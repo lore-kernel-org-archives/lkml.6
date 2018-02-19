@@ -1,149 +1,597 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2399110-1518598820-2-11179678515606439252
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518598819; b=BO/IcYkXS7LhYD0uZAXfEuc9o6nuF0xsHUX1lyxyXMFiq7X
-    8xbj5uP2JZ+sGA1sXczNPsr53Tnna8JcBPZaxsd8hzR7xx00+uC52xiK1fsTzBT3
-    ZDf+8/RIa7S9aD0SRV3OYxSG62rVBZ8NbsW/5/C5PgBGQgMhsP+mvRpHpWuevqpq
-    Qj1xaYFIwc4AtxqOb03nDdfl05SCWCmUILi2R1A4qd6F87OLJsyv09f8BRC8F9Gy
-    Zl10T0fwKzbA9J8/XkG1AVVzmGvacpnK/O9DusJlq9lsjQ+cF4k5/0qSBk5I2Par
-    AbD4AYZp10B12LYlRZ0EF+lJcT2uHRBpbsemgZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518598819; bh=kaz461HWyMCRqmMsg16/7NtoYG5FI4J8XyXnJP
-    wJTAA=; b=orrNqFHw339xdf2ewsOKeYuYQLe2eHsldOE6zTqHIFxMHR8tMc0hhJ
-    c/+ZrWYjSNwVDzU2/EBBAEa+ehG+Ep7cn+TFaUx52LgBwRG50fZF5hxV1db5RA83
-    6b9m6vJYA/mgaMWf/giTrOJCInwQBb7aXv8xhGoDUAz0MriXgYpCMN6RrFf9UfE6
-    psYx1gaZmTMHr2T/9xz9fd2x+BSYWESGjeSv17As9De6q9G9Gnfe1yVnDA4QQDKX
-    herHgivEF3JB8+er9MoyRbSg0RFqxQpbtE1VWfE0RU8BEex5FW7KYU8gJjQdr8dg
-    Cq3d6Yn9JUX7lniCVL45QUME/bjYgg7A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fF6tnX5v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BNLFsqWC;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fF6tnX5v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BNLFsqWC;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754676AbeBNJAS (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Feb 2018 04:00:18 -0500
-Received: from mail-yw0-f179.google.com ([209.85.161.179]:47054 "EHLO
-        mail-yw0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754570AbeBNJAR (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 14 Feb 2018 04:00:17 -0500
-X-Google-Smtp-Source: AH8x226P0oRyZxngvpB/QW9lap1tBdsuYa1w9nV0ik+2dWsWBsbBLORzhmT9eU8lzTcq2GC3/PpXLRhGH7jZrEEo/+8=
+Return-Path: <outreachy-kernel+bncBD2YBJOB4QPBBEU3VPKAKGQEMYBWG2A@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1519046035; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=Bx5MwXKBYcpjkZk6AI6vBmUH+gqTJbey7+tEex3hqgD20XspXCWMYBuYNm8MB1oV5z
+         HGGN2TrSMPDnVCZoGtG8I6LyRlx5xk4qEXaVHFhogrr/4cPmZHNgTCIqDWXspVf5yGDo
+         DuZPjkd7DON+yiwCCzfLKgl/NAqSH/JQaMq1JWnHwl4rtK+VGu1SNyClxqlAZ6bAxQBl
+         aC/utFLZgaluK12Cs6bkUi6W/1ToQl2/h4fxYHO5RXw8wsyxR3aZWdVp9mOtrnGPJzbF
+         W/ZtQ1D93FBkay5VXa2HZl+/ak0iCwhfyeUbloPYtUIxlUd7quEzxILctN6Owx/bzb4J
+         mUgQ==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:message-id:date:subject:cc:to:from
+         :arc-authentication-results:arc-message-signature:mime-version
+         :sender:dkim-signature:dkim-signature:arc-authentication-results
+         :arc-message-signature:arc-authentication-results;
+        bh=j3asAkjmFJ4Clu+n/2GkmDNBEgQ5l2/IMpe5NC9JZLg=;
+        b=LddVo4PYjDASx3siOImJVyCV7W5g23wAgrvLqI8o7doemUmI3AXIZv8CT8bdJsD1Tx
+         z6UIafJ6DHyUX9pCutI7Om+CdfsRjV+YlyTVNNa3KRxgY//UAixrLNQ/FRUNNAuI79YT
+         7KLiR0CN5G/Kf+rBa5ecg86V02tLP7j0GLHty3w4e5DK1aYLgcPbLU0Cwg9DXeiCh1dM
+         MczrC8FV/FxdyYU9xJ6FOIZ1yaWI7YAHE1Yw9fJ7k9X7RG+InNx1MR1ixVVNQOEzvzDv
+         vXBiVrKw8M5swyAG9+2rxBfKOBYYpcJjyJDwu4vQKX6wUYH4SVs1Vmg+SQcT/iUp92PI
+         9ioA==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ro8lau5m;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gQ4jdGQA;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbbeu3vpkakgqemybwg2a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBEU3VPKAKGQEMYBWG2A@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ro8lau5m;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gQ4jdGQA;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbbeu3vpkakgqemybwg2a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBEU3VPKAKGQEMYBWG2A@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1519046034; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=pifQy92eyVMMIE8nqPkSCdbs1ygUhNqq6LVBLlmAYiNih1lTxG1rrYKDHFU4GX6/PW
+         VRCGpXV+Il5v8PRbVjMK6IvkvZcOajarNjsJV8BcgY5/A1fvcWhihhmqLGdim+pMVrWn
+         mt6ULBIGQNUAqsHmhW1SZ5/U61vBrP4ulR5MHlq/DG8L6hzKqDKODjG+m0d9XyH7fmC9
+         jwy9YTiYmfblDyhLsY4etvMUaROJA/hi/JhKhx3ZC3DgEh6st7vB4GDjQF/H0carVdYN
+         vEHhYSthnJmBtUJbqaadPxMahDiWy1JtY9oClAgXgAHQsOMG/Lk/8GPSWFUlFyJETWo1
+         wl3g==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:message-id:date:subject:cc:to:from
+         :arc-authentication-results:arc-message-signature:mime-version
+         :sender:dkim-signature:dkim-signature:arc-authentication-results;
+        bh=j3asAkjmFJ4Clu+n/2GkmDNBEgQ5l2/IMpe5NC9JZLg=;
+        b=IXVcoq0cdqA38YEeRul3dkVMswi9QS16q7VQFsB27gHSRlPCboXAf1BKtMlTr/mhb0
+         J370O46q19y6/TCx9S0DaU1FR14Jcuznr/4Qh8bF0T10YUBhjzsm57f933WaqymcE5Bh
+         nm/dLsNWde+IE77yOrwvU8tasLYwPzxxfG+Ot30zlrBuzM3a8CPLPLM9SgSrLnSxLgYI
+         heagh5VCO8PeIhYEMXEQXnUZJEp0BmkQlnP14CJ+j8NFmNcucnpvrgh5UfLF9Do1zf6N
+         +I3000kI7GQGkLlXadZpb3n1+9z907y+j0kyehWvcsikbCmV4UPxLHgvPjZE/Ktubz7d
+         3v7g==
+ARC-Authentication-Results: i=2; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EaIzrUZU;
+       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c00::22f as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Sender: outreachy-kernel@googlegroups.com
+X-Google-Smtp-Source: AH8x225XDmxIXZ9BD82L5v/VMpnpWlCCS0N0j+jPWWWSMod6ngupbyMnvQp+quE4Ku/8QmN8rC6o/w==
 MIME-Version: 1.0
-In-Reply-To: <CALvZod7FTNzoGfGnaorqjk4KEsxJFdz1pApHi04P1cF10ejxpQ@mail.gmail.com>
-References: <20171030124358.GF23278@quack2.suse.cz> <76a4d544-833a-5f42-a898-115640b6783b@alibaba-inc.com>
- <20171031101238.GD8989@quack2.suse.cz> <20171109135444.znaksm4fucmpuylf@dhcp22.suse.cz>
- <10924085-6275-125f-d56b-547d734b6f4e@alibaba-inc.com> <20171114093909.dbhlm26qnrrb2ww4@dhcp22.suse.cz>
- <afa2dc80-16a3-d3d1-5090-9430eaafc841@alibaba-inc.com> <20171115093131.GA17359@quack2.suse.cz>
- <CALvZod6HJO73GUfLemuAXJfr4vZ8xMOmVQpFO3vJRog-s2T-OQ@mail.gmail.com>
- <CAOQ4uxg-mTgQfTv-qO6EVwfttyOy+oFyAHyFDKTQsDOkQPyyfA@mail.gmail.com>
- <20180124103454.ibuqt3njaqbjnrfr@quack2.suse.cz> <CAOQ4uxhDpBBUrr0JWRBaNQTTaUeJ4=gnM0iij2KivaGgp1ggtg@mail.gmail.com>
- <CALvZod4PyqfaqgEswegF5uOjNwVwbY1C4ptJB0Ouvgchv2aVFg@mail.gmail.com>
- <CAOQ4uxhyZNghjQU5atNv5xtgdHzA75UayphCyQDzxjM8GDTv3Q@mail.gmail.com>
- <CALvZod5H4eL=YtZ3zkGG3p8gD+3=qnC3siUw1zpKL+128KufAA@mail.gmail.com>
- <CAOQ4uxgJqn0CJaf=LMH-iv2g1MJZwPM97K6iCtzrcY3eoN6KjA@mail.gmail.com>
- <CAOQ4uxjgKUFJ_uhyrQdcTs1FzcN6JrR_JpPc9QBrGJEU+cf65w@mail.gmail.com>
- <CALvZod45r7oW=HWH7KJyvFhJWB=6+Si54JK7E0Mx_2gLTZd1Pg@mail.gmail.com>
- <CAOQ4uxghwNg9Ni23EQA-971-qAaTNceSZS2MSvK06uEjoXG_yg@mail.gmail.com> <CALvZod7FTNzoGfGnaorqjk4KEsxJFdz1pApHi04P1cF10ejxpQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 14 Feb 2018 11:00:15 +0200
-Message-ID: <CAOQ4uxhRW=AN5UUHiWYaQp=Nw29ys_1Ak6ADCAvCLTUOqaYn6g@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: fsnotify: account fsnotify metadata to kmemcg
-To: Shakeel Butt <shakeelb@google.com>
-Cc: Jan Kara <jack@suse.cz>, Yang Shi <yang.s@alibaba-inc.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+X-BeenThere: outreachy-kernel@googlegroups.com
+ARC-Seal: i=1; a=rsa-sha256; t=1519046034; cv=none;
+        d=google.com; s=arc-20160816;
+        b=QOJX20kGlerKAwjT9uNCMMrZtIqYG1g5dblC12i5/WNtTmR/I97F9GlHBx0qandO/e
+         +qO6GsHL3BNAQThRRRlvLzWwXx99dBoN2W54MuhvxCtXwf0ukapCRsU+QKkWYZAUseJz
+         V6dd/OtbCd/V+XYz4DcUb1OOb2xaZKvmxGJJzXSKVibxARwIWdy9B4zUTdGA4cPmmTGn
+         mRiJV3F7VCNVeR7cyp/upQugoikv6pQMmy3quTBWM2dWoW2oHj6EEJElb2fsDbldVGS6
+         N29ecFWERryvuHnsEGJrRaBjtLFlfZqM534rkExjmQdUg3mwCOfbufOFf0hQj6aORPCe
+         9tfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=RicOORjjWERXJX6u+1fLKVCsnvgHwMbGdgNZxwbThcA=;
+        b=FyrDpX5XaKYeyvkANjolwzGvP57RtyERSKaX8OfPElRKt9ZIJD27sy2wJdQw+I/4Mw
+         QUGmAIh+Va7m9lrF11sNZPoCJ3ZHaNuuU1yKuXD2eqwHcqPYrshwhc1mwODqh9Pg20eM
+         jWvsOFs25bluVFWtFhQw6iagM5TC+Osk+43hmjTedzYj2jgQQ1yy2Y5SCaQAMksRnT5Q
+         B47vTxJMWOccuT48eiQw+wE3bicRRzMaJ307Xmfhyd65An77WMeAn2w/scRrLSJsXlIm
+         564qS6Khz+sjBu+dcBnaWk8Aiv8l6pBJkHFjzxu0iIrHcUetJVKk/kg6BHdkA2L+Dwp7
+         qUKw==
+ARC-Authentication-Results: i=1; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EaIzrUZU;
+       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c00::22f as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
+To: boris.brezillon@free-electrons.com,
+	richard@nod.at,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	cyrille.pitchen@wedev4u.fr,
+	maximlevitsky@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ezequiel@vanguardiasur.com.ar,
+	outreachy-kernel@googlegroups.com
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>
+Subject: [Outreachy kernel] [PATCH NAND v2] mtd: nand: Replace printk() with
+ appropriate pr_*macro()
+Date: Mon, 19 Feb 2018 18:43:45 +0530
+Message-Id: <1519046025-9412-1-git-send-email-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-Original-Sender: shreeya.patel23498@gmail.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@gmail.com header.s=20161025 header.b=EaIzrUZU;       spf=pass
+ (google.com: domain of shreeya.patel23498@gmail.com designates
+ 2607:f8b0:400e:c00::22f as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
+X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
+X-Google-Group-Id: 672804067692
+List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
+List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
+List-Archive: <https://groups.google.com/group/outreachy-kernel
+List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
+ <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592835215641943440?=
+X-GMAIL-MSGID: =?utf-8?q?1592835215641943440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 12:20 AM, Shakeel Butt <shakeelb@google.com> wrote:
-> On Tue, Feb 13, 2018 at 1:54 PM, Amir Goldstein <amir73il@gmail.com> wrote:
->> On Tue, Feb 13, 2018 at 11:10 PM, Shakeel Butt <shakeelb@google.com> wrote:
-[...]
->>>> The question is, do we need the user to also explicitly opt-in for
->>>> Q_OVERFLOW on ENOMEM with FAN_Q_ERR mark mask?
->>>> Should these 2 new APIs be coupled or independent?
->>>>
->>>
->>> Are there any error which are not related to queue overflows? I see
->>> the mention of ENODEV and EOVERFLOW in the discussion. If there are
->>> such errors and might be interesting to the listener then we should
->>> have 2 independent APIs.
->>>
->>
->> These are indeed 2 different use cases.
->> A Q_OVERFLOW event is only expected one of ENOMEM or
->> EOVERFLOW in event->fd, but other events (like open of special device
->> file) can have ENODEV in event->fd.
->>
->> But I am not convinced that those require 2 independent APIs.
->> Specifying FAN_Q_ERR means that the user expects to reads errors
->> from event->fd.
->>
->
-> Can you please explain what you mean by 2 independent APIs? I thought
-> "no independent APIs" means FAN_Q_ERR can only be used with
-> FAN_Q_OVERFLOW and without FAN_Q_OVERFLOW, FAN_Q_ERR is ignored. Is
-> that right or I misunderstood?
->
+The log levels embedded with the name are more concise than
+printk.
+Replace printks having a log level with the appropriate
+pr_*macro.
 
-What I initially meant to say was, we actually consider several
-behavior changes:
-1. Charge event allocations to memcg of listener
-2. Queue a Q_OVERFLOW event on ENOMEM of event allocation
-3. Report the error to user on metadata->fd (instead of FAN_NOFD)
-4. Allow non Q_OVERFLOW event to have negative metadata->fd.
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+---
 
-#3 is applicable both to Q_OVERFLOW event and other events that
-can't provide and open file descriptor for some reason (i.e. ENODEV).
+Changes in v2:
+  -Merge previous patches of the patchset regarding replacement
+of printk with pr_*macro, into single patch.
 
-#1 and #2 could be independent, but they both make sense together.
-When enabling #1 user increases the chance of ENOMEM and therefore
-#2 is desired. So if we are going to let distro/admin/programmer to
-opt-in for what we believe to be a "change of behavior for the best", then
-we could consider that opting-in  for #1 will also imply opting-in for #2
-and #3 (as the means to report Q_OVERFLOW due to ENOMEM).
 
-I guess we will need to allow user to opt-in to #4 and #3 by FAN_Q_ERR
-mask flag to cover the ENODEV case independently from opting-in to
-charging memcg.
+ drivers/mtd/nand/cs553x_nand.c   |  9 ++---
+ drivers/mtd/nand/diskonchip.c    | 76 +++++++++++++++++++++-------------------
+ drivers/mtd/nand/fsl_elbc_nand.c |  2 +-
+ drivers/mtd/nand/fsl_ifc_nand.c  |  2 +-
+ drivers/mtd/nand/mxc_nand.c      |  2 +-
+ drivers/mtd/nand/nand_bch.c      | 12 +++----
+ drivers/mtd/nand/nandsim.c       | 10 +++---
+ drivers/mtd/nand/r852.c          |  2 +-
+ drivers/mtd/nand/r852.h          |  6 ++--
+ drivers/mtd/nand/sm_common.c     |  5 ++-
+ 10 files changed, 65 insertions(+), 61 deletions(-)
 
-How was I doing in the balance of adding clarity vs. adding confusion?
+diff --git a/drivers/mtd/nand/cs553x_nand.c b/drivers/mtd/nand/cs553x_nand.c
+index d488775..1fe3c8a 100644
+--- a/drivers/mtd/nand/cs553x_nand.c
++++ b/drivers/mtd/nand/cs553x_nand.c
+@@ -189,10 +189,11 @@ static int __init cs553x_init_one(int cs, int mmio, unsigned long adr)
+ 	struct nand_chip *this;
+ 	struct mtd_info *new_mtd;
+ 
+-	printk(KERN_NOTICE "Probing CS553x NAND controller CS#%d at %sIO 0x%08lx\n", cs, mmio?"MM":"P", adr);
++	pr_notice("Probing CS553x NAND controller CS#%d at %sIO 0x%08lx\n",
++		  cs, mmio?"MM":"P", adr);
+ 
+ 	if (!mmio) {
+-		printk(KERN_NOTICE "PIO mode not yet implemented for CS553X NAND controller\n");
++		pr_notice("PIO mode not yet implemented for CS553X NAND controller\n");
+ 		return -ENXIO;
+ 	}
+ 
+@@ -211,7 +212,7 @@ static int __init cs553x_init_one(int cs, int mmio, unsigned long adr)
+ 	/* map physical address */
+ 	this->IO_ADDR_R = this->IO_ADDR_W = ioremap(adr, 4096);
+ 	if (!this->IO_ADDR_R) {
+-		printk(KERN_WARNING "ioremap cs553x NAND @0x%08lx failed\n", adr);
++		pr_warn("ioremap cs553x NAND @0x%08lx failed\n", adr);
+ 		err = -EIO;
+ 		goto out_mtd;
+ 	}
+@@ -295,7 +296,7 @@ static int __init cs553x_init(void)
+ 	/* If it doesn't have the NAND controller enabled, abort */
+ 	rdmsrl(MSR_DIVIL_BALL_OPTS, val);
+ 	if (val & PIN_OPT_IDE) {
+-		printk(KERN_INFO "CS553x NAND controller: Flash I/O not enabled in MSR_DIVIL_BALL_OPTS.\n");
++		pr_info("CS553x NAND controller: Flash I/O not enabled in MSR_DIVIL_BALL_OPTS.\n");
+ 		return -ENXIO;
+ 	}
+ 
+diff --git a/drivers/mtd/nand/diskonchip.c b/drivers/mtd/nand/diskonchip.c
+index c3aa53c..b97d88c 100644
+--- a/drivers/mtd/nand/diskonchip.c
++++ b/drivers/mtd/nand/diskonchip.c
+@@ -411,7 +411,7 @@ static uint16_t __init doc200x_ident_chip(struct mtd_info *mtd, int nr)
+ 
+ 		ident.dword = readl(docptr + DoC_2k_CDSN_IO);
+ 		if (((ident.byte[0] << 8) | ident.byte[1]) == ret) {
+-			printk(KERN_INFO "DiskOnChip 2000 responds to DWORD access\n");
++			pr_info("DiskOnChip 2000 responds to DWORD access\n");
+ 			this->read_buf = &doc2000_readbuf_dword;
+ 		}
+ 	}
+@@ -438,7 +438,7 @@ static void __init doc2000_count_chips(struct mtd_info *mtd)
+ 			break;
+ 	}
+ 	doc->chips_per_floor = i;
+-	printk(KERN_DEBUG "Detected %d chips per floor.\n", i);
++	pr_info("Detected %d chips per floor.\n", i);
+ }
+ 
+ static int doc200x_wait(struct mtd_info *mtd, struct nand_chip *this)
+@@ -935,14 +935,15 @@ static int doc200x_correct_data(struct mtd_info *mtd, u_char *dat,
+ 
+ 		ret = doc_ecc_decode(rs_decoder, dat, calc_ecc);
+ 		if (ret > 0)
+-			printk(KERN_ERR "doc200x_correct_data corrected %d errors\n", ret);
++			pr_err("doc200x_correct_data corrected %d errors\n",
++				ret);
+ 	}
+ 	if (DoC_is_MillenniumPlus(doc))
+ 		WriteDOC(DOC_ECC_DIS, docptr, Mplus_ECCConf);
+ 	else
+ 		WriteDOC(DOC_ECC_DIS, docptr, ECCConf);
+ 	if (no_ecc_failures && mtd_is_eccerr(ret)) {
+-		printk(KERN_ERR "suppressing ECC failure\n");
++		pr_err("suppressing ECC failure\n");
+ 		ret = 0;
+ 	}
+ 	return ret;
+@@ -1015,11 +1016,11 @@ static int __init find_media_headers(struct mtd_info *mtd, u_char *buf, const ch
+ 		if (retlen != mtd->writesize)
+ 			continue;
+ 		if (ret) {
+-			printk(KERN_WARNING "ECC error scanning DOC at 0x%x\n", offs);
++			pr_warn("ECC error scanning DOC at 0x%x\n", offs);
+ 		}
+ 		if (memcmp(buf, id, 6))
+ 			continue;
+-		printk(KERN_INFO "Found DiskOnChip %s Media Header at 0x%x\n", id, offs);
++		pr_info("Found DiskOnChip %s Media Header at 0x%x\n", id, offs);
+ 		if (doc->mh0_page == -1) {
+ 			doc->mh0_page = offs >> this->page_shift;
+ 			if (!findmirror)
+@@ -1030,7 +1031,7 @@ static int __init find_media_headers(struct mtd_info *mtd, u_char *buf, const ch
+ 		return 2;
+ 	}
+ 	if (doc->mh0_page == -1) {
+-		printk(KERN_WARNING "DiskOnChip %s Media Header not found.\n", id);
++		pr_warn("DiskOnChip %s Media Header not found.\n", id);
+ 		return 0;
+ 	}
+ 	/* Only one mediaheader was found.  We want buf to contain a
+@@ -1039,7 +1040,7 @@ static int __init find_media_headers(struct mtd_info *mtd, u_char *buf, const ch
+ 	ret = mtd_read(mtd, offs, mtd->writesize, &retlen, buf);
+ 	if (retlen != mtd->writesize) {
+ 		/* Insanity.  Give up. */
+-		printk(KERN_ERR "Read DiskOnChip Media Header once, but can't reread it???\n");
++		pr_err("Read DiskOnChip Media Header once, but can't reread it???\n");
+ 		return 0;
+ 	}
+ 	return 1;
+@@ -1069,11 +1070,11 @@ static inline int __init nftl_partscan(struct mtd_info *mtd, struct mtd_partitio
+ 	le16_to_cpus(&mh->FirstPhysicalEUN);
+ 	le32_to_cpus(&mh->FormattedSize);
+ 
+-	printk(KERN_INFO "    DataOrgID        = %s\n"
+-			 "    NumEraseUnits    = %d\n"
+-			 "    FirstPhysicalEUN = %d\n"
+-			 "    FormattedSize    = %d\n"
+-			 "    UnitSizeFactor   = %d\n",
++	pr_info("    DataOrgID        = %s\n"
++		"    NumEraseUnits    = %d\n"
++		"    FirstPhysicalEUN = %d\n"
++		"    FormattedSize    = %d\n"
++		"    UnitSizeFactor   = %d\n",
+ 		mh->DataOrgID, mh->NumEraseUnits,
+ 		mh->FirstPhysicalEUN, mh->FormattedSize,
+ 		mh->UnitSizeFactor);
+@@ -1093,7 +1094,7 @@ static inline int __init nftl_partscan(struct mtd_info *mtd, struct mtd_partitio
+ 			maxblocks = min(32768U, (maxblocks << 1) + psize);
+ 			mh->UnitSizeFactor--;
+ 		}
+-		printk(KERN_WARNING "UnitSizeFactor=0x00 detected.  Correct value is assumed to be 0x%02x.\n", mh->UnitSizeFactor);
++		pr_warn("UnitSizeFactor=0x00 detected.  Correct value is assumed to be 0x%02x.\n", mh->UnitSizeFactor);
+ 	}
+ 
+ 	/* NOTE: The lines below modify internal variables of the NAND and MTD
+@@ -1104,13 +1105,13 @@ static inline int __init nftl_partscan(struct mtd_info *mtd, struct mtd_partitio
+ 	if (mh->UnitSizeFactor != 0xff) {
+ 		this->bbt_erase_shift += (0xff - mh->UnitSizeFactor);
+ 		mtd->erasesize <<= (0xff - mh->UnitSizeFactor);
+-		printk(KERN_INFO "Setting virtual erase size to %d\n", mtd->erasesize);
++		pr_info("Setting virtual erase size to %d\n", mtd->erasesize);
+ 		blocks = mtd->size >> this->bbt_erase_shift;
+ 		maxblocks = min(32768U, mtd->erasesize - psize);
+ 	}
+ 
+ 	if (blocks > maxblocks) {
+-		printk(KERN_ERR "UnitSizeFactor of 0x%02x is inconsistent with device size.  Aborting.\n", mh->UnitSizeFactor);
++		pr_err("UnitSizeFactor of 0x%02x is inconsistent with device size.  Aborting.\n", mh->UnitSizeFactor);
+ 		goto out;
+ 	}
+ 
+@@ -1181,14 +1182,14 @@ static inline int __init inftl_partscan(struct mtd_info *mtd, struct mtd_partiti
+ 	le32_to_cpus(&mh->FormatFlags);
+ 	le32_to_cpus(&mh->PercentUsed);
+ 
+-	printk(KERN_INFO "    bootRecordID          = %s\n"
+-			 "    NoOfBootImageBlocks   = %d\n"
+-			 "    NoOfBinaryPartitions  = %d\n"
+-			 "    NoOfBDTLPartitions    = %d\n"
+-			 "    BlockMultiplerBits    = %d\n"
+-			 "    FormatFlgs            = %d\n"
+-			 "    OsakVersion           = %d.%d.%d.%d\n"
+-			 "    PercentUsed           = %d\n",
++	pr_info("    bootRecordID          = %s\n"
++		"    NoOfBootImageBlocks   = %d\n"
++		"    NoOfBinaryPartitions  = %d\n"
++		"    NoOfBDTLPartitions    = %d\n"
++		"    BlockMultiplerBits    = %d\n"
++		"    FormatFlgs            = %d\n"
++		"    OsakVersion           = %d.%d.%d.%d\n"
++		"    PercentUsed           = %d\n",
+ 		mh->bootRecordID, mh->NoOfBootImageBlocks,
+ 		mh->NoOfBinaryPartitions,
+ 		mh->NoOfBDTLPartitions,
+@@ -1203,13 +1204,13 @@ static inline int __init inftl_partscan(struct mtd_info *mtd, struct mtd_partiti
+ 
+ 	blocks = mtd->size >> vshift;
+ 	if (blocks > 32768) {
+-		printk(KERN_ERR "BlockMultiplierBits=%d is inconsistent with device size.  Aborting.\n", mh->BlockMultiplierBits);
++		pr_err("BlockMultiplierBits=%d is inconsistent with device size.  Aborting.\n", mh->BlockMultiplierBits);
+ 		goto out;
+ 	}
+ 
+ 	blocks = doc->chips_per_floor << (this->chip_shift - this->phys_erase_shift);
+ 	if (inftl_bbt_write && (blocks > mtd->erasesize)) {
+-		printk(KERN_ERR "Writeable BBTs spanning more than one erase block are not yet supported.  FIX ME!\n");
++		pr_err("Writeable BBTs spanning more than one erase block are not yet supported.  FIX ME!\n");
+ 		goto out;
+ 	}
+ 
+@@ -1223,7 +1224,7 @@ static inline int __init inftl_partscan(struct mtd_info *mtd, struct mtd_partiti
+ 		le32_to_cpus(&ip->spareUnits);
+ 		le32_to_cpus(&ip->Reserved0);
+ 
+-		printk(KERN_INFO	"    PARTITION[%d] ->\n"
++		pr_info("    PARTITION[%d] ->\n"
+ 			"        virtualUnits    = %d\n"
+ 			"        firstUnit       = %d\n"
+ 			"        lastUnit        = %d\n"
+@@ -1309,7 +1310,7 @@ static int __init inftl_scan_bbt(struct mtd_info *mtd)
+ 	struct mtd_partition parts[5];
+ 
+ 	if (this->numchips > doc->chips_per_floor) {
+-		printk(KERN_ERR "Multi-floor INFTL devices not yet supported.\n");
++		pr_err("Multi-floor INFTL devices not yet supported.\n");
+ 		return -EIO;
+ 	}
+ 
+@@ -1437,7 +1438,8 @@ static int __init doc_probe(unsigned long physadr)
+ 		return -EBUSY;
+ 	virtadr = ioremap(physadr, DOC_IOREMAP_LEN);
+ 	if (!virtadr) {
+-		printk(KERN_ERR "Diskonchip ioremap failed: 0x%x bytes at 0x%lx\n", DOC_IOREMAP_LEN, physadr);
++		pr_err("Diskonchip ioremap failed: 0x%x bytes at 0x%lx\n",
++		       DOC_IOREMAP_LEN, physadr);
+ 		ret = -EIO;
+ 		goto error_ioremap;
+ 	}
+@@ -1496,7 +1498,7 @@ static int __init doc_probe(unsigned long physadr)
+ 			reg = DoC_Mplus_Toggle;
+ 			break;
+ 		case DOC_ChipID_DocMilPlus32:
+-			printk(KERN_ERR "DiskOnChip Millennium Plus 32MB is not supported, ignoring.\n");
++			pr_err("DiskOnChip Millennium Plus 32MB is not supported, ignoring.\n");
+ 		default:
+ 			ret = -ENODEV;
+ 			goto notfound;
+@@ -1512,7 +1514,7 @@ static int __init doc_probe(unsigned long physadr)
+ 	tmpb = ReadDOC_(virtadr, reg) & DOC_TOGGLE_BIT;
+ 	tmpc = ReadDOC_(virtadr, reg) & DOC_TOGGLE_BIT;
+ 	if ((tmp == tmpb) || (tmp != tmpc)) {
+-		printk(KERN_WARNING "Possible DiskOnChip at 0x%lx failed TOGGLE test, dropping.\n", physadr);
++		pr_warn("Possible DiskOnChip at 0x%lx failed TOGGLE test, dropping.\n", physadr);
+ 		ret = -ENODEV;
+ 		goto notfound;
+ 	}
+@@ -1546,12 +1548,13 @@ static int __init doc_probe(unsigned long physadr)
+ 		}
+ 		newval = ~newval;
+ 		if (oldval == newval) {
+-			printk(KERN_DEBUG "Found alias of DOC at 0x%lx to 0x%lx\n", doc->physadr, physadr);
++			pr_debug("Found alias of DOC at 0x%lx to 0x%lx\n",
++				 doc->physadr, physadr);
+ 			goto notfound;
+ 		}
+ 	}
+ 
+-	printk(KERN_NOTICE "DiskOnChip found at 0x%lx\n", physadr);
++	pr_notice("DiskOnChip found at 0x%lx\n", physadr);
+ 
+ 	len = sizeof(struct nand_chip) + sizeof(struct doc_priv) +
+ 	      (2 * sizeof(struct nand_bbt_descr));
+@@ -1666,12 +1669,13 @@ static int __init init_nanddoc(void)
+ 	 */
+ 	rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
+ 	if (!rs_decoder) {
+-		printk(KERN_ERR "DiskOnChip: Could not create a RS decoder\n");
++		pr_err("DiskOnChip: Could not create a RS decoder\n");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	if (doc_config_location) {
+-		printk(KERN_INFO "Using configured DiskOnChip probe address 0x%lx\n", doc_config_location);
++		pr_info("Using configured DiskOnChip probe address 0x%lx\n",
++			doc_config_location);
+ 		ret = doc_probe(doc_config_location);
+ 		if (ret < 0)
+ 			goto outerr;
+@@ -1683,7 +1687,7 @@ static int __init init_nanddoc(void)
+ 	/* No banner message any more. Print a message if no DiskOnChip
+ 	   found, so the user knows we at least tried. */
+ 	if (!doclist) {
+-		printk(KERN_INFO "No valid DiskOnChip devices found\n");
++		pr_info("No valid DiskOnChip devices found\n");
+ 		ret = -ENODEV;
+ 		goto outerr;
+ 	}
+diff --git a/drivers/mtd/nand/fsl_elbc_nand.c b/drivers/mtd/nand/fsl_elbc_nand.c
+index 17db2f9..a5df4f18 100644
+--- a/drivers/mtd/nand/fsl_elbc_nand.c
++++ b/drivers/mtd/nand/fsl_elbc_nand.c
+@@ -929,7 +929,7 @@ static int fsl_elbc_nand_probe(struct platform_device *pdev)
+ 	mtd_device_parse_register(mtd, part_probe_types, NULL,
+ 				  NULL, 0);
+ 
+-	printk(KERN_INFO "eLBC NAND device at 0x%llx, bank %d\n",
++	pr_info("eLBC NAND device at 0x%llx, bank %d\n",
+ 	       (unsigned long long)res.start, priv->bank);
+ 	return 0;
+ 
+diff --git a/drivers/mtd/nand/fsl_ifc_nand.c b/drivers/mtd/nand/fsl_ifc_nand.c
+index 9e03bac..f88a493 100644
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -805,7 +805,7 @@ static void fsl_ifc_sram_init(struct fsl_ifc_mtd *priv)
+ 			   msecs_to_jiffies(IFC_TIMEOUT_MSECS));
+ 
+ 	if (ctrl->nand_stat != IFC_NAND_EVTER_STAT_OPC)
+-		printk(KERN_ERR "fsl-ifc: Failed to Initialise SRAM\n");
++		pr_err("fsl-ifc: Failed to Initialise SRAM\n");
+ 
+ 	/* Restore CSOR and CSOR_ext */
+ 	ifc_out32(csor, &ifc_global->csor_cs[cs].csor);
+diff --git a/drivers/mtd/nand/mxc_nand.c b/drivers/mtd/nand/mxc_nand.c
+index 53e5e03..e99c272 100644
+--- a/drivers/mtd/nand/mxc_nand.c
++++ b/drivers/mtd/nand/mxc_nand.c
+@@ -634,7 +634,7 @@ static int mxc_nand_correct_data_v2_v3(struct mtd_info *mtd, u_char *dat,
+ 	do {
+ 		err = ecc_stat & ecc_bit_mask;
+ 		if (err > err_limit) {
+-			printk(KERN_WARNING "UnCorrectable RS-ECC Error\n");
++			pr_warn("UnCorrectable RS-ECC Error\n");
+ 			return -EBADMSG;
+ 		} else {
+ 			ret += err;
+diff --git a/drivers/mtd/nand/nand_bch.c b/drivers/mtd/nand/nand_bch.c
+index 505441c..7f11b68 100644
+--- a/drivers/mtd/nand/nand_bch.c
++++ b/drivers/mtd/nand/nand_bch.c
+@@ -95,7 +95,7 @@ int nand_bch_correct_data(struct mtd_info *mtd, unsigned char *buf,
+ 					errloc[i]);
+ 		}
+ 	} else if (count < 0) {
+-		printk(KERN_ERR "ecc unrecoverable error\n");
++		pr_err("ecc unrecoverable error\n");
+ 		count = -EBADMSG;
+ 	}
+ 	return count;
+@@ -134,7 +134,7 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
+ 	}
+ 
+ 	if (!eccsize || !eccbytes) {
+-		printk(KERN_WARNING "ecc parameters not supplied\n");
++		pr_warn("ecc parameters not supplied\n");
+ 		goto fail;
+ 	}
+ 
+@@ -151,8 +151,8 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
+ 
+ 	/* verify that eccbytes has the expected value */
+ 	if (nbc->bch->ecc_bytes != eccbytes) {
+-		printk(KERN_WARNING "invalid eccbytes %u, should be %u\n",
+-		       eccbytes, nbc->bch->ecc_bytes);
++		pr_warn("invalid eccbytes %u, should be %u\n",
++			eccbytes, nbc->bch->ecc_bytes);
+ 		goto fail;
+ 	}
+ 
+@@ -166,7 +166,7 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
+ 
+ 	/* sanity checks */
+ 	if (8*(eccsize+eccbytes) >= (1 << m)) {
+-		printk(KERN_WARNING "eccsize %u is too large\n", eccsize);
++		pr_warn("eccsize %u is too large\n", eccsize);
+ 		goto fail;
+ 	}
+ 
+@@ -181,7 +181,7 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
+ 	nand->ecc.steps = eccsteps;
+ 	nand->ecc.total = eccsteps * eccbytes;
+ 	if (mtd_ooblayout_count_eccbytes(mtd) != (eccsteps*eccbytes)) {
+-		printk(KERN_WARNING "invalid ecc layout\n");
++		pr_warn("invalid ecc layout\n");
+ 		goto fail;
+ 	}
+ 
+diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
+index 246b439..4e5f817 100644
+--- a/drivers/mtd/nand/nandsim.c
++++ b/drivers/mtd/nand/nandsim.c
+@@ -184,15 +184,15 @@ MODULE_PARM_DESC(bch,		 "Enable BCH ecc and set how many bits should "
+ 
+ /* Simulator's output macros (logging, debugging, warning, error) */
+ #define NS_LOG(args...) \
+-	do { if (log) printk(KERN_DEBUG NS_OUTPUT_PREFIX " log: " args); } while(0)
++	do { if (log) pr_debug(NS_OUTPUT_PREFIX " log: " args); } while(0)
+ #define NS_DBG(args...) \
+-	do { if (dbg) printk(KERN_DEBUG NS_OUTPUT_PREFIX " debug: " args); } while(0)
++	do { if (dbg) pr_debug(NS_OUTPUT_PREFIX " debug: " args); } while(0)
+ #define NS_WARN(args...) \
+-	do { printk(KERN_WARNING NS_OUTPUT_PREFIX " warning: " args); } while(0)
++	do { pr_warn(NS_OUTPUT_PREFIX " warning: " args); } while(0)
+ #define NS_ERR(args...) \
+-	do { printk(KERN_ERR NS_OUTPUT_PREFIX " error: " args); } while(0)
++	do { pr_err(NS_OUTPUT_PREFIX " error: " args); } while(0)
+ #define NS_INFO(args...) \
+-	do { printk(KERN_INFO NS_OUTPUT_PREFIX " " args); } while(0)
++	do { pr_info(NS_OUTPUT_PREFIX " " args); } while(0)
+ 
+ /* Busy-wait delay macros (microseconds, milliseconds) */
+ #define NS_UDELAY(us) \
+diff --git a/drivers/mtd/nand/r852.c b/drivers/mtd/nand/r852.c
+index fc9287a..3d54c6a 100644
+--- a/drivers/mtd/nand/r852.c
++++ b/drivers/mtd/nand/r852.c
+@@ -935,7 +935,7 @@ static int  r852_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
+ 		&dev->card_detect_work, 0);
+ 
+ 
+-	printk(KERN_NOTICE DRV_NAME ": driver loaded successfully\n");
++	pr_notice(DRV_NAME ": driver loaded successfully\n");
+ 	return 0;
+ 
+ error10:
+diff --git a/drivers/mtd/nand/r852.h b/drivers/mtd/nand/r852.h
+index 8713c57..63de9b6 100644
+--- a/drivers/mtd/nand/r852.h
++++ b/drivers/mtd/nand/r852.h
+@@ -149,12 +149,12 @@ struct r852_device {
+ 
+ #define dbg(format, ...) \
+ 	if (debug) \
+-		printk(KERN_DEBUG DRV_NAME ": " format "\n", ## __VA_ARGS__)
++		pr_debug(DRV_NAME ": " format "\n", ## __VA_ARGS__)
+ 
+ #define dbg_verbose(format, ...) \
+ 	if (debug > 1) \
+-		printk(KERN_DEBUG DRV_NAME ": " format "\n", ## __VA_ARGS__)
++		pr_debug(DRV_NAME ": " format "\n", ## __VA_ARGS__)
+ 
+ 
+ #define message(format, ...) \
+-	printk(KERN_INFO DRV_NAME ": " format "\n", ## __VA_ARGS__)
++	pr_info(DRV_NAME ": " format "\n", ## __VA_ARGS__)
+diff --git a/drivers/mtd/nand/sm_common.c b/drivers/mtd/nand/sm_common.c
+index c378705..7f5044a 100644
+--- a/drivers/mtd/nand/sm_common.c
++++ b/drivers/mtd/nand/sm_common.c
+@@ -119,9 +119,8 @@ static int sm_block_markbad(struct mtd_info *mtd, loff_t ofs)
+ 
+ 	ret = mtd_write_oob(mtd, ofs, &ops);
+ 	if (ret < 0 || ops.oobretlen != SM_OOB_SIZE) {
+-		printk(KERN_NOTICE
+-			"sm_common: can't mark sector at %i as bad\n",
+-								(int)ofs);
++		pr_notice("sm_common: can't mark sector at %i as bad\n",
++			  (int)ofs);
+ 		return -EIO;
+ 	}
+ 
+-- 
+2.7.4
 
-Thanks,
-Amir.
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/1519046025-9412-1-git-send-email-shreeya.patel23498%40gmail.com.
+For more options, visit https://groups.google.com/d/optout.
