@@ -1,76 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932267AbeBSXm1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 18:42:27 -0500
-Received: from mga18.intel.com ([134.134.136.126]:27310 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932232AbeBSXm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 18:42:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
-   d="scan'208";a="29202249"
-From: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
-To: Jon Masters <jcm@jonmasters.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-CC: Ingo Molnar <mingo@kernel.org>
-Subject: RE: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-Thread-Topic: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-Thread-Index: AQHTpBYQl8Dyc4mRm0iZ20KRHB9/vaOif+eAgAADjgCAABy9AIAABnAAgAAEXACAAAFigIAEqxQAgAACw4CAAAOrgIAAC+oAgAASX4CABXcSgP//eu2w
-Date: Mon, 19 Feb 2018 23:42:24 +0000
-Message-ID: <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
- <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
- <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
- <1518509708.12890.33.camel@infradead.org>
- <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
- <1518517262.12890.43.camel@infradead.org>
- <1518518198.12890.48.camel@infradead.org>
- <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
- <1518775136.7876.13.camel@infradead.org>
- <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
- <1518776517.7876.21.camel@infradead.org>
- <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
- <1518783021.7876.34.camel@infradead.org>
- <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
-In-Reply-To: <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S932294AbeBSXnu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 18:43:50 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:37854 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932241AbeBSXnt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 18:43:49 -0500
+Date: Mon, 19 Feb 2018 18:43:43 -0500 (EST)
+Message-Id: <20180219.184343.1801583131809551924.davem@davemloft.net>
+To: fthain@telegraphics.com.au
+Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net 2/4] net/8390: Fix msg_enable patch snafu
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
+References: <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au>
+        <20180219.141137.2095980245673495027.davem@davemloft.net>
+        <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1JNgeUx018397
 
-> 
-> >>> Even if the guest doesn't have/support IBRS_ALL, and is frobbing the
-> >>> (now emulated) MSR on every kernel entry/exit, that's *still* going to
-> >>> be a metric shitload faster than what it *thought* it was doing.
-> 
-> Is there any indication/log to the admin that VM doesn't know about
-> IBRS_ALL and is constantly uselessly writing to an emulated MSR?
-> 
-> While it's probably true that the overhead in time is similar to (or
-> better than) an actual IBRS MSR write, if the admin/user knows the VM
-> needs updating, then there's a fighting chance that they might do so.
+From: Finn Thain <fthain@telegraphics.com.au>
+Date: Tue, 20 Feb 2018 09:01:11 +1100 (AEDT)
 
-the guest is not the problem; guests obviously will already honor if Enhanced IBRS is enumerated.
-The problem is mixed migration pools where the hypervisor may need to decide to not pass this enumeration through to the guest.
+> On Mon, 19 Feb 2018, David Miller wrote:
+> 
+>> From: Finn Thain <fthain@telegraphics.com.au>
+>> Date: Sun, 18 Feb 2018 21:39:17 -0500 (EST)
+>> 
+>> > The lib8390 module parameter 'msg_enable' doesn't do anything useful:
+>> > it causes an ancient version string to be logged.
+>> 
+>> Since you are removing the last reference to this 'version' string
+>> you should remove it as well.
+>> 
+>> I'm surprised the compiler doesn't warn about this.
+>> 
+> 
+> I compile-tested every 8390 module and I didn't come across any compiler 
+> bugs.
+> 
+> Please take another look. I think you'll find that lib8390.c is always 
+> #included by a module which does define that symbol.
+
+But nothing references 'version' after you remove the log message.
+
+You can therefore delete it.
+
+And I'm politely asking you to.
+
+Thank you.
