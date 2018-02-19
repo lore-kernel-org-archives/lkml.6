@@ -1,116 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752566AbeBSKtv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:49:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52804 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752392AbeBSKtt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:49:49 -0500
+        id S1752592AbeBSKt7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:49:59 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752392AbeBSKty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:49:54 -0500
+Date: Mon, 19 Feb 2018 11:49:44 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH 6/9] perf tools: Don't search for active kernel start in
+ __machine__create_kernel_maps
+Message-ID: <20180219104917.GA19365@krava>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+ <20180215122635.24029-7-jolsa@kernel.org>
+ <20180219022036.GB1583@sejong>
+ <20180219100140.GA17630@krava>
+ <20180219101936.GD1583@sejong>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Feb 2018 16:19:48 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/12] i2c: qup: use the complete transfer length to
- choose DMA mode
-In-Reply-To: <4a3d98e2-c340-1a13-eaa4-dde07768e7d8@codeaurora.org>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-8-git-send-email-absahu@codeaurora.org>
- <4a3d98e2-c340-1a13-eaa4-dde07768e7d8@codeaurora.org>
-Message-ID: <0142c0722cd0d444711918741e3691ab@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180219101936.GD1583@sejong>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-16 10:05, Sricharan R wrote:
-> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
->> Currently each message length in complete transfer is being
->> checked for determining DMA mode and if any of the message length
->> is less than FIFO length then non DMA mode is being used which
->> will increase overhead. DMA can be used for any length and it
->> should be determined with complete transfer length. Now, this
->> patch introduces DMA threshold length and the transfer will be
->> done in DMA mode if the total length is greater than this
->> threshold length.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->>  drivers/i2c/busses/i2c-qup.c | 15 +++++++++------
->>  1 file changed, 9 insertions(+), 6 deletions(-)
->> 
->> diff --git a/drivers/i2c/busses/i2c-qup.c 
->> b/drivers/i2c/busses/i2c-qup.c
->> index 6227a5c..a91fc70 100644
->> --- a/drivers/i2c/busses/i2c-qup.c
->> +++ b/drivers/i2c/busses/i2c-qup.c
->> @@ -192,6 +192,8 @@ struct qup_i2c_dev {
->>  	bool			is_dma;
->>  	/* To check if the current transfer is using DMA */
->>  	bool			use_dma;
->> +	/* The threshold length above which DMA will be used */
->> +	unsigned int		dma_threshold;
->>  	struct			dma_pool *dpool;
->>  	struct			qup_i2c_tag start_tag;
->>  	struct			qup_i2c_bam brx;
->> @@ -1294,7 +1296,8 @@ static int qup_i2c_xfer_v2(struct i2c_adapter 
->> *adap,
->>  			   int num)
->>  {
->>  	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
->> -	int ret, len, idx = 0;
->> +	int ret, idx = 0;
->> +	unsigned int total_len = 0;
->> 
->>  	qup->bus_err = 0;
->>  	qup->qup_err = 0;
->> @@ -1320,14 +1323,13 @@ static int qup_i2c_xfer_v2(struct i2c_adapter 
->> *adap,
->>  				goto out;
->>  			}
->> 
->> -			len = (msgs[idx].len > qup->out_fifo_sz) ||
->> -			      (msgs[idx].len > qup->in_fifo_sz);
->> -
->> -			if (is_vmalloc_addr(msgs[idx].buf) || !len)
->> +			if (is_vmalloc_addr(msgs[idx].buf))
->>  				break;
->> +
->> +			total_len += msgs[idx].len;
->>  		}
->> 
->> -		if (idx == num)
->> +		if (idx == num && total_len > qup->dma_threshold)
->>  			qup->use_dma = true;
->>  	}
->> 
->> @@ -1587,6 +1589,7 @@ static int qup_i2c_probe(struct platform_device 
->> *pdev)
->> 
->>  	size = QUP_INPUT_FIFO_SIZE(io_mode);
->>  	qup->in_fifo_sz = qup->in_blk_sz * (2 << size);
->> +	qup->dma_threshold = min(qup->out_fifo_sz, qup->in_fifo_sz);
+On Mon, Feb 19, 2018 at 07:19:36PM +0900, Namhyung Kim wrote:
+
+SNIP
+
+> From b736729e83b62f97d716a011ccf4e430b614fecd Mon Sep 17 00:00:00 2001
+> From: Namhyung Kim <namhyung@kernel.org>
+> Date: Mon, 19 Feb 2018 19:00:46 +0900
+> Subject: [PATCH] perf tools: Fix paranoid check in machine__set_kernel_mmap()
 > 
->   The patch is fine. small nit, you can avoid this global 
-> dma_threshold. Instead
->   have it locally in qup_i2c_xfer_v2 itself.
+> The machine__set_kernel_mmap() is to setup addresses of the kernel map
+> using external info.  But it has a check when the address is given
+> from an incorrect input which should have the start and end address of
+> 0 (i.e. machine__process_kernel_mmap_event).
+> 
+> But we also use the end address of 0 for a valid input so change it to
+> check both start and end addresses.
+> 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-  Thanks Sricharan.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-  The idea for introducing global dma_threshold was to give option
-  for controlling the behavior from one place. If someone wants to
-  change the length above which dma will be used, then It can be
-  controlled from once place in the probe function itself.
+thanks,
+jirka
 
-  Also, min(qup->out_fifo_sz, qup->in_fifo_sz) requires comparison
-  and adding in qup_i2c_xfer_v2 will make this happen everytime.
-
-  Regards,
-  Abhishek
+> ---
+>  tools/perf/util/machine.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index fe27ef55cbb9..12b7427444a3 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -1226,7 +1226,7 @@ static void machine__set_kernel_mmap(struct machine *machine,
+>  		 * Be a bit paranoid here, some perf.data file came with
+>  		 * a zero sized synthesized MMAP event for the kernel.
+>  		 */
+> -		if (machine->vmlinux_maps[i]->end == 0)
+> +		if (start == 0 && end == 0)
+>  			machine->vmlinux_maps[i]->end = ~0ULL;
+>  	}
+>  }
+> -- 
+> 2.16.1
+> 
