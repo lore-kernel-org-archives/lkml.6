@@ -1,91 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeBSLLn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:11:43 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45341 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752486AbeBSLLl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:11:41 -0500
-X-Google-Smtp-Source: AH8x227W1J10pRht3flfgiJaCQJ96bpr21xyEJtdEfzTFr1243oI670dFHLjxdE45XJ2LAbwiplT7w==
-Date: Mon, 19 Feb 2018 11:11:36 +0000
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [RESEND PATCH v5 2/5] dt-bindings: pwm-backlight: add PWM delay
- proprieties.
-Message-ID: <20180219111136.jpv4wtcm6h2hfwac@oak.lan>
-References: <20180216174034.15936-1-enric.balletbo@collabora.com>
- <20180216174034.15936-2-enric.balletbo@collabora.com>
+        id S1752587AbeBSLM5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:12:57 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56709 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752486AbeBSLM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:12:56 -0500
+Subject: Re: [PATCH] arm64: Fix compilation error while accessing
+ MPIDR_HWID_BITMASK from .S files
+To: Will Deacon <will.deacon@arm.com>
+References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
+ <36bd758c-dd49-edef-cc1a-20f5b43f5011@huawei.com>
+ <20180219110238.GA30394@arm.com>
+CC: Bhupesh Sharma <bhsharma@redhat.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <bhupesh.linux@gmail.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <c868d4aa-99f8-6e14-9b26-a4f0ad768f71@huawei.com>
+Date: Mon, 19 Feb 2018 11:12:32 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216174034.15936-2-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180219110238.GA30394@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 06:40:31PM +0100, Enric Balletbo i Serra wrote:
-> Hardware needs a delay between setting an initial (non-zero) PWM and
-> enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
-> this delay in milli seconds. Hardware also needs a delay between disabing
-> the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
-> is this delay in milli seconds.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+On 19/02/2018 11:02, Will Deacon wrote:
+> Hi John,
+>
+> On Mon, Feb 19, 2018 at 10:19:35AM +0000, John Garry wrote:
+>> On 19/02/2018 06:39, Bhupesh Sharma wrote:
+>>> Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
+>>> Silence Sparse warnings), compilation of arm64 architecture is broken
+>>> with the following error messages:
+>>>
+>>>  AR      arch/arm64/kernel/built-in.o
+>>>  arch/arm64/kernel/head.S: Assembler messages:
+>>>  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>>>  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>>>  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>>>  arch/arm64/kernel/head.S:677: Error: junk at end of line, first
+>>>  unrecognized character is `L'
+>>>  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+>>>  instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
+>>>  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+>>>  instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
+>>>
+>>> This patch fixes the same by using the UL() macro correctly for
+>>> assigning the MPIDR_HWID_BITMASK macro value.
+>>>
+>>> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+>>> ---
+>>> arch/arm64/include/asm/cputype.h | 2 +-
+>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+>>> index eda8c5f629fc..350c76a1d15b 100644
+>>> --- a/arch/arm64/include/asm/cputype.h
+>>> +++ b/arch/arm64/include/asm/cputype.h
+>>> @@ -20,7 +20,7 @@
+>>>
+>>> #define MPIDR_UP_BITMASK	(0x1 << 30)
+>>> #define MPIDR_MT_BITMASK	(0x1 << 24)
+>>> -#define MPIDR_HWID_BITMASK	0xff00ffffffUL
+>>> +#define MPIDR_HWID_BITMASK	UL(0xff00ffffff)
+>>
+>> Works for me.
+>>
+>> FYI, I am using (old) gcc-linaro-4.8-2015.06-x86_64_aarch64.
+>
+> Just to confirm: are you saying that this patch fixes the build for you,
+> or that mainline builds for you and the patch is not needed?
+>
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Ah, what I said was ambigious.
 
-> ---
-> Based on the original Huang Lin <hl@rock-chips.com> work.
-> 
-> Changes since v4:
->  - Rebase on top of mainline.
-> Changes since v3:
->  - Replace us for ms.
->  - Add Acked-by: Pavel Machek <pavel@ucw.cz>
-> Changes since v2:
->  - Use separate properties (Rob Herring)
-> Changes since v1:
->  - As suggested by Daniel Thompson
->    - Do not assume power-on delay and power-off delay will be the same
-> 
->  Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 764db86d441a..310810906613 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -17,6 +17,10 @@ Optional properties:
->                 "pwms" property (see PWM binding[0])
->    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
->                    and disables the backlight (see GPIO binding[1])
-> +  - post-pwm-on-delay-ms: Delay in ms between setting an initial (non-zero) PWM
-> +                          and enabling the backlight using GPIO.
-> +  - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-> +                      and setting PWM value to 0.
->  
->  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
->  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -32,4 +36,6 @@ Example:
->  
->  		power-supply = <&vdd_bl_reg>;
->  		enable-gpios = <&gpio 58 0>;
-> +		post-pwm-on-delay-ms = <10>;
-> +		pwm-off-delay-ms = <10>;
->  	};
-> -- 
-> 2.15.1
-> 
+I am saying that linux-next (20180219) is broken for me for the same 
+reason and this patch fixes it.
+
+I didn't spot the kernelci message Arnd mentioned, so I just wanted to 
+mention the toolchain I used.
+
+Cheers,
+John
+
+> Cheers,
+>
+> Will
+>
+> .
+>
