@@ -1,70 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeBSJjd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:39:33 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50636 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752080AbeBSJjb (ORCPT
+        id S1752191AbeBSJms (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:42:48 -0500
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:40642 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeBSJmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:39:31 -0500
-X-Google-Smtp-Source: AH8x224oQuw1LPnZG35JIJRBx8CoQr7fPfb+3WfoVj7Iwis0bgHRhGDRAzFsWqZJPcfEbgy+XBXJ1A==
-Date: Mon, 19 Feb 2018 10:39:27 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, hpa@zytor.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-Message-ID: <20180219093927.644jb6h5peworj62@gmail.com>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
- <1518808600.7876.49.camel@infradead.org>
- <66f94cb1-8160-56e0-680c-2e847ae05893@linux.intel.com>
- <20180217102616.vcwatxsgj2vunlew@gmail.com>
- <20180219092017.GN25201@hirez.programming.kicks-ass.net>
- <1519032552.7876.55.camel@infradead.org>
+        Mon, 19 Feb 2018 04:42:46 -0500
+X-Google-Smtp-Source: AH8x225jtYrQqvICXpcrRe75GrhKUwvRftkGVuCp+va+VU0Hwe2ZQrHS2jdt9McydI+UOR1TFBd7bwcqiFpqkejeRr0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1519032552.7876.55.camel@infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAD=FV=UqPt5d=Kw4JBFZVgSNwvDZDCNd_ORV66MwWMxMJpW-eQ@mail.gmail.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+ <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
+ <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com>
+ <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
+ <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com> <CAD=FV=UqPt5d=Kw4JBFZVgSNwvDZDCNd_ORV66MwWMxMJpW-eQ@mail.gmail.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 19 Feb 2018 10:42:45 +0100
+Message-ID: <CAFqH_53DVTc4+EWTcMDMW5Fxg59GMgX=UCSO++ovNHCL=E2t0g@mail.gmail.com>
+Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+To: Doug Anderson <dianders@chromium.org>
+Cc: Sean Paul <seanpaul@chromium.org>, Haixia Shi <hshi@chromium.org>,
+        Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
+        Zain Wang <wzz@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-* David Woodhouse <dwmw2@infradead.org> wrote:
+2018-02-16 21:54 GMT+01:00 Doug Anderson <dianders@chromium.org>:
+> Hi,
+>
+> On Fri, Feb 16, 2018 at 4:34 AM, Enric Balletbo Serra
+> <eballetbo@gmail.com> wrote:
+>> Hi,
+>>
+>> 2018-01-31 17:52 GMT+01:00 Doug Anderson <dianders@chromium.org>:
+>>> Hi,
+>>>
+>>>
+>>> On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
+>>>> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>>>>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
+>>>>>> From: Sean Paul <seanpaul@chromium.org>
+>>>>>>
+>>>>>> Change the mode for Sharp lq123p1jx31 panel to something more
+>>>>>> rockchip-friendly such that we can use the fixed PLLs to
+>>>>>> generate the pixel clock
+>>>>>
+>>>>> This should really switch to a display timing instead of exposing a
+>>>>> single mode. The display timing has min, typical, max tuples for all
+>>>>> the timings values, which would allow the attached driver to vary the
+>>>>> timings inside the allowed bounds if it makes sense.
+>>>>>
+>>>>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
+>>>>> the use cases envisioned for the display timings stuff.
+>>>>>
+>>>>
+>>>> Agreed, I think we had this discussion the first time around. We
+>>>> should drop this patch.
+>>>>
+>>>> Thanks for catching this!
+>>>
+>>> Are you sure we should drop this?  In order for things to work
+>>> properly (not generate noise on the digitizer or other EMI), this
+>>> needs to run at a very specific pixel clock with very specific
+>>> blanking times.  I know that earlier we had slightly different
+>>> blanking times and Samsung came back and said that there was noise on
+>>> the digitizer.  I could be wrong, but I don't think there's any way
+>>> currently to be able to specify exactly what timings should be used on
+>>> a particular board.
+>>>
+>>> Don't get be wrong--I think a patch such as this one that claims a
+>>> single board's timings as the "right" ones for a generic panel is a
+>>> bit of a hack.  ...but at the same time there are no other users of
+>>> this panel (that I know of) in mainline and the timings presented here
+>>> are certainly sane timings for this panel.
+>>>
+>>> In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
+>>>
+>>>
+>>> ...oh, and looking at the previous discussion reminds me that the
+>>> timings presented in this here patch are actually not the right ones
+>>> (they have the right PLL, but the wrong blankings to avoid the noise
+>>> issues).  See <//chromium-review.googlesource.com/381015>
+>>>
+>>
+>> As Thierry no longer has the hardware to test these patch series, I'll
+>> take care of these and follow the upstreaming process. I think that
+>> doesn't make sense send a v4 version of all 43 patches for this
+>> change. Right now, only this patch received comments so I'll wait a
+>> bit more for if we can get the other patches reviewed. If the others
+>> are fine just and I don't need to send a new version just don't apply
+>> this one and I will send a second version of that specific patch. Or
+>> even better, is really trivial what needs to be changed, so maybe the
+>> maintainer can do it? ;)
+>
+> Just as a heads up, Sean Paul has a series of patches to replace this
+> patch.  The following are IDs from patchwork.kernel.org:
+>
+> 10207583 New          [v3,1/6] dt-bindings: Clarify timing subnode use
+> as panel-timing
+> 10207585 New          [v3,2/6] dt-bindings: Add headings to
+> simple-panel bindings
+> 10207591 New          [v3,3/6] dt-bindings: Add panel-timing subnode
+> to simple-panel
+> 10207593 New          [v3,4/6] drm/panel: simple: Add ability to
+> override typical timing
+> 10207595 New          [v3,5/6] drm/panel: simple: Use display_timing
+> for lq123p1jx31
+> 10207603 New          [v3,6/6] arm64: dts: rockchip: Specify override
+> mode for kevin panel
+>
+> -Doug
 
-> On Mon, 2018-02-19 at 10:20 +0100, Peter Zijlstra wrote:
-> > 
-> > I did not update or otherwise change packages while I was bisecting; the
-> > machine is:
-> > 
-> > vendor_id       : GenuineIntel
-> > cpu family      : 6
-> > model           : 62
-> > model name      : Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz
-> > stepping        : 4
-> > microcode       : 0x428
-> 
-> That's IVX with a microcode that doesn't *have* IBRS/IBPB. I don't
-> think there's a publicly available microcode that does; I assume you
-> didn't have one and build it into your kernel for early loading, and
-> thus you really weren't even using IBRS here? The code never even gets
-> patched in?
+Nice, I was not aware of these, I'll test. That means that this patch
+can be removed from these series as the Sean solution is a lot better.
+Just a note that this patch can be removed without any collateral
+impact on the other patches, so just ignore it.
 
-Note that PeterZ's boot troubles only match the *symptoms* of the spurious 
-failures reported by Tim Chen. Your commit wasn't bisected to.
-
-I linked these two reports on the (remote) possibility that they might be related 
-via some alignment dependent bug somewhere else in the x86 kernel - possibly 
-completely unrelated to any IBRS/IBPB details.
-
-Thanks,
-
-	Ingo
+Regards,
+ Enric
