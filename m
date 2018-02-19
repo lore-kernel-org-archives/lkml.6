@@ -1,244 +1,1123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753959AbeBSUcJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:32:09 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:52436 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753877AbeBSUcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:32:07 -0500
-Date: Mon, 19 Feb 2018 22:32:03 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: corbet@lwn.net, mchehab@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] v4l2: i2c: ov7670: Implement OF mbus configuration
-Message-ID: <20180219203203.aeiuedswxrpthxia@valkosipuli.retiisi.org.uk>
-References: <1516786250-3750-1-git-send-email-jacopo+renesas@jmondi.org>
- <1516786250-3750-3-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516786250-3750-3-git-send-email-jacopo+renesas@jmondi.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1753971AbeBSUcc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:32:32 -0500
+Received: from vern.gendns.com ([206.190.152.46]:58403 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753769AbeBSUWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 15:22:40 -0500
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>
+Subject: [PATCH v7 02/42] clk: davinci: New driver for davinci PLL clocks
+Date: Mon, 19 Feb 2018 14:21:23 -0600
+Message-Id: <1519071723-31790-3-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 10:30:50AM +0100, Jacopo Mondi wrote:
-> ov7670 driver supports two optional properties supplied through platform
-> data, but currently does not support any standard video interface
-> property.
-> 
-> Add support through OF parsing for 2 generic properties (vsync and hsync
-> polarities) and for one custom property already supported through
-> platform data to suppress pixel clock output during horizontal
-> blanking.
-> 
-> While at there, check return value of register writes in set_fmt
-> function and rationalize spacings.
-> 
-> Signal polarities and pixel clock blanking verified through scope and
-> image capture.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+This adds a new driver for mach-davinci PLL clocks. This is porting the
+code from arch/arm/mach-davinci/clock.c to the common clock framework.
+Additionally, it adds device tree support for these clocks.
 
-Hi Jacopo,
+The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
+compile errors until the clock code in arch/arm/mach-davinci is removed.
 
-I'll add the following diff to the patch in order to fix the build error
-without V4L2_FWNODE:
+Note: although there are similar clocks for TI Keystone we are not able
+to share the code for a few reasons. The keystone clocks are device tree
+only and use legacy one-node-per-clock bindings. Also the register
+layouts are a bit different, which would add even more if/else mess
+to the keystone clocks. And the keystone PLL driver doesn't support
+setting clock rates.
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 535f85b73075..245387f7b65e 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -683,6 +683,7 @@ config VIDEO_OV7670
- 	tristate "OmniVision OV7670 sensor support"
- 	depends on I2C && VIDEO_V4L2
- 	depends on MEDIA_CAMERA_SUPPORT
-+	select V4L2_FWNODE
- 	---help---
- 	  This is a Video4Linux2 sensor-level driver for the OmniVision
- 	  OV7670 VGA camera.  It currently only works with the M88ALP01
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-> ---
->  drivers/media/i2c/ov7670.c | 98 +++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 84 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> index 61c472e..80c822c 100644
-> --- a/drivers/media/i2c/ov7670.c
-> +++ b/drivers/media/i2c/ov7670.c
-> @@ -21,6 +21,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <media/v4l2-device.h>
->  #include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-fwnode.h>
->  #include <media/v4l2-mediabus.h>
->  #include <media/v4l2-image-sizes.h>
->  #include <media/i2c/ov7670.h>
-> @@ -242,6 +243,7 @@ struct ov7670_info {
->  	struct clk *clk;
->  	struct gpio_desc *resetb_gpio;
->  	struct gpio_desc *pwdn_gpio;
-> +	unsigned int mbus_config;	/* Media bus configuration flags */
->  	int min_width;			/* Filter out smaller sizes */
->  	int min_height;			/* Filter out smaller sizes */
->  	int clock_speed;		/* External clock speed (MHz) */
-> @@ -1018,7 +1020,7 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  #ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
->  	struct v4l2_mbus_framefmt *mbus_fmt;
->  #endif
-> -	unsigned char com7;
-> +	unsigned char com7, com10 = 0;
->  	int ret;
->  
->  	if (format->pad)
-> @@ -1038,7 +1040,6 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  	}
->  
->  	ret = ov7670_try_fmt_internal(sd, &format->format, &ovfmt, &wsize);
-> -
->  	if (ret)
->  		return ret;
->  	/*
-> @@ -1049,16 +1050,41 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  	 */
->  	com7 = ovfmt->regs[0].value;
->  	com7 |= wsize->com7_bit;
-> -	ov7670_write(sd, REG_COM7, com7);
-> +	ret = ov7670_write(sd, REG_COM7, com7);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Configure the media bus through COM10 register
-> +	 */
-> +	if (info->mbus_config & V4L2_MBUS_VSYNC_ACTIVE_LOW)
-> +		com10 |= COM10_VS_NEG;
-> +	if (info->mbus_config & V4L2_MBUS_HSYNC_ACTIVE_LOW)
-> +		com10 |= COM10_HREF_REV;
-> +	if (info->pclk_hb_disable)
-> +		com10 |= COM10_PCLK_HB;
-> +	ret = ov7670_write(sd, REG_COM10, com10);
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * Now write the rest of the array.  Also store start/stops
->  	 */
-> -	ov7670_write_array(sd, ovfmt->regs + 1);
-> -	ov7670_set_hw(sd, wsize->hstart, wsize->hstop, wsize->vstart,
-> -			wsize->vstop);
-> -	ret = 0;
-> -	if (wsize->regs)
-> +	ret = ov7670_write_array(sd, ovfmt->regs + 1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ov7670_set_hw(sd, wsize->hstart, wsize->hstop, wsize->vstart,
-> +			    wsize->vstop);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (wsize->regs) {
->  		ret = ov7670_write_array(sd, wsize->regs);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	info->fmt = ovfmt;
->  
->  	/*
-> @@ -1071,8 +1097,10 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  	 * to write it unconditionally, and that will make the frame
->  	 * rate persistent too.
->  	 */
-> -	if (ret == 0)
-> -		ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
-> +	ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
-> +	if (ret)
-> +		return ret;
-> +
->  	return 0;
->  }
->  
-> @@ -1698,6 +1726,45 @@ static int ov7670_init_gpio(struct i2c_client *client, struct ov7670_info *info)
->  	return 0;
->  }
->  
-> +/*
-> + * ov7670_parse_dt() - Parse device tree to collect mbus configuration
-> + *			properties
-> + */
-> +static int ov7670_parse_dt(struct device *dev,
-> +			   struct ov7670_info *info)
-> +{
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> +	struct v4l2_fwnode_endpoint bus_cfg;
-> +	struct fwnode_handle *ep;
-> +	int ret;
-> +
-> +	if (!fwnode)
-> +		return -EINVAL;
-> +
-> +	info->pclk_hb_disable = false;
-> +	if (fwnode_property_present(fwnode, "ov7670,pclk-hb-disable"))
-> +		info->pclk_hb_disable = true;
-> +
-> +	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
-> +	if (!ep)
-> +		return -EINVAL;
-> +
-> +	ret = v4l2_fwnode_endpoint_parse(ep, &bus_cfg);
-> +	if (ret) {
-> +		fwnode_handle_put(ep);
-> +		return ret;
-> +	}
-> +
-> +	if (bus_cfg.bus_type != V4L2_MBUS_PARALLEL) {
-> +		dev_err(dev, "Unsupported media bus type\n");
-> +		fwnode_handle_put(ep);
-> +		return ret;
-> +	}
-> +	info->mbus_config = bus_cfg.bus.parallel.flags;
-> +
-> +	return 0;
-> +}
-> +
->  static int ov7670_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
->  {
-> @@ -1718,7 +1785,13 @@ static int ov7670_probe(struct i2c_client *client,
->  #endif
->  
->  	info->clock_speed = 30; /* default: a guess */
-> -	if (client->dev.platform_data) {
-> +
-> +	if (dev_fwnode(&client->dev)) {
-> +		ret = ov7670_parse_dt(&client->dev, info);
-> +		if (ret)
-> +			return ret;
-> +
-> +	} else if (client->dev.platform_data) {
->  		struct ov7670_config *config = client->dev.platform_data;
->  
->  		/*
-> @@ -1785,9 +1858,6 @@ static int ov7670_probe(struct i2c_client *client,
->  	tpf.denominator = 30;
->  	info->devtype->set_framerate(sd, &tpf);
->  
-> -	if (info->pclk_hb_disable)
-> -		ov7670_write(sd, REG_COM10, COM10_PCLK_HB);
-> -
->  	v4l2_ctrl_handler_init(&info->hdl, 10);
->  	v4l2_ctrl_new_std(&info->hdl, &ov7670_ctrl_ops,
->  			V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
-> -- 
-> 2.7.4
-> 
+v7 changes:
+- convert to platform device driver
+- rename PLL_HAS_OSCIN to PLL_HAS_CLKMODE
+- add comments to clarify which clock domain "oscin" is
 
+v6 changes:
+- Added R: Sekhar Nori <nsekhar@ti.com> to MAINTAINERS
+- Split main PLL clock into oscdiv, prediv, pllout, postdiv and pllen clocks
+- Added min/max rate checking for pllout in set_rate
+- Added min/max PLLM value checking for pllout in set_rate
+- Fixed sysclk set_rate (checking GOSTAT and setting GOSET)
+- Added *_clk_info structs for passing controller-specific info
+- Added quirks for optional PREDIV and POSTDIV registers
+- Added quirk for DM355 broken PREDIV register
+- Added quirk for DM365 2x PLLM register
+- Handle unlocking PLL registers via CFGCHIP
+- Use pr_fmt macro
+
+
+ MAINTAINERS                  |   7 +
+ drivers/clk/Makefile         |   1 +
+ drivers/clk/davinci/Makefile |   5 +
+ drivers/clk/davinci/pll.c    | 864 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.h    | 120 ++++++
+ 5 files changed, 997 insertions(+)
+ create mode 100644 drivers/clk/davinci/Makefile
+ create mode 100644 drivers/clk/davinci/pll.c
+ create mode 100644 drivers/clk/davinci/pll.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9a7f76e..7d5c129 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13794,6 +13794,13 @@ F:	arch/arm/mach-davinci/
+ F:	drivers/i2c/busses/i2c-davinci.c
+ F:	arch/arm/boot/dts/da850*
+ 
++TI DAVINCI SERIES CLOCK DRIVER
++M:	David Lechner <david@lechnology.com>
++R:	Sekhar Nori <nsekhar@ti.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/ti/davinci/
++F:	drivers/clk/davinci/
++
+ TI DAVINCI SERIES GPIO DRIVER
+ M:	Keerthy <j-keerthy@ti.com>
+ L:	linux-gpio@vger.kernel.org
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e..07ac0fdb 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
++obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+ obj-$(CONFIG_H8300)			+= h8300/
+ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+new file mode 100644
+index 0000000..d9673bd
+--- /dev/null
++++ b/drivers/clk/davinci/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++
++ifeq ($(CONFIG_COMMON_CLK), y)
++obj-y += pll.o
++endif
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+new file mode 100644
+index 0000000..e4f3e5f
+--- /dev/null
++++ b/drivers/clk/davinci/pll.c
+@@ -0,0 +1,864 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock driver for TI Davinci SoCs
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ *
++ * Based on arch/arm/mach-davinci/clock.c
++ * Copyright (C) 2006-2007 Texas Instruments.
++ * Copyright (C) 2008-2009 Deep Root Systems, LLC
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/notifier.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++#define MAX_NAME_SIZE	20
++#define OSCIN_CLK_NAME	"oscin"
++
++#define REVID		0x000
++#define PLLCTL		0x100
++#define OCSEL		0x104
++#define PLLSECCTL	0x108
++#define PLLM		0x110
++#define PREDIV		0x114
++#define PLLDIV1		0x118
++#define PLLDIV2		0x11c
++#define PLLDIV3		0x120
++#define OSCDIV		0x124
++#define POSTDIV		0x128
++#define BPDIV		0x12c
++#define PLLCMD		0x138
++#define PLLSTAT		0x13c
++#define ALNCTL		0x140
++#define DCHANGE		0x144
++#define CKEN		0x148
++#define CKSTAT		0x14c
++#define SYSTAT		0x150
++#define PLLDIV4		0x160
++#define PLLDIV5		0x164
++#define PLLDIV6		0x168
++#define PLLDIV7		0x16c
++#define PLLDIV8		0x170
++#define PLLDIV9		0x174
++
++#define PLLCTL_PLLEN		BIT(0)
++#define PLLCTL_PLLPWRDN		BIT(1)
++#define PLLCTL_PLLRST		BIT(3)
++#define PLLCTL_PLLDIS		BIT(4)
++#define PLLCTL_PLLENSRC		BIT(5)
++#define PLLCTL_CLKMODE		BIT(8)
++
++/* shared by most *DIV registers */
++#define DIV_RATIO_SHIFT		0
++#define DIV_RATIO_WIDTH		5
++#define DIV_ENABLE_SHIFT	15
++
++#define PLLCMD_GOSET		BIT(0)
++#define PLLSTAT_GOSTAT		BIT(0)
++
++#define CKEN_OBSCLK_SHIFT	1
++#define CKEN_AUXEN_SHIFT	0
++
++/*
++ * OMAP-L138 system reference guide recommends a wait for 4 OSCIN/CLKIN
++ * cycles to ensure that the PLLC has switched to bypass mode. Delay of 1us
++ * ensures we are good for all > 4MHz OSCIN/CLKIN inputs. Typically the input
++ * is ~25MHz. Units are micro seconds.
++ */
++#define PLL_BYPASS_TIME		1
++
++/* From OMAP-L138 datasheet table 6-4. Units are micro seconds */
++#define PLL_RESET_TIME		1
++
++/*
++ * From OMAP-L138 datasheet table 6-4; assuming prediv = 1, sqrt(pllm) = 4
++ * Units are micro seconds.
++ */
++#define PLL_LOCK_TIME		20
++
++/**
++ * struct davinci_pll_clk - Main PLL clock (aka PLLOUT)
++ * @hw: clk_hw for the pll
++ * @base: Base memory address
++ * @pllm_min: The minimum allowable PLLM[PLLM] value
++ * @pllm_max: The maxiumum allowable PLLM[PLLM] value
++ * @pllm_mask: Bitmask for PLLM[PLLM] value
++ */
++struct davinci_pll_clk {
++	struct clk_hw hw;
++	void __iomem *base;
++	u32 pllm_min;
++	u32 pllm_max;
++	u32 pllm_mask;
++};
++
++#define to_davinci_pll_clk(_hw) \
++	container_of((_hw), struct davinci_pll_clk, hw)
++
++static unsigned long davinci_pll_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
++	unsigned long rate = parent_rate;
++	u32 mult;
++
++	mult = readl(pll->base + PLLM) & pll->pllm_mask;
++	rate *= mult + 1;
++
++	return rate;
++}
++
++static int davinci_pll_determine_rate(struct clk_hw *hw,
++				      struct clk_rate_request *req)
++{
++	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
++	struct clk_hw *parent = req->best_parent_hw;
++	unsigned long parent_rate = req->best_parent_rate;
++	unsigned long rate = req->rate;
++	unsigned long best_rate, r;
++	u32 mult;
++
++	/* there is a limited range of valid outputs (see datasheet) */
++	if (rate < req->min_rate)
++		return -EINVAL;
++
++	rate = min(rate, req->max_rate);
++	mult = rate / parent_rate;
++	best_rate = parent_rate * mult;
++
++	/* easy case when there is no PREDIV */
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		if (best_rate < req->min_rate)
++			return -EINVAL;
++
++		if (mult < pll->pllm_min || mult > pll->pllm_max)
++			return -EINVAL;
++
++		req->rate = best_rate;
++
++		return 0;
++	}
++
++	/* see if the PREDIV clock can help us */
++	best_rate = 0;
++
++	for (mult = pll->pllm_min; mult <= pll->pllm_max; mult++) {
++		parent_rate = clk_hw_round_rate(parent, rate / mult);
++		r = parent_rate * mult;
++		if (r < req->min_rate)
++			continue;
++		if (r > rate || r > req->max_rate)
++			break;
++		if (r > best_rate) {
++			best_rate = r;
++			req->rate = best_rate;
++			req->best_parent_rate = parent_rate;
++			if (best_rate == rate)
++				break;
++		}
++	}
++
++	return 0;
++}
++
++static int davinci_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
++	u32 mult;
++
++	mult = rate / parent_rate;
++	writel(mult - 1, pll->base + PLLM);
++
++	return 0;
++}
++
++#ifdef CONFIG_DEBUG_FS
++static int davinci_pll_debug_init(struct clk_hw *hw, struct dentry *dentry);
++#else
++#define davinci_pll_debug_init NULL
++#endif
++
++static const struct clk_ops davinci_pll_ops = {
++	.recalc_rate	= davinci_pll_recalc_rate,
++	.determine_rate	= davinci_pll_determine_rate,
++	.set_rate	= davinci_pll_set_rate,
++	.debug_init	= davinci_pll_debug_init,
++};
++
++/* PLLM works differently on DM365 */
++static unsigned long dm365_pll_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
++	unsigned long rate = parent_rate;
++	u32 mult;
++
++	mult = readl(pll->base + PLLM) & pll->pllm_mask;
++	rate *= mult * 2;
++
++	return rate;
++}
++
++static const struct clk_ops dm365_pll_ops = {
++	.recalc_rate	= dm365_pll_recalc_rate,
++	.debug_init	= davinci_pll_debug_init,
++};
++
++/**
++ * davinci_pll_div_register - common *DIV clock implementation
++ * @name: the clock name
++ * @parent_name: the parent clock name
++ * @reg: the *DIV register
++ * @fixed: if true, the divider is a fixed value
++ * @flags: bitmap of CLK_* flags from clock-provider.h
++ */
++static struct clk *davinci_pll_div_register(struct device *dev,
++					    const char *name,
++					    const char *parent_name,
++					    void __iomem *reg,
++					    bool fixed, u32 flags)
++{
++	const char * const *parent_names = parent_name ? &parent_name : NULL;
++	int num_parents = parent_name ? 1 : 0;
++	const struct clk_ops *divider_ops = &clk_divider_ops;
++	struct clk_gate *gate;
++	struct clk_divider *divider;
++
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->reg = reg;
++	gate->bit_idx = DIV_ENABLE_SHIFT;
++
++	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	if (!divider)
++		return ERR_PTR(-ENOMEM);
++
++	divider->reg = reg;
++	divider->shift = DIV_RATIO_SHIFT;
++	divider->width = DIV_RATIO_WIDTH;
++
++	if (fixed) {
++		divider->flags |= CLK_DIVIDER_READ_ONLY;
++		divider_ops = &clk_divider_ro_ops;
++	}
++
++	return clk_register_composite(dev, name, parent_names, num_parents,
++				      NULL, NULL, &divider->hw, divider_ops,
++				      &gate->hw, &clk_gate_ops, flags);
++}
++
++struct davinci_pllen_clk {
++	struct clk_hw hw;
++	void __iomem *base;
++};
++
++#define to_davinci_pllen_clk(_hw) \
++	container_of((_hw), struct davinci_pllen_clk, hw)
++
++static const struct clk_ops davinci_pllen_ops = {
++	/* this clocks just uses the clock notification feature */
++};
++
++/*
++ * The PLL has to be switched into bypass mode while we are chaning the rate,
++ * so we do that on the PLLEN clock since it is the end of the line. This will
++ * switch to bypass before any of the parent clocks (PREDIV, PLL, POSTDIV) are
++ * changed and will switch back to the PLL after the changes have been made.
++ */
++static int davinci_pllen_rate_change(struct notifier_block *nb,
++				     unsigned long flags, void *data)
++{
++	struct clk_notifier_data *cnd = data;
++	struct clk_hw *hw = __clk_get_hw(cnd->clk);
++	struct davinci_pllen_clk *pll = to_davinci_pllen_clk(hw);
++	u32 ctrl;
++
++	ctrl = readl(pll->base + PLLCTL);
++
++	if (flags == PRE_RATE_CHANGE) {
++		/* Switch the PLL to bypass mode */
++		ctrl &= ~(PLLCTL_PLLENSRC | PLLCTL_PLLEN);
++		writel(ctrl, pll->base + PLLCTL);
++
++		udelay(PLL_BYPASS_TIME);
++
++		/* Reset and enable PLL */
++		ctrl &= ~(PLLCTL_PLLRST | PLLCTL_PLLDIS);
++		writel(ctrl, pll->base + PLLCTL);
++	} else {
++		udelay(PLL_RESET_TIME);
++
++		/* Bring PLL out of reset */
++		ctrl |= PLLCTL_PLLRST;
++		writel(ctrl, pll->base + PLLCTL);
++
++		udelay(PLL_LOCK_TIME);
++
++		/* Remove PLL from bypass mode */
++		ctrl |= PLLCTL_PLLEN;
++		writel(ctrl, pll->base + PLLCTL);
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block davinci_pllen_notifier = {
++	.notifier_call = davinci_pllen_rate_change,
++};
++
++/**
++ * davinci_pll_clk_register - Register a PLL clock
++ * @info: The device-specific clock info
++ * @parent_name: The parent clock name
++ * @base: The PLL's memory region
++ *
++ * This creates a series of clocks that represent the PLL.
++ *
++ *     OSCIN > [PREDIV >] PLL > [POSTDIV >] PLLEN
++ *
++ * - OSCIN is the parent clock (on secondary PLL, may come from primary PLL)
++ * - PREDIV and POSTDIV are optional (depends on the PLL controller)
++ * - PLL is the PLL output (aka PLLOUT)
++ * - PLLEN is the bypass multiplexer
++ *
++ * Returns: The PLLOUT clock or a negative error code.
++ */
++struct clk *davinci_pll_clk_register(struct device *dev,
++				     const struct davinci_pll_clk_info *info,
++				     const char *parent_name,
++				     void __iomem *base)
++{
++	char prediv_name[MAX_NAME_SIZE];
++	char pllout_name[MAX_NAME_SIZE];
++	char postdiv_name[MAX_NAME_SIZE];
++	char pllen_name[MAX_NAME_SIZE];
++	struct clk_init_data init;
++	struct davinci_pll_clk *pllout;
++	struct davinci_pllen_clk *pllen;
++	struct clk *pllout_clk, *clk;
++
++	if (info->flags & PLL_HAS_CLKMODE) {
++		/*
++		 * If a PLL has PLLCTL[CLKMODE], then it is the primary PLL.
++		 * We register a clock named "oscin" that serves as the internal
++		 * "input clock" domain shared by both PLLs (if there are 2)
++		 * and will be the parent clock to the AUXCLK, SYSCLKBP and
++		 * OBSCLK domains. NB: The various TRMs use "OSCIN" to mean
++		 * a number of different things. In this driver we use it to
++		 * mean the signal after the PLLCTL[CLKMODE] switch.
++		 */
++		clk = clk_register_fixed_factor(dev, OSCIN_CLK_NAME,
++						parent_name, 0, 1, 1);
++		if (IS_ERR(clk))
++			return clk;
++
++		parent_name = OSCIN_CLK_NAME;
++	}
++
++	if (info->flags & PLL_HAS_PREDIV) {
++		bool fixed = info->flags & PLL_PREDIV_FIXED_DIV;
++		u32 flags = 0;
++
++		snprintf(prediv_name, MAX_NAME_SIZE, "%s_prediv", info->name);
++
++		if (info->flags & PLL_PREDIV_ALWAYS_ENABLED)
++			flags |= CLK_IS_CRITICAL;
++
++		/* Some? DM355 chips don't correctly report the PREDIV value */
++		if (info->flags & PLL_PREDIV_FIXED8)
++			clk = clk_register_fixed_factor(dev, prediv_name,
++						parent_name, flags, 1, 8);
++		else
++			clk = davinci_pll_div_register(dev, prediv_name,
++				parent_name, base + PREDIV, fixed, flags);
++		if (IS_ERR(clk))
++			return clk;
++
++		parent_name = prediv_name;
++	}
++
++	/* Unlock writing to PLL registers */
++	if (info->unlock_reg) {
++		struct regmap *cfgchip;
++
++		cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++		if (IS_ERR(cfgchip))
++			dev_warn(dev, "Failed to get CFGCHIP (%ld)\n",
++				 PTR_ERR(cfgchip));
++		else
++			regmap_write_bits(cfgchip, info->unlock_reg,
++					  info->unlock_mask, 0);
++	}
++
++	pllout = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
++	if (!pllout)
++		return ERR_PTR(-ENOMEM);
++
++	snprintf(pllout_name, MAX_NAME_SIZE, "%s_pllout", info->name);
++
++	init.name = pllout_name;
++	if (info->flags & PLL_PLLM_2X)
++		init.ops = &dm365_pll_ops;
++	else
++		init.ops = &davinci_pll_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = 0;
++
++	if (info->flags & PLL_HAS_PREDIV)
++		init.flags |= CLK_SET_RATE_PARENT;
++
++	pllout->hw.init = &init;
++	pllout->base = base;
++	pllout->pllm_mask = info->pllm_mask;
++	pllout->pllm_min = info->pllm_min;
++	pllout->pllm_max = info->pllm_max;
++
++	pllout_clk = devm_clk_register(dev, &pllout->hw);
++	if (IS_ERR(pllout_clk))
++		return pllout_clk;
++
++	clk_hw_set_rate_range(&pllout->hw, info->pllout_min_rate,
++			      info->pllout_max_rate);
++
++	parent_name = pllout_name;
++
++	if (info->flags & PLL_HAS_POSTDIV) {
++		bool fixed = info->flags & PLL_POSTDIV_FIXED_DIV;
++		u32 flags = CLK_SET_RATE_PARENT;
++
++		snprintf(postdiv_name, MAX_NAME_SIZE, "%s_postdiv", info->name);
++
++		if (info->flags & PLL_POSTDIV_ALWAYS_ENABLED)
++			flags |= CLK_IS_CRITICAL;
++
++		clk = davinci_pll_div_register(dev, postdiv_name, parent_name,
++					       base + POSTDIV, fixed, flags);
++		if (IS_ERR(clk))
++			return clk;
++
++		parent_name = postdiv_name;
++	}
++
++	pllen = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
++	if (!pllen)
++		return ERR_PTR(-ENOMEM);
++
++	snprintf(pllen_name, MAX_NAME_SIZE, "%s_pllen", info->name);
++
++	init.name = pllen_name;
++	init.ops = &davinci_pllen_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_PARENT;
++
++	pllen->hw.init = &init;
++	pllen->base = base;
++
++	clk = devm_clk_register(dev, &pllen->hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	clk_notifier_register(clk, &davinci_pllen_notifier);
++
++	return pllout_clk;
++}
++
++/**
++ * davinci_pll_auxclk_register - Register bypass clock (AUXCLK)
++ * @name: The clock name
++ * @base: The PLL memory region
++ */
++struct clk *davinci_pll_auxclk_register(struct device *dev,
++					const char *name,
++					void __iomem *base)
++{
++	return clk_register_gate(dev, name, OSCIN_CLK_NAME, 0, base + CKEN,
++				 CKEN_AUXEN_SHIFT, 0, NULL);
++}
++
++/**
++ * davinci_pll_sysclkbp_clk_register - Register bypass divider clock (SYSCLKBP)
++ * @name: The clock name
++ * @base: The PLL memory region
++ */
++struct clk *davinci_pll_sysclkbp_clk_register(struct device *dev,
++					      const char *name,
++					      void __iomem *base)
++{
++	return clk_register_divider(dev, name, OSCIN_CLK_NAME, 0, base + BPDIV,
++				    DIV_RATIO_SHIFT, DIV_RATIO_WIDTH,
++				    CLK_DIVIDER_READ_ONLY, NULL);
++}
++
++/**
++ * davinci_pll_obsclk_register - Register oscillator divider clock (OBSCLK)
++ * @info: The clock info
++ * @base: The PLL memory region
++ */
++struct clk *
++davinci_pll_obsclk_register(struct device *dev,
++			    const struct davinci_pll_obsclk_info *info,
++			    void __iomem *base)
++{
++	struct clk_mux *mux;
++	struct clk_gate *gate;
++	struct clk_divider *divider;
++	u32 oscdiv;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	mux->reg = base + OCSEL;
++	mux->table = info->table;
++	mux->mask = info->ocsrc_mask;
++
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->reg = base + CKEN;
++	gate->bit_idx = CKEN_OBSCLK_SHIFT;
++
++	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	if (!divider)
++		return ERR_PTR(-ENOMEM);
++
++	divider->reg = base + OSCDIV;
++	divider->shift = DIV_RATIO_SHIFT;
++	divider->width = DIV_RATIO_WIDTH;
++
++	/* make sure divider is enabled just in case bootloader disabled it */
++	oscdiv = readl(base + OSCDIV);
++	oscdiv |= BIT(DIV_ENABLE_SHIFT);
++	writel(oscdiv, base + OSCDIV);
++
++	return clk_register_composite(dev, info->name, info->parent_names,
++				      info->num_parents,
++				      &mux->hw, &clk_mux_ops,
++				      &divider->hw, &clk_divider_ops,
++				      &gate->hw, &clk_gate_ops, 0);
++}
++
++/* The PLL SYSCLKn clocks have a mechanism for synchronizing rate changes. */
++static int davinci_pll_sysclk_rate_change(struct notifier_block *nb,
++					  unsigned long flags, void *data)
++{
++	struct clk_notifier_data *cnd = data;
++	struct clk_hw *hw = __clk_get_hw(clk_get_parent(cnd->clk));
++	struct davinci_pllen_clk *pll = to_davinci_pllen_clk(hw);
++	u32 pllcmd, pllstat;
++
++	switch (flags) {
++	case POST_RATE_CHANGE:
++		/* apply the changes */
++		pllcmd = readl(pll->base + PLLCMD);
++		pllcmd |= PLLCMD_GOSET;
++		writel(pllcmd, pll->base + PLLCMD);
++		/* fallthrough */
++	case PRE_RATE_CHANGE:
++		/* Wait until for outstanding changes to take effect */
++		do {
++			pllstat = readl(pll->base + PLLSTAT);
++		} while (pllstat & PLLSTAT_GOSTAT);
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block davinci_pll_sysclk_notifier = {
++	.notifier_call = davinci_pll_sysclk_rate_change,
++};
++
++/**
++ * davinci_pll_sysclk_register - Register divider clocks (SYSCLKn)
++ * @info: The clock info
++ * @base: The PLL memory region
++ */
++struct clk *
++davinci_pll_sysclk_register(struct device *dev,
++			    const struct davinci_pll_sysclk_info *info,
++			    void __iomem *base)
++{
++	const struct clk_ops *divider_ops = &clk_divider_ops;
++	struct clk_gate *gate;
++	struct clk_divider *divider;
++	struct clk *clk;
++	u32 reg;
++	u32 flags = 0;
++
++	/* PLLDIVn registers are not entirely consecutive */
++	if (info->id < 4)
++		reg = PLLDIV1 + 4 * (info->id - 1);
++	else
++		reg = PLLDIV4 + 4 * (info->id - 4);
++
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->reg = base + reg;
++	gate->bit_idx = DIV_ENABLE_SHIFT;
++
++	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	if (!divider)
++		return ERR_PTR(-ENOMEM);
++
++	divider->reg = base + reg;
++	divider->shift = DIV_RATIO_SHIFT;
++	divider->width = info->ratio_width;
++	divider->flags = 0;
++
++	if (info->flags & SYSCLK_FIXED_DIV) {
++		divider->flags |= CLK_DIVIDER_READ_ONLY;
++		divider_ops = &clk_divider_ro_ops;
++	}
++
++	/* Only the ARM clock can change the parent PLL rate */
++	if (info->flags & SYSCLK_ARM_RATE)
++		flags |= CLK_SET_RATE_PARENT;
++
++	if (info->flags & SYSCLK_ALWAYS_ENABLED)
++		flags |= CLK_IS_CRITICAL;
++
++	clk = clk_register_composite(dev, info->name, &info->parent_name, 1,
++				     NULL, NULL, &divider->hw, divider_ops,
++				     &gate->hw, &clk_gate_ops, flags);
++	if (IS_ERR(clk))
++		return clk;
++
++	clk_notifier_register(clk, &davinci_pll_sysclk_notifier);
++
++	return clk;
++}
++
++int of_davinci_pll_init(struct device *dev,
++			const struct davinci_pll_clk_info *info,
++			const struct davinci_pll_obsclk_info *obsclk_info,
++			const struct davinci_pll_sysclk_info *div_info,
++			u8 max_sysclk_id,
++			void __iomem *base)
++{
++	struct device_node *node = dev->of_node;
++	struct device_node *child;
++	const char *parent_name;
++	struct clk *clk;
++
++	if (info->flags & PLL_HAS_CLKMODE)
++		parent_name = of_clk_get_parent_name(node, 0);
++	else
++		parent_name = OSCIN_CLK_NAME;
++
++	clk = davinci_pll_clk_register(dev, info, parent_name, base);
++	if (IS_ERR(clk)) {
++		dev_err(dev, "failed to register %s\n", info->name);
++		return PTR_ERR(clk);
++	}
++
++	child = of_get_child_by_name(node, "pllout");
++	if (of_device_is_available(child))
++		of_clk_add_provider(child, of_clk_src_simple_get, clk);
++	of_node_put(child);
++
++	child = of_get_child_by_name(node, "sysclk");
++	if (of_device_is_available(child)) {
++		struct clk_onecell_data *clk_data;
++		struct clk **clks;
++		int n_clks =  max_sysclk_id + 1;
++		int i;
++
++		clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
++		if (!clk_data)
++			return -ENOMEM;
++
++		clks = devm_kmalloc_array(dev, n_clks, sizeof(*clks), GFP_KERNEL);
++		if (!clks)
++			return -ENOMEM;
++
++		clk_data->clks = clks;
++		clk_data->clk_num = n_clks;
++
++		for (i = 0; i < n_clks; i++)
++			clks[i] = ERR_PTR(-ENOENT);
++
++		for (; div_info->name; div_info++) {
++			clk = davinci_pll_sysclk_register(dev, div_info, base);
++			if (IS_ERR(clk))
++				dev_warn(dev, "failed to register %s (%ld)\n",
++					 div_info->name, PTR_ERR(clk));
++			else
++				clks[div_info->id] = clk;
++		}
++		of_clk_add_provider(child, of_clk_src_onecell_get, clk_data);
++	}
++	of_node_put(child);
++
++	child = of_get_child_by_name(node, "auxclk");
++	if (of_device_is_available(child)) {
++		char child_name[MAX_NAME_SIZE];
++
++		snprintf(child_name, MAX_NAME_SIZE, "%s_auxclk", info->name);
++
++		clk = davinci_pll_auxclk_register(dev, child_name, base);
++		if (IS_ERR(clk))
++			dev_warn(dev, "failed to register %s (%ld)\n",
++				 child_name, PTR_ERR(clk));
++		else
++			of_clk_add_provider(child, of_clk_src_simple_get, clk);
++	}
++	of_node_put(child);
++
++	child = of_get_child_by_name(node, "obsclk");
++	if (of_device_is_available(child)) {
++		if (obsclk_info)
++			clk = davinci_pll_obsclk_register(dev, obsclk_info, base);
++		else
++			clk = ERR_PTR(-EINVAL);
++
++		if (IS_ERR(clk))
++			dev_warn(dev, "failed to register obsclk (%ld)\n",
++				 PTR_ERR(clk));
++		else
++			of_clk_add_provider(child, of_clk_src_simple_get, clk);
++	}
++	of_node_put(child);
++
++	return 0;
++}
++
++static const struct of_device_id davinci_pll_of_match[] = {
++	{ }
++};
++
++static const struct platform_device_id davinci_pll_id_table[] = {
++	{ }
++};
++
++typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base);
++
++static int davinci_pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct of_device_id *of_id;
++	davinci_pll_init pll_init = NULL;
++	struct resource *res;
++	void __iomem *base;
++
++	of_id = of_match_device(davinci_pll_of_match, dev);
++	if (of_id)
++		pll_init = of_id->data;
++	else if (pdev->id_entry)
++		pll_init = (void *)pdev->id_entry->driver_data;
++
++	if (!pll_init) {
++		dev_err(dev, "unable to find driver data\n");
++		return -EINVAL;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base)) {
++		dev_err(dev, "ioremap failed\n");
++		return PTR_ERR(base);
++	}
++
++	return pll_init(dev, base);
++}
++
++static struct platform_driver davinci_pll_driver = {
++	.probe		= davinci_pll_probe,
++	.driver		= {
++		.name		= "davinci-pll-clk",
++		.of_match_table	= davinci_pll_of_match,
++	},
++	.id_table	= davinci_pll_id_table,
++};
++
++static int __init davinci_pll_driver_init(void)
++{
++	return platform_driver_register(&davinci_pll_driver);
++}
++
++/* has to be postcore_initcall because PSC devices depend on PLL parent clocks */
++postcore_initcall(davinci_pll_driver_init);
++
++#ifdef CONFIG_DEBUG_FS
++#include <linux/debugfs.h>
++
++#define DEBUG_REG(n)	\
++{			\
++	.name	= #n,	\
++	.offset	= n,	\
++}
++
++static const struct debugfs_reg32 davinci_pll_regs[] = {
++	DEBUG_REG(REVID),
++	DEBUG_REG(PLLCTL),
++	DEBUG_REG(OCSEL),
++	DEBUG_REG(PLLSECCTL),
++	DEBUG_REG(PLLM),
++	DEBUG_REG(PREDIV),
++	DEBUG_REG(PLLDIV1),
++	DEBUG_REG(PLLDIV2),
++	DEBUG_REG(PLLDIV3),
++	DEBUG_REG(OSCDIV),
++	DEBUG_REG(POSTDIV),
++	DEBUG_REG(BPDIV),
++	DEBUG_REG(PLLCMD),
++	DEBUG_REG(PLLSTAT),
++	DEBUG_REG(ALNCTL),
++	DEBUG_REG(DCHANGE),
++	DEBUG_REG(CKEN),
++	DEBUG_REG(CKSTAT),
++	DEBUG_REG(SYSTAT),
++	DEBUG_REG(PLLDIV4),
++	DEBUG_REG(PLLDIV5),
++	DEBUG_REG(PLLDIV6),
++	DEBUG_REG(PLLDIV7),
++	DEBUG_REG(PLLDIV8),
++	DEBUG_REG(PLLDIV9),
++};
++
++static int davinci_pll_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
++	struct debugfs_regset32 *regset;
++	struct dentry *d;
++
++	regset = kzalloc(sizeof(regset), GFP_KERNEL);
++	if (!regset)
++		return -ENOMEM;
++
++	regset->regs = davinci_pll_regs;
++	regset->nregs = ARRAY_SIZE(davinci_pll_regs);
++	regset->base = pll->base;
++
++	d = debugfs_create_regset32("registers", 0400, dentry, regset);
++	if (IS_ERR(d)) {
++		kfree(regset);
++		return PTR_ERR(d);
++	}
++
++	return 0;
++}
++#endif
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+new file mode 100644
+index 0000000..50fe429
+--- /dev/null
++++ b/drivers/clk/davinci/pll.h
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Clock driver for TI Davinci PSC controllers
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#ifndef __CLK_DAVINCI_PLL_H___
++#define __CLK_DAVINCI_PLL_H___
++
++#include <linux/bitops.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/types.h>
++
++#define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
++#define PLL_HAS_PREDIV			BIT(1) /* has prediv before PLL */
++#define PLL_PREDIV_ALWAYS_ENABLED	BIT(2) /* don't clear DEN bit */
++#define PLL_PREDIV_FIXED_DIV		BIT(3) /* fixed divider value */
++#define PLL_HAS_POSTDIV			BIT(4) /* has postdiv after PLL */
++#define PLL_POSTDIV_ALWAYS_ENABLED	BIT(5) /* don't clear DEN bit */
++#define PLL_POSTDIV_FIXED_DIV		BIT(6) /* fixed divider value */
++#define PLL_HAS_EXTCLKSRC		BIT(7) /* has selectable bypass */
++#define PLL_PLLM_2X			BIT(8) /* PLLM value is 2x (DM365) */
++#define PLL_PREDIV_FIXED8		BIT(9) /* DM355 quirk */
++
++/** davinci_pll_clk_info - controller-specific PLL info
++ * @name: The name of the PLL
++ * @unlock_reg: Option CFGCHIP register for unlocking PLL
++ * @unlock_mask: Bitmask used with @unlock_reg
++ * @pllm_mask: Bitmask for PLLM[PLLM] value
++ * @pllm_min: Minimum allowable value for PLLM[PLLM]
++ * @pllm_max: Maximum allowable value for PLLM[PLLM]
++ * @pllout_min_rate: Minimum allowable rate for PLLOUT
++ * @pllout_max_rate: Maximum allowable rate for PLLOUT
++ * @flags: Bitmap of PLL_* flags.
++ */
++struct davinci_pll_clk_info {
++	const char *name;
++	u32 unlock_reg;
++	u32 unlock_mask;
++	u32 pllm_mask;
++	u32 pllm_min;
++	u32 pllm_max;
++	unsigned long pllout_min_rate;
++	unsigned long pllout_max_rate;
++	u32 flags;
++};
++
++#define SYSCLK_ARM_RATE		BIT(0) /* Controls ARM rate */
++#define SYSCLK_ALWAYS_ENABLED	BIT(1) /* Or bad things happen */
++#define SYSCLK_FIXED_DIV	BIT(2) /* Fixed divider */
++
++/** davinci_pll_sysclk_info - SYSCLKn-specific info
++ * @name: The name of the clock
++ * @parent_name: The name of the parent clock
++ * @id: "n" in "SYSCLKn"
++ * @ratio_width: Width (in bits) of RATIO in PLLDIVn register
++ * @flags: Bitmap of SYSCLK_* flags.
++ */
++struct davinci_pll_sysclk_info {
++	const char *name;
++	const char *parent_name;
++	u32 id;
++	u32 ratio_width;
++	u32 flags;
++};
++
++#define SYSCLK(i, n, p, w, f)	\
++{				\
++	.name		= #n,	\
++	.parent_name	= #p,	\
++	.id		= (i),	\
++	.ratio_width	= (w),	\
++	.flags		= (f),	\
++}
++
++/** davinci_pll_obsclk_info - OBSCLK-specific info
++ * @name: The name of the clock
++ * @parent_names: Array of names of the parent clocks
++ * @num_parents: Length of @parent_names
++ * @table: Array of values to write to OCSEL[OCSRC] cooresponding to
++ *         @parent_names
++ * @ocsrc_mask: Bitmask for OCSEL[OCSRC]
++ */
++struct davinci_pll_obsclk_info {
++	const char *name;
++	const char * const *parent_names;
++	u8 num_parents;
++	u32 *table;
++	u32 ocsrc_mask;
++};
++
++struct clk *davinci_pll_clk_register(struct device *dev,
++				     const struct davinci_pll_clk_info *info,
++				     const char *parent_name,
++				     void __iomem *base);
++struct clk *davinci_pll_auxclk_register(struct device *dev,
++					const char *name,
++					void __iomem *base);
++struct clk *davinci_pll_sysclkbp_clk_register(struct device *dev,
++					      const char *name,
++					      void __iomem *base);
++struct clk *
++davinci_pll_obsclk_register(struct device *dev,
++			    const struct davinci_pll_obsclk_info *info,
++			    void __iomem *base);
++struct clk *
++davinci_pll_sysclk_register(struct device *dev,
++			    const struct davinci_pll_sysclk_info *info,
++			    void __iomem *base);
++
++int of_davinci_pll_init(struct device *dev,
++			const struct davinci_pll_clk_info *info,
++			const struct davinci_pll_obsclk_info *obsclk_info,
++			const struct davinci_pll_sysclk_info *div_info,
++			u8 max_sysclk_id,
++			void __iomem *base);
++
++#endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+2.7.4
