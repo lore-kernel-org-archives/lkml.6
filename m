@@ -1,100 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeBSOsR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:48:17 -0500
-Received: from prv-mh.provo.novell.com ([137.65.248.74]:54257 "EHLO
-        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752793AbeBSOsQ (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Mon, 19 Feb 2018 09:48:16 -0500
-Message-Id: <5A8AF1BB02000078001A91C3@prv-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Mon, 19 Feb 2018 07:48:11 -0700
-From: "Jan Beulich" <JBeulich@suse.com>
-To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
-Cc: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86: fix {pmd,pud}_{set,clear}_flags()
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1753027AbeBSOtK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:49:10 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41361 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeBSOtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 09:49:07 -0500
+X-Google-Smtp-Source: AH8x227tILHqsR0882CgUexROVoPzpvvMW0w3TfXk795FKTBSJWeVyOX0Bg/Cx9yEOh7ie/M2fMi+g==
+Date: Mon, 19 Feb 2018 08:49:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Brendan Higgins <brendanhiggins@google.com>
+Cc: Tali Perry <tali.perry1@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
+Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
+Message-ID: <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop>
+References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
+ <1518701959-22899-2-git-send-email-tali.perry1@gmail.com>
+ <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like pte_{set,clear}_flags() their PMD and PUD counterparts should
-not do any address translation. This was outright wrong under Xen
-(causing a dead boot with no useful output on "suitable" systems), and
-produced needlessly more complicated code (even if just slightly) when
-paravirt was enabled.
+On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
+> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
+> >
+> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> >
+>  <snip>
+> 
+> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
+> clocks (moved from drivers/clk/clk-npcm7xx.c):
+> https://www.spinics.net/lists/arm-kernel/msg634678.html
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: stable@vger.kernel.org 
----
- arch/x86/include/asm/pgtable.h       |    8 ++++----
- arch/x86/include/asm/pgtable_types.h |   10 ++++++++++
- 2 files changed, 14 insertions(+), 4 deletions(-)
+No, binding docs, dts files and driver code should all be separate 
+patches.
 
---- 4.16-rc2/arch/x86/include/asm/pgtable.h
-+++ 4.16-rc2-x86-pXd_set_flags-no-xlat/arch/x86/include/asm/pgtable.h
-@@ -350,14 +350,14 @@ static inline pmd_t pmd_set_flags(pmd_t
- {
- 	pmdval_t v = native_pmd_val(pmd);
- 
--	return __pmd(v | set);
-+	return native_make_pmd(v | set);
- }
- 
- static inline pmd_t pmd_clear_flags(pmd_t pmd, pmdval_t clear)
- {
- 	pmdval_t v = native_pmd_val(pmd);
- 
--	return __pmd(v & ~clear);
-+	return native_make_pmd(v & ~clear);
- }
- 
- static inline pmd_t pmd_mkold(pmd_t pmd)
-@@ -409,14 +409,14 @@ static inline pud_t pud_set_flags(pud_t
- {
- 	pudval_t v = native_pud_val(pud);
- 
--	return __pud(v | set);
-+	return native_make_pud(v | set);
- }
- 
- static inline pud_t pud_clear_flags(pud_t pud, pudval_t clear)
- {
- 	pudval_t v = native_pud_val(pud);
- 
--	return __pud(v & ~clear);
-+	return native_make_pud(v & ~clear);
- }
- 
- static inline pud_t pud_mkold(pud_t pud)
---- 4.16-rc2/arch/x86/include/asm/pgtable_types.h
-+++ 4.16-rc2-x86-pXd_set_flags-no-xlat/arch/x86/include/asm/pgtable_types.h
-@@ -323,6 +323,11 @@ static inline pudval_t native_pud_val(pu
- #else
- #include <asm-generic/pgtable-nopud.h>
- 
-+static inline pud_t native_make_pud(pudval_t val)
-+{
-+	return (pud_t) { .p4d.pgd = native_make_pgd(val) };
-+}
-+
- static inline pudval_t native_pud_val(pud_t pud)
- {
- 	return native_pgd_val(pud.p4d.pgd);
-@@ -344,6 +349,11 @@ static inline pmdval_t native_pmd_val(pm
- #else
- #include <asm-generic/pgtable-nopmd.h>
- 
-+static inline pmd_t native_make_pmd(pmdval_t val)
-+{
-+	return (pmd_t) { .pud.p4d.pgd = native_make_pgd(val) };
-+}
-+
- static inline pmdval_t native_pmd_val(pmd_t pmd)
- {
- 	return native_pgd_val(pmd.pud.p4d.pgd);
+Rob
