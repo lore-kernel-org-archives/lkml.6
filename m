@@ -1,56 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753551AbeBSRPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:15:35 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52166 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753228AbeBSRPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:15:33 -0500
-Date: Mon, 19 Feb 2018 12:15:32 -0500
-From: Mike Snitzer <snitzer@redhat.com>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Milan Broz <gmazyland@gmail.com>, NeilBrown <neilb@suse.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: DM Regression in 4.16-rc1 - read() returns data when it shouldn't
-Message-ID: <20180219171531.GA27498@redhat.com>
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
- <5fca4e3f-536c-9c52-31bb-927e8ab5b6c8@leemhuis.info>
+        id S1753336AbeBSRS1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:18:27 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:58016 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753208AbeBSRSZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 12:18:25 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w1JHIKWt016040
+X-Nifty-SrcIP: [209.85.217.182]
+X-Google-Smtp-Source: AH8x225I4WmiSi7WuCmiBjsAwYJI/Fr6oeVflfJxBXbkAEyniW/abKwKIBMXmmUJ/pRRkZLqVsoKEKloBMzfNwAuxpA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5fca4e3f-536c-9c52-31bb-927e8ab5b6c8@leemhuis.info>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1519060182-1746-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519060182-1746-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 20 Feb 2018 02:17:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS_yqOVKGOEJ_SrvigpqEKZoriuWGuCYdwEWtTtSMxetA@mail.gmail.com>
+Message-ID: <CAK7LNAS_yqOVKGOEJ_SrvigpqEKZoriuWGuCYdwEWtTtSMxetA@mail.gmail.com>
+Subject: Re: [PATCH] sh: fix build error for empty CONFIG_BUILTIN_DTB_SOURCE
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19 2018 at  8:44am -0500,
-Thorsten Leemhuis <regressions@leemhuis.info> wrote:
+2018-02-20 2:09 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> If CONFIG_USE_BUILTIN_DTB is enabled, but CONFIG_BUILTIN_DTB_SOURCE
+> is empty (for example, allmodconfig), a build error occurs.
+>
+> Surround obj-y with ifneq ... endif.
+>
+> I replaced $(CONFIG_USE_BUILTIN_DTB) with 'y' since this is always
+> the case from the following code from arch/sh/Makefile:
+>
+>   core-$(CONFIG_USE_BUILTIN_DTB)  += arch/sh/boot/dts/
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  arch/sh/boot/dts/Makefile | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/sh/boot/dts/Makefile b/arch/sh/boot/dts/Makefile
+> index 715def0..01d0f7f 100644
+> --- a/arch/sh/boot/dts/Makefile
+> +++ b/arch/sh/boot/dts/Makefile
+> @@ -1 +1,3 @@
+> -obj-$(CONFIG_USE_BUILTIN_DTB) += $(patsubst "%",%,$(CONFIG_BUILTIN_DTB_SOURCE)).dtb.o
+> +ifneq ($(CONFIG_BUILTIN_DTB_SOURCE),"")
+> +obj-y += $(patsubst "%",%,$(CONFIG_BUILTIN_DTB_SOURCE)).dtb.o
+> +endif
 
-> JFYI: This issues is tracked in the regression reports for Linux 4.16
-> (http://bit.ly/lnxregrep416 ) with this id:
-> 
-> Linux-Regression-ID: lr#9e195f
-> 
-> Please include this line in the comment section of patches that are
-> supposed to fix the issue. Please also mention the string once in other
-> mailinglist threads or different bug tracking entries if you or someone
-> else start to discuss the issue there. By including that string you make
-> it a whole lot easier to track where an issue gets discussed and how far
-> patches to fix it have made it. For more details on this please see
-> here: http://bit.ly/lnxregtrackid
-> 
-> Thx for your help. Ciao, Thorsten
 
-The fix was already merged by Linus on Friday, see:
-git.kernel.org/linus/8dd601fa8317243be887458c49f6c29c2f3d719f
 
-But moving forward I have no interest in sprinkling external metadata
-references in Linux commit headers. 
+I inserted this before Nicholas' patch
+to silence the test robot.
 
-Seems more like you're engineering something that gives you, and
-possibly a select few others, meaning but that is make work for all
-Linux maintainers.
 
-Mike
+-- 
+Best Regards
+Masahiro Yamada
