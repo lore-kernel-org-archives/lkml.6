@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeBSMIS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 07:08:18 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37284 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752579AbeBSMIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 07:08:16 -0500
-X-Google-Smtp-Source: AH8x224/NAHznqkGHBuSw40yWt2Vx+XtBG2qY6klo2SaEa2GU+v7gu29uCtyQ0lf9bOjbGElY8HYmcAiYpmZszRB1Dk=
+        id S1752684AbeBSMJv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 07:09:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58176 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752579AbeBSMJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 07:09:50 -0500
+Subject: Re: [PATCH] arm64: Fix compilation error while accessing
+ MPIDR_HWID_BITMASK from .S files
+To: Bhupesh Sharma <bhsharma@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: bhupesh.linux@gmail.com
+References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8c648c07-3611-bd18-eca9-3a34f43c8d44@arm.com>
+Date: Mon, 19 Feb 2018 12:09:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1519040779.3408.7.camel@pengutronix.de>
-References: <20180219065438.19933-1-joel@jms.id.au> <20180219065438.19933-4-joel@jms.id.au>
- <1519040779.3408.7.camel@pengutronix.de>
-From: Joel Stanley <joel@jms.id.au>
-Date: Mon, 19 Feb 2018 22:37:55 +1030
-X-Google-Sender-Auth: 0rNM0WgskkP9BgJu-xgUWdBnU90
-Message-ID: <CACPK8Xe3bKSfp=PqL8Rm9ivaM5HN0M7FbJ9Bwf_O2D5MZxEpPQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] reset: simple: Allow user selection of driver
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, Lee Jones <lee.jones@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:16 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Mon, 2018-02-19 at 17:24 +1030, Joel Stanley wrote:
->> Currently this driver is only user selectable if COMPILE_TEST is turned
->> on. Users may wish to select (and deselect) it, so remove this
->> restriction.
->
-> I would like to keep user visible options to a minimum unless there is a
-> good reason. What is the scenario in which a user would decide to
-> disable the default-enabled reset-simple driver, or the other way
-> around? This should be mentioned in the commit message.
+On 19/02/18 06:39, Bhupesh Sharma wrote:
+> Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
+> Silence Sparse warnings), compilation of arm64 architecture is broken
+> with the following error messages:
+> 
+>    AR      arch/arm64/kernel/built-in.o
+>    arch/arm64/kernel/head.S: Assembler messages:
+>    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+>    arch/arm64/kernel/head.S:677: Error: junk at end of line, first
+>    unrecognized character is `L'
+>    arch/arm64/kernel/head.S:677: Error: unexpected characters following
+>    instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
+>    arch/arm64/kernel/head.S:677: Error: unexpected characters following
+>    instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
+> 
+> This patch fixes the same by using the UL() macro correctly for
+> assigning the MPIDR_HWID_BITMASK macro value.
 
-In this SoC's case the driver is not essential. A system that does not
-use UART1..4 will not ever call on the driver. This situation is
-common as the console uses UART5.
+Sorry! I am however rather puzzled at how I didn't hit this with my 
+toolchain (Linaro 17.11), and neither did the LKP robot. Oh well.
 
-> Maybe this is an indication that there could be a better default than
-> just ARCH_ASPEED.
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-This is an appropriate default, as it causes the least surprise to a
-user. Without taking the UART out of reset, the kernel driver still
-loads, but characters are never drained from the FIFO.
-
-Advanced users may want to save the few kilobytes that an extra driver
-adds, and the boot overhead of loading yet another driver. The saving
-is small, so if you feel strongly about it we can drop this patch.
-
-Cheers,
-
-Joel
-
->
-> regards
-> Philipp
->
->> Signed-off-by: Joel Stanley <joel@jms.id.au>
->> ---
->>  drivers/reset/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 18f152d251d7..7490a4370900 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -82,7 +82,7 @@ config RESET_PISTACHIO
->>         This enables the reset driver for ImgTec Pistachio SoCs.
->>
->>  config RESET_SIMPLE
->> -     bool "Simple Reset Controller Driver" if COMPILE_TEST
->> +     bool "Simple Reset Controller Driver"
->>       default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
->>       help
->>         This enables a simple reset controller driver for reset lines that
+> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> ---
+>   arch/arm64/include/asm/cputype.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+> index eda8c5f629fc..350c76a1d15b 100644
+> --- a/arch/arm64/include/asm/cputype.h
+> +++ b/arch/arm64/include/asm/cputype.h
+> @@ -20,7 +20,7 @@
+>   
+>   #define MPIDR_UP_BITMASK	(0x1 << 30)
+>   #define MPIDR_MT_BITMASK	(0x1 << 24)
+> -#define MPIDR_HWID_BITMASK	0xff00ffffffUL
+> +#define MPIDR_HWID_BITMASK	UL(0xff00ffffff)
+>   
+>   #define MPIDR_LEVEL_BITS_SHIFT	3
+>   #define MPIDR_LEVEL_BITS	(1 << MPIDR_LEVEL_BITS_SHIFT)
+> 
