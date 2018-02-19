@@ -1,133 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeBSIwH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 03:52:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:32021 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751866AbeBSIwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 03:52:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="28254422"
-Subject: Re: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-10-kishon@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <cda22332-ed17-9309-4989-19765744879b@intel.com>
-Date: Mon, 19 Feb 2018 10:51:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752340AbeBSIwT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 03:52:19 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:56097 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbeBSIwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 03:52:17 -0500
+Date: Mon, 19 Feb 2018 09:52:05 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: wens@csie.org, linux@armlinux.org.uk, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v3 6/7] arm: dts: sun8i: a83t: Fix undefined offset with
+ virtual timer
+Message-ID: <20180219085205.jh6bcmbzcxqffkhk@flea.lan>
+References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
+ <20180219081837.15482-7-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180205125029.21570-10-kishon@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="swcqkmnxnqqwxqtn"
+Content-Disposition: inline
+In-Reply-To: <20180219081837.15482-7-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
-> Add quirk to disable HW timeout if the requested timeout is more than
-> the maximum obtainable timeout.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/mmc/host/sdhci.c | 12 ++++++++++++
->  drivers/mmc/host/sdhci.h |  7 +++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 070aff9c108f..1aa74b4682f3 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->  		DBG("Too large timeout 0x%x requested for CMD%d!\n",
->  		    count, cmd->opcode);
->  		count = 0xE;
-> +		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
-> +			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
-> +			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> +			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> +			host->hw_timeout_disabled = true;
-> +		}
 
-sdhci_calc_timeout() is really for calculations so please do this in
-sdhci_set_timeout() instead (i.e. change sdhci_calc_timeout() to return
-whether the timeout is too big).  Note that you need to cater for the "/*
-Unspecified timeout, assume max */" case and the
-SDHCI_QUIRK_BROKEN_TIMEOUT_VAL case.
+--swcqkmnxnqqwxqtn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also if SDHCI_INT_DATA_TIMEOUT is not being disabled, check here to
-re-enable it and leave sdhci_request_done() alone. i.e.
+Hi,
 
-	else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
-		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-	}
+On Mon, Feb 19, 2018 at 09:18:36AM +0100, Myl=E8ne Josserand wrote:
+> The ARM architected timers use an offset between their physical and
+> virtual counters. That offset should be configured by the bootloader
+> in CNTVOFF.
+>=20
+> However, the A83t bootloader fails to do so, and we end up with an
+> undefined offset (which in our case is random), meaning that each CPU
+> will have a different time, which isn't working very well.
+>=20
+> Fix that by setting the arm,cpu-registers-not-fw-configured that will
+> make Linux use the physical timers instead of the virtual ones. One
+> possible side effect would be that the virtualization features would
+> be disabled. However, due to the way the GIC has been integrated in
+> the system, it is already unusable so we're effectively not losing any
+> feature.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
 
-Maybe make a separate subroutine for the update:
+One small nitpick on this one (and the previous one), arm in the
+subject prefix should be uppercase.
 
-void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
-{
-	if (enable)
-		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-	else
-		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
-	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-}
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
 
->  	}
->  
->  	return count;
-> @@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
->  	}
->  
->  	sdhci_del_timer(host, mrq);
-> +	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
-> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> +		host->hw_timeout_disabled = false;
-> +	}
->  
->  	/*
->  	 * Always unmap the data buffers if they were mapped by
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index afab26fd70e6..3a967a56fcc3 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -437,6 +437,11 @@ struct sdhci_host {
->  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
->  /* Controller has CRC in 136 bit Command Response */
->  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
-> +/*
-> + * Disable HW timeout if the requested timeout is more than the maximum
-> + * obtainable timeout
-> + */
-> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
->  
->  	int irq;		/* Device IRQ */
->  	void __iomem *ioaddr;	/* Mapped address */
-> @@ -522,6 +527,8 @@ struct sdhci_host {
->  	unsigned int            ocr_avail_mmc;
->  	u32 ocr_mask;		/* available voltages */
->  
-> +	bool			hw_timeout_disabled;
-> +
->  	unsigned		timing;		/* Current timing */
->  
->  	u32			thread_isr;
-> 
+--swcqkmnxnqqwxqtn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqKkDQACgkQ0rTAlCFN
+r3SXPQ/9HiMOITN6rhCMOcwolM6if0cK1KZMFq1LLftQXV5N/6JUdehvV7aSZfC6
+YRGq3Nmz33cgnwnZcuZzWTwSSCOwtQox2P6G91q5W/nT8cMvP+nS6j8RoNVAdxkn
+SfqI+yJzAxkW9fJy2lWtohIzPRShorGlnkEhq9hK7/6W5dQtEXUEKvjrY2eW2RPy
+UmV4XtPcXGb++A+mnLyTq7NtcYu4zFRkrierrVefi6GHFeHlxIlWqP2KdkpZl5qM
+mV+pulcZhMT/7u8EwBYlJI/0eAPz7IkwzqCFAn4K3oV6RwXP4Icx0aejgbcMyspB
+ySy4L1XxqzuB9zxZX/bPyeo9vFddMULl39w+K23Ivil0KIdo9Ec8aDegpSOa+4zW
+z5fZkoJmMdYtA1ZPA9G2p9NHk4akNoEniZxhA3L2HmJ1wcXcYW8wOxLuGCHU/Len
+SgiJyg0I+X5v4smtcNrvoILH9KcuvLzUjDFInqaiGCJyUWaoqbeNcer6UpX7in8s
+kMVllEu6QXYaIrQ2khujCknj4InyMqv1pgIoOuYULbxxZ1g/B/UYng9okd3kw1Am
+Oyakr/GgPLtE14cHmqBu9wLVkYclzvIULNVqzHvDWAgaGphw0JLtx8XKzeDfClfU
+juEzyz1BaDY+zWYZ8eaoaZ2QGpBrK5xVFsl6z++20HykBUwsE0I=
+=s1e8
+-----END PGP SIGNATURE-----
+
+--swcqkmnxnqqwxqtn--
