@@ -1,220 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeBSLXz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:23:55 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57845 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbeBSLXw (ORCPT
+        id S1752784AbeBSLYF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:24:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42996 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752594AbeBSLYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:23:52 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        George Cherian <gcherian@caviumnetworks.com>,
-        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
-Date: Mon, 19 Feb 2018 12:21:56 +0100
-Message-ID: <2858019.9TUCWsDpTB@aspire.rjw.lan>
-In-Reply-To: <20180216203434.GC11014@bhelgaas-glaptop.roam.corp.google.com>
-References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com> <2323301.ORZpb3hFRe@aspire.rjw.lan> <20180216203434.GC11014@bhelgaas-glaptop.roam.corp.google.com>
+        Mon, 19 Feb 2018 06:24:02 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Feb 2018 16:54:01 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] i2c: qup: fix buffer overflow for multiple msg of
+ maximum xfer len
+In-Reply-To: <246915f4-5351-c1b5-761b-45d88e4a3845@codeaurora.org>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-10-git-send-email-absahu@codeaurora.org>
+ <246915f4-5351-c1b5-761b-45d88e4a3845@codeaurora.org>
+Message-ID: <c04d40862c2158b7a175fddda83dd339@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, February 16, 2018 9:34:34 PM CET Bjorn Helgaas wrote:
-> On Fri, Feb 16, 2018 at 01:40:37PM +0100, Rafael J. Wysocki wrote:
-> > On Friday, February 16, 2018 12:39:00 AM CET Bjorn Helgaas wrote:
-> > > On Thu, Feb 15, 2018 at 10:57:25PM +0100, Rafael J. Wysocki wrote:
-> > > > On Wednesday, February 14, 2018 9:16:53 PM CET Bjorn Helgaas wrote:
-> > > > > On Wed, Feb 14, 2018 at 04:58:08PM +0530, George Cherian wrote:
-> > > > > > On 02/13/2018 08:39 PM, Bjorn Helgaas wrote:
-> > > > > > >On Fri, Feb 02, 2018 at 07:00:46AM +0000, George Cherian wrote:
+On 2018-02-16 10:51, Sricharan R wrote:
+> Hi Abhishek,
 > 
-> <snip>
-> > > > > > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
-> > > > > 
-> > > > > > >>[   12.813518] PC is at pci_generic_config_read+0x5c/0xf0
-> > > > > > >>[   12.818643] LR is at pci_generic_config_read+0x48/0xf0
-> > > > > > >> ...
-> > > > > > >>[   13.269819] [<ffff000008506f34>] pci_generic_config_read+0x5c/0xf0
-> > > > > > >>[   13.275987] [<ffff000008506e2c>] pci_bus_read_config_dword+0xb4/0xd8
-> > > > > > >>[   13.282328] [<ffff0000085089f4>] pcie_capability_read_dword+0x64/0xb8
-> > > > > > >>[   13.288757] [<ffff000008513d28>] __pci_dev_reset+0x90/0x328
-> > > > > > >>[   13.294317] [<ffff0000085142d4>] pci_probe_reset_function+0x24/0x30
-> > > > > > >>[   13.300571] [<ffff000008518754>] pci_create_sysfs_dev_files+0x18c/0x2a0
-> > > > > > >>[   13.307173] [<ffff000008d9a974>] pci_sysfs_init+0x38/0x60
-> > > > > > >>[   13.312560] [<ffff000008083b4c>] do_one_initcall+0x5c/0x170
-> > > > > > >>[   13.318122] [<ffff000008d60dfc>] kernel_init_freeable+0x1c0/0x27c
-> > > > > > >>[   13.324205] [<ffff000008980d90>] kernel_init+0x18/0x110
-> > > > > > >>[   13.329416] [<ffff000008083690>] ret_from_fork+0x10/0x40
-> > > > > 
-> > > > > I should have asked this before: why are we even trying to do this
-> > > > > config read to a device that's in D3?  I assume this root port started
-> > > > > out in D0 because we apparently enumerated it successfully, but it
-> > > > > must have been put into D3 later?
-> > > > > 
-> > > > > The pci_probe_reset_function() function comment says "the PCI device
-> > > > > must be responsive to PCI config space in order to use this function." 
-> > > > > So apparently the caller should make sure the device is in at least
-> > > > > D3hot and any bridges leading to it are in D0.
-> > > > > 
-> > > > > If we're missing whatever it is that makes sure the target device is
-> > > > > reachable and responsive to config space, we likely have issues on
-> > > > > other systems as well.  On Cavium this causes the external abort, but
-> > > > > on other systems, we'd probably just get all 1's data back from the
-> > > > > config read and silently do the wrong thing in
-> > > > > pci_probe_reset_function().
-> > > > > 
-> > > > > I don't know how this runtime PM works, but maybe Rafael can help us
-> > > > > out.
-> > > > 
-> > > > I'm not sure what the question is to be honest.
-> > > 
-> > > My questions are basically "What does the PCI core need to do to make
-> > > sure a device is in D0 before it operates on it?  And where do we need
-> > > to do that?"
-> > > 
-> > > > Unused ports are autosuspended after 100ms as per pcie_portdrv_probe().
-> > > 
-> > > So I guess this is only done for PCIe bridges, not for conventional
-> > > PCI bridges.  Is this because autosuspend depends on a PCIe-only
-> > > feature?
-> > 
-> > Yes, that's PCIe-only.
+> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
+>> The BAM mode requires buffer for start tag data and tx, rx SG
+>> list. Currently, this is being taken for maximum transfer length
+>> (65K). But an I2C transfer can have multiple messages and each
+>> message can be of this maximum length so the buffer overflow will
+>> happen in this case. Since increasing buffer length won’t be
+>> feasible since an I2C transfer can contain any number of messages
+>> so this patch does following changes to make i2c transfers working
+>> for multiple messages case.
+>> 
+>> 1. Calculate the required buffers for 2 maximum length messages
+>>    (65K * 2).
+>> 2. Split the descriptor formation and descriptor scheduling.
+>>    The idea is to fit as many messages in one DMA transfers for 65K
+>>    threshold value (max_xfer_sg_len). Whenever the sg_cnt is
+>>    crossing this, then schedule the BAM transfer and subsequent
+>>    transfer will again start from zero.
+
+  <snip>
+
+>> +static void qup_i2c_bam_clear_tag_buffers(struct qup_i2c_dev *qup)
+>> +{
+>> +	qup->btx.sg_cnt = 0;
+>> +	qup->brx.sg_cnt = 0;
+>> +	qup->tag_buf_pos = 0;
+>> +}
+>> +
+>>  static int qup_i2c_bam_xfer(struct i2c_adapter *adap, struct i2c_msg 
+>> *msg,
+>>  			    int num)
+>>  {
+>>  	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+>>  	int ret = 0;
+>> +	int idx = 0;
+>> 
+>>  	enable_irq(qup->irq);
+>>  	ret = qup_i2c_req_dma(qup);
+>> @@ -905,9 +916,34 @@ static int qup_i2c_bam_xfer(struct i2c_adapter 
+>> *adap, struct i2c_msg *msg,
+>>  		goto out;
+>> 
+>>  	writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
+>> +	qup_i2c_bam_clear_tag_buffers(qup);
+>> +
+>> +	for (idx = 0; idx < num; idx++) {
+>> +		qup->msg = msg + idx;
+>> +		qup->is_last = idx == (num - 1);
+>> +
+>> +		ret = qup_i2c_bam_make_desc(qup, qup->msg);
+>> +		if (ret)
+>> +			break;
+>> +
+>> +		/*
+>> +		 * Make DMA descriptor and schedule the BAM transfer if its
+>> +		 * already crossed the maximum length. Since the memory for all
+>> +		 * tags buffers have been taken for 2 maximum possible
+>> +		 * transfers length so it will never cross the buffer actual
+>> +		 * length.
+>> +		 */
+>> +		if (qup->btx.sg_cnt > qup->max_xfer_sg_len ||
+>> +		    qup->brx.sg_cnt > qup->max_xfer_sg_len ||
+>> +		    qup->is_last) {
+>> +			ret = qup_i2c_bam_schedule_desc(qup);
+>> +			if (ret)
+>> +				break;
+>> +
+>> +			qup_i2c_bam_clear_tag_buffers(qup);
+>> +		}
+>> +	}
+>> 
 > 
-> What PCIe feature does this depend on?
+>   hmm, is this because of only stress tests or was there any device 
+> which
+>   was using i2c for multiple messages exceeding 64k bytes ?
 
-It doesn't depend on any PCIe feature in particular, but we don't need to do it
-for PCI-to-PCI bridges in general.
+  Its mainly part of stress test but we have test slave devices which
+  supports the multiple messages exceeding 64k bytes. Also, in I2C EEPROM
+  we can send the multiple messages exceeding 64k bytes. It will roll 
+over
+  to starting address after its capacity.
 
-> I see the PCIe test in pci_bridge_d3_possible(), added by 9d26d3a8f1b0
-> ("PCI: Put PCIe ports into D3 during suspend"), but unfortunately that
-> commit doesn't say *why* we only do this for PCIe, or only for BIOS
-> dates of 2015 or newer.
-
-The reason why we need this is related to deep low-power states on new
-SoCs that only can be entered if PCIe root ports are in D3 (that is, if the
-root ports are not in D3, the whole SoC cannot enter some of its deep
-low-power states and that may exted to package C-states for processors).
-
-That also is the reason why we do it for PCIe only.
-
-The reason for the cut-off date is because we know it for a fact that PCIe
-port PM doesn't work on some older platforms due to hardware issues and,
-again, it only really needs to be done on recent SoCs.
-
-I believe that all of the above was mentioned during discussions on the patches
-that ended up as commit 9d26d3a8f1b0 and so on.
-
-> > > Here's the path we're in now:
-> > > 
-> > >   pcie_portdrv_init                        # device_initcall (level 6)
-> > >     pci_register_driver(&pcie_portdriver)
-> > >       ...
-> > >         pcie_portdrv_probe                 # pcie_portdriver.probe
-> > >           pm_runtime_set_autosuspend_delay(&dev->dev, 100)
-> > > 
-> > >   pci_sysfs_init                           # late_initcall (level 7)
-> > >     for_each_pci_dev(dev)
-> > >       pci_create_sysfs_dev_files(dev)
-> > >         pci_create_capabilities_sysfs(dev)
-> > >           pci_probe_reset_function(dev)
-> > >             ...
-> > >               pcie_capability_read_dword   <-- config read causing abort
-> > > 
-> > > I guess it's conceivable that more than 100ms elapsed between
-> > > pcie_portdrv_probe() and pci_probe_reset_function(), and obviously we
-> > > can't depend on any particular timing.
-> > 
-> > Right.
 > 
-> George, can you find out which specific devices are involved here?
+>   Infact we are trying to club two separate messages together across 
+> 64k
+>   boundaries. Not sure if its really correct. So either we club all 
+> messages
+>   fully or club only up to the length that would cover the whole 
+> message < 64K
+>   and send the remaining whole messages in next transfer.
 > 
-> My working assumption is that as for_each_pci_dev() iterates through
-> all the devices, we call pci_probe_reset_function() for a root port
-> that happens to be in D3hot (this should work fine because the root
-> port's config space should be accessible), then we call
-> pci_probe_reset_function() for a device *below* the root port.  That
-> doesn't work because the root port's link is down and and devices
-> below it are not accessible.  The root port should treat this as an
-> Unsupported Request.
-> 
-> > > > Now, it looks like they should be resumed in the code path in question,
-> > > > so this case seems to have been overlooked.
-> > > 
-> > > How do we identify which code paths need to resume the device, and
-> > > what do we need to do to resume it?
-> > 
-> > The "suspended" metastate is generally defined as "the device may not be
-> > accessible now" and for the majority of bus types it is unsafe to attempt
-> > to access suspended devices.
-> > 
-> > That's not strictly the case for PCI, but IMO PCI devices should be resumed
-> > before accessing them too because of the below. :-)
-> > 
-> > pm_runtime_get_sync() resumes the device and prevents it from suspending
-> > again until pm_runtime_put() (or equivalent) is called on it.
-> 
-> How do we identify the places that need to call pm_runtime_get_sync()?
-> 
-> PCI devices will respond to config accesses while in D3hot, but not to
-> memory or I/O accesses.  I think that distinction is probably too
-> detailed and the general rule should be "the device must be in D0
-> before you access it."
 
-Right, but in some cases we access config spaces for things like PME
-status changes and similar (and AML may be accessing them too for similar
-reasons) and if the request is dropped on the floor silently then, well,
-so be it.
+  The QUP DMA can be used for any transfer length. It supports greater 
+than
+  64k also in one go. Only restriction is descriptors memory. clubing all
+  messages won't be feasible since there is no restriction on the number 
+of
+  messages due to which we can't determine the required descriptors size.
 
-> I guess generally the driver is in control, and if it suspends the
-> device, it has to be smart enough to resume it before touching it.
+  whole message < 64K will require more code changes since we need to 
+calculate
+  the number of required descriptors in advance. Again in descriptor 
+formation,
+  the number of required descriptors will be calculated and filled. To 
+make the
+  code less complicated, I have taken the memory for 128K xfer length 
+which
+  will make the current code working without any major code changes.
 
-Not necessarily.
-
-Say, user space may want to access it too via the bus type's sysfs.
-
-That's why we have pci_config_pm_runtime_get(), for instance.
-
-> This particular pci_probe_reset_function() case is a problem because
-> it's the PCI *core* doing the access while the device may already be
-> claimed by a driver.  I think it's generally taboo for the core to do
-> this, and I have a patch to move this access so it happens before a
-> driver can claim the device.
-
-The core may do accesses like that IMO (especially reads, not writes), but
-indeed this particular case looks a bit over the top.
-
-> We also have the case where userspace accesses a device via sysfs.  I
-> guess all those cases probably need to wake up the device.  It looks
-> like pci_config_pm_runtime_get() already does that for config
-> accesses.
-
-Right.
-
-> But I think other entry points, e.g., the following, should have the
-> same problem and I don't see anything there:
-> 
->   pci_read_legacy_io()
->   pci_write_legacy_io()
->   pci_mmap_legacy_mem()
->   pci_mmap_legacy_io()
->   pci_mmap_resource()
->   pci_resource_io()
->   pci_read_rom()
->   reset_store()
-> 
-> Plus probably the ASPM control files, VPD, maybe others?
-
-Generally speaking, every code path going directly to the config space
-(below the driver) needs to take the possibility that the device may be in
-D3cold into account.
-
-Whether or not this means resuming the device upfront depends on the purpose
-of the access I think.
+  Thanks,
+  Abhishek
