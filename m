@@ -1,67 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeBSSKY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:10:24 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:41316 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753185AbeBSSKW (ORCPT
+        id S1753457AbeBSSNO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:13:14 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:45524 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753185AbeBSSNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:10:22 -0500
-Date: Mon, 19 Feb 2018 12:10:20 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] rds: send: mark expected switch fall-through in rds_rm_size
-Message-ID: <20180219181020.GA19154@embeddedgus>
+        Mon, 19 Feb 2018 13:13:12 -0500
+Subject: Re: [PATCH net-next 0/7] stmmac multi-queue fixes and cleanups
+To: Niklas Cassel <niklas.cassel@axis.com>, <netdev@vger.kernel.org>
+References: <20180219171116.15326-1-niklas.cassel@axis.com>
+CC: <Jose.Abreu@synopsys.com>, <vbhadram@nvidia.com>,
+        Niklas Cassel <niklass@axis.com>, <linux-kernel@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <5a7aa80d-aa5d-ee92-8e39-3cf8e0f6c24e@synopsys.com>
+Date: Mon, 19 Feb 2018 18:12:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1enptN-001fdY-OI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:40002
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.66]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Hi Niklas,
 
-Addresses-Coverity-ID: 1465362 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/rds/send.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 19-02-2018 17:11, Niklas Cassel wrote:
+> stmmac multi-queue fixes and cleanups
+>
+> Niklas Cassel (7):
+>   net: stmmac: set MSS for each tx DMA channel
+>   net: stmmac: do not clear tx_skbuff entries in
+>     stmmac_xmit()/stmmac_tso_xmit()
+>   net: stmmac: WARN if tx_skbuff entries are reused before cleared
+>   net: stmmac: rename dwmac4_tx_queue_routing() to match reality
+>   net: stmmac: call correct function in
+>     stmmac_mac_config_rx_queues_routing()
+>   net: stmmac: add error handling in stmmac_mtl_setup()
+>   net: stmmac: honor error code from stmmac_dt_phy()
 
-diff --git a/net/rds/send.c b/net/rds/send.c
-index 028ab59..79d158b 100644
---- a/net/rds/send.c
-+++ b/net/rds/send.c
-@@ -902,6 +902,8 @@ static int rds_rm_size(struct msghdr *msg, int num_sgs)
- 
- 		case RDS_CMSG_ZCOPY_COOKIE:
- 			zcopy_cookie = true;
-+			/* fall through */
-+
- 		case RDS_CMSG_RDMA_DEST:
- 		case RDS_CMSG_RDMA_MAP:
- 			cmsg_groups |= 2;
--- 
-2.7.4
+Thanks! The whole series is:
+
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+
+Best Regards,
+Jose Miguel Abreu
+
+>
+>  drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  6 ++--
+>  drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  2 +-
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 23 +++++++--------
+>  .../net/ethernet/stmicro/stmmac/stmmac_platform.c  | 34 +++++++++++++++++-----
+>  4 files changed, 42 insertions(+), 23 deletions(-)
+>
