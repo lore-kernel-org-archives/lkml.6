@@ -1,72 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeBSMJv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 07:09:51 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58176 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752579AbeBSMJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 07:09:50 -0500
-Subject: Re: [PATCH] arm64: Fix compilation error while accessing
- MPIDR_HWID_BITMASK from .S files
-To: Bhupesh Sharma <bhsharma@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: bhupesh.linux@gmail.com
-References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <8c648c07-3611-bd18-eca9-3a34f43c8d44@arm.com>
-Date: Mon, 19 Feb 2018 12:09:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1752701AbeBSMKe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 07:10:34 -0500
+Received: from mga05.intel.com ([192.55.52.43]:37144 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752579AbeBSMKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 07:10:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
+   d="scan'208";a="31168607"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tpm: use kmemdup() to copy the EFI event log
+Date: Mon, 19 Feb 2018 14:10:26 +0200
+Message-Id: <20180219121026.14304-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/18 06:39, Bhupesh Sharma wrote:
-> Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
-> Silence Sparse warnings), compilation of arm64 architecture is broken
-> with the following error messages:
-> 
->    AR      arch/arm64/kernel/built-in.o
->    arch/arm64/kernel/head.S: Assembler messages:
->    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->    arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->    arch/arm64/kernel/head.S:677: Error: junk at end of line, first
->    unrecognized character is `L'
->    arch/arm64/kernel/head.S:677: Error: unexpected characters following
->    instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
->    arch/arm64/kernel/head.S:677: Error: unexpected characters following
->    instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
-> 
-> This patch fixes the same by using the UL() macro correctly for
-> assigning the MPIDR_HWID_BITMASK macro value.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm_eventlog_efi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Sorry! I am however rather puzzled at how I didn't hit this with my 
-toolchain (Linaro 17.11), and neither did the LKP robot. Oh well.
-
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
-> ---
->   arch/arm64/include/asm/cputype.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-> index eda8c5f629fc..350c76a1d15b 100644
-> --- a/arch/arm64/include/asm/cputype.h
-> +++ b/arch/arm64/include/asm/cputype.h
-> @@ -20,7 +20,7 @@
->   
->   #define MPIDR_UP_BITMASK	(0x1 << 30)
->   #define MPIDR_MT_BITMASK	(0x1 << 24)
-> -#define MPIDR_HWID_BITMASK	0xff00ffffffUL
-> +#define MPIDR_HWID_BITMASK	UL(0xff00ffffff)
->   
->   #define MPIDR_LEVEL_BITS_SHIFT	3
->   #define MPIDR_LEVEL_BITS	(1 << MPIDR_LEVEL_BITS_SHIFT)
-> 
+diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/tpm_eventlog_efi.c
+index e3f9ffd341d2..57c8b3cc46be 100644
+--- a/drivers/char/tpm/tpm_eventlog_efi.c
++++ b/drivers/char/tpm/tpm_eventlog_efi.c
+@@ -50,10 +50,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+ 	}
+ 
+ 	/* malloc EventLog space */
+-	log->bios_event_log = kmalloc(log_size, GFP_KERNEL);
++	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
+ 	if (!log->bios_event_log)
+ 		goto err_memunmap;
+-	memcpy(log->bios_event_log, log_tbl->log, log_size);
+ 	log->bios_event_log_end = log->bios_event_log + log_size;
+ 
+ 	tpm_log_version = log_tbl->version;
+-- 
+2.14.1
