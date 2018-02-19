@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeBSIgt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 03:36:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:53197 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751628AbeBSIgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 03:36:48 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>
-Cc: "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
-        Douglas Miller <dougmill@linux.vnet.ibm.com>,
-        Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>,
-        "open list\:LINUX FOR POWERPC \(32-BIT AND 64-BIT\)"
-        <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] powerpc/xmon: Dont register sysrq key when kernel param xmon=off
-In-Reply-To: <87d116wy6g.fsf@vajain21.in.ibm.com>
-References: <20180212085956.12016-1-vaibhav@linux.vnet.ibm.com> <CAKTCnz=cDmeU6rvqpHf_oW-JjtcVSNjeSQpwzwRMo5U_g+hAwg@mail.gmail.com> <8737264c91.fsf@vajain21.in.ibm.com> <87eflnre7w.fsf@concordia.ellerman.id.au> <87d116wy6g.fsf@vajain21.in.ibm.com>
-Date: Mon, 19 Feb 2018 19:36:43 +1100
-Message-ID: <877er9l6jo.fsf@concordia.ellerman.id.au>
+        id S1752209AbeBSIrE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 03:47:04 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53806 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751628AbeBSIrA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 03:47:00 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v2 1/3] ARM: dts: stm32: add USB OTG HS support for STM32H743 SoC
+Date: Mon, 19 Feb 2018 09:46:26 +0100
+Message-ID: <1519029988-9261-2-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519029988-9261-1-git-send-email-amelie.delaunay@st.com>
+References: <1519029988-9261-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vaibhav Jain <vaibhav@linux.vnet.ibm.com> writes:
-> Michael Ellerman <mpe@ellerman.id.au> writes:
->> <snip>
-<snip>
->>
->> What would be nice is if we keep that behaviour, but any action you take
->> in xmon that requires xmon to remain resident, ie. setting a breakpoint,
->> calls a function which makes sure xmon_on = true and if it wasn't prints
->> a nice message saying "Turning xmon on due to breakpoint insertion" or
->> something.
+This patch adds support for USB OTG HS on STM32H743 SoC.
+USB OTG HS controller is the same than the one used on STM32F7 SoCs.
 
-> That makes sense to me and sounds workable. However we already have a
-> debugfs interface to enable/disable xmon debugger hook. I can also tweak
-> this interface to also register the sysrq key when xmon is enabled. This
-> should provide the user the ability to still use xmon if they want to
-> after the system has booted with xmon=off.
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32h743.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I agree that sounds sensible, but it has one fatal flaw IMO.
-
-Currently you can boot a box with XMON_DEFAULT=n, and it will crash dump
-and so on, but if the box gets stuck you can jump on the console and
-drop into xmon with sysrq-x.
-
-If we additionally require xmon to be enabled via debugfs every boot
-that will break the above use case, and I don't want to do that.
-
-So in short I think I like my idea better :)
-
-cheers
+diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+index 38d7cb8..0f6c078 100644
+--- a/arch/arm/boot/dts/stm32h743.dtsi
++++ b/arch/arm/boot/dts/stm32h743.dtsi
+@@ -217,6 +217,18 @@
+ 			};
+ 		};
+ 
++		usbotg_hs: usb@40040000 {
++			compatible = "st,stm32f7-hsotg";
++			reg = <0x40040000 0x40000>;
++			interrupts = <77>;
++			clocks = <&rcc USB1OTG_CK>;
++			clock-names = "otg";
++			g-rx-fifo-size = <256>;
++			g-np-tx-fifo-size = <32>;
++			g-tx-fifo-size = <128 128 64 64 64 64 32 32>;
++			status = "disabled";
++		};
++
+ 		mdma1: dma@52000000 {
+ 			compatible = "st,stm32h7-mdma";
+ 			reg = <0x52000000 0x1000>;
+-- 
+2.7.4
