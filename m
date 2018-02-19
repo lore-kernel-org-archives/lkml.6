@@ -1,105 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeBSOnj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:43:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60012 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752313AbeBSOni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:43:38 -0500
-Date: Mon, 19 Feb 2018 14:43:46 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Philip Elcan <pelcan@codeaurora.org>
-Subject: Re: [PATCH] arm64: Add support for new control bits CTR_EL0.IDC and
- CTR_EL0.IDC
-Message-ID: <20180219144346.GF30394@arm.com>
-References: <1518829066-3558-1-git-send-email-shankerd@codeaurora.org>
+        id S1752832AbeBSOrj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:47:39 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36282 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751446AbeBSOrh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 09:47:37 -0500
+X-Google-Smtp-Source: AH8x227m+4uh50vfC2STiPNvKPMWKMgH0suDxGGF1aWznDW/kH9cAf8DN/UkAMI8H1MGvvFGEfpzTw==
+Date: Mon, 19 Feb 2018 08:47:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ludovic Barre <ludovic.Barre@st.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: mmc: document the stm32 sdmmc bindings
+Message-ID: <20180219144735.sbxa76z6aik3w453@rob-hp-laptop>
+References: <1518701697-14242-1-git-send-email-ludovic.Barre@st.com>
+ <1518701697-14242-2-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518829066-3558-1-git-send-email-shankerd@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1518701697-14242-2-git-send-email-ludovic.Barre@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shanker,
-
-On Fri, Feb 16, 2018 at 06:57:46PM -0600, Shanker Donthineni wrote:
-> Two point of unification cache maintenance operations 'DC CVAU' and
-> 'IC IVAU' are optional for implementors as per ARMv8 specification.
-> This patch parses the updated CTR_EL0 register definition and adds
-> the required changes to skip POU operations if the hardware reports
-> CTR_EL0.IDC and/or CTR_EL0.IDC.
+On Thu, Feb 15, 2018 at 02:34:53PM +0100, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
 > 
-> CTR_EL0.DIC: Instruction cache invalidation requirements for
->  instruction to data coherence. The meaning of this bit[29].
->   0: Instruction cache invalidation to the point of unification
->      is required for instruction to data coherence.
->   1: Instruction cache cleaning to the point of unification is
->       not required for instruction to data coherence.
+> Document the binding for stm32 sdmmc controller.
 > 
-> CTR_EL0.IDC: Data cache clean requirements for instruction to data
->  coherence. The meaning of this bit[28].
->   0: Data cache clean to the point of unification is required for
->      instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
->      or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
->   1: Data cache clean to the point of unification is not required
->      for instruction to data coherence.
-> 
-> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
-> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 > ---
->  arch/arm64/include/asm/assembler.h | 48 ++++++++++++++++++++++++--------------
->  arch/arm64/include/asm/cache.h     |  2 ++
->  arch/arm64/kernel/cpufeature.c     |  2 ++
->  arch/arm64/mm/cache.S              | 26 ++++++++++++++-------
->  4 files changed, 51 insertions(+), 27 deletions(-)
+>  .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+> new file mode 100644
+> index 0000000..52eb1f8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+> @@ -0,0 +1,35 @@
+> +* STMicroelectronics STM32 SDMMC controller
+> +
+> +The highspeed MMC host controller on STM32 soc family
+> +provides an interface for MMC, SD and SDIO types of memory cards.
+> +
+> +This file documents differences between the core properties described
+> +by mmc.txt and the properties used by the sdmmc driver.
+> +
+> +Required properties:
+> + - compatible: Should be "st,stm32h7-sdmmc"
+> + - reg: mmc controller base registers
+> + - interrupts: Should contain the interrupt number
+> + - clocks: Should contain phandle for the clock feeding the controller
+> + - resets: Should contain phandle for the reset feeding the controller
+> +
+> +Optional property:
+> +- st,dirpol: Allow to select direction polarity of external voltage
 
-I was looking at our CTR_EL0 code last week but forgot to post the patch I
-wrote fixing up some of the fields. I just send it now, so please can
-you rebase on top of:
+This doesn't need to be so terse. Perhaps "st,dir-output-high".
 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/560488.html
+> +  transceiver (which manage data and command direction).
+> +  if set: Voltage transceiver IOs are driven as output when direction signals are high,
+> +  else: Voltage transceiver IOs are driven as output when direction signals are low.
+> +- st,negedge: generate data & command on sdmmc clock falling edge
 
-Also:
+st,neg-edge
 
-> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-> index ea9bb4e..aea533b 100644
-> --- a/arch/arm64/include/asm/cache.h
-> +++ b/arch/arm64/include/asm/cache.h
-> @@ -22,6 +22,8 @@
->  #define CTR_L1IP_MASK		3
->  #define CTR_CWG_SHIFT		24
->  #define CTR_CWG_MASK		15
-> +#define CTR_IDC_SHIFT		28
-> +#define CTR_DIC_SHIFT		29
->  
->  #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
->  
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 29b1f87..f42bb5a 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -200,6 +200,8 @@ static int __init register_cpu_hwcaps_dumper(void)
->  
->  static const struct arm64_ftr_bits ftr_ctr[] = {
->  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),	/* RAO */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 0),	/* DIC */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 0),	/* IDC */
->  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
->  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* ERG */
->  	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
+> +- st,pin-ckin: use sdmmc_ckin pin from an external driver to sample
+> +  the receive data (example: with voltage switch transceiver).
 
-Could you update the other table entries here to use the CTR_*_SHIFT values
-as well?
+st,use-ckin
 
-Thanks,
+> +
+> +Example:
+> +	sdmmc1: sdmmc@52007000 {
 
-Will
+mmc@...
+
+> +		compatible = "st,stm32h7-sdmmc";
+> +		reg = <0x52007000 0x1000>;
+> +		interrupts = <49>;
+> +		clocks = <&rcc SDMMC1_CK>;
+> +		resets = <&rcc SDMMC1_R>;
+> +		bus-width = <4>;
+> +		cap-sd-highspeed;
+> +		cap-mmc-highspeed;
+> +	};
+> -- 
+> 2.7.4
+> 
