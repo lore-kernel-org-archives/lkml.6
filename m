@@ -1,165 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753303AbeBSRZb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:25:31 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:32839 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753152AbeBSRZ3 (ORCPT
+        id S1753328AbeBSR0c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:26:32 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:59845 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753152AbeBSR0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:25:29 -0500
-To: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during  suspend/resume
-X-PHP-Originating-Script: 0:main.inc
+        Mon, 19 Feb 2018 12:26:31 -0500
+Date: Mon, 19 Feb 2018 18:26:41 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+cc: Yuriy Vostrikov <delamonpansie@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: linux acpi (thunderbolt? bug)
+In-Reply-To: <bfee0c69-ce31-f699-7e9b-7c28fc640596@infradead.org>
+Message-ID: <alpine.DEB.2.21.1802191823570.1853@nanos.tec.linutronix.de>
+References: <CABbc0=RMYWGN0L=z_Y=FuZJUDzD5NVa2XBTVnmpZxX5tnk3-5g@mail.gmail.com> <alpine.DEB.2.21.1802141306360.1292@nanos.tec.linutronix.de> <alpine.DEB.2.21.1802150948530.1673@nanos.tec.linutronix.de> <CABbc0=QZY8d_Kyd5hX5X99S60ANrncPSk785FpZTAJS+C9_tDQ@mail.gmail.com>
+ <alpine.DEB.2.21.1802181901520.1549@nanos.tec.linutronix.de> <alpine.DEB.2.21.1802191549270.1853@nanos.tec.linutronix.de> <bfee0c69-ce31-f699-7e9b-7c28fc640596@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Feb 2018 17:25:26 +0000
-From: Marc Zyngier <maz@misterjones.org>
-Cc: <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <swarren@nvidia.com>, <andy.shevchenko@gmail.com>,
-        <alcooperx@gmail.com>, <linux-gpio@vger.kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Organization: Metropolis
-In-Reply-To: <20170301183257.6554-1-f.fainelli@gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com>
-Message-ID: <83d6bd0da9254d868d3f713bd3bc282c@www.loen.fr>
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: f.fainelli@gmail.com, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, linux-gpio@vger.kernel.org, heiko@sntech.de
-X-SA-Exim-Mail-From: maz@misterjones.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Mon, 19 Feb 2018, Randy Dunlap wrote:
 
-On 2017-03-01 18:32, Florian Fainelli wrote:
-> In case a platform only defaults a "default" set of pins, but not a
-> "sleep" set of pins, and this particular platform suspends and 
-> resumes
-> in a way that the pin states are not preserved by the hardware, when 
-> we
-> resume, we would call pinctrl_single_resume() -> 
-> pinctrl_force_default()
-> -> pinctrl_select_state() and the first thing we do is check that the
-> pins state is the same as before, and do nothing.
->
-> In order to fix this, decouple the actual state change from
-> pinctrl_select_state() and move it pinctrl_commit_state(), while 
-> keeping
-> the p->state == state check in pinctrl_select_state() not to change 
-> the
-> caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-> are updated to bypass the state check by calling 
-> pinctrl_commit_state().
->
-> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states
-> per device")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
-> Changes in v3:
->
-> - move the state check to pinctrl_select_state
->
-> Changes in v2:
->
-> - rename __pinctrl_select_state to pinctrl_commit_state
->
->  drivers/pinctrl/core.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> index fb38e208f32d..735d8f7f9d71 100644
-> --- a/drivers/pinctrl/core.c
-> +++ b/drivers/pinctrl/core.c
-> @@ -992,19 +992,16 @@ struct pinctrl_state
-> *pinctrl_lookup_state(struct pinctrl *p,
->  EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
->
->  /**
-> - * pinctrl_select_state() - select/activate/program a pinctrl state 
-> to HW
-> + * pinctrl_commit_state() - select/activate/program a pinctrl state 
-> to HW
->   * @p: the pinctrl handle for the device that requests configuration
->   * @state: the state handle to select/activate/program
->   */
-> -int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state 
-> *state)
-> +static int pinctrl_commit_state(struct pinctrl *p, struct
-> pinctrl_state *state)
->  {
->  	struct pinctrl_setting *setting, *setting2;
->  	struct pinctrl_state *old_state = p->state;
->  	int ret;
->
-> -	if (p->state == state)
-> -		return 0;
-> -
->  	if (p->state) {
->  		/*
->  		 * For each pinmux setting in the old state, forget SW's record
-> @@ -1068,6 +1065,19 @@ int pinctrl_select_state(struct pinctrl *p,
-> struct pinctrl_state *state)
->
->  	return ret;
->  }
-> +
-> +/**
-> + * pinctrl_select_state() - select/activate/program a pinctrl state 
-> to HW
-> + * @p: the pinctrl handle for the device that requests configuration
-> + * @state: the state handle to select/activate/program
-> + */
-> +int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state 
-> *state)
-> +{
-> +	if (p->state == state)
-> +		return 0;
-> +
-> +	return pinctrl_commit_state(p, state);
-> +}
->  EXPORT_SYMBOL_GPL(pinctrl_select_state);
->
->  static void devm_pinctrl_release(struct device *dev, void *res)
-> @@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinctrl_map
-> const *map)
->  int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
->  {
->  	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
-> -		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-> +		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-> @@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
->  int pinctrl_force_default(struct pinctrl_dev *pctldev)
->  {
->  	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
-> -		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-> +		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_force_default);
+> On 02/19/18 06:51, Thomas Gleixner wrote:
+> >  	} else {
+> > +		/*
+> > +		 * Offline case: The current vector needs to be released in
+> > +		 * the matrix allocator.
+> > +		 */
+> > +		if (apicd->vector &&
+> 
+> Drop the "apicd->vector &&" ? (redundant)
 
-I don't often go back over a year worth of LKML, but since this patch 
-recently landed in mainline as 981ed1bfbc6c, I though I'd use it as an 
-anchor to report the following:
+No. The else path is entered when
 
-It turns out that this patch completely breaks resume on my 
-rk3399-based Chromebook. Most things are timing out, the box is 
-unusable. And since this is my everyday tool, I'm mildly grumpy. Please 
-don't break my toys! ;-) Reverting this patch on top of 4.16-rc2 makes 
-me productive again...
+    apicd->vector == 0
 
-More seriously, I have no idea what's wrong here. It could be a 
-SoC-related issue, hence Heiko on Cc. I'm happy to test any idea you 
-could have.
+or
+
+    apicd->cpu is offline
+
+So we need to check here for vector != 0 as otherwise we'd free vector 0
+which is invalid. I'll add a comment explaining the mess.
+
+> > +		    apicd->vector != MANAGED_IRQ_SHUTDOWN_VECTOR) {
+> > +			irq_matrix_free(vector_matrix, apicd->cpu,
+> > +					apicd->vector, managed);
+> > +		}
+> >  		apicd->prev_vector = 0;
+> >  	}
 
 Thanks,
 
-         M.
--- 
-Who you jivin' with that Cosmik Debris?
+	tglx
