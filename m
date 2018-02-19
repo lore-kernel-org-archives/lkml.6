@@ -1,99 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753811AbeBSUbL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:31:11 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39804 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753674AbeBSUbI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:31:08 -0500
-X-Google-Smtp-Source: AH8x227iJR7O0FMu8uD2ZG8LCGqPITcs9y3c61VdF77Ic/KfCzDm2PNoR4S2tRJ8T/9Rch/LjWMXoQ==
-Date: Mon, 19 Feb 2018 14:31:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, sboyd@codeaurora.org,
-        rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] dt-bindings: introduce Command DB for QCOM SoCs
-Message-ID: <20180219203106.mfzmxy42biwo33qj@rob-hp-laptop>
-References: <20180216224614.24037-1-ilina@codeaurora.org>
- <20180216224614.24037-3-ilina@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216224614.24037-3-ilina@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S932260AbeBSUa4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:30:56 -0500
+Received: from vern.gendns.com ([206.190.152.46]:58431 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753648AbeBSUWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 15:22:44 -0500
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>
+Subject: [PATCH v7 05/42] clk: davinci: Add platform information for TI DM355 PLL
+Date: Mon, 19 Feb 2018 14:21:26 -0600
+Message-Id: <1519071723-31790-6-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 03:46:14PM -0700, Lina Iyer wrote:
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> 
-> Command DB provides information on shared resources like clocks,
-> regulators etc., probed at boot by the remote subsytem and made
-> available in shared memory.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
->  .../devicetree/bindings/arm/msm/cmd-db.txt         | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/msm/cmd-db.txt b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> new file mode 100644
-> index 000000000000..039be54fe9c4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> @@ -0,0 +1,30 @@
-> +Command DB
-> +---------
-> +
-> +Command DB is a database that provides a mapping between resource key and the
-> +resource address for a system resource managed by a remote processor. The data
-> +is stored in a shared memory region and is loaded by the remote processor.
-> +
-> +Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
-> +controlling shared resources. Depending on the board configuration the shared
-> +resource properties may change. These properties are dynamically probed by the
-> +remote processor and made available in the shared memory.
-> +
-> +The devicetree representation of the command DB driver should be:
+This adds platform-specific declarations for the PLL clocks on TI
+DM355 based systems.
 
-Need to state this is a child of /reserved-memory
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-> +
-> +PROPERTIES:
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
 
-Why the yelling? :)
+v6 changes:
+- Added dm355_pll{1,2}_info with controller-specific information
+- Add empty lines between function calls
 
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Should be "qcom,cmd-db"
 
-reg?
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-dm355.c | 75 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |  2 ++
+ drivers/clk/davinci/pll.h       |  3 ++
+ 4 files changed, 81 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm355.c
 
-> +
-> +Example:
-> +
-> +	reserved-memory {
-> +		[...]
-> +		qcom,cmd-db@c3f000c {
-> +			reg = <0x0 0xc3f000c 0x0 0x8>,
-> +			      <0x0 0x85fe0000 0x0 0x20000>;
-> +			compatible = "qcom,cmd-db";
-> +		};
-> +	};
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 13049d4..6720bd0 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+new file mode 100644
+index 0000000..88bf310
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_clk_info dm355_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED |
++		 PLL_PREDIV_FIXED8 | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_pll_clk_info dm355_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++int __init dm355_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base);
++
++	for (info = dm355_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	return 0;
++}
++
++int __init dm355_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base);
++
++	for (info = dm355_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 7c56397..f72ea30 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -756,6 +756,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
+ 	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
++	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
++	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 545a156..6bd73d7 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -126,4 +126,7 @@ int da850_pll1_init(struct device *dev, void __iomem *base);
+ int of_da850_pll0_init(struct device *dev, void __iomem *base);
+ int of_da850_pll1_init(struct device *dev, void __iomem *base);
+ 
++int dm355_pll1_init(struct device *dev, void __iomem *base);
++int dm355_pll2_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+-- 
+2.7.4
