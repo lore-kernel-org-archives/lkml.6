@@ -1,52 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751545AbeBTMMM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:12:12 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44323 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751450AbeBTMML (ORCPT
+        id S1751709AbeBTMV2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:21:28 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:52960 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751521AbeBTMV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:12:11 -0500
-X-Google-Smtp-Source: AH8x227RI/5Mp1kyd0b9Z7qiyZSPVFXf1wJ/BMKeeVghBMePLNP+qwAI9EaErxhmWBG5AhyByV0IiQ==
-Subject: Re: [PATCH] regulator: core: Handle PM_SUSPEND_TO_IDLE
- suspend_state_t
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180218170424.11976-1-hdegoede@redhat.com>
- <20180219113444.GA32761@sirena.org.uk>
- <5486ab34-4e5b-e2d5-9475-4d7e24a0cda6@redhat.com>
- <20180220114759.GB6378@sirena.org.uk>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <066afd48-896f-b8fa-0bc0-7e3b0b76e33b@redhat.com>
-Date: Tue, 20 Feb 2018 13:12:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 20 Feb 2018 07:21:26 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 19 Feb 2018 11:42:04 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Jonathan Cameron <jic23@kernel.org>
+CC: <broonie@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 4/5] iio: accel: bcm150: Remove handling for regmap
+ raw_read_max
+Message-ID: <20180219114204.nl3zsq55tezy7hvh@localhost.localdomain>
+References: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
+ <20180215175220.2691-4-ckeepax@opensource.cirrus.com>
+ <20180217140935.74447c0b@archlinux>
 MIME-Version: 1.0
-In-Reply-To: <20180220114759.GB6378@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180217140935.74447c0b@archlinux>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802200158
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 20-02-18 12:47, Mark Brown wrote:
-> On Mon, Feb 19, 2018 at 09:59:13PM +0100, Hans de Goede wrote:
->> On 19-02-18 12:34, Mark Brown wrote:
+On Sat, Feb 17, 2018 at 02:09:35PM +0000, Jonathan Cameron wrote:
+> On Thu, 15 Feb 2018 17:52:19 +0000
+> Charles Keepax <ckeepax@opensource.cirrus.com> wrote:
 > 
->> There are multiple callers of regulator_get_suspend_state() in
->> drivers/regulator/core.c, I assume you refer to this commit:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/regulator/core.c?id=57a0dd187956ea04870f4bbbf25a63c425ee7cad
+> > The regmap core now handles splitting up transactions according to
+> > max_raw_read, so this code is no longer required in client drivers.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Hi Charles,
 > 
-> No, he sent a second fix which isn't in Linus' tree yet, see my -next.
+> This looks fine to me.  I'll need to wait for Mark's patches to work
+> their way through to mainline before I can apply this however.
+> 
+> Please give me a poke when that has happened if it looks like I have
+> forgotten it.
+> 
 
-I might just be looking at the wrong place and if so I'm sorry, but I
-don't see any (additional) fixes related to this here:
+Yeah can do.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/log/drivers/regulator?h=for-next
-
-Regards,
-
-Hans
+Thanks,
+Charles
