@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeBSNAG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:00:06 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:55185 "EHLO
+        id S1752809AbeBSNBi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:01:38 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:5714 "EHLO
         smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeBSNAE (ORCPT
+        with ESMTP id S1752691AbeBSNBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:00:04 -0500
+        Mon, 19 Feb 2018 08:01:35 -0500
 X-IronPort-AV: E=Sophos;i="5.46,535,1511827200";
-   d="scan'208";a="720362985"
+   d="scan'208";a="720363854"
 From: David Woodhouse <dwmw@amazon.co.uk>
-To: mpe@ellerman.id.au, benh@kernel.crashing.org, bhelgaas@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+To: monstr@monstr.eu, bhelgaas@google.com, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Subject: [PATCH] powerpc: Use generic pci_mmap_resource_range()
-Date: Mon, 19 Feb 2018 12:59:51 +0000
-Message-Id: <1519045191-22145-1-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH] microblaze: Use generic pci_mmap_resource_range()
+Date: Mon, 19 Feb 2018 13:01:23 +0000
+Message-Id: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,44 +28,42 @@ Let's get on with that eradication...
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/powerpc/include/asm/pci.h   |   9 ++--
- arch/powerpc/kernel/pci-common.c | 106 ++++-----------------------------------
- 2 files changed, 15 insertions(+), 100 deletions(-)
+ arch/microblaze/include/asm/pci.h |  7 +--
+ arch/microblaze/pci/pci-common.c  | 99 ++++-----------------------------------
+ 2 files changed, 13 insertions(+), 93 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/pci.h b/arch/powerpc/include/asm/pci.h
-index d82802f..401c62a 100644
---- a/arch/powerpc/include/asm/pci.h
-+++ b/arch/powerpc/include/asm/pci.h
-@@ -76,10 +76,11 @@ extern int pci_proc_domain(struct pci_bus *bus);
+diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
+index 114b934..5de871e 100644
+--- a/arch/microblaze/include/asm/pci.h
++++ b/arch/microblaze/include/asm/pci.h
+@@ -47,9 +47,10 @@ extern int pci_proc_domain(struct pci_bus *bus);
  
  struct vm_area_struct;
  
--/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() and it does WC */
+-/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() */
 -#define HAVE_PCI_MMAP		1
 -#define arch_can_pci_mmap_io()	1
--#define arch_can_pci_mmap_wc()	1
 +/* Tell PCI code what kind of PCI resource mappings we support */
 +#define HAVE_PCI_MMAP			1
 +#define ARCH_GENERIC_PCI_MMAP_RESOURCE	1
 +#define arch_can_pci_mmap_io()		1
-+#define arch_can_pci_mmap_wc()		1
  
  extern int pci_legacy_read(struct pci_bus *bus, loff_t port, u32 *val,
  			   size_t count);
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index 446c796..fe9733f 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -410,72 +410,22 @@ static int pci_read_irq_line(struct pci_dev *pci_dev)
+diff --git a/arch/microblaze/pci/pci-common.c b/arch/microblaze/pci/pci-common.c
+index ae79e86..161f975 100644
+--- a/arch/microblaze/pci/pci-common.c
++++ b/arch/microblaze/pci/pci-common.c
+@@ -151,72 +151,22 @@ void pcibios_set_master(struct pci_dev *dev)
  }
  
  /*
 - * Platform support for /proc/bus/pci/X/Y mmap()s,
 - * modelled on the sparc64 implementation by Dave Miller.
+- *  -- paulus.
 + * Platform support for /proc/bus/pci/X/Y mmap()s.
-  *  -- paulus.
   */
--
+ 
 -/*
 - * Adjust vm_pgoff of VMA such that it is the physical page offset
 - * corresponding to the 32-bit pci bus offset for DEV requested by the user.
@@ -86,8 +83,10 @@ index 446c796..fe9733f 100644
 -	struct pci_controller *hose = pci_bus_to_host(dev->bus);
 -	unsigned long io_offset = 0;
 -	int i, res_bit;
--
--	if (hose == NULL)
++	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
++	resource_size_t ioaddr = pci_resource_start(pdev, bar);
+ 
+ 	if (!hose)
 -		return NULL;		/* should never happen */
 -
 -	/* If memory, add on the PCI bridge address offset */
@@ -109,8 +108,7 @@ index 446c796..fe9733f 100644
 -	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
 -		struct resource *rp = &dev->resource[i];
 -		int flags = rp->flags;
-+	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-+	resource_size_t ioaddr = pci_resource_start(pdev, bar);
++		return -EINVAL;		/* should never happen */
  
 -		/* treat ROM as memory (should be already) */
 -		if (i == PCI_ROM_RESOURCE)
@@ -123,9 +121,7 @@ index 446c796..fe9733f 100644
 -		/* In the range of this resource? */
 -		if (*offset < (rp->start & PAGE_MASK) || *offset > rp->end)
 -			continue;
-+	if (!hose)
-+		return -EINVAL;
- 
+-
 -		/* found it! construct the final physical address */
 -		if (mmap_state == pci_mmap_io)
 -			*offset += hose->io_base_phys - io_offset;
@@ -140,11 +136,10 @@ index 446c796..fe9733f 100644
  }
  
  /*
-@@ -527,42 +477,6 @@ pgprot_t pci_phys_mem_access_prot(struct file *file,
+@@ -268,37 +218,6 @@ pgprot_t pci_phys_mem_access_prot(struct file *file,
  	return prot;
  }
  
--
 -/*
 - * Perform the actual remap of the pages for a PCI device mapping, as
 - * appropriate for this architecture.  The region in the process to map
@@ -155,8 +150,7 @@ index 446c796..fe9733f 100644
 - *
 - * Returns a negative error code on failure, zero on success.
 - */
--int pci_mmap_page_range(struct pci_dev *dev, int bar,
--			struct vm_area_struct *vma,
+-int pci_mmap_page_range(struct pci_dev *dev, int bar, struct vm_area_struct *vma,
 -			enum pci_mmap_state mmap_state, int write_combine)
 -{
 -	resource_size_t offset =
@@ -169,10 +163,7 @@ index 446c796..fe9733f 100644
 -		return -EINVAL;
 -
 -	vma->vm_pgoff = offset >> PAGE_SHIFT;
--	if (write_combine)
--		vma->vm_page_prot = pgprot_noncached_wc(vma->vm_page_prot);
--	else
--		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+-	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
 -
 -	ret = remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
 -			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
