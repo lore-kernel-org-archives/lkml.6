@@ -1,121 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeBSQ3b (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:29:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33352 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752897AbeBSQ31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:29:27 -0500
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-To: Maciej Purski <m.purski@samsung.com>, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thibault Saunier <thibault.saunier@osg.samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
-Date: Mon, 19 Feb 2018 16:29:12 +0000
+        id S1753252AbeBSQ3u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:29:50 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44339 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeBSQ3t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:29:49 -0500
+X-Google-Smtp-Source: AH8x226sWkWOkFospRrVGbBBFV9NLe6J2euIboYNmrpNTbOukJMRrXEeiITSva60TgcLU3pfCUFOig==
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 1/3] locking/ww_mutex: cleanup lock->ctx usage in amdgpu
+To: christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180215141944.4332-1-christian.koenig@amd.com>
+ <20180219152421.GQ22199@phenom.ffwll.local>
+ <cbfec1ed-d01f-1d4f-c3c0-cc04b93bc58c@gmail.com>
+ <20180219161544.GY22199@phenom.ffwll.local>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <2e696981-6b4a-e292-c16a-0f3477dbf8ce@gmail.com>
+Date: Mon, 19 Feb 2018 17:29:46 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+In-Reply-To: <20180219161544.GY22199@phenom.ffwll.local>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maciej,
+Am 19.02.2018 um 17:15 schrieb Daniel Vetter:
+> On Mon, Feb 19, 2018 at 04:41:55PM +0100, Christian König wrote:
+>> Am 19.02.2018 um 16:24 schrieb Daniel Vetter:
+>>> On Thu, Feb 15, 2018 at 03:19:42PM +0100, Christian König wrote:
+>>>> amdgpu needs to verify if userspace sends us valid addresses and the simplest
+>>>> way of doing this is to check if the buffer object is locked with the ticket
+>>>> of the current submission.
+>>>>
+>>>> Clean up the access to the ww_mutex internals by providing a function
+>>>> for this and extend the check to the thread owning the underlying mutex.
+>>>>
+>>>> Signed-off-by: Christian König <christian.koenig@amd.com>
+>>>> ---
+>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |  3 ++-
+>>>>    include/linux/ww_mutex.h               | 17 +++++++++++++++++
+>>>>    2 files changed, 19 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>>>> index eaa3cb0c3ad1..4c04b560e358 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>>>> @@ -1594,7 +1594,8 @@ int amdgpu_cs_find_mapping(struct amdgpu_cs_parser *parser,
+>>>>    	*map = mapping;
+>>>>    	/* Double check that the BO is reserved by this CS */
+>>>> -	if (READ_ONCE((*bo)->tbo.resv->lock.ctx) != &parser->ticket)
+>>>> +	if (!ww_mutex_is_owned_by(&(*bo)->tbo.resv->lock, current,
+>>>> +				  &parser->ticket))
+>>>>    		return -EINVAL;
+>>>>    	if (!((*bo)->flags & AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS)) {
+>>>> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+>>>> index 39fda195bf78..dd580db289e8 100644
+>>>> --- a/include/linux/ww_mutex.h
+>>>> +++ b/include/linux/ww_mutex.h
+>>>> @@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
+>>>>    	return mutex_is_locked(&lock->base);
+>>>>    }
+>>>> +/**
+>>>> + * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
+>>>> + * @lock: the mutex to be queried
+>>>> + * @task: the task structure to check
+>>>> + * @ctx: the w/w acquire context to test
+>>>> + *
+>>>> + * Returns true if the mutex is locked in the context by the given task, false
+>>>> + * otherwise.
+>>>> + */
+>>>> +static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
+>>>> +					struct task_struct *task,
+>>>> +					struct ww_acquire_ctx *ctx)
+>>>> +{
+>>>> +	return likely(__mutex_owner(&lock->base) == task) &&
+>>>> +		READ_ONCE(lock->ctx) == ctx;
+>>> Just comparing the context should be good enough. If you ever pass a
+>>> ww_acquire_ctx which does not belong to your own thread your seriously
+>>> wreaking things much worse already (and if we do catch that, should
+>>> probably lock the ctx to a given task when ww-mutex debugging is enabled).
+>>>
+>>> That also simplifies the function signature.
+>>>
+>>> Of course that means if you don't have a ctx, you can't test ownership of
+>>> a ww_mute, but I think that's not a really valid use-case.
+>> Well exactly that is the use case in TTM, see patch #3 in this series.
+>>
+>> In TTM the evicted BOs are trylocked and so we need a way of testing for
+>> ownership without a context.
+> I don't think your final patch to keep ww_mutex locked until the end
+> works. You can't really nest ww_mutex_trylock with ww_mutex at will (since
+> trylock bypasses the entire deadlock avoidance).
 
-On 19/02/18 15:43, Maciej Purski wrote:
-> When a driver is going to use clk_bulk_get() function, it has to
-> initialize an array of clk_bulk_data, by filling its id fields.
-> 
-> Add a new function to the core, which dynamically allocates
-> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
-> function, which frees the array allocated by clk_bulk_alloc() function.
-> Add a managed version of clk_bulk_alloc().
+Well that is not a problem at all. See we don't nest trylock with normal 
+lock acquiring, cause that would indeed bypass the whole deadlock detection.
 
-Seeing how every subsequent patch ends up with the roughly this same stanza:
+Instead we first use ww_mutex_acquire to lock all BOs which are needed 
+for a command submission, including the deadlock detection.
 
-	x = devm_clk_bulk_alloc(dev, num, names);
-	if (IS_ERR(x)
-		return PTR_ERR(x);
-	ret = devm_clk_bulk_get(dev, x, num);
+Then all additional BOs which needed to be evicted to fulfill the 
+current request are trylocked.
 
-I wonder if it might be better to simply implement:
+> If this is really what you want to do, then we need a
+> ww_mutex_trylock_ctx, which also fills out the ctx value (so that other
+> threads can correctly resolve deadlocks when you hold that lock while
+> trying to grab additional locks). In which case you really don't need the
+> task pointer.
 
-	int devm_clk_bulk_alloc_get(dev, &x, num, names)
+Actually considered that as well, but it turned out that this is exactly 
+what I don't want.
 
-that does the whole lot in one go, and let drivers that want to do more 
-fiddly things continue to open-code the allocation.
+Cause then we wouldn't be able to distinct ww_mutex locked with a 
+context (because they are part of the submission) and without (because 
+TTM trylocked them).
 
-But perhaps that's an abstraction too far... I'm not all that familiar 
-with the lie of the land here.
+> Yes it's a disappointment that lockdep doesn't correctly track trylocks,
+> it just does basic sanity checks, but then drops them on the floor wrt
+> depency tracking. Just in case you wonder why you're not getting a
+> lockdeps splat for this. Unfortunately I don't understand lockdep enough
+> to be able to fix this gap.
 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
->   drivers/clk/clk-bulk.c   | 16 ++++++++++++
->   drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
->   include/linux/clk.h      | 64 ++++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 113 insertions(+), 4 deletions(-)
-> 
+Sorry to disappoint you, but lockdep is indeed capable to correctly 
+track those trylocked BOs.
 
-[...]
-> @@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
->   
->   #else /* !CONFIG_HAVE_CLK */
->   
-> +static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
-> +						   const char **clk_ids)
-> +{
-> +	return NULL;
+Got quite a bunch of warning before I was able to resolve to this solution.
 
-Either way, is it intentional not returning an ERR_PTR() value in this 
-case? Since NULL will pass an IS_ERR() check, it seems a bit fragile for 
-an allocation call to apparently succeed when the whole API is 
-configured out (and I believe introducing new uses of IS_ERR_OR_NULL() 
-is in general strongly discouraged.)
+Christian.
 
-Robin.
-
-> +}
-> +
-> +static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev,
-> +							int num_clks,
-> +							const char **clk_ids)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline void clk_bulk_free(struct clk_bulk_data *clks)
-> +{
-> +}
-> +
->   static inline struct clk *clk_get(struct device *dev, const char *id)
->   {
->   	return NULL;
-> 
+> -Daniel
+>
+>> Christian.
+>>
+>>>    And not needed
+>>> for cmd submission, where you need the ctx anyway.
+>>>
+>>> Besides this interface nit looks all good. With the task check&parameter
+>>> removed:
+>>>
+>>> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>>
+>>> -Daniel
+>>>
+>>>> +}
+>>>> +
+>>>>    #endif
+>>>> -- 
+>>>> 2.14.1
+>>>>
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
