@@ -1,101 +1,96 @@
-Return-Path: <tursulin@ursulin.net>
-ARC-Seal: i=1; a=rsa-sha256; t=1519035025; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519043144; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZirMHpyyC9tfTeldpNDDiQ8oaGXVue+f+BZmSGlnlInL9sRPResRPArXbjVLMd83cj
-         El+KrOFuePd4IgovDvkW2XRJIMWvYWkgElyR5VmgYqjwKQ7x+eu3R9RuzrQfx/0mQbYi
-         lBCcSTo/fPDFNxtDGkTkxXaz4VUpwDy2AowNy1XcOlElnlNMcjARTTBYvUguwlDdG3MC
-         gPuiDoZYTGJDe/1v84aksp2WXYwralr9ssYKpUn1L7FW/cyeMOswHpOHaMplc5B+zTpq
-         cX+Silb9crZRopDk+PR7RlVY1vnMTd7xBLm4rRQf2dvdC2TKwhXR7Km9G9SpdMkGz4DZ
-         Sk/w==
+        b=bk93PH2f+IsOKKFrjR89LulwBH8LT87HKXqakqhUKpU3faxD3iZCvQ8jH0vQT0rvjY
+         bgb6OIBo9TWjIyrFck4BcjI0oo2cwc90G2yGVnzTUgLIJlf/2jdbAUyIv1xZ4+AaeFYR
+         4uur8wjFyiQsnfhMJ6OsYpsl9pllg0UMoFfS9Tk47BJ+Din0M36QdO21a79juyvjhdxf
+         F0y3zq0dBkqyup36+bgp/zJ23H2mZPWvD/JcTrq/cwnDuCKRyqd8BSfo4LOOPoHKfAQa
+         Nr5zQmB0ZNMFbqdETjtrNajMP/4XuPF+J1F98P75UA+i/lb7jYJgjXqwoFW7saMNDeiv
+         iG5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=TEy/v89+jdPEfGMEL5KFPuaajehok8pTuBXjjyJom9w=;
-        b=E6CvrJeHDU8A9lEki3DLFOc4dYPGCOnkOuyt9uO65vZTa9HmVp6DD2iTcLJYXaANW5
-         QKsenAUIwYnJyYssj1nbd0ocarT9jhTl0zgPqlGDB6AmKuLDa9r7FBs0+NTcxMIXFfoP
-         qxPU98yzX/f5KS/AFd4y6o5YN3OTa22+mHpTMtfNUFkVaTD/7AkVpZgwvtGVtW4ZYxEh
-         X3xt4Lf0iitfyRBRUp7EojDCGrFPVo748ZfimnxdIaHjubUQIr+eoaRqVunfnVq0mLaq
-         P+g2R2cVWKuW1u1uskxyhTe6alOY28nssyEFHWx+B1NviDg/9wmPHmNUmW12Rr7Rzk11
-         e4fA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=kb7+quyTmrICuy4Gdk1uVzdDyf8EFoAMUx+fAEjXiUQ=;
+        b=fy0R93yY8M41I2ZkFnTg1vv7w3gI22REhPVHz2n+P1F5OxYYcheilenuTb0xHIsJOq
+         pqGxNX1MWIpq+nvJp91VHSDSzmzHUj0vD8rqRE6gEzVINQZByN6ct4xh7t0IzjTpxO4U
+         wZT2Fo4EqbrWGuazY3u08BtuiQk1/ZPOk0Xx4D5Y0/ELswofoTY7zHbOuzeH02f0zvWu
+         /PifAANG5I17Z+dgCCpapEQ4WUMeCZMlGMu8ely/ctsxrWsfkinIVwtr3OqJb9hBdBEX
+         mpntUSPvUX5L9OiCV719lcBe1fO7dQu6NL0ysd6j3WR14HvEvZWXIcEmbhGKPa1v7xgC
+         teuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ursulin-net.20150623.gappssmtp.com header.s=20150623 header.b=FYNxnJZ9;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of tursulin@ursulin.net) smtp.mailfrom=tursulin@ursulin.net
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Id6scxzg;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ursulin-net.20150623.gappssmtp.com header.s=20150623 header.b=FYNxnJZ9;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of tursulin@ursulin.net) smtp.mailfrom=tursulin@ursulin.net
-X-Google-Smtp-Source: AH8x224aTnUPfi7rQCr3cRr0e2ChqsCvpMikS+xlEkEDZCygaLr8Ab5Mgw/VpVIptYLA80Ncd52IMg==
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Id6scxzg;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225UQb4TFHMAYiaWFcpPILlov8O1z77vXBldnP5VU5KigM7lTVNJL1DchoID06cYVNA/sGPIvszRGmjuAlr+WaY=
+MIME-Version: 1.0
+In-Reply-To: <8eacaf1d-1df8-edc6-36f6-d02748b50baa@ursulin.net>
+References: <20180215033356.6978-1-khandual@linux.vnet.ibm.com>
+ <201802180359.yuetSevh%fengguang.wu@intel.com> <c407c32f-a7b6-06c5-4a03-109445e27427@linux.vnet.ibm.com>
+ <8eacaf1d-1df8-edc6-36f6-d02748b50baa@ursulin.net>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 19 Feb 2018 14:25:44 +0200
+Message-ID: <CAHp75VfRQ-J0PDDuaziX+O2pjZqqtfag8V7FDQkwvBwtfmx24w@mail.gmail.com>
 Subject: Re: [PATCH V2] lib/scatterlist: Add SG_CHAIN and SG_END macros for
  LSB encodings
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
- kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, bart.vanassche@wdc.com, jthumshirn@suse.de,
- axboe@kernel.dk, chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com
-References: <20180215033356.6978-1-khandual@linux.vnet.ibm.com>
- <201802180359.yuetSevh%fengguang.wu@intel.com>
- <c407c32f-a7b6-06c5-4a03-109445e27427@linux.vnet.ibm.com>
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-Message-ID: <8eacaf1d-1df8-edc6-36f6-d02748b50baa@ursulin.net>
-Date: Mon, 19 Feb 2018 10:10:23 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <c407c32f-a7b6-06c5-4a03-109445e27427@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bart Van Assche <bart.vanassche@wdc.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>, Jens Axboe <axboe@kernel.dk>,
+	Chris Wilson <chris@chris-wilson.co.uk>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592436393983047782?=
-X-GMAIL-MSGID: =?utf-8?q?1592823671003297265?=
+X-GMAIL-MSGID: =?utf-8?q?1592832184588821354?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Mon, Feb 19, 2018 at 12:10 PM, Tvrtko Ursulin <tursulin@ursulin.net> wrote:
+> On 19/02/18 04:12, Anshuman Khandual wrote:
+>> On 02/18/2018 12:58 AM, kbuild test robot wrote:
 
-On 19/02/18 04:12, Anshuman Khandual wrote:
-> On 02/18/2018 12:58 AM, kbuild test robot wrote:
->> Hi Anshuman,
+
+>>>      #define SG_END   0x02
+>>>          In file included from include/linux/blkdev.h:28:0,
+>>>                      from drivers/staging/rts5208/rtsx.c:23:
+>>>     include/linux/scatterlist.h:69:0: note: this is the location of the
+>>> previous definition
+>>>      #define SG_END  0x02UL
+>>>
+>>> vim +/SG_END +343 drivers/staging/rts5208/rtsx_chip.h
 >>
->> Thank you for the patch! Perhaps something to improve:
 >>
->> [auto build test WARNING on linus/master]
->> [also build test WARNING on v4.16-rc1 next-20180216]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Anshuman-Khandual/lib-scatterlist-Add-SG_CHAIN-and-SG_END-macros-for-LSB-encodings/20180218-015554
->> config: x86_64-randconfig-s3-02180201 (attached as .config)
->> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
->> reproduce:
->>          # save the attached .config to linux build tree
->>          make ARCH=x86_64
->>
->> All warnings (new ones prefixed by >>):
->>
->>     In file included from drivers/staging/rts5208/rtsx.h:180:0,
->>                      from drivers/staging/rts5208/rtsx.c:28:
->>>> drivers/staging/rts5208/rtsx_chip.h:343:0: warning: "SG_END" redefined
->>      #define SG_END   0x02
->>      
->>     In file included from include/linux/blkdev.h:28:0,
->>                      from drivers/staging/rts5208/rtsx.c:23:
->>     include/linux/scatterlist.h:69:0: note: this is the location of the previous definition
->>      #define SG_END  0x02UL
->>      
->>
->> vim +/SG_END +343 drivers/staging/rts5208/rtsx_chip.h
-> 
-> SG_END is already defined in a driver. Hence shall we change back
-> 'SG_END' definition as 'SG_EMARK' or any other suggestions ?
+>> SG_END is already defined in a driver.
 
-Maybe SG_LAST? Going by existence of sg_is_chain and sg_is_last.
+In some driver which is by the way staging one.
 
-And also would probably be good to add something like:
+> Hence shall we change back
+>> 'SG_END' definition as 'SG_EMARK' or any other suggestions ?
+>
+>
+> Maybe SG_LAST? Going by existence of sg_is_chain and sg_is_last.
 
-#define SG_PAGE_BITS (SG_CHAIN | SG_LAST)
-#define SG_PAGE_MASK (~SG_PAGE_BITS)
+The mentioned driver should be cleaned up as well (and perhaps to start with).
+It allows us to rectify constants in global namespace.
 
-?
+So, from my point of view the driver code is ugly in a sense it
+doesn't have its own namespace for constants.
 
-Regards,
+After we fix the driver, the rest would be whatever we get agreed on.
 
-Tvrtko
+> And also would probably be good to add something like:
+>
+> #define SG_PAGE_BITS (SG_CHAIN | SG_LAST)
+> #define SG_PAGE_MASK (~SG_PAGE_BITS)
+>
+> ?
+
+Good suggestion,
+
+-- 
+With Best Regards,
+Andy Shevchenko
