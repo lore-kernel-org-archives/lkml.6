@@ -1,220 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752322AbeBSKBJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:01:09 -0500
-Received: from lhrrgout.huawei.com ([194.213.3.17]:26626 "EHLO huawei.com"
+        id S1752474AbeBSKBq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:01:46 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43508 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752129AbeBSKBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:01:08 -0500
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Topic: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
- update iova list
-Thread-Index: AQHTpkHzP3l07Mrork29+TliCTbhtaOnegMAgAQIQeA=
-Date: Mon, 19 Feb 2018 10:00:53 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838648B14@FRAEML521-MBX.china.huawei.com>
-References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
-        <20180215094504.4972-3-shameerali.kolothum.thodi@huawei.com>
- <20180216141810.55d754da@w520.home>
-In-Reply-To: <20180216141810.55d754da@w520.home>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752224AbeBSKBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:01:45 -0500
+Date: Mon, 19 Feb 2018 11:01:40 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH 6/9] perf tools: Don't search for active kernel start in
+ __machine__create_kernel_maps
+Message-ID: <20180219100140.GA17630@krava>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+ <20180215122635.24029-7-jolsa@kernel.org>
+ <20180219022036.GB1583@sejong>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180219022036.GB1583@sejong>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 19, 2018 at 11:20:36AM +0900, Namhyung Kim wrote:
 
+SNIP
 
-> -----Original Message-----
-> From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> Sent: Friday, February 16, 2018 9:18 PM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; John Garry <john.garry@huawei.com>; xuwei (O)
-> <xuwei5@huawei.com>
-> Subject: Re: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
-> update iova list
-> 
-> On Thu, 15 Feb 2018 09:45:00 +0000
-> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
-> 
-> > This retrieves the reserved regions associated with dev group and
-> > checks for conflicts with any existing dma mappings. Also update
-> > the iova list excluding the reserved regions.
-> >
-> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 86
-> ++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 85 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> b/drivers/vfio/vfio_iommu_type1.c
-> > index 4726f55..4db87a9 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -1303,6 +1303,72 @@ static int vfio_iommu_aper_resize(struct
-> list_head *iova,
-> >  	return 0;
-> >  }
-> >
-> > +/*
-> > + * Check reserved region conflicts with existing dma mappings
-> > + */
-> > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-> > +				struct list_head *resv_regions)
+> > +static void machine__set_kernel_mmap(struct machine *machine,
+> > +				     u64 start, u64 end)
 > > +{
-> > +	struct iommu_resv_region *region;
+> > +	int i;
 > > +
-> > +	/* Check for conflict with existing dma mappings */
-> > +	list_for_each_entry(region, resv_regions, list) {
-> > +		if (vfio_find_dma(iommu, region->start, region->length))
-> > +			return true;
-> > +	}
+> > +	for (i = 0; i < MAP__NR_TYPES; i++) {
+> > +		machine->vmlinux_maps[i]->start = start;
+> > +		machine->vmlinux_maps[i]->end   = end;
 > > +
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * Check iova region overlap with  reserved regions and
-> > + * exclude them from the iommu iova range
-> > + */
-> > +static int vfio_iommu_resv_exclude(struct list_head *iova,
-> > +					struct list_head *resv_regions)
-> > +{
-> > +	struct iommu_resv_region *resv;
-> > +	struct vfio_iova *n, *next;
-> > +
-> > +	list_for_each_entry(resv, resv_regions, list) {
-> > +		phys_addr_t start, end;
-> > +
-> > +		start = resv->start;
-> > +		end = resv->start + resv->length - 1;
-> > +
-> > +		list_for_each_entry_safe(n, next, iova, list) {
-> > +			int ret = 0;
-> > +
-> > +			/* No overlap */
-> > +			if ((start > n->end) || (end < n->start))
-> > +				continue;
-> > +			/*
-> > +			 * Insert a new node if current node overlaps with the
-> > +			 * reserve region to exlude that from valid iova range.
-> > +			 * Note that, new node is inserted before the current
-> > +			 * node and finally the current node is deleted keeping
-> > +			 * the list updated and sorted.
-> > +			 */
-> > +			if (start > n->start)
-> > +				ret = vfio_insert_iova(n->start, start - 1,
-> > +								 &n->list);
-> > +			if (!ret && end < n->end)
-> > +				ret = vfio_insert_iova(end + 1, n->end,
-> > +							     &n->list);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			list_del(&n->list);
-> > +			kfree(n);
-> > +		}
-> > +	}
-> > +
-> > +	if (list_empty(iova))
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int vfio_iommu_get_iova_copy(struct vfio_iommu *iommu,
-> >  				struct list_head *iova_copy)
-> >  {
-> > @@ -1346,7 +1412,8 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
-> >  	bool resv_msi, msi_remap;
-> >  	phys_addr_t resv_msi_base;
-> >  	struct iommu_domain_geometry geo;
-> > -	struct list_head iova_copy;
-> > +	struct list_head iova_copy, group_resv_regions;
-> > +	struct iommu_resv_region *resv, *resv_next;
-> >  	struct vfio_iova *iova, *iova_next;
-> >
-> >  	mutex_lock(&iommu->lock);
-> > @@ -1426,6 +1493,14 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
-> >  		goto out_detach;
-> >  	}
-> >
-> > +	INIT_LIST_HEAD(&group_resv_regions);
+> > +		/*
+> > +		 * Be a bit paranoid here, some perf.data file came with
+> > +		 * a zero sized synthesized MMAP event for the kernel.
+> > +		 */
+> > +		if (machine->vmlinux_maps[i]->end == 0)
+> > +			machine->vmlinux_maps[i]->end = ~0ULL;
 > 
-> LIST_HEAD()
-
-Ok.
-
-> > +	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
-> > +
-> > +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
-> > +		ret = -EINVAL;
-> > +		goto out_detach;
-> > +	}
-> > +
-> >  	/* Get a copy of the current iova list and work on it */
-> >  	INIT_LIST_HEAD(&iova_copy);
-> >  	ret = vfio_iommu_get_iova_copy(iommu, &iova_copy);
-> > @@ -1437,6 +1512,10 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
-> >  	if (ret)
-> >  		goto out_detach;
-> >
-> > +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
-> > +	if (ret)
-> > +		goto out_detach;
-> > +
-> >  	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
-> >
-> >  	INIT_LIST_HEAD(&domain->group_list);
-> > @@ -1497,6 +1576,9 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
-> >  	/* Delete the old one and insert new iova list */
-> >  	vfio_iommu_insert_iova_copy(iommu, &iova_copy);
-> >
-> > +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
-> > +		kfree(resv);
+> Hmm.. this will make map_groups__fixup_end() below not working since
+> it only updates if the end address of a map is zero.
 > 
-> list_del() here and below, also this can be done after the mutex unlock.
+> And about the paranoid check, AFAIK the only case it cares is the
+> machine__process_kernel_mmap_event() which calls it with
+> event->mmap.start and event->mmap.start + event->mmap.len.  Thus, in
+> order for the end to be zero, both start and len should be zero.  Then
+> I think this condition can be changed like below:
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index fe27ef55cbb9..c8acb603c359 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -1226,7 +1226,7 @@ static void machine__set_kernel_mmap(struct machine *machine,
+>                  * Be a bit paranoid here, some perf.data file came with
+>                  * a zero sized synthesized MMAP event for the kernel.
+>                  */
+> -               if (machine->vmlinux_maps[i]->end == 0)
+> +               if (start == 0 && end == 0)
+>                         machine->vmlinux_maps[i]->end = ~0ULL;
+>         }
 
-Ok. I thought that as the reserved regions are local to this function, list_del() is
-not required.  Same for the iova_copy in the first patch as well(which I missed to
-comment there).
+right, the call from machine__create_kernel_maps will have always
+the start != 0 and there will be subsequent map_groups__fixup_end
+call..
 
-Thanks,
-Shameer 
+seems ok to me.. will you send the patch?
 
-> > +
-> >  	mutex_unlock(&iommu->lock);
-> >
-> >  	return 0;
-> > @@ -1507,6 +1589,8 @@ static int vfio_iommu_type1_attach_group(void
-> *iommu_data,
-> >  	iommu_domain_free(domain->domain);
-> >  	list_for_each_entry_safe(iova, iova_next, &iova_copy, list)
-> >  		kfree(iova);
-> > +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
-> > +		kfree(resv);
-> >  out_free:
-> >  	kfree(domain);
-> >  	kfree(group);
+thanks,
+jirka
