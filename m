@@ -1,125 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeBSMTx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 07:19:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60758 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752678AbeBSMTv (ORCPT
+        id S1752753AbeBSMUu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 07:20:50 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:60970 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752678AbeBSMUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 07:19:51 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, Akshu Agrawal <akshu.agrawal@amd.com>,
-        Harsha Priya <harshapriya.n@intel.com>, linux-kernel@vger.kernel.org,
-        Shengjiu Wang <shengjiu.wang@nxp.com>, Takashi Iwai <tiwai@suse.com>,
-        Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mihai Serban <mihai.serban@nxp.com>,
-        Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>,
-        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>,
-        Naveen Manohar <naveen.m@intel.com>, Dylan Reid <dgreid@chromium.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Alex Deucher <alexander.deucher@amd.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: intel: kbl_da7219_max98357: replace codec to component" to the asoc tree
-In-Reply-To: <874lmdpzxn.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1enkQ5-0002rw-Px@debutante>
-Date: Mon, 19 Feb 2018 12:19:45 +0000
+        Mon, 19 Feb 2018 07:20:48 -0500
+Date: Mon, 19 Feb 2018 13:20:46 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Alessandro Zummo <a.zummo@towertech.it>,
+        alexandre.belloni@bootlin.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3] rtc: ac100: Fix ac100 determine rate bug
+Message-ID: <20180219122046.kap53tbui6av5irl@flea.lan>
+References: <20180214135612.21356-1-embed3d@gmail.com>
+ <20180215141154.monvwx25awwetqrc@flea.lan>
+ <00ece3d8-52ac-c51d-1867-97f7fd84dadf@gmail.com>
+ <CAGb2v67fP4-xxAAPWAa0+YtWY3xvQX=5XX7koq-h8USvT+YA-A@mail.gmail.com>
+ <20180216130741.jjtjwbnjcmsnz3ds@flea.lan>
+ <CAGb2v64xzVO0n8vTx9TfaoPPXv-85OoDk9y4k5KgLfkz70w2FA@mail.gmail.com>
+ <aae613df-f7d8-d9dd-306b-fcda2bbb770f@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oizlize64jg2tdqs"
+Content-Disposition: inline
+In-Reply-To: <aae613df-f7d8-d9dd-306b-fcda2bbb770f@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   ASoC: intel: kbl_da7219_max98357: replace codec to component
+--oizlize64jg2tdqs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Sun, Feb 18, 2018 at 06:55:58PM +0100, Philipp Rossak wrote:
+> On 16.02.2018 14:15, Chen-Yu Tsai wrote:
+> > On Fri, Feb 16, 2018 at 9:07 PM, Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > > On Fri, Feb 16, 2018 at 12:10:18PM +0800, Chen-Yu Tsai wrote:
+> > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> > > > > b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> > > > > index 6550bf0e594b..6f56d429f17e 100644
+> > > > > --- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> > > > > +++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+> > > > > @@ -175,11 +175,18 @@
+> > > > >                          compatible =3D "x-powers,ac100-rtc";
+> > > > >                          interrupt-parent =3D <&r_intc>;
+> > > > >                          interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+> > > > > -                       clocks =3D <&ac100_codec>;
+> > > > > +                       clocks =3D <&ac100_rtc_32k>;
+> > > > >                          #clock-cells =3D <1>;
+> > > > >                          clock-output-names =3D "cko1_rtc",
+> > > > >                                               "cko2_rtc",
+> > > > >                                               "cko3_rtc";
+> > > > > +
+> > > > > +                       ac100_rtc_32k: rtc-32k-oscillator {
+> > > > > +                               compatible =3D "fixed-clock";
+> > > > > +                               #clock-cells =3D <0>;
+> > > > > +                               clock-frequency  =3D <32768>;
+> > > > > +                               clock-output-names =3D "ac100-rtc=
+-32k";
+> > > > > +                       };
+> > > > >                  };
+> > > > >          };
+> > > > >   };
+> > > > >=20
+> > > > > What do you think about that solution?
+> > > >=20
+> > > > That's not quite right either. As I mentioned before, the
+> > > > RTC block has two clock inputs, one 4MHz signal from the
+> > > > codec block, and one 32.768 kHz signal from an external
+> > > > crystal. The original device tree binding describes the
+> > > > first one, and the 32.768 kHz clock was registered by
+> > > > the RTC driver internally.
+> > > >=20
+> > > > If you're going to add the crystal clock, you still need
+> > > > to keep the codec one. Note that this does not fix what
+> > > > Maxime is asking you. I've already provided an explanation:
+> > > >=20
+> > > > The clock core allows registering clocks with not-yet-existing
+> > > > clock parents. Parents are matches by string names. If no
+> > > > clock by that name is registered yet, the clock core simply
+> > > > orphans the new clock if the unregistered parent is its
+> > > > current parent or simply ignores that parent if its not the
+> > > > current parent. This is entirely valid and is what we are
+> > > > counting on here, as we haven't implemented the codec-side
+> > > > driver.
+> > >=20
+> > > So, we end up in a situation where clk_hw_get_num_parents returns the
+> > > amount of clocks we can be parented to (orphans or not), but
+> > > clk_hw_get_parent_by_index will not return the orphan clocks?
+> >=20
+> > There is no placeholder for missing parents, unlike the regulator
+> > subsystem that has a dummy regulator for this purpose.
+> >=20
+> > > That's pretty bad :/
+> >=20
+> > Yeah. I didn't expect this to happen. But to be fair, I should
+> > have done the check on clk_hw_get_parent_by_index.
+> >=20
+> > > Is there a way to test before registering that all our parents are
+> > > actually there? clk_get?
+> >=20
+> > That's probably the way to do it. However in the AC100 RTC case,
+> > I left it open to be missing on purpose, so we could use the RTC
+> > without waiting for the codec to be supported.
+> >=20
+> > ChenYu
+> >=20
+>=20
+> So how should we proceed with this issue?
+>=20
+> Should I send a new version with a fixed comment or should I implement the
+> check in clk_get function?
+>=20
+> For the second option I will need about 3 weeks to submit a proper patch
+> since I have the next two weeks some other stuff to do.
+> If a proper fix is required earlier, it might be better if someone else is
+> taking care about a fix.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+A better comment will do.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Maxime
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--oizlize64jg2tdqs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqKwR0ACgkQ0rTAlCFN
+r3QYxQ/+JVdimX2RS0HAaySW/q4zrw1CDQsaxBcoyHyakR6FoFaR10mNn6JXb/V6
+1nOhpoqDit3eQggfrBOZ1uhkSKrT5Kub+mAad696p3lxc+GhLg7d04YWjuWJEst5
+1ip1fUc9Cx2QjayWtkNF7Ci+kP9FH4SzR8c6tdwNievwvVyubQKNoBU/iUV0nbf3
+Kf++5GiixXDwIa1FIHb65hqjiuqPOBm4OPHZ8dDMi6j9WCs8V7RTPvdVUJPA+wQO
+h8mzL6o3TT4npTLOkdOeHxpsjOeX00vZJFFgQI70Euuj/UrZ4/4ZcxxCR/+wrp0q
+hmQ6BBqJbjosJQmgmhgljvq/qseR+OKtxHFBmC/QK3ss58b3sZ0AoGFezFj/uUnX
+TPQASjIQbRksBMzb0zCsyWTAcoSXDUJESSMXlByNM9TKFYVdaV3czECZjohXXhSY
+F/oul/BzIuu+5315ieH+M7tRnz1RXN42nE3JtyH5SxdKVHmY+te4zFSaudi0on+0
+YG2pQdDmldiuu+B5POjiqqmw4ij66qha/6EaxSdbBYZj/jDBBo/ptHs7Zis3MQfJ
+l8n5dDbHo9ndmCf0vV7/sSZ+1At12CxrmPHfChnHJ8j0cQR6/JdgppjsmKVhHEL1
+ZuEvytlZHD66aNrXsuyJAZH4LhvPVCNsf/oN5sPlCHmZiROnvec=
+=NFwc
+-----END PGP SIGNATURE-----
 
->From 257aaceb63eb2337e50cd9f9008d11df2cb86207 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 19 Feb 2018 04:15:38 +0000
-Subject: [PATCH] ASoC: intel: kbl_da7219_max98357: replace codec to component
-
-Now we can replace Codec to Component. Let's do it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/kbl_da7219_max98357a.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-index d689124f6687..e84baafd5f63 100644
---- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
-+++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-@@ -168,7 +168,7 @@ static int kabylake_ssp_fixup(struct snd_soc_pcm_runtime *rtd,
- static int kabylake_da7219_codec_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct kbl_codec_private *ctx = snd_soc_card_get_drvdata(rtd->card);
--	struct snd_soc_codec *codec = rtd->codec;
-+	struct snd_soc_component *component = rtd->codec_dai->component;
- 	struct snd_soc_jack *jack;
- 	int ret;
- 
-@@ -191,7 +191,7 @@ static int kabylake_da7219_codec_init(struct snd_soc_pcm_runtime *rtd)
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOICECOMMAND);
--	da7219_aad_jack_det(codec, &ctx->kabylake_headset);
-+	da7219_aad_jack_det(component, &ctx->kabylake_headset);
- 
- 	ret = snd_soc_dapm_ignore_suspend(&rtd->card->dapm, "SoC DMIC");
- 	if (ret)
-@@ -522,12 +522,12 @@ static int kabylake_card_late_probe(struct snd_soc_card *card)
- {
- 	struct kbl_codec_private *ctx = snd_soc_card_get_drvdata(card);
- 	struct kbl_hdmi_pcm *pcm;
--	struct snd_soc_codec *codec = NULL;
-+	struct snd_soc_component *component = NULL;
- 	int err, i = 0;
- 	char jack_name[NAME_SIZE];
- 
- 	list_for_each_entry(pcm, &ctx->hdmi_pcm_list, head) {
--		codec = pcm->codec_dai->codec;
-+		component = pcm->codec_dai->component;
- 		snprintf(jack_name, sizeof(jack_name),
- 			"HDMI/DP, pcm=%d Jack", pcm->device);
- 		err = snd_soc_card_jack_new(card, jack_name,
-@@ -546,10 +546,10 @@ static int kabylake_card_late_probe(struct snd_soc_card *card)
- 
- 	}
- 
--	if (!codec)
-+	if (!component)
- 		return -EINVAL;
- 
--	return hdac_hdmi_jack_port_init(codec, &card->dapm);
-+	return hdac_hdmi_jack_port_init(component, &card->dapm);
- }
- 
- /* kabylake audio machine driver for SPT + DA7219 */
--- 
-2.16.1
+--oizlize64jg2tdqs--
