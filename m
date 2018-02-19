@@ -1,214 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeBSNE0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:04:26 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:3704 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752638AbeBSNEY (ORCPT
+        id S1752807AbeBSNF3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:05:29 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52590 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752687AbeBSNF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:04:24 -0500
-X-IronPort-AV: E=Sophos;i="5.46,535,1511827200";
-   d="scan'208";a="720365549"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: davem@davemloft.net, sparclinux@vger.kernel.org, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: [PATCH] sparc: Use generic pci_mmap_resource_range()
-Date: Mon, 19 Feb 2018 13:04:12 +0000
-Message-Id: <1519045452-22645-1-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Feb 2018 08:05:27 -0500
+Date: Mon, 19 Feb 2018 13:05:14 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
+Message-ID: <20180219130514.GC32761@sirena.org.uk>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
+ <20180216113008.GB5886@sirena.org.uk>
+ <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
+ <20180216134448.GI5886@sirena.org.uk>
+ <20180216141237.rd75sbix7bopi7zu@earth.universe>
+ <20180216151609.GK5886@sirena.org.uk>
+ <20180216155706.GS6364@atomide.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
+Content-Disposition: inline
+In-Reply-To: <20180216155706.GS6364@atomide.com>
+X-Cookie: You enjoy the company of other people.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
-ARM64") added this generic function with the intent of using it
-everywhere and ultimately killing the old arch-specific implementations.
 
-Let's get on with that eradication...
+--kfjH4zxOES6UT95V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/sparc/include/asm/pci_64.h |   1 +
- arch/sparc/kernel/pci.c         | 155 ----------------------------------------
- 2 files changed, 1 insertion(+), 155 deletions(-)
+On Fri, Feb 16, 2018 at 07:57:07AM -0800, Tony Lindgren wrote:
+> * Mark Brown <broonie@kernel.org> [180216 15:17]:
 
-diff --git a/arch/sparc/include/asm/pci_64.h b/arch/sparc/include/asm/pci_64.h
-index 671274e..95d41c8 100644
---- a/arch/sparc/include/asm/pci_64.h
-+++ b/arch/sparc/include/asm/pci_64.h
-@@ -43,6 +43,7 @@ static inline int pci_proc_domain(struct pci_bus *bus)
- /* Platform support for /proc/bus/pci/X/Y mmap()s. */
- 
- #define HAVE_PCI_MMAP
-+#define ARCH_GENERIC_PCI_MMAP_RESOURCE
- #define arch_can_pci_mmap_io()	1
- #define HAVE_ARCH_PCI_GET_UNMAPPED_AREA
- #define get_pci_unmapped_area get_fb_unmapped_area
-diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
-index 220d0f3..1c1f632 100644
---- a/arch/sparc/kernel/pci.c
-+++ b/arch/sparc/kernel/pci.c
-@@ -721,161 +721,6 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
- 	return 0;
- }
- 
--/* Platform support for /proc/bus/pci/X/Y mmap()s. */
--
--/* If the user uses a host-bridge as the PCI device, he may use
-- * this to perform a raw mmap() of the I/O or MEM space behind
-- * that controller.
-- *
-- * This can be useful for execution of x86 PCI bios initialization code
-- * on a PCI card, like the xfree86 int10 stuff does.
-- */
--static int __pci_mmap_make_offset_bus(struct pci_dev *pdev, struct vm_area_struct *vma,
--				      enum pci_mmap_state mmap_state)
--{
--	struct pci_pbm_info *pbm = pdev->dev.archdata.host_controller;
--	unsigned long space_size, user_offset, user_size;
--
--	if (mmap_state == pci_mmap_io) {
--		space_size = resource_size(&pbm->io_space);
--	} else {
--		space_size = resource_size(&pbm->mem_space);
--	}
--
--	/* Make sure the request is in range. */
--	user_offset = vma->vm_pgoff << PAGE_SHIFT;
--	user_size = vma->vm_end - vma->vm_start;
--
--	if (user_offset >= space_size ||
--	    (user_offset + user_size) > space_size)
--		return -EINVAL;
--
--	if (mmap_state == pci_mmap_io) {
--		vma->vm_pgoff = (pbm->io_space.start +
--				 user_offset) >> PAGE_SHIFT;
--	} else {
--		vma->vm_pgoff = (pbm->mem_space.start +
--				 user_offset) >> PAGE_SHIFT;
--	}
--
--	return 0;
--}
--
--/* Adjust vm_pgoff of VMA such that it is the physical page offset
-- * corresponding to the 32-bit pci bus offset for DEV requested by the user.
-- *
-- * Basically, the user finds the base address for his device which he wishes
-- * to mmap.  They read the 32-bit value from the config space base register,
-- * add whatever PAGE_SIZE multiple offset they wish, and feed this into the
-- * offset parameter of mmap on /proc/bus/pci/XXX for that device.
-- *
-- * Returns negative error code on failure, zero on success.
-- */
--static int __pci_mmap_make_offset(struct pci_dev *pdev,
--				  struct vm_area_struct *vma,
--				  enum pci_mmap_state mmap_state)
--{
--	unsigned long user_paddr, user_size;
--	int i, err;
--
--	/* First compute the physical address in vma->vm_pgoff,
--	 * making sure the user offset is within range in the
--	 * appropriate PCI space.
--	 */
--	err = __pci_mmap_make_offset_bus(pdev, vma, mmap_state);
--	if (err)
--		return err;
--
--	/* If this is a mapping on a host bridge, any address
--	 * is OK.
--	 */
--	if ((pdev->class >> 8) == PCI_CLASS_BRIDGE_HOST)
--		return err;
--
--	/* Otherwise make sure it's in the range for one of the
--	 * device's resources.
--	 */
--	user_paddr = vma->vm_pgoff << PAGE_SHIFT;
--	user_size = vma->vm_end - vma->vm_start;
--
--	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
--		struct resource *rp = &pdev->resource[i];
--		resource_size_t aligned_end;
--
--		/* Active? */
--		if (!rp->flags)
--			continue;
--
--		/* Same type? */
--		if (i == PCI_ROM_RESOURCE) {
--			if (mmap_state != pci_mmap_mem)
--				continue;
--		} else {
--			if ((mmap_state == pci_mmap_io &&
--			     (rp->flags & IORESOURCE_IO) == 0) ||
--			    (mmap_state == pci_mmap_mem &&
--			     (rp->flags & IORESOURCE_MEM) == 0))
--				continue;
--		}
--
--		/* Align the resource end to the next page address.
--		 * PAGE_SIZE intentionally added instead of (PAGE_SIZE - 1),
--		 * because actually we need the address of the next byte
--		 * after rp->end.
--		 */
--		aligned_end = (rp->end + PAGE_SIZE) & PAGE_MASK;
--
--		if ((rp->start <= user_paddr) &&
--		    (user_paddr + user_size) <= aligned_end)
--			break;
--	}
--
--	if (i > PCI_ROM_RESOURCE)
--		return -EINVAL;
--
--	return 0;
--}
--
--/* Set vm_page_prot of VMA, as appropriate for this architecture, for a pci
-- * device mapping.
-- */
--static void __pci_mmap_set_pgprot(struct pci_dev *dev, struct vm_area_struct *vma,
--					     enum pci_mmap_state mmap_state)
--{
--	/* Our io_remap_pfn_range takes care of this, do nothing.  */
--}
--
--/* Perform the actual remap of the pages for a PCI device mapping, as appropriate
-- * for this architecture.  The region in the process to map is described by vm_start
-- * and vm_end members of VMA, the base physical address is found in vm_pgoff.
-- * The pci device structure is provided so that architectures may make mapping
-- * decisions on a per-device or per-bus basis.
-- *
-- * Returns a negative error code on failure, zero on success.
-- */
--int pci_mmap_page_range(struct pci_dev *dev, int bar,
--			struct vm_area_struct *vma,
--			enum pci_mmap_state mmap_state, int write_combine)
--{
--	int ret;
--
--	ret = __pci_mmap_make_offset(dev, vma, mmap_state);
--	if (ret < 0)
--		return ret;
--
--	__pci_mmap_set_pgprot(dev, vma, mmap_state);
--
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
--	ret = io_remap_pfn_range(vma, vma->vm_start,
--				 vma->vm_pgoff,
--				 vma->vm_end - vma->vm_start,
--				 vma->vm_page_prot);
--	if (ret)
--		return ret;
--
--	return 0;
--}
--
- #ifdef CONFIG_NUMA
- int pcibus_to_node(struct pci_bus *pbus)
- {
--- 
-2.7.4
+> > It's not just other operating systems, it's also other versions of
+> > Linux we have to think about here.  The most obvious issue with audio is
+> > the clocking where the division between ASoC and clock APIs is not super
+> > obvious and could easily change in the future.
+
+> Yeah let's stick to describing how the hardware is wired in the
+> dts files. In this case it's really only the routing to the SoC,
+> right?
+
+The SoC and anything else on the board like external amps and so on.
+
+> One advantage of using a compatible property for the pmic subdevices
+> though is that it leaves out a dependency between various device
+> drivers things happen automagically. The mfd core driver can be
+> minimal and just implement interrupt handling and regmap. So no need
+> to to parse the child nodes in the pmic mfd driver :)
+
+There's no need to do that anyway - with a MFD the child devices can
+assume that they're part of the MFD and reference their parent.
+
+> So personally I'd prefer the option that requires least amount
+> of custom code if compatible vs no compatible property is the
+> only issue here.
+
+It's a few lines of code to register the child devices from code rather
+than the DT, and keeps it out of the ABI.
+
+--kfjH4zxOES6UT95V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqKy4kACgkQJNaLcl1U
+h9B1lQf/a8TZDsqEBvQtJkGu5qETjBBmD3NKFPciTMSDiDjESniZiUpr9iqEp8i+
+agilWO/k3bTnMokOJbA099mqFI9i0gMc/VrdcTwdURkDnxc6/UN+iUD2rLLjZ0XD
+I+twFE0vEt8JAJZABYcspfHqogrwz0E3wHKwRnwJugf931HzzQqb1lyi1VYa1u4Q
+f/voPWQT87XIYpt5l04X3RGlgpKEk7mnyOFkyQUfsuIPr7FZlORRDuhNrypGBvHq
+/7E6x/X2JFPV0Ri9uFTjq+WsIeHMPztFiE28CKbgJC1XJFdji0uR7zH/3ZtD9TAn
+P4KmKZS2g8RozgPdo7K0uN6/IW+oUw==
+=u1LI
+-----END PGP SIGNATURE-----
+
+--kfjH4zxOES6UT95V--
