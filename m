@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeBTNCU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:02:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46876 "EHLO
+        id S1752220AbeBTNCW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:02:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46878 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeBTNCQ (ORCPT
+        with ESMTP id S1752178AbeBTNCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Feb 2018 08:02:16 -0500
-Date: Mon, 19 Feb 2018 18:43:34 +0100
+Date: Mon, 19 Feb 2018 18:44:13 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: Alan Stern <stern@rowland.harvard.edu>
 Cc: Andrea Parri <parri.andrea@gmail.com>,
@@ -21,7 +21,7 @@ Cc: Andrea Parri <parri.andrea@gmail.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>
 Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
  smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180219174334.GU25201@hirez.programming.kicks-ass.net>
+Message-ID: <20180219174413.GV25201@hirez.programming.kicks-ass.net>
 References: <20180217151413.GA3785@andrea>
  <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
@@ -34,9 +34,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Feb 19, 2018 at 12:14:45PM -0500, Alan Stern wrote:
-> This leaves us with a question: Do we want to change the kernel by
-> adding memory barriers after unsuccessful RMW operations on Alpha, or
-> do we want to change the model by excluding such operations from
-> address dependencies?
+> Note that operations like atomic_add_unless() already include memory 
+> barriers.
 
-I think we want to put all the 'pain and weirdness' in Alpha.
+It is valid for atomic_add_unless() to not imply any barriers when the
+addition doesn't happen.
