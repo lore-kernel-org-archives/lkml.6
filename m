@@ -1,42 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeBSP5r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:57:47 -0500
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:42555 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753143AbeBSP5o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:57:44 -0500
-X-Google-Smtp-Source: AH8x225+HabFbSAXH2xEVNm5gFz9MEfkR0/LS0V5y/2SjF6YD78fo8kQoZX22qMvW9R8KxXAWu+HfWIFI74AIcEPCmo=
+        id S1753265AbeBSP6V (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:58:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51485 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753124AbeBSP6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 10:58:19 -0500
+Date: Mon, 19 Feb 2018 16:58:17 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2] printk: Relocate wake_klogd check close to the end of
+ console_unlock()
+Message-ID: <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
+References: <20180208130402.15157-1-pmladek@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <1510586871-27478-1-git-send-email-brian.starkey@arm.com>
-References: <1510586871-27478-1-git-send-email-brian.starkey@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 19 Feb 2018 15:57:42 +0000
-X-Google-Sender-Auth: 3grX-P7ROmt1_1SRKkL3jLtiI04
-Message-ID: <CAPKp9uZY_4Hm9oq_aBdWPAhvZv-LbxezWu3rU86kw9+kFAXJ6g@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: Remove WARNs in ->round_rate()
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: open list <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208130402.15157-1-pmladek@suse.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 13, 2017 at 3:27 PM, Brian Starkey <brian.starkey@arm.com> wrote:
-> clk_round_rate() is intended to be used to round a given clock rate to
-> the closest one achievable by the actual clock. This implies that the
-> input to clk_round_rate() is expected to be unachievable - and such
-> cases shouldn't be treated as exceptional.
->
-> To reflect this, remove the WARN_ONs which trigger when an unachievable
-> clock rate is passed to vexpress_osc_round_rate().
->
-> Reported-by: Vladimir Murzin <vladimir.murzin@arm.com>
-> Signed-off-by: Brian Starkey <brian.starkey@arm.com>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+On Thu 2018-02-08 14:04:02, Petr Mladek wrote:
+> From: Tejun Heo <tj@kernel.org>
+> 
+> We mark for waking up klogd whenever we see a new message sequence in
+> the main loop.  However, the actual wakeup is always at the end of the
+> function and we can easily test for the wakeup condition when we do
+> the final should-we-repeat check.
+> 
+> Move the wake_klogd condition check out of the main loop.  This avoids
+> doing the same thing repeatedly and groups similar checks into a
+> common place.
+> 
+> This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
+> console owner and waiter logic to load balance console writes").
+> The current console owner might process the newly added message before
+> the related printk() start waiting for the console lock. Then the lock
+> is passed without waking klogd. The new owner sees the already updated
+> seen_seq and does not know that the wakeup is needed.
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index db4b9b8929eb..2682209b1c90 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2417,12 +2413,17 @@ void console_unlock(void)
+>  	up_console_sem();
+>  
+>  	/*
+> -	 * Someone could have filled up the buffer again, so re-check if there's
+> -	 * something to flush. In case we cannot trylock the console_sem again,
+> -	 * there's a new owner and the console_unlock() from them will do the
+> -	 * flush, no worries.
+> +	 * Check whether userland needs notification.  Also, someone could
+> +	 * have filled up the buffer again, so re-check if there's
+> +	 * something to flush. In case we cannot trylock the console_sem
+> +	 * again, there's a new owner and the console_unlock() from them
+> +	 * will do the flush, no worries.
+>  	 */
+>  	raw_spin_lock(&logbuf_lock);
+> +	if (seen_seq != log_next_seq) {
+> +		wake_klogd = true;
+> +		seen_seq = log_next_seq;
 
-Ping!
+Sigh, there is actually still a race with console_trylock_spinning().
+We might see the updated log_next_seq here while the related
+printk() might steal the lock in retry path.
+
+The simplest solution seems to be to do this only when !retry.
+I am going to send v3.
+
+> +	}
+>  	retry = console_seq != log_next_seq;
+>  	raw_spin_unlock(&logbuf_lock);
+>  	printk_safe_exit_irqrestore(flags);
+
+Best Regards,
+Petr
