@@ -1,67 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753407AbeBSRLS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:11:18 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.219]:43631 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753184AbeBSRLQ (ORCPT
+        id S1753538AbeBSRLf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:11:35 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:38843 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753220AbeBSRLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:11:16 -0500
-Date: Mon, 19 Feb 2018 11:11:13 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] CIFS: fix sha512 check in cifs_crypto_secmech_release
-Message-ID: <20180219171113.GA16636@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1enoyB-000fMj-Ah
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:38064
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 19 Feb 2018 12:11:31 -0500
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose.Abreu@synopsys.com, vbhadram@nvidia.com,
+        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 2/7] net: stmmac: do not clear tx_skbuff entries in stmmac_xmit()/stmmac_tso_xmit()
+Date: Mon, 19 Feb 2018 18:11:10 +0100
+Message-Id: <20180219171116.15326-3-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
+References: <20180219171116.15326-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems this is a copy-paste error and that the proper variable to use
-in this particular case is _sha512_ instead of _md5_.
+tx_skbuff is initialized to NULL in init_dma_tx_desc_rings(), which is
+called from ndo_open().
 
-Addresses-Coverity-ID: 1465358 ("Copy-paste error")
-Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+stmmac_tx_clean() frees any non-NULL skb, and sets the tx_skbuff
+entry to NULL. Hence, there is no need to set skbuff entries to NULL
+in stmmac_xmit()/stmmac_tso_xmit(), and doing so falsely gives the
+reader the impression that it is needed.
+Do not clear tx_skbuff entries in stmmac_xmit()/stmmac_tso_xmit().
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- fs/cifs/cifsencrypt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
-index 6fa6d45..a6ef088 100644
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_Server_Info *server)
- 		server->secmech.md5 = NULL;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index d38bf38f12f5..24afe7733cde 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2927,7 +2927,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 
+ 		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
+ 		tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_frag_size(frag);
+-		tx_q->tx_skbuff[tx_q->cur_tx] = NULL;
+ 		tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
  	}
  
--	if (server->secmech.md5) {
-+	if (server->secmech.sha512) {
- 		crypto_free_shash(server->secmech.sha512);
- 		server->secmech.sha512 = NULL;
- 	}
+@@ -3102,8 +3101,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		if (dma_mapping_error(priv->device, des))
+ 			goto dma_map_err; /* should reuse desc w/o issues */
+ 
+-		tx_q->tx_skbuff[entry] = NULL;
+-
+ 		tx_q->tx_skbuff_dma[entry].buf = des;
+ 		if (unlikely(priv->synopsys_id >= DWMAC_CORE_4_00))
+ 			desc->des0 = cpu_to_le32(des);
 -- 
-2.7.4
+2.14.2
