@@ -1,38 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753557AbeBSTLl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:11:41 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:35036 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753548AbeBSTLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:11:39 -0500
-Date: Mon, 19 Feb 2018 14:11:37 -0500 (EST)
-Message-Id: <20180219.141137.2095980245673495027.davem@davemloft.net>
-To: fthain@telegraphics.com.au
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net 2/4] net/8390: Fix msg_enable patch snafu
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au>
-References: <cover.1519007130.git.fthain@telegraphics.com.au>
-        <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1753554AbeBSTOJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:14:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753443AbeBSTOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 14:14:07 -0500
+Subject: Re: [PATCH v3] ACPI / tables: Add IORT to injectable table list
+To: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc: "lenb@kernel.org" <lenb@kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "Jiang, Yutang2" <yutang2.jiang@hxt-semitech.com>
+Newsgroups: gmane.linux.acpi.devel,gmane.linux.kernel
+References: <1517567138-27283-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <68362a1f-cc0c-42f9-97da-bdf379c4f5a1@huawei.com>
+ <em5890c25f-84af-42ac-bfea-b27c6516e46b@bjl0091>
+From: Jon Masters <jcm@jonmasters.org>
+Organization: World Organi{s,z}ation of Broken Dreams
+Message-ID: <669340a4-e748-07f4-51d5-bf0566cd75b8@jonmasters.org>
+Date: Mon, 19 Feb 2018 14:13:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <em5890c25f-84af-42ac-bfea-b27c6516e46b@bjl0091>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
-Date: Sun, 18 Feb 2018 21:39:17 -0500 (EST)
+On 02/02/2018 07:12 AM, Wang, Dongsheng wrote:
+> Hey, Hanjun,
+> 
+> On 2018/2/2 19:54:24, "Hanjun Guo" <guohanjun@huawei.com> wrote:
+> 
+>> On 2018/2/2 18:25, Yang Shunyong wrote:
+>>> Loading IORT table from initrd is used to fix firmware IORT defects.
+>>
+>> I don't think this fix "firmware defects", it just for debug purpose,
+>> we will not use that for production purpose, right? I think above line
+>> can be removed.
+>>
+> I thinks the upgrade feature not only for debug. Here's an important
+> way to fix bugs that come from the firmware.
+> 
+> Documentation/acpi/initrd_table_override.txt
 
-> The lib8390 module parameter 'msg_enable' doesn't do anything useful:
-> it causes an ancient version string to be logged.
+I think we should message that this is for debug/development use.
+Ultimately, it's not the way to address firmware problems. Firmware
+needs to address that by shipping the correct(ed) tables :)
 
-Since you are removing the last reference to this 'version' string
-you should remove it as well.
-
-I'm surprised the compiler doesn't warn about this.
+-- 
+Computer Architect
