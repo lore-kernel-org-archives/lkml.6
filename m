@@ -1,53 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeBSLfp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:35:45 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34770 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752528AbeBSLfn (ORCPT
+        id S1752623AbeBSLiv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:38:51 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:40781 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbeBSLiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:35:43 -0500
-X-Google-Smtp-Source: AH8x227Lgu/2riow7ruE4SAhhDK7o3RZm1KoPJFcEV1sS0EE3qn5R7/0WDu8MXQUTPDnoQiUeioHhuwc0dHqMFt2RE4=
-MIME-Version: 1.0
-In-Reply-To: <1514904162-11201-6-git-send-email-sudeep.holla@arm.com>
-References: <1514904162-11201-1-git-send-email-sudeep.holla@arm.com> <1514904162-11201-6-git-send-email-sudeep.holla@arm.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 19 Feb 2018 12:35:42 +0100
-X-Google-Sender-Auth: W0_w-LdS8A3MBp2HExIpXkpJXE8
-Message-ID: <CAK8P3a1wBBVZnd6ns5K-HhQ28WKAwVbaWsnmE+83SyOnTQt4_w@mail.gmail.com>
-Subject: Re: [PATCH v5 05/20] firmware: arm_scmi: add scmi protocol bus to
- enumerate protocol devices
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: ALKML <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-        Roy Franz <roy.franz@cavium.com>,
-        Harb Abdulhamid <harba@codeaurora.org>, Nishanth Menon <nm@ti.com>,
-        Loc Ho <lho@apm.com>, Alexey Klimov <klimov.linux@gmail.com>,
-        Ryan Harkin <Ryan.Harkin@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 19 Feb 2018 06:38:50 -0500
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: linux-snps-arc@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Subject: [PATCH] clocksource/arc_timer: Halt GFRC together with ARC cores
+Date: Mon, 19 Feb 2018 14:38:46 +0300
+Message-Id: <20180219113846.2312-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 2, 2018 at 3:42 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+Currently GFRC is running regardless state of ARC cores in the SMP cluster.
+That means even if ARC cores are halted when doing JTAG debugging GFRC
+[our source of wall-time] continues to run giving us unexpected warnings
+once we allow ARC cores to run due to some tasks being stuck for too
+long.
 
-> +#ifdef CONFIG_ARM_SCMI_PROTOCOL
-> +int scmi_driver_register(struct scmi_driver *driver,
-> +                        struct module *owner, const char *mod_name);
-> +void scmi_driver_unregister(struct scmi_driver *driver);
-> +#else
-> +static int scmi_driver_register(struct scmi_driver *driver,
-> +                               struct module *owner, const char *mod_name)
-> +{
-> +       return -EINVAL;
-> +}
-> +static void scmi_driver_unregister(struct scmi_driver *driver) {}
-> +#endif /* CONFIG_ARM_SCMI_PROTOCOL */
+Starting from ARC HS v3.0 it's possible to tie GFRC to state of up-to 4
+ARC cores with help of GFRC's CORE register where we set a mask for
+cores which state we need to rely on.
 
-The dummy helpers must be 'static inline', not just 'static', otherwise you
-get a warning when this header is included by a file that doesn't call
-both of them.
+For now we set GFRC to be halted whenever either of 4 ARC cores
+(currently max number of ARC cores in SMP cluster) is halted.
 
+That setting is safe for clusters with fewer ARC cores as well because
+bits for missign cores won't be written anyways.
 
-      Arnd
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+---
+ drivers/clocksource/arc_timer.c | 7 +++++++
+ include/soc/arc/mcip.h          | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+index 4927355f9cbe..6c21b3634be0 100644
+--- a/drivers/clocksource/arc_timer.c
++++ b/drivers/clocksource/arc_timer.c
+@@ -93,6 +93,13 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
+ 		return -ENXIO;
+ 	}
+ 
++	/*
++	 * Halt GFRC if either of 4 cores in SMP cluster is halted.
++	 * Only works for ARC HS v3.0+, on earlier versions has no effect.
++	 * 	TODO: set mask only for used cores.
++	 */
++	__mcip_cmd_data(CMD_GFRC_SET_CORE, 0, 0xf);
++
+ 	ret = arc_get_timer_clk(node);
+ 	if (ret)
+ 		return ret;
+diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
+index c2d1b15da136..1dd1d1317907 100644
+--- a/include/soc/arc/mcip.h
++++ b/include/soc/arc/mcip.h
+@@ -40,6 +40,7 @@ struct mcip_cmd {
+ 
+ #define CMD_GFRC_READ_LO		0x42
+ #define CMD_GFRC_READ_HI		0x43
++#define CMD_GFRC_SET_CORE		0x47
+ 
+ #define CMD_IDU_ENABLE			0x71
+ #define CMD_IDU_DISABLE			0x72
+-- 
+2.14.3
