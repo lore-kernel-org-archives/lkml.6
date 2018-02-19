@@ -1,63 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeBSOr5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:47:57 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:54650 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752890AbeBSOry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:47:54 -0500
-Subject: Re: [PATCH v2 0/5] Change ISA_BUS_API dependency to selection
-To: William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        linux-iio@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com>
- <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
- <20180131022151.GA14668@sophia>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <02989234-6b1c-0118-2a38-a600fb892f11@maciej.szmigiero.name>
-Date: Mon, 19 Feb 2018 15:47:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180131022151.GA14668@sophia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1753011AbeBSOsR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:48:17 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:54257 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752793AbeBSOsQ (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Mon, 19 Feb 2018 09:48:16 -0500
+Message-Id: <5A8AF1BB02000078001A91C3@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 19 Feb 2018 07:48:11 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
+Cc: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86: fix {pmd,pud}_{set,clear}_flags()
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Just like pte_{set,clear}_flags() their PMD and PUD counterparts should
+not do any address translation. This was outright wrong under Xen
+(causing a dead boot with no useful output on "suitable" systems), and
+produced needlessly more complicated code (even if just slightly) when
+paravirt was enabled.
 
-On 31.01.2018 03:22, William Breathitt Gray wrote:
-> On Tue, Jan 02, 2018 at 10:29:30AM +0100, Linus Walleij wrote:
->> On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
->> <vilhelm.gray@gmail.com> wrote:
->>
->>> Linus, please pickup this entire patchset through your GPIO subsystem
->>> tree; a recursive dependency error is present if these patches are
->>> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
->>> be merged together in the same tree.
->>
->> OK I just need a bunch of ACKs so giving subsystem maintainers some
->> days to come back on this.
->>
->> Yours,
->> Linus Walleij
-> 
-> Hi Linus,
-> 
-> Do you have any objections to picking up this patchset now; or would you
-> prefer to wait for some more input from the other maintainers?
-> 
-> William Breathitt Gray
-> 
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: stable@vger.kernel.org 
+---
+ arch/x86/include/asm/pgtable.h       |    8 ++++----
+ arch/x86/include/asm/pgtable_types.h |   10 ++++++++++
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-Anything still blocking this patchset?
-It is a pure Kconfig change, however it has been waiting nearly
-2 months now...
-
-Maciej
+--- 4.16-rc2/arch/x86/include/asm/pgtable.h
++++ 4.16-rc2-x86-pXd_set_flags-no-xlat/arch/x86/include/asm/pgtable.h
+@@ -350,14 +350,14 @@ static inline pmd_t pmd_set_flags(pmd_t
+ {
+ 	pmdval_t v = native_pmd_val(pmd);
+ 
+-	return __pmd(v | set);
++	return native_make_pmd(v | set);
+ }
+ 
+ static inline pmd_t pmd_clear_flags(pmd_t pmd, pmdval_t clear)
+ {
+ 	pmdval_t v = native_pmd_val(pmd);
+ 
+-	return __pmd(v & ~clear);
++	return native_make_pmd(v & ~clear);
+ }
+ 
+ static inline pmd_t pmd_mkold(pmd_t pmd)
+@@ -409,14 +409,14 @@ static inline pud_t pud_set_flags(pud_t
+ {
+ 	pudval_t v = native_pud_val(pud);
+ 
+-	return __pud(v | set);
++	return native_make_pud(v | set);
+ }
+ 
+ static inline pud_t pud_clear_flags(pud_t pud, pudval_t clear)
+ {
+ 	pudval_t v = native_pud_val(pud);
+ 
+-	return __pud(v & ~clear);
++	return native_make_pud(v & ~clear);
+ }
+ 
+ static inline pud_t pud_mkold(pud_t pud)
+--- 4.16-rc2/arch/x86/include/asm/pgtable_types.h
++++ 4.16-rc2-x86-pXd_set_flags-no-xlat/arch/x86/include/asm/pgtable_types.h
+@@ -323,6 +323,11 @@ static inline pudval_t native_pud_val(pu
+ #else
+ #include <asm-generic/pgtable-nopud.h>
+ 
++static inline pud_t native_make_pud(pudval_t val)
++{
++	return (pud_t) { .p4d.pgd = native_make_pgd(val) };
++}
++
+ static inline pudval_t native_pud_val(pud_t pud)
+ {
+ 	return native_pgd_val(pud.p4d.pgd);
+@@ -344,6 +349,11 @@ static inline pmdval_t native_pmd_val(pm
+ #else
+ #include <asm-generic/pgtable-nopmd.h>
+ 
++static inline pmd_t native_make_pmd(pmdval_t val)
++{
++	return (pmd_t) { .pud.p4d.pgd = native_make_pgd(val) };
++}
++
+ static inline pmdval_t native_pmd_val(pmd_t pmd)
+ {
+ 	return native_pgd_val(pmd.pud.p4d.pgd);
