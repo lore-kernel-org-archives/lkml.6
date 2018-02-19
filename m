@@ -1,87 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932192AbeBSUhA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:37:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932108AbeBSUg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:36:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4DB20C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 19 Feb 2018 14:36:57 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        George Cherian <gcherian@caviumnetworks.com>,
-        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
-Message-ID: <20180219203657.GA48133@bhelgaas-glaptop.roam.corp.google.com>
-References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com>
- <2323301.ORZpb3hFRe@aspire.rjw.lan>
- <20180216203434.GC11014@bhelgaas-glaptop.roam.corp.google.com>
- <2858019.9TUCWsDpTB@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2858019.9TUCWsDpTB@aspire.rjw.lan>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1753901AbeBSUlH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:41:07 -0500
+Received: from s3.sipsolutions.net ([144.76.63.242]:56130 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753835AbeBSUlF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 15:41:05 -0500
+Message-ID: <1519072860.16723.22.camel@sipsolutions.net>
+Subject: Re: WARNING in check_flush_dependency
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+41cdaf4232c50e658934@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Date: Mon, 19 Feb 2018 21:41:00 +0100
+In-Reply-To: <CACT4Y+bziyU+32umG=VD7wCbxpsKoGkbAypDwQS=PivfGSzypA@mail.gmail.com> (sfid-20180219_195836_294501_B226CD07)
+References: <001a1143c56ef80bb405636ca341@google.com>
+         <1516779566.2508.41.camel@sipsolutions.net>
+         <CACT4Y+bziyU+32umG=VD7wCbxpsKoGkbAypDwQS=PivfGSzypA@mail.gmail.com>
+         (sfid-20180219_195836_294501_B226CD07)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 12:21:56PM +0100, Rafael J. Wysocki wrote:
-> On Friday, February 16, 2018 9:34:34 PM CET Bjorn Helgaas wrote:
-> > On Fri, Feb 16, 2018 at 01:40:37PM +0100, Rafael J. Wysocki wrote:
-> > > On Friday, February 16, 2018 12:39:00 AM CET Bjorn Helgaas wrote:
-<snip>
+On Mon, 2018-02-19 at 19:58 +0100, Dmitry Vyukov wrote:
+> 
+> > Yeah, we clearly shouldn't have WQ_RECLAIM set on this workqueue...
+> 
+> Hi Johannes,
+> 
+> Do you mind to send a patch to fix this?
 
-> > > > My questions are basically "What does the PCI core need to do
-> > > > to make sure a device is in D0 before it operates on it?  And
-> > > > where do we need to do that?"
-> > > > 
-> > > > > Unused ports are autosuspended after 100ms as per
-> > > > > pcie_portdrv_probe().
-> > > > 
-> > > > So I guess this is only done for PCIe bridges, not for
-> > > > conventional PCI bridges.  Is this because autosuspend depends
-> > > > on a PCIe-only feature?
-> > > 
-> > > Yes, that's PCIe-only.
-> > 
-> > What PCIe feature does this depend on?
-> 
-> It doesn't depend on any PCIe feature in particular, but we don't
-> need to do it for PCI-to-PCI bridges in general.
-> 
-> > I see the PCIe test in pci_bridge_d3_possible(), added by
-> > 9d26d3a8f1b0 ("PCI: Put PCIe ports into D3 during suspend"), but
-> > unfortunately that commit doesn't say *why* we only do this for
-> > PCIe, or only for BIOS dates of 2015 or newer.
-> 
-> The reason why we need this is related to deep low-power states on
-> new SoCs that only can be entered if PCIe root ports are in D3 (that
-> is, if the root ports are not in D3, the whole SoC cannot enter some
-> of its deep low-power states and that may exted to package C-states
-> for processors).
-> 
-> That also is the reason why we do it for PCIe only.
-> 
-> The reason for the cut-off date is because we know it for a fact
-> that PCIe port PM doesn't work on some older platforms due to
-> hardware issues and, again, it only really needs to be done on
-> recent SoCs.
-> 
-> I believe that all of the above was mentioned during discussions on
-> the patches that ended up as commit 9d26d3a8f1b0 and so on.
+Yeah, sorry, I've been behind on patches a bit. I just applied it
+today, and once I've let it sit for a day for build bot etc. I'll send
+it up.
 
-OK.  I should have made sure more of this was captured in the code
-comments.  The code doesn't match the spec and unless you happen to
-remember all that history, you'd have no idea why, which makes
-maintenance a bit of a hassle.  I'll propose a patch to add some
-comments.
+Let me double-check I've added the syzbot annotation to it though ...
 
-Bjorn
+johannes
