@@ -1,98 +1,93 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1361518-1519212391-2-3492975569512262777
+X-Cyrus-Session-Id: sloti22d1t05-1293483-1519082862-2-10668699906126536583
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519212391; b=Q5+NGmFXyReMXntMi0vvoZaFw7x8pvrXl4mICVpe24tK1Wo
-    GxnsBd7njz5oHq1wWWsUsEnp8XCjHsA0Cyv9n3op6xssWiD/tHlzS0cDRkUKarKl
-    IGVt5zOqpu+r5tZdrZTUdb25j8AMVeMSmmEDnoiW9/DFCqEEo4qedHISWbUfzOg+
-    iF9t+gO88iXucDJFxVI54EFZKWT9RMZnZ6dRDX0na9xJFFx8Zy6o2D+xPipOv6/C
-    gooe3asevQyyjDRoG9fs+HqvuWK67hFfhbBsQ+XKTaccbq1DMWfZfL57KqfNB59M
-    n6ZeyfsyM62aUyQsONoGCuoQgwbmCdYCBaot0tQ==
+    t=1519082862; b=qwzbL81lL0ukWvhi09pUB9AmiILIYbD1DooZKi9RU+Y50wm
+    be7xs4ofxL0R3EkzVbLLw8FMOZ2Q+J0W9E2PmuIoC6QhzeNmcwi/G4MPtmhOHBLv
+    3rqAshB72GGJiftY0YfEQybeysQK8eZZvBpHL2NVMt1HKCmzBiDkPrsfXYjGVg30
+    iWC8MyQ4t20yC6aZ0okufcmT6BjNW2IUT/2IjhHQ2/tvJOOfNFgJY+znSHXsQ1W+
+    9V4p7d7iAZsICIBrfjPL/kfuEX4ckKDsaNWgPgaF386GT9dHoNZl45hFpCBj/DVE
+    vMBtuFGGirFEFi+f0Rve/h1gtaWDkbu9MOKUhNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519212391; bh=MfPXl74vFlzhWVr2JawFRnchIQ
-    V4XIBJJ6VC8mpJAoA=; b=OkmF/DcghI7sV017j9oUwXLvHJ+UUtGYfcZWvDxbjz
-    flFUjbh2SjMrCKOPxZS8UL71lacQb0o9K01EswuVZPymln5x7zcWvRsLrNE8EX9x
-    BB2CZAGgjoanOyXWFYDu/Nq9UZf92k0vtw/v4tcIpZHn1J2pDRGaUGS9+RjqHoqx
-    39FFpLt1/bLiIy+8oZjx2TgR8nXz5XyVTCc8m5GnVQAUaw3OOAD4h2DjTlk6NvE4
-    pZJnrLDjHSBmqM73JHMxQWmlchTn3z/0A+fVMfpwXMGnGcNaUkyJHTniovrVYCU8
-    4cKGmmoQWVHRjc6ghzkVTarQfsf5ZOFnRFDtqWXucCjg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519082862; bh=MGJCwc92G8a01a517OUPZTqFGCzvK5+lOiLy0Y
+    JcE/g=; b=Rgcnq5jIw0shorNqtiWCYbnJXuPwnuPh3lFBMXBWdcUFQQES6pUTLO
+    E2ugKKJ24QM3TS6EH1XaLMCdIN06KhHgh6ryVKmF5Fs1a41bycSW3dyuQrusrT2Q
+    Y3vh8qqO3BXMe4NY2khSkBmoNvVNVf/FXnIzRG8FbLDOExzzrPG1n7+4fpg7Vn1R
+    cGbfVjBC7Oc5Yz0HM7MtQkz+RNWFCM4ajdzQMRmdUkPL/bS/QoWzpBKNu0KKYanb
+    IMynHrbEnzwX06wi9rVm8GGyDCFA7y/K8qgaCnq3Q4pGhS7wr2QZ1dqf5FT0vkvP
+    lmu7GOFCtGp6W116sh5NtL8Ju96/V6Aw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=omv/biv0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uBa/7WUP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=omv/biv0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uBa/7WUP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeBUL0a (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 06:26:30 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34238 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeBUL03 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 06:26:29 -0500
-Date: Wed, 21 Feb 2018 12:26:31 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [stable 4.14 patch] x86: fix KMEMCHECK warning about
- FRAME_POINTER
-Message-ID: <20180221112631.GA19900@kroah.com>
-References: <20180216152949.1630609-1-arnd@arndb.de>
+        id S932241AbeBSX13 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Feb 2018 18:27:29 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:38075 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932195AbeBSX12 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Feb 2018 18:27:28 -0500
+X-Google-Smtp-Source: AH8x226CK+FS6joeK6RyQv/jo8nkhQDp9eV7pCjH526Jii4EERA9XMJ7PNQQ0luQD3Gaql0I0PH/f7PG8zvhv907iYY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216152949.1630609-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <c35cd314-9dad-5d25-4627-1cc8687dbf7f@suse.de>
+References: <CALQ-8CJ8biPVCKvg+Gri9Am+TRBP0Rw-cWL42U2F_z8VvWTNfg@mail.gmail.com>
+ <c35cd314-9dad-5d25-4627-1cc8687dbf7f@suse.de>
+From: Max Ivanov <ivanov.maxim@gmail.com>
+Date: Mon, 19 Feb 2018 23:27:07 +0000
+Message-ID: <CALQ-8CKP7GcK-oVwaWz3ZU0qvBOj19eJTwJf0cYQz4Di1Q3n3A@mail.gmail.com>
+Subject: Re: iSCSI session logout regression after fbce4d97fd ("scsi: fixup
+ kernel warning during rmmod()")
+To: Hannes Reinecke <hare@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Cc: Johannes Thumshirn <jthumshirn@suse.de>,
+        Kyle Fortin <kyle.fortin@oracle.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        labbott@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 04:29:10PM +0100, Arnd Bergmann wrote:
-> When KMEMCHECK is enabled without UNWINDER_FRAME_POINTER, we get a
-> Kconfig warning, presumably harmless:
-> 
-> warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && KMEMCHECK && LOCKDEP && UNWINDER_FRAME_POINTER) selects FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS || !UNWINDER_ORC && !UNWINDER_GUESS)
-> 
-> In newer mainline kernels, the KMEMCHECK option has been removed, so
-> this no longer happens. Adding the unwinder as a direct dependency
-> for KMEMCHECK works for 4.14-stable as well and documents the
-> dependency better.
+> As already explained in the previous mail, there is a fixup for this in
+> commit 81b6c9998979 ('scsi: core: check for device state in
+> __scsi_remove_target()').
+> Please check if this is applied, too.
 
-4.14.y now has that option removed as well, as I just removed all of
-kmemcheck as it was "getting in the way" of other patches, so this isn't
-needed anymore.
+I tested commit 81b6c9998979 cherry-picked on top of 4.14.20 and it
+indeed solves the problem.
 
-thanks,
-
-greg k-h
+Can it be backported to 4.14 LTS, please?
