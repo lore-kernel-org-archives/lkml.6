@@ -1,169 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeBSKXi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:23:38 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34792 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752499AbeBSKXg (ORCPT
+        id S1752573AbeBSKYM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:24:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752499AbeBSKYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:23:36 -0500
-From: Colin King <colin.king@canonical.com>
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] i40evf: remove redundant array comparisons to 0 checks
-Date: Mon, 19 Feb 2018 10:23:30 +0000
-Message-Id: <20180219102330.22045-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 19 Feb 2018 05:24:10 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date: Mon, 19 Feb 2018 15:54:09 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] i2c: qup: fixed releasing dma without flush
+ operation completion
+In-Reply-To: <0ff28076-b105-9280-a7e0-767f923768fa@codeaurora.org>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-2-git-send-email-absahu@codeaurora.org>
+ <0ff28076-b105-9280-a7e0-767f923768fa@codeaurora.org>
+Message-ID: <4d6ece838847032b87af6374264ea21b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 2018-02-08 19:33, Sricharan R wrote:
+> Hi Abhishek,
+> 
+> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
+>> The QUP BSLP BAM generates the following error sometimes if the
+>> current I2C DMA transfer fails and the flush operation has been
+>> scheduled
+>> 
+>>     “bam-dma-engine 7884000.dma: Cannot free busy channel”
+>> 
+>> If any I2C error comes during BAM DMA transfer, then the QUP I2C
+>> interrupt will be generated and the flush operation will be
+>> carried out to make i2c consume all scheduled DMA transfer.
+>> Currently, the same completion structure is being used for BAM
+>> transfer which has already completed without reinit. It will make
+>> flush operation wait_for_completion_timeout completed immediately
+>> and will proceed for freeing the DMA resources where the
+>> descriptors are still in process.
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/i2c/busses/i2c-qup.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/i2c/busses/i2c-qup.c 
+>> b/drivers/i2c/busses/i2c-qup.c
+>> index 08f8e01..9faa26c41a 100644
+>> --- a/drivers/i2c/busses/i2c-qup.c
+>> +++ b/drivers/i2c/busses/i2c-qup.c
+>> @@ -1,5 +1,5 @@
+>>  /*
+>> - * Copyright (c) 2009-2013, The Linux Foundation. All rights 
+>> reserved.
+>> + * Copyright (c) 2009-2013, 2016-2018, The Linux Foundation. All 
+>> rights reserved.
+> 
+> Not sure, if this was an intended change. But given that you are fixing 
+> this,
 
-The checks to see if key->dst.s6_addr and key->src.s6_addr are null
-pointers are redundant because these are constant size arrays and
-so the checks always return true.  Fix this by removing the redundant
-checks.   Also replace filter->f with vf, allowing wide lines to be
-condensed and to rejoin some split wide lines.
+  Thanks Sricharan.
+  Since this is the first patch, so I updated the year.
 
-Detected by CoverityScan, CID#1465279 ("Array compared to 0")
+> you can change the header to the new SPDX one.
+> 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/i40evf/i40evf_main.c | 61 ++++++++++---------------
- 1 file changed, 25 insertions(+), 36 deletions(-)
+  Yes that would be better.
+  I will fix that also.
 
-diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_main.c b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-index 4955ce3ab6a2..a13df27089c3 100644
---- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-@@ -2493,6 +2493,7 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 	u16 addr_type = 0;
- 	u16 n_proto = 0;
- 	int i = 0;
-+	struct virtchnl_filter *vf = &filter->f;
- 
- 	if (f->dissector->used_keys &
- 	    ~(BIT(FLOW_DISSECTOR_KEY_CONTROL) |
-@@ -2540,7 +2541,7 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 			return -EINVAL;
- 		if (n_proto == ETH_P_IPV6) {
- 			/* specify flow type as TCP IPv6 */
--			filter->f.flow_type = VIRTCHNL_TCP_V6_FLOW;
-+			vf->flow_type = VIRTCHNL_TCP_V6_FLOW;
- 		}
- 
- 		if (key->ip_proto != IPPROTO_TCP) {
-@@ -2585,9 +2586,8 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 			    is_multicast_ether_addr(key->dst)) {
- 				/* set the mask if a valid dst_mac address */
- 				for (i = 0; i < ETH_ALEN; i++)
--					filter->f.mask.tcp_spec.dst_mac[i] |=
--									0xff;
--				ether_addr_copy(filter->f.data.tcp_spec.dst_mac,
-+					vf->mask.tcp_spec.dst_mac[i] |= 0xff;
-+				ether_addr_copy(vf->data.tcp_spec.dst_mac,
- 						key->dst);
- 			}
- 
-@@ -2596,9 +2596,8 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 			    is_multicast_ether_addr(key->src)) {
- 				/* set the mask if a valid dst_mac address */
- 				for (i = 0; i < ETH_ALEN; i++)
--					filter->f.mask.tcp_spec.src_mac[i] |=
--									0xff;
--				ether_addr_copy(filter->f.data.tcp_spec.src_mac,
-+					vf->mask.tcp_spec.src_mac[i] |= 0xff;
-+				ether_addr_copy(vf->data.tcp_spec.src_mac,
- 						key->src);
- 		}
- 	}
-@@ -2622,8 +2621,8 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 				return I40E_ERR_CONFIG;
- 			}
- 		}
--		filter->f.mask.tcp_spec.vlan_id |= cpu_to_be16(0xffff);
--		filter->f.data.tcp_spec.vlan_id = cpu_to_be16(key->vlan_id);
-+		vf->mask.tcp_spec.vlan_id |= cpu_to_be16(0xffff);
-+		vf->data.tcp_spec.vlan_id = cpu_to_be16(key->vlan_id);
- 	}
- 
- 	if (dissector_uses_key(f->dissector, FLOW_DISSECTOR_KEY_CONTROL)) {
-@@ -2670,14 +2669,12 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 			return I40E_ERR_CONFIG;
- 		}
- 		if (key->dst) {
--			filter->f.mask.tcp_spec.dst_ip[0] |=
--							cpu_to_be32(0xffffffff);
--			filter->f.data.tcp_spec.dst_ip[0] = key->dst;
-+			vf->mask.tcp_spec.dst_ip[0] |= cpu_to_be32(0xffffffff);
-+			vf->data.tcp_spec.dst_ip[0] = key->dst;
- 		}
- 		if (key->src) {
--			filter->f.mask.tcp_spec.src_ip[0] |=
--							cpu_to_be32(0xffffffff);
--			filter->f.data.tcp_spec.src_ip[0] = key->src;
-+			vf->mask.tcp_spec.src_ip[0] |= cpu_to_be32(0xffffffff);
-+			vf->data.tcp_spec.src_ip[0] = key->src;
- 		}
- 	}
- 
-@@ -2710,22 +2707,14 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 		if (!ipv6_addr_any(&mask->dst) || !ipv6_addr_any(&mask->src))
- 			field_flags |= I40EVF_CLOUD_FIELD_IIP;
- 
--		if (key->dst.s6_addr) {
--			for (i = 0; i < 4; i++)
--				filter->f.mask.tcp_spec.dst_ip[i] |=
--							cpu_to_be32(0xffffffff);
--			memcpy(&filter->f.data.tcp_spec.dst_ip,
--			       &key->dst.s6_addr32,
--			       sizeof(filter->f.data.tcp_spec.dst_ip));
--		}
--		if (key->src.s6_addr) {
--			for (i = 0; i < 4; i++)
--				filter->f.mask.tcp_spec.src_ip[i] |=
--							cpu_to_be32(0xffffffff);
--			memcpy(&filter->f.data.tcp_spec.src_ip,
--			       &key->src.s6_addr32,
--			       sizeof(filter->f.data.tcp_spec.src_ip));
--		}
-+		for (i = 0; i < 4; i++)
-+			vf->mask.tcp_spec.dst_ip[i] |= cpu_to_be32(0xffffffff);
-+		memcpy(&vf->data.tcp_spec.dst_ip, &key->dst.s6_addr32,
-+		       sizeof(vf->data.tcp_spec.dst_ip));
-+		for (i = 0; i < 4; i++)
-+			vf->mask.tcp_spec.src_ip[i] |= cpu_to_be32(0xffffffff);
-+		memcpy(&vf->data.tcp_spec.src_ip, &key->src.s6_addr32,
-+		       sizeof(vf->data.tcp_spec.src_ip));
- 	}
- 	if (dissector_uses_key(f->dissector, FLOW_DISSECTOR_KEY_PORTS)) {
- 		struct flow_dissector_key_ports *key =
-@@ -2757,16 +2746,16 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
- 			}
- 		}
- 		if (key->dst) {
--			filter->f.mask.tcp_spec.dst_port |= cpu_to_be16(0xffff);
--			filter->f.data.tcp_spec.dst_port = key->dst;
-+			vf->mask.tcp_spec.dst_port |= cpu_to_be16(0xffff);
-+			vf->data.tcp_spec.dst_port = key->dst;
- 		}
- 
- 		if (key->src) {
--			filter->f.mask.tcp_spec.src_port |= cpu_to_be16(0xffff);
--			filter->f.data.tcp_spec.src_port = key->dst;
-+			vf->mask.tcp_spec.src_port |= cpu_to_be16(0xffff);
-+			vf->data.tcp_spec.src_port = key->dst;
- 		}
- 	}
--	filter->f.field_flags = field_flags;
-+	vf->field_flags = field_flags;
- 
- 	return 0;
- }
--- 
-2.15.1
+  Thanks,
+  Abhishek
+
+>>   * Copyright (c) 2014, Sony Mobile Communications AB.
+>>   *
+>>   *
+>> @@ -844,6 +844,8 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev 
+>> *qup, struct i2c_msg *msg,
+>>  	}
+>> 
+>>  	if (ret || qup->bus_err || qup->qup_err) {
+>> +		reinit_completion(&qup->xfer);
+>> +
+>>  		if (qup_i2c_change_state(qup, QUP_RUN_STATE)) {
+>>  			dev_err(qup->dev, "change to run state timed out");
+>>  			goto desc_err;
+>> 
+> 
+> Except for the above nit,
+>   Acked-by: Sricharan R <sricharan@codeaurora.org>
+> 
+> Regards,
+>  Sricharan
