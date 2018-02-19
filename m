@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753582AbeBSRLs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:11:48 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:38874 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753220AbeBSRLp (ORCPT
+        id S1753692AbeBSRNQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:13:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43675 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753651AbeBSRNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:11:45 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose.Abreu@synopsys.com, vbhadram@nvidia.com,
-        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 4/7] net: stmmac: rename dwmac4_tx_queue_routing() to match reality
-Date: Mon, 19 Feb 2018 18:11:12 +0100
-Message-Id: <20180219171116.15326-5-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
-References: <20180219171116.15326-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+        Mon, 19 Feb 2018 12:13:12 -0500
+From: Colin King <colin.king@canonical.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] CIFS: fix copy-n-paste on new sha512 secmech
+Date: Mon, 19 Feb 2018 17:13:10 +0000
+Message-Id: <20180219171310.10515-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looking at dwmac4_tx_queue_routing(), it is obvious that it
-sets up rx queue routing.
+From: Colin Ian King <colin.king@canonical.com>
 
-Rename dwmac4_tx_queue_routing() to dwmac4_rx_queue_routing()
-to better match reality.
+The check for the sha512 crypto secmech is checking .md5 rather
+than .sha512, this looks like a copy-paste error when adding
+in this code.  Fix this by using the correct .sha512 field.
 
-Fixes: abe80fdc6ee6 ("net: stmmac: RX queue routing configuration")
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Detected by CoverityScan, CID#1465358 ("Copy-paste error")
+
+Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/cifs/cifsencrypt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 63795ecafc8d..46b9ae20ff6c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -120,7 +120,7 @@ static void dwmac4_tx_queue_priority(struct mac_device_info *hw,
- 	writel(value, ioaddr + base_register);
- }
+diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
+index 6fa6d459678e..a6ef088e057b 100644
+--- a/fs/cifs/cifsencrypt.c
++++ b/fs/cifs/cifsencrypt.c
+@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_Server_Info *server)
+ 		server->secmech.md5 = NULL;
+ 	}
  
--static void dwmac4_tx_queue_routing(struct mac_device_info *hw,
-+static void dwmac4_rx_queue_routing(struct mac_device_info *hw,
- 				    u8 packet, u32 queue)
- {
- 	void __iomem *ioaddr = hw->pcsr;
-@@ -713,7 +713,7 @@ static const struct stmmac_ops dwmac4_ops = {
- 	.rx_queue_enable = dwmac4_rx_queue_enable,
- 	.rx_queue_prio = dwmac4_rx_queue_priority,
- 	.tx_queue_prio = dwmac4_tx_queue_priority,
--	.rx_queue_routing = dwmac4_tx_queue_routing,
-+	.rx_queue_routing = dwmac4_rx_queue_routing,
- 	.prog_mtl_rx_algorithms = dwmac4_prog_mtl_rx_algorithms,
- 	.prog_mtl_tx_algorithms = dwmac4_prog_mtl_tx_algorithms,
- 	.set_mtl_tx_queue_weight = dwmac4_set_mtl_tx_queue_weight,
-@@ -744,7 +744,7 @@ static const struct stmmac_ops dwmac410_ops = {
- 	.rx_queue_enable = dwmac4_rx_queue_enable,
- 	.rx_queue_prio = dwmac4_rx_queue_priority,
- 	.tx_queue_prio = dwmac4_tx_queue_priority,
--	.rx_queue_routing = dwmac4_tx_queue_routing,
-+	.rx_queue_routing = dwmac4_rx_queue_routing,
- 	.prog_mtl_rx_algorithms = dwmac4_prog_mtl_rx_algorithms,
- 	.prog_mtl_tx_algorithms = dwmac4_prog_mtl_tx_algorithms,
- 	.set_mtl_tx_queue_weight = dwmac4_set_mtl_tx_queue_weight,
+-	if (server->secmech.md5) {
++	if (server->secmech.sha512) {
+ 		crypto_free_shash(server->secmech.sha512);
+ 		server->secmech.sha512 = NULL;
+ 	}
 -- 
-2.14.2
+2.15.1
