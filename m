@@ -1,120 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752181AbeBSBSZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 20:18:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751971AbeBSBRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 20:17:48 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH v3 1/3] jump_label: Explicitly disable jump labels in __init code
-Date: Sun, 18 Feb 2018 19:17:19 -0600
-Message-Id: <969b2305cce1b9ce94aa3b678c36fbd6abd94a5d.1519002843.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1519002843.git.jpoimboe@redhat.com>
-References: <cover.1519002843.git.jpoimboe@redhat.com>
+        id S1752053AbeBSBVi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 20:21:38 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:41889 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751971AbeBSBVh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 20:21:37 -0500
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Mon, 19 Feb 2018 10:21:34 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: changbin.du@intel.com
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH v3] perf ftrace: Append an EOL when write tracing files
+Message-ID: <20180219012134.GA1583@sejong>
+References: <1518576264-16436-1-git-send-email-changbin.du@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1518576264-16436-1-git-send-email-changbin.du@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After initmem has been freed, any jump labels in __init code are
-prevented from being written to by the kernel_text_address() check in
-__jump_label_update().  However, this check is quite broad.  If
-kernel_text_address() were to return false for any other reason, the
-jump label write would fail silently with no warning.
+Hello,
 
-For jump labels in module init code, entry->code is set to zero to
-indicate that the entry is disabled.  Do the same thing for core kernel
-init code.  This makes the behavior more consistent, and will also make
-it more straightforward to detect non-init jump label write failures in
-the next patch.
+On Wed, Feb 14, 2018 at 10:44:24AM +0800, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> Before this change, the '--graph-funcs', '--nograph-funcs' and
+> '--trace-funcs' options didn't work as expected when the <func> doesn't
+> exist. Because the kernel side hid possible errors.
+> 
+> $ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
+>  0)   0.140 us    |  rcu_all_qs();
+>  3)   0.304 us    |  mutex_unlock();
+>  0)   0.153 us    |  find_vma();
+>  3)   0.088 us    |  __fsnotify_parent();
+>  0)   6.145 us    |  handle_mm_fault();
+>  3)   0.089 us    |  fsnotify();
+>  3)   0.161 us    |  __sb_end_write();
+>  3)   0.710 us    |  SyS_close();
+>  3)   7.848 us    |  exit_to_usermode_loop();
+> 
+> On above example, I specified function filter 'abcdefg' but all functions
+> are enabled. The expected error is hidden.
+> 
+> The original fix is to make the kernel support '\0' as end of string:
+> https://lkml.org/lkml/2018/1/16/116
+> 
+> But above fix cannot be compatible with old kernels. Then Namhyung Kim
+> suggest adding a space after function name.
+> 
+> This patch will append an '\n' when write tracing file. After this fix,
+> the perf will report correct error state. Also let it print an error if
+> reset_tracing_files() fails.
+> 
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> 
+> ---
+> v3: Took Kim's suggestion that add a space after function name.
+> v2: Rebase.
+> ---
+>  tools/perf/builtin-ftrace.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index 25a42ac..9ffd748 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -72,6 +72,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+>  	ssize_t size = strlen(val);
+>  	int flags = O_WRONLY;
+>  	char errbuf[512];
+> +	char *val_copy;
+>  
+>  	file = get_tracing_file(name);
+>  	if (!file) {
+> @@ -91,12 +92,20 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+>  		goto out;
+>  	}
+>  
+> -	if (write(fd, val, size) == size)
+> +	/*
+> +	 * Copy the original value and append a '\n'. Without this,
+> +	 * the kernel can hide possible errors.
+> +	 */
+> +	val_copy = strdup(val);
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- include/linux/jump_label.h |  3 +++
- init/main.c                |  2 ++
- kernel/jump_label.c        | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+)
+Please check the return value.
 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index b6a29c126cc4..2168cc6b8b30 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -151,6 +151,7 @@ extern struct jump_entry __start___jump_table[];
- extern struct jump_entry __stop___jump_table[];
- 
- extern void jump_label_init(void);
-+extern void jump_label_invalidate_init(void);
- extern void jump_label_lock(void);
- extern void jump_label_unlock(void);
- extern void arch_jump_label_transform(struct jump_entry *entry,
-@@ -198,6 +199,8 @@ static __always_inline void jump_label_init(void)
- 	static_key_initialized = true;
- }
- 
-+static inline void jump_label_invalidate_init(void) {}
-+
- static __always_inline bool static_key_false(struct static_key *key)
- {
- 	if (unlikely(static_key_count(key) > 0))
-diff --git a/init/main.c b/init/main.c
-index a8100b954839..969eaf140ef0 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -89,6 +89,7 @@
- #include <linux/io.h>
- #include <linux/cache.h>
- #include <linux/rodata_test.h>
-+#include <linux/jump_label.h>
- 
- #include <asm/io.h>
- #include <asm/bugs.h>
-@@ -1000,6 +1001,7 @@ static int __ref kernel_init(void *unused)
- 	/* need to finish all async __init code before freeing the memory */
- 	async_synchronize_full();
- 	ftrace_free_init_mem();
-+	jump_label_invalidate_init();
- 	free_initmem();
- 	mark_readonly();
- 	system_state = SYSTEM_RUNNING;
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index b4517095db6a..3adc3d37623b 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -16,6 +16,7 @@
- #include <linux/jump_label_ratelimit.h>
- #include <linux/bug.h>
- #include <linux/cpu.h>
-+#include <asm/sections.h>
- 
- #ifdef HAVE_JUMP_LABEL
- 
-@@ -633,6 +634,21 @@ static void jump_label_del_module(struct module *mod)
- 	}
- }
- 
-+/* Disable any jump label entries in __init code */
-+void __init jump_label_invalidate_init(void)
-+{
-+	struct jump_entry *iter_start = __start___jump_table;
-+	struct jump_entry *iter_stop = __stop___jump_table;
-+	struct jump_entry *iter;
-+
-+	for (iter = iter_start; iter < iter_stop; iter++) {
-+		if (iter->code >= (unsigned long)_sinittext &&
-+		    iter->code < (unsigned long)_einittext)
-+			iter->code = 0;
-+	}
-+}
-+
-+/* Disable any jump label entries in module init code */
- static void jump_label_invalidate_module_init(struct module *mod)
- {
- 	struct jump_entry *iter_start = mod->jump_entries;
--- 
-2.14.3
+Thanks,
+Namhyung
+
+
+> +	val_copy[size] = '\n';
+> +
+> +	if (write(fd, val_copy, size + 1) == size + 1)
+>  		ret = 0;
+>  	else
+>  		pr_debug("write '%s' to tracing/%s failed: %s\n",
+>  			 val, name, str_error_r(errno, errbuf, sizeof(errbuf)));
+>  
+> +	free(val_copy);
+>  	close(fd);
+>  out:
+>  	put_tracing_file(file);
+> @@ -280,8 +289,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+>  	signal(SIGCHLD, sig_handler);
+>  	signal(SIGPIPE, sig_handler);
+>  
+> -	if (reset_tracing_files(ftrace) < 0)
+> +	if (reset_tracing_files(ftrace) < 0) {
+> +		pr_err("failed to reset ftrace\n");
+>  		goto out;
+> +	}
+>  
+>  	/* reset ftrace buffer */
+>  	if (write_tracing_file("trace", "0") < 0)
+> -- 
+> 2.7.4
+> 
