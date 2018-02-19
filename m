@@ -1,108 +1,80 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AH8x2268EkqEXbRZGTaOPzWndKZQMDI+vXKesgt0x6ZpGN/k3DJl5pbsW7TztYy3PF9og9HGyy1P
-ARC-Seal: i=1; a=rsa-sha256; t=1519128609; cv=none;
+Return-Path: <david@lechnology.com>
+X-Google-Smtp-Source: AH8x227R5BfzYLxfYWvBPGhVHHG4ZUHodNOkaBwORDxRXgolXFcffuCL6rtlpFGJ9jkNk9bBudh6
+ARC-Seal: i=1; a=rsa-sha256; t=1519076588; cv=none;
         d=google.com; s=arc-20160816;
-        b=zM86ciO3HiXMKqxtuRIFJTZUTcrOdNCJQpXoRxuwAu7c6yTb46GkhxiYWcJumfIWNi
-         cZWUDy64w/O8Q3//Ho9Dj5qoGVB+qvvZDA0+0p2GUAGkRKDJuY6rA2nagaYkzRdn5Xa/
-         7d5TcEBN7pPodz7U/09JazwV9XNl4/II1nDQ9mlOgzr4yxX7z+fgmAN545c9AovwBpYC
-         k75FbepocB6XLvn4NtHS32GEjn/xHrhYrZc/s7PqgkN5Slw1OpJXPnPzbLrlIVrB65zI
-         TVfGAwIgK4kFw7LVo21wwPIELyyg1CoU7OsOMVtVrrufiJFLG19Ky5OvXZ7JiRBQ++dL
-         HCKw==
+        b=otRkv6qwoqPQ0leeijE5xfmNJK8+R1hg1ZMuShSSbGw0SYo7tfUKPUh0wT0PSaZuuD
+         R3tec7vnU5fuixNlA9Op7Hp9QFMi2TGGTavqWNfHupNDJKe0DuCSeWbWtC75ww8s+Unz
+         QEnhjERMbm8SgnQYj5ZgRumzVshUJrblO8MVef44FQwVg4XbrKjbMlvAKz16rOX1hRxb
+         1a9djYv/AbrmZJ1zIq1vrIxpyy+JX3dIlhpIqkhohukn/bD7P0i9GQRTTmQcXSj8GXxR
+         7FtfntsCaSRTgbD27JxkDb/zfXUZSy9FboY3RDniIo2hIQZC42ncjDOuAFIJ2kPfIwFu
+         qbaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=jAxc7KU8us48gb9aLunpzQsI/R1WSU6/vVLo28AZXsk=;
-        b=0tNIZofBUEa2uU0OnGT3f/Cscb7O8lwchnq1MJj5tDLDkaQLRpjTeH8c9C4kepLpTM
-         YMmCopUWMNMhyg3yz/PICAOYzN/NjK3bS82d+Dftc284NNRKXSUG7bOAKleYKne++GEG
-         XoZ2k9Bz3UtSC32Gs2fr220Y59VTX/0Ff3JmJSrE8cU8r0kRKp5X+J01g0PQEAuRoHyT
-         ILnPsi91S4Y6KT1AdmVk9/qp6kWdBBF1+DU8iFqbGsc9SYMrUfslsfQ/Vks6YUGQQuJu
-         gvLairuwg9km2daM/UeZJxHbgCoMplocRWCQwiTkv2OR9Prvrx2Mu21sySdzdcqNdT6E
-         TFLg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=BhPDIN0c9F9boRgQiH5d+qiGsjLmudUhlqPZ3+YITEs=;
+        b=i8YEA1nQ8bGBbw3qGK3ATgX0XLtyAMOEjAKA4jVWsYhdpl1WKBwo5V2aDa4vvKM7ku
+         ZBXgmzMbJ5Z4L+C72WMe16R5LIUww3YWCN4EZbV2wYsginn3sJQktKVQFStHkfGVYJtP
+         U4Dbd6GRCQrFQKW6U7Q8tmBSpQcDQlqdsTj+g2P+wfVoU24wpaTVtvQdR2/UoPPVViqf
+         JoEY4srakN9GMgRZ/86DHuLdfWzdH8fhJd6oXeRYCfMfrZ6iS/s1BOTjN/PMWcE46Htr
+         dX9nZD7tQEqSzuQWYtuoiZHogJKm0pvtTovH9kXgOrj1tnDjEMegeDCyz0+XXJtM/7Dj
+         5l2w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=ddaVXqmV;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+       dkim=pass header.i=@lechnology.com header.s=default header.b=m6HQ7Gvq;
+       spf=pass (google.com: domain of david@lechnology.com designates 206.190.152.46 as permitted sender) smtp.mailfrom=david@lechnology.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=ddaVXqmV;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
-From: Mark Brown <broonie@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: Allow missing device in regmap_name_read_file()" to the regmap tree
-In-Reply-To: <1519076582-7687-2-git-send-email-david@lechnology.com>
-Message-Id: <E1eo6kJ-0003E2-GT@debutante>
-Date: Tue, 20 Feb 2018 12:10:07 +0000
+       dkim=pass header.i=@lechnology.com header.s=default header.b=m6HQ7Gvq;
+       spf=pass (google.com: domain of david@lechnology.com designates 206.190.152.46 as permitted sender) smtp.mailfrom=david@lechnology.com
+From: David Lechner <david@lechnology.com>
+To: linux-kernel@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 2/2] regmap: use debugfs even when no device
+Date: Mon, 19 Feb 2018 15:43:02 -0600
+Message-Id: <1519076582-7687-3-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519076582-7687-1-git-send-email-david@lechnology.com>
+References: <1519076582-7687-1-git-send-email-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592921801411794840?=
-X-GMAIL-MSGID: =?utf-8?q?1592921801411794840?=
+X-GMAIL-THRID: =?utf-8?q?1592867251259492596?=
+X-GMAIL-MSGID: =?utf-8?q?1592867252444158741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
-
-   regmap: Allow missing device in regmap_name_read_file()
-
-has been applied to the regmap tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 12ae3808c160b7be0de3c633ac4cbe8c5f2937bf Mon Sep 17 00:00:00 2001
-From: David Lechner <david@lechnology.com>
-Date: Mon, 19 Feb 2018 15:43:01 -0600
-Subject: [PATCH] regmap: Allow missing device in regmap_name_read_file()
-
-This fixes a possible NULL pointer dereference oops in
-regmap_name_read_file() when the regmap does not have a device
-associated with it. For example syscon regmaps retrieved with
-syscon_regmap_lookup_by_compatible() don't have a device.
+This registers regmaps with debugfs even when they do not have an
+associated device. For example, this is common for syscon regmaps.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap-debugfs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index f3266334063e..7eb512ba2828 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -40,6 +40,7 @@ static ssize_t regmap_name_read_file(struct file *file,
- 				     loff_t *ppos)
- {
- 	struct regmap *map = file->private_data;
-+	const char *name = "nodev";
- 	int ret;
- 	char *buf;
+v2 changes:
+- none
+
+ drivers/base/regmap/regmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index ee302cc..f5fa1dd 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1116,6 +1116,8 @@ struct regmap *__regmap_init(struct device *dev,
+ 		ret = regmap_attach_dev(dev, map, config);
+ 		if (ret != 0)
+ 			goto err_regcache;
++	} else {
++		regmap_debugfs_init(map, config->name);
+ 	}
  
-@@ -47,7 +48,10 @@ static ssize_t regmap_name_read_file(struct file *file,
- 	if (!buf)
- 		return -ENOMEM;
- 
--	ret = snprintf(buf, PAGE_SIZE, "%s\n", map->dev->driver->name);
-+	if (map->dev && map->dev->driver)
-+		name = map->dev->driver->name;
-+
-+	ret = snprintf(buf, PAGE_SIZE, "%s\n", name);
- 	if (ret < 0) {
- 		kfree(buf);
- 		return ret;
+ 	return map;
 -- 
-2.16.1
+2.7.4
