@@ -1,52 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753339AbeBSQAi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:00:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51814 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753009AbeBSQAg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:00:36 -0500
-Date: Mon, 19 Feb 2018 08:00:34 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Nikolay Borisov <nborisov@suse.com>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@fb.com
-Subject: Re: [PATCH] fs: Improve comment of inode_dio_begin
-Message-ID: <20180219160034.GC24352@bombadil.infradead.org>
-References: <1519053629-14114-1-git-send-email-nborisov@suse.com>
+        id S1753233AbeBSQBY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:01:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51956 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751701AbeBSQBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:01:23 -0500
+Date: Mon, 19 Feb 2018 17:01:22 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Subject: [PATCH v3] printk: Relocate wake_klogd check close to the end of
+ console_unlock()
+Message-ID: <20180219160122.upqkpbbffm3rth6p@pathway.suse.cz>
+References: <20180208130402.15157-1-pmladek@suse.com>
+ <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519053629-14114-1-git-send-email-nborisov@suse.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 05:20:29PM +0200, Nikolay Borisov wrote:
-> +++ b/include/linux/fs.h
-> @@ -3015,8 +3015,10 @@ void inode_dio_wait(struct inode *inode);
->   * inode_dio_begin - signal start of a direct I/O requests
->   * @inode: inode the direct I/O happens on
->   *
-> - * This is called once we've finished processing a direct I/O request,
-> - * and is used to wake up callers waiting for direct I/O to be quiesced.
-> + * This is called before we begin processing a direct I/O request,
-> + * and is used to quiesce callers of inode_dio_wait. It must be
-> + * called under a lock that serialising getting a reference to
-> + * ->i_dio_count (usually the inode_lock)
->   */
->  static inline void inode_dio_begin(struct inode *inode)
->  {
+From: Tejun Heo <tj@kernel.org>
 
-Thanks for the patch!  It'd be nice if it used the kernel-doc annotations
-for Context: to document the locking requirements.  Also, I find the
-wording a little confusing.  How does the following look?
+We mark for waking up klogd whenever we see a new message sequence in
+the main loop.  However, the actual wakeup is always at the end of the
+function and we can easily test for the wakeup condition when we do
+the final should-we-repeat check.
 
- * Mark the inode as having direct I/O in progress.  This causes callers
- * of inode_dio_wait() to block until the I/O has completed.
- *
- * Context: Process context.  Caller should hold a lock that callers of
- * inode_dio_wait() also hold (usually inode_lock, but this depends on
- * the filesystem).
+Move the wake_klogd condition check out of the main loop.  This avoids
+doing the same thing repeatedly and groups similar checks into a
+common place.
+
+This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
+console owner and waiter logic to load balance console writes").
+The current console owner might process the newly added message before
+the related printk() start waiting for the console lock. Then the lock
+is passed without waking klogd. The new owner sees the already updated
+seen_seq and does not know that the wakeup is needed.
+
+Fixes: dbdda842fe96f8932 ("printk: Add console owner and waiter logic to load balance console writes")
+Signed-off-by: Tejun Heo <tj@kernel.org>
+[pmladek@suse.com: Fix and describe a new race with console waiter]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+---
+Changes against v2:
+
++ check wake_klogd only when really leaving
+
+ kernel/printk/printk.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index db4b9b8929eb..aaa28c1409ab 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2335,10 +2335,6 @@ void console_unlock(void)
+ 
+ 		printk_safe_enter_irqsave(flags);
+ 		raw_spin_lock(&logbuf_lock);
+-		if (seen_seq != log_next_seq) {
+-			wake_klogd = true;
+-			seen_seq = log_next_seq;
+-		}
+ 
+ 		if (console_seq < log_first_seq) {
+ 			len = sprintf(text, "** %u printk messages dropped **\n",
+@@ -2416,14 +2412,22 @@ void console_unlock(void)
+ 
+ 	up_console_sem();
+ 
++	raw_spin_lock(&logbuf_lock);
+ 	/*
+ 	 * Someone could have filled up the buffer again, so re-check if there's
+ 	 * something to flush. In case we cannot trylock the console_sem again,
+ 	 * there's a new owner and the console_unlock() from them will do the
+ 	 * flush, no worries.
+ 	 */
+-	raw_spin_lock(&logbuf_lock);
+ 	retry = console_seq != log_next_seq;
++	/*
++	 * Check whether userland needs notification. Do this only when really
++	 * leaving to avoid race with console_trylock_spinning().
++	 */
++	if (seen_seq != log_next_seq && !retry) {
++		wake_klogd = true;
++		seen_seq = log_next_seq;
++	}
+ 	raw_spin_unlock(&logbuf_lock);
+ 	printk_safe_exit_irqrestore(flags);
+ 
+-- 
+2.13.6
