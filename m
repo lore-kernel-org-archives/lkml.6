@@ -1,208 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753465AbeBSQ7r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:59:47 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45703 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753240AbeBSQ5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:57:04 -0500
-From: John Garry <john.garry@huawei.com>
-To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
-        <robh@kernel.org>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <rdunlap@infradead.org>
-Subject: [PATCH v14 4/9] PCI: Apply the new generic I/O management on PCI IO hosts
-Date: Tue, 20 Feb 2018 01:48:35 +0800
-Message-ID: <1519062520-198902-5-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
-References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+        id S1753193AbeBSRBf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:01:35 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:52197 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753108AbeBSRBd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 12:01:33 -0500
+X-Google-Smtp-Source: AH8x226ADKF6SvRIRVPbZKUkk7zhlYCtWQR/+RB5BT/y5iXOf2NBVU6//FvAJLTenqLYIKEOcSZcjQ==
+Date: Mon, 19 Feb 2018 18:01:29 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Dongwon Kim <dongwon.kim@intel.com>
+Cc: linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
+        mateuszx.potrola@intel.com
+Subject: Re: [RFC PATCH v2 0/9] hyper_dmabuf: Hyper_DMABUF driver
+Message-ID: <20180219170129.GC22199@phenom.ffwll.local>
+Mail-Followup-To: Dongwon Kim <dongwon.kim@intel.com>,
+        linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
+        mateuszx.potrola@intel.com
+References: <20180214015008.9513-1-dongwon.kim@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180214015008.9513-1-dongwon.kim@intel.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+On Tue, Feb 13, 2018 at 05:49:59PM -0800, Dongwon Kim wrote:
+> This patch series contains the implementation of a new device driver,
+> hyper_DMABUF driver, which provides a way to expand the boundary of
+> Linux DMA-BUF sharing to across different VM instances in Multi-OS platform
+> enabled by a Hypervisor (e.g. XEN)
+> 
+> This version 2 series is basically refactored version of old series starting
+> with "[RFC PATCH 01/60] hyper_dmabuf: initial working version of hyper_dmabuf
+> drv"
+> 
+> Implementation details of this driver are described in the reference guide
+> added by the second patch, "[RFC PATCH v2 2/5] hyper_dmabuf: architecture
+> specification and reference guide".
+> 
+> Attaching 'Overview' section here as a quick summary.
+> 
+> ------------------------------------------------------------------------------
+> Section 1. Overview
+> ------------------------------------------------------------------------------
+> 
+> Hyper_DMABUF driver is a Linux device driver running on multiple Virtual
+> achines (VMs), which expands DMA-BUF sharing capability to the VM environment
+> where multiple different OS instances need to share same physical data without
+> data-copy across VMs.
+> 
+> To share a DMA_BUF across VMs, an instance of the Hyper_DMABUF drv on the
+> exporting VM (so called, “exporter”) imports a local DMA_BUF from the original
+> producer of the buffer, then re-exports it with an unique ID, hyper_dmabuf_id
+> for the buffer to the importing VM (so called, “importer”).
+> 
+> Another instance of the Hyper_DMABUF driver on importer registers
+> a hyper_dmabuf_id together with reference information for the shared physical
+> pages associated with the DMA_BUF to its database when the export happens.
+> 
+> The actual mapping of the DMA_BUF on the importer’s side is done by
+> the Hyper_DMABUF driver when user space issues the IOCTL command to access
+> the shared DMA_BUF. The Hyper_DMABUF driver works as both an importing and
+> exporting driver as is, that is, no special configuration is required.
+> Consequently, only a single module per VM is needed to enable cross-VM DMA_BUF
+> exchange.
+> 
+> ------------------------------------------------------------------------------
+> 
+> There is a git repository at github.com where this series of patches are all
+> integrated in Linux kernel tree based on the commit:
+> 
+>         commit ae64f9bd1d3621b5e60d7363bc20afb46aede215
+>         Author: Linus Torvalds <torvalds@xxxxxxxxxxxxxxxxxxxx>
+>         Date:   Sun Dec 3 11:01:47 2018 -0500
+> 
+>             Linux 4.15-rc2
+> 
+> https://github.com/downor/linux_hyper_dmabuf.git hyper_dmabuf_integration_v4
 
-After introducing the new generic I/O space management in logic pio, the
-original PCI MMIO relevant helpers need to be updated based on the new
-interfaces.
-This patch adapts the corresponding code to match the changes introduced
-by logic pio.
+Since you place this under drivers/dma-buf I'm assuming you want to
+maintain this as part of the core dma-buf support, and not as some
+Xen-specific thing. Given that, usual graphics folks rules apply:
 
-Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci.c        | 92 +++++++++---------------------------------------
- include/asm-generic/io.h |  2 +-
- 2 files changed, 18 insertions(+), 76 deletions(-)
+Where's the userspace for this (must be open source)? What exactly is the
+use-case you're trying to solve by sharing dma-bufs in this fashion?
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 07290a3..9e08751 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -22,6 +22,7 @@
- #include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/log2.h>
-+#include <linux/logic_pio.h>
- #include <linux/pci-aspm.h>
- #include <linux/pm_wakeup.h>
- #include <linux/interrupt.h>
-@@ -3440,17 +3441,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
- }
- EXPORT_SYMBOL(pci_request_regions_exclusive);
- 
--#ifdef PCI_IOBASE
--struct io_range {
--	struct list_head list;
--	phys_addr_t start;
--	resource_size_t size;
--};
--
--static LIST_HEAD(io_range_list);
--static DEFINE_SPINLOCK(io_range_lock);
--#endif
--
- /*
-  * Record the PCI IO range (expressed as CPU physical address + size).
-  * Return a negative value if an error has occured, zero otherwise
-@@ -3458,51 +3448,28 @@ struct io_range {
- int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
- 			resource_size_t	size)
- {
--	int err = 0;
--
-+	int ret = 0;
- #ifdef PCI_IOBASE
--	struct io_range *range;
--	resource_size_t allocated_size = 0;
--
--	/* check if the range hasn't been previously recorded */
--	spin_lock(&io_range_lock);
--	list_for_each_entry(range, &io_range_list, list) {
--		if (addr >= range->start && addr + size <= range->start + size) {
--			/* range already registered, bail out */
--			goto end_register;
--		}
--		allocated_size += range->size;
--	}
-+	struct logic_pio_hwaddr *range;
- 
--	/* range not registed yet, check for available space */
--	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
--		/* if it's too big check if 64K space can be reserved */
--		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
--			err = -E2BIG;
--			goto end_register;
--		}
--
--		size = SZ_64K;
--		pr_warn("Requested IO range too big, new size set to 64K\n");
--	}
-+	if (!size || addr + size < addr)
-+		return -EINVAL;
- 
--	/* add the range to the list */
- 	range = kzalloc(sizeof(*range), GFP_ATOMIC);
--	if (!range) {
--		err = -ENOMEM;
--		goto end_register;
--	}
-+	if (!range)
-+		return -ENOMEM;
- 
--	range->start = addr;
-+	range->fwnode = fwnode;
- 	range->size = size;
-+	range->hw_start = addr;
-+	range->flags = PIO_CPU_MMIO;
- 
--	list_add_tail(&range->list, &io_range_list);
--
--end_register:
--	spin_unlock(&io_range_lock);
-+	ret = logic_pio_register_range(range);
-+	if (ret)
-+		kfree(range);
- #endif
- 
--	return err;
-+	return ret;
- }
- 
- phys_addr_t pci_pio_to_address(unsigned long pio)
-@@ -3510,21 +3477,10 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
- 	phys_addr_t address = (phys_addr_t)OF_BAD_ADDR;
- 
- #ifdef PCI_IOBASE
--	struct io_range *range;
--	resource_size_t allocated_size = 0;
--
--	if (pio > IO_SPACE_LIMIT)
-+	if (pio >= MMIO_UPPER_LIMIT)
- 		return address;
- 
--	spin_lock(&io_range_lock);
--	list_for_each_entry(range, &io_range_list, list) {
--		if (pio >= allocated_size && pio < allocated_size + range->size) {
--			address = range->start + pio - allocated_size;
--			break;
--		}
--		allocated_size += range->size;
--	}
--	spin_unlock(&io_range_lock);
-+	address = logic_pio_to_hwaddr(pio);
- #endif
- 
- 	return address;
-@@ -3533,21 +3489,7 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
- unsigned long __weak pci_address_to_pio(phys_addr_t address)
- {
- #ifdef PCI_IOBASE
--	struct io_range *res;
--	resource_size_t offset = 0;
--	unsigned long addr = -1;
--
--	spin_lock(&io_range_lock);
--	list_for_each_entry(res, &io_range_list, list) {
--		if (address >= res->start && address < res->start + res->size) {
--			addr = address - res->start + offset;
--			break;
--		}
--		offset += res->size;
--	}
--	spin_unlock(&io_range_lock);
--
--	return addr;
-+	return logic_pio_trans_cpuaddr(address);
- #else
- 	if (address > IO_SPACE_LIMIT)
- 		return (unsigned long)-1;
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index b7996a79..5a59931 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -901,7 +901,7 @@ static inline void iounmap(void __iomem *addr)
- #define ioport_map ioport_map
- static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
- {
--	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
-+	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
- }
- #endif
- 
+Iirc my feedback on v1 was why exactly you really need to be able to
+import a normal dma-buf into a hyper-dmabuf, instead of allocating them
+directly in the hyper-dmabuf driver. Which would _massively_ simplify your
+design, since you don't need to marshall all the attach and map business
+around (since the hypervisor would be in control of the dma-buf, not a
+guest OS). Also, all this marshalling leaves me with the impression that
+the guest that exports the dma-buf could take down the importer. That
+kinda nukes all the separation guarantees that vms provide.
+
+Or you just stuff this somewhere deeply hidden within Xen where gpu folks
+can't find it :-)
+-Daniel
+
+> 
+> Dongwon Kim, Mateusz Polrola (9):
+>   hyper_dmabuf: initial upload of hyper_dmabuf drv core framework
+>   hyper_dmabuf: architecture specification and reference guide
+>   MAINTAINERS: adding Hyper_DMABUF driver section in MAINTAINERS
+>   hyper_dmabuf: user private data attached to hyper_DMABUF
+>   hyper_dmabuf: hyper_DMABUF synchronization across VM
+>   hyper_dmabuf: query ioctl for retreiving various hyper_DMABUF info
+>   hyper_dmabuf: event-polling mechanism for detecting a new hyper_DMABUF
+>   hyper_dmabuf: threaded interrupt in Xen-backend
+>   hyper_dmabuf: default backend for XEN hypervisor
+> 
+>  Documentation/hyper-dmabuf-sharing.txt             | 734 ++++++++++++++++
+>  MAINTAINERS                                        |  11 +
+>  drivers/dma-buf/Kconfig                            |   2 +
+>  drivers/dma-buf/Makefile                           |   1 +
+>  drivers/dma-buf/hyper_dmabuf/Kconfig               |  50 ++
+>  drivers/dma-buf/hyper_dmabuf/Makefile              |  44 +
+>  .../backends/xen/hyper_dmabuf_xen_comm.c           | 944 +++++++++++++++++++++
+>  .../backends/xen/hyper_dmabuf_xen_comm.h           |  78 ++
+>  .../backends/xen/hyper_dmabuf_xen_comm_list.c      | 158 ++++
+>  .../backends/xen/hyper_dmabuf_xen_comm_list.h      |  67 ++
+>  .../backends/xen/hyper_dmabuf_xen_drv.c            |  46 +
+>  .../backends/xen/hyper_dmabuf_xen_drv.h            |  53 ++
+>  .../backends/xen/hyper_dmabuf_xen_shm.c            | 525 ++++++++++++
+>  .../backends/xen/hyper_dmabuf_xen_shm.h            |  46 +
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.c    | 410 +++++++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.h    | 122 +++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.c  | 122 +++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.h  |  38 +
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.c     | 135 +++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.h     |  53 ++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c  | 794 +++++++++++++++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.h  |  52 ++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.c   | 295 +++++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.h   |  73 ++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c    | 416 +++++++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h    |  89 ++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.c    | 415 +++++++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.h    |  34 +
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.c  | 174 ++++
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.h  |  36 +
+>  .../hyper_dmabuf/hyper_dmabuf_remote_sync.c        | 324 +++++++
+>  .../hyper_dmabuf/hyper_dmabuf_remote_sync.h        |  32 +
+>  .../dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c   | 257 ++++++
+>  .../dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.h   |  43 +
+>  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h | 143 ++++
+>  include/uapi/linux/hyper_dmabuf.h                  | 134 +++
+>  36 files changed, 6950 insertions(+)
+>  create mode 100644 Documentation/hyper-dmabuf-sharing.txt
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/Kconfig
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/Makefile
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm_list.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm_list.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_drv.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_drv.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_shm.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_shm.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_remote_sync.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_remote_sync.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.h
+>  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h
+>  create mode 100644 include/uapi/linux/hyper_dmabuf.h
+> 
+> -- 
+> 2.16.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-1.9.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
