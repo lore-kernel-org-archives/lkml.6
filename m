@@ -1,261 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752711AbeBSMoH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 07:44:07 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37815 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeBSMoE (ORCPT
+        id S1752739AbeBSMpL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 07:45:11 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44338 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752657AbeBSMpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 07:44:04 -0500
-X-Google-Smtp-Source: AH8x225i8ot0qlmg5xNILf1biTPR0xPqYk1k1Mlpf7JVpFNZCSeflIIU0RNliPea5XFLrYDgOp8I0g==
-Subject: Re: [PATCH v2 2/2] memory: tegra: Introduce memory client hot reset
- API
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1518452709.git.digetx@gmail.com>
- <6eff4be25012d88595a9ef73d3d626e4707b032c.1518452709.git.digetx@gmail.com>
- <20180213112418.GB6764@ulmo> <e061ce8f-fe3a-8697-3ec2-eed40e00ee8d@gmail.com>
-Message-ID: <a489c730-999a-e1fd-c547-77cad46bbefb@gmail.com>
-Date: Mon, 19 Feb 2018 15:44:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Feb 2018 07:45:10 -0500
+Date: Mon, 19 Feb 2018 13:44:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <fengguang.wu@intel.com>
+Cc: kan.liang@linux.intel.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, acme@kernel.org, tglx@linutronix.de,
+        jolsa@redhat.com, eranian@google.com, ak@linux.intel.com, lkp@01.org
+Subject: Re: [perf/x86/intel]  41e062cd2e:
+ WARNING:at_arch/x86/events/intel/ds.c:#intel_pmu_save_and_restart_reload
+Message-ID: <20180219124446.GR25201@hirez.programming.kicks-ass.net>
+References: <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
+ <20180217062119.cemwsj6dsf4ezfn6@inn>
 MIME-Version: 1.0
-In-Reply-To: <e061ce8f-fe3a-8697-3ec2-eed40e00ee8d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180217062119.cemwsj6dsf4ezfn6@inn>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.02.2018 15:35, Dmitry Osipenko wrote:
-> On 13.02.2018 14:24, Thierry Reding wrote:
->> On Mon, Feb 12, 2018 at 08:06:31PM +0300, Dmitry Osipenko wrote:
->>> In order to reset busy HW properly, memory controller needs to be
->>> involved, otherwise it possible to get corrupted memory if HW was reset
->>> during DMA. Introduce memory client 'hot reset' API that will be used
->>> for resetting busy HW. The primary users are memory clients related to
->>> video (decoder/encoder/camera) and graphics (2d/3d).
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/memory/tegra/mc.c       | 249 ++++++++++++++++++++++++++++++++++++++++
->>>  drivers/memory/tegra/tegra114.c |  25 ++++
->>>  drivers/memory/tegra/tegra124.c |  32 ++++++
->>>  drivers/memory/tegra/tegra20.c  |  23 ++++
->>>  drivers/memory/tegra/tegra210.c |  27 +++++
->>>  drivers/memory/tegra/tegra30.c  |  25 ++++
->>>  include/soc/tegra/mc.h          |  77 +++++++++++++
->>>  7 files changed, 458 insertions(+)
->>
->> As discussed on IRC, I typed up a variant of this in an attempt to fix
->> an unrelated bug report. The code is here:
->>
->> 	https://github.com/thierryreding/linux/commit/e104e703cb75dfe742b2e051194a0af8ddefcd03
->>
->> I think we can make this without adding a custom API. The reset control
->> API should work just fine. The above version doesn't take into account
->> some of Tegra20's quirks, but I think it should still work for Tegra20
->> with just slightly different implementations for ->assert() and
->> ->deassert().
->>
->> A couple of more specific comments below.
->>
->>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->>> index 187a9005351b..9838f588d64d 100644
->>> --- a/drivers/memory/tegra/mc.c
->>> +++ b/drivers/memory/tegra/mc.c
->>> @@ -7,11 +7,13 @@
->>>   */
->>>  
->>>  #include <linux/clk.h>
->>> +#include <linux/delay.h>
->>>  #include <linux/interrupt.h>
->>>  #include <linux/kernel.h>
->>>  #include <linux/module.h>
->>>  #include <linux/of.h>
->>>  #include <linux/platform_device.h>
->>> +#include <linux/reset.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/sort.h>
->>>  
->>> @@ -81,6 +83,172 @@ static const struct of_device_id tegra_mc_of_match[] = {
->>>  };
->>>  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
->>>  
->>> +static int terga_mc_flush_dma(struct tegra_mc *mc, unsigned int id)
->>> +{
->>> +	unsigned int hw_id = mc->soc->modules[id].hw_id;
->>> +	u32 value, reg_poll = mc->soc->reg_client_flush_status;
->>> +	int retries = 3;
->>> +
->>> +	value = mc_readl(mc, mc->soc->reg_client_ctrl);
->>> +
->>> +	if (mc->soc->tegra20)
->>> +		value &= ~BIT(hw_id);
->>> +	else
->>> +		value |= BIT(hw_id);
->>> +
->>> +	/* block clients DMA requests */
->>> +	mc_writel(mc, value, mc->soc->reg_client_ctrl);
->>> +
->>> +	/* wait for completion of the outstanding DMA requests */
->>> +	if (mc->soc->tegra20) {
->>> +		while (mc_readl(mc, reg_poll + hw_id * sizeof(u32)) != 0) {
->>> +			if (!retries--)
->>> +				return -EBUSY;
->>> +
->>> +			usleep_range(1000, 2000);
->>> +		}
->>> +	} else {
->>> +		while ((mc_readl(mc, reg_poll) & BIT(hw_id)) == 0) {
->>> +			if (!retries--)
->>> +				return -EBUSY;
->>> +
->>> +			usleep_range(1000, 2000);
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>
->> I think this suffers from too much unification. The programming model is
->> too different to stash this into a single function implementation and as
->> a result this becomes very difficult to read. In my experience it's more
->> readable to split this into separate implementations and pass around
->> pointers to them.
->>
->>> +
->>> +static int terga_mc_unblock_dma(struct tegra_mc *mc, unsigned int id)
->>> +{
->>> +	unsigned int hw_id = mc->soc->modules[id].hw_id;
->>> +	u32 value;
->>> +
->>> +	value = mc_readl(mc, mc->soc->reg_client_ctrl);
->>> +
->>> +	if (mc->soc->tegra20)
->>> +		value |= BIT(hw_id);
->>> +	else
->>> +		value &= ~BIT(hw_id);
->>> +
->>> +	mc_writel(mc, value, mc->soc->reg_client_ctrl);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int terga_mc_hotreset_assert(struct tegra_mc *mc, unsigned int id)
->>> +{
->>> +	unsigned int hw_id = mc->soc->modules[id].hw_id;
->>> +	u32 value;
->>> +
->>> +	if (mc->soc->tegra20) {
->>> +		value = mc_readl(mc, mc->soc->reg_client_hotresetn);
->>> +
->>> +		mc_writel(mc, value & ~BIT(hw_id),
->>> +			  mc->soc->reg_client_hotresetn);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int terga_mc_hotreset_deassert(struct tegra_mc *mc, unsigned int id)
->>> +{
->>> +	unsigned int hw_id = mc->soc->modules[id].hw_id;
->>> +	u32 value;
->>> +
->>> +	if (mc->soc->tegra20) {
->>> +		value = mc_readl(mc, mc->soc->reg_client_hotresetn);
->>> +
->>> +		mc_writel(mc, value | BIT(hw_id),
->>> +			  mc->soc->reg_client_hotresetn);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>
->> The same goes for these. I think we can do this much more easily by
->> providing reset controller API ->assert() and ->deassert()
->> implementations for Tegra20 and Tegra30+, and then register the reset
->> controller device using the ops stored in the MC SoC structure.
->>
->>> +static int tegra_mc_hot_reset_assert(struct tegra_mc *mc, unsigned int id,
->>> +				     struct reset_control *rst)
->>> +{
->>> +	int err;
->>> +
->>> +	/*
->>> +	 * Block clients DMA requests and wait for completion of the
->>> +	 * outstanding requests.
->>> +	 */
->>> +	err = terga_mc_flush_dma(mc, id);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to flush DMA: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	/* put in reset HW that corresponds to the memory client */
->>> +	err = reset_control_assert(rst);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to assert HW reset: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	/* clear the client requests sitting before arbitration */
->>> +	err = terga_mc_hotreset_assert(mc, id);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to hot reset client: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>
->> This is very strictly according to the TRM, but I don't see a reason why
->> you couldn't stash the DMA blocking and the hot reset into a ->assert()
->> implementation...
->>
->>> +
->>> +static int tegra_mc_hot_reset_deassert(struct tegra_mc *mc, unsigned int id,
->>> +				       struct reset_control *rst)
->>> +{
->>> +	int err;
->>> +
->>> +	/* take out client from hot reset */
->>> +	err = terga_mc_hotreset_deassert(mc, id);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to deassert hot reset: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	/* take out from reset corresponding clients HW */
->>> +	err = reset_control_deassert(rst);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to deassert HW reset: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	/* allow new DMA requests to proceed to arbitration */
->>> +	err = terga_mc_unblock_dma(mc, id);
->>> +	if (err) {
->>> +		dev_err(mc->dev, "Failed to unblock client: %d\n", err);
->>> +		return err;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>
->> ... and the hot reset deassertion and the DMA unblocking into a
->> ->deassert() implementation.
->>
->> I think the important part is that DMA is blocked and the requests are
->> cleared before the module reset, and similarily that the hot reset is
->> released and DMA is unblocked after the module reset.
-> 
-> Okay, let's try the way you're suggesting and see if anything breaks..
+On Sat, Feb 17, 2018 at 02:21:19PM +0800, kernel test robot wrote:
+> [  242.731381] WARNING: CPU: 3 PID: 1107 at arch/x86/events/intel/ds.c:1326 intel_pmu_save_and_restart_reload+0x87/0x90
 
-Although, it would be awesome if you could ask somebody who is familiar with the
-actual HW implementation. I can imagine that HW is simplified and expecting SW
-to take that into account, there could be hazards.
+That's the one asserting the PMU is in fact disabled.
+
+> [  242.731417] CPU: 3 PID: 1107 Comm: netserver Not tainted 4.15.0-00001-g41e062c #1
+> [  242.731418] Hardware name: LENOVO IdeaPad U410    /Lenovo          , BIOS 65CN15WW 06/05/2012
+> [  242.731422] RIP: 0010:intel_pmu_save_and_restart_reload+0x87/0x90
+> [  242.731423] RSP: 0018:fffffe000008c8d0 EFLAGS: 00010002
+> [  242.731425] RAX: 0000000000000001 RBX: ffff88007d069800 RCX: 0000000000000000
+> [  242.731426] RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffff88007d069800
+> [  242.731427] RBP: 0000000000000010 R08: 0000000000000001 R09: 0000000000000001
+> [  242.731428] R10: 00000000000000b0 R11: 0000000000003000 R12: 00000000000f4243
+> [  242.731429] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+> [  242.731431] FS:  00007f1501639700(0000) GS:ffff880112ac0000(0000) knlGS:0000000000000000
+> [  242.731432] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  242.731433] CR2: 00007f65a1394d68 CR3: 000000007f62a006 CR4: 00000000001606e0
+> [  242.731434] Call Trace:
+> [  242.731438]  <NMI>
+> [  242.731443]  __intel_pmu_pebs_event+0xc8/0x260
+> [  242.731452]  ? intel_pmu_drain_pebs_nhm+0x211/0x2f0
+> [  242.731454]  intel_pmu_drain_pebs_nhm+0x211/0x2f0
+> [  242.731457]  intel_pmu_handle_irq+0x12d/0x4b0
+> [  242.731464]  ? perf_event_nmi_handler+0x2d/0x50
+> [  242.731466]  perf_event_nmi_handler+0x2d/0x50
+> [  242.731470]  nmi_handle+0x6a/0x130
+> [  242.731473]  default_do_nmi+0x4e/0x110
+> [  242.731475]  do_nmi+0xe5/0x140
+> [  242.731479]  end_repeat_nmi+0x1a/0x54
+
+And this should have shown with any testing I think.
+
+The problem appears to be that intel_pmu_handle_irq() uses
+__intel_pmu_disable_all() which 'forgets' to clear cpuc->enabled as per
+x86_pmu_disable().
