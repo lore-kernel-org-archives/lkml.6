@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932097AbeBSTtj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:49:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45046 "EHLO
+        id S932074AbeBSTtn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:49:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44998 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753574AbeBSTqa (ORCPT
+        with ESMTP id S1753811AbeBSTq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:46:30 -0500
+        Mon, 19 Feb 2018 14:46:27 -0500
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 54/61] btrfs: Convert page cache to XArray
-Date: Mon, 19 Feb 2018 11:45:49 -0800
-Message-Id: <20180219194556.6575-55-willy@infradead.org>
+Subject: [PATCH v7 48/61] shmem: Convert shmem_wait_for_pins to XArray
+Date: Mon, 19 Feb 2018 11:45:43 -0800
+Message-Id: <20180219194556.6575-49-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
 References: <20180219194556.6575-1-willy@infradead.org>
@@ -23,44 +23,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+As with shmem_tag_pins(), hold the lock around the entire loop instead
+of acquiring & dropping it for each entry we're going to untag.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/btrfs/compression.c | 4 +---
- fs/btrfs/extent_io.c   | 6 ++----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ mm/shmem.c | 59 ++++++++++++++++++++++++-----------------------------------
+ 1 file changed, 24 insertions(+), 35 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 9fa8617c7344..23867981d016 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -457,9 +457,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
- 		if (pg_index > end_index)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5b70fbdec605..ccb6d7ecdee0 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2636,9 +2636,7 @@ static void shmem_tag_pins(struct address_space *mapping)
+  */
+ static int shmem_wait_for_pins(struct address_space *mapping)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
+-	pgoff_t start;
++	XA_STATE(xas, &mapping->pages, 0);
+ 	struct page *page;
+ 	int error, scan;
+ 
+@@ -2646,7 +2644,9 @@ static int shmem_wait_for_pins(struct address_space *mapping)
+ 
+ 	error = 0;
+ 	for (scan = 0; scan <= LAST_SCAN; scan++) {
+-		if (!radix_tree_tagged(&mapping->pages, SHMEM_TAG_PINNED))
++		unsigned int tagged = 0;
++
++		if (!xas_tagged(&xas, SHMEM_TAG_PINNED))
  			break;
  
--		rcu_read_lock();
--		page = radix_tree_lookup(&mapping->pages, pg_index);
--		rcu_read_unlock();
-+		page = xa_load(&mapping->pages, pg_index);
- 		if (page && !xa_is_value(page)) {
- 			misses++;
- 			if (misses > 4)
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 54cef60dd79b..02e15093ed57 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -5170,11 +5170,9 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
+ 		if (!scan)
+@@ -2654,45 +2654,34 @@ static int shmem_wait_for_pins(struct address_space *mapping)
+ 		else if (schedule_timeout_killable((HZ << scan) / 200))
+ 			scan = LAST_SCAN;
  
- 		clear_page_dirty_for_io(page);
- 		xa_lock_irq(&page->mapping->pages);
--		if (!PageDirty(page)) {
--			radix_tree_tag_clear(&page->mapping->pages,
--						page_index(page),
-+		if (!PageDirty(page))
-+			__xa_clear_tag(&page->mapping->pages, page_index(page),
- 						PAGECACHE_TAG_DIRTY);
--		}
- 		xa_unlock_irq(&page->mapping->pages);
- 		ClearPageError(page);
- 		unlock_page(page);
+-		start = 0;
+-		rcu_read_lock();
+-		radix_tree_for_each_tagged(slot, &mapping->pages, &iter,
+-					   start, SHMEM_TAG_PINNED) {
+-
+-			page = radix_tree_deref_slot(slot);
+-			if (radix_tree_exception(page)) {
+-				if (radix_tree_deref_retry(page)) {
+-					slot = radix_tree_iter_retry(&iter);
+-					continue;
+-				}
+-
+-				page = NULL;
+-			}
+-
+-			if (page &&
+-			    page_count(page) - page_mapcount(page) != 1) {
+-				if (scan < LAST_SCAN)
+-					goto continue_resched;
+-
++		xas_set(&xas, 0);
++		xas_lock_irq(&xas);
++		xas_for_each_tag(&xas, page, ULONG_MAX, SHMEM_TAG_PINNED) {
++			bool clear = true;
++			if (xa_is_value(page))
++				continue;
++			if (page_count(page) - page_mapcount(page) != 1) {
+ 				/*
+ 				 * On the last scan, we clean up all those tags
+ 				 * we inserted; but make a note that we still
+ 				 * found pages pinned.
+ 				 */
+-				error = -EBUSY;
++				if (scan == LAST_SCAN)
++					error = -EBUSY;
++				else
++					clear = false;
+ 			}
++			if (clear)
++				xas_clear_tag(&xas, SHMEM_TAG_PINNED);
++			if (++tagged % XA_CHECK_SCHED)
++				continue;
+ 
+-			xa_lock_irq(&mapping->pages);
+-			radix_tree_tag_clear(&mapping->pages,
+-					     iter.index, SHMEM_TAG_PINNED);
+-			xa_unlock_irq(&mapping->pages);
+-continue_resched:
+-			if (need_resched()) {
+-				slot = radix_tree_iter_resume(slot, &iter);
+-				cond_resched_rcu();
+-			}
++			xas_pause(&xas);
++			xas_unlock_irq(&xas);
++			cond_resched();
++			xas_lock_irq(&xas);
+ 		}
+-		rcu_read_unlock();
++		xas_unlock_irq(&xas);
+ 	}
+ 
+ 	return error;
 -- 
 2.16.1
