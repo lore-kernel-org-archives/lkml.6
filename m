@@ -1,345 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeBSQhC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:37:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33528 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753108AbeBSQhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:37:00 -0500
-Date: Mon, 19 Feb 2018 16:36:51 +0000
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: andy.gross@linaro.org, devicetree@vger.kernel.org,
-        dianders@chromium.org, linux-arm-msm@vger.kernel.org,
-        sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, bjorn.andersson@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 3/4] arm64: dts: sdm845: Add minimal dts/dtsi files
- for sdm845 SoC and MTP
-Message-ID: <20180219163651.66936056@why.wild-wind.fr.eu.org>
-In-Reply-To: <20180216060503.22006-4-rnayak@codeaurora.org>
-References: <20180216060503.22006-1-rnayak@codeaurora.org>
-        <20180216060503.22006-4-rnayak@codeaurora.org>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753310AbeBSQjI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:39:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48606 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752973AbeBSQjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:39:06 -0500
+Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
+ support
+To: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: geert@linux-m68k.org, borntraeger@de.ibm.com, tomi.valkeinen@ti.com,
+        b.zolnierkie@samsung.com
+References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
+ <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
+ <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+From: Farhan Ali <alifm@linux.vnet.ibm.com>
+Date: Mon, 19 Feb 2018 11:38:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021916-0028-0000-0000-00000931BC00
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008560; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00992069; UDB=6.00503973; IPR=6.00771415;
+ MB=3.00019638; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-19 16:39:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021916-0029-0000-0000-000039AA35BE
+Message-Id: <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802190205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018 11:35:02 +0530
-Rajendra Nayak <rnayak@codeaurora.org> wrote:
 
-> Add a skeletal sdm845 SoC dtsi and MTP board dts/dtsi files
+
+On 02/19/2018 11:25 AM, Thomas Huth wrote:
+> On 19.02.2018 16:47, Farhan Ali wrote:
+>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
+>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
+>> "Graphics support" menu for S390. But if we enable VT layer for S390,
+>> we would also need to enable the dummy console. So let's remove the
+>> HAS_IOMEM dependency.
+>>
+>> Move this dependency to sub menu items and console drivers that use
+>> io memory.
+>>
+>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+>> ---
+>>   drivers/video/Kconfig         | 21 +++++++++++----------
+>>   drivers/video/console/Kconfig |  4 ++--
+>>   2 files changed, 13 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+>> index 3c20af9..8f10915 100644
+>> --- a/drivers/video/Kconfig
+>> +++ b/drivers/video/Kconfig
+>> @@ -3,7 +3,6 @@
+>>   #
+>>   
+>>   menu "Graphics support"
+>> -	depends on HAS_IOMEM
+>>   
+>>   config HAVE_FB_ATMEL
+>>   	bool
+>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
+>>   config SH_LCD_MIPI_DSI
+>>   	bool
+>>   
+>> -source "drivers/char/agp/Kconfig"
+>> +if HAS_IOMEM
+>> +	source "drivers/char/agp/Kconfig"
+>>   
+>> -source "drivers/gpu/vga/Kconfig"
+>> +	source "drivers/gpu/vga/Kconfig"
+>>   
+>> -source "drivers/gpu/host1x/Kconfig"
+>> -source "drivers/gpu/ipu-v3/Kconfig"
+>> +	source "drivers/gpu/host1x/Kconfig"
+>> +	source "drivers/gpu/ipu-v3/Kconfig"
+>>   
+>> -source "drivers/gpu/drm/Kconfig"
+>> +	source "drivers/gpu/drm/Kconfig"
+>>   
+>> -menu "Frame buffer Devices"
+>> -source "drivers/video/fbdev/Kconfig"
+>> -endmenu
+>> +	menu "Frame buffer Devices"
+>> +	source "drivers/video/fbdev/Kconfig"
+>> +	endmenu
+>>   
+>> -source "drivers/video/backlight/Kconfig"
+>> +        source "drivers/video/backlight/Kconfig"
+>> +endif
+>>   
+>>   config VGASTATE
+>>          tristate
+>> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+>> index 7f1f1fb..0023b16 100644
+>> --- a/drivers/video/console/Kconfig
+>> +++ b/drivers/video/console/Kconfig
+>> @@ -85,7 +85,7 @@ config MDA_CONSOLE
+>>   
+>>   config SGI_NEWPORT_CONSOLE
+>>           tristate "SGI Newport Console support"
+>> -        depends on SGI_IP22
+>> +        depends on SGI_IP22 && HAS_IOMEM
+>>           select FONT_SUPPORT
+>>           help
+>>             Say Y here if you want the console on the Newport aka XL graphics
+>> @@ -153,7 +153,7 @@ config FRAMEBUFFER_CONSOLE_ROTATION
+>>   
+>>   config STI_CONSOLE
+>>           bool "STI text console"
+>> -        depends on PARISC
+>> +        depends on PARISC && HAS_IOMEM
+>>           select FONT_SUPPORT
+>>           default y
+>>           help
+>>
 > 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile       |   1 +
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  15 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 277 ++++++++++++++++++++++++++++++++
->  3 files changed, 293 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
+> Maybe config VGA_CONSOLE should depend on HAS_IOMEM, too? I think you
+> can hardly use a VGA card without IOMEM, can you?
+
+True, you can't. And I did think of adding the dependency for VGA, but 
+VGA already is fenced off by many (almost all) architectures and I 
+wasn't sure if it would be necessary. But I can add it.
+
+> Anyway, this approach now looks reasonable to me, so either way, feel
+> free to add my:
+> 
+> Reviewed-by: Thomas Huth <thuth@redhat.com>
 > 
 
-[...]
-
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> new file mode 100644
-> index 000000000000..c46e726af621
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -0,0 +1,277 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * SDM845 SoC device tree source
-> + *
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	interrupt-parent = <&intc>;
-> +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	chosen { };
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		/* We expect the bootloader to fill in the size */
-> +		reg = <0 0x80000000 0 0>;
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +
-> +		CPU0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +			L2_0: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +				L3_0: l3-cache {
-> +				      compatible = "cache";
-> +				};
-> +			};
-> +		};
-> +
-> +		CPU1: cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x100>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_100>;
-> +			L2_100: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU2: cpu@200 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x200>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_200>;
-> +			L2_200: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU3: cpu@300 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x300>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_300>;
-> +			L2_300: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU4: cpu@400 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x400>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_400>;
-> +			L2_400: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU5: cpu@500 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x500>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_500>;
-> +			L2_500: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU6: cpu@600 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x600>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_600>;
-> +			L2_600: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +
-> +		CPU7: cpu@700 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo385";
-> +			reg = <0x0 0x700>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_700>;
-> +			L2_700: l2-cache {
-> +				compatible = "cache";
-> +				next-level-cache = <&L3_0>;
-> +			};
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	clocks {
-> +		xo_board: xo-board {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <19200000>;
-> +		};
-> +
-> +		sleep_clk: sleep-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <32764>;
-> +		};
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	soc: soc {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0xffffffff>;
-> +		compatible = "simple-bus";
-> +
-> +		intc: interrupt-controller@17a00000 {
-> +			compatible = "arm,gic-v3";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			#redistributor-regions = <1>;
-> +			redistributor-stride = <0x0 0x20000>;
-> +			reg = <0x17a00000 0x10000>,     /* GICD */
-> +			      <0x17a60000 0x100000>;    /* GICR * 8 */
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			gic-its@17a40000 {
-> +				compatible = "arm,gic-v3-its";
-> +				msi-controller;
-> +				#msi-cells = <1>;
-> +				reg = <0x17a40000 0x20000>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +
-> +		gcc: clock-controller@100000 {
-> +			compatible = "qcom,gcc-sdm845";
-> +			reg = <0x100000 0x1f0000>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +		};
-> +
-> +		tlmm: pinctrl@3400000 {
-> +			compatible = "qcom,sdm845-pinctrl";
-> +			reg = <0x03400000 0xc00000>;
-> +			interrupts = <GIC_SPI 208 IRQ_TYPE_NONE>;
-
-Please do not use IRQ_TYPE_NONE, ever. It doesn't exist in the GIC
-binding. Set it to the actual trigger value.
-
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +
-> +		timer@17c90000 {
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			compatible = "arm,armv7-timer-mem";
-> +			reg = <0x17c90000 0x1000>;
-> +
-> +			frame@17ca0000 {
-> +				frame-number = <0>;
-> +				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17ca0000 0x1000>,
-> +				      <0x17cb0000 0x1000>;
-> +			};
-> +
-> +			frame@17cc0000 {
-> +				frame-number = <1>;
-> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17cc0000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@17cd0000 {
-> +				frame-number = <2>;
-> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17cd0000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@17ce0000 {
-> +				frame-number = <3>;
-> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17ce0000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@17cf0000 {
-> +				frame-number = <4>;
-> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17cf0000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@17d00000 {
-> +				frame-number = <5>;
-> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17d00000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@17d10000 {
-> +				frame-number = <6>;
-> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x17d10000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +
-> +		spmi_bus: spmi@c440000 {
-> +			compatible = "qcom,spmi-pmic-arb";
-> +			reg = <0xc440000 0x1100>,
-> +			      <0xc600000 0x2000000>,
-> +			      <0xe600000 0x100000>,
-> +			      <0xe700000 0xa0000>,
-> +			      <0xc40a000 0x26000>;
-> +			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
-> +			interrupt-names = "periph_irq";
-> +			interrupts = <GIC_SPI 481 IRQ_TYPE_NONE>;
-
-Same here.
-
-> +			qcom,ee = <0>;
-> +			qcom,channel = <0>;
-> +			#address-cells = <2>;
-> +			#size-cells = <0>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <4>;
-> +			cell-index = <0>;
-> +		};
-> +	};
-> +};
-
-Thanks,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+Thank you so much for reviewing. Appreciate your feedback :)
