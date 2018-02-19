@@ -1,67 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753471AbeBSSWP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:22:15 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5247 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753390AbeBSSWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:22:13 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 1/8] dt-bindings: scsi: hisi_sas: add an property of signal attenuation
-Date: Tue, 20 Feb 2018 03:13:24 +0800
-Message-ID: <1519067611-206638-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
-References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
+        id S1753443AbeBSS3s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:29:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753272AbeBSS3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 13:29:46 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C642177E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x2268Qv5A4pfFCCV45gemwFJl48kaVFMI/AE7W5YC+DZieNqHuir1jEapoUIDVaW001pJ8OCqanqr+9x6VxVnuQw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com> <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 19 Feb 2018 12:29:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+Message-ID: <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update audsys
+ documentation to adapt MFD device
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> The MediaTek audio hardware block that exposes functionalities that are
+> handled by separate subsystems in the kernel.  These functions are all
+> mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
+> up with other functions within the same registers.
 
-For some new boards with hip07 chipset we are required to
-set PHY config registers differently. The hw property which
-determines how to set these registers is in the PHY signal
-attenuation readings.
+I still don't think this change is necessary.
 
-This patch add an devicetree property, signal-attenuation, which
-is used to describe the signal attenuation of an board.
+Just because a hardware block in DT maps to different subsystems in a
+particular OS doesn't mean you need a DT node for each OS subsystem.
+What we have subsystems for changes over time and DT shouldn't really
+be changing based on that. And DT is not the only way to instantiate
+drivers.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-index df3bef7..bd32ecd 100644
---- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-+++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-@@ -53,6 +53,13 @@ Main node required properties:
- Optional main node properties:
-  - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
- 			    "am-max-transmissions" limitation.
-+ - signal-attenuation : array of 3 32-bit values, containing de-emphasis,
-+		preshoot, and boost attenuation readings for the board. They
-+		are used to describe the signal attenuation of the board. These
-+		values' range is 7600 to 12400, and used to represent -24dB to
-+		24dB.
-+		The formula is "y = (x-10000)/10000". For example, 10478
-+		means 4.78dB.
- 
- Example:
- 	sas0: sas@c1000000 {
--- 
-1.9.1
+Rob
