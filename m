@@ -1,271 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeBSKvV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:51:21 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:8610 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeBSKvQ (ORCPT
+        id S1752644AbeBSKvT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:51:19 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:56712 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752594AbeBSKvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Feb 2018 05:51:16 -0500
 X-IronPort-AV: E=Sophos;i="5.46,534,1511827200";
-   d="scan'208";a="720268865"
+   d="scan'208";a="708596432"
 From: David Woodhouse <dwmw@amazon.co.uk>
 To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
         kvm@vger.kernel.org, torvalds@linux-foundation.org,
         pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
         peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
         arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
-Subject: [PATCH v3 3/4] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
-Date: Mon, 19 Feb 2018 10:50:56 +0000
-Message-Id: <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH v3 2/4] x86/speculation: Support "Enhanced IBRS" on future CPUs
+Date: Mon, 19 Feb 2018 10:50:55 +0000
+Message-Id: <1519037457-7643-3-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>
 References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
-the RSB filling out of line and calling it, we waste one RSB slot for
-returning from the function itself, which means one fewer actual function
-call we can make if we're doing the Skylake abomination of call-depth
-counting.
+The original IBRS hack in microcode is horribly slow. For the next
+generation of CPUs, as a stopgap until we get a proper fix, Intel
+promise an "Enhanced IBRS" which will be fast.
 
-It also changed the number of RSB stuffings we do on vmexit from 32,
-which was correct, to 16. Let's just stop with the bikeshedding; it
-didn't actually *fix* anything anyway.
+The assumption is that predictions in the BTB/RSB will be tagged with
+the VMX mode and ring that they were learned in, and thus the CPU will
+avoid consuming unsafe predictions without a performance penalty.
+
+Intel's documentation says that it is still required to set the IBRS bit
+in the SPEC_CTRL MSR and ensure that it remains set.
+
+Cope with this by trapping and emulating *all* access to SPEC_CTRL from
+KVM guests when the IBRS_ALL feature is present, so it can never be
+turned off. Guests who see IBRS_ALL should never do anything except
+turn it on at boot anyway. And if they didn't know about IBRS_ALL and
+they keep frobbing IBRS on every kernel entry/exit... well the vmexit
+for a no-op is probably going to be faster than they were expecting
+anyway, so they'll live.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
 ---
- arch/x86/entry/entry_32.S             |  3 +-
- arch/x86/entry/entry_64.S             |  3 +-
- arch/x86/include/asm/asm-prototypes.h |  3 --
- arch/x86/include/asm/nospec-branch.h  | 70 +++++++++++++++++++++++++++++++----
- arch/x86/lib/Makefile                 |  1 -
- arch/x86/lib/retpoline.S              | 56 ----------------------------
- 6 files changed, 65 insertions(+), 71 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |  9 ++++++++-
+ arch/x86/kernel/cpu/bugs.c           | 17 +++++++++++++++--
+ arch/x86/kvm/vmx.c                   | 31 +++++++++++++++++++------------
+ 3 files changed, 42 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 16c2c02..6ad064c 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	/* Clobbers %ebx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 77edc23..7a53879 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	/* Clobbers %rbx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
-diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
-index 4d11161..1908214 100644
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
--asmlinkage void __fill_rsb(void);
--asmlinkage void __clear_rsb(void);
--
- #endif /* CONFIG_RETPOLINE */
 diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 34cbce3..94749fb 100644
+index 0995c6a..34cbce3 100644
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -8,6 +8,50 @@
- #include <asm/cpufeatures.h>
- #include <asm/msr-index.h>
+@@ -141,9 +141,16 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
++	SPECTRE_V2_IBRS_ALL,
+ };
  
-+/*
-+ * Fill the CPU return stack buffer.
-+ *
-+ * Each entry in the RSB, if used for a speculative 'ret', contains an
-+ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-+ *
-+ * This is required in various cases for retpoline and IBRS-based
-+ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-+ * eliminate potentially bogus entries from the RSB, and sometimes
-+ * purely to ensure that it doesn't get empty, which on some CPUs would
-+ * allow predictions from other (unwanted!) sources to be used.
-+ *
-+ * We define a CPP macro such that it can be used from both .S files and
-+ * inline assembly. It's possible to do a .macro and then include that
-+ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-+ */
++extern enum spectre_v2_mitigation spectre_v2_enabled;
 +
-+#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
-+#define RSB_FILL_LOOPS		16	/* To avoid underflow */
++static inline bool spectre_v2_ibrs_all(void)
++{
++	return spectre_v2_enabled == SPECTRE_V2_IBRS_ALL;
++}
 +
-+/*
-+ * Google experimented with loop-unrolling and this turned out to be
-+ * the optimal version — two calls, each with their own speculation
-+ * trap should their return address end up getting used, in a loop.
-+ */
-+#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
-+	mov	$(nr/2), reg;			\
-+771:						\
-+	call	772f;				\
-+773:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	773b;				\
-+772:						\
-+	call	774f;				\
-+775:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	775b;				\
-+774:						\
-+	dec	reg;				\
-+	jnz	771b;				\
-+	add	$(BITS_PER_LONG/8) * nr, sp;
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index bfca937..505c467 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -88,12 +88,14 @@ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ALL]			= "Mitigation: Enhanced IBRS",
+ };
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
+ 
+-static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
++enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
++EXPORT_SYMBOL_GPL(spectre_v2_enabled);
+ 
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+@@ -237,6 +239,16 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	case SPECTRE_V2_CMD_FORCE:
+ 	case SPECTRE_V2_CMD_AUTO:
++		if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
++			u64 ia32_cap = 0;
 +
- #ifdef __ASSEMBLY__
++			rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++			if (ia32_cap & ARCH_CAP_IBRS_ALL) {
++				mode = SPECTRE_V2_IBRS_ALL;
++				wrmsrl(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS);
++				goto ibrs_all;
++			}
++		}
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+@@ -274,6 +286,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
  
- /*
-@@ -78,10 +122,17 @@
- #endif
- .endm
++ ibrs_all:
+ 	spectre_v2_enabled = mode;
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
  
--/* This clobbers the BX register */
--.macro FILL_RETURN_BUFFER nr:req ftr:req
-+ /*
-+  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
-+  * monstrosity above, manually.
-+  */
-+.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ALTERNATIVE "", "call __clear_rsb", \ftr
-+	ANNOTATE_NOSPEC_ALTERNATIVE
-+	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
-+		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
-+		\ftr
-+.Lskip_rsb_\@:
- #endif
- .endm
+@@ -305,7 +318,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 	 * Retpoline means the kernel is safe because it has no indirect
+ 	 * branches. But firmware isn't, so use IBRS to protect that.
+ 	 */
+-	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++	if (mode != SPECTRE_V2_IBRS_ALL && boot_cpu_has(X86_FEATURE_IBRS)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 3dec126..5dfeb11 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3387,13 +3387,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
  
-@@ -163,10 +214,15 @@ extern char __indirect_thunk_end[];
- static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
--	alternative_input("",
--			  "call __fill_rsb",
--			  X86_FEATURE_RETPOLINE,
--			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
-+	unsigned long loops;
-+
-+	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
-+		      ALTERNATIVE("jmp 910f",
-+				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
-+				  X86_FEATURE_RETPOLINE)
-+		      "910:"
-+		      : "=r" (loops), ASM_CALL_CONSTRAINT
-+		      : : "memory" );
- #endif
- }
+ 		vmx->spec_ctrl = data;
  
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 91e9700..25a972c 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -28,7 +28,6 @@ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
- lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
--OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+-		if (!data)
++		if (!data && !spectre_v2_ibrs_all())
+ 			break;
  
- obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 		/*
+ 		 * For non-nested:
+ 		 * When it's written (to non-zero) for the first time, pass
+-		 * it through.
++		 * it through unless we have IBRS_ALL and it should just be
++		 * set for ever.
+ 		 *
+ 		 * For nested:
+ 		 * The handling of the MSR bitmap for L2 guests is done in
+@@ -9451,7 +9452,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (vmx->spec_ctrl)
++	if (!spectre_v2_ibrs_all() && vmx->spec_ctrl)
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
  
-diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-index 480edc3..c909961 100644
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -7,7 +7,6 @@
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
--#include <asm/bitsperlong.h>
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+@@ -9573,11 +9574,12 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	      );
  
- .macro THUNK reg
- 	.section .text.__x86.indirect_thunk
-@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
- #endif
--
--/*
-- * Fill the CPU return stack buffer.
-- *
-- * Each entry in the RSB, if used for a speculative 'ret', contains an
-- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-- *
-- * This is required in various cases for retpoline and IBRS-based
-- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-- * eliminate potentially bogus entries from the RSB, and sometimes
-- * purely to ensure that it doesn't get empty, which on some CPUs would
-- * allow predictions from other (unwanted!) sources to be used.
-- *
-- * Google experimented with loop-unrolling and this turned out to be
-- * the optimal version - two calls, each with their own speculation
-- * trap should their return address end up getting used, in a loop.
-- */
--.macro STUFF_RSB nr:req sp:req
--	mov	$(\nr / 2), %_ASM_BX
--	.align 16
--771:
--	call	772f
--773:						/* speculation trap */
--	pause
--	lfence
--	jmp	773b
--	.align 16
--772:
--	call	774f
--775:						/* speculation trap */
--	pause
--	lfence
--	jmp	775b
--	.align 16
--774:
--	dec	%_ASM_BX
--	jnz	771b
--	add	$((BITS_PER_LONG/8) * \nr), \sp
--.endm
--
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
--
--ENTRY(__fill_rsb)
--	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
--	ret
--END(__fill_rsb)
--EXPORT_SYMBOL_GPL(__fill_rsb)
--
--#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--
--ENTRY(__clear_rsb)
--	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
--	ret
--END(__clear_rsb)
--EXPORT_SYMBOL_GPL(__clear_rsb)
+ 	/*
+-	 * We do not use IBRS in the kernel. If this vCPU has used the
+-	 * SPEC_CTRL MSR it may have left it on; save the value and
+-	 * turn it off. This is much more efficient than blindly adding
+-	 * it to the atomic save/restore list. Especially as the former
+-	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 * Without IBRS_ALL, we do not use IBRS in the kernel. If this
++	 * vCPU has used the SPEC_CTRL MSR it may have left it on;
++	 * save the value and turn it off. This is much more efficient
++	 * than blindly adding it to the atomic save/restore list.
++	 * Especially as the former (saving guest MSRs on vmexit)
++	 * doesn't even exist in KVM.
+ 	 *
+ 	 * For non-nested case:
+ 	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
+@@ -9586,12 +9588,17 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	 * For nested case:
+ 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
+ 	 * save it.
++	 *
++	 * If IBRS_ALL is present then the whole thing is a no-op fiction
++	 * for guests and every access is trapped, so do nothing.
+ 	 */
+-	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++	if (!spectre_v2_ibrs_all()) {
++		if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++			rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
+ 
+-	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		if (vmx->spec_ctrl)
++			wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	}
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
 -- 
 2.7.4
