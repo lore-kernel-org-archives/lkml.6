@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932283AbeBSXqV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 18:46:21 -0500
-Received: from edison.jonmasters.org ([173.255.233.168]:59960 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932232AbeBSXqU (ORCPT
+        id S932269AbeBSXxP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 18:53:15 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:56916 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932245AbeBSXxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 18:46:20 -0500
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        Timur Tabi <timur@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc: tchalamarla@cavium.com, rrichter@cavium.com, opendmb@gmail.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
- <ca6c47f9-86df-bcdb-bbe1-eac9db68ec33@codeaurora.org>
- <ffc090d5-62c9-e608-32e2-8d13d01234e6@gmail.com>
- <f5d6d768-d354-56b5-ce0c-4f46d4e6d642@codeaurora.org>
- <126b2cc2-a61e-b30d-1ff9-ea30af7abf57@gmail.com>
-From: Jon Masters <jcm@jonmasters.org>
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <9a5190d1-eb8d-0275-d8d9-39de622a679c@jonmasters.org>
-Date: Mon, 19 Feb 2018 18:46:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <126b2cc2-a61e-b30d-1ff9-ea30af7abf57@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 81.171.212.148
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+        Mon, 19 Feb 2018 18:53:13 -0500
+X-Google-Smtp-Source: AH8x226Z6LZIhk4ktHLsqEMxQdx/EmUW0Y51fU1JH5GXIAHWciEZO4PqbXCLsvI0jN/Y7GmlcmSlxw==
+From: valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+Cc: Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future CPUs
+In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk> <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk> <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com> <1518509708.12890.33.camel@infradead.org> <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com> <1518517262.12890.43.camel@infradead.org> <1518518198.12890.48.camel@infradead.org> <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com> <1518775136.7876.13.camel@infradead.org> <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com> <1518776517.7876.21.camel@infradead.org> <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com> <1518783021.7876.34.camel@infradead.org> <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+ <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1519084385_3347P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Mon, 19 Feb 2018 18:53:05 -0500
+Message-ID: <10373.1519084385@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 07:17 PM, Florian Fainelli wrote:
-> On 02/12/2018 04:10 PM, Timur Tabi wrote:
->> On 02/12/2018 05:57 PM, Florian Fainelli wrote:
->>> That is debatable, is there a good publicly available table of what the
->>> typical L1 cache line size is on ARMv8 platforms?
+--==_Exmh_1519084385_3347P
+Content-Type: text/plain; charset=us-ascii
 
-With a server hat on...
+On Mon, 19 Feb 2018 23:42:24 +0000, "Van De Ven, Arjan" said:
 
-There are many ARMv8 server platforms that do 64b today, but future
-designs are likely to head toward 128b (for a variety of reasons). Many
-of the earlier designs were 64b because that's what certain other arches
-were using in their server cores. I doubt Vulcan will remain a unique
-and special case for very long. On the CCIX side of things, I've been
-trying to push people to go with 128b lines in future designs too.
+> the guest is not the problem; guests obviously will already honor if Enhanced
+> IBRS is enumerated. The problem is mixed migration pools where the hypervisor
+> may need to decide to not pass this enumeration through to the guest.
 
-Jon.
+For bonus points:  What should happen to a VM that is live migrated from one
+hypervisor to another, and the hypervisors have different IBRS support?
+
+--==_Exmh_1519084385_3347P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWotjYY0DS38y7CIcAQKk7wf7BvI+Z/7zK+ZZpj4lSNIdrdUjyEg7mn0R
+Vew6NFaLpP/G4ZeJEd70wG/D29GtKWlNKWbgV7nhNusSHxZVddaOx3elXtWHXSW9
+2zJveZ5FVzfan/FwGVITg8egtvnyazKBTmrBOEBQFyvgdbSgnLqbKu0kcKet8Yaf
+GBQVd1DvISfLWtEAA1kPj4EDMz5Nhsspr75o9zSH4lelp+OkYHASUvYHlSMpWEK5
+SBachW8j1t/gsoIaZ+7aqNLt5Xe+C3fPcajQtf55l0IV/j6V1+ziCcGMTouNs3en
+3sK8MmeWOCYVaf43T7YbWSH7lBnS5oaKVzZwtK+UYs8Kqe4yhc6z6w==
+=bDvg
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1519084385_3347P--
