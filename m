@@ -1,178 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752809AbeBSNBi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:01:38 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:5714 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeBSNBf (ORCPT
+        id S1752777AbeBSNBg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:01:36 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41524 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752638AbeBSNBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:01:35 -0500
-X-IronPort-AV: E=Sophos;i="5.46,535,1511827200";
-   d="scan'208";a="720363854"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: monstr@monstr.eu, bhelgaas@google.com, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH] microblaze: Use generic pci_mmap_resource_range()
-Date: Mon, 19 Feb 2018 13:01:23 +0000
-Message-Id: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Feb 2018 08:01:34 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+        Jayachandran Nair <Jayachandran.Nair@cavium.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Tom Vaden <tom.vaden@hpe.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        George Cherian <george.cherian@cavium.com>
+Subject: Re: [PATCH v1 1/2] PCI: Probe for device reset support before driver claim
+Date: Mon, 19 Feb 2018 13:59:38 +0100
+Message-ID: <9067468.WjanRiEMkP@aspire.rjw.lan>
+In-Reply-To: <20180216225010.67295.92539.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180216224213.67295.2251.stgit@bhelgaas-glaptop.roam.corp.google.com> <20180216225010.67295.92539.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
-ARM64") added this generic function with the intent of using it
-everywhere and ultimately killing the old arch-specific implementations.
+On Friday, February 16, 2018 11:50:11 PM CET Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Previously we called pci_probe_reset_function() in this path:
+> 
+>   pci_sysfs_init                              # late_initcall
+>     for_each_pci_dev(dev)
+>       pci_create_sysfs_dev_files(dev)
+> 	pci_create_capabilities_sysfs(dev)
+> 	  pci_probe_reset_function
+> 	    pci_dev_specific_reset
+> 	    pcie_has_flr
+>               pcie_capability_read_dword
+> 
+> pci_sysfs_init() is a late_initcall, and a driver may have already claimed
+> one of these devices and enabled runtime power management for it, so the
+> device could already be in D3hot by the time we get to pci_sysfs_init().
 
-Let's get on with that eradication...
+It also may be in D3cold if, say, AML can cut off power from it or ACPI
+power resources can be used for that.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/microblaze/include/asm/pci.h |  7 +--
- arch/microblaze/pci/pci-common.c  | 99 ++++-----------------------------------
- 2 files changed, 13 insertions(+), 93 deletions(-)
+> The device itself should respond to the config read even while it's in
+> D3hot, but if an upstream bridge is also in D3hot, the read won't even
+> reach the device because the bridge won't forward it downstream to the
+> device.  If the bridge is a PCIe port, it should complete the read as an
+> Unsupported Request, which may be reported to the CPU as an exception or as
+> invalid data.
+> 
+> Avoid this case by probing for reset support from pci_init_capabilities(),
+> before a driver can claim the device.  The device should be in D0 and fully
+> accessible at that point.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
-index 114b934..5de871e 100644
---- a/arch/microblaze/include/asm/pci.h
-+++ b/arch/microblaze/include/asm/pci.h
-@@ -47,9 +47,10 @@ extern int pci_proc_domain(struct pci_bus *bus);
- 
- struct vm_area_struct;
- 
--/* Tell drivers/pci/proc.c that we have pci_mmap_page_range() */
--#define HAVE_PCI_MMAP		1
--#define arch_can_pci_mmap_io()	1
-+/* Tell PCI code what kind of PCI resource mappings we support */
-+#define HAVE_PCI_MMAP			1
-+#define ARCH_GENERIC_PCI_MMAP_RESOURCE	1
-+#define arch_can_pci_mmap_io()		1
- 
- extern int pci_legacy_read(struct pci_bus *bus, loff_t port, u32 *val,
- 			   size_t count);
-diff --git a/arch/microblaze/pci/pci-common.c b/arch/microblaze/pci/pci-common.c
-index ae79e86..161f975 100644
---- a/arch/microblaze/pci/pci-common.c
-+++ b/arch/microblaze/pci/pci-common.c
-@@ -151,72 +151,22 @@ void pcibios_set_master(struct pci_dev *dev)
- }
- 
- /*
-- * Platform support for /proc/bus/pci/X/Y mmap()s,
-- * modelled on the sparc64 implementation by Dave Miller.
-- *  -- paulus.
-+ * Platform support for /proc/bus/pci/X/Y mmap()s.
-  */
- 
--/*
-- * Adjust vm_pgoff of VMA such that it is the physical page offset
-- * corresponding to the 32-bit pci bus offset for DEV requested by the user.
-- *
-- * Basically, the user finds the base address for his device which he wishes
-- * to mmap.  They read the 32-bit value from the config space base register,
-- * add whatever PAGE_SIZE multiple offset they wish, and feed this into the
-- * offset parameter of mmap on /proc/bus/pci/XXX for that device.
-- *
-- * Returns negative error code on failure, zero on success.
-- */
--static struct resource *__pci_mmap_make_offset(struct pci_dev *dev,
--					       resource_size_t *offset,
--					       enum pci_mmap_state mmap_state)
-+int pci_iobar_pfn(struct pci_dev *pdev, int bar, struct vm_area_struct *vma)
- {
--	struct pci_controller *hose = pci_bus_to_host(dev->bus);
--	unsigned long io_offset = 0;
--	int i, res_bit;
-+	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-+	resource_size_t ioaddr = pci_resource_start(pdev, bar);
- 
- 	if (!hose)
--		return NULL;		/* should never happen */
--
--	/* If memory, add on the PCI bridge address offset */
--	if (mmap_state == pci_mmap_mem) {
--#if 0 /* See comment in pci_resource_to_user() for why this is disabled */
--		*offset += hose->pci_mem_offset;
--#endif
--		res_bit = IORESOURCE_MEM;
--	} else {
--		io_offset = (unsigned long)hose->io_base_virt - _IO_BASE;
--		*offset += io_offset;
--		res_bit = IORESOURCE_IO;
--	}
--
--	/*
--	 * Check that the offset requested corresponds to one of the
--	 * resources of the device.
--	 */
--	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
--		struct resource *rp = &dev->resource[i];
--		int flags = rp->flags;
-+		return -EINVAL;		/* should never happen */
- 
--		/* treat ROM as memory (should be already) */
--		if (i == PCI_ROM_RESOURCE)
--			flags |= IORESOURCE_MEM;
--
--		/* Active and same type? */
--		if ((flags & res_bit) == 0)
--			continue;
--
--		/* In the range of this resource? */
--		if (*offset < (rp->start & PAGE_MASK) || *offset > rp->end)
--			continue;
--
--		/* found it! construct the final physical address */
--		if (mmap_state == pci_mmap_io)
--			*offset += hose->io_base_phys - io_offset;
--		return rp;
--	}
-+	/* Convert to an offset within this PCI controller */
-+	ioaddr -= (unsigned long)hose->io_base_virt - _IO_BASE;
- 
--	return NULL;
-+	vma->vm_pgoff += (ioaddr + hose->io_base_phys) >> PAGE_SHIFT;
-+	return 0;
- }
- 
- /*
-@@ -268,37 +218,6 @@ pgprot_t pci_phys_mem_access_prot(struct file *file,
- 	return prot;
- }
- 
--/*
-- * Perform the actual remap of the pages for a PCI device mapping, as
-- * appropriate for this architecture.  The region in the process to map
-- * is described by vm_start and vm_end members of VMA, the base physical
-- * address is found in vm_pgoff.
-- * The pci device structure is provided so that architectures may make mapping
-- * decisions on a per-device or per-bus basis.
-- *
-- * Returns a negative error code on failure, zero on success.
-- */
--int pci_mmap_page_range(struct pci_dev *dev, int bar, struct vm_area_struct *vma,
--			enum pci_mmap_state mmap_state, int write_combine)
--{
--	resource_size_t offset =
--		((resource_size_t)vma->vm_pgoff) << PAGE_SHIFT;
--	struct resource *rp;
--	int ret;
--
--	rp = __pci_mmap_make_offset(dev, &offset, mmap_state);
--	if (rp == NULL)
--		return -EINVAL;
--
--	vma->vm_pgoff = offset >> PAGE_SHIFT;
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
--
--	ret = remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
--			       vma->vm_end - vma->vm_start, vma->vm_page_prot);
--
--	return ret;
--}
--
- /* This provides legacy IO read access on a bus */
- int pci_legacy_read(struct pci_bus *bus, loff_t port, u32 *val, size_t size)
- {
--- 
-2.7.4
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+> ---
+>  drivers/pci/pci-sysfs.c |    3 +--
+>  drivers/pci/probe.c     |    3 +++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index eb6bee8724cc..4933f0270471 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1542,11 +1542,10 @@ static int pci_create_capabilities_sysfs(struct pci_dev *dev)
+>  	/* Active State Power Management */
+>  	pcie_aspm_create_sysfs_dev_files(dev);
+>  
+> -	if (!pci_probe_reset_function(dev)) {
+> +	if (dev->reset_fn) {
+>  		retval = device_create_file(&dev->dev, &reset_attr);
+>  		if (retval)
+>  			goto error;
+> -		dev->reset_fn = 1;
+>  	}
+>  	return 0;
+>  
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index ef5377438a1e..489660d0d384 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2121,6 +2121,9 @@ static void pci_init_capabilities(struct pci_dev *dev)
+>  
+>  	/* Advanced Error Reporting */
+>  	pci_aer_init(dev);
+> +
+> +	if (pci_probe_reset_function(dev) == 0)
+> +		dev->reset_fn = 1;
+>  }
+>  
+>  /*
+> 
+> 
