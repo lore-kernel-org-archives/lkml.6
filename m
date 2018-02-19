@@ -1,136 +1,420 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753491AbeBSRLe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:11:34 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:38847 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753427AbeBSRLc (ORCPT
+        id S1753589AbeBSROt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:14:49 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59416 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753250AbeBSROp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:11:32 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose.Abreu@synopsys.com, vbhadram@nvidia.com,
-        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/7] net: stmmac: set MSS for each tx DMA channel
-Date: Mon, 19 Feb 2018 18:11:09 +0100
-Message-Id: <20180219171116.15326-2-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
-References: <20180219171116.15326-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+        Mon, 19 Feb 2018 12:14:45 -0500
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
+ eXpander
+Thread-Topic: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
+ eXpander
+Thread-Index: AQHToOkDMk7LryqMCE6GHDVul6FkVaOj/t4AgAf4mAA=
+Date: Mon, 19 Feb 2018 17:13:57 +0000
+Message-ID: <32166cf0-5384-c313-f1be-4c27baf40ccf@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
+ <CAHp75VfuEd5fgjv40A27hOgj_Nd_LK2Yh=oBR-8qgPc+gSiiQw@mail.gmail.com>
+In-Reply-To: <CAHp75VfuEd5fgjv40A27hOgj_Nd_LK2Yh=oBR-8qgPc+gSiiQw@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E6578396D7806846A36DC1D02A147D85@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1JHEs3X024889
 
-The DMA engine in dwmac4 can segment a large TSO packet to several
-smaller packets of (max) size Maximum Segment Size (MSS).
 
-The DMA engine fetches and saves the MSS via a context descriptor.
 
-This context decriptor has to be provided to each tx DMA channel.
-To ensure that this is done, move struct member mss from stmmac_priv
-to stmmac_tx_queue.
+On 02/14/2018 04:30 PM, Andy Shevchenko wrote:
+> On Thu, Feb 8, 2018 at 4:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
+>> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
+>> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
+>> when other MFX features are not enabled.
+> 
+>> +config GPIO_ST_MFX
+>> +       bool "ST-MFX GPIOs"
+>> +       depends on MFD_ST_MFX
+>> +       depends on OF_GPIO
+>> +       select GPIOLIB_IRQCHIP
+>> +       help
+>> +         GPIO driver for STMicroelectronics Multi-Function eXpander.
+>> +
+>> +         This provides GPIO interface supporting inputs and outputs.
+> 
+>> +/*
+>> + * STMicroelectronics Multi-Function eXpander (ST-MFX) - GPIO expander driver.
+>> + *
+>> + * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
+>> + * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
+> 
+>> + * License terms: GPL V2.0.
+>> + *
+>> + * st-mfx-gpio is free software; you can redistribute it and/or modify it
+>> + * under the terms of the GNU General Public License version 2 as published by
+>> + * the Free Software Foundation.
+>> + *
+>> + * st-mfx-gpio is distributed in the hope that it will be useful, but
+>> + * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+>> + * details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License along with
+>> + * st-mfx-gpio. If not, see <http://www.gnu.org/licenses/>.
+> 
+> Use SPDX instead.
+> 
+OK.
+>> + */
+> 
+>> +#include <linux/of_gpio.h>
+> 
+>> +/* MFX has a maximum of 24 gpios, with 8 gpios per bank, so 3 banks maximum */
+>> +#define NR_MAX_GPIOS           24
+>> +#define NR_GPIOS_PER_BANK      8
+>> +#define NR_MAX_BANKS           (NR_MAX_GPIOS / NR_GPIOS_PER_BANK)
+> 
+>> +#define get_bank(offset)       ((u8)((offset) / NR_GPIOS_PER_BANK))
+>> +#define get_mask(offset)       ((u8)BIT((offset) % NR_GPIOS_PER_BANK))
+> 
+> I would rather keep it consistent, i.e.
+> get_bank() [as is]
+> get_mask -> get_shift() [w/o BIT() macro]
+> 
+#define get_shift(offset)       ((u8)((offset) % NR_GPIOS_PER_BANK))
+u8 mask = (u8)BIT(get_shift(offset));
+I'm not sure consistency is more important than readability and 
+convenience ?
 
-stmmac_reset_queues_param() now also resets mss, together with other
-queue parameters, so reset of mss value can be removed from
-stmmac_resume().
+>> +enum { REG_IRQ_SRC, REG_IRQ_EVT, REG_IRQ_TYPE, NR_CACHE_IRQ_REGS };
+> 
+> Please, do one item per line.
+> 
+OK.
 
-init_dma_tx_desc_rings() now also resets mss, together with other
-queue parameters, so reset of mss value can be removed from
-stmmac_open().
+>> +/*
+>> + * This is MFX-specific flags, overloading Linux-specific of_gpio_flags,
+>> + * needed in of_xlate callback.
+> 
+>> + * on MFX: - if GPIO is output:
+> 
+> Split to two lines.
+> 
+OK.
 
-This fixes tx queue timeouts for dwmac4, with DT property
-snps,tx-queues-to-use > 1, when running iperf3 with multiple threads.
+>> + *             * (0) means PUSH_PULL
+>> + *             * OF_GPIO_SINGLE_ENDED (=2) means OPEN-DRAIN
+>> + *        - if GPIO is input:
+>> + *             * (0) means NO_PULL
+>> + *             * OF_MFX_GPI_PUSH_PULL (=2) means PUSH_PULL
+>> + *
+>> + *             * OF_MFX_GPIO_PULL_UP programs pull up resistor on the GPIO,
+>> + *               whatever its direction, without this flag, depending on
+>> + *               GPIO type and direction, it programs either no pull or
+>> + *               pull down resistor.
+>> + */
+>> +enum of_mfx_gpio_flags {
+>> +       OF_MFX_GPI_PUSH_PULL = 0x2,
+>> +       OF_MFX_GPIO_PULL_UP = 0x4,
+> 
+> These have misleading prefix. OF_ is reserved for general OF stuff.
+> 
+You're right. I will fix it in V2.
 
-Fixes: ce736788e8a9 ("net: stmmac: adding multiple buffers for TX")
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 13 +++++--------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+>> +};
+>> +
+>> +struct mfx_gpio {
+>> +       struct gpio_chip gc;
+>> +       struct mfx *mfx;
+> 
+>> +       struct device *dev;
+> 
+> Don't you have it in gc above as a parent device?
+> 
+Yes, I agree to remove it.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index a916e13624eb..75161e1b7e55 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -58,6 +58,7 @@ struct stmmac_tx_queue {
- 	unsigned int dirty_tx;
- 	dma_addr_t dma_tx_phy;
- 	u32 tx_tail_addr;
-+	u32 mss;
- };
- 
- struct stmmac_rx_queue {
-@@ -138,7 +139,6 @@ struct stmmac_priv {
- 	spinlock_t ptp_lock;
- 	void __iomem *mmcaddr;
- 	void __iomem *ptpaddr;
--	u32 mss;
- 
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *dbgfs_dir;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 7ad841434ec8..d38bf38f12f5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1355,6 +1355,7 @@ static int init_dma_tx_desc_rings(struct net_device *dev)
- 
- 		tx_q->dirty_tx = 0;
- 		tx_q->cur_tx = 0;
-+		tx_q->mss = 0;
- 
- 		netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, queue));
- 	}
-@@ -1946,6 +1947,7 @@ static void stmmac_tx_err(struct stmmac_priv *priv, u32 chan)
- 						     (i == DMA_TX_SIZE - 1));
- 	tx_q->dirty_tx = 0;
- 	tx_q->cur_tx = 0;
-+	tx_q->mss = 0;
- 	netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, chan));
- 	stmmac_start_tx_dma(priv, chan);
- 
-@@ -2632,7 +2634,6 @@ static int stmmac_open(struct net_device *dev)
- 
- 	priv->dma_buf_sz = STMMAC_ALIGN(buf_sz);
- 	priv->rx_copybreak = STMMAC_RX_COPYBREAK;
--	priv->mss = 0;
- 
- 	ret = alloc_dma_desc_resources(priv);
- 	if (ret < 0) {
-@@ -2872,10 +2873,10 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 	mss = skb_shinfo(skb)->gso_size;
- 
- 	/* set new MSS value if needed */
--	if (mss != priv->mss) {
-+	if (mss != tx_q->mss) {
- 		mss_desc = tx_q->dma_tx + tx_q->cur_tx;
- 		priv->hw->desc->set_mss(mss_desc, mss);
--		priv->mss = mss;
-+		tx_q->mss = mss;
- 		tx_q->cur_tx = STMMAC_GET_ENTRY(tx_q->cur_tx, DMA_TX_SIZE);
- 	}
- 
-@@ -4436,6 +4437,7 @@ static void stmmac_reset_queues_param(struct stmmac_priv *priv)
- 
- 		tx_q->cur_tx = 0;
- 		tx_q->dirty_tx = 0;
-+		tx_q->mss = 0;
- 	}
- }
- 
-@@ -4481,11 +4483,6 @@ int stmmac_resume(struct device *dev)
- 
- 	stmmac_reset_queues_param(priv);
- 
--	/* reset private mss value to force mss context settings at
--	 * next tso xmit (only used for gmac4).
--	 */
--	priv->mss = 0;
--
- 	stmmac_clear_descriptors(priv);
- 
- 	stmmac_hw_setup(ndev, false);
--- 
-2.14.2
+>> +       struct mutex irq_lock; /* IRQ bus lock */
+>> +       u32 flags[NR_MAX_GPIOS];
+>> +       /* Caches of interrupt control registers for bus_lock */
+>> +       u8 regs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
+>> +       u8 oldregs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
+>> +};
+> 
+>> +static int mfx_gpio_direction_input(struct gpio_chip *gc,
+>> +                                   unsigned int offset)
+>> +{
+>> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+>> +       struct mfx *mfx = mfx_gpio->mfx;
+>> +       u8 reg_type = MFX_REG_GPIO_TYPE + get_bank(offset);
+>> +       u8 reg_pupd = MFX_REG_GPIO_PUPD + get_bank(offset);
+>> +       u8 reg_dir = MFX_REG_GPIO_DIR + get_bank(offset);
+>> +       u8 mask = get_mask(offset);
+>> +       int ret;
+>> +
+>> +       /*
+>> +        * In case of input direction, there is actually no way to apply some
+>> +        * configuration in hardware, as it can be done with
+>> +        * .set_config in case of output direction. That's why we apply
+>> +        * here the MFX specific-flags.
+>> +        */
+>> +       if (mfx_gpio->flags[offset] & OF_MFX_GPI_PUSH_PULL)
+>> +               ret = mfx_set_bits(mfx, reg_type, mask, mask);
+>> +       else
+>> +               ret = mfx_set_bits(mfx, reg_type, mask, 0);
+> 
+>> +
+> 
+> Redundant empty line.
+> 
+OK.
+
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       if (mfx_gpio->flags[offset] & OF_MFX_GPIO_PULL_UP)
+>> +               ret = mfx_set_bits(mfx, reg_pupd, mask, mask);
+>> +       else
+>> +               ret = mfx_set_bits(mfx, reg_pupd, mask, 0);
+> 
+>> +
+> 
+> Ditto.
+> 
+OK.
+
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return mfx_set_bits(mfx, reg_dir, mask, 0);
+>> +}
+> 
+>> +static void mfx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+>> +{
+>> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+>> +       struct mfx *mfx = mfx_gpio->mfx;
+>> +       u16 i;
+>> +
+>> +       for (i = 0; i < gc->ngpio; i++) {
+>> +               int gpio = i + gc->base;
+>> +               const char *label = gpiochip_is_requested(gc, i);
+>> +               int dir = mfx_gpio_get_direction(gc, i);
+>> +               int val = mfx_gpio_get(gc, i);
+>> +               u8 mask = get_mask(i);
+>> +               u8 reg;
+>> +               int type, pupd;
+>> +               int irqsrc, irqevt, irqtype, irqpending;
+> 
+>> +               if (!label)
+>> +                       label = "Unrequested";
+> 
+> I would rather put label = gpiochip_...(); immediately before this
+> condition for better readability.
+> 
+You're right.
+
+>> +
+>> +               seq_printf(s, " gpio-%-3d (%-20.20s) ", gpio, label);
+>> +
+> 
+>> +               reg = MFX_REG_IRQ_GPI_PENDING + get_bank(i);
+>> +               irqpending = mfx_reg_read(mfx, reg);
+>> +               if (irqpending < 0)
+>> +                       return;
+>> +               irqpending = !!(irqpending & mask);
+>> +
+> 
+>> +               if (!dir) {
+> 
+> Why not to use
+> 
+> if (dir) {
+> 
+> ?
+> 
+My brain orders things in ascending order, I think it is the reason why 
+this code manages false cases (=0) before the others.
+
+>> +                       seq_printf(s, "out %s ", val ? "high" : "low");
+>> +                       if (type)
+>> +                               seq_puts(s, "open drain ");
+>> +                       else
+>> +                               seq_puts(s, "push pull ");
+>> +                       if (pupd && type)
+>> +                               seq_puts(s, "with internal pull-up ");
+>> +                       else
+>> +                               seq_puts(s, "without internal pull-up ");
+>> +               } else {
+>> +                       seq_printf(s, "in %s ", val ? "high" : "low");
+>> +                       if (type)
+>> +                               seq_printf(s, "with internal pull-%s ",
+>> +                                          pupd ? "up" : "down");
+>> +                       else
+>> +                               seq_printf(s, "%s ",
+>> +                                          pupd ? "floating" : "analog");
+>> +               }
+>> +
+>> +               if (irqsrc) {
+>> +                       seq_printf(s, "IRQ generated on %s %s",
+>> +                                  !irqevt ?
+>> +                                  (!irqtype ? "Low level" : "High level") :
+>> +                                  (!irqtype ? "Falling edge" : "Rising edge"),
+>> +                                  irqpending ? "(pending)" : "");
+> 
+> Why do you use negative conditions? Use positive ones.
+> 
+OK, I will make the effort in V2.
+>> +               }
+>> +
+>> +               seq_puts(s, "\n");
+>> +       }
+>> +}
+> 
+>> +static void mfx_gpio_irq_toggle_trigger(struct gpio_chip *gc, int offset)
+>> +{
+>> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+>> +       struct mfx *mfx = mfx_gpio->mfx;
+>> +       u8 bank = get_bank(offset);
+>> +       u8 mask = get_mask(offset);
+>> +       int val = mfx_gpio_get(gc, offset);
+>> +
+> 
+>> +       if (val < 0) {
+>> +               dev_err(mfx_gpio->dev, "can't get value of gpio%d: ret=%d\n",
+>> +                       offset, val);
+> 
+> Is it somehow useful on err level?
+> 
+I can drop it.
+>> +               return;
+>> +       }
+> 
+>> +}
+> 
+>> +static int mfx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>> +{
+>> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+>> +       int bank = get_bank(d->hwirq);
+>> +       int mask = get_mask(d->hwirq);
+>> +
+> 
+>> +       if ((type & IRQ_TYPE_LEVEL_LOW) || (type & IRQ_TYPE_LEVEL_HIGH))
+> 
+> IRQ_TYPE_LEVEL_MASK?
+> 
+You're right.
+>> +               mfx_gpio->regs[REG_IRQ_EVT][bank] &= ~mask;
+>> +       else
+>> +               mfx_gpio->regs[REG_IRQ_EVT][bank] |= mask;
+>> +
+>> +       if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
+> 
+> IRQ_TYPE_EDGE_BOTH ?
+> 
+No, here I test EDGE_RISING and LEVEL_HIGH, so mixing EDGE and LEVEL type.
+>> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] |= mask;
+>> +       else
+>> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] &= ~mask;
+>> +
+> 
+>> +}
+> 
+>> +static void mfx_gpio_irq_lock(struct irq_data *d)
+> 
+> Missed annotation that this acquires a lock.
+> 
+It is .irq_bus_lock and .irq_bus_sync_unlock. Description is available 
+in include/linux/irq.h:
+  * @irq_bus_lock:	function to lock access to slow bus (i2c) chips
+  * @irq_bus_sync_unlock:function to sync and unlock slow bus (i2c) chips
+>> +static void mfx_gpio_irq_sync_unlock(struct irq_data *d)
+> 
+> Ditto for releasing lock.
+> 
+>> +static irqreturn_t mfx_gpio_irq(int irq, void *dev)
+>> +{
+>> +       struct mfx_gpio *mfx_gpio = dev;
+>> +       struct mfx *mfx = mfx_gpio->mfx;
+>> +       int num_banks = mfx->num_gpio / 8;
+>> +       u8 status[num_banks];
+> 
+>> +       int ret;
+>> +       u8 bank;
+> 
+> Swap lines.
+> 
+OK.
+>> +
+>> +       ret = mfx_block_read(mfx, MFX_REG_IRQ_GPI_PENDING, ARRAY_SIZE(status),
+>> +                            status);
+>> +       if (ret < 0) {
+> 
+>> +               dev_err(mfx_gpio->dev, "can't get IRQ_GPI_PENDING: %d\n", ret);
+> 
+> In IRQ context on err level? Hmm...
+> 
+OK I will remove it in V2.
+>> +               return IRQ_NONE;
+>> +       }
+>> +
+>> +       for (bank = 0; bank < ARRAY_SIZE(status); bank++) {
+>> +               u8 stat = status[bank];
+>> +
+>> +               if (!stat)
+>> +                       continue;
+>> +
+> 
+>> +               while (stat) {
+>> +                       int bit = __ffs(stat);
+> 
+> for_each_set_bit() ?
+> 
+You're right.
+>> +                       int offset = bank * NR_GPIOS_PER_BANK + bit;
+>> +                       int gpio_irq = irq_find_mapping(mfx_gpio->gc.irq.domain,
+>> +                                                       offset);
+>> +                       int irq_trigger = irq_get_trigger_type(gpio_irq);
+>> +
+>> +                       handle_nested_irq(gpio_irq);
+>> +                       stat &= ~(BIT(bit));
+>> +
+>> +                       if (irq_trigger & IRQ_TYPE_EDGE_BOTH)
+>> +                               mfx_gpio_irq_toggle_trigger(&mfx_gpio->gc,
+>> +                                                           offset);
+>> +               }
+>> +
+>> +               mfx_reg_write(mfx, MFX_REG_IRQ_GPI_ACK + bank, status[bank]);
+>> +       }
+>> +
+>> +       return IRQ_HANDLED;
+>> +}
+> 
+
+Thanks for review,
+Amelie
