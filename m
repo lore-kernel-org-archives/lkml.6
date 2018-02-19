@@ -1,85 +1,98 @@
-Return-Path: <kernel-hardening-return-11954-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtj7lGO6RmW53WfKXmRelAucqFyyxGChL2TJniyunKgbQllRW4RXwhOIWR++djt5InbNjlJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519610477; cv=none;
+Return-Path: <kernel-hardening-return-11820-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x224jT5b0M8LRNJJNHzNfQsMJ04JIUzn1uh802FKqvW7VagHRtpprFlZiBR86YRltuufv29+A
+ARC-Seal: i=1; a=rsa-sha256; t=1519008708; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ljvhklzk3iLQBXs9HP4TczN/k3r4jwvwlyKpvXRsa8JKgBKQgNW+412tuAi3+LlrCc
-         2wsfkM14O/bAH746pNR7pz0DW6g59m4kgMc/sZgyIpeZwLofQ9h8T3tro1N1t8KLmJiw
-         zZtJp+24z7iQjEthjGGEtt9EpNq1V0kDR5+NjcDn+GSa2cLPwBjPn2ZqnzN4uJov+dY5
-         B1CcPkqIF6pi488FFwUoBGObnaRQgJDmIG08SeWEd02mDHuL/KzU1dHx86k891SXSGcj
-         pXAFuRQE4iAjnKDeJn0ykqe1tu6HGQg1jVBd0rE4X3l/2b21vYPb+ET1T3soVxT301mG
-         I9wQ==
+        b=Tgg9wlii3q33aM25cjo+Z8zd6+yl4Qk2I9XX5EQioDQIcIzjErjt/AL+xoWHc+ydoe
+         gYO+8tkMFVN43r49rWpW2RgTuNx9vNyYQSLzq5bGjcClG3ZFu25Z8JhPsIbycNyGWdFP
+         Gp91H4OGeN7HYxOhHxJ1XubdnCPhY8rvoIs27tJiRF7ZT9SyDP81dvgOqP4TuZgA6+R7
+         +fLnMGUp3RrgADxFILc9S7w5r69XI7k451YeRRzDiSwURyywGf1owYC2+5ZnNZYqwV7S
+         ytXexQ9LfI5D55ZfUgsDpwbUAFQVzxSTcdMYAkFQTLFOqLQ6/PJiJU5wp7W9dO7Hx0Gg
+         8iCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=t5Xwa7LXUJcjtSRdmSjoO7+1Rxo4jTGddQS0sAugw6g=;
-        b=NsV5cNq0pMBRGUAFRja8a+f3tc60CxkD4jTBXcR5XTDhvt6i5/qHUytPiqgTUVga0C
-         kXIziFdDrOv1K+iGE0xC7lpBvoGVzbvdImfhopjuQo98hcHGvQVfb5oD/qDtu8IZQi/G
-         IJALvkI+8g6iiLd4hC+q88ozme963f0RPHpqtg4ZY9bJNueRoNepBP2dTi5wGtJPsbsO
-         +nUIfGyWCBvOcmYkpsR/yQuzzI07zpNeuFRPBkVzfGFHHnBpe05usgdYTp1ZRQBR4n8P
-         kmD2i5yaK8Vrj9DJJO+cB0RJEcrn2Cs/Vq/hfzNLddc0v7w+tEoH/q+g6MKWvjQxCSop
-         wkgw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=5LNGGAv5VmJ6N0ZiC2ctlulzNBFN47Oc19TxF0btwk0=;
+        b=OGYEfNLlasYXgBoz3/7bqee1QTDAnoGgmg0Osb6gmo+lQd9KmypyLuROFnRIPLlPNS
+         rqE98aIF92n80vg170KPBkYCmxCgpR4E3Ytb1iBS5zC7Wij5UNwmWXpHcMiP2Gq94+Fe
+         rIpv3xtdKS3Zl98R1ysyzyVyDeoBkktfrzpUTyOr9NVTTlCcFpC7kNeksh6B4WS7/ass
+         JuZdKurhfux9Xx5Qwi/LmEzy4plvmUjd5yCRfkAPUezWoEKGIB9BowvyDljsPpU8fJIV
+         1zserQNkzqf3RPiTWzVIezFMx7x3fVNwXXzRvWcTnqM/gtGJAegKOZw5RXEYSbLVg0g0
+         rXhg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XNH3d3zg;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aSNmpLWQ;
-       spf=pass (google.com: domain of kernel-hardening-return-11954-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11954-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=YoI97MCk;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=P9jg7I5f;
+       spf=pass (google.com: domain of kernel-hardening-return-11820-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11820-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=XNH3d3zg;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aSNmpLWQ;
-       spf=pass (google.com: domain of kernel-hardening-return-11954-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11954-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=YoI97MCk;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=P9jg7I5f;
+       spf=pass (google.com: domain of kernel-hardening-return-11820-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11820-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:R2qTWntoUEXLKoZ97wZ90CFCPrF-VzX-N2ty-fnCsT8sK7AZGsK2Og>
-Date: Mon, 26 Feb 2018 13:00:36 +1100
+X-ME-Sender: <xms:mzuKWm6k-J5YsgMi4HAvV-vkgWhHGDJbVYggUn2HcACUnxmfqZv5gg>
 From: "Tobin C. Harding" <me@tobin.cc>
-To: Tycho Andersen <tycho@tycho.ws>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+To: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	Tycho Andersen <tycho@tycho.ws>,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] leaking_addresses: simplify path skipping
-Message-ID: <20180226020036.GE2808@eros>
+Subject: [PATCH 3/4] leaking_addresses: cache architecture name
+Date: Mon, 19 Feb 2018 13:50:48 +1100
+Message-Id: <1519008649-15782-4-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519008649-15782-1-git-send-email-me@tobin.cc>
 References: <1519008649-15782-1-git-send-email-me@tobin.cc>
- <1519008649-15782-3-git-send-email-me@tobin.cc>
- <20180226012631.qff25qjngubxy4ia@cisco>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226012631.qff25qjngubxy4ia@cisco>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592796064766188382?=
-X-GMAIL-MSGID: =?utf-8?q?1593427076527068539?=
+X-GMAIL-THRID: =?utf-8?q?1592796076018706536?=
+X-GMAIL-MSGID: =?utf-8?q?1592796076018706536?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 25, 2018 at 06:26:31PM -0700, Tycho Andersen wrote:
-> Hi Tobin,
-> 
-> On Mon, Feb 19, 2018 at 01:50:47PM +1100, Tobin C. Harding wrote:
-> > -# Do not parse these files under any subdirectory.
-> > -my @skip_parse_files_any = ('0',
-> > -			    '1',
-> > -			    '2',
-> > -			    'pagemap',
-> > -			    'events',
-> > -			    'access',
-> > -			    'registers',
-> > -			    'snapshot_raw',
-> > -			    'trace_pipe_raw',
-> > -			    'ptmx',
-> > -			    'trace_pipe');
-> 
-> It might be worth adding 'syscall' here; the pointers listed are user
-> pointers, and negative syscall args will show up like kernel pointers,
-> e.g. I get this output, which is spurious:
-> 
-> /proc/31808/syscall: 0 0x3 0x55b107a38180 0x2000 0xffffffffffffffb0 0x55b107a302d0 0x55b107a38180 0x7fffa313b8e8 0x7ff098560d11
+Currently we are repeatedly calling `uname -m`.  This is causing the
+script to take a long time to run (more than 10 seconds to parse
+/proc/kallsyms).  We can use Perl state variables to cache the result of
+the first call to `uname -m`.  With this change in place the script
+scans the whole kernel in under a minute.
 
-Nice.  Will add.
+Cache machine architecture in state variable.
 
-thanks,
-Tobin.
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ scripts/leaking_addresses.pl | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
+index e7bf15a45a69..f52e91ef7d5c 100755
+--- a/scripts/leaking_addresses.pl
++++ b/scripts/leaking_addresses.pl
+@@ -175,7 +175,7 @@ sub is_32bit
+ 
+ sub is_ix86_32
+ {
+-       my $arch = `uname -m`;
++       state $arch = `uname -m`;
+ 
+        chomp $arch;
+        if ($arch =~ m/i[3456]86/) {
+@@ -198,12 +198,14 @@ sub is_arch
+ 
+ sub is_x86_64
+ {
+-	return is_arch('x86_64');
++	state $is = is_arch('x86_64');
++	return $is;
+ }
+ 
+ sub is_ppc64
+ {
+-	return is_arch('ppc64');
++	state $is = is_arch('ppc64');
++	return $is;
+ }
+ 
+ # Gets config option value from kernel config file.
+-- 
+2.7.4
