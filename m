@@ -1,69 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752606AbeBSKog convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:44:36 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:58757 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752307AbeBSKoe (ORCPT
+        id S1752517AbeBSKrV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:47:21 -0500
+Received: from smtprelay09.ispgateway.de ([134.119.228.114]:56539 "EHLO
+        smtprelay09.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752307AbeBSKrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:44:34 -0500
-Date: Mon, 19 Feb 2018 11:44:22 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, linux@armlinux.org.uk, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v3 6/7] arm: dts: sun8i: a83t: Fix undefined offset with
- virtual timer
-Message-ID: <20180219114422.37977175@dell-desktop.home>
-In-Reply-To: <20180219085205.jh6bcmbzcxqffkhk@flea.lan>
-References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
-        <20180219081837.15482-7-mylene.josserand@bootlin.com>
-        <20180219085205.jh6bcmbzcxqffkhk@flea.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 19 Feb 2018 05:47:19 -0500
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
+        / MXC ARM ARCHITECTURE),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-kernel@vger.kernel.org (open list)
+Cc: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+Subject: [PATCH] ARM: dts: imx6dl: remove 'lcdif' node
+Date: Mon, 19 Feb 2018 11:47:05 +0100
+Message-Id: <1519037225-22872-1-git-send-email-LW@KARO-electronics.de>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+According to the "i.MX 6Solo/6DualLite Applications Processor
+Reference Manual" Rev. 3, 09/2017 there is no LCDIF unit on the
+i.MX6DL.
 
-On Mon, 19 Feb 2018 09:52:05 +0100
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6dl.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> Hi,
-> 
-> On Mon, Feb 19, 2018 at 09:18:36AM +0100, Mylène Josserand wrote:
-> > The ARM architected timers use an offset between their physical and
-> > virtual counters. That offset should be configured by the bootloader
-> > in CNTVOFF.
-> > 
-> > However, the A83t bootloader fails to do so, and we end up with an
-> > undefined offset (which in our case is random), meaning that each CPU
-> > will have a different time, which isn't working very well.
-> > 
-> > Fix that by setting the arm,cpu-registers-not-fw-configured that will
-> > make Linux use the physical timers instead of the virtual ones. One
-> > possible side effect would be that the virtualization features would
-> > be disabled. However, due to the way the GIC has been integrated in
-> > the system, it is already unusable so we're effectively not losing any
-> > feature.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
-> 
-> One small nitpick on this one (and the previous one), arm in the
-> subject prefix should be uppercase.
-
-Okay, I will fix that in V4.
-
-Mylène
-
+diff --git a/arch/arm/boot/dts/imx6dl.dtsi b/arch/arm/boot/dts/imx6dl.dtsi
+index c01674f..d9c502a 100644
+--- a/arch/arm/boot/dts/imx6dl.dtsi
++++ b/arch/arm/boot/dts/imx6dl.dtsi
+@@ -80,11 +80,6 @@
+ 				reg = <0x020f4000 0x4000>;
+ 				interrupts = <0 97 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
+-
+-			lcdif: lcdif@20f8000 {
+-				reg = <0x020f8000 0x4000>;
+-				interrupts = <0 39 IRQ_TYPE_LEVEL_HIGH>;
+-			};
+ 		};
+ 
+ 		aips2: aips-bus@2100000 {
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.1.4
