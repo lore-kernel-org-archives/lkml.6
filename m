@@ -1,148 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753310AbeBSQjI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:39:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752973AbeBSQjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:39:06 -0500
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: geert@linux-m68k.org, borntraeger@de.ibm.com, tomi.valkeinen@ti.com,
-        b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
- <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
-From: Farhan Ali <alifm@linux.vnet.ibm.com>
-Date: Mon, 19 Feb 2018 11:38:59 -0500
+        id S1753214AbeBSQlj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:41:39 -0500
+Received: from vern.gendns.com ([206.190.152.46]:49018 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753152AbeBSQlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:41:37 -0500
+Subject: Re: [PATCH v3] reset: add support for non-DT systems
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
+References: <20180219123435.12007-1-brgl@bgdev.pl>
+ <1519046007.3408.9.camel@pengutronix.de>
+From: David Lechner <david@lechnology.com>
+Message-ID: <078f13eb-22ec-e042-827b-f543c9765e9c@lechnology.com>
+Date: Mon, 19 Feb 2018 10:41:48 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+In-Reply-To: <1519046007.3408.9.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021916-0028-0000-0000-00000931BC00
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008560; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00992069; UDB=6.00503973; IPR=6.00771415;
- MB=3.00019638; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-19 16:39:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021916-0029-0000-0000-000039AA35BE
-Message-Id: <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802190205
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/19/2018 11:25 AM, Thomas Huth wrote:
-> On 19.02.2018 16:47, Farhan Ali wrote:
->> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
->> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
->> "Graphics support" menu for S390. But if we enable VT layer for S390,
->> we would also need to enable the dummy console. So let's remove the
->> HAS_IOMEM dependency.
->>
->> Move this dependency to sub menu items and console drivers that use
->> io memory.
->>
->> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
->> ---
->>   drivers/video/Kconfig         | 21 +++++++++++----------
->>   drivers/video/console/Kconfig |  4 ++--
->>   2 files changed, 13 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
->> index 3c20af9..8f10915 100644
->> --- a/drivers/video/Kconfig
->> +++ b/drivers/video/Kconfig
->> @@ -3,7 +3,6 @@
->>   #
->>   
->>   menu "Graphics support"
->> -	depends on HAS_IOMEM
->>   
->>   config HAVE_FB_ATMEL
->>   	bool
->> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
->>   config SH_LCD_MIPI_DSI
->>   	bool
->>   
->> -source "drivers/char/agp/Kconfig"
->> +if HAS_IOMEM
->> +	source "drivers/char/agp/Kconfig"
->>   
->> -source "drivers/gpu/vga/Kconfig"
->> +	source "drivers/gpu/vga/Kconfig"
->>   
->> -source "drivers/gpu/host1x/Kconfig"
->> -source "drivers/gpu/ipu-v3/Kconfig"
->> +	source "drivers/gpu/host1x/Kconfig"
->> +	source "drivers/gpu/ipu-v3/Kconfig"
->>   
->> -source "drivers/gpu/drm/Kconfig"
->> +	source "drivers/gpu/drm/Kconfig"
->>   
->> -menu "Frame buffer Devices"
->> -source "drivers/video/fbdev/Kconfig"
->> -endmenu
->> +	menu "Frame buffer Devices"
->> +	source "drivers/video/fbdev/Kconfig"
->> +	endmenu
->>   
->> -source "drivers/video/backlight/Kconfig"
->> +        source "drivers/video/backlight/Kconfig"
->> +endif
->>   
->>   config VGASTATE
->>          tristate
->> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
->> index 7f1f1fb..0023b16 100644
->> --- a/drivers/video/console/Kconfig
->> +++ b/drivers/video/console/Kconfig
->> @@ -85,7 +85,7 @@ config MDA_CONSOLE
->>   
->>   config SGI_NEWPORT_CONSOLE
->>           tristate "SGI Newport Console support"
->> -        depends on SGI_IP22
->> +        depends on SGI_IP22 && HAS_IOMEM
->>           select FONT_SUPPORT
->>           help
->>             Say Y here if you want the console on the Newport aka XL graphics
->> @@ -153,7 +153,7 @@ config FRAMEBUFFER_CONSOLE_ROTATION
->>   
->>   config STI_CONSOLE
->>           bool "STI text console"
->> -        depends on PARISC
->> +        depends on PARISC && HAS_IOMEM
->>           select FONT_SUPPORT
->>           default y
->>           help
->>
+On 02/19/2018 07:13 AM, Philipp Zabel wrote:
+> Hi Bartosz,
 > 
-> Maybe config VGA_CONSOLE should depend on HAS_IOMEM, too? I think you
-> can hardly use a VGA card without IOMEM, can you?
-
-True, you can't. And I did think of adding the dependency for VGA, but 
-VGA already is fenced off by many (almost all) architectures and I 
-wasn't sure if it would be necessary. But I can add it.
-
-> Anyway, this approach now looks reasonable to me, so either way, feel
-> free to add my:
+> On Mon, 2018-02-19 at 13:34 +0100, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> The reset framework only supports device-tree. There are some platforms
+>> however, which need to use it even in legacy, board-file based mode.
+>>
+>> An example of such architecture is the DaVinci family of SoCs which
+>> supports both device tree and legacy boot modes and we don't want to
+>> introduce any regressions.
+>>
+>> We're currently working on converting the platform from its hand-crafted
+>> clock API to using the common clock framework. Part of the overhaul will
+>> be representing the chip's power sleep controller's reset lines using
+>> the reset framework.
+>>
+>> This changeset extends the core reset code with a new field in the
+>> reset controller struct which contains an array of lookup entries. Each
+>> entry contains the device name, an additional, optional identifier
+>> string and the reset id number.
+>>
+>> Drivers can register a set of reset lines using this lookup table and
+>> concerned devices can access them using the regular reset_control API.
+>>
+>> This new function is only called as a fallback in case the of_node
+>> field is NULL and doesn't change anything for current users.
+>>
+>> Tested with a dummy reset driver with several lookup entries.
+>>
+>> An example lookup table can look like this:
+>>
+>> static const struct reset_lookup foobar_reset_lookup[] = {
+>> 	{ .dev = "foo",   .reset_id = "foo_id",    .id = 14 },
+>> 	{ .dev = "bar",   .id = NULL,              .id = 3  },
+>> 	{ }
+>> };
 > 
-> Reviewed-by: Thomas Huth <thuth@redhat.com>
+> Thank you for the patch. This is a useful addition, but the lookups
+> should be added in platform code, not by the reset controller driver.
+> 
+> I would prefer reset_lookups to follow the patterns set by the other
+> subsystem's lookup implementations:
+> clk, gpiod, phy, and pwm have lookups that can be created from platform
+> code, independently from the drivers (via clkdev_add_table,
+> gpiod_add_lookup_table, phy_create_lookup, and pwm_add_table).
+> 
+> Following this pattern would allow to support reset controllers that are
+> implemented as proper device drivers, and reset controllers that are
+> reused on multiple platforms.
 > 
 
-Thank you so much for reviewing. Appreciate your feedback :)
+When testing v2 of this series, I was thinking that having this sort
+of separation would be better as well.
