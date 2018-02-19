@@ -1,94 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752855AbeBSNCx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:02:53 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61606 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752638AbeBSNCu (ORCPT
+        id S1752790AbeBSNE0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:04:26 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:3704 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752638AbeBSNEY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:02:50 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org,
-        Jayachandran Nair <Jayachandran.Nair@cavium.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Tom Vaden <tom.vaden@hpe.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        George Cherian <george.cherian@cavium.com>
-Subject: Re: [PATCH v1 2/2] PCI: Remove redundant probes for device reset support
-Date: Mon, 19 Feb 2018 14:00:53 +0100
-Message-ID: <5209987.iOvtupYxAV@aspire.rjw.lan>
-In-Reply-To: <20180216225018.67295.36860.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180216224213.67295.2251.stgit@bhelgaas-glaptop.roam.corp.google.com> <20180216225018.67295.36860.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 19 Feb 2018 08:04:24 -0500
+X-IronPort-AV: E=Sophos;i="5.46,535,1511827200";
+   d="scan'208";a="720365549"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: davem@davemloft.net, sparclinux@vger.kernel.org, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: [PATCH] sparc: Use generic pci_mmap_resource_range()
+Date: Mon, 19 Feb 2018 13:04:12 +0000
+Message-Id: <1519045452-22645-1-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, February 16, 2018 11:50:18 PM CET Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> We probe every device for whether it supports reset so we can tell whether
-> to create a sysfs "reset" file for it.  We do that probe in
-> pci_init_capabilities() during enumeration and save the result in
-> dev->reset_fn.  The result doesn't depend on any other devices on the bus
-> and shouldn't change after boot, so we don't need to do the probe again.
-> 
-> Remove the pci_probe_reset_function() calls and rely on the dev->reset_fn
-> we found during enumeration.  No functional change intended.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
+ARM64") added this generic function with the intent of using it
+everywhere and ultimately killing the old arch-specific implementations.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Let's get on with that eradication...
 
-> ---
->  drivers/pci/pci.c |   15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index f6a4dd10d9b0..4db740e4f50a 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4450,9 +4450,8 @@ int pci_reset_function(struct pci_dev *dev)
->  {
->  	int rc;
->  
-> -	rc = pci_probe_reset_function(dev);
-> -	if (rc)
-> -		return rc;
-> +	if (!dev->reset_fn)
-> +		return -ENOTTY;
->  
->  	pci_dev_lock(dev);
->  	pci_dev_save_and_disable(dev);
-> @@ -4487,9 +4486,8 @@ int pci_reset_function_locked(struct pci_dev *dev)
->  {
->  	int rc;
->  
-> -	rc = pci_probe_reset_function(dev);
-> -	if (rc)
-> -		return rc;
-> +	if (!dev->reset_fn)
-> +		return -ENOTTY;
->  
->  	pci_dev_save_and_disable(dev);
->  
-> @@ -4511,9 +4509,8 @@ int pci_try_reset_function(struct pci_dev *dev)
->  {
->  	int rc;
->  
-> -	rc = pci_probe_reset_function(dev);
-> -	if (rc)
-> -		return rc;
-> +	if (!dev->reset_fn)
-> +		return -ENOTTY;
->  
->  	if (!pci_dev_trylock(dev))
->  		return -EAGAIN;
-> 
-> 
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/sparc/include/asm/pci_64.h |   1 +
+ arch/sparc/kernel/pci.c         | 155 ----------------------------------------
+ 2 files changed, 1 insertion(+), 155 deletions(-)
+
+diff --git a/arch/sparc/include/asm/pci_64.h b/arch/sparc/include/asm/pci_64.h
+index 671274e..95d41c8 100644
+--- a/arch/sparc/include/asm/pci_64.h
++++ b/arch/sparc/include/asm/pci_64.h
+@@ -43,6 +43,7 @@ static inline int pci_proc_domain(struct pci_bus *bus)
+ /* Platform support for /proc/bus/pci/X/Y mmap()s. */
+ 
+ #define HAVE_PCI_MMAP
++#define ARCH_GENERIC_PCI_MMAP_RESOURCE
+ #define arch_can_pci_mmap_io()	1
+ #define HAVE_ARCH_PCI_GET_UNMAPPED_AREA
+ #define get_pci_unmapped_area get_fb_unmapped_area
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index 220d0f3..1c1f632 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -721,161 +721,6 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+ 	return 0;
+ }
+ 
+-/* Platform support for /proc/bus/pci/X/Y mmap()s. */
+-
+-/* If the user uses a host-bridge as the PCI device, he may use
+- * this to perform a raw mmap() of the I/O or MEM space behind
+- * that controller.
+- *
+- * This can be useful for execution of x86 PCI bios initialization code
+- * on a PCI card, like the xfree86 int10 stuff does.
+- */
+-static int __pci_mmap_make_offset_bus(struct pci_dev *pdev, struct vm_area_struct *vma,
+-				      enum pci_mmap_state mmap_state)
+-{
+-	struct pci_pbm_info *pbm = pdev->dev.archdata.host_controller;
+-	unsigned long space_size, user_offset, user_size;
+-
+-	if (mmap_state == pci_mmap_io) {
+-		space_size = resource_size(&pbm->io_space);
+-	} else {
+-		space_size = resource_size(&pbm->mem_space);
+-	}
+-
+-	/* Make sure the request is in range. */
+-	user_offset = vma->vm_pgoff << PAGE_SHIFT;
+-	user_size = vma->vm_end - vma->vm_start;
+-
+-	if (user_offset >= space_size ||
+-	    (user_offset + user_size) > space_size)
+-		return -EINVAL;
+-
+-	if (mmap_state == pci_mmap_io) {
+-		vma->vm_pgoff = (pbm->io_space.start +
+-				 user_offset) >> PAGE_SHIFT;
+-	} else {
+-		vma->vm_pgoff = (pbm->mem_space.start +
+-				 user_offset) >> PAGE_SHIFT;
+-	}
+-
+-	return 0;
+-}
+-
+-/* Adjust vm_pgoff of VMA such that it is the physical page offset
+- * corresponding to the 32-bit pci bus offset for DEV requested by the user.
+- *
+- * Basically, the user finds the base address for his device which he wishes
+- * to mmap.  They read the 32-bit value from the config space base register,
+- * add whatever PAGE_SIZE multiple offset they wish, and feed this into the
+- * offset parameter of mmap on /proc/bus/pci/XXX for that device.
+- *
+- * Returns negative error code on failure, zero on success.
+- */
+-static int __pci_mmap_make_offset(struct pci_dev *pdev,
+-				  struct vm_area_struct *vma,
+-				  enum pci_mmap_state mmap_state)
+-{
+-	unsigned long user_paddr, user_size;
+-	int i, err;
+-
+-	/* First compute the physical address in vma->vm_pgoff,
+-	 * making sure the user offset is within range in the
+-	 * appropriate PCI space.
+-	 */
+-	err = __pci_mmap_make_offset_bus(pdev, vma, mmap_state);
+-	if (err)
+-		return err;
+-
+-	/* If this is a mapping on a host bridge, any address
+-	 * is OK.
+-	 */
+-	if ((pdev->class >> 8) == PCI_CLASS_BRIDGE_HOST)
+-		return err;
+-
+-	/* Otherwise make sure it's in the range for one of the
+-	 * device's resources.
+-	 */
+-	user_paddr = vma->vm_pgoff << PAGE_SHIFT;
+-	user_size = vma->vm_end - vma->vm_start;
+-
+-	for (i = 0; i <= PCI_ROM_RESOURCE; i++) {
+-		struct resource *rp = &pdev->resource[i];
+-		resource_size_t aligned_end;
+-
+-		/* Active? */
+-		if (!rp->flags)
+-			continue;
+-
+-		/* Same type? */
+-		if (i == PCI_ROM_RESOURCE) {
+-			if (mmap_state != pci_mmap_mem)
+-				continue;
+-		} else {
+-			if ((mmap_state == pci_mmap_io &&
+-			     (rp->flags & IORESOURCE_IO) == 0) ||
+-			    (mmap_state == pci_mmap_mem &&
+-			     (rp->flags & IORESOURCE_MEM) == 0))
+-				continue;
+-		}
+-
+-		/* Align the resource end to the next page address.
+-		 * PAGE_SIZE intentionally added instead of (PAGE_SIZE - 1),
+-		 * because actually we need the address of the next byte
+-		 * after rp->end.
+-		 */
+-		aligned_end = (rp->end + PAGE_SIZE) & PAGE_MASK;
+-
+-		if ((rp->start <= user_paddr) &&
+-		    (user_paddr + user_size) <= aligned_end)
+-			break;
+-	}
+-
+-	if (i > PCI_ROM_RESOURCE)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-/* Set vm_page_prot of VMA, as appropriate for this architecture, for a pci
+- * device mapping.
+- */
+-static void __pci_mmap_set_pgprot(struct pci_dev *dev, struct vm_area_struct *vma,
+-					     enum pci_mmap_state mmap_state)
+-{
+-	/* Our io_remap_pfn_range takes care of this, do nothing.  */
+-}
+-
+-/* Perform the actual remap of the pages for a PCI device mapping, as appropriate
+- * for this architecture.  The region in the process to map is described by vm_start
+- * and vm_end members of VMA, the base physical address is found in vm_pgoff.
+- * The pci device structure is provided so that architectures may make mapping
+- * decisions on a per-device or per-bus basis.
+- *
+- * Returns a negative error code on failure, zero on success.
+- */
+-int pci_mmap_page_range(struct pci_dev *dev, int bar,
+-			struct vm_area_struct *vma,
+-			enum pci_mmap_state mmap_state, int write_combine)
+-{
+-	int ret;
+-
+-	ret = __pci_mmap_make_offset(dev, vma, mmap_state);
+-	if (ret < 0)
+-		return ret;
+-
+-	__pci_mmap_set_pgprot(dev, vma, mmap_state);
+-
+-	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+-	ret = io_remap_pfn_range(vma, vma->vm_start,
+-				 vma->vm_pgoff,
+-				 vma->vm_end - vma->vm_start,
+-				 vma->vm_page_prot);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_NUMA
+ int pcibus_to_node(struct pci_bus *pbus)
+ {
+-- 
+2.7.4
