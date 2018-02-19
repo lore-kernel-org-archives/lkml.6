@@ -1,18 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932291AbeBSXh6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 18:37:58 -0500
-Received: from edison.jonmasters.org ([173.255.233.168]:59916 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbeBSXh5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 18:37:57 -0500
-To: David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com
-Cc: Ingo Molnar <mingo@kernel.org>
+        id S932267AbeBSXm1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 18:42:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:27310 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932232AbeBSXm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 18:42:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
+   d="scan'208";a="29202249"
+From: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+To: Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+CC: Ingo Molnar <mingo@kernel.org>
+Subject: RE: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+Thread-Topic: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+Thread-Index: AQHTpBYQl8Dyc4mRm0iZ20KRHB9/vaOif+eAgAADjgCAABy9AIAABnAAgAAEXACAAAFigIAEqxQAgAACw4CAAAOrgIAAC+oAgAASX4CABXcSgP//eu2w
+Date: Mon, 19 Feb 2018 23:42:24 +0000
+Message-ID: <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
 References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
  <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
  <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
@@ -26,40 +42,35 @@ References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
  <1518776517.7876.21.camel@infradead.org>
  <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
  <1518783021.7876.34.camel@infradead.org>
-From: Jon Masters <jcm@jonmasters.org>
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
-Date: Mon, 19 Feb 2018 18:37:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1518783021.7876.34.camel@infradead.org>
-Content-Type: text/plain; charset=utf-8
+ <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+In-Reply-To: <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 82.111.139.164
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1JNgeUx018397
 
-On 02/16/2018 07:10 AM, David Woodhouse wrote:
-> On Fri, 2018-02-16 at 12:04 +0100, Paolo Bonzini wrote:
->> On 16/02/2018 11:21, David Woodhouse wrote:
+> 
+> >>> Even if the guest doesn't have/support IBRS_ALL, and is frobbing the
+> >>> (now emulated) MSR on every kernel entry/exit, that's *still* going to
+> >>> be a metric shitload faster than what it *thought* it was doing.
+> 
+> Is there any indication/log to the admin that VM doesn't know about
+> IBRS_ALL and is constantly uselessly writing to an emulated MSR?
+> 
+> While it's probably true that the overhead in time is similar to (or
+> better than) an actual IBRS MSR write, if the admin/user knows the VM
+> needs updating, then there's a fighting chance that they might do so.
 
->>> Even if the guest doesn't have/support IBRS_ALL, and is frobbing the
->>> (now emulated) MSR on every kernel entry/exit, that's *still* going to
->>> be a metric shitload faster than what it *thought* it was doing.
-
-Is there any indication/log to the admin that VM doesn't know about
-IBRS_ALL and is constantly uselessly writing to an emulated MSR?
-
-While it's probably true that the overhead in time is similar to (or
-better than) an actual IBRS MSR write, if the admin/user knows the VM
-needs updating, then there's a fighting chance that they might do so.
-
-Jon.
+the guest is not the problem; guests obviously will already honor if Enhanced IBRS is enumerated.
+The problem is mixed migration pools where the hypervisor may need to decide to not pass this enumeration through to the guest.
