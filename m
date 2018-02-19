@@ -1,81 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753789AbeBSURN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:17:13 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34980 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753685AbeBSURL (ORCPT
+        id S1753739AbeBSUTA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:19:00 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34814 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753562AbeBSUS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:17:11 -0500
-X-Google-Smtp-Source: AH8x226y9tOOS3l2HXvTS5qZgtahBY97bw5RcMVjPETFOJmu2Rn2vWf8IA/OaW2W6Sfsz6wyvwlBpw==
-From: Tomasz Maciej Nowak <tmn505@gmail.com>
-To: thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Tomasz Maciej Nowak <tmn505@gmail.com>
-Subject: [PATCH] ARM: dtc: tegra: enable front panel leds in TrimSlice
-Date: Mon, 19 Feb 2018 21:16:23 +0100
-Message-Id: <20180219201623.6987-1-tmn505@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Mon, 19 Feb 2018 15:18:58 -0500
+X-Google-Smtp-Source: AH8x226VtGxF+tUs7yf7YItDGqDgQ5ONBzl40ij773zL2rLJ5/pbpHbQmOE825lDAasJLoX+p5DYNg==
+Date: Mon, 19 Feb 2018 14:18:56 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Daney <david.daney@cavium.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v4] rtc: isl12026: Add driver.
+Message-ID: <20180219201856.47v33fxvbz6sgxfm@rob-hp-laptop>
+References: <20180216194415.6103-1-david.daney@cavium.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216194415.6103-1-david.daney@cavium.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds device nodes for two front panel LEDs.
+On Fri, Feb 16, 2018 at 11:44:15AM -0800, David Daney wrote:
+> The ISL12026 is a combination RTC and EEPROM device with I2C
+> interface.  The standard RTC driver interface is provided.  The EEPROM
+> is accessed via the NVMEM interface via the "eeprom0" directory in the
+> sysfs entry for the device.
+> 
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: David Daney <david.daney@cavium.com>
+> ---
+> Changes from v3:
+> 
+> o Add Reviewed-by
+> 
+> o s/dev_err/dev_warn/ in one place
+> 
+> o Remove redundant ','
+> 
+> Changes from v2:
+> 
+> o More code cleanups suggested by reviewers.
+> 
+> Changes from v1:
+> 
+> o Fixed device tree bindings document example.
+> 
+> o Use RTC_NVMEM facility for eeprom support.
+> 
+> o Small code cleanups suggested by reviewers.
+> 
+>  .../devicetree/bindings/rtc/isil,isl12026.txt      |  28 ++
 
-Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
----
- arch/arm/boot/dts/tegra20-trimslice.dts | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index d55c6b240a30..31a8b088d386 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -200,16 +200,17 @@
- 			conf_ata {
- 				nvidia,pins = "ata", "atc", "atd", "ate",
- 					"crtp", "dap2", "dap3", "dap4", "dta",
--					"dtb", "dtc", "dtd", "dte", "gmb",
--					"gme", "i2cp", "pta", "slxc", "slxd",
--					"spdi", "spdo", "uda";
-+					"dtb", "dtc", "dtd", "gmb", "gme",
-+					"i2cp", "pta", "slxc", "slxd", "spdi",
-+					"spdo", "uda";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 			};
- 			conf_atb {
- 				nvidia,pins = "atb", "cdev1", "cdev2", "dap1",
--					"gma", "gmc", "gmd", "gpu", "gpu7",
--					"gpv", "sdio1", "slxa", "slxk", "uac";
-+					"dte", "gma", "gmc", "gmd", "gpu",
-+					"gpu7", "gpv", "sdio1", "slxa", "slxk",
-+					"uac";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -402,6 +403,20 @@
- 		};
- 	};
- 
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		ds2 {
-+			label = "trimslice:green:right";
-+			gpios = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		ds3 {
-+			label = "trimslice:green:left";
-+			gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	poweroff {
- 		compatible = "gpio-poweroff";
- 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
--- 
-2.16.2
+>  drivers/rtc/Kconfig                                |   9 +
+>  drivers/rtc/Makefile                               |   1 +
+>  drivers/rtc/rtc-isl12026.c                         | 529 +++++++++++++++++++++
+>  4 files changed, 567 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl12026.txt
+>  create mode 100644 drivers/rtc/rtc-isl12026.c
