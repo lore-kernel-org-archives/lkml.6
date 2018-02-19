@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeBSNF3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:05:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52590 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752687AbeBSNF1 (ORCPT
+        id S1752759AbeBSNNa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:13:30 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53445 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752666AbeBSNN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:05:27 -0500
-Date: Mon, 19 Feb 2018 13:05:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
-Message-ID: <20180219130514.GC32761@sirena.org.uk>
-References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
- <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
- <20180216113008.GB5886@sirena.org.uk>
- <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
- <20180216134448.GI5886@sirena.org.uk>
- <20180216141237.rd75sbix7bopi7zu@earth.universe>
- <20180216151609.GK5886@sirena.org.uk>
- <20180216155706.GS6364@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
-Content-Disposition: inline
-In-Reply-To: <20180216155706.GS6364@atomide.com>
-X-Cookie: You enjoy the company of other people.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 19 Feb 2018 08:13:29 -0500
+Message-ID: <1519046007.3408.9.camel@pengutronix.de>
+Subject: Re: [PATCH v3] reset: add support for non-DT systems
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        David Lechner <david@lechnology.com>
+Date: Mon, 19 Feb 2018 14:13:27 +0100
+In-Reply-To: <20180219123435.12007-1-brgl@bgdev.pl>
+References: <20180219123435.12007-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Bartosz,
 
---kfjH4zxOES6UT95V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 2018-02-19 at 13:34 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The reset framework only supports device-tree. There are some platforms
+> however, which need to use it even in legacy, board-file based mode.
+> 
+> An example of such architecture is the DaVinci family of SoCs which
+> supports both device tree and legacy boot modes and we don't want to
+> introduce any regressions.
+> 
+> We're currently working on converting the platform from its hand-crafted
+> clock API to using the common clock framework. Part of the overhaul will
+> be representing the chip's power sleep controller's reset lines using
+> the reset framework.
+> 
+> This changeset extends the core reset code with a new field in the
+> reset controller struct which contains an array of lookup entries. Each
+> entry contains the device name, an additional, optional identifier
+> string and the reset id number.
+> 
+> Drivers can register a set of reset lines using this lookup table and
+> concerned devices can access them using the regular reset_control API.
+>
+> This new function is only called as a fallback in case the of_node
+> field is NULL and doesn't change anything for current users.
+> 
+> Tested with a dummy reset driver with several lookup entries.
+> 
+> An example lookup table can look like this:
+> 
+> static const struct reset_lookup foobar_reset_lookup[] = {
+> 	{ .dev = "foo",   .reset_id = "foo_id",    .id = 14 },
+> 	{ .dev = "bar",   .id = NULL,              .id = 3  },
+> 	{ }
+> };
 
-On Fri, Feb 16, 2018 at 07:57:07AM -0800, Tony Lindgren wrote:
-> * Mark Brown <broonie@kernel.org> [180216 15:17]:
+Thank you for the patch. This is a useful addition, but the lookups
+should be added in platform code, not by the reset controller driver.
 
-> > It's not just other operating systems, it's also other versions of
-> > Linux we have to think about here.  The most obvious issue with audio is
-> > the clocking where the division between ASoC and clock APIs is not super
-> > obvious and could easily change in the future.
+I would prefer reset_lookups to follow the patterns set by the other
+subsystem's lookup implementations:
+clk, gpiod, phy, and pwm have lookups that can be created from platform
+code, independently from the drivers (via clkdev_add_table,
+gpiod_add_lookup_table, phy_create_lookup, and pwm_add_table).
 
-> Yeah let's stick to describing how the hardware is wired in the
-> dts files. In this case it's really only the routing to the SoC,
-> right?
+Following this pattern would allow to support reset controllers that are
+implemented as proper device drivers, and reset controllers that are
+reused on multiple platforms.
 
-The SoC and anything else on the board like external amps and so on.
-
-> One advantage of using a compatible property for the pmic subdevices
-> though is that it leaves out a dependency between various device
-> drivers things happen automagically. The mfd core driver can be
-> minimal and just implement interrupt handling and regmap. So no need
-> to to parse the child nodes in the pmic mfd driver :)
-
-There's no need to do that anyway - with a MFD the child devices can
-assume that they're part of the MFD and reference their parent.
-
-> So personally I'd prefer the option that requires least amount
-> of custom code if compatible vs no compatible property is the
-> only issue here.
-
-It's a few lines of code to register the child devices from code rather
-than the DT, and keeps it out of the ABI.
-
---kfjH4zxOES6UT95V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqKy4kACgkQJNaLcl1U
-h9B1lQf/a8TZDsqEBvQtJkGu5qETjBBmD3NKFPciTMSDiDjESniZiUpr9iqEp8i+
-agilWO/k3bTnMokOJbA099mqFI9i0gMc/VrdcTwdURkDnxc6/UN+iUD2rLLjZ0XD
-I+twFE0vEt8JAJZABYcspfHqogrwz0E3wHKwRnwJugf931HzzQqb1lyi1VYa1u4Q
-f/voPWQT87XIYpt5l04X3RGlgpKEk7mnyOFkyQUfsuIPr7FZlORRDuhNrypGBvHq
-/7E6x/X2JFPV0Ri9uFTjq+WsIeHMPztFiE28CKbgJC1XJFdji0uR7zH/3ZtD9TAn
-P4KmKZS2g8RozgPdo7K0uN6/IW+oUw==
-=u1LI
------END PGP SIGNATURE-----
-
---kfjH4zxOES6UT95V--
+regards
+Philipp
