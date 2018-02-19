@@ -1,76 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeBSRif (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:38:35 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:43288 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753186AbeBSRie (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:38:34 -0500
-Date: Mon, 19 Feb 2018 18:38:13 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: tim@krieglstein.org, jarkko.nikula@linux.intel.com,
-        preid@electromag.com.au, wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: i2c-designware: sound and s2ram broken on Broadwell-U system
- since commit ca382f5b38f367b6 (add i2c gpio recovery option)
-Message-ID: <20180219173813.GA16875@light.dominikbrodowski.net>
-References: <20180217132543.GA21571@light.dominikbrodowski.net>
- <1518879773.22495.378.camel@linux.intel.com>
- <1518880180.22495.379.camel@linux.intel.com>
+        id S1753411AbeBSRlZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:41:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59562 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753279AbeBSRlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 12:41:24 -0500
+Subject: Re: [PATCH] x86: fix {pmd,pud}_{set,clear}_flags()
+To: Jan Beulich <JBeulich@suse.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        lkml <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+References: <5A8AF1BB02000078001A91C3@suse.com>
+ <44911e30-7d7a-14fd-1a70-ae3d92bfc771@suse.com>
+ <5A8B119F02000078001A9412@suse.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <cca49cd2-d59d-07e3-273b-3a45f32fab2c@suse.com>
+Date: Mon, 19 Feb 2018 18:41:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518880180.22495.379.camel@linux.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <5A8B119F02000078001A9412@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 17, 2018 at 05:09:40PM +0200, Andy Shevchenko wrote:
-> On Sat, 2018-02-17 at 17:02 +0200, Andy Shevchenko wrote:
-> > On Sat, 2018-02-17 at 14:25 +0100, Dominik Brodowski wrote:
-> > 
-> > > on v4.16-rc1+, sound does not work any more on my Dell XPS 13;
-> > > suspend-to-RAM hangs as well. I have bisected this problem down to
-> > > commit ca382f5b38f3; reverting this on top of Linus' latest
-> > > (1e3510b2b053)
-> > > fixes these issues.
-> > > And a few snippets from a broken kernel dmesg:
-> > > 
-> > > 	i2c_designware: probe of INT3432:00 failed with error -38
-> > > 	i2c_designware: probe of INT3433:00 failed with error -38
-> > 
-> > ENOSYS here at probe time, taking into account the commit you think is
-> > a
-> > culprit, can be passed from gpiod_get() calls only.
-> > 
-> > > Ideas on how to fix this properly?
-> > 
-> > Enable CONFIG_DEBUG_GPIO first and share through some service the
-> > dmesg.
-> > (it might be good idea to add 'ignore_loglevel initcall_debug' to the
-> > kernel command line)
+On 19/02/18 18:04, Jan Beulich wrote:
+>>>> On 19.02.18 at 17:23, <jgross@suse.com> wrote:
+>> On 19/02/18 15:48, Jan Beulich wrote:
+>>> Just like pte_{set,clear}_flags() their PMD and PUD counterparts should
+>>> not do any address translation. This was outright wrong under Xen
+>>> (causing a dead boot with no useful output on "suitable" systems), and
+>>> produced needlessly more complicated code (even if just slightly) when
+>>> paravirt was enabled.
+>>>
+>>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+>>> Cc: stable@vger.kernel.org 
+>>
+>> While the changes look alright I'm really curious which kind of failure
+>> you are seeing, especially considering how long those functions haven't
+>> been changed (since more than 6 years).
 > 
-> And tell if the following patch helps.
-> 
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -644,7 +644,7 @@ static int i2c_dw_init_recovery_info(struct
-> dw_i2c_dev *dev)
->         gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
->         if (IS_ERR(gpio)) {
->                 r = PTR_ERR(gpio);
-> -               if (r == -ENOENT)
-> +               if (r == -ENOENT || r == -ENOSYS)
->                         return 0;
->                 return r;
->         }
-> 
+> It's the new use of pmd_set_flags() in 2cc42bac1c ("x86-64/Xen:
+> eliminate W+X mappings"), and due to the (very odd afaic) identity
+> map handling the issue is invisible on most systems/setups.
 
-Fixes: ca382f5b38f3 ("i2c: designware: add i2c gpio recovery option")
-Tested-and-reported-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Aah, okay. This helps.
 
-Thanks,
-	Dominik
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+
+Juergen
