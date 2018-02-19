@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeBSJUj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:20:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34888 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeBSJUi (ORCPT
+        id S1752288AbeBSJWw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:22:52 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40145 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752006AbeBSJWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:20:38 -0500
-Date: Mon, 19 Feb 2018 10:20:17 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, hpa@zytor.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-Message-ID: <20180219092017.GN25201@hirez.programming.kicks-ass.net>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
- <1518808600.7876.49.camel@infradead.org>
- <66f94cb1-8160-56e0-680c-2e847ae05893@linux.intel.com>
- <20180217102616.vcwatxsgj2vunlew@gmail.com>
+        Mon, 19 Feb 2018 04:22:49 -0500
+X-Google-Smtp-Source: AH8x226ax2B1TGEuXWty9fUb00INwqZ1nGvR/g2En2nOpz6v1ZAYl1bCF7a6wOaO46WZzljwT24WfQ==
+Date: Mon, 19 Feb 2018 09:22:47 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [RESEND PATCH v5 2/5] dt-bindings: pwm-backlight: add PWM delay
+ proprieties.
+Message-ID: <20180219092247.estv4d2v6cbopx6z@dell>
+References: <20180216174034.15936-1-enric.balletbo@collabora.com>
+ <20180216174034.15936-2-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180217102616.vcwatxsgj2vunlew@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180216174034.15936-2-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 17, 2018 at 11:26:16AM +0100, Ingo Molnar wrote:
-> Note that PeterZ was struggling with intermittent boot hangs yesterday as well, 
-> which hangs came and went during severeal (fruitless) bisection attempts. Then at 
-> a certain point the hangs went away altogether.
+On Fri, 16 Feb 2018, Enric Balletbo i Serra wrote:
+
+> Hardware needs a delay between setting an initial (non-zero) PWM and
+> enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
+> this delay in milli seconds. Hardware also needs a delay between disabing
+> the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
+> is this delay in milli seconds.
 > 
-> The symptoms for both his and your hangs are consistent with an alignment 
-> dependent bug.
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+> Based on the original Huang Lin <hl@rock-chips.com> work.
+> 
+> Changes since v4:
+>  - Rebase on top of mainline.
+> Changes since v3:
+>  - Replace us for ms.
+>  - Add Acked-by: Pavel Machek <pavel@ucw.cz>
+> Changes since v2:
+>  - Use separate properties (Rob Herring)
+> Changes since v1:
+>  - As suggested by Daniel Thompson
+>    - Do not assume power-on delay and power-off delay will be the same
+> 
+>  Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Mine would consistently hang right after
+Looks like this still needs an Ack.
 
-  "Freeing SMP alternatives memory: 44K"
+Also, you didn't supply a 0th (cover-letter) patch, so I have no idea
+of patch history or your future intentions.
 
-At one point I bisected it to commit:
+Are there build-time dependencies between them or can each patch be
+merged via their respective trees without the fear of merge/build
+failure?
 
-  a06cc94f3f8d ("x86/build: Drop superfluous ALIGN from the linker script")
-
-But shortly thereafter I started having trouble reproducing, and now I
-can run kernels that before would consistently fail to boot :/
-
-> My other guess is that it's perhaps somehow microcode related?
-
-I did not update or otherwise change packages while I was bisecting; the
-machine is:
-
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 62
-model name      : Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz
-stepping        : 4
-microcode       : 0x428
-
-Like I wrote on IRC; what _seems_ to have 'cured' things is clearing out
-my /boot. The amount of kernels generated by the bisect was immense and
-running 'update-grub' was taking _much_ longer than actually building a
-new kernel.
-
-What I have not tried is again generating and installing that many
-kernels to see if that will make it go 'funny' again.
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
