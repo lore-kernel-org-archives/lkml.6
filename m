@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752858AbeBSNty (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:49:54 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46513 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752753AbeBSNtx (ORCPT
+        id S1752971AbeBSNvH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:51:07 -0500
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:39390 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752822AbeBSNvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:49:53 -0500
-Message-ID: <1519048168.3408.13.camel@pengutronix.de>
-Subject: Re: [PATCH v5 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber
- drvdata
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jernej Skrabec <jernej.skrabec@siol.net>,
-        maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-        Jose.Abreu@synopsys.com
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        hjc@rock-chips.com, heiko@sntech.de
-Date: Mon, 19 Feb 2018 14:49:28 +0100
-In-Reply-To: <20180214200906.31509-6-jernej.skrabec@siol.net>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
-         <20180214200906.31509-6-jernej.skrabec@siol.net>
+        Mon, 19 Feb 2018 08:51:06 -0500
+X-Google-Smtp-Source: AH8x227CgHmbq9lNbmfiDGxsQQEiWA9+PzXM4HsFLFb0tiY7UTq3xTvB+kzedd19R+aog4Yt8g4q+iiT9IaaUw1QOlU=
+MIME-Version: 1.0
+In-Reply-To: <20180218220146.22485-7-hdegoede@redhat.com>
+References: <20180218220146.22485-1-hdegoede@redhat.com> <20180218220146.22485-7-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 19 Feb 2018 15:51:05 +0200
+Message-ID: <CAHp75VfjpRngR9_vE2SrHA_NRZdsap-2bEdRD6OEK63CTPBw2g@mail.gmail.com>
+Subject: Re: [PATCH 6/9] ASoC: Intel: sst: Free streams on suspend, re-alloc
+ on resume
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-14 at 21:08 +0100, Jernej Skrabec wrote:
-> dw_hdmi shouldn't set drvdata since some drivers might need to store
-> it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
-> instead to store it in drvdata. This way drivers are responsible to
-> store and pass structure when needed.
-> 
-> Idea was taken from the following commit:
-> 8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
-> 
-> Cc: p.zabel@pengutronix.de
-> Cc: narmstrong@baylibre.com
-> Cc: Laurent.pinchart@ideasonboard.com
-> Cc: hjc@rock-chips.com
-> Cc: heiko@sntech.de
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On Mon, Feb 19, 2018 at 12:01 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> The Bay Trail SST-DSP firmware version looses track of all streams over a
+> suspend/resume, failing any attempts to resume and/or free streams, with
+> a SST_ERR_INVALID_STREAM_ID error.
+>
+> This commit adds support for free-ing the streams on suspend and
+> re-allocating them on resume, fixing suspend/resume issues on devices
+> using this firmware version.
+>
+> This new behavior gets triggered by a new flag in sst_platform_info which
+> only gets set on Bay Trail platforms.
+>
+> This has been tested on the following devices:
+> -Asus T100TA,    Bay Trail    + ALC5642 codec
+> -Ployer MOMO7W,  Bay Trail CR + ALC5652 codec
 
-For i.MX:
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-regards
-Philipp
+>  /* Cherryview (Cherrytrail and Braswell) uses same mrfld dpcm fw as Baytrail,
+> - * so pdata is same as Baytrail.
+> + * so pdata is same as Baytrail, minus the streams_lost_on_suspend quirk.
+>   */
+
+A nit, perhaps to fix multi line comment style as well?
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
