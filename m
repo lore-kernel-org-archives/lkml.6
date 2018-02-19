@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753747AbeBSSXz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:23:55 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5251 "EHLO huawei.com"
+        id S1753732AbeBSSXy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:23:54 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5253 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753435AbeBSSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753439AbeBSSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Feb 2018 13:22:16 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
@@ -13,9 +13,9 @@ CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         Xiaofei Tan <tanxiaofei@huawei.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 5/8] scsi: hisi_sas: increase timer expire of internal abort task
-Date: Tue, 20 Feb 2018 03:13:28 +0800
-Message-ID: <1519067611-206638-6-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 3/8] scsi: hisi_sas: fix the issue of link rate inconsistency
+Date: Tue, 20 Feb 2018 03:13:26 +0800
+Message-ID: <1519067611-206638-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
 References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
@@ -29,42 +29,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-The current 110ms expiry time is not long enough for the internal
-abort task.
+In sysfs, there are two files about minimum linkrate, and also
+two files for maximum linkrate. Take maximum linkrate example,
+maximum_linkrate_hw is read-only and indicated by the register
+HARD_PHY_LINKRATE, and maximum_linkrate is read-write and
+corresponding to the register PROG_PHY_LINK_RATE.
 
-The reason is that the internal abort task could be blocked in HW
-if the HW is retrying to set up link. The internal abort task will
-be executed only when the retry process finished.
+But in the function phy_up_v*_hw(), we get *_linkrate value from
+HARD_PHY_LINKRATE. It is not right. This patch is to fix this issue.
 
-The maximum time is 5s for the retry of setting up link. So, the timer
-expire should be more than 5s. This patch increases it from 110ms to 6s.
+Unreferenced PHY-interrupt enum is also removed for v3 hw.
 
 Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c  |  2 ++
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |  1 -
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  8 +-------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 13 +------------
+ 4 files changed, 4 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 9d16372..9ff8790 100644
+index 2d4dbed..9d16372 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -871,6 +871,7 @@ static void hisi_sas_tmf_timedout(struct timer_list *t)
+@@ -683,6 +683,8 @@ static void hisi_sas_phy_init(struct hisi_hba *hisi_hba, int phy_no)
  
- #define TASK_TIMEOUT 20
- #define TASK_RETRY 3
-+#define INTERNAL_ABORT_TIMEOUT 6
- static int hisi_sas_exec_internal_tmf_task(struct domain_device *device,
- 					   void *parameter, u32 para_len,
- 					   struct hisi_sas_tmf_task *tmf)
-@@ -1574,7 +1575,7 @@ static int hisi_sas_query_task(struct sas_task *task)
- 	task->task_proto = device->tproto;
- 	task->task_done = hisi_sas_task_done;
- 	task->slow_task->timer.function = hisi_sas_tmf_timedout;
--	task->slow_task->timer.expires = jiffies + msecs_to_jiffies(110);
-+	task->slow_task->timer.expires = jiffies + INTERNAL_ABORT_TIMEOUT*HZ;
- 	add_timer(&task->slow_task->timer);
+ 	phy->hisi_hba = hisi_hba;
+ 	phy->port = NULL;
++	phy->minimum_linkrate = SAS_LINK_RATE_1_5_GBPS;
++	phy->maximum_linkrate = hisi_hba->hw->phy_get_max_linkrate();
+ 	sas_phy->enabled = (phy_no < hisi_hba->n_phy) ? 1 : 0;
+ 	sas_phy->class = SAS;
+ 	sas_phy->iproto = SAS_PROTOCOL_ALL;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 679e76f..38bbda9 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -873,7 +873,6 @@ static void phy_set_linkrate_v1_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 	sas_phy->phy->maximum_linkrate = max;
+ 	sas_phy->phy->minimum_linkrate = min;
  
- 	res = hisi_sas_internal_abort_task_exec(hisi_hba, sas_dev->device_id,
+-	min -= SAS_LINK_RATE_1_5_GBPS;
+ 	max -= SAS_LINK_RATE_1_5_GBPS;
+ 
+ 	for (i = 0; i <= max; i++)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index ab6db50..662d259 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -1603,7 +1603,6 @@ static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 	sas_phy->phy->maximum_linkrate = max;
+ 	sas_phy->phy->minimum_linkrate = min;
+ 
+-	min -= SAS_LINK_RATE_1_5_GBPS;
+ 	max -= SAS_LINK_RATE_1_5_GBPS;
+ 
+ 	for (i = 0; i <= max; i++)
+@@ -2684,7 +2683,7 @@ static int prep_abort_v2_hw(struct hisi_hba *hisi_hba,
+ static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
+ {
+ 	int i, res = IRQ_HANDLED;
+-	u32 port_id, link_rate, hard_phy_linkrate;
++	u32 port_id, link_rate;
+ 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
+ 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
+ 	struct device *dev = hisi_hba->dev;
+@@ -2723,11 +2722,6 @@ static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
+ 	}
+ 
+ 	sas_phy->linkrate = link_rate;
+-	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
+-						HARD_PHY_LINKRATE);
+-	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
+-	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
+-
+ 	sas_phy->oob_mode = SAS_OOB_MODE;
+ 	memcpy(sas_phy->attached_sas_addr, &id->sas_addr, SAS_ADDR_SIZE);
+ 	dev_info(dev, "phyup: phy%d link_rate=%d\n", phy_no, link_rate);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index a1f1868..1ee95ab 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -340,12 +340,6 @@ struct hisi_sas_err_record_v3 {
+ #define HISI_SAS_COMMAND_ENTRIES_V3_HW 4096
+ #define HISI_SAS_MSI_COUNT_V3_HW 32
+ 
+-enum {
+-	HISI_SAS_PHY_PHY_UPDOWN,
+-	HISI_SAS_PHY_CHNL_INT,
+-	HISI_SAS_PHY_INT_NR
+-};
+-
+ #define DIR_NO_DATA 0
+ #define DIR_TO_INI 1
+ #define DIR_TO_DEVICE 2
+@@ -1121,7 +1115,7 @@ static int prep_abort_v3_hw(struct hisi_hba *hisi_hba,
+ static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+ {
+ 	int i, res = 0;
+-	u32 context, port_id, link_rate, hard_phy_linkrate;
++	u32 context, port_id, link_rate;
+ 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
+ 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
+ 	struct device *dev = hisi_hba->dev;
+@@ -1139,10 +1133,6 @@ static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+ 		goto end;
+ 	}
+ 	sas_phy->linkrate = link_rate;
+-	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
+-						HARD_PHY_LINKRATE);
+-	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
+-	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
+ 	phy->phy_type &= ~(PORT_TYPE_SAS | PORT_TYPE_SATA);
+ 
+ 	/* Check for SATA dev */
+@@ -1864,7 +1854,6 @@ static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 	sas_phy->phy->maximum_linkrate = max;
+ 	sas_phy->phy->minimum_linkrate = min;
+ 
+-	min -= SAS_LINK_RATE_1_5_GBPS;
+ 	max -= SAS_LINK_RATE_1_5_GBPS;
+ 
+ 	for (i = 0; i <= max; i++)
 -- 
 1.9.1
