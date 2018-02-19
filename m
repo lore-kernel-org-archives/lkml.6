@@ -1,81 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753598AbeBSSWX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:22:23 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5250 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753430AbeBSSWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:22:15 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 7/8] scsi: hisi_sas: fix return value of hisi_sas_task_prep()
-Date: Tue, 20 Feb 2018 03:13:30 +0800
-Message-ID: <1519067611-206638-8-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
-References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
+        id S1753637AbeBSSWe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:22:34 -0500
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:39997 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753609AbeBSSWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 13:22:31 -0500
+X-Google-Smtp-Source: AH8x227P7xwakrSWTaGXoLSNHb2/FxNSLnbSYr+kIb1JuuPyws6ibzbAWk7gWaI3K1hEjRpEb7TEdP0vjLkRfLXdW2c=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+References: <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
+ <1519055046-2399-1-git-send-email-m.purski@samsung.com> <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Mon, 19 Feb 2018 18:22:29 +0000
+Message-ID: <CACvgo50-Cx_=yvbLD-osxHXnrdENHpwFBkrXT_jV4R9vJniTjw@mail.gmail.com>
+Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
+To: Maciej Purski <m.purski@samsung.com>
+Cc: linux-media@vger.kernel.org,
+        "moderated list:ARM/S5P EXYNOS AR..."
+        <linux-samsung-soc@vger.kernel.org>,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thibault Saunier <thibault.saunier@osg.samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+HI Maciej,
 
-It is an implicit regulation that error code that function returned
-should be negative. But hisi_sas_task_prep() doesn't follow this.
-This may cause problems in the upper layer code.
+Just sharing a couple of fly-by ideas - please don't read too much into them.
 
-For example, in sas_expander.c of libsas, smp_execute_task_sg() may
-return the number of bytes of underrun. It will be conflicted with
-the scenaio lldd_execute_task() return an positive error code.
+On 19 February 2018 at 15:43, Maciej Purski <m.purski@samsung.com> wrote:
+> When a driver is going to use clk_bulk_get() function, it has to
+> initialize an array of clk_bulk_data, by filling its id fields.
+>
+> Add a new function to the core, which dynamically allocates
+> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
+> function, which frees the array allocated by clk_bulk_alloc() function.
+> Add a managed version of clk_bulk_alloc().
+>
+Most places use a small fixed number of struct clk pointers.
+Using devres + kalloc to allocate 1-4 pointers feels a bit strange.
 
-This patch change the return value from SAS_PHY_DOWN to -ECOMM in
-hisi_sas_task_prep().
+Quick grep shows over 150 instances that could be updated to use the new API.
+Adding a cocci script to simplify the transition would be a good idea.
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/notifier.h>
+> +#include <linux/slab.h>
+>
+The extra header declaration should not be needed. One should be able
+to forward declare any undefined structs.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 88ad8d4..dff9723 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -316,7 +316,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
- 		 */
- 		if (device->dev_type != SAS_SATA_DEV)
- 			task->task_done(task);
--		return SAS_PHY_DOWN;
-+		return -ECOMM;
- 	}
- 
- 	if (DEV_IS_GONE(sas_dev)) {
-@@ -327,7 +327,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
- 			dev_info(dev, "task prep: device %016llx not ready\n",
- 				 SAS_ADDR(device->sas_addr));
- 
--		return SAS_PHY_DOWN;
-+		return -ECOMM;
- 	}
- 
- 	port = to_hisi_sas_port(sas_port);
-@@ -337,7 +337,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
- 			 "SATA/STP" : "SAS",
- 			 device->port->id);
- 
--		return SAS_PHY_DOWN;
-+		return -ECOMM;
- 	}
- 
- 	if (!sas_protocol_ata(task->task_proto)) {
--- 
-1.9.1
+HTH
+Emil
