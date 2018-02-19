@@ -1,81 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeBSSWe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:22:34 -0500
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:39997 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753609AbeBSSWb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:22:31 -0500
-X-Google-Smtp-Source: AH8x227P7xwakrSWTaGXoLSNHb2/FxNSLnbSYr+kIb1JuuPyws6ibzbAWk7gWaI3K1hEjRpEb7TEdP0vjLkRfLXdW2c=
+        id S1753558AbeBSSWU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:22:20 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5249 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753401AbeBSSWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 13:22:13 -0500
+From: John Garry <john.garry@huawei.com>
+To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH 6/8] scsi: hisi_sas: remove unused variable hisi_sas_devices.running_req
+Date: Tue, 20 Feb 2018 03:13:29 +0800
+Message-ID: <1519067611-206638-7-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
+References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-References: <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-1-git-send-email-m.purski@samsung.com> <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Mon, 19 Feb 2018 18:22:29 +0000
-Message-ID: <CACvgo50-Cx_=yvbLD-osxHXnrdENHpwFBkrXT_jV4R9vJniTjw@mail.gmail.com>
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-To: Maciej Purski <m.purski@samsung.com>
-Cc: linux-media@vger.kernel.org,
-        "moderated list:ARM/S5P EXYNOS AR..."
-        <linux-samsung-soc@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thibault Saunier <thibault.saunier@osg.samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Maciej,
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Just sharing a couple of fly-by ideas - please don't read too much into them.
+The structure element hisi_sas_devices.running_req to count how
+many commands are active is in effect only ever written in the
+code, so remove it.
 
-On 19 February 2018 at 15:43, Maciej Purski <m.purski@samsung.com> wrote:
-> When a driver is going to use clk_bulk_get() function, it has to
-> initialize an array of clk_bulk_data, by filling its id fields.
->
-> Add a new function to the core, which dynamically allocates
-> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
-> function, which frees the array allocated by clk_bulk_alloc() function.
-> Add a managed version of clk_bulk_alloc().
->
-Most places use a small fixed number of struct clk pointers.
-Using devres + kalloc to allocate 1-4 pointers feels a bit strange.
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas.h       | 1 -
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 9 ---------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 3 ---
+ 3 files changed, 13 deletions(-)
 
-Quick grep shows over 150 instances that could be updated to use the new API.
-Adding a cocci script to simplify the transition would be a good idea.
-
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -15,6 +15,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/notifier.h>
-> +#include <linux/slab.h>
->
-The extra header declaration should not be needed. One should be able
-to forward declare any undefined structs.
-
-HTH
-Emil
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index e7fd287..d1153e8 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -175,7 +175,6 @@ struct hisi_sas_device {
+ 	struct hisi_sas_dq	*dq;
+ 	struct list_head	list;
+ 	u64 attached_phy;
+-	atomic64_t running_req;
+ 	enum sas_device_type	dev_type;
+ 	int device_id;
+ 	int sata_idx;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 9ff8790..88ad8d4 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -200,8 +200,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
+ 
+ 	if (task) {
+ 		struct device *dev = hisi_hba->dev;
+-		struct domain_device *device = task->dev;
+-		struct hisi_sas_device *sas_dev = device->lldd_dev;
+ 
+ 		if (!task->lldd_task)
+ 			return;
+@@ -213,9 +211,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
+ 				dma_unmap_sg(dev, task->scatter,
+ 					     task->num_scatter,
+ 					     task->data_dir);
+-
+-		if (sas_dev)
+-			atomic64_dec(&sas_dev->running_req);
+ 	}
+ 
+ 	if (slot->buf)
+@@ -431,8 +426,6 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 
+ 	dq->slot_prep = slot;
+-
+-	atomic64_inc(&sas_dev->running_req);
+ 	++(*pass);
+ 
+ 	return 0;
+@@ -1517,8 +1510,6 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 
+ 	dq->slot_prep = slot;
+ 
+-	atomic64_inc(&sas_dev->running_req);
+-
+ 	/* send abort command to the chip */
+ 	hisi_hba->hw->start_delivery(dq);
+ 	spin_unlock_irqrestore(&dq->lock, flags_dq);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 2eb8980..8dd0e6a6 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -1407,9 +1407,6 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
+ 	}
+ 
+ out:
+-	if (sas_dev)
+-		atomic64_dec(&sas_dev->running_req);
+-
+ 	hisi_sas_slot_task_free(hisi_hba, task, slot);
+ 	sts = ts->stat;
+ 
+-- 
+1.9.1
