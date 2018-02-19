@@ -1,108 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752688AbeBSKvX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:51:23 -0500
+        id S1752670AbeBSKvV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:51:21 -0500
 Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:8610 "EHLO
         smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752392AbeBSKvR (ORCPT
+        with ESMTP id S1752597AbeBSKvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:51:17 -0500
+        Mon, 19 Feb 2018 05:51:16 -0500
 X-IronPort-AV: E=Sophos;i="5.46,534,1511827200";
-   d="scan'208";a="720268878"
+   d="scan'208";a="720268865"
 From: David Woodhouse <dwmw@amazon.co.uk>
 To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
         kvm@vger.kernel.org, torvalds@linux-foundation.org,
         pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
         peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
         arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
-Subject: [PATCH v3 4/4] x86/retpoline: Support retpoline build with Clang
-Date: Mon, 19 Feb 2018 10:50:57 +0000
-Message-Id: <1519037457-7643-5-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH v3 3/4] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+Date: Mon, 19 Feb 2018 10:50:56 +0000
+Message-Id: <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>
 References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+the RSB filling out of line and calling it, we waste one RSB slot for
+returning from the function itself, which means one fewer actual function
+call we can make if we're doing the Skylake abomination of call-depth
+counting.
+
+It also changed the number of RSB stuffings we do on vmexit from 32,
+which was correct, to 16. Let's just stop with the bikeshedding; it
+didn't actually *fix* anything anyway.
+
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/Makefile              | 5 ++++-
- include/linux/compiler-clang.h | 5 +++++
- include/linux/compiler-gcc.h   | 4 ++++
- include/linux/init.h           | 8 ++++----
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/entry/entry_32.S             |  3 +-
+ arch/x86/entry/entry_64.S             |  3 +-
+ arch/x86/include/asm/asm-prototypes.h |  3 --
+ arch/x86/include/asm/nospec-branch.h  | 70 +++++++++++++++++++++++++++++++----
+ arch/x86/lib/Makefile                 |  1 -
+ arch/x86/lib/retpoline.S              | 56 ----------------------------
+ 6 files changed, 65 insertions(+), 71 deletions(-)
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index fad5516..dbc7d0e 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -232,7 +232,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
- 
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
-+    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
-+
-+    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-     ifneq ($(RETPOLINE_CFLAGS),)
-         KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-     endif
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index d02a4df..d3f264a 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -27,3 +27,8 @@
- #if __has_feature(address_sanitizer)
- #define __SANITIZE_ADDRESS__
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 16c2c02..6ad064c 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %ebx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
  #endif
-+
-+/* Clang doesn't have a way to turn it off per-function, yet. */
-+#ifdef __noretpoline
-+#undef __noretpoline
-+#endif
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 73bc63e..673fbf9 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -93,6 +93,10 @@
- #define __weak		__attribute__((weak))
- #define __alias(symbol)	__attribute__((alias(#symbol)))
  
-+#ifdef RETPOLINE
-+#define __noretpoline __attribute__((indirect_branch("keep")))
-+#endif
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 77edc23..7a53879 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %rbx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
+index 4d11161..1908214 100644
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-asmlinkage void __fill_rsb(void);
+-asmlinkage void __clear_rsb(void);
+-
+ #endif /* CONFIG_RETPOLINE */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 34cbce3..94749fb 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -8,6 +8,50 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
+ 
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * We define a CPP macro such that it can be used from both .S files and
++ * inline assembly. It's possible to do a .macro and then include that
++ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
++ */
 +
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
++
++/*
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version — two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
++ */
++#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
++	mov	$(nr/2), reg;			\
++771:						\
++	call	772f;				\
++773:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	773b;				\
++772:						\
++	call	774f;				\
++775:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	775b;				\
++774:						\
++	dec	reg;				\
++	jnz	771b;				\
++	add	$(BITS_PER_LONG/8) * nr, sp;
++
+ #ifdef __ASSEMBLY__
+ 
  /*
-  * it doesn't make sense on ARM (currently the only user of __naked)
-  * to trace naked functions because then mcount is called without
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 506a981..bc27cf0 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -6,10 +6,10 @@
- #include <linux/types.h>
- 
- /* Built-in __init functions needn't be compiled with retpoline */
--#if defined(RETPOLINE) && !defined(MODULE)
--#define __noretpoline __attribute__((indirect_branch("keep")))
-+#if defined(__noretpoline) && !defined(MODULE)
-+#define __noinitretpoline __noretpoline
- #else
--#define __noretpoline
-+#define __noinitretpoline
+@@ -78,10 +122,17 @@
  #endif
+ .endm
  
- /* These macros are used to mark some functions or 
-@@ -47,7 +47,7 @@
+-/* This clobbers the BX register */
+-.macro FILL_RETURN_BUFFER nr:req ftr:req
++ /*
++  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
++  * monstrosity above, manually.
++  */
++.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ALTERNATIVE "", "call __clear_rsb", \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
++		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
++		\ftr
++.Lskip_rsb_\@:
+ #endif
+ .endm
  
- /* These are for everybody (although not all archs will actually
-    discard it in modules) */
--#define __init		__section(.init.text) __cold  __latent_entropy __noretpoline
-+#define __init		__section(.init.text) __cold  __latent_entropy __noinitretpoline
- #define __initdata	__section(.init.data)
- #define __initconst	__section(.init.rodata)
- #define __exitdata	__section(.exit.data)
+@@ -163,10 +214,15 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
+ {
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
+-			  "call __fill_rsb",
+-			  X86_FEATURE_RETPOLINE,
+-			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
++	unsigned long loops;
++
++	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
++		      ALTERNATIVE("jmp 910f",
++				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
++				  X86_FEATURE_RETPOLINE)
++		      "910:"
++		      : "=r" (loops), ASM_CALL_CONSTRAINT
++		      : : "memory" );
+ #endif
+ }
+ 
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 91e9700..25a972c 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -28,7 +28,6 @@ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
+-OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index 480edc3..c909961 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,7 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+-#include <asm/bitsperlong.h>
+ 
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
+-
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version - two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-.macro STUFF_RSB nr:req sp:req
+-	mov	$(\nr / 2), %_ASM_BX
+-	.align 16
+-771:
+-	call	772f
+-773:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	773b
+-	.align 16
+-772:
+-	call	774f
+-775:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	775b
+-	.align 16
+-774:
+-	dec	%_ASM_BX
+-	jnz	771b
+-	add	$((BITS_PER_LONG/8) * \nr), \sp
+-.endm
+-
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-ENTRY(__fill_rsb)
+-	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
+-	ret
+-END(__fill_rsb)
+-EXPORT_SYMBOL_GPL(__fill_rsb)
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-
+-ENTRY(__clear_rsb)
+-	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
+-	ret
+-END(__clear_rsb)
+-EXPORT_SYMBOL_GPL(__clear_rsb)
 -- 
 2.7.4
