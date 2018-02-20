@@ -1,32 +1,32 @@
 Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AH8x2263uV6p242eQwZA1d9CFRew8/plBC3wjsEEaUjOKrY4O7UsoVe4P+BqH1pbSw9GsdzpiSNz
+X-Google-Smtp-Source: AH8x225OQv11Vt053ubQ5NOk/pw9aU+/ZJvVBQ0/EHiEhRW3t/iCdOZtJXzQVLDy43AswHz8Zhej
 ARC-Seal: i=1; a=rsa-sha256; t=1519163052; cv=none;
         d=google.com; s=arc-20160816;
-        b=GENWrVs9HbCD1goFp18m5Lz8rvDN7xy+Kv5Eyqq+M1+jr6FCLT98YPmhofUAv1VpWP
-         t5PGTKuC8Wswuwewly6AcYvU2nYBogqVvo/QhSB0UHovvZV/2itd+uw3VtjOPl8Pgqhs
-         R44kWHschcrpei+fS/7EbAm5TqSjJN7KvdxVK3+ZrdzC24yesg0q2Ef+LY0CDJFSlWWi
-         xaML6Aa3WvIbBvy0NXaw2GTl6VUjzye5wLuv3Wr1sLbZV0KI2u8iVod5KpAZBf9MOA8d
-         OwW/v7RgJ1xfgQMaZZETU9/RRBwzxRQtZbfGz1EDF+YfGLrjiHiUknbwuPFdedv4dolB
-         h8UQ==
+        b=IgRlkhOkn4ggcpf9IfOW8P6x612b/7pE/upiwz3DspqwXH1Yxc7nCItRyK3sWWkUkw
+         b7Bv3yDVzvnp1pwWufYuQ9iMXNegIK7BflBLBWUlrdY8IET8D2A6Vv+Y2AZ6MRHiGyO6
+         zRWl01J5bH5oR/qxa55eEyh8cTTqzdVU+Go1Z+pq+UyQ7Mslrs1Qoqs054hhHzVMWM5U
+         1k2gYhB0tiiqRZaWDYzuzcN9b5nPlyrhPa289nc28HfKUznKg6Gm90Iq4OvwxRgvEBoV
+         AUU7SBJP7h/mNNhA+c/GE0Y/ELFk4yvqpAZ/gNJCEsMOaPQKvg2l7RitkUKpJv5nT8Bu
+         iU5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=7nA9N8GSh3H48wcuQD3eyc/u7BItbbawRiDI306G7ts=;
-        b=fwtDHKz9sTwYFJpPvAw+4fQdgJ1jEIRauQtmMwOPsjWbothGfQAWQkFgN1YhV3bLBW
-         sKfhD2Yd7ZhA9T+xe5/aYSokWZ9uT+xY0SukydBVDLtSR1Gfa091Exjelvp+DLtgW/YM
-         Np06WqcuWamMPVHQRle1HQnRyNWET+CM/8pXDioyt/chK3BP/E4jBjEFDwyyaMJshz8n
-         xXSa6wfcsrTwvvp30PrIrREWkgk7f7yymAvwZ4zeokipaC9eIQR0uV1CxlayNqLOiV8y
-         GFf4tqgJDfVSj3d5TZYLrPMDRpZLhKfZXCGimwPsYOeHYPIHVruyXWDX22SXsAGA2nuJ
-         enhQ==
+        bh=si6RgHZDUTmr+PY56nzCKuCLAJJxMRhaMAV3HNW0F4Q=;
+        b=k8DlMNzghP7eayr70MSD8FLcRZ8pHcvVNCx8uWpTLzSgIXsV4iEPlqdBz5QyVwewjV
+         jbivZ3Whh2SqK9ilv/UMtDqCD3eo1+IMl6zu1P0vRkSUi4vBXpJ8q2FWW/L6dRvGGHgS
+         PWEJkxIOQEWoF90gf1ZMA/Lc8aspYMfRn/xggSnNxhIxsiq1EWGB0lexMlGEJdZkHGmy
+         Vqjwh+IPnFoTbrKuNONZyyufznXRHTScF09V2m0zxLxeIhRjCI0ViK5b8QdISMwAKwTe
+         vWU9igOwSOGPzY1cumWu8j96ADIsPE22SaMIM2h54u85lcKT66ROHJKqOWgpaDhOKUa/
+         IIyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="28597065"
+   d="scan'208";a="19075781"
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,67 +38,85 @@ To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Joe Perches <joe@perches.com>,
 	Mark Salyzyn <salyzyn@android.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 10/21] rtc: pm8xxx: Switch to use %ptR
-Date: Tue, 20 Feb 2018 23:43:49 +0200
-Message-Id: <20180220214400.66749-11-andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2 17/21] rtc: tegra: Switch to use %ptR
+Date: Tue, 20 Feb 2018 23:43:56 +0200
+Message-Id: <20180220214400.66749-18-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180220214400.66749-1-andriy.shevchenko@linux.intel.com>
 References: <20180220214400.66749-1-andriy.shevchenko@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592957916738575236?=
-X-GMAIL-MSGID: =?utf-8?q?1592957916738575236?=
+X-GMAIL-THRID: =?utf-8?q?1592957917281747275?=
+X-GMAIL-MSGID: =?utf-8?q?1592957917281747275?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Use %ptR instead of open coded variant to print content of
 struct rtc_time in human readable format.
 
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/rtc/rtc-pm8xxx.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/rtc/rtc-tegra.c | 30 +++---------------------------
+ 1 file changed, 3 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-index fac835530671..deb0f14f9e37 100644
---- a/drivers/rtc/rtc-pm8xxx.c
-+++ b/drivers/rtc/rtc-pm8xxx.c
-@@ -196,9 +196,7 @@ static int pm8xxx_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 		return rc;
- 	}
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index d30d57b048d3..e9adfaa851f5 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -124,15 +124,7 @@ static int tegra_rtc_read_time(struct device *dev, struct rtc_time *tm)
  
--	dev_dbg(dev, "secs = %lu, h:m:s == %d:%d:%d, d/m/y = %d/%d/%d\n",
--		secs, tm->tm_hour, tm->tm_min, tm->tm_sec,
--		tm->tm_mday, tm->tm_mon, tm->tm_year);
-+	dev_dbg(dev, "secs = %lu, h:m:s == %ptRt, y-m-d = %ptRdr\n", secs, tm, tm);
+ 	rtc_time_to_tm(sec, tm);
  
- 	return 0;
- }
-@@ -243,10 +241,8 @@ static int pm8xxx_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 		goto rtc_rw_fail;
- 	}
- 
--	dev_dbg(dev, "Alarm Set for h:r:s=%d:%d:%d, d/m/y=%d/%d/%d\n",
--		alarm->time.tm_hour, alarm->time.tm_min,
--		alarm->time.tm_sec, alarm->time.tm_mday,
--		alarm->time.tm_mon, alarm->time.tm_year);
-+	dev_dbg(dev, "Alarm Set for h:m:s=%ptRt, y-m-d=%ptRdr\n",
-+		&alarm->time, &alarm->time);
- rtc_rw_fail:
- 	spin_unlock_irqrestore(&rtc_dd->ctrl_reg_lock, irq_flags);
- 	return rc;
-@@ -277,10 +273,8 @@ static int pm8xxx_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 		return rc;
- 	}
- 
--	dev_dbg(dev, "Alarm set for - h:r:s=%d:%d:%d, d/m/y=%d/%d/%d\n",
--		alarm->time.tm_hour, alarm->time.tm_min,
--		alarm->time.tm_sec, alarm->time.tm_mday,
--		alarm->time.tm_mon, alarm->time.tm_year);
-+	dev_dbg(dev, "Alarm set for - h:m:s=%ptRt, y-m-d=%ptRdr\n",
-+		&alarm->time, &alarm->time);
+-	dev_vdbg(dev, "time read as %lu. %d/%d/%d %d:%02u:%02u\n",
+-		sec,
+-		tm->tm_mon + 1,
+-		tm->tm_mday,
+-		tm->tm_year + 1900,
+-		tm->tm_hour,
+-		tm->tm_min,
+-		tm->tm_sec
+-	);
++	dev_vdbg(dev, "time read as %lu. %ptR\n", sec, tm);
  
  	return 0;
  }
+@@ -150,15 +142,7 @@ static int tegra_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	rtc_tm_to_time(tm, &sec);
+ 
+-	dev_vdbg(dev, "time set to %lu. %d/%d/%d %d:%02u:%02u\n",
+-		sec,
+-		tm->tm_mon+1,
+-		tm->tm_mday,
+-		tm->tm_year+1900,
+-		tm->tm_hour,
+-		tm->tm_min,
+-		tm->tm_sec
+-	);
++	dev_vdbg(dev, "time set to %lu. %ptR\n", sec, tm);
+ 
+ 	/* seconds only written if wait succeeded. */
+ 	ret = tegra_rtc_wait_while_busy(dev);
+@@ -235,15 +219,7 @@ static int tegra_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+ 	/* if successfully written and alarm is enabled ... */
+ 	if (sec) {
+ 		tegra_rtc_alarm_irq_enable(dev, 1);
+-
+-		dev_vdbg(dev, "alarm set as %lu. %d/%d/%d %d:%02u:%02u\n",
+-			sec,
+-			alarm->time.tm_mon+1,
+-			alarm->time.tm_mday,
+-			alarm->time.tm_year+1900,
+-			alarm->time.tm_hour,
+-			alarm->time.tm_min,
+-			alarm->time.tm_sec);
++		dev_vdbg(dev, "alarm set as %lu. %ptR\n", sec, &alarm->time);
+ 	} else {
+ 		/* disable alarm if 0 or write error. */
+ 		dev_vdbg(dev, "alarm disabled\n");
 -- 
 2.15.1
