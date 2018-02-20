@@ -1,84 +1,149 @@
-Return-Path: <nicolas.pitre@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519143990; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZvV/oQkMD1MY26qA7L83IjvQMbynQ6o/5nyLAxO7TwzsAyXwG6ObwSwj4ZT+AVRF4b
-         zy59hNld8dbCR0rFQ2v2fmOGiFTrWD+msqAZ4U6Rw7gFrk6SgZ7MeueUlTS7sSeR//to
-         yZEytBqcZv6zBkL4gJ1khjxnjNGatxTIZY7PJ8Bdj1Y52hlTCU2k++7Z5qlTefAFQ1El
-         RvXsD7SS1FbcrBBwb57x8Ia0l5ma7dFQQqgZElDZb2ZNSJxnbks6t8ryf9kjWurID7ot
-         ZK40CwrArQQyMzC5qsnkY3HjtZbVCNxeJVCYda1NWYeNmR7uK6FM5hIle01FcFiLWTOh
-         LERw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=d5H+wDCMbC4VQe2cY8bzilCgKnhBy95cBPO+HyFN51Y=;
-        b=HQP+5087v4DboaBetbvyAosQXXXkGxy4h7ChHHv0iWWex/qjxRbOPIgtJDOgqLXC9L
-         lJ1u8jl26xOho7EMaSgUhM4YToogwfiOH2rQfSH2kyg/XBuuAaeBFkODe03c5cBPeB4O
-         VIOpIopkol/rvgirumwwhWSADhtADDCJzeu5b+xzdXDq8BUSNVnVgR/jQKibph4Ve5Qc
-         0wPf5c4TOa3MHyv6AQTQxc1NQbKGbsLgfRS0iUScj6JC1xwl4XVMCAdu98tN0j7mpbDh
-         yUBadVivsyogfitawxvL+poZUuQu3mhBpgtloMZKbFv1+x8qahERA2lOBhvxQdl6+oLj
-         79Qw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Js5/gWa9;
-       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Js5/gWa9;
-       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x225rIOcflsyRPoUuF4Fb05lByNCp4+QTZOTjBPAMUIrgqctqONJgQm5ib4178HK2iGP9dvQQcw==
-Date: Tue, 20 Feb 2018 11:26:28 -0500 (EST)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Richard Weinberger <richard@nod.at>
-cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Kate Stewart <kstewart@linuxfoundation.org>,
-    Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-    Andrew Morton <akpm@linux-foundation.org>, david@sigma-star.at,
-    kbuild-all@01.org, Sam Ravnborg <sam@ravnborg.org>,
-    Arnaud Lacombe <lacombar@gmail.com>,
-    Nick Bowler <nbowler@elliptictech.com>, Michal Marek <mmarek@suse.cz>,
-    Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH v2] kbuild: Don't source kernel config
-In-Reply-To: <1919455.eZKeABUfgV@blindfold>
-Message-ID: <nycvar.YSQ.7.76.1802201125210.31644@knanqh.ubzr>
-References: <20180219092245.26404-1-richard@nod.at> <14335276.CH3Xr2i6I8@blindfold> <CAK7LNAQT8jEHt39xG7BvMMWjObdvCCpPhJAA83LFut4ewUVQsg@mail.gmail.com> <1919455.eZKeABUfgV@blindfold>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2058923-1519112416-2-3624640341325482360
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519112415; b=kk/lw/4SZB7Iw/8jHi3AS/XmfQWWA9E6BbeFDj+V9aXXsUB
+    YhkNAJT75s215oK7yB+Tvazms6igmaOaFGkJexqV8Vaxv0dnR2lKYjV+atJRzYLo
+    U5kcXcvqrSofJAOO3MuFWkW8/yS5Kg84UoNByBjrbZf0uqaVZePcZHlzclPc3Dh5
+    cBCQfSureF4dU7p881nEsiDR6ytWfdPkh8Mxb/K93PQP5F34LTWo05zm0jk7nGRz
+    sUqn9b8NksGTtf3bMq37EFYGsdtynCMB2oQkL/UzYW3laTQXCJI1KvQIH8OR4jPq
+    ayQs69wX6EfxgG5pvJCRdf+99RBAKl0cckzcPDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519112415; bh=C
+    XJTaprPAqCcozHbg8m3styf5L5TPjhwZKr9NPRuuPQ=; b=waHmaH8BjypjZ4Nso
+    oZ7T58khBqiobaHJNteKdZVo3XeQelYNY3bxGKE0mH1IW176eghsZmADIVZeY5Qm
+    Px/hl4g4+B665XfhuSSLChvXW3ZpyqvDuX+ZRucS8KeH07wlGAK8Ot5J11s9fY+L
+    O6uoUfmiKaZfS4GVTNFbOP71H6mSLPDQb153or8i9m+f22DE4pKx5N58qg4k7xX8
+    kGtOWNR3u+jZ0cpfDSe1zgekctGwhrCt5To3CeJXlQJOjCUA7zflEaqWdCQ8ksnk
+    rtEiWSnLcbeZUYP+D0KxPEOgSvkxPRfMjYuTnNIbufxb7j3RX8I0+RCBX6QAjyez
+    OZ//g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=LceyhQE5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=amazon.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.de);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=amazon.de header.i=@amazon.de header.b=LceyhQE5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.de;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=amazon.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-IronPort-AV: E=Sophos;i="5.46,538,1511827200"; d="scan'208";a="720518547"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, x86@kernel.org
+Subject: [PATCH] X86/UAPI: Use __u64 instead of u64 in hyperv.h
+Date: Tue, 20 Feb 2018 08:39:51 +0100
+Message-Id: <1519112391-23773-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>,
+ KarimAllah Ahmed <karahmed@amazon.de>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592820606337824892?=
-X-GMAIL-MSGID: =?utf-8?q?1592937929325855376?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 20 Feb 2018, Richard Weinberger wrote:
+... since u64 has a hidden header dependency that was not there before
+using it (i.e. it breaks our VMM build). Also, __u64 is the right way to
+expose the data type through UAPI.
 
-> An alternate approach would be this:
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 5c12dc91ef34..ff0a7c62344b 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -161,6 +161,13 @@ static int conf_set_sym_val(struct symbol *sym, int def, 
-> int def_flags, char *p)
->  	case S_STRING:
->  		if (*p++ != '"')
->  			break;
-> +
-> +		p2 = strpbrk(p, "`$");
-> +		if (p2 && !(p2[0] == '$' && p2[1] != '(')) {
-> +			conf_warning("string contains forbidden characters");
-> +			return 1;
-> +		}
-> +
->  		for (p2 = p; (p2 = strpbrk(p2, "\"\\")); p2++) {
->  			if (*p2 == '"') {
->  				*p2 = 0;
-> 
-> That way the conf tool will sanitize the .config before shell scripts will 
-> source it.
+Fixes: 93286261 ("x86/hyperv: Reenlightenment notifications support")
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: devel@linuxdriverproject.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/include/uapi/asm/hyperv.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Looks like a much saner approach to me indeed.
+diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+index 197c2e6..0994143 100644
+--- a/arch/x86/include/uapi/asm/hyperv.h
++++ b/arch/x86/include/uapi/asm/hyperv.h
+@@ -241,24 +241,24 @@
+ #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
+ 
+ struct hv_reenlightenment_control {
+-	u64 vector:8;
+-	u64 reserved1:8;
+-	u64 enabled:1;
+-	u64 reserved2:15;
+-	u64 target_vp:32;
++	__u64 vector:8;
++	__u64 reserved1:8;
++	__u64 enabled:1;
++	__u64 reserved2:15;
++	__u64 target_vp:32;
+ };
+ 
+ #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
+ #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
+ 
+ struct hv_tsc_emulation_control {
+-	u64 enabled:1;
+-	u64 reserved:63;
++	__u64 enabled:1;
++	__u64 reserved:63;
+ };
+ 
+ struct hv_tsc_emulation_status {
+-	u64 inprogress:1;
+-	u64 reserved:63;
++	__u64 inprogress:1;
++	__u64 reserved:63;
+ };
+ 
+ #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+-- 
+2.7.4
 
-
-Nicolas
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
