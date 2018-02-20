@@ -1,78 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeBTQQR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:16:17 -0500
-Received: from mout.gmx.net ([212.227.15.18]:40119 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752028AbeBTQQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:16:16 -0500
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mm@kvack.org, Joel Stanley <joel@jms.id.au>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 0/6] DISCONTIGMEM support for PPC32
-Date: Tue, 20 Feb 2018 17:14:18 +0100
-Message-Id: <20180220161424.5421-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.16.1
+        id S1752816AbeBTQQq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:16:46 -0500
+Received: from mail-it0-f47.google.com ([209.85.214.47]:39672 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751993AbeBTQQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:16:44 -0500
+X-Google-Smtp-Source: AH8x225SF1kvCiiApWGcPxQK3Fs3cS8tulJsK9v7lMk2fB/SUbMfKGvWkDkRAJnWNasZ4p3ILfnZsw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:P3Zn9VFYRabmV2qaGHNDR/yE3vsO1btaPGbd3lic3FQ8OMgGLK0
- 6pTRW/lZIXeQlrehMBJk7mIlJzfhhYFwWWsmzsjJ1sDnZMPPaj+dY1yMIlyudli/hrrgb7x
- q+CqTnGo3fU5L689dcViIzNNRYaiCioRj1mfFCyUHZCAK4plBsJ1grUKpv6YL/9p3g1doK4
- bNE61hQ0u9yQEudd/hWpg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:c6AuXNF4uqY=:5fORZAKvAa9Lh85VwGcNJ9
- 9ZRe55W4+oeO1PV/cK79YUvi+CHaRf42Z3wP+w3+Of4+XoZu1181Emt5UKb9VdUBmnXYebcg5
- SEx+zwVVldIz2MnUioFxskevRHXXqb53Fkjh2ga9K99PIF4sRGSlcBsX7fBOfzB69Qa/UN9Qn
- V4RbbM6B3lOrVniKHND2HoWiSrQSGV0UzdwRAGKdZ5Bev863yvjZIEDOd31WOfhie4YQBxAkb
- d2voTt6KENrJPqI/8cpWhy7jyrwXSZ0AJ+WStRp91LS+oS1I14YClICeAw895AhQyFxWZ4poW
- LrLmnchafkEd6sY7zbynwaGX7FrOFdOHUPFStRoq3Xy5jt/VhaLjkQRQSZ3dkB1L2u6z0nm0B
- DeMluXWldeKJVD4ReQ3ZWeWr8V9pwzQuHxrrbg0eWJU02kSejyUmARfnmm0tPXYquZp3NAQoU
- 1/2Jyevkaz/8BLZ4zzbnnKqN+i/vNHCBDFU/8ssWf1T57O771UD9T5gyNgAfRtX3YJG0m/HZq
- lpLdqV6i47Y4Qj80I26Xo8aU9MPiOQjP5nBKz5/ktkilVaaXzGy20WgYi146maU6bYzme3xvn
- QxhuLBV7v9S5nvumtEZkhs2/9i8bWbfu7fIBzUqILui3ErhsFdg2FE7KRIoUyNMgM+YZyA3Wh
- 1KzWHFqNEySWip3lhXmoNS+nAF5+47DMyKJ8ouME9bqe+dJS1QnXYXE2+DcwrpB/V53ymfJ2l
- 8yDIJYRWQeyI/3VKOoIhzD2NioY6oq0XwPfyIqIl7hI+Vxg4zopnuZ1J1U2YqyNvtbISjvIK1
- UJM3Or7LqjQ9U4A2UaQIoxJN+xRp5lziCK+yfExsZY+mtONKQY=
+In-Reply-To: <cover.1516810725.git.meghana.madhyastha@gmail.com>
+References: <cover.1516810725.git.meghana.madhyastha@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Date: Tue, 20 Feb 2018 11:16:21 -0500
+X-Gmail-Original-Message-ID: <CAOw6vbLxenhYeV3axTkLn5azf7Ocr0fNqwdwLprAQUSE2e0e+g@mail.gmail.com>
+Message-ID: <CAOw6vbLxenhYeV3axTkLn5azf7Ocr0fNqwdwLprAQUSE2e0e+g@mail.gmail.com>
+Subject: Re: [PATCH v19 00/10] Add backlight helper functions
+To: Meghana Madhyastha <meghana.madhyastha@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for DISCONTIGMEM on 32-bit PowerPC. This is
-required to properly support the Nintendo Wii's memory layout, in which
-there are two blocks of RAM and MMIO in the middle.
+On Wed, Jan 24, 2018 at 11:32 AM, Meghana Madhyastha
+<meghana.madhyastha@gmail.com> wrote:
+> Move drm helper functions from tinydrm-helpers to linux/backlight for
+> ease of use by callers in other drivers.
+>
 
-Previously, this memory layout was handled by code that joins the two
-RAM blocks into one, reserves the MMIO hole, and permits allocations of
-reserved memory in ioremap. This hack didn't work with resource-based
-allocation (as used for example in the GPIO driver for Wii[1]), however.
+It was a long time coming, but this has finally been applied to
+-misc-next. Thanks for sticking with it!
 
-After this patchset, users of the Wii can either select CONFIG_FLATMEM
-to get the old behaviour, or CONFIG_DISCONTIGMEM to get the new
-behaviour.
+Sean
 
-Some parts of this patchset are probably not ideal (I'm thinking of my
-implementation of pfn_to_nid here), and will require some discussion/
-changes.
-
-[1]: https://www.spinics.net/lists/devicetree/msg213956.html
-
-Jonathan Neuschäfer (6):
-  powerpc/mm/32: Use pfn_valid to check if pointer is in RAM
-  powerpc: numa: Fix overshift on PPC32
-  powerpc: numa: Use the right #ifdef guards around functions
-  powerpc: numa: Restrict fake NUMA enulation to CONFIG_NUMA systems
-  powerpc: Implement DISCONTIGMEM and allow selection on PPC32
-  powerpc: wii: Don't rely on reserved memory hack if DISCONTIGMEM is
-    set
-
- arch/powerpc/Kconfig                     |  5 ++++-
- arch/powerpc/include/asm/mmzone.h        | 21 +++++++++++++++++++++
- arch/powerpc/mm/numa.c                   | 18 +++++++++++++++---
- arch/powerpc/mm/pgtable_32.c             |  2 +-
- arch/powerpc/platforms/embedded6xx/wii.c | 10 +++++++---
- 5 files changed, 48 insertions(+), 8 deletions(-)
-
--- 
-2.16.1
+> Changes in v19:
+> -Changed to devm version of of_find_backlight in omapdrm (patch 10)
+> -removed assigning pdev->dev to variable dev in omapdrm (patch 10)
+>
+> Meghana Madhyastha (10):
+>   video: backlight: Add helpers to enable and disable backlight
+>   drm/tinydrm: Convert tinydrm_enable/disable_backlight to
+>     backlight_enable/disable
+>   video: backlight: Add of_find_backlight helper in backlight.c
+>   drm/tinydrm: Replace tinydrm_of_find_backlight with of_find_backlight
+>   video: backlight: Add devres versions of of_find_backlight
+>   drm/tinydrm: Call devres version of of_find_backlight
+>   drm/panel: Use backlight_enable/disable helpers
+>   drm/omapdrm: Use backlight_enable/disable helpers
+>   drm/panel: Use of_find_backlight helper
+>   drm/omapdrm: Use of_find_backlight helper
+>
+>  drivers/gpu/drm/omapdrm/displays/panel-dpi.c    | 36 ++--------
+>  drivers/gpu/drm/panel/panel-innolux-p079zca.c   | 30 ++------
+>  drivers/gpu/drm/panel/panel-jdi-lt070me05000.c  |  6 +-
+>  drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 38 ++--------
+>  drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c | 37 ++--------
+>  drivers/gpu/drm/tinydrm/Kconfig                 |  2 -
+>  drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c  | 95 -------------------------
+>  drivers/gpu/drm/tinydrm/mi0283qt.c              |  3 +-
+>  drivers/gpu/drm/tinydrm/mipi-dbi.c              |  4 +-
+>  drivers/gpu/drm/tinydrm/st7735r.c               |  3 +-
+>  drivers/video/backlight/backlight.c             | 73 +++++++++++++++++++
+>  include/drm/tinydrm/tinydrm-helpers.h           |  4 --
+>  include/linux/backlight.h                       | 58 +++++++++++++++
+>  13 files changed, 165 insertions(+), 224 deletions(-)
+>
+> --
+> 2.11.0
+>
