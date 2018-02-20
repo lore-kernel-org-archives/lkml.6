@@ -1,89 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeBTRpU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 12:45:20 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:13621 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753384AbeBTRpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:45:18 -0500
-Subject: Re: [PATCH 1/6] powerpc/mm/32: Use pfn_valid to check if pointer is
- in RAM
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mm@kvack.org, Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
- <20180220161424.5421-2-j.neuschaefer@gmx.net>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <0d14cb2c-dd00-d258-cb15-302b2a9d684f@c-s.fr>
-Date: Tue, 20 Feb 2018 18:45:09 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753462AbeBTRpr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 12:45:47 -0500
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:41934 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752081AbeBTRpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 12:45:44 -0500
+X-Google-Smtp-Source: AH8x224bETPqvBgZi7GNaQ2/P0nsvKlBmnh7uKl5plzultkntS5v96vvORgc+ALiwtSg5Fx30lNzyw==
+Date: Tue, 20 Feb 2018 18:45:40 +0100
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH 2/3] HID: steam: add serial number information.
+Message-ID: <20180220174540.GA8231@casa>
+References: <20180213120308.23879-2-rodrigorivascosta@gmail.com>
+ <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
+ <20180215221633.GA18755@casa>
+ <CAO-hwJLjFaP3ZLoM+EDbruoRhOyPPFXmo7FWGoXESc9XgkD4Kg@mail.gmail.com>
+ <20180216090243.GB18755@casa>
+ <CAO-hwJKuWWiNX63=X1GSEQQ1cPhi35g6NuX7gsFNGj_s0UdM+Q@mail.gmail.com>
+ <20180216095722.GC18755@casa>
+ <CAO-hwJ+9Jvd8x5dRaerstzeNNgY4_mUar77BB1k2ctxaOCJLtQ@mail.gmail.com>
+ <20180216205939.GA17329@casa>
+ <CAO-hwJ+MW=3X=pSrmPf=Xp7fW0X4d2GJJj_0rf0yCTmFsnfD1g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180220161424.5421-2-j.neuschaefer@gmx.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO-hwJ+MW=3X=pSrmPf=Xp7fW0X4d2GJJj_0rf0yCTmFsnfD1g@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 20/02/2018 à 17:14, Jonathan Neuschäfer a écrit :
-> The Nintendo Wii has a memory layout that places two chunks of RAM at
-> non-adjacent addresses, and MMIO between them. Currently, the allocation
-> of these MMIO areas is made possible by declaring the MMIO hole as
-> reserved memory and allowing reserved memory to be allocated (cf.
-> wii_memory_fixups).
+On Tue, Feb 20, 2018 at 05:49:02PM +0100, Benjamin Tissoires wrote:
+> On Fri, Feb 16, 2018 at 9:59 PM, Rodrigo Rivas Costa
+> > But about that +7 in hid_alloc_report_buf(), isn't it to make room for
+> > the implement()/extract() functions? And IIUIC those are not used for
+> > raw_requests... they are instead passed directly to usb_control_msg()
+> > (or whatever the ll driver does). That's the point of being raw, isn't
+> > it?
+> >
+> > If I'm right with that, would it make sense to go back to kzalloc(65)?
+> >
+> > If I'm wrong, then if you agree, I'll default to:
+> >
+> >         hid_hw_raw_request(steam->hid_dev, 0x00,
+> >                 buf, hid_report_len(r) + 1, /* count the request number */
+> >                 HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
+> >
+> > Then, if hid_report_len() is ever updated to return the +1, this one
+> > should be removed. And even if it is not, we still have +6 extra bytes
+> > from hid_alloc_report_buf(), so no real harm done.
 > 
-> This patch is the first step towards proper support for discontiguous
-> memory on PPC32 by using pfn_valid to check if a pointer points into
-> RAM, rather than open-coding the check. It should result in no
-> functional difference.
+> I am fine with your analysis except for the last point :)
+> We need all 7 extra bytes, not 6 (in implement()). However, as you
+> said, implement() is not used in the low_level transport functions, so
+> there is no point bike shedding for ages.
 > 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
->   arch/powerpc/mm/pgtable_32.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> I'd say please stick to hid_report_alloc_buf (maybe add a comment
+> about the missing report ID added by usb), and use hid_report_len(r) +
+> 1 while calling hid_hw_raw_request(). This way, we can always fix the
+> behavior later and have something which will not break.
 > 
-> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-> index d35d9ad3c1cd..b5c009893a44 100644
-> --- a/arch/powerpc/mm/pgtable_32.c
-> +++ b/arch/powerpc/mm/pgtable_32.c
-> @@ -147,7 +147,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
->   	 * Don't allow anybody to remap normal RAM that we're using.
->   	 * mem_init() sets high_memory so only do the check after that.
->   	 */
-> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
-> +	if (slab_is_available() && pfn_valid(__phys_to_pfn(p)) &&
+> How does that sound?
+It sound fine to me. I'll try to write a small comment explaining the
++1.
 
-I'm not sure this is equivalent:
-
-high_memory = (void *) __va(max_low_pfn * PAGE_SIZE);
-#define ARCH_PFN_OFFSET		((unsigned long)(MEMORY_START >> PAGE_SHIFT))
-#define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
-set_max_mapnr(max_pfn);
-
-So in the current implementation it checks against max_low_pfn while 
-your patch checks against max_pfn
-
-	max_low_pfn = max_pfn = memblock_end_of_DRAM() >> PAGE_SHIFT;
-#ifdef CONFIG_HIGHMEM
-	max_low_pfn = lowmem_end_addr >> PAGE_SHIFT;
-#endif
-
-Christophe
-
->   	    !(__allow_ioremap_reserved && memblock_is_region_reserved(p, size))) {
->   		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
->   		       (unsigned long long)p, __builtin_return_address(0));
-> 
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+Thanks
+Rodrigo
