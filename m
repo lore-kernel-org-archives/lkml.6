@@ -1,178 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753182AbeBTQ1a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:27:30 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44520 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753148AbeBTQ1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753170AbeBTQ1U (ORCPT <rfc822;w@1wt.eu>);
         Tue, 20 Feb 2018 11:27:20 -0500
-X-Google-Smtp-Source: AG47ELscerVaZPmGtrbdU/uiwqnn2oOm2l2tw4U2c/43gJsL1m4vnNvbw37kerUWroPD/+055DH0dh2kgGY7Nlp6hUA=
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:58834 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752907AbeBTQ1Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:27:16 -0500
+Date: Tue, 20 Feb 2018 11:26:22 -0500
+From: Neil Horman <nhorman@tuxdriver.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Xin Long <lucien.xin@gmail.com>, David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+Message-ID: <20180220162622.GA32068@hmswarspite.think-freely.org>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
+ <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
+ <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+ <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+ <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
+ <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180220160358.68832-1-andriy.shevchenko@linux.intel.com>
-References: <20180220160358.68832-1-andriy.shevchenko@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Feb 2018 17:27:18 +0100
-X-Google-Sender-Auth: ovEXqF50ufGpDS0OJV0Vumu0Td0
-Message-ID: <CAJZ5v0jAvkcNgieaRjnAss+vqg+=+STp8-ASqjVAh_KxP+swOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] ACPI / x86: boot: Not all platforms require acpi_reduced_hw_init()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Spam-Score: -2.9 (--)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 5:03 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> Some platforms might take care of legacy devices on theirs own. Due to this,
-> export acpi_reduced_hw_init() and put it into struct x86_init_acpi.
+On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
+> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
+> <tommi.t.rantala@nokia.com> wrote:
+> > On 19.02.2018 20:59, Dmitry Vyukov wrote:
+> >>
+> >> On Sat, Feb 3, 2018 at 1:15 PM, Xin Long <lucien.xin@gmail.com> wrote:
+> >>>>>
+> >>>>> On 1/30/18 1:57 PM, David Ahern wrote:
+> >>>>>>
+> >>>>>> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
+> >>>>>>>
+> >>>>>>> On 01/30/2018 07:32 PM, Cong Wang wrote:
+> >>>>>>>>
+> >>>>>>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com>
+> >>>>>>>> wrote:
+> >>>>>>>>>
+> >>>>>>>>> Hello,
+> >>>>>>>>>
+> >>>>>>>>> The following program creates a hang in unregister_netdevice.
+> >>>>>>>>> cleanup_net work hangs there forever periodically printing
+> >>>>>>>>> "unregister_netdevice: waiting for lo to become free. Usage count =
+> >>>>>>>>> 3"
+> >>>>>>>>> and creation of any new network namespaces hangs forever.
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> Interestingly, this is not reproducible on net-next.
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp:
+> >>>>>>> close
+> >>>>>>> sock if net namespace is exiting") in net/net-next from 5 days ago,
+> >>>>>>> maybe
+> >>>>>>> fixed due to that?
+> >>>>>>>
+> >>>>>>
+> >>>>>> This appears to be the commit introducing the refcnt leak:
+> >>>>>>
+> >>>>>> $ git bisect bad
+> >>>>>> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
+> >>>>>> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
+> >>>>>> Author: Xin Long <lucien.xin@gmail.com>
+> >>>>>> Date:   Fri May 12 14:39:52 2017 +0800
+> >>>>>>
+> >>>>>>      sctp: fix src address selection if using secondary addresses for
+> >>>>>> ipv6
+> >>>>>>
+> >>>>>>
+> >>>>>> v4.14 is bad. Running bisect in the background while doing other
+> >>>>>> things....
+> >>>>>>
+> >>>>>
+> >>>>> Interesting. The commit that avoids the refcnt leak is
+> >>>>>
+> >>>>> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
+> >>>>> Author: David Ahern <dsahern@gmail.com>
+> >>>>> Date:   Wed Jan 24 19:45:29 2018 -0800
+> >>>>>
+> >>>>>      net/ipv6: Do not allow route add with a device that is down
+> >>>>>
+> >>>>> That commit does not intentionally address the problem so it is just
+> >>>>> masking the problematic code introduced by the commit above.
+> >>>>
+> >>>> Thanks, David A.
+> >>>>
+> >>>> I'm still on a trip. will look into this asap.
+> >>>
+> >>>
+> >>> Alexey and Tommi already had the patches for this issue on
+> >>> both SCTP v4 and v6 dst_get, Thanks.
+> >>
+> >>
+> >>
+> >>
+> >> Is this meant to be fixed already? I am still seeing this on the
+> >> latest upstream tree.
+> >>
+> >
+> > These two commits are in v4.16-rc1:
+> >
+> > commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
+> > Author: Tommi Rantala <tommi.t.rantala@nokia.com>
+> > Date:   Mon Feb 5 21:48:14 2018 +0200
+> >
+> >     sctp: fix dst refcnt leak in sctp_v4_get_dst
+> > ...
+> >     Fixes: 410f03831 ("sctp: add routing output fallback")
+> >     Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary
+> > addresses")
+> >
+> >
+> > commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
+> > Author: Alexey Kodanev <alexey.kodanev@oracle.com>
+> > Date:   Mon Feb 5 15:10:35 2018 +0300
+> >
+> >     sctp: fix dst refcnt leak in sctp_v6_get_dst()
+> > ...
+> >     Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary
+> > addresses for ipv6")
+> >
+> >
+> > I guess we missed something if it's still reproducible.
+> >
+> > I can check it later this week, unless someone else beat me to it.
+> 
+> Hi Tommi,
+> 
+> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
+> another one then. But I am still seeing these:
+> 
+> [   58.799130] unregister_netdevice: waiting for lo to become free.
+> Usage count = 4
+> [   60.847138] unregister_netdevice: waiting for lo to become free.
+> Usage count = 4
+> [   62.895093] unregister_netdevice: waiting for lo to become free.
+> Usage count = 4
+> [   64.943103] unregister_netdevice: waiting for lo to become free.
+> Usage count = 4
+> 
+> on upstream tree pulled ~12 hours ago.
+> 
+Can you write a systemtap script to probe dev_hold, and dev_put, printing out a
+backtrace if the device name matches "lo".  That should tell us definitively if
+the problem is in the same location or not
 
-IMO this completely doesn't explain what really happens here.
+Neil
 
-You basically want to provide your own versions of
-x86_init.timers.timer_init, x86_init.irqs.pre_vector_init and
-legacy_pic on some HW-reduced platforms AFAICS, so you make it
-possible for the platform to provide its own variant of
-acpi_reduced_hw_init().
-
-I would say something like this:
-
-"Some ACPI hawdware-reduced platforms need to initialize certain
-devices defined by the ACPI hardware specification even though in
-principle those devices should not be present in an ACPI
-hawdware-reduced platform.  To allow that to happen, make it possible
-to override the generic x86_init callbacks and provide a custom
-legacy_pic value, add a new ->reduced_hw_early_init() callback to
-struct x86_init_acpi and make acpi_reduced_hw_init() use it."
-
-And I would retain acpi_reduced_hw_init(), but ->
-
-> While doing this, rename acpi_reduced_hw_init() to
-> acpi_reduced_hw_early_init() to show the stage at which it's called.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->
-> - re-done based on patches from Juergen Gross
-> - supposed to go via tip tree (x86/boot branch)
-> - tested on ASuS T100ta (HW reduced) and Intel Broxton based platforms
->
->  arch/x86/include/asm/acpi.h     |  4 ++++
->  arch/x86/include/asm/x86_init.h |  2 ++
->  arch/x86/kernel/acpi/boot.c     | 21 ++++++++++-----------
->  arch/x86/kernel/x86_init.c      |  2 ++
->  4 files changed, 18 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-> index 6609dd7289b5..f3f86be35fc5 100644
-> --- a/arch/x86/include/asm/acpi.h
-> +++ b/arch/x86/include/asm/acpi.h
-> @@ -140,6 +140,8 @@ static inline u64 acpi_arch_get_root_pointer(void)
->         return x86_init.acpi.get_root_pointer();
->  }
->
-> +void acpi_reduced_hw_early_init(void);
-> +
->  #else /* !CONFIG_ACPI */
->
->  #define acpi_lapic 0
-> @@ -149,6 +151,8 @@ static inline void acpi_noirq_set(void) { }
->  static inline void acpi_disable_pci(void) { }
->  static inline void disable_acpi(void) { }
->
-> +static inline void acpi_reduced_hw_early_init(void) { }
-> +
->  #endif /* !CONFIG_ACPI */
->
->  #define ARCH_HAS_POWER_INIT    1
-> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-> index 5ffa116ddb08..199e15bd3ec5 100644
-> --- a/arch/x86/include/asm/x86_init.h
-> +++ b/arch/x86/include/asm/x86_init.h
-> @@ -133,9 +133,11 @@ struct x86_hyper_init {
->  /**
->   * struct x86_init_acpi - x86 ACPI init functions
->   * @get_root_pointer:          get RSDP address
-> + * @reduced_hw_early_init:     hardware reduced platform early init
->   */
->  struct x86_init_acpi {
->         u64 (*get_root_pointer)(void);
-> +       void (*reduced_hw_early_init)(void);
->  };
->
->  /**
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index d3deae23e584..02acf1c58d3a 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -1378,17 +1378,15 @@ static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
->   *
->   * We initialize the Hardware-reduced ACPI model here:
->   */
-> -static void __init acpi_reduced_hw_init(void)
-> +void __init acpi_reduced_hw_early_init(void)
-
--> I would call this acpi_generic_reduced_hw_init() and ->>
-
->  {
-> -       if (acpi_gbl_reduced_hardware) {
-> -               /*
-> -                * Override x86_init functions and bypass legacy pic
-> -                * in Hardware-reduced ACPI mode
-> -                */
-> -               x86_init.timers.timer_init      = x86_init_noop;
-> -               x86_init.irqs.pre_vector_init   = x86_init_noop;
-> -               legacy_pic                      = &null_legacy_pic;
-> -       }
-> +       /*
-> +        * Override x86_init functions and bypass legacy pic
-> +        * in Hardware-reduced ACPI mode.
-> +        */
-> +       x86_init.timers.timer_init      = x86_init_noop;
-> +       x86_init.irqs.pre_vector_init   = x86_init_noop;
-> +       legacy_pic                      = &null_legacy_pic;
->  }
->
->  /*
-> @@ -1593,7 +1591,8 @@ int __init early_acpi_boot_init(void)
->         /*
->          * Hardware-reduced ACPI mode initialization:
->          */
-> -       acpi_reduced_hw_init();
-> +       if (acpi_gbl_reduced_hardware)
-> +               x86_init.acpi.reduced_hw_early_init();
-
-->> I would put the two lines above into acpi_reduced_hw_init().
-
->
->         return 0;
->  }
-> diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-> index 32c288ebf870..8fd63640e764 100644
-> --- a/arch/x86/kernel/x86_init.c
-> +++ b/arch/x86/kernel/x86_init.c
-> @@ -8,6 +8,7 @@
->  #include <linux/export.h>
->  #include <linux/pci.h>
->
-> +#include <asm/acpi.h>
->  #include <asm/bios_ebda.h>
->  #include <asm/paravirt.h>
->  #include <asm/pci_x86.h>
-> @@ -95,6 +96,7 @@ struct x86_init_ops x86_init __initdata = {
->
->         .acpi = {
->                 .get_root_pointer       = u64_x86_init_noop,
-> +               .reduced_hw_early_init  = acpi_reduced_hw_early_init,
->         },
->  };
->
+> Kernel does not detect this as any kind of BUG/WARNING, so
+> syzkaller/syzbot do not catch it as bug and do not try to reproduce,
+> localize and report.
 > --
+> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
