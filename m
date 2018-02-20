@@ -1,91 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932483AbeBTDRE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 22:17:04 -0500
-Received: from mga09.intel.com ([134.134.136.24]:40358 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932352AbeBTDRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 22:17:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
-   d="scan'208";a="19346594"
-Subject: Re: [RFC PATCH V2 11/22] x86/intel_rdt: Associate pseudo-locked
- regions with its domain
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <216ad1ef8314dc578a900ff8b06248464f5aa2ee.1518443616.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1802192218370.1853@nanos.tec.linutronix.de>
- <7bd1f8e8-116f-bdb2-23d2-a94f9a21e028@intel.com>
- <alpine.DEB.2.21.1802200017130.1853@nanos.tec.linutronix.de>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <0efce774-57a8-40fa-7b8a-6e57e496bb37@intel.com>
-Date: Mon, 19 Feb 2018 19:17:01 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S932528AbeBTDRw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 22:17:52 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51738 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeBTDRv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 22:17:51 -0500
+X-Google-Smtp-Source: AH8x227BPuOD90DlNa/IQAF4GhIcUfU5cCfPNfYYjkcILgc4dYS4AP4jN/Co8dI/nR0BaD45q+dTNw==
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1802200017130.1853@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180219080511.wfzeokrwbyyr5l3r@flea.lan>
+References: <20180217050112.14619-1-wens@csie.org> <20180219080511.wfzeokrwbyyr5l3r@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 20 Feb 2018 11:17:28 +0800
+X-Gmail-Original-Message-ID: <CAGb2v642RKd7UAsqTkCRfeL6hEPWMEWTL1H_hes0CFFPfGtVRA@mail.gmail.com>
+Message-ID: <CAGb2v642RKd7UAsqTkCRfeL6hEPWMEWTL1H_hes0CFFPfGtVRA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: sunxi: Fix multi-cluster SMP support compilation in
+ multi v6/v7 configs
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On 2/19/2018 3:19 PM, Thomas Gleixner wrote:
-> On Mon, 19 Feb 2018, Reinette Chatre wrote:
->> On 2/19/2018 1:19 PM, Thomas Gleixner wrote:
->>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
->>>
->>>> After a pseudo-locked region is locked it needs to be associated with
->>>> the RDT domain representing the pseudo-locked cache so that its life
->>>> cycle can be managed correctly.
->>>>
->>>> Only a single pseudo-locked region can exist on any cache instance so we
->>>> maintain a single pointer to a pseudo-locked region from each RDT
->>>> domain.
->>>
->>> Why is only a single pseudo locked region possible? 
+On Mon, Feb 19, 2018 at 4:05 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Sat, Feb 17, 2018 at 01:01:12PM +0800, Chen-Yu Tsai wrote:
+>> Various parts of the assembly code used in the multi-cluster SMP support
+>> requires ARMv7-A. If the kernel config also has multi v6 support enabled,
+>> Kbuild defaults to building for armv6k, which does not support some of
+>> the instructions we use.
 >>
->> The setup of a pseudo-locked region requires the usage of wbinvd. If a
->> second pseudo-locked region is thus attempted it will evict the
->> pseudo-locked data of the first.
-> 
-> Why does it neeed wbinvd? wbinvd is a big hammer. What's wrong with clflush?
+>> Configure the Makefile such that the multi-cluster SMP code is always
+>> built for ARMv7-A. This is also what mach-exynos does for their MC-SMP
+>> code.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>
+>> This addresses "[sunxi:sunxi/core-for-4.17 1/4] /tmp/ccSQM2rD.s:438:
+>> Error: selected processor does not support `isb' in ARM mode"
+>> reported by the kbuild test robot for arm-allmodconfig.
+>>
+>> Should we apply it, or squash it in the original patch?
+>
+> I guess we can squash it. And while you're at it..
+>
+>> ---
+>>  arch/arm/mach-sunxi/Makefile | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
+>> index 3e741e959c7c..3c2c4384357a 100644
+>> --- a/arch/arm/mach-sunxi/Makefile
+>> +++ b/arch/arm/mach-sunxi/Makefile
+>> @@ -1,3 +1,4 @@
+>>  obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
+>>  obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
+>> +CFLAGS_mc_smp.o      += -march=armv7-a
+>
+> Can you move it to the first line of the file (before the other obj-*)
+> with a newline after it?
 
-wbinvd is required by this hardware supported feature but limited to the
-creation of the pseudo-locked region. An administrator could dedicate a
-portion of cache to pseudo-locking and applications using this region
-can come and go. The pseudo-locked region lifetime need not be tied to
-application lifetime. The pseudo-locked region could be set up once on
-boot and remain for lifetime of system.
+Done and done.
 
-Even so, understanding that it is a big hammer I did explore the
-alternatives. Trying clflush, clflushopt, as well as clwb. Finding them
-all to perform poorly(*) I went further to explore if it is possible to
-use these other instructions with some additional work in support to
-make them perform as well as wbinvd. The additional work included,
-looping over the data more times than done for wbinvd, reducing the size
-of memory locked in relationship to cache size, unused spacing between
-pseudo-locked region and other regions, unmapped memory at end of
-pseudo-locked region.
-
-In addition to the above research from my side I also followed up with
-the CPU architects directly to question the usage of these instructions
-instead of wbinvd.
-
-In all the testing and questioning I did I was only able to confirm that
-wbinvd is required. Its use consistently results in the fewest cache
-misses to the created pseudo-locked region.
-
-Reinette
-
-(*) By poorly I mean that accessing the pseudo-locked region created
-using these instructions resulted in significant cache misses.
+ChenYu
