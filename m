@@ -1,43 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932289AbeBTAmI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 19:42:08 -0500
-Received: from mail-io0-f177.google.com ([209.85.223.177]:44047 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932237AbeBTAmH (ORCPT
+        id S932319AbeBTAmb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 19:42:31 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56882 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932284AbeBTAma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 19:42:07 -0500
-X-Google-Smtp-Source: AH8x225Yd/cWpdJ5TmnKsWO8kq4uAftn5ZgFkXgLDgbqggjelIgO8zfUmckkOIWr0O1elKiNV459BgtzY8CbDij/Kp4=
+        Mon, 19 Feb 2018 19:42:30 -0500
+Date: Tue, 20 Feb 2018 11:42:26 +1100 (AEDT)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: David Miller <davem@davemloft.net>
+cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net 2/4] net/8390: Fix msg_enable patch snafu
+In-Reply-To: <20180219.184343.1801583131809551924.davem@davemloft.net>
+Message-ID: <alpine.LNX.2.21.1802201108100.8@nippy.intranet>
+References: <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au> <20180219.141137.2095980245673495027.davem@davemloft.net> <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
+ <20180219.184343.1801583131809551924.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <878tbov9i6.fsf@linutronix.de>
-References: <20180216150933.971-1-john.ogness@linutronix.de>
- <20180216150933.971-5-john.ogness@linutronix.de> <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
- <87y3js36s7.fsf@linutronix.de> <CA+55aFxku7bB9BEBrqgREc5ac4MK9CGLir1c7ZA-7bjp-Q2tAg@mail.gmail.com>
- <87r2pk358g.fsf@linutronix.de> <CA+55aFzfug3S_dRrHDh=Zdat0KZVar13NQVzyqXd3-xHLzeSjA@mail.gmail.com>
- <87lgfs3374.fsf@linutronix.de> <CA+55aFySL+exqUJX0JKmJY4Pa0CKwn9y4Voqs1QjWY29hkzhnQ@mail.gmail.com>
- <878tbov9i6.fsf@linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 19 Feb 2018 16:42:05 -0800
-X-Google-Sender-Auth: a5D6Aza0Wu1Y874ztWxSsTroqPI
-Message-ID: <CA+55aFz0nPOiwHysfBW+YkzNE770s9V0u9DxbCvxjW-ER574=w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] fs/dcache: Avoid the try_lock loops in dentry_kill()
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 3:34 PM, John Ogness <john.ogness@linutronix.de> wrote:
->
-> IMHO the original v1 patchset is the simplest codewise. And if the
-> comments were updated to not mislead, it is the way I would want to go.
+On Mon, 19 Feb 2018, David Miller wrote:
 
-Ok, looking at your alternatives, I am inclined to agree.
+> > On Mon, 19 Feb 2018, David Miller wrote:
+> > 
+> >> > The lib8390 module parameter 'msg_enable' doesn't do anything 
+> >> > useful: it causes an ancient version string to be logged.
+> >> 
+> >> Since you are removing the last reference to this 'version' string 
+> >> you should remove it as well.
+> >> 
+> >> I'm surprised the compiler doesn't warn about this.
+> >> 
+> > 
+> > I compile-tested every 8390 module and I didn't come across any 
+> > compiler bugs.
+> > 
+> > Please take another look. I think you'll find that lib8390.c is always 
+> > #included by a module which does define that symbol.
+> 
+> But nothing references 'version' after you remove the log message.
+> 
+> You can therefore delete it.
+> 
+> And I'm politely asking you to.
+> 
+> Thank you.
+> 
 
-           Linus
+If there was an unused variables I would happily remove that too but the 
+'version' string is not unused. The etherh.c and mac8390.c files both 
+include "lib8390.c" and in there you'll find the 'version' string used in 
+ethdev_setup().
+
+If you want to remove the reference to the 'version' string from the core 
+driver, it would seem to imply the loss of this functionality from 8 
+modules or else the duplication of this code in the same modules, neither 
+of which seems desirable... What am I missing?
+
+-- 
