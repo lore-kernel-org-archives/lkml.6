@@ -1,102 +1,143 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x226KIhidQNB7QvgFgatadSA0rsjFsng/hcnhVWMUss8n1FMGdtHLgzAECl3tF1aIZWccLjPU
-ARC-Seal: i=1; a=rsa-sha256; t=1519304031; cv=none;
+Return-Path: <andriy.shevchenko@linux.intel.com>
+X-Google-Smtp-Source: AH8x2241LxrhlqHQI6tp+IKOVQg9N6hlyCzPRHM8Jdo5DC0Gf78efu3iPu1gyDu/O6h3HiLnW5+8
+ARC-Seal: i=1; a=rsa-sha256; t=1519163046; cv=none;
         d=google.com; s=arc-20160816;
-        b=VadX4JQjMM1kNpZP9i2jVgVp9ZhDUnrtYmhnztKYQglTbzCGs3Svp4v7Q/D4/2K1x6
-         jViQPanidECTS0eGZ3p+CacLWtDEPvbO6VnEJGMQE7gbND24cSbi6ysJaTTiWD2ruOb+
-         QQJ9WW/Tot+mOtw5AwkO2rMIaXw7Pg9uz+zAkHHeyq6w6vc29eBaotgG8EYM2sF8Ls+8
-         QhSA8Zu+ePq3ziZTg1ECRgyrJFqVB9rk8SWIVWFcg9cCBEj3TdZQ2mrZonliOwBfAN09
-         OV8IAeHWtw5wKHieqsOgyalxLrXC4bnHT6zrp0Da8L29SDE6ouBBrIrtxvIrg1pIz5G6
-         FLww==
+        b=X0ME1fBKcvMxcRUDaBo8ULVSVa44PGtNfpkYvCTr6qlvEkp9ZLqECguQtfOLGLZMIU
+         eCuIdTR4R9p1OZwm4ItKCjWNcCllsgL2ecMiMHYuvhWGbOgZIm7trLg1uvqbUu9643fw
+         Aj216Xu+pl3gN5VD/TpKM8Z47e2rX9RGJGy+8+7YMuNVtNTRutEMHLJaLgiSkgpgRkk/
+         YcebvR4PkQ9m+nqObdyN5Aza7RKwg+RfVwq/kZh9+s08GuSm6DOzLlyiKNhNsojJGJZc
+         06c6NlcR/MYivqW1fipkaSIhaI7qe/M1EJZzyMa3IOGrzEAY8oUz65piBfye56lPwivt
+         J17w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=2kozv+qUwCiH77WtFuZSU6/5uiZy6pAZHAkEiMAZfBA=;
-        b=lr2sVZyvFnn5fhJisjqT1k/BIWNjeHKR+N0WSR8RWR8SISrM3tresJKXlGWzmJxTlD
-         15SXQHhIz1n6kBBJIEaW9oNbRfxl8wfHy5E85IlYDTsUl5v4HfkdPds48Jm2uc5IpyPm
-         qRzWYCbqtkoiRGUgY6eU93eNLTqNkbL2E/Ywm8nKP8VQaTUMCBCi/hawjtbMAkW/1UZX
-         dsgItGH+MoLLI5pRgfLs+Fe1mBhchQ92f0rz9+JhrqVEWlXPHvTZgyI4LEaYrWyVGKQj
-         qHbQvfMZEaTls3fWkIz9Y79lQuJ0rE10tjSsZmFmB5bRtgDGeB2oD2aUrKaVXPfpzq8H
-         a78g==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=rOpsc+gKKzwiV7DnWDGVyvxw9zsLQR5uIZqGpdrJeTE=;
+        b=BzJfP1Q8VOfNQm9YhOSpfsbtbXnOOcQFvN0QkIh4miBGc0TnFkt7VkeODlSt8Es4Iy
+         NPQkWXZzcwYU02YLYHYzVCYYyb9/JVcOUyNkKDHV7OJV6vRhPJeGYVFSIOHPP3JEEIe5
+         6yUpyHdRbWmw37m7BIOzvi7Jk1rV4cZuczQLM5gxJ0Wpqxb1Tfj+95NkSyjxgxF7A8kW
+         YQ5jG4fApaKtiuOeCBUWZwgLci6Jda+NHSM4fEmeqBT15C1TrqqqQX/fkoDu1QmUwKhd
+         o2m1QdaMy/FNcM/3mw4UYFoETJqvRc8gn9B/xPIpnbY9h6g6UkwtqyFw0AlnTfezdZqF
+         tc6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=CTSxkM2V;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=CTSxkM2V;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753747AbeBVMxu (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 22 Feb 2018 07:53:50 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44882 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753702AbeBVMxu (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:53:50 -0500
-From: Zong Li <zongbox@gmail.com>
-To: shuah@kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: zong@andestech.com, greentime@andestech.com,
-        Zong Li <zongbox@gmail.com>
-Subject: [PATCH] selftest: support running subset of selftests for run_kselftest.sh
-Date: Thu, 22 Feb 2018 20:53:00 +0800
-Message-Id: <20180222125300.15681-1-zongbox@gmail.com>
-X-Mailer: git-send-email 2.16.1
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
+   d="scan'208";a="19075756"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-rtc@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joe Perches <joe@perches.com>,
+	Mark Salyzyn <salyzyn@android.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 00/21] lib, rtc: Print rtc_time via %ptR[dt][rv]
+Date: Tue, 20 Feb 2018 23:43:39 +0200
+Message-Id: <20180220214400.66749-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593105744237110038?=
-X-GMAIL-MSGID: =?utf-8?q?1593105744237110038?=
+X-GMAIL-THRID: =?utf-8?q?1592957910104002623?=
+X-GMAIL-MSGID: =?utf-8?q?1592957910104002623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Simply use the first argument to specify the subset of selftests.
-Use comma notation to separate multiple tests.
-(e.g. ./run_kselftest.sh size,timers,...)
-Default behaviour is running all selftests.
+At some point I have noticed too many users of struct rtc_time that
+printing its content field by field.
 
-Each selftest be defined as function that we can run one of selftests.
-The function name has underline as prefix to avoid confilct with
-built-in command of shell.
-(e.g. The exec is built-in command of shell)
-The hyhpen of function name be replace to the underline because
-not all shells can use hyphen in function name, like sh, ash and so on.
+In this series I introduce %ptR[dt][rv] specifier to make life a bit
+easier.
 
-Signed-off-by: Zong Li <zong@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Shuah Khan <shuah@kernel.org>
----
- tools/testing/selftests/Makefile | 9 +++++++++
- 1 file changed, 9 insertions(+)
+There are still users of detailed output of the struct rtc_time, but we
+can introduce an additional extension for them in the future if needed,
+otherwise they might be converted to the proposed output format.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 7442dfb73b7f..08e2a855f187 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -128,13 +128,22 @@ ifdef INSTALL_PATH
- 
- 	for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
-+		echo "_$${TARGET//-/_}()" >> $(ALL_SCRIPT); \
-+		echo "{" >> $(ALL_SCRIPT); \
- 		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
- 		echo "echo ========================================" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
- 		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
-+		echo "}" >> $(ALL_SCRIPT); \
-+		echo "" >> $(ALL_SCRIPT); \
- 	done;
- 
-+	echo "TARGETS=\$${1:-\`ls -d */ | sed 's#/##' \`}" >> $(ALL_SCRIPT);
-+	echo "for TARGET in \$${TARGETS//,/ }; do" >> $(ALL_SCRIPT);
-+	echo "    _\$${TARGET//-/_}" >> $(ALL_SCRIPT);
-+	echo "done" >> $(ALL_SCRIPT);
-+
- 	chmod u+x $(ALL_SCRIPT)
- else
- 	$(error Error: set INSTALL_PATH to use install)
+Some of the changes slightly modify the output. In those cases we are on
+the safe side since they are pure debug. Nevertheless I tried to leave
+numbers to be the same or quite close: in some cases year is printed +
+1900, though month is left in the range [0,11] instead of [1,12].
+
+I didn't compile everything there, though I did a basic smoke test on
+some x86 hardware. So, I rely on kbuild test robot as well :-)
+
+Most of the users currently are RTC drivers, thus the patch series is
+assumed to go via RTC tree.
+
+The patch series depends on earlier send clean up of lib/vsprintf [1].
+
+[1]: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1612716.html
+
+Changelog v2:
+- split out lib/vsprintf changes to separate series
+- build it optionally depending on introduced PRINTK_PEXT_TIMEDATE
+- for now support only struct rtc_time
+- make an additional letter for different time representations
+- make above letter capital to reduce confusion on %ptr vs. %ptR
+- drop kdb patch since it's a candidate for time64_t support
+
+Andy Shevchenko (21):
+  lib/vsprintf: Print time and date in human readable format via %pt
+  rtc: Switch to use %ptR
+  rtc: at91rm9200: Switch to use %ptR
+  rtc: at91sam9: Switch to use %ptR
+  rtc: m41t80: Switch to use %ptR
+  rtc: m48t59: Switch to use %ptR
+  rtc: mcp795: Switch to use %ptR
+  rtc: pcf50633: Switch to use %ptR
+  rtc: pic32: Switch to use %ptR
+  rtc: pm8xxx: Switch to use %ptR
+  rtc: puv3: Switch to use %ptR
+  rtc: rk808: Switch to use %ptR
+  rtc: rx6110: Switch to use %ptR
+  rtc: rx8025: Switch to use %ptR
+  rtc: s3c: Switch to use %ptR
+  rtc: s5m: Switch to use %ptR
+  rtc: tegra: Switch to use %ptR
+  ds1302: Switch to use %ptR
+  Input: hp_sdc_rtc - Switch to use %ptR
+  mk68/mac: Switch to use %ptR
+  PM: Switch to use %ptR
+
+ Documentation/core-api/printk-formats.rst |  31 +++++++
+ arch/m68k/Kconfig.machine                 |   1 +
+ arch/m68k/mac/misc.c                      |   8 +-
+ drivers/base/power/trace.c                |   4 +-
+ drivers/char/Kconfig                      |   2 +
+ drivers/char/ds1302.c                     |  39 +++-----
+ drivers/char/rtc.c                        |   7 +-
+ drivers/input/misc/Kconfig                |   1 +
+ drivers/input/misc/hp_sdc_rtc.c           |   8 +-
+ drivers/rtc/Kconfig                       |   1 +
+ drivers/rtc/hctosys.c                     |   8 +-
+ drivers/rtc/interface.c                   |   8 +-
+ drivers/rtc/rtc-at91rm9200.c              |  15 +---
+ drivers/rtc/rtc-at91sam9.c                |  16 +---
+ drivers/rtc/rtc-m41t80.c                  |   6 +-
+ drivers/rtc/rtc-m48t59.c                  |   8 +-
+ drivers/rtc/rtc-mcp795.c                  |  18 ++--
+ drivers/rtc/rtc-pcf50633.c                |   8 +-
+ drivers/rtc/rtc-pic32.c                   |  18 +---
+ drivers/rtc/rtc-pm8xxx.c                  |  16 ++--
+ drivers/rtc/rtc-proc.c                    |  36 ++------
+ drivers/rtc/rtc-puv3.c                    |  18 +---
+ drivers/rtc/rtc-rk808.c                   |  20 ++---
+ drivers/rtc/rtc-rx6110.c                  |  12 +--
+ drivers/rtc/rtc-rx8025.c                  |  19 +---
+ drivers/rtc/rtc-s3c.c                     |  21 ++---
+ drivers/rtc/rtc-s5m.c                     |  27 ++----
+ drivers/rtc/rtc-sysfs.c                   |  12 +--
+ drivers/rtc/rtc-tegra.c                   |  30 +------
+ kernel/power/Kconfig                      |   1 +
+ lib/Kconfig                               |   8 ++
+ lib/test_printf.c                         |   6 ++
+ lib/vsprintf.c                            | 145 ++++++++++++++++++++++++++++++
+ 33 files changed, 287 insertions(+), 291 deletions(-)
+
 -- 
-2.16.1
-
+2.15.1
