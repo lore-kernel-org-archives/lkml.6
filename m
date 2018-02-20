@@ -1,61 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeBTOww (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 09:52:52 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34790 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeBTOwr (ORCPT
+        id S1751827AbeBTOyZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 09:54:25 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56290 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbeBTOyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:52:47 -0500
-X-Google-Smtp-Source: AH8x225Wfr5jbI3VKukL0KACnOKjT1XhTXbcqN6HhkrfTlxnbvixXMs+dLcfc0vaz3eGJgsqAwoLQY8xTf7ABLqmQXI=
+        Tue, 20 Feb 2018 09:54:24 -0500
+Date: Tue, 20 Feb 2018 15:54:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dev@mblankhorst.nl,
+        chris@chris-wilson.co.uk
+Subject: Re: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function
+ v3
+Message-ID: <20180220145413.GF25201@hirez.programming.kicks-ass.net>
+References: <20180220125829.27060-1-christian.koenig@amd.com>
+ <20180220131253.GF25314@hirez.programming.kicks-ass.net>
+ <8fd80334-4d0e-8ed0-8a09-02a7e36a0eae@gmail.com>
+ <20180220135709.GD25201@hirez.programming.kicks-ass.net>
+ <b625cbca-c05a-afd1-fe97-a7a0760383c1@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <1519062520-198902-9-git-send-email-john.garry@huawei.com>
-References: <1519062520-198902-1-git-send-email-john.garry@huawei.com> <1519062520-198902-9-git-send-email-john.garry@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 20 Feb 2018 16:52:46 +0200
-Message-ID: <CAHp75Vdy53cNq0qveM6MPVaukxZ856jCex7EnRKZudwaidJ3_Q@mail.gmail.com>
-Subject: Re: [PATCH v14 8/9] HISI LPC: Add ACPI support
-To: John Garry <john.garry@huawei.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b625cbca-c05a-afd1-fe97-a7a0760383c1@amd.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
-> Based on the previous patches, this patch supports the
-> LPC host on hip06/hip07 for ACPI FW.
->
-> It is the responsibility of the LPC host driver to
-> enumerate the child devices, as the ACPI scan code will
-> not enumerate children of "indirect IO" hosts.
+On Tue, Feb 20, 2018 at 03:34:07PM +0100, Christian König wrote:
+> > OK, but neither case would in fact need the !ctx case right? That's just
+> > there for completeness sake?
+> 
+> Unfortunately not. TTM uses trylock to lock BOs which are about to be
+> evicted to make room for all the BOs locked with a ctx.
+> 
+> I need to be able to distinct between the BOs which are trylocked and those
+> which are locked with a ctx.
+> 
+> Writing this I actually noticed the current version is buggy, cause even
+> when we check the mutex owner we still need to make sure that the ctx in the
+> lock is NULL.
 
->         if (!acpi_device)
->                 ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +       else
-> +               ret = hisi_lpc_acpi_probe(dev);
->         if (ret) {
->                 dev_err(dev, "populate children failed (%d)\n", ret);
->                 return ret;
+Hurm... I can't remember why trylocks behave like that, and it seems
+rather unfortunate / inconsistent.
 
-Ah, please, ignore one comment to previous patch.
+Chris, Maarten, do either one of you remember?
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'm thinking that if we do acquire the trylock, the thing should join
+the ctx such that a subsequent contending mutex_lock() can ww right.
