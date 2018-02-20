@@ -1,287 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752585AbeBTEcN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 23:32:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41026 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeBTEcL (ORCPT
+        id S1751057AbeBTEoo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 23:44:44 -0500
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:37893 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750829AbeBTEol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 23:32:11 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B264602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH 11/12] i2c: qup: reorganization of driver code to remove
- polling for qup v1
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-12-git-send-email-absahu@codeaurora.org>
- <04839e54-02bd-b7a6-8a94-26f72c3de7b3@codeaurora.org>
- <420a228111f0a71b9d5c3245c42d9148@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <e0009777-f185-e580-a1a2-13f283eb77ee@codeaurora.org>
-Date: Tue, 20 Feb 2018 10:02:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <420a228111f0a71b9d5c3245c42d9148@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Feb 2018 23:44:41 -0500
+X-Google-Smtp-Source: AH8x226jjl3XmUq2wwyL1ZRJHpJOS3NiUWn1JiG+5gz/oRRTLCVcl6qYClgYcfiaeO42Vv/wcavqVQ==
+From: Alexandre Courbot <acourbot@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [RFCv4 00/21] Request API
+Date: Tue, 20 Feb 2018 13:44:04 +0900
+Message-Id: <20180220044425.169493-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+Hi everyone,
 
-On 2/19/2018 6:51 PM, Abhishek Sahu wrote:
-> On 2018-02-16 13:14, Sricharan R wrote:
->> Hi Abhishek,
->>
->> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
->>> Following are the major issues in current driver code
->>>
->>> 1. The current driver simply assumes the transfer completion
->>>    whenever its gets any non-error interrupts and then simply do the
->>>    polling of available/free bytes in FIFO.
->>> 2. The block mode is not working properly since no handling in
->>>    being done for OUT_BLOCK_WRITE_REQ and IN_BLOCK_READ_REQ.
->>>
->>> Because of above, i2c v1 transfers of size greater than 32 are failing
->>> with following error message
->>>
->>>     i2c_qup 78b6000.i2c: timeout for fifo out full
->>>
->>> To make block mode working properly and move to use the interrupts
->>> instead of polling, major code reorganization is required. Following
->>> are the major changes done in this patch
->>>
->>> 1. Remove the polling of TX FIFO free space and RX FIFO available
->>>    bytes and move to interrupts completely. QUP has QUP_MX_OUTPUT_DONE,
->>>    QUP_MX_INPUT_DONE, OUT_BLOCK_WRITE_REQ and IN_BLOCK_READ_REQ
->>>    interrupts to handle FIFO’s properly so check all these interrupts.
->>> 2. During write, For FIFO mode, TX FIFO can be directly written
->>>    without checking for FIFO space. For block mode, the QUP will generate
->>>    OUT_BLOCK_WRITE_REQ interrupt whenever it has block size of available
->>>    space.
->>> 3. During read, both TX and RX FIFO will be used. TX will be used
->>>    for writing tags and RX will be used for receiving the data. In QUP,
->>>    TX and RX can operate in separate mode so configure modes accordingly.
->>> 4. For read FIFO mode, wait for QUP_MX_INPUT_DONE interrupt which
->>>    will be generated after all the bytes have been copied in RX FIFO. For
->>>    read Block mode, QUP will generate IN_BLOCK_READ_REQ interrupts
->>>    whenever it has block size of available data.
->>>
->>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->>> ---
->>>  drivers/i2c/busses/i2c-qup.c | 399 ++++++++++++++++++++++++++++---------------
->>>  1 file changed, 257 insertions(+), 142 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
->>> index edea3b9..af6c21a 100644
->>> --- a/drivers/i2c/busses/i2c-qup.c
->>> +++ b/drivers/i2c/busses/i2c-qup.c
->>> @@ -73,8 +73,11 @@
->>>  #define QUP_IN_SVC_FLAG        BIT(9)
->>>  #define QUP_MX_OUTPUT_DONE    BIT(10)
->>>  #define QUP_MX_INPUT_DONE    BIT(11)
->>> +#define OUT_BLOCK_WRITE_REQ    BIT(12)
->>> +#define IN_BLOCK_READ_REQ    BIT(13)
->>>
->>>  /* I2C mini core related values */
->>> +#define QUP_NO_INPUT        BIT(7)
->>>  #define QUP_CLOCK_AUTO_GATE    BIT(13)
->>>  #define I2C_MINI_CORE        (2 << 8)
->>>  #define I2C_N_VAL        15
->>> @@ -138,13 +141,51 @@
->>>  #define DEFAULT_CLK_FREQ 100000
->>>  #define DEFAULT_SRC_CLK 20000000
->>>
->>> +/* MAX_OUTPUT_DONE_FLAG has been received */
->>> +#define QUP_BLK_EVENT_TX_IRQ_DONE        BIT(0)
->>> +/* MAX_INPUT_DONE_FLAG has been received */
->>> +#define QUP_BLK_EVENT_RX_IRQ_DONE        BIT(1)
->>> +/* All the TX bytes have been written in TX FIFO */
->>> +#define QUP_BLK_EVENT_TX_DATA_DONE        BIT(2)
->>> +/* All the RX bytes have been read from RX FIFO */
->>> +#define QUP_BLK_EVENT_RX_DATA_DONE        BIT(3)
->>> +
->>> +/* All the required events to mark a QUP I2C TX transfer completed */
->>> +#define QUP_BLK_EVENT_TX_DONE        (QUP_BLK_EVENT_TX_IRQ_DONE | \
->>> +                     QUP_BLK_EVENT_TX_DATA_DONE)
->>> +/* All the required events to mark a QUP I2C RX transfer completed */
->>> +#define QUP_BLK_EVENT_RX_DONE        (QUP_BLK_EVENT_TX_DONE | \
->>> +                     QUP_BLK_EVENT_RX_IRQ_DONE | \
->>> +                     QUP_BLK_EVENT_RX_DATA_DONE)
->>> +
->>> +/*
->>> + * count: no of blocks
->>> + * pos: current block number
->>> + * tx_tag_len: tx tag length for current block
->>> + * rx_tag_len: rx tag length for current block
->>> + * data_len: remaining data length for current message
->>> + * total_tx_len: total tx length including tag bytes for current QUP transfer
->>> + * total_rx_len: total rx length including tag bytes for current QUP transfer
->>> + * tx_fifo_free: number of free bytes in current QUP block write.
->>> + * fifo_available: number of available bytes in RX FIFO for current
->>> + *           QUP block read
->>> + * is_tx_blk_mode: whether tx uses block or FIFO mode in case of non BAM xfer.
->>> + * is_rx_blk_mode: whether rx uses block or FIFO mode in case of non BAM xfer.
->>> + * tags: contains tx tag bytes for current QUP transfer
->>> + */
->>>  struct qup_i2c_block {
->>> -    int    count;
->>> -    int    pos;
->>> -    int    tx_tag_len;
->>> -    int    rx_tag_len;
->>> -    int    data_len;
->>> -    u8    tags[6];
->>> +    int        count;
->>> +    int        pos;
->>> +    int        tx_tag_len;
->>> +    int        rx_tag_len;
->>> +    int        data_len;
->>> +    int        total_tx_len;
->>> +    int        total_rx_len;
->>> +    int        tx_fifo_free;
->>> +    int        fifo_available;
->>> +    bool        is_tx_blk_mode;
->>> +    bool        is_rx_blk_mode;
->>> +    u8        tags[6];
->>>  };
->>>
->>>  struct qup_i2c_tag {
->>> @@ -187,6 +228,7 @@ struct qup_i2c_dev {
->>>
->>>      /* To check if this is the last msg */
->>>      bool            is_last;
->>> +    bool            is_qup_v1;
->>>
->>>      /* To configure when bus is in run state */
->>>      int            config_run;
->>> @@ -195,6 +237,10 @@ struct qup_i2c_dev {
->>>      bool            is_dma;
->>>      /* To check if the current transfer is using DMA */
->>>      bool            use_dma;
->>> +    /* Required events to mark QUP transfer as completed */
->>> +    u32            blk_events;
->>> +    /* Already completed events in QUP transfer */
->>> +    u32            cur_blk_events;
->>>      /* The threshold length above which DMA will be used */
->>>      unsigned int        dma_threshold;
->>>      unsigned int        max_xfer_sg_len;
->>> @@ -205,11 +251,18 @@ struct qup_i2c_dev {
->>>      struct            qup_i2c_bam btx;
->>>
->>>      struct completion    xfer;
->>> +    /* function to write data in tx fifo */
->>> +    void (*write_tx_fifo)(struct qup_i2c_dev *qup);
->>> +    /* function to read data from rx fifo */
->>> +    void (*read_rx_fifo)(struct qup_i2c_dev *qup);
->>> +    /* function to write tags in tx fifo for i2c read transfer */
->>> +    void (*write_rx_tags)(struct qup_i2c_dev *qup);
->>>  };
->>>
->>>  static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
->>>  {
->>>      struct qup_i2c_dev *qup = dev;
->>> +    struct qup_i2c_block *blk = &qup->blk;
->>>      u32 bus_err;
->>>      u32 qup_err;
->>>      u32 opflags;
->>> @@ -256,12 +309,54 @@ static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
->>>          goto done;
->>>      }
->>>
->>> -    if (opflags & QUP_IN_SVC_FLAG)
->>> -        writel(QUP_IN_SVC_FLAG, qup->base + QUP_OPERATIONAL);
->>> +    if (!qup->is_qup_v1)
->>> +        goto done;
->>>
->>> -    if (opflags & QUP_OUT_SVC_FLAG)
->>> +    if (opflags & QUP_OUT_SVC_FLAG) {
->>>          writel(QUP_OUT_SVC_FLAG, qup->base + QUP_OPERATIONAL);
->>>
->>> +        /*
->>> +         * Ideally, would like to check QUP_MAX_OUTPUT_DONE_FLAG.
->>> +         * However, QUP_MAX_OUTPUT_DONE_FLAG is lagging behind
->>> +         * QUP_OUTPUT_SERVICE_FLAG. The only reason for
->>> +         * QUP_OUTPUT_SERVICE_FLAG to be set in FIFO mode is
->>> +         * QUP_MAX_OUTPUT_DONE_FLAG condition. The code checking
->>> +         * here QUP_OUTPUT_SERVICE_FLAG and assumes that
->>> +         * QUP_MAX_OUTPUT_DONE_FLAG.
->>> +         */
->>> +        if (!blk->is_tx_blk_mode)
->>> +            qup->cur_blk_events |= QUP_BLK_EVENT_TX_IRQ_DONE;
->>> +
->>> +        if (opflags & OUT_BLOCK_WRITE_REQ) {
->>> +            blk->tx_fifo_free += qup->out_blk_sz;
->>> +            if (qup->msg->flags & I2C_M_RD)
->>> +                qup->write_rx_tags(qup);
->>> +            else
->>> +                qup->write_tx_fifo(qup);
->>> +        }
->>> +    }
->>> +
->>> +    if (opflags & QUP_IN_SVC_FLAG) {
->>> +        writel(QUP_IN_SVC_FLAG, qup->base + QUP_OPERATIONAL);
->>> +
->>> +        if (!blk->is_rx_blk_mode) {
->>> +            blk->fifo_available += qup->in_fifo_sz;
->>> +            qup->read_rx_fifo(qup);
->>> +        } else if (opflags & IN_BLOCK_READ_REQ) {
->>> +            blk->fifo_available += qup->in_blk_sz;
->>> +            qup->read_rx_fifo(qup);
->>> +        }
->>> +    }
->>> +
->>> +    if (opflags & QUP_MX_OUTPUT_DONE)
->>> +        qup->cur_blk_events |= QUP_BLK_EVENT_TX_IRQ_DONE;
->>> +
->>> +    if (opflags & QUP_MX_INPUT_DONE)
->>> +        qup->cur_blk_events |= QUP_BLK_EVENT_RX_IRQ_DONE;
->>> +
->>> +    if (qup->cur_blk_events != qup->blk_events)
->>> +        return IRQ_HANDLED;
->>
->>   Is it correct that if we do a complete in above case, i mean
->>   for TX -> based on QUP_MX_OUTPUT_DONE and for RX -> based on
->>   QUP_MX_INPUT_DONE, would that simplify things by getting rid of
->>   QUP_BLK_EVENT_RX/TX_DONE and QUP_BLK_EVENT_RX/TX_IRQ_DONE
->>   altogether ?
-> 
->  We can get rid of QUP_BLK_EVENT_TX_DONE.
->  For RX, the QUP_MX_INPUT_DONE will be triggered when QUP copies all
->  the data in FIFO from external i2c slave. So if 64 bytes read has been
->  scheduled then  following is the behaviour
-> 
->  IRQ with QUP_MX_INPUT_DONE and IN_BLOCK_READ_REQ -> read 16 bytes
->  IRQ with IN_BLOCK_READ_REQ -> read next 16 bytes
->  IRQ with IN_BLOCK_READ_REQ  -> read next 16 bytes
->  IRQ with IN_BLOCK_READ_REQ -> read last 16 bytes
-> 
->  So for RX, we can't trigger complete by checking QUP_BLK_EVENT_RX_DONE alone.
->  We need to track the number of bytes read from FIFO. Instead of putting
->  this check, I am taking one extra event bit QUP_BLK_EVENT_RX_DONE which
->  will be set when all the bytes has been read.
-> 
->  I am not sure if checking QUP_MX_INPUT_DONE will always work since
->  there may be some case, when for small transfers the QUP_MX_INPUT_DONE
->  will come before QUP_MX_OUTPUT_DONE so checking for both will work
->  always.
+And thanks for all the feedback on the previous version! I have tried to address as much as possible, which results in (another) almost rewrite. But I think the behavior and structure are converging to something satisfying and usable.
 
-Looking in to the code and the above case,
-  RX -> complete when the required len bytes are read from FIFO in to the msg buffer.
-  TX -> complete just when QUP_MX_OUTPUT_DONE is set.
+Besides the buffer queuing behavior that has been fixed, some of the big design changes undertaken are that the media controller framework is not a requirement anymore (although it can still be used in exactly the same way as before), and that ioctls related to requests are now performed directly on the request FD.
 
-Tf this helps of getting rid of 3 of the above 4 flags tracking and all your stress/testing
-continues to work then fine.
+As discussed with Sakari, the fact that request entities were in fact media entities was a bit limiting, so I created a request_entity type that can be embedded into any structure we want to control with requests. This is what allows drivers to support requests without the media controller: simple V4L2 drivers can use the V4L2 implementation that allows to control a single video device (as opposed to the whole pipeline under a media controller). Media controllers can still, of course, use a more complex implementation and control their whole pipeline, but bringing that complexity to simple drivers seemed overreached to me.
 
-Regards,
- Sricharan
+Independently of the request implementation, request entities can store their own data, in a way that makes sense regarding their type (that would be v4l2_request_entity_data for V4L2 devices, but can be another data type for media controllers topology).
+
+The entity data lookup is also performed on these request_entities, working effectively like the data store Sakari proposed, but retaining a base type for data lookup.
+
+Patches are organized as follows:
+
+Patch 1 provides the base request support, not tied to either media or v4l2.
+
+Patches 2 to 8 are the control rework done by Hans, with an extra workaround for a bug discovered while working on vivid (see commit message for details).
+
+Patch 9 adds request support to V4L2 in the form of entity data for v4l2 devices to be used in requests, and a request manager capable of producing simple requests for video devices. Maybe this should be split into different files, but since the code is not that big I have kept it under the same file.
+
+Patches 10 to 13 add request support to vb2-core and vb2-v4l2.
+
+Patches 14 and 15 add support for the request_fd field in G/S/TRY_EXT_CTRLS ioctls.
+
+Patch 16 allows requests to be allocated from a supporting V4L2 video device node.
+
+Patches 17 and 19 add request support to mem2mem and vim2m. Patch 18 documents usage of requests with V4L2 devices.
+
+Patch 20 adds support to the vivid capture device.
+
+Finally, 21 is a WIP patch implementing request support for media controller nodes. Requests allocated that way are of a different, broader nature than V4L2 requests, and will be able to control any device managed by the controller. To allow this, request_entity is embedded into media_entity, so that media entities can be upcasted as in the previous version.
+
+Phew! That was quite long, sorry about that. As usual, simple programs demonstrating requests on vim2m and vivid are available:
+
+https://gist.github.com/Gnurou/34c35f1f8e278dad454b51578d239a42
+https://gist.github.com/Gnurou/5052e6ab41e7c55164b75d2970bc5a04
+
+If things are starting to look ok, I would like to move on to the next step and implement support in v4l2-ctl. Maybe also start submitting an actual codec driver once the control work is completed. And of course, it may be good time to think about how pipeline configuration would work. The current design should make this question orthogonal to getting support in for simple V4L2 devices.
+
+Looking forward to your feedback!
+
+Changes since RFC v3:
+* Buffer queuing is now performed as soon as the request is queued, allowing drivers to see them early.
+* Request refcounting is done using the file * structure instead of a kref
+* Requests can now be used independently of a media controller, to avoid having to pull it for simple codec drivers. For such drivers, the device node can allocate requests that are exclusive to this device only. Media controller nodes can still allocate requests that control their topology as well as the devices under them.
+* Consequently, media_request is now its own module since it can be used independently of media.ko.
+* SUBMIT/REINIT request ioctls are now performed on the request FD instead of the media device. This means that device/media controller node's business with requests is limited to allocating them.
+* Got rid of request IDs.
+* Only allow one buffer to be queued to each queue of request entities.
+* The request FD that produced a CAPTURE buffer is not returned to user-space anymore.
+* Added requests support for the Vivid video capture device.
+* Let drivers decide individually whether their entities should be per file handle or global to the device, solving the question we had about this in previous RFCs. Vim2m provides an example of per-context entities, while vivid gives an example of a global request entity.
+* Improved documentation.
+
+Issues remaining with this version:
+* Vivid support exposed what seems to be a limitation in the current controls cloning implementation. See patch 8 (which works the issue around) for details.
+* Media controller implementation of requests is still incomplete. I plan to complete and exert it on an actual camera driver sometime soon.
+
+
+Alexandre Courbot (14):
+  media: add request API core and UAPI
+  [WAR] v4l2-ctrls: do not clone non-standard controls
+  v4l2: add request API support
+  media: v4l2_fh: add request entity field
+  media: videobuf2: add support for requests
+  media: videobuf2-v4l2: support for requests
+  videodev2.h: add request_fd field to v4l2_ext_controls
+  v4l2-ctrls: support requests in EXT_CTRLS ioctls
+  v4l2: video_device: support for creating requests
+  media: mem2mem: support for requests
+  Documentation: v4l: document request API
+  media: vim2m: add request support
+  media: vivid: add request support for the video capture device
+  [WIP] media: media-device: support for creating requests
+
+Hans Verkuil (7):
+  v4l2-ctrls: v4l2_ctrl_add_handler: add from_other_dev
+  v4l2-ctrls: prepare internal structs for request API
+  v4l2-ctrls: add core request API
+  v4l2-ctrls: use ref in helper instead of ctrl
+  v4l2-ctrls: support g/s_ext_ctrls for requests
+  v4l2-ctrls: add v4l2_ctrl_request_setup
+  videodev2.h: Add request_fd field to v4l2_buffer
+
+ Documentation/ioctl/ioctl-number.txt          |   1 +
+ Documentation/media/uapi/v4l/buffer.rst       |   9 +-
+ Documentation/media/uapi/v4l/common.rst       |   1 +
+ Documentation/media/uapi/v4l/request-api.rst  | 199 ++++++++++
+ Documentation/media/uapi/v4l/user-func.rst    |   1 +
+ .../media/uapi/v4l/vidioc-g-ext-ctrls.rst     |  16 +-
+ .../media/uapi/v4l/vidioc-new-request.rst     |  64 ++++
+ Documentation/media/uapi/v4l/vidioc-qbuf.rst  |   7 +
+ drivers/media/Kconfig                         |   3 +
+ drivers/media/Makefile                        |   6 +
+ .../media/common/videobuf2/videobuf2-core.c   |   3 +
+ .../media/common/videobuf2/videobuf2-v4l2.c   | 131 ++++++-
+ drivers/media/dvb-frontends/rtl2832_sdr.c     |   5 +-
+ drivers/media/media-device.c                  |  11 +
+ drivers/media/media-request.c                 | 341 +++++++++++++++++
+ drivers/media/pci/bt8xx/bttv-driver.c         |   2 +-
+ drivers/media/pci/cx23885/cx23885-417.c       |   2 +-
+ drivers/media/pci/cx88/cx88-blackbird.c       |   2 +-
+ drivers/media/pci/cx88/cx88-video.c           |   2 +-
+ drivers/media/pci/saa7134/saa7134-empress.c   |   4 +-
+ drivers/media/pci/saa7134/saa7134-video.c     |   2 +-
+ drivers/media/platform/Kconfig                |   1 +
+ .../media/platform/exynos4-is/fimc-capture.c  |   2 +-
+ drivers/media/platform/omap3isp/ispvideo.c    |   2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c   |   3 +-
+ drivers/media/platform/rcar_drif.c            |   2 +-
+ .../media/platform/soc_camera/soc_camera.c    |   3 +-
+ drivers/media/platform/vim2m.c                |  75 ++++
+ drivers/media/platform/vivid/Kconfig          |   1 +
+ drivers/media/platform/vivid/vivid-core.c     |  63 +++-
+ drivers/media/platform/vivid/vivid-core.h     |   3 +
+ drivers/media/platform/vivid/vivid-ctrls.c    |  46 +--
+ .../media/platform/vivid/vivid-kthread-cap.c  |  17 +
+ drivers/media/usb/cpia2/cpia2_v4l.c           |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-417.c       |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c     |   4 +-
+ drivers/media/usb/msi2500/msi2500.c           |   2 +-
+ drivers/media/usb/tm6000/tm6000-video.c       |   2 +-
+ drivers/media/v4l2-core/Makefile              |   1 +
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   9 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c          | 341 +++++++++++++++--
+ drivers/media/v4l2-core/v4l2-dev.c            |   2 +
+ drivers/media/v4l2-core/v4l2-device.c         |   3 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c          |  37 +-
+ drivers/media/v4l2-core/v4l2-mem2mem.c        |   3 +-
+ drivers/media/v4l2-core/v4l2-request.c        | 178 +++++++++
+ drivers/media/v4l2-core/v4l2-subdev.c         |   2 +-
+ drivers/staging/media/imx/imx-media-dev.c     |   2 +-
+ drivers/staging/media/imx/imx-media-fim.c     |   2 +-
+ include/media/mc-request.h                    |  33 ++
+ include/media/media-device.h                  |   1 +
+ include/media/media-entity.h                  |   5 +
+ include/media/media-request.h                 | 349 ++++++++++++++++++
+ include/media/v4l2-ctrls.h                    |  20 +-
+ include/media/v4l2-dev.h                      |   2 +
+ include/media/v4l2-fh.h                       |   3 +
+ include/media/v4l2-request.h                  | 159 ++++++++
+ include/media/videobuf2-core.h                |   4 +
+ include/media/videobuf2-v4l2.h                |  59 +++
+ include/uapi/linux/media-request.h            |  37 ++
+ include/uapi/linux/media.h                    |   2 +
+ include/uapi/linux/videodev2.h                |   9 +-
+ 62 files changed, 2217 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/media/uapi/v4l/request-api.rst
+ create mode 100644 Documentation/media/uapi/v4l/vidioc-new-request.rst
+ create mode 100644 drivers/media/media-request.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-request.c
+ create mode 100644 include/media/mc-request.h
+ create mode 100644 include/media/media-request.h
+ create mode 100644 include/media/v4l2-request.h
+ create mode 100644 include/uapi/linux/media-request.h
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.1.291.g4437f3f132-goog
