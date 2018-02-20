@@ -1,85 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeBTNfr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:35:47 -0500
-Received: from mga17.intel.com ([192.55.52.151]:48624 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751737AbeBTNfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:35:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,539,1511856000";
-   d="scan'208";a="36064880"
-Date: Tue, 20 Feb 2018 21:27:00 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: changbin.du@intel.com, Steven Rostedt <rostedt@goodmis.org>,
-        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/17] trace doc: convert trace/ftrace.txt to rst format
-Message-ID: <20180220132700.iz27aumgy5o2agp3@intel.com>
-References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
- <1518845990-20733-6-git-send-email-changbin.du@intel.com>
- <CAOFm3uE78DosAoZDNfD_YRaGPhpxW=4_cd3d9MafV-mdk5BuxQ@mail.gmail.com>
+        id S1751895AbeBTNjV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:39:21 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38062 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751683AbeBTNjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 08:39:19 -0500
+X-Google-Smtp-Source: AH8x225A0AYNWaqWuUgmBgonXufV39z+qEAlHRzv8xWz1bz+tBooG04l6BhGrUNkpxnlef7L6hHCOlOI/q8oJbsL6Ec=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOFm3uE78DosAoZDNfD_YRaGPhpxW=4_cd3d9MafV-mdk5BuxQ@mail.gmail.com>
-User-Agent: NeoMutt/20171027-42-ad8712
+In-Reply-To: <20180220123047.24469-2-Eugeniy.Paltsev@synopsys.com>
+References: <20180220123047.24469-1-Eugeniy.Paltsev@synopsys.com> <20180220123047.24469-2-Eugeniy.Paltsev@synopsys.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 20 Feb 2018 15:39:17 +0200
+Message-ID: <CAHp75VdQ_tVG29+JdycoTg-0tBAxKa9dNvesU-b+f8RqhQf4Rw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dmaengine: Introduce DW AXI DMAC driver
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: dmaengine <dmaengine@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Tue, Feb 20, 2018 at 08:28:24AM +0100, Philippe Ombredanne wrote:
-> Changbin, Steven,
-> 
-> On Sat, Feb 17, 2018 at 6:39 AM,  <changbin.du@intel.com> wrote:
-> > From: Changbin Du <changbin.du@intel.com>
-> >
-> > This converts the plain text documentation to reStructuredText format and
-> > add it into Sphinx TOC tree. No essential content change.
-> >
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > ---
-> >  Documentation/trace/ftrace.rst | 3332 ++++++++++++++++++++++++++++++++++++++++
-> >  Documentation/trace/ftrace.txt | 3220 --------------------------------------
-> >  Documentation/trace/index.rst  |    1 +
-> >  3 files changed, 3333 insertions(+), 3220 deletions(-)
-> >  create mode 100644 Documentation/trace/ftrace.rst
-> >  delete mode 100644 Documentation/trace/ftrace.txt
-> >
-> > diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
-> > new file mode 100644
-> > index 0000000..636aa9bf
-> > --- /dev/null
-> > +++ b/Documentation/trace/ftrace.rst
-> > @@ -0,0 +1,3332 @@
-> > +========================
-> > +ftrace - Function Tracer
-> > +========================
-> > +
-> > +Copyright 2008 Red Hat Inc.
-> > +
-> > +:Author:   Steven Rostedt <srostedt@redhat.com>
-> > +:License:  The GNU Free Documentation License, Version 1.2
-> > +          (dual licensed under the GPL v2)
-> 
-> 
-> Do you mind using an SPDX id per [1] rather that this?
-> 
-> Steven, are you OK with this? Can you ack?
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
-> -- 
-> Cordially
-> Philippe Ombredanne
+On Tue, Feb 20, 2018 at 2:30 PM, Eugeniy Paltsev
+<Eugeniy.Paltsev@synopsys.com> wrote:
+> This patch adds support for the DW AXI DMAC controller.
+> DW AXI DMAC is a part of HSDK development board from Synopsys.
+>
+> In this driver implementation only DMA_MEMCPY transfers are
+> supported.
 
-I leave this to Steven, since I just converted the format of this doc.
+Just few comments, code looks fine I hope.
+
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13344,6 +13344,12 @@ F:     include/linux/dma/dw.h
+>  F:     include/linux/platform_data/dma-dw.h
+>  F:     drivers/dma/dw/
+>
+> +SYNOPSYS DESIGNWARE AXI DMAC DRIVER
+> +M:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> +S:     Maintained
+> +F:     drivers/dma/dwi-axi-dmac/
+> +F:     Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
+
+AXI is earlier in alphabet than DMAC in previous record.
+
+Linus even submitted a script last year to sort the MAINTAINERS data base.
+
+> +/*
+> + * Synopsys DesignWare AXI DMA Controller driver.
+> + *
+> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
+> + * Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+
+Now we have SPDX identifiers.
+
+> +static u32 axi_chan_get_xfer_width(struct axi_dma_chan *chan, dma_addr_t src,
+> +                                  dma_addr_t dst, size_t len)
+> +{
+> +       u32 max_width = chan->chip->dw->hdata->m_data_width;
+> +
+> +       return min_t(size_t, __ffs(src | dst | len), max_width);
+
+size_t -> u32 ?
+
+> +}
+
+> +       unsigned int timeout = 20; /* timeout iterations */
+
+> +       do  {
+> +               if (axi_chan_irq_read(chan) & DWAXIDMAC_IRQ_SUSPENDED) {
+> +                       ret = 0;
+> +                       break;
+> +               }
+> +               udelay(2);
+> +       } while (timeout--);
+
+Off-by-one. You will have 21 tries here.
+
+} while (--timeout);
 
 -- 
-Thanks,
-Changbin Du
+With Best Regards,
+Andy Shevchenko
