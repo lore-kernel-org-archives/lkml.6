@@ -1,108 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751460AbeBTLcb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 06:32:31 -0500
-Received: from mail-eopbgr10084.outbound.protection.outlook.com ([40.107.1.84]:49184
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751348AbeBTLc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 06:32:29 -0500
-From: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: Christophe LEROY <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping outside
- the requests
-Thread-Topic: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping
- outside the requests
-Thread-Index: AQHTPqPqvsZq/NPBh0+2ewavIdT74g==
-Date: Tue, 20 Feb 2018 11:32:25 +0000
-Message-ID: <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-References: <cover.1507284818.git.christophe.leroy@c-s.fr>
- <e47bf94ae44f23230b1647e31c9623f1075d3b79.1507284818.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB3342A0A8530F74D408CA2F0298FC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <2338eb8d-a26a-9722-d667-5a9785b32977@c-s.fr>
- <VI1PR0402MB3342D90D574C8829701882BE98C90@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <630c313c-5eca-224d-a5ac-fb3f2783573a@c-s.fr>
- <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <d5809df9-fc17-03da-b7f4-038d973dbd1f@c-s.fr>
- <VI1PR0402MB334299B37F17771BFA9AFDDA98C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <20180220103436.GA20571@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com;
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3838;7:jrpTG0HCBk5dFMHBrTK/wz2uYbfU9Ig9SMYE9I1lLuSqgznkoagBYvqACYy1tN6xqO3dSnYZ6J2dCd5MVqj841S9Y9oOwKEMbeNA+BGk9EHPjbfmUnmaTJCxJfi0tb0fr2Mp7D3rVL59zw4Ri81PYLqV+CTqPqD7Z/rqN08DHSolctwkoOF7I5uMqp6/xsOkQngAbybDwpD8K8jvGoVruNmuDZRVVKEPuHuu+VixKIjJoQ+50OqehvHMA41gxX8p
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 9744d063-f165-4627-4f08-08d578559de5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:VI1PR0402MB3838;
-x-ms-traffictypediagnostic: VI1PR0402MB3838:
-x-microsoft-antispam-prvs: <VI1PR0402MB3838E33202D03CDD860F348A98CF0@VI1PR0402MB3838.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(944501161)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0402MB3838;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3838;
-x-forefront-prvs: 05891FB07F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(396003)(39860400002)(366004)(376002)(189003)(199004)(8936002)(2900100001)(105586002)(97736004)(68736007)(66066001)(8676002)(14454004)(93886005)(74316002)(3660700001)(3280700002)(106356001)(4326008)(6116002)(26005)(186003)(478600001)(59450400001)(53546011)(102836004)(6506007)(5250100002)(5660300001)(76176011)(7696005)(305945005)(86362001)(7736002)(6916009)(54906003)(229853002)(6246003)(9686003)(55016002)(99286004)(6436002)(316002)(25786009)(2906002)(81166006)(81156014)(3846002)(53936002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3838;H:VI1PR0402MB3342.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 61AcFkg6nNZX5Fc88q3+hfu0c+moPsas3UWLD9mkLhFBctPtGkk/qk0kIEih16N4e5WS4qeUFLgF0qiKA4Y9MZLOwCbm+RsxlXpPL7QjlkyO6neCDQNiHssIIC4ZoJ2ZwPtJ6tSRrxFb/SDUPMpfBoUW7wS2lkzRBDE87LBaYOg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
+        id S1751485AbeBTLdY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 06:33:24 -0500
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:41855 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeBTLdW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 06:33:22 -0500
+X-Google-Smtp-Source: AH8x2254PiCwPtg1OGII2G4w0DnW0FwLcvL9c17feAQ4JWdAwXGLDj+pKSDQHEW5Z/IT1GPekg4nlg==
+Date: Tue, 20 Feb 2018 12:33:18 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: christian.koenig@amd.com
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] locking/ww_mutex: cleanup lock->ctx usage in amdgpu
+Message-ID: <20180220113318.GN22199@phenom.ffwll.local>
+Mail-Followup-To: christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180215141944.4332-1-christian.koenig@amd.com>
+ <20180219152421.GQ22199@phenom.ffwll.local>
+ <cbfec1ed-d01f-1d4f-c3c0-cc04b93bc58c@gmail.com>
+ <20180219161544.GY22199@phenom.ffwll.local>
+ <2e696981-6b4a-e292-c16a-0f3477dbf8ce@gmail.com>
+ <20180219164354.GB22199@phenom.ffwll.local>
+ <f3cef14f-135c-2446-74b5-20e14773b0c4@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9744d063-f165-4627-4f08-08d578559de5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2018 11:32:25.8147
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3838
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f3cef14f-135c-2446-74b5-20e14773b0c4@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1KBWchu004609
 
-On 2/20/2018 12:34 PM, Herbert Xu wrote:
-> On Mon, Feb 19, 2018 at 01:16:30PM +0000, Horia Geantã wrote:
->>
->>> And what about ALGIF path from user space ?
->>> What if the user never calls the last sendmsg() which will call 
->>> hash_finup() ?
->>>
->> User is expected to follow the rules of the crypto API.
->> Of course, kernel won't (or at least shouldn't) crash in case of misuse.
->> However, in these cases some resources might not be freed - it's unavoidable.
+On Tue, Feb 20, 2018 at 10:43:48AM +0100, Christian König wrote:
+> Am 19.02.2018 um 17:43 schrieb Daniel Vetter:
+> > On Mon, Feb 19, 2018 at 05:29:46PM +0100, Christian König wrote:
+> > > [SNIP]
+> > > Well that is not a problem at all. See we don't nest trylock with normal
+> > > lock acquiring, cause that would indeed bypass the whole deadlock detection.
+> > > 
+> > > Instead we first use ww_mutex_acquire to lock all BOs which are needed for a
+> > > command submission, including the deadlock detection.
+> > > 
+> > > Then all additional BOs which needed to be evicted to fulfill the current
+> > > request are trylocked.
+> > Yeah it's the lock; trylock; lock combo that deadlocks. If lockdep indeed
+> > catches that one (and not some other recursion combo) then I think we
+> > don't have to worry about holding tons of trylock'ed locks.
 > 
-> the crypto API does not require the presence of a finalisation.
-> It is entirely optional.  So leaving resources pinned down until
-> final/finup occurs is unacceptable, both from user-space and the
-> kernel.
+> Well I haven't explicitly tested the lock; trylock; lock case, but you get a
+> warning anyway in the lock; ... anything ...; lock case.
 > 
-If final/finup is optional, how is the final hash supposed to be retrieved?
+> See the first and the second lock can't use the same acquire context,
+> because that isn't known down the call stack and lockdep warns about that
+> quite intensively.
 
-According to documentation, these are the accepted flows (with the option to
-export/import a partial hash b/w update and final/finup):
+Ah, so the ttm_ctx I've spotted was something entirely different and
+doesn't contain the ww_acquire_ctx (I didn't check)? I'd assume you have
+the same ctx passed around to everything in ttm, but if that doesn't exist
+then we can indeed not annotate ww_mutex_trylock_ctx with the right ctx.
 
-.init() -> .update() -> .final()
-            ^    |         |
-            '----'         '---> HASH
+> What is a problem is that lockdep sometimes runs out of space to keep track
+> of all the trylocked mutexes, but that could have happened before as well if
+> I'm not completely mistaken.
+> 
+> > > > If this is really what you want to do, then we need a
+> > > > ww_mutex_trylock_ctx, which also fills out the ctx value (so that other
+> > > > threads can correctly resolve deadlocks when you hold that lock while
+> > > > trying to grab additional locks). In which case you really don't need the
+> > > > task pointer.
+> > > Actually considered that as well, but it turned out that this is exactly
+> > > what I don't want.
+> > > 
+> > > Cause then we wouldn't be able to distinct ww_mutex locked with a context
+> > > (because they are part of the submission) and without (because TTM trylocked
+> > > them).
+> > Out of curiosity, why do you need to know that?
+> 
+> The control flow in TTM is that when you trylocked a BO you start to evict
+> it.
+> 
+> Now sometimes it happens that we evict it from VRAM to GTT, but then find
+> that we don't have enough GTT space and need to evict something from there
+> to the SYSTEM domain.
+> 
+> The problem is now since the reservation object is trylocked because of the
+> VRAM to GTT eviction we can't lock it again because of the GTT to the SYSTEM
+> domain.
+> 
+> > > > Yes it's a disappointment that lockdep doesn't correctly track trylocks,
+> > > > it just does basic sanity checks, but then drops them on the floor wrt
+> > > > depency tracking. Just in case you wonder why you're not getting a
+> > > > lockdeps splat for this. Unfortunately I don't understand lockdep enough
+> > > > to be able to fix this gap.
+> > > Sorry to disappoint you, but lockdep is indeed capable to correctly track
+> > > those trylocked BOs.
+> > > 
+> > > Got quite a bunch of warning before I was able to resolve to this solution.
+> > Hm, I thought it didn't detect a lock; trylock; lock combo because the
+> > trylock didn't show up in the dependency stack. Maybe that got fixed
+> > meanwhile.
+> 
+> Yeah I can confirm that this indeed got fixed.
+> 
+> > Assuming that we indeed need both, could we split up the two use-cases for
+> > clarity? I.e. ww_mutex_is_owned_by_ctx, which only takes the ctx (and
+> > forgoes checking for a task, since that's implied) and requires a non-NULL
+> > ctx. And ww_mutex_is_owned_by_task, which only takes the task (and maybe
+> > we should limit it to trylock and _single locks, i.e. WARN_ON(lock->ctx)
+> > if ww-mutex debugging is enabled).
+> > 
+> > Or does that hit another requirement of your use-case?
+> 
+> Well we could add two tests, one which only checks the context and one which
+> checks that the context is NULL and then checks the mutex owner.
+> 
+> But to me it actually looks more like that makes it unnecessary complicated.
+> The use case in amdgpu which could only check the context isn't performance
+> critical.
 
-.init() -> .update() -> .finup()
-            ^    |         |
-            '----'         '---> HASH
+Oh I'm not worried about the runtime overhead at all, I'm worried about
+conceptual clarity of this stuff. If you have a ctx there's no need to
+also look at ->owner.
 
-           .digest()
-               |
-               '---------------> HASH
+Another idea: We drop the task argument from functions and go with the
+following logic:
 
-Note that digest() is not an issue in the case we are discussing, since resource
-allocation happens only in init().
+ww_mutex_is_owner(lock, ctx)
+{
+	if (ctx)
+		return lock->ctx == ctx;
+	else
+		return lock->owner == current;
+}
 
-Thanks,
-Horia
+I think that would solve your use case, and gives us the neat interface
+I'm aiming for. Kerneldoc can then explain what's happening for a NULL
+ctx.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
