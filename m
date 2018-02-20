@@ -1,93 +1,126 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3335824-1519402722-2-9871598406051991039
+X-Cyrus-Session-Id: sloti22d1t05-2727985-1519128221-2-10885499885692666865
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519402721; b=oJWvy4bDa9kADZEvrCIjgWaR2/2KvAyCYp2/2JJEYyCY2rN
-    BHIudcKirhgpVzh3ncC9V1UApMF5XHbReRE6DSik/v76nv/m3hAd4GG7lCtg7t2I
-    UV1d7em3gAgCYmnTdbnuqChw6rfR4IfTN9kuMdwiQ3ZkomNbKK3WxSDgCVP5cnaX
-    ePidwyvDy65nJVMFdZH608jLh94zi4cJwVXZAWZiSfkHJJpoVKyXsYIlK9j+Ujdj
-    UDbe8ah31WgSo3c2Ftak6hXTUXktTCYECAPmmDLTUTYBk5JJDvqdNPxvF9Oi0in7
-    WZ7XZczEBlXA+bo3BdtchCkSolFoZ0asp2VUHWg==
+    t=1519128221; b=b1Ot5Shmci2kIp3mL4QgliUfJaor/58nKflEmySQX4cXR74
+    UmDVcOnoa22zrWTzZ9UyT2lwuDMkfKP9QrhTkh6lmstmYvp68OJkxaH5oNAtoQM9
+    6YrvdxrRtIa92yLd8vmmGr66MVEzZHZbopLhi7CfCgw9GbC1SoGVQzjPyKBAcCRo
+    q4PmvW2jsv7mml/JnwJTTzWj/2MHwjF9/HFf6q8WZvzoeFzDRzYgH0knInA+HGdD
+    /GiLdmCVZLQF/AuCpttDmg8pZg4KU6zCfTOB8rwuFI7hSeG8Fi/qPQW4h0Ou2NJv
+    vcADhKnOylzgK1Yop9WeS9eaAKCczo4cGjzuk3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519402721; bh=c6F2k5edRJkDXghXRlsQ4uR5WO
-    /559AZrdcWMs91cyQ=; b=wjkx17i9EyyD9RXD4MP+KZvqGX1R42KUfQLB9npG+e
-    wDTnYEf5zN9Bzt8gqhK3TznEoIr4jwftqXErm0u1eg1Y6DkvF8o2qf5T3Bf2KDWc
-    58pG6doSFmr1rHxDa9HdmbrXy0Df+D9xyvGcIBbI7ICxFKIcccMdGPQqLQRFM6lK
-    aO15bvHrlwMUMtTEoxJIECvN9yaCkNq6sQVtpv6XYQPuNPU1ha9L1VvCvrtthoK/
-    12vRSrbyFWVdTIMfcAyAXrOYlZctfioHI1lj2F/fciiUIlbmDamFKcsOuOXXXA3B
-    Jkc6OBqKMkyYd9DAQ5CzxdQcxbYCW7ib9nctLDpgp48A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519128221;
+    bh=c6/JVI9PhrCZHdU5WmS9+nCrygsQ9kRFEVYVAW3urAg=; b=d082FPwPDWdl
+    7GVrKGrl/E/Me/szrvwx/6zk+8Pu/Y+h45LeJVgLaHlenjo3FSAI0Y4xqQg1bOT3
+    m1z6QPIZjQ3S1MniW5rS7kyxe5dHKlkzJmX5osvEjLbACLKT1xf6Yz2onlHaAPXw
+    oDv82UeIOKRCKbo+VeI+Ad19awTxVihYwbjDCVQ9h3q8eLLO4BcHO2T/wTSeRDmB
+    vV9MlxzDmJjSuprYDXJfqHA9chvwjHSlJ4zOw6vKpxlrp2K7j8Ia5dloCGGvWbg/
+    jLF/r+0DgULiC6x9VQNQR5ys/q5eGrXSaJGVtUoktpm3gjHA1Nwk/t4jkzVQrxut
+    swxLK85/OQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeBWQSX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 11:18:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47326 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751801AbeBWQSW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 11:18:22 -0500
-Date: Fri, 23 Feb 2018 17:18:22 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [4.4-stable 00/22] patches for 'randconfig'
-Message-ID: <20180223161822.GA13207@kroah.com>
-References: <20180220115527.1806578-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S1751694AbeBTMAJ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Feb 2018 07:00:09 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:44449 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbeBTMAH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 20 Feb 2018 07:00:07 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: stable@vger.kernel.org
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Petr Vandrovec <petr@vandrovec.name>
+Subject: [4.4-stable 20/22] ncpfs: fix unused variable warning
+Date: Tue, 20 Feb 2018 12:55:07 +0100
+Message-Id: <20180220115527.1806578-21-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180220115527.1806578-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+References: <20180220115527.1806578-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:bbYuVB2S+qrU85V94CfEFI8zD4MD28pQXW4ZMgrRb25k4vuexxf
+ fvom2gUWMzSx4b0IVrHfFy4JoIydVxzCPwHYYWnLB4pB9AN9yLBE15oh3ZXtfEoFvOKyZGI
+ YbNsd0/QZ/QqjnlC0isrZNZTZkjY7/Y5sMJnfg5K6l/uY5g8opA9GGawr0faNcJxFY5NiBD
+ uNSSyl4bukkUYTe0BOfSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Kxz6P+lxgHg=:l5QX0ZO1ML6npbSlYr8RhF
+ +NcUbSdqvgoZad5+n05En2gMNbD/gwhh9sIQPwinNKmjJCbBSeFTq8dLSj3EXae2GdkU8Zc94
+ Eo/GbwpDFrmLpUoIXNfakiAXmVmB4rFIMzyUeRZnTAceDTSKpyyDPrEJ06dRtNJ8d3Lab3HI8
+ HNxfcv+05CPXuvmrHauA1r6uH1MkzbETHZrXAVObK4Ni53DLUgyhU8w2MV+u5MSJWdANp4SCo
+ bivAWpa+Kiv2SjOccJLrrP3gKD8k5BfbPAbjyBlqT4SeXwmACcTjasUMhnUXzIvNwnPiBAXmd
+ VlNrkMSQJp6/mL2j/1fRcUd0gKqGLWuJfsqggrOZ7lMYLPwqkUoCBm/DBW+1Q8V5yimI/hoKw
+ 48Br0m8OcFaeCFzqzbR67zTad+uRimZmzrtP5dSHKLR8k3x74meuOOUd9tPzt2htnJNDzkcrj
+ M6FAYa0MtaiPbhMHhWZJDSh9TzScOPrjCPDxFiV20qbuEq1puFr4PLmh7TZPuBausIwTf2Jgz
+ lxWWjskjqd6zBdXRvazLqMfe9y6BEM41RWMMx5rFnIC7n9afEy/p1dCz2gbz9cSmHV5sC5/bs
+ T/UqIeDbX+sbY+kuNTxYIBNTc5FkvlAkQtqy3KGP9x1sl5XX7PU5uElPzwtGGUmm1bR3XQsN1
+ 3tjVZJdpdaqrTD7zDbCKgCxaqgO1yY3w5kkINtwxSRBugW/XDVEQ4cnSanD+OQpr+sTpD2qTB
+ NAVVvJo5rwyojRIsntEeFiO01yBPngheO2YUng==
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 12:54:47PM +0100, Arnd Bergmann wrote:
-> Like the earlier series of randconfig build fixes for 4.9, this is the
-> equivalent for 4.4. Again, most of it is for harmless warnings, but there
-> are also fixes for excessive stack consumption that can be possibly
-> dangerous, and the 'genksyms' segfault fix is now needed to build the
-> backported 'retpoline' support.
-> 
-> Please backport these 89 commits from mainline, and apply the 22 patches
-> that needed manual changes.
-> 
-> 4000fbea945c ("isdn: icn: remove a #warning")
-> f0bb2d50dfcc ("virtio_balloon: prevent uninitialized variable use")
-> b115bebc07f2 ("gpio: xgene: mark PM functions as __maybe_unused")
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-You duplicated this commit your list, and in the patches afterward.  I
-think the same thing happened for a few others, but not a problem.  I've
-applied this long list, and the individual patches as well.  Many thanks
-for this, hopefully we should have cleaner builds now.
+commit 9a232de4999666b2e8ea6775b2b0e3e4feb09b7a upstream.
 
-greg k-h
+Without CONFIG_NCPFS_NLS the following warning is seen:
+
+fs/ncpfs/dir.c: In function 'ncp_hash_dentry':
+fs/ncpfs/dir.c:136:23: warning: unused variable 'sb' [-Wunused-variable]
+   struct super_block *sb = dentry->d_sb;
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+[arnd: rebased to 4.4]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/ncpfs/dir.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/ncpfs/dir.c b/fs/ncpfs/dir.c
+index 03446c5a3ec1..4e1144512522 100644
+--- a/fs/ncpfs/dir.c
++++ b/fs/ncpfs/dir.c
+@@ -133,12 +133,11 @@ ncp_hash_dentry(const struct dentry *dentry, struct qstr *this)
+ 		return 0;
+ 
+ 	if (!ncp_case_sensitive(inode)) {
+-		struct super_block *sb = dentry->d_sb;
+ 		struct nls_table *t;
+ 		unsigned long hash;
+ 		int i;
+ 
+-		t = NCP_IO_TABLE(sb);
++		t = NCP_IO_TABLE(dentry->d_sb);
+ 		hash = init_name_hash();
+ 		for (i=0; i<this->len ; i++)
+ 			hash = partial_name_hash(ncp_tolower(t, this->name[i]),
+-- 
+2.9.0
