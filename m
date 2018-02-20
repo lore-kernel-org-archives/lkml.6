@@ -1,53 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751580AbeBTKun (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:50:43 -0500
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:43728 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeBTKul (ORCPT
+        id S1751465AbeBTK4u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:56:50 -0500
+Received: from stargate.chelsio.com ([12.32.117.8]:41535 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeBTK4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:50:41 -0500
-X-Google-Smtp-Source: AH8x225ZMZ6xAduiVaEINrncIcn/+fMcd2BKMhGuz+8LATptEwXdnPsGcB966OKyJC7F+m2WpCZjewxOi8YB4zFicZA=
+        Tue, 20 Feb 2018 05:56:49 -0500
+Date: Tue, 20 Feb 2018 16:26:14 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        davem@davemloft.net, ganeshgr@chelsio.com, nirranjan@chelsio.com,
+        indranil@chelsio.com, rahul.lakkireddy@chelsio.com
+Subject: Appending firmware/hardware dump to vmcore during kernel panic
+Message-ID: <20180220105613.GA9766@chelsio.com>
 MIME-Version: 1.0
-In-Reply-To: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
-References: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 11:50:40 +0100
-X-Google-Sender-Auth: XyzzNoH0lJU2GagkdDhl7O8Btic
-Message-ID: <CAMuHMdWa5RgkGCAucN5ykGRW=FdHUZw=+t5jMAsKhdixMUSQzQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 10:03 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The hs_timing_cfg[] array is indexed using a value derived from the
-> "mshcN" alias in DT, which may lead to an out-of-bounds access.
->
-> Fix this by adding a range check.
->
-> Fixes: 7d92895208a008a2 ("mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias")
+Hi all,
 
-Oops
+We have a requirement to collect firmware/hardware state of the
+underlying NIC during kernel panic.  We are doing this in cxgb4
+driver, using panic notifier list [1].  cxgb4 registers a callback
+function to the panic notifier list, which gets invoked during kernel
+panic. In the callback function, firmware/hardware dump is collected
+into pre-allocated buffer and then extracted later from the vmcore,
+for post-analysis.
 
-Fixes: 361c7fe9b02eee7e ("mmc: dw_mmc-k3: add sd support for hi3660")
+Is this approach of using panic notifier correct?  Any suggestions are
+much appreciated.
 
-Gr{oetje,eeting}s,
+Thanks,
+Rahul
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[1] https://patchwork.ozlabs.org/patch/873830/
