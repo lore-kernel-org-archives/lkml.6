@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x227+JR/R2r6FQW2yfbMUoj3RgWzOLDCCNkW9bM6wa/0uYi5ZEpuf8eIEJZ7SdATaa/0rtJLH
-ARC-Seal: i=1; a=rsa-sha256; t=1519093487; cv=none;
+X-Google-Smtp-Source: AH8x227YkratT5hk/6eSHSOocLVPyN7bK1bSPzoXTMusMd5sgoySPebREk2ZLASk0GDgtdDJaeyN
+ARC-Seal: i=1; a=rsa-sha256; t=1519093480; cv=none;
         d=google.com; s=arc-20160816;
-        b=P5MuVK9RmTt8dbB5uto/4dr2cjN01+sgmmwbFio7eW10drPTmudqBUhOKQpEyUqZc1
-         OH8oHx8u4e0deHZyBxE0ehH62NYpZWQ3UQ4tnujwPPUOKoumDU2kIgfcZAtuSNlLziO/
-         ns96GQS03KvlDYJfZuongeLPgO8JfGLlWU154xciRwB7bb6ig86B/HThwy9nXYWofnm4
-         4bghOSkqJT2bL6OuCa4cqPY3BkI58+fCn/Glod9PTOFtR/0RYrDqbe8qqeJFewJZoHUn
-         C7bdFazrXTZSp9Hoq8qAFjx9iGCnfVzkpR/QtDqx0qnobEIpZkb+7T8Fg257Lv1rlzyK
-         tKeA==
+        b=dCsBIbRtAQUMwvRE0bzVs4cBt6QztActhW9A4z5rcplivbZPEX8YurQ2fakQ93VSTV
+         5GwNPFyWwBR1+CxcYb3sts82Gm1kAHEShZvKsLmrTSqdEUnpOV/GEoZw1zaqPRY0na5H
+         ps7bPEmnyJkDHpAJLipTn7Z6XvLlRiNQMQq7sF9mgo+pfH70lWN5VGBJCadtTT5xrsNA
+         rgb6FtZMjTHB1naW4Sq+K+YwX+kp5wjQd3+ltMukTax3fRix2RFtbZ0+RuD2nnj3r2yw
+         Q1DhPLFm4OoOFFdU7zGjaQncq/EWr2H/wzxJSnGQQPuVKoyxT95MZe6ylQxbkvXJcjQE
+         KCfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=OiW43hRD+KNkPTYDZoe5QY+hxkYbr2VFI5d5Wx2AT5Q=;
-        b=uuFgBWCEovu21KEO2mvEnErGsW6oko+VYFUfVXJ5H5U7rVcipxlxQI0Ci+hEv6U2AI
-         G/YqmLcV2A7X3NninARcpSd+yc5srYMit0B/gZ9VJ1sYFbJ5h1vL3ZERkRs+R4HOkDb7
-         gFk6Nk2hNyL944IV5q214ax347Kcb5oUvTe6ovDQqLACVnsPhl6CQaBPCcV1xm+6IX7q
-         /JrffIT5iPJaYu9Ky8YmGFjcyToGoGKnugedt14JVGccj2DMM4ZZULuTrFLDmndXrWO0
-         NJeBjvEkvNXAJu7pSDU/F7Wl+qWTi2m0d6I+TmTJOHwKl3y1A+PUZQvOLgX9lpDnMbUo
-         ELQw==
+        bh=CsMNmg+Iby6HnumzisxOYGrRoFJ+fmPQ4UzIULsVe9E=;
+        b=IGohfYea80Eg1OStkOi4QhYpImZ7WprA1lmLUJgV++caeb3YtRAuLEUZ8A3TK0xh9G
+         iclKtbZ1RWA4odwksjdRP4/iALH+eOwOa4cdYGKn0Gvo8ntKQRoIlF+hLdEBOG0amBnP
+         vVDYACBAvoIrUdB+RopcfEUulTNXglSUQSZFuXnsKnWw3f0j1/8Z59NOx+b8mHMzQZzN
+         7Ng1xz1ogGNriL0NyozkX5r1N8GYEYJYtC44EdbcAZtL57k7BD5CebihH8cYII5UA/H2
+         6/B6mkhzMaVSX7KdLIv2bT6G736vDryyF9T/8OThhM9SJl+pEhFS7LuyMJlesN0/rD7r
+         sJhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,10 +28,9 @@ To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 20 Feb 2018 13:23:37 +1100
-Subject: [PATCH 04/21] staging: lustre: remove unnecessary
- cfs_block_allsigs() calls
+Subject: [PATCH 03/21] staging: lustre: remove linux-curproc.c
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341766.25814.10094434408580614776.stgit@noble>
+Message-ID: <151909341763.25814.2230821270457016452.stgit@noble>
 In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -39,124 +38,135 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592884972820907418?=
-X-GMAIL-MSGID: =?utf-8?q?1592884972820907418?=
+X-GMAIL-THRID: =?utf-8?q?1592884965280086333?=
+X-GMAIL-MSGID: =?utf-8?q?1592884965280086333?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Threads started by kthread_run() ignore all signals,
-as kthreadd() calls ignore_signals(), and this is
-inherited by all children.
-So there is no need to call cfs_block_allsigs() in functions
-that are only run from kthread_run().
+The only functionality remaining here is
+cfs_curproc_cap_pack(),
+and it can be trivially implemented as an inline
+in curproc.h.
+So do that and remove the file.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |    6 ------
- .../staging/lustre/lnet/klnds/socklnd/socklnd_cb.c |    6 ------
- drivers/staging/lustre/lnet/lnet/acceptor.c        |    2 --
- drivers/staging/lustre/lnet/lnet/router.c          |    2 --
- drivers/staging/lustre/lnet/selftest/timer.c       |    2 --
- 5 files changed, 18 deletions(-)
+ .../staging/lustre/include/linux/libcfs/curproc.h  |    6 +-
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    1 
+ .../lustre/lnet/libcfs/linux/linux-curproc.c       |   78 --------------------
+ 3 files changed, 5 insertions(+), 80 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c
 
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-index ca094555e04b..6690a6cd4e34 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-@@ -3288,8 +3288,6 @@ kiblnd_connd(void *arg)
- 	int peer_index = 0;
- 	unsigned long deadline = jiffies;
+diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+index 51f2179b7534..4702956805a6 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
++++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+@@ -66,7 +66,11 @@ typedef u32 cfs_cap_t;
+ 			 BIT(CAP_SYS_BOOT) |	\
+ 			 BIT(CAP_SYS_RESOURCE))
  
--	cfs_block_allsigs();
+-cfs_cap_t cfs_curproc_cap_pack(void);
++static inline cfs_cap_t cfs_curproc_cap_pack(void)
++{
++	/* cfs_cap_t is only the first word of kernel_cap_t */
++	return (cfs_cap_t)(current_cap().cap[0]);
++}
+ 
+ /* __LIBCFS_CURPROC_H__ */
+ #endif
+diff --git a/drivers/staging/lustre/lnet/libcfs/Makefile b/drivers/staging/lustre/lnet/libcfs/Makefile
+index 730f2c675047..fccea8684f0c 100644
+--- a/drivers/staging/lustre/lnet/libcfs/Makefile
++++ b/drivers/staging/lustre/lnet/libcfs/Makefile
+@@ -6,7 +6,6 @@ obj-$(CONFIG_LNET) += libcfs.o
+ 
+ libcfs-linux-objs := linux-tracefile.o linux-debug.o
+ libcfs-linux-objs += linux-prim.o linux-cpu.o
+-libcfs-linux-objs += linux-curproc.o
+ libcfs-linux-objs += linux-module.o
+ libcfs-linux-objs += linux-crypto.o
+ libcfs-linux-objs += linux-crypto-adler.o
+diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c
+deleted file mode 100644
+index 6b75c5cdc3ec..000000000000
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c
++++ /dev/null
+@@ -1,78 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- *
+- * Copyright (c) 2011, 2015, Intel Corporation.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- *
+- * libcfs/libcfs/linux/linux-curproc.c
+- *
+- * Lustre curproc API implementation for Linux kernel
+- *
+- * Author: Nikita Danilov <nikita@clusterfs.com>
+- */
 -
- 	init_waitqueue_entry(&wait, current);
- 	kiblnd_data.kib_connd = current;
- 
-@@ -3542,8 +3540,6 @@ kiblnd_scheduler(void *arg)
- 	int busy_loops = 0;
- 	int rc;
- 
--	cfs_block_allsigs();
+-#include <linux/sched.h>
+-#include <linux/fs_struct.h>
 -
- 	init_waitqueue_entry(&wait, current);
- 
- 	sched = kiblnd_data.kib_scheds[KIB_THREAD_CPT(id)];
-@@ -3676,8 +3672,6 @@ kiblnd_failover_thread(void *arg)
- 
- 	LASSERT(*kiblnd_tunables.kib_dev_failover);
- 
--	cfs_block_allsigs();
+-#include <linux/compat.h>
+-#include <linux/thread_info.h>
 -
- 	init_waitqueue_entry(&wait, current);
- 	write_lock_irqsave(glock, flags);
- 
-diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
-index 63e452f666bf..6ab002c006ab 100644
---- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
-@@ -1324,8 +1324,6 @@ int ksocknal_scheduler(void *arg)
- 	info = ksocknal_data.ksnd_sched_info[KSOCK_THREAD_CPT(id)];
- 	sched = &info->ksi_scheds[KSOCK_THREAD_SID(id)];
- 
--	cfs_block_allsigs();
+-#define DEBUG_SUBSYSTEM S_LNET
 -
- 	rc = cfs_cpt_bind(lnet_cpt_table(), info->ksi_cpt);
- 	if (rc) {
- 		CWARN("Can't set CPU partition affinity to %d: %d\n",
-@@ -2078,8 +2076,6 @@ ksocknal_connd(void *arg)
- 	int nloops = 0;
- 	int cons_retry = 0;
- 
--	cfs_block_allsigs();
+-#include <linux/libcfs/libcfs.h>
 -
- 	init_waitqueue_entry(&wait, current);
- 
- 	spin_lock_bh(connd_lock);
-@@ -2472,8 +2468,6 @@ ksocknal_reaper(void *arg)
- 	int peer_index = 0;
- 	unsigned long deadline = cfs_time_current();
- 
--	cfs_block_allsigs();
+-/*
+- * Implementation of cfs_curproc API (see portals/include/libcfs/curproc.h)
+- * for Linux kernel.
+- */
 -
- 	INIT_LIST_HEAD(&enomem_conns);
- 	init_waitqueue_entry(&wait, current);
- 
-diff --git a/drivers/staging/lustre/lnet/lnet/acceptor.c b/drivers/staging/lustre/lnet/lnet/acceptor.c
-index 6c1f4941d4ba..fb478e20e204 100644
---- a/drivers/staging/lustre/lnet/lnet/acceptor.c
-+++ b/drivers/staging/lustre/lnet/lnet/acceptor.c
-@@ -335,8 +335,6 @@ lnet_acceptor(void *arg)
- 
- 	LASSERT(!lnet_acceptor_state.pta_sock);
- 
--	cfs_block_allsigs();
+-static void cfs_kernel_cap_pack(kernel_cap_t kcap, cfs_cap_t *cap)
+-{
+-	/* XXX lost high byte */
+-	*cap = kcap.cap[0];
+-}
 -
- 	rc = lnet_sock_listen(&lnet_acceptor_state.pta_sock, 0, accept_port,
- 			      accept_backlog);
- 	if (rc) {
-diff --git a/drivers/staging/lustre/lnet/lnet/router.c b/drivers/staging/lustre/lnet/lnet/router.c
-index ec1d3e58519a..a3c3f4959f46 100644
---- a/drivers/staging/lustre/lnet/lnet/router.c
-+++ b/drivers/staging/lustre/lnet/lnet/router.c
-@@ -1226,8 +1226,6 @@ lnet_router_checker(void *arg)
- 	struct lnet_peer *rtr;
- 	struct list_head *entry;
- 
--	cfs_block_allsigs();
+-cfs_cap_t cfs_curproc_cap_pack(void)
+-{
+-	cfs_cap_t cap;
 -
- 	while (the_lnet.ln_rc_state == LNET_RC_STATE_RUNNING) {
- 		__u64 version;
- 		int cpt;
-diff --git a/drivers/staging/lustre/lnet/selftest/timer.c b/drivers/staging/lustre/lnet/selftest/timer.c
-index 9716afeb3c94..1b2c5fc81358 100644
---- a/drivers/staging/lustre/lnet/selftest/timer.c
-+++ b/drivers/staging/lustre/lnet/selftest/timer.c
-@@ -170,8 +170,6 @@ stt_timer_main(void *arg)
- {
- 	int rc = 0;
- 
--	cfs_block_allsigs();
+-	cfs_kernel_cap_pack(current_cap(), &cap);
+-	return cap;
+-}
+-EXPORT_SYMBOL(cfs_curproc_cap_pack);
 -
- 	while (!stt_data.stt_shuttingdown) {
- 		stt_check_timers(&stt_data.stt_prev_slot);
- 
+-/*
+- * Local variables:
+- * c-indentation-style: "K&R"
+- * c-basic-offset: 8
+- * tab-width: 8
+- * fill-column: 80
+- * scroll-step: 1
+- * End:
+- */
