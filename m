@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751635AbeBTEtu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 23:49:50 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45195 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751168AbeBTEor (ORCPT
+        id S1751168AbeBTEy6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 23:54:58 -0500
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:38184 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeBTEy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 23:44:47 -0500
-X-Google-Smtp-Source: AH8x2258u+0g0VGy39rPgly95ICoR6IBSF7mpT8tm2wIOANQwFs6NVPDB4/TSLQZj9+2EbLaK4PUkw==
+        Mon, 19 Feb 2018 23:54:56 -0500
+X-Google-Smtp-Source: AH8x224AFV61M8u5I/mFO1QJOkOpiRNf4aq1rhh3dXnyRQr3l4t1FnFCyBlFzjHE/IEzyFa+SnhMLA==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,468 +18,221 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv4 02/21] v4l2-ctrls: v4l2_ctrl_add_handler: add from_other_dev
-Date: Tue, 20 Feb 2018 13:44:06 +0900
-Message-Id: <20180220044425.169493-3-acourbot@chromium.org>
+Subject: [RFCv4 00/21] Request API
+Date: Tue, 20 Feb 2018 13:54:44 +0900
+Message-Id: <20180220045444.171477-1-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
 In-Reply-To: <20180220044425.169493-1-acourbot@chromium.org>
-References: <20180220044425.169493-1-acourbot@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+(resending with correct word-wrap - sorry for the inconvenience)
 
-Add a 'bool from_other_dev' argument: set to true if the two
-handlers refer to different devices (e.g. it is true when
-inheriting controls from a subdev into a main v4l2 bridge
-driver).
+Hi everyone,
 
-This will be used later when implementing support for the
-request API since we need to skip such controls.
+And thanks for all the feedback on the previous version! I have tried to address
+as much as possible, which results in (another) almost rewrite. But I think the
+behavior and structure are converging to something satisfying and usable.
 
-TODO: check drivers/staging/media/imx/imx-media-fim.c change.
+Besides the buffer queuing behavior that has been fixed, some of the big design
+changes undertaken are that the media controller framework is not a requirement
+anymore (although it can still be used in exactly the same way as before), and
+that ioctls related to requests are now performed directly on the request FD.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
----
- drivers/media/dvb-frontends/rtl2832_sdr.c     |  5 +-
- drivers/media/pci/bt8xx/bttv-driver.c         |  2 +-
- drivers/media/pci/cx23885/cx23885-417.c       |  2 +-
- drivers/media/pci/cx88/cx88-blackbird.c       |  2 +-
- drivers/media/pci/cx88/cx88-video.c           |  2 +-
- drivers/media/pci/saa7134/saa7134-empress.c   |  4 +-
- drivers/media/pci/saa7134/saa7134-video.c     |  2 +-
- .../media/platform/exynos4-is/fimc-capture.c  |  2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c   |  3 +-
- drivers/media/platform/rcar_drif.c            |  2 +-
- .../media/platform/soc_camera/soc_camera.c    |  3 +-
- drivers/media/platform/vivid/vivid-ctrls.c    | 46 +++++++++----------
- drivers/media/usb/cx231xx/cx231xx-417.c       |  2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c     |  4 +-
- drivers/media/usb/msi2500/msi2500.c           |  2 +-
- drivers/media/usb/tm6000/tm6000-video.c       |  2 +-
- drivers/media/v4l2-core/v4l2-ctrls.c          | 11 +++--
- drivers/media/v4l2-core/v4l2-device.c         |  3 +-
- drivers/staging/media/imx/imx-media-dev.c     |  2 +-
- drivers/staging/media/imx/imx-media-fim.c     |  2 +-
- include/media/v4l2-ctrls.h                    |  4 +-
- 21 files changed, 58 insertions(+), 49 deletions(-)
+As discussed with Sakari, the fact that request entities were in fact media
+entities was a bit limiting, so I created a request_entity type that can be
+embedded into any structure we want to control with requests. This is what
+allows drivers to support requests without the media controller: simple V4L2
+drivers can use the V4L2 implementation that allows to control a single video
+device (as opposed to the whole pipeline under a media controller). Media
+controllers can still, of course, use a more complex implementation and control
+their whole pipeline, but bringing that complexity to simple drivers seemed
+overreached to me.
 
-diff --git a/drivers/media/dvb-frontends/rtl2832_sdr.c b/drivers/media/dvb-frontends/rtl2832_sdr.c
-index c6e78d870ccd..6064d28224e8 100644
---- a/drivers/media/dvb-frontends/rtl2832_sdr.c
-+++ b/drivers/media/dvb-frontends/rtl2832_sdr.c
-@@ -1394,7 +1394,8 @@ static int rtl2832_sdr_probe(struct platform_device *pdev)
- 	case RTL2832_SDR_TUNER_E4000:
- 		v4l2_ctrl_handler_init(&dev->hdl, 9);
- 		if (subdev)
--			v4l2_ctrl_add_handler(&dev->hdl, subdev->ctrl_handler, NULL);
-+			v4l2_ctrl_add_handler(&dev->hdl, subdev->ctrl_handler,
-+					      NULL, true);
- 		break;
- 	case RTL2832_SDR_TUNER_R820T:
- 	case RTL2832_SDR_TUNER_R828D:
-@@ -1423,7 +1424,7 @@ static int rtl2832_sdr_probe(struct platform_device *pdev)
- 		v4l2_ctrl_handler_init(&dev->hdl, 2);
- 		if (subdev)
- 			v4l2_ctrl_add_handler(&dev->hdl, subdev->ctrl_handler,
--					      NULL);
-+					      NULL, true);
- 		break;
- 	default:
- 		v4l2_ctrl_handler_init(&dev->hdl, 0);
-diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
-index f697698fe38d..cdcb36d8c5c3 100644
---- a/drivers/media/pci/bt8xx/bttv-driver.c
-+++ b/drivers/media/pci/bt8xx/bttv-driver.c
-@@ -4211,7 +4211,7 @@ static int bttv_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
- 	/* register video4linux + input */
- 	if (!bttv_tvcards[btv->c.type].no_video) {
- 		v4l2_ctrl_add_handler(&btv->radio_ctrl_handler, hdl,
--				v4l2_ctrl_radio_filter);
-+				v4l2_ctrl_radio_filter, false);
- 		if (btv->radio_ctrl_handler.error) {
- 			result = btv->radio_ctrl_handler.error;
- 			goto fail2;
-diff --git a/drivers/media/pci/cx23885/cx23885-417.c b/drivers/media/pci/cx23885/cx23885-417.c
-index a71f3c7569ce..762823871c78 100644
---- a/drivers/media/pci/cx23885/cx23885-417.c
-+++ b/drivers/media/pci/cx23885/cx23885-417.c
-@@ -1527,7 +1527,7 @@ int cx23885_417_register(struct cx23885_dev *dev)
- 	dev->cxhdl.priv = dev;
- 	dev->cxhdl.func = cx23885_api_func;
- 	cx2341x_handler_set_50hz(&dev->cxhdl, tsport->height == 576);
--	v4l2_ctrl_add_handler(&dev->ctrl_handler, &dev->cxhdl.hdl, NULL);
-+	v4l2_ctrl_add_handler(&dev->ctrl_handler, &dev->cxhdl.hdl, NULL, false);
- 
- 	/* Allocate and initialize V4L video device */
- 	dev->v4l_device = cx23885_video_dev_alloc(tsport,
-diff --git a/drivers/media/pci/cx88/cx88-blackbird.c b/drivers/media/pci/cx88/cx88-blackbird.c
-index 0e0952e60795..39f69d89a663 100644
---- a/drivers/media/pci/cx88/cx88-blackbird.c
-+++ b/drivers/media/pci/cx88/cx88-blackbird.c
-@@ -1183,7 +1183,7 @@ static int cx8802_blackbird_probe(struct cx8802_driver *drv)
- 	err = cx2341x_handler_init(&dev->cxhdl, 36);
- 	if (err)
- 		goto fail_core;
--	v4l2_ctrl_add_handler(&dev->cxhdl.hdl, &core->video_hdl, NULL);
-+	v4l2_ctrl_add_handler(&dev->cxhdl.hdl, &core->video_hdl, NULL, false);
- 
- 	/* blackbird stuff */
- 	pr_info("cx23416 based mpeg encoder (blackbird reference design)\n");
-diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
-index 9be682cdb644..e35bfa03a1e2 100644
---- a/drivers/media/pci/cx88/cx88-video.c
-+++ b/drivers/media/pci/cx88/cx88-video.c
-@@ -1378,7 +1378,7 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
- 		if (vc->id == V4L2_CID_CHROMA_AGC)
- 			core->chroma_agc = vc;
- 	}
--	v4l2_ctrl_add_handler(&core->video_hdl, &core->audio_hdl, NULL);
-+	v4l2_ctrl_add_handler(&core->video_hdl, &core->audio_hdl, NULL, false);
- 
- 	/* load and configure helper modules */
- 
-diff --git a/drivers/media/pci/saa7134/saa7134-empress.c b/drivers/media/pci/saa7134/saa7134-empress.c
-index 66acfd35ffc6..fc75ce00dbf8 100644
---- a/drivers/media/pci/saa7134/saa7134-empress.c
-+++ b/drivers/media/pci/saa7134/saa7134-empress.c
-@@ -265,9 +265,9 @@ static int empress_init(struct saa7134_dev *dev)
- 		 "%s empress (%s)", dev->name,
- 		 saa7134_boards[dev->board].name);
- 	v4l2_ctrl_handler_init(hdl, 21);
--	v4l2_ctrl_add_handler(hdl, &dev->ctrl_handler, empress_ctrl_filter);
-+	v4l2_ctrl_add_handler(hdl, &dev->ctrl_handler, empress_ctrl_filter, false);
- 	if (dev->empress_sd)
--		v4l2_ctrl_add_handler(hdl, dev->empress_sd->ctrl_handler, NULL);
-+		v4l2_ctrl_add_handler(hdl, dev->empress_sd->ctrl_handler, NULL, true);
- 	if (hdl->error) {
- 		video_device_release(dev->empress_dev);
- 		return hdl->error;
-diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
-index 1ca6a32ad10e..065af5df77b6 100644
---- a/drivers/media/pci/saa7134/saa7134-video.c
-+++ b/drivers/media/pci/saa7134/saa7134-video.c
-@@ -2136,7 +2136,7 @@ int saa7134_video_init1(struct saa7134_dev *dev)
- 		hdl = &dev->radio_ctrl_handler;
- 		v4l2_ctrl_handler_init(hdl, 2);
- 		v4l2_ctrl_add_handler(hdl, &dev->ctrl_handler,
--				v4l2_ctrl_radio_filter);
-+				v4l2_ctrl_radio_filter, false);
- 		if (hdl->error)
- 			return hdl->error;
- 	}
-diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index ed9302caa004..64f3ab3584d7 100644
---- a/drivers/media/platform/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -1421,7 +1421,7 @@ static int fimc_link_setup(struct media_entity *entity,
- 		return 0;
- 
- 	return v4l2_ctrl_add_handler(&vc->ctx->ctrls.handler,
--				     sensor->ctrl_handler, NULL);
-+				     sensor->ctrl_handler, NULL, true);
- }
- 
- static const struct media_entity_operations fimc_sd_media_ops = {
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index b479b882da12..90246113fa03 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -900,7 +900,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
-+	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler,
-+				    NULL, true);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
-index b2e080ef5391..70cef10c81a6 100644
---- a/drivers/media/platform/rcar_drif.c
-+++ b/drivers/media/platform/rcar_drif.c
-@@ -1167,7 +1167,7 @@ static int rcar_drif_notify_complete(struct v4l2_async_notifier *notifier)
- 	}
- 
- 	ret = v4l2_ctrl_add_handler(&sdr->ctrl_hdl,
--				    sdr->ep.subdev->ctrl_handler, NULL);
-+				    sdr->ep.subdev->ctrl_handler, NULL, true);
- 	if (ret) {
- 		rdrif_err(sdr, "failed: ctrl add hdlr ret %d\n", ret);
- 		goto error;
-diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
-index c86dd2fdab84..33fac0cdfc5e 100644
---- a/drivers/media/platform/soc_camera/soc_camera.c
-+++ b/drivers/media/platform/soc_camera/soc_camera.c
-@@ -1180,7 +1180,8 @@ static int soc_camera_probe_finish(struct soc_camera_device *icd)
- 
- 	v4l2_subdev_call(sd, video, g_tvnorms, &icd->vdev->tvnorms);
- 
--	ret = v4l2_ctrl_add_handler(&icd->ctrl_handler, sd->ctrl_handler, NULL);
-+	ret = v4l2_ctrl_add_handler(&icd->ctrl_handler, sd->ctrl_handler,
-+				    NULL, true);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/drivers/media/platform/vivid/vivid-ctrls.c b/drivers/media/platform/vivid/vivid-ctrls.c
-index 4b6b5d715031..83e097de7d7d 100644
---- a/drivers/media/platform/vivid/vivid-ctrls.c
-+++ b/drivers/media/platform/vivid/vivid-ctrls.c
-@@ -1660,59 +1660,59 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
- 		v4l2_ctrl_auto_cluster(2, &dev->autogain, 0, true);
- 
- 	if (dev->has_vid_cap) {
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_vid, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_aud, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_streaming, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_sdtv_cap, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_loop_cap, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_fb, NULL);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_vid, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_user_aud, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_streaming, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_sdtv_cap, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_loop_cap, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_cap, hdl_fb, NULL, false);
- 		if (hdl_vid_cap->error)
- 			return hdl_vid_cap->error;
- 		dev->vid_cap_dev.ctrl_handler = hdl_vid_cap;
- 	}
- 	if (dev->has_vid_out) {
--		v4l2_ctrl_add_handler(hdl_vid_out, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_out, hdl_user_aud, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_out, hdl_streaming, NULL);
--		v4l2_ctrl_add_handler(hdl_vid_out, hdl_fb, NULL);
-+		v4l2_ctrl_add_handler(hdl_vid_out, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_out, hdl_user_aud, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_out, hdl_streaming, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vid_out, hdl_fb, NULL, false);
- 		if (hdl_vid_out->error)
- 			return hdl_vid_out->error;
- 		dev->vid_out_dev.ctrl_handler = hdl_vid_out;
- 	}
- 	if (dev->has_vbi_cap) {
--		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_streaming, NULL);
--		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_sdtv_cap, NULL);
--		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_loop_cap, NULL);
-+		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_streaming, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_sdtv_cap, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vbi_cap, hdl_loop_cap, NULL, false);
- 		if (hdl_vbi_cap->error)
- 			return hdl_vbi_cap->error;
- 		dev->vbi_cap_dev.ctrl_handler = hdl_vbi_cap;
- 	}
- 	if (dev->has_vbi_out) {
--		v4l2_ctrl_add_handler(hdl_vbi_out, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_vbi_out, hdl_streaming, NULL);
-+		v4l2_ctrl_add_handler(hdl_vbi_out, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_vbi_out, hdl_streaming, NULL, false);
- 		if (hdl_vbi_out->error)
- 			return hdl_vbi_out->error;
- 		dev->vbi_out_dev.ctrl_handler = hdl_vbi_out;
- 	}
- 	if (dev->has_radio_rx) {
--		v4l2_ctrl_add_handler(hdl_radio_rx, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_radio_rx, hdl_user_aud, NULL);
-+		v4l2_ctrl_add_handler(hdl_radio_rx, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_radio_rx, hdl_user_aud, NULL, false);
- 		if (hdl_radio_rx->error)
- 			return hdl_radio_rx->error;
- 		dev->radio_rx_dev.ctrl_handler = hdl_radio_rx;
- 	}
- 	if (dev->has_radio_tx) {
--		v4l2_ctrl_add_handler(hdl_radio_tx, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_radio_tx, hdl_user_aud, NULL);
-+		v4l2_ctrl_add_handler(hdl_radio_tx, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_radio_tx, hdl_user_aud, NULL, false);
- 		if (hdl_radio_tx->error)
- 			return hdl_radio_tx->error;
- 		dev->radio_tx_dev.ctrl_handler = hdl_radio_tx;
- 	}
- 	if (dev->has_sdr_cap) {
--		v4l2_ctrl_add_handler(hdl_sdr_cap, hdl_user_gen, NULL);
--		v4l2_ctrl_add_handler(hdl_sdr_cap, hdl_streaming, NULL);
-+		v4l2_ctrl_add_handler(hdl_sdr_cap, hdl_user_gen, NULL, false);
-+		v4l2_ctrl_add_handler(hdl_sdr_cap, hdl_streaming, NULL, false);
- 		if (hdl_sdr_cap->error)
- 			return hdl_sdr_cap->error;
- 		dev->sdr_cap_dev.ctrl_handler = hdl_sdr_cap;
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index b80e6857e2eb..fca16cf8b3bf 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -1991,7 +1991,7 @@ int cx231xx_417_register(struct cx231xx *dev)
- 	dev->mpeg_ctrl_handler.ops = &cx231xx_ops;
- 	if (dev->sd_cx25840)
- 		v4l2_ctrl_add_handler(&dev->mpeg_ctrl_handler.hdl,
--				dev->sd_cx25840->ctrl_handler, NULL);
-+				dev->sd_cx25840->ctrl_handler, NULL, false);
- 	if (dev->mpeg_ctrl_handler.hdl.error) {
- 		err = dev->mpeg_ctrl_handler.hdl.error;
- 		dprintk(3, "%s: can't add cx25840 controls\n", dev->name);
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index 5b321b8ada3a..907cf095d54c 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -2204,10 +2204,10 @@ int cx231xx_register_analog_devices(struct cx231xx *dev)
- 
- 	if (dev->sd_cx25840) {
- 		v4l2_ctrl_add_handler(&dev->ctrl_handler,
--				dev->sd_cx25840->ctrl_handler, NULL);
-+				dev->sd_cx25840->ctrl_handler, NULL, true);
- 		v4l2_ctrl_add_handler(&dev->radio_ctrl_handler,
- 				dev->sd_cx25840->ctrl_handler,
--				v4l2_ctrl_radio_filter);
-+				v4l2_ctrl_radio_filter, true);
- 	}
- 
- 	if (dev->ctrl_handler.error)
-diff --git a/drivers/media/usb/msi2500/msi2500.c b/drivers/media/usb/msi2500/msi2500.c
-index 65ef755adfdc..4aacd77a5d58 100644
---- a/drivers/media/usb/msi2500/msi2500.c
-+++ b/drivers/media/usb/msi2500/msi2500.c
-@@ -1278,7 +1278,7 @@ static int msi2500_probe(struct usb_interface *intf,
- 	}
- 
- 	/* currently all controls are from subdev */
--	v4l2_ctrl_add_handler(&dev->hdl, sd->ctrl_handler, NULL);
-+	v4l2_ctrl_add_handler(&dev->hdl, sd->ctrl_handler, NULL, true);
- 
- 	dev->v4l2_dev.ctrl_handler = &dev->hdl;
- 	dev->vdev.v4l2_dev = &dev->v4l2_dev;
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index 8314d3fa9241..1cfbbc47adfc 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -1623,7 +1623,7 @@ int tm6000_v4l2_register(struct tm6000_core *dev)
- 	v4l2_ctrl_new_std(&dev->ctrl_handler, &tm6000_ctrl_ops,
- 			V4L2_CID_HUE, -128, 127, 1, 0);
- 	v4l2_ctrl_add_handler(&dev->ctrl_handler,
--			&dev->radio_ctrl_handler, NULL);
-+			&dev->radio_ctrl_handler, NULL, false);
- 
- 	if (dev->radio_ctrl_handler.error)
- 		ret = dev->radio_ctrl_handler.error;
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index ce08b50b8290..5c705f5dde9b 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1876,7 +1876,8 @@ EXPORT_SYMBOL(v4l2_ctrl_find);
- 
- /* Allocate a new v4l2_ctrl_ref and hook it into the handler. */
- static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
--			   struct v4l2_ctrl *ctrl)
-+			   struct v4l2_ctrl *ctrl,
-+			   bool from_other_dev)
- {
- 	struct v4l2_ctrl_ref *ref;
- 	struct v4l2_ctrl_ref *new_ref;
-@@ -1900,6 +1901,7 @@ static int handler_new_ref(struct v4l2_ctrl_handler *hdl,
- 	if (!new_ref)
- 		return handler_set_err(hdl, -ENOMEM);
- 	new_ref->ctrl = ctrl;
-+	new_ref->from_other_dev = from_other_dev;
- 	if (ctrl->handler == hdl) {
- 		/* By default each control starts in a cluster of its own.
- 		   new_ref->ctrl is basically a cluster array with one
-@@ -2080,7 +2082,7 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
- 		ctrl->type_ops->init(ctrl, idx, ctrl->p_new);
- 	}
- 
--	if (handler_new_ref(hdl, ctrl)) {
-+	if (handler_new_ref(hdl, ctrl, false)) {
- 		kvfree(ctrl);
- 		return NULL;
- 	}
-@@ -2249,7 +2251,8 @@ EXPORT_SYMBOL(v4l2_ctrl_new_int_menu);
- /* Add the controls from another handler to our own. */
- int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
- 			  struct v4l2_ctrl_handler *add,
--			  bool (*filter)(const struct v4l2_ctrl *ctrl))
-+			  bool (*filter)(const struct v4l2_ctrl *ctrl),
-+			  bool from_other_dev)
- {
- 	struct v4l2_ctrl_ref *ref;
- 	int ret = 0;
-@@ -2272,7 +2275,7 @@ int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
- 		/* Filter any unwanted controls */
- 		if (filter && !filter(ctrl))
- 			continue;
--		ret = handler_new_ref(hdl, ctrl);
-+		ret = handler_new_ref(hdl, ctrl, from_other_dev);
- 		if (ret)
- 			break;
- 	}
-diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-index 937c6de85606..8391a7f0895b 100644
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -178,7 +178,8 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
- 
- 	sd->v4l2_dev = v4l2_dev;
- 	/* This just returns 0 if either of the two args is NULL */
--	err = v4l2_ctrl_add_handler(v4l2_dev->ctrl_handler, sd->ctrl_handler, NULL);
-+	err = v4l2_ctrl_add_handler(v4l2_dev->ctrl_handler, sd->ctrl_handler,
-+				    NULL, true);
- 	if (err)
- 		goto error_module;
- 
-diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-index 289d775c4820..08799beaea42 100644
---- a/drivers/staging/media/imx/imx-media-dev.c
-+++ b/drivers/staging/media/imx/imx-media-dev.c
-@@ -391,7 +391,7 @@ static int imx_media_inherit_controls(struct imx_media_dev *imxmd,
- 
- 		ret = v4l2_ctrl_add_handler(vfd->ctrl_handler,
- 					    sd->ctrl_handler,
--					    NULL);
-+					    NULL, true);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/staging/media/imx/imx-media-fim.c b/drivers/staging/media/imx/imx-media-fim.c
-index 6df189135db8..8cf773eef9da 100644
---- a/drivers/staging/media/imx/imx-media-fim.c
-+++ b/drivers/staging/media/imx/imx-media-fim.c
-@@ -463,7 +463,7 @@ int imx_media_fim_add_controls(struct imx_media_fim *fim)
- {
- 	/* add the FIM controls to the calling subdev ctrl handler */
- 	return v4l2_ctrl_add_handler(fim->sd->ctrl_handler,
--				     &fim->ctrl_handler, NULL);
-+				     &fim->ctrl_handler, NULL, false);
- }
- EXPORT_SYMBOL_GPL(imx_media_fim_add_controls);
- 
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index 05ebb9ef9e73..96f5c63c12d0 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -257,6 +257,7 @@ struct v4l2_ctrl_ref {
- 	struct v4l2_ctrl_ref *next;
- 	struct v4l2_ctrl *ctrl;
- 	struct v4l2_ctrl_helper *helper;
-+	bool from_other_dev;
- };
- 
- /**
-@@ -642,7 +643,8 @@ typedef bool (*v4l2_ctrl_filter)(const struct v4l2_ctrl *ctrl);
-  */
- int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
- 			  struct v4l2_ctrl_handler *add,
--			  v4l2_ctrl_filter filter);
-+			  v4l2_ctrl_filter filter,
-+			  bool from_other_dev);
- 
- /**
-  * v4l2_ctrl_radio_filter() - Standard filter for radio controls.
+Independently of the request implementation, request entities can store their
+own data, in a way that makes sense regarding their type (that would be
+v4l2_request_entity_data for V4L2 devices, but can be another data type for
+media controllers topology).
+
+The entity data lookup is also performed on these request_entities, working
+effectively like the data store Sakari proposed, but retaining a base type for
+data lookup.
+
+Patches are organized as follows:
+
+Patch 1 provides the base request support, not tied to either media or v4l2.
+
+Patches 2 to 8 are the control rework done by Hans, with an extra workaround for
+a bug discovered while working on vivid (see commit message for details).
+
+Patch 9 adds request support to V4L2 in the form of entity data for v4l2 devices
+to be used in requests, and a request manager capable of producing simple
+requests for video devices. Maybe this should be split into different files, but
+since the code is not that big I have kept it under the same file.
+
+Patches 10 to 13 add request support to vb2-core and vb2-v4l2.
+
+Patches 14 and 15 add support for the request_fd field in G/S/TRY_EXT_CTRLS
+ioctls.
+
+Patch 16 allows requests to be allocated from a supporting V4L2 video device
+node.
+
+Patches 17 and 19 add request support to mem2mem and vim2m. Patch 18 documents
+usage of requests with V4L2 devices.
+
+Patch 20 adds support to the vivid capture device.
+
+Finally, 21 is a WIP patch implementing request support for media controller
+nodes. Requests allocated that way are of a different, broader nature than V4L2
+requests, and will be able to control any device managed by the controller. To
+allow this, request_entity is embedded into media_entity, so that media entities
+can be upcasted as in the previous version.
+
+Phew! That was quite long, sorry about that. As usual, simple programs
+demonstrating requests on vim2m and vivid are available:
+
+https://gist.github.com/Gnurou/34c35f1f8e278dad454b51578d239a42
+https://gist.github.com/Gnurou/5052e6ab41e7c55164b75d2970bc5a04
+
+If things are starting to look ok, I would like to move on to the next step and
+implement support in v4l2-ctl. Maybe also start submitting an actual codec
+driver once the control work is completed. And of course, it may be good time to
+think about how pipeline configuration would work. The current design should
+make this question orthogonal to getting support in for simple V4L2 devices.
+
+Looking forward to your feedback!
+
+Changes since RFC v3:
+* Buffer queuing is now performed as soon as the request is queued, allowing
+drivers to see them early.
+* Request refcounting is done using the file * structure instead of a kref
+* Requests can now be used independently of a media controller, to avoid having
+to pull it for simple codec drivers. For such drivers, the device node can
+allocate requests that are exclusive to this device only. Media controller nodes
+can still allocate requests that control their topology as well as the devices
+under them.
+* Consequently, media_request is now its own module since it can be used
+independently of media.ko.
+* SUBMIT/REINIT request ioctls are now performed on the request FD instead of
+the media device. This means that device/media controller node's business with
+requests is limited to allocating them.
+* Got rid of request IDs.
+* Only allow one buffer to be queued to each queue of request entities.
+* The request FD that produced a CAPTURE buffer is not returned to user-space
+anymore.
+* Added requests support for the Vivid video capture device.
+* Let drivers decide individually whether their entities should be per file
+handle or global to the device, solving the question we had about this in
+previous RFCs. Vim2m provides an example of per-context entities, while vivid
+gives an example of a global request entity.
+* Improved documentation.
+
+Issues remaining with this version:
+* Vivid support exposed what seems to be a limitation in the current controls
+cloning implementation. See patch 8 (which works the issue around) for details.
+* Media controller implementation of requests is still incomplete. I plan to
+complete and exert it on an actual camera driver sometime soon.
+
+
+Alexandre Courbot (14):
+  media: add request API core and UAPI
+  [WAR] v4l2-ctrls: do not clone non-standard controls
+  v4l2: add request API support
+  media: v4l2_fh: add request entity field
+  media: videobuf2: add support for requests
+  media: videobuf2-v4l2: support for requests
+  videodev2.h: add request_fd field to v4l2_ext_controls
+  v4l2-ctrls: support requests in EXT_CTRLS ioctls
+  v4l2: video_device: support for creating requests
+  media: mem2mem: support for requests
+  Documentation: v4l: document request API
+  media: vim2m: add request support
+  media: vivid: add request support for the video capture device
+  [WIP] media: media-device: support for creating requests
+
+Hans Verkuil (7):
+  v4l2-ctrls: v4l2_ctrl_add_handler: add from_other_dev
+  v4l2-ctrls: prepare internal structs for request API
+  v4l2-ctrls: add core request API
+  v4l2-ctrls: use ref in helper instead of ctrl
+  v4l2-ctrls: support g/s_ext_ctrls for requests
+  v4l2-ctrls: add v4l2_ctrl_request_setup
+  videodev2.h: Add request_fd field to v4l2_buffer
+
+ Documentation/ioctl/ioctl-number.txt          |   1 +
+ Documentation/media/uapi/v4l/buffer.rst       |   9 +-
+ Documentation/media/uapi/v4l/common.rst       |   1 +
+ Documentation/media/uapi/v4l/request-api.rst  | 199 ++++++++++
+ Documentation/media/uapi/v4l/user-func.rst    |   1 +
+ .../media/uapi/v4l/vidioc-g-ext-ctrls.rst     |  16 +-
+ .../media/uapi/v4l/vidioc-new-request.rst     |  64 ++++
+ Documentation/media/uapi/v4l/vidioc-qbuf.rst  |   7 +
+ drivers/media/Kconfig                         |   3 +
+ drivers/media/Makefile                        |   6 +
+ .../media/common/videobuf2/videobuf2-core.c   |   3 +
+ .../media/common/videobuf2/videobuf2-v4l2.c   | 131 ++++++-
+ drivers/media/dvb-frontends/rtl2832_sdr.c     |   5 +-
+ drivers/media/media-device.c                  |  11 +
+ drivers/media/media-request.c                 | 341 +++++++++++++++++
+ drivers/media/pci/bt8xx/bttv-driver.c         |   2 +-
+ drivers/media/pci/cx23885/cx23885-417.c       |   2 +-
+ drivers/media/pci/cx88/cx88-blackbird.c       |   2 +-
+ drivers/media/pci/cx88/cx88-video.c           |   2 +-
+ drivers/media/pci/saa7134/saa7134-empress.c   |   4 +-
+ drivers/media/pci/saa7134/saa7134-video.c     |   2 +-
+ drivers/media/platform/Kconfig                |   1 +
+ .../media/platform/exynos4-is/fimc-capture.c  |   2 +-
+ drivers/media/platform/omap3isp/ispvideo.c    |   2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c   |   3 +-
+ drivers/media/platform/rcar_drif.c            |   2 +-
+ .../media/platform/soc_camera/soc_camera.c    |   3 +-
+ drivers/media/platform/vim2m.c                |  75 ++++
+ drivers/media/platform/vivid/Kconfig          |   1 +
+ drivers/media/platform/vivid/vivid-core.c     |  63 +++-
+ drivers/media/platform/vivid/vivid-core.h     |   3 +
+ drivers/media/platform/vivid/vivid-ctrls.c    |  46 +--
+ .../media/platform/vivid/vivid-kthread-cap.c  |  17 +
+ drivers/media/usb/cpia2/cpia2_v4l.c           |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-417.c       |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c     |   4 +-
+ drivers/media/usb/msi2500/msi2500.c           |   2 +-
+ drivers/media/usb/tm6000/tm6000-video.c       |   2 +-
+ drivers/media/v4l2-core/Makefile              |   1 +
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   9 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c          | 341 +++++++++++++++--
+ drivers/media/v4l2-core/v4l2-dev.c            |   2 +
+ drivers/media/v4l2-core/v4l2-device.c         |   3 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c          |  37 +-
+ drivers/media/v4l2-core/v4l2-mem2mem.c        |   3 +-
+ drivers/media/v4l2-core/v4l2-request.c        | 178 +++++++++
+ drivers/media/v4l2-core/v4l2-subdev.c         |   2 +-
+ drivers/staging/media/imx/imx-media-dev.c     |   2 +-
+ drivers/staging/media/imx/imx-media-fim.c     |   2 +-
+ include/media/mc-request.h                    |  33 ++
+ include/media/media-device.h                  |   1 +
+ include/media/media-entity.h                  |   5 +
+ include/media/media-request.h                 | 349 ++++++++++++++++++
+ include/media/v4l2-ctrls.h                    |  20 +-
+ include/media/v4l2-dev.h                      |   2 +
+ include/media/v4l2-fh.h                       |   3 +
+ include/media/v4l2-request.h                  | 159 ++++++++
+ include/media/videobuf2-core.h                |   4 +
+ include/media/videobuf2-v4l2.h                |  59 +++
+ include/uapi/linux/media-request.h            |  37 ++
+ include/uapi/linux/media.h                    |   2 +
+ include/uapi/linux/videodev2.h                |   9 +-
+ 62 files changed, 2217 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/media/uapi/v4l/request-api.rst
+ create mode 100644 Documentation/media/uapi/v4l/vidioc-new-request.rst
+ create mode 100644 drivers/media/media-request.c
+ create mode 100644 drivers/media/v4l2-core/v4l2-request.c
+ create mode 100644 include/media/mc-request.h
+ create mode 100644 include/media/media-request.h
+ create mode 100644 include/media/v4l2-request.h
+ create mode 100644 include/uapi/linux/media-request.h
+
 -- 
 2.16.1.291.g4437f3f132-goog
