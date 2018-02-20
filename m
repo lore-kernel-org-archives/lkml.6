@@ -1,59 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeBTPJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:09:29 -0500
-Received: from mail01.prevas.se ([62.95.78.3]:29123 "EHLO mail01.prevas.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751808AbeBTPJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:09:24 -0500
-X-IronPort-AV: E=Sophos;i="5.46,539,1511823600";
-   d="scan'208";a="3274638"
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-To: Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        York Sun <york.sun@nxp.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] EDAC, layerscape: allow building for LS1021A
-Date: Tue, 20 Feb 2018 16:09:12 +0100
-Message-ID: <20180220150912.2954-1-rasmus.villemoes@prevas.dk>
-X-Mailer: git-send-email 2.15.1
+        id S1752330AbeBTPJn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:09:43 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752265AbeBTPJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:09:42 -0500
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>
+Cc: Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518509708.12890.33.camel@infradead.org>
+ <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org>
+ <1518518198.12890.48.camel@infradead.org>
+ <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+ <1518775136.7876.13.camel@infradead.org>
+ <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
+ <1518776517.7876.21.camel@infradead.org>
+ <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
+ <1518783021.7876.34.camel@infradead.org>
+ <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+ <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+ <10373.1519084385@turing-police.cc.vt.edu>
+ <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+ <aa3fbaf1-0efc-64b1-4f7b-3d00b0493d48@redhat.com>
+ <0575AF4FD06DD142AD198903C74E1CC87A619465@ORSMSX103.amr.corp.intel.com>
+ <2159cdc0-c30d-3bf8-1c25-74bff46a1e91@redhat.com>
+ <0575AF4FD06DD142AD198903C74E1CC87A6194AB@ORSMSX103.amr.corp.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5b39cfbb-a04f-46a8-87cb-3a52fc8e9700@redhat.com>
+Date: Tue, 20 Feb 2018 16:09:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.8.31]
+In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A6194AB@ORSMSX103.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1021A has a memory controller supported by this driver. It builds
-just fine, and I've done some rudimentary testing using the error
-injection facility, which suggests that it is indeed working.
+On 20/02/2018 15:59, Van De Ven, Arjan wrote:
+> 
+>>> I meant software wise. You're not going to live migrate from xen to
+>>> kvm or backwards. or between very radically different versions of the
+>>> kvm stack.
+>>
+>> Forwards migration to a radically newer version certainly happens.  So
+>> when the source hypervisor was too old to tell the VM about IBRS_ALL,
+>> for example, migration should work properly and the VM should perform
+>> well on the destination hypervisor.
+> 
+> that makes sense, compatibility in this direction can be done
+> and is useful as you move a fleet of servers forward
+> 
+>> Backwards migration to older hypervisors also happens sometimes, but in
+>> general it creates more userspace than kernel issues.
+> 
+> that direction is obviously harder
 
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
----
-Hi York
+>From KVM's point of view it's mostly a matter of having a complete ioctl
+API right.  I'm not that much worried by it.
 
-In https://patchwork.kernel.org/patch/9264623/, you wrote that LS1021A
-support is "just one step away". I'm wondering if this is simply that
-step, or there is a little more to it. As I write, it seems to work
-just fine, but I may be missing something.
-
- drivers/edac/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 96afb2aeed18..23f619afe31d 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -254,7 +254,7 @@ config EDAC_MPC85XX
- 
- config EDAC_LAYERSCAPE
- 	tristate "Freescale Layerscape DDR"
--	depends on ARCH_LAYERSCAPE
-+	depends on ARCH_LAYERSCAPE || SOC_LS1021A
- 	help
- 	  Support for error detection and correction on Freescale memory
- 	  controllers on Layerscape SoCs.
--- 
-2.15.1
+Paolo
