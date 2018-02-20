@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeBTEoz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 23:44:55 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35951 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeBTEou (ORCPT
+        id S1751411AbeBTEpI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 23:45:08 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38772 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751381AbeBTEpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 23:44:50 -0500
-X-Google-Smtp-Source: AH8x226n7qnPliMK6SxZ957HHsM5E6EN3VR6diPYiEEMI0o6VN6uScLDBx0WG6YdjB+jlOihl3kcoA==
+        Mon, 19 Feb 2018 23:45:05 -0500
+X-Google-Smtp-Source: AH8x227pCYs3/uEZieT11TL1q+Uk9EeiHirpHHFUqFd8ID4F9GtbU6hWSj/dIze11rLNZ20cp0LOcQ==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -18,11 +18,10 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv4 03/21] v4l2-ctrls: prepare internal structs for request API
-Date: Tue, 20 Feb 2018 13:44:07 +0900
-Message-Id: <20180220044425.169493-4-acourbot@chromium.org>
+Subject: [RFCv4 08/21] [WAR] v4l2-ctrls: do not clone non-standard controls
+Date: Tue, 20 Feb 2018 13:44:12 +0900
+Message-Id: <20180220044425.169493-9-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
 In-Reply-To: <20180220044425.169493-1-acourbot@chromium.org>
 References: <20180220044425.169493-1-acourbot@chromium.org>
@@ -30,62 +29,34 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Only standard controls can be successfully cloned: handler_new_ref, used
+by v4l2_ctrl_request_clone(), forcibly calls v4l2_ctrl_new_std() which
+fails to find custom controls names, and we eventually hit the condition
+that name == NULL in v4l2_ctrl_new().
 
-Add a refcount and is_request bool to struct v4l2_ctrl_handler:
-this is used to refcount a handler that represents a request.
+This prevents us from using non-standard controls with requests, but
+that is enough for testing purposes.
 
-Add a p_req field to struct v4l2_ctrl_ref that will store the
-request value.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 1 +
- include/media/v4l2-ctrls.h           | 4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/media/v4l2-core/v4l2-ctrls.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 5c705f5dde9b..eac70598635d 100644
+index 166647817efb..7a81aa5959c3 100644
 --- a/drivers/media/v4l2-core/v4l2-ctrls.c
 +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1761,6 +1761,7 @@ int v4l2_ctrl_handler_init_class(struct v4l2_ctrl_handler *hdl,
- 				      sizeof(hdl->buckets[0]),
- 				      GFP_KERNEL | __GFP_ZERO);
- 	hdl->error = hdl->buckets ? 0 : -ENOMEM;
-+	hdl->is_request = false;
- 	return hdl->error;
- }
- EXPORT_SYMBOL(v4l2_ctrl_handler_init_class);
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index 96f5c63c12d0..bcabbf8a44b5 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -18,6 +18,7 @@
- #define _V4L2_CTRLS_H
- 
- #include <linux/list.h>
-+#include <linux/kref.h>
- #include <linux/mutex.h>
- #include <linux/videodev2.h>
- 
-@@ -257,6 +258,7 @@ struct v4l2_ctrl_ref {
- 	struct v4l2_ctrl_ref *next;
- 	struct v4l2_ctrl *ctrl;
- 	struct v4l2_ctrl_helper *helper;
-+	union v4l2_ctrl_ptr p_req;
- 	bool from_other_dev;
- };
- 
-@@ -292,7 +294,9 @@ struct v4l2_ctrl_handler {
- 	v4l2_ctrl_notify_fnc notify;
- 	void *notify_priv;
- 	u16 nr_of_buckets;
-+	bool is_request;
- 	int error;
-+	struct kref ref;
- };
- 
- /**
+@@ -2772,6 +2772,11 @@ int v4l2_ctrl_request_clone(struct v4l2_ctrl_handler *hdl,
+ 		if (filter && !filter(ctrl))
+ 			continue;
+ 		err = handler_new_ref(hdl, ctrl, &new_ref, false);
++		if (err) {
++			printk("%s: handler_new_ref on control %x (%s) returned %d\n", __func__, ctrl->id, ctrl->name, err);
++			err = 0;
++			continue;
++		}
+ 		if (err)
+ 			break;
+ 		if (from->is_request)
 -- 
 2.16.1.291.g4437f3f132-goog
