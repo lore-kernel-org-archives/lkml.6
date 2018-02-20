@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751329AbeBTPq1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:46:27 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38573 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752458AbeBTPqZ (ORCPT
+        id S1752696AbeBTPqw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:46:52 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46856 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752504AbeBTPqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:46:25 -0500
-X-Google-Smtp-Source: AG47ELujhQOvxgmtTI9AxupcPu8XYWjdNzm8sUV4AZ9mISZBrkMAjOfPB7ynUc4cSO75GUQmCyLTW46VPtYZxsBaaLg=
+        Tue, 20 Feb 2018 10:46:51 -0500
+X-Google-Smtp-Source: AH8x226Df+7QJIYUBWDrZyiZpsiNUMOmtkhHTVTZQK8EV88NUF2twMZ3JGPNGWUl/MRkIocFUo9yOQ0FSUec9rn8wVM=
 MIME-Version: 1.0
-In-Reply-To: <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519139541-18783-13-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-13-git-send-email-jacopo+renesas@jmondi.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 16:46:23 +0100
-X-Google-Sender-Auth: 2qJKOzJRZ_bWtll94FIuRXwHSIU
-Message-ID: <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
+Date: Tue, 20 Feb 2018 16:46:49 +0100
+X-Google-Sender-Auth: dPAzzR6_W4yRuubzS-yxmcf_UYY
+Message-ID: <CAMuHMdVEEcG6HcnnS0W6gTW57aD-y5Gg5ojvEr6TDvUp_irUPw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/19] dt-bindings: serial: sh-sci: Add support for
+ r8a77965 (H)SCIF
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -30,11 +31,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
->
-> Based on original work from:
-> Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Magnus Damm <damm+renesas@opensource.se>
+> Add documentation for r8a77965 compatible string to Renesas sci-serial
+> device tree bindings documentation.
 >
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
