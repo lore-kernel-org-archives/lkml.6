@@ -1,106 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeBTXLb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:11:31 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38076 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeBTXKN (ORCPT
+        id S1751784AbeBTXRI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:17:08 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45644 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbeBTXRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:13 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: [PATCH v4 03/16] of: dynamic: Add __of_node_dupv()
-Date: Wed, 21 Feb 2018 01:10:33 +0200
-Message-Id: <20180220231046.32638-4-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 20 Feb 2018 18:17:07 -0500
+Date: Tue, 20 Feb 2018 15:17:05 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 2/3] sysctl: Warn when a clamped sysctl parameter is set
+ out of range
+Message-Id: <20180220151705.8b4519f105db8f5c119015f0@linux-foundation.org>
+In-Reply-To: <1519059231-2456-3-git-send-email-longman@redhat.com>
+References: <1519059231-2456-1-git-send-email-longman@redhat.com>
+        <1519059231-2456-3-git-send-email-longman@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+On Mon, 19 Feb 2018 11:53:50 -0500 Waiman Long <longman@redhat.com> wrote:
 
-Add an __of_node_dupv() private method and make __of_node_dup() use it.
-This is required for the subsequent changeset accessors which will
-make use of it.
+> Even with clamped sysctl parameters, it is still not that straight
+> forward to figure out the exact range of those parameters. One may
+> try to write extreme parameter values to see if they get clamped.
+> To make it easier, a warning with the expected range will now be
+> printed in the kernel ring buffer when a clamped sysctl parameter
+> receives an out of range value.
 
-Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/of/dynamic.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+This assumes that do_proc_dointvec_minmax_conv() and
+do_proc_douintvec_minmax_conv() are only ever called by privileged
+userspace.  Because we mustn't give unprivileged applications a way to
+spam the kernel logs.
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 7bb33d22b4e2..4ffd04925fdf 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -382,8 +382,9 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
- }
- 
- /**
-- * __of_node_dup() - Duplicate or create an empty device node dynamically.
-- * @fmt: Format string (plus vargs) for new full name of the device node
-+ * __of_node_dupv() - Duplicate or create an empty device node dynamically.
-+ * @fmt: Format string for new full name of the device node
-+ * @vargs: va_list containing the arugments for the node full name
-  *
-  * Create an device tree node, either by duplicating an empty node or by allocating
-  * an empty one suitable for further modification.  The node data are
-@@ -391,17 +392,15 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
-  * OF_DETACHED bits set. Returns the newly allocated node or NULL on out of
-  * memory error.
-  */
--struct device_node *__of_node_dup(const struct device_node *np, const char *fmt, ...)
-+struct device_node *__of_node_dupv(const struct device_node *np,
-+		const char *fmt, va_list vargs)
- {
--	va_list vargs;
- 	struct device_node *node;
- 
- 	node = kzalloc(sizeof(*node), GFP_KERNEL);
- 	if (!node)
- 		return NULL;
--	va_start(vargs, fmt);
- 	node->full_name = kvasprintf(GFP_KERNEL, fmt, vargs);
--	va_end(vargs);
- 	if (!node->full_name) {
- 		kfree(node);
- 		return NULL;
-@@ -433,6 +432,24 @@ struct device_node *__of_node_dup(const struct device_node *np, const char *fmt,
- 	return NULL;
- }
- 
-+/**
-+ * __of_node_dup() - Duplicate or create an empty device node dynamically.
-+ * @fmt: Format string (plus vargs) for new full name of the device node
-+ *
-+ * See: __of_node_dupv()
-+ */
-+struct device_node *__of_node_dup(const struct device_node *np,
-+		const char *fmt, ...)
-+{
-+	va_list vargs;
-+	struct device_node *node;
-+
-+	va_start(vargs, fmt);
-+	node = __of_node_dupv(np, fmt, vargs);
-+	va_end(vargs);
-+	return node;
-+}
-+
- static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
- {
- 	of_node_put(ce->np);
--- 
-Regards,
-
-Laurent Pinchart
+That's presumably true in the case of the caller you just added, but I
+don't see what we can do to guarantee this in the future, so perhaps we
+should add some permission check to the pr_warn()?
