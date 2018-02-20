@@ -1,58 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751372AbeBTVir (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 16:38:47 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:48384 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeBTViq (ORCPT
+        id S1751221AbeBTVkR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 16:40:17 -0500
+Received: from 15.mo5.mail-out.ovh.net ([178.33.107.29]:48658 "EHLO
+        15.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeBTVkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 16:38:46 -0500
-Date: Tue, 20 Feb 2018 22:38:39 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCMCIA / PM: Combine system resume callbacks
-Message-ID: <20180220213839.GA12082@light.dominikbrodowski.net>
-References: <4287858.bFmM5lK9H6@aspire.rjw.lan>
+        Tue, 20 Feb 2018 16:40:16 -0500
+Date: Tue, 20 Feb 2018 17:48:16 +0100
+From: Greg Kurz <groug@kaod.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>, netdev@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        Ron Minnich <rminnich@sandia.gov>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [V9fs-developer] [PATCH] net/9p: avoid -ERESTARTSYS leak to
+ userspace
+Message-ID: <20180220174816.0ef05769@bahia.lan>
+In-Reply-To: <151811152925.12219.16418114797025615002.stgit@bahia.lab.toulouse-stg.fr.ibm.com>
+References: <151811152925.12219.16418114797025615002.stgit@bahia.lab.toulouse-stg.fr.ibm.com>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4287858.bFmM5lK9H6@aspire.rjw.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 5931803662776834327
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrgeejgdeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 12:47:27PM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> There is a problem with PCMCIA system resume callbacks with respect
-> to suspend-to-idle in which the ->suspend_noirq() callback may be
-> invoked after the ->resume_noirq() one without resuming the system
-> entirely in some cases.  This doesn't work for PCMCIA because of
-> the lack of symmetry between its system suspend and system resume
-> "noirq" callbacks.
-> 
-> The system resume handling in PCMCIA is split between
-> socket_early_resume() and socket_late_resume() which are called in
-> different phases of system resume and both need to run for
-> socket_suspend() (invoked by the system suspend "noirq" callback)
-> to work.  Specifically, socket_suspend() returns an error when
-> called after socket_early_resume() without socket_late_resume(),
-> so if the suspend-to-idle core detects a spurious wakeup event and
-> attempts to put the system back to sleep, that is aborted by the
-> error coming from socket_suspend().
-> 
-> This design doesn't follow the power management documentation
-> stating that the "noirq" resume callback is expected to reverse
-> the changes made by the "noirq" suspend one.  Moreover, I don't see
-> a reason for splitting the PCMCIA socket system resume handling this
-> way
+Hi Al,
 
-Unless I am mistaken, this split was introduced by commit
-9905d1b411946 . So we should take into account the reasons stated
-in that commit message.
+It's been two years without any sign of life from 9p maintainers... :-\
+
+Would you apply (or nack) this patch ?
 
 Thanks,
-	Dominik
+
+--
+Greg
+
+PS: in the case you apply it, probable Cc stable@vger.kernel.org as well
+
+
+On Thu, 08 Feb 2018 18:38:49 +0100
+
+Greg Kurz <groug@kaod.org> wrote:
+
+> If it was interrupted by a signal, the 9p client may need to send some
+> more requests to the server for cleanup before returning to userspace.
+> 
+> To avoid such a last minute request to be interrupted right away, the
+> client memorizes if a signal is pending, clear TIF_SIGPENDING, handle
+> the request and call recalc_sigpending() before returning.
+> 
+> Unfortunately, if the transmission of this cleanup request fails for any
+> reason, the transport returns an error and the client propagates it right
+> away, without calling recalc_sigpending().
+> 
+> This ends up with -ERESTARTSYS from the initially interrupted request
+> crawling up to syscall exit, with TIF_SIGPENDING cleared by the cleanup
+> request. The specific signal handling code, which is responsible for
+> converting -ERESTARTSYS to -EINTR is not called, and userspace receives
+> the confusing errno value:
+> 
+> open: Unknown error 512 (512)
+> 
+> This is really hard to hit in real life. I discovered the issue while
+> working on hot-unplug of a virtio-9p-pci device with an instrumented
+> QEMU allowing to control request completion.
+> 
+> Both p9_client_zc_rpc() and p9_client_rpc() functions have this buggy
+> error path actually. Their code flow is a bit obscure and the best
+> thing to do would probably be a full rewrite: to really ensure this
+> situation of clearing TIF_SIGPENDING and returning -ERESTARTSYS can
+> never happen.
+> 
+> But given the general lack of interest for the 9p code, I won't risk
+> breaking more things. So this patch simply fix the buggy paths in both
+> functions with a trivial label+goto.
+> 
+> Thanks to Laurent Dufour for his help and suggestions on how to find
+> the root cause and how to fix it.
+> 
+> Signed-off-by: Greg Kurz <groug@kaod.org>
+> ---
+>  net/9p/client.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 4c8cf9c1631a..5154eaf19fff 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -769,7 +769,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+>  	if (err < 0) {
+>  		if (err != -ERESTARTSYS && err != -EFAULT)
+>  			c->status = Disconnected;
+> -		goto reterr;
+> +		goto recalc_sigpending;
+>  	}
+>  again:
+>  	/* Wait for the response */
+> @@ -804,6 +804,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+>  		if (req->status == REQ_STATUS_RCVD)
+>  			err = 0;
+>  	}
+> +recalc_sigpending:
+>  	if (sigpending) {
+>  		spin_lock_irqsave(&current->sighand->siglock, flags);
+>  		recalc_sigpending();
+> @@ -867,7 +868,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
+>  		if (err == -EIO)
+>  			c->status = Disconnected;
+>  		if (err != -ERESTARTSYS)
+> -			goto reterr;
+> +			goto recalc_sigpending;
+>  	}
+>  	if (req->status == REQ_STATUS_ERROR) {
+>  		p9_debug(P9_DEBUG_ERROR, "req_status error %d\n", req->t_err);
+> @@ -885,6 +886,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
+>  		if (req->status == REQ_STATUS_RCVD)
+>  			err = 0;
+>  	}
+> +recalc_sigpending:
+>  	if (sigpending) {
+>  		spin_lock_irqsave(&current->sighand->siglock, flags);
+>  		recalc_sigpending();
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> V9fs-developer mailing list
+> V9fs-developer@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/v9fs-developer
