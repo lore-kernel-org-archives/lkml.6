@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x224+LQDKmTfFOC7DVZVutE9z0nwaKeU5QJnfAOMpWg9WbU++zt3U7NJJLcfDCvuz20ZVXKRF
-ARC-Seal: i=1; a=rsa-sha256; t=1519093566; cv=none;
+X-Google-Smtp-Source: AH8x227MrcTWN+pzeyHn9ftG3xrQjvbJr1+ppCqy/7C7cy+qENfS5H1UIE/HfEmF269sdmFJjaFO
+ARC-Seal: i=1; a=rsa-sha256; t=1519093551; cv=none;
         d=google.com; s=arc-20160816;
-        b=lmJKyxSq/S+9hq5S0WLRC97D9+6WZc9owTVzKigNbO0W+2Shg5eEaeO/Il7FCOIGOh
-         hBuqhWyWW700blTPa8dbmfS6gZHXACQqhC98cYCFoRwSqihh7oWaGjX4h4QjEx47Ni0b
-         3GikeEqud32ctx6h5122nmfOucDbcQ0nIXnH/arfMD6p7ZCddE+hsEohsBg5QMYPLUIG
-         aMdlZj26gVTM+PzFTKa5LROALi474ynHKbPypoczgicG5HEcs8Uzq9u0UYGdwE98zbar
-         bGFUEtP+4lF5MZvamOdS21i7QNmBvDYlO+QUVzEeWnkzTKUIsFw9erXewc6iR6FcV1Gb
-         yIAA==
+        b=m01y8a7BjAUNlkPq2Glf13QL7324QUnHSKXdnE1FsXoAzfir/092hpfeo+MFeIJNF8
+         aCrzbIZgD6hig5HOBmdS6oalE7macvU9Ufq5tkxly16iICdzw64NAiEqQM+pjswO3wFF
+         Bg5JkmTavdusU0Mt9beTquwobSbSwJI6ZCwxInwOLFnJxrc2/vZps+w4fYUfagFp7GCH
+         MXKdzVod9XDJSwsdgL2YCYe7X+/KsgBycP4IppT43UKn8oEG1A7aih3XfwLmRwyG+EkM
+         qPQtCw/IT05B3aYgHwLmogU7Vj8BSHQlH2JJnNtLKl3hk6TpYuQ/QiIlurBeCR8XOo6h
+         CC6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=W9jEJhedkShd8JAf6ozQhJsKZOHPvv9xM+gR4Ag2riI=;
-        b=S/p/bLrXuvreZCoXG/s3bfXYppUSLXKcf6LSDjaVDfbih4KOYBQVGqDM3pL0kc7m8N
-         6RePA/D0sVOPqF1X7l74M01j8glM+i4sfcL3ELHgJP5HQ6ZUVLqIxSkAIrTul3Dtp74c
-         5mz+WdfGsvuBSfjk8oW2ClBhImhBrMs3gvhuznYYfqVPdI19f3NBmXQBKKIfzcslcmmK
-         rGDuW2OO/FKv1nM9F9sR9ZJoYucKQMtnzxhHJkVvfS/d4HtiLC363zzSzFpsS4oWdN43
-         Na1RY0DKlG+uPSwqqSsEw9j/NQRIuhQjHp2qR0H6Q6NfWDn5cBw7EKOnA04ij9Kstxed
-         KO4w==
+        bh=wyiYtzjP2O1io2Bmo7V9aUlZSaGGt46RWtajAzTyUk8=;
+        b=E+l8bYQzcC7pNV/Tu1M1rE0YeyRMuw5FvyTr3H3qjesTfCtglP6oPStQ6oMdvlgTKn
+         a4e/MWvtTCr2UPJ8HZBNWiBIBLnXZxumU9SbjKP6vCf2jONrlFCWKJoT7IJ0/eo4PBOV
+         iESHAxH+N7Sy0ubRbNoyOUkZlnQl38Ck0xYvdspdoe5msruHvfyFFQuk7OzkXZUH18Fu
+         A2qqknfqSWg+roJ5v2RGfWzlQD36jy8RZRytzRF3idQyuFfZHpGzrnUDVVfQO6FrOBR+
+         Uk/eTi1iC1SNuiUqvOObgOxY51uPY5oz0tsZrS1ywYGIcmdxAa+Q2H6z6iVWMwqS2WjL
+         EFfg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,9 +28,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 20 Feb 2018 13:23:38 +1100
-Subject: [PATCH 15/21] staging: lustre: ptlrpc: list_for_each improvements.
+Subject: [PATCH 13/21] staging: lustre: remove phantom struct
+ cfs_crypto_hash_desc
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341806.25814.159210690547707508.stgit@noble>
+Message-ID: <151909341798.25814.6579149760977367071.stgit@noble>
 In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -38,539 +39,189 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592885055433225736?=
-X-GMAIL-MSGID: =?utf-8?q?1592885055433225736?=
+X-GMAIL-THRID: =?utf-8?q?1592885039683052190?=
+X-GMAIL-MSGID: =?utf-8?q?1592885039683052190?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-1/ use list_for_each_entry_safe() instead of
-   list_for_each_safe() and similar.
-
-2/ use list_first_entry() and list_last_entry() where appropriate.
-
-3/ When removing everything from a list, use
-     while ((x = list_first_entry_or_null()) {
-   as it makes the intent clear
-
-4/ No need to take a spinlock in a structure that is about
-   to be freed - we must have exclusive access at this stage.
+There is no "struct cfs_crypto_hash_desc" structure.  There
+are only pointers to this structure, which are cast back and
+forth to struct ahash_request.
+So discard cfs_crypto_hash_desc, and just use ahash_request directly.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/ptlrpc/client.c  |   89 +++++++-----------------
- drivers/staging/lustre/lustre/ptlrpc/import.c  |   34 +++------
- drivers/staging/lustre/lustre/ptlrpc/pinger.c  |    8 +-
- drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c |   15 +---
- drivers/staging/lustre/lustre/ptlrpc/recover.c |   26 +++----
- drivers/staging/lustre/lustre/ptlrpc/service.c |   13 +---
- 6 files changed, 59 insertions(+), 126 deletions(-)
+ .../lustre/include/linux/libcfs/libcfs_crypto.h    |   11 +++-----
+ .../lustre/lnet/libcfs/linux/linux-crypto.c        |   29 +++++++++-----------
+ drivers/staging/lustre/lustre/osc/osc_request.c    |    2 +
+ drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c    |    2 +
+ 4 files changed, 19 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-index d4c641d2480c..ca096fadb9c0 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/client.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
-@@ -504,19 +504,16 @@ void ptlrpc_request_cache_free(struct ptlrpc_request *req)
-  */
- void ptlrpc_free_rq_pool(struct ptlrpc_request_pool *pool)
- {
--	struct list_head *l, *tmp;
- 	struct ptlrpc_request *req;
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
+index e5c156e9d907..3a72117140ed 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
+@@ -189,18 +189,15 @@ int cfs_crypto_hash_digest(enum cfs_crypto_hash_alg hash_alg,
+ 			   unsigned char *key, unsigned int key_len,
+ 			   unsigned char *hash, unsigned int *hash_len);
  
--	spin_lock(&pool->prp_lock);
--	list_for_each_safe(l, tmp, &pool->prp_req_list) {
--		req = list_entry(l, struct ptlrpc_request, rq_list);
-+	while ((req = list_first_entry_or_null(&pool->prp_req_list,
-+					       struct ptlrpc_request, rq_list))) {
- 		list_del(&req->rq_list);
- 		LASSERT(req->rq_reqbuf);
- 		LASSERT(req->rq_reqbuf_len == pool->prp_rq_size);
- 		kvfree(req->rq_reqbuf);
- 		ptlrpc_request_cache_free(req);
- 	}
--	spin_unlock(&pool->prp_lock);
- 	kfree(pool);
+-/* cfs crypto hash descriptor */
+-struct cfs_crypto_hash_desc;
+-
+-struct cfs_crypto_hash_desc *
++struct ahash_request *
+ cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
+ 		     unsigned char *key, unsigned int key_len);
+-int cfs_crypto_hash_update_page(struct cfs_crypto_hash_desc *desc,
++int cfs_crypto_hash_update_page(struct ahash_request *desc,
+ 				struct page *page, unsigned int offset,
+ 				unsigned int len);
+-int cfs_crypto_hash_update(struct cfs_crypto_hash_desc *desc, const void *buf,
++int cfs_crypto_hash_update(struct ahash_request *desc, const void *buf,
+ 			   unsigned int buf_len);
+-int cfs_crypto_hash_final(struct cfs_crypto_hash_desc *desc,
++int cfs_crypto_hash_final(struct ahash_request *desc,
+ 			  unsigned char *hash, unsigned int *hash_len);
+ int cfs_crypto_register(void);
+ void cfs_crypto_unregister(void);
+diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
+index 80072b2a443c..b55006264155 100644
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
++++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
+@@ -42,7 +42,7 @@ static int cfs_crypto_hash_speeds[CFS_HASH_ALG_MAX];
+ /**
+  * Initialize the state descriptor for the specified hash algorithm.
+  *
+- * An internal routine to allocate the hash-specific state in \a hdesc for
++ * An internal routine to allocate the hash-specific state in \a req for
+  * use with cfs_crypto_hash_digest() to compute the hash of a single message,
+  * though possibly in multiple chunks.  The descriptor internal state should
+  * be freed with cfs_crypto_hash_final().
+@@ -50,7 +50,7 @@ static int cfs_crypto_hash_speeds[CFS_HASH_ALG_MAX];
+  * \param[in]	  hash_alg	hash algorithm id (CFS_HASH_ALG_*)
+  * \param[out]	  type		pointer to the hash description in hash_types[]
+  *				array
+- * \param[in,out] hdesc		hash state descriptor to be initialized
++ * \param[in,out] req		hash state descriptor to be initialized
+  * \param[in]	  key		initial hash value/state, NULL to use default
+  *				value
+  * \param[in]	  key_len	length of \a key
+@@ -194,7 +194,7 @@ EXPORT_SYMBOL(cfs_crypto_hash_digest);
+  * \retval		pointer to descriptor of hash instance
+  * \retval		ERR_PTR(errno) in case of error
+  */
+-struct cfs_crypto_hash_desc *
++struct ahash_request *
+ cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
+ 		     unsigned char *key, unsigned int key_len)
+ {
+@@ -206,14 +206,14 @@ cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
+ 
+ 	if (err)
+ 		return ERR_PTR(err);
+-	return (struct cfs_crypto_hash_desc *)req;
++	return req;
  }
- EXPORT_SYMBOL(ptlrpc_free_rq_pool);
-@@ -656,16 +653,13 @@ static void __ptlrpc_free_req_to_pool(struct ptlrpc_request *request)
- void ptlrpc_add_unreplied(struct ptlrpc_request *req)
- {
- 	struct obd_import	*imp = req->rq_import;
--	struct list_head	*tmp;
- 	struct ptlrpc_request	*iter;
+ EXPORT_SYMBOL(cfs_crypto_hash_init);
  
- 	assert_spin_locked(&imp->imp_lock);
- 	LASSERT(list_empty(&req->rq_unreplied_list));
- 
- 	/* unreplied list is sorted by xid in ascending order */
--	list_for_each_prev(tmp, &imp->imp_unreplied_list) {
--		iter = list_entry(tmp, struct ptlrpc_request,
--				  rq_unreplied_list);
-+	list_for_each_entry_reverse(iter, &imp->imp_unreplied_list, rq_unreplied_list) {
- 
- 		LASSERT(req->rq_xid != iter->rq_xid);
- 		if (req->rq_xid < iter->rq_xid)
-@@ -1001,18 +995,14 @@ struct ptlrpc_request_set *ptlrpc_prep_fcset(int max, set_producer_func func,
+ /**
+  * Update hash digest computed on data within the given \a page
+  *
+- * \param[in] hdesc	hash state descriptor
++ * \param[in] hreq	hash state descriptor
+  * \param[in] page	data page on which to compute the hash
+  * \param[in] offset	offset within \a page at which to start hash
+  * \param[in] len	length of data on which to compute hash
+@@ -221,11 +221,10 @@ EXPORT_SYMBOL(cfs_crypto_hash_init);
+  * \retval		0 for success
+  * \retval		negative errno on failure
   */
- void ptlrpc_set_destroy(struct ptlrpc_request_set *set)
+-int cfs_crypto_hash_update_page(struct cfs_crypto_hash_desc *hdesc,
++int cfs_crypto_hash_update_page(struct ahash_request *req,
+ 				struct page *page, unsigned int offset,
+ 				unsigned int len)
  {
--	struct list_head *tmp;
--	struct list_head *next;
-+	struct ptlrpc_request *req;
- 	int expected_phase;
- 	int n = 0;
+-	struct ahash_request *req = (void *)hdesc;
+ 	struct scatterlist sl;
  
- 	/* Requests on the set should either all be completed, or all be new */
- 	expected_phase = (atomic_read(&set->set_remaining) == 0) ?
- 			 RQ_PHASE_COMPLETE : RQ_PHASE_NEW;
--	list_for_each(tmp, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_set_chain);
--
-+	list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 		LASSERT(req->rq_phase == expected_phase);
- 		n++;
- 	}
-@@ -1021,9 +1011,9 @@ void ptlrpc_set_destroy(struct ptlrpc_request_set *set)
- 		 atomic_read(&set->set_remaining) == n, "%d / %d\n",
- 		 atomic_read(&set->set_remaining), n);
- 
--	list_for_each_safe(tmp, next, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_set_chain);
-+	while ((req = list_first_entry_or_null(&set->set_requests,
-+					       struct ptlrpc_request,
-+					       rq_set_chain))) {
- 		list_del_init(&req->rq_set_chain);
- 
- 		LASSERT(req->rq_phase == expected_phase);
-@@ -1640,7 +1630,7 @@ static inline int ptlrpc_set_producer(struct ptlrpc_request_set *set)
+ 	sg_init_table(&sl, 1);
+@@ -239,17 +238,16 @@ EXPORT_SYMBOL(cfs_crypto_hash_update_page);
+ /**
+  * Update hash digest computed on the specified data
+  *
+- * \param[in] hdesc	hash state descriptor
++ * \param[in] req	hash state descriptor
+  * \param[in] buf	data buffer on which to compute the hash
+  * \param[in] buf_len	length of \buf on which to compute hash
+  *
+  * \retval		0 for success
+  * \retval		negative errno on failure
   */
- int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
+-int cfs_crypto_hash_update(struct cfs_crypto_hash_desc *hdesc,
++int cfs_crypto_hash_update(struct ahash_request *req,
+ 			   const void *buf, unsigned int buf_len)
  {
--	struct list_head *tmp, *next;
-+	struct ptlrpc_request *req, *next;
- 	struct list_head comp_reqs;
- 	int force_timer_recalc = 0;
+-	struct ahash_request *req = (void *)hdesc;
+ 	struct scatterlist sl;
  
-@@ -1648,9 +1638,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 		return 1;
- 
- 	INIT_LIST_HEAD(&comp_reqs);
--	list_for_each_safe(tmp, next, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_set_chain);
-+	list_for_each_entry_safe(req, next, &set->set_requests, rq_set_chain) {
- 		struct obd_import *imp = req->rq_import;
- 		int unregistered = 0;
- 		int rc = 0;
-@@ -2126,13 +2114,11 @@ int ptlrpc_expire_one_request(struct ptlrpc_request *req, int async_unlink)
+ 	sg_init_one(&sl, buf, buf_len);
+@@ -262,20 +260,19 @@ EXPORT_SYMBOL(cfs_crypto_hash_update);
+ /**
+  * Finish hash calculation, copy hash digest to buffer, clean up hash descriptor
+  *
+- * \param[in]	  hdesc		hash descriptor
++ * \param[in]	  req		hash descriptor
+  * \param[out]	  hash		pointer to hash buffer to store hash digest
+- * \param[in,out] hash_len	pointer to hash buffer size, if \a hdesc = NULL
+- *				only free \a hdesc instead of computing the hash
++ * \param[in,out] hash_len	pointer to hash buffer size, if \a req = NULL
++ *				only free \a req instead of computing the hash
+  *
+  * \retval	0 for success
+  * \retval	-EOVERFLOW if hash_len is too small for the hash digest
+  * \retval	negative errno for other errors from lower layers
   */
- void ptlrpc_expired_set(struct ptlrpc_request_set *set)
+-int cfs_crypto_hash_final(struct cfs_crypto_hash_desc *hdesc,
++int cfs_crypto_hash_final(struct ahash_request *req,
+ 			  unsigned char *hash, unsigned int *hash_len)
  {
--	struct list_head *tmp;
-+	struct ptlrpc_request *req;
- 	time64_t now = ktime_get_real_seconds();
+ 	int err;
+-	struct ahash_request *req = (void *)hdesc;
+ 	int size = crypto_ahash_digestsize(crypto_ahash_reqtfm(req));
  
- 	/* A timeout expired. See which reqs it applies to...  */
--	list_for_each(tmp, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_set_chain);
-+	list_for_each_entry(req, &set->set_requests, rq_set_chain) {
+ 	if (!hash || !hash_len) {
+@@ -331,7 +328,7 @@ static void cfs_crypto_performance_test(enum cfs_crypto_hash_alg hash_alg)
  
- 		/* don't expire request waiting for context */
- 		if (req->rq_wait_ctx)
-@@ -2173,13 +2159,10 @@ EXPORT_SYMBOL(ptlrpc_mark_interrupted);
-  */
- static void ptlrpc_interrupted_set(struct ptlrpc_request_set *set)
+ 	for (start = jiffies, end = start + msecs_to_jiffies(MSEC_PER_SEC),
+ 	     bcount = 0; time_before(jiffies, end); bcount++) {
+-		struct cfs_crypto_hash_desc *hdesc;
++		struct ahash_request *hdesc;
+ 		int i;
+ 
+ 		hdesc = cfs_crypto_hash_init(hash_alg, NULL, 0);
+diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
+index 074b5ce6284c..1c2bbbf5d864 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_request.c
++++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+@@ -931,7 +931,7 @@ static u32 osc_checksum_bulk(int nob, u32 pg_count,
  {
--	struct list_head *tmp;
--
-+	struct ptlrpc_request *req;
- 	CDEBUG(D_RPCTRACE, "INTERRUPTED SET %p\n", set);
+ 	__u32 cksum;
+ 	int i = 0;
+-	struct cfs_crypto_hash_desc *hdesc;
++	struct ahash_request *hdesc;
+ 	unsigned int bufsize;
+ 	unsigned char cfs_alg = cksum_obd2cfs(cksum_type);
  
--	list_for_each(tmp, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_set_chain);
-+	list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 
- 		if (req->rq_phase != RQ_PHASE_RPC &&
- 		    req->rq_phase != RQ_PHASE_UNREG_RPC)
-@@ -2194,14 +2177,12 @@ static void ptlrpc_interrupted_set(struct ptlrpc_request_set *set)
-  */
- int ptlrpc_set_next_timeout(struct ptlrpc_request_set *set)
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c b/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
+index 2184022ed724..577c5822b823 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
+@@ -530,7 +530,7 @@ EXPORT_SYMBOL(bulk_sec_desc_unpack);
+ int sptlrpc_get_bulk_checksum(struct ptlrpc_bulk_desc *desc, __u8 alg,
+ 			      void *buf, int buflen)
  {
--	struct list_head *tmp;
- 	time64_t now = ktime_get_real_seconds();
- 	int timeout = 0;
- 	struct ptlrpc_request *req;
- 	time64_t deadline;
- 
--	list_for_each(tmp, &set->set_requests) {
--		req = list_entry(tmp, struct ptlrpc_request, rq_set_chain);
-+	list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 
- 		/* Request in-flight? */
- 		if (!(((req->rq_phase == RQ_PHASE_RPC) && !req->rq_waiting) ||
-@@ -2240,16 +2221,13 @@ int ptlrpc_set_next_timeout(struct ptlrpc_request_set *set)
-  */
- int ptlrpc_set_wait(struct ptlrpc_request_set *set)
- {
--	struct list_head *tmp;
- 	struct ptlrpc_request *req;
- 	int rc, timeout;
- 
- 	if (set->set_producer)
- 		(void)ptlrpc_set_producer(set);
- 	else
--		list_for_each(tmp, &set->set_requests) {
--			req = list_entry(tmp, struct ptlrpc_request,
--					 rq_set_chain);
-+		list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 			if (req->rq_phase == RQ_PHASE_NEW)
- 				(void)ptlrpc_send_new_req(req);
- 		}
-@@ -2322,9 +2300,7 @@ int ptlrpc_set_wait(struct ptlrpc_request_set *set)
- 		 * the error cases -eeb.
- 		 */
- 		if (rc == 0 && atomic_read(&set->set_remaining) == 0) {
--			list_for_each(tmp, &set->set_requests) {
--				req = list_entry(tmp, struct ptlrpc_request,
--						 rq_set_chain);
-+			list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 				spin_lock(&req->rq_lock);
- 				req->rq_invalid_rqset = 1;
- 				spin_unlock(&req->rq_lock);
-@@ -2335,9 +2311,7 @@ int ptlrpc_set_wait(struct ptlrpc_request_set *set)
- 	LASSERT(atomic_read(&set->set_remaining) == 0);
- 
- 	rc = set->set_rc; /* rq_status of already freed requests if any */
--	list_for_each(tmp, &set->set_requests) {
--		req = list_entry(tmp, struct ptlrpc_request, rq_set_chain);
--
-+	list_for_each_entry(req, &set->set_requests, rq_set_chain) {
- 		LASSERT(req->rq_phase == RQ_PHASE_COMPLETE);
- 		if (req->rq_status != 0)
- 			rc = req->rq_status;
-@@ -2716,8 +2690,7 @@ EXPORT_SYMBOL(ptlrpc_request_addref);
- void ptlrpc_retain_replayable_request(struct ptlrpc_request *req,
- 				      struct obd_import *imp)
- {
--	struct list_head *tmp;
--
-+	struct ptlrpc_request *iter;
- 	assert_spin_locked(&imp->imp_lock);
- 
- 	if (req->rq_transno == 0) {
-@@ -2744,10 +2717,7 @@ void ptlrpc_retain_replayable_request(struct ptlrpc_request *req,
- 	LASSERT(imp->imp_replayable);
- 	/* Balanced in ptlrpc_free_committed, usually. */
- 	ptlrpc_request_addref(req);
--	list_for_each_prev(tmp, &imp->imp_replay_list) {
--		struct ptlrpc_request *iter =
--			list_entry(tmp, struct ptlrpc_request, rq_replay_list);
--
-+	list_for_each_entry_reverse(iter, &imp->imp_replay_list, rq_replay_list) {
- 		/*
- 		 * We may have duplicate transnos if we create and then
- 		 * open a file, or for closes retained if to match creating
-@@ -2955,7 +2925,7 @@ int ptlrpc_replay_req(struct ptlrpc_request *req)
-  */
- void ptlrpc_abort_inflight(struct obd_import *imp)
- {
--	struct list_head *tmp, *n;
-+	struct ptlrpc_request *req, *n;
- 
- 	/*
- 	 * Make sure that no new requests get processed for this import.
-@@ -2969,10 +2939,7 @@ void ptlrpc_abort_inflight(struct obd_import *imp)
- 	 * locked?  Also, how do we know if the requests on the list are
- 	 * being freed at this time?
- 	 */
--	list_for_each_safe(tmp, n, &imp->imp_sending_list) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_list);
--
-+	list_for_each_entry_safe(req, n, &imp->imp_sending_list, rq_list) {
- 		DEBUG_REQ(D_RPCTRACE, req, "inflight");
- 
- 		spin_lock(&req->rq_lock);
-@@ -2984,10 +2951,7 @@ void ptlrpc_abort_inflight(struct obd_import *imp)
- 		spin_unlock(&req->rq_lock);
- 	}
- 
--	list_for_each_safe(tmp, n, &imp->imp_delayed_list) {
--		struct ptlrpc_request *req =
--			list_entry(tmp, struct ptlrpc_request, rq_list);
--
-+	list_for_each_entry_safe(req, n, &imp->imp_delayed_list, rq_list) {
- 		DEBUG_REQ(D_RPCTRACE, req, "aborting waiting req");
- 
- 		spin_lock(&req->rq_lock);
-@@ -3014,12 +2978,9 @@ void ptlrpc_abort_inflight(struct obd_import *imp)
-  */
- void ptlrpc_abort_set(struct ptlrpc_request_set *set)
- {
--	struct list_head *tmp, *pos;
--
--	list_for_each_safe(pos, tmp, &set->set_requests) {
--		struct ptlrpc_request *req =
--			list_entry(pos, struct ptlrpc_request, rq_set_chain);
-+	struct ptlrpc_request *req, *tmp;
- 
-+	list_for_each_entry_safe(req, tmp, &set->set_requests, rq_set_chain) {
- 		spin_lock(&req->rq_lock);
- 		if (req->rq_phase != RQ_PHASE_RPC) {
- 			spin_unlock(&req->rq_lock);
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/import.c b/drivers/staging/lustre/lustre/ptlrpc/import.c
-index faf0f606f013..a2c4fc3488b1 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/import.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/import.c
-@@ -242,15 +242,13 @@ ptlrpc_inflight_deadline(struct ptlrpc_request *req, time64_t now)
- static unsigned int ptlrpc_inflight_timeout(struct obd_import *imp)
- {
- 	time64_t now = ktime_get_real_seconds();
--	struct list_head *tmp, *n;
--	struct ptlrpc_request *req;
-+	struct ptlrpc_request *req, *n;
- 	unsigned int timeout = 0;
- 
- 	spin_lock(&imp->imp_lock);
--	list_for_each_safe(tmp, n, &imp->imp_sending_list) {
--		req = list_entry(tmp, struct ptlrpc_request, rq_list);
-+	list_for_each_entry_safe(req, n, &imp->imp_sending_list, rq_list)
- 		timeout = max(ptlrpc_inflight_deadline(req, now), timeout);
--	}
-+
- 	spin_unlock(&imp->imp_lock);
- 	return timeout;
- }
-@@ -263,8 +261,7 @@ static unsigned int ptlrpc_inflight_timeout(struct obd_import *imp)
-  */
- void ptlrpc_invalidate_import(struct obd_import *imp)
- {
--	struct list_head *tmp, *n;
--	struct ptlrpc_request *req;
-+	struct ptlrpc_request *req, *n;
- 	unsigned int timeout;
- 	int rc;
- 
-@@ -336,19 +333,13 @@ void ptlrpc_invalidate_import(struct obd_import *imp)
- 				 */
- 				rc = 0;
- 			} else {
--				list_for_each_safe(tmp, n,
--						   &imp->imp_sending_list) {
--					req = list_entry(tmp,
--							 struct ptlrpc_request,
--							 rq_list);
-+				list_for_each_entry_safe(req, n,
-+							 &imp->imp_sending_list, rq_list) {
- 					DEBUG_REQ(D_ERROR, req,
- 						  "still on sending list");
- 				}
--				list_for_each_safe(tmp, n,
--						   &imp->imp_delayed_list) {
--					req = list_entry(tmp,
--							 struct ptlrpc_request,
--							 rq_list);
-+				list_for_each_entry_safe(req, n,
-+							 &imp->imp_delayed_list, rq_list) {
- 					DEBUG_REQ(D_ERROR, req,
- 						  "still on delayed list");
- 				}
-@@ -557,14 +548,13 @@ static int import_select_connection(struct obd_import *imp)
- static int ptlrpc_first_transno(struct obd_import *imp, __u64 *transno)
- {
- 	struct ptlrpc_request *req;
--	struct list_head *tmp;
- 
- 	/* The requests in committed_list always have smaller transnos than
- 	 * the requests in replay_list
- 	 */
- 	if (!list_empty(&imp->imp_committed_list)) {
--		tmp = imp->imp_committed_list.next;
--		req = list_entry(tmp, struct ptlrpc_request, rq_replay_list);
-+		req = list_first_entry(&imp->imp_committed_list,
-+				       struct ptlrpc_request, rq_replay_list);
- 		*transno = req->rq_transno;
- 		if (req->rq_transno == 0) {
- 			DEBUG_REQ(D_ERROR, req,
-@@ -574,8 +564,8 @@ static int ptlrpc_first_transno(struct obd_import *imp, __u64 *transno)
- 		return 1;
- 	}
- 	if (!list_empty(&imp->imp_replay_list)) {
--		tmp = imp->imp_replay_list.next;
--		req = list_entry(tmp, struct ptlrpc_request, rq_replay_list);
-+		req = list_first_entry(&imp->imp_replay_list,
-+				       struct ptlrpc_request, rq_replay_list);
- 		*transno = req->rq_transno;
- 		if (req->rq_transno == 0) {
- 			DEBUG_REQ(D_ERROR, req, "zero transno in replay_list");
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/pinger.c b/drivers/staging/lustre/lustre/ptlrpc/pinger.c
-index 639070f6e68e..b5f3cfee8e75 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/pinger.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/pinger.c
-@@ -230,17 +230,13 @@ static int ptlrpc_pinger_main(void *arg)
- 		unsigned long this_ping = cfs_time_current();
- 		long time_to_next_wake;
- 		struct timeout_item *item;
--		struct list_head *iter;
-+		struct obd_import *imp;
- 
- 		mutex_lock(&pinger_mutex);
- 		list_for_each_entry(item, &timeout_list, ti_chain) {
- 			item->ti_cb(item, item->ti_cb_data);
- 		}
--		list_for_each(iter, &pinger_imports) {
--			struct obd_import *imp =
--				list_entry(iter, struct obd_import,
--					   imp_pinger_chain);
--
-+		list_for_each_entry(imp, &pinger_imports, imp_pinger_chain) {
- 			ptlrpc_pinger_process_import(imp, this_ping);
- 			/* obd_timeout might have changed */
- 			if (imp->imp_pingable && imp->imp_next_ping &&
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c b/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-index 6ed77521d025..c0fa13942bd8 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-@@ -197,17 +197,14 @@ ptlrpcd_select_pc(struct ptlrpc_request *req)
- static int ptlrpcd_steal_rqset(struct ptlrpc_request_set *des,
- 			       struct ptlrpc_request_set *src)
- {
--	struct list_head *tmp, *pos;
--	struct ptlrpc_request *req;
-+	struct ptlrpc_request *req, *tmp;
- 	int rc = 0;
- 
- 	spin_lock(&src->set_new_req_lock);
- 	if (likely(!list_empty(&src->set_new_requests))) {
--		list_for_each_safe(pos, tmp, &src->set_new_requests) {
--			req = list_entry(pos, struct ptlrpc_request,
--					 rq_set_chain);
-+		list_for_each_entry_safe(req, tmp, &src->set_new_requests, rq_set_chain)
- 			req->rq_set = des;
--		}
-+
- 		list_splice_init(&src->set_new_requests, &des->set_requests);
- 		rc = atomic_read(&src->set_new_count);
- 		atomic_add(rc, &des->set_remaining);
-@@ -273,8 +270,7 @@ static inline void ptlrpc_reqset_get(struct ptlrpc_request_set *set)
-  */
- static int ptlrpcd_check(struct lu_env *env, struct ptlrpcd_ctl *pc)
- {
--	struct list_head *tmp, *pos;
--	struct ptlrpc_request *req;
-+	struct ptlrpc_request *req, *tmp;
- 	struct ptlrpc_request_set *set = pc->pc_set;
- 	int rc = 0;
- 	int rc2;
-@@ -320,8 +316,7 @@ static int ptlrpcd_check(struct lu_env *env, struct ptlrpcd_ctl *pc)
- 	/* NB: ptlrpc_check_set has already moved completed request at the
- 	 * head of seq::set_requests
- 	 */
--	list_for_each_safe(pos, tmp, &set->set_requests) {
--		req = list_entry(pos, struct ptlrpc_request, rq_set_chain);
-+	list_for_each_entry_safe(req, tmp, &set->set_requests, rq_set_chain) {
- 		if (req->rq_phase != RQ_PHASE_COMPLETE)
- 			break;
- 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/recover.c b/drivers/staging/lustre/lustre/ptlrpc/recover.c
-index 5bb9f9fe91d8..2ea0a7ff87dd 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/recover.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/recover.c
-@@ -66,8 +66,7 @@ void ptlrpc_initiate_recovery(struct obd_import *imp)
- int ptlrpc_replay_next(struct obd_import *imp, int *inflight)
- {
- 	int rc = 0;
--	struct list_head *tmp, *pos;
--	struct ptlrpc_request *req = NULL;
-+	struct ptlrpc_request *req = NULL, *pos;
- 	__u64 last_transno;
- 
- 	*inflight = 0;
-@@ -86,8 +85,8 @@ int ptlrpc_replay_next(struct obd_import *imp, int *inflight)
- 
- 	/* Replay all the committed open requests on committed_list first */
- 	if (!list_empty(&imp->imp_committed_list)) {
--		tmp = imp->imp_committed_list.prev;
--		req = list_entry(tmp, struct ptlrpc_request, rq_replay_list);
-+		req = list_last_entry(&imp->imp_committed_list,
-+				      struct ptlrpc_request, rq_replay_list);
- 
- 		/* The last request on committed_list hasn't been replayed */
- 		if (req->rq_transno > last_transno) {
-@@ -119,13 +118,13 @@ int ptlrpc_replay_next(struct obd_import *imp, int *inflight)
- 	 * the imp_replay_list
- 	 */
- 	if (!req) {
--		list_for_each_safe(tmp, pos, &imp->imp_replay_list) {
--			req = list_entry(tmp, struct ptlrpc_request,
--					 rq_replay_list);
--
--			if (req->rq_transno > last_transno)
-+		struct ptlrpc_request *tmp;
-+		list_for_each_entry_safe(tmp, pos, &imp->imp_replay_list,
-+					 rq_replay_list) {
-+			if (tmp->rq_transno > last_transno) {
-+				req = tmp;
- 				break;
--			req = NULL;
-+			}
- 		}
- 	}
- 
-@@ -211,13 +210,10 @@ int ptlrpc_resend(struct obd_import *imp)
-  */
- void ptlrpc_wake_delayed(struct obd_import *imp)
- {
--	struct list_head *tmp, *pos;
--	struct ptlrpc_request *req;
-+	struct ptlrpc_request *req, *pos;
- 
- 	spin_lock(&imp->imp_lock);
--	list_for_each_safe(tmp, pos, &imp->imp_delayed_list) {
--		req = list_entry(tmp, struct ptlrpc_request, rq_list);
--
-+	list_for_each_entry_safe(req, pos, &imp->imp_delayed_list, rq_list) {
- 		DEBUG_REQ(D_HA, req, "waking (set %p):", req->rq_set);
- 		ptlrpc_client_wake_req(req);
- 	}
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
-index 99aeb291f3f2..49417228b621 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/service.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
-@@ -726,8 +726,6 @@ static void ptlrpc_server_drop_request(struct ptlrpc_request *req)
- 	struct ptlrpc_service_part *svcpt = rqbd->rqbd_svcpt;
- 	struct ptlrpc_service *svc = svcpt->scp_service;
- 	int refcount;
--	struct list_head *tmp;
--	struct list_head *nxt;
- 
- 	if (!atomic_dec_and_test(&req->rq_refcount))
- 		return;
-@@ -776,9 +774,7 @@ static void ptlrpc_server_drop_request(struct ptlrpc_request *req)
- 			/* remove rqbd's reqs from svc's req history while
- 			 * I've got the service lock
- 			 */
--			list_for_each(tmp, &rqbd->rqbd_reqs) {
--				req = list_entry(tmp, struct ptlrpc_request,
--						 rq_list);
-+			list_for_each_entry(req, &rqbd->rqbd_reqs, rq_list) {
- 				/* Track the highest culled req seq */
- 				if (req->rq_history_seq >
- 				    svcpt->scp_hist_seq_culled) {
-@@ -790,10 +786,9 @@ static void ptlrpc_server_drop_request(struct ptlrpc_request *req)
- 
- 			spin_unlock(&svcpt->scp_lock);
- 
--			list_for_each_safe(tmp, nxt, &rqbd->rqbd_reqs) {
--				req = list_entry(rqbd->rqbd_reqs.next,
--						 struct ptlrpc_request,
--						 rq_list);
-+			while ((req = list_first_entry_or_null(
-+					&rqbd->rqbd_reqs,
-+					struct ptlrpc_request, rq_list))) {
- 				list_del(&req->rq_list);
- 				ptlrpc_server_free_request(req);
- 			}
+-	struct cfs_crypto_hash_desc *hdesc;
++	struct ahash_request *hdesc;
+ 	int hashsize;
+ 	unsigned int bufsize;
+ 	int i, err;
