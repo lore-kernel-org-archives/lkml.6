@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeBTQiK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:38:10 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37481 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752533AbeBTQgu (ORCPT
+        id S1752626AbeBTQg5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:36:57 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46049 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753034AbeBTQgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:36:50 -0500
-X-Google-Smtp-Source: AH8x224dkebNJDS3ijia737ueL2+hboe2mj8L0JZT3sw2IBmMcm+QPV/gkjaCaDW4rnc7zQSX7N4fA==
+        Tue, 20 Feb 2018 11:36:53 -0500
+X-Google-Smtp-Source: AH8x227DJwX6vy6BiguLg9Ps4VLuBCI9aL7Yuz46ZTNU2tuMjT/JnsTnLV+ronLUTL1tfVPYtgWnQA==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/15] memory: tegra: Add Tegra124 memory controller hot resets
-Date: Tue, 20 Feb 2018 19:36:29 +0300
-Message-Id: <74072a57f9dd4c865f6e5f3494e160f91cf82671.1519141896.git.digetx@gmail.com>
+Subject: [PATCH v3 15/15] memory: tegra: Add Tegra20 memory controller hot resets
+Date: Tue, 20 Feb 2018 19:36:32 +0300
+Message-Id: <c828837ae96880e031f22bed1b416b3f4f8310aa.1519141896.git.digetx@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <c8edcd52ec69afcca6007d8c2a1045aae7333bb4.1519141896.git.digetx@gmail.com>
 References: <c8edcd52ec69afcca6007d8c2a1045aae7333bb4.1519141896.git.digetx@gmail.com>
@@ -26,78 +26,154 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the table of memory controller hot resets for Tegra124.
+Define the table of memory controller hot resets for Tegra20 and add
+specific to Tegra20 hot reset operations.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra124.c | 42 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/memory/tegra/tegra20.c | 118 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index bd16555cca0f..cd2c99526de2 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1012,6 +1012,42 @@ static const struct tegra_smmu_group_soc tegra124_groups[] = {
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index 512a3418cb80..c7add1ef01ed 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -6,6 +6,8 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <dt-bindings/memory/tegra20-mc.h>
++
+ #include "mc.h"
+ 
+ static const struct tegra_mc_client tegra20_mc_clients[] = {
+@@ -168,6 +170,119 @@ static const struct tegra_mc_client tegra20_mc_clients[] = {
  	},
  };
  
-+#define TEGRA124_MC_RESET(_name, _control, _status, _bit)	\
-+	{							\
-+		.name = #_name,					\
-+		.id = TEGRA124_MC_RESET_##_name,		\
-+		.control = _control,				\
-+		.status = _status,				\
-+		.bit = _bit,					\
++#define TEGRA20_MC_RESET(_name, _control, _status, _reset, _bit)	\
++	{								\
++		.name = #_name,						\
++		.id = TEGRA20_MC_RESET_##_name,				\
++		.control = _control,					\
++		.status = _status,					\
++		.reset = _reset,					\
++		.bit = _bit,						\
 +	}
 +
-+static const struct tegra_mc_reset tegra124_mc_resets[] = {
-+	TEGRA124_MC_RESET(AFI,       0x200, 0x204,  0),
-+	TEGRA124_MC_RESET(AVPC,      0x200, 0x204,  1),
-+	TEGRA124_MC_RESET(DC,        0x200, 0x204,  2),
-+	TEGRA124_MC_RESET(DCB,       0x200, 0x204,  3),
-+	TEGRA124_MC_RESET(HC,        0x200, 0x204,  6),
-+	TEGRA124_MC_RESET(HDA,       0x200, 0x204,  7),
-+	TEGRA124_MC_RESET(ISP2,      0x200, 0x204,  8),
-+	TEGRA124_MC_RESET(MPCORE,    0x200, 0x204,  9),
-+	TEGRA124_MC_RESET(MPCORELP,  0x200, 0x204, 10),
-+	TEGRA124_MC_RESET(MSENC,     0x200, 0x204, 11),
-+	TEGRA124_MC_RESET(PPCS,      0x200, 0x204, 14),
-+	TEGRA124_MC_RESET(SATA,      0x200, 0x204, 15),
-+	TEGRA124_MC_RESET(VDE,       0x200, 0x204, 16),
-+	TEGRA124_MC_RESET(VI,        0x200, 0x204, 17),
-+	TEGRA124_MC_RESET(VIC,       0x200, 0x204, 18),
-+	TEGRA124_MC_RESET(XUSB_HOST, 0x200, 0x204, 19),
-+	TEGRA124_MC_RESET(XUSB_DEV,  0x200, 0x204, 20),
-+	TEGRA124_MC_RESET(TSEC,      0x200, 0x204, 21),
-+	TEGRA124_MC_RESET(SDMMC1,    0x200, 0x204, 22),
-+	TEGRA124_MC_RESET(SDMMC2,    0x200, 0x204, 23),
-+	TEGRA124_MC_RESET(SDMMC3,    0x200, 0x204, 25),
-+	TEGRA124_MC_RESET(SDMMC4,    0x970, 0x974,  0),
-+	TEGRA124_MC_RESET(ISP2B,     0x970, 0x974,  1),
-+	TEGRA124_MC_RESET(GPU,       0x970, 0x974,  2),
++static const struct tegra_mc_reset tegra20_mc_resets[] = {
++	TEGRA20_MC_RESET(AVPC,   0x100, 0x140, 0x104,  0),
++	TEGRA20_MC_RESET(DC,     0x100, 0x144, 0x104,  1),
++	TEGRA20_MC_RESET(DCB,    0x100, 0x148, 0x104,  2),
++	TEGRA20_MC_RESET(EPP,    0x100, 0x14c, 0x104,  3),
++	TEGRA20_MC_RESET(2D,     0x100, 0x150, 0x104,  4),
++	TEGRA20_MC_RESET(HC,     0x100, 0x154, 0x104,  5),
++	TEGRA20_MC_RESET(ISP,    0x100, 0x158, 0x104,  6),
++	TEGRA20_MC_RESET(MPCORE, 0x100, 0x15c, 0x104,  7),
++	TEGRA20_MC_RESET(MPEA,   0x100, 0x160, 0x104,  8),
++	TEGRA20_MC_RESET(MPEB,   0x100, 0x164, 0x104,  9),
++	TEGRA20_MC_RESET(MPEC,   0x100, 0x168, 0x104, 10),
++	TEGRA20_MC_RESET(3D,     0x100, 0x16c, 0x104, 11),
++	TEGRA20_MC_RESET(PPCS,   0x100, 0x170, 0x104, 12),
++	TEGRA20_MC_RESET(VDE,    0x100, 0x174, 0x104, 13),
++	TEGRA20_MC_RESET(VI,     0x100, 0x178, 0x104, 14),
 +};
 +
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- static const struct tegra_smmu_soc tegra124_smmu_soc = {
- 	.clients = tegra124_mc_clients,
-@@ -1038,6 +1074,9 @@ const struct tegra_mc_soc tegra124_mc_soc = {
- 	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
- 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.resets_ops = &terga_mc_resets_ops_common,
-+	.resets = tegra124_mc_resets,
-+	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
++static int terga20_mc_hotreset_assert(struct tegra_mc *mc,
++				      const struct tegra_mc_reset *rst)
++{
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&mc->lock, flags);
++
++	value = mc_readl(mc, rst->reset);
++	mc_writel(mc, value & ~BIT(rst->bit), rst->reset);
++
++	spin_unlock_irqrestore(&mc->lock, flags);
++
++	return 0;
++}
++
++static int terga20_mc_hotreset_deassert(struct tegra_mc *mc,
++					const struct tegra_mc_reset *rst)
++{
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&mc->lock, flags);
++
++	value = mc_readl(mc, rst->reset);
++	mc_writel(mc, value | BIT(rst->bit), rst->reset);
++
++	spin_unlock_irqrestore(&mc->lock, flags);
++
++	return 0;
++}
++
++static int terga20_mc_block_dma(struct tegra_mc *mc,
++				const struct tegra_mc_reset *rst)
++{
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&mc->lock, flags);
++
++	value = mc_readl(mc, rst->control) & ~BIT(rst->bit);
++	mc_writel(mc, value, rst->control);
++
++	spin_unlock_irqrestore(&mc->lock, flags);
++
++	return 0;
++}
++
++static bool terga20_mc_dma_idling(struct tegra_mc *mc,
++				  const struct tegra_mc_reset *rst)
++{
++	return mc_readl(mc, rst->status) == 0;
++}
++
++static int terga20_mc_reset_status(struct tegra_mc *mc,
++				   const struct tegra_mc_reset *rst)
++{
++	return (mc_readl(mc, rst->reset) & BIT(rst->bit)) == 0;
++}
++
++static int terga20_mc_unblock_dma(struct tegra_mc *mc,
++				  const struct tegra_mc_reset *rst)
++{
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&mc->lock, flags);
++
++	value = mc_readl(mc, rst->control) | BIT(rst->bit);
++	mc_writel(mc, value, rst->control);
++
++	spin_unlock_irqrestore(&mc->lock, flags);
++
++	return 0;
++}
++
++const struct tegra_mc_reset_ops terga20_mc_resets_ops = {
++	.hotreset_assert = terga20_mc_hotreset_assert,
++	.hotreset_deassert = terga20_mc_hotreset_deassert,
++	.block_dma = terga20_mc_block_dma,
++	.dma_idling = terga20_mc_dma_idling,
++	.unblock_dma = terga20_mc_unblock_dma,
++	.reset_status = terga20_mc_reset_status,
++};
++
+ const struct tegra_mc_soc tegra20_mc_soc = {
+ 	.clients = tegra20_mc_clients,
+ 	.num_clients = ARRAY_SIZE(tegra20_mc_clients),
+@@ -175,4 +290,7 @@ const struct tegra_mc_soc tegra20_mc_soc = {
+ 	.client_id_mask = 0x3f,
+ 	.intmask = MC_INT_SECURITY_VIOLATION | MC_INT_INVALID_GART_PAGE |
+ 		   MC_INT_DECERR_EMEM,
++	.resets_ops = &terga20_mc_resets_ops,
++	.resets = tegra20_mc_resets,
++	.num_resets = ARRAY_SIZE(tegra20_mc_resets),
  };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
- 
-@@ -1065,5 +1104,8 @@ const struct tegra_mc_soc tegra132_mc_soc = {
- 	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
- 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.resets_ops = &terga_mc_resets_ops_common,
-+	.resets = tegra124_mc_resets,
-+	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
- };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
 -- 
 2.16.1
