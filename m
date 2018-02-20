@@ -1,83 +1,163 @@
-Return-Path: <daniel.diaz@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519236578; cv=none;
+Return-Path: <j.neuschaefer@gmx.net>
+X-Google-Smtp-Source: AH8x226gIKNNyn8btr8Iwien0vdgUonEXTLFum88xZgXhvF2uEVcafQe/lo646gjumr7IdC/EIEA
+ARC-Seal: i=1; a=rsa-sha256; t=1519143404; cv=none;
         d=google.com; s=arc-20160816;
-        b=D8JDp05Uq+1gXgAEv7BwJbfGevG5EJgy5Oz+cuhO4pIuZ0hPyCSnyrOZYszNS05mqw
-         dvkaLtnIkCaoJJMnqS5H6gaYyyopqIoYpj4o7TMvca2ZViIKo+0gA40QBvlBfoXMJTt7
-         pJj5vcYfsocrnN/k6yVRveYb3+ByMKBWrzXthVzROLI0z8QffX1VH9VBfPGWuOZRndjD
-         6M3mQ59UMxF+jSnx5QspoMPHPhL1jGiTdqbsV31ghLWSu00tGvH0bJh6d+4vLDy2uthN
-         IYurkPx89bsDwcATKu5oWTtHQmVm8qwbh7EPcKeGWb13tVsFkx8B22BTbdYU6MmLldNK
-         blEQ==
+        b=AoEWa3y3vWkOIL4qNb1huiOoFeeAkrXo8DsxxNGocxIBcDbV1pVHUAanjiEIEajlHW
+         PW2dvxyjkTFT2+27axTJ6YzlYQkd9EUtnR96CtYBYboAXPwiMMQpyFJqDdXOZsjWLMmO
+         8/Mk6xoSyRPDECKZ11e+JB3k6O/XAGXHDxdDlvlOIL+nEB2fhJlzWK2FLV6Zps6IgLiJ
+         xnt1RNOrEM0/30XUV03nXMVVj0WMB+XokhCzcCbQJcOgdvUjqAoQC7vf89LJk6tUgeyq
+         PUcM/45Gn3zoNChRsWvoF7O48F0ZcYz7Sss4QlRMFeWtMnzDP9UpDmGG5j4txUaqrFGV
+         ge1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=ljQ9h7q4idaGVu/GzNq7X6BG2wx+Noe4L1VTQ99qX7g=;
-        b=K0qVlTvdIHOTmGzCkuK3smGF7jifGxbFjSYYE2403TpahTUq5To70BjI01NoWPCi1W
-         Wk1N8ty/AlTY5nPjbntb/EFLLNLeff2LDD9Tk396EJr+OxeYsTiauffs2fSisGGFaLNB
-         w4t6qsnzrpCZVD4sQoAQpwE9CmrifwmZZYqONCLzcu+ebrZF6345eg62qpR60D2XJEI8
-         80GsZW+pWHoYwV5puM30w3e2TbT7jAY/B2ChYtE8FkJdH7r1FaWYXLgil/3jF2zathpH
-         JsBX0KoPlI0JayCKHdbcjLz9xDUjumONLTlouA/xuYNuW1xDwFg+jL+oJPTv9V6x+FAf
-         P8OA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=+0AYLxzJoDiuXmIZCLZzheOH/zaYBdMpJ5hsTrczKO0=;
+        b=HGrN9nYjfup+G7mxzz1nwdY6PQ2JBcIFelsLsDgclfqfBAFAnjao1n/KzXMrfDF+TC
+         SY0vSEBc2UnErQjVr1dlGuG7jlCEAgDCQuQ3RKG3MlXQXvni7+IuZjcCZpdEdLe9/Woy
+         X8lyQ9Mdo1vPy0HGyx8gEt2lkMnVdbbnAsWC65aho+bTJGGilQVtyu80VWpALQbcZvaR
+         f54sbQDAMAOi4of43TpJlXeNWLYHqkZ15fsf/eR3JOFGTaJ3TaWDZu33bO6aJhAC4ktG
+         j9Lj+XZXk8wVefGNl58oiFNCg7LIEg7/5KYrQRQmJ1vugipCwCXdKLAcxNy7R1HZHTNS
+         rPeQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=BFbAmtRO;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.22 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=BFbAmtRO;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x225RNK9nvXKglp6qigAVHxR169GnSlgaYQeQbh/dd9zgJG7Pd3zC60FHHirproYOpRKM5o+Pgg==
-From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-To: shuahkh@osg.samsung.com,
-	linux-kselftest@vger.kernel.org
-Cc: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	SeongJae Park <sj38.park@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.22 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	linux-mm@kvack.org,
+	Joel Stanley <joel@jms.id.au>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] selftests/intel_pstate: Fix build rule for x86
-Date: Wed, 21 Feb 2018 12:07:57 -0600
-Message-Id: <1519236493-13851-1-git-send-email-daniel.diaz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+	Michael Bringmann <mwb@linux.vnet.ibm.com>,
+	Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 5/6] powerpc: Implement DISCONTIGMEM and allow selection on PPC32
+Date: Tue, 20 Feb 2018 17:14:23 +0100
+Message-Id: <20180220161424.5421-6-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180220161424.5421-1-j.neuschaefer@gmx.net>
+References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:Ef61GgKjYRLsV3CHZhmjmyAWWBvqKTYdDtb1IGBtXC5GWbRe9HO
+ XXXBzb2sqZygGsQ3+s70/W1wNSDiXM3RUHZjIOWxluJTS5AeblzkLoOCW0mEsMKWPcQwCIx
+ o7II6IvWyW5YMru2TriMDc8AVVK8B8pczdm0sCyc55b5Cewj2bWK6SheM7dNdK4SJfdie2L
+ lymF5bc6m19OSQ3WCTM3Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nUdq7GK29KQ=:1o8l58jovUtY3uMuj95WFS
+ sHC1WXKH4DXLo9vZ4l/oAOlg0eSGGX90KBQ/iEF4705V9QAW58gro81C9gvn5ZcqU4pu9DAX1
+ h41/KDHFADFXMw+b2jTJwHdJX2ltVhdoTF/cZLCWk2ws5dpzjkYKJm5FD+SlqFaqastsUDPJR
+ bsCN8QK9kD8ecUy3Kz/H5gQbPVXpXpaO50cfVUMWUp/OVHoH+IFnL+L+R/6GD7lB6G70DPIVa
+ DL+tx2udI33hM74CimK0eGVCqJHJPbbe/OYOeM6RxVM4BuFhfAxfG8rbCiP/nLCVLaD7xmWmH
+ SSXQX37HC9KNTNakuBXQorlNOEYp+ds/nAwiG2e6PZcn/MF3EN4y4JjZE3qPkMZ4vsay4MnTs
+ hAQjX7t9WqgVA2OdzCSXA274MLaQ0MYHAIDbXIxA8+TGTpx8CbNrwsuryAYP2F/ruKsDjUIgz
+ sBpxAslwTHBl6u0ZTF/+i80zBC+bp3VItpTzT3by6h7VPoLk/T+nxHLo9/xNAwiOIOL6x7cZq
+ ZoDAtcKjnC/qtU//cIpkOSJrpQ2J7lKrGkvIYGVGb3XBMe6aJWD/LBsF5nVdsEsGXMs8YuGRo
+ 6Ry1HCukUzRqKSTb3V6OcM4etFtONrqMjWOjpaq4qcwyCPPSGEkr8jdwGoukNeaU2FWDOxuIr
+ M9B8UumEj+mm19CloTH/K+OxBwe5suVNvE6UCA2YnqV3gsc1i4pJiJRQqgeQU1zTI/NsEsj/M
+ vNV+12D0JwuGpEBBA8ZpijU8o3ULBm4BqPjxufqUyfZLk88nptZzDEH7QDE09dhzUc90KHqGY
+ a9HMIvhzqPXr9dDbZrdSUS3U6NjucwudyiToY1WxJqAP4lyzh4=
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593035014326696662?=
-X-GMAIL-MSGID: =?utf-8?q?1593035014326696662?=
+X-GMAIL-THRID: =?utf-8?q?1592937314761110102?=
+X-GMAIL-MSGID: =?utf-8?q?1592937314761110102?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Ensure that ARCH is defined and that this only builds for
-x86 architectures.
+The implementation of pfn_to_nid and pfn_valid in mmzone.h is based on
+arch/metag's implementation.
 
-It is possible to build from the root of the Linux tree, which
-will define ARCH, or to run make from the selftests/ directory
-itself, which has no provision for defining ARCH, so this
-change is to use the current definition (if any), or to check
-uname -m if undefined.
-
-Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- tools/testing/selftests/intel_pstate/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/intel_pstate/Makefile b/tools/testing/selftests/intel_pstate/Makefile
-index 5a3f7d37..7340fd6 100644
---- a/tools/testing/selftests/intel_pstate/Makefile
-+++ b/tools/testing/selftests/intel_pstate/Makefile
-@@ -2,7 +2,10 @@
- CFLAGS := $(CFLAGS) -Wall -D_GNU_SOURCE
- LDLIBS := $(LDLIBS) -lm
+NOTE: Checking NODE_DATA(nid) in pfn_to_nid appears to be uncommon.
+Running up to MAX_NUMNODES instead of checking NODE_DATA(nid) would
+require the node_data array to be filled with valid pointers.
+---
+ arch/powerpc/Kconfig              |  5 ++++-
+ arch/powerpc/include/asm/mmzone.h | 21 +++++++++++++++++++++
+ arch/powerpc/mm/numa.c            |  7 +++++++
+ 3 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 73ce5dd07642..c2633b7b8ed9 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -639,7 +639,6 @@ config HAVE_MEMORYLESS_NODES
  
--ifeq (,$(filter $(ARCH),x86))
-+uname_M := $(shell uname -m 2>/dev/null || echo not)
-+ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+ config ARCH_SELECT_MEMORY_MODEL
+ 	def_bool y
+-	depends on PPC64
+ 
+ config ARCH_FLATMEM_ENABLE
+ 	def_bool y
+@@ -654,6 +653,10 @@ config ARCH_SPARSEMEM_DEFAULT
+ 	def_bool y
+ 	depends on PPC_BOOK3S_64
+ 
++config ARCH_DISCONTIGMEM_ENABLE
++	def_bool y
++	depends on PPC32
 +
-+ifeq (x86,$(ARCH))
- TEST_GEN_FILES := msr aperf
- endif
+ config SYS_SUPPORTS_HUGETLBFS
+ 	bool
+ 
+diff --git a/arch/powerpc/include/asm/mmzone.h b/arch/powerpc/include/asm/mmzone.h
+index 91c69ff53a8a..1684a5c98d23 100644
+--- a/arch/powerpc/include/asm/mmzone.h
++++ b/arch/powerpc/include/asm/mmzone.h
+@@ -26,6 +26,27 @@ extern struct pglist_data *node_data[];
+  */
+ #define NODE_DATA(nid)		(node_data[nid])
+ 
++static inline int pfn_to_nid(unsigned long pfn)
++{
++	int nid;
++
++	for (nid = 0; nid < MAX_NUMNODES && NODE_DATA(nid); nid++)
++		if (pfn >= node_start_pfn(nid) && pfn <= node_end_pfn(nid))
++			return nid;
++
++	return -1;
++}
++
++static inline int pfn_valid(int pfn)
++{
++	int nid = pfn_to_nid(pfn);
++
++	if (nid >= 0)
++		return pfn < node_end_pfn(nid);
++
++	return 0;
++}
++
+ /*
+  * Following are specific to this numa platform.
+  */
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index dfe279529463..ec47f1081509 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -744,6 +744,13 @@ static void __init setup_nonnuma(void)
+ 				  PFN_PHYS(end_pfn - start_pfn),
+ 				  &memblock.memory, nid);
+ 		node_set_online(nid);
++
++		/*
++		 * On DISCONTIGMEM systems, place different memory blocks into
++		 * different nodes.
++		 */
++		if (IS_ENABLED(CONFIG_DISCONTIGMEM) && nid < MAX_NUMNODES - 1)
++			nid++;
+ 	}
+ }
  
 -- 
-2.7.4
+2.16.1
