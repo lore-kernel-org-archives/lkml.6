@@ -1,76 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751485AbeBTWia (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:38:30 -0500
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:43797 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeBTWi3 (ORCPT
+        id S1751537AbeBTWq2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:46:28 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46019 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeBTWq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:38:29 -0500
-X-Google-Smtp-Source: AH8x2255q8JkpMtvPPysbwEt8bnaYXp0Vq9MQBjyOWckvYK/edhZXpCXb+v35LFP0Yp5xphznwdnfw==
-Date: Wed, 21 Feb 2018 01:38:25 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: proc: use down_read_killable in
- proc_pid_cmdline_read()
-Message-ID: <20180220223825.GA6705@avx2>
-References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
+        Tue, 20 Feb 2018 17:46:27 -0500
+X-Google-Smtp-Source: AH8x226orPH4l1F1TsyqrFiEO6UIjPNRV/JSbl22aj4s36sgxC+GXk+glF0eYQGnoPBUKVjti6sOZA==
+Date: Tue, 20 Feb 2018 14:46:24 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: cpufeature: Trim feature reporting and include PAN
+ emulation
+Message-ID: <20180220224624.GA28218@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 03:49:29AM +0800, Yang Shi wrote:
-> When running vm-scalability with large memory (> 300GB), the below hung
-> task issue happens occasionally.
-> 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> 
-> When manipulating a large mapping, the process may hold the mmap_sem for
-> long time, so reading /proc/<pid>/cmdline may be blocked in
-> uninterruptible state for long time.
-> 
-> down_read_trylock() sounds too aggressive, and we already have killable
-> version APIs for semaphore, here use down_read_killable() to improve the
-> responsiveness.
+The PAN emulation notification was only happening for non-boot CPUs
+if CPU capabilities had already been configured. This seems to be the
+wrong place, as it's system-wide and isn't attached to capabilities,
+so its reporting didn't normally happen. Instead, report it once from
+the boot CPU. Additionally removes the redundant "feature" word from the
+"CPU features:" line.
 
-> -	down_read(&mm->mmap_sem);
-> +	rv = down_read_killable(&mm->mmap_sem);
-> +	if (rv)
-> +		goto out_mmput;
->  	arg_start = mm->arg_start;
->  	arg_end = mm->arg_end;
->  	env_start = mm->env_start;
+Before (redundant "feature", and missing PAN emulation report):
 
-Fix is incomplete
-1) /proc/*/cmdline only wants to read 4 values atomically,
-   those 4 values are basically random values and aren't
-   related to VM part at all (after C/R went in, they are
-   settable to arbitrary values)
-2) access_remote_vm() et al will do the same ->mmap_sem, and
-3) /proc/*/environ and get_cmdline() do the same.
+ SMP: Total of 4 processors activated.
+ CPU features: detected feature: 32-bit EL0 Support
+ CPU features: detected feature: Kernel page table isolation (KPTI)
+ CPU: All CPU(s) started at EL2
+
+After:
+
+ SMP: Total of 4 processors activated.
+ CPU features: detected: 32-bit EL0 Support
+ CPU features: detected: Kernel page table isolation (KPTI)
+ CPU features: emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching
+ CPU: All CPU(s) started at EL2
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/arm64/kernel/cpufeature.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 29b1f873e337..6c799ca58b53 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1333,9 +1333,6 @@ static void verify_local_cpu_capabilities(void)
+ 
+ 	if (system_supports_sve())
+ 		verify_sve_features();
+-
+-	if (system_uses_ttbr0_pan())
+-		pr_info("Emulating Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
+ }
+ 
+ void check_local_cpu_capabilities(void)
+@@ -1360,7 +1357,7 @@ void check_local_cpu_capabilities(void)
+ 
+ static void __init setup_feature_capabilities(void)
+ {
+-	update_cpu_capabilities(arm64_features, "detected feature:");
++	update_cpu_capabilities(arm64_features, "detected:");
+ 	enable_cpu_capabilities(arm64_features);
+ }
+ 
+@@ -1394,6 +1391,9 @@ void __init setup_cpu_features(void)
+ 	if (system_supports_32bit_el0())
+ 		setup_elf_hwcaps(compat_elf_hwcaps);
+ 
++	if (system_uses_ttbr0_pan())
++		pr_info("emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
++
+ 	sve_setup();
+ 
+ 	/* Advertise that we have computed the system capabilities */
+-- 
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
