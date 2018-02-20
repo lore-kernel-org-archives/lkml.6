@@ -1,67 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeBTQZm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:25:42 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:51205 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeBTQZl (ORCPT
+        id S1752863AbeBTQZt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:25:49 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36977 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752809AbeBTQZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:25:41 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: arm@kernel.org, Alexander Shiyan <shc_work@mail.ru>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] ARM: clps711x: mark clps711x_compat as const
-Date: Tue, 20 Feb 2018 17:24:50 +0100
-Message-Id: <20180220162519.1498223-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:fXYVUPI+6dLY7rICVDMHqPLs5NL8aankfKB+dOP8X51nrDYhwcB
- jm2+d9j086x7lSr0CKwarQ9ZsMHFmBUpP7bWqcrgB+Tlg1oWPsvsu08pxkixJZ+a0eXdTUQ
- Vs7+mnl6Zy/gE4y9kDvxj6B34itskviPvUx1WcQhsojGl7HCuDwllBm4VloYktUXIEWC7+1
- uClV4vJ555zUk5ex0eCXA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:39cjZnKOEXQ=:/OO8b0BU3N9c2DykWw3DCa
- J3Kl6TfK0heG/Xdd2NPSMuncxip5QFIUnjuRHCjqo6rZWuaX8LxnissyAvT6oiW4Aw4wgt7ov
- Dphvh2PaB2hP4nduZyLXkU+e++3fGS/23EAHwhN3gnCExyKQGwxRvf+BG25lb6gc9lnRGd5sK
- RS4h0bsPS0DPUdsB/HwFArqjZN4vmbE+QYQ729u56lMhrbWw/AJABxCokTGZ+lI0xxqRF+tod
- vH5+CUKryUs//MX2oJ17ZKcuOUp1moajDnAW6nXlzByl2UCNnUWrNCkUVIxHLvPcmYOEiRu7W
- GrjT2Dm+594hAZqF3YXalDqZ+NRmIROSC9jzOQKlyuJ7lsqPx/MBaGEyGPwSayLun3gW1NcNp
- /3FptrVwp3sMC8cqhhi+bqsIIqmPMISdTzseHeBUv6YrIJsBjrap93/oUCN5VK74SP5Z8JSBw
- 9v6aMqqpPGwDkRIDWYZ2rQgEfHRuI1XYSsymJY4oW4QkYp1r4nrjSik6HUI32wri3ZWOBGyvP
- IuIt3l+vSoZl9LhPnZy2rAYOZx1yENpI4FSrGA1iD36YbXzt2QVXNjrXMXPijsEnMMluQd3J7
- cYYjwF8ARvybpO2eOAp5uNO0x1DQueNphjGL5fQLAhA1Pk7jNYCkjMLSvw5mpm2n3RwaQ5lxK
- QG9jqKIzClS1beTzMn4Gzp6FlRP/gofzwmHhRSa9GHTKEClLVMzS3qLVtS/x6pCC6V4m1E+fX
- rWlv75h2LlI8HlzkN6Yf+em+WTxIXuDeNUYfoA==
+        Tue, 20 Feb 2018 11:25:46 -0500
+X-Google-Smtp-Source: AH8x2265JgW9olHHSilQtKeI2j72Vh6ATF29Oom8azIu9K/JEeYNYVkYGxE5BhVa8xFW6EGIgpj6sg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/15] Memory controller hot reset
+Date: Tue, 20 Feb 2018 19:25:13 +0300
+Message-Id: <cover.1519141896.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The array of string pointers is put in __initconst, and the strings themselves
-are marke 'const' but the the pointers are not, which caused a warning when
-built with LTO:
+Tegra's memory controller has a "memory hot reset" functionality that
+blocks all memory transactions for the memory client, which is required
+for a proper HW resetting. HW could perform DMA while being reset and this
+could lead to a system hang or memory corruption, so here comes the memory
+hot reset that blocks all interactions of HW with memory so that it could
+be reset safely. Memory hot reset is urgently required for multimedia (on
+Tegra20 especially), like GPU or video decoder, as it is quite easy to get
+in a trouble without a proper HW reset.
 
-arch/arm/mach-clps711x/board-dt.c:72:20: error: 'clps711x_compat' causes a section type conflict with 'feroceon_ids'
- static const char *clps711x_compat[] __initconst = {
+Changelog:
 
-This marks the array itself const as well, which was certainly the
-intention originally.
+V3:
+	Addressed review comments to V2 from Thierry Reding. MC now
+	uses generic reset controller API instead of a custom one,
+	hence DT changes are now involved and so Rob Herring is CC'd
+	for a review.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-clps711x/board-dt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	Added couple minor cleanup/correction patches.
 
-diff --git a/arch/arm/mach-clps711x/board-dt.c b/arch/arm/mach-clps711x/board-dt.c
-index ee1f83b1a332..4c89a8e9a2e3 100644
---- a/arch/arm/mach-clps711x/board-dt.c
-+++ b/arch/arm/mach-clps711x/board-dt.c
-@@ -69,7 +69,7 @@ static void clps711x_restart(enum reboot_mode mode, const char *cmd)
- 	soft_restart(0);
- }
- 
--static const char *clps711x_compat[] __initconst = {
-+static const char *const clps711x_compat[] __initconst = {
- 	"cirrus,ep7209",
- 	NULL
- };
+V2:
+	Basically a re-send of V1 with some minor changes.
+
+Dmitry Osipenko (14):
+  dt-bindings: arm: tegra: Remove duplicated Tegra30+ MC binding
+  dt-bindings: memory: tegra: Document #reset-cells property of the
+    Tegra30 MC
+  dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20
+    MC
+  dt-bindings: memory: tegra: Add hot resets definitions
+  memory: tegra: Do not handle spurious interrupts
+  memory: tegra: Setup interrupts mask before requesting IRQ
+  memory: tegra: Apply interrupts mask per SoC
+  memory: tegra: Remove unused headers inclusions
+  memory: tegra: Squash tegra20-mc into common tegra-mc driver
+  memory: tegra: Introduce memory client hot reset
+  memory: tegra: Add Tegra124 memory controller hot resets
+  memory: tegra: Add Tegra114 memory controller hot resets
+  memory: tegra: Add Tegra30 memory controller hot resets
+  memory: tegra: Add Tegra20 memory controller hot resets
+
+Thierry Reding (1):
+  memory: tegra: Add Tegra210 memory controller hot resets
+
+ .../bindings/arm/tegra/nvidia,tegra20-mc.txt       |  12 +-
+ .../bindings/arm/tegra/nvidia,tegra30-mc.txt       |  18 --
+ .../memory-controllers/nvidia,tegra30-mc.txt       |   5 +
+ drivers/memory/Kconfig                             |  10 -
+ drivers/memory/Makefile                            |   1 -
+ drivers/memory/tegra/Makefile                      |   1 +
+ drivers/memory/tegra/mc.c                          | 358 +++++++++++++++++++--
+ drivers/memory/tegra/mc.h                          |  22 ++
+ drivers/memory/tegra/tegra114.c                    |  35 ++
+ drivers/memory/tegra/tegra124.c                    |  48 +++
+ drivers/memory/tegra/tegra20.c                     | 296 +++++++++++++++++
+ drivers/memory/tegra/tegra210.c                    |  53 ++-
+ drivers/memory/tegra/tegra30.c                     |  35 ++
+ drivers/memory/tegra20-mc.c                        | 254 ---------------
+ include/dt-bindings/memory/tegra114-mc.h           |  19 ++
+ include/dt-bindings/memory/tegra124-mc.h           |  25 ++
+ include/dt-bindings/memory/tegra20-mc.h            |  21 ++
+ include/dt-bindings/memory/tegra210-mc.h           |  31 ++
+ include/dt-bindings/memory/tegra30-mc.h            |  19 ++
+ include/soc/tegra/mc.h                             |  37 ++-
+ 20 files changed, 978 insertions(+), 322 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-mc.txt
+ create mode 100644 drivers/memory/tegra/tegra20.c
+ delete mode 100644 drivers/memory/tegra20-mc.c
+ create mode 100644 include/dt-bindings/memory/tegra20-mc.h
+
 -- 
-2.9.0
+2.16.1
