@@ -1,66 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752645AbeBTPSE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:18:04 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34661 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeBTPSA (ORCPT
+        id S1752445AbeBTPUA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:20:00 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52137 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbeBTPT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:18:00 -0500
-X-Google-Smtp-Source: AH8x2264gupE+Y+gDWr6lho9pY3WyvhxG7IBaf3QutHRMPw/LGPU2Gh1ReiUCRJDmy+bSPwAaUJo3A==
-Date: Tue, 20 Feb 2018 16:17:52 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180220151752.GA1900@andrea>
-References: <20180217151413.GA3785@andrea>
- <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
- <20180219174413.GV25201@hirez.programming.kicks-ass.net>
- <20180220144813.GF3617@linux.vnet.ibm.com>
+        Tue, 20 Feb 2018 10:19:59 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: stub out cpuidle_poll_state_init() without CONFIG_CPU_IDLE
+Date: Tue, 20 Feb 2018 16:18:01 +0100
+Message-ID: <2227596.UD9Rb3uRxu@aspire.rjw.lan>
+In-Reply-To: <20180220150559.3182304-1-arnd@arndb.de>
+References: <20180220150559.3182304-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180220144813.GF3617@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 06:48:13AM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 19, 2018 at 06:44:13PM +0100, Peter Zijlstra wrote:
-> > On Mon, Feb 19, 2018 at 12:14:45PM -0500, Alan Stern wrote:
-> > > Note that operations like atomic_add_unless() already include memory 
-> > > barriers.
-> > 
-> > It is valid for atomic_add_unless() to not imply any barriers when the
-> > addition doesn't happen.
+On Tuesday, February 20, 2018 4:05:44 PM CET Arnd Bergmann wrote:
+> Calling cpuidle_poll_state_init() from apm_init() results in a link
+> failure since that directory is never entered without CONFIG_CPU_IDLE:
 > 
-> Agreed, given that atomic_add_unless() just returns 0 or 1, not the
-> pointer being added.  Of course, the __atomic_add_unless() function
-> that it calls is another story, as it does return the old value.  Sigh.
-> And __atomic_add_unless() is called directly from some code.  All of
-> which looks to be counters rather than pointers, thankfully.
+> arch/x86/kernel/apm_32.o: In function `apm_init':
+> apm_32.c:(.init.text+0x62c): undefined reference to `cpuidle_poll_state_init'
 > 
-> So, do we want to rely on atomic_add_unless() always being
-> invoked on counters rather than pointers, or does it need an
-> smp_read_barrier_depends()?
-
-alpha's implementation of __atomic_add_unless() has an unconditional smp_mb()
-before returning so, as far as dependencies are concerned, these seem fine.
-
-  Andrea
-
-
+> CONFIG_ARCH_HAS_CPU_RELAX can be set without CONFIG_CPU_IDLE but has no
+> effect then, so we should treat that configuration the same as
+> if CONFIG_ARCH_HAS_CPU_RELAX was not set at all.
 > 
-> 							Thanx, Paul
+> Fixes: 34c2f65b718d ("cpuidle: Move polling state initialization code to separate file")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/linux/cpuidle.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index 871f9e21810c..0b3fc229086c 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -225,7 +225,7 @@ static inline void cpuidle_coupled_parallel_barrier(struct cpuidle_device *dev,
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_ARCH_HAS_CPU_RELAX
+> +#if defined(CONFIG_CPU_IDLE) && defined(CONFIG_ARCH_HAS_CPU_RELAX)
+>  void cpuidle_poll_state_init(struct cpuidle_driver *drv);
+>  #else
+>  static inline void cpuidle_poll_state_init(struct cpuidle_driver *drv) {}
+> 
+
+https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=pm-4.16-rc2&id=d7212cfb05ba802bea4dd6c90d61cfe6366ea224
+
+is in the Linus' tree already.
+
+Thanks,
+Rafael
