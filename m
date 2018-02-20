@@ -1,102 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeBTKIB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:08:01 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33717 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751119AbeBTKH6 (ORCPT
+        id S1751406AbeBTKKN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:10:13 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56734 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751119AbeBTKKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:07:58 -0500
-X-Google-Smtp-Source: AH8x224gOw7LwZNjRynDRqgkTLYXfHwqbKKTptM2SeVGsKcMjZavyapLbDO65xSFgBnbocsd1Xq8xQ==
-Date: Tue, 20 Feb 2018 11:07:55 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Anholt <eric@anholt.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: linux-next: Tree for Feb 19 (gpu/drm/pl111/)
-Message-ID: <20180220100755.GG23425@ulmo>
-References: <20180219131426.14ecac87@canb.auug.org.au>
- <5a671632-f746-52d2-1a9c-1e72a7e2f42b@infradead.org>
- <b1028c02-9633-47bf-e930-a20926e14ca9@infradead.org>
+        Tue, 20 Feb 2018 05:10:11 -0500
+Date: Tue, 20 Feb 2018 11:10:04 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/15] soc: renesas: Add R-Car M3-N support
+Message-ID: <20180220101004.GD7203@w540>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/Zw+/jwnNHcBRYYu"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b1028c02-9633-47bf-e930-a20926e14ca9@infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
 
---/Zw+/jwnNHcBRYYu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 14, 2018 at 01:48:27PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> Thanks for your patch!
+>
+> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add support for R-Car M3-N (r8a77965) power areas and reset.
+> > M3-N power areas are identical to M3-W ones, so just copy and rename
+> > them.
+>
+> They are not identical:
+>   - M3-N does not have the CA53-related areas,
+>   - M3-W does not have A3VP,
+>   - M3-N does not have A2VC0 (M3-W also doesn't, according to latest
+> datasheet?).
+>
+> The datasheet also mentions A3SH, without further info about the register
+> block. I think we need to bring this up with Renesas.
+>
+> >  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+> >  .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
+> >  drivers/soc/renesas/Kconfig                        |  9 ++++--
+> >  drivers/soc/renesas/Makefile                       |  1 +
+> >  drivers/soc/renesas/r8a77965-sysc.c                | 37 ++++++++++++++++++++++
+> >  drivers/soc/renesas/rcar-rst.c                     |  1 +
+> >  drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+> >  drivers/soc/renesas/rcar-sysc.h                    |  1 +
+> >  drivers/soc/renesas/renesas-soc.c                  |  8 +++++
+> >  include/dt-bindings/power/r8a77965-sysc.h          | 31 ++++++++++++++++++
+> >  10 files changed, 91 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
+> >  create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
+>
+> The maintainer may ask you to split this patch by functionality...
+>
+> > --- /dev/null
+> > +++ b/drivers/soc/renesas/r8a77965-sysc.c
+> > @@ -0,0 +1,37 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Renesas R-Car M3-N System Controller
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + *
+> > + * Based on Renesas R-Car M3-W System Controller
+> > + * Copyright (C) 2016 Glider bvba
+> > + */
+> > +
+> > +#include <linux/bug.h>
+> > +#include <linux/kernel.h>
+> > +
+> > +#include <dt-bindings/power/r8a77965-sysc.h>
+> > +
+> > +#include "rcar-sysc.h"
+> > +
+> > +static const struct rcar_sysc_area r8a77965_areas[] __initconst = {
+> > +       { "always-on",      0, 0, R8A77965_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+> > +       { "ca57-scu",   0x1c0, 0, R8A77965_PD_CA57_SCU, R8A77965_PD_ALWAYS_ON,
+> > +         PD_SCU },
+> > +       { "ca57-cpu0",   0x80, 0, R8A77965_PD_CA57_CPU0, R8A77965_PD_CA57_SCU,
+> > +         PD_CPU_NOCR },
+> > +       { "ca57-cpu1",   0x80, 1, R8A77965_PD_CA57_CPU1, R8A77965_PD_CA57_SCU,
+> > +         PD_CPU_NOCR },
+> > +       { "cr7",        0x240, 0, R8A77965_PD_CR7,      R8A77965_PD_ALWAYS_ON },
+> > +       { "a3vc",       0x380, 0, R8A77965_PD_A3VC,     R8A77965_PD_ALWAYS_ON },
+> > +       { "a2vc0",      0x3c0, 0, R8A77965_PD_A2VC0,    R8A77965_PD_A3VC },
+>
+> M3-N (and M3-W) does not have A2VC0?
 
-On Mon, Feb 19, 2018 at 10:30:06AM -0800, Randy Dunlap wrote:
-> [add Eric + dri-devel]
->=20
-> On 02/19/18 09:26, Randy Dunlap wrote:
-> > On 02/18/18 18:14, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Changes since 20180216:
-> >>
-> >> The nand tree gained a conflict against Linus' tree.
-> >>
-> >> The drm tree gained conflicts against Linus' tree.
-> >=20
-> > on i386 (randconfig):
-> >=20
-> > warning: (DRM_PL111) selects DRM_DUMB_VGA_DAC which has unmet direct de=
-pendencies (HAS_IOMEM && DRM && DRM_BRIDGE && OF)
+Why do I still see that power area listed in latest renesas-drivers for
+M3-W? Are there patch pendings for that?
 
-I think this is caused by the fact that DRM_PL111 has || COMPILE_TEST in
-the architecture dependencies, which causes it to be unavailable on
-systems other than ARM and ARM64 where OF may not be implied. Then the
-DRM_PL111 selects DRM_DUMB_VGA_DAC that has a dependency on OF.
+I'll remove it anyway for M3-N.
 
-I think the best solution would be to remove the select DRM_DUMB_VGA_DAC
-=66rom DRM_PL111. Also see the warning against selecting visible symbols
-in Documentation/kbuild/kconfig-language.txt (line 127).
+Thanks
+   j
 
-> > and then
-> >=20
-> > ../drivers/gpu/drm/bridge/dumb-vga-dac.c: In function 'dumb_vga_probe':
-> > ../drivers/gpu/drm/bridge/dumb-vga-dac.c:207:13: error: 'struct drm_bri=
-dge' has no member named 'of_node'
-> >   vga->bridge.of_node =3D pdev->dev.of_node;
-> >              ^
-
-Irrespective of the above, I don't think it's very useful to have
-of_node conditionally included in this structure. This used to be the
-case for struct gpio_chip (and others) and used to cause lots of such
-build failures because people tend not to build-test OF vs. !OF
-
-Thierry
-
---/Zw+/jwnNHcBRYYu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqL83gACgkQ3SOs138+
-s6HwkA/9Er6eoWKkfjrFSIO6yZITLmunvFv7Y8KWURJI7ty7D846CxhnTIchcAGL
-WHRt4/yvxwez1BbfcPCtwVBzF39v3LXtA9qOhONvDP76MC6kiWrA32IRC7jey6yP
-kpGe5/XsIJzJu+e+M2qPAkzOyiSjobTuR6vIvDVKxOM2oM1lcxckcU/p/CknOFvG
-RsIQxA0C478iM8rbMp8e095S1O4ESDsUeV5YogqNsx8JYLR9e0Mxzd3pW2YXnBLB
-KThQA3cQJsiuPfSw6K3eSLRMkgRwlKPaLY0qnHyh7cGFP4p3GeK15gl0Zwazxf+U
-bJg4P0nS0cisw8ZVg9KRyFEp8JV1Bpl8ZoYMnkgsNGhoiOjXmdSfAqTrSKX+N3AL
-BemAxPlA9loDeoBt4zYIrlW3HPuykgBqZQC9q140E/EDTFeXTEfa9zRoQGv3or0Y
-I2YIgqamWrAq16va/OeFUv6MpUF6XwbAh59ihY2gCrHghTNybnTPp6Yy08zpayot
-yviQInfL+A9xOtxc/OzgErp6EN45b17VGdFjan7o+F00XS545TAWcunADKAhzDuP
-7IzkT/TDWwxRuye6X/apkbUEy6NDlfSx7cHvIpDzCAtsv2iso7kp8PR/TWMaOHah
-RlqbI6ap5je73mLSupw6HYdWqp/PvPT8Iz1PLB1o0NpODFlgYjU=
-=p7zH
------END PGP SIGNATURE-----
-
---/Zw+/jwnNHcBRYYu--
+>
+> > +       { "a2vc1",      0x3c0, 1, R8A77965_PD_A2VC1,    R8A77965_PD_A3VC },
+> > +       { "3dg-a",      0x100, 0, R8A77965_PD_3DG_A,    R8A77965_PD_ALWAYS_ON },
+> > +       { "3dg-b",      0x100, 1, R8A77965_PD_3DG_B,    R8A77965_PD_3DG_A },
+> > +       { "a3ir",       0x180, 0, R8A77965_PD_A3IR,     R8A77965_PD_ALWAYS_ON },
+>
+> A3VP is missing?
+>
+> > +};
+> > +
+> > +const struct rcar_sysc_info r8a77965_sysc_info __initconst = {
+> > +       .areas = r8a77965_areas,
+> > +       .num_areas = ARRAY_SIZE(r8a77965_areas),
+> > +};
+>
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/r8a77965-sysc.h
+> > @@ -0,0 +1,31 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + * Copyright (C) 2016 Glider bvba
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_POWER_R8A77965_SYSC_H__
+> > +#define __DT_BINDINGS_POWER_R8A77965_SYSC_H__
+> > +
+> > +/*
+> > + * These power domain indices match the numbers of the interrupt bits
+> > + * representing the power areas in the various Interrupt Registers
+> > + * (e.g. SYSCISR, Interrupt Status Register)
+> > + */
+> > +
+> > +#define R8A77965_PD_CA57_CPU0           0
+> > +#define R8A77965_PD_CA57_CPU1           1
+> > +#define R8A77965_PD_A3VP                9
+> > +#define R8A77965_PD_CA57_SCU           12
+> > +#define R8A77965_PD_CR7                        13
+> > +#define R8A77965_PD_A3VC               14
+> > +#define R8A77965_PD_3DG_A              17
+> > +#define R8A77965_PD_3DG_B              18
+> > +#define R8A77965_PD_A3IR               24
+> > +#define R8A77965_PD_A2VC0              25
+>
+> M3-N (and M3-W) does not have A2VC0?
+>
+> > +#define R8A77965_PD_A2VC1              26
+> > +
+> > +/* Always-on power area */
+> > +#define R8A77965_PD_ALWAYS_ON          32
+> > +
+> > +#endif /* __DT_BINDINGS_POWER_R8A77965_SYSC_H__ */
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
