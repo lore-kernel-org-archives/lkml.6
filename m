@@ -1,103 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751470AbeBTU4w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 15:56:52 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:35653 "EHLO
+        id S1751501AbeBTU5G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 15:57:06 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:56733 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeBTU4u (ORCPT
+        with ESMTP id S1751270AbeBTU5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 15:56:50 -0500
+        Tue, 20 Feb 2018 15:57:05 -0500
 From: Arnd Bergmann <arnd@arndb.de>
 To: Selvin Xavier <selvin.xavier@broadcom.com>,
         Devesh Sharma <devesh.sharma@broadcom.com>,
         Somnath Kotur <somnath.kotur@broadcom.com>,
         Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
         Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
+Cc: Arnd Bergmann <arnd@arndb.de>, Leon Romanovsky <leonro@mellanox.com>,
+        Dasaratharaman Chandramouli
+        <dasaratharaman.chandramouli@intel.com>,
         Eddie Wai <eddie.wai@broadcom.com>, linux-rdma@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-Date: Tue, 20 Feb 2018 21:56:26 +0100
-Message-Id: <20180220205638.1959033-1-arnd@arndb.de>
+Subject: [PATCH 2/2] infiniband: bnxt_re: use BIT_ULL() for 64-bit bit masks
+Date: Tue, 20 Feb 2018 21:56:27 +0100
+Message-Id: <20180220205638.1959033-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:UsVEUP5YRm5GTLXIFRv9PjJVrPSCuF++k8RY9xC1anBdbTXPHSp
- UVhCTxxko4ttVyPMYBUhU7uSTcgGhmt4dlX7IgdM+y39lGuUIMpTQq4mD9gnfY0jo8H+n0Y
- 6rfIoRFcFLordE4PTIARNWWrSNhYSRWckAYKuAwAMNlHBYP2y9nHu0ZtMwXQGQHpuUq9oCG
- 6D4Mci/9WUbDbjoVprvxw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WrFKAHds2Jg=:wCMKKuiTelSrhn6UzCVvyz
- QeRJF/EwbV62W9whmdjStwScFzv9V9ZTxTMQESS/GaFqtBsj0GRHbo9qL2IULZWKi4pJQ6Esn
- HyiQcxVyVDUNk6ifWok/C50XinraJ40kls1UFJe4dJLamDsb0AoiYP5eUjsEhrgK425h64Wae
- 4DY1sqpS/jCKa5LMUyIeDMCQrs/JW4u0zHSD6TnAk5Uq25yfCfTj2rjdfHuBRMm8jNopX2/tb
- AfE7YpXV95U6E8vW+TAMtAaYEXfoTFs4UTg3/jdI8bi0fdCqI6RvvB7uahXzQnqkTJfuh/sgz
- w9EH09qKf5QZCNxLdbekV5FZuwxME0zVFoY4ATCa9yHLDOZLfaClQgjMTU8aiiMIAqJvQ63x4
- VX0CU6v1DcQKUpgqWvOIZR0XeLU5p3t43BTNhxC10hg6bFw0Sljq0Xu5y9kNzSYTKjFzm32pB
- +2q9nM/yRBkj+ZQNbfzlS0z4n2iljJj98ocY1iFExuzkOhNtYCfhQlty0YBHAwQeIsZOzaD1a
- r5U9C19320aADPOMkMvdwaW7KyawghF4ovPYcx3Y6lDQv5NwVY8vrLW7MSeDgn763KALOHqqI
- yD1x41GeubbVjc9irCL2Scm5zBHK5MVXtKRfrICJt+p1EgGA9BreRf3ldn7Iss/8L9ZuF5kzo
- Za/Y71PcEZghId3bI1nrEOCjLXeL9/b/DrQnVaGhFqDG3W1YFgN1C/7B+US6qxMy6WEJIHvDu
- 8a+8EdCGgt+IyD2PMUqdWXqnWZPvCroPCHsPLA==
+In-Reply-To: <20180220205638.1959033-1-arnd@arndb.de>
+References: <20180220205638.1959033-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:KhaiDgnSD+cMVSEl4+FmNZV5Xvd8iAdqyCgQ6IqXONx796W7T67
+ 7oJ4p9mwdhNdqkqOw79AcPVcTpWi7LFsrTvA//UH/GBJzziGlz3xQ/SsiULN8El8ztKVqNn
+ q5DaMODZho3RXtoyVtXXVYfojMZq4K7gPIcEDLgyvfXerYefdCqeN3FDMEu/XUMfWNP+zfu
+ T3MKgGHStbusx+dE4VGRw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rLqOSOpHLl4=:ULde+PK2ZaeuPJmF3bWEZL
+ kMHKeSyyhr98hAX+UEK2++XNPFFwO3xRTjR+mk5Y1fDQRdqADCFjSAkeHsUnHQBOHHyPiqRaz
+ 1PFssl9hvMdASmYwrd8LwagQfAElufyHF16NOoqRxnrq2jEAFWuI62uVHSnUNkklaDiC0gL9h
+ RrPN6AoKtpraedF7AqYVdNi9g8B1g03J/6TS6puv+VB42C5jN9vl+q3s3E5nIdEkez5Rd6KKF
+ GqHEIggXwb8oiBi/6DmmkRGnobmm1USKLASD5WQ+b62h3n0VrSGFshkUIL4qD++0I7IivkwbY
+ VrEGNC7RTWwmLOVNEkRjIT1Plt30SeiI5Ngw65uEyyyjzoDmTO9itH8Ul35rgcfJmeEVuigxG
+ oM+V1LESskcvz76RGLrlyUGRgNmdLhrFVkplnxZdYCpw6gRevNXBTFnWBUEYNoYy8k3ilA/Zn
+ ZYMIjNzKUvQPmGD9H/JPy7hp/wU7+ll4Y2QXUWXhBqZqF4D6mePnWqtS2xabgodDICY6ihGq6
+ leF1B1jdAnglWTg480CQgFZOgTwq3OxSxxsPB812edIR14abzHf7/7s54HAYM9kucZ/pg5IJ6
+ MlqsOAdfvIu04l/kxM+LVLNWNsaXbdm9oRqM9xmb4F9G8mlRk0iPi+sl6MOigQBs1d14jg5fo
+ kBzHozbq8AFmeapNlYGMMXnKp4NGg6BQR+VM/DO8jBhmyVGIUxOsiue6R0pnnDfTpi+PRe6+0
+ E7waCwnQLECQZpPWPjOIGES6exPE1Cdh3SUMgg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building for a 32-bit target results in a couple of warnings from casting between
-a 32-bit pointer and a 64-bit integer:
+On 32-bit targets, we otherwise get a warning about an impossible constant
+integer expression:
 
-drivers/infiniband/hw/bnxt_re/qplib_fp.c: In function 'bnxt_qplib_service_nq':
-drivers/infiniband/hw/bnxt_re/qplib_fp.c:333:23: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-    bnxt_qplib_arm_srq((struct bnxt_qplib_srq *)q_handle,
-                       ^
-drivers/infiniband/hw/bnxt_re/qplib_fp.c:336:12: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-            (struct bnxt_qplib_srq *)q_handle,
-            ^
-In file included from include/linux/byteorder/little_endian.h:5,
-                 from arch/arm/include/uapi/asm/byteorder.h:22,
-                 from include/asm-generic/bitops/le.h:6,
-                 from arch/arm/include/asm/bitops.h:342,
-                 from include/linux/bitops.h:38,
-                 from include/linux/kernel.h:11,
+In file included from include/linux/kernel.h:11,
                  from include/linux/interrupt.h:6,
-                 from drivers/infiniband/hw/bnxt_re/qplib_fp.c:39:
-drivers/infiniband/hw/bnxt_re/qplib_fp.c: In function 'bnxt_qplib_create_srq':
-include/uapi/linux/byteorder/little_endian.h:31:43: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
- #define __cpu_to_le64(x) ((__force __le64)(__u64)(x))
-                                           ^
-include/linux/byteorder/generic.h:86:21: note: in expansion of macro '__cpu_to_le64'
- #define cpu_to_le64 __cpu_to_le64
-                     ^~~~~~~~~~~~~
-drivers/infiniband/hw/bnxt_re/qplib_fp.c:569:19: note: in expansion of macro 'cpu_to_le64'
-  req.srq_handle = cpu_to_le64(srq);
+                 from drivers/infiniband/hw/bnxt_re/ib_verbs.c:39:
+drivers/infiniband/hw/bnxt_re/ib_verbs.c: In function 'bnxt_re_query_device':
+include/linux/bitops.h:7:24: error: left shift count >= width of type [-Werror=shift-count-overflow]
+ #define BIT(nr)   (1UL << (nr))
+                        ^~
+drivers/infiniband/hw/bnxt_re/bnxt_re.h:61:34: note: in expansion of macro 'BIT'
+ #define BNXT_RE_MAX_MR_SIZE_HIGH BIT(39)
+                                  ^~~
+drivers/infiniband/hw/bnxt_re/bnxt_re.h:62:30: note: in expansion of macro 'BNXT_RE_MAX_MR_SIZE_HIGH'
+ #define BNXT_RE_MAX_MR_SIZE  BNXT_RE_MAX_MR_SIZE_HIGH
+                              ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/hw/bnxt_re/ib_verbs.c:149:25: note: in expansion of macro 'BNXT_RE_MAX_MR_SIZE'
+  ib_attr->max_mr_size = BNXT_RE_MAX_MR_SIZE;
+                         ^~~~~~~~~~~~~~~~~~~
 
-Using a uintptr_t as an intermediate works on all architectures.
-
-Fixes: 37cb11acf1f7 ("RDMA/bnxt_re: Add SRQ support for Broadcom adapters")
+Fixes: 872f3578241d ("RDMA/bnxt_re: Add support for MRs with Huge pages")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_fp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/bnxt_re/bnxt_re.h  | 4 ++--
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-index 1b0e94697fe3..9885d7d428e3 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-@@ -283,7 +283,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 	u32 sw_cons, raw_cons;
- 	u16 type;
- 	int budget = nq->budget;
--	u64 q_handle;
-+	uintptr_t q_handle;
+diff --git a/drivers/infiniband/hw/bnxt_re/bnxt_re.h b/drivers/infiniband/hw/bnxt_re/bnxt_re.h
+index ca32057e886f..32dbde48f3e6 100644
+--- a/drivers/infiniband/hw/bnxt_re/bnxt_re.h
++++ b/drivers/infiniband/hw/bnxt_re/bnxt_re.h
+@@ -57,8 +57,8 @@
+ #define BNXT_RE_PAGE_SIZE_8M		BIT(BNXT_RE_PAGE_SHIFT_8M)
+ #define BNXT_RE_PAGE_SIZE_1G		BIT(BNXT_RE_PAGE_SHIFT_1G)
  
- 	/* Service the NQ until empty */
- 	raw_cons = hwq->cons;
-@@ -566,7 +566,7 @@ int bnxt_qplib_create_srq(struct bnxt_qplib_res *res,
+-#define BNXT_RE_MAX_MR_SIZE_LOW		BIT(BNXT_RE_PAGE_SHIFT_1G)
+-#define BNXT_RE_MAX_MR_SIZE_HIGH	BIT(39)
++#define BNXT_RE_MAX_MR_SIZE_LOW		BIT_ULL(BNXT_RE_PAGE_SHIFT_1G)
++#define BNXT_RE_MAX_MR_SIZE_HIGH	BIT_ULL(39)
+ #define BNXT_RE_MAX_MR_SIZE		BNXT_RE_MAX_MR_SIZE_HIGH
  
- 	/* Configure the request */
- 	req.dpi = cpu_to_le32(srq->dpi->dpi);
--	req.srq_handle = cpu_to_le64(srq);
-+	req.srq_handle = cpu_to_le64((uintptr_t)srq);
+ #define BNXT_RE_MAX_QPC_COUNT		(64 * 1024)
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index ae9e9ff54826..56878387c8f9 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -3548,7 +3548,7 @@ struct ib_mr *bnxt_re_reg_user_mr(struct ib_pd *ib_pd, u64 start, u64 length,
+ 	int umem_pgs, page_shift, rc;
  
- 	req.srq_size = cpu_to_le16((u16)srq->hwq.max_elements);
- 	pbl = &srq->hwq.pbl[PBL_LVL_0];
+ 	if (length > BNXT_RE_MAX_MR_SIZE) {
+-		dev_err(rdev_to_dev(rdev), "MR Size: %lld > Max supported:%ld\n",
++		dev_err(rdev_to_dev(rdev), "MR Size: %lld > Max supported:%lld\n",
+ 			length, BNXT_RE_MAX_MR_SIZE);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
 -- 
 2.9.0
