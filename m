@@ -1,99 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeBTSFN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 13:05:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:65009 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752067AbeBTSFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 13:05:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,540,1511856000";
-   d="scan'208";a="19169771"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        x86@kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-acpi@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v5 1/3] ACPI / x86: boot: Split out acpi_generic_reduce_hw_init() and export
-Date: Tue, 20 Feb 2018 20:05:04 +0200
-Message-Id: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752897AbeBTSH7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 13:07:59 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46034 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751376AbeBTSH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 13:07:58 -0500
+Subject: Re: [PATCH v3 6/7] arm: dts: sun8i: a83t: Fix undefined offset with
+ virtual timer
+To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, quentin.schulz@bootlin.com,
+        linux-kernel@vger.kernel.org, clabbe.montjoie@gmail.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org
+References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
+ <20180219081837.15482-7-mylene.josserand@bootlin.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <823f256a-3240-7bb4-cc0b-711108f3076c@arm.com>
+Date: Tue, 20 Feb 2018 18:07:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180219081837.15482-7-mylene.josserand@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation patch to allow override the hardware reduced
-initialization on ACPI enabled platforms.
+Hi Mylène,
 
-No functional change intended.
+On 19/02/18 08:18, Mylène Josserand wrote:
+> The ARM architected timers use an offset between their physical and
+> virtual counters. That offset should be configured by the bootloader
+> in CNTVOFF.
+> 
+> However, the A83t bootloader fails to do so, and we end up with an
+> undefined offset (which in our case is random), meaning that each CPU
+> will have a different time, which isn't working very well.
+> 
+> Fix that by setting the arm,cpu-registers-not-fw-configured that will
+> make Linux use the physical timers instead of the virtual ones. One
+> possible side effect would be that the virtualization features would
+> be disabled. However, due to the way the GIC has been integrated in
+> the system, it is already unusable so we're effectively not losing any
+> feature.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> ---
+>  arch/arm/boot/dts/sun8i-a83t.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> index e97a6d17b8d0..b9bdb891cf2f 100644
+> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> @@ -123,6 +123,7 @@
+>  			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+>  			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+>  			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> +		arm,cpu-registers-not-fw-configured;
+>  	};
+>  
+>  	clocks {
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/x86/include/asm/acpi.h |  4 ++++
- arch/x86/kernel/acpi/boot.c | 22 +++++++++++++---------
- 2 files changed, 17 insertions(+), 9 deletions(-)
+Is the firmware dropping you in the kernel in secure or non-secure mode?
 
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index 6609dd7289b5..a303d7b7d763 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -140,6 +140,8 @@ static inline u64 acpi_arch_get_root_pointer(void)
- 	return x86_init.acpi.get_root_pointer();
- }
- 
-+void acpi_generic_reduced_hw_init(void);
-+
- #else /* !CONFIG_ACPI */
- 
- #define acpi_lapic 0
-@@ -149,6 +151,8 @@ static inline void acpi_noirq_set(void) { }
- static inline void acpi_disable_pci(void) { }
- static inline void disable_acpi(void) { }
- 
-+static inline void acpi_generic_reduced_hw_init(void) { }
-+
- #endif /* !CONFIG_ACPI */
- 
- #define ARCH_HAS_POWER_INIT	1
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 2aa92094b59d..baa084ecffdb 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1376,17 +1376,21 @@ static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
-  *
-  * We initialize the Hardware-reduced ACPI model here:
-  */
-+void __init acpi_generic_reduced_hw_init(void)
-+{
-+	/*
-+	 * Override x86_init functions and bypass legacy PIC in
-+	 * hardware reduced ACPI mode.
-+	 */
-+	x86_init.timers.timer_init	= x86_init_noop;
-+	x86_init.irqs.pre_vector_init	= x86_init_noop;
-+	legacy_pic			= &null_legacy_pic;
-+}
-+
- static void __init acpi_reduced_hw_init(void)
- {
--	if (acpi_gbl_reduced_hardware) {
--		/*
--		 * Override x86_init functions and bypass legacy pic
--		 * in Hardware-reduced ACPI mode
--		 */
--		x86_init.timers.timer_init	= x86_init_noop;
--		x86_init.irqs.pre_vector_init	= x86_init_noop;
--		legacy_pic			= &null_legacy_pic;
--	}
-+	if (acpi_gbl_reduced_hardware)
-+		acpi_generic_reduced_hw_init();
- }
- 
- /*
+If the later, what you have is the only solution. If the former, that
+I'd suggest you adopt what we already have for the Renesas stuff (see
+arch/arm/mach-shmobile/headsmp-apmu.S and commit 3fd45a136ff6).
+
+It would allow you to use the virtual timer as intended.
+
+Thanks,
+
+	M.
 -- 
-2.15.1
+Jazz is not dead. It just smells funny...
