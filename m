@@ -1,148 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeBTQEG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:04:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:7632 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752730AbeBTQEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:04:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,540,1511856000";
-   d="scan'208";a="19474387"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        x86@kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-acpi@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 1/2] ACPI / x86: boot: Not all platforms require acpi_reduced_hw_init()
-Date: Tue, 20 Feb 2018 18:03:57 +0200
-Message-Id: <20180220160358.68832-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752753AbeBTQKP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:10:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57174 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751827AbeBTQKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:10:14 -0500
+Date: Tue, 20 Feb 2018 08:10:30 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
+ smp_read_barrier_depends, and lockless_dereference
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180220144939.GG3617@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1802201005590.1428-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1802201005590.1428-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022016-0040-0000-0000-000003FA07F1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008564; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00992540; UDB=6.00504256; IPR=6.00771886;
+ MB=3.00019657; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-20 16:10:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022016-0041-0000-0000-000007FB0D08
+Message-Id: <20180220161030.GJ3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-20_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802200200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some platforms might take care of legacy devices on theirs own. Due to this,
-export acpi_reduced_hw_init() and put it into struct x86_init_acpi.
+On Tue, Feb 20, 2018 at 10:11:06AM -0500, Alan Stern wrote:
+> On Tue, 20 Feb 2018, Paul E. McKenney wrote:
+> 
+> > On Mon, Feb 19, 2018 at 09:28:44PM +0100, Peter Zijlstra wrote:
+> > > On Mon, Feb 19, 2018 at 11:41:23AM -0800, Paul E. McKenney wrote:
+> > > > On Mon, Feb 19, 2018 at 12:14:45PM -0500, Alan Stern wrote:
+> > > > > This leaves us with a question: Do we want to change the kernel by
+> > > > > adding memory barriers after unsuccessful RMW operations on Alpha, or
+> > > > > do we want to change the model by excluding such operations from
+> > > > > address dependencies?
+> > > > 
+> > > > I vote for adding the barrier on Alpha.  However, I don't know of any
+> > > > code in the Linux kernel that relies on read-to-read address dependency
+> > > > ordering headed by a failing RMW operation, so I don't feel all that
+> > > > strongly about this.
+> > > 
+> > > Right, but not knowing doesn't mean doesn't exist, and most certainly
+> > > doesn't mean will never exist.
+> > 
+> > Fair enough, safety first!
+> > 
+> > > > > Note that operations like atomic_add_unless() already include memory 
+> > > > > barriers.
+> > > > 
+> > > > And I don't see an atomic_add_unless_relaxed(), so we are good on this
+> > > > one.  So far, anyway!  ;-)
+> > > 
+> > > Not the point, add_unless() is a conditional operation, and therefore
+> > > doesn't need to imply anything when failing.
+> > 
+> > Plus it doesn't return a pointer, so there is no problem with dereferences.
+> > Unless someone wants to use its return value as an array index and rely
+> > on dependency ordering to the array, but I would NAK that use case.
+> 
+> You may not get the chance to NAK it.
+> 
+> We need to be consistent.  Array indexing is indeed a form of address
+> dependency, so either we assert that the dependency is enforced when
+> the array index is derived from a failed atomic operation, or else we
+> assert that failed atomic operations do not create address
+> dependencies.
 
-While doing this, rename acpi_reduced_hw_init() to
-acpi_reduced_hw_early_init() to show the stage at which it's called.
+The problem is that the compiler can get up to a great deal more mischief
+with integers than it can with pointers.  I agree that it would be quite
+challenging to represent this distinction between integers and pointers in
+the model, but then again herd does not yet support array indexing anyway.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+So for the time being, anyway, I must stand by my NAK.
 
-- re-done based on patches from Juergen Gross
-- supposed to go via tip tree (x86/boot branch)
-- tested on ASuS T100ta (HW reduced) and Intel Broxton based platforms
-
- arch/x86/include/asm/acpi.h     |  4 ++++
- arch/x86/include/asm/x86_init.h |  2 ++
- arch/x86/kernel/acpi/boot.c     | 21 ++++++++++-----------
- arch/x86/kernel/x86_init.c      |  2 ++
- 4 files changed, 18 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index 6609dd7289b5..f3f86be35fc5 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -140,6 +140,8 @@ static inline u64 acpi_arch_get_root_pointer(void)
- 	return x86_init.acpi.get_root_pointer();
- }
- 
-+void acpi_reduced_hw_early_init(void);
-+
- #else /* !CONFIG_ACPI */
- 
- #define acpi_lapic 0
-@@ -149,6 +151,8 @@ static inline void acpi_noirq_set(void) { }
- static inline void acpi_disable_pci(void) { }
- static inline void disable_acpi(void) { }
- 
-+static inline void acpi_reduced_hw_early_init(void) { }
-+
- #endif /* !CONFIG_ACPI */
- 
- #define ARCH_HAS_POWER_INIT	1
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 5ffa116ddb08..199e15bd3ec5 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -133,9 +133,11 @@ struct x86_hyper_init {
- /**
-  * struct x86_init_acpi - x86 ACPI init functions
-  * @get_root_pointer:		get RSDP address
-+ * @reduced_hw_early_init:	hardware reduced platform early init
-  */
- struct x86_init_acpi {
- 	u64 (*get_root_pointer)(void);
-+	void (*reduced_hw_early_init)(void);
- };
- 
- /**
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index d3deae23e584..02acf1c58d3a 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1378,17 +1378,15 @@ static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
-  *
-  * We initialize the Hardware-reduced ACPI model here:
-  */
--static void __init acpi_reduced_hw_init(void)
-+void __init acpi_reduced_hw_early_init(void)
- {
--	if (acpi_gbl_reduced_hardware) {
--		/*
--		 * Override x86_init functions and bypass legacy pic
--		 * in Hardware-reduced ACPI mode
--		 */
--		x86_init.timers.timer_init	= x86_init_noop;
--		x86_init.irqs.pre_vector_init	= x86_init_noop;
--		legacy_pic			= &null_legacy_pic;
--	}
-+	/*
-+	 * Override x86_init functions and bypass legacy pic
-+	 * in Hardware-reduced ACPI mode.
-+	 */
-+	x86_init.timers.timer_init	= x86_init_noop;
-+	x86_init.irqs.pre_vector_init	= x86_init_noop;
-+	legacy_pic			= &null_legacy_pic;
- }
- 
- /*
-@@ -1593,7 +1591,8 @@ int __init early_acpi_boot_init(void)
- 	/*
- 	 * Hardware-reduced ACPI mode initialization:
- 	 */
--	acpi_reduced_hw_init();
-+	if (acpi_gbl_reduced_hardware)
-+		x86_init.acpi.reduced_hw_early_init();
- 
- 	return 0;
- }
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 32c288ebf870..8fd63640e764 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -8,6 +8,7 @@
- #include <linux/export.h>
- #include <linux/pci.h>
- 
-+#include <asm/acpi.h>
- #include <asm/bios_ebda.h>
- #include <asm/paravirt.h>
- #include <asm/pci_x86.h>
-@@ -95,6 +96,7 @@ struct x86_init_ops x86_init __initdata = {
- 
- 	.acpi = {
- 		.get_root_pointer	= u64_x86_init_noop,
-+		.reduced_hw_early_init	= acpi_reduced_hw_early_init,
- 	},
- };
- 
--- 
-2.15.1
+							Thanx, Paul
