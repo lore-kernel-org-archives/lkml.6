@@ -1,66 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeBTWXQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:23:16 -0500
-Received: from mga07.intel.com ([134.134.136.100]:47863 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750998AbeBTWXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:23:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="29442912"
-Date: Tue, 20 Feb 2018 14:25:12 -0800
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Yves-Alexis Perez <corsac@debian.org>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
-Message-ID: <20180220142512.039309aa@jacob-builder>
-In-Reply-To: <1518992132.2542.5.camel@debian.org>
-References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
-        <20180213140303.42mbzfxpypljy37l@8bytes.org>
-        <20180213214002.GA27066@otc-nc-03>
-        <1518992132.2542.5.camel@debian.org>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1751384AbeBTWZG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:25:06 -0500
+Received: from mail-io0-f176.google.com ([209.85.223.176]:42541 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeBTWZE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 17:25:04 -0500
+X-Google-Smtp-Source: AG47ELvUJ3TQmtYCqb2aURhDeitsAo/dSarUYdcNsVB0nlPoVIEw/sRbJQJSwmajm74HC4Ulmk9FeQWWSzmkLdIz9ME=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180220210113.6725-2-linux@dominikbrodowski.net>
+References: <20180220210113.6725-1-linux@dominikbrodowski.net> <20180220210113.6725-2-linux@dominikbrodowski.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 20 Feb 2018 14:25:03 -0800
+X-Google-Sender-Auth: 6XAxsFItZBsaLoeEndNE7Mg0PmQ
+Message-ID: <CA+55aFx=moDaKj3Ogc_Fvm0vKQ1DP=yA9UE3axmpECyv3Khi1Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 1/6] x86/entry/64: move PUSH_AND_CLEAR_REGS from
+ interrupt macro to helper function
+To: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Brian Gerst <brgerst@gmail.com>, Andrew Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 18 Feb 2018 23:15:32 +0100
-Yves-Alexis Perez <corsac@debian.org> wrote:
+On Tue, Feb 20, 2018 at 1:01 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> +ENTRY(interrupt_entry)
+> +       UNWIND_HINT_FUNC
+> +
+> +       PUSH_AND_CLEAR_REGS save_ret=1
+> +       ENCODE_FRAME_POINTER 8
+> +
+> +       ret
+> +END(interrupt_entry)
 
-> On Tue, 2018-02-13 at 13:40 -0800, Raj, Ashok wrote:
-> > This version has only hw dumps for now, but we plan to add some
-> > other things like walking 2nd level page-tables, or get some SVM
-> > specific data from the driver in the future.   
-> 
-> Hi,
-> 
-> I'm not sure how much you know about chipsec [1], but with a oneliner
-> [2] you can have it print a lot of data from Vt-d configuration,
-> including page tables. As far as I remember, it doesn't need access
-> to /dev/mem (but I gidn't dig to check how it does it).
-> 
-> It might still be useful to have everything from debugfs because
-> it'll always be consistent with the current running kernel, but at
-> least it might help users reporting bugs.
-> 
-> [1] https://github.com/chipsec/chipsec
-> [2] http://paste.debian.net/1010105
+There's nothing wrong with this patch, but it does expose what a nasty
+hack our "ENCODE_FRAME_POINTER" thing is.
 
-I didn't know about chipsec but reading the code seems to rely on an
-out-of-tree kernel module. I don't think it matches what we need here.
+It generates (when there is an offset, like this):
+
+        leaq \ptregs_offset(%rsp), %rbp
+        orq     $0x1, %rbp
+
+and I would _really_ hope that the stack pointer is always aligned on
+interrupt entry, so I don't see why it's not just
+
+        leaq 1+\ptregs_offset(%rsp), %rbp
+
+instead.
+
+I dunno. Let's ask Josh what the reason for the separate "or" was.
+
+But this is an independent issue of this patch, really.
+
+              Linus
