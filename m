@@ -1,58 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932280AbeBTAHX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 19:07:23 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:43520 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932248AbeBTAHW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 19:07:22 -0500
-Subject: Re: syscon regmap for disabled node?
-To: Arnd Bergmann <arnd@arndb.de>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <e9863f03-f1b5-9158-76f3-37158a0b4cd4@ti.com>
- <CAK8P3a25wQiCreFB3qBuyE86GvwmjpZmqyTszF-ZBJRDPwHotQ@mail.gmail.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <112b03a1-8f2d-dddf-529c-e70561722722@ti.com>
-Date: Mon, 19 Feb 2018 18:06:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932290AbeBTANo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 19:13:44 -0500
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:32980 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932237AbeBTANn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 19:13:43 -0500
+Date: Tue, 20 Feb 2018 00:13:01 +0000
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+Cc: "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
+        Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Ingo Molnar" <mingo@kernel.org>
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+Message-ID: <20180220001301.70101e1d@alans-desktop>
+In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+        <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+        <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+        <1518509708.12890.33.camel@infradead.org>
+        <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+        <1518517262.12890.43.camel@infradead.org>
+        <1518518198.12890.48.camel@infradead.org>
+        <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+        <1518775136.7876.13.camel@infradead.org>
+        <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
+        <1518776517.7876.21.camel@infradead.org>
+        <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
+        <1518783021.7876.34.camel@infradead.org>
+        <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+        <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+        <10373.1519084385@turing-police.cc.vt.edu>
+        <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a25wQiCreFB3qBuyE86GvwmjpZmqyTszF-ZBJRDPwHotQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.247.58.153]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/17/2018 01:51 PM, Arnd Bergmann wrote:
-> On Sat, Feb 17, 2018 at 2:40 AM, Suman Anna <s-anna@ti.com> wrote:
->> Hi Pankaj, Arnd, Lee,
->>
->> I am testing some code to use a syscon/regmap interface and I find that
->> the syscon/regmap is initialized even on a disabled device node using a
->> "syscon" compatible property when I have expected it to fail. Prior to
->> commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from
->> platform devices"), the driver would have never probed, and the
->> of_syscon_register() only checks for the compatible, but not if the
->> device node is available. Is this intentional or a bug?
-> 
-> My guess would be that nothing relies on the current behavior and that
-> it could be changed if it causes problems, but it's hard to tell for the general
-> case.
-> 
-> Can you describe why you have a disabled syscon node? Most uses of the
-> status property are for on-chip devices that we disable because nothing is
-> connected to them, but that seems unlikely for a syscon.
+On Tue, 20 Feb 2018 00:00:23 +0000
+"Van De Ven, Arjan" <arjan.van.de.ven@intel.com> wrote:
 
-I am just testing the failure paths in my code by specifically disabling
-the syscon node, and to my surprise, the code went through fine when I
-had expected the syscon_node_to_regmap() call to fail.
+> > On Mon, 19 Feb 2018 23:42:24 +0000, "Van De Ven, Arjan" said:
+> >   
+> > > the guest is not the problem; guests obviously will already honor if Enhanced
+> > > IBRS is enumerated. The problem is mixed migration pools where the  
+> > hypervisor  
+> > > may need to decide to not pass this enumeration through to the guest.  
+> > 
+> > For bonus points:  What should happen to a VM that is live migrated from one
+> > hypervisor to another, and the hypervisors have different IBRS support?  
+> 
+> Doctor Doctor it hurts when I do this....
+> 
+> Migration tends to only work between HV's that are relatively homogeneous, that's nothing new... folks who run clouds or bigger pools know this obviously.
 
-regards
-Suman
+In theory there's nothing stopping a guest getting a 'you are about to
+gain/lose IBRS' message or having a new 'CPU' hotplugged and the old one
+removed.
+
+It's just that it's always been less painful to avoid the problems you
+get with wild mismatches than attmept the cure. And any 'cure' goes
+beyond the OS kernel into some of the managed runtimes so I'd agree with
+Arjan 'don't do that'.
+
+Alan
