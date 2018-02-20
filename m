@@ -1,105 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeBTKkc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:40:32 -0500
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:43987 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751467AbeBTKk3 (ORCPT
+        id S1751443AbeBTKmE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:42:04 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:32912 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751052AbeBTKmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:40:29 -0500
-X-Google-Smtp-Source: AH8x2275gQPqnI5zhha7Oa/OSWoyoKQSpA8HQkqvybFPpmOycDb6itMe7nqfPPBSD7gP4WuXWugt0++5cx5VXO7iIzM=
+        Tue, 20 Feb 2018 05:42:02 -0500
+Date: Tue, 20 Feb 2018 11:42:07 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: David Woodhouse <dwmw2@infradead.org>
+cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com, mingo@kernel.org
+Subject: Re: [PATCH v3 2/4] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+In-Reply-To: <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1802201141160.24268@nanos.tec.linutronix.de>
+References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>  <1519037457-7643-3-git-send-email-dwmw@amazon.co.uk>  <alpine.DEB.2.21.1802200854010.24268@nanos.tec.linutronix.de> <1519116825.7876.112.camel@infradead.org>
+ <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Ymn4U7R849psS49N8LKesAEpsTBnbZbpgJsvut6CsQ6g@mail.gmail.com>
-References: <cover.1517246437.git.dvyukov@google.com> <20180130153609.GA10917@arm.com>
- <20180131072858.5hoy6wsukda27v2o@gmail.com> <CACT4Y+Y1Qbsd4DOb6K6y0MVC2e_StjgYERE9ntJmQb+6BtZciA@mail.gmail.com>
- <20180131161725.GA18758@arm.com> <CACT4Y+Ymn4U7R849psS49N8LKesAEpsTBnbZbpgJsvut6CsQ6g@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 20 Feb 2018 11:40:07 +0100
-Message-ID: <CACT4Y+a1yWWfz5NZKjb1v8EFJA-Yag4ZjGxq7K2fJ6A2JRDnOA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] x86, kasan: add KASAN checks to atomic operations
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323329-1006712813-1519123329=:24268"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 3:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Jan 31, 2018 at 5:17 PM, Will Deacon <will.deacon@arm.com> wrote:
->>> > * Will Deacon <will.deacon@arm.com> wrote:
->>> >> e.g. for atomic[64]_read, your asm-generic header looks like:
->>> >>
->>> >> #ifndef _LINUX_ATOMIC_INSTRUMENTED_H
->>> >> #define _LINUX_ATOMIC_INSTRUMENTED_H
->>> >>
->>> >> #include <linux/build_bug.h>
->>> >> #include <linux/kasan-checks.h>
->>> >>
->>> >> static __always_inline int __atomic_read_instrumented(const atomic_t *v)
->>> >> {
->>> >>       kasan_check_read(v, sizeof(*v));
->>> >>       return atomic_read(v);
->>> >> }
->>> >>
->>> >> static __always_inline s64 __atomic64_read_instrumented(const atomic64_t *v)
->>> >> {
->>> >>       kasan_check_read(v, sizeof(*v));
->>> >>       return atomic64_read(v);
->>> >> }
->>> >>
->>> >> #undef atomic_read
->>> >> #undef atomic64_read
->>> >>
->>> >> #define atomic_read   __atomic_read_instrumented
->>> >> #define atomic64_read __atomic64_read_instrumented
->>> >>
->>> >> #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
->>> >>
->>> >> and the arch code just includes that in asm/atomic.h once it's done with
->>> >> its definitions.
->>> >>
->>> >> What do you think? Too stinky?
->>> >
->>> > Hm, so while this could work - I actually *like* the low level changes: they are
->>> > straightforward, trivial, easy to read and they add the arch_ prefix that makes it
->>> > abundantly clear that this isn't the highest level interface.
->>> >
->>> > The KASAN callbacks in the generic methods are also abundantly clear and very easy
->>> > to read. I could literally verify the sanity of the series while still being only
->>> > half awake. ;-)
->>> >
->>> > Also note that the arch renaming should be 'trivial', in the sense that any
->>> > missing rename results in a clear build breakage. Plus any architecture making use
->>> > of this new KASAN feature should probably be tested before it's enabled - and the
->>> > renaming of the low level atomic APIs kind of forces that too.
->>> >
->>> > So while this approach creates some churn, this series is IMHO a marked
->>> > improvement over the previous iterations.
->>>
->>>
->>> I think I mildly leaning towards Ingo's point.
->>> I guess people will first find the version in arch (because that's
->>> where they used to be), but that version is actually not the one that
->>> is called.
->>> The renaming is mechanical and you get build errors if anything is
->>> wrong. It's macros that caused hard to debug runtime crashes and
->>> multiple revisions of this series.
->>
->> Sure, and it sounds like you're proposing to do the arm64 changes anyway so
->> I'm not complaining! Just thought I'd float the alternative to see what
->> people think.
->
->
-> Any other comments?
-> Ingo, will you take this to locking tree?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323329-1006712813-1519123329=:24268
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Any other comments?
-Ingo, will you take this to locking tree?
+On Tue, 20 Feb 2018, Thomas Gleixner wrote:
+> On Tue, 20 Feb 2018, David Woodhouse wrote:
+> > On Tue, 2018-02-20 at 09:31 +0100, Thomas Gleixner wrote:
+> > > > @@ -3387,13 +3387,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> > > >  
+> > > >  		vmx->spec_ctrl = data;
+> > > >  
+> > > > -		if (!data)
+> > > > +		if (!data && !spectre_v2_ibrs_all())
+> > > >  			break;
+> > > >  
+> > > >  		/*
+> > > >  		 * For non-nested:
+> > > >  		 * When it's written (to non-zero) for the first time, pass
+> > > > -		 * it through.
+> > > > +		 * it through unless we have IBRS_ALL and it should just be
+> > > > +		 * set for ever.
+> > >
+> > > A non zero write is going to disable the intercept only when IBRS_ALL
+> > > is on. The comment says is should be set forever, i.e. not changeable by
+> > > the guest. So the condition should be:
+> > > 
+> > > 		if (!data || spectre_v2_ibrs_all())
+> > > 			break;
+> > > Hmm?
+> > 
+> > Yes, good catch. Thanks.
+> > 
+> > However, Paolo is very insistent that taking the trap every time is
+> > actually a lot *slower* than really frobbing IBRS on certain
+> > microarchitectures, so my hand-waving "pfft, what did they expect?" is
+> > not acceptable.
+> > 
+> > Which I think puts us back to the "throwing the toys out of the pram"
+
+There are no more toys in the pram. I threw them all out weeks ago ...
+
+> > solution; demanding that Intel give us a new feature bit for "IBRS_ALL,
+> > and the bit in the MSR is a no-op". Which was going to be true for
+> > *most* new CPUs anyway. (Note: a blacklist for those few CPUs on which
+> > it *isn't* true might also suffice instead of a new feature bit.)
+> >
+> > Unless someone really wants to implement the atomic MSR save and
+> > restore on vmexit, and make it work with nesting, and make the whole
+> > thing sufficiently simple that we don't throw our toys out of the pram
+> > anyway when we see it?
+> 
+> That whole stuff was duct taped into microcode in a rush and the result is
+> that we have only the choice between fire and frying pan. Whatever we
+> decide to implement is not going to be a half baken hack.
+
+  s/not// of course
+
+> 
+> I fully agree that Intel needs to get their act together and implement
+> IBRS_ALL sanely.
+> 
+> The right thing to do is to allow the host to lock down the MSR once it
+> enabled IBRS_ALL so that any write to it will just turn into NOOPs. That
+> removes all worries about guests and in future generations of CPUs this bit
+> might just be hardwired to one and the MSR just a dummy for compability
+> reasons.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+--8323329-1006712813-1519123329=:24268--
