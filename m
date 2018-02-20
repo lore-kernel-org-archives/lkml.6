@@ -1,102 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeBTI7K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:59:10 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:56486 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeBTI7I (ORCPT
+        id S1751265AbeBTJFA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 04:05:00 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40613 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750998AbeBTJE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:59:08 -0500
-Date: Tue, 20 Feb 2018 09:58:57 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Message-ID: <20180220085857.GC7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-12-git-send-email-jacopo+renesas@jmondi.org>
- <1963190.TI9O1pFqZp@avalon>
+        Tue, 20 Feb 2018 04:04:57 -0500
+X-Google-Smtp-Source: AH8x227lZWZaatg6CgYiqUA0klja6FMnmnYd07mKt9KGn9hBqYKk8xpqhsS80OEQU4AmaT1i/nrISw==
+Subject: Re: [PATCH] drm/meson: fix vsync buffer update
+To: airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Michal Lazo <michal.lazo@gmail.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1518689976-23292-1-git-send-email-narmstrong@baylibre.com>
+ <20180219151900.GP22199@phenom.ffwll.local>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <261b72e2-554c-6fcc-34ea-1e4f8201d21e@baylibre.com>
+Date: Tue, 20 Feb 2018 10:04:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180219151900.GP22199@phenom.ffwll.local>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1963190.TI9O1pFqZp@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On 19/02/2018 16:19, Daniel Vetter wrote:
+> On Thu, Feb 15, 2018 at 11:19:36AM +0100, Neil Armstrong wrote:
+>> The plane buffer address/stride/height was incorrectly updated in the
+>> plane_atomic_update operation instead of the vsync irq.
+>> This patch delays this operation in the vsync irq along with the
+>> other plane delayed setup.
+>>
+>> This issue was masked using legacy framebuffer and X11 modesetting, but
+>> is clearly visible using gbm rendering when buffer is submitted late after
+>> vblank, like using software decoding and OpenGL rendering in Kodi.
+>> With this patch, tearing and other artifacts disappears completely.
+> 
+> You mean the frontbuffer rendering nature of X11 with all it's tearing
+> made the issue not noticeable? I'm also not clear what you mean with
+> legacy framebuffer ...
 
-On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
-> > The sensor driver sets mbus format colorspace information and sizes,
-> > but not ycbcr encoding, quantization and xfer function. When supplied
-> > with an badly initialized mbus frame format structure, those fields
-> > need to be set explicitly not to leave them uninitialized. This is
-> > tested by v4l2-compliance, which supplies a mbus format description
-> > structure and checks for all fields to be properly set.
-> >
-> > Without this commit, v4l2-compliance fails when testing formats with:
-> > fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/i2c/ov7670.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > index 25b26d4..61c472e 100644
-> > --- a/drivers/media/i2c/ov7670.c
-> > +++ b/drivers/media/i2c/ov7670.c
-> > @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev
-> > *sd, fmt->height = wsize->height;
-> >  	fmt->colorspace = ov7670_formats[index].colorspace;
->
-> On a side note, if I'm not mistaken the colorspace field is set to SRGB for
-> all entries. Shouldn't you hardcode it here and remove the field ?
->
-> > +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-> > +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-> > +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
->
-> How about setting the values explicitly instead of relying on defaults ? That
-> would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
-> V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if the
-> sensor outputs limited or full range ?
->
+Yeah I don't have to correct technical terms, sorry.
 
-This actually makes me wonder if those informations (ycbcb_enc,
-quantization and xfer_func) shouldn't actually be part of the
-supported format list... I blindly added those default fields in the
-try_fmt function, but I doubt they applies to all supported formats.
+> 
+> Either way looks reasonable:
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
-RGB 565) and 1 raw format (BGGR). I now have a question here:
+Thanks,
 
-1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
-applies to RGB and raw formats? I don't think so, and what value is
-the correct one for the ycbcr_enc field in this case? I assume
-xfer_func and quantization applies to all formats instead..
+Pushed to drm-misc-fixes.
 
-Thanks
-   j
+Neil
 
-> >  	info->format = *fmt;
-> >
-> >  	return 0;
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+> 
+>> Cc: Michal Lazo <michal.lazo@gmail.com>
+>> Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/meson/meson_crtc.c  | 6 ++++++
+>>  drivers/gpu/drm/meson/meson_drv.h   | 3 +++
+>>  drivers/gpu/drm/meson/meson_plane.c | 7 +++----
+>>  3 files changed, 12 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+>> index 5155f01..0552020 100644
+>> --- a/drivers/gpu/drm/meson/meson_crtc.c
+>> +++ b/drivers/gpu/drm/meson/meson_crtc.c
+>> @@ -36,6 +36,7 @@
+>>  #include "meson_venc.h"
+>>  #include "meson_vpp.h"
+>>  #include "meson_viu.h"
+>> +#include "meson_canvas.h"
+>>  #include "meson_registers.h"
+>>  
+>>  /* CRTC definition */
+>> @@ -192,6 +193,11 @@ void meson_crtc_irq(struct meson_drm *priv)
+>>  		} else
+>>  			meson_vpp_disable_interlace_vscaler_osd1(priv);
+>>  
+>> +		meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
+>> +			   priv->viu.osd1_addr, priv->viu.osd1_stride,
+>> +			   priv->viu.osd1_height, MESON_CANVAS_WRAP_NONE,
+>> +			   MESON_CANVAS_BLKMODE_LINEAR);
+>> +
+>>  		/* Enable OSD1 */
+>>  		writel_bits_relaxed(VPP_OSD1_POSTBLEND, VPP_OSD1_POSTBLEND,
+>>  				    priv->io_base + _REG(VPP_MISC));
+>> diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
+>> index 5e8b392..8450d6ac 100644
+>> --- a/drivers/gpu/drm/meson/meson_drv.h
+>> +++ b/drivers/gpu/drm/meson/meson_drv.h
+>> @@ -43,6 +43,9 @@ struct meson_drm {
+>>  		bool osd1_commit;
+>>  		uint32_t osd1_ctrl_stat;
+>>  		uint32_t osd1_blk0_cfg[5];
+>> +		uint32_t osd1_addr;
+>> +		uint32_t osd1_stride;
+>> +		uint32_t osd1_height;
+>>  	} viu;
+>>  
+>>  	struct {
+>> diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+>> index d0a6ac8..27bd350 100644
+>> --- a/drivers/gpu/drm/meson/meson_plane.c
+>> +++ b/drivers/gpu/drm/meson/meson_plane.c
+>> @@ -164,10 +164,9 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+>>  	/* Update Canvas with buffer address */
+>>  	gem = drm_fb_cma_get_gem_obj(fb, 0);
+>>  
+>> -	meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
+>> -			   gem->paddr, fb->pitches[0],
+>> -			   fb->height, MESON_CANVAS_WRAP_NONE,
+>> -			   MESON_CANVAS_BLKMODE_LINEAR);
+>> +	priv->viu.osd1_addr = gem->paddr;
+>> +	priv->viu.osd1_stride = fb->pitches[0];
+>> +	priv->viu.osd1_height = fb->height;
+>>  
+>>  	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
+>>  }
+>> -- 
+>> 2.7.4
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
