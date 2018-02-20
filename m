@@ -1,56 +1,74 @@
-Return-Path: <corbet@lwn.net>
-X-Google-Smtp-Source: AH8x224Dyv8WcmedJ+VKpmxsoKS3eVn4GIyhz6xXUaxUTs2pcSDpXNikKuZ8XRcbV9Sx9zMspaBM
-ARC-Seal: i=1; a=rsa-sha256; t=1519399065; cv=none;
+Return-Path: <ed.cashin@acm.org>
+X-Google-Smtp-Source: AH8x226XPnPaZQa+PvNOJa1DJm48j0UIRxLBDkuuywk0qp6CqhzJiG5dsOZ3WWzT5fFg0Sqgvz1M
+ARC-Seal: i=1; a=rsa-sha256; t=1519092524; cv=none;
         d=google.com; s=arc-20160816;
-        b=ODoLmSMUSDUg5XD3lQhfFH4r545uK8iGaG4w0rwwPw2DVJWpks+1CzkHDrEMLHqdDj
-         LRPiCOgmR4hBdzf6D48k1RiQol96NmI0uw5QZfHBWhvqZb9Z4RV7Z/JnoeG1L7qmWr5N
-         yVrJvsf3GKrYnG0zt9hnbqeoEj9SpEOdV0QmFq29VkFjPpF6ObzJ2akEr2Ext5i+qidN
-         SsxhYy3YycmZ2uwZfJDGFQYNOT2EzWn2WijtTloLS+ool4rnbHoTxO8LfxC4mno8gp9k
-         PAuL2W1uFC8Sia8wnWnShS0eBpfmwCxPalh9hIHVGhaGRNNKyAoKXlhbBtzIy/x+Gp3z
-         eP3w==
+        b=MY33dug8R6Ao0z2XwBfWQR8QbrBaOwLBqKo/bOMjD5HVTmP8lQTRHPcBMX3Oges1Aa
+         Wf8XOD2KoPWrsKKjNcJbtatIqPm3Ow2Eoyd/UL5UeaUkxTUMIMcTQfeDon/mNucsbrpC
+         ygRkPoxeMyf9zGSl+fnRp1t/IK22kVQD5z/Mh80XBX9znJ4EkXPy1uOVh4/cL99xEIdM
+         CMYZdWi2DArAuysHa8U+Y/mknpgPV1u1mijRB7etws7rB3blSDzrHk55Vx732+B8RLQR
+         q4kokvC5zCjZvdnx6AWDnESc7B6KKXoUL75O/VJTL6B+eanDqwgOhWpUIJWNxxLQ4byL
+         Vziw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=8SsnQnLJ6CtlfBUO+IyaGSaHdI4SaOPgqr/QdiQm3XU=;
-        b=BvqkcoG19y9kJeqUYvXV2hFcl08cJ5/3RKbzUPf9F1WNlu6K4zvkCfd0ZEm4LEPUDl
-         T8IFEdxJ7rsk4BIkS7CBp7QmLaWpHhi+06NK00jF2R/XgIv9C4ZPCB7xi3bnzluXAGQL
-         Dzkpfn6d9dCh9APk9WUGNt8bfC4BipDLvQPqDoqZTVho4et+7fGWgkRD0vcpRMV5EoVq
-         YCiLjVSURKRadvDARhx3g1Suu8HyH2h9HLVrYgGD+Ld1w4HBHL+LqLlaGHKCMDRtHx1n
-         JrWH0bDSnwUAa9TkaCPfFzcaZKdDNrBbj2wLjyyRapHerISF3UhzpsR4M8LUssEq6QyC
-         w9PQ==
+        bh=83TGgaRZ9QwMmDICDH3h+jRF67kDZvbF+dfPZbK9WLY=;
+        b=N5ioM97KO6ycXxrGXYgnLltyEOipwSlvXnNYr+wO/inhw2tC+k0BiLGgkaHi0kGo3f
+         eSi2YEXwGqvpRJNrfmNRZi6lVNaLP1Eh9F9JnVLvWW9k4KZNwTO11yHElIPO4TyN08dm
+         BZ9tOGrS/3uBpE8hKNr5Lu3zXBwD+cqI7AyELLir9HJzbA9hd40cqLmciLSUZGDpet6j
+         dvKu7djv/ulUp7h8pG9dLKYrX7110QJsflkCVsTnSaz/9hwwAr46iC+TlLTZvQD6NGMn
+         EwsxMFbpcRXCy9uJ92heU2Yl8QXfiudBb4ad7tu7AWuOgJDBlNymEXYPXZ3S9YER96d5
+         zg1w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
+       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 173.254.64.10 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
-Date: Fri, 23 Feb 2018 08:17:43 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Aishwarya Pant <aishpant@gmail.com>
-Cc: "Ed L. Cashin" <ed.cashin@acm.org>, linux-kernel@vger.kernel.org, Greg
- KH <gregkh@linuxfoundation.org>, Julia Lawall <julia.lawall@lip6.fr>
+       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 173.254.64.10 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
+X-Authority-Analysis: v=2.2 cv=TIA1cxta c=1 sm=1 tr=0
+ a=6lV6tj8ir7tGSl/9xQZNPA==:117 a=6lV6tj8ir7tGSl/9xQZNPA==:17
+ a=IkcTkHD0fZMA:10 a=Op4juWPpsa0A:10 a=6dSziLGFmYxQ7E99zKgA:9 a=QEXdDO2ut3YA:10
 Subject: Re: [PATCH v3] aoe: document sysfs interface
-Message-ID: <20180223081743.5c111bc5@lwn.net>
-In-Reply-To: <20180219181653.GA2925@mordor.localdomain>
+To: Aishwarya Pant <aishpant@gmail.com>, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
 References: <20180219181653.GA2925@mordor.localdomain>
-Organization: LWN.net
+From: Ed Cashin <ed.cashin@acm.org>
+Message-ID: <2a0a129e-eb85-8fc5-3df4-c8a855a0b48f@acm.org>
+Date: Mon, 19 Feb 2018 21:08:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180219181653.GA2925@mordor.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box320.bluehost.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - acm.org
+X-BWhitelist: no
+X-Source-IP: 24.99.197.19
+X-Exim-ID: 1enxME-001Qxz-Fg
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-24-99-197-19.hsd1.ga.comcast.net ([10.0.0.86]) [24.99.197.19]:33033
+X-Source-Auth: nobody
+X-Email-Count: 0
+X-Source-Cap: bm9ib2R5Oztib3gzMjAuYmx1ZWhvc3QuY29t
+X-Local-Domain: no
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592854282679037569?=
-X-GMAIL-MSGID: =?utf-8?q?1593205394154428265?=
+X-GMAIL-MSGID: =?utf-8?q?1592883963300924351?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 19 Feb 2018 23:46:53 +0530
-Aishwarya Pant <aishpant@gmail.com> wrote:
-
+On 02/19/2018 01:16 PM, Aishwarya Pant wrote:
 > Documentation has been compiled from git commit logs and descriptions in
 > Documentation/aoe/aoe.txt. This should be useful for scripting and
 > tracking changes in the ABI.
-> 
-> Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
 
-Applied to the docs tree, thanks.
+I don't see any problems with v3.  Thank you.
 
-jon
+-- 
+   Ed
