@@ -1,160 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751749AbeBTXKO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:10:14 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38051 "EHLO
+        id S1751909AbeBTXLG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:11:06 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38076 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751582AbeBTXKL (ORCPT
+        with ESMTP id S1751725AbeBTXKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:11 -0500
+        Tue, 20 Feb 2018 18:10:15 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
+Cc: linux-renesas-soc@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
         Matt Porter <mporter@konsulko.com>,
         Koen Kooi <koen@dominion.thruhere.net>,
         Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
         Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
-Date: Wed, 21 Feb 2018 01:10:30 +0200
-Message-Id: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: [PATCH v4 05/16] of: changeset: Add of_changeset_node_move method
+Date: Wed, 21 Feb 2018 01:10:35 +0200
+Message-Id: <20180220231046.32638-6-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 
-This patch series addresses a design mistake that dates back from the initial
-DU support. Support for the LVDS encoders, which are IP cores separate from
-the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
-described through a single DT node.
+Adds a changeset helper for moving a subtree to a different place
+in the running tree. This is useful in advances cases of dynamic
+device tree construction.
 
-To fix the, patches 01/16 and 02/16 define new DT bindings for the LVDS
-encoders, and deprecate their description inside the DU bindings. To retain
-backward compatibility with existing DT, patches 03/16 to 08/16 then patch the
-device tree at runtime to convert the legacy bindings to the new ones.
+Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/of/dynamic.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of.h   |  9 +++++++
+ 2 files changed, 75 insertions(+)
 
-With the DT side addressed, patch 09/16 converts the LVDS support code to a
-separate bridge driver. Patches 11/16 to 16/16 then update all the device tree
-sources to the new DU and LVDS encoders bindings.
-
-I decided to go for live DT patching in patch 08/16 because implementing
-support for both the legacy and new bindings in the driver would have been
-very intrusive, and prevented further cleanups. This version relies more
-heavily on overlays to avoid touching the internals of the OF core compared to
-v2, even if manual fixes to the device tree are still needed.
-
-Compared to v3, this series uses the OF changeset API to update properties
-instead of accessing the internals of the property structure. This removes the
-local implementation of functions to look up nodes by path and update
-properties. In order to do this, I pulled in Pantelis' patch series titled
-"[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
-rebased it while taking two small review comments into account.
-
-Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
-now a dependency, I'd need you to merge them early (ideally on top of
-v4.16-rc1) and provide a stable branch, or get your ack to merge them through
-Dave's tree if they don't conflict with what you have and will queue for
-v4.17.
-
-This version also drops the small fix to the Porter board device tree that has
-been queued for v4.17 already.
-
-Compared to v2, the biggest change is in patch 03/16. Following Rob's and
-Frank's reviews it was clear that modifying the unflattened DT structure of
-the overlay before applying it wasn't popular. I have thus decided to use one
-overlay source per SoC to move as much of the DT changes to the overlay as
-possible, and only perform manual modifications (that are still needed as some
-of the information is board-specific) on the system DT after applying the
-overlay. As a result the overlay is parsed and applied without being modified.
-
-Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
-and incorporate review feedback as described by the changelogs of individual
-patches.
-
-
-Laurent Pinchart (11):
-  dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-  dt-bindings: display: renesas: Deprecate LVDS support in the DU
-    bindings
-  drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
-  drm: rcar-du: Convert LVDS encoder code to bridge driver
-  ARM: dts: r8a7790: Convert to new LVDS DT bindings
-  ARM: dts: r8a7791: Convert to new LVDS DT bindings
-  ARM: dts: r8a7792: Convert to new DU DT bindings
-  ARM: dts: r8a7793: Convert to new LVDS DT bindings
-  ARM: dts: r8a7794: Convert to new DU DT bindings
-  arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
-  arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
-
-Pantelis Antoniou (5):
-  of: dynamic: Add __of_node_dupv()
-  of: changesets: Introduce changeset helper methods
-  of: changeset: Add of_changeset_node_move method
-  of: unittest: changeset helpers
-  i2c: demux: Use changeset helpers for clarity
-
- .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
- .../devicetree/bindings/display/renesas,du.txt     |  31 +-
- MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/r8a7790-lager.dts                |  22 +-
- arch/arm/boot/dts/r8a7790.dtsi                     |  64 ++-
- arch/arm/boot/dts/r8a7791-koelsch.dts              |  10 +-
- arch/arm/boot/dts/r8a7791-porter.dts               |  16 +-
- arch/arm/boot/dts/r8a7791.dtsi                     |  36 +-
- arch/arm/boot/dts/r8a7792.dtsi                     |   1 -
- arch/arm/boot/dts/r8a7793-gose.dts                 |  10 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  37 +-
- arch/arm/boot/dts/r8a7794.dtsi                     |   1 -
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   3 +-
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  36 +-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   3 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  36 +-
- drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
- drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
- drivers/gpu/drm/rcar-du/rcar_du_of.c               | 307 ++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  81 ++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  55 +++
- drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
- drivers/i2c/muxes/i2c-demux-pinctrl.c              |  12 +-
- drivers/of/dynamic.c                               | 317 ++++++++++++-
- drivers/of/unittest.c                              |  54 +++
- include/linux/of.h                                 | 337 +++++++++++++
- 43 files changed, 2199 insertions(+), 710 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
-
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index 85e722ed8631..27d9057ef360 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -1132,3 +1132,69 @@ int __of_changeset_add_update_property_string_list(
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(__of_changeset_add_update_property_string_list);
++
++static struct device_node *
++__of_changeset_node_move_one(struct of_changeset *ocs,
++		struct device_node *np, struct device_node *new_parent)
++{
++	struct device_node *np2;
++	const char *unitname;
++	int err;
++
++	err = of_changeset_detach_node(ocs, np);
++	if (err)
++		return ERR_PTR(err);
++
++	unitname = strrchr(np->full_name, '/');
++	if (!unitname)
++		unitname = np->full_name;
++
++	np2 = __of_node_dup(np, "%s/%s",
++			new_parent->full_name, unitname);
++	if (!np2)
++		return ERR_PTR(-ENOMEM);
++	np2->parent = new_parent;
++
++	err = of_changeset_attach_node(ocs, np2);
++	if (err)
++		return ERR_PTR(err);
++
++	return np2;
++}
++
++/**
++ * of_changeset_node_move_to - Moves a subtree to a new place in
++ *                             the tree
++ *
++ * @ocs:	changeset pointer
++ * @np:		device node pointer to be moved
++ * @to:		device node of the new parent
++ *
++ * Moves a subtree to a new place in the tree.
++ * Note that a move is a safe operation because the phandles
++ * remain valid.
++ *
++ * Returns zero on success, a negative error value otherwise.
++ */
++int of_changeset_node_move(struct of_changeset *ocs,
++		struct device_node *np, struct device_node *new_parent)
++{
++	struct device_node *npc, *nppc;
++
++	/* move the root first */
++	nppc = __of_changeset_node_move_one(ocs, np, new_parent);
++	if (IS_ERR(nppc))
++		return PTR_ERR(nppc);
++
++	/* move the subtrees next */
++	for_each_child_of_node(np, npc) {
++		nppc = __of_changeset_node_move_one(ocs, npc, nppc);
++		if (IS_ERR(nppc)) {
++			of_node_put(npc);
++			return PTR_ERR(nppc);
++		}
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(of_changeset_node_move);
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 7aef555f9bc2..76197bc75346 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -1328,6 +1328,9 @@ int __of_changeset_add_update_property_string_list(
+ 		struct of_changeset *ocs, struct device_node *np,
+ 		const char *name, const char **strs, int count, bool update);
+ 
++int of_changeset_node_move(struct of_changeset *ocs,
++	struct device_node *np, struct device_node *new_parent);
++
+ #else /* CONFIG_OF_DYNAMIC */
+ static inline int of_reconfig_notifier_register(struct notifier_block *nb)
+ {
+@@ -1390,6 +1393,12 @@ static inline int __of_changeset_add_update_property_string_list(
+ 	return -EINVAL;
+ }
+ 
++static inline int of_changeset_node_move(struct of_changeset *ocs,
++		struct device_node *np, struct device_node *new_parent)
++{
++	return -EINVAL;
++}
++
+ #endif /* CONFIG_OF_DYNAMIC */
+ 
+ /**
 -- 
 Regards,
 
