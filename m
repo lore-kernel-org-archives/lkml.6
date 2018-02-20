@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeBTM6d (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:58:33 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39396 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeBTM6b (ORCPT
+        id S1751908AbeBTM6g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:58:36 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40507 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeBTM6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:58:31 -0500
-X-Google-Smtp-Source: AH8x226GI528+7JpHxNN70Wg2tqUGxYphL7mxV9Qu13f92whz/5ryrIjXPYW15hcJ9rpKqm3VmfCdQ==
+        Tue, 20 Feb 2018 07:58:33 -0500
+X-Google-Smtp-Source: AH8x226F8n+aNWnh9FC/agHrvQazToseQcF+MK1+GnqC8rIvASIfXvLV+sS4mMZW8dVmK0zhlinCsw==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function v3
-Date: Tue, 20 Feb 2018 13:58:26 +0100
-Message-Id: <20180220125829.27060-1-christian.koenig@amd.com>
+Subject: [PATCH 3/4] drm/ttm: handle already locked BOs during eviction and swapout.
+Date: Tue, 20 Feb 2018 13:58:28 +0100
+Message-Id: <20180220125829.27060-3-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180220125829.27060-1-christian.koenig@amd.com>
+References: <20180220125829.27060-1-christian.koenig@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -24,46 +26,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-amdgpu needs to verify if userspace sends us valid addresses and the simplest
-way of doing this is to check if the buffer object is locked with the ticket
-of the current submission.
-
-Clean up the access to the ww_mutex internals by providing a function
-for this and extend the check to the thread owning the underlying mutex.
-
-v2: split amdgpu changes into separate patch as suggested by Alex
-v3: change logic as suggested by Daniel
+This solves the problem that when we swapout a BO from a domain we
+sometimes couldn't make room for it because holding the lock blocks all
+other BOs with this reservation object.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- include/linux/ww_mutex.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/ttm/ttm_bo.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index 39fda195bf78..14e4149d3d9d 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
- 	return mutex_is_locked(&lock->base);
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index d90b1cf10b27..3a44c2ee4155 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -713,31 +713,30 @@ bool ttm_bo_eviction_valuable(struct ttm_buffer_object *bo,
+ EXPORT_SYMBOL(ttm_bo_eviction_valuable);
+ 
+ /**
+- * Check the target bo is allowable to be evicted or swapout, including cases:
+- *
+- * a. if share same reservation object with ctx->resv, have assumption
+- * reservation objects should already be locked, so not lock again and
+- * return true directly when either the opreation allow_reserved_eviction
+- * or the target bo already is in delayed free list;
+- *
+- * b. Otherwise, trylock it.
++ * Check if the target bo is allowed to be evicted or swapedout.
+  */
+ static bool ttm_bo_evict_swapout_allowable(struct ttm_buffer_object *bo,
+-			struct ttm_operation_ctx *ctx, bool *locked)
++					   struct ttm_operation_ctx *ctx,
++					   bool *locked)
+ {
+-	bool ret = false;
++	/* First check if we can lock it */
++	*locked = reservation_object_trylock(bo->resv);
++	if (*locked)
++		return true;
+ 
+-	*locked = false;
++	/* Check if it's locked because it is part of the current operation */
+ 	if (bo->resv == ctx->resv) {
+ 		reservation_object_assert_held(bo->resv);
+-		if (ctx->allow_reserved_eviction || !list_empty(&bo->ddestroy))
+-			ret = true;
+-	} else {
+-		*locked = reservation_object_trylock(bo->resv);
+-		ret = *locked;
++		return ctx->allow_reserved_eviction ||
++			!list_empty(&bo->ddestroy);
+ 	}
+ 
+-	return ret;
++	/* Check if it's locked because it was already evicted */
++	if (ww_mutex_is_owned_by(&bo->resv->lock, NULL))
++		return true;
++
++	/* Some other thread is using it, don't touch it */
++	return false;
  }
  
-+/**
-+ * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
-+ * @lock: the mutex to be queried
-+ * @ctx: the w/w acquire context to test
-+ *
-+ * If @ctx is not NULL test if the mutex is owned by this context.
-+ * If @ctx is NULL test if the mutex is owned by the current thread.
-+ */
-+static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
-+					struct ww_acquire_ctx *ctx)
-+{
-+	if (ctx)
-+		return likely(READ_ONCE(lock->ctx) == ctx);
-+	else
-+		return likely(__mutex_owner(&lock->base) == current);
-+}
-+
- #endif
+ static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
 -- 
 2.14.1
