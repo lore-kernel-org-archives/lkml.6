@@ -1,90 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeBTIyN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:54:13 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54482 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbeBTIxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:53:41 -0500
-Date: Tue, 20 Feb 2018 09:53:38 +0100
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Cc: Han Xu <han.xu@nxp.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: nand: gpmi: fix edo mode for non fully ONFI
- compliant flashes
-Message-ID: <20180220095338.13f04062@xps13>
-In-Reply-To: <2e12a84b-b4cb-f0ff-f3c9-173def6b5bd2@ginzinger.com>
-References: <2e12a84b-b4cb-f0ff-f3c9-173def6b5bd2@ginzinger.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751399AbeBTI4j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:56:39 -0500
+Received: from ozlabs.org ([103.22.144.67]:51203 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750781AbeBTI4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 03:56:38 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        "Manoj N . Kumar" <manoj@linux.vnet.ibm.com>
+Cc: linux-scsi@vger.kernel.org,
+        "Matthew R . Ochs" <mrochs@linux.vnet.ibm.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] scsi: cxlflash: Select SCSI_SCAN_ASYNC
+In-Reply-To: <20180219071037.27938-1-vaibhav@linux.vnet.ibm.com>
+References: <20180219071037.27938-1-vaibhav@linux.vnet.ibm.com>
+Date: Tue, 20 Feb 2018 19:56:35 +1100
+Message-ID: <87sh9wrqd8.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manfred,
+Vaibhav Jain <vaibhav@linux.vnet.ibm.com> writes:
 
-On Tue, 20 Feb 2018 09:15:33 +0100, Manfred Schlaegl
-<manfred.schlaegl@ginzinger.com> wrote:
+> The cxlflash driver uses "Asynchronous SCSI scanning" enabled by
+> CONFIG_SCSI_SCAN_ASYNC. Without this enabled the modprobe of cxlflash
+> module gets hung with following backtrace:
+>
+> Call Trace:
+>  __switch_to+0x2cc/0x470
+>  __schedule+0x288/0xab0
+>  schedule+0x40/0xc0
+>  schedule_timeout+0x254/0x4f0
+>  wait_for_common+0xdc/0x260
+>  flush_work+0x140/0x2a0
+>  work_on_cpu+0x88/0xb0
+>  pci_device_probe+0x1d0/0x220
+>  driver_probe_device+0x408/0x5b0
+>  __driver_attach+0x16c/0x1a0
+>  bus_for_each_dev+0xb8/0x110
+>  driver_attach+0x3c/0x60
+>  bus_add_driver+0x1d8/0x370
+>  driver_register+0x9c/0x180
+>  __pci_register_driver+0x74/0xa0
+>  init_cxlflash+0x158/0x1cc
+>  do_one_initcall+0x68/0x1e0
+>  do_init_module+0x90/0x254
+>  load_module+0x2f8c/0x3720
+>  SyS_finit_module+0xcc/0x140
+>  system_call+0x58/0x6c
 
-> In enable_edo_mode the timing mode feature is set according to previously
-> read capabilities of the parameter page ("Timing mode support"). After
-> the value was set, it is read back to provide a "double-check".
-> If the "double check" fails, the whole function returns with an error,
-> which leads to a very slow (non-edo) fallback timing.
-> 
-> The problem here is, that there seem to be some NAND flashes, which are
-> not fully ONFI 1.0 compliant.
-> One of these is Winbond W29N04GV. According to datasheet and parameter
-> page, the flash supports timing mode 4 (edo), but the timing mode feature
-> is simply missing.
-> 
-> It seems that setting a non-existing feature is simply ignored. The real
-> problem occurs, when the feature is read back: W29N04GV always delivers
-> zero, which causes the "double-check" to fail. This leads to very slow
-> timing and therefore to poor performance.
-> 
-> To solve this, we simply remove the double-check, which is a paranoia
-> check anyways.
+Why does it "hang"? That's kind of bizarre, I would expect either a
+build or runtime failure if a feature the driver requires is missing.
 
-I have been in troubles about this already and sent a first patch
-to dot the exact same thing, which was (rightly) nacked by Han.
+> diff --git a/drivers/scsi/cxlflash/Kconfig b/drivers/scsi/cxlflash/Kconfig
+> index a011c5dbf214..f054c1b0fff3 100644
+> --- a/drivers/scsi/cxlflash/Kconfig
+> +++ b/drivers/scsi/cxlflash/Kconfig
+> @@ -6,6 +6,7 @@ config CXLFLASH
+>  	tristate "Support for IBM CAPI Flash"
+>  	depends on PCI && SCSI && CXL && EEH
+>  	select IRQ_POLL
+> +	select SCSI_SCAN_ASYNC
 
-So I moved to another solution which is:
-1/ Move the GPMI driver to use the standardized
-->setup_data_interface() hook. This way, use the logic already laying
-in the core (controller drivers should not care about that anyway).
-2/ Handle differently the ONFI/JEDEC parameter page so that we only
-keep the parameters we actually use (instead of the whole page)
-3/ Add the possibility in vendor code to nack a feature which is
-declared supported (I guess it is your case too) by editing the new
-structure replacing the parameter page. This way the check won't be
-trustable and thus ignored.
+It's user configurable, so it's rude to select it. It can also be
+disabled on the kernel command line, so this seems like a fragile
+solution.
 
-You can find the first versions here [1] [2] and I am currently working
-on a next version right now. Look at the last patch in Macronix NAND
-code, I guess you could do a similar patch for your NAND (you may wait
-for the next version for that, it is subject to slightly change).
-
-Cheers,
-Miquèl
-
-[1]
-http://lists.infradead.org/pipermail/linux-mtd/2018-January/078920.html
-[2]
-http://lists.infradead.org/pipermail/linux-mtd/2018-February/079048.html
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+cheers
