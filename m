@@ -1,134 +1,138 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1614509-1518834363-2-5574714605472190229
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518834362; b=lbuPfXkppqzzHqPmeUbOrb4wSS1Mj04ezslUfeHGDMPC0+T
-    DqGQ+PdJDL4rhO+G+bp/6XG2Ju2wKx023v/x//4NAouX4n7SXduQIZ3sltzjOuRO
-    mH8LgAIjJFBtlw0G1RDX5pHW8jc9VQ41wfLt70nHaF7D4mpZrsv+BVT8WaPDSuSC
-    4xuJwJfFEGBronZUOnM5SGh6n1708NkJs/21YnPzWusxAa1jfOMt4SaRKnT3ly4i
-    tV29RNpM60uiI/XAjrxzLvSWMY4uO2F5Zi/I8Zw4ZC80wHP8pfSouu3SnydV5kX7
-    nVW+DPk2botu/+VlIwYs/mfntr/NfghJaCNOi8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518834362; bh=O
-    O3GmS5Aer6w/YSViZt1MLwwdo4MLnkqgFa9vORQzEA=; b=uWHknwjdug5kZ/riC
-    EBrJkVr7Z+0Vc8Uex8pwDp1ezVgDsxYie4I6I/BuWxj1KesYEyR1xJxoaGBpVYWi
-    W+MowXKO6Dklpmjn+CfWMqA90IJmKFrSVxXvJjFL4ysVz/pHj2GbbC71pygOrq/K
-    iPkbH9D33081JwvEFoS4yel/pdo4QrrUliIz78zWDNuZFNiPK9Js5bJb+JniqK5i
-    BlYaFH0inxYnOYSb2WNhSTIzWgGpYSl02PsEvgb0eOQ+9SZBQKIj4MgK7S2NPEDR
-    qE9cnpDYfY6h1PdZh42JRNKCXLTpLu/1tCG13P5pMHF4xUol0Ew7JeeEwo6AlMZn
-    HxarQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	wsa@the-dreams.de
-Subject: [PATCH 4/4] Staging: ks7010: hostif: Fix multiple use of arguments in
- ps_confirm_wait_inc() macro.
-Date: Fri, 16 Feb 2018 18:25:03 -0800
-Message-Id: <20180217022503.24982-3-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180217022503.24982-1-quytelda@tamalin.org>
-References: <20180217022503.24982-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:wbi28CcRn2hImfZqDy7pByH7KJtG9Z4lvITLCgVMCdir9Pkp5v6
- 5EAB/YoBA3UyTFnhUv2ASPrMdBHZqrF0BoBqDBZIdF0XF9ta1rzydlDmWZ4REYEAsJCN5zE
- 7uQ7VO2fGcSwVqIMb8b8y1vCkdWq2woZWk3qVis3+ewGL92Afh1Qs4pb82gDJCdojPmkfP7
- fJ7QrkP6yEUwu6kJjjeJQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ltYgGuMpeNw=:7yUz8cMuNRoN/tWwQYgOE4
- WR9FUZMR/UeunLtOPQlEql6s4q6H1ARTb92u8WH4VHr4m2QcvzSs8/l57jFt8kS/+HhA1n+To
- AwN4wGMJOT0JE/rqyu3yPEC7XtJ/UeGbZAr4K8pocLpJHoBYBeuqRqhfcoD56aB6qUjWNMqZk
- r2rL4MvR2m5XfzlB419EhGXglVyw+MEVMTDykupwpYaURPNegd9F7nX4zT0Z+Muxm5lLHoAFK
- 7gJ2cOfTVihutfDybQMG81yA94OuY6UIPPQfqZvKMCajb+3hz4wVHC7qhXIBhiAv6cQqGmJE0
- lA47p+h8c1OTw59cePkLM7vR1eQ+V7hbRVFuC9cXcpJlNvuA0WUQJHt0AKCdQUuXQnYMH/5Ts
- i0BoqOYnAy84ymlaNSNSODKuvogsnOKfOeScLIT2+WjDrd73wroLWMie5dYEMoNWSmxhzwtzi
- frEYMFtscwnRh+FHQrwaQY/m/T0jGSJgHG8U+IAK4acKCPB+3sq/DTfTmo74VHtzGAj5sZsvS
- gBrg6stZKanZ4p+aa1iGm467k7ZUNscbVCxg7AmsR/INa7slkibHIXW+DLHBgANRiu0x1FiXU
- CJe4IxTPa0Od8PQSCwwLYsS31yfpoYoB3VhyfmzDlhBJoQp2v5uETL/xFuSSJ4X72IC6k2PWE
- wGHJyKKnMAE3cR29LbAhJQ+woKFCJVcDiC2hMBX4F7jTa/dRPhP6qZUIaOFq8LfjQixQ02N+2
- nu4TBJ/q9uBxZGcIj6L182Wf5tkTkS4/7lgJIQ==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AH8x225Tgru6+OybaZQ3uCHcPETaHeGSWEn1x2Kn0kNfxeLFOb/oWG53C3/Pz60HzMgYVGKpl45u
+ARC-Seal: i=1; a=rsa-sha256; t=1519102624; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jwC4vrfxzwd2/XI028E81lnTiMPm2HSfCEfjNENgL6bY8IqG0vJ54O9zfsXM9I2r1/
+         eU4QPmOAYXGnDTUJU0nb+9blwZIqGnk6tH9qi0RClonLZ99P877oLxRUVXlCJk5mZi6q
+         LOBK7+ANuEaVjbfnhZtqRx8Z/0HBoZZTBbImqRFqdKMoExzerq2L4YbA/OQuvwH9FL+N
+         3FzMZ4V9mMvGPk9V0AmkHCG3ZL9v0Vsb0PEzvjKII5AEqVt/ujpYhXxpBGTJI+fZMG4U
+         FCaCZYb39FXEPe/mPFColqqFp5j/2JDQZY3nDLxH7jHAEWVOWStSYdNAL9XaR43nMsnO
+         lesg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:message-id:references:in-reply-to:subject:to:from:date
+         :content-transfer-encoding:mime-version:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=a4DIXkSrMo2oj2t5+qKIydhf8HgEO91XGNvd5D713Eg=;
+        b=xtK1VdtLENXL5NsaItoDR+vflrTfDRwnMUHSL2fcyVCdOMAxzxQL4esei+3gqxgC40
+         HkY5ThvPZxFkahPUs6fKMp5va2WJUfAuGmkEc0PifEj+W5FAOYLRwE+lmggN32Y0xJ8d
+         +2AkhWmaV5GZcoSLLfMcAVj94cMmDuKciD7urxIMAgbW9DczYcoGUWy3YwWFIY9jUjpf
+         LzUkN5a0hy4iXNx3FL+6vVooStXDUX78cs/A/PXqC14bc/1s+pGPHR5/8ZxOMRyNWLTf
+         D8+9moVDunAD9reX3f2zs0xkO5U1buA6NjpZUHKrXlbHKrigJX5zyXPNNbwXsE3uG9uk
+         jeqQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=J02ZrgfT;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=J02ZrgfT;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=J02ZrgfT;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=J02ZrgfT;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Date: Tue, 20 Feb 2018 10:27:02 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
+ <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
+ <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
+ Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
+ <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v7 0/7] Address error and recovery for AER and DPC
+In-Reply-To: <1516430119-3825-1-git-send-email-poza@codeaurora.org>
+References: <1516430119-3825-1-git-send-email-poza@codeaurora.org>
+Message-ID: <b667e39f9d16a90ff8745f90010871da@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590092241313961369?=
+X-GMAIL-MSGID: =?utf-8?q?1592894554226498513?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use GCC extensions to prevent macro arguments from accidentally being evaluated
-multiple times when the macro is called.
+On 2018-01-20 12:05, Oza Pawandeep wrote:
+> This patch set brings in error handling support for DPC
+> 
+> The current implementation of AER and error message broadcasting to the
+> EP driver is tightly coupled and limited to AER service driver.
+> It is important to factor out broadcasting and other link handling
+> callbacks. So that not only when AER gets triggered, but also when DPC 
+> get
+> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+> 
+> DPC should enumerate the devices after recovering the link, which is
+> achieved by implementing error_resume callback.
+> 
+> Changes since v6:
+>     Sinan's and Stefan's comments implemented.
+> 	> reordered patch 6 and 7
+> 	> cleaned up
+> Changes since v5:
+>     Sinan's and Keith's comments incorporated.
+>         > made separate patch for mutex
+>         > unified error repotting codes into driver/pci/pci.h
+>         > got rid of wait link active/inactive and
+>           made generic function in driver/pci/pci.c
+> Changes since v4:
+>     Bjorn's comments incorporated.
+>         > Renamed only do_recovery.
+>         > moved the things more locally to drivers/pci/pci.h
+> Changes since v3:
+>     Bjorn's comments incorporated.
+>         > Made separate patch renaming generic pci_err.c
+>         > Introduce pci_err.h to contain all the error types and 
+> recovery
+>         > removed all the dependencies on pci.h
+> Changes since v2:
+>     Based on feedback from Keith:
+>     "
+>     When DPC is triggered due to receipt of an uncorrectable error 
+> Message,
+>     the Requester ID from the Message is recorded in the DPC Error
+>     Source ID register and that Message is discarded and not forwarded 
+> Upstream.
+>     "
+>     Removed the patch where AER checks if DPC service is active
+> Changes since v1:
+>     Kbuild errors fixed:
+>         > pci_find_dpc_dev made static
+>         > ras_event.h updated
+>         > pci_find_aer_service call with CONFIG check
+>         > pci_find_dpc_service call with CONFIG check
+> 
+> Oza Pawandeep (7):
+>   PCI/AER: Rename error recovery to generic pci naming
+>   PCI/AER: factor out error reporting from AER
+>   PCI/ERR: add mutex to synchronize recovery
+>   PCI/DPC: Unify and plumb error handling into DPC
+>   PCI/AER: Unify aer error defines at single space
+>   PCI/DPC: Enumerate the devices after DPC trigger event
+>   PCI: Unify wait for link active into generic pci
+> 
+>  drivers/acpi/apei/ghes.c               |   1 +
+>  drivers/pci/hotplug/pciehp_hpc.c       |  21 +-
+>  drivers/pci/pci.c                      |  39 +++-
+>  drivers/pci/pci.h                      |  11 +
+>  drivers/pci/pcie/Makefile              |   2 +-
+>  drivers/pci/pcie/aer/aerdrv.h          |  30 ---
+>  drivers/pci/pcie/aer/aerdrv_core.c     | 293 
+> +-------------------------
+>  drivers/pci/pcie/aer/aerdrv_errprint.c |   1 +
+>  drivers/pci/pcie/pcie-dpc.c            | 115 ++++++++++-
+>  drivers/pci/pcie/pcie-err.c            | 366 
+> +++++++++++++++++++++++++++++++++
+>  drivers/pci/pcie/portdrv.h             |   2 +
+>  include/linux/aer.h                    |   4 -
+>  include/linux/pci.h                    |   1 +
+>  13 files changed, 534 insertions(+), 352 deletions(-)
+>  create mode 100644 drivers/pci/pcie/pcie-err.c
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
- drivers/staging/ks7010/ks_hostif.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Hi Bjorn,
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 30c9592b3a00..92035e8ac843 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1306,11 +1306,10 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	return ret;
- }
- 
--#define ps_confirm_wait_inc(priv)					 \
--	do {								 \
--		if (atomic_read(&priv->psstatus.status) > PS_ACTIVE_SET) \
--			atomic_inc(&priv->psstatus.confirm_wait);	 \
--	} while (0)
-+#define ps_confirm_wait_inc(priv)					\
-+	({ typeof(priv) priv_ = (priv);					\
-+		if (atomic_read(&priv_->psstatus.status) > PS_ACTIVE_SET) \
-+			atomic_inc(&priv_->psstatus.confirm_wait); })
- 
- static
- void hostif_mib_get_request(struct ks_wlan_private *priv,
--- 
-2.16.1
+I will rebase this patch series on pci and post it again.
+on
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Regards,
+Oza.
