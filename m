@@ -1,32 +1,32 @@
 Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AH8x226a4B2I2ImgsKO2weRvE6R+rlZ0xFMi/NlG7Vh1hkzzUY+G4ZorORQS9xSoF/Oj5egZ2cKH
-ARC-Seal: i=1; a=rsa-sha256; t=1519163049; cv=none;
+X-Google-Smtp-Source: AH8x226mcOJk7dJLfkqbQaTsceI11k9MTuysKMo4BSXBqHDaW89P/+3XdpCXT70+tQU3JuKIwneF
+ARC-Seal: i=1; a=rsa-sha256; t=1519163048; cv=none;
         d=google.com; s=arc-20160816;
-        b=Oc+kxsWB6LNAjp8TFM5pTtB8Q5Z5sKn8koVY7i3NwnPgGAh5BzTWc7E5cnlsgaRHC2
-         EwpIlRziTJOkz2hyLITP4bcQVnFAcT4GogYE1lJveRp5cg4iFqJyOCxeld2OE68nM1/L
-         dCwC9vAyk7062v+Zo08It1dYPrUnD2WWScj2ydqbk3bN6boQsC//Vps7KxIgU82BEkF7
-         l9kbzr4RDxZjtyuupGS8mdAsm+ZaXpMfbI5hAAcAcFAbYbqvNQL0b0X8/MkBinln1VQe
-         Uf59VV67dt1nFlMWGSUvP5cwe9hTXDM44/z6aqzgGbVgEdnNAwYoeLZZlfyAmKmaydLa
-         +1Vg==
+        b=CYGm3J4kfCYunt+nWQ28IIzdp9XcH6JgFQLXYfH+jpxeFvwfRHTW2gfDv/uDeua+Ty
+         bo7XV32wjIG4ORTsoAiOcF4M2+gHT/yh8HE3awx6C9EUo5XQ4t1EVuqWptRVggx3487J
+         XeL9x5JeBm8lJ8HVoNAlSGqaDn3sgyZxlksAd8ZJMm9EpotbnpJSeVpHU5BO1gHgFOlw
+         NfAeBh1uRGvyW9Dnij9Obsr11+1HGRI2gozdjSA9Kwj+6m9AHSKy/B78j6C7aMLuMbiP
+         KgqMNyXC2p0+aLlE/61e5xdtUWPfGE/FaaF6gXdFA5mbLhmr4oelGVWNxCINTjYb8OTe
+         vc6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=6Xmp1BSrkAKibCMRKdegnLQFhMIzVAvG16W0eacND+w=;
-        b=P6Ed5dDCPPBrHwQ3lYqP0zZMvfa2BItDJoqsLHFruR9K4aGhUIKDu4TRq3Sv4VTJ+q
-         HARqLol5PRRBfLyG9ijoWDIJs/2coGNuQ8jwzGdHj5hopt5T09csVcOfvV774N7S7KzJ
-         pjLMNKZVf+niqMTMgEoBl7oEJ4lFNMH9P7ZYt0IqVFT2x5BUd33cEpnlOhvhm7fMOx2Y
-         RwdrLV8vhNTS6MzTEDnXN3aZFLUXuzQ5fbNPtGoT4tXRp3dSngom2O8C6BnCQHELccY7
-         8fk2sY3z2hxzbUvJ0mwsvPqJKTQjNZk7zEsID5jbAlat5Otkh2Iqe0NUexQQwFM8kTJq
-         nnDQ==
+        bh=bWwQz9KxOdJDxkZMKcXKUlocKLScWzcgAgaTTY2IPXo=;
+        b=EVrOR8I8CEp7XrqpXeaqxPse4KUqYdkxZsaYuisD5fIbA6Kqy3QCk6ua9N4RMc0daG
+         dI741Eai2YdiXanxN8h3dKFaXQUQEc/Bn3RJnyK7BRGphnzZF1HBZOwRc/IS02NSsU9z
+         Fh1uFKt8j+pxQyyFUBpp1SR2Pp2ygnnDdL6duHr6tqYTzcsrx4PZwTz26dEchrXTaWIS
+         GC4e/larai6H1pT3vmY4PhgPAljXDQ4MOa+1sfnp7BsfPn2BxcLIoIZNLIzOJwl3j/Ng
+         /piEkppyBhDnvILkHDrtzV3hJNwMmtlhMjkmh+Au9JdN8ZDEIiY6dHEiyerlJbSoOIK7
+         zP0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="31520269"
+   d="scan'208";a="19075770"
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,15 +39,15 @@ To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
 	Joe Perches <joe@perches.com>,
 	Mark Salyzyn <salyzyn@android.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 12/21] rtc: rk808: Switch to use %ptR
-Date: Tue, 20 Feb 2018 23:43:51 +0200
-Message-Id: <20180220214400.66749-13-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 06/21] rtc: m48t59: Switch to use %ptR
+Date: Tue, 20 Feb 2018 23:43:45 +0200
+Message-Id: <20180220214400.66749-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180220214400.66749-1-andriy.shevchenko@linux.intel.com>
 References: <20180220214400.66749-1-andriy.shevchenko@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592957913495439021?=
-X-GMAIL-MSGID: =?utf-8?q?1592957913495439021?=
+X-GMAIL-THRID: =?utf-8?q?1592957912787147919?=
+X-GMAIL-MSGID: =?utf-8?q?1592957912787147919?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,60 +56,34 @@ struct rtc_time in human readable format.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/rtc/rtc-rk808.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/rtc/rtc-m48t59.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
-index 35c9aada07c8..09d6653bc0de 100644
---- a/drivers/rtc/rtc-rk808.c
-+++ b/drivers/rtc/rtc-rk808.c
-@@ -138,9 +138,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	tm->tm_year = (bcd2bin(rtc_data[5] & YEARS_REG_MSK)) + 100;
- 	tm->tm_wday = bcd2bin(rtc_data[6] & WEEKS_REG_MSK);
- 	rockchip_to_gregorian(tm);
--	dev_dbg(dev, "RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
--		tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "RTC date/time %ptRd(%d) %ptRt\n", tm, tm->tm_wday, tm);
+diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
+index 399fc4255d54..67ba7cb2bbe4 100644
+--- a/drivers/rtc/rtc-m48t59.c
++++ b/drivers/rtc/rtc-m48t59.c
+@@ -102,9 +102,7 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	M48T59_CLEAR_BITS(M48T59_CNTL_READ, M48T59_CNTL);
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
  
- 	return ret;
+-	dev_dbg(dev, "RTC read time %04d-%02d-%02d %02d/%02d/%02d\n",
+-		tm->tm_year + 1900, tm->tm_mon, tm->tm_mday,
+-		tm->tm_hour, tm->tm_min, tm->tm_sec);
++	dev_dbg(dev, "RTC read time %ptR\n", tm);
+ 	return rtc_valid_tm(tm);
  }
-@@ -153,9 +151,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	u8 rtc_data[NUM_TIME_REGS];
- 	int ret;
  
--	dev_dbg(dev, "set RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
--		tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "set RTC date/time %ptRd(%d) %ptRt\n", tm, tm->tm_wday, tm);
- 	gregorian_to_rockchip(tm);
- 	rtc_data[0] = bin2bcd(tm->tm_sec);
- 	rtc_data[1] = bin2bcd(tm->tm_min);
-@@ -216,10 +212,8 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		return ret;
- 	}
+@@ -193,9 +191,7 @@ static int m48t59_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	M48T59_CLEAR_BITS(M48T59_CNTL_READ, M48T59_CNTL);
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
  
--	dev_dbg(dev, "alrm read RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + alrm->time.tm_year, alrm->time.tm_mon + 1,
--		alrm->time.tm_mday, alrm->time.tm_wday, alrm->time.tm_hour,
--		alrm->time.tm_min, alrm->time.tm_sec);
-+	dev_dbg(dev, "alrm read RTC date/time %ptRd(%d) %ptRt\n",
-+		&alrm->time, alrm->time.tm_wday, &alrm->time);
+-	dev_dbg(dev, "RTC read alarm time %04d-%02d-%02d %02d/%02d/%02d\n",
+-		tm->tm_year + 1900, tm->tm_mon, tm->tm_mday,
+-		tm->tm_hour, tm->tm_min, tm->tm_sec);
++	dev_dbg(dev, "RTC read alarm time %ptR\n", tm);
+ 	return rtc_valid_tm(tm);
+ }
  
- 	alrm->enabled = (int_reg & BIT_RTC_INTERRUPTS_REG_IT_ALARM_M) ? 1 : 0;
- 
-@@ -261,10 +255,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		dev_err(dev, "Failed to stop alarm: %d\n", ret);
- 		return ret;
- 	}
--	dev_dbg(dev, "alrm set RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + alrm->time.tm_year, alrm->time.tm_mon + 1,
--		alrm->time.tm_mday, alrm->time.tm_wday, alrm->time.tm_hour,
--		alrm->time.tm_min, alrm->time.tm_sec);
-+	dev_dbg(dev, "alrm set RTC date/time %ptRd(%d) %ptRt\n",
-+		&alrm->time, alrm->time.tm_wday, &alrm->time);
- 
- 	gregorian_to_rockchip(&alrm->time);
- 	alrm_data[0] = bin2bcd(alrm->time.tm_sec);
 -- 
 2.15.1
