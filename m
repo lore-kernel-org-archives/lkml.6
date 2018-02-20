@@ -1,76 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752330AbeBTPJn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:09:43 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752265AbeBTPJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:09:42 -0500
-Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>
-Cc: Jon Masters <jcm@jonmasters.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
- <1518509708.12890.33.camel@infradead.org>
- <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
- <1518517262.12890.43.camel@infradead.org>
- <1518518198.12890.48.camel@infradead.org>
- <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
- <1518775136.7876.13.camel@infradead.org>
- <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
- <1518776517.7876.21.camel@infradead.org>
- <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
- <1518783021.7876.34.camel@infradead.org>
- <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
- <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
- <10373.1519084385@turing-police.cc.vt.edu>
- <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
- <aa3fbaf1-0efc-64b1-4f7b-3d00b0493d48@redhat.com>
- <0575AF4FD06DD142AD198903C74E1CC87A619465@ORSMSX103.amr.corp.intel.com>
- <2159cdc0-c30d-3bf8-1c25-74bff46a1e91@redhat.com>
- <0575AF4FD06DD142AD198903C74E1CC87A6194AB@ORSMSX103.amr.corp.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5b39cfbb-a04f-46a8-87cb-3a52fc8e9700@redhat.com>
-Date: Tue, 20 Feb 2018 16:09:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A6194AB@ORSMSX103.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752368AbeBTPJ7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:09:59 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:39271 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752340AbeBTPJ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:09:58 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Jinbum Park <jinb.park7@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: make CONFIG_DEBUG_WX depend on MMU
+Date: Tue, 20 Feb 2018 16:09:19 +0100
+Message-Id: <20180220150932.3285766-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:1pubBCoyK7Vg1tXRaiUowkWqm20Md9suTAdDsnV4jjuPy33aM1q
+ K1GU3Q6Kg6NFzgMbkT35Kc3NIA1CAuEZQXMKbVIVVxq17PM8smSBveu+XCtp8WU/j/bGYfe
+ /imGXFfYEuf8iukRWJJcjc979247qNIbc0UGsJ0+RI9iq6tXoYIRVgdk3t9SmSsfVVLV+t0
+ MG0FGyTUJjbf9mdIXb69g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZYwGFYNpsEA=:DXZnnXZYEXPBRl6wo5CJSV
+ TMGvVgya691kufufp48KiS188U88u1ue9PzuSnX30hoCE1jPSkpkh135gyZ0gOW71C0lTEus+
+ +9x70Jl1dPQhBD1QeFEOy8wHmDqPiLb010ZpNIcxbeBPuQgALJAU26qJ9P7RyMNzKIfeZdfQt
+ Tm0EG6z6+HkfLs1gbTc/0biY39q4U/HhZPu4Qoh2apB5Oz2Wn486rv6nIVXj1ZyfF9jb4q3wg
+ 4gCWGmhq6/yWnEgesb+zLvsekexjEUI2w5V1J3k0M87hk7E9nmUc2TS6B0w43v1E3sQGWFs0O
+ rvgj2Mxlw3ZT3eKJqTX8qknGYWo6ajuvmGwmXkK1FudqlT2T+YDCUlnHoCU5X7m4d5BC7NCYZ
+ Bd6qU+e58DhbUH5su2sdJZZz8DJQPT5X4pFiO1VADMUVDhSSqnWzIhQRAH0U9ZmPyZJ6UmPf8
+ DOKK3HaH6PCkH9z0+DgyTyazi7C37OTDfN+bEsNIAoKOsZtBaqkd2CJP2y4jxv6SPaVpzOrDH
+ i5eOod9qaYAmZFU3o5WbRNTM1D9LdA/g1PFvFeUgCRlSwgxA9lgTOuJSPcXb4JliaOwks77hj
+ icGVn/JkzdIHwmaaSenMGASDBGGUSz/sgheSmY1I6KAs3Dzf+wnztLnrgz7Z8vd5FFRlD7sau
+ VwbSOG9CvldBhsTqRToqi8+lRBT+VFLgb47R8c9w8YOT20Ws14Tv5dMfyreXjM2AYltLpL7Ei
+ aYWtGBaX5UrmnnSqvl5TfGztg3RbqccFuAgXfg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/02/2018 15:59, Van De Ven, Arjan wrote:
-> 
->>> I meant software wise. You're not going to live migrate from xen to
->>> kvm or backwards. or between very radically different versions of the
->>> kvm stack.
->>
->> Forwards migration to a radically newer version certainly happens.  So
->> when the source hypervisor was too old to tell the VM about IBRS_ALL,
->> for example, migration should work properly and the VM should perform
->> well on the destination hypervisor.
-> 
-> that makes sense, compatibility in this direction can be done
-> and is useful as you move a fleet of servers forward
-> 
->> Backwards migration to older hypervisors also happens sometimes, but in
->> general it creates more userspace than kernel issues.
-> 
-> that direction is obviously harder
+Without CONFIG_MMU, this results in a build failure:
 
->From KVM's point of view it's mostly a matter of having a complete ioctl
-API right.  I'm not that much worried by it.
+./arch/arm/include/asm/memory.h:92:23: error: initializer element is not constant
+ #define VECTORS_BASE  vectors_base
+arch/arm/mm/dump.c:32:4: note: in expansion of macro 'VECTORS_BASE'
+  { VECTORS_BASE, "Vectors" },
 
-Paolo
+arch/arm/mm/dump.c:71:11: error: 'L_PTE_USER' undeclared here (not in a function); did you mean 'VTIME_USER'?
+   .mask = L_PTE_USER,
+           ^~~~~~~~~~
+
+Obviously the feature only makes sense with an MMU, so let's add the
+dependency here.
+
+Fixes: a8e53c151fe7 ("ARM: 8737/1: mm: dump: add checking for writable and executable")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/Kconfig.debug | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 7b3d9c5c73bb..6db106b5b9e9 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -22,6 +22,7 @@ config ARM_PTDUMP_DEBUGFS
+ 
+ config DEBUG_WX
+ 	bool "Warn on W+X mappings at boot"
++	depends on MMU
+ 	select ARM_PTDUMP_CORE
+ 	---help---
+ 		Generate a warning if any W+X mappings are found at boot.
+-- 
+2.9.0
