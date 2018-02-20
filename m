@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751909AbeBTXLG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:11:06 -0500
+        id S1751954AbeBTXLb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:11:31 -0500
 Received: from galahad.ideasonboard.com ([185.26.127.97]:38076 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeBTXKP (ORCPT
+        with ESMTP id S1751635AbeBTXKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:15 -0500
+        Tue, 20 Feb 2018 18:10:13 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org,
@@ -17,9 +17,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
         Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: [PATCH v4 05/16] of: changeset: Add of_changeset_node_move method
-Date: Wed, 21 Feb 2018 01:10:35 +0200
-Message-Id: <20180220231046.32638-6-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v4 03/16] of: dynamic: Add __of_node_dupv()
+Date: Wed, 21 Feb 2018 01:10:33 +0200
+Message-Id: <20180220231046.32638-4-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -29,118 +29,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 
-Adds a changeset helper for moving a subtree to a different place
-in the running tree. This is useful in advances cases of dynamic
-device tree construction.
+Add an __of_node_dupv() private method and make __of_node_dup() use it.
+This is required for the subsequent changeset accessors which will
+make use of it.
 
 Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/of/dynamic.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of.h   |  9 +++++++
- 2 files changed, 75 insertions(+)
+ drivers/of/dynamic.c | 29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 85e722ed8631..27d9057ef360 100644
+index 7bb33d22b4e2..4ffd04925fdf 100644
 --- a/drivers/of/dynamic.c
 +++ b/drivers/of/dynamic.c
-@@ -1132,3 +1132,69 @@ int __of_changeset_add_update_property_string_list(
- 	return ret;
+@@ -382,8 +382,9 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
  }
- EXPORT_SYMBOL_GPL(__of_changeset_add_update_property_string_list);
-+
-+static struct device_node *
-+__of_changeset_node_move_one(struct of_changeset *ocs,
-+		struct device_node *np, struct device_node *new_parent)
-+{
-+	struct device_node *np2;
-+	const char *unitname;
-+	int err;
-+
-+	err = of_changeset_detach_node(ocs, np);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	unitname = strrchr(np->full_name, '/');
-+	if (!unitname)
-+		unitname = np->full_name;
-+
-+	np2 = __of_node_dup(np, "%s/%s",
-+			new_parent->full_name, unitname);
-+	if (!np2)
-+		return ERR_PTR(-ENOMEM);
-+	np2->parent = new_parent;
-+
-+	err = of_changeset_attach_node(ocs, np2);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return np2;
-+}
-+
-+/**
-+ * of_changeset_node_move_to - Moves a subtree to a new place in
-+ *                             the tree
-+ *
-+ * @ocs:	changeset pointer
-+ * @np:		device node pointer to be moved
-+ * @to:		device node of the new parent
-+ *
-+ * Moves a subtree to a new place in the tree.
-+ * Note that a move is a safe operation because the phandles
-+ * remain valid.
-+ *
-+ * Returns zero on success, a negative error value otherwise.
-+ */
-+int of_changeset_node_move(struct of_changeset *ocs,
-+		struct device_node *np, struct device_node *new_parent)
-+{
-+	struct device_node *npc, *nppc;
-+
-+	/* move the root first */
-+	nppc = __of_changeset_node_move_one(ocs, np, new_parent);
-+	if (IS_ERR(nppc))
-+		return PTR_ERR(nppc);
-+
-+	/* move the subtrees next */
-+	for_each_child_of_node(np, npc) {
-+		nppc = __of_changeset_node_move_one(ocs, npc, nppc);
-+		if (IS_ERR(nppc)) {
-+			of_node_put(npc);
-+			return PTR_ERR(nppc);
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_changeset_node_move);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 7aef555f9bc2..76197bc75346 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -1328,6 +1328,9 @@ int __of_changeset_add_update_property_string_list(
- 		struct of_changeset *ocs, struct device_node *np,
- 		const char *name, const char **strs, int count, bool update);
- 
-+int of_changeset_node_move(struct of_changeset *ocs,
-+	struct device_node *np, struct device_node *new_parent);
-+
- #else /* CONFIG_OF_DYNAMIC */
- static inline int of_reconfig_notifier_register(struct notifier_block *nb)
- {
-@@ -1390,6 +1393,12 @@ static inline int __of_changeset_add_update_property_string_list(
- 	return -EINVAL;
- }
- 
-+static inline int of_changeset_node_move(struct of_changeset *ocs,
-+		struct device_node *np, struct device_node *new_parent)
-+{
-+	return -EINVAL;
-+}
-+
- #endif /* CONFIG_OF_DYNAMIC */
  
  /**
+- * __of_node_dup() - Duplicate or create an empty device node dynamically.
+- * @fmt: Format string (plus vargs) for new full name of the device node
++ * __of_node_dupv() - Duplicate or create an empty device node dynamically.
++ * @fmt: Format string for new full name of the device node
++ * @vargs: va_list containing the arugments for the node full name
+  *
+  * Create an device tree node, either by duplicating an empty node or by allocating
+  * an empty one suitable for further modification.  The node data are
+@@ -391,17 +392,15 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
+  * OF_DETACHED bits set. Returns the newly allocated node or NULL on out of
+  * memory error.
+  */
+-struct device_node *__of_node_dup(const struct device_node *np, const char *fmt, ...)
++struct device_node *__of_node_dupv(const struct device_node *np,
++		const char *fmt, va_list vargs)
+ {
+-	va_list vargs;
+ 	struct device_node *node;
+ 
+ 	node = kzalloc(sizeof(*node), GFP_KERNEL);
+ 	if (!node)
+ 		return NULL;
+-	va_start(vargs, fmt);
+ 	node->full_name = kvasprintf(GFP_KERNEL, fmt, vargs);
+-	va_end(vargs);
+ 	if (!node->full_name) {
+ 		kfree(node);
+ 		return NULL;
+@@ -433,6 +432,24 @@ struct device_node *__of_node_dup(const struct device_node *np, const char *fmt,
+ 	return NULL;
+ }
+ 
++/**
++ * __of_node_dup() - Duplicate or create an empty device node dynamically.
++ * @fmt: Format string (plus vargs) for new full name of the device node
++ *
++ * See: __of_node_dupv()
++ */
++struct device_node *__of_node_dup(const struct device_node *np,
++		const char *fmt, ...)
++{
++	va_list vargs;
++	struct device_node *node;
++
++	va_start(vargs, fmt);
++	node = __of_node_dupv(np, fmt, vargs);
++	va_end(vargs);
++	return node;
++}
++
+ static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+ {
+ 	of_node_put(ce->np);
 -- 
 Regards,
 
