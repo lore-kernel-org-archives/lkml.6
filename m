@@ -1,176 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751406AbeBTKKN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:10:13 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56734 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751119AbeBTKKL (ORCPT
+        id S1751345AbeBTKRd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:17:33 -0500
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:47090 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeBTKRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:10:11 -0500
-Date: Tue, 20 Feb 2018 11:10:04 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/15] soc: renesas: Add R-Car M3-N support
-Message-ID: <20180220101004.GD7203@w540>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
- <1518515162-23663-4-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
+        Tue, 20 Feb 2018 05:17:32 -0500
+X-Google-Smtp-Source: AH8x227eKsqp9QeQYlvllFZPf/oKAzkYOHS5z60mXA8lRygpEg3CTR9skgTR/eLmc+tykmeWDVUXcA==
+Date: Tue, 20 Feb 2018 11:17:27 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jan Beulich <JBeulich@suse.com>
+Cc: mingo@elte.hu, tglx@linutronix.de,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        hpa@zytor.com
+Subject: Re: [PATCH RESEND] x86: consider effective protection attributes in
+ W+X check
+Message-ID: <20180220101727.c4akak6cgoqbgn2y@gmail.com>
+References: <5A8BDF3602000078001A96CD@prv-mh.provo.novell.com>
+ <20180220081042.wgriecqneizg3df7@gmail.com>
+ <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
+ <20180220083731.kzkctvwvtc4qhrdi@gmail.com>
+ <5A8BEDBE02000078001A9763@prv-mh.provo.novell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <5A8BEDBE02000078001A9763@prv-mh.provo.novell.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
 
-On Wed, Feb 14, 2018 at 01:48:27PM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> Thanks for your patch!
->
-> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
-> <jacopo+renesas@jmondi.org> wrote:
-> > Add support for R-Car M3-N (r8a77965) power areas and reset.
-> > M3-N power areas are identical to M3-W ones, so just copy and rename
-> > them.
->
-> They are not identical:
->   - M3-N does not have the CA53-related areas,
->   - M3-W does not have A3VP,
->   - M3-N does not have A2VC0 (M3-W also doesn't, according to latest
-> datasheet?).
->
-> The datasheet also mentions A3SH, without further info about the register
-> block. I think we need to bring this up with Renesas.
->
-> >  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
-> >  .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
-> >  drivers/soc/renesas/Kconfig                        |  9 ++++--
-> >  drivers/soc/renesas/Makefile                       |  1 +
-> >  drivers/soc/renesas/r8a77965-sysc.c                | 37 ++++++++++++++++++++++
-> >  drivers/soc/renesas/rcar-rst.c                     |  1 +
-> >  drivers/soc/renesas/rcar-sysc.c                    |  3 ++
-> >  drivers/soc/renesas/rcar-sysc.h                    |  1 +
-> >  drivers/soc/renesas/renesas-soc.c                  |  8 +++++
-> >  include/dt-bindings/power/r8a77965-sysc.h          | 31 ++++++++++++++++++
-> >  10 files changed, 91 insertions(+), 2 deletions(-)
-> >  create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
-> >  create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
->
-> The maintainer may ask you to split this patch by functionality...
->
-> > --- /dev/null
-> > +++ b/drivers/soc/renesas/r8a77965-sysc.c
-> > @@ -0,0 +1,37 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Renesas R-Car M3-N System Controller
-> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > + *
-> > + * Based on Renesas R-Car M3-W System Controller
-> > + * Copyright (C) 2016 Glider bvba
-> > + */
-> > +
-> > +#include <linux/bug.h>
-> > +#include <linux/kernel.h>
-> > +
-> > +#include <dt-bindings/power/r8a77965-sysc.h>
-> > +
-> > +#include "rcar-sysc.h"
-> > +
-> > +static const struct rcar_sysc_area r8a77965_areas[] __initconst = {
-> > +       { "always-on",      0, 0, R8A77965_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
-> > +       { "ca57-scu",   0x1c0, 0, R8A77965_PD_CA57_SCU, R8A77965_PD_ALWAYS_ON,
-> > +         PD_SCU },
-> > +       { "ca57-cpu0",   0x80, 0, R8A77965_PD_CA57_CPU0, R8A77965_PD_CA57_SCU,
-> > +         PD_CPU_NOCR },
-> > +       { "ca57-cpu1",   0x80, 1, R8A77965_PD_CA57_CPU1, R8A77965_PD_CA57_SCU,
-> > +         PD_CPU_NOCR },
-> > +       { "cr7",        0x240, 0, R8A77965_PD_CR7,      R8A77965_PD_ALWAYS_ON },
-> > +       { "a3vc",       0x380, 0, R8A77965_PD_A3VC,     R8A77965_PD_ALWAYS_ON },
-> > +       { "a2vc0",      0x3c0, 0, R8A77965_PD_A2VC0,    R8A77965_PD_A3VC },
->
-> M3-N (and M3-W) does not have A2VC0?
+* Jan Beulich <JBeulich@suse.com> wrote:
 
-Why do I still see that power area listed in latest renesas-drivers for
-M3-W? Are there patch pendings for that?
+> >>> On 20.02.18 at 09:37, <mingo@kernel.org> wrote:
+> 
+> > * Jan Beulich <JBeulich@suse.com> wrote:
+> > 
+> >> I'll see what I can do; it's a pity that the change here, which had
+> >> been sent weeks ago and is a bug fix, hadn't gone in before that
+> >> other change (being more an improvement than a bug fix).
+> > 
+> > When was it submitted, got a link or Message-ID of the previous submission?
+> 
+> On Dec 12th (https://patchwork.kernel.org/patch/10106593/).
 
-I'll remove it anyway for M3-N.
+Indeed! There was a bit of a back and forth in the submission, with v2 and v3 
+patches sent for the #1 patch, which combined with the whole Meltdown/PTI mess 
+that was in overdrive during the holliday season just made us miss this...
 
-Thanks
-   j
+Next time anything like this happens just ping the original thread and I'll pick 
+it up. (But a resend is fine too, of course.)
 
->
-> > +       { "a2vc1",      0x3c0, 1, R8A77965_PD_A2VC1,    R8A77965_PD_A3VC },
-> > +       { "3dg-a",      0x100, 0, R8A77965_PD_3DG_A,    R8A77965_PD_ALWAYS_ON },
-> > +       { "3dg-b",      0x100, 1, R8A77965_PD_3DG_B,    R8A77965_PD_3DG_A },
-> > +       { "a3ir",       0x180, 0, R8A77965_PD_A3IR,     R8A77965_PD_ALWAYS_ON },
->
-> A3VP is missing?
->
-> > +};
-> > +
-> > +const struct rcar_sysc_info r8a77965_sysc_info __initconst = {
-> > +       .areas = r8a77965_areas,
-> > +       .num_areas = ARRAY_SIZE(r8a77965_areas),
-> > +};
->
-> > --- /dev/null
-> > +++ b/include/dt-bindings/power/r8a77965-sysc.h
-> > @@ -0,0 +1,31 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > + * Copyright (C) 2016 Glider bvba
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_POWER_R8A77965_SYSC_H__
-> > +#define __DT_BINDINGS_POWER_R8A77965_SYSC_H__
-> > +
-> > +/*
-> > + * These power domain indices match the numbers of the interrupt bits
-> > + * representing the power areas in the various Interrupt Registers
-> > + * (e.g. SYSCISR, Interrupt Status Register)
-> > + */
-> > +
-> > +#define R8A77965_PD_CA57_CPU0           0
-> > +#define R8A77965_PD_CA57_CPU1           1
-> > +#define R8A77965_PD_A3VP                9
-> > +#define R8A77965_PD_CA57_SCU           12
-> > +#define R8A77965_PD_CR7                        13
-> > +#define R8A77965_PD_A3VC               14
-> > +#define R8A77965_PD_3DG_A              17
-> > +#define R8A77965_PD_3DG_B              18
-> > +#define R8A77965_PD_A3IR               24
-> > +#define R8A77965_PD_A2VC0              25
->
-> M3-N (and M3-W) does not have A2VC0?
->
-> > +#define R8A77965_PD_A2VC1              26
-> > +
-> > +/* Always-on power area */
-> > +#define R8A77965_PD_ALWAYS_ON          32
-> > +
-> > +#endif /* __DT_BINDINGS_POWER_R8A77965_SYSC_H__ */
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+I assume the Xen fix got merged meanwhile?
+
+Thanks,
+
+	Ingo
