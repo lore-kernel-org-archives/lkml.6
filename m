@@ -1,167 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751302AbeBTIPE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:15:04 -0500
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:45736 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeBTIPC (ORCPT
+        id S1751135AbeBTIU1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:20:27 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:53143 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeBTIU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:15:02 -0500
-X-Google-Smtp-Source: AH8x226daUyKhGZBqGMSDy6AYP3GJvR2+n3y+DU4/0WGcBSjjlrwgFtwhCbmcT9/7J9fRb1JBwouN5eUWzu9s3vmPv4=
-MIME-Version: 1.0
-In-Reply-To: <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
- <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
- <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com> <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 20 Feb 2018 09:14:41 +0100
-Message-ID: <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: Tommi Rantala <tommi.t.rantala@nokia.com>
-Cc: Xin Long <lucien.xin@gmail.com>, David Ahern <dsahern@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 20 Feb 2018 03:20:26 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w1K8Iv28015820
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Petr Vorel <petr.vorel@gmail.com>, Paul Bolle <pebolle@tiscali.nl>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: clean-up reverse dependency help implementation
+Date: Tue, 20 Feb 2018 17:18:47 +0900
+Message-Id: <1519114728-1084-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
-<tommi.t.rantala@nokia.com> wrote:
-> On 19.02.2018 20:59, Dmitry Vyukov wrote:
->>
->> On Sat, Feb 3, 2018 at 1:15 PM, Xin Long <lucien.xin@gmail.com> wrote:
->>>>>
->>>>> On 1/30/18 1:57 PM, David Ahern wrote:
->>>>>>
->>>>>> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
->>>>>>>
->>>>>>> On 01/30/2018 07:32 PM, Cong Wang wrote:
->>>>>>>>
->>>>>>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com>
->>>>>>>> wrote:
->>>>>>>>>
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> The following program creates a hang in unregister_netdevice.
->>>>>>>>> cleanup_net work hangs there forever periodically printing
->>>>>>>>> "unregister_netdevice: waiting for lo to become free. Usage count =
->>>>>>>>> 3"
->>>>>>>>> and creation of any new network namespaces hangs forever.
->>>>>>>>
->>>>>>>>
->>>>>>>> Interestingly, this is not reproducible on net-next.
->>>>>>>
->>>>>>>
->>>>>>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp:
->>>>>>> close
->>>>>>> sock if net namespace is exiting") in net/net-next from 5 days ago,
->>>>>>> maybe
->>>>>>> fixed due to that?
->>>>>>>
->>>>>>
->>>>>> This appears to be the commit introducing the refcnt leak:
->>>>>>
->>>>>> $ git bisect bad
->>>>>> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
->>>>>> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
->>>>>> Author: Xin Long <lucien.xin@gmail.com>
->>>>>> Date:   Fri May 12 14:39:52 2017 +0800
->>>>>>
->>>>>>      sctp: fix src address selection if using secondary addresses for
->>>>>> ipv6
->>>>>>
->>>>>>
->>>>>> v4.14 is bad. Running bisect in the background while doing other
->>>>>> things....
->>>>>>
->>>>>
->>>>> Interesting. The commit that avoids the refcnt leak is
->>>>>
->>>>> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
->>>>> Author: David Ahern <dsahern@gmail.com>
->>>>> Date:   Wed Jan 24 19:45:29 2018 -0800
->>>>>
->>>>>      net/ipv6: Do not allow route add with a device that is down
->>>>>
->>>>> That commit does not intentionally address the problem so it is just
->>>>> masking the problematic code introduced by the commit above.
->>>>
->>>> Thanks, David A.
->>>>
->>>> I'm still on a trip. will look into this asap.
->>>
->>>
->>> Alexey and Tommi already had the patches for this issue on
->>> both SCTP v4 and v6 dst_get, Thanks.
->>
->>
->>
->>
->> Is this meant to be fixed already? I am still seeing this on the
->> latest upstream tree.
->>
->
-> These two commits are in v4.16-rc1:
->
-> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
-> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
-> Date:   Mon Feb 5 21:48:14 2018 +0200
->
->     sctp: fix dst refcnt leak in sctp_v4_get_dst
-> ...
->     Fixes: 410f03831 ("sctp: add routing output fallback")
->     Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary
-> addresses")
->
->
-> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
-> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
-> Date:   Mon Feb 5 15:10:35 2018 +0300
->
->     sctp: fix dst refcnt leak in sctp_v6_get_dst()
-> ...
->     Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary
-> addresses for ipv6")
->
->
-> I guess we missed something if it's still reproducible.
->
-> I can check it later this week, unless someone else beat me to it.
+This commit splits out the special E_OR handling ('-' instead of '||')
+into a dedicated helper expr_print_revdev().
 
-Hi Tommi,
+Restore the original expr_print() prior to commit 1ccb27143360
+("kconfig: make "Selected by:" and "Implied by:" readable").
 
-Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
-another one then. But I am still seeing these:
+This makes sense because:
 
-[   58.799130] unregister_netdevice: waiting for lo to become free.
-Usage count = 4
-[   60.847138] unregister_netdevice: waiting for lo to become free.
-Usage count = 4
-[   62.895093] unregister_netdevice: waiting for lo to become free.
-Usage count = 4
-[   64.943103] unregister_netdevice: waiting for lo to become free.
-Usage count = 4
+  - We need to chop those expressions only when printing the reverse
+    dependency, and only when E_OR is encountered
 
-on upstream tree pulled ~12 hours ago.
+  - Otherwise, it should be printed as before, so fall back to
+    expr_print()
 
-Kernel does not detect this as any kind of BUG/WARNING, so
-syzkaller/syzbot do not catch it as bug and do not try to reproduce,
-localize and report.
+This also improves the behavior; for a single line, it was previously
+displayed in the same line as "Selected by", like this:
+
+  Selected by: A [=n] && B [=n]
+
+This will be displayed in a new line, consistently:
+
+  Selected by:
+  - A [=n] && B [=n]
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/expr.c | 36 +++++++++++++++++++++---------------
+ scripts/kconfig/menu.c |  6 ++----
+ 2 files changed, 23 insertions(+), 19 deletions(-)
+
+diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+index d453819..cd3a8f5 100644
+--- a/scripts/kconfig/expr.c
++++ b/scripts/kconfig/expr.c
+@@ -1179,7 +1179,9 @@ struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
+ 	return expr_get_leftmost_symbol(ret);
+ }
+ 
+-static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, const char *), void *data, int prevtoken, bool revdep)
++void expr_print(struct expr *e,
++		void (*fn)(void *, struct symbol *, const char *),
++		void *data, int prevtoken)
+ {
+ 	if (!e) {
+ 		fn(data, NULL, "y");
+@@ -1234,14 +1236,9 @@ static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, con
+ 		fn(data, e->right.sym, e->right.sym->name);
+ 		break;
+ 	case E_OR:
+-		if (revdep && e->left.expr->type != E_OR)
+-			fn(data, NULL, "\n  - ");
+-		__expr_print(e->left.expr, fn, data, E_OR, revdep);
+-		if (revdep)
+-			fn(data, NULL, "\n  - ");
+-		else
+-			fn(data, NULL, " || ");
+-		__expr_print(e->right.expr, fn, data, E_OR, revdep);
++		expr_print(e->left.expr, fn, data, E_OR);
++		fn(data, NULL, " || ");
++		expr_print(e->right.expr, fn, data, E_OR);
+ 		break;
+ 	case E_AND:
+ 		expr_print(e->left.expr, fn, data, E_AND);
+@@ -1274,11 +1271,6 @@ static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, con
+ 		fn(data, NULL, ")");
+ }
+ 
+-void expr_print(struct expr *e, void (*fn)(void *, struct symbol *, const char *), void *data, int prevtoken)
+-{
+-	__expr_print(e, fn, data, prevtoken, false);
+-}
+-
+ static void expr_print_file_helper(void *data, struct symbol *sym, const char *str)
+ {
+ 	xfwrite(str, strlen(str), 1, data);
+@@ -1329,7 +1321,21 @@ void expr_gstr_print(struct expr *e, struct gstr *gs)
+  * line with a minus. This makes expressions much easier to read.
+  * Suitable for reverse dependency expressions.
+  */
++static void expr_print_revdep(struct expr *e,
++			      void (*fn)(void *, struct symbol *, const char *),
++			      void *data)
++{
++	if (e->type == E_OR) {
++		expr_print_revdep(e->left.expr, fn, data);
++		expr_print_revdep(e->right.expr, fn, data);
++	} else {
++		fn(data, NULL, "  - ");
++		expr_print(e, fn, data, E_NONE);
++		fn(data, NULL, "\n");
++	}
++}
++
+ void expr_gstr_print_revdep(struct expr *e, struct gstr *gs)
+ {
+-	__expr_print(e, expr_print_gstr_helper, gs, E_NONE, true);
++	expr_print_revdep(e, expr_print_gstr_helper, gs);
+ }
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 9922285..7e70be3 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -827,16 +827,14 @@ static void get_symbol_str(struct gstr *r, struct symbol *sym,
+ 
+ 	get_symbol_props_str(r, sym, P_SELECT, _("  Selects: "));
+ 	if (sym->rev_dep.expr) {
+-		str_append(r, _("  Selected by: "));
++		str_append(r, _("  Selected by: \n"));
+ 		expr_gstr_print_revdep(sym->rev_dep.expr, r);
+-		str_append(r, "\n");
+ 	}
+ 
+ 	get_symbol_props_str(r, sym, P_IMPLY, _("  Implies: "));
+ 	if (sym->implied.expr) {
+-		str_append(r, _("  Implied by: "));
++		str_append(r, _("  Implied by: \n"));
+ 		expr_gstr_print_revdep(sym->implied.expr, r);
+-		str_append(r, "\n");
+ 	}
+ 
+ 	str_append(r, "\n\n");
+-- 
+2.7.4
