@@ -1,93 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751904AbeBTXUm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:20:42 -0500
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:34121 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751746AbeBTXUk (ORCPT
+        id S1751936AbeBTXVu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:21:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33970 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751745AbeBTXVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:20:40 -0500
-X-Google-Smtp-Source: AH8x226y4eMhU0GWg+h4tfPPRMp94Fk76nSg3Ob+0v+++fErbKxbjg9rD9bJNDSKxkpn0CTRMOtsWA==
-Date: Wed, 21 Feb 2018 00:20:35 +0100
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
-Message-ID: <20180220232035.GA28798@casa>
-References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
- <673a2510-7d82-1b24-1085-9f5aa2bb9998@valvesoftware.com>
+        Tue, 20 Feb 2018 18:21:49 -0500
+Date: Wed, 21 Feb 2018 00:21:44 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
+ pseudo-locking core
+In-Reply-To: <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
+Message-ID: <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
+References: <cover.1518443616.git.reinette.chatre@intel.com> <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de> <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <673a2510-7d82-1b24-1085-9f5aa2bb9998@valvesoftware.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 02:29:48PM -0800, Pierre-Loup A. Griffais wrote:
-> Hi Rodrigo,
+Reinette,
+
+On Tue, 20 Feb 2018, Reinette Chatre wrote:
+> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
+> > On Tue, 13 Feb 2018, Reinette Chatre wrote:
+> > 
+> > Are you really sure that the life time rules of plr are correct vs. an
+> > application which still has the locked memory mapped? i.e. the following
+> > operation:
 > 
-> Thanks for working on that! I have a few questions and remarks.
+> You are correct. I am not preventing an administrator from removing the
+> pseudo-locked region if it is in use. I will fix that.
+
+The removal is fine and you cannot prevent it w/o introducing a mess, but
+you have to make sure that the PLR and the mapped memory are not
+vanishing. The refcount rules I outlined are exactly doing that.
+
+> Thank you so much for taking the time to do this thorough review and to
+> make these suggestions. While I am still digesting the details I do
+> intend to follow all (as well as the ones earlier I did not explicitly
+> respond to).
+
+Make your mind up and tell me where I'm wrong before you implement the crap
+I suggested blindly, as that will just cause the next reviewer (me or
+someone else) to tell _you_ that it is crap :)
+
+> Keeping the CLOSID associated with the pseudo-locked region will surely
+> make the above simpler since CLOSID's are association with resource
+> groups (represented by the directories). I would like to highlight that
+> on some platforms there are only a few (for example, 4) CLOSIDs
+> available. Not releasing a CLOSID would thus reduce available CLOSIDs
+> that are already limited. These platforms do have smaller possible
+> bitmasks though (for example, 8 possible bits), which may make light of
+> this concern. I thus just add it as informational to the consequence of
+> this simplification.
+
+Yes. If you have 4 CLOSIDs and only 8 CBM bits it really does not matter
+much.
+
+> > Now the remaining thing is the memory allocation and the mmap itself. I
+> > really dislike the preallocation of memory right at setup time. Ideally
+> > that should be an allocation of the application itself, but the horrid
+> > wbinvd stuff kinda prevents that. With that restriction we are more or less
+> > bound to immediate allocation and population.
 > 
-> For the reverse-engineering part, there's a lot of existing reference in
-> existing (user-space) drivers for the controllers like sc-controller, but
-> feel free to reach out if you have any questions. It's overall pretty simple
-> and there's nothing secret about how it functions; there are some quirks,
-> however. Nothing secret about it, but also no documentation, so might as
-> well be... Have you tried deflecting the analog stick while touching the
-> left trackpad? You'll most likely need special handling there. How are you
-> planning to expose enabling/disabling auxiliary data like gyro over
-> wireless?
+> Acknowledged. I am not sure if the current permissions would support
+> such a dynamic setup though. At this time the system administrator is
+> the one that sets up the pseudo-locked region and can through
+> permissions of the character device provide access to these regions to
+> user space applications.
 
-Yeah, I look for information about a year when I started on this. I read
-Ynsta's user-mode driver [1] (I didn't find sc-controller), but I found
-that a bit incomplete, so I wrote my own named `inputmap` [2]. 
+You still would need some interface, e.g. character device which allows you
+to hand in the pointer to the user allocated memory and do the cache
+priming. So you could use the same permission setup for that character
+device.
 
-About the left trackpad/joystick, currently I'm not treating them
-different. I'm out of ABS axes, and anyway, it is not likely that the
-left pad and the joystick be used at the same time (I only have one left
-thumb). Nevertheless, if we really want to make them apart, we can use
-bits 10.3 (lpad_touch) and 10.7 (lpad_and_joy) together. I described the
-details in [2], but I'm not currently doing that in this driver.
+The other problem is that we'd need to have MAP_CONTIG first so you
+actually can allocate physically contigous memory from user space. Mike is
+working on that, but it's not available today. The only way to do so today
+(with lots of waste) would be MAP_HUGETLB, which might be an acceptable
+constraint up to the point where MAP_CONTIG is available.
 
-About the gyroscope/acceleration/quaternion, you know the issue
-that the wireless gives gyro plus quat but no accel, while the wired
-gives all three. My general idea is to create an additional input device
-with INPUT_PROP_ACCELEROMETER to expose what is available. Pity is that
-the wireless gives no accel, maybe there is some command to enable it?
+Though this all depends on the ability to remove the wbinvd
+requirement. But even if we can remove that we'd still need to be aware
+that the cache priming loop which needs to run with interrupts disabled is
+expensive as well and can introduce undesired latencies. Needs all some
+thought...
 
-Also, ideally, we could expose the quat. data directly to userspace, but
-I see no clear way to do that. Maybe defining INPUT_PROP_QUATERNION? I
-also thought of computing yaw/pitch/roll from the quat. and exposing
-those, but doing that requires atan2() and sin() (16-bit precision), and
-that would be tricky. Any thoughts on that?
+Thanks,
 
-> Will this driver being loaded affect functionality of existing applications
-> that talk to it through HID directly, like Steam or sc-controller? Will they
-> be able to keep getting the same HID data they do today? If so, the extent
-> of the work needed to support it in Steam might just be to ignore the
-> controller device it's exposing, since Steam will expose that itself through
-> its own means.
-
-As it is, this patchset hould be pretty safe. The only command sent to
-the controller is the get-serial-number, and that seems to do no harm to
-Steam Client. Other than that, it only reads. Moreover, the hidraw
-device is still created, so user-mode driver should keep working
-(but AFAIK, Steam Client uses direct USB access, not hidraw).
-
-Curiously, Steam Client does not show the new native Steam Controller
-gamepad. That is, if I connect the Steam controller with hid-steam.ko
-and an Acme HID gamepad, then in Steam Client controller settings I
-see only two controllers, the managed Steam Controller (not HID) and the
-Acme HID gamepad. I reckon that Steam Client recognizes that the
-new HID device is a Steam Controller and ignores it in favor of its own
-managed controller.
-
-Regards.
-Rodrigo
-
-[1]: https://github.com/ynsta/steamcontroller
-[2]: https://github.com/rodrigorc/inputmap
+	tglx
