@@ -1,75 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeBTWBM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:01:12 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:57717 "EHLO
+        id S1751522AbeBTWB3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:01:29 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:41189 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeBTWAV (ORCPT
+        with ESMTP id S1750735AbeBTWAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:00:21 -0500
+        Tue, 20 Feb 2018 17:00:20 -0500
 From: Arnd Bergmann <arnd@arndb.de>
 To: Nicolas Pitre <nico@linaro.org>
 Cc: Andi Kleen <ak@linux.intel.com>, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/7] [HACK] pass endianess flag to LTO linker
-Date: Tue, 20 Feb 2018 22:59:50 +0100
-Message-Id: <20180220215954.4092811-4-arnd@arndb.de>
+Subject: [PATCH 7/7] efi: disable LTO for EFI stub
+Date: Tue, 20 Feb 2018 22:59:54 +0100
+Message-Id: <20180220215954.4092811-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180220215954.4092811-1-arnd@arndb.de>
 References: <20180220215954.4092811-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:2jo0KNnjQFA0vHEhz+QmUaepQ1mlmpluQzE/EAn1H7/QvIH7Jzi
- ViH2im1R9pEKhC2Dv95f9PRRrvj3sqK+j/y3qgmjv7ITwBfRbOMBajWau7wswsoIgSMc1hJ
- U1m9vV8Wbni0bsezmL0YrzR1l08syn1u5NKxvFyDT2kDeB2RsCK2SMP6D/NabQkZv7YLqLA
- u2/m5bL6bHm61GCjgocig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+KkU0vohw3Q=:hJSmopaCFGYevUdnoWXnpD
- jig8SDTv5gJF+jvcuMZDB3t+nwZC0jltgmNZApp6m7nfq1n6s590WtuYnSeYlEanQVDFWkjh9
- slYt7I4MU+ROQIhqsrocOPcJZ2p4p9RCtqBe9csiiMhr/zKEsFcscSDn2IiNrh2ziV4gOkjpW
- 884+wwMU3sVb5u85xOGvlj3TYiwR76wXQIWEJxL4Rnm3b4z4NglKv2eVBowy2Il+C+K2GHETA
- Lhuiwod9AL/79UBkPLGOryDKYeVzpGnehzdoV4+YKJUPY3n9DeFSLHNEEJ45npBvCBpxw9BaS
- wBlPBgSjLZ/3j5PF2iSaRltTgUu2TIww2N7fQPhvthZ272u0b9IjZJpe612Ee+LSjYer69oJk
- 8vp+DNZ9GyeBOOMifEy1QxXK8RMD/WsHDyp+7mlXwlXccVFKNznrwR5ZWZ0AQDoehlEgwCMlG
- F3fLzDkfqla0Ovy2Upot7lNafm7oL0MAgSlxTJTFmLoNIjjhdYA2e6+kpSsBLel2sXIhVIi0w
- aF/5mETwzjKEDyBWisJ4DuhDjIJV3AK0/6PXyJozGfRsLwgJ83IKd7xxTXxeKpN8FeEQ8DRz7
- nmESGGt+4HBiehcGkH34KzaDiLKJ3iNM41K6YlUz7LODZx+Kv5/5dlniVk+x1y/KnT5TTb8Pn
- 1G4UfrVaMS/dIF2KJ3czF9BQ2+A4+kGa2QmBmc/ARyuEgkkwd0L3BxDeY9JfUCD6QBlsQADWa
- 6WCtSv/ny9DRw5Ytzf1w9nnB7td6hS9NViB7Xw==
+X-Provags-ID: V03:K0:g/CEMVWePhNFebbS+t3z1ahrGqtz52H1ciUl2QfOtEWWz189hrF
+ 4UCDqVTe7lzPHA/3cPChJS5omNkjfn6l0U9FWwL6u6g+z43ydixs/vZgjY4Jk63ZoAtdju4
+ t5ZVWikTJVzodXA8fFtI7Gw1oNKNxMCEy0RXZMY1mQiCJaV0VWRAJJJrZatxBloI2un4gRs
+ mKwsxGFkipoawu2cvx6fA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qVyq8I0Ua8E=:N1BiRs+SuUxLrxbDlsW+tD
+ U8aOzfvOdGyUXfeZqUyZuElzqVGyUeUzh/XHRwF9oCA35GSmwYdP73dgrJ+Bh9x4j0StXz0Ir
+ ogrKmNS1zGPhSBAFdBxsA+EuZkhwJp6/AsNJ2cY3Hexrm7AMS+nf/ncVSWgdOsnmynne+Kcud
+ y2wEBexYipchH9F+9nT74oTh9E0sI+h3khlwXA5+Dcwj3xL1ZOWaOVGXSnf5GkV5+sm3KHebD
+ YXAnDhicFcx23CADmra77KV4cLuM9c45n25VfVGjcOL5/k6kzWxsN+8ablblcHRHkEKRivRcK
+ A5xGdJVNWhxIxkakN4d2oNsVzydgcnkK39A/sBUFpu5ZnnbH57TRo3sd78XymheYIxLkS8Kbi
+ TtB6fDw2gXvuvKWsAXuR2QTa66bJ/jHdLvu2ssxfsA4Ot1tiaifz6vRofBX0c5V8B3Y8bTnJO
+ n5ZfH0yYZDH73hpBBvwWdx42foqMxZJdL6LV/XcvXYuIL5xrrMNg8M0j07ddX6eae0TWkuuzA
+ /0uusBtLo93Pu7LQvO0C+sZUgAlX23aGTE3Iavat/CfutbLBFX0t2HyYYT1/uIGmRBgIp/Cbb
+ YLwiyyjdeE/RLRoFjGJKPdwjN9o5V8pdRPPsKfCCMPmQk/nVIOpBksGwiRikGQHP/xvVy9/nj
+ J3EUcJpO9HzungfLoNxPiFyIA1bdkWZ9KS7bWkhAxrHkexrXGNRx8h6HJ/XDffOBSMQbxPA4U
+ MrAmGGjzkwRQJppxelHtEy+ChKQ7OrFavAPWJw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need some way to pass -mbig-endian to the linker during the
-LTO link stage, otherwise we get a waning like
+Building the EFI stub on 32-bit ARM with LTO resulted in a build error:
 
-arm-linux-gnueabi/bin/ld: arch/arm/lib/clearbit.o: compiled for a big endian system and target is little endian
+arm-linux-gnueabi-ld: drivers/firmware/efi/libstub/arm-stub.stub.o: plugin needed to handle lto object
+arch/arm/boot/compressed/head.o: In function `efi_stub_entry':
 
-for each file we link in.
-
-There is probably a better method of passing that flag, I'm just
-adding it to a different hack that I added earlier for x86 LTO
-here.
+Locally disabling LTO for this directory seems to do the trick.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/firmware/efi/libstub/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 33b7eb4502aa..f39c2e2d55c0 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -49,11 +49,13 @@ endif
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index 7b3ba40f0745..cc4c53f1ff0a 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -20,7 +20,9 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+ 				   -D__NO_FORTIFY \
+ 				   $(call cc-option,-ffreestanding) \
+-				   $(call cc-option,-fno-stack-protector)
++				   $(call cc-option,-fno-stack-protector) \
++				   $(DISABLE_LTO)
++
  
- ifeq ($(CONFIG_CPU_BIG_ENDIAN),y)
- KBUILD_CPPFLAGS	+= -mbig-endian
-+KBUILD_BIARCHFLAGS += -mbig-endian
- CHECKFLAGS	+= -D__ARMEB__
- AS		+= -EB
- LD		+= -EB
- else
- KBUILD_CPPFLAGS	+= -mlittle-endian
-+KBUILD_BIARCHFLAGS += -mlittle-endian
- CHECKFLAGS	+= -D__ARMEL__
- AS		+= -EL
- LD		+= -EL
+ GCOV_PROFILE			:= n
+ KASAN_SANITIZE			:= n
 -- 
 2.9.0
