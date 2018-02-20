@@ -1,54 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeBTIcY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:32:24 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55377 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbeBTIcX (ORCPT
+        id S1751314AbeBTIfR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:35:17 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:60753 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbeBTIfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:32:23 -0500
-X-Google-Smtp-Source: AH8x226GleKCmS5bnriUaYwLjtPk21EfcASdY5LDlF+LXYV49uWbJVcd4y2FQUGvUGNeEihRFDpXyg==
-Date: Tue, 20 Feb 2018 09:32:11 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jan Beulich <JBeulich@suse.com>
-Cc: mingo@elte.hu, tglx@linutronix.de,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-Subject: Re: [PATCH RESEND] x86: consider effective protection attributes in
- W+X check
-Message-ID: <20180220083211.s5wr5r7ocpzzizgp@gmail.com>
-References: <5A8BDF3602000078001A96CD@prv-mh.provo.novell.com>
- <20180220081042.wgriecqneizg3df7@gmail.com>
- <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
+        Tue, 20 Feb 2018 03:35:16 -0500
+Date: Tue, 20 Feb 2018 09:35:25 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: David Woodhouse <dwmw@amazon.co.uk>
+cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com, mingo@kernel.org
+Subject: Re: [PATCH v3 3/4] Revert "x86/retpoline: Simplify
+ vmexit_fill_RSB()"
+In-Reply-To: <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
+Message-ID: <alpine.DEB.2.21.1802200935050.24268@nanos.tec.linutronix.de>
+References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk> <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 19 Feb 2018, David Woodhouse wrote:
 
-* Jan Beulich <JBeulich@suse.com> wrote:
-
-> >>> On 20.02.18 at 09:10, <mingo@kernel.org> wrote:
-> > * Jan Beulich <JBeulich@suse.com> wrote:
-> >> Using just the leaf page table entry flags would cause a false warning
-> >> in case _PAGE_RW is clear or _PAGE_NX is set in a higher level entry.
-> > 
-> > Under what circumstances did you see false positive warnings?
+> This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+> the RSB filling out of line and calling it, we waste one RSB slot for
+> returning from the function itself, which means one fewer actual function
+> call we can make if we're doing the Skylake abomination of call-depth
+> counting.
 > 
-> As explained in the 2-patch series this was originally part of, there
-> continues to be that W+X warning when running under Xen, as
-> commit 2cc42bac1c ("x86-64/Xen: eliminate W+X mappings") has
-> to make the necessary adjustment in L2 rather than L1 (the
-> reason is explained there). I.e. _PAGE_RW is clear there in L1,
-> but _PAGE_NX is set in L2.
+> It also changed the number of RSB stuffings we do on vmexit from 32,
+> which was correct, to 16. Let's just stop with the bikeshedding; it
+> didn't actually *fix* anything anyway.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-This would make an excellent additional paragraph of the v2 changelog.
-
-Thanks,
-
-	Ingo
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
