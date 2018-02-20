@@ -1,271 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeBTKdq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:33:46 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:33679 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeBTKdp (ORCPT
+        id S1751566AbeBTKeG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:34:06 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51261 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeBTKeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:33:45 -0500
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        "Ying Huang" <ying.huang@intel.com>, <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>, Ingo Molnar <mingo@kernel.org>,
-        "Matija Glavinic Pecotic" <matija.glavinic-pecotic.ext@nokia.com>
-Subject: [PATCH 2/2] MIPS: SMP: Introduce CONFIG_SMP_SINGLE_IPI
-Date: Tue, 20 Feb 2018 10:32:23 +0000
-Message-ID: <1519122743-4847-3-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519122743-4847-1-git-send-email-matt.redfearn@mips.com>
-References: <1519122743-4847-1-git-send-email-matt.redfearn@mips.com>
+        Tue, 20 Feb 2018 05:34:04 -0500
+Date: Tue, 20 Feb 2018 02:28:39 -0800
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-d1c99108af3c5992640aa2afa7d2e88c3775c06e@git.kernel.org>
+Cc: hpa@zytor.com, dwmw@amazon.co.uk, torvalds@linux-foundation.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        dwmw@amazon.co.uk, hpa@zytor.com
+In-Reply-To: <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
+References: <1519037457-7643-4-git-send-email-dwmw@amazon.co.uk>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+Git-Commit-ID: d1c99108af3c5992640aa2afa7d2e88c3775c06e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.150.130.83]
-X-BESS-ID: 1519122817-321459-23589-8117-4
-X-BESS-VER: 2018.2-r1802152108
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190214
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a new Kconfig option which allows selection of a single IPI
-per CPU rather than the usual 2 on platforms using
-CONFIG_GENERIC_IRQ_IPI.
+Commit-ID:  d1c99108af3c5992640aa2afa7d2e88c3775c06e
+Gitweb:     https://git.kernel.org/tip/d1c99108af3c5992640aa2afa7d2e88c3775c06e
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Mon, 19 Feb 2018 10:50:56 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Feb 2018 09:38:26 +0100
 
-This introduces a new IPI mechanism in which a bitmask of requested IPIs
-is kept per cpu. A bit is atomically set in the target CPUs mask when
-requesting an IPI, before raising the necessary interrupt. The
-receiving CPU atomically xchg()s the pending mask, then checks for each
-IPI function bit being set in the mask and performing appropriate
-actions. This is done in a loop so that any further requests that arrive
-are handled immediately without returning from interrupt context.
+Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
 
-This allows systems which have insufficient interrupts for the usual 2 /
-CPU to run SMP Linux.
+This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+the RSB filling out of line and calling it, we waste one RSB slot for
+returning from the function itself, which means one fewer actual function
+call we can make if we're doing the Skylake abomination of call-depth
+counting.
 
-There is a small performance penalty to the average latency of handling
-interrupts with this mechanism. Running an IPI latency test on a CI40
-over a weekend, The following latencies were observed, while maxing out
-CPUs with stress.
+It also changed the number of RSB stuffings we do on vmexit from 32,
+which was correct, to 16. Let's just stop with the bikeshedding; it
+didn't actually *fix* anything anyway.
 
-v4.15:
-IPI self avg  4us
-IPI other core min  5us
-IPI other core avg  35us
-IPI other core max  602us
-IPI other thread avg  30us
-
-v4.15 + CONFIG_SMP_SINGLE_IPI
-IPI self avg  6us
-IPI other core min  3us
-IPI other core avg  42us
-IPI other core max  272us
-IPI other thread avg  38us
-
-The average time to handle IPIs is increased for all cases of
-interrupting the same CPU, the sibling CPU in the same CPU which shares
-an L1 cache, and the other core where the action mask must be bounced to
-the other core's L1 cache. While the average is higher, the minimum and
-maximum latencies of handling IPIs on another core are both reduced.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1519037457-7643-4-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
+ arch/x86/entry/entry_32.S             |  3 +-
+ arch/x86/entry/entry_64.S             |  3 +-
+ arch/x86/include/asm/asm-prototypes.h |  3 --
+ arch/x86/include/asm/nospec-branch.h  | 70 +++++++++++++++++++++++++++++++----
+ arch/x86/lib/Makefile                 |  1 -
+ arch/x86/lib/retpoline.S              | 56 ----------------------------
+ 6 files changed, 65 insertions(+), 71 deletions(-)
 
-The logic of mips_smp_send_ipi_mask / mips_smp_send_ipi_single is
-reversed here. Neither the CPU nor GIC IRQ driver implements a function
-to raise an interrupt on multiple CPUs at once, so the generic IPI core
-must iterate over the CPU mask raising interrupts on each target CPU
-individually. Together with needing to set a bit in each CPUs
-ipi_action, this would end up with 2 loops over the CPU mask, which can
-be avoided by having mips_smp_send_ipi_mask call
-mips_smp_send_ipi_single rather than the other way round.
-
----
- arch/mips/Kconfig      | 11 ++++++
- arch/mips/kernel/smp.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 8e0b3702f1c0..d53964183119 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2654,6 +2654,17 @@ config SMP
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 16c2c02..6ad064c 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %ebx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
  
- 	  If you don't know what to do here, say N.
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 77edc23..7a53879 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %rbx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
  
-+config SMP_SINGLE_IPI
-+	bool "Route all IPIs through a single vector"
-+	depends on SMP && GENERIC_IRQ_IPI
-+	help
-+	  This option reduces the number of IPIs required for Linux to one
-+	  per CPU rather than the traditional 2, at the expense of a slightly
-+	  higher latency. This allows Linux to run on devices that do not have
-+	  enough interrupts available for IPIs.
-+
-+	  If you don't know what to do here, say N.
-+
- config HOTPLUG_CPU
- 	bool "Support for hot-pluggable CPUs"
- 	depends on SMP && SYS_SUPPORTS_HOTPLUG_CPU
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index 5b25e181cefe..f7f0ec9aa555 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -152,6 +152,71 @@ void register_smp_ops(const struct plat_smp_ops *ops)
- }
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
+index 4d11161..1908214 100644
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-asmlinkage void __fill_rsb(void);
+-asmlinkage void __clear_rsb(void);
+-
+ #endif /* CONFIG_RETPOLINE */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 76b0585..af34b1e 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -8,6 +8,50 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
  
- #ifdef CONFIG_GENERIC_IRQ_IPI
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * We define a CPP macro such that it can be used from both .S files and
++ * inline assembly. It's possible to do a .macro and then include that
++ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
++ */
 +
-+#ifdef CONFIG_SMP_SINGLE_IPI
-+/* A per-cpu mask of pending IPI requests */
-+static DEFINE_PER_CPU_SHARED_ALIGNED(atomic_t, ipi_action);
-+static unsigned int ipi_virq;
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
 +
-+static irqreturn_t handle_IPI(int irq, void *dev_id)
-+{
-+	atomic_t *pending_ipis = this_cpu_ptr(&ipi_action);
-+	unsigned long actions;
++/*
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version — two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
++ */
++#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
++	mov	$(nr/2), reg;			\
++771:						\
++	call	772f;				\
++773:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	773b;				\
++772:						\
++	call	774f;				\
++775:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	775b;				\
++774:						\
++	dec	reg;				\
++	jnz	771b;				\
++	add	$(BITS_PER_LONG/8) * nr, sp;
 +
-+	while ((actions = atomic_xchg(pending_ipis, 0)) != 0) {
-+		if (actions & SMP_CALL_FUNCTION)
-+			generic_smp_call_function_interrupt();
-+
-+		if (actions & SMP_RESCHEDULE_YOURSELF)
-+			scheduler_ipi();
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct irqaction irq_ipi = {
-+	.handler	= handle_IPI,
-+	.flags		= IRQF_PERCPU,
-+	.name		= "IPI"
-+};
-+
-+void mips_smp_send_ipi_single(int cpu, unsigned int action)
-+{
-+	unsigned long flags;
-+	unsigned int core;
-+
-+	local_irq_save(flags);
-+
-+	atomic_or(action, &per_cpu(ipi_action, cpu));
-+	ipi_send_single(ipi_virq, cpu);
-+
-+	if (IS_ENABLED(CONFIG_CPU_PM) && mips_cpc_present() &&
-+	    !cpus_are_siblings(cpu, smp_processor_id())) {
-+		/*
-+		 * When CPU Idle is enabled, ensure that the target CPU
-+		 * is powered up and able to receive the incoming IPI
-+		 */
-+		while (!cpumask_test_cpu(cpu, &cpu_coherent_mask)) {
-+			core = cpu_core(&cpu_data[cpu]);
-+			mips_cm_lock_other_cpu(cpu, CM_GCR_Cx_OTHER_BLOCK_LOCAL);
-+			mips_cpc_lock_other(core);
-+			write_cpc_co_cmd(CPC_Cx_CMD_PWRUP);
-+			mips_cpc_unlock_other();
-+			mips_cm_unlock_other();
-+		}
-+	}
-+	local_irq_restore(flags);
-+}
-+
-+void mips_smp_send_ipi_mask(const struct cpumask *mask, unsigned int action)
-+{
-+	int cpu;
-+
-+	for_each_cpu(cpu, mask)
-+		mips_smp_send_ipi_single(cpu, action);
-+}
-+
-+#else /* CONFIG_SMP_SINGLE_IPI */
- static unsigned int call_virq, sched_virq;
- static struct irq_desc *call_desc;
- static struct irq_desc *sched_desc;
-@@ -229,6 +294,8 @@ static struct irqaction irq_call = {
- 	.name		= "IPI call"
- };
+ #ifdef __ASSEMBLY__
  
-+#endif /* CONFIG_SMP_SINGLE_IPI */
-+
- static void smp_ipi_init_one(unsigned int virq,
- 				    struct irqaction *action)
+ /*
+@@ -78,10 +122,17 @@
+ #endif
+ .endm
+ 
+-/* This clobbers the BX register */
+-.macro FILL_RETURN_BUFFER nr:req ftr:req
++ /*
++  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
++  * monstrosity above, manually.
++  */
++.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ALTERNATIVE "", "call __clear_rsb", \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
++		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
++		\ftr
++.Lskip_rsb_\@:
+ #endif
+ .endm
+ 
+@@ -156,10 +207,15 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
  {
-@@ -272,6 +339,21 @@ int mips_smp_ipi_allocate(const struct cpumask *mask)
- 		return 0;
- 	}
- 
-+#ifdef CONFIG_SMP_SINGLE_IPI
-+	virq = irq_reserve_ipi(ipidomain, mask);
-+	BUG_ON(!virq);
-+	if (!ipi_virq)
-+		ipi_virq = virq;
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
+-			  "call __fill_rsb",
+-			  X86_FEATURE_RETPOLINE,
+-			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
++	unsigned long loops;
 +
-+	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
-+		int cpu;
-+
-+		for_each_cpu(cpu, mask)
-+			smp_ipi_init_one(ipi_virq + cpu, &irq_ipi);
-+	} else {
-+		smp_ipi_init_one(ipi_virq, &irq_ipi);
-+	}
-+#else
- 	virq = irq_reserve_ipi(ipidomain, mask);
- 	BUG_ON(!virq);
- 	if (!call_virq)
-@@ -293,6 +375,7 @@ int mips_smp_ipi_allocate(const struct cpumask *mask)
- 		smp_ipi_init_one(call_virq, &irq_call);
- 		smp_ipi_init_one(sched_virq, &irq_resched);
- 	}
-+#endif /* CONFIG_SMP_SINGLE_IPI */
- 
- 	return 0;
- }
-@@ -315,6 +398,15 @@ int mips_smp_ipi_free(const struct cpumask *mask)
- 
- 	BUG_ON(!ipidomain);
- 
-+#ifdef CONFIG_SMP_SINGLE_IPI
-+	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
-+		int cpu;
-+
-+		for_each_cpu(cpu, mask)
-+			remove_irq(ipi_virq + cpu, &irq_ipi);
-+	}
-+	irq_destroy_ipi(ipi_virq, mask);
-+#else
- 	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
- 		int cpu;
- 
-@@ -325,6 +417,7 @@ int mips_smp_ipi_free(const struct cpumask *mask)
- 	}
- 	irq_destroy_ipi(call_virq, mask);
- 	irq_destroy_ipi(sched_virq, mask);
-+#endif /* CONFIG_SMP_SINGLE_IPI */
- 	return 0;
++	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
++		      ALTERNATIVE("jmp 910f",
++				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
++				  X86_FEATURE_RETPOLINE)
++		      "910:"
++		      : "=r" (loops), ASM_CALL_CONSTRAINT
++		      : : "memory" );
+ #endif
  }
  
-@@ -336,8 +429,10 @@ static int __init mips_smp_ipi_init(void)
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 91e9700..25a972c 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -28,7 +28,6 @@ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
+-OBJECT_FILES_NON_STANDARD_retpoline.o :=y
  
- 	mips_smp_ipi_allocate(cpu_possible_mask);
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
  
-+#ifndef CONFIG_SMP_SINGLE_IPI
- 	call_desc = irq_to_desc(call_virq);
- 	sched_desc = irq_to_desc(sched_virq);
-+#endif /* CONFIG_SMP_SINGLE_IPI */
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index 480edc3..c909961 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,7 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+-#include <asm/bitsperlong.h>
  
- 	return 0;
- }
--- 
-2.7.4
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
+-
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version - two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-.macro STUFF_RSB nr:req sp:req
+-	mov	$(\nr / 2), %_ASM_BX
+-	.align 16
+-771:
+-	call	772f
+-773:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	773b
+-	.align 16
+-772:
+-	call	774f
+-775:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	775b
+-	.align 16
+-774:
+-	dec	%_ASM_BX
+-	jnz	771b
+-	add	$((BITS_PER_LONG/8) * \nr), \sp
+-.endm
+-
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-ENTRY(__fill_rsb)
+-	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
+-	ret
+-END(__fill_rsb)
+-EXPORT_SYMBOL_GPL(__fill_rsb)
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-
+-ENTRY(__clear_rsb)
+-	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
+-	ret
+-END(__clear_rsb)
+-EXPORT_SYMBOL_GPL(__clear_rsb)
