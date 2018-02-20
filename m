@@ -1,157 +1,133 @@
-Return-Path: <outreachy-kernel+bncBD2YBJOB4QPBBW5HVPKAKGQE4L64BVI@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1519047644; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=aDbOKX1gaPu2iHGZ6WPYue6u6eSWiBMsfIh8SL0XDPxKUvj2WsdzdZXVNQNaI+jEH5
-         C8IRjAk8IZ3Cv8bhFAzVbomXwXeS9B3FLRjZ1OnqOXnMBJO1pMTinsiQ/TaGOqWBGZnx
-         yTfWRC5Gd0b7qhiC0o52QBAG/Z/Q6CXKXJ/wMy+HNEWli7UP0RIuJhojUJMxHrYDVefB
-         dMfRBb2CCGwHfGwmpyYwB8iFW0sCsxCCra/JsWZpvH7M/UiQQOakAKMD9nnDLNchGKNn
-         ZPLHGq1zwV5avMv+qfaZlulnC1NdgfZV3mMMC+48d9X2xvlAQr7TqPmEVWO+P9CXuJVI
-         Pzhw==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:mime-version
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results:arc-message-signature:sender
-         :dkim-signature:dkim-signature:arc-authentication-results
-         :arc-message-signature:arc-authentication-results;
-        bh=gOPuTLd+7usGzE4V+oOl5KUzRX2VbqBNKL9nb4DgNQk=;
-        b=dBN3NdnUZfQoj3InusOV3BmTqMClWpcHRaCipOSa15l96jKdl65LA3z+RWsw29rKcY
-         R+f3QHQnv8LaLyCiNHix3YJ0w/RjjULhzdp5mDO6h9ecySDEakesGxujKTrDTNwZLWiJ
-         q1OO4UUEsJWqd30LU9Dl/iEjPMemCD7UDyS7dPYPNrORjG9R+2FSOJkdIhPrSwjUkAjI
-         K6LGRTfX/WrakIbdMZZYCNi0dknUNNejfY8zkWgWrHkz3zCgr62JA4RD6FNybJoeAKT2
-         NlOQNJseO1nMbbuMiK/sVC/0yQsCGTbTRH8IzaBmIpcXsLXtvpA7YVKAUVTtXYb7aJV9
-         pAkg==
-ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=DoLjRE7m;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AwgvCR57;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbbw5hvpkakgqe4l64bvi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBW5HVPKAKGQE4L64BVI@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=DoLjRE7m;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AwgvCR57;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbbw5hvpkakgqe4l64bvi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBW5HVPKAKGQE4L64BVI@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-ARC-Seal: i=2; a=rsa-sha256; t=1519047644; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=MaBe6zKkOJrBDiRTchvslCyJIQL7CYQIMPV66X4ZRX6HIX7t9KZw9eNh6m+hc0IRL3
-         fMQ1qFQj/EM71YPUPibSIZMQXJJbPFD2uu3xietR3jePsR9faJNHowwS7OdONwzp43D8
-         2+EmCtXtNo+zkMpBkBsBlGb6C8ny8epsLKqre2tacQtgCNQXcQ1yhBl6jSWVrWfD96qC
-         9+0E/ey1A6iSKjFmwrZR776mvTRG6/qyRo/Uj19cjP3ULnTp41X1iH3yaBR2+YF/WLml
-         776dqgPW+OeQVJAOGEC6iAWtPaqA0/H2eonFBLj4sVWM5J3jZN6ncMtB4Qw9uNKObASU
-         Gocg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:mime-version
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results:arc-message-signature:sender
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=gOPuTLd+7usGzE4V+oOl5KUzRX2VbqBNKL9nb4DgNQk=;
-        b=VIn3xKNVnNwIk8IBenyCVgNBAmRBdsF11Vp7JgjlatdAG77kvkA5vgGfgp7TKw5u7N
-         9PM1DYaiPUWh3r9T6DGiJUGmsU5ZtJgbAFrm4R0x9qTxjJRs+atXKJNsbHWuVzEzZIRE
-         HyOPfuvvMjxng4kZqw+dh1jEPVNT7ns3zg2+JfRxc7kfP/joEuJ8pTFo4kLNQMgqhnJL
-         kbkCOF4yuJyPQbSt5RRCEWAZyRnG3Rs7HHUVKF0HkexrcWj90MqXNsafC6jhIDXqT5ry
-         F5dlJqhmNpnue+Xw7wFqY2ZmZCdZCVSmD43ZZuvLAWPThQiCXfuJgXtRuT88VjQNFs6C
-         lE/g==
-ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XrqE2XQb;
-       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c00::231 as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AH8x226dszkAGtgUZ+DYAQ/TyeLTjF7Hj0DWvlWNrT+z/JGT0IvFLf9V+LsT4CzHdWTQHDTSQVYTmg==
-X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1519047643; cv=none;
-        d=google.com; s=arc-20160816;
-        b=j7dfXw0vS05qOHkav3nMj7KxDTCfAzCzTt8ROVmWuG9dEF0r28hcENy0bXzsXPhVFP
-         hZC9LG9p0M9G79BkIbTosMoLXTm+koMwTFE8nplyrTyWnzHCeXOjKtj6m9h0sA9X7olY
-         a07DG9cVCyKu5LlXxu3THWcQUAyaEdcd/V6eA+se0Te6uom/K5hben9aJvOUEmHCvlVF
-         EsBV7jvQR/kLFoJfJA2pRMy6T55BHmeSigm3Pa9bxZKLJzwey6AGw7x1/p90WGAFoffG
-         oUmnO91omWxa1MNX9RnY34vDjmF+LFIAnGDgUTSBxX261D3DQUORCSZ7fxIHl5pjV3Uo
-         hVJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:dkim-signature
-         :arc-authentication-results;
-        bh=37Vn7zBGKYtdhGIN77JNbWAj4PY4rio8BZ0xdPnfzXw=;
-        b=JKVaHJSF8LooFiHaV7hceby0hot763dMsRuTllQwGbnjQwyDqOikydGObJtvz6UBGy
-         N+XaGK20uzoXMX+e7cTJLO0eyTrKsy3oZf3FjVlmScLALHdRpCA7oD7+gj8OmpTi28I3
-         L++sAqmvDoOxTlwzFTzcQDlrZuGi7jIsljfujyubZb9N4RiRooUeZ1WaLhp8EatbqI0u
-         njMzgAK6ZHR6iXCL3tN89Fu6Wr6j1dyPBXZmBhV82NzxlE/NuMDzyMIG7Y1Nyw4QRS5A
-         B0sJHQNRWGf6aRnJoEsiLPS0BBxt2ZcJFWkYmJV7m3TpM2PKFn/7brWm2h6voQLsZAYh
-         R5tA==
-ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XrqE2XQb;
-       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c00::231 as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Message-ID: <1519047636.2063.3.camel@gmail.com>
-Subject: [Outreachy kernel] Re: [PATCH NAND v2] mtd: nand: Replace printk()
- with appropriate pr_*macro()
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
-To: Richard Weinberger <richard@nod.at>
-Cc: boris.brezillon@free-electrons.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com,
- cyrille.pitchen@wedev4u.fr,  maximlevitsky@gmail.com,
- linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
- ezequiel@vanguardiasur.com.ar,  outreachy-kernel@googlegroups.com
-Date: Mon, 19 Feb 2018 19:10:36 +0530
-In-Reply-To: <5296610.PbIriun04K@blindfold>
-References: <1519046025-9412-1-git-send-email-shreeya.patel23498@gmail.com>
-	 <5296610.PbIriun04K@blindfold>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Original-Sender: shreeya.patel23498@gmail.com
-X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
- header.i=@gmail.com header.s=20161025 header.b=XrqE2XQb;       spf=pass
- (google.com: domain of shreeya.patel23498@gmail.com designates
- 2607:f8b0:400e:c00::231 as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
-X-Google-Group-Id: 672804067692
-List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
-List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
-List-Archive: <https://groups.google.com/group/outreachy-kernel
-List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
- <https://groups.google.com/group/outreachy-kernel/subscribe>
+Return-Path: <kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-2058923-1519111619-2-10390419747440629905
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+  LANGUAGES ensk.us-ascii, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519111618; b=Igct2s+qZOFBUQEkIc9J6SywKrYEhsYa8aiwwCC+IJKWNWw
+    sjmPl4EPiKl9gg6cxIJaNQhjP3fu/MxbjoRr8cSOcJ0hPda4Amuu4ET04u19zQU0
+    /bWm6Nf7CorUcTy/n4PHNyThxxxi4OaP/HaAABdPs9lqGDF9CQpbWi9+15Zqb31j
+    /MR9LL1wJGBHiehkvLGZkQ8w4U8JbXPq6iB8opEqHp0mx37d1dD0z8wWUDXFUx4D
+    aHCJ5MgNeDaxtPYj43uq53J7gU11VmvZEOH9Hmrj5Whkn4ltMKAJeYkxua0Mp+FB
+    58tuAZfqTZ24uhxyC/6E4olnQe93M+2NLXxU5kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:list-id:list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:content-type:content-transfer-encoding; s=
+    arctest; t=1519111618; bh=ApRIf0ILKu1gUPUigJaGXEVMiIUDf97I7w2Pat
+    4dXbo=; b=sIse/Clmt90h4UgvngiSKHMZoF2h4epsKtZx3g30EKEsdDD5KDy4cQ
+    DYCMjIRTPJdIIRnu3fK89UxhrvOh0ayvH355QlQzyXriCz8hnCtZgxbYACdBIPmL
+    0oQwERDKyGxXXYo/1SE+henEMwm5d92Xg4BfXFSEK/qPSLeYCCpJFpIVpuMw3tBh
+    fVaAxLJ3wENE3MluxIKTXnYp6HT+/T7Ljj6Lk2vo52yDXEhx1fHdQ+trJVFJSuDX
+    te+O/D9OCL/o86hvVYk/ueyI8OVnSvN1UxsF05A1wIg7OOuljj5RbvxyWC/Im/RA
+    VIahop4NfWPMQdyFUf4DGsssc7kLHZlQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Eny9H5L6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Baphicjn;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Eny9H5L6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Baphicjn;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AH8x227K8aVOnO7BV31tBYqyLeOlW/m3N+fbvgG4Zc6UXhuzFWuXEvrneaTb4WOoXim4xOTT+SblYUt/rdH2IYyje+k=
+MIME-Version: 1.0
+From: Ivid Suvarna <ivid.suvarna@gmail.com>
+Date: Tue, 20 Feb 2018 12:53:26 +0530
+Message-ID: <CABXF_AAQVJ7eMt4gFhiEcgZTD7Y4R66-9ELZ1OJ2gAmKPeLMAw@mail.gmail.com>
+Subject: Timekeeping warning during resume from suspend to disk
+To: Kernel development list <linux-kernel@vger.kernel.org>,
+ kernelnewbies@kernelnewbies.org, Linux-pm@vger.kernel.org
+X-BeenThere: kernelnewbies@kernelnewbies.org
+X-Mailman-Version: 2.1.15
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592835215641943440?=
-X-GMAIL-MSGID: =?utf-8?q?1592836902903786865?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-02-19 at 14:30 +0100, Richard Weinberger wrote:
-> Shreeya,
-Hi Richard,
->=20
-> Am Montag, 19. Februar 2018, 14:13:45 CET schrieb Shreeya Patel:
-> >=20
-> > The log levels embedded with the name are more concise than
-> > printk.
-> > Replace printks having a log level with the appropriate
-> > pr_*macro.
-> >=20
-> > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-> Multiple patches with the same subject are confusing. :)
+Hi All,
 
-I'll keep this in mind.
+Facing below warning backtrace during resume from suspend to disk. I
+am using 4.1.15 freescale kernel. After this warning there is a huge
+time gap (nearly 10 sec) between Enabling non-boot cpus and CPU1 being
+up. Any pointers on this would be helpful.
 
-I did not combine the two patches as they had some different
-changes.
+[  545.227081] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[  545.227081] [<80018674>] (unwind_backtrace) from [<80013c24>]
+(show_stack+0x20/0x24)
+[  545.227081] [<80013c24>] (show_stack) from [<80684220>]
+(dump_stack+0x7c/0xbc)
+[  545.227081] [<80684220>] (dump_stack) from [<80034fcc>]
+(warn_slowpath_common+0x94/0xc4)
+[  545.227081] [<80034fcc>] (warn_slowpath_common) from [<800350b8>]
+(warn_slowpath_null+0x2c/0x34)
+[  545.227081] [<800350b8>] (warn_slowpath_null) from [<8009ce24>]
+(clockevents_program_event+0x14c/0x15c)
+[  545.227081] [<8009ce24>] (clockevents_program_event) from
+[<8009f39c>] (tick_resume_oneshot+0x5c/0x64)
+[  545.227081] [<8009f39c>] (tick_resume_oneshot) from [<8009daa8>]
+(tick_resume_local+0x58/0x68)
+[  545.227081] [<8009daa8>] (tick_resume_local) from [<8009daf4>]
+(tick_resume+0x1c/0x20)
+[  545.227081] [<8009daf4>] (tick_resume) from [<80096328>]
+(timekeeping_resume+0x1c8/0x2bc)
+[  545.227081] [<80096328>] (timekeeping_resume) from [<803e5a7c>]
+(syscore_resume+0x94/0x250)
+[  545.227081] [<803e5a7c>] (syscore_resume) from [<800721b0>]
+(suspend_devices_and_enter+0x78c/0x99c)
+[  545.227081] [<800721b0>] (suspend_devices_and_enter) from
+[<800728a0>] (pm_suspend+0x4e0/0x74c)
+[  545.227081] [<800728a0>] (pm_suspend) from [<80070adc>]
+(state_store+0x74/0xa0)
+[  545.227081] [<80070adc>] (state_store) from [<8031f3c4>]
+(kobj_attr_store+0x1c/0x28)
+[  545.227081] [<8031f3c4>] (kobj_attr_store) from [<801a9814>]
+(sysfs_kf_write+0x50/0x54)
+[  545.227081] [<801a9814>] (sysfs_kf_write) from [<801a8fc8>]
+(kernfs_fop_write+0xcc/0x1b8)
+[  545.227081] [<801a8fc8>] (kernfs_fop_write) from [<8013c1d4>]
+(__vfs_write+0x3c/0xec)
+[  545.227081] [<8013c1d4>] (__vfs_write) from [<8013ca88>]
+(vfs_write+0xa0/0x180)
+[  545.227081] [<8013ca88>] (vfs_write) from [<8013d2fc>] (SyS_write+0x4c/0xa0)
+[  545.227081] [<8013d2fc>] (SyS_write) from [<8000fd3c>]
+(__cpuset_migrate_return+0x0/0x24)
 
-Thanks :)
->=20
-> Thanks,
-> //richard=C2=A0
+Regards,
+IVID
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-outreachy-kernel" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to outreachy-kernel+unsubscribe@googlegroups.com.
-To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/=
-outreachy-kernel/1519047636.2063.3.camel%40gmail.com.
-For more options, visit https://groups.google.com/d/optout.
+_______________________________________________
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
