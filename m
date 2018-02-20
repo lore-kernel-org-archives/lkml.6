@@ -1,177 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeBTPPM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:15:12 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:33619 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbeBTPOf (ORCPT
+        id S1752708AbeBTPPj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:15:39 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:56369 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752424AbeBTPPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:35 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/19] pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions
-Date: Tue, 20 Feb 2018 16:12:20 +0100
-Message-Id: <1519139541-18783-19-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 20 Feb 2018 10:15:37 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: mark wdt_mux_p[] as const
+Date: Tue, 20 Feb 2018 16:15:21 +0100
+Message-Id: <20180220151531.3379003-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:0OKz5pr4AZuFohW481tTI8rpzjJGNWFVLYz6MhDGdbIwQlgiRSo
+ ClBSdwj87qjrbj5COChIaerFhyqzYKbX+cQFGOPkrJyWyoSAXpPQJQsjm6/DgJsvLFx2bsV
+ hc6Djc6NVrc2agXcywmaEJSzTc7Je391qS5+ju2P3jJ6Rcay49U3jmZT3M9q9BgqdfArCkl
+ BZzOeG1xKc8qwCCYv9Mhw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:x6o5CmB0KmI=:oc9KxIKfYmKyRbGuRWxSUa
+ UgQBWOx4rHqwH7LZ5AnVZhFtp+6jeNn/NJmBrhHoV1QFef/uPFwwyxB/mcncb5oVZtus7YqkX
+ Pkzd891Gv2bKKDTy3Ch2Mj7eFwZ0uxHRTa9LRBc3CkSKCrOSrShKjDDXySNFz5cNy0pPCUa27
+ RYAFekhij66Yd1Mrlp6CzJfQIJmiGx0V8aXNKSWA1UQZ/+dDC9STbbfs3ugtO1nTBBBzTY2pD
+ kFBlfKjmzNvJYKhr9QQOqXjpr/2ZEcylbXydtv/HJ72V1VSPH4Cw2x14el2NkmjGY5ablgOqB
+ FNcCAbSoDKS585PneYcOGs1dzfmlLb9xT121G1joe7FEFupzbVBU++G+ZnUutuATTsXGEh4/r
+ VoPw1eXocPLp1xr6yMVcTYyJxSEEpLa+xaqZY+TEot+ZTRpTaZ7S4yrCoUEO9jmI6o5yWsuuS
+ K68Cj3F0drR2ZJ8RSiQmf7gPa+plqA9afPrDkzWnkZHQFtpIvqFnJREipBeMqzQLvq8LGFsdz
+ vDMggVDfCXhjaQT55WGMEXVYi7rnmxvz/zSJX9fbNBzjLbRkG0NsThXDKgT83pc3VaIfCXQQf
+ /uRKWeBVw6pATlZRgQWc6b6fyFxLkBktJJgjS2dzCNy8E00sMalPBj/PbzLeUADNhTB7AbSWt
+ GYsu9lEOYT5pnhcjThPfR9LEWwDM+VVNnKW1OD50uA7ObKa2eBfNB71bxc5HrTf0P2oPHca4H
+ TY8YjDZhGMUsM2qBtDNBfr+M75+3PRE+Yol/EQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add EtherAVB groups and functions definitions for R-Car M3-N.
+The symbol is in the __initconst section but not marked init, which
+caused a warning when building with LTO.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This makes it 'const' as was obviously intended.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 110 ++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ drivers/clk/hisilicon/crg-hi3516cv300.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 43ffd63..7b9fea9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1571,6 +1571,92 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
- };
+diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
+index 2007123832bb..53450b651e4c 100644
+--- a/drivers/clk/hisilicon/crg-hi3516cv300.c
++++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
+@@ -204,7 +204,7 @@ static const struct hisi_crg_funcs hi3516cv300_crg_funcs = {
+ /* hi3516CV300 sysctrl CRG */
+ #define HI3516CV300_SYSCTRL_NR_CLKS 16
  
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC_ */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdc_pins[] = {
-+	/* AVB_MDC, AVB_MDIO */
-+	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
-+};
-+static const unsigned int avb_mdc_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	/*
-+	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
-+	 * AVB_TD1, AVB_TD2, AVB_TD3,
-+	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
-+	 * AVB_RD1, AVB_RD2, AVB_RD3,
-+	 * AVB_TXCREFCLK
-+	 */
-+	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
-+	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
-+	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
-+	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
-+	PIN_NUMBER('A', 12),
-+
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
-+	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
-+	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
-+	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
-+	AVB_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	/*  AVB_AVTP_MATCH_B */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	/* AVB_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
-+};
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1783,6 +1869,16 @@ static const unsigned int scif_clk_b_mux[] = {
- };
+-static const char *wdt_mux_p[] __initconst = { "3m", "apb" };
++static const char *const wdt_mux_p[] __initconst = { "3m", "apb" };
+ static u32 wdt_mux_table[] = {0, 1};
  
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1814,6 +1910,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdc",
-+	"avb_mii",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+	"avb_avtp_match_b",
-+	"avb_avtp_capture_b",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1864,6 +1973,7 @@ static const char * const scif_clk_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
+ static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
 -- 
-2.7.4
+2.9.0
