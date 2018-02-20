@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751531AbeBTEp3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 23:45:29 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37250 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeBTEpZ (ORCPT
+        id S1751861AbeBTErH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 23:47:07 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45225 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751511AbeBTEp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 23:45:25 -0500
-X-Google-Smtp-Source: AH8x225rk2qRmF30PO57NtfVgCZ/N1nOyEauC0aC8FHMp79Q+eVBPmjporFan4bvepQxXnbVvAsJVg==
+        Mon, 19 Feb 2018 23:45:27 -0500
+X-Google-Smtp-Source: AH8x224cAETS1cnMJ/XhflKqBIOpV8aalshG58eTxOFxvGgFxHIbI6kakC2Ih8HlhhNwPspgBh51sw==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -19,9 +19,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv4 15/21] v4l2-ctrls: support requests in EXT_CTRLS ioctls
-Date: Tue, 20 Feb 2018 13:44:19 +0900
-Message-Id: <20180220044425.169493-16-acourbot@chromium.org>
+Subject: [RFCv4 16/21] v4l2: video_device: support for creating requests
+Date: Tue, 20 Feb 2018 13:44:20 +0900
+Message-Id: <20180220044425.169493-17-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
 In-Reply-To: <20180220044425.169493-1-acourbot@chromium.org>
 References: <20180220044425.169493-1-acourbot@chromium.org>
@@ -29,228 +29,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read and use the request_fd field of struct v4l2_ext_controls to apply
-VIDIOC_G_EXT_CTRLS or VIDIOC_S_EXT_CTRLS to a request when asked by
-userspace.
+Add a new VIDIOC_NEW_REQUEST ioctl, which allows to instanciate requests
+on devices that support the request API. Requests created that way can
+only control the device they originate from, making them suitable for
+simple devices, but not complex pipelines.
 
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/platform/omap3isp/ispvideo.c |  2 +-
- drivers/media/v4l2-core/v4l2-ctrls.c       | 98 +++++++++++++++++++++-
- drivers/media/v4l2-core/v4l2-ioctl.c       |  6 +-
- drivers/media/v4l2-core/v4l2-subdev.c      |  2 +-
- include/media/v4l2-ctrls.h                 |  3 +-
- 5 files changed, 102 insertions(+), 9 deletions(-)
+ Documentation/ioctl/ioctl-number.txt |  1 +
+ drivers/media/v4l2-core/v4l2-dev.c   |  2 ++
+ drivers/media/v4l2-core/v4l2-ioctl.c | 25 +++++++++++++++++++++++++
+ include/media/v4l2-dev.h             |  2 ++
+ include/uapi/linux/videodev2.h       |  3 +++
+ 5 files changed, 33 insertions(+)
 
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index a751c89a3ea8..3976cd9ac2f2 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -1028,7 +1028,7 @@ static int isp_video_check_external_subdevs(struct isp_video *video,
- 	ctrls.count = 1;
- 	ctrls.controls = &ctrl;
- 
--	ret = v4l2_g_ext_ctrls(pipe->external->ctrl_handler, &ctrls);
-+	ret = v4l2_g_ext_ctrls(NULL, pipe->external->ctrl_handler, &ctrls);
- 	if (ret < 0) {
- 		dev_warn(isp->dev, "no pixel rate control in subdev %s\n",
- 			 pipe->external->name);
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 7a81aa5959c3..d7b1aeb32470 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -27,6 +27,7 @@
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-event.h>
- #include <media/v4l2-dev.h>
-+#include <media/v4l2-request.h>
- 
- #define has_op(master, op) \
- 	(master->ops && master->ops->op)
-@@ -2959,9 +2960,44 @@ static int class_check(struct v4l2_ctrl_handler *hdl, u32 which)
- }
- 
- 
-+#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
-+static struct media_request *
-+get_handler_for_request(struct v4l2_fh *fh, struct v4l2_ext_controls *cs,
-+			struct v4l2_ctrl_handler **hdl)
-+{
-+	struct media_request *req;
-+	struct v4l2_request_entity_data *data;
-+
-+	if (!fh || !fh->entity)
-+		return ERR_PTR(-EINVAL);
-+
-+	req = media_request_get_from_fd(cs->request_fd);
-+	if (!req)
-+		return ERR_PTR(-EINVAL);
-+
-+	data = to_v4l2_entity_data(media_request_get_entity_data(req,
-+								 fh->entity));
-+	if (IS_ERR(data)) {
-+		media_request_put(req);
-+		return (void *)data;
-+	}
-+
-+	*hdl = &data->ctrls;
-+
-+	return req;
-+}
-+#else
-+static struct media_request *
-+get_handler_for_request(struct v4l2_fh *fh, struct v4l2_ext_controls *cs,
-+			struct v4l2_ctrl_handler **hdl)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
-+#endif
- 
- /* Get extended controls. Allocates the helpers array if needed. */
--int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs)
-+int __v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl,
-+		       struct v4l2_ext_controls *cs)
- {
- 	struct v4l2_ctrl_helper helper[4];
- 	struct v4l2_ctrl_helper *helpers = helper;
-@@ -3042,6 +3078,30 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
- 		kvfree(helpers);
- 	return ret;
- }
-+
-+int v4l2_g_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
-+		     struct v4l2_ext_controls *cs)
-+{
-+	struct media_request *req = NULL;
-+	int ret;
-+
-+	if (cs->request_fd > 0) {
-+		req = get_handler_for_request(fh, cs, &hdl);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+
-+		 media_request_lock(req);
-+	}
-+
-+	ret = __v4l2_g_ext_ctrls(hdl, cs);
-+
-+	if (req) {
-+		media_request_unlock(req);
-+		media_request_put(req);
-+	}
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(v4l2_g_ext_ctrls);
- 
- /* Helper function to get a single control */
-@@ -3217,9 +3277,9 @@ static void update_from_auto_cluster(struct v4l2_ctrl *master)
- }
- 
- /* Try or try-and-set controls */
--static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
--			     struct v4l2_ext_controls *cs,
--			     bool set)
-+static int __try_set_ext_ctrls(struct v4l2_fh *fh,
-+			       struct v4l2_ctrl_handler *hdl,
-+			       struct v4l2_ext_controls *cs, bool set)
- {
- 	struct v4l2_ctrl_helper helper[4];
- 	struct v4l2_ctrl_helper *helpers = helper;
-@@ -3332,6 +3392,36 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
- 	return ret;
- }
- 
-+static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
-+			     struct v4l2_ext_controls *cs, bool set)
-+{
-+	struct media_request *req = NULL;
-+	int ret;
-+
-+	if (cs->request_fd > 0) {
-+		req = get_handler_for_request(fh, cs, &hdl);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+
-+		media_request_lock(req);
-+
-+		if (media_request_get_state(req) != MEDIA_REQUEST_STATE_IDLE) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
-+	}
-+
-+	ret = __try_set_ext_ctrls(fh, hdl, cs, set);
-+
-+out:
-+	if (req) {
-+		media_request_unlock(req);
-+		media_request_put(req);
-+	}
-+
-+	return ret;
-+}
-+
- int v4l2_try_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs)
- {
- 	return try_set_ext_ctrls(NULL, hdl, cs, false);
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 6501389d55b9..afdc9ed255b0 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -286,6 +286,7 @@ Code  Seq#(hex)	Include File		Comments
+ 					<mailto:oe@port.de>
+ 'z'	10-4F	drivers/s390/crypto/zcrypt_api.h	conflict!
+ '|'	00-7F	linux/media.h
++'|'	80-9F	linux/media-request.h
+ 0x80	00-1F	linux/fb.h
+ 0x89	00-06	arch/x86/include/asm/sockios.h
+ 0x89	0B-DF	linux/sockios.h
+diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+index 0301fe426a43..062ebee5bffc 100644
+--- a/drivers/media/v4l2-core/v4l2-dev.c
++++ b/drivers/media/v4l2-core/v4l2-dev.c
+@@ -559,6 +559,8 @@ static void determine_valid_ioctls(struct video_device *vdev)
+ 		set_bit(_IOC_NR(VIDIOC_TRY_EXT_CTRLS), valid_ioctls);
+ 	if (vdev->ctrl_handler || ops->vidioc_querymenu)
+ 		set_bit(_IOC_NR(VIDIOC_QUERYMENU), valid_ioctls);
++	if (vdev->req_mgr)
++		set_bit(_IOC_NR(VIDIOC_NEW_REQUEST), valid_ioctls);
+ 	SET_VALID_IOCTL(ops, VIDIOC_G_FREQUENCY, vidioc_g_frequency);
+ 	SET_VALID_IOCTL(ops, VIDIOC_S_FREQUENCY, vidioc_s_frequency);
+ 	SET_VALID_IOCTL(ops, VIDIOC_LOG_STATUS, vidioc_log_status);
 diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 2f40ac0cdf6e..ab4968ea443f 100644
+index ab4968ea443f..a45fe078f8ae 100644
 --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2077,10 +2077,11 @@ static int v4l_g_ext_ctrls(const struct v4l2_ioctl_ops *ops,
- 		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
+@@ -21,6 +21,7 @@
  
- 	p->error_idx = p->count;
+ #include <linux/videodev2.h>
+ 
++#include <media/media-request.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-ctrls.h>
+@@ -842,6 +843,13 @@ static void v4l_print_freq_band(const void *arg, bool write_only)
+ 			p->rangehigh, p->modulation);
+ }
+ 
++static void vidioc_print_new_request(const void *arg, bool write_only)
++{
++	const struct media_request_new *new = arg;
 +
- 	if (vfh && vfh->ctrl_handler)
--		return v4l2_g_ext_ctrls(vfh->ctrl_handler, p);
-+		return v4l2_g_ext_ctrls(vfh, vfh->ctrl_handler, p);
- 	if (vfd->ctrl_handler)
--		return v4l2_g_ext_ctrls(vfd->ctrl_handler, p);
-+		return v4l2_g_ext_ctrls(NULL, vfd->ctrl_handler, p);
- 	if (ops->vidioc_g_ext_ctrls == NULL)
- 		return -ENOTTY;
- 	return check_ext_ctrls(p, 0) ? ops->vidioc_g_ext_ctrls(file, fh, p) :
-@@ -2096,6 +2097,7 @@ static int v4l_s_ext_ctrls(const struct v4l2_ioctl_ops *ops,
- 		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
- 
- 	p->error_idx = p->count;
++	pr_cont("fd=0x%x\n", new->fd);
++}
 +
- 	if (vfh && vfh->ctrl_handler)
- 		return v4l2_s_ext_ctrls(vfh, vfh->ctrl_handler, p);
- 	if (vfd->ctrl_handler)
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index c5639817db34..c547788026c6 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -202,7 +202,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 		return v4l2_s_ctrl(vfh, vfh->ctrl_handler, arg);
+ static void v4l_print_edid(const void *arg, bool write_only)
+ {
+ 	const struct v4l2_edid *p = arg;
+@@ -2486,6 +2494,22 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
+ 	return -ENOTTY;
+ }
  
- 	case VIDIOC_G_EXT_CTRLS:
--		return v4l2_g_ext_ctrls(vfh->ctrl_handler, arg);
-+		return v4l2_g_ext_ctrls(vfh, vfh->ctrl_handler, arg);
++static int vidioc_new_request(const struct v4l2_ioctl_ops *ops,
++			      struct file *file, void *fh, void *arg)
++{
++#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
++	struct media_request_new *new = arg;
++	struct video_device *vfd = video_devdata(file);
++
++	if (!vfd->req_mgr)
++		return -ENOTTY;
++
++	return media_request_ioctl_new(vfd->req_mgr, new);
++#else
++	return -ENOTTY;
++#endif
++}
++
+ struct v4l2_ioctl_info {
+ 	unsigned int ioctl;
+ 	u32 flags;
+@@ -2617,6 +2641,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
+ 	IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
+ 	IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
+ 	IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
++	IOCTL_INFO_FNC(VIDIOC_NEW_REQUEST, vidioc_new_request, vidioc_print_new_request, 0),
+ };
+ #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
  
- 	case VIDIOC_S_EXT_CTRLS:
- 		return v4l2_s_ext_ctrls(vfh, vfh->ctrl_handler, arg);
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index 3a10fb3419e3..7c6a76479099 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -1126,12 +1126,13 @@ int v4l2_s_ctrl(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
-  * v4l2_g_ext_ctrls - Helper function to implement
-  *	:ref:`VIDIOC_G_EXT_CTRLS <vidioc_g_ext_ctrls>` ioctl
-  *
-+ * @fh: pointer to &struct v4l2_fh
-  * @hdl: pointer to &struct v4l2_ctrl_handler
-  * @c: pointer to &struct v4l2_ext_controls
-  *
-  * If hdl == NULL then they will all return -EINVAL.
-  */
--int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl,
-+int v4l2_g_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
- 		     struct v4l2_ext_controls *c);
+diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+index 53f32022fabe..e6c4e10889bc 100644
+--- a/include/media/v4l2-dev.h
++++ b/include/media/v4l2-dev.h
+@@ -209,6 +209,7 @@ struct v4l2_file_operations {
+  * @entity: &struct media_entity
+  * @intf_devnode: pointer to &struct media_intf_devnode
+  * @pipe: &struct media_pipeline
++ * @req_mgr: request manager to use if this device supports creating requests
+  * @fops: pointer to &struct v4l2_file_operations for the video device
+  * @device_caps: device capabilities as used in v4l2_capabilities
+  * @dev: &struct device for the video device
+@@ -251,6 +252,7 @@ struct video_device
+ 	struct media_intf_devnode *intf_devnode;
+ 	struct media_pipeline pipe;
+ #endif
++	struct media_request_mgr *req_mgr;
+ 	const struct v4l2_file_operations *fops;
  
- /**
+ 	u32 device_caps;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 91cfe0cbd5c5..35706204e81d 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -63,6 +63,7 @@
+ #include <linux/compiler.h>
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
++#include <linux/media-request.h>
+ #include <linux/v4l2-common.h>
+ #include <linux/v4l2-controls.h>
+ 
+@@ -2407,6 +2408,8 @@ struct v4l2_create_buffers {
+ 
+ #define VIDIOC_QUERY_EXT_CTRL	_IOWR('V', 103, struct v4l2_query_ext_ctrl)
+ 
++#define VIDIOC_NEW_REQUEST	_IOWR('V', 104, struct media_request_new)
++
+ /* Reminder: when adding new ioctls please add support for them to
+    drivers/media/v4l2-core/v4l2-compat-ioctl32.c as well! */
+ 
 -- 
 2.16.1.291.g4437f3f132-goog
