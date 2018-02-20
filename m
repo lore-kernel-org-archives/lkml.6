@@ -1,154 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751135AbeBTIU1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:20:27 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:53143 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750781AbeBTIU0 (ORCPT
+        id S1751372AbeBTIVC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:21:02 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:39003 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750820AbeBTIVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:20:26 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w1K8Iv28015820
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Petr Vorel <petr.vorel@gmail.com>, Paul Bolle <pebolle@tiscali.nl>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: clean-up reverse dependency help implementation
-Date: Tue, 20 Feb 2018 17:18:47 +0900
-Message-Id: <1519114728-1084-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 20 Feb 2018 03:21:01 -0500
+X-CTCH-RefID: str=0001.0A0B0203.5A8BD925.01EE:SCFSTAT16437741,ss=1,re=-4.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Subject: [PATCH] mtd: nand: gpmi: fix edo mode for non fully ONFI compliant
+ flashes
+To: Han Xu <han.xu@nxp.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+CC: Richard Weinberger <richard@nod.at>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Message-ID: <2e12a84b-b4cb-f0ff-f3c9-173def6b5bd2@ginzinger.com>
+Date: Tue, 20 Feb 2018 09:15:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.1.106]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [PATCH] mtd: nand: gpmi: fix edo mode for non
+ fully ONFI compliant flashes[NOSIG][NODISC]
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit splits out the special E_OR handling ('-' instead of '||')
-into a dedicated helper expr_print_revdev().
+In enable_edo_mode the timing mode feature is set according to previously
+read capabilities of the parameter page ("Timing mode support"). After
+the value was set, it is read back to provide a "double-check".
+If the "double check" fails, the whole function returns with an error,
+which leads to a very slow (non-edo) fallback timing.
 
-Restore the original expr_print() prior to commit 1ccb27143360
-("kconfig: make "Selected by:" and "Implied by:" readable").
+The problem here is, that there seem to be some NAND flashes, which are
+not fully ONFI 1.0 compliant.
+One of these is Winbond W29N04GV. According to datasheet and parameter
+page, the flash supports timing mode 4 (edo), but the timing mode feature
+is simply missing.
 
-This makes sense because:
+It seems that setting a non-existing feature is simply ignored. The real
+problem occurs, when the feature is read back: W29N04GV always delivers
+zero, which causes the "double-check" to fail. This leads to very slow
+timing and therefore to poor performance.
 
-  - We need to chop those expressions only when printing the reverse
-    dependency, and only when E_OR is encountered
+To solve this, we simply remove the double-check, which is a paranoia
+check anyways.
 
-  - Otherwise, it should be printed as before, so fall back to
-    expr_print()
+The modification was intensively tested on i.MX6 with linux-4.1, Winbond
+W29N04GV and Micron MT29F4G08ABADAH4.
 
-This also improves the behavior; for a single line, it was previously
-displayed in the same line as "Selected by", like this:
-
-  Selected by: A [=n] && B [=n]
-
-This will be displayed in a new line, consistently:
-
-  Selected by:
-  - A [=n] && B [=n]
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 ---
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
- scripts/kconfig/expr.c | 36 +++++++++++++++++++++---------------
- scripts/kconfig/menu.c |  6 ++----
- 2 files changed, 23 insertions(+), 19 deletions(-)
-
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index d453819..cd3a8f5 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -1179,7 +1179,9 @@ struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
- 	return expr_get_leftmost_symbol(ret);
- }
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+index 97787246af41..40fba96df215 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+@@ -939,16 +939,9 @@ static int enable_edo_mode(struct gpmi_nand_data *this, int mode)
+ 	if (ret)
+ 		goto err_out;
  
--static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, const char *), void *data, int prevtoken, bool revdep)
-+void expr_print(struct expr *e,
-+		void (*fn)(void *, struct symbol *, const char *),
-+		void *data, int prevtoken)
- {
- 	if (!e) {
- 		fn(data, NULL, "y");
-@@ -1234,14 +1236,9 @@ static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, con
- 		fn(data, e->right.sym, e->right.sym->name);
- 		break;
- 	case E_OR:
--		if (revdep && e->left.expr->type != E_OR)
--			fn(data, NULL, "\n  - ");
--		__expr_print(e->left.expr, fn, data, E_OR, revdep);
--		if (revdep)
--			fn(data, NULL, "\n  - ");
--		else
--			fn(data, NULL, " || ");
--		__expr_print(e->right.expr, fn, data, E_OR, revdep);
-+		expr_print(e->left.expr, fn, data, E_OR);
-+		fn(data, NULL, " || ");
-+		expr_print(e->right.expr, fn, data, E_OR);
- 		break;
- 	case E_AND:
- 		expr_print(e->left.expr, fn, data, E_AND);
-@@ -1274,11 +1271,6 @@ static void __expr_print(struct expr *e, void (*fn)(void *, struct symbol *, con
- 		fn(data, NULL, ")");
- }
- 
--void expr_print(struct expr *e, void (*fn)(void *, struct symbol *, const char *), void *data, int prevtoken)
--{
--	__expr_print(e, fn, data, prevtoken, false);
--}
+-	/* [2] send GET FEATURE command to double-check the timing mode */
+-	memset(feature, 0, ONFI_SUBFEATURE_PARAM_LEN);
+-	ret = nand->onfi_get_features(mtd, nand,
+-				ONFI_FEATURE_ADDR_TIMING_MODE, feature);
+-	if (ret || feature[0] != mode)
+-		goto err_out;
 -
- static void expr_print_file_helper(void *data, struct symbol *sym, const char *str)
- {
- 	xfwrite(str, strlen(str), 1, data);
-@@ -1329,7 +1321,21 @@ void expr_gstr_print(struct expr *e, struct gstr *gs)
-  * line with a minus. This makes expressions much easier to read.
-  * Suitable for reverse dependency expressions.
-  */
-+static void expr_print_revdep(struct expr *e,
-+			      void (*fn)(void *, struct symbol *, const char *),
-+			      void *data)
-+{
-+	if (e->type == E_OR) {
-+		expr_print_revdep(e->left.expr, fn, data);
-+		expr_print_revdep(e->right.expr, fn, data);
-+	} else {
-+		fn(data, NULL, "  - ");
-+		expr_print(e, fn, data, E_NONE);
-+		fn(data, NULL, "\n");
-+	}
-+}
-+
- void expr_gstr_print_revdep(struct expr *e, struct gstr *gs)
- {
--	__expr_print(e, expr_print_gstr_helper, gs, E_NONE, true);
-+	expr_print_revdep(e, expr_print_gstr_helper, gs);
- }
-diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-index 9922285..7e70be3 100644
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -827,16 +827,14 @@ static void get_symbol_str(struct gstr *r, struct symbol *sym,
+ 	nand->select_chip(mtd, -1);
  
- 	get_symbol_props_str(r, sym, P_SELECT, _("  Selects: "));
- 	if (sym->rev_dep.expr) {
--		str_append(r, _("  Selected by: "));
-+		str_append(r, _("  Selected by: \n"));
- 		expr_gstr_print_revdep(sym->rev_dep.expr, r);
--		str_append(r, "\n");
- 	}
+-	/* [3] set the main IO clock, 100MHz for mode 5, 80MHz for mode 4. */
++	/* [2] set the main IO clock, 100MHz for mode 5, 80MHz for mode 4. */
+ 	rate = (mode == 5) ? 100000000 : 80000000;
+ 	clk_set_rate(r->clock[0], rate);
  
- 	get_symbol_props_str(r, sym, P_IMPLY, _("  Implies: "));
- 	if (sym->implied.expr) {
--		str_append(r, _("  Implied by: "));
-+		str_append(r, _("  Implied by: \n"));
- 		expr_gstr_print_revdep(sym->implied.expr, r);
--		str_append(r, "\n");
- 	}
- 
- 	str_append(r, "\n\n");
 -- 
-2.7.4
+2.11.0
