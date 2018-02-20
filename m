@@ -1,109 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeBTM4h (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:56:37 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:35807 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751629AbeBTM4f (ORCPT
+        id S1751886AbeBTM6d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:58:33 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39396 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeBTM6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:56:35 -0500
-X-Google-Smtp-Source: AH8x2261GDFi+K4WBu1nR28NWzntubJQ6jaH3Em6g/bwxo/8nRqaK7+aaCm9lxC3BlOdmNBy3FbFtGIw5z5W6GfQUOw=
+        Tue, 20 Feb 2018 07:58:31 -0500
+X-Google-Smtp-Source: AH8x226GI528+7JpHxNN70Wg2tqUGxYphL7mxV9Qu13f92whz/5ryrIjXPYW15hcJ9rpKqm3VmfCdQ==
+From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
+        <ckoenig.leichtzumerken@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function v3
+Date: Tue, 20 Feb 2018 13:58:26 +0100
+Message-Id: <20180220125829.27060-1-christian.koenig@amd.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-In-Reply-To: <1519077427-30165-1-git-send-email-david@lechnology.com>
-References: <1519077427-30165-1-git-send-email-david@lechnology.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 20 Feb 2018 14:56:33 +0200
-Message-ID: <CAHp75VeR2LG-qAzQs2048K3pyfRkz7OKioHDNyU8bVAPsgy8ew@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
- bits_per_mux != 0
-To: David Lechner <david@lechnology.com>
-Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 11:57 PM, David Lechner <david@lechnology.com> wrote:
-> This fixes pcs_request_gpio() in the pinctrl-single driver when
-> bits_per_mux != 0. It appears this was overlooked when the multiple
-> pins per register feature was added.
->
-> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->
-> v2 changes:
-> - don't wrap Fixes: line in commit message since it is a special machine-
->   readable line.
->
-> There was some discussion in v1 about using DIV_ROUND_UP(), etc. macros, but
-> the consensus was to leave it as-is since it matches existing code and that
-> macros can be introduced in another patch.
->
->  drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> index cec7537..a7c5eb3 100644
-> --- a/drivers/pinctrl/pinctrl-single.c
-> +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
->                         || pin < frange->offset)
->                         continue;
+amdgpu needs to verify if userspace sends us valid addresses and the simplest
+way of doing this is to check if the buffer object is locked with the ticket
+of the current submission.
 
->                 mux_bytes = pcs->width / BITS_PER_BYTE;
-> -               data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
-> -               data |= frange->gpiofunc;
-> -               pcs->write(data, pcs->base + pin * mux_bytes);
-> +
-> +               if (pcs->bits_per_mux) {
-> +                       int byte_num, offset, pin_shift;
-> +
-> +                       byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-> +                       offset = (byte_num / mux_bytes) * mux_bytes;
-> +                       pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
-> +                                   pcs->bits_per_pin;
-> +
-> +                       data = pcs->read(pcs->base + offset);
-> +                       data &= ~(pcs->fmask << pin_shift);
-> +                       data |= frange->gpiofunc << pin_shift;
-> +                       pcs->write(data, pcs->base + offset);
-> +               } else {
+Clean up the access to the ww_mutex internals by providing a function
+for this and extend the check to the thread owning the underlying mutex.
 
-> +                       data = pcs->read(pcs->base + pin * mux_bytes);
-> +                       data &= ~pcs->fmask;
-> +                       data |= frange->gpiofunc;
-> +                       pcs->write(data, pcs->base + pin * mux_bytes);
+v2: split amdgpu changes into separate patch as suggested by Alex
+v3: change logic as suggested by Daniel
 
-Just an idea, you may leave this almost untouched and do calculate
-pin_shift and offset in condition, like
+Signed-off-by: Christian König <christian.koenig@amd.com>
+---
+ include/linux/ww_mutex.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-if (...) {
- pin_shift = ...
- offset = ...
-} else {
- pin_shift = 0;
- offset = pin * mux_bytes;
-}
-
-                       data = pcs->read(pcs->base + offset);
-                       data &= ~(pcs->fmask << pin_shift);
-                       data |= frange->gpiofunc << pin_shift;
-                       pcs->write(data, pcs->base + offset);
-
-It's also possible to split to two changes, where first introduces
-that variables and their default values (see 'else' branch) and second
-one introduces an if branch override.
-
-> +               }
->                 break;
-
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index 39fda195bf78..14e4149d3d9d 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
+ 	return mutex_is_locked(&lock->base);
+ }
+ 
++/**
++ * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
++ * @lock: the mutex to be queried
++ * @ctx: the w/w acquire context to test
++ *
++ * If @ctx is not NULL test if the mutex is owned by this context.
++ * If @ctx is NULL test if the mutex is owned by the current thread.
++ */
++static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
++					struct ww_acquire_ctx *ctx)
++{
++	if (ctx)
++		return likely(READ_ONCE(lock->ctx) == ctx);
++	else
++		return likely(__mutex_owner(&lock->base) == current);
++}
++
+ #endif
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
