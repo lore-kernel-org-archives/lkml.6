@@ -1,78 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeBTPki (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:40:38 -0500
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:36774 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752313AbeBTPkg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:40:36 -0500
-X-Google-Smtp-Source: AH8x227Qp2U9y7ffyn+Oui7nkh37X0dVBx+pA57zX2v1zrpL4OgfLsPges+6fXWRV9t2h4bdJOS7dVYMTXdfQRsAEj8=
+        id S1752626AbeBTPlr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:41:47 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37765 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752313AbeBTPln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:41:43 -0500
+Subject: Re: [PATCH v14 0/9] LPC: legacy ISA I/O support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+ <CAHp75VeFiQocuedW64ePgLO=_FQd7Q_hX-+wMh0zec3XUzhVxw@mail.gmail.com>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <55d64c79-87b6-78e0-b13e-77ac7f1c9e90@huawei.com>
+Date: Tue, 20 Feb 2018 15:41:18 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <1519139541-18783-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-4-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 16:40:34 +0100
-X-Google-Sender-Auth: EhhZiA_DRm7yn3NZYQ8zpIJEU1Y
-Message-ID: <CAMuHMdVw4OSPP7XYLGuE7SfVjOk_6VK847NdsVwszBX9XshQ3A@mail.gmail.com>
-Subject: Re: [PATCH v2 03/19] soc: renesas: Identify R-Car M3-N
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VeFiQocuedW64ePgLO=_FQd7Q_hX-+wMh0zec3XUzhVxw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add support for indentifying R-Car M3-N (R8A77965) SoC.
+On 20/02/2018 14:54, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
+>> > This patchset supports the IPMI-bt device attached to the Low-Pin-Count
+>> > interface implemented on Hisilicon Hip06/Hip07 SoC.
+>> >                         -----------
+>> >                         | LPC host|
+>> >                         |         |
+>> >                         -----------
+>> >                              |
+>> >                 _____________V_______________LPC
+>> >                   |                       |
+>> >                   V                       V
+>> >                                      ------------
+>> >                                      |  BT(ipmi)|
+>> >                                      ------------
+>> >
+>> > When master accesses those peripherals beneath the Hip06/Hip07 LPC, a specific
+>> > LPC driver is needed to make LPC host generate the standard LPC I/O cycles with
+>> > the target peripherals'I/O port addresses. But on curent arm64 world, there is
+>> > no real I/O accesses. All the I/O operations through in/out accessors are based
+>> > on MMIO ranges; on Hip06/Hip07 LPC the I/O accesses are performed through driver
+>> > specific accessors rather than MMIO.
+>> > To solve this issue and keep the relevant existing peripherals' drivers untouched,
+>> > this patchset:
+>> >    - introduces a generic I/O space management framework, logical PIO, to support
+>> >       I/O operations on host controllers operating either on MMIO buses or on buses
+>> >      requiring specific driver I/O accessors;
+>> >    - redefines the in/out accessors to provide a unified interface for both MMIO
+>> >      and driver specific I/O operations. Using logical PIO, th call of in/out() from
+>> >      the host children drivers, such as ipmi-si, will be redirected to the
+>> >      corresponding device-specific I/O hooks to perform the I/O accesses.
+>> >
+>> > Based on this patch-set, all the I/O accesses to Hip06/Hip07 LPC peripherals can
+>> > be supported without any changes on the existing ipmi-si driver.
+>> >
+>> > The whole patchset has been tested on Hip07 D05 board both using DTB and ACPI.
+>> >
+>> > Differences to v13:
+>> > - dropped ACPI scan handler and added patch to not enumerate children
+>> >   of indirect IO hosts in ACPI code
+>> > - tidied up logic_pio.c a bit for kerneldoc and made some APIs clearer
+>> >   to understand
+>> > - tided (and simplified) hisi_lpc.c and added new ACPI probe code
+>> >   (same as previous ACPI scan handler code, so comments from Rafael
+>> >   and Andy included)
+>> > - reinstated PCI range upper limit check in pci_pio_to_address()
+>> > - dropped Dann Frazier's "tested-by" tag in light of changes
+>> > - rebase to linuxnext 20180219 (had to fix locally arm64 build issue)
+>> >
+> Some minor comments per patches, otherwise FWIW
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/drivers/soc/renesas/renesas-soc.c
-> +++ b/drivers/soc/renesas/renesas-soc.c
-> @@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
->         .id     = 0x54,
->  };
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 >
-> +static const struct renesas_soc soc_rcar_m3_n __initconst __maybe_unused = {
-> +       .family = &fam_rcar_gen3,
-> +       .id     = 0x55,
-> +};
 
-Note that the list was sorted by SoC part number.
+Thanks, the comments in the other 2 patches I did not reply to are ok.
 
-> +
->  static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
->         .family = &fam_rcar_gen3,
->         .id     = 0x56,
-> @@ -214,6 +219,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
->  #ifdef CONFIG_ARCH_R8A7796
->         { .compatible = "renesas,r8a7796",      .data = &soc_rcar_m3_w },
->  #endif
-> +#ifdef CONFIG_ARCH_R8A77965
-> +       { .compatible = "renesas,r8a77965",     .data = &soc_rcar_m3_n },
-> +#endif
->  #ifdef CONFIG_ARCH_R8A77970
->         { .compatible = "renesas,r8a77970",     .data = &soc_rcar_v3m },
->  #endif
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+John
