@@ -1,56 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751520AbeBTLlv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 06:41:51 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:43752 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeBTLlq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 06:41:46 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w1KBeVbJ032618
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: Don't leak choice names during parsing
-Date: Tue, 20 Feb 2018 20:40:29 +0900
-Message-Id: <1519126829-7257-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751528AbeBTLnm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 06:43:42 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750710AbeBTLnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 06:43:41 -0500
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>
+Cc: Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org>
+ <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org>
+ <1518518198.12890.48.camel@infradead.org>
+ <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+ <1518775136.7876.13.camel@infradead.org>
+ <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
+ <1518776517.7876.21.camel@infradead.org>
+ <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
+ <1518783021.7876.34.camel@infradead.org>
+ <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
+ <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+ <10373.1519084385@turing-police.cc.vt.edu>
+ <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <aa3fbaf1-0efc-64b1-4f7b-3d00b0493d48@redhat.com>
+Date: Tue, 20 Feb 2018 12:43:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The named choice is not used in the kernel tree, but if it were used,
-it would not be freed.
+On 20/02/2018 01:00, Van De Ven, Arjan wrote:
+>>> the guest is not the problem; guests obviously will already honor
+>>> if Enhanced IBRS is enumerated. The problem is mixed migration
+>>> pools where the hypervisor
+>>> may need to decide to not pass this enumeration through to the
+>>> guest.
+>> For bonus points:  What should happen to a VM that is live migrated
+>> from one hypervisor to another, and the hypervisors have different
+>> IBRS support?
+>
+> Doctor Doctor it hurts when I do this....
+> 
+> Migration tends to only work between HV's that are relatively
+> homogeneous, that's nothing new...
 
-The intention of the named choice can be seen in the log of
-commit 5a1aa8a1aff6 ("kconfig: add named choice group").
+No Arjan, this is just wrong.  Well, I suppose it's right in the present
+tense with the IBRS mess on Skylake, but it's _not_ been true until last
+year.
 
-There is room for argument if this is useful in practice, but anyway
-I am fixing the memory leak.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/kconfig/zconf.y | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index 4be9805..4893676 100644
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -276,6 +276,7 @@ choice: T_CHOICE word_opt T_EOL
- 	sym->flags |= SYMBOL_AUTO;
- 	menu_add_entry(sym);
- 	menu_add_expr(P_CHOICE, NULL, NULL);
-+	free($2);
- 	printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
- };
- 
--- 
-2.7.4
+Paolo
