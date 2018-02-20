@@ -1,106 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752265AbeBTNCz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:02:55 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:55480 "EHLO
+        id S1752129AbeBTNCJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:02:09 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55454 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbeBTNCN (ORCPT
+        with ESMTP id S1751782AbeBTNCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:02:13 -0500
-Date: Tue, 20 Feb 2018 10:51:58 +0100
+        Tue, 20 Feb 2018 08:02:05 -0500
+Date: Tue, 20 Feb 2018 09:43:54 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180220095158.GJ25181@hirez.programming.kicks-ass.net>
-References: <20180217151413.GA3785@andrea>
- <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
- <20180220093346.GA5505@andrea>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        hjl.tools@gmail.com
+Subject: Re: [PATCH 4/4] fs/dcache: Avoid the try_lock loops in dentry_kill()
+Message-ID: <20180220084354.GO25235@hirez.programming.kicks-ass.net>
+References: <20180216150933.971-5-john.ogness@linutronix.de>
+ <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
+ <87y3js36s7.fsf@linutronix.de>
+ <CA+55aFxku7bB9BEBrqgREc5ac4MK9CGLir1c7ZA-7bjp-Q2tAg@mail.gmail.com>
+ <87r2pk358g.fsf@linutronix.de>
+ <CA+55aFzfug3S_dRrHDh=Zdat0KZVar13NQVzyqXd3-xHLzeSjA@mail.gmail.com>
+ <87lgfs3374.fsf@linutronix.de>
+ <CA+55aFySL+exqUJX0JKmJY4Pa0CKwn9y4Voqs1QjWY29hkzhnQ@mail.gmail.com>
+ <878tbov9i6.fsf@linutronix.de>
+ <20180220083937.GX25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180220093346.GA5505@andrea>
+In-Reply-To: <20180220083937.GX25201@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 10:33:47AM +0100, Andrea Parri wrote:
-> I'd like to continue to treat R[once] and R*[once] equally if possible.
-> Given the (unconditional) smp_read_barrier_depends in READ_ONCE and in
-> atomics, it seems reasonable to have it unconditionally in cmpxchg.
+On Tue, Feb 20, 2018 at 09:39:37AM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 20, 2018 at 12:34:57AM +0100, John Ogness wrote:
+> > Implementation 2: Using switch on a dentry_lock_inode() that returns a
+> > tristate value. Does not support branch prediction. This approach is
+> > probably easiest to understand.
+> > 
+> >  		/*
+> >  		 * Lock the inode. Might drop dentry->d_lock temporarily
+> >  		 * which allows inode to change. Start over if that happens.
+> >  		 */
+> >                 switch (dentry_lock_inode(dentry)) {
+> >                 case LOCK_FAST:
 > 
-> As with the following patch?
+> Bah, I just checked, you cannot use GCC label attributes on statements
+> :/ Otherwise you could've done:
 > 
->   Andrea
-> 
-> ---
-> diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-> index 68dfb3cb71454..e2660866ce972 100644
-> --- a/arch/alpha/include/asm/xchg.h
-> +++ b/arch/alpha/include/asm/xchg.h
-> @@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
->   * store NEW in MEM.  Return the initial value in MEM.  Success is
->   * indicated by comparing RETURN with OLD.
->   *
-> - * The memory barrier should be placed in SMP only when we actually
-> - * make the change. If we don't change anything (so if the returned
-> - * prev is equal to old) then we aren't acquiring anything new and
-> - * we don't need any memory barrier as far I can tell.
-> + * The memory barrier is placed in SMP unconditionally, in order to
-> + * guarantee that dependency ordering is preserved when a dependency
-> + * is headed by an unsuccessful operation.
->   */
->  
->  static inline unsigned long
-> @@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
-> @@ -177,8 +176,8 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
-> @@ -200,8 +199,8 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
->  	"	mov %4,%1\n"
->  	"	stl_c %1,%2\n"
->  	"	beq %1,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
-> @@ -223,8 +222,8 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
->  	"	mov %4,%1\n"
->  	"	stq_c %1,%2\n"
->  	"	beq %1,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
+> 		case LOCK_FAST: __attribute__((hot));
 
-ACK
+Oooh shiny, you can actually write:
+
+		switch(__builtin_expect(dentry_lock_inode(dentry), LOCK_FAST)) {
+
+and have that work, see:
+
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59521
+
+> >                         break;
+> >                 case LOCK_SLOW:
+> >                         /*
+> >                          * Recheck refcount as it might have been
+> >                          * incremented while d_lock was dropped.
+> >                          */
+> >                         if (unlikely(dentry->d_lockref.count != 1))
+> >                                 goto drop_ref;
+> >                         break;
+> >                 case LOCK_FAILED:
+> >                         goto again;
+> >                 }
+> > 
