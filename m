@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeBTNBe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:01:34 -0500
-Received: from foss.arm.com ([217.140.101.70]:42680 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751957AbeBTNBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:01:31 -0500
+        id S1752036AbeBTNBj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:01:39 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42692 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751985AbeBTNBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 08:01:33 -0500
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: Sandy Huang <hjc@rock-chips.com>,
         =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
 Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] drm/rockchip: Do not use memcpy for MMIO addresses
-Date: Tue, 20 Feb 2018 13:01:19 +0000
-Message-Id: <20180220130120.5254-3-marc.zyngier@arm.com>
+Subject: [PATCH 3/3] drm/rockchip: Don't use spin_lock_irqsave in interrupt context
+Date: Tue, 20 Feb 2018 13:01:20 +0000
+Message-Id: <20180220130120.5254-4-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180220130120.5254-1-marc.zyngier@arm.com>
 References: <20180220130120.5254-1-marc.zyngier@arm.com>
@@ -22,55 +22,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memcpy is only meant to be used for memory, and only that.
-MMIO accessors should be used to access MMIO regions, preferably
-the ones that correspond to the size of the register accessed.
+The rockchip DRM driver is quite careful to disable interrupts
+when taking a lock that is also taken in interrupt context,
+which is a good thing.
 
-Let's convert the bulk register copy to writel/readl_relaxed,
-which is the correct API.
+What is a bit over the top is to use spin_lock_irqsave when
+already in interrupt context, as you cannot take another
+interrupt again, and disabling interrupt is just pure
+overhead.
+
+Switching to the non _irqsave version in interrupt context is
+more logical, and less heavy handed.
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 7b224e08cbf1..f2bde1c76bbe 100644
+index f2bde1c76bbe..48d27f6fb16d 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -528,7 +528,10 @@ static int vop_enable(struct drm_crtc *crtc)
- 		goto err_disable_aclk;
- 	}
+@@ -1160,15 +1160,14 @@ static void vop_handle_vblank(struct vop *vop)
+ {
+ 	struct drm_device *drm = vop->drm_dev;
+ 	struct drm_crtc *crtc = &vop->crtc;
+-	unsigned long flags;
  
--	memcpy(vop->regs, vop->regsbak, vop->len);
-+	spin_lock(&vop->reg_lock);
-+	for (i = 0; i < vop->len; i += 4)
-+		writel_relaxed(vop->regsbak[i / 4], vop->regs + i);
-+
+-	spin_lock_irqsave(&drm->event_lock, flags);
++	spin_lock(&drm->event_lock);
+ 	if (vop->event) {
+ 		drm_crtc_send_vblank_event(crtc, vop->event);
+ 		drm_crtc_vblank_put(crtc);
+ 		vop->event = NULL;
+ 	}
+-	spin_unlock_irqrestore(&drm->event_lock, flags);
++	spin_unlock(&drm->event_lock);
+ 
+ 	if (test_and_clear_bit(VOP_PENDING_FB_UNREF, &vop->pending))
+ 		drm_flip_work_commit(&vop->fb_unref_work, system_unbound_wq);
+@@ -1179,21 +1178,20 @@ static irqreturn_t vop_isr(int irq, void *data)
+ 	struct vop *vop = data;
+ 	struct drm_crtc *crtc = &vop->crtc;
+ 	uint32_t active_irqs;
+-	unsigned long flags;
+ 	int ret = IRQ_NONE;
+ 
  	/*
- 	 * We need to make sure that all windows are disabled before we
- 	 * enable the crtc. Otherwise we might try to scan from a destroyed
-@@ -538,10 +541,9 @@ static int vop_enable(struct drm_crtc *crtc)
- 		struct vop_win *vop_win = &vop->win[i];
- 		const struct vop_win_data *win = vop_win->data;
+ 	 * interrupt register has interrupt status, enable and clear bits, we
+ 	 * must hold irq_lock to avoid a race with enable/disable_vblank().
+ 	*/
+-	spin_lock_irqsave(&vop->irq_lock, flags);
++	spin_lock(&vop->irq_lock);
  
--		spin_lock(&vop->reg_lock);
- 		VOP_WIN_SET(vop, win, enable, 0);
--		spin_unlock(&vop->reg_lock);
- 	}
-+	spin_unlock(&vop->reg_lock);
+ 	active_irqs = VOP_INTR_GET_TYPE(vop, status, INTR_MASK);
+ 	/* Clear all active interrupt sources */
+ 	if (active_irqs)
+ 		VOP_INTR_SET_TYPE(vop, clear, active_irqs, 1);
  
- 	vop_cfg_done(vop);
+-	spin_unlock_irqrestore(&vop->irq_lock, flags);
++	spin_unlock(&vop->irq_lock);
  
-@@ -1417,7 +1419,8 @@ static int vop_initial(struct vop *vop)
- 	VOP_INTR_SET_TYPE(vop, clear, INTR_MASK, 1);
- 	VOP_INTR_SET_TYPE(vop, enable, INTR_MASK, 0);
- 
--	memcpy(vop->regsbak, vop->regs, vop->len);
-+	for (i = 0; i < vop->len; i += sizeof(u32))
-+		vop->regsbak[i / 4] = readl_relaxed(vop->regs + i);
- 
- 	VOP_REG_SET(vop, misc, global_regdone_en, 1);
- 	VOP_REG_SET(vop, common, dsp_blank, 0);
+ 	/* This is expected for vop iommu irqs, since the irq is shared */
+ 	if (!active_irqs)
 -- 
 2.14.2
