@@ -1,83 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeBTWgJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:36:09 -0500
-Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:60866 "EHLO
-        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750884AbeBTWgH (ORCPT
+        id S1751619AbeBTWhO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:37:14 -0500
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:46578 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeBTWhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:36:07 -0500
-Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
-From: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
-Message-ID: <673a2510-7d82-1b24-1085-9f5aa2bb9998@valvesoftware.com>
-Date: Tue, 20 Feb 2018 14:29:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 20 Feb 2018 17:37:12 -0500
+X-Google-Smtp-Source: AH8x226v1Fui/BK/uyu8FDEAcBIZC+OKM0aaIxcEl8FPz2HV7aH3akP10e6lsG5yipEKOMBdwn3RCg==
+Subject: Re: [PATCH] blk: optimization for classic polling
+To: Peter Zijlstra <peterz@infradead.org>,
+        Nitesh Shetty <nj.shetty@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, joshi.k@samsung.com
+References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
+ <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+ <20180220132137.GG25314@hirez.programming.kicks-ass.net>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <35a2d52e-dd40-d130-85d9-5f3ffe0d28af@kernel.dk>
+Date: Tue, 20 Feb 2018 12:37:07 -1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+ Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
+In-Reply-To: <20180220132137.GG25314@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Mlf-Version: 8.3.2.6535
-X-Mlf-UniqueId: o201802202229380028279
-X-MC-Unique: KjgueYcNPai2u_0-ULcoAg-1
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1KMaDuT018984
 
-Hi Rodrigo,
-
-Thanks for working on that! I have a few questions and remarks.
-
-For the reverse-engineering part, there's a lot of existing reference in 
-existing (user-space) drivers for the controllers like sc-controller, 
-but feel free to reach out if you have any questions. It's overall 
-pretty simple and there's nothing secret about how it functions; there 
-are some quirks, however. Nothing secret about it, but also no 
-documentation, so might as well be... Have you tried deflecting the 
-analog stick while touching the left trackpad? You'll most likely need 
-special handling there. How are you planning to expose 
-enabling/disabling auxiliary data like gyro over wireless?
-
-Will this driver being loaded affect functionality of existing 
-applications that talk to it through HID directly, like Steam or 
-sc-controller? Will they be able to keep getting the same HID data they 
-do today? If so, the extent of the work needed to support it in Steam 
-might just be to ignore the controller device it's exposing, since Steam 
-will expose that itself through its own means.
-
-Thanks,
-  - Pierre-Loup
-
-On 02/20/2018 11:33 AM, Rodrigo Rivas Costa wrote:
-> This patchset implements a driver for Valve Steam Controller, based on a
-> reverse analysis by myself.
+On 2/20/18 3:21 AM, Peter Zijlstra wrote:
+> On Sun, May 30, 2083 at 09:51:06AM +0530, Nitesh Shetty wrote:
+>> This removes the dependency on interrupts to wake up task. Set task
+>> state as TASK_RUNNING, if need_resched() returns true,
+>> while polling for IO completion.
+>> Earlier, polling task used to sleep, relying on interrupt to wake it up.
+>> This made some IO take very long when interrupt-coalescing is enabled in
+>> NVMe.
 > 
-> Notable changes from patchset v1:
->   * Remove references to USB. Now the interesting interfaces are selected by
->     looking for the ones with feature reports.
->   * Feature reports buffers are allocated with hid_alloc_report_buf().
->   * Feature report length is checked, to avoid overflows in case of
->     corrupt/malicius USB devices.
->   * Resolution added to the ABS axes.
->   * A lot of minor cleanups.
-> 
-> Rodrigo Rivas Costa (3):
->    HID: add driver for Valve Steam Controller
->    HID: steam: add serial number information.
->    HID: steam: add battery device.
-> 
->   drivers/hid/Kconfig      |   8 +
->   drivers/hid/Makefile     |   1 +
->   drivers/hid/hid-ids.h    |   4 +
->   drivers/hid/hid-quirks.c |   4 +
->   drivers/hid/hid-steam.c  | 703 +++++++++++++++++++++++++++++++++++++++++++++++
->   5 files changed, 720 insertions(+)
->   create mode 100644 drivers/hid/hid-steam.c
-> 
+> This is a horrible Changelog.. it does not in fact explain why the patch
+> works or is correct.
+
+Yeah, that should have been improved.
+
+> Also, set_current_state(TASK_RUNNING) is dodgy (similarly in
+> __blk_mq_poll), why do you need that memory barrier?
+
+I pointed that out in the review, and v2 fixed it. v2 is the
+one that got merged.
+
+-- 
+Jens Axboe
