@@ -1,88 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751406AbeBTUPe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 15:15:34 -0500
-Received: from mga04.intel.com ([192.55.52.120]:3022 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750985AbeBTUPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 15:15:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="176757438"
-Date: Tue, 20 Feb 2018 12:15:32 -0800
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20180220201532.GI27433@intel.com>
-References: <20180219101050.0a1514e5@canb.auug.org.au>
+        id S1751351AbeBTUY4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 15:24:56 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42780 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeBTUYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 15:24:54 -0500
+X-Google-Smtp-Source: AH8x227OApoBEXl9byYZhBYL8R6ClmgFkehh67jXrq5iFEfqFVtEyBmRR8/memxCgYNonUBt+BlG6g==
+Date: Tue, 20 Feb 2018 22:24:50 +0200
+From: Narcisa Ana Maria Vasile <narcisaanamaria12@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Richard Lai <richard@richardman.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: ccs811: Renamed resistance member in
+ ccs811_reading struct
+Message-ID: <20180220202450.GA11057@nati-X550JK>
+References: <1518570519-1117-1-git-send-email-richard@richardman.com>
+ <20180217141442.728c941b@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180219101050.0a1514e5@canb.auug.org.au>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180217141442.728c941b@archlinux>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:10:50AM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Sat, Feb 17, 2018 at 02:14:42PM +0000, Jonathan Cameron wrote:
+> On Wed, 14 Feb 2018 01:08:35 +0000
+> Richard Lai <richard@richardman.com> wrote:
 > 
-> Today's linux-next merge of the drm tree got a conflict in:
-> 
->   drivers/gpu/drm/i915/intel_breadcrumbs.c
-> 
-> between commit:
-> 
->   117172c8f9d4 ("drm/i915/breadcrumbs: Ignore unsubmitted signalers")
-> 
-> from Linus' tree and commit:
-> 
->   b7a3f33bd5ab ("drm/i915/breadcrumbs: Drop request reference for the signaler thread")
-> 
-> from the drm tree.
-> 
-> These are basically identical for the conflicting section except that
-> the former added a line:
-> 
-> 	GEM_BUG_ON(!i915_gem_request_completed(request));
-> 
-> which I left in.
-> 
-> I fixed it up (see above) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> > The resistance member in ccs811_reading struct is an unsigned 16-bit
+> > integer variable used to store RAW_DATA register bytes read from CCS811.
+> > It is kind of misleading to name this struct member as resistance.
+> > 
+> > About the RAW_DATA register bytes, the CCS811 datasheet states that:
+> > -----
+> > Two byte read only register which contains the latest readings from the
+> > sense resistor.
+> > 
+> > The most significant 6 bits of the Byte 0 contain the value of the current
+> > through the sensor (0μA to 63μA).
+> > 
+> > The lower 10 bits contain (as computed from the ADC) the readings of the
+> > voltage across the sensor with the selected current (1023 = 1.65V)"
+> > -----
+> > 
+    True.
 
-For this and for the PMU one, I'm really sorry. I believe I should had
-mentioned this to Dave when sending pull request for drm-intel-fixes.
+> > Hence, the RAW_DATA register byte contains information about electric
+> > current and voltage of the CCS811 sensor. Calling this struct member
+> > 'resistance' is kind of misleading, although both electric current and
+> > voltage are needed to calculate the electrical resistance of the sensor
+> > using Ohm's law, V = I x R, in which a new channel type of IIO_RESISTANCE
+> > may be added to the driver in the future.
+> > 
+    
 
-I didn't mentioned because for what fixes is concerned this shouldn't
-be a problem, but I totally forgot about linux-next. Please accept my
-apologies.
-
-Do you use any rerere on linux-next? I wonder if drm-rerere could be used
-somehow here to simplify this process of propagating conflicts resolutions
-like this.
-
-Thanks,
-Rodrigo.
-
+> > Signed-off-by: Richard Lai <richard@richardman.com>
+> This seems logical to me, but I'd just like to let it sit for a few
+> more days to let Narcisa have time to respond.
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-
-
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+    I agree, Richard's suggestion is a better fit as a name for this
+    register.
+> Feel free to give me a poke if it looks like I have forgotten this
+> in a week or so.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> > ---
+> >  drivers/iio/chemical/ccs811.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/chemical/ccs811.c b/drivers/iio/chemical/ccs811.c
+> > index 8e8beb7..e6f6bc4 100644
+> > --- a/drivers/iio/chemical/ccs811.c
+> > +++ b/drivers/iio/chemical/ccs811.c
+> > @@ -66,7 +66,7 @@ struct ccs811_reading {
+> >  	__be16 voc;
+> >  	u8 status;
+> >  	u8 error;
+> > -	__be16 resistance;
+> > +	__be16 raw_data;
+> >  } __attribute__((__packed__));
+> >  
+> >  struct ccs811_data {
+> > @@ -202,12 +202,12 @@ static int ccs811_read_raw(struct iio_dev *indio_dev,
+> >  
+> >  		switch (chan->type) {
+> >  		case IIO_VOLTAGE:
+> > -			*val = be16_to_cpu(data->buffer.resistance) &
+> > +			*val = be16_to_cpu(data->buffer.raw_data) &
+> >  					   CCS811_VOLTAGE_MASK;
+> >  			ret = IIO_VAL_INT;
+> >  			break;
+> >  		case IIO_CURRENT:
+> > -			*val = be16_to_cpu(data->buffer.resistance) >> 10;
+> > +			*val = be16_to_cpu(data->buffer.raw_data) >> 10;
+> >  			ret = IIO_VAL_INT;
+> >  			break;
+> >  		case IIO_CONCENTRATION:
+> 
