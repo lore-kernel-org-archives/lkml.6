@@ -1,69 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932528AbeBTDRw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 22:17:52 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51738 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932352AbeBTDRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 22:17:51 -0500
-X-Google-Smtp-Source: AH8x227BPuOD90DlNa/IQAF4GhIcUfU5cCfPNfYYjkcILgc4dYS4AP4jN/Co8dI/nR0BaD45q+dTNw==
+        id S932512AbeBTDVr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 22:21:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:46079 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932370AbeBTDVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 22:21:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
+   d="scan'208";a="19347110"
+Subject: Re: [RFC PATCH V2 06/22] x86/intel_rdt: Create pseudo-locked regions
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+ <17cceeb077f3ac5f50b110285b36905091a345b0.1518443616.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1802192138140.1853@nanos.tec.linutronix.de>
+ <97148038-6af3-aa49-d5ac-35741867dd29@intel.com>
+ <alpine.DEB.2.21.1802200012030.1853@nanos.tec.linutronix.de>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <d6345cf7-159b-ab90-2df4-1a998358a710@intel.com>
+Date: Mon, 19 Feb 2018 19:21:44 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180219080511.wfzeokrwbyyr5l3r@flea.lan>
-References: <20180217050112.14619-1-wens@csie.org> <20180219080511.wfzeokrwbyyr5l3r@flea.lan>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 20 Feb 2018 11:17:28 +0800
-X-Gmail-Original-Message-ID: <CAGb2v642RKd7UAsqTkCRfeL6hEPWMEWTL1H_hes0CFFPfGtVRA@mail.gmail.com>
-Message-ID: <CAGb2v642RKd7UAsqTkCRfeL6hEPWMEWTL1H_hes0CFFPfGtVRA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: sunxi: Fix multi-cluster SMP support compilation in
- multi v6/v7 configs
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1802200012030.1853@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 4:05 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Sat, Feb 17, 2018 at 01:01:12PM +0800, Chen-Yu Tsai wrote:
->> Various parts of the assembly code used in the multi-cluster SMP support
->> requires ARMv7-A. If the kernel config also has multi v6 support enabled,
->> Kbuild defaults to building for armv6k, which does not support some of
->> the instructions we use.
->>
->> Configure the Makefile such that the multi-cluster SMP code is always
->> built for ARMv7-A. This is also what mach-exynos does for their MC-SMP
->> code.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>
->> This addresses "[sunxi:sunxi/core-for-4.17 1/4] /tmp/ccSQM2rD.s:438:
->> Error: selected processor does not support `isb' in ARM mode"
->> reported by the kbuild test robot for arm-allmodconfig.
->>
->> Should we apply it, or squash it in the original patch?
->
-> I guess we can squash it. And while you're at it..
->
->> ---
->>  arch/arm/mach-sunxi/Makefile | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
->> index 3e741e959c7c..3c2c4384357a 100644
->> --- a/arch/arm/mach-sunxi/Makefile
->> +++ b/arch/arm/mach-sunxi/Makefile
->> @@ -1,3 +1,4 @@
->>  obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
->>  obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
->> +CFLAGS_mc_smp.o      += -march=armv7-a
->
-> Can you move it to the first line of the file (before the other obj-*)
-> with a newline after it?
+Hi Thomas,
 
-Done and done.
+On 2/19/2018 3:16 PM, Thomas Gleixner wrote:
+> On Mon, 19 Feb 2018, Reinette Chatre wrote:
+>> On 2/19/2018 12:57 PM, Thomas Gleixner wrote:
+>>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
+>>>
+>>>> System administrator creates/removes pseudo-locked regions by
+>>>> creating/removing directories in the pseudo-lock subdirectory of the
+>>>> resctrl filesystem. Here we add directory creation and removal support.
+>>>>
+>>>> A "pseudo-lock region" is introduced, which represents an
+>>>> instance of a pseudo-locked cache region. During mkdir a new region is
+>>>> created but since we do not know which cache it belongs to at that time
+>>>> we maintain a global pointer to it from where it will be moved to the cache
+>>>> (rdt_domain) it belongs to after initialization. This implies that
+>>>> we only support one uninitialized pseudo-locked region at a time.
+>>>
+>>> Whats the reason for this restriction? If there are uninitialized
+>>> directories, so what?
+>>
+>> I was thinking about a problematic scenario where an application
+>> attempts to create infinite directories. All of these uninitialized
+>> directories need to be kept track of before they are initialized as
+>> pseudo-locked regions. It seemed simpler to require that one
+>> pseudo-locked region is set up at a time.
+> 
+> If the application is allowed to create directories then it can also create
+> a dozen unused resource control groups. This is not a Joe User operation so
+> there is no problem.
 
-ChenYu
+Thank you for the guidance. I will remove this restriction.
+
+>>>> +/*
+>>>> + * rdt_pseudo_lock_rmdir - Remove pseudo-lock region
+>>>> + *
+>>>> + * LOCKING:
+>>>> + * Since the pseudo-locked region can be associated with a RDT domain at
+>>>> + * removal we take both rdtgroup_mutex and rdt_pseudo_lock_mutex to protect
+>>>> + * the rdt_domain access as well as the pseudo_lock_region access.
+>>>
+>>> Is there a real reason / benefit for having this second mutex?
+>>
+>> Some interactions with the pseudo-locked region are currently done
+>> without the need for the rdtgroup_mutex. For example, interaction with
+>> the character device associated with the pseudo-locked region (the
+>> mmap() call) as well as the debugfs operations.
+> 
+> Well, yes. But none of those operations are hot path so having the double
+> locking in lots of the other function is just extra complexity for no real
+> value.
+
+I will revise.
+
+Thank you very much.
+
+Reinette
