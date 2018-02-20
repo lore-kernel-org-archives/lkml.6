@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3115364-1519139944-2-2957500381210583367
+X-Cyrus-Session-Id: sloti22d1t05-3351714-1519146392-2-3187454176959549204
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,159 +7,172 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_H
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519139943; b=HLXbLE/0FFx3ODTixBX9irNG5uYV9PT92y/yGmD8BSwgtUo
-    99iGZfhzpOKKJ0aQBOc2ozoypNTxeLMZpptW5puhWhoR27qm0yaKV1ruUbljMKGa
-    er/lu6FHBuv6IpijBz20WpnzKzITSR2iHvF5vl4Ahfw9kT789XGYjTenibO18DRh
-    FU9OKb6UTkyk5eji1rXtrNSsZU3gnKTJHi/X9LC7pad5GvSkfG31bKz23G2liisj
-    4ZdYfgEvnUirx2akkdROdCXvCzEsHpkdng+uiXY0RfxCGuiaaNfj124QE6HwKt4o
-    SCg2F3Jq0qSmm7jLccL1t8bXC9quucMruUtyhVg==
+    t=1519146392; b=r2WYoWNizXDLfZ28kdaYWJJSIhscpyoy6I1/10kh2Uyod1i
+    Yaz3a5K0dMaH8O44oixFp3/ae6AVU86UwSS15v/aW/Yna4DtafXUKjaIIgxfFqhG
+    OuFp/PX2XodVz6EcQv7qy1YtR70h2ohdrE+L5xiF8j3NwVxQpQYvV7hnKMRC2ObM
+    JoDA8qPPJ3UD2Wppu5vMvJV9Y3JADU887n6SRuCgUK6IWSAesiarUq2+LTTJbBb6
+    s1AM0tkiYMOBW1tHrDMYM8+oXPhSCK24qrmDr1Kjm/KLtbV224zAOCZXv/mo/GVM
+    W4a1EsXgqPvBoyHoZtkBnOCIPwEIWQf7d8Xh5oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519139943; bh=v1lbXnemylnWTnwpK/uGOsMAZp
-    iGHXjWisu4HdfV3kY=; b=XWkfivaedUYsk3nsolUZoODcEKMva9IgXl/cfSGq3B
-    socAmV1jPzMbpTlvoPgciNfYRGHoxWTCTe4IXSaQd2y/zhco70bWgML7JfQxK6tX
-    pYmn/bpO917+2QuRH13BoMFrsepMXDPJJpuyevvS/vG1jPh1KwFoZHEACFl0Xtfq
-    FcpRmuxSfk8jUq6bYfO5wC2uVOHjGVVndvTpE2qMa2AMIIi0tEaGYb5sX+ALeMFV
-    1qpqjsiXgx7SqWQFHAjSwt+0VeWl1/sMjCQGrqGXO2OXIWDNkv+/RZ2EXNsyQ9Xx
-    JX49VqfhepwXimlzYBU1lmkFOQefE/BPRp5DkH/zISKw==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519146392; bh=8Gyz1lrbxrqYTyrjmsmqTiPpEpPMFGYHCYlApv
+    vq+Jc=; b=ptOCFrFOv1H/4qGK/63Nlc1L9wS3n1+nd7X0ZnaGJY/1lNms/TxwYO
+    gAoOBwP7agx5J8s5xuNAWzstD6m7iZuTWuS1veuT3KtdXv1J0HLztU8gdrjCSMLN
+    XU5ksyg3/2l/wA3x6hJhtAEnp2Qx/X5UTp4mIZ76qRnabLutSAE6eol1XavnUS0t
+    ZSk6EsfFvPzA4QO4IHM7HTBZp3kVpBp16tSxQeBtPIKdnKDdZafp6+zvYUZpwlUc
+    2IbO9eiD1/b4z3rmo41hQnKlCrjX44jz2kSGdt8E5HnBxWl51aQ384tWFSYNQibc
+    aFfVpS0TNLoMEO1wghjqnSeN/MrMDdeQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=auM36oBt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=xRphzJsK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gGGxgSQd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=auM36oBt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=xRphzJsK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gGGxgSQd;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752431AbeBTPTA (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Feb 2018 10:19:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41726 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752184AbeBTPS6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 20 Feb 2018 10:18:58 -0500
-Date: Tue, 20 Feb 2018 16:18:49 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Paul Moore <paul@paul-moore.com>
+        id S1753084AbeBTRGa (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Feb 2018 12:06:30 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38029 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752533AbeBTRG3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 20 Feb 2018 12:06:29 -0500
+X-Google-Smtp-Source: AH8x224vo/yqn/qfpJzvw+UkGq1SgUzESzJgq4ilwLesQUcxPZskZXuYnyeLylftuaZmUJaP4ma8Mz5QWkZ4Ucc2C4k=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180220151849.GG25201@hirez.programming.kicks-ass.net>
+References: <20170328122915.640228468@linuxfoundation.org> <20170328122918.597715642@linuxfoundation.org>
+ <20180220123757.GE25314@hirez.programming.kicks-ass.net> <CAHC9VhTOxzcJpVSFDign56jkkruQjujTp7GQzk107FNWYTXRYg@mail.gmail.com>
+ <20180220140640.GE25201@hirez.programming.kicks-ass.net> <CAHC9VhS40=qNxjNJSBqz2GwrqrvTqLKpdOWUrJ5iUDFp8ERO-A@mail.gmail.com>
+ <20180220151849.GG25201@hirez.programming.kicks-ass.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 20 Feb 2018 12:06:26 -0500
+Message-ID: <CAHC9VhQUGF+W0sZemeCstPDUHxwQrD7Pmbu5SnAHZVdkCPdMwg@mail.gmail.com>
+Subject: Re: [PATCH 4.10 070/111] audit: fix auditd/kernel connection state tracking
+To: Peter Zijlstra <peterz@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Dmitry Vyukov <dvyukov@google.com>, linux-audit@redhat.com
-Subject: Re: [PATCH 4.10 070/111] audit: fix auditd/kernel connection state
- tracking
-Message-ID: <20180220151849.GG25201@hirez.programming.kicks-ass.net>
-References: <20170328122915.640228468@linuxfoundation.org>
- <20170328122918.597715642@linuxfoundation.org>
- <20180220123757.GE25314@hirez.programming.kicks-ass.net>
- <CAHC9VhTOxzcJpVSFDign56jkkruQjujTp7GQzk107FNWYTXRYg@mail.gmail.com>
- <20180220140640.GE25201@hirez.programming.kicks-ass.net>
- <CAHC9VhS40=qNxjNJSBqz2GwrqrvTqLKpdOWUrJ5iUDFp8ERO-A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhS40=qNxjNJSBqz2GwrqrvTqLKpdOWUrJ5iUDFp8ERO-A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 09:51:08AM -0500, Paul Moore wrote:
-> On Tue, Feb 20, 2018 at 9:06 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, Feb 20, 2018 at 10:18 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Feb 20, 2018 at 09:51:08AM -0500, Paul Moore wrote:
+>> On Tue, Feb 20, 2018 at 9:06 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+>> > It's not at all clear to me what that code does, I just stumbled upon
+>> > __mutex_owner() outside of the mutex code itself and went WTF.
+>>
+>> If you don't want people to use __mutex_owner() outside of the mutex
+>> code I might suggest adding a rather serious comment at the top of the
+>> function, because right now I don't see anything suggesting that
+>> function shouldn't be used.  Yes, there is the double underscore
+>> prefix, but that can mean a few different things these days.
+>
+> Find below.
+>
+>> > The comment (aside from having the most horribly style) ...
+>>
+>> Yeah, your dog is ugly too.  Notice how neither comment is constructive?
+>
+> I'm sure you've seen this one:
+>
+>   https://lkml.org/lkml/2016/7/8/625
 
-> > It's not at all clear to me what that code does, I just stumbled upon
-> > __mutex_owner() outside of the mutex code itself and went WTF.
-> 
-> If you don't want people to use __mutex_owner() outside of the mutex
-> code I might suggest adding a rather serious comment at the top of the
-> function, because right now I don't see anything suggesting that
-> function shouldn't be used.  Yes, there is the double underscore
-> prefix, but that can mean a few different things these days.
+Yep.  I stand behind my earlier comment in this thread.
 
-Find below.
+>> > Maybe if you could explain how that code is supposed to work and why it
+>> > doesn't know if it holds a lock I could make a suggestion...
+>>
+>> I just spent a few minutes looking back over the bits available in
+>> include/linux/mutex.h and I'm not seeing anything beyond
+>> __mutex_owner() which would allow us to determine the mutex owning
+>> task.  It's probably easiest for us to just track ownership ourselves.
+>> I'll put together a patch later today.
+>
+> Note that up until recently the mutex implementation didn't even have a
+> consistent owner field. And the thing is, it's very easy to use wrong,
+> only today I've seen a patch do: "__mutex_owner() == task", where task
+> was allowed to be !current, which is just wrong.
 
-> > The comment (aside from having the most horribly style) ...
-> 
-> Yeah, your dog is ugly too.  Notice how neither comment is constructive?
+Arguably all the more reason why a strongly worded warning is
+important (which I see you've included below, feel free to include my
+Reviewed-by).
 
-I'm sure you've seen this one:
+> Looking through kernel/audit.c I'm not even sure I see how you would end
+> up in audit_log_start() with audit_cmd_mutex held.
+>
+> Can you give me a few code paths that trigger this? Simple git-grep is
+> failing me.
 
-  https://lkml.org/lkml/2016/7/8/625
+Basically look at the code in audit_receive_msg(), but I wasn't asking
+your opinion on how we should rewrite the audit subsystem, I was just
+asking how one could determine if the current task was holding a given
+mutex in a way that was acceptable to you.  Based on your comments,
+and some further inspection of the mutex code, it appears that is/was
+not something that the core mutex code wants to support/make-visible.
+Which is perfectly fine, I just wanted to make sure I wasn't missing
+something before I went ahead and wrote a wrapper around the mutex
+code for use by audit.
 
-It's all about reading code; inconsistent and unbalanced styles are just
-_really_ hard on the brain.
+FWIW, I just put together the following patch which removes the
+__mutex_owner() call from audit and doesn't appear to break anything
+on the audit side (you're CC'd on the patch).  It has only been
+lightly tested, but I'm going to bang on it for a day or so and if I
+hear no objections I'll merge it into audit/next.
 
-> > ... is wrong too, because it claims it will not block when we hold that lock, while,
-> > afaict, it will in fact do just that.
-> 
-> A mutex blocks when it is held, but the audit_log_start() function
-> should not block for the task that currently holds the
-> audit_cmd_mutex; that is what the comment is meant to convey.  I
-> believe the comment makes sense, but I did write it so I'll concede
-> that I'm probably the not best judge.  If anyone would like to offer a
-> different wording I'm happy to consider it.
+* https://www.redhat.com/archives/linux-audit/2018-February/msg00066.html
 
-The comment uses 'sleep' which is typically used to mean anything that
-schedules, but then it does the schedule_timeout() thing.
+> ---
+> Subject: mutex: Add comment to __mutex_owner()
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Tue Feb 20 16:01:36 CET 2018
+>
+> Attempt to deter usage, this is not a public interface. It is entirely
+> possibly to implement a conformant mutex without having this owner
+> field (in fact, we used to have that).
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+> --- a/include/linux/mutex.h
+> +++ b/include/linux/mutex.h
+> @@ -66,6 +66,11 @@ struct mutex {
+>  #endif
+>  };
+>
+> +/*
+> + * Internal helper function; C doesn't allow us to hide it :/
+> + *
+> + * DO NOT USE (outside of mutex code).
+> + */
+>  static inline struct task_struct *__mutex_owner(struct mutex *lock)
+>  {
+>         return (struct task_struct *)(atomic_long_read(&lock->owner) & ~0x07);
 
-> > Maybe if you could explain how that code is supposed to work and why it
-> > doesn't know if it holds a lock I could make a suggestion...
-> 
-> I just spent a few minutes looking back over the bits available in
-> include/linux/mutex.h and I'm not seeing anything beyond
-> __mutex_owner() which would allow us to determine the mutex owning
-> task.  It's probably easiest for us to just track ownership ourselves.
-> I'll put together a patch later today.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Note that up until recently the mutex implementation didn't even have a
-consistent owner field. And the thing is, it's very easy to use wrong,
-only today I've seen a patch do: "__mutex_owner() == task", where task
-was allowed to be !current, which is just wrong.
-
-Looking through kernel/audit.c I'm not even sure I see how you would end
-up in audit_log_start() with audit_cmd_mutex held.
-
-Can you give me a few code paths that trigger this? Simple git-grep is
-failing me.
-
-
----
-Subject: mutex: Add comment to __mutex_owner()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue Feb 20 16:01:36 CET 2018
-
-Attempt to deter usage, this is not a public interface. It is entirely
-possibly to implement a conformant mutex without having this owner
-field (in fact, we used to have that).
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -66,6 +66,11 @@ struct mutex {
- #endif
- };
- 
-+/*
-+ * Internal helper function; C doesn't allow us to hide it :/
-+ *
-+ * DO NOT USE (outside of mutex code).
-+ */
- static inline struct task_struct *__mutex_owner(struct mutex *lock)
- {
- 	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~0x07);
+-- 
+paul moore
+www.paul-moore.com
