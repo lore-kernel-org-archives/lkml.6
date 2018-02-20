@@ -1,147 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeBTLRx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 06:17:53 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38644 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbeBTLRw (ORCPT
+        id S1751708AbeBTLWU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 06:22:20 -0500
+Received: from twosheds.infradead.org ([90.155.92.209]:56146 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751358AbeBTLWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 06:17:52 -0500
-X-Google-Smtp-Source: AH8x224p9vJjlxM99icsI7Gk9JwKWEZW3K1T155VfIPCxNEDkVwYuJZ0rjv2LswVr3gCGta3+s5xSg==
-Date: Tue, 20 Feb 2018 12:17:48 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        airlied@linux.ie, daniel.vetter@intel.com
-Subject: Re: [PATCH] drm/simple_kms_helper: Fix NULL pointer dereference with
- no active CRTC
-Message-ID: <20180220111748.GJ22199@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        airlied@linux.ie, daniel.vetter@intel.com
-References: <1518511456-28257-1-git-send-email-andr2000@gmail.com>
- <20180219143002.GC22199@phenom.ffwll.local>
- <d676eef9-55b2-a7fd-be9b-4d53d59610a9@epam.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d676eef9-55b2-a7fd-be9b-4d53d59610a9@epam.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 20 Feb 2018 06:22:18 -0500
+Message-ID: <1519125725.7876.117.camel@infradead.org>
+Subject: Re: [PATCH v3 2/4] x86/speculation: Support "Enhanced IBRS" on
+ future CPUs
+From: David Woodhouse <dwmw2@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com, mingo@kernel.org
+In-Reply-To: <alpine.DEB.2.21.1802201141160.24268@nanos.tec.linutronix.de>
+References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>
+         <1519037457-7643-3-git-send-email-dwmw@amazon.co.uk>
+         <alpine.DEB.2.21.1802200854010.24268@nanos.tec.linutronix.de>
+         <1519116825.7876.112.camel@infradead.org>
+         <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>
+         <alpine.DEB.2.21.1802201141160.24268@nanos.tec.linutronix.de>
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-L0/e0qOZftupoMmUmdxX"
+Date: Tue, 20 Feb 2018 11:22:05 +0000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 04:58:43PM +0200, Oleksandr Andrushchenko wrote:
-> On 02/19/2018 04:30 PM, Daniel Vetter wrote:
-> > On Tue, Feb 13, 2018 at 10:44:16AM +0200, Oleksandr Andrushchenko wrote:
-> > > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> > > 
-> > > It is possible that drm_simple_kms_plane_atomic_check called
-> > > with no CRTC set, e.g. when user-space application sets CRTC_ID/FB_ID
-> > > to 0 before doing any actual drawing. This leads to NULL pointer
-> > > dereference because in this case new CRTC state is NULL and must be
-> > > checked before accessing.
-> > > 
-> > > Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> > > ---
-> > >   drivers/gpu/drm/drm_simple_kms_helper.c | 6 ++++--
-> > >   1 file changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
-> > > index 9ca8a4a59b74..a05eca9cec8b 100644
-> > > --- a/drivers/gpu/drm/drm_simple_kms_helper.c
-> > > +++ b/drivers/gpu/drm/drm_simple_kms_helper.c
-> > > @@ -121,8 +121,10 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
-> > >   	pipe = container_of(plane, struct drm_simple_display_pipe, plane);
-> > >   	crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
-> > >   						   &pipe->crtc);
-> > > -	if (!crtc_state->enable)
-> > > -		return 0; /* nothing to check when disabling or disabled */
-> > > +
-> > > +	if (!crtc_state || !crtc_state->enable)
-> > > +		/* nothing to check when disabling or disabled or no CRTC set */
-> > > +		return 0;
-> > >   	if (crtc_state->enable)
-> > >   		drm_mode_get_hv_timing(&crtc_state->mode,
-> > Hm, this is a bit annoying, since the can_position = false parameter to
-> > drm_atomic_helper_check_plane_state is supposed to catch all this. Would
-> > moving all the checks after the call to that helper, and gating them on
-> > plane_state->visible also work?
-> Yes, it does work if this is what you mean:
 
-I wasn't sure, thanks for figuring this out!
+--=-L0/e0qOZftupoMmUmdxX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c
-> b/drivers/gpu/drm/drm_simple_kms_helper.c
-> index a05eca9cec8b..c48858bb2823 100644
-> --- a/drivers/gpu/drm/drm_simple_kms_helper.c
-> +++ b/drivers/gpu/drm/drm_simple_kms_helper.c
-> @@ -122,14 +122,6 @@ static int drm_simple_kms_plane_atomic_check(struct
-> drm_plane *plane,
->         crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
-> &pipe->crtc);
-> 
-> -       if (!crtc_state || !crtc_state->enable)
-> -               /* nothing to check when disabling or disabled or no CRTC
-> set */
-> -               return 0;
-> -
-> -       if (crtc_state->enable)
-> -               drm_mode_get_hv_timing(&crtc_state->mode,
-> -                                      &clip.x2, &clip.y2);
-> -
->         ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
->                                                   &clip,
-> DRM_PLANE_HELPER_NO_SCALING,
-> @@ -138,6 +130,13 @@ static int drm_simple_kms_plane_atomic_check(struct
-> drm_plane *plane,
->         if (ret)
->                 return ret;
-> 
-> +       if (!plane_state->visible || !crtc_state->enable)
-> +               return 0; /* nothing to check when disabling or disabled */
 
-if (!plane_state->visible) {
-	WARN_ON(crtc_state->enabled);
-	return 0;
-}
 
-The helper call above should guarantee this.
-> +
-> +       if (plane_state->visible && crtc_state->enable)
+On Tue, 2018-02-20 at 11:42 +0100, Thomas Gleixner wrote:
+>=20
+> > > However, Paolo is very insistent that taking the trap every time is
+> > > actually a lot *slower* than really frobbing IBRS on certain
+> > > microarchitectures, so my hand-waving "pfft, what did they expect?" i=
+s
+> > > not acceptable.
+> > >=C2=A0
+> > > Which I think puts us back to the "throwing the toys out of the pram"
+>=20
+> There are no more toys in the pram. I threw them all out weeks ago ...
 
-Similar here.
+One option is to take the patch as-is=C2=B9 with the trap on every access.
+As soon as Intel define that 'IBRS_ALL_AND_THE_BIT_IS_A_NOOP' bit in
+MSR_IA32_ARCH_CAPABILITIES, *then* we can expose it to guests directly
+again just as we do at the moment.
 
-> +               drm_mode_get_hv_timing(&crtc_state->mode,
-> +                                      &clip.x2, &clip.y2);
-> +
->         if (!plane_state->visible)
->                 return -EINVAL;
+That way, the slowdown that Paolo is concerned about is limited to a
+small set of current CPUs on which we're mostly unlikely to care too
+much about KVM anyway.
 
-This can now be removed, the plane helper takes care of checking for
-plane_state->visible != crtc_state->enable. Please also remove.
 
-> > We'd need to add a guarantee to drm_atomic_helper_check_plane_state that
-> > it can cope with crtc_state == NULL, but I think that's a good idea
-> > anyway. Atm it shouldn't end up looking at the crtc_state pointer in that
-> > case.
-> It doesn't look at it at the moment
-> > Otherwise we'll just go with your fix, but it feels all a bit too fragile,
-> > hence why I want to explore more robust options a bit.
-> At list with the change above it passes my test which failed
-> before. Although I cannot confirm it works for others, but it
-> certainly does for me.
-> > -Daniel
-> Do you want me to send v1 with the code above?
 
-Yes please, with my above cleanup suggestions.
+=C2=B9 as-is, except I really will go and turn the IA32_ARCH_CAPABILITIES=
+=C2=A0
+=C2=A0 bits into scattered cpufeatures before I repost it.
+--=-L0/e0qOZftupoMmUmdxX
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMjAxMTIyMDVaMC8GCSqG
+SIb3DQEJBDEiBCBPMe2AC2qGtf9cys5p1Kjw9QTw9xVw2uUjvCb2F15h4zCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAH6/g4ueYsfK
+Pu+GySnSn9PEiKfcwjZCTjdsnujzJDTDVqCkBAh4AQdNhw9qp0rKTtRJQJ4W3SesPmjWdudfhdIj
+dizDG9suXZICOlfU9KGhsbobmaroLYCZlcUTbUp5GimcpmcczpvGnDcK1RXpq7H0jnqIbcHnlC+h
+WpDxL9ik62XSfhPWoCcpfliujuYP4/986kxtZeWegBLfOe0KSI1hSzIJrxWwLIxgrUsnJV35UKBS
+8co8/oDnRqST4xT0bB6RUWTdrqowtxkJln97Ph37lTDbJljAw+fIcS/8W14pRB6QAaXlflkUq1zU
+PXtFXUUK5mxovpiiGG363jNYWusAAAAAAAA=
+
+
+--=-L0/e0qOZftupoMmUmdxX--
