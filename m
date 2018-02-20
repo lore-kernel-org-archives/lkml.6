@@ -1,59 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeBTPWK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:22:10 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752339AbeBTPWG (ORCPT
+        id S1752566AbeBTPY7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:24:59 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:58508 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752186AbeBTPY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:22:06 -0500
-Date: Tue, 20 Feb 2018 16:21:58 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: christian.koenig@amd.com
-Cc: dev@mblankhorst.nl, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function
- v3
-Message-ID: <20180220152158.GH25201@hirez.programming.kicks-ass.net>
-References: <20180220125829.27060-1-christian.koenig@amd.com>
- <20180220131253.GF25314@hirez.programming.kicks-ass.net>
- <8fd80334-4d0e-8ed0-8a09-02a7e36a0eae@gmail.com>
- <20180220135709.GD25201@hirez.programming.kicks-ass.net>
- <b625cbca-c05a-afd1-fe97-a7a0760383c1@amd.com>
- <20180220145413.GF25201@hirez.programming.kicks-ass.net>
- <2dac8ec9-c54a-7dd1-af4e-62f2bc1a959c@gmail.com>
+        Tue, 20 Feb 2018 10:24:58 -0500
+Subject: Re: [RFCv4 11/21] media: v4l2_fh: add request entity field
+To: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180220044425.169493-1-acourbot@chromium.org>
+ <20180220044425.169493-12-acourbot@chromium.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5b0fcac9-18e1-433f-7977-2a90f3d961f8@xs4all.nl>
+Date: Tue, 20 Feb 2018 16:24:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2dac8ec9-c54a-7dd1-af4e-62f2bc1a959c@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180220044425.169493-12-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfACbdaIdBFoCHyr8vPH0IdBeajBJpkdw9HMk5PPVsAv/CzS9pYG55kWbQGLbq5MIEiSqTrb1zaHxbFvAHfRfSH5nAYg6tTe9hOn2n6mto+Betq0A3l5q
+ I1425IkNrZrijYpgC+duUPTdySKGaGwFPYB8JEz6BsCEVrb1lpXOSlpViqawzp6VN89EP9sRgQH83R2lXFSvUsYHAIGW0Qdl3Rgp1WzVgsWDADXKa65fC1CC
+ wEGWnz8nlQR9DL+wm/TgY0T68Eqfi+VICnL9tLQ1/mmNgKW74sDOv6Jj6XZbF97kCzYixhHfeRRXCPQGAx6KIvnOnZL78ndiJ1Kb9TWyTMkdItUuzoiUc9Bn
+ Sb6aFUC+oVVA0lB36eZi4KEvJf6Dlvly/mXH7g3AlN9Y0SasiV/GqYRvfKgjwd01XH8IB2XUbmxtzIfFW6ablL4mIz+PNBqkSKMQOFSdSmPBtLe4rwk32JWF
+ EIeDRcK5CN2Pj5WrgXhg9ZraD0OlFQRP6vd7+zV2e4zy+t2NaCmoZId47hb4XuWD2SWy+j7R775ZXJIpjvdRs2BOoh5yCRwl5K9jCsf+uuq+GbtH64mnCh25
+ w3Y=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 04:05:49PM +0100, Christian König wrote:
-> Am 20.02.2018 um 15:54 schrieb Peter Zijlstra:
-> > On Tue, Feb 20, 2018 at 03:34:07PM +0100, Christian König wrote:
-> > > > OK, but neither case would in fact need the !ctx case right? That's just
-> > > > there for completeness sake?
-> > > Unfortunately not. TTM uses trylock to lock BOs which are about to be
-> > > evicted to make room for all the BOs locked with a ctx.
-> > > 
-> > > I need to be able to distinct between the BOs which are trylocked and those
-> > > which are locked with a ctx.
-> > > 
-> > > Writing this I actually noticed the current version is buggy, cause even
-> > > when we check the mutex owner we still need to make sure that the ctx in the
-> > > lock is NULL.
-> > Hurm... I can't remember why trylocks behave like that, and it seems
-> > rather unfortunate / inconsistent.
+On 02/20/18 05:44, Alexandre Courbot wrote:
+> Allow drivers to assign a request entity to v4l2_fh. This will be useful
+> for request-aware ioctls to find out which request entity to use.
 > 
-> Actually for me that is rather fortunate, cause I need to distinct between
-> the locks acquired through trylock and lock.
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  include/media/v4l2-fh.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
+> index ea73fef8bdc0..f54cb319dd64 100644
+> --- a/include/media/v4l2-fh.h
+> +++ b/include/media/v4l2-fh.h
+> @@ -28,6 +28,7 @@
+>  
+>  struct video_device;
+>  struct v4l2_ctrl_handler;
+> +struct media_request_entity;
+>  
+>  /**
+>   * struct v4l2_fh - Describes a V4L2 file handler
+> @@ -43,6 +44,7 @@ struct v4l2_ctrl_handler;
+>   * @navailable: number of available events at @available list
+>   * @sequence: event sequence number
+>   * @m2m_ctx: pointer to &struct v4l2_m2m_ctx
+> + * @entity: the request entity this fh operates on behalf of
+>   */
+>  struct v4l2_fh {
+>  	struct list_head	list;
+> @@ -60,6 +62,7 @@ struct v4l2_fh {
+>  #if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+>  	struct v4l2_m2m_ctx	*m2m_ctx;
+>  #endif
+> +	struct media_request_entity *entity;
 
-I suppose that would always be possible using:
-ww_mutex_trylock(.ctx=NULL), and it could be that there simply weren't
-any immediate uses for a !NULL trylock and it was thus not implemented.
+The name 'media_request_entity' is very confusing.
 
-But that is all very long ago..
+In the media controller API terminology an entity represents a piece
+of hardware with inputs and outputs (very rough description), but a
+request is not an entity. It may be associated with an entity, though.
+
+So calling this field 'entity' is also very misleading.
+
+As with previous patches, I'll have to think about this and try and
+come up with better, less confusing names.
+
+Regards,
+
+	Hans
+
+>  };
+>  
+>  /**
+> 
