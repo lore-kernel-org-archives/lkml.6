@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750979AbeBTFJr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 00:09:47 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46990 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750703AbeBTFJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 00:09:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
-   d="scan'208";a="205450924"
-Date: Tue, 20 Feb 2018 13:22:23 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: kbuild-all@01.org, laurent.pinchart@ideasonboard.com,
-        magnus.damm@gmail.com, geert@glider.be, hverkuil@xs4all.nl,
-        mchehab@kernel.org, festevam@gmail.com, sakari.ailus@iki.fi,
-        robh+dt@kernel.org, mark.rutland@arm.com, pombredanne@nexb.com,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] media: i2c: ov772x: ov772x_frame_intervals[] can be
- static
-Message-ID: <20180220052223.GA27152@lkp-sb04>
-References: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+        id S1751017AbeBTFZE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 00:25:04 -0500
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:35241 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeBTFZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 00:25:02 -0500
+X-Google-Smtp-Source: AH8x224nkMY1T/XmVMQZ+E0uOk/mbdXCJXtZ1t7wXaQqUMi+/ZU6N8TI8dNn674ygLWatGy3nqpeNA==
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+To: Jonathan Woithe <jwoithe@just42.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] fujitsu-laptop: Miscellaneous cleanups
+Date: Tue, 20 Feb 2018 06:24:47 +0100
+Message-Id: <20180220052454.11134-1-kernel@kempniu.pl>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series contains miscellaneous cleanups which I think are
+worth getting done before splitting fujitsu-laptop into two separate
+modules.
 
-Fixes: 42b7d5be5f1f ("media: i2c: ov772x: Support frame interval handling")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- ov772x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from v1:
 
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index eba71d97..0d8ce2a 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -532,7 +532,7 @@ static const struct ov772x_win_size ov772x_win_sizes[] = {
- /*
-  * frame rate settings lists
-  */
--unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
-+static unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
- #define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
- 
- /*
+  - [6/7] Rename BACKLIGHT_POWER to BACKLIGHT_PARAM_POWER.
+
+  - [6/7] Use BACKLIGHT_OFF instead of a numeric constant.
+
+  - [7/7] Include <linux/bitops.h> due to the use of BIT().
+
+ drivers/platform/x86/fujitsu-laptop.c | 180 +++++++++++++++++-----------------
+ 1 file changed, 91 insertions(+), 89 deletions(-)
+
+-- 
+2.16.1
