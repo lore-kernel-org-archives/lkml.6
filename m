@@ -1,43 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751265AbeBTVfd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 16:35:33 -0500
-Received: from mail-io0-f181.google.com ([209.85.223.181]:37885 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeBTVfc (ORCPT
+        id S1751372AbeBTVir (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 16:38:47 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:48384 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeBTViq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 16:35:32 -0500
-X-Google-Smtp-Source: AG47ELuJtsNCJGeYzP+HQ1Oz9Nv9gWIiXTXBJn13NL4r/Jjjnd9tBlCZg4i77PZC7MyZGRMYfKHA88NEFuUPQt0l9MM=
+        Tue, 20 Feb 2018 16:38:46 -0500
+Date: Tue, 20 Feb 2018 22:38:39 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCMCIA / PM: Combine system resume callbacks
+Message-ID: <20180220213839.GA12082@light.dominikbrodowski.net>
+References: <4287858.bFmM5lK9H6@aspire.rjw.lan>
 MIME-Version: 1.0
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <20180215182208.35003-2-joe.konno@linux.intel.com> <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
- <20180220211849.fqjb6rdmypl6opir@agluck-desk> <CACdnJusL1Vj_rvhZY+0_KZkrk=fwnQcr1y+vxOBmUXa4xdHHsg@mail.gmail.com>
- <20180220213246.43y2vbiiikqyx2ys@agluck-desk>
-In-Reply-To: <20180220213246.43y2vbiiikqyx2ys@agluck-desk>
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 20 Feb 2018 21:35:20 +0000
-Message-ID: <CACdnJuvR1h+qn=EqiWDAR3m1LcPyqMszLbQbO0j9b3HYkc1nDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
-To: tony.luck@intel.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        joe.konno@linux.intel.com, linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, matthew.garrett@nebula.com,
-        jk@ozlabs.org, ak@linux.intel.com, pjones@redhat.com, luto@kernel.org,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4287858.bFmM5lK9H6@aspire.rjw.lan>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 1:32 PM Luck, Tony <tony.luck@intel.com> wrote:
+On Tue, Feb 20, 2018 at 12:47:27PM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> There is a problem with PCMCIA system resume callbacks with respect
+> to suspend-to-idle in which the ->suspend_noirq() callback may be
+> invoked after the ->resume_noirq() one without resuming the system
+> entirely in some cases.  This doesn't work for PCMCIA because of
+> the lack of symmetry between its system suspend and system resume
+> "noirq" callbacks.
+> 
+> The system resume handling in PCMCIA is split between
+> socket_early_resume() and socket_late_resume() which are called in
+> different phases of system resume and both need to run for
+> socket_suspend() (invoked by the system suspend "noirq" callback)
+> to work.  Specifically, socket_suspend() returns an error when
+> called after socket_early_resume() without socket_late_resume(),
+> so if the suspend-to-idle core detects a spurious wakeup event and
+> attempts to put the system back to sleep, that is aborted by the
+> error coming from socket_suspend().
+> 
+> This design doesn't follow the power management documentation
+> stating that the "noirq" resume callback is expected to reverse
+> the changes made by the "noirq" suspend one.  Moreover, I don't see
+> a reason for splitting the PCMCIA socket system resume handling this
+> way
 
-> The immediate problem is the denial of service attack.  I have
-> a nagging worry that allowing a user to cause an SMI at a precise
-> time might also be a problem. But I don't know how that could be
-> leveraged in some other attack.
+Unless I am mistaken, this split was introduced by commit
+9905d1b411946 . So we should take into account the reasons stated
+in that commit message.
 
-The thing that worries me here is that if it's possible for root to
-potentially attack the kernel then just changing the permissions is still
-allowing an escalation of privilege. The other approaches would also block
-this.
+Thanks,
+	Dominik
