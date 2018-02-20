@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x226HYLI12ZQIsq8dvOmlyiqHIzrCWy/QvPSAJopn7oqVcvO+L6FZPTPf9HkEHznCO0Q3V1Zu
-ARC-Seal: i=1; a=rsa-sha256; t=1519093494; cv=none;
+X-Google-Smtp-Source: AH8x227+JR/R2r6FQW2yfbMUoj3RgWzOLDCCNkW9bM6wa/0uYi5ZEpuf8eIEJZ7SdATaa/0rtJLH
+ARC-Seal: i=1; a=rsa-sha256; t=1519093487; cv=none;
         d=google.com; s=arc-20160816;
-        b=KvMcOowfzkCQoU+9DUFFC+j25owd/yU7daib/E4SPuiXxqd8ga72oZmltb1Mcs7EkK
-         Ut/s96jH/HWufZ8KKEITzV1Y1HvQ75JXqvimpFj4ev1QEaSemfg6Sd8DaDFhDfRU5FwB
-         IDYEuFofONKmQM5+WePWg6hIZtUSUzXEMjagReE2jUSj6NijoslsRJXkK6tHGUH6XSag
-         c9QVxWi3tSeHzebD7LpHyBvLt2yn4hpwF3bNfHpRTGf/uMpila8/Kpkc+33AevYTVNyb
-         RBY+0SCfAuFBm6kTvpRkbMYYWm1SA95gLYwJTdiO8+R+1Q9DE45Ykjd2OQgUAFWh+eCK
-         /rHQ==
+        b=P5MuVK9RmTt8dbB5uto/4dr2cjN01+sgmmwbFio7eW10drPTmudqBUhOKQpEyUqZc1
+         OH8oHx8u4e0deHZyBxE0ehH62NYpZWQ3UQ4tnujwPPUOKoumDU2kIgfcZAtuSNlLziO/
+         ns96GQS03KvlDYJfZuongeLPgO8JfGLlWU154xciRwB7bb6ig86B/HThwy9nXYWofnm4
+         4bghOSkqJT2bL6OuCa4cqPY3BkI58+fCn/Glod9PTOFtR/0RYrDqbe8qqeJFewJZoHUn
+         C7bdFazrXTZSp9Hoq8qAFjx9iGCnfVzkpR/QtDqx0qnobEIpZkb+7T8Fg257Lv1rlzyK
+         tKeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=y04Lk55AurMzsqdQzMFjisw5lZyPkvzvoIq+fitsrIs=;
-        b=zgGNjFqelQERP2WVdCkxQtlYydMSBOjA+3Z/U4O1elI2ZT4E5lTyClqIAtLumNKBhw
-         wGZjTkIk4Evk/fuY9DPXGrx0aiZEzOueGtUnVjnFKue0pjWh77kmhqYPHUv/KK/kPLM+
-         fSJcrWVMJ3oO6thswebLyMxHd4U0HGtk6CIPN854HhPpRHQbnBNneu69xtuIOLVaNuQe
-         Np/EwUmCqUWYACrjMvDWKmkRSxe+lrjXwjX2A+8uabsapkZQjdGcosBSnblimnjq65vg
-         o9bT1CZehRsqNTS+RqNCa+urs78bY4JuLBJZhD7ChS8XMEiJNrGOJOaywOJ2m1G+TNPv
-         /vTw==
+        bh=OiW43hRD+KNkPTYDZoe5QY+hxkYbr2VFI5d5Wx2AT5Q=;
+        b=uuFgBWCEovu21KEO2mvEnErGsW6oko+VYFUfVXJ5H5U7rVcipxlxQI0Ci+hEv6U2AI
+         G/YqmLcV2A7X3NninARcpSd+yc5srYMit0B/gZ9VJ1sYFbJ5h1vL3ZERkRs+R4HOkDb7
+         gFk6Nk2hNyL944IV5q214ax347Kcb5oUvTe6ovDQqLACVnsPhl6CQaBPCcV1xm+6IX7q
+         /JrffIT5iPJaYu9Ky8YmGFjcyToGoGKnugedt14JVGccj2DMM4ZZULuTrFLDmndXrWO0
+         NJeBjvEkvNXAJu7pSDU/F7Wl+qWTi2m0d6I+TmTJOHwKl3y1A+PUZQvOLgX9lpDnMbUo
+         ELQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,9 +28,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 20 Feb 2018 13:23:37 +1100
-Subject: [PATCH 05/21] staging: lustre: lnet: remove cfs_block_allsigs calls.
+Subject: [PATCH 04/21] staging: lustre: remove unnecessary
+ cfs_block_allsigs() calls
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341769.25814.4922187814462338726.stgit@noble>
+Message-ID: <151909341766.25814.10094434408580614776.stgit@noble>
 In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -38,135 +39,124 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592884980277324714?=
-X-GMAIL-MSGID: =?utf-8?q?1592884980277324714?=
+X-GMAIL-THRID: =?utf-8?q?1592884972820907418?=
+X-GMAIL-MSGID: =?utf-8?q?1592884972820907418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Both places that cfs_block_allsigs() is used here,
-the goal is to turn an interruptible wait into an
-uninterruptible way.
-So instead of blocking the signals, change TASK_INTERRUPTIBLE to
-TASK_NOLOAD.
-In each case, no other functions called while signals are blocked
-will sleep - just the one that has been fixed.
-In one case, an extra 'interruptible' flag needs to be passed
-down so the waiting decision can be made at the right place.
+Threads started by kthread_run() ignore all signals,
+as kthreadd() calls ignore_signals(), and this is
+inherited by all children.
+So there is no need to call cfs_block_allsigs() in functions
+that are only run from kthread_run().
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/include/linux/lnet/api.h |    1 +
- drivers/staging/lustre/lnet/lnet/api-ni.c       |   15 +++------------
- drivers/staging/lustre/lnet/lnet/lib-eq.c       |   10 +++++++---
- 3 files changed, 11 insertions(+), 15 deletions(-)
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |    6 ------
+ .../staging/lustre/lnet/klnds/socklnd/socklnd_cb.c |    6 ------
+ drivers/staging/lustre/lnet/lnet/acceptor.c        |    2 --
+ drivers/staging/lustre/lnet/lnet/router.c          |    2 --
+ drivers/staging/lustre/lnet/selftest/timer.c       |    2 --
+ 5 files changed, 18 deletions(-)
 
-diff --git a/drivers/staging/lustre/include/linux/lnet/api.h b/drivers/staging/lustre/include/linux/lnet/api.h
-index 31fcd33171b4..dae2e4f0056c 100644
---- a/drivers/staging/lustre/include/linux/lnet/api.h
-+++ b/drivers/staging/lustre/include/linux/lnet/api.h
-@@ -169,6 +169,7 @@ int LNetEQFree(struct lnet_handle_eq eventq_in);
- int LNetEQPoll(struct lnet_handle_eq *eventqs_in,
- 	       int		 neq_in,
- 	       int		 timeout_ms,
-+	       int		 interruptible,
- 	       struct lnet_event *event_out,
- 	       int		*which_eq_out);
- /** @} lnet_eq */
-diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
-index 93e6274e9dac..48d25ccadbb3 100644
---- a/drivers/staging/lustre/lnet/lnet/api-ni.c
-+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
-@@ -961,19 +961,15 @@ static void
- lnet_ping_md_unlink(struct lnet_ping_info *pinfo,
- 		    struct lnet_handle_md *md_handle)
- {
--	sigset_t blocked = cfs_block_allsigs();
--
- 	LNetMDUnlink(*md_handle);
- 	LNetInvalidateMDHandle(md_handle);
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+index ca094555e04b..6690a6cd4e34 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -3288,8 +3288,6 @@ kiblnd_connd(void *arg)
+ 	int peer_index = 0;
+ 	unsigned long deadline = jiffies;
  
- 	/* NB md could be busy; this just starts the unlink */
- 	while (pinfo->pi_features != LNET_PING_FEAT_INVAL) {
- 		CDEBUG(D_NET, "Still waiting for ping MD to unlink\n");
--		set_current_state(TASK_UNINTERRUPTIBLE);
-+		set_current_state(TASK_NOLOAD);
- 		schedule_timeout(HZ);
- 	}
+-	cfs_block_allsigs();
 -
--	cfs_restore_sigs(blocked);
- }
+ 	init_waitqueue_entry(&wait, current);
+ 	kiblnd_data.kib_connd = current;
  
- static void
-@@ -2141,7 +2137,6 @@ static int lnet_ping(struct lnet_process_id id, int timeout_ms,
- 	int nob;
+@@ -3542,8 +3540,6 @@ kiblnd_scheduler(void *arg)
+ 	int busy_loops = 0;
  	int rc;
- 	int rc2;
--	sigset_t blocked;
  
- 	infosz = offsetof(struct lnet_ping_info, pi_ni[n_ids]);
- 
-@@ -2197,13 +2192,9 @@ static int lnet_ping(struct lnet_process_id id, int timeout_ms,
- 
- 	do {
- 		/* MUST block for unlink to complete */
--		if (unlinked)
--			blocked = cfs_block_allsigs();
+-	cfs_block_allsigs();
 -
--		rc2 = LNetEQPoll(&eqh, 1, timeout_ms, &event, &which);
+ 	init_waitqueue_entry(&wait, current);
  
--		if (unlinked)
--			cfs_restore_sigs(blocked);
-+		rc2 = LNetEQPoll(&eqh, 1, timeout_ms, !unlinked,
-+				 &event, &which);
+ 	sched = kiblnd_data.kib_scheds[KIB_THREAD_CPT(id)];
+@@ -3676,8 +3672,6 @@ kiblnd_failover_thread(void *arg)
  
- 		CDEBUG(D_NET, "poll %d(%d %d)%s\n", rc2,
- 		       (rc2 <= 0) ? -1 : event.type,
-diff --git a/drivers/staging/lustre/lnet/lnet/lib-eq.c b/drivers/staging/lustre/lnet/lnet/lib-eq.c
-index a173b69e2f92..ea53b5cb3f72 100644
---- a/drivers/staging/lustre/lnet/lnet/lib-eq.c
-+++ b/drivers/staging/lustre/lnet/lnet/lib-eq.c
-@@ -308,7 +308,7 @@ lnet_eq_dequeue_event(struct lnet_eq *eq, struct lnet_event *ev)
-  */
+ 	LASSERT(*kiblnd_tunables.kib_dev_failover);
  
- static int
--lnet_eq_wait_locked(int *timeout_ms)
-+lnet_eq_wait_locked(int *timeout_ms, long state)
- __must_hold(&the_lnet.ln_eq_wait_lock)
+-	cfs_block_allsigs();
+-
+ 	init_waitqueue_entry(&wait, current);
+ 	write_lock_irqsave(glock, flags);
+ 
+diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
+index 63e452f666bf..6ab002c006ab 100644
+--- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_cb.c
+@@ -1324,8 +1324,6 @@ int ksocknal_scheduler(void *arg)
+ 	info = ksocknal_data.ksnd_sched_info[KSOCK_THREAD_CPT(id)];
+ 	sched = &info->ksi_scheds[KSOCK_THREAD_SID(id)];
+ 
+-	cfs_block_allsigs();
+-
+ 	rc = cfs_cpt_bind(lnet_cpt_table(), info->ksi_cpt);
+ 	if (rc) {
+ 		CWARN("Can't set CPU partition affinity to %d: %d\n",
+@@ -2078,8 +2076,6 @@ ksocknal_connd(void *arg)
+ 	int nloops = 0;
+ 	int cons_retry = 0;
+ 
+-	cfs_block_allsigs();
+-
+ 	init_waitqueue_entry(&wait, current);
+ 
+ 	spin_lock_bh(connd_lock);
+@@ -2472,8 +2468,6 @@ ksocknal_reaper(void *arg)
+ 	int peer_index = 0;
+ 	unsigned long deadline = cfs_time_current();
+ 
+-	cfs_block_allsigs();
+-
+ 	INIT_LIST_HEAD(&enomem_conns);
+ 	init_waitqueue_entry(&wait, current);
+ 
+diff --git a/drivers/staging/lustre/lnet/lnet/acceptor.c b/drivers/staging/lustre/lnet/lnet/acceptor.c
+index 6c1f4941d4ba..fb478e20e204 100644
+--- a/drivers/staging/lustre/lnet/lnet/acceptor.c
++++ b/drivers/staging/lustre/lnet/lnet/acceptor.c
+@@ -335,8 +335,6 @@ lnet_acceptor(void *arg)
+ 
+ 	LASSERT(!lnet_acceptor_state.pta_sock);
+ 
+-	cfs_block_allsigs();
+-
+ 	rc = lnet_sock_listen(&lnet_acceptor_state.pta_sock, 0, accept_port,
+ 			      accept_backlog);
+ 	if (rc) {
+diff --git a/drivers/staging/lustre/lnet/lnet/router.c b/drivers/staging/lustre/lnet/lnet/router.c
+index ec1d3e58519a..a3c3f4959f46 100644
+--- a/drivers/staging/lustre/lnet/lnet/router.c
++++ b/drivers/staging/lustre/lnet/lnet/router.c
+@@ -1226,8 +1226,6 @@ lnet_router_checker(void *arg)
+ 	struct lnet_peer *rtr;
+ 	struct list_head *entry;
+ 
+-	cfs_block_allsigs();
+-
+ 	while (the_lnet.ln_rc_state == LNET_RC_STATE_RUNNING) {
+ 		__u64 version;
+ 		int cpt;
+diff --git a/drivers/staging/lustre/lnet/selftest/timer.c b/drivers/staging/lustre/lnet/selftest/timer.c
+index 9716afeb3c94..1b2c5fc81358 100644
+--- a/drivers/staging/lustre/lnet/selftest/timer.c
++++ b/drivers/staging/lustre/lnet/selftest/timer.c
+@@ -170,8 +170,6 @@ stt_timer_main(void *arg)
  {
- 	int tms = *timeout_ms;
-@@ -320,7 +320,7 @@ __must_hold(&the_lnet.ln_eq_wait_lock)
- 		return -ENXIO; /* don't want to wait and no new event */
+ 	int rc = 0;
  
- 	init_waitqueue_entry(&wl, current);
--	set_current_state(TASK_INTERRUPTIBLE);
-+	set_current_state(state);
- 	add_wait_queue(&the_lnet.ln_eq_waitq, &wl);
+-	cfs_block_allsigs();
+-
+ 	while (!stt_data.stt_shuttingdown) {
+ 		stt_check_timers(&stt_data.stt_prev_slot);
  
- 	lnet_eq_wait_unlock();
-@@ -359,6 +359,7 @@ __must_hold(&the_lnet.ln_eq_wait_lock)
-  * \param timeout_ms Time in milliseconds to wait for an event to occur on
-  * one of the EQs. The constant LNET_TIME_FOREVER can be used to indicate an
-  * infinite timeout.
-+ * \param interruptible, if true, use TASK_INTERRUPTIBLE, else TASK_NOLOAD
-  * \param event,which On successful return (1 or -EOVERFLOW), \a event will
-  * hold the next event in the EQs, and \a which will contain the index of the
-  * EQ from which the event was taken.
-@@ -372,6 +373,7 @@ __must_hold(&the_lnet.ln_eq_wait_lock)
-  */
- int
- LNetEQPoll(struct lnet_handle_eq *eventqs, int neq, int timeout_ms,
-+	   int interruptible,
- 	   struct lnet_event *event, int *which)
- {
- 	int wait = 1;
-@@ -412,7 +414,9 @@ LNetEQPoll(struct lnet_handle_eq *eventqs, int neq, int timeout_ms,
- 		 *  0 : don't want to wait anymore, but might have new event
- 		 *      so need to call dequeue again
- 		 */
--		wait = lnet_eq_wait_locked(&timeout_ms);
-+		wait = lnet_eq_wait_locked(&timeout_ms,
-+					   interruptible ? TASK_INTERRUPTIBLE
-+					   : TASK_NOLOAD);
- 		if (wait < 0) /* no new event */
- 			break;
- 	}
