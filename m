@@ -1,53 +1,84 @@
-Return-Path: <richard@nod.at>
-X-Google-Smtp-Source: AH8x224PqgDSMIZE4KSplN2MgyuceUKoUjWN/531IZNsMTdGtwN96uNRJ5GbFcKkqMFuS5dYIipq
-ARC-Seal: i=1; a=rsa-sha256; t=1519145673; cv=none;
+Return-Path: <nicolas.pitre@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519143990; cv=none;
         d=google.com; s=arc-20160816;
-        b=bBoWySUrN3nOfghRIZ64sR/NqNIeqd00d3jq0rm2OlNdLyzpfO/vAcSVAjHfLI9DzM
-         YOWbHLAWlXHvIZCy9aSDM6/kXmSJpiVuEO/R/I0mWAq28pYlGeqXVJwlyNgGixoJO44t
-         MN1wWhxSmet6qWdIofaiB3mhMaDs36Sk57BFVcmy4Nuc4K7AqiR4xvXDMeJxl5IVpCoY
-         xUldDNstT3qwPNudHLYL4i7QPVamXMXfFixxhvYG1CZjkvk6CiJm2Pk+IJxpEnqewrdn
-         +1vYvpjkgTqW4OIxH7HjbScOT81hRmhFYebCQ+58e2LHOrxqZA3tU0utwq5FB3wN+mRb
-         gR5A==
+        b=ZvV/oQkMD1MY26qA7L83IjvQMbynQ6o/5nyLAxO7TwzsAyXwG6ObwSwj4ZT+AVRF4b
+         zy59hNld8dbCR0rFQ2v2fmOGiFTrWD+msqAZ4U6Rw7gFrk6SgZ7MeueUlTS7sSeR//to
+         yZEytBqcZv6zBkL4gJ1khjxnjNGatxTIZY7PJ8Bdj1Y52hlTCU2k++7Z5qlTefAFQ1El
+         RvXsD7SS1FbcrBBwb57x8Ia0l5ma7dFQQqgZElDZb2ZNSJxnbks6t8ryf9kjWurID7ot
+         ZK40CwrArQQyMzC5qsnkY3HjtZbVCNxeJVCYda1NWYeNmR7uK6FM5hIle01FcFiLWTOh
+         LERw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=7+Z/uOd+IoG0JTN+RdTmXXIbBA6cW1gq2MYj9TGxOlk=;
-        b=Rrxigjd2fMZo46O6qnYSgdf9K73AjgetFa0ybL1t409wk9SJt7coj4wX7uJL24mgNX
-         TVgZpbDn+aP5QCiG2jlw9o2+Z0IztqlzOcQyHK36J+bTCC4hNyC5AShkWavI5G4vsSjp
-         TG1m4XhqTDuuie5q9jyO+rKtum8OjK+ij2MT/hoWXIXaP+/MDc9b05YAr5Gcd1ZkN/R5
-         o9mr900zdjv/WMpJ3/P65sy1Z66jNlG9FhCAI934Okb7B4ROSu/tJCaFCZhbh4P0pywS
-         ASrLurCDra3H9ae2A5KfxImD2Cw+aSjGMFDKFvsVCLkQNKC+pUyDo//46R2wJ//xrnvS
-         N8rA==
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:dkim-signature:arc-authentication-results;
+        bh=d5H+wDCMbC4VQe2cY8bzilCgKnhBy95cBPO+HyFN51Y=;
+        b=HQP+5087v4DboaBetbvyAosQXXXkGxy4h7ChHHv0iWWex/qjxRbOPIgtJDOgqLXC9L
+         lJ1u8jl26xOho7EMaSgUhM4YToogwfiOH2rQfSH2kyg/XBuuAaeBFkODe03c5cBPeB4O
+         VIOpIopkol/rvgirumwwhWSADhtADDCJzeu5b+xzdXDq8BUSNVnVgR/jQKibph4Ve5Qc
+         0wPf5c4TOa3MHyv6AQTQxc1NQbKGbsLgfRS0iUScj6JC1xwl4XVMCAdu98tN0j7mpbDh
+         yUBadVivsyogfitawxvL+poZUuQu3mhBpgtloMZKbFv1+x8qahERA2lOBhvxQdl6+oLj
+         79Qw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning richard@nod.at does not designate 109.75.188.150 as permitted sender) smtp.mailfrom=richard@nod.at
+       dkim=pass header.i=@linaro.org header.s=google header.b=Js5/gWa9;
+       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning richard@nod.at does not designate 109.75.188.150 as permitted sender) smtp.mailfrom=richard@nod.at
-From: Richard Weinberger <richard@nod.at>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, david@sigma-star.at, kbuild-all@01.org, Sam Ravnborg <sam@ravnborg.org>, Arnaud Lacombe <lacombar@gmail.com>, Nick Bowler <nbowler@elliptictech.com>, Michal Marek <mmarek@suse.cz>, Nicolas Pitre <nico@linaro.org>, Rusty Russell <rusty@rustcorp.com.au>
+       dkim=pass header.i=@linaro.org header.s=google header.b=Js5/gWa9;
+       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AH8x225rIOcflsyRPoUuF4Fb05lByNCp4+QTZOTjBPAMUIrgqctqONJgQm5ib4178HK2iGP9dvQQcw==
+Date: Tue, 20 Feb 2018 11:26:28 -0500 (EST)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Richard Weinberger <richard@nod.at>
+cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Kate Stewart <kstewart@linuxfoundation.org>,
+    Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+    Andrew Morton <akpm@linux-foundation.org>, david@sigma-star.at,
+    kbuild-all@01.org, Sam Ravnborg <sam@ravnborg.org>,
+    Arnaud Lacombe <lacombar@gmail.com>,
+    Nick Bowler <nbowler@elliptictech.com>, Michal Marek <mmarek@suse.cz>,
+    Rusty Russell <rusty@rustcorp.com.au>
 Subject: Re: [PATCH v2] kbuild: Don't source kernel config
-Date: Tue, 20 Feb 2018 17:55:51 +0100
-Message-ID: <2045626.ePW2a4dgOU@blindfold>
-In-Reply-To: <CAK7LNARDG3TaMsSH__u9W_RmxcwrMZsrfn82L3Cf8Ec9N2jodg@mail.gmail.com>
-References: <20180219092245.26404-1-richard@nod.at> <1919455.eZKeABUfgV@blindfold> <CAK7LNARDG3TaMsSH__u9W_RmxcwrMZsrfn82L3Cf8Ec9N2jodg@mail.gmail.com>
+In-Reply-To: <1919455.eZKeABUfgV@blindfold>
+Message-ID: <nycvar.YSQ.7.76.1802201125210.31644@knanqh.ubzr>
+References: <20180219092245.26404-1-richard@nod.at> <14335276.CH3Xr2i6I8@blindfold> <CAK7LNAQT8jEHt39xG7BvMMWjObdvCCpPhJAA83LFut4ewUVQsg@mail.gmail.com> <1919455.eZKeABUfgV@blindfold>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592820606337824892?=
-X-GMAIL-MSGID: =?utf-8?q?1592939692987333898?=
+X-GMAIL-MSGID: =?utf-8?q?1592937929325855376?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Am Dienstag, 20. Februar 2018, 17:30:10 CET schrieb Masahiro Yamada:
-> > That way the conf tool will sanitize the .config before shell scripts will
-> > source it.
+On Tue, 20 Feb 2018, Richard Weinberger wrote:
+
+> An alternate approach would be this:
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index 5c12dc91ef34..ff0a7c62344b 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -161,6 +161,13 @@ static int conf_set_sym_val(struct symbol *sym, int def, 
+> int def_flags, char *p)
+>  	case S_STRING:
+>  		if (*p++ != '"')
+>  			break;
+> +
+> +		p2 = strpbrk(p, "`$");
+> +		if (p2 && !(p2[0] == '$' && p2[1] != '(')) {
+> +			conf_warning("string contains forbidden characters");
+> +			return 1;
+> +		}
+> +
+>  		for (p2 = p; (p2 = strpbrk(p2, "\"\\")); p2++) {
+>  			if (*p2 == '"') {
+>  				*p2 = 0;
 > 
-> This approach seems better.
+> That way the conf tool will sanitize the .config before shell scripts will 
+> source it.
 
-Okay, let's go for it. :)
-I went first for the ugly bash approach because it is a white list and not a 
-black list filter.
+Looks like a much saner approach to me indeed.
 
-Thanks,
-//richard
+
+Nicolas
