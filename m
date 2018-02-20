@@ -1,26 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751683AbeBTKfG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:35:06 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47767 "EHLO
+        id S1751697AbeBTKfj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:35:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39431 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeBTKfD (ORCPT
+        with ESMTP id S1751401AbeBTKfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:35:03 -0500
-Date: Tue, 20 Feb 2018 02:29:38 -0800
-From: tip-bot for David Woodhouse <tipbot@zytor.com>
-Message-ID: <tip-87358710c1fb4f1bf96bbe2349975ff9953fc9b2@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, mingo@kernel.org, tglx@linutronix.de,
-        dwmw@amazon.co.uk
-Reply-To: mingo@kernel.org, dwmw@amazon.co.uk, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <1519037457-7643-5-git-send-email-dwmw@amazon.co.uk>
-References: <1519037457-7643-5-git-send-email-dwmw@amazon.co.uk>
+        Tue, 20 Feb 2018 05:35:37 -0500
+Date: Tue, 20 Feb 2018 02:25:08 -0800
+From: tip-bot for Juergen Gross <tipbot@zytor.com>
+Message-ID: <tip-e9cb8fc2e5ca5996417f900ed5149bd9150f6abd@git.kernel.org>
+Cc: rafael.j.wysocki@intel.com, tglx@linutronix.de, hpa@zytor.com,
+        jgross@suse.com, bp@alien8.de, peterz@infradead.org,
+        keescook@chromium.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        ebiederm@xmission.com, torvalds@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, andy.shevchenko@gmail.com
+Reply-To: hpa@zytor.com, jgross@suse.com, bp@alien8.de, peterz@infradead.org,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        andy.shevchenko@gmail.com, torvalds@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org,
+        ebiederm@xmission.com
+In-Reply-To: <20180219100906.14265-4-jgross@suse.com>
+References: <20180219100906.14265-4-jgross@suse.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/retpoline: Support retpoline builds with Clang
-Git-Commit-ID: 87358710c1fb4f1bf96bbe2349975ff9953fc9b2
+Subject: [tip:x86/boot] x86/xen: Add pvh specific rsdp address retrieval
+ function
+Git-Commit-ID: e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,104 +39,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  87358710c1fb4f1bf96bbe2349975ff9953fc9b2
-Gitweb:     https://git.kernel.org/tip/87358710c1fb4f1bf96bbe2349975ff9953fc9b2
-Author:     David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate: Mon, 19 Feb 2018 10:50:57 +0000
+Commit-ID:  e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
+Gitweb:     https://git.kernel.org/tip/e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
+Author:     Juergen Gross <jgross@suse.com>
+AuthorDate: Mon, 19 Feb 2018 11:09:06 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Feb 2018 11:17:58 +0100
+CommitDate: Tue, 20 Feb 2018 09:00:56 +0100
 
-x86/retpoline: Support retpoline builds with Clang
+x86/xen: Add pvh specific rsdp address retrieval function
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Add pvh_get_root_pointer() for Xen PVH guests to communicate the
+address of the RSDP table given to the kernel via Xen start info.
+
+This makes the kernel boot again in PVH mode after on recent Xen the
+RSDP was moved to higher addresses. So up to that change it was pure
+luck that the legacy method to locate the RSDP was working when
+running as PVH mode.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-5-git-send-email-dwmw@amazon.co.uk
+Cc: boris.ostrovsky@oracle.com
+Cc: lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Link: http://lkml.kernel.org/r/20180219100906.14265-4-jgross@suse.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/Makefile              | 5 ++++-
- include/linux/compiler-clang.h | 5 +++++
- include/linux/compiler-gcc.h   | 4 ++++
- include/linux/init.h           | 8 ++++----
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/xen/enlighten_pvh.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index fad5516..dbc7d0e 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -232,7 +232,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+index 436c4f0..aa1c6a68 100644
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -6,6 +6,7 @@
+ #include <asm/io_apic.h>
+ #include <asm/hypervisor.h>
+ #include <asm/e820/api.h>
++#include <asm/x86_init.h>
  
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
-+    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
-+
-+    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-     ifneq ($(RETPOLINE_CFLAGS),)
-         KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-     endif
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index d02a4df..d3f264a 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -27,3 +27,8 @@
- #if __has_feature(address_sanitizer)
- #define __SANITIZE_ADDRESS__
- #endif
-+
-+/* Clang doesn't have a way to turn it off per-function, yet. */
-+#ifdef __noretpoline
-+#undef __noretpoline
-+#endif
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 73bc63e..673fbf9 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -93,6 +93,10 @@
- #define __weak		__attribute__((weak))
- #define __alias(symbol)	__attribute__((alias(#symbol)))
- 
-+#ifdef RETPOLINE
-+#define __noretpoline __attribute__((indirect_branch("keep")))
-+#endif
-+
+ #include <asm/xen/interface.h>
+ #include <asm/xen/hypercall.h>
+@@ -16,15 +17,20 @@
  /*
-  * it doesn't make sense on ARM (currently the only user of __naked)
-  * to trace naked functions because then mcount is called without
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 506a981..bc27cf0 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -6,10 +6,10 @@
- #include <linux/types.h>
+  * PVH variables.
+  *
+- * xen_pvh and pvh_bootparams need to live in data segment since they
+- * are used after startup_{32|64}, which clear .bss, are invoked.
++ * xen_pvh pvh_bootparams and pvh_start_info need to live in data segment
++ * since they are used after startup_{32|64}, which clear .bss, are invoked.
+  */
+ bool xen_pvh __attribute__((section(".data"))) = 0;
+ struct boot_params pvh_bootparams __attribute__((section(".data")));
++struct hvm_start_info pvh_start_info __attribute__((section(".data")));
  
- /* Built-in __init functions needn't be compiled with retpoline */
--#if defined(RETPOLINE) && !defined(MODULE)
--#define __noretpoline __attribute__((indirect_branch("keep")))
-+#if defined(__noretpoline) && !defined(MODULE)
-+#define __noinitretpoline __noretpoline
- #else
--#define __noretpoline
-+#define __noinitretpoline
- #endif
+-struct hvm_start_info pvh_start_info;
+ unsigned int pvh_start_info_sz = sizeof(pvh_start_info);
  
- /* These macros are used to mark some functions or 
-@@ -47,7 +47,7 @@
++static u64 pvh_get_root_pointer(void)
++{
++	return pvh_start_info.rsdp_paddr;
++}
++
+ static void __init init_pvh_bootparams(void)
+ {
+ 	struct xen_memory_map memmap;
+@@ -71,6 +77,8 @@ static void __init init_pvh_bootparams(void)
+ 	 */
+ 	pvh_bootparams.hdr.version = 0x212;
+ 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
++
++	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ }
  
- /* These are for everybody (although not all archs will actually
-    discard it in modules) */
--#define __init		__section(.init.text) __cold  __latent_entropy __noretpoline
-+#define __init		__section(.init.text) __cold  __latent_entropy __noinitretpoline
- #define __initdata	__section(.init.data)
- #define __initconst	__section(.init.rodata)
- #define __exitdata	__section(.exit.data)
+ /*
