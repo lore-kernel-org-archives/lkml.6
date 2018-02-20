@@ -1,131 +1,97 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x226SQ357bhvbmyF9KxVZKvm8l2ZiO0CPFklJj+y0wjZXW66kDgBsCmmITNv0pts+ti6Rl8S7
-ARC-Seal: i=1; a=rsa-sha256; t=1519116939; cv=none;
+Return-Path: <dmitry.eremin@intel.com>
+X-Google-Smtp-Source: AH8x225dMroB+NB/Ky1dZvHHjWLCrqXmYuqgStaQ4A7dDdc/zBaJX53XmTB5X7Oo2tlzkWfR28VE
+ARC-Seal: i=1; a=rsa-sha256; t=1519123828; cv=none;
         d=google.com; s=arc-20160816;
-        b=ll1FS4wPCmGdbDikrbpBqy+rftx5hxIWdM9wZY+hASv1pHHEKGUzn4q7m5mwrCMzhh
-         /RLtrY8SomBF1NrBCmToKJ3GinLL+2HOUZ+FLMUyPxiMVV6ViRQ57RXE1Y9766JhihIh
-         2ZYEEXdGhYVvmLyku0OHtF41W/zKTEwvuO3AP6o9ySf+U0Mut7AE2YzwVRcd7kIxape0
-         8BmCxAtUEKlU6c7P6slNarOluzs/U9kaOHGvynMP/yfl7Ab4jD8kNtUevPYTwlyZ2SrO
-         zYNMxdT3I6+3oLwsDmJxEzEunedoN1Ae87LPKFrdHpIP4IK6/qDuNDw+7Y90suwxyOjS
-         h0tw==
+        b=wxnOiuFaUBzHcfGFT9Dl8ZBCvMpxoB5pS80XA5q8jtIzjHyLpHHWL9TX41/yWZBcHD
+         AnpBtqfIXCcLF6U2l0JupQUbwAx5yE752S2GYPlx+VuzQQEzYxuDt9jQ9M0oYFT9xIsZ
+         W/ONT0ujsDU6ZavgtgcpN0CTofUcehLUBdgUupX3FpfuBsGO92D/WNUyaefrPyhtycE0
+         bPVDAHJtt0ZXD1F4Xd74mUTdubZcMGflshw6WAJanOfuc+DPTD7l4JlxYIP1/pUPQeL7
+         kRuIHw/FIJU+kyMnBbdEkhTzgm04eUgO/uHVjcR+TaL/7KLHEnDuEp59xQaxEladFnLn
+         7dhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
-         :from:arc-authentication-results;
-        bh=y6a3eQkYnvHjiwvbywvn+isHfCsnrHENFTI8974t6LM=;
-        b=klSCPkYQ1RJEDnJoKTx/M7XpPA8ZKyTBoKiKNb2lavk/ffcpHfMpUZU1LFTPuZ7kSy
-         KHF4AuDA620kHBBd3OhPcgXvf8+xiPHHN93BSC6PgMfVMSOa+QlOz0BUVEKnF+iOiaUA
-         1dhea1Rft7HW6RFHAxetpqv2QvnrVr51MeHgsb5O5540lv8Z02tH7Wrns/zBmRzlhJPi
-         TFhMqYhjjH2+GFPxY/lJKNvzwan3jx6WW8MHftPNa0ttgNFT0Tw2PsbGNy1jSvyt8F+8
-         W5zXliYM0sMz4AJgt9OxrlWVHuscl7raonkhj9xyNpxNVlFrsh3An2+u/GfqDDmiPPVK
-         I9kQ==
+        h=content-transfer-encoding:mime-version:dlp-reaction:dlp-version
+         :dlp-product:content-language:accept-language:in-reply-to:references
+         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=RUaH/ZD8BvY/TWtL1mWYr5t+jBQFqRzz95Td8BD5piM=;
+        b=H1/PqixZfzztdfDJxWK0PtGZZCIHoVA+s3fbhXADM17p+oDF4xRuAAOoVhP7+3WRlf
+         CjX570OkITwLAPi8kMHk+FZtTd7QIXOgofzPU0F8GlXlX2nNyOrXxv1LI1FyIVDBmiIK
+         JUNh5NuEgb2zlZUTMv3/5da3VVrJd5MP6euGhLH0hqYo+kPxYzMChyBxmjQ+Ab4/9XqF
+         Le8OiEdTZ6UPpkzfAkPyHEX/goD6nn4Ovilt+WQSpZvx8sfo4tBlB2cvvi/4v2jKhvMw
+         /qexmYCj3ypscobrthKuUg6CoYDP2Ey4JoFsyz3lDq/m12m1yKqOUCkJkTGR534ksd4g
+         xxAg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+       spf=pass (google.com: domain of dmitry.eremin@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dmitry.eremin@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: "Eremin\, Dmitry" <dmitry.eremin@intel.com>, "Drokin\, Oleg" <oleg.drokin@intel.com>, "James
- Simmons" <jsimmons@infradead.org>, "Dilger\, Andreas" <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 20 Feb 2018 19:55:30 +1100
-Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Subject: RE: [lustre-devel] [PATCH 14/21] staging: lustre: fix assorted checkpatch errors
-In-Reply-To: <9FC73D3DBECE0941BD2ED069D26863425CE8FF1E@irsmsx110.ger.corp.intel.com>
-References: <151909308778.25814.9912662268627044409.stgit@noble> <151909341801.25814.16760126077741712102.stgit@noble> <9FC73D3DBECE0941BD2ED069D26863425CE8FF1E@irsmsx110.ger.corp.intel.com>
-Message-ID: <87lgfojb0d.fsf@notabene.neil.brown.name>
+       spf=pass (google.com: domain of dmitry.eremin@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dmitry.eremin@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,538,1511856000";
+   d="scan'208";a="202395446"
+From: "Eremin, Dmitry" <dmitry.eremin@intel.com>
+To: NeilBrown <neilb@suse.com>, "Drokin, Oleg" <oleg.drokin@intel.com>,
+	"James Simmons" <jsimmons@infradead.org>, "Dilger, Andreas"
+	<andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: lkml <linux-kernel@vger.kernel.org>, lustre
+	<lustre-devel@lists.lustre.org>
+Subject: RE: [lustre-devel] [PATCH 14/21] staging: lustre: fix assorted
+ checkpatch errors
+Thread-Topic: [lustre-devel] [PATCH 14/21] staging: lustre: fix assorted
+ checkpatch errors
+Thread-Index: AQHTqfPgZAgkHfH0b0e/vnwE8ILnnaOs7T3AgAAP+QCAAB77kA==
+Date: Tue, 20 Feb 2018 10:50:25 +0000
+Message-ID: <9FC73D3DBECE0941BD2ED069D26863425CE8FF72@irsmsx110.ger.corp.intel.com>
+References: <151909308778.25814.9912662268627044409.stgit@noble>
+ <151909341801.25814.16760126077741712102.stgit@noble>
+ <9FC73D3DBECE0941BD2ED069D26863425CE8FF1E@irsmsx110.ger.corp.intel.com>
+ <87lgfojb0d.fsf@notabene.neil.brown.name>
+In-Reply-To: <87lgfojb0d.fsf@notabene.neil.brown.name>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGIyY2QzYzEtYmI4Zi00ZjIzLTk5OTYtNDI1MjNjY2YyZTM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlJZQjRHT1NPUUZEZ2ZOWGxUNjUyamx5QXFMUk9mWDY5Rmc1RkZlK0RYdDg9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [163.33.239.182]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: base64
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592885047375416179?=
-X-GMAIL-MSGID: =?utf-8?q?1592909564081440505?=
+X-GMAIL-MSGID: =?utf-8?q?1592916788150684594?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 20 2018, Eremin, Dmitry wrote:
-
-> Hello Neil,
->
->> diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c
->> b/drivers/staging/lustre/lustre/mdc/mdc_request.c
->> index ab48746ce433..bde27acb0dd3 100644
->> --- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
->> +++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
->> @@ -1060,8 +1060,10 @@ static void mdc_adjust_dirpages(struct page
->> **pages, int cfs_pgs, int lu_pgs)
->>=20
->>  		while (--lu_pgs > 0) {
->>  			ent =3D lu_dirent_start(dp);
->> -			for (end_dirent =3D ent; ent;
->> -			     end_dirent =3D ent, ent =3D lu_dirent_next(ent));
->> +			while (ent) {
->> +				end_dirent =3D ent;
->> +				ent =3D lu_dirent_next(ent);
->> +			}
->>=20
->>  			/* Advance dp to next lu_dirpage. */
->>  			dp =3D (struct lu_dirpage *)((char *)dp + LU_PAGE_SIZE);
->
-> I doubt this is correct replacement. In original code end_dirent is
-> set always in the begin of outer loop (while (--lu_pgs > 0)). But in
-> new code this is missed. Therefore in case of second iteration and
-> (ent =3D lu_dirent_start(dp)) =3D=3D NULL the end_dirent will contain a
-> value from previous iteration which is not correct.
-
-Thanks for the review.  Yes, you are correct.
-I had seen that end_dirent was initialized to NULL, and let myself
-believe that would make the transformation safe.
-In fact, that initialization to NULL is pointless as it is never used.
-
-Maybe this would be better
-
-@@ -1055,13 +1055,14 @@ static void mdc_adjust_dirpages(struct page **pages=
-, int cfs_pgs, int lu_pgs)
- 		__u64 hash_end =3D le64_to_cpu(dp->ldp_hash_end);
- 		__u32 flags =3D le32_to_cpu(dp->ldp_flags);
- 		struct lu_dirpage *first =3D dp;
-=2D		struct lu_dirent *end_dirent =3D NULL;
-=2D		struct lu_dirent *ent;
-=20
- 		while (--lu_pgs > 0) {
-=2D			ent =3D lu_dirent_start(dp);
-=2D			for (end_dirent =3D ent; ent;
-=2D			     end_dirent =3D ent, ent =3D lu_dirent_next(ent));
-+			struct lu_dirent *end_dirent =3D NULL;
-+			struct lu_dirent *ent;
-+
-+			for (ent =3D lu_dirent_start(dp); ent;
-+			     ent =3D lu_dirent_next(ent))
-+				end_dirent =3D ent;
-=20
- 			/* Advance dp to next lu_dirpage. */
- 			dp =3D (struct lu_dirpage *)((char *)dp + LU_PAGE_SIZE);
-
-
-??
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqL4oIACgkQOeye3VZi
-gbn9DQ/6AuKl03Xp0H9vqgBahu5E/xlb8ETHCe33DOeMAYKQzqlfY+n4rNFkHeli
-15EnR9w8nbxUR6dlg2A8vVN/N1IZ6IvBWahMNI95x7SgS6VqvizNBZIwFgjUSfyl
-tPexX8r741x+apSFKZUveNiaghIa3XMMEwwNwe2PTJ9bXq6CmXqSO31odVKbcjOQ
-3AJKauMYIqvmpDOPtMCBBmgtyalwXC92HlF4Bsgi0rjMREfkLjitM6uod9YZsooy
-axEAGtWMiTWlLWsiu+aw7zLT//UDa+ki24h2IU8lqqhujo8vZ7b/2Abr/Vj6x+22
-+m2Xuh3KZ/Cw6XZSbJcJ/JDvBd1V+RUGccttnGvqHKHh24R/RurOCi5rv1ZFz1HB
-JelKEjtEDlhBlgEQ7HxK6X75R9EMY/Qo03FRJRPWSwhe38lvzFu4jBKvTLuvHgWA
-V1/WcQKnJfHKD6D0Tc0HaT4S8VntAxLFc9dekRamQA7pGOEiA2TCkGOQakAcf0P/
-NAGV48yWNwiNipT+b7vWKY8jXwH9pMV5EunmuPyYV40EP8plu/2ntQhBuk6oenpd
-GVWAcQcaNfTc9+NPNcfLnjEN9QOt5Qs4oHN9dG3xinbSjP7KCx0oU7Mx2MPOmgBf
-l5i+7pnNJJJq9JQZciMAJMr6CGkIpRIiq6NR7nEOEgktzWUq5cM=
-=zA5b
------END PGP SIGNATURE-----
---=-=-=--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBUaGFua3MgZm9yIHRoZSByZXZpZXcuICBZ
+ZXMsIHlvdSBhcmUgY29ycmVjdC4NCj4gSSBoYWQgc2VlbiB0aGF0IGVuZF9kaXJlbnQgd2FzIGlu
+aXRpYWxpemVkIHRvIE5VTEwsIGFuZCBsZXQgbXlzZWxmDQo+IGJlbGlldmUgdGhhdCB3b3VsZCBt
+YWtlIHRoZSB0cmFuc2Zvcm1hdGlvbiBzYWZlLg0KPiBJbiBmYWN0LCB0aGF0IGluaXRpYWxpemF0
+aW9uIHRvIE5VTEwgaXMgcG9pbnRsZXNzIGFzIGl0IGlzIG5ldmVyIHVzZWQuDQo+IA0KPiBNYXli
+ZSB0aGlzIHdvdWxkIGJlIGJldHRlcg0KPiANCj4gQEAgLTEwNTUsMTMgKzEwNTUsMTQgQEAgc3Rh
+dGljIHZvaWQgbWRjX2FkanVzdF9kaXJwYWdlcyhzdHJ1Y3QgcGFnZQ0KPiAqKnBhZ2VzLCBpbnQg
+Y2ZzX3BncywgaW50IGx1X3BncykNCj4gIAkJX191NjQgaGFzaF9lbmQgPSBsZTY0X3RvX2NwdShk
+cC0+bGRwX2hhc2hfZW5kKTsNCj4gIAkJX191MzIgZmxhZ3MgPSBsZTMyX3RvX2NwdShkcC0+bGRw
+X2ZsYWdzKTsNCj4gIAkJc3RydWN0IGx1X2RpcnBhZ2UgKmZpcnN0ID0gZHA7DQo+IC0JCXN0cnVj
+dCBsdV9kaXJlbnQgKmVuZF9kaXJlbnQgPSBOVUxMOw0KPiAtCQlzdHJ1Y3QgbHVfZGlyZW50ICpl
+bnQ7DQo+IA0KPiAgCQl3aGlsZSAoLS1sdV9wZ3MgPiAwKSB7DQo+IC0JCQllbnQgPSBsdV9kaXJl
+bnRfc3RhcnQoZHApOw0KPiAtCQkJZm9yIChlbmRfZGlyZW50ID0gZW50OyBlbnQ7DQo+IC0JCQkg
+ICAgIGVuZF9kaXJlbnQgPSBlbnQsIGVudCA9IGx1X2RpcmVudF9uZXh0KGVudCkpOw0KPiArCQkJ
+c3RydWN0IGx1X2RpcmVudCAqZW5kX2RpcmVudCA9IE5VTEw7DQo+ICsJCQlzdHJ1Y3QgbHVfZGly
+ZW50ICplbnQ7DQo+ICsNCj4gKwkJCWZvciAoZW50ID0gbHVfZGlyZW50X3N0YXJ0KGRwKTsgZW50
+Ow0KPiArCQkJICAgICBlbnQgPSBsdV9kaXJlbnRfbmV4dChlbnQpKQ0KPiArCQkJCWVuZF9kaXJl
+bnQgPSBlbnQ7DQo+IA0KPiAgCQkJLyogQWR2YW5jZSBkcCB0byBuZXh0IGx1X2RpcnBhZ2UuICov
+DQo+ICAJCQlkcCA9IChzdHJ1Y3QgbHVfZGlycGFnZSAqKSgoY2hhciAqKWRwICsgTFVfUEFHRV9T
+SVpFKTsNCj4gPz8NCg0KVGhhbmtzLCBJIGFncmVlIHdpdGggdGhpcyB2ZXJzaW9uLg0KDQpEbWl0
+cnkuDQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KSm9pbnQgU3RvY2sgQ29tcGFueSBJbnRlbCBBL08KUmVnaXN0ZXJl
+ZCBsZWdhbCBhZGRyZXNzOiBLcnlsYXRza3kgSGlsbHMgQnVzaW5lc3MgUGFyaywKMTcgS3J5bGF0
+c2theWEgU3RyLiwgQmxkZyA0LCBNb3Njb3cgMTIxNjE0LApSdXNzaWFuIEZlZGVyYXRpb24KClRo
+aXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1h
+dGVyaWFsIGZvcgp0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55
+IHJldmlldyBvciBkaXN0cmlidXRpb24KYnkgb3RoZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQu
+IElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZApyZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRo
+ZSBzZW5kZXIgYW5kIGRlbGV0ZSBhbGwgY29waWVzLgo=
