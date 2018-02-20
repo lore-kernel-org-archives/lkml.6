@@ -1,441 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeBTSrz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 13:47:55 -0500
-Received: from mga12.intel.com ([192.55.52.136]:58154 "EHLO mga12.intel.com"
+        id S1751733AbeBTStm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 13:49:42 -0500
+Received: from mga01.intel.com ([192.55.52.88]:16182 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751384AbeBTSry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 13:47:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1751379AbeBTStl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 13:49:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,540,1511856000";
-   d="scan'208";a="19515079"
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
+   d="scan'208";a="32233634"
+Date: Tue, 20 Feb 2018 20:49:36 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
-Date: Tue, 20 Feb 2018 10:47:51 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+Cc: Juergen Gross <jgross@suse.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Jiang Liu <jiang.liu@linux.intel.com>,
+        "Chen, Augustine" <augustine.chen@intel.com>,
+        "Bossart, Pierre-louis" <pierre-louis.bossart@intel.com>
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: Remove unused IRQ chip data of
+ HDMI LPE audio
+Message-ID: <20180220184936.GI5453@intel.com>
+References: <20171208093323.2212-1-augustine.chen@intel.com>
+ <20171208114404.GN10981@intel.com>
+ <alpine.DEB.2.20.1712082340400.2301@nanos>
+ <F6867404AABACB4D8EC371BF802A4B7C5790D206@fmsmsx101.amr.corp.intel.com>
+ <alpine.DEB.2.20.1712121804570.1794@nanos>
+ <F6867404AABACB4D8EC371BF802A4B7C5790F9A8@fmsmsx101.amr.corp.intel.com>
+ <alpine.DEB.2.20.1712131232090.1885@nanos>
+ <s5hshce7skk.wl-tiwai@suse.de>
+ <alpine.DEB.2.20.1712131452550.1885@nanos>
+ <20180129170922.GR5453@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180129170922.GR5453@intel.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Mon, Jan 29, 2018 at 07:09:22PM +0200, Ville Syrjälä wrote:
+> On Wed, Dec 13, 2017 at 03:06:55PM +0100, Thomas Gleixner wrote:
+> > On Wed, 13 Dec 2017, Takashi Iwai wrote:
+> > > On Wed, 13 Dec 2017 12:35:54 +0100,
+> > > Thomas Gleixner wrote:
+> > > > 
+> > > > > > On Mon, 11 Dec 2017, Anand, Jerome wrote:
+> > > > > > > > On Fri, 8 Dec 2017, Ville Syrjälä wrote:
+> > > > > > > >
+> > > > > > > > > On Fri, Dec 08, 2017 at 05:33:23PM +0800, Augustine.Chen wrote:
+> > > > > > > > > > The chip data of HDMI LPE audio is set to drm_i915_private which
+> > > > > > > > > > is not consistent with the expectation by x86 APIC driver.
+> > > > > > > > >
+> > > > > > > > > Hmm. Why is the apic code looking at data for an irq chip it
+> > > > > > > > > hasn't created?
+> > > > > > > > >
+> > > > > > >
+> > > > > > > apic code expects an irq domain to be place as generic approach.
+> > > > > > 
+> > > > > > APIC code does not even see that interrupt at all. It's completely disconnected.
+> > > > > > 
+> > > > > 
+> > > > > That's the problem - APIC just converts the chip data to its internal
+> > > > > format and fails.
+> > > > 
+> > > > How does APIC code end up to touch that interrupt at all? Call stack please.
+> > > 
+> > > It's found in the bugzilla referred in the patch:
+> > >   https://bugs.freedesktop.org/show_bug.cgi?id=103731
+> > > 
+> > > [   87.353072] irq 298 idata->chip->name hdmi_lpe_audio_irqchip
+> > > [   87.353072] irq 298 apic_chip_data
+> > > [   87.353073] irq 298 data->domain is NULL
+> > > [   87.353120] BUG: unable to handle kernel NULL pointer dereference at (null)
+> > > [   87.353132] IP: setup_vector_irq+0x1ba/0x230
+> > > [   87.353133] PGD 0
+> > > 
+> > > If my understanding is correct, it happens only with 4.14 and earlier
+> > > kernels where __setup_vector_irq() loops over the all irqs:
+> > > 
+> > > static void __setup_vector_irq(int cpu)
+> > > {
+> > > 	struct apic_chip_data *data;
+> > > 	struct irq_desc *desc;
+> > > 	int irq, vector;
+> > > 
+> > > 	/* Mark the inuse vectors */
+> > > 	for_each_irq_desc(irq, desc) {
+> > > 		struct irq_data *idata = irq_desc_get_irq_data(desc);
+> > > 
+> > > 		data = apic_chip_data(idata);
+> > > 		if (!data || !cpumask_test_cpu(cpu, data->domain))
+> > > 			continue;
+> > > 		....
+> > > 
+> > > And since we have assigned a non-APIC chip data in the driver, the
+> > > code above refers to a wrong object, leading to Oops.
+> > 
+> > Bah crap. This information should have been provided earlier instead of
+> > handwavy 'doesnt work with CONFIG_FOO and hotplug'.
+> > 
+> > > As a further note, the setup_vector_irq() code has been changed in
+> > > 4.15, and such a reference won't happen any longer.  So the patch
+> > > isn't necessary for now, although it's not bad to take as a cleanup.
+> > > And we can eventually put Cc to stable there since it actually works
+> > > around the issue above for the older kernels -- of course, with more
+> > > detailed descriptions about the background.
+> > 
+> > No, that's just tinkering. The proper fix is to make that code robust.
+> > 
+> > Something like the completely untested patch below should do the trick.
+> > 
+> > Thanks,
+> > 
+> > 	tglx
+> > ---
+> > diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+> > index f3557a1eb562..02e6a3cc0d74 100644
+> > --- a/arch/x86/kernel/apic/vector.c
+> > +++ b/arch/x86/kernel/apic/vector.c
+> > @@ -58,6 +58,9 @@ static struct apic_chip_data *apic_chip_data(struct irq_data *irq_data)
+> >  	while (irq_data->parent_data)
+> >  		irq_data = irq_data->parent_data;
+> >  
+> > +	if (irq_data->domain != x86_vector_domain)
+> > +		return NULL;
+> > +
+> >  	return irq_data->chip_data;
+> >  }
+> >  
+> > 
+> 
+> Did this patch resolve the issue?
 
-On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
-> On Tue, 13 Feb 2018, Reinette Chatre wrote:
->>  static void __pseudo_lock_region_release(struct pseudo_lock_region *plr)
->>  {
->>  	bool is_new_plr = (plr == new_plr);
->> @@ -93,6 +175,23 @@ static void __pseudo_lock_region_release(struct pseudo_lock_region *plr)
->>  	if (!plr->deleted)
->>  		return;
->>  
->> +	if (plr->locked) {
->> +		plr->d->plr = NULL;
->> +		/*
->> +		 * Resource groups come and go. Simply returning this
->> +		 * pseudo-locked region's bits to the default CLOS may
->> +		 * result in default CLOS to become fragmented, causing
->> +		 * the setting of its bitmask to fail. Ensure it is valid
->> +		 * first. If this check does fail we cannot return the bits
->> +		 * to the default CLOS and userspace intervention would be
->> +		 * required to ensure portions of the cache do not go
->> +		 * unused.
->> +		 */
->> +		if (cbm_validate_val(plr->d->ctrl_val[0] | plr->cbm, plr->r))
->> +			pseudo_lock_clos_set(plr, 0,
->> +					     plr->d->ctrl_val[0] | plr->cbm);
->> +		pseudo_lock_region_clear(plr);
->> +	}
->>  	kfree(plr);
->>  	if (is_new_plr)
->>  		new_plr = NULL;
-> 
-> Are you really sure that the life time rules of plr are correct vs. an
-> application which still has the locked memory mapped? i.e. the following
-> operation:
+Ping.
 
-You are correct. I am not preventing an administrator from removing the
-pseudo-locked region if it is in use. I will fix that.
-
-> 1# create_pseudo_lock_region()
-> 
-> 					2# start_app()
-> 					   fd = open(/dev/.../lock);
-> 					   ptr = mmap(fd, .....); <- takes a ref on fd
-> 					   close(fd);
-> 					   do_stuff(ptr);
-> 
-> 1# rmdir .../lock
-> 
-> 					   unmap(ptr);	<- releases fd
-> 
-> I can't see how that is protected. You already have a kref in the PLR, but
-> it's in no way connected to the file descriptor lifetime.  So the refcount
-> logic here must be:
-> 
-> create_lock_region()
-> 	plr = alloc_plr();
-> 	take_ref(plr);
-> 	if (!init_plr(plr)) {
-> 		drop_ref(plr);
-> 		...
-> 	}
-> 
-> lockdev_open(filp)
-> 	take_ref(plr);
-> 	filp->private = plr;
-> 
-> rmdir_lock_region()
-> 	...
-> 	drop_ref(plr);
-> 
-> lockdev_relese(filp)
-> 	filp->private = NULL;
-> 	drop_ref(plr);
-> 
->>  /*
->> + * Only one pseudo-locked region can be set up at a time and that is
->> + * enforced by taking the rdt_pseudo_lock_mutex when the user writes the
->> + * requested schemata to the resctrl file and releasing the mutex on
->> + * completion. The thread locking the kernel memory into the cache starts
->> + * and completes during this time so we can be sure that only one thread
->> + * can run at any time.
->> + * The functions starting the pseudo-locking thread needs to wait for its
->> + * completion and since there can only be one we have a global workqueue
->> + * and variable to support this.
->> + */
->> +static DECLARE_WAIT_QUEUE_HEAD(wq);
->> +static int thread_done;
-> 
-> Eew. For one, you really couldn't come up with more generic and less
-> relatable variable names, right?
-> 
-> That aside, its just wrong to build code based on current hardware
-> limitations. The waitqueue and the result code belong into PLR.
-
-Will do. This also builds on your previous suggestion to not limit the
-number of uninitialized pseudo-locked regions.
-
-> 
->> +/**
->> + * pseudo_lock_fn - Load kernel memory into cache
->> + *
->> + * This is the core pseudo-locking function.
->> + *
->> + * First we ensure that the kernel memory cannot be found in the cache.
->> + * Then, while taking care that there will be as little interference as
->> + * possible, each cache line of the memory to be loaded is touched while
->> + * core is running with class of service set to the bitmask of the
->> + * pseudo-locked region. After this is complete no future CAT allocations
->> + * will be allowed to overlap with this bitmask.
->> + *
->> + * Local register variables are utilized to ensure that the memory region
->> + * to be locked is the only memory access made during the critical locking
->> + * loop.
->> + */
->> +static int pseudo_lock_fn(void *_plr)
->> +{
->> +	struct pseudo_lock_region *plr = _plr;
->> +	u32 rmid_p, closid_p;
->> +	unsigned long flags;
->> +	u64 i;
->> +#ifdef CONFIG_KASAN
->> +	/*
->> +	 * The registers used for local register variables are also used
->> +	 * when KASAN is active. When KASAN is active we use a regular
->> +	 * variable to ensure we always use a valid pointer, but the cost
->> +	 * is that this variable will enter the cache through evicting the
->> +	 * memory we are trying to lock into the cache. Thus expect lower
->> +	 * pseudo-locking success rate when KASAN is active.
->> +	 */
-> 
-> I'm not a real fan of this mess. But well, 
-> 
->> +	unsigned int line_size;
->> +	unsigned int size;
->> +	void *mem_r;
->> +#else
->> +	register unsigned int line_size asm("esi");
->> +	register unsigned int size asm("edi");
->> +#ifdef CONFIG_X86_64
->> +	register void *mem_r asm("rbx");
->> +#else
->> +	register void *mem_r asm("ebx");
->> +#endif /* CONFIG_X86_64 */
->> +#endif /* CONFIG_KASAN */
->> +
->> +	/*
->> +	 * Make sure none of the allocated memory is cached. If it is we
->> +	 * will get a cache hit in below loop from outside of pseudo-locked
->> +	 * region.
->> +	 * wbinvd (as opposed to clflush/clflushopt) is required to
->> +	 * increase likelihood that allocated cache portion will be filled
->> +	 * with associated memory
-> 
-> Sigh.
-> 
->> +	 */
->> +	wbinvd();
->> +
->> +	preempt_disable();
->> +	local_irq_save(flags);
-> 
-> preempt_disable() is pointless when you disable interrupts.  And this
-> really should be local_irq_disable(). This code is always called with
-> interrupts enabled....
-> 
->> +	/*
->> +	 * Call wrmsr and rdmsr as directly as possible to avoid tracing
->> +	 * clobbering local register variables or affecting cache accesses.
->> +	 */
-> 
-> You probably want to make sure that the code below is in L1 cache already
-> before the CLOSID is set to the allocation. To do this you want to put the
-> preload mechanics into a separate ASM function.
-> 
-> Then you run it with size = 1 on some other temporary memory buffer with
-> the default CLOSID, which has the CBM bits of the lock region excluded,
-> Then switch to the real CLOSID and run the loop with the real buffer and
-> the real size.
-
-Thank you for the suggestion. I will experiment how this affects the
-pseudo-locked region success.
-
->> +	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-> 
-> This wants an explanation why the prefetcher needs to be disabled.
-> 
->> +static int pseudo_lock_doit(struct pseudo_lock_region *plr,
->> +			    struct rdt_resource *r,
->> +			    struct rdt_domain *d)
->> +{
->> +	struct task_struct *thread;
->> +	int closid;
->> +	int ret, i;
->> +
->> +	/*
->> +	 * With the usage of wbinvd we can only support one pseudo-locked
->> +	 * region per domain at this time.
-> 
-> This really sucks.
-> 
->> +	 */
->> +	if (d->plr) {
->> +		rdt_last_cmd_puts("pseudo-locked region exists on cache\n");
->> +		return -ENOSPC;
-> 
-> This check is not sufficient for a CPU which has both L2 and L3 allocation
-> capability. If there is already a L3 locked region and the current call
-> sets up a L2 locked region then this will not catch it and the following
-> wbinvd will wipe the L3 locked region ....
-> 
->> +	}
->> +
->> +	ret = pseudo_lock_region_init(plr, r, d);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	closid = closid_alloc();
->> +	if (closid < 0) {
->> +		ret = closid;
->> +		rdt_last_cmd_puts("unable to obtain free closid\n");
->> +		goto out_region;
->> +	}
->> +
->> +	/*
->> +	 * Ensure we end with a valid default CLOS. If a pseudo-locked
->> +	 * region in middle of possible bitmasks is selected it will split
->> +	 * up default CLOS which would be a fault and for which handling
->> +	 * is unclear so we fail back to userspace. Validation will also
->> +	 * ensure that default CLOS is not zero, keeping some cache
->> +	 * available to rest of system.
->> +	 */
->> +	if (!cbm_validate_val(d->ctrl_val[0] & ~plr->cbm, r)) {
->> +		ret = -EINVAL;
->> +		rdt_last_cmd_printf("bm 0x%x causes invalid clos 0 bm 0x%x\n",
->> +				    plr->cbm, d->ctrl_val[0] & ~plr->cbm);
->> +		goto out_closid;
->> +	}
->> +
->> +	ret = pseudo_lock_clos_set(plr, 0, d->ctrl_val[0] & ~plr->cbm);
-> 
-> Fiddling with the default CBM is wrong. The lock operation should only
-> succeed when the bits in that domain are not used by _ANY_ control group
-> including the default one. This is a reasonable constraint.
-
-This changes one of my original assumptions. I will rework all to adjust
-since your later design change suggestions will impact this.
-
->> +	if (ret < 0) {
->> +		rdt_last_cmd_printf("unable to set clos 0 bitmask to 0x%x\n",
->> +				    d->ctrl_val[0] & ~plr->cbm);
->> +		goto out_closid;
->> +	}
->> +
->> +	ret = pseudo_lock_clos_set(plr, closid, plr->cbm);
->> +	if (ret < 0) {
->> +		rdt_last_cmd_printf("unable to set closid %d bitmask to 0x%x\n",
->> +				    closid, plr->cbm);
->> +		goto out_clos_def;
->> +	}
->> +
->> +	plr->closid = closid;
->> +
->> +	thread_done = 0;
->> +
->> +	thread = kthread_create_on_node(pseudo_lock_fn, plr,
->> +					cpu_to_node(plr->cpu),
->> +					"pseudo_lock/%u", plr->cpu);
->> +	if (IS_ERR(thread)) {
->> +		ret = PTR_ERR(thread);
->> +		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
->> +		/*
->> +		 * We do not return CBM to newly allocated CLOS here on
->> +		 * error path since that will result in a CBM of all
->> +		 * zeroes which is an illegal MSR write.
-> 
-> I'm not sure what you are trying to explain here.
-> 
-> If you remove a ctrl group then the CBM bits are not added to anything
-> either. It's up to the operator to handle that. Why would this be any
-> different for the pseudo-locking stuff?
-
-It is not different, no. On failure the closid is released but the CBM
-associated with it remains. Here I attempted to explain why the CBM
-remains. This is the same behavior as current CAT. I will remove the
-comment since it is just causing confusion.
-
->> +		 */
->> +		goto out_clos_def;
->> +	}
->> +
->> +	kthread_bind(thread, plr->cpu);
->> +	wake_up_process(thread);
->> +
->> +	ret = wait_event_interruptible(wq, thread_done == 1);
->> +	if (ret < 0) {
->> +		rdt_last_cmd_puts("locking thread interrupted\n");
->> +		goto out_clos_def;
-> 
-> This is broken. If the thread does not get on the CPU for whatever reason
-> and the process which sets up the region is interrupted then this will
-> leave the thread in runnable state and once it gets on the CPU it will
-> happily derefence the freed plr struct and fiddle with the freed memory.
-> 
-> You need to make sure that the thread holds a reference on the plr struct,
-> which prevents freeing. That includes the CLOSID .....
-
-Thanks for catching this.
-
-> 
->> +	}
->> +
->> +	/*
->> +	 * closid will be released soon but its CBM as well as CBM of not
->> +	 * yet allocated CLOS as stored in the array will remain. Ensure
->> +	 * that CBM will be what is currently the default CLOS, which
->> +	 * excludes pseudo-locked region.
->> +	 */
->> +	for (i = 1; i < r->num_closid; i++) {
->> +		if (i == closid || !closid_allocated(i))
->> +			pseudo_lock_clos_set(plr, i, d->ctrl_val[0]);
->> +	}
-> 
-> This is all magical duct tape. The overall design of this is sideways and
-> not really well integrated into the existing infrastructure which creates
-> these kinds of magic warts and lots of duplicated code.
-> 
-> The deeper I read into the patch series the less I like that interface and
-> the implementation.
-> 
-> Let's look at the existing crtl/mon groups which are each represented by a
-> directory already.
-> 
->  - Adding a 'size' file to the ctrl groups would be a natural extension
->    which makes sense for regular cache allocations as well.
-> 
->  - Adding a 'exclusive' flag would be an interesting feature even for the
->    normal use case. Marking a group as exclusive prevents other groups to
->    request CBM bits which are held by a exclusive allocation.
-> 
->    I'd suggest to have a file 'mode' for controlling this. The valid values
->    would be something like 'shareable' and 'exclusive'.
-> 
->    When trying to set a group to exclusive mode then the schemata has to be
->    checked for overlaps with the other schematas and in case of conflict
->    the write fails. Once enabled subsequent writes to the schemata file
->    need to be checked for conflicts as well.
-> 
->    If the exclusive setting is enabled then the CBM bits of that group
->    are excluded from being used in other control groups.
-> 
-> Aside of that a file in the info directory which shows the (un)used CBM
-> bits of all groups is really helpful for controlling all of that (even w/o
-> pseudo locking). You have this in the 'avail' file, but there is no reason
-> why this should only be available for pseudo locking enabled systems.
-> 
-> Now for the pseudo locking part.
-> 
-> What you need on top of the above is a new 'mode': 'locked'. That mode
-> utilizes the 'exclusive' mode rules vs. conflict checking and the
-> protection against allocating the associated CBM bits in other control
-> groups.
-> 
-> The setup would be like this:
-> 
->     mkdir group
->     echo '$CONFIG' >group/schemata
->     echo 'locked' >group/mode
-> 
-> Setting mode to locked locks down the schemata file along with the
-> task/cpus/cpus_list files. The task/cpu files need to be empty when
-> entering locked mode, otherwise the operation fails. I'd even would not
-> bother handing back the CLOSID. For simplicity the CLOSID should just stay
-> associated with the control group until it is destroyed as any other
-> control group.
-
-Thank you so much for taking the time to do this thorough review and to
-make these suggestions. While I am still digesting the details I do
-intend to follow all (as well as the ones earlier I did not explicitly
-respond to).
-
-Keeping the CLOSID associated with the pseudo-locked region will surely
-make the above simpler since CLOSID's are association with resource
-groups (represented by the directories). I would like to highlight that
-on some platforms there are only a few (for example, 4) CLOSIDs
-available. Not releasing a CLOSID would thus reduce available CLOSIDs
-that are already limited. These platforms do have smaller possible
-bitmasks though (for example, 8 possible bits), which may make light of
-this concern. I thus just add it as informational to the consequence of
-this simplification.
-
-> Now the remaining thing is the memory allocation and the mmap itself. I
-> really dislike the preallocation of memory right at setup time. Ideally
-> that should be an allocation of the application itself, but the horrid
-> wbinvd stuff kinda prevents that. With that restriction we are more or less
-> bound to immediate allocation and population.
-
-Acknowledged. I am not sure if the current permissions would support
-such a dynamic setup though. At this time the system administrator is
-the one that sets up the pseudo-locked region and can through
-permissions of the character device provide access to these regions to
-user space applications.
-
-Reinette
+-- 
+Ville Syrjälä
+Intel OTC
