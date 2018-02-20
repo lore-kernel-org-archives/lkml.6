@@ -1,121 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeBTIwZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:52:25 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:45144 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbeBTIwY (ORCPT
+        id S1751404AbeBTIwz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:52:55 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:60841 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeBTIwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:52:24 -0500
-X-Google-Smtp-Source: AH8x224l7Oko+c3+aRNJLfLisNtFVUlLs6cGWtoqy5u4PSP0HTQ9hlLtgMvD6MVecTSd6o4PQoHpgblnC6gCx+8b5R8=
+        Tue, 20 Feb 2018 03:52:54 -0500
+Date: Tue, 20 Feb 2018 09:52:50 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
+        Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+In-Reply-To: <CA+55aFzm7zLd5BPtpp9MYMuP8We55bMd7noeLPrXiKfDynO6JA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1802200937330.24268@nanos.tec.linutronix.de>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk> <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk> <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com> <1518509708.12890.33.camel@infradead.org> <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org> <1518518198.12890.48.camel@infradead.org> <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com> <1518775136.7876.13.camel@infradead.org> <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com> <1518776517.7876.21.camel@infradead.org>
+ <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com> <1518783021.7876.34.camel@infradead.org> <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org> <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com> <10373.1519084385@turing-police.cc.vt.edu>
+ <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com> <20180220001301.70101e1d@alans-desktop> <CA+55aFzm7zLd5BPtpp9MYMuP8We55bMd7noeLPrXiKfDynO6JA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAP_ceTzdA6TgO4H2CCa4rJOjQvLL4tfFD8DnCZeJp67rWiSrdg@mail.gmail.com>
-References: <20180219224043.21383-1-enric.balletbo@collabora.com> <CAP_ceTzdA6TgO4H2CCa4rJOjQvLL4tfFD8DnCZeJp67rWiSrdg@mail.gmail.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Tue, 20 Feb 2018 09:52:22 +0100
-Message-ID: <CAFqH_53KekHzh_WGBN8WVFexb3DRCpu-pW4ffv3U0U7NUe99nw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] mfd: cros_ec: free IRQ automatically
-To: Vincent Palatin <vpalatin@chromium.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+On Mon, 19 Feb 2018, Linus Torvalds wrote:
+> On Mon, Feb 19, 2018 at 4:13 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+> >
+> > In theory there's nothing stopping a guest getting a 'you are about to
+> > gain/lose IBRS' message or having a new 'CPU' hotplugged and the old one
+> > removed.
+> 
+> I'm not convinced we handle the case of hotplug CPU's with different
+> CPU models correctly.
+> 
+> In fact, I'd be very surprised it it worked in the general case.
 
-2018-02-20 9:00 GMT+01:00 Vincent Palatin <vpalatin@chromium.org>:
-> On Mon, Feb 19, 2018 at 11:40 PM, Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
->> From: Vincent Palatin <vpalatin@chromium.org>
->>
->> Free the IRQ we might have requested when removing the cros_ec device,
->> so we can unload and reload the driver properly.
->>
->> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>  drivers/mfd/cros_ec.c | 17 ++++++-----------
->>  1 file changed, 6 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->> index 74780f2964a1..d1a4fbee9380 100644
->> --- a/drivers/mfd/cros_ec.c
->> +++ b/drivers/mfd/cros_ec.c
->> @@ -119,9 +119,9 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>         }
->>
->>         if (ec_dev->irq) {
->> -               err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
->> -                                          IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> -                                          "chromeos-ec", ec_dev);
->> +               err = devm_request_threaded_irq(dev, ec_dev->irq, NULL,
->> +                               ec_irq_thread, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> +                               "chromeos-ec", ec_dev);
->>                 if (err) {
->>                         dev_err(dev, "Failed to request IRQ %d: %d",
->>                                 ec_dev->irq, err);
->> @@ -135,7 +135,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>                 dev_err(dev,
->>                         "Failed to register Embedded Controller subdevice %d\n",
->>                         err);
->> -               goto fail_mfd;
->> +               return err;
->>         }
->>
->>         if (ec_dev->max_passthru) {
->> @@ -153,7 +153,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>                         dev_err(dev,
->>                                 "Failed to register Power Delivery subdevice %d\n",
->>                                 err);
->> -                       goto fail_mfd;
->> +                       return err;
->>                 }
->>         }
->>
->> @@ -162,7 +162,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>                 if (err) {
->>                         mfd_remove_devices(dev);
->>                         dev_err(dev, "Failed to register sub-devices\n");
->> -                       goto fail_mfd;
->> +                       return err;
->>                 }
->>         }
->>
->> @@ -180,11 +180,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>         cros_ec_acpi_install_gpe_handler(dev);
->>
->>         return 0;
->> -
->> -fail_mfd:
->> -       if (ec_dev->irq)
->> -               free_irq(ec_dev->irq, ec_dev);
->> -       return err;
->>  }
->>  EXPORT_SYMBOL(cros_ec_register);
->
->
-> You need to remove the "free_irq(ec_dev->irq, ec_dev);" in cros_ec_remove() too.
-> as done there:
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/866858/15/drivers/mfd/cros_ec.c
->
-> it was missing originally but was added by: 'f58b14e6632a mfd:
-> cros_ec: Free IRQ on exit'
->
+We pretend to work with different CPU models mostly by having per cpu
+feature bits, but in practice this would fall apart in bits and pieces all
+over the place. 
 
-Many thanks to catch this. I'll wait a bit more for if I receive more
-feedback on the other patches and send a second version of this
-patchset.
+Thanks,
 
-Regards,
-  Enric
-
->
->>
->> --
->> 2.16.1
->>
+	tglx
