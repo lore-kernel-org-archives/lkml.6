@@ -1,50 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeBTBoL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 20:44:11 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37154 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932294AbeBTBoH (ORCPT
+        id S932347AbeBTByg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 20:54:36 -0500
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:55553 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932294AbeBTByf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 20:44:07 -0500
-X-Google-Smtp-Source: AH8x225cLBJpKfcBClaY4Sythn6sXx63YCHBxQby86P1ADxZEVvHp9xeetNO+lQOb8IWywIinECKQQ==
-From: Joel Stanley <joel@jms.id.au>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org
-Subject: [PATCH v2 3/3] reset: simple: Allow user selection of driver
-Date: Tue, 20 Feb 2018 12:13:30 +1030
-Message-Id: <20180220014330.23425-4-joel@jms.id.au>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180220014330.23425-1-joel@jms.id.au>
-References: <20180220014330.23425-1-joel@jms.id.au>
+        Mon, 19 Feb 2018 20:54:35 -0500
+Date: Tue, 20 Feb 2018 02:54:33 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
+Message-ID: <20180220015433.GA9656@wunner.de>
+References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com>
+ <2323301.ORZpb3hFRe@aspire.rjw.lan>
+ <20180216203434.GC11014@bhelgaas-glaptop.roam.corp.google.com>
+ <2858019.9TUCWsDpTB@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2858019.9TUCWsDpTB@aspire.rjw.lan>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently this driver is only user selectable if COMPILE_TEST is turned
-on. Users may wish to select (and deselect) it, so remove this
-restriction.
+On Mon, Feb 19, 2018 at 12:21:56PM +0100, Rafael J. Wysocki wrote:
+> On Friday, February 16, 2018 9:34:34 PM CET Bjorn Helgaas wrote:
+> > On Fri, Feb 16, 2018 at 01:40:37PM +0100, Rafael J. Wysocki wrote:
+> > > On Friday, February 16, 2018 12:39:00 AM CET Bjorn Helgaas wrote:
+> > > > On Thu, Feb 15, 2018 at 10:57:25PM +0100, Rafael J. Wysocki wrote:
+> > > > > On Wednesday, February 14, 2018 9:16:53 PM CET Bjorn Helgaas wrote:
+> > > > > > I don't know how this runtime PM works, but maybe Rafael can help
+> > > > > > us out.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/reset/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This has nothing to do with runtime PM AFAICS.
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 18f152d251d7..7490a4370900 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -82,7 +82,7 @@ config RESET_PISTACHIO
- 	  This enables the reset driver for ImgTec Pistachio SoCs.
- 
- config RESET_SIMPLE
--	bool "Simple Reset Controller Driver" if COMPILE_TEST
-+	bool "Simple Reset Controller Driver"
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
- 	help
- 	  This enables a simple reset controller driver for reset lines that
--- 
-2.15.1
+The device seems to be in D3hot on boot, is that correct?
+The PCI core assumes that unbound devices remain in D0
+(see comments in pci_pm_runtime_resume() / pci_pm_runtime_suspend()).
+
+
+> > > > > I'm not sure what the question is to be honest.
+> > > > 
+> > > > My questions are basically "What does the PCI core need to do to make
+> > > > sure a device is in D0 before it operates on it?  And where do we need
+> > > > to do that?"
+
+When scanning the bus and discovering the device is not in D0,
+call pci_power_up().  This could probably go into pci_init_pm().
+Once a driver binds to it, it may choose to runtime suspend it to
+D3hot again.
+
+Just an idea anyway.
+
+Thanks,
+
+Lukas
