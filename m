@@ -1,53 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752524AbeBTP0t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:26:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752359AbeBTP0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:26:48 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C2420685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 20 Feb 2018 10:26:44 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>,
-        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/17] trace doc: convert trace/ftrace.txt to rst format
-Message-ID: <20180220102644.38218f27@gandalf.local.home>
-In-Reply-To: <20180220132700.iz27aumgy5o2agp3@intel.com>
-References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
-        <1518845990-20733-6-git-send-email-changbin.du@intel.com>
-        <CAOFm3uE78DosAoZDNfD_YRaGPhpxW=4_cd3d9MafV-mdk5BuxQ@mail.gmail.com>
-        <20180220132700.iz27aumgy5o2agp3@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752360AbeBTP3k (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:29:40 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41515 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbeBTP3i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:29:38 -0500
+X-Google-Smtp-Source: AH8x227wJDfDW6IcqL154uEbcwdlywSytj4GRJ+hnpLcABmHXi4AMqAmzVJAI4mik4ktfFtC+oaNau+1dLpUlqbJ4Xs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1519139541-18783-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 16:29:37 +0100
+X-Google-Sender-Auth: zKTG4HEk6RvYalhL0ZJrYYjXUaM
+Message-ID: <CAMuHMdVPkbKQf=svj+R_jjt2_+FqHXaCRmW7Wu7c0AfJzZR2Sg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/19] soc: renesas: rcar-rst: Add support for R-Car M3-N
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018 21:27:00 +0800
-"Du, Changbin" <changbin.du@intel.com> wrote:
+On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-> > > @@ -0,0 +1,3332 @@
-> > > +========================
-> > > +ftrace - Function Tracer
-> > > +========================
-> > > +
-> > > +Copyright 2008 Red Hat Inc.
-> > > +
-> > > +:Author:   Steven Rostedt <srostedt@redhat.com>
-> > > +:License:  The GNU Free Documentation License, Version 1.2
-> > > +          (dual licensed under the GPL v2)  
-> > 
-> > 
-> > Do you mind using an SPDX id per [1] rather that this?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-One it should be a separate patch. Two, how does SPDX deal with dual
-licenses?
+Gr{oetje,eeting}s,
 
--- Steve
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
