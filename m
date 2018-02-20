@@ -1,52 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751053AbeBTNpg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:45:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42342 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750732AbeBTNpf (ORCPT
+        id S1751302AbeBTNpj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:45:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52998 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbeBTNph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:45:35 -0500
-Subject: Re: [PATCH v3 0/3] Enable CONFIG_VT support for S390
-To: Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc: geert@linux-m68k.org, tomi.valkeinen@ti.com, thuth@redhat.com,
-        b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <c4319571-96fd-8f5b-68e3-c06b7968203f@de.ibm.com>
-From: Farhan Ali <alifm@linux.vnet.ibm.com>
-Date: Tue, 20 Feb 2018 08:45:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 20 Feb 2018 08:45:37 -0500
+Date: Tue, 20 Feb 2018 13:45:27 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Applied "ASoC: topology: Add missing clock gating parameter when
+ parsing hw_configs" to the asoc tree
+Message-ID: <20180220134527.GF6378@sirena.org.uk>
+References: <20180219203636.3692-2-k.marinushkin@gmail.com>
+ <E1eo6jW-00039l-Ts@debutante>
 MIME-Version: 1.0
-In-Reply-To: <c4319571-96fd-8f5b-68e3-c06b7968203f@de.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022013-0024-0000-0000-0000032981A7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008563; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00992492; UDB=6.00504227; IPR=6.00771838;
- MB=3.00019655; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-20 13:45:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022013-0025-0000-0000-00004716FB7A
-Message-Id: <276a4dfc-c234-0576-ee52-08ac2748c610@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-20_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802200176
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XIiC+We3v3zHqZ6Z"
+Content-Disposition: inline
+In-Reply-To: <E1eo6jW-00039l-Ts@debutante>
+X-Cookie: Don't read everything you believe.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--XIiC+We3v3zHqZ6Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/20/2018 04:43 AM, Christian Borntraeger wrote:
-> Added to my linux next tree to check for any fallout.
-> 
-Thanks!
+On Tue, Feb 20, 2018 at 12:09:18PM +0000, Mark Brown wrote:
+> The patch
+>=20
+>    ASoC: topology: Add missing clock gating parameter when parsing hw_con=
+figs
+>=20
+> has been applied to the asoc tree at
+>=20
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git=20
+
+This broke the build so I dropped it.
+
+--XIiC+We3v3zHqZ6Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqMJnYACgkQJNaLcl1U
+h9Bxvgf+Nv7fdDYz7Rset2EHm/+CjK0HLbtGsrmrgxokwdjQrrz71yZr2CV5yHuu
+PIqcRNCVc9Z/UPgkgBcEh+IZVunrVzPUYG9eVr+muo5GwHfXbCxceszxl8/KpEOg
+wP1XrME4y1PIfzjDWmujAUnhfS94Th9mHYOQit9DUCzRECYNaN4/iIUW+CORDbAm
+x6B2u57aHhKuYMcHi0vZoLXjsAYaGljvALDtunkaaTTHa7BLypVNdSKhOj7E36gw
+ncLaY1MYmUoM0Zbk1K2cxh8Toq6Cwfmy17j3j02Bkwdf6AWDn1cjGgpq6LDVQ9C6
+jS2kD5yPoo467LGlD5JtS/0OJSDDDA==
+=Jg+6
+-----END PGP SIGNATURE-----
+
+--XIiC+We3v3zHqZ6Z--
