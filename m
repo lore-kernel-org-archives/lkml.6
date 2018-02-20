@@ -1,102 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751936AbeBTXVu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:21:50 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33970 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeBTXVt (ORCPT
+        id S1751917AbeBTXYH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:24:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37848 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751764AbeBTXYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:21:49 -0500
-Date: Wed, 21 Feb 2018 00:21:44 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
-In-Reply-To: <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
-Message-ID: <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
-References: <cover.1518443616.git.reinette.chatre@intel.com> <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de> <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Feb 2018 18:24:05 -0500
+Date: Tue, 20 Feb 2018 15:24:05 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, nborisov@suse.com
+Subject: [PATCH RFC tools/lkmm 0/12] Miscellaneous fixes
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022023-0052-0000-0000-000002BB5DCF
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008566; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00992684; UDB=6.00504342; IPR=6.00772030;
+ MB=3.00019661; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-20 23:23:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022023-0053-0000-0000-00005BC22B7D
+Message-Id: <20180220232405.GA19274@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802200276
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reinette,
+Hello!
 
-On Tue, 20 Feb 2018, Reinette Chatre wrote:
-> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
-> > On Tue, 13 Feb 2018, Reinette Chatre wrote:
-> > 
-> > Are you really sure that the life time rules of plr are correct vs. an
-> > application which still has the locked memory mapped? i.e. the following
-> > operation:
-> 
-> You are correct. I am not preventing an administrator from removing the
-> pseudo-locked region if it is in use. I will fix that.
+This RFC series adds some miscellaneous updates to the Linux kernel
+memory model:
 
-The removal is fine and you cannot prevent it w/o introducing a mess, but
-you have to make sure that the PLR and the mapped memory are not
-vanishing. The refcount rules I outlined are exactly doing that.
+1.	Clarify the origin and scope of the tool name to avoid confusion
+	between "memory model" and "memory management", courtesy of
+	Andrea Parri.
 
-> Thank you so much for taking the time to do this thorough review and to
-> make these suggestions. While I am still digesting the details I do
-> intend to follow all (as well as the ones earlier I did not explicitly
-> respond to).
+2.	Move the maintainer list for LKMM to the main MAINTAINERS file,
+	courtesy of Andrea Parri.
 
-Make your mind up and tell me where I'm wrong before you implement the crap
-I suggested blindly, as that will just cause the next reviewer (me or
-someone else) to tell _you_ that it is crap :)
+3.	Add memory-barriers.txt to the LKMM MAINTAINERS entry, courtesy
+	of Andrea Parri.
 
-> Keeping the CLOSID associated with the pseudo-locked region will surely
-> make the above simpler since CLOSID's are association with resource
-> groups (represented by the directories). I would like to highlight that
-> on some platforms there are only a few (for example, 4) CLOSIDs
-> available. Not releasing a CLOSID would thus reduce available CLOSIDs
-> that are already limited. These platforms do have smaller possible
-> bitmasks though (for example, 8 possible bits), which may make light of
-> this concern. I thus just add it as informational to the consequence of
-> this simplification.
+4.	Add comments explaining the purpose of the various litmus tests.
 
-Yes. If you have 4 CLOSIDs and only 8 CBM bits it really does not matter
-much.
+5.	Fix punctuation errors in litmus-tests/README.
 
-> > Now the remaining thing is the memory allocation and the mmap itself. I
-> > really dislike the preallocation of memory right at setup time. Ideally
-> > that should be an allocation of the application itself, but the horrid
-> > wbinvd stuff kinda prevents that. With that restriction we are more or less
-> > bound to immediate allocation and population.
-> 
-> Acknowledged. I am not sure if the current permissions would support
-> such a dynamic setup though. At this time the system administrator is
-> the one that sets up the pseudo-locked region and can through
-> permissions of the character device provide access to these regions to
-> user space applications.
+6.	Add Akira Yokosawa as an LKMM reviewer.
 
-You still would need some interface, e.g. character device which allows you
-to hand in the pointer to the user allocated memory and do the cache
-priming. So you could use the same permission setup for that character
-device.
+7.	Cross-reference tools/memory-model from memory-barriers.txt,
+	courtesy of Andrea Parri and Akira Yokosawa.
 
-The other problem is that we'd need to have MAP_CONTIG first so you
-actually can allocate physically contigous memory from user space. Mike is
-working on that, but it's not available today. The only way to do so today
-(with lots of waste) would be MAP_HUGETLB, which might be an acceptable
-constraint up to the point where MAP_CONTIG is available.
+8.	Fix description of data dependency barriers, courtesy of
+	Nikolay Borisov.
 
-Though this all depends on the ability to remove the wbinvd
-requirement. But even if we can remove that we'd still need to be aware
-that the cache priming loop which needs to run with interrupts disabled is
-expensive as well and can introduce undesired latencies. Needs all some
-thought...
+9.	Add required herd7 version to README file.
 
-Thanks,
+10.	Add a S lock-based external-view litmus test, courtesy of Alan
+	Stern.
 
-	tglx
+11.	Convert underscores to hyphens in .bell and .cat files for
+	consistency with typical cat-language code.
+
+12.	Remove rb-dep, smp_read_barrier_depends, and lockless_dereference,
+	which reflect recent Linux-kernel changes, courtesy of
+	Alan Stern.
+
+Changes since v1:
+
+o	Applied feedback from v1 posting.
+
+o	Squashing patches together, as promised in v1.
+
+o	Added patches 7-10 and 12.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ /tools/memory-model/MAINTAINERS                                                            |   15 -
+ b/Documentation/memory-barriers.txt                                                        |    8 
+ b/MAINTAINERS                                                                              |   18 ++
+ b/tools/memory-model/Documentation/cheatsheet.txt                                          |    3 
+ b/tools/memory-model/Documentation/explanation.txt                                         |   81 +++++-----
+ b/tools/memory-model/MAINTAINERS                                                           |    2 
+ b/tools/memory-model/README                                                                |   17 +-
+ b/tools/memory-model/linux-kernel.bell                                                     |    9 -
+ b/tools/memory-model/linux-kernel.cat                                                      |   15 -
+ b/tools/memory-model/linux-kernel.def                                                      |    8 
+ b/tools/memory-model/litmus-tests/CoRR+poonceonce+Once.litmus                              |    7 
+ b/tools/memory-model/litmus-tests/CoRW+poonceonce+Once.litmus                              |    7 
+ b/tools/memory-model/litmus-tests/CoWR+poonceonce+Once.litmus                              |    7 
+ b/tools/memory-model/litmus-tests/CoWW+poonceonce.litmus                                   |    7 
+ b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus                         |   10 +
+ b/tools/memory-model/litmus-tests/IRIW+poonceonces+OnceOnce.litmus                         |   10 +
+ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus               |   41 +++++
+ b/tools/memory-model/litmus-tests/ISA2+poonceonces.litmus                                  |    9 +
+ b/tools/memory-model/litmus-tests/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus |   11 +
+ b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus                        |   11 +
+ b/tools/memory-model/litmus-tests/LB+poacquireonce+pooncerelease.litmus                    |    8 
+ b/tools/memory-model/litmus-tests/LB+poonceonces.litmus                                    |    7 
+ b/tools/memory-model/litmus-tests/MP+onceassign+derefonce.litmus                           |   11 +
+ b/tools/memory-model/litmus-tests/MP+polocks.litmus                                        |   11 +
+ b/tools/memory-model/litmus-tests/MP+poonceonces.litmus                                    |    7 
+ b/tools/memory-model/litmus-tests/MP+pooncerelease+poacquireonce.litmus                    |    8 
+ b/tools/memory-model/litmus-tests/MP+porevlocks.litmus                                     |   11 +
+ b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus                        |    8 
+ b/tools/memory-model/litmus-tests/R+mbonceonces.litmus                                     |    9 +
+ b/tools/memory-model/litmus-tests/R+poonceonces.litmus                                     |    8 
+ b/tools/memory-model/litmus-tests/README                                                   |    4 
+ b/tools/memory-model/litmus-tests/S+poonceonces.litmus                                     |    9 +
+ b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus                       |    7 
+ b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus                                    |    9 +
+ b/tools/memory-model/litmus-tests/SB+poonceonces.litmus                                    |    8 
+ b/tools/memory-model/litmus-tests/WRC+poonceonces+Once.litmus                              |    8 
+ b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus                |    8 
+ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus               |    9 +
+ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus               |    8 
+ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus    |   14 +
+ 40 files changed, 380 insertions(+), 88 deletions(-)
