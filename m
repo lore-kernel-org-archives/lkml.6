@@ -1,65 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932319AbeBTAmb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 19:42:31 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56882 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932284AbeBTAma (ORCPT
+        id S932330AbeBTAnx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 19:43:53 -0500
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36384 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932252AbeBTAnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 19:42:30 -0500
-Date: Tue, 20 Feb 2018 11:42:26 +1100 (AEDT)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: David Miller <davem@davemloft.net>
-cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net 2/4] net/8390: Fix msg_enable patch snafu
-In-Reply-To: <20180219.184343.1801583131809551924.davem@davemloft.net>
-Message-ID: <alpine.LNX.2.21.1802201108100.8@nippy.intranet>
-References: <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au> <20180219.141137.2095980245673495027.davem@davemloft.net> <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
- <20180219.184343.1801583131809551924.davem@davemloft.net>
+        Mon, 19 Feb 2018 19:43:51 -0500
+X-Google-Smtp-Source: AH8x225daCh3aX3e2AV2L3wizfADGA1r6CDN9mB+GbMS+cty8WsGeAQTp1HmZJLOXWpiMdX6I5H8+MhAqqQ1rsUlT4s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180220001301.70101e1d@alans-desktop>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk> <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org> <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org> <1518518198.12890.48.camel@infradead.org>
+ <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com> <1518775136.7876.13.camel@infradead.org>
+ <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com> <1518776517.7876.21.camel@infradead.org>
+ <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com> <1518783021.7876.34.camel@infradead.org>
+ <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org> <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
+ <10373.1519084385@turing-police.cc.vt.edu> <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
+ <20180220001301.70101e1d@alans-desktop>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 19 Feb 2018 16:43:50 -0800
+X-Google-Sender-Auth: hak1zdxDT45Qp7D_-poNxTqhjxU
+Message-ID: <CA+55aFzm7zLd5BPtpp9MYMuP8We55bMd7noeLPrXiKfDynO6JA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future CPUs
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
+        Jon Masters <jcm@jonmasters.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018, David Miller wrote:
+On Mon, Feb 19, 2018 at 4:13 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>
+> In theory there's nothing stopping a guest getting a 'you are about to
+> gain/lose IBRS' message or having a new 'CPU' hotplugged and the old one
+> removed.
 
-> > On Mon, 19 Feb 2018, David Miller wrote:
-> > 
-> >> > The lib8390 module parameter 'msg_enable' doesn't do anything 
-> >> > useful: it causes an ancient version string to be logged.
-> >> 
-> >> Since you are removing the last reference to this 'version' string 
-> >> you should remove it as well.
-> >> 
-> >> I'm surprised the compiler doesn't warn about this.
-> >> 
-> > 
-> > I compile-tested every 8390 module and I didn't come across any 
-> > compiler bugs.
-> > 
-> > Please take another look. I think you'll find that lib8390.c is always 
-> > #included by a module which does define that symbol.
-> 
-> But nothing references 'version' after you remove the log message.
-> 
-> You can therefore delete it.
-> 
-> And I'm politely asking you to.
-> 
-> Thank you.
-> 
+I'm not convinced we handle the case of hotplug CPU's with different
+CPU models correctly.
 
-If there was an unused variables I would happily remove that too but the 
-'version' string is not unused. The etherh.c and mac8390.c files both 
-include "lib8390.c" and in there you'll find the 'version' string used in 
-ethdev_setup().
+In fact, I'd be very surprised it it worked in the general case.
 
-If you want to remove the reference to the 'version' string from the core 
-driver, it would seem to imply the loss of this functionality from 8 
-modules or else the duplication of this code in the same modules, neither 
-of which seems desirable... What am I missing?
-
--- 
+            Linus
