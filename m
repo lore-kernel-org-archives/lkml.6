@@ -1,32 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751697AbeBTKfj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:35:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39431 "EHLO
+        id S1751734AbeBTKfz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:35:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41159 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbeBTKfh (ORCPT
+        with ESMTP id S1751443AbeBTKfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:35:37 -0500
-Date: Tue, 20 Feb 2018 02:25:08 -0800
+        Tue, 20 Feb 2018 05:35:54 -0500
+Date: Tue, 20 Feb 2018 02:24:40 -0800
 From: tip-bot for Juergen Gross <tipbot@zytor.com>
-Message-ID: <tip-e9cb8fc2e5ca5996417f900ed5149bd9150f6abd@git.kernel.org>
-Cc: rafael.j.wysocki@intel.com, tglx@linutronix.de, hpa@zytor.com,
-        jgross@suse.com, bp@alien8.de, peterz@infradead.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        ebiederm@xmission.com, torvalds@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, andy.shevchenko@gmail.com
-Reply-To: hpa@zytor.com, jgross@suse.com, bp@alien8.de, peterz@infradead.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        andy.shevchenko@gmail.com, torvalds@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mingo@kernel.org,
-        ebiederm@xmission.com
-In-Reply-To: <20180219100906.14265-4-jgross@suse.com>
-References: <20180219100906.14265-4-jgross@suse.com>
+Message-ID: <tip-62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9@git.kernel.org>
+Cc: keescook@chromium.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, rafael.j.wysocki@intel.com,
+        kirill.shutemov@linux.intel.com, andy.shevchenko@gmail.com,
+        jgross@suse.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        hpa@zytor.com, ebiederm@xmission.com, mingo@kernel.org,
+        peterz@infradead.org
+Reply-To: kirill.shutemov@linux.intel.com, rafael.j.wysocki@intel.com,
+        tglx@linutronix.de, keescook@chromium.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, bp@alien8.de,
+        ebiederm@xmission.com, mingo@kernel.org, hpa@zytor.com,
+        andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org,
+        jgross@suse.com
+In-Reply-To: <20180219100906.14265-3-jgross@suse.com>
+References: <20180219100906.14265-3-jgross@suse.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/xen: Add pvh specific rsdp address retrieval
- function
-Git-Commit-ID: e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
+Subject: [tip:x86/boot] x86/acpi: Add a new x86_init_acpi structure to
+ x86_init_ops
+Git-Commit-ID: 62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -39,22 +40,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
-Gitweb:     https://git.kernel.org/tip/e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
+Commit-ID:  62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9
+Gitweb:     https://git.kernel.org/tip/62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9
 Author:     Juergen Gross <jgross@suse.com>
-AuthorDate: Mon, 19 Feb 2018 11:09:06 +0100
+AuthorDate: Mon, 19 Feb 2018 11:09:05 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 20 Feb 2018 09:00:56 +0100
 
-x86/xen: Add pvh specific rsdp address retrieval function
+x86/acpi: Add a new x86_init_acpi structure to x86_init_ops
 
-Add pvh_get_root_pointer() for Xen PVH guests to communicate the
-address of the RSDP table given to the kernel via Xen start info.
-
-This makes the kernel boot again in PVH mode after on recent Xen the
-RSDP was moved to higher addresses. So up to that change it was pure
-luck that the legacy method to locate the RSDP was working when
-running as PVH mode.
+Add a new struct x86_init_acpi to x86_init_ops. For now it contains
+only one init function to get the RSDP table address.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
@@ -71,54 +67,86 @@ Cc: boris.ostrovsky@oracle.com
 Cc: lenb@kernel.org
 Cc: linux-acpi@vger.kernel.org
 Cc: xen-devel@lists.xenproject.org
-Link: http://lkml.kernel.org/r/20180219100906.14265-4-jgross@suse.com
+Link: http://lkml.kernel.org/r/20180219100906.14265-3-jgross@suse.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/xen/enlighten_pvh.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/acpi.h     | 7 +++++++
+ arch/x86/include/asm/x86_init.h | 9 +++++++++
+ arch/x86/kernel/x86_init.c      | 5 +++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index 436c4f0..aa1c6a68 100644
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -6,6 +6,7 @@
- #include <asm/io_apic.h>
- #include <asm/hypervisor.h>
- #include <asm/e820/api.h>
+diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
+index 1188172..6609dd7 100644
+--- a/arch/x86/include/asm/acpi.h
++++ b/arch/x86/include/asm/acpi.h
+@@ -31,6 +31,7 @@
+ #include <asm/mmu.h>
+ #include <asm/mpspec.h>
+ #include <asm/realmode.h>
 +#include <asm/x86_init.h>
  
- #include <asm/xen/interface.h>
- #include <asm/xen/hypercall.h>
-@@ -16,15 +17,20 @@
- /*
-  * PVH variables.
-  *
-- * xen_pvh and pvh_bootparams need to live in data segment since they
-- * are used after startup_{32|64}, which clear .bss, are invoked.
-+ * xen_pvh pvh_bootparams and pvh_start_info need to live in data segment
-+ * since they are used after startup_{32|64}, which clear .bss, are invoked.
-  */
- bool xen_pvh __attribute__((section(".data"))) = 0;
- struct boot_params pvh_bootparams __attribute__((section(".data")));
-+struct hvm_start_info pvh_start_info __attribute__((section(".data")));
- 
--struct hvm_start_info pvh_start_info;
- unsigned int pvh_start_info_sz = sizeof(pvh_start_info);
- 
-+static u64 pvh_get_root_pointer(void)
-+{
-+	return pvh_start_info.rsdp_paddr;
-+}
-+
- static void __init init_pvh_bootparams(void)
- {
- 	struct xen_memory_map memmap;
-@@ -71,6 +77,8 @@ static void __init init_pvh_bootparams(void)
- 	 */
- 	pvh_bootparams.hdr.version = 0x212;
- 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
-+
-+	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ #ifdef CONFIG_ACPI_APEI
+ # include <asm/pgtable_types.h>
+@@ -133,6 +134,12 @@ static inline bool acpi_has_cpu_in_madt(void)
+ 	return !!acpi_lapic;
  }
  
++#define ACPI_HAVE_ARCH_GET_ROOT_POINTER
++static inline u64 acpi_arch_get_root_pointer(void)
++{
++	return x86_init.acpi.get_root_pointer();
++}
++
+ #else /* !CONFIG_ACPI */
+ 
+ #define acpi_lapic 0
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index fc2f082..2e2c34d 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -131,6 +131,14 @@ struct x86_hyper_init {
+ };
+ 
+ /**
++ * struct x86_init_acpi - x86 ACPI init functions
++ * @get_root_pointer:		get RSDP address
++ */
++struct x86_init_acpi {
++	u64 (*get_root_pointer)(void);
++};
++
++/**
+  * struct x86_init_ops - functions for platform specific setup
+  *
+  */
+@@ -144,6 +152,7 @@ struct x86_init_ops {
+ 	struct x86_init_iommu		iommu;
+ 	struct x86_init_pci		pci;
+ 	struct x86_hyper_init		hyper;
++	struct x86_init_acpi		acpi;
+ };
+ 
+ /**
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index 1151ccd..9e4e994 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -30,6 +30,7 @@ int __init iommu_init_noop(void) { return 0; }
+ void iommu_shutdown_noop(void) { }
+ bool __init bool_x86_init_noop(void) { return false; }
+ void x86_op_int_noop(int cpu) { }
++u64 u64_x86_init_noop(void) { return 0; }
+ 
  /*
+  * The platform setup functions are preset with the default functions
+@@ -91,6 +92,10 @@ struct x86_init_ops x86_init __initdata = {
+ 		.x2apic_available	= bool_x86_init_noop,
+ 		.init_mem_mapping	= x86_init_noop,
+ 	},
++
++	.acpi = {
++		.get_root_pointer	= u64_x86_init_noop,
++	},
+ };
+ 
+ struct x86_cpuinit_ops x86_cpuinit = {
