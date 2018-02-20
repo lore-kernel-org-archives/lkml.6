@@ -1,105 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeBTNjV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:39:21 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:38062 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeBTNjT (ORCPT
+        id S1751952AbeBTNky (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:40:54 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37530 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeBTNkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:39:19 -0500
-X-Google-Smtp-Source: AH8x225A0AYNWaqWuUgmBgonXufV39z+qEAlHRzv8xWz1bz+tBooG04l6BhGrUNkpxnlef7L6hHCOlOI/q8oJbsL6Ec=
+        Tue, 20 Feb 2018 08:40:51 -0500
+X-Google-Smtp-Source: AH8x224LIkjX0PIVHUZJnt9SIQe6TXqL+bJLo0LJjhcdUoqKh0okjS7GrFyJgcCAl+kj3maQsE6QWGWorDGOVlEX4Uk=
 MIME-Version: 1.0
-In-Reply-To: <20180220123047.24469-2-Eugeniy.Paltsev@synopsys.com>
-References: <20180220123047.24469-1-Eugeniy.Paltsev@synopsys.com> <20180220123047.24469-2-Eugeniy.Paltsev@synopsys.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 20 Feb 2018 15:39:17 +0200
-Message-ID: <CAHp75VdQ_tVG29+JdycoTg-0tBAxKa9dNvesU-b+f8RqhQf4Rw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dmaengine: Introduce DW AXI DMAC driver
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: dmaengine <dmaengine@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+In-Reply-To: <20180220133532.GE7203@w540>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com> <20180220133532.GE7203@w540>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 14:40:50 +0100
+X-Google-Sender-Auth: ZX7LE-nnhgLkOX3oj-GW65JCapw
+Message-ID: <CAMuHMdWRLdXAUCRo_i14zt+aX=UM9_DJNbJgAwbF=q8+=8vkOQ@mail.gmail.com>
+Subject: Re: [PATCH 11/15] gpio: rcar: Add R-Car M3-N compatible string
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 2:30 PM, Eugeniy Paltsev
-<Eugeniy.Paltsev@synopsys.com> wrote:
-> This patch adds support for the DW AXI DMAC controller.
-> DW AXI DMAC is a part of HSDK development board from Synopsys.
+Hi Jacopo,
+
+On Tue, Feb 20, 2018 at 2:35 PM, jacopo mondi <jacopo@jmondi.org> wrote:
+> On Wed, Feb 14, 2018 at 03:05:05PM +0100, Geert Uytterhoeven wrote:
+>> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+>> <jacopo+renesas@jmondi.org> wrote:
+>> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+>> >
+>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>
+>> > --- a/drivers/gpio/gpio-rcar.c
+>> > +++ b/drivers/gpio/gpio-rcar.c
+>> > @@ -360,6 +360,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+>> >                 /* Gen3 GPIO is identical to Gen2. */
+>> >                 .data = &gpio_rcar_info_gen2,
+>> >         }, {
+>> > +               .compatible = "renesas,gpio-r8a77965",
+>> > +               /* Gen3 GPIO is identical to Gen2. */
+>> > +               .data = &gpio_rcar_info_gen2,
+>> > +       }, {
+>>
+>> This part is not needed, as the driver already matches agains the generic
+>> "renesas,rcar-gen3-gpio".
 >
-> In this driver implementation only DMA_MEMCPY transfers are
-> supported.
+> Just to point out that the compatible string is there for M3-W and H3.
+> Anyway, if that's not good practice to add per-SoC strings here, I'll
+> drop this bit.
 
-Just few comments, code looks fine I hope.
+That's correct. Initially, we added the H3 string first, and the M3-W later.
+After that we learned about new future Gen3 members, and we started using
+the family-specific one.
 
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13344,6 +13344,12 @@ F:     include/linux/dma/dw.h
->  F:     include/linux/platform_data/dma-dw.h
->  F:     drivers/dma/dw/
->
-> +SYNOPSYS DESIGNWARE AXI DMAC DRIVER
-> +M:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> +S:     Maintained
-> +F:     drivers/dma/dwi-axi-dmac/
-> +F:     Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
+Note that we cannot drop the strings for H3 and M3-W from the driver, as
+old DTBs do not have the family-specific strings.
 
-AXI is earlier in alphabet than DMAC in previous record.
+Gr{oetje,eeting}s,
 
-Linus even submitted a script last year to sort the MAINTAINERS data base.
+                        Geert
 
-> +/*
-> + * Synopsys DesignWare AXI DMA Controller driver.
-> + *
-> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
-> + * Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Now we have SPDX identifiers.
-
-> +static u32 axi_chan_get_xfer_width(struct axi_dma_chan *chan, dma_addr_t src,
-> +                                  dma_addr_t dst, size_t len)
-> +{
-> +       u32 max_width = chan->chip->dw->hdata->m_data_width;
-> +
-> +       return min_t(size_t, __ffs(src | dst | len), max_width);
-
-size_t -> u32 ?
-
-> +}
-
-> +       unsigned int timeout = 20; /* timeout iterations */
-
-> +       do  {
-> +               if (axi_chan_irq_read(chan) & DWAXIDMAC_IRQ_SUSPENDED) {
-> +                       ret = 0;
-> +                       break;
-> +               }
-> +               udelay(2);
-> +       } while (timeout--);
-
-Off-by-one. You will have 21 tries here.
-
-} while (--timeout);
-
--- 
-With Best Regards,
-Andy Shevchenko
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
