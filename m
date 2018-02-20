@@ -1,75 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeBTOMf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 09:12:35 -0500
-Received: from mga02.intel.com ([134.134.136.20]:25967 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeBTOMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:12:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,539,1511856000";
-   d="scan'208";a="18973587"
-Message-ID: <1519135945.4113.9.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 20 Feb 2018 16:12:25 +0200
-In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-         <20180214134319.4400-2-tomas.winkler@intel.com>
-         <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1751682AbeBTONC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 09:13:02 -0500
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:34392 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeBTONA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:13:00 -0500
+X-Google-Smtp-Source: AH8x224fLLCcExODganjezQlYhIVlKHPgAk+EzLMvyXA/cLQtoHZuNWilVtwaYEDSCd1XpW8NmjWjxkPEpOTsHznVw0=
+MIME-Version: 1.0
+In-Reply-To: <20180219225918.2311-2-mdf@kernel.org>
+References: <20180219225918.2311-1-mdf@kernel.org> <20180219225918.2311-2-mdf@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 20 Feb 2018 16:12:59 +0200
+Message-ID: <CAHp75VfKXe-7pzPT=9N3r20YV5Sq1UyHPoYwoLL1L4mjt8cEUA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] power: reset: gpio-poweroff: Add support for
+ timeout from DT
+To: Moritz Fischer <mdf@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-19 at 13:27 +0200, Jarkko Sakkinen wrote:
-> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
-> >  	if (need_locality && chip->ops->relinquish_locality) {
-> > -		chip->ops->relinquish_locality(chip, chip-
-> > >locality);
-> > +		/* this coud be on error path, don't override
-> > error code */
-> > +		int l_rc = chip->ops->relinquish_locality(chip,
-> > chip->locality);
-> 
-> All local variable declarations must be in the beginning of the
-> function.
-> 
-> > +
-> > +		if (l_rc) {
-> > +			dev_err(&chip->dev, "%s:
-> > relinquish_locality: error %d\n",
-> > +				__func__, l_rc);
-> > +			rc = l_rc;
-> > +		}
-> 
-> Your comment about not overriding error code is incorrect.
-> 
-> The value of 'rc' should be never overridden, which kind of supports
-> to "just print" behavior that we had for a locality error.
-> 
-> Is your fix somehow dependent on changing relinquish_locality()
-> behavior? If not, please remove this change. If you want to
-> contribute
-> such behavioral change, you should make a separate patch of it.
-> 
-> Now it's like a trojan horse bundled inside a bug fix.
+On Tue, Feb 20, 2018 at 12:59 AM, Moritz Fischer <mdf@kernel.org> wrote:
+> Add support for reading a timeout value from devicetree.
+> Fall back to previous default of 3s if nothing is specified.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-[And while doing this noticed a flaw in my test suite:
-https://github.com/jsakkine-intel/tpm2-scripts/issues/3]
+> +       of_property_read_u32(pdev->dev.of_node, "timeout_ms", &timeout);
 
-/Jarkko
+Perhaps stop being OF-centric by using device_property_read_u32() instead?
+
+-- 
+With Best Regards,
+Andy Shevchenko
