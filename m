@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751807AbeBTEqK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 23:46:10 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39337 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751601AbeBTEpf (ORCPT
+        id S1751772AbeBTEqI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 23:46:08 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46472 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbeBTEpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 23:45:35 -0500
-X-Google-Smtp-Source: AH8x224X7KVclfchYuq1+8YsoiF+SCMWiMs4XpCmOGQXVuppbFRXcghLQCPQP2grNOsv0Mpc7qUF9Q==
+        Mon, 19 Feb 2018 23:45:38 -0500
+X-Google-Smtp-Source: AH8x2262SdrYDPtErf12XVo2/MjKlJtSI2YL1uq5tHIQblP8y0G00wgpLGL28IL/HfqQB1dsApmbag==
 From: Alexandre Courbot <acourbot@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -19,9 +19,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv4 19/21] media: vim2m: add request support
-Date: Tue, 20 Feb 2018 13:44:23 +0900
-Message-Id: <20180220044425.169493-20-acourbot@chromium.org>
+Subject: [RFCv4 20/21] media: vivid: add request support for the video capture device
+Date: Tue, 20 Feb 2018 13:44:24 +0900
+Message-Id: <20180220044425.169493-21-acourbot@chromium.org>
 X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
 In-Reply-To: <20180220044425.169493-1-acourbot@chromium.org>
 References: <20180220044425.169493-1-acourbot@chromium.org>
@@ -29,157 +29,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the necessary ops for supporting requests in vim2m.
+Allow to use requests with the video capture device.
 
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
- drivers/media/platform/Kconfig |  1 +
- drivers/media/platform/vim2m.c | 75 ++++++++++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
+ drivers/media/platform/vivid/Kconfig          |  1 +
+ drivers/media/platform/vivid/vivid-core.c     | 63 ++++++++++++++++++-
+ drivers/media/platform/vivid/vivid-core.h     |  3 +
+ .../media/platform/vivid/vivid-kthread-cap.c  | 17 +++++
+ 4 files changed, 83 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 614fbef08ddc..09be0b5f9afe 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -534,6 +534,7 @@ source "drivers/media/platform/vivid/Kconfig"
- config VIDEO_VIM2M
- 	tristate "Virtual Memory-to-Memory Driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
+diff --git a/drivers/media/platform/vivid/Kconfig b/drivers/media/platform/vivid/Kconfig
+index 154de92dd809..a6494dabae95 100644
+--- a/drivers/media/platform/vivid/Kconfig
++++ b/drivers/media/platform/vivid/Kconfig
+@@ -7,6 +7,7 @@ config VIDEO_VIVID
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
 +	select MEDIA_REQUEST_API
  	select VIDEOBUF2_VMALLOC
- 	select V4L2_MEM2MEM_DEV
- 	default n
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index 065483e62db4..02793dd9a330 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -30,6 +30,8 @@
- #include <media/v4l2-ctrls.h>
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select VIDEO_V4L2_TPG
+diff --git a/drivers/media/platform/vivid/vivid-core.c b/drivers/media/platform/vivid/vivid-core.c
+index 82ec216f2ad8..c1cf8e7ca2c9 100644
+--- a/drivers/media/platform/vivid/vivid-core.c
++++ b/drivers/media/platform/vivid/vivid-core.c
+@@ -23,6 +23,7 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-fh.h>
  #include <media/v4l2-event.h>
- #include <media/videobuf2-vmalloc.h>
 +#include <media/v4l2-request.h>
-+#include <media/videobuf2-v4l2.h>
  
- MODULE_DESCRIPTION("Virtual device for mem2mem framework testing");
- MODULE_AUTHOR("Pawel Osciak, <pawel@osciak.com>");
-@@ -148,6 +150,8 @@ struct vim2m_dev {
- 	struct timer_list	timer;
- 
- 	struct v4l2_m2m_dev	*m2m_dev;
-+
-+	struct v4l2_request_mgr req_mgr;
+ #include "vivid-core.h"
+ #include "vivid-vid-common.h"
+@@ -486,6 +487,33 @@ static const struct v4l2_file_operations vivid_fops = {
+ 	.mmap           = vb2_fop_mmap,
  };
  
- struct vim2m_ctx {
-@@ -155,6 +159,7 @@ struct vim2m_ctx {
- 	struct vim2m_dev	*dev;
- 
- 	struct v4l2_ctrl_handler hdl;
-+	struct v4l2_request_entity req_entity;
- 
- 	/* Processed buffers in this transaction */
- 	u8			num_processed;
-@@ -367,6 +372,24 @@ static void job_abort(void *priv)
- 	ctx->aborting = 1;
- }
- 
-+static int apply_request_params(struct media_request *req,
-+				struct vim2m_ctx *ctx)
++static int vivid_cap_open(struct file *filp)
 +{
-+	struct v4l2_request_entity_data *data;
++	struct vivid_dev *dev;
++	struct v4l2_fh *fh;
++	int ret;
 +
-+	if (!req)
-+		return -EINVAL;
++	ret = v4l2_fh_open(filp);
++	if (ret)
++		return ret;
 +
-+	data = to_v4l2_entity_data(media_request_get_entity_data(req,
-+							&ctx->req_entity.base));
-+	if (WARN_ON(IS_ERR(data)))
-+		return PTR_ERR(data);
++	dev = container_of(video_devdata(filp), struct vivid_dev, vid_cap_dev);
++	fh = filp->private_data;
++	fh->entity = &dev->vid_cap_req_entity.base;
 +
-+	v4l2_ctrl_request_setup(&data->ctrls);
-+
-+	return 0;
++	return ret;
 +}
 +
- /* device_run() - prepares and starts the device
-  *
-  * This simulates all the immediate preparations required before starting
-@@ -382,6 +405,19 @@ static void device_run(void *priv)
- 	src_buf = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
- 	dst_buf = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
- 
-+	WARN_ON(dst_buf->vb2_buf.request != NULL &&
-+		dst_buf->vb2_buf.request != src_buf->vb2_buf.request);
-+
-+	/* Apply request if needed */
-+	if (src_buf->vb2_buf.request) {
-+		int ret = apply_request_params(src_buf->vb2_buf.request, ctx);
-+		if (ret) {
-+			dprintk(dev, "error applying request parameters: %d\n",
-+				ret);
-+			return;
-+		}
-+	}
-+
- 	device_process(ctx, src_buf, dst_buf);
- 
- 	/* Run a timer, which simulates a hardware irq  */
-@@ -393,6 +429,7 @@ static void device_isr(struct timer_list *t)
- 	struct vim2m_dev *vim2m_dev = from_timer(vim2m_dev, t, timer);
- 	struct vim2m_ctx *curr_ctx;
- 	struct vb2_v4l2_buffer *src_vb, *dst_vb;
-+	struct media_request *req;
- 	unsigned long flags;
- 
- 	curr_ctx = v4l2_m2m_get_curr_priv(vim2m_dev->m2m_dev);
-@@ -404,6 +441,7 @@ static void device_isr(struct timer_list *t)
- 
- 	src_vb = v4l2_m2m_src_buf_remove(curr_ctx->fh.m2m_ctx);
- 	dst_vb = v4l2_m2m_dst_buf_remove(curr_ctx->fh.m2m_ctx);
-+	req = src_vb->vb2_buf.request;
- 
- 	curr_ctx->num_processed++;
- 
-@@ -411,6 +449,8 @@ static void device_isr(struct timer_list *t)
- 	v4l2_m2m_buf_done(src_vb, VB2_BUF_STATE_DONE);
- 	v4l2_m2m_buf_done(dst_vb, VB2_BUF_STATE_DONE);
- 	spin_unlock_irqrestore(&vim2m_dev->irqlock, flags);
-+	if (req)
-+		media_request_entity_complete(req, &curr_ctx->req_entity.base);
- 
- 	if (curr_ctx->num_processed == curr_ctx->translen
- 	    || curr_ctx->aborting) {
-@@ -838,6 +878,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	src_vq->mem_ops = &vb2_vmalloc_memops;
- 	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	src_vq->lock = &ctx->dev->dev_mutex;
-+	src_vq->allow_requests = true;
- 
- 	ret = vb2_queue_init(src_vq);
- 	if (ret)
-@@ -851,6 +892,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	dst_vq->mem_ops = &vb2_vmalloc_memops;
- 	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	dst_vq->lock = &ctx->dev->dev_mutex;
-+	dst_vq->allow_requests = true;
- 
- 	return vb2_queue_init(dst_vq);
- }
-@@ -877,6 +919,31 @@ static const struct v4l2_ctrl_config vim2m_ctrl_trans_num_bufs = {
- 	.step = 1,
++static const struct v4l2_file_operations vivid_cap_fops = {
++	.owner		= THIS_MODULE,
++	.open           = vivid_cap_open,
++	.release        = vivid_fop_release,
++	.read           = vb2_fop_read,
++	.write          = vb2_fop_write,
++	.poll		= vb2_fop_poll,
++	.unlocked_ioctl = video_ioctl2,
++	.mmap           = vb2_fop_mmap,
++};
+ static const struct v4l2_file_operations vivid_radio_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.open           = v4l2_fh_open,
+@@ -607,6 +635,31 @@ static const struct v4l2_ioctl_ops vivid_ioctl_ops = {
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
  };
  
 +struct media_request_entity_data *
-+vim2m_entity_data_alloc(struct media_request *req,
++vid_cap_entity_data_alloc(struct media_request *req,
 +			struct media_request_entity *entity)
 +{
-+	struct vim2m_ctx *ctx;
++	struct vivid_dev *dev;
 +
-+	ctx = container_of(entity, struct vim2m_ctx, req_entity.base);
-+	return v4l2_request_entity_data_alloc(req, &ctx->hdl);
++	dev = container_of(entity, struct vivid_dev, vid_cap_req_entity.base);
++	return v4l2_request_entity_data_alloc(req, &dev->ctrl_hdl_vid_cap);
 +}
 +
-+static int vim2m_request_submit(struct media_request *req,
++static int vid_cap_request_submit(struct media_request *req,
 +				struct media_request_entity_data *_data)
 +{
 +	struct v4l2_request_entity_data *data;
@@ -188,50 +120,114 @@ index 065483e62db4..02793dd9a330 100644
 +	return vb2_request_submit(data);
 +}
 +
-+static const struct media_request_entity_ops vim2m_request_entity_ops = {
-+	.data_alloc	= vim2m_entity_data_alloc,
++static const struct media_request_entity_ops vivid_request_entity_ops = {
++	.data_alloc	= vid_cap_entity_data_alloc,
 +	.data_free	= v4l2_request_entity_data_free,
-+	.submit		= vim2m_request_submit,
++	.submit		= vid_cap_request_submit,
 +};
 +
- /*
-  * File operations
-  */
-@@ -900,6 +967,9 @@ static int vim2m_open(struct file *file)
- 	ctx->dev = dev;
- 	hdl = &ctx->hdl;
- 	v4l2_ctrl_handler_init(hdl, 4);
-+	v4l2_request_entity_init(&ctx->req_entity, &vim2m_request_entity_ops,
-+				 &ctx->dev->vfd);
-+	ctx->fh.entity = &ctx->req_entity.base;
- 	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
- 	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
- 	v4l2_ctrl_new_custom(hdl, &vim2m_ctrl_trans_time_msec, NULL);
-@@ -999,6 +1069,9 @@ static int vim2m_probe(struct platform_device *pdev)
- 	if (!dev)
- 		return -ENOMEM;
+ /* -----------------------------------------------------------------
+ 	Initialization and module stuff
+    ------------------------------------------------------------------*/
+@@ -1057,6 +1110,7 @@ static int vivid_create_instance(struct platform_device *pdev, int inst)
+ 		q->mem_ops = vivid_mem_ops[allocator];
+ 		q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+ 		q->min_buffers_needed = 2;
++		q->allow_requests = true;
+ 		q->lock = &dev->mutex;
+ 		q->dev = dev->v4l2_dev.dev;
  
-+	v4l2_request_mgr_init(&dev->req_mgr, &dev->vfd,
-+			      &v4l2_request_ops);
+@@ -1158,13 +1212,19 @@ static int vivid_create_instance(struct platform_device *pdev, int inst)
+ 		vfd = &dev->vid_cap_dev;
+ 		snprintf(vfd->name, sizeof(vfd->name),
+ 			 "vivid-%03d-vid-cap", inst);
+-		vfd->fops = &vivid_fops;
++		vfd->fops = &vivid_cap_fops;
+ 		vfd->ioctl_ops = &vivid_ioctl_ops;
+ 		vfd->device_caps = dev->vid_cap_caps;
+ 		vfd->release = video_device_release_empty;
+ 		vfd->v4l2_dev = &dev->v4l2_dev;
+ 		vfd->queue = &dev->vb_vid_cap_q;
+ 		vfd->tvnorms = tvnorms_cap;
++		vfd->req_mgr = &dev->vid_cap_req_mgr.base;
++		v4l2_request_mgr_init(&dev->vid_cap_req_mgr, vfd,
++				      &v4l2_request_ops);
++		v4l2_request_entity_init(&dev->vid_cap_req_entity,
++					 &vivid_request_entity_ops,
++					 vfd);
+ 
+ 		/*
+ 		 * Provide a mutex to v4l2 core. It will be used to protect
+@@ -1448,6 +1508,7 @@ static int vivid_remove(struct platform_device *pdev)
+ 			v4l2_info(&dev->v4l2_dev, "unregistering %s\n",
+ 				video_device_node_name(&dev->vid_cap_dev));
+ 			video_unregister_device(&dev->vid_cap_dev);
++			v4l2_request_mgr_free(&dev->vid_cap_req_mgr);
+ 		}
+ 		if (dev->has_vid_out) {
+ 			v4l2_info(&dev->v4l2_dev, "unregistering %s\n",
+diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
+index 477c80a4d44c..c8adcbb1c1d1 100644
+--- a/drivers/media/platform/vivid/vivid-core.h
++++ b/drivers/media/platform/vivid/vivid-core.h
+@@ -11,6 +11,7 @@
+ #include <linux/fb.h>
+ #include <linux/workqueue.h>
+ #include <media/cec.h>
++#include <media/v4l2-request.h>
+ #include <media/videobuf2-v4l2.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-dev.h>
+@@ -145,6 +146,8 @@ struct vivid_dev {
+ 	struct v4l2_ctrl_handler	ctrl_hdl_fb;
+ 	struct video_device		vid_cap_dev;
+ 	struct v4l2_ctrl_handler	ctrl_hdl_vid_cap;
++	struct v4l2_request_mgr		vid_cap_req_mgr;
++	struct v4l2_request_entity	vid_cap_req_entity;
+ 	struct video_device		vid_out_dev;
+ 	struct v4l2_ctrl_handler	ctrl_hdl_vid_out;
+ 	struct video_device		vbi_cap_dev;
+diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
+index 3fdb280c36ca..0d0866dc11b3 100644
+--- a/drivers/media/platform/vivid/vivid-kthread-cap.c
++++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
+@@ -19,6 +19,7 @@
+ #include <linux/random.h>
+ #include <linux/v4l2-dv-timings.h>
+ #include <asm/div64.h>
++#include <media/media-request.h>
+ #include <media/videobuf2-vmalloc.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-ioctl.h>
+@@ -703,6 +704,17 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+ 		goto update_mv;
+ 
+ 	if (vid_cap_buf) {
++		struct media_request *req = vid_cap_buf->vb.vb2_buf.request;
 +
- 	spin_lock_init(&dev->irqlock);
++		/* Using request? Apply its controls */
++		if (req) {
++			struct v4l2_request_entity_data *data;
++			data = to_v4l2_entity_data(
++				media_request_get_entity_data(req,
++						&dev->vid_cap_req_entity.base));
++			if (!WARN_ON(IS_ERR(data)))
++				v4l2_ctrl_request_setup(&data->ctrls);
++		}
+ 		/* Fill buffer */
+ 		vivid_fillbuff(dev, vid_cap_buf);
+ 		dprintk(dev, 1, "filled buffer %d\n",
+@@ -717,6 +729,11 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+ 				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
+ 		dprintk(dev, 2, "vid_cap buffer %d done\n",
+ 				vid_cap_buf->vb.vb2_buf.index);
++		if (req)
++			media_request_entity_complete(req,
++						 &dev->vid_cap_req_entity.base);
++		dprintk(dev, 2, "vid_cap buffer %d request completed\n",
++				vid_cap_buf->vb.vb2_buf.index);
+ 	}
  
- 	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
-@@ -1012,6 +1085,7 @@ static int vim2m_probe(struct platform_device *pdev)
- 	vfd = &dev->vfd;
- 	vfd->lock = &dev->dev_mutex;
- 	vfd->v4l2_dev = &dev->v4l2_dev;
-+	vfd->req_mgr = &dev->req_mgr.base;
- 
- 	ret = video_register_device(vfd, VFL_TYPE_GRABBER, 0);
- 	if (ret) {
-@@ -1054,6 +1128,7 @@ static int vim2m_remove(struct platform_device *pdev)
- 	del_timer_sync(&dev->timer);
- 	video_unregister_device(&dev->vfd);
- 	v4l2_device_unregister(&dev->v4l2_dev);
-+	v4l2_request_mgr_free(&dev->req_mgr);
- 
- 	return 0;
- }
+ 	if (vbi_cap_buf) {
 -- 
 2.16.1.291.g4437f3f132-goog
