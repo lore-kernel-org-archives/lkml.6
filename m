@@ -1,66 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752441AbeBTT1X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 14:27:23 -0500
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:36934 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751785AbeBTT1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 14:27:21 -0500
-X-Google-Smtp-Source: AH8x227/OGyJJ6eoV5eGFQSTiyY0t5DnvVj1hirCI+IzFb9omKot2AYGSlFA4daP4EzbWwTiDI6m8oc7SvCkTvy1PO8=
+        id S1753062AbeBTT36 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 14:29:58 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751994AbeBTT35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 14:29:57 -0500
+Date: Tue, 20 Feb 2018 13:29:56 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code:
+ section
+Message-ID: <20180220192956.si2a6m3ckskexvte@treble>
+References: <20180219202826.19797-1-bp@alien8.de>
+ <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
 MIME-Version: 1.0
-Reply-To: mtk.manpages@gmail.com
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date: Tue, 20 Feb 2018 20:26:59 +0100
-Message-ID: <CAKgNAkgEa9ZEHzoRWv7Y71eFVuFsy8Z4zSazZv9u7NRrx3xG9Q@mail.gmail.com>
-Subject: A "domain invalid" cgroup *can* sometimes have member tasks
-To: Tejun Heo <tj@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Tejun
+On Tue, Feb 20, 2018 at 07:14:00PM +0000, Andy Lutomirski wrote:
+> On Mon, Feb 19, 2018 at 8:28 PM, Borislav Petkov <bp@alien8.de> wrote:
+> > From: Borislav Petkov <bp@suse.de>
+> >
+> > Hi,
+> >
+> > so I've been thinking about doing this for a while now: be able to dump
+> > the opcode bytes around the user rIP just like we do for kernel faults.
+> >
+> > Why?
+> >
+> > See patch 5's commit message. That's why I've marked it RFC.
+> >
+> > The rest is cleanups: we're copying the opcodes byte-by-byte and that's
+> > just wasteful.
+> 
+> Maybe this series already has this side-effect, but I'd really love to
+> see oopses show the code bytes for each kernel entry, not just the
+> innermode one.  We already dump full regs including RIP -- adding
+> Code: should be easy and would be very helpful.
 
-According to Documentation/cgroup-v2.txt, a "domain invalid" cgroup
-can't have member tasks. And indeed this is generally not permitted.
-
-However, someone recently showed me a scenario where a "domain
-invalid" cgroup can have member processes. See the following example:
-
-# mkdir -p /sys/fs/cgroup/unified/grp0/grp1
-# sleep 1000 &
-[1] 10549
-# echo 10549 > /sys/fs/cgroup/unified/grp0/grp1/cgroup.procs
-# echo threaded > /sys/fs/cgroup/unified/grp0/cgroup.type
-# cat /sys/fs/cgroup/unified/grp0/cgroup.type
-threaded
-# cat /sys/fs/cgroup/unified/grp0/grp1/cgroup.type
-domain invalid
-# cat /sys/fs/cgroup/unified/grp0/grp1/cgroup.threads
-10549
-
->From the above, we see that the cgroup grp0/grp1 is of type "domain
-invalid" and has a member thread. This seems to be a violation of the
-documented rules, and is I assume a bug, since in the above scenario,
-we are denied from adding further tasks to the grp0/grp1 cgroup:
-
-# sleep 2000 &
-[2] 10553
-# echo 10553 > /sys/fs/cgroup/unified/grp0/grp1/cgroup.procs
-sh: echo: write error: Operation not supported
-
-Could you comment please?
-
-Thanks,
-
-Michael
+Just to clarify, I think you want to show the Code: around regs->ip
+every time we show the registers?
 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Josh
