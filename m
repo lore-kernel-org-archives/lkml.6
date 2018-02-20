@@ -1,92 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751372AbeBTIVC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:21:02 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:39003 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750820AbeBTIVB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:21:01 -0500
-X-CTCH-RefID: str=0001.0A0B0203.5A8BD925.01EE:SCFSTAT16437741,ss=1,re=-4.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Subject: [PATCH] mtd: nand: gpmi: fix edo mode for non fully ONFI compliant
- flashes
-To: Han Xu <han.xu@nxp.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-CC: Richard Weinberger <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Message-ID: <2e12a84b-b4cb-f0ff-f3c9-173def6b5bd2@ginzinger.com>
-Date: Tue, 20 Feb 2018 09:15:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.1.106]
-X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
- exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [PATCH] mtd: nand: gpmi: fix edo mode for non
- fully ONFI compliant flashes[NOSIG][NODISC]
-X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
+        id S1751233AbeBTIWT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:22:19 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:49654 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeBTIWS (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Tue, 20 Feb 2018 03:22:18 -0500
+Message-Id: <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Tue, 20 Feb 2018 01:22:14 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Ingo Molnar" <mingo@kernel.org>
+Cc: <mingo@elte.hu>, <tglx@linutronix.de>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: Re: [PATCH RESEND] x86: consider effective protection
+ attributes in W+X check
+References: <5A8BDF3602000078001A96CD@prv-mh.provo.novell.com>
+ <20180220081042.wgriecqneizg3df7@gmail.com>
+In-Reply-To: <20180220081042.wgriecqneizg3df7@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In enable_edo_mode the timing mode feature is set according to previously
-read capabilities of the parameter page ("Timing mode support"). After
-the value was set, it is read back to provide a "double-check".
-If the "double check" fails, the whole function returns with an error,
-which leads to a very slow (non-edo) fallback timing.
+>>> On 20.02.18 at 09:10, <mingo@kernel.org> wrote:
+> * Jan Beulich <JBeulich@suse.com> wrote:
+>> Using just the leaf page table entry flags would cause a false warning
+>> in case _PAGE_RW is clear or _PAGE_NX is set in a higher level entry.
+> 
+> Under what circumstances did you see false positive warnings?
 
-The problem here is, that there seem to be some NAND flashes, which are
-not fully ONFI 1.0 compliant.
-One of these is Winbond W29N04GV. According to datasheet and parameter
-page, the flash supports timing mode 4 (edo), but the timing mode feature
-is simply missing.
+As explained in the 2-patch series this was originally part of, there
+continues to be that W+X warning when running under Xen, as
+commit 2cc42bac1c ("x86-64/Xen: eliminate W+X mappings") has
+to make the necessary adjustment in L2 rather than L1 (the
+reason is explained there). I.e. _PAGE_RW is clear there in L1,
+but _PAGE_NX is set in L2.
 
-It seems that setting a non-existing feature is simply ignored. The real
-problem occurs, when the feature is read back: W29N04GV always delivers
-zero, which causes the "double-check" to fail. This leads to very slow
-timing and therefore to poor performance.
+>> Hand through both the current entry's flags as well as the accumulated
+>> effective value (the latter as pgprotval_t instead of pgprot_t, as it's
+>> not an actual entry's value).
+>> 
+>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+>> Reviewed-by: Juergen Gross <jgross@suse.com>
+>> ---
+>>  arch/x86/mm/dump_pagetables.c |   92 ++++++++++++++++++++++++++----------------
+>>  1 file changed, 57 insertions(+), 35 deletions(-)
+> 
+> Could you please rebase this on top of latest tip:master, which changed 
+> arch/x86/mm/dump_pagetables.c non-trivially due the dynamic 5 level paging 
+> changes?
 
-To solve this, we simply remove the double-check, which is a paranoia
-check anyways.
+I'll see what I can do; it's a pity that the change here, which had
+been sent weeks ago and is a bug fix, hadn't gone in before that
+other change (being more an improvement than a bug fix). At
+least it doesn't look like the re-basing would be very difficult.
 
-The modification was intensively tested on i.MX6 with linux-4.1, Winbond
-W29N04GV and Micron MT29F4G08ABADAH4.
-
-Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
----
- drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
-index 97787246af41..40fba96df215 100644
---- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
-+++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
-@@ -939,16 +939,9 @@ static int enable_edo_mode(struct gpmi_nand_data *this, int mode)
- 	if (ret)
- 		goto err_out;
- 
--	/* [2] send GET FEATURE command to double-check the timing mode */
--	memset(feature, 0, ONFI_SUBFEATURE_PARAM_LEN);
--	ret = nand->onfi_get_features(mtd, nand,
--				ONFI_FEATURE_ADDR_TIMING_MODE, feature);
--	if (ret || feature[0] != mode)
--		goto err_out;
--
- 	nand->select_chip(mtd, -1);
- 
--	/* [3] set the main IO clock, 100MHz for mode 5, 80MHz for mode 4. */
-+	/* [2] set the main IO clock, 100MHz for mode 5, 80MHz for mode 4. */
- 	rate = (mode == 5) ? 100000000 : 80000000;
- 	clk_set_rate(r->clock[0], rate);
- 
--- 
-2.11.0
+Jan
