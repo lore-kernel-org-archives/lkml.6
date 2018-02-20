@@ -1,46 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeBTHoQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 02:44:16 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:60674 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeBTHoP (ORCPT
+        id S1751436AbeBTHqc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 02:46:32 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51323 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751320AbeBTHqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 02:44:15 -0500
-Date: Tue, 20 Feb 2018 08:44:15 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: David Woodhouse <dwmw@amazon.co.uk>
-cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com, mingo@kernel.org
-Subject: Re: [PATCH v3 1/4] x86/speculation: Use IBRS if available before
- calling into firmware
-In-Reply-To: <1519037457-7643-2-git-send-email-dwmw@amazon.co.uk>
-Message-ID: <alpine.DEB.2.21.1802200843570.24268@nanos.tec.linutronix.de>
-References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk> <1519037457-7643-2-git-send-email-dwmw@amazon.co.uk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Feb 2018 02:46:30 -0500
+X-Google-Smtp-Source: AH8x2248LCNozIQxLhxoW9913oGd55nketWH35ykep+yhMLfKXvkRQna1jfDffcSk18+dYcR02mRkFECROslE8+Tnnk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180216170033.3834-2-mdf@kernel.org>
+References: <20180216170033.3834-1-mdf@kernel.org> <20180216170033.3834-2-mdf@kernel.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Tue, 20 Feb 2018 08:45:39 +0100
+Message-ID: <CAOFm3uFjoR+qpOR0tHUk78h4BA-qeweoqs3+y_ut==Q34V-0Sw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] net: ethernet: nixge: Add support for National
+ Instruments XGE netdev
+To: Moritz Fischer <mdf@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        netdev@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018, David Woodhouse wrote:
+Hi Moritz,
 
-> Retpoline means the kernel is safe because it has no indirect branches.
-> But firmware isn't, so use IBRS for firmware calls if it's available.
-> 
-> Block preemption while IBRS is set, although in practice the call sites
-> already had to be doing that.
-> 
-> Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
-> code, from an NMI handler. I don't want to touch that with a bargepole.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+On Fri, Feb 16, 2018 at 6:00 PM, Moritz Fischer <mdf@kernel.org> wrote:
+> Add support for the National Instruments XGE 1/10G network device.
+>
+> It uses the EEPROM on the board via NVMEM.
+>
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+<snip>
+
+> --- /dev/null
+> +++ b/drivers/net/ethernet/ni/nixge.c
+> @@ -0,0 +1,1352 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+<snip>
+
+> +MODULE_LICENSE("GPL");
+
+This does not match your license above. Per module.h "GPL" would mean "GPL-2.0+"
+Can you use one or the other an\d ensure both of these are in sync?
+
+-- 
+Cordially
+Philippe Ombredanne
