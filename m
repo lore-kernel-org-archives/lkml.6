@@ -1,101 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeBTPlr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:41:47 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37765 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752313AbeBTPln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:41:43 -0500
-Subject: Re: [PATCH v14 0/9] LPC: legacy ISA I/O support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
- <CAHp75VeFiQocuedW64ePgLO=_FQd7Q_hX-+wMh0zec3XUzhVxw@mail.gmail.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <55d64c79-87b6-78e0-b13e-77ac7f1c9e90@huawei.com>
-Date: Tue, 20 Feb 2018 15:41:18 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1752577AbeBTPmK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:42:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52164 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750871AbeBTPmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:42:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69228605FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 20 Feb 2018 15:42:05 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, sboyd@codeaurora.org,
+        rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: Re: [PATCH v3 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Message-ID: <20180220154205.GC28504@codeaurora.org>
+References: <20180216224614.24037-1-ilina@codeaurora.org>
+ <20180216224614.24037-3-ilina@codeaurora.org>
+ <20180219203106.mfzmxy42biwo33qj@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeFiQocuedW64ePgLO=_FQd7Q_hX-+wMh0zec3XUzhVxw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180219203106.mfzmxy42biwo33qj@rob-hp-laptop>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/02/2018 14:54, Andy Shevchenko wrote:
-> On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
->> > This patchset supports the IPMI-bt device attached to the Low-Pin-Count
->> > interface implemented on Hisilicon Hip06/Hip07 SoC.
->> >                         -----------
->> >                         | LPC host|
->> >                         |         |
->> >                         -----------
->> >                              |
->> >                 _____________V_______________LPC
->> >                   |                       |
->> >                   V                       V
->> >                                      ------------
->> >                                      |  BT(ipmi)|
->> >                                      ------------
->> >
->> > When master accesses those peripherals beneath the Hip06/Hip07 LPC, a specific
->> > LPC driver is needed to make LPC host generate the standard LPC I/O cycles with
->> > the target peripherals'I/O port addresses. But on curent arm64 world, there is
->> > no real I/O accesses. All the I/O operations through in/out accessors are based
->> > on MMIO ranges; on Hip06/Hip07 LPC the I/O accesses are performed through driver
->> > specific accessors rather than MMIO.
->> > To solve this issue and keep the relevant existing peripherals' drivers untouched,
->> > this patchset:
->> >    - introduces a generic I/O space management framework, logical PIO, to support
->> >       I/O operations on host controllers operating either on MMIO buses or on buses
->> >      requiring specific driver I/O accessors;
->> >    - redefines the in/out accessors to provide a unified interface for both MMIO
->> >      and driver specific I/O operations. Using logical PIO, th call of in/out() from
->> >      the host children drivers, such as ipmi-si, will be redirected to the
->> >      corresponding device-specific I/O hooks to perform the I/O accesses.
->> >
->> > Based on this patch-set, all the I/O accesses to Hip06/Hip07 LPC peripherals can
->> > be supported without any changes on the existing ipmi-si driver.
->> >
->> > The whole patchset has been tested on Hip07 D05 board both using DTB and ACPI.
->> >
->> > Differences to v13:
->> > - dropped ACPI scan handler and added patch to not enumerate children
->> >   of indirect IO hosts in ACPI code
->> > - tidied up logic_pio.c a bit for kerneldoc and made some APIs clearer
->> >   to understand
->> > - tided (and simplified) hisi_lpc.c and added new ACPI probe code
->> >   (same as previous ACPI scan handler code, so comments from Rafael
->> >   and Andy included)
->> > - reinstated PCI range upper limit check in pci_pio_to_address()
->> > - dropped Dann Frazier's "tested-by" tag in light of changes
->> > - rebase to linuxnext 20180219 (had to fix locally arm64 build issue)
->> >
-> Some minor comments per patches, otherwise FWIW
+On Mon, Feb 19 2018 at 20:31 +0000, Rob Herring wrote:
+>On Fri, Feb 16, 2018 at 03:46:14PM -0700, Lina Iyer wrote:
+>> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>>
+>> +The devicetree representation of the command DB driver should be:
 >
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>Need to state this is a child of /reserved-memory
+Yes, ofcourse. Will fix.
+
 >
+>> +
+>> +PROPERTIES:
+>
+>Why the yelling? :)
+>
+Oops.
 
-Thanks, the comments in the other 2 patches I did not reply to are ok.
+>> +- compatible:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Should be "qcom,cmd-db"
+>
+>reg?
+>
+Yes.
 
-John
+Thanks Rob for the reveiw.
+-- Lina
