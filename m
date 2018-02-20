@@ -1,60 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751718AbeBTMlK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:41:10 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57772 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeBTMlJ (ORCPT
+        id S1751807AbeBTMrq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:47:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37904 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeBTMro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:41:09 -0500
-Date: Tue, 20 Feb 2018 12:41:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Handle PM_SUSPEND_TO_IDLE
- suspend_state_t
-Message-ID: <20180220124107.GD6378@sirena.org.uk>
-References: <20180218170424.11976-1-hdegoede@redhat.com>
- <20180219113444.GA32761@sirena.org.uk>
- <5486ab34-4e5b-e2d5-9475-4d7e24a0cda6@redhat.com>
- <20180220114759.GB6378@sirena.org.uk>
- <066afd48-896f-b8fa-0bc0-7e3b0b76e33b@redhat.com>
+        Tue, 20 Feb 2018 07:47:44 -0500
+Date: Tue, 20 Feb 2018 04:47:42 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 15/61] xarray: Add xa_load
+Message-ID: <20180220124742.GA21243@bombadil.infradead.org>
+References: <20180219194556.6575-1-willy@infradead.org>
+ <20180219194556.6575-16-willy@infradead.org>
+ <CAOFm3uFQsycp1LpCwsMYJ0TynO03c5v3wBsNmE6mJxXaXyk+yA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <066afd48-896f-b8fa-0bc0-7e3b0b76e33b@redhat.com>
-X-Cookie: Don't read everything you believe.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAOFm3uFQsycp1LpCwsMYJ0TynO03c5v3wBsNmE6mJxXaXyk+yA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 20, 2018 at 08:34:06AM +0100, Philippe Ombredanne wrote:
+> > +++ b/tools/testing/radix-tree/xarray-test.c
+> > @@ -0,0 +1,56 @@
+> > +/*
+> > + * xarray-test.c: Test the XArray API
+> > + * Copyright (c) 2017 Microsoft Corporation <mawilcox@microsoft.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify it
+> > + * under the terms and conditions of the GNU General Public License,
+> > + * version 2, as published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope it will be useful, but WITHOUT
+> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> > + * more details.
+> > + */
+> 
+> Do you mind using SPDX tags per [1] rather that this fine but long legalese?
+> Unless you are a legalese lover of course.
 
---llIrKcgUOe3dCx0c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Argh, missed that one.
 
-On Tue, Feb 20, 2018 at 01:12:08PM +0100, Hans de Goede wrote:
-
-> I might just be looking at the wrong place and if so I'm sorry, but I
-> don't see any (additional) fixes related to this here:
-
-Seems to have got stuck somewhere, sorry - pushed now.
-
---llIrKcgUOe3dCx0c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqMF2IACgkQJNaLcl1U
-h9Aw7wf9FSReESPP0gGN+B6L9igxFyNzcwbLOXSdwbMy92t7cvncxWsr9yNSMweU
-BgXBhre0Kxbk5YMZPQ90ge26SMhfLXPoqsD3G4L3JoTn+BxGW0LGVn2nl0mUpwdK
-o9+3RD5y/2OAqHwZXCRvwgmhebXtobtSjrJlUWkWdTmD3aSK5ZuxM8EVtQ2WBh/p
-Qj/AtSTriwZCmQWCb5UOCsnnlVIs266locbeS/BjiAOdmVNEUsUo7wlyk2o9rwmT
-l2Rw6sbjSZLGgyZkLL95TT8VK1uYd3Ajuq8Fi64O+6w1t3Yhswkroo3TH+7ZpXQq
-tFyyLjRuKpc3AeLJktnOIxot1mGN/Q==
-=Q2el
------END PGP SIGNATURE-----
-
---llIrKcgUOe3dCx0c--
+I'm more concerned with the documentation license, though.  I didn't
+get a response from you to the email I sent Feb 12, Subject: License
+documentation.
