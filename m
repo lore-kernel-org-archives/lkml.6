@@ -1,63 +1,103 @@
-Return-Path: <ivid.suvarna@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519134565; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZQHu7OgdZ0gjnoVTEGmo+10d03TVDzkcurO5iF7JsDbYx7s6UmDyYmK/EdEOHU9OuG
-         A2cou03xCkYPguf6nmyUQTMEJb/XmwRbD/Pp9Hg3cwnsmlwLcQ2x+R9VjxgjW2gS64g4
-         AK1df9OsFhjuhTD7gayIClt6t0+hK8fY/iIy013uPD1mpvxjbB+2QuSXfPP8Nzmf0cnM
-         N2Vl3UO91nc/sZuDpLJQtgEbc2grFWNxAdDQYw+1viIdiJKsAS6DNVSiUDkebfA9uCW1
-         PQ9nOv+7OAncrq6ymCSI54AClely/xK5+Ity095g2kMPPg9YTDe0KeuBEo85eaJeKIpE
-         SDyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=JDo/Ag99wzjwbldRng8QSKZPogS0ranC5mwi/71zUss=;
-        b=KlogHZ7g7SLwiaV9EOSCnoWZ7uds0QN5afTdJzQGG+NEw04n0Xa7YJMx/SAn+1TeeR
-         p87x2KnLll/HZZ65mesoIMbHAZL9KZA50TCxNU5adDX5K0/44vEYA+goB1OLrE6kfUfM
-         wpBOXwG6PXU8k4kMOXM6DMYWHaEjjRHwb7AeAz4oxHwbkZWBPrfuRDfav++29zIayxd/
-         CMM84M3i9NL1oM8OkjQmZu4Z3JsuGAOAdNPEVjcGpJjCRxMBtyHBpqu70T2tb5xLcn0+
-         lBbxq1QyDbfKUtACQN5yq711UJ+6SZcFbbRRMTtHmb2fO/2ppXpiIFr+DxnzzCSj3SeS
-         xoNA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DamHlBhr;
-       spf=pass (google.com: domain of ivid.suvarna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ivid.suvarna@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DamHlBhr;
-       spf=pass (google.com: domain of ivid.suvarna@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ivid.suvarna@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227+6agfDdsk+gIvr/IY+M7f8BXhN1aMtZO5DRlfLcpU3ukHNrd5jDuinJMPIMNo1x7hVM4/JTPEiTe/+7ckS9Y=
-MIME-Version: 1.0
-In-Reply-To: <20180220075425.GA13048@kroah.com>
+Return-Path: <kernelnewbies-bounces@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-3530641-1519152602-2-15320726546681729933
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: kernelnewbies-bounces@kernelnewbies.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519152601; b=Xswh3yvHWkwDTspHWUY3wG3stggJWcr8x2SiGqEP/RG0wqP
+    ao0WTT199Q+/MsRAJ/hjLuECIS75rHRRW8AiNBa6F7OyQaQYdKvS2yItrMD1hvZV
+    9DJTAy60CIUHiDo436CbelOE+MndqrxLC/Sga0+DxUKe48LfDWJD2/hePDgzOsdo
+    M4Zdx5I12zAuZ+VgfDZME9qE5/JQ239kgTTGmyTTQ6iSMsSUdUhu4sqtz/uuLnV3
+    LI3SrL7bxey/SYdIh8RmgxowLFcT5ozZHFNSaigGo+T5zpLQ55wQtHfBzeTRvauU
+    +GYZErmJTfU6sbVLLRZibrt1CPL4Rikp+JlTzNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:mime-version:cc:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding; s=arctest; t=1519152601; bh=bG9sHf24
+    Dp7N8Jync4YHRbEybQdfLLlcNYZQ4lp0ObQ=; b=P5O3HyXr/epfJkt/iDM417ja
+    UFhyMhN+3JARuXdidK0PuP8vCwl4rz4VyNOeTmWdjGKHRfnRh4dyTJInBSOL7qsy
+    AKpwe2XrKjanh3KUtq/N4r41aAXDw3K5mzO1BsuTIGZp202dbLhX6w8iYUySU+ZF
+    XMOYeeBjAUFUzXoQeQb+FbQLBDX7ghtnpAK6TBYkkq6sxZL6BJiiCa9xAmi6LQ9+
+    Nx5/Jg47wspw4egrrBoBDOss6/Jw42AwjB+VlysYIx0oc+pKzIjo0uYBpR2pQKJs
+    tbBvuwTWsC7tXE3iUzHDp1vZ8JSN8mVooM79V9WSvc6K7NX3ROtz6RDGptLFDg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rjwysocki.net;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=rjwysocki.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rjwysocki.net;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=rjwysocki.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Ivid Suvarna <ivid.suvarna@gmail.com>
+Subject: Re: Timekeeping warning during resume from suspend to disk
+Date: Tue, 20 Feb 2018 16:22:10 +0100
+Message-ID: <10932445.pQZk5yFdez@aspire.rjw.lan>
+In-Reply-To: <CABXF_AD74A8SmXGA5T9ODbC4JnDuxQN9n8N_9RZrm8a7CtjXQQ@mail.gmail.com>
 References: <CABXF_AAQVJ7eMt4gFhiEcgZTD7Y4R66-9ELZ1OJ2gAmKPeLMAw@mail.gmail.com>
  <20180220075425.GA13048@kroah.com>
-From: Ivid Suvarna <ivid.suvarna@gmail.com>
-Date: Tue, 20 Feb 2018 19:19:24 +0530
-Message-ID: <CABXF_AD74A8SmXGA5T9ODbC4JnDuxQN9n8N_9RZrm8a7CtjXQQ@mail.gmail.com>
-Subject: Re: Timekeeping warning during resume from suspend to disk
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Kernel development list <linux-kernel@vger.kernel.org>, kernelnewbies@kernelnewbies.org,
-	Linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <CABXF_AD74A8SmXGA5T9ODbC4JnDuxQN9n8N_9RZrm8a7CtjXQQ@mail.gmail.com>
+MIME-Version: 1.0
+X-Mailman-Approved-At: Tue, 20 Feb 2018 13:49:49 -0500
+Cc: Greg KH <gregkh@linuxfoundation.org>, Linux-pm@vger.kernel.org,
+ Kernel development list <linux-kernel@vger.kernel.org>,
+ kernelnewbies@kernelnewbies.org
+X-BeenThere: kernelnewbies@kernelnewbies.org
+X-Mailman-Version: 2.1.15
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1592928046517690959?=
-X-GMAIL-MSGID: =?utf-8?q?1592928046517690959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+On Tuesday, February 20, 2018 2:49:24 PM CET Ivid Suvarna wrote:
+> Hi Greg,
+> 
+> > 4.1.15 is a kernel that is very old and obsolete (released almost 3
+> > years ago, and tens of thousands of changes old.)  Please try something
+> > newer and more modern like 4.15.  If the issue is still there, the
+> > community will be glad to help you out.
+> >
+> > If you are stuck at that old kernel version for some odd reason, please
+> > get support from the company that is forcing you to use it.
+> 
+> Thank u for your kind suggestions.
+> I just tested with 4.14 kernel on same board and am still facing the same issue.
+> Is there anything I can look into for debugging this issue?
 
-> 4.1.15 is a kernel that is very old and obsolete (released almost 3
-> years ago, and tens of thousands of changes old.)  Please try something
-> newer and more modern like 4.15.  If the issue is still there, the
-> community will be glad to help you out.
->
-> If you are stuck at that old kernel version for some odd reason, please
-> get support from the company that is forcing you to use it.
+Can you add a bit more context from your log, please?
 
-Thank u for your kind suggestions.
-I just tested with 4.14 kernel on same board and am still facing the same issue.
-Is there anything I can look into for debugging this issue?
 
-Thanks,
-IVID
+_______________________________________________
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
