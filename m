@@ -1,295 +1,147 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1146594-1518691232-2-7921452186765891643
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518691231; b=VIuxk2f+fxNx0DH9JbJD3MBdfyNujAK7DuH9v94GG3cy8xD
-    ako5I6eGF4fDeqM9RFQIeRzf4KTPWmKwhixXhnYm9UuB+BrPH4T1tV6F1a/+LB+B
-    OZb78eXeMKm+lgBWGAFYvittC+ntVbeKW0yWUrZt0LYVzRQFcGLiLmY+LYMxxqt5
-    93gBH5M4Bdtp117PflrYHdAceo6CyThOuNBMCvvgt7KcQfMwy0WYXglv9x2pC+Gv
-    GRX/S8PxmPxwHlliUvd7f5HSqcgGnVk27G7PLFLMd++kpwxXDlkoo8giUbN36YXD
-    EuCDdj04jesvE7GTgC6RDaMYoiSswdfnhnBKAiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518691231;
-    bh=BC4GkbyhaBawShvQfPj3gjCi+1BUn6cixSLjomJbNIg=; b=Rc6ESoURQ9U6
-    CXem4kM7vTEAqZzjabdKWMBQ74rQk6yMH2evbycfdIdU+aBTbMJ/kxTnDUm1o/GE
-    JQjxOPcOnF5DtPHQSx1M+9f+0K5q264Nn1jkZFBr6GxYsDl5tDO6/pnMzozng3x5
-    EWiB56VQpO3wIWiRmJp0z+emAHoTs5qcYPHnRZaO225SGLqHd6bUHf5BmLzMjPNp
-    QxfOYx3KXHj5IDGFoZF/vc8Z6soOqVlbPN9cgaCmLho0qv3gpIgYuHZNQUSUfxgl
-    m3JcyjrypOI3nxLZ325H4wq2fR4kO91/Kb4oasdJmsWgfr5vSmFZKPB2AIf8G1g9
-    kwcZmQ5v7g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=VJZia74E x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=VJZia74E x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755497AbeBOKkN (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 05:40:13 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47570 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755446AbeBOKjh (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Feb 2018 05:39:37 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180215103935euoutp01bf85612dd0d6225fb1b464347ffae589~TeZPxNUCf1203312033euoutp01P
-X-AuditID: cbfec7f4-b4fc79c0000043e4-de-5a85636236d1
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Cc: Maciej Purski <m.purski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [RFC PATCH v2 6/6] drm/bridge/sii8620: use micro-USB cable
- detection logic to detect MHL
-Date: Thu, 15 Feb 2018 11:39:20 +0100
-Message-id: <20180215103920.32017-7-a.hajda@samsung.com>
-X-Mailer: git-send-email 2.16.1
-In-reply-to: <20180215103920.32017-1-a.hajda@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7djP87pJya1RBj/v61vcWneO1aKp4y2r
-        xcYZ61ktrn95zmox/whQ7MrX92wWk+5PYLE4f34Du0XnxCXsFpseX2O1uLxrDpvFjPP7mCwW
-        LWtltljw8haLxdojd9ktll6/yGTRuvcIu4Ogx5p5axg9Lvf1MnnM7pjJ6rFpVSebx/3u40we
-        m5fUe/RtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfG9/PT2Areq1U03v3E2MDYq9DFyMkhIWAi
-        0b64i6WLkYtDSGAFo8S9WZtYIZzPjBIHG7ewwlTN3XSNCSKxjFFi664PUM5/RolJb9exgVSx
-        CWhK/N18E8wWEYiVeHdpFzNIEbPANxaJebPmM4EkhAWSJT4ub2AEsVkEVCUmHD/NAmLzClhI
-        9LzuZYZYJy9x+E0T0GoODk4BS4kp8y1A5kgIPGaT+PRgMRtEjYvEidO72SFsYYlXx7dA2TIS
-        lyd3s0A0dDNKnNrXyQzhTGGUOP/qMhNElbXE4eMXwZ5jFuCTmLRtOjPINgkBXomONiGIEg+J
-        ny2HoP53lLjY+ZMN4uUeRonp3fuYJjBKLWBkWMUonlpanJueWmyUl1quV5yYW1yal66XnJ+7
-        iRGYHE7/O/5lB+OuP0mHGAU4GJV4eA1sWqKEWBPLiitzDzFKcDArifB+jGqNEuJNSaysSi3K
-        jy8qzUktPsQozcGiJM4bp1EXJSSQnliSmp2aWpBaBJNl4uCUamAMLGRSOc125tvRNXOTxEQy
-        p/52Mj/gkhQUOWd1yPdnhSUHaqqe1r5svfOMbdk58YPiV7n0JSUM7j5K+3PvyG33fIVoGWXt
-        GMlDSrcX+dcVWGuJHFmxcO2qv8u8u7hVHn+60h/AoPKR/01E6ZqwX783HslZKKe42vB0Or+P
-        TD+31nYGB/3X7QlKLMUZiYZazEXFiQDECjuPCgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsVy+t/xq7qJya1RBp8VLW6tO8dq0dTxltVi
-        44z1rBbXvzxntZh/BCh25et7NotJ9yewWJw/v4HdonPiEnaLTY+vsVpc3jWHzWLG+X1MFouW
-        tTJbLHh5i8Vi7ZG77BZLr19ksmjde4TdQdBjzbw1jB6X+3qZPGZ3zGT12LSqk83jfvdxJo/N
-        S+o9+rasYvT4vEkugCOKyyYlNSezLLVI3y6BK+P7+WlsBe/VKhrvfmJsYOxV6GLk5JAQMJGY
-        u+kaUxcjF4eQwBJGidOfZjBDOI1MEvOOXmYGqWIT0JT4u/kmG4gtIhAr8fbUZ7AiZoEfLBLX
-        T+4ESwgLJEu0Hv7LCGKzCKhKTDh+mgXE5hWwkOh53csMsU5e4vCbJtYuRg4OTgFLiSnzLUDC
-        QkAlGyfPY53AyLOAkWEVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYOhuO/Zzyw7GrnfBhxgF
-        OBiVeHgNbFqihFgTy4orcw8xSnAwK4nwfoxqjRLiTUmsrEotyo8vKs1JLT7EKM3BoiTOe96g
-        MkpIID2xJDU7NbUgtQgmy8TBKdXAOLux3Y6L7YpuQKFR5rsD01z+/E1lO/W2NLmc86uZ84k9
-        NnpVu4xF2njUT0okiX+ONTeRvBj+XVdf6pxLyCphS76626fXGPC/KI+a1rVU0Llz8rLjjtMK
-        is+WKsxSX7onzFL12qap5Quyo14f8CmfL1ko6Xdo0Xmpz1N3Xz70442Zzuy85Op0JZbijERD
-        Leai4kQA2SPhhFkCAAA=
-X-CMS-MailID: 20180215103929eucas1p208a0b6b20e7b0c5ce1b99791b6707ab8
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180215103929eucas1p208a0b6b20e7b0c5ce1b99791b6707ab8
-X-RootMTR: 20180215103929eucas1p208a0b6b20e7b0c5ce1b99791b6707ab8
-References: <20180215103920.32017-1-a.hajda@samsung.com>
-        <CGME20180215103929eucas1p208a0b6b20e7b0c5ce1b99791b6707ab8@eucas1p2.samsung.com>
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <Thomas.Lendacky@amd.com>
+X-Google-Smtp-Source: AH8x224QDj9Gz+a2/WiFPNmQAYP7b9QbQcCPTO7SbIZxXMBXj7aQBciOCZu/hpNhbTwUCAkhcXvH
+ARC-Seal: i=1; a=rsa-sha256; t=1519140165; cv=none;
+        d=google.com; s=arc-20160816;
+        b=urcmq79ZpjShvppPdZmwYKZ/lpUbhQMlBSEGu1cc8GwZPpTmt8GV2AZMeA7H+d+WJJ
+         IwhwSOoJegm60Pe1d3vDbjtD/sqjZflzN0tpGGzJ209Bw6lpLaHcAsasfkZp5IrGJQo5
+         aljBgn8liOo5RcFKpUXhTq6geo8H+GUWRhxhtwugfwNxeTc6gx3XywW8VIfxEv9iu7w+
+         7VzhR9U9t/FO1d12PTdzdRg8YycuvmNmqdZoUrfk+RIzvD8nHqfZWBlDp3I0smltcXG2
+         Zvnt8FQQ/ZTFQCm5U4nOu8ELCZ3izn5SSaGeJpnit2lSCCltUa5GjtJYv1pCRdRWMXNp
+         JGLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:references:cc:to:from:subject
+         :dkim-signature:arc-authentication-results;
+        bh=R9RT8s/flWK+Kp1JiofGVbkeuE/8JQDWu4Efdv2yRUc=;
+        b=UrYTGxiMNkC67f1nfoMZzaPGNDi59+flzWkpdV/AQBgPodQrCZX5A+og9ifbEuH1V3
+         69aGmTPvL9I+4+WFHDuL8xMGwaGM0Rn5w4EaReltlV54LpxG4NSSYzncm8AcgoQC2Dhe
+         bJ7e6sXdtmR2xd0zr0QNd3sZTu6Nj8Nh9e/20f3fQJ1DMPULa87vDbCh6wfLWlpGk1yp
+         wma5jUtzB+IwRI9Dd/OfzMQdj4Oeq6prhZbR89fIx3a4rkM4one1D91yJGoZSkWpORZf
+         2P8rUsew02t/7irF98eN66Bdc6RYGOmq6moXlS68koP3KLIYGIP2g+jNa+ypp5vtBXe8
+         on5g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=44ePuWkS;
+       spf=neutral (google.com: 104.47.37.77 is neither permitted nor denied by best guess record for domain of thomas.lendacky@amd.com) smtp.mailfrom=Thomas.Lendacky@amd.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=44ePuWkS;
+       spf=neutral (google.com: 104.47.37.77 is neither permitted nor denied by best guess record for domain of thomas.lendacky@amd.com) smtp.mailfrom=Thomas.Lendacky@amd.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [PATCH v3 3/6] x86/cpufeatures: Add AMD feature bits for
+ Speculation Control
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: David Woodhouse <dwmw2@infradead.org>,
+ Greg KH <gregkh@linux-foundation.org>
+Cc: arjan@linux.intel.com, tglx@linutronix.de, karahmed@amazon.de,
+ x86@kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com,
+ bp@alien8.de, peterz@infradead.org, pbonzini@redhat.com, ak@linux.intel.com,
+ torvalds@linux-foundation.org, dave.hansen@intel.com,
+ gnomes@lxorguk.ukuu.org.uk
+References: <1516813025-10794-1-git-send-email-dwmw@amazon.co.uk>
+ <1516813025-10794-4-git-send-email-dwmw@amazon.co.uk>
+ <20180124172002.GE16646@kroah.com> <1516816633.13558.166.camel@infradead.org>
+ <ea50b592-7664-ffd6-8e9d-e26a4ebb7257@amd.com>
+Message-ID: <df8c19da-50ae-e608-6961-ac56939a4248@amd.com>
+Date: Tue, 20 Feb 2018 09:22:08 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <ea50b592-7664-ffd6-8e9d-e26a4ebb7257@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: CY4PR0601CA0096.namprd06.prod.outlook.com
+ (2603:10b6:910:88::37) To CY4PR12MB1144.namprd12.prod.outlook.com
+ (2603:10b6:903:38::8)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: de3f532f-37f9-4be0-1b4f-08d57875bc36
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:CY4PR12MB1144;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1144;3:LiQYTo0QbBKWN3zQ6XPHrBYPBSkZJcLTWH3+pnpWGrDFc9p39N/U6rB476k6k216R1EPn62H1KoaY6qYlQHnXS9x6JDNvNGylFDWwBr80b957sU285FpVZOFA3K0mQZ8DER+QH/wqtKQUDEM9wQ/U0wlA2BkLGikEqNCQOMKzKJEDV7BPSMb/2CAICo+NKoOWZxUEDKOP1mSFpaSsRevP/zJk0hr2/N0VDgR4qZYq0O6ObRRnKmAT+turOBwX9mA;25:onCJyB0J6Ug0AXoyFUbEzn8BEXkcbogtcoiR48VTxfITcm7IujV5WmJcz/wsAj4TeMO85hgRww8dBYCqJeQ4R3qxVd2XzoiauEf8LqKB/voSU/xIv2+Zm6Orm+xz0asBsZMV6uCYi8PFkDQnVp6+n1muOYqFBn4hKy10Wz0cimuqWMwQklCvf2xz2zd3kqhCXNBKbeGFQxAvaWhtF63WrJSPW2VYdcjlEH+L/xoKnjPeE844ZuQdxIdopQg4bigWK/n++DyAH7TKaePcZ3YBvDxEGlCnYpWyBIWCrKO5SWUCaQaWOBBHMf8QTfCSo+XM5QWG5sQYzb0SQwsjrx++hA==;31:MM3Wd9CKzue9IwnbIwXi14r3oY0MmOuxeouT7oZMnD48iminqLxq9OZbXnI8ZX+VmB7n12I+LLne/pTvGIUEHackMxVpyTj0Dtblp39+vsFsM6RxDCo8i41IRYUYRHZLqkQz+Aa1ZcYh6RSI40TKFX0sw/jyiFOkL1LwrTv3vektfudBLalHS+BLN3ACLk/kuhK2cCp27ljcVz4Zq6r/GJqUwbyY+JUb5lmBxPItxwc=
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1144:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1144;20:oCRm/Lq+KW+Z0E/VMO9ZfngOIsQ8zqVkXPmtJzqahN0Gx+XgbOyHUPMmA5c/6uRkBOkmA1K2rb6Ks4TH9WLOQFpNaScFBHJbGt2bBn+y36iAHfqr9ZrfmGGFWoKTuN73IfEIR3a7RXD+VN8YOok+5NgduRYxRjDDz5BMEgx4kZ3fsjq64QEjAEjvgaqcmH5VjUompJ0oiSzfCtTsjnYfj8u0vYp8mb7PObiAjHyObu9xlihmpY/m57yB5CrFcl6GpiZlGeP5bzN3Z3kwx4AdQ/9Ye5UCupQmCyMXMp0+F/Ya/bioxjPONaYF0okuHh+ssKF4TPzJpShwGjVyStaEaXfNVTq1Iwe6cGjEn0Y3CtHhucf4M2ddYBSJSj74bxAz+HJhZGGYwzLZQ4lafKidQUzbphTiKfqTG07hU9EYceVJoRSlLF1r4eGLMomKd764VLQmXndERHVdTQes0Up7ffI4ihWb/qntCEXQS9kT9kwBRm8qSeOUGWKqEm2WwhlP;4:qBXHUU6FD6YYEUGLVA8koAFNoS15O4Aafnqyk656B5E+aV/9/2NcL+1cdlHIoLnyW1b0ch8gTSPHqscO4CsyN1froV+w7VC6qICiqpmJ8Lp1LclE7QvlAShKgKK0EM4kJUPYITrILyiQvZCtu3QMILOtpLOQwfp71QXDD1aeTkaPmlFFWVFixk2eRBbfw9wHLvRPCZTPZLgssqLuFvNa6vHV3DHPMl1hcZCbwMgHFWzjjXxYgCRT8v7rO2Grb3Kxhu5jZGwlZP9/fWDIimVa/yfK/ab1c+JHlEJ6Uiw4J70r9xtdGzsykgDWS1rYf008Pq8pM9C/VufgpUBPFqcSwA==
+X-Microsoft-Antispam-PRVS: <CY4PR12MB114450AF4D2A5E59274C4E8FECCF0@CY4PR12MB1144.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(42068640409301);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231101)(944501161)(10201501046)(6055026)(6041288)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:CY4PR12MB1144;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1144;
+X-Forefront-PRVS: 05891FB07F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(376002)(39380400002)(366004)(396003)(346002)(189003)(377424004)(199004)(110136005)(36756003)(31696002)(50466002)(64126003)(65806001)(105586002)(106356001)(31686004)(7736002)(305945005)(7416002)(47776003)(66066001)(65956001)(8676002)(81166006)(230700001)(81156014)(97736004)(8936002)(25786009)(3260700006)(4326008)(58126008)(72206003)(316002)(16576012)(68736007)(2486003)(23676004)(52116002)(52146003)(93886005)(478600001)(6246003)(76176011)(6666003)(2950100002)(65826007)(5660300001)(16526019)(59450400001)(77096007)(186003)(53546011)(966005)(386003)(3846002)(53936002)(2906002)(6116002)(26005)(6486002)(6306002)(229853002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1144;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjEyTUIxMTQ0OzIzOjZmRVRLc0JCZFJUT0lYOUI1cXJvRnBwUURL?=
+ =?utf-8?B?N0F6QTJUajlpSW5RV3FKd3lDajlGdzNrQ2M4Z0JCeE1xREprZHVnNHdHSUkw?=
+ =?utf-8?B?cXp0RGdtRjFxSjhGVnpFMXlHSk1YZGtEQUpYaElHYXF6aTh0WUJhVGlRRzZq?=
+ =?utf-8?B?amlGWlBFdkNLMzIvTlhOZVNkWGZKc3NhN1ptSUQ2NFRpTzdwWE1ZWGhycnVB?=
+ =?utf-8?B?Um4wNTFvU0lENGJrVDlMVXhtOHRRdldOWTFoTGk5SjVwbWZ6cDRKeUIrdHU5?=
+ =?utf-8?B?MHRQQm1DeU5INVdYL3NQRnFlbGU2ZVVJaS96OUtBSExwcGNmOVFjd2Y5MVVx?=
+ =?utf-8?B?d1c1RkRCL25CcllDeE42NHNUMlU5ZzdnSWpwRkh1MVBGNW1ZTU53QmkvM2RD?=
+ =?utf-8?B?d20xMDg4cGV6QmY1eHJlMUF2SnpUR3dsWjYxYXlRMkxMSldBVXJYZ015Q3Fl?=
+ =?utf-8?B?Z3lxUldXeVRNK2txZGkzYnJkaXhUNDlUc201bFNCUEpnVEppTU0zSC81ek1R?=
+ =?utf-8?B?ZkpiLzE4eXRZam11UzhhMHc0RnF4OW1PdkdaVnMxZFRVamlNVTc5RUNJSkJN?=
+ =?utf-8?B?cWl6aHR6N3FTd1VnMjZNWVR4cDFhR29MSSs5cFg2Q04zOEJ0SE1sbjd6eHpW?=
+ =?utf-8?B?MDRkWHNGVTlNRHhYVzVIYXhuZ2hCTmVMUEdvU3NLR2habURFaHRFZnV3SVhq?=
+ =?utf-8?B?ODZrdWE3TFgzdUdmdHhKQ2ZFUjQ3R3hCS2lyd21raXZBVFRjaW51OXBEWnRU?=
+ =?utf-8?B?bFJuNUFVeEZzQU0rVmZjaHVCK1E1UERnRGt0cmU3dkN5WitPUWIvRlU5bW5S?=
+ =?utf-8?B?dHQ4cTJtWmFYdnZOTGpxWFg0dXdVWlN6c21LeGtLM3lIQjZBL3VNSnI4bkVD?=
+ =?utf-8?B?SWVPM2pGRFBVME1tY3hoMUJzUmVaUFA1Z0gwRVlJL3JYN3hYK2QxSncvcExp?=
+ =?utf-8?B?Rnd0MDRBN2ZpcG1QZXMvYjFZSFVabmtUNFhoUU5Tcmtvd2RyUDBVYjQreHk1?=
+ =?utf-8?B?OUZMOUdHaFo2VmxrREYwalhuRTVUK2JUVTlpZ2x2c1dhc2dKeFRYY0Jpb00w?=
+ =?utf-8?B?aEMrc3poT1FkbkkzT3VObHZIWStQdTdGUGdJVEdyTkluYXA1dGhYVEM5c3ZO?=
+ =?utf-8?B?aG11b3lpeVVCY0NjUXRLSDV6SWpia25UN2pkWkw2dU9ySEtpMzBFSnNKbkJY?=
+ =?utf-8?B?cklHU0o5NSsrM2g2U2ZRV05ld3liTDlGK2dSZjYzTzRhSG8vU2FtTldBMDVO?=
+ =?utf-8?B?ZFB5K2xaNFhab2drOFBBQ0NOUTZydmJMYjMyWXBOSUptRk9tbHZNWlVoQXBI?=
+ =?utf-8?B?VVozQVh2ckthQk9zc0hsUkh2OU91RmVMUHA0OUI0b3dFTHc0UDVkc2JCVkpE?=
+ =?utf-8?B?czVQanpicDhiSnMwZ3l6ejlQL3FWL2FRdjR5QzRMTGxpVGhQWitGM0c3QmRv?=
+ =?utf-8?B?QlhvMDZiVzNIUkdKMzdvKzVQSXREVmFpQStJZlFjdHhpZFhjRmM5L0wxcUlU?=
+ =?utf-8?B?WFRVb2NlRjArM09BV3V2bjJTQU91Z1lIRkhPbnY1dzhWWk9FVmNmeDkrdWZJ?=
+ =?utf-8?B?MWJTQ09Lc0pub1dYV0FtTDNIQ3ZCQzdHK3FtZmFUdG5LeHJTeUszbGd4SnBV?=
+ =?utf-8?B?cVJMK1YvNmJxNGxyMUVCVFF2RGNHa0w4UEEyTkwxNGpuOE5sUU9sNkcwVUtN?=
+ =?utf-8?B?NXRvQ0ZwaVJmbzVXVWxRZ2hsUFFNOUNDZDQ3d2NyR1pObVJlQ2tLbE5XMGk2?=
+ =?utf-8?B?SUowVHNpeWd6ZWVGTW4wUFNnZE4wUHE5S3FiaEhKUm92dEtacW1vdGdSYlRM?=
+ =?utf-8?B?MmZIQVliWk1xR0R6d3RIWmxMZ3RSZlJxeWNhUzdGdjFYZWYyeE96VDhDd3ZK?=
+ =?utf-8?B?aUZGb0RWNitreHJIWDZKK1liOFh0clMwcTVzblF0SXN4V1dxUWJNRXJEcjls?=
+ =?utf-8?B?THorTmlyMGFPRWZSeTY2ZDFaS3AzUjFkajlzSjNhd3FrenJka2Q3eldJVUJ2?=
+ =?utf-8?B?SWMvRUo1aklHakFJS2QvSWZPSHRIOU9VOGc5UmpXTUVaR0hhZ3hmQ0J6dG1C?=
+ =?utf-8?Q?wbNE=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1144;6:FNuM8uebiA0rzkUoXxx6me7p139CFOuNU9pUYRvD3VJ7+hJcRNawb1w+dYxQv1cl1icGUkAfNsLeIkqhVu/fa42s58AvM9Gd/bbxrbC2jvUg9TgDmxi/XGM7zTRjCmOC9cumrkiFRsl8jIHSAInZ4VODAPWpkALnoga5H+rLStB0SsNSl2QWF9k4R7xe03FM2Rt2P05K5J7JW1BwzF1FuzC2t3W0znHpLT1f5wUs40VC51/l905nHvSJ273TNH/4P/G2kqbpC9tj6GtC/Mh6Rh3t/zDKu91mL+pN0IFyQbA/8HTAGTHEKPOKcaA0cszaHEWtYhvtORutPf2ztXjUDgdLs2dQwL37fKlt8sH45oo=;5:RR0Y7NCPzWzDhYkEhrmR1vpt73WJYfTI5ySNGCCYpUfkqNFh4OiBQutXqNermGLg83fNrUeCiT3j0EE9OsdiANQFOpYWEVLQzzd/0xa3H1J1YemjsWCyORcg2E/SCwN9Wv989auj46V6gKqrzWuBgyx4YsBgfW6Yn/Uzz4CySCU=;24:XtEwE6eQ5sK0FBPomBkFIR/x3NupwfwX1o4KPNf+pV/3e/5F82hmds4Z82GK8xtmmdTXDzOZbMD/4j3wXkjRUiMTEY8n5Q/sdtJxlT/dx9k=;7:Gb0yw1WHUnBDBeHSAuJFjGSxSvxqXWJhZFQ8ggdCuwn7nWPVq4xYHtBo83n/k9L4yrIDR/0VvzWxm2XK/K5nP8/9RqwpI8ZLEolqCnJPUI+bOLcz6rbKw00yBc7FFH0oSrHd+BJcMD21Uj4VQdD15sSeqn05dpNRsM1YCeqppV9dRIyCsMC4qvLq9/m+29GRNKhphI+MPJanMTIk/TBC6N/R4YQkB/H2wUWLV++sq5pZxCgJN0wU0uxa7nn83c03
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1144;20:r/XAXjw6yoR2+ayxpoXsucMnJaz/twt1VSkK84ddUX6Ax0/SejGNTA2kAielwT/6uu3rnw2mYY9fMX0bP/qmSN/pg651+DYIKw+3gpgh98sKWSh1kuH7JemqL5gpGSS+iYxTftd9Oql1GqPLNLKBez9D+/nkZ12H0fdxKgOfTRLsVE9/UK53zE5QZS1ohFxatANLS+qL7kqwVryVJjffjRHbA2/5GUfc91gTwtyHdnTBaSxPIcp27jf+yrE/CQNP
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2018 15:22:19.8528 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de3f532f-37f9-4be0-1b4f-08d57875bc36
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1144
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1590493826599421101?=
+X-GMAIL-MSGID: =?utf-8?q?1592933918049557160?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Maciej Purski <m.purski@samsung.com>
+On 1/24/2018 4:52 PM, Tom Lendacky wrote:
+> On 1/24/2018 11:57 AM, David Woodhouse wrote:
+>> On Wed, 2018-01-24 at 18:20 +0100, Greg KH wrote:
+>>> On Wed, Jan 24, 2018 at 04:57:02PM +0000, David Woodhouse wrote:
+>>>>
+>>>> AMD exposes the PRED_CMD/SPEC_CTRL MSRs slightly differently to Intel.
+>>>> See http://lkml.kernel.org/r/2b3e25cc-286d-8bd0-aeaf-9ac4aae39de8@amd.com
+>>> Oh how fun :(
+>>
+>> At least they *work* the same :)
+>>
+>> Although I still haven't seen that doc, Tom...
+> 
+> Working on it...
 
-Currently MHL chip must be turned on permanently to detect MHL cable. It
-duplicates micro-USB controller's (MUIC) functionality and consumes
-unnecessary power. Lets use extcon attached to MUIC to enable MHL chip
-only if it detects MHL cable.
+The CPUID/MSR information is published:
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-This is rework of the patch by Maciej with following changes:
-- use micro-USB port bindings to get extcon, instead of extcon property,
-- fixed remove sequence,
-- fixed extcon get state logic.
+  https://developer.amd.com/wp-content/resources/Architecture_Guidelines_Update_Indirect_Branch_Control.pdf
 
-Code finding extcon node is hacky IMO, I guess ultimately it should be done
-via some framework (maybe even extcon), or at least via helper, I hope it
-can stay as is until the proper solution will be merged.
+Thanks,
+Tom
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/bridge/sil-sii8620.c | 97 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 94 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
-index 9e785b8e0ea2..565cc352ca81 100644
---- a/drivers/gpu/drm/bridge/sil-sii8620.c
-+++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -17,6 +17,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/extcon.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -25,6 +26,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -81,6 +83,10 @@ struct sii8620 {
- 	struct edid *edid;
- 	unsigned int gen2_write_burst:1;
- 	enum sii8620_mt_state mt_state;
-+	struct extcon_dev *extcon;
-+	struct notifier_block extcon_nb;
-+	struct work_struct extcon_wq;
-+	int cable_state;
- 	struct list_head mt_queue;
- 	struct {
- 		int r_size;
-@@ -2175,6 +2181,77 @@ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
- 	ctx->rc_dev = rc_dev;
- }
- 
-+static void sii8620_cable_out(struct sii8620 *ctx)
-+{
-+	disable_irq(to_i2c_client(ctx->dev)->irq);
-+	sii8620_hw_off(ctx);
-+}
-+
-+static void sii8620_extcon_work(struct work_struct *work)
-+{
-+	struct sii8620 *ctx =
-+		container_of(work, struct sii8620, extcon_wq);
-+	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-+
-+	if (state == ctx->cable_state)
-+		return;
-+
-+	ctx->cable_state = state;
-+
-+	if (state > 0)
-+		sii8620_cable_in(ctx);
-+	else
-+		sii8620_cable_out(ctx);
-+}
-+
-+static int sii8620_extcon_notifier(struct notifier_block *self,
-+			unsigned long event, void *ptr)
-+{
-+	struct sii8620 *ctx =
-+		container_of(self, struct sii8620, extcon_nb);
-+
-+	schedule_work(&ctx->extcon_wq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sii8620_extcon_init(struct sii8620 *ctx)
-+{
-+	struct extcon_dev *edev;
-+	struct device_node *musb, *muic;
-+	int ret;
-+
-+	/* get micro-USB connector node */
-+	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-+	/* next get micro-USB Interface Controller node */
-+	muic = of_get_next_parent(musb);
-+
-+	if (!muic) {
-+		dev_info(ctx->dev, "no extcon found, switching to 'always on' mode\n");
-+		return 0;
-+	}
-+
-+	edev = extcon_get_edev_by_of_node(muic);
-+	of_node_put(muic);
-+	if (IS_ERR(edev)) {
-+		if (PTR_ERR(edev) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dev_err(ctx->dev, "Invalid or missing extcon\n");
-+		return PTR_ERR(edev);
-+	}
-+
-+	ctx->extcon = edev;
-+	ctx->extcon_nb.notifier_call = sii8620_extcon_notifier;
-+	INIT_WORK(&ctx->extcon_wq, sii8620_extcon_work);
-+	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-+	if (ret) {
-+		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static inline struct sii8620 *bridge_to_sii8620(struct drm_bridge *bridge)
- {
- 	return container_of(bridge, struct sii8620, bridge);
-@@ -2307,13 +2384,20 @@ static int sii8620_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
-+	ret = sii8620_extcon_init(ctx);
-+	if (ret < 0) {
-+		dev_err(ctx->dev, "failed to initialize EXTCON\n");
-+		return ret;
-+	}
-+
- 	i2c_set_clientdata(client, ctx);
- 
- 	ctx->bridge.funcs = &sii8620_bridge_funcs;
- 	ctx->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ctx->bridge);
- 
--	sii8620_cable_in(ctx);
-+	if (!ctx->extcon)
-+		sii8620_cable_in(ctx);
- 
- 	return 0;
- }
-@@ -2322,8 +2406,15 @@ static int sii8620_remove(struct i2c_client *client)
- {
- 	struct sii8620 *ctx = i2c_get_clientdata(client);
- 
--	disable_irq(to_i2c_client(ctx->dev)->irq);
--	sii8620_hw_off(ctx);
-+	if (ctx->extcon) {
-+		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-+					   &ctx->extcon_nb);
-+		flush_work(&ctx->extcon_wq);
-+		if (ctx->cable_state > 0)
-+			sii8620_cable_out(ctx);
-+	} else {
-+		sii8620_cable_out(ctx);
-+	}
- 	drm_bridge_remove(&ctx->bridge);
- 
- 	return 0;
--- 
-2.16.1
-
+> 
+> Thanks,
+> Tom
+> 
+>>
