@@ -1,76 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751295AbeBTTto (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 14:49:44 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:32918 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750732AbeBTTtn (ORCPT
+        id S1751346AbeBTTzA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 14:55:00 -0500
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:36059 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750774AbeBTTy7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 14:49:43 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0SyIwpCz_1519156170;
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: akpm@linux-foundation.org, mingo@kernel.org, adobriyan@gmail.com
-Cc: yang.shi@linux.alibaba.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: proc: use down_read_killable in proc_pid_cmdline_read()
-Date: Wed, 21 Feb 2018 03:49:29 +0800
-Message-Id: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 20 Feb 2018 14:54:59 -0500
+X-Google-Smtp-Source: AH8x2265xa7sLnkZ1RzowQLGRvwEi1sZUqFrz95JzmAPpwW+ii4qGOxif2Efqih5wuZ4S/PNZZOsN/unCv2oZOVTJC0=
+MIME-Version: 1.0
+In-Reply-To: <1519126829-7257-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519126829-7257-1-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Tue, 20 Feb 2018 20:54:58 +0100
+Message-ID: <CAFkk2KRbErqLGspp9Th9J+nGzJffxpmiZ81b6jqe-dNH9SJ3ig@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Don't leak choice names during parsing
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running vm-scalability with large memory (> 300GB), the below hung
-task issue happens occasionally.
+On Tue, Feb 20, 2018 at 12:40 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> The named choice is not used in the kernel tree, but if it were used,
+> it would not be freed.
+>
+> The intention of the named choice can be seen in the log of
+> commit 5a1aa8a1aff6 ("kconfig: add named choice group").
+>
+> There is room for argument if this is useful in practice, but anyway
+> I am fixing the memory leak.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  scripts/kconfig/zconf.y | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+> index 4be9805..4893676 100644
+> --- a/scripts/kconfig/zconf.y
+> +++ b/scripts/kconfig/zconf.y
+> @@ -276,6 +276,7 @@ choice: T_CHOICE word_opt T_EOL
+>         sym->flags |= SYMBOL_AUTO;
+>         menu_add_entry(sym);
+>         menu_add_expr(P_CHOICE, NULL, NULL);
+> +       free($2);
+>         printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
+>  };
+>
+> --
+> 2.7.4
+>
 
-INFO: task ps:14018 blocked for more than 120 seconds.
-       Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- ps              D    0 14018      1 0x00000004
-  ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
-  ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
-  00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
- Call Trace:
-  [<ffffffff817154d0>] ? __schedule+0x250/0x730
-  [<ffffffff817159e6>] schedule+0x36/0x80
-  [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
-  [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
-  [<ffffffff81717db0>] down_read+0x20/0x40
-  [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
-  [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
-  [<ffffffff81241d87>] __vfs_read+0x37/0x150
-  [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
-  [<ffffffff81242266>] vfs_read+0x96/0x130
-  [<ffffffff812437b5>] SyS_read+0x55/0xc0
-  [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 
-When manipulating a large mapping, the process may hold the mmap_sem for
-long time, so reading /proc/<pid>/cmdline may be blocked in
-uninterruptible state for long time.
+Only place I've seen named choices in practice is in the esp-idf
+project. Not sure what they're using them for.
 
-down_read_trylock() sounds too aggressive, and we already have killable
-version APIs for semaphore, here use down_read_killable() to improve the
-responsiveness.
+They were handy for writing tests too. :P
 
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
----
- fs/proc/base.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9298324..44b6f8f 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -242,7 +242,9 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 		goto out_mmput;
- 	}
- 
--	down_read(&mm->mmap_sem);
-+	rv = down_read_killable(&mm->mmap_sem);
-+	if (rv)
-+		goto out_mmput;
- 	arg_start = mm->arg_start;
- 	arg_end = mm->arg_end;
- 	env_start = mm->env_start;
--- 
-1.8.3.1
+Cheers,
+Ulf
