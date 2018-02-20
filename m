@@ -1,74 +1,77 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-120056-1517892271-2-10810081496216351411
+X-Cyrus-Session-Id: sloti22d1t05-3115364-1519140159-2-12793991205848639136
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517892271; b=QiiYziaHTHHqsXoXTb3Be1P1zvu7pMdV50/3pl+spJQJ5Rt
-    6AumPRZhqqRKXoQiNSTQBZ5s3KoCbyVqkSRGWATxent0ni9bxUqFpX/nbEivI3o9
-    rRHyQE3tuNo9OxDPf36azlAx+mpGT1SSYrWFF9JOu+4v038uimPScd/8yO9sLAFr
-    7sdUK68opClCb8kO2Bc+WSODFZ5Wbwkdt53AaExjI+k2/hFEBmko3szu+fVct/SR
-    lDIvNQmkj+To5JjzZQdaC3npdkqSx5MYp0Vnbnfqgf/tDY86yHTu7o88MKl7SqRX
-    vlmk4OOBrFZizxF9LYIFWdnlqZ5OFPecH+RvpPg==
+    t=1519140159; b=knRM4Y+2IkFyOuotmoNyJHlFRCKZJIi4V8NPZF7lXkkwesv
+    zcCbJEW4Kr4q99jOhhOU9gbA6LVicN6rh8hjZdYc7n3uJB1JzZ26ZpxgcwyccWbo
+    DGtvR3cRAjyh5MOI9YpTkn4Zqg6MbrExxBU4N2ytinTskOWuxQlomeI0zMPh2vpQ
+    znmsysT3PSQItXj6bgDmZpUabg6fC8ijcHInS/aCHFR3yLToXD46H/X/kBQ9zesC
+    zUYIa+7y7Xs+tfnJEEEzz1rnopc8t2kfw7/s7K0gXOSMAFVrZl/fa3xHhRjTvX2e
+    oNiz/JK7Ipi51KSUFF9wfUpAExGXJ9cz4A8Bp8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1517892271; bh=dbXZIitr9dF0EDaPOFCanPA3puXye3KJNBsRtY
-    JlOsY=; b=mRz5rSSMbjX65a+R57E3qge/clUKLBVzBRLaMooj3wWbjfCS73J/sh
-    2iFkjCwltqRiCh7QdKPFxVHYfgnVH29XXQ4Z89QJGj5u1zHO7z0opsed3bkMnGvg
-    gB9I9E7SKwjtUl7UT6DzVzVZaL5O9LDIy2mXLlOqe2iINEz4gVV8Cj1VJPZ25mfd
-    XwrPu4dY0MVwcB1iS6xG8ZxoBNUCH2Dc2JHCwdB/hzUBDDMOslsBXCul7xO3Wrzj
-    eYJl72wgAzykpJf2YlW1sw2zNrO+z0c/mZsUFTsD8GSOAtfo2StBiOAKwvB2cmBy
-    FhnlgnDyb0Q6kIOTiTuOZERLLdww0KBw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b=oFF5wGVZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brainfault.org;
+    arctest; t=1519140159; bh=mMpjVX0m5+ythBBtJv4yoX8lUgaAEpUKvPC4UL
+    v4RHA=; b=Vop8X2+ZN5XR2UXfa6n78rdq8IfkdKQBkzbXg/g4XP5e4b6Hm+xhrg
+    Y+2I+pYe1K8LmhzavjtQfu8jm4O0XeVxAuZi3llQz1pmhkrjttnCTj/h42WVWkuj
+    Gd3EL82Z3UXhbp6lFm2PBf2FyP9IO0eliUI3lQtrZJ9qqlFNYDmSpkrMWZ7B7kQs
+    KMtnoIndMcYkB8Jcnm/c+vsKzc++EzK99i8Ojsrl4J8k6cbCschUeL/OTzF6RyAK
+    txzpTb39jz0tGza7EP9iaKz30m4rHEr9bR9ZlklX09hJlarVlwN2rEVtb+/LBfsY
+    a+OV7dj0nX342ubS1ALttOSW12KmMnRA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=r+V8LcpQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dDhbShS4;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ef24etS/;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=brainfault.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b=oFF5wGVZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brainfault.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=r+V8LcpQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dDhbShS4;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ef24etS/;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=brainfault.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752582AbeBFEoY (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Feb 2018 23:44:24 -0500
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:35543 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752539AbeBFEoR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Feb 2018 23:44:17 -0500
-X-Google-Smtp-Source: AH8x226Rs0DMiAWhbkga8BXBLLWxkycDTPGUen9jHLz53dCP9j+TvphKFdW0KNuLLS6lAb77IitYle5XMgp23lRbJIQ=
+        id S1752328AbeBTPWI (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Feb 2018 10:22:08 -0500
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:37411 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752230AbeBTPWG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 20 Feb 2018 10:22:06 -0500
+X-Google-Smtp-Source: AH8x225fXOwh8v1zYEQgAemI+VavXWNVqA75R184pU3zTj5ka3oHiwAqxM/v9qUCqTNsVbRD8jkHRJX5G2A84OLjjXo=
 MIME-Version: 1.0
-In-Reply-To: <1515590217-24256-1-git-send-email-anup@brainfault.org>
-References: <1515590217-24256-1-git-send-email-anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 6 Feb 2018 10:14:15 +0530
-Message-ID: <CAAhSdy2882krYXY5QAA44EaZoq48GdaBNtXr4J813WLyz==kAA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rpmsg: virtio_rpmsg_bus: fix rpmsg_probe() for
- virtio-mmio transport
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>, stable@vger.kernel.org
+In-Reply-To: <5a8c18fe.594a620a.7443c.50c7@mx.google.com>
+References: <5a8c18fe.594a620a.7443c.50c7@mx.google.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 20 Feb 2018 16:22:04 +0100
+X-Google-Sender-Auth: HXYk_MraB79LWj7mFYTgREfZsbQ
+Message-ID: <CAK8P3a3ma6aO_rBCj5e4AhUMhxRH383Ag2KzKQ9qfk2=Nkx-oQ@mail.gmail.com>
+Subject: Re: stable-rc build: 3 warnings 0 failures (stable-rc/v4.14.20-119-g1b1ab1d)
+To: stable <stable@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>
+Cc: Olof Johansson <olof@lixom.net>,
+        Kernel Build Reports Mailman List
+        <kernel-build-reports@lists.linaro.org>,
+        "Olof's autobuilder" <build@lixom.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -76,9 +79,22 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Bjorn,
+On Tue, Feb 20, 2018 at 1:47 PM, Olof's autobuilder <build@lixom.net> wrote:
 
-Can you please have a look at this patch?
+> Warnings:
+>
+>         arm64.allmodconfig:
+> drivers/media/tuners/r820t.c:1334:1: warning: the frame size of 2896 bytes is larger than 2048 bytes [-Wframe-larger-than=]
 
-Regards,
-Anup
+Hi Greg,
+
+please add
+
+16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
+
+This is an old bug, but hasn't shown up before as the stack warning
+limit was turned off
+in allmodconfig kernels. The fix is also on the backport lists I sent
+for 4.9 and 4.4.
+
+        Arnd
