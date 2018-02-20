@@ -1,95 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeBTN2M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:28:12 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41426 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbeBTN2J (ORCPT
+        id S1752028AbeBTN2u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:28:50 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39894 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751646AbeBTN2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:28:09 -0500
-X-Google-Smtp-Source: AH8x225ICSX7PrLdnoMhIOnFmd2gwLGDkevgIm09ng/Vywyi2YTtDDYtG3Tim3HyV2nqaURbuLwweQ==
-Date: Tue, 20 Feb 2018 10:28:04 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio:dummy: Fix coding style in Kconfig
-Message-ID: <20180220132804.fnlsi6ag6h5rrqya@smtp.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+        Tue, 20 Feb 2018 08:28:48 -0500
+X-Google-Smtp-Source: AH8x225UPQsmiwRccpebHDVOWRIdJJJ8GIXujr1oNAM70rOwuZV1upx9sCNfWMiw+1+KIEbDxqeOVA==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH net-next] tcp: remove the hardcode in the definition of TCPF Macro
+Date: Tue, 20 Feb 2018 21:28:31 +0800
+Message-Id: <1519133311-22068-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+TCPF_ macro depends on the definition of TCP_ macro.
+So it is better to define them with TCP_ marco.
 
-drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
-describes the config symbol fully
-drivers/iio/dummy/Kconfig:29: WARNING: please write a paragraph that
-describes the config symbol fully
-
-This patch expands the explanation about IIO_DUMMY_EVGEN by using the
-code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
-way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
-from file iio_simple_dummy_buffer.c. Finally, this patch apply the
-coding-style for Kconfig files (Documentation/process/coding-style.rst)
-
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- drivers/iio/dummy/Kconfig | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ include/net/tcp_states.h | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
-index 5a29fbd3c531..4a7127fb2979 100644
---- a/drivers/iio/dummy/Kconfig
-+++ b/drivers/iio/dummy/Kconfig
-@@ -9,20 +9,24 @@ config IIO_DUMMY_EVGEN
- 	tristate
- 
- config IIO_SIMPLE_DUMMY
--       tristate "An example driver with no hardware requirements"
--       depends on IIO_SW_DEVICE
--       help
--	 Driver intended mainly as documentation for how to write
--	 a driver. May also be useful for testing userspace code
--	 without hardware.
-+	tristate "An example driver with no hardware requirements"
-+	depends on IIO_SW_DEVICE
-+	help
-+	  Driver intended mainly as documentation for how to write
-+	  a driver. May also be useful for testing userspace code
-+	  without hardware.
- 
- if IIO_SIMPLE_DUMMY
- 
- config IIO_SIMPLE_DUMMY_EVENTS
--       bool "Event generation support"
--       select IIO_DUMMY_EVGEN
--       help
--         Add some dummy events to the simple dummy driver.
-+	bool "Event generation support"
-+	select IIO_DUMMY_EVGEN
-+	help
-+	  Add some dummy events to the simple dummy driver.
-+
-+	  The purpose of this is to generate 'fake' event interrupts thus
-+	  allowing that driver's code to be as close as possible to that
-+	  a normal driver talking to hardware.
- 
- config IIO_SIMPLE_DUMMY_BUFFER
- 	bool "Buffered capture support"
-@@ -32,6 +36,8 @@ config IIO_SIMPLE_DUMMY_BUFFER
- 	help
- 	  Add buffered data capture to the simple dummy driver.
- 
-+	  Buffer handling elements of industrial I/O reference driver.
-+	  Uses the kfifo buffer.
- endif # IIO_SIMPLE_DUMMY
- 
- endmenu
--- 
-2.16.1
+diff --git a/include/net/tcp_states.h b/include/net/tcp_states.h
+index 50e78a7..2875e16 100644
+--- a/include/net/tcp_states.h
++++ b/include/net/tcp_states.h
+@@ -32,21 +32,21 @@ enum {
+
+ #define TCP_STATE_MASK	0xF
+
+-#define TCP_ACTION_FIN	(1 << 7)
++#define TCP_ACTION_FIN	(1 << TCP_CLOSE)
+
+ enum {
+-	TCPF_ESTABLISHED = (1 << 1),
+-	TCPF_SYN_SENT	 = (1 << 2),
+-	TCPF_SYN_RECV	 = (1 << 3),
+-	TCPF_FIN_WAIT1	 = (1 << 4),
+-	TCPF_FIN_WAIT2	 = (1 << 5),
+-	TCPF_TIME_WAIT	 = (1 << 6),
+-	TCPF_CLOSE	 = (1 << 7),
+-	TCPF_CLOSE_WAIT	 = (1 << 8),
+-	TCPF_LAST_ACK	 = (1 << 9),
+-	TCPF_LISTEN	 = (1 << 10),
+-	TCPF_CLOSING	 = (1 << 11),
+-	TCPF_NEW_SYN_RECV = (1 << 12),
++	TCPF_ESTABLISHED = (1 << TCP_ESTABLISHED),
++	TCPF_SYN_SENT	 = (1 << TCP_SYN_SENT),
++	TCPF_SYN_RECV	 = (1 << TCP_SYN_RECV),
++	TCPF_FIN_WAIT1	 = (1 << TCP_FIN_WAIT1),
++	TCPF_FIN_WAIT2	 = (1 << TCP_FIN_WAIT2),
++	TCPF_TIME_WAIT	 = (1 << TCP_TIME_WAIT),
++	TCPF_CLOSE	 = (1 << TCP_CLOSE),
++	TCPF_CLOSE_WAIT	 = (1 << TCP_CLOSE_WAIT),
++	TCPF_LAST_ACK	 = (1 << TCP_LAST_ACK),
++	TCPF_LISTEN	 = (1 << TCP_LISTEN),
++	TCPF_CLOSING	 = (1 << TCP_CLOSING),
++	TCPF_NEW_SYN_RECV = (1 << TCP_NEW_SYN_RECV),
+ };
+
+ #endif	/* _LINUX_TCP_STATES_H */
+--
+1.8.3.1
