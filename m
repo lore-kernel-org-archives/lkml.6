@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x2270qGhi5EbPn1IGHqklvBA2w1rxWy00je1kjgNakwmzApJVtLBSVF9d0roGjUJq1TndGSr0
-ARC-Seal: i=1; a=rsa-sha256; t=1519093580; cv=none;
+X-Google-Smtp-Source: AH8x226855/zc6slFfcrkLdFx2qdq7bXlCMdYDGjDIxHdcMUSVrXkA6NbZyB+bIaCGyKVbqYYASa
+ARC-Seal: i=1; a=rsa-sha256; t=1519093573; cv=none;
         d=google.com; s=arc-20160816;
-        b=yrN6fay2kMI8EX38lKhtDhTLV4gF9i/4mfOG1M3IJepp5dwYym3gk+nhD/qDUcvbt4
-         cNbPUnDuJiwnU5GC5ZNzD4GsNioXp2UXUv+rSdIlQ+qnPjQIVPu77tnpATMmgmU2eZaL
-         VKDx1sOcRiiUUUjDW+kBD5PJKDUXfJX5Ym+1urVNeocHKXm+aiCMowC/5s35hGQIzd/O
-         WzYKjnleETEEl+zimKoUkwp+aY7C4cPzXXVXcDZDTtJWeqUH/hE3/8lcBa4BV8ov7Ib0
-         WNqCSg2g6B9yunn10tTI0MFhMu1Eyc8VyoLBH+Xa2qvhhnj8b0zh8zWS3dGbFGhI69IV
-         aycw==
+        b=kM48C2QC/cZEVCSsvpyGQyRahxCwQLhLJ2mYAB8nunTyxxz4RQazYyy53hoJ59Uw9l
+         RxXwwyfXc8oP2QQgcSiZr8WKQgATaKiSr1gTNXHR9KuVhwxH79BmLC7ilcxpWE6G3fiH
+         Tju2HB0jWov0b1yl5zu+4tCnfZeFqZnf2fICp88ll1jzw15upnT5PNTudYHrBmz0fJSd
+         6FMU1oJwhDccax6tO6xnbcQ89BXL7FdJeW8lI0SvWLbXDEo2kQwDELPdc67s8ys65AWi
+         16gwfFQForJhPt9WolQYsZOzpOoHpyQsKNHYjnSh6sQVUAhPsq/eUbRVmEH+hx4KYMKN
+         YSZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=xv2HgGfNbcEtnkqd2YwbKIBsHadMl4PHddUMoBYOmWg=;
-        b=AUrYEBQdq++pxQAqHkSupnk1CwuEat6Gwaw941NIaJrJWR8HSL3pGTjjdBZ7+zUcFY
-         /MEcx+ND2Tb//ZIRty3SJs4JCAAtanyUM0Xi8KZRdk5uiZGPb0XGooIux4XSBk4oPQck
-         Kjh0NX/93e7YOH8SJSLn7nNvLXrjjhQUnx1XXW8XshgWYL2EzJKH7vlCU77V7oa1ntFU
-         O53SJ1eoTUDouliv5Hs37xb8g+LbZHCn4kF556C1bkXEEuqBCSWUORqt0Y1nTH/u7fKT
-         CYZSdfsh0GO6o15kKjGmsBUbjNmXSTVNDcREBSq3uYX+Uh/lX/nFQ0uHPiC9gJXk0HTD
-         JzNQ==
+        bh=cqOWP8khz2Q1e226I3AtPf74A+drC7c5MAuwohqEXY4=;
+        b=GJETyQXnLAU7qRAmbDzQCbqJTGx+Akr+SzSzQXYBv6eGkplUkIlv0icS8IvUqoJ6NR
+         C3mkdFHcedG8Z+VQ2wSeE780IRt2zu2KR7gNzaon8YdYp2OdTscXxz2zdUca/bWfa8Wz
+         2G+0CJADbxityNT70Dfm2DSxELhga/1HeoFGFIFI7GBgWQnBlzovxXMZLSpyZopA+Vq1
+         U0wFNiW69MN6pL1MGcisWL6vkGb4r1w/3608LJKdH4u0kXWuUjtLDuT9MdLmfKU/LClk
+         SFEjg/6VB7xssrK+DWhgYHpVON2W+76esOqF9K3z1Niyy9rD/SmelITuV6u103cNNxNq
+         FbXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Tue, 20 Feb 2018 13:23:38 +1100
-Subject: [PATCH 17/21] staging: lustre: fid: use wait_event_cmd()
+Subject: [PATCH 16/21] staging: lustre: fid: convert lcs_mutex to a spinlock
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341813.25814.17831255008034562097.stgit@noble>
+Message-ID: <151909341810.25814.8461248924883891726.stgit@noble>
 In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -38,137 +38,231 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592885069696849532?=
-X-GMAIL-MSGID: =?utf-8?q?1592885069696849532?=
+X-GMAIL-THRID: =?utf-8?q?1592885062375543610?=
+X-GMAIL-MSGID: =?utf-8?q?1592885062375543610?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Rather than open-coding a wait event loop twice,
-use wait_event_cmd() to wait, dropping the spinlock
-over schedule().
-This does require duplicating part of the wait
-condition, but that is just three tests on values that
-are in registers or in cache, so the cost is small
-and the increased readability is large.
+There is only one place where this lock is held
+while the task might sleep - in
+  ldebugfs_fid_space_seq_write()
+while ldebugfs_fid_write_common() is called.
+
+This call can easily be taken out of the locked region
+by asking it to parse the user data into a local variable,
+and then copying that variable into ->lcs_space while
+holding the lock.
+
+Note that ldebugfs_gid_write_common returns >0 on
+success, so use that to gate updating ->lcs_space.
+
+So make that change, and convert lcs_mutex to a spinlock
+named lcs_lock.  spinlocks are slightly cheaper than mutexes
+and using one makes is clear that the lock is only held for
+a short time.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/fid/fid_request.c |   68 +++++++----------------
- 1 file changed, 20 insertions(+), 48 deletions(-)
+ drivers/staging/lustre/lustre/fid/fid_request.c    |   24 ++++++++---------
+ drivers/staging/lustre/lustre/fid/lproc_fid.c      |   29 +++++++++++---------
+ drivers/staging/lustre/lustre/include/lustre_fid.h |    2 +
+ 3 files changed, 29 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
-index 6b9d024bd27b..ef9ee5426151 100644
+index 009c2367f74e..6b9d024bd27b 100644
 --- a/drivers/staging/lustre/lustre/fid/fid_request.c
 +++ b/drivers/staging/lustre/lustre/fid/fid_request.c
-@@ -192,26 +192,6 @@ static int seq_client_alloc_seq(const struct lu_env *env,
- 	return rc;
+@@ -198,24 +198,24 @@ static int seq_fid_alloc_prep(struct lu_client_seq *seq,
+ 	if (seq->lcs_update) {
+ 		add_wait_queue(&seq->lcs_waitq, link);
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+-		mutex_unlock(&seq->lcs_mutex);
++		spin_unlock(&seq->lcs_lock);
+ 
+ 		schedule();
+ 
+-		mutex_lock(&seq->lcs_mutex);
++		spin_lock(&seq->lcs_lock);
+ 		remove_wait_queue(&seq->lcs_waitq, link);
+ 		set_current_state(TASK_RUNNING);
+ 		return -EAGAIN;
+ 	}
+ 	++seq->lcs_update;
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 	return 0;
  }
  
--static int seq_fid_alloc_prep(struct lu_client_seq *seq,
--			      wait_queue_entry_t *link)
--{
--	if (seq->lcs_update) {
--		add_wait_queue(&seq->lcs_waitq, link);
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		spin_unlock(&seq->lcs_lock);
--
--		schedule();
--
--		spin_lock(&seq->lcs_lock);
--		remove_wait_queue(&seq->lcs_waitq, link);
--		set_current_state(TASK_RUNNING);
--		return -EAGAIN;
--	}
--	++seq->lcs_update;
--	spin_unlock(&seq->lcs_lock);
--	return 0;
--}
--
  static void seq_fid_alloc_fini(struct lu_client_seq *seq)
  {
  	LASSERT(seq->lcs_update == 1);
-@@ -224,32 +204,34 @@ static void seq_fid_alloc_fini(struct lu_client_seq *seq)
- int seq_client_alloc_fid(const struct lu_env *env,
- 			 struct lu_client_seq *seq, struct lu_fid *fid)
- {
--	wait_queue_entry_t link;
- 	int rc;
- 
- 	LASSERT(seq);
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
+ 	--seq->lcs_update;
+ 	wake_up(&seq->lcs_waitq);
+ }
+@@ -231,7 +231,7 @@ int seq_client_alloc_fid(const struct lu_env *env,
  	LASSERT(fid);
  
--	init_waitqueue_entry(&link, current);
- 	spin_lock(&seq->lcs_lock);
+ 	init_waitqueue_entry(&link, current);
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
  
  	if (OBD_FAIL_CHECK(OBD_FAIL_SEQ_EXHAUST))
  		seq->lcs_fid.f_oid = seq->lcs_width;
+@@ -256,7 +256,7 @@ int seq_client_alloc_fid(const struct lu_env *env,
+ 			CERROR("%s: Can't allocate new sequence, rc %d\n",
+ 			       seq->lcs_name, rc);
+ 			seq_fid_alloc_fini(seq);
+-			mutex_unlock(&seq->lcs_mutex);
++			spin_unlock(&seq->lcs_lock);
+ 			return rc;
+ 		}
  
--	while (1) {
-+	wait_event_cmd(seq->lcs_waitq,
-+		       (!fid_is_zero(&seq->lcs_fid) &&
-+			fid_oid(&seq->lcs_fid) < seq->lcs_width) ||
-+		       !seq->lcs_update,
-+		       spin_unlock(&seq->lcs_lock),
-+		       spin_lock(&seq->lcs_lock));
-+
-+	if (!fid_is_zero(&seq->lcs_fid) &&
-+	    fid_oid(&seq->lcs_fid) < seq->lcs_width) {
-+		/* Just bump last allocated fid and return to caller. */
-+		seq->lcs_fid.f_oid += 1;
-+		rc = 0;
-+	} else {
- 		u64 seqnr;
- 
--		if (!fid_is_zero(&seq->lcs_fid) &&
--		    fid_oid(&seq->lcs_fid) < seq->lcs_width) {
--			/* Just bump last allocated fid and return to caller. */
--			seq->lcs_fid.f_oid += 1;
--			rc = 0;
--			break;
--		}
--
--		rc = seq_fid_alloc_prep(seq, &link);
--		if (rc)
--			continue;
-+		LASSERT(seq->lcs_update == 0);
-+		++seq->lcs_update;
-+		spin_unlock(&seq->lcs_lock);
- 
- 		rc = seq_client_alloc_seq(env, seq, &seqnr);
- 		if (rc) {
-@@ -274,7 +256,6 @@ int seq_client_alloc_fid(const struct lu_env *env,
- 		rc = 1;
- 
- 		seq_fid_alloc_fini(seq);
--		break;
+@@ -278,7 +278,7 @@ int seq_client_alloc_fid(const struct lu_env *env,
  	}
  
  	*fid = seq->lcs_fid;
-@@ -292,23 +273,14 @@ EXPORT_SYMBOL(seq_client_alloc_fid);
-  */
- void seq_client_flush(struct lu_client_seq *seq)
- {
--	wait_queue_entry_t link;
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	CDEBUG(D_INFO,
+ 	       "%s: Allocated FID " DFID "\n", seq->lcs_name,  PFID(fid));
+@@ -296,16 +296,16 @@ void seq_client_flush(struct lu_client_seq *seq)
  
  	LASSERT(seq);
--	init_waitqueue_entry(&link, current);
- 	spin_lock(&seq->lcs_lock);
+ 	init_waitqueue_entry(&link, current);
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
  
--	while (seq->lcs_update) {
--		add_wait_queue(&seq->lcs_waitq, &link);
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		spin_unlock(&seq->lcs_lock);
--
--		schedule();
--
--		spin_lock(&seq->lcs_lock);
--		remove_wait_queue(&seq->lcs_waitq, &link);
--		set_current_state(TASK_RUNNING);
--	}
-+	wait_event_cmd(seq->lcs_waitq,
-+		       !seq->lcs_update,
-+		       spin_unlock(&seq->lcs_lock),
-+		       spin_lock(&seq->lcs_lock));
+ 	while (seq->lcs_update) {
+ 		add_wait_queue(&seq->lcs_waitq, &link);
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+-		mutex_unlock(&seq->lcs_mutex);
++		spin_unlock(&seq->lcs_lock);
  
- 	fid_zero(&seq->lcs_fid);
- 	/**
+ 		schedule();
+ 
+-		mutex_lock(&seq->lcs_mutex);
++		spin_lock(&seq->lcs_lock);
+ 		remove_wait_queue(&seq->lcs_waitq, &link);
+ 		set_current_state(TASK_RUNNING);
+ 	}
+@@ -319,7 +319,7 @@ void seq_client_flush(struct lu_client_seq *seq)
+ 	seq->lcs_space.lsr_index = -1;
+ 
+ 	lu_seq_range_init(&seq->lcs_space);
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ }
+ EXPORT_SYMBOL(seq_client_flush);
+ 
+@@ -382,7 +382,7 @@ static int seq_client_init(struct lu_client_seq *seq,
+ 
+ 	seq->lcs_type = type;
+ 
+-	mutex_init(&seq->lcs_mutex);
++	spin_lock_init(&seq->lcs_lock);
+ 	if (type == LUSTRE_SEQ_METADATA)
+ 		seq->lcs_width = LUSTRE_METADATA_SEQ_MAX_WIDTH;
+ 	else
+diff --git a/drivers/staging/lustre/lustre/fid/lproc_fid.c b/drivers/staging/lustre/lustre/fid/lproc_fid.c
+index 083419f77697..e05487662afd 100644
+--- a/drivers/staging/lustre/lustre/fid/lproc_fid.c
++++ b/drivers/staging/lustre/lustre/fid/lproc_fid.c
+@@ -98,20 +98,23 @@ ldebugfs_fid_space_seq_write(struct file *file,
+ 			     size_t count, loff_t *off)
+ {
+ 	struct lu_client_seq *seq;
++	struct lu_seq_range range;
+ 	int rc;
+ 
+ 	seq = ((struct seq_file *)file->private_data)->private;
+ 
+-	mutex_lock(&seq->lcs_mutex);
+-	rc = ldebugfs_fid_write_common(buffer, count, &seq->lcs_space);
++	rc = ldebugfs_fid_write_common(buffer, count, &range);
++
++	spin_lock(&seq->lcs_lock);
++	if (rc > 0)
++		seq->lcs_space = range;
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	if (rc == 0) {
+ 		CDEBUG(D_INFO, "%s: Space: " DRANGE "\n",
+-		       seq->lcs_name, PRANGE(&seq->lcs_space));
++		       seq->lcs_name, PRANGE(&range));
+ 	}
+ 
+-	mutex_unlock(&seq->lcs_mutex);
+-
+ 	return count;
+ }
+ 
+@@ -120,9 +123,9 @@ ldebugfs_fid_space_seq_show(struct seq_file *m, void *unused)
+ {
+ 	struct lu_client_seq *seq = (struct lu_client_seq *)m->private;
+ 
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
+ 	seq_printf(m, "[%#llx - %#llx]:%x:%s\n", PRANGE(&seq->lcs_space));
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	return 0;
+ }
+@@ -142,7 +145,7 @@ ldebugfs_fid_width_seq_write(struct file *file,
+ 	if (rc)
+ 		return rc;
+ 
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
+ 	if (seq->lcs_type == LUSTRE_SEQ_DATA)
+ 		max = LUSTRE_DATA_SEQ_MAX_WIDTH;
+ 	else
+@@ -155,7 +158,7 @@ ldebugfs_fid_width_seq_write(struct file *file,
+ 		       seq->lcs_width);
+ 	}
+ 
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	return count;
+ }
+@@ -165,9 +168,9 @@ ldebugfs_fid_width_seq_show(struct seq_file *m, void *unused)
+ {
+ 	struct lu_client_seq *seq = (struct lu_client_seq *)m->private;
+ 
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
+ 	seq_printf(m, "%llu\n", seq->lcs_width);
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	return 0;
+ }
+@@ -177,9 +180,9 @@ ldebugfs_fid_fid_seq_show(struct seq_file *m, void *unused)
+ {
+ 	struct lu_client_seq *seq = (struct lu_client_seq *)m->private;
+ 
+-	mutex_lock(&seq->lcs_mutex);
++	spin_lock(&seq->lcs_lock);
+ 	seq_printf(m, DFID "\n", PFID(&seq->lcs_fid));
+-	mutex_unlock(&seq->lcs_mutex);
++	spin_unlock(&seq->lcs_lock);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/lustre/lustre/include/lustre_fid.h b/drivers/staging/lustre/lustre/include/lustre_fid.h
+index d19c7a27ee48..094ad282de2c 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_fid.h
++++ b/drivers/staging/lustre/lustre/include/lustre_fid.h
+@@ -324,7 +324,7 @@ enum lu_mgr_type {
+ struct lu_client_seq {
+ 	/* Sequence-controller export. */
+ 	struct obd_export      *lcs_exp;
+-	struct mutex		lcs_mutex;
++	spinlock_t		lcs_lock;
+ 
+ 	/*
+ 	 * Range of allowed for allocation sequences. When using lu_client_seq on
