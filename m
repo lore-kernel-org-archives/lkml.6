@@ -1,101 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeBTXic (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:38:32 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51660 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750773AbeBTXib (ORCPT
+        id S1751424AbeBTXjA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:39:00 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51786 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeBTXi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:38:31 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SyIwHO-_1519169905;
-Subject: Re: [PATCH] fs: proc: use down_read_killable in
- proc_pid_cmdline_read()
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180220223825.GA6705@avx2>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <fa1e9b6b-efaf-79c5-00ea-1f58d5078c2d@linux.alibaba.com>
-Date: Tue, 20 Feb 2018 15:38:24 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180220223825.GA6705@avx2>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 20 Feb 2018 18:38:59 -0500
+Date: Tue, 20 Feb 2018 15:38:57 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: huang ying <huang.ying.caritas@gmail.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Shaohua Li <shli@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>, jglisse@redhat.com,
+        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>, Rik van Riel <riel@redhat.com>,
+        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
+        Aaron Lu <aaron.lu@intel.com>
+Subject: Re: [PATCH -mm -v5 RESEND] mm, swap: Fix race between swapoff and
+ some swap operations
+Message-Id: <20180220153857.dee8f7d5c904cd7219529312@linux-foundation.org>
+In-Reply-To: <CAC=cRTMuDtuwCqTK+0UfaTrKcVHzuN4YkHLnH3Yn7FkxknKXtw@mail.gmail.com>
+References: <20180213014220.2464-1-ying.huang@intel.com>
+        <20180213154123.9f4ef9e406ea8365ca46d9c5@linux-foundation.org>
+        <87fu64jthz.fsf@yhuang-dev.intel.com>
+        <20180216153823.ad74f1d2c157adc67ed2c970@linux-foundation.org>
+        <CAC=cRTMuDtuwCqTK+0UfaTrKcVHzuN4YkHLnH3Yn7FkxknKXtw@mail.gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 18 Feb 2018 09:06:47 +0800 huang ying <huang.ying.caritas@gmail.com> wrote:
 
+> >> >> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
+> >> >> +{
+> >> >> +  struct swap_info_struct *si;
+> >> >> +  unsigned long type, offset;
+> >> >> +
+> >> >> +  if (!entry.val)
+> >> >> +          goto out;
+> >> >> +  type = swp_type(entry);
+> >> >> +  if (type >= nr_swapfiles)
+> >> >> +          goto bad_nofile;
+> >> >> +  si = swap_info[type];
+> >> >> +
+> >> >> +  preempt_disable();
+> >> >
+> >> > This preempt_disable() is later than I'd expect.  If a well-timed race
+> >> > occurs, `si' could now be pointing at a defunct entry.  If that
+> >> > well-timed race include a swapoff AND a swapon, `si' could be pointing
+> >> > at the info for a new device?
+> >>
+> >> struct swap_info_struct pointed to by swap_info[] will never be freed.
+> >> During swapoff, we only free the memory pointed to by the fields of
+> >> struct swap_info_struct.  And when swapon, we will always reuse
+> >> swap_info[type] if it's not NULL.  So it should be safe to dereference
+> >> swap_info[type] with preemption enabled.
+> >
+> > That's my point.  If there's a race window during which there is a
+> > parallel swapoff+swapon, this swap_info_struct may now be in use for a
+> > different device?
+> 
+> Yes.  It's possible.  And the caller of get_swap_device() can live
+> with it if the swap_info_struct has been fully initialized.  For
+> example, for the race in the patch description,
+> 
+> do_swap_page
+>   swapin_readahead
+>     __read_swap_cache_async
+>       swapcache_prepare
+>         __swap_duplicate
+> 
+> in __swap_duplicate(), it's possible that the swap device returned by
+> get_swap_device() is different from the swap device when
+> __swap_duplicate() call get_swap_device().  But the struct_info_struct
+> has been fully initialized, so __swap_duplicate() can reference
+> si->swap_map[] safely.  And we will check si->swap_map[] before any
+> further operation.  Even if the swap entry is swapped out again for
+> the new swap device, we will check the page table again in
+> do_swap_page().  So there is no functionality problem.
 
-On 2/20/18 2:38 PM, Alexey Dobriyan wrote:
-> On Wed, Feb 21, 2018 at 03:49:29AM +0800, Yang Shi wrote:
->> When running vm-scalability with large memory (> 300GB), the below hung
->> task issue happens occasionally.
->>
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>
->> When manipulating a large mapping, the process may hold the mmap_sem for
->> long time, so reading /proc/<pid>/cmdline may be blocked in
->> uninterruptible state for long time.
->>
->> down_read_trylock() sounds too aggressive, and we already have killable
->> version APIs for semaphore, here use down_read_killable() to improve the
->> responsiveness.
->> -	down_read(&mm->mmap_sem);
->> +	rv = down_read_killable(&mm->mmap_sem);
->> +	if (rv)
->> +		goto out_mmput;
->>   	arg_start = mm->arg_start;
->>   	arg_end = mm->arg_end;
->>   	env_start = mm->env_start;
-> Fix is incomplete
-
-Yes, it is. Since I just ran into the above splat, so I just did the 
-minimum change.
-
-> 1) /proc/*/cmdline only wants to read 4 values atomically,
->     those 4 values are basically random values and aren't
->     related to VM part at all (after C/R went in, they are
->     settable to arbitrary values)
-
-Sorry, I don't get your point here. Could you please elaborate?
-
-> 2) access_remote_vm() et al will do the same ->mmap_sem, and
-
-Yes, it does. But, __access_remote_vm() is called by access_process_vm() 
-too, which is used by much more places, i.e. ptrace, so I was not sure 
-if it is preferred to convert to killable version. So, I leave it untouched.
-
-> 3) /proc/*/environ and get_cmdline() do the same.
-
-They look suitable to use killable version.
-
-BTW, I just realized the code should go to out_free_page instead of 
-out_mmput. Will rectify in newer version once we decide the extra places 
-to use killable version.
-
-Thanks,
-Yang
+That's rather revolting.  Can we tighten this up?  Or at least very
+loudly document it?
