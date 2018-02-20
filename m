@@ -1,139 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751813AbeBTMif (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:38:35 -0500
-Received: from mga17.intel.com ([192.55.52.151]:46266 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751755AbeBTMic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:38:32 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,539,1511856000";
-   d="scan'208";a="19434752"
-Date: Tue, 20 Feb 2018 20:38:19 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Juergen Gross <jgross@suse.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [tip:x86/boot 8/9] arch/x86/kernel/x86_init.c:33:5: sparse: symbol
- 'u64_x86_init_noop' was not declared. Should it be static?
-Message-ID: <201802202043.UzW7iu9d%fengguang.wu@intel.com>
+        id S1751718AbeBTMlK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:41:10 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbeBTMlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 07:41:09 -0500
+Date: Tue, 20 Feb 2018 12:41:07 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: core: Handle PM_SUSPEND_TO_IDLE
+ suspend_state_t
+Message-ID: <20180220124107.GD6378@sirena.org.uk>
+References: <20180218170424.11976-1-hdegoede@redhat.com>
+ <20180219113444.GA32761@sirena.org.uk>
+ <5486ab34-4e5b-e2d5-9475-4d7e24a0cda6@redhat.com>
+ <20180220114759.GB6378@sirena.org.uk>
+ <066afd48-896f-b8fa-0bc0-7e3b0b76e33b@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <066afd48-896f-b8fa-0bc0-7e3b0b76e33b@redhat.com>
+X-Cookie: Don't read everything you believe.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
-head:   e9cb8fc2e5ca5996417f900ed5149bd9150f6abd
-commit: 62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9 [8/9] x86/acpi: Add a new x86_init_acpi structure to x86_init_ops
-reproduce:
-        # apt-get install sparse
-        git checkout 62d8b7fba8d3ba9c046b7a1a95946c6aaf7c5da9
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
+--llIrKcgUOe3dCx0c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-sparse warnings: (new ones prefixed by >>)
+On Tue, Feb 20, 2018 at 01:12:08PM +0100, Hans de Goede wrote:
 
-   include/linux/init.h:134:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/init.h:135:5: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/init.h:268:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/init.h:269:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/printk.h:200:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:32:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:34:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:37:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:38:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:40:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:42:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:43:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:45:5: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:46:5: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/mem_encrypt.h:49:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/qspinlock.h:53:32: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/workqueue.h:646:5: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/workqueue.h:647:5: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/memory_hotplug.h:221:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/numa.h:34:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/numa.h:35:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/numa.h:62:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/vmalloc.h:64:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/vmalloc.h:173:8: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/vmalloc.h:174:8: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/fixmap.h:174:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/fixmap.h:176:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/fixmap.h:178:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/fixmap.h:180:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/apic.h:254:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/apic.h:430:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/io_apic.h:184:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/mmzone.h:1292:15: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/smp.h:113:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/smp.h:125:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/smp.h:126:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/percpu.h:110:33: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/percpu.h:112:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/percpu.h:114:12: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/percpu.h:118:12: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/percpu.h:126:12: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/hrtimer.h:497:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/io.h:47:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/kmemleak.h:29:33: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/kasan.h:29:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/kasan.h:30:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pgtable.h:28:5: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/slab.h:135:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/slab.h:716:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/wait_bit.h:41:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:63:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:64:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:65:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:66:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:2421:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:2422:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/fs.h:3329:5: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/mm.h:1753:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/mm.h:1941:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/mm.h:2083:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/mm.h:2671:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/pci.h:1932:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/pci.h:1933:6: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/swiotlb.h:39:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/swiotlb.h:124:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/swiotlb.h:9:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/swiotlb.h:10:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/swiotlb.h:11:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/swiotlb.h:12:13: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/dma-contiguous.h:85:5: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:120:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:121:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:124:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:125:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:126:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:146:12: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/pci_x86.h:147:13: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/setup.h:127:17: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/include/asm/setup.h:128:17: sparse: attribute 'indirect_branch': unknown attribute
-   include/linux/clocksource.h:195:29: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/kernel/x86_init.c:28:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/kernel/x86_init.c:29:5: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/kernel/x86_init.c:31:6: sparse: attribute 'indirect_branch': unknown attribute
-   arch/x86/kernel/x86_init.c:29:12: sparse: symbol 'iommu_init_noop' was not declared. Should it be
-   arch/x86/kernel/x86_init.c:31:13: sparse: symbol 'bool_x86_init_noop' was not declared. Should it be
-   arch/x86/kernel/x86_init.c:32:6: sparse: symbol 'x86_op_int_noop' was not declared. Should it be
->> arch/x86/kernel/x86_init.c:33:5: sparse: symbol 'u64_x86_init_noop' was not declared. Should it be
+> I might just be looking at the wrong place and if so I'm sorry, but I
+> don't see any (additional) fixes related to this here:
 
-Please review and possibly fold the followup patch.
+Seems to have got stuck somewhere, sorry - pushed now.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--llIrKcgUOe3dCx0c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqMF2IACgkQJNaLcl1U
+h9Aw7wf9FSReESPP0gGN+B6L9igxFyNzcwbLOXSdwbMy92t7cvncxWsr9yNSMweU
+BgXBhre0Kxbk5YMZPQ90ge26SMhfLXPoqsD3G4L3JoTn+BxGW0LGVn2nl0mUpwdK
+o9+3RD5y/2OAqHwZXCRvwgmhebXtobtSjrJlUWkWdTmD3aSK5ZuxM8EVtQ2WBh/p
+Qj/AtSTriwZCmQWCb5UOCsnnlVIs266locbeS/BjiAOdmVNEUsUo7wlyk2o9rwmT
+l2Rw6sbjSZLGgyZkLL95TT8VK1uYd3Ajuq8Fi64O+6w1t3Yhswkroo3TH+7ZpXQq
+tFyyLjRuKpc3AeLJktnOIxot1mGN/Q==
+=Q2el
+-----END PGP SIGNATURE-----
+
+--llIrKcgUOe3dCx0c--
