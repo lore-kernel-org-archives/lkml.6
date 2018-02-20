@@ -1,120 +1,332 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeBTPiv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:38:51 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:58996 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752381AbeBTPiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:38:50 -0500
-Date: Tue, 20 Feb 2018 10:38:49 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Andrea Parri <parri.andrea@gmail.com>
-cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: remove rb-dep, smp_read_barrier_depends,
- and lockless_dereference
-In-Reply-To: <20180220093346.GA5505@andrea>
-Message-ID: <Pine.LNX.4.44L0.1802201031120.1428-100000@iolanthe.rowland.org>
+        id S1752561AbeBTPk0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:40:26 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37468 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752313AbeBTPkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:40:23 -0500
+Subject: Re: [PATCH v14 6/9] HISI LPC: Support the LPC host on Hip06/Hip07
+ with DT bindings
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+ <1519062520-198902-7-git-send-email-john.garry@huawei.com>
+ <CAHp75VcOayaBDrEPnorYiywn_g22TYZ7-Rw396Czj7briyLYfg@mail.gmail.com>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <cb2d5338-0f3b-6e30-3611-0cb18dd9fb1a@huawei.com>
+Date: Tue, 20 Feb 2018 15:39:55 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <CAHp75VcOayaBDrEPnorYiywn_g22TYZ7-Rw396Czj7briyLYfg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018, Andrea Parri wrote:
+On 20/02/2018 14:50, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
+>> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+>>
+>> The low-pin-count(LPC) interface of Hip06/Hip07 accesses the peripherals in
+>> I/O port addresses. This patch implements the LPC host controller driver
+>> which perform the I/O operations on the underlying hardware.
+>> We don't want to touch those existing peripherals' driver, such as ipmi-bt.
+>> So this driver applies the indirect-IO introduced in the previous patch
+>> after registering an indirect-IO node to the indirect-IO devices list which
+>> will be searched in the I/O accessors to retrieve the host-local I/O port.
+>>
+>> The driver config is set as a bool instead of a trisate. The reason
+>> here is that, by the very nature of the driver providing a logical
+>> PIO range, it does not make sense to have this driver as a loadable
+>> module. Another more specific reason is that the Huawei D03 board
+>> which includes hip06 SoC requires the LPC bus for UART console, so
+>> should be built in.
+>
 
-> > This leaves us with a question: Do we want to change the kernel by
-> > adding memory barriers after unsuccessful RMW operations on Alpha, or
-> > do we want to change the model by excluding such operations from
-> > address dependencies?
-> 
-> I'd like to continue to treat R[once] and R*[once] equally if possible.
-> Given the (unconditional) smp_read_barrier_depends in READ_ONCE and in
-> atomics, it seems reasonable to have it unconditionally in cmpxchg.
-> 
-> As with the following patch?
+Hi Andy,
 
-Yes, this seems reasonable to me.  If Will gives it his "Acked-by"  
-to go with Peter's, you should submit it to Ingo Molnar.
+>> +config HISILICON_LPC
+>> +       bool "Support for ISA I/O space on Hisilicon hip06/7"
+>> +       depends on (ARM64 && (ARCH_HISI || COMPILE_TEST))
+>
+> Redundant parens.
 
-And once this is made, there shouldn't be any trouble with the proposed 
-patch for the memory model.
+OK, these can be removed
 
-Alan
+>
+>> +       select INDIRECT_PIO
+>> +       help
+>> +         Driver needed for some legacy ISA devices attached to Low-Pin-Count
+>> +         on Hisilicon hip06/7 SoC.
+>
+>
+>
+>> +#if LPC_MAX_DULEN > LPC_MAX_BURST
+>> +#error "LPC.. MAX_DULEN must be not bigger than MAX_OPCNT!"
+>> +#endif
+>
+> But here you can easily avoid an #error, by making them equal, just
+> issue a warning instead.
 
->   Andrea
-> 
-> ---
-> diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-> index 68dfb3cb71454..e2660866ce972 100644
-> --- a/arch/alpha/include/asm/xchg.h
-> +++ b/arch/alpha/include/asm/xchg.h
-> @@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
->   * store NEW in MEM.  Return the initial value in MEM.  Success is
->   * indicated by comparing RETURN with OLD.
->   *
-> - * The memory barrier should be placed in SMP only when we actually
-> - * make the change. If we don't change anything (so if the returned
-> - * prev is equal to old) then we aren't acquiring anything new and
-> - * we don't need any memory barrier as far I can tell.
-> + * The memory barrier is placed in SMP unconditionally, in order to
-> + * guarantee that dependency ordering is preserved when a dependency
-> + * is headed by an unsuccessful operation.
->   */
->  
->  static inline unsigned long
-> @@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
-> @@ -177,8 +176,8 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
-> @@ -200,8 +199,8 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
->  	"	mov %4,%1\n"
->  	"	stl_c %1,%2\n"
->  	"	beq %1,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
-> @@ -223,8 +222,8 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
->  	"	mov %4,%1\n"
->  	"	stq_c %1,%2\n"
->  	"	beq %1,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
-> 
-> 
-> > 
-> > Note that operations like atomic_add_unless() already include memory 
-> > barriers.
-> > 
-> > Alan
+These values are dictated by the HW. Well the burst length is. 
+Regardless I have simplified the driver not to use the burst mode so I 
+can remove.
+
+>
+>> +#if LPC_MAX_BURST % LPC_MAX_DULEN
+>> +#error "LPC.. LPC_MAX_BURST must be multiple of LPC_MAX_DULEN!"
+>> +#endif
+>
+> Is it like this, or also should be power of two?
+>
+
+As above
+
+>> +/* The command register fields */
+>> +#define LPC_CMD_SAMEADDR       0x08
+>> +#define LPC_CMD_TYPE_IO                0x00
+>
+>> +#define LPC_CMD_WRITE          0x01
+>> +#define LPC_CMD_READ           0x00
+>> +/* the bit attribute is W1C. 1 represents OK. */
+>> +#define LPC_STAT_BYIRQ         0x02
+>
+> BIT() ?
+
+Not all, but I'll fix them up to be clearer
+
+>
+>> +#define LPC_STATUS_IDLE                0x01
+>> +#define LPC_OP_FINISHED                0x02
+>> +
+>> +#define LPC_START_WORK         0x01
+>
+> Ditto?
+>
+>> +static inline int wait_lpc_idle(unsigned char *mbase,
+>> +                               unsigned int waitcnt) {
+>> +       u32 opstatus;
+>> +
+>> +       while (waitcnt--) {
+>> +               ndelay(LPC_NSEC_PERWAIT);
+>> +               opstatus = readl(mbase + LPC_REG_OP_STATUS);
+>> +               if (opstatus & LPC_STATUS_IDLE)
+>> +                       return (opstatus & LPC_OP_FINISHED) ? 0 : (-EIO);
+>> +       }
+>> +       return -ETIME;
+>
+> Personally I prefer timeout loops in a do {} while (--count) style.
+
+OK, I think it's fine to change as mentioned
+
+>
+>> +}
+>
+>> +static int
+>> +hisi_lpc_target_in(struct hisi_lpc_dev *lpcdev, struct lpc_cycle_para *para,
+>> +                 unsigned long addr, unsigned char *buf,
+>> +                 unsigned long opcnt)
+>> +{
+>> +       unsigned int cmd_word;
+>> +       unsigned int waitcnt;
+>> +       unsigned long flags;
+>> +       int ret;
+>> +
+>> +       if (!buf || !opcnt || !para || !para->csize || !lpcdev)
+>> +               return -EINVAL;
+>
+>> +
+>> +       cmd_word = LPC_CMD_TYPE_IO | LPC_CMD_READ;
+>> +       waitcnt = LPC_PEROP_WAITCNT;
+>> +       if (!(para->opflags & FG_INCRADDR_LPC)) {
+>> +               cmd_word |= LPC_CMD_SAMEADDR;
+>> +               waitcnt = LPC_MAX_WAITCNT;
+>> +       }
+>> +
+>
+>> +       ret = 0;
+>> +
+>
+> Sounds redundant.
+
+it is, so I'll fix
+
+>
+>> +       /* whole operation must be atomic */
+>> +       spin_lock_irqsave(&lpcdev->cycle_lock, flags);
+>> +
+>> +       writel_relaxed(opcnt, lpcdev->membase + LPC_REG_OP_LEN);
+>> +
+>> +       writel_relaxed(cmd_word, lpcdev->membase + LPC_REG_CMD);
+>> +
+>> +       writel_relaxed(addr, lpcdev->membase + LPC_REG_ADDR);
+>> +
+>> +       writel(LPC_START_WORK, lpcdev->membase + LPC_REG_START);
+>> +
+>> +       /* whether the operation is finished */
+>> +       ret = wait_lpc_idle(lpcdev->membase, waitcnt);
+>
+>> +       if (!ret) {
+>
+> I would rather go with usual pattern
+> if (ret) {
+>  ...
+>  return ret;
+> }
+>
+
+The intention was to not have 2 calls to free the spinlock. But we can 
+go with the usual pattern.
+
+>
+>> +               for (; opcnt; opcnt--, buf++)
+>> +                       *buf = readb(lpcdev->membase + LPC_REG_RDATA);
+>
+> Looks like a do {} while (slightly better for my opinion).
+>
+> do {
+>               *buf++ = readb(lpcdev->membase + LPC_REG_RDATA);
+> } while (--opcnt);
+>
+
+ok
+
+>> +       }
+>> +
+>> +       spin_unlock_irqrestore(&lpcdev->cycle_lock, flags);
+>> +
+>> +       return ret;
+>> +}
+>
+>> +       for (; opcnt; buf++, opcnt--)
+>> +               writeb(*buf, lpcdev->membase + LPC_REG_WDATA);
+>
+> Ditto.
+>
+
+Ditto
+
+>> +static u32 hisi_lpc_comm_in(void *hostdata, unsigned long pio, size_t dwidth)
+>
+>> +       if (!lpcdev || !dwidth || dwidth > LPC_MAX_DULEN)
+>> +               return -1;
+>
+> ~0 ?
+>
+
+I need to check the patchset for all of these :)
+
+>> +       if (ret)
+>> +               return -1;
+>
+> Ditto.
+>
+>> +       do {
+>> +               int ret;
+>> +
+>> +               ret = hisi_lpc_target_in(lpcdev, &iopara, addr,
+>> +                                       buf, dwidth);
+>> +               if (ret)
+>> +                       return ret;
+>> +               buf += dwidth;
+>
+>> +               count--;
+>> +       } while (count);
+>
+> } while (--count);
+>
+>> +       do {
+>> +               if (hisi_lpc_target_out(lpcdev, &iopara, addr, buf,
+>> +                                               dwidth))
+>> +                       break;
+>> +               buf += dwidth;
+>> +               count--;
+>> +       } while (count);
+>
+> Ditto.
+
+ok, we can use the do-while loop
+
+>
+>> +static int hisi_lpc_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct acpi_device *acpi_device = ACPI_COMPANION(dev);
+>> +       struct logic_pio_hwaddr *range;
+>> +       struct hisi_lpc_dev *lpcdev;
+>> +       struct resource *res;
+>
+>> +       int ret = 0;
+>
+> Redundant assignment.
+
+Right
+
+>
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>
+>> +       if (!res)
+>> +               return -ENODEV;
+>
+> Redundant.
+>
+
+Right, devm_ioremap_resource() can deal with res = NULL.
+
+>> +
+>> +       lpcdev->membase = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(lpcdev->membase)) {
+>
+>> +               dev_err(dev, "remap failed\n");
+>
+> Redundant.
+
+right, an error is printed in devm_ioremap_resource()
+
+>
+>> +               return PTR_ERR(lpcdev->membase);
+>> +       }
+>
+>> +       /* register the LPC host PIO resources */
+>
+>> +       if (!acpi_device)
+>> +               ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>
+>> +       if (ret) {
+>
+>> +               dev_err(dev, "populate children failed (%d)\n", ret);
+>
+> JFYI: ret is printed by device core if ->probe() fails.
+
+OK, so then this is superfluous
+
+>
+>> +               return ret;
+>> +       }
+>
+> This condition should go under if (!acpi_device) case.
+>
+
+Thanks,
+John
