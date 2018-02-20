@@ -1,5 +1,5 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2549902-1519120676-2-7206696191109469355
+X-Cyrus-Session-Id: sloti22d1t05-2549902-1519120681-2-18281545606931473306
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519120676; b=rV8J2kkSnCUBdNrFUfh1+HNj1idylBiocmxASzpG83lBKTA
-    SNeg8b+xnQaP7Y2Ggl+gidqMQXwb82gyTif2h8VjQhhUGiwQejbAgApcH8AanAVa
-    CmIR7b1XIRDuVxzqFJHsS8DHv9lJzDWnKcpmRqbYNngbRgkOcc8GJ5IwF9KcIL1P
-    gUWXZSirVrjMh9LVPRIL5uzhk4nNlQb+/lLvQ2aHBMtqQYJ+FprB8zSdxZN3q2Vz
-    iw6IlDOFL4P3jwtj4xYrrRFpJjHNfXw7unkkwQUunn6b3sq6aeQ04fjlacuIjewe
-    vBV5gpO9KRD4C4wo1vB+dqBXzkBoWfK062Nms3A==
+    t=1519120681; b=Pk1EEUn3A40ZGn+pTvOapDlUssTiLJyqwpsg3GaSiTUnXtE
+    Xwcdcw1fVuJCE1Eony5t/VdBT/AZf/H7s4297G0f7h1fDlkJU6IORjuF2JqvUj6C
+    InzQ8Hiuz3FBJ3WTVKvWfppQ9Sj9N+XsH9Yn4ewKFscVK8AHGgdl2LJn13GnTNGN
+    M/s32emoGC/htw+qfGoNCtvuEW45upNKctF5J+NJ9FRvatjIpdSvXBVl0wcb2Aqy
+    B6ipJGfMGAVoSu4A62yzRaYvYbccN7lWZYl1oCdBojgMDkr91SzGQmTwEE4S4V1i
+    6XU4mIf40WxVdLqLYBUJZABUq7TLPdNvU3mPqJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1519120676; bh=UHJxlMkY0M6RdXwKCEpYXzoSHE
-    OYb5CYmlR/EQsSdxk=; b=pxqx+SzHUNkMNcq7BRn4MEtADiGxKTEnt4ZO47ijKT
-    dUSP0b/1z7d6utzd+b2G9wMoiPVkfoZj+qWMXHHucWsDliORH9mla1xJdQWsBD4F
-    fNhIgLHt3Qr5OQhBlB13R+UlGN/Qo4xMu6+niCIY7m7tVTYcZYv3x1TfYR9RFYZI
-    yZJttHipg5nFLmhUM00mUhI+KiI3/IqwcWmES3t+aCgFN0OFtAI8K+m0vD5x9h14
-    ZqpB1hPTT3j4M0eVCPEx9TiMBp9MiwWsvjODVtiGtoVVdAyg53TDdG0ZSseS6kgM
-    IIKdh3MM2EQZLeElc/32FZKZBsXJHjy4SIsOJUukGMfQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519120681;
+    bh=Mj3mlp05aK1mLGGLCgAHTFHpjbXkJs2OsJVyH7O5qSQ=; b=cMcbuSrckARc
+    7JKIX4+SEe/EpfysajnlSstWvsSjKaZRtl8FgNcxT9tR3AMW5ZYIjRozScYPWvPa
+    BWq1necaUcrMO2Rp2aQgE9bVPaUFo6tXpnL1hQQ2EisdK6JUftsuOzw+zxmDV3GR
+    nKAfP4D4eC1PIXHtDWEAzi84MBbJYJVJsEOxO2g8E7goK5iYxXG6SWrunR2xCQv1
+    rvJ3lyDZoNDGvk3qmaQxYw10IN0nI9Yb3gLaOoBJCojimQbfWdB9KvPRayeQIkeX
+    JIQFi/WhezdAVjkNMjnqw5ReXAnE62dVrU5NTJPaAQqe+24CmDuVzzh7jK50bAMu
+    1S33r8VQOg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=glider.be;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -36,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=glider.be header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=glider.be;
@@ -46,13 +47,13 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=glider.be header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751394AbeBTJ5a (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Feb 2018 04:57:30 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60170 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751383AbeBTJ5Z (ORCPT
+        id S1751260AbeBTJ56 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 20 Feb 2018 04:57:58 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:59728 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751440AbeBTJ51 (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 20 Feb 2018 04:57:25 -0500
+        Tue, 20 Feb 2018 04:57:27 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
@@ -63,74 +64,42 @@ Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/9] serial: Fix out-of-bounds accesses through DT aliases
-Date: Tue, 20 Feb 2018 10:40:15 +0100
-Message-Id: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 9/9] serial: xuartps: Fix out-of-bounds access through DT alias
+Date: Tue, 20 Feb 2018 10:40:24 +0100
+Message-Id: <1519119624-1268-10-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
+References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-	Hi all,
+The cdns_uart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Serial drivers used on DT platforms use the "serialN" alias in DT to
-obtain the serial port index for a specific port.  Drivers typically use
-a fixed-size array for keeping track of all available serial ports.
-However, several drivers do not perform any validation on the index
-obtained from DT, which may lead to out-of-bounds accesses of these
-fixed-size arrays.
+Fix this by adding a range check.
 
-While the DTB passed to the kernel might be considered trusted, some of
-these out-of-bounds accesses can be triggered by a legitimate DTB:
-  - In some drivers the size of the array is defined by a Kconfig
-    symbol, so a user who doesn't need all serial ports may lower this
-    value rightfully,
-  - Tomorrow's new SoC may have more serial ports than the fixed-size
-    array in today's driver can accommodate, which the user may forget
-    to enlarge.
-
-Hence this series fixes that by adding checks for out-of-range aliases,
-logging an error message when triggered.
-
-Tested on r8a7791/koelsch (sh-sci), all other drivers were
-compile-tested only.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (9):
-  serial: arc_uart: Fix out-of-bounds access through DT alias
-  serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-  serial: imx: Fix out-of-bounds access through DT alias
-  serial: mxs-auart: Fix out-of-bounds access through DT alias
-  serial: pxa: Fix out-of-bounds access through DT alias
-  serial: samsung: Fix out-of-bounds access through DT alias
-  serial: sh-sci: Fix out-of-bounds access through DT alias
-  serial: sirf: Fix out-of-bounds access through DT alias
-  serial: xuartps: Fix out-of-bounds access through DT alias
-
- drivers/tty/serial/arc_uart.c      | 5 +++++
- drivers/tty/serial/fsl_lpuart.c    | 4 ++++
- drivers/tty/serial/imx.c           | 5 +++++
- drivers/tty/serial/mxs-auart.c     | 4 ++++
- drivers/tty/serial/pxa.c           | 4 ++++
- drivers/tty/serial/samsung.c       | 4 ++++
- drivers/tty/serial/sh-sci.c        | 4 ++++
- drivers/tty/serial/sirfsoc_uart.c  | 5 +++++
+Fixes: 1f118c02a1819856 ("serial: xuartps: Fix out-of-bounds access through DT alias")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  drivers/tty/serial/xilinx_uartps.c | 2 +-
- 9 files changed, 36 insertions(+), 1 deletion(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index b9b2bc76bcac606c..abcb4d09a2d866d0 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1110,7 +1110,7 @@ static struct uart_port *cdns_uart_get_port(int id)
+ 	struct uart_port *port;
+ 
+ 	/* Try the given port id if failed use default method */
+-	if (cdns_uart_port[id].mapbase != 0) {
++	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
+ 		/* Find the next unused port */
+ 		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
+ 			if (cdns_uart_port[id].mapbase == 0)
 -- 
 2.7.4
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
