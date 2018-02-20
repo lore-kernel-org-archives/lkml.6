@@ -1,60 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeBTQd5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:33:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45200 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751329AbeBTQd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:33:56 -0500
-Date: Tue, 20 Feb 2018 16:33:52 +0000
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] sched/fair: Avoid unnecessary balancing of
- asymmetric capacity groups
-Message-ID: <20180220163352.GD4589@e105550-lin.cambridge.arm.com>
-References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
- <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
- <20180219151011.GI25181@hirez.programming.kicks-ass.net>
+        id S1752696AbeBTQf1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:35:27 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:35344 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752290AbeBTQfZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:35:25 -0500
+Subject: Re: [RFCv4 16/21] v4l2: video_device: support for creating requests
+To: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180220044425.169493-1-acourbot@chromium.org>
+ <20180220044425.169493-17-acourbot@chromium.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ea10280d-bfb4-b1af-79cc-64f40e1007f1@xs4all.nl>
+Date: Tue, 20 Feb 2018 17:35:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180219151011.GI25181@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180220044425.169493-17-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfJTGH4w3j193igAx1n5GH5f4D7VEHV/02uLT88xODNnzJ4CUENCKySJLBgmXAljxYUQTBr9l74RFs6elTzvL06esVwxw4DjFqF0UKsfnZNtTUPS+i9mu
+ LUaeF1iCklRUCN3rjmFR8PCcxU9vd3H3+9q6UE5nnT6RrmX1aFOnj435ngDR2gYmnQJmgoYeyjzP+2CUD3EBXh0K50V4gKaNk9zGaji6sBAS0io2i50jTElv
+ Lnf7sysf6ZOS+V8ZQ1oFRT1RGzo3bPMJFCAPyX+3pRmg4JZcFEDN08IjhltpP5FkcQ5hMdJFifZ8cYvl1B85sUpf3Z+QgfQ+qB1iYAsfitSpN7QV39se751l
+ BoA2a/g/X7stUDq619VwJ+CccaNfF/cwkpj9xcybNgNf7YFm0N0UfpMclY7M9dwFzQA29qMbjICFWGLsR7jZGlRoz5sBWsA84VRtPSoLOITXnJCxxQ2jUnGq
+ 2RSQj2qeXcLAneJ0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 04:10:11PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 15, 2018 at 04:20:51PM +0000, Morten Rasmussen wrote:
-> > +/*
-> > + * group_similar_cpu_capacity: Returns true if the minimum capacity of the
-> > + * compared groups differ by less than 12.5%.
-> > + */
-> > +static inline bool
-> > +group_similar_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
-> > +{
-> > +	long diff = sg->sgc->min_capacity - ref->sgc->min_capacity;
-> > +	long max = max(sg->sgc->min_capacity, ref->sgc->min_capacity);
-> > +
-> > +	return abs(diff) < max >> 3;
-> > +}
+On 02/20/2018 05:44 AM, Alexandre Courbot wrote:
+> Add a new VIDIOC_NEW_REQUEST ioctl, which allows to instanciate requests
+> on devices that support the request API. Requests created that way can
+> only control the device they originate from, making them suitable for
+> simple devices, but not complex pipelines.
 > 
-> This seems a fairly random and dodgy heuristic.
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  Documentation/ioctl/ioctl-number.txt |  1 +
+>  drivers/media/v4l2-core/v4l2-dev.c   |  2 ++
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 25 +++++++++++++++++++++++++
+>  include/media/v4l2-dev.h             |  2 ++
+>  include/uapi/linux/videodev2.h       |  3 +++
+>  5 files changed, 33 insertions(+)
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+> index 6501389d55b9..afdc9ed255b0 100644
+> --- a/Documentation/ioctl/ioctl-number.txt
+> +++ b/Documentation/ioctl/ioctl-number.txt
+> @@ -286,6 +286,7 @@ Code  Seq#(hex)	Include File		Comments
+>  					<mailto:oe@port.de>
+>  'z'	10-4F	drivers/s390/crypto/zcrypt_api.h	conflict!
+>  '|'	00-7F	linux/media.h
+> +'|'	80-9F	linux/media-request.h
+>  0x80	00-1F	linux/fb.h
+>  0x89	00-06	arch/x86/include/asm/sockios.h
+>  0x89	0B-DF	linux/sockios.h
 
-I can't deny that :-)
+This ^^^^ doesn't belong in this patch.
 
-We need to somehow figure out if we are doing asymmetric cpu capacity
-balancing or normal SMP balancing. We probably don't care about
-migrating tasks if the capacities are nearly identical. But how much is
-'nearly'?
+> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+> index 0301fe426a43..062ebee5bffc 100644
+> --- a/drivers/media/v4l2-core/v4l2-dev.c
+> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> @@ -559,6 +559,8 @@ static void determine_valid_ioctls(struct video_device *vdev)
+>  		set_bit(_IOC_NR(VIDIOC_TRY_EXT_CTRLS), valid_ioctls);
+>  	if (vdev->ctrl_handler || ops->vidioc_querymenu)
+>  		set_bit(_IOC_NR(VIDIOC_QUERYMENU), valid_ioctls);
+> +	if (vdev->req_mgr)
+> +		set_bit(_IOC_NR(VIDIOC_NEW_REQUEST), valid_ioctls);
+>  	SET_VALID_IOCTL(ops, VIDIOC_G_FREQUENCY, vidioc_g_frequency);
+>  	SET_VALID_IOCTL(ops, VIDIOC_S_FREQUENCY, vidioc_s_frequency);
+>  	SET_VALID_IOCTL(ops, VIDIOC_LOG_STATUS, vidioc_log_status);
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index ab4968ea443f..a45fe078f8ae 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -21,6 +21,7 @@
+>  
+>  #include <linux/videodev2.h>
+>  
+> +#include <media/media-request.h>
+>  #include <media/v4l2-common.h>
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/v4l2-ctrls.h>
+> @@ -842,6 +843,13 @@ static void v4l_print_freq_band(const void *arg, bool write_only)
+>  			p->rangehigh, p->modulation);
+>  }
+>  
+> +static void vidioc_print_new_request(const void *arg, bool write_only)
+> +{
+> +	const struct media_request_new *new = arg;
+> +
+> +	pr_cont("fd=0x%x\n", new->fd);
 
-We could make it strictly equal as long as sgc->min_capacity is based on
-capacity_orig. If we let things like rt-pressure influence
-sgc->min_capacity, it might become a mess.
+I'd use %d since fds are typically shown as signed integers.
 
-We could tie it to sd->imbalance_pct to make it slightly less arbitrary,
-or we can try to drop the margin.
+> +}
+> +
+>  static void v4l_print_edid(const void *arg, bool write_only)
+>  {
+>  	const struct v4l2_edid *p = arg;
+> @@ -2486,6 +2494,22 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
+>  	return -ENOTTY;
+>  }
+>  
+> +static int vidioc_new_request(const struct v4l2_ioctl_ops *ops,
+> +			      struct file *file, void *fh, void *arg)
+> +{
+> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
+> +	struct media_request_new *new = arg;
+> +	struct video_device *vfd = video_devdata(file);
+> +
+> +	if (!vfd->req_mgr)
+> +		return -ENOTTY;
+> +
+> +	return media_request_ioctl_new(vfd->req_mgr, new);
+> +#else
+> +	return -ENOTTY;
+> +#endif
+> +}
 
-Alternative solutions and preferences are welcome...
+You don't need the #ifdef's here. media_request_ioctl_new() will be stubbed if
+CONFIG_MEDIA_REQUEST_API isn't set.
+
+> +
+>  struct v4l2_ioctl_info {
+>  	unsigned int ioctl;
+>  	u32 flags;
+> @@ -2617,6 +2641,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
+>  	IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
+>  	IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
+>  	IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
+> +	IOCTL_INFO_FNC(VIDIOC_NEW_REQUEST, vidioc_new_request, vidioc_print_new_request, 0),
+>  };
+>  #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
+>  
+> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+> index 53f32022fabe..e6c4e10889bc 100644
+> --- a/include/media/v4l2-dev.h
+> +++ b/include/media/v4l2-dev.h
+> @@ -209,6 +209,7 @@ struct v4l2_file_operations {
+>   * @entity: &struct media_entity
+>   * @intf_devnode: pointer to &struct media_intf_devnode
+>   * @pipe: &struct media_pipeline
+> + * @req_mgr: request manager to use if this device supports creating requests
+>   * @fops: pointer to &struct v4l2_file_operations for the video device
+>   * @device_caps: device capabilities as used in v4l2_capabilities
+>   * @dev: &struct device for the video device
+> @@ -251,6 +252,7 @@ struct video_device
+>  	struct media_intf_devnode *intf_devnode;
+>  	struct media_pipeline pipe;
+>  #endif
+> +	struct media_request_mgr *req_mgr;
+>  	const struct v4l2_file_operations *fops;
+>  
+>  	u32 device_caps;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 91cfe0cbd5c5..35706204e81d 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -63,6 +63,7 @@
+>  #include <linux/compiler.h>
+>  #include <linux/ioctl.h>
+>  #include <linux/types.h>
+> +#include <linux/media-request.h>
+>  #include <linux/v4l2-common.h>
+>  #include <linux/v4l2-controls.h>
+>  
+> @@ -2407,6 +2408,8 @@ struct v4l2_create_buffers {
+>  
+>  #define VIDIOC_QUERY_EXT_CTRL	_IOWR('V', 103, struct v4l2_query_ext_ctrl)
+>  
+> +#define VIDIOC_NEW_REQUEST	_IOWR('V', 104, struct media_request_new)
+
+Hmm, I probably call this VIDIOC_CREATE_REQUEST (analogous to CREATE_BUFS).
+Ditto struct media_create_request and MEDIA_IOC_CREATE_REQUEST.
+
+I'm still not convinced this is the right approach (as opposed to using the media
+device node). I plan to dig deeper into the data structures tomorrow morning.
+
+Regards,
+
+	Hans
+
+> +
+>  /* Reminder: when adding new ioctls please add support for them to
+>     drivers/media/v4l2-core/v4l2-compat-ioctl32.c as well! */
+>  
+> 
