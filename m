@@ -1,97 +1,217 @@
-Return-Path: <dmitry.eremin@intel.com>
-X-Google-Smtp-Source: AH8x225dMroB+NB/Ky1dZvHHjWLCrqXmYuqgStaQ4A7dDdc/zBaJX53XmTB5X7Oo2tlzkWfR28VE
-ARC-Seal: i=1; a=rsa-sha256; t=1519123828; cv=none;
+Return-Path: <prvs=5824d3ed3=paf@cray.com>
+X-Google-Smtp-Source: AH8x227tgP5dhVl5J8yQqgauFCwsRCliLKiyyGzFEYqK4UWjlQJEvqQe77NWmLXjvm5KB60LINsh
+ARC-Seal: i=1; a=rsa-sha256; t=1519100292; cv=none;
         d=google.com; s=arc-20160816;
-        b=wxnOiuFaUBzHcfGFT9Dl8ZBCvMpxoB5pS80XA5q8jtIzjHyLpHHWL9TX41/yWZBcHD
-         AnpBtqfIXCcLF6U2l0JupQUbwAx5yE752S2GYPlx+VuzQQEzYxuDt9jQ9M0oYFT9xIsZ
-         W/ONT0ujsDU6ZavgtgcpN0CTofUcehLUBdgUupX3FpfuBsGO92D/WNUyaefrPyhtycE0
-         bPVDAHJtt0ZXD1F4Xd74mUTdubZcMGflshw6WAJanOfuc+DPTD7l4JlxYIP1/pUPQeL7
-         kRuIHw/FIJU+kyMnBbdEkhTzgm04eUgO/uHVjcR+TaL/7KLHEnDuEp59xQaxEladFnLn
-         7dhA==
+        b=hlY/w87pAn+PAhWjUzxHj75SeehdDyjGm+QjYr8Uyl7R376z9uEhdyTZEbjAAhyKLg
+         f18hm2Fwz8Pl69/IHggUCGpgXkGD8LM33/qcUu+uFVIINLEdlge+8X9/K3dblG1iZQpH
+         S4jrqfDddQwI4lNO0eooILRuSWlZpuwfx2hC3ORaNaD/SuD98PJiLl3ri6r/f/Fv/gmm
+         UPebePlUXtwFO/7mU5i54LsYD3kcw34Dt5hFu5zMNcdNxdGdDjSgQkrizctxSP0yfSiG
+         qKpyMmJqwc5GYGXDHzECuTS7fvi45ZToSB6uZWS45TAMPTHPxOkYc/VBGRmkxknmqdub
+         Gq7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:dlp-reaction:dlp-version
-         :dlp-product:content-language:accept-language:in-reply-to:references
-         :message-id:date:thread-index:thread-topic:subject:cc:to:from
-         :arc-authentication-results;
-        bh=RUaH/ZD8BvY/TWtL1mWYr5t+jBQFqRzz95Td8BD5piM=;
-        b=H1/PqixZfzztdfDJxWK0PtGZZCIHoVA+s3fbhXADM17p+oDF4xRuAAOoVhP7+3WRlf
-         CjX570OkITwLAPi8kMHk+FZtTd7QIXOgofzPU0F8GlXlX2nNyOrXxv1LI1FyIVDBmiIK
-         JUNh5NuEgb2zlZUTMv3/5da3VVrJd5MP6euGhLH0hqYo+kPxYzMChyBxmjQ+Ab4/9XqF
-         Le8OiEdTZ6UPpkzfAkPyHEX/goD6nn4Ovilt+WQSpZvx8sfo4tBlB2cvvi/4v2jKhvMw
-         /qexmYCj3ypscobrthKuUg6CoYDP2Ey4JoFsyz3lDq/m12m1yKqOUCkJkTGR534ksd4g
-         xxAg==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:dkim-signature:arc-authentication-results;
+        bh=QFo1jnbzJKYjpvmFZE7HMHQyUKMqzaVjGlqGofnRhNk=;
+        b=eH5/OFzWGs34xU8UTfER1bCIMBIy2PAIS0s7/VjLnQh3biJx25SWaSVa3gTQsqbZWX
+         foixXaVaVsXAKrR+aSO2ncCwbn7yGTp4lPImyCurYXj7dmbpksmYfEiMAgeIcjCezYY4
+         iLyF8ALwJW7dDoLbNNJmXpP6jWteW4/hwg+dU4lZC94z54Yru2RXXlDDZ4lHfLwzoiie
+         OVxFSWWaBe9sGCXKjJmlVic/tyUSDiwfmTnVpYcqSsMXsbG80AjpdOFjhxZtmkOqDa+M
+         rGATX5djEgxYhhtduFZwjHtcTY6qdzQMES4/9SNWdEFcpelbfeX16lj0uxs8czXQCLKg
+         i5jw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dmitry.eremin@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dmitry.eremin@intel.com
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=b7zxsgiX;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=yfcSzpMy;
+       spf=pass (google.com: domain of prvs=5824d3ed3=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=5824d3ed3=paf@cray.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dmitry.eremin@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dmitry.eremin@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,538,1511856000";
-   d="scan'208";a="202395446"
-From: "Eremin, Dmitry" <dmitry.eremin@intel.com>
-To: NeilBrown <neilb@suse.com>, "Drokin, Oleg" <oleg.drokin@intel.com>,
-	"James Simmons" <jsimmons@infradead.org>, "Dilger, Andreas"
-	<andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=b7zxsgiX;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=yfcSzpMy;
+       spf=pass (google.com: domain of prvs=5824d3ed3=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=5824d3ed3=paf@cray.com
+X-IronPort-AV: E=Sophos;i="5.46,537,1511827200";
+   d="scan'208";a="18233224"
+X-Cray-OBMMKR: 1433258124 18233224
+From: Patrick Farrell <paf@cray.com>
+To: NeilBrown <neilb@suse.com>, Oleg Drokin <oleg.drokin@intel.com>, "James
+ Simmons" <jsimmons@infradead.org>, Andreas Dilger <andreas.dilger@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC: lkml <linux-kernel@vger.kernel.org>, lustre
 	<lustre-devel@lists.lustre.org>
-Subject: RE: [lustre-devel] [PATCH 14/21] staging: lustre: fix assorted
- checkpatch errors
-Thread-Topic: [lustre-devel] [PATCH 14/21] staging: lustre: fix assorted
- checkpatch errors
-Thread-Index: AQHTqfPgZAgkHfH0b0e/vnwE8ILnnaOs7T3AgAAP+QCAAB77kA==
-Date: Tue, 20 Feb 2018 10:50:25 +0000
-Message-ID: <9FC73D3DBECE0941BD2ED069D26863425CE8FF72@irsmsx110.ger.corp.intel.com>
+Subject: Re: [lustre-devel] [PATCH 00/21] staging: assorted lustre clean-up
+Thread-Topic: [lustre-devel] [PATCH 00/21] staging: assorted lustre clean-up
+Thread-Index: AQHTqfH1/iE52eHutUujSSL+zuhVZqOsr4xy
+Date: Tue, 20 Feb 2018 04:18:07 +0000
+Message-ID: <BN6PR1101MB213293D47D19B25752F4B7C9CBCF0@BN6PR1101MB2132.namprd11.prod.outlook.com>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
- <151909341801.25814.16760126077741712102.stgit@noble>
- <9FC73D3DBECE0941BD2ED069D26863425CE8FF1E@irsmsx110.ger.corp.intel.com>
- <87lgfojb0d.fsf@notabene.neil.brown.name>
-In-Reply-To: <87lgfojb0d.fsf@notabene.neil.brown.name>
-Accept-Language: ru-RU, en-US
+In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGIyY2QzYzEtYmI4Zi00ZjIzLTk5OTYtNDI1MjNjY2YyZTM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlJZQjRHT1NPUUZEZ2ZOWGxUNjUyamx5QXFMUk9mWDY5Rmc1RkZlK0RYdDg9In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [163.33.239.182]
-Content-Type: text/plain; charset="utf-8"
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=paf@cray.com; 
+x-originating-ip: [2601:443:480:1e55:81b3:73da:8070:a8bf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2081;6:LPlSmV1TTh7iSixaAdv4AjFn/kLkFiZIbUfi5XFjPzjws7PjbdBnHH0fZReWk9m0DyaRe7DDlgwY517i+GSYY1XFiQB+6yb5v+37/VoTVMek3l/ikrTF7QLxfFqBu69TYXwT9dTyZu4TKmSQXx5VVF3XZ8s7gVJME7Pp5f+WbCZRMqbezGrcoFcDNs/d8fsEgmf/LCZNu5HKnMztubW4/gVmb2rv0YbKeqJM0QZw+1sEWL74j7I4wVxidT6d9WKy06+zy8qO7H1XOX4yEOKYLRYlumj/O7UsmHdsNSneHnZghI/cw4gvAyErmqR7/H5bSx9GWr9eX8MmmWgJqLk1MUopfgBzOzJY3naaSab7dlyFy257eFMcuFIpyEw5qEPx;5:IYfZIQFq1whDpOTqmsU12d+NXmMYcAN16tgIXsyYEszaAxsoYYQu8jD4NB9TTqVUx0n2qNc1yXQksonOcqPdKbqxwaV/4bWeGzHILcWCyMboHe+2wCJdwDCTTwSBl2G0EihDqbq+qIarPP4d9cwM6kvRmKROrao6LHojhBZIbT0=;24:3IiVVU7zJWI3OPtYQmgFvZ1y0PUU2EQ/zh3NuQLlosUWzUqCYDNGOUgONg+Sje4ZVkSPnJnS2f/H7Dq9V7KkD5VboqvF3Oj7m8Q7ErhYTQY=;7:K6H92h3rPDa//qDHGOojrV0iI4NTbTztrT0XbsJqBWNvAcg4W0DgBXsCKkbVBi6DLInbBCfA5oDINpxeTcHIYU8qHmFHCoV2iGWyfBPSSilQGo5R93PUFCHo/2MJocwuCl7hEHs2OMiePqyaRMS90zO4AbY7Aj7p27XKyPXQJo3w4uvTcrWN9IjlCwuZyj8BjoWJ5zgb/RsXk1v5QBMBZwAObrEe07pseoUOfG9Y13zEgLY1MXRU1qRimWnUewpK
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: c4d7ae8b-fe6b-4d32-25ce-08d57818f1fd
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:BN6PR1101MB2081;
+x-ms-traffictypediagnostic: BN6PR1101MB2081:
+x-microsoft-antispam-prvs: <BN6PR1101MB2081BFB2C60EF819277015AACBCF0@BN6PR1101MB2081.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001056)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR1101MB2081;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2081;
+x-forefront-prvs: 05891FB07F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(39850400004)(366004)(346002)(189003)(199004)(33656002)(25786009)(4326008)(97736004)(54906003)(110136005)(316002)(99286004)(86362001)(105586002)(6246003)(6436002)(53936002)(55016002)(106356001)(9686003)(6306002)(2900100001)(305945005)(68736007)(3660700001)(53546011)(6506007)(14454004)(8936002)(8676002)(81156014)(81166006)(59450400001)(3280700002)(7736002)(5660300001)(2906002)(2950100002)(77096007)(186003)(478600001)(7696005)(76176011)(102836004)(74316002)(966005)(229853002)(6116002)(13693001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR1101MB2081;H:BN6PR1101MB2132.namprd11.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: FYmoaygJJNckEgEctPGhywxxn84ApPCaHldlBm9aob+EMV8Ogo7vTFcNVMzeMrSM1mbV6+rMJCpwTyAcSNdqMUo5K3Rc81DnakprHh5GXxfvviJdqg/rnIdd56t7WIAZMUH6oqNqzAneZSuAvr76/GZkhDVcofSpF26JC7m2hus=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4d7ae8b-fe6b-4d32-25ce-08d57818f1fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2018 04:18:07.4584
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2081
+X-OriginatorOrg: cray.com
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592885047375416179?=
-X-GMAIL-MSGID: =?utf-8?q?1592916788150684594?=
+X-GMAIL-THRID: =?utf-8?q?1592884943787540243?=
+X-GMAIL-MSGID: =?utf-8?q?1592892108409528722?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBUaGFua3MgZm9yIHRoZSByZXZpZXcuICBZ
-ZXMsIHlvdSBhcmUgY29ycmVjdC4NCj4gSSBoYWQgc2VlbiB0aGF0IGVuZF9kaXJlbnQgd2FzIGlu
-aXRpYWxpemVkIHRvIE5VTEwsIGFuZCBsZXQgbXlzZWxmDQo+IGJlbGlldmUgdGhhdCB3b3VsZCBt
-YWtlIHRoZSB0cmFuc2Zvcm1hdGlvbiBzYWZlLg0KPiBJbiBmYWN0LCB0aGF0IGluaXRpYWxpemF0
-aW9uIHRvIE5VTEwgaXMgcG9pbnRsZXNzIGFzIGl0IGlzIG5ldmVyIHVzZWQuDQo+IA0KPiBNYXli
-ZSB0aGlzIHdvdWxkIGJlIGJldHRlcg0KPiANCj4gQEAgLTEwNTUsMTMgKzEwNTUsMTQgQEAgc3Rh
-dGljIHZvaWQgbWRjX2FkanVzdF9kaXJwYWdlcyhzdHJ1Y3QgcGFnZQ0KPiAqKnBhZ2VzLCBpbnQg
-Y2ZzX3BncywgaW50IGx1X3BncykNCj4gIAkJX191NjQgaGFzaF9lbmQgPSBsZTY0X3RvX2NwdShk
-cC0+bGRwX2hhc2hfZW5kKTsNCj4gIAkJX191MzIgZmxhZ3MgPSBsZTMyX3RvX2NwdShkcC0+bGRw
-X2ZsYWdzKTsNCj4gIAkJc3RydWN0IGx1X2RpcnBhZ2UgKmZpcnN0ID0gZHA7DQo+IC0JCXN0cnVj
-dCBsdV9kaXJlbnQgKmVuZF9kaXJlbnQgPSBOVUxMOw0KPiAtCQlzdHJ1Y3QgbHVfZGlyZW50ICpl
-bnQ7DQo+IA0KPiAgCQl3aGlsZSAoLS1sdV9wZ3MgPiAwKSB7DQo+IC0JCQllbnQgPSBsdV9kaXJl
-bnRfc3RhcnQoZHApOw0KPiAtCQkJZm9yIChlbmRfZGlyZW50ID0gZW50OyBlbnQ7DQo+IC0JCQkg
-ICAgIGVuZF9kaXJlbnQgPSBlbnQsIGVudCA9IGx1X2RpcmVudF9uZXh0KGVudCkpOw0KPiArCQkJ
-c3RydWN0IGx1X2RpcmVudCAqZW5kX2RpcmVudCA9IE5VTEw7DQo+ICsJCQlzdHJ1Y3QgbHVfZGly
-ZW50ICplbnQ7DQo+ICsNCj4gKwkJCWZvciAoZW50ID0gbHVfZGlyZW50X3N0YXJ0KGRwKTsgZW50
-Ow0KPiArCQkJICAgICBlbnQgPSBsdV9kaXJlbnRfbmV4dChlbnQpKQ0KPiArCQkJCWVuZF9kaXJl
-bnQgPSBlbnQ7DQo+IA0KPiAgCQkJLyogQWR2YW5jZSBkcCB0byBuZXh0IGx1X2RpcnBhZ2UuICov
-DQo+ICAJCQlkcCA9IChzdHJ1Y3QgbHVfZGlycGFnZSAqKSgoY2hhciAqKWRwICsgTFVfUEFHRV9T
-SVpFKTsNCj4gPz8NCg0KVGhhbmtzLCBJIGFncmVlIHdpdGggdGhpcyB2ZXJzaW9uLg0KDQpEbWl0
-cnkuDQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KSm9pbnQgU3RvY2sgQ29tcGFueSBJbnRlbCBBL08KUmVnaXN0ZXJl
-ZCBsZWdhbCBhZGRyZXNzOiBLcnlsYXRza3kgSGlsbHMgQnVzaW5lc3MgUGFyaywKMTcgS3J5bGF0
-c2theWEgU3RyLiwgQmxkZyA0LCBNb3Njb3cgMTIxNjE0LApSdXNzaWFuIEZlZGVyYXRpb24KClRo
-aXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1h
-dGVyaWFsIGZvcgp0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55
-IHJldmlldyBvciBkaXN0cmlidXRpb24KYnkgb3RoZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQu
-IElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZApyZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRo
-ZSBzZW5kZXIgYW5kIGRlbGV0ZSBhbGwgY29waWVzLgo=
+
+Lustre networking driver.  (Or so I was taught)
+
+Regards,
+Patrick
+
+
+________________________________________
+From: lustre-devel <lustre-devel-bounces@lists.lustre.org> on behalf of Nei=
+lBrown <neilb@suse.com>
+Sent: Monday, February 19, 2018 8:23:37 PM
+To: Oleg Drokin; James Simmons; Andreas Dilger; Greg Kroah-Hartman
+Cc: lkml; lustre
+Subject: [lustre-devel] [PATCH 00/21] staging: assorted lustre clean-up
+
+Following are assorted patches which clean up parts of lustre.
+One or two tiny buglets are fixed, but mostly the patches
+just make the code more readable, often by removing distractions.
+
+The first several patches remove content from libcfs, completely
+removing 3 files.
+There are some list_for_each improvements in ptlrpc, and some
+code simplification in fid.
+Finally a small simplification in socklnd.
+
+(lnd ?? Lustre Networking Domain??)
+
+Thanks,
+NeilBrown
+
+
+---
+
+NeilBrown (21):
+      staging: lustre: replace all CFS_CAP_* macros with CAP_*
+      staging: lustre: opencode cfs_cap_{raise,lower,raised}
+      staging: lustre: remove linux-curproc.c
+      staging: lustre: remove unnecessary cfs_block_allsigs() calls
+      staging: lustre: lnet: remove cfs_block_allsigs calls.
+      staging: lustre: simplify linux-prim.c
+      staging: lustre: improve API and implementation of blocking signals.
+      staging: lustre: make signal-blocking functions inline
+      staging: lustre: discard libcfs_kvzalloc_cpt()
+      staging: lustre: discard lu_buf allocation library.
+      staging: lustre: improve some libcfs_kvzalloc calls.
+      staging: lustre: discard libcfs_kvzalloc and linux-mem.c
+      staging: lustre: remove phantom struct cfs_crypto_hash_desc
+      staging: lustre: fix assorted checkpatch errors
+      staging: lustre: ptlrpc: list_for_each improvements.
+      staging: lustre: fid: convert lcs_mutex to a spinlock
+      staging: lustre: fid: use wait_event_cmd()
+      staging: lustre: fid: remove seq_fid_alloc_fini() and simplify
+      staging: lustre: fid: fix up debugfs access to ->lcs_space
+      staging: lustre: fid: perform sanity checks before commiting
+      staging: lustre: socklnd: simplify ksnc_rx_iov_space
+
+
+ .../staging/lustre/include/linux/libcfs/curproc.h  |   37 ++-----
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |   27 +++--
+ .../lustre/include/linux/libcfs/libcfs_crypto.h    |   11 +-
+ drivers/staging/lustre/include/linux/lnet/api.h    |    1
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |    6 -
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.h    |   11 --
+ .../staging/lustre/lnet/klnds/socklnd/socklnd_cb.c |   10 --
+ .../lustre/lnet/klnds/socklnd/socklnd_lib.c        |    2
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    4 -
+ .../staging/lustre/lnet/libcfs/linux/linux-cpu.c   |    2
+ .../lustre/lnet/libcfs/linux/linux-crypto.c        |   29 ++---
+ .../lustre/lnet/libcfs/linux/linux-curproc.c       |  108 ----------------=
+---
+ .../staging/lustre/lnet/libcfs/linux/linux-mem.c   |   51 ---------
+ .../staging/lustre/lnet/libcfs/linux/linux-prim.c  |  113 ----------------=
+----
+ drivers/staging/lustre/lnet/lnet/acceptor.c        |    2
+ drivers/staging/lustre/lnet/lnet/api-ni.c          |   15 +--
+ drivers/staging/lustre/lnet/lnet/lib-eq.c          |   10 +-
+ drivers/staging/lustre/lnet/lnet/router.c          |    2
+ drivers/staging/lustre/lnet/selftest/timer.c       |    2
+ drivers/staging/lustre/lustre/fid/fid_request.c    |  106 ++++++----------=
+---
+ drivers/staging/lustre/lustre/fid/lproc_fid.c      |   44 +++++---
+ drivers/staging/lustre/lustre/include/lu_object.h  |    7 -
+ drivers/staging/lustre/lustre/include/lustre_fid.h |    2
+ drivers/staging/lustre/lustre/include/lustre_lib.h |   18 ++-
+ drivers/staging/lustre/lustre/include/lustre_sec.h |    3 -
+ drivers/staging/lustre/lustre/include/obd_class.h  |    8 +
+ .../staging/lustre/lustre/include/obd_support.h    |    2
+ drivers/staging/lustre/lustre/llite/dcache.c       |    2
+ drivers/staging/lustre/lustre/llite/dir.c          |   10 +-
+ drivers/staging/lustre/lustre/llite/file.c         |   12 +-
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |    8 +
+ drivers/staging/lustre/lustre/llite/llite_mmap.c   |    8 +
+ drivers/staging/lustre/lustre/llite/xattr.c        |    2
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        |    4 -
+ drivers/staging/lustre/lustre/lov/lov_ea.c         |    2
+ drivers/staging/lustre/lustre/lov/lov_io.c         |    2
+ drivers/staging/lustre/lustre/lov/lov_lock.c       |    2
+ drivers/staging/lustre/lustre/lov/lov_object.c     |    4 -
+ drivers/staging/lustre/lustre/lov/lov_pack.c       |    2
+ drivers/staging/lustre/lustre/lov/lov_request.c    |    2
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c      |    2
+ drivers/staging/lustre/lustre/mdc/mdc_request.c    |    6 +
+ drivers/staging/lustre/lustre/obdclass/linkea.c    |   16 ++-
+ .../lustre/lustre/obdclass/linux/linux-module.c    |    4 -
+ drivers/staging/lustre/lustre/obdclass/llog.c      |   22 ++--
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |   70 ------------
+ .../lustre/lustre/obdclass/lustre_handles.c        |    4 -
+ .../staging/lustre/lustre/obdecho/echo_client.c    |    8 +
+ drivers/staging/lustre/lustre/osc/osc_cache.c      |    4 -
+ drivers/staging/lustre/lustre/osc/osc_page.c       |    2
+ drivers/staging/lustre/lustre/osc/osc_request.c    |    2
+ drivers/staging/lustre/lustre/ptlrpc/client.c      |   93 +++++-----------
+ drivers/staging/lustre/lustre/ptlrpc/import.c      |   34 ++----
+ drivers/staging/lustre/lustre/ptlrpc/layout.c      |    2
+ drivers/staging/lustre/lustre/ptlrpc/pinger.c      |    8 -
+ drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c     |   15 +--
+ drivers/staging/lustre/lustre/ptlrpc/recover.c     |   28 ++---
+ drivers/staging/lustre/lustre/ptlrpc/sec.c         |    4 -
+ drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c    |    4 -
+ drivers/staging/lustre/lustre/ptlrpc/sec_null.c    |    8 +
+ drivers/staging/lustre/lustre/ptlrpc/sec_plain.c   |    8 +
+ drivers/staging/lustre/lustre/ptlrpc/service.c     |   27 ++---
+ 62 files changed, 295 insertions(+), 769 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.=
+c
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-mem.c
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-prim.c
+
+--
+Signature
+
+_______________________________________________
+lustre-devel mailing list
+lustre-devel@lists.lustre.org
+http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
