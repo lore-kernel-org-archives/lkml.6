@@ -1,85 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeBTWB1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:01:27 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:34563 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeBTWAU (ORCPT
+        id S1751563AbeBTWBz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:01:55 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:40626 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeBTWBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:00:20 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Nicolas Pitre <nico@linaro.org>
-Cc: Andi Kleen <ak@linux.intel.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/7] ARM: disallow combining XIP and LTO
-Date: Tue, 20 Feb 2018 22:59:48 +0100
-Message-Id: <20180220215954.4092811-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180220215954.4092811-1-arnd@arndb.de>
-References: <20180220215954.4092811-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:68CP8D5zJQFwnlFrJ/irQ54USuaEt6O5wK4lDMNIAyakOc7alQ2
- eQ/4aC76leERsEA1T/DOpfDW3K4PVo1T2mnzXFqPQcRtehbPZ7cWo+lyDWD5TrH/jpHm+Al
- O6rfVaM83JPtqeAt8Y1P20vq4NwFY3JVBIAMLaLrP9sKNDGE4tUB89fgY/kzu4Uojy46pnm
- NXE7vMpvOdbTDISlPrJpg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rR8Kc8pDCKk=:ndfU5F6i9ZigA1mfZqMVBF
- Q38QVPhjLkB5CoVuApUGOAk8hNVq0HX3eZQ4eXGL85WY2OT4Q6gw8hBfSzdUDhYy/sCtb7qMn
- A0K4SkY5VbnEmYfmKklZUeQraieZ4JSysqCxIVSf3WyPAtWRTMvbTQBY47fIxU1iQ4TfUbHyH
- 3juU7cLJ6mufH6oO0RYg1CwNGeE5l0tsLR2vOwBEHWlnEwqTWGC06u7OqlQrWXg9Iqp7mFC4o
- CZRqfG2SIYwgzrk108RSK0vdTvID7/eVM0Vaqcw47y6gTVN9WyXraD6ljkT0pHh5RfYxSsHDV
- ZsTHCXDKOFRhX4nMatMPgVVwQPfhQ9R7hh1B+kXDsuRf5tRvnmq6KGzfhZHhsD4aRyKS1xg33
- p6wz2dKp6K/mL1ettGP13zC7VGN5fO/yD/qKPswkW6pXxjGGKCG7WeBxBNZk7Y9XSxlyo/6AU
- 0ej7nm9URsuhYBW0zXfV0J1FSSmQ/8e4VNSOIAY4jcpJbZT0nVXaCOsp2UJegvcndGsUXY3CK
- N5j1PLqE1XOE7njy+UDgyOgPtPHb5oJMZMNMhVPKY3myyqIrBx9w4+HTcbngUeOET7UbcbPbC
- d436lrCgQ5N9Q25jMRcihWbaZZGVG0rmgF2cu0ykrTrvaVZbUGt+KQo1Tuj6QP62AfuUwtDtg
- oRxmud2e67XgFnW+RJ1TsUyJ3NBfqroVPyYzV0AoXSoUVSLB6nvLjg9w1PowK9MWxrR7HpJYn
- CXjbSqmozplKYfGX3crpAsbom6YEhMt+p8yX/w==
+        Tue, 20 Feb 2018 17:01:53 -0500
+X-Google-Smtp-Source: AH8x227KZhzz7bUawZeP4Ut/AMjh0JC2PIb6t9k6Oc2DnGVhAIH+D+4xBBKmfE6k6Nq3WCuUsB+IVvsqWL/ZKJiK7oU=
+MIME-Version: 1.0
+In-Reply-To: <20180220211849.fqjb6rdmypl6opir@agluck-desk>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <20180215182208.35003-2-joe.konno@linux.intel.com> <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 20 Feb 2018 14:01:51 -0800
+X-Google-Sender-Auth: aObiZiaw4rkvwuU3jRUr-xLS8l0
+Message-ID: <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Joe Konno <joe.konno@linux.intel.com>, linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Matthew Garrett <mjg59@google.com>, Peter Jones <pjones@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fails during deflate_xip_data.sh
+On Tue, Feb 20, 2018 at 1:18 PM, Luck, Tony <tony.luck@intel.com> wrote:
+> ...
+>> > -   inode = efivarfs_get_inode(sb, d_inode(root), S_IFREG | 0644, 0,
+>> > +   inode = efivarfs_get_inode(sb, d_inode(root), S_IFREG | 0600, 0,
+>> >                                is_removable);
+>
+> Linus,
+>
+> Does this rate an exception to the "don't break userspace" for a security issue?
 
-  /home/arnd/cross-gcc/bin/arm-linux-gnueabi-objcopy -O binary -R .comment -S  vmlinux arch/arm/boot/xipImage && /bin/bash -c '/git/arm-soc/arch/arm/boot/deflate_xip_data.sh vmlinux arch/arm/boot/xipImage || { rm -f arch/arm/boot/xipImage; false; }'
-make -f /git/arm-soc/scripts/Makefile.modpost
-+ sym_val __data_loc
-+ sed -n / __data_loc$/{s/ .*$//p;q}
-+ /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
-/home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
-+ local val=ac74c0f4
-+ [ ac74c0f4 ]
-+ echo 2893332724
-+ __data_loc=2893332724
-+ sym_val _edata_loc
-+ /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
-+ sed -n / _edata_loc$/{s/ .*$//p;q}
-/home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
-+ local val=ac7b8744
-+ [ ac7b8744 ]
-+ echo 2893776708
-+ _edata_loc=2893776708
-+ sym_val _xiprom
-+ sed -n / _xiprom$/{s/ .*$//p;q}
-+ /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
-/home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
+I have a hard time judging, since I don't know what the breakage is.
 
-Obviously we want to make the combination work, no idea why it doesn't.
+_Theoretical_ breakage doesn't matter.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+But yes, if it's actually part of some regular use flow, then it
+matters, and we should not do this change. It's not a real security
+issue, afaik.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 823e397ee0f3..8ed0f664f86f 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1976,6 +1976,7 @@ endchoice
- config XIP_KERNEL
- 	bool "Kernel Execute-In-Place from ROM"
- 	depends on !ARM_LPAE && !ARCH_MULTIPLATFORM
-+	depends on !LTO
- 	help
- 	  Execute-In-Place allows the kernel to run from non-volatile storage
- 	  directly addressable by the CPU, such as NOR flash. This saves RAM
--- 
-2.9.0
+I do think that we might need to just extend on the whitelist for efi
+variables we _already_ have for other reasons. I'm talking about that
+whole variable_validate[] array.
+
+Which variables are actually used by user space tools? It sounds like
+it may be exactly those boot order things that we already have flags
+and special behavior for.
+
+And no, I don't believe in the "SMI can trigger a DoS" argument. Those
+garbage efivars that *do* trigger SMI's should me marked and shamed,
+and maybe _they_ need to be added to the list of things that you
+should look out for. Root or not.
+
+And just on general principlies, I don't want to see weasel-wordy
+commit messages like
+
+ "Reading certain EFI variables trigger SMIs"
+
+I understand *writing* them causing SMI's due to some flash protection
+scheme. What's the reading thing? And why aren't we calling that
+garbage out?
+
+So even if we do need to limit reading, I want out comments (in core
+or commits) to actually explain *Why*., instead of this kind of
+non-specific fear-mongering that nobody can really say yay or nay
+about.
+
+               Linus
