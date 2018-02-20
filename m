@@ -1,22 +1,22 @@
 Return-Path: <Valentin.Vidic@carnet.hr>
-X-Google-Smtp-Source: AH8x226QpRHe5+WgBB1UjYX4rtgC0wn2y/GCnOBcgDf4/L66FrkgurgFNsRKVMnEiZHjI08aK4L/
-ARC-Seal: i=1; a=rsa-sha256; t=1519135418; cv=none;
+X-Google-Smtp-Source: AH8x226l+WUeK03Te/zjBv0Qzo8/3dwHiFsWOgK78BRK0JWlyAc+Z4VVAPs6zxrAtHCN+EVaHR3A
+ARC-Seal: i=1; a=rsa-sha256; t=1519135023; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ge+ZhggeGO5Ch84rOYrs0AKMJr7foPgIXLWSbYJtYWgk6ekTw6uaSg31zDrwUk+ort
-         ZHu6arCGuJL8/mE4LWigbe7bHApxpVtSuN7XQeCoPG0GfiADQ+Z1gpU3RcpkrFTnRUpf
-         DWPFN0WTS+RqAnchoRcNY0m+Szf80tjQd/DlkE/LeshBRIEmmnX5ZqH9e8AsyapXVGEC
-         exl19bIgiYCcZIj5FLm1CRSM7HKxoTqzrW5YferTBAUHrxPTR03l03vob9IUhAKBfIQH
-         k9gFIG2t7eG11xTq8sP+TT+IXuaDGuO0d5twg6FVUEewo4OGgnH4HYYVo7/iJSzXJbGg
-         mwXg==
+        b=PI3KNEr4G8diR3VkLPBjTDgh8T4FAFsOcVvNLpv5hNT+pL6nWO6zURlJyJ19+zaMyl
+         FEQQgIN6zwKSrytlQFn1V1oXIqim+BVS2910sjwrVh2zqUvESeh6RZ+uBdB8OzyucORF
+         P99zbdMGA23hXa3x+gYYY33U+UfsU1aoKJaxsb4vuK0ueW58cxAomHuiAUPyjSCLJwqi
+         0HNt5f1D0Zc9Yhse0fcWteGrpiA0KfjR0nAd9U5wN56WInVXzKBw7ux1rntz+mxEmtZc
+         AV2eEhOEnQvLl+NfDXPQxAzjhh/u7kCbAYTD3ojZF2QfoB93NtAC4TbsURyCmhyEwKip
+         VTFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=subject:message-id:date:cc:to:from:arc-authentication-results;
-        bh=I2iaWw2KtNKvscc8wzflbc3OYyyFKDWv5RW/ZA6/XWE=;
-        b=Yd08uprd2xQ9L/SgFeAsP9eGciCbxkOXovmb7b17/fc5hPTWzAxn805bDqkW04OG09
-         jriUhuo5MC7ntxwWq4IWjN0YPEgr+iZeVx+yygYlUWWsUUgc7GTBl/W+2Itld9R2yFuc
-         VAdfCHAU8J2Bn3AWdGAh8Hif9ZgvuUerbMAgZuh1/AfvUn0in4TjATHuVFW+5isIgO4S
-         CPPQhedzoUMhqfmB3Wzn6QaZ/B/eBa+5CIxunW1qczXUbCripZHLMjqTTQEXZW1z6hWD
-         ditwZB3gUOZkhnbltbLXl/9UbEDF/KcckOo1rCXLzTYtT8QwOky52L6L7xCseogrl8Dq
-         Z2dg==
+        bh=iOZEbiDD+tYPG5At4Ix7oBlRtK++jPRxiAo5ZM4+Mgw=;
+        b=lnm1PMUpD8pXYfIMVcu8o2QzgUXgDFIxN6qqurGgMs8hbFt02uMEoY2ExeLvLQc3YG
+         pYEBdL8YwSeAP9f6/86sXtgimzWBVJSHs+RWslIYKvI24nbDejcTsWrLqKRhimwzlWBA
+         1hwd4/43SfrhuLhJn4U8or+3WIPSXHPcivZ0KwXjQJgXoeaioo8vgY5aU7glciLlMVzP
+         YGBDM7ts76ka3W3pHcBjCjPR6gOZIId4S+IB/TBxcmfdPyf07Vcpc0ALa1Z5ToCQ7SZV
+         g8lDTKnrWofccD36+Tr/ZtJXcwBPg65ng/1VFaKjy8tvLKUBUW1b/j8RZIPWIypzCIg9
+         4GTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of valentin.vidic@carnet.hr designates 2001:b68:ff:2::6 as permitted sender) smtp.mailfrom=Valentin.Vidic@carnet.hr
 Authentication-Results: mx.google.com;
@@ -32,98 +32,84 @@ Cc: =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Date: Tue, 20 Feb 2018 15:03:30 +0100
-Message-Id: <20180220140330.22100-1-Valentin.Vidic@CARNet.hr>
+Date: Tue, 20 Feb 2018 14:56:45 +0100
+Message-Id: <20180220135645.20985-1-Valentin.Vidic@CARNet.hr>
 X-Mailer: git-send-email 2.16.1
-X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: [PATCH] staging: pi433: fix CamelCase for thresholdDecrement
+X-SA-Exim-Connect-IP: 161.53.12.131
+Subject: [PATCH] staging: pi433: fix CamelCase for txStartCondition
 X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592928939994849789?=
-X-GMAIL-MSGID: =?utf-8?q?1592928939994849789?=
+X-GMAIL-THRID: =?utf-8?q?1592928526833154329?=
+X-GMAIL-MSGID: =?utf-8?q?1592928526833154329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Fixes checkpatch warning:
 
-  CHECK: Avoid CamelCase: <thresholdDecrement>
+  CHECK: Avoid CamelCase: <txStartCondition>
 
 Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 ---
- drivers/staging/pi433/Documentation/pi433.txt | 2 +-
- drivers/staging/pi433/pi433_if.h              | 2 +-
- drivers/staging/pi433/rf69.c                  | 4 ++--
- drivers/staging/pi433/rf69.h                  | 2 +-
- drivers/staging/pi433/rf69_enum.h             | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/pi433/pi433_if.h  | 2 +-
+ drivers/staging/pi433/rf69.c      | 4 ++--
+ drivers/staging/pi433/rf69.h      | 2 +-
+ drivers/staging/pi433/rf69_enum.h | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/pi433/Documentation/pi433.txt b/drivers/staging/pi433/Documentation/pi433.txt
-index 61ba9700d7dc..3313dff3c37e 100644
---- a/drivers/staging/pi433/Documentation/pi433.txt
-+++ b/drivers/staging/pi433/Documentation/pi433.txt
-@@ -180,7 +180,7 @@ rf params:
- 		threshold value for the signal strength on the receiver input.
- 		If this value is exceeded, a reception cycle starts
- 		Allowed values: 0...255
--	thresholdDecrement
-+	threshold_decrement
- 		in order to adapt to different levels of singnal strength, over
- 		time the receiver gets more and more sensitive. This value
- 		determs, how fast the sensitivity increases.
 diff --git a/drivers/staging/pi433/pi433_if.h b/drivers/staging/pi433/pi433_if.h
-index 69847f978a69..22c1631d0bf0 100644
+index c4e4ea086a24..69847f978a69 100644
 --- a/drivers/staging/pi433/pi433_if.h
 +++ b/drivers/staging/pi433/pi433_if.h
-@@ -115,7 +115,7 @@ struct pi433_rx_cfg {
- 	enum modulation		modulation;
+@@ -69,7 +69,7 @@ struct pi433_tx_cfg {
  
- 	__u8			rssi_threshold;
--	enum thresholdDecrement	threshold_decrement;
-+	enum threshold_decrement threshold_decrement;
- 	enum antenna_impedance	antenna_impedance;
- 	enum lnaGain		lna_gain;
- 	enum mantisse		bw_mantisse;	/* normal: 0x50 */
+ 	enum paRamp		pa_ramp;
+ 
+-	enum txStartCondition	tx_start_condition;
++	enum tx_start_condition	tx_start_condition;
+ 
+ 	__u16			repetitions;
+ 
 diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 722d95a3777f..91c834059710 100644
+index 42c2e1c6b386..722d95a3777f 100644
 --- a/drivers/staging/pi433/rf69.c
 +++ b/drivers/staging/pi433/rf69.c
-@@ -476,9 +476,9 @@ int rf69_set_bandwidth_during_afc(struct spi_device *spi, enum mantisse mantisse
- 	return rf69_set_bandwidth_intern(spi, REG_AFCBW, mantisse, exponent);
+@@ -714,9 +714,9 @@ int rf69_set_broadcast_address(struct spi_device *spi, u8 broadcastAddress)
+ 	return rf69_write_reg(spi, REG_BROADCASTADRS, broadcastAddress);
  }
  
--int rf69_set_ook_threshold_dec(struct spi_device *spi, enum thresholdDecrement thresholdDecrement)
-+int rf69_set_ook_threshold_dec(struct spi_device *spi, enum threshold_decrement threshold_decrement)
+-int rf69_set_tx_start_condition(struct spi_device *spi, enum txStartCondition txStartCondition)
++int rf69_set_tx_start_condition(struct spi_device *spi, enum tx_start_condition tx_start_condition)
  {
--	switch (thresholdDecrement) {
-+	switch (threshold_decrement) {
- 	case dec_every8th:
- 		return rf69_read_mod_write(spi, REG_OOKPEAK, MASK_OOKPEAK_THRESDEC, OOKPEAK_THRESHDEC_EVERY_8TH);
- 	case dec_every4th:
+-	switch (txStartCondition) {
++	switch (tx_start_condition) {
+ 	case fifo_level:
+ 		return rf69_clear_bit(spi, REG_FIFO_THRESH, MASK_FIFO_THRESH_TXSTART);
+ 	case fifo_not_empty:
 diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
-index 147d89390745..21d7034e2c79 100644
+index 2c0d130f7a03..147d89390745 100644
 --- a/drivers/staging/pi433/rf69.h
 +++ b/drivers/staging/pi433/rf69.h
-@@ -40,7 +40,7 @@ int rf69_set_antenna_impedance(struct spi_device *spi, enum antenna_impedance an
- int rf69_set_lna_gain(struct spi_device *spi, enum lnaGain lnaGain);
- int rf69_set_bandwidth(struct spi_device *spi, enum mantisse mantisse, u8 exponent);
- int rf69_set_bandwidth_during_afc(struct spi_device *spi, enum mantisse mantisse, u8 exponent);
--int rf69_set_ook_threshold_dec(struct spi_device *spi, enum thresholdDecrement thresholdDecrement);
-+int rf69_set_ook_threshold_dec(struct spi_device *spi, enum threshold_decrement threshold_decrement);
- int rf69_set_dio_mapping(struct spi_device *spi, u8 DIONumber, u8 value);
- bool rf69_get_flag(struct spi_device *spi, enum flag flag);
- int rf69_set_rssi_threshold(struct spi_device *spi, u8 threshold);
+@@ -57,7 +57,7 @@ int rf69_set_adressFiltering(struct spi_device *spi, enum addressFiltering addre
+ int rf69_set_payload_length(struct spi_device *spi, u8 payload_length);
+ int rf69_set_node_address(struct spi_device *spi, u8 nodeAddress);
+ int rf69_set_broadcast_address(struct spi_device *spi, u8 broadcastAddress);
+-int rf69_set_tx_start_condition(struct spi_device *spi, enum txStartCondition txStartCondition);
++int rf69_set_tx_start_condition(struct spi_device *spi, enum tx_start_condition tx_start_condition);
+ int rf69_set_fifo_threshold(struct spi_device *spi, u8 threshold);
+ int rf69_set_dagc(struct spi_device *spi, enum dagc dagc);
+ 
 diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
-index 196c95dfe327..478e3a4c4948 100644
+index 5629af716e4f..196c95dfe327 100644
 --- a/drivers/staging/pi433/rf69_enum.h
 +++ b/drivers/staging/pi433/rf69_enum.h
-@@ -82,7 +82,7 @@ enum mantisse {
- 	mantisse24
+@@ -123,7 +123,7 @@ enum packetFormat {
+ 	packetLengthVar
  };
  
--enum thresholdDecrement {
-+enum threshold_decrement {
- 	dec_every8th,
- 	dec_every4th,
- 	dec_every2nd,
+-enum txStartCondition {
++enum tx_start_condition {
+ 	fifo_level,
+ 	fifo_not_empty
+ };
 -- 
 2.16.1
