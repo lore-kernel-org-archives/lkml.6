@@ -1,73 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeBTPJ7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:09:59 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:39271 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752340AbeBTPJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:09:58 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Jinbum Park <jinb.park7@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: make CONFIG_DEBUG_WX depend on MMU
-Date: Tue, 20 Feb 2018 16:09:19 +0100
-Message-Id: <20180220150932.3285766-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:1pubBCoyK7Vg1tXRaiUowkWqm20Md9suTAdDsnV4jjuPy33aM1q
- K1GU3Q6Kg6NFzgMbkT35Kc3NIA1CAuEZQXMKbVIVVxq17PM8smSBveu+XCtp8WU/j/bGYfe
- /imGXFfYEuf8iukRWJJcjc979247qNIbc0UGsJ0+RI9iq6tXoYIRVgdk3t9SmSsfVVLV+t0
- MG0FGyTUJjbf9mdIXb69g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZYwGFYNpsEA=:DXZnnXZYEXPBRl6wo5CJSV
- TMGvVgya691kufufp48KiS188U88u1ue9PzuSnX30hoCE1jPSkpkh135gyZ0gOW71C0lTEus+
- +9x70Jl1dPQhBD1QeFEOy8wHmDqPiLb010ZpNIcxbeBPuQgALJAU26qJ9P7RyMNzKIfeZdfQt
- Tm0EG6z6+HkfLs1gbTc/0biY39q4U/HhZPu4Qoh2apB5Oz2Wn486rv6nIVXj1ZyfF9jb4q3wg
- 4gCWGmhq6/yWnEgesb+zLvsekexjEUI2w5V1J3k0M87hk7E9nmUc2TS6B0w43v1E3sQGWFs0O
- rvgj2Mxlw3ZT3eKJqTX8qknGYWo6ajuvmGwmXkK1FudqlT2T+YDCUlnHoCU5X7m4d5BC7NCYZ
- Bd6qU+e58DhbUH5su2sdJZZz8DJQPT5X4pFiO1VADMUVDhSSqnWzIhQRAH0U9ZmPyZJ6UmPf8
- DOKK3HaH6PCkH9z0+DgyTyazi7C37OTDfN+bEsNIAoKOsZtBaqkd2CJP2y4jxv6SPaVpzOrDH
- i5eOod9qaYAmZFU3o5WbRNTM1D9LdA/g1PFvFeUgCRlSwgxA9lgTOuJSPcXb4JliaOwks77hj
- icGVn/JkzdIHwmaaSenMGASDBGGUSz/sgheSmY1I6KAs3Dzf+wnztLnrgz7Z8vd5FFRlD7sau
- VwbSOG9CvldBhsTqRToqi8+lRBT+VFLgb47R8c9w8YOT20Ws14Tv5dMfyreXjM2AYltLpL7Ei
- aYWtGBaX5UrmnnSqvl5TfGztg3RbqccFuAgXfg==
+        id S1752254AbeBTPHb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:07:31 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43762 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751666AbeBTPH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:07:29 -0500
+Subject: Re: [PATCH v14 1/9] LIB: Introduce a generic PIO mapping method
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+ <1519062520-198902-2-git-send-email-john.garry@huawei.com>
+ <CAHp75Vf102MDDZ8d9kXw2K0+0_WkhFMSq7o=Vz=KrzOM=NRW5A@mail.gmail.com>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <7197ce31-c4c2-d00e-be04-1edc14c3e721@huawei.com>
+Date: Tue, 20 Feb 2018 15:06:51 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vf102MDDZ8d9kXw2K0+0_WkhFMSq7o=Vz=KrzOM=NRW5A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without CONFIG_MMU, this results in a build failure:
+On 20/02/2018 14:33, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
+>> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+>>
+>> In commit 41f8bba7f555 ("of/pci: Add pci_register_io_range() and
+>> pci_pio_to_address()"), a new I/O space management was supported. With
+>> that driver, the I/O ranges configured for PCI/PCIe hosts on some
+>> architectures can be mapped to logical PIO, converted easily between
+>> CPU address and the corresponding logicial PIO. Based on this, PCI
+>> I/O devices can be accessed in a memory read/write way through the
+>> unified in/out accessors.
+>>
+>> But on some archs/platforms, there are bus hosts which access I/O
+>> peripherals with host-local I/O port addresses rather than memory
+>> addresses after memory-mapped.
+>>
+>> To support those devices, a more generic I/O mapping method is introduced
+>> here. Through this patch, both the CPU addresses and the host-local port
+>> can be mapped into the logical PIO space with different logical/fake PIOs.
+>> After this, all the I/O accesses to either PCI MMIO devices or host-local
+>> I/O peripherals can be unified into the existing I/O accessors defined in
+>> asm-generic/io.h and be redirected to the right device-specific hooks
+>> based on the input logical PIO.
+>
 
-./arch/arm/include/asm/memory.h:92:23: error: initializer element is not constant
- #define VECTORS_BASE  vectors_base
-arch/arm/mm/dump.c:32:4: note: in expansion of macro 'VECTORS_BASE'
-  { VECTORS_BASE, "Vectors" },
+Hi Andy,
 
-arch/arm/mm/dump.c:71:11: error: 'L_PTE_USER' undeclared here (not in a function); did you mean 'VTIME_USER'?
-   .mask = L_PTE_USER,
-           ^~~~~~~~~~
+>> +#define PIO_INDIRECT           0x01UL /* indirect IO flag */
+>> +#define PIO_CPU_MMIO           0x00UL /* memory mapped io flag */
+>
+> It looks like bitfield, but from use I don't see it.
+>
 
-Obviously the feature only makes sense with an MMU, so let's add the
-dependency here.
+IIRC, the orignal intention was that this would be a bit value in a 
+bitfield.
 
-Fixes: a8e53c151fe7 ("ARM: 8737/1: mm: dump: add checking for writable and executable")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/Kconfig.debug | 1 +
- 1 file changed, 1 insertion(+)
+> Perhaps use enum instead?
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 7b3d9c5c73bb..6db106b5b9e9 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -22,6 +22,7 @@ config ARM_PTDUMP_DEBUGFS
- 
- config DEBUG_WX
- 	bool "Warn on W+X mappings at boot"
-+	depends on MMU
- 	select ARM_PTDUMP_CORE
- 	---help---
- 		Generate a warning if any W+X mappings are found at boot.
--- 
-2.9.0
+I'll change to enum to be clear.
+
+>> +       resource_size_t hwaddr = -1;
+>
+>> +unsigned long
+>> +               return -1;
+>> +               return -1;
+>
+>> +unsigned long
+>> +       return -1;
+>
+>> +type logic_in##bw(unsigned long addr)                                  \
+>> +       type ret = -1;                                                  \
+>
+> All types above are unsigned. I'm not sure it's the best approach to
+> use -1 implicitly casted to unsigned type.
+>
+> I would rather use ~0UL or alike.
+>
+
+Yes, I can change these.
+
+Much appreciated,
+John
