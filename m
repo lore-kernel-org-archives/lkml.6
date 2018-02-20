@@ -1,44 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeBTIgu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 03:36:50 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:60765 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750781AbeBTIgs (ORCPT
+        id S1751405AbeBTIhg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 03:37:36 -0500
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:51269 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbeBTIhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 03:36:48 -0500
-Date: Tue, 20 Feb 2018 09:36:57 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: David Woodhouse <dwmw@amazon.co.uk>
-cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com, mingo@kernel.org
-Subject: Re: [PATCH v3 4/4] x86/retpoline: Support retpoline build with
- Clang
-In-Reply-To: <1519037457-7643-5-git-send-email-dwmw@amazon.co.uk>
-Message-ID: <alpine.DEB.2.21.1802200935300.24268@nanos.tec.linutronix.de>
-References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk> <1519037457-7643-5-git-send-email-dwmw@amazon.co.uk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Feb 2018 03:37:35 -0500
+X-Google-Smtp-Source: AH8x225h/YNgssW8CMmtkUWWsjgLzwke2ij2eL1pXujcTCTc1ACjKNUCZ/+FSdyKHvb/6zm4qrH/+A==
+Date: Tue, 20 Feb 2018 09:37:31 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jan Beulich <JBeulich@suse.com>
+Cc: mingo@elte.hu, tglx@linutronix.de,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        hpa@zytor.com
+Subject: Re: [PATCH RESEND] x86: consider effective protection attributes in
+ W+X check
+Message-ID: <20180220083731.kzkctvwvtc4qhrdi@gmail.com>
+References: <5A8BDF3602000078001A96CD@prv-mh.provo.novell.com>
+ <20180220081042.wgriecqneizg3df7@gmail.com>
+ <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5A8BE8C602000078001A9729@prv-mh.provo.novell.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018, David Woodhouse wrote:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+* Jan Beulich <JBeulich@suse.com> wrote:
 
-> +/* Clang doesn't have a way to turn it off per-function, yet. */
+> I'll see what I can do; it's a pity that the change here, which had
+> been sent weeks ago and is a bug fix, hadn't gone in before that
+> other change (being more an improvement than a bug fix).
 
-Is that going to happen in the foreseable future? Hmm, why am I asking,
-clang is going to break anyway once we require asm-gotos hard.
+When was it submitted, got a link or Message-ID of the previous submission?
 
 Thanks,
 
-	tglx
+	Ingo
