@@ -1,68 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeBTXaO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:30:14 -0500
-Received: from mga12.intel.com ([192.55.52.136]:9028 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751860AbeBTXaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:30:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="19059857"
-Date: Tue, 20 Feb 2018 15:30:09 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Joe Konno <joe.konno@linux.intel.com>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matthew Garrett <matthew.garrett@nebula.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Matthew Garrett <mjg59@google.com>, Peter Jones <pjones@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
-Message-ID: <20180220233008.55rfm7zw62hrao5p@agluck-desk>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <20180215182208.35003-2-joe.konno@linux.intel.com>
- <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
- <20180220211849.fqjb6rdmypl6opir@agluck-desk>
- <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+        id S1751362AbeBTXic (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:38:32 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51660 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750773AbeBTXib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:38:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SyIwHO-_1519169905;
+Subject: Re: [PATCH] fs: proc: use down_read_killable in
+ proc_pid_cmdline_read()
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: akpm@linux-foundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180220223825.GA6705@avx2>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <fa1e9b6b-efaf-79c5-00ea-1f58d5078c2d@linux.alibaba.com>
+Date: Tue, 20 Feb 2018 15:38:24 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180220223825.GA6705@avx2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 02:01:51PM -0800, Linus Torvalds wrote:
-> And just on general principlies, I don't want to see weasel-wordy
-> commit messages like
-> 
->  "Reading certain EFI variables trigger SMIs"
-> 
-> I understand *writing* them causing SMI's due to some flash protection
-> scheme. What's the reading thing? And why aren't we calling that
-> garbage out?
 
-Too much weasel there.  Should say:
 
-EFI[1] stinks. Reading any file in /sys/firmware/efi/efivars/ generates
-4 (yes FOUR!) SMIs.
+On 2/20/18 2:38 PM, Alexey Dobriyan wrote:
+> On Wed, Feb 21, 2018 at 03:49:29AM +0800, Yang Shi wrote:
+>> When running vm-scalability with large memory (> 300GB), the below hung
+>> task issue happens occasionally.
+>>
+>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>   ps              D    0 14018      1 0x00000004
+>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>   Call Trace:
+>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>    [<ffffffff817159e6>] schedule+0x36/0x80
+>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>    [<ffffffff81717db0>] down_read+0x20/0x40
+>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>    [<ffffffff81242266>] vfs_read+0x96/0x130
+>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>>
+>> When manipulating a large mapping, the process may hold the mmap_sem for
+>> long time, so reading /proc/<pid>/cmdline may be blocked in
+>> uninterruptible state for long time.
+>>
+>> down_read_trylock() sounds too aggressive, and we already have killable
+>> version APIs for semaphore, here use down_read_killable() to improve the
+>> responsiveness.
+>> -	down_read(&mm->mmap_sem);
+>> +	rv = down_read_killable(&mm->mmap_sem);
+>> +	if (rv)
+>> +		goto out_mmput;
+>>   	arg_start = mm->arg_start;
+>>   	arg_end = mm->arg_end;
+>>   	env_start = mm->env_start;
+> Fix is incomplete
 
-# rdmsr 0x34
-14e2
-# cat /sys/firmware/efi/efivars/ConIn-8be4df61-93ca-11d2-aa0d-00e098032b8c > /dev/null
-# rdmsr 0x34
-14e6
+Yes, it is. Since I just ran into the above splat, so I just did the 
+minimum change.
 
--Tony
+> 1) /proc/*/cmdline only wants to read 4 values atomically,
+>     those 4 values are basically random values and aren't
+>     related to VM part at all (after C/R went in, they are
+>     settable to arbitrary values)
 
-[1] I didn't dig through the Linux code to check whether we manage to
-get those four SMIs from a single EFI call, or whether we make multiple
-EFI calls to open/read/close one file. It is possible that we stink a
-bit too if we are doing more EFI calls than required.
+Sorry, I don't get your point here. Could you please elaborate?
+
+> 2) access_remote_vm() et al will do the same ->mmap_sem, and
+
+Yes, it does. But, __access_remote_vm() is called by access_process_vm() 
+too, which is used by much more places, i.e. ptrace, so I was not sure 
+if it is preferred to convert to killable version. So, I leave it untouched.
+
+> 3) /proc/*/environ and get_cmdline() do the same.
+
+They look suitable to use killable version.
+
+BTW, I just realized the code should go to out_free_page instead of 
+out_mmput. Will rectify in newer version once we decide the extra places 
+to use killable version.
+
+Thanks,
+Yang
