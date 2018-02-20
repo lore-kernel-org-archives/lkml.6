@@ -1,76 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753000AbeBTQ0L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:26:11 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:37149 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752969AbeBTQ0H (ORCPT
+        id S1752895AbeBTQZx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:25:53 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45491 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752856AbeBTQZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:26:07 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: arm@kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@free-electrons.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] ARM: orion: mark orion_ge00_mvmdio_bus_name as const
-Date: Tue, 20 Feb 2018 17:24:51 +0100
-Message-Id: <20180220162519.1498223-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180220162519.1498223-1-arnd@arndb.de>
-References: <20180220162519.1498223-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:y6y0pFvKhmcpMzBWGo5aUobC/UXYRncYa2LJLwxocd2iLzciV+r
- Xt3q9ejrOyjfxAOpkvvkhCvbiLNTx1Cw/51UcYYb18jUjwwEl1zYg76on6bATgXrVlmszIZ
- 5JLx349tv1C/1bCEznJteLb9hvy7+KiUxtptiuHjv5OHAEdJyh026cOxITjMOxYzmq5gLTH
- xWFZHjfoL1CoxKBscteCg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:z+TE90QItLg=:RVlJOrF6vWp9zIcftvg6Qx
- nv5K7fAC5Rtn68UURW2ddUoaIB8NsLxHu6cYgfBDSeA/XOjiebCsG/SSMIM7f6yDqPPAHL4W1
- 7hYTaLouND8Awgu4Bn/q1y46w1rCl1xTDWM4rg5v9s8D1nyAad6gBmfP0IGOlumU7+frYfJ3D
- S3wuAEjxjDlTcei4+1wFgcdkRYpBMXb4xTYxB7Ajibcbo5oDElahuAqaTIh7sDxyCd2Kh9onr
- wZVN1xi87eyXpys/6OR/njja34YkdxLiF2agT3dczx6xrzO1aDaMJNOq3tdf4TgEZ0WFzdOdN
- 01Iun9522XW09sKtvhdGaiWYCo5AT+WVdkiBcf/kLt0qjnBRPUEoxxMSYDdRZ6mWGZQPaKt7L
- 4Cp9V3pO9ZlKcuy50zQPH1ZlpmKSBPgZKuV/XbmsfDgOSVDig+aAO8BWKsh23Vwq5sYxHEhzA
- RAUxz6BsIsK9OGV93GyqxvLH5kci60qfOb9YYoobnjksgsPxcIuBFs6rqUKZta30aSevcsmSF
- i+XqyG3opWcRKXXbtd/5rH5M7x4BTVG9SG9Ebu5RRhGABGiJQFEkvaM+rdeCIHYQWudwA5eTi
- Nqu8IZhMwteof7BjOKe05IYzgL3LKJoP+I5IMh0XbLrDVAmJwdMmuuhSDwJnrgVVxMy6Kxrs4
- JjxwAOBZcqDGFFNwPete3CAgAxZ3BN6GIHkGXyWVtZUx9BpvHyg4XCsBDj9VIN1Ux9B0D26sb
- JmaoOj70OgwLIVOdOtD6ZBt5Y/xNsbbdAe0Luw==
+        Tue, 20 Feb 2018 11:25:50 -0500
+X-Google-Smtp-Source: AH8x226r9EB2IpxTk4uj15x77QyP36MwKp54MlFXjBJbsW6EAkVVwMU2xucv7CBqVB+Lz8H+Jxb4NQ==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 03/15] dt-bindings: arm: tegra: Document #reset-cells property of the Tegra20 MC
+Date: Tue, 20 Feb 2018 19:25:16 +0300
+Message-Id: <c16e37ca23b7a3c53d121ba85889bb6f35576557.1519141896.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1519141896.git.digetx@gmail.com>
+References: <cover.1519141896.git.digetx@gmail.com>
+In-Reply-To: <cover.1519141896.git.digetx@gmail.com>
+References: <cover.1519141896.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A section type mismatch warning shows up when building with LTO,
-since orion_ge00_mvmdio_bus_name was put in __initconst but not marked
-const itself:
+Memory Controller has a memory client "hot reset" functionality, which
+resets the DMA interface of a memory client, so MC is a reset controller.
+Documentation the new property.
 
-include/linux/of.h: In function 'spear_setup_of_timer':
-arch/arm/mach-spear/time.c:207:34: error: 'timer_of_match' causes a section type conflict with 'orion_ge00_mvmdio_bus_name'
- static const struct of_device_id timer_of_match[] __initconst = {
-                                  ^
-arch/arm/plat-orion/common.c:475:32: note: 'orion_ge00_mvmdio_bus_name' was declared here
- static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
-                                ^
-
-This marks it const as well.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/plat-orion/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt      | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-orion/common.c b/arch/arm/plat-orion/common.c
-index aff6994950ba..4e1d8270537c 100644
---- a/arch/arm/plat-orion/common.c
-+++ b/arch/arm/plat-orion/common.c
-@@ -472,7 +472,7 @@ void __init orion_ge11_init(struct mv643xx_eth_platform_data *eth_data,
- /*****************************************************************************
-  * Ethernet switch
-  ****************************************************************************/
--static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
-+static __initconst const char *const orion_ge00_mvmdio_bus_name = "orion-mii";
- static __initdata struct mdio_board_info
- 		  orion_ge00_switch_board_info;
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
+index f9632bacbd04..7d60a50a4fa1 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt
+@@ -6,11 +6,21 @@ Required properties:
+   example below. Note that the MC registers are interleaved with the
+   GART registers, and hence must be represented as multiple ranges.
+ - interrupts : Should contain MC General interrupt.
++- #reset-cells : Should be 1. This cell represents memory client module ID.
++  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
++  or in the TRM documentation.
  
+ Example:
+-	memory-controller@7000f000 {
++	mc: memory-controller@7000f000 {
+ 		compatible = "nvidia,tegra20-mc";
+ 		reg = <0x7000f000 0x024
+ 		       0x7000f03c 0x3c4>;
+ 		interrupts = <0 77 0x04>;
++		#reset-cells = <1>;
++	};
++
++	video-codec@6001a000 {
++		compatible = "nvidia,tegra20-vde";
++		...
++		resets = <&mc TEGRA20_MC_RESET_VDE>;
+ 	};
 -- 
-2.9.0
+2.16.1
