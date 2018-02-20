@@ -1,63 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeBTOuy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 09:50:54 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:26049 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751753AbeBTOux (ORCPT
+        id S1752053AbeBTOww (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 09:52:52 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34790 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751825AbeBTOwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:50:53 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w1KEohhI021573
-X-Nifty-SrcIP: [209.85.213.49]
-X-Google-Smtp-Source: AH8x227x6ajuDOcC5yCHEYfqdp8D1BipMfVwucOFfYcV0l45Q1QmNYLAOZ5RJZQfrErVLDUhNMf3261xpiQpyyn0GM0=
+        Tue, 20 Feb 2018 09:52:47 -0500
+X-Google-Smtp-Source: AH8x225Wfr5jbI3VKukL0KACnOKjT1XhTXbcqN6HhkrfTlxnbvixXMs+dLcfc0vaz3eGJgsqAwoLQY8xTf7ABLqmQXI=
 MIME-Version: 1.0
-In-Reply-To: <20180215210750.28813-1-luc.vanoostenryck@gmail.com>
-References: <20180215210750.28813-1-luc.vanoostenryck@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 20 Feb 2018 23:50:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR6Pizog=NBVjYfF1owSntjOb4o7qV4WNv7d3j3LxongA@mail.gmail.com>
-Message-ID: <CAK7LNAR6Pizog=NBVjYfF1owSntjOb4o7qV4WNv7d3j3LxongA@mail.gmail.com>
-Subject: Re: [PATCH] disable sparse warnings about unknown attributes
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-sparse@vger.kernel.org
+In-Reply-To: <1519062520-198902-9-git-send-email-john.garry@huawei.com>
+References: <1519062520-198902-1-git-send-email-john.garry@huawei.com> <1519062520-198902-9-git-send-email-john.garry@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 20 Feb 2018 16:52:46 +0200
+Message-ID: <CAHp75Vdy53cNq0qveM6MPVaukxZ856jCex7EnRKZudwaidJ3_Q@mail.gmail.com>
+Subject: Re: [PATCH v14 8/9] HISI LPC: Add ACPI support
+To: John Garry <john.garry@huawei.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-16 6:07 GMT+09:00 Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
-> Currently, sparse issues warnings on code using an attribute
-> it doesn't know about.
+On Mon, Feb 19, 2018 at 7:48 PM, John Garry <john.garry@huawei.com> wrote:
+> Based on the previous patches, this patch supports the
+> LPC host on hip06/hip07 for ACPI FW.
 >
-> One of the problem with this is that these warnings have no
-> value for the developer, it's just noise for him. At best these
-> warnings tell something about some deficiencies of sparse itself
-> but not about a potential problem with code analyzed.
->
-> A second problem with this is that sparse release are, alas,
-> less frequent than new attributes are added to GCC.
->
-> So, avoid the noise by asking sparse to not warn about
-> attributes it doesn't know about.
->
-> Reference: https://marc.info/?l=linux-sparse&m=151871600016790
-> Reference: https://marc.info/?l=linux-sparse&m=151871725417322
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> It is the responsibility of the LPC host driver to
+> enumerate the child devices, as the ACPI scan code will
+> not enumerate children of "indirect IO" hosts.
 
-Applied to linux-kbuild/kbuild.
+>         if (!acpi_device)
+>                 ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +       else
+> +               ret = hisi_lpc_acpi_probe(dev);
+>         if (ret) {
+>                 dev_err(dev, "populate children failed (%d)\n", ret);
+>                 return ret;
 
-Thanks!
-
+Ah, please, ignore one comment to previous patch.
 
 -- 
-Best Regards
-Masahiro Yamada
+With Best Regards,
+Andy Shevchenko
