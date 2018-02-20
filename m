@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x227MrcTWN+pzeyHn9ftG3xrQjvbJr1+ppCqy/7C7cy+qENfS5H1UIE/HfEmF269sdmFJjaFO
-ARC-Seal: i=1; a=rsa-sha256; t=1519093551; cv=none;
+X-Google-Smtp-Source: AH8x22460ljjcZtE50wFxOhlaPXykNp2CEuC9K1RXt0IMFf2BhLTIjpAUyZrDSiSQ1CYZdIizNPk
+ARC-Seal: i=1; a=rsa-sha256; t=1519093544; cv=none;
         d=google.com; s=arc-20160816;
-        b=m01y8a7BjAUNlkPq2Glf13QL7324QUnHSKXdnE1FsXoAzfir/092hpfeo+MFeIJNF8
-         aCrzbIZgD6hig5HOBmdS6oalE7macvU9Ufq5tkxly16iICdzw64NAiEqQM+pjswO3wFF
-         Bg5JkmTavdusU0Mt9beTquwobSbSwJI6ZCwxInwOLFnJxrc2/vZps+w4fYUfagFp7GCH
-         MXKdzVod9XDJSwsdgL2YCYe7X+/KsgBycP4IppT43UKn8oEG1A7aih3XfwLmRwyG+EkM
-         qPQtCw/IT05B3aYgHwLmogU7Vj8BSHQlH2JJnNtLKl3hk6TpYuQ/QiIlurBeCR8XOo6h
-         CC6g==
+        b=O6aDOXin2cBrE08uS+zeI+NMVJ9PnhZDmnzb3pXnRxWc8EPFvJ1vfOZRkMi5paWDj9
+         /T1R/zwnv073Y6+qWq9ArdEBaA1oElFU6AhHo/8NgrYAVpe5uLDC7XTpRztmq9IATKeU
+         915xtI0L5XCpojVwikvhZ/ns/vOy5kSo/lsqMx57GmsBdztUmWn1x5vI21wRn/E1lfrr
+         ZBZUPRMiKdrU1u/CChC3guuGxNXn8ot2Ker4OhqKqgTksAcosSk8PgmfthKDhu4/b6e8
+         2vW9S/bqX0IIDIRarBHzqIbeoppWk3gKscFnkQ1knxKCMOOPwrhSyaD9AIYrHRM8Zavd
+         hmLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=wyiYtzjP2O1io2Bmo7V9aUlZSaGGt46RWtajAzTyUk8=;
-        b=E+l8bYQzcC7pNV/Tu1M1rE0YeyRMuw5FvyTr3H3qjesTfCtglP6oPStQ6oMdvlgTKn
-         a4e/MWvtTCr2UPJ8HZBNWiBIBLnXZxumU9SbjKP6vCf2jONrlFCWKJoT7IJ0/eo4PBOV
-         iESHAxH+N7Sy0ubRbNoyOUkZlnQl38Ck0xYvdspdoe5msruHvfyFFQuk7OzkXZUH18Fu
-         A2qqknfqSWg+roJ5v2RGfWzlQD36jy8RZRytzRF3idQyuFfZHpGzrnUDVVfQO6FrOBR+
-         Uk/eTi1iC1SNuiUqvOObgOxY51uPY5oz0tsZrS1ywYGIcmdxAa+Q2H6z6iVWMwqS2WjL
-         EFfg==
+        bh=hSZzMCInDdFTGsyOow9joC7Zc3CKVQmuLeP12yaPUNs=;
+        b=AA1npCB+BBoiz+XwhXqCbix+b6gQoeAUM2o2qGzv38wfCmJJMGVPrABaMQiamfvgg0
+         IFsD52eTO0208SGJLP9ETjoRz4Yfr970IwlA72vvbGAPRgQTzNzJoEdfWWFigtSn3ghN
+         qwx0ZfpN/nSFW+iAWsGuqtzAc53QGcMZaX/XmBqMcbSLSjAv/49RkuI1iMQgwOVe6WSn
+         M4xGiLSvtpDHvEXhU1yrSU1umXtZQ7JajoIsGNGBthimAijIdtI894NQXKMJjzar1eR/
+         4nG+UNWgCkbC1R4gWTQbdS0LPx/tDPIjoIYYN4EnXh/CgohsEgINegNIB4XI2AG81jI8
+         8BSg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -27,11 +27,11 @@ From: NeilBrown <neilb@suse.com>
 To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 20 Feb 2018 13:23:38 +1100
-Subject: [PATCH 13/21] staging: lustre: remove phantom struct
- cfs_crypto_hash_desc
+Date: Tue, 20 Feb 2018 13:23:37 +1100
+Subject: [PATCH 12/21] staging: lustre: discard libcfs_kvzalloc and
+ linux-mem.c
 Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341798.25814.6579149760977367071.stgit@noble>
+Message-ID: <151909341794.25814.12112685405079106591.stgit@noble>
 In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
 References: <151909308778.25814.9912662268627044409.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -39,189 +39,445 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592885039683052190?=
-X-GMAIL-MSGID: =?utf-8?q?1592885039683052190?=
+X-GMAIL-THRID: =?utf-8?q?1592885032067638407?=
+X-GMAIL-MSGID: =?utf-8?q?1592885032067638407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There is no "struct cfs_crypto_hash_desc" structure.  There
-are only pointers to this structure, which are cast back and
-forth to struct ahash_request.
-So discard cfs_crypto_hash_desc, and just use ahash_request directly.
+The only interesting difference between libcfs_kvzalloc()
+and kvzalloc() is that the former appears to work
+with GFP_NOFS, which the latter gives a WARN_ON_ONCE()
+when that is attempted.
+
+Each libcfs_kvzalloc() should really be analysed
+and either converted to a kzalloc() call if the size is never
+more than a page, or to use GFP_KERNEL if no locks are held.
+
+If there is ever a case where locks are held and a large allocation
+is needed, then some other technique should be used.
+
+It might be nice to not always blindly zero pages too...
+
+For now, just convert libcfs_kvzalloc() calls to
+kvzalloc(), and let the warning remind us that there is work to do.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- .../lustre/include/linux/libcfs/libcfs_crypto.h    |   11 +++-----
- .../lustre/lnet/libcfs/linux/linux-crypto.c        |   29 +++++++++-----------
- drivers/staging/lustre/lustre/osc/osc_request.c    |    2 +
- drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c    |    2 +
- 4 files changed, 19 insertions(+), 25 deletions(-)
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    2 -
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    1 
+ .../staging/lustre/lnet/libcfs/linux/linux-mem.c   |   44 --------------------
+ drivers/staging/lustre/lustre/llite/file.c         |    2 -
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        |    4 +-
+ drivers/staging/lustre/lustre/lov/lov_ea.c         |    2 -
+ drivers/staging/lustre/lustre/lov/lov_io.c         |    2 -
+ drivers/staging/lustre/lustre/lov/lov_lock.c       |    2 -
+ drivers/staging/lustre/lustre/lov/lov_object.c     |    4 +-
+ drivers/staging/lustre/lustre/lov/lov_pack.c       |    2 -
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c      |    2 -
+ .../lustre/lustre/obdclass/linux/linux-module.c    |    2 -
+ drivers/staging/lustre/lustre/obdclass/llog.c      |    4 +-
+ .../lustre/lustre/obdclass/lustre_handles.c        |    2 -
+ drivers/staging/lustre/lustre/ptlrpc/client.c      |    2 -
+ drivers/staging/lustre/lustre/ptlrpc/sec.c         |    4 +-
+ drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c    |    2 -
+ drivers/staging/lustre/lustre/ptlrpc/sec_null.c    |    8 ++--
+ drivers/staging/lustre/lustre/ptlrpc/sec_plain.c   |    8 ++--
+ drivers/staging/lustre/lustre/ptlrpc/service.c     |    4 +-
+ 20 files changed, 28 insertions(+), 75 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-mem.c
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
-index e5c156e9d907..3a72117140ed 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_crypto.h
-@@ -189,18 +189,15 @@ int cfs_crypto_hash_digest(enum cfs_crypto_hash_alg hash_alg,
- 			   unsigned char *key, unsigned int key_len,
- 			   unsigned char *hash, unsigned int *hash_len);
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 039205763021..392793582956 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -112,8 +112,6 @@ static inline void *__container_of(void *ptr, unsigned long shift)
  
--/* cfs crypto hash descriptor */
--struct cfs_crypto_hash_desc;
+ #define _LIBCFS_H
+ 
+-void *libcfs_kvzalloc(size_t size, gfp_t flags);
 -
--struct cfs_crypto_hash_desc *
-+struct ahash_request *
- cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
- 		     unsigned char *key, unsigned int key_len);
--int cfs_crypto_hash_update_page(struct cfs_crypto_hash_desc *desc,
-+int cfs_crypto_hash_update_page(struct ahash_request *desc,
- 				struct page *page, unsigned int offset,
- 				unsigned int len);
--int cfs_crypto_hash_update(struct cfs_crypto_hash_desc *desc, const void *buf,
-+int cfs_crypto_hash_update(struct ahash_request *desc, const void *buf,
- 			   unsigned int buf_len);
--int cfs_crypto_hash_final(struct cfs_crypto_hash_desc *desc,
-+int cfs_crypto_hash_final(struct ahash_request *desc,
- 			  unsigned char *hash, unsigned int *hash_len);
- int cfs_crypto_register(void);
- void cfs_crypto_unregister(void);
-diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
-index 80072b2a443c..b55006264155 100644
---- a/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
-+++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto.c
-@@ -42,7 +42,7 @@ static int cfs_crypto_hash_speeds[CFS_HASH_ALG_MAX];
+ extern struct miscdevice libcfs_dev;
  /**
-  * Initialize the state descriptor for the specified hash algorithm.
-  *
-- * An internal routine to allocate the hash-specific state in \a hdesc for
-+ * An internal routine to allocate the hash-specific state in \a req for
-  * use with cfs_crypto_hash_digest() to compute the hash of a single message,
-  * though possibly in multiple chunks.  The descriptor internal state should
-  * be freed with cfs_crypto_hash_final().
-@@ -50,7 +50,7 @@ static int cfs_crypto_hash_speeds[CFS_HASH_ALG_MAX];
-  * \param[in]	  hash_alg	hash algorithm id (CFS_HASH_ALG_*)
-  * \param[out]	  type		pointer to the hash description in hash_types[]
-  *				array
-- * \param[in,out] hdesc		hash state descriptor to be initialized
-+ * \param[in,out] req		hash state descriptor to be initialized
-  * \param[in]	  key		initial hash value/state, NULL to use default
-  *				value
-  * \param[in]	  key_len	length of \a key
-@@ -194,7 +194,7 @@ EXPORT_SYMBOL(cfs_crypto_hash_digest);
-  * \retval		pointer to descriptor of hash instance
-  * \retval		ERR_PTR(errno) in case of error
-  */
--struct cfs_crypto_hash_desc *
-+struct ahash_request *
- cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
- 		     unsigned char *key, unsigned int key_len)
- {
-@@ -206,14 +206,14 @@ cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
+  * The path of debug log dump upcall script.
+diff --git a/drivers/staging/lustre/lnet/libcfs/Makefile b/drivers/staging/lustre/lnet/libcfs/Makefile
+index a51a8b0b9921..b7dc7ac11cc5 100644
+--- a/drivers/staging/lustre/lnet/libcfs/Makefile
++++ b/drivers/staging/lustre/lnet/libcfs/Makefile
+@@ -9,7 +9,6 @@ libcfs-linux-objs += linux-cpu.o
+ libcfs-linux-objs += linux-module.o
+ libcfs-linux-objs += linux-crypto.o
+ libcfs-linux-objs += linux-crypto-adler.o
+-libcfs-linux-objs += linux-mem.o
  
- 	if (err)
- 		return ERR_PTR(err);
--	return (struct cfs_crypto_hash_desc *)req;
-+	return req;
- }
- EXPORT_SYMBOL(cfs_crypto_hash_init);
+ libcfs-linux-objs := $(addprefix linux/,$(libcfs-linux-objs))
  
- /**
-  * Update hash digest computed on data within the given \a page
-  *
-- * \param[in] hdesc	hash state descriptor
-+ * \param[in] hreq	hash state descriptor
-  * \param[in] page	data page on which to compute the hash
-  * \param[in] offset	offset within \a page at which to start hash
-  * \param[in] len	length of data on which to compute hash
-@@ -221,11 +221,10 @@ EXPORT_SYMBOL(cfs_crypto_hash_init);
-  * \retval		0 for success
-  * \retval		negative errno on failure
-  */
--int cfs_crypto_hash_update_page(struct cfs_crypto_hash_desc *hdesc,
-+int cfs_crypto_hash_update_page(struct ahash_request *req,
- 				struct page *page, unsigned int offset,
- 				unsigned int len)
- {
--	struct ahash_request *req = (void *)hdesc;
- 	struct scatterlist sl;
+diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-mem.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-mem.c
+deleted file mode 100644
+index f2c001bac303..000000000000
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-mem.c
++++ /dev/null
+@@ -1,44 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- */
+-/*
+- * This file creates a memory allocation primitive for Lustre, that
+- * allows to fallback to vmalloc allocations should regular kernel allocations
+- * fail due to size or system memory fragmentation.
+- *
+- * Author: Oleg Drokin <green@linuxhacker.ru>
+- *
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Seagate Technology.
+- */
+-#include <linux/slab.h>
+-#include <linux/vmalloc.h>
+-
+-#include <linux/libcfs/libcfs.h>
+-
+-void *libcfs_kvzalloc(size_t size, gfp_t flags)
+-{
+-	void *ret;
+-
+-	ret = kzalloc(size, flags | __GFP_NOWARN);
+-	if (!ret)
+-		ret = __vmalloc(size, flags | __GFP_ZERO, PAGE_KERNEL);
+-	return ret;
+-}
+-EXPORT_SYMBOL(libcfs_kvzalloc);
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 002a56793e89..ca5faea13b7e 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -3361,7 +3361,7 @@ static int ll_layout_fetch(struct inode *inode, struct ldlm_lock *lock)
+ 		goto out;
+ 	}
  
- 	sg_init_table(&sl, 1);
-@@ -239,17 +238,16 @@ EXPORT_SYMBOL(cfs_crypto_hash_update_page);
- /**
-  * Update hash digest computed on the specified data
-  *
-- * \param[in] hdesc	hash state descriptor
-+ * \param[in] req	hash state descriptor
-  * \param[in] buf	data buffer on which to compute the hash
-  * \param[in] buf_len	length of \buf on which to compute hash
-  *
-  * \retval		0 for success
-  * \retval		negative errno on failure
-  */
--int cfs_crypto_hash_update(struct cfs_crypto_hash_desc *hdesc,
-+int cfs_crypto_hash_update(struct ahash_request *req,
- 			   const void *buf, unsigned int buf_len)
- {
--	struct ahash_request *req = (void *)hdesc;
- 	struct scatterlist sl;
+-	lvbdata = libcfs_kvzalloc(lmmsize, GFP_NOFS);
++	lvbdata = kvzalloc(lmmsize, GFP_NOFS);
+ 	if (!lvbdata) {
+ 		rc = -ENOMEM;
+ 		goto out;
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index c2c57f65431e..179651531862 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -1035,7 +1035,7 @@ static int lmv_iocontrol(unsigned int cmd, struct obd_export *exp,
+ 				reqlen = offsetof(typeof(*hur),
+ 						  hur_user_item[nr])
+ 					 + hur->hur_request.hr_data_len;
+-				req = libcfs_kvzalloc(reqlen, GFP_NOFS);
++				req = kvzalloc(reqlen, GFP_NOFS);
+ 				if (!req)
+ 					return -ENOMEM;
  
- 	sg_init_one(&sl, buf, buf_len);
-@@ -262,20 +260,19 @@ EXPORT_SYMBOL(cfs_crypto_hash_update);
- /**
-  * Finish hash calculation, copy hash digest to buffer, clean up hash descriptor
-  *
-- * \param[in]	  hdesc		hash descriptor
-+ * \param[in]	  req		hash descriptor
-  * \param[out]	  hash		pointer to hash buffer to store hash digest
-- * \param[in,out] hash_len	pointer to hash buffer size, if \a hdesc = NULL
-- *				only free \a hdesc instead of computing the hash
-+ * \param[in,out] hash_len	pointer to hash buffer size, if \a req = NULL
-+ *				only free \a req instead of computing the hash
-  *
-  * \retval	0 for success
-  * \retval	-EOVERFLOW if hash_len is too small for the hash digest
-  * \retval	negative errno for other errors from lower layers
-  */
--int cfs_crypto_hash_final(struct cfs_crypto_hash_desc *hdesc,
-+int cfs_crypto_hash_final(struct ahash_request *req,
- 			  unsigned char *hash, unsigned int *hash_len)
- {
- 	int err;
--	struct ahash_request *req = (void *)hdesc;
- 	int size = crypto_ahash_digestsize(crypto_ahash_reqtfm(req));
+@@ -2733,7 +2733,7 @@ static int lmv_unpackmd(struct obd_export *exp, struct lmv_stripe_md **lsmp,
+ 		lsm_size = lmv_stripe_md_size(0);
  
- 	if (!hash || !hash_len) {
-@@ -331,7 +328,7 @@ static void cfs_crypto_performance_test(enum cfs_crypto_hash_alg hash_alg)
+ 	if (!lsm) {
+-		lsm = libcfs_kvzalloc(lsm_size, GFP_NOFS);
++		lsm = kvzalloc(lsm_size, GFP_NOFS);
+ 		if (!lsm)
+ 			return -ENOMEM;
+ 		allocated = true;
+diff --git a/drivers/staging/lustre/lustre/lov/lov_ea.c b/drivers/staging/lustre/lustre/lov/lov_ea.c
+index d563dd73343a..c56a971745e8 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_ea.c
++++ b/drivers/staging/lustre/lustre/lov/lov_ea.c
+@@ -89,7 +89,7 @@ struct lov_stripe_md *lsm_alloc_plain(u16 stripe_count)
+ 	oinfo_ptrs_size = sizeof(struct lov_oinfo *) * stripe_count;
+ 	lsm_size = sizeof(*lsm) + oinfo_ptrs_size;
  
- 	for (start = jiffies, end = start + msecs_to_jiffies(MSEC_PER_SEC),
- 	     bcount = 0; time_before(jiffies, end); bcount++) {
--		struct cfs_crypto_hash_desc *hdesc;
-+		struct ahash_request *hdesc;
- 		int i;
+-	lsm = libcfs_kvzalloc(lsm_size, GFP_NOFS);
++	lsm = kvzalloc(lsm_size, GFP_NOFS);
+ 	if (!lsm)
+ 		return NULL;
  
- 		hdesc = cfs_crypto_hash_init(hash_alg, NULL, 0);
-diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
-index 074b5ce6284c..1c2bbbf5d864 100644
---- a/drivers/staging/lustre/lustre/osc/osc_request.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_request.c
-@@ -931,7 +931,7 @@ static u32 osc_checksum_bulk(int nob, u32 pg_count,
- {
- 	__u32 cksum;
- 	int i = 0;
--	struct cfs_crypto_hash_desc *hdesc;
-+	struct ahash_request *hdesc;
- 	unsigned int bufsize;
- 	unsigned char cfs_alg = cksum_obd2cfs(cksum_type);
+diff --git a/drivers/staging/lustre/lustre/lov/lov_io.c b/drivers/staging/lustre/lustre/lov/lov_io.c
+index c5f5d1b106dc..c0dbf6cd53b4 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_io.c
++++ b/drivers/staging/lustre/lustre/lov/lov_io.c
+@@ -243,7 +243,7 @@ static int lov_io_subio_init(const struct lu_env *env, struct lov_io *lio,
+ 	 * when writing a page. -jay
+ 	 */
+ 	lio->lis_subs =
+-		libcfs_kvzalloc(lsm->lsm_stripe_count *
++		kvzalloc(lsm->lsm_stripe_count *
+ 				sizeof(lio->lis_subs[0]),
+ 				GFP_NOFS);
+ 	if (lio->lis_subs) {
+diff --git a/drivers/staging/lustre/lustre/lov/lov_lock.c b/drivers/staging/lustre/lustre/lov/lov_lock.c
+index 2fcdeb707ff9..b0292100bf26 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_lock.c
++++ b/drivers/staging/lustre/lustre/lov/lov_lock.c
+@@ -145,7 +145,7 @@ static struct lov_lock *lov_lock_sub_init(const struct lu_env *env,
+ 			nr++;
+ 	}
+ 	LASSERT(nr > 0);
+-	lovlck = libcfs_kvzalloc(offsetof(struct lov_lock, lls_sub[nr]),
++	lovlck = kvzalloc(offsetof(struct lov_lock, lls_sub[nr]),
+ 				 GFP_NOFS);
+ 	if (!lovlck)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/staging/lustre/lustre/lov/lov_object.c b/drivers/staging/lustre/lustre/lov/lov_object.c
+index 86cd4f9fbd0c..16cf9d584bbc 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_object.c
++++ b/drivers/staging/lustre/lustre/lov/lov_object.c
+@@ -242,7 +242,7 @@ static int lov_init_raid0(const struct lu_env *env, struct lov_device *dev,
+ 	r0->lo_nr  = lsm->lsm_stripe_count;
+ 	LASSERT(r0->lo_nr <= lov_targets_nr(dev));
  
+-	r0->lo_sub = libcfs_kvzalloc(r0->lo_nr * sizeof(r0->lo_sub[0]),
++	r0->lo_sub = kvzalloc(r0->lo_nr * sizeof(r0->lo_sub[0]),
+ 				     GFP_NOFS);
+ 	if (r0->lo_sub) {
+ 		int psz = 0;
+@@ -1375,7 +1375,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
+ 	if (fiemap_count_to_size(fiemap->fm_extent_count) < buffer_size)
+ 		buffer_size = fiemap_count_to_size(fiemap->fm_extent_count);
+ 
+-	fm_local = libcfs_kvzalloc(buffer_size, GFP_NOFS);
++	fm_local = kvzalloc(buffer_size, GFP_NOFS);
+ 	if (!fm_local) {
+ 		rc = -ENOMEM;
+ 		goto out;
+diff --git a/drivers/staging/lustre/lustre/lov/lov_pack.c b/drivers/staging/lustre/lustre/lov/lov_pack.c
+index e5b11c4085a9..b1060d02a164 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_pack.c
++++ b/drivers/staging/lustre/lustre/lov/lov_pack.c
+@@ -333,7 +333,7 @@ int lov_getstripe(struct lov_object *obj, struct lov_stripe_md *lsm,
+ 	lmmk_size = lov_mds_md_size(stripe_count, lsm->lsm_magic);
+ 
+ 
+-	lmmk = libcfs_kvzalloc(lmmk_size, GFP_NOFS);
++	lmmk = kvzalloc(lmmk_size, GFP_NOFS);
+ 	if (!lmmk) {
+ 		rc = -ENOMEM;
+ 		goto out;
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+index 3114907ac5ff..695ef44532cf 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+@@ -660,7 +660,7 @@ static int mdc_finish_enqueue(struct obd_export *exp,
+ 		LDLM_DEBUG(lock, "layout lock returned by: %s, lvb_len: %d",
+ 			   ldlm_it2str(it->it_op), lvb_len);
+ 
+-		lmm = libcfs_kvzalloc(lvb_len, GFP_NOFS);
++		lmm = kvzalloc(lvb_len, GFP_NOFS);
+ 		if (!lmm) {
+ 			LDLM_LOCK_PUT(lock);
+ 			return -ENOMEM;
+diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+index f8967fd44363..7bceee7f121e 100644
+--- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+@@ -180,7 +180,7 @@ int obd_ioctl_getdata(char **buf, int *len, void __user *arg)
+ 	 * obdfilter-survey is an example, which relies on ioctl. So we'd
+ 	 * better avoid vmalloc on ioctl path. LU-66
+ 	 */
+-	*buf = libcfs_kvzalloc(hdr.ioc_len, GFP_KERNEL);
++	*buf = kvzalloc(hdr.ioc_len, GFP_KERNEL);
+ 	if (!*buf) {
+ 		CERROR("Cannot allocate control buffer of len %d\n",
+ 		       hdr.ioc_len);
+diff --git a/drivers/staging/lustre/lustre/obdclass/llog.c b/drivers/staging/lustre/lustre/obdclass/llog.c
+index ed310696a95d..693e1129f1f9 100644
+--- a/drivers/staging/lustre/lustre/obdclass/llog.c
++++ b/drivers/staging/lustre/lustre/obdclass/llog.c
+@@ -155,7 +155,7 @@ int llog_init_handle(const struct lu_env *env, struct llog_handle *handle,
+ 	LASSERT(!handle->lgh_hdr);
+ 
+ 	LASSERT(chunk_size >= LLOG_MIN_CHUNK_SIZE);
+-	llh = libcfs_kvzalloc(sizeof(*llh), GFP_KERNEL);
++	llh = kvzalloc(sizeof(*llh), GFP_KERNEL);
+ 	if (!llh)
+ 		return -ENOMEM;
+ 	handle->lgh_hdr = llh;
+@@ -240,7 +240,7 @@ static int llog_process_thread(void *arg)
+ 	/* expect chunk_size to be power of two */
+ 	LASSERT(is_power_of_2(chunk_size));
+ 
+-	buf = libcfs_kvzalloc(chunk_size, GFP_NOFS);
++	buf = kvzalloc(chunk_size, GFP_NOFS);
+ 	if (!buf) {
+ 		lpi->lpi_rc = -ENOMEM;
+ 		return 0;
+diff --git a/drivers/staging/lustre/lustre/obdclass/lustre_handles.c b/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
+index 9a6377502ae4..f53b1a3c342e 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
++++ b/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
+@@ -184,7 +184,7 @@ int class_handle_init(void)
+ 
+ 	LASSERT(!handle_hash);
+ 
+-	handle_hash = libcfs_kvzalloc(sizeof(*bucket) * HANDLE_HASH_SIZE,
++	handle_hash = kvzalloc(sizeof(*bucket) * HANDLE_HASH_SIZE,
+ 				      GFP_KERNEL);
+ 	if (!handle_hash)
+ 		return -ENOMEM;
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
+index 781462621d92..d4c641d2480c 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/client.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
+@@ -547,7 +547,7 @@ int ptlrpc_add_rqs_to_pool(struct ptlrpc_request_pool *pool, int num_rq)
+ 		req = ptlrpc_request_cache_alloc(GFP_KERNEL);
+ 		if (!req)
+ 			return i;
+-		msg = libcfs_kvzalloc(size, GFP_KERNEL);
++		msg = kvzalloc(size, GFP_KERNEL);
+ 		if (!msg) {
+ 			ptlrpc_request_cache_free(req);
+ 			return i;
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec.c b/drivers/staging/lustre/lustre/ptlrpc/sec.c
+index 90e3b3022106..f152ba1af0fc 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec.c
+@@ -442,7 +442,7 @@ int sptlrpc_req_ctx_switch(struct ptlrpc_request *req,
+ 	/* save request message */
+ 	reqmsg_size = req->rq_reqlen;
+ 	if (reqmsg_size != 0) {
+-		reqmsg = libcfs_kvzalloc(reqmsg_size, GFP_NOFS);
++		reqmsg = kvzalloc(reqmsg_size, GFP_NOFS);
+ 		if (!reqmsg)
+ 			return -ENOMEM;
+ 		memcpy(reqmsg, req->rq_reqmsg, reqmsg_size);
+@@ -1089,7 +1089,7 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
+ 
+ 	early_size = req->rq_nob_received;
+ 	early_bufsz = size_roundup_power2(early_size);
+-	early_buf = libcfs_kvzalloc(early_bufsz, GFP_NOFS);
++	early_buf = kvzalloc(early_bufsz, GFP_NOFS);
+ 	if (!early_buf) {
+ 		rc = -ENOMEM;
+ 		goto err_req;
 diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c b/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
-index 2184022ed724..577c5822b823 100644
+index 134ee727e8b7..2184022ed724 100644
 --- a/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
 +++ b/drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c
-@@ -530,7 +530,7 @@ EXPORT_SYMBOL(bulk_sec_desc_unpack);
- int sptlrpc_get_bulk_checksum(struct ptlrpc_bulk_desc *desc, __u8 alg,
- 			      void *buf, int buflen)
+@@ -375,7 +375,7 @@ static inline void enc_pools_alloc(void)
  {
--	struct cfs_crypto_hash_desc *hdesc;
-+	struct ahash_request *hdesc;
- 	int hashsize;
- 	unsigned int bufsize;
- 	int i, err;
+ 	LASSERT(page_pools.epp_max_pools);
+ 	page_pools.epp_pools =
+-		libcfs_kvzalloc(page_pools.epp_max_pools *
++		kvzalloc(page_pools.epp_max_pools *
+ 				sizeof(*page_pools.epp_pools),
+ 				GFP_NOFS);
+ }
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_null.c b/drivers/staging/lustre/lustre/ptlrpc/sec_null.c
+index 80cea0b24693..ecc387d1b9b4 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec_null.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec_null.c
+@@ -158,7 +158,7 @@ int null_alloc_reqbuf(struct ptlrpc_sec *sec,
+ 		int alloc_size = size_roundup_power2(msgsize);
+ 
+ 		LASSERT(!req->rq_pool);
+-		req->rq_reqbuf = libcfs_kvzalloc(alloc_size, GFP_NOFS);
++		req->rq_reqbuf = kvzalloc(alloc_size, GFP_NOFS);
+ 		if (!req->rq_reqbuf)
+ 			return -ENOMEM;
+ 
+@@ -201,7 +201,7 @@ int null_alloc_repbuf(struct ptlrpc_sec *sec,
+ 
+ 	msgsize = size_roundup_power2(msgsize);
+ 
+-	req->rq_repbuf = libcfs_kvzalloc(msgsize, GFP_NOFS);
++	req->rq_repbuf = kvzalloc(msgsize, GFP_NOFS);
+ 	if (!req->rq_repbuf)
+ 		return -ENOMEM;
+ 
+@@ -246,7 +246,7 @@ int null_enlarge_reqbuf(struct ptlrpc_sec *sec,
+ 	if (req->rq_reqbuf_len < newmsg_size) {
+ 		alloc_size = size_roundup_power2(newmsg_size);
+ 
+-		newbuf = libcfs_kvzalloc(alloc_size, GFP_NOFS);
++		newbuf = kvzalloc(alloc_size, GFP_NOFS);
+ 		if (!newbuf)
+ 			return -ENOMEM;
+ 
+@@ -317,7 +317,7 @@ int null_alloc_rs(struct ptlrpc_request *req, int msgsize)
+ 		/* pre-allocated */
+ 		LASSERT(rs->rs_size >= rs_size);
+ 	} else {
+-		rs = libcfs_kvzalloc(rs_size, GFP_NOFS);
++		rs = kvzalloc(rs_size, GFP_NOFS);
+ 		if (!rs)
+ 			return -ENOMEM;
+ 
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c b/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
+index 44e34056515b..ec3d9af76b17 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
+@@ -562,7 +562,7 @@ int plain_alloc_reqbuf(struct ptlrpc_sec *sec,
+ 		LASSERT(!req->rq_pool);
+ 
+ 		alloc_len = size_roundup_power2(alloc_len);
+-		req->rq_reqbuf = libcfs_kvzalloc(alloc_len, GFP_NOFS);
++		req->rq_reqbuf = kvzalloc(alloc_len, GFP_NOFS);
+ 		if (!req->rq_reqbuf)
+ 			return -ENOMEM;
+ 
+@@ -620,7 +620,7 @@ int plain_alloc_repbuf(struct ptlrpc_sec *sec,
+ 
+ 	alloc_len = size_roundup_power2(alloc_len);
+ 
+-	req->rq_repbuf = libcfs_kvzalloc(alloc_len, GFP_NOFS);
++	req->rq_repbuf = kvzalloc(alloc_len, GFP_NOFS);
+ 	if (!req->rq_repbuf)
+ 		return -ENOMEM;
+ 
+@@ -671,7 +671,7 @@ int plain_enlarge_reqbuf(struct ptlrpc_sec *sec,
+ 	if (req->rq_reqbuf_len < newbuf_size) {
+ 		newbuf_size = size_roundup_power2(newbuf_size);
+ 
+-		newbuf = libcfs_kvzalloc(newbuf_size, GFP_NOFS);
++		newbuf = kvzalloc(newbuf_size, GFP_NOFS);
+ 		if (!newbuf)
+ 			return -ENOMEM;
+ 
+@@ -808,7 +808,7 @@ int plain_alloc_rs(struct ptlrpc_request *req, int msgsize)
+ 		/* pre-allocated */
+ 		LASSERT(rs->rs_size >= rs_size);
+ 	} else {
+-		rs = libcfs_kvzalloc(rs_size, GFP_NOFS);
++		rs = kvzalloc(rs_size, GFP_NOFS);
+ 		if (!rs)
+ 			return -ENOMEM;
+ 
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
+index 57e41e2cd30a..79d9f3860022 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/service.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
+@@ -1068,7 +1068,7 @@ static int ptlrpc_at_send_early_reply(struct ptlrpc_request *req)
+ 	reqcopy = ptlrpc_request_cache_alloc(GFP_NOFS);
+ 	if (!reqcopy)
+ 		return -ENOMEM;
+-	reqmsg = libcfs_kvzalloc(req->rq_reqlen, GFP_NOFS);
++	reqmsg = kvzalloc(req->rq_reqlen, GFP_NOFS);
+ 	if (!reqmsg) {
+ 		rc = -ENOMEM;
+ 		goto out_free;
+@@ -2077,7 +2077,7 @@ static int ptlrpc_main(void *arg)
+ 	}
+ 
+ 	/* Alloc reply state structure for this one */
+-	rs = libcfs_kvzalloc(svc->srv_max_reply_size, GFP_NOFS);
++	rs = kvzalloc(svc->srv_max_reply_size, GFP_NOFS);
+ 	if (!rs) {
+ 		rc = -ENOMEM;
+ 		goto out_srv_fini;
