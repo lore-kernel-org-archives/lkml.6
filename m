@@ -1,75 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751429AbeBTJdp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 04:33:45 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46900 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeBTJdm (ORCPT
+        id S1751454AbeBTJd7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 04:33:59 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37554 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751410AbeBTJdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 04:33:42 -0500
-X-Google-Smtp-Source: AH8x225Rd4psSv3negpJUM6GHboifdZSrtSp79vX5DmytUqGwgHSkB52uRJvdUolEVBCSRJw1Sb9YQ==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v3 02/25] soc: qcom: add support to APR bus driver
-To: Rob Herring <robh@kernel.org>
-Cc: andy.gross@linaro.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        david.brown@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-3-srinivas.kandagatla@linaro.org>
- <20180219030819.qovj4swuvged6c24@rob-hp-laptop>
-Message-ID: <6be00df2-de80-0d40-9603-8b0fd94efa41@linaro.org>
-Date: Tue, 20 Feb 2018 09:33:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 20 Feb 2018 04:33:55 -0500
+X-Google-Smtp-Source: AH8x224J+DvqINx61Oepia3n+Ns0dfT+CZ4bnz7AsfkXQes5Be6EblviKA5htz8U2FaeT6OdosRJFA==
+Date: Tue, 20 Feb 2018 10:33:47 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
+ smp_read_barrier_depends, and lockless_dereference
+Message-ID: <20180220093346.GA5505@andrea>
+References: <20180217151413.GA3785@andrea>
+ <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180219030819.qovj4swuvged6c24@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for review comments,
-
-On 19/02/18 03:08, Rob Herring wrote:
-> On Tue, Feb 13, 2018 at 04:58:14PM +0000,srinivas.kandagatla@linaro.org  wrote:
->> From: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
->>
->> This patch adds support toi APR bus (Asynchronous Packet Router) driver.
->> ARP driver is made as a bus driver so that the apr devices can added removed
->> more dynamically depending on the state of the services on the dsp.
->> APR is used for communication between application processor and QDSP to
->> use services on QDSP like Audio and others.
->>
->> Signed-off-by: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/soc/qcom/Kconfig           |   9 +
->>   drivers/soc/qcom/Makefile          |   1 +
->>   drivers/soc/qcom/apr.c             | 381 +++++++++++++++++++++++++++++++++++++
->>   include/dt-bindings/soc/qcom,apr.h |  27 +++
-> This belongs in the binding patch.
+On Mon, Feb 19, 2018 at 12:14:45PM -0500, Alan Stern wrote:
+> On Sat, 17 Feb 2018, Andrea Parri wrote:
 > 
-I agree, will fix it in next version.
->>   include/linux/mod_devicetable.h    |  11 ++
->>   include/linux/soc/qcom/apr.h       | 131 +++++++++++++
->>   6 files changed, 560 insertions(+)
->>   create mode 100644 drivers/soc/qcom/apr.c
->>   create mode 100644 include/dt-bindings/soc/qcom,apr.h
->>   create mode 100644 include/linux/soc/qcom/apr.h
+> > > Akira's observation about READ_ONCE extends to all (annotated) loads.  In
+> > > fact, it also applies to loads corresponding to unsuccessful RMW operations;
+> > > consider, for example, the following variation of MP+onceassign+derefonce:
+> > > 
+> > > C T
+> > > 
+> > > {
+> > > y=z;
+> > > z=0;
+> > > }
+> > > 
+> > > P0(int *x, int **y)
+> > > {
+> > > 	WRITE_ONCE(*x, 1);
+> > > 	smp_store_release(y, x);
+> > > }
+> > > 
+> > > P1(int **y, int *z)
+> > > {
+> > > 	int *r0;
+> > > 	int r1;
+> > > 
+> > > 	r0 = cmpxchg_relaxed(y, z, z);
+> > > 	r1 = READ_ONCE(*r0);
+> > > }
+> > > 
+> > > exists (1:r0=x /\ 1:r1=0)
+> > > 
+> > > The final state is allowed w/o the patch, and forbidden w/ the patch.
+> > > 
+> > > This also reminds me of
+> > > 
+> > >    5a8897cc7631fa544d079c443800f4420d1b173f
+> > >    ("locking/atomics/alpha: Add smp_read_barrier_depends() to _release()/_relaxed() atomics")
+> > > 
+> > > (that we probably want to mention in the commit message).
+> > 
+> > Please also notice that 5a8897cc7631f only touched alpha's atomic.h:
+> > I see no corresponding commit/change on {,cmp}xchg.h (where the "mb"
+> > is currently conditionally executed).
 > 
->> diff --git a/include/dt-bindings/soc/qcom,apr.h b/include/dt-bindings/soc/qcom,apr.h
->> new file mode 100644
->> index 000000000000..fb162ac4ca0e
->> --- /dev/null
->> +++ b/include/dt-bindings/soc/qcom,apr.h
->> @@ -0,0 +1,27 @@
-> SPDX tag
+> This leaves us with a question: Do we want to change the kernel by
+> adding memory barriers after unsuccessful RMW operations on Alpha, or
+> do we want to change the model by excluding such operations from
+> address dependencies?
 
-Thanks for reminding this.. Will fix it in next spin.
+I'd like to continue to treat R[once] and R*[once] equally if possible.
+Given the (unconditional) smp_read_barrier_depends in READ_ONCE and in
+atomics, it seems reasonable to have it unconditionally in cmpxchg.
 
+As with the following patch?
+
+  Andrea
+
+---
+diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
+index 68dfb3cb71454..e2660866ce972 100644
+--- a/arch/alpha/include/asm/xchg.h
++++ b/arch/alpha/include/asm/xchg.h
+@@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
+  * store NEW in MEM.  Return the initial value in MEM.  Success is
+  * indicated by comparing RETURN with OLD.
+  *
+- * The memory barrier should be placed in SMP only when we actually
+- * make the change. If we don't change anything (so if the returned
+- * prev is equal to old) then we aren't acquiring anything new and
+- * we don't need any memory barrier as far I can tell.
++ * The memory barrier is placed in SMP unconditionally, in order to
++ * guarantee that dependency ordering is preserved when a dependency
++ * is headed by an unsuccessful operation.
+  */
+ 
+ static inline unsigned long
+@@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
+ 	"	or	%1,%2,%2\n"
+ 	"	stq_c	%2,0(%4)\n"
+ 	"	beq	%2,3f\n"
+-		__ASM__MB
+ 	"2:\n"
++		__ASM__MB
+ 	".subsection 2\n"
+ 	"3:	br	1b\n"
+ 	".previous"
+@@ -177,8 +176,8 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
+ 	"	or	%1,%2,%2\n"
+ 	"	stq_c	%2,0(%4)\n"
+ 	"	beq	%2,3f\n"
+-		__ASM__MB
+ 	"2:\n"
++		__ASM__MB
+ 	".subsection 2\n"
+ 	"3:	br	1b\n"
+ 	".previous"
+@@ -200,8 +199,8 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
+ 	"	mov %4,%1\n"
+ 	"	stl_c %1,%2\n"
+ 	"	beq %1,3f\n"
+-		__ASM__MB
+ 	"2:\n"
++		__ASM__MB
+ 	".subsection 2\n"
+ 	"3:	br 1b\n"
+ 	".previous"
+@@ -223,8 +222,8 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
+ 	"	mov %4,%1\n"
+ 	"	stq_c %1,%2\n"
+ 	"	beq %1,3f\n"
+-		__ASM__MB
+ 	"2:\n"
++		__ASM__MB
+ 	".subsection 2\n"
+ 	"3:	br 1b\n"
+ 	".previous"
+
+
+> 
+> Note that operations like atomic_add_unless() already include memory 
+> barriers.
+> 
+> Alan
 > 
