@@ -1,49 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751423AbeBTXow (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:44:52 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41876 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeBTXou (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:44:50 -0500
-X-Google-Smtp-Source: AH8x2248zvNuHNfdaFkzXZdlvcHPXSefl1t7HD9y3puckvNhpOUh3J1ymfmLZFkVF8siw4y8r+w70Q==
-Date: Tue, 20 Feb 2018 15:44:43 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: linux-kernel@vger.kernel.org
-Cc: linux-metag@vger.kernel.org, James Hogan <jhogan@kernel.org>
-Subject: metag build errors in mainline kernel
-Message-ID: <20180220234443.GA27059@roeck-us.net>
+        id S1751415AbeBTXuh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:50:37 -0500
+Received: from mga09.intel.com ([134.134.136.24]:20301 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751053AbeBTXuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:50:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,542,1511856000";
+   d="scan'208";a="176800474"
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Matthew Garrett <mjg59@google.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>,
+        "joe.konno@linux.intel.com" <joe.konno@linux.intel.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>, "ak@linux.intel.com" <ak@linux.intel.com>,
+        "pjones@redhat.com" <pjones@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Subject: RE: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+Thread-Topic: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+Thread-Index: AQHTpon2sBXepSmY30arvR+oDcRgZ6OuOFeA//+bYYCAAJIigP//ko4AgACIt4D//3t70A==
+Date: Tue, 20 Feb 2018 23:50:08 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7B37DB0F@ORSMSX110.amr.corp.intel.com>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <20180215182208.35003-2-joe.konno@linux.intel.com>
+ <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk>
+ <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+ <20180220233008.55rfm7zw62hrao5p@agluck-desk>
+ <CACdnJussCnLqdGGyOc=iUwEdot_U2DZjGcVWRcQa-DxVcUhabA@mail.gmail.com>
+In-Reply-To: <CACdnJussCnLqdGGyOc=iUwEdot_U2DZjGcVWRcQa-DxVcUhabA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjYxYWM0NDYtNzc3Ni00ZGNiLTlmOTMtNjQ1NWYzMzE3N2RlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJGU3BWUUdKU3J6bDFTV2hvTzNwaXlJNUtsc1lhWUxzSWptYUowSHVyWmYyWnBTcHNVSHdXUXI2OUc4YlFkWlwvTiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1KNoghY000675
 
-The following errors are seen when building the kernel with the latest
-available metag toolchain (4.2.4 (IMG-1.4.0.700)). Kernel version tested
-is (v4.16-rc2-64-gaf3e79d29555).
+> read() will make two calls - one to obtain the size of the variable, the
+> other to read it. It looks like cat will also trigger an fstat(), so we're
+> probably also making a call for that. There's presumably some optimisation
+> that could be made there if we trust the firmware not to change the size
+> behind our back.
 
-metag:allmodconfig
+Hmmm. "ls -l" reports the size of each of the files without causing any SMIs,
+so Linux has that cached someplace and "read" is being silly making a call
+to get something that we already know.  Unless we think the size may be
+changing asynchronously and are OK with reporting a stale value for "stat"
+but want the actual value for "read".
 
-arch/metag/kernel/devtree.c:54: error: implicit declaration of function 'pr_info'
-
-arch/metag/kernel/perf/perf_event.c:831: error: label ‘out’ used but not defined
-arch/metag/kernel/perf/perf_event.c:822: warning: unused variable ‘cpu’
-
-metag:meta2_smp_defconfig
-
-kernel/time/hrtimer.c: In function 'hrtimer_run_softirq':
-time/hrtimer.c:1431: error: unable to find a register to spill in class 'Yr_REGS'
-time/hrtimer.c:1431: error: this is the insn:
-(insn:HI 41 40 99 2 kernel/time/hrtimer.c:576 (set (mem/s/j:DI (plus:SI (reg/f:SI 15 D1.7 [orig:84 D.45290 ] [84])
-                (const_int 368 [0x170])) [0 <variable>.offset+0 S8 A128])
-	(reg:DI 99 [ <variable>.offset ])) 211 {*sto_di_1_1_off12} (nil)
-    (expr_list:REG_DEAD (reg:DI 99 [ <variable>.offset ])
-	(nil)))
-kernel/time/hrtimer.c:1431: confused by earlier errors, bailing out
-
-Guenter
+-Tony
