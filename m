@@ -1,65 +1,67 @@
-Return-Path: <kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org>
-X-Cyrus-Session-Id: sloti22d1t05-2058923-1519111619-2-10390419747440629905
+Return-Path: <kernelnewbies-bounces@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-2326222-1519113278-2-9748295776704645456
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_NONE -0.0001,
-  LANGUAGES ensk.us-ascii, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org
+X-Mail-from: kernelnewbies-bounces@kernelnewbies.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519111618; b=Igct2s+qZOFBUQEkIc9J6SywKrYEhsYa8aiwwCC+IJKWNWw
-    sjmPl4EPiKl9gg6cxIJaNQhjP3fu/MxbjoRr8cSOcJ0hPda4Amuu4ET04u19zQU0
-    /bWm6Nf7CorUcTy/n4PHNyThxxxi4OaP/HaAABdPs9lqGDF9CQpbWi9+15Zqb31j
-    /MR9LL1wJGBHiehkvLGZkQ8w4U8JbXPq6iB8opEqHp0mx37d1dD0z8wWUDXFUx4D
-    aHCJ5MgNeDaxtPYj43uq53J7gU11VmvZEOH9Hmrj5Whkn4ltMKAJeYkxua0Mp+FB
-    58tuAZfqTZ24uhxyC/6E4olnQe93M+2NLXxU5kQ==
+    t=1519113278; b=ZxJdl0+xBn8rCyP/vhjL2Fhjna6Se9BbRiglAu0vBKvsoy9
+    gyo84N7ZGqmqJrn51aUcOf0TCZ0ETa+ozubn9JekpFWNUBx0bEooWAjl1P0GpYwK
+    LwnEhrf1+CXyyb/7Rz1tRWLdIVZWEAv1CA5T40xi0T7u00tEYkml0fc46qLDXIQm
+    VVN9dQqn20tBGYDE93Ic0Jak002FM5AOMPBI2R/Jc/t2Rka0iuhgUBCz8LRqv29A
+    hPeo8YABaMPPqLJviVEaY4OXRBHiJIZt2j9mZrkGFPckM+hviIZTa1kw8fIUmI3e
+    0zQzBwV19ZyGgCeMBvbuG4ATZcJ4s1PpPnROg8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:from:date:message-id:subject
-    :to:list-id:list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:content-type:content-transfer-encoding; s=
-    arctest; t=1519111618; bh=ApRIf0ILKu1gUPUigJaGXEVMiIUDf97I7w2Pat
-    4dXbo=; b=sIse/Clmt90h4UgvngiSKHMZoF2h4epsKtZx3g30EKEsdDD5KDy4cQ
-    DYCMjIRTPJdIIRnu3fK89UxhrvOh0ayvH355QlQzyXriCz8hnCtZgxbYACdBIPmL
-    0oQwERDKyGxXXYo/1SE+henEMwm5d92Xg4BfXFSEK/qPSLeYCCpJFpIVpuMw3tBh
-    fVaAxLJ3wENE3MluxIKTXnYp6HT+/T7Ljj6Lk2vo52yDXEhx1fHdQ+trJVFJSuDX
-    te+O/D9OCL/o86hvVYk/ueyI8OVnSvN1UxsF05A1wIg7OOuljj5RbvxyWC/Im/RA
-    VIahop4NfWPMQdyFUf4DGsssc7kLHZlQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Eny9H5L6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:cc:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding; s=arctest; t=1519113278; bh=2Z6hb3L8
+    hwQnRp1FsNAKvSm/+Mwne1Y94BwqEUOTHc4=; b=Nj9sM0RuxvimWxziJNiMaT39
+    58FXpSXfmCqJgRF+fQsqfZChew2P+sWw8tBZHFta7isqQkSWyMepHMT4+sdj7Rwn
+    /gewTZmKNpms941OrweSplKeK1E2KjYZpPW6lNAb671kjEWqJ6HNO7bwQSh9B89r
+    BznsCVCMSYNFKADLLdvPs5JCCw4qeCfYtPxU/7sGWSZY9aMdZgGMWGPSjxPpse7n
+    9PRZPyWPu25zllEX1PmXXrx8xzRQVVCqu593hi6s+aUi30O3DJZwkBMXIZvc2T8X
+    tREgFby1/0apPclRpYtr3JMcnkmC3lCyOTcTsNhf08yCM0q9fjEtUX+R6+G9eQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
-    spf=permerror smtp.mailfrom=kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Baphicjn;
     x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
-    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Eny9H5L6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
-    spf=permerror smtp.mailfrom=kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Baphicjn;
     x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
-    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x227K8aVOnO7BV31tBYqyLeOlW/m3N+fbvgG4Zc6UXhuzFWuXEvrneaTb4WOoXim4xOTT+SblYUt/rdH2IYyje+k=
+Date: Tue, 20 Feb 2018 08:54:25 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ivid Suvarna <ivid.suvarna@gmail.com>
+Subject: Re: Timekeeping warning during resume from suspend to disk
+Message-ID: <20180220075425.GA13048@kroah.com>
+References: <CABXF_AAQVJ7eMt4gFhiEcgZTD7Y4R66-9ELZ1OJ2gAmKPeLMAw@mail.gmail.com>
 MIME-Version: 1.0
-From: Ivid Suvarna <ivid.suvarna@gmail.com>
-Date: Tue, 20 Feb 2018 12:53:26 +0530
-Message-ID: <CABXF_AAQVJ7eMt4gFhiEcgZTD7Y4R66-9ELZ1OJ2gAmKPeLMAw@mail.gmail.com>
-Subject: Timekeeping warning during resume from suspend to disk
-To: Kernel development list <linux-kernel@vger.kernel.org>,
- kernelnewbies@kernelnewbies.org, Linux-pm@vger.kernel.org
+Content-Disposition: inline
+In-Reply-To: <CABXF_AAQVJ7eMt4gFhiEcgZTD7Y4R66-9ELZ1OJ2gAmKPeLMAw@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+Cc: Linux-pm@vger.kernel.org,
+ Kernel development list <linux-kernel@vger.kernel.org>,
+ kernelnewbies@kernelnewbies.org
 X-BeenThere: kernelnewbies@kernelnewbies.org
 X-Mailman-Version: 2.1.15
 List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
@@ -71,61 +73,28 @@ List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>
  <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Errors-To: kernelnewbies-bounces+greg=kroah.com@kernelnewbies.org
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi All,
+On Tue, Feb 20, 2018 at 12:53:26PM +0530, Ivid Suvarna wrote:
+> Hi All,
+> 
+> Facing below warning backtrace during resume from suspend to disk. I
+> am using 4.1.15 freescale kernel.
 
-Facing below warning backtrace during resume from suspend to disk. I
-am using 4.1.15 freescale kernel. After this warning there is a huge
-time gap (nearly 10 sec) between Enabling non-boot cpus and CPU1 being
-up. Any pointers on this would be helpful.
+4.1.15 is a kernel that is very old and obsolete (released almost 3
+years ago, and tens of thousands of changes old.)  Please try something
+newer and more modern like 4.15.  If the issue is still there, the
+community will be glad to help you out.
 
-[  545.227081] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[  545.227081] [<80018674>] (unwind_backtrace) from [<80013c24>]
-(show_stack+0x20/0x24)
-[  545.227081] [<80013c24>] (show_stack) from [<80684220>]
-(dump_stack+0x7c/0xbc)
-[  545.227081] [<80684220>] (dump_stack) from [<80034fcc>]
-(warn_slowpath_common+0x94/0xc4)
-[  545.227081] [<80034fcc>] (warn_slowpath_common) from [<800350b8>]
-(warn_slowpath_null+0x2c/0x34)
-[  545.227081] [<800350b8>] (warn_slowpath_null) from [<8009ce24>]
-(clockevents_program_event+0x14c/0x15c)
-[  545.227081] [<8009ce24>] (clockevents_program_event) from
-[<8009f39c>] (tick_resume_oneshot+0x5c/0x64)
-[  545.227081] [<8009f39c>] (tick_resume_oneshot) from [<8009daa8>]
-(tick_resume_local+0x58/0x68)
-[  545.227081] [<8009daa8>] (tick_resume_local) from [<8009daf4>]
-(tick_resume+0x1c/0x20)
-[  545.227081] [<8009daf4>] (tick_resume) from [<80096328>]
-(timekeeping_resume+0x1c8/0x2bc)
-[  545.227081] [<80096328>] (timekeeping_resume) from [<803e5a7c>]
-(syscore_resume+0x94/0x250)
-[  545.227081] [<803e5a7c>] (syscore_resume) from [<800721b0>]
-(suspend_devices_and_enter+0x78c/0x99c)
-[  545.227081] [<800721b0>] (suspend_devices_and_enter) from
-[<800728a0>] (pm_suspend+0x4e0/0x74c)
-[  545.227081] [<800728a0>] (pm_suspend) from [<80070adc>]
-(state_store+0x74/0xa0)
-[  545.227081] [<80070adc>] (state_store) from [<8031f3c4>]
-(kobj_attr_store+0x1c/0x28)
-[  545.227081] [<8031f3c4>] (kobj_attr_store) from [<801a9814>]
-(sysfs_kf_write+0x50/0x54)
-[  545.227081] [<801a9814>] (sysfs_kf_write) from [<801a8fc8>]
-(kernfs_fop_write+0xcc/0x1b8)
-[  545.227081] [<801a8fc8>] (kernfs_fop_write) from [<8013c1d4>]
-(__vfs_write+0x3c/0xec)
-[  545.227081] [<8013c1d4>] (__vfs_write) from [<8013ca88>]
-(vfs_write+0xa0/0x180)
-[  545.227081] [<8013ca88>] (vfs_write) from [<8013d2fc>] (SyS_write+0x4c/0xa0)
-[  545.227081] [<8013d2fc>] (SyS_write) from [<8000fd3c>]
-(__cpuset_migrate_return+0x0/0x24)
+If you are stuck at that old kernel version for some odd reason, please
+get support from the company that is forcing you to use it.
 
-Regards,
-IVID
+good luck!
+
+greg k-h
 
 _______________________________________________
 Kernelnewbies mailing list
