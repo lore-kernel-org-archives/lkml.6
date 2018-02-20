@@ -1,50 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeBTPDu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:03:50 -0500
-Received: from mail-it0-f74.google.com ([209.85.214.74]:43981 "EHLO
-        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752116AbeBTPDt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:03:49 -0500
-X-Google-Smtp-Source: AH8x226ZlAPlWVnlJexOyrNq3tT6zOZ71GIVwSHeZCh0NCEyI80olo6ZcxQ2NRL1T5RUEjXvQsCtWaLDLvh5
+        id S1752252AbeBTPJ3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:09:29 -0500
+Received: from mail01.prevas.se ([62.95.78.3]:29123 "EHLO mail01.prevas.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751808AbeBTPJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 10:09:24 -0500
+X-IronPort-AV: E=Sophos;i="5.46,539,1511823600";
+   d="scan'208";a="3274638"
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+To: Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        York Sun <york.sun@nxp.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] EDAC, layerscape: allow building for LS1021A
+Date: Tue, 20 Feb 2018 16:09:12 +0100
+Message-ID: <20180220150912.2954-1-rasmus.villemoes@prevas.dk>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Date: Tue, 20 Feb 2018 16:03:18 +0100
-Message-Id: <20180220150318.138827-1-delroth@google.com>
-X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
-Subject: [PATCH] max17042: propagate of_node to power supply device
-From: Pierre Bourdon <delroth@google.com>
-Cc: Pierre Bourdon <delroth@google.com>, Andre Heider <a.heider@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [172.16.8.31]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-max17042_get_status uses the core power_supply_am_i_supplied. That
-function relies on DT properties to figure out the power supply
-topology, and will error out without DT.
+The LS1021A has a memory controller supported by this driver. It builds
+just fine, and I've done some rudimentary testing using the error
+injection facility, which suggests that it is indeed working.
 
-Fixes max17042 battery status being reported as "unknown".
-
-Signed-off-by: Andre Heider <a.heider@gmail.com>
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 ---
- drivers/power/supply/max17042_battery.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi York
 
-diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-index 35dde81b1c9b..1a568df383db 100644
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -1053,6 +1053,7 @@ static int max17042_probe(struct i2c_client *client,
+In https://patchwork.kernel.org/patch/9264623/, you wrote that LS1021A
+support is "just one step away". I'm wondering if this is simply that
+step, or there is a little more to it. As I write, it seems to work
+just fine, but I may be missing something.
+
+ drivers/edac/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 96afb2aeed18..23f619afe31d 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -254,7 +254,7 @@ config EDAC_MPC85XX
  
- 	i2c_set_clientdata(client, chip);
- 	psy_cfg.drv_data = chip;
-+	psy_cfg.of_node = dev->of_node;
- 
- 	/* When current is not measured,
- 	 * CURRENT_NOW and CURRENT_AVG properties should be invisible. */
+ config EDAC_LAYERSCAPE
+ 	tristate "Freescale Layerscape DDR"
+-	depends on ARCH_LAYERSCAPE
++	depends on ARCH_LAYERSCAPE || SOC_LS1021A
+ 	help
+ 	  Support for error detection and correction on Freescale memory
+ 	  controllers on Layerscape SoCs.
 -- 
-2.16.1.291.g4437f3f132-goog
+2.15.1
