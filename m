@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751975AbeBTM7I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 07:59:08 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35062 "EHLO
+        id S1752002AbeBTM73 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 07:59:29 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36526 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeBTM6f (ORCPT
+        with ESMTP id S1751754AbeBTM6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:58:35 -0500
-X-Google-Smtp-Source: AH8x227J5ejuTGhqpjdAYGfqJN3m2Lwnz1PsLGO8lIYJryoHZ7iftJB8XnC6KpZYwscXfEMFt2v8dg==
+        Tue, 20 Feb 2018 07:58:32 -0500
+X-Google-Smtp-Source: AH8x227dJJy8+7laUPe+FrUiYkRjM9KaoZdR4kB6R9AnIeA2ny2Y6LpzaUR30hVqBHqIqKypr93NQA==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/ttm: keep BOs reserved until end of eviction
-Date: Tue, 20 Feb 2018 13:58:29 +0100
-Message-Id: <20180220125829.27060-4-christian.koenig@amd.com>
+Subject: [PATCH 2/4] drm/amdgpu: use new ww_mutex_is_owned_by function
+Date: Tue, 20 Feb 2018 13:58:27 +0100
+Message-Id: <20180220125829.27060-2-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180220125829.27060-1-christian.koenig@amd.com>
 References: <20180220125829.27060-1-christian.koenig@amd.com>
@@ -26,119 +26,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids problems when BOs are evicted but directly moved back into
-the domain from other threads.
+Instead of accessing ww_mutex internals directly use the provided
+function to check if the ww_mutex was indeed locked by the current
+command submission.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/ttm/ttm_bo.c | 37 +++++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index 3a44c2ee4155..593a0216faff 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -742,7 +742,8 @@ static bool ttm_bo_evict_swapout_allowable(struct ttm_buffer_object *bo,
- static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
- 			       uint32_t mem_type,
- 			       const struct ttm_place *place,
--			       struct ttm_operation_ctx *ctx)
-+			       struct ttm_operation_ctx *ctx,
-+			       struct list_head *evicted)
- {
- 	struct ttm_bo_global *glob = bdev->glob;
- 	struct ttm_mem_type_manager *man = &bdev->man[mem_type];
-@@ -792,17 +793,28 @@ static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index eaa3cb0c3ad1..6db26a3144dc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -1594,7 +1594,7 @@ int amdgpu_cs_find_mapping(struct amdgpu_cs_parser *parser,
+ 	*map = mapping;
  
- 	ret = ttm_bo_evict(bo, ctx);
- 	if (locked) {
--		ttm_bo_unreserve(bo);
-+		list_add_tail(&bo->lru, evicted);
- 	} else {
- 		spin_lock(&glob->lru_lock);
- 		ttm_bo_add_to_lru(bo);
- 		spin_unlock(&glob->lru_lock);
-+		kref_put(&bo->list_kref, ttm_bo_release_list);
- 	}
+ 	/* Double check that the BO is reserved by this CS */
+-	if (READ_ONCE((*bo)->tbo.resv->lock.ctx) != &parser->ticket)
++	if (!ww_mutex_is_owned_by(&(*bo)->tbo.resv->lock, &parser->ticket))
+ 		return -EINVAL;
  
--	kref_put(&bo->list_kref, ttm_bo_release_list);
- 	return ret;
- }
- 
-+static void ttm_mem_evict_cleanup(struct list_head *evicted)
-+{
-+	struct ttm_buffer_object *bo, *tmp;
-+
-+	list_for_each_entry_safe(bo, tmp, evicted, lru) {
-+		list_del_init(&bo->lru);
-+		ttm_bo_unreserve(bo);
-+		kref_put(&bo->list_kref, ttm_bo_release_list);
-+	}
-+}
-+
- void ttm_bo_mem_put(struct ttm_buffer_object *bo, struct ttm_mem_reg *mem)
- {
- 	struct ttm_mem_type_manager *man = &bo->bdev->man[mem->mem_type];
-@@ -852,20 +864,26 @@ static int ttm_bo_mem_force_space(struct ttm_buffer_object *bo,
- {
- 	struct ttm_bo_device *bdev = bo->bdev;
- 	struct ttm_mem_type_manager *man = &bdev->man[mem_type];
-+	struct list_head evicted;
- 	int ret;
- 
-+	INIT_LIST_HEAD(&evicted);
- 	do {
- 		ret = (*man->func->get_node)(man, bo, place, mem);
- 		if (unlikely(ret != 0))
- 			return ret;
- 		if (mem->mm_node)
- 			break;
--		ret = ttm_mem_evict_first(bdev, mem_type, place, ctx);
-+		ret = ttm_mem_evict_first(bdev, mem_type, place, ctx, &evicted);
- 		if (unlikely(ret != 0))
--			return ret;
-+			goto error;
- 	} while (1);
- 	mem->mem_type = mem_type;
--	return ttm_bo_add_move_fence(bo, man, mem);
-+	ret = ttm_bo_add_move_fence(bo, man, mem);
-+
-+error:
-+	ttm_mem_evict_cleanup(&evicted);
-+	return ret;
- }
- 
- static uint32_t ttm_bo_select_caching(struct ttm_mem_type_manager *man,
-@@ -1345,6 +1363,7 @@ static int ttm_bo_force_list_clean(struct ttm_bo_device *bdev,
- 	struct ttm_operation_ctx ctx = { false, false };
- 	struct ttm_mem_type_manager *man = &bdev->man[mem_type];
- 	struct ttm_bo_global *glob = bdev->glob;
-+	struct list_head evicted;
- 	struct dma_fence *fence;
- 	int ret;
- 	unsigned i;
-@@ -1352,18 +1371,20 @@ static int ttm_bo_force_list_clean(struct ttm_bo_device *bdev,
- 	/*
- 	 * Can't use standard list traversal since we're unlocking.
- 	 */
--
-+	INIT_LIST_HEAD(&evicted);
- 	spin_lock(&glob->lru_lock);
- 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
- 		while (!list_empty(&man->lru[i])) {
- 			spin_unlock(&glob->lru_lock);
--			ret = ttm_mem_evict_first(bdev, mem_type, NULL, &ctx);
-+			ret = ttm_mem_evict_first(bdev, mem_type, NULL, &ctx,
-+						  &evicted);
- 			if (ret)
- 				return ret;
- 			spin_lock(&glob->lru_lock);
- 		}
- 	}
- 	spin_unlock(&glob->lru_lock);
-+	ttm_mem_evict_cleanup(&evicted);
- 
- 	spin_lock(&man->move_lock);
- 	fence = dma_fence_get(man->move);
+ 	if (!((*bo)->flags & AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS)) {
 -- 
 2.14.1
