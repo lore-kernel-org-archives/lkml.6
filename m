@@ -1,78 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751600AbeBTW6S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:58:18 -0500
-Received: from mga01.intel.com ([192.55.52.88]:31337 "EHLO mga01.intel.com"
+        id S1751581AbeBTXBV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:01:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750998AbeBTW6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:58:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="36193669"
-Date: Wed, 21 Feb 2018 00:58:11 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] tpm: Trigger only missing TPM 2.0 self tests
-Message-ID: <20180220225811.eedakhqvrmw3yhrb@linux.intel.com>
-References: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
+        id S1750998AbeBTXBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:01:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 293C02177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 20 Feb 2018 23:01:15 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Linux MIPS <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 6/8] MIPS: Loongson64: cleanup all mach files to use
+ SPDX Identifier
+Message-ID: <20180220230115.GH6245@saruman>
+References: <20171226132339.7356-1-jiaxun.yang@flygoat.com>
+ <20171230182830.6496-1-jiaxun.yang@flygoat.com>
+ <20171230182830.6496-7-jiaxun.yang@flygoat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xHbokkKX1kTiQeDC"
 Content-Disposition: inline
-In-Reply-To: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20171230182830.6496-7-jiaxun.yang@flygoat.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 12:53:47AM +0200, Jarkko Sakkinen wrote:
-> From: Alexander Steffen <Alexander.Steffen@infineon.com>
-> 
-> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
-> (necessitating a reboot). The problem seems to be that the TPM gets into a
-> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
-> all tests have run to completion), but instead returns TPM_RC_TESTING
-> (meaning some tests are still running in the background).  There are
-> various theories that resending the self-test command actually causes the
-> tests to restart and thus triggers more TPM_RC_TESTING returns until the
-> timeout is exceeded.
-> 
-> There are several issues here: firstly being we shouldn't slow down the
-> boot sequence waiting for the self test to complete once the TPM
-> backgrounds them.  It will actually make available all functions that have
-> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
-> command.  So the fix is to kick off self tests once and if they return
-> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
-> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
-> (which it might if they send a command that needs a TPM subsystem which is
-> still under test), we loop in tpm_transmit_cmd until either a timeout or we
-> don't get a TPM_RC_TESTING return.
-> 
-> Finally, there have been observations of strange returns from a partial
-> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
-> any unexpected return from a partial self test as an indication we need to
-> run a full self test.
-> 
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
-> Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
+
+--xHbokkKX1kTiQeDC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Dec 31, 2017 at 02:28:29AM +0800, Jiaxun Yang wrote:
+> To reduce unnecessary license text.
+>=20
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 > ---
-> v4: Some updatees from jarkko.sakkinen@linux.intel.com:
->     - squashed tpm_buf migration
->     - cleaned up a bunch of clutter from the original patch
+>  arch/mips/loongson64/Makefile | 1 +
+>  arch/mips/loongson64/Platform | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/arch/mips/loongson64/Makefile b/arch/mips/loongson64/Makefile
+> index 4fe3d88fc361..64b270c70607 100644
+> --- a/arch/mips/loongson64/Makefile
+> +++ b/arch/mips/loongson64/Makefile
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0=20
 
-I decided to rather just clean up the code. Would have taken more
-time to explain than do the code change. Hope you don't mind and
-hope I didn't break it.
+whitespace at end of line
 
-/Jarkko
+>  #
+>  # Common code for all Loongson based systems
+>  #
+> diff --git a/arch/mips/loongson64/Platform b/arch/mips/loongson64/Platform
+> index 0fce4608aa88..ceffdace758e 100644
+> --- a/arch/mips/loongson64/Platform
+> +++ b/arch/mips/loongson64/Platform
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0=20
+
+same
+
+Cheers
+James
+
+--xHbokkKX1kTiQeDC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqMqLoACgkQbAtpk944
+dnpVkA/+L/zPthBFiarZCX9WOVePDaQtrzHzgxzib9Hox7K2X9nwYJvgvuCqENOY
+MPC60seSN08+/gN2ejoySsdzjuxyyoyNyYdqU7jKRT38QEYq47gOmjYFRiB2dl4U
+2TKI1uhntZnr/tlkl59alll00JIvez5cMsXsE9z07+K46Yb9JnGn+7f/FVBsQR52
+p5LeM3IaIkcbtCUxPfC3Opl9KKMJLT370ejkdhs0f6ptQ0uelV3hwUHEuex4uL1n
+DhA7HxT9J6hCGNtLGf/x5/oRlfLhlHuEbcJGCVB+/6afYXSH6j+TdgHXbwvopI0s
+NDofxAWVT8f0UIefK2RDdv3GS5vi875ktqMTKp2BM75PTe/QLVAjzwWLp7oycts2
+V7Ghq9YOkAC7/DJtmZEbLJlANwcjBNOlYJDTdvqMBrTaVyUP4HpMQgw3A/tm+Dgj
+8w7nRg1fEleTlufDXp3QPhAQTogT5MDBULjwH8fEvXimrpB2BKiL3ZDmlNVwHVkf
+6DryeIXru9LsZDlvA/Ey6v9W0Tnng8dcjfXK+pKSJ8G9nQ64DNoRJrm+1m/hQCdo
+UflxpKst1tOSfozpoFayorUgDFbp5LnnXOZG2j3JgmAbzYbhku0oeYSagR+absyj
+YBEPfbbSeNwPEXziCrlHrbVswTp4CMOcrF5Pl/ydy8PhPwW6Dlw=
+=HZU6
+-----END PGP SIGNATURE-----
+
+--xHbokkKX1kTiQeDC--
