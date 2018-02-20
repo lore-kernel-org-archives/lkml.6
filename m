@@ -1,82 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeBTRiO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 12:38:14 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33825 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753411AbeBTRiL (ORCPT
+        id S1752135AbeBTRom (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 12:44:42 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42253 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750829AbeBTRok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:38:11 -0500
-X-Google-Smtp-Source: AH8x226fo2yHyqqggYZ3q8hM8dKw9+aTTyq4ovAZJ+FQ3Pis1SbQ7YLNZvmP2d1ecZ9eloHELlMz5g==
-From: Moritz Fischer <mdf@kernel.org>
+        Tue, 20 Feb 2018 12:44:40 -0500
+X-Google-Smtp-Source: AH8x225Eo7ZKU7NzS28vqSKw8NYzmAxuRkKdt+NtqjBsKtqc+URTVyomRsTBUr7dnVYrnMvViV6LSg==
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH v4 1/2] dt-bindings: net: Add bindings for National Instruments XGE netdev
-Date: Tue, 20 Feb 2018 09:32:40 -0800
-Message-Id: <20180220173241.32658-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.16.1
+Cc: Kirill Marinushkin <k.marinushkin@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org
+Subject: [RESEND PATCH v2 0/2] ASoC: topology: Add parsing clock gating
+Date: Tue, 20 Feb 2018 18:44:44 +0100
+Message-Id: <20180220174446.7784-1-k.marinushkin@gmail.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds bindings for the NI XGE 1G/10G network device.
+This patch series adds parsing the topology clock gating parameter, which
+is currently can be set by alsa-lib, but ignored by kernel.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
+The patch 1/2 modifies the UAPI header. If it is applied, the corresponded
+patch should be applied in alsa-lib [2].
 
-Changes from v3:
-- Added Rob's Reviewed-by
+Related, but not required alsa-lib patch: [1].
 
-Changes from v2:
-- Addressed Rob's comments w.r.t to IRQ names and typo
+[1]. [alsa-lib,v2,1/2] topology: Fix parsing config with multiple
+  hw_configs
+[2]. [alsa-lib,v2,2/2] ASoC: topology: Add defines for
+  snd_soc_tplg_hw_config.clock_gated
 
-Changes from v1:
-- Corrected from nixge -> nixge.txt
----
- Documentation/devicetree/bindings/net/nixge.txt | 32 +++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/nixge.txt
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
 
-diff --git a/Documentation/devicetree/bindings/net/nixge.txt b/Documentation/devicetree/bindings/net/nixge.txt
-new file mode 100644
-index 000000000000..e55af7f0881a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/nixge.txt
-@@ -0,0 +1,32 @@
-+* NI XGE Ethernet controller
-+
-+Required properties:
-+- compatible: Should be "ni,xge-enet-2.00"
-+- reg: Address and length of the register set for the device
-+- interrupts: Should contain tx and rx interrupt
-+- interrupt-names: Should be "rx" and "tx"
-+- phy-mode: See ethernet.txt file in the same directory.
-+- phy-handle: See ethernet.txt file in the same directory.
-+- nvmem-cells: Phandle of nvmem cell containing the MAC address
-+- nvmem-cell-names: Should be "address"
-+
-+Examples (10G generic PHY):
-+	nixge0: ethernet@40000000 {
-+		compatible = "ni,xge-enet-2.00";
-+		reg = <0x40000000 0x6000>;
-+
-+		nvmem-cells = <&eth1_addr>;
-+		nvmem-cell-names = "address";
-+
-+		interrupts = <0 29 IRQ_TYPE_LEVEL_HIGH>, <0 30 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "rx", "tx";
-+		interrupt-parent = <&intc>;
-+
-+		phy-mode = "xgmii";
-+		phy-handle = <&ethernet_phy1>;
-+
-+		ethernet_phy1: ethernet-phy@4 {
-+			compatible = "ethernet-phy-ieee802.3-c45";
-+			reg = <4>;
-+		};
-+	};
+Kirill Marinushkin (2):
+  ASoC: topology: Add defines for snd_soc_tplg_hw_config.clock_gated
+  ASoC: topology: Add missing clock gating parameter when parsing
+    hw_configs
+
+ include/uapi/sound/asoc.h | 7 ++++++-
+ sound/soc/soc-topology.c  | 7 +++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
 -- 
-2.16.1
+2.13.6
