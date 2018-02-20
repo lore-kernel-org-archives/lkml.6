@@ -1,114 +1,89 @@
 Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AH8x2250OqCMgGtG6055K5D9WJCp3cE8gCLyPzWHMrpgJI1d5tMOJd8vcoPGhra7q1Nz6bnq3yVx
-ARC-Seal: i=1; a=rsa-sha256; t=1519127875; cv=none;
+X-Google-Smtp-Source: AH8x226UJLNVCGBSnltdAU4w/eGgh2JTN3v3anrUlqEhK0tICzQT+lj4z9wMprZZN6FCXQE244AE
+ARC-Seal: i=1; a=rsa-sha256; t=1519127885; cv=none;
         d=google.com; s=arc-20160816;
-        b=dAWWodvA1cLU9HrE4gIi7QHlwq330uYOPWvREexhd/cNFsQsjTYjUGfdinRvjzCWqr
-         WwN5LlfAvxQtJBZg7to/A4KvBCYGTS7XW8Ga/qauFh9TIBSiQDUqAUMvCSj4QLWw+YUV
-         3/8LY+zbVT+b7/CzGYViYaDqjU0EATT1mSFgXfXID7/gALI5rchP1ACkMedaSHLqUU17
-         Jr1flD11SoLnWTzv8aTZgYouMSTgi8v0pGbEhx+hCfXkpRHEtU/Ri88hH5Ji4/z9YcBW
-         g8oY66V3FTAc4bQerEWAmMDUqWJXXWDNYvP8s5Inbn/oMJ7JTiP3K3K4HsN/M9XNeVKM
-         igug==
+        b=YbkEgT7XsFxR9icgv1/A3OdBfTUmVUYmWAFTjy9YXcDQ8iv5k7OiuuvgI/FJoUVHoC
+         DtAM6zi2j2eACMTHi79BAWzHfAbIqMooIaUBZW83khk2S3z/O7j7ZP2cHMufFye+GGlH
+         UjneVjtGhQiSiY3uksHpth1GZ15iZlSAQgEZ+VxtPz5oPr+H1LSwDvDUo3AxIgsY9+oP
+         ypHo/2Y4p9NRa/13Zk5i0mqRC/BJYMb9D5FKE45/CXUiMEmRQj6WfaJAnZFslEg1SLmp
+         ROsdGR4kOWffqtvhnLnk8+YlDCw1fjlj3ujygLdGYu8hAZiGGWA5bZWAiCiyNUApiPid
+         Wjhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Fl7fdk2G+f0AMLPfy21mEwUJ81kbdXfmKKtoeRJptLo=;
-        b=RUvPI/szwpZ8egK/6Tvi9OTUnUksYN6c2GVG96ghfiaLbLhTp/V11y1byJkmRjJsJz
-         EeMVLX9/TbU6OsgKbumnsSrlFSDK8RjDnw0dTL7/75UL3iR2F4BOUGrx3NVixQWzuzRX
-         oP31iWOMmC4KJ1FnRqA9xVPA/fvKObKnoSisF3xEn1qsdt8LMRMQpTV1lX6U53te4xK+
-         wrhrZCd16Q8RVvyL3Ow3q4RXmSSkQlR+VC87bX8Y9xVnYxtTEaqfWG0nzvi6wvHIBRSS
-         RC+ZvIF24xWxscEiw7I5lj7+/4AvtsyElg87V0M4F9kZtinLZquOZElcHyqSnIoe67Ht
-         Tn/A==
+        bh=Z0S1j3hz8v2hsL211MhMKIP9Xvjd89cEAimb7ZObk00=;
+        b=akPnCW2k7IssueenyxPHnUs/UY21Mew9OTeSXAP7W9RFhTH6F3SK+HNcEb/+2irvIQ
+         K5TbqjKYaOQE8C2phIeAUH/ORQC6TWc1Rx61aWyrsuClO/eJCOCl12isFmCwxutUTlct
+         DNRtBsiUg3o6QurHZxN4z5+3SjmL4sUzH5dtNBib+j00RSsv0Yb3eRjxO2syQ5k8PoJi
+         RKDcC+nwHddkx/6nZsBpm2T7qSPvKmdr4nLVeBXLU4yuWBxcqCo2oETZhZI6LV7Z6OcU
+         A84J9BlyXdc1q1FJxjEu2G79s3F/qUZwlZN5scWILHtp1mXFjDXdM/IT9a0WKwyJQo0J
+         jaxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       spf=neutral (google.com: 212.227.17.10 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 217.72.192.75 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       spf=neutral (google.com: 212.227.17.10 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 From: Arnd Bergmann <arnd@arndb.de>
 To: stable@vger.kernel.org
 Cc: Greg KH <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Karsten Keil <isdn@linux-pingi.de>,
-	netdev@vger.kernel.org
-Subject: [4.4-stable 04/22] isdn: sc: work around type mismatch warning
-Date: Tue, 20 Feb 2018 12:54:51 +0100
-Message-Id: <20180220115527.1806578-5-arnd@arndb.de>
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [4.4-stable 06/22] idle: i7300: add PCI dependency
+Date: Tue, 20 Feb 2018 12:54:53 +0100
+Message-Id: <20180220115527.1806578-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180220115527.1806578-1-arnd@arndb.de>
 References: <20180220115527.1806578-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:zIwe370LQLXA/9Kx1TyVFIRhjAMoHSQUdlpMtjs1cKFkA5yhYWn
- IPcY9t6RPE2MTSUkCeLYfwT2BBWYsBj7XJ0zaLh79Uk6ZtwKg+63v0J7iK7qlpzR9puF0se
- ivF4NTMCZ4xHNMoZV9jiVGk4lmPX1nlKnCf8uanfwhQWWIosQWooW6NfraPGvDhx6GKdTYW
- SWpc6noMgsNqKrYlBo1aQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BsNSwTrm9U4=:/1B547Sw7qpdamF+dRgdp/
- aRKswH94fMMoNIZkUQzqrzCc+i5exEZKVyZuCKWUBbg3cvDsAghripce3ZwJUzTQ/BbP/eflp
- N/L9so5bLiSvlpAclCP75gWs/EN22KBBz8/Gg2bksNJslQOJJkbc3i/wMyx5Y2oB5PeT4WYym
- TzRLJPgJIgzxA+mH+Du53Jugy9Vip/kzDKnzFdm14DQFiuHHwxEA1is6ikGFFs5Lzm6DRuwhw
- AqjVTlT3UPr1DucSqjIJCRj67/brD6vsKcSJrfMJkFHwH1qJ8oDH13g0iEaMgPNGQRbsNT6Tf
- VRPeDc8n/MVqz2JpiJj99NwMB7uq+K4OkDRRthJNweTnyBPtv8vsFt+/MlkBbdRiSbUFcekpS
- JK8kKoAEQ0mh3GfOYmorUxUg5Q7CbmnIWsnvR1e4NHLorAxLxD6shQ8uPHu09FC6916RuxN9u
- H8kI5FfMYJa5MKJBdmVNOWg+IqYmAaVq4oDJsuT9Ew0MEVN10PM7vDoqymn2VFjeEaGnYiZF5
- oDfU5nvKnt6GBwCbNC+W7jV55TLYCBjQfgZUjjSWc1QL4y35km14ufIyVXxieqeU8IwYK21LU
- WDmTTPnlo21O1l3pvz2i7EMh4aDq8O1L3I9WxUnb95KFZhKxmTAzvAGmYN0A9562CPu8I6sh6
- MLTDRyYIUaP/2xIn4WDOJN9YjzEWCIDW+Bt8PAMcgWtPyf4M8gzAXo9Sog31g4k0el7yFmMQ6
- AGTVm04snQSk6cTYYD7QqpI/0DmvdYuhQmisDA==
+X-Provags-ID: V03:K0:audqB6t/TKtFuP7xXeMHPpE15je6SNsN6H29ASBsGwcioxtYxRx
+ INUR8GjMlOm43y10rc36MBBp7GfQm/mg4igCeVntvN+ThKmVstnxtiWGKB/XbWgXsO6m7sB
+ eFojdYSVLtaX67YAJBESmc7f3hSMnDEZhTbsu830GvG2TtkjKLP7g0pXarRAioASPdmYkiD
+ OSChE2TjHQmK2tC3eAobg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lZtYoJsoWZA=:BJeO4JbQV4m8JykqZ6CqS7
+ KwXBYO2ehmblhpNY8gpFCiZ+Yj8eZIpDdatDkLInfcvGpLc6zBWLJ0H+q81uTwOwuX8xoa5lu
+ Zfk7ej+cg0qo52+Gi23le81/FVrNMC0yAdUt9DA2vV4UhZdK4la6fUCJIHt4YaebYPIff66hz
+ eo7jo6SNJtUBCdhlqb5TL/DpocZeKo0/qSYsA6D0X/llUlneq9744vTrm87qo96sYqKaf71b7
+ 5/M1PgBL70EdjnksKNXAIkhw1XUzpdnieaiqwyAyLJuN8vfwAZYKSHGU+RBoGIhjlzx4jb190
+ U5qRAeLw+En+4Hdd+lkf23gqiiQaWd7/es/h8l1GF9GpB/Rz0Q7b7RwIz9JsLDPX2m2kXTErk
+ WBo95NA3jpxRJ1VxbO4LGkBKNscVIxPBcYwkwxNa4ENMB63tBet71pKZPQOQ0+10v5NnY3qWH
+ V2Fqa7IrUoLH+voV4t/U7wmizQ9piecMbjWpwxQMkFqW3R+WEfHiOmt4+YN7oA8oDfVuTgidi
+ RUaNJmM3CIiu4QbbDdchdAhqWH3qMZYgSfQcCbb4WLQEYJRvaCoC43Vf/PRR72WO7J0E4Ls7U
+ ZYtjB4gPzzthK1ZlxXpJYBMMepc+ZJ/PUyHBbRrj/DlO/KFwXixjJlP10QYhlT/y2DlFIty4V
+ hkM3378n3r80lP8LHHwvbfLY2+KVqBRWiHSRuoX3hSnGQlFfONQlqfZHMitwEb1eHt6Old3qq
+ o2V/aJM+lLLLVsG5tBPeUGjAf/27ujKRUwNw5Q==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592921031090286782?=
-X-GMAIL-MSGID: =?utf-8?q?1592921031090286782?=
+X-GMAIL-THRID: =?utf-8?q?1592921042301620209?=
+X-GMAIL-MSGID: =?utf-8?q?1592921042301620209?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This driver shows warnings on many architectures:
+GCC correctly points out an uninitialized variable use when CONFIG_PCI is disabled.
 
-drivers/isdn/sc/init.c: In function 'identify_board':
-drivers/isdn/sc/init.c:484:2: error: passing argument 1 of 'readl' makes pointer from integer without a cast [-Werror]
+drivers/idle/i7300_idle.c: In function 'i7300_idle_notifier':
+include/asm-generic/bug.h:119:5: error: 'got_ctl' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (unlikely(__ret_warn_once && !__warned)) {  \
+     ^
+drivers/idle/i7300_idle.c:415:5: note: 'got_ctl' was declared here
+  u8 got_ctl;
+     ^~~~~~~
 
-In newer kernels, it was completely removed, but for the 4.4-stable
-series, let's just shut up that warning by adding an extra variable
-to do the necessary type cast.
+The driver no longer exists in later kernels, so this patch only appplies to
+linux-4.9.y and earlier.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/isdn/sc/init.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/idle/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/isdn/sc/init.c b/drivers/isdn/sc/init.c
-index 3597ef47b28a..09fc129ef2fa 100644
---- a/drivers/isdn/sc/init.c
-+++ b/drivers/isdn/sc/init.c
-@@ -441,6 +441,7 @@ static int identify_board(unsigned long rambase, unsigned int iobase)
- 	RspMessage rcvmsg;
- 	ReqMessage sndmsg;
- 	HWConfig_pl hwci;
-+	void __iomem *rambase_sig = (void __iomem *)rambase + SIG_OFFSET;
- 	int x;
+diff --git a/drivers/idle/Kconfig b/drivers/idle/Kconfig
+index 4732dfc15447..331adc509f3a 100644
+--- a/drivers/idle/Kconfig
++++ b/drivers/idle/Kconfig
+@@ -17,6 +17,7 @@ config I7300_IDLE_IOAT_CHANNEL
  
- 	pr_debug("Attempting to identify adapter @ 0x%lx io 0x%x\n",
-@@ -481,7 +482,7 @@ static int identify_board(unsigned long rambase, unsigned int iobase)
- 	 */
- 	outb(PRI_BASEPG_VAL, pgport);
- 	msleep_interruptible(1000);
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl(rambase_sig);
- 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
- 	if (sig == SIGNATURE)
- 		return PRI_BOARD;
-@@ -491,7 +492,7 @@ static int identify_board(unsigned long rambase, unsigned int iobase)
- 	 */
- 	outb(BRI_BASEPG_VAL, pgport);
- 	msleep_interruptible(1000);
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl(rambase_sig);
- 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
- 	if (sig == SIGNATURE)
- 		return BRI_BOARD;
-@@ -501,7 +502,7 @@ static int identify_board(unsigned long rambase, unsigned int iobase)
- 	/*
- 	 * Try to spot a card
- 	 */
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl(rambase_sig);
- 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
- 	if (sig != SIGNATURE)
- 		return -1;
+ config I7300_IDLE
+ 	tristate "Intel chipset idle memory power saving driver"
++	depends on PCI
+ 	select I7300_IDLE_IOAT_CHANNEL
+ 	help
+ 	  Enable memory power savings when idle with certain Intel server
 -- 
 2.9.0
