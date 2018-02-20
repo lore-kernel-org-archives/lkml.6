@@ -1,55 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeBTWhO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:37:14 -0500
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:46578 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeBTWhM (ORCPT
+        id S1751485AbeBTWia (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:38:30 -0500
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:43797 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750998AbeBTWi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:37:12 -0500
-X-Google-Smtp-Source: AH8x226v1Fui/BK/uyu8FDEAcBIZC+OKM0aaIxcEl8FPz2HV7aH3akP10e6lsG5yipEKOMBdwn3RCg==
-Subject: Re: [PATCH] blk: optimization for classic polling
-To: Peter Zijlstra <peterz@infradead.org>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, joshi.k@samsung.com
-References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
- <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
- <20180220132137.GG25314@hirez.programming.kicks-ass.net>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <35a2d52e-dd40-d130-85d9-5f3ffe0d28af@kernel.dk>
-Date: Tue, 20 Feb 2018 12:37:07 -1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
- Thunderbird/59.0
+        Tue, 20 Feb 2018 17:38:29 -0500
+X-Google-Smtp-Source: AH8x2255q8JkpMtvPPysbwEt8bnaYXp0Vq9MQBjyOWckvYK/edhZXpCXb+v35LFP0Yp5xphznwdnfw==
+Date: Wed, 21 Feb 2018 01:38:25 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: proc: use down_read_killable in
+ proc_pid_cmdline_read()
+Message-ID: <20180220223825.GA6705@avx2>
+References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20180220132137.GG25314@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/18 3:21 AM, Peter Zijlstra wrote:
-> On Sun, May 30, 2083 at 09:51:06AM +0530, Nitesh Shetty wrote:
->> This removes the dependency on interrupts to wake up task. Set task
->> state as TASK_RUNNING, if need_resched() returns true,
->> while polling for IO completion.
->> Earlier, polling task used to sleep, relying on interrupt to wake it up.
->> This made some IO take very long when interrupt-coalescing is enabled in
->> NVMe.
+On Wed, Feb 21, 2018 at 03:49:29AM +0800, Yang Shi wrote:
+> When running vm-scalability with large memory (> 300GB), the below hung
+> task issue happens occasionally.
 > 
-> This is a horrible Changelog.. it does not in fact explain why the patch
-> works or is correct.
+> INFO: task ps:14018 blocked for more than 120 seconds.
+>        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>  ps              D    0 14018      1 0x00000004
+>   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>  Call Trace:
+>   [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>   [<ffffffff817159e6>] schedule+0x36/0x80
+>   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>   [<ffffffff81717db0>] down_read+0x20/0x40
+>   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>   [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>   [<ffffffff81242266>] vfs_read+0x96/0x130
+>   [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> 
+> When manipulating a large mapping, the process may hold the mmap_sem for
+> long time, so reading /proc/<pid>/cmdline may be blocked in
+> uninterruptible state for long time.
+> 
+> down_read_trylock() sounds too aggressive, and we already have killable
+> version APIs for semaphore, here use down_read_killable() to improve the
+> responsiveness.
 
-Yeah, that should have been improved.
+> -	down_read(&mm->mmap_sem);
+> +	rv = down_read_killable(&mm->mmap_sem);
+> +	if (rv)
+> +		goto out_mmput;
+>  	arg_start = mm->arg_start;
+>  	arg_end = mm->arg_end;
+>  	env_start = mm->env_start;
 
-> Also, set_current_state(TASK_RUNNING) is dodgy (similarly in
-> __blk_mq_poll), why do you need that memory barrier?
-
-I pointed that out in the review, and v2 fixed it. v2 is the
-one that got merged.
-
--- 
-Jens Axboe
+Fix is incomplete
+1) /proc/*/cmdline only wants to read 4 values atomically,
+   those 4 values are basically random values and aren't
+   related to VM part at all (after C/R went in, they are
+   settable to arbitrary values)
+2) access_remote_vm() et al will do the same ->mmap_sem, and
+3) /proc/*/environ and get_cmdline() do the same.
