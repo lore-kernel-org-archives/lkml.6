@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeBTNBj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:01:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42692 "EHLO
+        id S1751951AbeBTNBb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:01:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42666 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751985AbeBTNBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:01:33 -0500
+        id S1751598AbeBTNB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 08:01:29 -0500
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: Sandy Huang <hjc@rock-chips.com>,
         =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
 Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/rockchip: Don't use spin_lock_irqsave in interrupt context
-Date: Tue, 20 Feb 2018 13:01:20 +0000
-Message-Id: <20180220130120.5254-4-marc.zyngier@arm.com>
+Subject: [PATCH 1/3] drm/rockchip: Clear all interrupts before requesting the IRQ
+Date: Tue, 20 Feb 2018 13:01:18 +0000
+Message-Id: <20180220130120.5254-2-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180220130120.5254-1-marc.zyngier@arm.com>
 References: <20180220130120.5254-1-marc.zyngier@arm.com>
@@ -22,68 +22,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rockchip DRM driver is quite careful to disable interrupts
-when taking a lock that is also taken in interrupt context,
-which is a good thing.
+Calling request_irq() followed by disable_irq() is usually a bad idea,
+specially if the interrupt can be pending, and you're not yet in a
+position to handle it.
 
-What is a bit over the top is to use spin_lock_irqsave when
-already in interrupt context, as you cannot take another
-interrupt again, and disabling interrupt is just pure
-overhead.
+This is exactly what happens on my kevin system when rebooting in a
+second kernel using kexec: Some interrupt is left pending from
+the previous kernel, and we take it too early, before disable_irq()
+could do anything.
 
-Switching to the non _irqsave version in interrupt context is
-more logical, and less heavy handed.
+Let's clear the pending interrupts as we initialize the HW, and move
+the interrupt request after that point. This ensures that we're in
+a sane state when the interrupt is requested.
 
+Cc: stable@vger.kernel.org
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index f2bde1c76bbe..48d27f6fb16d 100644
+index ba7505292b78..7b224e08cbf1 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1160,15 +1160,14 @@ static void vop_handle_vblank(struct vop *vop)
- {
- 	struct drm_device *drm = vop->drm_dev;
- 	struct drm_crtc *crtc = &vop->crtc;
--	unsigned long flags;
+@@ -1414,6 +1414,9 @@ static int vop_initial(struct vop *vop)
+ 	usleep_range(10, 20);
+ 	reset_control_deassert(ahb_rst);
  
--	spin_lock_irqsave(&drm->event_lock, flags);
-+	spin_lock(&drm->event_lock);
- 	if (vop->event) {
- 		drm_crtc_send_vblank_event(crtc, vop->event);
- 		drm_crtc_vblank_put(crtc);
- 		vop->event = NULL;
++	VOP_INTR_SET_TYPE(vop, clear, INTR_MASK, 1);
++	VOP_INTR_SET_TYPE(vop, enable, INTR_MASK, 0);
++
+ 	memcpy(vop->regsbak, vop->regs, vop->len);
+ 
+ 	VOP_REG_SET(vop, misc, global_regdone_en, 1);
+@@ -1569,17 +1572,9 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	mutex_init(&vop->vsync_mutex);
+ 
+-	ret = devm_request_irq(dev, vop->irq, vop_isr,
+-			       IRQF_SHARED, dev_name(dev), vop);
+-	if (ret)
+-		return ret;
+-
+-	/* IRQ is initially disabled; it gets enabled in power_on */
+-	disable_irq(vop->irq);
+-
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
+-		goto err_enable_irq;
++		return ret;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -1590,13 +1585,19 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 		goto err_disable_pm_runtime;
  	}
--	spin_unlock_irqrestore(&drm->event_lock, flags);
-+	spin_unlock(&drm->event_lock);
  
- 	if (test_and_clear_bit(VOP_PENDING_FB_UNREF, &vop->pending))
- 		drm_flip_work_commit(&vop->fb_unref_work, system_unbound_wq);
-@@ -1179,21 +1178,20 @@ static irqreturn_t vop_isr(int irq, void *data)
- 	struct vop *vop = data;
- 	struct drm_crtc *crtc = &vop->crtc;
- 	uint32_t active_irqs;
--	unsigned long flags;
- 	int ret = IRQ_NONE;
++	ret = devm_request_irq(dev, vop->irq, vop_isr,
++			       IRQF_SHARED, dev_name(dev), vop);
++	if (ret)
++		goto err_disable_pm_runtime;
++
++	/* IRQ is initially disabled; it gets enabled in power_on */
++	disable_irq(vop->irq);
++
+ 	return 0;
  
- 	/*
- 	 * interrupt register has interrupt status, enable and clear bits, we
- 	 * must hold irq_lock to avoid a race with enable/disable_vblank().
- 	*/
--	spin_lock_irqsave(&vop->irq_lock, flags);
-+	spin_lock(&vop->irq_lock);
+ err_disable_pm_runtime:
+ 	pm_runtime_disable(&pdev->dev);
+ 	vop_destroy_crtc(vop);
+-err_enable_irq:
+-	enable_irq(vop->irq); /* To balance out the disable_irq above */
+ 	return ret;
+ }
  
- 	active_irqs = VOP_INTR_GET_TYPE(vop, status, INTR_MASK);
- 	/* Clear all active interrupt sources */
- 	if (active_irqs)
- 		VOP_INTR_SET_TYPE(vop, clear, active_irqs, 1);
- 
--	spin_unlock_irqrestore(&vop->irq_lock, flags);
-+	spin_unlock(&vop->irq_lock);
- 
- 	/* This is expected for vop iommu irqs, since the irq is shared */
- 	if (!active_irqs)
 -- 
 2.14.2
