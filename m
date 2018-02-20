@@ -1,183 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeBTPVA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:21:00 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:45405 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752044AbeBTPU7 (ORCPT
+        id S1752473AbeBTPVH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:21:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43890 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752395AbeBTPVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:20:59 -0500
-Subject: Re: [RFCv4 10/21] videodev2.h: Add request_fd field to v4l2_buffer
-To: Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>
-References: <20180220044425.169493-1-acourbot@chromium.org>
- <20180220044425.169493-11-acourbot@chromium.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <eac9e222-b605-77b6-4428-66e20f3d1269@xs4all.nl>
-Date: Tue, 20 Feb 2018 16:20:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180220044425.169493-11-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfPD2bt08rZCr+MLp50B5ktVscibdjRicuL8Jh/A0r3ebzmYJOdPGzZjAEm4yjLf7HZIKaomVBXrzcHI5ljLBSmVmQ+1iRnXSyVh7P2K7bijVfHwS1iNX
- Ptlo0n39OS8EDIK2I2hXNfhbjER712zA6NNqo6yt1Xz8Y/zYE43li/ev9oi0HrI2OwZB0N5cOVzPw3E1XnQ6jZSQ0imIfF8PxFz1ekHSAnGBLGTIQZxk2+qM
- HsvsW7cT9o2Cucu9ZJVSC2cZByvivzKbUUclMTVSHB9KxegQ2Sz18pHKRhUroEFy84wA11WLbeEIAxMZeW6t55Bhff4G0R8itUowaXt0F3DqnS9qdAXdi+2c
- KkGHV1igk5uncLwYabqTu6R94jZSm9ltdYqJta5wyoAa35+6aC+i+1NOsTJlw82ht3geoP/+38ULPoXXakrpU2gwswF5lxKRnXfTulNwrJDvN9HHe5Z1Kaln
- Jk11LjGcpMTtBtY7Y3+5R14we/nzwWE90ClB+o74ORxw34T1+h6Pz+nKKh4+SuiIQzjjZKkMlv509AKItLSTq+d6lM/XfsUazEnX34k43xskN6pz9rTPfiB/
- ywXl3+IixewpgUks7iHEqIvi
+        Tue, 20 Feb 2018 10:21:04 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        alsa-devel@alsa-project.org, shengjiu.wang@nxp.com,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        cosmin.samoila@nxp.com, daniel.baluta@nxp.com, mihai.serban@gmail.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: ak5558: Fix style for SPDX identifier" to the asoc tree
+In-Reply-To: <1519131190-15046-1-git-send-email-daniel.baluta@nxp.com>
+Message-Id: <E1eo9j3-0003xF-PL@debutante>
+Date: Tue, 20 Feb 2018 15:21:01 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20/18 05:44, Alexandre Courbot wrote:
-> From: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> When queuing buffers allow for passing the request that should
-> be associated with this buffer.
-> 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> [acourbot@chromium.org: make request ID 32-bit]
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/media/common/videobuf2/videobuf2-v4l2.c | 2 +-
->  drivers/media/usb/cpia2/cpia2_v4l.c             | 2 +-
->  drivers/media/v4l2-core/v4l2-compat-ioctl32.c   | 9 ++++++---
->  drivers/media/v4l2-core/v4l2-ioctl.c            | 4 ++--
->  include/uapi/linux/videodev2.h                  | 3 ++-
->  5 files changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index 886a2d8d5c6c..6d4d184aa68e 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -203,7 +203,7 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
->  	b->timestamp = ns_to_timeval(vb->timestamp);
->  	b->timecode = vbuf->timecode;
->  	b->sequence = vbuf->sequence;
-> -	b->reserved2 = 0;
-> +	b->request_fd = 0;
->  	b->reserved = 0;
->  
->  	if (q->is_multiplanar) {
-> diff --git a/drivers/media/usb/cpia2/cpia2_v4l.c b/drivers/media/usb/cpia2/cpia2_v4l.c
-> index 99f106b13280..af42ce3ceb48 100644
-> --- a/drivers/media/usb/cpia2/cpia2_v4l.c
-> +++ b/drivers/media/usb/cpia2/cpia2_v4l.c
-> @@ -948,7 +948,7 @@ static int cpia2_dqbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
->  	buf->sequence = cam->buffers[buf->index].seq;
->  	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
->  	buf->length = cam->frame_size;
-> -	buf->reserved2 = 0;
-> +	buf->request_fd = 0;
->  	buf->reserved = 0;
->  	memset(&buf->timecode, 0, sizeof(buf->timecode));
->  
-> diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> index 5198c9eeb348..32bf47489a2e 100644
-> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> @@ -386,7 +386,7 @@ struct v4l2_buffer32 {
->  		__s32		fd;
->  	} m;
->  	__u32			length;
-> -	__u32			reserved2;
-> +	__s32			request_fd;
->  	__u32			reserved;
->  };
->  
-> @@ -486,6 +486,7 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp,
->  {
->  	u32 type;
->  	u32 length;
-> +	s32 request_fd;
->  	enum v4l2_memory memory;
->  	struct v4l2_plane32 __user *uplane32;
->  	struct v4l2_plane __user *uplane;
-> @@ -500,7 +501,9 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp,
->  	    get_user(memory, &up->memory) ||
->  	    put_user(memory, &kp->memory) ||
->  	    get_user(length, &up->length) ||
-> -	    put_user(length, &kp->length))
-> +	    put_user(length, &kp->length) ||
-> +	    get_user(request_fd, &up->request_fd) ||
-> +	    put_user(request_fd, &kp->request_fd))
->  		return -EFAULT;
->  
->  	if (V4L2_TYPE_IS_OUTPUT(type))
-> @@ -604,7 +607,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *kp,
->  	    assign_in_user(&up->timestamp.tv_usec, &kp->timestamp.tv_usec) ||
->  	    copy_in_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
->  	    assign_in_user(&up->sequence, &kp->sequence) ||
-> -	    assign_in_user(&up->reserved2, &kp->reserved2) ||
-> +	    assign_in_user(&up->request_fd, &kp->request_fd) ||
->  	    assign_in_user(&up->reserved, &kp->reserved) ||
->  	    get_user(length, &kp->length) ||
->  	    put_user(length, &up->length))
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 260288ca4f55..7bfeaf233d5a 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -437,13 +437,13 @@ static void v4l_print_buffer(const void *arg, bool write_only)
->  	const struct v4l2_plane *plane;
->  	int i;
->  
-> -	pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, flags=0x%08x, field=%s, sequence=%d, memory=%s",
-> +	pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, request_fd=%u, flags=0x%08x, field=%s, sequence=%d, memory=%s",
->  			p->timestamp.tv_sec / 3600,
->  			(int)(p->timestamp.tv_sec / 60) % 60,
->  			(int)(p->timestamp.tv_sec % 60),
->  			(long)p->timestamp.tv_usec,
->  			p->index,
-> -			prt_names(p->type, v4l2_type_names),
-> +			prt_names(p->type, v4l2_type_names), p->request_fd,
->  			p->flags, prt_names(p->field, v4l2_field_names),
->  			p->sequence, prt_names(p->memory, v4l2_memory_names));
->  
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 982718965180..4fd46ae8fad5 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -909,6 +909,7 @@ struct v4l2_plane {
->   * @length:	size in bytes of the buffer (NOT its payload) for single-plane
->   *		buffers (when type != *_MPLANE); number of elements in the
->   *		planes array for multi-plane buffers
-> + * @request_fd: fd of the request that this buffer should use
->   *
->   * Contains data exchanged by application and driver using one of the Streaming
->   * I/O methods.
-> @@ -932,7 +933,7 @@ struct v4l2_buffer {
->  		__s32		fd;
->  	} m;
->  	__u32			length;
-> -	__u32			reserved2;
-> +	__s32			request_fd;
+The patch
 
-This should be:
+   ASoC: ak5558: Fix style for SPDX identifier
 
-	union {
-		__s32		request_fd;
-		__u32		reserved2;
-	};
+has been applied to the asoc tree at
 
-Otherwise any existing application that sets 'reserved2 = 0;' would fail.
-I encountered this issue when compiling v4l-utils.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Regards,
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-	Hans
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
->  	__u32			reserved;
->  };
->  
-> 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From af3acca3e35c01920fe476f730dca7345d0a48df Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Tue, 20 Feb 2018 14:53:10 +0200
+Subject: [PATCH] ASoC: ak5558: Fix style for SPDX identifier
+
+Use // for .c and /* for .h files according to:
+Documentation/process/license-rules.rst file.
+
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ak5558.c | 11 +++++------
+ sound/soc/codecs/ak5558.h |  4 ++--
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/sound/soc/codecs/ak5558.c b/sound/soc/codecs/ak5558.c
+index f2248315677e..f4ed5cc40661 100644
+--- a/sound/soc/codecs/ak5558.c
++++ b/sound/soc/codecs/ak5558.c
+@@ -1,10 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * Audio driver for AK5558 ADC
+- *
+- * Copyright (C) 2015 Asahi Kasei Microdevices Corporation
+- * Copyright 2018 NXP
+- */
++//
++// Audio driver for AK5558 ADC
++//
++// Copyright (C) 2015 Asahi Kasei Microdevices Corporation
++// Copyright 2018 NXP
+ 
+ #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
+diff --git a/sound/soc/codecs/ak5558.h b/sound/soc/codecs/ak5558.h
+index 7c9e37374f39..61059086f161 100644
+--- a/sound/soc/codecs/ak5558.h
++++ b/sound/soc/codecs/ak5558.h
+@@ -1,5 +1,5 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Audio driver header for AK5558
+  *
+  * Copyright (C) 2016 Asahi Kasei Microdevices Corporation
+-- 
+2.16.1
