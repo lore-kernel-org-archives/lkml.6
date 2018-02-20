@@ -1,76 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751476AbeBTLlo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 06:41:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:35043 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750710AbeBTLln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 06:41:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,539,1511856000";
-   d="scan'208";a="18923306"
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] tpm: use kmemdup() to copy the event log
-Date: Tue, 20 Feb 2018 13:41:29 +0200
-Message-Id: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
+        id S1751520AbeBTLlv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 06:41:51 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:43752 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeBTLlq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 06:41:46 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w1KBeVbJ032618
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: Don't leak choice names during parsing
+Date: Tue, 20 Feb 2018 20:40:29 +0900
+Message-Id: <1519126829-7257-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
-tpm_eventlog_of.c.
+The named choice is not used in the kernel tree, but if it were used,
+it would not be freed.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+The intention of the named choice can be seen in the log of
+commit 5a1aa8a1aff6 ("kconfig: add named choice group").
+
+There is room for argument if this is useful in practice, but anyway
+I am fixing the memory leak.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v2: update also tpm_eventlog_of.c
- drivers/char/tpm/tpm_eventlog_efi.c | 3 +--
- drivers/char/tpm/tpm_eventlog_of.c  | 5 +----
- 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/tpm_eventlog_efi.c
-index e3f9ffd341d2..57c8b3cc46be 100644
---- a/drivers/char/tpm/tpm_eventlog_efi.c
-+++ b/drivers/char/tpm/tpm_eventlog_efi.c
-@@ -50,10 +50,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 	}
+ scripts/kconfig/zconf.y | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index 4be9805..4893676 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -276,6 +276,7 @@ choice: T_CHOICE word_opt T_EOL
+ 	sym->flags |= SYMBOL_AUTO;
+ 	menu_add_entry(sym);
+ 	menu_add_expr(P_CHOICE, NULL, NULL);
++	free($2);
+ 	printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
+ };
  
- 	/* malloc EventLog space */
--	log->bios_event_log = kmalloc(log_size, GFP_KERNEL);
-+	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		goto err_memunmap;
--	memcpy(log->bios_event_log, log_tbl->log, log_size);
- 	log->bios_event_log_end = log->bios_event_log + log_size;
- 
- 	tpm_log_version = log_tbl->version;
-diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
-index 96fd5646f866..c4b1d3049060 100644
---- a/drivers/char/tpm/tpm_eventlog_of.c
-+++ b/drivers/char/tpm/tpm_eventlog_of.c
-@@ -68,14 +68,11 @@ int tpm_read_log_of(struct tpm_chip *chip)
- 		return -EIO;
- 	}
- 
--	log->bios_event_log = kmalloc(size, GFP_KERNEL);
-+	log->bios_event_log = kmemdup(__va(base), size, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		return -ENOMEM;
--
- 	log->bios_event_log_end = log->bios_event_log + size;
- 
--	memcpy(log->bios_event_log, __va(base), size);
--
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
- 	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
 -- 
-2.14.1
+2.7.4
