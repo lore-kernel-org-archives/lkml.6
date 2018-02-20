@@ -1,69 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752275AbeBTPGF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:06:05 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:37621 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752220AbeBTPGE (ORCPT
+        id S1752203AbeBTPFy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:05:54 -0500
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:44389 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeBTPFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:06:04 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] cpuidle: stub out cpuidle_poll_state_init() without CONFIG_CPU_IDLE
-Date: Tue, 20 Feb 2018 16:05:44 +0100
-Message-Id: <20180220150559.3182304-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:3OD7vIULYZde7RWXK6ymLab5sOw5e7xnMJoCCDbaoZIBwgxEpyq
- YLPGXYPuFqblau/9uFFGf/C1cDUj2BUCiktk1Y4Fj1yNiiW0RWuaI/o5mOZDDfmRUMfjDkR
- msEAszgBCstD1n5jHGclxzcEZHql4ZcoJVRWiCyJM7QAnpQijpp18tpgOo8/pv/bzXvnqLk
- hbCv9jehzUi2lG/sd0iiA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vH1vV7XC7wg=:o21vuKj8bbAcQ5wi0S/JE3
- 2pKHrcBn76rrNJPIOh1whFF8yoKBdlwuEjFSnTURZlQl6bJUnkpmyQAbFxhZJuKii9VOcPyft
- qaZjB1T9IeNwiG/MnlL7Pq25MbjkI2r8tYcNk8eCdsFMX5gqPMl3f4ikckOHzl7pfHs7d4B1p
- 8n9LtCtG7Lz7kN14e7gZ04Prpudfx41rpog0/intFxW9nc5lcF6Dmvz+Z5kSjcJY3RSGKJiyL
- 2tOvJs4yAp3CCNkQdv9+Y4ctKB2jDF8G41wjSmWE1WRloYGDdLW0ZXE+kMmXR5HFFHoGFesre
- GH6KGqnz6k6mOlyaG6Gm1/v29tBKptTfwLCmvB0fjqQGrnrau4UwAvn1DLK04yyBJoWZTA1kF
- Zf6B9OlyZoTEP/jSeJiGH1giss2iPdCDe/GYMMV85eoqkbu6T540RTtfckBbKqz+DTVS12uCw
- YqQ7/iSOZqU0YKcGricd3BVwCikmtM61DhcokEEoEett1h2JpdZXFKfeIk2/dFYpHvTo4cGsM
- kXw1WUh9lqtr5hVoHAp1u7xQObcT0R0CuumuhFI58lZvuCdWeliglMH8DIKa92HUAzA6p3fsP
- o5x3jRK6um+IM1G2HB/U3DtNHRtFwgu3Wkj3xsV0cxRYIj0ZV+8JkyQrddbXay4YHy++eoHWE
- jnrECDvotqoPwOc8TXOovzZ+nXTg5ka0OXA6bKUUAZjX3ZOZdtuPBpDl3VAlq/R3mAzjQS9XJ
- WXZ/gNZpGxRlOWoSIV/MTCUz2suQOJo6rvw3aA==
+        Tue, 20 Feb 2018 10:05:52 -0500
+X-Google-Smtp-Source: AH8x224eoLXlvjLu1C1V1Cb0ZhTe79cEubqExkZsDhhmhhBJvFF/AjcODtL/OoQ45TZlvLgFwmslIw==
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function
+ v3
+To: Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc: dev@mblankhorst.nl, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180220125829.27060-1-christian.koenig@amd.com>
+ <20180220131253.GF25314@hirez.programming.kicks-ass.net>
+ <8fd80334-4d0e-8ed0-8a09-02a7e36a0eae@gmail.com>
+ <20180220135709.GD25201@hirez.programming.kicks-ass.net>
+ <b625cbca-c05a-afd1-fe97-a7a0760383c1@amd.com>
+ <20180220145413.GF25201@hirez.programming.kicks-ass.net>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <2dac8ec9-c54a-7dd1-af4e-62f2bc1a959c@gmail.com>
+Date: Tue, 20 Feb 2018 16:05:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180220145413.GF25201@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling cpuidle_poll_state_init() from apm_init() results in a link
-failure since that directory is never entered without CONFIG_CPU_IDLE:
+Am 20.02.2018 um 15:54 schrieb Peter Zijlstra:
+> On Tue, Feb 20, 2018 at 03:34:07PM +0100, Christian König wrote:
+>>> OK, but neither case would in fact need the !ctx case right? That's just
+>>> there for completeness sake?
+>> Unfortunately not. TTM uses trylock to lock BOs which are about to be
+>> evicted to make room for all the BOs locked with a ctx.
+>>
+>> I need to be able to distinct between the BOs which are trylocked and those
+>> which are locked with a ctx.
+>>
+>> Writing this I actually noticed the current version is buggy, cause even
+>> when we check the mutex owner we still need to make sure that the ctx in the
+>> lock is NULL.
+> Hurm... I can't remember why trylocks behave like that, and it seems
+> rather unfortunate / inconsistent.
 
-arch/x86/kernel/apm_32.o: In function `apm_init':
-apm_32.c:(.init.text+0x62c): undefined reference to `cpuidle_poll_state_init'
+Actually for me that is rather fortunate, cause I need to distinct 
+between the locks acquired through trylock and lock.
 
-CONFIG_ARCH_HAS_CPU_RELAX can be set without CONFIG_CPU_IDLE but has no
-effect then, so we should treat that configuration the same as
-if CONFIG_ARCH_HAS_CPU_RELAX was not set at all.
+In other words when the amdgpu does it's checking if userspace sends 
+nonsense to the kernel it should only get a green signal when the lock 
+was intentionally locked using the context.
 
-Fixes: 34c2f65b718d ("cpuidle: Move polling state initialization code to separate file")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/cpuidle.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If the lock was just taken because TTM trylocked it because TTM had to 
+evict the BO to make room then the check should fail and we need to tell 
+userspace that it did something wrong.
 
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index 871f9e21810c..0b3fc229086c 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -225,7 +225,7 @@ static inline void cpuidle_coupled_parallel_barrier(struct cpuidle_device *dev,
- }
- #endif
- 
--#ifdef CONFIG_ARCH_HAS_CPU_RELAX
-+#if defined(CONFIG_CPU_IDLE) && defined(CONFIG_ARCH_HAS_CPU_RELAX)
- void cpuidle_poll_state_init(struct cpuidle_driver *drv);
- #else
- static inline void cpuidle_poll_state_init(struct cpuidle_driver *drv) {}
--- 
-2.9.0
+Regards,
+Christian.
+
+> Chris, Maarten, do either one of you remember?
+>
+> I'm thinking that if we do acquire the trylock, the thing should join
+> the ctx such that a subsequent contending mutex_lock() can ww right.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
