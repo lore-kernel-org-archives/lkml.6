@@ -1,257 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932457AbeBTDA5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 22:00:57 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44340 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932352AbeBTDAz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 22:00:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6B76602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        Thomas Speier <tspeier@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH v2] arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC
-Date: Mon, 19 Feb 2018 20:59:06 -0600
-Message-Id: <1519095546-24420-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S932483AbeBTDRE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 22:17:04 -0500
+Received: from mga09.intel.com ([134.134.136.24]:40358 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932352AbeBTDRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 22:17:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,537,1511856000";
+   d="scan'208";a="19346594"
+Subject: Re: [RFC PATCH V2 11/22] x86/intel_rdt: Associate pseudo-locked
+ regions with its domain
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+ <216ad1ef8314dc578a900ff8b06248464f5aa2ee.1518443616.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1802192218370.1853@nanos.tec.linutronix.de>
+ <7bd1f8e8-116f-bdb2-23d2-a94f9a21e028@intel.com>
+ <alpine.DEB.2.21.1802200017130.1853@nanos.tec.linutronix.de>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <0efce774-57a8-40fa-7b8a-6e57e496bb37@intel.com>
+Date: Mon, 19 Feb 2018 19:17:01 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1802200017130.1853@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DCache clean & ICache invalidation requirements for instructions
-to be data coherence are discoverable through new fields in CTR_EL0.
-The following two control bits DIC and IDC were defined for this
-purpose. No need to perform point of unification cache maintenance
-operations from software on systems where CPU caches are transparent.
+Hi Thomas,
 
-This patch optimize the three functions __flush_cache_user_range(),
-clean_dcache_area_pou() and invalidate_icache_range() if the hardware
-reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
-instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
-in order to avoid the unnecessary overhead.
+On 2/19/2018 3:19 PM, Thomas Gleixner wrote:
+> On Mon, 19 Feb 2018, Reinette Chatre wrote:
+>> On 2/19/2018 1:19 PM, Thomas Gleixner wrote:
+>>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
+>>>
+>>>> After a pseudo-locked region is locked it needs to be associated with
+>>>> the RDT domain representing the pseudo-locked cache so that its life
+>>>> cycle can be managed correctly.
+>>>>
+>>>> Only a single pseudo-locked region can exist on any cache instance so we
+>>>> maintain a single pointer to a pseudo-locked region from each RDT
+>>>> domain.
+>>>
+>>> Why is only a single pseudo locked region possible? 
+>>
+>> The setup of a pseudo-locked region requires the usage of wbinvd. If a
+>> second pseudo-locked region is thus attempted it will evict the
+>> pseudo-locked data of the first.
+> 
+> Why does it neeed wbinvd? wbinvd is a big hammer. What's wrong with clflush?
 
-CTR_EL0.DIC: Instruction cache invalidation requirements for
- instruction to data coherence. The meaning of this bit[29].
-  0: Instruction cache invalidation to the point of unification
-     is required for instruction to data coherence.
-  1: Instruction cache cleaning to the point of unification is
-      not required for instruction to data coherence.
+wbinvd is required by this hardware supported feature but limited to the
+creation of the pseudo-locked region. An administrator could dedicate a
+portion of cache to pseudo-locking and applications using this region
+can come and go. The pseudo-locked region lifetime need not be tied to
+application lifetime. The pseudo-locked region could be set up once on
+boot and remain for lifetime of system.
 
-CTR_EL0.IDC: Data cache clean requirements for instruction to data
- coherence. The meaning of this bit[28].
-  0: Data cache clean to the point of unification is required for
-     instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
-     or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
-  1: Data cache clean to the point of unification is not required
-     for instruction to data coherence.
+Even so, understanding that it is a big hammer I did explore the
+alternatives. Trying clflush, clflushopt, as well as clwb. Finding them
+all to perform poorly(*) I went further to explore if it is possible to
+use these other instructions with some additional work in support to
+make them perform as well as wbinvd. The additional work included,
+looping over the data more times than done for wbinvd, reducing the size
+of memory locked in relationship to cache size, unused spacing between
+pseudo-locked region and other regions, unmapped memory at end of
+pseudo-locked region.
 
-Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
----
-Changes since v1:
-  -Reworded commit text.
-  -Used the alternatives framework as Catalin suggested.
-  -Rebased on top of https://patchwork.kernel.org/patch/10227927/
+In addition to the above research from my side I also followed up with
+the CPU architects directly to question the usage of these instructions
+instead of wbinvd.
 
- arch/arm64/Kconfig               | 21 +++++++++++++++++++
- arch/arm64/include/asm/cache.h   |  5 +++++
- arch/arm64/include/asm/cpucaps.h |  4 +++-
- arch/arm64/kernel/cpufeature.c   | 44 ++++++++++++++++++++++++++++++++++------
- arch/arm64/mm/cache.S            | 15 ++++++++++++++
- 5 files changed, 82 insertions(+), 7 deletions(-)
+In all the testing and questioning I did I was only able to confirm that
+wbinvd is required. Its use consistently results in the fewest cache
+misses to the created pseudo-locked region.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index f55fe5b..4061210 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1095,6 +1095,27 @@ config ARM64_RAS_EXTN
- 	  and access the new registers if the system supports the extension.
- 	  Platform RAS features may additionally depend on firmware support.
- 
-+config ARM64_CACHE_IDC
-+	bool "Enable support for DCache clean PoU optimization"
-+	default y
-+	help
-+	  The data cache clean to the point of unification is not required
-+	  for instruction to be data coherence if CTR_EL0.IDC has value 1.
-+
-+	  Selecting this feature will allow the kernel to optimize the POU
-+	  cache maintaince operations where it requires 'DC CVAU'.
-+
-+config ARM64_CACHE_DIC
-+	bool "Enable support for ICache invalidation PoU optimization"
-+	default y
-+	help
-+	  Instruction cache invalidation to the point of unification is not
-+	  required for instruction to be data coherence if CTR_EL0.DIC has
-+	  value 1.
-+
-+	  Selecting this feature will allow the kernel to optimize the POU
-+	  cache maintaince operations where it requires 'IC IVAU'.
-+
- endmenu
- 
- config ARM64_SVE
-diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-index ea9bb4e..e22178b 100644
---- a/arch/arm64/include/asm/cache.h
-+++ b/arch/arm64/include/asm/cache.h
-@@ -20,8 +20,13 @@
- 
- #define CTR_L1IP_SHIFT		14
- #define CTR_L1IP_MASK		3
-+#define CTR_DMLINE_SHIFT	16
-+#define CTR_ERG_SHIFT		20
- #define CTR_CWG_SHIFT		24
- #define CTR_CWG_MASK		15
-+#define CTR_IDC_SHIFT		28
-+#define CTR_DIC_SHIFT		29
-+#define CTR_B31_SHIFT		31
- 
- #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
- 
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index bb26382..8dd42ae 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -45,7 +45,9 @@
- #define ARM64_HARDEN_BRANCH_PREDICTOR		24
- #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
- #define ARM64_HAS_RAS_EXTN			26
-+#define ARM64_HAS_CACHE_IDC			27
-+#define ARM64_HAS_CACHE_DIC			28
- 
--#define ARM64_NCAPS				27
-+#define ARM64_NCAPS				29
- 
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index ff8a6e9..53a7266 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
- };
- 
- static const struct arm64_ftr_bits ftr_ctr[] = {
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, CTR_B31_SHIFT, 1, 1),         /* RES1 */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
- 	/*
- 	 * Linux can handle differing I-cache policies. Userspace JITs will
- 	 * make use of *minLine.
-@@ -864,6 +864,22 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
- 					ID_AA64PFR0_FP_SHIFT) < 0;
- }
- 
-+#ifdef CONFIG_ARM64_CACHE_IDC
-+static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
-+			  int __unused)
-+{
-+	return !!(read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_IDC_SHIFT));
-+}
-+#endif
-+
-+#ifdef CONFIG_ARM64_CACHE_DIC
-+static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
-+			  int __unused)
-+{
-+	return !!(read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_DIC_SHIFT));
-+}
-+#endif
-+
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
- 
-@@ -1100,6 +1116,22 @@ static int cpu_copy_el2regs(void *__unused)
- 		.enable = cpu_clear_disr,
- 	},
- #endif /* CONFIG_ARM64_RAS_EXTN */
-+#ifdef CONFIG_ARM64_CACHE_IDC
-+	{
-+		.desc = "DCache clean to POU",
-+		.capability = ARM64_HAS_CACHE_IDC,
-+		.def_scope = SCOPE_SYSTEM,
-+		.matches = has_cache_idc,
-+	},
-+#endif /* CONFIG_ARM64_CACHE_IDC */
-+#ifdef CONFIG_ARM64_CACHE_DIC
-+	{
-+		.desc = "ICache invalidation to POU",
-+		.capability = ARM64_HAS_CACHE_DIC,
-+		.def_scope = SCOPE_SYSTEM,
-+		.matches = has_cache_dic,
-+	},
-+#endif /* CONFIG_ARM64_CACHE_DIC */
- 	{},
- };
- 
-diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 758bde7..7d37d71 100644
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -50,6 +50,9 @@ ENTRY(flush_icache_range)
-  */
- ENTRY(__flush_cache_user_range)
- 	uaccess_ttbr0_enable x2, x3, x4
-+alternative_if ARM64_HAS_CACHE_IDC
-+	b	8f
-+alternative_else_nop_endif
- 	dcache_line_size x2, x3
- 	sub	x3, x2, #1
- 	bic	x4, x0, x3
-@@ -60,6 +63,11 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
- 	b.lo	1b
- 	dsb	ish
- 
-+8:
-+alternative_if ARM64_HAS_CACHE_DIC
-+	mov	x0, #0
-+	b	1f
-+alternative_else_nop_endif
- 	invalidate_icache_by_line x0, x1, x2, x3, 9f
- 	mov	x0, #0
- 1:
-@@ -80,6 +88,10 @@ ENDPROC(__flush_cache_user_range)
-  *	- end     - virtual end address of region
-  */
- ENTRY(invalidate_icache_range)
-+alternative_if ARM64_HAS_CACHE_DIC
-+	mov	x0, xzr
-+	ret
-+alternative_else_nop_endif
- 	uaccess_ttbr0_enable x2, x3, x4
- 
- 	invalidate_icache_by_line x0, x1, x2, x3, 2f
-@@ -116,6 +128,9 @@ ENDPIPROC(__flush_dcache_area)
-  *	- size    - size in question
-  */
- ENTRY(__clean_dcache_area_pou)
-+alternative_if ARM64_HAS_CACHE_IDC
-+	ret
-+alternative_else_nop_endif
- 	dcache_by_line_op cvau, ish, x0, x1, x2, x3
- 	ret
- ENDPROC(__clean_dcache_area_pou)
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Reinette
+
+(*) By poorly I mean that accessing the pseudo-locked region created
+using these instructions resulted in significant cache misses.
