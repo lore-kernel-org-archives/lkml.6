@@ -1,108 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeBTKmE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:42:04 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:32912 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeBTKmC (ORCPT
+        id S1751580AbeBTKun (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:50:43 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:43728 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751553AbeBTKul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:42:02 -0500
-Date: Tue, 20 Feb 2018 11:42:07 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: David Woodhouse <dwmw2@infradead.org>
-cc: karahmed@amazon.de, x86@kernel.org, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com, mingo@kernel.org
-Subject: Re: [PATCH v3 2/4] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-In-Reply-To: <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1802201141160.24268@nanos.tec.linutronix.de>
-References: <1519037457-7643-1-git-send-email-dwmw@amazon.co.uk>  <1519037457-7643-3-git-send-email-dwmw@amazon.co.uk>  <alpine.DEB.2.21.1802200854010.24268@nanos.tec.linutronix.de> <1519116825.7876.112.camel@infradead.org>
- <alpine.DEB.2.21.1802201115190.24268@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Feb 2018 05:50:41 -0500
+X-Google-Smtp-Source: AH8x225ZMZ6xAduiVaEINrncIcn/+fMcd2BKMhGuz+8LATptEwXdnPsGcB966OKyJC7F+m2WpCZjewxOi8YB4zFicZA=
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1006712813-1519123329=:24268"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
+References: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 11:50:40 +0100
+X-Google-Sender-Auth: XyzzNoH0lJU2GagkdDhl7O8Btic
+Message-ID: <CAMuHMdWa5RgkGCAucN5ykGRW=FdHUZw=+t5jMAsKhdixMUSQzQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Feb 20, 2018 at 10:03 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The hs_timing_cfg[] array is indexed using a value derived from the
+> "mshcN" alias in DT, which may lead to an out-of-bounds access.
+>
+> Fix this by adding a range check.
+>
+> Fixes: 7d92895208a008a2 ("mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias")
 
---8323329-1006712813-1519123329=:24268
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Oops
 
-On Tue, 20 Feb 2018, Thomas Gleixner wrote:
-> On Tue, 20 Feb 2018, David Woodhouse wrote:
-> > On Tue, 2018-02-20 at 09:31 +0100, Thomas Gleixner wrote:
-> > > > @@ -3387,13 +3387,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> > > >  
-> > > >  		vmx->spec_ctrl = data;
-> > > >  
-> > > > -		if (!data)
-> > > > +		if (!data && !spectre_v2_ibrs_all())
-> > > >  			break;
-> > > >  
-> > > >  		/*
-> > > >  		 * For non-nested:
-> > > >  		 * When it's written (to non-zero) for the first time, pass
-> > > > -		 * it through.
-> > > > +		 * it through unless we have IBRS_ALL and it should just be
-> > > > +		 * set for ever.
-> > >
-> > > A non zero write is going to disable the intercept only when IBRS_ALL
-> > > is on. The comment says is should be set forever, i.e. not changeable by
-> > > the guest. So the condition should be:
-> > > 
-> > > 		if (!data || spectre_v2_ibrs_all())
-> > > 			break;
-> > > Hmm?
-> > 
-> > Yes, good catch. Thanks.
-> > 
-> > However, Paolo is very insistent that taking the trap every time is
-> > actually a lot *slower* than really frobbing IBRS on certain
-> > microarchitectures, so my hand-waving "pfft, what did they expect?" is
-> > not acceptable.
-> > 
-> > Which I think puts us back to the "throwing the toys out of the pram"
+Fixes: 361c7fe9b02eee7e ("mmc: dw_mmc-k3: add sd support for hi3660")
 
-There are no more toys in the pram. I threw them all out weeks ago ...
+Gr{oetje,eeting}s,
 
-> > solution; demanding that Intel give us a new feature bit for "IBRS_ALL,
-> > and the bit in the MSR is a no-op". Which was going to be true for
-> > *most* new CPUs anyway. (Note: a blacklist for those few CPUs on which
-> > it *isn't* true might also suffice instead of a new feature bit.)
-> >
-> > Unless someone really wants to implement the atomic MSR save and
-> > restore on vmexit, and make it work with nesting, and make the whole
-> > thing sufficiently simple that we don't throw our toys out of the pram
-> > anyway when we see it?
-> 
-> That whole stuff was duct taped into microcode in a rush and the result is
-> that we have only the choice between fire and frying pan. Whatever we
-> decide to implement is not going to be a half baken hack.
+                        Geert
 
-  s/not// of course
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> 
-> I fully agree that Intel needs to get their act together and implement
-> IBRS_ALL sanely.
-> 
-> The right thing to do is to allow the host to lock down the MSR once it
-> enabled IBRS_ALL so that any write to it will just turn into NOOPs. That
-> removes all worries about guests and in future generations of CPUs this bit
-> might just be hardwired to one and the MSR just a dummy for compability
-> reasons.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
---8323329-1006712813-1519123329=:24268--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
