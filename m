@@ -1,81 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeBTOIc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 09:08:32 -0500
-Received: from mga01.intel.com ([192.55.52.88]:61754 "EHLO mga01.intel.com"
+        id S1751401AbeBTOMf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 09:12:35 -0500
+Received: from mga02.intel.com ([134.134.136.20]:25967 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751203AbeBTOI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:08:29 -0500
+        id S1751270AbeBTOMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:12:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,539,1511856000";
-   d="scan'208";a="205546158"
-From: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>
-CC: Jon Masters <jcm@jonmasters.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>
-Subject: RE: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-Thread-Topic: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-Thread-Index: AQHTpBYQl8Dyc4mRm0iZ20KRHB9/vaOif+eAgAADjgCAABy9AIAABnAAgAAEXACAAAFigIAEqxQAgAACw4CAAAOrgIAAC+oAgAASX4CABXcSgP//eu2wgACJV4D//3ujYIABSuKA//+iJWA=
-Date: Tue, 20 Feb 2018 14:08:26 +0000
-Message-ID: <0575AF4FD06DD142AD198903C74E1CC87A619465@ORSMSX103.amr.corp.intel.com>
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
- <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
- <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
- <1518509708.12890.33.camel@infradead.org>
- <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
- <1518517262.12890.43.camel@infradead.org>
- <1518518198.12890.48.camel@infradead.org>
- <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
- <1518775136.7876.13.camel@infradead.org>
- <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
- <1518776517.7876.21.camel@infradead.org>
- <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
- <1518783021.7876.34.camel@infradead.org>
- <4882860e-23c5-75b3-ac02-c700f615156e@jonmasters.org>
- <0575AF4FD06DD142AD198903C74E1CC87A61923C@ORSMSX103.amr.corp.intel.com>
- <10373.1519084385@turing-police.cc.vt.edu>
- <0575AF4FD06DD142AD198903C74E1CC87A619255@ORSMSX103.amr.corp.intel.com>
- <aa3fbaf1-0efc-64b1-4f7b-3d00b0493d48@redhat.com>
-In-Reply-To: <aa3fbaf1-0efc-64b1-4f7b-3d00b0493d48@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+   d="scan'208";a="18973587"
+Message-ID: <1519135945.4113.9.camel@linux.intel.com>
+Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+ granting locality
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 20 Feb 2018 16:12:25 +0200
+In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+References: <20180214134319.4400-1-tomas.winkler@intel.com>
+         <20180214134319.4400-2-tomas.winkler@intel.com>
+         <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1KE8bxO031538
 
-> >> For bonus points:  What should happen to a VM that is live migrated
-> >> from one hypervisor to another, and the hypervisors have different
-> >> IBRS support?
-> >
-> > Doctor Doctor it hurts when I do this....
-> >
-> > Migration tends to only work between HV's that are relatively
-> > homogeneous, that's nothing new...
+On Mon, 2018-02-19 at 13:27 +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
+> >  	if (need_locality && chip->ops->relinquish_locality) {
+> > -		chip->ops->relinquish_locality(chip, chip-
+> > >locality);
+> > +		/* this coud be on error path, don't override
+> > error code */
+> > +		int l_rc = chip->ops->relinquish_locality(chip,
+> > chip->locality);
 > 
-> No Arjan, this is just wrong.  Well, I suppose it's right in the present
-> tense with the IBRS mess on Skylake, but it's _not_ been true until last
-> year.
+> All local variable declarations must be in the beginning of the
+> function.
+> 
+> > +
+> > +		if (l_rc) {
+> > +			dev_err(&chip->dev, "%s:
+> > relinquish_locality: error %d\n",
+> > +				__func__, l_rc);
+> > +			rc = l_rc;
+> > +		}
+> 
+> Your comment about not overriding error code is incorrect.
+> 
+> The value of 'rc' should be never overridden, which kind of supports
+> to "just print" behavior that we had for a locality error.
+> 
+> Is your fix somehow dependent on changing relinquish_locality()
+> behavior? If not, please remove this change. If you want to
+> contribute
+> such behavioral change, you should make a separate patch of it.
+> 
+> Now it's like a trojan horse bundled inside a bug fix.
 
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-I meant software wise. You're not going to live migrate from xen to kvm or backwards. or between very radically different versions of the kvm stack.
+[And while doing this noticed a flaw in my test suite:
+https://github.com/jsakkine-intel/tpm2-scripts/issues/3]
+
+/Jarkko
