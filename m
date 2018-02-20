@@ -1,85 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeBTXjk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:39:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751129AbeBTXjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:39:37 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B17F20C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 20 Feb 2018 17:39:35 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Khalid Aziz <khalid.aziz@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-pci@vger.kernel.org,
-        Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org,
-        David Ahern <david.ahern@oracle.com>, TJ <linux@iam.tj>
-Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
-Message-ID: <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1751662AbeBTXjt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:39:49 -0500
+Received: from mail-it0-f41.google.com ([209.85.214.41]:51258 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeBTXjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:39:39 -0500
+X-Google-Smtp-Source: AH8x2272F9og1eELoY5MeGS0S6C8Jq4oDUGB9M2rnaw3JGrQbm0V3kCSi9gz1DT2WVC57lllroBgHeBBZSXSNRjMKjI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <20180215182208.35003-2-joe.konno@linux.intel.com> <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk> <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+ <20180220233008.55rfm7zw62hrao5p@agluck-desk>
+In-Reply-To: <20180220233008.55rfm7zw62hrao5p@agluck-desk>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 20 Feb 2018 23:39:27 +0000
+Message-ID: <CACdnJussCnLqdGGyOc=iUwEdot_U2DZjGcVWRcQa-DxVcUhabA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+To: tony.luck@intel.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        joe.konno@linux.intel.com, linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, matthew.garrett@nebula.com,
+        Jeremy Kerr <jk@ozlabs.org>, ak@linux.intel.com, pjones@redhat.com,
+        luto@kernel.org,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc David Ahern, TJ]
+On Tue, Feb 20, 2018 at 3:30 PM Luck, Tony <tony.luck@intel.com> wrote:
+> [1] I didn't dig through the Linux code to check whether we manage to
+> get those four SMIs from a single EFI call, or whether we make multiple
+> EFI calls to open/read/close one file. It is possible that we stink a
+> bit too if we are doing more EFI calls than required.
 
-On Thu, Feb 15, 2018 at 09:17:58AM -0600, Bjorn Helgaas wrote:
-> I'm trying to make some progress on this old series from Yinghai [1].
-> There's a lot more to do than just these first two patches, but maybe a
-> tiny bit of incremental progress is better than none.
-> 
-> The first patch ("Support arbitrary host bridge address offset") is
-> unchanged from Yinghai's posting except for the changelog.
-> 
-> I'm interested in feedback about the second ("Reserve System ROM and Video
-> ROM") patch because it changes something that *looks* wrong to me, but I
-> don't know anything about the Sparc address map.
-> 
-> If this is on the right track, I'd like to merge these via my PCI tree in
-> the hope that I can include more of Yinghai's patches as well.
-> 
-> [1] https://lkml.kernel.org/r/20170421050500.13957-1-yinghai@kernel.org
-> 
-> ---
-> 
-> Bjorn Helgaas (1):
->       sparc/PCI: Reserve System ROM and Video ROM outside of PCI space
-> 
-> Yinghai Lu (1):
->       sparc/PCI: Support arbitrary host bridge address offset
-> 
-> 
->  arch/sparc/kernel/pci.c        |    6 ++--
->  arch/sparc/kernel/pci_common.c |   54 +++++++++++++++++++---------------------
->  arch/sparc/kernel/pci_impl.h   |    4 +++
->  arch/sparc/mm/init_64.c        |   17 +++++++++++++
->  4 files changed, 50 insertions(+), 31 deletions(-)
-
-Both these patches are on my pci/sparc branch and appeared in the
-Feb 19 linux-next tree.
-
-Any testing and feedback (especially on the second patch, which should
-change /proc/iomem) would be great.
-
-They're headed for v4.17 unless I hear about issues.
-
-It would be useful to hear about what's still broken so I can try to
-pull in the other patches.
-
-IIUC, the first patch should fix something on T4.
-
-I think patch 04/13 of the original series adds IORESOURCE_MEM_64 to
-host bridge windows.  We don't do that for other arches, so it's not
-clear to me why we need it for sparc.
-
-Patch 09/13 of the original series fixes something on T5-8.  I haven't
-included that yet, so it's probably still broken.
-
-Bjorn
+read() will make two calls - one to obtain the size of the variable, the
+other to read it. It looks like cat will also trigger an fstat(), so we're
+probably also making a call for that. There's presumably some optimisation
+that could be made there if we trust the firmware not to change the size
+behind our back.
