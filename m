@@ -1,77 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752930AbeBTQSt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:18:49 -0500
-Received: from mout.gmx.net ([212.227.15.18]:54723 "EHLO mout.gmx.net"
+        id S1752833AbeBTQW1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:22:27 -0500
+Received: from foss.arm.com ([217.140.101.70]:45020 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752759AbeBTQSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:18:48 -0500
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mm@kvack.org, Joel Stanley <joel@jms.id.au>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Subject: [PATCH 2/6] powerpc: numa: Fix overshift on PPC32
-Date: Tue, 20 Feb 2018 17:14:20 +0100
-Message-Id: <20180220161424.5421-3-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180220161424.5421-1-j.neuschaefer@gmx.net>
-References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
+        id S1752702AbeBTQW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:22:26 -0500
+Date: Tue, 20 Feb 2018 16:22:22 +0000
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] sched/fair: Avoid unnecessary balancing of
+ asymmetric capacity groups
+Message-ID: <20180220162222.GC4589@e105550-lin.cambridge.arm.com>
+References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
+ <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
+ <20180219145012.GH25181@hirez.programming.kicks-ass.net>
+ <20180219145335.GN25235@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:fjUEsZJ5xb8HrLMSiLDkNOKbFV0dV7YVUL9HfqyU5mPrje+T3oH
- C1LUHJ33vldVbmnSxweqUXzj/GRDvPa+GU4BUPHGzbQ+RpO2D6Ux5/rovYpzqZ/92hiDelX
- rIsae6vsUiAGSLSYs6/e6Mof/2c+mjmsGtE+pvMJZEVStL1RWC3oI0IgOXgm3E8lPmTZ52A
- SnQZb0BhwpV4ctjTxdT4w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZSJ04dRNURM=:vUuxJ+sqzdPH6QcDqImz8W
- hrbqcRt59dIynev4HTaywaM3jYMycLubl8JumqRo+54mIep00Fvnk6fCMivBR51uzqkVhmpy5
- Rfx377JKXOuCx9UOttQsDuTt7ijwMmyZX5Ko7NW+1wrRSikij7sZKHEdaEsyYcbWXCPchO75v
- AoWnYmbxXqpgMhYKHZIzgxdmUJZUg3izRDRAxFTdb1HlclSvDsmwPbSoKepjLg4Z6b6luPFca
- P4RkHksNeAiOYerdL1eAARq8KjfzLZb+JdoZak6Bm1h2FRbPOsbF5pIv2//e46zJAeJn3vurX
- /K+SY7aHTn0S9G0JPSoTqdO5WAyLHaBxex7lntly4nx/5c21EU0TDh9XmlXMG0T8Ir+ENkXBF
- 4PHfuJlPZQ9T3YKYo66AreGapBBw+RzjjkRO59uddVY4O3mp7JXKtq/Q/vFxUvkA5YkS0LgqV
- /9aTlrP4y1PAfFKiAkFpL763g9yZ+DjD5sdyg3iIJYBjUtVghU7ILgk+sMei7JuIhbRM4CEwI
- 8lJ6Ca+uUWUmzxs+KpAc0pi+PfdXCIHncnf3Yx18IyO1cYd7AGO6MeynN0iB+ZRxjLIE9prPo
- JtCyChSdce1NyZFH8qdml2xQ8PHXoKtvitCG7MnSXhH+MyKuNgzyyjTUN0NDTVn+9kE64ipiL
- /j9Vnz2eI3C9LUzlJa4XTi/2dp2Mb7hjEbG5pn1YTDAUxkAyODsN9oAT1RzVDfseQQmipoUOn
- jqK4XYw1fZqiCzgu2BFJ6OZSr4PT0pAIeLSznmPoliv3+Uo1CFSS9AHUnOAYl8nqAI66OSSFj
- YPJVBQ/UJG8jDevD3vf69qaqRahglLPe0tsNpOwQ1xFSeMFRJY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180219145335.GN25235@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When read_n_cells is compiled for PPC32, "result << 32" causes an
-overshift, which GCC doesn't like. Fix this by using u64 instead of
-unsigned long.
+On Mon, Feb 19, 2018 at 03:53:35PM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 19, 2018 at 03:50:12PM +0100, Peter Zijlstra wrote:
+> > On Thu, Feb 15, 2018 at 04:20:51PM +0000, Morten Rasmussen wrote:
+> > > On systems with asymmetric cpu capacities, a skewed load distribution
+> > > might yield better throughput than balancing load per group capacity.
+> > > For example, preferring high capacity cpus for compute intensive tasks
+> > > leaving low capacity cpus idle rather than balancing the number of idle
+> > > cpus across different cpu types. Instead, let load-balance back off if
+> > > the busiest group isn't really overloaded.
+> > 
+> > I'm sorry. I just can't seem to make sense of that today. What?
+> 
+> Aah, you're saying that is we have 4+4 bit.little and 4 runnable tasks,
+> we would like them running on our big cluster and leave the small
+> cluster entirely idle, instead of runnint 2+2.
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
- arch/powerpc/mm/numa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yes. Ideally, when are busy, we want to fill up the big cpus first, one
+task on each, and if we have more tasks we start using little cpus
+before putting additional tasks on any of the bigs. The load per group
+capacity metric is sort of working against that up until roughly the
+point where we have enough tasks for all the cpus.
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index edd8d0bc9364..0570bc2a0b13 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -357,9 +357,9 @@ static void __init get_n_mem_cells(int *n_addr_cells, int *n_size_cells)
- 	of_node_put(memory);
- }
- 
--static unsigned long read_n_cells(int n, const __be32 **buf)
-+static u64 read_n_cells(int n, const __be32 **buf)
- {
--	unsigned long result = 0;
-+	u64 result = 0;
- 
- 	while (n--) {
- 		result = (result << 32) | of_read_number(*buf, 1);
--- 
-2.16.1
+> So what about this DynamicQ nonsense? Or is that so unstructured we
+> can't really do anything sensible with it?
+
+With DynamiQ we don't have any grouping of the cpu types provided by the
+architecture. So we are going end up balancing between individual cpus.
+I hope these tweaks should work for DynamiQ too. Always-running tasks on
+little cpus should to be flagged as misfits and be picked up by big
+cpus. It is still to be verified though.
