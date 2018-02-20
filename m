@@ -1,90 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeBTVYG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 16:24:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbeBTVYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 16:24:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8C82177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jeyu@kernel.org
-Date: Tue, 20 Feb 2018 22:23:59 +0100
-From: Jessica Yu <jeyu@kernel.org>
-To: Matthew Garrett <mjg59@google.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Make kernel taint on invalid module signatures
- configurable
-Message-ID: <20180220212357.wts5c5c7uqcfguzu@redbean>
-References: <20170807195027.13192-1-mjg59@google.com>
- <CACdnJus-X533K0Bgqjc-MoZ2NbLz0ac9x+rryHUtnjrnmJ+Kmg@mail.gmail.com>
- <20180215152514.rxmh7webdg2i2fct@redbean>
- <CACdnJutL7rJE=1bsh45RmvunU-GZJCYaejyznENrAgFB6nbCLA@mail.gmail.com>
- <20180220192100.wlrn3c4hnqdmu4zg@redbean>
- <CACdnJuvQHWBaLtPETbmOu=rwT72KGmYQfExRd8788SrYy2hUPQ@mail.gmail.com>
+        id S1751459AbeBTV3u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 16:29:50 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:60704 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750799AbeBTV3s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 16:29:48 -0500
+Date: Tue, 20 Feb 2018 22:29:45 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
+        Lars Persson <larper@axis.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/8] ARM: dts: artpec: add disabled node for PCIe
+ endpoint mode
+Message-ID: <20180220212945.GA30339@axis.com>
+References: <20180220170049.22809-1-niklas.cassel@axis.com>
+ <20180220170049.22809-8-niklas.cassel@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACdnJuvQHWBaLtPETbmOu=rwT72KGmYQfExRd8788SrYy2hUPQ@mail.gmail.com>
-X-OS: Linux redbean 4.14.16-200.fc26.x86_64 x86_64
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180220170049.22809-8-niklas.cassel@axis.com>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Matthew Garrett [20/02/18 20:37 +0000]:
->On Tue, Feb 20, 2018 at 11:21 AM Jessica Yu <jeyu@kernel.org> wrote:
->
->> Ah, OK. So if I'm understanding correctly, you want to use the same kernel
->> image/configuration but for two different use cases, one where the module
->> signatures do not matter, and one where they do matter. But the config you
->> want to use in both use cases would have CONFIG_MODULE_SIG=y and
->> CONFIG_MODULE_SIG_TAINT=n (to avoid tainting of unsigned/invalidly signed
->> modules).
->
->Right. Distributions generally have to try to satisfy multiple use cases
->with as few kernel images as possible.
->
->> In any case, I think I'd be willing to merge it as a module_param made
->> available under CONFIG_MODULE_SIG=y (rather than as a new separate config
->> option), while preserving the default behavior of tainting on
->> unsigned/invalidly signed module loads (so let's keep the param parts of
->> your patch). I think it makes sense to consider the turning-off-the-taint
->> param as a behavioral tweak under CONFIG_MODULE_SIG. Then you could turn
->> off the tainting behavior on the kernel command line, would this
->sufficient
->> enough for your use cases?
->
->I think that's probably not practical - distributions often aren't in
->control of the kernel command line after initial installation, so they'd
->end up with different behaviour depending on whether a machine was a clean
->install or not (which is why several things that are module_params have
->defaults controlled by additional kernel config options)
+On Tue, Feb 20, 2018 at 06:00:48PM +0100, Niklas Cassel wrote:
+> The PCIe controller in the artpec6 SoC supports both root complex and
+> endpoint mode, however, the controller can only be used in one of the
+> modes.
+> 
+> Both pci nodes are disabled by default. A DTS file can enable one of
+> them, depending on what mode it wants to run.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> ---
+>  arch/arm/boot/dts/artpec6.dtsi | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
+> index 1c46df0c03ce..8d02d210574a 100644
+> --- a/arch/arm/boot/dts/artpec6.dtsi
+> +++ b/arch/arm/boot/dts/artpec6.dtsi
+> @@ -154,6 +154,10 @@
+>  		interrupt-affinity = <&cpu0>, <&cpu1>;
+>  	};
+>  
+> +	/*
+> +	 * Both pci nodes cannot be enabled at the same time,
+> +	 * leave the unwanted node as disabled.
+> +	 */
+>  	pcie: pcie@f8050000 {
+>  		compatible = "axis,artpec6-pcie", "snps,dw-pcie";
+>  		reg = <0xf8050000 0x2000
+> @@ -181,6 +185,22 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	pcie_ep: pcie_ep@f8050000 {
+> +		compatible = "axis,artpec6-pcie-ep", "snps,dw-pcie";
+> +		reg = <0xf8050000 0x2000
+> +		       0xf8051000 0x2000
+> +		       0xf8040000 0x1000
+> +		       0xc0000000 0x20000000>;
+> +		reg-names = "dbi", "dbi2", "phy", "addr_space";
+> +		num-ib-windows = <6>;
+> +		num-ob-windows = <2>;
+> +		num-lanes = <2>;
+> +		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "msi";
 
-Ah I see.. Fair enough!
+Actually, interrupts and interrupt-names are not needed in EP mode,
+so these two properties should be removed.
 
->> >Not entirely. There's two cases where the current situation causes
->problems:
->> >
->> >1) Distributions that build out of tree kernel modules and don't have
->> >infrastructure to sign them will end up with kernel taint. That's
->something
->> >that can be resolved by implementing that infrastructure.
->> >2) End-users who build out of tree kernel modules will end up with kernel
->> >taint and will file bugs. This cannot be fixed but will increase
->> >distribution load anyway.
->
->> I thought these two cases (particularly #2) were the very situations
->> where distros might find the unsigned module taint useful (especially
->> in the use case where you do benefit from module signatures). From my
->> understanding, the unsigned module taint is intended to be useful when
->> looking at crashes/OOPses, to provide a clear indication of whether or
->> not a developer could reliably debug the crash, or choose to tread
->> carefully, because the end-user has loaded an unsigned/out-of-tree
->> module that wasn't signed/shipped by the distribution. Is the taint
->> just not useful to distros in this manner anymore?
->
->The module list is usually sufficient for that - users tend not to replace
->individual distribution modules without rebuilding their entire kernel.
+Will send out a V2 to fix this, but in the meantime, feel free to
+review the rest of the patch series.
+
+> +		axis,syscon-pcie = <&syscon>;
+> +		status = "disabled";
+> +	};
+> +
+>  	pinctrl: pinctrl@f801d000 {
+>  		compatible = "axis,artpec6-pinctrl";
+>  		reg = <0xf801d000 0x400>;
+> -- 
+> 2.14.2
+> 
