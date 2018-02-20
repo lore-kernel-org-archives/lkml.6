@@ -1,92 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeBTRov (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 12:44:51 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45330 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753341AbeBTRor (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:44:47 -0500
-X-Google-Smtp-Source: AH8x227PDbHT79vO0+9wHQ6GTd3fcT9z1dP9kWo4FfSvQfTyqWxXpIaXrsWX7Ws2D8D5s1g+8+kHbA==
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Kirill Marinushkin <k.marinushkin@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org
-Subject: [RESEND PATCH v2 2/2] ASoC: topology: Add missing clock gating parameter when parsing hw_configs
-Date: Tue, 20 Feb 2018 18:44:46 +0100
-Message-Id: <20180220174446.7784-3-k.marinushkin@gmail.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180220174446.7784-1-k.marinushkin@gmail.com>
-References: <20180220174446.7784-1-k.marinushkin@gmail.com>
+        id S1753421AbeBTRpU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 12:45:20 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:13621 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753384AbeBTRpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 12:45:18 -0500
+Subject: Re: [PATCH 1/6] powerpc/mm/32: Use pfn_valid to check if pointer is
+ in RAM
+To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mm@kvack.org, Joel Stanley <joel@jms.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
+ <20180220161424.5421-2-j.neuschaefer@gmx.net>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <0d14cb2c-dd00-d258-cb15-302b2a9d684f@c-s.fr>
+Date: Tue, 20 Feb 2018 18:45:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180220161424.5421-2-j.neuschaefer@gmx.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clock gating parameter is a part of `dai_fmt`. It is supported by
-`alsa-lib` when creating a topology binary file, but ignored by kernel
-when loading this topology file.
 
-After applying this commit, the clock gating parameter is not ignored any
-more. The old behaviour is not broken, as by default the parameter value
-is 0.
 
-For example, the following config, based on
-alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
+Le 20/02/2018 à 17:14, Jonathan Neuschäfer a écrit :
+> The Nintendo Wii has a memory layout that places two chunks of RAM at
+> non-adjacent addresses, and MMIO between them. Currently, the allocation
+> of these MMIO areas is made possible by declaring the MMIO hole as
+> reserved memory and allowing reserved memory to be allocated (cf.
+> wii_memory_fixups).
+> 
+> This patch is the first step towards proper support for discontiguous
+> memory on PPC32 by using pfn_valid to check if a pointer points into
+> RAM, rather than open-coding the check. It should result in no
+> functional difference.
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> ---
+>   arch/powerpc/mm/pgtable_32.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+> index d35d9ad3c1cd..b5c009893a44 100644
+> --- a/arch/powerpc/mm/pgtable_32.c
+> +++ b/arch/powerpc/mm/pgtable_32.c
+> @@ -147,7 +147,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
+>   	 * Don't allow anybody to remap normal RAM that we're using.
+>   	 * mem_init() sets high_memory so only do the check after that.
+>   	 */
+> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+> +	if (slab_is_available() && pfn_valid(__phys_to_pfn(p)) &&
 
-~~~~
-SectionHWConfig."CodecHWConfig" {
-        id "1"
-        format "I2S"            # physical audio format.
-        bclk   "master"         # Platform is master of bit clock
-        fsync  "master"         # platform is master of fsync
-        pm_gate_clocks "true"   # clock can be gated
-}
+I'm not sure this is equivalent:
 
-SectionLink."Codec" {
+high_memory = (void *) __va(max_low_pfn * PAGE_SIZE);
+#define ARCH_PFN_OFFSET		((unsigned long)(MEMORY_START >> PAGE_SHIFT))
+#define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
+set_max_mapnr(max_pfn);
 
-        # used for binding to the physical link
-        id "0"
+So in the current implementation it checks against max_low_pfn while 
+your patch checks against max_pfn
 
-        hw_configs [
-                "CodecHWConfig"
-        ]
+	max_low_pfn = max_pfn = memblock_end_of_DRAM() >> PAGE_SHIFT;
+#ifdef CONFIG_HIGHMEM
+	max_low_pfn = lowmem_end_addr >> PAGE_SHIFT;
+#endif
 
-        default_hw_conf_id "1"
-}
-~~~~
+Christophe
 
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linux-kernel@vger.kernel.org
+>   	    !(__allow_ioremap_reserved && memblock_is_region_reserved(p, size))) {
+>   		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+>   		       (unsigned long long)p, __builtin_return_address(0));
+> 
+
 ---
- sound/soc/soc-topology.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 01a50413c66f..bac70676a6b4 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1981,6 +1981,13 @@ static void set_link_hw_format(struct snd_soc_dai_link *link,
- 
- 		link->dai_fmt = hw_config->fmt & SND_SOC_DAIFMT_FORMAT_MASK;
- 
-+		/* clock gating */
-+		if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
-+			link->dai_fmt |= SND_SOC_DAIFMT_GATED;
-+		else if (hw_config->clock_gated ==
-+			 SND_SOC_TPLG_DAI_CLK_GATE_CONT)
-+			link->dai_fmt |= SND_SOC_DAIFMT_CONT;
-+
- 		/* clock signal polarity */
- 		invert_bclk = hw_config->invert_bclk;
- 		invert_fsync = hw_config->invert_fsync;
--- 
-2.13.6
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
