@@ -1,254 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751381AbeBTOCX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 09:02:23 -0500
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:45876 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeBTOCU (ORCPT
+        id S1751554AbeBTOC5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 09:02:57 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43174 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeBTOC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:02:20 -0500
-X-Google-Smtp-Source: AH8x225fipL7WqEGPllAVi6A4a+xksfejhDSeKP6Dq9zzcMvzsTe93OPhMIMEYa4zuUuWx0GDhFbVnV10akWLV+ulpo=
+        Tue, 20 Feb 2018 09:02:56 -0500
+X-Google-Smtp-Source: AH8x226tf3teoQpWQiwgzYCZmhR2ih0UX2bwc7R0fcgHpDnWFm8Jy0K9STMjriPN6oAod9Q08ZIuTw==
+Date: Tue, 20 Feb 2018 15:02:52 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?=
+        <ckoenig.leichtzumerken@gmail.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function
+ v3
+Message-ID: <20180220140252.GU22199@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180220125829.27060-1-christian.koenig@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180220090827.913-3-ard.biesheuvel@linaro.org>
-References: <20180220090827.913-1-ard.biesheuvel@linaro.org> <20180220090827.913-3-ard.biesheuvel@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 20 Feb 2018 16:02:18 +0200
-Message-ID: <CAHp75VeUJpXLpL55erp+uoMH4jqppoG5zTt1DcffqNYPsJMdUQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180220125829.27060-1-christian.koenig@amd.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 11:08 AM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> This is a cleaned up version of the I2C controller driver for
-> the Fujitsu F_I2C IP, which was never supported upstream, and
-> has now been incorporated into the Socionext SynQuacer SoC.
->
+On Tue, Feb 20, 2018 at 01:58:26PM +0100, Christian König wrote:
+> amdgpu needs to verify if userspace sends us valid addresses and the simplest
+> way of doing this is to check if the buffer object is locked with the ticket
+> of the current submission.
+> 
+> Clean up the access to the ww_mutex internals by providing a function
+> for this and extend the check to the thread owning the underlying mutex.
+> 
+> v2: split amdgpu changes into separate patch as suggested by Alex
+> v3: change logic as suggested by Daniel
+> 
+> Signed-off-by: Christian König <christian.koenig@amd.com>
+> ---
+>  include/linux/ww_mutex.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> index 39fda195bf78..14e4149d3d9d 100644
+> --- a/include/linux/ww_mutex.h
+> +++ b/include/linux/ww_mutex.h
+> @@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
+>  	return mutex_is_locked(&lock->base);
+>  }
+>  
+> +/**
+> + * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
+> + * @lock: the mutex to be queried
+> + * @ctx: the w/w acquire context to test
+> + *
+> + * If @ctx is not NULL test if the mutex is owned by this context.
+> + * If @ctx is NULL test if the mutex is owned by the current thread.
 
-Typical issues below.
+This is a bit much how and not so much why, but I couldn't come up with a
+concise text what was materially better.
 
-> +/* SPDX-License-Identifier: GPL-2.0 */
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Shouldn't be // ?
-
-> +#include <linux/init.h>
-
-> +#include <linux/module.h>
-
-Supposed to be one of them, not both.
-
-> +#define WAIT_PCLK(n, rate)     ndelay((((1000000000 +  (rate) - 1) / \
-> +                                        (rate) + n - 1) / n) + 10)
-
-This split makes it harder to catch the calculus.
-Also, you can use DIV_ROUND_UP(), though it longer, but adds a bit of
-clarity to the calculus.
-
-> +#define SYNQUACER_I2C_TIMEOUT(x) (msecs_to_jiffies(x))
-
-Isn't shorter to use original function in place?
-
-> +static inline unsigned long calc_timeout_ms(struct synquacer_i2c *i2c,
-> +                                           struct i2c_msg *msgs,
-> +                                           int num)
+> + */
+> +static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
+> +					struct ww_acquire_ctx *ctx)
 > +{
-> +       unsigned long bit_count = 0;
-> +       int i;
-> +
-> +       for (i = 0; i < num; i++, msgs++)
-> +               bit_count += msgs->len;
-> +
-> +       return DIV_ROUND_UP(((bit_count * 9) + (10 * num)) * 3, 200) + 10;
-
-Redundant parens surrounding multiplications.
-
-bit_count * 9 + num * 10 ?
-
+> +	if (ctx)
+> +		return likely(READ_ONCE(lock->ctx) == ctx);
+> +	else
+> +		return likely(__mutex_owner(&lock->base) == current);
 > +}
-
-> +static void synquacer_i2c_stop(struct synquacer_i2c *i2c, int ret)
-> +{
-> +       dev_dbg(i2c->dev, "STOP\n");
-
-Hmm... Can't use FTRACE ?
-
 > +
-> +       /*
-> +        * clear IRQ (INT=0, BER=0)
-> +        * set Stop Condition (MSS=0)
-> +        * Interrupt Disable
-> +        */
-> +       writeb(0, i2c->base + SYNQUACER_I2C_REG_BCR);
-> +
-> +       i2c->state = STATE_IDLE;
-> +
-> +       i2c->msg_ptr = 0;
-> +       i2c->msg = NULL;
-> +       i2c->msg_idx++;
-> +       i2c->msg_num = 0;
-> +       if (ret)
-> +               i2c->msg_idx = ret;
-> +
-> +       complete(&i2c->completion);
-> +}
-
-> +       default:
-> +               BUG();
-
-Oh, oh. What is the strong argument to have this kind of crash here?
-
-> +static int synquacer_i2c_master_start(struct synquacer_i2c *i2c,
-> +                                     struct i2c_msg *pmsg)
-> +{
-> +       unsigned char bsr, bcr;
-
-> +       dev_dbg(i2c->dev, "%s slave:0x%02x\n", __func__, pmsg->addr);
-
-__func__ is redundant (See dynamic debug manual how to enable run-time).
-
-> +       /* Force to make one clock pulse */
-
-> +       count = 0;
-> +       for (;;) {
-
-> +               if (++count > 9) {
-> +                       dev_err(i2c->dev, "%s: count: %i, bc2r: 0x%x\n",
-> +                               __func__, count, bc2r);
-> +                       return -EIO;
-> +               }
-> +       }
-
-Personally I think for iterations do {} while approach looks cleaner
-and more understandable:
-
-unsigned int count = 10;
-
-do {
-...
-} while (--count);
-
-> +static int synquacer_i2c_doxfer(struct synquacer_i2c *i2c,
-> +                               struct i2c_msg *msgs, int num)
-> +{
-> +       unsigned char bsr;
-> +       unsigned long timeout, bb_timeout;
-
-> +       int ret = 0;
-
-Redundant assignment.
-
-> +       ret = synquacer_i2c_master_start(i2c, i2c->msg);
-> +       if (ret < 0) {
-> +               dev_dbg(i2c->dev, "Address failed: (0x%08x)\n", ret);
-
-ret as a hex?!?!
-So confusing.
-
-A side note, %#08x will print 0x.
-
-> +out:
-> +       return ret;
-
-Useless label since there is nothing except returning an error code.
-
-> +static int synquacer_i2c_probe(struct platform_device *pdev)
-> +{
-> +       struct synquacer_i2c *i2c;
-> +       struct resource *r;
-> +       int speed_khz;
-> +       int ret;
-
-> +       if (dev_of_node(&pdev->dev)) {
-> +               i2c->clk = devm_clk_get(&pdev->dev, "pclk");
-> +               if (IS_ERR(i2c->clk)) {
-> +                       dev_err(&pdev->dev, "cannot get clock\n");
-> +                       return PTR_ERR(i2c->clk);
-> +               }
-> +               dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
-> +
-> +               i2c->clkrate = clk_get_rate(i2c->clk);
-> +               dev_dbg(&pdev->dev, "clock rate %d\n", i2c->clkrate);
-> +               clk_prepare_enable(i2c->clk);
-> +       } else {
-
-> +               ret = device_property_read_u32(&pdev->dev,
-> +                                              "socionext,pclk-rate",
-> +                                              &i2c->clkrate);
-
-I suppose for ACPI we just register a fixed rate clock and use it in
-the driver in the same way as in OF case.
-I guess at some point we even can provide a generic clock provider for
-ACPI based on rate property.
-
-> +               if (ret)
-> +                       return ret;
-> +       }
-
-> +       i2c->state = STATE_IDLE;
-> +       i2c->dev = &pdev->dev;
-
-> +       i2c->msg = NULL;
-
-Isn't it done by z letter in allocation?
-
-
-> +#ifdef CONFIG_PM_SLEEP
-
-__maybe_unused instead of ugly #ifdef:s.
-
-> +static int synquacer_i2c_suspend(struct device *dev)
-
-> +static int synquacer_i2c_resume(struct device *dev)
-
-> +#else
-> +#define SYNQUACER_I2C_PM       NULL
-> +#endif
-
-> +#ifdef CONFIG_OF
-
-OK, this is fine since we have an ACPI ID for it.
-
-> +static const struct of_device_id synquacer_i2c_dt_ids[] = {
-> +       { .compatible = "socionext,synquacer-i2c" },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, synquacer_i2c_dt_ids);
-> +#endif
-> +
-> +#ifdef CONFIG_ACPI
-> +static const struct acpi_device_id synquacer_i2c_acpi_ids[] = {
-> +       { "SCX0003" },
-> +       { /* sentinel */ }
-> +};
-> +#endif
-
-> +static struct platform_driver synquacer_i2c_driver = {
-> +       .probe  = synquacer_i2c_probe,
-> +       .remove = synquacer_i2c_remove,
-> +       .driver = {
-
-> +               .owner = THIS_MODULE,
-
-Macro below will fill this for you.
-
-> +               .name = "synquacer_i2c",
-> +               .of_match_table = of_match_ptr(synquacer_i2c_dt_ids),
-> +               .acpi_match_table = ACPI_PTR(synquacer_i2c_acpi_ids),
-> +               .pm = SYNQUACER_I2C_PM,
-> +       },
-> +};
-> +module_platform_driver(synquacer_i2c_driver);
+>  #endif
+> -- 
+> 2.14.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
