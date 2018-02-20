@@ -1,56 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeBTWvg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 17:51:36 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:53819 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750884AbeBTWvf (ORCPT
+        id S1751605AbeBTWv6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 17:51:58 -0500
+Received: from mail-yw0-f201.google.com ([209.85.161.201]:43297 "EHLO
+        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751552AbeBTWv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 17:51:35 -0500
-From: Stefan Agner <stefan@agner.ch>
-To: linus.walleij@linaro.org, aisheng.dong@nxp.com, fabio.estevam@nxp.com,
-        shawnguo@kernel.org, kernel@pengutronix.de
-Cc: joe@perches.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v3] MAINTAINERS: add Freescale pin controllers
-Date: Tue, 20 Feb 2018 23:51:30 +0100
-Message-Id: <20180220225130.14468-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.16.2
+        Tue, 20 Feb 2018 17:51:57 -0500
+X-Google-Smtp-Source: AH8x226wpWml4XI+QHH40IzJadeQoGHffmmvd1SRMYCUDmUY43j6k/S/0lbnulGruyqrQ1udsDUxLtKQv+IeHkZS2mefVg==
+MIME-Version: 1.0
+Date: Tue, 20 Feb 2018 14:51:46 -0800
+Message-Id: <20180220225146.27650-1-mjg59@google.com>
+X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
+Subject: [PATCH V2] Allow configuring whether unsigned modules taint the kernel
+From: Matthew Garrett <mjg59@google.com>
+To: jeyu@redhat.com
+Cc: linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as maintainer
-and the Pengutronix kernel team as reviewer.
+Distributions build kernels that are intended to satisfy multiple
+use-cases. One is that kernels must be usable in scenarios where module
+signing is required (such as many Secure Boot policies) and scenarios
+where it isn't (such as booting the same kernel on a legacy BIOS
+system). This requires that CONFIG_MODULE_SIG be set, but this causes a
+change in behaviour for the legacy platform case - loading an unsigned
+module now taints the kernel. This is a change in behaviour, and may
+cause users to file bugs, increasing distribution support load.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+This patch adds a CONFIG_MODULE_UNSIGNED_TAINT option, which controls
+the default behaviour of the kernel. If set (the default) then behaviour
+is unchanged - loading an unsigned module on a CONFIG_MODULE_SIG kernel
+will taint the kernel. If not set, CONFIG_MODULE_SIG will have no impact
+(ie, unloading unsigned modules will not cause taint) until module
+signature enforcement is enabled, at which point the kernel will still
+refuse to allow unsigned modules to load.
+
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
+ Documentation/admin-guide/module-signing.rst    | 13 +++++++++----
+ init/Kconfig                                    | 13 ++++++++++++-
+ kernel/module.c                                 |  7 ++++++-
+ 4 files changed, 33 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93a12af4f180..621f3ec7e85e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10926,6 +10926,17 @@ L:	linux-gpio@vger.kernel.org
- S:	Supported
- F:	drivers/pinctrl/pinctrl-at91-pio4.*
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1d1d53f85ddd..b6ea5d5251d3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2339,6 +2339,12 @@
+ 			Note that if CONFIG_MODULE_SIG_FORCE is set, that
+ 			is always true, so this option does nothing.
  
-+PIN CONTROLLER - FREESCALE
-+M:	Dong Aisheng <aisheng.dong@nxp.com>
-+M:	Fabio Estevam <festevam@gmail.com>
-+M:	Shawn Guo <shawnguo@kernel.org>
-+M:	Stefan Agner <stefan@agner.ch>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/pinctrl/freescale/*
-+F:	Documentation/devicetree/bindings/pinctrl/fsl,*
++	module.sig_taint
++			[KNL] When CONFIG_MODULE_SIG is set, this means
++			that modules without (valid) signatures will taint the
++			kernel on load. Note that if CONFIG_MODULE_SIG_TAINT is
++			set, that is always true, so this option does nothing.
 +
- PIN CONTROLLER - INTEL
- M:	Mika Westerberg <mika.westerberg@linux.intel.com>
- M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ 	module_blacklist=  [KNL] Do not load a comma-separated list of
+ 			modules.  Useful for debugging problem modules.
+ 
+diff --git a/Documentation/admin-guide/module-signing.rst b/Documentation/admin-guide/module-signing.rst
+index 27e59498b487..96709b93c606 100644
+--- a/Documentation/admin-guide/module-signing.rst
++++ b/Documentation/admin-guide/module-signing.rst
+@@ -52,10 +52,11 @@ This has a number of options available:
+      This specifies how the kernel should deal with a module that has a
+      signature for which the key is not known or a module that is unsigned.
+ 
+-     If this is off (ie. "permissive"), then modules for which the key is not
+-     available and modules that are unsigned are permitted, but the kernel will
+-     be marked as being tainted, and the concerned modules will be marked as
+-     tainted, shown with the character 'E'.
++     If this is off (ie. "permissive"), then modules for which the key
++     is not available and modules that are unsigned are permitted. If
++     ``CONFIG_MODULE_SIG_TAINT`` is enabled or the sig_taint parameter is
++     set the kernel will be marked as being tainted, and the concerned
++     modules will be marked as tainted, shown with the character 'E'.
+ 
+      If this is on (ie. "restrictive"), only modules that have a valid
+      signature that can be verified by a public key in the kernel's possession
+@@ -266,6 +267,10 @@ for which it has a public key.   Otherwise, it will also load modules that are
+ unsigned.   Any module for which the kernel has a key, but which proves to have
+ a signature mismatch will not be permitted to load.
+ 
++If ``CONFIG_MODULE_SIG_TAINT`` is enabled or module.sig_taint=1 is
++supplied on the kernel command line, the kernel will be tainted if an
++invalidly signed or unsigned module is loaded.
++
+ Any module that has an unparseable signature will be rejected.
+ 
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index e37f4b2a6445..36d6429451a8 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1775,12 +1775,23 @@ config MODULE_SIG
+ 	  debuginfo strip done by some packagers (such as rpmbuild) and
+ 	  inclusion into an initramfs that wants the module size reduced.
+ 
++config MODULE_SIG_TAINT
++	bool "Taint the kernel on unsigned or incorrectly signed module load"
++	default y
++	depends on MODULE_SIG
++	help
++	  Taint the kernel if an unsigned or untrusted kernel module is loaded.
++	  If this option is enabled, the kernel will be tainted on an attempt
++	  to load an unsigned module or signed modules for which we don't have
++	  a key.
++
+ config MODULE_SIG_FORCE
+ 	bool "Require modules to be validly signed"
+ 	depends on MODULE_SIG
+ 	help
+ 	  Reject unsigned modules or signed modules for which we don't have a
+-	  key.  Without this, such modules will simply taint the kernel.
++	  key. Without this, such modules will be loaded successfully but will
++	  (if MODULE_SIG_TAINT is set) taint the kernel.
+ 
+ config MODULE_SIG_ALL
+ 	bool "Automatically sign all modules"
+diff --git a/kernel/module.c b/kernel/module.c
+index ad2d420024f6..a5e5a0246e5f 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -288,6 +288,11 @@ bool is_module_sig_enforced(void)
+ }
+ EXPORT_SYMBOL(is_module_sig_enforced);
+ 
++static bool sig_taint = IS_ENABLED(CONFIG_MODULE_SIG_TAINT);
++#ifndef CONFIG_MODULE_SIG_TAINT
++module_param(sig_taint, bool_enable_only, 0644);
++#endif /* !CONFIG_MODULE_SIG_TAINT */
++
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
+@@ -3685,7 +3690,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 
+ #ifdef CONFIG_MODULE_SIG
+ 	mod->sig_ok = info->sig_ok;
+-	if (!mod->sig_ok) {
++	if (!mod->sig_ok && sig_taint) {
+ 		pr_notice_once("%s: module verification failed: signature "
+ 			       "and/or required key missing - tainting "
+ 			       "kernel\n", mod->name);
 -- 
-2.16.2
+2.16.1.291.g4437f3f132-goog
