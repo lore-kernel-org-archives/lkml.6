@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751452AbeBTKWH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 05:22:07 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:54360 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeBTKVu (ORCPT
+        id S1751429AbeBTKWG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 05:22:06 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:41828 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbeBTKWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:21:50 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
-Date: Tue, 20 Feb 2018 10:03:13 +0100
-Message-Id: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Tue, 20 Feb 2018 05:22:04 -0500
+X-Google-Smtp-Source: AH8x227w/vI1zqiqh8XeRH8grmtq6ol1Sr20EIl36FoThemxdJdMDNQfVP18Q8dmrDZoZdDx6JGmVOeRVYYklUycfeE=
+MIME-Version: 1.0
+In-Reply-To: <20180220095310.13464-1-suzuki.katsuhiro@socionext.com>
+References: <20180220095310.13464-1-suzuki.katsuhiro@socionext.com>
+From: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Date: Tue, 20 Feb 2018 19:21:43 +0900
+Message-ID: <CAA93ih00RV2rhfMyLupxe+-3xvkLyA-TgpzybPKm4E0FqTJKOg@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: uniphier: evea: fix typo 'eva' -> 'evea'
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hs_timing_cfg[] array is indexed using a value derived from the
-"mshcN" alias in DT, which may lead to an out-of-bounds access.
+2018-02-20 18:53 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
 
-Fix this by adding a range check.
+Looks good to me:)
 
-Fixes: 7d92895208a008a2 ("mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
+Reviewed-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
 
-There is another possible out-of-bounds access in
-drivers/mmc/host/dw_mmc.c:dw_mci_init_slot():
+Thanks,
 
-    if (drv_data && drv_data->caps)
-	    mmc->caps |= drv_data->caps[ctrl_id];
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
+>  sound/soc/uniphier/evea.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
+> index cad7e60de21d..ac2d30b55fb6 100644
+> --- a/sound/soc/uniphier/evea.c
+> +++ b/sound/soc/uniphier/evea.c
+> @@ -292,7 +292,7 @@ static int evea_set_switch_hp(struct snd_kcontrol *kcontrol,
+>         return evea_update_switch_hp(evea);
+>  }
+>
+> -static const struct snd_kcontrol_new eva_controls[] = {
+> +static const struct snd_kcontrol_new evea_controls[] = {
+>         SOC_SINGLE_BOOL_EXT("Line Capture Switch", 0,
+>                             evea_get_switch_lin, evea_set_switch_lin),
+>         SOC_SINGLE_BOOL_EXT("Line Playback Switch", 0,
+> @@ -384,8 +384,8 @@ static struct snd_soc_component_driver soc_codec_evea = {
+>         .num_dapm_widgets       = ARRAY_SIZE(evea_widgets),
+>         .dapm_routes            = evea_routes,
+>         .num_dapm_routes        = ARRAY_SIZE(evea_routes),
+> -       .controls               = eva_controls,
+> -       .num_controls           = ARRAY_SIZE(eva_controls),
+> +       .controls               = evea_controls,
+> +       .num_controls           = ARRAY_SIZE(evea_controls),
+>         .idle_bias_on           = 1,
+>         .use_pmdown_time        = 1,
+>         .endianness             = 1,
+> --
+> 2.16.1
+>
 
-With ctrl_id derived from "mshcN".
 
-Unfortunately the upper bound is not known at run-time, without adding
-such a field to struct dw_mci_drv_data first.
----
- drivers/mmc/host/dw_mmc-k3.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
-index 73fd75c3c824904d..75ae5803b0db24dd 100644
---- a/drivers/mmc/host/dw_mmc-k3.c
-+++ b/drivers/mmc/host/dw_mmc-k3.c
-@@ -135,6 +135,9 @@ static int dw_mci_hi6220_parse_dt(struct dw_mci *host)
- 	if (priv->ctrl_id < 0)
- 		priv->ctrl_id = 0;
- 
-+	if (priv->ctrl_id >= TIMING_MODE)
-+		return -EINVAL;
-+
- 	host->priv = priv;
- 	return 0;
- }
 -- 
-2.7.4
+Masami Hiramatsu
