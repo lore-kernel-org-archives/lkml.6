@@ -1,185 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753170AbeBTQ1U (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 11:27:20 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:58834 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeBTQ1Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 11:27:16 -0500
-Date: Tue, 20 Feb 2018 11:26:22 -0500
-From: Neil Horman <nhorman@tuxdriver.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Tommi Rantala <tommi.t.rantala@nokia.com>,
-        Xin Long <lucien.xin@gmail.com>, David Ahern <dsahern@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-Message-ID: <20180220162622.GA32068@hmswarspite.think-freely.org>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
- <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
- <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
- <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
- <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
- <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
- <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+        id S1753195AbeBTQ1g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 11:27:36 -0500
+Received: from mga02.intel.com ([134.134.136.20]:37765 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752783AbeBTQ1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 11:27:33 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,540,1511856000";
+   d="scan'208";a="176701489"
+Date: Tue, 20 Feb 2018 09:27:37 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, axboe@fb.com,
+        linux-nvme@lists.infradead.org, joshi.k@samsung.com
+Subject: Re: [PATCH] blk: optimization for classic polling
+Message-ID: <20180220162737.GC7076@localhost.localdomain>
+References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
+ <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+ <20180220132137.GG25314@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Spam-Score: -2.9 (--)
+In-Reply-To: <20180220132137.GG25314@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
-> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
-> <tommi.t.rantala@nokia.com> wrote:
-> > On 19.02.2018 20:59, Dmitry Vyukov wrote:
-> >>
-> >> On Sat, Feb 3, 2018 at 1:15 PM, Xin Long <lucien.xin@gmail.com> wrote:
-> >>>>>
-> >>>>> On 1/30/18 1:57 PM, David Ahern wrote:
-> >>>>>>
-> >>>>>> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
-> >>>>>>>
-> >>>>>>> On 01/30/2018 07:32 PM, Cong Wang wrote:
-> >>>>>>>>
-> >>>>>>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com>
-> >>>>>>>> wrote:
-> >>>>>>>>>
-> >>>>>>>>> Hello,
-> >>>>>>>>>
-> >>>>>>>>> The following program creates a hang in unregister_netdevice.
-> >>>>>>>>> cleanup_net work hangs there forever periodically printing
-> >>>>>>>>> "unregister_netdevice: waiting for lo to become free. Usage count =
-> >>>>>>>>> 3"
-> >>>>>>>>> and creation of any new network namespaces hangs forever.
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Interestingly, this is not reproducible on net-next.
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp:
-> >>>>>>> close
-> >>>>>>> sock if net namespace is exiting") in net/net-next from 5 days ago,
-> >>>>>>> maybe
-> >>>>>>> fixed due to that?
-> >>>>>>>
-> >>>>>>
-> >>>>>> This appears to be the commit introducing the refcnt leak:
-> >>>>>>
-> >>>>>> $ git bisect bad
-> >>>>>> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
-> >>>>>> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
-> >>>>>> Author: Xin Long <lucien.xin@gmail.com>
-> >>>>>> Date:   Fri May 12 14:39:52 2017 +0800
-> >>>>>>
-> >>>>>>      sctp: fix src address selection if using secondary addresses for
-> >>>>>> ipv6
-> >>>>>>
-> >>>>>>
-> >>>>>> v4.14 is bad. Running bisect in the background while doing other
-> >>>>>> things....
-> >>>>>>
-> >>>>>
-> >>>>> Interesting. The commit that avoids the refcnt leak is
-> >>>>>
-> >>>>> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
-> >>>>> Author: David Ahern <dsahern@gmail.com>
-> >>>>> Date:   Wed Jan 24 19:45:29 2018 -0800
-> >>>>>
-> >>>>>      net/ipv6: Do not allow route add with a device that is down
-> >>>>>
-> >>>>> That commit does not intentionally address the problem so it is just
-> >>>>> masking the problematic code introduced by the commit above.
-> >>>>
-> >>>> Thanks, David A.
-> >>>>
-> >>>> I'm still on a trip. will look into this asap.
-> >>>
-> >>>
-> >>> Alexey and Tommi already had the patches for this issue on
-> >>> both SCTP v4 and v6 dst_get, Thanks.
-> >>
-> >>
-> >>
-> >>
-> >> Is this meant to be fixed already? I am still seeing this on the
-> >> latest upstream tree.
-> >>
-> >
-> > These two commits are in v4.16-rc1:
-> >
-> > commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
-> > Author: Tommi Rantala <tommi.t.rantala@nokia.com>
-> > Date:   Mon Feb 5 21:48:14 2018 +0200
-> >
-> >     sctp: fix dst refcnt leak in sctp_v4_get_dst
-> > ...
-> >     Fixes: 410f03831 ("sctp: add routing output fallback")
-> >     Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary
-> > addresses")
-> >
-> >
-> > commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
-> > Author: Alexey Kodanev <alexey.kodanev@oracle.com>
-> > Date:   Mon Feb 5 15:10:35 2018 +0300
-> >
-> >     sctp: fix dst refcnt leak in sctp_v6_get_dst()
-> > ...
-> >     Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary
-> > addresses for ipv6")
-> >
-> >
-> > I guess we missed something if it's still reproducible.
-> >
-> > I can check it later this week, unless someone else beat me to it.
-> 
-> Hi Tommi,
-> 
-> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
-> another one then. But I am still seeing these:
-> 
-> [   58.799130] unregister_netdevice: waiting for lo to become free.
-> Usage count = 4
-> [   60.847138] unregister_netdevice: waiting for lo to become free.
-> Usage count = 4
-> [   62.895093] unregister_netdevice: waiting for lo to become free.
-> Usage count = 4
-> [   64.943103] unregister_netdevice: waiting for lo to become free.
-> Usage count = 4
-> 
-> on upstream tree pulled ~12 hours ago.
-> 
-Can you write a systemtap script to probe dev_hold, and dev_put, printing out a
-backtrace if the device name matches "lo".  That should tell us definitively if
-the problem is in the same location or not
+On Tue, Feb 20, 2018 at 02:21:37PM +0100, Peter Zijlstra wrote:
+> Also, set_current_state(TASK_RUNNING) is dodgy (similarly in
+> __blk_mq_poll), why do you need that memory barrier?
 
-Neil
+You're right. The subsequent revision that was committed removed the
+barrier. The commit is here:
 
-> Kernel does not detect this as any kind of BUG/WARNING, so
-> syzkaller/syzbot do not catch it as bug and do not try to reproduce,
-> localize and report.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=67b4110f8c8d16e588d7730db8e8b01b32c1bd8b
+
+I hope the code at least looks more reasonable. The changelog isn't much
+different, though.
