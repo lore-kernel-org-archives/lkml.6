@@ -1,11 +1,11 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2727985-1519129328-2-9300188216757926509
+X-Cyrus-Session-Id: sloti22d1t05-2820223-1519130234-2-8032197519740084789
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -14,59 +14,64 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519129327; b=fpPNtjIRMqKMubZ3syY0VPG8hbahEavGuby3B64kkFgCIzM
-    BxCmzkLBLBdudZrKTm+IiCMhFn9tCCc+9vq8oYUgQNn1L9Sq5z0yekHCu8rQS0C1
-    My6HeiJ2AMsxwQ2JPU60tZEadm6jagueBhi7NxxV+plZfihXgzjgd/AUqiUyDUtM
-    0DDW//tCtL24DrT9xv2FT2LwINcwmqm2CVDrzdH9WYjMF2jTFPTjDMwmPRMXV74A
-    VYflgdBe7OaDe3od/+uYXSuw4lxmmNZOYzDiQR8Ife7SgHnTwmLrRQgDhrXFsYiG
-    If+IAUVB/n3KZ6w21UbsZstuefI3A73/NldgM9g==
+    t=1519130233; b=N3fWnCLyHFrX5+5zfMdEYfgJyyI/SosE1xgj3wkhR4Obn1p
+    HM87pHaZ72utxQFa3DIaGkRq9TGzRIPwWER6Z5dZjzsTB46ap2DF1FwnbM4c42mL
+    CM6pFU+ahTQcU0n8N+2mBlWdFJZD4N70XeigJRSKnHkjDSqasDrdEnlEGanVLikk
+    wVJFtMTBYn/mBCEOUeX7q3evwrDbDth1EaA9CdVPdmV8nmvH5ocrutP/twSItxj2
+    3RXxe93HGInrmbpiUWAy8va2XcgRmr5HuyqEFOKROo089yuG9QO9wAuXH02DeU4D
+    LZ2ZbRr4xofyKeLn9BIH7ddWHM9pj2BSppstj8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
     :references:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519129327; bh=h
-    OPNQQ8eXtYil1CNguSfq2cpYZF1269uNKaZovqXNXE=; b=pXXwStSviWrY/yq1M
-    pABwmpEjwkoE/Rl7SfbZVV9Go5tFyArbbUv3XxY7lRreLBj7/c29hQ4KqPO0tYNE
-    zdXDDtN61JQMCoq75mrSmXAxnA3DMmvOIk4xrHQB/Re11YKxwHpKvk7rfIY/cZ/i
-    W6DD9Pa2gHlft6WGDuxEuVVPo8CC7o9TcYfj55QWJABQgJBDmgs4JTarJYjy+qYw
-    2r92VxY/+YNDn9JfjLSgAVx6SKERwAtTkZwsZNnAekG425RAyE7vDRHqSbbh1dBT
-    y8fNG+wcu2anBr7vz3NsQsc6Qcuk0zLh6+SL2oQz/msiG/2bKCeRuy7rYGXJ0IE6
-    PJwUw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cUj4amcx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    :content-transfer-encoding:sender; s=arctest; t=1519130233; bh=7
+    K49rPYJtpMxrhLibw3GXTkAsHrU48gFUUQCU83niVg=; b=Pyi07ZZ6s/GiBryFA
+    rKSByw/V3nwgegtA0TOq0BSgmdxnmKeH0EtZbBkEM5zEFDJk/WOO5wPStzPyP13C
+    FeSl73FiFDSU7j8gH55OQLpc7nZVrkRhrj6+596UUOG8ovRBb9ULKlIVj9TrRXi6
+    KonCKlv8sfW+ig8wp5YhukSChL9Q4HG9ZGuPt9IyJlM1l1bqM0eq+q7WBbxfMXvk
+    ywqq1YT30B+8iZ4Dl9JwrbpEr6s/WTN6FtzTRD2CK4N+vVtHAtx2LmUmCaflLXEN
+    yfPN5CKptO7iIpv7W67co3ekTVS/ByTNvhyogIvDJ68KY6AKh1IXzeo+NQ1Ct0ex
+    ZGL4w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=M2AwpNUE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MHsHipWy;
     x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cUj4amcx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=M2AwpNUE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MHsHipWy;
     x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x227ZXne5GziVKNwE/PhaIfHZsY7qWOK5KJNacJi24H0qnpi8kpYJbMHTF6M68Bx8SlWkG5H3FQ==
-Date: Tue, 20 Feb 2018 09:21:56 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Feb 2018 15:36:52 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 Subject: Re: [PATCH v2] staging:iio:meter: Add name to function definition
  arguments
-Message-ID: <20180220122156.s25laa4wgcf3hxuz@smtp.gmail.com>
+Message-ID: <20180220123652.evmvebkdimfcofl3@mwanda>
 References: <20180219162832.qbkogggfzwbgsqlt@smtp.gmail.com>
  <20180220072442.2oxvhwequzzc3gz2@mwanda>
+ <20180220122156.s25laa4wgcf3hxuz@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20180220072442.2oxvhwequzzc3gz2@mwanda>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180220122156.s25laa4wgcf3hxuz@smtp.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8809
+ signatures=668674
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=540
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802200162
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -90,18 +95,23 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/20, Dan Carpenter wrote:
-> > On Mon, Feb 19, 2018 at 01:28:32PM -0300, rodrigosiqueira wrote:
->                                             ^^^^^^^^^^^^^^^
-> This looks good, but you need to fix your from email header.
+On Tue, Feb 20, 2018 at 09:21:56AM -0300, Rodrigo Siqueira wrote:
+> On 02/20, Dan Carpenter wrote:
+> > > On Mon, Feb 19, 2018 at 01:28:32PM -0300, rodrigosiqueira wrote:
+> >                                             ^^^^^^^^^^^^^^^
+> > This looks good, but you need to fix your from email header.
+> 
+> Thanks for the review, and the feedback related to the email header.
+> I already fixed it. Is it necessary to resend the patch?
+>  
 
-Thanks for the review, and the feedback related to the email header.
-I already fixed it. Is it necessary to resend the patch?
- 
-> regards,
-> dan carpenter
-> 
-> 
+I don't know?  Sometimes mainainters will cleanup patches themselves...
+
+Probably it's simplest to just resend, yes.
+
+regards,
+dan carpenter
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
