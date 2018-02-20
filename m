@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753370AbeBTRBy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 12:01:54 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:34018 "EHLO
+        id S1753327AbeBTRBj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 12:01:39 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:33955 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752561AbeBTRBw (ORCPT
+        with ESMTP id S1753201AbeBTRBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:01:52 -0500
+        Tue, 20 Feb 2018 12:01:36 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
         Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>,
@@ -14,9 +14,9 @@ To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
         Russell King <linux@armlinux.org.uk>
 Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] ARM: dts: artpec: add node for hardware crypto accelerator
-Date: Tue, 20 Feb 2018 18:00:49 +0100
-Message-Id: <20180220170049.22809-9-niklas.cassel@axis.com>
+Subject: [PATCH 3/8] ARM: dts: artpec: remove 0x prefix from clkctrl unit address
+Date: Tue, 20 Feb 2018 18:00:44 +0100
+Message-Id: <20180220170049.22809-4-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180220170049.22809-1-niklas.cassel@axis.com>
 References: <20180220170049.22809-1-niklas.cassel@axis.com>
@@ -25,29 +25,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add node for the hardware crypto acceleration used in the artpec6 SoC.
+Remove 0x prefix from clkctrl unit address.
+
+This silences the following dtc warning:
+Warning (unit_address_format):
+ Node /clkctrl@0xf8000000 unit name should not have leading "0x"
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- arch/arm/boot/dts/artpec6.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/artpec6.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
-index 8d02d210574a..c0bbdbc8c7ba 100644
+index d9776a97d8ff..f4b39738f1ac 100644
 --- a/arch/arm/boot/dts/artpec6.dtsi
 +++ b/arch/arm/boot/dts/artpec6.dtsi
-@@ -234,6 +234,12 @@
- 		ranges;
- 		dma-ranges;
+@@ -98,7 +98,7 @@
+ 		clock-frequency = <125000000>;
+ 	};
  
-+		crypto@f4264000 {
-+			compatible = "axis,artpec6-crypto";
-+			reg = <0xf4264000 0x4000>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		dma0: dma@f8019000 {
- 			compatible = "renesas,nbpfaxi64dmac8b16";
- 			reg = <0xf8019000 0x400>;
+-	clkctrl: clkctrl@0xf8000000 {
++	clkctrl: clkctrl@f8000000 {
+ 		#clock-cells = <1>;
+ 		compatible = "axis,artpec6-clkctrl";
+ 		reg = <0xf8000000 0x48>;
 -- 
 2.14.2
