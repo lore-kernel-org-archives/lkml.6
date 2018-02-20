@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeBTPPj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 10:15:39 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:56369 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752424AbeBTPPh (ORCPT
+        id S1752711AbeBTPQE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 10:16:04 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53991 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752600AbeBTPOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:15:37 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: hisilicon: mark wdt_mux_p[] as const
-Date: Tue, 20 Feb 2018 16:15:21 +0100
-Message-Id: <20180220151531.3379003-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:0OKz5pr4AZuFohW481tTI8rpzjJGNWFVLYz6MhDGdbIwQlgiRSo
- ClBSdwj87qjrbj5COChIaerFhyqzYKbX+cQFGOPkrJyWyoSAXpPQJQsjm6/DgJsvLFx2bsV
- hc6Djc6NVrc2agXcywmaEJSzTc7Je391qS5+ju2P3jJ6Rcay49U3jmZT3M9q9BgqdfArCkl
- BZzOeG1xKc8qwCCYv9Mhw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:x6o5CmB0KmI=:oc9KxIKfYmKyRbGuRWxSUa
- UgQBWOx4rHqwH7LZ5AnVZhFtp+6jeNn/NJmBrhHoV1QFef/uPFwwyxB/mcncb5oVZtus7YqkX
- Pkzd891Gv2bKKDTy3Ch2Mj7eFwZ0uxHRTa9LRBc3CkSKCrOSrShKjDDXySNFz5cNy0pPCUa27
- RYAFekhij66Yd1Mrlp6CzJfQIJmiGx0V8aXNKSWA1UQZ/+dDC9STbbfs3ugtO1nTBBBzTY2pD
- kFBlfKjmzNvJYKhr9QQOqXjpr/2ZEcylbXydtv/HJ72V1VSPH4Cw2x14el2NkmjGY5ablgOqB
- FNcCAbSoDKS585PneYcOGs1dzfmlLb9xT121G1joe7FEFupzbVBU++G+ZnUutuATTsXGEh4/r
- VoPw1eXocPLp1xr6yMVcTYyJxSEEpLa+xaqZY+TEot+ZTRpTaZ7S4yrCoUEO9jmI6o5yWsuuS
- K68Cj3F0drR2ZJ8RSiQmf7gPa+plqA9afPrDkzWnkZHQFtpIvqFnJREipBeMqzQLvq8LGFsdz
- vDMggVDfCXhjaQT55WGMEXVYi7rnmxvz/zSJX9fbNBzjLbRkG0NsThXDKgT83pc3VaIfCXQQf
- /uRKWeBVw6pATlZRgQWc6b6fyFxLkBktJJgjS2dzCNy8E00sMalPBj/PbzLeUADNhTB7AbSWt
- GYsu9lEOYT5pnhcjThPfR9LEWwDM+VVNnKW1OD50uA7ObKa2eBfNB71bxc5HrTf0P2oPHca4H
- TY8YjDZhGMUsM2qBtDNBfr+M75+3PRE+Yol/EQ==
+        Tue, 20 Feb 2018 10:14:24 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 15/19] dt-bindings: gpio: Add support for r8a77965
+Date: Tue, 20 Feb 2018 16:12:17 +0100
+Message-Id: <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The symbol is in the __initconst section but not marked init, which
-caused a warning when building with LTO.
+Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
 
-This makes it 'const' as was obviously intended.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/hisilicon/crg-hi3516cv300.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1 -> v2:
+- Drop SoC-specific compatible string from drivers/gpio/gpio-rcar.c
+- Change patch subject to reflect it only changes dt bindings
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
-index 2007123832bb..53450b651e4c 100644
---- a/drivers/clk/hisilicon/crg-hi3516cv300.c
-+++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
-@@ -204,7 +204,7 @@ static const struct hisi_crg_funcs hi3516cv300_crg_funcs = {
- /* hi3516CV300 sysctrl CRG */
- #define HI3516CV300_SYSCTRL_NR_CLKS 16
- 
--static const char *wdt_mux_p[] __initconst = { "3m", "apb" };
-+static const char *const wdt_mux_p[] __initconst = { "3m", "apb" };
- static u32 wdt_mux_table[] = {0, 1};
- 
- static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 9474138..f2af897 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -14,6 +14,7 @@ Required Properties:
+     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+     - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
++    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
+     - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
+     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
+     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
 -- 
-2.9.0
+2.7.4
