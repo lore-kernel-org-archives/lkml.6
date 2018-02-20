@@ -1,159 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeBTJd7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 04:33:59 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37554 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeBTJdz (ORCPT
+        id S1751461AbeBTJep (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 04:34:45 -0500
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:39818 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbeBTJem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 04:33:55 -0500
-X-Google-Smtp-Source: AH8x224J+DvqINx61Oepia3n+Ns0dfT+CZ4bnz7AsfkXQes5Be6EblviKA5htz8U2FaeT6OdosRJFA==
-Date: Tue, 20 Feb 2018 10:33:47 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180220093346.GA5505@andrea>
-References: <20180217151413.GA3785@andrea>
- <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
+        Tue, 20 Feb 2018 04:34:42 -0500
+X-Google-Smtp-Source: AH8x2245vQa2FysgZ4L+Ho6JQwUrolFWQ6B3I+36dUBi9hNyeR9YBPR1pGvcKR0fb1wHHKpq2oQR7Q==
+Subject: Re: [alsa-devel] [PATCH v3 05/25] ASoC: qcom: qdsp6: Add support to
+ Q6AFE
+To: Rohit Kumar <rohitkr@codeaurora.org>, andy.gross@linaro.org,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
+        lgirdwood@gmail.com, david.brown@linaro.org, robh+dt@kernel.org,
+        spatakok@qti.qualcomm.com, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-6-srinivas.kandagatla@linaro.org>
+ <2465335e-4d45-02d7-2e64-0a1c28a44ff1@codeaurora.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <2360f3a9-f207-bc84-b0da-2675b7c9f0e0@linaro.org>
+Date: Tue, 20 Feb 2018 09:34:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <2465335e-4d45-02d7-2e64-0a1c28a44ff1@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 12:14:45PM -0500, Alan Stern wrote:
-> On Sat, 17 Feb 2018, Andrea Parri wrote:
-> 
-> > > Akira's observation about READ_ONCE extends to all (annotated) loads.  In
-> > > fact, it also applies to loads corresponding to unsuccessful RMW operations;
-> > > consider, for example, the following variation of MP+onceassign+derefonce:
-> > > 
-> > > C T
-> > > 
-> > > {
-> > > y=z;
-> > > z=0;
-> > > }
-> > > 
-> > > P0(int *x, int **y)
-> > > {
-> > > 	WRITE_ONCE(*x, 1);
-> > > 	smp_store_release(y, x);
-> > > }
-> > > 
-> > > P1(int **y, int *z)
-> > > {
-> > > 	int *r0;
-> > > 	int r1;
-> > > 
-> > > 	r0 = cmpxchg_relaxed(y, z, z);
-> > > 	r1 = READ_ONCE(*r0);
-> > > }
-> > > 
-> > > exists (1:r0=x /\ 1:r1=0)
-> > > 
-> > > The final state is allowed w/o the patch, and forbidden w/ the patch.
-> > > 
-> > > This also reminds me of
-> > > 
-> > >    5a8897cc7631fa544d079c443800f4420d1b173f
-> > >    ("locking/atomics/alpha: Add smp_read_barrier_depends() to _release()/_relaxed() atomics")
-> > > 
-> > > (that we probably want to mention in the commit message).
-> > 
-> > Please also notice that 5a8897cc7631f only touched alpha's atomic.h:
-> > I see no corresponding commit/change on {,cmp}xchg.h (where the "mb"
-> > is currently conditionally executed).
-> 
-> This leaves us with a question: Do we want to change the kernel by
-> adding memory barriers after unsuccessful RMW operations on Alpha, or
-> do we want to change the model by excluding such operations from
-> address dependencies?
-
-I'd like to continue to treat R[once] and R*[once] equally if possible.
-Given the (unconditional) smp_read_barrier_depends in READ_ONCE and in
-atomics, it seems reasonable to have it unconditionally in cmpxchg.
-
-As with the following patch?
-
-  Andrea
-
----
-diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-index 68dfb3cb71454..e2660866ce972 100644
---- a/arch/alpha/include/asm/xchg.h
-+++ b/arch/alpha/include/asm/xchg.h
-@@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
-  * store NEW in MEM.  Return the initial value in MEM.  Success is
-  * indicated by comparing RETURN with OLD.
-  *
-- * The memory barrier should be placed in SMP only when we actually
-- * make the change. If we don't change anything (so if the returned
-- * prev is equal to old) then we aren't acquiring anything new and
-- * we don't need any memory barrier as far I can tell.
-+ * The memory barrier is placed in SMP unconditionally, in order to
-+ * guarantee that dependency ordering is preserved when a dependency
-+ * is headed by an unsuccessful operation.
-  */
- 
- static inline unsigned long
-@@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
- 	"	or	%1,%2,%2\n"
- 	"	stq_c	%2,0(%4)\n"
- 	"	beq	%2,3f\n"
--		__ASM__MB
- 	"2:\n"
-+		__ASM__MB
- 	".subsection 2\n"
- 	"3:	br	1b\n"
- 	".previous"
-@@ -177,8 +176,8 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
- 	"	or	%1,%2,%2\n"
- 	"	stq_c	%2,0(%4)\n"
- 	"	beq	%2,3f\n"
--		__ASM__MB
- 	"2:\n"
-+		__ASM__MB
- 	".subsection 2\n"
- 	"3:	br	1b\n"
- 	".previous"
-@@ -200,8 +199,8 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
- 	"	mov %4,%1\n"
- 	"	stl_c %1,%2\n"
- 	"	beq %1,3f\n"
--		__ASM__MB
- 	"2:\n"
-+		__ASM__MB
- 	".subsection 2\n"
- 	"3:	br 1b\n"
- 	".previous"
-@@ -223,8 +222,8 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
- 	"	mov %4,%1\n"
- 	"	stq_c %1,%2\n"
- 	"	beq %1,3f\n"
--		__ASM__MB
- 	"2:\n"
-+		__ASM__MB
- 	".subsection 2\n"
- 	"3:	br 1b\n"
- 	".previous"
+Thanks for your review comments
 
 
-> 
-> Note that operations like atomic_add_unless() already include memory 
-> barriers.
-> 
-> Alan
-> 
+
+On 19/02/18 10:30, Rohit Kumar wrote:
+>> diff --git a/sound/soc/qcom/Makefile b/sound/soc/qcom/Makefile
+>> index d5280355c24f..748f5e891dcf 100644
+>> --- a/sound/soc/qcom/Makefile
+>> +++ b/sound/soc/qcom/Makefile
+>> @@ -13,6 +13,11 @@ obj-$(CONFIG_SND_SOC_LPASS_APQ8016) += 
+>> snd-soc-lpass-apq8016.o
+>>   # Machine
+>>   snd-soc-storm-objs := storm.o
+>>   snd-soc-apq8016-sbc-objs := apq8016_sbc.o
+>> +snd-soc-msm8996-objs := apq8096.o
+> This needs to be moved out of this patch
+
+Will fix it in next version.
+
+>>   obj-$(CONFIG_SND_SOC_STORM) += snd-soc-storm.o
+>>   obj-$(CONFIG_SND_SOC_APQ8016_SBC) += snd-soc-apq8016-sbc.o
+>> +obj-$(CONFIG_SND_SOC_MSM8996) += snd-soc-msm8996.o
+>> +
+>> +#DSP lib 
