@@ -1,107 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeBTXDO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 18:03:14 -0500
-Received: from mga18.intel.com ([134.134.136.126]:32736 "EHLO mga18.intel.com"
+        id S1751665AbeBTXGW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 18:06:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751539AbeBTXDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:03:12 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,541,1511856000";
-   d="scan'208";a="19567001"
-Date: Wed, 21 Feb 2018 01:03:01 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-Message-ID: <20180220230301.fdvczohdtp635kav@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-2-tomas.winkler@intel.com>
- <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
- <1519138649.26293.1.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
+        id S1750998AbeBTXGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:06:21 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB7320C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 20 Feb 2018 23:06:16 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Linux MIPS <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 1/8] MIPS: Loongson64: cleanup all cs5536 files to use
+ SPDX Identifier
+Message-ID: <20180220230615.GI6245@saruman>
+References: <20171226132339.7356-1-jiaxun.yang@flygoat.com>
+ <20171230182830.6496-1-jiaxun.yang@flygoat.com>
+ <20171230182830.6496-2-jiaxun.yang@flygoat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cf0hFtnykp6aONGL"
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20171230182830.6496-2-jiaxun.yang@flygoat.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 08:26:45PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > > > All local variable declarations must be in the beginning of the
-> > > > function.
-> > >
-> > > Who says?
-> > 
-> > It is coherent how we have everything else.
->  I will have to care about its value out of the scope where the variable existence is not relevant.
-> 
-> > It is much easier to see the stack allocation this way when the allocation is
-> > only done in the beginning of each function. If you really need to do such
-> > pattern, then it would be a better idea to consider an additional helper
-> > function.
-> The code block decides whether to modify 'rc'. I'm not sure if additional function will make
->  the code cleaner, on the opposite.
-> > 
-> > > > Your comment about not overriding error code is incorrect.
-> > >
-> > > Please explain?
-> > 
-> > 'l_rc' overrides 'rc' in the case when both are non-zero.
-> 
-> Yes, that's been the intention, we cannot return more than one value. 
-> l_rc if set it has hire priority. 
-> 
-> > 
-> > > > The value of 'rc' should be never overridden, which kind of supports
-> > > > to "just print" behavior that we had for a locality error.
-> > >
-> > > You are not consistent, you've agreed with propagating it to user
-> > > space.  The error will  be propagated in case of an error in locality
-> > > relinquish the device is pretty much in non functional state and
-> > > provious errors do not matter much, but rc value won't be modified if
-> > > locality_reliquish succeeds.
-> > 
-> > Well, sometimes you fail to notice things and I failed to notice the collision
-> > above. The commit message does not describe why 'l_rc'
-> > overrides 'rc' in the case when both are non-zero. What was the reasoning,
-> > which made you end up with this priority order?  Why is 'l_rc' more
-> > important than 'rc'?
-> 
-> Because, it's fatal. I'm not sure it's matter much what the previous error was, it cannot be recovered
-> That's my understanding of this flow.
-> 
->  
-> > My take is that does it really make sense have this change as part of a high
-> > priority bug fix that should be as localized as possible?
-> > Seems like a non-trivial problem by itself.
-> 
-> Yes, the issue here is that also an error path can fail. Now what is the correct return value.. 
-> 
-> In any case, in order to resolve this dispute, I will post a version when the error is just prints out,
-> Once, however fatal the error is, it's very unlikely that it will happen.
-> Second the driver will find the device not responding in a subsequent command.
-> 
-> Not perfect, but at least we will have functional driver.
-> 
-> Thanks
-> Tomas
-> 
 
-Please add my tested by to next version. Thanks.
+--cf0hFtnykp6aONGL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-/Jarkko
+On Sun, Dec 31, 2017 at 02:28:24AM +0800, Jiaxun Yang wrote:
+> diff --git a/arch/mips/loongson64/common/cs5536/cs5536_acc.c b/arch/mips/loongson64/common/cs5536/cs5536_acc.c
+> index ab4d6cc57384..ba0474bb4a3d 100644
+> --- a/arch/mips/loongson64/common/cs5536/cs5536_acc.c
+> +++ b/arch/mips/loongson64/common/cs5536/cs5536_acc.c
+> @@ -1,3 +1,5 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+
+No other cases I've seen bother with the blank line. Please remove
+throughout the series.
+
+>  /*
+>   * the ACC Virtual Support Module of AMD CS5536
+>   *
+> @@ -7,10 +9,6 @@
+>   * Copyright (C) 2009 Lemote, Inc.
+>   * Author: Wu Zhangjin, wuzhangjin@gmail.com
+>   *
+> - * This program is free software; you can redistribute	it and/or modify it
+> - * under  the terms of	the GNU General	 Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+
+or any later version implies it should be "GPL-2.0+"
+
+Same throughout. Please check carefully you aren't changing the stated
+license on any files.
+
+Cheers
+James
+
+--cf0hFtnykp6aONGL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqMqecACgkQbAtpk944
+dnqS0A/9FX4z+Hgy85g4WVOGYHRirj92ioOnyIn2MfOBUznt9mS63ggbSNjVq2V8
+Jy/XhGpucoXPfp/HbCABPoVV2CAYsADkQJG5S8udwzgR5i/i9yaq8qV9h+pRYjwa
+cAXtqwy02OEnZXdF0R2XZGZvSCtjeDRAuX6Po6qgl1uFbPWmMxSPnZN2vPXGFN7h
+en9P9n93B83dRiYt92WB4jFxLmGsWHG8d1T79Cy/uu3GlcV/9rxILCvjO44NOBZK
+NWUt4O0gDG6uMPOGZjpD8gxscf22F8oCftLdXzj9AwR3QcEvnv9zcXXx1HYcfUYH
+xwc/+/uVFlf1PCau0Fe+hi6YOuNS+PgJHDSZYa15y2rSI4gQOMegDnb43+NBulq2
+SxlNJvL90sNGKF6T44pbUEZDU0IGdm1bxTWojfxpkeXT9R7QZbbPQ7wbsyI1qequ
+pLjHAPj+YDHVHR0ESC3rjF9uX3NjL5HXZwy5OjVCvf2SV5Y+U1x1BD8wH4Jkr+yL
+yOkH1ucb/dZ+m2Z5ICSUYNbgGcCLWnCxGE/sv5CcPFLp8bJiuVcieiY8ETBZdQUA
+y7tcBZKrL6NfovnquvLUQtYi7AwwF4cFigS/W7P04kloQvRuhxiydGsaay7dHt18
+DdWzn3ydjsQy0xXQO7Xima0mqu3Snr3Q2zKdMrw42IB/BH5vftQ=
+=HsSx
+-----END PGP SIGNATURE-----
+
+--cf0hFtnykp6aONGL--
