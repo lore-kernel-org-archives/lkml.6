@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224qLNM9mYxWNujhAXOiuP1AeGmvvmO4yPElG3E5yHWb4+C4UOWwXzH8yZvLe7F0JT3bxpqT
-ARC-Seal: i=1; a=rsa-sha256; t=1519217694; cv=none;
+X-Google-Smtp-Source: AH8x227LJXtSX4rNAmkl/O5eNAbV04v5PK59/Zx/jVnkkVRXaMd9o4Bg7gYfvQ3p9x9uthsEDagZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519217692; cv=none;
         d=google.com; s=arc-20160816;
-        b=F/kAwXk08jhJ3oSNN0BwhrvBdMWSbFgEpm410/1bBg8nZocl/9Ff9UKuDBUeDtJDlc
-         MLuh234bE+pXA6MIa/V1xEbfIqGatafOwsLkWTO9qokgd4O0fjZitNqO/iMR1zpD3ATO
-         EdopHYSmRckROJFAU+E6PG4yXzXTEYYIPWMHC7HGho4nfv11D2CR8O43arU42x3KygKG
-         +JqPbW8X6h/zlmjjSCR9UHGHCWNWC3z7kBk43y8FEZYNqUI+mwFwj/81r3SeS8QoRqQl
-         wSMWBfWbpZvEpEvRlFPmvekuU6Xue51UIYWlvHl6FSDAF827wK1zegt2UCM5Y85RhFdj
-         /itA==
+        b=ubyQK+mrIOtHc6iYi0AehGOEHj4qIP2woCm4tKicPpUx74SkrfiG/jmBHvHdndeKu8
+         e3PB4hxTYuBUkC1JzZXgLGEWE7FHojTwhG/GxjCjCR3Snij4eHscSHCL9D76sFe26Tzz
+         lA1TXylq28HIHNajTh+f36BAF5MiR4GbTzt7x6EhsvJIwIIxD+cg01X6sgqtmkAUCTJS
+         HfN7rlPA0+LShS5EnH7JQfEewr+Zw36v6sI3Zv11OMBXt6rzISK2j3IjyB/XHDL562Eq
+         zeEmorsWNPMYX1Jbnmj49IYV/oraITat7hhc+ggQ4ZAwMg1LqdnpnLGL4oalDoSOqvEH
+         7+DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9YAqP6IvgLPZO1wS2FuJn2a/6/pBUBKbts6yDX0/BCM=;
-        b=kB7kBGKfvQsTCCxuwIyGVahRHCbZq9eALR5r6hiP70BjO6iOVcv5zIM/aPIbPsviUT
-         ohIqPL5xS8hb7vWhfOabtT4irVX3Rad01hDbjNibiGDIjVZ8V7GQuG88zv99lpTLomi+
-         wCJMbMpSH1+Sy1AoYqTDGOTgxW4X5wNvPeN3r0FNCij0ra67BcryS+rZYCyDdmnxiU8l
-         f4mCvsI8n3R4XrBfnZknUXUkfxz7v6Pnp3aHQLEi8eQp7umiTthwwjESJ01LyZbU9V03
-         j0KVHCaDkhLkPIikCZ9Qmi30J5tbbrwPu5Wl7kyLEcEghT08rnbWV3JhQjYfspLQrVoc
-         1DTA==
+        bh=Tf3u1JJEYNwvw9qOWo98z2MX5fMFwJVHJLbfiEENCpM=;
+        b=ws80JZ8CMsxQ0hhDX+JcvxBZLKQWmGGHvWmUOZGWKkGqwe3QYuAiNyCY0CuuchAIRq
+         GntT6oU/vPC8FH5rqncSg/qjzH7FYYCJzKJG1NQegM9MvC86/PhEAz9YK6h2YnbLdqjH
+         lfjX45NiOR8b9f8qqNwlAZlpOoEv2QrAV79alGIYs0vG46eu+1y4iaf2J44bzUeM1QAO
+         Y7lHLL4h1sweCJJmrW1hBaYgjVbDMnEcxGyyuw6ltu4w5i4zN/LaxAUCGkCZiOS9a3Yo
+         u3MHYe0+O7sZ8CiedpZnf2fAskI9l1GODT+y2HvUeVqSXHZGNTmpbY27gUPYftrRntGz
+         CFJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Liu Bo <bo.li.liu@oracle.com>,
+	Nikolay Borisov <nborisov@suse.com>,
 	Josef Bacik <jbacik@fb.com>,
 	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 22/77] Btrfs: fix unexpected -EEXIST when creating new inode
-Date: Wed, 21 Feb 2018 13:48:31 +0100
-Message-Id: <20180221124433.121005103@linuxfoundation.org>
+Subject: [PATCH 4.9 21/77] Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
+Date: Wed, 21 Feb 2018 13:48:30 +0100
+Message-Id: <20180221124433.073992378@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014643316551271?=
-X-GMAIL-MSGID: =?utf-8?q?1593015213930796928?=
+X-GMAIL-THRID: =?utf-8?q?1593015210708041633?=
+X-GMAIL-MSGID: =?utf-8?q?1593015210708041633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,56 +53,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 900c9981680067573671ecc5cbfa7c5770be3a40 upstream.
+commit e8f1bc1493855e32b7a2a019decc3c353d94daf6 upstream.
 
-The highest objectid, which is assigned to new inode, is decided at
-the time of initializing fs roots.  However, in cases where log replay
-gets processed, the btree which fs root owns might be changed, so we
-have to search it again for the highest objectid, otherwise creating
-new inode would end up with -EEXIST.
+This regression is introduced in
+commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction").
 
-cc: <stable@vger.kernel.org> v4.4-rc6+
-Fixes: f32e48e92596 ("Btrfs: Initialize btrfs_root->highest_objectid when loading tree root and subvolume roots")
+There are two problems,
+
+a) it is ->destroy_inode() that does the final free on inode, not
+   ->evict_inode(),
+b) clear_inode() must be called before ->evict_inode() returns.
+
+This could end up hitting BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+in evict() because I_CLEAR is set in clear_inode().
+
+Fixes: commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction")
+Cc: <stable@vger.kernel.org> # v4.7-rc6+
 Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/btrfs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -28,6 +28,7 @@
- #include "hash.h"
- #include "compression.h"
- #include "qgroup.h"
-+#include "inode-map.h"
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5229,7 +5229,7 @@ void btrfs_evict_inode(struct inode *ino
+ 	trace_btrfs_inode_evict(inode);
  
- /* magic values for the inode_only field in btrfs_log_inode:
-  *
-@@ -5661,6 +5662,23 @@ again:
- 						      path);
- 		}
+ 	if (!root) {
+-		kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
++		clear_inode(inode);
+ 		return;
+ 	}
  
-+		if (!ret && wc.stage == LOG_WALK_REPLAY_ALL) {
-+			struct btrfs_root *root = wc.replay_dest;
-+
-+			btrfs_release_path(path);
-+
-+			/*
-+			 * We have just replayed everything, and the highest
-+			 * objectid of fs roots probably has changed in case
-+			 * some inode_item's got replayed.
-+			 *
-+			 * root->objectid_mutex is not acquired as log replay
-+			 * could only happen during mount.
-+			 */
-+			ret = btrfs_find_highest_objectid(root,
-+						  &root->highest_objectid);
-+		}
-+
- 		key.offset = found_key.offset - 1;
- 		wc.replay_dest->log_root = NULL;
- 		free_extent_buffer(log->node);
