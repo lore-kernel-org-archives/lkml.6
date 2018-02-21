@@ -1,57 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751378AbeBUWQD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 17:16:03 -0500
-Received: from ozlabs.org ([103.22.144.67]:40301 "EHLO ozlabs.org"
+        id S1751343AbeBUWUh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 17:20:37 -0500
+Received: from botnar.kaiser.cx ([176.28.20.183]:59484 "EHLO botnar.kaiser.cx"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751129AbeBUWQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 17:16:02 -0500
-Date: Thu, 22 Feb 2018 09:15:31 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: linux-next: address change for the contact of the rtc tree
-Message-ID: <20180222091531.6bcb1503@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UzpS3BxA055_4.RRyWZz+1="; protocol="application/pgp-signature"
+        id S1751158AbeBUWUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 17:20:36 -0500
+From: Martin Kaiser <martin@kaiser.cx>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] ARM: mx35_3ds: remove unnecessary USB OTG init flag
+Date: Wed, 21 Feb 2018 23:17:43 +0100
+Message-Id: <1519251463-12318-1-git-send-email-martin@kaiser.cx>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UzpS3BxA055_4.RRyWZz+1=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The platform-specific init function for the USB OTG port,
+mx35_3ds_otg_init(), sets the MXC_EHCI_INTERNAL_PHY flag.
 
-Hi Alexandre,
+This flag is applicable only to the host port, not to the OTG port. It's
+ignored by mx35_initialize_usb_hw() when the OTG port is initialized.
 
-I notcied this commit
+Remove the flag to make it clear what is actually configured.
 
-  f6dbaad611f9 ("MAINTAINERS: rtc: update my email address")
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+ arch/arm/mach-imx/mach-mx35_3ds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-in the rtc tree today.  Should I update the email address I use for the
-rtc tree contact?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UzpS3BxA055_4.RRyWZz+1=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqN74MACgkQAVBC80lX
-0GxyzQf/S05I50Ve05hqHVPB2r5jS6HV8DYdbHhJGHZHoe+xRfApIy7BubLPHZtd
-Yg+ex30BzVxo6epgrHnBpa2MmwGOqFd9xeCVzuELUZ8S8DvwAFvlpbvPRY2xyIN/
-DFfH35tlUg3IAU8Zj/0D1kgfFYZxbuTLMkGUd3D12HPOIsiTbk05CGtdId7iqiIj
-DwhzhQlSfEUrTq3+ZhPqmFdhzclMht37jclrz5z3yhTplB22OGWPZJnsmlRbhetO
-DMnd1swMneoppn9Re37sug89SNNra78Q3pt1/ua/661E0RKjFLHFLOsfTuKDDdhe
-PKubpswsmpA/EYXq3lhte8UL3uXPqQ==
-=g+co
------END PGP SIGNATURE-----
-
---Sig_/UzpS3BxA055_4.RRyWZz+1=--
+diff --git a/arch/arm/mach-imx/mach-mx35_3ds.c b/arch/arm/mach-imx/mach-mx35_3ds.c
+index 1c33a6c..f1963f2 100644
+--- a/arch/arm/mach-imx/mach-mx35_3ds.c
++++ b/arch/arm/mach-imx/mach-mx35_3ds.c
+@@ -407,7 +407,7 @@ static void __init imx35_3ds_init_mc13892(void)
+ 
+ static int mx35_3ds_otg_init(struct platform_device *pdev)
+ {
+-	return mx35_initialize_usb_hw(pdev->id, MXC_EHCI_INTERNAL_PHY);
++	return mx35_initialize_usb_hw(pdev->id, 0);
+ }
+ 
+ /* OTG config */
+-- 
+2.1.4
