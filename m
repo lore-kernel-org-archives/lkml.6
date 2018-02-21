@@ -1,96 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753364AbeBUSil (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:38:41 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:34096 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1753454AbeBUSih (ORCPT
+        id S1753600AbeBUSjx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:39:53 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:40097 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeBUSjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:38:37 -0500
-Date: Wed, 21 Feb 2018 13:38:35 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        <akiyks@gmail.com>, <nborisov@suse.com>
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S lock-based
- external-view litmus test
-In-Reply-To: <20180221175320.GI3617@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1802211334560.2032-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Wed, 21 Feb 2018 13:39:51 -0500
+X-Google-Smtp-Source: AH8x224ZICO8j1f6DMkehDvpcl32a22eFSSOBu7OViD6oUzmTVOVOyQaMJUvJ1necTpGNPoo+DgEKA==
+Message-ID: <1519238388.55655.43.camel@gmail.com>
+Subject: Re: [PATCH net-next] tcp: remove the hardcode in the definition of
+ TCPF Macro
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 21 Feb 2018 10:39:48 -0800
+In-Reply-To: <1519133311-22068-1-git-send-email-laoar.shao@gmail.com>
+References: <1519133311-22068-1-git-send-email-laoar.shao@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018, Paul E. McKenney wrote:
-
-> On Wed, Feb 21, 2018 at 11:50:31AM -0500, Alan Stern wrote:
-> > On Wed, 21 Feb 2018, Paul E. McKenney wrote:
-> > 
-> > > On Wed, Feb 21, 2018 at 10:09:00AM -0500, Alan Stern wrote:
-> > > > On Tue, 20 Feb 2018, Paul E. McKenney wrote:
-> > > > 
-> > > > > From: Alan Stern <stern@rowland.harvard.edu>
-> > > > > 
-> > > > > This commit adds a litmus test in which P0() and P1() form a lock-based S
-> > > > > litmus test, with the addition of P2(), which observes P0()'s and P1()'s
-> > > > 
-> > > > Why do you call this an "S" litmus test?  Isn't ISA2 a better 
-> > > > description?
-> > > 
-> > > Indeed, the name of the test is in fact ISA2.
-> > 
-> > Sure; and the Changelog entry should reflect this.
+On Tue, 2018-02-20 at 21:28 +0800, Yafang Shao wrote:
+> TCPF_ macro depends on the definition of TCP_ macro.
+> So it is better to define them with TCP_ marco.
 > 
-> No argument.
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
 
-> ------------------------------------------------------------------------
-> 
-> commit e6658d1d7fcc6391f3d00beaadc484243123a893
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Wed Feb 21 09:49:01 2018 -0800
-> 
->     tools/memory-order: Add documentation of new litmus test
->     
->     The litmus-tests/README file lacked any mention of then litmus test
+Seems reasonable, thanks !
 
-s/lacked/lacks/
-s/then/the new/
-
->     named ISA2+pooncelock+pooncelock+pombonce.litmus.  This commit therefore
-
-s/named //
-
->     adds this test.
-
-It adds a description of the test, not the test itself.
-
->     
->     Reported-by: Alan Stern <stern@rowland.harvard.edu>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-> index dca7d823ad57..aff3eb90e067 100644
-> --- a/tools/memory-model/litmus-tests/README
-> +++ b/tools/memory-model/litmus-tests/README
-> @@ -32,6 +32,11 @@ IRIW+poonceonces+OnceOnce.litmus
->  	order of a pair of writes, where each write is to a different
->  	variable by a different process?
->  
-> +ISA2+pooncelock+pooncelock+pombonce.litmus
-> +	Tests whether the ordering provided by a lock-protected S litmus
-
-Call it an ISA2 litmus test, not an S litmus test!
-
-> +	test is visible to an external process whose accesses are
-> +	separated by smp_mb().
-> +
->  ISA2+poonceonces.litmus
->  	As below, but with store-release replaced with WRITE_ONCE()
->  	and load-acquire replaced with READ_ONCE().
-
-Alan
+Reviewed-by: Eric Dumazet <edumazet@google.com>
