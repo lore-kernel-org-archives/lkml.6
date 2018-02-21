@@ -1,22 +1,23 @@
 Return-Path: <arend.vanspriel@broadcom.com>
-X-Google-Smtp-Source: AH8x224x7pMSxo0EwAmRQKMOkCGIP0LEI7+012IOBOWzdVXbnzAShaopoci7BJeWSVu7hg1nMfL3
-ARC-Seal: i=1; a=rsa-sha256; t=1519210241; cv=none;
+X-Google-Smtp-Source: AH8x2274z6d+8Lb1Om5rOtZx8oacg3snMow4tgLNXGpek8bQqVG/usHtslwK1fa9p4x6obrxTRW3
+ARC-Seal: i=1; a=rsa-sha256; t=1519210242; cv=none;
         d=google.com; s=arc-20160816;
-        b=HIvP65o4PZy1Iz9g++ghfGcWaeUIazVkrMU8M1QLmzQubf09hL27jmSL1K36QHmaAT
-         mg1RJ/CA918DKsrvt+z+/i4MyHtpxI0Sf64X8+AX6inWsE9HNgZy+5ZW/+Tq5HD0AiFz
-         KAXqg+LNlFB1plKtQxOl3oSo0G+tg/uCXgF+rfq35/wH7o4Hp4ckuk3A6sTYOhCMk6ad
-         mZN650sAnRxjUywipV7FYsONjUuf3SCELQi/YQh3XhMG005wPzPBNbDiweTnMmJsciWR
-         rXjce6OSssdMzlS1ge5L/cv6VzbabuUfsB0wV8BgXwxvC94ir/CHsTnMUjOUMfzbY0jY
-         hw1A==
+        b=dVwS2ZVu3JQI4J7T82XsIkSrsLztoZVAiyRkb53sW0pmumqhcUFVlRZh3qJoqWDQGG
+         38Tc946Oy9BlzcsTd23UOhRNN0nWsnBAX8XqDAJ+gEi4M1zzeugG6M3eJYndHxLFDpcu
+         3fkb/34rwcduGzjbC8y9wbeEFH2WA0TupFSH+YUCc2EBKKYXVSYYGmjf7lEwBhH2hD6S
+         +4uvLXtfQ9ZeEurnoEM3Q5kmF/L3jHOap91mxDts2wAuI5BT1SLhr5att7U0N2t7iHNv
+         QCb3yIca7fPJeu/mX3YCz43as/R25H27Q9TqXwuDEk6M0Qb49su40gHs9IgirHy5rDDC
+         I7zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=h7B7Cayff3+sxPAQJUBJ/PYpSfS7fMUMwOyQkvTrOGM=;
-        b=ce3JZCq6afJtKHRM5hehPMTC1q/zxFAJMaBVx3SrZl6LxKyrQpO3O/3cjjBnCkj3e4
-         2kTWl4aL3Rvq7BYWwv16RXryaQ0TC5+5jA+sapqmxllRV84gZti3G9bD/fEPX9HTXt+Q
-         crV3WT460WYfQ75hZS2Ycto5twQ3dRrD9uy6vIs3B/m34TvVqaM7kCunpLDuAF5Bynqi
-         hRha9UiA/xWX9suPMpXPcSzeHu3gJX5tokq8QiRVCKkmhdMbrlCI2QGUKmuPbM3auvoX
-         t4cvImB0vfgP2xe56oR/GPX52ZbBcQyi/6Nj0F9PA2Jm1TRJ0ufM5q/ZKZLoXmIqFZ9+
-         AsfQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=JFL1UWdNvvwNfSWuKSTcxS0iY+jbR2m6ultW5AVgoNI=;
+        b=fSqZnko1HL9rJ9frKTziylYO9K8lowAFBpwV6kN7qKCUpdYBx8ohFNks/Lv1UJ3utq
+         bcTRBGtBvUxU9f05XRJBr5Uc6tHaUlbgqIMYhe/acp3kvLwQ29si9UQWtVqxYKr3NOh6
+         uhSO/gUn+FzV+jo9Acb63/5RTNOXYKJ1p/pJD9dMxWqyZMPhPlXAZdFv6KChzAiyWMau
+         5tNtcczn07uXGfYPISeKeospvDpUDBzRWXVB3alC0R+hb8rov4hxhmRUSdbYJB6KCkUl
+         EXhAV9H87RfsjS6tfP9zIqVMU5elYVWF0UMuCJWh5KW3aekF0HLO7Kxt5fXd4IeZD4sa
+         JLPg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
        dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
@@ -31,69 +32,191 @@ Cc: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 0/3] drivers: support for sysfs initiated coredump
-Date: Wed, 21 Feb 2018 11:50:17 +0100
-Message-Id: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
+Subject: [PATCH 3/3] btmrvl: support sysfs initiated firmware coredump
+Date: Wed, 21 Feb 2018 11:50:20 +0100
+Message-Id: <1519210220-22437-4-git-send-email-arend.vanspriel@broadcom.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
+References: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593007398481717171?=
-X-GMAIL-MSGID: =?utf-8?q?1593007398481717171?=
+X-GMAIL-THRID: =?utf-8?q?1593007399539898108?=
+X-GMAIL-MSGID: =?utf-8?q?1593007399539898108?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This series is intended for 4.17 adding support for sysfs initiated
-coredump. This uses new functionality that was added in drivers base.
-Device drivers can now implement a .coredump() callback upon which a
-sysfs entry is created when the device is bound to the driver. From
-user-space a device coredump can be initiated. The easiest way is by
-going the drivers entry and enter into the bound device folder like
-this:
+Since commit 3c47d19ff4dc ("drivers: base: add coredump driver ops")
+it is possible to initiate a device coredump from user-space. This
+patch adds support for it in btmrvl_sdio adding the .coredump()
+driver callback. This makes dump through debugfs obsolete so removing
+it.
 
-  # cd /sys/bus/pci/drivers/brcmfmac/0000:02:00.0
-  # echo 1 > coredump
-  # ls /sys/class/devcoredump/
-  devcd1	disabled
-  # ls -l /sys/class/devcoredump/devcd1/
-  total 0
-  -rw------- 1 root root    0 Feb 19 23:49 data
-  lrwxrwxrwx 1 root root    0 Feb 19 23:49 failing_device ->
-  	../../../pci0000:00/0000:00:1c.0/0000:02:00.0
-  drwxr-xr-x 2 root root    0 Feb 19 23:49 power
-  lrwxrwxrwx 1 root root    0 Feb 19 23:49 subsystem ->
-  	../../../../class/devcoredump
-  -rw-r--r-- 1 root root 4096 Feb 19 23:49 uevent
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+---
+ drivers/bluetooth/btmrvl_debugfs.c | 31 -------------------------------
+ drivers/bluetooth/btmrvl_drv.h     |  2 --
+ drivers/bluetooth/btmrvl_main.c    |  6 ------
+ drivers/bluetooth/btmrvl_sdio.c    | 18 ++++++++++++------
+ 4 files changed, 12 insertions(+), 45 deletions(-)
 
-The device driver can implement the .coredump() callback as they like.
-The use of the dev_coredump api is not enforced although the sysfs entry
-is only created when CONFIG_DEV_COREDUMP is selected.
-
-Apart from brcmfmac, the other drivers used dev_coredump api and had a
-mechanism in place through debugfs, which is removed in these patches.
-With these patches initiating the coredump can be done without selecting
-CONFIG_DEBUGFS. No attempt was made to look for drivers providing some sore
-of coredump functionality by other means than the dev_coredump api.
-
-The first 2 patches apply to the master branch of the wireless-drivers-next
-repository. The last patch applies to the master branch of the bluetooth-next.
-
-Arend van Spriel (3):
-  brcmfmac: add support for sysfs initiated coredump
-  mwifiex: support sysfs initiated device coredump
-  btmrvl: support sysfs initiated firmware coredump
-
- drivers/bluetooth/btmrvl_debugfs.c                 | 31 ----------------------
- drivers/bluetooth/btmrvl_drv.h                     |  2 --
- drivers/bluetooth/btmrvl_main.c                    |  6 -----
- drivers/bluetooth/btmrvl_sdio.c                    | 18 ++++++++-----
- .../wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c  |  1 +
- .../net/wireless/broadcom/brcm80211/brcmfmac/bus.h |  2 ++
- .../wireless/broadcom/brcm80211/brcmfmac/core.c    |  7 +++++
- .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    |  1 +
- drivers/net/wireless/marvell/mwifiex/debugfs.c     | 31 +---------------------
- drivers/net/wireless/marvell/mwifiex/pcie.c        | 19 +++++++++++--
- drivers/net/wireless/marvell/mwifiex/sdio.c        | 13 +++++++++
- drivers/net/wireless/marvell/mwifiex/usb.c         | 14 ++++++++++
- 12 files changed, 68 insertions(+), 77 deletions(-)
-
+diff --git a/drivers/bluetooth/btmrvl_debugfs.c b/drivers/bluetooth/btmrvl_debugfs.c
+index 1828ed8..023d35e 100644
+--- a/drivers/bluetooth/btmrvl_debugfs.c
++++ b/drivers/bluetooth/btmrvl_debugfs.c
+@@ -167,35 +167,6 @@ static ssize_t btmrvl_hscmd_read(struct file *file, char __user *userbuf,
+ 	.llseek = default_llseek,
+ };
+ 
+-static ssize_t btmrvl_fwdump_write(struct file *file, const char __user *ubuf,
+-				   size_t count, loff_t *ppos)
+-{
+-	struct btmrvl_private *priv = file->private_data;
+-	char buf[16];
+-	bool result;
+-
+-	memset(buf, 0, sizeof(buf));
+-
+-	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
+-		return -EFAULT;
+-
+-	if (strtobool(buf, &result))
+-		return -EINVAL;
+-
+-	if (!result)
+-		return -EINVAL;
+-
+-	btmrvl_firmware_dump(priv);
+-
+-	return count;
+-}
+-
+-static const struct file_operations btmrvl_fwdump_fops = {
+-	.write	= btmrvl_fwdump_write,
+-	.open	= simple_open,
+-	.llseek = default_llseek,
+-};
+-
+ void btmrvl_debugfs_init(struct hci_dev *hdev)
+ {
+ 	struct btmrvl_private *priv = hci_get_drvdata(hdev);
+@@ -226,8 +197,6 @@ void btmrvl_debugfs_init(struct hci_dev *hdev)
+ 			    priv, &btmrvl_hscmd_fops);
+ 	debugfs_create_file("hscfgcmd", 0644, dbg->config_dir,
+ 			    priv, &btmrvl_hscfgcmd_fops);
+-	debugfs_create_file("fw_dump", 0200, dbg->config_dir,
+-			    priv, &btmrvl_fwdump_fops);
+ 
+ 	dbg->status_dir = debugfs_create_dir("status", hdev->debugfs);
+ 	debugfs_create_u8("curpsmode", 0444, dbg->status_dir,
+diff --git a/drivers/bluetooth/btmrvl_drv.h b/drivers/bluetooth/btmrvl_drv.h
+index fc3caf4..f045454 100644
+--- a/drivers/bluetooth/btmrvl_drv.h
++++ b/drivers/bluetooth/btmrvl_drv.h
+@@ -110,7 +110,6 @@ struct btmrvl_private {
+ 				u8 *payload, u16 nb);
+ 	int (*hw_wakeup_firmware)(struct btmrvl_private *priv);
+ 	int (*hw_process_int_status)(struct btmrvl_private *priv);
+-	void (*firmware_dump)(struct btmrvl_private *priv);
+ 	spinlock_t driver_lock;		/* spinlock used by driver */
+ #ifdef CONFIG_DEBUG_FS
+ 	void *debugfs_data;
+@@ -183,7 +182,6 @@ struct btmrvl_event {
+ int btmrvl_enable_ps(struct btmrvl_private *priv);
+ int btmrvl_prepare_command(struct btmrvl_private *priv);
+ int btmrvl_enable_hs(struct btmrvl_private *priv);
+-void btmrvl_firmware_dump(struct btmrvl_private *priv);
+ 
+ #ifdef CONFIG_DEBUG_FS
+ void btmrvl_debugfs_init(struct hci_dev *hdev);
+diff --git a/drivers/bluetooth/btmrvl_main.c b/drivers/bluetooth/btmrvl_main.c
+index b280d46..e5cf14d 100644
+--- a/drivers/bluetooth/btmrvl_main.c
++++ b/drivers/bluetooth/btmrvl_main.c
+@@ -358,12 +358,6 @@ int btmrvl_prepare_command(struct btmrvl_private *priv)
+ 	return ret;
+ }
+ 
+-void btmrvl_firmware_dump(struct btmrvl_private *priv)
+-{
+-	if (priv->firmware_dump)
+-		priv->firmware_dump(priv);
+-}
+-
+ static int btmrvl_tx_pkt(struct btmrvl_private *priv, struct sk_buff *skb)
+ {
+ 	int ret = 0;
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 7dbb446..0f02025 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -1311,9 +1311,11 @@ rdwr_status btmrvl_sdio_rdwr_firmware(struct btmrvl_private *priv,
+ }
+ 
+ /* This function dump sdio register and memory data */
+-static void btmrvl_sdio_dump_firmware(struct btmrvl_private *priv)
++static int btmrvl_sdio_coredump(struct device *dev)
+ {
+-	struct btmrvl_sdio_card *card = priv->btmrvl_dev.card;
++	struct sdio_func *func = dev_to_sdio_func(dev);
++	struct btmrvl_sdio_card *card;
++	struct btmrvl_private *priv;
+ 	int ret = 0;
+ 	unsigned int reg, reg_start, reg_end;
+ 	enum rdwr_status stat;
+@@ -1321,12 +1323,15 @@ static void btmrvl_sdio_dump_firmware(struct btmrvl_private *priv)
+ 	u8 dump_num = 0, idx, i, read_reg, doneflag = 0;
+ 	u32 memory_size, fw_dump_len = 0;
+ 
++	card = sdio_get_drvdata(func);
++	priv = card->priv;
++
+ 	/* dump sdio register first */
+ 	btmrvl_sdio_dump_regs(priv);
+ 
+ 	if (!card->supports_fw_dump) {
+ 		BT_ERR("Firmware dump not supported for this card!");
+-		return;
++		return -ENODATA;
+ 	}
+ 
+ 	for (idx = 0; idx < ARRAY_SIZE(mem_type_mapping_tbl); idx++) {
+@@ -1445,12 +1450,12 @@ static void btmrvl_sdio_dump_firmware(struct btmrvl_private *priv)
+ 	sdio_release_host(card->func);
+ 
+ 	if (fw_dump_len == 0)
+-		return;
++		return -ENODATA;
+ 
+ 	fw_dump_data = vzalloc(fw_dump_len+1);
+ 	if (!fw_dump_data) {
+ 		BT_ERR("Vzalloc fw_dump_data fail!");
+-		return;
++		return -ENOMEM;
+ 	}
+ 	fw_dump_ptr = fw_dump_data;
+ 
+@@ -1487,6 +1492,7 @@ static void btmrvl_sdio_dump_firmware(struct btmrvl_private *priv)
+ 	 */
+ 	dev_coredumpv(&card->func->dev, fw_dump_data, fw_dump_len, GFP_KERNEL);
+ 	BT_INFO("== btmrvl firmware dump to /sys/class/devcoredump end");
++	return 0;
+ }
+ 
+ static int btmrvl_sdio_probe(struct sdio_func *func,
+@@ -1547,7 +1553,6 @@ static int btmrvl_sdio_probe(struct sdio_func *func,
+ 	priv->hw_host_to_card = btmrvl_sdio_host_to_card;
+ 	priv->hw_wakeup_firmware = btmrvl_sdio_wakeup_fw;
+ 	priv->hw_process_int_status = btmrvl_sdio_process_int_status;
+-	priv->firmware_dump = btmrvl_sdio_dump_firmware;
+ 
+ 	if (btmrvl_register_hdev(priv)) {
+ 		BT_ERR("Register hdev failed!");
+@@ -1717,6 +1722,7 @@ static int btmrvl_sdio_resume(struct device *dev)
+ 	.remove		= btmrvl_sdio_remove,
+ 	.drv = {
+ 		.owner = THIS_MODULE,
++		.coredump = btmrvl_sdio_coredump,
+ 		.pm = &btmrvl_sdio_pm_ops,
+ 	}
+ };
 -- 
 1.9.1
