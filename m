@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227R9jFpPQTUyqrme46Cudltd0hRf3McJIztsfgPcbfmZJ5mOQdOpn+wq1qRqdBl3BzDyhGU
-ARC-Seal: i=1; a=rsa-sha256; t=1519224990; cv=none;
+X-Google-Smtp-Source: AH8x227Sch0tBQFP0hQC2GEBoxmMp4UMXw8njtlR/3HZ3e0ZDJKvBJ/fgUvXsTDi9vus23tM/bjZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519224966; cv=none;
         d=google.com; s=arc-20160816;
-        b=C2qYjFjiLTZpQyQxXyTyOu82xgoah5LJ28Wm9K4xPXkGYKEH5//UUunyzy3Lz15Qgo
-         fe73P9xHuSSAJggcEuwQIswG8FJ34H46NbrF0VE+lBW6wfOOjJc4wjc/TfgRuzE1oFNM
-         Sy7h3D/U5xGzBJYVtj/ZAllIxK1RlktiLk9WeCQqDGboLsRMslDjjY4QdK34SjWJRd6V
-         HdtxJkeJ8ibDfa0X4G/2Mb0cJtxvbpg/17iwzpHOcRGFl05X1WMM7SwGFVnkXyH7Mc3a
-         EnJ19PZX5TKmiuU5yVRRoYZpZvJ1q8rm9om8ONoZeDlbBi9mWShqcSpj0lNS/cNL4Mdw
-         M8zA==
+        b=JRf2M1ZZQ4/E0nUykhmktVZfQwxPQrJPFs7BReiPQ05TjZKyQWehKgvux1dfLAqjG6
+         BkF0wF+l9f9mnFRX7P5VmIzcxCEqoY83R8vff+Oe3WwtOE6tcKNR6A7GepitrzHioGVi
+         QGmL3pWWVue5vqWsZ2wSXoH4bZKABOPTgmwb6X4nDNDXi/Mylfu+ZvRIE76canK6fJaY
+         HSU/eaXuib+ZqHO9+zXZ4z0E1yRPmtNa409gi4ogSwlm8ZcfgvL6EqTdSjer0eQc/qrD
+         B6mk5IMzwAgPykYlwVMouxVc8geg+YbIvOflcrccoGK72r5O9hlboH7lF9TfLUl+QbUA
+         0KPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=My0Y7cjct5gMcofuRdT/TMuxdaCuuwcOCok22TdhQvA=;
-        b=pZiYWSgVjxTMA4m4H8FswL3soK04MjWy2nYSeeE+7/JdSmEYBiCxlCHX9T/C9ekcVl
-         ZJNl/RALsK2O7BkkbqUnzvt/Aj0OSSH5ZUJ2Cvo/buWdQ2mRbM5JKQGWHnSWXOP8jPZj
-         5o9L1k2crY6cXc5tDuKG4N1b+XuT7F8g8/x/xKJM7IRSKyzlWexHaR21qp2Vi0Leuwh1
-         PZ1Z8CIeImaAmcItXB3ecr2zInPSr+1DnzsrOos20jv4x28FxPw7Jm1DkuFEEGKT/1cK
-         JRC4/2RocNy0/OoW/IHs/6mfH9hI+TuO/JWY3PZuqIIc/AebI6Wg9n3uBVsGVkxCBQMQ
-         VTKQ==
+        bh=ROLfIujIxGgXBYkZ9XBsMoCYyAz6jbwvTxn4Cz5wcCc=;
+        b=Gpi4hC2YxV/eEvgE038fJQ71EcQzLbOwOWKGqEV9ZToq7rzuyMquH+rIoLrxtE8jyA
+         tQwuYgX2rwbzBNDcaE3kskFsA7en2yWoPAMckIE/iEqjVk1hk0LooaKlhFp3BAWd2JN8
+         3G9TNKA+DlIIHWj5qLmXySAT0+/Y4z6QNR0/e6yJtK1GHk9MfDUz4yegDRJtS75YVaC/
+         T9XFQDyWWT58Wycg2UnTAHAlvO5CQPVzIPibGGMCOK7jrq1c0P6Hp3xGgTiqcw6Ti0D+
+         tYYpdchj5YxtVmATsPqmk6fk/M4vYqJLInrXUHI9cy2LYRiuAQQ7Rs2wbl5z4X3UiGjr
+         fMfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935626AbeBUOzg (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 09:55:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
+        id S937392AbeBUO4G (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 09:56:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934833AbeBUOzf (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:55:35 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75726205F4
+        id S936893AbeBUO4E (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:56:04 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770B1205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v2 02/17] selftests: ftrace: Add probe event argument syntax testcase
-Date: Wed, 21 Feb 2018 23:55:06 +0900
-Message-Id: <151922490640.6217.5972817162012775601.stgit@devbox>
+Subject: [PATCH v2 03/17] selftests: ftrace: Add a testcase for string type with kprobe_event
+Date: Wed, 21 Feb 2018 23:55:40 +0900
+Message-Id: <151922494028.6217.2260900936608276328.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <151922484560.6217.1143686155616343906.stgit@devbox>
 References: <151922484560.6217.1143686155616343906.stgit@devbox>
@@ -54,122 +54,71 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593022864315712820?=
-X-GMAIL-MSGID: =?utf-8?q?1593022864315712820?=
+X-GMAIL-THRID: =?utf-8?q?1593022838638842956?=
+X-GMAIL-MSGID: =?utf-8?q?1593022838638842956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a testcase for probe event argument syntax which
-ensures the kprobe_events interface correctly parses
-given event arguments.
+Add a testcase for string type with kprobe event.
+This tests good/bad syntax combinations and also
+the traced data is correct in several way.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |   97 ++++++++++++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   46 ++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
 new file mode 100644
-index 000000000000..231bcd2c4eb5
+index 000000000000..5ba73035e1d9
 --- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -0,0 +1,97 @@
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -0,0 +1,46 @@
 +#!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event argument syntax
++# description: Kprobe event string type argument
 +
 +[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
 +
 +echo 0 > events/enable
 +echo > kprobe_events
 +
-+PROBEFUNC="vfs_read"
-+GOODREG=
-+BADREG=
-+GOODSYM="_sdata"
-+if ! grep -qw ${GOODSYM} /proc/kallsyms ; then
-+  GOODSYM=$PROBEFUNC
-+fi
-+BADSYM="deaqswdefr"
-+SYMADDR=0x`grep -w ${GOODSYM} /proc/kallsyms | cut -f 1 -d " "`
-+GOODTYPE="x16"
-+BADTYPE="y16"
-+
 +case `uname -m` in
-+x86_64|i[3456]86)
-+  GOODREG=%ax
-+  BADREG=%ex
++x86_64)
++  ARG2=%si
++  OFFS=8
++;;
++i[3456]86)
++  ARG2=%cx
++  OFFS=4
 +;;
 +aarch64)
-+  GOODREG=%x0
-+  BADREG=%ax
++  ARG2=%x1
++  OFFS=8
 +;;
 +arm*)
-+  GOODREG=%r0
-+  BADREG=%ax
++  ARG2=%r1
++  OFFS=4
 +;;
++*)
++  echo "Please implement other architecture here"
++  exit_untested
 +esac
 +
-+test_goodarg() # Good-args
-+{
-+  while [ "$1" ]; do
-+    echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
++: "Test get argument (1)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
 +
-+test_badarg() # Bad-args
-+{
-+  while [ "$1" ]; do
-+    ! echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
++echo 0 > events/kprobes/testprobe/enable
++: "Test get argument (2)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test1 test2 >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
 +
-+echo > kprobe_events
-+
-+: "Register access"
-+test_goodarg ${GOODREG}
-+test_badarg ${BADREG}
-+
-+: "Symbol access"
-+test_goodarg "@${GOODSYM}" "@${SYMADDR}" "@${GOODSYM}+10" "@${GOODSYM}-10"
-+test_badarg "@" "@${BADSYM}" "@${GOODSYM}*10" "@${GOODSYM}/10" \
-+	    "@${GOODSYM}%10" "@${GOODSYM}&10" "@${GOODSYM}|10"
-+
-+: "Stack access"
-+test_goodarg "\$stack" "\$stack0" "\$stack1"
-+test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
-+
-+: "Retval access"
-+echo "r ${PROBEFUNC} \$retval" > kprobe_events
-+! echo "p ${PROBEFUNC} \$retval" > kprobe_events
-+
-+: "Comm access"
-+test_goodarg "\$comm"
-+
-+: "Indirect memory access"
-+test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
-+	"+0(\$stack1)" "+10(@${GOODSYM}-10)" "+0(+10(+20(\$stack)))"
-+test_badarg "+(${GOODREG})" "(${GOODREG}+10)" "-(${GOODREG})" "(${GOODREG})" \
-+	"+10(\$comm)" "+0(${GOODREG})+10"
-+
-+: "Name assignment"
-+test_goodarg "varname=${GOODREG}"
-+test_badarg "varname=varname2=${GOODREG}"
-+
-+: "Type syntax"
-+test_goodarg "${GOODREG}:${GOODTYPE}"
-+test_badarg "${GOODREG}::${GOODTYPE}" "${GOODREG}:${BADTYPE}" \
-+	"${GOODTYPE}:${GOODREG}"
-+
-+: "Combination check"
-+
-+test_goodarg "\$comm:string" "+0(\$stack):string"
-+test_badarg "\$comm:x64" "\$stack:string" "${GOODREG}:string"
-+
++echo 0 > events/enable
 +echo > kprobe_events
 
