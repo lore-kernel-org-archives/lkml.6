@@ -1,308 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937185AbeBUOzq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:55:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936922AbeBUOzo (ORCPT
+        id S937363AbeBUO4D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:56:03 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33288 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936893AbeBUOzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:55:44 -0500
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To: mpe@ellerman.id.au
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        benh@kernel.crashing.org,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH V2] powerpc/powernv : Add support to enable sensor groups
-Date: Wed, 21 Feb 2018 20:25:14 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18022114-0040-0000-0000-00000436191F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022114-0041-0000-0000-000020D82E46
-Message-Id: <1519224914-24596-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=1
- malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802210181
+        Wed, 21 Feb 2018 09:55:37 -0500
+X-Google-Smtp-Source: AH8x225lhvo8gFx6cJVl2BGNwBcOfWgdKu9xJN5qkOdx02/WrP0L9MSbGIdv2hNyJK04P83tiAX0IQ==
+Date: Wed, 21 Feb 2018 20:25:26 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
+Message-ID: <20180221145526.6kr7kx5dwg5lzyvg@linaro.org>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-9-manivannan.sadhasivam@linaro.org>
+ <CAOFm3uEYhMxMz5QHDhOtpzEsrwJPrOdqLbGWTqveuNMtR_FVWA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOFm3uEYhMxMz5QHDhOtpzEsrwJPrOdqLbGWTqveuNMtR_FVWA@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds support to enable/disable a sensor group. This can be used to
-select the sensor groups that needs to be copied to main memory by
-OCC. Sensor groups like power, temperature, current, voltage,
-frequency, utilization can be enabled/disabled at runtime.
+Hi Philippe,
+On Tue, Feb 20, 2018 at 08:55:57AM +0100, Philippe Ombredanne wrote:
+> Manivannan,
+> 
+> On Sat, Feb 17, 2018 at 9:44 PM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> > Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> > controlling the gpio shares the same register range with pinctrl block.
+> >
+> > GPIO registers are organized as 6 banks and each bank controls the
+> > maximum of 32 gpios.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> <snip>
+> 
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-owl.c
+> > @@ -0,0 +1,258 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> 
+> <snip>
+> 
+> > +MODULE_LICENSE("GPL v2");
+> 
+> Please sync this with your SPDX id above. nodule.h has the doc on the
+> meaning of MODULE_LICENSE macros.
+> Here you have stated a combo of GPL-2.0 and GPL-2.0 or later
+> 
+Sorry. It should be MODULE_LICENSE("GPL"). Will get it fixed in next revision.
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
-Changes from V1:
-- Rebase on master
-- Add documentation
-
- .../ABI/testing/sysfs-firmware-opal-sensor-groups  |  34 ++++++
- arch/powerpc/include/asm/opal-api.h                |   4 +-
- arch/powerpc/include/asm/opal.h                    |   1 +
- .../powerpc/platforms/powernv/opal-sensor-groups.c | 123 ++++++++++++++++-----
- arch/powerpc/platforms/powernv/opal-wrappers.S     |   1 +
- 5 files changed, 132 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
-
-diff --git a/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups b/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
-new file mode 100644
-index 0000000..81081de
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
-@@ -0,0 +1,34 @@
-+What:		/sys/firmware/opal/sensor_groups
-+Date:		January 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sensor groups directory for POWER9 powernv servers
-+
-+		Each folder in this directory contains a sensor group
-+		which are classified based on type of the sensor
-+		like power, temperature, frequency, current, etc. They
-+		can also indicate the group of sensors belonging to
-+		different owners like CSM, Profiler, Job-Scheduler
-+
-+What:		/sys/firmware/opal/sensor_groups/<sensor_group_name>/clear
-+Date:		Januaury 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sysfs file to clear the min-max of all the sensors
-+		belonging to the group.
-+
-+		Writing 1 to this file will clear the minimum and
-+		maximum values of all the sensors in the group. The
-+		min-max of a sensor is the historical minimum and
-+		maximum value of the sensor cached by OCC.
-+
-+What:		/sys/firmware/opal/sensor_groups/<sensor_group_name>/enable
-+Date:		Januaury 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sysfs file to enable/disable the sensor-group
-+
-+		Writing 0 value to this file will disable the copying
-+		of the sensor-group to main memory by OCC. And writing
-+		1 to this file will enable the sensor-group copying.
-+		By default all the sensor-groups are enabled and will
-+		be copied to main memory. This file can be used to
-+		increase the update frequency of selective
-+		sensor-groups.
-diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-index 94bd1bf..b6bbbd8 100644
---- a/arch/powerpc/include/asm/opal-api.h
-+++ b/arch/powerpc/include/asm/opal-api.h
-@@ -204,7 +204,9 @@
- #define OPAL_NPU_SPA_SETUP			159
- #define OPAL_NPU_SPA_CLEAR_CACHE		160
- #define OPAL_NPU_TL_SET				161
--#define OPAL_LAST				161
-+#define OPAL_SENSOR_READ_U64			162
-+#define OPAL_SENSOR_GROUP_ENABLE		163
-+#define OPAL_LAST				163
- 
- /* Device tree flags */
- 
-diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-index 12e70fb..e708c41 100644
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -286,6 +286,7 @@ int64_t opal_imc_counters_init(uint32_t type, uint64_t address,
- int opal_get_power_shift_ratio(u32 handle, int token, u32 *psr);
- int opal_set_power_shift_ratio(u32 handle, int token, u32 psr);
- int opal_sensor_group_clear(u32 group_hndl, int token);
-+int opal_sensor_group_enable(u32 group_hndl, int token, bool enable);
- 
- s64 opal_signal_system_reset(s32 cpu);
- 
-diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-index 7e5a235..1a3359d 100644
---- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-+++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-@@ -24,6 +24,8 @@
- struct sg_attr {
- 	u32 handle;
- 	struct kobj_attribute attr;
-+	u32 opal_no;
-+	int enable;
- };
- 
- static struct sensor_group {
-@@ -32,34 +34,44 @@ struct sg_attr {
- 	struct sg_attr *sgattrs;
- } *sgs;
- 
--static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
--			const char *buf, size_t count)
-+static int sensor_group_clear(u32 handle)
- {
--	struct sg_attr *sattr = container_of(attr, struct sg_attr, attr);
- 	struct opal_msg msg;
--	u32 data;
--	int ret, token;
--
--	ret = kstrtoint(buf, 0, &data);
--	if (ret)
--		return ret;
--
--	if (data != 1)
--		return -EINVAL;
-+	int token, ret;
- 
- 	token = opal_async_get_token_interruptible();
--	if (token < 0) {
--		pr_devel("Failed to get token\n");
-+	if (token < 0)
- 		return token;
-+
-+	ret = opal_sensor_group_clear(handle, token);
-+	if (ret == OPAL_ASYNC_COMPLETION) {
-+		ret = opal_async_wait_response(token, &msg);
-+		if (ret) {
-+			pr_devel("Failed to wait for the async response\n");
-+			ret = -EIO;
-+			goto out;
-+		}
-+		ret = opal_error_code(opal_get_async_rc(msg));
-+	} else {
-+		ret = opal_error_code(ret);
- 	}
- 
--	ret = mutex_lock_interruptible(&sg_mutex);
--	if (ret)
--		goto out_token;
-+out:
-+	opal_async_release_token(token);
-+	return ret;
-+}
-+
-+static int sensor_group_enable(u32 handle, int enable)
-+{
-+	struct opal_msg msg;
-+	int token, ret;
-+
-+	token = opal_async_get_token_interruptible();
-+	if (token < 0)
-+		return token;
- 
--	ret = opal_sensor_group_clear(sattr->handle, token);
--	switch (ret) {
--	case OPAL_ASYNC_COMPLETION:
-+	ret = opal_sensor_group_enable(handle, token, enable);
-+	if (ret == OPAL_ASYNC_COMPLETION) {
- 		ret = opal_async_wait_response(token, &msg);
- 		if (ret) {
- 			pr_devel("Failed to wait for the async response\n");
-@@ -67,39 +79,90 @@ static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			goto out;
- 		}
- 		ret = opal_error_code(opal_get_async_rc(msg));
--		if (!ret)
--			ret = count;
-+	} else {
-+		ret = opal_error_code(ret);
-+	}
-+
-+out:
-+	opal_async_release_token(token);
-+	return ret;
-+}
-+
-+static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	struct sg_attr *sattr = container_of(attr, struct sg_attr, attr);
-+	u32 data;
-+	int ret;
-+
-+	ret = kstrtoint(buf, 0, &data);
-+	if (ret)
-+		return ret;
-+
-+	ret = mutex_lock_interruptible(&sg_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = -EINVAL;
-+	switch (sattr->opal_no) {
-+	case OPAL_SENSOR_GROUP_CLEAR:
-+		if (data == 1)
-+			ret = sensor_group_clear(sattr->handle);
- 		break;
--	case OPAL_SUCCESS:
--		ret = count;
-+	case OPAL_SENSOR_GROUP_ENABLE:
-+		if (data == 0 || data == 1) {
-+			if (data != sattr->enable) {
-+				ret = sensor_group_enable(sattr->handle, data);
-+				if (!ret)
-+					sattr->enable = data;
-+			} else {
-+				ret = 0;
-+			}
-+		}
- 		break;
- 	default:
--		ret = opal_error_code(ret);
-+		break;
- 	}
- 
--out:
-+	if (!ret)
-+		ret = count;
-+
- 	mutex_unlock(&sg_mutex);
--out_token:
--	opal_async_release_token(token);
- 	return ret;
- }
- 
-+static ssize_t sg_show(struct kobject *kobj, struct kobj_attribute *attr,
-+		       char *buf)
-+{
-+	struct sg_attr *sattr = container_of(attr, struct sg_attr, attr);
-+
-+	return sprintf(buf, "%d\n", sattr->enable);
-+}
-+
- static struct sg_ops_info {
- 	int opal_no;
- 	const char *attr_name;
- 	ssize_t (*store)(struct kobject *kobj, struct kobj_attribute *attr,
- 			const char *buf, size_t count);
-+	ssize_t (*show)(struct kobject *kobj, struct kobj_attribute *attr,
-+			char *buf);
-+	umode_t mode;
- } ops_info[] = {
--	{ OPAL_SENSOR_GROUP_CLEAR, "clear", sg_store },
-+	{ OPAL_SENSOR_GROUP_CLEAR, "clear", sg_store, NULL, 0220 },
-+	{ OPAL_SENSOR_GROUP_ENABLE, "enable", sg_store, sg_show, 0660 },
- };
- 
- static void add_attr(int handle, struct sg_attr *attr, int index)
- {
- 	attr->handle = handle;
-+	attr->opal_no = ops_info[index].opal_no;
- 	sysfs_attr_init(&attr->attr.attr);
- 	attr->attr.attr.name = ops_info[index].attr_name;
--	attr->attr.attr.mode = 0220;
-+	attr->attr.attr.mode = ops_info[index].mode;
- 	attr->attr.store = ops_info[index].store;
-+	attr->attr.show = ops_info[index].show;
-+	if (attr->opal_no == OPAL_SENSOR_GROUP_ENABLE)
-+		attr->enable = 1;
- }
- 
- static int add_attr_group(const __be32 *ops, int len, struct sensor_group *sg,
-diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
-index 1b2936b..90c2b40 100644
---- a/arch/powerpc/platforms/powernv/opal-wrappers.S
-+++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
-@@ -323,3 +323,4 @@ OPAL_CALL(opal_sensor_group_clear,		OPAL_SENSOR_GROUP_CLEAR);
- OPAL_CALL(opal_npu_spa_setup,			OPAL_NPU_SPA_SETUP);
- OPAL_CALL(opal_npu_spa_clear_cache,		OPAL_NPU_SPA_CLEAR_CACHE);
- OPAL_CALL(opal_npu_tl_set,			OPAL_NPU_TL_SET);
-+OPAL_CALL(opal_sensor_group_enable,		OPAL_SENSOR_GROUP_ENABLE);
--- 
-1.8.3.1
+Thanks,
+Mani
+> -- 
+> Cordially
+> Philippe Ombredanne
