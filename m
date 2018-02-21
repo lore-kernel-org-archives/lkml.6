@@ -1,131 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeBUVjV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 16:39:21 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:45735 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeBUVjU (ORCPT
+        id S1751436AbeBUVjz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 16:39:55 -0500
+Received: from mail-it0-f41.google.com ([209.85.214.41]:33899 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeBUVjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 16:39:20 -0500
-X-Google-Smtp-Source: AH8x227QZjU2qkIHpXZ6o7gEsyMzTbNUUYUgYPJiQ6rqcZWyF9lgOg51TCRexMN+TE6hEn0wYmueRzW82zUrbWERuWk=
+        Wed, 21 Feb 2018 16:39:54 -0500
+X-Google-Smtp-Source: AH8x226yov9F4vnSrvuB6VfhuEd/ZX14okoaR1RkB+5QS7Gc0/tM/6hRly6twarslXgHMJpYckAc5+cF8mTTq21C71I=
 MIME-Version: 1.0
-In-Reply-To: <5A8AF1F802000078001A91E1@prv-mh.provo.novell.com>
-References: <5A8AF1F802000078001A91E1@prv-mh.provo.novell.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 21 Feb 2018 13:39:18 -0800
-X-Google-Sender-Auth: g3fwGE08kFtiMPgeWQNuDK_OqX8
-Message-ID: <CAGXu5jLB9WXdaHg7ox85BftejyHUBHrUe7EpCLU08e5eRLstLQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/asm: improve how GEN_*_SUFFIXED_RMWcc() specify clobbers
-To: Jan Beulich <JBeulich@suse.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180221175429.GC9989@pd.tnic>
+References: <20180219202826.19797-1-bp@alien8.de> <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
+ <20180220192956.si2a6m3ckskexvte@treble> <20180220204435.GC24320@pd.tnic>
+ <20180221091553.gxnvhbitiewo2mjc@gmail.com> <20180221175429.GC9989@pd.tnic>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Feb 2018 13:39:52 -0800
+X-Google-Sender-Auth: MmP30eyoL4QTN_Wu9FFRetwJKZI
+Message-ID: <CA+55aFxOcAdN4mnK49F1ObiXoyB2xaREd04JGosgxTd_ufuzpg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code: section
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 6:49 AM, Jan Beulich <JBeulich@suse.com> wrote:
-> Commit df3405245a ("x86/asm: Add suffix macro for GEN_*_RMWcc()")
-> introduced "suffix" RMWcc operations, adding bogus clobber specifiers:
-> For one, on x86 there's no point explicitly clobbering "cc". In fact,
+On Wed, Feb 21, 2018 at 9:54 AM, Borislav Petkov <bp@alien8.de> wrote:
+>
+> Ok, lemme run it by Linus too as he probably stares at this part of the
+> output a *lot* :-)
 
-Do you have more details on this? It seems from the GCC clobbers
-docs[1] that "cc" is needed for asm that changes the flags register.
-Given the explicit subl and decl being used for these macros, it seems
-needed to me.
+Less than I used to, since there are others who are pretty good at
+decoding them, but yes...
 
-> with gcc properly fixed, this results in an overlap being detected by
-> the compiler between outputs and clobbers. Further more it seems bad
+> Anyway, here's a 64-bit splat. I'm basically dumping opcode bytes
+> everytime we dump RIP.
 
-Do you mean the flags register is already being included as an
-implicit clobber because there is an output of any kind? I can't find
-documentation that says this is true. If anything it looks like it
-could be "improved" from a full "cc" clobber to an output operand
-flag, like =@ccs.
+So I think that's probably a good idea, but the way it ends up being
+repeated is really confusing. Particularly when you now do it for the
+user code too - which might be occasionally useful, but your example
+also shows how there are now _three_ code lines due to the duplication
+at the end (for "maybe the first one scrolled off the screen" and the
+user code).
 
-> practice to me to have clobber specification and use of the clobbered
-> register(s) disconnected - it should rather be at the invocation place
-> of that GEN_{UN,BIN}ARY_SUFFIXED_RMWcc() macros that the clobber is
-> specified which this particular invocation needs.
->
-> Drop the "cc" clobber altogether and move the "cx" one to refcount.h.
->
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> ---
->  arch/x86/include/asm/refcount.h |    4 ++--
->  arch/x86/include/asm/rmwcc.h    |   16 ++++++++--------
->  2 files changed, 10 insertions(+), 10 deletions(-)
->
-> --- 4.16-rc2/arch/x86/include/asm/refcount.h
-> +++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/refcount.h
-> @@ -67,13 +67,13 @@ static __always_inline __must_check
->  bool refcount_sub_and_test(unsigned int i, refcount_t *r)
->  {
->         GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-> -                                 r->refs.counter, "er", i, "%0", e);
-> +                                 r->refs.counter, "er", i, "%0", e, "cx");
->  }
->
->  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
->  {
->         GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-> -                                r->refs.counter, "%0", e);
-> +                                r->refs.counter, "%0", e, "cx");
->  }
->
->  static __always_inline __must_check
-> --- 4.16-rc2/arch/x86/include/asm/rmwcc.h
-> +++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/rmwcc.h
-> @@ -2,8 +2,7 @@
->  #ifndef _ASM_X86_RMWcc
->  #define _ASM_X86_RMWcc
->
-> -#define __CLOBBERS_MEM         "memory"
-> -#define __CLOBBERS_MEM_CC_CX   "memory", "cc", "cx"
-> +#define __CLOBBERS_MEM(clb...) "memory", ## clb
+And the "executive summary" used to be a dense one-liner (to not
+scroll the non-summary away), now it's generally four lines on the
+screen (you also made the RIP/RSP be now two lines, and the Code line
+is usually two lines because it's so long).
 
-This leaves a trailing comma in the non-cx case. I thought that caused
-me problems in the past, but maybe that's GCC version-specific?
+So my gut feel is that yes, this is moving in the right direction, but
+I also really think that it now makes the normal oops too big to fit
+on a screen.
 
->  #if !defined(__GCC_ASM_FLAG_OUTPUTS__) && defined(CC_HAVE_ASM_GOTO)
->
-> @@ -40,18 +39,19 @@ do {                                                                        \
->  #endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) || !defined(CC_HAVE_ASM_GOTO) */
->
->  #define GEN_UNARY_RMWcc(op, var, arg0, cc)                             \
-> -       __GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM)
-> +       __GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
->
-> -#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc)            \
-> +#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc, clobbers...)\
->         __GEN_RMWcc(op " " arg0 "\n\t" suffix, var, cc,                 \
-> -                   __CLOBBERS_MEM_CC_CX)
-> +                   __CLOBBERS_MEM(clobbers))
->
->  #define GEN_BINARY_RMWcc(op, var, vcon, val, arg0, cc)                 \
->         __GEN_RMWcc(op __BINARY_RMWcc_ARG arg0, var, cc,                \
-> -                   __CLOBBERS_MEM, vcon (val))
-> +                   __CLOBBERS_MEM(), vcon (val))
->
-> -#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc)        \
-> +#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc,        \
-> +                                 clobbers...)                          \
->         __GEN_RMWcc(op __BINARY_RMWcc_ARG arg0 "\n\t" suffix, var, cc,  \
-> -                   __CLOBBERS_MEM_CC_CX, vcon (val))
-> +                   __CLOBBERS_MEM(clobbers), vcon (val))
->
->  #endif /* _ASM_X86_RMWcc */
+That matters, because we still end up having the "take a picture of
+the oops" issue for hard hangs etc that don't survive in the logs.
 
-Anyway, I'm fine to clean it up, sure, but I'd like more details on
-why this doesn't break things. :)
+Do I know what the right answer is? No. But I suspect at the very
+least we would want to get rid of the RSP line from show_ip(), and
+make that part of the regular regs. That would make the summary one
+line less.
 
-Thanks!
+Hmm. The Code: line actually ends up being *three* lines on the
+default 80x25 screen, so in your 64-bit example, you actually get
+something like this:
 
--Kees
+     ? preempt_count_sub+0xa8/0x100
+     vfs_write+0xc0/0x190
+     SyS_write+0x64/0xe0
+     ? trace_hardirqs_off_thunk+0x1a/0x1c
+     do_syscall_64+0x76/0x140
+     entry_SYSCALL_64_after_hwframe+0x42/0xb7
+    RIP: 0033:0x7ffff74b9620
+    RSP: 002b:00007fffffffe7a8 EFLAGS: 00000246
+    Code: ff 73 01 c3 48 8b 0d 68 98 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66
+    0f 1f 44 00 00 83 3d bd f1 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d
+    01 f0 ff ff 73 31 c3 48 83 ec 08 e8 ce 8f 01 00 48 89 04
+     ORIG_RAX: 0000000000000001
+    RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007ffff74b9620
+    RDX: 0000000000000002 RSI: 0000000000705408 RDI: 0000000000000001
+    RBP: 0000000000705408 R08: 000000000000000a R09: 00007ffff7fdb700
+    R10: 00007ffff77826a0 R11: 0000000000000246 R12: 00007ffff77842a0
+    R13: 0000000000000002 R14: 0000000000000001 R15: 0000000000000000
+    RIP: 0010:sysrq_handle_crash+0x17/0x20
+    RSP: 0018:ffffc90000c23df0 EFLAGS: 00010246
+    Code: eb d1 e8 fd ca b6 ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+    44 00 00 e8 f6 de bc ff c7 05 84 0d 1a 01 01 00 00 00 0f ae f8 <c6> 04
+    25 00 00 00 00 01 c3 0f 1f 44 00 00 e8 86 df c1 ff fb 66
+    CR2: 0000000000000000
+    ---[ end trace e17dc9a4aa5cc4d9 ]---
+    Kernel panic - not syncing: Fatal exception
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+showing with a hung kernel. And most of the above is actually
+completely useless. Those are the *usermode* registers it shows, not
+the kernel registers at the time of the crash (the final rip/rsp/code
+lines are for the actual kernel crash, but I'm talking about the
+register dump above it).
 
--- 
-Kees Cook
-Pixel Security
+So notice how most of the *useful* data has actually scrolled off the
+screen and is all gone because the machine is hung. Instead, we've
+added stuff that doesn't help at all, usually.
+
+It's not just that last patch, obviously. The big hunk o fuser
+register dumping is actually from Josh's trace improvements. But the
+above really is a great example of how we have made oopses *harder* to
+read by trying to add more data. They have gotten messier, but they
+have also gotten so verbose that the *good* stuff has all scrolled
+away.
+
+So I think we should take a hard look at that "more data is better".
+Look at the above 25 lines and tell me - is that actually 25 useful
+lines for debugging a crash in sysrq_handle_crash?
+
+No. The only really _useful_ lines above are
+
+    RIP: 0010:sysrq_handle_crash+0x17/0x20
+    RSP: 0018:ffffc90000c23df0 EFLAGS: 00010246
+    Code: eb d1 e8 fd ca b6 ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+    44 00 00 e8 f6 de bc ff c7 05 84 0d 1a 01 01 00 00 00 0f ae f8 <c6> 04
+    25 00 00 00 00 01 c3 0f 1f 44 00 00 e8 86 df c1 ff fb 66
+    CR2: 0000000000000000
+
+which are actually about the crash. The rest is almost entirely useless.
+
+Do I know what the corrent answer is? No.
+
+              Linus
