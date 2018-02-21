@@ -1,44 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeBUS30 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:29:26 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:57307 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeBUS3Y (ORCPT
+        id S1752891AbeBUSb7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:31:59 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35030 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752521AbeBUSb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:29:24 -0500
-Date: Wed, 21 Feb 2018 19:29:18 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
- (CEU)
-Message-ID: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
-References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Feb 2018 13:31:57 -0500
+X-Google-Smtp-Source: AG47ELt/c/CrFwP5AjAMDmEkU44Kx3KFDQT1Q/8ykJ8YMccoP5x/rfUTDSNycR8pBk9TyooYcox2jg==
+Date: Wed, 21 Feb 2018 10:31:55 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jimmy.vance@hpe.com
+Subject: Re: [PATCH] watchdog/hpwdt: update maintainer information
+Message-ID: <20180221183155.GA14769@roeck-us.net>
+References: <20180221092201.8031-1-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180221092201.8031-1-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
-> Add Capture Engine Unit (CEU) node to device tree.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+On Wed, Feb 21, 2018 at 02:22:01AM -0700, Jerry Hoemann wrote:
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-This patch depends on the binding for "renesas,r7s72100-ceu".
-Please repost or otherwise ping me once that dependency has been accepted.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9a7f76eadae9..98b2ef91487d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6267,7 +6267,7 @@ S:	Odd Fixes
+>  F:	drivers/media/usb/hdpvr/
+>  
+>  HEWLETT PACKARD ENTERPRISE ILO NMI WATCHDOG DRIVER
+> -M:	Jimmy Vance <jimmy.vance@hpe.com>
+> +M:	Jerry Hoemann <jerry.hoemann@hpe.com>
+>  S:	Supported
+>  F:	Documentation/watchdog/hpwdt.txt
+>  F:	drivers/watchdog/hpwdt.c
+> -- 
+> 2.13.6
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
