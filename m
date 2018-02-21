@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224rzbMjkHZVT9hRH/LwaknzJlMvz5+iAIVW+LFztrmfcMO/PdJ2E8h/J+K/Rgf/vRhPtRak
-ARC-Seal: i=1; a=rsa-sha256; t=1519217878; cv=none;
+X-Google-Smtp-Source: AH8x224X26yciFBSu4jGcg5jkb3XfcMRvsnrFSL/KWxQO811lDgQjBWO1N5YgXM0E5acIwwusb7K
+ARC-Seal: i=1; a=rsa-sha256; t=1519217875; cv=none;
         d=google.com; s=arc-20160816;
-        b=FaoxsUY2yG/5e/jscQtn5ABl3jp+lhoIGQX1OfuiE837J+bOMDpHjbC2x3ocdniMzB
-         KK3lW6tVhOni1D4M9/uv8lpwk8nTUL05ePXwpBgqEGAhZjCiF7x13pviAXrRqT3JWMkF
-         452U8+q+WNXdTok6j2SEWXC+T2W5SuYvhniB80D0BIv12HC8k/bJPaT/LwIj/sM1Ryuu
-         sI1iJj3FDnqSxj/ffyaZzqFS97gvgLTk9fT/qHhZLijpREKb53d1ieWNd80Yj37qDxCm
-         +flICC75MKR5BzbyCe1hTGfnlotGAzUI/Xn2xC04JmepUtCWnGSrsCPBNomEElEt9QRU
-         XcYQ==
+        b=P2JyEZbfg89FmYvZwvF7YfxZX/mKmgygLHZftlMLPMO9OayYa1NUm1C9G8oidFFMFg
+         gAFKYiIdVALi9LXB+1/5TrBVwXDyPca5ZL1TzbBO2EYIF9lw4AxWj5ljRPhoTXoylUii
+         JrVmd4ePhaWRVaNryXsEyaMZLcWTeRbN6ovKfwBUNBHSE009sRYx7H0Y3O+qxxYKiYuX
+         QzmJ5/J9cEilmMpgW45NakGk9rczTwxhxCf/CqRWuTwiEY7ufPupm20Bc75e1OgmDmjj
+         ltOwLPXM565EN+i7dxZsvCPPvp/BmZ9jBGwf+iYN3xoukQ2QQfoxOQ0z11RyijjgNxMT
+         om5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=72VSGO2dFgtSUsFYyqF9kGtz7Mv+9pYSTaxnOEKFuZI=;
-        b=fLOEcDNfVgilrRwVvoo8YXX6tPIhiy6p+Qx4TlMgBhtkn0IlmqIZn8cl7KT+2ec9LW
-         XzzRf9nXhpjTdThxoIwLT6ed36x3cSQjTwCILZTSwaFmaJvPXacWZlvJBsbqvknPSA2+
-         EzbCcA7FMymn/6D0QfII6S1Fge2X4L4RBZyhuKBjTljatAEVwuGDnzhXiVHK7PTSsZYC
-         tcv7gq6TL5TAaWRHx0aRZ+U4iLLiLsoa70Zah71E7F7RbuY/VIpa9nNeNKCJvV4XXBqW
-         ClKP+wNgclNkgwsJ/fGa94vGQfBhZOoP2Z8YLuoXdKsjejOt9XnVdrX95dNSqvrYxPXc
-         +6Bg==
+        bh=+fotsc9EUA++xrPCQbYUAtzrZFmv2zddeN3kZCZu54M=;
+        b=bsYxxCEfzCGuQCFuJeyfBXSnnjIPg1lOYVEwvy7666C3Q0St9xzlq7WchW96Wk2v/c
+         4CXFGAKci4LpnlqpbKX61Mpiy/UCPiXdp+yj5Z/ViLNJJPO5VVmlFfRF+cyhBjfz3CDK
+         BEtAo6GpehicXPZC6GjUBIVMTOq4ctidI8PD+AD3K8p2YvEpgh2N/YmHJfTxvNutDadm
+         JGyiWlREGJjhQIDrdFv9bJ0eJFu+YYyaf3coSr174HDeC3eJ5lP9YLaUxobZAliF3oXm
+         rMU43rIgiL797jkNZQ5iwYmeaolCUP2lVXPj4EQqEt9MuRaTX2JK7X/UfX+b/WnKl2er
+         7P/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.14 010/167] kselftest: fix OOM in memory compaction test
-Date: Wed, 21 Feb 2018 13:47:01 +0100
-Message-Id: <20180221124525.170302793@linuxfoundation.org>
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 001/167] tracing: Prevent PROFILE_ALL_BRANCHES when FORTIFY_SOURCE=y
+Date: Wed, 21 Feb 2018 13:46:52 +0100
+Message-Id: <20180221124524.709899387@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015263366853351?=
-X-GMAIL-MSGID: =?utf-8?q?1593015405674702468?=
+X-GMAIL-THRID: =?utf-8?q?1593015402937560884?=
+X-GMAIL-MSGID: =?utf-8?q?1593015402937560884?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +49,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 4c1baad223906943b595a887305f2e8124821dad upstream.
+commit 68e76e034b6b1c1ce2eece1ab8ae4008e14be470 upstream.
 
-Running the compaction_test sometimes results in out-of-memory
-failures. When I debugged this, it turned out that the code to
-reset the number of hugepages to the initial value is simply
-broken since we write into an open sysctl file descriptor
-multiple times without seeking back to the start.
+I regularly get 50 MB - 60 MB files during kernel randconfig builds.
+These large files mostly contain (many repeats of; e.g., 124,594):
 
-Adding the lseek here fixes the problem.
+In file included from ../include/linux/string.h:6:0,
+                 from ../include/linux/uuid.h:20,
+                 from ../include/linux/mod_devicetable.h:13,
+                 from ../scripts/mod/devicetable-offsets.c:3:
+../include/linux/compiler.h:64:4: warning: '______f' is static but declared in inline function 'strcpy' which is not static [enabled by default]
+    ______f = {     \
+    ^
+../include/linux/compiler.h:56:23: note: in expansion of macro '__trace_if'
+                       ^
+../include/linux/string.h:425:2: note: in expansion of macro 'if'
+  if (p_size == (size_t)-1 && q_size == (size_t)-1)
+  ^
 
-Cc: stable@vger.kernel.org
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Link: https://bugs.linaro.org/show_bug.cgi?id=3145
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+This only happens when CONFIG_FORTIFY_SOURCE=y and
+CONFIG_PROFILE_ALL_BRANCHES=y, so prevent PROFILE_ALL_BRANCHES if
+FORTIFY_SOURCE=y.
+
+Link: http://lkml.kernel.org/r/9199446b-a141-c0c3-9678-a3f9107f2750@infradead.org
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/vm/compaction_test.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/trace/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/vm/compaction_test.c
-+++ b/tools/testing/selftests/vm/compaction_test.c
-@@ -137,6 +137,8 @@ int check_compaction(unsigned long mem_f
- 	printf("No of huge pages allocated = %d\n",
- 	       (atoi(nr_hugepages)));
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -343,7 +343,7 @@ config PROFILE_ANNOTATED_BRANCHES
+ 	  on if you need to profile the system's use of these macros.
  
-+	lseek(fd, 0, SEEK_SET);
-+
- 	if (write(fd, initial_nr_hugepages, strlen(initial_nr_hugepages))
- 	    != strlen(initial_nr_hugepages)) {
- 		perror("Failed to write value to /proc/sys/vm/nr_hugepages\n");
+ config PROFILE_ALL_BRANCHES
+-	bool "Profile all if conditionals"
++	bool "Profile all if conditionals" if !FORTIFY_SOURCE
+ 	select TRACE_BRANCH_PROFILING
+ 	help
+ 	  This tracer profiles all branch conditions. Every if ()
