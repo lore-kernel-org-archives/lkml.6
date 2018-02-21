@@ -1,67 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937520AbeBUOQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:16:28 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42826 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935340AbeBUOQZ (ORCPT
+        id S937676AbeBUObK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:31:10 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:35632 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934310AbeBUObI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:16:25 -0500
-X-Google-Smtp-Source: AH8x2278pndCXC8A0qdc5CpoSEbiizgJHL9nzJEdkwipEBUETWX+rWagP6D9VgH4dQa8JCGN3hTF/g==
-Subject: Re: metag build errors in mainline kernel
-To: James Hogan <james.hogan@mips.com>
-Cc: linux-kernel@vger.kernel.org, linux-metag@vger.kernel.org
-References: <20180220234443.GA27059@roeck-us.net>
- <20180221122719.GI29460@jhogan-linux.mipstec.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <95906b76-6ce1-3f84-eaba-c29b4ae952eb@roeck-us.net>
-Date: Wed, 21 Feb 2018 06:16:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180221122719.GI29460@jhogan-linux.mipstec.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 21 Feb 2018 09:31:08 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v2] rtc: m48t59: use generic nvmem
+Date: Wed, 21 Feb 2018 15:30:55 +0100
+Message-Id: <20180221143055.22960-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 04:27 AM, James Hogan wrote:
-> On Tue, Feb 20, 2018 at 03:44:43PM -0800, Guenter Roeck wrote:
->> The following errors are seen when building the kernel with the latest
->> available metag toolchain (4.2.4 (IMG-1.4.0.700)). Kernel version tested
->> is (v4.16-rc2-64-gaf3e79d29555).
->>
->> metag:allmodconfig
->>
->> arch/metag/kernel/devtree.c:54: error: implicit declaration of function 'pr_info'
->>
->> arch/metag/kernel/perf/perf_event.c:831: error: label ‘out’ used but not defined
->> arch/metag/kernel/perf/perf_event.c:822: warning: unused variable ‘cpu’
-> 
-> Thanks, these are easy enough for me to fix up.
-> 
->>
->> metag:meta2_smp_defconfig
->>
->> kernel/time/hrtimer.c: In function 'hrtimer_run_softirq':
->> time/hrtimer.c:1431: error: unable to find a register to spill in class 'Yr_REGS'
->> time/hrtimer.c:1431: error: this is the insn:
->> (insn:HI 41 40 99 2 kernel/time/hrtimer.c:576 (set (mem/s/j:DI (plus:SI (reg/f:SI 15 D1.7 [orig:84 D.45290 ] [84])
->>                  (const_int 368 [0x170])) [0 <variable>.offset+0 S8 A128])
->> 	(reg:DI 99 [ <variable>.offset ])) 211 {*sto_di_1_1_off12} (nil)
->>      (expr_list:REG_DEAD (reg:DI 99 [ <variable>.offset ])
->> 	(nil)))
->> kernel/time/hrtimer.c:1431: confused by earlier errors, bailing out
-> 
-> Hmm.. ancient shelved toolchain. Perhaps this is the excuse we need to
-> say goodbye to arch/metag/...
-> 
+Instead of adding a binary sysfs attribute from the driver (which suffers
+from a race condition as the attribute appears after the device), use the
+core to register an nvmem device.
 
-Might be worth a thought. The metag toolchain doesn't even build anymore
-without tweaking. gcc 4.2.4 doesn't build with a modern gcc, the metag
-buildroot on github points to a no longer existing daily snapshot of
-uclibc, and ToT uclibc doesn't build with gcc 4.2.4.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
 
-Guenter
+Changes in v2:
+ - set nvmem_cfg.size once pdata->offset is defined
+
+ drivers/rtc/rtc-m48t59.c | 56 ++++++++++++++++++++----------------------------
+ 1 file changed, 23 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
+index e248e56ff8a1..c6af83505448 100644
+--- a/drivers/rtc/rtc-m48t59.c
++++ b/drivers/rtc/rtc-m48t59.c
+@@ -334,16 +334,16 @@ static const struct rtc_class_ops m48t02_rtc_ops = {
+ 	.set_time	= m48t59_rtc_set_time,
+ };
+ 
+-static ssize_t m48t59_nvram_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
+-				char *buf, loff_t pos, size_t size)
++static int m48t59_nvram_read(void *priv, unsigned int offset, void *val,
++			     size_t size)
+ {
+-	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
++	struct platform_device *pdev = priv;
++	struct device *dev = &pdev->dev;
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct m48t59_private *m48t59 = platform_get_drvdata(pdev);
+ 	ssize_t cnt = 0;
+ 	unsigned long flags;
++	u8 *buf = val;
+ 
+ 	spin_lock_irqsave(&m48t59->lock, flags);
+ 
+@@ -352,19 +352,19 @@ static ssize_t m48t59_nvram_read(struct file *filp, struct kobject *kobj,
+ 
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
+ 
+-	return cnt;
++	return 0;
+ }
+ 
+-static ssize_t m48t59_nvram_write(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
+-				char *buf, loff_t pos, size_t size)
++static int m48t59_nvram_write(void *priv, unsigned int offset, void *val,
++			      size_t size)
+ {
+-	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
++	struct platform_device *pdev = priv;
++	struct device *dev = &pdev->dev;
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct m48t59_private *m48t59 = platform_get_drvdata(pdev);
+ 	ssize_t cnt = 0;
+ 	unsigned long flags;
++	u8 *buf = val;
+ 
+ 	spin_lock_irqsave(&m48t59->lock, flags);
+ 
+@@ -373,18 +373,9 @@ static ssize_t m48t59_nvram_write(struct file *filp, struct kobject *kobj,
+ 
+ 	spin_unlock_irqrestore(&m48t59->lock, flags);
+ 
+-	return cnt;
++	return 0;
+ }
+ 
+-static struct bin_attribute m48t59_nvram_attr = {
+-	.attr = {
+-		.name = "nvram",
+-		.mode = S_IRUGO | S_IWUSR,
+-	},
+-	.read = m48t59_nvram_read,
+-	.write = m48t59_nvram_write,
+-};
+-
+ static int m48t59_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct m48t59_plat_data *pdata = dev_get_platdata(&pdev->dev);
+@@ -393,6 +384,14 @@ static int m48t59_rtc_probe(struct platform_device *pdev)
+ 	int ret = -ENOMEM;
+ 	char *name;
+ 	const struct rtc_class_ops *ops;
++	struct nvmem_config nvmem_cfg = {
++		.name = "m48t59-",
++		.word_size = 1,
++		.stride = 1,
++		.reg_read = m48t59_nvram_read,
++		.reg_write = m48t59_nvram_write,
++		.priv = pdev,
++	};
+ 
+ 	/* This chip could be memory-mapped or I/O-mapped */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -484,24 +483,16 @@ static int m48t59_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(m48t59->rtc))
+ 		return PTR_ERR(m48t59->rtc);
+ 
++	m48t59->rtc->nvram_old_abi = true;
+ 	m48t59->rtc->ops = ops;
+ 
+ 	ret = rtc_register_device(m48t59->rtc);
+ 	if (ret)
+ 		return ret;
+ 
+-	m48t59_nvram_attr.size = pdata->offset;
++	nvmem_cfg.size = pdata->offset;
++	rtc_nvmem_register(m48t59->rtc, &nvmem_cfg);
+ 
+-	ret = sysfs_create_bin_file(&pdev->dev.kobj, &m48t59_nvram_attr);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-static int m48t59_rtc_remove(struct platform_device *pdev)
+-{
+-	sysfs_remove_bin_file(&pdev->dev.kobj, &m48t59_nvram_attr);
+ 	return 0;
+ }
+ 
+@@ -513,7 +504,6 @@ static struct platform_driver m48t59_rtc_driver = {
+ 		.name	= "rtc-m48t59",
+ 	},
+ 	.probe		= m48t59_rtc_probe,
+-	.remove		= m48t59_rtc_remove,
+ };
+ 
+ module_platform_driver(m48t59_rtc_driver);
+-- 
+2.16.1
