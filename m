@@ -1,80 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932976AbeBUQf5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:35:57 -0500
-Received: from resqmta-po-12v.sys.comcast.net ([96.114.154.171]:37598 "EHLO
-        resqmta-po-12v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932880AbeBUQfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:35:55 -0500
-Date: Wed, 21 Feb 2018 10:35:51 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Shakeel Butt <shakeelb@google.com>
-cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] fs: fsnotify: account fsnotify metadata to
- kmemcg
-In-Reply-To: <20180221030101.221206-4-shakeelb@google.com>
-Message-ID: <alpine.DEB.2.20.1802211029080.13404@nuc-kabylake>
-References: <20180221030101.221206-1-shakeelb@google.com> <20180221030101.221206-4-shakeelb@google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S935924AbeBUQgC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:36:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932880AbeBUQf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:35:59 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13A2217B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x22490F15SHuwKx3DP60kYpGgvVni5zCo3qEYiAfwLWmYfAU3yGOZz3LLBX5ghNEXDOFXIy2Xqc+xQrleHLfjaAo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfMHdd0LGot/zrxQ4rqTs5cMhgsmTyr6RkLXbJGlFLQCfYwa8dFg4e+HbOtfk9LQUalzgc55rbeisRmT61RN7BuN3Lm0A8WLrvr+gM/thorQmEfim/TxQ
- +Hsrxz1298aUYuG29A5/aaEI2pL6+/88VsGGKIJpAWcbVPzjJxL1r6FxCmKt3yqBUMmgi06PEx1cR1ybU+ogzYLx4u4G9uU/au/ODQhzc+PvqbkYmeDHY/Bo
- Lv0e5Wa8smLdq59Y3pH62lb3FDi6CreNQJ1AN+uRatZDMzL47+DJC/2j5d/nM8UbXIW1Gn2Oitao9Ng7YyMA05+UPvjnbJVYNNPj0DX1NV0jXIviiFcfsrQd
- VRjeVPF3DCbg/PGuXOya797ODJ3f15ILaU0MaQ5Qe9Curie/ytTrNxaShFfFkm472AZfkN6I4FttP27c+U+4NLI4SuoKQkX6oROEw0YY4C5yBEPqbBWIJb+I
- z2Bf6dAmr0W2SubbKXWJXLyDSl7cCUT1lFL9EL/BhvUDxoyE7l9y7bjJrAc15BxlLvTiN3XJzxWdFN2GvjUCj818aATopYHFEbbrUhyr74xxtt15rZnrxuf3
- sHopa1fkoJwV1F9ptMeUp1zpJ1PZM1U9Ak9GxkrlrUGaz4chh83SDoPnhrXOKHAXsBY=
+In-Reply-To: <d636d1cb-88d9-8474-d5bc-fb2994108919@yandex-team.ru>
+References: <151670492223.658225.4605377710524021456.stgit@buzz>
+ <151670492913.658225.2758351129158778856.stgit@buzz> <5c19630f-7466-676d-dbbc-a5668c91cbcd@yandex-team.ru>
+ <20180220161634.517598ec63ec4a785c4c81cc@linux-foundation.org> <d636d1cb-88d9-8474-d5bc-fb2994108919@yandex-team.ru>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 21 Feb 2018 16:35:37 +0000
+X-Gmail-Original-Message-ID: <CALCETrXU5rq4HHvp2y0GZrvt85hRO=PEMakUQ938+mxF2xYwzw@mail.gmail.com>
+Message-ID: <CALCETrXU5rq4HHvp2y0GZrvt85hRO=PEMakUQ938+mxF2xYwzw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] kernel/fork: switch vmapped stack callation to __vmalloc_area()
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018, Shakeel Butt wrote:
-
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 6702a6a0bbb5..0d9493ebc7cd 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
->  	if (fanotify_is_perm_event(mask)) {
->  		struct fanotify_perm_event_info *pevent;
+On Wed, Feb 21, 2018 at 7:23 AM, Konstantin Khlebnikov
+<khlebnikov@yandex-team.ru> wrote:
 >
-> -		pevent = kmem_cache_alloc(fanotify_perm_event_cachep,
-> -					  GFP_KERNEL);
-> +		pevent = kmem_cache_alloc_memcg(fanotify_perm_event_cachep,
-> +						GFP_KERNEL, memcg);
->  		if (!pevent)
-
-#1
-
-> index 8b73332735ba..ed8e7b5f3981 100644
-> --- a/fs/notify/inotify/inotify_fsnotify.c
-> +++ b/fs/notify/inotify/inotify_fsnotify.c
-> @@ -98,7 +98,7 @@ int inotify_handle_event(struct fsnotify_group *group,
->  	i_mark = container_of(inode_mark, struct inotify_inode_mark,
->  			      fsn_mark);
 >
-> -	event = kmalloc(alloc_len, GFP_KERNEL);
-> +	event = kmalloc_memcg(alloc_len, GFP_KERNEL, group->memcg);
->  	if (unlikely(!event))
->  		return -ENOMEM;
+> On 21.02.2018 03:16, Andrew Morton wrote:
+>>
+>> On Tue, 23 Jan 2018 16:57:21 +0300 Konstantin Khlebnikov
+>> <khlebnikov@yandex-team.ru> wrote:
+>>
+>>> # stress-ng --clone 100 -t 10s --metrics-brief
+>>> at 32-core machine shows boost 35000 -> 36000 bogo ops
+>>>
+>>> Patch 4/4 is a kind of RFC.
+>>> Actually per-cpu cache of preallocated stacks works faster than buddy
+>>> allocator thus
+>>> performance boots for it happens only at completely insane rate of
+>>> clones.
+>>>
+>>
+>> I'm not really sure what to make of this patchset.  Is it useful in any
+>> known real-world use cases?
+>
+>
+> Not yet. Feel free to ignore last patch.
+>
+>>
+>>> +         This option neutralize stack overflow protection but allows to
+>>> +         achieve best performance for syscalls fork() and clone().
+>>
+>>
+>> That sounds problematic, but perhaps acceptable if the fallback only
+>> happens rarely.
+>>
+>> Can this code be folded into CONFIG_VMAP_STACk in some cleaner fashion?
+>> We now have options for non-vmapped stacks, vmapped stacks and a mix
+>> of both.
+>>
+>> And what about this comment in arch/Kconfig:VMAP_STACK:
+>>
+>>            This is presently incompatible with KASAN because KASAN expects
+>>            the stack to map directly to the KASAN shadow map using a
+>> formula
+>>            that is incorrect if the stack is in vmalloc space.
+>>
+>>
+>> So VMAP_STACK_AS_FALLBACK will intermittently break KASAN?
+>>
+>
+> All of this (including CONFIG_VMAP_STACK) could be turned into boot option.
+> I think this would be a best solution.
 
-#2
-
-
-So we have all this churn for those two allocations which are basically
-the same code for two different notification schemes.
-
-Could you store the task that is requesting the fsnotify action instead of
-the memcg? Then do the allocation in the context of that task. That
-reduces the modifications to fsnotify.
+Or someone could *fix* KASAN to work with stacks in the vmalloc area.
