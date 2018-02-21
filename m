@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2256QHkEorCqMfWqCGzH0087iNF+eo7kJR039nRPqs492OJLeU3jHppI24Ohh74AuUnr35yD
-ARC-Seal: i=1; a=rsa-sha256; t=1519218082; cv=none;
+X-Google-Smtp-Source: AH8x2278PastxI15TVSrbuDXESBf1vRY6nCOdLu58Lh19b0CAKIWtGV+xgrNElyPcZWsgHdbyw5X
+ARC-Seal: i=1; a=rsa-sha256; t=1519218079; cv=none;
         d=google.com; s=arc-20160816;
-        b=KshqttHvbx0eAqm4YFvKoHSosGt3wDVJF8X5VCoq3FHcLxEKR1v7EZvaVVciJ1AE06
-         UZK7YvG06fTa1p+jHAA9nj0ufq6h0ZYnlhL8IzNKQwr/9ScopW8jE5yoFSDNc+W9NjeW
-         s4jl37vdBeAWU9qLLYtqbQtRmBwxvni/iUuU368bsxe/NpBLhZ5NkzyIMXuoKn3TkNwZ
-         /X27hCl/mAsx0ed+ntSmSUMA1ThGDTt4oQ4cKq8VUIid7cGT8sYV5o7gWeGyTIjC5Fvd
-         0fSu/BcFpPJdg1cqbgocV9K0kIR96HVKv22uiamh89U4mZHPYN0WU2cWDW9Q8i1SA+qY
-         FE/Q==
+        b=DxSF/aOcdEW3q2ms7OG+j2w+QVEPchT4q0oUNy/BwuzK53kwve+OECv4PKzQUb9sKH
+         AZZt2VoPOyTb2AwCk5uaBC6kmf3h+TTqC2QmPUxQyictL7/kyzKGUR8MZLP4TmevCthl
+         7WT2ByWmQNzIOi1wWE1Czah00DCpBCy5dTtJt7Tze1uHqhYq+obCN1SWymbGw3zS5Bby
+         7FBiuA89OVKuWmtztepuwClWHSPcdoOEl42Hupo+PKtcBAEEmx3nwzOTUaY9WJ7nvEoh
+         Bec4DBcfEcl9f9gtGURDll1/WRGKVjVAFn1EqbioM7V+ObCe0Rmz1CQpK9r27oE2DRLB
+         gvow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ms04ClJc7nawTJbgU2u7/OgX4ay8KCK/bZefqjtuxq4=;
-        b=pY+M6VGO/AmJeqwSSLWHa10onNhFin12FwWYKSD5YakSGeSwt8D4I9eQv54MIGg2bh
-         +pPR/D57co6pGPldCuiO0FsZyqiPWRT9aSaWG1HXWdNIMNUN/OzpZU6biTfN/sTeyTDT
-         0Ip/zQEOAhLIepLttRlQAwa99jFrm8itrBgif7zM+tcPDs05aeTIBT2ktrZ8G8xysbSQ
-         Y0Lw+SfiiTSB/d/sjhATz4Ur734TX6tKU+8S040/UkPGBVphP3bceDdWVZct2kZ/SsJ5
-         wCCKSHy6pO9HbKGZ24TAOSd+BCY6cObteHkThIqk5WaoWI07VghWbAlRm4OSSc9ALtIP
-         S40Q==
+        bh=Vs1leo7q+MyCVNyVj+0Q/xDYyhUGp1nN3uonopyrUmk=;
+        b=MJOLKfN4Q6IXru9SxIF+ow71pnAqPmEtB6G2QvljNqBNceHQWetzaaIaOMJZSWcDmp
+         it0n7pr5ti66i9cFEleH8rb4RRzYI/uXMjoKTgshA64dm1yf7PocLjBjTCFAVPbmxyIh
+         ZP5zJHw892YwjTHLElFp1lB7jmpb5hLwEnnnH4Q6hU08jxHAomgHwoT6qgK7yULy7ebm
+         FfXps4p8cNSxuLGBT45xLRtqA4YT3Mk8+u3UqMGFFFGhrbyAaf1QGwLXgjPOx0nLo4bX
+         WC6CvWqe5nozpgVWkUZpQcWHIUC3fZYNBrKXWkiZ5WnKnP7o7ej78/KEeUSZz5hjAXUp
+         oKQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -36,9 +36,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Vegard Nossum <vegardno@ifi.uio.no>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 081/167] kmemcheck: remove whats left of NOTRACK flags
-Date: Wed, 21 Feb 2018 13:48:12 +0100
-Message-Id: <20180221124528.877841731@linuxfoundation.org>
+Subject: [PATCH 4.14 079/167] kmemcheck: remove annotations
+Date: Wed, 21 Feb 2018 13:48:10 +0100
+Message-Id: <20180221124528.765796569@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -48,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015619522534995?=
-X-GMAIL-MSGID: =?utf-8?q?1593015619522534995?=
+X-GMAIL-THRID: =?utf-8?q?1593015616130885337?=
+X-GMAIL-MSGID: =?utf-8?q?1593015616130885337?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,11 +59,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Levin, Alexander (Sasha Levin) <alexander.levin@verizon.com>
 
-commit d8be75663cec0069b85f80191abd2682ce4a512f upstream.
+commit 4950276672fce5c241857540f8561c440663673d upstream.
 
-Now that kmemcheck is gone, we don't need the NOTRACK flags.
+Patch series "kmemcheck: kill kmemcheck", v2.
 
-Link: http://lkml.kernel.org/r/20171007030159.22241-5-alexander.levin@verizon.com
+As discussed at LSF/MM, kill kmemcheck.
+
+KASan is a replacement that is able to work without the limitation of
+kmemcheck (single CPU, slow).  KASan is already upstream.
+
+We are also not aware of any users of kmemcheck (or users who don't
+consider KASan as a suitable replacement).
+
+The only objection was that since KASAN wasn't supported by all GCC
+versions provided by distros at that time we should hold off for 2
+years, and try again.
+
+Now that 2 years have passed, and all distros provide gcc that supports
+KASAN, kill kmemcheck again for the very same reasons.
+
+This patch (of 4):
+
+Remove kmemcheck annotations, and calls to kmemcheck from the kernel.
+
+[alexander.levin@verizon.com: correctly remove kmemcheck call from dma_map_sg_attrs]
+  Link: http://lkml.kernel.org/r/20171012192151.26531-1-alexander.levin@verizon.com
+Link: http://lkml.kernel.org/r/20171007030159.22241-2-alexander.levin@verizon.com
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Cc: Alexander Potapenko <glider@google.com>
 Cc: Eric W. Biederman <ebiederm@xmission.com>
@@ -77,131 +98,777 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/pgtable.h       |    5 -----
- arch/x86/include/asm/pgtable_types.h |   13 -------------
- include/linux/gfp.h                  |    9 ---------
- include/linux/slab.h                 |    6 ------
- include/trace/events/mmflags.h       |    1 -
- mm/slub.c                            |    2 --
- tools/perf/builtin-kmem.c            |    1 -
- 7 files changed, 37 deletions(-)
+ arch/arm/include/asm/dma-iommu.h        |    1 -
+ arch/openrisc/include/asm/dma-mapping.h |    1 -
+ arch/x86/Makefile                       |    5 -----
+ arch/x86/include/asm/dma-mapping.h      |    1 -
+ arch/x86/include/asm/xor.h              |    5 +----
+ arch/x86/kernel/traps.c                 |    5 -----
+ arch/x86/mm/fault.c                     |    6 ------
+ drivers/char/random.c                   |    1 -
+ drivers/misc/c2port/core.c              |    2 --
+ fs/dcache.c                             |    2 --
+ include/linux/c2port.h                  |    4 ----
+ include/linux/dma-mapping.h             |    8 +-------
+ include/linux/filter.h                  |    2 --
+ include/linux/mm_types.h                |    8 --------
+ include/linux/net.h                     |    3 ---
+ include/linux/ring_buffer.h             |    3 ---
+ include/linux/skbuff.h                  |    3 ---
+ include/net/inet_sock.h                 |    3 ---
+ include/net/inet_timewait_sock.h        |    4 ----
+ include/net/sock.h                      |    3 ---
+ init/main.c                             |    1 -
+ kernel/bpf/core.c                       |    6 ------
+ kernel/locking/lockdep.c                |    3 ---
+ kernel/trace/ring_buffer.c              |    3 ---
+ mm/kmemleak.c                           |    9 ---------
+ mm/page_alloc.c                         |   14 --------------
+ mm/slab.c                               |   14 --------------
+ mm/slab.h                               |    2 --
+ mm/slub.c                               |   20 --------------------
+ net/core/skbuff.c                       |    5 -----
+ net/core/sock.c                         |    2 --
+ net/ipv4/inet_timewait_sock.c           |    3 ---
+ net/ipv4/tcp_input.c                    |    1 -
+ net/socket.c                            |    1 -
+ 34 files changed, 2 insertions(+), 152 deletions(-)
 
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -668,11 +668,6 @@ static inline bool pte_accessible(struct
- 	return false;
- }
+--- a/arch/arm/include/asm/dma-iommu.h
++++ b/arch/arm/include/asm/dma-iommu.h
+@@ -7,7 +7,6 @@
+ #include <linux/mm_types.h>
+ #include <linux/scatterlist.h>
+ #include <linux/dma-debug.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/kref.h>
  
--static inline int pte_hidden(pte_t pte)
--{
--	return pte_flags(pte) & _PAGE_HIDDEN;
--}
+ #define ARM_MAPPING_ERROR		(~(dma_addr_t)0x0)
+--- a/arch/openrisc/include/asm/dma-mapping.h
++++ b/arch/openrisc/include/asm/dma-mapping.h
+@@ -23,7 +23,6 @@
+  */
+ 
+ #include <linux/dma-debug.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/dma-mapping.h>
+ 
+ extern const struct dma_map_ops or1k_dma_map_ops;
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -158,11 +158,6 @@ ifdef CONFIG_X86_X32
+ endif
+ export CONFIG_X86_X32_ABI
+ 
+-# Don't unroll struct assignments with kmemcheck enabled
+-ifeq ($(CONFIG_KMEMCHECK),y)
+-	KBUILD_CFLAGS += $(call cc-option,-fno-builtin-memcpy)
+-endif
 -
- static inline int pmd_present(pmd_t pmd)
- {
- 	/*
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -32,7 +32,6 @@
+ #
+ # If the function graph tracer is used with mcount instead of fentry,
+ # '-maccumulate-outgoing-args' is needed to prevent a GCC bug
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@ -7,7 +7,6 @@
+  * Documentation/DMA-API.txt for documentation.
+  */
  
- #define _PAGE_BIT_SPECIAL	_PAGE_BIT_SOFTW1
- #define _PAGE_BIT_CPA_TEST	_PAGE_BIT_SOFTW1
--#define _PAGE_BIT_HIDDEN	_PAGE_BIT_SOFTW3 /* hidden by kmemcheck */
- #define _PAGE_BIT_SOFT_DIRTY	_PAGE_BIT_SOFTW3 /* software dirty tracking */
- #define _PAGE_BIT_DEVMAP	_PAGE_BIT_SOFTW4
+-#include <linux/kmemcheck.h>
+ #include <linux/scatterlist.h>
+ #include <linux/dma-debug.h>
+ #include <asm/io.h>
+--- a/arch/x86/include/asm/xor.h
++++ b/arch/x86/include/asm/xor.h
+@@ -1,7 +1,4 @@
+-#ifdef CONFIG_KMEMCHECK
+-/* kmemcheck doesn't handle MMX/SSE/SSE2 instructions */
+-# include <asm-generic/xor.h>
+-#elif !defined(_ASM_X86_XOR_H)
++#ifndef _ASM_X86_XOR_H
+ #define _ASM_X86_XOR_H
  
-@@ -79,18 +78,6 @@
- #define _PAGE_KNL_ERRATUM_MASK 0
+ /*
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -42,7 +42,6 @@
+ #include <linux/edac.h>
  #endif
  
--#ifdef CONFIG_KMEMCHECK
--#define _PAGE_HIDDEN	(_AT(pteval_t, 1) << _PAGE_BIT_HIDDEN)
--#else
--#define _PAGE_HIDDEN	(_AT(pteval_t, 0))
--#endif
+-#include <asm/kmemcheck.h>
+ #include <asm/stacktrace.h>
+ #include <asm/processor.h>
+ #include <asm/debugreg.h>
+@@ -764,10 +763,6 @@ dotraplinkage void do_debug(struct pt_re
+ 	if (!dr6 && user_mode(regs))
+ 		user_icebp = 1;
+ 
+-	/* Catch kmemcheck conditions! */
+-	if ((dr6 & DR_STEP) && kmemcheck_trap(regs))
+-		goto exit;
 -
--/*
-- * The same hidden bit is used by kmemcheck, but since kmemcheck
-- * works on kernel pages while soft-dirty engine on user space,
-- * they do not conflict with each other.
-- */
+ 	/* Store the virtualized DR6 value */
+ 	tsk->thread.debugreg6 = dr6;
+ 
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -20,7 +20,6 @@
+ #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
+ #include <asm/traps.h>			/* dotraplinkage, ...		*/
+ #include <asm/pgalloc.h>		/* pgd_*(), ...			*/
+-#include <asm/kmemcheck.h>		/* kmemcheck_*(), ...		*/
+ #include <asm/fixmap.h>			/* VSYSCALL_ADDR		*/
+ #include <asm/vsyscall.h>		/* emulate_vsyscall		*/
+ #include <asm/vm86.h>			/* struct vm86			*/
+@@ -1257,8 +1256,6 @@ __do_page_fault(struct pt_regs *regs, un
+ 	 * Detect and handle instructions that would cause a page fault for
+ 	 * both a tracked kernel page and a userspace page.
+ 	 */
+-	if (kmemcheck_active(regs))
+-		kmemcheck_hide(regs);
+ 	prefetchw(&mm->mmap_sem);
+ 
+ 	if (unlikely(kmmio_fault(regs, address)))
+@@ -1281,9 +1278,6 @@ __do_page_fault(struct pt_regs *regs, un
+ 		if (!(error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
+ 			if (vmalloc_fault(address) >= 0)
+ 				return;
 -
- #ifdef CONFIG_MEM_SOFT_DIRTY
- #define _PAGE_SOFT_DIRTY	(_AT(pteval_t, 1) << _PAGE_BIT_SOFT_DIRTY)
- #else
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -37,7 +37,6 @@ struct vm_area_struct;
- #define ___GFP_THISNODE		0x40000u
- #define ___GFP_ATOMIC		0x80000u
- #define ___GFP_ACCOUNT		0x100000u
--#define ___GFP_NOTRACK		0x200000u
- #define ___GFP_DIRECT_RECLAIM	0x400000u
- #define ___GFP_WRITE		0x800000u
- #define ___GFP_KSWAPD_RECLAIM	0x1000000u
-@@ -201,19 +200,11 @@ struct vm_area_struct;
-  * __GFP_COMP address compound page metadata.
-  *
-  * __GFP_ZERO returns a zeroed page on success.
-- *
-- * __GFP_NOTRACK avoids tracking with kmemcheck.
-- *
-- * __GFP_NOTRACK_FALSE_POSITIVE is an alias of __GFP_NOTRACK. It's a means of
-- *   distinguishing in the source between false positives and allocations that
-- *   cannot be supported (e.g. page tables).
+-			if (kmemcheck_fault(regs, address, error_code))
+-				return;
+ 		}
+ 
+ 		/* Can handle a stale RO->RW TLB: */
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -259,7 +259,6 @@
+ #include <linux/cryptohash.h>
+ #include <linux/fips.h>
+ #include <linux/ptrace.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/workqueue.h>
+ #include <linux/irq.h>
+ #include <linux/syscalls.h>
+--- a/drivers/misc/c2port/core.c
++++ b/drivers/misc/c2port/core.c
+@@ -15,7 +15,6 @@
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/ctype.h>
+ #include <linux/delay.h>
+ #include <linux/idr.h>
+@@ -904,7 +903,6 @@ struct c2port_device *c2port_device_regi
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	c2dev = kmalloc(sizeof(struct c2port_device), GFP_KERNEL);
+-	kmemcheck_annotate_bitfield(c2dev, flags);
+ 	if (unlikely(!c2dev))
+ 		return ERR_PTR(-ENOMEM);
+ 
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2705,8 +2705,6 @@ static void swap_names(struct dentry *de
+ 			 */
+ 			unsigned int i;
+ 			BUILD_BUG_ON(!IS_ALIGNED(DNAME_INLINE_LEN, sizeof(long)));
+-			kmemcheck_mark_initialized(dentry->d_iname, DNAME_INLINE_LEN);
+-			kmemcheck_mark_initialized(target->d_iname, DNAME_INLINE_LEN);
+ 			for (i = 0; i < DNAME_INLINE_LEN / sizeof(long); i++) {
+ 				swap(((long *) &dentry->d_iname)[i],
+ 				     ((long *) &target->d_iname)[i]);
+--- a/include/linux/c2port.h
++++ b/include/linux/c2port.h
+@@ -9,8 +9,6 @@
+  * the Free Software Foundation
   */
- #define __GFP_COLD	((__force gfp_t)___GFP_COLD)
- #define __GFP_NOWARN	((__force gfp_t)___GFP_NOWARN)
- #define __GFP_COMP	((__force gfp_t)___GFP_COMP)
- #define __GFP_ZERO	((__force gfp_t)___GFP_ZERO)
--#define __GFP_NOTRACK	((__force gfp_t)___GFP_NOTRACK)
--#define __GFP_NOTRACK_FALSE_POSITIVE (__GFP_NOTRACK)
  
- /* Disable lockdep for GFP context tracking */
- #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -78,12 +78,6 @@
+-#include <linux/kmemcheck.h>
+-
+ #define C2PORT_NAME_LEN			32
  
- #define SLAB_NOLEAKTRACE	0x00800000UL	/* Avoid kmemleak tracing */
+ struct device;
+@@ -22,10 +20,8 @@ struct device;
+ /* Main struct */
+ struct c2port_ops;
+ struct c2port_device {
+-	kmemcheck_bitfield_begin(flags);
+ 	unsigned int access:1;
+ 	unsigned int flash_access:1;
+-	kmemcheck_bitfield_end(flags);
  
--/* Don't track use of uninitialized memory */
+ 	int id;
+ 	char name[C2PORT_NAME_LEN];
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -9,7 +9,6 @@
+ #include <linux/dma-debug.h>
+ #include <linux/dma-direction.h>
+ #include <linux/scatterlist.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/bug.h>
+ #include <linux/mem_encrypt.h>
+ 
+@@ -230,7 +229,6 @@ static inline dma_addr_t dma_map_single_
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 	dma_addr_t addr;
+ 
+-	kmemcheck_mark_initialized(ptr, size);
+ 	BUG_ON(!valid_dma_direction(dir));
+ 	addr = ops->map_page(dev, virt_to_page(ptr),
+ 			     offset_in_page(ptr), size,
+@@ -263,11 +261,8 @@ static inline int dma_map_sg_attrs(struc
+ 				   unsigned long attrs)
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+-	int i, ents;
+-	struct scatterlist *s;
++	int ents;
+ 
+-	for_each_sg(sg, s, nents, i)
+-		kmemcheck_mark_initialized(sg_virt(s), s->length);
+ 	BUG_ON(!valid_dma_direction(dir));
+ 	ents = ops->map_sg(dev, sg, nents, dir, attrs);
+ 	BUG_ON(ents < 0);
+@@ -297,7 +292,6 @@ static inline dma_addr_t dma_map_page_at
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 	dma_addr_t addr;
+ 
+-	kmemcheck_mark_initialized(page_address(page) + offset, size);
+ 	BUG_ON(!valid_dma_direction(dir));
+ 	addr = ops->map_page(dev, page, offset, size, dir, attrs);
+ 	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -454,13 +454,11 @@ struct bpf_binary_header {
+ 
+ struct bpf_prog {
+ 	u16			pages;		/* Number of allocated pages */
+-	kmemcheck_bitfield_begin(meta);
+ 	u16			jited:1,	/* Is our filter JIT'ed? */
+ 				locked:1,	/* Program image locked? */
+ 				gpl_compatible:1, /* Is filter GPL compatible? */
+ 				cb_access:1,	/* Is control block accessed? */
+ 				dst_needed:1;	/* Do we need dst entry? */
+-	kmemcheck_bitfield_end(meta);
+ 	enum bpf_prog_type	type;		/* Type of BPF program */
+ 	u32			len;		/* Number of filter blocks */
+ 	u32			jited_len;	/* Size of jited insns in bytes */
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -207,14 +207,6 @@ struct page {
+ 					   not kmapped, ie. highmem) */
+ #endif /* WANT_PAGE_VIRTUAL */
+ 
 -#ifdef CONFIG_KMEMCHECK
--# define SLAB_NOTRACK		0x01000000UL
--#else
--# define SLAB_NOTRACK		0x00000000UL
+-	/*
+-	 * kmemcheck wants to track the status of each byte in a page; this
+-	 * is a pointer to such a status block. NULL if not tracked.
+-	 */
+-	void *shadow;
 -#endif
- #ifdef CONFIG_FAILSLAB
- # define SLAB_FAILSLAB		0x02000000UL	/* Fault injection mark */
- #else
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -46,7 +46,6 @@
- 	{(unsigned long)__GFP_RECLAIMABLE,	"__GFP_RECLAIMABLE"},	\
- 	{(unsigned long)__GFP_MOVABLE,		"__GFP_MOVABLE"},	\
- 	{(unsigned long)__GFP_ACCOUNT,		"__GFP_ACCOUNT"},	\
--	{(unsigned long)__GFP_NOTRACK,		"__GFP_NOTRACK"},	\
- 	{(unsigned long)__GFP_WRITE,		"__GFP_WRITE"},		\
- 	{(unsigned long)__GFP_RECLAIM,		"__GFP_RECLAIM"},	\
- 	{(unsigned long)__GFP_DIRECT_RECLAIM,	"__GFP_DIRECT_RECLAIM"},\
+-
+ #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+ 	int _last_cpupid;
+ #endif
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -22,7 +22,6 @@
+ #include <linux/random.h>
+ #include <linux/wait.h>
+ #include <linux/fcntl.h>	/* For O_CLOEXEC and O_NONBLOCK */
+-#include <linux/kmemcheck.h>
+ #include <linux/rcupdate.h>
+ #include <linux/once.h>
+ #include <linux/fs.h>
+@@ -111,9 +110,7 @@ struct socket_wq {
+ struct socket {
+ 	socket_state		state;
+ 
+-	kmemcheck_bitfield_begin(type);
+ 	short			type;
+-	kmemcheck_bitfield_end(type);
+ 
+ 	unsigned long		flags;
+ 
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -2,7 +2,6 @@
+ #ifndef _LINUX_RING_BUFFER_H
+ #define _LINUX_RING_BUFFER_H
+ 
+-#include <linux/kmemcheck.h>
+ #include <linux/mm.h>
+ #include <linux/seq_file.h>
+ #include <linux/poll.h>
+@@ -14,9 +13,7 @@ struct ring_buffer_iter;
+  * Don't refer to this struct directly, use functions below.
+  */
+ struct ring_buffer_event {
+-	kmemcheck_bitfield_begin(bitfield);
+ 	u32		type_len:5, time_delta:27;
+-	kmemcheck_bitfield_end(bitfield);
+ 
+ 	u32		array[];
+ };
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -15,7 +15,6 @@
+ #define _LINUX_SKBUFF_H
+ 
+ #include <linux/kernel.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/compiler.h>
+ #include <linux/time.h>
+ #include <linux/bug.h>
+@@ -706,7 +705,6 @@ struct sk_buff {
+ 	/* Following fields are _not_ copied in __copy_skb_header()
+ 	 * Note that queue_mapping is here mostly to fill a hole.
+ 	 */
+-	kmemcheck_bitfield_begin(flags1);
+ 	__u16			queue_mapping;
+ 
+ /* if you move cloned around you also must adapt those constants */
+@@ -725,7 +723,6 @@ struct sk_buff {
+ 				head_frag:1,
+ 				xmit_more:1,
+ 				__unused:1; /* one bit hole */
+-	kmemcheck_bitfield_end(flags1);
+ 
+ 	/* fields enclosed in headers_start/headers_end are copied
+ 	 * using a single memcpy() in __copy_skb_header()
+--- a/include/net/inet_sock.h
++++ b/include/net/inet_sock.h
+@@ -17,7 +17,6 @@
+ #define _INET_SOCK_H
+ 
+ #include <linux/bitops.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/jhash.h>
+@@ -84,7 +83,6 @@ struct inet_request_sock {
+ #define ireq_state		req.__req_common.skc_state
+ #define ireq_family		req.__req_common.skc_family
+ 
+-	kmemcheck_bitfield_begin(flags);
+ 	u16			snd_wscale : 4,
+ 				rcv_wscale : 4,
+ 				tstamp_ok  : 1,
+@@ -93,7 +91,6 @@ struct inet_request_sock {
+ 				ecn_ok	   : 1,
+ 				acked	   : 1,
+ 				no_srccheck: 1;
+-	kmemcheck_bitfield_end(flags);
+ 	u32                     ir_mark;
+ 	union {
+ 		struct ip_options_rcu __rcu	*ireq_opt;
+--- a/include/net/inet_timewait_sock.h
++++ b/include/net/inet_timewait_sock.h
+@@ -15,8 +15,6 @@
+ #ifndef _INET_TIMEWAIT_SOCK_
+ #define _INET_TIMEWAIT_SOCK_
+ 
+-
+-#include <linux/kmemcheck.h>
+ #include <linux/list.h>
+ #include <linux/timer.h>
+ #include <linux/types.h>
+@@ -69,14 +67,12 @@ struct inet_timewait_sock {
+ 	/* Socket demultiplex comparisons on incoming packets. */
+ 	/* these three are in inet_sock */
+ 	__be16			tw_sport;
+-	kmemcheck_bitfield_begin(flags);
+ 	/* And these are ours. */
+ 	unsigned int		tw_kill		: 1,
+ 				tw_transparent  : 1,
+ 				tw_flowlabel	: 20,
+ 				tw_pad		: 2,	/* 2 bits hole */
+ 				tw_tos		: 8;
+-	kmemcheck_bitfield_end(flags);
+ 	struct timer_list	tw_timer;
+ 	struct inet_bind_bucket	*tw_tb;
+ };
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -436,7 +436,6 @@ struct sock {
+ #define SK_FL_TYPE_MASK    0xffff0000
+ #endif
+ 
+-	kmemcheck_bitfield_begin(flags);
+ 	unsigned int		sk_padding : 1,
+ 				sk_kern_sock : 1,
+ 				sk_no_check_tx : 1,
+@@ -445,8 +444,6 @@ struct sock {
+ 				sk_protocol  : 8,
+ 				sk_type      : 16;
+ #define SK_PROTOCOL_MAX U8_MAX
+-	kmemcheck_bitfield_end(flags);
+-
+ 	u16			sk_gso_max_segs;
+ 	unsigned long	        sk_lingertime;
+ 	struct proto		*sk_prot_creator;
+--- a/init/main.c
++++ b/init/main.c
+@@ -69,7 +69,6 @@
+ #include <linux/kgdb.h>
+ #include <linux/ftrace.h>
+ #include <linux/async.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/sfi.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/slab.h>
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -85,8 +85,6 @@ struct bpf_prog *bpf_prog_alloc(unsigned
+ 	if (fp == NULL)
+ 		return NULL;
+ 
+-	kmemcheck_annotate_bitfield(fp, meta);
+-
+ 	aux = kzalloc(sizeof(*aux), GFP_KERNEL | gfp_extra_flags);
+ 	if (aux == NULL) {
+ 		vfree(fp);
+@@ -127,8 +125,6 @@ struct bpf_prog *bpf_prog_realloc(struct
+ 	if (fp == NULL) {
+ 		__bpf_prog_uncharge(fp_old->aux->user, delta);
+ 	} else {
+-		kmemcheck_annotate_bitfield(fp, meta);
+-
+ 		memcpy(fp, fp_old, fp_old->pages * PAGE_SIZE);
+ 		fp->pages = pages;
+ 		fp->aux->prog = fp;
+@@ -662,8 +658,6 @@ static struct bpf_prog *bpf_prog_clone_c
+ 
+ 	fp = __vmalloc(fp_other->pages * PAGE_SIZE, gfp_flags, PAGE_KERNEL);
+ 	if (fp != NULL) {
+-		kmemcheck_annotate_bitfield(fp, meta);
+-
+ 		/* aux->prog still points to the fp_other one, so
+ 		 * when promoting the clone to the real program,
+ 		 * this still needs to be adapted.
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -47,7 +47,6 @@
+ #include <linux/stringify.h>
+ #include <linux/bitops.h>
+ #include <linux/gfp.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/random.h>
+ #include <linux/jhash.h>
+ 
+@@ -3225,8 +3224,6 @@ static void __lockdep_init_map(struct lo
+ {
+ 	int i;
+ 
+-	kmemcheck_mark_initialized(lock, sizeof(*lock));
+-
+ 	for (i = 0; i < NR_LOCKDEP_CACHING_CLASSES; i++)
+ 		lock->class_cache[i] = NULL;
+ 
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -13,7 +13,6 @@
+ #include <linux/uaccess.h>
+ #include <linux/hardirq.h>
+ #include <linux/kthread.h>	/* for self test */
+-#include <linux/kmemcheck.h>
+ #include <linux/module.h>
+ #include <linux/percpu.h>
+ #include <linux/mutex.h>
+@@ -2059,7 +2058,6 @@ rb_reset_tail(struct ring_buffer_per_cpu
+ 	}
+ 
+ 	event = __rb_page_index(tail_page, tail);
+-	kmemcheck_annotate_bitfield(event, bitfield);
+ 
+ 	/* account for padding bytes */
+ 	local_add(BUF_PAGE_SIZE - tail, &cpu_buffer->entries_bytes);
+@@ -2690,7 +2688,6 @@ __rb_reserve_next(struct ring_buffer_per
+ 	/* We reserved something on the buffer */
+ 
+ 	event = __rb_page_index(tail_page, tail);
+-	kmemcheck_annotate_bitfield(event, bitfield);
+ 	rb_update_event(cpu_buffer, event, info);
+ 
+ 	local_inc(&tail_page->entries);
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -110,7 +110,6 @@
+ #include <linux/atomic.h>
+ 
+ #include <linux/kasan.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/kmemleak.h>
+ #include <linux/memory_hotplug.h>
+ 
+@@ -1238,9 +1237,6 @@ static bool update_checksum(struct kmeml
+ {
+ 	u32 old_csum = object->checksum;
+ 
+-	if (!kmemcheck_is_obj_initialized(object->pointer, object->size))
+-		return false;
+-
+ 	kasan_disable_current();
+ 	object->checksum = crc32(0, (void *)object->pointer, object->size);
+ 	kasan_enable_current();
+@@ -1314,11 +1310,6 @@ static void scan_block(void *_start, voi
+ 		if (scan_should_stop())
+ 			break;
+ 
+-		/* don't scan uninitialized memory */
+-		if (!kmemcheck_is_obj_initialized((unsigned long)ptr,
+-						  BYTES_PER_POINTER))
+-			continue;
+-
+ 		kasan_disable_current();
+ 		pointer = *ptr;
+ 		kasan_enable_current();
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -24,7 +24,6 @@
+ #include <linux/memblock.h>
+ #include <linux/compiler.h>
+ #include <linux/kernel.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/kasan.h>
+ #include <linux/module.h>
+ #include <linux/suspend.h>
+@@ -1022,7 +1021,6 @@ static __always_inline bool free_pages_p
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 
+ 	trace_mm_page_free(page, order);
+-	kmemcheck_free_shadow(page, order);
+ 
+ 	/*
+ 	 * Check tail pages before head page information is cleared to
+@@ -2674,15 +2672,6 @@ void split_page(struct page *page, unsig
+ 	VM_BUG_ON_PAGE(PageCompound(page), page);
+ 	VM_BUG_ON_PAGE(!page_count(page), page);
+ 
+-#ifdef CONFIG_KMEMCHECK
+-	/*
+-	 * Split shadow pages too, because free(page[0]) would
+-	 * otherwise free the whole shadow.
+-	 */
+-	if (kmemcheck_page_is_tracked(page))
+-		split_page(virt_to_page(page[0].shadow), order);
+-#endif
+-
+ 	for (i = 1; i < (1 << order); i++)
+ 		set_page_refcounted(page + i);
+ 	split_page_owner(page, order);
+@@ -4228,9 +4217,6 @@ out:
+ 		page = NULL;
+ 	}
+ 
+-	if (kmemcheck_enabled && page)
+-		kmemcheck_pagealloc_alloc(page, order, gfp_mask);
+-
+ 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
+ 
+ 	return page;
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -114,7 +114,6 @@
+ #include	<linux/rtmutex.h>
+ #include	<linux/reciprocal_div.h>
+ #include	<linux/debugobjects.h>
+-#include	<linux/kmemcheck.h>
+ #include	<linux/memory.h>
+ #include	<linux/prefetch.h>
+ #include	<linux/sched/task_stack.h>
+@@ -1435,15 +1434,6 @@ static struct page *kmem_getpages(struct
+ 	if (sk_memalloc_socks() && page_is_pfmemalloc(page))
+ 		SetPageSlabPfmemalloc(page);
+ 
+-	if (kmemcheck_enabled && !(cachep->flags & SLAB_NOTRACK)) {
+-		kmemcheck_alloc_shadow(page, cachep->gfporder, flags, nodeid);
+-
+-		if (cachep->ctor)
+-			kmemcheck_mark_uninitialized_pages(page, nr_pages);
+-		else
+-			kmemcheck_mark_unallocated_pages(page, nr_pages);
+-	}
+-
+ 	return page;
+ }
+ 
+@@ -1455,8 +1445,6 @@ static void kmem_freepages(struct kmem_c
+ 	int order = cachep->gfporder;
+ 	unsigned long nr_freed = (1 << order);
+ 
+-	kmemcheck_free_shadow(page, order);
+-
+ 	if (cachep->flags & SLAB_RECLAIM_ACCOUNT)
+ 		mod_lruvec_page_state(page, NR_SLAB_RECLAIMABLE, -nr_freed);
+ 	else
+@@ -3516,8 +3504,6 @@ void ___cache_free(struct kmem_cache *ca
+ 	kmemleak_free_recursive(objp, cachep->flags);
+ 	objp = cache_free_debugcheck(cachep, objp, caller);
+ 
+-	kmemcheck_slab_free(cachep, objp, cachep->object_size);
+-
+ 	/*
+ 	 * Skip calling cache_free_alien() when the platform is not numa.
+ 	 * This will avoid cache misses that happen while accessing slabp (which
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -40,7 +40,6 @@ struct kmem_cache {
+ 
+ #include <linux/memcontrol.h>
+ #include <linux/fault-inject.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/kasan.h>
+ #include <linux/kmemleak.h>
+ #include <linux/random.h>
+@@ -439,7 +438,6 @@ static inline void slab_post_alloc_hook(
+ 	for (i = 0; i < size; i++) {
+ 		void *object = p[i];
+ 
+-		kmemcheck_slab_alloc(s, flags, object, slab_ksize(s));
+ 		kmemleak_alloc_recursive(object, s->object_size, 1,
+ 					 s->flags, flags);
+ 		kasan_slab_alloc(s, object, flags);
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -5633,8 +5633,6 @@ static char *create_unique_id(struct kme
- 		*p++ = 'a';
- 	if (s->flags & SLAB_CONSISTENCY_CHECKS)
- 		*p++ = 'F';
--	if (!(s->flags & SLAB_NOTRACK))
--		*p++ = 't';
- 	if (s->flags & SLAB_ACCOUNT)
- 		*p++ = 'A';
- 	if (p != name + 1)
---- a/tools/perf/builtin-kmem.c
-+++ b/tools/perf/builtin-kmem.c
-@@ -655,7 +655,6 @@ static const struct {
- 	{ "__GFP_RECLAIMABLE",		"RC" },
- 	{ "__GFP_MOVABLE",		"M" },
- 	{ "__GFP_ACCOUNT",		"AC" },
--	{ "__GFP_NOTRACK",		"NT" },
- 	{ "__GFP_WRITE",		"WR" },
- 	{ "__GFP_RECLAIM",		"R" },
- 	{ "__GFP_DIRECT_RECLAIM",	"DR" },
+@@ -22,7 +22,6 @@
+ #include <linux/notifier.h>
+ #include <linux/seq_file.h>
+ #include <linux/kasan.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/cpu.h>
+ #include <linux/cpuset.h>
+ #include <linux/mempolicy.h>
+@@ -1375,7 +1374,6 @@ static inline void *slab_free_hook(struc
+ 		unsigned long flags;
+ 
+ 		local_irq_save(flags);
+-		kmemcheck_slab_free(s, x, s->object_size);
+ 		debug_check_no_locks_freed(x, s->object_size);
+ 		local_irq_restore(flags);
+ 	}
+@@ -1596,22 +1594,6 @@ static struct page *allocate_slab(struct
+ 		stat(s, ORDER_FALLBACK);
+ 	}
+ 
+-	if (kmemcheck_enabled &&
+-	    !(s->flags & (SLAB_NOTRACK | DEBUG_DEFAULT_FLAGS))) {
+-		int pages = 1 << oo_order(oo);
+-
+-		kmemcheck_alloc_shadow(page, oo_order(oo), alloc_gfp, node);
+-
+-		/*
+-		 * Objects from caches that have a constructor don't get
+-		 * cleared when they're allocated, so we need to do it here.
+-		 */
+-		if (s->ctor)
+-			kmemcheck_mark_uninitialized_pages(page, pages);
+-		else
+-			kmemcheck_mark_unallocated_pages(page, pages);
+-	}
+-
+ 	page->objects = oo_objects(oo);
+ 
+ 	order = compound_order(page);
+@@ -1687,8 +1669,6 @@ static void __free_slab(struct kmem_cach
+ 			check_object(s, page, p, SLUB_RED_INACTIVE);
+ 	}
+ 
+-	kmemcheck_free_shadow(page, compound_order(page));
+-
+ 	mod_lruvec_page_state(page,
+ 		(s->flags & SLAB_RECLAIM_ACCOUNT) ?
+ 		NR_SLAB_RECLAIMABLE : NR_SLAB_UNRECLAIMABLE,
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -41,7 +41,6 @@
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
+ #include <linux/in.h>
+@@ -234,14 +233,12 @@ struct sk_buff *__alloc_skb(unsigned int
+ 	shinfo = skb_shinfo(skb);
+ 	memset(shinfo, 0, offsetof(struct skb_shared_info, dataref));
+ 	atomic_set(&shinfo->dataref, 1);
+-	kmemcheck_annotate_variable(shinfo->destructor_arg);
+ 
+ 	if (flags & SKB_ALLOC_FCLONE) {
+ 		struct sk_buff_fclones *fclones;
+ 
+ 		fclones = container_of(skb, struct sk_buff_fclones, skb1);
+ 
+-		kmemcheck_annotate_bitfield(&fclones->skb2, flags1);
+ 		skb->fclone = SKB_FCLONE_ORIG;
+ 		refcount_set(&fclones->fclone_ref, 1);
+ 
+@@ -301,7 +298,6 @@ struct sk_buff *__build_skb(void *data,
+ 	shinfo = skb_shinfo(skb);
+ 	memset(shinfo, 0, offsetof(struct skb_shared_info, dataref));
+ 	atomic_set(&shinfo->dataref, 1);
+-	kmemcheck_annotate_variable(shinfo->destructor_arg);
+ 
+ 	return skb;
+ }
+@@ -1284,7 +1280,6 @@ struct sk_buff *skb_clone(struct sk_buff
+ 		if (!n)
+ 			return NULL;
+ 
+-		kmemcheck_annotate_bitfield(n, flags1);
+ 		n->fclone = SKB_FCLONE_UNAVAILABLE;
+ 	}
+ 
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1469,8 +1469,6 @@ static struct sock *sk_prot_alloc(struct
+ 		sk = kmalloc(prot->obj_size, priority);
+ 
+ 	if (sk != NULL) {
+-		kmemcheck_annotate_bitfield(sk, flags);
+-
+ 		if (security_sk_alloc(sk, family, priority))
+ 			goto out_free;
+ 
+--- a/net/ipv4/inet_timewait_sock.c
++++ b/net/ipv4/inet_timewait_sock.c
+@@ -9,7 +9,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/kmemcheck.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <net/inet_hashtables.h>
+@@ -167,8 +166,6 @@ struct inet_timewait_sock *inet_twsk_all
+ 	if (tw) {
+ 		const struct inet_sock *inet = inet_sk(sk);
+ 
+-		kmemcheck_annotate_bitfield(tw, flags);
+-
+ 		tw->tw_dr	    = dr;
+ 		/* Give us an identity. */
+ 		tw->tw_daddr	    = inet->inet_daddr;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -6204,7 +6204,6 @@ struct request_sock *inet_reqsk_alloc(co
+ 	if (req) {
+ 		struct inet_request_sock *ireq = inet_rsk(req);
+ 
+-		kmemcheck_annotate_bitfield(ireq, flags);
+ 		ireq->ireq_opt = NULL;
+ #if IS_ENABLED(CONFIG_IPV6)
+ 		ireq->pktopts = NULL;
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -568,7 +568,6 @@ struct socket *sock_alloc(void)
+ 
+ 	sock = SOCKET_I(inode);
+ 
+-	kmemcheck_annotate_bitfield(sock, type);
+ 	inode->i_ino = get_next_ino();
+ 	inode->i_mode = S_IFSOCK | S_IRWXUGO;
+ 	inode->i_uid = current_fsuid();
