@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224eW+odyUFtXPhrydHAujBmy4f3PbLL3al3zJuk5S7IU+VrJHL93wyVfMITOqce/Oz6Irwc
-ARC-Seal: i=1; a=rsa-sha256; t=1519217137; cv=none;
+X-Google-Smtp-Source: AH8x226zmsc7ZeH9DyphkFS4/pYCSQfsGHULhg0K9IgBAHLFwORlZI6tnQ1aE+nHSgvGcacLr0qk
+ARC-Seal: i=1; a=rsa-sha256; t=1519217134; cv=none;
         d=google.com; s=arc-20160816;
-        b=BA1tjxl0VufKsgktYZ6YHpXAcTw/Yt+VnUx34Ktvig/OCvz2b5BUfSi7+/SFSx+JCh
-         wjcNnZ06uxpRK7VSFwousl8PDth9jLZncmk48ipYfWBbfegDDZ8Tn5ySKg6CRGpbx8fh
-         2gPMgYisJbBYgg733Gam3Ao7LLH8XgpsL1KwG327eovQmrR0tptLgy3hhjd0nJL5c27+
-         PTfoNHZuUD/RA/LHT5JVLPzqdetF8620mjyd+60eJAbU+UNG6oYnaNMTtsoS+EvR9FZA
-         Ed5hrx4hQLJ9TiRpug0OeCn6ceLzqvvnCmO8m3E8wFdqW+9Xe/dcz0Y8Jnt+K7qT/o8J
-         gShg==
+        b=gE41Y/50Puo6M4HjfRIKK8tlc+0MBIBMZqSe2sjS7QHjwTsVDIKxBWeC9N4pCLKEBw
+         EsvzP1A/84xZLsps8feuMtE7NWJ3rjl8ZbxZPpQs59GDux1myjD8O7b8DeHlIy3JVvwr
+         zdVoNpiiG62JQdR8JbYET+hdBYHkGemo9/LoDWoYsJD5zZI0hNocjphZ4hcCbfiO1tdz
+         D63TACfFOnY0ZCF5Pr5DaZwOWg1JRD94yLwV9eaOWP9jFnASZrB5kdsAcjuxiqHZqdlq
+         CsRIEk6t5csaYFZsC6SwkR3sb7Yf6HLwU0FAWCALcr8ZsOT3NT1rAbN+7/n8AV/XzacT
+         5ucQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WGmxsMTspuHAjsL1mpAhbThYnVErAElHevzNBSblK5Y=;
-        b=bmnzTxkwsPjeyjXtkzdrzYYNxWeFFacwvo6BKvcGHzq7TrHkTysECMAyCX4m3enYNS
-         ErRhbc1GOrqfT4wIKu30rMfFvMRtq4g2qG9S8Ho6uHeXZ/bpF7WdZTw0E2Cg5B3Hgku3
-         sbTR/xV9rxU+Lomkz1p/8GN/cIOSQigRjm3qb2RFaMK1ov0AWZdcPx40u5Ipim6RAUSX
-         M3L+UpQolAyxPXoKsIryMctX1+99qApZKaaufOQ5710ZHjbxLqB1CUo598LRgoVvjvlV
-         7wfBg/oh4xI0DABg9xO53tsqb1fiq2+n5U+banCSbrY4kb+hA97dcu+O5pvXiKC7eUlF
-         Ov6A==
+        bh=39wnCxJ+i5/2bANMhpKSSFUPojcdNHdGsnGqp1yA1X0=;
+        b=z8QaLGRaytgigEB9xNfUt93Fk+6EqzPMNpbOJERtZ8/P5zoa2BIpThLh9Kn/5dUFVZ
+         nM31wNrKzLeqwbAUQ3BjIPJ++McrUMD+I0XBnmbFAmGLIaF9BojF6RBMV1myqRVdkx2/
+         i4frUITrlRQdWs48kQiadiCuO+p9Ep79H20gNwBv7hqE91/W931mGkRHMQksig+XN45W
+         hbM1hu3P+HsYNu1K/t6qBvOAzPAhyhsGKHQfod6tOzqrAjE8B5J6rmlZj7CQ7rBuZPhO
+         ri6Akl/h16ZqlM4mkgDTCgqDG4RZ4JbMNM7m1NQm4CAgyQtDWc9RhS+rPZhT6jsj2HBe
+         Faqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Johan Hovold <johan@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.4 16/33] video: fbdev: atmel_lcdfb: fix display-timings lookup
-Date: Wed, 21 Feb 2018 13:44:59 +0100
-Message-Id: <20180221124410.482540641@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 15/33] mm: hide a #warning for COMPILE_TEST
+Date: Wed, 21 Feb 2018 13:44:58 +0100
+Message-Id: <20180221124410.439521900@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014629325392076?=
-X-GMAIL-MSGID: =?utf-8?q?1593014629325392076?=
+X-GMAIL-THRID: =?utf-8?q?1593014626139492093?=
+X-GMAIL-MSGID: =?utf-8?q?1593014626139492093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 9cb18db0701f6b74f0c45c23ad767b3ebebe37f6 upstream.
+commit af27d9403f5b80685b79c88425086edccecaf711 upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+We get a warning about some slow configurations in randconfig kernels:
 
-To make things worse, the parent display node was also prematurely
-freed.
+  mm/memory.c:83:2: error: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Werror=cpp]
 
-Note that the display and timings node references are never put after a
-successful dt-initialisation so the nodes would leak on later probe
-deferrals and on driver unbind.
+The warning is reasonable by itself, but gets in the way of randconfig
+build testing, so I'm hiding it whenever CONFIG_COMPILE_TEST is set.
 
-Fixes: b985172b328a ("video: atmel_lcdfb: add device tree suport")
-Cc: stable <stable@vger.kernel.org>     # 3.13
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+The warning was added in 2013 in commit 75980e97dacc ("mm: fold
+page->_last_nid into page->flags where possible").
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/atmel_lcdfb.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/memory.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -1120,7 +1120,7 @@ static int atmel_lcdfb_of_init(struct at
- 		goto put_display_node;
- 	}
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -72,7 +72,7 @@
  
--	timings_np = of_find_node_by_name(display_np, "display-timings");
-+	timings_np = of_get_child_by_name(display_np, "display-timings");
- 	if (!timings_np) {
- 		dev_err(dev, "failed to find display-timings node\n");
- 		ret = -ENODEV;
-@@ -1141,6 +1141,12 @@ static int atmel_lcdfb_of_init(struct at
- 		fb_add_videomode(&fb_vm, &info->modelist);
- 	}
+ #include "internal.h"
  
-+	/*
-+	 * FIXME: Make sure we are not referencing any fields in display_np
-+	 * and timings_np and drop our references to them before returning to
-+	 * avoid leaking the nodes on probe deferral and driver unbind.
-+	 */
-+
- 	return 0;
+-#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
++#if defined(LAST_CPUPID_NOT_IN_PAGE_FLAGS) && !defined(CONFIG_COMPILE_TEST)
+ #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
+ #endif
  
- put_timings_node:
