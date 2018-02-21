@@ -1,170 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938647AbeBUQvQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:51:16 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38341 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938633AbeBUQvM (ORCPT
+        id S1753545AbeBUQvh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:51:37 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:33876 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1752196AbeBUQve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:51:12 -0500
-Message-ID: <1519231860.3405.11.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] vfio: platform: Add generic DT reset support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 21 Feb 2018 17:51:00 +0100
-In-Reply-To: <1518539815-13774-3-git-send-email-geert+renesas@glider.be>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
-         <1518539815-13774-3-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 21 Feb 2018 11:51:34 -0500
+Date: Wed, 21 Feb 2018 11:51:33 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
+        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <akiyks@gmail.com>, <nborisov@suse.com>
+Subject: Re: [PATCH RFC tools/lkmm 09/12] tools/memory-model: Add required
+ herd7 version to README file
+In-Reply-To: <20180221161550.GF3617@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1802211151100.2032-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Wed, 21 Feb 2018, Paul E. McKenney wrote:
 
-I have a suggestion to avoid having to use the IS_ERR_OR_NULL macro, see
-below:
-
-On Tue, 2018-02-13 at 17:36 +0100, Geert Uytterhoeven wrote:
-> Vfio-platform requires reset support, provided either by ACPI, or, on DT
-> platforms, by a device-specific reset driver matching against the
-> device's compatible value.
+> On Wed, Feb 21, 2018 at 10:10:52AM -0500, Alan Stern wrote:
+> > On Tue, 20 Feb 2018, Paul E. McKenney wrote:
+> > 
+> > > LKMM and the herd7 tool are co-evolving, and out-of-date herd7 tools
+> > > produce inaccurate results, often with no obvious error messages.  This
+> > > commit therefore adds the required herd7 version to the LKMM README file.
+> > > 
+> > > Longer term, it would be good if .cat files could specify the required
+> > > version in a manner allowing herd7 to produce clear diagnostics.
+> > > 
+> > > Suggested-by: Akira Yokosawa <akiyks@gmail.com>
+> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > ---
+> > >  tools/memory-model/README | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/memory-model/README b/tools/memory-model/README
+> > > index 91414a49fac5..ea950c566ffd 100644
+> > > --- a/tools/memory-model/README
+> > > +++ b/tools/memory-model/README
+> > > @@ -20,7 +20,8 @@ that litmus test to be exercised within the Linux kernel.
+> > >  REQUIREMENTS
+> > >  ============
+> > >  
+> > > -The "herd7" and "klitmus7" tools must be downloaded separately:
+> > > +Version 7.48 of the "herd7" and "klitmus7" tools must be downloaded
+> > > +separately:
+> > >  
+> > >    https://github.com/herd/herdtools7
+> > 
+> > The text immediately below this mentions the Docker image and gentoo
+> > package.  Aren't they both seriously out of date at this point?  In
+> > which case, shouldn't we remove them from the README?
 > 
-> On many SoCs, devices are connected to an SoC-internal reset controller,
-> and can be reset in a generic way.  Hence add support to reset such
-> devices using the reset controller subsystem, provided the reset
-> hierarchy is described correctly in DT using the "resets" property.
+> Agreed, we should.  How about the following?
 > 
-> Devices that require a more complex reset procedure can still
-> provide a device-specific reset driver, as that takes precedence.
+> 							Thanx, Paul
 > 
-> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
-> becomes a no-op if reset controller support is disabled.
+> ------------------------------------------------------------------------
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/vfio/platform/vfio_platform_common.c  | 23 +++++++++++++++++++++--
->  drivers/vfio/platform/vfio_platform_private.h |  1 +
->  2 files changed, 22 insertions(+), 2 deletions(-)
+> commit b59fd89b465f0bfbfe06bf47e22c0cf160aef66b
+> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Date:   Wed Feb 21 08:13:48 2018 -0800
 > 
-> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index b60bb5326668498c..5d1e48f96e423508 100644
-> --- a/drivers/vfio/platform/vfio_platform_common.c
-> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -17,6 +17,7 @@
->  #include <linux/iommu.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/reset.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
-> @@ -112,7 +113,13 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
->  	if (VFIO_PLATFORM_IS_ACPI(vdev))
->  		return vfio_platform_acpi_has_reset(vdev);
+>     tools/memory-model: Remove mention of docker/gentoo image
+>     
+>     Because the docker and gentoo images haven't been updated in quite some
+>     time, they are likely to provide more confusion than help.  This commit
+>     therefore removes mention of them from the README file.
+>     
+>     Reported-by: Alan Stern <stern@rowland.harvard.edu>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/tools/memory-model/README b/tools/memory-model/README
+> index ea950c566ffd..0b3a5f3c9ccd 100644
+> --- a/tools/memory-model/README
+> +++ b/tools/memory-model/README
+> @@ -27,21 +27,6 @@ separately:
 >  
-> -	return vdev->of_reset ? true : false;
-> +	if (vdev->of_reset)
-> +		return true;
-> +
-> +	if (!IS_ERR_OR_NULL(vdev->reset_control))
-> +		return true;
-
-I'd avoid storing error values in vdev->reset_control at all, so this
-could be:
-
-	if (vdev->reset_control)
-		return true;
-
-> +
-> +	return false;
->  }
+>  See "herdtools7/INSTALL.md" for installation instructions.
 >  
->  static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
-> @@ -127,8 +134,15 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->  		vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->  							&vdev->reset_module);
->  	}
-> +	if (vdev->of_reset)
-> +		return 0;
-> +
-> +	vdev->reset_control = __of_reset_control_get(vdev->device->of_node,
-> +						     NULL, 0, false, false);
-> +	if (!IS_ERR(vdev->reset_control))
-> +		return 0;
-
-if you assign to a local variable first here:
-
-	struct reset_control *rstc;
-
-	 ...
-
-	rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
-	if (!IS_ERR(rstc)) {
-		vdev->reset_control = rstc;
-		return 0;
-	}
-
-Also, please don't use __of_reset_control_get directly.
-
+> -Alternatively, Abhishek Bhardwaj has kindly provided a Docker image
+> -of these tools at "abhishek40/memory-model".  Abhishek suggests the
+> -following commands to install and use this image:
+> -
+> -  - Users should install Docker for their distribution.
+> -  - docker run -itd abhishek40/memory-model
+> -  - docker attach <id-emitted-from-the-previous-command>
+> -
+> -Gentoo users might wish to make use of Patrick McLean's package:
+> -
+> -  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/herdtools7
+> -
+> -These packages may not be up-to-date with respect to the GitHub
+> -repository.
+> -
 >  
-> -	return vdev->of_reset ? 0 : -ENOENT;
-> +	return PTR_ERR(vdev->reset_control);
+>  ==================
+>  BASIC USAGE: HERD7
 
-	return PTR_ERR(rstc);
+Yeah, that's good.
 
->  }
->  
->  static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
-> @@ -138,6 +152,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
->  
->  	if (vdev->of_reset)
->  		module_put(vdev->reset_module);
-> +
-> +	reset_control_put(vdev->reset_control);
->  }
->  
->  static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
-> @@ -217,6 +233,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
->  	} else if (vdev->of_reset) {
->  		dev_info(vdev->device, "reset\n");
->  		return vdev->of_reset(vdev);
-> +	} else if (!IS_ERR_OR_NULL(vdev->reset_control)) {
-> +		dev_info(vdev->device, "reset\n");
-> +		return reset_control_reset(vdev->reset_control);
-
-	} else {
-		if (vdev->reset_control)
-			dev_info(vdev->device, "reset\n");
-		return reset_control_reset(vdev->reset_control);
-
->  	}
->  
->  	dev_warn(vdev->device, "no reset function found!\n");
-> diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
-> index 85ffe5d9d1abd94e..a56e80ae5986540b 100644
-> --- a/drivers/vfio/platform/vfio_platform_private.h
-> +++ b/drivers/vfio/platform/vfio_platform_private.h
-> @@ -60,6 +60,7 @@ struct vfio_platform_device {
->  	const char			*compat;
->  	const char			*acpihid;
->  	struct module			*reset_module;
-> +	struct reset_control		*reset_control;
->  	struct device			*device;
->  
->  	/*
-
-regards
-Philipp
+Alan
