@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2250dMw1GnAeFfvTuGTgSUkcR51yB2cMOqZ6J+MS1RiInJ6tt2UxdUxTliH/Y9c0pvHaaw3h
-ARC-Seal: i=1; a=rsa-sha256; t=1519218116; cv=none;
+X-Google-Smtp-Source: AH8x226/KN5qXYo+JswhfRIU3ufKaWJmewoVRk+fumZcpNmLWKh7V8GoUAU7I9CrdIjXW1JkarFP
+ARC-Seal: i=1; a=rsa-sha256; t=1519218115; cv=none;
         d=google.com; s=arc-20160816;
-        b=KJJImGZSIUGfJWAs8v2OCZI9tfUYgx9XFUN722vitVc+UvfdWzirhaUKTV4XSKHdd4
-         JS03fg2nqM3OWA0VbDH7RDPezfHp0a1LlXFkKxQ/ahkSkkPg0ftaHLOvQoONQV8T9lX6
-         vnKoAO/qnivBWuOWx5I+Tc8n+kkssLNtcrvG+ZyOMvjvef05AHSSsxzJ6QjbDY5wWaes
-         G7D3D31aA/ExzT+daiXS8M5KkvPu30BuKB1KvEdLhaZnQml1/1zbBi7+JgKCG6QCojUe
-         adhCQKp8CKLa/uBGO4rU8aTM470V4oaUjETbqhxg5rCEyBG+zZIOeCGUjJkvnyAAWAMz
-         jWkQ==
+        b=lGrrZdBsAnvkhhlqL9mfXIvx4jslzmcW+0vY6/H0fmk1IrE5x3qH6qVEemzpR9cDtB
+         gM6rDI22457UZW7vGZfTV22bkkixo5wMIEy6YGv8qs9l9s7eHDbE6rHSEa+g40z6W2R6
+         R++bBS7E19RsEa6aGneNtoaS7XMkFq5JlNUi1i00C1UTCGw7wPKaFN9CkiJSKidEZp4j
+         WgHTjM4XEn7p1aIwNGdJ7Mmh+EG+kX1U92fkQevZTD3+n873VF51q/lmmPfmH9jTGyTH
+         1Za0+F6Hqkz2GklCJv/ppp/wWsT/9X+cZjRDDMfKvXyxLlBx0Fexo0cB+mE1dDtSI2fP
+         UD6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2MyYMAmoh1cCpST3PFbe2Kts4nPVfB48yRd92p00DNI=;
-        b=EDYHxUWwHf6tpLHdSayNn2rKNFun5zYeF5k31J9Ld+FungLRPEZ3zr4rdDz4wGqfA8
-         jnvlaOsPAkQvSitGjm6NWFMNGk2XI7D9lfFrx+tGQ6+vDrEa+IpOcPBeIgHIKxHqH7Ns
-         mdrgYc/02B9BSXr4uau7ODzYc/rMoDn4M5ECzDqYldGlggVt/NwOmkuCrPwKvJSio3Rf
-         CCJhdn7AOpx+QrdqLIjJWjs7OvDhUlBCZ8jMkhumt6AiCvk5JqzmGy7KlfclSM3AsY8b
-         m93ABJtP8oRQ5xXXEOs+xZ5m22JSZxNUhNfn96X72UIuj6XmM2x2WIKVyTqdKNgZ1et+
-         jv1A==
+        bh=seE5bcKzqnBpAgQbz0DY2fuS8qYgxzZNwNINwCPmh2E=;
+        b=1Gfsrrbe05ZOfJuGC1j/JgNw6mZphAk9YHYUKNgw4aQ+bhULe4OLXGUH7It6ObiZlS
+         Uuopadg/epphLMMPFelXDHxz+hl1qn744gpZFgCj6FU3eZnaeqq9si+YmoSHI//orew+
+         Te3I3FTTMI07tMVxam+mQu7vdIRIAdN0NsoXUmpKJt/VZ1eCKLjmW464oGLdjmK1ErkP
+         aQZAeNPJYQFdx7gtM4dO3CU8fc6wPGP3Afj6lmhVlfY/eKhfSnA+GWgu3Gm4pQ6NfwUk
+         G5qeCvME6/Fvjle5hLMlNh1NQ6sM8hZ7KQ73dckr6i5caMvgVnTbMfbhntWtTWhXbc40
+         qHOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 090/167] drm/ttm: Dont add swapped BOs to swap-LRU list
-Date: Wed, 21 Feb 2018 13:48:21 +0100
-Message-Id: <20180221124529.313391102@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 088/167] x86/cpu: Change type of x86_cache_size variable to unsigned int
+Date: Wed, 21 Feb 2018 13:48:19 +0100
+Message-Id: <20180221124529.208569839@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015655531949481?=
-X-GMAIL-MSGID: =?utf-8?q?1593015655531949481?=
+X-GMAIL-THRID: =?utf-8?q?1593014675451742666?=
+X-GMAIL-MSGID: =?utf-8?q?1593015654480394278?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +53,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-commit fd5002d6a3c602664b07668a24df4ef7a43bf078 upstream.
+commit 24dbc6000f4b9b0ef5a9daecb161f1907733765a upstream.
 
-A BO that's already swapped would be added back to the swap-LRU list
-for example if its validation failed under high memory pressure. This
-could later lead to swapping it out again and leaking previous swap
-storage.
+Currently, x86_cache_size is of type int, which makes no sense as we
+will never have a valid cache size equal or less than 0. So instead of
+initializing this variable to -1, it can perfectly be initialized to 0
+and use it as an unsigned variable instead.
 
-This commit adds a condition to prevent that from happening.
-
-v2: Check page_flags instead of swap_storage
-
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Addresses-Coverity-ID: 1464429
+Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ttm/ttm_bo.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/processor.h      |    2 +-
+ arch/x86/kernel/cpu/common.c          |    2 +-
+ arch/x86/kernel/cpu/microcode/intel.c |    2 +-
+ arch/x86/kernel/cpu/proc.c            |    4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -175,7 +175,8 @@ void ttm_bo_add_to_lru(struct ttm_buffer
- 		list_add_tail(&bo->lru, &man->lru[bo->priority]);
- 		kref_get(&bo->list_kref);
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -109,7 +109,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	/* in KB - valid for CPUS which support this call: */
+-	int			x86_cache_size;
++	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+ 	/* Cache QoS architectural values: */
+ 	int			x86_cache_max_rmid;	/* max index */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1160,7 +1160,7 @@ static void identify_cpu(struct cpuinfo_
+ 	int i;
  
--		if (bo->ttm && !(bo->ttm->page_flags & TTM_PAGE_FLAG_SG)) {
-+		if (bo->ttm && !(bo->ttm->page_flags &
-+				 (TTM_PAGE_FLAG_SG | TTM_PAGE_FLAG_SWAPPED))) {
- 			list_add_tail(&bo->swap,
- 				      &bo->glob->swap_lru[bo->priority]);
- 			kref_get(&bo->list_kref);
+ 	c->loops_per_jiffy = loops_per_jiffy;
+-	c->x86_cache_size = -1;
++	c->x86_cache_size = 0;
+ 	c->x86_vendor = X86_VENDOR_UNKNOWN;
+ 	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
+ 	c->x86_vendor_id[0] = '\0'; /* Unset */
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -982,7 +982,7 @@ static struct microcode_ops microcode_in
+ 
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ {
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 
+ 	do_div(llc_size, c->x86_max_cores);
+ 
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -91,8 +91,8 @@ static int show_cpuinfo(struct seq_file
+ 	}
+ 
+ 	/* Cache size */
+-	if (c->x86_cache_size >= 0)
+-		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
++	if (c->x86_cache_size)
++		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
+ 
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
