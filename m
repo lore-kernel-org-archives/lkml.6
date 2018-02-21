@@ -1,127 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938916AbeBUR7J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:59:09 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43692 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753941AbeBUR7G (ORCPT
+        id S1755087AbeBUR7R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:59:17 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59867 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933620AbeBUR7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:59:06 -0500
-X-Google-Smtp-Source: AH8x224+XbjDN5OLK4sxWd8OtJSKsG5+74i2BfNENKT4eSk69y6+tr1x2+9fHs4jpp+16qVh5Ss3eA==
-Date: Wed, 21 Feb 2018 18:58:57 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180221175857.GA23000@andrea>
-References: <20180221160602.GD3617@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
+        Wed, 21 Feb 2018 12:59:09 -0500
+Date: Wed, 21 Feb 2018 09:58:42 -0800
+From: tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-09933946643bcc8e0a9bd4ede192ed854e22db8f@git.kernel.org>
+Cc: bp@suse.de, peterz@infradead.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        linux-edac@vger.kernel.org, tony.luck@intel.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, bp@suse.de, peterz@infradead.org,
+        bp@alien8.de, linux-edac@vger.kernel.org, tony.luck@intel.com,
+        mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <20180221101900.10326-3-bp@alien8.de>
+References: <20180221101900.10326-3-bp@alien8.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] x86/mce: Convert 'struct mca_config' bools to a
+ bitfield
+Git-Commit-ID: 09933946643bcc8e0a9bd4ede192ed854e22db8f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 12:15:56PM -0500, Alan Stern wrote:
-> Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
-> smp_read_barrier_depends, and lockless_dereference") was accidentally
-> merged too early, while it was still in RFC form.  This patch adds in
-> the missing pieces.
-> 
-> Akira pointed out some typos in the original patch, and he noted that
-> cheatsheet.txt should be updated to indicate how unsuccessful RMW
-> operations relate to address dependencies.
-> 
-> Andrea pointed out that the macro for rcu_dereference() in linux.def
-> should now use the "once" annotation instead of "deref".  He also
-> suggested that the comments should mention commit 5a8897cc7631
-> ("locking/atomics/alpha: Add smp_read_barrier_depends() to
-> _release()/_relaxed() atomics") as an important precursor, and he
-> contributed commit cb13b424e986 ("locking/xchg/alpha: Add
-> unconditional memory barrier to cmpxchg()"), another prerequisite.
-> 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> Suggested-by: Akira Yokosawa <akiyks@gmail.com>
-> Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-> Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
+Commit-ID:  09933946643bcc8e0a9bd4ede192ed854e22db8f
+Gitweb:     https://git.kernel.org/tip/09933946643bcc8e0a9bd4ede192ed854e22db8f
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Wed, 21 Feb 2018 11:18:54 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 17:00:53 +0100
 
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
+x86/mce: Convert 'struct mca_config' bools to a bitfield
 
-Thanks,
-  Andrea
+... to save space when future flags are added.
 
+No functionality change.
 
-> 
-> ---
-> 
->  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
->  tools/memory-model/Documentation/explanation.txt |    4 ++--
->  tools/memory-model/linux-kernel.def              |    2 +-
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
-> +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> @@ -1,11 +1,11 @@
->                                    Prior Operation     Subsequent Operation
->                                    ---------------  ---------------------------
->                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-> -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
-> +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
->  
->  Store, e.g., WRITE_ONCE()            Y                                       Y
-> -Load, e.g., READ_ONCE()              Y                              Y        Y
-> -Unsuccessful RMW operation           Y                              Y        Y
-> +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
-> +Unsuccessful RMW operation           Y                          Y   Y        Y
->  rcu_dereference()                    Y                          Y   Y        Y
->  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
->  Successful *_release()         C        Y  Y    Y     W                      Y
-> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-> @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
->  executed on C before the fence (i.e., those which precede the fence in
->  program order).
->  
-> -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
->  other properties which we discuss later.
->  
->  
-> @@ -1138,7 +1138,7 @@ final effect is that even though the two
->  program order, it appears that they aren't.
->  
->  This could not have happened if the local cache had processed the
-> -incoming stores in FIFO order.  In constrast, other architectures
-> +incoming stores in FIFO order.  By contrast, other architectures
->  maintain at least the appearance of FIFO order.
->  
->  In practice, this difficulty is solved by inserting a special fence
-> Index: usb-4.x/tools/memory-model/linux-kernel.def
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/linux-kernel.def
-> +++ usb-4.x/tools/memory-model/linux-kernel.def
-> @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
->  smp_store_release(X,V) { __store{release}(*X,V); }
->  smp_load_acquire(X) __load{acquire}(*X)
->  rcu_assign_pointer(X,V) { __store{release}(X,V); }
-> -rcu_dereference(X) __load{deref}(X)
-> +rcu_dereference(X) __load{once}(X)
->  
->  // Fences
->  smp_mb() { __fence{mb} ; }
-> 
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180221101900.10326-3-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/mcheck/mce-internal.h | 13 ++++++++-----
+ arch/x86/kernel/cpu/mcheck/mce.c          | 16 ++++++++--------
+ 2 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+index ed3c5ae..374d1aa 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-internal.h
++++ b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+@@ -131,12 +131,15 @@ static inline void mce_unmap_kpfn(unsigned long pfn) {}
+ struct mca_config {
+ 	bool dont_log_ce;
+ 	bool cmci_disabled;
+-	bool lmce_disabled;
+ 	bool ignore_ce;
+-	bool disabled;
+-	bool ser;
+-	bool recovery;
+-	bool bios_cmci_threshold;
++
++	__u64 lmce_disabled		: 1,
++	      disabled			: 1,
++	      ser			: 1,
++	      recovery			: 1,
++	      bios_cmci_threshold	: 1,
++	      __reserved		: 59;
++
+ 	u8 banks;
+ 	s8 bootlog;
+ 	int tolerant;
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 8ff94d1..db5b1e4 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1511,7 +1511,7 @@ static int __mcheck_cpu_cap_init(void)
+ 		mca_cfg.rip_msr = MSR_IA32_MCG_EIP;
+ 
+ 	if (cap & MCG_SER_P)
+-		mca_cfg.ser = true;
++		mca_cfg.ser = 1;
+ 
+ 	return 0;
+ }
+@@ -1819,12 +1819,12 @@ void mcheck_cpu_init(struct cpuinfo_x86 *c)
+ 		return;
+ 
+ 	if (__mcheck_cpu_cap_init() < 0 || __mcheck_cpu_apply_quirks(c) < 0) {
+-		mca_cfg.disabled = true;
++		mca_cfg.disabled = 1;
+ 		return;
+ 	}
+ 
+ 	if (mce_gen_pool_init()) {
+-		mca_cfg.disabled = true;
++		mca_cfg.disabled = 1;
+ 		pr_emerg("Couldn't allocate MCE records pool!\n");
+ 		return;
+ 	}
+@@ -1902,11 +1902,11 @@ static int __init mcheck_enable(char *str)
+ 	if (*str == '=')
+ 		str++;
+ 	if (!strcmp(str, "off"))
+-		cfg->disabled = true;
++		cfg->disabled = 1;
+ 	else if (!strcmp(str, "no_cmci"))
+ 		cfg->cmci_disabled = true;
+ 	else if (!strcmp(str, "no_lmce"))
+-		cfg->lmce_disabled = true;
++		cfg->lmce_disabled = 1;
+ 	else if (!strcmp(str, "dont_log_ce"))
+ 		cfg->dont_log_ce = true;
+ 	else if (!strcmp(str, "ignore_ce"))
+@@ -1914,9 +1914,9 @@ static int __init mcheck_enable(char *str)
+ 	else if (!strcmp(str, "bootlog") || !strcmp(str, "nobootlog"))
+ 		cfg->bootlog = (str[0] == 'b');
+ 	else if (!strcmp(str, "bios_cmci_threshold"))
+-		cfg->bios_cmci_threshold = true;
++		cfg->bios_cmci_threshold = 1;
+ 	else if (!strcmp(str, "recovery"))
+-		cfg->recovery = true;
++		cfg->recovery = 1;
+ 	else if (isdigit(str[0])) {
+ 		if (get_option(&str, &cfg->tolerant) == 2)
+ 			get_option(&str, &(cfg->monarch_timeout));
+@@ -2381,7 +2381,7 @@ device_initcall_sync(mcheck_init_device);
+  */
+ static int __init mcheck_disable(char *str)
+ {
+-	mca_cfg.disabled = true;
++	mca_cfg.disabled = 1;
+ 	return 1;
+ }
+ __setup("nomce", mcheck_disable);
