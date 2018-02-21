@@ -1,113 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935950AbeBUQgc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:36:32 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932674AbeBUQga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:36:30 -0500
-Subject: Re: [PATCH v2 1/2] KVM: x86: Add a framework for supporting MSR-based
- features
-To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <20180215231156.31016.79657.stgit@tlendack-t1.amdoffice.net>
- <20180215231206.31016.78914.stgit@tlendack-t1.amdoffice.net>
- <00583b68-d599-b709-133a-3741c258df13@redhat.com>
- <7f6a78ae-abab-2a03-aebd-e43e6fe168b4@amd.com>
- <94f6ed44-07ab-ff0f-2a6d-b3d8ff4ff4b1@redhat.com>
- <f1b934f4-e228-e6e3-496d-d8287018602e@amd.com>
- <d77a8a6e-d10b-82d9-6df4-7ed5505ef40f@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ff8260fc-a928-31f8-38ab-248fcc068193@redhat.com>
-Date: Wed, 21 Feb 2018 17:36:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S936096AbeBUQg7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:36:59 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3497 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932674AbeBUQg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:36:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,545,1511856000";
+   d="scan'208";a="32490339"
+Date: Wed, 21 Feb 2018 18:36:54 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private
+ objects
+Message-ID: <20180221163654.GS5453@intel.com>
+References: <20180221143730.30285-1-robdclark@gmail.com>
+ <20180221143730.30285-2-robdclark@gmail.com>
+ <20180221144919.GN5453@intel.com>
+ <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
+ <20180221150727.GO5453@intel.com>
+ <CAF6AEGucNXQZjKaL4KYXSnax=kFiurmsgxKHP9t5ycy_tbmj7g@mail.gmail.com>
+ <20180221152720.GP5453@intel.com>
+ <CAF6AEGs+_gjEzueON9Rz8ce9xzHKhkdR2yQGfSpC=6DQV19V2A@mail.gmail.com>
+ <20180221155410.GQ5453@intel.com>
+ <CAF6AEGvbQ6KF3utSmrx+_Bcmw=BC2D1yvbU8GeFfAd4rMWfvkQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d77a8a6e-d10b-82d9-6df4-7ed5505ef40f@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGvbQ6KF3utSmrx+_Bcmw=BC2D1yvbU8GeFfAd4rMWfvkQ@mail.gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2018 15:52, Tom Lendacky wrote:
-> On 2/21/2018 8:47 AM, Tom Lendacky wrote:
->> On 2/21/2018 8:32 AM, Paolo Bonzini wrote:
->>> On 21/02/2018 15:15, Tom Lendacky wrote:
->>>> On 2/21/2018 5:41 AM, Paolo Bonzini wrote:
->>>>> On 16/02/2018 00:12, Tom Lendacky wrote:
->>>>>> +static u32 msr_based_features[] = {
->>>>>> +};
->>>>>> +
->>>>>> +static unsigned int num_msr_based_features = ARRAY_SIZE(msr_based_features);
->>>>>> +
->>>>>>  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer)
->>>>>>  {
->>>>>>  	if (efer & efer_reserved_bits)
->>>>>> @@ -2785,6 +2794,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->>>>>>  	case KVM_CAP_SET_BOOT_CPU_ID:
->>>>>>   	case KVM_CAP_SPLIT_IRQCHIP:
->>>>>>  	case KVM_CAP_IMMEDIATE_EXIT:
->>>>>> +	case KVM_CAP_GET_MSR_FEATURES:
->>>>>>  		r = 1;
->>>>>>  		break;
->>>>>>  	case KVM_CAP_ADJUST_CLOCK:
->>>>>> @@ -4410,6 +4420,47 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>>>>>  			r = kvm_x86_ops->mem_enc_unreg_region(kvm, &region);
->>>>>>  		break;
->>>>>>  	}
->>>>>> +	case KVM_GET_MSR_INDEX_LIST: {
->>>>>> +		struct kvm_msr_list __user *user_msr_list = argp;
->>>>>> +		struct kvm_msr_list msr_list;
->>>>>> +		unsigned int n;
->>>>>> +
->>>>>> +		r = -EFAULT;
->>>>>> +		if (copy_from_user(&msr_list, user_msr_list, sizeof(msr_list)))
->>>>>> +			goto out;
->>>>>> +		n = msr_list.nmsrs;
->>>>>> +		msr_list.nmsrs = num_msr_based_features;
->>>>>> +		if (copy_to_user(user_msr_list, &msr_list, sizeof(msr_list)))
->>>>>> +			goto out;
->>>>>> +		r = -E2BIG;
->>>>>> +		if (n < msr_list.nmsrs)
->>>>>> +			goto out;
->>>>>> +		r = -EFAULT;
->>>>>> +		if (copy_to_user(user_msr_list->indices, &msr_based_features,
->>>>>> +				 num_msr_based_features * sizeof(u32)))
->>>>>> +			goto out;
->>>>>> +		r = 0;
->>>>>> +		break;
->>>>>
->>>>> I think it's better to have some logic in kvm_init_msr_list, to filter
->>>>> the MSR list based on whatever MSRs the backend provides.
->>>>
->>>> Ok, that's what I had originally and then you said to just return the full
->>>> list and let KVM_GET_MSR return a 0 or 1 if it was supported. I can switch
->>>> it back.
->>>
->>> Hmm, I cannot find this remark (I would have been very confused, so I
->>> tried to look for it).  I commented on removing kvm_valid_msr_feature,
->>> but not kvm_init_msr_list.
->>
->> I think this is the reply that sent me off on that track:
->>   https://marc.info/?l=linux-kernel&m=151862648123153&w=2
-
-Yeah, it was referring to AMD hosts that don't have the MSR.  Sorry for
-the confusion.
-
->> I'll make it consistent with the other MSR-related items and initialize
->> the list in kvm_init_msr_list().  I'll change the signature of the
->> msr_feature() kvm_x86_ops callback to take an index and optionally return
->> a data value so it can be used to check for support when building the
->> list and return a value when needed.
+On Wed, Feb 21, 2018 at 11:17:21AM -0500, Rob Clark wrote:
+> On Wed, Feb 21, 2018 at 10:54 AM, Ville Syrjälä
+> <ville.syrjala@linux.intel.com> wrote:
+> > On Wed, Feb 21, 2018 at 10:36:06AM -0500, Rob Clark wrote:
+> >> On Wed, Feb 21, 2018 at 10:27 AM, Ville Syrjälä
+> >> <ville.syrjala@linux.intel.com> wrote:
+> >> > On Wed, Feb 21, 2018 at 10:20:03AM -0500, Rob Clark wrote:
+> >> >> On Wed, Feb 21, 2018 at 10:07 AM, Ville Syrjälä
+> >> >> <ville.syrjala@linux.intel.com> wrote:
+> >> >> > On Wed, Feb 21, 2018 at 09:54:49AM -0500, Rob Clark wrote:
+> >> >> >> On Wed, Feb 21, 2018 at 9:49 AM, Ville Syrjälä
+> >> >> >> <ville.syrjala@linux.intel.com> wrote:
+> >> >> >> > On Wed, Feb 21, 2018 at 09:37:21AM -0500, Rob Clark wrote:
+> >> >> >> >> Follow the same pattern of locking as with other state objects.  This
+> >> >> >> >> avoids boilerplate in the driver.
+> >> >> >> >
+> >> >> >> > I'm not sure we really want to do this. What if the driver wants a
+> >> >> >> > custom locking scheme for this state?
+> >> >> >>
+> >> >> >> That seems like something we want to discourage, ie. all the more
+> >> >> >> reason for this patch.
+> >> >> >>
+> >> >> >> There is no reason drivers could not split their global state into
+> >> >> >> multiple private objs's, each with their own lock, for more fine
+> >> >> >> grained locking.  That is basically the only valid reason I can think
+> >> >> >> of for "custom locking".
+> >> >> >
+> >> >> > In i915 we have at least one case that would want something close to an
+> >> >> > rwlock. Any crtc lock is enough for read, need all of them for write.
+> >> >> > Though if we wanted to use private objs for that we might need to
+> >> >> > actually make the states refcounted as well, otherwise I can imagine
+> >> >> > we might land in some use-after-free issues once again.
+> >> >> >
+> >> >> > Maybe we could duplicate the state into per-crtc and global copies, but
+> >> >> > then we have to keep all of those in sync somehow which doesn't sound
+> >> >> > particularly pleasant.
+> >> >>
+> >> >> Or just keep your own driver lock for read, and use that plus the core
+> >> >> modeset lock for write?
+> >> >
+> >> > If we can't add the private obj to the state we can't really use it.
+> >> >
+> >>
+> >> I'm not sure why that is strictly true (that you need to add it to the
+> >> state if for read-only), since you'd be guarding it with your own
+> >> driver read-lock you can just priv->foo_state->bar.
+> >>
+> >> Since it is read-only access, there is no roll-back to worry about for
+> >> test-only or failed atomic_check()s..
+> >
+> > That would be super ugly. We want to access the information the same
+> > way whether it has been modified or not.
 > 
-> Hmm, actually I'll just leave the signature alone and pass in a local
-> kvm_msr_entry struct variable for the call when initializing the list.
+> Well, I mean the whole idea of what you want to do seems a bit super-ugly ;-)
+> 
+> I mean, in mdp5 the assigned global resources go in plane/crtc state,
+> and tracking of what is assigned to which plane/crtc is in global
+> state, so it fits nicely in the current locking model.  For i915, I'm
+> not quite sure what is the global state you are concerned about, so it
+> is a bit hard to talk about the best solution in the abstract.  Maybe
+> the better option is to teach modeset-lock how to be a rwlock instead?
 
-Sounds good!
+The thing I'm thinking is the core display clock (cdclk) frequency which
+we need to consult whenever computing plane states and whatnot. We don't
+want a modeset on one crtc to block a plane update on another crtc
+unless we actually have to bump the cdclk (which would generally require
+all crtcs to undergo a full modeset). Seems like a generally useful
+pattern to me.
 
-Paolo
+-- 
+Ville Syrjälä
+Intel OTC
