@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935677AbeBURrx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:47:53 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:11223 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934959AbeBURrt (ORCPT
+        id S934748AbeBURwt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:52:49 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:26762 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935104AbeBURrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:47:49 -0500
+        Wed, 21 Feb 2018 12:47:51 -0500
 X-IronPort-AV: E=Sophos;i="5.47,375,1515456000";
-   d="scan'208";a="723871744"
+   d="scan'208";a="709068518"
 From: KarimAllah Ahmed <karahmed@amazon.de>
 To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc: hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
         pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
         KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH 04/10] KVM: Introduce a new guest mapping API
-Date: Wed, 21 Feb 2018 18:47:15 +0100
-Message-Id: <1519235241-6500-5-git-send-email-karahmed@amazon.de>
+Subject: [PATCH 09/10] KVM/X86: hyperv: Use kvm_vcpu_map in synic_clear_sint_msg_pending
+Date: Wed, 21 Feb 2018 18:47:20 +0100
+Message-Id: <1519235241-6500-10-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
 References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
@@ -24,126 +24,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In KVM, specially for nested guests, there is a dominant pattern of:
-
-	=> map guest memory -> do_something -> unmap guest memory
-
-In addition to all this unnecessarily noise in the code due to boiler plate
-code, most of the time the mapping function does not properly handle memory
-that is not backed by "struct page". This new guest mapping API encapsulate
-most of this boiler plate code and also handles guest memory that is not
-backed by "struct page".
-
-Keep in mind that memremap is horribly slow, so this mapping API should not
-be used for high-frequency mapping operations. But rather for low-frequency
-mappings.
+... since using kvm_vcpu_gpa_to_page() and kmap() will only work for guest
+memory that has a "struct page".
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
- include/linux/kvm_host.h | 15 +++++++++++++++
- virt/kvm/kvm_main.c      | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
+ arch/x86/kvm/hyperv.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index ac0062b..6cc2c29 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -204,6 +204,13 @@ enum {
- 	READING_SHADOW_PAGE_TABLES,
- };
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index dc97f25..909b498 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -137,26 +137,22 @@ static void synic_clear_sint_msg_pending(struct kvm_vcpu_hv_synic *synic,
+ 					u32 sint)
+ {
+ 	struct kvm_vcpu *vcpu = synic_to_vcpu(synic);
+-	struct page *page;
+-	gpa_t gpa;
++	struct kvm_host_map map;
+ 	struct hv_message *msg;
+ 	struct hv_message_page *msg_page;
  
-+struct kvm_host_map {
-+	struct page *page;
-+	void *kaddr;
-+	kvm_pfn_t pfn;
-+	kvm_pfn_t gfn;
-+};
-+
- /*
-  * Sometimes a large or cross-page mmio needs to be broken up into separate
-  * exits for userspace servicing.
-@@ -700,6 +707,9 @@ struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
- struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn);
- kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
- kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
-+bool kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa,
-+		  struct kvm_host_map *map);
-+void kvm_vcpu_unmap(struct kvm_host_map *map);
- struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
- unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
- unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
-@@ -996,6 +1006,11 @@ static inline struct page *kvm_vcpu_gpa_to_page(struct kvm_vcpu *vcpu,
- 	return kvm_vcpu_gfn_to_page(vcpu, gpa_to_gfn(gpa));
+-	gpa = synic->msg_page & PAGE_MASK;
+-	page = kvm_vcpu_gfn_to_page(vcpu, gpa >> PAGE_SHIFT);
+-	if (is_error_page(page)) {
++	if (!kvm_vcpu_map(vcpu, gpa_to_gfn(synic->msg_page), &map)) {
+ 		vcpu_err(vcpu, "Hyper-V SynIC can't get msg page, gpa 0x%llx\n",
+-			 gpa);
++			 synic->msg_page);
+ 		return;
+ 	}
+-	msg_page = kmap_atomic(page);
+ 
++	msg_page = map.kaddr;
+ 	msg = &msg_page->sint_message[sint];
+ 	msg->header.message_flags.msg_pending = 0;
+ 
+-	kunmap_atomic(msg_page);
+-	kvm_release_page_dirty(page);
+-	kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
++	kvm_vcpu_unmap(&map);
++	kvm_vcpu_mark_page_dirty(vcpu, gpa_to_gfn(synic->msg_page));
  }
  
-+static inline bool kvm_vcpu_map_valid(struct kvm_host_map *map)
-+{
-+	return map->kaddr != NULL;
-+}
-+
- static inline bool kvm_is_error_gpa(struct kvm *kvm, gpa_t gpa)
- {
- 	unsigned long hva = gfn_to_hva(kvm, gpa_to_gfn(gpa));
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4501e65..54e7329 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1632,6 +1632,56 @@ struct page *gfn_to_page(struct kvm *kvm, gfn_t gfn)
- }
- EXPORT_SYMBOL_GPL(gfn_to_page);
- 
-+bool kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
-+{
-+	kvm_pfn_t pfn;
-+	void *kaddr = NULL;
-+	struct page *page = NULL;
-+
-+	if (map->kaddr && map->gfn == gfn)
-+		/* If the mapping is valid and guest memory is already mapped */
-+		return true;
-+	else if (map->kaddr)
-+		/* If the mapping is valid but trying to map a different guest pfn */
-+		kvm_vcpu_unmap(map);
-+
-+	pfn = kvm_vcpu_gfn_to_pfn(vcpu, gfn);
-+	if (is_error_pfn(pfn))
-+		return false;
-+
-+	if (pfn_valid(pfn)) {
-+		page = pfn_to_page(pfn);
-+		kaddr = vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-+	} else {
-+		kaddr = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
-+	}
-+
-+	if (!kaddr)
-+		return false;
-+
-+	map->page = page;
-+	map->kaddr = kaddr;
-+	map->pfn = pfn;
-+	map->gfn = gfn;
-+
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_kaddr);
-+
-+void kvm_vcpu_unmap(struct kvm_host_map *map)
-+{
-+	if (!map->kaddr)
-+		return;
-+
-+	if (map->page)
-+		kunmap(map->page);
-+	else
-+		memunmap(map->kaddr);
-+
-+	kvm_release_pfn_dirty(map->pfn);
-+	memset(map, 0, sizeof(*map));
-+}
-+
- struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn)
- {
- 	kvm_pfn_t pfn;
+ static void kvm_hv_notify_acked_sint(struct kvm_vcpu *vcpu, u32 sint)
 -- 
 2.7.4
