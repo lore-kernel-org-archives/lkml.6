@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751565AbeBUESG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 23:18:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751532AbeBUESD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751534AbeBUESD (ORCPT <rfc822;w@1wt.eu>);
         Tue, 20 Feb 2018 23:18:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE03B2178F
+Received: from mail.kernel.org ([198.145.29.99]:55450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751459AbeBUESA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 23:18:00 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E68721741
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -20,9 +20,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
         Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 6/7] sched/nohz: Remove the 1 Hz tick code
-Date: Wed, 21 Feb 2018 05:17:28 +0100
-Message-Id: <1519186649-3242-7-git-send-email-frederic@kernel.org>
+Subject: [PATCH 5/7] sched/isolation: Offload residual 1Hz scheduler tick
+Date: Wed, 21 Feb 2018 05:17:27 +0100
+Message-Id: <1519186649-3242-6-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519186649-3242-1-git-send-email-frederic@kernel.org>
 References: <1519186649-3242-1-git-send-email-frederic@kernel.org>
@@ -30,8 +30,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the 1Hz tick is offloaded to workqueues, we can safely remove
-the residual code that used to handle it locally.
+When a CPU runs in full dynticks mode, a 1Hz tick remains in order to
+keep the scheduler stats alive. However this residual tick is a burden
+for bare metal tasks that can't stand any interruption at all, or want
+to minimize them.
+
+The usual boot parameters "nohz_full=" or "isolcpus=nohz" will now
+outsource these scheduler ticks to the global workqueue so that a
+housekeeping CPU handles those remotely. The sched_class::task_tick()
+implementations have been audited and look safe to be called remotely
+as the target runqueue and its current task are passed in parameter
+and don't seem to be accessed locally.
+
+Note that in the case of using isolcpus, it's still up to the user to
+affine the global workqueues to the housekeeping CPUs through
+/sys/devices/virtual/workqueue/cpumask or domains isolation
+"isolcpus=nohz,domain".
 
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
@@ -46,133 +60,268 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Wanpeng Li <kernellwp@gmail.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched/nohz.h |  4 ----
- kernel/sched/core.c        | 29 -----------------------------
- kernel/sched/idle_task.c   |  1 -
- kernel/sched/sched.h       | 11 +----------
- kernel/time/tick-sched.c   |  6 ------
- 5 files changed, 1 insertion(+), 50 deletions(-)
+ kernel/sched/core.c      | 92 ++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/deadline.c  |  8 +++++
+ kernel/sched/fair.c      |  7 +++-
+ kernel/sched/idle_task.c |  8 +++++
+ kernel/sched/isolation.c |  4 +++
+ kernel/sched/rt.c        |  8 +++++
+ kernel/sched/sched.h     |  2 ++
+ kernel/sched/stop_task.c |  8 +++++
+ 8 files changed, 136 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
-index 3d3a97d..0942172 100644
---- a/include/linux/sched/nohz.h
-+++ b/include/linux/sched/nohz.h
-@@ -37,8 +37,4 @@ extern void wake_up_nohz_cpu(int cpu);
- static inline void wake_up_nohz_cpu(int cpu) { }
- #endif
- 
--#ifdef CONFIG_NO_HZ_FULL
--extern u64 scheduler_tick_max_deferment(void);
--#endif
--
- #endif /* _LINUX_SCHED_NOHZ_H */
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5dfef45..8fff4f1 100644
+index e72ca3c..5dfef45 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3096,35 +3096,9 @@ void scheduler_tick(void)
- 	rq->idle_balance = idle_cpu(cpu);
- 	trigger_load_balance(rq);
- #endif
--	rq_last_tick_reset(rq);
+@@ -3125,6 +3125,96 @@ u64 scheduler_tick_max_deferment(void)
+ 
+ 	return jiffies_to_nsecs(next - now);
  }
- 
- #ifdef CONFIG_NO_HZ_FULL
--/**
-- * scheduler_tick_max_deferment
-- *
-- * Keep at least one tick per second when a single
-- * active task is running because the scheduler doesn't
-- * yet completely support full dynticks environment.
-- *
-- * This makes sure that uptime, CFS vruntime, load
-- * balancing, etc... continue to move forward, even
-- * with a very low granularity.
-- *
-- * Return: Maximum deferment in nanoseconds.
-- */
--u64 scheduler_tick_max_deferment(void)
--{
--	struct rq *rq = this_rq();
--	unsigned long next, now = READ_ONCE(jiffies);
--
--	next = rq->last_sched_tick + HZ;
--
--	if (time_before_eq(next, now))
--		return 0;
--
--	return jiffies_to_nsecs(next - now);
--}
- 
- struct tick_work {
- 	int			cpu;
-@@ -6116,9 +6090,6 @@ void __init sched_init(void)
- 		rq->last_load_update_tick = jiffies;
- 		rq->nohz_flags = 0;
++
++struct tick_work {
++	int			cpu;
++	struct delayed_work	work;
++};
++
++static struct tick_work __percpu *tick_work_cpu;
++
++static void sched_tick_remote(struct work_struct *work)
++{
++	struct delayed_work *dwork = to_delayed_work(work);
++	struct tick_work *twork = container_of(dwork, struct tick_work, work);
++	int cpu = twork->cpu;
++	struct rq *rq = cpu_rq(cpu);
++	struct rq_flags rf;
++
++	/*
++	 * Handle the tick only if it appears the remote CPU is running in full
++	 * dynticks mode. The check is racy by nature, but missing a tick or
++	 * having one too much is no big deal because the scheduler tick updates
++	 * statistics and checks timeslices in a time-independent way, regardless
++	 * of when exactly it is running.
++	 */
++	if (!idle_cpu(cpu) && tick_nohz_tick_stopped_cpu(cpu)) {
++		struct task_struct *curr;
++		u64 delta;
++
++		rq_lock_irq(rq, &rf);
++		update_rq_clock(rq);
++		curr = rq->curr;
++		delta = rq_clock_task(rq) - curr->se.exec_start;
++
++		/*
++		 * Make sure the next tick runs within a reasonable
++		 * amount of time.
++		 */
++		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
++		curr->sched_class->task_tick(rq, curr, 0);
++		rq_unlock_irq(rq, &rf);
++	}
++
++	/*
++	 * Run the remote tick once per second (1Hz). This arbitrary
++	 * frequency is large enough to avoid overload but short enough
++	 * to keep scheduler internal stats reasonably up to date.
++	 */
++	queue_delayed_work(system_unbound_wq, dwork, HZ);
++}
++
++static void sched_tick_start(int cpu)
++{
++	struct tick_work *twork;
++
++	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
++		return;
++
++	WARN_ON_ONCE(!tick_work_cpu);
++
++	twork = per_cpu_ptr(tick_work_cpu, cpu);
++	twork->cpu = cpu;
++	INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
++	queue_delayed_work(system_unbound_wq, &twork->work, HZ);
++}
++
++#ifdef CONFIG_HOTPLUG_CPU
++static void sched_tick_stop(int cpu)
++{
++	struct tick_work *twork;
++
++	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
++		return;
++
++	WARN_ON_ONCE(!tick_work_cpu);
++
++	twork = per_cpu_ptr(tick_work_cpu, cpu);
++	cancel_delayed_work_sync(&twork->work);
++}
++#endif /* CONFIG_HOTPLUG_CPU */
++
++int __init sched_tick_offload_init(void)
++{
++	tick_work_cpu = alloc_percpu(struct tick_work);
++	BUG_ON(!tick_work_cpu);
++
++	return 0;
++}
++
++#else /* !CONFIG_NO_HZ_FULL */
++static inline void sched_tick_start(int cpu) { }
++static inline void sched_tick_stop(int cpu) { }
  #endif
--#ifdef CONFIG_NO_HZ_FULL
--		rq->last_sched_tick = 0;
--#endif
- #endif /* CONFIG_SMP */
- 		hrtick_rq_init(rq);
- 		atomic_set(&rq->nr_iowait, 0);
-diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
-index e1b46e0..48b8a83 100644
---- a/kernel/sched/idle_task.c
-+++ b/kernel/sched/idle_task.c
-@@ -48,7 +48,6 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
  
- static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+ #if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
+@@ -5786,6 +5876,7 @@ int sched_cpu_starting(unsigned int cpu)
  {
--	rq_last_tick_reset(rq);
+ 	set_cpu_rq_start_time(cpu);
+ 	sched_rq_cpu_starting(cpu);
++	sched_tick_start(cpu);
+ 	return 0;
  }
+ 
+@@ -5797,6 +5888,7 @@ int sched_cpu_dying(unsigned int cpu)
+ 
+ 	/* Handle pending wakeups and then migrate everything off */
+ 	sched_ttwu_pending();
++	sched_tick_stop(cpu);
+ 
+ 	rq_lock_irqsave(rq, &rf);
+ 	if (rq->rd) {
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 9df0978..65cd5ea 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1776,6 +1776,14 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
+ 		enqueue_pushable_dl_task(rq, p);
+ }
+ 
++/*
++ * scheduler tick hitting a task of our scheduling class.
++ *
++ * NOTE: This function can be called remotely by the tick offload that
++ * goes along full dynticks. Therefore no local assumption can be made
++ * and everything must be accessed through the @rq and @curr passed in
++ * parameters.
++ */
+ static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
+ {
+ 	update_curr_dl(rq);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 5eb3ffc..94d4da5 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9440,7 +9440,12 @@ static void rq_offline_fair(struct rq *rq)
+ #endif /* CONFIG_SMP */
  
  /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c1c7c78..dc6c8b5 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -727,9 +727,7 @@ struct rq {
- #endif /* CONFIG_SMP */
- 	unsigned long nohz_flags;
- #endif /* CONFIG_NO_HZ_COMMON */
--#ifdef CONFIG_NO_HZ_FULL
--	unsigned long last_sched_tick;
--#endif
-+
- 	/* capture load from *all* tasks on this cpu: */
- 	struct load_weight load;
- 	unsigned long nr_load_updates;
-@@ -1626,13 +1624,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
- 	sched_update_tick_dependency(rq);
+- * scheduler tick hitting a task of our scheduling class:
++ * scheduler tick hitting a task of our scheduling class.
++ *
++ * NOTE: This function can be called remotely by the tick offload that
++ * goes along full dynticks. Therefore no local assumption can be made
++ * and everything must be accessed through the @rq and @curr passed in
++ * parameters.
+  */
+ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ {
+diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
+index d518664..e1b46e0 100644
+--- a/kernel/sched/idle_task.c
++++ b/kernel/sched/idle_task.c
+@@ -51,6 +51,14 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+ 	rq_last_tick_reset(rq);
  }
  
--static inline void rq_last_tick_reset(struct rq *rq)
--{
--#ifdef CONFIG_NO_HZ_FULL
--	rq->last_sched_tick = jiffies;
--#endif
--}
--
- extern void update_rq_clock(struct rq *rq);
++/*
++ * scheduler tick hitting a task of our scheduling class.
++ *
++ * NOTE: This function can be called remotely by the tick offload that
++ * goes along full dynticks. Therefore no local assumption can be made
++ * and everything must be accessed through the @rq and @curr passed in
++ * parameters.
++ */
+ static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
+ {
+ }
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index a2500c4..39f340d 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/static_key.h>
+ #include <linux/ctype.h>
++#include "sched.h"
  
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index d479b21..f2fa2e9 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -748,12 +748,6 @@ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
- 		delta = KTIME_MAX;
- 	}
+ DEFINE_STATIC_KEY_FALSE(housekeeping_overriden);
+ EXPORT_SYMBOL_GPL(housekeeping_overriden);
+@@ -61,6 +62,9 @@ void __init housekeeping_init(void)
  
--#ifdef CONFIG_NO_HZ_FULL
--	/* Limit the tick delta to the maximum scheduler deferment */
--	if (!ts->inidle)
--		delta = min(delta, scheduler_tick_max_deferment());
--#endif
--
- 	/* Calculate the next expiry time */
- 	if (delta < (KTIME_MAX - basemono))
- 		expires = basemono + delta;
+ 	static_branch_enable(&housekeeping_overriden);
+ 
++	if (housekeeping_flags & HK_FLAG_TICK)
++		sched_tick_offload_init();
++
+ 	/* We need at least one CPU to handle housekeeping work */
+ 	WARN_ON_ONCE(cpumask_empty(housekeeping_mask));
+ }
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index aad49451..c80563b 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2292,6 +2292,14 @@ static void watchdog(struct rq *rq, struct task_struct *p)
+ static inline void watchdog(struct rq *rq, struct task_struct *p) { }
+ #endif
+ 
++/*
++ * scheduler tick hitting a task of our scheduling class.
++ *
++ * NOTE: This function can be called remotely by the tick offload that
++ * goes along full dynticks. Therefore no local assumption can be made
++ * and everything must be accessed through the @rq and @curr passed in
++ * parameters.
++ */
+ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
+ {
+ 	struct sched_rt_entity *rt_se = &p->rt;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index fb5fc458..c1c7c78 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1574,6 +1574,7 @@ extern void post_init_entity_util_avg(struct sched_entity *se);
+ 
+ #ifdef CONFIG_NO_HZ_FULL
+ extern bool sched_can_stop_tick(struct rq *rq);
++extern int __init sched_tick_offload_init(void);
+ 
+ /*
+  * Tick may be needed by tasks in the runqueue depending on their policy and
+@@ -1598,6 +1599,7 @@ static inline void sched_update_tick_dependency(struct rq *rq)
+ 		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
+ }
+ #else
++static inline int sched_tick_offload_init(void) { return 0; }
+ static inline void sched_update_tick_dependency(struct rq *rq) { }
+ #endif
+ 
+diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
+index 210b1f2..ea8d2b6 100644
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -75,6 +75,14 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
+ 	cgroup_account_cputime(curr, delta_exec);
+ }
+ 
++/*
++ * scheduler tick hitting a task of our scheduling class.
++ *
++ * NOTE: This function can be called remotely by the tick offload that
++ * goes along full dynticks. Therefore no local assumption can be made
++ * and everything must be accessed through the @rq and @curr passed in
++ * parameters.
++ */
+ static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ {
+ }
 -- 
 2.7.4
