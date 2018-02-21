@@ -1,37 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224K5+X8BlJekf+v9payjY2ggTqVd+bEsKkYMwZ/T5goJhUmx+7SSgXvVRGNvURqukCbapko
-ARC-Seal: i=1; a=rsa-sha256; t=1519218129; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FIEa4vKl4limLwFMlwZPCDZn9Aoh2omYEuWG8eCwhU0a2OG0EbfQwt5Wq90ZpuLS8G
-         pz39p+/bOW5+GxouVCIqkxgg37n0QLGPPFqHkFqgvDFm35Gl3pHflpfOLFjTpwd8fGLL
-         WNzJJwoK9uJiz7rhYO+zIIz29cC0lt5b0+G2bGkyQT1WwxAD0cf6QHatLe3O0b1jXg1R
-         XmG3NH9xUdw8XApMlRp7mn0bYfRq+cM2W91I4nZwz7IY6+C6My//P8pdCnEycgH1tlw8
-         IJr1bhY8u5FYGhjnZDuyV5eQ350A2pSbdlOE2LuQxJP6SYNnRcqqi8sFcUyFvlRkkQnn
-         3vKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=c8+qvxUeJ336QOYR8TrJzE9CmGg7J7G7Bido8ZOeCbI=;
-        b=wqB1maWkrFk9fgSoN7Cw+MNu36TXpqX/rfncH2hx4V88POM4JYN75pU8ES4uP464nq
-         h1dhSlxPZEnRwhRzBIIW2m8/bXj9/j30FLHxiCwbXI5pCZp2K9HHMeD7taA3K3eQUXgy
-         F6p3XpPmcsiiD0Kx3JdiCzz73PvRC7afsOlYCqHk2qn1Wg7wiHgCLgp0otoJW7q5LLqG
-         Nhlk9zZh4cx7itAb9gEah9MWxVUiIKk4Jd51O4iRTJZnY3WGRzQ9w2to0AXIZa3CZSB3
-         3PFEYQHXQXpj2PcAbJov0w0j5ZZMPuOdUCyWGDQ7xLf6QAPovvOZgBVf6KFXLuPOxIK5
-         pGrw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1474421-1519218126-2-12584177639656778440
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519218125; b=VoRuRN2tjmAcr/iSCwpDiwnEoilxmWVXuLJL8wQ1G7h8jq/
+    gUDrmfNwSmpzXw3XrDsKcf0rpahNDNlAAC8cqdQogeO06RvOB/wH1V3OQEJLMvO2
+    SB0yaopZ9xDBXIoZVwF3JyrTdD9RUInIiJm4l6K9+k25Gah+40h7unVhhRrqHQsq
+    XqTQ0q9N3HBcou8tZsncN723omiiiTXrvkPq+jUAfWeQfuxeJ1YkqHzrgRX/7deV
+    djhJcPaNwGrrFPff4kcXH4jwtgiSkOEUN0MJX9Q60jwZQU9yul3S80CKpuxb+IUc
+    p7a8vNfn1m/Vh7JEYSq1cWCKEEWw0KVQ5dA/buw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519218125; bh=oD9uRdfEugSVFeNj/YfA5/N9A1
+    WcJ3k4PmCc8qekk3w=; b=VzqlDcZgq73bGJrlGNk5+aHAMEBAnuKWKwMcOfBAKn
+    n+7rM6zG+oQAk+zMj45w6I648em924dffU7moncXfI7u/fNdC5b4A27ujxmlc5nP
+    GngKwtBXkpqs88tPYXyG8qwGBj+Ga/9+s5SI6KhZomFsI5CmRiN6UlgNhG4Fi+OP
+    pZ+pURn6Ny8vSPKIPUTklHWy4nCJMP+t401tnmGQcQxPqdY2B3gmIwkEapzlIBFf
+    FBP/OQTZKqLkTqCWyXAJF443KiGIUkTZjJRoZl+2EV2mTL5ryw7Zp3yCEFWEbQzA
+    c/tM/04XsdhMh17cL5VgXheqkxQP9KqIS+MxbbR2MDpg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935518AbeBUNCA (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:02:00 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38704 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935515AbeBUNB6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:01:58 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 097/167] drm/radeon: adjust tested variable
-Date: Wed, 21 Feb 2018 13:48:28 +0100
-Message-Id: <20180221124529.650795019@linuxfoundation.org>
+        stable@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Subject: [PATCH 4.14 093/167] drm/amd/powerplay: Fix smu_table_entry.handle type
+Date: Wed, 21 Feb 2018 13:48:24 +0100
+Message-Id: <20180221124529.446598240@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -39,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015181472475587?=
-X-GMAIL-MSGID: =?utf-8?q?1593015669039552994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +79,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 
-commit 3a61b527b4e1f285d21b6e9e623dc45cf8bb391f upstream.
+commit adab595d16abe48e9c097f000bf8921d35b28fb7 upstream.
 
-Check the variable that was most recently initialized.
+The handle describes kernel logical address, should be
+unsigned long and not uint32_t.
+Fixes KASAN error and GFP on driver unload.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x, y, f, g, e, m;
-statement S1,S2,S3,S4;
-@@
-
-x = f(...);
-if (\(<+...x...+>\&e\)) S1 else S2
-(
-x = g(...);
-|
-m = g(...,&x,...);
-|
-y = g(...);
-*if (e)
- S3 else S4
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Rex Zhu <Rex.Zhu@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/radeon_uvd.c |    2 +-
+ drivers/gpu/drm/amd/powerplay/smumgr/rv_smumgr.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/radeon/radeon_uvd.c
-+++ b/drivers/gpu/drm/radeon/radeon_uvd.c
-@@ -995,7 +995,7 @@ int radeon_uvd_calc_upll_dividers(struct
- 		/* calc dclk divider with current vco freq */
- 		dclk_div = radeon_uvd_calc_upll_post_div(vco_freq, dclk,
- 							 pd_min, pd_even);
--		if (vclk_div > pd_max)
-+		if (dclk_div > pd_max)
- 			break; /* vco is too big, it has to stop */
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/rv_smumgr.h
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/rv_smumgr.h
+@@ -40,7 +40,7 @@ struct smu_table_entry {
+ 	uint32_t table_addr_high;
+ 	uint32_t table_addr_low;
+ 	uint8_t *table;
+-	uint32_t handle;
++	unsigned long handle;
+ };
  
- 		/* calc score with current vco freq */
+ struct smu_table_array {
