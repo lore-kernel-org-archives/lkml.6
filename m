@@ -1,75 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeBUXwr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751104AbeBUXwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:52:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F8621795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x225/xR21QzuuIqY3e4XVPbXG58dxwjdg2tVtbJ7yxtb+UclPxpphpa5hUBMvW8AfoPZGMezCQcGTw4fi5Rfg9WQ=
+        id S1751364AbeBUXw4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:52:56 -0500
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37393 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeBUXwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:52:53 -0500
+X-Google-Smtp-Source: AH8x225hnuERD7nZEG8PoHjTM1ojmb+jVy1Eb861kxW9F+JzKNGWSYYV+W4vtpmwd5TxItSdw673OyF7ug8q0A2en1M=
 MIME-Version: 1.0
-In-Reply-To: <20180221145821.bhoxjndibp3bqfxi@linaro.org>
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-6-manivannan.sadhasivam@linaro.org> <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
- <20180221145821.bhoxjndibp3bqfxi@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 21 Feb 2018 17:52:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK+586zyvsZ0b9i+x78V5NDnAput6Ygfw0qFXu=B-hb9g@mail.gmail.com>
-Message-ID: <CAL_JsqK+586zyvsZ0b9i+x78V5NDnAput6Ygfw0qFXu=B-hb9g@mail.gmail.com>
-Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-gpio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180219224602.22582-1-enric.balletbo@collabora.com>
+References: <20180219224602.22582-1-enric.balletbo@collabora.com>
+From: Gwendal Grignou <gwendal@chromium.org>
+Date: Wed, 21 Feb 2018 15:52:31 -0800
+X-Google-Sender-Auth: dsLSNMw5ruQ8wtRzGkgQrR3ppN8
+Message-ID: <CAMHSBOUTrkyANDovR1eV4c80ci2hf3tm+0rPTijojHuBm-gH2g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] mfd: cros_ec: fail early if we cannot identify the EC
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
+        Vincent Palatin <vpalatin@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 8:58 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Hi Rob,
-> On Mon, Feb 19, 2018 at 02:35:23PM -0600, Rob Herring wrote:
->> On Sun, Feb 18, 2018 at 02:14:28AM +0530, Manivannan Sadhasivam wrote:
->> > Add gpio nodes for Actions Semi S900 SoC.
->> >
->> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> > ---
->> >  .../devicetree/bindings/gpio/actions,owl-gpio.txt         | 15 +++++++++++++++
->> >  1 file changed, 15 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> > new file mode 100644
->> > index 000000000000..4cd4cb7bfd1b
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> > @@ -0,0 +1,15 @@
->> > +* Actions Semi OWL GPIO controller bindings
->> > +
->> > +- compatible      : Should be "actions,s900-gpio"
->> > +- reg             : Address and range of the GPIO controller registers.
->> > +- gpio-controller : Marks the device node as a GPIO controller.
->> > +- #gpio-cells     : Should be <2>. The first cell is the gpio number and
->> > +                    the second cell is used to specify optional parameters.
->>
->> Doesn't do interrupts?
->>
-> Interrupt support will be added once this base driver gets in.
-> One step at a time ;-)
-
-Binding are separate from the driver. Drivers can evolve, but h/w
-doesn't (for a given piece of Si). It is not a high bar to list
-#interrupt-cells and interrupt-controller.
-
-Rob
+On Mon, Feb 19, 2018 at 2:46 PM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
+>
+> If we cannot communicate with the EC chip to detect the protocol version
+> and its features, it's very likely useless to continue. Else we will
+> commit all kind of uninformed mistakes (using the wrong protocol, the
+> wrong buffer size, mixing the EC with other chips).
+>
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Acked-by: Benson Leung <bleung@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> ---
+>  drivers/mfd/cros_ec.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index d61024141e2b..74780f2964a1 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -112,7 +112,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>
+>         mutex_init(&ec_dev->lock);
+>
+> -       cros_ec_query_all(ec_dev);
+> +       err = cros_ec_query_all(ec_dev);
+> +       if (err) {
+> +               dev_err(dev, "Cannot identify the EC: error %d\n", err);
+> +               return err;
+> +       }
+>
+>         if (ec_dev->irq) {
+>                 err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+> --
+> 2.16.1
+>
