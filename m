@@ -1,45 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751455AbeBUVho (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 16:37:44 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:48058 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751119AbeBUVhm (ORCPT
+        id S1751387AbeBUVjV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 16:39:21 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45735 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeBUVjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 16:37:42 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] m68k: time: stop validating rtc_time in .read_time
-Date: Wed, 21 Feb 2018 22:37:24 +0100
-Message-Id: <20180221213724.810-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.1
+        Wed, 21 Feb 2018 16:39:20 -0500
+X-Google-Smtp-Source: AH8x227QZjU2qkIHpXZ6o7gEsyMzTbNUUYUgYPJiQ6rqcZWyF9lgOg51TCRexMN+TE6hEn0wYmueRzW82zUrbWERuWk=
+MIME-Version: 1.0
+In-Reply-To: <5A8AF1F802000078001A91E1@prv-mh.provo.novell.com>
+References: <5A8AF1F802000078001A91E1@prv-mh.provo.novell.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 21 Feb 2018 13:39:18 -0800
+X-Google-Sender-Auth: g3fwGE08kFtiMPgeWQNuDK_OqX8
+Message-ID: <CAGXu5jLB9WXdaHg7ox85BftejyHUBHrUe7EpCLU08e5eRLstLQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/asm: improve how GEN_*_SUFFIXED_RMWcc() specify clobbers
+To: Jan Beulich <JBeulich@suse.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RTC core is always calling rtc_valid_tm after the read_time callback.
-It is not necessary to call it just before returning from the callback.
+On Mon, Feb 19, 2018 at 6:49 AM, Jan Beulich <JBeulich@suse.com> wrote:
+> Commit df3405245a ("x86/asm: Add suffix macro for GEN_*_RMWcc()")
+> introduced "suffix" RMWcc operations, adding bogus clobber specifiers:
+> For one, on x86 there's no point explicitly clobbering "cc". In fact,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/m68k/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do you have more details on this? It seems from the GCC clobbers
+docs[1] that "cc" is needed for asm that changes the flags register.
+Given the explicit subl and decl being used for these macros, it seems
+needed to me.
 
-diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
-index 87160b4415fb..97dd4e26f234 100644
---- a/arch/m68k/kernel/time.c
-+++ b/arch/m68k/kernel/time.c
-@@ -91,7 +91,7 @@ void read_persistent_clock(struct timespec *ts)
- static int rtc_generic_get_time(struct device *dev, struct rtc_time *tm)
- {
- 	mach_hwclk(0, tm);
--	return rtc_valid_tm(tm);
-+	return 0;
- }
- 
- static int rtc_generic_set_time(struct device *dev, struct rtc_time *tm)
+> with gcc properly fixed, this results in an overlap being detected by
+> the compiler between outputs and clobbers. Further more it seems bad
+
+Do you mean the flags register is already being included as an
+implicit clobber because there is an output of any kind? I can't find
+documentation that says this is true. If anything it looks like it
+could be "improved" from a full "cc" clobber to an output operand
+flag, like =@ccs.
+
+> practice to me to have clobber specification and use of the clobbered
+> register(s) disconnected - it should rather be at the invocation place
+> of that GEN_{UN,BIN}ARY_SUFFIXED_RMWcc() macros that the clobber is
+> specified which this particular invocation needs.
+>
+> Drop the "cc" clobber altogether and move the "cx" one to refcount.h.
+>
+> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/x86/include/asm/refcount.h |    4 ++--
+>  arch/x86/include/asm/rmwcc.h    |   16 ++++++++--------
+>  2 files changed, 10 insertions(+), 10 deletions(-)
+>
+> --- 4.16-rc2/arch/x86/include/asm/refcount.h
+> +++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/refcount.h
+> @@ -67,13 +67,13 @@ static __always_inline __must_check
+>  bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+>  {
+>         GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
+> -                                 r->refs.counter, "er", i, "%0", e);
+> +                                 r->refs.counter, "er", i, "%0", e, "cx");
+>  }
+>
+>  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+>  {
+>         GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
+> -                                r->refs.counter, "%0", e);
+> +                                r->refs.counter, "%0", e, "cx");
+>  }
+>
+>  static __always_inline __must_check
+> --- 4.16-rc2/arch/x86/include/asm/rmwcc.h
+> +++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/rmwcc.h
+> @@ -2,8 +2,7 @@
+>  #ifndef _ASM_X86_RMWcc
+>  #define _ASM_X86_RMWcc
+>
+> -#define __CLOBBERS_MEM         "memory"
+> -#define __CLOBBERS_MEM_CC_CX   "memory", "cc", "cx"
+> +#define __CLOBBERS_MEM(clb...) "memory", ## clb
+
+This leaves a trailing comma in the non-cx case. I thought that caused
+me problems in the past, but maybe that's GCC version-specific?
+
+>  #if !defined(__GCC_ASM_FLAG_OUTPUTS__) && defined(CC_HAVE_ASM_GOTO)
+>
+> @@ -40,18 +39,19 @@ do {                                                                        \
+>  #endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) || !defined(CC_HAVE_ASM_GOTO) */
+>
+>  #define GEN_UNARY_RMWcc(op, var, arg0, cc)                             \
+> -       __GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM)
+> +       __GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
+>
+> -#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc)            \
+> +#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc, clobbers...)\
+>         __GEN_RMWcc(op " " arg0 "\n\t" suffix, var, cc,                 \
+> -                   __CLOBBERS_MEM_CC_CX)
+> +                   __CLOBBERS_MEM(clobbers))
+>
+>  #define GEN_BINARY_RMWcc(op, var, vcon, val, arg0, cc)                 \
+>         __GEN_RMWcc(op __BINARY_RMWcc_ARG arg0, var, cc,                \
+> -                   __CLOBBERS_MEM, vcon (val))
+> +                   __CLOBBERS_MEM(), vcon (val))
+>
+> -#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc)        \
+> +#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc,        \
+> +                                 clobbers...)                          \
+>         __GEN_RMWcc(op __BINARY_RMWcc_ARG arg0 "\n\t" suffix, var, cc,  \
+> -                   __CLOBBERS_MEM_CC_CX, vcon (val))
+> +                   __CLOBBERS_MEM(clobbers), vcon (val))
+>
+>  #endif /* _ASM_X86_RMWcc */
+
+Anyway, I'm fine to clean it up, sure, but I'd like more details on
+why this doesn't break things. :)
+
+Thanks!
+
+-Kees
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+
 -- 
-2.16.1
+Kees Cook
+Pixel Security
