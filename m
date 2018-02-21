@@ -1,61 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936504AbeBUNPq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:15:46 -0500
-Received: from ozlabs.org ([103.22.144.67]:59407 "EHLO ozlabs.org"
+        id S936516AbeBUNP7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:15:59 -0500
+Received: from mx.socionext.com ([202.248.49.38]:15785 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754542AbeBUNNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:13:09 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] cpufreq: powernv: Check negative value returned by cpufreq_table_find_index_dl()
-In-Reply-To: <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
-References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <20180212102900.GU28462@vireshk-i7> <874lmasxxx.fsf@concordia.ellerman.id.au> <20180221055450.GO28462@vireshk-i7> <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
-Date: Thu, 22 Feb 2018 00:13:03 +1100
-Message-ID: <87vaeqqye8.fsf@concordia.ellerman.id.au>
+        id S1753795AbeBUNP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:15:57 -0500
+From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To: "'Mark Brown'" <broonie@kernel.org>,
+        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?=
+        <suzuki.katsuhiro@socionext.com>
+Cc: <alsa-devel@alsa-project.org>, "Rob Herring" <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20180221043311.25840-1-suzuki.katsuhiro@socionext.com> <20180221043311.25840-3-suzuki.katsuhiro@socionext.com> <20180221122639.GH8334@sirena.org.uk>
+In-Reply-To: <20180221122639.GH8334@sirena.org.uk>
+Subject: Re: [PATCH 2/2] ASoC: support ROHM BD28623 codec
+Date: Wed, 21 Feb 2018 22:15:52 +0900
+Message-ID: <002601d3ab16$195fdf20$4c1f9d60$@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+        charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHTqs0WYpLkxEPPmUeTrT/mwR3ztaOuMfeAgACiNwA=
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Rafael J. Wysocki" <rafael@kernel.org> writes:
+Hello Mark,
 
-> On Wed, Feb 21, 2018 at 6:54 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> On 21-02-18, 16:39, Michael Ellerman wrote:
->>> Viresh Kumar <viresh.kumar@linaro.org> writes:
->>
->>> > AFAICT, you will get -1 here only if the freq table had no valid
->>> > frequencies (or the freq table is empty). Why would that happen ?
->>>
->>> Bugs?
->>
->> The cupfreq driver shouldn't have registered itself in that case (i.e.
->> if the cpufreq table is empty).
->
-> To be precise, ->init() should fail as that's where the table is
-> created.  The registration fails as a result then.
->
-> But what if the bug is that ->init() doesn't fail when it should?
->
-> I guess the core could double check the frequency table after ->init()
-> if ->target_index is not NULL.
->
-> The overall point here is that if you get a negative index in
-> ->fast_switch(), that's way too late anyway and we should be able to
-> catch that error much earlier.
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: Wednesday, February 21, 2018 9:27 PM
+> To: Suzuki, Katsuhiro <suzuki.katsuhiro@socionext.com>
+> Cc: alsa-devel@alsa-project.org; Rob Herring <robh+dt@kernel.org>; devicetree@vger.kernel.org; Masami Hiramatsu
+> <masami.hiramatsu@linaro.org>; Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] ASoC: support ROHM BD28623 codec
+> 
+> On Wed, Feb 21, 2018 at 01:33:11PM +0900, Katsuhiro Suzuki wrote:
+> 
+> > +++ b/sound/soc/codecs/bd28623.c
+> > @@ -0,0 +1,258 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * ROHM BD28623MUV class D speaker amplifier codec driver.
+> > + *
+> 
+> Please make the entire comment C++ so this looks intentional.
+> 
+> > +		dev_err(dev, "Failed to enable supplies: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	gpiod_set_value(bd->reset_gpio, 0);
+> 
+> Since this GPIO is not needed in atomic contexts you should use the
+> _cansleep() versions of the GPIO functions - it doesn't cost you
+> anything and means that if for some reason someone wired this up to a
+> GPIO that can't be used in atomic context the driver will just work.
+> 
 
-OK.
+Thank you, I'll fix it.
 
-Still it's one thing for the driver to print a warning and bail out,
-it's another to access off the front of an array and keep running using
-some junk values, or oops (though not in this case because the array
-happens to be static).
 
-cheers
+> > +	bd->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+> > +						 GPIOD_OUT_HIGH);
+> 
+> > +	bd->mute_gpio = devm_gpiod_get_optional(dev, "mute",
+> > +						GPIOD_OUT_HIGH);
+> 
+> These properties were documented as mandatory in the binding but are
+> optional here.  It's fine that they're optional but I'd expect the
+> binding to be consistent with this.
+> 
+
+These GPIO is optional if board vendor connects directly RSTX and MUTEX pins
+to VCC. So I think I should fix DT-bindings document.
+
+
+> > +static int bd28623_remove(struct platform_device *pdev)
+> > +{
+> > +	struct bd28623_priv *bd = platform_get_drvdata(pdev);
+> > +
+> > +	regulator_bulk_disable(ARRAY_SIZE(bd->supplies), bd->supplies);
+> > +
+> > +	return 0;
+> > +}
+> 
+> We don't enable the supplies explicitly as part of the probe function so
+> it feels wrong to disable on remove() - I'm sure it is fine in practice
+> as-is but I'd have to think too hard to confirm that.  I'd put this in a
+> component level remove function instead so that it's consistent.
+
+Ah, indeed. I will use component driver's remove() function instead of platform.
+
+Thank you for review!
+
+
+Regards,
+--
+Katsuhiro Suzuki
