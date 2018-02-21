@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226VxVH1lgk5JI3FWV1XKMwpJBjmiiA4o87guYe8dIMbXjcEOLy8o/LbPqZ4oljbgGY1Pg9s
-ARC-Seal: i=1; a=rsa-sha256; t=1519217924; cv=none;
+X-Google-Smtp-Source: AH8x225dyhI87sAxeCcMBJ2VkVq9+k5Pke+Oe+0j7hC+FEe9JQ+JpikhAfYpKRurwX/bBpEKUqEY
+ARC-Seal: i=1; a=rsa-sha256; t=1519217922; cv=none;
         d=google.com; s=arc-20160816;
-        b=anX14G0zHllzdaUgOuK8hf1mcsp8IwRQvlVzEVIest+zSceBt4MyBPuAFSrxzrHsF6
-         bth7r/kEbj9M9Ckpgu9sayVGuhnXZO3/4hnBcdiguBkGFozDA19bJHVoB23sufLdnmqH
-         ozPmiTS+OtAvyfb3Kq9nYeODSbm0L82mBDdP3YYnjd71Re93JmhRJUBem0ETSW5YyaWH
-         aSYzDJ68O7tUy3WUX6bDbTEyDNeM8G46s9LE2oZAzYjOnR7u7Ihue0aXNeBGAR+AtMgG
-         vXlArAtspL3QanQx5RfRimtxsPVbp8bL6t6SRSiJ/BW1F+5uZkbN7vvczrxcpCrhNsoy
-         XfxQ==
+        b=OSAMwggjTk1y0vr0sGN/eoly74PJEsyRYpSaWypY47Hsaz7F9RufV0plbBCFll51e6
+         hPo3Zwgyyr6QPqWsk5qroHA+Vjh7Ehd5KN8mdr0WPjoq7uQ/ORZWw+wWAksu20D/SGKE
+         rD6jQqWAnO5xLL/ZPD3UQwj562qKDip1VrRM4QyOpf1V52INm4HEBfeuiyc/rinR4bKH
+         jvxSJrmIBgh0c9HnmL8y0O25gHzyHuYDp1EXDUEaBsdfAPUOVji7UUif3RVeP3SFeM3i
+         CjNsd94Qu3PEHknobGpeIgajo227TyVVvCicWRbXITRCNtiyeoNMklis9cpEVn/Zfssv
+         Iekg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eLUhO2vEGx1EUr6FGAjDoTIfr5JnnJ+0p42T2V/7oSs=;
-        b=tIIMJY1eOy4yf4eEe2zh791WvTx0GIm+eh2+ALmYgM/+0LUXwOFQn20tZaDrIao6Ut
-         HJhOZYwgT7pYQZ8lGtnXRAHDyvsio1NRsftWGT5Edl2iBBhAVfpevOjPCnPY4DER71wL
-         Eq+kBJhi9ABErX9uwVK9ma39LRggEfRDVU/rGfmrEjodR9PqtZZ7CBgA1oTMmAHeyFmd
-         RuGPxfboo08UzoIj++gU2EOPc2qU2hRJVlsZJI5m2HF35fSQZ4LdFAL9yKrLMakymylh
-         hEoCBzXHBwFOXicQQRqfWlz3IdJxzuohRBTBj80+Vj7oeVxW37NWr5zkcxPK4HB+v9qB
-         KHPA==
+        bh=KbVLJWM0lAxA1TP595FTro2I0QE3q5I1GANigiKcupE=;
+        b=WObzOadvQQ/ia4pzfYCInTva3BTXIRsQUn2lHE2gBcJ6eyKypiMjkLUTFZVaX4ZjEa
+         DpjCv+/d4HCkqVs0mjf5Dpf8ISBaQdwjeONcNJ9Upqln+tWLukNoS0iPBS4l3pSPcluA
+         pbwoRxFgAfkvjVMMkMFk93zIxUTnjoBO90NYT4FQgJ86oeNpS/iEi2vMYPGnXjx2LmLy
+         iitVsT+DOgaTKGttSQLBedjWErpoNCFHX43H90kYq26jtV9oPL8nr1RR+0wpgrl3EKjt
+         6ko4bmI2kbcZPNtsCjg/vU3LeOu7p8Ce5MSm/NikAB8+KBcre2TldQoE+MeFppV23nZe
+         U8Rw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ramon Fried <rfried@codeaurora.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Andy Gross <andy.gross@linaro.org>
-Subject: [PATCH 4.14 026/167] arm64: dts: msm8916: Correct ipc references for smsm
-Date: Wed, 21 Feb 2018 13:47:17 +0100
-Message-Id: <20180221124526.030604592@linuxfoundation.org>
+	Eugene Syromiatnikov <esyr@redhat.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 025/167] s390: fix handling of -1 in set{,fs}[gu]id16 syscalls
+Date: Wed, 21 Feb 2018 13:47:16 +0100
+Message-Id: <20180221124525.983812041@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015280077586216?=
-X-GMAIL-MSGID: =?utf-8?q?1593015454950402325?=
+X-GMAIL-THRID: =?utf-8?q?1593014683983574350?=
+X-GMAIL-MSGID: =?utf-8?q?1593015452233341958?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,36 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Eugene Syromiatnikov <esyr@redhat.com>
 
-commit 566bd8902e7fa20bd412ed753e09e89c1c96939c upstream.
+commit 6dd0d2d22aa363fec075cb2577ba273ac8462e94 upstream.
 
-SMSM is not symmetrical, the incoming bits from WCNSS are available at
-index 6, but the outgoing host id for WCNSS is 3. Further more, upstream
-references the base of APCS (in contrast to downstream), so the register
-offset of 8 must be included.
+For some reason, the implementation of some 16-bit ID system calls
+(namely, setuid16/setgid16 and setfsuid16/setfsgid16) used type cast
+instead of low2highgid/low2highuid macros for converting [GU]IDs, which
+led to incorrect handling of value of -1 (which ought to be considered
+invalid).
 
-Fixes: 1fb47e0a9ba4 ("arm64: dts: qcom: msm8916: Add smsm and smp2p nodes")
+Discovered by strace test suite.
+
 Cc: stable@vger.kernel.org
-Reported-by: Ramon Fried <rfried@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/kernel/compat_linux.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -1430,8 +1430,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -110,7 +110,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setregid16,
  
--		qcom,ipc-1 = <&apcs 0 13>;
--		qcom,ipc-6 = <&apcs 0 19>;
-+		qcom,ipc-1 = <&apcs 8 13>;
-+		qcom,ipc-3 = <&apcs 8 19>;
+ COMPAT_SYSCALL_DEFINE1(s390_setgid16, u16, gid)
+ {
+-	return sys_setgid((gid_t)gid);
++	return sys_setgid(low2highgid(gid));
+ }
  
- 		apps_smsm: apps@0 {
- 			reg = <0>;
+ COMPAT_SYSCALL_DEFINE2(s390_setreuid16, u16, ruid, u16, euid)
+@@ -120,7 +120,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setreuid16,
+ 
+ COMPAT_SYSCALL_DEFINE1(s390_setuid16, u16, uid)
+ {
+-	return sys_setuid((uid_t)uid);
++	return sys_setuid(low2highuid(uid));
+ }
+ 
+ COMPAT_SYSCALL_DEFINE3(s390_setresuid16, u16, ruid, u16, euid, u16, suid)
+@@ -173,12 +173,12 @@ COMPAT_SYSCALL_DEFINE3(s390_getresgid16,
+ 
+ COMPAT_SYSCALL_DEFINE1(s390_setfsuid16, u16, uid)
+ {
+-	return sys_setfsuid((uid_t)uid);
++	return sys_setfsuid(low2highuid(uid));
+ }
+ 
+ COMPAT_SYSCALL_DEFINE1(s390_setfsgid16, u16, gid)
+ {
+-	return sys_setfsgid((gid_t)gid);
++	return sys_setfsgid(low2highgid(gid));
+ }
+ 
+ static int groups16_to_user(u16 __user *grouplist, struct group_info *group_info)
