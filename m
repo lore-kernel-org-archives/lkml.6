@@ -1,58 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeBUXYC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:24:02 -0500
-Received: from mail-vk0-f43.google.com ([209.85.213.43]:43808 "EHLO
-        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbeBUXX7 (ORCPT
+        id S1751383AbeBUXZg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:25:36 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34010 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeBUXZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:23:59 -0500
-X-Google-Smtp-Source: AH8x227shDbaCzurl3FBBPBhFqSdKYBPj8KLN56ezI91WFxxyVFjaiYoYCzwVST/6ycZZ+1Q7yw17O4sZwhd36DwpKg=
+        Wed, 21 Feb 2018 18:25:33 -0500
+X-Google-Smtp-Source: AH8x225cQJrgJ4S4ZNGnpVfExXxJ5uALpAvD8YfVnlOu6xAuqPpsiMspkYZli9jYI2ZaNj0QC5wPbw==
 MIME-Version: 1.0
-In-Reply-To: <20180219163651.66936056@why.wild-wind.fr.eu.org>
-References: <20180216060503.22006-1-rnayak@codeaurora.org> <20180216060503.22006-4-rnayak@codeaurora.org>
- <20180219163651.66936056@why.wild-wind.fr.eu.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 21 Feb 2018 15:23:57 -0800
-X-Google-Sender-Auth: cwYfaeBXLmfcJ1GbRx223shBdtI
-Message-ID: <CAD=FV=WgyX-O8haJp3WpzPodV2f1sokL9hW_qe7R8hVYy3v+sg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, evgreen@chromium.org,
+In-Reply-To: <20180215173507.10989-10-ilina@codeaurora.org>
+References: <20180215173507.10989-1-ilina@codeaurora.org> <20180215173507.10989-10-ilina@codeaurora.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Wed, 21 Feb 2018 15:24:50 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7DV3semzumy+62hQgrUWUvOATJs6BKB5x0mj=0dt+Tig@mail.gmail.com>
+Message-ID: <CAE=gft7DV3semzumy+62hQgrUWUvOATJs6BKB5x0mj=0dt+Tig@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] drivers: qcom: rpmh: add support for batch RPMH request
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Lina,
 
-On Mon, Feb 19, 2018 at 8:36 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> +                     interrupts = <GIC_SPI 208 IRQ_TYPE_NONE>;
+On Thu, Feb 15, 2018 at 9:35 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+> Platform drivers need make a lot of resource state requests at the same
+> time, say, at the start or end of an usecase. It can be quite
+> inefficient to send each request separately. Instead they can give the
+> RPMH library a batch of requests to be sent and wait on the whole
+> transaction to be complete.
 >
-> Please do not use IRQ_TYPE_NONE, ever. It doesn't exist in the GIC
-> binding. Set it to the actual trigger value.
+> rpmh_write_batch() is a blocking call that can be used to send multiple
+> RPMH command sets. Each RPMH command set is set asynchronously and the
+> API blocks until all the command sets are complete and receive their
+> tx_done callbacks.
 >
-
->> +                     interrupts = <GIC_SPI 481 IRQ_TYPE_NONE>;
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh.c | 150 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/soc/qcom/rpmh.h |   8 +++
+>  2 files changed, 158 insertions(+)
 >
-> Same here.
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> index dff4c46be3af..6f60bb9a4dfa 100644
+> --- a/drivers/soc/qcom/rpmh.c
+> +++ b/drivers/soc/qcom/rpmh.c
+[...]
+> @@ -394,6 +537,11 @@ int rpmh_flush(struct rpmh_client *rc)
+>         }
+>         spin_unlock_irqrestore(&rpm->lock, flags);
+>
+> +       /* First flush the cached batch requests */
+> +       ret = flush_batch(rc);
+> +       if (ret)
+> +               return ret;
+> +
+>         /*
+>          * Nobody else should be calling this function other than system PM,,
+>          * hence we can run without locks.
+> @@ -438,6 +586,8 @@ int rpmh_invalidate(struct rpmh_client *rc)
+>         if (IS_ERR_OR_NULL(rc))
+>                 return -EINVAL;
+>
+> +       invalidate_batch(rc);
+> +
 
-Thanks for the review Marc!
+Similarly to my comments in patch 7, aren't there races here with
+adding new elements? After flush_batch, but before invalidate_batch,
+somebody could call cache_batch, which would add new things on the end
+of the array. These new items would be clobbered by invalidate_batch,
+without having been flushed first.
 
-
-Andy: If I'm reading everything correctly you're the one who would
-collect these patches and apply them.  Is that right?  Do they look OK
-to you in general?  Would you prefer that Rajendra send out a v5 with
-the fixes pointed out by Marc, or would you prefer to fix them up
-yourself when applying?  Is now a good time or would you prefer to
-wait?
-
-Thanks!  :)
-
--Doug
+-Evan
