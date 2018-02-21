@@ -1,67 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938395AbeBUPrA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:47:00 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:43044 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934310AbeBUPq5 (ORCPT
+        id S966104AbeBUPrY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:47:24 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:45695 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934310AbeBUPrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:46:57 -0500
-X-Google-Smtp-Source: AG47ELs7/d2O/gVLYX9KARyM4XGwQ+3Xbdgv2Z8OeiWa0QgADsLMJe8x+YG3FboV/aak8eCYszpJrfxBloKwGzlLhlg=
+        Wed, 21 Feb 2018 10:47:22 -0500
+Date: Wed, 21 Feb 2018 16:47:12 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
+Message-ID: <20180221154712.GJ7203@w540>
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519059584-30844-12-git-send-email-jacopo+renesas@jmondi.org>
+ <1963190.TI9O1pFqZp@avalon>
+ <20180220085857.GC7203@w540>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com> <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Feb 2018 16:46:56 +0100
-X-Google-Sender-Auth: xJ5H9Z_Zsu0080TYodT4oz9fiZg
-Message-ID: <CAMuHMdVcbgX-Gi7p15JgsF0Ghe2wo4XEkPM2c=uxgqxJ9f2i=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
-To: Rob Herring <robh@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180220085857.GC7203@w540>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hello again,
 
-On Wed, Feb 21, 2018 at 4:23 PM, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Feb 21, 2018 at 4:21 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> You missed one fix I have in my topic/overlays branch
->> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/overlays&id=150f95b9dec77ce371c229f7ac4d6dd8620bef4a
+On Tue, Feb 20, 2018 at 09:58:57AM +0100, jacopo mondi wrote:
+> Hi Laurent,
 >
-> Are you planning to try to upstream all this? If not, I'll get Frank
+> On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
+> > Hi Jacopo,
+> >
+> > Thank you for the patch.
+> >
+> > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
+> > > The sensor driver sets mbus format colorspace information and sizes,
+> > > but not ycbcr encoding, quantization and xfer function. When supplied
+> > > with an badly initialized mbus frame format structure, those fields
+> > > need to be set explicitly not to leave them uninitialized. This is
+> > > tested by v4l2-compliance, which supplies a mbus format description
+> > > structure and checks for all fields to be properly set.
+> > >
+> > > Without this commit, v4l2-compliance fails when testing formats with:
+> > > fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >  drivers/media/i2c/ov7670.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> > > index 25b26d4..61c472e 100644
+> > > --- a/drivers/media/i2c/ov7670.c
+> > > +++ b/drivers/media/i2c/ov7670.c
+> > > @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev
+> > > *sd, fmt->height = wsize->height;
+> > >  	fmt->colorspace = ov7670_formats[index].colorspace;
+> >
+> > On a side note, if I'm not mistaken the colorspace field is set to SRGB for
+> > all entries. Shouldn't you hardcode it here and remove the field ?
+> >
+> > > +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
+> > > +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
+> > > +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
+> >
+> > How about setting the values explicitly instead of relying on defaults ? That
+> > would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
+> > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if the
+> > sensor outputs limited or full range ?
+> >
+>
+> This actually makes me wonder if those informations (ycbcb_enc,
+> quantization and xfer_func) shouldn't actually be part of the
+> supported format list... I blindly added those default fields in the
+> try_fmt function, but I doubt they applies to all supported formats.
+>
+> Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
+> RGB 565) and 1 raw format (BGGR). I now have a question here:
+>
+> 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
+> applies to RGB and raw formats? I don't think so, and what value is
+> the correct one for the ycbcr_enc field in this case? I assume
+> xfer_func and quantization applies to all formats instead..
+>
 
-Not really. But I do need a way to load DT overlays at runtime, for testing
-hardware on expansion connectors.
+What if I repropose this as separate patch not part of the CEU series
+in order not to hold back v10 (which I hope will be the last CEU
+iteration)?
 
-> to keep changing the overlay API to make carrying it out of tree more
-> painful. :)
-
-He already did a very good job w.r.t. that in v4.15-rc1 ;^)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Thanks
+>    j
+>
+> > >  	info->format = *fmt;
+> > >
+> > >  	return 0;
+> >
+> > --
+> > Regards,
+> >
+> > Laurent Pinchart
+> >
