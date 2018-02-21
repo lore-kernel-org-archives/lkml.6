@@ -1,71 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965780AbeBUNZO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:25:14 -0500
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:44629 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeBUNZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:25:11 -0500
-X-Google-Smtp-Source: AG47ELvs79EccjeR2N6vEbW/+5cVYBLIwJ9ceVBl4PnMZwJsaipoR1z1HVpkD8QfSuKmogMQzbTqfwBQz758ywuXBF0=
+        id S936753AbeBUN3D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:29:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:56866 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933705AbeBUN27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:28:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="19990838"
+Date: Wed, 21 Feb 2018 15:28:53 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
+Message-ID: <20180221132853.GM5453@intel.com>
+References: <20180206152143.vea6si7ncjj7sxyq@pali>
+ <20180213085030.kiksdi2a7ksae5wz@pali>
+ <20180213132726.GD5453@intel.com>
+ <20180213133842.i5z5jj3sllorsy2w@pali>
+ <20180213153654.GG5453@intel.com>
+ <20180213160437.gy5luyygjvuktuqx@pali>
+ <20180213161221.GK5453@intel.com>
+ <20180213174341.abcjlfjymxbcz25t@pali>
+ <20180213174556.GM5453@intel.com>
+ <20180219093650.avb4xipvflfd2kel@pali>
 MIME-Version: 1.0
-In-Reply-To: <87vaeqqye8.fsf@concordia.ellerman.id.au>
-References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <20180212102900.GU28462@vireshk-i7> <874lmasxxx.fsf@concordia.ellerman.id.au>
- <20180221055450.GO28462@vireshk-i7> <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
- <87vaeqqye8.fsf@concordia.ellerman.id.au>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Feb 2018 14:25:10 +0100
-X-Google-Sender-Auth: Cew4bkNtXHxwEF8A9kLpyqzV_MI
-Message-ID: <CAJZ5v0gVUO5OMfHUrQKd0T1EKo2c9iJ+zb-v9i2tkkS0MJbntA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: powernv: Check negative value returned by cpufreq_table_find_index_dl()
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180219093650.avb4xipvflfd2kel@pali>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 2:13 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> "Rafael J. Wysocki" <rafael@kernel.org> writes:
->
->> On Wed, Feb 21, 2018 at 6:54 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>> On 21-02-18, 16:39, Michael Ellerman wrote:
->>>> Viresh Kumar <viresh.kumar@linaro.org> writes:
->>>
->>>> > AFAICT, you will get -1 here only if the freq table had no valid
->>>> > frequencies (or the freq table is empty). Why would that happen ?
->>>>
->>>> Bugs?
->>>
->>> The cupfreq driver shouldn't have registered itself in that case (i.e.
->>> if the cpufreq table is empty).
->>
->> To be precise, ->init() should fail as that's where the table is
->> created.  The registration fails as a result then.
->>
->> But what if the bug is that ->init() doesn't fail when it should?
->>
->> I guess the core could double check the frequency table after ->init()
->> if ->target_index is not NULL.
->>
->> The overall point here is that if you get a negative index in
->> ->fast_switch(), that's way too late anyway and we should be able to
->> catch that error much earlier.
->
-> OK.
->
-> Still it's one thing for the driver to print a warning and bail out,
-> it's another to access off the front of an array and keep running using
-> some junk values, or oops (though not in this case because the array
-> happens to be static).
+On Mon, Feb 19, 2018 at 10:36:50AM +0100, Pali Rohár wrote:
+> On Tuesday 13 February 2018 19:45:56 Ville Syrjälä wrote:
+> > On Tue, Feb 13, 2018 at 06:43:41PM +0100, Pali Rohár wrote:
+> > > On Tuesday 13 February 2018 18:12:21 Ville Syrjälä wrote:
+> > > > On Tue, Feb 13, 2018 at 05:04:37PM +0100, Pali Rohár wrote:
+> > > > > So it can be done only once after reboot? Or only prior to booting kernel?
+> > > > 
+> > > > Never.
+> > > 
+> > > Never? Now I'm lost. Why then dmesg message instruct user to try set up
+> > > it in BIOS if you say it is never possible?
+> > 
+> > You can change it in the BIOS. No way to change it from the operating system.
+> 
+> Hi! Can you explain it a bit more?
+> 
+> What does it mean "in BIOS"? Prior switching from 16bit real mode to
+> protected or long? Or before exiting EFI boot services? Or before
+> booting kernel (when initialize memory mapping)?
 
-Well, let me rephrase.  If ->fast_switch() runs, then it must not be
-possible to get a negative index in it.  That has to be guaranteed by
-the core.
+The BIOS is a black box, no one really knows what it's doing. The stolen
+memory is carved out pretty early I think (alongside other carved out
+chunks for SMM and whatnot). And once that's done the BIOS usually locks
+down stuff like this (the hw has magic write once lock bits for various
+registers) so there's just no way to change things afterwards.
+
+> 
+> I still do not see reason nor understand why this cannot be possible
+> either in bootloader (e.g. grub2) or prior to loading bootloader which
+> runs in protected or long mode.
+> 
+> It is because BIOS uses some undocumented call/procedure which sets that
+> amount of memory and it is unknown how to do it?
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
+
+-- 
+Ville Syrjälä
+Intel OTC
