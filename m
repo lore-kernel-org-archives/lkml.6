@@ -1,91 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938776AbeBURAE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:00:04 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38394 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933341AbeBURAA (ORCPT
+        id S938791AbeBURAM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:00:12 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36375 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933341AbeBURAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:00:00 -0500
-X-Google-Smtp-Source: AH8x225a/8J9HVTgsdSHVvaPCLy4tRRaK/pl9TQWMnBznzqp2oVLnHElFDmJW3+njtm9mxbVGUHdgQ==
-Date: Wed, 21 Feb 2018 17:59:57 +0100
+        Wed, 21 Feb 2018 12:00:09 -0500
+X-Google-Smtp-Source: AH8x224zOY8jqO2cE4XKAn36Y3nARpeMQg/g+DBpuR4SFLMPMlNVRiM1LkcHxzDNk/JwheM3aFwmGA==
+Date: Wed, 21 Feb 2018 18:00:06 +0100
 From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
 To: Andy Shevchenko <andy@infradead.org>
 Cc: Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/7] Topstar U931/RVP7 ACPI LED Workaround
-Message-ID: <cover.1519231939.git.gdouezangrard@gmail.com>
+Subject: [PATCH v5 1/7] platform/x86: topstar-laptop: revert "convert to
+ module_acpi_driver()"
+Message-ID: <110548dc26a7792cd03a66b8e43bb6ea95a13064.1519231939.git.gdouezangrard@gmail.com>
+References: <cover.1519231939.git.gdouezangrard@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1519231939.git.gdouezangrard@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+Revert commit
+  15165594da65 ("topstar-laptop: convert to module_acpi_driver()")
+to later add a platform device.
 
-Thank you for your review. Changes since the previous submission are
-highlighted below.
+Signed-off-by: Guillaume Douézan-Grard <gdouezangrard@gmail.com>
+---
+ drivers/platform/x86/topstar-laptop.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-On Topstar U931/RVP7 Notebooks, an issue prevents the WLAN toggle key
-from being properly managed by the Embedded Controller and successfully
-disconnect the adapter. A specific ACPI method allows to toggle the WLAN
-LED state regardless.
-
-Based on a DMI check, the LED is registered within the corresponding
-subsystem, making possible to use a software-based trigger (rfkill for
-instance, to synchronize the LED with the network interface state).
-
-Thank you for your time,
-
---
-Guillaume Douézan-Grard
-
-
-Changes since v4:
-
-* move module description comment change from patch 5 to 4,
-* fix SDPX identifiers mismatch.
-
-
-Changes since v3:
-
-* fix revert commit message format and wrapping,
-* update module description while actually doing the changes,
-* switch to SDPX identifiers.
-
-
-Changes since v2:
-
-* revert an older conversion from a generic module to an acpi driver
-module instead of undoing it manually,
-* separate commits for the renaming and the spliting phases,
-* DMI-based check instead of a module parameter,
-* copyright and minor fixes put at the end.
-
-
-Changes since v1:
-
-* leave devices names unchanged for ABI compatibility,
-* fix label names,
-* separate module authors definition,
-* add commit description to Patch 3.
-
-
-Guillaume Douézan-Grard (7):
-  platform/x86: topstar-laptop: revert "convert to module_acpi_driver()"
-  platform/x86: topstar-laptop: use consistent naming scheme
-  platform/x86: topstar-laptop: split ACPI events and input handling
-  platform/x86: topstar-laptop: add platform device
-  platform/x86: topstar-laptop: add Topstar U931/RVP7 WLAN LED
-    workaround
-  platform/x86: topstar-laptop: update copyright and fix some comments
-  platform/x86: topstar-laptop: replace licence text with SPDX tag
-
- drivers/platform/x86/Kconfig          |   2 +
- drivers/platform/x86/topstar-laptop.c | 363 +++++++++++++++++++++++++++-------
- 2 files changed, 291 insertions(+), 74 deletions(-)
-
+diff --git a/drivers/platform/x86/topstar-laptop.c b/drivers/platform/x86/topstar-laptop.c
+index 1032c00b907b..b4807b868a69 100644
+--- a/drivers/platform/x86/topstar-laptop.c
++++ b/drivers/platform/x86/topstar-laptop.c
+@@ -178,7 +178,27 @@ static struct acpi_driver acpi_topstar_driver = {
+ 		.notify = acpi_topstar_notify,
+ 	},
+ };
+-module_acpi_driver(acpi_topstar_driver);
++
++static int __init topstar_laptop_init(void)
++{
++	int ret;
++
++	ret = acpi_bus_register_driver(&acpi_topstar_driver);
++	if (ret < 0)
++		return ret;
++
++	pr_info("ACPI extras driver loaded\n");
++
++	return 0;
++}
++
++static void __exit topstar_laptop_exit(void)
++{
++	acpi_bus_unregister_driver(&acpi_topstar_driver);
++}
++
++module_init(topstar_laptop_init);
++module_exit(topstar_laptop_exit);
+ 
+ MODULE_AUTHOR("Herton Ronaldo Krzesinski");
+ MODULE_DESCRIPTION("Topstar Laptop ACPI Extras driver");
 -- 
 2.16.1
