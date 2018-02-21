@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224vAnlRRYFddyWQOuPLeAt7j+6PKrNkVUx1vlXVlxM4JTiVtTjjlrlzNgjnx8sNCFdLoANG
-ARC-Seal: i=1; a=rsa-sha256; t=1519218217; cv=none;
+X-Google-Smtp-Source: AH8x2246a7FAo51G47f+WEetFkJkiCiSaVmVx/GUGkqeDy2ZuU3h/Nqf6XzsOggO8JHp1EMATlHT
+ARC-Seal: i=1; a=rsa-sha256; t=1519218214; cv=none;
         d=google.com; s=arc-20160816;
-        b=c6cKFpA1zYhCGupRCikydTe8dkGO9urQpR+TKkTSkfwZ5tU/pZWRCskScAoTdw0/S8
-         zfcJar/PFy+MbNOcLxtUI0ddlOuDrlz3GvyRfJnzveOgyZDQUdKI7oPYPEQZ0ELloqN/
-         Gpa/fBxfzGvGbYCpYnAOyQzWZDLTB4MyPeQr7l/c2OR7JEgXy8LXlvgis4er2q5xh01c
-         pYQXngw4K6LO8qZCacuC2DiX843YRwfav1OTkdTEzUj7b7iiZLZrU+h/avwCeqPvlSE/
-         53DDDxMMHb3p34M7wrUo743GCAFGziE/xZYl69x2C9j0tf3M/LiY7xbIXowCdXxHyKPK
-         aTKA==
+        b=mPw9te42ovuGTwA4ipd0uKXkgMbchGJKFc8LCS4DLGWzJyR7VCgFX6E59tP/ooAeMf
+         glGuF5ezP/uyJH2N0Uys8XnUMdAWKvUt1D8ICkUhbh1V69+k127PZmP7wYFxDZlhqSeP
+         Za2MxdKAAQUEivx5kbEHoqqmvqSrcyQueBb3EGMcBgSZB1e3gvECHkfeNMu3qUTESxQf
+         LXZgHFwMuiQQ9dvcYn4flw3P3Wdf0xsh9QsIWcncf7DeHr99sjzbDI7l35tRou7u9qm/
+         4HouHnkOQMetZefAwtQjZDwtgCr3IhcvkB/qoW0smiv0ShqyHQ9RoDLVrWLaBGU5DwFp
+         RvQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6b4aJQzGadtM/GkBDzlTt1xVOGGBa7fG6uUudvYzlSY=;
-        b=oCPF3/qAOsa8T53smtSj2T9fcilL05f7aHIwekdWSOiMc1DV468JMI6XP023S3UPYN
-         nrCLMzFeZGY8ZC79X67ZrEOpsb/3z40Jq0oL9l/omj2GYo7SuEpjVhy3au+/0hklPPvg
-         Q3CTniF+jY0V2wv59/dga/mZg0Ujgv3Up7mFGf/pqWlcdzLznrVPCqb7B8eRRDF/g/0s
-         2/xIa5PFDnCYlelwY9aD2Ds2XMWEZanRFyFr1IxWdHqbkrd1dcvASj3tk4Z27HzIT7g4
-         pPwJZK/CgYJdv+2QzMovfhI1e9n1uqIacrd0F8hohX9TE6oaleTl3P+Ciwyjp1JbaEHe
-         BD9g==
+        bh=PlVGgTCGzSjZshCDLFkCccVAYJv28zi4RxblW2xTHuE=;
+        b=ygDH5TuO8V5RX7+fUjSggbLjr/mmhkI2b5rpDKjbtzeFP75Gg8rIe5mNmi6kihN2gy
+         3L3z0/fQO0ABJC0FeLtIMKFdjTWr8GTfy3tltklst5WSiSNJf3EdYruxK4o/rk8SoV43
+         7dTDMvHCM7Aqwt+DkJ3MdP5xR7+02o41tOI2ajegflGzxgdZHX9pUjlcT5jBNXa5Dlq9
+         fmR4+mz1ZAt0x0XtU/hrdFdQIxvMFxdN3YeGU0dk7IZSSV0nqgeXv5vkXHV9Fy3YI9Hd
+         UmM52LRi2nDpUA/AC3mU8gUQgu177gxRx+w00ZssG+wUh02N6zItxZANZsmTd1o/HX/L
+         fFJA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Kalderon <Michal.Kalderon@cavium.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.14 128/167] xprtrdma: Fix calculation of ri_max_send_sges
-Date: Wed, 21 Feb 2018 13:48:59 +0100
-Message-Id: <20180221124531.595333431@linuxfoundation.org>
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Ray Strode <rstrode@redhat.com>
+Subject: [PATCH 4.14 127/167] drm/qxl: reapply cursor after resetting primary
+Date: Wed, 21 Feb 2018 13:48:58 +0100
+Message-Id: <20180221124531.530779774@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015761707323407?=
-X-GMAIL-MSGID: =?utf-8?q?1593015761707323407?=
+X-GMAIL-THRID: =?utf-8?q?1593015758811089577?=
+X-GMAIL-MSGID: =?utf-8?q?1593015758811089577?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,75 +50,151 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Ray Strode <rstrode@redhat.com>
 
-commit 1179e2c27efe21167ec9d882b14becefba2ee990 upstream.
+commit 9428088c90b6f7d5edd2a1b0d742c75339b36f6e upstream.
 
-Commit 16f906d66cd7 ("xprtrdma: Reduce required number of send
-SGEs") introduced the rpcrdma_ia::ri_max_send_sges field. This fixes
-a problem where xprtrdma would not work if the device's max_sge
-capability was small (low single digits).
+QXL associates mouse state with its primary plane.
 
-At least RPCRDMA_MIN_SEND_SGES are needed for the inline parts of
-each RPC. ri_max_send_sges is set to this value:
+Destroying a primary plane and putting a new one in place has the side
+effect of destroying the cursor as well.
 
-  ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
+This commit changes the driver to reapply the cursor any time a new
+primary is created. It achieves this by keeping a reference to the
+cursor bo on the qxl_crtc struct.
 
-Then when marshaling each RPC, rpcrdma_args_inline uses that value
-to determine whether the device has enough Send SGEs to convey an
-NFS WRITE payload inline, or whether instead a Read chunk is
-required.
+This fix is very similar to
 
-More recently, commit ae72950abf99 ("xprtrdma: Add data structure to
-manage RDMA Send arguments") used the ri_max_send_sges value to
-calculate the size of an array, but that commit erroneously assumed
-ri_max_send_sges contains a value similar to the device's max_sge,
-and not one that was reduced by the minimum SGE count.
+commit 4532b241a4b7 ("drm/qxl: reapply cursor after SetCrtc calls")
 
-This assumption results in the calculated size of the sendctx's
-Send SGE array to be too small. When the array is used to marshal
-an RPC, the code can write Send SGEs into the following sendctx
-element in that array, corrupting it. When the device's max_sge is
-large, this issue is entirely harmless; but it results in an oops
-in the provider's post_send method, if dev.attrs.max_sge is small.
+which got implicitly reverted as part of implementing the atomic
+modeset feature.
 
-So let's straighten this out: ri_max_send_sges will now contain a
-value with the same meaning as dev.attrs.max_sge, which makes
-the code easier to understand, and enables rpcrdma_sendctx_create
-to calculate the size of the SGE array correctly.
-
-Reported-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Fixes: 16f906d66cd7 ("xprtrdma: Reduce required number of send SGEs")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Tested-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Cc: stable@vger.kernel.org # v4.10+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1512097
+Fixes: 1277eed5fecb ("drm: qxl: Atomic phase 1: convert cursor to universal plane")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ray Strode <rstrode@redhat.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xprtrdma/rpc_rdma.c |    2 +-
- net/sunrpc/xprtrdma/verbs.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/qxl/qxl_display.c |   59 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/qxl/qxl_drv.h     |    2 +
+ 2 files changed, 61 insertions(+)
 
---- a/net/sunrpc/xprtrdma/rpc_rdma.c
-+++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-@@ -142,7 +142,7 @@ static bool rpcrdma_args_inline(struct r
- 	if (xdr->page_len) {
- 		remaining = xdr->page_len;
- 		offset = offset_in_page(xdr->page_base);
--		count = 0;
-+		count = RPCRDMA_MIN_SEND_SGES;
- 		while (remaining) {
- 			remaining -= min_t(unsigned int,
- 					   PAGE_SIZE - offset, remaining);
---- a/net/sunrpc/xprtrdma/verbs.c
-+++ b/net/sunrpc/xprtrdma/verbs.c
-@@ -523,7 +523,7 @@ rpcrdma_ep_create(struct rpcrdma_ep *ep,
- 		pr_warn("rpcrdma: HCA provides only %d send SGEs\n", max_sge);
- 		return -ENOMEM;
- 	}
--	ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
-+	ia->ri_max_send_sges = max_sge;
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -289,6 +289,7 @@ static void qxl_crtc_destroy(struct drm_
+ {
+ 	struct qxl_crtc *qxl_crtc = to_qxl_crtc(crtc);
  
- 	if (ia->ri_device->attrs.max_qp_wr <= RPCRDMA_BACKWARD_WRS) {
- 		dprintk("RPC:       %s: insufficient wqe's available\n",
++	qxl_bo_unref(&qxl_crtc->cursor_bo);
+ 	drm_crtc_cleanup(crtc);
+ 	kfree(qxl_crtc);
+ }
+@@ -495,6 +496,53 @@ static int qxl_primary_atomic_check(stru
+ 	return 0;
+ }
+ 
++static int qxl_primary_apply_cursor(struct drm_plane *plane)
++{
++	struct drm_device *dev = plane->dev;
++	struct qxl_device *qdev = dev->dev_private;
++	struct drm_framebuffer *fb = plane->state->fb;
++	struct qxl_crtc *qcrtc = to_qxl_crtc(plane->state->crtc);
++	struct qxl_cursor_cmd *cmd;
++	struct qxl_release *release;
++	int ret = 0;
++
++	if (!qcrtc->cursor_bo)
++		return 0;
++
++	ret = qxl_alloc_release_reserved(qdev, sizeof(*cmd),
++					 QXL_RELEASE_CURSOR_CMD,
++					 &release, NULL);
++	if (ret)
++		return ret;
++
++	ret = qxl_release_list_add(release, qcrtc->cursor_bo);
++	if (ret)
++		goto out_free_release;
++
++	ret = qxl_release_reserve_list(release, false);
++	if (ret)
++		goto out_free_release;
++
++	cmd = (struct qxl_cursor_cmd *)qxl_release_map(qdev, release);
++	cmd->type = QXL_CURSOR_SET;
++	cmd->u.set.position.x = plane->state->crtc_x + fb->hot_x;
++	cmd->u.set.position.y = plane->state->crtc_y + fb->hot_y;
++
++	cmd->u.set.shape = qxl_bo_physical_address(qdev, qcrtc->cursor_bo, 0);
++
++	cmd->u.set.visible = 1;
++	qxl_release_unmap(qdev, release, &cmd->release_info);
++
++	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
++	qxl_release_fence_buffer_objects(release);
++
++	return ret;
++
++out_free_release:
++	qxl_release_free(qdev, release);
++	return ret;
++}
++
+ static void qxl_primary_atomic_update(struct drm_plane *plane,
+ 				      struct drm_plane_state *old_state)
+ {
+@@ -510,6 +558,7 @@ static void qxl_primary_atomic_update(st
+ 	    .x2 = qfb->base.width,
+ 	    .y2 = qfb->base.height
+ 	};
++	int ret;
+ 	bool same_shadow = false;
+ 
+ 	if (old_state->fb) {
+@@ -531,6 +580,11 @@ static void qxl_primary_atomic_update(st
+ 		if (!same_shadow)
+ 			qxl_io_destroy_primary(qdev);
+ 		bo_old->is_primary = false;
++
++		ret = qxl_primary_apply_cursor(plane);
++		if (ret)
++			DRM_ERROR(
++			"could not set cursor after creating primary");
+ 	}
+ 
+ 	if (!bo->is_primary) {
+@@ -571,6 +625,7 @@ static void qxl_cursor_atomic_update(str
+ 	struct drm_device *dev = plane->dev;
+ 	struct qxl_device *qdev = dev->dev_private;
+ 	struct drm_framebuffer *fb = plane->state->fb;
++	struct qxl_crtc *qcrtc = to_qxl_crtc(plane->state->crtc);
+ 	struct qxl_release *release;
+ 	struct qxl_cursor_cmd *cmd;
+ 	struct qxl_cursor *cursor;
+@@ -628,6 +683,10 @@ static void qxl_cursor_atomic_update(str
+ 		cmd->u.set.shape = qxl_bo_physical_address(qdev,
+ 							   cursor_bo, 0);
+ 		cmd->type = QXL_CURSOR_SET;
++
++		qxl_bo_unref(&qcrtc->cursor_bo);
++		qcrtc->cursor_bo = cursor_bo;
++		cursor_bo = NULL;
+ 	} else {
+ 
+ 		ret = qxl_release_reserve_list(release, true);
+--- a/drivers/gpu/drm/qxl/qxl_drv.h
++++ b/drivers/gpu/drm/qxl/qxl_drv.h
+@@ -135,6 +135,8 @@ struct qxl_bo_list {
+ struct qxl_crtc {
+ 	struct drm_crtc base;
+ 	int index;
++
++	struct qxl_bo *cursor_bo;
+ };
+ 
+ struct qxl_output {
