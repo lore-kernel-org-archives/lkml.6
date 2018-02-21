@@ -1,41 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeBUE6X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 23:58:23 -0500
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:47100 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeBUE6W (ORCPT
+        id S1751346AbeBUFDV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 00:03:21 -0500
+Received: from alexa-out-tai-01.qualcomm.com ([103.229.16.226]:64432 "EHLO
+        alexa-out-tai-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750716AbeBUFDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 23:58:22 -0500
-X-Google-Smtp-Source: AH8x226LsX8YBrwMNBsZy1U3rWWGclVpa932eigbokYhDlr//j7JSSIJNRXuuaX2o8bcDA5YfS5C3qAs08dV6d/QPMI=
-MIME-Version: 1.0
-Reply-To: m.dim.deng1@gmail.com
-From: Dim Deng <mariam.cook2020@gmail.com>
-Date: Wed, 21 Feb 2018 04:58:20 +0000
-Message-ID: <CAHVDHLeDf0odxg9BHmC5FRJ=92qxnO+m=9spGRaq-3uuNrRwHw@mail.gmail.com>
-Subject: Pls assist me to come and establish an industry in your country
-To: Mariam Cook <mariam.cook2020@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Feb 2018 00:03:19 -0500
+X-IronPort-AV: E=Sophos;i="5.46,542,1511798400";
+   d="scan'208";a="712"
+X-IronPort-AV: E=McAfee;i="5900,7806,8810"; a="2373333"
+From: Asutosh Das <asutoshd@codeaurora.org>
+To: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Asutosh Das <asutoshd@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 6/9] scsi: ufs-qcom: remove broken hci version quirk
+Date: Wed, 21 Feb 2018 10:26:37 +0530
+Message-Id: <de2da3b98c5f6ec9e7ea0341a7b79f37c78ab29a.1519120988.git.asutoshd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1519120988.git.asutoshd@codeaurora.org>
+References: <cover.1519120988.git.asutoshd@codeaurora.org>
+In-Reply-To: <cover.1519120988.git.asutoshd@codeaurora.org>
+References: <cover.1519120988.git.asutoshd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Genuine offer
- How are you today and your family, I am a citizen of Sudan but
-currently staying in Burkina Faso. My name is Miss Mariam Dim Deng,
-25years old originated from Sudan.
-My late father Dr. Dominic Dim Deng was the former Minister for SPLA
-Affair and Special Adviser to President Salva Kiir of South Sudan for
-Decentralization. You can read more about the crash through the below
-site:
-http://news.bbc.co.uk/2/hi/africa/7380412.stm
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-I am the only survival daughter of my late father, I want to establish
-an industry in your country.My father left the sum of eight million,
-four hundred thousand dollars, in the bank, so you will help me to
-receive the fund for investment in your country.
-Please can you be my partner and to direct me the way to establish an
-industry,out of this fund I will give you 30% for helping me, please
-contact me at email: m.dim.deng1@gmail.com
+UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION is only applicable for QCOM UFS host
+controller version 2.x.y and this has been fixed from version 3.x.y
+onwards, hence this change removes this quirk for version 3.x.y onwards.
 
-Your beloved Mariam Dim Deng
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+---
+ drivers/scsi/ufs/ufs-qcom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+index 2b38db2..221820a 100644
+--- a/drivers/scsi/ufs/ufs-qcom.c
++++ b/drivers/scsi/ufs/ufs-qcom.c
+@@ -1098,7 +1098,7 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
+ 		hba->quirks |= UFSHCD_QUIRK_BROKEN_LCC;
+ 	}
+ 
+-	if (host->hw_ver.major >= 0x2) {
++	if (host->hw_ver.major == 0x2) {
+ 		hba->quirks |= UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION;
+ 
+ 		if (!ufs_qcom_cap_qunipro(host))
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
