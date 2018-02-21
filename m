@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227DMy/YYH1UuN0b5v6z9hXOpq5qWmlKR72LQ19ZBLI+ptFZ8/4Wru+QBBj5hU+0PsaZtBjc
-ARC-Seal: i=1; a=rsa-sha256; t=1519217955; cv=none;
+X-Google-Smtp-Source: AH8x224UJ6x1vteOkYTTfyGmt9S5jkvdlXZTe2h1hboNF8U8d0NZUmcklZ++Ai9AzN0LOVNENM6+
+ARC-Seal: i=1; a=rsa-sha256; t=1519217953; cv=none;
         d=google.com; s=arc-20160816;
-        b=AYxlmqnWc+tGWlJS+fLRKdREBA2BGCShhNdrzFrvOP01/z+C8U8Zcc4dCJa0nvACTU
-         wngyCY/pP1VBeP62dpWOMDwEEsJdwz7J4lDJwB5lPY6zFGjOJu9IwKUiv4wFL3qWstw2
-         vMFZ/z4Bnj5A4J62R3wXIlhNvrTJbiRUzeQJC3XAKYtpCNm8YkzJyTuIkwfCNUIIpYwe
-         zdDef5F9/5uW9T//Mz7FTmL2VBYQv7KFyazPtEVgLdMFtJeJF++6VXnkcGB+Gc8OU8q4
-         JpQgZtfJNtH0Q8aLyZY4aa/Iei6a2TjzHiE7lKBFGgG+ElRCM+J7x9QkAcaJlXITGAG2
-         aF5A==
+        b=lYtc/gVKw04TqafeAHriN7QTpsuuKzXG3ZoHpetgwAPJMFJ8vgybYiWpWkGT8Lywc3
+         lhCFrPTm2YcCl8E61VcqAftSvXfkm/DqPwo3iifQMDgXAP7xzuXp0PZKiHYKD+0TVOLp
+         9/TI4FBiDq1drT0lBpktfOv35/1662R7wFExV+6xHXUnAGdGaLFqPYqvtlTgZ7O32eFp
+         MnQj5suoKvPK+xy5ski9LhqH2IfykoBS0/sE6f61Cdf5jHFbHhl2juFtsrE9tL6M6V2D
+         nqFeCBFHoLb5qizUXletKLueXbWd6cb3lAyB3XT6YL6FtgQVhSqYt6JUByt7/UOn1Atm
+         Q6Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RAhOT26S4EMpLdL01maOm9PpLOk207eoLmvg8ewiMlM=;
-        b=1Gg4MOq4+01Tr8xV2x2TRDDN010J7g+YzQ0e8lYQlJHajN7fIPe3bmt1psDPVfVT51
-         fqMB9ABlui9Dw6K9K+9AFoJf3kzzSPRGQZDGVz9j5Qc8rhUokYWrxY4la+M5o+hWElfq
-         tdlgEXX6L5f9WTsjLyxsm0oLZdg/8PJiR9UdxIqO5smUQIF7bFtEfjgDsM6pcs7O0S09
-         QNdWQSNRwDa57YrGbEjlPeJplC7SnbFuOQ6kQJtWkLjR3uoR+IxSZx9tIbPjZ9nzQ4yd
-         XyCUVRffsvtO8u0skCze5vI8Dpuy7abjwb3LWx5RXsk8RTnWU3BHWsDGvEj1ECJyTKtn
-         Jl0g==
+        bh=v4uubXf8qAj8fjqGCmEwUUWFbMKz9tiIb++HwH4jocg=;
+        b=AaLigsA6BaHe4bNEyIqhCnZSRwT4Fd22alrm84fot0pgOnBAeSEAEW0klKzPUIG+tE
+         +DXN9e6B+0MTlEtv3sCuglqzSwaSxW1oXgCJzXjNYC9chxBnqWEFonSjyavagKPI7AKV
+         /ltm+UwoFZSH8wdkpK+wW+BFUWrHo0ZvkBrV2sKAiJ7qxoTAq32LHpLjQBGq1wjMpidl
+         Os1ew1E4vwrAY0513mLY+tBTZIQwyMXkAFfL5DJ8vYW95KOBSY5hLEb8mddic0ov0QWZ
+         7W5JVhY0YLKyZzKh9JtvuVhjbmLPaEmI5GcJk5h+wHlxiDJc3S8k6htXXqJWiQSUAotV
+         k6Nw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Kees Cook <keescook@chromium.org>,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.14 009/167] selftests: seccomp: fix compile error seccomp_bpf
-Date: Wed, 21 Feb 2018 13:47:00 +0100
-Message-Id: <20180221124525.113392115@linuxfoundation.org>
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 008/167] IB/core: Avoid a potential OOPs for an unused optional parameter
+Date: Wed, 21 Feb 2018 13:46:59 +0100
+Message-Id: <20180221124525.067909126@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015487390350295?=
-X-GMAIL-MSGID: =?utf-8?q?1593015487390350295?=
+X-GMAIL-THRID: =?utf-8?q?1593015484554049351?=
+X-GMAIL-MSGID: =?utf-8?q?1593015484554049351?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +51,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit 912ec316686df352028afb6efec59e47a958a24d upstream.
+commit 2ff124d597c2df8696169ce0006fc974c49a4569 upstream.
 
-aarch64-linux-gnu-gcc -Wl,-no-as-needed -Wall
-    -lpthread seccomp_bpf.c -o seccomp_bpf
-seccomp_bpf.c: In function 'tracer_ptrace':
-seccomp_bpf.c:1720:12: error: '__NR_open' undeclared
-    (first use in this function)
-  if (nr == __NR_open)
-            ^~~~~~~~~
-seccomp_bpf.c:1720:12: note: each undeclared identifier is reported
-    only once for each function it appears in
-In file included from seccomp_bpf.c:48:0:
-seccomp_bpf.c: In function 'TRACE_syscall_ptrace_syscall_dropped':
-seccomp_bpf.c:1795:39: error: '__NR_open' undeclared
-    (first use in this function)
-  EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_open));
-                                       ^
-open(2) is a legacy syscall, replaced with openat(2) since 2.6.16.
-Thus new architectures in the kernel, such as arm64, don't implement
-these legacy syscalls.
+The ev_file is an optional parameter for CQ creation. If the parameter
+is not passed, the ev_file pointer will be NULL.  Using that pointer
+to set the cq_context will result in an OOPs.
 
-Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Verify that ev_file is not NULL before using.
+
+Cc: <stable@vger.kernel.org> # 4.14.x
+Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/seccomp/seccomp_bpf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/uverbs_std_types.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -1717,7 +1717,7 @@ void tracer_ptrace(struct __test_metadat
- 
- 	if (nr == __NR_getpid)
- 		change_syscall(_metadata, tracee, __NR_getppid);
--	if (nr == __NR_open)
-+	if (nr == __NR_openat)
- 		change_syscall(_metadata, tracee, -1);
- }
- 
-@@ -1792,7 +1792,7 @@ TEST_F(TRACE_syscall, ptrace_syscall_dro
- 					   true);
- 
- 	/* Tracer should skip the open syscall, resulting in EPERM. */
--	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_open));
-+	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
- }
- 
- TEST_F(TRACE_syscall, syscall_allowed)
+--- a/drivers/infiniband/core/uverbs_std_types.c
++++ b/drivers/infiniband/core/uverbs_std_types.c
+@@ -315,7 +315,7 @@ static int uverbs_create_cq_handler(stru
+ 	cq->uobject       = &obj->uobject;
+ 	cq->comp_handler  = ib_uverbs_comp_handler;
+ 	cq->event_handler = ib_uverbs_cq_event_handler;
+-	cq->cq_context    = &ev_file->ev_queue;
++	cq->cq_context    = ev_file ? &ev_file->ev_queue : NULL;
+ 	obj->uobject.object = cq;
+ 	obj->uobject.user_handle = user_handle;
+ 	atomic_set(&cq->usecnt, 0);
