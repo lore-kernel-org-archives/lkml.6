@@ -1,112 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeBULVm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 06:21:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53202 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752892AbeBULVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 06:21:39 -0500
-Date: Wed, 21 Feb 2018 11:21:38 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xchg/alpha: Add unconditional memory barrier to cmpxchg
-Message-ID: <20180221112137.GA6165@arm.com>
-References: <1519152356-4804-1-git-send-email-parri.andrea@gmail.com>
+        id S933227AbeBULWS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 06:22:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37250 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932758AbeBULWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 06:22:11 -0500
+Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
+ support
+To: Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>
+Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        geert@linux-m68k.org, tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
+References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
+ <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
+ <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+ <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
+ <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
+ <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
+ <20180221113217.11bb1c69.cohuck@redhat.com>
+ <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
+ <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Wed, 21 Feb 2018 12:22:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519152356-4804-1-git-send-email-parri.andrea@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022111-0040-0000-0000-000004360304
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022111-0041-0000-0000-000020D81727
+Message-Id: <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802210140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
 
-On Tue, Feb 20, 2018 at 07:45:56PM +0100, Andrea Parri wrote:
-> Continuing along with the fight against smp_read_barrier_depends() [1]
-> (or rather, against its improper use), add an unconditional barrier to
-> cmpxchg.  This guarantees that dependency ordering is preserved when a
-> dependency is headed by an unsuccessful cmpxchg.  As it turns out, the
-> change could enable further simplification of LKMM as proposed in [2].
+
+On 02/21/2018 12:14 PM, Thomas Huth wrote:
+> On 21.02.2018 12:09, Christian Borntraeger wrote:
+>>
+>>
+>> On 02/21/2018 11:32 AM, Cornelia Huck wrote:
+>>> On Wed, 21 Feb 2018 11:22:38 +0100
+>>> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+>>>
+>>>> On 02/21/2018 11:05 AM, Christian Borntraeger wrote:
+>>>>>
+>>>>>
+>>>>> On 02/19/2018 05:38 PM, Farhan Ali wrote:  
+>>>>>>
+>>>>>>
+>>>>>> On 02/19/2018 11:25 AM, Thomas Huth wrote:  
+>>>>>>> On 19.02.2018 16:47, Farhan Ali wrote:  
+>>>>>>>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
+>>>>>>>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
+>>>>>>>> "Graphics support" menu for S390. But if we enable VT layer for S390,
+>>>>>>>> we would also need to enable the dummy console. So let's remove the
+>>>>>>>> HAS_IOMEM dependency.
+>>>>>>>>
+>>>>>>>> Move this dependency to sub menu items and console drivers that use
+>>>>>>>> io memory.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+>>>>>>>> ---
+>>>>>>>>   drivers/video/Kconfig         | 21 +++++++++++----------
+>>>>>>>>   drivers/video/console/Kconfig |  4 ++--
+>>>>>>>>   2 files changed, 13 insertions(+), 12 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+>>>>>>>> index 3c20af9..8f10915 100644
+>>>>>>>> --- a/drivers/video/Kconfig
+>>>>>>>> +++ b/drivers/video/Kconfig
+>>>>>>>> @@ -3,7 +3,6 @@
+>>>>>>>>   #
+>>>>>>>>     menu "Graphics support"
+>>>>>>>> -    depends on HAS_IOMEM
+>>>>>>>>     config HAVE_FB_ATMEL
+>>>>>>>>       bool
+>>>>>>>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
+>>>>>>>>   config SH_LCD_MIPI_DSI
+>>>>>>>>       bool
+>>>>>>>>   -source "drivers/char/agp/Kconfig"
+>>>>>>>> +if HAS_IOMEM
+>>>>>>>> +    source "drivers/char/agp/Kconfig"
+>>>>>>>>   -source "drivers/gpu/vga/Kconfig"
+>>>>>>>> +    source "drivers/gpu/vga/Kconfig"
+>>>>>>>>   -source "drivers/gpu/host1x/Kconfig"
+>>>>>>>> -source "drivers/gpu/ipu-v3/Kconfig"
+>>>>>>>> +    source "drivers/gpu/host1x/Kconfig"
+>>>>>>>> +    source "drivers/gpu/ipu-v3/Kconfig"
+>>>>>>>>   -source "drivers/gpu/drm/Kconfig"
+>>>>>>>> +    source "drivers/gpu/drm/Kconfig"  
+>>>>>
+>>>>>
+>>>>> Hmmm, looks like that this makes it impossible to select VIRTIO_GPU - need still more
+>>>>> work.
+>>>>>   
+>>>> Sorry my fault. I had CONFIG_PCI disabled.
+>>>
+>>> That smells like the s390 HAS_IOMEM stuff needs more work -- I guess
+>>> that you want to enable a ccw virtio-gpu device, not a pci one, right?
+>>
+>> It is a ccw virtio-gpu. But s390 has no IOMEM without CONFIG_PCI, so you cannot
+>> select VIRTIO_GPU, which needs DRM, which need IOMEM.
 > 
-> [1] https://marc.info/?l=linux-kernel&m=150884953419377&w=2
->     https://marc.info/?l=linux-kernel&m=150884946319353&w=2
->     https://marc.info/?l=linux-kernel&m=151215810824468&w=2
->     https://marc.info/?l=linux-kernel&m=151215816324484&w=2
-> 
-> [2] https://marc.info/?l=linux-kernel&m=151881978314872&w=2
-> 
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> Acked-by: Peter Zijlstra <peterz@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Richard Henderson <rth@twiddle.net>
-> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> Cc: Matt Turner <mattst88@gmail.com>
-> Cc: linux-alpha@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/alpha/include/asm/xchg.h | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-> index 68dfb3cb71454..e2660866ce972 100644
-> --- a/arch/alpha/include/asm/xchg.h
-> +++ b/arch/alpha/include/asm/xchg.h
-> @@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
->   * store NEW in MEM.  Return the initial value in MEM.  Success is
->   * indicated by comparing RETURN with OLD.
->   *
-> - * The memory barrier should be placed in SMP only when we actually
-> - * make the change. If we don't change anything (so if the returned
-> - * prev is equal to old) then we aren't acquiring anything new and
-> - * we don't need any memory barrier as far I can tell.
-> + * The memory barrier is placed in SMP unconditionally, in order to
-> + * guarantee that dependency ordering is preserved when a dependency
-> + * is headed by an unsuccessful operation.
->   */
->  
->  static inline unsigned long
-> @@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
-> -		__ASM__MB
->  	"2:\n"
-> +		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
+> So the 'source "drivers/gpu/drm/Kconfig"' should maybe rather reside
+> outside of the "if HAS_IOMEM" path? Or does it not compile anymore that way?
 
-It might be better just to add smp_read_barrier_depends() into the cmpxchg
-macro, then remove all of the __ASM__MB stuff.
-
-That said, I don't actually understand how the Alpha cmpxchg or xchg
-implementations satisfy the memory model, since they only appear to have
-a barrier after the operation.
-
-So MP using xchg:
-
-WRITE_ONCE(x, 1)
-xchg(y, 1)
-
-smp_load_acquire(y) == 1
-READ_ONCE(x) == 0
-
-would be allowed. What am I missing?
-
-Since I'm in the mood for dumb questions, do we need to care about
-this_cpu_cmpxchg? I'm sure I've seen code that allows concurrent access to
-per-cpu variables, but the asm-generic implementation of this_cpu_cmpxchg
-doesn't use READ_ONCE.
-
-Will
+virtio-gpu depends on drm. So in essence it boils down to if you want virtio-gpu
+you also need to enable PCI, even if the actual channel is ccw.
