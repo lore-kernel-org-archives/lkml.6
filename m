@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224mfZ+2H4dDqaIS2syLLS0HUu4P2NWSsWIQKukwUIJfzJUlQ7q3kCa65PcW3Ik1blPWvhQP
-ARC-Seal: i=1; a=rsa-sha256; t=1519218674; cv=none;
+X-Google-Smtp-Source: AH8x224rGP/XJmoKc7MK2WHklAcVJTLIQWrdW4lEn95VUQbXOfMCoYy/dguDhGXqPIoOF/0e3JkT
+ARC-Seal: i=1; a=rsa-sha256; t=1519218673; cv=none;
         d=google.com; s=arc-20160816;
-        b=mN65QNB4px9zdB3njMGJGzVOut/7E9yn+VsxHPStEITxlFIlDdvoFXhPQKO8Q0vBYL
-         tbQrYll0vpJRGyeRTjORBQD4ji+JmLrkADE7jbgTYqCXCoA9QuJR8XyGBjj6PVpc8hHr
-         CSJpGNKw/wVcG5Yoaio74ctmTwbKT1ECbT/BtyMsJyWpjTnyU2HEvg0Y9lw95lEuJLk2
-         it2fZ9c/cx3tm+RiviATTMm0ehNOCs6dDV0HLYY4E4uHaNZtTP24VoWBqq6UkjpVPbrz
-         oEqS5zwJYYrZnU98VdAXIm4FivEjcEz1DrgrpqcOKDVYw46TBtij7od+GrvNVvW0InMi
-         IdWw==
+        b=YZERwornPu1xPury95fZKmxilkVjSE9g2hGi6SJfBeKmP4bCbUB28G8nV6iGirfm4C
+         RhtEjr8w9LpTYD9YzChzs86zvDZAbZ7Upy/y1ZwCZZIBVd0JKRWaBxjoeXu1rgeBTBcC
+         sdgBfJ1YtTY/VrAYEux3T1jEF5L0rUlwglvsPt4hw9NZPj/d7LLhu5NY8uOMdZPHqJC0
+         KMrQgauovLFChrUSM0LOnnruivvQN6CUy+sihEXDPIIq1y7tfpBv0n8jMig8OxHRr7Sx
+         sjqJRg1GDt3tKSa5gQ2QLZZ/FdsRAe2TRV6hauDRt4Zg7cA3CFd/dBNWeU0Z6DBrQ2h+
+         TYZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1HyUWJYhV6/RechYEDNuijiHyw7wFyng4FzmuvfZbtM=;
-        b=iNKlGEWbu0val7R/zFPzPqfzb3faeA8CiwV/iADqEDotg99+QLKmvL7XevL37eY7Ox
-         JglqlDMFv1ZDlHsS2MMmCFha3YbEaP9psHcmorT3LSMikIvQ/8uu1m1e4caw1MTpkC+k
-         I5vPPuJB2lhmDkcCmZaj8N5uaIulr+hmdGXCaZY0zVdRMxkZETHQs2O06joHARUULEiR
-         7GtUuqVGi4TxU+2b9tSXdmKdOR6w3fwcqXovx04PlUygyEnOv0iwpHg2fNKVpiFI6N4o
-         Ru9g6jpru9YlmPBUHihJYcT08BNK6OAmptsqg3me0pZFydZmXCBaCH+eOxFblTwWAGr5
-         QVyg==
+        bh=6MW8nKrSIhrb0r8U3a9J89FdhDMFVKDTQu8A7WCp2Ok=;
+        b=kOlsWQ8/nD72GynfYQsvbQ0YeV0T5bSbdAY70FGlNQUcgJe97bBN1x/0nz8SXMsovN
+         sqZt2I2F3IcBUngx6aU/yQmcs6dV4Zs0mPDOCSw0zeTbb2b3FmkG/5HNtRV4THCmso5q
+         LIEYkzYOgGYpk+dKQjprnRXWSeNn2sh/ZRI2lFtv2O+VLg9UDokmDsa3+nRrte/IzcPI
+         zkct0HA8f9f0YkaDlIV491XG407oBej7ZrfpatB+nRGT9R+2iiuB5t3iSC7gCyX4nqcw
+         kLemRH/jqPgXLSdb+mVYlVa77AUs49HA+J2LFC7Ep0Zy4jY2asmLJUyoOYwfJM708hw5
+         B0EQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicolas Pitre <nico@linaro.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.15 120/163] console/dummy: leave .con_font_get set to NULL
-Date: Wed, 21 Feb 2018 13:49:09 +0100
-Message-Id: <20180221124536.747679607@linuxfoundation.org>
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Yehezkel Bernat <yehezkel.bernat@intel.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Andreas Noever <andreas.noever@gmail.com>
+Subject: [PATCH 4.15 117/163] PCI: pciehp: Assume NoCompl+ for Thunderbolt ports
+Date: Wed, 21 Feb 2018 13:49:06 +0100
+Message-Id: <20180221124536.606429707@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014631678388583?=
-X-GMAIL-MSGID: =?utf-8?q?1593016241413508955?=
+X-GMAIL-THRID: =?utf-8?q?1593016239425186791?=
+X-GMAIL-MSGID: =?utf-8?q?1593016239425186791?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +54,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 724ba8b30b044aa0d94b1cd374fc15806cdd6f18 upstream.
+commit 493fb50e958c1c6deef7feff0b8c3855def78d75 upstream.
 
-When this method is set, the caller expects struct console_font fields
-to be properly initialized when it returns. Leave it unset otherwise
-nonsensical (leaked kernel stack) values are returned to user space.
+Certain Thunderbolt 1 controllers claim to support Command Completed events
+(value of 0b in the No Command Completed Support field of the Slot
+Capabilities register) but in reality they neither set the Command
+Completed bit in the Slot Status register nor signal a Command Completed
+interrupt:
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+  8086:1513  CV82524  [Light Ridge 4C  2010]
+  8086:151a  DSL2310  [Eagle Ridge 2C  2011]
+  8086:151b  CVL2510  [Light Peak 2C   2010]
+  8086:1547  DSL3510  [Cactus Ridge 4C 2012]
+  8086:1548  DSL3310  [Cactus Ridge 2C 2012]
+  8086:1549  DSL2210  [Port Ridge 1C   2011]
+
+All known newer chips (Redwood Ridge and onwards) set No Command Completed
+Support, indicating that they do not support Command Completed events.
+
+The user-visible impact is that after unplugging such a device, 2 seconds
+elapse until pciehp is unbound.  That's because on ->remove,
+pcie_write_cmd() is called via pcie_disable_notification() and every call
+to pcie_write_cmd() takes 2 seconds (1 second for each invocation of
+pcie_wait_cmd()):
+
+  [  337.942727] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x1038 (issued 21176 msec ago)
+  [  340.014735] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x0000 (issued 2072 msec ago)
+
+That by itself has always been unpleasant, but the situation has become
+worse with commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
+shutdown"):  Now pciehp is unbound on ->shutdown.  Because Thunderbolt
+controllers typically have 4 hotplug ports, every reboot and shutdown is
+now delayed by 8 seconds, plus another 2 seconds for every attached
+Thunderbolt 1 device.
+
+Thunderbolt hotplug slots are not physical slots that one inserts cards
+into, but rather logical hotplug slots implemented in silicon.  Devices
+appear beyond those logical slots once a PCI tunnel is established on top
+of the Thunderbolt Converged I/O switch.  One would expect commands written
+to the Slot Control register to be executed immediately by the silicon, so
+for simplicity we always assume NoCompl+ for Thunderbolt ports.
+
+Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
+Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: stable@vger.kernel.org	# v4.12+
+Cc: Sinan Kaya <okaya@codeaurora.org>
+Cc: Yehezkel Bernat <yehezkel.bernat@intel.com>
+Cc: Michael Jamet <michael.jamet@intel.com>
+Cc: Andreas Noever <andreas.noever@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/console/dummycon.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/pci/hotplug/pciehp_hpc.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/video/console/dummycon.c
-+++ b/drivers/video/console/dummycon.c
-@@ -67,7 +67,6 @@ const struct consw dummy_con = {
-     .con_switch =	DUMMY,
-     .con_blank =	DUMMY,
-     .con_font_set =	DUMMY,
--    .con_font_get =	DUMMY,
-     .con_font_default =	DUMMY,
-     .con_font_copy =	DUMMY,
- };
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -848,6 +848,13 @@ struct controller *pcie_init(struct pcie
+ 	if (pdev->hotplug_user_indicators)
+ 		slot_cap &= ~(PCI_EXP_SLTCAP_AIP | PCI_EXP_SLTCAP_PIP);
+ 
++	/*
++	 * We assume no Thunderbolt controllers support Command Complete events,
++	 * but some controllers falsely claim they do.
++	 */
++	if (pdev->is_thunderbolt)
++		slot_cap |= PCI_EXP_SLTCAP_NCCS;
++
+ 	ctrl->slot_cap = slot_cap;
+ 	mutex_init(&ctrl->ctrl_lock);
+ 	init_waitqueue_head(&ctrl->queue);
