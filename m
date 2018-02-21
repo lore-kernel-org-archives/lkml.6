@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225FWQmUuAOQ9hCKQjARHgnoBg/P9rE8Pr6UY+A2Clz6FzhkdQ2mlSLnfCc0t5I4to9VyyGO
-ARC-Seal: i=1; a=rsa-sha256; t=1519217905; cv=none;
+X-Google-Smtp-Source: AH8x227YTFmPyongUCkqAf9N4a35sR5Gr+bYGGjFSa/xmfEbHIHZeA7ayR125l0J61uUAZCtyTUu
+ARC-Seal: i=1; a=rsa-sha256; t=1519217902; cv=none;
         d=google.com; s=arc-20160816;
-        b=lI/F2nl8ZauDyXiVtKozWP698g5Iljks4R1e9BqsQMh1Smu60qfjL+LolBj4BoRL8z
-         mOyPgc+w+0erB67tU/47UHP28qrT8RK7IBT3EHJ7qA63ofo/NqooGUyWY4eNBIzsjz9K
-         3Q7uFHMoWN+ddZ2Frxtd5tTWhBUy4BT4c9+E3Hj9V69BBuwfG2EQxfTa51DPAgp4m0Gi
-         XxG1EnyBGnNYJi33Ueg/ab6DyA5avg5YKN6o3uhuDFfJMDBnR2YnTif023oI8bhya4gd
-         8LOEGNRzsd+Hum2WrI/16PKsC3vVY5Kzz+GqqNbvj8u5bocBz5xmrLqlGEiyGsqYN2AQ
-         4Gyw==
+        b=x3vulYsEaqK0JOLHwxa24HCbiDp7TKqGI8J5E6rdfAuwWctaI4rKKBzDhYFVkhcQpR
+         fiKTcT+mNj/W/r2kcrtcOxeJ7/PWjk6XoVXbNS1W4+ZMPtNlE4NmEaVgLMsEMpSGTTvu
+         pbphUxl46WBd8XsOeOB6SWd3kTiQbHE468cBdV1rrrDWSU+T2frocLbo4Wta70OS28Er
+         sgn8knwVPi4CITP2vpEqhOQIfJnS4yoiQjBLJP1TmBw2G5sXYW4Zr3OSS609VgW0rqPv
+         Hn8PXPw8ichF0Qmplzj5OWNpEHiWQzciOD8n1igTxszxir/z0AwUBwr5e2c1MYpKW/fD
+         psxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IdjWK8RO/jHCLWOXnjWEw8CPSkHN/Ce1fJET/tlZI04=;
-        b=dFUFlqRIi/kQPUqT6jSlDY7bDSrrGYaEu6ymcdF6Yne0N1yM2rR84In0NdLzn44LOe
-         ZE/KeQ6NAGlnnOgVQ+IYvHZRKsA0PVtGZVDQBLNvtXiBbLg8yHkzagFx8ZWn7xnA3jn4
-         CH8itFPwS/ZRIZLg1wigjrp67kkLT+HkXHA1Ux/VLbVoa7rzWOEZjZV725fmSSIqW2Zp
-         SiKifR6KHj3riDKJiCK60y4SSYMg1x0Str0O+xJPtP/iJin+xR3TxB5oP91BQ9hi/MRA
-         LMWciTa9O3o9Z2KLfaxln7KoWyJv8AiYWTIWTGouVRUGK5xRY+CzlprUmWCT9GCkr6HR
-         Vqhg==
+        bh=v9DZ8O7sPeEly3E8aGLMIWsgmqiLLXU9NLVLTl6A4Ko=;
+        b=tg23sG3x5JBLAFXrzCHOnKkeCRxo0fCBU/NR7msulRV9jTnbZZyumD69bryof6IWSI
+         bgKnsefnnPjaj/p3gQbWeEhQ3Chq+Z7YmWIducRsCZaX6Z0+zeu9uJmY+J+JN49xjP65
+         gHbFtddsp+3DgNoj39/OqhCEtWbj3/Lm3ZgYm3RCY5WUmIQjw9lFm6eyjJVyhNKPcLo8
+         BLSZCdMF3pi4hc77kQCpgYQ+UImorPD2U3Jq9e1ksFY0NZXGRFGiyaRAApgTa0tYUwz4
+         HyYdtC0+QNiQnnn08DsCRnqgByoQr3tPXmxAM4zlwBIaW3LlTVYRoNm0+qhah7a9Bhi5
+         KsQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Steffen Weber <steffen.weber@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 002/167] scsi: smartpqi: allow static build ("built-in")
-Date: Wed, 21 Feb 2018 13:46:53 +0100
-Message-Id: <20180221124524.768984272@linuxfoundation.org>
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 019/167] powerpc/radix: Remove trace_tlbie call from radix__flush_tlb_all
+Date: Wed, 21 Feb 2018 13:47:10 +0100
+Message-Id: <20180221124525.656642817@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015175879199840?=
-X-GMAIL-MSGID: =?utf-8?q?1593015434530680542?=
+X-GMAIL-THRID: =?utf-8?q?1593015431627887973?=
+X-GMAIL-MSGID: =?utf-8?q?1593015431627887973?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,24 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Weber <steffen.weber@gmail.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit dc2db1dc5fb9ab3a43b305c2720fee5278dbee2a upstream.
+commit 8d81296cfcce89013a714feb8d25004a156f8181 upstream.
 
-If CONFIG_SCSI_SMARTPQI=y then don't build this driver as a module.
+radix__flush_tlb_all() is called only in kexec path in real mode and any
+tracepoints at this stage will make kexec to fail if enabled.
 
-Signed-off-by: Steffen Weber <steffen.weber@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+To verify enable tlbie trace before kexec.
+
+$ echo 1 > /sys/kernel/debug/tracing/events/powerpc/tlbie/enable
+== kexec into new kernel and kexec fails.
+
+Fix this by not calling trace_tlbie from radix__flush_tlb_all().
+
+Fixes: 0428491cba92 ("powerpc/mm: Trace tlbie(l) instructions")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/smartpqi/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/tlb-radix.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/scsi/smartpqi/Makefile
-+++ b/drivers/scsi/smartpqi/Makefile
-@@ -1,3 +1,3 @@
- ccflags-y += -I.
--obj-m		+= smartpqi.o
-+obj-$(CONFIG_SCSI_SMARTPQI) += smartpqi.o
- smartpqi-objs := smartpqi_init.o smartpqi_sis.o smartpqi_sas_transport.o
+--- a/arch/powerpc/mm/tlb-radix.c
++++ b/arch/powerpc/mm/tlb-radix.c
+@@ -453,14 +453,12 @@ void radix__flush_tlb_all(void)
+ 	 */
+ 	asm volatile(PPC_TLBIE_5(%0, %4, %3, %2, %1)
+ 		     : : "r"(rb), "i"(r), "i"(1), "i"(ric), "r"(rs) : "memory");
+-	trace_tlbie(0, 0, rb, rs, ric, prs, r);
+ 	/*
+ 	 * now flush host entires by passing PRS = 0 and LPID == 0
+ 	 */
+ 	asm volatile(PPC_TLBIE_5(%0, %4, %3, %2, %1)
+ 		     : : "r"(rb), "i"(r), "i"(prs), "i"(ric), "r"(0) : "memory");
+ 	asm volatile("eieio; tlbsync; ptesync": : :"memory");
+-	trace_tlbie(0, 0, rb, 0, ric, prs, r);
+ }
+ 
+ void radix__flush_tlb_pte_p9_dd1(unsigned long old_pte, struct mm_struct *mm,
