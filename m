@@ -1,41 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754889AbeBURD2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:03:28 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:55704 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753945AbeBURDY (ORCPT
+        id S1754907AbeBURDp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:03:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44437 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeBURDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:03:24 -0500
-Date: Wed, 21 Feb 2018 18:03:19 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/19] ARM64: Add Renesas R-Car M3-N config symbol
-Message-ID: <20180221170319.3w2ylymp5dtjxxqg@verge.net.au>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-8-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Feb 2018 12:03:42 -0500
+Date: Wed, 21 Feb 2018 09:03:08 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-0ca7d5baa1787e5f2a7abd6bfca3303b1bbb48ac@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        luto@kernel.org, torvalds@linux-foundation.org, brgerst@gmail.com,
+        jpoimboe@redhat.com, linux@dominikbrodowski.net,
+        dan.j.williams@intel.com, hpa@zytor.com, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, luto@kernel.org,
+        tglx@linutronix.de, jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        brgerst@gmail.com, dan.j.williams@intel.com,
+        linux@dominikbrodowski.net, hpa@zytor.com, peterz@infradead.org
+In-Reply-To: <20180221024214.lhl5jfgw33c4vz3m@treble>
+References: <20180221024214.lhl5jfgw33c4vz3m@treble>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Simplify ENCODE_FRAME_POINTER
+Git-Commit-ID: 0ca7d5baa1787e5f2a7abd6bfca3303b1bbb48ac
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1519139541-18783-8-git-send-email-jacopo+renesas@jmondi.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 04:12:09PM +0100, Jacopo Mondi wrote:
-> Add configuration option for the R-Car M3-N (R8A77965) SoC.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Commit-ID:  0ca7d5baa1787e5f2a7abd6bfca3303b1bbb48ac
+Gitweb:     https://git.kernel.org/tip/0ca7d5baa1787e5f2a7abd6bfca3303b1bbb48ac
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Tue, 20 Feb 2018 20:42:14 -0600
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 16:54:07 +0100
 
-Thanks, I have applied this after updating the subject to:
+x86/entry/64: Simplify ENCODE_FRAME_POINTER
 
-arm64: add Renesas R8A77965 support
+On 64-bit, the stack pointer is always aligned on interrupt, so instead
+of setting the LSB of the pt_regs address, we can just add 1 to it.
 
-Please use "arm64" rather than ARM64 as a prefix.
-(But "ARM" rather than "arm"!).
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrew Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180221024214.lhl5jfgw33c4vz3m@treble
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/calling.h | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 5d10b7a..be63330 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -181,12 +181,7 @@ For 32-bit we have the following conventions - kernel is built with
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
+ #ifdef CONFIG_FRAME_POINTER
+-	.if \ptregs_offset
+-		leaq \ptregs_offset(%rsp), %rbp
+-	.else
+-		mov %rsp, %rbp
+-	.endif
+-	orq	$0x1, %rbp
++	leaq 1+\ptregs_offset(%rsp), %rbp
+ #endif
+ .endm
+ 
