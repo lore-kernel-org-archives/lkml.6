@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2247ZHu4aho/3zMFtTzpBx+LKqSVI8G9C+LVb2ykEZ4BBhSxwxgOyUrgIVCCn2OPo7ckomZW
-ARC-Seal: i=1; a=rsa-sha256; t=1519218579; cv=none;
+X-Google-Smtp-Source: AH8x225hyNWK8Qdpn9wi4WBsCLv6jfONnL9II/w19/lv419LkeeKbm7fYB9d+89dUnaDXpcFwFPz
+ARC-Seal: i=1; a=rsa-sha256; t=1519218577; cv=none;
         d=google.com; s=arc-20160816;
-        b=yLPqRH7ArBRtHfHNN2qSzOGSOzNHYgwYyIwlud2WwB4H3DU1AMdoQ+jzAOjKJNDu3V
-         uN5UwFHVPfVshfibPbWvexL9nDGWVAQtqMVDnkjz0ubk2aMvQ5fL5G7UCDeq3Es7m0lS
-         bi/MSDMrFe8LwgLDjpdru1QJo98kDm6F/wCI1ueYPSSIinj9QVjc8K7/ChKmHHmWpCBc
-         A1c40V4UdE6XwG8q/KeHgEkOMggQYhfXtd2OqoGhDSa2tYMiFpSs1pn2W4C7Bap5dcck
-         MfAf8RaPmZsLX/6Ak2LF/YoGpj64SivoeBQHDUDU9T28UqVwTQZoz/Wp+NboQzyrgK3l
-         BaOw==
+        b=ynjIEtaiudeI4AYTrFdGQ5GwKTAOkux67zp2xfn5JTyVtDLpqL97d9TqQttDmSZveB
+         gKj2rz+Kva/6La3Xfju3kXCv/SIpiodnrcGWhLgrprsNDDYJqVu13tiSMUri34FD3eoj
+         lIAjfYJzE2Id1xBPQs3IUW6WJHDGZEwcZeHhZerLwVEUasLIPLENbDfx33t72OPs6Ufl
+         BU3H5pTJhBdBxKEIg1PO2xN0nEE+n8sgfP0p3BaFGpDJ4yLr1j/b+v4QYLeLe/OSxYm1
+         XiuWDWKNj/MzFG/KQ2d9FwQztGNrdC+b9tK1/YQHoRpXL5MDEQZSjlrMHslF+yNI9PVL
+         iiQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=46xLsvLO+Js4lfd8DZujKlJw5FWxNM9tcloni4boFa4=;
-        b=K93pkD1ImAp9YdsyLl5uuuuO087dodnQjf/pyonvSdqgmjLvtKICCdwpaInzwEr43W
-         6USTRKYX24hhN5NGAOFF2EnCUEv49LGPxfCVvGD7VcguDMgbbgWC1pbqmrDeyXd3iaGL
-         fjkulULKEzzMZ5EcfJMF9FYMbX7Hbi3eNQsENYB8AuEizdWr44+uXN4JDIu/Z5cujbo6
-         vU5KEyQwTL9N4EHKcWqc1DWZpsx+LLcTURSSF4oyB7fH54j79dIjQxWIfrFRaoJSJoeM
-         jARr0me9cjUcjtrbbYfz4J2Rx5nyD5iTyz3Mb497iG2hT/fcTdghKg1JpRoqTKCR1Xrn
-         HDHw==
+        bh=Ls+fHU1RjOL44wG5Hyo5pHYJIh2MSxOEOL4Mgf4ObPU=;
+        b=QvAsH9wg+bwIV9YetZSDRfKR/wUx23MqXOwOR5R2v/qi0NLrE4SToO87NzrqZNBHt9
+         jNHh9241MrVIInbm+FugKwRUpaGgC/xl+YyQ3kzv/R7Sovz5H+121UNRhzJ/+/ghHWxz
+         5UZEyjqFdC59B8PX0FAb/sxIDx7fIuQwanDNBTIbXfJxtytJnH9/eh/VWophw9VGweWA
+         lNMeQnDJX5gEQmjLQVUSPdUmJ1FuMAPOlDySGo85KaALvs20eXa20a+Ewvr/yJe/k0Ov
+         BhQ8gxQrRsmBSjbWgvwGnZ6MVOzYDtTYKMft2BK8EI+zsrakAM4H7T6hSCC5AyYR2jpE
+         qt0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 088/163] drm/ttm: Dont add swapped BOs to swap-LRU list
-Date: Wed, 21 Feb 2018 13:48:37 +0100
-Message-Id: <20180221124535.228959261@linuxfoundation.org>
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 087/163] x86/entry/64: Fix CR3 restore in paranoid_exit()
+Date: Wed, 21 Feb 2018 13:48:36 +0100
+Message-Id: <20180221124535.195847594@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -41,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015655531949481?=
-X-GMAIL-MSGID: =?utf-8?q?1593016141060524832?=
+X-GMAIL-THRID: =?utf-8?q?1593015655835796589?=
+X-GMAIL-MSGID: =?utf-8?q?1593016138965222273?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +57,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit fd5002d6a3c602664b07668a24df4ef7a43bf078 upstream.
+commit e48657573481a5dff7cfdc3d57005c80aa816500 upstream.
 
-A BO that's already swapped would be added back to the swap-LRU list
-for example if its validation failed under high memory pressure. This
-could later lead to swapping it out again and leaking previous swap
-storage.
+Josh Poimboeuf noticed the following bug:
 
-This commit adds a condition to prevent that from happening.
+ "The paranoid exit code only restores the saved CR3 when it switches back
+  to the user GS.  However, even in the kernel GS case, it's possible that
+  it needs to restore a user CR3, if for example, the paranoid exception
+  occurred in the syscall exit path between SWITCH_TO_USER_CR3_STACK and
+  SWAPGS."
 
-v2: Check page_flags instead of swap_storage
+Josh also confirmed via targeted testing that it's possible to hit this bug.
 
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fix the bug by also restoring CR3 in the paranoid_exit_no_swapgs branch.
+
+The reason we haven't seen this bug reported by users yet is probably because
+"paranoid" entry points are limited to the following cases:
+
+ idtentry double_fault       do_double_fault  has_error_code=1  paranoid=2
+ idtentry debug              do_debug         has_error_code=0  paranoid=1 shift_ist=DEBUG_STACK
+ idtentry int3               do_int3          has_error_code=0  paranoid=1 shift_ist=DEBUG_STACK
+ idtentry machine_check      do_mce           has_error_code=0  paranoid=1
+
+Amongst those entry points only machine_check is one that will interrupt an
+IRQS-off critical section asynchronously - and machine check events are rare.
+
+The other main asynchronous entries are NMI entries, which can be very high-freq
+with perf profiling, but they are special: they don't use the 'idtentry' macro but
+are open coded and restore user CR3 unconditionally so don't have this bug.
+
+Reported-and-tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180214073910.boevmg65upbk3vqb@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ttm/ttm_bo.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -175,7 +175,8 @@ void ttm_bo_add_to_lru(struct ttm_buffer
- 		list_add_tail(&bo->lru, &man->lru[bo->priority]);
- 		kref_get(&bo->list_kref);
- 
--		if (bo->ttm && !(bo->ttm->page_flags & TTM_PAGE_FLAG_SG)) {
-+		if (bo->ttm && !(bo->ttm->page_flags &
-+				 (TTM_PAGE_FLAG_SG | TTM_PAGE_FLAG_SWAPPED))) {
- 			list_add_tail(&bo->swap,
- 				      &bo->glob->swap_lru[bo->priority]);
- 			kref_get(&bo->list_kref);
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1168,6 +1168,7 @@ ENTRY(paranoid_exit)
+ 	jmp	.Lparanoid_exit_restore
+ .Lparanoid_exit_no_swapgs:
+ 	TRACE_IRQS_IRETQ_DEBUG
++	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ .Lparanoid_exit_restore:
+ 	jmp restore_regs_and_return_to_kernel
+ END(paranoid_exit)
