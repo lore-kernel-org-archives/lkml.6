@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2267i/AEcUjEwPmW3Mfa6n7VZopPzjOO7kp59zrxFErhORiPcQWXWEakTfedum0u0hFv5G5/
-ARC-Seal: i=1; a=rsa-sha256; t=1519217764; cv=none;
+X-Google-Smtp-Source: AH8x2260ljlJ1pIpLsnVFHjnRlvRDzTRQnAjwE+Kvnmz7LcJE0jldr4BkqDVM/1J2xNjfOYoGUSy
+ARC-Seal: i=1; a=rsa-sha256; t=1519217761; cv=none;
         d=google.com; s=arc-20160816;
-        b=WWZJIkBp8SbF9dHu3uRSb7ueY65IHEnMoBhSTCCDvDKwI/Ss8B+TTl8NZ5iI8Es3Pm
-         3vhjI4vpK3WwTKJ9qu+F7VDUAT61+3HXP3OdWPyDYxbpP4fxMO1bmobwo75GFzaLTDNK
-         8/HBrqayqBMnYxcvTq9vlBUHu7o02fnAxzbr10STgXjYLTrZykqWt/V1t5iP/huo0iUh
-         IoPnC7qI4vLOAkP4XB3o0QvNLZnwDA5DdIn+T1PmjBcy7UtsR+ja7N/wn6+eOZdMUJyo
-         P+mTVMjiiAXkcXER6pdPKzBQDqPIClB+2kFJvuhQAvcd+LVX41FpJ5k0xc7RtTp7cktO
-         E0hA==
+        b=PrAWlbBZOWyXP/1+A8X8OLdqyxHpj7XfjCNz2eJ8nJljwaRF5NM/dS7EM1kcpGc5gP
+         wY/J4vXITnrPQ4McD5mM57gqg9msF1Y3m46tk8snOagWW4FD4y/kuwll/8J3UKZGbbQi
+         HIhjJlyk3rDaQfuu6VED9fW4EV+cv9eKbLWiCK5Tb4TyfxCCYUG5sHXQE9t8CFKYPr43
+         J1zd6wci/VU+MTadL3lMNWSwfCtxPH+ZQJfzW7e0iJ/1m+qJR1qSq+QdpU2TzHTeqyJa
+         SHIyDXyCFHDgoRkh/h+pdLweedG2nP7sybGXSbAVTSYQCieWRzZIDniT3HDT5rUfhehH
+         2mQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oF8GvvEmzpeeNxRECgIwU7/dtmSMfPMfFsqSNJUASSw=;
-        b=O0irXVnQTjN2oNECYjDnQ/igyW5SnECoxDEqguHHVT8J6vjuCX73InCSAlEQ62X4y7
-         yrm7u3HQPkn82BzOfCPoEct2jw4PXBH35BUnmWOS8NvZcFm+7iuObZz7Rn1epNrTGwWt
-         hNPjnXO7BQRYqlWb7WhPTZ4I+6+SdjdiZ5H9qz+J25unNwqqdjTWoaeEvFYjGWbfMQ5Z
-         Aw4b3Z8CkYKSvDpkzc4gtri+Z+L0ktqymOXSrDVgyreiZRU0XoOTSJu9piOC/u/4CbtH
-         LBqT9/k26I5PQyrmy84Hov+v2kaNX4nywUXN75TkrLqdHZUVh5V90zDAxu8s7TrBr/Oi
-         j0Og==
+        bh=c+OhXgqczLNLUcu2iq46ZcyUj+E/uqOa2k+kKwnTEhs=;
+        b=tJ1NbAXnznGsnlUpPeIP7yJo9Q0dZtu4brRsFRoa8lJ/24BGsJ57qXSAVYn2rbYxYP
+         hzADooWhSYdmuFohVITi5QyG8oe+8cOpBq1lfLNEVDUy9GKvxZ4t9fp5m76pjmw3W295
+         JzHu+NLi7T3JWNTEa4/8gUN0TkZWKbeLInK1jgDshkdhtIVX+0trSxU2xAkDgvTnid5Y
+         Qr1nt4jWzGPLQQ6XH8Z1+6c4McM68gNHF210npwlHzlX6njKEaSo4LWO9UFOL/bSz+9o
+         2LA8F4I7k8vJkSUFZRKXKXcRmtHV/Cx2a/gNB6S2ES5At/yqcKYMicOx2BNm1eldWuEU
+         Varw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 10/77] mm: hide a #warning for COMPILE_TEST
-Date: Wed, 21 Feb 2018 13:48:19 +0100
-Message-Id: <20180221124432.594430035@linuxfoundation.org>
+	"=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" <ernesto.mnd.fernandez@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 09/77] ext4: correct documentation for grpid mount option
+Date: Wed, 21 Feb 2018 13:48:18 +0100
+Message-Id: <20180221124432.558409040@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014626139492093?=
-X-GMAIL-MSGID: =?utf-8?q?1593015286795135854?=
+X-GMAIL-THRID: =?utf-8?q?1593015282752811367?=
+X-GMAIL-MSGID: =?utf-8?q?1593015282752811367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-commit af27d9403f5b80685b79c88425086edccecaf711 upstream.
+commit 9f0372488cc9243018a812e8cfbf27de650b187b upstream.
 
-We get a warning about some slow configurations in randconfig kernels:
+The grpid option is currently described as being the same as nogrpid.
 
-  mm/memory.c:83:2: error: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Werror=cpp]
-
-The warning is reasonable by itself, but gets in the way of randconfig
-build testing, so I'm hiding it whenever CONFIG_COMPILE_TEST is set.
-
-The warning was added in 2013 in commit 75980e97dacc ("mm: fold
-page->_last_nid into page->flags where possible").
-
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory.c |    2 +-
+ Documentation/filesystems/ext4.txt |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -75,7 +75,7 @@
+--- a/Documentation/filesystems/ext4.txt
++++ b/Documentation/filesystems/ext4.txt
+@@ -233,7 +233,7 @@ data_err=ignore(*)	Just print an error m
+ data_err=abort		Abort the journal if an error occurs in a file
+ 			data buffer in ordered mode.
  
- #include "internal.h"
+-grpid			Give objects the same group ID as their creator.
++grpid			New objects have the group ID of their parent.
+ bsdgroups
  
--#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
-+#if defined(LAST_CPUPID_NOT_IN_PAGE_FLAGS) && !defined(CONFIG_COMPILE_TEST)
- #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
- #endif
- 
+ nogrpid		(*)	New objects have the group ID of their creator.
