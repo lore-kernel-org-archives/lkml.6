@@ -1,68 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932467AbeBUSyX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:54:23 -0500
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:46060 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932270AbeBUSyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:54:18 -0500
-X-Google-Smtp-Source: AH8x227frkkIKBeu4XqWp26bfZi1VSSncTbNwcu0CjkhYcvsezasUKy/WscvamUiz1hIiAVR/WqsJiL9JcqMefFldOc=
+        id S932551AbeBUSyc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:54:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46020 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932270AbeBUSy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:54:26 -0500
+Date: Wed, 21 Feb 2018 19:54:25 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Dan Rue <dan.rue@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/6] mm, hugetlb: further simplify hugetlb allocation API
+Message-ID: <20180221185425.GK2231@dhcp22.suse.cz>
+References: <20180103093213.26329-1-mhocko@kernel.org>
+ <20180103093213.26329-6-mhocko@kernel.org>
+ <20180221042457.uolmhlmv5je5dqx7@xps>
+ <20180221095526.GB2231@dhcp22.suse.cz>
+ <20180221100107.GC2231@dhcp22.suse.cz>
+ <840f8c4f-0994-fa7d-0b8d-ad2c8d77c67d@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_5N3bTAasc5Gt0pTo-s3mMdqmvt-C=GM0ACkkptyrN-Q@mail.gmail.com>
-References: <20180220090827.913-1-ard.biesheuvel@linaro.org>
- <20180220090827.913-3-ard.biesheuvel@linaro.org> <CAHp75VeUJpXLpL55erp+uoMH4jqppoG5zTt1DcffqNYPsJMdUQ@mail.gmail.com>
- <CAKv+Gu8A1YKr5t0B=Fe2sF6+QT9iCVeRW+99K37g22viEoismA@mail.gmail.com>
- <CAHp75Vd=dww8AQM4tC5Z38i4PNaV4vxMFsTf=ozJ1Yw3Gd9DWg@mail.gmail.com> <CAKv+Gu_5N3bTAasc5Gt0pTo-s3mMdqmvt-C=GM0ACkkptyrN-Q@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Feb 2018 20:54:16 +0200
-Message-ID: <CAHp75VepC+gch+st16FA8Bzisg7+X_oZg2Ua83QpHyZ43Pd5ow@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <840f8c4f-0994-fa7d-0b8d-ad2c8d77c67d@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 8:20 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 20 February 2018 at 19:39, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> On Tue, Feb 20, 2018 at 8:04 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 20 February 2018 at 14:02, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Wed 21-02-18 09:59:40, Mike Kravetz wrote:
+> On 02/21/2018 02:01 AM, Michal Hocko wrote:
+> > On Wed 21-02-18 10:55:26, Michal Hocko wrote:
+> > Hmm, I guess I can see it. Does the following help?
+> > ---
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 7c204e3d132b..a963f2034dfc 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1583,7 +1583,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+> >  		page = NULL;
+> >  	} else {
+> >  		h->surplus_huge_pages++;
+> > -		h->nr_huge_pages_node[page_to_nid(page)]++;
+> > +		h->surplus_huge_pages_node[page_to_nid(page)]++;
+> >  	}
+> >  
+> >  out_unlock:
+> 
+> I thought we had this corrected in a previous version of the patch.
+> My apologies for not looking more closely at this version.
 
->>>>> +               ret = device_property_read_u32(&pdev->dev,
->>>>> +                                              "socionext,pclk-rate",
->>>>> +                                              &i2c->clkrate);
->>>>
->>>> I suppose for ACPI we just register a fixed rate clock and use it in
->>>> the driver in the same way as in OF case.
->>>> I guess at some point we even can provide a generic clock provider for
->>>> ACPI based on rate property.
->>
->>> Is there a question here? Do you want me to change anything?
->>
->> Is it opener for discussion. At least in the drivers we have done for
->> x86 we do the way I described.
->>
->> See, for example, drivers/mfd/intel-lpss.c
+I must have screwed up when rebasing. I remember I was splitting this
+patch...
 
-> OK, I see what you mean now. But for this driver, creating a fixed
-> rate clock with no controls whatsoever, only to interrogate it for its
-> rate (which we retrieved from the ACPI device node in the first place)
-> seems rather pointless to me. Am I missing something here?
+> FWIW,
+> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Somehow you are right. That's why I'm thinking that we need to provide
-a generic clock provider for such cases.
-It's really not a driver business to know the details of resource provider.
-
+Thanks!
 -- 
-With Best Regards,
-Andy Shevchenko
+Michal Hocko
+SUSE Labs
