@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933258AbeBUKgw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:36:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56179 "EHLO
+        id S933275AbeBUKhD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:37:03 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49863 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeBUKgu (ORCPT
+        with ESMTP id S933054AbeBUKhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:36:50 -0500
-Date: Wed, 21 Feb 2018 02:25:42 -0800
-From: tip-bot for Namhyung Kim <tipbot@zytor.com>
-Message-ID: <tip-1d12cec6ce99614297e10945d917fd8a62cd2b09@git.kernel.org>
-Cc: jolsa@kernel.org, hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        dsahern@gmail.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org
-Reply-To: namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        dsahern@gmail.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, acme@redhat.com, hpa@zytor.com,
-        jolsa@kernel.org
-In-Reply-To: <20180219101936.GD1583@sejong>
-References: <20180219101936.GD1583@sejong>
+        Wed, 21 Feb 2018 05:37:01 -0500
+Date: Wed, 21 Feb 2018 02:35:21 -0800
+From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-77a021be383ebdacb17594e280242f7fd116095f@git.kernel.org>
+Cc: riel@redhat.com, kernellwp@gmail.com, hpa@zytor.com,
+        lcapitulino@redhat.com, cl@linux.com, peterz@infradead.org,
+        cmetcalf@mellanox.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        frederic@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, efault@gmx.de
+Reply-To: paulmck@linux.vnet.ibm.com, cmetcalf@mellanox.com,
+        frederic@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
+        efault@gmx.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        lcapitulino@redhat.com, kernellwp@gmail.com, riel@redhat.com,
+        hpa@zytor.com, peterz@infradead.org, cl@linux.com
+In-Reply-To: <1519186649-3242-2-git-send-email-frederic@kernel.org>
+References: <1519186649-3242-2-git-send-email-frederic@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf machine: Fix paranoid check in
- machine__set_kernel_mmap()
-Git-Commit-ID: 1d12cec6ce99614297e10945d917fd8a62cd2b09
+Subject: [tip:sched/core] sched/core: Rename init_rq_hrtick() to
+ hrtick_rq_init()
+Git-Commit-ID: 77a021be383ebdacb17594e280242f7fd116095f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,45 +38,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1d12cec6ce99614297e10945d917fd8a62cd2b09
-Gitweb:     https://git.kernel.org/tip/1d12cec6ce99614297e10945d917fd8a62cd2b09
-Author:     Namhyung Kim <namhyung@kernel.org>
-AuthorDate: Mon, 19 Feb 2018 19:00:46 +0900
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 19 Feb 2018 09:17:46 -0300
+Commit-ID:  77a021be383ebdacb17594e280242f7fd116095f
+Gitweb:     https://git.kernel.org/tip/77a021be383ebdacb17594e280242f7fd116095f
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Wed, 21 Feb 2018 05:17:23 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 09:49:07 +0100
 
-perf machine: Fix paranoid check in machine__set_kernel_mmap()
+sched/core: Rename init_rq_hrtick() to hrtick_rq_init()
 
-The machine__set_kernel_mmap() is to setup addresses of the kernel map
-using external info.  But it has a check when the address is given from
-an incorrect input which should have the start and end address of 0
-(i.e. machine__process_kernel_mmap_event).
+Do that rename in order to normalize the hrtick namespace.
 
-But we also use the end address of 0 for a valid input so change it to
-check both start and end addresses.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20180219101936.GD1583@sejong
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Wanpeng Li <kernellwp@gmail.com>
+Link: http://lkml.kernel.org/r/1519186649-3242-2-git-send-email-frederic@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/perf/util/machine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index fe27ef5..12b7427 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1226,7 +1226,7 @@ static void machine__set_kernel_mmap(struct machine *machine,
- 		 * Be a bit paranoid here, some perf.data file came with
- 		 * a zero sized synthesized MMAP event for the kernel.
- 		 */
--		if (machine->vmlinux_maps[i]->end == 0)
-+		if (start == 0 && end == 0)
- 			machine->vmlinux_maps[i]->end = ~0ULL;
- 	}
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e7c535e..e72ca3c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -333,7 +333,7 @@ void hrtick_start(struct rq *rq, u64 delay)
  }
+ #endif /* CONFIG_SMP */
+ 
+-static void init_rq_hrtick(struct rq *rq)
++static void hrtick_rq_init(struct rq *rq)
+ {
+ #ifdef CONFIG_SMP
+ 	rq->hrtick_csd_pending = 0;
+@@ -351,7 +351,7 @@ static inline void hrtick_clear(struct rq *rq)
+ {
+ }
+ 
+-static inline void init_rq_hrtick(struct rq *rq)
++static inline void hrtick_rq_init(struct rq *rq)
+ {
+ }
+ #endif	/* CONFIG_SCHED_HRTICK */
+@@ -6028,7 +6028,7 @@ void __init sched_init(void)
+ 		rq->last_sched_tick = 0;
+ #endif
+ #endif /* CONFIG_SMP */
+-		init_rq_hrtick(rq);
++		hrtick_rq_init(rq);
+ 		atomic_set(&rq->nr_iowait, 0);
+ 	}
+ 
