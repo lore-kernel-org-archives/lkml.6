@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754917AbeBURT3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:19:29 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36618 "EHLO
+        id S934144AbeBURTo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:19:44 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36678 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754761AbeBURTZ (ORCPT
+        with ESMTP id S1754791AbeBURT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:19:25 -0500
+        Wed, 21 Feb 2018 12:19:26 -0500
 From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net, ebiederm@xmission.com,
-        dave.hansen@linux.intel.com
+To: davem@davemloft.net, dave.hansen@linux.intel.com
 Cc: Khalid Aziz <khalid.aziz@oracle.com>, anthony.yznaga@oracle.com,
-        rob.gardner@oracle.com, mingo@kernel.org, jane.chu@oracle.com,
-        vegard.nossum@oracle.com, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v12 11/11] sparc64: Update signal delivery to use new helper functions
-Date: Wed, 21 Feb 2018 10:15:53 -0700
-Message-Id: <15cfb4f72990919ff6fa16414eee7e4d1a5c7430.1519227112.git.khalid.aziz@oracle.com>
+        mingo@kernel.org, rob.gardner@oracle.com, ebiederm@xmission.com,
+        vegard.nossum@oracle.com, jane.chu@oracle.com,
+        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>
+Subject: [PATCH v12 05/11] sparc64: Add handler for "Memory Corruption Detected" trap
+Date: Wed, 21 Feb 2018 10:15:47 -0700
+Message-Id: <2aa37a8e033c98990afba8b76ab602ceb45931f5.1519227112.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
 References: <cover.1519227112.git.khalid.aziz@oracle.com>
@@ -31,109 +31,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f8ec66014ffd ("signal: Add send_sig_fault and force_sig_fault")
-added new helper functions to streamline signal delivery. This patch
-updates signal delivery for new/updated handlers for ADI related
-exceptions to use the helper function.
+M7 and newer processors add a "Memory corruption Detected" trap with
+the addition of ADI feature. This trap is vectored into kernel by HV
+through resumable error trap with error attribute for the resumable
+error set to 0x00000800.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 Cc: Khalid Aziz <khalid@gonehiking.org>
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
-v12:
-	- new patch
+v7:
+	- new patch split off from patch 4/4 in v6
 
- arch/sparc/kernel/traps_64.c | 38 +++++++++-----------------------------
- 1 file changed, 9 insertions(+), 29 deletions(-)
+ arch/sparc/kernel/traps_64.c | 59 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
 diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index f36a40217f6c..462a21abd105 100644
+index d273a65a0a10..f36a40217f6c 100644
 --- a/arch/sparc/kernel/traps_64.c
 +++ b/arch/sparc/kernel/traps_64.c
-@@ -362,7 +362,6 @@ void sun4v_data_access_exception(struct pt_regs *regs, unsigned long addr, unsig
- {
- 	unsigned short type = (type_ctx >> 16);
- 	unsigned short ctx  = (type_ctx & 0xffff);
--	siginfo_t info;
- 
- 	if (notify_die(DIE_TRAP, "data access exception", regs,
- 		       0, 0x8, SIGTRAP) == NOTIFY_STOP)
-@@ -406,24 +405,18 @@ void sun4v_data_access_exception(struct pt_regs *regs, unsigned long addr, unsig
- 	 * kerbel by HV as data access exception with fault type set to
- 	 * HV_FAULT_TYPE_INV_ASI.
- 	 */
--	info.si_errno = 0;
--	info.si_addr = (void __user *) addr;
--	info.si_trapno = 0;
- 	switch (type) {
- 	case HV_FAULT_TYPE_INV_ASI:
--		info.si_signo = SIGILL;
--		info.si_code = ILL_ILLADR;
--		force_sig_info(SIGILL, &info, current);
-+		force_sig_fault(SIGILL, ILL_ILLADR, (void __user *)addr, 0,
-+				current);
- 		break;
- 	case HV_FAULT_TYPE_MCD_DIS:
--		info.si_signo = SIGSEGV;
--		info.si_code = SEGV_ACCADI;
--		force_sig_info(SIGSEGV, &info, current);
-+		force_sig_fault(SIGSEGV, SEGV_ACCADI, (void __user *)addr, 0,
-+				current);
- 		break;
- 	default:
--		info.si_signo = SIGSEGV;
--		info.si_code = SEGV_MAPERR;
--		force_sig_info(SIGSEGV, &info, current);
-+		force_sig_fault(SIGSEGV, SEGV_MAPERR, (void __user *)addr, 0,
-+				current);
- 		break;
+@@ -1870,6 +1870,7 @@ struct sun4v_error_entry {
+ #define SUN4V_ERR_ATTRS_ASI		0x00000080
+ #define SUN4V_ERR_ATTRS_PRIV_REG	0x00000100
+ #define SUN4V_ERR_ATTRS_SPSTATE_MSK	0x00000600
++#define SUN4V_ERR_ATTRS_MCD		0x00000800
+ #define SUN4V_ERR_ATTRS_SPSTATE_SHFT	9
+ #define SUN4V_ERR_ATTRS_MODE_MSK	0x03000000
+ #define SUN4V_ERR_ATTRS_MODE_SHFT	24
+@@ -2067,6 +2068,56 @@ static void sun4v_log_error(struct pt_regs *regs, struct sun4v_error_entry *ent,
  	}
  }
-@@ -2073,8 +2066,6 @@ static void sun4v_log_error(struct pt_regs *regs, struct sun4v_error_entry *ent,
-  */
- void do_mcd_err(struct pt_regs *regs, struct sun4v_error_entry ent)
- {
--	siginfo_t info;
--
- 	if (notify_die(DIE_TRAP, "MCD error", regs, 0, 0x34,
- 		       SIGSEGV) == NOTIFY_STOP)
- 		return;
-@@ -2110,12 +2101,8 @@ void do_mcd_err(struct pt_regs *regs, struct sun4v_error_entry ent)
- 	/* Send SIGSEGV to the userspace process with the right signal
- 	 * code
- 	 */
--	info.si_signo = SIGSEGV;
--	info.si_errno = 0;
--	info.si_code = SEGV_ADIDERR;
--	info.si_addr = (void __user *)ent.err_raddr;
--	info.si_trapno = 0;
--	force_sig_info(SIGSEGV, &info, current);
-+	force_sig_fault(SIGSEGV, SEGV_ADIDERR, (void __user *)ent.err_raddr,
-+			0, current);
- }
  
++/* Handle memory corruption detected error which is vectored in
++ * through resumable error trap.
++ */
++void do_mcd_err(struct pt_regs *regs, struct sun4v_error_entry ent)
++{
++	siginfo_t info;
++
++	if (notify_die(DIE_TRAP, "MCD error", regs, 0, 0x34,
++		       SIGSEGV) == NOTIFY_STOP)
++		return;
++
++	if (regs->tstate & TSTATE_PRIV) {
++		/* MCD exception could happen because the task was
++		 * running a system call with MCD enabled and passed a
++		 * non-versioned pointer or pointer with bad version
++		 * tag to the system call. In such cases, hypervisor
++		 * places the address of offending instruction in the
++		 * resumable error report. This is a deferred error,
++		 * so the read/write that caused the trap was potentially
++		 * retired long time back and we may have no choice
++		 * but to send SIGSEGV to the process.
++		 */
++		const struct exception_table_entry *entry;
++
++		entry = search_exception_tables(regs->tpc);
++		if (entry) {
++			/* Looks like a bad syscall parameter */
++#ifdef DEBUG_EXCEPTIONS
++			pr_emerg("Exception: PC<%016lx> faddr<UNKNOWN>\n",
++				 regs->tpc);
++			pr_emerg("EX_TABLE: insn<%016lx> fixup<%016lx>\n",
++				 ent.err_raddr, entry->fixup);
++#endif
++			regs->tpc = entry->fixup;
++			regs->tnpc = regs->tpc + 4;
++			return;
++		}
++	}
++
++	/* Send SIGSEGV to the userspace process with the right signal
++	 * code
++	 */
++	info.si_signo = SIGSEGV;
++	info.si_errno = 0;
++	info.si_code = SEGV_ADIDERR;
++	info.si_addr = (void __user *)ent.err_raddr;
++	info.si_trapno = 0;
++	force_sig_info(SIGSEGV, &info, current);
++}
++
  /* We run with %pil set to PIL_NORMAL_MAX and PSTATE_IE enabled in %pstate.
-@@ -2748,8 +2735,6 @@ void sun4v_do_mna(struct pt_regs *regs, unsigned long addr, unsigned long type_c
- void sun4v_mem_corrupt_detect_precise(struct pt_regs *regs, unsigned long addr,
- 				      unsigned long context)
- {
--	siginfo_t info;
--
- 	if (notify_die(DIE_TRAP, "memory corruption precise exception", regs,
- 		       0, 0x8, SIGSEGV) == NOTIFY_STOP)
- 		return;
-@@ -2784,12 +2769,7 @@ void sun4v_mem_corrupt_detect_precise(struct pt_regs *regs, unsigned long addr,
- 		regs->tpc &= 0xffffffff;
- 		regs->tnpc &= 0xffffffff;
+  * Log the event and clear the first word of the entry.
+  */
+@@ -2104,6 +2155,14 @@ void sun4v_resum_error(struct pt_regs *regs, unsigned long offset)
+ 		goto out;
  	}
--	info.si_signo = SIGSEGV;
--	info.si_code = SEGV_ADIPERR;
--	info.si_errno = 0;
--	info.si_addr = (void __user *) addr;
--	info.si_trapno = 0;
--	force_sig_info(SIGSEGV, &info, current);
-+	force_sig_fault(SIGSEGV, SEGV_ADIPERR, (void __user *)addr, 0, current);
- }
  
- void do_privop(struct pt_regs *regs)
++	/* If this is a memory corruption detected error vectored in
++	 * by HV through resumable error trap, call the handler
++	 */
++	if (local_copy.err_attrs & SUN4V_ERR_ATTRS_MCD) {
++		do_mcd_err(regs, local_copy);
++		return;
++	}
++
+ 	sun4v_log_error(regs, &local_copy, cpu,
+ 			KERN_ERR "RESUMABLE ERROR",
+ 			&sun4v_resum_oflow_cnt);
 -- 
 2.11.0
