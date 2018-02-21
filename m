@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227mFd/Z75LAOKTtirA8bSd87YTPCfkbH97rkJjHMQEMKKzJsULvBzREAFcuIQ3VCBoE8GLn
-ARC-Seal: i=1; a=rsa-sha256; t=1519218166; cv=none;
+X-Google-Smtp-Source: AH8x2243hrd8K+bvM+y6VcEbmT2XVzhQ0qZgGqJQAkgMnnZICA8U4LGgWuWz0LbbbZewtNaJi5BN
+ARC-Seal: i=1; a=rsa-sha256; t=1519218163; cv=none;
         d=google.com; s=arc-20160816;
-        b=POssJbCUg2bKwk09fL3EX/oC+t2t2fRKW6KwQu0UTsko6iFvADhEZaqH0EYPT1DrZ3
-         DKQDmOigdB3qKZ3GnUbPqFC0Z4IkR0s86J3kQYQDAY/nC/a35Cj5gKult5l10qTA6u7w
-         Ut50poMu05sh+ezEWctOepdXbw9UcyBzH5uf9Ifh6FEr2qH+E+I40h/X74mauzJbT4AG
-         71qqowp2T7ZzxnWzUy662qtMsTiqHpzsK8qnOTMwjsznMUICs/xhyRVEBpNM3u2CdSzq
-         QAej6OqoNa5Q37MSPQEZaihL1SmTPB7do+BTYd8CV+aYx8NCOHEoccFHIkK/jtNj3DR6
-         StxA==
+        b=NgS4S+mQiKv7iWXMeY5Ups+T28RFwBFPiLbacbDdIczdKcbuXHyfNmq1CbcvuVnizJ
+         pQhMrxS6mV+lsY99y/sQQdLx0kdSKsHr114Sab2ZUYCNsaJJehREa7WjmZv/ljjcij9R
+         eI3tbukJcOwgC+5oDDVXRjipS4Orio8fvaYULZJlWGwZr6KatJaweAjEkpo8PEhOB5Cb
+         crkwXNVeWipsCfWLOveX3t78qEVOwPzHdQ9uRb0GuKbtTo7Miu8UU1PRJSN3WEIs6Co7
+         /gYscR0Nvi4j0vnCPsuTAxzYWzP+TgW5zj+CiG3MxA9jtqs1Y5K8jIbGXwA7uW4PTSID
+         d24g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YGEV3YExdWA3/eZVdg0Jp67CKVqRGJRWfwBS+U65TFU=;
-        b=Ci66mlXkxbdVDjFfuXt/H26dxoQI2v5z85ilEThWMpPzY08lhU2Bc2cBnJ40Y/mwqa
-         yr0IyElesqkm9ojiSaJylgD3UaKgASA4JN8t0Jaq2zMLtPtzjetTy/Xu510L95X1+40G
-         m9HPbsBUNQNNd/P4ThQqmOqmWeb2hC8iN7ASnJLYFHjJ4+EkA2VK9tepVye0m9/0SmN9
-         8JfoXJeMwZdvPkkV4VaI7Ai4eZJouiMaWw1jD0kPjMVhMLFCCelxYKOwxBOCbX1AnUfL
-         tA0KfZFa+sr4Gj2gcgq2thrrInqXmMosgYsJgHTjBknyMxtEi3tAmnf9y9wWTv8iCDwq
-         K+qg==
+        bh=YAoWYNgsYbCYEK8TT+5YRQ2+CqRjAToWWUokFZ5povI=;
+        b=BZcR8lOdnaOu939BddV0i9f+ajiuadoo1F2+CXLfUJkoloi4ZipJQKElZvike7uNjm
+         W+YVMlL1Y/O02+Su/s5ozsxEI9j7o6trYhWbSjlVPqnMk7gRpNVkw0m2XNCxwx/RJGE3
+         FX3XgpFeK+uf9Qzge7jkVSonyKmu6NjfGUnavTrLTbTlat8hMiqwBrGGqSV0McCLqdy2
+         CXuqoXi3IY81By7BSUAdMSpOoEwqz+c/DAGaD6Goyp1+6twpfjiQ0S3XdaHsd2no/qEU
+         FiCJdQkg2KLL6/8d7YFE20z3eY+JImqDkr6vDGwdi/lkOvB6bTsfsEmInNfToBBul1by
+         iVEA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,14 +27,19 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 076/167] x86/speculation: Fix up array_index_nospec_mask() asm constraint
-Date: Wed, 21 Feb 2018 13:48:07 +0100
-Message-Id: <20180221124528.627101123@linuxfoundation.org>
+Subject: [PATCH 4.14 075/167] x86/debug: Use UD2 for WARN()
+Date: Wed, 21 Feb 2018 13:48:06 +0100
+Message-Id: <20180221124528.580750096@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -44,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015326563332665?=
-X-GMAIL-MSGID: =?utf-8?q?1593015707588483420?=
+X-GMAIL-THRID: =?utf-8?q?1593015704879461165?=
+X-GMAIL-MSGID: =?utf-8?q?1593015704879461165?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,34 +58,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit be3233fbfcb8f5acb6e3bcd0895c3ef9e100d470 upstream.
+commit 3b3a371cc9bc980429baabe0a8e5f307f3d1f463 upstream.
 
-Allow the compiler to handle @size as an immediate value or memory
-directly rather than allocating a register.
+Since the Intel SDM added an ModR/M byte to UD0 and binutils followed
+that specification, we now cannot disassemble our kernel anymore.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This now means Intel and AMD disagree on the encoding of UD0. And instead
+of playing games with additional bytes that are valid ModR/M and single
+byte instructions (0xd6 for instance), simply use UD2 for both WARN() and
+BUG().
+
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151797010204.1289.1510000292250184993.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: http://lkml.kernel.org/r/20180208194406.GD25181@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/barrier.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/bug.h |   15 ++++++---------
+ arch/x86/kernel/traps.c    |    2 +-
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -40,7 +40,7 @@ static inline unsigned long array_index_
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -5,23 +5,20 @@
+ #include <linux/stringify.h>
  
- 	asm ("cmp %1,%2; sbb %0,%0;"
- 			:"=r" (mask)
--			:"r"(size),"r" (index)
-+			:"g"(size),"r" (index)
- 			:"cc");
- 	return mask;
- }
+ /*
+- * Since some emulators terminate on UD2, we cannot use it for WARN.
+- * Since various instruction decoders disagree on the length of UD1,
+- * we cannot use it either. So use UD0 for WARN.
++ * Despite that some emulators terminate on UD2, we use it for WARN().
+  *
+- * (binutils knows about "ud1" but {en,de}codes it as 2 bytes, whereas
+- *  our kernel decoder thinks it takes a ModRM byte, which seems consistent
+- *  with various things like the Intel SDM instruction encoding rules)
++ * Since various instruction decoders/specs disagree on the encoding of
++ * UD0/UD1.
+  */
+ 
+-#define ASM_UD0		".byte 0x0f, 0xff"
++#define ASM_UD0		".byte 0x0f, 0xff" /* + ModRM (for Intel) */
+ #define ASM_UD1		".byte 0x0f, 0xb9" /* + ModRM */
+ #define ASM_UD2		".byte 0x0f, 0x0b"
+ 
+ #define INSN_UD0	0xff0f
+ #define INSN_UD2	0x0b0f
+ 
+-#define LEN_UD0		2
++#define LEN_UD2		2
+ 
+ #ifdef CONFIG_GENERIC_BUG
+ 
+@@ -79,7 +76,7 @@ do {								\
+ 
+ #define __WARN_FLAGS(flags)					\
+ do {								\
+-	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
++	_BUG_FLAGS(ASM_UD2, BUGFLAG_WARNING|(flags));		\
+ 	annotate_reachable();					\
+ } while (0)
+ 
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -181,7 +181,7 @@ int fixup_bug(struct pt_regs *regs, int
+ 		break;
+ 
+ 	case BUG_TRAP_TYPE_WARN:
+-		regs->ip += LEN_UD0;
++		regs->ip += LEN_UD2;
+ 		return 1;
+ 	}
+ 
