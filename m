@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591082-1519254279-2-10767052711735148536
+X-Cyrus-Session-Id: sloti22d1t05-1047503-1519204550-2-16006728333015778473
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,182 +7,194 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_H
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519254278; b=nAh7rdv3FOWr2Wbl+hh4HiELMQg23SL/ZNflboTDfE+R1Qq
-    pZTnKGV6WYPIdGRuGv6OcmAKZi4V93oHNIfPUDgJYWBWPNyskaLnNlSi49djmMVL
-    VgWlWBoOO6mKgpRY0L+hMcDwPatb0kiWXB+c2d27b4xD4NRwLns8OkDp8PzmaiSg
-    z3s1d21XCFI8lf3u6LR5Hf70nnVZdXj3IEYJL+3ei4/jONlqPUUV2bETK86mFuVk
-    aJBkGCgjojIWi68oVqapeJ2+fVUQARMuWwtq9NeHlJcasf+sUiLaU18gnmbBvgAg
-    R/beWg9fIo0mZ5GdGuDVIyxIjgIViNM/VfTfedA==
+    t=1519204550; b=b4tFpnQcvCg/2E/3HjjbgTheCib61VQUIa+wIXZK23kvgjL
+    AhxPIX2jjIg6KXHbk4Oj3QxLmZGMCCbPOhlNfxOf0UpSqx4m/3WFLCcoEorGS9lf
+    iCn6vojcS0vSGUW2ln2LxY3HnUTGG8aXyPIkVQUhfcXpTZJk83Bfr4ZMev7zjlfs
+    /du2H6BAtfnigLEgZZq2tMwd8fYFMzehRO2OxYwTe09s+Ujah8DVRueOLvS2V8zj
+    J+53fZahKPCUPW3THDkZRU+veE6yShChDWpMT66KRofLu8TNNepwwz3/y3UCQLL1
+    E6KvkkTy17kwM1BICxCIAv3SV/Z2TJQMbbLcpHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519254278; bh=dejs7K5vK1WHfQOBuMoFJphPbmj3ASdoP34RAH
-    N+9Mk=; b=FyIldpFX1YHUpKLY6PYMKhJ6J5K2OyTl65UkyvKa1Wr/uCaOBodiU9
-    4aNFgT2x7hryGMsguK+yeK6Z+gWjlxI4vIDYs86nmgI0QPxWRIJ1qA3OWnWlOvMC
-    3RFeJvGCuV4zY178X7t+54PQOal2VxRO+1RXApMHDSSEaZSyHwitK5FZ3w5L63qw
-    wQyWUCp3Ot4VPJwLBBAEUtayygraebxwo6N0hpGjp3MyEhey+sZQ0jTY4JDfCTmB
-    eys2v05u/b79TN9doqFNYgOVwUvGeW/OBLhy7BwwciGhiHMoaSE1UeE4nWlRLJ10
-    HDS9mIM/2Ztm7JPouXex0yIZC8A1hk0g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=B1WLwtU4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1519204550; bh=VQpgG7ASSAlymaDYObKPZI4qeZ
+    OeKJxkF+SNgyF5m7w=; b=uaFDbjMwlakT6sajRe3GS9D4hT/Df8RV0eFoX8BL/4
+    LL4+aG8pSthwhRxl2e9SyrmwdYV0whUiZVvnXuxCIDWWKMYysEWPHskEUTF+5PXJ
+    W6kBQr1XA6mVjmeVfbjBPz9KCxgK7HtoOsmV408ZNzTYHj4RzcjCwcC30oMdOpwA
+    whoMcA2F880vxkjzUwqjo6mMIisSYJIsw4y0JvH5a5FlWZLimIit2wJRrYqkwKDq
+    iyD0UH+5Zx0nh/O1GzackZ+CvepweNspSMuFpc79JfouaHintkKygc6ALMXr5gDq
+    UBRjzIp04kk3iyYlBhxaX03lBLu6Fhz/ip2+Stn2/73g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HA0dtqEa x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HjbiKW8+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=B1WLwtU4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HA0dtqEa x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HjbiKW8+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeBUXEf (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 18:04:35 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41219 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeBUXEd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 18:04:33 -0500
-X-Google-Smtp-Source: AH8x227WczXSqp4nPaIUndqhNRPFOptrWZbwF4MLQ2LGL5Cd1LhcViURoXIo0uwWqr7jICj4y11VbUHiNGC64zadW7U=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180221084601.scnvgiiv32s2pgye@gmail.com>
-References: <20170328122915.640228468@linuxfoundation.org> <20170328122918.597715642@linuxfoundation.org>
- <20180220123757.GE25314@hirez.programming.kicks-ass.net> <CAHC9VhTOxzcJpVSFDign56jkkruQjujTp7GQzk107FNWYTXRYg@mail.gmail.com>
- <20180220140640.GE25201@hirez.programming.kicks-ass.net> <CAHC9VhS40=qNxjNJSBqz2GwrqrvTqLKpdOWUrJ5iUDFp8ERO-A@mail.gmail.com>
- <20180220151849.GG25201@hirez.programming.kicks-ass.net> <CAHC9VhQUGF+W0sZemeCstPDUHxwQrD7Pmbu5SnAHZVdkCPdMwg@mail.gmail.com>
- <20180221084601.scnvgiiv32s2pgye@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2018 18:04:30 -0500
-Message-ID: <CAHC9VhSL3MAA75su=J3Q551xfqphwiv9=FbaN8M18-zVrtP==g@mail.gmail.com>
-Subject: Re: [PATCH 4.10 070/111] audit: fix auditd/kernel connection state tracking
-To: Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1752858AbeBUJPp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 04:15:45 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbeBUJPP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 04:15:15 -0500
+Date: Wed, 21 Feb 2018 10:15:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Dmitry Vyukov <dvyukov@google.com>, linux-audit@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>, rgb@redhat.com
+Subject: Re: [PATCH 4.10 070/111] audit: fix auditd/kernel connection state
+ tracking
+Message-ID: <20180221091503.GK25181@hirez.programming.kicks-ass.net>
+References: <20170328122915.640228468@linuxfoundation.org>
+ <20170328122918.597715642@linuxfoundation.org>
+ <20180220123757.GE25314@hirez.programming.kicks-ass.net>
+ <CAHC9VhTOxzcJpVSFDign56jkkruQjujTp7GQzk107FNWYTXRYg@mail.gmail.com>
+ <20180220140640.GE25201@hirez.programming.kicks-ass.net>
+ <CAHC9VhS40=qNxjNJSBqz2GwrqrvTqLKpdOWUrJ5iUDFp8ERO-A@mail.gmail.com>
+ <20180220151849.GG25201@hirez.programming.kicks-ass.net>
+ <CAHC9VhQUGF+W0sZemeCstPDUHxwQrD7Pmbu5SnAHZVdkCPdMwg@mail.gmail.com>
+ <20180221084601.scnvgiiv32s2pgye@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221084601.scnvgiiv32s2pgye@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 3:46 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Paul Moore <paul@paul-moore.com> wrote:
->
->> On Tue, Feb 20, 2018 at 10:18 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> > On Tue, Feb 20, 2018 at 09:51:08AM -0500, Paul Moore wrote:
->> >> On Tue, Feb 20, 2018 at 9:06 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> >
->> >> > It's not at all clear to me what that code does, I just stumbled upon
->> >> > __mutex_owner() outside of the mutex code itself and went WTF.
->> >>
->> >> If you don't want people to use __mutex_owner() outside of the mutex
->> >> code I might suggest adding a rather serious comment at the top of the
->> >> function, because right now I don't see anything suggesting that
->> >> function shouldn't be used.  Yes, there is the double underscore
->> >> prefix, but that can mean a few different things these days.
->> >
->> > Find below.
->> >
->> >> > The comment (aside from having the most horribly style) ...
->> >>
->> >> Yeah, your dog is ugly too.  Notice how neither comment is constructive?
->> >
->> > I'm sure you've seen this one:
->> >
->> >   https://lkml.org/lkml/2016/7/8/625
->>
->> Yep.  I stand behind my earlier comment in this thread.
->>
->> >> > Maybe if you could explain how that code is supposed to work and why it
->> >> > doesn't know if it holds a lock I could make a suggestion...
->> >>
->> >> I just spent a few minutes looking back over the bits available in
->> >> include/linux/mutex.h and I'm not seeing anything beyond
->> >> __mutex_owner() which would allow us to determine the mutex owning
->> >> task.  It's probably easiest for us to just track ownership ourselves.
->> >> I'll put together a patch later today.
->> >
->> > Note that up until recently the mutex implementation didn't even have a
->> > consistent owner field. And the thing is, it's very easy to use wrong,
->> > only today I've seen a patch do: "__mutex_owner() == task", where task
->> > was allowed to be !current, which is just wrong.
->>
->> Arguably all the more reason why a strongly worded warning is
->> important (which I see you've included below, feel free to include my
->> Reviewed-by).
->>
->> > Looking through kernel/audit.c I'm not even sure I see how you would end
->> > up in audit_log_start() with audit_cmd_mutex held.
->> >
->> > Can you give me a few code paths that trigger this? Simple git-grep is
->> > failing me.
->>
->> Basically look at the code in audit_receive_msg(), but I wasn't asking
->> your opinion on how we should rewrite the audit subsystem, I was just
->> asking how one could determine if the current task was holding a given
->> mutex in a way that was acceptable to you.  Based on your comments,
->> and some further inspection of the mutex code, it appears that is/was
->> not something that the core mutex code wants to support/make-visible.
->> Which is perfectly fine, I just wanted to make sure I wasn't missing
->> something before I went ahead and wrote a wrapper around the mutex
->> code for use by audit.
->>
->> FWIW, I just put together the following patch which removes the
->> __mutex_owner() call from audit and doesn't appear to break anything
->> on the audit side (you're CC'd on the patch).  It has only been
->> lightly tested, but I'm going to bang on it for a day or so and if I
->> hear no objections I'll merge it into audit/next.
->>
->> * https://www.redhat.com/archives/linux-audit/2018-February/msg00066.html
->
-> Could you please explain the audit_ctl_lock()/unlock() primitive you are
-> introducing there? You seem to be implementing some sort of recursive locking
-> primitive, but in a strange way.
->
+On Wed, Feb 21, 2018 at 09:46:02AM +0100, Ingo Molnar wrote:
 > AFAICS the primary problem appears to be this code path:
->
+> 
 >   audit_receive() -> audit_receive_msg() -> AUDIT_TTY_SET -> audit_log_common_recv_msg() -> audit_log_start()
->
+> 
 > where we can arrive already holding the lock.
->
+> 
 > I.e. recursive mutex, kinda.
->
-> What's the thinking there? Neither the changelog nor the code explains this.
 
-I don't really go into great detail in the changelog, or comments in
-the code, because I'm not really doing anything new with respect to
-locking in this commit.  The patch simply wraps the existing
-mutex_{lock,unlock}() calls so that we can track the mutex owner.  It
-doesn't fundamentally change the locking, it's a quick patch to get
-rid our our __mutex_owner() usage as Peter doesn't want anyone,
-outside the mutex code, to use that function.
+I _think_ something like the below ought to work, but I've no idea how
+to even begin testing audit.
 
-Based on your comments above, I'm guessing some of the
-misunderstanding comes from the
-__mutex_owner()/audit_ctl_owner_current() call in audit_log_start().
-We try to determine the mutex/lock owner in audit_log_start() not
-because we are trying to avoid a recursive lock, we do the check as an
-optimization to skip the normal queue managment so that the lock
-holder isn't subject to the same rescheduling/queue-management (is
-"queue calming" a term?) as regular tasks.
+---
+ kernel/audit.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
--- 
-paul moore
-www.paul-moore.com
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 227db99b0f19..24175754f79d 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -184,6 +184,9 @@ static char *audit_feature_names[2] = {
+ /* Serialize requests from userspace. */
+ DEFINE_MUTEX(audit_cmd_mutex);
+ 
++static struct audit_buffer *__audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
++				     int type, bool recursive);
++
+ /* AUDIT_BUFSIZ is the size of the temporary buffer used for formatting
+  * audit records.  Since printk uses a 1024 byte buffer, this buffer
+  * should be at least that large. */
+@@ -357,7 +360,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
+ 	struct audit_buffer *ab;
+ 	int rc = 0;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
++	ab = __audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE, true);
+ 	if (unlikely(!ab))
+ 		return rc;
+ 	audit_log_format(ab, "%s=%u old=%u", function_name, new, old);
+@@ -1024,7 +1027,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+ 		return;
+ 	}
+ 
+-	*ab = audit_log_start(NULL, GFP_KERNEL, msg_type);
++	*ab = __audit_log_start(NULL, GFP_KERNEL, msg_type, true);
+ 	if (unlikely(!*ab))
+ 		return;
+ 	audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
+@@ -1057,7 +1060,7 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+ 	if (audit_enabled == AUDIT_OFF)
+ 		return;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	ab = __audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE, true);
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
+@@ -1578,6 +1581,12 @@ static int __init audit_enable(char *str)
+ 
+ 	if (audit_default == AUDIT_OFF)
+ 		audit_initialized = AUDIT_DISABLED;
++	/*
++	 * Normally audit_set_enabled() would need to be called under
++	 * @audit_cmd_mutex, however since audit_do_config_change() will not in
++	 * fact call audit_log_config_change() when 'audit_enabled ==
++	 * AUDIT_OFF', we can use it here without issue.
++	 */
+ 	if (audit_set_enabled(audit_default))
+ 		panic("audit: error setting audit state (%d)\n", audit_default);
+ 
+@@ -1690,8 +1699,8 @@ static inline void audit_get_stamp(struct audit_context *ctx,
+  * will be written at syscall exit.  If there is no associated task, then
+  * task context (ctx) should be NULL.
+  */
+-struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+-				     int type)
++static struct audit_buffer *__audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
++				     int type, bool recursive)
+ {
+ 	struct audit_buffer *ab;
+ 	struct timespec64 t;
+@@ -1703,6 +1712,9 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+ 	if (unlikely(!audit_filter(type, AUDIT_FILTER_TYPE)))
+ 		return NULL;
+ 
++	if (recursive)
++		lockdep_assert_held(&audit_cmd_mutex);
++
+ 	/* NOTE: don't ever fail/sleep on these two conditions:
+ 	 * 1. auditd generated record - since we need auditd to drain the
+ 	 *    queue; also, when we are checking for auditd, compare PIDs using
+@@ -1710,8 +1722,7 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+ 	 *    using a PID anchored in the caller's namespace
+ 	 * 2. generator holding the audit_cmd_mutex - we don't want to block
+ 	 *    while holding the mutex */
+-	if (!(auditd_test_task(current) ||
+-	      (current == __mutex_owner(&audit_cmd_mutex)))) {
++	if (!(auditd_test_task(current) || recursive)) {
+ 		long stime = audit_backlog_wait_time;
+ 
+ 		while (audit_backlog_limit &&
+@@ -1753,6 +1764,12 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+ 	return ab;
+ }
+ 
++struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
++				     int type)
++{
++	return __audit_log_start(ctx, gfp_mask, type, false);
++}
++
+ /**
+  * audit_expand - expand skb in the audit buffer
+  * @ab: audit_buffer
