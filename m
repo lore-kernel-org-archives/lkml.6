@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeBUKTX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:19:23 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:57758 "EHLO mail.skyhub.de"
+        id S932916AbeBUKUm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:20:42 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57786 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932743AbeBUKTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:19:21 -0500
+        id S932798AbeBUKTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 05:19:23 -0500
 From: Borislav Petkov <bp@alien8.de>
 To: X86 ML <x86@kernel.org>
 Cc: Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/8] x86/MCE: Convert mca_config bools to a bitfield
-Date: Wed, 21 Feb 2018 11:18:54 +0100
-Message-Id: <20180221101900.10326-3-bp@alien8.de>
+Subject: [PATCH 5/8] x86/MCE/AMD: Pass the bank number to smca_get_bank_type()
+Date: Wed, 21 Feb 2018 11:18:57 +0100
+Message-Id: <20180221101900.10326-6-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180221101900.10326-1-bp@alien8.de>
 References: <20180221101900.10326-1-bp@alien8.de>
@@ -19,105 +19,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-... to save space when future flags are added.
+Pass the bank number to smca_get_bank_type() since that's all we need.
 
-No functionality change.
+Also, we should compare the bank number to MAX_NR_BANKS (size of the
+smca_banks array) not the number of bank types. Bank types are reused
+for multiple banks, so the number of types can be different from the
+number of banks in a system and thus we could return an invalid bank
+type.
 
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Cc: <stable@vger.kernel.org> # 4.14.x: 11cf887728a3 x86/MCE/AMD: Define a function to get SMCA bank type
+Cc: <stable@vger.kernel.org> # 4.14.x: c6708d50f166 x86/MCE: Report only DRAM ECC as memory errors on AMD systems
+Cc: <stable@vger.kernel.org> # 4.14.x
+Link: https://lkml.kernel.org/r/20180215210943.11530-1-Yazen.Ghannam@amd.com
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/mcheck/mce-internal.h | 13 ++++++++-----
- arch/x86/kernel/cpu/mcheck/mce.c          | 16 ++++++++--------
- 2 files changed, 16 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mcheck/mce-internal.h
-index 986c8dd2d320..ceb67cd5918f 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-internal.h
-+++ b/arch/x86/kernel/cpu/mcheck/mce-internal.h
-@@ -116,12 +116,15 @@ static inline void mce_unregister_injector_chain(struct notifier_block *nb)	{ }
- struct mca_config {
- 	bool dont_log_ce;
- 	bool cmci_disabled;
--	bool lmce_disabled;
- 	bool ignore_ce;
--	bool disabled;
--	bool ser;
--	bool recovery;
--	bool bios_cmci_threshold;
-+
-+	__u64 lmce_disabled		: 1,
-+	      disabled			: 1,
-+	      ser			: 1,
-+	      recovery			: 1,
-+	      bios_cmci_threshold	: 1,
-+	      __reserved		: 59;
-+
- 	u8 banks;
- 	s8 bootlog;
- 	int tolerant;
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 75f405ac085c..9c8cb58c77f8 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1506,7 +1506,7 @@ static int __mcheck_cpu_cap_init(void)
- 		mca_cfg.rip_msr = MSR_IA32_MCG_EIP;
- 
- 	if (cap & MCG_SER_P)
--		mca_cfg.ser = true;
-+		mca_cfg.ser = 1;
- 
- 	return 0;
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index 0f32ad242324..7fbb19cb1859 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -110,14 +110,14 @@ const char *smca_get_long_name(enum smca_bank_types t)
  }
-@@ -1814,12 +1814,12 @@ void mcheck_cpu_init(struct cpuinfo_x86 *c)
- 		return;
+ EXPORT_SYMBOL_GPL(smca_get_long_name);
  
- 	if (__mcheck_cpu_cap_init() < 0 || __mcheck_cpu_apply_quirks(c) < 0) {
--		mca_cfg.disabled = true;
-+		mca_cfg.disabled = 1;
- 		return;
- 	}
- 
- 	if (mce_gen_pool_init()) {
--		mca_cfg.disabled = true;
-+		mca_cfg.disabled = 1;
- 		pr_emerg("Couldn't allocate MCE records pool!\n");
- 		return;
- 	}
-@@ -1897,11 +1897,11 @@ static int __init mcheck_enable(char *str)
- 	if (*str == '=')
- 		str++;
- 	if (!strcmp(str, "off"))
--		cfg->disabled = true;
-+		cfg->disabled = 1;
- 	else if (!strcmp(str, "no_cmci"))
- 		cfg->cmci_disabled = true;
- 	else if (!strcmp(str, "no_lmce"))
--		cfg->lmce_disabled = true;
-+		cfg->lmce_disabled = 1;
- 	else if (!strcmp(str, "dont_log_ce"))
- 		cfg->dont_log_ce = true;
- 	else if (!strcmp(str, "ignore_ce"))
-@@ -1909,9 +1909,9 @@ static int __init mcheck_enable(char *str)
- 	else if (!strcmp(str, "bootlog") || !strcmp(str, "nobootlog"))
- 		cfg->bootlog = (str[0] == 'b');
- 	else if (!strcmp(str, "bios_cmci_threshold"))
--		cfg->bios_cmci_threshold = true;
-+		cfg->bios_cmci_threshold = 1;
- 	else if (!strcmp(str, "recovery"))
--		cfg->recovery = true;
-+		cfg->recovery = 1;
- 	else if (isdigit(str[0])) {
- 		if (get_option(&str, &cfg->tolerant) == 2)
- 			get_option(&str, &(cfg->monarch_timeout));
-@@ -2376,7 +2376,7 @@ device_initcall_sync(mcheck_init_device);
-  */
- static int __init mcheck_disable(char *str)
+-static enum smca_bank_types smca_get_bank_type(struct mce *m)
++static enum smca_bank_types smca_get_bank_type(unsigned int bank)
  {
--	mca_cfg.disabled = true;
-+	mca_cfg.disabled = 1;
- 	return 1;
+ 	struct smca_bank *b;
+ 
+-	if (m->bank >= N_SMCA_BANK_TYPES)
++	if (bank >= MAX_NR_BANKS)
+ 		return N_SMCA_BANK_TYPES;
+ 
+-	b = &smca_banks[m->bank];
++	b = &smca_banks[bank];
+ 	if (!b->hwid)
+ 		return N_SMCA_BANK_TYPES;
+ 
+@@ -760,7 +760,7 @@ bool amd_mce_is_memory_error(struct mce *m)
+ 	u8 xec = (m->status >> 16) & 0x1f;
+ 
+ 	if (mce_flags.smca)
+-		return smca_get_bank_type(m) == SMCA_UMC && xec == 0x0;
++		return smca_get_bank_type(m->bank) == SMCA_UMC && xec == 0x0;
+ 
+ 	return m->bank == 4 && xec == 0x8;
  }
- __setup("nomce", mcheck_disable);
+@@ -1063,7 +1063,7 @@ static struct kobj_type threshold_ktype = {
+ 
+ static const char *get_name(unsigned int bank, struct threshold_block *b)
+ {
+-	unsigned int bank_type;
++	enum smca_bank_types bank_type;
+ 
+ 	if (!mce_flags.smca) {
+ 		if (b && bank == 4)
+@@ -1072,11 +1072,10 @@ static const char *get_name(unsigned int bank, struct threshold_block *b)
+ 		return th_names[bank];
+ 	}
+ 
+-	if (!smca_banks[bank].hwid)
++	bank_type = smca_get_bank_type(bank);
++	if (bank_type >= N_SMCA_BANK_TYPES)
+ 		return NULL;
+ 
+-	bank_type = smca_banks[bank].hwid->bank_type;
+-
+ 	if (b && bank_type == SMCA_UMC) {
+ 		if (b->block < ARRAY_SIZE(smca_umc_block_names))
+ 			return smca_umc_block_names[b->block];
 -- 
 2.13.0
