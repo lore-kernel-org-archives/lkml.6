@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1047503-1519203428-2-11780555285350837043
+X-Cyrus-Session-Id: sloti22d1t05-1047503-1519203506-2-14085988114947692551
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -14,32 +14,33 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519203428; b=eyvq7XfJmAS2TjhvaFOgz79FsHLLSMta83GEqV5OGS9q9w+
-    7pbqToC1g96bCPbguPomo+1k7z0KwC/PpWwMS8fJVS2esUqvwULb5+bQJ62kzGNX
-    bDvzu3C8GZKZJaStNojFtTRHAT4FYUGj8sGVCBS5fOKJXOto+QhJxt/ibYDBOrfb
-    b4aPeWV/21ABIbyRXTWxVgEdpxbJNjt9GrTTJf0SnstG3CIo8Rpmd/+9CYMaEgJs
-    BhrOfKEbkrEJM0Wo38RRMs2ga3pUpJm4hwwVdkU0QAWxPgdlnNLyjaZkLK+ds5wy
-    ESi6oE07PMZqloPcuIM/nXwWnhRhrteCmVkGp8w==
+    t=1519203506; b=JCtxa3LwDZFbFU7sCl9RDFesmK8Wa2G3lujel+UCBFRqEE7
+    UxBeHwnVtBx0UHdofaL29ds8PL2JhBQWYzPtQSyMglcTWCX1N7NKZS7wJRq8b/ab
+    qtT2blq80Gx8xUlAT0OcN0uwUcYlc6mvNdXnqz7AW0yx/sJ0phJdXn9i8eNXDPQ3
+    qVjKaFZuWMJBFdb2RfxmDJsBsQ3DBTB2Ua2piaGz+dRa6xvcICbZI78DIgTdJjSx
+    8SkaWedQx//lpGlrD7zR5OmALeA32eeVlKqrHcevYkACj6ZLmKYIeYFj/y6utsbw
+    7x+P0fu5st+cOknbEOSynznUzdGizwU7ol/aZSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:sender:list-id; s=arctest; t=1519203428; bh=rXftO0zO
-    Ou7ouqEvsw8oZ8NNHqra1TLTTU5nuwhAf6s=; b=fnmrvZrn0ANO3rYF5MiSQTnt
-    dWIsuaOTJ2NkItHVnWCekAJR1k6iIfOsoSpSprx9qWJFsqPYf1iRzv/UCQc0cyEp
-    +AtH4XDLw9bQ3F0G7VIY0fN0GepYjcWoRsDP2Y4V2gjuTIunrAq4ZWYs83Em4ydU
-    bbqaMe6mtF1k4jpIfCQVNO7WKT+OEjuGuLanBKe3P8Sb2zX4g86B/IXP0+BexUMU
-    yEbN3W52ytChpm8zARgZ6rN2KQu83UnXN/SS4ul4MzGpZJ5fK1vkhmHlOvUjPpFf
-    38yaY6zVJDlyKUQYiQAJulKus2HON3ZjMJDdjo9wYdt4E5q8Ih5CM2ZD1voqCA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=OyVTZMDP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519203506;
+    bh=m/GW9H6q/7I/TLHQluFu3GsDhHNNSZ8XRcmwX9BOnFo=; b=aVyBw9Fzmvnd
+    RZ3AAraeJhkVyI5fAHB/PjUMPpaU3qQ72BwWu1VCUcPrmMN5mlMb3ISfw69N5PbW
+    zuLdIbImejVhO7RCFJ6F3pZJUE5CsApT80G1d12wqOrl9gMsnjjHkZW3BkTX62h0
+    bbWfK/YjBOwqGeTVe1/xpQU2Uby36w5Q18olHNsIopStO31zpleAFasve90JDzi6
+    pawRUfBQoBniJjWL/8wgtpCoEEiXkUqnIACTM1sHeKXuTV7ONBxpcxgWlN7dtejF
+    yczdrOfEhwJOVVA/H9DjXAP90IIxM7AXu3AgdIM4SN9+60B93BRAa6JHc3qPqNBc
+    r+6d9dRMHQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=ZhvlUwDz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=OyVTZMDP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=ZhvlUwDz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -47,14 +48,14 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeBUI4O (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 03:56:14 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57088 "EHLO
+        id S1752351AbeBUI6M (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 03:58:12 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57121 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeBUI4I (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 21 Feb 2018 03:56:08 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180221085605euoutp024744e65faf29a31f252f28281ec859f2~VS2lpSIUc2484324843euoutp02X
-X-AuditID: cbfec7f2-1c1ff70000011644-32-5a8d3424e6be
+        with ESMTP id S1752134AbeBUI4L (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 21 Feb 2018 03:56:11 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180221085609euoutp02f26fb1d02bbbfb8cacaa45db05cffa92~VS2pBnAWI2484424844euoutp02V
+X-AuditID: cbfec7f5-f95739c0000028a9-ec-5a8d34289bc4
 From: Andrzej Hajda <a.hajda@samsung.com>
 To: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
@@ -70,87 +71,112 @@ Cc: Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH v4 0/6] dt-bindings: add bindings for USB physical connector
-Date: Wed, 21 Feb 2018 09:55:35 +0100
-Message-id: <20180221085541.14556-1-a.hajda@samsung.com>
+Subject: [PATCH v4 4/6] arm64: dts: exynos: add OF graph between MHL and USB
+ connector
+Date: Wed, 21 Feb 2018 09:55:39 +0100
+Message-id: <20180221085541.14556-5-a.hajda@samsung.com>
 X-Mailer: git-send-email 2.16.1
-X-Brightmail-Tracker: H4sIAAAAAAAAAzVRa0hTYRjuO2fn4nJxmqZfWmmj6OpUEvqg6IbUgfpRfyIGy1YeL+im7XjJ
-        ftSwjM2pmRlqxYo0E9PMeW1eIhUHWk5daGYpoVAtZ+UcZHjJefLf87zP8/A+Ly+NSydFAXS8
-        JoXTalSJMlIsauyes4Vsi8hVhPUVB6OPL/oIlKl3Eqi2uIZAw7NfCfSoa3n23v2TRAXj+SJk
-        s72kkOFOGYXME0MEslsekqjY1o6hJ+VZOKru+kyhp8MDGMpq66KOMGyVqQqw9rxcjH2gLyFY
-        c6WBZMeNVoytK7vO5tVXAtZl3nKaVogPRnOJ8WmcNvTQBXGcs+U2mTzsfcX1J4fSgXmvbOBF
-        QyYCDo2ZQTYQ01KmAsCColXiArD7nlm06sq6UYoLQjmADfMmTCBLAL7WPSM8LpLZBRfqRkgP
-        9mWUcHrQspLAmX4R7O91UNmApn2YU/DH3a0ej4jZDj8szlIeLGEQnKr6BoRtQbBzKpPwZCHT
-        RcL7BUukIETCL5aW/5V8oMNaTwl4EzTo32BCwAhgT7sBF0ghgDaHHRNcB2CndWClKs6sgwWN
-        RbinEWQkUH9LKkAW6mZ9BPdR6DDOrOySLh9TP/aJzAcbH4M1lcCfS+XVsRwfruHS5bxKzadq
-        YuWXktRmsPz73kXrTDNwD17sAAwNZN4StDdHISVUaXyGugNAGpf5SjKkuQqpJFqVcZXTJkVp
-        UxM5vgME0iKZv+T8zmsKKROrSuESOC6Z066qGO0VoANFFDPd23/YeezcjuNK+fNfpYWtyn1y
-        5UTTzYn2UHFpdPpv5u+cOZOLtWmagr03tCZHgaCehjrSbnePWl01exzNDSEjugRLvinkbGRM
-        bWCFO9x4AjPY1n7vfac/c3JhNMbhl16yPrG6jdWW7DeJh0x+rxQu53xYS87k27TNl2UiPk4V
-        vhvX8qp/HJfy5vcCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsVy+t/xa7rKJr1RBovm61vcWneO1aKp4y2r
+In-reply-to: <20180221085541.14556-1-a.hajda@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsWy7djP87oaJr1RBjsuM1vcWneO1aKp4y2r
         xcYZ61ktrn95zmox/whQ7MrX92wWk+5PYLE4f34Du0XnxCXsFpseX2O1uLxrDpvFjPP7mCwW
         LWtltlh75C67xdLrF5ksWvceYXcQ8Fgzbw2jx+W+XiaP2R0zWT02repk87jffZzJY/OSeo++
-        LasYPT5vkgvgiOKySUnNySxLLdK3S+DKeLu7n63gOk/F5x897A2Mfzi7GDk5JARMJFqbFzN3
-        MXJxCAksYZT4uGMpI0hCSKCRSWLlbm4Qm01AU+Lv5ptsILaIQKzE21OfwRqYBS6wSPyeOJO9
-        i5GDQ1jAR+L1ZEWQGhYBVYkb/76wg9i8AhYSb9a8YIRYJi9x+E0T6wRGrgWMDKsYRVJLi3PT
-        c4sN9YoTc4tL89L1kvNzNzECA3DbsZ+bdzBe2hh8iFGAg1GJh9dCpydKiDWxrLgy9xCjBAez
-        kghvpVBvlBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe8waVUUIC6YklqdmpqQWpRTBZJg5OqQbG
-        aTNXfPr8zMGfb5vRvCKepf97XI+7nynq6I14y871d7Ft98nPmxe/XfUrmTkw9mrec2WNX3le
-        ZcdPf2343FVzm3V3Qc75l4HLd2qaut8KnFz7a1Gr/is9r4O6Ww4a7/bmeZD8P/FwJivP/L3h
-        HjsbDIKU29fsNe0Xqqv6ZhZyKmn19rz+bUvXKrEUZyQaajEXFScCANz7aLw8AgAA
-X-CMS-MailID: 20180221085603eucas1p1c941a765f267145fc48de67184b613b3
+        LasYPT5vkgvgiOKySUnNySxLLdK3S+DK+N39ia3gLnfFnjM3mRoY73B0MXJySAiYSKx5eYqx
+        i5GLQ0hgBaNE19QLUM5nRokl+3uZYKraJvxkhkgsY5R43b2JCcL5zyjx79s9FpAqNgFNib+b
+        b7KB2CICsRLvLu0C62AWuMAiceH0K3aQhLBAhMSEFf/BilgEVCXuHjrDCmLzClhIzP/4kR1i
+        nbzE4TdNYHFOAUuJ33sngQ2SELjNJjGpfxULRJGLxObD86AahCVeHd8CZctIXJ7czQLR0M0o
+        cWpfJ1T3FEaJ868uQ31kLXH4+EWwFcwCfBKTtk0HKuIAivNKdLQJQZR4SNz+MRdqqKPElskH
+        oCHTwygx791XpgmMUgsYGVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJoXT/45/3cG4
+        70/SIUYBDkYlHl4LnZ4oIdbEsuLK3EOMEhzMSiK8lUK9UUK8KYmVValF+fFFpTmpxYcYpTlY
+        lMR54zTqooQE0hNLUrNTUwtSi2CyTBycUg2MnG+nf3+eqj9li5EHr4/B/1nnTnyLMzP+cnjf
+        cR3J1uqvyZGXT5186Lroncz67Yabfuavl5LZJRzvNV0mbbtE2Kawrf0vSgvitXV4s4v6gxYu
+        PxdZOd1d3KhzN69YddAZ3rNzEh+8uPPD3/WZzpepCkoPpZbVa3llWU0+0XSi+YJCwNzGZrWL
+        SizFGYmGWsxFxYkA4yF1YgYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsVy+t/xa7rqJr1RBr/2KlvcWneO1aKp4y2r
+        xcYZ61ktrn95zmox/whQ7MrX92wWk+5PYLE4f34Du0XnxCXsFpseX2O1uLxrDpvFjPP7mCwW
+        LWtltlh75C67xdLrF5ksWvceYXcQ8Fgzbw2jx+W+XiaP2R0zWT02repk87jffZzJY/OSeo++
+        LasYPT5vkgvgiOKySUnNySxLLdK3S+DK+N39ia3gLnfFnjM3mRoY73B0MXJySAiYSLRN+Mnc
+        xcjFISSwhFFi+e39rBBOI5NEx4Sp7CBVbAKaEn8332QDsUUEYiXenvoM1sEscIFF4vfEmWBF
+        wgIREhNW/AcrYhFQlbh76AwriM0rYCEx/+NHdoh18hKH3zSBxTkFLCV+753EDGILAdV8OPeV
+        fQIjzwJGhlWMIqmlxbnpucVGesWJucWleel6yfm5mxiBQbvt2M8tOxi73gUfYhTgYFTi4bXQ
+        6YkSYk0sK67MPcQowcGsJMJbKdQbJcSbklhZlVqUH19UmpNafIhRmoNFSZz3vEFllJBAemJJ
+        anZqakFqEUyWiYNTqoGx2dM3+ZcGL/MchT2X/V05H7Ja/pAo1OX4NZlxd5Cwzi0usz3vOe0O
+        BC6dkcHjH3FwzYs8Vl7HRb0cK3JENmoWp0cE3BBf/SDB/pjD84ymKu+dS9df0lXP8OBUFf42
+        3f//CnnDe8vfqWllRhWfNj75bMmc+1uvrrQ2P7ivzsZCtbRd5eiuTWJKLMUZiYZazEXFiQDg
+        7MTGVgIAAA==
+X-CMS-MailID: 20180221085607eucas1p1a08c82fac832049d79705b4222422fa9
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180221085603eucas1p1c941a765f267145fc48de67184b613b3
-X-RootMTR: 20180221085603eucas1p1c941a765f267145fc48de67184b613b3
-References: <CGME20180221085603eucas1p1c941a765f267145fc48de67184b613b3@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180221085607eucas1p1a08c82fac832049d79705b4222422fa9
+X-RootMTR: 20180221085607eucas1p1a08c82fac832049d79705b4222422fa9
+References: <20180221085541.14556-1-a.hajda@samsung.com>
+        <CGME20180221085607eucas1p1a08c82fac832049d79705b4222422fa9@eucas1p1.samsung.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+OF graph describes MHL data lanes between MHL and respective USB
+connector.
 
-Thanks for reviews of previous iterations.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+v4:
+- added missing reg property in connector's port node (Krzysztof)
+---
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 32 ++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
-This patchset introduces USB physical connector bindings, together with
-working example.
-I have removed RFC prefix - the patchset seems to be heading
-to a happy end :)
-
-v4: improved binding descriptions, added missing reg in dts.
-v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
-    example.
-v2: I have addressed comments by Rob and Laurent, thanks 
-
-Changes in datail are described in the patches.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (5):
-  dt-bindings: add bindings for USB physical connector
-  dt-bindings: add bindings for Samsung micro-USB 11-pin connector
-  arm64: dts: exynos: add micro-USB connector node to TM2 platforms
-  arm64: dts: exynos: add OF graph between MHL and USB connector
-  extcon: add possibility to get extcon device by OF node
-
-Maciej Purski (1):
-  drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
-
- .../connector/samsung,usb-connector-11pin.txt      | 49 +++++++++++
- .../bindings/connector/usb-connector.txt           | 75 +++++++++++++++++
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 39 ++++++++-
- drivers/extcon/extcon.c                            | 44 +++++++---
- drivers/gpu/drm/bridge/sil-sii8620.c               | 97 +++++++++++++++++++++-
- include/linux/extcon.h                             |  6 ++
- 6 files changed, 294 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index f604f6b1a9c2..2ed506df94d0 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -817,9 +817,22 @@
+ 		clocks = <&pmu_system_controller 0>;
+ 		clock-names = "xtal";
+ 
+-		port {
+-			mhl_to_hdmi: endpoint {
+-				remote-endpoint = <&hdmi_to_mhl>;
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				mhl_to_hdmi: endpoint {
++					remote-endpoint = <&hdmi_to_mhl>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				mhl_to_musb_con: endpoint {
++					remote-endpoint = <&musb_con_to_mhl>;
++				};
+ 			};
+ 		};
+ 	};
+@@ -842,6 +855,19 @@
+ 					     "usb-b-connector";
+ 				label = "micro-USB";
+ 				type = "micro";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@3 {
++						reg = <3>;
++						musb_con_to_mhl: endpoint {
++							remote-endpoint = <&mhl_to_musb_con>;
++						};
++					};
++				};
++			};
+ 			};
+ 		};
+ 
 -- 
 2.16.1
 
