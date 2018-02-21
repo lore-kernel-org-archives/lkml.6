@@ -1,73 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217926-2-11452008446157387201
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519217925; b=qHs5n4OHnWoAm96QTmlrWTBBKY9BCdSOVk3Ptoy1JVuSKCV
-    GxrZQFIeujh0xKeexLeGeexxLItDvvJjHRn+BohIeVm2qQxUOszW+5QNvFsfDOWf
-    pNbmlGe+j5ckmTSB1uBzq5zP0It0/kZdAlZ0CEvVeuLsOatzQgH7rYy5B74ZcsJ5
-    VVGTqfq/lkeJdYJOgYHrT1iYpvIFw3ykJY3EwtIjDVt4LDhMK5JsOyuENhAI8M/M
-    nhOdJcYZACp6FVBtH9NEaT/zpQzirE00Xbv51qKclB7j3c6mn4YV3vyi5NZp7uU7
-    qDEMb/M+M7grFyRKcKlJZV3mnSFM/hocgXHpQ4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519217925; bh=xpYC9/vNaopLEuYFH2JpdJD3Rq
-    W4UBhF7gNLxgNfHn0=; b=IGNebm0AJCvHn7Y6ApAP03QyOu3eDERN42P56o7+9k
-    xt9N2CTPh7GbVIrOJKSqFTfwzuoMlvFD6QHinkdii/PLSZ7TyFCr+z0jkDwg2ABb
-    QCDhy+zNaXqiaYOCQjZoml6FIzB3h0VfoMOwsS+OdnNdOrfQMbgyiRigRmIJiHmH
-    mAlW4/HbDmoY4YzCQMarHQneJYitQkZiX2XrBB7KdyeqMQda2yDAFQOFnUrvE03+
-    pwRw8QBYO89hvdfgTx0pcBrqWMbTmFeFXDv3IjKhC1XbqKJ6w+nfKt7iQnHHnV5z
-    +qNefqMG6kHXUbTTjWK+vqKhG3uBaSWv7FAvnnEGg3pw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934883AbeBUM6V (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 07:58:21 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36096 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934849AbeBUM6T (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:58:19 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226VxVH1lgk5JI3FWV1XKMwpJBjmiiA4o87guYe8dIMbXjcEOLy8o/LbPqZ4oljbgGY1Pg9s
+ARC-Seal: i=1; a=rsa-sha256; t=1519217924; cv=none;
+        d=google.com; s=arc-20160816;
+        b=anX14G0zHllzdaUgOuK8hf1mcsp8IwRQvlVzEVIest+zSceBt4MyBPuAFSrxzrHsF6
+         bth7r/kEbj9M9Ckpgu9sayVGuhnXZO3/4hnBcdiguBkGFozDA19bJHVoB23sufLdnmqH
+         ozPmiTS+OtAvyfb3Kq9nYeODSbm0L82mBDdP3YYnjd71Re93JmhRJUBem0ETSW5YyaWH
+         aSYzDJ68O7tUy3WUX6bDbTEyDNeM8G46s9LE2oZAzYjOnR7u7Ihue0aXNeBGAR+AtMgG
+         vXlArAtspL3QanQx5RfRimtxsPVbp8bL6t6SRSiJ/BW1F+5uZkbN7vvczrxcpCrhNsoy
+         XfxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=eLUhO2vEGx1EUr6FGAjDoTIfr5JnnJ+0p42T2V/7oSs=;
+        b=tIIMJY1eOy4yf4eEe2zh791WvTx0GIm+eh2+ALmYgM/+0LUXwOFQn20tZaDrIao6Ut
+         HJhOZYwgT7pYQZ8lGtnXRAHDyvsio1NRsftWGT5Edl2iBBhAVfpevOjPCnPY4DER71wL
+         Eq+kBJhi9ABErX9uwVK9ma39LRggEfRDVU/rGfmrEjodR9PqtZZ7CBgA1oTMmAHeyFmd
+         RuGPxfboo08UzoIj++gU2EOPc2qU2hRJVlsZJI5m2HF35fSQZ4LdFAL9yKrLMakymylh
+         hEoCBzXHBwFOXicQQRqfWlz3IdJxzuohRBTBj80+Vj7oeVxW37NWr5zkcxPK4HB+v9qB
+         KHPA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gang He <ghe@suse.com>,
-        Eric Ren <zren@suse.com>, alex chen <alex.chen@huawei.com>,
-        piaojun <piaojun@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 018/167] ocfs2: try a blocking lock before return AOP_TRUNCATED_PAGE
-Date: Wed, 21 Feb 2018 13:47:09 +0100
-Message-Id: <20180221124525.606075301@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ramon Fried <rfried@codeaurora.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>
+Subject: [PATCH 4.14 026/167] arm64: dts: msm8916: Correct ipc references for smsm
+Date: Wed, 21 Feb 2018 13:47:17 +0100
+Message-Id: <20180221124526.030604592@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -75,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593015280077586216?=
+X-GMAIL-MSGID: =?utf-8?q?1593015454950402325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -85,135 +50,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gang He <ghe@suse.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit ff26cc10aec128c3f86b5611fd5f59c71d49c0e3 upstream.
+commit 566bd8902e7fa20bd412ed753e09e89c1c96939c upstream.
 
-If we can't get inode lock immediately in the function
-ocfs2_inode_lock_with_page() when reading a page, we should not return
-directly here, since this will lead to a softlockup problem when the
-kernel is configured with CONFIG_PREEMPT is not set.  The method is to
-get a blocking lock and immediately unlock before returning, this can
-avoid CPU resource waste due to lots of retries, and benefits fairness
-in getting lock among multiple nodes, increase efficiency in case
-modifying the same file frequently from multiple nodes.
+SMSM is not symmetrical, the incoming bits from WCNSS are available at
+index 6, but the outgoing host id for WCNSS is 3. Further more, upstream
+references the base of APCS (in contrast to downstream), so the register
+offset of 8 must be included.
 
-The softlockup crash (when set /proc/sys/kernel/softlockup_panic to 1)
-looks like:
-
-  Kernel panic - not syncing: softlockup: hung tasks
-  CPU: 0 PID: 885 Comm: multi_mmap Tainted: G L 4.12.14-6.1-default #1
-  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-  Call Trace:
-    <IRQ>
-    dump_stack+0x5c/0x82
-    panic+0xd5/0x21e
-    watchdog_timer_fn+0x208/0x210
-    __hrtimer_run_queues+0xcc/0x200
-    hrtimer_interrupt+0xa6/0x1f0
-    smp_apic_timer_interrupt+0x34/0x50
-    apic_timer_interrupt+0x96/0xa0
-    </IRQ>
-   RIP: 0010:unlock_page+0x17/0x30
-   RSP: 0000:ffffaf154080bc88 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff10
-   RAX: dead000000000100 RBX: fffff21e009f5300 RCX: 0000000000000004
-   RDX: dead0000000000ff RSI: 0000000000000202 RDI: fffff21e009f5300
-   RBP: 0000000000000000 R08: 0000000000000000 R09: ffffaf154080bb00
-   R10: ffffaf154080bc30 R11: 0000000000000040 R12: ffff993749a39518
-   R13: 0000000000000000 R14: fffff21e009f5300 R15: fffff21e009f5300
-    ocfs2_inode_lock_with_page+0x25/0x30 [ocfs2]
-    ocfs2_readpage+0x41/0x2d0 [ocfs2]
-    filemap_fault+0x12b/0x5c0
-    ocfs2_fault+0x29/0xb0 [ocfs2]
-    __do_fault+0x1a/0xa0
-    __handle_mm_fault+0xbe8/0x1090
-    handle_mm_fault+0xaa/0x1f0
-    __do_page_fault+0x235/0x4b0
-    trace_do_page_fault+0x3c/0x110
-    async_page_fault+0x28/0x30
-   RIP: 0033:0x7fa75ded638e
-   RSP: 002b:00007ffd6657db18 EFLAGS: 00010287
-   RAX: 000055c7662fb700 RBX: 0000000000000001 RCX: 000055c7662fb700
-   RDX: 0000000000001770 RSI: 00007fa75e909000 RDI: 000055c7662fb700
-   RBP: 0000000000000003 R08: 000000000000000e R09: 0000000000000000
-   R10: 0000000000000483 R11: 00007fa75ded61b0 R12: 00007fa75e90a770
-   R13: 000000000000000e R14: 0000000000001770 R15: 0000000000000000
-
-About performance improvement, we can see the testing time is reduced,
-and CPU utilization decreases, the detailed data is as follows.  I ran
-multi_mmap test case in ocfs2-test package in a three nodes cluster.
-
-Before applying this patch:
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2754 ocfs2te+  20   0  170248   6980   4856 D 80.73 0.341   0:18.71 multi_mmap
-   1505 root      rt   0  222236 123060  97224 S 2.658 6.015   0:01.44 corosync
-      5 root      20   0       0      0      0 S 1.329 0.000   0:00.19 kworker/u8:0
-     95 root      20   0       0      0      0 S 1.329 0.000   0:00.25 kworker/u8:1
-   2728 root      20   0       0      0      0 S 0.997 0.000   0:00.24 jbd2/sda1-33
-   2721 root      20   0       0      0      0 S 0.664 0.000   0:00.07 ocfs2dc-3C8CFD4
-   2750 ocfs2te+  20   0  142976   4652   3532 S 0.664 0.227   0:00.28 mpirun
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 14:44:52 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 783 seconds.
-
-After apply this patch:
-
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2508 ocfs2te+  20   0  170248   6804   4680 R 54.00 0.333   0:55.37 multi_mmap
-    155 root      20   0       0      0      0 S 2.667 0.000   0:01.20 kworker/u8:3
-     95 root      20   0       0      0      0 S 2.000 0.000   0:01.58 kworker/u8:1
-   2504 ocfs2te+  20   0  142976   4604   3480 R 1.667 0.225   0:01.65 mpirun
-      5 root      20   0       0      0      0 S 1.000 0.000   0:01.36 kworker/u8:0
-   2482 root      20   0       0      0      0 S 1.000 0.000   0:00.86 jbd2/sda1-33
-    299 root       0 -20       0      0      0 S 0.333 0.000   0:00.13 kworker/2:1H
-    335 root       0 -20       0      0      0 S 0.333 0.000   0:00.17 kworker/1:1H
-    535 root      20   0   12140   7268   1456 S 0.333 0.355   0:00.34 haveged
-   1282 root      rt   0  222284 123108  97224 S 0.333 6.017   0:01.33 corosync
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 15:04:12 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 487 seconds.
-
-Link: http://lkml.kernel.org/r/1514447305-30814-1-git-send-email-ghe@suse.com
-Fixes: 1cce4df04f37 ("ocfs2: do not lock/unlock() inode DLM lock")
-Signed-off-by: Gang He <ghe@suse.com>
-Reviewed-by: Eric Ren <zren@suse.com>
-Acked-by: alex chen <alex.chen@huawei.com>
-Acked-by: piaojun <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 1fb47e0a9ba4 ("arm64: dts: qcom: msm8916: Add smsm and smp2p nodes")
+Cc: stable@vger.kernel.org
+Reported-by: Ramon Fried <rfried@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dlmglue.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2486,6 +2486,15 @@ int ocfs2_inode_lock_with_page(struct in
- 	ret = ocfs2_inode_lock_full(inode, ret_bh, ex, OCFS2_LOCK_NONBLOCK);
- 	if (ret == -EAGAIN) {
- 		unlock_page(page);
-+		/*
-+		 * If we can't get inode lock immediately, we should not return
-+		 * directly here, since this will lead to a softlockup problem.
-+		 * The method is to get a blocking lock and immediately unlock
-+		 * before returning, this can avoid CPU resource waste due to
-+		 * lots of retries, and benefits fairness in getting lock.
-+		 */
-+		if (ocfs2_inode_lock(inode, ret_bh, ex) == 0)
-+			ocfs2_inode_unlock(inode, ex);
- 		ret = AOP_TRUNCATED_PAGE;
- 	}
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -1430,8 +1430,8 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
+-		qcom,ipc-1 = <&apcs 0 13>;
+-		qcom,ipc-6 = <&apcs 0 19>;
++		qcom,ipc-1 = <&apcs 8 13>;
++		qcom,ipc-3 = <&apcs 8 19>;
+ 
+ 		apps_smsm: apps@0 {
+ 			reg = <0>;
