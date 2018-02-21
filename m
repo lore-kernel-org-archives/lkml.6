@@ -1,197 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964856AbeBUOxE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:53:04 -0500
-Received: from mail-dm3nam03on0053.outbound.protection.outlook.com ([104.47.41.53]:49637
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1754641AbeBUOyH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:54:07 -0500
+Received: from mail-eopbgr00127.outbound.protection.outlook.com ([40.107.0.127]:39168
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933218AbeBUOxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:53:02 -0500
+        id S1753161AbeBUOyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:54:04 -0500
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com;
-Subject: Re: [PATCH v2 1/2] KVM: x86: Add a framework for supporting MSR-based
- features
-From: Tom Lendacky <thomas.lendacky@amd.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <20180215231156.31016.79657.stgit@tlendack-t1.amdoffice.net>
- <20180215231206.31016.78914.stgit@tlendack-t1.amdoffice.net>
- <00583b68-d599-b709-133a-3741c258df13@redhat.com>
- <7f6a78ae-abab-2a03-aebd-e43e6fe168b4@amd.com>
- <94f6ed44-07ab-ff0f-2a6d-b3d8ff4ff4b1@redhat.com>
- <f1b934f4-e228-e6e3-496d-d8287018602e@amd.com>
-Message-ID: <d77a8a6e-d10b-82d9-6df4-7ed5505ef40f@amd.com>
-Date: Wed, 21 Feb 2018 08:52:46 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ smtp.mailfrom=tommi.t.rantala@nokia.com;
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Neil Horman <nhorman@tuxdriver.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc: Xin Long <lucien.xin@gmail.com>, David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net>
+ <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
+ <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+ <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+ <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
+ <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+ <20180220162622.GA32068@hmswarspite.think-freely.org>
+From: Tommi Rantala <tommi.t.rantala@nokia.com>
+Message-ID: <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
+Date: Wed, 21 Feb 2018 16:53:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <f1b934f4-e228-e6e3-496d-d8287018602e@amd.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180220162622.GA32068@hmswarspite.think-freely.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: CO1PR15CA0109.namprd15.prod.outlook.com
- (2603:10b6:101:21::29) To MWHPR12MB1151.namprd12.prod.outlook.com
- (2603:10b6:300:e::15)
+X-Originating-IP: [131.228.32.176]
+X-ClientProxiedBy: AM5PR0701CA0015.eurprd07.prod.outlook.com
+ (2603:10a6:203:51::25) To DB5PR07MB1319.eurprd07.prod.outlook.com
+ (2a01:111:e400:599b::13)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 743adab9-2b28-4673-5bb5-08d5793acbd9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1151;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1151;3:+LQg2t/UWUjx86G4pnUVSGli4yQhkxc0lZAqeGCpBwfSdqLMi8RZ9rgIuJURvdSR2GWN49Vk41uvoXzmUrT3ee7pGFuZZY1HHpjr07qZMFNzkbNv3ycmdWdz+33OjqS8uv+FRrLubCrtVtVQ1zrubxL6qNTTO2LrmV5yloHZwxv7edgYpdkVBc+8IBdY1psOcaYlGz1Uzsx+ncQGfjjso2o10gVk1a5F1MTC1nfProaI167TGRQn0pL0j4E8+ure;25:Ytw8LrGomzQEm5P9aINJgfrgM4flYkeOm0SyS3uUYIqm+HUV93vJr0IW1qf94FsAubF+W8ri+cQw+kB0/xRk4tkFrb/SVGFx8hTb267c7ylpPxV7YlIz+Vj7xq26wLDj1sREJq+7j6WYN8niOG1uc+MA3q/Yk7Q/NQzM8TmhRhzT4H97cHRv4tkxUP3y64LBLFGcaaAyoaF2755ql/3NXipU81wMYgwreYGb8TY0hSrg3zqEOTw1pXwzlGW6DsGWOS5yMXXJ39C26uAuDFoETy2j0WdvB9L2PT/1nvqRQKk+iawyZD1AJsI6JFWWQuzXVoWc9gh5QnUjyGKjaY91OA==;31:il+nnyc+fg0YH1ZVptk6aaCpkQEAkuLaBJ+RQg2T3Etk4pCyH1q2HEwPnmZwA42IIGmAdnu1E+BvG8nCkkkYdMPU67PxLIzlsEUEP3ehuzTqcblHv7DCUaJKDT019KRndw8nq5V81I3jG7Y80XtD0QJLDpVF46ZwEi80GJWzHGVi1OJL++po7J7yF35YYTD9IDT2lClxmRVTpUZgmW8j72+xLVRDtgZIJpB+GPGFCDA=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1151:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1151;20:ZQDyoBUckS4HP/OF39r0ZFqKlrQz6a2HJRfjztJZ6Cgb23xz8ZzkeTHF2QEJ+K07xrDoLwbhpsCkQ0VAokooNh+qsR73tA8kquIvJthKOtKp6Tid9WaCY0LdxBjIyU8MQMTTDitT7WJsciEQnja4PCa6/5FpN6YQuBxIPVHia7VziSz3R8Igm578ZZmZeZYzdedmZzX91CSILjcOe+8vtyzDp5//wZtpPZa427IfeCk5Voi5msTzBLRb8RKuDcDkA7xiGaPkAfxksNbj1nK4maEP8eQ8Btq22p8IRE32CDB0GWud2ZVRsqalGkOLldC/n6o5iSHf+WeO7CNLWQFAGOeL4oidnhvgESwb3Z/u2B1LH8kfeEMLxxCeVmm1i3VlcOiNoulo2Kgikr78WecvMZ1BDAviE86by7q9qN4PFPZxfGPp7/c95cDhsIvmU20XWXwfto9zBsAgZA7Fbd3nPHo0YFKYzqN5KhBt56m9suxBOnTXkQimNxTboxgfgnUS;4:OYSudRHMU3rtNEb9xs/fOM5Pg1tK3Jzb6Jdq9n81oj3cA2kv6aQTTl5LNUR8PF9+4QpMM2juTw3FygAP2JFL1M6T+IdQ/gpYOPIS5VUMPeNztZYgJV8xcrF9hjKNAt65dY0D8RfVJ+sKnnuTlVQAgxEhoGHobBW0h8/jE6ymfL++yb7+RUsae4IiVjxmBvCT2CfkJq2yJ+428FQAd2v/Jojd8PepW0/ap7xBnhttUJCNRgMXuaJqH6IZLbeKa2JNcoBHNr40k5kpnHcWe+g9Zg==
-X-Microsoft-Antispam-PRVS: <MWHPR12MB115190E4EFBB6210C4CBB6E2ECCE0@MWHPR12MB1151.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001068)(6040501)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231101)(944501161)(6055026)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR12MB1151;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1151;
+X-MS-Office365-Filtering-Correlation-Id: 73cb5af3-2928-4a37-4acc-08d5793af0ed
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7193020);SRVR:DB5PR07MB1319;
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;3:PGDccZTaq96/Gpbo0SP6IiLDdYQK7qcwnzAk5mxm06dG5t37R7LY7rbx6FxOYnwOjjadzFCwRImRN6AFGUEtdHB1oKD/36Ui05jJs+MfcLhHG2EtyuAT1Eov1pzR+iFLNL4m+KtzotJctdP0zpVm5ZLdZyUVkbWRYAUpFLQR5mo51i+gPxufquqX75reR03b82KawDncylFvgdsFLnc0hF5BVNfnDeQf8RJm8MNfRbeJcysuIp+/ibb7MpCHBrvh;25:fUY7TuzRDc/rdlargxBos8etSC1y5bCXYPaFYN1z56vUrBsjIPHymP01rExurtty7vP2g1zqPEs+pnH2/CDONzxXeC/4eg4KGiyQdWK2RXCux/R3+oyJy2xXpQBTO/ujwDHBYgq2/A9eN3uxFTVSGncnQNDlYmP2d2hdrAGXwbJ6b/Kb+YtkQ1OdXm9pZBaw1yTiUEpQS4Qh9nI/eE2fpxwEdO+spIYGFwsgS3LyLO7oezFLRlrF/yYqxhqnCm8ogMhXaMMC7Pvy5FTGF26VcX6Ul/s4wS/KR8dyxlO6IVpLonH57GC6ifYf41ymHgXc4r8NcV0YVox0tqByZL8ZrA==;31:DzFcLDsXs9fwXFq2ehezyi4MCWjwgA6XrlRYbmlr5qXFnN9hRfKKDksLAZ0m1jcxj954kpEqAdM7TRMZnL3Ez9nR7LeNJFMRRKl/tRLN7sbtskVZ8hX2+K5EV8cNgIBOL1oTD1TJda7Rn7VNvusIiSiJlO1hoZEkvbcXlC9rlK19qQUenD3G/Q49ykxh/K/fswUFOQB37kRCg2PTTpM0jS939V35+mOkHbtyHTZS4rg=
+X-MS-TrafficTypeDiagnostic: DB5PR07MB1319:
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;20:pAFUdeLFpo7F2AfV8Mnftgn83qQe2+nQgsa1/ywpiujvaHGMfsCNeuIIWmVku35kjIAxYO/WfZ/1Qqm96j5FYzN95Nji/GW946eeYMsm030MdRmG7V45h+oalbnCTmSm/Wfja8P/Hels0ts+O8ohQoQD3+0koG5RQM/63jyvXuui8kaBd1Xb5/KYd4RjReZe9zJJIHw7o12ipxAx4vjlgvM2huCtgtvgEPcjZS5d4/WXKLdxoU/A8B+GWZkUWRY+MFpXBg1UG9Vjd+t9BfsE5bqeEG1ra5trQT1GbNoDcpyIQN78FPlVTx+2AkmjEy3vJ3BeaEGwnwEy6Kuy5+4tvb/BASJGrr9VFfjS1YLsXV1owpbt4mj/Bk8/KVYnQa31MfuZ+y2MTqCWSuKpSYKxU3dzB++jC6xlY9B319LwUBhSAP4ZXMdk8zy5M9dP8HjMgxACA10T7xGnlVm6b9Zj911YdRf7SCs+8VZR567GZmqM3IhtImd4FTZtiP4KdzH0;4:wQFz/bVtCSvL+EduSQvJE6wFVuK+xAi5RGNdARFWERJnyhI7yzzM2DQEBGMSl5hWTbSBwgT/ADM9IZkRqziVPwhgqfnn3WCy9oONFH9DPBxt99I6VJjXsuyQogQZONNcUSUm3up99G06K3ROQT0eGfO3M+hQw3vAp+mmTOsYCJni8mA7KkmppHlJcxkohhLMbpEcfFhlO/Omb6B7aOXcErZJxM0CTzYZGlN9cE3fX6XEcQefFAaJB88y1CM+c9GlFP8PiIjqTHblWue1JQUWOjJVBRIetcaVfQJSNN6BASP1ALe0itHrx1Qg7w8sGL8uYGbOF0H1NwVMzZ4hBBnc+aG2kRJ4QqVypkjVlZtfhSM=
+X-Microsoft-Antispam-PRVS: <DB5PR07MB13194F7A8FEEB5D2A488927BB4CE0@DB5PR07MB1319.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(82608151540597)(146099531331640);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231101)(11241501184)(806099)(944501161)(3002001)(6055026)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DB5PR07MB1319;BCL:0;PCL:0;RULEID:;SRVR:DB5PR07MB1319;
 X-Forefront-PRVS: 0590BBCCBC
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(376002)(346002)(39860400002)(39380400002)(366004)(189003)(199004)(86362001)(23676004)(2486003)(52146003)(6486002)(2950100002)(52116002)(50466002)(230700001)(6666003)(105586002)(4326008)(47776003)(31686004)(65956001)(31696002)(66066001)(3260700006)(106356001)(64126003)(65806001)(53936002)(93886005)(97736004)(25786009)(76176011)(386003)(229853002)(6306002)(53546011)(8936002)(72206003)(966005)(58126008)(478600001)(16576012)(316002)(6246003)(36756003)(81156014)(2906002)(186003)(16526019)(26005)(81166006)(5660300001)(65826007)(77096007)(8676002)(54906003)(3846002)(305945005)(6116002)(7736002)(68736007)(6606295002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1151;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxMTUxOzIzOmVTbWJqaENmVUdLLzlLK3pPWTI2QktvbmVU?=
- =?utf-8?B?RnF6QlVSYWIyY3JUT1cxS3JLNVk0QUxFbFhJY244Z2M0RkZta3lzSGRFZnVK?=
- =?utf-8?B?UXU3VkR4L0hXSkpUU25lRklsZ3ZoQVd2QVNId3IrYkkvZFZCQW9TRmtyd3dB?=
- =?utf-8?B?T1hrRWhYVGNZeXBua3JkM2w1MFR3QkdsU0R2bDVaY0FmcEpiUWxuZEhwWnE0?=
- =?utf-8?B?cTFRUTcrNTYwcmk5b0ZLUCt0WGFkOXFKVUlvV2lMN0p3QktGM0tML0d5TEF6?=
- =?utf-8?B?UTRIZUh2Rit4ZkRlVmU0U2lWZEx4WE5RRktzMkUwTGdMQVhtWkFaR0ViRmxM?=
- =?utf-8?B?ZlI1QUtmL01mbWpYU0RUWjh2SDNwaFFnUk9yeUthcHVBdWFuQWpWTExpbzNz?=
- =?utf-8?B?MEppeW83bnFrM0hFUTk4dkptL2pDZmI1N21zdzlCaER5RFZRbUloeUR5bENi?=
- =?utf-8?B?RGJOa1FNV2NldXVtMW5YeDNBenRKK0hnWGVVanlmUmxNWjJDRVA1OTkxSG95?=
- =?utf-8?B?b3lidHVCSGlKT3AzUTYwbzFMUU1FNDB6TnVCbFYxVjFkODY2RFU3UFZBc2ZJ?=
- =?utf-8?B?Nyt1L3grbDlDTC9TRzJMdllLdG5adE5EMmYrdVM3SU42bjBJbDVKSGtEa3pz?=
- =?utf-8?B?YjIyb1JFSWYwTmR5WEc1UW9DTnBZa20ycWp2ZjBZdmdDWlc3UTJaY2VTcWNN?=
- =?utf-8?B?SzBkYVR6Vlo2TjBxYi93ZktGZDdJZjFCVDR2VFk1YmJrSFBUcXJwT3JaTkJ5?=
- =?utf-8?B?a2kydmFiU2l0TEgrcDR4ekViL0hOcjU4MkNNYUNwU3ZJRGRHMjlibkNHYkJu?=
- =?utf-8?B?MFdiMkNLcXhuTnhIOU9GbVJOTGFhOElacDBlUTRxRllhVVh2UXdnT2xDZ1oy?=
- =?utf-8?B?RUZjeUJQalJZRGFKS1pnUkxNNlZaQlhYekgweTRQRzFXWm1RN3FlU3VERmlp?=
- =?utf-8?B?M0NvR1NVRkZqbEtocU1iS1B6SzhiMkg0a21RVkI4K0VrcU01TC9sdzJGYXJM?=
- =?utf-8?B?TGRCdkNKa29BdlhyUlBpODA0ZVRKVUx3Q1pUQmR4bU5NcVZCeXFkOUdRdVl0?=
- =?utf-8?B?OCt2MWo3SlRsaHQ2SDVyNUdNRFhQdG95Rlk2UWRvRkNuUS8zdDJHNVVIdkMw?=
- =?utf-8?B?dzI3RUY4bXY2ZUM0VVViR3JEUUlDU1Q5SUpJeWxUekllR2NJaENQc2ZIUWFj?=
- =?utf-8?B?alJ3bHBYUnVPMjJ5cXo1aEgvU0JSTHR4ekZEa29rRTcvQ09MenVjUUtNMlVW?=
- =?utf-8?B?c0d0WFllbi9uZUp2M1ZBNmxGTXNFK0xnWFJVV3ZSblZtcXlVUE1IUHkzK2pi?=
- =?utf-8?B?OC8yTkIyVmtoQ1ArcmcwTEhTNDJjUzQ2YnVwSmF2Y29oc3E1eW95MEo5YjVY?=
- =?utf-8?B?MmpSdVRoTW1tbHVOVTlaSHVuVzhJbHU1WXVaZVpxYm9GQmtrYlR3OG8zV0FZ?=
- =?utf-8?B?c2pqem1YRTVMZ2srK01EeEwvYVRXM1BLRWZDNHZQNzErNklDdDRVOWQ4Wkdz?=
- =?utf-8?B?NCtKYmcxVElLSDNoR0VaaHNjR0piN0VhWFdaek1PbWVFeUVyQW1FWHRNUmJI?=
- =?utf-8?B?VXdyaEw0S2crNXZuTGdUZVBIZ2VteExMZTZ0SWJ5eHFCRHZZbGMzVm5rcmYv?=
- =?utf-8?B?a0xYMktCYzdxazRFTitWcXRHRityNHdOSTFEWkZ1Y010UFR2TDZOUVNZQTUx?=
- =?utf-8?B?SkJNSUwxUDBFbVZPQ0xZNVNYUkpjNVdCR2VoR3dTYnpMNDNTcmZOVzZTYVZB?=
- =?utf-8?B?RDNMSUl6ZUVKb0RkMFFQVVd5akx2aTZ2cFlVR2d6eXBVTHVTcnJyY2o1OG1Y?=
- =?utf-8?B?MXNmclpUU0pmYUJwYjdVVHA3QzZrb2FQMzQ5WkJ1NHBZSXZLSENiMTFoN0d5?=
- =?utf-8?B?UzlEQ2xJVTU2RUpwakJuSmVwV0ltM3k2eGExb3FER1MxQWJBZkhuejEyRUl1?=
- =?utf-8?B?L1hFdjlOVFpCYUxnUDF4NGFsWmNqRnpOb1U5OFIwc1hMR0ZXOXZ4U21ka3Fl?=
- =?utf-8?Q?MzksNx?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1151;6:XsFZEnQKgNdAj3GWAoWOujj4pXrfT3DKDSYHhHrAAQ4eAS9CqleqdEiYc2pkWqgWmt3og8YHhWUrrZd+pNgx1+5h1UWRpcVswvbQwMVxiZSClD2GNJ2g1wwIo3fB/6qSGwaJ7kzRSSlvQb3sIfILBG27K7MlrUCPNj2coM/7WoydjuyIUHBnaJ1LXLDucZ4x8zYQHuo4d+LEj/BZN5a3KFGsuB87jGXOPYTIgVOzzO1dwYoVJKjyDkCPGDGLWCOjWCg++rZ14WeYaXLW0uyfplhKnAPjHB8CeSSsDkPafVxGj8L+Kwav7TpKOU53eVrERsSSf4xyUqpTy32DRHxkx3wSIZ3NPvSrce6gCoMkObw=;5:xSe2aJFXWQqunqPqFLUUPO5B3vEjAGafAaiOTEJ/zzEhHfzGFSJSYchOsUDVqV9grui0v4NcCrzctzyGgJGf3qKuta/eCGzz0OxFpTPq7YgqdMvhmTKuOzLSKQtSIZT4Emo0ZhS/M0RMNtOe8tS0c/IFfhjs9wPDFF6BTB6A8G0=;24:TDVInqHob+SI4dyYolYmB8aYCTtvtEk5MT69J05miU5ybqfawfkwesBaObpYQff4KS+eJgVKsDPBnfvUzmyz/5xef55UIoB7vzzNgd/44ks=;7:YTJ/nn1j2Wk4Am47Pa/WmazOLlaW5sy62Cw4B8ooPxB3ls92A+b4AVFLoCA2diONJ3zxOhaabrtlnPbIVp97f8MIYzfDsNhWwxynMRanmJURTfyULYUiiUufbupyLTXeYcaWgSegvcboeQF8AYZegnbEyjFfAHUcGD6vZrqUhcdwja+eM7CV0qeB6+gAw5mEJXL+EynyrN/eveT/HU92clIyZrtYe09dnigmdsHm6snY/4pEnY3Mbe0lL912mG1+
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(39860400002)(396003)(39380400002)(366004)(346002)(189003)(199004)(7736002)(186003)(305945005)(52146003)(16526019)(2486003)(23676004)(77096007)(26005)(7416002)(2906002)(4326008)(39060400002)(81156014)(25786009)(16576012)(86362001)(8936002)(8676002)(81166006)(76176011)(478600001)(110136005)(52116002)(65826007)(67846002)(93886005)(2950100002)(386003)(53546011)(65806001)(6666003)(5660300001)(31696002)(65956001)(66066001)(47776003)(54906003)(229853002)(53936002)(6246003)(50466002)(6486002)(6116002)(68736007)(64126003)(97736004)(105586002)(106356001)(316002)(36756003)(230700001)(58126008)(31686004)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB5PR07MB1319;H:[10.145.143.144];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjVQUjA3TUIxMzE5OzIzOmlGOUdMUDZldUZHUDNBSXAyWDI1NExxTW44?=
+ =?utf-8?B?NldTMjdxL25Pbk1kMGQwQnFWRDhldmY5NGM0UlFkenlod0thZHpiYkxqS3d0?=
+ =?utf-8?B?bThtSmVZSVY3ajJvdFZtcTZ5SWpmOVVUOWNvQ25ndlRKM1FtOHUrU3lSVVI4?=
+ =?utf-8?B?bUtyUnBlWHZJeTZMcVdjY1NRNlY5bzJkYlNUaUlqMThnanpxcU10bHZla29I?=
+ =?utf-8?B?cXNhdlJNV2hVSzFmWjBuY0JZclM4Z2RiQnVZWDFjbTEvUmN1YzN0MXc5bGFh?=
+ =?utf-8?B?RFdwS3FtVkp3aThLWGpFdHRobWQrcTQzeU1CVDJZanFDT2Y4Q3NRcEp3bWJN?=
+ =?utf-8?B?S0FnN3RQMUJFTU9FeGtpVUFaZWViR2sySE1ncWdvZDZhTzRjekJXRXBia1R3?=
+ =?utf-8?B?UEFsN2NObTQwT2x0L3d6OVIzNGhrWU5FMkhjTUdvMW1NbVZvTWU3L3JMSkIw?=
+ =?utf-8?B?U3FaZmpCSjBjZXVOa1NncEQrNlEvSUZjS2NTMjRHMEV4b1lNVXVJM3daRnAr?=
+ =?utf-8?B?UUhMNlVVUXZINmtYai9MSXZqVDNCMzJVVWxZTjd2cStkKzMyV1JpSXJSbXpN?=
+ =?utf-8?B?ems4WlVzMENrbTlJVjV6bzJWU3pHQVk0blJ4N0hMY2s0dGJQL0YrSmZzQkE2?=
+ =?utf-8?B?SVRsQm9IM2M3aEpiUmxQWTMzVTJMd2FyemhhalJCZDZucmgyeWZGb1RiOEFx?=
+ =?utf-8?B?a0RNeFhHNWl4UDE5N2Z4SktKT0pUZHVOMkxWVFhCZG1KVEZqazVwYTMwZlI5?=
+ =?utf-8?B?YUlEZVFEVXlaSWxwa24xUnducWg3R3U4dWlVZk9ESjBBQllBNmtieUtPRzdM?=
+ =?utf-8?B?V1gvak9oMUNacDUrZDBKQ0IraGt0eDFPbTNFdTljeEFFcVNnTGJWQVdkZ2Rx?=
+ =?utf-8?B?OUh5dG9iZXRKMG92MU9EdU9FaWRZdzVEclZlV25mdUJPcjVhaGxicnNVL1ZV?=
+ =?utf-8?B?K0d2VXlhQmgrSnJpd1lNcUR6WHlpWW56Wi9WcG52dHk5MVNSbEdlak1FZ2lz?=
+ =?utf-8?B?eU10K2cyM0l0bnhHUjhROEM0YjVJTSs2K3ZZam1uQTl4SEF4T0ZGa0NMcFln?=
+ =?utf-8?B?TFJ0Nzh3WUY1UDhVR2xJNXBOWE1Pa05LZVB4bVk1dGNvZGxyYWFWZU1PZ3pU?=
+ =?utf-8?B?VTV2cnNzV1pEc2d2WUFWMFc4aG9WOHRoN005OTZwRzZtYjg5TEw3TzM0NHRV?=
+ =?utf-8?B?ckhYanlLSjlpdkxJR3VDbW1wRzhNYzB2U2VXeFpXSXlON3lhRHplNVN6aktn?=
+ =?utf-8?B?Rm45U00yV01hVXBzYTBEM1VzRXNFa2pDcFY5ck1OYko3Uzl2YWI5Y3F1eWNi?=
+ =?utf-8?B?MjhHOU13aVpUL0dFWTF3cThFejFGdGVpcHdjdjZ6dE9ycUhYVHhBdEZVekZC?=
+ =?utf-8?B?cm9OWXVubDg5OTVRc1FHZWxGcUdrM1ArQTErVjdKM1REWUt6bUZvOVlwdDls?=
+ =?utf-8?B?Y0FZMkJhcmFLMDZZUkFpcWpvVi9HSktxVnFuQUtNVzRqRkdvZmVtMDFwNlFh?=
+ =?utf-8?B?Y2lyUVFyM3l0cjBsYkRoeFYwNGl0VHNxVG9KMVNYYzRWQm9vdExRUUd6TVpC?=
+ =?utf-8?B?QnY5NTlkdGwyV0JVSElBc2ZJM1p0WHVQcHpNbTdCbXZJeGVvUVpFbTlZM2FM?=
+ =?utf-8?B?SFMyTGQvT1RYczlFYVZrQ0Fod2trYy9FY0UxdWpxK2twVDRRdTdHVlBkOXJz?=
+ =?utf-8?B?Rkh1ckkvLzRWb2ZlUzN4b0h3c2xON0hQalpLMXBrcVpwblQzVW1Yc0ZCMThJ?=
+ =?utf-8?B?RVNXSGI3dU5GV1VMSlA5SXhCdGFKbk1SZ2dqQlJ5d0lCeHJZMmFIbHkwZkMz?=
+ =?utf-8?B?WmRuUTBWNTRnTmpXWG4zY1Q2TndKcHgxUEw3WjV1dStpTTB6am5kVWhEc3hr?=
+ =?utf-8?B?WjlEekMrQmk4L1JScGxONVhqMlJlcWpoN2tsbEhBVU03RXE3OG14MDBlRThL?=
+ =?utf-8?Q?5ry4evYlC6e8OQOVe++mbkvHiKr3T4=3D?=
+X-Microsoft-Antispam-Message-Info: Tjw9UXwlUOQQJ3esX1PJak5P6iRaWj/yL1/gPeaJcnXvrXYJFKvQeBN6gj/oopisKEu+i5CV1h4Nx4jtsME32w==
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;6:84FUnT6keFcZRXys+K4rKxnuUTlOwXOCacDDTv7entdUXxF1FFqdgMaURwf3XF63sI3kueCoKdKH9rChsZkLb6Df+Y8OKBm1sqBwKyhmJx/C5Hay2Tsk1BJE8IIYfNcmT7U4a3dhR2jcBO6K4hPClTTIKWjxNBDa7KT4Nu7B2QOeTbllgVjFJ5cqrgLCwvlyS2pX3xaiOBxXUPEajAoKXQmbC8tAmb4AMy6Gg7pmI70xzL7h8dwKe6ncO4zX9KgUGn/AxM2cFMuGMHddmh/jBEJbLe8Sis5A0AZ+wn9JZbZcHBMYP9r3YZbqhtTMoKWXRw5tTq4HOmCLZJOrDzLms1QEP9ha+mEiKgjoB7Zr5kQ=;5:3lD0MfXCGFgnmt+KHsfdh3UJNf0FgdXxfxKddDCqmKzMVe9HkHvlV3dUBTCoAguo5C+27HPX4BRpeiABnN1P7wxQnBMlgc5aYKwD3x4xFjAis5WAEJY0rFW5a13GsB2cs3GIvSd6KyfxYR9pvXb4nI9wkCfm+xCQrU8Gw1td+W8=;24:p0NIzCTKkWQ1j3RydQz01QVWBMB7edQIpnE6IuMiddiKNQ8mpjj7MvSSwmF/XXP0f9dD8lD6H1YpbFYRexXivVGlcqy99mVltJMVEqitVhg=;7:+qLSuHwkQ1hYUeSUtlapwNO5XeHeqVTNmAdPW0Io4lm6UGmP1E/C0eD9hg+SwT/kEPmaOPd6zdSlFKvNKyohl2I7mTiaaAZgOcEdWi88jSaUI69RMn8S4nzWxTk22FNMbaCkfeohVtfbQ+hiiFpv+xfmKldQ7DaNZrq+3dDwuY+uJ4hGkNN7aScxKS2G6Ik63YNzH5EwWpaCdVGWufBOtXq6CzgaUQafDuszKAa4SVjCt7yP78gK60DQ8BNncMvW
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1151;20:miHHopBDnUVSTrwSJDhrFFQTv4BURY31xUZfzOMGmTRqjOPJnTw3Ty6Kaf7j9vHbwineqenKaS+eDwmrUfsX04fYyFizcffKtOshZ19FaHggfavh370hXa7BDYZgww+4axVVP8pLZ1/3/ESp709+S0JoPWyr+4bQmnnfmDCvW///2+P+tiXWgJuW/hIGMSKFGHhcBlvgisdZ9chMmJwPu23L1WwCHc0+9aJntZAVcBMGzu921v5yt9+YfbRweT7o
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2018 14:52:56.8814 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 743adab9-2b28-4673-5bb5-08d5793acbd9
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2018 14:53:58.4783 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73cb5af3-2928-4a37-4acc-08d5793af0ed
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1151
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR07MB1319
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/2018 8:47 AM, Tom Lendacky wrote:
-> On 2/21/2018 8:32 AM, Paolo Bonzini wrote:
->> On 21/02/2018 15:15, Tom Lendacky wrote:
->>> On 2/21/2018 5:41 AM, Paolo Bonzini wrote:
->>>> On 16/02/2018 00:12, Tom Lendacky wrote:
->>>>> +static u32 msr_based_features[] = {
->>>>> +};
->>>>> +
->>>>> +static unsigned int num_msr_based_features = ARRAY_SIZE(msr_based_features);
->>>>> +
->>>>>  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer)
->>>>>  {
->>>>>  	if (efer & efer_reserved_bits)
->>>>> @@ -2785,6 +2794,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->>>>>  	case KVM_CAP_SET_BOOT_CPU_ID:
->>>>>   	case KVM_CAP_SPLIT_IRQCHIP:
->>>>>  	case KVM_CAP_IMMEDIATE_EXIT:
->>>>> +	case KVM_CAP_GET_MSR_FEATURES:
->>>>>  		r = 1;
->>>>>  		break;
->>>>>  	case KVM_CAP_ADJUST_CLOCK:
->>>>> @@ -4410,6 +4420,47 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>>>>  			r = kvm_x86_ops->mem_enc_unreg_region(kvm, &region);
->>>>>  		break;
->>>>>  	}
->>>>> +	case KVM_GET_MSR_INDEX_LIST: {
->>>>> +		struct kvm_msr_list __user *user_msr_list = argp;
->>>>> +		struct kvm_msr_list msr_list;
->>>>> +		unsigned int n;
->>>>> +
->>>>> +		r = -EFAULT;
->>>>> +		if (copy_from_user(&msr_list, user_msr_list, sizeof(msr_list)))
->>>>> +			goto out;
->>>>> +		n = msr_list.nmsrs;
->>>>> +		msr_list.nmsrs = num_msr_based_features;
->>>>> +		if (copy_to_user(user_msr_list, &msr_list, sizeof(msr_list)))
->>>>> +			goto out;
->>>>> +		r = -E2BIG;
->>>>> +		if (n < msr_list.nmsrs)
->>>>> +			goto out;
->>>>> +		r = -EFAULT;
->>>>> +		if (copy_to_user(user_msr_list->indices, &msr_based_features,
->>>>> +				 num_msr_based_features * sizeof(u32)))
->>>>> +			goto out;
->>>>> +		r = 0;
->>>>> +		break;
+On 20.02.2018 18:26, Neil Horman wrote:
+> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
+>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
+>> <tommi.t.rantala@nokia.com> wrote:
+>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
+>>>> Is this meant to be fixed already? I am still seeing this on the
+>>>> latest upstream tree.
 >>>>
->>>> I think it's better to have some logic in kvm_init_msr_list, to filter
->>>> the MSR list based on whatever MSRs the backend provides.
 >>>
->>> Ok, that's what I had originally and then you said to just return the full
->>> list and let KVM_GET_MSR return a 0 or 1 if it was supported. I can switch
->>> it back.
->>
->> Hmm, I cannot find this remark (I would have been very confused, so I
->> tried to look for it).  I commented on removing kvm_valid_msr_feature,
->> but not kvm_init_msr_list.
-> 
-> I think this is the reply that sent me off on that track:
->   https://marc.info/?l=linux-kernel&m=151862648123153&w=2
-> 
-> I'll make it consistent with the other MSR-related items and initialize
-> the list in kvm_init_msr_list().  I'll change the signature of the
-> msr_feature() kvm_x86_ops callback to take an index and optionally return
-> a data value so it can be used to check for support when building the
-> list and return a value when needed.
-
-Hmm, actually I'll just leave the signature alone and pass in a local
-kvm_msr_entry struct variable for the call when initializing the list.
-
-Thanks,
-Tom
-
-> 
-> Thanks,
-> Tom
-> 
->>
->>>>
->>>>> +	}
->>>>> +	case KVM_GET_MSR: {
->>>>
->>>> It's not that the API isn't usable, KVM_GET_MSR is fine for what we need
->>>> here (it's not a fast path), but it's a bit confusing to have
->>>> KVM_GET_MSR and KVM_GET_MSRS.
->>>>
->>>> I see two possibilities:
->>>>
->>>> 1) reuse KVM_GET_MSRS as in the previous version.  It's okay to
->>>> cut-and-paste code from msr_io.
+>>> These two commits are in v4.16-rc1:
 >>>
->>> If I go back to trimming the list based on support, then KVM_GET_MSRS can
->>> be used.
+>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
+>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
+>>> Date:   Mon Feb 5 21:48:14 2018 +0200
+>>>
+>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
+>>> ...
+>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
+>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary
+>>> addresses")
+>>>
+>>>
+>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
+>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
+>>> Date:   Mon Feb 5 15:10:35 2018 +0300
+>>>
+>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
+>>> ...
+>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary
+>>> addresses for ipv6")
+>>>
+>>>
+>>> I guess we missed something if it's still reproducible.
+>>>
+>>> I can check it later this week, unless someone else beat me to it.
 >>
->> No problem, renaming is enough---I should have made a better suggestion
->> in the previous review.
+>> Hi Tommi,
 >>
->> Paolo
+>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
+>> another one then. But I am still seeing these:
 >>
+>> [   58.799130] unregister_netdevice: waiting for lo to become free.
+>> Usage count = 4
+>> [   60.847138] unregister_netdevice: waiting for lo to become free.
+>> Usage count = 4
+>> [   62.895093] unregister_netdevice: waiting for lo to become free.
+>> Usage count = 4
+>> [   64.943103] unregister_netdevice: waiting for lo to become free.
+>> Usage count = 4
+>>
+>> on upstream tree pulled ~12 hours ago.
+>>
+> Can you write a systemtap script to probe dev_hold, and dev_put, printing out a
+> backtrace if the device name matches "lo".  That should tell us definitively if
+> the problem is in the same location or not
+
+Hi Dmitry, I tested with the reproducer and the kernel .config file that 
+you sent in the first email in this thread:
+
+With 4.16-rc2 unable to reproduce.
+
+With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting 
+for lo to become free. Usage count = 3"
+
+With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in 
+sctp_v6_get_dst()" cherry-picked on top, unable to reproduce.
+
+
+Is syzkaller doing something else now to trigger the bug...?
+Can you still trigger the bug with the same reproducer?
+
+
+Tommi
