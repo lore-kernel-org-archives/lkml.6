@@ -1,67 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932411AbeBUSw6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:52:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45935 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932244AbeBUSw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:52:56 -0500
-Date: Wed, 21 Feb 2018 19:52:52 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Dan Rue <dan.rue@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] mm, hugetlb: further simplify hugetlb allocation API
-Message-ID: <20180221185252.GJ2231@dhcp22.suse.cz>
-References: <20180103093213.26329-1-mhocko@kernel.org>
- <20180103093213.26329-6-mhocko@kernel.org>
- <20180221042457.uolmhlmv5je5dqx7@xps>
- <20180221095526.GB2231@dhcp22.suse.cz>
- <20180221100107.GC2231@dhcp22.suse.cz>
- <20180221161914.ltssyoumwpyiwca6@xps>
+        id S932126AbeBUSyF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:54:05 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41081 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753691AbeBUSyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:54:02 -0500
+X-Google-Smtp-Source: AH8x2279gUobtMImtRPDHHWm2I3j8r1VZtDALhmvMVS2NwxoibCNs0E7S271e9vud03mrFxw4pmh/g==
+Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
+To: Simon Horman <horms@verge.net.au>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
+ <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
+ <20180221100716.GF7203@w540>
+ <cbeb1b6b-1b02-7665-0f1f-847ab8de69e3@cogentembedded.com>
+ <20180221173106.vgyshbz3kkc4p3cu@verge.net.au>
+ <321c6c8c-8853-ac00-7567-c0be82b510f4@cogentembedded.com>
+ <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
+ <20180221182340.wvdvgtv5pw7pvd3v@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <eaf3c72b-a482-86cf-88e7-4af457f74558@cogentembedded.com>
+Date: Wed, 21 Feb 2018 21:53:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180221161914.ltssyoumwpyiwca6@xps>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180221182340.wvdvgtv5pw7pvd3v@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-02-18 10:19:14, Dan Rue wrote:
-> On Wed, Feb 21, 2018 at 11:01:07AM +0100, Michal Hocko wrote:
-> > On Wed 21-02-18 10:55:26, Michal Hocko wrote:
-> > > On Tue 20-02-18 22:24:57, Dan Rue wrote:
-> > [...]
-> > > > I bisected the failure to this commit. The problem is seen on multiple
-> > > > architectures (tested x86-64 and arm64).
-> > > 
-> > > The patch shouldn't have introduced any functional changes IIRC. But let
-> > > me have a look
-> > 
-> > Hmm, I guess I can see it. Does the following help?
-> > ---
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 7c204e3d132b..a963f2034dfc 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -1583,7 +1583,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
-> >  		page = NULL;
-> >  	} else {
-> >  		h->surplus_huge_pages++;
-> > -		h->nr_huge_pages_node[page_to_nid(page)]++;
-> > +		h->surplus_huge_pages_node[page_to_nid(page)]++;
-> >  	}
-> >  
-> >  out_unlock:
+On 02/21/2018 09:23 PM, Simon Horman wrote:
+
+> ...
 > 
-> That did the trick. Confirmed fixed on v4.15-3389-g0c397daea1d4 and
-> v4.16-rc2 with the above patch.
+>>>>>>>> +			clocks = <&cpg CPG_MOD 812>;
+>>>>>>>> +			power-domains = <&sysc 32>;
+>>>>>>>> +			resets = <&cpg 812>;
+>>>>>>>> +			phy-mode = "rgmii-txid";
+>>>>>>>
+>>>>>>>    Why not just "rgmii"? TX delay is a board specific detail, no?
+>>>>>>>
+>>>>>> I admit I took this one straight from r8a7796 dtsi.
+>>>>>> Would you like to me resend and change this?
+>>>>>
+>>>>>    Yes, unless Simon would fix it while merging...
+>>>>
+>>>> Can I confirm the desired change is s/rgmii-txid/rgmii/ ?
+>>>
+>>>    Yes.
+>>
+>>    Apparently that means that this prop should be overridden in the board file
+>> (which may not be an easy task given the board is Salvator-XS again).
+>>
+>> [...]
+> 
+> Can we override it in r8a77965-salvator-x.dts or r8a77965-salvator-xs.dts?
 
-Thanks a lot for re-testing! Can I assume your Tested-by?
+   In salvator-common.dtsi most probably -- it has the PHY data for Ether AVB.
 
--- 
-Michal Hocko
-SUSE Labs
+> I feel that I'm missing an important point here.
+
+   Well, r8a779{5|6}.dtsi also have phy-mode = "rgmii-txid" (which was unjustified
+in my current understanding). Thus such board override wouldn't hurt them. But we lack
+a patch modifying salvator-common.dtsi in htis series, so I'm now thinking a respin of
+this series is needed anyway... sorry for being unclear. :-)
+
+MBR, Sergei
