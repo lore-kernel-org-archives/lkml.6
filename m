@@ -1,143 +1,121 @@
-Return-Path: <kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x2273pTPF8BAm8HiNuahfHiVR7oPdhfZxu8UpS7X5lLiHMggJzvhGx1yQuxlbhvFGyiJJUNGs
-ARC-Seal: i=1; a=rsa-sha256; t=1518175103; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HMn/7MST/EuYn4Uk9gxVlKR4qKujSxXYwfesbxwzuQQgb+GuTo4/w1oHAj2yTGpNef
-         cRFEy6np5Hw/Y/yE6mwnykVEbfDdbbB3PTNYCxdKLVhpv2egiUQ2R2BhawpcaltwS9tv
-         AR/dzy6NPr38uIxdkWaX8JhaJd3rhdqN2Anl8O8MQKTMi1FB56F0pWQX8VxxxxNL9Tuz
-         UXyfB7QcG9FUaZqzWMHKYoNxokGgDVpsFOYxSffpBr5nMimLNxf+J8ZnaVq6HEpX2tAC
-         /j2axPubkz7jyVofdwX1bygihhTjZGhooQqVRLtlWT5vpza92yRJ/J1MJ1715lZyjCve
-         t21Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=PtKCdjezdS7D1o/3dQdqe06HUK6rSSKXb18otnQFOlM=;
-        b=nNF0A81GRdCphHCGXOgI+Gi/HZE3atWvJlBxG6GRLlFW+2dV/XaHbS8cezAVTwiCJR
-         +2QsDjrLUBJR/t7aPxga0UIuI4VXtsYMXcyeppYwxj7JoYykuAac39/ZQzk+Y5hB7ERa
-         9UID1WueHWMvPJ653L9I7stxcOidLrY79LMUeESa70LPuP00nFi7wYZPuZHenSwysGM8
-         RVDMwg3BYpmd0tkUHpgxaicsRmEYm2jS/bj6K1RjxIyO1pH3U/1qoJI4jLC5wHCix8Xx
-         PVZ+jRpdQ+R8sZDA+OfA2lfxHO51sbRq0vlA1kD0/EB4bHJEIfQeIuPozaL1KvSvi7Od
-         UWtg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11667-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [kernel-hardening] [PATCH 4/6] Protectable Memory
-To: Christopher Lameter <cl@linux.com>
-CC: Matthew Wilcox <willy@infradead.org>, Boris Lukashev
-	<blukashev@sempervictus.com>, Jann Horn <jannh@google.com>,
-	<jglisse@redhat.com>, Kees Cook <keescook@chromium.org>, Michal Hocko
-	<mhocko@kernel.org>, Laura Abbott <labbott@redhat.com>, Christoph Hellwig
-	<hch@infradead.org>, <linux-security-module@vger.kernel.org>,
-	<linux-mm@kvack.org>, kernel list <linux-kernel@vger.kernel.org>, "Kernel
- Hardening" <kernel-hardening@lists.openwall.com>
-References: <20180124175631.22925-1-igor.stoppa@huawei.com>
- <20180124175631.22925-5-igor.stoppa@huawei.com>
- <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
- <20180126053542.GA30189@bombadil.infradead.org>
- <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
- <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
- <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <4e113814-7d24-b48c-993f-46d5aee1755d@huawei.com>
-Date: Fri, 9 Feb 2018 13:17:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591082-1519251959-2-5305837329467479643
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519251959; b=SoTy8c7o1LU6pJHSB8ZTLoD0ysnzweZO1/jqfsSN1BfYDRB
+    BtCUZdpXXNNsAwwGIENXWeXpdWZp97rU3CB1RDH+E2ruRL3LBi4wLomfrkheXSpa
+    jgQoQDmKMeeilH8Ang2W6iKCBoWqvLkrlIHVvCjIGKbVAS9qqALSw/u8vwS0Rlox
+    rsB+czJOjlWVHgP5u+C890qz6BvMO1vNlOwNt2AXhzpwP/wStX6cawF8dbYCMLKM
+    CXn3Ob/NaCCRFFEj0hXv5usDI6Tms1AZ13vKoZeIINFAxXW7NChMuRA69ZHnCNe7
+    wFqsnsI1kw58VJjS4p34BfzC+snnGWBb1bPJe4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519251959; bh=9
+    Y4Dd4CKtMm5Vk4Lmwv6zW54wZq77aRek6l9UK3dbZw=; b=Lww5IHQbq1wPhvb7r
+    JAFhiRyLRV0vK1X7uiN3H2gKz1JFA8uK5vbYWVAik0l7195UjjjGQFOooUtbE6YZ
+    U1dTPCm5lSX8Elj9SdYqJnLveK5L0QP51hFz89PATRSifW82uo0BSE06++py4ZFk
+    XlsxQBzh1ofsg8ERKwChMEwgRxYHOlGVSwgJ+OWHH7PJm8y5oVqd4uQpPL+fwclz
+    GDgU6ymck1fo7bMemURqDE3Z1VQDtXK+zwWjzDxTYQnEtkwR8NT/eEkaO5gm8oLL
+    kZtn6QyD5uQPOhKkTwZrtmIdIQCp4Sgd3iRo8TxERh2gss6kN/E5BhvfiJrfy/b4
+    3hN+Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CtAGraeH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CtAGraeH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AH8x2250jNqj9Rn+BIyy8z7oiqXaGeQCpzRZSDsBLD+c3hKXozG5kNS0e6+KuYAgiC4eoN6l4rqRjA==
+From: Laura Abbott <labbott@redhat.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+	Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCHv2 0/2] Ion unit test with VGEM
+Date: Wed, 21 Feb 2018 14:25:41 -0800
+Message-Id: <20180221222543.13633-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chris Wilson <chris@chris-wilson.co.uk>, linux-kselftest@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1802050935300.10705@nuc-kabylake>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
-X-GMAIL-MSGID: =?utf-8?q?1591921977447513555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
 
+This is v2 of the series to add a unit test to Ion with VGEM. From v1:
 
-On 05/02/18 17:40, Christopher Lameter wrote:
-> On Sat, 3 Feb 2018, Igor Stoppa wrote:
-> 
->>> We could even do this in a more thorough way. Can we use a ring 1 / 2
->>> distinction to create a hardened OS core that policies the rest of
->>> the ever expanding kernel with all its modules and this and that feature?
->>
->> What would be the differentiating criteria? Furthermore, what are the
->> chances
->> of invalidating the entire concept, because there is already an
->> hypervisor using
->> the higher level features?
->> That is what you are proposing, if I understand correctly.
-> 
-> Were there not 4 rings as well as methods by the processor vendors to
-> virtualize them as well?
+Ion hasn't had much in the way of unit tests and fixing that is
+something that needs to happen before it can move out of staging. The
+difficult part of testing parts of Ion is that it relies on having a
+kernel driver to actually make some of the dma_buf calls. The vgem
+DRM driver exists mostly for testing and works great for this case.
 
-I think you are talking x86, mostly.
-On ARM there are ELx and they are often (typically?) already used.
-For x86 I cannot comment.
+Changes since v1:
+- Dropped RFC
+- Feedback/review from Daniel Vetter about DRM ioctls
 
->>> I think that will long term be a better approach and allow more than the
->>> current hardening approaches can get you. It seems that we are willing to
->>> tolerate significant performance regressions now. So lets use the
->>> protection mechanisms that the hardware offers.
->>
->> I would rather *not* propose significant performance regression :-P
-> 
-> But we already have implemented significant kernel hardening which causes
-> performance regressions. Using hardware capabilities allows the processor
-> vendor to further optimize these mechanisms whereas the software
-> preventative measures are eating up more and more performance as the pile
-> them on. Plus these are methods that can be worked around. Restrictions
-> implemented in a higher ring can be enforced and are much better than
-> just "hardening" (which is making life difficult for the hackers and
-> throwing away performannce for the average user).
+Thanks,
+Laura
 
-What you are proposing requires major restructuring of the memory
-management - at the very least - provided that it doesn't cause the
-conflicts I mentioned above.
+Laura Abbott (2):
+  selftests: ion: Remove some prints
+  selftests: ion: Add simple test with the vgem driver
 
-Even after you do that, the system will still be working with memory
-pages, there will be still a need to segregate data within certain
-pages, or pay the penalty of handling exceptions, when data with
-different permissions coexist within the same page.
+ tools/testing/selftests/android/ion/Makefile      |   3 +-
+ tools/testing/selftests/android/ion/config        |   1 +
+ tools/testing/selftests/android/ion/ionmap_test.c | 149 ++++++++++++++++++++++
+ tools/testing/selftests/android/ion/ionutils.c    |   6 -
+ 4 files changed, 152 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/android/ion/ionmap_test.c
 
-The way the pmalloc API is designed is meant to facilitate the
-segregation and to actually improve performance, by grouping types of
-data with same scope and permission.
+-- 
+2.14.3
 
-WRT the implementation, there is a minimal exposure to the memory
-provider, both for allocation and release.
-
-Same goes for the protection mechanism.
-It's a single call to the function which makes pages read only.
-It would be trivial to swap it out with a call to whatever framework you
-want to come up with, for implementing ring/EL based protection.
-
->From this perspective, you can easily provide patches that implement
-what you are proposing, against pmalloc, if you really think that it's
-the way to go.
-
-I'll be happy to use them, if they provide improved performance and same
-or better protection.
-
-The way I designed pmalloc was really to be able to switch to some
-alternate memory provider and/or protection mechanism, should a better
-one arise.
-
-But it can be done in a separate step, I think, since you are not
-proposing to just change pmalloc, you are proposing to re-design how the
-overall kernel memory hardening works (including executable pages, const
-data, __ro_after_init, etc.)
-
---
-igor
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
