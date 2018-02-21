@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966038AbeBUPNY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:13:24 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46419 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935404AbeBUPNV (ORCPT
+        id S966068AbeBUPNo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:13:44 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45264 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934979AbeBUPNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:13:21 -0500
-X-Google-Smtp-Source: AH8x2258jmC8W85kgo4pn1Z6myziwj6ad4lG4MJtAecbGfARg+OKkootMUHQAgYbffP3un6bnI/7vQ==
-Date: Wed, 21 Feb 2018 16:13:17 +0100
+        Wed, 21 Feb 2018 10:13:41 -0500
+X-Google-Smtp-Source: AH8x225IkW5tqnICOW8yUs4PElh6zDbF9GW7Q3IIDVS6wq+Wvb/vRwoeXy3NMuGCRV2GZ4bTH4zkgw==
+Date: Wed, 21 Feb 2018 16:13:37 +0100
 From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
 To: Andy Shevchenko <andy@infradead.org>
 Cc: Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] platform/x86: topstar-laptop: split ACPI events and
- input handling
-Message-ID: <a2c2c74033dee3ca1f2b97768e0c6f523c2313b5.1519225570.git.gdouezangrard@gmail.com>
+Subject: [PATCH v3 5/6] platform/x86: topstar-laptop: add Topstar U931/RVP7
+ WLAN LED workaround
+Message-ID: <ed6c10037d1d7dd92f89da412c9ccced3a4b1571.1519225570.git.gdouezangrard@gmail.com>
 References: <cover.1519225570.git.gdouezangrard@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,192 +26,197 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* get the `acpi_device` from the `topstar_laptop` struct,
+Topstar U931 laptops provide a LED synced with the WLAN adapter
+hard-blocking state. Unfortunately, some models seem to be defective,
+making impossible to hard-block the adapter with the WLAN switch and
+thus the LED is useless.
 
-* split input registering and `sparse_keymap` events from ACPI events
-handling,
+An ACPI method is available to programmatically control this switch and
+it indirectly allows to control the LED.
 
-* use notify, init and exit functions for ACPI and input handling
+This commit registers the LED within the corresponding subsystem, making
+possible for instance to use an rfkill-based trigger to synchronize the
+LED with the device state.
+
+This workaround is enabled automatically for Topstar U931/RVP7 laptops
+based on a DMI check.
 
 Signed-off-by: Guillaume Douézan-Grard <gdouezangrard@gmail.com>
 ---
- drivers/platform/x86/topstar-laptop.c | 109 ++++++++++++++++++++++------------
- 1 file changed, 71 insertions(+), 38 deletions(-)
+ drivers/platform/x86/Kconfig          |   2 +
+ drivers/platform/x86/topstar-laptop.c | 108 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 110 insertions(+)
 
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 9a8f96465cdc..bc66a31757db 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -742,6 +742,8 @@ config TOPSTAR_LAPTOP
+ 	depends on ACPI
+ 	depends on INPUT
+ 	select INPUT_SPARSEKMAP
++	select LEDS_CLASS
++	select NEW_LEDS
+ 	---help---
+ 	  This driver adds support for hotkeys found on Topstar laptops.
+ 
 diff --git a/drivers/platform/x86/topstar-laptop.c b/drivers/platform/x86/topstar-laptop.c
-index 17f22a085d9a..fbf020e8a0e1 100644
+index 792c90d62724..bf9761092c7e 100644
 --- a/drivers/platform/x86/topstar-laptop.c
 +++ b/drivers/platform/x86/topstar-laptop.c
-@@ -24,9 +24,14 @@
- #define TOPSTAR_LAPTOP_CLASS "topstar"
+@@ -18,8 +18,10 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/acpi.h>
++#include <linux/dmi.h>
+ #include <linux/input.h>
+ #include <linux/input/sparse-keymap.h>
++#include <linux/leds.h>
+ #include <linux/platform_device.h>
  
- struct topstar_laptop {
-+	struct acpi_device *device;
+ #define TOPSTAR_LAPTOP_CLASS "topstar"
+@@ -28,8 +30,77 @@ struct topstar_laptop {
+ 	struct acpi_device *device;
+ 	struct platform_device *platform;
  	struct input_dev *input;
++	struct led_classdev led;
  };
  
 +/*
-+ * Input
++ * LED
 + */
 +
- static const struct key_entry topstar_keymap[] = {
- 	{ KE_KEY, 0x80, { KEY_BRIGHTNESSUP } },
- 	{ KE_KEY, 0x81, { KEY_BRIGHTNESSDOWN } },
-@@ -57,40 +62,12 @@ static const struct key_entry topstar_keymap[] = {
- 	{ KE_END, 0 }
- };
- 
--static void topstar_acpi_notify(struct acpi_device *device, u32 event)
-+static void topstar_input_notify(struct topstar_laptop *topstar, int event)
- {
--	static bool dup_evnt[2];
--	bool *dup;
--	struct topstar_laptop *topstar = acpi_driver_data(device);
--
--	/* 0x83 and 0x84 key events comes duplicated... */
--	if (event == 0x83 || event == 0x84) {
--		dup = &dup_evnt[event - 0x83];
--		if (*dup) {
--			*dup = false;
--			return;
--		}
--		*dup = true;
--	}
--
- 	if (!sparse_keymap_report_event(topstar->input, event, 1, true))
- 		pr_info("unknown event = 0x%02x\n", event);
- }
- 
--static int topstar_acpi_fncx_switch(struct acpi_device *device, bool state)
--{
--	acpi_status status;
--
--	status = acpi_execute_simple_method(device->handle, "FNCX",
--						state ? 0x86 : 0x87);
--	if (ACPI_FAILURE(status)) {
--		pr_err("Unable to switch FNCX notifications\n");
--		return -ENODEV;
--	}
--
--	return 0;
--}
--
- static int topstar_input_init(struct topstar_laptop *topstar)
- {
- 	struct input_dev *input;
-@@ -124,9 +101,62 @@ static int topstar_input_init(struct topstar_laptop *topstar)
- 	return err;
- }
- 
-+static void topstar_input_exit(struct topstar_laptop *topstar)
++static enum led_brightness topstar_led_get(struct led_classdev *led)
 +{
-+	input_unregister_device(topstar->input);
++	return led->brightness;
 +}
 +
-+/*
-+ * ACPI
-+ */
-+
-+static int topstar_acpi_fncx_switch(struct acpi_device *device, bool state)
++static int topstar_led_set(struct led_classdev *led,
++		enum led_brightness state)
 +{
-+	acpi_status status;
-+	u64 arg = state ? 0x86 : 0x87;
++	struct topstar_laptop *topstar = container_of(led,
++			struct topstar_laptop, led);
 +
-+	status = acpi_execute_simple_method(device->handle, "FNCX", arg);
-+	if (ACPI_FAILURE(status)) {
-+		pr_err("Unable to switch FNCX notifications\n");
-+		return -ENODEV;
++	struct acpi_object_list params;
++	union acpi_object in_obj;
++	unsigned long long int ret;
++	acpi_status status;
++
++	params.count = 1;
++	params.pointer = &in_obj;
++	in_obj.type = ACPI_TYPE_INTEGER;
++	in_obj.integer.value = 0x83;
++
++	/*
++	 * Topstar ACPI returns 0x30001 when the LED is ON and 0x30000 when it
++	 * is OFF.
++	 */
++	status = acpi_evaluate_integer(topstar->device->handle,
++			"GETX", &params, &ret);
++	if (ACPI_FAILURE(status))
++		return -1;
++
++	/*
++	 * FNCX(0x83) toggles the LED (more precisely, it is supposed to
++	 * act as an hardware switch and disconnect the WLAN adapter but
++	 * it seems to be faulty on some models like the Topstar U931
++	 * Notebook).
++	 */
++	if ((ret == 0x30001 && state == LED_OFF)
++			|| (ret == 0x30000 && state != LED_OFF)) {
++		status = acpi_execute_simple_method(topstar->device->handle,
++				"FNCX", 0x83);
++		if (ACPI_FAILURE(status))
++			return -1;
 +	}
 +
 +	return 0;
 +}
 +
-+static void topstar_acpi_notify(struct acpi_device *device, u32 event)
++static int topstar_led_init(struct topstar_laptop *topstar)
 +{
-+	struct topstar_laptop *topstar = acpi_driver_data(device);
-+	static bool dup_evnt[2];
-+	bool *dup;
++	topstar->led = (struct led_classdev) {
++		.default_trigger = "rfkill0",
++		.brightness_get = topstar_led_get,
++		.brightness_set_blocking = topstar_led_set,
++		.name = TOPSTAR_LAPTOP_CLASS "::wlan",
++	};
 +
-+	/* 0x83 and 0x84 key events comes duplicated... */
-+	if (event == 0x83 || event == 0x84) {
-+		dup = &dup_evnt[event - 0x83];
-+		if (*dup) {
-+			*dup = false;
-+			return;
-+		}
-+		*dup = true;
-+	}
-+
-+	topstar_input_notify(topstar, event);
++	return led_classdev_register(&topstar->platform->dev, &topstar->led);
 +}
 +
-+static int topstar_acpi_init(struct topstar_laptop *topstar)
++static void topstar_led_exit(struct topstar_laptop *topstar)
 +{
-+	return topstar_acpi_fncx_switch(topstar->device, true);
++	led_classdev_unregister(&topstar->led);
 +}
 +
-+static void topstar_acpi_exit(struct topstar_laptop *topstar)
+ /*
+  * Input
+  */
+@@ -192,11 +263,37 @@ static void topstar_acpi_exit(struct topstar_laptop *topstar)
+ 	topstar_acpi_fncx_switch(topstar->device, false);
+ }
+ 
++/*
++ * Enable software-based WLAN LED control on systems with defective
++ * hardware switch.
++ */
++static bool led_workaround;
++
++static int dmi_led_workaround(const struct dmi_system_id *id)
 +{
-+	topstar_acpi_fncx_switch(topstar->device, false);
++	led_workaround = true;
++	return 0;
 +}
++
++static const struct dmi_system_id topstar_dmi_ids[] = {
++	{
++		.callback = dmi_led_workaround,
++		.ident = "Topstar U931/RVP7",
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "U931"),
++			DMI_MATCH(DMI_BOARD_VERSION, "RVP7"),
++		},
++	},
++	{}
++};
 +
  static int topstar_acpi_add(struct acpi_device *device)
  {
  	struct topstar_laptop *topstar;
-+	int err;
+ 	int err;
  
++	dmi_check_system(topstar_dmi_ids);
++
  	topstar = kzalloc(sizeof(struct topstar_laptop), GFP_KERNEL);
  	if (!topstar)
-@@ -134,30 +164,34 @@ static int topstar_acpi_add(struct acpi_device *device)
+ 		return -ENOMEM;
+@@ -218,8 +315,16 @@ static int topstar_acpi_add(struct acpi_device *device)
+ 	if (err)
+ 		goto err_platform_exit;
  
- 	strcpy(acpi_device_name(device), "Topstar TPSACPI");
- 	strcpy(acpi_device_class(device), TOPSTAR_LAPTOP_CLASS);
-+	device->driver_data = topstar;
-+	topstar->device = device;
- 
--	if (topstar_acpi_fncx_switch(device, true))
-+	err = topstar_acpi_init(topstar);
-+	if (err)
- 		goto err_free;
- 
--	if (topstar_input_init(topstar))
--		goto err_free;
-+	err = topstar_input_init(topstar);
-+	if (err)
-+		goto err_acpi_exit;
- 
--	device->driver_data = topstar;
++	if (led_workaround) {
++		err = topstar_led_init(topstar);
++		if (err)
++			goto err_input_exit;
++	}
++
  	return 0;
  
-+err_acpi_exit:
-+	topstar_acpi_exit(topstar);
- err_free:
- 	kfree(topstar);
--	return -ENODEV;
-+	return err;
- }
- 
- static int topstar_acpi_remove(struct acpi_device *device)
++err_input_exit:
++	topstar_input_exit(topstar);
+ err_platform_exit:
+ 	topstar_platform_exit(topstar);
+ err_acpi_exit:
+@@ -233,6 +338,9 @@ static int topstar_acpi_remove(struct acpi_device *device)
  {
  	struct topstar_laptop *topstar = acpi_driver_data(device);
  
--	topstar_acpi_fncx_switch(device, false);
-+	topstar_input_exit(topstar);
-+	topstar_acpi_exit(topstar);
- 
--	input_unregister_device(topstar->input);
- 	kfree(topstar);
--
- 	return 0;
- }
- 
-@@ -188,7 +222,6 @@ static int __init topstar_laptop_init(void)
- 		return ret;
- 
- 	pr_info("ACPI extras driver loaded\n");
--
- 	return 0;
- }
- 
++	if (led_workaround)
++		topstar_led_exit(topstar);
++
+ 	topstar_input_exit(topstar);
+ 	topstar_platform_exit(topstar);
+ 	topstar_acpi_exit(topstar);
 -- 
 2.16.1
