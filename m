@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224dU/1t1PVAIbZucjNMH2c3sRzPuojutirwF4cvtpI+L3BarKb9/MNhTWGJTYib0xTOsmTp
-ARC-Seal: i=1; a=rsa-sha256; t=1519218273; cv=none;
+X-Google-Smtp-Source: AH8x2265PPzLBNstwtlrPo2zRbp8bFECExYLbSgYU8GoMxZUcqi7KENqor2vch42CAWDyWJL9AOo
+ARC-Seal: i=1; a=rsa-sha256; t=1519218270; cv=none;
         d=google.com; s=arc-20160816;
-        b=lr+/r+xmDrem94lPESQajR5uy8fIGq6xMn7xLkGdPE59PHmINPpRuBjdDVnmolsliX
-         F007idoif5Ul2+XlknUwue/FUfg/9d4fSkqEVDikX0xQuQwsEnu0/qXnrsuc6itsO9sn
-         7A6E2HJh7+CPUjyA+Q/UwZtGW8UmbbTn5NBGNoIGz/E9pVbOpcFLXOA5/irZ/AA/Dk5h
-         Tfn5CrjExJmkLzWzNU1BCCoasNifhxg8zk4o/IzuI8RVtNn5fu2LDbNmrtfAmJ/47Xac
-         kx3THOY+dw18JKmFHaKviV2alxlVY/njezBIWfczEXdmGpf2yDaFXtGkF1xwqkFcdOjg
-         GL2A==
+        b=GAc9W9pHthutSG+j0Zyqn/LcMSaLGqCTTfopuDQSV3k6YAyHzYXz3ZMnsL91JdBA5j
+         Ec2VtKv0ej6w6w2zc2RP0amw7SZIyxEb+QzRF3pa8mryaX7b/aIC/WWn8LsDAAJT00Zw
+         AoXP0mpG/rT5docUS6/IX6FNw0efATf8J83Q/NC5CCg0iXV/kIei9IXlHGMzNeLHGL28
+         yqX2K1t81juvRw3njEu4vlT4m8DFfisYqNjuP/q11mEKIYGIdl2tT8SUqpqcdpCjwgYd
+         6svrbAhG7N0mI1Y0rWQqn+VBiNr09l/WmDA4fLtKr4tDkSBWkV9ybkiC1fYtSENdi+tt
+         9oGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=58hjT/S3p6Mvf2jKmaFL7HLBlV4I8ABYSKTQ9kh7xYw=;
-        b=CuInC/Cns1/HeNLqPR19dNjt4x6P4HHNoH48Upjt4PyIb1QxWiIeSj6TNdi33/1glI
-         PbMIXicD4tN+H52G7pFb+QqjROWhcOieJZYBkowT3+X2Mnv6B6XbkgF02MG6oZQWDLmI
-         W4X2kbMIP9WLVyAYLBn0k27BmXsDvSeDvSsMpsuK5Mv2Qgoe9eMhLkPDaVuXEsXMogNe
-         THiYBBjGNgiMEoamRPVBSS0kay3DaQc93kb80/bg9Z6lTRNj4GZKAT6VLkqK7ogwSLb9
-         9TY7eZTdS1JQZUcNjTdr+lw9wdTv2QMEubqVaXtYMf8U9UX8ZhCtFCEja+xhKXScsZJ4
-         fYZg==
+        bh=pZvrlMrpFntl396AtGs52GopchJWkLwCQueFcNR4pAg=;
+        b=eoFh/wuFFI/39X7UEMRUxRwO9Pp5Oj41zvVMWi2+YEvdTuWV7g50Fpkc9VQKfjCBIO
+         ymxM/ulPBN4ELEdfuKYW7z4+sta7i9sAN/jOzY6L/KefBuzi65EuWImn9ubpiEvJHosb
+         TwhC73Hx4BAv0zF9exvq99gpuJ8tNpO+CgRhj+96JoJ4B+veJj8JyeGcqhCF60vScLTY
+         lioO0bfLnDidX2EK4d9YegRfmdc0E18IKGLIdR+0NgfHvJTaSF/QKUmiEo+UUrk8Zih1
+         PCPv0spFKtnYdux+p0HAOVr2n8tPSBNmAr3fFLqxAKA/ie0GTKK2zpB5dAbt73hYwtVO
+         vMhA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Zhou Wang <wangzhou1@hisilicon.com>
-Subject: [PATCH 4.14 113/167] PCI: Disable MSI for HiSilicon Hip06/Hip07 only in Root Port mode
-Date: Wed, 21 Feb 2018 13:48:44 +0100
-Message-Id: <20180221124530.579888907@linuxfoundation.org>
+	Mathieu Malaterre <mathieu.malaterre@gmail.com>,
+	Marcin Nowakowski <marcin.nowakowski@mips.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	Mathieu Malaterre <malat@debian.org>,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.14 112/167] MIPS: Fix incorrect mem=X@Y handling
+Date: Wed, 21 Feb 2018 13:48:43 +0100
+Message-Id: <20180221124530.493920482@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015819879372165?=
-X-GMAIL-MSGID: =?utf-8?q?1593015819879372165?=
+X-GMAIL-THRID: =?utf-8?q?1593015817295324421?=
+X-GMAIL-MSGID: =?utf-8?q?1593015817295324421?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +53,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dongdong Liu <liudongdong3@huawei.com>
+From: Marcin Nowakowski <marcin.nowakowski@mips.com>
 
-commit deb86999323661c019ef2740eb9d479d1e526b5c upstream.
+commit 67a3ba25aa955198196f40b76b329b3ab9ad415a upstream.
 
-HiSilicon Hip06/Hip07 can operate as either a Root Port or an Endpoint.  It
-always advertises an MSI capability, but it can only generate MSIs when in
-Endpoint mode.
+Commit 73fbc1eba7ff ("MIPS: fix mem=X@Y commandline processing") added a
+fix to ensure that the memory range between PHYS_OFFSET and low memory
+address specified by mem= cmdline argument is not later processed by
+free_all_bootmem.  This change was incorrect for systems where the
+commandline specifies more than 1 mem argument, as it will cause all
+memory between PHYS_OFFSET and each of the memory offsets to be marked
+as reserved, which results in parts of the RAM marked as reserved
+(Creator CI20's u-boot has a default commandline argument 'mem=256M@0x0
+mem=768M@0x30000000').
 
-The device has the same Vendor and Device IDs in both modes, so check the
-Class Code and disable MSI only when operating as a Root Port.
+Change the behaviour to ensure that only the range between PHYS_OFFSET
+and the lowest start address of the memories is marked as protected.
 
-[bhelgaas: changelog]
-Fixes: 72f2ff0deb87 ("PCI: Disable MSI for HiSilicon Hip06/Hip07 Root Ports")
-Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Zhou Wang <wangzhou1@hisilicon.com>
-Cc: stable@vger.kernel.org	# v4.11+
+This change also ensures that the range is marked protected even if it's
+only defined through the devicetree and not only via commandline
+arguments.
+
+Reported-by: Mathieu Malaterre <mathieu.malaterre@gmail.com>
+Signed-off-by: Marcin Nowakowski <marcin.nowakowski@mips.com>
+Fixes: 73fbc1eba7ff ("MIPS: fix mem=X@Y commandline processing")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # v4.11+
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Patchwork: https://patchwork.linux-mips.org/patch/18562/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/kernel/setup.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -1636,8 +1636,8 @@ static void quirk_pcie_mch(struct pci_de
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7520_MCH,	quirk_pcie_mch);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7320_MCH,	quirk_pcie_mch);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7525_MCH,	quirk_pcie_mch);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI,	0x1610,	quirk_pcie_mch);
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -374,6 +374,7 @@ static void __init bootmem_init(void)
+ 	unsigned long reserved_end;
+ 	unsigned long mapstart = ~0UL;
+ 	unsigned long bootmap_size;
++	phys_addr_t ramstart = (phys_addr_t)ULLONG_MAX;
+ 	bool bootmap_valid = false;
+ 	int i;
  
-+DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_HUAWEI, 0x1610, PCI_CLASS_BRIDGE_PCI, 8, quirk_pcie_mch);
+@@ -394,7 +395,8 @@ static void __init bootmem_init(void)
+ 	max_low_pfn = 0;
  
- /*
-  * It's possible for the MSI to get corrupted if shpc and acpi
+ 	/*
+-	 * Find the highest page frame number we have available.
++	 * Find the highest page frame number we have available
++	 * and the lowest used RAM address
+ 	 */
+ 	for (i = 0; i < boot_mem_map.nr_map; i++) {
+ 		unsigned long start, end;
+@@ -406,6 +408,8 @@ static void __init bootmem_init(void)
+ 		end = PFN_DOWN(boot_mem_map.map[i].addr
+ 				+ boot_mem_map.map[i].size);
+ 
++		ramstart = min(ramstart, boot_mem_map.map[i].addr);
++
+ #ifndef CONFIG_HIGHMEM
+ 		/*
+ 		 * Skip highmem here so we get an accurate max_low_pfn if low
+@@ -435,6 +439,13 @@ static void __init bootmem_init(void)
+ 		mapstart = max(reserved_end, start);
+ 	}
+ 
++	/*
++	 * Reserve any memory between the start of RAM and PHYS_OFFSET
++	 */
++	if (ramstart > PHYS_OFFSET)
++		add_memory_region(PHYS_OFFSET, ramstart - PHYS_OFFSET,
++				  BOOT_MEM_RESERVED);
++
+ 	if (min_low_pfn >= max_low_pfn)
+ 		panic("Incorrect memory mapping !!!");
+ 	if (min_low_pfn > ARCH_PFN_OFFSET) {
+@@ -663,9 +674,6 @@ static int __init early_parse_mem(char *
+ 
+ 	add_memory_region(start, size, BOOT_MEM_RAM);
+ 
+-	if (start && start > PHYS_OFFSET)
+-		add_memory_region(PHYS_OFFSET, start - PHYS_OFFSET,
+-				BOOT_MEM_RESERVED);
+ 	return 0;
+ }
+ early_param("mem", early_parse_mem);
