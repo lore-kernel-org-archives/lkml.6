@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1521561-1519217343-5-10056535323261888357
+X-Cyrus-Session-Id: sloti22d1t05-1521561-1519217343-2-4036160069489191266
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519217343; b=pwxp6chf9AVqPmgtvDEJeQeb174m5tkgDrfy2n6TvZ67tPd
-    Gvyi8K7xQ8T4DQYqb6z1gopDsSEYtU99OHxj8M9i7HZWd4/Z/fC/ixH2k7fD8ljP
-    TNvv9nBtRYiIaZHjCfxz2gU8UaAzbPh6MQiXGJFNMOivmm+86qw4y+P3ntMe836p
-    VOYzNCXh6tyYbCzTiVohARUTAIPEvSMMv0LAHnU17B7OcXkvH8kbjYSo6rt+VTVZ
-    V5ySzJhtVcWupCXKe5zDCCS647DUIYn8b0AVLIRzoDMGwWwTE1F4+RqyTTdOLK0y
-    Bi7kD7ywiB5/92T2koXuBQog2AYKeYPWp93DuMg==
+    t=1519217342; b=PXwBZKJxRzKpBMMf8pua5+8Uih1FiGlJa/LdCy+Om+bO4o8
+    bayWZQk7mFLlDFXs57zUZWvU8sQMvKSgSuviodD9n6Xi2VQ5Cfr5XqlAgtlYzScC
+    2TTtZbF81adcSeBNVZPu24ZQfHGGoNN634VmouL34cWf1bYh4lkF+0M/FqGVlVEi
+    jlLbJv259CYVBd8ZqLKPQwUD+5fjSiFAuoUCYbS7ZKUkWRkY2Qpc8WGpuqXqNwq5
+    IwdvH0gmDBdoG6mxbvoxKMHvWH+3QovOxI3WMWJAcg+PlAHyFWJ8jictzuNT+ffx
+    3QoBDsyX/2ktU/l3c/exlqZ05e/svHM1wmJ/Ryg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519217343; bh=BTWWqZEL7rumeA7PmAXgL6XuqB
-    cVAj4mqlF1bbrAC9Q=; b=E+Qf5T9Pwt0WgXC+WCHO6ed3uGNXQVLIHPUiGBy7Lr
-    QmiPJ3cAIKOejFgy0QeV0NwYwYsS80TsIi2UhGk/8FJxi8iCdjb83h2VeMbSdRrg
-    aA34Dd5ap3SZ7mp87su6Urji1fXnxSz33Dr4PW89S9pqgUhKqSKkOeudFbRvIe3n
-    fVHzFco5jifb3uKCgCFCHZdoWycsWEi2h+s5aP7W48hy2Jci541yl1uAbdMjingD
-    bDG8W7cXihxFHe9Jq9g6jJd77MjAJdR4qDORSfw199FcTPV9wumEe3T/E3F4tXC6
-    BMaepoWG1BC6+BLRZDLv4ITrS7DOPs+rOqN/zmeNBifQ==
+    :list-id; s=arctest; t=1519217342; bh=6KXcr96LIE0i302yBZVuziF5/j
+    5uVeSmAbXNpD/jTjA=; b=KOetsXuNWah0OENIVPxOFMHObXiBpYUzwaQThgEl4N
+    DallOzVV2fbUL0AlmkoXiEC2bDeH7g9vZ/yYraOI3wx1chLyGK9bq2Afde0oAZjI
+    ptPyGDMN9ui9HmT7T0EXyNW8IWHDD+7JWxGNwPN8M0ANrjwg6SM/Ziwa48Cv0vTJ
+    FrFKGH2lyhIsWP01vN+svwAedJcGdtYCRZjHCePfFGZ76z3n0KLrBylioPavjccL
+    GQjenpaRjSSZUaTOiBlnlgfUY/j4WYWstyAPCaJgtmDA2eUc4mz6Qy1RfRMLJlh4
+    89SVhyIC6akqo2PHDiprOSh58fiOEVy3wIUge0hEj6Ow==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933915AbeBUMq2 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 07:46:28 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59638 "EHLO
+        id S933924AbeBUMqd (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 07:46:33 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933905AbeBUMq0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:26 -0500
+        with ESMTP id S933905AbeBUMqb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 12/33] rtc-opal: Fix handling of firmware error codes, prevent busy loops
-Date: Wed, 21 Feb 2018 13:44:55 +0100
-Message-Id: <20180221124410.314449386@linuxfoundation.org>
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.4 28/33] dm: correctly handle chained bios in dec_pending()
+Date: Wed, 21 Feb 2018 13:45:11 +0100
+Message-Id: <20180221124411.045394813@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -78,80 +78,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
+From: NeilBrown <neilb@suse.com>
 
-commit 5b8b58063029f02da573120ef4dc9079822e3cda upstream.
+commit 8dd601fa8317243be887458c49f6c29c2f3d719f upstream.
 
-According to the OPAL docs:
-  skiboot-5.2.5/doc/opal-api/opal-rtc-read-3.txt
-  skiboot-5.2.5/doc/opal-api/opal-rtc-write-4.txt
+dec_pending() is given an error status (possibly 0) to be recorded
+against a bio.  It can be called several times on the one 'struct
+dm_io', and it is careful to only assign a non-zero error to
+io->status.  However when it then assigned io->status to bio->bi_status,
+it is not careful and could overwrite a genuine error status with 0.
 
-OPAL_HARDWARE may be returned from OPAL_RTC_READ or OPAL_RTC_WRITE and
-this indicates either a transient or permanent error.
+This can happen when chained bios are in use.  If a bio is chained
+beneath the bio that this dm_io is handling, the child bio might
+complete and set bio->bi_status before the dm_io completes.
 
-Prior to this patch, Linux was not dealing with OPAL_HARDWARE being a
-permanent error particularly well, in that you could end up in a busy
-loop.
+This has been possible since chained bios were introduced in 3.14, and
+has become a lot easier to trigger with commit 18a25da84354 ("dm: ensure
+bio submission follows a depth-first tree walk") as that commit caused
+dm to start using chained bios itself.
 
-This was not too hard to trigger on an AMI BMC based OpenPOWER machine
-doing a continuous "ipmitool mc reset cold" to the BMC, the result of
-that being that we'd get stuck in an infinite loop in
-opal_get_rtc_time().
+A particular failure mode is that if a bio spans an 'error' target and a
+working target, the 'error' fragment will complete instantly and set the
+->bi_status, and the other fragment will normally complete a little
+later, and will clear ->bi_status.
 
-We now retry a few times before returning the error higher up the
-stack.
+The fix is simply to only assign io_error to bio->bi_status when
+io_error is not zero.
 
-Fixes: 16b1d26e77b1 ("rtc/tpo: Driver to support rtc and wakeup on PowerNV platform")
-Cc: stable@vger.kernel.org # v3.19+
-Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-and-tested-by: Milan Broz <gmazyland@gmail.com>
+Cc: stable@vger.kernel.org (v3.14+)
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/rtc-opal.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/md/dm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/rtc/rtc-opal.c
-+++ b/drivers/rtc/rtc-opal.c
-@@ -58,6 +58,7 @@ static void tm_to_opal(struct rtc_time *
- static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d;
- 	u64 h_m_s_ms;
- 	__be32 __y_m_d;
-@@ -67,8 +68,11 @@ static int opal_get_rtc_time(struct devi
- 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -974,7 +974,8 @@ static void dec_pending(struct dm_io *io
+ 		} else {
+ 			/* done with normal IO or empty flush */
+ 			trace_block_bio_complete(md->queue, bio, io_error);
+-			bio->bi_error = io_error;
++			if (io_error)
++				bio->bi_error = io_error;
+ 			bio_endio(bio);
+ 		}
  	}
- 
- 	if (rc != OPAL_SUCCESS)
-@@ -84,6 +88,7 @@ static int opal_get_rtc_time(struct devi
- static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d = 0;
- 	u64 h_m_s_ms = 0;
- 
-@@ -92,8 +97,11 @@ static int opal_set_rtc_time(struct devi
- 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
- 	}
- 
- 	return rc == OPAL_SUCCESS ? 0 : -EIO;
