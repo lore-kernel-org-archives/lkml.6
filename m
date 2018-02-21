@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226Fzb4L+CO820Xug+ubajs4mvhEH9WmDb9BG6hBvcoKJ290FtRYsB1DgJQK2wiflXuNIGEF
-ARC-Seal: i=1; a=rsa-sha256; t=1519218705; cv=none;
+X-Google-Smtp-Source: AH8x227NTgCXhMyjPmzllOHOePAdzYrZxBhqD07BFzWBSAJxEQdV+DkQBV1m3TK1lB+JJeDEAzQ4
+ARC-Seal: i=1; a=rsa-sha256; t=1519218702; cv=none;
         d=google.com; s=arc-20160816;
-        b=oVw2Z9il9X7si5PwZhXz2PdtmNqFKsxQFhnBM9pDBLp75C8lrU2sN9OYu9bB3mIxHr
-         yo1OYQO+zt2IKr3tX9tSREP0Fe5PQbdgIPQQYvpCHetBYaqYV91u+yDkHLR1nh9x5Ens
-         rbJBJnBSXdv9SL4SALhzqUsjnbfhqUN2ePJDqLUxkQVtA67vIO0w1aJpiDyUEDyXbhUE
-         nl/pKmwtDyA4kIURGqbE39lJZrDu83gsAWwpdwYCl6oJ7MgTYWyPE8j1+m4jXVI5Ms/5
-         ruSPg3NdMeL4SvszOVu46n2JvfaH7Rj7x/pxnDUp+zdgQjPlD42nZ88vgFrThMY29zRY
-         A0Yw==
+        b=Jvw5O/I9dz5rD0a+7SB9P1iVOhW4EgbOuoaxfsDm6R6fW7DPPkGevvfLCxd36RPrGR
+         MfDWZMkBFJWdKqC47cZrQrWecb2M5uU+Up56Dg28w6s3NwxPvMfN4hHLeWV7IQq4Nw2N
+         jx8zLehoc0AD79ymh2guW9vmpTgshDaQbFfeKtbjE3EqOkOt5S7x/0eKKubcm+4j2APp
+         xFWwWEqJVxwIlOoenL0yhnFCnmIrcsgHtKqy5cSFpmDmEgCfopq7r4QBP0BCe4f85kqp
+         dXjnwtZ5SAXnuS6En1yEvjU6RkVsHu1TPLSFejB8eOjewrPEGijzlA486pRSDhY6BQ3G
+         TgAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yaDIxE3oYVTOJIfJOXf2bs2/2DYqMxO84IxCRS17yhU=;
-        b=m8MF+htGRrjEwO1yUzde+gLGEYVdBdonkZcysSEyWQfoX8oyyj/ikcoOlPkF3jxedd
-         WYIIbaydm1WwRRa7pE783iiRg/Yb+8CddOpLCafkl+ADlBRYn8+4OEF4mPvwtD7p54Xh
-         jOmKpLlLCSZQj6erFO4ZRHSjWjryAXQDqhRdEM4J9x2VRzxdRkXZQteWitszeQKnAo2B
-         ExeHFg/+6N/lg+7nJCm3w0MlTTmPCwMCnr5gUuPBlzewIFAQ2dwln5M3abYlv9Mif5fF
-         CXtpdLH8aMv6lHVjWEbkzv/lZpMtb8s9jiWW4DrhYeR3jWnCcWBYF6JKguoFOesxTtI5
-         WM4w==
+        bh=Tjf2ZxS0mULtNKE7gLRXOFf5GWjx7zDqeVAzKPvQbO0=;
+        b=gD3NV7g0BgIQCPVcdimwANTAvjcX53knedQb2VuWgREphli3EZdTLG1APLhp8PB5Kj
+         XOwtF+l1WJcSFxEkOX0/Q+L5CnufkTlpeOr1YYxAHhBQE9u+5w2/SLcUnvzuwNJlrlQF
+         f/2DhzFtWgW8VpNtCKd7Mtqf8j9f7c3L2oBB5jGrdLHr/4khSKQaV5rlNrA50BPjl9JI
+         M68a3Ms62UAJItnBxx06NcqvkB7R5krbA7Y7vLvAhhfYz3sGho4nHM2Tvs9hEyW+AmVX
+         vVqNnPejU/K3+TQ7DWt3IkTTXEC5ED13u361GuUwZvozDfgoNGE5ecPYU2Z9/1J2gkwO
+         vFIw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 4.15 100/163] mbcache: initialize entry->e_referenced in mb_cache_entry_create()
-Date: Wed, 21 Feb 2018 13:48:49 +0100
-Message-Id: <20180221124535.820576980@linuxfoundation.org>
+	Stewart Smith <stewart@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 099/163] rtc-opal: Fix handling of firmware error codes, prevent busy loops
+Date: Wed, 21 Feb 2018 13:48:48 +0100
+Message-Id: <20180221124535.766623327@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015301228685105?=
-X-GMAIL-MSGID: =?utf-8?q?1593016273756488531?=
+X-GMAIL-THRID: =?utf-8?q?1593014681201227169?=
+X-GMAIL-MSGID: =?utf-8?q?1593016270077660133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,91 +49,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
 
-commit 3876bbe27d04b848750d5310a37d6b76b593f648 upstream.
+commit 5b8b58063029f02da573120ef4dc9079822e3cda upstream.
 
-KMSAN reported use of uninitialized |entry->e_referenced| in a condition
-in mb_cache_shrink():
+According to the OPAL docs:
+  skiboot-5.2.5/doc/opal-api/opal-rtc-read-3.txt
+  skiboot-5.2.5/doc/opal-api/opal-rtc-write-4.txt
 
-==================================================================
-BUG: KMSAN: use of uninitialized memory in mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
-CPU: 2 PID: 816 Comm: kswapd1 Not tainted 4.11.0-rc5+ #2877
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
-01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:16 [inline]
- dump_stack+0x172/0x1c0 lib/dump_stack.c:52
- kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:927
- __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:469
- mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
- mb_cache_scan+0x67/0x80 fs/mbcache.c:321
- do_shrink_slab mm/vmscan.c:397 [inline]
- shrink_slab+0xc3d/0x12d0 mm/vmscan.c:500
- shrink_node+0x208f/0x2fd0 mm/vmscan.c:2603
- kswapd_shrink_node mm/vmscan.c:3172 [inline]
- balance_pgdat mm/vmscan.c:3289 [inline]
- kswapd+0x160f/0x2850 mm/vmscan.c:3478
- kthread+0x46c/0x5f0 kernel/kthread.c:230
- ret_from_fork+0x29/0x40 arch/x86/entry/entry_64.S:430
-chained origin:
- save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:317 [inline]
- kmsan_internal_chain_origin+0x12a/0x1f0 mm/kmsan/kmsan.c:547
- __msan_store_shadow_origin_1+0xac/0x110 mm/kmsan/kmsan_instr.c:257
- mb_cache_entry_create+0x3b3/0xc60 fs/mbcache.c:95
- ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
- ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
- ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
- ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
- ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
- __vfs_setxattr+0x703/0x790 fs/xattr.c:149
- __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
- vfs_setxattr fs/xattr.c:223 [inline]
- setxattr+0x6ae/0x790 fs/xattr.c:449
- path_setxattr+0x1eb/0x380 fs/xattr.c:468
- SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
- SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
- entry_SYSCALL_64_fastpath+0x13/0x94
-origin:
- save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
- kmsan_internal_poison_shadow+0xb1/0x1a0 mm/kmsan/kmsan.c:198
- kmsan_kmalloc+0x7f/0xe0 mm/kmsan/kmsan.c:337
- kmem_cache_alloc+0x1c2/0x1e0 mm/slub.c:2766
- mb_cache_entry_create+0x283/0xc60 fs/mbcache.c:86
- ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
- ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
- ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
- ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
- ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
- __vfs_setxattr+0x703/0x790 fs/xattr.c:149
- __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
- vfs_setxattr fs/xattr.c:223 [inline]
- setxattr+0x6ae/0x790 fs/xattr.c:449
- path_setxattr+0x1eb/0x380 fs/xattr.c:468
- SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
- SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
- entry_SYSCALL_64_fastpath+0x13/0x94
-==================================================================
+OPAL_HARDWARE may be returned from OPAL_RTC_READ or OPAL_RTC_WRITE and
+this indicates either a transient or permanent error.
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Cc: stable@vger.kernel.org # v4.6
+Prior to this patch, Linux was not dealing with OPAL_HARDWARE being a
+permanent error particularly well, in that you could end up in a busy
+loop.
+
+This was not too hard to trigger on an AMI BMC based OpenPOWER machine
+doing a continuous "ipmitool mc reset cold" to the BMC, the result of
+that being that we'd get stuck in an infinite loop in
+opal_get_rtc_time().
+
+We now retry a few times before returning the error higher up the
+stack.
+
+Fixes: 16b1d26e77b1 ("rtc/tpo: Driver to support rtc and wakeup on PowerNV platform")
+Cc: stable@vger.kernel.org # v3.19+
+Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/mbcache.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-opal.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/fs/mbcache.c
-+++ b/fs/mbcache.c
-@@ -94,6 +94,7 @@ int mb_cache_entry_create(struct mb_cach
- 	entry->e_key = key;
- 	entry->e_value = value;
- 	entry->e_reusable = reusable;
-+	entry->e_referenced = 0;
- 	head = mb_cache_entry_head(cache, key);
- 	hlist_bl_lock(head);
- 	hlist_bl_for_each_entry(dup, dup_node, head, e_hash_list) {
+--- a/drivers/rtc/rtc-opal.c
++++ b/drivers/rtc/rtc-opal.c
+@@ -58,6 +58,7 @@ static void tm_to_opal(struct rtc_time *
+ static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	long rc = OPAL_BUSY;
++	int retries = 10;
+ 	u32 y_m_d;
+ 	u64 h_m_s_ms;
+ 	__be32 __y_m_d;
+@@ -67,8 +68,11 @@ static int opal_get_rtc_time(struct devi
+ 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
+-		else
++		else if (retries-- && (rc == OPAL_HARDWARE
++				       || rc == OPAL_INTERNAL_ERROR))
+ 			msleep(10);
++		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
++			break;
+ 	}
+ 
+ 	if (rc != OPAL_SUCCESS)
+@@ -84,6 +88,7 @@ static int opal_get_rtc_time(struct devi
+ static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	long rc = OPAL_BUSY;
++	int retries = 10;
+ 	u32 y_m_d = 0;
+ 	u64 h_m_s_ms = 0;
+ 
+@@ -92,8 +97,11 @@ static int opal_set_rtc_time(struct devi
+ 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
+-		else
++		else if (retries-- && (rc == OPAL_HARDWARE
++				       || rc == OPAL_INTERNAL_ERROR))
+ 			msleep(10);
++		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
++			break;
+ 	}
+ 
+ 	return rc == OPAL_SUCCESS ? 0 : -EIO;
