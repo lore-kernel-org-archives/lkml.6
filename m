@@ -1,56 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeBUUxo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:53:44 -0500
-Received: from ozlabs.org ([103.22.144.67]:55133 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751119AbeBUUxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:53:43 -0500
-Date: Thu, 22 Feb 2018 07:53:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simon Horman <horms@verge.net.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the renesas tree
-Message-ID: <20180222075330.6d1ab19d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MGgzaFlLVR+/H+rDHLW6ytj"; protocol="application/pgp-signature"
+        id S1751376AbeBUUya (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:54:30 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48206 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751119AbeBUUy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 15:54:28 -0500
+Date: Wed, 21 Feb 2018 12:54:26 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] Directed kmem charging
+Message-Id: <20180221125426.464f894d29a0b6e525b2e3be@linux-foundation.org>
+In-Reply-To: <CALvZod68LD-wnbm2+MQks=bd_D2zY64uScUBp28hyug_vaGyDA@mail.gmail.com>
+References: <20180221030101.221206-1-shakeelb@google.com>
+        <alpine.DEB.2.20.1802211002200.12567@nuc-kabylake>
+        <CALvZod68LD-wnbm2+MQks=bd_D2zY64uScUBp28hyug_vaGyDA@mail.gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/MGgzaFlLVR+/H+rDHLW6ytj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 21 Feb 2018 09:18:35 -0800 Shakeel Butt <shakeelb@google.com> wrote:
 
-Hi Simon,
+> On Wed, Feb 21, 2018 at 8:09 AM, Christopher Lameter <cl@linux.com> wrote:
+> > Another way to solve this is to switch the user context right?
+> >
+> > Isnt it possible to avoid these patches if do the allocation in another
+> > task context instead?
+> >
+> 
+> Sorry, can you please explain what you mean by 'switch the user
+> context'. Is there any example in kernel which does something similar?
+> 
+> Another way is by adding a field 'remote_memcg_to_charge' in
+> task_struct and set it before the allocation and in memcontrol.c,
+> first check if current->remote_memcg_to_charge is set otherwise use
+> the memcg of current. Also if we provide a wrapper to do that for the
+> user, there will be a lot less plumbing.
+> 
+> Please let me know if you prefer this approach.
 
-Commits
+That would be a lot simpler.  Passing function arguments via
+task_struct is a bit dirty but is sometimes sooo effective.  You
+should've seen how much mess task_struct.journal_info avoided!  And
+reclaim_state.
 
-  b9f945d06b08 ("arm64: dts: renesas: Add R-Car Salvator-x M3-N support")
-  4cc11f95789c ("soc: renesas: rcar-sysc: Add R-Car M3-N support")
+And one always wonders whether we should do a local save/restore before
+modifying the task_struct field, so it nests.
 
-are missing a Signed-off-by from their committer.
+What do others think?
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/MGgzaFlLVR+/H+rDHLW6ytj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqN3EoACgkQAVBC80lX
-0GzZjAf/ZJRwOVnmaHuHV8DWn1Gi4hJZxDovvN93RzxbQVEwP49XzLIgGe5AKtYm
-T+LG1GwGJm3IdrCzuwCjVvvdpf95BAy7G9hnfUu0rtAO9VWT+GUwEyMgKtIAE5az
-zHsOhlNNhflHinhTquvQAY2PUfY0uqIXqhQKYujPNnw0hzU2pWKvrJEslFHSSH/V
-XyVSFQkI8Su5tR+JXM/UQCbwRj4JQrkWObsO2uRBCVOBZIOOjYrwhkmWPSyVefEB
-YjTCCEc6tE5zCp2qPURf/t3n3Nz0f8gbWtYASp0UXw9uT1A5t2OJYF4EPgH3Z7Dc
-YBTsfNaBgrP+yNgffGz6gsqeOjoESg==
-=lzZu
------END PGP SIGNATURE-----
-
---Sig_/MGgzaFlLVR+/H+rDHLW6ytj--
+Maybe we can rename task_struct.reclaim_state to `struct task_mm_state
+*task_mm_state", add remote_memcg_to_charge to struct task_mm_state and
+avoid bloating the task_struct?
