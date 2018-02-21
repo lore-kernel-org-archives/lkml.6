@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2269UAisWikbGnRzm5F4leZZ4LquJ3RCoc3hH2l0iLDG29cw7KWQMcp68iR+YX+twO+5gIDi
-ARC-Seal: i=1; a=rsa-sha256; t=1519218183; cv=none;
+X-Google-Smtp-Source: AH8x227duy2i6SkIAn7D/BCbYBxsn6ZWj0B+/ZwXLljnF0l5w2Igo0vD7BUo+K1RXZR9jGJSiTwD
+ARC-Seal: i=1; a=rsa-sha256; t=1519218179; cv=none;
         d=google.com; s=arc-20160816;
-        b=IJsUh6brGGq1s9J0P92KkF43nevf9GTkqXCCzErnRzGCqXnW+SVYwHb+xRAcFcv/lh
-         5C8dhcvjWydnOa3OK4/7d63PUSQMypOE7UqGiLppcldAZv3dqLvExpe5WysRiQ/QeVtK
-         7XK3Sm00PnC1k67acOtnp7irzcVRrXf9vrXVDRe9k+8nJhZf+wq0wytGIx/FngBFgUPH
-         euV2lMuNEm7g+A/gJ2WzgrDdN0o7d9IaLbCRe4Z24znr6tUlNlzEuxpckR3H4pI5vaOg
-         bUmypWZf1r7HTUaYEr1tR/E+A9XXYYn536SbnsWZ2XVQmtWBElhK+oknI/LaynUNueLH
-         nA/w==
+        b=DfF6/ZpXhhvexxgbFGz39dfPOJ1vHn7B3FCaPTPVYqFAbzjJ3I10OrLtdOp2KoPYbd
+         9uNLBDykV/NX1IA/gS/kC+ZFAN/1gdIGSpLTesHQo5VXKM/TXJEMmhLFclbSl10X/eWy
+         TImWa6XlZXqKNaL9si8gIu+8ewdjSrR3pt6ijJXySHVovPKlltN73fz9wBwLzew73DlU
+         ZykwuYzvbqlkOvCY273Aaoe4VM3y29C/BUEAYU5FcNG7abnYYE0UDIeYeqTceGeJK0SF
+         ImFVS8G/rjW8wvKM3+J4BCzsqRiTZwshRQz6Xv1o0wFbDttLFXs/jP+D0RL3rNWtCrrP
+         CvzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mp4QVQ6cWc0zBV+I7JI/dVBqH89bXCj+T+T+JRHSYpA=;
-        b=ivdyS9TKe9f9sQ5WOcVDyGtYn9lIhZWoSgviRhS3TIjFJTjFfmJ6sxZuuQbVDai4gY
-         DoKnF50nlF2myPG/zS7+XPP9SY42ghUpu77XXtkDAIXt2yHrPIzKXilZi5ByHXsgxqxk
-         QTyqQ2bO+80QpFYlCGiTMMCYIR6qv5eg73r+fDPvFuNo9+KeJZlbnxTAiC/WLa+RxhgP
-         KbsiSEcZZujUTkTc+6vfmB/IOcuPbiPnIgmA6tB4aZ0ghWioHPBDV3pC3pIBiKMCf2al
-         7k9McFmty09R4hd5YyiufBS63vwEXvW25Nrr6gm35O6iiWVbg8MgbWm4vptSZxVbJ5JG
-         GnTw==
+        bh=J2rAazOcLGEL83i+h9uopf/HPMzewKOMjr44bgRXjp0=;
+        b=EOc/bbgGoSKNG0apU4npYXJnFdYYd2uCsIuSTA+EIYLQULLh8fG5NvrLZvEGHPUA9i
+         KaAoIt7pHNlvi8wyyEP8IHElvq78ogfquTcCxqL2yNub0KeRMcSq1ElSMknjwdYIGQcT
+         7F207vH2w94Yhk5Kc6tF8Ey9hJO/wMi0SZpwm2dGo68HLikeBjjn+iFOATXyDrJmiU0g
+         y1jbL4t+fN2pEZ0VREzTXiwk8BJ02LFnh3QZhMB3Zl6fKqyF96ngpgtlGB0fT8SXRuTd
+         wCpifHJiTD11bREKZ7ODlafYzrSXrw8au2zI0QJnfVOXzQIn3O2EQkBMOYMi78QNFoMJ
+         kJcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicolas Pitre <nico@linaro.org>,
+	Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Johan Hovold <johan@kernel.org>,
 	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 117/167] console/dummy: leave .con_font_get set to NULL
-Date: Wed, 21 Feb 2018 13:48:48 +0100
-Message-Id: <20180221124530.830303095@linuxfoundation.org>
+Subject: [PATCH 4.14 116/167] video: fbdev: atmel_lcdfb: fix display-timings lookup
+Date: Wed, 21 Feb 2018 13:48:47 +0100
+Message-Id: <20180221124530.764473157@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014631678388583?=
-X-GMAIL-MSGID: =?utf-8?q?1593015725663591965?=
+X-GMAIL-THRID: =?utf-8?q?1593014629325392076?=
+X-GMAIL-MSGID: =?utf-8?q?1593015721933977448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +52,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit 724ba8b30b044aa0d94b1cd374fc15806cdd6f18 upstream.
+commit 9cb18db0701f6b74f0c45c23ad767b3ebebe37f6 upstream.
 
-When this method is set, the caller expects struct console_font fields
-to be properly initialized when it returns. Leave it unset otherwise
-nonsensical (leaked kernel stack) values are returned to user space.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org
+To make things worse, the parent display node was also prematurely
+freed.
+
+Note that the display and timings node references are never put after a
+successful dt-initialisation so the nodes would leak on later probe
+deferrals and on driver unbind.
+
+Fixes: b985172b328a ("video: atmel_lcdfb: add device tree suport")
+Cc: stable <stable@vger.kernel.org>     # 3.13
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/console/dummycon.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/video/fbdev/atmel_lcdfb.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/video/console/dummycon.c
-+++ b/drivers/video/console/dummycon.c
-@@ -67,7 +67,6 @@ const struct consw dummy_con = {
-     .con_switch =	DUMMY,
-     .con_blank =	DUMMY,
-     .con_font_set =	DUMMY,
--    .con_font_get =	DUMMY,
-     .con_font_default =	DUMMY,
-     .con_font_copy =	DUMMY,
- };
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1119,7 +1119,7 @@ static int atmel_lcdfb_of_init(struct at
+ 		goto put_display_node;
+ 	}
+ 
+-	timings_np = of_find_node_by_name(display_np, "display-timings");
++	timings_np = of_get_child_by_name(display_np, "display-timings");
+ 	if (!timings_np) {
+ 		dev_err(dev, "failed to find display-timings node\n");
+ 		ret = -ENODEV;
+@@ -1140,6 +1140,12 @@ static int atmel_lcdfb_of_init(struct at
+ 		fb_add_videomode(&fb_vm, &info->modelist);
+ 	}
+ 
++	/*
++	 * FIXME: Make sure we are not referencing any fields in display_np
++	 * and timings_np and drop our references to them before returning to
++	 * avoid leaking the nodes on probe deferral and driver unbind.
++	 */
++
+ 	return 0;
+ 
+ put_timings_node:
