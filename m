@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226zbY6DX01geIIa9nKzubOoobzdb0QRe+crwx2eVZWNaFH/mBdRcG+5V+4fiG7BBgm/wTkV
-ARC-Seal: i=1; a=rsa-sha256; t=1519218155; cv=none;
+X-Google-Smtp-Source: AH8x224dXzp2TEO0bZM2+ftpsa2gMDa3WyxEnh3Fo1+7Ihs7YFxSpm9LMqI2wLfIQI/81vIZrgAy
+ARC-Seal: i=1; a=rsa-sha256; t=1519218151; cv=none;
         d=google.com; s=arc-20160816;
-        b=kq8TetdfDLIdbSchuWInAQ71/dbVJkehYS3Kn4NG87JfGRJBbHqsIsY2GOLuEtwdh8
-         +jWteVW8DctD8LQumjmdTM8ggr8wbbNP83nfY9QRF5gxPAmvrlhq3eOCvuwm9C9V1xSy
-         w/KZg2h8Yrj3o+07ydw66Bh9uzXGOpKA480ZYR4cR/ip1yEj+NeDBQCn+tlyEa8uBgNS
-         rzl/F9NC3EUD7JAejcCkfNPOEOZ+xvsiFIpynU92kctTteRSeFwjm9WOO0rz7ffsO5ze
-         EpXMjJQAomPRcBQ/Rml1dAygWHC0IZ220ynkYjunMz+iy/CeS6p0xpqWa8bmAPkWGVL0
-         ji3g==
+        b=o7I5AwhGOKcuK646+cecSJikyYd1CtKeDsvVXVM+MWWsV5IuJq/IWhJlrIQ2Pdz6Vd
+         eQhtoWU1hqJv2+ipkBpgVAIZze1wbY5pH2GLWlXzueTEs7AjY0sjDxNJRPKqSDyoPPh7
+         FIuwT7LW7Qtv09Ri41yIpEaxs/zXyakMAU6PO6MpUpJeIg24fdBdN3+RxJCHsrW9Hm7D
+         4SqPzMKpTNezoaGXV5v72w4a1fGzdHpl7L4TNQ05g7ivLwkZ7adW6hUxO7Zt5alEpUHx
+         KE/YBmGUcgjqByhlbU7mcDRDQEGDdifuAV/tsQzritQkcq+u0ezNsibqUjVr1AIkWggX
+         EH7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cMDC29GkbSDMk4jO4klZcguiAt21ZJg+Qp8vjbLRMJI=;
-        b=lridyYB4mFqu2IqYunjbKOdMvdhr4ik8DOxuWWHY7VVsVUSvY6DRNYVP+va1nB95UX
-         XnePaHRV0bJXMrUAtaQcIJLKZuQg0SuZ1dsn6NC98+88kiUyBQf8rCegzI1VOClL8/E/
-         Nn0SuJFHfUO0904FsYGp3vNwzYPjHHDhmPz7ULaquz2U9dzu6A2VZbW14WpgUCmPbMf5
-         hqEjoJt6yxoaiuts9TTYAVq8j3+XxL3hzC46D4UpKFW/lyPjuN/JicUpCnmznJ4Tu0h1
-         PP0+E/lPz+AHK0h8F+UoVwTT+NtP5ULZAZnr1eMkZ55FPZLwK5BgQ6P/Z9T6VCCucb7w
-         6+Ug==
+        bh=kiXUPhMIidnYg2NkcZrAzbJUXpNqY9l7C1bPaBZouAo=;
+        b=TsWxgLP1SCdsv2lnD12Tnmc4oWfo0Ebz0k51DieQY8MYZmlHEVIJ9QUJ4vFvQL9bHG
+         JuvRtbM6Z3QjVhOEQ1/zViae/Tr37VMzgm2E7Zpmm+5w2EXeVeD6vThEJz2xz9wISOMQ
+         tmDxYv+EGPJzzwi1Z9C2/h5k+RKs1Q1XXw/UNoSDmYgL0cbd7v7ng7WhqlDaBl1LjkWa
+         z8wPOT8YDEie3m5ghYtHrFUf3HIIDJmqrYitL3LuIM7QQwLsk9lVqNHbqbIeS3xO2IKz
+         6i4I4Rwg5+izfSf5DjciFpTk8AdetXg63Ljd/Wk72W+JkGZv3cXX2fKaECVC43UjdKfx
+         Sk8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 072/167] selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
-Date: Wed, 21 Feb 2018 13:48:03 +0100
-Message-Id: <20180221124528.441870850@linuxfoundation.org>
+	Petri Hodju <petrihodju@yahoo.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Bruno=20Pr=C3=A9mont?= <bonbons@linux-vserver.org>,
+	Andy Ritger <aritger@nvidia.com>,
+	=?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>,
+	Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>,
+	Lukas Wunner <lukas@wunner.de>,
+	"Darren Hart (VMware)" <dvhart@infradead.org>
+Subject: [PATCH 4.14 104/167] Revert "apple-gmux: lock iGP IO to protect from vgaarb changes"
+Date: Wed, 21 Feb 2018 13:48:35 +0100
+Message-Id: <20180221124530.053661678@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -47,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015696449113507?=
-X-GMAIL-MSGID: =?utf-8?q?1593015696449113507?=
+X-GMAIL-THRID: =?utf-8?q?1593015691967203234?=
+X-GMAIL-MSGID: =?utf-8?q?1593015691967203234?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,74 +55,187 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 9279ddf23ce78ff2676e8e8e19fec0f022c26d04 upstream.
+commit d6fa7588fd7a8def4c747c0c574ce85d453e3788 upstream.
 
-The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
-hard-coded 32-bit syscall numbers and call "int $0x80".
+Commit 4eebd5a4e726 ("apple-gmux: lock iGP IO to protect from vgaarb
+changes") amended this driver's ->probe hook to lock decoding of normal
+(non-legacy) I/O space accesses to the integrated GPU on dual-GPU
+MacBook Pros.  The lock stays in place until the driver is unbound.
 
-This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
+The change was made to work around an issue with the out-of-tree nvidia
+graphics driver (available at http://www.nvidia.com/object/unix.html).
+It contains the following sequence in nvidia/nv.c:
 
-Therefore, do not build these tests if we cannot build 32-bit binaries
-(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
+	#if defined(CONFIG_VGA_ARB) && !defined(NVCPU_PPC64LE)
+	#if defined(VGA_DEFAULT_DEVICE)
+	    vga_tryget(VGA_DEFAULT_DEVICE, VGA_RSRC_LEGACY_MASK);
+	#endif
+	    vga_set_legacy_decoding(dev, VGA_RSRC_NONE);
+	#endif
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This code was reported to cause deadlocks with VFIO already in 2013:
+https://devtalk.nvidia.com/default/topic/545560
+
+I've reported the issue to Nvidia developers once more in 2017:
+https://www.spinics.net/lists/dri-devel/msg138754.html
+
+On the MacBookPro10,1, this code apparently breaks backlight control
+(which is handled by apple-gmux via an I/O region starting at 0x700),
+as reported by Petri Hodju:
+https://bugzilla.kernel.org/show_bug.cgi?id=86121
+
+I tried to replicate Petri's observations on my MacBook9,1, which uses
+the same Intel Ivy Bridge + Nvidia GeForce GT 650M architecture, to no
+avail.  On my machine apple-gmux' I/O region remains accessible even
+with the nvidia driver loaded and commit 4eebd5a4e726 reverted.
+Petri reported that apple-gmux becomes accessible again after a
+suspend/resume cycle because the BIOS changed the VGA routing on the
+root port to the Nvidia GPU.  Perhaps this is a BIOS issue after all
+that can be fixed with an update?
+
+In any case, the change made by commit 4eebd5a4e726 has turned out to
+cause two new issues:
+
+* Wilfried Klaebe reports a deadlock when launching Xorg because it
+  opens /dev/vga_arbiter and calls vga_get(), but apple-gmux is holding
+  a lock on I/O space indefinitely.  It looks like apple-gmux' current
+  behavior is an abuse of the vgaarb API as locks are not meant to be
+  held for longer periods:
+  https://bugzilla.kernel.org/show_bug.cgi?id=88861#c11
+  https://bugzilla.kernel.org/attachment.cgi?id=217541
+
+* On dual GPU MacBook Pros introduced since 2013, the integrated GPU is
+  powergated on boot und thus becomes invisible to Linux unless a custom
+  EFI protocol is used to leave it powered on.  (A patch exists but is
+  not in mainline yet due to several negative side effects.)  On these
+  machines, locking I/O to the integrated GPU (as done by 4eebd5a4e726)
+  fails and backlight control is therefore broken:
+  https://bugzilla.kernel.org/show_bug.cgi?id=105051
+
+So let's revert commit 4eebd5a4e726 please.  Users experiencing the
+issue with the proprietary nvidia driver can comment out the above-
+quoted problematic code as a workaround (or try updating the BIOS).
+
+Cc: Petri Hodju <petrihodju@yahoo.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Bruno Prémont <bonbons@linux-vserver.org>
+Cc: Andy Ritger <aritger@nvidia.com>
+Cc: Ronald Tschalär <ronald@innovation.ch>
+Tested-by: Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/platform/x86/apple-gmux.c |   48 --------------------------------------
+ 1 file changed, 1 insertion(+), 47 deletions(-)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -5,16 +5,26 @@ include ../lib.mk
+--- a/drivers/platform/x86/apple-gmux.c
++++ b/drivers/platform/x86/apple-gmux.c
+@@ -24,7 +24,6 @@
+ #include <linux/delay.h>
+ #include <linux/pci.h>
+ #include <linux/vga_switcheroo.h>
+-#include <linux/vgaarb.h>
+ #include <acpi/video.h>
+ #include <asm/io.h>
  
- .PHONY: all all_32 all_64 warn_32bit_failure clean
+@@ -54,7 +53,6 @@ struct apple_gmux_data {
+ 	bool indexed;
+ 	struct mutex index_lock;
  
--TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
--			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
-+UNAME_M := $(shell uname -m)
-+CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
-+CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
-+
-+TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
-+			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
- 			protection_keys test_vdso test_vsyscall
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
-+# Some selftests require 32bit support enabled also on 64bit systems
-+TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
+-	struct pci_dev *pdev;
+ 	struct backlight_device *bdev;
  
--TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
-+TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
- TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
-+ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
-+TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
-+endif
-+
- BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
- BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
+ 	/* switcheroo data */
+@@ -599,23 +597,6 @@ static int gmux_resume(struct device *de
+ 	return 0;
+ }
  
-@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,
- 
- CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
- 
--UNAME_M := $(shell uname -m)
--CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
--CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+-static struct pci_dev *gmux_get_io_pdev(void)
+-{
+-	struct pci_dev *pdev = NULL;
 -
- ifeq ($(CAN_BUILD_I386),1)
- all: all_32
- TEST_PROGS += $(BINARIES_32)
+-	while ((pdev = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, pdev))) {
+-		u16 cmd;
+-
+-		pci_read_config_word(pdev, PCI_COMMAND, &cmd);
+-		if (!(cmd & PCI_COMMAND_IO))
+-			continue;
+-
+-		return pdev;
+-	}
+-
+-	return NULL;
+-}
+-
+ static int is_thunderbolt(struct device *dev, void *data)
+ {
+ 	return to_pci_dev(dev)->is_thunderbolt;
+@@ -631,7 +612,6 @@ static int gmux_probe(struct pnp_dev *pn
+ 	int ret = -ENXIO;
+ 	acpi_status status;
+ 	unsigned long long gpe;
+-	struct pci_dev *pdev = NULL;
+ 
+ 	if (apple_gmux_data)
+ 		return -EBUSY;
+@@ -682,7 +662,7 @@ static int gmux_probe(struct pnp_dev *pn
+ 			ver_minor = (version >> 16) & 0xff;
+ 			ver_release = (version >> 8) & 0xff;
+ 		} else {
+-			pr_info("gmux device not present or IO disabled\n");
++			pr_info("gmux device not present\n");
+ 			ret = -ENODEV;
+ 			goto err_release;
+ 		}
+@@ -690,23 +670,6 @@ static int gmux_probe(struct pnp_dev *pn
+ 	pr_info("Found gmux version %d.%d.%d [%s]\n", ver_major, ver_minor,
+ 		ver_release, (gmux_data->indexed ? "indexed" : "classic"));
+ 
+-	/*
+-	 * Apple systems with gmux are EFI based and normally don't use
+-	 * VGA. In addition changing IO+MEM ownership between IGP and dGPU
+-	 * disables IO/MEM used for backlight control on some systems.
+-	 * Lock IO+MEM to GPU with active IO to prevent switch.
+-	 */
+-	pdev = gmux_get_io_pdev();
+-	if (pdev && vga_tryget(pdev,
+-			       VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM)) {
+-		pr_err("IO+MEM vgaarb-locking for PCI:%s failed\n",
+-			pci_name(pdev));
+-		ret = -EBUSY;
+-		goto err_release;
+-	} else if (pdev)
+-		pr_info("locked IO for PCI:%s\n", pci_name(pdev));
+-	gmux_data->pdev = pdev;
+-
+ 	memset(&props, 0, sizeof(props));
+ 	props.type = BACKLIGHT_PLATFORM;
+ 	props.max_brightness = gmux_read32(gmux_data, GMUX_PORT_MAX_BRIGHTNESS);
+@@ -822,10 +785,6 @@ err_enable_gpe:
+ err_notify:
+ 	backlight_device_unregister(bdev);
+ err_release:
+-	if (gmux_data->pdev)
+-		vga_put(gmux_data->pdev,
+-			VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM);
+-	pci_dev_put(pdev);
+ 	release_region(gmux_data->iostart, gmux_data->iolen);
+ err_free:
+ 	kfree(gmux_data);
+@@ -845,11 +804,6 @@ static void gmux_remove(struct pnp_dev *
+ 					   &gmux_notify_handler);
+ 	}
+ 
+-	if (gmux_data->pdev) {
+-		vga_put(gmux_data->pdev,
+-			VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM);
+-		pci_dev_put(gmux_data->pdev);
+-	}
+ 	backlight_device_unregister(gmux_data->bdev);
+ 
+ 	release_region(gmux_data->iostart, gmux_data->iolen);
