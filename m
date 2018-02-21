@@ -1,84 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeBUDf6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 22:35:58 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42709 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeBUDfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 22:35:55 -0500
-X-Google-Smtp-Source: AH8x227tDCzcgY/yY1XR4e5gEzK5PmvtR6BlNcLR+wu2YVtO/QRXB0EbXI1rhmoYa5FB4hUbLnPjRw==
-Date: Wed, 21 Feb 2018 09:05:51 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] cpufreq: scpi: invoke frequency-invariance setter
- function
-Message-ID: <20180221033551.GN28462@vireshk-i7>
-References: <20180220111057.14756-1-dietmar.eggemann@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180220111057.14756-1-dietmar.eggemann@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751351AbeBUDmK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 22:42:10 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:51897 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751135AbeBUDmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 22:42:09 -0500
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: davem@davemloft.net, johannes.berg@intel.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] netlink: put module reference if dump start fails
+Date: Wed, 21 Feb 2018 04:41:59 +0100
+Message-Id: <20180221034159.14685-1-Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-02-18, 11:10, Dietmar Eggemann wrote:
-> Commit 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
-> changed the cpufreq driver on juno from arm_big_little to scpi.
-> 
-> The scpi set_target function does not call the frequency-invariance
-> setter function arch_set_freq_scale() like the arm_big_little set_target
-> function does. As a result the task scheduler load and utilization
-> signals are not frequency-invariant on this platform anymore.
-> 
-> Fix this by adding a call to arch_set_freq_scale() into
-> scpi_cpufreq_set_target().
-> 
-> Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/cpufreq/scpi-cpufreq.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-> index c32a833e1b00..3101d4e9c2de 100644
-> --- a/drivers/cpufreq/scpi-cpufreq.c
-> +++ b/drivers/cpufreq/scpi-cpufreq.c
-> @@ -51,13 +51,19 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
->  static int
->  scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
->  {
-> +	unsigned long freq = policy->freq_table[index].frequency;
->  	struct scpi_data *priv = policy->driver_data;
-> -	u64 rate = policy->freq_table[index].frequency * 1000;
-> +	u64 rate = freq * 1000;
->  	int ret;
->  
->  	ret = clk_set_rate(priv->clk, rate);
-> -	if (!ret && (clk_get_rate(priv->clk) != rate))
-> -		ret = -EIO;
-> +	if (!ret) {
-> +		if (clk_get_rate(priv->clk) != rate)
-> +			ret = -EIO;
-> +
-> +		arch_set_freq_scale(policy->related_cpus, freq,
-> +				    policy->cpuinfo.max_freq);
-> +	}
->  
->  	return ret;
->  }
+Before, if cb->start() failed, the module reference would never be put,
+because cb->cb_running is intentionally false at this point. Users are
+generally annoyed by this because they can no longer unload modules that
+leak references. Also, it may be possible to tediously wrap a reference
+counter back to zero, especially since module.c still uses atomic_inc
+instead of refcount_inc.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This patch expands the error path to simply call module_put if
+cb->start() fails.
 
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+This probably should be queued up for stable.
+
+ net/netlink/af_netlink.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 2ad445c1d27c..07e8478068f0 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -2308,7 +2308,7 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
+ 	if (cb->start) {
+ 		ret = cb->start(cb);
+ 		if (ret)
+-			goto error_unlock;
++			goto error_put;
+ 	}
+ 
+ 	nlk->cb_running = true;
+@@ -2328,6 +2328,8 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
+ 	 */
+ 	return -EINTR;
+ 
++error_put:
++	module_put(control->module);
+ error_unlock:
+ 	sock_put(sk);
+ 	mutex_unlock(nlk->cb_mutex);
 -- 
-viresh
+2.16.1
