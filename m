@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751524AbeBUXlS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33270 "EHLO mail.kernel.org"
+        id S1751559AbeBUXld (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751500AbeBUXlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:41:15 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48762179F
+        id S1751158AbeBUXlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:41:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D589217A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
 From: James Hogan <jhogan@kernel.org>
 To: linux-metag@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: [PATCH 12/13] media: img-ir: Drop METAG dependency
-Date: Wed, 21 Feb 2018 23:38:24 +0000
-Message-Id: <20180221233825.10024-13-jhogan@kernel.org>
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Subject: [PATCH 13/13] i2c: img-scb: Drop METAG dependency
+Date: Wed, 21 Feb 2018 23:38:25 +0000
+Message-Id: <20180221233825.10024-14-jhogan@kernel.org>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180221233825.10024-1-jhogan@kernel.org>
 References: <20180221233825.10024-1-jhogan@kernel.org>
@@ -26,30 +24,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Now that arch/metag/ has been removed, remove the METAG dependency from
-the IMG IR device driver. The hardware is also present on MIPS SoCs so
-the driver still has value.
+the IMG SCB I2C device driver. The hardware is also present on MIPS SoCs
+so the driver still has value.
 
 Signed-off-by: James Hogan <jhogan@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org
 Cc: linux-metag@vger.kernel.org
 ---
- drivers/media/rc/img-ir/Kconfig | 2 +-
+ drivers/i2c/busses/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/img-ir/Kconfig b/drivers/media/rc/img-ir/Kconfig
-index a896d3c83a1c..d2c6617d468e 100644
---- a/drivers/media/rc/img-ir/Kconfig
-+++ b/drivers/media/rc/img-ir/Kconfig
-@@ -1,7 +1,7 @@
- config IR_IMG
- 	tristate "ImgTec IR Decoder"
- 	depends on RC_CORE
--	depends on METAG || MIPS || COMPILE_TEST
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index a9805c7cb305..94f419489a0b 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -635,7 +635,7 @@ config I2C_IBM_IIC
+ 
+ config I2C_IMG
+ 	tristate "Imagination Technologies I2C SCB Controller"
+-	depends on MIPS || METAG || COMPILE_TEST
 +	depends on MIPS || COMPILE_TEST
- 	select IR_IMG_HW if !IR_IMG_RAW
  	help
- 	   Say Y or M here if you want to use the ImgTec infrared decoder
+ 	  Say Y here if you want to use the IMG I2C SCB controller,
+ 	  available on the TZ1090 and other IMG SoCs.
 -- 
 2.13.6
