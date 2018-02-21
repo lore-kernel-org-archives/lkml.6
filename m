@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218877-2-15056354429176778851
+X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218858-2-15713371502176876297
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218876; b=lylYkO4OaA13hcQ1aRRmk0qL8RwuNH5inSaFKi4JTtzo7B1
-    rcsPGLEQ1jGLo+reZ8YluW8wffeAkBruYlKO6AXX8dgkw99GOZiDBklPLWIlyHB1
-    ZToCjmSBuyLaFPzzoRil6Knnm9UQ0zPIqlcDxxW9WBrb1ZbUSXExOd/YFJW86u5d
-    Uh+aEUIGmQR7/VlmeUXOrajZ33BYabpnGjZLog6Zdpqb2PysGf56FvxjAXVoCUP1
-    Vn3dZpTpRCLz1rtsvUOksf1H4DvGhWPdxN5Cl6YEu07FvWFs7kiUztKK+3TLiDUd
-    kW6UevVXM0ctcI58Kg22QUDBq/nFYR7MnWo8Bdw==
+    t=1519218857; b=HHEI930Ojis/HhGoe5dGNoW7Tx+1OUIH0AvJbDIcniqB4iV
+    mE3HGKroGWbenGyw8mOATT/zHehQ02fpO281FeqbCVXJeoDiO5sAhyuJyY2z9Eup
+    RWHVUwvG32yo71z0APlCfJqa+gGMA302OmscH9R7+uxNuZtfc7qM4FgsHaoWXmQ0
+    iDew19DYSuiCyjbfk/7bBqZFEyzhmLTQyueGsAdYh3SMYfsboizMoSPx436U864O
+    Fk2LMjlLdbnJYoXvenhKZAYn0Re9BYbI7984yZH7qJdV60G/XCwsDJG4DUuZ0wdy
+    yz5GkTYOFJElORjSMQ/dwgZ+WbbK81jASmvTUVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218876; bh=EqL2NqodpN0zK4PCgPnL5Hh6I+
-    nVqUiCdh153+9fhZo=; b=tT3HRhxLZhYY5KN9vL3303EAICEHCswyCGZtW/AcGw
-    H0yaf5DYgvY1GjvfR0DNUsGdxpwgII5g8jk+cj7CvVCC3nQXfk46pQ/QjFhl2C1V
-    rsvlO7d+bsFp66rk5mCEBRKcBCG7Mnu6Ch4SOLQabp8s3hwoI6mXyQlSvZgAQ9HX
-    5wEKuRUgWPvloHsLtDEmyfLyc58Q0hmI/3cI6FNSlfuGlhLVBCllAOHLUbmOnkdW
-    lC2a81wukTJkiA/Y4+mdZvFFaifblNe4P4u2AVmaqC5UiSl7m70n0ZY9RUng98Un
-    pIf2xR3eXg3+tBe9pl/Fhrjh4hVTb1dTVaEEivzI2S7g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519218857; bh=O9DPCyTsY3vqHtNmCu2CMvnWek
+    K7mTkRpyWSOYgeiWg=; b=kpiwPnaJKTiFVwY+9OWo9TTjJApheGWPVQNcdMjU4g
+    Cki9V4fDa+HdZm8a/kcRn5pIcjt2NagCKthdQxcFdwWwxsoQiH5gUADVbI0K9d5c
+    csgP4ZNUwux4ZwkdZLO1IWIB7vbb6AmgYIbmqnst8y255dUU4xS33Ra6+lHf3AdV
+    shR4SBzvpzvkfCDIY7cRuwUviuWAfC+w59aBblpjNNAg5um0iiMuMM9WAfQ+zYp4
+    xr0JV6gBK4ZmhF7MdqvDoPYnKAJuy/7c9KcRh+kETuvYogDc2EBPuXjd3OcYpqvn
+    HH5jPqmbt2cVDFjZGbW3n7Ixog09J3MnmM/TPpfJnluQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754556AbeBUNN0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:13:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46050 "EHLO
+        id S965743AbeBUNNc (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:13:32 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753216AbeBUNNY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:24 -0500
+        with ESMTP id S965740AbeBUNNb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 137/163] Btrfs: fix extent state leak from tree log
-Date: Wed, 21 Feb 2018 13:49:26 +0100
-Message-Id: <20180221124537.745508657@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.15 129/163] xprtrdma: Fix calculation of ri_max_send_sges
+Date: Wed, 21 Feb 2018 13:49:18 +0100
+Message-Id: <20180221124537.261537429@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -78,42 +80,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit 55237a5f2431a72435e3ed39e4306e973c0446b7 upstream.
+commit 1179e2c27efe21167ec9d882b14becefba2ee990 upstream.
 
-It's possible that btrfs_sync_log() bails out after one of the two
-btrfs_write_marked_extents() which convert extent state's state bit into
-EXTENT_NEED_WAIT from EXTENT_DIRTY/EXTENT_NEW, however only EXTENT_DIRTY
-and EXTENT_NEW are searched by free_log_tree() so that those extent states
-with EXTENT_NEED_WAIT lead to memory leak.
+Commit 16f906d66cd7 ("xprtrdma: Reduce required number of send
+SGEs") introduced the rpcrdma_ia::ri_max_send_sges field. This fixes
+a problem where xprtrdma would not work if the device's max_sge
+capability was small (low single digits).
 
-cc: <stable@vger.kernel.org>
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+At least RPCRDMA_MIN_SEND_SGES are needed for the inline parts of
+each RPC. ri_max_send_sges is set to this value:
+
+  ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
+
+Then when marshaling each RPC, rpcrdma_args_inline uses that value
+to determine whether the device has enough Send SGEs to convey an
+NFS WRITE payload inline, or whether instead a Read chunk is
+required.
+
+More recently, commit ae72950abf99 ("xprtrdma: Add data structure to
+manage RDMA Send arguments") used the ri_max_send_sges value to
+calculate the size of an array, but that commit erroneously assumed
+ri_max_send_sges contains a value similar to the device's max_sge,
+and not one that was reduced by the minimum SGE count.
+
+This assumption results in the calculated size of the sendctx's
+Send SGE array to be too small. When the array is used to marshal
+an RPC, the code can write Send SGEs into the following sendctx
+element in that array, corrupting it. When the device's max_sge is
+large, this issue is entirely harmless; but it results in an oops
+in the provider's post_send method, if dev.attrs.max_sge is small.
+
+So let's straighten this out: ri_max_send_sges will now contain a
+value with the same meaning as dev.attrs.max_sge, which makes
+the code easier to understand, and enables rpcrdma_sendctx_create
+to calculate the size of the SGE array correctly.
+
+Reported-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Fixes: 16f906d66cd7 ("xprtrdma: Reduce required number of send SGEs")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Cc: stable@vger.kernel.org # v4.10+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtrdma/rpc_rdma.c |    2 +-
+ net/sunrpc/xprtrdma/verbs.c    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3049,13 +3049,14 @@ static void free_log_tree(struct btrfs_t
- 
- 	while (1) {
- 		ret = find_first_extent_bit(&log->dirty_log_pages,
--				0, &start, &end, EXTENT_DIRTY | EXTENT_NEW,
-+				0, &start, &end,
-+				EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT,
- 				NULL);
- 		if (ret)
- 			break;
- 
- 		clear_extent_bits(&log->dirty_log_pages, start, end,
--				  EXTENT_DIRTY | EXTENT_NEW);
-+				  EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT);
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -143,7 +143,7 @@ static bool rpcrdma_args_inline(struct r
+ 	if (xdr->page_len) {
+ 		remaining = xdr->page_len;
+ 		offset = offset_in_page(xdr->page_base);
+-		count = 0;
++		count = RPCRDMA_MIN_SEND_SGES;
+ 		while (remaining) {
+ 			remaining -= min_t(unsigned int,
+ 					   PAGE_SIZE - offset, remaining);
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -509,7 +509,7 @@ rpcrdma_ep_create(struct rpcrdma_ep *ep,
+ 		pr_warn("rpcrdma: HCA provides only %d send SGEs\n", max_sge);
+ 		return -ENOMEM;
  	}
+-	ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
++	ia->ri_max_send_sges = max_sge;
  
- 	/*
+ 	if (ia->ri_device->attrs.max_qp_wr <= RPCRDMA_BACKWARD_WRS) {
+ 		dprintk("RPC:       %s: insufficient wqe's available\n",
