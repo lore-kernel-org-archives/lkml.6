@@ -1,75 +1,127 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519829059; cv=none;
+Return-Path: <rrajk@nvidia.com>
+X-Google-Smtp-Source: AG47ELtVsHNQjaEP+jbDnKIn9F9MDh/Hru0HlMTXlCRXJFaXSiZiprOWWNhYMDEK7BWdYdJ+qv9/
+ARC-Seal: i=1; a=rsa-sha256; t=1519196358; cv=none;
         d=google.com; s=arc-20160816;
-        b=st2DpiT5JqXLyTue5TPNNY41dWImc2xZhykQOBjKGizPkDqWrNZIss4vqpXtQPE2CO
-         6UySPZjD+9K7U9u4wjNBUY1Ka+T24uadvFGk3PD/HxUYXg3G3O6+aKCWPLAfLZCwga5A
-         WeiTBWAxfytcMdwxlTFB0AO1F2ButNWfK1UVSWA0vES12SllEJDOKNV/QV+ntLdhJZ9M
-         mOzGhq74y1gE2iegX1Vnfr1xp26XRyMEoT6b5XX8pzg7O8ornZ5Bx2FsIJB7gljX5nlP
-         DYmeNnOBp7oKmPfY3C+yc9ybgIW9WHFl/3D+fNwT2S1X1jDKq4a8P2KpOPk4qNzwBYXK
-         NPjg==
+        b=qJvCwmDmdeCd01ElnrYWriBBJoD4YmeXMVNxHK/mE4WgRyDnqNXPdkrCI6NBtDmlmV
+         4biPgSOYWKPC8tUB7ONeM6QiqJzH6AglwunE7Fd6I4OG0d4fhlHWoOPRgCIoeGXtH4Vd
+         dP2lJwGAvqxeoQF0xzSnc5/k1QsCw2XjcXwluo1FUVxO4pYblVd9lnHKYOlI8OdV/9MM
+         sXACB8bNz/AyuOU2ZNfCIPm3CUkXQkdAA6aujfN9w3+m/Sxzvu1o2ac5zbPgg5l90Uzm
+         PRkt1KHutRb/4bOXeSLdgarfz0t49Esl0FUBZ6WBHq1jLcpeKj8bRdPEs9mUHkyoGrJN
+         O8wQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=4k1Gm0adUpjoNVMmJ4aR6DxwHafZMge7dhfPPadrWcY=;
-        b=UeqP6gI2ROZy0W8fz/dx86lKxMNfFtjRtk/oKbgRGH4JDuedIcQUNqRbfACfv6gpuD
-         ggnMNkcd+9PzLaOPEnwppGEIc1KQJWd1Rkk7zeeLAb68hbXyrkut5PBm8DYjYeGyNXdt
-         hyOSH+H19tVeO1o965RFTo8Y7d1zO3nO78hXHiEXurhP9hdhOIUq2HN1bsozRdImZT5h
-         x/UvLtWk2E6cJ///BwRrLyilOu/4/SIYrvhdzuD0XO6F0ImWYZdVJbXhlFv6Xz2QRFJ/
-         TbwaKGWpaoh3bGBsWENiDeiFgFORHsnCHhme7FLqL+SPiR2hHkWH8uwAf/gOBZnPdYGC
-         qkew==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=08pxwqlhYD+9IoV0DNT5WDgqnOpnehFqxonQ5r8AMgw=;
+        b=ir5O3dsRAMYsPGZjDw6mUtQ4HPnZAOaYspAYQ6+v6GuAQonW3puZ9q4Ak+Facv7C1d
+         h4p9nhxFztOVx9APMOOQOH/R9TbV6J+EE8/wmtSr8uGPpKc1pUZkvJf+0JzLfJfTW//W
+         t67mYz6Jp2AQR86WAxXW9MfYNHo/dvHw7q+R/r9Eh8yg9lr4bQ9P3cloAH4FMkAnURzi
+         Q3RmGDa72kl3rbDye1wEGEZXK3wX9d1gcIegRkpS4KC9t5H+kK33hjuVxjf/b4p5eZAE
+         vlIIVYRMrmneDmuYlwD/GqcNJfwe/wyt2v334DLLgScVBv4PEW5PH36L+BF68BNc5if7
+         5Mtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lt0NPZPk;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lt0NPZPk;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AG47ELvyIYt+9VnY1AZt03obXQcQpgJARkD4wVGAB2OO68ZbLrvyZptvV0xeVg4DiQLAWcZ6Ew13RSQr1WlXrHPrLEY=
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate101.nvidia.com on Tue, 20 Feb 2018 22:59:16 -0800
+From: Rajkumar Rampelli <rrajk@nvidia.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+	<kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
+	<pombredanne@nexb.com>, <mmaddireddy@nvidia.com>, <mperttunen@nvidia.com>,
+	<arnd@arndb.de>, <gregory.clement@free-electrons.com>,
+	<timur@codeaurora.org>, <andy.gross@linaro.org>, <xuwei5@hisilicon.com>,
+	<elder@linaro.org>, <heiko@sntech.de>, <krzk@kernel.org>,
+	<ard.biesheuvel@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
+	<rrajk@nvidia.com>
+Subject: [PATCH 00/10] Implementation of Tegra Tachometer driver
+Date: Wed, 21 Feb 2018 12:28:49 +0530
+Message-ID: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <826093167e8fb24723f474b0272f3dcab1b6a97e.1519821626.git.baolin.wang@linaro.org>
-References: <826093167e8fb24723f474b0272f3dcab1b6a97e.1519821626.git.baolin.wang@linaro.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 28 Feb 2018 15:44:18 +0100
-X-Google-Sender-Auth: 0sbNO82B9hP9x7lHaiuGd0-oA98
-Message-ID: <CAK8P3a1v2GanneaFKpXWjWLt1YzibJ9Bh7vUcd_SH-4jGN_1+A@mail.gmail.com>
-Subject: Re: [PATCH v3] Input: gpio_keys: Add level trigger support for GPIO keys
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, gregkh <gregkh@linuxfoundation.org>, lumotuwe@gmail.com,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>, josephl@nvidia.com,
-	kstewart@linuxfoundation.org, Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593648786277200792?=
-X-GMAIL-MSGID: =?utf-8?q?1593656275955077983?=
+X-GMAIL-THRID: =?utf-8?q?1592992841266774003?=
+X-GMAIL-MSGID: =?utf-8?q?1592992841266774003?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 1:44 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> On some platforms (such as Spreadtrum platform), the GPIO keys can only
-> be triggered by level type. So this patch introduces one property to
-> indicate if the GPIO trigger type is level trigger or edge trigger.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes since v2:
->  - Use 'interrupt' property to indicate the irq type.
->
-> Changes since v1:
->  - Diable the GPIO irq until reversing the GPIO level type.
+The following patches adds support for PWM based Tegra Tachometer driver
+which implements PWM capture interface to analyze the PWM signal of a
+electronic fan and reports it in periods and duty cycles.
 
-I've looked at your patch in more detail now, and given it a bit more thought.
+Generic PWM Tachometer implemented to monitor the speed of fan in rpms
+using PWM interface. RPM of Fan will be exposed to user interface through
+HWMON sysfs interface avialable at below location
+/sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
 
-I wonder if you could move that logic into your gpiochip/irqchip driver instead.
-It seems that what you do in the gpio-keys driver is to emulate edge triggered
-behavior on a level triggered irqchip.
+Steps to validate Tachometer:
+A. push modules pwm-tegra.ko, pwm-tegra-tachometer.ko and
+   generic-pwm-tachometer.ko to linux device using scp command.
+   scp build/tegra186/drivers/pwm/pwm-tegra.ko ubuntu@10.19.65.176:/tmp/
+   scp build/tegra186/drivers/pwm/pwm-tegra-tachometer.ko ubuntu@10.19.65.176:/tmp/
+   scp build/tegra186/drivers/hwmon/generic-pwm-tachometer.ko ubuntu@10.19.65.176:/tmp/
+B. On Linux device console, insert these modules using insmod command.
+   insmod /tmp/pwm-tegra.ko
+   insmod /tmp/pwm-tegra-tachometer.ko
+   insmod /tmp/generic-pwm-tachometer.ko
+C. Read RPM value at below sysfs node
+   cat /sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
+D. Change the FAN speed using PWM sysfs interface. Follow below steps for the same:
+   a. cd /sys/class/pwm/pwmchip0
+   b. ls -la (make sure pwm controller is c340000.pwm)
+      Output should be: device -> ../../../c340000.pwm
+   c. echo 0 > export
+   d. cd pwmchip0:0
+   e. echo 8000 > period
+   f. echo 1 > enable
+   g. echo 7000 > duty_cycle # change duty_cycles from 0 to 7000 and see FAN speed
+   h. cat /sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
+   i. echo 4000 > duty_cycle
+   h. cat /sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
+   i. echo 2000 > duty_cycle
+   h. cat /sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
+   i. echo 0 > duty_cycle
+   h. cat /sys/devices/platform/generic_pwm_tachometer/hwmon/hwmon0/rpm
 
-If you put the same logic into the gpio driver, you could simply make it
-pretend to support an edge trigger on both edges and call into the interrupt
-handler whenever the state changes.
+Rajkumar Rampelli (10):
+  pwm: core: Add support for PWM HW driver with pwm capture only
+  dt-bindings: Tegra186 tachometer device tree bindings
+  pwm: tegra: Add PWM based Tachometer driver
+  hwmon: generic-pwm-tachometer: Add DT binding details
+  hwmon: generic-pwm-tachometer: Add generic PWM based tachometer
+  arm64: tegra: Add Tachometer Controller on Tegra186
+  arm64: tegra: Add PWM based Tachometer support on Tegra186
+  arm64: defconfig: enable Nvidia Tegra Tachometer as a module
+  arm64: defconfig: Enable Generic PWM based Tachometer driver
+  arm64: tegra: Add PWM controller on Tegra186 soc
 
-        Arnd
+ .../bindings/hwmon/generic-pwm-tachometer.txt      |  25 ++
+ .../bindings/pwm/pwm-tegra-tachometer.txt          |  31 +++
+ Documentation/hwmon/generic-pwm-tachometer         |  17 ++
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   5 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  28 ++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/hwmon/Kconfig                              |  10 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/generic-pwm-tachometer.c             | 112 ++++++++
+ drivers/pwm/Kconfig                                |  10 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/core.c                                 |   4 +
+ drivers/pwm/pwm-tegra-tachometer.c                 | 303 +++++++++++++++++++++
+ 13 files changed, 549 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/generic-pwm-tachometer.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-tegra-tachometer.txt
+ create mode 100644 Documentation/hwmon/generic-pwm-tachometer
+ create mode 100644 drivers/hwmon/generic-pwm-tachometer.c
+ create mode 100644 drivers/pwm/pwm-tegra-tachometer.c
+
+-- 
+2.1.4
