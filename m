@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754015AbeBUMPB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:15:01 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47267 "EHLO
+        id S1754025AbeBUMSX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:18:23 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47290 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeBUMO6 (ORCPT
+        with ESMTP id S1751639AbeBUMSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:14:58 -0500
+        Wed, 21 Feb 2018 07:18:21 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -22,12 +22,12 @@ Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v4 03/16] of: dynamic: Add __of_node_dupv()
-Date: Wed, 21 Feb 2018 14:15:39 +0200
-Message-ID: <8443535.FeXUiDPB9F@avalon>
+Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
+Date: Wed, 21 Feb 2018 14:19:02 +0200
+Message-ID: <2176862.3cxL0kyTvc@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <CAMuHMdWQEKETp50VnU4eiHcXvBqzgdwH1z6CYbkJq_YH1=UHaw@mail.gmail.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-4-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWQEKETp50VnU4eiHcXvBqzgdwH1z6CYbkJq_YH1=UHaw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -37,59 +37,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Geert,
 
-On Wednesday, 21 February 2018 12:26:45 EET Geert Uytterhoeven wrote:
+On Wednesday, 21 February 2018 12:21:50 EET Geert Uytterhoeven wrote:
 > On Wed, Feb 21, 2018 at 12:10 AM, Laurent Pinchart wrote:
 > > From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 > > 
-> > Add an __of_node_dupv() private method and make __of_node_dup() use it.
-> > This is required for the subsequent changeset accessors which will
-> > make use of it.
+> > Changesets are very powerful, but the lack of a helper API
+> > makes using them cumbersome. Introduce a simple copy based
+> > API that makes things considerably easier.
+> > 
+> > To wit, adding a property using the raw API.
+> > 
+> >         struct property *prop;
+> >         prop = kzalloc(sizeof(*prop)), GFP_KERNEL);
+> >         prop->name = kstrdup("compatible");
+> >         prop->value = kstrdup("foo,bar");
+> >         prop->length = strlen(prop->value) + 1;
+> >         of_changeset_add_property(ocs, np, prop);
+> > 
+> > while using the helper API
+> > 
+> >         of_changeset_add_property_string(ocs, np, "compatible",
+> >         
+> >                         "foo,bar");
 > > 
 > > Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> > [Fixed memory leak in __of_changeset_add_update_property_copy()]
 > > Signed-off-by: Laurent Pinchart
 > > <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/of/dynamic.c | 29 +++++++++++++++++++++++------
-> >  1 file changed, 23 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > index 7bb33d22b4e2..4ffd04925fdf 100644
-> > --- a/drivers/of/dynamic.c
-> > +++ b/drivers/of/dynamic.c
-> > @@ -382,8 +382,9 @@ struct property *__of_prop_dup(const struct property
-> > *prop, gfp_t allocflags)> 
-> >  }
-> >  
-> >  /**
-> > 
-> > - * __of_node_dup() - Duplicate or create an empty device node
-> > dynamically.
-> > - * @fmt: Format string (plus vargs) for new full name of the device node
-> > + * __of_node_dupv() - Duplicate or create an empty device node
-> > dynamically. + * @fmt: Format string for new full name of the device node
-> > + * @vargs: va_list containing the arugments for the node full name
-> > 
-> >   *
-> >   * Create an device tree node, either by duplicating an empty node or by
-> >   allocating * an empty one suitable for further modification.  The node
-> >   data are> 
-> > @@ -391,17 +392,15 @@ struct property *__of_prop_dup(const struct property
-> > *prop, gfp_t allocflags)> 
-> >   * OF_DETACHED bits set. Returns the newly allocated node or NULL on out
-> >   of
-> >   * memory error.
-> >   */
-> > 
-> > -struct device_node *__of_node_dup(const struct device_node *np, const
-> > char *fmt, ...) +struct device_node *__of_node_dupv(const struct
-> > device_node *np,
 > 
-> static, cfr.
+> You missed one fix I have in my topic/overlays branch
 > https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/co
-> mmit/?h=topic/overlays&id=c45324e1807dd708344c9a478b777b68aca11cdf
+> mmit/?h=topic/overlays&id=150f95b9dec77ce371c229f7ac4d6dd8620bef4a
+> > --- a/include/linux/of.h
+> > +++ b/include/linux/of.h
+> > 
+> > +/**
+> > + * of_changeset_add_property_u32 - Create a new u32 property
+> > + *
+> > + * @ocs:       changeset pointer
+> > + * @np:                device node pointer
+> > + * @name:      name of the property
+> > + * @val:       value in host endian format
+> > + *
+> > + * Adds a u32 property to the changeset.
+> > + *
+> > + * Returns zero on success, a negative error value otherwise.
+> > + */
+> > +static inline int of_changeset_add_property_u32(struct of_changeset *ocs,
+> > +               struct device_node *np, const char *name, u32 val)
+> > +{
+> > +       val = cpu_to_be32(val);
+> 
+> You must use an intermediate, to avoid complaints from sparse:
+> 
+>     __be32 x = cpu_to_be32(val);
+> 
+> > +       return __of_changeset_add_update_property_copy(ocs, np, name,
+> > &val,
+> > +                       sizeof(val), false);
+> 
+> s/val/x/
 
-I'll fix that in the next version.
+I'll fix both in the next version, thanks.
+
+> > +}
+> > +
+> > +/**
+> > + * of_changeset_update_property_u32 - Update u32 property
+> > + *
+> > + * @ocs:       changeset pointer
+> > + * @np:                device node pointer
+> > + * @name:      name of the property
+> > + * @val:       value in host endian format
+> > + *
+> > + * Updates a u32 property to the changeset.
+> > + *
+> > + * Returns zero on success, a negative error value otherwise.
+> > + */
+> > +static inline int of_changeset_update_property_u32(
+> > +       struct of_changeset *ocs, struct device_node *np,
+> > +       const char *name, u32 val)
+> > +{
+> > +       val = cpu_to_be32(val);
+> 
+> Oh, a new one.
+> 
+> > +       return __of_changeset_add_update_property_copy(ocs, np, name,
+> > &val,
+> > +                       sizeof(val), true);
+> > +}
 
 -- 
 Regards,
