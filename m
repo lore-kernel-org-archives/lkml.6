@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227fQuWKQPb4Ay+91OTSNW9DhoL4O72eEhu9ne3rH+m5NnY90zs8ONnqHGr/TtOM9wrahBvQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519217728; cv=none;
+X-Google-Smtp-Source: AH8x225p9QdC+Voe8H8WRqCjW/1wPjg3StPXavJHhjr3NksfE8pLjq8Js7E5U+W7Cw6dloHeeS88
+ARC-Seal: i=1; a=rsa-sha256; t=1519217725; cv=none;
         d=google.com; s=arc-20160816;
-        b=tndErs3PKdbityhV5Dw2dzI1VfZK7IDOiORLoKkxp+EarhUJ03J5xj4EiN0FR1xkZ8
-         VUx3srS59D6WY5UnmcVq/ZoxR/3At+BHlgGdvUS0r66rCmYSMWaFFfqMBNBKOQaM/j1L
-         FvsuLqkvpJz2BPi+ZfvvQNTE9j6FTQ/RSbiWypj2Z8JW0zvcaCl48ZIpuxykbw1sygTd
-         +O8YKmwNPHRbEwTC2OT2h3jpBrSjtfGuDw88tLLkGd4LoEmhWzHuA4gfb4MDiZgkMjPY
-         +VrkvYHgcCY6KT7EKiGvjV3pDNiwRfZFVbJ1unDHBRU7dFrf9mxenzJTziMgzD4m7HlZ
-         YfvA==
+        b=mx+5cmD1oAQ4iwuXNXekIeSLk1S4DihtojSjiNHb4AvtZnyfIxg8S39bBckQH7TYN9
+         kt0rE6OPJvg+mWfLUODdJEJDz3pWFi16L4Nou/Ao42oeEkzElbZGx/IwTqRkae48T9Kr
+         tmBsdrqnX2HGrOXEHsKCg6juUCdqicRVy8LulCV93aURDw6M6h0A/0UvXe+2b5xgqknL
+         IB7+oug6j7+oOqd5sUeRSZRfzWO81w/xgYDsXhocZbHpNzi+P1J/mVHl8B7sLdgKVcBH
+         7z43buTq95+U5GkiTM8hKuhg9uazwfeFpycTMKFEDgSBJl7lc8i8q1t8yKpFNNTs3mXE
+         7vTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LluB5H22ZRuAVRx41cnTKlXDww0NzfxAMOoVcDHYqfs=;
-        b=P/SuU96n8Ndd1Fa3hXF/ni/wWnj6D6K5NE+hJ4qIljayi4twbNLY+T0lSs0VGYF3Rg
-         +iWy4jWEQ/bcs5qhU6dEsHM8Gz96iEqe2rTVIg2eNRYmkMTB9F1O9mUr7zOsPTEoAPEO
-         oLj7RSfL8kjuVjDSWF/KZzQmYj/A1SlyLKRGkD80vUxZtIB0taemrh9o4tfCl800RSLY
-         BsK/Hmzcd5/Z1CCTHgfzT3XWVk+c6VB/ECpdqwEc6lNXYLNuulR4rbbi2Uk0pFvmUJPE
-         hoptnq+6OiG1d6cTe27Rnu2XbiVoH8TIWyeKTE99SVjTG8sIW2Hl1uCbECy6Uj6HCNEv
-         ExmA==
+        bh=Dm7YY+uyO6TVF6lEJ5EEbwjvq6DZSuK2lmexJM9Kw1A=;
+        b=yAnyoboucjPOeDVo5P217jbtN1PQJPFYuHFByZhf6j70nzA18gFTZeTryFg9Hbo7WX
+         Nd0kjaVG7KgM03Sf+Bbk8R5dsjXnpK6mWsyhCxLPXoimGGTDaVI/h73R2wxEv1VpsDuV
+         gTT+JkyetZL/T+rQKadYk5lJhlQ3cWg/zx1OBnuKim4nnm6FceTKZ9afAjjoUuPOUviJ
+         fAwrOlwnO/ao86imlUUi01ILzUh2qFQECveGmYmVefpdi8anYKbhWcjIdgtVzaxKPE4A
+         i2iweu4jdsPuufdPKtIy6N2xiJ9xkogAy0W1j1ioZHTO9MvmMsBXCSBrsDfS+rmh6EqP
+         A8zA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NeilBrown <neilb@suse.com>,
-	Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 33/77] dm: correctly handle chained bios in dec_pending()
-Date: Wed, 21 Feb 2018 13:48:42 +0100
-Message-Id: <20180221124433.581232888@linuxfoundation.org>
+	James Hogan <jhogan@kernel.org>,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	linux-usb@vger.kernel.org,
+	linux-mips@linux-mips.org
+Subject: [PATCH 4.9 32/77] usb: Move USB_UHCI_BIG_ENDIAN_* out of USB_SUPPORT
+Date: Wed, 21 Feb 2018 13:48:41 +0100
+Message-Id: <20180221124433.539558108@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014686624050782?=
-X-GMAIL-MSGID: =?utf-8?q?1593015248786280655?=
+X-GMAIL-THRID: =?utf-8?q?1593015246018600835?=
+X-GMAIL-MSGID: =?utf-8?q?1593015246018600835?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +53,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: James Hogan <jhogan@kernel.org>
 
-commit 8dd601fa8317243be887458c49f6c29c2f3d719f upstream.
+commit ec897569ad7dbc6d595873a487c3fac23f463f76 upstream.
 
-dec_pending() is given an error status (possibly 0) to be recorded
-against a bio.  It can be called several times on the one 'struct
-dm_io', and it is careful to only assign a non-zero error to
-io->status.  However when it then assigned io->status to bio->bi_status,
-it is not careful and could overwrite a genuine error status with 0.
+Move the Kconfig symbols USB_UHCI_BIG_ENDIAN_MMIO and
+USB_UHCI_BIG_ENDIAN_DESC out of drivers/usb/host/Kconfig, which is
+conditional upon USB && USB_SUPPORT, so that it can be freely selected
+by platform Kconfig symbols in architecture code.
 
-This can happen when chained bios are in use.  If a bio is chained
-beneath the bio that this dm_io is handling, the child bio might
-complete and set bio->bi_status before the dm_io completes.
+For example once the MIPS_GENERIC platform selects are fixed in commit
+2e6522c56552 ("MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN"), the MIPS
+32r6_defconfig warns like so:
 
-This has been possible since chained bios were introduced in 3.14, and
-has become a lot easier to trigger with commit 18a25da84354 ("dm: ensure
-bio submission follows a depth-first tree walk") as that commit caused
-dm to start using chained bios itself.
+warning: (MIPS_GENERIC) selects USB_UHCI_BIG_ENDIAN_MMIO which has unmet direct dependencies (USB_SUPPORT && USB)
+warning: (MIPS_GENERIC) selects USB_UHCI_BIG_ENDIAN_DESC which has unmet direct dependencies (USB_SUPPORT && USB)
 
-A particular failure mode is that if a bio spans an 'error' target and a
-working target, the 'error' fragment will complete instantly and set the
-->bi_status, and the other fragment will normally complete a little
-later, and will clear ->bi_status.
-
-The fix is simply to only assign io_error to bio->bi_status when
-io_error is not zero.
-
-Reported-and-tested-by: Milan Broz <gmazyland@gmail.com>
-Cc: stable@vger.kernel.org (v3.14+)
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 2e6522c56552 ("MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN")
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-usb@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Patchwork: https://patchwork.linux-mips.org/patch/18559/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/md/dm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/Kconfig      |    8 ++++++++
+ drivers/usb/host/Kconfig |    8 --------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -809,7 +809,8 @@ static void dec_pending(struct dm_io *io
- 		} else {
- 			/* done with normal IO or empty flush */
- 			trace_block_bio_complete(md->queue, bio, io_error);
--			bio->bi_error = io_error;
-+			if (io_error)
-+				bio->bi_error = io_error;
- 			bio_endio(bio);
- 		}
- 	}
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -19,6 +19,14 @@ config USB_EHCI_BIG_ENDIAN_MMIO
+ config USB_EHCI_BIG_ENDIAN_DESC
+ 	bool
+ 
++config USB_UHCI_BIG_ENDIAN_MMIO
++	bool
++	default y if SPARC_LEON
++
++config USB_UHCI_BIG_ENDIAN_DESC
++	bool
++	default y if SPARC_LEON
++
+ menuconfig USB_SUPPORT
+ 	bool "USB support"
+ 	depends on HAS_IOMEM
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -628,14 +628,6 @@ config USB_UHCI_PLATFORM
+ 	bool
+ 	default y if ARCH_VT8500
+ 
+-config USB_UHCI_BIG_ENDIAN_MMIO
+-	bool
+-	default y if SPARC_LEON
+-
+-config USB_UHCI_BIG_ENDIAN_DESC
+-	bool
+-	default y if SPARC_LEON
+-
+ config USB_FHCI_HCD
+ 	tristate "Freescale QE USB Host Controller support"
+ 	depends on OF_GPIO && QE_GPIO && QUICC_ENGINE
