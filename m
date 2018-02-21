@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224iytzKJIn6+qaVR8MHp3grKZcKdmEVJAH2d+Z1LuTvnHQh0nvgeZOUVKPPA13vcoRJDBcS
-ARC-Seal: i=1; a=rsa-sha256; t=1519218265; cv=none;
+X-Google-Smtp-Source: AH8x226gND9wN6Hk0nhXbiX5BEMpfdnVEx+MiO8DbM6tUUClCI0vozeeXmQoSu7eYdayghF6J7tv
+ARC-Seal: i=1; a=rsa-sha256; t=1519218262; cv=none;
         d=google.com; s=arc-20160816;
-        b=wEY+fYkBdJz5cH2xW9R2g9oYsTuW+C1eEpaqH87ExpfHzccyZBPCTTLaAYuk72ILgG
-         8YlJy/FQpBnvdShruR+vuZWDoWWCB5IyLdQ116iudJr0AuRecuPLeVor6ITtozxefHb0
-         eTYqQ52IKJvl3YRPYCjIckbwkiWQhG0ouSE7nUyziwS6Lk3uO34PAIxvk9WjlGnB8u7S
-         vHP8XGqZdXnr18DnTcfS0/T+VhppYKYRcpY7YkeWXk7P3iGLaL9rWCrDgg99PD8fFP0q
-         0apfXvLGP7e/uFkgLkhqX35669YQeZT4DOf4+zujEDPt/uFJA1UoqLDK8DEdUkoV1lU/
-         JhyA==
+        b=UbH5BHSjvi2fz3IPTh3UChqWMCRJ8ioRDnKkiWZ3wfGF+OScKnRJVJH4bVRfpzJlFs
+         KqcAduX33dP0v4ZWXheKkYClaCqnsJnlM3yCOp8lKsI09qKU9csR1NEme6X6UJjESqj7
+         2ZjnaF910akmKpG/4YsFJx8VkZeIbtw7TNDeFRkVsIzmygH+UtqaJnncX1HkzG670L3Z
+         QDYi/jXcvrvNxWoABKyVd6iqXec8j0OAj7PevPYl1oJFfFvGU54jRG+WSQB42JtSEx0a
+         ydLcwckNNdYFRyAkf+gdbD4CROpOBEbPb0shvKmdBt16n7l1WXDgj0vN97FjaBT8bAjw
+         8qog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=i9oOFGNTZ3P+/x5oqYo/5BH4x4wN9l4Z4EwMRyUcYbU=;
-        b=ZN240ijFu2ehHVC0ieJaYQ/EeqLpP1fHtsUp92D134N00X67eovHHpUQl1PqshN94d
-         1zYhvqaZnF26wAQMgKmyn+6j0L3CsqZiuYPegrR3Em18TupXksMOr2pL3ud4fyOGRr2r
-         PyjDLzKMefLwy8b0tKIm23gWBXiLpovB5yUM5RmOkOJc/ZkJRrlsDDbkMAjZgubQ9iGk
-         4+qLcDL5F4LxyQBlq5OYQ9iB1EGFeTQztoPO9szPmJ+FG+PLaqSaOPpS9xMoeP+0i1X/
-         Q8b6/u6u+NK2TUe4dbX5bCFRqvKuU38t0ESojyrqAFDxHmHkUf0LJtpCZtM8hK3kCiiM
-         +OUA==
+        bh=bPmpntl+xDrEtP5jafpUKmvr/CILHB6QJNg8jR6D7KM=;
+        b=fDhhJ3K6C2FP+60tiFTpc+74i2xGelHd7qQmpSWEk3tQEDBVgxAOorLHfAAfAxrtk+
+         ydrH1cOuXPE2EuXclGBYKQ+3TMNpGEcC/zu8zf2J1lN7oFKdPfjRhxOvmrnHIQ9t+TCV
+         Yz3x8x+hdLiJ1VU2qvbo72VZQgSMzxrQwCxzTe7NGsMN1MpmAqB0gAYQlEoiCMNl827v
+         TWxcdcc5mOConjTi7MRiCtD+mKKdDocakN5NkLVGZ+mq49WXDYb40MfL21uiHrikQhK0
+         QsC7X+mNvMD1HhSvUqm4bRqPVnyspXfXTnZ75yseeBwxiskgm2Eqr/PdJF+WZqW8oio5
+         +Xug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 110/167] mm: Fix memory size alignment in devm_memremap_pages_release()
-Date: Wed, 21 Feb 2018 13:48:41 +0100
-Message-Id: <20180221124530.383261933@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 109/167] mm: hide a #warning for COMPILE_TEST
+Date: Wed, 21 Feb 2018 13:48:40 +0100
+Message-Id: <20180221124530.329445704@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015289662337043?=
-X-GMAIL-MSGID: =?utf-8?q?1593015811122172460?=
+X-GMAIL-THRID: =?utf-8?q?1593014626139492093?=
+X-GMAIL-MSGID: =?utf-8?q?1593015808608062215?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan H. Schönherr <jschoenh@amazon.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 10a0cd6e4932b5078215b1ec2c896597eec0eff9 upstream.
+commit af27d9403f5b80685b79c88425086edccecaf711 upstream.
 
-The functions devm_memremap_pages() and devm_memremap_pages_release() use
-different ways to calculate the section-aligned amount of memory. The
-latter function may use an incorrect size if the memory region is small
-but straddles a section border.
+We get a warning about some slow configurations in randconfig kernels:
 
-Use the same code for both.
+  mm/memory.c:83:2: error: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Werror=cpp]
 
-Cc: <stable@vger.kernel.org>
-Fixes: 5f29a77cd957 ("mm: fix mixed zone detection in devm_memremap_pages")
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+The warning is reasonable by itself, but gets in the way of randconfig
+build testing, so I'm hiding it whenever CONFIG_COMPILE_TEST is set.
+
+The warning was added in 2013 in commit 75980e97dacc ("mm: fold
+page->_last_nid into page->flags where possible").
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/memremap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/memory.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -301,7 +301,8 @@ static void devm_memremap_pages_release(
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -81,7 +81,7 @@
  
- 	/* pages are dead and unused, undo the arch mapping */
- 	align_start = res->start & ~(SECTION_SIZE - 1);
--	align_size = ALIGN(resource_size(res), SECTION_SIZE);
-+	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
-+		- align_start;
+ #include "internal.h"
  
- 	mem_hotplug_begin();
- 	arch_remove_memory(align_start, align_size);
+-#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
++#if defined(LAST_CPUPID_NOT_IN_PAGE_FLAGS) && !defined(CONFIG_COMPILE_TEST)
+ #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
+ #endif
+ 
