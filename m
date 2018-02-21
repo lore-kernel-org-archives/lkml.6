@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519219107-2-3375784785393453490
+X-Cyrus-Session-Id: sloti22d1t05-1568560-1519219076-2-4184710912935300932
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519219106; b=KoXo9t1bs5qCOg9IDD0HJn8iBLRm1uxc/X8DQmkjT7W3gh2
-    /i2j5naNP310MeZmp0XjQOxczUOgMQnSJAr7Ly/gVMHfQxfxKWTYXSv4YwCT880A
-    3UyLowtqy+g7fKtV8f2EvvvymI9oRm8erV4YHVhu5MhdYzuBEE/5zeS+9nBQervo
-    fbwnDzxzgWRBe6bKcGkGD6kIYOQemj+eCc7KfuRHVBsWI0t8dZFIhyrmLZMCGl2E
-    KbZC+ryuerYddPV5SdLb0uGbzDEsfzVKbvuKK0xt1VWIA2VwqrezIHMa5x0u3hY3
-    mVTVaAhFe/jH2bOZOt2fT1T1UCZF30yv0w5Ujqg==
+    t=1519219076; b=A1fwy5YeXMjZ47yZpBArK2FjbIdNDIhPE7r6eN3aZHubQpc
+    +jxm51gso/e9Q0F5rVhPMyNVy5BhUA13IazqQNUAJNpiTJmPA0Ye4T3+p/nSWS2k
+    BL7i8VntgZqkgq+BV3R4x+RHLPgKRALm5HDvc4e4WphVssuBfMDFdvYVyz2bUJZw
+    XM0uJoQiM5Bd7xiWpvy4yMuIpFixBLlDS0Z+19bHbSmOaO3gLK2QY9XrYXPCzkRW
+    XlarqdjA7LlYTu1VpJh/pK9utg8W5xdWwaNVnYKuk3L6dFYtYTQghxKFAoap6ydm
+    HH4a3Wdii+awEumi3W+fFTPNdBvKfKx7iew5HCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519219106; bh=2NX3dnaT+lA3w/g6OvOgf4Xd16
-    ygpWMr/LZFe7EMEt4=; b=JgADDtSQbiL5sRpHnLc/pVj+dP+ZwO4BMX+RLmRUPe
-    APGt4En74gZSzFHnsGIEqTZbekkllBrZ6wM1m0LWnjL5KFtiF5j5d4CnmXmI73K0
-    UVp4diwxD4PPLgtcaKMof9jXsIn0ipyKbape0nbDfwCJqHtzgSwudJhUVDacVH50
-    qqhMVfxs4dgL+dGhO9yBtQmkIJ/P8OJvEqjVQeo3qHI701xpfQ4p6Fu1JwFpMIgf
-    4RH58x8rWORCaqR5VOX5znENR5CqtqO4pjozliSU+hF8cIW/NmoFXy1Ii6BLAA5N
-    5Fu4rQHId/tF67oj3bSq1x6ZTX+7+6DKTpAm4ldC1h2g==
+    :list-id; s=arctest; t=1519219076; bh=Mhz4CgG6gZcAayHQ8llPK2JWZ2
+    c5Lb0GAUHWDokwh1A=; b=wPVhm8C0jnhPi23Wgt2h98EhHkpVx96AgHVuzmQ4oY
+    foJfR7Tjrksf4sTSXoOvxrj6zEh2e/IGBW+Kt/SkZRUjS8FLTZVM8MVXxaGrxCXN
+    Za7tkQp7aAM8HEpk/DxJsJj0bvLPgtGeKa5Rn6E5G884WurkjOJp8z+D7wJyOZiY
+    2PZ3tps2Ame0HR6bM414mkVpdNnUiDwvFHGxLgI9Q0txwVNT60mP/apOb8/5o1Xv
+    GZCELRJmJzoKuq7CuFmkRazFoEwMJq6RZf26AH6RMJmSJRUgAKuu/qHWsNjkgLm+
+    XeTIdxB3oKArRjQnZoB4Lvugk5ez7Wj6k2zImOPE+m7A==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965643AbeBUNMp (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:12:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45808 "EHLO
+        id S965661AbeBUNMw (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:12:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45828 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965623AbeBUNMo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:12:44 -0500
+        with ESMTP id S965623AbeBUNMt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:12:49 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.15 155/163] ARM: pxa/tosa-bt: add MODULE_LICENSE tag
-Date: Wed, 21 Feb 2018 13:49:44 +0100
-Message-Id: <20180221124538.547075576@linuxfoundation.org>
+Subject: [PATCH 4.15 157/163] ARM: dts: s5pv210: add interrupt-parent for ohci
+Date: Wed, 21 Feb 2018 13:49:46 +0100
+Message-Id: <20180221124538.629895538@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -80,29 +80,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 3343647813fdf0f2409fbf5816ee3e0622168079 upstream.
+commit 5c1037196b9ee75897c211972de370ed1336ec8f upstream.
 
-Without this tag, we get a build warning:
+The ohci-hcd node has an interrupt number but no interrupt-parent,
+leading to a warning with current dtc versions:
 
-WARNING: modpost: missing MODULE_LICENSE() in arch/arm/mach-pxa/tosa-bt.o
+arch/arm/boot/dts/s5pv210-aquila.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-goni.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-smdkc110.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-smdkv210.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
+arch/arm/boot/dts/s5pv210-torbreck.dtb: Warning (interrupts_property): Missing interrupt-parent for /soc/ohci@ec300000
 
-For completeness, I'm also adding author and description fields.
+As seen from the related exynos dts files, the ohci and ehci controllers
+always share one interrupt number, and the number is the same here as
+well, so setting the same interrupt-parent is the reasonable solution
+here.
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-pxa/tosa-bt.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/s5pv210.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-pxa/tosa-bt.c
-+++ b/arch/arm/mach-pxa/tosa-bt.c
-@@ -132,3 +132,7 @@ static struct platform_driver tosa_bt_dr
- 	},
- };
- module_platform_driver(tosa_bt_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Dmitry Baryshkov");
-+MODULE_DESCRIPTION("Bluetooth built-in chip control");
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -463,6 +463,7 @@
+ 			compatible = "samsung,exynos4210-ohci";
+ 			reg = <0xec300000 0x100>;
+ 			interrupts = <23>;
++			interrupt-parent = <&vic1>;
+ 			clocks = <&clocks CLK_USB_HOST>;
+ 			clock-names = "usbhost";
+ 			#address-cells = <1>;
