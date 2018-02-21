@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Sj8NDJZymcxd+vrBTMCiRwggwovcQfZg6VAEIqYbjmsns91w/20jI9sikDRBAjMHQGe6q
-ARC-Seal: i=1; a=rsa-sha256; t=1519218567; cv=none;
+X-Google-Smtp-Source: AH8x226LmIJHJv8CQmQZcPtCL1k0TixP4WTz5r115pfwJz15AdRdUgzeBKTi+MYPcLPgxnIIucSf
+ARC-Seal: i=1; a=rsa-sha256; t=1519218562; cv=none;
         d=google.com; s=arc-20160816;
-        b=BLZ3Y6Q1qGTJqPllIwIfBi046ipv/Pzwl7RAhBwf5B+PaRcyqrjYZEfEiz8xS6sZoh
-         EsRXhCJ1jeDTY4b4GEWFmnVrPh6yvK7X1t0L3yGhq2ZIVmhy7T/3w7pUr9sPd9Adn8vD
-         7wBJ+WvcNqj+5LzldWqJg57nQlH75xhzucm+jucXs/LWT3mn6msH300T/5FkKVRyG4Hv
-         LMOcJPFwnn8tY6xC2IljOsKIzMF4fIUlGwsXM+hwPzjcLbhyvUL5p63sZ48DGCL+RX7o
-         gYbD44Y/BOjk5T+aRHLwZugAr+SUBDAWjmFRPcQsAyeeRM8Caiea656Y9L2elH/q4LVk
-         TPJQ==
+        b=FjV25Yu1MYyIG4EsGgB3LGG9LbrRXXnnIwLZKvqtb7toVbVIJc2oLCaD6/9Ii2qui5
+         BoQankzdFNgsdDhlIUmTqREGi0MAvjrbVYrXjl3ygFqd/C4x4himtxpWYJMZtmn1GQgY
+         qR2s0XlXj6USII+OWRINXtHtAswBsXAd7aLII7s5vxOLHTlmX8k22ay/QXd2n0XdJ4ws
+         Qm+eSzUH0tw0DODcgI8RXkS1kX3udsZ6hqRbxGZJYEvhbGuVtnfJuUWz/l9BHNgzu+mR
+         astmEHBQj1GD2GQ5Z5sMpi/AJcp6Y0xcmqdnvDzIuzG4ZxKNkVeJj6bmS3smLEoIMmJN
+         R9XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DbSwcU1EDgrYraAKeULX0sFIJMCXUBAD2MNMfJXpu70=;
-        b=oVTM9nwYrZeAwUtmu9fdEt91V0kWIaqKW0LYMGGIrsmL794aVBTd9CYJ6RgcQxwxgw
-         YQkq2tbAc95jhUogGwI8Bf1iI9Q/rMa29IOdLRHBvPSHcmeBTrmm4hPW0IiTYrn+fmy2
-         mKM3TLcc/mqGvnOEtAkbN5Jjk7AidrBCeG57c+QbIH3vT0MCj1+aV1nmJF7Cs+iWvnrk
-         Y8GDU2zw6jDNHfRhqrcFoiQzHxtZvbHL5H7Ba48RrXDhrPh3tjhbHpkTY1a39U9YUWPm
-         +7KQ3vbuV0BpJgKXXZ8Q/0QJUnpwVza754RbaRzq0M0Viv4C7gbB9Brl3YNAAHHMihdE
-         4Uvg==
+        bh=fhyX205zNX6orm9c9M1eZGGaKeV1ukebj2eD2JP5Rxs=;
+        b=xoPDpRLs2rskxG4ZoKi0x/clalWm1jHu3EB8/dH/d+BleAeHcB/f5yz66h/uXaBwLw
+         WAU1bEsrRAZ5WN8YTuVmglGD6gYlOYB8iOP4lrxfEqF7JCyeSbRUSjXPmP67cA1jxZW1
+         keT9fI0M5SvExEl9DrDpi/w7UWaOX0EFFSw/8Oz7tkJEMm8uVqyRepTH+kJIeRzNZewy
+         YGMcZvMvjDcIL8nlNg7+GR+C0GCqCKFnXWZoaMgobfySYUU9oPMXiRyg+rWALp9aqOKX
+         c0j/yXzFzu7/wi31Tp8ZKb9AtPQVgV5NUtUb6O/3iRVBfo9yfqvh5RkRXteJ6/45zYTQ
+         oEAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rui Wang <rui.y.wang@intel.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	dave.hansen@linux.intel.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 058/163] x86/entry/64: Clear registers for exceptions/interrupts, to reduce speculation attack surface
-Date: Wed, 21 Feb 2018 13:48:07 +0100
-Message-Id: <20180221124533.671163678@linuxfoundation.org>
+Subject: [PATCH 4.15 083/163] selftests/x86/mpx: Fix incorrect bounds with old _sigfault
+Date: Wed, 21 Feb 2018 13:48:32 +0100
+Message-Id: <20180221124535.007730540@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -49,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015548902748205?=
-X-GMAIL-MSGID: =?utf-8?q?1593016128947257780?=
+X-GMAIL-THRID: =?utf-8?q?1593015332922490474?=
+X-GMAIL-MSGID: =?utf-8?q?1593016123280105246?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,106 +53,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Rui Wang <rui.y.wang@intel.com>
 
-commit 3ac6d8c787b835b997eb23e43e09aa0895ef7d58 upstream.
+commit 961888b1d76d84efc66a8f5604b06ac12ac2f978 upstream.
 
-Clear the 'extra' registers on entering the 64-bit kernel for exceptions
-and interrupts. The common registers are not cleared since they are
-likely clobbered well before they can be exploited in a speculative
-execution attack.
+For distributions with old userspace header files, the _sigfault
+structure is different. mpx-mini-test fails with the following
+error:
 
-Originally-From: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+  [root@Purley]# mpx-mini-test_64 tabletest
+  XSAVE is supported by HW & OS
+  XSAVE processor supported state mask: 0x2ff
+  XSAVE OS supported state mask: 0x2ff
+   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
+    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
+  starting mpx bounds table test
+  ERROR: siginfo bounds do not match shadow bounds for register 0
+
+Fix it by using the correct offset of _lower/_upper in _sigfault.
+RHEL needs this patch to work.
+
+Signed-off-by: Rui Wang <rui.y.wang@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787989146.7847.15749181712358213254.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog and the code comments. ]
+Cc: dave.hansen@linux.intel.com
+Fixes: e754aedc26ef ("x86/mpx, selftests: Add MPX self test")
+Link: http://lkml.kernel.org/r/1513586050-1641-1-git-send-email-rui.y.wang@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h  |   19 +++++++++++++++++++
- arch/x86/entry/entry_64.S |    6 +++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/mpx-mini-test.c |   32 ++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -147,6 +147,25 @@ For 32-bit we have the following convent
- 	UNWIND_HINT_REGS offset=\offset
- 	.endm
- 
-+	/*
-+	 * Sanitize registers of values that a speculation attack
-+	 * might otherwise want to exploit. The lower registers are
-+	 * likely clobbered well before they could be put to use in
-+	 * a speculative execution gadget:
-+	 */
-+	.macro CLEAR_REGS_NOSPEC
-+	xorl %ebp, %ebp
-+	xorl %ebx, %ebx
-+	xorq %r8, %r8
-+	xorq %r9, %r9
-+	xorq %r10, %r10
-+	xorq %r11, %r11
-+	xorq %r12, %r12
-+	xorq %r13, %r13
-+	xorq %r14, %r14
-+	xorq %r15, %r15
-+	.endm
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -315,11 +315,39 @@ static inline void *__si_bounds_upper(si
+ 	return si->si_upper;
+ }
+ #else
 +
- 	.macro POP_EXTRA_REGS
- 	popq %r15
- 	popq %r14
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -575,6 +575,7 @@ END(irq_entries_start)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
++/*
++ * This deals with old version of _sigfault in some distros:
++ *
++
++old _sigfault:
++        struct {
++            void *si_addr;
++	} _sigfault;
++
++new _sigfault:
++	struct {
++		void __user *_addr;
++		int _trapno;
++		short _addr_lsb;
++		union {
++			struct {
++				void __user *_lower;
++				void __user *_upper;
++			} _addr_bnd;
++			__u32 _pkey;
++		};
++	} _sigfault;
++ *
++ */
++
+ static inline void **__si_bounds_hack(siginfo_t *si)
+ {
+ 	void *sigfault = &si->_sifields._sigfault;
+ 	void *end_sigfault = sigfault + sizeof(si->_sifields._sigfault);
+-	void **__si_lower = end_sigfault;
++	int *trapno = (int*)end_sigfault;
++	/* skip _trapno and _addr_lsb */
++	void **__si_lower = (void**)(trapno + 2);
  
- 	testb	$3, CS(%rsp)
-@@ -1133,6 +1134,7 @@ ENTRY(xen_failsafe_callback)
- 	ALLOC_PT_GPREGS_ON_STACK
- 	SAVE_C_REGS
- 	SAVE_EXTRA_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
- 	jmp	error_exit
- END(xen_failsafe_callback)
-@@ -1178,6 +1180,7 @@ ENTRY(paranoid_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
- 	movl	$MSR_GS_BASE, %ecx
-@@ -1230,8 +1233,8 @@ ENTRY(error_entry)
- 	cld
- 	SAVE_C_REGS 8
- 	SAVE_EXTRA_REGS 8
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER 8
--	xorl	%ebx, %ebx
- 	testb	$3, CS+8(%rsp)
- 	jz	.Lerror_kernelspace
+ 	return __si_lower;
+ }
+@@ -331,7 +359,7 @@ static inline void *__si_bounds_lower(si
  
-@@ -1428,6 +1431,7 @@ ENTRY(nmi)
- 	pushq	%r14		/* pt_regs->r14 */
- 	pushq	%r15		/* pt_regs->r15 */
- 	UNWIND_HINT_REGS
-+	CLEAR_REGS_NOSPEC
- 	ENCODE_FRAME_POINTER
+ static inline void *__si_bounds_upper(siginfo_t *si)
+ {
+-	return (*__si_bounds_hack(si)) + sizeof(void *);
++	return *(__si_bounds_hack(si) + 1);
+ }
+ #endif
  
- 	/*
