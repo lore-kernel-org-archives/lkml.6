@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225BIvZTNKlgb+dR8PQi8KkLjQw/wrEn49w7XEYiyaMInXcWD3PKxj1fK/vVF314tA4ywYtN
+X-Google-Smtp-Source: AH8x2250dMw1GnAeFfvTuGTgSUkcR51yB2cMOqZ6J+MS1RiInJ6tt2UxdUxTliH/Y9c0pvHaaw3h
 ARC-Seal: i=1; a=rsa-sha256; t=1519218116; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z5hPEWpitnq3cbsBx6AokdtvYZSIgplhaOXyz/fSum4HRrD+5nc5IHQfiBOQFRSQO2
-         BldSRE4UvOzMEAQQH9XAH9yX+3ni9DMatNj1PBgb9jU1GxXtS2CWZTAlyBk3yIqM3QRd
-         JfQya7J/L4RdceCgz1MB9zYGAAEweTySzE+un1KhCF7u3nTtAmE8LI00Z/PYa4zTHY6Y
-         Rs46Xu/WS6wjeITMhl8x4fVxPGEZsFE2VNjL1A0x7bmJlhv7oakb18pSt5qrZ0WInVP3
-         5YWQ27q2lueNrAc/MdOdjuLz07utEt3XEnMqkXGU9xEsT14mponpau3VDz5eSrTOK2Tx
-         BSxQ==
+        b=KJJImGZSIUGfJWAs8v2OCZI9tfUYgx9XFUN722vitVc+UvfdWzirhaUKTV4XSKHdd4
+         JS03fg2nqM3OWA0VbDH7RDPezfHp0a1LlXFkKxQ/ahkSkkPg0ftaHLOvQoONQV8T9lX6
+         vnKoAO/qnivBWuOWx5I+Tc8n+kkssLNtcrvG+ZyOMvjvef05AHSSsxzJ6QjbDY5wWaes
+         G7D3D31aA/ExzT+daiXS8M5KkvPu30BuKB1KvEdLhaZnQml1/1zbBi7+JgKCG6QCojUe
+         adhCQKp8CKLa/uBGO4rU8aTM470V4oaUjETbqhxg5rCEyBG+zZIOeCGUjJkvnyAAWAMz
+         jWkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+sI1mszy5Z4/U5HMD/8xuYl92e5wdmnA5znlQRHP/1I=;
-        b=m5W1Dzu1Inov1+CK2YzzcdkqbWaX6ienhFTCcZqXTchClWWNKN/CBAW1/a/UM7/vvd
-         zDNUto3rvp9dmnvrLWM52fTBNp5OHDkBxY5n3pSkLfL58KnhYkxbIXMVUi8gVsrlPESj
-         Ha87+YLFEF9iYvIXtYncs+7FE3VWOiTrH/bNmQPQjt9I8zPVMylp+BpJynC3WZovtTEB
-         R14YxzrJSWnAEikc8YNiZ9huiZFe5b2inNSsiAGu0jI7dWacn4lAu7okz8/ZwKx2sXW8
-         6LFnWFvzMVAuXtIUbRNaSiYE9DGUJbQ3EiwAyImC8faOQq7WD6SAB0WGSL8/hclDbHQt
-         IQhA==
+        bh=2MyYMAmoh1cCpST3PFbe2Kts4nPVfB48yRd92p00DNI=;
+        b=EDYHxUWwHf6tpLHdSayNn2rKNFun5zYeF5k31J9Ld+FungLRPEZ3zr4rdDz4wGqfA8
+         jnvlaOsPAkQvSitGjm6NWFMNGk2XI7D9lfFrx+tGQ6+vDrEa+IpOcPBeIgHIKxHqH7Ns
+         mdrgYc/02B9BSXr4uau7ODzYc/rMoDn4M5ECzDqYldGlggVt/NwOmkuCrPwKvJSio3Rf
+         CCJhdn7AOpx+QrdqLIjJWjs7OvDhUlBCZ8jMkhumt6AiCvk5JqzmGy7KlfclSM3AsY8b
+         m93ABJtP8oRQ5xXXEOs+xZ5m22JSZxNUhNfn96X72UIuj6XmM2x2WIKVyTqdKNgZ1et+
+         jv1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 089/167] x86/entry/64: Fix CR3 restore in paranoid_exit()
-Date: Wed, 21 Feb 2018 13:48:20 +0100
-Message-Id: <20180221124529.258044214@linuxfoundation.org>
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 090/167] drm/ttm: Dont add swapped BOs to swap-LRU list
+Date: Wed, 21 Feb 2018 13:48:21 +0100
+Message-Id: <20180221124529.313391102@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -48,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015655835796589?=
-X-GMAIL-MSGID: =?utf-8?q?1593015655835796589?=
+X-GMAIL-THRID: =?utf-8?q?1593015655531949481?=
+X-GMAIL-MSGID: =?utf-8?q?1593015655531949481?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,63 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
-commit e48657573481a5dff7cfdc3d57005c80aa816500 upstream.
+commit fd5002d6a3c602664b07668a24df4ef7a43bf078 upstream.
 
-Josh Poimboeuf noticed the following bug:
+A BO that's already swapped would be added back to the swap-LRU list
+for example if its validation failed under high memory pressure. This
+could later lead to swapping it out again and leaking previous swap
+storage.
 
- "The paranoid exit code only restores the saved CR3 when it switches back
-  to the user GS.  However, even in the kernel GS case, it's possible that
-  it needs to restore a user CR3, if for example, the paranoid exception
-  occurred in the syscall exit path between SWITCH_TO_USER_CR3_STACK and
-  SWAPGS."
+This commit adds a condition to prevent that from happening.
 
-Josh also confirmed via targeted testing that it's possible to hit this bug.
+v2: Check page_flags instead of swap_storage
 
-Fix the bug by also restoring CR3 in the paranoid_exit_no_swapgs branch.
-
-The reason we haven't seen this bug reported by users yet is probably because
-"paranoid" entry points are limited to the following cases:
-
- idtentry double_fault       do_double_fault  has_error_code=1  paranoid=2
- idtentry debug              do_debug         has_error_code=0  paranoid=1 shift_ist=DEBUG_STACK
- idtentry int3               do_int3          has_error_code=0  paranoid=1 shift_ist=DEBUG_STACK
- idtentry machine_check      do_mce           has_error_code=0  paranoid=1
-
-Amongst those entry points only machine_check is one that will interrupt an
-IRQS-off critical section asynchronously - and machine check events are rare.
-
-The other main asynchronous entries are NMI entries, which can be very high-freq
-with perf profiling, but they are special: they don't use the 'idtentry' macro but
-are open coded and restore user CR3 unconditionally so don't have this bug.
-
-Reported-and-tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180214073910.boevmg65upbk3vqb@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_64.S |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/ttm/ttm_bo.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1162,6 +1162,7 @@ ENTRY(paranoid_exit)
- 	jmp	.Lparanoid_exit_restore
- .Lparanoid_exit_no_swapgs:
- 	TRACE_IRQS_IRETQ_DEBUG
-+	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- .Lparanoid_exit_restore:
- 	jmp restore_regs_and_return_to_kernel
- END(paranoid_exit)
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -175,7 +175,8 @@ void ttm_bo_add_to_lru(struct ttm_buffer
+ 		list_add_tail(&bo->lru, &man->lru[bo->priority]);
+ 		kref_get(&bo->list_kref);
+ 
+-		if (bo->ttm && !(bo->ttm->page_flags & TTM_PAGE_FLAG_SG)) {
++		if (bo->ttm && !(bo->ttm->page_flags &
++				 (TTM_PAGE_FLAG_SG | TTM_PAGE_FLAG_SWAPPED))) {
+ 			list_add_tail(&bo->swap,
+ 				      &bo->glob->swap_lru[bo->priority]);
+ 			kref_get(&bo->list_kref);
