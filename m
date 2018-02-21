@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936863AbeBUNbB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:31:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49091 "EHLO mx2.suse.de"
+        id S936872AbeBUNbT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:31:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49074 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934892AbeBUN3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:29:45 -0500
+        id S934789AbeBUN3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:29:42 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v8 4/8] livepatch: Allow to unpatch only functions of the given type
-Date: Wed, 21 Feb 2018 14:29:10 +0100
-Message-Id: <20180221132914.4809-5-pmladek@suse.com>
+Subject: [PATCH v8 2/8] livepatch: Free only structures with initialized kobject
+Date: Wed, 21 Feb 2018 14:29:08 +0100
+Message-Id: <20180221132914.4809-3-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180221132914.4809-1-pmladek@suse.com>
 References: <20180221132914.4809-1-pmladek@suse.com>
@@ -24,135 +24,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Baron <jbaron@akamai.com>
-
 We are going to add a feature called atomic replace. It will allow to
 create a patch that would replace all already registered patches.
 For this, we will need to dynamically create funcs and objects
 for functions that are no longer patched.
 
-The dynamically allocated objects will not longer be needed once
-the patch is applied.
+We will want to reuse the existing init() and free() functions. Up to now,
+the free() functions checked a limit and were called only for structures
+with initialized kobject. But we will want to call them also for structures
+that were allocated but where the kobject was not initialized yet.
 
-This patch allows to unpatch functions of the given type. It might
-cause that the obj->patched flag is true even when some listed
-functions are not longer patched. This is fine as long as the
-unpatched funcs' structures are removed right after. It will
-be the case. Anyway, it is safe. In the worst case, it will
-not be possible to enable the disabled functions.
+This patch removes the limit. It calls klp_free*() functions for all
+structures. But only the ones with initialized kobject are freed.
+The handling of un-initialized structures will be added later with
+the support for dynamic structures.
 
-Signed-off-by: Jason Baron <jbaron@akamai.com>
-[pmladek@suse.com: Split and modified to use the generic ftype]
+This patch does not change the existing behavior.
+
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Jessica Yu <jeyu@kernel.org>
 Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: Jason Baron <jbaron@akamai.com>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 ---
- kernel/livepatch/core.c       |  2 +-
- kernel/livepatch/patch.c      | 26 +++++++++++++++++++-------
- kernel/livepatch/patch.h      |  4 ++--
- kernel/livepatch/transition.c |  2 +-
- 4 files changed, 23 insertions(+), 11 deletions(-)
+ kernel/livepatch/core.c | 44 ++++++++++++++++++--------------------------
+ 1 file changed, 18 insertions(+), 26 deletions(-)
 
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index a47c26147c17..ab1f6a371fc8 100644
+index 1d525f4a270a..69bde95e76f8 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -1060,7 +1060,7 @@ static void klp_cleanup_module_patches_limited(struct module *mod,
+@@ -653,17 +653,15 @@ static struct kobj_type klp_ktype_func = {
+ 	.sysfs_ops = &kobj_sysfs_ops,
+ };
  
- 				pr_notice("reverting patch '%s' on unloading module '%s'\n",
- 					  patch->mod->name, obj->mod->name);
--				klp_unpatch_object(obj);
-+				klp_unpatch_object(obj, KLP_FUNC_ANY);
- 
- 				klp_post_unpatch_callback(obj);
- 			}
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 82d584225dc6..54b3c379bb0f 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -236,15 +236,27 @@ static int klp_patch_func(struct klp_func *func)
- 	return ret;
- }
- 
--void klp_unpatch_object(struct klp_object *obj)
-+/*
-+ * It keeps obj->patched flag true when any listed function is still patched.
-+ * The caller is responsible for removing the unpatched functions to
-+ * make the flag clean again.
-+ */
-+void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype)
+-/*
+- * Free all functions' kobjects in the array up to some limit. When limit is
+- * NULL, all kobjects are freed.
+- */
+-static void klp_free_funcs_limited(struct klp_object *obj,
+-				   struct klp_func *limit)
++/* Free all funcs that have the kobject initialized. */
++static void klp_free_funcs(struct klp_object *obj)
  {
  	struct klp_func *func;
-+	bool patched = false;
  
--	klp_for_each_func(obj, func)
--		if (func->patched)
+-	for (func = obj->funcs; func->old_name && func != limit; func++)
+-		kobject_put(&func->kobj);
 +	klp_for_each_func(obj, func) {
-+		if (!func->patched)
-+			continue;
-+
-+		if (klp_is_func_type(func, ftype))
- 			klp_unpatch_func(func);
-+		else
-+			patched = true;
++		if (func->kobj.state_initialized)
++			kobject_put(&func->kobj);
 +	}
- 
--	obj->patched = false;
-+	obj->patched = patched;
  }
  
- int klp_patch_object(struct klp_object *obj)
-@@ -258,7 +270,7 @@ int klp_patch_object(struct klp_object *obj)
- 	klp_for_each_func(obj, func) {
- 		ret = klp_patch_func(func);
- 		if (ret) {
--			klp_unpatch_object(obj);
-+			klp_unpatch_object(obj, KLP_FUNC_ANY);
- 			return ret;
- 		}
- 	}
-@@ -267,11 +279,11 @@ int klp_patch_object(struct klp_object *obj)
- 	return 0;
+ /* Clean up when a patched object is unloaded */
+@@ -677,24 +675,23 @@ static void klp_free_object_loaded(struct klp_object *obj)
+ 		func->old_addr = 0;
  }
  
--void klp_unpatch_objects(struct klp_patch *patch)
-+void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype)
+-/*
+- * Free all objects' kobjects in the array up to some limit. When limit is
+- * NULL, all kobjects are freed.
+- */
+-static void klp_free_objects_limited(struct klp_patch *patch,
+-				     struct klp_object *limit)
++/* Free all funcs and objects that have the kobject initialized. */
++static void klp_free_objects(struct klp_patch *patch)
  {
  	struct klp_object *obj;
  
- 	klp_for_each_object(patch, obj)
- 		if (obj->patched)
--			klp_unpatch_object(obj);
-+			klp_unpatch_object(obj, ftype);
+-	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
+-		klp_free_funcs_limited(obj, NULL);
+-		kobject_put(&obj->kobj);
++	klp_for_each_object(patch, obj) {
++		klp_free_funcs(obj);
++
++		if (obj->kobj.state_initialized)
++			kobject_put(&obj->kobj);
+ 	}
  }
-diff --git a/kernel/livepatch/patch.h b/kernel/livepatch/patch.h
-index e72d8250d04b..885f644add4c 100644
---- a/kernel/livepatch/patch.h
-+++ b/kernel/livepatch/patch.h
-@@ -28,7 +28,7 @@ struct klp_ops {
- struct klp_ops *klp_find_ops(unsigned long old_addr);
  
- int klp_patch_object(struct klp_object *obj);
--void klp_unpatch_object(struct klp_object *obj);
--void klp_unpatch_objects(struct klp_patch *patch);
-+void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype);
-+void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype);
+ static void klp_free_patch(struct klp_patch *patch)
+ {
+-	klp_free_objects_limited(patch, NULL);
++	klp_free_objects(patch);
++
+ 	if (!list_empty(&patch->list))
+ 		list_del(&patch->list);
+ }
+@@ -791,21 +788,16 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+ 	klp_for_each_func(obj, func) {
+ 		ret = klp_init_func(obj, func);
+ 		if (ret)
+-			goto free;
++			return ret;
+ 	}
  
- #endif /* _LIVEPATCH_PATCH_H */
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index 7c6631e693bc..6917100fbe79 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -92,7 +92,7 @@ static void klp_complete_transition(void)
- 		 * All tasks have transitioned to KLP_UNPATCHED so we can now
- 		 * remove the new functions from the func_stack.
- 		 */
--		klp_unpatch_objects(klp_transition_patch);
-+		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_ANY);
+ 	if (klp_is_object_loaded(obj)) {
+ 		ret = klp_init_object_loaded(patch, obj);
+ 		if (ret)
+-			goto free;
++			return ret;
+ 	}
  
- 		/*
- 		 * Make sure klp_ftrace_handler() can no longer see functions
+ 	return 0;
+-
+-free:
+-	klp_free_funcs_limited(obj, func);
+-	kobject_put(&obj->kobj);
+-	return ret;
+ }
+ 
+ static int klp_init_patch(struct klp_patch *patch)
+@@ -842,7 +834,7 @@ static int klp_init_patch(struct klp_patch *patch)
+ 	return 0;
+ 
+ free:
+-	klp_free_objects_limited(patch, obj);
++	klp_free_objects(patch);
+ 
+ 	mutex_unlock(&klp_mutex);
+ 
 -- 
 2.13.6
