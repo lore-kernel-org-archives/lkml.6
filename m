@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2265PPzLBNstwtlrPo2zRbp8bFECExYLbSgYU8GoMxZUcqi7KENqor2vch42CAWDyWJL9AOo
-ARC-Seal: i=1; a=rsa-sha256; t=1519218270; cv=none;
+X-Google-Smtp-Source: AH8x224QEyqQ9Qbc2jskful2XDvWnaovScxtQJ3u2XM0bCV7jONT+dOADiBDJ8G3fos/eCgjiIhl
+ARC-Seal: i=1; a=rsa-sha256; t=1519218267; cv=none;
         d=google.com; s=arc-20160816;
-        b=GAc9W9pHthutSG+j0Zyqn/LcMSaLGqCTTfopuDQSV3k6YAyHzYXz3ZMnsL91JdBA5j
-         Ec2VtKv0ej6w6w2zc2RP0amw7SZIyxEb+QzRF3pa8mryaX7b/aIC/WWn8LsDAAJT00Zw
-         AoXP0mpG/rT5docUS6/IX6FNw0efATf8J83Q/NC5CCg0iXV/kIei9IXlHGMzNeLHGL28
-         yqX2K1t81juvRw3njEu4vlT4m8DFfisYqNjuP/q11mEKIYGIdl2tT8SUqpqcdpCjwgYd
-         6svrbAhG7N0mI1Y0rWQqn+VBiNr09l/WmDA4fLtKr4tDkSBWkV9ybkiC1fYtSENdi+tt
-         9oGw==
+        b=YlnBy/PjxGHVF+IXC6/dyADyWn1BI5KhS07rKejerzhatSmLybZGLHDcRG2lF8SBPt
+         lljxBvJfxBy5mGiiBJbqMfrRUar1FS7v+LmS7t0bcKx50UuYx9U5go9e46Ztby8NCg1b
+         jcmmM8ZNJLH5L7BdQABQbdoyizGlyc4xnT1/ocXUE2fIVPJXmiQFEK70ZJF+mL897z2o
+         Itq6absCw40XE0Qe5T4YSIg+aEipxcdiOl7fA5WvgvVfg6/34b21bD0hAGVcgKFBNAPR
+         E3r3qL8uqCiRu23VL7DKWdtEJQM92O5MP7LjrmIMDNgO722L24n4CXYryIX/a6k2scl6
+         4WeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pZvrlMrpFntl396AtGs52GopchJWkLwCQueFcNR4pAg=;
-        b=eoFh/wuFFI/39X7UEMRUxRwO9Pp5Oj41zvVMWi2+YEvdTuWV7g50Fpkc9VQKfjCBIO
-         ymxM/ulPBN4ELEdfuKYW7z4+sta7i9sAN/jOzY6L/KefBuzi65EuWImn9ubpiEvJHosb
-         TwhC73Hx4BAv0zF9exvq99gpuJ8tNpO+CgRhj+96JoJ4B+veJj8JyeGcqhCF60vScLTY
-         lioO0bfLnDidX2EK4d9YegRfmdc0E18IKGLIdR+0NgfHvJTaSF/QKUmiEo+UUrk8Zih1
-         PCPv0spFKtnYdux+p0HAOVr2n8tPSBNmAr3fFLqxAKA/ie0GTKK2zpB5dAbt73hYwtVO
-         vMhA==
+        bh=5zA9RDAv94Qy15mb/VAVnbbJSLbYY+gw826SvtcBk9s=;
+        b=QIbAXf2veaYmzmL/fkak41BGvPXfhPsNLEsfyxKFtpPT6Tu5oAic7Dm9pG1vbXDmxz
+         NeKDTxCBc3qaAZnMAiFuXTT0F6SVrdbg+ZshxRWISa56TiPa8O6CvxZPWbVd8iUuVqSe
+         G+Mlz3X7CMXQihGYHKtaGd9v22eRHH6MvOHa50OIeM4pZQWu0EpzLf/zwZjHd/PDs1ER
+         xlGtlZJEk+aOYRWrZOx9OGgIiBxKHvVhmLBuUah1aX7CwSDWXJggFasSyupRdHtCzSbw
+         hl6Eone56Baq7DtO0+kqC6PYTjHxTGPE3WDRsU1ealoCSpysUebqxcYWy+6IB+VY41Qh
+         GtZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathieu Malaterre <mathieu.malaterre@gmail.com>,
-	Marcin Nowakowski <marcin.nowakowski@mips.com>,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	James Hogan <jhogan@kernel.org>,
 	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	Mathieu Malaterre <malat@debian.org>,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 112/167] MIPS: Fix incorrect mem=X@Y handling
-Date: Wed, 21 Feb 2018 13:48:43 +0100
-Message-Id: <20180221124530.493920482@linuxfoundation.org>
+	linux-mips@linux-mips.org
+Subject: [PATCH 4.14 111/167] MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN
+Date: Wed, 21 Feb 2018 13:48:42 +0100
+Message-Id: <20180221124530.441016161@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015817295324421?=
-X-GMAIL-MSGID: =?utf-8?q?1593015817295324421?=
+X-GMAIL-THRID: =?utf-8?q?1593015291930892901?=
+X-GMAIL-MSGID: =?utf-8?q?1593015814502670613?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,92 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marcin Nowakowski <marcin.nowakowski@mips.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-commit 67a3ba25aa955198196f40b76b329b3ab9ad415a upstream.
+commit 2e6522c565522a2e18409c315c49d78c8b74807b upstream.
 
-Commit 73fbc1eba7ff ("MIPS: fix mem=X@Y commandline processing") added a
-fix to ensure that the memory range between PHYS_OFFSET and low memory
-address specified by mem= cmdline argument is not later processed by
-free_all_bootmem.  This change was incorrect for systems where the
-commandline specifies more than 1 mem argument, as it will cause all
-memory between PHYS_OFFSET and each of the memory offsets to be marked
-as reserved, which results in parts of the RAM marked as reserved
-(Creator CI20's u-boot has a default commandline argument 'mem=256M@0x0
-mem=768M@0x30000000').
+MIPS_GENERIC selects some options conditional on BIG_ENDIAN which does
+not exist.
 
-Change the behaviour to ensure that only the range between PHYS_OFFSET
-and the lowest start address of the memories is marked as protected.
+Replace BIG_ENDIAN with CPU_BIG_ENDIAN which is the correct kconfig
+name. Note that BMIPS_GENERIC does the same which confirms that this
+patch is needed.
 
-This change also ensures that the range is marked protected even if it's
-only defined through the devicetree and not only via commandline
-arguments.
-
-Reported-by: Mathieu Malaterre <mathieu.malaterre@gmail.com>
-Signed-off-by: Marcin Nowakowski <marcin.nowakowski@mips.com>
-Fixes: 73fbc1eba7ff ("MIPS: fix mem=X@Y commandline processing")
+Fixes: eed0eabd12ef0 ("MIPS: generic: Introduce generic DT-based board support")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Reviewed-by: James Hogan <jhogan@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # v4.11+
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Patchwork: https://patchwork.linux-mips.org/patch/18562/
+Cc: <stable@vger.kernel.org> # 4.9+
+Patchwork: https://patchwork.linux-mips.org/patch/18495/
+[jhogan@kernel.org: Clean up commit message]
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/setup.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/mips/Kconfig |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -374,6 +374,7 @@ static void __init bootmem_init(void)
- 	unsigned long reserved_end;
- 	unsigned long mapstart = ~0UL;
- 	unsigned long bootmap_size;
-+	phys_addr_t ramstart = (phys_addr_t)ULLONG_MAX;
- 	bool bootmap_valid = false;
- 	int i;
- 
-@@ -394,7 +395,8 @@ static void __init bootmem_init(void)
- 	max_low_pfn = 0;
- 
- 	/*
--	 * Find the highest page frame number we have available.
-+	 * Find the highest page frame number we have available
-+	 * and the lowest used RAM address
- 	 */
- 	for (i = 0; i < boot_mem_map.nr_map; i++) {
- 		unsigned long start, end;
-@@ -406,6 +408,8 @@ static void __init bootmem_init(void)
- 		end = PFN_DOWN(boot_mem_map.map[i].addr
- 				+ boot_mem_map.map[i].size);
- 
-+		ramstart = min(ramstart, boot_mem_map.map[i].addr);
-+
- #ifndef CONFIG_HIGHMEM
- 		/*
- 		 * Skip highmem here so we get an accurate max_low_pfn if low
-@@ -435,6 +439,13 @@ static void __init bootmem_init(void)
- 		mapstart = max(reserved_end, start);
- 	}
- 
-+	/*
-+	 * Reserve any memory between the start of RAM and PHYS_OFFSET
-+	 */
-+	if (ramstart > PHYS_OFFSET)
-+		add_memory_region(PHYS_OFFSET, ramstart - PHYS_OFFSET,
-+				  BOOT_MEM_RESERVED);
-+
- 	if (min_low_pfn >= max_low_pfn)
- 		panic("Incorrect memory mapping !!!");
- 	if (min_low_pfn > ARCH_PFN_OFFSET) {
-@@ -663,9 +674,6 @@ static int __init early_parse_mem(char *
- 
- 	add_memory_region(start, size, BOOT_MEM_RAM);
- 
--	if (start && start > PHYS_OFFSET)
--		add_memory_region(PHYS_OFFSET, start - PHYS_OFFSET,
--				BOOT_MEM_RESERVED);
- 	return 0;
- }
- early_param("mem", early_parse_mem);
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -119,12 +119,12 @@ config MIPS_GENERIC
+ 	select SYS_SUPPORTS_MULTITHREADING
+ 	select SYS_SUPPORTS_RELOCATABLE
+ 	select SYS_SUPPORTS_SMARTMIPS
+-	select USB_EHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
+-	select USB_EHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
+-	select USB_OHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
+-	select USB_OHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
+-	select USB_UHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
+-	select USB_UHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
++	select USB_EHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
++	select USB_EHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
++	select USB_OHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
++	select USB_OHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
++	select USB_UHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
++	select USB_UHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
+ 	select USE_OF
+ 	help
+ 	  Select this to build a kernel which aims to support multiple boards,
