@@ -1,124 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeBUXtk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:49:40 -0500
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39157 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbeBUXth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:49:37 -0500
-X-Google-Smtp-Source: AH8x226NOFRHskFO1xBOZ6JKgOvtdovY+xT5+9ANTSwxTntac1p98r3b4jOLpSvX/p02KfxTHGdEqfRbnlGBc4cMo+0=
+        id S1751317AbeBUXwr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:52:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751104AbeBUXwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:52:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F8621795
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x225/xR21QzuuIqY3e4XVPbXG58dxwjdg2tVtbJ7yxtb+UclPxpphpa5hUBMvW8AfoPZGMezCQcGTw4fi5Rfg9WQ=
 MIME-Version: 1.0
-In-Reply-To: <20180219224621.22676-1-enric.balletbo@collabora.com>
-References: <20180219224621.22676-1-enric.balletbo@collabora.com>
-From: Gwendal Grignou <gwendal@google.com>
-Date: Wed, 21 Feb 2018 15:49:15 -0800
-Message-ID: <CAMHSBOVX_B47hmAwQA0oSr=-CXyf4Am5fBZt7M3TQZr78-n-Ug@mail.gmail.com>
-Subject: Re: [PATCH 4/6] mfd: cros_ec_dev: Register cros_ec_accel_legacy
- driver as a subdevice.
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+In-Reply-To: <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-6-manivannan.sadhasivam@linaro.org> <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
+ <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 17:52:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK+586zyvsZ0b9i+x78V5NDnAput6Ygfw0qFXu=B-hb9g@mail.gmail.com>
+Message-ID: <CAL_JsqK+586zyvsZ0b9i+x78V5NDnAput6Ygfw0qFXu=B-hb9g@mail.gmail.com>
+Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 2:46 PM, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
-> With this patch, the cros_ec_ctl driver will register the legacy
-> accelerometer driver (named cros_ec_accel_legacy) if it fails to
-> register sensors through the usual path cros_ec_sensors_register().
-> This legacy device is present on Chromebook devices with older EC
-> firmware only supporting deprecated EC commands (Glimmer based devices).
->
-> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> ---
->  drivers/mfd/cros_ec_dev.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index e0c604ab380f..fc98e0564061 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -389,6 +389,63 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->         kfree(msg);
->  }
->
-> +#define CROS_EC_SENSOR_LEGACY_NUM 2
-> +static struct mfd_cell cros_ec_accel_legacy_cells[CROS_EC_SENSOR_LEGACY_NUM];
-> +
-> +static void cros_ec_accel_legacy_register(struct cros_ec_dev *ec)
-> +{
-> +       struct cros_ec_device *ec_dev = ec->ec_dev;
-> +       u8 status;
-> +       int i, ret;
-> +       struct cros_ec_sensor_platform
-> +               sensor_platforms[CROS_EC_SENSOR_LEGACY_NUM];
-> +
-> +       /*
-> +        * EC that need legacy support are the main EC, directly connected to
-> +        * the AP.
-> +        */
-> +       if (ec->cmd_offset != 0)
-> +               return;
-> +
-> +       /*
-> +        * Check if EC supports direct memory reads and if EC has
-> +        * accelerometers.
-> +        */
-> +       if (!ec_dev->cmd_readmem)
-> +               return;
-> +
-> +       ret = ec_dev->cmd_readmem(ec_dev, EC_MEMMAP_ACC_STATUS, 1, &status);
-> +       if (ret < 0) {
-> +               dev_warn(ec->dev, "EC does not support direct reads.\n");
-> +               return;
-> +       }
-> +
-> +       /* Check if EC has accelerometers. */
-> +       if (!(status & EC_MEMMAP_ACC_STATUS_PRESENCE_BIT)) {
-> +               dev_info(ec->dev, "EC does not have accelerometers.\n");
-> +               return;
-> +       }
-> +
-> +       /*
-> +        * Register 2 accelerometers
-> +        */
-> +       for (i = 0; i < CROS_EC_SENSOR_LEGACY_NUM; i++) {
-> +               cros_ec_accel_legacy_cells[i].name = "cros-ec-accel-legacy";
-> +               sensor_platforms[i].sensor_num = i;
-> +               cros_ec_accel_legacy_cells[i].id = i;
-> +               cros_ec_accel_legacy_cells[i].platform_data =
-> +                       &sensor_platforms[i];
-> +               cros_ec_accel_legacy_cells[i].pdata_size =
-> +                       sizeof(struct cros_ec_sensor_platform);
-> +       }
-> +       ret = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-> +                             cros_ec_accel_legacy_cells,
-> +                             CROS_EC_SENSOR_LEGACY_NUM,
-> +                             NULL, 0, NULL);
-> +       if (ret)
-> +               dev_err(ec_dev->dev, "failed to add EC sensors\n");
-> +}
-> +
->  static const struct mfd_cell cros_ec_rtc_cell = {
->         .name = "cros-ec-rtc",
->  };
-> @@ -440,6 +497,9 @@ static int ec_device_probe(struct platform_device *pdev)
->         /* check whether this EC is a sensor hub. */
->         if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->                 cros_ec_sensors_register(ec);
-> +       else
-> +               /* Workaroud for older EC firmware */
-> +               cros_ec_accel_legacy_register(ec);
->
->         /* check whether this EC instance has RTC host command support */
->         if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
-> --
-> 2.16.1
->
+On Wed, Feb 21, 2018 at 8:58 AM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Hi Rob,
+> On Mon, Feb 19, 2018 at 02:35:23PM -0600, Rob Herring wrote:
+>> On Sun, Feb 18, 2018 at 02:14:28AM +0530, Manivannan Sadhasivam wrote:
+>> > Add gpio nodes for Actions Semi S900 SoC.
+>> >
+>> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> > ---
+>> >  .../devicetree/bindings/gpio/actions,owl-gpio.txt         | 15 +++++++++++++++
+>> >  1 file changed, 15 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>> > new file mode 100644
+>> > index 000000000000..4cd4cb7bfd1b
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>> > @@ -0,0 +1,15 @@
+>> > +* Actions Semi OWL GPIO controller bindings
+>> > +
+>> > +- compatible      : Should be "actions,s900-gpio"
+>> > +- reg             : Address and range of the GPIO controller registers.
+>> > +- gpio-controller : Marks the device node as a GPIO controller.
+>> > +- #gpio-cells     : Should be <2>. The first cell is the gpio number and
+>> > +                    the second cell is used to specify optional parameters.
+>>
+>> Doesn't do interrupts?
+>>
+> Interrupt support will be added once this base driver gets in.
+> One step at a time ;-)
+
+Binding are separate from the driver. Drivers can evolve, but h/w
+doesn't (for a given piece of Si). It is not a high bar to list
+#interrupt-cells and interrupt-controller.
+
+Rob
