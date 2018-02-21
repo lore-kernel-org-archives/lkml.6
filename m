@@ -1,173 +1,259 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937099AbeBUQn3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:43:29 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59548 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754233AbeBUQn0 (ORCPT
+        id S937193AbeBUQnr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:43:47 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35386 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933097AbeBUQnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:43:26 -0500
-Date: Wed, 21 Feb 2018 17:43:18 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 03/11] media: platform: Add Renesas CEU driver
-Message-ID: <20180221164318.GK7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
- <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl>
- <2908261.btsdL5a7UQ@avalon>
- <19015eda-c830-f987-92fa-49a407033ada@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <19015eda-c830-f987-92fa-49a407033ada@xs4all.nl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 21 Feb 2018 11:43:45 -0500
+X-Google-Smtp-Source: AH8x227qCC66iSmejvG7iBxoPh+zAbrVGZ7B0z8nHhwQTgQb5MRgXth5hlYAhqmOg9f6jUWMIE5SRw==
+From: Thomas Hebb <tommyhebb@gmail.com>
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Thomas Hebb <tommyhebb@gmail.com>
+Subject: [PATCH] ath10k: search all IEs for variant before falling back
+Date: Wed, 21 Feb 2018 11:43:39 -0500
+Message-Id: <d121031bd5eacf212f7ddf49c0440218714f1ae6.1519231419.git.tommyhebb@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent, Hans,
+commit f2593cb1b291 ("ath10k: Search SMBIOS for OEM board file
+extension") added a feature to ath10k that allows Board Data File
+(BDF) conflicts between multiple devices that use the same device IDs
+but have different calibration requirements to be resolved by allowing
+a "variant" string to be stored in SMBIOS [and later device tree, added
+by commit d06f26c5c8a4 ("ath10k: search DT for qcom,ath10k-calibration-
+variant")] that gets appended to the ID stored in board-2.bin.
 
-On Wed, Feb 21, 2018 at 02:02:59PM +0100, Hans Verkuil wrote:
-> On 02/21/18 13:29, Laurent Pinchart wrote:
-> > Hi Hans,
-> >
-> > On Wednesday, 21 February 2018 14:03:24 EET Hans Verkuil wrote:
-> >> On 02/19/18 17:59, Jacopo Mondi wrote:
-> >>> Add driver for Renesas Capture Engine Unit (CEU).
-> >>>
-> >>> The CEU interface supports capturing 'data' (YUV422) and 'images'
-> >>> (NV[12|21|16|61]).
-> >>>
-> >>> This driver aims to replace the soc_camera-based sh_mobile_ceu one.
-> >>>
-> >>> Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
-> >>> platform GR-Peach.
-> >>>
-> >>> Tested with ov7725 camera sensor on SH4 platform Migo-R.
-> >>>
-> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> ---
-> >>>
-> >>>  drivers/media/platform/Kconfig       |    9 +
-> >>>  drivers/media/platform/Makefile      |    1 +
-> >>>  drivers/media/platform/renesas-ceu.c | 1661 +++++++++++++++++++++++++++++
-> >>>  3 files changed, 1671 insertions(+)
-> >>>  create mode 100644 drivers/media/platform/renesas-ceu.c
-> >>
-> >> <snip>
-> >>
-> >>> +static int ceu_s_input(struct file *file, void *priv, unsigned int i)
-> >>> +{
-> >>> +	struct ceu_device *ceudev = video_drvdata(file);
-> >>> +	struct ceu_subdev *ceu_sd_old;
-> >>> +	int ret;
-> >>> +
-> >>> +	if (i >= ceudev->num_sd)
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	if (vb2_is_streaming(&ceudev->vb2_vq))
-> >>> +		return -EBUSY;
-> >>> +
-> >>> +	if (i == ceudev->sd_index)
-> >>> +		return 0;
-> >>> +
-> >>> +	ceu_sd_old = ceudev->sd;
-> >>> +	ceudev->sd = &ceudev->subdevs[i];
-> >>> +
-> >>> +	/* Make sure we can generate output image formats. */
-> >>> +	ret = ceu_init_formats(ceudev);
-> >>
-> >> Why is this done for every s_input? I would expect that this is done only
-> >> once for each subdev.
-> >>
-> >> I also expect to see a ceu_set_default_fmt() call here. Or that the v4l2_pix
-> >> is kept in ceu_subdev (i.e. per subdev) instead of a single fmt in cuedev.
-> >> I think I prefer that over configuring a new default format every time you
-> >> switch inputs.
-> >
-> > What does userspace expect today ? I don't think we document anywhere that
-> > formats are stored per-input in drivers. The VIDIOC_S_INPUT documentation is
-> > very vague:
-> >
-> > "To select a video input applications store the number of the desired input in
-> > an integer and call the VIDIOC_S_INPUT ioctl with a pointer to this integer.
-> > Side effects are possible. For example inputs may support different video
-> > standards, so the driver may implicitly switch the current standard. Because
-> > of these possible side effects applications must select an input before
-> > querying or negotiating any other parameters."
-> >
-> > I understand that as meaning "anything can happen when you switch inputs, so
-> > be prepared to reconfigure everything explicitly without assuming any
-> > particular parameter to have a sane value".
-> >
-> >> This code will work for two subdevs with exactly the same
-> >> formats/properties. But switching between e.g. a sensor and a video
-> >> receiver will leave things in an inconsistent state as far as I can see.
-> >>
-> >> E.g. if input 1 is the video receiver then switching to that input and
-> >> running 'v4l2-ctl -V' will show the sensor format, not the video receiver
-> >> format.
-> >
-> > I agree that the format should be consistent with the selected input, as
-> > calling VIDIOC_S_INPUT immediately followed by a stream start sequence without
-> > configuring formats should work (but produce a format that is not known to
-> > userspace). My question is whether we should reset to a default format for the
-> > newly select input, or switch back to the previously set format. I'd tend to
-> > go for the former to keep as little state as possible, but I'm open to
-> > counter-proposals.
->
-> What to do is up to the driver. My personal preference is to make it persistent
-> per input, but that's just me. I won't block the other approach (resetting it
-> to a default). Be aware that for video receivers the format depends on the current
-> selected standard as well. I think the code does that correctly already, but it
-> would be good to verify if possible.
->
-> BTW, I think it is right that the spec isn't specific about what changes when
-> you switch inputs. It can be quite complex for drivers to handle this and it
-> is not unreasonable in my view for userspace to just assume it needs to configure
-> from scratch after switching inputs.
->
+This original patch had a regression, however. Namely that devices with
+a variant present in SMBIOS that didn't need custom BDFs could no longer
+find the default BDF, which has no variant appended. The patch was
+reverted and re-applied with a fix for this issue in commit 1657b8f84ed9
+("search SMBIOS for OEM board file extension").
 
-Given that there are not strict requisites here I will go for the
-default format selection.
+But the fix to fall back to a default BDF introduced another issue: the
+driver currently parses IEs in board-2.bin one by one, and for each one
+it first checks to see if it matches the ID with the variant appended.
+If it doesn't, it checks to see if it matches the "fallback" ID with no
+variant. If a matching BDF is found at any point during this search, the
+search is terminated and that BDF is used. The issue is that it's very
+possible (and is currently the case for board-2.bin files present in the
+ath10k-firmware repository) for the default BDF to occur in an earlier
+IE than the variant-specific BDF. In this case, the current code will
+happily choose the default BDF even though a better-matching BDF is
+present later in the file.
 
-While there I'll rename the ceu_init_formats() function to ceu_init_mbus_fmt() as
-that's what it actually does, and move ceudev->field initialization
-from there  to ceu_set[_default]_fmt() functions.
+This patch fixes the issue by first searching the entire file for the ID
+with variant, and searching for the fallback ID only if that search
+fails. It also includes some code cleanup in the area, as
+ath10k_core_fetch_board_data_api_n() no longer does its own string
+mangling to remove the variant from an ID, instead leaving that job to a
+new flag passed to ath10k_core_create_board_name().
 
-I'm sending v10 with this changes hopefully quite soon.
+I've tested this patch on a QCA4019 and verified that the driver behaves
+correctly for 1) both fallback and variant BDFs present, 2) only fallback
+BDF present, and 3) no matching BDFs present.
 
-Thanks
-   j
+Fixes: 1657b8f84ed9 ("ath10k: search SMBIOS for OEM board file extension")
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+---
+ drivers/net/wireless/ath/ath10k/core.c | 134 ++++++++++++++++++---------------
+ 1 file changed, 72 insertions(+), 62 deletions(-)
 
-> Regards,
->
-> 	Hans
->
-> >
-> >>> +	if (ret) {
-> >>> +		ceudev->sd = ceu_sd_old;
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +
-> >>> +	/* now that we're sure we can use the sensor, power off the old one. */
-> >>> +	v4l2_subdev_call(ceu_sd_old->v4l2_sd, core, s_power, 0);
-> >>> +	v4l2_subdev_call(ceudev->sd->v4l2_sd, core, s_power, 1);
-> >>> +
-> >>> +	ceudev->sd_index = i;
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>
-> >> The remainder of this driver looks good.
-> >
->
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index f3ec13b80b20..2233f7e8cc68 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -1252,14 +1252,61 @@ static int ath10k_core_parse_bd_ie_board(struct ath10k *ar,
+ 	return ret;
+ }
+ 
++static int ath10k_core_search_bd(struct ath10k *ar,
++				 const char *boardname,
++				 const u8 *data,
++				 size_t len)
++{
++	size_t ie_len;
++	struct ath10k_fw_ie *hdr;
++	int ret = -ENOENT, ie_id;
++
++	while (len > sizeof(struct ath10k_fw_ie)) {
++		hdr = (struct ath10k_fw_ie *)data;
++		ie_id = le32_to_cpu(hdr->id);
++		ie_len = le32_to_cpu(hdr->len);
++
++		len -= sizeof(*hdr);
++		data = hdr->data;
++
++		if (len < ALIGN(ie_len, 4)) {
++			ath10k_err(ar, "invalid length for board ie_id %d ie_len %zu len %zu\n",
++				   ie_id, ie_len, len);
++			return -EINVAL;
++		}
++
++		switch (ie_id) {
++		case ATH10K_BD_IE_BOARD:
++			ret = ath10k_core_parse_bd_ie_board(ar, data, ie_len,
++							    boardname);
++			if (ret == -ENOENT)
++				/* no match found, continue */
++				break;
++
++			/* either found or error, so stop searching */
++			goto out;
++		}
++
++		/* jump over the padding */
++		ie_len = ALIGN(ie_len, 4);
++
++		len -= ie_len;
++		data += ie_len;
++	}
++
++out:
++	/* return result of parse_bd_ie_board() or -ENOENT */
++	return ret;
++}
++
+ static int ath10k_core_fetch_board_data_api_n(struct ath10k *ar,
+ 					      const char *boardname,
++					      const char *fallback_boardname,
+ 					      const char *filename)
+ {
+-	size_t len, magic_len, ie_len;
+-	struct ath10k_fw_ie *hdr;
++	size_t len, magic_len;
+ 	const u8 *data;
+-	int ret, ie_id;
++	int ret;
+ 
+ 	ar->normal_mode_fw.board = ath10k_fetch_fw_file(ar,
+ 							ar->hw_params.fw.dir,
+@@ -1297,69 +1344,23 @@ static int ath10k_core_fetch_board_data_api_n(struct ath10k *ar,
+ 	data += magic_len;
+ 	len -= magic_len;
+ 
+-	while (len > sizeof(struct ath10k_fw_ie)) {
+-		hdr = (struct ath10k_fw_ie *)data;
+-		ie_id = le32_to_cpu(hdr->id);
+-		ie_len = le32_to_cpu(hdr->len);
+-
+-		len -= sizeof(*hdr);
+-		data = hdr->data;
+-
+-		if (len < ALIGN(ie_len, 4)) {
+-			ath10k_err(ar, "invalid length for board ie_id %d ie_len %zu len %zu\n",
+-				   ie_id, ie_len, len);
+-			ret = -EINVAL;
+-			goto err;
+-		}
++	/* attempt to find boardname in the IE list */
++	ret = ath10k_core_search_bd(ar, boardname, data, len);
+ 
+-		switch (ie_id) {
+-		case ATH10K_BD_IE_BOARD:
+-			ret = ath10k_core_parse_bd_ie_board(ar, data, ie_len,
+-							    boardname);
+-			if (ret == -ENOENT && ar->id.bdf_ext[0] != '\0') {
+-				/* try default bdf if variant was not found */
+-				char *s, *v = ",variant=";
+-				char boardname2[100];
+-
+-				strlcpy(boardname2, boardname,
+-					sizeof(boardname2));
+-
+-				s = strstr(boardname2, v);
+-				if (s)
+-					*s = '\0';  /* strip ",variant=%s" */
++	/* if we didn't find it and have a fallback name, try that */
++	if (ret == -ENOENT && fallback_boardname)
++		ret = ath10k_core_search_bd(ar, fallback_boardname, data, len);
+ 
+-				ret = ath10k_core_parse_bd_ie_board(ar, data,
+-								    ie_len,
+-								    boardname2);
+-			}
+-
+-			if (ret == -ENOENT)
+-				/* no match found, continue */
+-				break;
+-			else if (ret)
+-				/* there was an error, bail out */
+-				goto err;
+-
+-			/* board data found */
+-			goto out;
+-		}
+-
+-		/* jump over the padding */
+-		ie_len = ALIGN(ie_len, 4);
+-
+-		len -= ie_len;
+-		data += ie_len;
+-	}
+-
+-out:
+-	if (!ar->normal_mode_fw.board_data || !ar->normal_mode_fw.board_len) {
++	if (ret == -ENOENT) {
+ 		ath10k_err(ar,
+ 			   "failed to fetch board data for %s from %s/%s\n",
+ 			   boardname, ar->hw_params.fw.dir, filename);
+ 		ret = -ENODATA;
+-		goto err;
+ 	}
+ 
++	if (ret)
++		goto err;
++
+ 	return 0;
+ 
+ err:
+@@ -1368,12 +1369,12 @@ static int ath10k_core_fetch_board_data_api_n(struct ath10k *ar,
+ }
+ 
+ static int ath10k_core_create_board_name(struct ath10k *ar, char *name,
+-					 size_t name_len)
++					 size_t name_len, bool with_variant)
+ {
+ 	/* strlen(',variant=') + strlen(ar->id.bdf_ext) */
+ 	char variant[9 + ATH10K_SMBIOS_BDF_EXT_STR_LENGTH] = { 0 };
+ 
+-	if (ar->id.bdf_ext[0] != '\0')
++	if (with_variant && ar->id.bdf_ext[0] != '\0')
+ 		scnprintf(variant, sizeof(variant), ",variant=%s",
+ 			  ar->id.bdf_ext);
+ 
+@@ -1399,17 +1400,26 @@ static int ath10k_core_create_board_name(struct ath10k *ar, char *name,
+ 
+ static int ath10k_core_fetch_board_file(struct ath10k *ar)
+ {
+-	char boardname[100];
++	char boardname[100], fallback_boardname[100];
+ 	int ret;
+ 
+-	ret = ath10k_core_create_board_name(ar, boardname, sizeof(boardname));
++	ret = ath10k_core_create_board_name(ar, boardname,
++					    sizeof(boardname), true);
+ 	if (ret) {
+ 		ath10k_err(ar, "failed to create board name: %d", ret);
+ 		return ret;
+ 	}
+ 
++	ret = ath10k_core_create_board_name(ar, fallback_boardname,
++					    sizeof(boardname), false);
++	if (ret) {
++		ath10k_err(ar, "failed to create fallback board name: %d", ret);
++		return ret;
++	}
++
+ 	ar->bd_api = 2;
+ 	ret = ath10k_core_fetch_board_data_api_n(ar, boardname,
++						 fallback_boardname,
+ 						 ATH10K_BOARD_API2_FILE);
+ 	if (!ret)
+ 		goto success;
+-- 
+2.16.2
