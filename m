@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226nUe4SM6xmY+vuEsmN1lxTBg9C8w6xlu2XaVPFdrmrenKXJRG+iWg0+J7IShJHsl9eACC1
-ARC-Seal: i=1; a=rsa-sha256; t=1519218441; cv=none;
+X-Google-Smtp-Source: AH8x225EOKKc9OeMBclSF3fc7/a8Io6OmY5Nw7n7lcsw2e2PhNqVciNaqkP/BmO1bjAE8SEcowBo
+ARC-Seal: i=1; a=rsa-sha256; t=1519218438; cv=none;
         d=google.com; s=arc-20160816;
-        b=qv6EjtA3XSP/nM97WYgHRjXVBY6a2J78iOxKvUobgwAVw0Q7Uq2Z8tZvYfBWhI4evS
-         p/ms9i8xlfCROsyXAleluD/udm4at/BPZeNrxps9b/zMUpCuJAGev8pBEnXAYRMTjpz6
-         1WFxX6SbQqCuoATo6W/n231N6gOFd0+gcWTiP+g4ZkUGeGypt0OUCEfmBR2wigU55Gmx
-         UtyoESKLOnmEUSnwOFKQ5U/X4pJVYXNJ1cVqjhDhn1KHeVIpGnpGwyyg1ZL4Vynws6Km
-         vjyC5WiwGzEUY6gtG0s09Pz8rBeMibcs7np/5ZdhXjmEEhNK5H4j9lyfCDRbdpUrbI/4
-         aDFQ==
+        b=lXErkecvNgKBGDOCtCZk4/pOZ6FvMzt17BbC++9hkJA21KZ6//hzRm5QCbpYyQz1xh
+         cvL+iQTJI898vS8dqjIVEVWiKWfSrDE8ISWipm/W4Jz8P0p5hxlS+TnnMfz2q+38+wOh
+         hEvwbf6BijD5XVEVFsx+Mvpdd6faOqRESkRhCD5SYQsKoEZx9FJI1yUxhjY1+I+dkd1p
+         xjzeErajy8tKJuxQjodZDGx6aAV4n67n1O6S7GR50yS3beVv+mrmmwNwu8GIdic7u45/
+         nUr/1qRH4nt0QWj8SIYwelmJrAEpFUI230KIq9ybs7973kspT4LwMRWeOUUOLv1G6dGs
+         FE5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=C2EWzshnXRDh+0r6Yp/QsPMUacAeOJot/o2Qnc/S3n4=;
-        b=THd0+/Q0ymIG11O89qUAR/1NwEN3f/mnOK5zey5ZiVOykFAD1ZzXRrpS7IUUZFz9Gd
-         eMqeKCbSDPLw6tDiGxLptMxF1DIC+kaVWdvQ5saIjfu/5XWQulefoo+MkUk1oyF/otdF
-         u1GnnALTkWK49ZX+XFaUj3ZjY4R+pKRoPl7/vsReHWxWsSnH5SaZ3rs88PCKEd+Ni9hG
-         2ECv4izhfk/vXpoE4ijchUyXXpkG6SkPSh2znRkju+6cz+FqgnXSbgBH+BjuPRvZaH2l
-         c9L3EJvnhCHUM9KiaUjb1ZUyrZQu/OJtqoZydgZAa7VHWX+r+RpgSSIvhRoPRZ/sVdL9
-         6OJQ==
+        bh=kIH3ReyZiQdXRmXYYY1TXJ6QkhjSRfghrbonsGK+lTM=;
+        b=ZINZXH7lV1xzcXa7UCzY3cwWoPhhrtEJmMF9bBXWFb1SrFiNihc/6vHQ5fHEo7D01Y
+         4N3Ua1hozucK5jcFpMIY+tjFhhkJGzin8v5UVp6s5sZ4KnUkxzQrbMKcZt1C26jlbpMT
+         Dam+XYQwf0PxX9Uuc2vRJMZFhKsHVe0urVtehz897AjOJeVHf0ousJqrqjWaaLw8j4fi
+         4GhnEWvpQO0V97JHDwI/phD3bHsos/62KZliS8fSl/02QJAx2ZwoB/LyHLWY4xzCM2LH
+         V5Atxe0qG8omZZNaEqAuJ3xEAcqDeeHYmm8+YpzcGRzaqKTqt7kWgLsIvDD6tcuR/nM8
+         F2oQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 040/163] x86/entry/64: Clear extra registers beyond syscall arguments, to reduce speculation attack surface
-Date: Wed, 21 Feb 2018 13:47:49 +0100
-Message-Id: <20180221124532.559314707@linuxfoundation.org>
+	Michal Hocko <mhocko@suse.com>,
+	Bharata B Rao <bharata@linux.vnet.ibm.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Bob Picco <bob.picco@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 039/163] mm, memory_hotplug: fix memmap initialization
+Date: Wed, 21 Feb 2018 13:47:48 +0100
+Message-Id: <20180221124532.485499209@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -50,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015611169662442?=
-X-GMAIL-MSGID: =?utf-8?q?1593015996490436380?=
+X-GMAIL-THRID: =?utf-8?q?1593015994058369800?=
+X-GMAIL-MSGID: =?utf-8?q?1593015994058369800?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,74 +55,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 8e1eb3fa009aa7c0b944b3c8b26b07de0efb3200 upstream.
+commit 9bb5a391f9a5707e04763cf14298fc4cc29bfecd upstream.
 
-At entry userspace may have (maliciously) populated the extra registers
-outside the syscall calling convention with arbitrary values that could
-be useful in a speculative execution (Spectre style) attack.
+Bharata has noticed that onlining a newly added memory doesn't increase
+the total memory, pointing to commit f7f99100d8d9 ("mm: stop zeroing
+memory during allocation in vmemmap") as a culprit.  This commit has
+changed the way how the memory for memmaps is initialized and moves it
+from the allocation time to the initialization time.  This works
+properly for the early memmap init path.
 
-Clear these registers to minimize the kernel's attack surface.
+It doesn't work for the memory hotplug though because we need to mark
+page as reserved when the sparsemem section is created and later
+initialize it completely during onlining.  memmap_init_zone is called in
+the early stage of onlining.  With the current code it calls
+__init_single_page and as such it clears up the whole stage and
+therefore online_pages_range skips those pages.
 
-Note, this only clears the extra registers and not the unused
-registers for syscalls less than 6 arguments, since those registers are
-likely to be clobbered well before their values could be put to use
-under speculation.
+Fix this by skipping mm_zero_struct_page in __init_single_page for
+memory hotplug path.  This is quite uggly but unifying both early init
+and memory hotplug init paths is a large project.  Make sure we plug the
+regression at least.
 
-Note, Linus found that the XOR instructions can be executed with
-minimized cost if interleaved with the PUSH instructions, and Ingo's
-analysis found that R10 and R11 should be included in the register
-clearing beyond the typical 'extra' syscall calling convention
-registers.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Link: http://lkml.kernel.org/r/20180130101141.GW21609@dhcp22.suse.cz
+Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Bharata B Rao <bharata@linux.vnet.ibm.com>
+Tested-by: Bharata B Rao <bharata@linux.vnet.ibm.com>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Bob Picco <bob.picco@oracle.com>
 Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787988577.7847.16733592218894189003.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog and the code comments. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_64.S |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ mm/page_alloc.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -235,13 +235,26 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
- 	pushq	%r8				/* pt_regs->r8 */
- 	pushq	%r9				/* pt_regs->r9 */
- 	pushq	%r10				/* pt_regs->r10 */
-+	/*
-+	 * Clear extra registers that a speculation attack might
-+	 * otherwise want to exploit. Interleave XOR with PUSH
-+	 * for better uop scheduling:
-+	 */
-+	xorq	%r10, %r10			/* nospec   r10 */
- 	pushq	%r11				/* pt_regs->r11 */
-+	xorq	%r11, %r11			/* nospec   r11 */
- 	pushq	%rbx				/* pt_regs->rbx */
-+	xorl	%ebx, %ebx			/* nospec   rbx */
- 	pushq	%rbp				/* pt_regs->rbp */
-+	xorl	%ebp, %ebp			/* nospec   rbp */
- 	pushq	%r12				/* pt_regs->r12 */
-+	xorq	%r12, %r12			/* nospec   r12 */
- 	pushq	%r13				/* pt_regs->r13 */
-+	xorq	%r13, %r13			/* nospec   r13 */
- 	pushq	%r14				/* pt_regs->r14 */
-+	xorq	%r14, %r14			/* nospec   r14 */
- 	pushq	%r15				/* pt_regs->r15 */
-+	xorq	%r15, %r15			/* nospec   r15 */
- 	UNWIND_HINT_REGS
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1177,9 +1177,10 @@ static void free_one_page(struct zone *z
+ }
  
- 	TRACE_IRQS_OFF
+ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+-				unsigned long zone, int nid)
++				unsigned long zone, int nid, bool zero)
+ {
+-	mm_zero_struct_page(page);
++	if (zero)
++		mm_zero_struct_page(page);
+ 	set_page_links(page, zone, nid, pfn);
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+@@ -1194,9 +1195,9 @@ static void __meminit __init_single_page
+ }
+ 
+ static void __meminit __init_single_pfn(unsigned long pfn, unsigned long zone,
+-					int nid)
++					int nid, bool zero)
+ {
+-	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid);
++	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid, zero);
+ }
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+@@ -1217,7 +1218,7 @@ static void __meminit init_reserved_page
+ 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
+ 			break;
+ 	}
+-	__init_single_pfn(pfn, zid, nid);
++	__init_single_pfn(pfn, zid, nid, true);
+ }
+ #else
+ static inline void init_reserved_page(unsigned long pfn)
+@@ -1514,7 +1515,7 @@ static unsigned long __init deferred_ini
+ 					page++;
+ 				else
+ 					page = pfn_to_page(pfn);
+-				__init_single_page(page, pfn, zid, nid);
++				__init_single_page(page, pfn, zid, nid, true);
+ 				cond_resched();
+ 			}
+ 		}
+@@ -5393,15 +5394,20 @@ not_early:
+ 		 * can be created for invalid pages (for alignment)
+ 		 * check here not to call set_pageblock_migratetype() against
+ 		 * pfn out of zone.
++		 *
++		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
++		 * because this is done early in sparse_add_one_section
+ 		 */
+ 		if (!(pfn & (pageblock_nr_pages - 1))) {
+ 			struct page *page = pfn_to_page(pfn);
+ 
+-			__init_single_page(page, pfn, zone, nid);
++			__init_single_page(page, pfn, zone, nid,
++					context != MEMMAP_HOTPLUG);
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+ 			cond_resched();
+ 		} else {
+-			__init_single_pfn(pfn, zone, nid);
++			__init_single_pfn(pfn, zone, nid,
++					context != MEMMAP_HOTPLUG);
+ 		}
+ 	}
+ }
