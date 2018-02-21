@@ -1,161 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933572AbeBULkH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 06:40:07 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34875 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933558AbeBULkE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 06:40:04 -0500
-X-Google-Smtp-Source: AH8x2258y12L5s+hVnZ6tsodId/PyIPHz2rJH7AenBPaHxcv5PJ/P/E+jQpWrOagpNiv64YlVIw8N54ij44MG41OKbA=
+        id S933603AbeBULlv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 06:41:51 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36670 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932556AbeBULlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 06:41:49 -0500
+Subject: Re: [PATCH v2 1/2] KVM: x86: Add a framework for supporting MSR-based
+ features
+To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20180215231156.31016.79657.stgit@tlendack-t1.amdoffice.net>
+ <20180215231206.31016.78914.stgit@tlendack-t1.amdoffice.net>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <00583b68-d599-b709-133a-3741c258df13@redhat.com>
+Date: Wed, 21 Feb 2018 12:41:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1515590259-24304-1-git-send-email-anup@brainfault.org>
-References: <1515590259-24304-1-git-send-email-anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 21 Feb 2018 17:10:02 +0530
-Message-ID: <CAAhSdy3n-LuubSj+GNFoub3HJp0jap3Bu3f_NVeaYhc1H_7mHw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180215231206.31016.78914.stgit@tlendack-t1.amdoffice.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 6:47 PM, Anup Patel <anup@brainfault.org> wrote:
-> This patch adds "driver_override" device attribute for rpmsg_device which
-> will allow users to explicitly specify the rpmsg_driver to be used via
-> sysfs entry.
->
-> The "driver_override" device attribute implemented here is very similar
-> to "driver_override" implemented for platform, pci, and amba bus types.
->
-> One important use-case of "driver_override" device attribute is to force
-> use of rpmsg_chrdev driver for certain rpmsg_device instances.
->
-> Signed-off-by: Anup Patel <anup@brainfault.org>
-> ---
->  Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++
->  drivers/rpmsg/rpmsg_core.c                | 46 +++++++++++++++++++++++++++++--
->  2 files changed, 64 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
-> index 189e419..1c8599e 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-rpmsg
-> +++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
-> @@ -73,3 +73,23 @@ Description:
->                 This sysfs entry tells us whether the channel is a local
->                 server channel that is announced (values are either
->                 true or false).
+On 16/02/2018 00:12, Tom Lendacky wrote:
+> +static u32 msr_based_features[] = {
+> +};
 > +
-> +What:          /sys/bus/rpmsg/devices/.../driver_override
-> +Date:          January 2018
-> +KernelVersion: 4.16
-> +Contact:       Ohad Ben-Cohen <ohad@wizery.com>
-> +Description:
-> +               Every rpmsg device is a communication channel with a remote
-> +               processor. Channels are identified by a textual name (see
-> +               /sys/bus/rpmsg/devices/.../name above) and have a local
-> +               ("source") rpmsg address, and remote ("destination") rpmsg
-> +               address.
+> +static unsigned int num_msr_based_features = ARRAY_SIZE(msr_based_features);
 > +
-> +               The listening entity (or client) which communicates with a
-> +               remote processor is referred as rpmsg driver. The rpmsg device
-> +               and rpmsg driver are matched based on rpmsg device name and
-> +               rpmsg driver ID table.
+>  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer)
+>  {
+>  	if (efer & efer_reserved_bits)
+> @@ -2785,6 +2794,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>  	case KVM_CAP_SET_BOOT_CPU_ID:
+>   	case KVM_CAP_SPLIT_IRQCHIP:
+>  	case KVM_CAP_IMMEDIATE_EXIT:
+> +	case KVM_CAP_GET_MSR_FEATURES:
+>  		r = 1;
+>  		break;
+>  	case KVM_CAP_ADJUST_CLOCK:
+> @@ -4410,6 +4420,47 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>  			r = kvm_x86_ops->mem_enc_unreg_region(kvm, &region);
+>  		break;
+>  	}
+> +	case KVM_GET_MSR_INDEX_LIST: {
+> +		struct kvm_msr_list __user *user_msr_list = argp;
+> +		struct kvm_msr_list msr_list;
+> +		unsigned int n;
 > +
-> +               This sysfs entry allows the rpmsg driver for a rpmsg device
-> +               to be specified which will override standard OF, ID table
-> +               and name matching.
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index dffa3aa..9a25e42 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
->  }
->  EXPORT_SYMBOL(rpmsg_find_device);
->
-> -/* sysfs show configuration fields */
-> +/* sysfs configuration fields */
->  #define rpmsg_show_attr(field, path, format_string)                    \
->  static ssize_t                                                         \
->  field##_show(struct device *dev,                                       \
-> -                       struct device_attribute *attr, char *buf)       \
-> +            struct device_attribute *attr, char *buf)                  \
->  {                                                                      \
->         struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
->                                                                         \
-> @@ -333,11 +333,52 @@ field##_show(struct device *dev,                                  \
->  }                                                                      \
->  static DEVICE_ATTR_RO(field);
->
-> +#define rpmsg_string_attr(field, path)                                 \
-> +static ssize_t                                                         \
-> +field##_store(struct device *dev,                                      \
-> +             struct device_attribute *attr, const char *buf, size_t sz)\
-> +{                                                                      \
-> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
-> +       char *new, *old, *cp;                                           \
-> +                                                                       \
-> +       new = kstrndup(buf, sz, GFP_KERNEL);                            \
-> +       if (!new)                                                       \
-> +               return -ENOMEM;                                         \
-> +                                                                       \
-> +       cp = strchr(new, '\n');                                         \
-> +       if (cp)                                                         \
-> +               *cp = '\0';                                             \
-> +                                                                       \
-> +       device_lock(dev);                                               \
-> +       old = rpdev->path;                                              \
-> +       if (strlen(new)) {                                              \
-> +               rpdev->path = new;                                      \
-> +       } else {                                                        \
-> +               kfree(new);                                             \
-> +               rpdev->path = NULL;                                     \
-> +       }                                                               \
-> +       device_unlock(dev);                                             \
-> +                                                                       \
-> +       kfree(old);                                                     \
-> +                                                                       \
-> +       return sz;                                                      \
-> +}                                                                      \
-> +static ssize_t                                                         \
-> +field##_show(struct device *dev,                                       \
-> +            struct device_attribute *attr, char *buf)                  \
-> +{                                                                      \
-> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
-> +                                                                       \
-> +       return sprintf(buf, "%s\n", rpdev->path);                       \
-> +}                                                                      \
-> +static DEVICE_ATTR_RW(field)
-> +
->  /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
->  rpmsg_show_attr(name, id.name, "%s\n");
->  rpmsg_show_attr(src, src, "0x%x\n");
->  rpmsg_show_attr(dst, dst, "0x%x\n");
->  rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
-> +rpmsg_string_attr(driver_override, driver_override);
->
->  static ssize_t modalias_show(struct device *dev,
->                              struct device_attribute *attr, char *buf)
-> @@ -359,6 +400,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
->         &dev_attr_dst.attr,
->         &dev_attr_src.attr,
->         &dev_attr_announce.attr,
-> +       &dev_attr_driver_override.attr,
->         NULL,
->  };
->  ATTRIBUTE_GROUPS(rpmsg_dev);
-> --
-> 2.7.4
->
+> +		r = -EFAULT;
+> +		if (copy_from_user(&msr_list, user_msr_list, sizeof(msr_list)))
+> +			goto out;
+> +		n = msr_list.nmsrs;
+> +		msr_list.nmsrs = num_msr_based_features;
+> +		if (copy_to_user(user_msr_list, &msr_list, sizeof(msr_list)))
+> +			goto out;
+> +		r = -E2BIG;
+> +		if (n < msr_list.nmsrs)
+> +			goto out;
+> +		r = -EFAULT;
+> +		if (copy_to_user(user_msr_list->indices, &msr_based_features,
+> +				 num_msr_based_features * sizeof(u32)))
+> +			goto out;
+> +		r = 0;
+> +		break;
 
-Hi Bjorn,
+I think it's better to have some logic in kvm_init_msr_list, to filter
+the MSR list based on whatever MSRs the backend provides.
 
-Can you please review this patch?
+> +	}
+> +	case KVM_GET_MSR: {
 
-Regards,
-Anup
+It's not that the API isn't usable, KVM_GET_MSR is fine for what we need
+here (it's not a fast path), but it's a bit confusing to have
+KVM_GET_MSR and KVM_GET_MSRS.
+
+I see two possibilities:
+
+1) reuse KVM_GET_MSRS as in the previous version.  It's okay to
+cut-and-paste code from msr_io.
+
+2) find a name for KVM_GET_MSR that is better and different from
+KVM_GET_MSRS.  KVM_GET_HOST_MSR or KVM_GET_HOST_FEATURE_MSR come to
+mind, but I'm obviously open to other suggestions.
+
+Thanks!
+
+Paolo
+
+> +		struct kvm_msr_entry __user *user_msr = argp;
+> +		struct kvm_msr_entry msr;
+> +
+> +		r = -EFAULT;
+> +		if (copy_from_user(&msr, user_msr, sizeof(msr)))
+> +			goto out;
+> +
+> +		r = 1;
+> +		if (!kvm_x86_ops->msr_feature || kvm_x86_ops->msr_feature(&msr))
+> +			goto out;
+> +
+> +		r = -EFAULT;
+> +		if (copy_to_user(user_msr, &msr, sizeof(msr)))
+> +			goto out;
+> +
+> +		r = 0;
+> +		break;
+> +	}
