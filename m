@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226/oaTazT8Mz1acJKpMXQN8y9SrugW1H85hIjpXVTkopG3huh6EuHke5L9SheWO3gur3F2x
-ARC-Seal: i=1; a=rsa-sha256; t=1519218700; cv=none;
+X-Google-Smtp-Source: AH8x224Z0Iupy+6OynZwb2Q6ItscxtWpeEG9TIXM+VwJvzIU4mE2OP5tPXSDDfcl+ar8oOmq2MCH
+ARC-Seal: i=1; a=rsa-sha256; t=1519218697; cv=none;
         d=google.com; s=arc-20160816;
-        b=vrO06T7sNuwBDdrZlGfQ+ReGfm3hpR+n7oV4/eatS7886cPQyvZNw0RyL8oPf0pZSY
-         0m5FwlgQ4SNk6zBaK/zXpGi9i+6dcg9pG1aeKkSSjZ+SxcJg96S3JbGdKS+7trCDezvH
-         UtvKihZWOKYluLLH4+HXWXOZ8qeOZ5ziZOZ813e9K2bV6vrrKOCWfN/to3ENsZMKJdtZ
-         jVKrAa2Bo6ebdGCXxj9Va+cnDS+dQq6mkhg/CPHdp6XBD8oXGrGslwbNEE4nydMboW9E
-         R6AUHyY2sdwHJB6bfT1qtSz2poyky569SoRP6k5VkTKYnrnN7JoJIBxoQsqUA2ATW1HS
-         QpSQ==
+        b=efzQjLecjyMNuIxe6WM8AzuJVJNlpVrMtoD6vQghehtBCyqvvV/0hWRDC+2M2nEPkx
+         58tarxMVF4tKjvIyB50DkWw1WqsEbH2XKU0AfY371W3JdNqCLC7xotTlO6hR+r7w9oWp
+         lHLV+A890RwOWpmkQUjClXn2mqeK2Zjw0pShtsy5Hy1t1bzBc7LL0FiRRUhw66PfcANP
+         zE5YzU41kjDu5qFF4g+p9wGJcDkbFd4MKLdmwsQpcNUHWEUf9Kmqh3CsfOuKccaX6Muw
+         /c3WfU0FXRvKrY5e0imy00fFpFVYgbO5FUSnCVtf41rN8bIEwZqvWO5ntcnS1WWzrleV
+         AJEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1RzssPTA5Tcsfw+vpzbz4NENjigZ4vyYAWDAqxgU5b0=;
-        b=QdBLoA6hDuvrxzSxKwnUa8nXiwIR7suPzeWH1ifaSnzRNSYUuvnhxeuOLWxrY1IGMY
-         vmV89EO8TNgYk4H2BgU+mZWAEz0yYykHfuM4HG0oRIpLIbH4tkiHPC9AQkb2r7+8S5aw
-         lHfGCqCaDR0mXfwmtljYobialAwT+Ujc6WA/+sgW30+jYXJduUyRlfYKUy2AtQBFTajl
-         1q9brkd3Ta3Z+pbl3VHEOVA+AU3fxY+OooPzT+t/iIYSinQSWYduCIG2DUTI+hANnqZx
-         CuThOR8beagbwGKVibjUMuCDjR2/tQ+h955clPkjWu8A9ikAVsHHfPwhLVUqEUH1x6dP
-         SVXw==
+        bh=IQRq79fOcJXgQ+ByCF5zGlQ4hsBx73HMQ+0bxMdEwPE=;
+        b=s9tfsdyqUXOTYJdiOmBZGGORGOSb06xhNtzJ1m751HkTTktidK2tgCiBc/D96iGYJQ
+         kEDgb1yESYFjBSJ/0AC6r7oLmR3a6JjqVxZ8o6FBHvQUaKexvB/oSqUVnjWvSLvOmxoG
+         2L9mMuI9VWM9U2Xm8ikvjEqmxKR27F47AO3x3w0wbZCGlpcq+bCKqv5Z3AtoKbyN/Fkk
+         +8oskiudhOxz7i5DNh/Pgf74voeocFJdrYGI2NVM0xgfM2+3XyC/6deXWKCLa+dr5vOc
+         Sa3WhEE//84iHaCyZlTVa9d5CGuOhx+y3l3Y/AjyTwWdOKT8/JDZdmq0nuZGtAJq2aFd
+         SUvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	yasu.isimatu@gmail.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 098/163] x86/smpboot: Fix uncore_pci_remove() indexing bug when hot-removing a physical CPU
-Date: Wed, 21 Feb 2018 13:48:47 +0100
-Message-Id: <20180221124535.713836865@linuxfoundation.org>
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.15 097/163] drm/radeon: adjust tested variable
+Date: Wed, 21 Feb 2018 13:48:46 +0100
+Message-Id: <20180221124535.676734374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593016267461386549?=
-X-GMAIL-MSGID: =?utf-8?q?1593016267461386549?=
+X-GMAIL-THRID: =?utf-8?q?1593015181472475587?=
+X-GMAIL-MSGID: =?utf-8?q?1593016264647051517?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,111 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 295cc7eb314eb3321fb6d67ca6f7305f5c50d10f upstream.
+commit 3a61b527b4e1f285d21b6e9e623dc45cf8bb391f upstream.
 
-When a physical CPU is hot-removed, the following warning messages
-are shown while the uncore device is removed in uncore_pci_remove():
+Check the variable that was most recently initialized.
 
-  WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
-  uncore_pci_remove+0xf1/0x110
-  ...
-  CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
-  Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-  ...
-  Call Trace:
-  pci_device_remove+0x36/0xb0
-  device_release_driver_internal+0x145/0x210
-  pci_stop_bus_device+0x76/0xa0
-  pci_stop_root_bus+0x44/0x60
-  acpi_pci_root_remove+0x1f/0x80
-  acpi_bus_trim+0x54/0x90
-  acpi_bus_trim+0x2e/0x90
-  acpi_device_hotplug+0x2bc/0x4b0
-  acpi_hotplug_work_fn+0x1a/0x30
-  process_one_work+0x141/0x340
-  worker_thread+0x47/0x3e0
-  kthread+0xf5/0x130
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-When uncore_pci_remove() runs, it tries to get the package ID to
-clear the value of uncore_extra_pci_dev[].dev[] by using
-topology_phys_to_logical_pkg(). The warning messesages are
-shown because topology_phys_to_logical_pkg() returns -1.
+// <smpl>
+@@
+expression x, y, f, g, e, m;
+statement S1,S2,S3,S4;
+@@
 
-  arch/x86/events/intel/uncore.c:
-  static void uncore_pci_remove(struct pci_dev *pdev)
-  {
-  ...
-          phys_id = uncore_pcibus_to_physid(pdev->bus);
-  ...
-                  pkg = topology_phys_to_logical_pkg(phys_id); // returns -1
-                  for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
-                          if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
-                                  uncore_extra_pci_dev[pkg].dev[i] = NULL;
-                                  break;
-                          }
-                  }
-                  WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); // <=========== HERE!!
+x = f(...);
+if (\(<+...x...+>\&e\)) S1 else S2
+(
+x = g(...);
+|
+m = g(...,&x,...);
+|
+y = g(...);
+*if (e)
+ S3 else S4
+)
+// </smpl>
 
-topology_phys_to_logical_pkg() tries to find
-cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
-
-  arch/x86/kernel/smpboot.c:
-  int topology_phys_to_logical_pkg(unsigned int phys_pkg)
-  {
-          int cpu;
-
-          for_each_possible_cpu(cpu) {
-                  struct cpuinfo_x86 *c = &cpu_data(cpu);
-
-                  if (c->initialized && c->phys_proc_id == phys_pkg)
-                          return c->logical_proc_id;
-          }
-          return -1;
-  }
-
-However, the phys_proc_id was already set to 0 by remove_siblinginfo()
-when the CPU was offlined.
-
-So, topology_phys_to_logical_pkg() cannot find the correct
-logical_proc_id and always returns -1.
-
-As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
-messages are shown.
-
-What is worse is that the bogus 'pkg' index results in two bugs:
-
- - We dereference uncore_extra_pci_dev[] with a negative index
- - We fail to clean up a stale pointer in uncore_extra_pci_dev[][]
-
-To fix these bugs, remove the clearing of ->phys_proc_id from remove_siblinginfo().
-
-This should not cause any problems, because ->phys_proc_id is not
-used after it is hot-removed and it is re-set while hot-adding.
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: yasu.isimatu@gmail.com
-Cc: <stable@vger.kernel.org>
-Fixes: 30bb9811856f ("x86/topology: Avoid wasting 128k for package id array")
-Link: http://lkml.kernel.org/r/ed738d54-0f01-b38b-b794-c31dc118c207@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/smpboot.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_uvd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
- 	cpumask_clear(cpu_llc_shared_mask(cpu));
- 	cpumask_clear(topology_sibling_cpumask(cpu));
- 	cpumask_clear(topology_core_cpumask(cpu));
--	c->phys_proc_id = 0;
- 	c->cpu_core_id = 0;
- 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
- 	recompute_smt_state();
+--- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -995,7 +995,7 @@ int radeon_uvd_calc_upll_dividers(struct
+ 		/* calc dclk divider with current vco freq */
+ 		dclk_div = radeon_uvd_calc_upll_post_div(vco_freq, dclk,
+ 							 pd_min, pd_even);
+-		if (vclk_div > pd_max)
++		if (dclk_div > pd_max)
+ 			break; /* vco is too big, it has to stop */
+ 
+ 		/* calc score with current vco freq */
