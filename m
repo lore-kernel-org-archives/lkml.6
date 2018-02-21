@@ -1,44 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965985AbeBUPME (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:12:04 -0500
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:39392 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934737AbeBUPMA (ORCPT
+        id S938111AbeBUPMp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:12:45 -0500
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:42700 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933330AbeBUPMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:12:00 -0500
-X-Google-Smtp-Source: AH8x227lbMPtCkaLVwnfkSgdG2zphrDy8nqGGBX6ynZ0oPBEvpvO7kVIGNKFGTa5mo2YCAYpJ3K65Q==
-Message-ID: <1519225917.55655.42.camel@gmail.com>
-Subject: Re: [PATCH] netlink: put module reference if dump start fails
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: David Miller <davem@davemloft.net>,
-        "Berg, Johannes" <johannes.berg@intel.com>,
-        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Date: Wed, 21 Feb 2018 07:11:57 -0800
-In-Reply-To: <CAHmME9px8Bwjz-D0dbSgm3vRPiEaBavEaG=2bGWC0_L3api5rw@mail.gmail.com>
-References: <20180221034159.14685-1-Jason@zx2c4.com>
-         <1519192048.55655.35.camel@gmail.com>
-         <CAHmME9px8Bwjz-D0dbSgm3vRPiEaBavEaG=2bGWC0_L3api5rw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Feb 2018 10:12:43 -0500
+X-Google-Smtp-Source: AH8x226LiosfEgd09mSOih4SumuZm3QGam+ubWUivbMIdYe4WSwEhdhBpBke4vNp5MbgHuCYTL+0CA==
+Date: Wed, 21 Feb 2018 16:12:34 +0100
+From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
+To: Andy Shevchenko <andy@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] Topstar U931/RVP7 ACPI LED Workaround
+Message-ID: <cover.1519225570.git.gdouezangrard@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-21 at 15:54 +0100, Jason A. Donenfeld wrote:
-> On Wed, Feb 21, 2018 at 6:47 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> > > This probably should be queued up for stable.
-> > 
-> > When was the bug added ? This would help a lot stable teams ...
-> 
-> This needs to be backported to 4.16-rc0+, 4.15+, 4.14+, 4.13.14+, and 4.9.63+.
+Hi Andy,
 
-I guess I should have asked you to provide an appropriate Fixes: tag,
-clearly identifying the commit that added the bug.
+Thank you for your review. Changes since the previous submission are
+highlighted below.
 
-Fixes: 12-digit-sha1 ("patch title")
+On Topstar U931/RVP7 Notebooks, an issue prevents the WLAN toggle key
+from being properly managed by the Embedded Controller and successfully
+disconnect the adapter. A specific ACPI method allows to toggle the WLAN
+LED state regardless.
 
-Thanks.
+Based on a DMI check, the LED is registered within the corresponding
+subsystem, making possible to use a software-based trigger (rfkill for
+instance, to synchronize the LED with the network interface state).
+
+Thank you for your time,
+
+--
+Guillaume Douézan-Grard
+
+
+Changes since v2:
+
+* revert an older conversion from a generic module to an acpi driver
+module instead of undoing it manually,
+* separate commits for the renaming and the spliting phases,
+* DMI-based check instead of a module parameter,
+* copyright and minor fixes put at the end.
+
+
+Changes since v1:
+
+* leave devices names unchanged for ABI compatibility,
+* fix label names,
+* separate module authors definition,
+* add commit description to Patch 3.
+
+
+Guillaume Douézan-Grard (6):
+  revert "topstar-laptop: convert to module_acpi_driver()"
+  platform/x86: topstar-laptop: use consistent naming scheme
+  platform/x86: topstar-laptop: split ACPI events and input handling
+  platform/x86: topstar-laptop: add platform device
+  platform/x86: topstar-laptop: add Topstar U931/RVP7 WLAN LED
+    workaround
+  platform/x86: topstar-laptop: update copyright and fix some comments
+
+ drivers/platform/x86/Kconfig          |   2 +
+ drivers/platform/x86/topstar-laptop.c | 358 +++++++++++++++++++++++++++-------
+ 2 files changed, 290 insertions(+), 70 deletions(-)
+
+-- 
+2.16.1
