@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751415AbeBUERs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 23:17:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55322 "EHLO mail.kernel.org"
+        id S1751454AbeBUERv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 23:17:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751217AbeBUERp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 23:17:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF322178F
+        id S1751217AbeBUERt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 23:17:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9943D21795
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -20,9 +20,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
         Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 1/7] sched: Rename init_rq_hrtick to hrtick_rq_init
-Date: Wed, 21 Feb 2018 05:17:23 +0100
-Message-Id: <1519186649-3242-2-git-send-email-frederic@kernel.org>
+Subject: [PATCH 2/7] nohz: Convert tick_nohz_tick_stopped() to bool
+Date: Wed, 21 Feb 2018 05:17:24 +0100
+Message-Id: <1519186649-3242-3-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519186649-3242-1-git-send-email-frederic@kernel.org>
 References: <1519186649-3242-1-git-send-email-frederic@kernel.org>
@@ -30,9 +30,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do that rename in order to normalize the hrtick namespace.
+It makes this function more self-explanatory about what it does and how
+to use it.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Chris Metcalf <cmetcalf@mellanox.com>
 Cc: Christoph Lameter <cl@linux.com>
@@ -45,39 +46,35 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Wanpeng Li <kernellwp@gmail.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/tick.h     | 2 +-
+ kernel/time/tick-sched.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e7c535e..e72ca3c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -333,7 +333,7 @@ void hrtick_start(struct rq *rq, u64 delay)
- }
- #endif /* CONFIG_SMP */
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 7cc3592..86576d9 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -113,7 +113,7 @@ enum tick_dep_bits {
  
--static void init_rq_hrtick(struct rq *rq)
-+static void hrtick_rq_init(struct rq *rq)
- {
- #ifdef CONFIG_SMP
- 	rq->hrtick_csd_pending = 0;
-@@ -351,7 +351,7 @@ static inline void hrtick_clear(struct rq *rq)
- {
- }
+ #ifdef CONFIG_NO_HZ_COMMON
+ extern bool tick_nohz_enabled;
+-extern int tick_nohz_tick_stopped(void);
++extern bool tick_nohz_tick_stopped(void);
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 29a5733..0aba041 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -481,7 +481,7 @@ static int __init setup_tick_nohz(char *str)
  
--static inline void init_rq_hrtick(struct rq *rq)
-+static inline void hrtick_rq_init(struct rq *rq)
- {
- }
- #endif	/* CONFIG_SCHED_HRTICK */
-@@ -6028,7 +6028,7 @@ void __init sched_init(void)
- 		rq->last_sched_tick = 0;
- #endif
- #endif /* CONFIG_SMP */
--		init_rq_hrtick(rq);
-+		hrtick_rq_init(rq);
- 		atomic_set(&rq->nr_iowait, 0);
- 	}
+ __setup("nohz=", setup_tick_nohz);
  
+-int tick_nohz_tick_stopped(void)
++bool tick_nohz_tick_stopped(void)
+ {
+ 	return __this_cpu_read(tick_cpu_sched.tick_stopped);
+ }
 -- 
 2.7.4
