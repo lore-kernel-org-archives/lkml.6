@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225s2LQUdQopFdPB+vCaGBJrxUbqUmZP98qplayU2vOTYbG8kLwH9cQd/xK3YlPRZXxVO2Ss
-ARC-Seal: i=1; a=rsa-sha256; t=1519218391; cv=none;
+X-Google-Smtp-Source: AH8x225gOZMGYDWkPePzC4NK7MoQoL4hqgf5u+UxTYPHmCH+llN6DwFFQhMOH+XDTJTX1RSJ5eab
+ARC-Seal: i=1; a=rsa-sha256; t=1519218388; cv=none;
         d=google.com; s=arc-20160816;
-        b=cSXiPiLHT0CLP6BLmeD3qrNvQq1T6s5KHocCO3p+gzuBnx1UWHXwoco9si3EK/wiL1
-         NOU6GuuRSrKeE+mh3q6LMAOdb+oXOUGZIEfGli9Ve8nw/W3A82uixLhLx7oQEiWVywaN
-         dAIh4hZFAtL+a7zvtTe8lKK2M8Inx8Z07gwn2JFLvZhAZK+7Jx7OleR58FwTCg6P2fTr
-         d9WxSgq4RFymW47wJT3E/tEinKV22TPvXK7jxueYVzda7poHn6+kTn2Yj8rFWtD8eipz
-         qH3iPm4o7fQTzg/TqqcMUZdaQuwbK3BhiPRqbf6YCK5Af/BZ9NCsQZPi9gn4AiD8gHHh
-         6/0w==
+        b=rvNynNKTFzjCi1oJtA/oECL3Yabpvo/pZsy82tIrwEDKJ3KUTyPkZ1eu03jESCWwI9
+         bOL+3Iy/LCCy4UcINd1rUr/cqysvK71tQEk31u/v8VFf0XlJ8An5TkOCaYAZIp9V241A
+         3S7qvSsNWFkz/3tUnJ5HJHkS25N1cUkHgqmfytqT8enaQsE53d1o2nO8/XuRezFbQF2r
+         E7TLIAsjQtjuFluJSlSal9XDoJ89T+qE4OGmRA9PQd4IXgce+eUOdj0MsPCNMjzS6gCM
+         A5n0239X1uGDk67tMMl20BTuRXLuXBEwvwyKRM3Lf9apdC/AI0qwdM/cG/HfnrJI4QWJ
+         V3fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PkTcKkMHidUgKY1dXuVy1EiJbPlwQdq4T6Jzpiwm7JI=;
-        b=UGNUb7ufK+29sZ6dnt6s48JUfh6XdI+VBkuleq/0wSYNdg8ZSVnOGFNJW8kfvwmSR/
-         EkrIiwx+8o3CQW0iL2hEQWVkev1BxyEG+naFhViVYj+aVdwWDlvm8Wt0rnCdicCTsu68
-         iU3ON76G22vT4NGl4nVvlYrq8g4jzh0yRCn+3TLf/+4kqyuPJfI4fSL8X1AMXXtzPlGb
-         YApKV0z6m3LXjTUmuCPsPa5UEnDiDHnDHjESQIOwnvtrkkXGK7X9+S/JLxPM8v/3wwmP
-         pSQMyY9zugavnxEdo+WKXa3IJCYJYKhQNuWn/GcdqDyoeO4MWlOMU/yj+YSOaBAqlPls
-         qqFg==
+        bh=5ZCQUHq5It75/cUkkT67sOCIEtBAjlvxbld5Uc+whp0=;
+        b=AFAbXKeKbD2J0cUig73CPLhS7JZlE2D7zOPJVjaqyoR/NHgkdpm62grQtuizI/1jUJ
+         knw0MPNaulbbicLULXfyoOKRDTnKKnMGX3ojcn8B8W7LtUvyVZ0h4YH8kBOReGHQyB5h
+         puLOGpsWBr2R2gYUw0WzitaTtHyV+rdmmi8lELX492Jic49GI+9/DrXMpUMQow42dLJq
+         SAHT6sdYe9ZzBzObzfusUJWm1dy72zDbMDec5dAFNJancArTJkinTJwbasfLDJh+UHp9
+         Pkr1Y2w+Yrfe6ARBv7pmEAAxKHGvO43mrDvvwcoWawerbJ8sLQlmN0nN9XhbK38VPZY0
+         tbeA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Dalessandro <dennis.dalessandro@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Bodong Wang <bodong@mellanox.com>,
+	Parav Pandit <parav@mellanox.com>,
+	Leon Romanovsky <leon@kernel.org>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.15 007/163] IB/core: Avoid a potential OOPs for an unused optional parameter
-Date: Wed, 21 Feb 2018 13:47:16 +0100
-Message-Id: <20180221124530.367145369@linuxfoundation.org>
+Subject: [PATCH 4.15 006/163] IB/core: Fix ib_wc structure size to remain in 64 bytes boundary
+Date: Wed, 21 Feb 2018 13:47:15 +0100
+Message-Id: <20180221124530.307032354@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015484554049351?=
-X-GMAIL-MSGID: =?utf-8?q?1593015943781392064?=
+X-GMAIL-THRID: =?utf-8?q?1593015481822044558?=
+X-GMAIL-MSGID: =?utf-8?q?1593015940544717334?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +51,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Bodong Wang <bodong@mellanox.com>
 
-commit 2ff124d597c2df8696169ce0006fc974c49a4569 upstream.
+commit cd2a6e7d384b043d5d029e39663061cebc949385 upstream.
 
-The ev_file is an optional parameter for CQ creation. If the parameter
-is not passed, the ev_file pointer will be NULL.  Using that pointer
-to set the cq_context will result in an OOPs.
+The change of slid from u16 to u32 results in sizeof(struct ib_wc)
+cross 64B boundary, which causes more cache misses. This patch
+rearranges the fields and remain the size to 64B.
 
-Verify that ev_file is not NULL before using.
+Pahole output before this change:
 
-Cc: <stable@vger.kernel.org> # 4.14.x
-Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+struct ib_wc {
+        union {
+                u64                wr_id;                /*           8 */
+                struct ib_cqe *    wr_cqe;               /*           8 */
+        };                                               /*     0     8 */
+        enum ib_wc_status          status;               /*     8     4 */
+        enum ib_wc_opcode          opcode;               /*    12     4 */
+        u32                        vendor_err;           /*    16     4 */
+        u32                        byte_len;             /*    20     4 */
+        struct ib_qp *             qp;                   /*    24     8 */
+        union {
+                __be32             imm_data;             /*           4 */
+                u32                invalidate_rkey;      /*           4 */
+        } ex;                                            /*    32     4 */
+        u32                        src_qp;               /*    36     4 */
+        int                        wc_flags;             /*    40     4 */
+        u16                        pkey_index;           /*    44     2 */
+
+        /* XXX 2 bytes hole, try to pack */
+
+        u32                        slid;                 /*    48     4 */
+        u8                         sl;                   /*    52     1 */
+        u8                         dlid_path_bits;       /*    53     1 */
+        u8                         port_num;             /*    54     1 */
+        u8                         smac[6];              /*    55     6 */
+
+        /* XXX 1 byte hole, try to pack */
+
+        u16                        vlan_id;              /*    62     2 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        u8                         network_hdr_type;     /*    64     1 */
+
+        /* size: 72, cachelines: 2, members: 17 */
+        /* sum members: 62, holes: 2, sum holes: 3 */
+        /* padding: 7 */
+        /* last cacheline: 8 bytes */
+};
+
+Pahole output after this change:
+
+struct ib_wc {
+        union {
+                u64                wr_id;                /*           8 */
+                struct ib_cqe *    wr_cqe;               /*           8 */
+        };                                               /*     0     8 */
+        enum ib_wc_status          status;               /*     8     4 */
+        enum ib_wc_opcode          opcode;               /*    12     4 */
+        u32                        vendor_err;           /*    16     4 */
+        u32                        byte_len;             /*    20     4 */
+        struct ib_qp *             qp;                   /*    24     8 */
+        union {
+                __be32             imm_data;             /*           4 */
+                u32                invalidate_rkey;      /*           4 */
+        } ex;                                            /*    32     4 */
+        u32                        src_qp;               /*    36     4 */
+        u32                        slid;                 /*    40     4 */
+        int                        wc_flags;             /*    44     4 */
+        u16                        pkey_index;           /*    48     2 */
+        u8                         sl;                   /*    50     1 */
+        u8                         dlid_path_bits;       /*    51     1 */
+        u8                         port_num;             /*    52     1 */
+        u8                         smac[6];              /*    53     6 */
+
+        /* XXX 1 byte hole, try to pack */
+
+        u16                        vlan_id;              /*    60     2 */
+        u8                         network_hdr_type;     /*    62     1 */
+
+        /* size: 64, cachelines: 1, members: 17 */
+        /* sum members: 62, holes: 1, sum holes: 1 */
+        /* padding: 1 */
+};
+
+Fixes: 7db20ecd1d97 ("IB/core: Change wc.slid from 16 to 32 bits")
+Signed-off-by: Bodong Wang <bodong@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_std_types.c |    2 +-
+ include/rdma/ib_verbs.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/uverbs_std_types.c
-+++ b/drivers/infiniband/core/uverbs_std_types.c
-@@ -315,7 +315,7 @@ static int uverbs_create_cq_handler(stru
- 	cq->uobject       = &obj->uobject;
- 	cq->comp_handler  = ib_uverbs_comp_handler;
- 	cq->event_handler = ib_uverbs_cq_event_handler;
--	cq->cq_context    = &ev_file->ev_queue;
-+	cq->cq_context    = ev_file ? &ev_file->ev_queue : NULL;
- 	obj->uobject.object = cq;
- 	obj->uobject.user_handle = user_handle;
- 	atomic_set(&cq->usecnt, 0);
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -983,9 +983,9 @@ struct ib_wc {
+ 		u32		invalidate_rkey;
+ 	} ex;
+ 	u32			src_qp;
++	u32			slid;
+ 	int			wc_flags;
+ 	u16			pkey_index;
+-	u32			slid;
+ 	u8			sl;
+ 	u8			dlid_path_bits;
+ 	u8			port_num;	/* valid only for DR SMPs on switches */
