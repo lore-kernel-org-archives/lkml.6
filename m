@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225PaQ6GiHv2F3M6OnFlXMAMrnmIDpVo9bCv65yr6SeOqniHV6Icemy+hcPoxikwb6PBIV2P
-ARC-Seal: i=1; a=rsa-sha256; t=1519217716; cv=none;
+X-Google-Smtp-Source: AH8x224soIPUoJ3LSeacgmHveWREcjPtuMNrgV2fqFHZgVIrg2oJHzib3GGWR0jO+DNfX+xxDPam
+ARC-Seal: i=1; a=rsa-sha256; t=1519217714; cv=none;
         d=google.com; s=arc-20160816;
-        b=T1+HMA4qfQgnItJfGve3myIxNVD1CoohQ1+Jl5wVLTTyQiS1AsFaxxZ9dwQjeVP0Vl
-         pkxgk+T7BdMuiLr3YhmQhHd1ZlYlHLH2yt/NUcgkyHh3jsa+JrO3PxpA7+YU8flTN7aB
-         2fQ1zN3Q/gmQ4CHU0CbHT4kysxqBH6g4B874Us+DCX2dpkSTmEUbUgbr8b8xBmzG2so+
-         xBc9tX/nD8rYNKi3REoF/wmoY0tTCPhKxbPmsaz7X95F0V03PFlwy6tIfKE8uCXWUUDM
-         4bBKno8Hys86odTY2M4brfjtuwd+dyNBFaIMfwylIBElgbcPgpNONflCCt7wOV4GOpYl
-         g3uw==
+        b=RTLjw9xFHeJwPKbxWru9iA81XlWiMKD7CHjATAvFUaT48hn/Yd5zV+cJOQnBybkjMK
+         tPv2UCSc5yLr/18a5OqPN0zFJBeh3svswMQDD0Ijdx8pDPVZZ25k+UEtN6xhf+C4SIIa
+         rbtCuuVqm9Nf1SqoFbSZgLclGcPmJuC3R/T23H+XAYZ0VPR+jZnNJG7UC6QjbZpb60IQ
+         PcD2mm5pt6zNUNFU5OI8x5v7U+bfara3TDyV/sCvML7b8LcXFy1syZ2jFt+scupcZsGC
+         VwP2kApNdX8mvXp26VQE4sspxrT/6aLjn6/INvGVdxlKlP2Lp1ADk8JRhXzs25RP5FNU
+         a3TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oNNqQ3uZaA/Eol8MJ2EWvOR44w2sO9KTRCeLgQdAN4g=;
-        b=lHRL1UD6EbyAUTf9asRmS2/zB7fskys43WHzW33i6iQFs2P8PVfsWH8Tx0wTw1e2a4
-         d8VoTs9GnigjC+zhXh2mx75WmwsnuR7LlyvCXheXnX31fPUVPvZtQ6/aRG+8sT4dVSS4
-         WN8PQ5Noqi25rl/HiOP2BSgwsoPyClKbuvE2pr3sjE88heSpnJIvNpDLOq7JMgrji3FK
-         0VjChGPbAJeHtWRcgF+STv4DOChZ16LbX0jI+xiRw6odHICVUi1cA3WCOjNpj/7wHhJc
-         qbr6n2FHl3SE9Ik1kO2UXaSdRdeK43pdwQY37C7PxQ5pIqury+SDW3PjNP3XZnzckqtP
-         sYMA==
+        bh=3gk6aoubon8WSveVjT+4Aqb4+jGSCKc+4c4ET+rlK3U=;
+        b=NumqJo2nLsEcPmW9BYMl34ZlG8yPAwBZTOywQgnf7b/cD0bFszbmy2N/WYuxjI/zgx
+         RMf9hXuQdu01N0GwZcH38b9+64ihpvRw21eztoox0RaHIuZ6yZSFsVDg/cHPpttK1dD/
+         TJ07Zqf7cuSAbr5qf+/O2U4l90cElFgcdDojqyyklKXEeLtLD7kQHhs+rEjqY/zrwMLi
+         2GEAPhia9w5Fd2/HrbUirRuHiLeAOYHBP70X3iWXQW/xSnNjQmfuXTpY2W+bKKxgwHyu
+         2kOOE+lY9L7NFLkWO4gdChYqTSXrvbMnq31Q0OEemaCW16I0JmtfcwaiPAzDsJUaPdZP
+         f1UQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lassi Ylikojola <lassi.ylikojola@gmail.com>,
+	Jan-Marek Glogowski <glogow@fbihome.de>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 29/77] ALSA: usb-audio: add implicit fb quirk for Behringer UFX1204
-Date: Wed, 21 Feb 2018 13:48:38 +0100
-Message-Id: <20180221124433.423126151@linuxfoundation.org>
+Subject: [PATCH 4.9 28/77] ALSA: hda/realtek: PCI quirk for Fujitsu U7x7
+Date: Wed, 21 Feb 2018 13:48:37 +0100
+Message-Id: <20180221124433.385285205@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014658063044518?=
-X-GMAIL-MSGID: =?utf-8?q?1593015236546584272?=
+X-GMAIL-THRID: =?utf-8?q?1593014654795810271?=
+X-GMAIL-MSGID: =?utf-8?q?1593015233813920225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lassi Ylikojola <lassi.ylikojola@gmail.com>
+From: Jan-Marek Glogowski <glogow@fbihome.de>
 
-commit 5e35dc0338d85ccebacf3f77eca1e5dea73155e8 upstream.
+commit fdcc968a3b290407bcba9d4c90e2fba6d8d928f1 upstream.
 
-Add quirk to ensure a sync endpoint is properly configured.
-This patch is a fix for same symptoms on Behringer UFX1204 as patch
-from Albertto Aquirre on Dec 8 2016 for Axe-Fx II.
+These laptops have a combined jack to attach headsets, the U727 on
+the left, the U757 on the right, but a headsets microphone doesn't
+work. Using hdajacksensetest I found that pin 0x19 changed the
+present state when plugging the headset, in addition to 0x21, but
+didn't have the correct configuration (shown as "Not connected").
 
-Signed-off-by: Lassi Ylikojola <lassi.ylikojola@gmail.com>
+So this sets the configuration to the same values as the headphone
+pin 0x21 except for the device type microphone, which makes it
+work correctly. With the patch the configured pins for U727 are
+
+Pin 0x12 (Internal Mic, Mobile-In): present = No
+Pin 0x14 (Internal Speaker): present = No
+Pin 0x19 (Black Mic, Left side): present = No
+Pin 0x1d (Internal Aux): present = No
+Pin 0x21 (Black Headphone, Left side): present = No
+
+Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/pci/hda/patch_realtek.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -357,6 +357,15 @@ static int set_sync_ep_implicit_fb_quirk
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3130,6 +3130,19 @@ static void alc269_fixup_pincfg_no_hp_to
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+ }
  
- 		alts = &iface->altsetting[1];
- 		goto add_sync_ep;
-+	case USB_ID(0x1397, 0x0002):
-+		ep = 0x81;
-+		iface = usb_ifnum_to_if(dev, 1);
++static void alc269_fixup_pincfg_U7x7_headset_mic(struct hda_codec *codec,
++						 const struct hda_fixup *fix,
++						 int action)
++{
++	unsigned int cfg_headphone = snd_hda_codec_get_pincfg(codec, 0x21);
++	unsigned int cfg_headset_mic = snd_hda_codec_get_pincfg(codec, 0x19);
 +
-+		if (!iface || iface->num_altsetting == 0)
-+			return -EINVAL;
++	if (cfg_headphone && cfg_headset_mic == 0x411111f0)
++		snd_hda_codec_set_pincfg(codec, 0x19,
++			(cfg_headphone & ~AC_DEFCFG_DEVICE) |
++			(AC_JACK_MIC_IN << AC_DEFCFG_DEVICE_SHIFT));
++}
 +
-+		alts = &iface->altsetting[1];
-+		goto add_sync_ep;
- 
- 	}
- 	if (attr == USB_ENDPOINT_SYNC_ASYNC &&
+ static void alc269_fixup_hweq(struct hda_codec *codec,
+ 			       const struct hda_fixup *fix, int action)
+ {
+@@ -4819,6 +4832,7 @@ enum {
+ 	ALC269_FIXUP_LIFEBOOK_EXTMIC,
+ 	ALC269_FIXUP_LIFEBOOK_HP_PIN,
+ 	ALC269_FIXUP_LIFEBOOK_NO_HP_TO_LINEOUT,
++	ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC,
+ 	ALC269_FIXUP_AMIC,
+ 	ALC269_FIXUP_DMIC,
+ 	ALC269VB_FIXUP_AMIC,
+@@ -5010,6 +5024,10 @@ static const struct hda_fixup alc269_fix
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc269_fixup_pincfg_no_hp_to_lineout,
+ 	},
++	[ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc269_fixup_pincfg_U7x7_headset_mic,
++	},
+ 	[ALC269_FIXUP_AMIC] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+@@ -5733,6 +5751,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x10cf, 0x159f, "Lifebook E780", ALC269_FIXUP_LIFEBOOK_NO_HP_TO_LINEOUT),
+ 	SND_PCI_QUIRK(0x10cf, 0x15dc, "Lifebook T731", ALC269_FIXUP_LIFEBOOK_HP_PIN),
+ 	SND_PCI_QUIRK(0x10cf, 0x1757, "Lifebook E752", ALC269_FIXUP_LIFEBOOK_HP_PIN),
++	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
+ 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
