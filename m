@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227c9J8I9ScFZbWurny1wkrJWdnoVfUlwrID/SULHtpFZJ5O/AndRxtYExs3vVxqSUp7L1dl
-ARC-Seal: i=1; a=rsa-sha256; t=1519218716; cv=none;
+X-Google-Smtp-Source: AH8x2269RlYRMxq28UWyjwjoyVje72OkRkQ7LK+VH8vs6K+TkhhCZmzDdtKhQFr0+zanLaCzdiuw
+ARC-Seal: i=1; a=rsa-sha256; t=1519218713; cv=none;
         d=google.com; s=arc-20160816;
-        b=CSSUZLoSqn6NiNTmpUs2rMiMBT0Fz6Jl+oO0hCwXFlCa5Z5e0CTb86gfL6NwOq/QG9
-         0j920O3hst0ds5/k940iNbEdM5N/vdQB5puttFBF+5g+IhDYVH42awc19Xd4ebg72y2f
-         DmFrrsqwVS2OVmTIQOZqz6r96iSFVnfsCR5GkII9SHnBRgJGhJR4Df9xpoqxWuZ2qYlD
-         ZfDtlpwpdwl8FVgXeUmizfjYPjS9MGDq3/SlKPJenBkU0ILGBjFuR1Ol2LtLCtLezkRw
-         rRqIeXrxvAsKkqEcjn66w2NpqnBBFI6WrmixDrEDQp2/kiOGoEYTjOuutTQL8QmED8mA
-         509Q==
+        b=OJdptgl11ImXG4Ra1CksbdSZ3BC4onTtEtuTO1OzFfq+sTSf9x3kQ2vy+/l+Hln+xt
+         Sj67oSh1fdgqDXoh6uVhJa79aEzbE+bFw1U7J/mrRiYV8vPu+Bw4w8L5hK9LrsyKg9hq
+         EhCYdqSLdoC6TN9kqqcHWKK629t53nDKjzXCgiRWft7HRBX4izdajfZsTf2mS+f9Yw4y
+         KgJuoc/IVdRWiayHHt9JgAZB6IUYeDf6zifs/q/GKfh7IALQrC+1t1NqMyqqOHL+qpV4
+         CKMNBPd2EoaCVwC8hz81qDhQj7eGU+CgXa9gWc4ryp/9rrzN2/SPbBhkMBwjkcWIhHa9
+         PJxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4al5IxdK9izE6k5npkY4XN6QHP9zWm+1pT5fuZDh2wM=;
-        b=wrqXESQsYDdYf+ghYzLqHP2siqprC/m1zRLd7Pl0/fdkdT/jHEK9Q+1pQF89eZNsoz
-         EFG0GoLdRomm0OHAOB0gtPdvQHvc6i/ZC47rhTtCfUhdksSFE451BcAOeKDRE7gUCFb/
-         8ps5FiQoAfziO9IsuNdMo4Z5XZKpbREdOaDYeiS28AwlybXoPytR/D5i1+6n59mif2QR
-         ND606AfRCA13SytYaYiOQej3WVdbFG9cIkw6PVC+rxsAhB9TdiIhrop3miFJcRZmJm40
-         UV5fwaGsJ/dC5I7Nj3ubBlYmtuflGWHbII4TjKh78VyD3aDon8sgLgOYAc3yfYeHWk4W
-         tr8w==
+        bh=j+47s1km7n8F2boy2fe8THKWmKU2sFQkPQnDdX4tDug=;
+        b=qMKRq+uIoWw8GoQO+vEn62zW3wZ6iiLqLSTxfH4Qq35mNP/v3YtD9cBiYvA0EihqE6
+         ZG58WjvY0E4tVHerTl5IG66xqskHEY+ZxxDF8kr74IbmNPjtu11BiagasIzVREcnX64I
+         MvmMOwPtwTxK2Luw6KwVcLbxEid6PKor683CXt8Zo9m+/ARnHpLHINDLmBSSiTSZf7JV
+         7PO6eB8FGEtOwMP4QOAdvEzq5qs4f8VS1Q9onFmha5XOpcWkeG/I3GW4ttOvqm1S0V2Q
+         cQQbtSye1dhweHb2BWNC7s6xy+RMWi29e/2kOsAJ9sq7RrE9RXkLW34x4GEiXC829ktE
+         BCUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	Josef Bacik <jbacik@fb.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 139/163] Btrfs: fix use-after-free on root->orphan_block_rsv
-Date: Wed, 21 Feb 2018 13:49:28 +0100
-Message-Id: <20180221124537.837845430@linuxfoundation.org>
+	Michal Kalderon <Michal.Kalderon@cavium.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.15 130/163] xprtrdma: Fix BUG after a device removal
+Date: Wed, 21 Feb 2018 13:49:19 +0100
+Message-Id: <20180221124537.316025776@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015793947174912?=
-X-GMAIL-MSGID: =?utf-8?q?1593016285052551665?=
+X-GMAIL-THRID: =?utf-8?q?1593015764650252725?=
+X-GMAIL-MSGID: =?utf-8?q?1593016281988026455?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,119 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit 1a932ef4e47984dee227834667b5ff5a334e4805 upstream.
+commit e89e8d8fcdc6751e86ccad794b052fe67e6ad619 upstream.
 
-I got these from running generic/475,
+Michal Kalderon reports a BUG that occurs just after device removal:
 
-WARNING: CPU: 0 PID: 26384 at fs/btrfs/inode.c:3326 btrfs_orphan_commit_root+0x1ac/0x2b0 [btrfs]
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-IP: btrfs_block_rsv_release+0x1c/0x70 [btrfs]
-Call Trace:
-  btrfs_orphan_release_metadata+0x9f/0x200 [btrfs]
-  btrfs_orphan_del+0x10d/0x170 [btrfs]
-  btrfs_setattr+0x500/0x640 [btrfs]
-  notify_change+0x7ae/0x870
-  do_truncate+0xca/0x130
-  vfs_truncate+0x2ee/0x3d0
-  do_sys_truncate+0xaf/0xf0
-  SyS_truncate+0xe/0x10
-  entry_SYSCALL_64_fastpath+0x1f/0x96
+[  169.112490] rpcrdma: removing device qedr0 for 192.168.110.146:20049
+[  169.143909] BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
+[  169.181837] IP: rpcrdma_dma_unmap_regbuf+0xa/0x60 [rpcrdma]
 
-The race is between btrfs_orphan_commit_root and btrfs_orphan_del,
-        t1                                        t2
-btrfs_orphan_commit_root                     btrfs_orphan_del
-   spin_lock
-   check (&root->orphan_inodes)
-   root->orphan_block_rsv = NULL;
-   spin_unlock
-                                             atomic_dec(&root->orphan_inodes);
-                                             access root->orphan_block_rsv
+The RPC/RDMA client transport attempts to allocate some resources
+on demand. Registered buffers are one such resource. These are
+allocated (or re-allocated) by xprt_rdma_allocate to hold RPC Call
+and Reply messages. A hardware resource is associated with each of
+these buffers, as they can be used for a Send or Receive Work
+Request.
 
-Accessing root->orphan_block_rsv must be done before decreasing
-root->orphan_inodes.
+If a device is removed from under an NFS/RDMA mount, the transport
+layer is responsible for releasing all hardware resources before
+the device can be finally unplugged. A BUG results when the NFS
+mount hasn't yet seen much activity: the transport tries to release
+resources that haven't yet been allocated.
 
-cc: <stable@vger.kernel.org> v3.12+
-Fixes: 703c88e03524 ("Btrfs: fix tracking of orphan inode count")
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+rpcrdma_free_regbuf() already checks for this case, so just move
+that check to cover the DEVICE_REMOVAL case as well.
+
+Reported-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Fixes: bebd031866ca ("xprtrdma: Support unplugging an HCA ...")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ net/sunrpc/xprtrdma/verbs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3369,6 +3369,11 @@ int btrfs_orphan_add(struct btrfs_trans_
- 		ret = btrfs_orphan_reserve_metadata(trans, inode);
- 		ASSERT(!ret);
- 		if (ret) {
-+			/*
-+			 * dec doesn't need spin_lock as ->orphan_block_rsv
-+			 * would be released only if ->orphan_inodes is
-+			 * zero.
-+			 */
- 			atomic_dec(&root->orphan_inodes);
- 			clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 				  &inode->runtime_flags);
-@@ -3383,12 +3388,17 @@ int btrfs_orphan_add(struct btrfs_trans_
- 	if (insert >= 1) {
- 		ret = btrfs_insert_orphan_item(trans, root, btrfs_ino(inode));
- 		if (ret) {
--			atomic_dec(&root->orphan_inodes);
- 			if (reserve) {
- 				clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 					  &inode->runtime_flags);
- 				btrfs_orphan_release_metadata(inode);
- 			}
-+			/*
-+			 * btrfs_orphan_commit_root may race with us and set
-+			 * ->orphan_block_rsv to zero, in order to avoid that,
-+			 * decrease ->orphan_inodes after everything is done.
-+			 */
-+			atomic_dec(&root->orphan_inodes);
- 			if (ret != -EEXIST) {
- 				clear_bit(BTRFS_INODE_HAS_ORPHAN_ITEM,
- 					  &inode->runtime_flags);
-@@ -3420,28 +3430,26 @@ static int btrfs_orphan_del(struct btrfs
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -1476,6 +1476,9 @@ __rpcrdma_dma_map_regbuf(struct rpcrdma_
+ static void
+ rpcrdma_dma_unmap_regbuf(struct rpcrdma_regbuf *rb)
  {
- 	struct btrfs_root *root = inode->root;
- 	int delete_item = 0;
--	int release_rsv = 0;
- 	int ret = 0;
- 
--	spin_lock(&root->orphan_lock);
- 	if (test_and_clear_bit(BTRFS_INODE_HAS_ORPHAN_ITEM,
- 			       &inode->runtime_flags))
- 		delete_item = 1;
- 
-+	if (delete_item && trans)
-+		ret = btrfs_del_orphan_item(trans, root, btrfs_ino(inode));
++	if (!rb)
++		return;
 +
- 	if (test_and_clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 			       &inode->runtime_flags))
--		release_rsv = 1;
--	spin_unlock(&root->orphan_lock);
-+		btrfs_orphan_release_metadata(inode);
+ 	if (!rpcrdma_regbuf_is_mapped(rb))
+ 		return;
  
--	if (delete_item) {
-+	/*
-+	 * btrfs_orphan_commit_root may race with us and set ->orphan_block_rsv
-+	 * to zero, in order to avoid that, decrease ->orphan_inodes after
-+	 * everything is done.
-+	 */
-+	if (delete_item)
- 		atomic_dec(&root->orphan_inodes);
--		if (trans)
--			ret = btrfs_del_orphan_item(trans, root,
--						    btrfs_ino(inode));
--	}
+@@ -1491,9 +1494,6 @@ rpcrdma_dma_unmap_regbuf(struct rpcrdma_
+ void
+ rpcrdma_free_regbuf(struct rpcrdma_regbuf *rb)
+ {
+-	if (!rb)
+-		return;
 -
--	if (release_rsv)
--		btrfs_orphan_release_metadata(inode);
- 
- 	return ret;
+ 	rpcrdma_dma_unmap_regbuf(rb);
+ 	kfree(rb);
  }
