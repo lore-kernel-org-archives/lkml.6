@@ -1,95 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753761AbeBUK5m (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:57:42 -0500
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:35785 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752185AbeBUK5k (ORCPT
+        id S1753789AbeBULBj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 06:01:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38531 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeBULBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:57:40 -0500
-X-Google-Smtp-Source: AH8x2264RDr9tVn4dFT/nMqj23TDguaQ4c/9fZLEjkSKnyV+8Xi+vIQWUGygENrMLdpswQqLFbhczg==
-Date: Wed, 21 Feb 2018 11:57:35 +0100
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        linux-input <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
-Message-ID: <20180221105735.GA15792@casa>
-References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
- <CAM4jgCqPwHiqi9ecehE6wXi1fevSbqUSB3ABVNHXD1NCstGVZw@mail.gmail.com>
+        Wed, 21 Feb 2018 06:01:37 -0500
+Date: Wed, 21 Feb 2018 02:50:54 -0800
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-b9952ec78778aa7ae5b8df672668aece6fc93d2a@git.kernel.org>
+Cc: arjan@linux.intel.com, linux-kernel@vger.kernel.org, luto@kernel.org,
+        tglx@linutronix.de, bp@suse.de, jpoimboe@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, peterz@infradead.org, bp@alien8.de,
+        kirill.shutemov@linux.intel.com, dave.hansen@linux.intel.com,
+        dan.j.williams@intel.com, dwmw2@infradead.org, luto@amacapital.net,
+        jgross@suse.com, torvalds@linux-foundation.org
+Reply-To: luto@amacapital.net, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, jgross@suse.com,
+        dave.hansen@linux.intel.com, dan.j.williams@intel.com,
+        jpoimboe@redhat.com, bp@suse.de, hpa@zytor.com, bp@alien8.de,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org,
+        peterz@infradead.org, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de
+In-Reply-To: <20180216114948.68868-2-kirill.shutemov@linux.intel.com>
+References: <20180216114948.68868-2-kirill.shutemov@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/xen: Allow XEN_PV and XEN_PVH to be enabled with
+ X86_5LEVEL
+Git-Commit-ID: b9952ec78778aa7ae5b8df672668aece6fc93d2a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM4jgCqPwHiqi9ecehE6wXi1fevSbqUSB3ABVNHXD1NCstGVZw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 11:39:49AM +0100, Clément VUCHENER wrote:
-> Hi Rodrigo,
+Commit-ID:  b9952ec78778aa7ae5b8df672668aece6fc93d2a
+Gitweb:     https://git.kernel.org/tip/b9952ec78778aa7ae5b8df672668aece6fc93d2a
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Fri, 16 Feb 2018 14:49:46 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 10:19:18 +0100
 
-Hello, Clément!
+x86/xen: Allow XEN_PV and XEN_PVH to be enabled with X86_5LEVEL
 
-> I have written a kernel driver [1], some time ago. I did not submit it
-> for merging in the main-line because I thought that would mess with
-> user-space drivers. If your driver create an input device, a
-> user-space driver will have to disable it before creating its own. I
-> guess libusb based drivers will detach the kernel driver and will be
-> fine. But it is not as simple if you use hidraw. And there may be some
-> state problem as Pierre-Loup already said.
+With boot-time switching between paging modes, XEN_PV and XEN_PVH can be
+boot into 4-level paging mode.
 
+Tested-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180216114948.68868-2-kirill.shutemov@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/head_64.S | 12 ++++++------
+ arch/x86/xen/Kconfig      |  5 -----
+ arch/x86/xen/mmu_pv.c     | 21 +++++++++++++++++++++
+ 3 files changed, 27 insertions(+), 11 deletions(-)
 
-I not think that is a real problem. You can run this driver and a
-user-space driver and the Steam Client all at the same time. You will
-have several input devices that represet the same physical device. But
-as long as the user client (game) uses only one of them, all will be
-fine. That is, as long as the different drivers do not send any stateful
-commands, of course.
-
-> A few more tips about your discussion with Pierre-Loup (sorry I am not
-> replying to the answers directly, it's hard to insert myself in this
-> long discussion):
-> 
-> Beside Ynsta's driver, you may have a look at my own user-space driver
-> [2] or Dennis Hamester's library scraw [3].
-> 
-> You can enable and disable the accel and gyro when the separate input
-> device is opened or closed to save battery. My kernel driver does it,
-> IIRC I have taken the idea from the wiimote driver.
-
-Yeah, my future accel/gyro patch does exactly that. I copied the wii
-too.
-
-Also, my intention is to add a module variable so that the separate
-input device is disabled by default and Steam Client will work properly.
-
-> Note that there is
-> an issue with joydev using the accel/gyro input device. hid-sony
-> solved it by adding an exception in joydev driver (joydev_blacklist in
-> drivers/input/joydev.c).
-
-I don't know about that, I will look into it, thanks.
-
-> In my driver, I split the left pad and left stick events by looking at
-> the left pad touch bit. It works well as long as they are not used at
-> the same time. When they both being used the data alternate between
-> left pad and left stick data, the touch bit is set accordingly so axis
-> data is easy to use, but it looks like the left touch pad is being
-> tapped very fast.
-
-Actually, there is a proper way to do that, that involves using the
-lpad_touch and the lpand_and_joy bits at the same time. I think that I
-will split the joystick and left-pad axes definitely. Few problems that
-way. Maybe I'll map the left-pad to ABS_HAT1{X,Y}, that will play nicely
-with the dpad being ABS_HAT0{X,Y].
-
-Regards.
-Rodrigo
-
-> [1]: https://github.com/cvuchener/steamcontroller-linux-kernel
-> [2]: https://github.com/cvuchener/input-scripts/tree/master/src/daemon/steamcontroller
-> [3]: https://gitlab.com/dennis-hamester/scraw)
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 145d7b9..3e9de0f 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -38,12 +38,12 @@
+  *
+  */
+ 
++#define l4_index(x)	(((x) >> 39) & 511)
+ #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
+ 
+-#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
+-PGD_PAGE_OFFSET = pgd_index(__PAGE_OFFSET_BASE_L4)
+-PGD_START_KERNEL = pgd_index(__START_KERNEL_map)
+-#endif
++L4_PAGE_OFFSET = l4_index(__PAGE_OFFSET_BASE_L4)
++L4_START_KERNEL = l4_index(__START_KERNEL_map)
++
+ L3_START_KERNEL = pud_index(__START_KERNEL_map)
+ 
+ 	.text
+@@ -386,9 +386,9 @@ NEXT_PAGE(early_dynamic_pgts)
+ #if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
+ NEXT_PGD_PAGE(init_top_pgt)
+ 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+-	.org    init_top_pgt + PGD_PAGE_OFFSET*8, 0
++	.org    init_top_pgt + L4_PAGE_OFFSET*8, 0
+ 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+-	.org    init_top_pgt + PGD_START_KERNEL*8, 0
++	.org    init_top_pgt + L4_START_KERNEL*8, 0
+ 	/* (2^48-(2*1024*1024*1024))/(2^39) = 511 */
+ 	.quad   level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+ 	.fill	PTI_USER_PGD_FILL,8,0
+diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+index f605825..c1f98f3 100644
+--- a/arch/x86/xen/Kconfig
++++ b/arch/x86/xen/Kconfig
+@@ -18,9 +18,6 @@ config XEN_PV
+ 	bool "Xen PV guest support"
+ 	default y
+ 	depends on XEN
+-	# XEN_PV is not ready to work with 5-level paging.
+-	# Changes to hypervisor are also required.
+-	depends on !X86_5LEVEL
+ 	select XEN_HAVE_PVMMU
+ 	select XEN_HAVE_VPMU
+ 	help
+@@ -79,6 +76,4 @@ config XEN_DEBUG_FS
+ config XEN_PVH
+ 	bool "Support for running as a PVH guest"
+ 	depends on XEN && XEN_PVHVM && ACPI
+-	# Pre-built page tables are not ready to handle 5-level paging.
+-	depends on !X86_5LEVEL
+ 	def_bool n
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index d850762..3f4fec5 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -538,6 +538,22 @@ static void xen_set_p4d(p4d_t *ptr, p4d_t val)
+ 
+ 	xen_mc_issue(PARAVIRT_LAZY_MMU);
+ }
++
++#if CONFIG_PGTABLE_LEVELS >= 5
++__visible p4dval_t xen_p4d_val(p4d_t p4d)
++{
++	return pte_mfn_to_pfn(p4d.p4d);
++}
++PV_CALLEE_SAVE_REGS_THUNK(xen_p4d_val);
++
++__visible p4d_t xen_make_p4d(p4dval_t p4d)
++{
++	p4d = pte_pfn_to_mfn(p4d);
++
++	return native_make_p4d(p4d);
++}
++PV_CALLEE_SAVE_REGS_THUNK(xen_make_p4d);
++#endif  /* CONFIG_PGTABLE_LEVELS >= 5 */
+ #endif	/* CONFIG_X86_64 */
+ 
+ static int xen_pmd_walk(struct mm_struct *mm, pmd_t *pmd,
+@@ -2411,6 +2427,11 @@ static const struct pv_mmu_ops xen_mmu_ops __initconst = {
+ 
+ 	.alloc_pud = xen_alloc_pmd_init,
+ 	.release_pud = xen_release_pmd_init,
++
++#if CONFIG_PGTABLE_LEVELS >= 5
++	.p4d_val = PV_CALLEE_SAVE(xen_p4d_val),
++	.make_p4d = PV_CALLEE_SAVE(xen_make_p4d),
++#endif
+ #endif	/* CONFIG_X86_64 */
+ 
+ 	.activate_mm = xen_activate_mm,
