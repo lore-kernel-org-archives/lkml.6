@@ -1,69 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeBUXES (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:04:18 -0500
-Received: from ozlabs.org ([103.22.144.67]:38855 "EHLO ozlabs.org"
+        id S1751327AbeBUXKt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:10:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbeBUXEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:04:16 -0500
-Date: Thu, 22 Feb 2018 10:04:13 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: address change for the contact of the rtc tree
-Message-ID: <20180222100413.76238134@canb.auug.org.au>
-In-Reply-To: <20180221222924.GC31244@piout.net>
-References: <20180222091531.6bcb1503@canb.auug.org.au>
-        <20180221222924.GC31244@piout.net>
+        id S1750741AbeBUXKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:10:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2233820C0F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x2274dAOpifgIZznOBSI5JScGPrncBMP1AN9RcHAOmmu4+5qh/1aUyUpZns+YH16eZEgW8yXTAZ1YfaZ8RlZ8t/0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Erqgm4ZHguJOK9FxnNIDoHb"; protocol="application/pgp-signature"
+In-Reply-To: <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 17:10:25 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com>
+Message-ID: <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com>
+Subject: Re: [PATCH v4 06/16] of: unittest: changeset helpers
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Erqgm4ZHguJOK9FxnNIDoHb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Alexandre,
-
-On Wed, 21 Feb 2018 23:29:24 +0100 Alexandre Belloni <alexandre.belloni@fre=
-e-electrons.com> wrote:
+On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 >
-> On 22/02/2018 at 09:15:31 +1100, Stephen Rothwell wrote:
-> >=20
-> > I notcied this commit
-> >=20
-> >   f6dbaad611f9 ("MAINTAINERS: rtc: update my email address")
-> >=20
-> > in the rtc tree today.  Should I update the email address I use for the
-> > rtc tree contact?
-> >  =20
->=20
-> Yes, please do.
+> Add a unitest specific for the new changeset helpers.
+>
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/of/unittest.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index 7a9abaae874d..1b21d2c549a8 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
+>  #endif
+>  }
+>
+> +static void __init of_unittest_changeset_helper(void)
+> +{
+> +#ifdef CONFIG_OF_DYNAMIC
 
-Done.
+I think this can be:
 
---=20
-Cheers,
-Stephen Rothwell
+if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
+  return;
 
---Sig_/Erqgm4ZHguJOK9FxnNIDoHb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Otherwise,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqN+u0ACgkQAVBC80lX
-0GzzzAf8CbsObJc2r4JQK2T9Qqo8rxTYgqEIV0ZyCmccBDGd5opfkoP9PZTfrCEQ
-VEPRnGg+TuqkroCvG/PBGX2b+UQNZ1RLatgsqRAorcMuQmEK3l1uTcnD5P2iT6dW
-y6vMB3dxk8LQpDhg8PHPja/QKlsAglOnVx4HRTLPISHDEdVMEDZxLLd0RQxHc1jO
-eek96xHYLRpj8NyNX+ZqGLTQNP+DcQaovP4x41ncYtyQU40YTDESdNUqxFiw1z2O
-QAesDbCEKsRH2zEM4cRQyXtre/XcNT2u+8k6Qq72/64Z96xT3LWDpxShYUfcvYN1
-tpqEI2O/JXw74EEG4VYzGYSAX2SKCA==
-=hOY5
------END PGP SIGNATURE-----
-
---Sig_/Erqgm4ZHguJOK9FxnNIDoHb--
+Reviewed-by: Rob Herring <robh@kernel.org>
