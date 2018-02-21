@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226a+R1lPZgtvlQxRpLLtc/dhvrv005J4utBKYzOGUhYyYCzvLN+ofnVlWkaxcIXBVzIwY7B
+X-Google-Smtp-Source: AH8x225m4vhu3NpyoQW2x99ydZ93feSEHqx/SJUlIk+LfGdHNbJkmPAjT4RnF2ulpFNwp7fgIgSo
 ARC-Seal: i=1; a=rsa-sha256; t=1519218671; cv=none;
         d=google.com; s=arc-20160816;
-        b=DDAExBRKzMGJ8kaaRqo/mpCd9jQw1Mgjvs9NoDCJsLxpgplmlUorzno2K+ibNBnozW
-         46zdbF45KsiF6ZqYfi0ckIdi+5Vbsy5fU5d0/jq3Lpvd0Bj6sLiAwr9udXysyeJobQ8K
-         K5x4jSiR2pVBcm+d4l9nsy0QB9qNxlbU1x4vWZtpjfpMOBHrEzjP2VBqNszZlyC3ujJ1
-         LWBS12jimyfwQymbDh3fcF+Grc9iFnP+m0WmaEVNPblg6R8nryFaj7ANdETwdch95mry
-         sdR6FjyVO59S+pBrrp4fDa27udbyjpDIuOHpyn4TjBvLvo8x/qistTtEriQs2d1iHjm8
-         hnjQ==
+        b=jS9ROk1TFpjvJtFNdoSGNjBeGOgzhgD/VKJrDNJF207ffxwziE7TB/LxI8fxqxQPzk
+         Or+oVq+7uUFBRs0yFAIUKtWiuek07+1p/fM6mrYwCXjbl7Ofl+KFm8Xn8f5u274HKDQX
+         9AyVsycbb6j6P60Tyy7ISHT2hVm8hbVIDrQ4P5NBPXTHb1G76Kd3Hda6OI9/bu6VhjJn
+         MjuMYhNz+pHvpm6lWaszH0nByYd5bHsoyVdoyuduqZCYHZFfCVdYWCQEQcywN6AbDpKL
+         3TWLhFQPIXtooHaFrutGM68Z5k+eLDB1GWBmwdrC4LLkPvpUEaptjdbKc4FAZ1kuol0b
+         Mhvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cBPOvVLXVweDnDlCpZO4FAXHEzWOrc9WuYLjXZW2Yrs=;
-        b=myxwLQ5y+AVMitGST7wa+xDFr2CV7tke/EfwRGqOatR/BzXjwvnc1v2gpeSnCUz8GE
-         kTGz/UfWy4UUAJPFYNMbgcRlNdkwwNvBIAoXlY89FLTE6CGp07GgyEQr7SMAsLWmAR2X
-         uszLmERtGYiPtf4IMoqp8aBWbBgz2CoZM+Zz2O8I4UeFDPyhjjdQjvNpu3Wya7ia1510
-         DTqk107k6WNB9vcRdxa6SlQRLH+LU+hRSAtZgpKDNsiuhWNBppAO6uovgdMQDVZu2ntI
-         wdPeKab+94nB0E/1z6vu+0qenov3szgIs5tTtf/WH1Q6pVFCYAvw5CrQqEbSdyrUyvjg
-         nNsw==
+        bh=ZoKpDkj7ggsrolOIKx9hKHEKjecpedhXlg0DNcvelwQ=;
+        b=cuWXjVYzfPuJ6063z0UYcNB01bsjJkXOnPwmEswczK4bizRHokRdpi6BOJW6mX34NT
+         e9U99b++pzI+KvqWPw/nKMUYu15HlJ0709dypjK31ULJiXkkpdEMdzCRoTw5Rkeh7VES
+         PP5edhzVK/pp3yAEdt2QjTgy60XQCY233B29jD+TZCyKGxYQ0yKTpcxkqLZhWgQF+Sm5
+         4gho5+dC4dY7XeAIW6vCUUaumoaRNEyolnf6azFTVuRngSzymGii1RIO9z8YEyaxMCO2
+         bWBPVTgxHSAlPOBttTpmN4R9K1QPLph+m1UIYzMtWqPzBN17gxHoQOSuPqbV4/SYg0rF
+         HtvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Greg Ungerer <gerg@linux-m68k.org>,
 	James Hogan <jhogan@kernel.org>,
 	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
 	linux-mips@linux-mips.org
-Subject: [PATCH 4.15 112/163] MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN
-Date: Wed, 21 Feb 2018 13:49:01 +0100
-Message-Id: <20180221124536.358919398@linuxfoundation.org>
+Subject: [PATCH 4.15 113/163] MIPS: CPS: Fix MIPS_ISA_LEVEL_RAW fallout
+Date: Wed, 21 Feb 2018 13:49:02 +0100
+Message-Id: <20180221124536.407722932@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015291930892901?=
-X-GMAIL-MSGID: =?utf-8?q?1593016237550883653?=
+X-GMAIL-THRID: =?utf-8?q?1593016238261572063?=
+X-GMAIL-MSGID: =?utf-8?q?1593016238261572063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +52,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
+From: James Hogan <jhogan@kernel.org>
 
-commit 2e6522c565522a2e18409c315c49d78c8b74807b upstream.
+commit 8dbc1864b74f5dea5a3f7c30ca8fd358a675132f upstream.
 
-MIPS_GENERIC selects some options conditional on BIG_ENDIAN which does
-not exist.
+Commit 17278a91e04f ("MIPS: CPS: Fix r1 .set mt assembler warning")
+added .set MIPS_ISA_LEVEL_RAW to silence warnings about .set mt on r1,
+however this can result in a MOVE being encoded as a 64-bit DADDU
+instruction on certain version of binutils (e.g. 2.22), and reserved
+instruction exceptions at runtime on 32-bit hardware.
 
-Replace BIG_ENDIAN with CPU_BIG_ENDIAN which is the correct kconfig
-name. Note that BMIPS_GENERIC does the same which confirms that this
-patch is needed.
+Reduce the sizes of the push/pop sections to include only instructions
+that are part of the MT ASE or which won't convert to 64-bit
+instructions after .set mips64r2/mips64r6.
 
-Fixes: eed0eabd12ef0 ("MIPS: generic: Introduce generic DT-based board support")
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Reviewed-by: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.9+
-Patchwork: https://patchwork.linux-mips.org/patch/18495/
-[jhogan@kernel.org: Clean up commit message]
+Reported-by: Greg Ungerer <gerg@linux-m68k.org>
+Fixes: 17278a91e04f ("MIPS: CPS: Fix r1 .set mt assembler warning")
 Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.15
+Tested-by: Greg Ungerer <gerg@linux-m68k.org>
+Patchwork: https://patchwork.linux-mips.org/patch/18578/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/Kconfig |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/mips/kernel/cps-vec.S |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -119,12 +119,12 @@ config MIPS_GENERIC
- 	select SYS_SUPPORTS_MULTITHREADING
- 	select SYS_SUPPORTS_RELOCATABLE
- 	select SYS_SUPPORTS_SMARTMIPS
--	select USB_EHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_EHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
--	select USB_OHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_OHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
--	select USB_UHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_UHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
-+	select USB_EHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_EHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
-+	select USB_OHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_OHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
-+	select USB_UHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_UHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
- 	select USE_OF
- 	help
- 	  Select this to build a kernel which aims to support multiple boards,
+--- a/arch/mips/kernel/cps-vec.S
++++ b/arch/mips/kernel/cps-vec.S
+@@ -388,15 +388,16 @@ LEAF(mips_cps_boot_vpes)
+ 
+ #elif defined(CONFIG_MIPS_MT)
+ 
+-	.set	push
+-	.set	MIPS_ISA_LEVEL_RAW
+-	.set	mt
+-
+ 	/* If the core doesn't support MT then return */
+ 	has_mt	t0, 5f
+ 
+ 	/* Enter VPE configuration state */
++	.set	push
++	.set	MIPS_ISA_LEVEL_RAW
++	.set	mt
+ 	dvpe
++	.set	pop
++
+ 	PTR_LA	t1, 1f
+ 	jr.hb	t1
+ 	 nop
+@@ -422,6 +423,10 @@ LEAF(mips_cps_boot_vpes)
+ 	mtc0	t0, CP0_VPECONTROL
+ 	ehb
+ 
++	.set	push
++	.set	MIPS_ISA_LEVEL_RAW
++	.set	mt
++
+ 	/* Skip the VPE if its TC is not halted */
+ 	mftc0	t0, CP0_TCHALT
+ 	beqz	t0, 2f
+@@ -495,6 +500,8 @@ LEAF(mips_cps_boot_vpes)
+ 	ehb
+ 	evpe
+ 
++	.set	pop
++
+ 	/* Check whether this VPE is meant to be running */
+ 	li	t0, 1
+ 	sll	t0, t0, a1
+@@ -509,7 +516,7 @@ LEAF(mips_cps_boot_vpes)
+ 1:	jr.hb	t0
+ 	 nop
+ 
+-2:	.set	pop
++2:
+ 
+ #endif /* CONFIG_MIPS_MT_SMP */
+ 
