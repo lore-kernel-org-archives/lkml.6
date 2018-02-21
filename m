@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeBUJAe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:00:34 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:43249 "EHLO
+        id S1752857AbeBUJAw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:00:52 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:43322 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752488AbeBUJAb (ORCPT
+        with ESMTP id S1752559AbeBUJAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:00:31 -0500
+        Wed, 21 Feb 2018 04:00:49 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
         Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>,
@@ -14,9 +14,9 @@ To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
         Russell King <linux@armlinux.org.uk>
 Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/8] ARM: dts: artpec: remove 0x prefix from clkctrl unit address
-Date: Wed, 21 Feb 2018 09:59:55 +0100
-Message-Id: <20180221090000.18091-4-niklas.cassel@axis.com>
+Subject: [PATCH v2 7/8] ARM: dts: artpec: add disabled node for PCIe endpoint mode
+Date: Wed, 21 Feb 2018 09:59:59 +0100
+Message-Id: <20180221090000.18091-8-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180221090000.18091-1-niklas.cassel@axis.com>
 References: <20180221090000.18091-1-niklas.cassel@axis.com>
@@ -25,29 +25,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove 0x prefix from clkctrl unit address.
+The PCIe controller in the artpec6 SoC supports both root complex and
+endpoint mode, however, the controller can only be used in one of the
+modes.
 
-This silences the following dtc warning:
-Warning (unit_address_format):
- Node /clkctrl@0xf8000000 unit name should not have leading "0x"
+Both pci nodes are disabled by default. A DTS file can enable one of
+them, depending on what mode it wants to run.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- arch/arm/boot/dts/artpec6.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since V1:
+removed unused properties "interrupts" and "interrupt-names"
+
+ arch/arm/boot/dts/artpec6.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
-index d9776a97d8ff..f4b39738f1ac 100644
+index 1c46df0c03ce..b7720be8afb1 100644
 --- a/arch/arm/boot/dts/artpec6.dtsi
 +++ b/arch/arm/boot/dts/artpec6.dtsi
-@@ -98,7 +98,7 @@
- 		clock-frequency = <125000000>;
+@@ -154,6 +154,10 @@
+ 		interrupt-affinity = <&cpu0>, <&cpu1>;
  	};
  
--	clkctrl: clkctrl@0xf8000000 {
-+	clkctrl: clkctrl@f8000000 {
- 		#clock-cells = <1>;
- 		compatible = "axis,artpec6-clkctrl";
- 		reg = <0xf8000000 0x48>;
++	/*
++	 * Both pci nodes cannot be enabled at the same time,
++	 * leave the unwanted node as disabled.
++	 */
+ 	pcie: pcie@f8050000 {
+ 		compatible = "axis,artpec6-pcie", "snps,dw-pcie";
+ 		reg = <0xf8050000 0x2000
+@@ -181,6 +185,20 @@
+ 		status = "disabled";
+ 	};
+ 
++	pcie_ep: pcie_ep@f8050000 {
++		compatible = "axis,artpec6-pcie-ep", "snps,dw-pcie";
++		reg = <0xf8050000 0x2000
++		       0xf8051000 0x2000
++		       0xf8040000 0x1000
++		       0xc0000000 0x20000000>;
++		reg-names = "dbi", "dbi2", "phy", "addr_space";
++		num-ib-windows = <6>;
++		num-ob-windows = <2>;
++		num-lanes = <2>;
++		axis,syscon-pcie = <&syscon>;
++		status = "disabled";
++	};
++
+ 	pinctrl: pinctrl@f801d000 {
+ 		compatible = "axis,artpec6-pinctrl";
+ 		reg = <0xf801d000 0x400>;
 -- 
 2.14.2
