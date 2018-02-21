@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227HTAeChH+rUG+oaxVbEf+ESBxG0JHT3jlxOH+8XvQTNt75WxSuX3C3mg5mP7xPxl6OwloI
-ARC-Seal: i=1; a=rsa-sha256; t=1519218659; cv=none;
+X-Google-Smtp-Source: AH8x2255PNiVwIZRQFapTh7F/OOKajqexh3mxKffSfLzGXV2tFw2uV+wkNIKSR/LMkZiZUBHDWXP
+ARC-Seal: i=1; a=rsa-sha256; t=1519218656; cv=none;
         d=google.com; s=arc-20160816;
-        b=mjih5ciuOghxzB4JgL3asFDTgMheIAIJwuweQXv3BjOWvQw/QdWDisqB2qlJdq/yd/
-         48hwMaRvfsVZE8xdgnB+nqPT0O9NRDriu4BX4mGi5bafRUBdyDxzIxsQhIkYPGGhoIj/
-         0MZHS61xdmnBNRYCiOzra+RArcPBmSkX9ab/iWGeZfLcwABvUilBYqn56w0Ern+FSw2o
-         DcB6ZjcO7w8Dpm8UwuepeWQ69YFwEDgE/LVGNuyKgmteDFmntwedTRGoQ1XqSsrUFrrF
-         m9Xozmi2ruYmlJkI1LTZF4PRFpqEC7B7a9t0QXEkif/lMBhdKPTmV5BMZiEodbw8fq1f
-         LUWg==
+        b=gt1p1+CcKfeeNpwAyBJmOD17vaDVJOOljsSSbKGuNIkiOatETbVQUgnhSfFFj0cgiZ
+         4e2LuHseeUc8fGZAgFILM3i7yxdISCiOGqp80cm0toAKG/9Yq9aiRq7XUX+pN2u4r3tm
+         /C9a/PlgCTgdoswvbvtQAhyyiHG6fIaMVX0o7y6KcyZKrDSXCXBDfSfELUEkZwmSiSKw
+         IvuReB7N9NsTfBJ46SLD0O23OxmmvUKPR8CkDtqPDVezX8JdHbYV6+PJrbSFoLHPVBOH
+         RP2OTrkRgJlsaz1s7/e+U5YR65y4a+SBiJyHqZg3aVVsMMEe9wnikg/CPz+wCy2b7qmZ
+         dakQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6b1yBe1TzyaBojziohlHxfHf4w6L1r9JX3Dpdpa3jrA=;
-        b=CLRghkMcVjVruvBisiTEgTTI53H4hX7HaSqJWOH5dzkPGQ2RNUlgcMuYi5/insEUGO
-         TY1TS6Db7O+d6U4kdD7tcB0ukS195hTfU2Yox2rAlyGdxhoN69/RoxeolYlME5cDUkBe
-         zdTdL3IWmp/0yla7TFL1oQRPepfD5Ooco1tw3/uyNR7+Dqt3nCpEG6rlfBv/Vx2C6oF0
-         V71UuBG0XBrxHLVL4mkONoTkZSGz7N3heROP3Aecziou3anuwUzL3KiExAoCK1uG/scc
-         x+mSmqLlqiYek7EPMk4pPZYAmWhtWpOCZB5MXsNvZiVx4PuqfNZ3jgJakNrhJNu0b3uZ
-         3WsA==
+        bh=P+7Xs2ChQ7oHVpCqhnQcAEq9nouksJ/0W2l1ck2Gbos=;
+        b=Dbsx2a/WsF6Sm0NwdJiBIOtr3thQWZRgBHbxvCmB/tbx6bsv/uFwhlvqm5H/4EcIGr
+         wNqD4Qpl9BSpWEz1tsRiRXSKTHOtAA01R8YLhJxzs2PoadLPoNuEW4vM1Sa++b1tM9GR
+         RDpQLcnAisJtru5yopixQ4o8W0b9qnaai36g7pA6j14gjytqNNUsACwRkgUBPp9AnXKo
+         cjlBWmSxUEdRZy4lWB4/zYHBEgT4oZ9hpk5gtR/+2Y2W/wkokfoEkg9ToMunWpjmlAHX
+         4PJ3h70853cwp1Opvu+ixa3JUreR8pT6h95LZOSw5tNjmfRGwfGOZqNpudpvHN3vmor9
+         oxXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.15 104/163] mlx5: fix mlx5_get_vector_affinity to start from completion vector 0
-Date: Wed, 21 Feb 2018 13:48:53 +0100
-Message-Id: <20180221124536.020253137@linuxfoundation.org>
+	Zhouyi Zhou <zhouzhouyi@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.15 108/163] ext4: save error to disk in __ext4_grp_locked_error()
+Date: Wed, 21 Feb 2018 13:48:57 +0100
+Message-Id: <20180221124536.197167973@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015689231116812?=
-X-GMAIL-MSGID: =?utf-8?q?1593016225175166369?=
+X-GMAIL-THRID: =?utf-8?q?1593014620343797175?=
+X-GMAIL-MSGID: =?utf-8?q?1593016222214138333?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-commit 2572cf57d75a7f91835d9a38771e9e76d575d122 upstream.
+commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
 
-The consumers of this routine expects the affinity map of of vector
-index relative to the first completion vector. The upper layers are
-not aware of internal/private completion vectors that mlx5 allocates
-for its own usage.
+In the function __ext4_grp_locked_error(), __save_error_info()
+is called to save error info in super block block, but does not sync
+that information to disk to info the subsequence fsck after reboot.
 
-Hence, return the affinity map of vector index relative to the first
-completion vector.
+This patch writes the error information to disk.  After this patch,
+I think there is no obvious EXT4 error handle branches which leads to
+"Remounting filesystem read-only" will leave the disk partition miss
+the subsequence fsck.
 
-Fixes: 05e0cc84e00c ("net/mlx5: Fix get vector affinity helper function")
-Reported-by: Logan Gunthorpe <logang@deltatee.com>
-Tested-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Cc: <stable@vger.kernel.org> # v4.15
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/mlx5/driver.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1238,7 +1238,7 @@ mlx5_get_vector_affinity(struct mlx5_cor
- 	int eqn;
- 	int err;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -742,6 +742,7 @@ __acquires(bitlock)
+ 	}
  
--	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
-+	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
- 	if (err)
- 		return NULL;
- 
+ 	ext4_unlock_group(sb, grp);
++	ext4_commit_super(sb, 1);
+ 	ext4_handle_error(sb);
+ 	/*
+ 	 * We only get here in the ERRORS_RO case; relocking the group
