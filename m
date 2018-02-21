@@ -1,66 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751364AbeBUXw4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:52:56 -0500
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:37393 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeBUXwx (ORCPT
+        id S1751407AbeBUXxG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:53:06 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37970 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeBUXxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:52:53 -0500
-X-Google-Smtp-Source: AH8x225hnuERD7nZEG8PoHjTM1ojmb+jVy1Eb861kxW9F+JzKNGWSYYV+W4vtpmwd5TxItSdw673OyF7ug8q0A2en1M=
-MIME-Version: 1.0
-In-Reply-To: <20180219224602.22582-1-enric.balletbo@collabora.com>
-References: <20180219224602.22582-1-enric.balletbo@collabora.com>
-From: Gwendal Grignou <gwendal@chromium.org>
-Date: Wed, 21 Feb 2018 15:52:31 -0800
-X-Google-Sender-Auth: dsLSNMw5ruQ8wtRzGkgQrR3ppN8
-Message-ID: <CAMHSBOUTrkyANDovR1eV4c80ci2hf3tm+0rPTijojHuBm-gH2g@mail.gmail.com>
-Subject: Re: [PATCH 1/6] mfd: cros_ec: fail early if we cannot identify the EC
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        Vincent Palatin <vpalatin@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Feb 2018 18:53:04 -0500
+X-Google-Smtp-Source: AH8x226+1tz+C1IXapquseb2US6sJXK7RmwUIaSEAMJkHhsP2aVGTZtNycUypBdLGVdUJluNqdGKFg==
+From: Ram Pai <linuxram@us.ibm.com>
+To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
+        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
+        msuchanek@suse.com
+Subject: [PATCH v12 0/3] mm, x86, powerpc: Enhancements to Memory Protection Keys.
+Date: Wed, 21 Feb 2018 15:52:15 -0800
+Message-Id: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 2:46 PM, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
-> From: Vincent Palatin <vpalatin@chromium.org>
->
-> If we cannot communicate with the EC chip to detect the protocol version
-> and its features, it's very likely useless to continue. Else we will
-> commit all kind of uninformed mistakes (using the wrong protocol, the
-> wrong buffer size, mixing the EC with other chips).
->
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> Acked-by: Benson Leung <bleung@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> ---
->  drivers/mfd/cros_ec.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index d61024141e2b..74780f2964a1 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -112,7 +112,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->
->         mutex_init(&ec_dev->lock);
->
-> -       cros_ec_query_all(ec_dev);
-> +       err = cros_ec_query_all(ec_dev);
-> +       if (err) {
-> +               dev_err(dev, "Cannot identify the EC: error %d\n", err);
-> +               return err;
-> +       }
->
->         if (ec_dev->irq) {
->                 err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
-> --
-> 2.16.1
->
+This patch series provides arch-neutral enhancements to
+enable memory-keys on new architecutes, and the corresponding
+changes in x86 and powerpc specific code to support that.
+
+a) Provides ability to support upto 32 keys.  PowerPC
+	can handle 32 keys and hence needs this.
+
+b) Arch-neutral code; and not the arch-specific code,
+   determines the format of the string, that displays the key
+   for each vma in smaps.
+
+History:
+-------
+version v12:
+	(1) fixed compilation errors seen with various x86
+		configs.
+version v11:
+	(1) code that displays key in smaps is not any more
+		defined under CONFIG_ARCH_HAS_PKEYS.
+       	    - Comment by Eric W. Biederman and Michal Hocko
+	(2) merged two patches that implemented (1).
+		- comment by Michal Hocko
+
+version prior to v11:
+	(1) used one additional bit from VM_HIGH_ARCH_*
+       		to support 32 keys.
+	    - Suggestion by Dave Hansen.
+	(2) powerpc specific changes to support memory keys.
+
+Ram Pai (3):
+  mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS
+    is enabled
+  mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
+  mm, x86, powerpc: display pkey in smaps only if arch supports pkeys
+
+ arch/powerpc/include/asm/mmu_context.h |    5 -----
+ arch/x86/include/asm/mmu_context.h     |    5 -----
+ arch/x86/include/asm/pkeys.h           |    1 +
+ arch/x86/kernel/fpu/xstate.c           |    5 +++++
+ arch/x86/kernel/setup.c                |    8 --------
+ fs/proc/task_mmu.c                     |   15 ++++++++-------
+ include/linux/mm.h                     |   12 +++++++-----
+ include/linux/pkeys.h                  |    7 ++++++-
+ 8 files changed, 27 insertions(+), 31 deletions(-)
