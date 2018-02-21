@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227+P29J29x7eeXtORu6lH/Z5cj79b1UQm1eSOyN9Boajq4DJOkOYX2Q3LWwLkfHKzbQJp+m
-ARC-Seal: i=1; a=rsa-sha256; t=1519218131; cv=none;
+X-Google-Smtp-Source: AH8x224K5+X8BlJekf+v9payjY2ggTqVd+bEsKkYMwZ/T5goJhUmx+7SSgXvVRGNvURqukCbapko
+ARC-Seal: i=1; a=rsa-sha256; t=1519218129; cv=none;
         d=google.com; s=arc-20160816;
-        b=oB0He3no5pb7rkOeuUFInwdRTZbGNMoE8KMOLzucQONhJMtszT/2CeD5xNxrPKm6vw
-         MvPXE+y0RwhCfIHMpQsD8EkF19wWUkV4RYtGxEdv9s+si+sj9rcb/c0XobxQR3fR/sp+
-         3ABP7VgGM0FGiLzyH2JcP9oEGaZYCm34ghD/tqeNHHsGWr9go7fDTbrHc0ikCV02O6fa
-         yBB2TRckWurAq+TehlMSCCXJrzGCl7Z4/eAwNfML8qYJLA6Oai+eW/ttNlxWwyWwLX0U
-         vhkNY+mY7Kf6x6GYr20me6DWkf7XIioyJRQuR3LhQkdt7zvexRqIzH6iiF9SaRXMc7AI
-         PJ/A==
+        b=FIEa4vKl4limLwFMlwZPCDZn9Aoh2omYEuWG8eCwhU0a2OG0EbfQwt5Wq90ZpuLS8G
+         pz39p+/bOW5+GxouVCIqkxgg37n0QLGPPFqHkFqgvDFm35Gl3pHflpfOLFjTpwd8fGLL
+         WNzJJwoK9uJiz7rhYO+zIIz29cC0lt5b0+G2bGkyQT1WwxAD0cf6QHatLe3O0b1jXg1R
+         XmG3NH9xUdw8XApMlRp7mn0bYfRq+cM2W91I4nZwz7IY6+C6My//P8pdCnEycgH1tlw8
+         IJr1bhY8u5FYGhjnZDuyV5eQ350A2pSbdlOE2LuQxJP6SYNnRcqqi8sFcUyFvlRkkQnn
+         3vKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=76AvIPSy5osQFiUWooLQMwK3wRhN7Oej1G4tZwvMgHM=;
-        b=nJyKEq8fKaXNDOZtPRAeQEbVFRycmGbQbRjiEWlahPd1epIHs/nQasbrUxEUjxWg3f
-         sg+jT1eck/XlfCEBjYJ0e/q99tU1jzI3K3AdUCzyyjlrd9wyib0kpVBV9kR25zP86K1q
-         4qZoB/Bd5hENiRoefPGQQSKI7uEA6CfMOi1FndjIW81Xm8n+5s7CBUq8i5AJ2EwXMaFE
-         E0OKWlcy3bt+JLx/KcIIMRflXeFdNnE1SwVI8rpzUrD8WPx0ftx4uZNcj0Ck8Y6Me6H+
-         0DfwDuKAuy5ZsJV76G36rqNMWKJyNEHm7OMlo8+neMYCPjhq6KujcOBQu190sACA3RLe
-         UmTA==
+        bh=c8+qvxUeJ336QOYR8TrJzE9CmGg7J7G7Bido8ZOeCbI=;
+        b=wqB1maWkrFk9fgSoN7Cw+MNu36TXpqX/rfncH2hx4V88POM4JYN75pU8ES4uP464nq
+         h1dhSlxPZEnRwhRzBIIW2m8/bXj9/j30FLHxiCwbXI5pCZp2K9HHMeD7taA3K3eQUXgy
+         F6p3XpPmcsiiD0Kx3JdiCzz73PvRC7afsOlYCqHk2qn1Wg7wiHgCLgp0otoJW7q5LLqG
+         Nhlk9zZh4cx7itAb9gEah9MWxVUiIKk4Jd51O4iRTJZnY3WGRzQ9w2to0AXIZa3CZSB3
+         3PFEYQHXQXpj2PcAbJov0w0j5ZZMPuOdUCyWGDQ7xLf6QAPovvOZgBVf6KFXLuPOxIK5
+         pGrw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 071/167] selftests/x86: Do not rely on "int $0x80" in single_step_syscall.c
-Date: Wed, 21 Feb 2018 13:48:02 +0100
-Message-Id: <20180221124528.384481776@linuxfoundation.org>
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 097/167] drm/radeon: adjust tested variable
+Date: Wed, 21 Feb 2018 13:48:28 +0100
+Message-Id: <20180221124529.650795019@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015325375300324?=
-X-GMAIL-MSGID: =?utf-8?q?1593015672476090319?=
+X-GMAIL-THRID: =?utf-8?q?1593015181472475587?=
+X-GMAIL-MSGID: =?utf-8?q?1593015669039552994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,73 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 4105c69703cdeba76f384b901712c9397b04e9c2 upstream.
+commit 3a61b527b4e1f285d21b6e9e623dc45cf8bb391f upstream.
 
-On 64-bit builds, we should not rely on "int $0x80" working (it only does if
-CONFIG_IA32_EMULATION=y is enabled). To keep the "Set TF and check int80"
-test running on 64-bit installs with CONFIG_IA32_EMULATION=y enabled, build
-this test only if we can also build 32-bit binaries (which should be a
-good approximation for that).
+Check the variable that was most recently initialized.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-5-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x, y, f, g, e, m;
+statement S1,S2,S3,S4;
+@@
+
+x = f(...);
+if (\(<+...x...+>\&e\)) S1 else S2
+(
+x = g(...);
+|
+m = g(...,&x,...);
+|
+y = g(...);
+*if (e)
+ S3 else S4
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile              |    2 ++
- tools/testing/selftests/x86/single_step_syscall.c |    5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_uvd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -30,11 +30,13 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.s
- ifeq ($(CAN_BUILD_I386),1)
- all: all_32
- TEST_PROGS += $(BINARIES_32)
-+EXTRA_CFLAGS += -DCAN_BUILD_32
- endif
+--- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -995,7 +995,7 @@ int radeon_uvd_calc_upll_dividers(struct
+ 		/* calc dclk divider with current vco freq */
+ 		dclk_div = radeon_uvd_calc_upll_post_div(vco_freq, dclk,
+ 							 pd_min, pd_even);
+-		if (vclk_div > pd_max)
++		if (dclk_div > pd_max)
+ 			break; /* vco is too big, it has to stop */
  
- ifeq ($(CAN_BUILD_X86_64),1)
- all: all_64
- TEST_PROGS += $(BINARIES_64)
-+EXTRA_CFLAGS += -DCAN_BUILD_64
- endif
- 
- all_32: $(BINARIES_32)
---- a/tools/testing/selftests/x86/single_step_syscall.c
-+++ b/tools/testing/selftests/x86/single_step_syscall.c
-@@ -119,7 +119,9 @@ static void check_result(void)
- 
- int main()
- {
-+#ifdef CAN_BUILD_32
- 	int tmp;
-+#endif
- 
- 	sethandler(SIGTRAP, sigtrap, 0);
- 
-@@ -139,12 +141,13 @@ int main()
- 		      : : "c" (post_nop) : "r11");
- 	check_result();
- #endif
--
-+#ifdef CAN_BUILD_32
- 	printf("[RUN]\tSet TF and check int80\n");
- 	set_eflags(get_eflags() | X86_EFLAGS_TF);
- 	asm volatile ("int $0x80" : "=a" (tmp) : "a" (SYS_getpid)
- 			: INT80_CLOBBERS);
- 	check_result();
-+#endif
- 
- 	/*
- 	 * This test is particularly interesting if fast syscalls use
+ 		/* calc score with current vco freq */
