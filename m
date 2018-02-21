@@ -1,153 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965925AbeBUPHc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:07:32 -0500
-Received: from mga04.intel.com ([192.55.52.120]:5178 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932826AbeBUPHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:07:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
-   d="scan'208";a="21888900"
-Date: Wed, 21 Feb 2018 17:07:27 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private
- objects
-Message-ID: <20180221150727.GO5453@intel.com>
-References: <20180221143730.30285-1-robdclark@gmail.com>
- <20180221143730.30285-2-robdclark@gmail.com>
- <20180221144919.GN5453@intel.com>
- <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
+        id S1754673AbeBUPJC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:09:02 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:33012 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1754529AbeBUPJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 10:09:01 -0500
+Date: Wed, 21 Feb 2018 10:09:00 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
+        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <akiyks@gmail.com>, <nborisov@suse.com>
+Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S lock-based
+ external-view litmus test
+In-Reply-To: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1802211001030.2032-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 09:54:49AM -0500, Rob Clark wrote:
-> On Wed, Feb 21, 2018 at 9:49 AM, Ville Syrjälä
-> <ville.syrjala@linux.intel.com> wrote:
-> > On Wed, Feb 21, 2018 at 09:37:21AM -0500, Rob Clark wrote:
-> >> Follow the same pattern of locking as with other state objects.  This
-> >> avoids boilerplate in the driver.
-> >
-> > I'm not sure we really want to do this. What if the driver wants a
-> > custom locking scheme for this state?
-> 
-> That seems like something we want to discourage, ie. all the more
-> reason for this patch.
-> 
-> There is no reason drivers could not split their global state into
-> multiple private objs's, each with their own lock, for more fine
-> grained locking.  That is basically the only valid reason I can think
-> of for "custom locking".
+On Tue, 20 Feb 2018, Paul E. McKenney wrote:
 
-In i915 we have at least one case that would want something close to an
-rwlock. Any crtc lock is enough for read, need all of them for write.
-Though if we wanted to use private objs for that we might need to
-actually make the states refcounted as well, otherwise I can imagine
-we might land in some use-after-free issues once again.
-
-Maybe we could duplicate the state into per-crtc and global copies, but
-then we have to keep all of those in sync somehow which doesn't sound
-particularly pleasant.
-
+> From: Alan Stern <stern@rowland.harvard.edu>
 > 
-> (And ofc drivers could add there own locks in addition to what is done
-> by core, but I'd rather look at that on a case by case basis, rather
-> than it being part of the boilerplate in each driver.)
-> 
-> BR,
-> -R
-> 
-> >>
-> >> Signed-off-by: Rob Clark <robdclark@gmail.com>
-> >> ---
-> >>  drivers/gpu/drm/drm_atomic.c | 9 ++++++++-
-> >>  include/drm/drm_atomic.h     | 5 +++++
-> >>  2 files changed, 13 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> >> index fc8c4da409ff..004e621ab307 100644
-> >> --- a/drivers/gpu/drm/drm_atomic.c
-> >> +++ b/drivers/gpu/drm/drm_atomic.c
-> >> @@ -1078,6 +1078,8 @@ drm_atomic_private_obj_init(struct drm_private_obj *obj,
-> >>  {
-> >>       memset(obj, 0, sizeof(*obj));
-> >>
-> >> +     drm_modeset_lock_init(&obj->lock);
-> >> +
-> >>       obj->state = state;
-> >>       obj->funcs = funcs;
-> >>  }
-> >> @@ -1093,6 +1095,7 @@ void
-> >>  drm_atomic_private_obj_fini(struct drm_private_obj *obj)
-> >>  {
-> >>       obj->funcs->atomic_destroy_state(obj, obj->state);
-> >> +     drm_modeset_lock_fini(&obj->lock);
-> >>  }
-> >>  EXPORT_SYMBOL(drm_atomic_private_obj_fini);
-> >>
-> >> @@ -1113,7 +1116,7 @@ struct drm_private_state *
-> >>  drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
-> >>                                struct drm_private_obj *obj)
-> >>  {
-> >> -     int index, num_objs, i;
-> >> +     int index, num_objs, i, ret;
-> >>       size_t size;
-> >>       struct __drm_private_objs_state *arr;
-> >>       struct drm_private_state *obj_state;
-> >> @@ -1122,6 +1125,10 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
-> >>               if (obj == state->private_objs[i].ptr)
-> >>                       return state->private_objs[i].state;
-> >>
-> >> +     ret = drm_modeset_lock(&obj->lock, state->acquire_ctx);
-> >> +     if (ret)
-> >> +             return ERR_PTR(ret);
-> >> +
-> >>       num_objs = state->num_private_objs + 1;
-> >>       size = sizeof(*state->private_objs) * num_objs;
-> >>       arr = krealloc(state->private_objs, size, GFP_KERNEL);
-> >> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> >> index 09076a625637..9ae53b73c9d2 100644
-> >> --- a/include/drm/drm_atomic.h
-> >> +++ b/include/drm/drm_atomic.h
-> >> @@ -218,6 +218,11 @@ struct drm_private_state_funcs {
-> >>   * &drm_modeset_lock is required to duplicate and update this object's state.
-> >>   */
-> >>  struct drm_private_obj {
-> >> +     /**
-> >> +      * @lock: Modeset lock to protect the state object.
-> >> +      */
-> >> +     struct drm_modeset_lock lock;
-> >> +
-> >>       /**
-> >>        * @state: Current atomic state for this driver private object.
-> >>        */
-> >> --
-> >> 2.14.3
-> >>
-> >> _______________________________________________
-> >> dri-devel mailing list
-> >> dri-devel@lists.freedesktop.org
-> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >
-> > --
-> > Ville Syrjälä
-> > Intel OTC
+> This commit adds a litmus test in which P0() and P1() form a lock-based S
+> litmus test, with the addition of P2(), which observes P0()'s and P1()'s
 
--- 
-Ville Syrjälä
-Intel OTC
+Why do you call this an "S" litmus test?  Isn't ISA2 a better 
+description?
+
+> accesses with a full memory barrier but without the lock.  This litmus
+> test asks whether writes carried out by two different processes under the
+> same lock will be seen in order by a third process not holding that lock.
+> The answer to this question is "yes" for all architectures supporting
+> the Linux kernel, but is "no" according to the current version of LKMM.
+> 
+> A patch to LKMM is under development.
+> 
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> ---
+>  .../ISA2+pooncelock+pooncelock+pombonce.litmus     | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+
+Aren't these tests supposed to be described in litmus-tests/README?
+
+> diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> new file mode 100644
+> index 000000000000..7a39a0aaa976
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> @@ -0,0 +1,41 @@
+> +C ISA2+pooncelock+pooncelock+pombonce.litmus
+> +
+> +(*
+> + * Result: Sometimes
+> + *
+> + * This test shows that the ordering provided by a lock-protected S
+> + * litmus test (P0() and P1()) are not visible to external process P2().
+> + * This is likely to change soon.
+
+That last line may be premature.  We haven't reached any consensus on 
+how RISC-V will handle this.  If RISC-V allows the test then the memory 
+model can't forbid it.
+
+Alan
+
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y, spinlock_t *mylock)
+> +{
+> +	spin_lock(mylock);
+> +	WRITE_ONCE(*x, 1);
+> +	WRITE_ONCE(*y, 1);
+> +	spin_unlock(mylock);
+> +}
+> +
+> +P1(int *y, int *z, spinlock_t *mylock)
+> +{
+> +	int r0;
+> +
+> +	spin_lock(mylock);
+> +	r0 = READ_ONCE(*y);
+> +	WRITE_ONCE(*z, 1);
+> +	spin_unlock(mylock);
+> +}
+> +
+> +P2(int *x, int *z)
+> +{
+> +	int r1;
+> +	int r2;
+> +
+> +	r2 = READ_ONCE(*z);
+> +	smp_mb();
+> +	r1 = READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
+> 
