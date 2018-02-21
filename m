@@ -1,132 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751602AbeBUTdk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:33:40 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45054 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeBUTdj (ORCPT
+        id S1751762AbeBUTdq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:33:46 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33880 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBUTdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:33:39 -0500
-X-Google-Smtp-Source: AH8x225DU0QTxNO9xxvDmDG3EQTYUrfCPsTDK0v3BJxrSZGAzBj++gFEdQXjpR5Ds2K0N94dL5YYUw==
-Date: Wed, 21 Feb 2018 22:33:35 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] proc: deduplicate /proc/*/cmdline implementation
-Message-ID: <20180221193335.GB28678@avx2>
-References: <20180221192339.GA28548@avx2>
- <20180221192605.GB28548@avx2>
- <20180221192751.GC28548@avx2>
- <20180221193009.GA28678@avx2>
+        Wed, 21 Feb 2018 14:33:42 -0500
+X-Google-Smtp-Source: AH8x226THIWDsdlcb/f32LDw0+9m5N2jc06mf4QYHBkdRqnBsroRjBw2qGRVteEvUkt/lodjCnHZQQ==
+Date: Wed, 21 Feb 2018 11:33:38 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Jitendra Sharma <shajit@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Govind Singh <govinds@qti.qualcomm.com>,
+        Shon Parate <sparate@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] soc: qcom: rmtfs-mem: Add support for assigning
+ memory to remote
+Message-ID: <20180221193338.GB18510@minitux>
+References: <20180213013724.3177-1-bjorn.andersson@linaro.org>
+ <7d9ab926-a0cd-267e-6c85-3e3af2467e97@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221193009.GA28678@avx2>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <7d9ab926-a0cd-267e-6c85-3e3af2467e97@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code can be sonsolidated if a dummy region of 0 length is used in normal
-case of \0-separated command line:
+On Wed 21 Feb 05:04 PST 2018, Jitendra Sharma wrote:
 
-1) [arg_start, arg_end) + [dummy len=0]
-2) [arg_start, arg_end) + [env_start, env_end)
+> Hi Bjorn,
+> 
+> 
+> On 2/13/2018 7:07 AM, Bjorn Andersson wrote:
+> > On some platform the remote processor's memory map is not statically
+> > configured in TrustZone, so each memory region that is to be accessed by
+> > the remote needs a call into TrustZone to set up the remote's
+> > permissions.
+> > 
+> > Implement this for the rmtfs memory driver, to give the modem on 8996
+> > access to the shared file system buffers.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >   drivers/soc/qcom/Kconfig     |  1 +
+> >   drivers/soc/qcom/rmtfs_mem.c | 34 ++++++++++++++++++++++++++++++++++
+> >   2 files changed, 35 insertions(+)
+> > 
+> > diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> > index e050eb83341d..a993d19fa562 100644
+> > --- a/drivers/soc/qcom/Kconfig
+> > +++ b/drivers/soc/qcom/Kconfig
+> > @@ -47,6 +47,7 @@ config QCOM_QMI_HELPERS
+> >   config QCOM_RMTFS_MEM
+> >   	tristate "Qualcomm Remote Filesystem memory driver"
+> >   	depends on ARCH_QCOM
+> > +	select QCOM_SCM
+> >   	help
+> >   	  The Qualcomm remote filesystem memory driver is used for allocating
+> >   	  and exposing regions of shared memory with remote processors for the
+> > diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+> > index 0a43b2e8906f..c8999e38b005 100644
+> > --- a/drivers/soc/qcom/rmtfs_mem.c
+> > +++ b/drivers/soc/qcom/rmtfs_mem.c
+> > @@ -37,6 +37,8 @@ struct qcom_rmtfs_mem {
+> >   	phys_addr_t size;
+> >   	unsigned int client_id;
+> > +
+> > +	unsigned int perms;
+> >   };
+> >   static ssize_t qcom_rmtfs_mem_show(struct device *dev,
+> > @@ -151,9 +153,11 @@ static void qcom_rmtfs_mem_release_device(struct device *dev)
+> >   static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+> >   {
+> >   	struct device_node *node = pdev->dev.of_node;
+> > +	struct qcom_scm_vmperm perms[2];
+> >   	struct reserved_mem *rmem;
+> >   	struct qcom_rmtfs_mem *rmtfs_mem;
+> >   	u32 client_id;
+> > +	u32 vmid;
+> >   	int ret;
+> >   	rmem = of_reserved_mem_lookup(node);
+> > @@ -204,10 +208,31 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+> >   	rmtfs_mem->dev.release = qcom_rmtfs_mem_release_device;
+> > +	ret = of_property_read_u32(node, "qcom,vmid", &vmid);
+> > +	if (ret < 0 && ret != -EINVAL) {
+> > +		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
+> > +		goto remove_cdev;
+> > +	} else if (!ret) {
+> > +		perms[0].vmid = QCOM_SCM_VMID_HLOS;
+> > +		perms[0].perm = QCOM_SCM_PERM_RW;
+> > +		perms[1].vmid = vmid;
+> > +		perms[1].perm = QCOM_SCM_PERM_RW;
+> > +
+> > +		rmtfs_mem->perms = BIT(QCOM_SCM_VMID_HLOS);
+> > +		ret = qcom_scm_assign_mem(rmtfs_mem->addr, rmtfs_mem->size,
+> > +					  &rmtfs_mem->perms, perms, 2);
+> > +		if (ret < 0) {
+> > +			dev_err(&pdev->dev, "assign memory failed\n");
+> > +			goto remove_cdev;
+> > +		}
+> > +	}
+> > +
+> I have a query here,
+> We assigned memory ownership to modem at boot up. In case of errors in other
+> parts of driver, where we are returning, have we assigned memory back to
+> HLOS
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+We're assigning the rmtfs memory to MPSS from the time this driver
+probes until it is removed. The PIL related memory regions shared with
+MPSS is handled by the remoteproc driver, for the duration of the MPSS
+being up.
 
- fs/proc/base.c |   53 ++++++++++++++++++++---------------------------------
- 1 file changed, 20 insertions(+), 33 deletions(-)
+The one issue worth mentioning here is that this extends the dependency
+the booting MPSS have on the remote-storage QMI service being
+functional, i.e. if this device isn't present, we can't serve
+remote-storage requests and MPSS will not function.
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -239,9 +239,12 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 	char *page;
- 	unsigned long count = _count;
- 	unsigned long arg_start, arg_end, env_start, env_end;
--	unsigned long len1, len2, len;
--	unsigned long p;
-+	unsigned long len1, len2;
- 	char __user *buf0 = buf;
-+	struct {
-+		unsigned long p;
-+		unsigned long len;
-+	} cmdline[2];
- 	char c;
- 	int rv;
- 
-@@ -283,43 +286,21 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 	if (access_remote_vm(mm, arg_end - 1, &c, 1, 0) != 1)
- 		goto end;
- 
-+	cmdline[0].p = arg_start;
-+	cmdline[0].len = len1;
- 	if (c == '\0') {
- 		/* Command line (set of strings) occupies whole ARGV. */
--		if (len1 <= *pos)
--			goto end;
--
--		p = arg_start + *pos;
--		len = len1 - *pos;
--		while (count > 0 && len > 0) {
--			unsigned int nr_read;
--
--			nr_read = min3(count, len, PAGE_SIZE);
--			nr_read = access_remote_vm(mm, p, page, nr_read, 0);
--			if (nr_read == 0)
--				goto end;
--
--			if (copy_to_user(buf, page, nr_read)) {
--				rv = -EFAULT;
--				goto out_free_page;
--			}
--
--			p	+= nr_read;
--			len	-= nr_read;
--			buf	+= nr_read;
--			count	-= nr_read;
--		}
-+		cmdline[1].len = 0;
- 	} else {
- 		/*
- 		 * Command line (1 string) occupies ARGV and
- 		 * extends into ENVP.
- 		 */
--		struct {
--			unsigned long p;
--			unsigned long len;
--		} cmdline[2] = {
--			{ .p = arg_start, .len = len1 },
--			{ .p = env_start, .len = len2 },
--		};
-+		cmdline[1].p = env_start;
-+		cmdline[1].len = len2;
-+	}
-+
-+	{
- 		loff_t pos1 = *pos;
- 		unsigned int i;
- 
-@@ -329,6 +310,9 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 			i++;
- 		}
- 		while (i < 2) {
-+			unsigned long p;
-+			unsigned long len;
-+
- 			p = cmdline[i].p + pos1;
- 			len = cmdline[i].len - pos1;
- 			while (count > 0 && len > 0) {
-@@ -343,7 +327,10 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 				 * Command line can be shorter than whole ARGV
- 				 * even if last "marker" byte says it is not.
- 				 */
--				nr_write = strnlen(page, nr_read);
-+				if (c == '\0')
-+					nr_write = nr_read;
-+				else
-+					nr_write = strnlen(page, nr_read);
- 
- 				if (copy_to_user(buf, page, nr_write)) {
- 					rv = -EFAULT;
+I haven't yet come up with a good idea of how to make the MPSS PIL
+explicitly depend on the remote-storage service being present.
+
+Regards,
+Bjorn
