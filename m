@@ -1,57 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeBUVKd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 16:10:33 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44009 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751711AbeBUVKa (ORCPT
+        id S1752101AbeBUVK4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 16:10:56 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:47025 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbeBUU5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 16:10:30 -0500
-X-Google-Smtp-Source: AH8x227FIsP6bL8JjwufK/Wt+e0+2vFZn4xpf+uB1KewoWl72KJrdqJyb+9/GiRsVRVUMNqVlQ9sqlOhnGSkASlJh4Y=
-MIME-Version: 1.0
-In-Reply-To: <20180220131253.GF25314@hirez.programming.kicks-ass.net>
-References: <20180220125829.27060-1-christian.koenig@amd.com> <20180220131253.GF25314@hirez.programming.kicks-ass.net>
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Wed, 21 Feb 2018 21:10:28 +0000
-Message-ID: <CACvgo50rWD737JhfR=7sH3bVUwR3FdWN9bve7yZ2zxGHHuBFgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] locking/ww_mutex: add ww_mutex_is_owned_by function v3
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Feb 2018 15:57:43 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 058/100] rtc: r7301: stop validating rtc_time in .read_time
+Date: Wed, 21 Feb 2018 21:55:53 +0100
+Message-Id: <20180221205635.31314-59-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
+References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LLAawU021115
 
-On 20 February 2018 at 13:12, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Feb 20, 2018 at 01:58:26PM +0100, Christian König wrote:
->> amdgpu needs to verify if userspace sends us valid addresses and the simplest
->> way of doing this is to check if the buffer object is locked with the ticket
->> of the current submission.
->>
->> Clean up the access to the ww_mutex internals by providing a function
->> for this and extend the check to the thread owning the underlying mutex.
->
->> Signed-off-by: Christian König <christian.koenig@amd.com>
->
-> Much thanks for Cc'ing the relevant maintainers :/
->
-Doubt it's intentional. The get-maintainer script seems confused and
-lists no maintainers?
+The RTC core is always calling rtc_valid_tm after the read_time callback.
+It is not necessary to call it just before returning from the callback.
 
-$ ./scripts/get_maintainer.pl include/linux/ww_mutex.h
-linux-kernel@vger.kernel.org (open list)
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-r7301.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While the normal mutex header works fine.
-
-$ ./scripts/get_maintainer.pl include/linux/mutex.h
-Peter Zijlstra <peterz@infradead.org> (maintainer:LOCKING PRIMITIVES)
-Ingo Molnar <mingo@redhat.com> (maintainer:LOCKING PRIMITIVES)
-linux-kernel@vger.kernel.org (open list:LOCKING PRIMITIVES)
-
-HTH
-Emil
+diff --git a/drivers/rtc/rtc-r7301.c b/drivers/rtc/rtc-r7301.c
+index 500e8c8a2605..169704b2ce13 100644
+--- a/drivers/rtc/rtc-r7301.c
++++ b/drivers/rtc/rtc-r7301.c
+@@ -224,7 +224,7 @@ static int rtc7301_read_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+-	return err ? err : rtc_valid_tm(tm);
++	return err;
+ }
+ 
+ static int rtc7301_set_time(struct device *dev, struct rtc_time *tm)
+-- 
+2.16.1
