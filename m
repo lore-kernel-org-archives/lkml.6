@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225TYwuVoeYpbsVxdNoKN/jXVwML6oELBxEV6R9kKgX0pPS0uUykZrcmZ06ExjoYK6mCWtCS
-ARC-Seal: i=1; a=rsa-sha256; t=1519217667; cv=none;
+X-Google-Smtp-Source: AH8x227EUDtIRG52NjJaEL1hxlszwqe/MpJl7z8bbTAoJyaER1LyEpXj2SUM1JSRIzpGwc4xYKiH
+ARC-Seal: i=1; a=rsa-sha256; t=1519217664; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bs//Gew6xuEMLS5anY14JIv1GOiYvsvEsCkxmNHv1ziOSiFZEVgmrXvSykebyitCf9
-         Qc8M2OIzJ9wSdm4ioiceMwHkjzWsa1VrHVwWsMGebYU1RFDtfGNQSfrP0fA7PMRV9HIu
-         26g+JkBqAhCUKQPvUnBLTXg8cZMQEitUsAuRSXLgacf97zEmyIIGtuCys+1n0pT3cUZA
-         OZtQMq9WfZW32mSXojEe7TI9wKZN1NXT7wkl9zzmaQARH1nfu2GWWKIMyhpH8FqbeBue
-         d3Y8IhQJPPfiyeLisNFeLTW4kON8GXQ84NS3K8ntwSnwUhJ5nobzIhipIKJrBlkDItbs
-         nUgw==
+        b=sN63wJ40U4ciWZtOva+RjZlwFsSFNEfvvNvhph3o3KkyNJf7fezqQzdjES+MHVbVQ5
+         ilAMrC0Q7iYG3fYwADru52T2R+Mt/FvWSeUZ9cWHB48hsWWNpjKIcThD8Z8w33FzanOc
+         ySs0ZXnqXmDYpMygy6jRrrXzqflHt6bT4v1VYJ18mo7/Oik8Xgk4fNRU/D8/hftJMFH1
+         IKC9dzkQ7dYg0RiUce6hGvFxi8gGaNmsBqG5adJ/otj7NdBJCkxpFvUo4sXRERALP5d4
+         nbVfzEjfH4nLz9gZIPmTRD2+CuNHJIqG90bOuMRquE3TLrFa92bUIjNDdm52jSnoHw+X
+         0oNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DX+Tw0N4flZShYDmAePoSsHrM5GNZu/IjEjVtzRib3Q=;
-        b=xv5jYS8QgDzjfOc71rOs0JYcOCq5SuvdZeirpw80ilB3jRgR0gmKDwaz7iuipOd8fZ
-         k2KGao6oPGa3lV9YqsGsZRhEjNXgN1THnX4FpG7KTabKtBtd5aTkOgEwUaENjcXrSI27
-         A/zVU9RN41sgm6/yK7JpmuW1zu4pBF8KE8ycgZd21hVCcBx27T0RGDE6tpXPTlSR/fhI
-         ONKrWA0ccD+LbzfBURXAK9Ul53dRYV1aUcJ7YwfXmS93opbpOfPHv/m3qF8968668Wws
-         Ofmpp6hmhFENXfCKe2gxk+4tVW4cYL0vl0xf1kKen6EiJxGClUh3n56Ulw96PGTNkpWi
-         c13A==
+        bh=WQ0blSun6cd75f9zciRX/5zAbG+XVbdJNf5LfJC7qlI=;
+        b=msqygjbv+ZA+I1+UefAx86fg55L3W/XVpWkTbrUiXh6lt1pJxl8Zxbl3Suilg6Krm4
+         H3eZcu/fVjsL0jYinwp7bqsubpaid1SiHL/lN1djJuHSiIqZWZAVX4LWU/3FI6N6fWBZ
+         YvbWjcOqY2per2qO0bZKWFUCXN2YdaGlkUBqlzsZaEk7qHS3dxkmOj4fjuZDrNqfqNxZ
+         V7WCfobHn2HdeEz6S57vsYrgQxpcc+712ZB+Rp63QIjl1LeKZmPlOutatM1cCpNpYVFL
+         AOCLG+Prq8ksSwtnEt/+NyXEy1EFQ8aZbAmWr3+qGhLXxguu/5P1A7EFDiAE72NuybdT
+         WucA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stewart Smith <stewart@linux.vnet.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 04/77] rtc-opal: Fix handling of firmware error codes, prevent busy loops
-Date: Wed, 21 Feb 2018 13:48:13 +0100
-Message-Id: <20180221124432.350707446@linuxfoundation.org>
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.9 03/77] drm/radeon: adjust tested variable
+Date: Wed, 21 Feb 2018 13:48:12 +0100
+Message-Id: <20180221124432.309508161@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014681201227169?=
-X-GMAIL-MSGID: =?utf-8?q?1593015184863074705?=
+X-GMAIL-THRID: =?utf-8?q?1593015181472475587?=
+X-GMAIL-MSGID: =?utf-8?q?1593015181472475587?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,80 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 5b8b58063029f02da573120ef4dc9079822e3cda upstream.
+commit 3a61b527b4e1f285d21b6e9e623dc45cf8bb391f upstream.
 
-According to the OPAL docs:
-  skiboot-5.2.5/doc/opal-api/opal-rtc-read-3.txt
-  skiboot-5.2.5/doc/opal-api/opal-rtc-write-4.txt
+Check the variable that was most recently initialized.
 
-OPAL_HARDWARE may be returned from OPAL_RTC_READ or OPAL_RTC_WRITE and
-this indicates either a transient or permanent error.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Prior to this patch, Linux was not dealing with OPAL_HARDWARE being a
-permanent error particularly well, in that you could end up in a busy
-loop.
+// <smpl>
+@@
+expression x, y, f, g, e, m;
+statement S1,S2,S3,S4;
+@@
 
-This was not too hard to trigger on an AMI BMC based OpenPOWER machine
-doing a continuous "ipmitool mc reset cold" to the BMC, the result of
-that being that we'd get stuck in an infinite loop in
-opal_get_rtc_time().
+x = f(...);
+if (\(<+...x...+>\&e\)) S1 else S2
+(
+x = g(...);
+|
+m = g(...,&x,...);
+|
+y = g(...);
+*if (e)
+ S3 else S4
+)
+// </smpl>
 
-We now retry a few times before returning the error higher up the
-stack.
-
-Fixes: 16b1d26e77b1 ("rtc/tpo: Driver to support rtc and wakeup on PowerNV platform")
-Cc: stable@vger.kernel.org # v3.19+
-Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/rtc-opal.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_uvd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/rtc/rtc-opal.c
-+++ b/drivers/rtc/rtc-opal.c
-@@ -58,6 +58,7 @@ static void tm_to_opal(struct rtc_time *
- static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d;
- 	u64 h_m_s_ms;
- 	__be32 __y_m_d;
-@@ -67,8 +68,11 @@ static int opal_get_rtc_time(struct devi
- 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
- 	}
+--- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -995,7 +995,7 @@ int radeon_uvd_calc_upll_dividers(struct
+ 		/* calc dclk divider with current vco freq */
+ 		dclk_div = radeon_uvd_calc_upll_post_div(vco_freq, dclk,
+ 							 pd_min, pd_even);
+-		if (vclk_div > pd_max)
++		if (dclk_div > pd_max)
+ 			break; /* vco is too big, it has to stop */
  
- 	if (rc != OPAL_SUCCESS)
-@@ -84,6 +88,7 @@ static int opal_get_rtc_time(struct devi
- static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d = 0;
- 	u64 h_m_s_ms = 0;
- 
-@@ -92,8 +97,11 @@ static int opal_set_rtc_time(struct devi
- 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
- 	}
- 
- 	return rc == OPAL_SUCCESS ? 0 : -EIO;
+ 		/* calc score with current vco freq */
