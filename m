@@ -1,245 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751312AbeBUUVH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:21:07 -0500
-Received: from mga11.intel.com ([192.55.52.93]:48573 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750738AbeBUUVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:21:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,375,1515484800";
-   d="scan'208";a="205929714"
-Date: Wed, 21 Feb 2018 12:18:50 -0800
-From: Dongwon Kim <dongwon.kim@intel.com>
-To: linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
-        mateuszx.potrola@intel.com
-Subject: Re: [RFC PATCH v2 0/9] hyper_dmabuf: Hyper_DMABUF driver
-Message-ID: <20180221201850.GA20568@downor-Z87X-UD5H>
-References: <20180214015008.9513-1-dongwon.kim@intel.com>
- <20180219170129.GC22199@phenom.ffwll.local>
+        id S1751387AbeBUUVQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:21:16 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38463 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750738AbeBUUVN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 15:21:13 -0500
+X-Google-Smtp-Source: AH8x225F0uwXwqX15y8OzDksRX0XY4814kF8ggh93pmu6+aa9VQxyBh3b6tWJQ/MG6UNv4xX0bUY8g==
+Date: Wed, 21 Feb 2018 21:21:07 +0100
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
+Message-ID: <20180221202107.GA21140@casa>
+References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
+ <673a2510-7d82-1b24-1085-9f5aa2bb9998@valvesoftware.com>
+ <20180220232035.GA28798@casa>
+ <52b10af3-d93b-34b2-e6ba-22621511b16f@valvesoftware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180219170129.GC22199@phenom.ffwll.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <52b10af3-d93b-34b2-e6ba-22621511b16f@valvesoftware.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 06:01:29PM +0100, Daniel Vetter wrote:
-> On Tue, Feb 13, 2018 at 05:49:59PM -0800, Dongwon Kim wrote:
-> > This patch series contains the implementation of a new device driver,
-> > hyper_DMABUF driver, which provides a way to expand the boundary of
-> > Linux DMA-BUF sharing to across different VM instances in Multi-OS platform
-> > enabled by a Hypervisor (e.g. XEN)
-> > 
-> > This version 2 series is basically refactored version of old series starting
-> > with "[RFC PATCH 01/60] hyper_dmabuf: initial working version of hyper_dmabuf
-> > drv"
-> > 
-> > Implementation details of this driver are described in the reference guide
-> > added by the second patch, "[RFC PATCH v2 2/5] hyper_dmabuf: architecture
-> > specification and reference guide".
-> > 
-> > Attaching 'Overview' section here as a quick summary.
-> > 
-> > ------------------------------------------------------------------------------
-> > Section 1. Overview
-> > ------------------------------------------------------------------------------
-> > 
-> > Hyper_DMABUF driver is a Linux device driver running on multiple Virtual
-> > achines (VMs), which expands DMA-BUF sharing capability to the VM environment
-> > where multiple different OS instances need to share same physical data without
-> > data-copy across VMs.
-> > 
-> > To share a DMA_BUF across VMs, an instance of the Hyper_DMABUF drv on the
-> > exporting VM (so called, “exporter”) imports a local DMA_BUF from the original
-> > producer of the buffer, then re-exports it with an unique ID, hyper_dmabuf_id
-> > for the buffer to the importing VM (so called, “importer”).
-> > 
-> > Another instance of the Hyper_DMABUF driver on importer registers
-> > a hyper_dmabuf_id together with reference information for the shared physical
-> > pages associated with the DMA_BUF to its database when the export happens.
-> > 
-> > The actual mapping of the DMA_BUF on the importer’s side is done by
-> > the Hyper_DMABUF driver when user space issues the IOCTL command to access
-> > the shared DMA_BUF. The Hyper_DMABUF driver works as both an importing and
-> > exporting driver as is, that is, no special configuration is required.
-> > Consequently, only a single module per VM is needed to enable cross-VM DMA_BUF
-> > exchange.
-> > 
-> > ------------------------------------------------------------------------------
-> > 
-> > There is a git repository at github.com where this series of patches are all
-> > integrated in Linux kernel tree based on the commit:
-> > 
-> >         commit ae64f9bd1d3621b5e60d7363bc20afb46aede215
-> >         Author: Linus Torvalds <torvalds@xxxxxxxxxxxxxxxxxxxx>
-> >         Date:   Sun Dec 3 11:01:47 2018 -0500
-> > 
-> >             Linux 4.15-rc2
-> > 
-> > https://github.com/downor/linux_hyper_dmabuf.git hyper_dmabuf_integration_v4
+On Tue, Feb 20, 2018 at 04:09:39PM -0800, Pierre-Loup A. Griffais wrote:
+> On 02/20/2018 03:20 PM, Rodrigo Rivas Costa wrote:
+> > On Tue, Feb 20, 2018 at 02:29:48PM -0800, Pierre-Loup A. Griffais wrote:
+> > About the left trackpad/joystick, currently I'm not treating them
+> > different. I'm out of ABS axes, and anyway, it is not likely that the
+> > left pad and the joystick be used at the same time (I only have one left
+> > thumb). Nevertheless, if we really want to make them apart, we can use
+> > bits 10.3 (lpad_touch) and 10.7 (lpad_and_joy) together. I described the
+> > details in [2], but I'm not currently doing that in this driver.
 > 
-> Since you place this under drivers/dma-buf I'm assuming you want to
-> maintain this as part of the core dma-buf support, and not as some
-> Xen-specific thing. Given that, usual graphics folks rules apply:
+> I didn't necessarily mean exposing it, but in the event a user is using both
+> at the same time (it happens, using claw grip with some games is necessary
+> to use the D-pad while deflecting the stick), then you'll most likely run
+> into issues unless you demux the inbound data, since we were also out of
+> left analog fields and mux them together if used at the same time. Not sure
+> if you're already handling that case, but not doing it would result in the
+> stick appearing to fully deflect every other input report if the user is
+> doing both at the same time.
 
-I moved it inside driver/dma-buf because the half of design is not hypervisor
-specific and it is possible that we would add more backends for other
-additional hypervisor support. 
+"Claw grip"? Is that a real thing? Yes, it is! Well, you're totally
+right. I think that it will be best to fully separate the left-pad and
+the joystick. Maybe the left-pad can be mapped to ABS_HAT1{X,Y]...
 
+> > About the gyroscope/acceleration/quaternion, you know the issue
+> > that the wireless gives gyro plus quat but no accel, while the wired
+> > gives all three. My general idea is to create an additional input device
+> > with INPUT_PROP_ACCELEROMETER to expose what is available. Pity is that
+> > the wireless gives no accel, maybe there is some command to enable it?
 > 
-> Where's the userspace for this (must be open source)? What exactly is the
-> use-case you're trying to solve by sharing dma-bufs in this fashion?
-
-Automotive use cases are actually using this feature now where each VM has
-their own display and want to share same rendering contents from one to
-another. It is a platform based on Xen and Intel hardware and I don't think
-all of SW stack is open-sourced. I do have a test application to verify this,
-which I think I can make public.
-
+> It should be three neighboring bits for that setting; does this not work for
+> you?
 > 
-> Iirc my feedback on v1 was why exactly you really need to be able to
-> import a normal dma-buf into a hyper-dmabuf, instead of allocating them
-> directly in the hyper-dmabuf driver. Which would _massively_ simplify your
-> design, since you don't need to marshall all the attach and map business
-> around (since the hypervisor would be in control of the dma-buf, not a
-> guest OS). 
+> // Bitmask that define which IMU features to enable.
+> typedef enum
+> {
+> 	SETTING_GYRO_MODE_OFF				= 0x0000,
+> 	SETTING_GYRO_MODE_STEERING			= 0x0001,
+> 	SETTING_GYRO_MODE_TILT				= 0x0002,
+> 	SETTING_GYRO_MODE_SEND_ORIENTATION	= 0x0004,
+> 	SETTING_GYRO_MODE_SEND_RAW_ACCEL	= 0x0008,
+> 	SETTING_GYRO_MODE_SEND_RAW_GYRO		= 0x0010,
+> } SettingGyroMode;
 
-I am sorry but I don't quite understand which side you are talking about
-when you said "import a normal dma-buf". This hyper_dmabuf driver running
-on the exporting VM actually imports the normal dma-buf (e.g. the one from
-i915) then get underlying pages shared and pass all the references to those
-pages to the importing VM. On importing VM, hyper_dmabuf driver is supposed
-to create a dma-buf (Is this part what you are talking about?) with those
-shared pages and export it using normal dma-buf framework. Attaching and
-mapping functions should be defined in this case because hyper_dmabuf will
-be the original exporter in importing VM.
+Thanks for that, it will be useful! Those are the values to be written
+to what I called "register 0x30" with {0x87 0x03 0x30 X 0x00}. Currently
+I am writing 0x14 to enable and 0x00 to disable. I suspected it was a
+bit-field...
 
-I will try to contact you in IRC if more clarification is required.
+> In general I'm concerned about sending of the gyro-enable message
+> potentially impairing Steam functionality if it's running at the same time
+> (eg. if gyro gets disabled over the radio while Steam still needs it), or
+> sending any stateful messages to the device. For instance, are you ever
+> sending the "blank configuration" setting? I assume you must be or users
+> would still get keyboard/mouse input over these USB endpoints while trying
+> to interact with the controller. But sending this after Steam programmed a
+> setting, or instructed the controller to go back to lizard mode because it
+> was requested by a configuration, would be problematic.
 
-Also, as far as I remember you suggested to make this driver work as exporter
-on both sides. If your comment above is in-line with your previous feedback,
-I actually replied back to your initial comment. I am not sure if you had
-a chance to look at it, however it would be great if you can review it
-and make some comment if my answer was not enough. 
+Sure, but this patchset should be safe, shouldn't it?
+Maube future patches that play with the gyro/force-feedback could be
+disabled by default, and could need a module parameter to be enabled.
+That way Steam Client will work out-of-the-box anywhere but proficient
+users could use the extra functionality easily.
 
-> Also, all this marshalling leaves me with the impression that
-> the guest that exports the dma-buf could take down the importer. That
-> kinda nukes all the separation guarantees that vms provide.
-
-I understand the importance of separation however, sharing physical memory in
-kernel level breaks this guarantee anyway regardless of the implementation.
-
+Related to that, Benjamin Tissoires replied to 1/3:
+> > --- a/drivers/hid/hid-quirks.c
+> > +++ b/drivers/hid/hid-quirks.c
+> > @@ -629,6 +629,10 @@ static const struct hid_device_id
+> > hid_have_special_driver[] = {
+> >  #if IS_ENABLED(CONFIG_HID_SPEEDLINK)
+> >         { HID_USB_DEVICE(USB_VENDOR_ID_X_TENSIONS,
+> >         USB_DEVICE_ID_SPEEDLINK_VAD_CEZANNE) },
+> >  #endif
+> > +#if IS_ENABLED(CONFIG_HID_STEAM)
+> > +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER) },
+> > +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS) },
+> > +#endif
 > 
-> Or you just stuff this somewhere deeply hidden within Xen where gpu folks
-> can't find it :-)
+> In addition to the discussion in 0/3, I wonder if you should not
+> remove this hunk. Unless having hid-generic binding the device before
+> your hid-steam driver, it would be better not force the Steam boxes to
+> use your driver.
 
-Grant-table (memory sharing mechanism in Xen) has its own permission control
-for shared pages, however at least in graphic use-case, it is not fully
-quaranteed once those are mapped in GTT.
+I don't really see the point on that. If we do that I'll have to unbind
+and bind the device manually, and that is a pain, and impossible without
+root (my ultimate goal is to use this controller with my Tizen TV ;-P).
 
-> -Daniel
+And anyway this driver is mostly harmless, the only visible changes from
+userspace are the new input and power devices, and that the virtual
+keyboard/mouse are no more. If the virtual devices are really missed we
+could use:
 
-> 
-> > 
-> > Dongwon Kim, Mateusz Polrola (9):
-> >   hyper_dmabuf: initial upload of hyper_dmabuf drv core framework
-> >   hyper_dmabuf: architecture specification and reference guide
-> >   MAINTAINERS: adding Hyper_DMABUF driver section in MAINTAINERS
-> >   hyper_dmabuf: user private data attached to hyper_DMABUF
-> >   hyper_dmabuf: hyper_DMABUF synchronization across VM
-> >   hyper_dmabuf: query ioctl for retreiving various hyper_DMABUF info
-> >   hyper_dmabuf: event-polling mechanism for detecting a new hyper_DMABUF
-> >   hyper_dmabuf: threaded interrupt in Xen-backend
-> >   hyper_dmabuf: default backend for XEN hypervisor
-> > 
-> >  Documentation/hyper-dmabuf-sharing.txt             | 734 ++++++++++++++++
-> >  MAINTAINERS                                        |  11 +
-> >  drivers/dma-buf/Kconfig                            |   2 +
-> >  drivers/dma-buf/Makefile                           |   1 +
-> >  drivers/dma-buf/hyper_dmabuf/Kconfig               |  50 ++
-> >  drivers/dma-buf/hyper_dmabuf/Makefile              |  44 +
-> >  .../backends/xen/hyper_dmabuf_xen_comm.c           | 944 +++++++++++++++++++++
-> >  .../backends/xen/hyper_dmabuf_xen_comm.h           |  78 ++
-> >  .../backends/xen/hyper_dmabuf_xen_comm_list.c      | 158 ++++
-> >  .../backends/xen/hyper_dmabuf_xen_comm_list.h      |  67 ++
-> >  .../backends/xen/hyper_dmabuf_xen_drv.c            |  46 +
-> >  .../backends/xen/hyper_dmabuf_xen_drv.h            |  53 ++
-> >  .../backends/xen/hyper_dmabuf_xen_shm.c            | 525 ++++++++++++
-> >  .../backends/xen/hyper_dmabuf_xen_shm.h            |  46 +
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.c    | 410 +++++++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.h    | 122 +++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.c  | 122 +++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.h  |  38 +
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.c     | 135 +++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.h     |  53 ++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c  | 794 +++++++++++++++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.h  |  52 ++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.c   | 295 +++++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.h   |  73 ++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c    | 416 +++++++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h    |  89 ++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.c    | 415 +++++++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.h    |  34 +
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.c  | 174 ++++
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.h  |  36 +
-> >  .../hyper_dmabuf/hyper_dmabuf_remote_sync.c        | 324 +++++++
-> >  .../hyper_dmabuf/hyper_dmabuf_remote_sync.h        |  32 +
-> >  .../dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c   | 257 ++++++
-> >  .../dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.h   |  43 +
-> >  drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h | 143 ++++
-> >  include/uapi/linux/hyper_dmabuf.h                  | 134 +++
-> >  36 files changed, 6950 insertions(+)
-> >  create mode 100644 Documentation/hyper-dmabuf-sharing.txt
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/Kconfig
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/Makefile
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm_list.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm_list.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_drv.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_drv.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_shm.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_shm.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_drv.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_event.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_list.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ops.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_query.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_remote_sync.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_remote_sync.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.h
-> >  create mode 100644 drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h
-> >  create mode 100644 include/uapi/linux/hyper_dmabuf.h
-> > 
-> > -- 
-> > 2.16.1
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+	hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+
+on them, maybe with a module parameter? Note that one of the first
+things the Steam Client does is to disable the virtual devices (with a
+command to the device).
+(TBH I always had the impression that those virtual devices are there
+to move the Grub menu...)
+
+If Valve people really feel that this driver is not needed for SteamOS,
+because the Steam Client is always running, then SteamOS can always do
+CONFIG_HID_STEAM=n.
+
+Regards.
+Rodrigo
