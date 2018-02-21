@@ -1,37 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2267VpqOkfwABpmu+U6mUfkaafky/MRCE7VSSCfabmca0Yvk5VlKHI0QJk1uqD+Nr6kpGPIw
-ARC-Seal: i=1; a=rsa-sha256; t=1519218324; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IgGsf5NXfmaS2m+s/6sJ+/0XXNoRwpwUGIjdsOLtGdywWFGS3eRG9Wpw+dh2k19iXH
-         e5yArfGwUB5MJUuhwYENAUS8+ttSytyJpFAEJ/lZhvGMDeFrwu04Q2UmTQgMbp9evytL
-         /D24NthV94XzfKUt3H4ZaDgrbumCo9lrh60k8oY0OsnKI9EXiwwh96B+HCnmfjOTfOFf
-         29HpG48+/p5ZbmqZxtIS6gSiSXhxp2TDOy8Mhij3jwHtJCi7jhhNn4hXtvJL+ZU/kYTk
-         /Bm8aSti0F7Z/pYa7M/IdSmQ/xOk17hERC+3yYN3ZZKmW6lL0T+X3zHFTpgoSscEPkcQ
-         DJUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=JmxFSFJCQ5Gjj7zAkPcVgJURqzSvGRtdaFZ0tGrYqbI=;
-        b=FYxQd+1SgI6GOmoNZ1OzV31oQeSUjjTuxQbcRHBgf3xEVv6vgZAIwcbZ3DWzZ7wCVX
-         6iWBp2cbJDjzaqbC5n1/XZwX2JXN6D2DkQT0Ms1ym5x41UNxrZKOhK4sSHuPWCqemBZG
-         SXMF9FTiKmfu8nm1ud8wdtdgBkQ11ImsHTrpjyHWoUZjyd7lMsIaju/PYoQQ8aY4+zTa
-         RzVIlgSGTqYkIf0FziuQ64zLU2LYG46wPsl9uEiPsVgbfMzevekRnBq01uEf/dZ9M7dA
-         hSPPscwqqHmWQs2/n+09Qoz8C9Cu1QaPncXWn7Uj73bGwiPK5qYplaYymaguj28gIMtA
-         1Ogg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218323-2-1197087992056546260
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519218323; b=Uv/LrzDmBbaYDNCZl13s8fgDzW+STX9jCJRvZDEA+dH51tW
+    9rQ+cP4qPu2PYu3L4u4oPYaqT36R6j6EUnijpTlh7Fcp3QzZuOhO5anlEoSuuKWR
+    h2tV7VlAxgZSHA2SNDySMFMQnML4a0Llziqq09L6/7/Ubb67DrWEDqK6MshQ6D5t
+    5lzJeah4DqzwRFP0tpPJKSsqa5AeFbaPJzGgkcgVlq1K3y6NuP8RHrNmXR39OBzv
+    +fBj+sXNC3UojhVEbVbi0akb4nkUImCVNNdo3WB13DJd8GgcUi6dOIkUXSE4/WjE
+    DOhipQpaPYaCA7y8mBHHAmfpfp+GlUDC1Z7UW/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519218323; bh=d+eNRiNLIoyZ/2UgQTN8DCL8zB
+    m8FiDSXe4okGhD74c=; b=NoHuBPAnDKRJELA/+haqFLfK+CCHbffwPLp9DqOF+N
+    3yndtQHqsGtPCl7Rsja9K8GExfVVnVCJDqoizKQMLOvwKxwEHyvXZJ9pd51Y29cm
+    qvuVFIORgEYSSB5bNu4Rdoe8rq7jwgwHWEUkk0JfGxZURExiQvrz3661u6JL6y4E
+    u3+2mmA9KbZjY+OC2FrwdfYx6hobw1yZ/KaHGOAa5DW+S20Lk4FwQDAs8YAIJTRX
+    BgMRUKL8EYxR4cXlTCM1ncT2YZg699sZEPBLABH5agqviIhRa4tL9V2Ch/t9YFck
+    LoW3edMfNY5YWlvMflVz+0lZgeyEs+2NdyRE+gdTQKwA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S964819AbeBUNFT (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:05:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40234 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935998AbeBUNFR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:05:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Nicole=20F=C3=A6rber?= <nicole.faerber@dpin.de>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 166/167] ASoC: acpi: fix machine driver selection based on quirk
-Date: Wed, 21 Feb 2018 13:49:37 +0100
-Message-Id: <20180221124533.934366054@linuxfoundation.org>
+        stable@vger.kernel.org, "yinbo.zhu" <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: [PATCH 4.14 164/167] mmc: sdhci-of-esdhc: fix eMMC couldnt work after kexec
+Date: Wed, 21 Feb 2018 13:49:35 +0100
+Message-Id: <20180221124533.823064941@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -39,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015874113216867?=
-X-GMAIL-MSGID: =?utf-8?q?1593015874113216867?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,41 +80,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: yinbo.zhu <yinbo.zhu@nxp.com>
 
-commit 5c256045b87b8aa8e5bc9d2e2fdc0802351c1f99 upstream.
+commit 97618aca1440b5addc5c3d78659d3e176be23b80 upstream.
 
-The ACPI/machine-driver code refactoring introduced in 4.13 introduced
-a regression for cases where we need a DMI-based quirk to select the
-machine driver (the BIOS reports an invalid HID). The fix is just to
-make sure the results of the quirk are actually used.
+The bit eSDHC_TBCTL[TB_EN] couldn't be reset by eSDHC_SYSCTL[RSTA] which is
+used to reset for all. The driver should make sure it's cleared before card
+initialization, otherwise the initialization would fail.
 
-Fixes: 54746dabf770 ('ASoC: Improve machine driver selection based on quirk data')
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=96691
-Tested-by: Nicole Færber <nicole.faerber@dpin.de>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-match-acpi.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/soc/intel/common/sst-match-acpi.c
-+++ b/sound/soc/intel/common/sst-match-acpi.c
-@@ -83,11 +83,9 @@ struct sst_acpi_mach *sst_acpi_find_mach
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -785,6 +785,10 @@ static void esdhc_init(struct platform_d
+ 	pltfm_host = sdhci_priv(host);
+ 	esdhc = sdhci_pltfm_priv(pltfm_host);
  
- 	for (mach = machines; mach->id[0]; mach++) {
- 		if (sst_acpi_check_hid(mach->id) == true) {
--			if (mach->machine_quirk == NULL)
--				return mach;
--
--			if (mach->machine_quirk(mach) != NULL)
--				return mach;
-+			if (mach->machine_quirk)
-+				mach = mach->machine_quirk(mach);
-+			return mach;
- 		}
- 	}
- 	return NULL;
++	val = sdhci_readl(host, ESDHC_TBCTL);
++	val &= ~ESDHC_TB_EN;
++	sdhci_writel(host, val, ESDHC_TBCTL);
++
+ 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
+ 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
+ 			     SDHCI_VENDOR_VER_SHIFT;
