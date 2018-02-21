@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ewgzqhnUcUqBiuI/z3K24sQvm4t4vtoJJknsraxbKdL4hT5DcxEv1rU/2AuJGDSyNeadG
-ARC-Seal: i=1; a=rsa-sha256; t=1519217131; cv=none;
+X-Google-Smtp-Source: AH8x227ciTNISfk9PTlaMXoG3x95wrUF8u6ExIqOFq4HcGNFomWooHI23cR8A7v04U1ZP7FwhbMq
+ARC-Seal: i=1; a=rsa-sha256; t=1519217129; cv=none;
         d=google.com; s=arc-20160816;
-        b=VVsfZO/QoymptNvjWE2Aw1mq/2/ytuMG6IAO2FAHDrjspjoQemiXeCrJ6GGeu/dsTK
-         LbQSzaBrLpK26uO6GriS4dxp6ZE45JWz/VmuyJPeQSIPlTlqLPik5z1/4zYOg0YgUFu2
-         MQI2QSUdeqIDBKXie6IOf+i2hf4DH2XYeihHhknyEU7Tkx5FPO87K+iqVKHUpBMQlRV6
-         rbqz6QtE0Ulrs4hpSAgssJVgpchOnR3dqdpTPJIY1GHablr2i5oWKOCdjuiXuEY5wMFO
-         J5uKc1J4K5ig6eOh0jAJPlLzI34lHYyTWezen2suUdwOuVs7/OyBG+J7/RMVX2Gw8JGV
-         IoHg==
+        b=ngaEkyl24FqQc6igjfxGp/ktNTtGta15SQxM1Gl1liSi6LRiVecr8c19jA+vvZjGU9
+         u/YeLCTCepl2Pts/DdHBucaUZuxFQyVl7AdYerTvOmw1LhNjzKXEU0dTSAROSlzqRit+
+         j2fyJtAgXblml8GiNdXeeJu79rA+OLR8fEPglZAuwDK791uoDX38cyzsl6uA8cgP9GEg
+         eR1iuwS5PrMmjmSTKPBTlf+3U8fYUzm8l/m8g9io+RuljAhMRsDW31GZcaSAgXm33op7
+         l7/4GMHSQvCRnzupsHonP2CMxSpX0rP7Fzt75uxQZKgWLNoPS0xauq+Qr2WECH81qpe1
+         CBEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VIOrkYLLWFYJCPkHu8LYSzZrvUG6lLCC0cupBU2mrsE=;
-        b=tB/i7rMxHdo7EXT8hAcfyOxWvAaziH41uSndZP/7xc1Eh+Q7rRr99fKaMAk0oixRo7
-         M+8OjG+THfjOG4gbm6NLUBAaXFB6UgQ+/F8ruoLqNzM0cKNQ39oAVgYFISaqk7Y7stFP
-         0LrdlxYnn4Xex8Xjfe3tciiZ9a/W9hO5t/7lZVgVBMUSf1tV++6FPyRxw+gBpDGAJl5I
-         jbcLT4JMvTG0C0Bi7hdGuMmnJRxwqgkgx/JQX6CqtP5RRagMlcFyhQ7d8RJPHuehDH+Z
-         Ca7cxv0RddHUn0XLCILF2dzXqy7LPWDoRBvw/5fqUEBl/JcGqvX8EcpAytdeohd7IN+m
-         cg0A==
+        bh=rL02OBrOxOlquNATJUIW/6l4n+rYs5NFV+aZPTvThlA=;
+        b=NqGUugcnQUdy14bf/AKJ6Yfx6oJnW72sWbg0fwFNYHi0FkzQPrhgw22wxndfokPDq3
+         NfQtXdtrfIWLDB18MnP3VHmjLbtmLkrVCXjBwHVOdOeWaFsWTIStDBhjj8v53QopSSWC
+         91BHwOX+KNQg7AF0eJAutjliIuUxLz6S6jR9wp8PGaZekQF8yI4GesTxFkQ8g/44K8AZ
+         lKfTrS5hMfSfYGNP9O6GwfvR/1/u9FPlLoGhmMKJUa+g0NuN16SEDQDdjOnOaCoh9hCp
+         +NFvhdHaoNtWZNtR2LtcUK0xUNx9jRXgi27EQsNXY6vDQwcv5bUu7tlyL/zRfjnm47l3
+         6BRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" <ernesto.mnd.fernandez@gmail.com>,
+	Zhouyi Zhou <zhouzhouyi@gmail.com>,
 	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 14/33] ext4: correct documentation for grpid mount option
-Date: Wed, 21 Feb 2018 13:44:57 +0100
-Message-Id: <20180221124410.402826757@linuxfoundation.org>
+Subject: [PATCH 4.4 13/33] ext4: save error to disk in __ext4_grp_locked_error()
+Date: Wed, 21 Feb 2018 13:44:56 +0100
+Message-Id: <20180221124410.358901912@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014623261123447?=
-X-GMAIL-MSGID: =?utf-8?q?1593014623261123447?=
+X-GMAIL-THRID: =?utf-8?q?1593014620343797175?=
+X-GMAIL-MSGID: =?utf-8?q?1593014620343797175?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-commit 9f0372488cc9243018a812e8cfbf27de650b187b upstream.
+commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
 
-The grpid option is currently described as being the same as nogrpid.
+In the function __ext4_grp_locked_error(), __save_error_info()
+is called to save error info in super block block, but does not sync
+that information to disk to info the subsequence fsck after reboot.
 
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+This patch writes the error information to disk.  After this patch,
+I think there is no obvious EXT4 error handle branches which leads to
+"Remounting filesystem read-only" will leave the disk partition miss
+the subsequence fsck.
+
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/filesystems/ext4.txt |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/filesystems/ext4.txt
-+++ b/Documentation/filesystems/ext4.txt
-@@ -233,7 +233,7 @@ data_err=ignore(*)	Just print an error m
- data_err=abort		Abort the journal if an error occurs in a file
- 			data buffer in ordered mode.
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -688,6 +688,7 @@ __acquires(bitlock)
+ 	}
  
--grpid			Give objects the same group ID as their creator.
-+grpid			New objects have the group ID of their parent.
- bsdgroups
- 
- nogrpid		(*)	New objects have the group ID of their creator.
+ 	ext4_unlock_group(sb, grp);
++	ext4_commit_super(sb, 1);
+ 	ext4_handle_error(sb);
+ 	/*
+ 	 * We only get here in the ERRORS_RO case; relocking the group
