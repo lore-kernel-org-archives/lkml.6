@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227mF7i9+6Ef0EB7MFpmlH5JEggedKvfuIPpBfNEUXQJdmUAhr3fbQD2Qkc8FEV+0H2qmmHJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519218077; cv=none;
+X-Google-Smtp-Source: AH8x2271igMjaZ6K1C7LyOg5JRjmp0Tt3Eu+kBw4wM2hCLiymyC/du9b9JazdLYqbG6+wcn9Q+rX
+ARC-Seal: i=1; a=rsa-sha256; t=1519218076; cv=none;
         d=google.com; s=arc-20160816;
-        b=SEpbqH+N867Kr4qgPc0hYgUa/oVJOYghG9Q6EBUhJRtdfY5a3cHM+SYt3TWIh1QzSs
-         la9gDHq6esXJMh6PHHiRHScwkn7gKTfaqGV9LAWlR6s0oJ8O3TIr+qDeLMBWQInuG7b7
-         waawN0DoGBJh64Ue9kvahwHNZuGuvbDmcDqafvYCsUTmKKSp8abGmSzYR+MvuSkQg015
-         UIo8LenD7fUlhqBklRRltV0J2h+Tx8dOwxkrabFgFzxfDSMdid1JSxbfY1FRE1DTaXqh
-         K2PdNj1qCtXZlBLhEJKk3zrU8KRJNa+pFVhSSM8r5rnWpmdbp1eKc+/3mWANB8HELGyp
-         ADqA==
+        b=kIv13P37U6xr5ody077csg/xHrQ43w409mjutj/y2uPRhGIU3/TpFXn5kuGL3z9l6b
+         SrXHsf+y29kHHF7eZXtst8GhHNpAAB2FelNPEH5NUSz/cOFZBuw0DgzhrEDEYbDd2L76
+         9zEfQkzw55SAFeNzGLE92Kfhkf78uJr0ItR3Q4Fuw/cXwUFayrZCyFRO8WJcSopXaLa5
+         dEp4/ccliwDLQBegXqu5nlF0PLUEcIhy0CRejzWlOpLfBzD6H67RV4Ll8Q3xBZMGKOlP
+         BAHwiypbbxr74LzBc+yxy24/63Te4fIWZRrJFy1nJctXpi3X1/V/FPP+aLJIM2QS/2Vh
+         FLnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JKGzs3AXzeuDt3vI+H+xcP2JxgRLdJ0Z9No4j8AF+5w=;
-        b=LBFXLxtkIeEP/ballT9aOpiFC5WeDqVo6/0ne8O8pRC76tiLUOEEYwJ9y2dyhYG8bP
-         V8KEpei1RMcxp5lpF+zU7wPf5AA2fiYQz2CEwGhYa/UcOYoZzAXuqj+MnniaLfuQ6Z2A
-         R6yIFSWiAYP0Ep0m2no8HtrBmFcF3jRDYpPosjaxVder7KHJzQ+UXb8IAzQb/wd73fwd
-         W3V+2nw4coxe1r1ZAsNo1PMkm9Mq+3Ibr0BrzJDEtS7kLbSLkLmsNwG7bA6C64+TZt+T
-         YyTh6yWyb9uxoBykKOAPEqHjzl4cHH3cl1zHpKqzAtJQbTnmHnUMVeqhwcTjYhq3vBCJ
-         RkJQ==
+        bh=/KEIyebmvsNVge5XeeybSTDoDb8TFaWTgdnpyvFvkaw=;
+        b=FKR4PB1V7iv7Cs7M7K7Wv5EGlfpJLg3IuuvgCjk9x+8fBrmEkS253WhddWEi9P5sCs
+         1/Sbn7e73+8hxukyEB5UswTzJ4gB6jnm315QyDNffL07K0RssnM/2XEjMYvruH4vSFR2
+         aLM48WFEGqGFbHY/W3747uCjaT0YmGbPyeTJh9HluQTOdjq3joERRm7BVYcTTULY0r7r
+         ofgK25alB4mmfbtxdj8VH5TZ68qD2PAVnHPdGJK1ZOxGPdAny0pe6tXTotSZEiniXQAM
+         bDAdP1jsXfMoah/kgWplEA2Fn2HN6W/BvUELkZBRSO70D0F6WKuLFgvHuvjfyx5KNFaq
+         0fgw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,24 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joe Konno <joe.konno@linux.intel.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	arjan@linux.intel.com,
-	bp@alien8.de,
-	dan.j.williams@intel.com,
-	dave.hansen@linux.intel.com,
-	dwmw2@infradead.org,
-	dwmw@amazon.co.uk,
-	hpa@zytor.com,
-	jpoimboe@redhat.com,
-	linux-tip-commits@vger.kernel.org,
-	luto@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Andy Lutomirski <luto@kernel.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 078/167] x86/speculation: Add <asm/msr-index.h> dependency
-Date: Wed, 21 Feb 2018 13:48:09 +0100
-Message-Id: <20180221124528.723749680@linuxfoundation.org>
+Subject: [PATCH 4.14 069/167] selftests/x86/pkeys: Remove unused functions
+Date: Wed, 21 Feb 2018 13:48:00 +0100
+Message-Id: <20180221124528.280741604@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -53,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015329486886101?=
-X-GMAIL-MSGID: =?utf-8?q?1593015615035485037?=
+X-GMAIL-THRID: =?utf-8?q?1593015321225692352?=
+X-GMAIL-MSGID: =?utf-8?q?1593015613643027425?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,46 +54,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit ea00f301285ea2f07393678cd2b6057878320c9d upstream.
+commit ce676638fe7b284132a7d7d5e7e7ad81bab9947e upstream.
 
-Joe Konno reported a compile failure resulting from using an MSR
-without inclusion of <asm/msr-index.h>, and while the current code builds
-fine (by accident) this needs fixing for future patches.
+This also gets rid of two build warnings:
 
-Reported-by: Joe Konno <joe.konno@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+  protection_keys.c: In function ‘dumpit’:
+  protection_keys.c:419:3: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+     write(1, buf, nr_read);
+     ^~~~~~~~~~~~~~~~~~~~~~
+
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan@linux.intel.com
-Cc: bp@alien8.de
-Cc: dan.j.williams@intel.com
-Cc: dave.hansen@linux.intel.com
-Cc: dwmw2@infradead.org
-Cc: dwmw@amazon.co.uk
-Cc: gregkh@linuxfoundation.org
-Cc: hpa@zytor.com
-Cc: jpoimboe@redhat.com
-Cc: linux-tip-commits@vger.kernel.org
-Cc: luto@kernel.org
-Fixes: 20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
-Link: http://lkml.kernel.org/r/20180213132819.GJ25201@hirez.programming.kicks-ass.net
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/nospec-branch.h |    1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/x86/protection_keys.c |   28 --------------------------
+ 1 file changed, 28 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -6,6 +6,7 @@
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
-+#include <asm/msr-index.h>
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -393,34 +393,6 @@ pid_t fork_lazy_child(void)
+ 	return forkret;
+ }
  
- #ifdef __ASSEMBLY__
+-void davecmp(void *_a, void *_b, int len)
+-{
+-	int i;
+-	unsigned long *a = _a;
+-	unsigned long *b = _b;
+-
+-	for (i = 0; i < len / sizeof(*a); i++) {
+-		if (a[i] == b[i])
+-			continue;
+-
+-		dprintf3("[%3d]: a: %016lx b: %016lx\n", i, a[i], b[i]);
+-	}
+-}
+-
+-void dumpit(char *f)
+-{
+-	int fd = open(f, O_RDONLY);
+-	char buf[100];
+-	int nr_read;
+-
+-	dprintf2("maps fd: %d\n", fd);
+-	do {
+-		nr_read = read(fd, &buf[0], sizeof(buf));
+-		write(1, buf, nr_read);
+-	} while (nr_read > 0);
+-	close(fd);
+-}
+-
+ #define PKEY_DISABLE_ACCESS    0x1
+ #define PKEY_DISABLE_WRITE     0x2
  
