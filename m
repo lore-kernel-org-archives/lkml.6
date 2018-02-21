@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938825AbeBURAc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:00:32 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35137 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938810AbeBURA3 (ORCPT
+        id S938842AbeBURAm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:00:42 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35194 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938827AbeBURAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:00:29 -0500
-X-Google-Smtp-Source: AH8x224+7zPdPXG17m7wCF+4Jd7YjkjGpKBF0F9J9Kr2p213sFIxFy0feM3bFL/LPTbtdFzkrKQ0ZQ==
-Date: Wed, 21 Feb 2018 18:00:26 +0100
+        Wed, 21 Feb 2018 12:00:39 -0500
+X-Google-Smtp-Source: AH8x227LdpEjUEGV0zSCdj/WBRogIZR68mGZXufhYFvyIE5L4/YTPF3iFVePI1Y0hkbM3d6Hs/3lHg==
+Date: Wed, 21 Feb 2018 18:00:35 +0100
 From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
 To: Andy Shevchenko <andy@infradead.org>
 Cc: Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/7] platform/x86: topstar-laptop: split ACPI events and
- input handling
-Message-ID: <ca66720ad8d7d42d2752b7c46781dda585b70736.1519231939.git.gdouezangrard@gmail.com>
+Subject: [PATCH v5 4/7] platform/x86: topstar-laptop: add platform device
+Message-ID: <7386f81172590d4bf9234369de93688d2a588fc7.1519231939.git.gdouezangrard@gmail.com>
 References: <cover.1519231939.git.gdouezangrard@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -26,192 +25,146 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* get the `acpi_device` from the `topstar_laptop` struct,
+* add a platform device to support further addition of a led subsystem,
 
-* split input registering and `sparse_keymap` events from ACPI events
-handling,
-
-* use notify, init and exit functions for ACPI and input handling
+* register the existing input device to this platform device.
 
 Signed-off-by: Guillaume Douézan-Grard <gdouezangrard@gmail.com>
 ---
- drivers/platform/x86/topstar-laptop.c | 109 ++++++++++++++++++++++------------
- 1 file changed, 71 insertions(+), 38 deletions(-)
+ drivers/platform/x86/topstar-laptop.c | 61 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 58 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/platform/x86/topstar-laptop.c b/drivers/platform/x86/topstar-laptop.c
-index 17f22a085d9a..fbf020e8a0e1 100644
+index fbf020e8a0e1..e82f57e893c8 100644
 --- a/drivers/platform/x86/topstar-laptop.c
 +++ b/drivers/platform/x86/topstar-laptop.c
-@@ -24,9 +24,14 @@
+@@ -1,5 +1,5 @@
+ /*
+- * ACPI driver for Topstar notebooks (hotkeys support only)
++ * Topstar Laptop ACPI Extras driver
+  *
+  * Copyright (c) 2009 Herton Ronaldo Krzesinski <herton@mandriva.com.br>
+  *
+@@ -20,11 +20,13 @@
+ #include <linux/acpi.h>
+ #include <linux/input.h>
+ #include <linux/input/sparse-keymap.h>
++#include <linux/platform_device.h>
+ 
  #define TOPSTAR_LAPTOP_CLASS "topstar"
  
  struct topstar_laptop {
-+	struct acpi_device *device;
+ 	struct acpi_device *device;
++	struct platform_device *platform;
  	struct input_dev *input;
  };
  
-+/*
-+ * Input
-+ */
-+
- static const struct key_entry topstar_keymap[] = {
- 	{ KE_KEY, 0x80, { KEY_BRIGHTNESSUP } },
- 	{ KE_KEY, 0x81, { KEY_BRIGHTNESSDOWN } },
-@@ -57,40 +62,12 @@ static const struct key_entry topstar_keymap[] = {
- 	{ KE_END, 0 }
- };
+@@ -80,6 +82,7 @@ static int topstar_input_init(struct topstar_laptop *topstar)
+ 	input->name = "Topstar Laptop extra buttons";
+ 	input->phys = TOPSTAR_LAPTOP_CLASS "/input0";
+ 	input->id.bustype = BUS_HOST;
++	input->dev.parent = &topstar->platform->dev;
  
--static void topstar_acpi_notify(struct acpi_device *device, u32 event)
-+static void topstar_input_notify(struct topstar_laptop *topstar, int event)
- {
--	static bool dup_evnt[2];
--	bool *dup;
--	struct topstar_laptop *topstar = acpi_driver_data(device);
--
--	/* 0x83 and 0x84 key events comes duplicated... */
--	if (event == 0x83 || event == 0x84) {
--		dup = &dup_evnt[event - 0x83];
--		if (*dup) {
--			*dup = false;
--			return;
--		}
--		*dup = true;
--	}
--
- 	if (!sparse_keymap_report_event(topstar->input, event, 1, true))
- 		pr_info("unknown event = 0x%02x\n", event);
+ 	err = sparse_keymap_setup(input, topstar_keymap, NULL);
+ 	if (err) {
+@@ -106,6 +109,42 @@ static void topstar_input_exit(struct topstar_laptop *topstar)
+ 	input_unregister_device(topstar->input);
  }
  
--static int topstar_acpi_fncx_switch(struct acpi_device *device, bool state)
--{
--	acpi_status status;
--
--	status = acpi_execute_simple_method(device->handle, "FNCX",
--						state ? 0x86 : 0x87);
--	if (ACPI_FAILURE(status)) {
--		pr_err("Unable to switch FNCX notifications\n");
--		return -ENODEV;
--	}
--
--	return 0;
--}
--
- static int topstar_input_init(struct topstar_laptop *topstar)
- {
- 	struct input_dev *input;
-@@ -124,9 +101,62 @@ static int topstar_input_init(struct topstar_laptop *topstar)
- 	return err;
- }
- 
-+static void topstar_input_exit(struct topstar_laptop *topstar)
-+{
-+	input_unregister_device(topstar->input);
-+}
-+
 +/*
-+ * ACPI
++ * Platform
 + */
 +
-+static int topstar_acpi_fncx_switch(struct acpi_device *device, bool state)
-+{
-+	acpi_status status;
-+	u64 arg = state ? 0x86 : 0x87;
++static struct platform_driver topstar_platform_driver = {
++	.driver = {
++		.name = TOPSTAR_LAPTOP_CLASS,
++	},
++};
 +
-+	status = acpi_execute_simple_method(device->handle, "FNCX", arg);
-+	if (ACPI_FAILURE(status)) {
-+		pr_err("Unable to switch FNCX notifications\n");
-+		return -ENODEV;
-+	}
++static int topstar_platform_init(struct topstar_laptop *topstar)
++{
++	int err;
++
++	topstar->platform = platform_device_alloc(TOPSTAR_LAPTOP_CLASS, -1);
++	if (!topstar->platform)
++		return -ENOMEM;
++
++	platform_set_drvdata(topstar->platform, topstar);
++
++	err = platform_device_add(topstar->platform);
++	if (err)
++		goto err_device_put;
 +
 +	return 0;
++
++err_device_put:
++	platform_device_put(topstar->platform);
++	return err;
 +}
 +
-+static void topstar_acpi_notify(struct acpi_device *device, u32 event)
++static void topstar_platform_exit(struct topstar_laptop *topstar)
 +{
-+	struct topstar_laptop *topstar = acpi_driver_data(device);
-+	static bool dup_evnt[2];
-+	bool *dup;
-+
-+	/* 0x83 and 0x84 key events comes duplicated... */
-+	if (event == 0x83 || event == 0x84) {
-+		dup = &dup_evnt[event - 0x83];
-+		if (*dup) {
-+			*dup = false;
-+			return;
-+		}
-+		*dup = true;
-+	}
-+
-+	topstar_input_notify(topstar, event);
++	platform_device_unregister(topstar->platform);
 +}
 +
-+static int topstar_acpi_init(struct topstar_laptop *topstar)
-+{
-+	return topstar_acpi_fncx_switch(topstar->device, true);
-+}
-+
-+static void topstar_acpi_exit(struct topstar_laptop *topstar)
-+{
-+	topstar_acpi_fncx_switch(topstar->device, false);
-+}
-+
- static int topstar_acpi_add(struct acpi_device *device)
- {
- 	struct topstar_laptop *topstar;
-+	int err;
- 
- 	topstar = kzalloc(sizeof(struct topstar_laptop), GFP_KERNEL);
- 	if (!topstar)
-@@ -134,30 +164,34 @@ static int topstar_acpi_add(struct acpi_device *device)
- 
- 	strcpy(acpi_device_name(device), "Topstar TPSACPI");
- 	strcpy(acpi_device_class(device), TOPSTAR_LAPTOP_CLASS);
-+	device->driver_data = topstar;
-+	topstar->device = device;
- 
--	if (topstar_acpi_fncx_switch(device, true))
-+	err = topstar_acpi_init(topstar);
-+	if (err)
+ /*
+  * ACPI
+  */
+@@ -171,12 +210,18 @@ static int topstar_acpi_add(struct acpi_device *device)
+ 	if (err)
  		goto err_free;
  
--	if (topstar_input_init(topstar))
--		goto err_free;
+-	err = topstar_input_init(topstar);
++	err = topstar_platform_init(topstar);
+ 	if (err)
+ 		goto err_acpi_exit;
+ 
 +	err = topstar_input_init(topstar);
 +	if (err)
-+		goto err_acpi_exit;
- 
--	device->driver_data = topstar;
++		goto err_platform_exit;
++
  	return 0;
  
-+err_acpi_exit:
-+	topstar_acpi_exit(topstar);
++err_platform_exit:
++	topstar_platform_exit(topstar);
+ err_acpi_exit:
+ 	topstar_acpi_exit(topstar);
  err_free:
- 	kfree(topstar);
--	return -ENODEV;
-+	return err;
- }
- 
- static int topstar_acpi_remove(struct acpi_device *device)
- {
+@@ -189,6 +234,7 @@ static int topstar_acpi_remove(struct acpi_device *device)
  	struct topstar_laptop *topstar = acpi_driver_data(device);
  
--	topstar_acpi_fncx_switch(device, false);
-+	topstar_input_exit(topstar);
-+	topstar_acpi_exit(topstar);
+ 	topstar_input_exit(topstar);
++	topstar_platform_exit(topstar);
+ 	topstar_acpi_exit(topstar);
  
--	input_unregister_device(topstar->input);
  	kfree(topstar);
--
- 	return 0;
- }
+@@ -217,17 +263,26 @@ static int __init topstar_laptop_init(void)
+ {
+ 	int ret;
  
-@@ -188,7 +222,6 @@ static int __init topstar_laptop_init(void)
+-	ret = acpi_bus_register_driver(&topstar_acpi_driver);
++	ret = platform_driver_register(&topstar_platform_driver);
+ 	if (ret < 0)
  		return ret;
  
++	ret = acpi_bus_register_driver(&topstar_acpi_driver);
++	if (ret < 0)
++		goto err_driver_unreg;
++
  	pr_info("ACPI extras driver loaded\n");
--
  	return 0;
++
++err_driver_unreg:
++	platform_driver_unregister(&topstar_platform_driver);
++	return ret;
  }
  
+ static void __exit topstar_laptop_exit(void)
+ {
+ 	acpi_bus_unregister_driver(&topstar_acpi_driver);
++	platform_driver_unregister(&topstar_platform_driver);
+ }
+ 
+ module_init(topstar_laptop_init);
 -- 
 2.16.1
