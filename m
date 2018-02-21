@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932182AbeBUJVS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:21:18 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54549 "EHLO
+        id S932201AbeBUJVn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:21:43 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:54575 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbeBUJVK (ORCPT
+        with ESMTP id S932136AbeBUJVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:21:10 -0500
+        Wed, 21 Feb 2018 04:21:11 -0500
 From: Maxime Ripard <maxime.ripard@bootlin.com>
 To: Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -20,9 +20,9 @@ Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 07/10] dt-bindings: panel: Add Huarui LHR050H41 panel documentation
-Date: Wed, 21 Feb 2018 10:20:31 +0100
-Message-Id: <25495bb5034ae6a00442e10eb08254c26c213dda.1519204731.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH v2 08/10] drm/panel: Add Huarui LHR050H41 panel driver
+Date: Wed, 21 Feb 2018 10:20:32 +0100
+Message-Id: <33efcb267bc513bb19551f1ffdcf578ebfb90369.1519204731.git-series.maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
 References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
@@ -34,39 +34,560 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-The LHR050H41 is a 1280x700 4-lanes DSI panel.
+The LHR050H41 panel is the panel shipped with the BananaPi M2-Magic. Add a
+driver for it.
 
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt
+ drivers/gpu/drm/panel/Kconfig                  |   9 +-
+ drivers/gpu/drm/panel/Makefile                 |   1 +-
+ drivers/gpu/drm/panel/panel-huarui-lhr050h41.c | 506 ++++++++++++++++++-
+ 3 files changed, 516 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
 
-diff --git a/Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt b/Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 6ba4031f3919..965310fd129a 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -28,6 +28,15 @@ config DRM_PANEL_SIMPLE
+ 	  that it can be automatically turned off when the panel goes into a
+ 	  low power state.
+ 
++config DRM_PANEL_HUARUI_LHR050H41
++	tristate "Huarui LHR050H41 panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y if you want to enable support for the Huarui Lighting
++	  LHR05041 DSI panel. The panel has a 1280x720 resolution.
++
+ config DRM_PANEL_ILITEK_IL9322
+ 	tristate "Ilitek ILI9322 320x240 QVGA panels"
+ 	depends on OF && SPI
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 6d251ebc568c..0eda133d26bb 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+ obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
++obj-$(CONFIG_DRM_PANEL_HUARUI_LHR050H41) += panel-huarui-lhr050h41.o
+ obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+ obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+ obj-$(CONFIG_DRM_PANEL_JDI_LT070ME05000) += panel-jdi-lt070me05000.o
+diff --git a/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c b/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
 new file mode 100644
-index 000000000000..b254db4d29c5
+index 000000000000..f73d484a695b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt
-@@ -0,0 +1,19 @@
-+Huarui LHR050H41 MIPI-DSI panel
++++ b/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
+@@ -0,0 +1,506 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2017, Free Electrons
++ * Author: Maxime Ripard <maxime.ripard@free-electrons.com>
++ */
 +
-+Required properties:
-+  - compatible: "huarui,lhr050h41"
-+  - reg: DSI virtual channel used by that screen
-+  - power-gpios: a GPIO phandle for the power pin
-+  - reset-gpios: a GPIO phandle for the reset pin
++#include <linux/backlight.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/fb.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
 +
-+Optional properties:
-+  - backlight: phandle to the backlight used
++#include <linux/gpio/consumer.h>
 +
-+Example:
-+panel@0 {
-+	compatible = "huarui,lhr050h41";
-+	reg = <0>;
-+	power-gpios = <&pio 1 7 GPIO_ACTIVE_HIGH>; /* PB07 */
-+	reset-gpios = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL05 */
-+	backlight = <&pwm_bl>;
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++
++#include <video/mipi_display.h>
++
++struct lhr050h41 {
++	struct drm_panel	panel;
++	struct mipi_dsi_device	*dsi;
++
++	struct backlight_device *backlight;
++	struct gpio_desc	*power;
++	struct gpio_desc	*reset;
 +};
++
++enum lhr050h41_op {
++	LHR050H41_SWITCH_PAGE,
++	LHR050H41_COMMAND,
++};
++
++struct lhr050h41_instr {
++	enum lhr050h41_op	op;
++
++	union arg {
++		struct cmd {
++			u8	cmd;
++			u8	data;
++		} cmd;
++		u8	page;
++	} arg;
++};
++
++#define LHR050H41_SWITCH_PAGE_INSTR(_page)	\
++	{					\
++		.op = LHR050H41_SWITCH_PAGE,	\
++		.arg = {			\
++			.page = (_page),	\
++		},				\
++	}
++
++#define LHR050H41_COMMAND_INSTR(_cmd, _data)		\
++	{						\
++		.op = LHR050H41_COMMAND,		\
++		.arg = {				\
++			.cmd = {			\
++				.cmd = (_cmd),		\
++				.data = (_data),	\
++			},				\
++		},					\
++	}
++
++struct lhr050h41_instr lhr050h41_init[] = {
++	LHR050H41_SWITCH_PAGE_INSTR(3),
++	LHR050H41_COMMAND_INSTR(0x01, 0x00),
++	LHR050H41_COMMAND_INSTR(0x02, 0x00),
++	LHR050H41_COMMAND_INSTR(0x03, 0x73),
++	LHR050H41_COMMAND_INSTR(0x04, 0x03),
++	LHR050H41_COMMAND_INSTR(0x05, 0x00),
++	LHR050H41_COMMAND_INSTR(0x06, 0x06),
++	LHR050H41_COMMAND_INSTR(0x07, 0x06),
++	LHR050H41_COMMAND_INSTR(0x08, 0x00),
++	LHR050H41_COMMAND_INSTR(0x09, 0x18),
++	LHR050H41_COMMAND_INSTR(0x0a, 0x04),
++	LHR050H41_COMMAND_INSTR(0x0b, 0x00),
++	LHR050H41_COMMAND_INSTR(0x0c, 0x02),
++	LHR050H41_COMMAND_INSTR(0x0d, 0x03),
++	LHR050H41_COMMAND_INSTR(0x0e, 0x00),
++	LHR050H41_COMMAND_INSTR(0x0f, 0x25),
++	LHR050H41_COMMAND_INSTR(0x10, 0x25),
++	LHR050H41_COMMAND_INSTR(0x11, 0x00),
++	LHR050H41_COMMAND_INSTR(0x12, 0x00),
++	LHR050H41_COMMAND_INSTR(0x13, 0x00),
++	LHR050H41_COMMAND_INSTR(0x14, 0x00),
++	LHR050H41_COMMAND_INSTR(0x15, 0x00),
++	LHR050H41_COMMAND_INSTR(0x16, 0x0C),
++	LHR050H41_COMMAND_INSTR(0x17, 0x00),
++	LHR050H41_COMMAND_INSTR(0x18, 0x00),
++	LHR050H41_COMMAND_INSTR(0x19, 0x00),
++	LHR050H41_COMMAND_INSTR(0x1a, 0x00),
++	LHR050H41_COMMAND_INSTR(0x1b, 0x00),
++	LHR050H41_COMMAND_INSTR(0x1c, 0x00),
++	LHR050H41_COMMAND_INSTR(0x1d, 0x00),
++	LHR050H41_COMMAND_INSTR(0x1e, 0xC0),
++	LHR050H41_COMMAND_INSTR(0x1f, 0x80),
++	LHR050H41_COMMAND_INSTR(0x20, 0x04),
++	LHR050H41_COMMAND_INSTR(0x21, 0x01),
++	LHR050H41_COMMAND_INSTR(0x22, 0x00),
++	LHR050H41_COMMAND_INSTR(0x23, 0x00),
++	LHR050H41_COMMAND_INSTR(0x24, 0x00),
++	LHR050H41_COMMAND_INSTR(0x25, 0x00),
++	LHR050H41_COMMAND_INSTR(0x26, 0x00),
++	LHR050H41_COMMAND_INSTR(0x27, 0x00),
++	LHR050H41_COMMAND_INSTR(0x28, 0x33),
++	LHR050H41_COMMAND_INSTR(0x29, 0x03),
++	LHR050H41_COMMAND_INSTR(0x2a, 0x00),
++	LHR050H41_COMMAND_INSTR(0x2b, 0x00),
++	LHR050H41_COMMAND_INSTR(0x2c, 0x00),
++	LHR050H41_COMMAND_INSTR(0x2d, 0x00),
++	LHR050H41_COMMAND_INSTR(0x2e, 0x00),
++	LHR050H41_COMMAND_INSTR(0x2f, 0x00),
++	LHR050H41_COMMAND_INSTR(0x30, 0x00),
++	LHR050H41_COMMAND_INSTR(0x31, 0x00),
++	LHR050H41_COMMAND_INSTR(0x32, 0x00),
++	LHR050H41_COMMAND_INSTR(0x33, 0x00),
++	LHR050H41_COMMAND_INSTR(0x34, 0x04),
++	LHR050H41_COMMAND_INSTR(0x35, 0x00),
++	LHR050H41_COMMAND_INSTR(0x36, 0x00),
++	LHR050H41_COMMAND_INSTR(0x37, 0x00),
++	LHR050H41_COMMAND_INSTR(0x38, 0x3C),
++	LHR050H41_COMMAND_INSTR(0x39, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3a, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3b, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3c, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3d, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3e, 0x00),
++	LHR050H41_COMMAND_INSTR(0x3f, 0x00),
++	LHR050H41_COMMAND_INSTR(0x40, 0x00),
++	LHR050H41_COMMAND_INSTR(0x41, 0x00),
++	LHR050H41_COMMAND_INSTR(0x42, 0x00),
++	LHR050H41_COMMAND_INSTR(0x43, 0x00),
++	LHR050H41_COMMAND_INSTR(0x44, 0x00),
++	LHR050H41_COMMAND_INSTR(0x50, 0x01),
++	LHR050H41_COMMAND_INSTR(0x51, 0x23),
++	LHR050H41_COMMAND_INSTR(0x52, 0x45),
++	LHR050H41_COMMAND_INSTR(0x53, 0x67),
++	LHR050H41_COMMAND_INSTR(0x54, 0x89),
++	LHR050H41_COMMAND_INSTR(0x55, 0xab),
++	LHR050H41_COMMAND_INSTR(0x56, 0x01),
++	LHR050H41_COMMAND_INSTR(0x57, 0x23),
++	LHR050H41_COMMAND_INSTR(0x58, 0x45),
++	LHR050H41_COMMAND_INSTR(0x59, 0x67),
++	LHR050H41_COMMAND_INSTR(0x5a, 0x89),
++	LHR050H41_COMMAND_INSTR(0x5b, 0xab),
++	LHR050H41_COMMAND_INSTR(0x5c, 0xcd),
++	LHR050H41_COMMAND_INSTR(0x5d, 0xef),
++	LHR050H41_COMMAND_INSTR(0x5e, 0x11),
++	LHR050H41_COMMAND_INSTR(0x5f, 0x02),
++	LHR050H41_COMMAND_INSTR(0x60, 0x02),
++	LHR050H41_COMMAND_INSTR(0x61, 0x02),
++	LHR050H41_COMMAND_INSTR(0x62, 0x02),
++	LHR050H41_COMMAND_INSTR(0x63, 0x02),
++	LHR050H41_COMMAND_INSTR(0x64, 0x02),
++	LHR050H41_COMMAND_INSTR(0x65, 0x02),
++	LHR050H41_COMMAND_INSTR(0x66, 0x02),
++	LHR050H41_COMMAND_INSTR(0x67, 0x02),
++	LHR050H41_COMMAND_INSTR(0x68, 0x02),
++	LHR050H41_COMMAND_INSTR(0x69, 0x02),
++	LHR050H41_COMMAND_INSTR(0x6a, 0x0C),
++	LHR050H41_COMMAND_INSTR(0x6b, 0x02),
++	LHR050H41_COMMAND_INSTR(0x6c, 0x0F),
++	LHR050H41_COMMAND_INSTR(0x6d, 0x0E),
++	LHR050H41_COMMAND_INSTR(0x6e, 0x0D),
++	LHR050H41_COMMAND_INSTR(0x6f, 0x06),
++	LHR050H41_COMMAND_INSTR(0x70, 0x07),
++	LHR050H41_COMMAND_INSTR(0x71, 0x02),
++	LHR050H41_COMMAND_INSTR(0x72, 0x02),
++	LHR050H41_COMMAND_INSTR(0x73, 0x02),
++	LHR050H41_COMMAND_INSTR(0x74, 0x02),
++	LHR050H41_COMMAND_INSTR(0x75, 0x02),
++	LHR050H41_COMMAND_INSTR(0x76, 0x02),
++	LHR050H41_COMMAND_INSTR(0x77, 0x02),
++	LHR050H41_COMMAND_INSTR(0x78, 0x02),
++	LHR050H41_COMMAND_INSTR(0x79, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7a, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7b, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7c, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7d, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7e, 0x02),
++	LHR050H41_COMMAND_INSTR(0x7f, 0x02),
++	LHR050H41_COMMAND_INSTR(0x80, 0x0C),
++	LHR050H41_COMMAND_INSTR(0x81, 0x02),
++	LHR050H41_COMMAND_INSTR(0x82, 0x0F),
++	LHR050H41_COMMAND_INSTR(0x83, 0x0E),
++	LHR050H41_COMMAND_INSTR(0x84, 0x0D),
++	LHR050H41_COMMAND_INSTR(0x85, 0x06),
++	LHR050H41_COMMAND_INSTR(0x86, 0x07),
++	LHR050H41_COMMAND_INSTR(0x87, 0x02),
++	LHR050H41_COMMAND_INSTR(0x88, 0x02),
++	LHR050H41_COMMAND_INSTR(0x89, 0x02),
++	LHR050H41_COMMAND_INSTR(0x8A, 0x02),
++	LHR050H41_SWITCH_PAGE_INSTR(4),
++	LHR050H41_COMMAND_INSTR(0x6C, 0x15),
++	LHR050H41_COMMAND_INSTR(0x6E, 0x22),
++	LHR050H41_COMMAND_INSTR(0x6F, 0x33),
++	LHR050H41_COMMAND_INSTR(0x3A, 0xA4),
++	LHR050H41_COMMAND_INSTR(0x8D, 0x0D),
++	LHR050H41_COMMAND_INSTR(0x87, 0xBA),
++	LHR050H41_COMMAND_INSTR(0x26, 0x76),
++	LHR050H41_COMMAND_INSTR(0xB2, 0xD1),
++	LHR050H41_SWITCH_PAGE_INSTR(1),
++	LHR050H41_COMMAND_INSTR(0x22, 0x0A),
++	LHR050H41_COMMAND_INSTR(0x53, 0xDC),
++	LHR050H41_COMMAND_INSTR(0x55, 0xA7),
++	LHR050H41_COMMAND_INSTR(0x50, 0x78),
++	LHR050H41_COMMAND_INSTR(0x51, 0x78),
++	LHR050H41_COMMAND_INSTR(0x31, 0x02),
++	LHR050H41_COMMAND_INSTR(0x60, 0x14),
++	LHR050H41_COMMAND_INSTR(0xA0, 0x2A),
++	LHR050H41_COMMAND_INSTR(0xA1, 0x39),
++	LHR050H41_COMMAND_INSTR(0xA2, 0x46),
++	LHR050H41_COMMAND_INSTR(0xA3, 0x0e),
++	LHR050H41_COMMAND_INSTR(0xA4, 0x12),
++	LHR050H41_COMMAND_INSTR(0xA5, 0x25),
++	LHR050H41_COMMAND_INSTR(0xA6, 0x19),
++	LHR050H41_COMMAND_INSTR(0xA7, 0x1d),
++	LHR050H41_COMMAND_INSTR(0xA8, 0xa6),
++	LHR050H41_COMMAND_INSTR(0xA9, 0x1C),
++	LHR050H41_COMMAND_INSTR(0xAA, 0x29),
++	LHR050H41_COMMAND_INSTR(0xAB, 0x85),
++	LHR050H41_COMMAND_INSTR(0xAC, 0x1C),
++	LHR050H41_COMMAND_INSTR(0xAD, 0x1B),
++	LHR050H41_COMMAND_INSTR(0xAE, 0x51),
++	LHR050H41_COMMAND_INSTR(0xAF, 0x22),
++	LHR050H41_COMMAND_INSTR(0xB0, 0x2d),
++	LHR050H41_COMMAND_INSTR(0xB1, 0x4f),
++	LHR050H41_COMMAND_INSTR(0xB2, 0x59),
++	LHR050H41_COMMAND_INSTR(0xB3, 0x3F),
++	LHR050H41_COMMAND_INSTR(0xC0, 0x2A),
++	LHR050H41_COMMAND_INSTR(0xC1, 0x3a),
++	LHR050H41_COMMAND_INSTR(0xC2, 0x45),
++	LHR050H41_COMMAND_INSTR(0xC3, 0x0e),
++	LHR050H41_COMMAND_INSTR(0xC4, 0x11),
++	LHR050H41_COMMAND_INSTR(0xC5, 0x24),
++	LHR050H41_COMMAND_INSTR(0xC6, 0x1a),
++	LHR050H41_COMMAND_INSTR(0xC7, 0x1c),
++	LHR050H41_COMMAND_INSTR(0xC8, 0xaa),
++	LHR050H41_COMMAND_INSTR(0xC9, 0x1C),
++	LHR050H41_COMMAND_INSTR(0xCA, 0x29),
++	LHR050H41_COMMAND_INSTR(0xCB, 0x96),
++	LHR050H41_COMMAND_INSTR(0xCC, 0x1C),
++	LHR050H41_COMMAND_INSTR(0xCD, 0x1B),
++	LHR050H41_COMMAND_INSTR(0xCE, 0x51),
++	LHR050H41_COMMAND_INSTR(0xCF, 0x22),
++	LHR050H41_COMMAND_INSTR(0xD0, 0x2b),
++	LHR050H41_COMMAND_INSTR(0xD1, 0x4b),
++	LHR050H41_COMMAND_INSTR(0xD2, 0x59),
++	LHR050H41_COMMAND_INSTR(0xD3, 0x3F),
++};
++
++static inline struct lhr050h41 *panel_to_lhr050h41(struct drm_panel *panel)
++{
++	return container_of(panel, struct lhr050h41, panel);
++}
++
++static int lhr050h41_switch_page(struct lhr050h41 *ctx, u8 page)
++{
++	u8 buf[4] = { 0xff, 0x98, 0x81, page };
++	int ret;
++
++	ret = mipi_dsi_dcs_write_buffer(ctx->dsi, buf, sizeof(buf));
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int lhr050h41_send_cmd_data(struct lhr050h41 *ctx, u8 cmd, u8 data)
++{
++	u8 buf[2] = { cmd, data };
++	int ret;
++
++	ret = mipi_dsi_dcs_write_buffer(ctx->dsi, buf, sizeof(buf));
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int lhr050h41_prepare(struct drm_panel *panel)
++{
++	struct lhr050h41 *ctx = panel_to_lhr050h41(panel);
++	int i, ret;
++
++	/* Power the panel */
++	gpiod_set_value(ctx->power, 1);
++	mdelay(5);
++
++	/* And reset it */
++	gpiod_set_value(ctx->reset, 1);
++	mdelay(20);
++
++	gpiod_set_value(ctx->reset, 0);
++	mdelay(20);
++
++	for (i = 0; i < ARRAY_SIZE(lhr050h41_init); i++) {
++		struct lhr050h41_instr *instr = &lhr050h41_init[i];
++
++		if (instr->op == LHR050H41_SWITCH_PAGE)
++			ret = lhr050h41_switch_page(ctx, instr->arg.page);
++		else if (instr->op == LHR050H41_COMMAND)
++			ret = lhr050h41_send_cmd_data(ctx, instr->arg.cmd.cmd,
++						      instr->arg.cmd.data);
++
++		if (ret)
++			return ret;
++	}
++
++	ret = lhr050h41_switch_page(ctx, 0);
++	if (ret)
++		return ret;
++
++	ret = mipi_dsi_dcs_set_tear_on(ctx->dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
++	if (ret)
++		return ret;
++
++	mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void lhr050h41_enable_bl(struct lhr050h41 *ctx, bool enable)
++{
++	if (!ctx->backlight)
++		return;
++
++	if (enable) {
++		ctx->backlight->props.state &= ~BL_CORE_FBBLANK;
++		ctx->backlight->props.power = FB_BLANK_UNBLANK;
++	} else {
++		ctx->backlight->props.power = FB_BLANK_POWERDOWN;
++		ctx->backlight->props.state |= BL_CORE_FBBLANK;
++	}
++
++	backlight_update_status(ctx->backlight);
++}
++
++static int lhr050h41_enable(struct drm_panel *panel)
++{
++	struct lhr050h41 *ctx = panel_to_lhr050h41(panel);
++
++	mdelay(120);
++
++	mipi_dsi_dcs_set_display_on(ctx->dsi);
++
++	lhr050h41_enable_bl(ctx, true);
++
++	return 0;
++}
++
++static int lhr050h41_disable(struct drm_panel *panel)
++{
++	struct lhr050h41 *ctx = panel_to_lhr050h41(panel);
++
++	lhr050h41_enable_bl(ctx, false);
++
++	return mipi_dsi_dcs_set_display_off(ctx->dsi);
++}
++
++static int lhr050h41_unprepare(struct drm_panel *panel)
++{
++	struct lhr050h41 *ctx = panel_to_lhr050h41(panel);
++
++	mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
++	gpiod_set_value(ctx->power, 0);
++	gpiod_set_value(ctx->reset, 1);
++
++	return 0;
++}
++
++static const struct drm_display_mode default_mode = {
++	.clock		= 62000,
++	.vrefresh	= 60,
++
++	.hdisplay	= 720,
++	.hsync_start	= 720 + 10,
++	.hsync_end	= 720 + 10 + 20,
++	.htotal		= 720 + 10 + 20 + 30,
++
++	.vdisplay	= 1280,
++	.vsync_start	= 1280 + 10,
++	.vsync_end	= 1280 + 10 + 10,
++	.vtotal		= 1280 + 10 + 10 + 20,
++};
++
++static int lhr050h41_get_modes(struct drm_panel *panel)
++{
++	struct drm_connector *connector = panel->connector;
++	struct lhr050h41 *ctx = panel_to_lhr050h41(panel);
++	struct drm_display_mode *mode;
++
++	mode = drm_mode_duplicate(panel->drm, &default_mode);
++	if (!mode) {
++		dev_err(&ctx->dsi->dev, "failed to add mode %ux%ux@%u\n",
++			default_mode.hdisplay, default_mode.vdisplay,
++			default_mode.vrefresh);
++		return -ENOMEM;
++	}
++
++	drm_mode_set_name(mode);
++
++	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
++	drm_mode_probed_add(connector, mode);
++
++	panel->connector->display_info.width_mm = 62;
++	panel->connector->display_info.height_mm = 110;
++
++	return 1;
++}
++
++static const struct drm_panel_funcs lhr050h41_funcs = {
++	.prepare	= lhr050h41_prepare,
++	.unprepare	= lhr050h41_unprepare,
++	.enable		= lhr050h41_enable,
++	.disable	= lhr050h41_disable,
++	.get_modes	= lhr050h41_get_modes,
++};
++
++static int lhr050h41_dsi_probe(struct mipi_dsi_device *dsi)
++{
++	struct device_node *np;
++	struct lhr050h41 *ctx;
++	int ret;
++
++	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	mipi_dsi_set_drvdata(dsi, ctx);
++	ctx->dsi = dsi;
++
++	drm_panel_init(&ctx->panel);
++	ctx->panel.dev = &dsi->dev;
++	ctx->panel.funcs = &lhr050h41_funcs;
++
++	ctx->power = devm_gpiod_get(&dsi->dev, "power", GPIOD_OUT_LOW);
++	if (IS_ERR(ctx->power)) {
++		dev_err(&dsi->dev, "Couldn't get our power GPIO\n");
++		return PTR_ERR(ctx->power);
++	}
++
++	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(ctx->reset)) {
++		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
++		return PTR_ERR(ctx->reset);
++	}
++
++	np = of_parse_phandle(dsi->dev.of_node, "backlight", 0);
++	if (np) {
++		ctx->backlight = of_find_backlight_by_node(np);
++		of_node_put(np);
++
++		if (!ctx->backlight)
++			return -EPROBE_DEFER;
++	}
++
++	ret = drm_panel_add(&ctx->panel);
++	if (ret < 0)
++		return ret;
++
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->lanes = 4;
++
++	return mipi_dsi_attach(dsi);
++}
++
++static int lhr050h41_dsi_remove(struct mipi_dsi_device *dsi)
++{
++	struct lhr050h41 *ctx = mipi_dsi_get_drvdata(dsi);
++
++	mipi_dsi_detach(dsi);
++	drm_panel_remove(&ctx->panel);
++
++	if (ctx->backlight)
++		put_device(&ctx->backlight->dev);
++
++	return 0;
++}
++
++static const struct of_device_id lhr050h41_of_match[] = {
++	{ .compatible = "huarui,lhr050h41" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lhr050h41_of_match);
++
++static struct mipi_dsi_driver lhr050h41_dsi_driver = {
++	.probe		= lhr050h41_dsi_probe,
++	.remove		= lhr050h41_dsi_remove,
++	.driver = {
++		.name		= "lhr050h41-dsi",
++		.of_match_table	= lhr050h41_of_match,
++	},
++};
++module_mipi_dsi_driver(lhr050h41_dsi_driver);
++
++MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
++MODULE_DESCRIPTION("Huarui LHR050H41 LCD Driver");
++MODULE_LICENSE("GPL v2");
 -- 
 git-series 0.9.1
