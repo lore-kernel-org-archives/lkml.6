@@ -1,62 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752455AbeBUTQo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:16:44 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46653 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbeBUTQ1 (ORCPT
+        id S1751585AbeBUTSl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:18:41 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:34016 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751295AbeBUTSk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:16:27 -0500
-X-Google-Smtp-Source: AH8x225xYihXnmGgwJohi5qvRS4b86//RysdyKzUGo5+8AHYneq7qOPSxv3hoZTylY4QOaYIUKhvI940kbSN2ObYprY=
-MIME-Version: 1.0
-In-Reply-To: <20180221175734.39114-1-Evgeniy.Didin@synopsys.com>
-References: <20180221175734.39114-1-Evgeniy.Didin@synopsys.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Feb 2018 21:16:26 +0200
-Message-ID: <CAHp75VfyQz-W7DLJ4KvFRCPkOUnP3YQjSzn+Zsbx92Xb-x4GqA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: Fix the DTO timeout overflow calculation for
- 32-bit systems
-To: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-Cc: linux-mmc@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Feb 2018 14:18:40 -0500
+Date: Wed, 21 Feb 2018 14:18:38 -0500 (EST)
+Message-Id: <20180221.141838.385638704106855180.davem@davemloft.net>
+To: gustavo@embeddedor.com
+Cc: santosh.shilimkar@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, garsilva@embeddedor.com
+Subject: Re: [PATCH] rds: send: mark expected switch fall-through in
+ rds_rm_size
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180219181020.GA19154@embeddedgus>
+References: <20180219181020.GA19154@embeddedgus>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 7:57 PM, Evgeniy Didin
-<Evgeniy.Didin@synopsys.com> wrote:
-> In commit 9d9491a7da2a ("mmc: dw_mmc: Fix the DTO timeout calculation") have been made
-> changes which can cause multiply overflow for 32-bit systems. It was caught on arc/hsdk board
-> when "drto_ms" should be 671, but it was 70 and that caused a flow of stack-traces just copying
-> file from mmc.
->
-> Lets cast this multiply to long long int which prevents overflow.
->
-> Signed-off-by: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-> CC: Alexey Brodkin <abrodkin@synopsys.com>
-> CC: Douglas Anderson <dianders@chromium.org>
-> CC: Ulf Hansson <ulf.hansson@linaro.org>
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-snps-arc@lists.infradead.org
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Mon, 19 Feb 2018 12:10:20 -0600
 
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1944,7 +1944,7 @@ static void dw_mci_set_drto(struct dw_mci *host)
->         drto_div = (mci_readl(host, CLKDIV) & 0xff) * 2;
->         if (drto_div == 0)
->                 drto_div = 1;
-> -       drto_ms = DIV_ROUND_UP(MSEC_PER_SEC * drto_clks * drto_div,
-> +       drto_ms = DIV_ROUND_UP((uint64_t)MSEC_PER_SEC * drto_clks * drto_div,
->                                host->bus_hz);
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Addresses-Coverity-ID: 1465362 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Does the driver use uint64_t elsewhere?
-Or simple u64?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Applied.
