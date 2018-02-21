@@ -1,116 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751452AbeBUDfq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 22:35:46 -0500
-Received: from sonic311-15.consmr.mail.bf2.yahoo.com ([74.6.131.125]:33483
-        "EHLO sonic311-15.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751180AbeBUDfo (ORCPT
+        id S1751492AbeBUDf6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 22:35:58 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42709 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBUDfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 22:35:44 -0500
-X-YMail-OSG: 1lbsgXAVM1mtKYxP45Uuvu36wpPmlztzaFvx4k9QQ36CoeE621qgqtzf8CUF_bQ
- vJbdh_5TQltSiGSNOz24RCERVZ2Cr06aXT7CaiLLamnRxPeUfjBdmKD_ud_WyQegfqTK02iKArMo
- D3.g65FSpQ04nVMeqI3o8KYkwWYsleEYypcFy8QdQDRyOTdZQN4AYZNkA2XxRjeKRte9x9z4XCmS
- 3Z6akWNA1B.v_1SneWhH9KshdB7d796eG5twO8ubAZtlO.xuV3sz7LBLGKdQ9kSnrigSNgSzrLEf
- H4N5jzPTApXJtMnruqQyt2jRruVhLdSB0p6pk3QfdQktnPg.lBr9s6aO86pLZWKIxazqc.0kOEN6
- R179h2jUFlSBAVVXHn_9Qtm9eOWxFFCvXa8oBQ_5eLz8ZuoGPlxGZQvQfB1PBxkAuWZBFx5aVbCB
- d4eubdmGLbBApjiYIoR_IldCvVEZKMalnorz3V5nz4PdY7aas1zTYoQgcLxLVi22B5RxVw0cl82A
- NEqzrFcv7hSDKSbXoeSpt
-Date: Wed, 21 Feb 2018 03:35:31 +0000 (UTC)
-From: Denis Du <dudenis2000@yahoo.ca>
-To: David Miller <davem@davemloft.net>
-Cc: <khc@pm.waw.pl>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Message-ID: <1603547691.2507241.1519184131708@mail.yahoo.com>
-In-Reply-To: <2005408285.4065183.1517935842178@mail.yahoo.com>
-References: <998451043.3408644.1516727290310@mail.yahoo.com> <m3r2qavz73.fsf@pm.waw.pl> <438911112.3985245.1517930128335@mail.yahoo.com> <20180206.102943.1688399898359622454.davem@davemloft.net> <2005408285.4065183.1517935842178@mail.yahoo.com>
-Subject: Re: [PATCH] Carrier detect ok, don't turn off negotiation
+        Tue, 20 Feb 2018 22:35:55 -0500
+X-Google-Smtp-Source: AH8x227tDCzcgY/yY1XR4e5gEzK5PmvtR6BlNcLR+wu2YVtO/QRXB0EbXI1rhmoYa5FB4hUbLnPjRw==
+Date: Wed, 21 Feb 2018 09:05:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] cpufreq: scpi: invoke frequency-invariance setter
+ function
+Message-ID: <20180221033551.GN28462@vireshk-i7>
+References: <20180220111057.14756-1-dietmar.eggemann@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Mailer: WebService/1.1.11419 YMailNorrin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180220111057.14756-1-dietmar.eggemann@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1L3a5nr005435
 
-Hi, David:
-
-How  is your thinking about this patch?
-
-
-
->From b5902a4dfc709b62b704997ab64f31c9ef69a6db Mon Sep 17 00:00:00 2001 
-From: Denis Du <dudenis2000@yahoo.ca> 
-Date: Mon, 15 Jan 2018 17:26:06 -0500 
-Subject: [PATCH] netdev: carrier detect ok, don't turn off negotiation 
-
-Sometimes when physical lines have a just good noise to make the protocol 
-handshaking fail, but the carrier detect still good. Then after remove of 
-the noise, nobody will trigger this protocol to be start again to cause 
-the link to never come back. The fix is when the carrier is still on, not 
-terminate the protocol handshaking. 
-
-Signed-off-by: Denis Du <dudenis2000@yahoo.ca> 
---- 
-drivers/net/wan/hdlc_ppp.c | 5 ++++- 
-1 file changed, 4 insertions(+), 1 deletion(-) 
-
-diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c 
-index afeca6b..ab8b3cb 100644 
---- a/drivers/net/wan/hdlc_ppp.c 
-+++ b/drivers/net/wan/hdlc_ppp.c 
-@@ -574,7 +574,10 @@ static void ppp_timer(struct timer_list *t) 
-            ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0, 
-                     0, NULL); 
-            proto->restart_counter--; 
--        } else 
-+        } else if (netif_carrier_ok(proto->dev)) 
-+            ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0, 
-+                     0, NULL); 
-+        else 
-            ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0, 
-                     0, NULL); 
-        break; 
--- 
-2.1.4 
-
-
-
-
-
-On ‎Tuesday‎, ‎February‎ ‎06‎, ‎2018‎ ‎12‎:‎06‎:‎43‎ ‎PM‎ ‎EST, Denis Du <dudenis2000@yahoo.ca> wrote: 
-
-
-
-
-
-
-
-Ok, I submit it  again.
-
-
-In drivers/net/wan/hdlc_ppp.c, some noise on physical line can cause the carrier detect still ok, but the protocol will fail. So if carrier detect ok, don't turn off protocol negotiation
-
-This patch is against the kernel version Linux 4.15-rc8
-
-
-
-
-
-On Tuesday, February 6, 2018, 10:29:53 AM EST, David Miller <davem@davemloft.net> wrote: 
-
-
-
-
-
-From: Denis Du <dudenis2000@yahoo.ca>
-
-Date: Tue, 6 Feb 2018 15:15:28 +0000 (UTC)
-
-> How  do you think my patch?
+On 20-02-18, 11:10, Dietmar Eggemann wrote:
+> Commit 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+> changed the cpufreq driver on juno from arm_big_little to scpi.
 > 
-> As you see, Krzysztof  think my patch is ok to be accepted.
-> But if you have a better idea to fix it,I am glad to see it. Anyway, this issue have to be fixed.
+> The scpi set_target function does not call the frequency-invariance
+> setter function arch_set_freq_scale() like the arm_big_little set_target
+> function does. As a result the task scheduler load and utilization
+> signals are not frequency-invariant on this platform anymore.
+> 
+> Fix this by adding a call to arch_set_freq_scale() into
+> scpi_cpufreq_set_target().
+> 
+> Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/cpufreq/scpi-cpufreq.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+> index c32a833e1b00..3101d4e9c2de 100644
+> --- a/drivers/cpufreq/scpi-cpufreq.c
+> +++ b/drivers/cpufreq/scpi-cpufreq.c
+> @@ -51,13 +51,19 @@ static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
+>  static int
+>  scpi_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+>  {
+> +	unsigned long freq = policy->freq_table[index].frequency;
+>  	struct scpi_data *priv = policy->driver_data;
+> -	u64 rate = policy->freq_table[index].frequency * 1000;
+> +	u64 rate = freq * 1000;
+>  	int ret;
+>  
+>  	ret = clk_set_rate(priv->clk, rate);
+> -	if (!ret && (clk_get_rate(priv->clk) != rate))
+> -		ret = -EIO;
+> +	if (!ret) {
+> +		if (clk_get_rate(priv->clk) != rate)
+> +			ret = -EIO;
+> +
+> +		arch_set_freq_scale(policy->related_cpus, freq,
+> +				    policy->cpuinfo.max_freq);
+> +	}
+>  
+>  	return ret;
+>  }
 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Please resubmit it and I'll think about it again, thank you.
+-- 
+viresh
