@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225WJ4Pln5rO/49fXX0mjGX7R1xXnOC2J+K45ZZ47VpVBjJxdQtOh/7nQVDxdhC+xOGRTiCk
-ARC-Seal: i=1; a=rsa-sha256; t=1519217733; cv=none;
+X-Google-Smtp-Source: AH8x227fQuWKQPb4Ay+91OTSNW9DhoL4O72eEhu9ne3rH+m5NnY90zs8ONnqHGr/TtOM9wrahBvQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519217728; cv=none;
         d=google.com; s=arc-20160816;
-        b=xFR9JyauJHZjoFS0HQ0DFixqHRkR9tt7OgBrq2AIoql1RpLvR+21QlHQaD4WP476JJ
-         a3oNfg88sp4qgiCNeqJJP2+IH1Dr4O/Q2je1FRJgk+M3qg+Yb2rjotPI0eMh2dYXMWqn
-         rKAscRCErW7kC8xP35vuh2BT9EhEgdGhQ97hd+EvurrTsZeQWkW9egWm6yjzklwXUcfW
-         bT5eSi3o+8ysR0/yqc/MV9HG/Q7ZEUR6gNX6RQZqI2JCmP/RF8keStTcgKVoXkKV4qyE
-         C4pJ19ESFwN7ipVp+n9l2oz+qII/xyUhtggccP20f+vT3YHAQIzUyvag3HYbw+bYcKbS
-         FeYA==
+        b=tndErs3PKdbityhV5Dw2dzI1VfZK7IDOiORLoKkxp+EarhUJ03J5xj4EiN0FR1xkZ8
+         VUx3srS59D6WY5UnmcVq/ZoxR/3At+BHlgGdvUS0r66rCmYSMWaFFfqMBNBKOQaM/j1L
+         FvsuLqkvpJz2BPi+ZfvvQNTE9j6FTQ/RSbiWypj2Z8JW0zvcaCl48ZIpuxykbw1sygTd
+         +O8YKmwNPHRbEwTC2OT2h3jpBrSjtfGuDw88tLLkGd4LoEmhWzHuA4gfb4MDiZgkMjPY
+         +VrkvYHgcCY6KT7EKiGvjV3pDNiwRfZFVbJ1unDHBRU7dFrf9mxenzJTziMgzD4m7HlZ
+         YfvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=66/yDDJmFU04YoiDsPVnv8WNv/3PXvqJwS7XRc1uQZI=;
-        b=YpdXF/jd4ZZgNVgW7aRj1ea1I95XvGeP3C08i1A/8MImXMs49DWk6mEVTlNKbvSlDF
-         TMlJDRyWn5x3OIRCZ+IFU3MQbBehBJUpnwW0pGgrHtdV4+xxZD0QlzUoYBkFUFwDTN0c
-         N/GXEdYnbUdfP8EAr7gnmm9qkDJrfBmpG4vc/ZfwPy7IOPXQQ+u0AKtqf9PJQjGx048k
-         lvLHYDqIm6a0QMhwfqf1kOOTvhWZ8TB8C4ATGtoNjgXmCfM92ZhptYJg54LKxLEuBbeX
-         4s0xEC4Qan3UeKHrJyPeBDThy4ehf0YfTCFJ2yywQyZ54kIWYCT9BLF3z4vvI/3AQmYB
-         a1Gw==
+        bh=LluB5H22ZRuAVRx41cnTKlXDww0NzfxAMOoVcDHYqfs=;
+        b=P/SuU96n8Ndd1Fa3hXF/ni/wWnj6D6K5NE+hJ4qIljayi4twbNLY+T0lSs0VGYF3Rg
+         +iWy4jWEQ/bcs5qhU6dEsHM8Gz96iEqe2rTVIg2eNRYmkMTB9F1O9mUr7zOsPTEoAPEO
+         oLj7RSfL8kjuVjDSWF/KZzQmYj/A1SlyLKRGkD80vUxZtIB0taemrh9o4tfCl800RSLY
+         BsK/Hmzcd5/Z1CCTHgfzT3XWVk+c6VB/ECpdqwEc6lNXYLNuulR4rbbi2Uk0pFvmUJPE
+         hoptnq+6OiG1d6cTe27Rnu2XbiVoH8TIWyeKTE99SVjTG8sIW2Hl1uCbECy6Uj6HCNEv
+         ExmA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhouyi Zhou <zhouzhouyi@gmail.com>,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 08/77] ext4: save error to disk in __ext4_grp_locked_error()
-Date: Wed, 21 Feb 2018 13:48:17 +0100
-Message-Id: <20180221124432.521698126@linuxfoundation.org>
+	NeilBrown <neilb@suse.com>,
+	Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 33/77] dm: correctly handle chained bios in dec_pending()
+Date: Wed, 21 Feb 2018 13:48:42 +0100
+Message-Id: <20180221124433.581232888@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014620343797175?=
-X-GMAIL-MSGID: =?utf-8?q?1593015254602546777?=
+X-GMAIL-THRID: =?utf-8?q?1593014686624050782?=
+X-GMAIL-MSGID: =?utf-8?q?1593015248786280655?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+From: NeilBrown <neilb@suse.com>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
+commit 8dd601fa8317243be887458c49f6c29c2f3d719f upstream.
 
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
+dec_pending() is given an error status (possibly 0) to be recorded
+against a bio.  It can be called several times on the one 'struct
+dm_io', and it is careful to only assign a non-zero error to
+io->status.  However when it then assigned io->status to bio->bi_status,
+it is not careful and could overwrite a genuine error status with 0.
 
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
+This can happen when chained bios are in use.  If a bio is chained
+beneath the bio that this dm_io is handling, the child bio might
+complete and set bio->bi_status before the dm_io completes.
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+This has been possible since chained bios were introduced in 3.14, and
+has become a lot easier to trigger with commit 18a25da84354 ("dm: ensure
+bio submission follows a depth-first tree walk") as that commit caused
+dm to start using chained bios itself.
+
+A particular failure mode is that if a bio spans an 'error' target and a
+working target, the 'error' fragment will complete instantly and set the
+->bi_status, and the other fragment will normally complete a little
+later, and will clear ->bi_status.
+
+The fix is simply to only assign io_error to bio->bi_status when
+io_error is not zero.
+
+Reported-and-tested-by: Milan Broz <gmazyland@gmail.com>
+Cc: stable@vger.kernel.org (v3.14+)
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/ext4/super.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -720,6 +720,7 @@ __acquires(bitlock)
+---
+ drivers/md/dm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -809,7 +809,8 @@ static void dec_pending(struct dm_io *io
+ 		} else {
+ 			/* done with normal IO or empty flush */
+ 			trace_block_bio_complete(md->queue, bio, io_error);
+-			bio->bi_error = io_error;
++			if (io_error)
++				bio->bi_error = io_error;
+ 			bio_endio(bio);
+ 		}
  	}
- 
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
