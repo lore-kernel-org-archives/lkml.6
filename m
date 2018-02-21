@@ -1,103 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937964AbeBUOnM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:43:12 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:58740 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937940AbeBUOnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:43:09 -0500
-Subject: Re: mainline build: 15 warnings 0 failures
- (mainline/v4.16-rc2-64-gaf3e79d)
-To: Arnd Bergmann <arnd@arndb.de>, "Olof's autobuilder" <build@lixom.net>
-References: <5a8c6a34.8880a70a.2a9a1.afc7@mx.google.com>
- <CAK8P3a0OaN6QjPdTXXXzMeYQt+WnMfvVuhza5Rb2wqdq_iEFVA@mail.gmail.com>
-CC: Olof Johansson <olof@lixom.net>,
-        Kernel Build Reports Mailman List
-        <kernel-build-reports@lists.linaro.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, <selvin.xavier@broadcom.com>,
-        <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        <sriharsha.basavapatna@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <7b724d51-52b8-6cbf-2a9d-f44f3de28dc8@ti.com>
-Date: Wed, 21 Feb 2018 20:12:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S935145AbeBUOpP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:45:15 -0500
+Received: from mout.gmx.net ([212.227.17.20]:52743 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932639AbeBUOpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:45:14 -0500
+Date: Wed, 21 Feb 2018 15:44:10 +0100
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: christophe leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
+        Joel Stanley <joel@jms.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 1/6] powerpc/mm/32: Use pfn_valid to check if pointer is
+ in RAM
+Message-ID: <20180221144410.ckm4m366scrgk2rm@latitude>
+References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
+ <20180220161424.5421-2-j.neuschaefer@gmx.net>
+ <0d14cb2c-dd00-d258-cb15-302b2a9d684f@c-s.fr>
+ <20180221135119.d3qgvdck5yruomi7@latitude>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0OaN6QjPdTXXXzMeYQt+WnMfvVuhza5Rb2wqdq_iEFVA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="fphdnp5fz5oqdxfs"
+Content-Disposition: inline
+In-Reply-To: <20180221135119.d3qgvdck5yruomi7@latitude>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K0:ac994PAmcl2wrTMaDfwezMjVQo4p/TKxdZvtptydIM7hzmdWXR8
+ KCsYMl1iPrsHT3J/+Af/ub79IjM+0lTo64R+9Iizq1hYvymYWC7jC5N4pZTVxLJe8+0Vbh2
+ aOzD9Hgx2BC0zvXM5ibA6dtaQVrAqs/pIPTljmlZa7FPtLS6UEVisRj4VhbYHL6FmU1Z1l3
+ 0dSVU57uQ40m9sMj8VhSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JAFoGgN/qhg=:a62T0XYHiTUIxkksWreuRy
+ OKZtwFsNCfnDOXJCntOU2j6Mdz30x56OVXDkONJzV8F+A9Dxh6ypNIUEnyRN3n8SAjh1SA+AH
+ vjHqntOkXjB8xC2dzO6d8pgI5NpIBB79A+EWwwaoAs386VgOfrPr36ZBsrAAYMh9qA7CTQxCD
+ FWB4yrZCeVKfmV+RKa2RxY4DscVwelQ9rMD3/Fnqu0d0ii6QEZvY/59neDKdAxQQrHrEwSoqX
+ U1TF353Alwjo8mZ2HBSM1FWxqgLTDDwdjYs8eJrk5UdAhDanlyNSOchwqb+iiRNC+prcuII2N
+ niMqNiuZZwU0S1GsHiAcpRUMEeAJhAbvtBbky1F7Hg15ogfQxxHsSOAzreQmpqDv6BoV45+8N
+ UjA1luo/o1OvcpK5wOhlU+EiBDjW/VTf2VeYwxUQznWKYSGZvgApPgbSGLEznWLx88lDC1IDR
+ J86ACFm/XdfXObQK8HpAw3EbMCIzXu2nd1PmlljgqlNoXM+Sjo6TS61yrvBePvFaxHXGhUUUR
+ Yg8P0kzH8bTRmzR/L3SDnunExeoazvku27BUMNLyYTy5bZmecP/C0SGYe/ZQJLpISvOLkIvZU
+ By+8gk8kaEX0Zfiyuo8LUmd6a6To8QnEqEi79k4tXwRcA4vJmdS6IUsQ0ATQ5RUs/bq5jtXXI
+ GYrbH/aq4RRvqGuTaQ+kC+xomMnH26Usx1a28VaQZDYQ2JrwusUJixTNUxtW8QrsggToPvi9B
+ noRkqOGjQkhV5ZXEZpRfefIJoMw/5eH49mAIbA85QDUmuuYQeZKmDHeKb3ZTEt7EHVCQbxxir
+ WSAG+qvoP8gwVrT2Wc/k7BD6ntRzQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--fphdnp5fz5oqdxfs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 21 February 2018 06:12 PM, Arnd Bergmann wrote:
-> On Tue, Feb 20, 2018 at 7:34 PM, Olof's autobuilder <build@lixom.net> wrote:
->> Here are the build results from automated periodic testing.
->>
->> The tree being built was mainline, found at:
->>
->> URL: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>
->>
->> Warnings:
->>
->>         arm64.allmodconfig:
->> include/uapi/linux/byteorder/big_endian.h:31:52: warning: passing argument 1 of '__fswab64' makes integer from pointer without a cast [-Wint-conversion]
-> 
-> I sent two patches to the bnxt_re maintainers yesterday. I expect them
-> to get applied
-> soon, but haven't heard back yet.
-> 
->> WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
-> 
-> Still waiting for Kishon to apply an older patch I sent for this.
+On Wed, Feb 21, 2018 at 02:51:19PM +0100, Jonathan Neusch=C3=A4fer wrote:
+[...]
+> While looking through arch/powerpc/mm, I noticed that there's a
+> page_is_ram function, which simply uses the memblocks directly, on
+> PPC32.
 
-I had merged it locally. Now pushed everything.
+Oops, I misread the code here. memblock is used on PPC64.
 
-Thanks
-Kishon
+> It seems like a good candidate for the RAM check in
+> __ioremap_caller, except that there's this code, which apparently
+> trashes memblock 0 completely on non-CONFIG_NEED_MULTIPLE_NODES:
+>=20
+>   https://elixir.bootlin.com/linux/v4.16-rc2/source/arch/powerpc/mm/mem.c=
+#L223
+>=20
+>=20
+> Thanks,
+> Jonathan Neusch=C3=A4fer
 
-> 
->>         arm.allmodconfig:
->> /tmp/ccQBDjc9.s:18123: Warning: using r15 results in unpredictable behaviour
->> /tmp/ccQBDjc9.s:18195: Warning: using r15 results in unpredictable behaviour
-> 
-> I have done multiple versions of a patch for this, none was
-> universally liked, but
-> we need to decide on one of them.
-> 
->> include/linux/bitops.h:7:24: warning: left shift count >= width of type [-Wshift-count-overflow]
->> include/linux/bitops.h:7:24: warning: left shift count >= width of type [-Wshift-count-overflow]
->> include/linux/bitops.h:7:24: warning: left shift count >= width of type [-Wshift-count-overflow]
->> drivers/infiniband/hw/bnxt_re/qplib_fp.c:333:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->> drivers/infiniband/hw/bnxt_re/qplib_fp.c:336:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->> include/uapi/linux/swab.h:127:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> 
-> Also bnxt_re, same as above
-> 
->> drivers/infiniband/core/cq.c:78:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> 
-> Sent a patch yesterday, my workaround was suboptimal, discussion about
-> a better fix
-> is ongoing.
-> 
->>         arm.spear3xx_defconfig:
->> net/core/filter.c:3382:6: warning: unused variable 'val' [-Wunused-variable]
->>
->>         arm.spear6xx_defconfig:
->> net/core/filter.c:3382:6: warning: unused variable 'val' [-Wunused-variable]
->>
->>         arm.tct_hammer_defconfig:
->> net/core/filter.c:3382:6: warning: unused variable 'val' [-Wunused-variable]
-> 
-> Sent two versions of a patch yesterday, the second version was applied and
-> should make it into mainline next week.
-> 
->        Arnd
-> 
+
+
+--fphdnp5fz5oqdxfs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAABAgAGBQJajYW6AAoJEAgwRJqO81/bFD4P/jXB4GtqWaVXyc+1KcLnz2dz
+y1sAXcvxMgvHA+saHWsoUzMD1T8QR+7Q5N5PKUFmeWPDLAjAJq8LyuVt/oxsey5f
+EnBNlLGohqO4uF934qHvrDnfyopqesJWAx/v3/ioMAc34b5LX7wRH234hV1H/dyf
+U85qSkTHTpH4bRxZyXwddsJFtEfKkE34oupi4YU4AX5VctNzCuW9eR4GE2BpJ6Iw
+ibMaw/9U3hOO6ok2Wa3h6GgcqcNH0uD9TFLnvLbjCZJzCsGjCui/TGTb5tysLsoM
+4qhJsJwSo0GAAzxtrrKevrV6qEezwFUIGk/certOiAz8BGhmOYqDFoItiYpYpf0K
+aHrDj9MoviIaqfIdCfZCGp0t6fnt1cJb7a/wkbkORfqrsTjjZb0UTwvEgCIhrcy5
+L9MEh7p2HLgwlRzW6nlZI6RdpuJK65RnVfIYN0Y+VVt4riBkMRBSiRs/wMFNI2YM
+I41aDYtkpSl9ve0V+h+gUS/vjqaE8MkZlNobTt1TW+qmPPmquaHvLekeC27dGtwu
+PlfOjWYMceMyqRd4iIcRZ2eQEUvslg9g94Yyl0FmFDMQLCJM1f6PW8FEKlA8pGSL
+h+BwphnRhFAABKHC+0AaKpaBOWM9OVwL+LWkeeQifRao1IpL1Ml+E26Xl7icqIFE
+4uM02EJ0azFFfpUdczVu
+=K2aT
+-----END PGP SIGNATURE-----
+
+--fphdnp5fz5oqdxfs--
