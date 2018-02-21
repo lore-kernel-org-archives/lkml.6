@@ -1,93 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933907AbeBURSD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:18:03 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:52730 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933402AbeBURR7 (ORCPT
+        id S933935AbeBURSO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:18:14 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:55883 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753562AbeBURSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:17:59 -0500
-From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net, dave.hansen@linux.intel.com
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, rob.gardner@oracle.com,
-        anthony.yznaga@oracle.com, jane.chu@oracle.com, mingo@kernel.org,
-        ebiederm@xmission.com, vegard.nossum@oracle.com,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v12 04/11] sparc64: Add HV fault type handlers for ADI related faults
-Date: Wed, 21 Feb 2018 10:15:46 -0700
-Message-Id: <ce772518871b086e08a7d2570132035564251f5c.1519227112.git.khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=914
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802210211
+        Wed, 21 Feb 2018 12:18:12 -0500
+Date: Wed, 21 Feb 2018 18:18:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/19] ARM64: dts: r8a77965: Add dmac device nods
+Message-ID: <20180221171808.3fbzhupb42ef4nh3@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-12-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519139541-18783-12-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADI (Application Data Integrity) feature on M7 and newer processors
-adds new fault types for hypervisor - Invalid ASI and MCD disabled.
-This patch expands data access exception handler to handle these
-faults.
+On Tue, Feb 20, 2018 at 04:12:13PM +0100, Jacopo Mondi wrote:
+> Add dmac[0-2] device nodes for R-Car M3-N (r8a77965) SoC.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Khalid Aziz <khalid@gonehiking.org>
-Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
-v7:
-	- new patch split off from patch 4/4 in v6
+Thanks, applied with prefix updated to:
 
- arch/sparc/kernel/traps_64.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
-
-diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index fc73baa588f6..d273a65a0a10 100644
---- a/arch/sparc/kernel/traps_64.c
-+++ b/arch/sparc/kernel/traps_64.c
-@@ -397,12 +397,35 @@ void sun4v_data_access_exception(struct pt_regs *regs, unsigned long addr, unsig
- 	if (is_no_fault_exception(regs))
- 		return;
- 
--	info.si_signo = SIGSEGV;
-+	/* MCD (Memory Corruption Detection) disabled trap (TT=0x19) in HV
-+	 * is vectored thorugh data access exception trap with fault type
-+	 * set to HV_FAULT_TYPE_MCD_DIS. Check for MCD disabled trap.
-+	 * Accessing an address with invalid ASI for the address, for
-+	 * example setting an ADI tag on an address with ASI_MCD_PRIMARY
-+	 * when TTE.mcd is not set for the VA, is also vectored into
-+	 * kerbel by HV as data access exception with fault type set to
-+	 * HV_FAULT_TYPE_INV_ASI.
-+	 */
- 	info.si_errno = 0;
--	info.si_code = SEGV_MAPERR;
- 	info.si_addr = (void __user *) addr;
- 	info.si_trapno = 0;
--	force_sig_info(SIGSEGV, &info, current);
-+	switch (type) {
-+	case HV_FAULT_TYPE_INV_ASI:
-+		info.si_signo = SIGILL;
-+		info.si_code = ILL_ILLADR;
-+		force_sig_info(SIGILL, &info, current);
-+		break;
-+	case HV_FAULT_TYPE_MCD_DIS:
-+		info.si_signo = SIGSEGV;
-+		info.si_code = SEGV_ACCADI;
-+		force_sig_info(SIGSEGV, &info, current);
-+		break;
-+	default:
-+		info.si_signo = SIGSEGV;
-+		info.si_code = SEGV_MAPERR;
-+		force_sig_info(SIGSEGV, &info, current);
-+		break;
-+	}
- }
- 
- void sun4v_data_access_exception_tl1(struct pt_regs *regs, unsigned long addr, unsigned long type_ctx)
--- 
-2.11.0
+arm64: dts: renesas: r8a77965:
