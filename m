@@ -1,95 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933372AbeBUKjw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:39:52 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36517 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbeBUKju (ORCPT
+        id S933388AbeBUKj7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:39:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39271 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeBUKj4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:39:50 -0500
-X-Google-Smtp-Source: AG47ELuXJTlGTFYC+/Haq6e5EcD3ETIrhrvhAYHQ6QBvFl04gi/bXxQ3+kR+35cszKznGD3LbXNTeBPUzzATmzBY/BA=
+        Wed, 21 Feb 2018 05:39:56 -0500
+Date: Wed, 21 Feb 2018 02:38:21 -0800
+From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-083c6eeab2cc13894618d188b854f2fc6b5b2303@git.kernel.org>
+Cc: frederic@kernel.org, riel@redhat.com, cmetcalf@mellanox.com,
+        torvalds@linux-foundation.org, cl@linux.com,
+        paulmck@linux.vnet.ibm.com, kernellwp@gmail.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
+        tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org, efault@gmx.de
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, hpa@zytor.com, lcapitulino@redhat.com,
+        mingo@kernel.org, kernellwp@gmail.com, efault@gmx.de, riel@redhat.com,
+        cmetcalf@mellanox.com, frederic@kernel.org, paulmck@linux.vnet.ibm.com,
+        torvalds@linux-foundation.org, cl@linux.com
+In-Reply-To: <1519186649-3242-8-git-send-email-frederic@kernel.org>
+References: <1519186649-3242-8-git-send-email-frederic@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/isolation: Update nohz documentation to
+ explain tick offload
+Git-Commit-ID: 083c6eeab2cc13894618d188b854f2fc6b5b2303
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
-References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
-From: =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>
-Date: Wed, 21 Feb 2018 11:39:49 +0100
-Message-ID: <CAM4jgCqPwHiqi9ecehE6wXi1fevSbqUSB3ABVNHXD1NCstGVZw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        linux-input <linux-input@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rodrigo,
+Commit-ID:  083c6eeab2cc13894618d188b854f2fc6b5b2303
+Gitweb:     https://git.kernel.org/tip/083c6eeab2cc13894618d188b854f2fc6b5b2303
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Wed, 21 Feb 2018 05:17:29 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 09:49:10 +0100
 
-I have written a kernel driver [1], some time ago. I did not submit it
-for merging in the main-line because I thought that would mess with
-user-space drivers. If your driver create an input device, a
-user-space driver will have to disable it before creating its own. I
-guess libusb based drivers will detach the kernel driver and will be
-fine. But it is not as simple if you use hidraw. And there may be some
-state problem as Pierre-Loup already said.
+sched/isolation: Update nohz documentation to explain tick offload
 
-A few more tips about your discussion with Pierre-Loup (sorry I am not
-replying to the answers directly, it's hard to insert myself in this
-long discussion):
+Update the documentation to reflect the 1Hz tick offload changes.
 
-Beside Ynsta's driver, you may have a look at my own user-space driver
-[2] or Dennis Hamester's library scraw [3].
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Wanpeng Li <kernellwp@gmail.com>
+Link: http://lkml.kernel.org/r/1519186649-3242-8-git-send-email-frederic@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-You can enable and disable the accel and gyro when the separate input
-device is opened or closed to save battery. My kernel driver does it,
-IIRC I have taken the idea from the wiimote driver. Note that there is
-an issue with joydev using the accel/gyro input device. hid-sony
-solved it by adding an exception in joydev driver (joydev_blacklist in
-drivers/input/joydev.c).
-
-In my driver, I split the left pad and left stick events by looking at
-the left pad touch bit. It works well as long as they are not used at
-the same time. When they both being used the data alternate between
-left pad and left stick data, the touch bit is set accordingly so axis
-data is easy to use, but it looks like the left touch pad is being
-tapped very fast.
-
-[1]: https://github.com/cvuchener/steamcontroller-linux-kernel
-[2]: https://github.com/cvuchener/input-scripts/tree/master/src/daemon/steamcontroller
-[3]: https://gitlab.com/dennis-hamester/scraw)
-
-2018-02-20 20:33 GMT+01:00 Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>:
-> This patchset implements a driver for Valve Steam Controller, based on a
-> reverse analysis by myself.
->
-> Notable changes from patchset v1:
->  * Remove references to USB. Now the interesting interfaces are selected by
->    looking for the ones with feature reports.
->  * Feature reports buffers are allocated with hid_alloc_report_buf().
->  * Feature report length is checked, to avoid overflows in case of
->    corrupt/malicius USB devices.
->  * Resolution added to the ABS axes.
->  * A lot of minor cleanups.
->
-> Rodrigo Rivas Costa (3):
->   HID: add driver for Valve Steam Controller
->   HID: steam: add serial number information.
->   HID: steam: add battery device.
->
->  drivers/hid/Kconfig      |   8 +
->  drivers/hid/Makefile     |   1 +
->  drivers/hid/hid-ids.h    |   4 +
->  drivers/hid/hid-quirks.c |   4 +
->  drivers/hid/hid-steam.c  | 703 +++++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 720 insertions(+)
->  create mode 100644 drivers/hid/hid-steam.c
->
-> --
-> 2.16.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1d1d53f..50b9837 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1766,6 +1766,17 @@
+ 
+ 			nohz
+ 			  Disable the tick when a single task runs.
++
++			  A residual 1Hz tick is offloaded to workqueues, which you
++			  need to affine to housekeeping through the global
++			  workqueue's affinity configured via the
++			  /sys/devices/virtual/workqueue/cpumask sysfs file, or
++			  by using the 'domain' flag described below.
++
++			  NOTE: by default the global workqueue runs on all CPUs,
++			  so to protect individual CPUs the 'cpumask' file has to
++			  be configured manually after bootup.
++
+ 			domain
+ 			  Isolate from the general SMP balancing and scheduling
+ 			  algorithms. Note that performing domain isolation this way
