@@ -1,135 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965767AbeBUNZH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:25:07 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35676 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932152AbeBUNZF (ORCPT
+        id S965780AbeBUNZO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:25:14 -0500
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:44629 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932126AbeBUNZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:25:05 -0500
-X-Google-Smtp-Source: AH8x226WZMPPyWT4GUbrE/yrZUtr5MOTkw6rJMFaVqdXUlYtr1J3DmIDnGK8Hd5x3N5SoHn15pmUSA==
-Date: Wed, 21 Feb 2018 14:24:55 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xchg/alpha: Add unconditional memory barrier to cmpxchg
-Message-ID: <20180221132455.GA16111@andrea>
-References: <1519152356-4804-1-git-send-email-parri.andrea@gmail.com>
- <20180221112137.GA6165@arm.com>
+        Wed, 21 Feb 2018 08:25:11 -0500
+X-Google-Smtp-Source: AG47ELvs79EccjeR2N6vEbW/+5cVYBLIwJ9ceVBl4PnMZwJsaipoR1z1HVpkD8QfSuKmogMQzbTqfwBQz758ywuXBF0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180221112137.GA6165@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87vaeqqye8.fsf@concordia.ellerman.id.au>
+References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <20180212102900.GU28462@vireshk-i7> <874lmasxxx.fsf@concordia.ellerman.id.au>
+ <20180221055450.GO28462@vireshk-i7> <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
+ <87vaeqqye8.fsf@concordia.ellerman.id.au>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 Feb 2018 14:25:10 +0100
+X-Google-Sender-Auth: Cew4bkNtXHxwEF8A9kLpyqzV_MI
+Message-ID: <CAJZ5v0gVUO5OMfHUrQKd0T1EKo2c9iJ+zb-v9i2tkkS0MJbntA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: powernv: Check negative value returned by cpufreq_table_find_index_dl()
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 11:21:38AM +0000, Will Deacon wrote:
-> Hi Andrea,
-> 
-> On Tue, Feb 20, 2018 at 07:45:56PM +0100, Andrea Parri wrote:
-> > Continuing along with the fight against smp_read_barrier_depends() [1]
-> > (or rather, against its improper use), add an unconditional barrier to
-> > cmpxchg.  This guarantees that dependency ordering is preserved when a
-> > dependency is headed by an unsuccessful cmpxchg.  As it turns out, the
-> > change could enable further simplification of LKMM as proposed in [2].
-> > 
-> > [1] https://marc.info/?l=linux-kernel&m=150884953419377&w=2
-> >     https://marc.info/?l=linux-kernel&m=150884946319353&w=2
-> >     https://marc.info/?l=linux-kernel&m=151215810824468&w=2
-> >     https://marc.info/?l=linux-kernel&m=151215816324484&w=2
-> > 
-> > [2] https://marc.info/?l=linux-kernel&m=151881978314872&w=2
-> > 
-> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > Acked-by: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > Cc: Richard Henderson <rth@twiddle.net>
-> > Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> > Cc: Matt Turner <mattst88@gmail.com>
-> > Cc: linux-alpha@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  arch/alpha/include/asm/xchg.h | 15 +++++++--------
-> >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-> > index 68dfb3cb71454..e2660866ce972 100644
-> > --- a/arch/alpha/include/asm/xchg.h
-> > +++ b/arch/alpha/include/asm/xchg.h
-> > @@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
-> >   * store NEW in MEM.  Return the initial value in MEM.  Success is
-> >   * indicated by comparing RETURN with OLD.
-> >   *
-> > - * The memory barrier should be placed in SMP only when we actually
-> > - * make the change. If we don't change anything (so if the returned
-> > - * prev is equal to old) then we aren't acquiring anything new and
-> > - * we don't need any memory barrier as far I can tell.
-> > + * The memory barrier is placed in SMP unconditionally, in order to
-> > + * guarantee that dependency ordering is preserved when a dependency
-> > + * is headed by an unsuccessful operation.
-> >   */
-> >  
-> >  static inline unsigned long
-> > @@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
-> >  	"	or	%1,%2,%2\n"
-> >  	"	stq_c	%2,0(%4)\n"
-> >  	"	beq	%2,3f\n"
-> > -		__ASM__MB
-> >  	"2:\n"
-> > +		__ASM__MB
-> >  	".subsection 2\n"
-> >  	"3:	br	1b\n"
-> >  	".previous"
-> 
-> It might be better just to add smp_read_barrier_depends() into the cmpxchg
-> macro, then remove all of the __ASM__MB stuff.
+On Wed, Feb 21, 2018 at 2:13 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+>
+>> On Wed, Feb 21, 2018 at 6:54 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>>> On 21-02-18, 16:39, Michael Ellerman wrote:
+>>>> Viresh Kumar <viresh.kumar@linaro.org> writes:
+>>>
+>>>> > AFAICT, you will get -1 here only if the freq table had no valid
+>>>> > frequencies (or the freq table is empty). Why would that happen ?
+>>>>
+>>>> Bugs?
+>>>
+>>> The cupfreq driver shouldn't have registered itself in that case (i.e.
+>>> if the cpufreq table is empty).
+>>
+>> To be precise, ->init() should fail as that's where the table is
+>> created.  The registration fails as a result then.
+>>
+>> But what if the bug is that ->init() doesn't fail when it should?
+>>
+>> I guess the core could double check the frequency table after ->init()
+>> if ->target_index is not NULL.
+>>
+>> The overall point here is that if you get a negative index in
+>> ->fast_switch(), that's way too late anyway and we should be able to
+>> catch that error much earlier.
+>
+> OK.
+>
+> Still it's one thing for the driver to print a warning and bail out,
+> it's another to access off the front of an array and keep running using
+> some junk values, or oops (though not in this case because the array
+> happens to be static).
 
-Mmh, it might be better to add smp_mb() into the cmpxchg macro (after the
-operation), then remove all the __ASM__MB stuff.
-
-
-> 
-> That said, I don't actually understand how the Alpha cmpxchg or xchg
-> implementations satisfy the memory model, since they only appear to have
-> a barrier after the operation.
-> 
-> So MP using xchg:
-> 
-> WRITE_ONCE(x, 1)
-> xchg(y, 1)
-> 
-> smp_load_acquire(y) == 1
-> READ_ONCE(x) == 0
-> 
-> would be allowed. What am I missing?
-
-Good question ;-)  The absence of an smp_mb() (or of an __ASM__MB) before
-the operation did upset me.
-
-If this question remains pending, I'll send a patch to add these barriers.
-
-
-> 
-> Since I'm in the mood for dumb questions, do we need to care about
-> this_cpu_cmpxchg? I'm sure I've seen code that allows concurrent access to
-> per-cpu variables, but the asm-generic implementation of this_cpu_cmpxchg
-> doesn't use READ_ONCE.
-
-Frankly, I'm not sure if this's an issue in the generic implementation of
-this_cpu_* or, rather, in that code.  let me dig a bit more into this ...
-
-  Andrea
-
-
-> 
-> Will
+Well, let me rephrase.  If ->fast_switch() runs, then it must not be
+possible to get a negative index in it.  That has to be guaranteed by
+the core.
