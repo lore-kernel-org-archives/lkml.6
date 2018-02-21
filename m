@@ -1,56 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936589AbeBUNVl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:21:41 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54426 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752736AbeBUNMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:12:05 -0500
-Date: Wed, 21 Feb 2018 13:12:04 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Speier <tspeier@codeaurora.org>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-Message-ID: <20180221131203.GB7614@arm.com>
-References: <1519095546-24420-1-git-send-email-shankerd@codeaurora.org>
- <20180221111233.gylb6v4yxqnn6gyj@localhost>
- <23d70753-a628-f2e4-84df-39e4021337f5@codeaurora.org>
+        id S1754269AbeBUNYO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:24:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753180AbeBUNYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:24:12 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9591217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x225oDH7an3a+FMuEDI39cELszblfpHdBYMFvM+hM49ILnAft8S044xdvJ+6/VbIp5taDGq/iWDWgG6FnoSdO18k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23d70753-a628-f2e4-84df-39e4021337f5@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
+References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
+ <1518701959-22899-2-git-send-email-tali.perry1@gmail.com> <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
+ <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop> <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 07:23:50 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
+Message-ID: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
+To: Brendan Higgins <brendanhiggins@google.com>
+Cc: Tali Perry <tali.perry1@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 07:10:34AM -0600, Shanker Donthineni wrote:
-> On 02/21/2018 05:12 AM, Catalin Marinas wrote:
-> > However, my worry is that in an implementation with DIC set, we also
-> > skip the DSB/ISB sequence in the invalidate_icache_by_line macro. For
-> > example, in an implementation with transparent PoU, we could have:
-> > 
-> > 	str	<some instr>, [addr]
-> > 	// no cache maintenance or barrier
-> > 	br	<addr>
-> > 
-> 
-> Thanks for pointing out the missing barriers. I think it make sense to follow
-> the existing barrier semantics in order to avoid the unknown things.
->  
-> > Is an ISB required between the instruction store and execution? I would
-> > say yes but maybe Will has a better opinion here.
-> > 
-> Agree, an ISB is required especially for self-modifying code. I'll include in v3 patch. 
+On Tue, Feb 20, 2018 at 10:47 PM, Brendan Higgins
+<brendanhiggins@google.com> wrote:
+> On Mon, Feb 19, 2018 at 6:49 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
+>>> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
+>>> >
+>>> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+>>> >
+>>>  <snip>
+>>>
+>>> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
+>>> clocks (moved from drivers/clk/clk-npcm7xx.c):
+>>> https://www.spinics.net/lists/arm-kernel/msg634678.html
+>>
+>> No, binding docs, dts files and driver code should all be separate
+>> patches.
+>
+> My mistake. This patch has a dt-bindings include file; should the include file
+> go in here, with the dtsi changes, or in its own separate patch?
 
-I'd have thought you'd need a DSB too, before the ISB.
+It defines the binding, so with the binding documentation.
 
-Will
+Rob
