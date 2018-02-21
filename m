@@ -1,138 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754254AbeBUM3J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:29:09 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47319 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751929AbeBUM3G (ORCPT
+        id S1754290AbeBUM32 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:29:28 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:53647 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbeBUM30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:29:06 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 03/11] media: platform: Add Renesas CEU driver
-Date: Wed, 21 Feb 2018 14:29:47 +0200
-Message-ID: <2908261.btsdL5a7UQ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org> <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org> <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl>
+        Wed, 21 Feb 2018 07:29:26 -0500
+Date: Wed, 21 Feb 2018 12:27:19 +0000
+From: James Hogan <james.hogan@mips.com>
+To: Guenter Roeck <linux@roeck-us.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-metag@vger.kernel.org>
+Subject: Re: metag build errors in mainline kernel
+Message-ID: <20180221122719.GI29460@jhogan-linux.mipstec.com>
+References: <20180220234443.GA27059@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8/UBlNHSEJa6utmr"
+Content-Disposition: inline
+In-Reply-To: <20180220234443.GA27059@roeck-us.net>
+User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Originating-IP: [192.168.154.110]
+X-BESS-ID: 1519216112-321459-20032-55512-5
+X-BESS-VER: 2018.2-r1802152108
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190260
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+--8/UBlNHSEJa6utmr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, 21 February 2018 14:03:24 EET Hans Verkuil wrote:
-> On 02/19/18 17:59, Jacopo Mondi wrote:
-> > Add driver for Renesas Capture Engine Unit (CEU).
-> > 
-> > The CEU interface supports capturing 'data' (YUV422) and 'images'
-> > (NV[12|21|16|61]).
-> > 
-> > This driver aims to replace the soc_camera-based sh_mobile_ceu one.
-> > 
-> > Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
-> > platform GR-Peach.
-> > 
-> > Tested with ov7725 camera sensor on SH4 platform Migo-R.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/media/platform/Kconfig       |    9 +
-> >  drivers/media/platform/Makefile      |    1 +
-> >  drivers/media/platform/renesas-ceu.c | 1661 +++++++++++++++++++++++++++++
-> >  3 files changed, 1671 insertions(+)
-> >  create mode 100644 drivers/media/platform/renesas-ceu.c
-> 
-> <snip>
-> 
-> > +static int ceu_s_input(struct file *file, void *priv, unsigned int i)
-> > +{
-> > +	struct ceu_device *ceudev = video_drvdata(file);
-> > +	struct ceu_subdev *ceu_sd_old;
-> > +	int ret;
-> > +
-> > +	if (i >= ceudev->num_sd)
-> > +		return -EINVAL;
-> > +
-> > +	if (vb2_is_streaming(&ceudev->vb2_vq))
-> > +		return -EBUSY;
-> > +
-> > +	if (i == ceudev->sd_index)
-> > +		return 0;
-> > +
-> > +	ceu_sd_old = ceudev->sd;
-> > +	ceudev->sd = &ceudev->subdevs[i];
-> > +
-> > +	/* Make sure we can generate output image formats. */
-> > +	ret = ceu_init_formats(ceudev);
-> 
-> Why is this done for every s_input? I would expect that this is done only
-> once for each subdev.
-> 
-> I also expect to see a ceu_set_default_fmt() call here. Or that the v4l2_pix
-> is kept in ceu_subdev (i.e. per subdev) instead of a single fmt in cuedev.
-> I think I prefer that over configuring a new default format every time you
-> switch inputs.
+On Tue, Feb 20, 2018 at 03:44:43PM -0800, Guenter Roeck wrote:
+> The following errors are seen when building the kernel with the latest
+> available metag toolchain (4.2.4 (IMG-1.4.0.700)). Kernel version tested
+> is (v4.16-rc2-64-gaf3e79d29555).
+>=20
+> metag:allmodconfig
+>=20
+> arch/metag/kernel/devtree.c:54: error: implicit declaration of function '=
+pr_info'
+>=20
+> arch/metag/kernel/perf/perf_event.c:831: error: label =E2=80=98out=E2=80=
+=99 used but not defined
+> arch/metag/kernel/perf/perf_event.c:822: warning: unused variable =E2=80=
+=98cpu=E2=80=99
 
-What does userspace expect today ? I don't think we document anywhere that 
-formats are stored per-input in drivers. The VIDIOC_S_INPUT documentation is 
-very vague:
+Thanks, these are easy enough for me to fix up.
 
-"To select a video input applications store the number of the desired input in 
-an integer and call the VIDIOC_S_INPUT ioctl with a pointer to this integer. 
-Side effects are possible. For example inputs may support different video 
-standards, so the driver may implicitly switch the current standard. Because 
-of these possible side effects applications must select an input before 
-querying or negotiating any other parameters."
+>=20
+> metag:meta2_smp_defconfig
+>=20
+> kernel/time/hrtimer.c: In function 'hrtimer_run_softirq':
+> time/hrtimer.c:1431: error: unable to find a register to spill in class '=
+Yr_REGS'
+> time/hrtimer.c:1431: error: this is the insn:
+> (insn:HI 41 40 99 2 kernel/time/hrtimer.c:576 (set (mem/s/j:DI (plus:SI (=
+reg/f:SI 15 D1.7 [orig:84 D.45290 ] [84])
+>                 (const_int 368 [0x170])) [0 <variable>.offset+0 S8 A128])
+> 	(reg:DI 99 [ <variable>.offset ])) 211 {*sto_di_1_1_off12} (nil)
+>     (expr_list:REG_DEAD (reg:DI 99 [ <variable>.offset ])
+> 	(nil)))
+> kernel/time/hrtimer.c:1431: confused by earlier errors, bailing out
 
-I understand that as meaning "anything can happen when you switch inputs, so 
-be prepared to reconfigure everything explicitly without assuming any 
-particular parameter to have a sane value".
+Hmm.. ancient shelved toolchain. Perhaps this is the excuse we need to
+say goodbye to arch/metag/...
 
-> This code will work for two subdevs with exactly the same
-> formats/properties. But switching between e.g. a sensor and a video
-> receiver will leave things in an inconsistent state as far as I can see.
-> 
-> E.g. if input 1 is the video receiver then switching to that input and
-> running 'v4l2-ctl -V' will show the sensor format, not the video receiver
-> format.
+Cheers
+James
 
-I agree that the format should be consistent with the selected input, as 
-calling VIDIOC_S_INPUT immediately followed by a stream start sequence without 
-configuring formats should work (but produce a format that is not known to 
-userspace). My question is whether we should reset to a default format for the 
-newly select input, or switch back to the previously set format. I'd tend to 
-go for the former to keep as little state as possible, but I'm open to 
-counter-proposals.
+--8/UBlNHSEJa6utmr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> > +	if (ret) {
-> > +		ceudev->sd = ceu_sd_old;
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/* now that we're sure we can use the sensor, power off the old one. */
-> > +	v4l2_subdev_call(ceu_sd_old->v4l2_sd, core, s_power, 0);
-> > +	v4l2_subdev_call(ceudev->sd->v4l2_sd, core, s_power, 1);
-> > +
-> > +	ceudev->sd_index = i;
-> > +
-> > +	return 0;
-> > +}
-> 
-> The remainder of this driver looks good.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Regards,
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqNZaEACgkQbAtpk944
+dnol8BAAgtQ1cyWZxvAUbbeMIIyQr7C5wOt2LYgR9okcnwxhIMvd/JhsljUwFCPn
+UI04DlydGvKdUCvpTtuCciRmA6YDRaNcQEFrt+5Gsd6PTylaUGqG/D1rig/luiil
+fe7+MicRtQNvccECjx8cwNVdYXUca10vEeJyLl7NN45N6DtO6YXth7WzFXBHhjRg
+cQ08/3WOrQ8HsNTPfScm9oPbbC/IB4497ZLIGfY3FA4U3PIx11/0Bdz9jS1reciH
+91M/XkfOOQzio+2/mZVrB1GCPTdM3agLCsh1Pt42Owj69DhpemqMlYU2B42ZXl9+
+HeXUWrHYOqnn+S754MQSY8QYw+f74Y2hC9jie+mefKH8JkZpgmGPmzStnCNSBW7U
+V8q5bNBLfuN+V3vr2w5e5RTGTYjimG9QVYWVBHiqNMxYqIW+E44Dq95nSXsDZNF3
+B31KRWme9ZUnuKFreC2scWeplEJNYGJBMbVGaM36AqO5IEG0f718e/BUVa5TS8mt
+Yf4DNR1dlPqB+JnDdUCrTvyNisIy7GM/jcBdzL7+xXGpr9ItGZ1YE+LhRkarApp5
+3NDos3mtbIoVLWrAluLGwNfVJyRSuPuQxrZyHwSxzmLZvTXPA2ffMheLJlxsHNJN
+teOkJDUkMS1iEqBMztcExM2IjJpM8rewQvo2y0f1Wax51DjeEUM=
+=Y/QI
+-----END PGP SIGNATURE-----
 
-Laurent Pinchart
+--8/UBlNHSEJa6utmr--
