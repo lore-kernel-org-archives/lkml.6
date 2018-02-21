@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227duy2i6SkIAn7D/BCbYBxsn6ZWj0B+/ZwXLljnF0l5w2Igo0vD7BUo+K1RXZR9jGJSiTwD
-ARC-Seal: i=1; a=rsa-sha256; t=1519218179; cv=none;
+X-Google-Smtp-Source: AH8x226/cBtAdzTMe0hx0i10+Q0bkRLY9w6QpyE1lkqzwqF26yGeSI+GZ+KM/dM1ezAB1340/+Yg
+ARC-Seal: i=1; a=rsa-sha256; t=1519218177; cv=none;
         d=google.com; s=arc-20160816;
-        b=DfF6/ZpXhhvexxgbFGz39dfPOJ1vHn7B3FCaPTPVYqFAbzjJ3I10OrLtdOp2KoPYbd
-         9uNLBDykV/NX1IA/gS/kC+ZFAN/1gdIGSpLTesHQo5VXKM/TXJEMmhLFclbSl10X/eWy
-         TImWa6XlZXqKNaL9si8gIu+8ewdjSrR3pt6ijJXySHVovPKlltN73fz9wBwLzew73DlU
-         ZykwuYzvbqlkOvCY273Aaoe4VM3y29C/BUEAYU5FcNG7abnYYE0UDIeYeqTceGeJK0SF
-         ImFVS8G/rjW8wvKM3+J4BCzsqRiTZwshRQz6Xv1o0wFbDttLFXs/jP+D0RL3rNWtCrrP
-         CvzQ==
+        b=iboESjr12SGkCOHaI6pFJIkAbULIazUc3SVjnFY9yqOkAHmEN9OSFhWpL8WJk0Bx1s
+         2qhu997cKBbmW25+oZmzQbkRK1SF+ZO9146pdbzGsWGUAYojat7axIKfskzEHSkmN/jd
+         xpl+NrqpEkw5wfeYv+99AV1cR10ILyZyHPggxOfJPvPBMXUsgEc2LypTXuX2pXALZfrG
+         PaQbRDi0ZzxyLR3JOhSDJ1nx6EErTrK98OMvqLk/aW07g0gdF7O3cP2Wif09Nq+ye/L6
+         78axj3vRotjJczDeghcsr4vI/kftpRZfey2M04M8izOpvFGSVJ05g2J9jz1KryEnZWBO
+         wJ5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J2rAazOcLGEL83i+h9uopf/HPMzewKOMjr44bgRXjp0=;
-        b=EOc/bbgGoSKNG0apU4npYXJnFdYYd2uCsIuSTA+EIYLQULLh8fG5NvrLZvEGHPUA9i
-         KaAoIt7pHNlvi8wyyEP8IHElvq78ogfquTcCxqL2yNub0KeRMcSq1ElSMknjwdYIGQcT
-         7F207vH2w94Yhk5Kc6tF8Ey9hJO/wMi0SZpwm2dGo68HLikeBjjn+iFOATXyDrJmiU0g
-         y1jbL4t+fN2pEZ0VREzTXiwk8BJ02LFnh3QZhMB3Zl6fKqyF96ngpgtlGB0fT8SXRuTd
-         wCpifHJiTD11bREKZ7ODlafYzrSXrw8au2zI0QJnfVOXzQIn3O2EQkBMOYMi78QNFoMJ
-         kJcQ==
+        bh=3tzahAloAEOR8g5rdr9tAANXm/R+zKUoxM60RrVy6kw=;
+        b=JYh0v672rnoFlkL5/zjwqVNU1csXawPiaqQK8zhzktNV487rzA6Tjbz0vj2Ku2uAUd
+         xTz7J10W8cV8ROq9FZgmR4m5JCEiwXG+H/h0j15hFWPMZllYx1flTv2d//ySHBvC8/Q0
+         XiyuNbJYFRsprjDX7Xlu+55mLc3+1Kgzuh2feY3ct8tYlQdZ4aRuNvUhG6pYddBvSIeD
+         bcuqKU0ySAltmk2FZGSTIwshJ3QdWkfHHBS8sFC2rlW3MrSllZsU0XDHmGmwzYIdHfkD
+         4y+BvYfTcJobabLTCRRnFFdGFvzhY1pTMI/EFAoV4ls7E9O5m3+k7RUOHS7Sf252eZGX
+         8HMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Murali Karicheri <m-karicheri2@ti.com>,
 	Johan Hovold <johan@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 116/167] video: fbdev: atmel_lcdfb: fix display-timings lookup
-Date: Wed, 21 Feb 2018 13:48:47 +0100
-Message-Id: <20180221124530.764473157@linuxfoundation.org>
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.14 115/167] PCI: keystone: Fix interrupt-controller-node lookup
+Date: Wed, 21 Feb 2018 13:48:46 +0100
+Message-Id: <20180221124530.703828747@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014629325392076?=
-X-GMAIL-MSGID: =?utf-8?q?1593015721933977448?=
+X-GMAIL-THRID: =?utf-8?q?1593015295362303272?=
+X-GMAIL-MSGID: =?utf-8?q?1593015719232721627?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,53 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 9cb18db0701f6b74f0c45c23ad767b3ebebe37f6 upstream.
+commit eac56aa3bc8af3d9b9850345d0f2da9d83529134 upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+Fix child-node lookup during initialisation which was using the wrong
+OF-helper and ended up searching the whole device tree depth-first
+starting at the parent rather than just matching on its children.
 
-To make things worse, the parent display node was also prematurely
-freed.
+To make things worse, the parent pci node could end up being prematurely
+freed as of_find_node_by_name() drops a reference to its first argument.
+Any matching child interrupt-controller node was also leaked.
 
-Note that the display and timings node references are never put after a
-successful dt-initialisation so the nodes would leak on later probe
-deferrals and on driver unbind.
-
-Fixes: b985172b328a ("video: atmel_lcdfb: add device tree suport")
-Cc: stable <stable@vger.kernel.org>     # 3.13
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
+Cc: stable <stable@vger.kernel.org>     # 3.18
+Acked-by: Murali Karicheri <m-karicheri2@ti.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+[lorenzo.pieralisi@arm.com: updated commit subject]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/atmel_lcdfb.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/pci/dwc/pci-keystone.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -1119,7 +1119,7 @@ static int atmel_lcdfb_of_init(struct at
- 		goto put_display_node;
+--- a/drivers/pci/dwc/pci-keystone.c
++++ b/drivers/pci/dwc/pci-keystone.c
+@@ -178,7 +178,7 @@ static int ks_pcie_get_irq_controller_in
  	}
  
--	timings_np = of_find_node_by_name(display_np, "display-timings");
-+	timings_np = of_get_child_by_name(display_np, "display-timings");
- 	if (!timings_np) {
- 		dev_err(dev, "failed to find display-timings node\n");
- 		ret = -ENODEV;
-@@ -1140,6 +1140,12 @@ static int atmel_lcdfb_of_init(struct at
- 		fb_add_videomode(&fb_vm, &info->modelist);
+ 	/* interrupt controller is in a child node */
+-	*np_temp = of_find_node_by_name(np_pcie, controller);
++	*np_temp = of_get_child_by_name(np_pcie, controller);
+ 	if (!(*np_temp)) {
+ 		dev_err(dev, "Node for %s is absent\n", controller);
+ 		return -EINVAL;
+@@ -187,6 +187,7 @@ static int ks_pcie_get_irq_controller_in
+ 	temp = of_irq_count(*np_temp);
+ 	if (!temp) {
+ 		dev_err(dev, "No IRQ entries in %s\n", controller);
++		of_node_put(*np_temp);
+ 		return -EINVAL;
  	}
  
-+	/*
-+	 * FIXME: Make sure we are not referencing any fields in display_np
-+	 * and timings_np and drop our references to them before returning to
-+	 * avoid leaking the nodes on probe deferral and driver unbind.
-+	 */
+@@ -204,6 +205,8 @@ static int ks_pcie_get_irq_controller_in
+ 			break;
+ 	}
+ 
++	of_node_put(*np_temp);
 +
- 	return 0;
- 
- put_timings_node:
+ 	if (temp) {
+ 		*num_irqs = temp;
+ 		return 0;
