@@ -1,167 +1,348 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519228534; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Q617cZN70gsEM8YQ36NnLUTTyMr2xMfxSJdjD/n6/t114EtM/oWpyJMwSHeeNtsQII
-         3yROxuLmFCWNMH048G5HEG8qNo004OgP3DU8FoKjaNPQTiTekgKk5zV7ZGJaXjqD55DQ
-         1cHGLuB25vx3M2ojGDQlAwDlg0Fps+QaU2m/1KnWWMROts9Loe3q11UeJYeYHT49KnKB
-         UoGjtMmxklGRHVvD96BPkZRlQpkb0PjRDXJxhyqvcce4eL/ctg5ZZVErfqOH63+fU7z0
-         5lrQy9NaKal2aaCExcBRwDH5tqFYJlF6Y+Jd3Nnh+/+cO68oQdSOJ0RJjsmZuK7yucIz
-         HvTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=nEe2aQT23KUNNRa6ClPHxhjtUOOqrVx2wnMBtNfKgrs=;
-        b=z08aLT22DT3YsnqURsLXZGIAJLI+m08tD+rSySvFu3irMfValqI3C0cLKst7jJmMKr
-         l+MdWoG1fgYvYBWxBIcC4UDZublv69hSGmdwH2Rk35eFZaRi53uu90nMPNqNW5XIi7l4
-         +ybjhF92yCUgp4sUp7FMdmDeCgqKXw6v5ZVVR58vS2quxtwMEK7JNvk5PlFB55BLHxTF
-         SBJGmGclexw8U2EuDp5Lou3I3Q150EHRX8qmfKWD82irE5wJstQLRl731m/AVLl0EGBK
-         cbQVhETvsuT5+L4pYwoLCal7f9e0DCFnSRmUMI2u/2DZ5an8WWTvpHHjXiTdEiadag8R
-         lUgg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AhSAHVmS;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AhSAHVmS;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AH8x225zuNA8g/qDD1C01qbMNgCCaB4rc/epOwiYsuE98qxjD9tz9M12voMogcfpYlpsdc2J8gmZlA==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 21 Feb 2018 16:55:31 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Woodhouse <dwmw2@infradead.org>, hpa@zytor.com, luto@kernel.org,
-	arjan@linux.intel.com, tglx@linutronix.de, dan.j.williams@intel.com,
-	torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-	bp@alien8.de, linux-kernel@vger.kernel.org,
-	dave.hansen@linux.intel.com, jpoimboe@redhat.com,
-	linux-tip-commits@vger.kernel.org
-Subject: [PATCH v2] objtool, retpolines: Integrate objtool with retpoline
- support more closely
-Message-ID: <20180221155530.ddiojpjbx7ujpxvm@gmail.com>
-References: <tip-b4879c9b99a43e6c580d563f292a569a016af2a4@git.kernel.org>
- <1519210754.6482.43.camel@infradead.org>
- <20180221125357.GJ25201@hirez.programming.kicks-ass.net>
- <20180221131207.GS25235@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180221131207.GS25235@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1701872-1519223458-2-6261252841324435240
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H2 -0.001, SPF_PASS -0.001,
+  LANGUAGES roen, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.192.194', Host='mail-pf0-f194.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: leechu729@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519223458; b=AZCdruR6LFVtrlpwpfy+IgTCcYxIamn03tfJnArGrh9PZlm
+    s8iq03VZ8cssuwPHlyhHovOUtmKslpREXuWedSaAPc++lHSQjB/cOvAqCTU3Qq8h
+    xFmicetBIpN79lt7A2sO2iOD+aQYbod0K3WTte5+rtctKU81Dm4ALD7vItOyD4MP
+    q5DZi02+rWrLfPwdzuV95wB7RTpbQ+CfA8O8jFKCX8kf7OxADHjnp9DdBwXUzyAz
+    rcuskkEyCIIgogp5Mri7s4nkCVuyz56/JI3ti/FCdNsTlosWmI+4A4U6bQfu6s6p
+    wMFyS33kCzisXPfQSOjrlPxnetOYF+HSsKNjXpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1519223458; bh=s3nueMDqe7lNHFWBfG1VdUmwdWbF2Qb6dFVbdO
+    O2KO0=; b=CtfbbRKMJQWvE1hZ2En3xsHJR7M21TFkMVoO2wZ55Ki2IkigIhCbss
+    VVxx1o+dkBADem8QlUpF7m9sufps61sGfNpV/SYxoazNqJHi26PBDGT92Q/dxmh+
+    24hMrOTv1zr2yJJRGjUJCwPnu0pHQxIRz0uJJGXUae2hQEJnQVH44I6o3aKQtXs+
+    wTzn4SZu0Y5nViq+yWwuA9PeLfnJ8XhCNGzelZ4gHstVWcepH8wHvKNhbsUWxEAT
+    DzYEJY/izoyFGnDEMqiPp/G3ZUBERbQMl+XL6Tv9HbfQ1i/tRl1fIRIYvPEjejPf
+    P4FNSRbyaZHBdVHueYEUzGBGWYapevnQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vp+a1/Co x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.192.194 (mail-pf0-f194.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pf0-f194.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KNXrCrbz;
+    x-ptr=pass x-ptr-helo=mail-pf0-f194.google.com x-ptr-lookup=mail-pf0-f194.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vp+a1/Co x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.192.194 (mail-pf0-f194.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pf0-f194.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KNXrCrbz;
+    x-ptr=pass x-ptr-helo=mail-pf0-f194.google.com x-ptr-lookup=mail-pf0-f194.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AH8x225ShpsX2UrnYkTuA6x5FYZCtKmKNfCIcyg0CFv7fHhKxyhbBWmTfWSYTAwvEdVyGa7H6vLG2A==
+From: ShuFanLee <leechu729@gmail.com>
+To: heikki.krogerus@linux.intel.com,
+	linux@roeck-us.net,
+	greg@kroah.com
+Cc: shufan_lee@richtek.com,
+	cy_huang@richtek.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v3] Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and export tcpci_irq. More operations can be extended in tcpci_data if needed. According to TCPCI specification, 4.4.5.2 ROLE_CONTROL, TCPC shall not start DRP toggling until subsequently the TCPM writes to the COMMAND register to start DRP toggling. DRP toggling flow is chagned as following:   - Write DRP = 0 & Rd/Rd   - Write DRP = 1   - Set LOOK4CONNECTION command
+Date: Wed, 21 Feb 2018 22:30:34 +0800
+Message-Id: <1519223434-7396-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593007031866628709?=
-X-GMAIL-MSGID: =?utf-8?q?1593026580160509468?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: ShuFanLee <shufan_lee@richtek.com>
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Wed, Feb 21, 2018 at 01:53:57PM +0100, Peter Zijlstra wrote:
-> > That's because this crossed with the llvm cruft, right? I'll have a
-> > look.
-> 
-> Best I could come up with that seems to work is something like the
-> below. Ingo, can you backmerge or stuff on top as appropriate?
-
-I backmerged/reordered and made the v2 patch below out of it.
-
-Does this look good to everyone?
-
-Thanks,
-
-	Ingo
-
-=======================>
->From d5028ba8ee5a18c9d0bb926d883c28b370f89009 Mon Sep 17 00:00:00 2001
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue, 6 Feb 2018 09:46:13 +0100
-Subject: [PATCH] objtool, retpolines: Integrate objtool with retpoline support more closely
-
-Disable retpoline validation in objtool if your compiler sucks, and otherwise
-select the validation stuff for CONFIG_RETPOLINE=y (most builds would already
-have it set due to ORC).
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: ShuFanLee <shufan_lee@richtek.com>
 ---
- Makefile               |  5 +++++
- arch/x86/Kconfig       |  1 +
- arch/x86/Makefile      | 10 +++-------
- scripts/Makefile.build |  2 ++
- 4 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/staging/typec/tcpci.c | 128 +++++++++++++++++++++++++++++++++---------
+ drivers/staging/typec/tcpci.h |  13 +++++
+ 2 files changed, 115 insertions(+), 26 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 79ad2bfa24b6..3dfce4d2f25d 100644
---- a/Makefile
-+++ b/Makefile
-@@ -489,6 +489,11 @@ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- endif
+ patch changelogs between v1 & v2
+ - Remove unnecessary i2c_client in the structure of tcpci
+ - Rename structure of tcpci_vendor_data to tcpci_data
+ - Not exporting tcpci read/write wrappers but register i2c regmap in glue driver
+ - Add set_vconn ops in tcpci_data
+   (It is necessary for RT1711H to enable/disable idle mode before disabling/enabling vconn)
+ - Export tcpci_irq so that vendor can call it in their own IRQ handler
+
+ patch changelogs between v2 & v3
+ - Change the return type of tcpci_irq from int to irqreturn_t
+ - Disable IRQs and request threaded IRQ before registering tcpci port
+
+diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+index 9bd4412..4959c69 100644
+--- a/drivers/staging/typec/tcpci.c
++++ b/drivers/staging/typec/tcpci.c
+@@ -21,7 +21,6 @@
  
-+RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
-+RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-+export RETPOLINE_CFLAGS
+ struct tcpci {
+ 	struct device *dev;
+-	struct i2c_client *client;
+ 
+ 	struct tcpm_port *port;
+ 
+@@ -30,6 +29,12 @@ struct tcpci {
+ 	bool controls_vbus;
+ 
+ 	struct tcpc_dev tcpc;
++	struct tcpci_data *data;
++};
 +
- ifeq ($(config-targets),1)
- # ===========================================================================
- # *config targets only - make sure prerequisites are updated, and descend
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 63bf349b2b24..c1aed6c0e413 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -436,6 +436,7 @@ config GOLDFISH
- config RETPOLINE
- 	bool "Avoid speculative indirect branches in kernel"
- 	default y
-+	select STACK_VALIDATION if HAVE_STACK_VALIDATION
- 	help
- 	  Compile kernel with the retpoline compiler options to guard against
- 	  kernel-to-user data leaks by avoiding speculative indirect
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index dbc7d0ed2eaa..498c1b812300 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -232,13 +232,9 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
++struct tcpci_chip {
++	struct tcpci *tcpci;
++	struct tcpci_data data;
+ };
  
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
--    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
--
--    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
--    ifneq ($(RETPOLINE_CFLAGS),)
--        KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
--    endif
-+ifneq ($(RETPOLINE_CFLAGS),)
-+  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-+endif
- endif
+ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+@@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+ 	return container_of(tcpc, struct tcpci, tcpc);
+ }
  
- archscripts: scripts_basic
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index ce0fc4dd68c6..4f2b25d43ec9 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -267,8 +267,10 @@ else
- objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
- endif
- ifdef CONFIG_RETPOLINE
-+ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args += --retpoline
- endif
-+endif
+-static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+-			u16 *val)
++static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
+ {
+ 	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+ }
+@@ -98,8 +102,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 				    enum typec_cc_status cc)
+ {
++	int ret;
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+-	unsigned int reg = TCPC_ROLE_CTRL_DRP;
++	unsigned int reg = (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
  
+ 	switch (cc) {
+ 	default:
+@@ -117,7 +123,19 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 		break;
+ 	}
  
- ifdef CONFIG_MODVERSIONS
+-	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	usleep_range(500, 1000);
++	reg |= TCPC_ROLE_CTRL_DRP;
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
++			   TCPC_CMD_LOOK4CONNECTION);
++	if (ret < 0)
++		return ret;
++	return 0;
+ }
+ 
+ static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+@@ -178,6 +196,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc, bool enable)
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+ 	int ret;
+ 
++	/* Handle vendor set vconn */
++	if (tcpci->data) {
++		if (tcpci->data->set_vconn) {
++			ret = tcpci->data->set_vconn(tcpci, tcpci->data,
++						     enable);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	ret = regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+ 			   enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+ 	if (ret < 0)
+@@ -323,6 +351,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	if (time_after(jiffies, timeout))
+ 		return -ETIMEDOUT;
+ 
++	/* Handle vendor init */
++	if (tcpci->data) {
++		if (tcpci->data->init) {
++			ret = tcpci->data->init(tcpci, tcpci->data);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	/* Clear all events */
+ 	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+ 	if (ret < 0)
+@@ -344,9 +381,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+ }
+ 
+-static irqreturn_t tcpci_irq(int irq, void *dev_id)
++static irqreturn_t _tcpci_irq(int irq, void *dev_id)
+ {
+ 	struct tcpci *tcpci = dev_id;
++
++	return tcpci_irq(tcpci);
++}
++
++irqreturn_t tcpci_irq(struct tcpci *tcpci)
++{
+ 	u16 status;
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
+@@ -412,6 +455,7 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 
+ 	return IRQ_HANDLED;
+ }
++EXPORT_SYMBOL_GPL(tcpci_irq);
+ 
+ static const struct regmap_config tcpci_regmap_config = {
+ 	.reg_bits = 8,
+@@ -435,22 +479,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+ 	return 0;
+ }
+ 
+-static int tcpci_probe(struct i2c_client *client,
+-		       const struct i2c_device_id *i2c_id)
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data)
+ {
+ 	struct tcpci *tcpci;
+ 	int err;
+ 
+-	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
++	tcpci = devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+ 	if (!tcpci)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+-	tcpci->client = client;
+-	tcpci->dev = &client->dev;
+-	i2c_set_clientdata(client, tcpci);
+-	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+-	if (IS_ERR(tcpci->regmap))
+-		return PTR_ERR(tcpci->regmap);
++	tcpci->dev = dev;
++	tcpci->data = data;
++	tcpci->regmap = data->regmap;
+ 
+ 	tcpci->tcpc.init = tcpci_init;
+ 	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+@@ -467,27 +507,63 @@ static int tcpci_probe(struct i2c_client *client,
+ 
+ 	err = tcpci_parse_config(tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
++
++	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
++	if (PTR_ERR_OR_ZERO(tcpci->port))
++		return ERR_CAST(tcpci->port);
+ 
+-	/* Disable chip interrupts */
+-	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
++	return tcpci;
++}
++EXPORT_SYMBOL_GPL(tcpci_register_port);
++
++void tcpci_unregister_port(struct tcpci *tcpci)
++{
++	tcpm_unregister_port(tcpci->port);
++}
++EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+ 
+-	err = devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+-					tcpci_irq,
++static int tcpci_probe(struct i2c_client *client,
++		       const struct i2c_device_id *i2c_id)
++{
++	struct tcpci_chip *chip;
++	int err;
++	u16 val = 0;
++
++	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->data.regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
++	if (IS_ERR(chip->data.regmap))
++		return PTR_ERR(chip->data.regmap);
++
++	/* Disable chip interrupts before requesting irq */
++	err = regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val,
++			       sizeof(u16));
++	if (err < 0)
++		return err;
++
++	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					_tcpci_irq,
+ 					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+-					dev_name(tcpci->dev), tcpci);
++					dev_name(&client->dev), chip);
+ 	if (err < 0)
+ 		return err;
+ 
+-	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+-	return PTR_ERR_OR_ZERO(tcpci->port);
++	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
++	if (PTR_ERR_OR_ZERO(chip->tcpci))
++		return PTR_ERR(chip->tcpci);
++
++	i2c_set_clientdata(client, chip);
++	return 0;
+ }
+ 
+ static int tcpci_remove(struct i2c_client *client)
+ {
+-	struct tcpci *tcpci = i2c_get_clientdata(client);
++	struct tcpci_chip *chip = i2c_get_clientdata(client);
+ 
+-	tcpm_unregister_port(tcpci->port);
++	tcpci_unregister_port(chip->tcpci);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+index fdfb06c..40025b2 100644
+--- a/drivers/staging/typec/tcpci.h
++++ b/drivers/staging/typec/tcpci.h
+@@ -59,6 +59,7 @@
+ #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+ 
+ #define TCPC_CC_STATUS			0x1d
++#define TCPC_CC_STATUS_DRPRST		BIT(5)
+ #define TCPC_CC_STATUS_TERM		BIT(4)
+ #define TCPC_CC_STATUS_CC2_SHIFT	2
+ #define TCPC_CC_STATUS_CC2_MASK		0x3
+@@ -121,4 +122,16 @@
+ #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+ #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+ 
++struct tcpci;
++struct tcpci_data {
++	struct regmap *regmap;
++	int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
++	int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
++			 bool enable);
++};
++
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
++void tcpci_unregister_port(struct tcpci *tcpci);
++irqreturn_t tcpci_irq(struct tcpci *tcpci);
++
+ #endif /* __LINUX_USB_TCPCI_H */
+-- 
+1.9.1
