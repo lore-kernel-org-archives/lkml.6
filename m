@@ -1,63 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966109AbeBUPeB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:34:01 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S937924AbeBUPd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:33:59 -0500
-Subject: Re: [PATCH 2/3] sysctl: Warn when a clamped sysctl parameter is set
- out of range
-To: Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1519059231-2456-1-git-send-email-longman@redhat.com>
- <1519059231-2456-3-git-send-email-longman@redhat.com>
- <20180220151705.8b4519f105db8f5c119015f0@linux-foundation.org>
- <CAGXu5jJxj77yH8reSaQDp26D1tEvQVaiuL99uYuukCTc5FbfHA@mail.gmail.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <a178999f-84f7-db25-2db0-8257208cfc2b@redhat.com>
-Date: Wed, 21 Feb 2018 10:33:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S938299AbeBUPgL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:36:11 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41367 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935612AbeBUPgJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 10:36:09 -0500
+X-Google-Smtp-Source: AH8x226V6hC7hbmWuvoOvDceqIsfCrwBg9bckQCMe9IX9tMY32VKIl+ZbMpzedJOyyZZw0vD7Zxdu+41mfr3a1VRsKE=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJxj77yH8reSaQDp26D1tEvQVaiuL99uYuukCTc5FbfHA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180221152720.GP5453@intel.com>
+References: <20180221143730.30285-1-robdclark@gmail.com> <20180221143730.30285-2-robdclark@gmail.com>
+ <20180221144919.GN5453@intel.com> <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
+ <20180221150727.GO5453@intel.com> <CAF6AEGucNXQZjKaL4KYXSnax=kFiurmsgxKHP9t5ycy_tbmj7g@mail.gmail.com>
+ <20180221152720.GP5453@intel.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 21 Feb 2018 10:36:06 -0500
+Message-ID: <CAF6AEGs+_gjEzueON9Rz8ce9xzHKhkdR2yQGfSpC=6DQV19V2A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private objects
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LFaJmU024509
 
-On 02/20/2018 08:26 PM, Kees Cook wrote:
-> On Tue, Feb 20, 2018 at 3:17 PM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
->> On Mon, 19 Feb 2018 11:53:50 -0500 Waiman Long <longman@redhat.com> wrote:
+On Wed, Feb 21, 2018 at 10:27 AM, Ville Syrjälä
+<ville.syrjala@linux.intel.com> wrote:
+> On Wed, Feb 21, 2018 at 10:20:03AM -0500, Rob Clark wrote:
+>> On Wed, Feb 21, 2018 at 10:07 AM, Ville Syrjälä
+>> <ville.syrjala@linux.intel.com> wrote:
+>> > On Wed, Feb 21, 2018 at 09:54:49AM -0500, Rob Clark wrote:
+>> >> On Wed, Feb 21, 2018 at 9:49 AM, Ville Syrjälä
+>> >> <ville.syrjala@linux.intel.com> wrote:
+>> >> > On Wed, Feb 21, 2018 at 09:37:21AM -0500, Rob Clark wrote:
+>> >> >> Follow the same pattern of locking as with other state objects.  This
+>> >> >> avoids boilerplate in the driver.
+>> >> >
+>> >> > I'm not sure we really want to do this. What if the driver wants a
+>> >> > custom locking scheme for this state?
+>> >>
+>> >> That seems like something we want to discourage, ie. all the more
+>> >> reason for this patch.
+>> >>
+>> >> There is no reason drivers could not split their global state into
+>> >> multiple private objs's, each with their own lock, for more fine
+>> >> grained locking.  That is basically the only valid reason I can think
+>> >> of for "custom locking".
+>> >
+>> > In i915 we have at least one case that would want something close to an
+>> > rwlock. Any crtc lock is enough for read, need all of them for write.
+>> > Though if we wanted to use private objs for that we might need to
+>> > actually make the states refcounted as well, otherwise I can imagine
+>> > we might land in some use-after-free issues once again.
+>> >
+>> > Maybe we could duplicate the state into per-crtc and global copies, but
+>> > then we have to keep all of those in sync somehow which doesn't sound
+>> > particularly pleasant.
 >>
->>> Even with clamped sysctl parameters, it is still not that straight
->>> forward to figure out the exact range of those parameters. One may
->>> try to write extreme parameter values to see if they get clamped.
->>> To make it easier, a warning with the expected range will now be
->>> printed in the kernel ring buffer when a clamped sysctl parameter
->>> receives an out of range value.
->> This assumes that do_proc_dointvec_minmax_conv() and
->> do_proc_douintvec_minmax_conv() are only ever called by privileged
->> userspace.  Because we mustn't give unprivileged applications a way to
->> spam the kernel logs.
->>
->> That's presumably true in the case of the caller you just added, but I
->> don't see what we can do to guarantee this in the future, so perhaps we
->> should add some permission check to the pr_warn()?
-> How about pr_warn_ratelimited() instead?
+>> Or just keep your own driver lock for read, and use that plus the core
+>> modeset lock for write?
 >
-> -Kees
+> If we can't add the private obj to the state we can't really use it.
 >
-My current thinking is to issue at most one warning per sysctl parameter
-as additional warning of the same kind does not provide additional
-information.
 
--Longman
+I'm not sure why that is strictly true (that you need to add it to the
+state if for read-only), since you'd be guarding it with your own
+driver read-lock you can just priv->foo_state->bar.
+
+Since it is read-only access, there is no roll-back to worry about for
+test-only or failed atomic_check()s..
+
+BR,
+-R
+
+
+>>
+>> BR,
+>> -R
+>>
+>> >
+>> >>
+>> >> (And ofc drivers could add there own locks in addition to what is done
+>> >> by core, but I'd rather look at that on a case by case basis, rather
+>> >> than it being part of the boilerplate in each driver.)
+>> >>
+>> >> BR,
+>> >> -R
+>> >>
+>> >> >>
+>> >> >> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>> >> >> ---
+>> >> >>  drivers/gpu/drm/drm_atomic.c | 9 ++++++++-
+>> >> >>  include/drm/drm_atomic.h     | 5 +++++
+>> >> >>  2 files changed, 13 insertions(+), 1 deletion(-)
+>> >> >>
+>> >> >> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+>> >> >> index fc8c4da409ff..004e621ab307 100644
+>> >> >> --- a/drivers/gpu/drm/drm_atomic.c
+>> >> >> +++ b/drivers/gpu/drm/drm_atomic.c
+>> >> >> @@ -1078,6 +1078,8 @@ drm_atomic_private_obj_init(struct drm_private_obj *obj,
+>> >> >>  {
+>> >> >>       memset(obj, 0, sizeof(*obj));
+>> >> >>
+>> >> >> +     drm_modeset_lock_init(&obj->lock);
+>> >> >> +
+>> >> >>       obj->state = state;
+>> >> >>       obj->funcs = funcs;
+>> >> >>  }
+>> >> >> @@ -1093,6 +1095,7 @@ void
+>> >> >>  drm_atomic_private_obj_fini(struct drm_private_obj *obj)
+>> >> >>  {
+>> >> >>       obj->funcs->atomic_destroy_state(obj, obj->state);
+>> >> >> +     drm_modeset_lock_fini(&obj->lock);
+>> >> >>  }
+>> >> >>  EXPORT_SYMBOL(drm_atomic_private_obj_fini);
+>> >> >>
+>> >> >> @@ -1113,7 +1116,7 @@ struct drm_private_state *
+>> >> >>  drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+>> >> >>                                struct drm_private_obj *obj)
+>> >> >>  {
+>> >> >> -     int index, num_objs, i;
+>> >> >> +     int index, num_objs, i, ret;
+>> >> >>       size_t size;
+>> >> >>       struct __drm_private_objs_state *arr;
+>> >> >>       struct drm_private_state *obj_state;
+>> >> >> @@ -1122,6 +1125,10 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+>> >> >>               if (obj == state->private_objs[i].ptr)
+>> >> >>                       return state->private_objs[i].state;
+>> >> >>
+>> >> >> +     ret = drm_modeset_lock(&obj->lock, state->acquire_ctx);
+>> >> >> +     if (ret)
+>> >> >> +             return ERR_PTR(ret);
+>> >> >> +
+>> >> >>       num_objs = state->num_private_objs + 1;
+>> >> >>       size = sizeof(*state->private_objs) * num_objs;
+>> >> >>       arr = krealloc(state->private_objs, size, GFP_KERNEL);
+>> >> >> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+>> >> >> index 09076a625637..9ae53b73c9d2 100644
+>> >> >> --- a/include/drm/drm_atomic.h
+>> >> >> +++ b/include/drm/drm_atomic.h
+>> >> >> @@ -218,6 +218,11 @@ struct drm_private_state_funcs {
+>> >> >>   * &drm_modeset_lock is required to duplicate and update this object's state.
+>> >> >>   */
+>> >> >>  struct drm_private_obj {
+>> >> >> +     /**
+>> >> >> +      * @lock: Modeset lock to protect the state object.
+>> >> >> +      */
+>> >> >> +     struct drm_modeset_lock lock;
+>> >> >> +
+>> >> >>       /**
+>> >> >>        * @state: Current atomic state for this driver private object.
+>> >> >>        */
+>> >> >> --
+>> >> >> 2.14.3
+>> >> >>
+>> >> >> _______________________________________________
+>> >> >> dri-devel mailing list
+>> >> >> dri-devel@lists.freedesktop.org
+>> >> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> >> >
+>> >> > --
+>> >> > Ville Syrjälä
+>> >> > Intel OTC
+>> >
+>> > --
+>> > Ville Syrjälä
+>> > Intel OTC
+>
+> --
+> Ville Syrjälä
+> Intel OTC
