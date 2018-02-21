@@ -1,140 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751383AbeBUUZs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:25:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751119AbeBUUZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:25:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF99214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-From: Alan Tull <atull@kernel.org>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Alan Tull <atull@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: stratix10: enable i2c, add i2c periperals
-Date: Wed, 21 Feb 2018 14:25:41 -0600
-Message-Id: <20180221202541.3258-1-atull@kernel.org>
-X-Mailer: git-send-email 2.14.2
+        id S1751360AbeBUU1J (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:27:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38306 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750738AbeBUU1I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 15:27:08 -0500
+Date: Wed, 21 Feb 2018 12:27:07 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] proc: use set_puts() at /proc/*/wchan
+Message-Id: <20180221122707.69398914a45486a741bdad96@linux-foundation.org>
+In-Reply-To: <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
+References: <20180217072011.GB16074@avx2>
+        <CAHp75Vd9ZnC059W2n5=Rx_gz3GN0LORPwt=_AdG5GZPJAUTasw@mail.gmail.com>
+        <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
+        <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock for i2c
-Enable i2c1
-Set the i2c bus speed to 100KHz
-Add the following i2c peripherals
-* ds1339 RTC
-* 24c32 EEPROM
-* max1619 temperature monitor
-* ltc2497 ADC
-  * Add a fixed regulator for the ADC's Vref.
+On Wed, 21 Feb 2018 09:57:49 +0100 Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
 
-This requires Dinh Nguyen's Stratix10 clock driver
-("clk: socfpga: stratix10: add clock driver for Stratix10 platform")
+> On 2018-02-21 01:02, Andrew Morton wrote:
+> > On Sat, 17 Feb 2018 16:06:42 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > 
+> >> On Sat, Feb 17, 2018 at 9:20 AM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >>> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> >>
+> >>
+> >>> -               seq_printf(m, "%s", symname);
+> >>> +               seq_puts(m, symname);
+> >>
+> >> While this might have no security concerns, the pattern might be
+> >> brainlessly used by some janitors and there would have security
+> >> implications.
+> > 
+> > And I'd like to see a changelog, please.  One which explains why
+> > `symname' cannot have a %s (etc) in it, and never will.
+> 
+> OK, since #youtoo: It doesn't _matter_ if symname is "%pHAHAHA %fooled
+> you <unicode for evil grin emoji>", seq_puts does not interpret it at
+> all. There are _never_ security implications with the above replacement.
+> Sure, seq_printf(m, symname) would be bad, but that's not what is being
+> done.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |  5 ++++
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 34 ++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index 5a6a699..65d9256 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -210,6 +210,7 @@
- 			reg = <0xffc02800 0x100>;
- 			interrupts = <0 103 4>;
- 			resets = <&rst I2C0_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -220,6 +221,7 @@
- 			reg = <0xffc02900 0x100>;
- 			interrupts = <0 104 4>;
- 			resets = <&rst I2C1_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -230,6 +232,7 @@
- 			reg = <0xffc02a00 0x100>;
- 			interrupts = <0 105 4>;
- 			resets = <&rst I2C2_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -240,6 +243,7 @@
- 			reg = <0xffc02b00 0x100>;
- 			interrupts = <0 106 4>;
- 			resets = <&rst I2C3_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -250,6 +254,7 @@
- 			reg = <0xffc02c00 0x100>;
- 			interrupts = <0 107 4>;
- 			resets = <&rst I2C4_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index b7f0b6b..cf3b519 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -51,6 +51,13 @@
- 		reg = <0 0 0 0>;
- 	};
- 
-+	ref_033v: 033-v-ref {
-+		compatible = "regulator-fixed";
-+		regulator-name = "0.33V";
-+		regulator-min-microvolt = <330000>;
-+		regulator-max-microvolt = <330000>;
-+	};
-+
- 	soc {
- 		clock-controller@ffd10000 {
- 			clocks {
-@@ -111,3 +118,30 @@
- &usb0 {
- 	status = "okay";
- };
-+
-+&i2c1 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	adc@14 {
-+		compatible = "lltc,ltc2497";
-+		reg = <0x14>;
-+		vref-supply = <&ref_033v>;
-+	};
-+
-+	temp@4c {
-+		compatible = "maxim,max1619";
-+		reg = <0x4c>;
-+	};
-+
-+	eeprom@51 {
-+		compatible = "atmel,24c32";
-+		reg = <0x51>;
-+		pagesize = <32>;
-+	};
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1339";
-+		reg = <0x68>;
-+	};
-+};
--- 
-2.7.4
+doh, OK, sorry. RTFP, Andrew.
