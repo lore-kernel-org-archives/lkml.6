@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226aqq/GNcB9ZH8kx2alztJGveQ+OkdJ0xBJK/e94HaaoYDFe46wFTBJu4j1VXYHpNIKze4r
-ARC-Seal: i=1; a=rsa-sha256; t=1519218663; cv=none;
+X-Google-Smtp-Source: AH8x227HTAeChH+rUG+oaxVbEf+ESBxG0JHT3jlxOH+8XvQTNt75WxSuX3C3mg5mP7xPxl6OwloI
+ARC-Seal: i=1; a=rsa-sha256; t=1519218659; cv=none;
         d=google.com; s=arc-20160816;
-        b=JmAVOudkM7vmBw99XiPTIWtTxs9emJw6eEyZetZOp9J8YUI7TCSL1+FOHY+0s9Uqtd
-         2+L2L9vHrgn4dO9bnn5tYB8i4XaI/JZmawtkF45RViNbCBWoAasbneWKqckRJXSbxCQv
-         xFdCs0YTirxMiyp+nCA5fO+VPVJ0bz2RnRutBj6OOxgmU4ot6KweN2Fnd0LFnV3OijP6
-         Ntr3Zy2wnKWHNFgQyWoCjCtGVFcWGGSdLciPCnTmYZdzkj715spUGKkgj4kIbTmRiqJ5
-         B6dLkEwNs7QbdgMj610gyxW0Dx8kDE6iNZTB4uzUTZ/VacIqa89guDQFZgPRZy4sQ8EE
-         vEdA==
+        b=mjih5ciuOghxzB4JgL3asFDTgMheIAIJwuweQXv3BjOWvQw/QdWDisqB2qlJdq/yd/
+         48hwMaRvfsVZE8xdgnB+nqPT0O9NRDriu4BX4mGi5bafRUBdyDxzIxsQhIkYPGGhoIj/
+         0MZHS61xdmnBNRYCiOzra+RArcPBmSkX9ab/iWGeZfLcwABvUilBYqn56w0Ern+FSw2o
+         DcB6ZjcO7w8Dpm8UwuepeWQ69YFwEDgE/LVGNuyKgmteDFmntwedTRGoQ1XqSsrUFrrF
+         m9Xozmi2ruYmlJkI1LTZF4PRFpqEC7B7a9t0QXEkif/lMBhdKPTmV5BMZiEodbw8fq1f
+         LUWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=V6QiCeE7nCm9hVNK9hW4F7ccC26Ir9onHOV7poqJXFw=;
-        b=EmeZlbpq1MfoU1YmKFhnBPL26rTe298zwYHfzT4FfQnIHtl7TAwJ10hgvZ1W3yMiyI
-         AHAPqD5hryflr7GDut3Ph+CfKQFbyRa1c5SDFGZOFzlo2igo61EOx6eQN38oT/ENmGeI
-         a0IxETipTk2V1mYRZlHv9gzHWWD4c0rxIapYvZMa2ctDtfbrN5vYRgCIBiTp3tfsfeCE
-         70hUwjDzAN2fZEtvtWvpTk3RBrzuYX6J8+aqhpXUFlvhjom519G+dUsslAM73xQVYfui
-         wqoWAmjZa4D+0mHr7kpjVNeWD2AyqeObUUopOK2OxBHYgeiZ7mhDLZG5XmHVNZgQ1FsX
-         0gfA==
+        bh=6b1yBe1TzyaBojziohlHxfHf4w6L1r9JX3Dpdpa3jrA=;
+        b=CLRghkMcVjVruvBisiTEgTTI53H4hX7HaSqJWOH5dzkPGQ2RNUlgcMuYi5/insEUGO
+         TY1TS6Db7O+d6U4kdD7tcB0ukS195hTfU2Yox2rAlyGdxhoN69/RoxeolYlME5cDUkBe
+         zdTdL3IWmp/0yla7TFL1oQRPepfD5Ooco1tw3/uyNR7+Dqt3nCpEG6rlfBv/Vx2C6oF0
+         V71UuBG0XBrxHLVL4mkONoTkZSGz7N3heROP3Aecziou3anuwUzL3KiExAoCK1uG/scc
+         x+mSmqLlqiYek7EPMk4pPZYAmWhtWpOCZB5MXsNvZiVx4PuqfNZ3jgJakNrhJNu0b3uZ
+         3WsA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" <ernesto.mnd.fernandez@gmail.com>,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.15 109/163] ext4: correct documentation for grpid mount option
-Date: Wed, 21 Feb 2018 13:48:58 +0100
-Message-Id: <20180221124536.234378326@linuxfoundation.org>
+	Logan Gunthorpe <logang@deltatee.com>,
+	Max Gurtovoy <maxg@mellanox.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.15 104/163] mlx5: fix mlx5_get_vector_affinity to start from completion vector 0
+Date: Wed, 21 Feb 2018 13:48:53 +0100
+Message-Id: <20180221124536.020253137@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015282752811367?=
-X-GMAIL-MSGID: =?utf-8?q?1593016229747409249?=
+X-GMAIL-THRID: =?utf-8?q?1593015689231116812?=
+X-GMAIL-MSGID: =?utf-8?q?1593016225175166369?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-commit 9f0372488cc9243018a812e8cfbf27de650b187b upstream.
+commit 2572cf57d75a7f91835d9a38771e9e76d575d122 upstream.
 
-The grpid option is currently described as being the same as nogrpid.
+The consumers of this routine expects the affinity map of of vector
+index relative to the first completion vector. The upper layers are
+not aware of internal/private completion vectors that mlx5 allocates
+for its own usage.
 
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+Hence, return the affinity map of vector index relative to the first
+completion vector.
+
+Fixes: 05e0cc84e00c ("net/mlx5: Fix get vector affinity helper function")
+Reported-by: Logan Gunthorpe <logang@deltatee.com>
+Tested-by: Max Gurtovoy <maxg@mellanox.com>
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Cc: <stable@vger.kernel.org> # v4.15
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/filesystems/ext4.txt |    2 +-
+ include/linux/mlx5/driver.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/filesystems/ext4.txt
-+++ b/Documentation/filesystems/ext4.txt
-@@ -233,7 +233,7 @@ data_err=ignore(*)	Just print an error m
- data_err=abort		Abort the journal if an error occurs in a file
- 			data buffer in ordered mode.
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -1238,7 +1238,7 @@ mlx5_get_vector_affinity(struct mlx5_cor
+ 	int eqn;
+ 	int err;
  
--grpid			Give objects the same group ID as their creator.
-+grpid			New objects have the group ID of their parent.
- bsdgroups
+-	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
++	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
+ 	if (err)
+ 		return NULL;
  
- nogrpid		(*)	New objects have the group ID of their creator.
