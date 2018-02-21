@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933284AbeBUKh2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:37:28 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53429 "EHLO
+        id S933297AbeBUKhw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:37:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43453 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932790AbeBUKh1 (ORCPT
+        with ESMTP id S932790AbeBUKhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:37:27 -0500
-Date: Wed, 21 Feb 2018 02:35:50 -0800
+        Wed, 21 Feb 2018 05:37:50 -0500
+Date: Wed, 21 Feb 2018 02:36:21 -0800
 From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
-Message-ID: <tip-a364298359e74a414857bbbf3b725564feb22d09@git.kernel.org>
-Cc: riel@redhat.com, mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, cl@linux.com, lcapitulino@redhat.com,
-        paulmck@linux.vnet.ibm.com, cmetcalf@mellanox.com, tglx@linutronix.de,
-        efault@gmx.de, frederic@kernel.org, torvalds@linux-foundation.org,
-        kernellwp@gmail.com
-Reply-To: peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, cl@linux.com, lcapitulino@redhat.com,
-        riel@redhat.com, torvalds@linux-foundation.org, kernellwp@gmail.com,
-        paulmck@linux.vnet.ibm.com, cmetcalf@mellanox.com, tglx@linutronix.de,
-        frederic@kernel.org, efault@gmx.de
-In-Reply-To: <1519186649-3242-3-git-send-email-frederic@kernel.org>
-References: <1519186649-3242-3-git-send-email-frederic@kernel.org>
+Message-ID: <tip-22ab8bc02a5f6e8ffc418759894f7a6b0b632331@git.kernel.org>
+Cc: efault@gmx.de, hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com, lcapitulino@redhat.com,
+        linux-kernel@vger.kernel.org, cmetcalf@mellanox.com,
+        torvalds@linux-foundation.org, cl@linux.com, frederic@kernel.org,
+        riel@redhat.com, kernellwp@gmail.com
+Reply-To: kernellwp@gmail.com, riel@redhat.com, frederic@kernel.org,
+        cmetcalf@mellanox.com, cl@linux.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
+        paulmck@linux.vnet.ibm.com, mingo@kernel.org, tglx@linutronix.de,
+        efault@gmx.de, peterz@infradead.org, hpa@zytor.com
+In-Reply-To: <1519186649-3242-4-git-send-email-frederic@kernel.org>
+References: <1519186649-3242-4-git-send-email-frederic@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] nohz: Convert tick_nohz_tick_stopped() to bool
-Git-Commit-ID: a364298359e74a414857bbbf3b725564feb22d09
+Subject: [tip:sched/core] nohz: Allow to check if remote CPU tick is stopped
+Git-Commit-ID: 22ab8bc02a5f6e8ffc418759894f7a6b0b632331
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,19 +37,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a364298359e74a414857bbbf3b725564feb22d09
-Gitweb:     https://git.kernel.org/tip/a364298359e74a414857bbbf3b725564feb22d09
+Commit-ID:  22ab8bc02a5f6e8ffc418759894f7a6b0b632331
+Gitweb:     https://git.kernel.org/tip/22ab8bc02a5f6e8ffc418759894f7a6b0b632331
 Author:     Frederic Weisbecker <frederic@kernel.org>
-AuthorDate: Wed, 21 Feb 2018 05:17:24 +0100
+AuthorDate: Wed, 21 Feb 2018 05:17:25 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 09:49:08 +0100
 
-nohz: Convert tick_nohz_tick_stopped() to bool
+nohz: Allow to check if remote CPU tick is stopped
 
-It makes this function more self-explanatory about what it does and how
-to use it.
+This check is racy but provides a good heuristic to determine whether
+a CPU may need a remote tick or not.
 
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
@@ -61,36 +60,48 @@ Cc: Mike Galbraith <efault@gmx.de>
 Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Rik van Riel <riel@redhat.com>
 Cc: Wanpeng Li <kernellwp@gmail.com>
-Link: http://lkml.kernel.org/r/1519186649-3242-3-git-send-email-frederic@kernel.org
+Link: http://lkml.kernel.org/r/1519186649-3242-4-git-send-email-frederic@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/tick.h     | 2 +-
- kernel/time/tick-sched.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/tick.h     | 2 ++
+ kernel/time/tick-sched.c | 7 +++++++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 7cc3592..86576d9 100644
+index 86576d9..7f8c9a1 100644
 --- a/include/linux/tick.h
 +++ b/include/linux/tick.h
-@@ -113,7 +113,7 @@ enum tick_dep_bits {
- 
+@@ -114,6 +114,7 @@ enum tick_dep_bits {
  #ifdef CONFIG_NO_HZ_COMMON
  extern bool tick_nohz_enabled;
--extern int tick_nohz_tick_stopped(void);
-+extern bool tick_nohz_tick_stopped(void);
+ extern bool tick_nohz_tick_stopped(void);
++extern bool tick_nohz_tick_stopped_cpu(int cpu);
  extern void tick_nohz_idle_enter(void);
  extern void tick_nohz_idle_exit(void);
  extern void tick_nohz_irq_exit(void);
+@@ -125,6 +126,7 @@ extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
+ #else /* !CONFIG_NO_HZ_COMMON */
+ #define tick_nohz_enabled (0)
+ static inline int tick_nohz_tick_stopped(void) { return 0; }
++static inline int tick_nohz_tick_stopped_cpu(int cpu) { return 0; }
+ static inline void tick_nohz_idle_enter(void) { }
+ static inline void tick_nohz_idle_exit(void) { }
+ 
 diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 29a5733..0aba041 100644
+index 0aba041..d479b21 100644
 --- a/kernel/time/tick-sched.c
 +++ b/kernel/time/tick-sched.c
-@@ -481,7 +481,7 @@ static int __init setup_tick_nohz(char *str)
- 
- __setup("nohz=", setup_tick_nohz);
- 
--int tick_nohz_tick_stopped(void)
-+bool tick_nohz_tick_stopped(void)
- {
+@@ -486,6 +486,13 @@ bool tick_nohz_tick_stopped(void)
  	return __this_cpu_read(tick_cpu_sched.tick_stopped);
  }
+ 
++bool tick_nohz_tick_stopped_cpu(int cpu)
++{
++	struct tick_sched *ts = per_cpu_ptr(&tick_cpu_sched, cpu);
++
++	return ts->tick_stopped;
++}
++
+ /**
+  * tick_nohz_update_jiffies - update jiffies when idle was interrupted
+  *
