@@ -1,60 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751265AbeBUTqA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:46:00 -0500
-Received: from mail-ua0-f201.google.com ([209.85.217.201]:37352 "EHLO
-        mail-ua0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751118AbeBUTpz (ORCPT
+        id S1751345AbeBUTr2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:47:28 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41028 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeBUTr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:45:55 -0500
-X-Google-Smtp-Source: AH8x226se0GXd5vTWEUthiquC8w7ls2+8jDdONRuBDD3CMPYTr6vCoeni6meyOI69NjfQSgCYVyAykzzSY55
+        Wed, 21 Feb 2018 14:47:26 -0500
+X-Google-Smtp-Source: AH8x227wIPewAGw1VBiklYOhveNGCuE+h3DrXoatIRgnuvP5E09J3G6rszTiW1snpgiln7exfb5aDQ==
+Date: Wed, 21 Feb 2018 11:47:22 -0800
+From: Tejun Heo <tj@kernel.org>
+To: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        kernel-team@fb.com
+Subject: [PATCH cgroup/for-4.16-fixes] cgroup: fix rule checking for threaded
+ mode switching
+Message-ID: <20180221194722.GF170644@devbig577.frc2.facebook.com>
+References: <CAKgNAkgEa9ZEHzoRWv7Y71eFVuFsy8Z4zSazZv9u7NRrx3xG9Q@mail.gmail.com>
+ <20180220193547.GB170644@devbig577.frc2.facebook.com>
+ <20180220230136.GD170644@devbig577.frc2.facebook.com>
+ <CAKgNAkhMqq=VRKrLp89f5RR_gmsLSrd5W+qN8jv5C_ZVwzFs_Q@mail.gmail.com>
 MIME-Version: 1.0
-Date: Wed, 21 Feb 2018 20:45:26 +0100
-In-Reply-To: <20180221194526.49183-1-delroth@google.com>
-Message-Id: <20180221194526.49183-2-delroth@google.com>
-References: <20180221125512.8265-1-delroth@google.com> <20180221194526.49183-1-delroth@google.com>
-X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
-Subject: [PATCH v2 2/2] dt-bindings: iio: light: Add bh1730fvc bindings
-From: Pierre Bourdon <delroth@google.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Pierre Bourdon <delroth@google.com>, linux-iio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgNAkhMqq=VRKrLp89f5RR_gmsLSrd5W+qN8jv5C_ZVwzFs_Q@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Pierre Bourdon <delroth@google.com>
----
- .../devicetree/bindings/iio/light/bh1730.txt      | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/light/bh1730.txt
+>From d1897c9538edafd4ae6bbd03cc075962ddde2c21 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 21 Feb 2018 11:39:22 -0800
 
-diff --git a/Documentation/devicetree/bindings/iio/light/bh1730.txt b/Documentation/devicetree/bindings/iio/light/bh1730.txt
-new file mode 100644
-index 000000000000..6b38c4010647
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/light/bh1730.txt
-@@ -0,0 +1,15 @@
-+* ROHM BH1730FVC ambient light sensor
+A domain cgroup isn't allowed to be turned threaded if its subtree is
+populated or domain controllers are enabled.  cgroup_enable_threaded()
+depended on cgroup_can_be_thread_root() test to enforce this rule.  A
+parent which has populated domain descendants or have domain
+controllers enabled can't become a thread root, so the above rules are
+enforced automatically.
+
+However, for the root cgroup which can host mixed domain and threaded
+children, cgroup_can_be_thread_root() doesn't check any of those
+conditions and thus first level cgroups ends up escaping those rules.
+
+This patch fixes the bug by adding explicit checks for those rules in
+cgroup_enable_threaded().
+
+Reported-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 8cfd8147df67 ("cgroup: implement cgroup v2 thread support")
+Cc: stable@vger.kernel.org # v4.14+
+---
+ kernel/cgroup/cgroup.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 8cda3bc..4bfb290 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3183,6 +3183,16 @@ static int cgroup_enable_threaded(struct cgroup *cgrp)
+ 	if (cgroup_is_threaded(cgrp))
+ 		return 0;
+ 
++	/*
++	 * If @cgroup is populated or has domain controllers enabled, it
++	 * can't be switched.  While the below cgroup_can_be_thread_root()
++	 * test can catch the same conditions, that's only when @parent is
++	 * not mixable, so let's check it explicitly.
++	 */
++	if (cgroup_is_populated(cgrp) ||
++	    cgrp->subtree_control & ~cgrp_dfl_threaded_ss_mask)
++		return -EOPNOTSUPP;
 +
-+http://www.rohm.com/web/global/products/-/product/BH1730FVC
-+
-+Required properties:
-+
-+  - compatible : should be "rohm,bh1730fvc"
-+  - reg : the I2C address of the sensor
-+
-+Example:
-+
-+bh1730fvc@29 {
-+	compatible = "rohm,bh1730fvc";
-+	reg = <0x29>;
-+};
+ 	/* we're joining the parent's domain, ensure its validity */
+ 	if (!cgroup_is_valid_domain(dom_cgrp) ||
+ 	    !cgroup_can_be_thread_root(dom_cgrp))
 -- 
-2.16.1.291.g4437f3f132-goog
+2.9.5
