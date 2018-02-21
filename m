@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2251ZKtD7NuaZrVDa+0uEyl2V5fw81rBTZx4Pm+cGXa9kGgIwg+JzphrHjRCs7af1tbIUIhx
-ARC-Seal: i=1; a=rsa-sha256; t=1519218338; cv=none;
+X-Google-Smtp-Source: AH8x227kyjmkwgqrFkSBfkkdJuFdgcQtgbXFrAV4RKZ4MAT3+5KqqP69EUw/CH4At8q+vV6wN02Q
+ARC-Seal: i=1; a=rsa-sha256; t=1519218335; cv=none;
         d=google.com; s=arc-20160816;
-        b=SmIxQKvAz4rHEJe3h3we0YF94mQegsA2lBeKGxxvUzVfyPqHzLJ52DbscCL/GgEk/r
-         R41NYh13fMw5B9/rcjzF0hkDHkygiptb37XajQKN6zxrYNBmUfB9pV0Db/cejFgs8R2r
-         HdTYQguUvC9ZW2f1v3NW7NstT9NCBv6IDkayKx0MaW53xedYZOx6bdeJKaflQycaEY1/
-         s2Yq7hldzTSWxXAjMN/oK9sFBsOw3ViZRhzm6lFSqfbW7+9q+FPcV7RfGNg6PWJC+I6a
-         L7A0Ub0UU5Yx3Lj01NRhZ/Nj2586MxamFAdiZ6r6RMYa2sMnkJjZ0lmo9vrJBZp+Gh8i
-         mxYg==
+        b=vsqcmTgw78l9MkduFzhNCVD2ou/vQyLr7vWtF4DNx6XyHpyTpFmr4TDEFJP6ndSW7L
+         /FnFPUmmqC93crwz290CrFm9GB9FhKSvUULnK7g9zG85wnCFwWHS552Lm/hpO+O3ZAE0
+         3Qd03hwlGmyT15Z1ziguTji9wTQFMTAPKHuLvOwbuC0Jjpe3xkV6yz4LhOQ6bkzPIxsV
+         mzOGv28A42vy6EmwYia3JNZ8/d4zNjBkcXm9y2hn/mdU1AhWG6PEu31DYJ4ph0IHhHcZ
+         4+ZczMb63W3juIoZdKN+scCQ+okU0cIf8Y3axabh65F8Gppyia1jKTmvcProEAa1KG7K
+         mpqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5+/I93O9vpVZ0mwwYqoV0QD/FQ3JXldXG/A33eEfmd8=;
-        b=If1G5LvkK5jd5T1/N8EP0W6oimLxxv9UfGYKT+fU8wbkizXAkawTcWe8iaIFvoVCL/
-         v2+eXWmvP/QCQWCuZFih7ylUHqvbGcVJJDFnVX0U2VWXJXJc/gnMvb8qcG+oiAJ8Y1M0
-         7wP2QYTmdLFJKevgfIcQ2YdFTrKNyh5A7bDprhqpQYyzQpAPvX8pf8/P9MWd89w/g3j4
-         0maYrEb91i9jp2c23/i5Iu0KnUr5vPMkWWXNf9+OVB+3xa3t/kdJS/c+uLNfvZ3dkdKT
-         aNEUPfRxG8M5BzO+a/OdPWftPWzxEqYzZ16WfJu0/mCAuLpij8e0STnVt4of5OUt1yB0
-         pjtw==
+        bh=Xcu7RDQo9NTJFBpuAV6nV/9/l/52uQZJsx8/sSgkiOo=;
+        b=NfmRB1yJoqnBLMS2QG2Sm+cnmdBjfFj5QffnvU7it1AwxlvKs1PvBkS6ZtN/nlmKU/
+         zDIwgp1KSzWQCZHCbj/4pue/uEqFKe9R8SFl6up/Pt2nQUwuLhQ7tR+ParGBgx36A/Ak
+         SwSb4EEC4c9XrKF4eDiWfu8aK3z2xlvg4TeTz0IY0GhZ7W4NzPrEy49j/yOEVIsMbafK
+         +kOeZBteoJm/StiLF8AI0CHWhGmqUIWAEnGWqgYVcXRQXxuKmBr+pPd9cG8M2HQjd6os
+         sy3pCY6x961/xhGI1gayIw9/A7eaHu9c7d2TAS3eo1rW7q1Oq4gSnPxIBkGZvTPX96O3
+         A9dw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
+	Daniel Mack <daniel@zonque.org>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 149/167] ALSA: seq: Fix racy pool initializations
-Date: Wed, 21 Feb 2018 13:49:20 +0100
-Message-Id: <20180221124532.916634327@linuxfoundation.org>
+Subject: [PATCH 4.14 148/167] ALSA: usb: add more device quirks for USB DSD devices
+Date: Wed, 21 Feb 2018 13:49:19 +0100
+Message-Id: <20180221124532.849565593@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015239722936389?=
-X-GMAIL-MSGID: =?utf-8?q?1593015888516753594?=
+X-GMAIL-THRID: =?utf-8?q?1593015885600564211?=
+X-GMAIL-MSGID: =?utf-8?q?1593015885600564211?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,55 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Daniel Mack <daniel@zonque.org>
 
-commit d15d662e89fc667b90cd294b0eb45694e33144da upstream.
+commit 7c74866baef1827e18f8269aec85030063520bd4 upstream.
 
-ALSA sequencer core initializes the event pool on demand by invoking
-snd_seq_pool_init() when the first write happens and the pool is
-empty.  Meanwhile user can reset the pool size manually via ioctl
-concurrently, and this may lead to UAF or out-of-bound accesses since
-the function tries to vmalloc / vfree the buffer.
+Add some more devices that need quirks to handle DSD modes correctly.
 
-A simple fix is to just wrap the snd_seq_pool_init() call with the
-recently introduced client->ioctl_mutex; as the calls for
-snd_seq_pool_init() from other side are always protected with this
-mutex, we can avoid the race.
-
-Reported-by: 范龙飞 <long7573@126.com>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reported-and-tested-by: Thomas Gresens <tgresens@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_clientmgr.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/usb/quirks.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -999,7 +999,7 @@ static ssize_t snd_seq_write(struct file
- {
- 	struct snd_seq_client *client = file->private_data;
- 	int written = 0, len;
--	int err = -EINVAL;
-+	int err;
- 	struct snd_seq_event event;
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1369,8 +1369,11 @@ u64 snd_usb_interface_dsd_format_quirks(
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+ 		break;
  
- 	if (!(snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT))
-@@ -1014,11 +1014,15 @@ static ssize_t snd_seq_write(struct file
- 
- 	/* allocate the pool now if the pool is not allocated yet */ 
- 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
--		if (snd_seq_pool_init(client->pool) < 0)
-+		mutex_lock(&client->ioctl_mutex);
-+		err = snd_seq_pool_init(client->pool);
-+		mutex_unlock(&client->ioctl_mutex);
-+		if (err < 0)
- 			return -ENOMEM;
- 	}
- 
- 	/* only process whole events */
-+	err = -EINVAL;
- 	while (count >= sizeof(struct snd_seq_event)) {
- 		/* Read in the event header from the user */
- 		len = sizeof(event);
+-	/* Amanero Combo384 USB interface with native DSD support */
+-	case USB_ID(0x16d0, 0x071a):
++	/* Amanero Combo384 USB based DACs with native DSD support */
++	case USB_ID(0x16d0, 0x071a):  /* Amanero - Combo384 */
++	case USB_ID(0x2ab6, 0x0004):  /* T+A DAC8DSD-V2.0, MP1000E-V2.0, MP2000R-V2.0, MP2500R-V2.0, MP3100HV-V2.0 */
++	case USB_ID(0x2ab6, 0x0005):  /* T+A USB HD Audio 1 */
++	case USB_ID(0x2ab6, 0x0006):  /* T+A USB HD Audio 2 */
+ 		if (fp->altsetting == 2) {
+ 			switch (le16_to_cpu(chip->dev->descriptor.bcdDevice)) {
+ 			case 0x199:
