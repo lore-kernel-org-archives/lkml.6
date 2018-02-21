@@ -1,73 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218380-2-15112580658080419083
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218379; b=j/f9tFM3Cxv9hk/xmAmXliucQSeGMHya1lQI0QSQoS6LIXg
-    7jSuC3LvcPvP/qmKYER1MJTfjlrG1GYtxfD+0ldkLlc4B5hTch/hGPPTwf3q/b96
-    rVzXYbfbAYiwt8xUnH/ieUtS92WpwltzytazBvrITn/LBzcwP8tcE4LjjgZTU0jD
-    V6dEtCgpBKH9fVYS2sgxosgcsQ3cY4kwBPFSDAhq/betxbSRmHpOhce3ajivt6O4
-    MQHflTtAiKfxOwl7CFLS9HW1uVryX35G1EVOrriL8aIibleUFrvbvwQ4ticeYhTF
-    M2KTOwNgdbhp4c68UAIuxXWkq5n/nAr6GlLEUxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218379; bh=Ff4cnVyOCHvWQ06zK/Lie5gL8E
-    PsHBWbTxWuiehrZRY=; b=ScwjMD8JrssjjoPA1IjQBS102c22wc1iCROsz1wJty
-    wjQntn61jSlJAs6hT52oUqjKhFMhLEYZVxkpX8mrpl9noxJ0WRNx5L/wNYhsuLUY
-    rIoF0VuWNsiXpsTLIOS+cUbaBEtgM6pVlgXUKe9n/ZaYaji3V5fh0PrdURPN/cx+
-    szpDc+jY8mkleaXNezFU/lMkGafHqJ79tn38LhYoICHadX+MRjyrn5Fhqw+QxMxX
-    Bn3gEk2kZXPEubHm++9vaS/4x/NmHHIWiDBGZgD9dstD3Hg2sPyABVHUMI0J47i6
-    ZqwRaz5sKvVC/XVkhOC6aC8OT1BbHTh9uT2i0d5ZsJIg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753564AbeBUNGQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:06:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40598 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964913AbeBUNGN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:06:13 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225sxkyBb3B1/O+qE5l5+CLjI0uzoO7H22VSYOHb2YPRODeJQIaxd+G0IG6hEYQWJaNCQt3y
+ARC-Seal: i=1; a=rsa-sha256; t=1519218380; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SM9ACFefwGVVEV3qFsQUghhuP+/UM7qS7fDw4pp+GIiWw7RZhfAWZHX3g9hD9M1LU7
+         M5lsbD8cJp20RegmPde7BxlkzMNWIE3hdnXDTMRKW4gVBkkZTOcSoxiWigqB3QTD9ZbA
+         1q80eDDFBVoxhiFgqFCYuGK4ROVDfZQaHyF5nk7UedOm5Mf4TCXX3ygDxqPyM7CTdain
+         V/R8xhZse6PdKVLPgoYOheOBxoDNJ2VrwXh9xa2eEbiez2nsz9VTu/kuaEZMji355x9s
+         9hcNExoemcyT83HvQaOTrfVSJEx/ubtUKLGTThPBC/3NyI+2hWjSruIPE9bzTaPv9qSy
+         fkBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=jnf6geqSmWqeBaocx+cVBi6uheApCGhqm1zm52cAgMo=;
+        b=gFQYaWNtWltRvtJ5oGK9DEYc5WiOibebq1ngdg3+uYOzmdR2NPgvABtQtVefco+t9T
+         Ero33/irfQKDCHTIUgMa3bfZlwJ6cynki8an0KJHssmOMYJPwUqHuoTOifW7D6944m+2
+         j0TQztiTjGp4OmoA54aQ9Lr4TsFrIpDZnZwumnTaIMmj9bFhL2EUOBOrEyMFsacDHrcf
+         pitQDd8SdHIjdt3SRmW1bH+eWtkDTpYMyauSfrJaAZGZjiR5jUJ9GhZzACwmCkCdTFvO
+         gNHjxDIua3Mz/GiEZ4JTVyGYtYUqy2kflE2eMQ5s48i2y236hlkAaMCEDLpaOaaAvqId
+         4KUA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gang He <ghe@suse.com>,
-        Eric Ren <zren@suse.com>, alex chen <alex.chen@huawei.com>,
-        piaojun <piaojun@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 017/163] ocfs2: try a blocking lock before return AOP_TRUNCATED_PAGE
-Date: Wed, 21 Feb 2018 13:47:26 +0100
-Message-Id: <20180221124531.073481061@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.15 003/163] IB/qib: Fix comparison error with qperf compare/swap test
+Date: Wed, 21 Feb 2018 13:47:12 +0100
+Message-Id: <20180221124530.140974532@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -75,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593015257383542372?=
+X-GMAIL-MSGID: =?utf-8?q?1593015931820970750?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -85,135 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gang He <ghe@suse.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit ff26cc10aec128c3f86b5611fd5f59c71d49c0e3 upstream.
+commit 87b3524cb5058fdc7c2afdb92bdb2e079661ddc4 upstream.
 
-If we can't get inode lock immediately in the function
-ocfs2_inode_lock_with_page() when reading a page, we should not return
-directly here, since this will lead to a softlockup problem when the
-kernel is configured with CONFIG_PREEMPT is not set.  The method is to
-get a blocking lock and immediately unlock before returning, this can
-avoid CPU resource waste due to lots of retries, and benefits fairness
-in getting lock among multiple nodes, increase efficiency in case
-modifying the same file frequently from multiple nodes.
+This failure exists with qib:
 
-The softlockup crash (when set /proc/sys/kernel/softlockup_panic to 1)
-looks like:
+ver_rc_compare_swap:
+mismatch, sequence 2, expected 123456789abcdef, got 0
 
-  Kernel panic - not syncing: softlockup: hung tasks
-  CPU: 0 PID: 885 Comm: multi_mmap Tainted: G L 4.12.14-6.1-default #1
-  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-  Call Trace:
-    <IRQ>
-    dump_stack+0x5c/0x82
-    panic+0xd5/0x21e
-    watchdog_timer_fn+0x208/0x210
-    __hrtimer_run_queues+0xcc/0x200
-    hrtimer_interrupt+0xa6/0x1f0
-    smp_apic_timer_interrupt+0x34/0x50
-    apic_timer_interrupt+0x96/0xa0
-    </IRQ>
-   RIP: 0010:unlock_page+0x17/0x30
-   RSP: 0000:ffffaf154080bc88 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff10
-   RAX: dead000000000100 RBX: fffff21e009f5300 RCX: 0000000000000004
-   RDX: dead0000000000ff RSI: 0000000000000202 RDI: fffff21e009f5300
-   RBP: 0000000000000000 R08: 0000000000000000 R09: ffffaf154080bb00
-   R10: ffffaf154080bc30 R11: 0000000000000040 R12: ffff993749a39518
-   R13: 0000000000000000 R14: fffff21e009f5300 R15: fffff21e009f5300
-    ocfs2_inode_lock_with_page+0x25/0x30 [ocfs2]
-    ocfs2_readpage+0x41/0x2d0 [ocfs2]
-    filemap_fault+0x12b/0x5c0
-    ocfs2_fault+0x29/0xb0 [ocfs2]
-    __do_fault+0x1a/0xa0
-    __handle_mm_fault+0xbe8/0x1090
-    handle_mm_fault+0xaa/0x1f0
-    __do_page_fault+0x235/0x4b0
-    trace_do_page_fault+0x3c/0x110
-    async_page_fault+0x28/0x30
-   RIP: 0033:0x7fa75ded638e
-   RSP: 002b:00007ffd6657db18 EFLAGS: 00010287
-   RAX: 000055c7662fb700 RBX: 0000000000000001 RCX: 000055c7662fb700
-   RDX: 0000000000001770 RSI: 00007fa75e909000 RDI: 000055c7662fb700
-   RBP: 0000000000000003 R08: 000000000000000e R09: 0000000000000000
-   R10: 0000000000000483 R11: 00007fa75ded61b0 R12: 00007fa75e90a770
-   R13: 000000000000000e R14: 0000000000001770 R15: 0000000000000000
+The request builder was using the incorrect inlines to
+build the request header resulting in incorrect data
+in the atomic header.
 
-About performance improvement, we can see the testing time is reduced,
-and CPU utilization decreases, the detailed data is as follows.  I ran
-multi_mmap test case in ocfs2-test package in a three nodes cluster.
+Fix by using the appropriate inlines to create the request.
 
-Before applying this patch:
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2754 ocfs2te+  20   0  170248   6980   4856 D 80.73 0.341   0:18.71 multi_mmap
-   1505 root      rt   0  222236 123060  97224 S 2.658 6.015   0:01.44 corosync
-      5 root      20   0       0      0      0 S 1.329 0.000   0:00.19 kworker/u8:0
-     95 root      20   0       0      0      0 S 1.329 0.000   0:00.25 kworker/u8:1
-   2728 root      20   0       0      0      0 S 0.997 0.000   0:00.24 jbd2/sda1-33
-   2721 root      20   0       0      0      0 S 0.664 0.000   0:00.07 ocfs2dc-3C8CFD4
-   2750 ocfs2te+  20   0  142976   4652   3532 S 0.664 0.227   0:00.28 mpirun
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 14:44:52 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 783 seconds.
-
-After apply this patch:
-
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2508 ocfs2te+  20   0  170248   6804   4680 R 54.00 0.333   0:55.37 multi_mmap
-    155 root      20   0       0      0      0 S 2.667 0.000   0:01.20 kworker/u8:3
-     95 root      20   0       0      0      0 S 2.000 0.000   0:01.58 kworker/u8:1
-   2504 ocfs2te+  20   0  142976   4604   3480 R 1.667 0.225   0:01.65 mpirun
-      5 root      20   0       0      0      0 S 1.000 0.000   0:01.36 kworker/u8:0
-   2482 root      20   0       0      0      0 S 1.000 0.000   0:00.86 jbd2/sda1-33
-    299 root       0 -20       0      0      0 S 0.333 0.000   0:00.13 kworker/2:1H
-    335 root       0 -20       0      0      0 S 0.333 0.000   0:00.17 kworker/1:1H
-    535 root      20   0   12140   7268   1456 S 0.333 0.355   0:00.34 haveged
-   1282 root      rt   0  222284 123108  97224 S 0.333 6.017   0:01.33 corosync
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 15:04:12 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 487 seconds.
-
-Link: http://lkml.kernel.org/r/1514447305-30814-1-git-send-email-ghe@suse.com
-Fixes: 1cce4df04f37 ("ocfs2: do not lock/unlock() inode DLM lock")
-Signed-off-by: Gang He <ghe@suse.com>
-Reviewed-by: Eric Ren <zren@suse.com>
-Acked-by: alex chen <alex.chen@huawei.com>
-Acked-by: piaojun <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 261a4351844b ("IB/qib,IB/hfi: Use core common header file")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dlmglue.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/hw/qib/qib_rc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2486,6 +2486,15 @@ int ocfs2_inode_lock_with_page(struct in
- 	ret = ocfs2_inode_lock_full(inode, ret_bh, ex, OCFS2_LOCK_NONBLOCK);
- 	if (ret == -EAGAIN) {
- 		unlock_page(page);
-+		/*
-+		 * If we can't get inode lock immediately, we should not return
-+		 * directly here, since this will lead to a softlockup problem.
-+		 * The method is to get a blocking lock and immediately unlock
-+		 * before returning, this can avoid CPU resource waste due to
-+		 * lots of retries, and benefits fairness in getting lock.
-+		 */
-+		if (ocfs2_inode_lock(inode, ret_bh, ex) == 0)
-+			ocfs2_inode_unlock(inode, ex);
- 		ret = AOP_TRUNCATED_PAGE;
- 	}
- 
+--- a/drivers/infiniband/hw/qib/qib_rc.c
++++ b/drivers/infiniband/hw/qib/qib_rc.c
+@@ -434,13 +434,13 @@ no_flow_control:
+ 				qp->s_state = OP(COMPARE_SWAP);
+ 				put_ib_ateth_swap(wqe->atomic_wr.swap,
+ 						  &ohdr->u.atomic_eth);
+-				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
+-						  &ohdr->u.atomic_eth);
++				put_ib_ateth_compare(wqe->atomic_wr.compare_add,
++						     &ohdr->u.atomic_eth);
+ 			} else {
+ 				qp->s_state = OP(FETCH_ADD);
+ 				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
+ 						  &ohdr->u.atomic_eth);
+-				put_ib_ateth_swap(0, &ohdr->u.atomic_eth);
++				put_ib_ateth_compare(0, &ohdr->u.atomic_eth);
+ 			}
+ 			put_ib_ateth_vaddr(wqe->atomic_wr.remote_addr,
+ 					   &ohdr->u.atomic_eth);
