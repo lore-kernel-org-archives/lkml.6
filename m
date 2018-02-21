@@ -1,76 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218021-2-962222878945225212
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218020; b=dV2slScq/dpmth/xviJwp/8j42LIHpoq3W1cpk64tvberNj
-    lo0SIoSAYx+A1hHLfEx3UReCkNN4t8xWzhEMC4BvEykz+8S3PnPaGcQ2RFNcgyBy
-    BKBc5xd8c62ByyzLecz6za2IjVDMbsDDrNhl4kVfF5mg6q93Jv6cpOR/Uk9QnZzZ
-    OkQ2z3mHtVsGEn2tXEsCVd6X1NVbLHu9qwxnXa5QKJ+M9RxburWdt4cM7cVsSEOF
-    npS1H9nJeXKDnE+l/WtO6tISkNWE2bR5qd/2KyohmhAoXHfEElWogK0O3TCXF3dP
-    wyuNBszKfIEVfJmOuFI/zhIqkrzrLjWmsZF4Ajw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218020; bh=LiwxcLFtJ+unyqL0n3rOxP2PwC
-    p61DQr0ofvcIIReog=; b=vK/Egqf2oFq78+GU6ddtJuzS3nx1XARlf64idtRVgd
-    hsHo/c+1uIQhG9sVRUkifBXxgV54QpN9ovLTxMmvda5uu6VNfHvr7IXZqA7rrrE8
-    mbxRE8MT6LR8KAb1tCsAo/GvZu+3PMmRCrQmSsfURkxycvhBnNF2HZB+/isjAwzr
-    PJUDRCSKRd/6yxUs9F3X3vEH/J6oZ7Oj3xzEjBFoBO5yaUN9f7apGtc0SvYlm/9w
-    yX6HXvM2R0RYa6/AV7lQVa4RTVRaNrO5+N9t0C5VRDMDZPWYeT7XZhUIivNsWsLL
-    NtAO7yuRsmCfjTP2sBtYYNL/tUep1T+9BMjMMZs2nNLg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935235AbeBUNAD (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:00:03 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36828 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932948AbeBUNAC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:00:02 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225/8Ycj+W//HDJPmm0EZHKQ07WR19yRycWJ/EDl0gviBN1DRhaJmPCVTnMOR/P3RSdEITLh
+ARC-Seal: i=1; a=rsa-sha256; t=1519218019; cv=none;
+        d=google.com; s=arc-20160816;
+        b=RwNMMniXrR+sD0CIz8fo0WZdNLT8EJkSwy7ghPFuQ0cASdvLmWcXxt5bYnzE1nITyn
+         RFJ/rVDZdSz8knpIpNIrJ0cRAtAWy9BnDg9XwA4/mu14Ba/YvEv5bvUcj6ALYC3s52+H
+         0Urh+wZNHpcYxGYBfnIH3JegYWP1aHRgbqBMfpOOwCz4sitZiRQYeBLtje0GUm3zKyFj
+         uFMnrvps9zG0TTKrgGlKZI34FsW5LEfFa1uxRMJsvV2cQ3Q6OYt3ZHBTXIC9IDdDVawp
+         9LAk/l07Xh7rgx4UwnBihYQQZtCVHUuDJv/AuiuPaODBBcVHEd+5eSUCAWC3H23psJKU
+         pmTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=l4TaSJFNSIXzYAsD68pMZycTLAPsPfPLeJEbVb05JN8=;
+        b=h9n9uAAAekLCmka7UxVwTEPUp6T0xdPwAo5u0yqiJR/cELCGEvRU2g50n00PuJ4C1h
+         7C/7ICaf9pNiVrW4et3lE6xWqrwvKjRNRvoccOSeAQ4KpLq56+nCC55ZkIuXTqKeZTs+
+         mTCxgBbdvpx+83LkgKls/xEN+c045UiKVJ2vq7oR9TG28Ct+yPTpmZhxGcCMV/fKCvGB
+         LT34+OIKRE6/9SrUEPiyUVVFjMZfm+hz6i1KUGREFlKvVhHmy1NRNSNigSj9kGCkRDVJ
+         CFiGlOaL8No/tLZJQumy5TzVljvbe0gyJnD8IHp1+R/K4gIDU93uHgWn6u8Z3RWDKxs+
+         87ow==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 054/167] x86/speculation: Clean up various Spectre related details
-Date: Wed, 21 Feb 2018 13:47:45 +0100
-Message-Id: <20180221124527.504082663@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	dan.j.williams@intel.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 059/167] x86/entry/64: Merge the POP_C_REGS and POP_EXTRA_REGS macros into a single POP_REGS macro
+Date: Wed, 21 Feb 2018 13:47:50 +0100
+Message-Id: <20180221124527.747244953@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -78,9 +48,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593015554149942379?=
+X-GMAIL-MSGID: =?utf-8?q?1593015554149942379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -88,143 +59,125 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 21e433bdb95bdf3aa48226fd3d33af608437f293 upstream.
+commit 502af0d70843c2a9405d7ba1f79b4b0305aaf5f5 upstream.
 
-Harmonize all the Spectre messages so that a:
+The two special, opencoded cases for POP_C_REGS can be handled by ASM
+macros.
 
-    dmesg | grep -i spectre
-
-... gives us most Spectre related kernel boot messages.
-
-Also fix a few other details:
-
- - clarify a comment about firmware speculation control
-
- - s/KPTI/PTI
-
- - remove various line-breaks that made the code uglier
-
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180211104949.12992-3-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |   28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+ arch/x86/entry/calling.h  |   15 +++++++++++----
+ arch/x86/entry/entry_64.S |   26 ++++----------------------
+ 2 files changed, 15 insertions(+), 26 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -162,8 +162,7 @@ static enum spectre_v2_mitigation_cmd __
- 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
- 		return SPECTRE_V2_CMD_NONE;
- 	else {
--		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
--					  sizeof(arg));
-+		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
- 		if (ret < 0)
- 			return SPECTRE_V2_CMD_AUTO;
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -139,25 +139,32 @@ For 32-bit we have the following convent
+ 	xorq %r15, %r15
+ 	.endm
  
-@@ -175,8 +174,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
+-	.macro POP_EXTRA_REGS
++	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+ 	popq %r13
+ 	popq %r12
+ 	popq %rbp
+ 	popq %rbx
+-	.endm
+-
+-	.macro POP_C_REGS
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %r11
++	.endif
+ 	popq %r10
+ 	popq %r9
+ 	popq %r8
+ 	popq %rax
++	.if \skip_r11rcx
++	popq %rsi
++	.else
+ 	popq %rcx
++	.endif
+ 	popq %rdx
+ 	popq %rsi
++	.if \pop_rdi
+ 	popq %rdi
++	.endif
+ 	.endm
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
-@@ -185,8 +183,7 @@ static enum spectre_v2_mitigation_cmd __
- 	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
- 	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
- 	    !IS_ENABLED(CONFIG_RETPOLINE)) {
--		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
--		       mitigation_options[i].option);
-+		pr_err("%s selected but not compiled in. Switching to AUTO select\n", mitigation_options[i].option);
- 		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
-@@ -256,14 +253,14 @@ static void __init spectre_v2_select_mit
- 			goto retpoline_auto;
- 		break;
- 	}
--	pr_err("kernel not compiled with retpoline; no mitigation available!");
-+	pr_err("Spectre mitigation: kernel not compiled with retpoline; no mitigation available!");
- 	return;
- 
- retpoline_auto:
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
- 	retpoline_amd:
- 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
--			pr_err("LFENCE not serializing. Switching to generic retpoline\n");
-+			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
- 			goto retpoline_generic;
- 		}
- 		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
-@@ -281,7 +278,7 @@ retpoline_auto:
- 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 	.macro icebp
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -330,15 +330,7 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+ syscall_return_via_sysret:
+ 	/* rcx and r11 are already restored (see code above) */
+ 	UNWIND_HINT_EMPTY
+-	POP_EXTRA_REGS
+-	popq	%rsi	/* skip r11 */
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rsi	/* skip rcx */
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0 skip_r11rcx=1
  
  	/*
--	 * If neither SMEP or KPTI are available, there is a risk of
-+	 * If neither SMEP nor PTI are available, there is a risk of
- 	 * hitting userspace addresses in the RSB after a context switch
- 	 * from a shallow call stack to a deeper one. To prevent this fill
- 	 * the entire RSB, even when using IBRS.
-@@ -295,21 +292,20 @@ retpoline_auto:
- 	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
- 	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
- 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
--		pr_info("Filling RSB on context switch\n");
-+		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
- 	}
+ 	 * Now all regs are restored except RSP and RDI.
+@@ -631,15 +623,7 @@ GLOBAL(swapgs_restore_regs_and_return_to
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	popq	%r11
+-	popq	%r10
+-	popq	%r9
+-	popq	%r8
+-	popq	%rax
+-	popq	%rcx
+-	popq	%rdx
+-	popq	%rsi
++	POP_REGS pop_rdi=0
  
- 	/* Initialize Indirect Branch Prediction Barrier if supported */
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
--		pr_info("Enabling Indirect Branch Prediction Barrier\n");
-+		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
- 	}
- }
+ 	/*
+ 	 * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.
+@@ -697,8 +681,7 @@ GLOBAL(restore_regs_and_return_to_kernel
+ 	ud2
+ 1:
+ #endif
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
+ 	addq	$8, %rsp	/* skip regs->orig_ax */
+ 	INTERRUPT_RETURN
  
- #undef pr_fmt
+@@ -1655,8 +1638,7 @@ end_repeat_nmi:
+ nmi_swapgs:
+ 	SWAPGS_UNSAFE_STACK
+ nmi_restore:
+-	POP_EXTRA_REGS
+-	POP_C_REGS
++	POP_REGS
  
- #ifdef CONFIG_SYSFS
--ssize_t cpu_show_meltdown(struct device *dev,
--			  struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
- 		return sprintf(buf, "Not affected\n");
-@@ -318,16 +314,14 @@ ssize_t cpu_show_meltdown(struct device
- 	return sprintf(buf, "Vulnerable\n");
- }
- 
--ssize_t cpu_show_spectre_v1(struct device *dev,
--			    struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
- 		return sprintf(buf, "Not affected\n");
- 	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- }
- 
--ssize_t cpu_show_spectre_v2(struct device *dev,
--			    struct device_attribute *attr, char *buf)
-+ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
+ 	/*
+ 	 * Skip orig_ax and the "outermost" frame to point RSP at the "iret"
