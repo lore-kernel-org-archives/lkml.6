@@ -1,73 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933238AbeBUQhj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:37:39 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39868 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932674AbeBUQhi (ORCPT
+        id S936167AbeBUQiz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:38:55 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55512 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932674AbeBUQix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:37:38 -0500
-X-Google-Smtp-Source: AH8x226lMKpz0zHXUeS3ojmo3D/Oatey1jhBot1lqITC3aN9uIdJokWSIe3xCdJpRn3ZJyAzBtQlUA==
-Date: Wed, 21 Feb 2018 08:37:37 -0800 (PST)
-X-Google-Original-Date: Wed, 21 Feb 2018 08:36:27 PST (-0800)
-Subject: [GIT PULL] RISC-V: Cleanups for 4.16-rc3
-CC: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        patches@groups.riscv.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-120c4a2d-e09b-4d5d-9fc2-3141275ca58b@palmer-si-x1c4>
+        Wed, 21 Feb 2018 11:38:53 -0500
+Subject: Re: [PATCH 3/3] platform/chrome: mfd/cros_ec_dev: Add sysfs entry to
+ set keyboard wake lid angle
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com, groeck@chromium.org, gwendal@chromium.org
+References: <20180221145033.13781-1-enric.balletbo@collabora.com>
+ <CAHp75Vf3fKen1mHGrKK0NjaCoiNwS_x91+5cfv4RPqSKAfTSQQ@mail.gmail.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <ddd2fd38-8128-ceec-a3c2-04a76110933d@collabora.com>
+Date: Wed, 21 Feb 2018 17:38:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vf3fKen1mHGrKK0NjaCoiNwS_x91+5cfv4RPqSKAfTSQQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Hi Andy,
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+On 21/02/18 16:16, Andy Shevchenko wrote:
+> On Wed, Feb 21, 2018 at 4:50 PM, Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>> From: Gwendal Grignou <gwendal@chromium.org>
+>>
+>> This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
+>> used to set and get the keyboard wake lid angle. This attribute is
+>> present only if 2 accelerometers are controlled by the EC.
+>>
+>> This patch also moves the cros_ec features check before the device is
+>> added so the features map obtained from the EC is ready on time.
+> 
+>> +/* Keyboard wake angle control */
+>> +static ssize_t show_kb_wake_angle(struct device *dev,
+>> +                                 struct device_attribute *attr, char *buf)
+>> +{
+>> +       struct ec_response_motion_sense *resp;
+>> +       struct ec_params_motion_sense *param;
+>> +       struct cros_ec_command *msg;
+>> +       int ret;
+> 
+>> +       struct cros_ec_dev *ec = container_of(
+>> +                       dev, struct cros_ec_dev, class_dev);
+> 
+> First of all, do not split lines like this.
+> Second, consider just to add a preparatory patch which introduces
+> 
+> #define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
+> 
+> and use it here.
+> 
+>> +
+>> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+>> +       if (!msg)
+>> +               return -ENOMEM;
+>> +
+>> +       param = (struct ec_params_motion_sense *)msg->data;
+>> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
+>> +       msg->version = 2;
+>> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
+>> +       param->kb_wake_angle.data = EC_MOTION_SENSE_NO_VALUE;
+>> +       msg->outsize = sizeof(*param);
+>> +       msg->insize = sizeof(*resp);
+>> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+>> +       if (ret < 0)
+>> +               goto exit;
+>> +       resp = (struct ec_response_motion_sense *)msg->data;
+> 
+>> +       ret = scnprintf(buf, PAGE_SIZE, "%d\n",
+>> +                       resp->kb_wake_angle.ret);
+> 
+> Looks like one line.
+> 
+>> +exit:
+>> +       kfree(msg);
+>> +       return ret;
+>> +}
+>> +
+>> +static ssize_t store_kb_wake_angle(struct device *dev,
+>> +                                  struct device_attribute *attr,
+>> +                                  const char *buf, size_t count)
+>> +{
+>> +       struct ec_params_motion_sense *param;
+>> +       struct cros_ec_command *msg;
+>> +       int ret;
+>> +       struct cros_ec_dev *ec = container_of(
+>> +                       dev, struct cros_ec_dev, class_dev);
+>> +       u16 angle;
+>> +
+>> +       ret = kstrtou16(buf, 0, &angle);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+>> +       if (!msg)
+>> +               return -ENOMEM;
+>> +
+>> +       param = (struct ec_params_motion_sense *)msg->data;
+>> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
+>> +       msg->version = 2;
+>> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
+>> +       param->kb_wake_angle.data = angle;
+>> +       msg->outsize = sizeof(*param);
+>> +       msg->insize = sizeof(struct ec_response_motion_sense);
+>> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+>> +       kfree(msg);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +       return count;
+>> +}
+>> +
+>>  /* Module initialization */
+>>
+>>  static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
+>>  static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
+>>  static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
+>> +static DEVICE_ATTR(kb_wake_angle, S_IWUSR | S_IRUGO, show_kb_wake_angle,
+>> +                  store_kb_wake_angle);
+> 
+> Consider to switch to
+> 
+> DEVICE_ATTR_RO()
+> DEVICE_ATTR_RW()
+> 
 
-are available in the Git repository at:
+I'll send a second version soon, thanks for the review.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-4.16-rc3-riscv_cleanups
-
-for you to fetch changes up to 8b08f50152ff85a4780e5c385d2b65889406e842:
-
-  Rename sbi_save to parse_dtb to improve code readability (2018-02-20 10:56:26 -0800)
-
-----------------------------------------------------------------
-RISC-V: Cleanups for 4.16-rc3
-
-This pull request contains a handful of small cleanups.  The only
-functional change is that IRQs are now enabled during exception
-handling, which was found when some warnings triggered with
-`CONFIG_DEBUG_ATOMIC_SLEEP=y`.  The remaining fixes should have no
-functional change: `sbi_save()` has been renamed to `parse_dtb()`
-reflect what it actually does, and a handful of unused Kconfig entries
-have been removed.
-
-This is based on rc1 as a break to my usual flow, as it appears I missed
-rc2 over the holiday.  I've merged master as of Wednesday morning,
-af3e79d29555 ("Merge tag 'leds_for-4.16-rc3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds")
-without any conflicts and I've given it a simple build test.  If this
-isn't OK then feel free to drop the patch set and I'll send another
-against rc3 for rc4.
-
-----------------------------------------------------------------
-Michael Clark (1):
-      Rename sbi_save to parse_dtb to improve code readability
-
-Palmer Dabbelt (1):
-      RISC-V: kconfig cleanups
-
-Ulf Magnusson (3):
-      riscv: Remove ARCH_WANT_OPTIONAL_GPIOLIB select
-      riscv: kconfig: Remove RISCV_IRQ_INTC select
-      riscv: Remove ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE select
-
-zongbox@gmail.com (1):
-      RISC-V: Enable IRQ during exception handling
-
- arch/riscv/Kconfig        | 3 ---
- arch/riscv/kernel/entry.S | 5 +++--
- arch/riscv/kernel/head.S  | 2 +-
- arch/riscv/kernel/setup.c | 2 +-
- 4 files changed, 5 insertions(+), 7 deletions(-)
+Regards,
+ Enric
