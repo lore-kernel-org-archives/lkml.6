@@ -1,149 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934425AbeBUSOF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:14:05 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43328 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755127AbeBUSOD (ORCPT
+        id S1753155AbeBUSSh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:18:37 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46942 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbeBUSSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:14:03 -0500
-Date: Wed, 21 Feb 2018 10:14:10 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180221160602.GD3617@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
- <20180221175857.GA23000@andrea>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180221175857.GA23000@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022118-0056-0000-0000-00000421B08F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008571; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00993061; UDB=6.00504567; IPR=6.00772405;
- MB=3.00019675; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-21 18:13:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022118-0057-0000-0000-00000863B63C
-Message-Id: <20180221181410.GL3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802210219
+        Wed, 21 Feb 2018 13:18:32 -0500
+X-Google-Smtp-Source: AH8x224C+jKaUf2NuHRsGyaOpSscSrrFy2125pfvNqPvxoDuNCkvfBXnbUQbRNgKuH8OJ7pCVVCk4g==
+From: Kees Cook <keescook@chromium.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kees Cook <keescook@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] arm64: cpufeature: Remove redundant "feature" in reports
+Date: Wed, 21 Feb 2018 10:18:22 -0800
+Message-Id: <1519237102-46854-3-git-send-email-keescook@chromium.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519237102-46854-1-git-send-email-keescook@chromium.org>
+References: <1519237102-46854-1-git-send-email-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 06:58:57PM +0100, Andrea Parri wrote:
-> On Wed, Feb 21, 2018 at 12:15:56PM -0500, Alan Stern wrote:
-> > Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
-> > smp_read_barrier_depends, and lockless_dereference") was accidentally
-> > merged too early, while it was still in RFC form.  This patch adds in
-> > the missing pieces.
-> > 
-> > Akira pointed out some typos in the original patch, and he noted that
-> > cheatsheet.txt should be updated to indicate how unsuccessful RMW
-> > operations relate to address dependencies.
-> > 
-> > Andrea pointed out that the macro for rcu_dereference() in linux.def
-> > should now use the "once" annotation instead of "deref".  He also
-> > suggested that the comments should mention commit 5a8897cc7631
-> > ("locking/atomics/alpha: Add smp_read_barrier_depends() to
-> > _release()/_relaxed() atomics") as an important precursor, and he
-> > contributed commit cb13b424e986 ("locking/xchg/alpha: Add
-> > unconditional memory barrier to cmpxchg()"), another prerequisite.
-> > 
-> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > Suggested-by: Akira Yokosawa <akiyks@gmail.com>
-> > Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-> > Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
-> 
-> Acked-by: Andrea Parri <parri.andrea@gmail.com>
+The word "feature" is repeated in the CPU features reporting. This drops it
+for improved readability.
 
-Applied, thank you!
+Before (redundant "feature" word):
 
-							Thanx, Paul
+ SMP: Total of 4 processors activated.
+ CPU features: detected feature: 32-bit EL0 Support
+ CPU features: detected feature: Kernel page table isolation (KPTI)
+ CPU features: emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching
+ CPU: All CPU(s) started at EL2
 
-> Thanks,
->   Andrea
-> 
-> 
-> > 
-> > ---
-> > 
-> >  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
-> >  tools/memory-model/Documentation/explanation.txt |    4 ++--
-> >  tools/memory-model/linux-kernel.def              |    2 +-
-> >  3 files changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> > ===================================================================
-> > --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
-> > +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> > @@ -1,11 +1,11 @@
-> >                                    Prior Operation     Subsequent Operation
-> >                                    ---------------  ---------------------------
-> >                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-> > -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
-> > +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
-> >  
-> >  Store, e.g., WRITE_ONCE()            Y                                       Y
-> > -Load, e.g., READ_ONCE()              Y                              Y        Y
-> > -Unsuccessful RMW operation           Y                              Y        Y
-> > +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
-> > +Unsuccessful RMW operation           Y                          Y   Y        Y
-> >  rcu_dereference()                    Y                          Y   Y        Y
-> >  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
-> >  Successful *_release()         C        Y  Y    Y     W                      Y
-> > Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-> > ===================================================================
-> > --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-> > +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-> > @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
-> >  executed on C before the fence (i.e., those which precede the fence in
-> >  program order).
-> >  
-> > -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> > +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> >  other properties which we discuss later.
-> >  
-> >  
-> > @@ -1138,7 +1138,7 @@ final effect is that even though the two
-> >  program order, it appears that they aren't.
-> >  
-> >  This could not have happened if the local cache had processed the
-> > -incoming stores in FIFO order.  In constrast, other architectures
-> > +incoming stores in FIFO order.  By contrast, other architectures
-> >  maintain at least the appearance of FIFO order.
-> >  
-> >  In practice, this difficulty is solved by inserting a special fence
-> > Index: usb-4.x/tools/memory-model/linux-kernel.def
-> > ===================================================================
-> > --- usb-4.x.orig/tools/memory-model/linux-kernel.def
-> > +++ usb-4.x/tools/memory-model/linux-kernel.def
-> > @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
-> >  smp_store_release(X,V) { __store{release}(*X,V); }
-> >  smp_load_acquire(X) __load{acquire}(*X)
-> >  rcu_assign_pointer(X,V) { __store{release}(X,V); }
-> > -rcu_dereference(X) __load{deref}(X)
-> > +rcu_dereference(X) __load{once}(X)
-> >  
-> >  // Fences
-> >  smp_mb() { __fence{mb} ; }
-> > 
-> 
+After:
+
+ SMP: Total of 4 processors activated.
+ CPU features: detected: 32-bit EL0 Support
+ CPU features: detected: Kernel page table isolation (KPTI)
+ CPU features: emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching
+ CPU: All CPU(s) started at EL2
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+---
+ arch/arm64/kernel/cpufeature.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 61aff55245ea..6c799ca58b53 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1357,7 +1357,7 @@ void check_local_cpu_capabilities(void)
+ 
+ static void __init setup_feature_capabilities(void)
+ {
+-	update_cpu_capabilities(arm64_features, "detected feature:");
++	update_cpu_capabilities(arm64_features, "detected:");
+ 	enable_cpu_capabilities(arm64_features);
+ }
+ 
+-- 
+2.7.4
