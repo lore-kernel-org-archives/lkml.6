@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226apKIBZ+Ldfs7o0x4bdiZEtbYEokByJat+4vojuNfvgWsoArb1eeXxCG7ziMscCxVQBxau
-ARC-Seal: i=1; a=rsa-sha256; t=1519217705; cv=none;
+X-Google-Smtp-Source: AH8x227YBR7IKAcZJ3q4cUb/fJKAsLPndPY/H22uqY7Rs8bq3Yjj5QvDS0DfsFccOcOdoHPjcsL/
+ARC-Seal: i=1; a=rsa-sha256; t=1519217703; cv=none;
         d=google.com; s=arc-20160816;
-        b=TDxMsDyk8YHcw86pqsDVYSJu1QUpfOjaJu/2WkRgu9aIbB1TI/UKSVk/1xA/38RZ7V
-         xASCdbv/IdOvH08OB5xbS3oB4aqv96h+SRHLcplx7GlyVHTJO5fKA/KZ13Qp2E+Q9cSh
-         ku6teqfLuymVYxw0MTxuz6vsxW5IS9oLvUx1AiNN3rYYSy8KJ361FqFIgVOZXGRQNnmc
-         jX5S2odr1qfzK5H8l0mxbqnt3dK/b/iHR8CBGyk/Bg9NWDDAK3TKaT40XBnOFVRCCXQz
-         PiDA2K9jX03mNHaq5WeReLMJF+zbkHo4BjuOc7F+hmqjaBW95B2EP7AXV51IthwqKd5p
-         GiOQ==
+        b=N2OEh9oUadbYa/Bs/xRqc5DNsPC11qZmfYbucp3pQkqGdUr7IKWzvUQIAr3rEnILxG
+         u1wEz3AzPzWaSGlO0+rCXkLQoqO/jx5bWdtx0uBiwto7FAy2oFnpwlIgzzlJBrhbJ/V+
+         B5h7TzWEueU2kUpir3o/TARBqKy4KvGIhvUZBZMKgDpRUoyYZ/Gxn1JKCk9GuhwEwN8f
+         jNHFxuVSUVQeJbZDRNKBAJaVNce9SfVQ5f2np9vNnjr6JxPkdBjF37UzEbSUrwqVVDyY
+         lFRsFnKF8M6+jGtz20VSfVsDD69iYJXTn3uC07s/c5n7vQC1jTXXq2iN1FL9iUPTXaAM
+         85Qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=G+janLEQLbvQSXwaE3dJw3EqMQYyAXqeEU+sLiWQQ/c=;
-        b=CUWI5nTPXb2gwDH6mrHru4CbQmTS+7vc/O3LZLhMENVmT+v3MX+yRcQNtQ2c0dOrjX
-         WBZWCQDJF/FNCYlVYUByZN+4Gd4H1Vk3pQ4ejvG2G4W7PcLSjV3xpnkEmGDc5DwJK3WZ
-         T1Xk+mWoF/d7soKOyzDcRbUUfEP18ypikPwsmD4NApc8DjWbsobG5Wr5is11gj3HyxsD
-         BbBv/M9bQePubuEN8MgTw0SjVAWNkWNr/cEF3Qv+BgeB/S7JZC4LV+6rnXmEqSK9CBfo
-         W2xwB43YPO2iDL/TG5mtyX16474TAA8rXlsMqNGZRFIK+hIwejZSUSgKPClGUWJNMwed
-         u5Lw==
+        bh=kvmYAcmK2L5clYZtmFcLbk3Za8E2LMNDoYZI3LNHseo=;
+        b=RXqFBB2Yuf29cZI/SPTLB1amdTcKuG4iXiwpGx6GSae3OXBT5tcSvhJChHfI168e49
+         XRQBbMSuLn8UB2Eg65kGmXr21extthMSnZLb/4aMi0LouaYAqrvoalPFrinbfZQ5RHN3
+         z7rmgNnwkBG0Yen6nqS9EGAuvwlCX/egdHao84+2DVS6Ke3JMpGqwrIbo2bk0cZscACa
+         3NTISof5vwQx5bGNwo9CG7ZJviqzH+hN8f47Tf0iMLBad2HXTdL/cxMEJ1ZxjJhpe+dY
+         lDVjbKgVRbEYzMV8Ms4UgbDnWcZMDh1k+It9D0fYABmVR0ywdhdPw1uw2wKShApI9w+F
+         h29w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hui Wang <hui.wang@canonical.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 25/77] ALSA: hda - Fix headset mic detection problem for two Dell machines
-Date: Wed, 21 Feb 2018 13:48:34 +0100
-Message-Id: <20180221124433.248953380@linuxfoundation.org>
+	Harshad Shirwadkar <harshads@google.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 07/77] ext4: fix a race in the ext4 shutdown path
+Date: Wed, 21 Feb 2018 13:48:16 +0100
+Message-Id: <20180221124432.484661745@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014646341023518?=
-X-GMAIL-MSGID: =?utf-8?q?1593015224849545068?=
+X-GMAIL-THRID: =?utf-8?q?1593015222152228057?=
+X-GMAIL-MSGID: =?utf-8?q?1593015222152228057?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Harshad Shirwadkar <harshads@google.com>
 
-commit 3f2f7c553d077be6a30cb96b2976a2c940bf5335 upstream.
+commit abbc3f9395c76d554a9ed27d4b1ebfb5d9b0e4ca upstream.
 
-One of them has the codec of alc256 and the other one has the codec
-of alc289.
+This patch fixes a race between the shutdown path and bio completion
+handling. In the ext4 direct io path with async io, after submitting a
+bio to the block layer, if journal starting fails,
+ext4_direct_IO_write() would bail out pretending that the IO
+failed. The caller would have had no way of knowing whether or not the
+IO was successfully submitted. So instead, we return -EIOCBQUEUED in
+this case. Now, the caller knows that the IO was submitted.  The bio
+completion handler takes care of the error.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Tested: Ran the shutdown xfstest test 461 in loop for over 2 hours across
+4 machines resulting in over 400 runs. Verified that the race didn't
+occur. Usually the race was seen in about 20-30 iterations.
+
+Signed-off-by: Harshad Shirwadkar <harshads@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/ext4/inode.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5994,6 +5994,11 @@ static const struct snd_hda_pin_quirk al
- 		{0x14, 0x90170110},
- 		{0x21, 0x02211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0x90a60130},
-+		{0x14, 0x90170110},
-+		{0x14, 0x01011020},
-+		{0x21, 0x0221101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC256_STANDARD_PINS),
- 	SND_HDA_PIN_QUIRK(0x10ec0280, 0x103c, "HP", ALC280_FIXUP_HP_GPIO4,
- 		{0x12, 0x90a60130},
-@@ -6049,6 +6054,10 @@ static const struct snd_hda_pin_quirk al
- 		{0x12, 0x90a60120},
- 		{0x14, 0x90170110},
- 		{0x21, 0x0321101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0xb7a60130},
-+		{0x14, 0x90170110},
-+		{0x21, 0x04211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0290, 0x103c, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1,
- 		ALC290_STANDARD_PINS,
- 		{0x15, 0x04211040},
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3526,10 +3526,18 @@ static ssize_t ext4_direct_IO_write(stru
+ 		/* Credits for sb + inode write */
+ 		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+ 		if (IS_ERR(handle)) {
+-			/* This is really bad luck. We've written the data
+-			 * but cannot extend i_size. Bail out and pretend
+-			 * the write failed... */
+-			ret = PTR_ERR(handle);
++			/*
++			 * We wrote the data but cannot extend
++			 * i_size. Bail out. In async io case, we do
++			 * not return error here because we have
++			 * already submmitted the corresponding
++			 * bio. Returning error here makes the caller
++			 * think that this IO is done and failed
++			 * resulting in race with bio's completion
++			 * handler.
++			 */
++			if (!ret)
++				ret = PTR_ERR(handle);
+ 			if (inode->i_nlink)
+ 				ext4_orphan_del(NULL, inode);
+ 
