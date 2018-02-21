@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933408AbeBUKk4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:40:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53021 "EHLO
+        id S933441AbeBUKl1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:41:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33377 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752656AbeBUKky (ORCPT
+        with ESMTP id S933412AbeBUKlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:40:54 -0500
-Date: Wed, 21 Feb 2018 02:39:24 -0800
+        Wed, 21 Feb 2018 05:41:24 -0500
+Date: Wed, 21 Feb 2018 02:39:57 -0800
 From: tip-bot for Andrea Parri <tipbot@zytor.com>
-Message-ID: <tip-48d44d4e8a583c66d9f376e18c1a1fcc445f4b64@git.kernel.org>
-Cc: mingo@kernel.org, paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+Message-ID: <tip-e7d74c9f900a12ea0bd5cabb3be142441530e24e@git.kernel.org>
+Cc: paulmck@linux.vnet.ibm.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, peterz@infradead.org, stern@rowland.harvard.edu,
+        parri.andrea@gmail.com, will.deacon@arm.com, tglx@linutronix.de
+Reply-To: paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, tglx@linutronix.de,
         will.deacon@arm.com, parri.andrea@gmail.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        stern@rowland.harvard.edu, torvalds@linux-foundation.org,
-        parri.andrea@gmail.com, will.deacon@arm.com
-In-Reply-To: <1519169112-20593-1-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1519169112-20593-1-git-send-email-paulmck@linux.vnet.ibm.com>
+In-Reply-To: <1519169112-20593-2-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1519169112-20593-2-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Clarify the origin/scope of
- the tool name
-Git-Commit-ID: 48d44d4e8a583c66d9f376e18c1a1fcc445f4b64
+Subject: [tip:locking/core] MAINTAINERS: Add the Memory Consistency Model
+ subsystem
+Git-Commit-ID: e7d74c9f900a12ea0bd5cabb3be142441530e24e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,27 +36,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  48d44d4e8a583c66d9f376e18c1a1fcc445f4b64
-Gitweb:     https://git.kernel.org/tip/48d44d4e8a583c66d9f376e18c1a1fcc445f4b64
+Commit-ID:  e7d74c9f900a12ea0bd5cabb3be142441530e24e
+Gitweb:     https://git.kernel.org/tip/e7d74c9f900a12ea0bd5cabb3be142441530e24e
 Author:     Andrea Parri <parri.andrea@gmail.com>
-AuthorDate: Tue, 20 Feb 2018 15:25:01 -0800
+AuthorDate: Tue, 20 Feb 2018 15:25:02 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 09:58:12 +0100
 
-tools/memory-model: Clarify the origin/scope of the tool name
+MAINTAINERS: Add the Memory Consistency Model subsystem
 
-Ingo pointed out that:
-
-  "The "memory model" name is overly generic, ambiguous and somewhat
-   misleading, as we usually mean the virtual memory layout/model
-   when we say "memory model". GCC too uses it in that sense [...]"
-
-Make it clear that tools/memory-model/ uses the term "memory model" as
-shorthand for "memory consistency model" by calling out this convention
-in tools/memory-model/README.
-
-Stick to the original "memory model" term in sources' headers and for
-the subsystem name.
+Move the contents of tools/memory-model/MAINTAINERS into the main
+MAINTAINERS file, removing tools/memory-model/MAINTAINERS. This
+allows get_maintainer.pl to correctly identify the maintainers of
+tools/memory-model/.
 
 Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
@@ -74,75 +66,58 @@ Cc: linux-arch@vger.kernel.org
 Cc: luc.maranget@inria.fr
 Cc: nborisov@suse.com
 Cc: npiggin@gmail.com
-Link: http://lkml.kernel.org/r/1519169112-20593-1-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1519169112-20593-2-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/MAINTAINERS       |  2 +-
- tools/memory-model/README            | 14 +++++++-------
- tools/memory-model/linux-kernel.bell |  2 +-
- tools/memory-model/linux-kernel.cat  |  2 +-
- 4 files changed, 10 insertions(+), 10 deletions(-)
+ MAINTAINERS                    | 16 ++++++++++++++++
+ tools/memory-model/MAINTAINERS | 15 ---------------
+ 2 files changed, 16 insertions(+), 15 deletions(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9a7f76e..654c6c6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8148,6 +8148,22 @@ M:	Kees Cook <keescook@chromium.org>
+ S:	Maintained
+ F:	drivers/misc/lkdtm*
+ 
++LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
++M:	Alan Stern <stern@rowland.harvard.edu>
++M:	Andrea Parri <parri.andrea@gmail.com>
++M:	Will Deacon <will.deacon@arm.com>
++M:	Peter Zijlstra <peterz@infradead.org>
++M:	Boqun Feng <boqun.feng@gmail.com>
++M:	Nicholas Piggin <npiggin@gmail.com>
++M:	David Howells <dhowells@redhat.com>
++M:	Jade Alglave <j.alglave@ucl.ac.uk>
++M:	Luc Maranget <luc.maranget@inria.fr>
++M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++L:	linux-kernel@vger.kernel.org
++S:	Supported
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
++F:	tools/memory-model/
++
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
+ M:	Chris Wright <chrisw@sous-sol.org>
+ L:	linux-security-module@vger.kernel.org
 diff --git a/tools/memory-model/MAINTAINERS b/tools/memory-model/MAINTAINERS
-index 711cbe7..db3bd3f 100644
+deleted file mode 100644
+index db3bd3f..0000000
 --- a/tools/memory-model/MAINTAINERS
-+++ b/tools/memory-model/MAINTAINERS
-@@ -1,4 +1,4 @@
--LINUX KERNEL MEMORY MODEL
-+LINUX KERNEL MEMORY CONSISTENCY MODEL
- M:	Alan Stern <stern@rowland.harvard.edu>
- M:	Andrea Parri <parri.andrea@gmail.com>
- M:	Will Deacon <will.deacon@arm.com>
-diff --git a/tools/memory-model/README b/tools/memory-model/README
-index 43ba494..91414a4 100644
---- a/tools/memory-model/README
-+++ b/tools/memory-model/README
-@@ -1,15 +1,15 @@
--			=========================
--			LINUX KERNEL MEMORY MODEL
--			=========================
-+		=====================================
-+		LINUX KERNEL MEMORY CONSISTENCY MODEL
-+		=====================================
- 
- ============
- INTRODUCTION
- ============
- 
--This directory contains the memory model of the Linux kernel, written
--in the "cat" language and executable by the (externally provided)
--"herd7" simulator, which exhaustively explores the state space of
--small litmus tests.
-+This directory contains the memory consistency model (memory model, for
-+short) of the Linux kernel, written in the "cat" language and executable
-+by the externally provided "herd7" simulator, which exhaustively explores
-+the state space of small litmus tests.
- 
- In addition, the "klitmus7" tool (also externally provided) may be used
- to convert a litmus test to a Linux kernel module, which in turn allows
-diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-index 5711250..b984bbd 100644
---- a/tools/memory-model/linux-kernel.bell
-+++ b/tools/memory-model/linux-kernel.bell
-@@ -11,7 +11,7 @@
-  * which is to appear in ASPLOS 2018.
-  *)
- 
--"Linux kernel memory model"
-+"Linux-kernel memory consistency model"
- 
- enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
- 		'release (*smp_store_release*) ||
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index 15b7a5d..babe2b3 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -11,7 +11,7 @@
-  * which is to appear in ASPLOS 2018.
-  *)
- 
--"Linux kernel memory model"
-+"Linux-kernel memory consistency model"
- 
- (*
-  * File "lock.cat" handles locks and is experimental.
++++ /dev/null
+@@ -1,15 +0,0 @@
+-LINUX KERNEL MEMORY CONSISTENCY MODEL
+-M:	Alan Stern <stern@rowland.harvard.edu>
+-M:	Andrea Parri <parri.andrea@gmail.com>
+-M:	Will Deacon <will.deacon@arm.com>
+-M:	Peter Zijlstra <peterz@infradead.org>
+-M:	Boqun Feng <boqun.feng@gmail.com>
+-M:	Nicholas Piggin <npiggin@gmail.com>
+-M:	David Howells <dhowells@redhat.com>
+-M:	Jade Alglave <j.alglave@ucl.ac.uk>
+-M:	Luc Maranget <luc.maranget@inria.fr>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+-L:	linux-kernel@vger.kernel.org
+-S:	Supported
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+-F:	tools/memory-model/
