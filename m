@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224LOkSsW/VovdA/Gu2xl43sQa6ir2JNp+OvACiEQ33CdN3u2+myg5cKog1LEx933qe8TBJX
-ARC-Seal: i=1; a=rsa-sha256; t=1519217913; cv=none;
+X-Google-Smtp-Source: AH8x224GVPuqPK+7lorWm9OayxaoifPqy7KzaB7lFpVV2m7I/1wz5TzNzCS/kdZFHmYNVb1abYBJ
+ARC-Seal: i=1; a=rsa-sha256; t=1519217910; cv=none;
         d=google.com; s=arc-20160816;
-        b=bpwMpyaSysV3EpkRvz1ICncHchROGrzSNsu5mQBLgg+74webscspKBo1wH2RyGT6z1
-         q45lyBWrksn2LBhYIOxSBBwYQ3D+hCwG/ES7XnFmAVWr2NS8xWh0ux3jJH1miEvwdFwp
-         sp6FyzQ99oeiyFt8RWg+uBMZCYCEkN2eJW+P79qkvisrzr1gad4daajETFAMGycbzVzu
-         WETkmF2dOmtEO6/hSw+hRzt7ziEqGJl9JYF8siQ6rVNY70mWcG7/K/Pxi8ndk5z1bQ8r
-         1C18wdhDIPpYsiAxVGu0LyyTF6Y3Zv919NIwDi28UNALTYdpzEuTEUe+KfltKY6oLiCV
-         96EA==
+        b=TnRoiyULEiSa2PJze+nrDYWdR16T80vcDoJ3MI1XwEjK8TZh7FShjfKo7G1fn0WLLc
+         PG/cCSohSRh7yvkYSRQWQXQZBUiyAgWBT73YiNBFzk/YgbK/4F2hAoen/bqURTOEoyyw
+         2eHVi+faJImpGMGnC3p20j5Xck1UV0hHh8iwSPsZ0e5eNGR4UJT+YnCZ6+tPzAQuRV9s
+         P7a183MNJv1qCND3pfUOx3s6aFDEU4Ng2aCJhlJOwsJVzuXwx5An2VFHYDTt1Se29SoK
+         9LpNbkzFjsbvKkChLMV8CXAy26c5C9e692/3Of6i6xb8YRTXj6l/NXxA64VgxrP37+Yv
+         Bhww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=P8y8mXqEDVjhKjP5llXPF16yFWedFwygKHNvKPfUkG0=;
-        b=PQyX5PUnuV5ajcG6hwRUJaZSrOHKOxGfiWQZNaAiflNSSFFwm2XJ3VSZpk+Qx6+N18
-         kHuNwSmhEcOb74FPULNEtvHHeoeQUuv99edaaRwLAO2u7xR1+/zGhpcJYBUckt4PWBn8
-         W1jieWqovR6xll61dBEPb7gGl0Y5otHKx2nrogb2Hq6DUcb3vLT2JvNISUBtBdUkXCBH
-         Sr50hjh9MXXLGkOZ+wWRTw049ZC21E9gZXvlO0TlIQwRyCmIkMA78H7bO0CfK0ovO428
-         h7HTsN0x75dAheoPn2D2MRpPIgOdDEFPi6mxao7N3RvLZGOQghI3wklXN115Oryae6Ie
-         /fdg==
+        bh=sK4vBGMS3O3SsQhr1L2kynC38ADTT8JN/VxRRMOjgdI=;
+        b=HRdY7qYNOMePgnuwAJvtk66yCJWTbL80tqoY4CFbw+0pOClM92oGhuJSfaAi+yPQIl
+         84X7VNMDeNGpnmkLawojupFvPj6IAqXsF2fwF0oC+QdtDKxMb9PImLB71+fTUJy0Fikt
+         56u56SVB6uvKEQ+XUv875MB1SKNtUwz7vuj3860zxUJ/UQRSEhRZKYkMfGAkC+LTlWPO
+         W55v9Bu0210NgyPfdJhQe4+U0poLJOXxZx/hp7B1kQ8TN5x1JcfRUR5bbFIEDs5DtR/M
+         C3W6q7zkiwydkEOURt9ohcq3jBN5ep8AkmOlwjXTvb62n2ceL68DA6h2zGlmw3ZWoFXn
+         fKgA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	Alexey Kardashevskiy <aik@ozlabs.ru>,
+	Laurent Vivier <lvivier@redhat.com>,
+	Daniel Henrique Barboza <danielhb@linux.vnet.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 022/167] powerpc/xive: Use hw CPU ids when configuring the CPU queues
-Date: Wed, 21 Feb 2018 13:47:13 +0100
-Message-Id: <20180221124525.830492356@linuxfoundation.org>
+Subject: [PATCH 4.14 021/167] powerpc/mm: Flush radix process translations when setting MMU type
+Date: Wed, 21 Feb 2018 13:47:12 +0100
+Message-Id: <20180221124525.783825428@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015443174391988?=
-X-GMAIL-MSGID: =?utf-8?q?1593015443174391988?=
+X-GMAIL-THRID: =?utf-8?q?1593015440301212181?=
+X-GMAIL-MSGID: =?utf-8?q?1593015440301212181?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cédric Le Goater <clg@kaod.org>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-commit 8e036c8d30a2cd9d8fc7442fbf6824e0a3e986e7 upstream.
+commit 62e984ddfd6b056d399e24113f5e6a7145e579d8 upstream.
 
-The CPU event notification queues on sPAPR should be configured using
-a hardware CPU identifier.
+Radix guests do normally invalidate process-scoped translations when a
+new pid is allocated but migrated guests do not invalidate these so
+migrated guests crash sometime, especially easy to reproduce with
+migration happening within first 10 seconds after the guest boot start
+on the same machine.
 
-The problem did not show up on the Power Hypervisor because pHyp
-supports 8 threads per core which keeps CPU number contiguous. This is
-not the case on all sPAPR virtual machines, some use SMT=1.
+This adds the "Invalidate process-scoped translations" flush to fix
+radix guests migration.
 
-Also improve error logging by adding the CPU number.
-
-Fixes: eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
+Fixes: 2ee13be34b13 ("KVM: PPC: Book3S HV: Update kvmppc_set_arch_compat() for ISA v3.00")
+Cc: stable@vger.kernel.org # v4.10+
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Tested-by: Laurent Vivier <lvivier@redhat.com>
+Tested-by: Daniel Henrique Barboza <danielhb@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/sysdev/xive/spapr.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/powerpc/mm/pgtable_64.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/powerpc/sysdev/xive/spapr.c
-+++ b/arch/powerpc/sysdev/xive/spapr.c
-@@ -356,7 +356,8 @@ static int xive_spapr_configure_queue(u3
- 
- 	rc = plpar_int_get_queue_info(0, target, prio, &esn_page, &esn_size);
- 	if (rc) {
--		pr_err("Error %lld getting queue info prio %d\n", rc, prio);
-+		pr_err("Error %lld getting queue info CPU %d prio %d\n", rc,
-+		       target, prio);
- 		rc = -EIO;
- 		goto fail;
- 	}
-@@ -370,7 +371,8 @@ static int xive_spapr_configure_queue(u3
- 	/* Configure and enable the queue in HW */
- 	rc = plpar_int_set_queue_config(flags, target, prio, qpage_phys, order);
- 	if (rc) {
--		pr_err("Error %lld setting queue for prio %d\n", rc, prio);
-+		pr_err("Error %lld setting queue for CPU %d prio %d\n", rc,
-+		       target, prio);
- 		rc = -EIO;
+--- a/arch/powerpc/mm/pgtable_64.c
++++ b/arch/powerpc/mm/pgtable_64.c
+@@ -483,6 +483,8 @@ void mmu_partition_table_set_entry(unsig
+ 	if (old & PATB_HR) {
+ 		asm volatile(PPC_TLBIE_5(%0,%1,2,0,1) : :
+ 			     "r" (TLBIEL_INVAL_SET_LPID), "r" (lpid));
++		asm volatile(PPC_TLBIE_5(%0,%1,2,1,1) : :
++			     "r" (TLBIEL_INVAL_SET_LPID), "r" (lpid));
+ 		trace_tlbie(lpid, 0, TLBIEL_INVAL_SET_LPID, lpid, 2, 0, 1);
  	} else {
- 		q->qpage = qpage;
-@@ -389,8 +391,8 @@ static int xive_spapr_setup_queue(unsign
- 	if (IS_ERR(qpage))
- 		return PTR_ERR(qpage);
- 
--	return xive_spapr_configure_queue(cpu, q, prio, qpage,
--					  xive_queue_shift);
-+	return xive_spapr_configure_queue(get_hard_smp_processor_id(cpu),
-+					  q, prio, qpage, xive_queue_shift);
- }
- 
- static void xive_spapr_cleanup_queue(unsigned int cpu, struct xive_cpu *xc,
-@@ -399,10 +401,12 @@ static void xive_spapr_cleanup_queue(uns
- 	struct xive_q *q = &xc->queue[prio];
- 	unsigned int alloc_order;
- 	long rc;
-+	int hw_cpu = get_hard_smp_processor_id(cpu);
- 
--	rc = plpar_int_set_queue_config(0, cpu, prio, 0, 0);
-+	rc = plpar_int_set_queue_config(0, hw_cpu, prio, 0, 0);
- 	if (rc)
--		pr_err("Error %ld setting queue for prio %d\n", rc, prio);
-+		pr_err("Error %ld setting queue for CPU %d prio %d\n", rc,
-+		       hw_cpu, prio);
- 
- 	alloc_order = xive_alloc_order(xive_queue_shift);
- 	free_pages((unsigned long)q->qpage, alloc_order);
+ 		asm volatile(PPC_TLBIE_5(%0,%1,2,0,0) : :
