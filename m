@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225sakMGyF1RTE8lBb0ABnk7g8uCDrdZroPx0J+OEix/8sEPNR1HdNp8yPId3QXnGH9sjyEE
-ARC-Seal: i=1; a=rsa-sha256; t=1519218556; cv=none;
+X-Google-Smtp-Source: AH8x227xqbCu5ECvBuRruA0s8lKyzkNt8JdPlc7Rvf9HiNTQBApJmUFyldhMDlWxUWu8Q1ks96Yv
+ARC-Seal: i=1; a=rsa-sha256; t=1519218553; cv=none;
         d=google.com; s=arc-20160816;
-        b=XLi+ia2SnI9LqOhP04P+Bv72ZcqosUptMDqBOlJdl8b0tA9FpqRyI6iT07rZ4XImNA
-         /TgtZ+BVSb8N5pZ5ePmsEJuwfiRcyACgU/tiAliYtxtw0S1VCdGKrQHZyZnKjktSE7qC
-         l9dl15jzCbaVO8xiMyoi7Xw7O4SUMcSGNMFtoFZuIGitPJoo4Vt0O1HfjiolpgDs7FVF
-         Zewi3YcNYcicDyBeOd5keU7Q9i+9lTVe9aRfDOcRT0ZoMKbaqdU4EqQEyLES43gG2JHC
-         5akwAKssmzB4WjLA1arIfXxuR0QjMx9/7N6mtbufv3xXgIjpRjtGFfEoj8sEZ3NHHAWS
-         GyQQ==
+        b=iLG/BnW8KzkQfd4vCUal6Pd2/I1v++9EqDd8YIDf8X87a4d9P3DQhPvyu0+WSNBpJ1
+         0ANp0GQJFQa4wkdrDbcBIoE51n7NubhYrwCEa0gzFB5Rfy5rxzHiEc4dyXpcp+jgsopM
+         up1JNI93MZOBXR+19iNjXaXGA8JL8eaYJNmngoYL4A0mH7lBGNqZLN5Ax128mZ2U38e3
+         bT92X7oUpglUyrQEoN9SId0p7sjzfqcyH5iGOUzTBB/3uBa9d0sWtV760JOtnxdndERk
+         eDbckPVuXoWxd5aIWmwKKcmzhpBFnZlZBxcLCGnmdxdvWGLTcQLAsqjX2fu129c88Rw4
+         OnOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F2Fi4tfmE1aszUSYBcVXVFy9YL4+MmmkWAcj8AC8Pqc=;
-        b=iZSe1Pbl86qHrs+XDnCnwd13YI1Ap1XCWfQpD4Y97+oVqW4q+dFLicZLYXeeunTf4A
-         WtUPGeTY3sUvDO3rwo/sbDQEypEIG23lQUAfUp2+L+a3EmiCX/znDHphagXAkxFJ9tec
-         Rlj4Ww1QYEuI93MtNMdaheiNQZFhLUVFf0VRzrQI0jlADr9uXgQNxmSyZLk54aJMHyii
-         4ovm0jNnMLHLUNXXXKdr4qWcFDNppc9P+PbBScWWQPF2G9cQuH5EtZUnqpBs9Bd+pAoz
-         KSK8WdoddDV8XOGSP9InKsIeJ1SjLYI9U9Qc485QCOwzWkSuCDj7ksPYx4pD/8A6clfa
-         5+OQ==
+        bh=e9pzlwU/p2sRW8TEUHPWxvdjjPXXAcMhmnFqHUEIA0E=;
+        b=wjGtLHNUOrRAuf45u6VPoHR5YLyjTOQp9zrDuo7uVpFDlZHe0USM9jTAMrwRZmbrvU
+         TRyfuUPNzCguzkajDSc4L6zPao6nWqiaXyFEwqaKgBnCgsdNEDs8ACz4pVtIGjq6Tb0X
+         P+3/SYgxcTvpCfuyazc+Jek2ovUcRA7VTvOIb4nnYWb3Df/ZHnJytxM+M9TOqP8+c9PV
+         FgOF+ywgwFR/1Gaw/Hi0eaUAeE25/zj8IoJp+UxD55Dg12ekV8dNkIP0YiwBAy5vQI9O
+         Gt5Fy2qqOYrCeowuooyjqbhQ2ns7gTAjUufDh5fj8HK7ER0+a5BWF1jsEvGFdUl2Ht/L
+         Rgag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,24 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joe Konno <joe.konno@linux.intel.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will.deacon@arm.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	arjan@linux.intel.com,
-	bp@alien8.de,
-	dan.j.williams@intel.com,
-	dave.hansen@linux.intel.com,
-	dwmw2@infradead.org,
-	dwmw@amazon.co.uk,
-	hpa@zytor.com,
-	jpoimboe@redhat.com,
-	linux-tip-commits@vger.kernel.org,
-	luto@kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 081/163] x86/speculation: Add <asm/msr-index.h> dependency
-Date: Wed, 21 Feb 2018 13:48:30 +0100
-Message-Id: <20180221124534.909221582@linuxfoundation.org>
+Subject: [PATCH 4.15 080/163] nospec: Move array_index_nospec() parameter checking into separate macro
+Date: Wed, 21 Feb 2018 13:48:29 +0100
+Message-Id: <20180221124534.867810766@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -53,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015329486886101?=
-X-GMAIL-MSGID: =?utf-8?q?1593016117397117487?=
+X-GMAIL-THRID: =?utf-8?q?1593015327190817338?=
+X-GMAIL-MSGID: =?utf-8?q?1593016114754913796?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,46 +53,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit ea00f301285ea2f07393678cd2b6057878320c9d upstream.
+commit 8fa80c503b484ddc1abbd10c7cb2ab81f3824a50 upstream.
 
-Joe Konno reported a compile failure resulting from using an MSR
-without inclusion of <asm/msr-index.h>, and while the current code builds
-fine (by accident) this needs fixing for future patches.
+For architectures providing their own implementation of
+array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
+complain about out-of-range parameters using WARN_ON() results in a mess
+of mutually-dependent include files.
 
-Reported-by: Joe Konno <joe.konno@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Rather than unpick the dependencies, simply have the core code in nospec.h
+perform the checking for us.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan@linux.intel.com
-Cc: bp@alien8.de
-Cc: dan.j.williams@intel.com
-Cc: dave.hansen@linux.intel.com
-Cc: dwmw2@infradead.org
-Cc: dwmw@amazon.co.uk
-Cc: gregkh@linuxfoundation.org
-Cc: hpa@zytor.com
-Cc: jpoimboe@redhat.com
-Cc: linux-tip-commits@vger.kernel.org
-Cc: luto@kernel.org
-Fixes: 20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
-Link: http://lkml.kernel.org/r/20180213132819.GJ25201@hirez.programming.kicks-ass.net
+Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/nospec-branch.h |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/nospec.h |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -6,6 +6,7 @@
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
-+#include <asm/msr-index.h>
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -20,20 +20,6 @@ static inline unsigned long array_index_
+ 						    unsigned long size)
+ {
+ 	/*
+-	 * Warn developers about inappropriate array_index_nospec() usage.
+-	 *
+-	 * Even if the CPU speculates past the WARN_ONCE branch, the
+-	 * sign bit of @index is taken into account when generating the
+-	 * mask.
+-	 *
+-	 * This warning is compiled out when the compiler can infer that
+-	 * @index and @size are less than LONG_MAX.
+-	 */
+-	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
+-			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
+-		return 0;
+-
+-	/*
+ 	 * Always calculate and emit the mask even if the compiler
+ 	 * thinks the mask is not needed. The compiler does not take
+ 	 * into account the value of @index under speculation.
+@@ -44,6 +30,26 @@ static inline unsigned long array_index_
+ #endif
  
- #ifdef __ASSEMBLY__
- 
+ /*
++ * Warn developers about inappropriate array_index_nospec() usage.
++ *
++ * Even if the CPU speculates past the WARN_ONCE branch, the
++ * sign bit of @index is taken into account when generating the
++ * mask.
++ *
++ * This warning is compiled out when the compiler can infer that
++ * @index and @size are less than LONG_MAX.
++ */
++#define array_index_mask_nospec_check(index, size)				\
++({										\
++	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
++	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
++		_mask = 0;							\
++	else									\
++		_mask = array_index_mask_nospec(index, size);			\
++	_mask;									\
++})
++
++/*
+  * array_index_nospec - sanitize an array index after a bounds check
+  *
+  * For a code sequence like:
+@@ -61,7 +67,7 @@ static inline unsigned long array_index_
+ ({									\
+ 	typeof(index) _i = (index);					\
+ 	typeof(size) _s = (size);					\
+-	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
++	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
+ 									\
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
