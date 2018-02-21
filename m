@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753710AbeBUKto (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:49:44 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41425 "EHLO
+        id S1753731AbeBUKuH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:50:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48997 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752178AbeBUKtm (ORCPT
+        with ESMTP id S1751738AbeBUKuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:49:42 -0500
-Date: Wed, 21 Feb 2018 02:49:00 -0800
+        Wed, 21 Feb 2018 05:50:05 -0500
+Date: Wed, 21 Feb 2018 02:49:28 -0800
 From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-5400c00440061515c5bda299c19b6e86b81be798@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, jbaron@akamai.com, rostedt@goodmis.org,
-        mingo@kernel.org, peterz@infradead.org, hpa@zytor.com, bp@suse.de,
-        jpoimboe@redhat.com
-Reply-To: mingo@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, torvalds@linux-foundation.org, rostedt@goodmis.org,
-        jbaron@akamai.com, bp@suse.de, hpa@zytor.com, jpoimboe@redhat.com
-In-Reply-To: <de3a271c93807adb7ed48f4e946b4f9156617680.1519051220.git.jpoimboe@redhat.com>
-References: <de3a271c93807adb7ed48f4e946b4f9156617680.1519051220.git.jpoimboe@redhat.com>
+Message-ID: <tip-d414f443c2baf24e104d903ae4bc07d0c401c6d0@git.kernel.org>
+Cc: hpa@zytor.com, peterz@infradead.org, jpoimboe@redhat.com,
+        tglx@linutronix.de, rostedt@goodmis.org, jbaron@akamai.com,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, bp@suse.de
+Reply-To: hpa@zytor.com, jpoimboe@redhat.com, peterz@infradead.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, tglx@linutronix.de,
+        jbaron@akamai.com, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        bp@suse.de
+In-Reply-To: <4335d02be8d45ca7d265d2f174251d0b7ee6c5fd.1519051220.git.jpoimboe@redhat.com>
+References: <4335d02be8d45ca7d265d2f174251d0b7ee6c5fd.1519051220.git.jpoimboe@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] jump_label: Warn on failed jump_label patching
- attempt
-Git-Commit-ID: 5400c00440061515c5bda299c19b6e86b81be798
+Subject: [tip:x86/pti] extable: Make init_kernel_text() global
+Git-Commit-ID: d414f443c2baf24e104d903ae4bc07d0c401c6d0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,61 +35,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5400c00440061515c5bda299c19b6e86b81be798
-Gitweb:     https://git.kernel.org/tip/5400c00440061515c5bda299c19b6e86b81be798
+Commit-ID:  d414f443c2baf24e104d903ae4bc07d0c401c6d0
+Gitweb:     https://git.kernel.org/tip/d414f443c2baf24e104d903ae4bc07d0c401c6d0
 Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Tue, 20 Feb 2018 11:37:52 -0600
+AuthorDate: Tue, 20 Feb 2018 11:37:53 -0600
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 10:11:39 +0100
 
-jump_label: Warn on failed jump_label patching attempt
+extable: Make init_kernel_text() global
 
-Currently when the jump label code encounters an address which isn't
-recognized by kernel_text_address(), it just silently fails.
+Convert init_kernel_text() to a global function and use it in a few
+places instead of manually comparing _sinittext and _einittext.
 
-This can be dangerous because jump labels are used in a variety of
-places, and are generally expected to work.  Convert the silent failure
-to a warning.
+Note that kallsyms.h has a very similar function called
+is_kernel_inittext(), but its end check is inclusive.  I'm not sure
+whether that's intentional behavior, so I didn't touch it.
 
-This won't warn about attempted writes to tracepoints in __init code
-after initmem has been freed, as those are already guarded by the
-entry->code check.
-
+Suggested-by: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Cc: Borislav Petkov <bp@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/de3a271c93807adb7ed48f4e946b4f9156617680.1519051220.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/4335d02be8d45ca7d265d2f174251d0b7ee6c5fd.1519051220.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/jump_label.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/kernel/unwind_orc.c | 3 +--
+ include/linux/kernel.h       | 1 +
+ kernel/extable.c             | 2 +-
+ kernel/jump_label.c          | 4 +---
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index b717765..b2f0b47 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -367,12 +367,15 @@ static void __jump_label_update(struct static_key *key,
- {
- 	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
- 		/*
--		 * entry->code set to 0 invalidates module init text sections
--		 * kernel_text_address() verifies we are not in core kernel
--		 * init code, see jump_label_invalidate_module_init().
-+		 * An entry->code of 0 indicates an entry which has been
-+		 * disabled because it was in an init text area.
- 		 */
--		if (entry->code && kernel_text_address(entry->code))
--			arch_jump_label_transform(entry, jump_label_type(entry));
-+		if (entry->code) {
-+			if (kernel_text_address(entry->code))
-+				arch_jump_label_transform(entry, jump_label_type(entry));
-+			else
-+				WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
-+		}
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 1f9188f..feb28fe 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -5,7 +5,6 @@
+ #include <asm/unwind.h>
+ #include <asm/orc_types.h>
+ #include <asm/orc_lookup.h>
+-#include <asm/sections.h>
+ 
+ #define orc_warn(fmt, ...) \
+ 	printk_deferred_once(KERN_WARNING pr_fmt("WARNING: " fmt), ##__VA_ARGS__)
+@@ -148,7 +147,7 @@ static struct orc_entry *orc_find(unsigned long ip)
  	}
+ 
+ 	/* vmlinux .init slow lookup: */
+-	if (ip >= (unsigned long)_sinittext && ip < (unsigned long)_einittext)
++	if (init_kernel_text(ip))
+ 		return __orc_find(__start_orc_unwind_ip, __start_orc_unwind,
+ 				  __stop_orc_unwind_ip - __start_orc_unwind_ip, ip);
+ 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index ce51455..3fd2915 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -472,6 +472,7 @@ extern bool parse_option_str(const char *str, const char *option);
+ extern char *next_arg(char *args, char **param, char **val);
+ 
+ extern int core_kernel_text(unsigned long addr);
++extern int init_kernel_text(unsigned long addr);
+ extern int core_kernel_data(unsigned long addr);
+ extern int __kernel_text_address(unsigned long addr);
+ extern int kernel_text_address(unsigned long addr);
+diff --git a/kernel/extable.c b/kernel/extable.c
+index a17fdb6..6a5b61e 100644
+--- a/kernel/extable.c
++++ b/kernel/extable.c
+@@ -64,7 +64,7 @@ const struct exception_table_entry *search_exception_tables(unsigned long addr)
+ 	return e;
  }
  
+-static inline int init_kernel_text(unsigned long addr)
++int init_kernel_text(unsigned long addr)
+ {
+ 	if (addr >= (unsigned long)_sinittext &&
+ 	    addr < (unsigned long)_einittext)
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index b2f0b47..52a0a7a 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -16,7 +16,6 @@
+ #include <linux/jump_label_ratelimit.h>
+ #include <linux/bug.h>
+ #include <linux/cpu.h>
+-#include <asm/sections.h>
+ 
+ #ifdef HAVE_JUMP_LABEL
+ 
+@@ -429,8 +428,7 @@ void __init jump_label_invalidate_init(void)
+ 	struct jump_entry *iter;
+ 
+ 	for (iter = iter_start; iter < iter_stop; iter++) {
+-		if (iter->code >= (unsigned long)_sinittext &&
+-		    iter->code < (unsigned long)_einittext)
++		if (init_kernel_text(iter->code))
+ 			iter->code = 0;
+ 	}
+ }
