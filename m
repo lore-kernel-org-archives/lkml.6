@@ -1,54 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751408AbeBUErs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 23:47:48 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34195 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeBUErq (ORCPT
+        id S1751412AbeBUE6X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 23:58:23 -0500
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:47100 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBUE6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 23:47:46 -0500
-X-Google-Smtp-Source: AG47ELure/VQjDazgLTvyvOVJOtNCCXiMO5k+ZkWhbJhUBhhNyAbtcWqL1ddlryNSD3xG5HGMXHJ334lz+WgPhkflO4=
+        Tue, 20 Feb 2018 23:58:22 -0500
+X-Google-Smtp-Source: AH8x226LsX8YBrwMNBsZy1U3rWWGclVpa932eigbokYhDlr//j7JSSIJNRXuuaX2o8bcDA5YfS5C3qAs08dV6d/QPMI=
 MIME-Version: 1.0
-In-Reply-To: <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop>
-References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
- <1518701959-22899-2-git-send-email-tali.perry1@gmail.com> <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
- <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop>
-From: Brendan Higgins <brendanhiggins@google.com>
-Date: Tue, 20 Feb 2018 20:47:44 -0800
-Message-ID: <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
-To: Rob Herring <robh@kernel.org>
-Cc: Tali Perry <tali.perry1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
+Reply-To: m.dim.deng1@gmail.com
+From: Dim Deng <mariam.cook2020@gmail.com>
+Date: Wed, 21 Feb 2018 04:58:20 +0000
+Message-ID: <CAHVDHLeDf0odxg9BHmC5FRJ=92qxnO+m=9spGRaq-3uuNrRwHw@mail.gmail.com>
+Subject: Pls assist me to come and establish an industry in your country
+To: Mariam Cook <mariam.cook2020@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 6:49 AM, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
->> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
->> >
->> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
->> >
->>  <snip>
->>
->> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
->> clocks (moved from drivers/clk/clk-npcm7xx.c):
->> https://www.spinics.net/lists/arm-kernel/msg634678.html
->
-> No, binding docs, dts files and driver code should all be separate
-> patches.
+Genuine offer
+ How are you today and your family, I am a citizen of Sudan but
+currently staying in Burkina Faso. My name is Miss Mariam Dim Deng,
+25years old originated from Sudan.
+My late father Dr. Dominic Dim Deng was the former Minister for SPLA
+Affair and Special Adviser to President Salva Kiir of South Sudan for
+Decentralization. You can read more about the crash through the below
+site:
+http://news.bbc.co.uk/2/hi/africa/7380412.stm
 
-My mistake. This patch has a dt-bindings include file; should the include file
-go in here, with the dtsi changes, or in its own separate patch?
+I am the only survival daughter of my late father, I want to establish
+an industry in your country.My father left the sum of eight million,
+four hundred thousand dollars, in the bank, so you will help me to
+receive the fund for investment in your country.
+Please can you be my partner and to direct me the way to establish an
+industry,out of this fund I will give you 30% for helping me, please
+contact me at email: m.dim.deng1@gmail.com
 
-Thanks
+Your beloved Mariam Dim Deng
