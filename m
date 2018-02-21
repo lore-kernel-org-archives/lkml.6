@@ -1,23 +1,23 @@
 Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AH8x227qEm/oS2w29ya1jHOutftoOzd+9c2Dt98nocXbSUSucZ/gJXU8Gt3P0UFFSdEr8oKbhAm+
-ARC-Seal: i=1; a=rsa-sha256; t=1519229781; cv=none;
+X-Google-Smtp-Source: AH8x224n+5zChTqSbiY3VspeLZyqbFTvZo2Fi61QH3LXdWzEk0CNBU72cHycjWbAk6/UKWsW4eM0
+ARC-Seal: i=1; a=rsa-sha256; t=1519229780; cv=none;
         d=google.com; s=arc-20160816;
-        b=KHkicOAyHYH8tch+3KHUfApE0+6HFQblQH3L/tunRgsPkw5c2ohNJNz+lU1EzPPjMR
-         AhIejf0YEjTGzKZogezWRokMFKBEKYkeTq5rLJhkFwNclrePNpgiiPFRMOWStzf1Xg/q
-         Y//4EBhCyAtq94FuyzxeB2JBe1Px5DoDbq88sx/L4uh8Ocouhfg2XAZ3WIcHvKgkpkY+
-         R3rgXWScbtY046tWjQzoaBtOahhboZwPcOlrUw38FatCBbpcfWVp6CcluRWeJR2tgNFp
-         +LRdIBOKgQP6ykzpISuz1NHTUAtxoOonHmH00eBKBypZJGyMiAYFvVaBdB47czshO6lD
-         levg==
+        b=ZobTZ9Bw5tiTC5Ki9GxbSfEg41slWeVaQVjwv7DlT2PPRVxtEJWqaGVCba1M274Coh
+         T4MhFk+KBg8HSkBnOLr7/ze91MYvL5V0clGPNxDwD96TXv8VXC81Jpg/r1yU+PTnIHm7
+         ergIKwGAjh+a3y3sBbkK67SHIUjKzYuuaip1ThF4KTOlZT2Jd34BQ6p39WDI7TsOj3kl
+         NtJP/V76bidF//UmLjYllp5DO6cRONIDX86L8ftjxPdsmJ8MUktJnSY23B9eulqLXQgy
+         z1b9qj8QHvhjxtIIHx9BWQ1JWCnYrbSXaB74jYPB6nrsxc3Mwu1RHyiiCTfhSq48yBiZ
+         bDLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=uTViNhkTCo8ujDzDLJb/yvJo6M5Dh9BKAuHvexKoJWE=;
-        b=P8S9Ol+lGtO9It+QUKaGMRqUUwqBLNEoxNAaXEHyib8FZm7AYSDcoi33Y33GTHdndE
-         lY+JszZhvpMb7kZWbfeL9OHlQXQSMfkdRpb6az3NIQERMQsbLpY3TSEnx+GoNZjt+ehK
-         GvqkIRwB5YYDM2O9wd7DX1HR/ovBvfl4a727OWO2B/lnlOOfmTZthrH2AAq89J6evBvl
-         ugQzADPQo3OjobeKEjSYWbSJ+tE89w0HmCjR8Ulc4XP+iAFF72/h2iMBqrQyx97J7Seo
-         JOT1LVIXYY1NC1kk4naDMTJhXUQlGl04jB2Fn1ipXU5RGUrTauteYW4h8zAWcZHPlGaN
-         4Qlw==
+        bh=cfu+9LM1dU2qKvXbKy4V4ZXZDI9hb26e7m9sqDYtE3s=;
+        b=BZ3D3e5Xn9fUY+CZ1lDjSIw6iBh28a0hhHKJv5vlCIA7c1vPHvVfsyJNE2muO6i4yu
+         ELtmLCPsWKJ5oCj1/NLuoIlVi7Ho3M6SlUc5wyrDYGCXpYG7lHhWxU4L78c0upQq/8jS
+         f2c5+pxE0BtCrTZQhiCxzG7za3M9yEbd6oTjJKILwPyyZZFf6sDYXUL7MYdEdJo5jePE
+         YxdpdZja3zNPe9RzUmOm1NDLRNvKyHkI1n9iDAyGyymFB9uYI4I/ba9Xk29trH338BUS
+         ZlSHXc+zt27iE1u/eD23QZZPjY9st5x5JQp9W1202HUhaH/pvU7V3swiju/lUTD/Sax6
+         YqbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
-   d="scan'208";a="29617851"
+   d="scan'208";a="29617847"
 From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To: joel@jms.id.au,
 	andrew@aj.id.au,
@@ -43,59 +43,586 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	openbmc@lists.ozlabs.org,
 	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH v2 5/8] [PATCH [5/8] Documentation: dt-bindings: Add a document for PECI hwmon client driver
-Date: Wed, 21 Feb 2018 08:16:03 -0800
-Message-Id: <20180221161606.32247-6-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v2 4/8] [PATCH 4/8] drivers/peci: Add a PECI adapter driver for Aspeed AST24xx/AST25xx
+Date: Wed, 21 Feb 2018 08:16:02 -0800
+Message-Id: <20180221161606.32247-5-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
 References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593027887659877027?=
-X-GMAIL-MSGID: =?utf-8?q?1593027887659877027?=
+X-GMAIL-THRID: =?utf-8?q?1593027886664910668?=
+X-GMAIL-MSGID: =?utf-8?q?1593027886664910668?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds a dt-bindings document for a generic PECI hwmon client
-driver.
+This commit adds PECI adapter driver implementation for Aspeed
+AST24xx/AST25xx.
 
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 ---
- .../devicetree/bindings/hwmon/peci-hwmon.txt       | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/peci-hwmon.txt
+ drivers/peci/Kconfig       |  19 ++
+ drivers/peci/Makefile      |   3 +
+ drivers/peci/peci-aspeed.c | 510 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 532 insertions(+)
+ create mode 100644 drivers/peci/peci-aspeed.c
 
-diff --git a/Documentation/devicetree/bindings/hwmon/peci-hwmon.txt b/Documentation/devicetree/bindings/hwmon/peci-hwmon.txt
+diff --git a/drivers/peci/Kconfig b/drivers/peci/Kconfig
+index 1cd2cb4b2298..f9875a0d0bc7 100644
+--- a/drivers/peci/Kconfig
++++ b/drivers/peci/Kconfig
+@@ -14,7 +14,26 @@ config PECI
+ 	  processor and chipset components to external monitoring or control
+ 	  devices.
+ 
++	  If you want PECI support, you should say Y here and also to the
++	  specific driver for your bus adapter(s) below.
++
+ 	  This PECI support can also be built as a module.  If so, the module
+ 	  will be called peci-core.
+ 
++if PECI
++
++config PECI_ASPEED
++	tristate "Aspeed AST24xx/AST25xx PECI support"
++	select REGMAP_MMIO
++	depends on OF && (ARCH_ASPEED || COMPILE_TEST)
++	help
++	  Say Y here if you want support for the Platform Environment Control
++	  Interface (PECI) bus adapter driver on the Aspeed AST24XX and AST25XX
++	  SoCs.
++
++	  This support is also available as a module.  If so, the module
++	  will be called peci-aspeed.
++
++endif # PECI
++
+ endmenu
+diff --git a/drivers/peci/Makefile b/drivers/peci/Makefile
+index 9e8615e0d3ff..886285e69765 100644
+--- a/drivers/peci/Makefile
++++ b/drivers/peci/Makefile
+@@ -4,3 +4,6 @@
+ 
+ # Core functionality
+ obj-$(CONFIG_PECI)		+= peci-core.o
++
++# Hardware specific bus drivers
++obj-$(CONFIG_PECI_ASPEED)	+= peci-aspeed.o
+diff --git a/drivers/peci/peci-aspeed.c b/drivers/peci/peci-aspeed.c
 new file mode 100644
-index 000000000000..831813158884
+index 000000000000..2b7800e96805
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/peci-hwmon.txt
-@@ -0,0 +1,27 @@
-+Bindings for Intel PECI (Platform Environment Control Interface) hwmon driver.
++++ b/drivers/peci/peci-aspeed.c
+@@ -0,0 +1,510 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2012-2020 ASPEED Technology Inc.
++// Copyright (c) 2018 Intel Corporation
 +
-+Required properties:
-+- compatible
-+	Should be "intel,peci-hwmon".
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/jiffies.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/peci.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+- reg
-+	Should contain address of a client CPU. Address range of CPU clients is
-+	starting from 0x30 based on PECI specification.
-+	<0x30> .. <0x37> (depends on the PECI_OFFSET_MAX definition)
++#define DUMP_DEBUG 0
 +
-+Example:
-+	peci-bus@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		< more properties >
++/* Aspeed PECI Registers */
++#define AST_PECI_CTRL     0x00
++#define AST_PECI_TIMING   0x04
++#define AST_PECI_CMD      0x08
++#define AST_PECI_CMD_CTRL 0x0c
++#define AST_PECI_EXP_FCS  0x10
++#define AST_PECI_CAP_FCS  0x14
++#define AST_PECI_INT_CTRL 0x18
++#define AST_PECI_INT_STS  0x1c
++#define AST_PECI_W_DATA0  0x20
++#define AST_PECI_W_DATA1  0x24
++#define AST_PECI_W_DATA2  0x28
++#define AST_PECI_W_DATA3  0x2c
++#define AST_PECI_R_DATA0  0x30
++#define AST_PECI_R_DATA1  0x34
++#define AST_PECI_R_DATA2  0x38
++#define AST_PECI_R_DATA3  0x3c
++#define AST_PECI_W_DATA4  0x40
++#define AST_PECI_W_DATA5  0x44
++#define AST_PECI_W_DATA6  0x48
++#define AST_PECI_W_DATA7  0x4c
++#define AST_PECI_R_DATA4  0x50
++#define AST_PECI_R_DATA5  0x54
++#define AST_PECI_R_DATA6  0x58
++#define AST_PECI_R_DATA7  0x5c
 +
-+		peci-hwmon@cpu0 {
-+			compatible = "intel,peci-hwmon";
-+			reg = <0x30>;
-+		};
++/* AST_PECI_CTRL - 0x00 : Control Register */
++#define PECI_CTRL_SAMPLING_MASK     GENMASK(19, 16)
++#define PECI_CTRL_SAMPLING(x)       (((x) << 16) & PECI_CTRL_SAMPLING_MASK)
++#define PECI_CTRL_SAMPLING_GET(x)   (((x) & PECI_CTRL_SAMPLING_MASK) >> 16)
++#define PECI_CTRL_READ_MODE_MASK    GENMASK(13, 12)
++#define PECI_CTRL_READ_MODE(x)      (((x) << 12) & PECI_CTRL_READ_MODE_MASK)
++#define PECI_CTRL_READ_MODE_GET(x)  (((x) & PECI_CTRL_READ_MODE_MASK) >> 12)
++#define PECI_CTRL_READ_MODE_COUNT   BIT(12)
++#define PECI_CTRL_READ_MODE_DBG     BIT(13)
++#define PECI_CTRL_CLK_SOURCE_MASK   BIT(11)
++#define PECI_CTRL_CLK_SOURCE(x)     (((x) << 11) & PECI_CTRL_CLK_SOURCE_MASK)
++#define PECI_CTRL_CLK_SOURCE_GET(x) (((x) & PECI_CTRL_CLK_SOURCE_MASK) >> 11)
++#define PECI_CTRL_CLK_DIV_MASK      GENMASK(10, 8)
++#define PECI_CTRL_CLK_DIV(x)        (((x) << 8) & PECI_CTRL_CLK_DIV_MASK)
++#define PECI_CTRL_CLK_DIV_GET(x)    (((x) & PECI_CTRL_CLK_DIV_MASK) >> 8)
++#define PECI_CTRL_INVERT_OUT        BIT(7)
++#define PECI_CTRL_INVERT_IN         BIT(6)
++#define PECI_CTRL_BUS_CONTENT_EN    BIT(5)
++#define PECI_CTRL_PECI_EN           BIT(4)
++#define PECI_CTRL_PECI_CLK_EN       BIT(0)
 +
-+		peci-hwmon@cpu1 {
-+			compatible = "intel,peci-hwmon";
-+			reg = <0x31>;
-+		};
++/* AST_PECI_TIMING - 0x04 : Timing Negotiation Register */
++#define PECI_TIMING_MESSAGE_MASK   GENMASK(15, 8)
++#define PECI_TIMING_MESSAGE(x)     (((x) << 8) & PECI_TIMING_MESSAGE_MASK)
++#define PECI_TIMING_MESSAGE_GET(x) (((x) & PECI_TIMING_MESSAGE_MASK) >> 8)
++#define PECI_TIMING_ADDRESS_MASK   GENMASK(7, 0)
++#define PECI_TIMING_ADDRESS(x)     ((x) & PECI_TIMING_ADDRESS_MASK)
++#define PECI_TIMING_ADDRESS_GET(x) ((x) & PECI_TIMING_ADDRESS_MASK)
++
++/* AST_PECI_CMD - 0x08 : Command Register */
++#define PECI_CMD_PIN_MON    BIT(31)
++#define PECI_CMD_STS_MASK   GENMASK(27, 24)
++#define PECI_CMD_STS_GET(x) (((x) & PECI_CMD_STS_MASK) >> 24)
++#define PECI_CMD_FIRE       BIT(0)
++
++/* AST_PECI_LEN - 0x0C : Read/Write Length Register */
++#define PECI_AW_FCS_EN       BIT(31)
++#define PECI_READ_LEN_MASK   GENMASK(23, 16)
++#define PECI_READ_LEN(x)     (((x) << 16) & PECI_READ_LEN_MASK)
++#define PECI_WRITE_LEN_MASK  GENMASK(15, 8)
++#define PECI_WRITE_LEN(x)    (((x) << 8) & PECI_WRITE_LEN_MASK)
++#define PECI_TAGET_ADDR_MASK GENMASK(7, 0)
++#define PECI_TAGET_ADDR(x)   ((x) & PECI_TAGET_ADDR_MASK)
++
++/* AST_PECI_EXP_FCS - 0x10 : Expected FCS Data Register */
++#define PECI_EXPECT_READ_FCS_MASK      GENMASK(23, 16)
++#define PECI_EXPECT_READ_FCS_GET(x)    (((x) & PECI_EXPECT_READ_FCS_MASK) >> 16)
++#define PECI_EXPECT_AW_FCS_AUTO_MASK   GENMASK(15, 8)
++#define PECI_EXPECT_AW_FCS_AUTO_GET(x) (((x) & PECI_EXPECT_AW_FCS_AUTO_MASK) \
++					>> 8)
++#define PECI_EXPECT_WRITE_FCS_MASK     GENMASK(7, 0)
++#define PECI_EXPECT_WRITE_FCS_GET(x)   ((x) & PECI_EXPECT_WRITE_FCS_MASK)
++
++/* AST_PECI_CAP_FCS - 0x14 : Captured FCS Data Register */
++#define PECI_CAPTURE_READ_FCS_MASK    GENMASK(23, 16)
++#define PECI_CAPTURE_READ_FCS_GET(x)  (((x) & PECI_CAPTURE_READ_FCS_MASK) >> 16)
++#define PECI_CAPTURE_WRITE_FCS_MASK   GENMASK(7, 0)
++#define PECI_CAPTURE_WRITE_FCS_GET(x) ((x) & PECI_CAPTURE_WRITE_FCS_MASK)
++
++/* AST_PECI_INT_CTRL/STS - 0x18/0x1c : Interrupt Register */
++#define PECI_INT_TIMING_RESULT_MASK GENMASK(31, 30)
++#define PECI_INT_TIMEOUT            BIT(4)
++#define PECI_INT_CONNECT            BIT(3)
++#define PECI_INT_W_FCS_BAD          BIT(2)
++#define PECI_INT_W_FCS_ABORT        BIT(1)
++#define PECI_INT_CMD_DONE           BIT(0)
++
++struct aspeed_peci {
++	struct peci_adapter	adaper;
++	struct device		*dev;
++	struct regmap		*regmap;
++	int			irq;
++	struct completion	xfer_complete;
++	u32			sts;
++	u32			cmd_timeout_ms;
++};
++
++#define PECI_INT_MASK  (PECI_INT_TIMEOUT | PECI_INT_CONNECT | \
++			PECI_INT_W_FCS_BAD | PECI_INT_W_FCS_ABORT | \
++			PECI_INT_CMD_DONE)
++
++#define PECI_IDLE_CHECK_TIMEOUT_MS      50
++#define PECI_IDLE_CHECK_INTERVAL_MS     10
++
++#define PECI_RD_SAMPLING_POINT_DEFAULT  8
++#define PECI_RD_SAMPLING_POINT_MAX      15
++#define PECI_CLK_DIV_DEFAULT            0
++#define PECI_CLK_DIV_MAX                7
++#define PECI_MSG_TIMING_NEGO_DEFAULT    1
++#define PECI_MSG_TIMING_NEGO_MAX        255
++#define PECI_ADDR_TIMING_NEGO_DEFAULT   1
++#define PECI_ADDR_TIMING_NEGO_MAX       255
++#define PECI_CMD_TIMEOUT_MS_DEFAULT     1000
++#define PECI_CMD_TIMEOUT_MS_MAX         60000
++
++static int aspeed_peci_xfer_native(struct aspeed_peci *priv,
++				   struct peci_xfer_msg *msg)
++{
++	u32 peci_head, peci_state, rx_data, cmd_sts;
++	uint reg;
++	ktime_t start, end;
++	s64 elapsed_ms;
++	long err, timeout = msecs_to_jiffies(priv->cmd_timeout_ms);
++	int i, rc = 0;
++
++	start = ktime_get();
++
++	/* Check command sts and bus idle state */
++	while (!regmap_read(priv->regmap, AST_PECI_CMD, &cmd_sts) &&
++	       (cmd_sts & (PECI_CMD_STS_MASK | PECI_CMD_PIN_MON))) {
++		end = ktime_get();
++		elapsed_ms = ktime_to_ms(ktime_sub(end, start));
++		if (elapsed_ms >= PECI_IDLE_CHECK_TIMEOUT_MS) {
++			dev_dbg(priv->dev, "Timeout waiting for idle state!\n");
++			return -ETIMEDOUT;
++		}
++
++		usleep_range(PECI_IDLE_CHECK_INTERVAL_MS * 1000,
++			     (PECI_IDLE_CHECK_INTERVAL_MS * 1000) + 1000);
 +	};
++
++	reinit_completion(&priv->xfer_complete);
++
++	peci_head = PECI_TAGET_ADDR(msg->addr) |
++				    PECI_WRITE_LEN(msg->tx_len) |
++				    PECI_READ_LEN(msg->rx_len);
++
++	rc = regmap_write(priv->regmap, AST_PECI_CMD_CTRL, peci_head);
++	if (rc)
++		return rc;
++
++	for (i = 0; i < msg->tx_len; i += 4) {
++		reg = i < 16 ? AST_PECI_W_DATA0 + i % 16 :
++			       AST_PECI_W_DATA4 + i % 16;
++		rc = regmap_write(priv->regmap, reg,
++				  (msg->tx_buf[i + 3] << 24) |
++				  (msg->tx_buf[i + 2] << 16) |
++				  (msg->tx_buf[i + 1] << 8) |
++				  msg->tx_buf[i + 0]);
++		if (rc)
++			return rc;
++	}
++
++	dev_dbg(priv->dev, "HEAD : 0x%08x\n", peci_head);
++#if DUMP_DEBUG
++	print_hex_dump(KERN_DEBUG, "TX : ", DUMP_PREFIX_NONE, 16, 1,
++		       msg->tx_buf, msg->tx_len, true);
++#endif
++
++	rc = regmap_write(priv->regmap, AST_PECI_CMD, PECI_CMD_FIRE);
++	if (rc)
++		return rc;
++
++	err = wait_for_completion_interruptible_timeout(&priv->xfer_complete,
++							timeout);
++
++	dev_dbg(priv->dev, "INT_STS : 0x%08x\n", priv->sts);
++	if (!regmap_read(priv->regmap, AST_PECI_CMD, &peci_state))
++		dev_dbg(priv->dev, "PECI_STATE : 0x%lx\n",
++			PECI_CMD_STS_GET(peci_state));
++	else
++		dev_dbg(priv->dev, "PECI_STATE : read error\n");
++
++	if (err <= 0 || !(priv->sts & PECI_INT_CMD_DONE)) {
++		if (err < 0) { /* -ERESTARTSYS */
++			return (int)err;
++		} else if (err == 0) {
++			dev_dbg(priv->dev, "Timeout waiting for a response!\n");
++			return -ETIMEDOUT;
++		}
++
++		dev_dbg(priv->dev, "No valid response!\n");
++		return -EFAULT;
++	}
++
++	for (i = 0; i < msg->rx_len; i++) {
++		u8 byte_offset = i % 4;
++
++		if (byte_offset == 0) {
++			reg = i < 16 ? AST_PECI_R_DATA0 + i % 16 :
++				       AST_PECI_R_DATA4 + i % 16;
++			rc = regmap_read(priv->regmap, reg, &rx_data);
++			if (rc)
++				return rc;
++		}
++
++		msg->rx_buf[i] = (u8)(rx_data >> (byte_offset << 3));
++	}
++
++#if DUMP_DEBUG
++	print_hex_dump(KERN_DEBUG, "RX : ", DUMP_PREFIX_NONE, 16, 1,
++		       msg->rx_buf, msg->rx_len, true);
++#endif
++	if (!regmap_read(priv->regmap, AST_PECI_CMD, &peci_state))
++		dev_dbg(priv->dev, "PECI_STATE : 0x%lx\n",
++			PECI_CMD_STS_GET(peci_state));
++	else
++		dev_dbg(priv->dev, "PECI_STATE : read error\n");
++	dev_dbg(priv->dev, "------------------------\n");
++
++	return rc;
++}
++
++static irqreturn_t aspeed_peci_irq_handler(int irq, void *arg)
++{
++	struct aspeed_peci *priv = arg;
++	bool valid_irq = true;
++
++	if (regmap_read(priv->regmap, AST_PECI_INT_STS, &priv->sts))
++		return IRQ_NONE;
++
++	switch (priv->sts & PECI_INT_MASK) {
++	case PECI_INT_TIMEOUT:
++		dev_dbg(priv->dev, "PECI_INT_TIMEOUT\n");
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS,
++				 PECI_INT_TIMEOUT))
++			return IRQ_NONE;
++		break;
++	case PECI_INT_CONNECT:
++		dev_dbg(priv->dev, "PECI_INT_CONNECT\n");
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS,
++				 PECI_INT_CONNECT))
++			return IRQ_NONE;
++		break;
++	case PECI_INT_W_FCS_BAD:
++		dev_dbg(priv->dev, "PECI_INT_W_FCS_BAD\n");
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS,
++				 PECI_INT_W_FCS_BAD))
++			return IRQ_NONE;
++		break;
++	case PECI_INT_W_FCS_ABORT:
++		dev_dbg(priv->dev, "PECI_INT_W_FCS_ABORT\n");
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS,
++				 PECI_INT_W_FCS_ABORT))
++			return IRQ_NONE;
++		break;
++	case PECI_INT_CMD_DONE:
++		dev_dbg(priv->dev, "PECI_INT_CMD_DONE\n");
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS,
++				 PECI_INT_CMD_DONE) ||
++		    regmap_write(priv->regmap, AST_PECI_CMD, 0))
++			return IRQ_NONE;
++		break;
++	default:
++		dev_dbg(priv->dev, "Unknown PECI interrupt : 0x%08x\n",
++			priv->sts);
++		if (regmap_write(priv->regmap, AST_PECI_INT_STS, priv->sts))
++			return IRQ_NONE;
++		valid_irq = false;
++		break;
++	}
++
++	if (valid_irq)
++		complete(&priv->xfer_complete);
++
++	return IRQ_HANDLED;
++}
++
++static int aspeed_peci_init_ctrl(struct aspeed_peci *priv)
++{
++	struct clk *clkin;
++	u32 clk_freq, clk_divisor, clk_div_val = 0;
++	u32 msg_timing_nego, addr_timing_nego, rd_sampling_point;
++	int ret;
++
++	clkin = devm_clk_get(priv->dev, NULL);
++	if (IS_ERR(clkin)) {
++		dev_err(priv->dev, "Failed to get clk source.\n");
++		return PTR_ERR(clkin);
++	}
++
++	ret = of_property_read_u32(priv->dev->of_node, "clock-frequency",
++				   &clk_freq);
++	if (ret < 0) {
++		dev_err(priv->dev,
++			"Could not read clock-frequency property.\n");
++		return ret;
++	}
++
++	clk_divisor = clk_get_rate(clkin) / clk_freq;
++	devm_clk_put(priv->dev, clkin);
++
++	while ((clk_divisor >> 1) && (clk_div_val < PECI_CLK_DIV_MAX))
++		clk_div_val++;
++
++	ret = of_property_read_u32(priv->dev->of_node, "msg-timing-nego",
++				   &msg_timing_nego);
++	if (ret || msg_timing_nego > PECI_MSG_TIMING_NEGO_MAX) {
++		dev_warn(priv->dev,
++			 "Invalid msg-timing-nego : %u, Use default : %u\n",
++			 msg_timing_nego, PECI_MSG_TIMING_NEGO_DEFAULT);
++		msg_timing_nego = PECI_MSG_TIMING_NEGO_DEFAULT;
++	}
++
++	ret = of_property_read_u32(priv->dev->of_node, "addr-timing-nego",
++				   &addr_timing_nego);
++	if (ret || addr_timing_nego > PECI_ADDR_TIMING_NEGO_MAX) {
++		dev_warn(priv->dev,
++			 "Invalid addr-timing-nego : %u, Use default : %u\n",
++			 addr_timing_nego, PECI_ADDR_TIMING_NEGO_DEFAULT);
++		addr_timing_nego = PECI_ADDR_TIMING_NEGO_DEFAULT;
++	}
++
++	ret = of_property_read_u32(priv->dev->of_node, "rd-sampling-point",
++				   &rd_sampling_point);
++	if (ret || rd_sampling_point > PECI_RD_SAMPLING_POINT_MAX) {
++		dev_warn(priv->dev,
++			 "Invalid rd-sampling-point : %u. Use default : %u\n",
++			 rd_sampling_point,
++			 PECI_RD_SAMPLING_POINT_DEFAULT);
++		rd_sampling_point = PECI_RD_SAMPLING_POINT_DEFAULT;
++	}
++
++	ret = of_property_read_u32(priv->dev->of_node, "cmd-timeout-ms",
++				   &priv->cmd_timeout_ms);
++	if (ret || priv->cmd_timeout_ms > PECI_CMD_TIMEOUT_MS_MAX ||
++	    priv->cmd_timeout_ms == 0) {
++		dev_warn(priv->dev,
++			 "Invalid cmd-timeout-ms : %u. Use default : %u\n",
++			 priv->cmd_timeout_ms,
++			 PECI_CMD_TIMEOUT_MS_DEFAULT);
++		priv->cmd_timeout_ms = PECI_CMD_TIMEOUT_MS_DEFAULT;
++	}
++
++	ret = regmap_write(priv->regmap, AST_PECI_CTRL,
++			   PECI_CTRL_CLK_DIV(PECI_CLK_DIV_DEFAULT) |
++			   PECI_CTRL_PECI_CLK_EN);
++	if (ret)
++		return ret;
++
++	usleep_range(1000, 5000);
++
++	/**
++	 * Timing negotiation period setting.
++	 * The unit of the programmed value is 4 times of PECI clock period.
++	 */
++	ret = regmap_write(priv->regmap, AST_PECI_TIMING,
++			   PECI_TIMING_MESSAGE(msg_timing_nego) |
++			   PECI_TIMING_ADDRESS(addr_timing_nego));
++	if (ret)
++		return ret;
++
++	/* Clear interrupts */
++	ret = regmap_write(priv->regmap, AST_PECI_INT_STS, PECI_INT_MASK);
++	if (ret)
++		return ret;
++
++	/* Enable interrupts */
++	ret = regmap_write(priv->regmap, AST_PECI_INT_CTRL, PECI_INT_MASK);
++	if (ret)
++		return ret;
++
++	/* Read sampling point and clock speed setting */
++	ret = regmap_write(priv->regmap, AST_PECI_CTRL,
++			   PECI_CTRL_SAMPLING(rd_sampling_point) |
++			   PECI_CTRL_CLK_DIV(clk_div_val) |
++			   PECI_CTRL_PECI_EN | PECI_CTRL_PECI_CLK_EN);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static const struct regmap_config aspeed_peci_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = AST_PECI_R_DATA7,
++	.val_format_endian = REGMAP_ENDIAN_LITTLE,
++	.fast_io = true,
++};
++
++static int aspeed_peci_xfer(struct peci_adapter *adaper,
++			    struct peci_xfer_msg *msg)
++{
++	struct aspeed_peci *priv = peci_get_adapdata(adaper);
++
++	return aspeed_peci_xfer_native(priv, msg);
++}
++
++static int aspeed_peci_probe(struct platform_device *pdev)
++{
++	struct aspeed_peci *priv;
++	struct resource *res;
++	void __iomem *base;
++	int ret = 0;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	dev_set_drvdata(&pdev->dev, priv);
++	priv->dev = &pdev->dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
++					     &aspeed_peci_regmap_config);
++	if (IS_ERR(priv->regmap))
++		return PTR_ERR(priv->regmap);
++
++	priv->irq = platform_get_irq(pdev, 0);
++	if (!priv->irq)
++		return -ENODEV;
++
++	ret = devm_request_irq(&pdev->dev, priv->irq, aspeed_peci_irq_handler,
++			       IRQF_SHARED,
++			       "peci-aspeed-irq",
++			       priv);
++	if (ret < 0)
++		return ret;
++
++	init_completion(&priv->xfer_complete);
++
++	priv->adaper.dev.parent = priv->dev;
++	priv->adaper.dev.of_node = of_node_get(dev_of_node(priv->dev));
++	strlcpy(priv->adaper.name, pdev->name, sizeof(priv->adaper.name));
++	priv->adaper.xfer = aspeed_peci_xfer;
++	peci_set_adapdata(&priv->adaper, priv);
++
++	ret = aspeed_peci_init_ctrl(priv);
++	if (ret < 0)
++		return ret;
++
++	ret = peci_add_adapter(&priv->adaper);
++	if (ret < 0)
++		return ret;
++
++	dev_info(&pdev->dev, "peci bus %d registered, irq %d\n",
++		 priv->adaper.nr, priv->irq);
++
++	return 0;
++}
++
++static int aspeed_peci_remove(struct platform_device *pdev)
++{
++	struct aspeed_peci *priv = dev_get_drvdata(&pdev->dev);
++
++	peci_del_adapter(&priv->adaper);
++	of_node_put(priv->adaper.dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id aspeed_peci_of_table[] = {
++	{ .compatible = "aspeed,ast2400-peci", },
++	{ .compatible = "aspeed,ast2500-peci", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, aspeed_peci_of_table);
++
++static struct platform_driver aspeed_peci_driver = {
++	.probe  = aspeed_peci_probe,
++	.remove = aspeed_peci_remove,
++	.driver = {
++		.name           = "peci-aspeed",
++		.of_match_table = of_match_ptr(aspeed_peci_of_table),
++	},
++};
++module_platform_driver(aspeed_peci_driver);
++
++MODULE_AUTHOR("Ryan Chen <ryan_chen@aspeedtech.com>");
++MODULE_AUTHOR("Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>");
++MODULE_DESCRIPTION("Aspeed PECI driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.16.1
