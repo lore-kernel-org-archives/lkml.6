@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937127AbeBUNoK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:44:10 -0500
-Received: from mga04.intel.com ([192.55.52.120]:64978 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936663AbeBUNoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:44:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
-   d="scan'208";a="176944773"
-Subject: Re: [PATCH V4 1/5] perf/x86/intel: Fix event update for auto-reload
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, acme@kernel.org,
-        tglx@linutronix.de, jolsa@redhat.com, eranian@google.com,
-        ak@linux.intel.com
-References: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
- <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
- <20180221103247.GL25181@hirez.programming.kicks-ass.net>
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <cac32cb6-e99a-2df7-e756-0498cf06598d@linux.intel.com>
-Date: Wed, 21 Feb 2018 08:43:47 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S937154AbeBUNor (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:44:47 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33660 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936089AbeBUNop (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:44:45 -0500
+X-Google-Smtp-Source: AH8x227hjya6IXLP9mTuGDvlAHwrQ/CHITRezFRPS4Ceu8oMHd9FOSSkCpSo5DDjTYaM4u3AsUwO8w==
+Subject: Re: [PATCH] RDMA/core: reduce IB_POLL_BATCH constant
+To: Chuck Lever <chuck.lever@oracle.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "jgg@ziepe.ca" <jgg@ziepe.ca>, "arnd@arndb.de" <arnd@arndb.de>,
+        "dledford@redhat.com" <dledford@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "leonro@mellanox.com" <leonro@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+References: <20180220205924.2035765-1-arnd@arndb.de>
+ <1519161268.3737.12.camel@wdc.com>
+ <F2FB1034-BFB6-45ED-878E-6FADD756157D@oracle.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <c3eab137-1c37-0e6c-a53a-df2cf80653d2@grimberg.me>
+Date: Wed, 21 Feb 2018 15:44:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221103247.GL25181@hirez.programming.kicks-ass.net>
+In-Reply-To: <F2FB1034-BFB6-45ED-878E-6FADD756157D@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -34,58 +34,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 2/21/2018 5:32 AM, Peter Zijlstra wrote:
-> On Mon, Feb 12, 2018 at 02:20:31PM -0800, kan.liang@linux.intel.com wrote:
->> @@ -1389,8 +1456,22 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs)
->>   
->>   	ds->pebs_index = ds->pebs_buffer_base;
->>   
->> -	if (unlikely(base >= top))
->> +	if (unlikely(base >= top)) {
->> +		/*
->> +		 * The drain_pebs() could be called twice in a short period
->> +		 * for auto-reload event in pmu::read(). There are no
->> +		 * overflows have happened in between.
->> +		 * It needs to call intel_pmu_save_and_restart_reload() to
->> +		 * update the event->count for this case.
->> +		 */
->> +		for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled,
->> +				 x86_pmu.max_pebs_events) {
->> +			event = cpuc->events[bit];
->> +			if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
->> +				intel_pmu_save_and_restart_reload(event, 0);
->> +		}
->>   		return;
->> +	}
->>   
->>   	for (at = base; at < top; at += x86_pmu.pebs_record_size) {
->>   		struct pebs_record_nhm *p = at;
+>> On Tue, 2018-02-20 at 21:59 +0100, Arnd Bergmann wrote:
+>>> /* # of WCs to poll for with a single call to ib_poll_cq */
+>>> -#define IB_POLL_BATCH			16
+>>> +#define IB_POLL_BATCH			8
+>>
+>> The purpose of batch polling is to minimize contention on the cq spinlock.
+>> Reducing the IB_POLL_BATCH constant may affect performance negatively. Has
+>> the performance impact of this change been verified for all affected drivers
+>> (ib_srp, ib_srpt, ib_iser, ib_isert, NVMeOF, NVMeOF target, SMB Direct, NFS
+>> over RDMA, ...)?
 > 
-> Is there a reason you didn't do intel_pmu_drain_pebs_core() ?
->
-
-Right, I forgot that the drain_pebs_core() also has auto_reload support.
-Sorry for that.
-I will re-send all patches.
-
-Thanks,
-Kan
-
+> Only the users of the DIRECT polling method use an on-stack
+> array of ib_wc's. This is only the SRP drivers.
 > 
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -1435,8 +1435,11 @@ static void intel_pmu_drain_pebs_core(st
->   		return;
->   
->   	n = top - at;
-> -	if (n <= 0)
-> +	if (n <= 0) {
-> +		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
-> +			intel_pmu_save_and_restart_reload(event, 0);
->   		return;
-> +	}
->   
->   	__intel_pmu_pebs_event(event, iregs, at, top, 0, n);
->   }
+> The other two modes have use of a dynamically allocated array
+> of ib_wc's that hangs off the ib_cq. These shouldn't need any
+> reduction in the size of this array, and they are the common
+> case.
 > 
+> IMO a better solution would be to change ib_process_cq_direct
+> to use a smaller on-stack array, and leave IB_POLL_BATCH alone.
+
+The only reason why I added this array on-stack was to allow consumers
+that did not use ib_alloc_cq api to call it, but that seems like a
+wrong decision when thinking it over again (as probably these users
+did not set the wr_cqe correctly).
+
+How about we make ib_process_cq_direct use the cq wc array and add
+a WARN_ON statement (and fail it gracefully) if the caller used this
+API without calling ib_alloc_cq?
+
+--
+diff --git a/drivers/infiniband/core/cq.c b/drivers/infiniband/core/cq.c
+index bc79ca8215d7..cd3e9e124834 100644
+--- a/drivers/infiniband/core/cq.c
++++ b/drivers/infiniband/core/cq.c
+@@ -25,10 +25,10 @@
+  #define IB_POLL_FLAGS \
+         (IB_CQ_NEXT_COMP | IB_CQ_REPORT_MISSED_EVENTS)
+
+-static int __ib_process_cq(struct ib_cq *cq, int budget, struct ib_wc 
+*poll_wc)
++static int __ib_process_cq(struct ib_cq *cq, int budget)
+  {
+         int i, n, completed = 0;
+-       struct ib_wc *wcs = poll_wc ? : cq->wc;
++       struct ib_wc *wcs = cq->wc;
+
+         /*
+          * budget might be (-1) if the caller does not
+@@ -72,9 +72,9 @@ static int __ib_process_cq(struct ib_cq *cq, int 
+budget, struct ib_wc *poll_wc)
+   */
+  int ib_process_cq_direct(struct ib_cq *cq, int budget)
+  {
+-       struct ib_wc wcs[IB_POLL_BATCH];
+-
+-       return __ib_process_cq(cq, budget, wcs);
++       if (unlikely(WARN_ON_ONCE(!cq->wc)))
++               return 0;
++       return __ib_process_cq(cq, budget);
+  }
+  EXPORT_SYMBOL(ib_process_cq_direct);
+
+@@ -88,7 +88,7 @@ static int ib_poll_handler(struct irq_poll *iop, int 
+budget)
+         struct ib_cq *cq = container_of(iop, struct ib_cq, iop);
+         int completed;
+
+-       completed = __ib_process_cq(cq, budget, NULL);
++       completed = __ib_process_cq(cq, budget);
+         if (completed < budget) {
+                 irq_poll_complete(&cq->iop);
+                 if (ib_req_notify_cq(cq, IB_POLL_FLAGS) > 0)
+@@ -108,7 +108,7 @@ static void ib_cq_poll_work(struct work_struct *work)
+         struct ib_cq *cq = container_of(work, struct ib_cq, work);
+         int completed;
+
+-       completed = __ib_process_cq(cq, IB_POLL_BUDGET_WORKQUEUE, NULL);
++       completed = __ib_process_cq(cq, IB_POLL_BUDGET_WORKQUEUE);
+         if (completed >= IB_POLL_BUDGET_WORKQUEUE ||
+             ib_req_notify_cq(cq, IB_POLL_FLAGS) > 0)
+                 queue_work(ib_comp_wq, &cq->work);
+--
