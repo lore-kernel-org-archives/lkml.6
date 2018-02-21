@@ -1,75 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeBUBzJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 20:55:09 -0500
-Received: from mga01.intel.com ([192.55.52.88]:40429 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751418AbeBUBzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 20:55:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,542,1511856000";
-   d="scan'208";a="176826660"
-Subject: Re: [Intel-wired-lan] [PATCH net-queue] e1000e: Fix check_for_link
- return value with autoneg off.
-To: Benjamin Poirier <bpoirier@suse.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        id S1751405AbeBUB7F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 20:59:05 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49028 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeBUB7E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 20:59:04 -0500
+Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
+ pseudo-locking core
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Reinette Chatre <reinette.chatre@intel.com>
+Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180220061200.17708-1-bpoirier@suse.com>
-From: "Neftin, Sasha" <sasha.neftin@intel.com>
-Message-ID: <1908e13b-3706-08d7-9ebb-5774b7d7cfb4@intel.com>
-Date: Tue, 20 Feb 2018 17:55:06 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+ <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
+ <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
+ <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <2db87a79-e13f-ad6b-c399-1ad58585f38e@oracle.com>
+Date: Tue, 20 Feb 2018 17:58:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180220061200.17708-1-bpoirier@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8810 signatures=668675
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802210022
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/2018 22:12, Benjamin Poirier wrote:
-> When autoneg is off, the .check_for_link callback functions clear the
-> get_link_status flag and systematically return a "pseudo-error". This means
-> that the link is not detected as up until the next execution of the
-> e1000_watchdog_task() 2 seconds later.
+On 02/20/2018 03:21 PM, Thomas Gleixner wrote:
+> On Tue, 20 Feb 2018, Reinette Chatre wrote:
+>> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
+>>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
+>>>
+>>> Now the remaining thing is the memory allocation and the mmap itself. I
+>>> really dislike the preallocation of memory right at setup time. Ideally
+>>> that should be an allocation of the application itself, but the horrid
+>>> wbinvd stuff kinda prevents that. With that restriction we are more or less
+>>> bound to immediate allocation and population.
+>>
+>> Acknowledged. I am not sure if the current permissions would support
+>> such a dynamic setup though. At this time the system administrator is
+>> the one that sets up the pseudo-locked region and can through
+>> permissions of the character device provide access to these regions to
+>> user space applications.
 > 
-> Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-> ---
->   drivers/net/ethernet/intel/e1000e/ich8lan.c | 2 +-
->   drivers/net/ethernet/intel/e1000e/mac.c     | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
+> You still would need some interface, e.g. character device which allows you
+> to hand in the pointer to the user allocated memory and do the cache
+> priming. So you could use the same permission setup for that character
+> device.
 > 
-> diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-> index 31277d3bb7dc..ff308b05d68c 100644
-> --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-> +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-> @@ -1602,7 +1602,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
->   	 * we have already determined whether we have link or not.
->   	 */
->   	if (!mac->autoneg)
-> -		return -E1000_ERR_CONFIG;
-> +		return 1;
->   
->   	/* Auto-Neg is enabled.  Auto Speed Detection takes care
->   	 * of MAC speed/duplex configuration.  So we only need to
-> diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
-> index f457c5703d0c..db735644b312 100644
-> --- a/drivers/net/ethernet/intel/e1000e/mac.c
-> +++ b/drivers/net/ethernet/intel/e1000e/mac.c
-> @@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
->   	 * we have already determined whether we have link or not.
->   	 */
->   	if (!mac->autoneg)
-> -		return -E1000_ERR_CONFIG;
-> +		return 1;
->   
->   	/* Auto-Neg is enabled.  Auto Speed Detection takes care
->   	 * of MAC speed/duplex configuration.  So we only need to
-> 
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+> The other problem is that we'd need to have MAP_CONTIG first so you
+> actually can allocate physically contigous memory from user space. Mike is
+> working on that, but it's not available today. The only way to do so today
+> (with lots of waste) would be MAP_HUGETLB, which might be an acceptable
+> constraint up to the point where MAP_CONTIG is available.
+
+Just to clarify, there is not any activity on exposing a general purpose
+MAP_CONTIG interface to user space.  When initially proposed, MAP_CONTIG
+was shot down and the suggestion was to create a new in kernel interface
+to make allocation of contiguous pages easier.  The initial use case was
+a driver which could use the new internal interface as part of it's
+mmap() routine to give contiguous regions to user space.
+
+Reinette is using this new interface, but that must be for the ?immediate
+allocation? case you are trying to move away from.  Sorry, I have not been
+following development of this feature.
+
+If you would have to create a device to accept a user buffer, could you
+perhaps use the same device to create/hand out a contiguous mapping?
+-- 
+Mike Kravetz
