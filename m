@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225xIq0OBeVLOAxOySWWmnG42o0WO5d6k8Nz6SYq2sgKNWhJADbIKnCsLdm/qSQ2iIpxMSZa
-ARC-Seal: i=1; a=rsa-sha256; t=1519218321; cv=none;
+X-Google-Smtp-Source: AH8x227xk0AFATb7zT201Kd/Dcmr2QCtsbb7LrVMYJPiWyEtNxBKw2+q/3bq8W5mBgJ60NPcBe3g
+ARC-Seal: i=1; a=rsa-sha256; t=1519218316; cv=none;
         d=google.com; s=arc-20160816;
-        b=oCaMb0zhzwJvBdVnk27+kNpZql+/tt1m+GTxyYUS7ylgpZr2O4hmmrswVMcZwAVKJx
-         ej0030Y/doepsA0rDvuRDTamDRM4irVFdoomAGwaH4EUH5VtTCUT3DVRwfGdbwzr8CFs
-         Uv864Vj4vp/dX0nh8N5jEnyAKIohhoMP8YGYu/zUf/3+6UIDmUDYG2w9lbgOyH6XJP90
-         ybutW+/qS95mb01gfa0QD6ZwTOAUYG7su3cfaVAZXFJX7k4BRqUJschQ1plvHuM5ZWdW
-         7b1Mkkz3VhcwEIO/3hBWAae80UJhyDgGLJX7rciH06sAeCWaIpz3HZXgwsgIwGpxEwJv
-         /IPA==
+        b=R6/UzVi5GCFXpNaiqDbBF1iBKNRLNE1LjPaDJXQ7/XEHn8NNA2j0e8B+4CjwZPdJAT
+         SVsEbPDqF9Yz2hkU6f+tFOmuFYQwZiuBpKeq0KO6xM1R91Cf8FPajJSN2pyUVBbfsTPK
+         4g0R9yELSfIB+/cxUs675uV2RgESYPjww7mpKRNqbB9zkktZQfhJDaeaX25Auhi2JG13
+         ioiGDYGEcaCnTNIjnJL78mlS4AcdZg4G2/ioUVfdeuqTJdXYKFXcsK3/hTiZ5F45NDqw
+         GoESWRvOW0oCGysWBQX97pZGJ8MNqIrby63v0YgQcUJ3MXY4dPNl4naSbKBqh+m8vDDX
+         UsBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oiRx7AWrZQMgmO5i8Eps/kA3BeG5UONLyLQXibLhIsA=;
-        b=Ser3EQViCDn7xJQbQnQ20pH5yYETfVOehGMW4jO8hj3osLMwUizgOvt+nhbnHp/jj4
-         yyXKIhrdlDnuiwABJT/lOsU8f8sVQ0cD90dyEjcyu7rBuiU3+UnkfSkyvuGC0VyeeBjy
-         38SosYEOQrreclAcR6r/Y93qPfuE7rcBikoasrkf97QUFfxPgCnxt5z/sMc+3ID1iJ52
-         8jFHCZhfRh/jXVfA8e60x3cHPtrl6zLIFPzLlavJdXuEDw1Ke08M3RKw9BZQsSUNBSr+
-         OTH3QPj1dFLnqiTgJRytn6cH34Tqi6xz/rPHURy+q3uSa/t9WpJSeZ+qazrTQkgOmI1b
-         faHg==
+        bh=lUtaF07w3xk4d/BTRd5bcUSENwGO92ja21MaPDF3GKw=;
+        b=dtkq+Hv+Y2gNMnikA3wM1T9qfIy+Beh30Alp+Epd0RbgVF9zb5tgowU1ryZcYp8nir
+         3s4ulxMC2fUaLipddxhIxStf8TdUGmYp3mSLqJW+X55ZjvlVHP3hPPWMRxuPC+A5JZYN
+         WOhoOSZmeaqsCrbkzb4LSGgcHRw3NzllFV84/WXvJLa3UxAhQe6pp2mjyy/G+c+AP3o0
+         WfAo+UiXgGFofWLhUAFl1IGlYBPnkxk3lJned7YOoeOS9PBMeM8mysjpKjobTMJmA7/K
+         VEoUFib/T3F2zdN51tjjBBvCfsAgfcRYkuLJw5LTtNuw8lDUFUlgqjCAyrslSYV7eb0R
+         6QoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"yinbo.zhu" <yinbo.zhu@nxp.com>,
 	Yangbo Lu <yangbo.lu@nxp.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH 4.14 165/167] mmc: sdhci-of-esdhc: fix the mmc error after sleep on ls1046ardb
-Date: Wed, 21 Feb 2018 13:49:36 +0100
-Message-Id: <20180221124533.880414341@linuxfoundation.org>
+Subject: [PATCH 4.14 163/167] mmc: sdhci-of-esdhc: disable SD clock for clock value 0
+Date: Wed, 21 Feb 2018 13:49:34 +0100
+Message-Id: <20180221124533.760885592@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015379524832660?=
-X-GMAIL-MSGID: =?utf-8?q?1593015871115518258?=
+X-GMAIL-THRID: =?utf-8?q?1593015864888711224?=
+X-GMAIL-MSGID: =?utf-8?q?1593015864888711224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +51,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: yinbo.zhu <yinbo.zhu@nxp.com>
+From: yangbo lu <yangbo.lu@nxp.com>
 
-commit f2bc600008bd6f7f5d0b6b56238d14f95cd454d2 upstream.
+commit dd3f6983b4a468efca9e8caa0e2b4aa20946d801 upstream.
 
-When system wakes up from sleep on ls1046ardb, the SD operation fails
-with mmc error messages since ESDHC_TB_EN bit couldn't be cleaned by
-eSDHC_SYSCTL[RSTA]. It's proper to clean this bit in esdhc_reset()
-rather than in probe.
+SD clock should be disabled for clock value 0. It's not
+right to just return. This may cause failure of signal
+voltage switching.
 
-Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
-Acked-by: Yangbo Lu <yangbo.lu@nxp.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c |   58 +++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 28 deletions(-)
 
 --- a/drivers/mmc/host/sdhci-of-esdhc.c
 +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -589,10 +589,18 @@ static void esdhc_pltfm_set_bus_width(st
- 
- static void esdhc_reset(struct sdhci_host *host, u8 mask)
- {
-+	u32 val;
-+
- 	sdhci_reset(host, mask);
- 
- 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
- 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-+
-+	if (mask & SDHCI_RESET_ALL) {
-+		val = sdhci_readl(host, ESDHC_TBCTL);
-+		val &= ~ESDHC_TB_EN;
-+		sdhci_writel(host, val, ESDHC_TBCTL);
-+	}
+@@ -458,6 +458,33 @@ static unsigned int esdhc_of_get_min_clo
+ 	return clock / 256 / 16;
  }
  
- /* The SCFG, Supplemental Configuration Unit, provides SoC specific
-@@ -785,10 +793,6 @@ static void esdhc_init(struct platform_d
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
++static void esdhc_clock_enable(struct sdhci_host *host, bool enable)
++{
++	u32 val;
++	ktime_t timeout;
++
++	val = sdhci_readl(host, ESDHC_SYSTEM_CONTROL);
++
++	if (enable)
++		val |= ESDHC_CLOCK_SDCLKEN;
++	else
++		val &= ~ESDHC_CLOCK_SDCLKEN;
++
++	sdhci_writel(host, val, ESDHC_SYSTEM_CONTROL);
++
++	/* Wait max 20 ms */
++	timeout = ktime_add_ms(ktime_get(), 20);
++	val = ESDHC_CLOCK_STABLE;
++	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & val)) {
++		if (ktime_after(ktime_get(), timeout)) {
++			pr_err("%s: Internal clock never stabilised.\n",
++				mmc_hostname(host->mmc));
++			break;
++		}
++		udelay(10);
++	}
++}
++
+ static void esdhc_of_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -469,8 +496,10 @@ static void esdhc_of_set_clock(struct sd
  
--	val = sdhci_readl(host, ESDHC_TBCTL);
--	val &= ~ESDHC_TB_EN;
--	sdhci_writel(host, val, ESDHC_TBCTL);
+ 	host->mmc->actual_clock = 0;
+ 
+-	if (clock == 0)
++	if (clock == 0) {
++		esdhc_clock_enable(host, false);
+ 		return;
++	}
+ 
+ 	/* Workaround to start pre_div at 2 for VNN < VENDOR_V_23 */
+ 	if (esdhc->vendor_ver < VENDOR_V_23)
+@@ -558,33 +587,6 @@ static void esdhc_pltfm_set_bus_width(st
+ 	sdhci_writel(host, ctrl, ESDHC_PROCTL);
+ }
+ 
+-static void esdhc_clock_enable(struct sdhci_host *host, bool enable)
+-{
+-	u32 val;
+-	ktime_t timeout;
 -
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
+-	val = sdhci_readl(host, ESDHC_SYSTEM_CONTROL);
+-
+-	if (enable)
+-		val |= ESDHC_CLOCK_SDCLKEN;
+-	else
+-		val &= ~ESDHC_CLOCK_SDCLKEN;
+-
+-	sdhci_writel(host, val, ESDHC_SYSTEM_CONTROL);
+-
+-	/* Wait max 20 ms */
+-	timeout = ktime_add_ms(ktime_get(), 20);
+-	val = ESDHC_CLOCK_STABLE;
+-	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & val)) {
+-		if (ktime_after(ktime_get(), timeout)) {
+-			pr_err("%s: Internal clock never stabilised.\n",
+-				mmc_hostname(host->mmc));
+-			break;
+-		}
+-		udelay(10);
+-	}
+-}
+-
+ static void esdhc_reset(struct sdhci_host *host, u8 mask)
+ {
+ 	sdhci_reset(host, mask);
