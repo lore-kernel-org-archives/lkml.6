@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226JVQOMTI0zDI8v4iCIrxptqF+1sZi2FWxxM2KgHDQ6V+P8PK5yzBNSxCCe/XF39z+1EfuM
-ARC-Seal: i=1; a=rsa-sha256; t=1519218730; cv=none;
+X-Google-Smtp-Source: AH8x225Hh/+N0GyvHrTazYDe/JxYH5dE7bcBQRgyAATU7WwBgFyMvUNLo6ud0sH8QW8X9HPDt+r1
+ARC-Seal: i=1; a=rsa-sha256; t=1519218727; cv=none;
         d=google.com; s=arc-20160816;
-        b=NTMve7mjv4ETFgWNvEmmjcdEID4ieYfXDUp1kcexUZEg+vEHVl0c67PkkyiLesPx7o
-         91ILN0MHuRJCdVVZRw8pWuvrTkg4JPB688t915tUmI5yct0nqtd2JUklNfzhM0QGctC/
-         m8U6GnzeLuHa00UnJfsKcNAxVzrIXImhWQfK0JIyUoOiv6CVKdSy3ry+3CKlJv51KRoq
-         upN1xGte9ILbt80kmdIh0/B/a1xZakB1H+yI98ReZOCeoh957zTbc2paCgmBYlRPRrhq
-         KR/0NdJDPCDT8oOypOSQJOnjeOUSuAS0G4ljgxWruUIH0C4g/LRq5s448wTxSeNKZt1P
-         0XOg==
+        b=onOwxgK3T+bwrdMD4WvIkupfQwJbCIJH0FnU5zsrv23bblpWuu0MKbNGPFFe/MjebY
+         2fgwOH6J8ibMH2XFcfmui85JZSV746JALdsFWf6J/Rg1I/4BxR7XTmL4s4BqB42e3Yvs
+         J7IlAQabg9q79ZqGWceaSD1lMxsUX2V6MIbcDjtIwPG4p+/FdZyTzgoQjPLPZaYtDRbV
+         ZAmGegpep9V4XhWJO/SwnaSEW7V+2GJaNDPDfNxezkAJ7tqLhtgiuoTAe+L1aR1utG02
+         20+brnOX/iHxct+MrusIBhSbiabT6Rg1oniEwDOLuziZQwJi7RAEY9kgZbw3zC4TJhzl
+         EfCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8kuq3hXUrf2dsxrv4vbianblBg00kZbAK7qL6AOm134=;
-        b=Smb3iZeMHo4k9vdLZ1c8mTsrNl3edQFteUmwpRry5YJwQ6cQwb5NrMJHV95voEVVMp
-         ukaR2oYgZ73OnWIRGlSOmv2rQ8euKJ0l7rFfelpXRb8PmPjsmVT2QJoQBiT5itJkXLpT
-         8UItDQK/C6qQ5P7etoKEkEJX6LmATmycaCcqy+RZikisfx+YJLxfrs0CAnsLlyB/XWVp
-         2wIVBaLET45H0zkBgaYcw9zRhn8wj2pXzlE2Nd0WB/1zcTWAGQFHb/TOfLJRpnuNwojX
-         /DPMflPC8HOO7ZRsJRCy7VCFQa7RdErx/k9yiQGhuNj/1KgMl51jhhSgAh6SJGU5QaSN
-         XH8A==
+        bh=rPJjBEo3oEAwtrS463PlIpEzTXA5NYrh0IYVUc120eg=;
+        b=U+Mam6J+P74kl4Yynhmu4D3ut7903Nw9l1X4Q8s3yzQdpe9IoMBV1h6TgFpma5MFdr
+         9wTAU+2KPjut6S6jntltE2AwxHLAfL7IphcWLZdZZekUdGSw/vJulg0iW75YX8GbACd4
+         Ui8vhLWspKzEaDZzLiymKO+yu3Z4rn73bGXRmoGc1Cg4/xXPT4Bp8DLOvXaCBSVFLyVx
+         Kgd6Rq5opyQjTHYL0YuyRA5VHiUcbMFgk6fBdYkuIqStmWL4iflRtzIkpQNJK2C2BGgI
+         4/+qTRCxtSzrGW2UwLfxB53p6N8U8w1WMnW7ykd2940ndw2xPGC2QWK5yWb8eD7UsR9K
+         XTiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kirill Marinushkin <k.marinushkin@gmail.com>,
+	Hui Wang <hui.wang@canonical.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 144/163] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE attribute
-Date: Wed, 21 Feb 2018 13:49:33 +0100
-Message-Id: <20180221124538.062309537@linuxfoundation.org>
+Subject: [PATCH 4.15 143/163] ALSA: hda - Fix headset mic detection problem for two Dell machines
+Date: Wed, 21 Feb 2018 13:49:32 +0100
+Message-Id: <20180221124538.015670189@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014652240317593?=
-X-GMAIL-MSGID: =?utf-8?q?1593016299420909246?=
+X-GMAIL-THRID: =?utf-8?q?1593014646341023518?=
+X-GMAIL-MSGID: =?utf-8?q?1593016296765889527?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,76 +49,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 447cae58cecd69392b74a4a42cd0ab9cabd816af upstream.
+commit 3f2f7c553d077be6a30cb96b2976a2c940bf5335 upstream.
 
-The layout of the UAC2 Control request and response varies depending on
-the request type. With the current implementation, only the Layout 2
-Parameter Block (with the 2-byte sized RANGE attribute) is handled
-properly. For the Control requests with the 1-byte sized RANGE attribute
-(Bass Control, Mid Control, Tremble Control), the response is parsed
-incorrectly.
+One of them has the codec of alc256 and the other one has the codec
+of alc289.
 
-This commit:
-* fixes the wLength field value in the request
-* fixes parsing the range values from the response
-
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ sound/pci/hda/patch_realtek.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -347,17 +347,20 @@ static int get_ctl_value_v2(struct usb_m
- 			    int validx, int *value_ret)
- {
- 	struct snd_usb_audio *chip = cval->head.mixer->chip;
--	unsigned char buf[4 + 3 * sizeof(__u32)]; /* enough space for one range */
-+	/* enough space for one range */
-+	unsigned char buf[sizeof(__u16) + 3 * sizeof(__u32)];
- 	unsigned char *val;
--	int idx = 0, ret, size;
-+	int idx = 0, ret, val_size, size;
- 	__u8 bRequest;
- 
-+	val_size = uac2_ctl_value_size(cval->val_type);
-+
- 	if (request == UAC_GET_CUR) {
- 		bRequest = UAC2_CS_CUR;
--		size = uac2_ctl_value_size(cval->val_type);
-+		size = val_size;
- 	} else {
- 		bRequest = UAC2_CS_RANGE;
--		size = sizeof(buf);
-+		size = sizeof(__u16) + 3 * val_size;
- 	}
- 
- 	memset(buf, 0, sizeof(buf));
-@@ -390,16 +393,17 @@ error:
- 		val = buf + sizeof(__u16);
- 		break;
- 	case UAC_GET_MAX:
--		val = buf + sizeof(__u16) * 2;
-+		val = buf + sizeof(__u16) + val_size;
- 		break;
- 	case UAC_GET_RES:
--		val = buf + sizeof(__u16) * 3;
-+		val = buf + sizeof(__u16) + val_size * 2;
- 		break;
- 	default:
- 		return -EINVAL;
- 	}
- 
--	*value_ret = convert_signed_value(cval, snd_usb_combine_bytes(val, sizeof(__u16)));
-+	*value_ret = convert_signed_value(cval,
-+					  snd_usb_combine_bytes(val, val_size));
- 
- 	return 0;
- }
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6613,6 +6613,11 @@ static const struct snd_hda_pin_quirk al
+ 		{0x14, 0x90170110},
+ 		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
++		{0x12, 0x90a60130},
++		{0x14, 0x90170110},
++		{0x14, 0x01011020},
++		{0x21, 0x0221101f}),
++	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC256_STANDARD_PINS),
+ 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1043, "ASUS", ALC256_FIXUP_ASUS_MIC,
+ 		{0x14, 0x90170110},
+@@ -6681,6 +6686,10 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60120},
+ 		{0x14, 0x90170110},
+ 		{0x21, 0x0321101f}),
++	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
++		{0x12, 0xb7a60130},
++		{0x14, 0x90170110},
++		{0x21, 0x04211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0290, 0x103c, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1,
+ 		ALC290_STANDARD_PINS,
+ 		{0x15, 0x04211040},
