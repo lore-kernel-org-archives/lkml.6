@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224QEyqQ9Qbc2jskful2XDvWnaovScxtQJ3u2XM0bCV7jONT+dOADiBDJ8G3fos/eCgjiIhl
-ARC-Seal: i=1; a=rsa-sha256; t=1519218267; cv=none;
+X-Google-Smtp-Source: AH8x224iytzKJIn6+qaVR8MHp3grKZcKdmEVJAH2d+Z1LuTvnHQh0nvgeZOUVKPPA13vcoRJDBcS
+ARC-Seal: i=1; a=rsa-sha256; t=1519218265; cv=none;
         d=google.com; s=arc-20160816;
-        b=YlnBy/PjxGHVF+IXC6/dyADyWn1BI5KhS07rKejerzhatSmLybZGLHDcRG2lF8SBPt
-         lljxBvJfxBy5mGiiBJbqMfrRUar1FS7v+LmS7t0bcKx50UuYx9U5go9e46Ztby8NCg1b
-         jcmmM8ZNJLH5L7BdQABQbdoyizGlyc4xnT1/ocXUE2fIVPJXmiQFEK70ZJF+mL897z2o
-         Itq6absCw40XE0Qe5T4YSIg+aEipxcdiOl7fA5WvgvVfg6/34b21bD0hAGVcgKFBNAPR
-         E3r3qL8uqCiRu23VL7DKWdtEJQM92O5MP7LjrmIMDNgO722L24n4CXYryIX/a6k2scl6
-         4WeQ==
+        b=wEY+fYkBdJz5cH2xW9R2g9oYsTuW+C1eEpaqH87ExpfHzccyZBPCTTLaAYuk72ILgG
+         8YlJy/FQpBnvdShruR+vuZWDoWWCB5IyLdQ116iudJr0AuRecuPLeVor6ITtozxefHb0
+         eTYqQ52IKJvl3YRPYCjIckbwkiWQhG0ouSE7nUyziwS6Lk3uO34PAIxvk9WjlGnB8u7S
+         vHP8XGqZdXnr18DnTcfS0/T+VhppYKYRcpY7YkeWXk7P3iGLaL9rWCrDgg99PD8fFP0q
+         0apfXvLGP7e/uFkgLkhqX35669YQeZT4DOf4+zujEDPt/uFJA1UoqLDK8DEdUkoV1lU/
+         JhyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5zA9RDAv94Qy15mb/VAVnbbJSLbYY+gw826SvtcBk9s=;
-        b=QIbAXf2veaYmzmL/fkak41BGvPXfhPsNLEsfyxKFtpPT6Tu5oAic7Dm9pG1vbXDmxz
-         NeKDTxCBc3qaAZnMAiFuXTT0F6SVrdbg+ZshxRWISa56TiPa8O6CvxZPWbVd8iUuVqSe
-         G+Mlz3X7CMXQihGYHKtaGd9v22eRHH6MvOHa50OIeM4pZQWu0EpzLf/zwZjHd/PDs1ER
-         xlGtlZJEk+aOYRWrZOx9OGgIiBxKHvVhmLBuUah1aX7CwSDWXJggFasSyupRdHtCzSbw
-         hl6Eone56Baq7DtO0+kqC6PYTjHxTGPE3WDRsU1ealoCSpysUebqxcYWy+6IB+VY41Qh
-         GtZg==
+        bh=i9oOFGNTZ3P+/x5oqYo/5BH4x4wN9l4Z4EwMRyUcYbU=;
+        b=ZN240ijFu2ehHVC0ieJaYQ/EeqLpP1fHtsUp92D134N00X67eovHHpUQl1PqshN94d
+         1zYhvqaZnF26wAQMgKmyn+6j0L3CsqZiuYPegrR3Em18TupXksMOr2pL3ud4fyOGRr2r
+         PyjDLzKMefLwy8b0tKIm23gWBXiLpovB5yUM5RmOkOJc/ZkJRrlsDDbkMAjZgubQ9iGk
+         4+qLcDL5F4LxyQBlq5OYQ9iB1EGFeTQztoPO9szPmJ+FG+PLaqSaOPpS9xMoeP+0i1X/
+         Q8b6/u6u+NK2TUe4dbX5bCFRqvKuU38t0ESojyrqAFDxHmHkUf0LJtpCZtM8hK3kCiiM
+         +OUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	James Hogan <jhogan@kernel.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.14 111/167] MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN
-Date: Wed, 21 Feb 2018 13:48:42 +0100
-Message-Id: <20180221124530.441016161@linuxfoundation.org>
+	"=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.14 110/167] mm: Fix memory size alignment in devm_memremap_pages_release()
+Date: Wed, 21 Feb 2018 13:48:41 +0100
+Message-Id: <20180221124530.383261933@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015291930892901?=
-X-GMAIL-MSGID: =?utf-8?q?1593015814502670613?=
+X-GMAIL-THRID: =?utf-8?q?1593015289662337043?=
+X-GMAIL-MSGID: =?utf-8?q?1593015811122172460?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
+From: Jan H. Schönherr <jschoenh@amazon.de>
 
-commit 2e6522c565522a2e18409c315c49d78c8b74807b upstream.
+commit 10a0cd6e4932b5078215b1ec2c896597eec0eff9 upstream.
 
-MIPS_GENERIC selects some options conditional on BIG_ENDIAN which does
-not exist.
+The functions devm_memremap_pages() and devm_memremap_pages_release() use
+different ways to calculate the section-aligned amount of memory. The
+latter function may use an incorrect size if the memory region is small
+but straddles a section border.
 
-Replace BIG_ENDIAN with CPU_BIG_ENDIAN which is the correct kconfig
-name. Note that BMIPS_GENERIC does the same which confirms that this
-patch is needed.
+Use the same code for both.
 
-Fixes: eed0eabd12ef0 ("MIPS: generic: Introduce generic DT-based board support")
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Reviewed-by: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.9+
-Patchwork: https://patchwork.linux-mips.org/patch/18495/
-[jhogan@kernel.org: Clean up commit message]
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 5f29a77cd957 ("mm: fix mixed zone detection in devm_memremap_pages")
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/Kconfig |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/memremap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -119,12 +119,12 @@ config MIPS_GENERIC
- 	select SYS_SUPPORTS_MULTITHREADING
- 	select SYS_SUPPORTS_RELOCATABLE
- 	select SYS_SUPPORTS_SMARTMIPS
--	select USB_EHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_EHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
--	select USB_OHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_OHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
--	select USB_UHCI_BIG_ENDIAN_DESC if BIG_ENDIAN
--	select USB_UHCI_BIG_ENDIAN_MMIO if BIG_ENDIAN
-+	select USB_EHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_EHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
-+	select USB_OHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_OHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
-+	select USB_UHCI_BIG_ENDIAN_DESC if CPU_BIG_ENDIAN
-+	select USB_UHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
- 	select USE_OF
- 	help
- 	  Select this to build a kernel which aims to support multiple boards,
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -301,7 +301,8 @@ static void devm_memremap_pages_release(
+ 
+ 	/* pages are dead and unused, undo the arch mapping */
+ 	align_start = res->start & ~(SECTION_SIZE - 1);
+-	align_size = ALIGN(resource_size(res), SECTION_SIZE);
++	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
++		- align_start;
+ 
+ 	mem_hotplug_begin();
+ 	arch_remove_memory(align_start, align_size);
