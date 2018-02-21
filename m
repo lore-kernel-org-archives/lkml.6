@@ -1,116 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeBUKHY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:07:24 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:36300 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932670AbeBUKHX (ORCPT
+        id S932731AbeBUKJz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:09:55 -0500
+Received: from mail-it0-f43.google.com ([209.85.214.43]:55062 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932631AbeBUKJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:07:23 -0500
-Date: Wed, 21 Feb 2018 11:07:16 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
-Message-ID: <20180221100716.GF7203@w540>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
- <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
+        Wed, 21 Feb 2018 05:09:54 -0500
+X-Google-Smtp-Source: AH8x227X5C1Xa5dEj674kPGhLjgNHJOkn9X1zCdQoTcoZJs+8PhMdWASNfbdIbIdsIX+KgwH/ZO5WcecFpuRo2J/t8U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAK8P3a11uyLcB=42ZTFOMDvxv5XZ3tCPh+f_MN6SEAjmPRRjtg@mail.gmail.com>
+References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-4-arnd@arndb.de>
+ <CAKv+Gu-Be_saZeHzpWrjJBdeiOSJih0H-d1pjkpj+sq7ytLVyw@mail.gmail.com> <CAK8P3a11uyLcB=42ZTFOMDvxv5XZ3tCPh+f_MN6SEAjmPRRjtg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 21 Feb 2018 10:09:53 +0000
+Message-ID: <CAKv+Gu-PR4mS+oB6fdGhpG3Fp+OhZUr=KkbueOoC9YpmDQgeqQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] [HACK] pass endianess flag to LTO linker
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sergei,
+On 21 February 2018 at 09:48, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Feb 21, 2018 at 9:37 AM, Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>> On 20 February 2018 at 21:59, Arnd Bergmann <arnd@arndb.de> wrote:
+>>> We need some way to pass -mbig-endian to the linker during the
+>>> LTO link stage, otherwise we get a waning like
+>>>
+>>> arm-linux-gnueabi/bin/ld: arch/arm/lib/clearbit.o: compiled for a big endian system and target is little endian
+>>>
+>>> for each file we link in.
+>>>
+>>> There is probably a better method of passing that flag, I'm just
+>>> adding it to a different hack that I added earlier for x86 LTO
+>>> here.
+>>>
+>>
+>> In general, LTO requires that *all* C flags are passed to the linker.
+>> Given that linking now involves code generation, any C flag that
+>> affects code generation must be visible to the linker as well, which
+>> includes all the tweaks and overrides that we add per-file or
+>> per-directory. It is not clear to me how much of this is carried in
+>> the intermediate representation as metadata, but we should probably
+>> err on the side of caution here, and update the Kbuild routines to
+>> pass the complete value of KBUILD_CFLAGS (or whatever it is called) to
+>> ld as well.
+>
+> It looks like we're just missing KBUILD_CPPFLAGS.
+>
+> However, I wonder for the more general case what happens to files
+> that require non-standard CFLAGS.
 
-On Tue, Feb 20, 2018 at 06:30:56PM +0300, Sergei Shtylyov wrote:
-> On 02/20/2018 06:12 PM, Jacopo Mondi wrote:
->
-> > Populate the ethernet@e6800000 device node to enable Ethernet interface
-> > for R-Car M3-N (r8a77965) SoC.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > ---
-> > v1 -> v2:
-> > - Replace ALWAYS_ON power area identifier with numeric constant
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 42 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > index 55f05f7..c249895 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > @@ -520,7 +520,48 @@
-> >  		};
-> >
-> >  		avb: ethernet@e6800000 {
-> > -			/* placeholder */
-> > +			compatible = "renesas,etheravb-r8a77965",
-> > +				     "renesas,etheravb-rcar-gen3";
-> > +			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-> > +			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-> > +					  "ch4", "ch5", "ch6", "ch7",
-> > +					  "ch8", "ch9", "ch10", "ch11",
-> > +					  "ch12", "ch13", "ch14", "ch15",
-> > +					  "ch16", "ch17", "ch18", "ch19",
-> > +					  "ch20", "ch21", "ch22", "ch23",
-> > +					  "ch24";
-> > +			clocks = <&cpg CPG_MOD 812>;
-> > +			power-domains = <&sysc 32>;
-> > +			resets = <&cpg 812>;
-> > +			phy-mode = "rgmii-txid";
->
->    Why not just "rgmii"? TX delay is a board specific detail, no?
+That was kind of my point, yes.
+
+> In some cases we turn off
+> some optimization step for a file, we might remove '-pg', or build for
+> a particular target architecture. Do we have to turn off -flto for any file
+> that requires this for correct behavior?
 >
 
-I admit I took this one straight from r8a7796 dtsi.
-Would you like to me resend and change this?
-
-Thanks
-   j
-
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +			status = "disabled";
-> >  		};
-> >
-> >  		csi20: csi2@fea80000 {
-> >
->
-> MBR, Sergei
+Excellent question. I think the problem is that the file boundary is
+becoming blurred with LTO, and so any option that is absolutely
+required to build a single file correctly may need to be applied to
+vmlinux as a whole. Whether that is the case for any particular option
+depends on which compiler pass(es) is (are) affected by the option,
+i.e., whether it is taken into account when creating the intermediate
+representation.
