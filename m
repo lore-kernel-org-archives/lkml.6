@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Ixtl1W7T8ZCcibGTs2oQDKU12Vi90gzFOBmLgJ58v8rr36dcaLoH4x/Tuv2bTWBbxp3R+
-ARC-Seal: i=1; a=rsa-sha256; t=1519217941; cv=none;
+X-Google-Smtp-Source: AH8x226GnS9aq5KZP7qleLUIa+La+nigUvntP5j50y4z80wiTDzkJY+8qGITY1yENpkrHdxnLk9a
+ARC-Seal: i=1; a=rsa-sha256; t=1519217938; cv=none;
         d=google.com; s=arc-20160816;
-        b=jjRkA7Csf6DFj76rYx1nPdS5GKL+abj7Ff6jsH8HnU6vGv48aAAyO0edJsFLOn6q7m
-         D08diMyRXKApOKpeSzUxc0eK1RiKrZeWoVcKOvXSILMctCMiHpnQbg602cZANfehoioc
-         E4w5k44Rc2RVl2HIM699mu94KnB7d5bm9xtePKxSwmrJmdEj87XP327tTdLCYua7zLBH
-         eZRuLqozYvUBVY4LlNr1ScgOBy7ZSM/TdTrYUIJlFsc1E+DThceQPu2gkrxU5Lij8lvO
-         nUsEoHWvOgiJ1G5AkJX+Kw/7HdC4mITXvXSbjg1qCYBEPC/2gUWX7B8zWtCxA/WVT9CC
-         8u5Q==
+        b=QlLEB+eHir8/3jyWlK4RbsJpow6xu4YG/3omTKbLnj5nECXpoOeN1QpPcn9+hqVEsp
+         wQSNXd3FZkf9c6obSD391okHOy2YHYKBagff+DpnopJxupGRRYcGNm03tT+qSZ2Mn2Hm
+         O6p+d7Sj3QXEFK1emfiqvlC4WXL6urBCzEhz8z9sGvRO+8J5IoA+UIdJ+hQVB0t5tjpf
+         +OMqKk+4Wa30RBOJv+WvxZXcoxfsKDNy/8z5uisCTIQSRtwwVsDx94Ws/HfqzgaBxRCt
+         AHt1s6Vmw4Srum1V65U7ItLyTj2D7tcUcYlMAhcaFJbC0gEd9bNPu1Vbf9o19eFUI+tf
+         lOuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WzxRa4jOFXKoz3akqAi7X+9IesgJWJLBBYeIsQdUpvs=;
-        b=GGBSB+PhPjlSg5oHXlhTRROxcIJ/krlQ5d+yHQEZjruhdISOpiCeccihE1F8hvmQwW
-         m8OudBmegNoVk29wngacozKBtSu0XQl+pcuaoVym85xGqkwnsO1zphI+qAYgR3mjYUDM
-         tCu4rJ0FMfpnD2gMgrKdNo/wNZtTXdFERzdMZ3WPlgbrOItaulYUdVrH/QVjkzLOK/4v
-         yfORjxW7Rmm+it5EsS5Epdn4K0ciKJcEY5ZtOwF3W9qKhcS5k/5s3QkcebjNDZeXt/65
-         EwQHe/ICPnpFOqqPQylomXFgXx0eQWpd7x0SLS60OK9kKhpag2wUfOCf+Ruialgw+ESA
-         petA==
+        bh=e/Y9GEuLta352g8qepvVK8n9RomIsGV9JA5Uq9tPRD0=;
+        b=0HaEXP4TKjwh1p719JsBPnYwE37V9h8XyfK32w5qzrXUpmz7cXfQFmJHO9tl3rcH6h
+         sjpV7/QiuflTncue3RRt2WP1AOJN4pRPhHBb/91/y5Ky2xpJPTjfJglqtBe9hE++Ngg8
+         UA0Ms06pObDNZ736mOQt7Gqj8QuTGPZYGCwbkISSnSMCohZ/i+p+2aukE7NAo7Xk7jOd
+         vQYrlWea7+f0+CC1qb/Nk3C/BGbgKN13HmeSoa5g6zolNErryKmEsY66ptA3lnXIXhur
+         2vYc3D0xOoft0ls3l8Ylehm1WtINF1GQqRM+zFVWNKYkiX09LhWpIrNk5OE7/5AjPftF
+         9+FQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Dennis Dalessandro <dennis.dalessandro@intel.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 004/167] IB/qib: Fix comparison error with qperf compare/swap test
-Date: Wed, 21 Feb 2018 13:46:55 +0100
-Message-Id: <20180221124524.874583902@linuxfoundation.org>
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH 4.14 030/167] arm: dts: mt7623: fix card detection issue on bananapi-r2
+Date: Wed, 21 Feb 2018 13:47:21 +0100
+Message-Id: <20180221124526.242817777@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015257383542372?=
-X-GMAIL-MSGID: =?utf-8?q?1593015472000029540?=
+X-GMAIL-THRID: =?utf-8?q?1593015469218852122?=
+X-GMAIL-MSGID: =?utf-8?q?1593015469218852122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit 87b3524cb5058fdc7c2afdb92bdb2e079661ddc4 upstream.
+commit b96a696fb2a8dd1ee4e6cfee48dcac270fc53287 upstream.
 
-This failure exists with qib:
+Fix that bananapi-r2 booting from SD-card would fail since incorrect
+polarity is applied to the previous setup with GPIO_ACTIVE_HIGH.
 
-ver_rc_compare_swap:
-mismatch, sequence 2, expected 123456789abcdef, got 0
-
-The request builder was using the incorrect inlines to
-build the request header resulting in incorrect data
-in the atomic header.
-
-Fix by using the appropriate inlines to create the request.
-
-Fixes: 261a4351844b ("IB/qib,IB/hfi: Use core common header file")
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: stable@vger.kernel.org
+Fixes: 0eed8d097612 ("arm: dts: mt7623: Add SD-card and EMMC to bananapi-r2")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Tested-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/qib/qib_rc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/qib/qib_rc.c
-+++ b/drivers/infiniband/hw/qib/qib_rc.c
-@@ -434,13 +434,13 @@ no_flow_control:
- 				qp->s_state = OP(COMPARE_SWAP);
- 				put_ib_ateth_swap(wqe->atomic_wr.swap,
- 						  &ohdr->u.atomic_eth);
--				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
--						  &ohdr->u.atomic_eth);
-+				put_ib_ateth_compare(wqe->atomic_wr.compare_add,
-+						     &ohdr->u.atomic_eth);
- 			} else {
- 				qp->s_state = OP(FETCH_ADD);
- 				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
- 						  &ohdr->u.atomic_eth);
--				put_ib_ateth_swap(0, &ohdr->u.atomic_eth);
-+				put_ib_ateth_compare(0, &ohdr->u.atomic_eth);
- 			}
- 			put_ib_ateth_vaddr(wqe->atomic_wr.remote_addr,
- 					   &ohdr->u.atomic_eth);
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -204,7 +204,7 @@
+ 	bus-width = <4>;
+ 	max-frequency = <50000000>;
+ 	cap-sd-highspeed;
+-	cd-gpios = <&pio 261 0>;
++	cd-gpios = <&pio 261 GPIO_ACTIVE_LOW>;
+ 	vmmc-supply = <&mt6323_vmch_reg>;
+ 	vqmmc-supply = <&mt6323_vio18_reg>;
+ };
