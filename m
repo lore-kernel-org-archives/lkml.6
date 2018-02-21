@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225EOKKc9OeMBclSF3fc7/a8Io6OmY5Nw7n7lcsw2e2PhNqVciNaqkP/BmO1bjAE8SEcowBo
-ARC-Seal: i=1; a=rsa-sha256; t=1519218438; cv=none;
+X-Google-Smtp-Source: AH8x224Ihyo89lm5m7JAtzoX3BzTmZFdvgn9b6SxUXlTnWkkcmIFDnBqlFEgSdFPQd9cxX3srFDF
+ARC-Seal: i=1; a=rsa-sha256; t=1519218435; cv=none;
         d=google.com; s=arc-20160816;
-        b=lXErkecvNgKBGDOCtCZk4/pOZ6FvMzt17BbC++9hkJA21KZ6//hzRm5QCbpYyQz1xh
-         cvL+iQTJI898vS8dqjIVEVWiKWfSrDE8ISWipm/W4Jz8P0p5hxlS+TnnMfz2q+38+wOh
-         hEvwbf6BijD5XVEVFsx+Mvpdd6faOqRESkRhCD5SYQsKoEZx9FJI1yUxhjY1+I+dkd1p
-         xjzeErajy8tKJuxQjodZDGx6aAV4n67n1O6S7GR50yS3beVv+mrmmwNwu8GIdic7u45/
-         nUr/1qRH4nt0QWj8SIYwelmJrAEpFUI230KIq9ybs7973kspT4LwMRWeOUUOLv1G6dGs
-         FE5g==
+        b=x88dszvaqFl3auKTv28K1w7/8s1vwH+AQBzMYoxY0QwUOoamypPOUBoCekEqi6uKmJ
+         amD5EY1vbpR4cEs7daWZY8Z3XGRu0GRFuTYp3YGx0NcFkgl/MskPyI6ESEJ3sNYbAOxB
+         YNBUeCV8NcuxB2K/cfyNXoyZzrmI9MpVMaK1WDiaIMvZWgjLT5gh7aCAty8Moq05lROl
+         6gUYn78GB1WnGCym/dNPg/8aymoFZvdvo/nF/ksEFLtISj+dh7Mxh6rV+RV6DujaESWu
+         AAr7In3cQy5ANDNbCNsN0pQisyJrAQ4XbwNv23LIdvSk4MAhlobsRWklwwszh8TgKSfm
+         5o9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kIH3ReyZiQdXRmXYYY1TXJ6QkhjSRfghrbonsGK+lTM=;
-        b=ZINZXH7lV1xzcXa7UCzY3cwWoPhhrtEJmMF9bBXWFb1SrFiNihc/6vHQ5fHEo7D01Y
-         4N3Ua1hozucK5jcFpMIY+tjFhhkJGzin8v5UVp6s5sZ4KnUkxzQrbMKcZt1C26jlbpMT
-         Dam+XYQwf0PxX9Uuc2vRJMZFhKsHVe0urVtehz897AjOJeVHf0ousJqrqjWaaLw8j4fi
-         4GhnEWvpQO0V97JHDwI/phD3bHsos/62KZliS8fSl/02QJAx2ZwoB/LyHLWY4xzCM2LH
-         V5Atxe0qG8omZZNaEqAuJ3xEAcqDeeHYmm8+YpzcGRzaqKTqt7kWgLsIvDD6tcuR/nM8
-         F2oQ==
+        bh=X5+jZ8ux7VwneS6nifT0nnUT5nyYBIzAgyMQ7357i/U=;
+        b=MT9Y9CdcvKcTFSOjMms0R4UbweLUuUu8XNP3ackL9T8haWPOQqADAZGvY9n4Wov5pK
+         bkzY84B8cOzON7FXPBHky0MJ4nTlDzsYzMfwuzbphLlrEm1GOOknIjJIOEWgwjlToz56
+         y0MlHSkxA7h8KxSvJQnvfssm5NitnrTmvURmwWIunIxGRLGtJHECNk1qB9oaP6NK7Dhr
+         bHDaa5wSMIoNLSH4796uDS+F1H+MqTj/vVG3+uMM+VJqFW65Xu4flMyUKs+sB+U9oDUR
+         kjaiMFoLpHyvkjHbnP35VBBJFXHbkFrK2O9UMNh7yvVurTaK3M2yDZ2+Yy54OrMxLLN5
+         oNAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	Bharata B Rao <bharata@linux.vnet.ibm.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Steven Sistare <steven.sistare@oracle.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Bob Picco <bob.picco@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 039/163] mm, memory_hotplug: fix memmap initialization
-Date: Wed, 21 Feb 2018 13:47:48 +0100
-Message-Id: <20180221124532.485499209@linuxfoundation.org>
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.15 038/163] x86: PM: Make APM idle driver initialize polling state
+Date: Wed, 21 Feb 2018 13:47:47 +0100
+Message-Id: <20180221124532.431052908@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -46,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015994058369800?=
-X-GMAIL-MSGID: =?utf-8?q?1593015994058369800?=
+X-GMAIL-THRID: =?utf-8?q?1593015610134726356?=
+X-GMAIL-MSGID: =?utf-8?q?1593015990564532632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,112 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 9bb5a391f9a5707e04763cf14298fc4cc29bfecd upstream.
+commit f859422075165e32c00c8d75d63f300015cc07ae upstream.
 
-Bharata has noticed that onlining a newly added memory doesn't increase
-the total memory, pointing to commit f7f99100d8d9 ("mm: stop zeroing
-memory during allocation in vmemmap") as a culprit.  This commit has
-changed the way how the memory for memmaps is initialized and moves it
-from the allocation time to the initialization time.  This works
-properly for the early memmap init path.
+Update the APM driver overlooked by commit 1b39e3f813b4 (cpuidle: Make
+drivers initialize polling state) to initialize the polling state like
+the other cpuidle drivers modified by that commit to prevent cpuidle
+from crashing.
 
-It doesn't work for the memory hotplug though because we need to mark
-page as reserved when the sparsemem section is created and later
-initialize it completely during onlining.  memmap_init_zone is called in
-the early stage of onlining.  With the current code it calls
-__init_single_page and as such it clears up the whole stage and
-therefore online_pages_range skips those pages.
-
-Fix this by skipping mm_zero_struct_page in __init_single_page for
-memory hotplug path.  This is quite uggly but unifying both early init
-and memory hotplug init paths is a large project.  Make sure we plug the
-regression at least.
-
-Link: http://lkml.kernel.org/r/20180130101141.GW21609@dhcp22.suse.cz
-Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Bharata B Rao <bharata@linux.vnet.ibm.com>
-Tested-by: Bharata B Rao <bharata@linux.vnet.ibm.com>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Bob Picco <bob.picco@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 1b39e3f813b4 (cpuidle: Make drivers initialize polling state)
+Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_alloc.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ arch/x86/kernel/apm_32.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1177,9 +1177,10 @@ static void free_one_page(struct zone *z
- }
- 
- static void __meminit __init_single_page(struct page *page, unsigned long pfn,
--				unsigned long zone, int nid)
-+				unsigned long zone, int nid, bool zero)
- {
--	mm_zero_struct_page(page);
-+	if (zero)
-+		mm_zero_struct_page(page);
- 	set_page_links(page, zone, nid, pfn);
- 	init_page_count(page);
- 	page_mapcount_reset(page);
-@@ -1194,9 +1195,9 @@ static void __meminit __init_single_page
- }
- 
- static void __meminit __init_single_pfn(unsigned long pfn, unsigned long zone,
--					int nid)
-+					int nid, bool zero)
- {
--	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid);
-+	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid, zero);
- }
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-@@ -1217,7 +1218,7 @@ static void __meminit init_reserved_page
- 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
- 			break;
- 	}
--	__init_single_pfn(pfn, zid, nid);
-+	__init_single_pfn(pfn, zid, nid, true);
- }
- #else
- static inline void init_reserved_page(unsigned long pfn)
-@@ -1514,7 +1515,7 @@ static unsigned long __init deferred_ini
- 					page++;
- 				else
- 					page = pfn_to_page(pfn);
--				__init_single_page(page, pfn, zid, nid);
-+				__init_single_page(page, pfn, zid, nid, true);
- 				cond_resched();
- 			}
- 		}
-@@ -5393,15 +5394,20 @@ not_early:
- 		 * can be created for invalid pages (for alignment)
- 		 * check here not to call set_pageblock_migratetype() against
- 		 * pfn out of zone.
-+		 *
-+		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
-+		 * because this is done early in sparse_add_one_section
- 		 */
- 		if (!(pfn & (pageblock_nr_pages - 1))) {
- 			struct page *page = pfn_to_page(pfn);
- 
--			__init_single_page(page, pfn, zone, nid);
-+			__init_single_page(page, pfn, zone, nid,
-+					context != MEMMAP_HOTPLUG);
- 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
- 			cond_resched();
- 		} else {
--			__init_single_pfn(pfn, zone, nid);
-+			__init_single_pfn(pfn, zone, nid,
-+					context != MEMMAP_HOTPLUG);
- 		}
- 	}
- }
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -2389,6 +2389,7 @@ static int __init apm_init(void)
+ 	if (HZ != 100)
+ 		idle_period = (idle_period * HZ) / 100;
+ 	if (idle_threshold < 100) {
++		cpuidle_poll_state_init(&apm_idle_driver);
+ 		if (!cpuidle_register_driver(&apm_idle_driver))
+ 			if (cpuidle_register_device(&apm_cpuidle_device))
+ 				cpuidle_unregister_driver(&apm_idle_driver);
