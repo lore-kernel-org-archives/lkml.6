@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753581AbeBUKoX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:44:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36785 "EHLO
+        id S1753596AbeBUKoz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:44:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36655 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbeBUKoW (ORCPT
+        with ESMTP id S1753145AbeBUKox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:44:22 -0500
-Date: Wed, 21 Feb 2018 02:43:59 -0800
-From: tip-bot for Alan Stern <tipbot@zytor.com>
-Message-ID: <tip-556bb7d252ae42d4653557325670e665087c38ad@git.kernel.org>
-Cc: paulmck@linux.vnet.ibm.com, hpa@zytor.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        peterz@infradead.org, stern@rowland.harvard.edu, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        stern@rowland.harvard.edu
-In-Reply-To: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
+        Wed, 21 Feb 2018 05:44:53 -0500
+Date: Wed, 21 Feb 2018 02:44:32 -0800
+From: "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
+Message-ID: <tip-cac79a39f200ef73ae7fc8a429ce2859ebb118d9@git.kernel.org>
+Cc: hpa@zytor.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        paulmck@linux.vnet.ibm.com, tglx@linutronix.de
+In-Reply-To: <1519169112-20593-11-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1519169112-20593-11-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Add a S lock-based
- external-view litmus test
-Git-Commit-ID: 556bb7d252ae42d4653557325670e665087c38ad
+Subject: [tip:locking/core] tools/memory-model: Convert underscores to
+ hyphens
+Git-Commit-ID: cac79a39f200ef73ae7fc8a429ce2859ebb118d9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,26 +34,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  556bb7d252ae42d4653557325670e665087c38ad
-Gitweb:     https://git.kernel.org/tip/556bb7d252ae42d4653557325670e665087c38ad
-Author:     Alan Stern <stern@rowland.harvard.edu>
-AuthorDate: Tue, 20 Feb 2018 15:25:10 -0800
+Commit-ID:  cac79a39f200ef73ae7fc8a429ce2859ebb118d9
+Gitweb:     https://git.kernel.org/tip/cac79a39f200ef73ae7fc8a429ce2859ebb118d9
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Tue, 20 Feb 2018 15:25:11 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 09:58:15 +0100
 
-tools/memory-model: Add a S lock-based external-view litmus test
+tools/memory-model: Convert underscores to hyphens
 
-This commit adds a litmus test in which P0() and P1() form a lock-based S
-litmus test, with the addition of P2(), which observes P0()'s and P1()'s
-accesses with a full memory barrier but without the lock.  This litmus
-test asks whether writes carried out by two different processes under the
-same lock will be seen in order by a third process not holding that lock.
-The answer to this question is "yes" for all architectures supporting
-the Linux kernel, but is "no" according to the current version of LKMM.
+Typical cat-language code uses hyphens for word separators in
+identifiers, but several LKMM identifiers use underscores instead.
+This commit therefore converts underscores to hyphens in the .bell-
+and .cat-file identifiers corresponding to smp_mb__before_atomic(),
+smp_mb__after_atomic(), and smp_mb__after_spinlock().
 
-A patch to LKMM is under development.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -69,47 +62,64 @@ Cc: luc.maranget@inria.fr
 Cc: nborisov@suse.com
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
+Cc: stern@rowland.harvard.edu
 Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1519169112-20593-11-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- ...ce.litmus => ISA2+pooncelock+pooncelock+pombonce.litmus} | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ tools/memory-model/linux-kernel.bell | 6 +++---
+ tools/memory-model/linux-kernel.cat  | 6 +++---
+ tools/memory-model/linux-kernel.def  | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-similarity index 55%
-copy from tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-copy to tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-index 10a2aa0..7a39a0a 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-+++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-@@ -1,11 +1,11 @@
--C Z6.0+pooncelock+pooncelock+pombonce
-+C ISA2+pooncelock+pooncelock+pombonce.litmus
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index b984bbd..18885ad 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -28,9 +28,9 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+ 		'rcu-lock (*rcu_read_lock*)  ||
+ 		'rcu-unlock (*rcu_read_unlock*) ||
+ 		'sync-rcu (*synchronize_rcu*) ||
+-		'before_atomic (*smp_mb__before_atomic*) ||
+-		'after_atomic (*smp_mb__after_atomic*) ||
+-		'after_spinlock (*smp_mb__after_spinlock*)
++		'before-atomic (*smp_mb__before_atomic*) ||
++		'after-atomic (*smp_mb__after_atomic*) ||
++		'after-spinlock (*smp_mb__after_spinlock*)
+ instructions F[Barriers]
  
- (*
-  * Result: Sometimes
-  *
-- * This example demonstrates that a pair of accesses made by different
-- * processes each while holding a given lock will not necessarily be
-- * seen as ordered by a third process not holding that lock.
-+ * This test shows that the ordering provided by a lock-protected S
-+ * litmus test (P0() and P1()) are not visible to external process P2().
-+ * This is likely to change soon.
-  *)
+ (* Compute matching pairs of nested Rcu-lock and Rcu-unlock *)
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index babe2b3..f0d27f8 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -29,9 +29,9 @@ let rb-dep = [R] ; fencerel(Rb_dep) ; [R]
+ let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
+ let wmb = [W] ; fencerel(Wmb) ; [W]
+ let mb = ([M] ; fencerel(Mb) ; [M]) |
+-	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
+-	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
+-	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
++	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
++	([M] ; po? ; [RMW] ; fencerel(After-atomic) ; [M]) |
++	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M])
+ let gp = po ; [Sync-rcu] ; po?
  
- {}
-@@ -31,10 +31,11 @@ P1(int *y, int *z, spinlock_t *mylock)
- P2(int *x, int *z)
- {
- 	int r1;
-+	int r2;
+ let strong-fence = mb | gp
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index a397387..f5a1eb0 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -21,9 +21,9 @@ smp_mb() { __fence{mb} ; }
+ smp_rmb() { __fence{rmb} ; }
+ smp_wmb() { __fence{wmb} ; }
+ smp_read_barrier_depends() { __fence{rb_dep}; }
+-smp_mb__before_atomic() { __fence{before_atomic} ; }
+-smp_mb__after_atomic() { __fence{after_atomic} ; }
+-smp_mb__after_spinlock() { __fence{after_spinlock} ; }
++smp_mb__before_atomic() { __fence{before-atomic} ; }
++smp_mb__after_atomic() { __fence{after-atomic} ; }
++smp_mb__after_spinlock() { __fence{after-spinlock} ; }
  
--	WRITE_ONCE(*z, 2);
-+	r2 = READ_ONCE(*z);
- 	smp_mb();
- 	r1 = READ_ONCE(*x);
- }
- 
--exists (1:r0=1 /\ z=2 /\ 2:r1=0)
-+exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
+ // Exchange
+ xchg(X,V)  __xchg{mb}(X,V)
