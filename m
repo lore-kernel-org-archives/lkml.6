@@ -1,101 +1,82 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x2253XAfd7rpocLkN26ktpfVev83nuQDRzg79YkiQQ+JDY3ypKpRYzesDNLxL67UVqFsdOZQR
-ARC-Seal: i=1; a=rsa-sha256; t=1519260248; cv=none;
+X-Google-Smtp-Source: AH8x225MbDNwE+d8CRSSzpQLUdqq+opjZfvudRruIR9gatcjz6Hp8KXSN7pBA6QyX3M/+Ar8ZnJh
+ARC-Seal: i=1; a=rsa-sha256; t=1519249053; cv=none;
         d=google.com; s=arc-20160816;
-        b=FPwqWf7rDWxfYgnpIhG7JFUxZ+qNHNksCZh9vTCBKQA2C09nPNAiAUap2afGvMElli
-         NmD9VTfFJMoPm7H538e72WEaFPVDTRUheOltx+XOkR4fJP44faPf97Dyqh/0vyIc8Puf
-         3lt75eZTr49GwcvP1HKCc446Dym3sqfFrSJgCCh/xOlbOBp6vAj0C0b3U4bgfDCUHXor
-         27CtqYaY2ow4vpPB3+mJC9jX80T9k1uWdRh9OUnGNcX705Mne2u5nn3QkEBsWToid45t
-         0pOTUvgz8/bGHpQ26cG2EKI7IjIq32IK0TNZEw33C7ElC1Xln8YO3aoDmkA8+vtT6/B7
-         dwfg==
+        b=0+GI/0bI7Ay2DZrVVI8DytYZ4JSWf2H3hZeBliSGGQf+I5A9jfc8W358RSK+oOhshk
+         s2K/YoSaJ9tilBlvCuqbn09q5TeLYA4wSUAGPcyvMsUvhov0EIBvQidit8u3NCZYUGOT
+         hZJsFHcsPWzRCWbeecxM92WLElI9woEL6o506n3WPUhBH/uyHbeBuj3RCJyjh+hRclu4
+         Aw0IOrZOfPGdQbitq6ve7sSvpaPzTcSWvU94yQbhsL+uCucs4pccR3d15B2IM7c5ikDh
+         xBEjMZkRmHqgVd48cmjgSPa5VFEd1i3gr9X73YNNrtplkuivADJdDo/Mzw7yDqC8H8wU
+         peSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding
          :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=Y/GSbWA+16+ocCc4er/NRYg5t2RTbRQHaiO5C56/gok=;
-        b=J/PG8InVmaDjUVRRy45kBo4r/rZUgqfDNc5FGMgwD6xWFa8c3440a7VUrsyXkM6n4u
-         gOJHWgw+58rKonFF4v2Gk8xwlAf3e2zJyBg2N8+wZAv69Sv3+zI5FyDajNXZEHBsw+fq
-         YndD2zFOKpvqL2ePjFcRV8XtPz5ueUrah55fbhuQ2T4/Qkh/WFZ4N00fLXLw6lojTmuU
-         SbrPzG13xY7fIvz4zvEx1cxAGXY+jaEj3QBnWKvC5nLvhSDd8zlZRRCleRaaej6J9880
-         DcgIJ8ayGf4tRl5QsmlFtSL/1RbPPmwwY+XI94zC4qAfaV2Lmnt3LqgTlrV/MpFrN8Ki
-         IAuQ==
+         :message-id:from:references:cc:to:subject:dkim-signature
+         :arc-authentication-results;
+        bh=ZfLsxFKPw8IWB0SHtqJduImOx8xD60tUgcPWD1LfJIg=;
+        b=eGWQdoqImIUOFhkxvNMdNU7aUi0NyYYbWRuxt8C/A6l7ujQzUvmFsktgASuVC0+aqS
+         ekrPx4aNS2vF5cyoFtsqTjcDYKrwBfrnCoJRkzgqSGWDOnG1OPdqB0C0psdgilvkHyaX
+         p2dh/7Fq+Xc1UmBfLbQnDda2IX2KMQl7VKhhu494FBjykuGeVSjx69p8kT/AdJikrTR6
+         52YvtC6OM1i7+y7z5wzYdWTl7NqPWCTGvlbTSxvnhC8SGfg6QyqmU45ZIkrUF6b8hHIJ
+         0x9AiMS/EWhvmPC0UTfp+9KdroXNwnEEWGLbCVYY3IRAxVAoI7DCcvhjeOPmOlFhPz+9
+         4qQw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=fT1ga+A5;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=fT1ga+A5;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeBVAoH (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 19:44:07 -0500
-Received: from www62.your-server.de ([213.133.104.62]:55150 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751336AbeBVAoH (ORCPT
+        id S1751406AbeBUVhR (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 16:37:17 -0500
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:41862 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeBUVhQ (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:44:07 -0500
+        Wed, 21 Feb 2018 16:37:16 -0500
 Subject: Re: [PATCH] selftests/bpf: update gitignore with test_libbpf_open
-To: Shuah Khan <shuahkh@osg.samsung.com>, shuah@kernel.org,
-        David Miller <davem@davemloft.net>, anders.roxell@linaro.org
-Cc: ast@kernel.org, netdev@vger.kernel.org,
+To: Anders Roxell <anders.roxell@linaro.org>, shuah@kernel.org
+Cc: daniel@iogearbox.net, ast@kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 References: <20180221213001.18682-1-anders.roxell@linaro.org>
- <20180221.174830.160781272671654190.davem@davemloft.net>
- <89896e14-e4ad-bb3d-2d9f-44cfa084a8cd@kernel.org>
- <54b323b8-6ada-a1d4-c347-9dec15923a92@iogearbox.net>
- <06743ec3-071d-6465-acad-9966ce72fc57@osg.samsung.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <de1b371c-52c7-3efd-f1fe-789b6cfa0085@iogearbox.net>
-Date: Thu, 22 Feb 2018 01:44:02 +0100
+From: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
+Message-ID: <537755db-cf7b-950d-6f30-871b3b412411@linaro.org>
+Date: Wed, 21 Feb 2018 15:37:13 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <06743ec3-071d-6465-acad-9966ce72fc57@osg.samsung.com>
+In-Reply-To: <20180221213001.18682-1-anders.roxell@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Transfer-Encoding: 8bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593047628966433611?=
-X-GMAIL-MSGID: =?utf-8?q?1593059833895268237?=
+X-GMAIL-MSGID: =?utf-8?q?1593048095947583312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/22/2018 01:37 AM, Shuah Khan wrote:
-> On 02/21/2018 05:33 PM, Daniel Borkmann wrote:
->> Hi Shuah,
->>
->> On 02/22/2018 12:03 AM, Shuah Khan wrote:
->>> On 02/21/2018 03:48 PM, David Miller wrote:
->>>> From: Anders Roxell <anders.roxell@linaro.org>
->>>> Date: Wed, 21 Feb 2018 22:30:01 +0100
->>>>
->>>>> bpf builds a test program for loading BPF ELF files. Add the executable
->>>>> to the .gitignore list.
->>>>>
->>>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->>>>
->>>> Acked-by: David S. Miller <davem@davemloft.net>
->>>
->>> Thanks. I will pull this in for 4.16-rc
->>
->> I would have taken this into bpf tree, but fair enough. This one
->> in particular doesn't cause any conflicts right now, so feel free
->> to pick it up then. But usual paths are via bpf / bpf-next as we
->> otherwise would run into real ugly merge conflicts.
+On 02/21/2018 03:30 PM, Anders Roxell wrote:
+> bpf builds a test program for loading BPF ELF files. Add the executable
+> to the .gitignore list.
 > 
-> Daniel,
-> 
-> Go for it. I know bpf tree stuff causes conflicts. That is why I usually
-> stay away from bpfs selftests and let you handle them.
-> 
-> You are taking the other one away, pick this up as well.
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Okay, great, thanks for your understanding, Shuah. Just applied
-to bpf tree.
+Tested-by: Daniel Díaz <daniel.diaz@linaro.org>
 
-> Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  tools/testing/selftests/bpf/.gitignore | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> thanks,
-> -- Shuah
-> 
-
+> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+> index cc15af2e54fe..9cf83f895d98 100644
+> --- a/tools/testing/selftests/bpf/.gitignore
+> +++ b/tools/testing/selftests/bpf/.gitignore
+> @@ -11,3 +11,4 @@ test_progs
+>  test_tcpbpf_user
+>  test_verifier_log
+>  feature
+> +test_libbpf_open
