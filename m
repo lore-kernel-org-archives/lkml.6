@@ -1,81 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751702AbeBUT14 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:27:56 -0500
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:36576 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbeBUT1y (ORCPT
+        id S1751952AbeBUT2O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:28:14 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:37453 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751401AbeBUT2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:27:54 -0500
-X-Google-Smtp-Source: AH8x226aCYoTjTzEd4UApqI7yN+IloL2Icg0MHshwd/oa857Nqg3BfsaK5PKBXZ9LQposoQCYLdr5w==
-Date: Wed, 21 Feb 2018 22:27:51 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] proc: somewhat simpler code for /proc/*/cmdline
-Message-ID: <20180221192751.GC28548@avx2>
-References: <20180221192339.GA28548@avx2>
- <20180221192605.GB28548@avx2>
+        Wed, 21 Feb 2018 14:28:12 -0500
+X-Google-Smtp-Source: AG47ELtQ/GdHah9zwOnKsYXcE8kxtX86T8IXtuSIVIZFALhW1rpSDinzwtF2tpD7GvnGblAhqNyzQQ==
+Date: Wed, 21 Feb 2018 16:28:07 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
+Message-ID: <20180221192807.qfyhp7z27f6r6p47@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221192605.GB28548@avx2>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"final" variable is OK but we can get away with less lines.
+This patch fixes the checkpatch.pl warning:
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+drivers/iio/dummy/iio_dummy_evgen.c:151: WARNING: Symbolic permissions
+'S_IWUSR' are not preferred. Consider using octal permissions '0200'.
+...
+
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
+Changes in v2:
+  - Make the commit message clearer.
+  - Fix just a single part of the code.
 
- fs/proc/base.c |   24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
+ drivers/iio/dummy/iio_dummy_evgen.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -337,8 +337,7 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 			p = cmdline[i].p + pos1;
- 			len = cmdline[i].len - pos1;
- 			while (count > 0 && len > 0) {
--				unsigned int nr_read, l;
--				bool final;
-+				unsigned int nr_read, nr_write;
+diff --git a/drivers/iio/dummy/iio_dummy_evgen.c b/drivers/iio/dummy/iio_dummy_evgen.c
+index efd0005f59b4..16ea547f79f0 100644
+--- a/drivers/iio/dummy/iio_dummy_evgen.c
++++ b/drivers/iio/dummy/iio_dummy_evgen.c
+@@ -148,16 +148,16 @@ static ssize_t iio_evgen_poke(struct device *dev,
+ 	return len;
+ }
  
- 				nr_read = min3(count, len, PAGE_SIZE);
- 				nr_read = access_remote_vm(mm, p, page, nr_read, 0);
-@@ -349,25 +348,20 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
- 				 * Command line can be shorter than whole ARGV
- 				 * even if last "marker" byte says it is not.
- 				 */
--				final = false;
--				l = strnlen(page, nr_read);
--				if (l < nr_read) {
--					nr_read = l;
--					final = true;
--				}
-+				nr_write = strnlen(page, nr_read);
+-static IIO_DEVICE_ATTR(poke_ev0, S_IWUSR, NULL, &iio_evgen_poke, 0);
+-static IIO_DEVICE_ATTR(poke_ev1, S_IWUSR, NULL, &iio_evgen_poke, 1);
+-static IIO_DEVICE_ATTR(poke_ev2, S_IWUSR, NULL, &iio_evgen_poke, 2);
+-static IIO_DEVICE_ATTR(poke_ev3, S_IWUSR, NULL, &iio_evgen_poke, 3);
+-static IIO_DEVICE_ATTR(poke_ev4, S_IWUSR, NULL, &iio_evgen_poke, 4);
+-static IIO_DEVICE_ATTR(poke_ev5, S_IWUSR, NULL, &iio_evgen_poke, 5);
+-static IIO_DEVICE_ATTR(poke_ev6, S_IWUSR, NULL, &iio_evgen_poke, 6);
+-static IIO_DEVICE_ATTR(poke_ev7, S_IWUSR, NULL, &iio_evgen_poke, 7);
+-static IIO_DEVICE_ATTR(poke_ev8, S_IWUSR, NULL, &iio_evgen_poke, 8);
+-static IIO_DEVICE_ATTR(poke_ev9, S_IWUSR, NULL, &iio_evgen_poke, 9);
++static IIO_DEVICE_ATTR(poke_ev0, 0200, NULL, &iio_evgen_poke, 0);
++static IIO_DEVICE_ATTR(poke_ev1, 0200, NULL, &iio_evgen_poke, 1);
++static IIO_DEVICE_ATTR(poke_ev2, 0200, NULL, &iio_evgen_poke, 2);
++static IIO_DEVICE_ATTR(poke_ev3, 0200, NULL, &iio_evgen_poke, 3);
++static IIO_DEVICE_ATTR(poke_ev4, 0200, NULL, &iio_evgen_poke, 4);
++static IIO_DEVICE_ATTR(poke_ev5, 0200, NULL, &iio_evgen_poke, 5);
++static IIO_DEVICE_ATTR(poke_ev6, 0200, NULL, &iio_evgen_poke, 6);
++static IIO_DEVICE_ATTR(poke_ev7, 0200, NULL, &iio_evgen_poke, 7);
++static IIO_DEVICE_ATTR(poke_ev8, 0200, NULL, &iio_evgen_poke, 8);
++static IIO_DEVICE_ATTR(poke_ev9, 0200, NULL, &iio_evgen_poke, 9);
  
--				if (copy_to_user(buf, page, nr_read)) {
-+				if (copy_to_user(buf, page, nr_write)) {
- 					rv = -EFAULT;
- 					goto out_free_page;
- 				}
- 
--				p	+= nr_read;
--				len	-= nr_read;
--				buf	+= nr_read;
--				count	-= nr_read;
--				rv	+= nr_read;
-+				p	+= nr_write;
-+				len	-= nr_write;
-+				buf	+= nr_write;
-+				count	-= nr_write;
-+				rv	+= nr_write;
- 
--				if (final)
-+				if (nr_write < nr_read)
- 					goto out_free_page;
- 			}
- 
+ static struct attribute *iio_evgen_attrs[] = {
+ 	&iio_dev_attr_poke_ev0.dev_attr.attr,
+-- 
+2.16.2
