@@ -1,110 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932364AbeBUMBy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:01:54 -0500
-Received: from mail-ot0-f176.google.com ([74.125.82.176]:41072 "EHLO
-        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751580AbeBUMBp (ORCPT
+        id S1753961AbeBUMDf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:03:35 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:34199 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751180AbeBUMDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:01:45 -0500
-X-Google-Smtp-Source: AH8x224vA7nyfQAbhNWsc/chxz6wJouexMZMr/+9G5r+ENPFW3lbAohQ18PM1BT9JAi+WOvdDEC3EsjFHDsuLCOAsuI=
+        Wed, 21 Feb 2018 07:03:32 -0500
+Subject: Re: [PATCH v9 03/11] media: platform: Add Renesas CEU driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl>
+Date: Wed, 21 Feb 2018 13:03:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com> <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 21 Feb 2018 13:01:44 +0100
-Message-ID: <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v7_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-        =?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfC3//5bGcprgwYjS3yJWpcn2SlUK3APAVGsHbEZgaspwkEG0TxTP0MPvdVG1kRoDHUOITr/u7Wu8IGCHuEfc4CgXZHyhJqtsTXxbw3q9bCK8Qx9pT6iB
+ m7UZ+UyuBJ1+YfCcYWlswuVpOz2gI/3/bq3IEotWVKxLvqYdt6TyvWMf6Dxcpw7zygSZArBocxaliUUaJ9GEjN5QIoR5PMn/nCiuC4vkl0Iqk7Bif6DhOFhy
+ 9zieTN8DehihZ9eOUg+3jIoxQGwGp8PcxX/AGNWEkT1zbP3xCYavL2pcXjrj3VFKJXmWwNKG6xuRYG/TEwhAVACKkIOtaogVONxtAvXggcacjCNVQiqIf6E0
+ 8+hzPtTCaYw+gn0C8xMi1lXebsMEViXCqsyGUjNId6B9dMSwZAC1Fyv43647WyIlfeMl4lEu6NblBkPVzyeVnhgNhlqnfQ0u3GTyTLRFqJCbhDqSsBOPZkbH
+ xMmLz/9s0Gy0ohMd+DksmHIkjVc0J8TIEDFbSJr9wQyh/HVZhexY4I2CFYBzbfXi22jg7hr3NRdYoTwJbqH3WquNp19kUZ9qdYZBIAPwKW2NEbr1AiYOytVv
+ 5kHE2ESMR2g5VzlwU/MTXjCvFlxGVtBb2heDqSAjKRpKPMdWqGkFX/IPImTyIpGfEMlSKoAkSdfCEcBjVDeaNM0zVj1kNJ+SxFmM2ZINK6ACsWt5/aAdo7Pi
+ lnlSMDF8RsWDXmvAt1H5cqCYHG++MB07fvZxcTRsHXIevZU8CQqxDhznhCX3kPz2YWoIwOPI9F5j2TQhJVw0JU3OtWgrqkL0XGUFBfOsBWWP57kIyxZ+qg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
->>
->> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>>
->>
->> Hi David,
->>
->> just some quick results from today's playing with v7.
->>
->> I started out with da850-lcdk with my standard rootfs over NFS. I was
->> not able to boot to console so far. The first problem is that mdio
->> fails to probe:
->>
->> libphy: Fixed MDIO Bus: probed
->> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
->> davinci_mdio 1e24000.mdio: no live phy, scanning all
->> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
->> digging I noticed that the supplied clock rate differs
->> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
->> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
->> not help like with lcdc.
->
->
-> Can you post the output of this command so that I can see how your
-> clocks are setup:
->
-> cat /sys/kernel/debug/clk/clk_summary
->
->
->>
->> After that, the boot just hangs without ever getting to emac's probe.
->
->
-> Using your workaround, can you run:
->
-> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->
-> If you see:
->   1e27000.clock-controller: emac  off-0
->
-> then genpd is not working like it is supposed to. You should see something
-> like this for device that are working:
->           1e27000.clock-controller: uart2  on
->     /devices/platform/soc@1c00000/1d0d000.serial        active
->
->
->>
->> Once I set the emac clock to always enabled (a workaround that was
->> necessary with v6, but could be dropped with my first
->> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
->> pointer dereference:
->
->
-> I noticed this too when adding the power-domains property to some device
-> tree nodes. This is part of the reason why I didn't add it everywhere.
-> I wasn't able to figure out the cause of this yet. As a work around
-> though, please try removing the power-domains property from the emac
-> and mdio nodes and use your previous workaround of having an always
-> enabled clock.
->
->
+On 02/19/18 17:59, Jacopo Mondi wrote:
+> Add driver for Renesas Capture Engine Unit (CEU).
+> 
+> The CEU interface supports capturing 'data' (YUV422) and 'images'
+> (NV[12|21|16|61]).
+> 
+> This driver aims to replace the soc_camera-based sh_mobile_ceu one.
+> 
+> Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
+> platform GR-Peach.
+> 
+> Tested with ov7725 camera sensor on SH4 platform Migo-R.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/media/platform/Kconfig       |    9 +
+>  drivers/media/platform/Makefile      |    1 +
+>  drivers/media/platform/renesas-ceu.c | 1661 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 1671 insertions(+)
+>  create mode 100644 drivers/media/platform/renesas-ceu.c
+> 
 
-When I use any of the workarounds I just keep getting more problems
-(e.g. [1] from blk and pinctrl). I only had a couple hours today to
-play with it but it seems to me we have some memory corruption
-somewhere. I'll check the initialization order of all the frameworks
-involved tomorrow.
+<snip>
 
-Best regards,
-Bartosz
+> +static int ceu_s_input(struct file *file, void *priv, unsigned int i)
+> +{
+> +	struct ceu_device *ceudev = video_drvdata(file);
+> +	struct ceu_subdev *ceu_sd_old;
+> +	int ret;
+> +
+> +	if (i >= ceudev->num_sd)
+> +		return -EINVAL;
+> +
+> +	if (vb2_is_streaming(&ceudev->vb2_vq))
+> +		return -EBUSY;
+> +
+> +	if (i == ceudev->sd_index)
+> +		return 0;
+> +
+> +	ceu_sd_old = ceudev->sd;
+> +	ceudev->sd = &ceudev->subdevs[i];
+> +
+> +	/* Make sure we can generate output image formats. */
+> +	ret = ceu_init_formats(ceudev);
 
-[1] https://pastebin.com/75mkkuJL
+Why is this done for every s_input? I would expect that this is done only once
+for each subdev.
+
+I also expect to see a ceu_set_default_fmt() call here. Or that the v4l2_pix is kept
+in ceu_subdev (i.e. per subdev) instead of a single fmt in cuedev. I think I prefer
+that over configuring a new default format every time you switch inputs.
+
+This code will work for two subdevs with exactly the same formats/properties. But
+switching between e.g. a sensor and a video receiver will leave things in an
+inconsistent state as far as I can see.
+
+E.g. if input 1 is the video receiver then switching to that input and running
+'v4l2-ctl -V' will show the sensor format, not the video receiver format.
+
+> +	if (ret) {
+> +		ceudev->sd = ceu_sd_old;
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* now that we're sure we can use the sensor, power off the old one. */
+> +	v4l2_subdev_call(ceu_sd_old->v4l2_sd, core, s_power, 0);
+> +	v4l2_subdev_call(ceudev->sd->v4l2_sd, core, s_power, 1);
+> +
+> +	ceudev->sd_index = i;
+> +
+> +	return 0;
+> +}
+
+The remainder of this driver looks good.
+
+Regards,
+
+	Hans
