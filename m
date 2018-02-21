@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227By2vnBNphHpLla1FcTStjApPzB807OZcGwI/5uqx9COGSLnw+Pnc6BWwx/5FcxOTIGKON
-ARC-Seal: i=1; a=rsa-sha256; t=1519218197; cv=none;
+X-Google-Smtp-Source: AH8x227SPAZijQARQVcynqkXA2XS6Hgq/wWURXie/GDNv5Tvd2Srg72oTM2V6pNgODxZraKS6p0m
+ARC-Seal: i=1; a=rsa-sha256; t=1519218194; cv=none;
         d=google.com; s=arc-20160816;
-        b=GB2k8Oa/2f0gunzZ+vsIAF7PVIlygUTYlITPFn46uU+FewPjYzAGlVGokiD3qW5SJY
-         LtOi1+o3vZxJ7afryQ6r94sNAXKTz8qyF8b8afGlWaCRAUZnwY5ASrr7lH9a8SB0OT/T
-         M6DatxGfD6WgNwpfIEpJ1pOvDlGAs8xX7KCCt2LAn6cTPA/x3UBffYaZJpqQLnZrhmmE
-         CxlOKK3faZMqJUfY8b55rx7a9HwAtlGc/6LU3YFusmePqwgdEFIzMuigAgkwZm3VXAIY
-         /6QrZ3oi8Y/ulCgB7/zagEUbBeiIO8PPxPqWRkKB2FWYzjko+0V/2HuMCvRxfiVzbWBb
-         TG2w==
+        b=FiWf5EP6HsrO8IyE4srETiUQc6VE/UIxcZxbOx136AhuhK5MPSwWjDX4oAQks5GJNd
+         2Zrr7H/Pslh5R1bUyTvAypqDJrEKtt9m0hFK7YRy+6t9AtJbHafDZhxd9ConFpf/c0QO
+         XkdMw/4yMtJOjuHu3HEtdUHr+aSF3VNbtSQRWmuAIS3xnllaPopI99xATVsnQtudFD2J
+         ucV0BgiU5xtkMMPbk/5sUtxgO5G2eAYJ7SWT0LKGuEcyz9Wwquxsj9hgfTM6ZxpGsoAR
+         CuRqhz0NTnk9Rf8vEZ067JjrPKiTqDnr6JymhrUayfZrni3RjZ7U7DDVYMHhKCrtNdPn
+         pMUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Evzb+KeLtElVko7fjKNnrwkN0RgzKkptHgACjqA2AgQ=;
-        b=Sb/ys050E7NPNlBkepFn7fa8Nj9WG/a54DtNQx86CPfe6YocdUI75F4mzNdfxT+kfw
-         XJhvcj1qAYNurLt7VnoH2CEphISL3T1tpzzLLChnlk8GqtmV2GixTQqFXRtydDQ6dPLH
-         J5TqxYx82ukDLQMlyR/f+BdAyrJaTioSL7uWUhCWpnA/hpzgUTiV65OMdds4rIt28/vS
-         h/HQjK3ekjYgE3z/OsGFdCh3LM6iFqy8DsuhGKLgX/xYFy0+HY9Z0s7PM1CZ0AImW+IK
-         Ra1T+FPkmTyC8vnvuIrUe6/i7le0SM4eT2PdOoqzClfxysam/iSp4ZLLieWNWATszuCa
-         +VWQ==
+        bh=aHGILldO9BV7+dkvVa4+BPwNriruQYGDY7yo1BKmpAM=;
+        b=Iac4Q1hmk0YeRHMGvEi6glChNFl6pkiw248zjCbBTduH18vC3pwuwYmxUFfU5YvRud
+         L55miGYvJRRdu7dDm0e/JmsqyElNlwVvy4rKM2B6+ZyUDHzsJwYsE880MqM2RJcNZOup
+         NJZtNL2IyBzJIfwxTJsLtjGTT4kQziR/mNWBHZ+9rWgEuodYyG1+Cb196VqOMC7ePrtu
+         0HLMtawAPHHKJJ0jPRrmwyYWKF6b7ViAhfExL3gqRejLNYJfAZhffJ/bAPKF94a0lxvC
+         JbPGMYf4AeQBTQPDzuojYLZR86KfTTg93y31IyRyafYKJ6z/OAeYXaDb3jROAa4dZycB
+         +Kbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 122/167] tracing: Fix parsing of globs with a wildcard at the beginning
-Date: Wed, 21 Feb 2018 13:48:53 +0100
-Message-Id: <20180221124531.192670190@linuxfoundation.org>
+	Rich Felker <dalias@libc.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 121/167] seq_file: fix incomplete reset on read from zero offset
+Date: Wed, 21 Feb 2018 13:48:52 +0100
+Message-Id: <20180221124531.122460958@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015741124609783?=
-X-GMAIL-MSGID: =?utf-8?q?1593015741124609783?=
+X-GMAIL-THRID: =?utf-8?q?1593015737726433241?=
+X-GMAIL-MSGID: =?utf-8?q?1593015737726433241?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,80 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 07234021410bbc27b7c86c18de98616c29fbe667 upstream.
+commit cf5eebae2cd28d37581507668605f4d23cd7218d upstream.
 
-Al Viro reported:
+When resetting iterator on a zero offset we need to discard any data
+already in the buffer (count), and private state of the iterator (version).
 
-    For substring - sure, but what about something like "*a*b" and "a*b"?
-    AFAICS, filter_parse_regex() ends up with identical results in both
-    cases - MATCH_GLOB and *search = "a*b".  And no way for the caller
-    to tell one from another.
+For example this bug results in first line being repeated in /proc/mounts
+if doing a zero size read before a non-zero size read.
 
-Testing this with the following:
-
- # cd /sys/kernel/tracing
- # echo '*raw*lock' > set_ftrace_filter
- bash: echo: write error: Invalid argument
-
-With this patch:
-
- # echo '*raw*lock' > set_ftrace_filter
- # cat set_ftrace_filter
-_raw_read_trylock
-_raw_write_trylock
-_raw_read_unlock
-_raw_spin_unlock
-_raw_write_unlock
-_raw_spin_trylock
-_raw_spin_lock
-_raw_write_lock
-_raw_read_lock
-
-Al recommended not setting the search buffer to skip the first '*' unless we
-know we are not using MATCH_GLOB. This implements his suggested logic.
-
-Link: http://lkml.kernel.org/r/20180127170748.GF13338@ZenIV.linux.org.uk
-
-Cc: stable@vger.kernel.org
-Fixes: 60f1d5e3bac44 ("ftrace: Support full glob matching")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Suggsted-by: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reported-by: Rich Felker <dalias@libc.org>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e522751d605d ("seq_file: reset iterator to first record for zero offset")
+Cc: <stable@vger.kernel.org> # v4.10
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_filter.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/seq_file.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -400,7 +400,6 @@ enum regex_type filter_parse_regex(char
- 	for (i = 0; i < len; i++) {
- 		if (buff[i] == '*') {
- 			if (!i) {
--				*search = buff + 1;
- 				type = MATCH_END_ONLY;
- 			} else if (i == len - 1) {
- 				if (type == MATCH_END_ONLY)
-@@ -410,14 +409,14 @@ enum regex_type filter_parse_regex(char
- 				buff[i] = 0;
- 				break;
- 			} else {	/* pattern continues, use full glob */
--				type = MATCH_GLOB;
--				break;
-+				return MATCH_GLOB;
- 			}
- 		} else if (strchr("[?\\", buff[i])) {
--			type = MATCH_GLOB;
--			break;
-+			return MATCH_GLOB;
- 		}
- 	}
-+	if (buff[0] == '*')
-+		*search = buff + 1;
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -181,8 +181,11 @@ ssize_t seq_read(struct file *file, char
+ 	 * if request is to read from zero offset, reset iterator to first
+ 	 * record as it might have been already advanced by previous requests
+ 	 */
+-	if (*ppos == 0)
++	if (*ppos == 0) {
+ 		m->index = 0;
++		m->version = 0;
++		m->count = 0;
++	}
  
- 	return type;
- }
+ 	/* Don't assume *ppos is where we left it */
+ 	if (unlikely(*ppos != m->read_pos)) {
