@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255PNiVwIZRQFapTh7F/OOKajqexh3mxKffSfLzGXV2tFw2uV+wkNIKSR/LMkZiZUBHDWXP
-ARC-Seal: i=1; a=rsa-sha256; t=1519218656; cv=none;
+X-Google-Smtp-Source: AH8x225DExwyXbjypbpBUed/Yo3i63Dqr+YfzgbZK3eaFlrpTFR/nAzmQgc2DHAYZ1rby6kcqOQ6
+ARC-Seal: i=1; a=rsa-sha256; t=1519218652; cv=none;
         d=google.com; s=arc-20160816;
-        b=gt1p1+CcKfeeNpwAyBJmOD17vaDVJOOljsSSbKGuNIkiOatETbVQUgnhSfFFj0cgiZ
-         4e2LuHseeUc8fGZAgFILM3i7yxdISCiOGqp80cm0toAKG/9Yq9aiRq7XUX+pN2u4r3tm
-         /C9a/PlgCTgdoswvbvtQAhyyiHG6fIaMVX0o7y6KcyZKrDSXCXBDfSfELUEkZwmSiSKw
-         IvuReB7N9NsTfBJ46SLD0O23OxmmvUKPR8CkDtqPDVezX8JdHbYV6+PJrbSFoLHPVBOH
-         RP2OTrkRgJlsaz1s7/e+U5YR65y4a+SBiJyHqZg3aVVsMMEe9wnikg/CPz+wCy2b7qmZ
-         dakQ==
+        b=bFiHq+grcigYFZtObqD04vJ/A+ZuFu1bsl47QbN8M7i/bjm00NgIa3s30Pxr/EkeqC
+         vcYNQYVoanDkghhzLG3pyn7eEcu6fid9lLK5sA5m/ElIy2KmDyMTOtpHl7cUAKDQWqrM
+         aqtLLqCgyNNmiXJnBwoS+vqK2uCg+vyqlB9ALg2FO3PZTobT8U6i+EOL7LHVt9vnOJFE
+         sQgZorw+1ufVNAAkh1VO+LCygWZp61bkqguzAT9AHRtn1Xw0YcUy0F9QlEnr0BiYeclt
+         eX4hTis00fM2F0eT+cU96Hq2YYZV5B+uX16m09GY3WcczsrM77yUZq69IAfBEIzFeo/t
+         WiMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=P+7Xs2ChQ7oHVpCqhnQcAEq9nouksJ/0W2l1ck2Gbos=;
-        b=Dbsx2a/WsF6Sm0NwdJiBIOtr3thQWZRgBHbxvCmB/tbx6bsv/uFwhlvqm5H/4EcIGr
-         wNqD4Qpl9BSpWEz1tsRiRXSKTHOtAA01R8YLhJxzs2PoadLPoNuEW4vM1Sa++b1tM9GR
-         RDpQLcnAisJtru5yopixQ4o8W0b9qnaai36g7pA6j14gjytqNNUsACwRkgUBPp9AnXKo
-         cjlBWmSxUEdRZy4lWB4/zYHBEgT4oZ9hpk5gtR/+2Y2W/wkokfoEkg9ToMunWpjmlAHX
-         4PJ3h70853cwp1Opvu+ixa3JUreR8pT6h95LZOSw5tNjmfRGwfGOZqNpudpvHN3vmor9
-         oxXw==
+        bh=pkSTOv4v5dvgDcqaROUmtPX69ZlYm9nDywCi40ZCp28=;
+        b=QwtMMV3wQebb/4ziujIFD0Qr0rBPYZFkCtws+mkkcBDLYbuGAUabyEFCFnUC9WTpBl
+         fIFIYZJmDieOGO1oluL02kluS7+UBkkfB/QT7jhbDs4UFYu953fGN0awbgHNFzUrrZlr
+         Rnqg/fRrUN/9t85OlxcoRSjV/JqUNPXtSwJ8cXbm6JKyfZGHrIH0OHSDUyl0jj7F2oc6
+         MeesEaLf/BvR346C7DlG98uyMkyRVvSfmkQyWInG/cFRTj6pu1eGtUoHyfkpUIAOBLtr
+         eX807H/dE4fCsm2FOU+TATwYNVK4/dTlAI2wh5aQF5XSiJGYXxGqYs+/M8o0wugCYGte
+         lE9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhouyi Zhou <zhouzhouyi@gmail.com>,
+	Harshad Shirwadkar <harshads@google.com>,
 	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.15 108/163] ext4: save error to disk in __ext4_grp_locked_error()
-Date: Wed, 21 Feb 2018 13:48:57 +0100
-Message-Id: <20180221124536.197167973@linuxfoundation.org>
+Subject: [PATCH 4.15 107/163] ext4: fix a race in the ext4 shutdown path
+Date: Wed, 21 Feb 2018 13:48:56 +0100
+Message-Id: <20180221124536.148656418@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014620343797175?=
-X-GMAIL-MSGID: =?utf-8?q?1593016222214138333?=
+X-GMAIL-THRID: =?utf-8?q?1593015222152228057?=
+X-GMAIL-MSGID: =?utf-8?q?1593016218300777939?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +49,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+From: Harshad Shirwadkar <harshads@google.com>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
+commit abbc3f9395c76d554a9ed27d4b1ebfb5d9b0e4ca upstream.
 
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
+This patch fixes a race between the shutdown path and bio completion
+handling. In the ext4 direct io path with async io, after submitting a
+bio to the block layer, if journal starting fails,
+ext4_direct_IO_write() would bail out pretending that the IO
+failed. The caller would have had no way of knowing whether or not the
+IO was successfully submitted. So instead, we return -EIOCBQUEUED in
+this case. Now, the caller knows that the IO was submitted.  The bio
+completion handler takes care of the error.
 
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
+Tested: Ran the shutdown xfstest test 461 in loop for over 2 hours across
+4 machines resulting in over 400 runs. Verified that the race didn't
+occur. Usually the race was seen in about 20-30 iterations.
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Signed-off-by: Harshad Shirwadkar <harshads@google.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/inode.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -742,6 +742,7 @@ __acquires(bitlock)
- 	}
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3767,10 +3767,18 @@ static ssize_t ext4_direct_IO_write(stru
+ 		/* Credits for sb + inode write */
+ 		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+ 		if (IS_ERR(handle)) {
+-			/* This is really bad luck. We've written the data
+-			 * but cannot extend i_size. Bail out and pretend
+-			 * the write failed... */
+-			ret = PTR_ERR(handle);
++			/*
++			 * We wrote the data but cannot extend
++			 * i_size. Bail out. In async io case, we do
++			 * not return error here because we have
++			 * already submmitted the corresponding
++			 * bio. Returning error here makes the caller
++			 * think that this IO is done and failed
++			 * resulting in race with bio's completion
++			 * handler.
++			 */
++			if (!ret)
++				ret = PTR_ERR(handle);
+ 			if (inode->i_nlink)
+ 				ext4_orphan_del(NULL, inode);
  
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
