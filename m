@@ -1,164 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966272AbeBUQLj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:11:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932757AbeBUQLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:11:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1EAF217A9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELtnkVFyHNkgZDPJHjmSOW2YZiczrhNg7EcMpyqJ5/w4A+cwGvYBexLS75lTP7HOqIUd8aXnhBBSfSfYoJPSN68=
+        id S966287AbeBUQMR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:12:17 -0500
+Received: from mail-qk0-f174.google.com ([209.85.220.174]:46893 "EHLO
+        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932757AbeBUQMP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:12:15 -0500
+X-Google-Smtp-Source: AH8x224iftizx23WQsOCJ1W3r3M+OeN/AlhSSWuUgTazEPuPmZ32l0p0ke991Muv+t7hbiCc7SEZCJ/iNOU28E7whlQ=
 MIME-Version: 1.0
-In-Reply-To: <20180221154214.GA4167@bombadil.infradead.org>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
- <151670493255.658225.2881484505285363395.stgit@buzz> <20180221154214.GA4167@bombadil.infradead.org>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 21 Feb 2018 16:11:16 +0000
-X-Gmail-Original-Message-ID: <CALCETrU5jaennr5ziS9NzNA6KpK204acdroJpuc6yYy3PGvpHQ@mail.gmail.com>
-Message-ID: <CALCETrU5jaennr5ziS9NzNA6KpK204acdroJpuc6yYy3PGvpHQ@mail.gmail.com>
-Subject: Re: Use higher-order pages in vmalloc
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
+In-Reply-To: <28255dd8-427f-f81a-1ec4-0837eb4738db@redhat.com>
+References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
+ <1518539815-13774-3-git-send-email-geert+renesas@glider.be>
+ <ed556509-1460-3e05-b161-f476090ff480@redhat.com> <CAMuHMdULCdVCY7k5ZHX66poxRMTJZ3B1KvDrCzBmtkEipC=CMw@mail.gmail.com>
+ <28255dd8-427f-f81a-1ec4-0837eb4738db@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Feb 2018 17:12:13 +0100
+X-Google-Sender-Auth: NNf00-mIU1Nu9ZkUmcDcpUg5ZJw
+Message-ID: <CAMuHMdXaG2Vef4UPKnAYWc27Pd=iK=e+-_R1=1+zTGXcYSg4uQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfio: platform: Add generic DT reset support
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 3:42 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Tue, Jan 23, 2018 at 01:55:32PM +0300, Konstantin Khlebnikov wrote:
->> Virtually mapped stack have two bonuses: it eats order-0 pages and
->> adds guard page at the end. But it slightly slower if system have
->> plenty free high-order pages.
+Hi Eric,
+
+On Wed, Feb 14, 2018 at 11:11 AM, Auger Eric <eric.auger@redhat.com> wrote:
+> On 14/02/18 10:43, Geert Uytterhoeven wrote:
+>> On Wed, Feb 14, 2018 at 10:09 AM, Auger Eric <eric.auger@redhat.com> wrote:
+>>> On 13/02/18 17:36, Geert Uytterhoeven wrote:
+>>>> Vfio-platform requires reset support, provided either by ACPI, or, on DT
+>>>> platforms, by a device-specific reset driver matching against the
+>>>> device's compatible value.
+>>>>
+>>>> On many SoCs, devices are connected to an SoC-internal reset controller,
+>>>> and can be reset in a generic way.  Hence add support to reset such
+>>>> devices using the reset controller subsystem, provided the reset
+>>>> hierarchy is described correctly in DT using the "resets" property.
+>>>
+>>> I first acknowledge I am not familiar with what those reset controllers
+>>> do in practice. My fear is that we may rely on generic SW pieces that
+>>> may not be adapted to passthrough constraints. We must guarantee that
+>>> any DMA access attempted by the devices are stopped and any interrupts
+>>> gets stopped. Can we guarantee that the reset controller always induce
+>>> that? Otherwise we may leave the door opened to badly reset assigned
+>>> devices.
 >>
->> This patch adds option to use virtually bapped stack as fallback for
->> atomic allocation of traditional high-order page.
+>> An on-SoC reset controller is basically a block controlling signals to the
+>> reset inputs of the individual on-SoC devices.
+>> On Renesas ARM SoCs, this allows to do a full reset of the attached device.
+>>
+>> Of course the exact semantics depend on the actual SoC.
+> that's the issue actually.
+>> If e.g. DMA and interrupts are not stopped for a specific device on a
+>> specific SoC, it still needs a device-specific reset driver, matching against
+>> the appropriate compatible value, cfr. the quoted paragraph below.
+> yes but by default we still accept the reset controller solution.
+>>
+>> You could add a whitelist for of_machine_is_compatible() or
+>> of_device_is_compatible(), but that will grow large fast.
+> Could be the kind of solution needed. At the moment the list of assigned
+> platform devices is pretty reduced.
 >
-> This prompted me to write a patch I've been meaning to do for a while,
-> allocating large pages if they're available to satisfy vmalloc.  I thought
-> it would save on touching multiple struct pages, but it turns out that
-> the checking code we currently have in the free_pages path requires you
-> to have initialised all of the tail pages (maybe we can make that code
-> conditional ...)
->
-> It does save the buddy allocator the trouble of breaking down higher-order
-> pages into order-0 pages, only to allocate them again immediately.
->
-> (um, i seem to have broken the patch while cleaning it up for submission.
-> since it probably won't be accepted anyway, I'm not going to try to debug it)
->
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index be8aa5b98666..2bc01071b6ae 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -319,12 +319,12 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
->         if (vm) {
->                 int i;
->
-> -               BUG_ON(vm->nr_pages != THREAD_SIZE / PAGE_SIZE);
-> -
-> -               for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++) {
-> -                       mod_zone_page_state(page_zone(vm->pages[i]),
-> +               for (i = 0; i < vm->nr_pages; i++) {
-> +                       struct page *page = vm->pages[i];
-> +                       unsigned int size = PAGE_SIZE << compound_order(page);
-> +                       mod_zone_page_state(page_zone(page),
->                                             NR_KERNEL_STACK_KB,
-> -                                           PAGE_SIZE / 1024 * account);
-> +                                           size / 1024 * account);
->                 }
->
->                 /* All stack pages belong to the same memcg. */
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index b728c98f49cd..4bfc29b21bc1 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -134,6 +134,7 @@ static void vunmap_page_range(unsigned long addr, unsigned long end)
->  static int vmap_pte_range(pmd_t *pmd, unsigned long addr,
->                 unsigned long end, pgprot_t prot, struct page **pages, int *nr)
->  {
-> +       unsigned int i;
->         pte_t *pte;
->
->         /*
-> @@ -151,9 +152,13 @@ static int vmap_pte_range(pmd_t *pmd, unsigned long addr,
->                         return -EBUSY;
->                 if (WARN_ON(!page))
->                         return -ENOMEM;
-> -               set_pte_at(&init_mm, addr, pte, mk_pte(page, prot));
-> +               for (i = 0; i < (1UL << compound_order(page)); i++) {
-> +                       set_pte_at(&init_mm, addr, pte++,
-> +                                       mk_pte(page + i, prot));
-> +                       addr += PAGE_SIZE;
-> +               }
->                 (*nr)++;
-> -       } while (pte++, addr += PAGE_SIZE, addr != end);
-> +       } while (addr != end);
->         return 0;
->  }
->
-> @@ -1530,14 +1535,14 @@ static void __vunmap(const void *addr, int deallocate_pages)
->         debug_check_no_obj_freed(addr, get_vm_area_size(area));
->
->         if (deallocate_pages) {
-> -               int i;
-> +               unsigned int i;
->
->                 for (i = 0; i < area->nr_pages; i++) {
->                         struct page *page = area->pages[i];
->
->                         BUG_ON(!page);
->                         __ClearPageVmalloc(page);
-> -                       __free_pages(page, 0);
-> +                       __free_pages(page, compound_order(page));
->                 }
->
->                 kvfree(area->pages);
-> @@ -1696,11 +1701,20 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->
->         for (i = 0; i < area->nr_pages; i++) {
->                 struct page *page;
-> -
-> -               if (node == NUMA_NO_NODE)
-> -                       page = alloc_page(alloc_mask);
-> -               else
-> -                       page = alloc_pages_node(node, alloc_mask, 0);
-> +               unsigned int j = ilog2(area->nr_pages - i) + 1;
-> +
-> +               do {
-> +                       j--;
-> +                       if (node == NUMA_NO_NODE)
-> +                               page = alloc_pages(alloc_mask, j);
-> +                       else
-> +                               page = alloc_pages_node(node, alloc_mask, j);
-> +               } while (!page && j);
-> +
-> +               if (j) {
-> +                       area->nr_pages -= (1UL << j) - 1;
+> Couldn't we imagine additional dt properties to emphasize the fact a
+> platform device is passthrough friendly in terms of reset, either
+> through a reset controller or exposing a single reg that need to be
+> reset for full reset to be achieved, in accordance with assignment
+> constraints. That way, the driver writer would somehow certify the
+> device is eligible for passthrough. One of the issue today is that the
+> vfio platform reset driver is not maintained by the native driver
+> maintainer.
 
-Is there any code that expects area->nr_pages to be the size of the
-area in pages?  I don't know of any such code.
+I'm not so fond of adding more DT properties for this. They can be abused
+as well.
 
-> +                       prep_compound_page(page, j);
-> +               }
->
->                 if (unlikely(!page)) {
->                         /* Successfully allocated i pages, free them in __vunmap() */
-> @@ -1719,8 +1733,8 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->
->  fail:
->         warn_alloc(gfp_mask, NULL,
-> -                         "vmalloc: allocation failure, allocated %ld of %ld bytes",
-> -                         (area->nr_pages*PAGE_SIZE), area->size);
-> +                  "vmalloc: allocation failure, allocated %ld of %ld bytes",
-> +                  (nr_pages * PAGE_SIZE), get_vm_area_size(area));
->         vfree(area->addr);
->         return NULL;
->  }
+In general, if there's a "resets" DT property, it means the device can be
+reset through the pointed-by reset controller. So that's the common case,
+which I'd like to optimize/simplify for.
+
+If more is needed, a separate (device-specific) vfio_reset handler needs
+to be written, by the people that know the hardware.
+
+> I think if people want to do platform passthrough, they need to devise
+> their HW IPs so that this reset modality is simplified by exposing this
+> kind of single reg and then dt description may expose this. Also if
+> possible, the dt node must be as simple/generic as possible to avoid
+> writing a huge dt node creation function on QEMU side and avoid
+> dependencies on other nodes.
+
+Yes. It all depends on sane hardware ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
