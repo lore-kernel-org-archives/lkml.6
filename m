@@ -1,124 +1,112 @@
 Return-Path: <khalid.aziz@oracle.com>
-X-Google-Smtp-Source: AH8x225QUEDkKOWSXuF8gutUjgC7iKEkuUuBkZBLwh9NQ1oVsexd4bMdgROu7mgnX4wexohw76U9
-ARC-Seal: i=1; a=rsa-sha256; t=1519423909; cv=none;
+X-Google-Smtp-Source: AH8x226UKJZftn43kSYrKXMmrMTz/pHpQdwQn/r5sPFPXCPNX/PdFh9bz/U3uOmnFrbvjbJwRO6c
+ARC-Seal: i=1; a=rsa-sha256; t=1519233431; cv=none;
         d=google.com; s=arc-20160816;
-        b=QaH9yLx3ELtWW/dR2hLkFZs0y+SNP0MqobvkJ+XYvnhpjqH7cP0iIuzPqPV77ZtlVw
-         SOnDcn5is5ePY9w3hN64SpgYn4B5HSykN7V2yejM2e+MIOMfNqC88oMWGHgbFH85Xjea
-         3CFQjp3jSHPseIKtJKGqN/TqakI8o0y0e7mJeQ7ouGUy/5AowppqadwT/oF0WzjjGYyN
-         zWTAFO/X4z/3rvxiH3ye/c9WZuLEWs0aTCcQ+IQM2+VBeLD0LqlRdygA8iapB3n3CGxb
-         3v2Zi4dhsxKGAw94xbGHtnQrG2E0xGBMsVL6DY92lQ6sXX33g4Gxo1o6+STk8PlK1vdz
-         8Ydg==
+        b=H1azGZr/KuBe1J69EQz01WV0PNpJOjM0tIkpnvVG9q358L0DObkXObdas7Mc0c/1nU
+         rMLTwEUJpmMSFjgr/hG+OBYRBE+trYw7Z9QqtSRBTUGWEVyBCQJyfb6gXpR9aj+JpnjO
+         F8JMeyhSyKamz1DyA1iLcz42fSP2I1Rux1tZh+5VRMpXVO9UqIPDchNRpuRV5/k4WsdD
+         nNUmYW+AGXvNomAy3ps7Iqm5ZpIcGo3x3DhozZ3Qm/B3C7IKrJyPwgokUXQjzrg9vadh
+         EAiCztVGIR/SewX3iL7xp+bbkyKH+EfffGEKAx3J56zxvFKGkyDkr6GY4CkCOwrKp604
+         iu3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:cc:to
-         :subject:dkim-signature:arc-authentication-results;
-        bh=3h4brh0SBIMdbgrC6l1qw3MBelArmAy9bbc9uYdhTuw=;
-        b=wbYzl05hQDv9q6eS5WFyGPxs0nNw5yxK/no0paD2K49UQzjQD3WW2A0DIKIuMWxbwi
-         pPglJGwO4FGSlTRS9YQFGVtPax+Bs1bOqilPVFEhavLhAnp7eYCG2+8VYgiCz5BuRwlb
-         enh4D/MVZ4PU2UfIulevB/b+irWnH3MMapGLwTKrVHU2ig2x/fCM7fr0jOG8CjuCIv3K
-         pPBuUZzowuA/IEXWO0Vxf+wPAicw21PoDsYKSASiIWz6GZYXq55kk8UcD0/qoWw8YZpp
-         oNuqcWlv/QRzWR2sq2nBTBSqpGUWd5nidF7Dtslz5VgeU0MiZnEXp4/XKCZaXR4QOtRA
-         FXGw==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=I0UP/esg2v2hf2NPXwTxSgx4NMM3+FY2gamsXfraMy8=;
+        b=uy9yBIxZUykcpIH9LI5MPCmkjCCEPmmpw0xW0rMv9daud0NMTH1pyreFINSfpr2AnM
+         47E6QEJ1TuZ38kD5HF0Lf314BpO2Vuq0YUI1hWf1ShfSqokn+J3jzlf3+f+aveijGNVr
+         7/es5bfJKXF9VB+q0udEr0P2XqJA82XvaJbyJ07r7P0PoSwAjxXLzEvygOaW6py+n2fE
+         4OZCLjFgynpWPn6FAKjzwNL/R1h+D/HAtCGWXfybDHPbN/0Rff/oJm19o5ONrnqi1YTp
+         n9e9bARkPWLPEQwOf31F2GKjcwAmUiq8dZkJaNYyHvOc+VcmnRaxI1dqP14vXfwpGbLi
+         IaYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=mDhjK6ge;
-       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PN/kcReI;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=mDhjK6ge;
-       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PN/kcReI;
+       spf=pass (google.com: domain of khalid.aziz@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Subject: Re: [PATCH v12 10/11] sparc64: Add support for ADI (Application Data
- Integrity)
-To: David Miller <davem@davemloft.net>
-Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com, corbet@lwn.net,
-        steven.sistare@oracle.com, pasha.tatashin@oracle.com,
-        mike.kravetz@oracle.com, rob.gardner@oracle.com, mingo@kernel.org,
-        nitin.m.gupta@oracle.com, anthony.yznaga@oracle.com,
-        kirill.shutemov@linux.intel.com, tom.hromatka@oracle.com,
-        allen.pais@oracle.com, tklauser@distanz.ch, shannon.nelson@oracle.com,
-        vijay.ac.kumar@oracle.com, mhocko@suse.com, jack@suse.cz,
-        punit.agrawal@arm.com, hughd@google.com, thomas.tai@oracle.com,
-        ross.zwisler@linux.intel.com, dave.jiang@intel.com,
-        willy@infradead.org, minchan@kernel.org, imbrenda@linux.vnet.ibm.com,
-        aarcange@redhat.com, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, tglx@linutronix.de, gregkh@linuxfoundation.org,
-        nagarathnam.muthusamy@oracle.com, linux@roeck-us.net,
-        jane.chu@oracle.com, dan.j.williams@intel.com, jglisse@redhat.com,
-        ktkhai@virtuozzo.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, khalid@gonehiking.org
-References: <d8602e35e65c8bf6df1a85166bf181536a6f3664.1519227112.git.khalid.aziz@oracle.com>
- <201802231005.WSf8KcHd%fengguang.wu@intel.com>
- <490b8c3b-fc62-b6e7-af28-7c1257e953ce@oracle.com>
- <20180223.135716.511559214062584207.davem@davemloft.net>
 From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <7223b9b5-c05a-8ade-beaa-e7e82cc8ea01@oracle.com>
-Date: Fri, 23 Feb 2018 15:11:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180223.135716.511559214062584207.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8813 signatures=668678
+To: arnd@arndb.de, hpa@zytor.com, davem@davemloft.net,
+        dave.hansen@linux.intel.com
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, tglx@linutronix.de, mingo@redhat.com,
+        x86@kernel.org, ebiederm@xmission.com, anthony.yznaga@oracle.com,
+        pombredanne@nexb.com, jroedel@suse.de, gregkh@linuxfoundation.org,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>
+Subject: [PATCH v12 01/11] signals, sparc: Add signal codes for ADI violations
+Date: Wed, 21 Feb 2018 10:15:43 -0700
+Message-Id: <b1712b03774934c31afd9e394f07aae51eca74f8.1519227112.git.khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802230268
+ engine=8.0.1-1711220000 definitions=main-1802210211
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593031948178483523?=
-X-GMAIL-MSGID: =?utf-8?q?1593231445310491746?=
+X-GMAIL-THRID: =?utf-8?q?1593031714313554791?=
+X-GMAIL-MSGID: =?utf-8?q?1593031714313554791?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/23/2018 11:57 AM, David Miller wrote:
-> From: Khalid Aziz <khalid.aziz@oracle.com>
-> Date: Fri, 23 Feb 2018 11:51:25 -0700
-> 
->> On 02/22/2018 07:50 PM, kbuild test robot wrote:
->>> Hi Khalid,
->>> I love your patch! Yet something to improve:
->>> [auto build test ERROR on sparc-next/master]
->>> [also build test ERROR on v4.16-rc2]
->>> [cannot apply to next-20180222]
->>> [if your patch is applied to the wrong git tree, please drop us a note
->>> to help improve the system]
->>> url:
->>> https://github.com/0day-ci/linux/commits/Khalid-Aziz/Application-Data-Integrity-feature-introduced-by-SPARC-M7/20180223-071725
->>> base:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git
->>> master
->>> config: sparc64-allyesconfig (attached as .config)
->>> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->>> reproduce:
->>>           wget
->>>           https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
->>>           -O ~/bin/make.cross
->>>           chmod +x ~/bin/make.cross
->>>           # save the attached .config to linux build tree
->>>           make.cross ARCH=sparc64
->>> All error/warnings (new ones prefixed by >>):
->>
->> Hi Dave,
->>
->> Including linux/sched.h in arch/sparc/include/asm/mmu_context.h should
->> eliminate these build warnings. My gcc version 6.2.1 does not report
->> these errors. Build bot is using 7.2.0.
->>
->> I can add a patch 12 to add the include, revise patch 10 or you can
->> add the include in your tree. Let me know how you would prefer to
->> resolve this.
-> 
-> You need to update patch #10 so that your patch series is fully
-> bisectable.
+SPARC M7 processor introduces a new feature - Application Data
+Integrity (ADI). ADI allows MMU to  catch rogue accesses to memory.
+When a rogue access occurs, MMU blocks the access and raises an
+exception. In response to the exception, kernel sends the offending
+task a SIGSEGV with si_code that indicates the nature of exception.
+This patch adds three new signal codes specific to ADI feature:
 
-Hi Dave,
+1. ADI is not enabled for the address and task attempted to access
+   memory using ADI
+2. Task attempted to access memory using wrong ADI tag and caused
+   a deferred exception.
+3. Task attempted to access memory using wrong ADI tag and caused
+   a precise exception.
 
-That sounds like the right thing to do. I am updating patch 10 and will 
-send out v13 for patch 10/11. Rest of the series is unchanged but I can 
-send the whole series if you prefer that.
+Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Khalid Aziz <khalid@gonehiking.org>
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+---
+v10:
+	- Updated si_code definitions to match other definitions
 
-Thanks,
-Khalid
+ arch/x86/kernel/signal_compat.c    | 2 +-
+ include/uapi/asm-generic/siginfo.h | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
+index ac057f9b0763..41cf5996a2a9 100644
+--- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@ -27,7 +27,7 @@ static inline void signal_compat_build_tests(void)
+ 	 */
+ 	BUILD_BUG_ON(NSIGILL  != 11);
+ 	BUILD_BUG_ON(NSIGFPE  != 13);
+-	BUILD_BUG_ON(NSIGSEGV != 4);
++	BUILD_BUG_ON(NSIGSEGV != 7);
+ 	BUILD_BUG_ON(NSIGBUS  != 5);
+ 	BUILD_BUG_ON(NSIGTRAP != 4);
+ 	BUILD_BUG_ON(NSIGCHLD != 6);
+diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+index 85dc965afd89..e94f03b3ee6f 100644
+--- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@ -246,7 +246,10 @@ typedef struct siginfo {
+ #else
+ # define SEGV_PKUERR	4	/* failed protection key checks */
+ #endif
+-#define NSIGSEGV	4
++#define SEGV_ACCADI	5	/* ADI not enabled for mapped object */
++#define SEGV_ADIDERR	6	/* Disrupting MCD error */
++#define SEGV_ADIPERR	7	/* Precise MCD exception */
++#define NSIGSEGV	7
+ 
+ /*
+  * SIGBUS si_codes
+-- 
+2.11.0
