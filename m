@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Gp41K5/fg8bQdAWQxbY4Wqb7lKudXTqt70HTOsQAf5sMZ8b9FX4yXMXe+aUP1QaJ1yr5d
-ARC-Seal: i=1; a=rsa-sha256; t=1519218424; cv=none;
+X-Google-Smtp-Source: AH8x225G6CdrtpIDERQNz5O55l0dWUNV6l29yB7qYLnoZjZaemjNjI+ti3dVDQbw3lGkaRyKpXEe
+ARC-Seal: i=1; a=rsa-sha256; t=1519218421; cv=none;
         d=google.com; s=arc-20160816;
-        b=YP5/AKZE+WnTluDBFUjesfwNisyTwMIvtfx54zhlFXJoeht7YPOw05IvkwFMf0u1vs
-         Nd45/QdFOybq/6MzIYwxnGQYvtztnpeOE2PQDZlLDYPhaV0Ax9B3aF/4UPRFC/Y2mjMQ
-         /YGAnL4nDMgVQQRiWckVOH6qiJ2AcJk+KKXcYmz6N7Mkr8gbtp369eUmv7I9XHl4Jdwc
-         t2PkVrmISzs8DUAtqP8/PmvLez2YqtdPqIR7fzZa5q1iv5BDkZBFmdYPps3NSOsCi8uY
-         xpALz6mjQrMLYn8w0GBJEHWn475WSmCdlwNMjkLJ2n0qxLOSt/XZRiTr4/N44Fg8ifJZ
-         Ruvw==
+        b=hpt5tJkgj9Jsh8Ts1wkMo05dOdAaMyFmcpF6G8STejB8Njc7mR7kpfkm70m1GM2ohC
+         0TFCAa11/+a5HS5CBTkccOCJoIzJ9p3iPG9nftQsfUMaMGRiKQ2I56AYWjXu7/4sr79Z
+         Be6Ts0CVRDuij40GQXW0tpbdhuAs7z44c6DSOoB37/9kV6yi9h+gYD1ETuoy3ucXUr7M
+         SvdLDUtlaaAp9augx8+RaOKBvmXsNFBWNddhN5s90fcwbr5V5YUaHqNwjLL8v7pmyx1i
+         vKUh8WeyiU3KeKEexY8r5aXGJeo6mAR/SvAq9E0OVes70n5UohchVNozdfew6g657dO9
+         pgVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vMT/THJCmOP7fBWPJ5TxEI1BpWrBmLLBqacCY165OMY=;
-        b=CPx8OqiM4FL4Pv1lHmEn/SWoz17LMou1iluWObDBKIVSG7JeYy1lyKbyUy0slxf/fb
-         On2TZ2f32GmHPDZ+7GZGzLy9BMzZxfNs0cje3pWeRZxStIaM64MMjZmPLSB/NBcKa1T4
-         Xy/JervrGTsLa2M7gA/6ILfJkiegWGzkZITQrzzmpoUu8EWUzfqU5pPiywZMhjFmqaqS
-         qqozqEF+aGewrMisEGzRXjXC+iBKAZ8j57DR8wHFCo9Ppx3mvDsvvH1osbRI/JFFQP2g
-         0X6J2p140SJbdrXeXIBQY4hpgwmHFiifMeC0E/Ib8CcdCXrbjFUoUfk5LoxLGDAw5uUg
-         Xgag==
+        bh=AzR5WLUOCBywcfzmVXs6hS/AfYxDIJRDkXXPiHS13WU=;
+        b=ZRZTZo1WPyT8LIbZPKCPIGwVQMUpyqSI12U2sVhi+AraLNn6k6Hl/5yRLWXur85H9h
+         IuSY/Q2F4T+7NylnraCk/MPSXS0oEdB8FBN8FGxUjYWRGbaGHMAvG4i1Zj+Nx46JMYxu
+         UtcGNOPafb0ZeqCD8S3YdkiK1/hIsuPPD84qOgvF5P+BIIEWb3du/wyliiADVsUh/bnm
+         pqUW/U2XOtwKvL5b8dNn0baN5LpL9koXDt22Lywd++gwuf4frm52NQTry0kZiluqrdDu
+         GteSxLf9yGSP/LQjL61WibLOoByIK2APWnpWPQ6w1uR0wSFvse58X5y/1M/YjHpqc16o
+         SqbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Anusha Srivatsa <anusha.srivatsa@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	David Airlie <airlied@linux.ie>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	x86@kernel.org,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.15 035/163] x86/gpu: add CFL to early quirks
-Date: Wed, 21 Feb 2018 13:47:44 +0100
-Message-Id: <20180221124532.202910761@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.15 034/163] arm: spear13xx: Fix spics gpio controllers warning
+Date: Wed, 21 Feb 2018 13:47:43 +0100
+Message-Id: <20180221124532.161662256@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -51,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015607863918761?=
-X-GMAIL-MSGID: =?utf-8?q?1593015978899399865?=
+X-GMAIL-THRID: =?utf-8?q?1593014666669772873?=
+X-GMAIL-MSGID: =?utf-8?q?1593015976181303192?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,65 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lucas De Marchi <lucas.demarchi@intel.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 33aa69ed8aacd92dea12671e52eb3ca6ac2d7a49 upstream.
+commit f8975cb1b8a36d0839b6365235778dd9df1d04ca upstream.
 
-CFL was missing from intel_early_ids[]. The PCI ID needs to be there to
-allow the memory region to be stolen, otherwise we could have RAM being
-arbitrarily overwritten if for example we keep using the UEFI framebuffer,
-depending on how BIOS has set up the e820 map.
+This fixes the following warning by also sending the flags argument for
+gpio controllers:
 
-Fixes: b056f8f3d6b9 ("drm/i915/cfl: Add Coffee Lake PCI IDs for S Skus.")
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Anusha Srivatsa <anusha.srivatsa@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: <stable@vger.kernel.org> # v4.13+ 0890540e21cf drm/i915: add GT number to intel_device_info
-Cc: <stable@vger.kernel.org> # v4.13+ 41693fd52373 drm/i915/kbl: Change a KBL pci id to GT2 from GT1.5
-Cc: <stable@vger.kernel.org> # v4.13+
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171213200425.2954-1-lucas.demarchi@intel.com
+Property 'cs-gpios', cell 6 is not a phandle reference in
+/ahb/apb/spi@e0100000
+
+Fixes: 8113ba917dfa ("ARM: SPEAr: DT: Update device nodes")
+Cc: stable@vger.kernel.org # v3.8+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/early-quirks.c |    1 +
- include/drm/i915_pciids.h      |    6 ++++++
- 2 files changed, 7 insertions(+)
+ arch/arm/boot/dts/spear1310-evb.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/early-quirks.c
-+++ b/arch/x86/kernel/early-quirks.c
-@@ -527,6 +527,7 @@ static const struct pci_device_id intel_
- 	INTEL_SKL_IDS(&gen9_early_ops),
- 	INTEL_BXT_IDS(&gen9_early_ops),
- 	INTEL_KBL_IDS(&gen9_early_ops),
-+	INTEL_CFL_IDS(&gen9_early_ops),
- 	INTEL_GLK_IDS(&gen9_early_ops),
- 	INTEL_CNL_IDS(&gen9_early_ops),
- };
---- a/include/drm/i915_pciids.h
-+++ b/include/drm/i915_pciids.h
-@@ -392,6 +392,12 @@
- 	INTEL_VGA_DEVICE(0x3EA8, info), /* ULT GT3 */ \
- 	INTEL_VGA_DEVICE(0x3EA5, info)  /* ULT GT3 */
+--- a/arch/arm/boot/dts/spear1310-evb.dts
++++ b/arch/arm/boot/dts/spear1310-evb.dts
+@@ -349,7 +349,7 @@
+ 			spi0: spi@e0100000 {
+ 				status = "okay";
+ 				num-cs = <3>;
+-				cs-gpios = <&gpio1 7 0>, <&spics 0>, <&spics 1>;
++				cs-gpios = <&gpio1 7 0>, <&spics 0 0>, <&spics 1 0>;
  
-+#define INTEL_CFL_IDS(info) \
-+	INTEL_CFL_S_GT1_IDS(info), \
-+	INTEL_CFL_S_GT2_IDS(info), \
-+	INTEL_CFL_H_GT2_IDS(info), \
-+	INTEL_CFL_U_GT3_IDS(info)
-+
- /* CNL U 2+2 */
- #define INTEL_CNL_U_GT2_IDS(info) \
- 	INTEL_VGA_DEVICE(0x5A52, info), \
+ 				stmpe610@0 {
+ 					compatible = "st,stmpe610";
