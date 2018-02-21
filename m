@@ -1,134 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeBUW3I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 17:29:08 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33384 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeBUW3H (ORCPT
+        id S1751457AbeBUW3h (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 17:29:37 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:49110 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeBUW3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 17:29:07 -0500
-X-Google-Smtp-Source: AH8x2256hhAiTaLtRav9pg32IWs08+0WhLe/XtGGIazNVS3SgGv0h3mhRBprUtOCv62x2TsStgDxJg==
-Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-To: Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Andrea Parri <parri.andrea@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
-From: Akira Yokosawa <akiyks@gmail.com>
-Message-ID: <74dbcbd4-6034-0be9-7674-ccb058de6177@gmail.com>
-Date: Thu, 22 Feb 2018 07:29:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Feb 2018 17:29:36 -0500
+Date: Wed, 21 Feb 2018 23:29:24 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: address change for the contact of the rtc tree
+Message-ID: <20180221222924.GC31244@piout.net>
+References: <20180222091531.6bcb1503@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222091531.6bcb1503@canb.auug.org.au>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/02/22 2:15, Alan Stern wrote:
-> Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
-> smp_read_barrier_depends, and lockless_dereference") was accidentally
-> merged too early, while it was still in RFC form.  This patch adds in
-> the missing pieces.
-> 
-> Akira pointed out some typos in the original patch, and he noted that
-> cheatsheet.txt should be updated to indicate how unsuccessful RMW
-> operations relate to address dependencies.
+Hello Stephen,
 
-My point was to separate unannotated loads from READ_ONCE(), if the
-cheatsheet should concern such accesses as well.
-Unsuccessful RMW operations were brought up by Andrea.
-
+On 22/02/2018 at 09:15:31 +1100, Stephen Rothwell wrote:
+> Hi Alexandre,
 > 
-> Andrea pointed out that the macro for rcu_dereference() in linux.def
-> should now use the "once" annotation instead of "deref".  He also
-> suggested that the comments should mention commit 5a8897cc7631
-> ("locking/atomics/alpha: Add smp_read_barrier_depends() to
-> _release()/_relaxed() atomics") as an important precursor, and he
-> contributed commit cb13b424e986 ("locking/xchg/alpha: Add
-> unconditional memory barrier to cmpxchg()"), another prerequisite.
+> I notcied this commit
 > 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> Suggested-by: Akira Yokosawa <akiyks@gmail.com>
-> Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-> Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
+>   f6dbaad611f9 ("MAINTAINERS: rtc: update my email address")
+> 
+> in the rtc tree today.  Should I update the email address I use for the
+> rtc tree contact?
 > 
 
-The change itself looks good to me.
+Yes, please do.
 
-Acked-by: Akira Yokosawa <akiyks@gmail.com>
+Thanks for your work!
 
-       Thanks, Akira
-
-> ---
-> 
->  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
->  tools/memory-model/Documentation/explanation.txt |    4 ++--
->  tools/memory-model/linux-kernel.def              |    2 +-
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
-> +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> @@ -1,11 +1,11 @@
->                                    Prior Operation     Subsequent Operation
->                                    ---------------  ---------------------------
->                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-> -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
-> +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
->  
->  Store, e.g., WRITE_ONCE()            Y                                       Y
-> -Load, e.g., READ_ONCE()              Y                              Y        Y
-> -Unsuccessful RMW operation           Y                              Y        Y
-> +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
-> +Unsuccessful RMW operation           Y                          Y   Y        Y
->  rcu_dereference()                    Y                          Y   Y        Y
->  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
->  Successful *_release()         C        Y  Y    Y     W                      Y
-> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-> @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
->  executed on C before the fence (i.e., those which precede the fence in
->  program order).
->  
-> -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-> +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
->  other properties which we discuss later.
->  
->  
-> @@ -1138,7 +1138,7 @@ final effect is that even though the two
->  program order, it appears that they aren't.
->  
->  This could not have happened if the local cache had processed the
-> -incoming stores in FIFO order.  In constrast, other architectures
-> +incoming stores in FIFO order.  By contrast, other architectures
->  maintain at least the appearance of FIFO order.
->  
->  In practice, this difficulty is solved by inserting a special fence
-> Index: usb-4.x/tools/memory-model/linux-kernel.def
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/linux-kernel.def
-> +++ usb-4.x/tools/memory-model/linux-kernel.def
-> @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
->  smp_store_release(X,V) { __store{release}(*X,V); }
->  smp_load_acquire(X) __load{acquire}(*X)
->  rcu_assign_pointer(X,V) { __store{release}(X,V); }
-> -rcu_dereference(X) __load{deref}(X)
-> +rcu_dereference(X) __load{once}(X)
->  
->  // Fences
->  smp_mb() { __fence{mb} ; }
-> 
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
