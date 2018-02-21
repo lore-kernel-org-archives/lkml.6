@@ -1,129 +1,73 @@
-Return-Path: <danilokrummrich@dk-develop.de>
-X-Google-Smtp-Source: AH8x2245oLLsNsMWOgulGukVK7TeCxo640f7NEX/57Nu4u4P2PIQWMhCZWF8cApUnhHKQvuWLTiw
-ARC-Seal: i=1; a=rsa-sha256; t=1519260383; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AH8x225jTJSw+TTUWbnCxKEtqUPiLIL76GGOaqMtrAuPmF5SlOQF0YvfDWtuuZkH1nccsLPoYfsR
+ARC-Seal: i=1; a=rsa-sha256; t=1519248608; cv=none;
         d=google.com; s=arc-20160816;
-        b=ADJ5snoEB58kxxa4scqTe7/+qmHKZLR+jvexfp5Sa7GAgV3cmbDa5atWOseZmMl3jt
-         6iqKTlNSN9fTq/DC4ZEVJtH6wryZkWnjJQcSzRNG/CMEi57gCIlFekY7XgFcyBJ8Yo6q
-         ye8qoJlzGDjn2k9UUKS5GnG2ASClJTgINnxGtUznJ6GlFlM+5qzuKaFboDJ8568isXqn
-         p/puNSZWHISMVbfjlCfkTFNp6XcbLLdDQBo9aEll0zbGn9yQe1b3lILJDthWlQEF2J+x
-         9H8KFdvImMo5WMPNEDXjUeSf1c43ZfCy5HzdG4/xsYNPXdBz3c279eD0CCexg08ptUj0
-         IYYQ==
+        b=RCeSVWqrsDFL+IMtbyeQyOww6vhT6VXZh951glDaYEbj/0nMqhOXIlmW0AzITNP4Tp
+         k2UGc6T8Eo5Bysa44LpEYHvhNSF3z1AtstzN/R03rdhNtdT/v70Omy/4KUPfVEESICtk
+         e8SFHNl0BmOVlfCpeMeNiGVw7M/NJtWj8pQOJ5632TG/K0pDSzNUj2zLDSmlAXbVbEwi
+         tVohxXZBzuu1G9VWR9PmW09WPcHSfrtGs/g8B3VwAAMz0jeILje3bp3kF+UBMDZeHNuw
+         OHDvw4ZSb2jd6ZclZXwLwA0CqL77GQnJ0XyGFbZfAoSqMSOMfGJi4cD9OsZPwW0ZKweV
+         NJow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=haMQbohAktrjzeke0oIcC3n2Ae82vBDcaAJZC5yEDFE=;
-        b=CDBElFORgr2vmDxTVCUxEYdihgypDUqQZbB93Zx7ghHfSd6ktneUMI3xFx6P1DE44q
-         +4+G/AKq/UYblgAdEejZMc6tTRIEbcT35s02SjkUBOgBMYhPx0pKNsapOK3zf1H4PcZo
-         zjvMmXnnyV2jYa1dDX0RpW7IZGywOkGE4tirClJdpC8rGZtJTd5Xlu8jleNKinUK8dZQ
-         dCK6vcRcSeb1XDDNhenZ6lzjMtawoSntPyW7e3IU8BbPtwFkc6JxfxLfAvsSWMx9F5ss
-         sdTu9Jf2ypyYrHJPGeHMyYOOlpeLQudUfW7bEunDu1ZCFFsx6c/1R6MIF8jtRKQauvb8
-         dx/w==
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=bKbROBt8bro/1R7RuI7l8xvlAs029waLbPu46IxcIqY=;
+        b=Edfm1SdqfhBfv4Pz56xOyfnWZ4j8gTn54Ab2f6gE1jJ2JIAJ0JCK1nfF/3kbRhKV3Z
+         iaFkZAw/mvA4ESvUCw2swJbM47cUr3VqDlFxkApLht1HK8tf2u48vEYIdq2fR6fWW6iT
+         S0t/nGB3FN/HxCWoXF6MSC2SSMsLX2ibzSfDmsDDmBGwPp1iFaNlsz7bWk9vKHYqwPwT
+         GcaiG7OMBsJsC2othWZiFSE0gobX1/9tOmyP9fIbzmNtXLPksu9A9gqBhaCXLc179qfp
+         3V6xFii8AJyufZnstm9stGbZ/ZteNJRg3mpkYk0GnC8zKwhj6YHFR/IswEwPrJkAvzLu
+         LHuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of danilokrummrich@dk-develop.de designates 213.136.71.231 as permitted sender) smtp.mailfrom=danilokrummrich@dk-develop.de
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=gXEqqTwU;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of danilokrummrich@dk-develop.de designates 213.136.71.231 as permitted sender) smtp.mailfrom=danilokrummrich@dk-develop.de
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: gregkh@linuxfoundation.org,
-	felipe.balbi@linux.intel.com
-Cc: linux-usb@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kai.heng.feng@canonical.com,
-	Danilo Krummrich <danilokrummrich@dk-develop.de>
-Subject: [PATCH] usb: quirks: add control message delay for 1b1c:1b20
-Date: Thu, 22 Feb 2018 01:46:18 +0100
-Message-Id: <20180222004618.3854-1-danilokrummrich@dk-develop.de>
-X-Mailer: git-send-email 2.14.1
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=gXEqqTwU;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750826AbeBUVaH (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 16:30:07 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39654 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbeBUVaG (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 21 Feb 2018 16:30:06 -0500
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org
+Cc: daniel@iogearbox.net, ast@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests/bpf: update gitignore with test_libbpf_open
+Date: Wed, 21 Feb 2018 22:30:01 +0100
+Message-Id: <20180221213001.18682-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593059976085062981?=
-X-GMAIL-MSGID: =?utf-8?q?1593059976085062981?=
+X-GMAIL-THRID: =?utf-8?q?1593047628966433611?=
+X-GMAIL-MSGID: =?utf-8?q?1593047628966433611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Corsair Strafe RGB keyboard does not respond to usb control messages
-sometimes and hence generates timeouts.
+bpf builds a test program for loading BPF ELF files. Add the executable
+to the .gitignore list.
 
-Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
-Strafe RGB keyboard") tried to fix those timeouts by adding
-USB_QUIRK_DELAY_INIT.
-
-Unfortunately, even with this quirk timeouts of usb_control_msg()
-can still be seen, but with a lower frequency (approx. 1 out of 15):
-
-[   29.103520] usb 1-8: string descriptor 0 read error: -110
-[   34.363097] usb 1-8: can't set config #1, error -110
-
-Adding further delays to different locations where usb control
-messages are issued just moves the timeouts to other locations,
-e.g.:
-
-[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
-[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
-
-The only way to reliably avoid those issues is having a pause after
-each usb control message. In approx. 200 boot cycles no more timeouts
-were seen.
-
-Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
-to have the delay in hub_port_connect() after hub_port_init().
-
-The overall boot time seems not to be influenced by these additional
-delays, even on fast machines.
-
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/usb/core/message.c | 5 +++++
- drivers/usb/core/quirks.c  | 3 ++-
- include/linux/usb/quirks.h | 3 +++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ tools/testing/selftests/bpf/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index 77001bcfc504..cbab2a99ce16 100644
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -150,6 +150,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
- 
- 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
- 
-+	/* Linger a bit, prior to the next control message. */
-+	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+		msleep(200);
-+
- 	kfree(dr);
- 
- 	return ret;
-@@ -642,6 +646,7 @@ int usb_get_descriptor(struct usb_device *dev, unsigned char type,
- 				USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
- 				(type << 8) + index, 0, buf, size,
- 				USB_CTRL_GET_TIMEOUT);
-+
- 		if (result <= 0 && result != -ETIMEDOUT)
- 			continue;
- 		if (result > 1 && ((u8 *)buf)[1] != type) {
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 4024926c1d68..4450bec7f3af 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -227,7 +227,8 @@ static const struct usb_device_id usb_quirk_list[] = {
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
- 
- 	/* Corsair Strafe RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index f1fcec2fd5f8..b7a99ce56bc9 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -63,4 +63,7 @@
-  */
- #define USB_QUIRK_DISCONNECT_SUSPEND		BIT(12)
- 
-+/* Device needs a pause after every control message. */
-+#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
+diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+index cc15af2e54fe..9cf83f895d98 100644
+--- a/tools/testing/selftests/bpf/.gitignore
++++ b/tools/testing/selftests/bpf/.gitignore
+@@ -11,3 +11,4 @@ test_progs
+ test_tcpbpf_user
+ test_verifier_log
+ feature
++test_libbpf_open
 -- 
-2.14.1
+2.11.0
+
