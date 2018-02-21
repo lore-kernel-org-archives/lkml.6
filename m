@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227OAafk3wuMKYbtwRBSGRE9ZMtlRX1zgDV6+lTFxdEugfP6i+a0FcxrdxbVqWjiZOXVcdIQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519217681; cv=none;
+X-Google-Smtp-Source: AH8x226QwIzY6tfGWSGLOK12WPa9wCakCOaEa2afh1Ieeo1aI7jiRtxwym+6ewlyfCCi8Uxy9zxd
+ARC-Seal: i=1; a=rsa-sha256; t=1519217675; cv=none;
         d=google.com; s=arc-20160816;
-        b=wJ4aq1rWDn1BjmTxx7HsPxgQuBgWroJJtWL3y63bbtz7EW0FvfOs0qSNoFGaQ/mL3I
-         AcKMaFwb2yOBoTpVloi6RJYMEhaY32oAwxbUttYno0NduPn7AKh2/9Jdljgv1fA1A7fI
-         tqQGwZHYfciTRD2y5GnKMlcsz1moTQ6lujDsYb6GK+F44r1h90ryJskDPsGvS8X9xFQV
-         pyFoXATAM9iloOtmIOTRxqJJxrsGowIN3mlFZu5ZUy6tD76UG69nHxuUqYhyJWf3fZJr
-         OZcYVFY2Z8O6xt1OHGyNVbi6aZcq4AmCqBvOGseVfdKP127um+2QQZfMNcByhdQasu77
-         Gb/w==
+        b=Y4/jHkplCGvWJ/2VQwOmY7ddXPKRU9LSx3ubj3S02FRH2NTPwYoAu8DMlB8rPrGp/a
+         8PRQDB6YfRwsm6YS30uR1OMMJYDvxusRbH0vS2mFg4KXC/ZKugmW+/LmoyrU8kYK7tSj
+         x37NLr1QqDX3sFsNGj1JNghAVTALB62jXd6whg0fB82G3KGJ8CCidXFFebyEqC8CiGqn
+         vZ8b6hHtxo5MH+PIM8+ZjsYrXnnTOp9QV2fFxl9c9gUHNDYjYFEHgcfqn1Q0LPOiavST
+         yB4ZOMmHXFiVQVt0xdHHN7texSSdm4NolheaEG3rg5zQSQo177pkyDqLw3PhETWH6wvH
+         WrqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OHv0djUL33R2Vj9DcSrVOLmdt/QgOn1U1tOPZyUp4zw=;
-        b=MB5XrxaucKMYkJhToBxjKAJht0bxkrkM8lUUjsTpvYIdvw881xEiJhXipRvuNuf+JN
-         Xr098Zap0yduxLhM8pPYRR7Sx7k6fcxdgacnVxg3lbvm6mIj4TrGnxvWXD9iS4UW29vQ
-         BtMHDZY40Gk7azUJxjIJcboA3mMEsZQpNN61VzcUGWlF7uPNmBcJoPIeqRxuSWVEZr3X
-         l83A6NUCFJjrbxpzEcLbF9yct6LyDQl5Y9NG8RnFFqzOD9yf4UkKSnfFg7OcYZ1MMl9O
-         pvErx6r27ZtDyFNtW6mBHspCIRCXRUfTNM5M78kNEjdcfVLsXTlec6v/dE6QV6Jq5Qu2
-         Z6fA==
+        bh=koTm9ym7j0cneedkKJJR65va3iL0zQBSl+rCb36kBhg=;
+        b=R1LXwpytw3NR76ojHY/pugG7Rs2soHdEGtHjWoa7gtXRYnMrKlzLIqrewA1XOPN125
+         Psd9jXrkdOAaABzHcA5Lj1I92Mn1DyiRxlNiby3DHa6bV3vE8rSIOpgfJo2YgOyXRJlg
+         EPJKeQItbeY6qZWaDd2vY1uTZEcytff03ir5YQcwN8FUkUYN+Dtz0f4TMXhcSRVg/zOQ
+         IhF5R+FpNQx5YadlOKCEQJh90fJC4mgbVE8BLoGrGOjrlxdsIYf+pyJhG0PQ1GyVFUSH
+         NzoXLwoJFj7u1UMaj2yBe2YvRYc08G8N4IFyWGWs8p5pcnCBzkSdlBNQHQJvEthnqyk3
+         KIFg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Markus Elfring <elfring@users.sourceforge.net>,
-	David Disseldorp <ddiss@suse.de>,
-	Nicholas Bellinger <nab@linux-iscsi.org>
-Subject: [PATCH 4.9 17/77] target/iscsi: avoid NULL dereference in CHAP auth error path
-Date: Wed, 21 Feb 2018 13:48:26 +0100
-Message-Id: <20180221124432.904654100@linuxfoundation.org>
+	Nicolas Pitre <nico@linaro.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.9 15/77] console/dummy: leave .con_font_get set to NULL
+Date: Wed, 21 Feb 2018 13:48:24 +0100
+Message-Id: <20180221124432.813376426@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015199328743705?=
-X-GMAIL-MSGID: =?utf-8?q?1593015199328743705?=
+X-GMAIL-THRID: =?utf-8?q?1593014631678388583?=
+X-GMAIL-MSGID: =?utf-8?q?1593015193335321475?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +49,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Disseldorp <ddiss@suse.de>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 
-commit ce512d79d0466a604793addb6b769d12ee326822 upstream.
+commit 724ba8b30b044aa0d94b1cd374fc15806cdd6f18 upstream.
 
-If chap_server_compute_md5() fails early, e.g. via CHAP_N mismatch, then
-crypto_free_shash() is called with a NULL pointer which gets
-dereferenced in crypto_shash_tfm().
+When this method is set, the caller expects struct console_font fields
+to be properly initialized when it returns. Leave it unset otherwise
+nonsensical (leaked kernel stack) values are returned to user space.
 
-Fixes: 69110e3cedbb ("iscsi-target: Use shash and ahash")
-Suggested-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Cc: stable@vger.kernel.org # 4.6+
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_auth.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/console/dummycon.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -413,7 +413,8 @@ static int chap_server_compute_md5(
- 	auth_ret = 0;
- out:
- 	kzfree(desc);
--	crypto_free_shash(tfm);
-+	if (tfm)
-+		crypto_free_shash(tfm);
- 	kfree(challenge);
- 	kfree(challenge_binhex);
- 	return auth_ret;
+--- a/drivers/video/console/dummycon.c
++++ b/drivers/video/console/dummycon.c
+@@ -67,7 +67,6 @@ const struct consw dummy_con = {
+     .con_switch =	DUMMY,
+     .con_blank =	DUMMY,
+     .con_font_set =	DUMMY,
+-    .con_font_get =	DUMMY,
+     .con_font_default =	DUMMY,
+     .con_font_copy =	DUMMY,
+ };
