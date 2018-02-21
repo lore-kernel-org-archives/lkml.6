@@ -1,70 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938616AbeBURzs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:55:48 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:46048 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933541AbeBURrk (ORCPT
+        id S938709AbeBUR5w (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:57:52 -0500
+Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:36022 "EHLO
+        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932551AbeBUR5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:47:40 -0500
-X-IronPort-AV: E=Sophos;i="5.47,375,1515456000";
-   d="scan'208";a="720905235"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH 03/10] X86/nVMX: Update the PML table without mapping and unmapping the page
-Date: Wed, 21 Feb 2018 18:47:14 +0100
-Message-Id: <1519235241-6500-4-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
-References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+        Wed, 21 Feb 2018 12:57:50 -0500
+Date: Wed, 21 Feb 2018 11:57:47 -0600 (CST)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Shakeel Butt <shakeelb@google.com>
+cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] Directed kmem charging
+In-Reply-To: <CALvZod68LD-wnbm2+MQks=bd_D2zY64uScUBp28hyug_vaGyDA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1802211155500.13845@nuc-kabylake>
+References: <20180221030101.221206-1-shakeelb@google.com> <alpine.DEB.2.20.1802211002200.12567@nuc-kabylake> <CALvZod68LD-wnbm2+MQks=bd_D2zY64uScUBp28hyug_vaGyDA@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfAhe/OtEzw9US2KrOeQnMDAXPXTwZkG4G/EP9RpXuGHdnASiARxcy0R6fXttn9tBYPb8cWx+pG3XqUnmYlepIodohgXBs7xt+rpx3+EcAcVpqvtb4Ipa
+ 9f6CyQlc/SrUjGU6f/xNRK5wuQZa9ZTCnohRh+/HFJElxfP017G5XcC8icSDHTy8Ll2c6vjVq105z4o7oQIbrfi4/i8KBgvp138mHAEck6Sh1/E5HblpIejM
+ gPUHD6QNRwGKNV9tjkGngge2DdEsM4lW9piKX4E91HV9sY98c4Zp/iXCbuF/hL7/petmJbCt05DgLZuxmnFicoKBKhAIy+YcnQlhYLRpoQuMQ61EytMuzTSQ
+ co7QLtnHMMGyaFNryCN4DocTV6kpA6ySKMWvFXuZXV5HPnpCvDsike3MQq6evJOKsPuaNZqw9YMxfHg0UuAe7QuR2nxyW6zFLYByDh6EWFtFgd4cEq6fB8AC
+ ubqbirQc4625dhoWCgQ4+FiVTYPU0AhtKH8tlkeZkOtvSeY/fa6I+G9paEuemsnNXtWa9Ab5lTENO0aJa5QkQb+ZkUe27sfki3mljvcOwR9+y/xZYox4uYeE
+ 3UKAYlBqBI/isebYmoqveyE/x0kuW/sYoiPcCqsVatrts1/gWc4tWwk0oNUoBVM3f+0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-... which also avoids using kvm_vcpu_gpa_to_page(..) which assumes that
-there is a "struct page" for guest memory.
+On Wed, 21 Feb 2018, Shakeel Butt wrote:
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
----
- arch/x86/kvm/vmx.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+> On Wed, Feb 21, 2018 at 8:09 AM, Christopher Lameter <cl@linux.com> wrote:
+> > Another way to solve this is to switch the user context right?
+> >
+> > Isnt it possible to avoid these patches if do the allocation in another
+> > task context instead?
+> >
+>
+> Sorry, can you please explain what you mean by 'switch the user
+> context'. Is there any example in kernel which does something similar?
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index e5653d2..0a98d1a 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -12111,9 +12111,7 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
- {
- 	struct vmcs12 *vmcs12;
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
--	gpa_t gpa;
--	struct page *page = NULL;
--	u64 *pml_address;
-+	gpa_t gpa, dst;
- 
- 	if (is_guest_mode(vcpu)) {
- 		WARN_ON_ONCE(vmx->nested.pml_full);
-@@ -12133,15 +12131,12 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
- 		}
- 
- 		gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS) & ~0xFFFull;
-+		dst = (gpa_t)(((u64 *)vmcs12->pml_address) + vmcs12->guest_pml_index);
- 
--		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->pml_address);
--		if (is_error_page(page))
-+		if (kvm_write_guest(vcpu->kvm, dst, &gpa, sizeof(gpa)))
- 			return 0;
- 
--		pml_address = kmap(page);
--		pml_address[vmcs12->guest_pml_index--] = gpa;
--		kunmap(page);
--		kvm_release_page_clean(page);
-+		vmcs12->guest_pml_index--;
- 	}
- 
- 	return 0;
--- 
-2.7.4
+See include/linux/task_work.h. One use case is in mntput_no_expire() in
+linux/fs/namespace.c
+
+> > Are there really any other use cases beyond fsnotify?
+> >
+>
+> Another use case I have in mind and plan to upstream is to bind a
+> filesystem mount with a memcg. So, all the file pages (or anon pages
+> for shmem) and kmem (like inodes and dentry) will be charged to that
+> memcg.
+
+The mount logic already uses task_work.h. That may be the approach to
+expand there.
