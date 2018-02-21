@@ -1,54 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751155AbeBUTwh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:52:37 -0500
-Received: from mail-io0-f171.google.com ([209.85.223.171]:45162 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeBUTwf (ORCPT
+        id S1751336AbeBUTxp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:53:45 -0500
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:38029 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBUTxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:52:35 -0500
-X-Google-Smtp-Source: AG47ELttlzWT/0Q5zK6Pmo1/DPc9eE+LLJp1DejMo4eHdfcDQOoeIpLeDiSzjdK9IZYIR+TJYz12ANCv+fLTLTS3GC4=
+        Wed, 21 Feb 2018 14:53:44 -0500
+X-Google-Smtp-Source: AH8x224RbyLTefWVbu1RCRoCJgEIRz/ftj/WeIpRt2tyPnaQsTKWh+VZq6ZLn0jw9xPLkt3vXpTaZg==
+Date: Wed, 21 Feb 2018 22:53:40 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, avagin@virtuozzo.com,
+        viro@zeniv.linux.org.uk
+Subject: [PATCH v2] proc: fix /proc/*/map_files lookup some more
+Message-ID: <20180221195340.GA28911@avx2>
+References: <20180221184411.GA25924@avx2>
+ <20180221185143.GJ30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180221182104.GI3231@tassilo.jf.intel.com>
-References: <20180215182208.35003-2-joe.konno@linux.intel.com>
- <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org> <20180220211849.fqjb6rdmypl6opir@agluck-desk>
- <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
- <20180220233008.55rfm7zw62hrao5p@agluck-desk> <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
- <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
- <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
- <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com> <20180221182104.GI3231@tassilo.jf.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 21 Feb 2018 11:52:33 -0800
-X-Google-Sender-Auth: 0M1s4uRWixnZBS5V2lUwi6_uW3c
-Message-ID: <CA+55aFytF4-B8pV5+aoNUi8ZpeSpsTdik23_Ltq9=Vu-MH=JAA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221185143.GJ30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:21 AM, Andi Kleen <ak@linux.intel.com> wrote:
->
-> How about uid name spaces? Someone untrusted in a container could
-> create a lot of uids and switch between them.
+I totally forgot that _parse_integer() accepts arbitrary amount of
+leading zeroes leading to the following:
 
-Anybody who does that deserves whatever the hell they get.
+		OK
+	# readlink /proc/1/map_files/56427ecba000-56427eddc000
+	/lib/systemd/systemd
 
-You can already blow out a lot of other resources that way. If you can
-create users indiscriminately enough, you can bypass most other
-resource limits too.
+		bogus
+	# readlink /proc/1/map_files/00000000000056427ecba000-56427eddc000
+	/lib/systemd/systemd
+	# readlink /proc/1/map_files/56427ecba000-00000000000056427eddc000
+	/lib/systemd/systemd
 
-If you think containers protect against security issues from untrusted
-users, I have a bridge to sell you.
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-              Linus
+ fs/proc/base.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1916,6 +1916,8 @@ static int dname_to_vma_addr(struct dentry *dentry,
+ 	unsigned long long sval, eval;
+ 	unsigned int len;
+ 
++	if (str[0] == '0' && str[1])
++		return -EINVAL;
+ 	len = _parse_integer(str, 16, &sval);
+ 	if (len & KSTRTOX_OVERFLOW)
+ 		return -EINVAL;
+@@ -1927,6 +1929,8 @@ static int dname_to_vma_addr(struct dentry *dentry,
+ 		return -EINVAL;
+ 	str++;
+ 
++	if (str[0] == '0' && str[1])
++		return -EINVAL;
+ 	len = _parse_integer(str, 16, &eval);
+ 	if (len & KSTRTOX_OVERFLOW)
+ 		return -EINVAL;
