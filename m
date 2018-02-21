@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224dBbk6/w6tp7U9M4Wq63brIjidfoxwnCWo5YqqpmVcQ3WDT0t9GLqeV3/XNyrb4/2htrfv
-ARC-Seal: i=1; a=rsa-sha256; t=1519217850; cv=none;
+X-Google-Smtp-Source: AH8x2256q2/Y7EKQqGkdyXGwB0er6RtTu4f4OeVWdnabKg+LfiqiGSL9Q3oF4GfrwuDuJaXk2itq
+ARC-Seal: i=1; a=rsa-sha256; t=1519217847; cv=none;
         d=google.com; s=arc-20160816;
-        b=f9XUU+jgHpTD4rypJnrEtFtt55BG9hZdOKqhxl65UC7ogxMb8k32XFeptQdcXvJ2d/
-         oPkHttjFYAN8IFbxQwpW4J8vTncCkRpKQ0C1UUQOyuh1J8zrCnsnt125gI7CrkRzSVgB
-         50eRrcpenHvVeNqIEVKhLPfHluKNBG3gxPImk45lBoP7H7iXiWV1KZAyxoo2qeCSQ/63
-         fuXxceB3YjSnajUSBWXazuC4y5Php6W7B1cakEbAR+T9hhwr14xRp/B7xGnq7hOuOVYp
-         ic/r7Yl+OgTqUMuekP7jokDaaGYUk2/1Qxwo8lSeFSS5dNP751QqXObLlHnk+a+Ry8gQ
-         Itkg==
+        b=O/MUC1ZxFgvxGTEi4Vau3fOiT9PctGkmBGXiTUY/wSCvvP8t5eNE/HKXNRGU5cPAkc
+         Ww5xOLSubaF9bFS5U2kzdN/7W4J8iAx02PD5sXH+EA33oHb9x5KCaZypJEZ7n74nvEYg
+         hvESZr5H/Wg4oE3CCvPhVXi+axckm/FZezGlyBUF6kDbs2HDJa27Rch5/yTGzei0naDl
+         bpiRJVO+cj+vNLSxuyvVFS244KPLnHu9wkeT6GMp2PXsBxiNrbeTEi8Q5rP+MP4qF4Wi
+         hguNfulNsi7c4Qs4ER64Yb1DGhbXYH8A3LGK6QAkZfDo0/j/rudFdfgLJVQoly1Bu60m
+         vbLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gQB3ek5QFZRAgXrB2mCtXvyZ0D5vkWEPPxKgqVxuHgU=;
-        b=kN6WdBa/s3JXYfi6Xxlyo0BsKW2uvJ5HFLE42bpe0OpGPIWWVWeo0apjEA+HoB+g1U
-         9fVmq4aUlOMnuWlNUdw7MwbsolGnKXG4Thw3A/cvMuemxrIkUAV5vIpH9ohrg5Qcsaci
-         0msbi4OtQv56fyhnMqmjSwApa86+fF5Dy2v7bfGpxOu1y9jDf1ODA8UKPzCPUE681E+F
-         J9VJuP0xLRbLsCIbKCn2/t4MWQXNE5RnRQDo8Jh1pPg4Eoc6kahaB3tM7qQ89h0aggdM
-         B7kQMMtKYNGe29dPbqWW5recZJEK5jPF4HJxdPhjQ0a6UyvzN2Ty3MtDaljCpifLoTi1
-         ZPXQ==
+        bh=6szMVwqh4/mDvg6vizrdByo8Nnd5YTsldoi4JDmWIqI=;
+        b=0ZnJbSLgNuz5yx+j7/6Ib+QcCDQKN4wqTrJV/sWAHXfECGs2nWOskYJQ7KcOLrmsTi
+         5+LRx2tKKSC2WFyNnJln+yybST2yRdZ7D6Cn+tl2RJyphaKh9S2GdPR0K8T/odWN3KOa
+         JfaersaD9ZbGvR7sescgVLYIoCcrqsinBGnIvtm2pqydF1udYiyZEVykpqKBX4hfMVOg
+         Ux0nF2xbt2f/qR1iAKlHzDW5InLH7a16SpfQwm36ZCzNCi5LTovZq+dmDuFyxQTkQbAh
+         z01irXPHO7ci2uaRVSJxEyuPjP5EtBTBv8BUlhGtbLZxEPZ+ZevbIMdAPploDPTJ8Q8D
+         MNQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"yinbo.zhu" <yinbo.zhu@nxp.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH 4.9 76/77] mmc: sdhci-of-esdhc: fix eMMC couldnt work after kexec
-Date: Wed, 21 Feb 2018 13:49:25 +0100
-Message-Id: <20180221124435.380851164@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.9 75/77] media: r820t: fix r820t_write_reg for KASAN
+Date: Wed, 21 Feb 2018 13:49:24 +0100
+Message-Id: <20180221124435.339734334@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015376217156636?=
-X-GMAIL-MSGID: =?utf-8?q?1593015376217156636?=
+X-GMAIL-THRID: =?utf-8?q?1593014700913189109?=
+X-GMAIL-MSGID: =?utf-8?q?1593015373907239465?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: yinbo.zhu <yinbo.zhu@nxp.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 97618aca1440b5addc5c3d78659d3e176be23b80 upstream.
+commit 16c3ada89cff9a8c2a0eea34ffa1aa20af3f6008 upstream.
 
-The bit eSDHC_TBCTL[TB_EN] couldn't be reset by eSDHC_SYSCTL[RSTA] which is
-used to reset for all. The driver should make sure it's cleared before card
-initialization, otherwise the initialization would fail.
+With CONFIG_KASAN, we get an overly long stack frame due to inlining
+the register access functions:
 
-Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+drivers/media/tuners/r820t.c: In function 'generic_set_freq.isra.7':
+drivers/media/tuners/r820t.c:1334:1: error: the frame size of 2880 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+
+This is caused by a gcc bug that has now been fixed in gcc-8.
+To work around the problem, we can pass the register data
+through a local variable that older gcc versions can optimize
+out as well.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/tuners/r820t.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -584,6 +584,10 @@ static void esdhc_init(struct platform_d
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
+--- a/drivers/media/tuners/r820t.c
++++ b/drivers/media/tuners/r820t.c
+@@ -396,9 +396,11 @@ static int r820t_write(struct r820t_priv
+ 	return 0;
+ }
  
-+	val = sdhci_readl(host, ESDHC_TBCTL);
-+	val &= ~ESDHC_TB_EN;
-+	sdhci_writel(host, val, ESDHC_TBCTL);
+-static int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
++static inline int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
+ {
+-	return r820t_write(priv, reg, &val, 1);
++	u8 tmp = val; /* work around GCC PR81715 with asan-stack=1 */
 +
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
++	return r820t_write(priv, reg, &tmp, 1);
+ }
+ 
+ static int r820t_read_cache_reg(struct r820t_priv *priv, int reg)
+@@ -411,17 +413,18 @@ static int r820t_read_cache_reg(struct r
+ 		return -EINVAL;
+ }
+ 
+-static int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
++static inline int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
+ 				u8 bit_mask)
+ {
++	u8 tmp = val;
+ 	int rc = r820t_read_cache_reg(priv, reg);
+ 
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	val = (rc & ~bit_mask) | (val & bit_mask);
++	tmp = (rc & ~bit_mask) | (tmp & bit_mask);
+ 
+-	return r820t_write(priv, reg, &val, 1);
++	return r820t_write(priv, reg, &tmp, 1);
+ }
+ 
+ static int r820t_read(struct r820t_priv *priv, u8 reg, u8 *val, int len)
