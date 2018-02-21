@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225r9m4axjeJxtk7oP3ocnqF5HWk7KDfZU8qTCwFX9WwD/zruC/ftqocSyq56TOOHnDc12ZR
-ARC-Seal: i=1; a=rsa-sha256; t=1519217170; cv=none;
+X-Google-Smtp-Source: AH8x227aGK/j9SpQQrcKYCgqX3Ij3NqfumLp9v72nntppIWLQCBlsn9ALsfHe+edt2bMW09HpDZb
+ARC-Seal: i=1; a=rsa-sha256; t=1519217167; cv=none;
         d=google.com; s=arc-20160816;
-        b=iL9mArFrqOonAlxpsTVxozuw+pdlijb9IPeV0V6MSpLHtK5dmefEl/6OEk0I2wfBxR
-         vxT5X14tn7p03xkT1R6EVJB2SmRi2hL2P9Y3pPWTHUAn7kTG/lO+uzKEyJVwRmIOUV4v
-         1DL0dlNl72cU7AFQ1kxhN01k7wJfXIMG8hdCHqLtVd2I2zECa40Y8+RJPISuvBBU9UmV
-         Yg8gAbFs7TlJk8R7NyQrc6lKcn4g7Bjwq1fP5tO3ndXctf3IvkqoIGc7L3JF+al2p5UG
-         gRTp9e0uYOiWZcKxfRN+HRhBBfEMAH5i4uc1SlRL3uobuhlIHlYtrmYCWxhmTFGbVBA4
-         Doew==
+        b=clsTZoDbzDiHgKMoqX+7KDJuNhONT1utIA/qEfU58bOKHWIR20BTM449AweyXlvdyT
+         08cswfm3p4F/1j81Iy7GByS2FksOFkWCtNCtji7T3ldtFpjuBcX/Jbedq2Z6p3yoc6d+
+         9eyZFxmzK0vej/3sNWsev4Kwyr2tk5nen1sqcwvLolBCD6h4gsEAYxzifkBhqnpxp0/U
+         /64Ceu9uSuS6Ljm5t+1aXJQ/Dd8ECPq64UMX1qIxglVNYrQSOUuTMXcnu3cX9/1n1FqJ
+         ZNylt60pY9faekjWuRbDTWgNTnYAfJLAQ6C0RhMdSPfC10rHBWrjv22RUuzpWYtPyOw4
+         EpJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0vHGljW7My4HCiOtfSVginrNYPCtKFPHhj6UHQ7zpmg=;
-        b=e9ofIKmTojegOBh2vyLtexK+eTXFVdJ2TXhCnsgkvkId1J/7BSVjqOWJdxuj72y2NW
-         h+8QiJYugyb0mzl/fDgLHvQWMr1KFtIZLO1RzfWjB3KO6UcCLcovl3vTfyVRJFREazp1
-         Lo+yg//sDQCe1M+YambRkf1a7h1e7C1dExrEARt8dfG+x6OW2LVdUy3HNbJdRyo/m33Z
-         gJ4rZkb6UTB2J3XWkntnzl0LgzO/3Q32Y3kRSn9eXVrNdG+9fhZhutfG+mpOMQTFjpJF
-         LoxnpQebrGdy0E2OvBsNWSIuvIxK2G8TgVSqya65NnKhNt+N2pr+HUuLN88SkTWHUCQb
-         8aww==
+        bh=gbrpzSUuv6uhYnqmfPSbrrY6QvG229JRzUNLvhzgpR0=;
+        b=eH4cD6kn+CtgRkjS52pNGd6C41TTBqLp7UK350EGpiVRrOsdmnLoqD1LG5GKO1VYP2
+         thEQ19cnkEZZnobGW/rzdxgmjmJoJK/IuCA4CTBme8BnS6kAg+8Pcf7Q060SeljOGm2z
+         O/+vPCjEqyUNUlCfml9ayn7sKz2FbAq6A2fgsNXQzFBJqhdThJwlReKMjailP9QOwJ/Q
+         uG/kXp4AHE1WtZgKaZ7FaJT6s3T9ChgZRu5ywUerTnA6ZvurGiAKspWX1uBfHpxoJsob
+         tTxdzU5UZrYmtCo6rX2i92eNGkDkCdNI3TUDPqbruljTcrh6dc5c5rQm+QDlAWzn1ddS
+         V/gQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.4 06/33] arm: spear13xx: Fix dmas cells
-Date: Wed, 21 Feb 2018 13:44:49 +0100
-Message-Id: <20180221124409.875789417@linuxfoundation.org>
+	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 26/33] ALSA: seq: Fix racy pool initializations
+Date: Wed, 21 Feb 2018 13:45:09 +0100
+Message-Id: <20180221124410.970901445@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014663549542696?=
-X-GMAIL-MSGID: =?utf-8?q?1593014663549542696?=
+X-GMAIL-THRID: =?utf-8?q?1593014660626611900?=
+X-GMAIL-MSGID: =?utf-8?q?1593014660626611900?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,70 +49,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit cdd10409914184c7eee5ae3e11beb890c9c16c61 upstream.
+commit d15d662e89fc667b90cd294b0eb45694e33144da upstream.
 
-The "dmas" cells for the designware DMA controller need to have only 3
-properties apart from the phandle: request line, src master and
-destination master. But the commit 6e8887f60f60 updated it incorrectly
-while moving from platform code to DT. Fix it.
+ALSA sequencer core initializes the event pool on demand by invoking
+snd_seq_pool_init() when the first write happens and the pool is
+empty.  Meanwhile user can reset the pool size manually via ioctl
+concurrently, and this may lead to UAF or out-of-bound accesses since
+the function tries to vmalloc / vfree the buffer.
 
-Cc: stable@vger.kernel.org # v3.10+
-Fixes: 6e8887f60f60 ("ARM: SPEAr13xx: Pass generic DW DMAC platform data from DT")
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+A simple fix is to just wrap the snd_seq_pool_init() call with the
+recently introduced client->ioctl_mutex; as the calls for
+snd_seq_pool_init() from other side are always protected with this
+mutex, we can avoid the race.
+
+Reported-by: 范龙飞 <long7573@126.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/dma/snps-dma.txt |    2 +-
- arch/arm/boot/dts/spear1340.dtsi                   |    4 ++--
- arch/arm/boot/dts/spear13xx.dtsi                   |    6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ sound/core/seq/seq_clientmgr.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/dma/snps-dma.txt
-+++ b/Documentation/devicetree/bindings/dma/snps-dma.txt
-@@ -58,6 +58,6 @@ Example:
- 		interrupts = <0 35 0x4>;
- 		status = "disabled";
- 		dmas = <&dmahost 12 0 1>,
--			<&dmahost 13 0 1 0>;
-+			<&dmahost 13 1 0>;
- 		dma-names = "rx", "rx";
- 	};
---- a/arch/arm/boot/dts/spear1340.dtsi
-+++ b/arch/arm/boot/dts/spear1340.dtsi
-@@ -141,8 +141,8 @@
- 				reg = <0xb4100000 0x1000>;
- 				interrupts = <0 105 0x4>;
- 				status = "disabled";
--				dmas = <&dwdma0 0x600 0 0 1>, /* 0xC << 11 */
--					<&dwdma0 0x680 0 1 0>; /* 0xD << 7 */
-+				dmas = <&dwdma0 12 0 1>,
-+					<&dwdma0 13 1 0>;
- 				dma-names = "tx", "rx";
- 			};
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1012,7 +1012,7 @@ static ssize_t snd_seq_write(struct file
+ {
+ 	struct snd_seq_client *client = file->private_data;
+ 	int written = 0, len;
+-	int err = -EINVAL;
++	int err;
+ 	struct snd_seq_event event;
  
---- a/arch/arm/boot/dts/spear13xx.dtsi
-+++ b/arch/arm/boot/dts/spear13xx.dtsi
-@@ -100,7 +100,7 @@
- 			reg = <0xb2800000 0x1000>;
- 			interrupts = <0 29 0x4>;
- 			status = "disabled";
--			dmas = <&dwdma0 0 0 0 0>;
-+			dmas = <&dwdma0 0 0 0>;
- 			dma-names = "data";
- 		};
+ 	if (!(snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT))
+@@ -1027,11 +1027,15 @@ static ssize_t snd_seq_write(struct file
  
-@@ -288,8 +288,8 @@
- 				#size-cells = <0>;
- 				interrupts = <0 31 0x4>;
- 				status = "disabled";
--				dmas = <&dwdma0 0x2000 0 0 0>, /* 0x4 << 11 */
--					<&dwdma0 0x0280 0 0 0>;  /* 0x5 << 7 */
-+				dmas = <&dwdma0 4 0 0>,
-+					<&dwdma0 5 0 0>;
- 				dma-names = "tx", "rx";
- 			};
+ 	/* allocate the pool now if the pool is not allocated yet */ 
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+-		if (snd_seq_pool_init(client->pool) < 0)
++		mutex_lock(&client->ioctl_mutex);
++		err = snd_seq_pool_init(client->pool);
++		mutex_unlock(&client->ioctl_mutex);
++		if (err < 0)
+ 			return -ENOMEM;
+ 	}
  
+ 	/* only process whole events */
++	err = -EINVAL;
+ 	while (count >= sizeof(struct snd_seq_event)) {
+ 		/* Read in the event header from the user */
+ 		len = sizeof(event);
