@@ -1,344 +1,172 @@
-Return-Path: <idryomov@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519229266; cv=none;
+Return-Path: <BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org>
+X-Google-Smtp-Source: AH8x227p2RIoAdTcagFEBPw4OpARSREcEUAQezlujCbffDvoHrV20uRJDx72o0o9Yg4vEkkYO4Ag
+ARC-Seal: i=1; a=rsa-sha256; t=1519210813; cv=none;
         d=google.com; s=arc-20160816;
-        b=BiqxAhl+J4vGdxAQi0riFqkSS0TpPWoBg3SiKBHczu5LClcK4ppRSRviRRqK4iH+Uj
-         CpspyDEr3ldvBkGCsObFwZPx5R0UYZEcMJ0ZUM08D053okQwBKHTM7bh8nVpowJ4XR+1
-         TH/G259Dmyod4gquiMYbrlQwVUo8gKgsQqdR8fD48+nyiYAFd57FWhr1EvcXWdMwbUDZ
-         wK9tgdGWfZr+oqJQTdFcj+jj+UQJ7ZefQCqnf/4glM7C/cMNzgzcydQiWdZDQX8dtJUf
-         5B3hH3KF8CQQYI5wobSNbpqAhJBoIhH6u0ag0AG6t3xYEv9JqLCf6POlYzlxZM3oGPl0
-         1o5A==
+        b=k1d+64ofxZ3l4Otm5mFeNs/4TU9JRvuWOkoVdD0zsfQ+aiJbYXJNjDkz6E7GYuOwdA
+         EEQ5qpKnfWLy4fZB+maBnem2+XdOrRmJegumWZ4dZhfnqprMQLlLW1Gr35/gcjy2tmN4
+         ziUadwv2kML4mVW1WaOk8n7B1B7Q3ZEv8k8OnkOgqisB/BZpaVHtnUFPQlmptu900SO6
+         Swa7WCPPb5vFSFTpeA3Z7cq4pHSxUVFkmY0qqDIro9TFLyXxT9ECn44S4KtcossjKZAK
+         cx3sRysO/7t4QC4bZKc53YdvMlVzDkfkFNCXnGp1ixD0pTpdao3gSPzrV4pet9i7Sgxf
+         b/uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Muf93tsKc0/a8SBCjTPfJPwkuH3X6plZ5UKcDb/30Mo=;
-        b=NkPBXk5Xn+i7iwGugjd+wgUAZnEqesVlQnQXYmc6wbWRjPCSBlR8Kt5jgoXVybZzCZ
-         zrIZBFGqnMpfb3qKWgl6fqskaDS4yKKKoWXkpZ1ipZQvnwXELcyNXZdFTEy8Tu7YhBJF
-         iMWSylbjkSSzoWms/jaFTkj4vXfKTcbImQkX1+J2/M8S8bwN0Rh5UX1SBq5sFy0TodVi
-         t7gD/YVQl3mtbzP3FHw1tnW6lh3WdOPbaVPERST8wQltfzVICV5j6/SBLOoOTgclm51+
-         fh5y23cpLER60QDIj9iV14xQnmnm9Hw1ekIEF4Clfru2jxnVo0U9L5aRuim4Y+H0Brow
-         FYEQ==
+        h=mime-version:date:face:references:in-reply-to:to:from:subject
+         :message-id:dkim-signature:arc-authentication-results;
+        bh=gulcejs6qe165++yQJwsVWzf6AmthCl5b8LaXGAazDo=;
+        b=xyEmrv9Cu8DOfaE+rRqtL2Kg+4GIp+gWIDZpERcR8Ja78+o8xBe9gJxE1zpdkGSHQp
+         cFAGF25WCTZjQvvqZOT+fR847v29so1/N/tJJjfp8krVQMsy6S9tuV5X5SwmAyrc9Qrc
+         11loX+uH/Mv02DdARlWCbFEXl8EYhuKW4XoBvVyb78rf0U1lQkR4SGKWXOEcYg8vhOKd
+         FcQUfTe9JKl5utZYYnWCrs5dt05U3ufu2QrqFrmiTdPJ6t4sjugA2p7nTUfvvf6GRhPp
+         p1K25PrpvS0Kek8Kb2yJIMq1FOcWEDFlDdvBaW71ceaAIB8IANbFQGlrRnqcPyJx9tx9
+         5WjA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JudIFZr9;
-       spf=pass (google.com: domain of idryomov@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=idryomov@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=ge4p5ULz;
+       spf=pass (google.com: best guess record for domain of batv+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JudIFZr9;
-       spf=pass (google.com: domain of idryomov@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=idryomov@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x226yvJTcs49nfmICvAg+ewIyxy3Y5G5atla1ezVuDIVbR/SVPCdRhpn6vOUsrtCOJEh5SUKbkw2BSPXqlvG+urI=
-MIME-Version: 1.0
-In-Reply-To: <20180220090859.GA22737@mordor.localdomain>
-References: <20180220090859.GA22737@mordor.localdomain>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 21 Feb 2018 17:07:45 +0100
-Message-ID: <CAOi1vP8qU421g=3-kTVLGLV02o7kxSPXrpd-uHAaXgO=BZ779g@mail.gmail.com>
-Subject: Re: [PATCH] block: rbd: update sysfs interface
-To: Aishwarya Pant <aishpant@gmail.com>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-	Ceph Development <ceph-devel@vger.kernel.org>, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=ge4p5ULz;
+       spf=pass (google.com: best guess record for domain of batv+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org
+Message-ID: <1519210754.6482.43.camel@infradead.org>
+Subject: Re: [tip:x86/pti] objtool, retpolines: Integrate objtool with
+ retpoline support more closely
+From: David Woodhouse <dwmw2@infradead.org>
+To: peterz@infradead.org, hpa@zytor.com, luto@kernel.org,
+ arjan@linux.intel.com,  tglx@linutronix.de, dan.j.williams@intel.com,
+ torvalds@linux-foundation.org,  gregkh@linuxfoundation.org,
+ mingo@kernel.org, bp@alien8.de,  linux-kernel@vger.kernel.org,
+ dave.hansen@linux.intel.com, jpoimboe@redhat.com,
+ linux-tip-commits@vger.kernel.org
+In-Reply-To: <tip-b4879c9b99a43e6c580d563f292a569a016af2a4@git.kernel.org>
+References: <tip-b4879c9b99a43e6c580d563f292a569a016af2a4@git.kernel.org>
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-CtEaLTaYWA1XtRuUFs1W"
+Date: Wed, 21 Feb 2018 10:59:14 +0000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592910409201593402?=
-X-GMAIL-MSGID: =?utf-8?q?1593027347482572037?=
+X-GMAIL-THRID: =?utf-8?q?1593007031866628709?=
+X-GMAIL-MSGID: =?utf-8?q?1593007998166247217?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 10:08 AM, Aishwarya Pant <aishpant@gmail.com> wrote:
-> The existing sysfs interface has been updated to be in the same format
-> as described in Documentation/ABI/README. This will be useful for
-> scripting and tracking changes in the ABI. Attributes have been grouped
-> by functionality and/or the date on which they were added.
->
-> There are a couple of more changes:
-> - The attributes have been annotated with file permissions RO/RW/WO.
-> - Added description of the bus attribute supported_features
->
-> Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-rbd | 202 +++++++++++++++++++-------------
->  1 file changed, 122 insertions(+), 80 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-rbd b/Documentation/ABI/testing/sysfs-bus-rbd
-> index f208ac58d613..9549e9b0fcf8 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-rbd
-> +++ b/Documentation/ABI/testing/sysfs-bus-rbd
-> @@ -1,121 +1,163 @@
-> -What:          /sys/bus/rbd/
-> -Date:          November 2010
-> +What:          /sys/bus/rbd/add
-> +What:          /sys/bus/rbd/remove
 
-Hi Aishwarya,
+--=-CtEaLTaYWA1XtRuUFs1W
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-No need to group "add" and "remove" together.  Do them separate, like
-"add_single_major" and "remove_single_major".
-
-> +Date:          Jan, 2012
-> +KernelVersion: v3.10
-
-I think "add" and "remove" go back to v2.6.37.
-
->  Contact:       Yehuda Sadeh <yehuda@newdream.net>,
->                 Sage Weil <sage@newdream.net>
-
-Remove Yehuda from the contact list here and everywhere else.
-
->  Description:
-> +               add : (WO) Add rbd block device.
->
-> -Being used for adding and removing rbd block devices.
-> +               Usage: <mon ip addr> <options> <pool name> <rbd image name> [<snap name>]
->
-> -Usage: <mon ip addr> <options> <pool name> <rbd image name> [<snap name>]
-> +                $ echo "192.168.0.1 name=admin rbd foo" > /sys/bus/rbd/add
->
-> - $ echo "192.168.0.1 name=admin rbd foo" > /sys/bus/rbd/add
-> +               The snapshot name can be "-" or omitted to map the image
-> +               read/write. A <dev-id> will be assigned for any registered block
-> +               device. If snapshot is used, it will be mapped read-only.
->
-> -The snapshot name can be "-" or omitted to map the image read/write. A <dev-id>
-> -will be assigned for any registered block device. If snapshot is used, it will
-> -be mapped read-only.
-> +               remove: (WO) Remove rbd block device.
->
-> -Usage: <dev-id> [force]
-> +               Usage: <dev-id> [force]
->
-> - $ echo 2 > /sys/bus/rbd/remove
-> +                $ echo 2 > /sys/bus/rbd/remove
+On Wed, 2018-02-21 at 02:34 -0800, tip-bot for Peter Zijlstra wrote:
+>=20
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -489,6 +489,11 @@ KBUILD_CFLAGS +=3D $(CLANG_TARGET) $(CLANG_GCC_TC)
+> =C2=A0KBUILD_AFLAGS +=3D $(CLANG_TARGET) $(CLANG_GCC_TC)
+> =C2=A0endif
+> =C2=A0
+> +ifneq ($(call cc-option,-mindirect-branch=3Dthunk-extern -mindirect-bran=
+ch-register),)
+> +=C2=A0 CC_HAS_RETPOLINE :=3D 1
+> +endif
+> +export CC_HAS_RETPOLINE
 > +
-> +               Optional "force" argument which when passed will wait for
-> +               running requests and then unmap the image. Requests sent to the
-> +               driver after initiating the removal will be failed. (August
-> +               2016, since 4.9.)
->
-> -Optional "force" argument which when passed will wait for running requests and
-> -then unmap the image. Requests sent to the driver after initiating the removal
-> -will be failed.  (August 2016, since 4.9.)
->
->  What:          /sys/bus/rbd/add_single_major
-> -Date:          December 2013
-> -KernelVersion: 3.14
-> -Contact:       Sage Weil <sage@inktank.com>
-> -Description:   Available only if rbd module is inserted with single_major
-> +Date:          Dec, 2013
-> +KernelVersion: v3.14
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               (WO) Available only if rbd module is inserted with single_major
->                 parameter set to true.
-> -               Usage is the same as for /sys/bus/rbd/add.  If present,
-> +
-> +               Usage is the same as for /sys/bus/rbd/add. If present, this
->                 should be used instead of the latter: any attempts to use
-> -               /sys/bus/rbd/add if /sys/bus/rbd/add_single_major is
-> -               available will fail for backwards compatibility reasons.
-> +               /sys/bus/rbd/add if /sys/bus/rbd/add_single_major is available
-> +               will fail for backwards compatibility reasons.
-> +
->
->  What:          /sys/bus/rbd/remove_single_major
-> -Date:          December 2013
-> -KernelVersion: 3.14
-> -Contact:       Sage Weil <sage@inktank.com>
-> -Description:   Available only if rbd module is inserted with single_major
-> +Date:          Dec, 2013
-> +KernelVersion: v3.14
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               (WO) Available only if rbd module is inserted with single_major
->                 parameter set to true.
-> -               Usage is the same as for /sys/bus/rbd/remove.  If present,
-> +
-> +               Usage is the same as for /sys/bus/rbd/remove. If present, this
->                 should be used instead of the latter: any attempts to use
->                 /sys/bus/rbd/remove if /sys/bus/rbd/remove_single_major is
->                 available will fail for backwards compatibility reasons.
->
-> -Entries under /sys/bus/rbd/devices/<dev-id>/
-> ---------------------------------------------
-> -
-> -client_addr
-> -
-> -       The ceph unique client entity_addr_t (address + nonce).
-> -       The format is <address>:<port>/<nonce>: '1.2.3.4:1234/5678' or
-> -       '[1:2:3:4:5:6:7:8]:1234/5678'.  (August 2016, since 4.9.)
-> -
-> -client_id
-> -
-> -       The ceph unique client id that was assigned for this specific session.
-> -
-> -cluster_fsid
-> -
-> -       The ceph cluster UUID.  (August 2016, since 4.9.)
-> -
-> -config_info
-> -
-> -       The string written into /sys/bus/rbd/add{,_single_major}.  (August
-> -       2016, since 4.9.)
-> -
-> -features
-> -
-> -       A hexadecimal encoding of the feature bits for this image.
->
-> -major
-> -
-> -       The block device major number.
-> -
-> -minor
-> +What:          /sys/bus/rbd/supported_features
-> +Date:          Mar, 2017
-> +KernelVersion: v4.11
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               (RO) Displays the features supported by the client software
 
-the client software implementation -> rbd module
+That isn't the same as the check in arch/x86/Makefile.
 
-> +               implementation so that userspace can generate meaningful error
-> +               messages and spell out unsupported features that need to be
-> +               disabled.
-> +
-> +
-> +What:          /sys/bus/rbd/devices/<dev-id>/size
-> +What:          /sys/bus/rbd/devices/<dev-id>/refresh
-> +What:          /sys/bus/rbd/devices/<dev-id>/current_snap
-> +What:          /sys/bus/rbd/devices/<dev-id>/name
-> +What:          /sys/bus/rbd/devices/<dev-id>/major
-> +What:          /sys/bus/rbd/devices/<dev-id>/client_id
-> +Date:          Aug, 2010
-> +KernelVersion: v2.6.37
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               size:           (RO) The size (in bytes) of the mapped block
-> +                               device.
->
-> -       The block device minor number.  (December 2013, since 3.14.)
-> +               refresh:        (WO) Writing to this file will reread the image
-> +                               header data and set all relevant data structures
-> +                               accordingly.
->
-> -name
-> +               current_snap:   (RO) The current snapshot for which the device
-> +                               is mapped.
->
-> -       The name of the rbd image.
-> +               name:           (RO) The name of the rbd image.
->
-> -image_id
-> +               major:          (RO) The block device major number.
->
-> -       The unique id for the rbd image.  (For rbd image format 1
-> -       this is empty.)
-> +               client_id:      (RO) The ceph unique client id that was assigned
-> +                               for this specific session.
->
-> -pool
->
-> -       The name of the storage pool where this rbd image resides.
-> -       An rbd image name is unique within its pool.
-> +What:          /sys/bus/rbd/devices/<dev-id>/pool
+--=-CtEaLTaYWA1XtRuUFs1W
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-"pool" also goes back to v2.6.37.
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMjExMDU5MTRaMC8GCSqG
+SIb3DQEJBDEiBCAtD3zZ/p+/cpHkwKdkW82VqUPkJg0SSW93fiMLMooVQjCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAJc6biq+vfbA
+S8yiikN488RCeMIYlY41YsjRKjMBV64CQK/zIKCvisZz25dZT3PDf4p32Z3zCKX/j54x59jGelAA
+SDEN/KA/kRmu2x2ko/rpjgSz7+pl86CDkXenoPsJloDz8s7XFyV3Vd5S/poDCrxdzm/Gdqo9R4vP
+mrP4V1uKHmt8axTkjnofFmU3XI9LJQnKYI3J7hsUzoY1EFnE8qgn+XIdt1430BBg8dV2zQqKIbH2
+7aQyBtUd6XLLFiIIrzDPvkC3PPOssl8z9SdrtgwxO4+BPLDDd8HoxUz4fBjO45qpzITKrHNLj2Xb
+EpuD3ssXZ8ibfNfgMu5vITr/Zi0AAAAAAAA=
 
-> +What:          /sys/bus/rbd/devices/<dev-id>/image_id
 
-"image_id" was added in v3.7.
-
-Having these documented is nice, but wrong versions and dates are worse
-than none at all.  Please cross check the rest with git log/blame.
-
-> +What:          /sys/bus/rbd/devices/<dev-id>/features
-> +What:          /sys/bus/rbd/devices/<dev-id>/pool_id
-> +Date:          Jul, 2012
-> +KernelVersion: v3.10
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               pool:           (RO) The name of the storage pool where this rbd
-> +                               image resides. An rbd image name is unique
-> +                               within its pool.
->
-> -pool_id
-> +               image_id:       (WO) The unique id for the rbd image. (For rbd
-> +                               image format 1 this is empty.)
-
-image_id should be RO.
-
->
-> -       The unique identifier for the rbd image's pool.  This is
-> -       a permanent attribute of the pool.  A pool's id will never
-> -       change.
-> +               features:       (RO) A hexadecimal encoding of the feature bits
-> +                               for this image.
->
-> -size
-> +               pool_idr:       (RO) The unique identifier for the rbd image's
-> +                               pool. This is a permanent attribute of the pool.
-> +                               A pool's id will never change.
-
-pool_idr -> pool_id
-
->
-> -       The size (in bytes) of the mapped block device.
->
-> -refresh
-> +What:          /sys/bus/rbd/devices/<dev-id>/parent
-> +Date:          Oct, 2012
-> +KernelVersion: v3.10
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               (RO) Information identifying the chain of parent images in a
-> +               layered rbd image. Entries are separated by empty lines.
->
-> -       Writing to this file will reread the image header data and set
-> -       all relevant datastructures accordingly.
->
-> -current_snap
-> +What:          /sys/bus/rbd/devices/<dev-id>/minor
-> +Date:          Dec, 2013
-> +KernelVersion: v3.14
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               (RO) The block device minor number.
->
-> -       The current snapshot for which the device is mapped.
->
-> -snap_id
-> +What:          /sys/bus/rbd/devices/<dev-id>/snap_id
-> +What:          /sys/bus/rbd/devices/<dev-id>/config_info
-> +What:          /sys/bus/rbd/devices/<dev-id>/cluster_fsid
-> +What:          /sys/bus/rbd/devices/<dev-id>/client_addr
-> +Date:          Aug, 2016
-> +KernelVersion: v4.9
-> +Contact:       Yehuda Sadeh <yehuda@newdream.net>,
-> +               Sage Weil <sage@newdream.net>
-> +Description:
-> +               snap_id:        (RO) The current snapshot's id.
->
-> -       The current snapshot's id.  (August 2016, since 4.9.)
-> +               config_info:    (RO) The string written into
-> +                               /sys/bus/rbd/add{,_single_major}.
->
-> -parent
-> +               cluster_fsid:   (RO) The ceph cluster UUID.
->
-> -       Information identifying the chain of parent images in a layered rbd
-> -       image.  Entries are separated by empty lines.
-> +               client_addr:    (RO) The ceph unique client
-> +                               entity_addr_t (address + nonce). The format is
-> +                               <address>:<port>/<nonce>: '1.2.3.4:1234/5678' or
-> +                               '[1:2:3:4:5:6:7:8]:1234/5678'.
-
-Thanks,
-
-                Ilya
+--=-CtEaLTaYWA1XtRuUFs1W--
