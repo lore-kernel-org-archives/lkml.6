@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225o/011GVvLCHKKyjU+U4XPV6x0+uF+tjo2R/I3jMrA/rI8MKNGpy7LuwfmF2TxKOF2qVrx
-ARC-Seal: i=1; a=rsa-sha256; t=1519218676; cv=none;
+X-Google-Smtp-Source: AH8x224OgS6MsRSqcXeoRmEEfB77LYIjP4o9gXLOAASKd7iO/ZPHrPyLms3dDSh/w8uFLejlWW/C
+ARC-Seal: i=1; a=rsa-sha256; t=1519218675; cv=none;
         d=google.com; s=arc-20160816;
-        b=dOm2lgTxkTqPFrhqoCNR8T7fhMWXr0x7uLxIbYxZ54EqQLkvYCZ2LPpRs/iTR0FYHB
-         P6TlYP5+toZ4rz2Hv8THjU2k3AWWCWBsljB69Q9YcKz0CV7sDA5rxsgFK5dKOSjLCJMo
-         QI3tReGiQQh8SPpDCwueeHwFZc+TUbalb0LaifwhpGeeEMQggrDxC7Ny7pLc+52Qo3JM
-         b+ThJjGJ8KS9skEG+U4Qx9Q2r9di95e23SeKPs7bxZ+tjKmLIJAsEqWSatd8OQ8en/EE
-         /0uEw7yf/TefOa4JAZu5wK02QSQ7NccmwiSHSPHGtGFLVarsXvubQiwtQygmH+MBdnHP
-         gDhA==
+        b=hU5ErefBnUTgPfvexl3DlmJx/E6xwoVtylC0Qy7h/8eENu/e0GOvZoCZvDc332qm1S
+         yN8SB0XVJKKs1WFu5IYSPXaDUGLET0UHNBfBCcUkFo5rt5B9yiv0Ewafi+uVsOyT9p1g
+         djg7kCEhx27WlQ9sp8jewF/T8TlVJSOvcM5WVr9GOPHacXwzFaxs7XfYmEHSsFH80mWU
+         SVNOi8ukop58XH3Bh4lhNOy4jUn2SPDkFNZWqMZaFbk3/KpiX3uZ3HXSmhg8Mb9YJxOG
+         A2KEdNEqFcOs+NpdIkfWB8sxZXtT9CT51KBms4VXsIp49ms9XqtHyVS4tjLXcmD6Aq0M
+         cwGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Mtd7ZOzmarsTz80pEViqRLcNd/ScEk4BTZFljAiWY/o=;
-        b=0ealFl5Ep2SiIh4+WZaCBIOtjCtYbM0ujC7fQZunhfLim9Ai7WtQS8M5KkcwVwlR2J
-         cUp5Vxzs/vzC+I6VKvzkGGiNCYHhpbqtKeHomNKCMpxSKwIBxrv18DUjWTLGG4WULC8E
-         9krlJGy9vB6KR3FU6vIu6pRjewluVhZ7MZARd3y0Um+cKgxS87eyddG1yVXZMfUOVA+s
-         U3CzRv6jWo771KDEOMRA4EsJxMWCjwEvD4cbw10ux+Urk2VPCZsRYEmyYtZoqmPJKiM6
-         YZ4ORxsJy9xSa3qaaHVWGKmRwyJvFEqbSs7jUPvLgBYDX5O36JEghNQhudROgpdQc43e
-         v1Hw==
+        bh=IeqjPyG8/A5sAZbMXgGQwLXU/DaJ/OATZa5WlQ+IkTI=;
+        b=EYhUifvdDeyv1L2G7WtR8EW8IgAwNjMIyjYCljxnIuxxgmycJJbltN4f4yoFHuVpHk
+         Z3hCQu4dnpvsuKVs3DYUVaxxgV1KLMTwsdvbHy9VY+83uHac+P9zIdqfsZ536xxyx6QD
+         b34FRpFKK8GekzMW4KNxH457hoY7Hd9XxLDo08ySBgyVBTgicZ44H8UEz/BcnW237Tst
+         hV6oAy2xmmR2cV0dR68IsvUapdTLQon8Ds+btlnRqBAGoLI1oHS71cslZFxwL9zaJ108
+         d3MFdS9YpOr6B5xE0Sv3eV7I1ExwfuTvpobiL17u9iqyzKSqNGUEp/hndz5qTgtSBKqg
+         UWqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Simon Gaiser <simon@invisiblethingslab.com>,
-	Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.15 122/163] xen: Fix {set,clear}_foreign_p2m_mapping on autotranslating guests
-Date: Wed, 21 Feb 2018 13:49:11 +0100
-Message-Id: <20180221124536.845877001@linuxfoundation.org>
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jason Dillaman <dillaman@redhat.com>
+Subject: [PATCH 4.15 121/163] rbd: whitelist RBD_FEATURE_OPERATIONS feature bit
+Date: Wed, 21 Feb 2018 13:49:10 +0100
+Message-Id: <20180221124536.802226088@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015731101166414?=
-X-GMAIL-MSGID: =?utf-8?q?1593016242227288790?=
+X-GMAIL-THRID: =?utf-8?q?1593015728324035230?=
+X-GMAIL-MSGID: =?utf-8?q?1593016242019317136?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Simon Gaiser <simon@invisiblethingslab.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 781198f1f373c3e350dbeb3af04a7d4c81c1b8d7 upstream.
+commit e573427a440fd67d3f522357d7ac901d59281948 upstream.
 
-Commit 82616f9599a7 ("xen: remove tests for pvh mode in pure pv paths")
-removed the check for autotranslation from {set,clear}_foreign_p2m_mapping
-but those are called by grant-table.c also on PVH/HVM guests.
+This feature bit restricts older clients from performing certain
+maintenance operations against an image (e.g. clone, snap create).
+krbd does not perform maintenance operations.
 
-Cc: <stable@vger.kernel.org> # 4.14
-Fixes: 82616f9599a7 ("xen: remove tests for pvh mode in pure pv paths")
-Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Jason Dillaman <dillaman@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/p2m.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/block/rbd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -694,6 +694,9 @@ int set_foreign_p2m_mapping(struct gntta
- 	int i, ret = 0;
- 	pte_t *pte;
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -124,11 +124,13 @@ static int atomic_dec_return_safe(atomic
+ #define RBD_FEATURE_STRIPINGV2		(1ULL<<1)
+ #define RBD_FEATURE_EXCLUSIVE_LOCK	(1ULL<<2)
+ #define RBD_FEATURE_DATA_POOL		(1ULL<<7)
++#define RBD_FEATURE_OPERATIONS		(1ULL<<8)
  
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return 0;
-+
- 	if (kmap_ops) {
- 		ret = HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,
- 						kmap_ops, count);
-@@ -736,6 +739,9 @@ int clear_foreign_p2m_mapping(struct gnt
- {
- 	int i, ret = 0;
+ #define RBD_FEATURES_ALL	(RBD_FEATURE_LAYERING |		\
+ 				 RBD_FEATURE_STRIPINGV2 |	\
+ 				 RBD_FEATURE_EXCLUSIVE_LOCK |	\
+-				 RBD_FEATURE_DATA_POOL)
++				 RBD_FEATURE_DATA_POOL |	\
++				 RBD_FEATURE_OPERATIONS)
  
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return 0;
-+
- 	for (i = 0; i < count; i++) {
- 		unsigned long mfn = __pfn_to_mfn(page_to_pfn(pages[i]));
- 		unsigned long pfn = page_to_pfn(pages[i]);
+ /* Features supported by this (client software) implementation. */
+ 
