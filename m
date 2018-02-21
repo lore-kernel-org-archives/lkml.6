@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2244GJ6Zl3wi042rs/wbpuJQgVIuiCq+XTclkDphiPDR9vcJwpShhodyFd0XBrM72boU//rm
-ARC-Seal: i=1; a=rsa-sha256; t=1519217808; cv=none;
+X-Google-Smtp-Source: AH8x224U4CpyEEuu2BCXo2KU5P3su7JA03LCwenCGGeBWzC/bufOPoNjo6FrNMa9+8Vdl2yF3RAj
+ARC-Seal: i=1; a=rsa-sha256; t=1519217805; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZS2L11wUNapLxs2geYEDnrU3lCUDTAFMmzwGJw8HSVXcYZdbegg8RY8okcYJ5mH62u
-         4TYky3JkofmJ/wpvsDpmKmpJ3uSIUBTMvZVloQ6atFU8DWMz1F/ymzmDA5JpQrMQilM6
-         3HGgS+rKZqx1azF56zgz5ZMYoy4JmKITSKnJ/Vm4EglX6SnHjBamJuGlH9N0n5yKeraI
-         CT8JyYuVO3wUO5+ROfLjgVOgXcFJzqdwhC8gdzvtgDLWTdnM1LWDinpF4sbVV3adqQCe
-         9K2Ek6mnurkjUnjQgSVTu3ndcFBqNaq7guVSs4YLKfPZkCY23bAOQ5qr6yGq74R31JL3
-         rIFg==
+        b=N0HD6tJeksIDnW6p7t45NyQAgxGKV+ci8nA72VrKDUkJkXO2o4mILZUv0VRmaRVFTA
+         v65vSooZsxnlGAA0h9dSbo0wkNcR0zBk1zvZSwwZa0/ZBMuqpGfsMzojz/CJTZIanRH6
+         /cAibU9eoeJj1C0SQm3P/YEHiRqQ04gSziMiSh5Gy1aVX8ufCAVs6245yIV9XDvK/gW5
+         Zj0jTcdfVFfqktWD7wIMZexF68S9H3IEO7d/TBnEaMMQNK/P3c9001Ay1xZN5I70djkM
+         yBfbEHVz7PNFs6u4m6rN3Y/oq8OlAsxA4xPZCj8bj7TrFeH8jsO1t8oCyqV9C/kHBdJG
+         XSuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wOV7net1OsVCIEkGpcMtx8y3j7Ml9Z6s7pUIUSpVo04=;
-        b=c2pWWgB6h413wekXFCh94u3eerP/QFHiHSkq9XqiuLapDinOI9e2ajQ+EiNHTc9zZV
-         wtaNBpc+5utRWTIo0SZmS3Tx+98uiqMA1xXPoh9FV4jFzSoPd6JvHK3uPkDxP2PMX1mI
-         ayccjanTgFitUmK30uM2W/sdSfNbMSLBAgFrNgM/QHPAu1s5oWTogFXQm2vuKSOToSlT
-         rBmJct7a9XvC9x7cC1Yg83tvSpP+QKOPDotYd+UzauGznQhrUUow/SIo9Fq8wmEPJ0oy
-         mtILu1TRbjitjDMkgKMeccYt5h8Xhtvk+FzGLHA5SLNyNbMLCihrzSTP+XZCyOo54hmC
-         0RFQ==
+        bh=xHl1gRg3tmq11JK7ndcSb6f9Q+/qZDFhMvzZbicORAk=;
+        b=rOYWRDmfLSGQ8tQ2Yez5xpKKFenrEBkdvoQE4ng2PuosF73M/QQu+QkB88Kp2dsKQy
+         jbdEsFHRLpaHcHo6EVXB/joAGrBI8HMEkwxtLw/Aa6B3IzJUaa0mtv5qmqfIjWUXAG9O
+         ssSQMeLVIgNW1Q1TqWkeQ4nuM0OLZHLg7+LeXL5qDzZHdBUW285/O9RFZvSmCdHk6XUZ
+         /C0XtiO2gQ9SCdib79hFTkydGm5ilpr9KmJFLW2i4bGknl7Uz95MaJtOfnV4dtJWqw3E
+         YPwp/GJsFnUbiw/UEEKAIwLyPrbpwv3tOG4dMTvDKFt0YTf5J8qUBCpeQq7zk0GK4DNy
+         Bb3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,24 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rui Wang <rui.y.wang@intel.com>,
+	Joe Konno <joe.konno@linux.intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	arjan@linux.intel.com,
+	bp@alien8.de,
+	dan.j.williams@intel.com,
 	dave.hansen@linux.intel.com,
+	dwmw2@infradead.org,
+	dwmw@amazon.co.uk,
+	hpa@zytor.com,
+	jpoimboe@redhat.com,
+	linux-tip-commits@vger.kernel.org,
+	luto@kernel.org,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 63/77] selftests/x86/mpx: Fix incorrect bounds with old _sigfault
-Date: Wed, 21 Feb 2018 13:49:12 +0100
-Message-Id: <20180221124434.872265094@linuxfoundation.org>
+Subject: [PATCH 4.9 62/77] x86/speculation: Add <asm/msr-index.h> dependency
+Date: Wed, 21 Feb 2018 13:49:11 +0100
+Message-Id: <20180221124434.818302526@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -44,8 +53,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015332922490474?=
-X-GMAIL-MSGID: =?utf-8?q?1593015332922490474?=
+X-GMAIL-THRID: =?utf-8?q?1593015329486886101?=
+X-GMAIL-MSGID: =?utf-8?q?1593015329486886101?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,89 +62,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rui Wang <rui.y.wang@intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 961888b1d76d84efc66a8f5604b06ac12ac2f978 upstream.
+commit ea00f301285ea2f07393678cd2b6057878320c9d upstream.
 
-For distributions with old userspace header files, the _sigfault
-structure is different. mpx-mini-test fails with the following
-error:
+Joe Konno reported a compile failure resulting from using an MSR
+without inclusion of <asm/msr-index.h>, and while the current code builds
+fine (by accident) this needs fixing for future patches.
 
-  [root@Purley]# mpx-mini-test_64 tabletest
-  XSAVE is supported by HW & OS
-  XSAVE processor supported state mask: 0x2ff
-  XSAVE OS supported state mask: 0x2ff
-   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
-    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
-  starting mpx bounds table test
-  ERROR: siginfo bounds do not match shadow bounds for register 0
-
-Fix it by using the correct offset of _lower/_upper in _sigfault.
-RHEL needs this patch to work.
-
-Signed-off-by: Rui Wang <rui.y.wang@intel.com>
+Reported-by: Joe Konno <joe.konno@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: arjan@linux.intel.com
+Cc: bp@alien8.de
+Cc: dan.j.williams@intel.com
 Cc: dave.hansen@linux.intel.com
-Fixes: e754aedc26ef ("x86/mpx, selftests: Add MPX self test")
-Link: http://lkml.kernel.org/r/1513586050-1641-1-git-send-email-rui.y.wang@intel.com
+Cc: dwmw2@infradead.org
+Cc: dwmw@amazon.co.uk
+Cc: gregkh@linuxfoundation.org
+Cc: hpa@zytor.com
+Cc: jpoimboe@redhat.com
+Cc: linux-tip-commits@vger.kernel.org
+Cc: luto@kernel.org
+Fixes: 20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
+Link: http://lkml.kernel.org/r/20180213132819.GJ25201@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/mpx-mini-test.c |   32 ++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -315,11 +315,39 @@ static inline void *__si_bounds_upper(si
- 	return si->si_upper;
- }
- #else
-+
-+/*
-+ * This deals with old version of _sigfault in some distros:
-+ *
-+
-+old _sigfault:
-+        struct {
-+            void *si_addr;
-+	} _sigfault;
-+
-+new _sigfault:
-+	struct {
-+		void __user *_addr;
-+		int _trapno;
-+		short _addr_lsb;
-+		union {
-+			struct {
-+				void __user *_lower;
-+				void __user *_upper;
-+			} _addr_bnd;
-+			__u32 _pkey;
-+		};
-+	} _sigfault;
-+ *
-+ */
-+
- static inline void **__si_bounds_hack(siginfo_t *si)
- {
- 	void *sigfault = &si->_sifields._sigfault;
- 	void *end_sigfault = sigfault + sizeof(si->_sifields._sigfault);
--	void **__si_lower = end_sigfault;
-+	int *trapno = (int*)end_sigfault;
-+	/* skip _trapno and _addr_lsb */
-+	void **__si_lower = (void**)(trapno + 2);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -6,6 +6,7 @@
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
++#include <asm/msr-index.h>
  
- 	return __si_lower;
- }
-@@ -331,7 +359,7 @@ static inline void *__si_bounds_lower(si
- 
- static inline void *__si_bounds_upper(siginfo_t *si)
- {
--	return (*__si_bounds_hack(si)) + sizeof(void *);
-+	return *(__si_bounds_hack(si) + 1);
- }
- #endif
+ #ifdef __ASSEMBLY__
  
