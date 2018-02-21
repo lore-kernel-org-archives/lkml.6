@@ -1,50 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeBUTAz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:00:55 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34581 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752578AbeBUTAx (ORCPT
+        id S1752809AbeBUTEb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:04:31 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:39288 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751745AbeBUTE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:00:53 -0500
-X-Google-Smtp-Source: AH8x225fvAHI3fPQwEe5nsAyNffn18Ig2xc517PohgDJh70nzSy1zrcGsmMhAoQo5etT6oarQXY1R+1wnIJmBCpKC0E=
+        Wed, 21 Feb 2018 14:04:29 -0500
+X-Google-Smtp-Source: AH8x226sebC9N+3VrfmhNvrYth6IlGKzINaGd0ymWRv09NxUEwWkPgjSZJ96kK2khM8tZ0rlvsUwtdRn25JMDHcPK0Y=
 MIME-Version: 1.0
-In-Reply-To: <20180221124707.26308-2-embedded24@evers-fischer.de>
-References: <20180221124707.26308-1-embedded24@evers-fischer.de> <20180221124707.26308-2-embedded24@evers-fischer.de>
+In-Reply-To: <20180221170748.27505-3-enric.balletbo@collabora.com>
+References: <20180221170748.27505-1-enric.balletbo@collabora.com> <20180221170748.27505-3-enric.balletbo@collabora.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Feb 2018 21:00:51 +0200
-Message-ID: <CAHp75VfgqqkLq0PbC0SBMCyCLqqoNZcUW0xngjacEL0VtAskmg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+Date: Wed, 21 Feb 2018 21:04:28 +0200
+Message-ID: <CAHp75Vdc1E1g7AYzASRZRfvsRsGFE6OT0+hD82YTfxMcnhGRrQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] platform/chrome: cros_ec_sysfs: introduce
+ to_cros_ec_dev define.
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+        kernel@collabora.com, groeck@chromium.org,
+        Gwendal Grignou <gwendal@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 2:47 PM, Rolf Evers-Fischer
-<embedded24@evers-fischer.de> wrote:
+On Wed, Feb 21, 2018 at 7:07 PM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> Add a define to get the cros_ec_dev from device and use it.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> Changes since v1:
+> - New in this series. Suggested by Andy Shevchenko.
 
-> This commit decreases the number of jump labels and ensures
-> that the next commit doesn't increase the number of occurrences
-> of 'kfree(func_name)'.
+We have an established tag
 
-> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-First of all, this shouldn't be here.
+>
+>  drivers/platform/chrome/cros_ec_sysfs.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+> index c03621e523a3..85bb9580439e 100644
+> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
+> @@ -34,6 +34,8 @@
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+>
+> +#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
+> +
+>  /* Accessor functions */
+>
+>  static ssize_t show_ec_reboot(struct device *dev,
+> @@ -70,8 +72,7 @@ static ssize_t store_ec_reboot(struct device *dev,
+>         int got_cmd = 0, offset = 0;
+>         int i;
+>         int ret;
+> -       struct cros_ec_dev *ec = container_of(dev,
+> -                                             struct cros_ec_dev, class_dev);
+> +       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+>
+>         msg = kmalloc(sizeof(*msg) + sizeof(*param), GFP_KERNEL);
+>         if (!msg)
+> @@ -132,8 +133,7 @@ static ssize_t show_ec_version(struct device *dev,
+>         struct cros_ec_command *msg;
+>         int ret;
+>         int count = 0;
+> -       struct cros_ec_dev *ec = container_of(dev,
+> -                                             struct cros_ec_dev, class_dev);
+> +       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+>
+>         msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+>         if (!msg)
+> @@ -231,8 +231,7 @@ static ssize_t show_ec_flashinfo(struct device *dev,
+>         struct ec_response_flash_info *resp;
+>         struct cros_ec_command *msg;
+>         int ret;
+> -       struct cros_ec_dev *ec = container_of(dev,
+> -                                             struct cros_ec_dev, class_dev);
+> +       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+>
+>         msg = kmalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+>         if (!msg)
+> --
+> 2.16.1
+>
 
-> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
 
-Looks like bipolar disorder?
-
-To the topic.
-This is a slow path and your change makes code slightly less readable
-b/c of patterns used in the kernel.
 
 -- 
 With Best Regards,
