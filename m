@@ -1,96 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932569AbeBUJkp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:40:45 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:55952 "EHLO
+        id S932599AbeBUJkv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:40:51 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:39273 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932349AbeBUJkn (ORCPT
+        with ESMTP id S932579AbeBUJkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:40:43 -0500
+        Wed, 21 Feb 2018 04:40:49 -0500
 From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To: linux-snps-arc@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 1/3] ARC: mcip: halt GFRC together with ARC cores
-Date: Wed, 21 Feb 2018 12:40:25 +0300
-Message-Id: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 3/3] ARC: setup cpu possible mask according to possible-cpus dts property
+Date: Wed, 21 Feb 2018 12:40:27 +0300
+Message-Id: <20180221094027.12674-3-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.9.3
+In-Reply-To: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
+References: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently GFRC is running regardless state of ARC cores in the SMP cluster.
-That means even if ARC cores are halted when doing JTAG debugging GFRC
-[our source of wall-time] continues to run giving us unexpected warnings
-once we allow ARC cores to run due to some tasks being stuck for too
-long.
+As we have option in u-boot to set CPU mask for running linux,
+we want to pass information to kernel about CPU cores should
+be brought up. So we patch kernel dtb in u-boot to set
+possible-cpus property.
 
-Starting from ARC HS v3.0 it's possible to tie GFRC to state of up-to 4
-ARC cores with help of GFRC's CORE register where we set a mask for
-cores which state we need to rely on.
+This also allows us to have correctly setuped MCIP debug mask.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
 ---
-NOTE: with this patch previous patch is not required:
-http://patchwork.ozlabs.org/patch/875091/
+ arch/arc/kernel/smp.c | 50 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
 
- arch/arc/kernel/mcip.c | 23 +++++++++++++++++++++++
- include/soc/arc/mcip.h |  2 ++
- 2 files changed, 25 insertions(+)
-
-diff --git a/arch/arc/kernel/mcip.c b/arch/arc/kernel/mcip.c
-index f61a52b..e87a4ea 100644
---- a/arch/arc/kernel/mcip.c
-+++ b/arch/arc/kernel/mcip.c
-@@ -22,10 +22,33 @@ static DEFINE_RAW_SPINLOCK(mcip_lock);
+diff --git a/arch/arc/kernel/smp.c b/arch/arc/kernel/smp.c
+index efe8b42..21d86c3 100644
+--- a/arch/arc/kernel/smp.c
++++ b/arch/arc/kernel/smp.c
+@@ -24,6 +24,7 @@
+ #include <linux/reboot.h>
+ #include <linux/irqdomain.h>
+ #include <linux/export.h>
++#include <linux/of_fdt.h>
  
- static char smp_cpuinfo_buf[128];
- 
-+/*
-+ * Set mask to halt GFRC if any online core in SMP cluster is halted.
-+ * Only works for ARC HS v3.0+, on earlier versions has no effect.
-+ */
-+static void mcip_update_gfrc_halt_mask(int cpu)
-+{
-+	struct mcip_bcr mp;
-+	u32 gfrc_halt_mask;
-+
-+	READ_BCR(ARC_REG_MCIP_BCR, mp);
-+
-+	if (!mp.gfrc)
-+		return;
-+
-+	__mcip_cmd(CMD_GFRC_READ_CORE, 0);
-+	gfrc_halt_mask = read_aux_reg(ARC_REG_MCIP_READBACK);
-+	gfrc_halt_mask |= BIT(cpu);
-+	__mcip_cmd_data(CMD_GFRC_SET_CORE, 0, gfrc_halt_mask);
-+}
-+
- static void mcip_setup_per_cpu(int cpu)
+ #include <asm/processor.h>
+ #include <asm/setup.h>
+@@ -47,6 +48,42 @@ void __init smp_prepare_boot_cpu(void)
  {
- 	smp_ipi_irq_setup(cpu, IPI_IRQ);
- 	smp_ipi_irq_setup(cpu, SOFTIRQ_IRQ);
-+
-+	/* Update GFRC halt mask as new CPU came online */
-+	mcip_update_gfrc_halt_mask(cpu);
  }
  
- static void mcip_ipi_send(int cpu)
-diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
-index c2d1b15..a156fa5 100644
---- a/include/soc/arc/mcip.h
-+++ b/include/soc/arc/mcip.h
-@@ -40,6 +40,8 @@ struct mcip_cmd {
++static int __init arc_get_cpu_map(const char *name, struct cpumask *cpumask)
++{
++	unsigned long dt_root = of_get_flat_dt_root();
++	const char *buf;
++
++	buf = of_get_flat_dt_prop(dt_root, name, NULL);
++	if (!buf)
++		return -EINVAL;
++
++	if (cpulist_parse(buf, cpumask))
++		return -EINVAL;
++
++	return 0;
++}
++
++/*
++ * Read from DeviceTree and setup cpu possible mask. If there is no
++ * "possible-cpus" property in DeviceTree pretend all [0..NR_CPUS-1] exist.
++ */
++static void __init arc_init_cpu_possible(void)
++{
++	struct cpumask cpumask;
++
++	if (arc_get_cpu_map("possible-cpus", &cpumask)) {
++		pr_warn("Failed to get possible-cpus from dtb, pretending all %u cpus exist\n",
++			NR_CPUS);
++
++		cpumask_setall(&cpumask);
++	}
++
++	if (!cpumask_test_cpu(0, &cpumask))
++		panic("Master cpu (cpu[0]) is missed in cpu possible mask!");
++
++	init_cpu_possible(&cpumask);
++}
++
+ /*
+  * Called from setup_arch() before calling setup_processor()
+  *
+@@ -58,10 +95,7 @@ void __init smp_prepare_boot_cpu(void)
+  */
+ void __init smp_init_cpus(void)
+ {
+-	unsigned int i;
+-
+-	for (i = 0; i < NR_CPUS; i++)
+-		set_cpu_possible(i, true);
++	arc_init_cpu_possible();
  
- #define CMD_GFRC_READ_LO		0x42
- #define CMD_GFRC_READ_HI		0x43
-+#define CMD_GFRC_SET_CORE		0x47
-+#define CMD_GFRC_READ_CORE		0x48
+ 	if (plat_smp_ops.init_early_smp)
+ 		plat_smp_ops.init_early_smp();
+@@ -70,16 +104,12 @@ void __init smp_init_cpus(void)
+ /* called from init ( ) =>  process 1 */
+ void __init smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * if platform didn't set the present map already, do it now
+ 	 * boot cpu is set to present already by init/main.c
+ 	 */
+-	if (num_present_cpus() <= 1) {
+-		for (i = 0; i < max_cpus; i++)
+-			set_cpu_present(i, true);
+-	}
++	if (num_present_cpus() <= 1)
++		init_cpu_present(cpu_possible_mask);
+ }
  
- #define CMD_IDU_ENABLE			0x71
- #define CMD_IDU_DISABLE			0x72
+ void __init smp_cpus_done(unsigned int max_cpus)
 -- 
 2.9.3
