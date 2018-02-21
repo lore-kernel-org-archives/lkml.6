@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2248goOLpvXCIFoD2yl87SUGUNXzii/37OSFNl/nuJJCEAGuy9sckIL5ZPvxh24MpGveyr2r
-ARC-Seal: i=1; a=rsa-sha256; t=1519217947; cv=none;
+X-Google-Smtp-Source: AH8x227FdFiujOrpjj0z9AOfl9l5aFf7Dl8nS/P/Kaf7XtmByqDeC+NspaXoehD2Puw4JuCxbUAY
+ARC-Seal: i=1; a=rsa-sha256; t=1519217945; cv=none;
         d=google.com; s=arc-20160816;
-        b=TmvRjCHyzfnDAIFs5PMqjh+6dK07dwSPcHLaGjWZhv3Y6pt5YTpZxbTv3TMCa84Yud
-         l73NKVKxqyRGS94427GQ2Bc6w8N7KywsJoyEWIWVqnglru1z7pFPaWt4Hr+4xZ40iw3a
-         yfaCXPhO3/C1K1Xhgkrw8Bd7wjMJRrHyPmwolrymp1QlOqInFW++7I7DMaKXI2CHucEh
-         54HMrVhBMfpGiuIGzr6/uLx6qvQdZwo32JVkTP6/53flwUncgr2dc9qS6QgxIgjLme3d
-         z+cIqnNUWY3zl3GCeIOF4BZvtEI5qkHB7OouTKtBbwfM7wmfOOZse44h9LlljtXqjMS7
-         Widg==
+        b=kG/ZCccvk/Ois3UblxwlsJKvHJ9ErfeNmic8GIMEIvz/aTm46J/hKdhYQFJbrn4ONu
+         mGSluo2WzgKJGzmnwZo2I/SDy6nvsOc/vKARwF3JZupMqCGCPc/WIMdNxPu+vT8snO8K
+         SkuMbkNUCl3WRu16zQeTFJngA568xQU06zA4tS7PwS7N+x2MJgIBvn/BJmfmwLxf7NdP
+         Hs+OIs++vXmqRhhqqv9HvKUE4INZ6it2jRrVzXZCQBt8YPTqB8pkM5AFiOpeif0DvjS9
+         goTdx9Jlpmp/9vGDDjLvJp5aH8MMKXebmIalGYxzUSUZO3RiyKntKIgKc8DgCoG7SzPj
+         OBYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AxoKYY8xBb9S9RlkrS8pZb3msP7Dx4hwi54jW05z6Uw=;
-        b=y3I6MNZzn/2R/PHtts2ll4sBsNfFf0l03RPQ2Cel+X9syyQj0+hH0RMtMAgSRanOsq
-         ftw+Uyiu2N3/++UyfT+0SgwgAJ2JmXa3cdNV41fBpK3fDNu4+DiwVu4uRJd5Y2uTB8lz
-         GEBcoZMeD+akzG1Rb1QDlE5uuDMpaoSbndhnGi7paY5dGSWe+thIbtNcEebtg6qr06YP
-         07WbdMp9fBNm7KdF5kg8qx4+NnoPe3RUJqBZ6v/yANY5f5/Lpi9PkRejOOwMtuVICQhr
-         /Sqo3QGZ/K1n4Fji4NCU3ublHk4TQ3Yum8uAJFksOsGsSQnCpsyAwZu9qeEtsD2PwpDq
-         /9Jw==
+        bh=pR6sla89HwPxSpGKYPlk1irQC40aHqJyO0vLDxGoJmI=;
+        b=BBQMjRMraz1dpN8WnREDIvuyIMTyzTT2fKRuY8XVRzT6zXi0hYzMsrUFdcuu/CH50a
+         XyS5WmufFPVlb+Tye4mMWtFVjEF5GZnb39jQQpUZWCM5fZ3tWRKk20rFE1giHrxElMhj
+         AO1/v6OX81fQZoQPxt1ePnwsBpbOChFBlLcHFo1vkeJkVsGfJRB/no747+rP5+eS/JN0
+         RPHsLE8q7lpkEipPWRMjXRUANM4QC/0E8UBwsnJZ00rgcT9S6urNyupf1XnYjG+UdbnK
+         4ELSdr0rP9RirTUHJQeuweNRUkD6Os1cdx2NR9xAxoZewwNXUQS2Oxt4TbP0BwLGFqqS
+         GxnA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
+	Jack Morgenstein <jackm@dev.mellanox.co.il>,
 	Leon Romanovsky <leon@kernel.org>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 006/167] IB/core: Fix two kernel warnings triggered by rxe registration
-Date: Wed, 21 Feb 2018 13:46:57 +0100
-Message-Id: <20180221124524.979876308@linuxfoundation.org>
+Subject: [PATCH 4.14 005/167] IB/mlx4: Fix incorrectly releasing steerable UD QPs when have only ETH ports
+Date: Wed, 21 Feb 2018 13:46:56 +0100
+Message-Id: <20180221124524.932553978@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015479048169875?=
-X-GMAIL-MSGID: =?utf-8?q?1593015479048169875?=
+X-GMAIL-THRID: =?utf-8?q?1593014606648192784?=
+X-GMAIL-MSGID: =?utf-8?q?1593015475741133609?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,112 +50,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 02ee9da347873699603d9ce0112a80b5dd69dea1 upstream.
+commit 852f6927594d0d3e8632c889b2ab38cbc46476ad upstream.
 
-Eliminate the WARN_ONs that create following two warnings when
-registering an rxe device:
+Allocating steerable UD QPs depends on having at least one IB port,
+while releasing those QPs does not.
 
-WARNING: CPU: 2 PID: 1005 at drivers/infiniband/core/device.c:449 ib_register_device+0x591/0x640 [ib_core]
-CPU: 2 PID: 1005 Comm: run_tests Not tainted 4.15.0-rc4-dbg+ #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:ib_register_device+0x591/0x640 [ib_core]
-Call Trace:
- rxe_register_device+0x3c6/0x470 [rdma_rxe]
- rxe_add+0x543/0x5e0 [rdma_rxe]
- rxe_net_add+0x37/0xb0 [rdma_rxe]
- rxe_param_set_add+0x5a/0x120 [rdma_rxe]
- param_attr_store+0x5e/0xc0
- module_attr_store+0x19/0x30
- sysfs_kf_write+0x3d/0x50
- kernfs_fop_write+0x116/0x1a0
- __vfs_write+0x23/0x120
- vfs_write+0xbe/0x1b0
- SyS_write+0x44/0xa0
- entry_SYSCALL_64_fastpath+0x23/0x9a
+As a result, when there are only ETH ports, the IB (RoCE) driver
+requests releasing a qp range whose base qp is zero, with
+qp count zero.
 
-WARNING: CPU: 2 PID: 1005 at drivers/infiniband/core/sysfs.c:1279 ib_device_register_sysfs+0x11d/0x160 [ib_core]
-CPU: 2 PID: 1005 Comm: run_tests Tainted: G        W        4.15.0-rc4-dbg+ #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:ib_device_register_sysfs+0x11d/0x160 [ib_core]
-Call Trace:
- ib_register_device+0x3f7/0x640 [ib_core]
- rxe_register_device+0x3c6/0x470 [rdma_rxe]
- rxe_add+0x543/0x5e0 [rdma_rxe]
- rxe_net_add+0x37/0xb0 [rdma_rxe]
- rxe_param_set_add+0x5a/0x120 [rdma_rxe]
- param_attr_store+0x5e/0xc0
- module_attr_store+0x19/0x30
- sysfs_kf_write+0x3d/0x50
- kernfs_fop_write+0x116/0x1a0
- __vfs_write+0x23/0x120
- vfs_write+0xbe/0x1b0
- SyS_write+0x44/0xa0
- entry_SYSCALL_64_fastpath+0x23/0x9a
+When SR-IOV is enabled, and the VF driver is running on a VM over
+a hypervisor which treats such qp release calls as errors
+(rather than NOPs), we see lines in the VM message log like:
 
-The code should accept either a parent pointer or a fully specified DMA
-specification without producing warnings.
+ mlx4_core 0002:00:02.0: Failed to release qp range base:0 cnt:0
 
-Fixes: 99db9494035f ("IB/core: Remove ib_device.dma_device")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Leon Romanovsky <leon@kernel.org>
+Fix this by adding a check for a zero count in mlx4_release_qp_range()
+(which thus treats releasing 0 qps as a nop), and eliminating the
+check for device managed flow steering when releasing steerable UD QPs.
+(Freeing ib_uc_qpns_bitmap unconditionally is also OK, since it
+remains NULL when steerable UD QPs are not allocated).
+
+Fixes: 4196670be786 ("IB/mlx4: Don't allocate range of steerable UD QPs for Ethernet-only device")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/device.c |   20 ++++++++++++++------
- drivers/infiniband/core/sysfs.c  |    1 -
- 2 files changed, 14 insertions(+), 7 deletions(-)
+ drivers/infiniband/hw/mlx4/main.c       |   13 +++++--------
+ drivers/net/ethernet/mellanox/mlx4/qp.c |    3 +++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -446,7 +446,6 @@ int ib_register_device(struct ib_device
- 	struct ib_udata uhw = {.outlen = 0, .inlen = 0};
- 	struct device *parent = device->dev.parent;
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2972,9 +2972,8 @@ err_steer_free_bitmap:
+ 	kfree(ibdev->ib_uc_qpns_bitmap);
  
--	WARN_ON_ONCE(!parent);
- 	WARN_ON_ONCE(device->dma_device);
- 	if (device->dev.dma_ops) {
- 		/*
-@@ -455,16 +454,25 @@ int ib_register_device(struct ib_device
- 		 * into device->dev.
- 		 */
- 		device->dma_device = &device->dev;
--		if (!device->dev.dma_mask)
--			device->dev.dma_mask = parent->dma_mask;
--		if (!device->dev.coherent_dma_mask)
--			device->dev.coherent_dma_mask =
--				parent->coherent_dma_mask;
-+		if (!device->dev.dma_mask) {
-+			if (parent)
-+				device->dev.dma_mask = parent->dma_mask;
-+			else
-+				WARN_ON_ONCE(true);
-+		}
-+		if (!device->dev.coherent_dma_mask) {
-+			if (parent)
-+				device->dev.coherent_dma_mask =
-+					parent->coherent_dma_mask;
-+			else
-+				WARN_ON_ONCE(true);
-+		}
- 	} else {
- 		/*
- 		 * The caller did not provide custom DMA operations. Use the
- 		 * DMA mapping operations of the parent device.
- 		 */
-+		WARN_ON_ONCE(!parent);
- 		device->dma_device = parent;
+ err_steer_qp_release:
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED)
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
+ err_counter:
+ 	for (i = 0; i < ibdev->num_ports; ++i)
+ 		mlx4_ib_delete_counters_table(ibdev, &ibdev->counters_table[i]);
+@@ -3079,11 +3078,9 @@ static void mlx4_ib_remove(struct mlx4_d
+ 		ibdev->iboe.nb.notifier_call = NULL;
  	}
  
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -1262,7 +1262,6 @@ int ib_device_register_sysfs(struct ib_d
- 	int ret;
- 	int i;
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED) {
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
+-		kfree(ibdev->ib_uc_qpns_bitmap);
+-	}
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
++	kfree(ibdev->ib_uc_qpns_bitmap);
  
--	WARN_ON_ONCE(!device->dev.parent);
- 	ret = dev_set_name(class_dev, "%s", device->name);
- 	if (ret)
- 		return ret;
+ 	iounmap(ibdev->uar_map);
+ 	for (p = 0; p < ibdev->num_ports; ++p)
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -287,6 +287,9 @@ void mlx4_qp_release_range(struct mlx4_d
+ 	u64 in_param = 0;
+ 	int err;
+ 
++	if (!cnt)
++		return;
++
+ 	if (mlx4_is_mfunc(dev)) {
+ 		set_param_l(&in_param, base_qpn);
+ 		set_param_h(&in_param, cnt);
