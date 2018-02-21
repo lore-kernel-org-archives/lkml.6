@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ZmsT+tZYcLGejPJkMuLQa9Dszc7qv6YZbh8+Me6JjeCtk5rzt0bO/WiUxeNWyAsYN/DCZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519218160; cv=none;
+X-Google-Smtp-Source: AH8x227GcocnEH5EwRgqrxo/j/mc8ouClUYMmZZDbY+J5s7L346Oqhz4SEDdfgR85sKAYz834Axb
+ARC-Seal: i=1; a=rsa-sha256; t=1519218157; cv=none;
         d=google.com; s=arc-20160816;
-        b=bzdD44lXnFw1bkeeLpca7HeFhBL3QDPhF6Kf6Uqj0Mim81bVXCB+QkwyteCRvHIyhI
-         nyNbNIjpci/DrDSTi8Ncc2NGOeBI0rozfz6Oj3jDl7MJ/+fgE3ak/y7EPckGnKvzX6w0
-         DWu0PqF0pMRyJdinzB+MSn+Ux2tVurnPQy1adnXQXFi/M8cD1XEc13y9OwCZHbtoAacf
-         iIeVgJ6rdFyw9jJjaquxS7IS/uX2HtCjmdaig/T5lJ+r1IrxD6tZOsFNRN+2hYJa6UOF
-         8YVwICioQti/FYgOtqMObvskr5cZ+inYH9a0uwmiVFFPMORudsdXc4zwbFhi/BViB09n
-         4luQ==
+        b=C5gxH11YD9+UylTMp5lBOmBdT3bDY+BZncl5A3yFDqwvXax9GfWkjY/V23iMVR7HYn
+         rdpVYMljKU88J36gi/pB57dUT1AR892LzoQSRgfEh+uNbZ1wLGLtSfFu1LyNGPhWSVB+
+         Bmh0znB4m/1dCPx/RiAH4K9NDoaYiEcaclx6j8vQb5NHgjYr042G4Kko+6OtBfazadNI
+         8CnHJcEFUB+pmV5NOpV9R7GJayF+8Mv6VLCjFgcf2EqBrvafFBJ5T/Nzj+YMwsy8gLNg
+         /RxGNzs5Y5BfrQ8Nud17/iC/X4e4yW7T0BeuR3uBLo5S2BpSVbg7E67/XfwlkUwdCM9G
+         zM6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1l7Op4mP7uSFi1e45VVkBfw/ICHXLackO58zSk13O08=;
-        b=PcfK6NPipclWVErPZZHJURdwL2dsiTcDzQuSRZiWcMyXhOo19HC5VodIvgK/m8FKmk
-         KGOyLIQFBAukYQ4pNjjFtbjXqAl4kHWEU/sAC5Btd5Nj9iu2zUXRgdngNt0TJVPL5I1f
-         BmiiYj0LHuGHcDaf3TTB65AZWcPlzBnK2lCoUN+oAPtGIG4PhRZP99YXSlUjg0px/sXE
-         K3az+bjKpwkmF/4r1d6NfnEZbGdrU3QFfBjIxR2eJEZjvY5LY4kJQGsVBWasnidnt2Qm
-         Om6o//rRjsNQ4231VRsPy5RT5a/JAhH/tQ8WseXtxGgLUBumyZdRpJBrurQDFCp2pdNZ
-         7quA==
+        bh=IUhXd/q4O3JekHvFu0IEZuyB3DHtP+MvpdBJ8O5vqJA=;
+        b=bWG7KCA7kcBMXnRK1v0sS/gCfGHEw7U64y4W/G3ird0y5AhME4wQhQEr1hqQc0TNWJ
+         Tsvf3hVb4mGAd/gKfsTAY8oGTKK8l17yTWleNdFmuS/EjoF9jaGlxtDIo1cyy0iteb/M
+         crHPNyHgIqcx+BqPo40urknt0mXODctKKtUUrvRKe70hCRpc5bmv2VQNQEawaSdl2m4r
+         cUrz3KBFUyu9jaGKnAt9nw4tQ6pDlq26uUeYBmdJijVf0cZ9vQulnYSkppa0AJX/quAP
+         ZrTU/sjJC/gkFS9dEme9k+qGrQfJLC41d3cSvoaZK8qx41CoNf/lHt3Q+AVoV9o+tEnU
+         B/7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	kbuild test robot <fengguang.wu@intel.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 074/167] x86/debug, objtool: Annotate WARN()-related UD2 as reachable
-Date: Wed, 21 Feb 2018 13:48:05 +0100
-Message-Id: <20180221124528.538238500@linuxfoundation.org>
+Subject: [PATCH 4.14 073/167] objtool: Fix segfault in ignore_unreachable_insn()
+Date: Wed, 21 Feb 2018 13:48:04 +0100
+Message-Id: <20180221124528.486326973@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015701695663855?=
-X-GMAIL-MSGID: =?utf-8?q?1593015701695663855?=
+X-GMAIL-THRID: =?utf-8?q?1593015699116643894?=
+X-GMAIL-MSGID: =?utf-8?q?1593015699116643894?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,14 +61,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 2b5db66862b95532cb6cca8165ae6eb73633cf85 upstream.
+commit fe24e27128252c230a34a6c628da2bf1676781ea upstream.
 
-By default, objtool assumes that a UD2 is a dead end.  This is mainly
-because GCC 7+ sometimes inserts a UD2 when it detects a divide-by-zero
-condition.
+Peter Zijlstra's patch for converting WARN() to use UD2 triggered a
+bunch of false "unreachable instruction" warnings, which then triggered
+a seg fault in ignore_unreachable_insn().
 
-Now that WARN() is moving back to UD2, annotate the code after it as
-reachable so objtool can follow the code flow.
+The seg fault happened when it tried to dereference a NULL 'insn->func'
+pointer.  Thanks to static_cpu_has(), some functions can jump to a
+non-function area in the .altinstr_aux section.  That breaks
+ignore_unreachable_insn()'s assumption that it's always inside the
+original function.
+
+Make sure ignore_unreachable_insn() only follows jumps within the
+current function.
 
 Reported-by: Borislav Petkov <bp@alien8.de>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
@@ -82,26 +88,36 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: kbuild test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/bug.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/objtool/check.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -77,7 +77,11 @@ do {								\
- 	unreachable();						\
- } while (0)
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1935,13 +1935,19 @@ static bool ignore_unreachable_insn(stru
+ 		if (is_kasan_insn(insn) || is_ubsan_insn(insn))
+ 			return true;
  
--#define __WARN_FLAGS(flags)	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags))
-+#define __WARN_FLAGS(flags)					\
-+do {								\
-+	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
-+	annotate_reachable();					\
-+} while (0)
+-		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest) {
+-			insn = insn->jump_dest;
+-			continue;
++		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
++			if (insn->jump_dest &&
++			    insn->jump_dest->func == insn->func) {
++				insn = insn->jump_dest;
++				continue;
++			}
++
++			break;
+ 		}
  
- #include <asm-generic/bug.h>
+ 		if (insn->offset + insn->len >= insn->func->offset + insn->func->len)
+ 			break;
++
+ 		insn = list_next_entry(insn, list);
+ 	}
  
