@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224tSBlHHQyOlD6tGAjLmqgmcZPqBg4d0Jw1yOLoXnxyQpO2VcqJyp6Z1GrNDIVppo2jo58A
-ARC-Seal: i=1; a=rsa-sha256; t=1519217753; cv=none;
+X-Google-Smtp-Source: AH8x226PYcqtOEs8aqkrDwOltwG/PmPeP9uMEvzNUT39SWgo5zqFhe3gWNh5dCCVG2JRkaTlh87m
+ARC-Seal: i=1; a=rsa-sha256; t=1519217750; cv=none;
         d=google.com; s=arc-20160816;
-        b=zCAl6SUbbD5MtcJ/xkLMTLgsOZaB38VlNYQPW8bQUoFE+biG+GUhohAUVLqe0qo/Cx
-         AN0cLaNg0fa2vrIwF/nl++iQAZ/WAoKyOjD0aOCAPSgNH2GfUkrGcGPsN6zJccHPfPfC
-         JS1RdPQMz2aerp32T5psKw5vXhZeRuhkftofbvbayxkInuz1VvnQHubZ1RV5Ot+Uq8C0
-         o6A21ck6CkEdxly7sj6gBXJHzFv8t4qqBOqroFrqZAz99Hu1snB6YuZHSOR8Uc8nMse4
-         2xcJckfWSaGBl1/l2SbmOOyLCdsWCtA6yeGJ06j7fUalJVnQzvn1tEJTE9CPWDxX8/kK
-         3lrA==
+        b=0cOXZjnnGLG0vaQHisJDV2ZmNALjePVZry78nx4a5JkCDbDqzwX9Br2hv4N5SieAIj
+         u6bwuObhkdhMwjQGmyfMnZp80Ijo239qcQbfZxkL2Xdcuf+4VV0HNoZ2XpNizGkCR7Co
+         pOU/paQNIFfcBOf2XYuy4MHtsmTsu2ckg/c6JPcV5nuTjJyIRZ1yV3dpoakFHJaMkRr9
+         9/myqDdZX5teUrs3jUijyghYcLble3Q+wiJCq7zPV/Y711Df6thLU7OeSbDAfSUvp2FB
+         7IfRJ+ovh1fUElaR3ovmxl01w+4gf+YR8PPAhDotc5AP6j2BDkAtJxXMb0+nbKBPFiol
+         14wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PeEHuHfAxjmiM/oYIwe0wCxWrxRHFxdWqvk16Ucjp/U=;
-        b=shHxNYB7uIYkGoVtxVcRhyfYQNTR2cxrKbXP0zKRfJ7riVVU927W64lyRktzqjGykz
-         sJGss6IeNBJG8XiCDFCmOjS2nXRuXV48hWXm/SRX27vQgWvH88JtSpeqWiRuGzF2ItJM
-         CgEKP7ZwRqIdmx06jv9Mq69kIo7UknF/EeMtBtWW+GYs5YluyJexXTw06gjeY4u2cq2w
-         wvIDBY4vUzUOPaF+JxxzYZiB/zg4SOmcoXiG5du83YZfGCVYFXYzvBZX00WSHk+bbSJ/
-         1Id0C9Kek0lpaExrgnshe8Z7grpFAEqhnsZJ7IjBrAQGnzO+DU7NqzWh5t16gp0A6eSB
-         Wr3g==
+        bh=ZT946jLa3GMtj7GFed0+V5Z6mUnaWD4zieRIC6Nf7Uw=;
+        b=RvXMlLCXYC1zUKhzBHoP7Pj+qZKQ1did0dF5ET1ksC/JSupOwSd9pCFSBatlKqypuq
+         8/bvZUHBX2hhq4+7gVW8pUHvWJXDIQoxNkZum0Ka2UFZWEHZJWXckJonxWdT1nqVIhYQ
+         A+/NAdKQAb7G1rmzg1FkdTCsG4J/hatQ70Yy+XTGcFYppetzmYC3E2nOL+WDcSnmJER0
+         efJaxVUtDbLz+jMWBFflu5w+Pk06xiRhTMdq6T7ZIbGYJjFLAwlL3f/qWeeNm2KvByIR
+         aB2GvN3QAa0QV9/Ge3gIVWYIYeEbqRqX+H1Dh2QPzbzyBpEqzJ3UrNmkuaRGJfYBrKI5
+         j8sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gang He <ghe@suse.com>,
-	Eric Ren <zren@suse.com>,
-	alex chen <alex.chen@huawei.com>,
-	piaojun <piaojun@huawei.com>,
-	Mark Fasheh <mfasheh@versity.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Junxiao Bi <junxiao.bi@oracle.com>,
-	Joseph Qi <jiangqi903@gmail.com>,
-	Changwei Ge <ge.changwei@h3c.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 41/77] ocfs2: try a blocking lock before return AOP_TRUNCATED_PAGE
-Date: Wed, 21 Feb 2018 13:48:50 +0100
-Message-Id: <20180221124433.925528813@linuxfoundation.org>
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 4.9 40/77] PM / devfreq: Propagate error from devfreq_add_device()
+Date: Wed, 21 Feb 2018 13:48:49 +0100
+Message-Id: <20180221124433.865789803@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -49,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015274728539386?=
-X-GMAIL-MSGID: =?utf-8?q?1593015274728539386?=
+X-GMAIL-THRID: =?utf-8?q?1593014614609921492?=
+X-GMAIL-MSGID: =?utf-8?q?1593015271755425745?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,135 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gang He <ghe@suse.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit ff26cc10aec128c3f86b5611fd5f59c71d49c0e3 upstream.
+commit d1bf2d30728f310f72296b54f0651ecdb09cbb12 upstream.
 
-If we can't get inode lock immediately in the function
-ocfs2_inode_lock_with_page() when reading a page, we should not return
-directly here, since this will lead to a softlockup problem when the
-kernel is configured with CONFIG_PREEMPT is not set.  The method is to
-get a blocking lock and immediately unlock before returning, this can
-avoid CPU resource waste due to lots of retries, and benefits fairness
-in getting lock among multiple nodes, increase efficiency in case
-modifying the same file frequently from multiple nodes.
+Propagate the error of devfreq_add_device() in devm_devfreq_add_device()
+rather than statically returning ENOMEM. This makes it slightly faster
+to pinpoint the cause of a returned error.
 
-The softlockup crash (when set /proc/sys/kernel/softlockup_panic to 1)
-looks like:
-
-  Kernel panic - not syncing: softlockup: hung tasks
-  CPU: 0 PID: 885 Comm: multi_mmap Tainted: G L 4.12.14-6.1-default #1
-  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-  Call Trace:
-    <IRQ>
-    dump_stack+0x5c/0x82
-    panic+0xd5/0x21e
-    watchdog_timer_fn+0x208/0x210
-    __hrtimer_run_queues+0xcc/0x200
-    hrtimer_interrupt+0xa6/0x1f0
-    smp_apic_timer_interrupt+0x34/0x50
-    apic_timer_interrupt+0x96/0xa0
-    </IRQ>
-   RIP: 0010:unlock_page+0x17/0x30
-   RSP: 0000:ffffaf154080bc88 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff10
-   RAX: dead000000000100 RBX: fffff21e009f5300 RCX: 0000000000000004
-   RDX: dead0000000000ff RSI: 0000000000000202 RDI: fffff21e009f5300
-   RBP: 0000000000000000 R08: 0000000000000000 R09: ffffaf154080bb00
-   R10: ffffaf154080bc30 R11: 0000000000000040 R12: ffff993749a39518
-   R13: 0000000000000000 R14: fffff21e009f5300 R15: fffff21e009f5300
-    ocfs2_inode_lock_with_page+0x25/0x30 [ocfs2]
-    ocfs2_readpage+0x41/0x2d0 [ocfs2]
-    filemap_fault+0x12b/0x5c0
-    ocfs2_fault+0x29/0xb0 [ocfs2]
-    __do_fault+0x1a/0xa0
-    __handle_mm_fault+0xbe8/0x1090
-    handle_mm_fault+0xaa/0x1f0
-    __do_page_fault+0x235/0x4b0
-    trace_do_page_fault+0x3c/0x110
-    async_page_fault+0x28/0x30
-   RIP: 0033:0x7fa75ded638e
-   RSP: 002b:00007ffd6657db18 EFLAGS: 00010287
-   RAX: 000055c7662fb700 RBX: 0000000000000001 RCX: 000055c7662fb700
-   RDX: 0000000000001770 RSI: 00007fa75e909000 RDI: 000055c7662fb700
-   RBP: 0000000000000003 R08: 000000000000000e R09: 0000000000000000
-   R10: 0000000000000483 R11: 00007fa75ded61b0 R12: 00007fa75e90a770
-   R13: 000000000000000e R14: 0000000000001770 R15: 0000000000000000
-
-About performance improvement, we can see the testing time is reduced,
-and CPU utilization decreases, the detailed data is as follows.  I ran
-multi_mmap test case in ocfs2-test package in a three nodes cluster.
-
-Before applying this patch:
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2754 ocfs2te+  20   0  170248   6980   4856 D 80.73 0.341   0:18.71 multi_mmap
-   1505 root      rt   0  222236 123060  97224 S 2.658 6.015   0:01.44 corosync
-      5 root      20   0       0      0      0 S 1.329 0.000   0:00.19 kworker/u8:0
-     95 root      20   0       0      0      0 S 1.329 0.000   0:00.25 kworker/u8:1
-   2728 root      20   0       0      0      0 S 0.997 0.000   0:00.24 jbd2/sda1-33
-   2721 root      20   0       0      0      0 S 0.664 0.000   0:00.07 ocfs2dc-3C8CFD4
-   2750 ocfs2te+  20   0  142976   4652   3532 S 0.664 0.227   0:00.28 mpirun
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 14:44:52 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 783 seconds.
-
-After apply this patch:
-
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-   2508 ocfs2te+  20   0  170248   6804   4680 R 54.00 0.333   0:55.37 multi_mmap
-    155 root      20   0       0      0      0 S 2.667 0.000   0:01.20 kworker/u8:3
-     95 root      20   0       0      0      0 S 2.000 0.000   0:01.58 kworker/u8:1
-   2504 ocfs2te+  20   0  142976   4604   3480 R 1.667 0.225   0:01.65 mpirun
-      5 root      20   0       0      0      0 S 1.000 0.000   0:01.36 kworker/u8:0
-   2482 root      20   0       0      0      0 S 1.000 0.000   0:00.86 jbd2/sda1-33
-    299 root       0 -20       0      0      0 S 0.333 0.000   0:00.13 kworker/2:1H
-    335 root       0 -20       0      0      0 S 0.333 0.000   0:00.17 kworker/1:1H
-    535 root      20   0   12140   7268   1456 S 0.333 0.355   0:00.34 haveged
-   1282 root      rt   0  222284 123108  97224 S 0.333 6.017   0:01.33 corosync
-
-  ocfs2test@tb-node2:~>multiple_run.sh -i ens3 -k ~/linux-4.4.21-69.tar.gz -o ~/ocfs2mullog -C hacluster -s pcmk -n tb-node2,tb-node1,tb-node3 -d /dev/sda1 -b 4096 -c 32768 -t multi_mmap /mnt/shared
-  Tests with "-b 4096 -C 32768"
-  Thu Dec 28 15:04:12 CST 2017
-  multi_mmap..................................................Passed.
-  Runtime 487 seconds.
-
-Link: http://lkml.kernel.org/r/1514447305-30814-1-git-send-email-ghe@suse.com
-Fixes: 1cce4df04f37 ("ocfs2: do not lock/unlock() inode DLM lock")
-Signed-off-by: Gang He <ghe@suse.com>
-Reviewed-by: Eric Ren <zren@suse.com>
-Acked-by: alex chen <alex.chen@huawei.com>
-Acked-by: piaojun <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 8cd84092d35e ("PM / devfreq: Add resource-managed function for devfreq device")
+Cc: stable@vger.kernel.org
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dlmglue.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/devfreq/devfreq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2485,6 +2485,15 @@ int ocfs2_inode_lock_with_page(struct in
- 	ret = ocfs2_inode_lock_full(inode, ret_bh, ex, OCFS2_LOCK_NONBLOCK);
- 	if (ret == -EAGAIN) {
- 		unlock_page(page);
-+		/*
-+		 * If we can't get inode lock immediately, we should not return
-+		 * directly here, since this will lead to a softlockup problem.
-+		 * The method is to get a blocking lock and immediately unlock
-+		 * before returning, this can avoid CPU resource waste due to
-+		 * lots of retries, and benefits fairness in getting lock.
-+		 */
-+		if (ocfs2_inode_lock(inode, ret_bh, ex) == 0)
-+			ocfs2_inode_unlock(inode, ex);
- 		ret = AOP_TRUNCATED_PAGE;
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -684,7 +684,7 @@ struct devfreq *devm_devfreq_add_device(
+ 	devfreq = devfreq_add_device(dev, profile, governor_name, data);
+ 	if (IS_ERR(devfreq)) {
+ 		devres_free(ptr);
+-		return ERR_PTR(-ENOMEM);
++		return devfreq;
  	}
  
+ 	*ptr = devfreq;
