@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227w3a67fEbdCvFZI9kp/WeDUy3dW8Ii97jXbAQaow2rQCUoqomFkxJc1iogmWPJTz4+AUsI
-ARC-Seal: i=1; a=rsa-sha256; t=1519218203; cv=none;
+X-Google-Smtp-Source: AH8x2246BXlV0Ysevy2e/s/DfzV9aoa11AICU5CK6uFPDDcpSl2jBrBJLyR7EfRZnNTx7E+K+Sfy
+ARC-Seal: i=1; a=rsa-sha256; t=1519218200; cv=none;
         d=google.com; s=arc-20160816;
-        b=CGGe+NUnQbbx5vJXTguoErfjpDgJHelZo19R/2y90afyTuB5W96o6klfKKdDFhXqVT
-         djckwVXJIl3g7QwYbVT+Vr6yjL79IHavAopoNTIkKSt2OIZlv5EOcZ/0kOolQBV3Uz6i
-         HDDpH34gvKkxDvtcBoLOnzXC/veW4EDxwprAxRyuXl5pUz61hAScF+V9LohjQRMrTnkY
-         4U5vqjsfxOJcTw+xcAvJKndqGDyhSRh4UI5juBdxPbsxDkAqLOXPpf5rv41O2eNRXemx
-         khvRWI0xxPRcQvoXG2TOd74lz22+916Gb/260jW1YH5q4370bJPY3nOhcyh3/dAHpaJI
-         RIQA==
+        b=I8cTku+w80DVUphgMe7/MK3HegGbi6/m8hf+SAjFnXUuhk7DoUoB3mteQDxAtbru3n
+         6lmnI01+RYmkSqgsC7Yu7jOrI/5GW0w1MHEDj0F+2PsAchLDTUT+Fj2swkDNY8bE4U7s
+         95ZO9sE9FAJDaoz8ABmpQ/1L2e1q+1RG/XMfvQH90zR2043f1YCfONC5eDipOFPMWOoo
+         OQYW4Sx6feAjNB7td9UTf0bHgUQ8oAaDDKi1SkgY+oGEO5Zr+Px/evLKF4TikmAc8nHL
+         Yovc7CpnafUMXdx5xyhQZiQpCmwcryk/UXfwH1LZ/23zuqMX5ODTKND8SrlJXPrx1dbe
+         /MhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mUNvZcXNPL58RBNz3SdqGICaZ4ChcP+IjKZNx/7h/sw=;
-        b=JdI+OgnpXqpgFFtawu/RBxbZUQF9l1kFZvy5o6G0jZEAvi7Vo2swwcwjD+U7RLy/8o
-         bv7pIfFkOIA1HWc09Di6RHglXCQenAvPMdv4ur+oY+0uIQ+9XPBogRG3+nahdGv8U/RA
-         xSgHVY3WDC8FMUVk5Cf8DS3OWGD3s9QZXKAQUZUYFa5Xk+V1gOu8np/BoPZqAdgWUc9Z
-         Cl78euxde0sdoIiE+Y8b/sYHYZwic+rOgyS3WEB3ZyyJETrFvo4trzfx9jnSAcUiGkyR
-         GM/rCw0FFBP99eRY7XFRDTUMUSmOjOWwVZ7FHrPDJcdA0RVUM49PvhoKj+fwJVedrhe7
-         2r2w==
+        bh=++53kGK3rxUXgE6KAZtguoi0RVLPlZW9pxThL8AFoog=;
+        b=DLtHuEfZRwvLaD8kQcGY3PMemsNn2Vud+r4qnVltWyaJsfMLerdZhK3BCd6pBNLUbn
+         c1HWe3/VHi4RzvQIZR/jareS1stCEK/42UTSyt9Pj9T3ZkHm15cFbmua8mnKaQZIpaeV
+         jNqFmrhkeALLxiKJFSRhvBMz+WOBgbVMqQG2YKmiLZhYMWgiWOK/JDxE4HISBVPnL3I0
+         csWBnCXbHjk3BNPgLHiqFfQGOW1DCg2umGd7PrkQCbDx/P+puRuE6SqHU0VeQs6dQdce
+         HzirwS2wtptzZ9f317/1WKe1TKGFIwqmyhBlbP2FacPgkU+E5TelZkKrZtNpCJikJ6ME
+         Rmmw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 124/167] rtlwifi: rtl8821ae: Fix connection lost problem correctly
-Date: Wed, 21 Feb 2018 13:48:55 +0100
-Message-Id: <20180221124531.333274857@linuxfoundation.org>
+	"David S. Miller" <davem@davemloft.net>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.14 123/167] mpls, nospec: Sanitize array index in mpls_label_ok()
+Date: Wed, 21 Feb 2018 13:48:54 +0100
+Message-Id: <20180221124531.269341715@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014634978594268?=
-X-GMAIL-MSGID: =?utf-8?q?1593015746390756065?=
+X-GMAIL-THRID: =?utf-8?q?1593015743562020219?=
+X-GMAIL-MSGID: =?utf-8?q?1593015743562020219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,68 +50,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit c713fb071edc0efc01a955f65a006b0e1795d2eb upstream.
+commit 3968523f855050b8195134da951b87c20bd66130 upstream.
 
-There has been a coding error in rtl8821ae since it was first introduced,
-namely that an 8-bit register was read using a 16-bit read in
-_rtl8821ae_dbi_read(). This error was fixed with commit 40b368af4b75
-("rtlwifi: Fix alignment issues"); however, this change led to
-instability in the connection. To restore stability, this change
-was reverted in commit b8b8b16352cd ("rtlwifi: rtl8821ae: Fix connection
-lost problem").
+mpls_label_ok() validates that the 'platform_label' array index from a
+userspace netlink message payload is valid. Under speculation the
+mpls_label_ok() result may not resolve in the CPU pipeline until after
+the index is used to access an array element. Sanitize the index to zero
+to prevent userspace-controlled arbitrary out-of-bounds speculation, a
+precursor for a speculative execution side channel vulnerability.
 
-Unfortunately, the unaligned access causes machine checks in ARM
-architecture, and we were finally forced to find the actual cause of the
-problem on x86 platforms. Following a suggestion from Pkshih
-<pkshih@realtek.com>, it was found that increasing the ASPM L1
-latency from 0 to 7 fixed the instability. This parameter was varied to
-see if a smaller value would work; however, it appears that 7 is the
-safest value. A new symbol is defined for this quantity, thus it can be
-easily changed if necessary.
-
-Fixes: b8b8b16352cd ("rtlwifi: rtl8821ae: Fix connection lost problem")
-Cc: Stable <stable@vger.kernel.org> # 4.14+
-Fix-suggested-by: Pkshih <pkshih@realtek.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Tested-by: James Cameron <quozl@laptop.org>  # x86_64 OLPC NL3
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: <stable@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c |    5 +++--
- drivers/net/wireless/realtek/rtlwifi/wifi.h         |    1 +
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ net/mpls/af_mpls.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
-@@ -1122,7 +1122,7 @@ static u8 _rtl8821ae_dbi_read(struct rtl
- 	}
- 	if (0 == tmp) {
- 		read_addr = REG_DBI_RDATA + addr % 4;
--		ret = rtl_read_word(rtlpriv, read_addr);
-+		ret = rtl_read_byte(rtlpriv, read_addr);
- 	}
- 	return ret;
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -8,6 +8,7 @@
+ #include <linux/ipv6.h>
+ #include <linux/mpls.h>
+ #include <linux/netconf.h>
++#include <linux/nospec.h>
+ #include <linux/vmalloc.h>
+ #include <linux/percpu.h>
+ #include <net/ip.h>
+@@ -904,24 +905,27 @@ errout:
+ 	return err;
  }
-@@ -1164,7 +1164,8 @@ static void _rtl8821ae_enable_aspm_back_
+ 
+-static bool mpls_label_ok(struct net *net, unsigned int index,
++static bool mpls_label_ok(struct net *net, unsigned int *index,
+ 			  struct netlink_ext_ack *extack)
+ {
++	bool is_ok = true;
++
+ 	/* Reserved labels may not be set */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED) {
++	if (*index < MPLS_LABEL_FIRST_UNRESERVED) {
+ 		NL_SET_ERR_MSG(extack,
+ 			       "Invalid label - must be MPLS_LABEL_FIRST_UNRESERVED or higher");
+-		return false;
++		is_ok = false;
  	}
  
- 	tmp = _rtl8821ae_dbi_read(rtlpriv, 0x70f);
--	_rtl8821ae_dbi_write(rtlpriv, 0x70f, tmp | BIT(7));
-+	_rtl8821ae_dbi_write(rtlpriv, 0x70f, tmp | BIT(7) |
-+			     ASPM_L1_LATENCY << 3);
+ 	/* The full 20 bit range may not be supported. */
+-	if (index >= net->mpls.platform_labels) {
++	if (is_ok && *index >= net->mpls.platform_labels) {
+ 		NL_SET_ERR_MSG(extack,
+ 			       "Label >= configured maximum in platform_labels");
+-		return false;
++		is_ok = false;
+ 	}
  
- 	tmp = _rtl8821ae_dbi_read(rtlpriv, 0x719);
- 	_rtl8821ae_dbi_write(rtlpriv, 0x719, tmp | BIT(3) | BIT(4));
---- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-@@ -99,6 +99,7 @@
- #define RTL_USB_MAX_RX_COUNT			100
- #define QBSS_LOAD_SIZE				5
- #define MAX_WMMELE_LENGTH			64
-+#define ASPM_L1_LATENCY				7
+-	return true;
++	*index = array_index_nospec(*index, net->mpls.platform_labels);
++	return is_ok;
+ }
  
- #define TOTAL_CAM_ENTRY				32
+ static int mpls_route_add(struct mpls_route_config *cfg,
+@@ -944,7 +948,7 @@ static int mpls_route_add(struct mpls_ro
+ 		index = find_free_label(net);
+ 	}
  
+-	if (!mpls_label_ok(net, index, extack))
++	if (!mpls_label_ok(net, &index, extack))
+ 		goto errout;
+ 
+ 	/* Append makes no sense with mpls */
+@@ -1021,7 +1025,7 @@ static int mpls_route_del(struct mpls_ro
+ 
+ 	index = cfg->rc_label;
+ 
+-	if (!mpls_label_ok(net, index, extack))
++	if (!mpls_label_ok(net, &index, extack))
+ 		goto errout;
+ 
+ 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
+@@ -1779,7 +1783,7 @@ static int rtm_to_route_config(struct sk
+ 				goto errout;
+ 
+ 			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
+-					   cfg->rc_label, extack))
++					   &cfg->rc_label, extack))
+ 				goto errout;
+ 			break;
+ 		}
+@@ -2106,7 +2110,7 @@ static int mpls_getroute(struct sk_buff
+ 			goto errout;
+ 		}
+ 
+-		if (!mpls_label_ok(net, in_label, extack)) {
++		if (!mpls_label_ok(net, &in_label, extack)) {
+ 			err = -EINVAL;
+ 			goto errout;
+ 		}
