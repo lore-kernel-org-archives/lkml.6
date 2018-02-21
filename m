@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226oq+rQbc+3ccKA18MEIUTx7/xpdsGNoEljxLiBRFHms+BEtdRlKCLpg3FTAXXF1UK/7vB6
-ARC-Seal: i=1; a=rsa-sha256; t=1519218120; cv=none;
+X-Google-Smtp-Source: AH8x224lsqcxiKQUe1aHqslPszgFlDGNPmpdVpB6bDV+tEcSrFqIihJZiiBbDPWhw2i1FznlYl5d
+ARC-Seal: i=1; a=rsa-sha256; t=1519218118; cv=none;
         d=google.com; s=arc-20160816;
-        b=tZASmvwVwP0Qjy7iPhhlI9U/ewAuP+p4cvFrY4iiPdm61ZoNCOS0xDK/HpVwGiM9yD
-         Vecpm6qGQT6Fny3MJo+ATgYaleRcqqH1Jwv5Dyp7BY7TOQgwP7yiFn2ME6EOxqJqKyws
-         +kIB1pUsJqCzFjqjMXohgjUWxmPF5c6E812j8fIDLct9mzXxZrhlomaDOVcbzqKnUyf2
-         jtFD+8+c1CwqEnZLF4MSulHNp3Gv/beBomYZiz8HOF2GDSWJ0ZhbMSXAE5s3TIqJBKr3
-         mvfHpuOtJyXcGCWkKRQD3Rk7ASPqL0/MO+mVA6Hmxyyam2aVQKKsDrZLEUcUg82lLf7k
-         Hc4A==
+        b=vDEr7pmkxzKd/GpuTNSfJ7wVfFR0G7yFFd1u0XTa/zH0jItgEn/bfOEt6rs5E+5MOq
+         yrhkbx6zVTBixucZ3QriVYB8EJqtnKj9nt8VVmNkgNNZI59sPVbCBoO+r4Mc70ZrSgv4
+         3rGM2J16cbgLyVDEgFk4uBhsPSUukvOA0Ra0pWYBye7ZygosvKOx+9GIAk6Az9gKHLKs
+         PlDZzUc0SPiTrut5GDe8odR1IIspdLyQ5msB9Zakgpf8eWliAKKdTyb6WbOkK7xxX9Du
+         b5j8bgQO36Bm//MaP77lPjdNhp9E7i9i7ZD6+voXYxeOAhivRZlGnoxRUJTt2+IcNvbi
+         cU/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=I/rPmDYEkvkd9S0c+FNMFw6rFzmGqoWQFqFyQ6I99J0=;
-        b=T0eUbDzLdpTMg6oPC5eSKyRzkVQLP8T9cvi0mOoSD8A4jwJPFQU5GyAkR1WyfbWk2m
-         d4yn93TCfMEZ7pqRMnQy9h6I7NHaxG6u3TKIE9X5E2ch/4UD2LWR+1hejWf8Wc4wFH6R
-         HrPHAUYh/dXOR2Ppkoh79u6iiZoBmhCsydcAm5n6RwXoVN+xl3J1078M70SXMS4IB+WI
-         mdkrMJUV27Wd1boPIN2zZpAJi23owVEQrf0JB75Z1lNazNAmQIi0DgKlK+vJ8iTkXLjR
-         K54nHUnedKDBXo9sGKfR6bHnSDsm7fkY9Yl3eOdp5jMaP3y0jirc/m0qFbVFIvsm73Gt
-         e9yw==
+        bh=yGHdZj3jvA/+pyYEet7cpbiFLHC+lpZR32+JunoDwoE=;
+        b=R6E3U2kiRYuNops0Ot8FyH/DWb2oLijnNbIpVdFtrbn7lLmBo7lGCkelvMOj5SFISF
+         D8Sp7ASRv6oMbMg6hn995x6FaeXUy7bnc7vt40j/RGM0000tLvi1Ji2kJXgOhmTW3mha
+         7LSUPNafwKKQNZ8VMOdHNMHFcHRUcTS26vGOyob2fVpyjqCs1fQSxHQ1LjG0vGJQPrXa
+         ptnj96v9PyEz11HZLv7kvuh8ghfF9ChcsY2kM0FrQcGF/AKxuHvJm5d1DY5FfZZYelhb
+         jY1FY7aD81v8eQiqT53g4GQzHZSkN1x1EO9Nqcu7sgJxzVIAjzwDSClp96pAA9gttm1B
+         bxrw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Rosin <peda@axenita.se>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Bill Fraser <bill.fraser@gmail.com>,
-	Daniel Vetter <daniel.vetter@intel.com>,
+	Ray Strode <rstrode@redhat.com>,
 	Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.14 094/167] drm/ast: Load lut in crtc_commit
-Date: Wed, 21 Feb 2018 13:48:25 +0100
-Message-Id: <20180221124529.494334996@linuxfoundation.org>
+Subject: [PATCH 4.14 092/167] drm/qxl: unref cursor bo when finished with it
+Date: Wed, 21 Feb 2018 13:48:23 +0100
+Message-Id: <20180221124529.402128391@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015659831429852?=
-X-GMAIL-MSGID: =?utf-8?q?1593015659831429852?=
+X-GMAIL-THRID: =?utf-8?q?1593015657382738159?=
+X-GMAIL-MSGID: =?utf-8?q?1593015657382738159?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,44 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Ray Strode <rstrode@redhat.com>
 
-commit 24b8ef699e8221d2b7f813adaab13eec053e1507 upstream.
+commit 16c6db3688734b27487a42d0c2a1062d0b2bad03 upstream.
 
-In the past the ast driver relied upon the fbdev emulation helpers to
-call ->load_lut at boot-up. But since
+qxl_cursor_atomic_update allocs a bo for the cursor that
+it never frees up at the end of the function.
 
-commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
-Author: Peter Rosin <peda@axentia.se>
-Date:   Tue Jul 4 12:36:57 2017 +0200
+This commit fixes that.
 
-    drm/fb-helper: factor out pseudo-palette
-
-that's cleaned up and drivers are expected to boot into a consistent
-lut state. This patch fixes that.
-
-Fixes: b8e2b0199cc3 ("drm/fb-helper: factor out pseudo-palette")
-Cc: Peter Rosin <peda@axenita.se>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: <stable@vger.kernel.org> # v4.14+
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198123
-Cc: Bill Fraser <bill.fraser@gmail.com>
-Reported-and-Tested-by: Bill Fraser <bill.fraser@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Ray Strode <rstrode@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_mode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/qxl/qxl_display.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -644,6 +644,7 @@ static void ast_crtc_commit(struct drm_c
- {
- 	struct ast_private *ast = crtc->dev->dev_private;
- 	ast_set_index_reg_mask(ast, AST_IO_SEQ_PORT, 0x1, 0xdf, 0);
-+	ast_crtc_load_lut(crtc);
- }
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -564,7 +564,7 @@ static void qxl_cursor_atomic_update(str
+ 	struct qxl_cursor_cmd *cmd;
+ 	struct qxl_cursor *cursor;
+ 	struct drm_gem_object *obj;
+-	struct qxl_bo *cursor_bo, *user_bo = NULL;
++	struct qxl_bo *cursor_bo = NULL, *user_bo = NULL;
+ 	int ret;
+ 	void *user_ptr;
+ 	int size = 64*64*4;
+@@ -634,6 +634,8 @@ static void qxl_cursor_atomic_update(str
+ 	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
+ 	qxl_release_fence_buffer_objects(release);
  
++	qxl_bo_unref(&cursor_bo);
++
+ 	return;
  
+ out_backoff:
