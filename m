@@ -1,219 +1,124 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2071779-1519234624-2-1467343249494329592
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519234624; b=Qihy5WBawdjZAs+PDaNDH5q44ylF/pALaYIFKax5S7b6aSA
-    qs2GNgOkVpiM+TVUevO4X0DIgTJfBXpD30KJI7OOZytr76srCAcBG8SdV1RoeJlJ
-    0zry4eE4NdyjCz4++WmA5FRTpYdFXfy1ePuiZcs/SeM4cY0eUQNMSB2ZSKxCvpEv
-    2nA1nshbOLvvNM/SQlBi68NAQbJQQX60lZyI/j8Pf+kGIOU7HqZ1FehYVz7yo1bO
-    21YqAajrQjEoj4iSi0O4gPp59PRFe2FianaD3263OUWu09JfGcH9kxNBT3jIF64k
-    Dssg6no1GmO/FsrAdxFtCJ1JmEvcxJvusP+kOuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519234624; bh=a7B/hpgLQMOC8cOOmy/kzs1KWZPB1Etg7BQH09ZmKZ8=; b=j
-    kwQLuV39nLi+4v+p0JFbOJWBx/lCrgOKz7ooPan+BqZuGsZ4Ai3VBArzsMd+edrr
-    m2cEHGfUVsJFgBIDPxL5HORJ9qcmZdWlsFETzJnovixnHVi04TH4Oon4g+njHZQG
-    Wh8It1WbbyFPeZfiR6lMfeVbMZ8H00HPRU/tJCU7rY8Ni0Gh+nMtVlP4+zmDUY4w
-    UPqSC3dAWu6Wk3H+HxGispeQ6x2dpEmTHSvp13CGtleQ+t5qJEpZB2AlGcl4WuVt
-    O4pGoE3h73mDP+QSffb3voOZc+M+xT8Lh4h3dz5SgSOoDkUc9azG1+EKbfIpx1qA
-    s8ONMjxV9ACMGJ7eNn6Uw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=MvrLar1y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NKkguywi;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=MvrLar1y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NKkguywi;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754932AbeBURgn (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 12:36:43 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33961 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754272AbeBURgm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 12:36:42 -0500
-X-Google-Smtp-Source: AH8x226V/wfddlg0/EOUgiTLCoUsOS/6V5y6PRtGLMwSTc5EisM2RXAoi+x/GDFGBBLlWNP1oqHJWQqz3dUDHQnnl0w=
-MIME-Version: 1.0
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x22484BrYsx8t+wvaDLRaxm8DnIlxc76+aXAaOX/8ERXeZ6dFkw6aOrjXXO2YADux4FhM5X9v
+ARC-Seal: i=1; a=rsa-sha256; t=1519218349; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EpmVAxP9N9Ah0fgvivKZ9IK5+59RBFMTmukU/sl17zwr8eDHRKCkK+AR+Exs+XnTUi
+         JilP8UkqyZuv02DENtA+krdGwxX/Bn8JUuoZdM/PzgjvmsqsWfLHcB1m28zsNNODoHOw
+         a7beRz7HUpNMYxPq5xuw9xotiZ11iSuSBq4JP7wZzhgzszrnVdAi3BnB13RzlKHNaD5V
+         Ry6xoVmGwE47lw61KwEwc5BuM4dy2RQiz98aJIDqBcQvU/8i/mlKX/WxUT6sRzy9alTr
+         L96zF9sEPVbqJFVQd5EvcJqHQFDeVG/Z8SNEoo2i1xr5ptgclCmi7wSRhLOVuDnSV1Os
+         5wKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=HtJrPiyoWeU3Su29aTnmwX9+b3iRPUrA9oD4glSPKJQ=;
+        b=VMsYUzfk1iU+HahIhOTJopBJjn2koLrU3hcIPtsl5JOgDW2XFRrFRXM7IYFTtmGhAU
+         wgJdRA7sZW+1wxmy37kNdyiOlfkxEQlHglpuWoetSpUkvrq1zqlIqwYGSjlMIfIYiIgR
+         Z1e+5vcS8ePVLcYqkpRLUjv/8XG1JMgrldsWeCgpjaX8iHBpqDSpehLhCh7LBaNj6BKY
+         qR9tX1foBTgFcGpC/P1uLjVSJe1R7bWmywu2CQsVoWh9geKhJjRa0c1yFwTD4qAv5gYB
+         aXXplVrdqtW+9zUyl3cTgBiq9Ko5SoN7EOZDkgyBXkqKHDd3jn2WSUZOtgT729nJ1pKO
+         YV0w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Kirill Marinushkin <k.marinushkin@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 143/167] ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE attribute
+Date: Wed, 21 Feb 2018 13:49:14 +0100
+Message-Id: <20180221124532.571939877@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 21 Feb 2018 23:06:40 +0530
-Message-ID: <CA+G9fYtZinFR5cO7xST2Pohx2==b5DD7yjni7Lzbs9SEzuinDw@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/167] 4.14.21-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        lkft-triage@lists.linaro.org, patches@kernelci.org,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593014652240317593?=
+X-GMAIL-MSGID: =?utf-8?q?1593015899889507345?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 21 February 2018 at 18:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.14.21 release.
-> There are 167 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri Feb 23 12:44:42 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.21-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+------------------
 
-Summary
-------------------------------------------------------------------------
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 
-kernel: 4.14.21-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 20a80dd2bbb095f1b2ae2e72143f12ff8b605382
-git describe: v4.14.20-168-g20a80dd2bbb0
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.20-168-g20a80dd2bbb0
+commit 447cae58cecd69392b74a4a42cd0ab9cabd816af upstream.
 
+The layout of the UAC2 Control request and response varies depending on
+the request type. With the current implementation, only the Layout 2
+Parameter Block (with the 2-byte sized RANGE attribute) is handled
+properly. For the Control requests with the 1-byte sized RANGE attribute
+(Bass Control, Mid Control, Tremble Control), the response is parsed
+incorrectly.
 
-No regressions (compared to build v4.14.20-119-g1b1ab1d5c50b)
+This commit:
+* fixes the wLength field value in the request
+* fixes parsing the range values from the response
 
-Boards, architectures and test suites:
--------------------------------------
+Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-hi6220-hikey - arm64
-* boot - pass: 20,
-* kselftest - skip: 17, pass: 48,
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 2, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 1, pass: 21,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 4, pass: 10,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 151, pass: 999,
-* ltp-timers-tests - skip: 1, pass: 12,
+---
+ sound/usb/mixer.c |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-juno-r2 - arm64
-* boot - pass: 20,
-* kselftest - skip: 17, pass: 48,
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 2, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 4, pass: 10,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 149, pass: 1001,
-* ltp-timers-tests - skip: 1, pass: 12,
-
-x15 - arm
-* boot - pass: 20,
-* kselftest - skip: 19, pass: 45,
-* libhugetlbfs - skip: 1, pass: 87,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 2, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 2, pass: 20,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 1, pass: 13,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 97, pass: 1053,
-* ltp-timers-tests - skip: 1, pass: 12,
-
-x86_64
-* boot - pass: 20,
-* kselftest - skip: 19, pass: 61,
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 1, pass: 62,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 5, pass: 9,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 119, pass: 1031,
-* ltp-timers-tests - skip: 1, pass: 12,
-
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -347,17 +347,20 @@ static int get_ctl_value_v2(struct usb_m
+ 			    int validx, int *value_ret)
+ {
+ 	struct snd_usb_audio *chip = cval->head.mixer->chip;
+-	unsigned char buf[4 + 3 * sizeof(__u32)]; /* enough space for one range */
++	/* enough space for one range */
++	unsigned char buf[sizeof(__u16) + 3 * sizeof(__u32)];
+ 	unsigned char *val;
+-	int idx = 0, ret, size;
++	int idx = 0, ret, val_size, size;
+ 	__u8 bRequest;
+ 
++	val_size = uac2_ctl_value_size(cval->val_type);
++
+ 	if (request == UAC_GET_CUR) {
+ 		bRequest = UAC2_CS_CUR;
+-		size = uac2_ctl_value_size(cval->val_type);
++		size = val_size;
+ 	} else {
+ 		bRequest = UAC2_CS_RANGE;
+-		size = sizeof(buf);
++		size = sizeof(__u16) + 3 * val_size;
+ 	}
+ 
+ 	memset(buf, 0, sizeof(buf));
+@@ -390,16 +393,17 @@ error:
+ 		val = buf + sizeof(__u16);
+ 		break;
+ 	case UAC_GET_MAX:
+-		val = buf + sizeof(__u16) * 2;
++		val = buf + sizeof(__u16) + val_size;
+ 		break;
+ 	case UAC_GET_RES:
+-		val = buf + sizeof(__u16) * 3;
++		val = buf + sizeof(__u16) + val_size * 2;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+-	*value_ret = convert_signed_value(cval, snd_usb_combine_bytes(val, sizeof(__u16)));
++	*value_ret = convert_signed_value(cval,
++					  snd_usb_combine_bytes(val, val_size));
+ 
+ 	return 0;
+ }
