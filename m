@@ -1,49 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937809AbeBUQuN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:50:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42534 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932778AbeBUQuK (ORCPT
+        id S938020AbeBUQue (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:50:34 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:33838 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S933336AbeBUQuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:50:10 -0500
-Date: Wed, 21 Feb 2018 08:50:06 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: Use higher-order pages in vmalloc
-Message-ID: <20180221165006.GA27687@bombadil.infradead.org>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
- <151670493255.658225.2881484505285363395.stgit@buzz>
- <20180221154214.GA4167@bombadil.infradead.org>
- <CALCETrU5jaennr5ziS9NzNA6KpK204acdroJpuc6yYy3PGvpHQ@mail.gmail.com>
+        Wed, 21 Feb 2018 11:50:32 -0500
+Date: Wed, 21 Feb 2018 11:50:31 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
+        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <akiyks@gmail.com>, <nborisov@suse.com>
+Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S lock-based
+ external-view litmus test
+In-Reply-To: <20180221161223.GE3617@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1802211148390.2032-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrU5jaennr5ziS9NzNA6KpK204acdroJpuc6yYy3PGvpHQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 04:11:16PM +0000, Andy Lutomirski wrote:
-> On Wed, Feb 21, 2018 at 3:42 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > +++ b/kernel/fork.c
-> > @@ -319,12 +319,12 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
-> >         if (vm) {
-> >                 int i;
-> >
-> > -               BUG_ON(vm->nr_pages != THREAD_SIZE / PAGE_SIZE);
-...
-> > +               if (j) {
-> > +                       area->nr_pages -= (1UL << j) - 1;
-> 
-> Is there any code that expects area->nr_pages to be the size of the
-> area in pages?  I don't know of any such code.
+On Wed, 21 Feb 2018, Paul E. McKenney wrote:
 
-I found one and deleted it ;-)
+> On Wed, Feb 21, 2018 at 10:09:00AM -0500, Alan Stern wrote:
+> > On Tue, 20 Feb 2018, Paul E. McKenney wrote:
+> > 
+> > > From: Alan Stern <stern@rowland.harvard.edu>
+> > > 
+> > > This commit adds a litmus test in which P0() and P1() form a lock-based S
+> > > litmus test, with the addition of P2(), which observes P0()'s and P1()'s
+> > 
+> > Why do you call this an "S" litmus test?  Isn't ISA2 a better 
+> > description?
+> 
+> Indeed, the name of the test is in fact ISA2.
+
+Sure; and the Changelog entry should reflect this.
+
+> > > accesses with a full memory barrier but without the lock.  This litmus
+> > > test asks whether writes carried out by two different processes under the
+> > > same lock will be seen in order by a third process not holding that lock.
+> > > The answer to this question is "yes" for all architectures supporting
+> > > the Linux kernel, but is "no" according to the current version of LKMM.
+> > > 
+> > > A patch to LKMM is under development.
+> > > 
+> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > ---
+> > >  .../ISA2+pooncelock+pooncelock+pombonce.litmus     | 41 ++++++++++++++++++++++
+> > >  1 file changed, 41 insertions(+)
+> > >  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> > 
+> > Aren't these tests supposed to be described in litmus-tests/README?
+
+You apparently missed this recommendation.
+
+> > > diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> > > new file mode 100644
+> > > index 000000000000..7a39a0aaa976
+> > > --- /dev/null
+> > > +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> > > @@ -0,0 +1,41 @@
+> > > +C ISA2+pooncelock+pooncelock+pombonce.litmus
+> > > +
+> > > +(*
+> > > + * Result: Sometimes
+> > > + *
+> > > + * This test shows that the ordering provided by a lock-protected S
+> > > + * litmus test (P0() and P1()) are not visible to external process P2().
+> > > + * This is likely to change soon.
+> > 
+> > That last line may be premature.  We haven't reached any consensus on 
+> > how RISC-V will handle this.  If RISC-V allows the test then the memory 
+> > model can't forbid it.
+> 
+> Agreed.  How about this?  If the RISC-V question is answered by the
+> end of next week, I update accordingly.  If not, I update the comment
+> to give the details.
+
+The README also should be updated.
+
+> Hey, at least having the memory model go in at about the same time as
+> a new architecture is giving us good practice!  ;-)
+
+Hopefully things will settle down in a week or two.
+
+Alan
