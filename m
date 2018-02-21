@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932398AbeBUJaM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:30:12 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40504 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753268AbeBUJ1W (ORCPT
+        id S932412AbeBUJaa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:30:30 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35437 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753322AbeBUJ1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:27:22 -0500
-X-Google-Smtp-Source: AH8x224ClL1O95yeRTmdLl+yyK7lYpwMy+r3OyFgVb2TzeabSbauY+9IU/8pPMBw757jQrUMdeXEJg==
+        Wed, 21 Feb 2018 04:27:21 -0500
+X-Google-Smtp-Source: AH8x226fIts+nAEqZhqXZEgllMLNdFwaGckDeh4eojsbMaWCZDMQCidpCF4w90X4Tt1A3e48xJd9IQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 11/20] lightnvm: pblk: check for supported version
-Date: Wed, 21 Feb 2018 10:26:49 +0100
-Message-Id: <1519205218-26994-12-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 10/20] lightnvm: pblk: rename ppaf* to addrf*
+Date: Wed, 21 Feb 2018 10:26:48 +0100
+Message-Id: <1519205218-26994-11-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
 References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
@@ -27,36 +27,143 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At this point, only 1.2 spec is supported, thus check for it. Also,
-since device-side L2P is only supported in the 1.2 spec, make sure to
-only check its value under 1.2.
+In preparation for 2.0 support in pblk, rename variables referring to
+the address format to addrf and reserve ppaf for the 1.2 path.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-init.c  |  8 ++++----
+ drivers/lightnvm/pblk-sysfs.c |  4 ++--
+ drivers/lightnvm/pblk.h       | 16 ++++++++--------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 56b4afc27add..ec39800eea42 100644
+index 6bf51ef8f516..56b4afc27add 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -990,9 +990,15 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	struct pblk *pblk;
- 	int ret;
+@@ -80,7 +80,7 @@ static size_t pblk_trans_map_size(struct pblk *pblk)
+ {
+ 	int entry_size = 8;
  
--	if (dev->geo.c.dom & NVM_RSP_L2P) {
-+	if (geo->c.version != NVM_OCSSD_SPEC_12) {
-+		pr_err("pblk: OCSSD version not supported (%u)\n",
-+							geo->c.version);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (geo->c.version == NVM_OCSSD_SPEC_12 && geo->c.dom & NVM_RSP_L2P) {
- 		pr_err("pblk: host-side L2P table not supported. (%x)\n",
--							dev->geo.c.dom);
-+							geo->c.dom);
- 		return ERR_PTR(-EINVAL);
+-	if (pblk->ppaf_bitsize < 32)
++	if (pblk->addrf_len < 32)
+ 		entry_size = 4;
+ 
+ 	return entry_size * pblk->rl.nr_secs;
+@@ -198,7 +198,7 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
+ 	return dst->blk_offset + src->blk_len;
+ }
+ 
+-static int pblk_set_ppaf(struct pblk *pblk)
++static int pblk_set_addrf(struct pblk *pblk)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+@@ -210,7 +210,7 @@ static int pblk_set_ppaf(struct pblk *pblk)
+ 		return -EINVAL;
  	}
  
+-	pblk->ppaf_bitsize = pblk_set_addrf_12(geo, (void *)&pblk->ppaf);
++	pblk->addrf_len = pblk_set_addrf_12(geo, (void *)&pblk->addrf);
+ 
+ 	return 0;
+ }
+@@ -319,7 +319,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 	if (!pblk->r_end_wq)
+ 		goto free_bb_wq;
+ 
+-	if (pblk_set_ppaf(pblk))
++	if (pblk_set_addrf(pblk))
+ 		goto free_r_end_wq;
+ 
+ 	if (pblk_rwb_init(pblk))
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index 81288aa9162a..d3b50741b691 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -117,12 +117,12 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+ 	struct nvm_addr_format_12 *geo_ppaf;
+ 	ssize_t sz = 0;
+ 
+-	ppaf = (struct nvm_addr_format_12 *)&pblk->ppaf;
++	ppaf = (struct nvm_addr_format_12 *)&pblk->addrf;
+ 	geo_ppaf = (struct nvm_addr_format_12 *)&geo->c.addrf;
+ 
+ 	sz = snprintf(page, PAGE_SIZE,
+ 		"pblk:(s:%d)ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
+-			pblk->ppaf_bitsize,
++			pblk->addrf_len,
+ 			ppaf->ch_offset, ppaf->ch_len,
+ 			ppaf->lun_offset, ppaf->lun_len,
+ 			ppaf->blk_offset, ppaf->blk_len,
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 4f7a365436f1..46b29a492f74 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -570,8 +570,8 @@ struct pblk {
+ 	struct pblk_line_mgmt l_mg;		/* Line management */
+ 	struct pblk_line_meta lm;		/* Line metadata */
+ 
+-	struct nvm_addr_format ppaf;
+-	int ppaf_bitsize;
++	struct nvm_addr_format addrf;
++	int addrf_len;
+ 
+ 	struct pblk_rb rwb;
+ 
+@@ -948,7 +948,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+ 					      u64 line_id)
+ {
+ 	struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&pblk->ppaf;
++				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 	struct ppa_addr ppa;
+ 
+ 	ppa.ppa = 0;
+@@ -966,7 +966,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
+ 							struct ppa_addr p)
+ {
+ 	struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&pblk->ppaf;
++				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 	u64 paddr;
+ 
+ 	paddr = (u64)p.g.ch << ppaf->ch_offset;
+@@ -991,7 +991,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
+ 		ppa64.c.is_cached = 1;
+ 	} else {
+ 		struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&pblk->ppaf;
++				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 
+ 		ppa64.g.ch = (ppa32 & ppaf->ch_mask) >> ppaf->ch_offset;
+ 		ppa64.g.lun = (ppa32 & ppaf->lun_mask) >> ppaf->lun_offset;
+@@ -1015,7 +1015,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
+ 		ppa32 |= 1U << 31;
+ 	} else {
+ 		struct nvm_addr_format_12 *ppaf =
+-				(struct nvm_addr_format_12 *)&pblk->ppaf;
++				(struct nvm_addr_format_12 *)&pblk->addrf;
+ 
+ 		ppa32 |= ppa64.g.ch << ppaf->ch_offset;
+ 		ppa32 |= ppa64.g.lun << ppaf->lun_offset;
+@@ -1033,7 +1033,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
+ {
+ 	struct ppa_addr ppa;
+ 
+-	if (pblk->ppaf_bitsize < 32) {
++	if (pblk->addrf_len < 32) {
+ 		u32 *map = (u32 *)pblk->trans_map;
+ 
+ 		ppa = pblk_ppa32_to_ppa64(pblk, map[lba]);
+@@ -1049,7 +1049,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
+ static inline void pblk_trans_map_set(struct pblk *pblk, sector_t lba,
+ 						struct ppa_addr ppa)
+ {
+-	if (pblk->ppaf_bitsize < 32) {
++	if (pblk->addrf_len < 32) {
+ 		u32 *map = (u32 *)pblk->trans_map;
+ 
+ 		map[lba] = pblk_ppa64_to_ppa32(pblk, ppa);
 -- 
 2.7.4
