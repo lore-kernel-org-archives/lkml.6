@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226Vv/f7vLl/34lRyQZhTgMsZf71uiUWV0j6xuoPQW0dsX2/qDdLyVgA6v4vtm9sos8RPFlj
-ARC-Seal: i=1; a=rsa-sha256; t=1519218360; cv=none;
+X-Google-Smtp-Source: AH8x226eoNMDRcYpFzRXi7fsuQMidDU0eZdH5+BLrTGxnRvCxGOzurYIfXMh0/D7t6PM5orhu13+
+ARC-Seal: i=1; a=rsa-sha256; t=1519218357; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hoc5eaq9M9oWAKx/KW6IFrh9w0fcX1kWC1/J4VBN9DxgOdal6+vQrraRSy+1+fOcdB
-         YbR1zI2kyFRGhlGti64zsEl5dORj97UwqpWCMdZrCVjgoKDIUpq69IFCX3Ne06mUh673
-         vpMjQ5x1XCyxeY1JM1Lcj25XHvou5qzVacZIbyg83yG5vdYfIHcZIvs9eGnn6stLZneN
-         EtpEjMBnoRX0ZmiTxylNmwpFJzlgRDfv93xKUysEbyENlcc4r5IPlb/daWlPwCJwC6Mu
-         QD/CIRcl1ddeY8Gn5LKfDuQ7dtO6dIMokkgXuIvJhEOuCXGhM7O/Gzeq4m1UJj2wcFxd
-         kzag==
+        b=rU+hsPQh0yBb/JPKDNMx0o4pdBm9KV2edmIPy6gUiHH5+J9J3UrGTov5X9wmiGSv71
+         A3PF+DC9jGxfI/Dm+Xqg2+OLP6auVf0Dqu0Lg6yGC2oq/b+3qPxMOJ9nqhYW68Ccoupy
+         GmcZ9Vu+x5sYGEaXmaZbSbFQ5x7MEo4uJ52zd4vPCILz9GiccGa5SbNSjCX5lYwy74ai
+         S5sBZnYqqWXFZ7ZKgPkObWBb7obTjDxVAjTJwrRNoX4mi+hulqtjpneMmDTBJ6X+BMsy
+         d7L9j3Z2d09EtHbMKhBYQlHC/6yIcbFsZHwYk9QM+kf7FkWz8PHyXz5QJS6dFx49ToCF
+         3gHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UE1yJcAZyIh0qf04OFskT53N90bMAJNuprhLwilFTRk=;
-        b=Hng2nr97cGY/XhJsXRus/0YFuh9HSlvZ2vm2xoCpK6RZoDaq49B/xJ37sJM85DJ8gI
-         1kjdXh7h+wgqtONyRS0XRdwB1AhRBrZbrAp6byIGaxwasQG7ZGsG+GqjSRHpHAF1IQd/
-         bOvMQb6uOmK5fqhAFmy4FVGYNqSAxp9KdhjnUFBHfI/mpM30tm1t12yGms8kSsI3PV0k
-         g1U9RshuXsHxBvYmFvuol61z6FFuzqcU2Mvm3fLmy/nt33miOeJtT3ehEOndAKgfRy6p
-         lRj2IuWMrutBg88hicJKJG/PhgQqtR+oYARGBTnYOKr4clcKhGEczIPSovIJRmaEXRaV
-         16KQ==
+        bh=euLTwpMQBUKIWRjqjkFVaOmYdSaa3bSMpsrZWOnaGfk=;
+        b=OmXMv0D6hD/MaZ/YcD0MD7yGbSaZzM07TTMHqni9P+LUG23OMgIMYU3+PFLOqWZQlF
+         6JSfNqNpRuu/Z8aHs65Qa40REbtWba1/RirWipv8ualX+I5qdxkmpRgqxffpA20VBhp/
+         65HKCGHlgsrqe/02SANwDOxQJ2tveO+FGa8n8qjnHFK6UJSpyZL+lSiT8rF+VeCbFhLu
+         8j8rx7Ls7UT9lNTppf8DFIqFCTpn+kfSyyT/Pxjg8nFlzbAS/4bPWzBEyX62eYVuXqO2
+         SzcpV3lkNuY8ZxWHlSVao6Fqs9m45JNszhyVdvlhAgAaJmczWK380gdUpbRoVqDq0bLc
+         jEJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
 	Moni Shoua <monis@mellanox.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
 	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.15 012/163] RDMA/rxe: Fix rxe_qp_cleanup()
-Date: Wed, 21 Feb 2018 13:47:21 +0100
-Message-Id: <20180221124530.703836813@linuxfoundation.org>
+Subject: [PATCH 4.15 011/163] RDMA/rxe: Fix a race condition in rxe_requester()
+Date: Wed, 21 Feb 2018 13:47:20 +0100
+Message-Id: <20180221124530.623695921@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015414667373323?=
-X-GMAIL-MSGID: =?utf-8?q?1593015911601586759?=
+X-GMAIL-THRID: =?utf-8?q?1593015411073533153?=
+X-GMAIL-MSGID: =?utf-8?q?1593015909148009510?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,88 +52,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit bb3ffb7ad48a21e98a5c64eb21103a74fd9f03f6 upstream.
+commit 65567e41219888feec72fee1de98ccf1efbbc16d upstream.
 
-rxe_qp_cleanup() can sleep so it must be run in thread context and
-not in atomic context. This patch avoids that the following bug is
-triggered:
+The rxe driver works as follows:
+* The send queue, receive queue and completion queues are implemented as
+  circular buffers.
+* ib_post_send() and ib_post_recv() calls are serialized through a spinlock.
+* Removing elements from various queues happens from tasklet
+  context. Tasklets are guaranteed to run on at most one CPU. This serializes
+  access to these queues. See also rxe_completer(), rxe_requester() and
+  rxe_responder().
+* rxe_completer() processes the skbs queued onto qp->resp_pkts.
+* rxe_requester() handles the send queue (qp->sq.queue).
+* rxe_responder() processes the skbs queued onto qp->req_pkts.
 
-Kernel BUG at 00000000560033f3 [verbose debug info unavailable]
-BUG: sleeping function called from invalid context at net/core/sock.c:2761
-in_atomic(): 1, irqs_disabled(): 0, pid: 7, name: ksoftirqd/0
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<00000000b6e69628>] __do_softirq+0x4e/0x540
-CPU: 0 PID: 7 Comm: ksoftirqd/0 Not tainted 4.15.0-rc7-dbg+ #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
- dump_stack+0x85/0xbf
- ___might_sleep+0x177/0x260
- lock_sock_nested+0x1d/0x90
- inet_shutdown+0x2e/0xd0
- rxe_qp_cleanup+0x107/0x140 [rdma_rxe]
- rxe_elem_release+0x18/0x80 [rdma_rxe]
- rxe_requester+0x1cf/0x11b0 [rdma_rxe]
- rxe_do_task+0x78/0xf0 [rdma_rxe]
- tasklet_action+0x99/0x270
- __do_softirq+0xc0/0x540
- run_ksoftirqd+0x1c/0x70
- smpboot_thread_fn+0x1be/0x270
- kthread+0x117/0x130
- ret_from_fork+0x24/0x30
+Since rxe_drain_req_pkts() processes qp->req_pkts, calling
+rxe_drain_req_pkts() from rxe_requester() is racy. Hence this patch.
 
+Reported-by: Moni Shoua <monis@mellanox.com>
 Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Moni Shoua <monis@mellanox.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_qp.c    |   12 ++++++++++--
- drivers/infiniband/sw/rxe/rxe_verbs.h |    3 +++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_loc.h  |    1 -
+ drivers/infiniband/sw/rxe/rxe_req.c  |    9 +--------
+ drivers/infiniband/sw/rxe/rxe_resp.c |    2 +-
+ 3 files changed, 2 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_qp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_qp.c
-@@ -824,9 +824,9 @@ void rxe_qp_destroy(struct rxe_qp *qp)
+--- a/drivers/infiniband/sw/rxe/rxe_loc.h
++++ b/drivers/infiniband/sw/rxe/rxe_loc.h
+@@ -237,7 +237,6 @@ int rxe_srq_from_attr(struct rxe_dev *rx
+ 
+ void rxe_release(struct kref *kref);
+ 
+-void rxe_drain_req_pkts(struct rxe_qp *qp, bool notify);
+ int rxe_completer(void *arg);
+ int rxe_requester(void *arg);
+ int rxe_responder(void *arg);
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -594,15 +594,8 @@ int rxe_requester(void *arg)
+ 	rxe_add_ref(qp);
+ 
+ next_wqe:
+-	if (unlikely(!qp->valid)) {
+-		rxe_drain_req_pkts(qp, true);
++	if (unlikely(!qp->valid || qp->req.state == QP_STATE_ERROR))
+ 		goto exit;
+-	}
+-
+-	if (unlikely(qp->req.state == QP_STATE_ERROR)) {
+-		rxe_drain_req_pkts(qp, true);
+-		goto exit;
+-	}
+ 
+ 	if (unlikely(qp->req.state == QP_STATE_RESET)) {
+ 		qp->req.wqe_index = consumer_index(qp->sq.queue);
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -1210,7 +1210,7 @@ static enum resp_states do_class_d1e_err
+ 	}
  }
  
- /* called when the last reference to the qp is dropped */
--void rxe_qp_cleanup(struct rxe_pool_entry *arg)
-+static void rxe_qp_do_cleanup(struct work_struct *work)
+-void rxe_drain_req_pkts(struct rxe_qp *qp, bool notify)
++static void rxe_drain_req_pkts(struct rxe_qp *qp, bool notify)
  {
--	struct rxe_qp *qp = container_of(arg, typeof(*qp), pelem);
-+	struct rxe_qp *qp = container_of(work, typeof(*qp), cleanup_work.work);
+ 	struct sk_buff *skb;
  
- 	rxe_drop_all_mcast_groups(qp);
- 
-@@ -859,3 +859,11 @@ void rxe_qp_cleanup(struct rxe_pool_entr
- 	kernel_sock_shutdown(qp->sk, SHUT_RDWR);
- 	sock_release(qp->sk);
- }
-+
-+/* called when the last reference to the qp is dropped */
-+void rxe_qp_cleanup(struct rxe_pool_entry *arg)
-+{
-+	struct rxe_qp *qp = container_of(arg, typeof(*qp), pelem);
-+
-+	execute_in_process_context(rxe_qp_do_cleanup, &qp->cleanup_work);
-+}
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -35,6 +35,7 @@
- #define RXE_VERBS_H
- 
- #include <linux/interrupt.h>
-+#include <linux/workqueue.h>
- #include <rdma/rdma_user_rxe.h>
- #include "rxe_pool.h"
- #include "rxe_task.h"
-@@ -281,6 +282,8 @@ struct rxe_qp {
- 	struct timer_list rnr_nak_timer;
- 
- 	spinlock_t		state_lock; /* guard requester and completer */
-+
-+	struct execute_work	cleanup_work;
- };
- 
- enum rxe_mem_state {
