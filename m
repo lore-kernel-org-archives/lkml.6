@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224gqI24mLm+5HbjJrOkq2jbBUxOkLSd8ReqnyZtIJ0530Ira0BN+pKzreheV7Avk/BhCWDb
-ARC-Seal: i=1; a=rsa-sha256; t=1519218295; cv=none;
+X-Google-Smtp-Source: AH8x2242ZvA+l+czhI0byJiMKWFk0p9iQOlW2/ptQ0yvuhStQEbctTyx8ZUBmxG8mOdhqYGOSMDX
+ARC-Seal: i=1; a=rsa-sha256; t=1519218293; cv=none;
         d=google.com; s=arc-20160816;
-        b=uXdTc9OPjULFPN7ECHH9SdB84gvMNNazKB9lIuhpwsyVSb63ph4MbjmOXffwoxxmRI
-         VX6yX9z+CILr8Ncf4Ygqo5LTupA5WuNRX4VtBf+eX8jEtYoc2Ep7uz4LwYsdrE4r+P2r
-         F6vP/eStgN6uESxcan3C8XkSAudKlJKLbw/b65/ff0Qe03yxxMZ9VjmUQLq7RFMtPUoG
-         Kt07j9b9WsjIBCBelhovIxzAvPnCyL4ONBFCuVyvC8BcAUI2tZPCW9CUvrb2/mLGus1c
-         1RUrBZ+fLFb0TnEHOBELjeUBTn94PmKlByMxBMueLAQ85fYWgrbG1wku1h00afPrsJM9
-         GRUg==
+        b=nZ0Df7uxSSxUbAo+8oDhj8jEsG3bia2s2EF76h7AXe+RYZ56Ah0aq3Z9bfJjb5pDL2
+         t2m5bVU+T3JYu35H78NBcbOGubOHWFTTWa3fK1D1xhGjAjhF3sKM2iy1V1HnkL/zbLy/
+         cWraaobFTjizqB6oA7HYuwxr7q81WNdet22ogwz+VUhlPEL+GUmhjj2CKVyuCeasTxeV
+         6ZbbfazijK8Subxdf0h3vQgG/UITgoVuEzg8azxbNzIkxfqqNxmHODYsv+mH0QCsnpHn
+         8woMcabBa7sYV1xVQB4QnmvzobZ8yVRHmvPNMm5HUiHOY8KzSzGVhEwSRLgXSNHyWXsJ
+         +g1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=c38CRXKJ2fNgLDpf6fF1VJCYDTeXk3ZOS3G0rXGbWbo=;
-        b=u1G5rOFpNTeUX8WhKq+TEXDiUjyr84jgPYlFPsPX9Pi414W3lgAwYSO+IvnUGP12d4
-         Dg7PmMBObRlFA76d1vO6oHad6q1XGp/HyKBtpbo4LKaLNjB7a/MWooe3jpx2sCVCRXEG
-         lrBhSC50xK7Hm/3Hq1sf0gpp8W2onDbd15bMlkhNIW+3JNqvDywCoI5p1vobpgYXPVXN
-         UR3q67F6TjRryjvtvmgASYRrOLAYZvo2cNRxmpI1YHh9YpbaPlWiplEWBdCS9DkE07iW
-         Zo1lG1H0LAlspVP3sHehjfBdbxKswFMBE6x2t9hIVR0waHl7Xlfxm/B9JrS1W/S5tQR0
-         uOmg==
+        bh=6lwOPgsBjJXDnxqrPnxHevSsvjxCj54XwOHL6nPUOTY=;
+        b=rVGucUZaeo+x3DIhVLXQQSsvbFqFSE5vigb4K1OapLNlNEgjUXoiLlcGeCkWZc8Mcu
+         5/ajJ+mYIS55lkYO3fnEjEOtcqnnQjyxKaBaluULTdybnAGsNPtLAaASiQD8s7UZmOrO
+         VfOkq9r/IcV9NxEnTyoIUm5nDDILaE2WBXoinFk+UjvTHWEe/aL9EBsDpiDREfTgzge1
+         7Q952wGXpH09Mx4aMsRi16jEcoSjG8xyizmj66DvqOAf2zMXmMS7CKrpHVxK6ONbTLQP
+         oB/SKg4m1WxaKKg9gmzioxwRIW4gt0cUF2BkAjrUHp5JlGdEmR5xcZanAPScwGnGOsiF
+         /7QA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Andy Gross <andy.gross@linaro.org>
-Subject: [PATCH 4.14 157/167] arm64: dts: msm8916: Add missing #phy-cells
-Date: Wed, 21 Feb 2018 13:49:28 +0100
-Message-Id: <20180221124533.437490178@linuxfoundation.org>
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 156/167] ARM: pxa/tosa-bt: add MODULE_LICENSE tag
+Date: Wed, 21 Feb 2018 13:49:27 +0100
+Message-Id: <20180221124533.390086212@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015359329892951?=
-X-GMAIL-MSGID: =?utf-8?q?1593015844124791478?=
+X-GMAIL-THRID: =?utf-8?q?1593014694992294145?=
+X-GMAIL-MSGID: =?utf-8?q?1593015840542902447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b0ab681285aa66064f2de5b74191c0cabba381ff upstream.
+commit 3343647813fdf0f2409fbf5816ee3e0622168079 upstream.
 
-Add a missing #phy-cells to the dsi-phy, to silence dtc warning.
+Without this tag, we get a build warning:
 
-Cc: Archit Taneja <architt@codeaurora.org>
-Fixes: 305410ffd1b2 ("arm64: dts: msm8916: Add display support")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+WARNING: modpost: missing MODULE_LICENSE() in arch/arm/mach-pxa/tosa-bt.o
+
+For completeness, I'm also adding author and description fields.
+
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-pxa/tosa-bt.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -901,6 +901,7 @@
- 					    "dsi_phy_regulator";
- 
- 				#clock-cells = <1>;
-+				#phy-cells = <0>;
- 
- 				clocks = <&gcc GCC_MDSS_AHB_CLK>;
- 				clock-names = "iface_clk";
+--- a/arch/arm/mach-pxa/tosa-bt.c
++++ b/arch/arm/mach-pxa/tosa-bt.c
+@@ -132,3 +132,7 @@ static struct platform_driver tosa_bt_dr
+ 	},
+ };
+ module_platform_driver(tosa_bt_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Dmitry Baryshkov");
++MODULE_DESCRIPTION("Bluetooth built-in chip control");
