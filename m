@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224izcVvA06DIHAj8w5DJKPPQQfji4Bg6ZMwVIPk8HJCzy9VN1iMMN7Tjr2j8kyIdVAc/wmn
-ARC-Seal: i=1; a=rsa-sha256; t=1519218587; cv=none;
+X-Google-Smtp-Source: AH8x226zexed7aIlSLj6pbwA/yhMnl2wxisUFLl8RIs+eM5+/zwYiL6ZyoYNQVpvnOogmWKNrlbu
+ARC-Seal: i=1; a=rsa-sha256; t=1519218584; cv=none;
         d=google.com; s=arc-20160816;
-        b=YElcDvXeSp7Oyytm1+eaEy5iKBsrYk2D2DnHLpAXgdhcjAoTujKNeib6qDIrmWLDw/
-         anYlzXUggjdOyEfvp2x2ZOpa2eM0F7udaNR49EYFAaN9nFLHiapxNW2Dyni+Ou670VDv
-         TDjzz/MjXC+buqCRK3nGFWY9T73+FSafFXf+t/QilwZSMyQ1CkQ1Vo3wVRWqVgw7D4jf
-         6JFu0x0g27CrtmUeqhwE0y1mSlmdMwY9Ak9IfA9f67I8yvdfDOXKAV/avYyh3xpE0riQ
-         P1wkDJCWx4EdKcbmNKDkMMJJ1BDF2KFXGnFBFklgA+z7KXaOEtZ9Guj42lZpEdSjTONg
-         YRqw==
+        b=bLwZ26dCA7l4gDcSKRIA/jARVzIhxKmbEMbxYBS6meLVhb6ysXCSgFmNRGtTLZWsvO
+         1CGsbqsqd5Yz2D4yMlQsKPfC8B+C7LicfhOBIC0gYQwPT3iddGC9YtIbsSX7cdDR/3cR
+         EEA1g2Y/j1CRhe20g3mKTmI13zewafrE9ZPU/9do0fINqjyyyiwcfF9jhyC+OH2SD2Rw
+         cpYfPNNgoakzIdQDBnWA4NWHU7EG6JnffKhDiFOvcvbkMTVCulgWVBvRyW7HSXbz2leW
+         b00BcbRFEWXTW0V8e5xcXGSw6Ay6TGmqPtIn3Xjkq2ZCe5Xwa4owhtNBb2oQPc/xz+Mi
+         JC7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yCgNjkaVNd8LzqrBKc4cy9jdHubjfJ5p0kSd+bhdSww=;
-        b=DAgu/VIDPRNU+QFxddeIZgmoLI3th1+gb85rAYD0sQqfFr7pXddEzE9JqzEz+2rBcf
-         ct6MeCIAsYnkMC2Usf1iDQXwtMzaQVISo8/35ADa5QcfbOJeKvUr4gcbt2z3vMMIHzeI
-         5Jxn0wfFpxxG6jwAuyOdNVKkN3CCR8rI9qLmYYTWBJIv/oDEztsq1/rLAQt/adOnXED+
-         cUBMihlV4au4YATAz/3S5pNDbzkjgUZBlhHX1mARR8XCDfGkGi25w/w4NcYtdOfa5KAC
-         d7ovyPC/kHxgq3deVMyC0GcASiHK/1+pF1Jvgg+8+IPflLKtH+l8sdSMuP+NDwORDV5T
-         GDjQ==
+        bh=FX9Gcgkex8nJQ1N9d8P9QdFcWdTTm+k7yE4B3mEt+Is=;
+        b=OOzE0nuDTwnkxo6B5advJz80K07LxPV23owc+qZJRvemoY2Ps0WIiI5Bc1zMgEmxMy
+         QKnoDXs1mULSPwMMZveLGAvCfE3WZLSfUH2QLZ9A3wSU4PvvAe6jYMVJKBnrDVMT6GwS
+         pELAiCmwEcXq13KdZgcJzmvFlXZwLw8g9kD+XGcID2JAEuwq00SRk0cLQHVXXZJXefiI
+         yNUhHkG4PdO3OHieqDSohanez4WrLtTUnvGlvyqGHpt5/8DEmnjG8XXS+pohvcmy8z0W
+         sL+yv0cEvByZEU7wpSsCgV5bFGhKKZ1H9Or9NWW1n4fctHyEC8PO3aD0xNZA/xUkrPl9
+         RzLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Ray Strode <rstrode@redhat.com>
-Subject: [PATCH 4.15 091/163] drm/qxl: reapply cursor after resetting primary
-Date: Wed, 21 Feb 2018 13:48:40 +0100
-Message-Id: <20180221124535.365464443@linuxfoundation.org>
+	Ray Strode <rstrode@redhat.com>,
+	Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.15 090/163] drm/qxl: unref cursor bo when finished with it
+Date: Wed, 21 Feb 2018 13:48:39 +0100
+Message-Id: <20180221124535.315936595@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015758811089577?=
-X-GMAIL-MSGID: =?utf-8?q?1593016149460322651?=
+X-GMAIL-THRID: =?utf-8?q?1593015657382738159?=
+X-GMAIL-MSGID: =?utf-8?q?1593016146949509969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,149 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Ray Strode <rstrode@redhat.com>
 
-commit 9428088c90b6f7d5edd2a1b0d742c75339b36f6e upstream.
+commit 16c6db3688734b27487a42d0c2a1062d0b2bad03 upstream.
 
-QXL associates mouse state with its primary plane.
+qxl_cursor_atomic_update allocs a bo for the cursor that
+it never frees up at the end of the function.
 
-Destroying a primary plane and putting a new one in place has the side
-effect of destroying the cursor as well.
+This commit fixes that.
 
-This commit changes the driver to reapply the cursor any time a new
-primary is created. It achieves this by keeping a reference to the
-cursor bo on the qxl_crtc struct.
-
-This fix is very similar to
-
-commit 4532b241a4b7 ("drm/qxl: reapply cursor after SetCrtc calls")
-
-which got implicitly reverted as part of implementing the atomic
-modeset feature.
-
-Cc: Gerd Hoffmann <kraxel@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1512097
-Fixes: 1277eed5fecb ("drm: qxl: Atomic phase 1: convert cursor to universal plane")
-Cc: stable@vger.kernel.org
 Signed-off-by: Ray Strode <rstrode@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/qxl/qxl_display.c |   59 ++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/qxl/qxl_drv.h     |    2 +
- 2 files changed, 61 insertions(+)
+ drivers/gpu/drm/qxl/qxl_display.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/qxl/qxl_display.c
 +++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -289,6 +289,7 @@ static void qxl_crtc_destroy(struct drm_
- {
- 	struct qxl_crtc *qxl_crtc = to_qxl_crtc(crtc);
- 
-+	qxl_bo_unref(&qxl_crtc->cursor_bo);
- 	drm_crtc_cleanup(crtc);
- 	kfree(qxl_crtc);
- }
-@@ -495,6 +496,53 @@ static int qxl_primary_atomic_check(stru
- 	return 0;
- }
- 
-+static int qxl_primary_apply_cursor(struct drm_plane *plane)
-+{
-+	struct drm_device *dev = plane->dev;
-+	struct qxl_device *qdev = dev->dev_private;
-+	struct drm_framebuffer *fb = plane->state->fb;
-+	struct qxl_crtc *qcrtc = to_qxl_crtc(plane->state->crtc);
-+	struct qxl_cursor_cmd *cmd;
-+	struct qxl_release *release;
-+	int ret = 0;
-+
-+	if (!qcrtc->cursor_bo)
-+		return 0;
-+
-+	ret = qxl_alloc_release_reserved(qdev, sizeof(*cmd),
-+					 QXL_RELEASE_CURSOR_CMD,
-+					 &release, NULL);
-+	if (ret)
-+		return ret;
-+
-+	ret = qxl_release_list_add(release, qcrtc->cursor_bo);
-+	if (ret)
-+		goto out_free_release;
-+
-+	ret = qxl_release_reserve_list(release, false);
-+	if (ret)
-+		goto out_free_release;
-+
-+	cmd = (struct qxl_cursor_cmd *)qxl_release_map(qdev, release);
-+	cmd->type = QXL_CURSOR_SET;
-+	cmd->u.set.position.x = plane->state->crtc_x + fb->hot_x;
-+	cmd->u.set.position.y = plane->state->crtc_y + fb->hot_y;
-+
-+	cmd->u.set.shape = qxl_bo_physical_address(qdev, qcrtc->cursor_bo, 0);
-+
-+	cmd->u.set.visible = 1;
-+	qxl_release_unmap(qdev, release, &cmd->release_info);
-+
-+	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
-+	qxl_release_fence_buffer_objects(release);
-+
-+	return ret;
-+
-+out_free_release:
-+	qxl_release_free(qdev, release);
-+	return ret;
-+}
-+
- static void qxl_primary_atomic_update(struct drm_plane *plane,
- 				      struct drm_plane_state *old_state)
- {
-@@ -510,6 +558,7 @@ static void qxl_primary_atomic_update(st
- 	    .x2 = qfb->base.width,
- 	    .y2 = qfb->base.height
- 	};
-+	int ret;
- 	bool same_shadow = false;
- 
- 	if (old_state->fb) {
-@@ -531,6 +580,11 @@ static void qxl_primary_atomic_update(st
- 		if (!same_shadow)
- 			qxl_io_destroy_primary(qdev);
- 		bo_old->is_primary = false;
-+
-+		ret = qxl_primary_apply_cursor(plane);
-+		if (ret)
-+			DRM_ERROR(
-+			"could not set cursor after creating primary");
- 	}
- 
- 	if (!bo->is_primary) {
-@@ -571,6 +625,7 @@ static void qxl_cursor_atomic_update(str
- 	struct drm_device *dev = plane->dev;
- 	struct qxl_device *qdev = dev->dev_private;
- 	struct drm_framebuffer *fb = plane->state->fb;
-+	struct qxl_crtc *qcrtc = to_qxl_crtc(plane->state->crtc);
- 	struct qxl_release *release;
+@@ -575,7 +575,7 @@ static void qxl_cursor_atomic_update(str
  	struct qxl_cursor_cmd *cmd;
  	struct qxl_cursor *cursor;
-@@ -628,6 +683,10 @@ static void qxl_cursor_atomic_update(str
- 		cmd->u.set.shape = qxl_bo_physical_address(qdev,
- 							   cursor_bo, 0);
- 		cmd->type = QXL_CURSOR_SET;
-+
-+		qxl_bo_unref(&qcrtc->cursor_bo);
-+		qcrtc->cursor_bo = cursor_bo;
-+		cursor_bo = NULL;
- 	} else {
+ 	struct drm_gem_object *obj;
+-	struct qxl_bo *cursor_bo, *user_bo = NULL;
++	struct qxl_bo *cursor_bo = NULL, *user_bo = NULL;
+ 	int ret;
+ 	void *user_ptr;
+ 	int size = 64*64*4;
+@@ -645,6 +645,8 @@ static void qxl_cursor_atomic_update(str
+ 	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
+ 	qxl_release_fence_buffer_objects(release);
  
- 		ret = qxl_release_reserve_list(release, true);
---- a/drivers/gpu/drm/qxl/qxl_drv.h
-+++ b/drivers/gpu/drm/qxl/qxl_drv.h
-@@ -111,6 +111,8 @@ struct qxl_bo_list {
- struct qxl_crtc {
- 	struct drm_crtc base;
- 	int index;
++	qxl_bo_unref(&cursor_bo);
 +
-+	struct qxl_bo *cursor_bo;
- };
+ 	return;
  
- struct qxl_output {
+ out_backoff:
