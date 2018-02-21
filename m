@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227hFLvxEoLdVxUGQYUt2piMlhHVyrWSLX70fliwlGYjeHrAeIMQ5S2cuQMDba9iZWwDL93N
-ARC-Seal: i=1; a=rsa-sha256; t=1519218287; cv=none;
+X-Google-Smtp-Source: AH8x226f3BBFh+AHUlXllBapXMEg6P6Z9+YYFyR2qKdN3uyBRdyRr0l1H/Ocp9Fb1Doc2gifsKE5
+ARC-Seal: i=1; a=rsa-sha256; t=1519218282; cv=none;
         d=google.com; s=arc-20160816;
-        b=J3frhHV59a7ayAo+9vyWiKSAnX9fwcjHKt2VLuIQBw+iu+s5+0NKDqvXDkhp2E8dBE
-         kscp3vYSLNKpiKsUtrnRY5fKqUrxJG6bw7q/wdr469ytRWKcHyG7Jn518HuzHWdPpg2i
-         BMadsbfwVWuYBSEG4FXz4OHLeqGVWcfEnoCGguRPuLIEoUhePXtkjbBLCyP7DlOZEwl2
-         3dT4vm8LsS3w7PIYtR0ojzJ4P2+zO2wILVPWjqGq1+uNMCgY62wyOpdGY+SbbXnmzWQC
-         SdFHA3z1j7wVfcAnu2eL13lF+N2JwNkTgq1FRIS0/2J4soAoBgV2KtdVH46lyixqipXo
-         JVqA==
+        b=R4Pjf6TCvp96XR0w22Rf1RKuP6JSYMOHPY3tGOgkHAWkw44HWlJc68nPt2GxVDBfwI
+         3cYo9lFy/LrVxlzkIsKRIHYugqoX8dTTkUCDT+PVie7iY4/cCwmgfg1BbViyKxOW64a0
+         /c8WaY+pFppukKDFT7be2WoL+K/u7aDTQAw0fYdQE3MZW0GRYUK5UXgAYZ25WL/zSheQ
+         Mnf54ef5wOfmmiExEbYcuTrVwb1jSw/jeGlYAUBfMEjghaxl5emMnMvenycl1AAIFQBC
+         uxfhBVFhWnKTx1ylY9/DGJ8hvsuI1FF22ni50nID96mfGBBu5wfl4f6kmoj0lTH1hj0m
+         Q24Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PS9+wcZdPucFewta+94a/B/1aq6fnfeEs+8LmoRXr2o=;
-        b=AFbJRoRvi49iNW8xY+AZMa4/U8o4zRE3+dbmPxRT5nynrW5F9nJHTaIQHdUSVQlqwB
-         nmQMdC1ZJER/eNj/PQrZlO/fwNKzDIC44KWHFD7wsUmV52Os2aTkHW/rbmN/nhNcjtyo
-         rFq/xhNobt+AHge4uqm9lpP3xgGqkJMfeAAbKIci6Xwo5UWWy7ERh0nsjsGnC/F/D7WX
-         4d0qrIz/p3LSbeP1ihklRv71DAhwGwk3RxQGX0MAWSRLZbzM/QyZrwFCY93M71nxK8UH
-         eF7WNv3ds4LU5z608v5p5Tr8MrWggsh0tZA+w45kUuZ6KRV8CYWAFzksYYgCbrDnEMn7
-         NYhg==
+        bh=Gebkx9xG3ZA4X7v3NZc4K/GSWimp07t03B2EjR0gXBc=;
+        b=Fgs5+N0lnebKkWIT5ncJwN0XWNYlQUvwg9SsUQXcvgXLHTLOoAqSTyu92sP5kjcS0b
+         VAcyNA2+ZYVBDpLfzrmXz/9nEITC7q6mece2U7Tp49SjDDxQ7vfeIPX0sw4NsiQiFArN
+         aCImVfJVjfau+yFNG6rBeSFLOZRnLf14lQx68hqxktg1wynVxK8WnFfqe3zlNrVVEQge
+         bLkdLhP/rkqNFzvTtfAaHlrKEcbRuBt/K3ypnC1S/mtrEljEXIYErnSf0DVPNN7zMGgG
+         Ygg+egK45HLaRn34R+JifGSkkH9y1w5eF3eJMztQA9aF8Z3tsAd0RT6sTFaXTT9T9b+U
+         49IA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.14 154/167] Bluetooth: BT_HCIUART now depends on SERIAL_DEV_BUS
-Date: Wed, 21 Feb 2018 13:49:25 +0100
-Message-Id: <20180221124533.283031693@linuxfoundation.org>
+	Kailang Yang <kailang@realtek.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 144/167] ALSA: hda/realtek - Add headset mode support for Dell laptop
+Date: Wed, 21 Feb 2018 13:49:15 +0100
+Message-Id: <20180221124532.615259554@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015835567100549?=
-X-GMAIL-MSGID: =?utf-8?q?1593015835567100549?=
+X-GMAIL-THRID: =?utf-8?q?1593015829281437815?=
+X-GMAIL-MSGID: =?utf-8?q?1593015829281437815?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 05e89fb576f580ac95e7a5d00bdb34830b09671a upstream.
+commit 40e2c4e5a7efcd50983aacbddd3c617e776018bf upstream.
 
-It is no longer possible to build BT_HCIUART into the kernel
-when SERIAL_DEV_BUS is a loadable module, even if none of the
-SERIAL_DEV_BUS based implementations are selected:
+This platform had two Dmic and single Dmic.
+This update was for single Dmic.
 
-drivers/bluetooth/hci_ldisc.o: In function `hci_uart_set_flow_control':
-hci_ldisc.c:(.text+0xb40): undefined reference to `serdev_device_set_flow_control'
-hci_ldisc.c:(.text+0xb5c): undefined reference to `serdev_device_set_tiocm'
+This commit was for two Dmic.
 
-This adds a dependency to avoid the broken configuration.
-
-Fixes: 7841d554809b ("Bluetooth: hci_uart_set_flow_control: Fix NULL deref when using serdev")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: 75ee94b20b46 ("ALSA: hda - fix headset mic problem for Dell machines...")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -66,6 +66,7 @@ config BT_HCIBTSDIO
- 
- config BT_HCIUART
- 	tristate "HCI UART driver"
-+	depends on SERIAL_DEV_BUS || !SERIAL_DEV_BUS
- 	depends on TTY
- 	help
- 	  Bluetooth HCI UART driver.
-@@ -80,7 +81,6 @@ config BT_HCIUART
- config BT_HCIUART_SERDEV
- 	bool
- 	depends on SERIAL_DEV_BUS && BT_HCIUART
--	depends on SERIAL_DEV_BUS=y || SERIAL_DEV_BUS=BT_HCIUART
- 	default y
- 
- config BT_HCIUART_H4
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6176,6 +6176,8 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
+ 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
+ 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
++	SND_PCI_QUIRK(0x1028, 0x084b, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
++	SND_PCI_QUIRK(0x1028, 0x084e, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
