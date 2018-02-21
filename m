@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937718AbeBUOiK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:38:10 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:44269 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934187AbeBUOiH (ORCPT
+        id S937808AbeBUOia (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:38:30 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36587 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934187AbeBUOi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:38:07 -0500
-X-Google-Smtp-Source: AH8x226KvrD9in6a88pXHiSujj3ao4MhjmwS2EeKkpPEdGcOm7JmcruwHDbVy2CNLwTS033cc6K6KQ==
+        Wed, 21 Feb 2018 09:38:27 -0500
+X-Google-Smtp-Source: AH8x2275HuStYhgw543NwNYgvIOe2+nfoXsZ3fV/U8ngbkPWzOdQEWKiWYVgfuERCzmnUDEl6FKd2Q==
 From: Rob Clark <robdclark@gmail.com>
 To: dri-devel@lists.freedesktop.org
 Cc: Archit Taneja <architt@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
         <ville.syrjala@linux.intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
         Sean Paul <seanpaul@chromium.org>, freedreno@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] drm/msm/mdp5: Add global state as a private atomic object
-Date: Wed, 21 Feb 2018 09:37:22 -0500
-Message-Id: <20180221143730.30285-3-robdclark@gmail.com>
+Subject: [PATCH 3/4] drm/msm/mdp5: Use the new private_obj state
+Date: Wed, 21 Feb 2018 09:37:23 -0500
+Message-Id: <20180221143730.30285-4-robdclark@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180221143730.30285-1-robdclark@gmail.com>
 References: <20180221143730.30285-1-robdclark@gmail.com>
@@ -30,172 +30,203 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Archit Taneja <architt@codeaurora.org>
 
-Global shared resources (hwpipes, hwmixers and SMP) for MDP5 are
-implemented as a part of atomic state by subclassing drm_atomic_state.
+This replaces the usage of the subclassed atomic state (mdp5_state)
+with a private_obj state embedded within drm_atomic_state. The latter
+method is the preferred approach, since it's simpler to implement
+and less prone to errors.
 
-The preferred approach is to use the drm_private_obj infrastructure
-available in the atomic core.
-
-mdp5_global_state is introduced as a drm atomic private object. The two
-funcs mdp5_get_global_state() and mdp5_get_existing_global_state() are
-the two variants that will be used to access mdp5_global_state.
-
-This will replace the existing mdp5_state struct (which subclasses
-drm_atomic_state) and the funcs around it. These will be removed later
-once we mdp5_global_state is put to use everywhere.
+The new API replaces the older and equivalent mdp5_state usage in the
+following pattern:
+- References to "mdp5_kms->state" (i.e, the old/existing state) is
+  replaced with mdp5_get_existing_global_state(). In the atomic_check
+  path, this should be called with the glob_state_lock drm_modeset_lock
+  alredy taken.
+- References to "mdp5_get_state()" are replaced with
+  mdp5_get_global_state(). This acquires glob_state_lock and uses
+  drm_atomic_get_private_obj_state() to create a new duplicated state.
 
 Signed-off-by: Archit Taneja <architt@codeaurora.org>
 Signed-off-by: Rob Clark <robdclark@gmail.com>
 ---
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 79 ++++++++++++++++++++++++++++++++
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h | 24 ++++++++++
- 2 files changed, 103 insertions(+)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   | 10 ++++++++--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c | 12 ++++++------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c  | 20 +++++++++++---------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c   | 17 ++++++++++++-----
+ 4 files changed, 37 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 7ad0560dbc9f..0f314c1f3e8a 100644
+index 0f314c1f3e8a..a7e80ebf0207 100644
 --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
 +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -106,6 +106,79 @@ static void mdp5_swap_state(struct msm_kms *kms, struct drm_atomic_state *state)
- 	swap(to_kms_state(state)->state, mdp5_kms->state);
- }
- 
-+/* Global/shared object state funcs */
-+
-+/*
-+ * This is a helper that returns the private state currently in operation.
-+ * Note that this would return the "old_state" if called in the atomic check
-+ * path, and the "new_state" after the atomic swap has been done.
-+ */
-+struct mdp5_global_state *
-+mdp5_get_existing_global_state(struct mdp5_kms *mdp5_kms)
-+{
-+	return to_mdp5_global_state(mdp5_kms->glob_state.state);
-+}
-+
-+/*
-+ * This acquires the modeset lock set aside for global state, creates
-+ * a new duplicated private object state.
-+ */
-+struct mdp5_global_state *mdp5_get_global_state(struct drm_atomic_state *s)
-+{
-+	struct msm_drm_private *priv = s->dev->dev_private;
-+	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(priv->kms));
-+	struct drm_private_state *priv_state;
-+
-+	priv_state = drm_atomic_get_private_obj_state(s, &mdp5_kms->glob_state);
-+	if (IS_ERR(priv_state))
-+		return ERR_CAST(priv_state);
-+
-+	return to_mdp5_global_state(priv_state);
-+}
-+
-+static struct drm_private_state *
-+mdp5_global_duplicate_state(struct drm_private_obj *obj)
-+{
-+	struct mdp5_global_state *state;
-+
-+	state = kmemdup(obj->state, sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		return NULL;
-+
-+	__drm_atomic_helper_private_obj_duplicate_state(obj, &state->base);
-+
-+	return &state->base;
-+}
-+
-+static void mdp5_global_destroy_state(struct drm_private_obj *obj,
-+				      struct drm_private_state *state)
-+{
-+	struct mdp5_global_state *mdp5_state = to_mdp5_global_state(state);
-+
-+	kfree(mdp5_state);
-+}
-+
-+static const struct drm_private_state_funcs mdp5_global_state_funcs = {
-+	.atomic_duplicate_state = mdp5_global_duplicate_state,
-+	.atomic_destroy_state = mdp5_global_destroy_state,
-+};
-+
-+static int mdp5_global_obj_init(struct mdp5_kms *mdp5_kms)
-+{
-+	struct mdp5_global_state *state;
-+
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		return -ENOMEM;
-+
-+	state->mdp5_kms = mdp5_kms;
-+
-+	drm_atomic_private_obj_init(&mdp5_kms->glob_state,
-+				    &state->base,
-+				    &mdp5_global_state_funcs);
-+	return 0;
-+}
-+
- static void mdp5_prepare_commit(struct msm_kms *kms, struct drm_atomic_state *state)
+@@ -183,11 +183,14 @@ static void mdp5_prepare_commit(struct msm_kms *kms, struct drm_atomic_state *st
  {
  	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(kms));
-@@ -779,6 +852,8 @@ static void mdp5_destroy(struct platform_device *pdev)
- 	if (mdp5_kms->rpm_enabled)
- 		pm_runtime_disable(&pdev->dev);
- 
-+	drm_atomic_private_obj_fini(&mdp5_kms->glob_state);
+ 	struct device *dev = &mdp5_kms->pdev->dev;
++	struct mdp5_global_state *global_state;
 +
- 	kfree(mdp5_kms->state);
++	global_state = mdp5_get_existing_global_state(mdp5_kms);
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+ 	if (mdp5_kms->smp)
+-		mdp5_smp_prepare_commit(mdp5_kms->smp, &mdp5_kms->state->smp);
++		mdp5_smp_prepare_commit(mdp5_kms->smp, &global_state->smp);
  }
  
-@@ -939,6 +1014,10 @@ static int mdp5_init(struct platform_device *pdev, struct drm_device *dev)
- 		goto fail;
- 	}
+ static void mdp5_commit(struct msm_kms *kms, struct drm_atomic_state *state)
+@@ -209,9 +212,12 @@ static void mdp5_complete_commit(struct msm_kms *kms, struct drm_atomic_state *s
+ {
+ 	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(kms));
+ 	struct device *dev = &mdp5_kms->pdev->dev;
++	struct mdp5_global_state *global_state;
++
++	global_state = mdp5_get_existing_global_state(mdp5_kms);
  
-+	ret = mdp5_global_obj_init(mdp5_kms);
-+	if (ret)
-+		goto fail;
-+
- 	mdp5_kms->mmio = msm_ioremap(pdev, "mdp_phys", "MDP5");
- 	if (IS_ERR(mdp5_kms->mmio)) {
- 		ret = PTR_ERR(mdp5_kms->mmio);
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h
-index 312e6a47dff8..1c70aac20a98 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.h
-@@ -57,6 +57,12 @@ struct mdp5_kms {
- 	struct mdp5_state *state;
- 	struct drm_modeset_lock state_lock;
+ 	if (mdp5_kms->smp)
+-		mdp5_smp_complete_commit(mdp5_kms->smp, &mdp5_kms->state->smp);
++		mdp5_smp_complete_commit(mdp5_kms->smp, &global_state->smp);
  
-+	/*
-+	 * Global private object state, Do not access directly, use
-+	 * mdp5_global_get_state()
-+	 */
-+	struct drm_private_obj glob_state;
-+
- 	struct mdp5_smp *smp;
- 	struct mdp5_ctl_manager *ctlm;
+ 	pm_runtime_put_sync(dev);
+ }
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
+index 8a00991f03c7..113e6b569562 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
+@@ -52,14 +52,14 @@ int mdp5_mixer_assign(struct drm_atomic_state *s, struct drm_crtc *crtc,
+ {
+ 	struct msm_drm_private *priv = s->dev->dev_private;
+ 	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(priv->kms));
+-	struct mdp5_state *state = mdp5_get_state(s);
++	struct mdp5_global_state *global_state = mdp5_get_global_state(s);
+ 	struct mdp5_hw_mixer_state *new_state;
+ 	int i;
  
-@@ -97,6 +103,24 @@ struct mdp5_state {
- struct mdp5_state *__must_check
- mdp5_get_state(struct drm_atomic_state *s);
+-	if (IS_ERR(state))
+-		return PTR_ERR(state);
++	if (IS_ERR(global_state))
++		return PTR_ERR(global_state);
  
-+/* Global private object state for tracking resources that are shared across
-+ * multiple kms objects (planes/crtcs/etc).
-+ */
-+#define to_mdp5_global_state(x) container_of(x, struct mdp5_global_state, base)
-+struct mdp5_global_state {
-+	struct drm_private_state base;
+-	new_state = &state->hwmixer;
++	new_state = &global_state->hwmixer;
+ 
+ 	for (i = 0; i < mdp5_kms->num_hwmixers; i++) {
+ 		struct mdp5_hw_mixer *cur = mdp5_kms->hwmixers[i];
+@@ -129,8 +129,8 @@ int mdp5_mixer_assign(struct drm_atomic_state *s, struct drm_crtc *crtc,
+ 
+ void mdp5_mixer_release(struct drm_atomic_state *s, struct mdp5_hw_mixer *mixer)
+ {
+-	struct mdp5_state *state = mdp5_get_state(s);
+-	struct mdp5_hw_mixer_state *new_state = &state->hwmixer;
++	struct mdp5_global_state *global_state = mdp5_get_global_state(s);
++	struct mdp5_hw_mixer_state *new_state = &global_state->hwmixer;
+ 
+ 	if (!mixer)
+ 		return;
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c
+index ff52c49095f9..1ef26bc63163 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_pipe.c
+@@ -24,17 +24,19 @@ int mdp5_pipe_assign(struct drm_atomic_state *s, struct drm_plane *plane,
+ {
+ 	struct msm_drm_private *priv = s->dev->dev_private;
+ 	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(priv->kms));
+-	struct mdp5_state *state;
++	struct mdp5_global_state *new_global_state, *old_global_state;
+ 	struct mdp5_hw_pipe_state *old_state, *new_state;
+ 	int i, j;
+ 
+-	state = mdp5_get_state(s);
+-	if (IS_ERR(state))
+-		return PTR_ERR(state);
++	new_global_state = mdp5_get_global_state(s);
++	if (IS_ERR(new_global_state))
++		return PTR_ERR(new_global_state);
+ 
+-	/* grab old_state after mdp5_get_state(), since now we hold lock: */
+-	old_state = &mdp5_kms->state->hwpipe;
+-	new_state = &state->hwpipe;
++	/* grab old_state after mdp5_get_global_state(), since now we hold lock: */
++	old_global_state = mdp5_get_existing_global_state(mdp5_kms);
 +
-+	struct drm_atomic_state *state;
-+	struct mdp5_kms *mdp5_kms;
++	old_state = &old_global_state->hwpipe;
++	new_state = &new_global_state->hwpipe;
+ 
+ 	for (i = 0; i < mdp5_kms->num_hwpipes; i++) {
+ 		struct mdp5_hw_pipe *cur = mdp5_kms->hwpipes[i];
+@@ -107,7 +109,7 @@ int mdp5_pipe_assign(struct drm_atomic_state *s, struct drm_plane *plane,
+ 		WARN_ON(r_hwpipe);
+ 
+ 		DBG("%s: alloc SMP blocks", (*hwpipe)->name);
+-		ret = mdp5_smp_assign(mdp5_kms->smp, &state->smp,
++		ret = mdp5_smp_assign(mdp5_kms->smp, &new_global_state->smp,
+ 				(*hwpipe)->pipe, blkcfg);
+ 		if (ret)
+ 			return -ENOMEM;
+@@ -132,7 +134,7 @@ void mdp5_pipe_release(struct drm_atomic_state *s, struct mdp5_hw_pipe *hwpipe)
+ {
+ 	struct msm_drm_private *priv = s->dev->dev_private;
+ 	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(priv->kms));
+-	struct mdp5_state *state = mdp5_get_state(s);
++	struct mdp5_global_state *state = mdp5_get_global_state(s);
+ 	struct mdp5_hw_pipe_state *new_state = &state->hwpipe;
+ 
+ 	if (!hwpipe)
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+index ae4983d9d0a5..1408eec75440 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+@@ -340,17 +340,20 @@ void mdp5_smp_dump(struct mdp5_smp *smp, struct drm_printer *p)
+ 	struct mdp5_kms *mdp5_kms = get_kms(smp);
+ 	struct mdp5_hw_pipe_state *hwpstate;
+ 	struct mdp5_smp_state *state;
++	struct mdp5_global_state *global_state;
+ 	int total = 0, i, j;
+ 
+ 	drm_printf(p, "name\tinuse\tplane\n");
+ 	drm_printf(p, "----\t-----\t-----\n");
+ 
+ 	if (drm_can_sleep())
+-		drm_modeset_lock(&mdp5_kms->state_lock, NULL);
++		drm_modeset_lock(&mdp5_kms->glob_state.lock, NULL);
 +
-+	struct mdp5_hw_pipe_state hwpipe;
-+	struct mdp5_hw_mixer_state hwmixer;
-+	struct mdp5_smp_state smp;
-+};
++	global_state = mdp5_get_existing_global_state(mdp5_kms);
+ 
+ 	/* grab these *after* we hold the state_lock */
+-	hwpstate = &mdp5_kms->state->hwpipe;
+-	state = &mdp5_kms->state->smp;
++	hwpstate = &global_state->hwpipe;
++	state = &global_state->smp;
+ 
+ 	for (i = 0; i < mdp5_kms->num_hwpipes; i++) {
+ 		struct mdp5_hw_pipe *hwpipe = mdp5_kms->hwpipes[i];
+@@ -374,7 +377,7 @@ void mdp5_smp_dump(struct mdp5_smp *smp, struct drm_printer *p)
+ 			bitmap_weight(state->state, smp->blk_cnt));
+ 
+ 	if (drm_can_sleep())
+-		drm_modeset_unlock(&mdp5_kms->state_lock);
++		drm_modeset_unlock(&mdp5_kms->glob_state.lock);
+ }
+ 
+ void mdp5_smp_destroy(struct mdp5_smp *smp)
+@@ -384,7 +387,8 @@ void mdp5_smp_destroy(struct mdp5_smp *smp)
+ 
+ struct mdp5_smp *mdp5_smp_init(struct mdp5_kms *mdp5_kms, const struct mdp5_smp_block *cfg)
+ {
+-	struct mdp5_smp_state *state = &mdp5_kms->state->smp;
++	struct mdp5_smp_state *state;
++	struct mdp5_global_state *global_state;
+ 	struct mdp5_smp *smp = NULL;
+ 	int ret;
+ 
+@@ -398,6 +402,9 @@ struct mdp5_smp *mdp5_smp_init(struct mdp5_kms *mdp5_kms, const struct mdp5_smp_
+ 	smp->blk_cnt = cfg->mmb_count;
+ 	smp->blk_size = cfg->mmb_size;
+ 
++	global_state = mdp5_get_existing_global_state(mdp5_kms);
++	state = &global_state->smp;
 +
-+struct mdp5_global_state * mdp5_get_existing_global_state(struct mdp5_kms *mdp5_kms);
-+struct mdp5_global_state *__must_check mdp5_get_global_state(struct drm_atomic_state *s);
-+
- /* Atomic plane state.  Subclasses the base drm_plane_state in order to
-  * track assigned hwpipe and hw specific state.
-  */
+ 	/* statically tied MMBs cannot be re-allocated: */
+ 	bitmap_copy(state->state, cfg->reserved_state, smp->blk_cnt);
+ 	memcpy(smp->reserved, cfg->reserved, sizeof(smp->reserved));
 -- 
 2.14.3
