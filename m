@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227LJXtSX4rNAmkl/O5eNAbV04v5PK59/Zx/jVnkkVRXaMd9o4Bg7gYfvQ3p9x9uthsEDagZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519217692; cv=none;
+X-Google-Smtp-Source: AH8x225tXyjztnwMYINN4Hst/SUrUEnStB/KdxzrsHV555ZKH/vQK0rtPWg7Yj6zGsDkIa93/QC3
+ARC-Seal: i=1; a=rsa-sha256; t=1519217689; cv=none;
         d=google.com; s=arc-20160816;
-        b=ubyQK+mrIOtHc6iYi0AehGOEHj4qIP2woCm4tKicPpUx74SkrfiG/jmBHvHdndeKu8
-         e3PB4hxTYuBUkC1JzZXgLGEWE7FHojTwhG/GxjCjCR3Snij4eHscSHCL9D76sFe26Tzz
-         lA1TXylq28HIHNajTh+f36BAF5MiR4GbTzt7x6EhsvJIwIIxD+cg01X6sgqtmkAUCTJS
-         HfN7rlPA0+LShS5EnH7JQfEewr+Zw36v6sI3Zv11OMBXt6rzISK2j3IjyB/XHDL562Eq
-         zeEmorsWNPMYX1Jbnmj49IYV/oraITat7hhc+ggQ4ZAwMg1LqdnpnLGL4oalDoSOqvEH
-         7+DQ==
+        b=ie2lWoD3pg4+gVvfUZsifIf5pgQR2oY3Beod/LyfGd5DZoQppVJzQxkVpAPAXIWDCS
+         bWzTasWHCQUfGJU1Hsu2dnseWDWtZXCrUuUysJv9XlwjjHN795vycmPTmUKE5P1wPdre
+         LUStiNi99b9h3us50T4BmptWX6rVoBYtJWAWdhcy6SqtJ3V1GbjPZkm4yKV4qFgXu3Qs
+         Oz++X/Hbjw8jp5hyoJyaMKeRidvz52rbiIpoqqVf3vB0EXf/DZ9DdCRk7RqKzaPmKliJ
+         Mh0xda1W4jcIwYQg2n9f6qvbhpzKWsi42oNbqvqDIJkQLRqficZ6TfX4lIg9KAirCiqa
+         2njA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Tf3u1JJEYNwvw9qOWo98z2MX5fMFwJVHJLbfiEENCpM=;
-        b=ws80JZ8CMsxQ0hhDX+JcvxBZLKQWmGGHvWmUOZGWKkGqwe3QYuAiNyCY0CuuchAIRq
-         GntT6oU/vPC8FH5rqncSg/qjzH7FYYCJzKJG1NQegM9MvC86/PhEAz9YK6h2YnbLdqjH
-         lfjX45NiOR8b9f8qqNwlAZlpOoEv2QrAV79alGIYs0vG46eu+1y4iaf2J44bzUeM1QAO
-         Y7lHLL4h1sweCJJmrW1hBaYgjVbDMnEcxGyyuw6ltu4w5i4zN/LaxAUCGkCZiOS9a3Yo
-         u3MHYe0+O7sZ8CiedpZnf2fAskI9l1GODT+y2HvUeVqSXHZGNTmpbY27gUPYftrRntGz
-         CFJg==
+        bh=+2wrC7Dc+0EiltFho6sq+CssfYQhm+9TyoqkkHCejy0=;
+        b=b32f8nxgdwG5SP8R3sT5Vq8JuDsSJsaXDQLY2BTkmJId2jKyC+c+06Suqe26Ch+aYD
+         xEgqkhkIIhoj4Zqi/s1h0JSCdMkpYJnRy4l/rRzzvbCVGpmrdJtVazVZpA78m8OyXJZA
+         FOO+MbdqBqG+IZd+GlFsBLxh6Wm4HJSixdvNra5lc3Xva9AFUVZvXO8zphZi9MANBXLt
+         IjQSdvtjka7gC5QkzO1zVxa+/9DCcCvV930A3qL6DnHB/ieuR5MLnrgHr2Cnjmo+Ges+
+         6dhe+tccymvLS5XdIl7yOvfzlpthFTNfwxnMM4LpkHIZatj9fUrs8ktD+F9eSrf/w0OT
+         bHqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Liu Bo <bo.li.liu@oracle.com>,
-	Nikolay Borisov <nborisov@suse.com>,
 	Josef Bacik <jbacik@fb.com>,
 	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 21/77] Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
-Date: Wed, 21 Feb 2018 13:48:30 +0100
-Message-Id: <20180221124433.073992378@linuxfoundation.org>
+Subject: [PATCH 4.9 20/77] Btrfs: fix extent state leak from tree log
+Date: Wed, 21 Feb 2018 13:48:29 +0100
+Message-Id: <20180221124433.029399304@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015210708041633?=
-X-GMAIL-MSGID: =?utf-8?q?1593015210708041633?=
+X-GMAIL-THRID: =?utf-8?q?1593015207747928649?=
+X-GMAIL-MSGID: =?utf-8?q?1593015207747928649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,40 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Liu Bo <bo.li.liu@oracle.com>
 
-commit e8f1bc1493855e32b7a2a019decc3c353d94daf6 upstream.
+commit 55237a5f2431a72435e3ed39e4306e973c0446b7 upstream.
 
-This regression is introduced in
-commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction").
+It's possible that btrfs_sync_log() bails out after one of the two
+btrfs_write_marked_extents() which convert extent state's state bit into
+EXTENT_NEED_WAIT from EXTENT_DIRTY/EXTENT_NEW, however only EXTENT_DIRTY
+and EXTENT_NEW are searched by free_log_tree() so that those extent states
+with EXTENT_NEED_WAIT lead to memory leak.
 
-There are two problems,
-
-a) it is ->destroy_inode() that does the final free on inode, not
-   ->evict_inode(),
-b) clear_inode() must be called before ->evict_inode() returns.
-
-This could end up hitting BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-in evict() because I_CLEAR is set in clear_inode().
-
-Fixes: commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction")
-Cc: <stable@vger.kernel.org> # v4.7-rc6+
+cc: <stable@vger.kernel.org>
 Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5229,7 +5229,7 @@ void btrfs_evict_inode(struct inode *ino
- 	trace_btrfs_inode_evict(inode);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3013,13 +3013,14 @@ static void free_log_tree(struct btrfs_t
  
- 	if (!root) {
--		kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
-+		clear_inode(inode);
- 		return;
+ 	while (1) {
+ 		ret = find_first_extent_bit(&log->dirty_log_pages,
+-				0, &start, &end, EXTENT_DIRTY | EXTENT_NEW,
++				0, &start, &end,
++				EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT,
+ 				NULL);
+ 		if (ret)
+ 			break;
+ 
+ 		clear_extent_bits(&log->dirty_log_pages, start, end,
+-				  EXTENT_DIRTY | EXTENT_NEW);
++				  EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT);
  	}
  
+ 	/*
