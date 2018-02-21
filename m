@@ -1,51 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753391AbeBUJc3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:32:29 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34248 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753200AbeBUJ1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:27:12 -0500
-X-Google-Smtp-Source: AH8x226W1dxyrxJkaprdtBD7IoYbeKGaW5l8b0U4YLLni1uiV7GKwunBY5DB+ij2tMa/IFIfVRhOYw==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 02/20] lightnvm: add controller capabilities to 2.0
-Date: Wed, 21 Feb 2018 10:26:40 +0100
-Message-Id: <1519205218-26994-3-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
-References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S932409AbeBUJeh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:34:37 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37332 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753123AbeBUJeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 04:34:36 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] audit: return on memory error to avoid null pointer dereference
+Date: Wed, 21 Feb 2018 04:30:07 -0500
+Message-Id: <2000f6951431b4f19947d7aa41bb8efd2fe3f15b.1519196084.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign missing mccap value on 2.0 path
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
+Passes audit-testsuite.
+See: https://github.com/linux-audit/audit-kernel/issues/76
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- drivers/nvme/host/lightnvm.c | 2 ++
+ kernel/audit.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index c81e64cc20d7..969bb874850c 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -392,6 +392,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
- 	dev_geo->c.ws_opt = le32_to_cpu(id->ws_opt);
- 	dev_geo->c.mw_cunits = le32_to_cpu(id->mw_cunits);
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 5c25449..2de74be 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1059,6 +1059,8 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+ 		return;
  
-+	dev_geo->c.mccap = le32_to_cpu(id->mccap);
-+
- 	dev_geo->c.trdt = le32_to_cpu(id->trdt);
- 	dev_geo->c.trdm = le32_to_cpu(id->trdm);
- 	dev_geo->c.tprt = le32_to_cpu(id->twrt);
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
 -- 
-2.7.4
+1.8.3.1
