@@ -1,68 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeBUSoR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:44:17 -0500
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:41630 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbeBUSoP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:44:15 -0500
-X-Google-Smtp-Source: AH8x226lJLt0+eS/0Fc0LU3mOgraRtg7XE0K8Izj9V0qPsqiRMY7KtXcvDvsaI5+N5PeiogLyKUQ4A==
-Date: Wed, 21 Feb 2018 21:44:11 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, avagin@virtuozzo.com
-Subject: [PATCH] proc: fix /proc/*/map_files lookup some more
-Message-ID: <20180221184411.GA25924@avx2>
+        id S1753592AbeBUSs0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:48:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753014AbeBUSsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:48:24 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA922178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AH8x22795nc168/9PYPoGYXS2iJgnaSw+FAic2baKmlQTUGmOGMgAM2dN5P6R209DTLCzo+xrXIDD4D8pO9NeEx5dhg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180221173306.17265-1-mdf@kernel.org>
+References: <20180221173306.17265-1-mdf@kernel.org>
+From: Alan Tull <atull@kernel.org>
+Date: Wed, 21 Feb 2018 12:47:41 -0600
+X-Gmail-Original-Message-ID: <CANk1AXRsKgAZYW_qFaC2pxZdbfKQgreOntLNyYm=JmrxN-TTWg@mail.gmail.com>
+Message-ID: <CANk1AXRsKgAZYW_qFaC2pxZdbfKQgreOntLNyYm=JmrxN-TTWg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fpga: Consolidate bridge properties
+To: Moritz Fischer <mdf@kernel.org>
+Cc: linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I totally forgot that _parse_integer() accepts arbitrary amount of
-leading zeroes leading to the following:
+On Wed, Feb 21, 2018 at 11:33 AM, Moritz Fischer <mdf@kernel.org> wrote:
 
-		OK
-	# readlink /proc/1/map_files/56427ecba000-56427eddc000
-	/lib/systemd/systemd
+Hi Moritz,
 
-		bogus
-	# readlink /proc/1/map_files/00000000000056427ecba000-56427eddc000
-	/lib/systemd/systemd
-	# readlink /proc/1/map_files/56427ecba000-00000000000056427eddc000
-	/lib/systemd/systemd
+Thanks!
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> Consolidate bridge properties in a single file, instead of duplicating
+> the same optional property over and over again.
+>
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+Acked-by: Alan Tull <atull@kernel.org>
 
- fs/proc/base.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1913,9 +1913,11 @@ static int dname_to_vma_addr(struct dentry *dentry,
- 			     unsigned long *start, unsigned long *end)
- {
- 	const char *str = dentry->d_name.name;
-+	unsigned int len = dentry->d_name.len;
- 	unsigned long long sval, eval;
--	unsigned int len;
- 
-+	if (len > 1 && *str == '0')
-+		return -EINVAL;
- 	len = _parse_integer(str, 16, &sval);
- 	if (len & KSTRTOX_OVERFLOW)
- 		return -EINVAL;
-@@ -1927,6 +1929,9 @@ static int dname_to_vma_addr(struct dentry *dentry,
- 		return -EINVAL;
- 	str++;
- 
-+	len = strlen(str);
-+	if (len > 1 && *str == '0')
-+		return -EINVAL;
- 	len = _parse_integer(str, 16, &eval);
- 	if (len & KSTRTOX_OVERFLOW)
- 		return -EINVAL;
+> Cc: Alan Tull <atull@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> ---
+>  .../devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt |  5 +----
+>  .../devicetree/bindings/fpga/altera-freeze-bridge.txt     |  5 +----
+>  .../devicetree/bindings/fpga/altera-hps2fpga-bridge.txt   |  5 +----
+>  Documentation/devicetree/bindings/fpga/fpga-bridge.txt    | 15 +++++++++++++++
+>  .../devicetree/bindings/fpga/xilinx-pr-decoupler.txt      |  8 ++------
+>  5 files changed, 20 insertions(+), 18 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/fpga/fpga-bridge.txt
+>
+> diff --git a/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt b/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt
+> index 817a8d4bf903..5dd0ff0f7b4e 100644
+> --- a/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt
+> +++ b/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt
+> @@ -3,10 +3,7 @@ Altera FPGA To SDRAM Bridge Driver
+>  Required properties:
+>  - compatible           : Should contain "altr,socfpga-fpga2sdram-bridge"
+>
+> -Optional properties:
+> -- bridge-enable                : 0 if driver should disable bridge at startup
+> -                         1 if driver should enable bridge at startup
+> -                         Default is to leave bridge in current state.
+> +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic bindings.
+>
+>  Example:
+>         fpga_bridge3: fpga-bridge@ffc25080 {
+> diff --git a/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt b/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
+> index f8e288c71b2d..8b26fbcff3c6 100644
+> --- a/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
+> +++ b/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
+> @@ -10,10 +10,7 @@ Required properties:
+>  - compatible           : Should contain "altr,freeze-bridge-controller"
+>  - regs                 : base address and size for freeze bridge module
+>
+> -Optional properties:
+> -- bridge-enable                : 0 if driver should disable bridge at startup
+> -                         1 if driver should enable bridge at startup
+> -                         Default is to leave bridge in current state.
+> +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic bindings.
+>
+>  Example:
+>         freeze-controller@100000450 {
+> diff --git a/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt b/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
+> index 6406f9337eeb..68cce3945b10 100644
+> --- a/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
+> +++ b/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
+> @@ -9,10 +9,7 @@ Required properties:
+>  - resets       : Phandle and reset specifier for this bridge's reset
+>  - clocks       : Clocks used by this module.
+>
+> -Optional properties:
+> -- bridge-enable        : 0 if driver should disable bridge at startup.
+> -                 1 if driver should enable bridge at startup.
+> -                 Default is to leave bridge in its current state.
+> +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic bindings.
+>
+>  Example:
+>         fpga_bridge0: fpga-bridge@ff400000 {
+> diff --git a/Documentation/devicetree/bindings/fpga/fpga-bridge.txt b/Documentation/devicetree/bindings/fpga/fpga-bridge.txt
+> new file mode 100644
+> index 000000000000..82607b23a287
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fpga/fpga-bridge.txt
+> @@ -0,0 +1,15 @@
+> +FPGA Bridge Device Tree Binding
+> +
+> +Moritz Fischer 2018 (Consolidated from previous bindings)
+> +
+> +Optional properties:
+> +- bridge-enable                : 0 if driver should disable bridge at startup
+> +                         1 if driver should enable bridge at startup
+> +                         Default is to leave bridge in current state.
+> +
+> +Example:
+> +       fpga_bridge3: fpga-bridge@ffc25080 {
+> +               compatible = "altr,socfpga-fpga2sdram-bridge";
+> +               reg = <0xffc25080 0x4>;
+> +               bridge-enable = <0>;
+> +       };
+> diff --git a/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt b/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
+> index 8dcfba926bc7..4284d293fa61 100644
+> --- a/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
+> +++ b/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
+> @@ -18,12 +18,8 @@ Required properties:
+>  - clocks               : input clock to IP
+>  - clock-names          : should contain "aclk"
+>
+> -Optional properties:
+> -- bridge-enable                : 0 if driver should disable bridge at startup
+> -                         1 if driver should enable bridge at startup
+> -                         Default is to leave bridge in current state.
+> -
+> -See Documentation/devicetree/bindings/fpga/fpga-region.txt for generic bindings.
+> +See Documentation/devicetree/bindings/fpga/fpga-region.txt and
+> +Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic bindings.
+>
+>  Example:
+>         fpga-bridge@100000450 {
+> --
+> 2.16.1
+>
