@@ -1,63 +1,82 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225SwOLt77HQs6guDzvKpyj9umwCDYiVGyQ8/od7KqNHD4Rq8z6W6tApAPF84Vh8Jghk76PA
-ARC-Seal: i=1; a=rsa-sha256; t=1519250040; cv=none;
+X-Google-Smtp-Source: AH8x224Y4S6tqJvbw/50dJLIHZURkIIxhZZR1YyESNPNkO6DFKQAnaFMrqZamb6P5ektt2PnbskD
+ARC-Seal: i=1; a=rsa-sha256; t=1519255405; cv=none;
         d=google.com; s=arc-20160816;
-        b=PoSeKLAHGlb9u2I2PB42chAUPZjmYjQVpgum6eEPvrOlPhbhXzj6zuziHKh51H/fDF
-         B2mCrut9ksoCjkgoCOrUqLljOu2ElYjkRFFJXzP6aWF0tP2DWywuq322HwKUILjH5vWR
-         i+mUE9scTIgmVy73Req8vr3QnTYj17/HvSIJyUmmocWkSUmo/pvc0j1t6sKPG2/3oKvt
-         Ly9KUyLeTLm74QYwY5txpoh9Bl4oQNgZNMjRzfKzR/XgLhb35ULc/dxApe4EMiCiRk2E
-         IU4Zu8vDD716lncIMzTpJ6QmNyWPZLeF2mzB3eG+5obgxo2XtJf4VKIQXnnZWyjR4AEg
-         uRsA==
+        b=Z0kWEGsLDttyxxEOnkRZjEb9reWyxTeq7F53bW5uitxzp2TXUQmQJz8OkPPfFAA/YI
+         SgIlZHsZ39OSlk+dzOafww0v1/bHBL2IxYThRJF5sTvPHNIS8pL15Zg5EEb9eOBuQbWX
+         GB2Bcn2zlFBBeRWa3zxIqABpeddNBLpUcPyTACrHBLAC8F3mridhVRmPb0LBgAiiy2x/
+         /J4mxekInWP47tRLAa2hJHKu+pbCZNOJyvz3q61Ofr6Bc6t5Xgu9oYbr3MMXPxnvGzyv
+         h4Z0MBDqimyUCDnbZlsu/5ZLJkoyMQaCwBhp47DQerM15Nh/8U0afj3jrT0KCOowJDRZ
+         d6lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+        h=list-id:precedence:sender:content-transfer-encoding:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=XeUHhpQIMDB2afVvskeaBBRwSQk+YicWLwaxiZPLvQg=;
-        b=C/mF3b8kpqPKWUpVHMkwGr2osHdxlu5LOpKPFYywvPCJY9PZ8FTn9gHR3xDauYJSFH
-         ej6pJ03GvNsqkTbW1DDDF1ms1yLaDcYSj+ExMrw9SJa5fZyEv+rXDH5eendt6P/PyOhL
-         QDiTRpgDxlvzReicX9Yu6EhbYkzq0oDt5LpVpw1jGuiUdhZz90Aer9EW/NE/QaijuzHC
-         czk4CziP5DGFyqqJPqTk0VdkTYiROGQUGbz6XU/S7J1fVQQD97OvdxfBrQakvV31skCS
-         tcgN1biNJ265ue7PXjNXRizewzaLcd4Bdeu0PNhvshjCZiJ58ywmakx074ZEujD0yCKZ
-         9DiQ==
+        bh=x4Wke0zUnkgw+AQbxh6SqP6V+t30SOGv0EvNF/aqK0U=;
+        b=PkTUcvRKQ2ngMvcfU/D0s+lv6JALQYGDrvx9nqvXSzO6zNDa8y0iSk9Oe0kHIfPJko
+         fHofplB4ALaEnRn+MjXPsAzFSUV2YDOAWIe60r/jaRaQNLNtPZEkFCpbniIEs4Kkkvk4
+         XTwciyON/3Xa/oMMfWbCC2/ce6zIVYDOwt0+4eGjQVrff3zRKB9bLnzQL2yvDwNZ7jbX
+         Ln6p4PjjZ2216BG3k4uCCvbx+bICH+QFajauC5F8tQus75AWzHWUZY11+Mi5Ye8N0ahR
+         SDASddlkko07Gr+bS0N+965oT/q7x6Fnyrz36y5s5jlnCpLfSkTupLUTxUWwddqtU4TO
+         NbAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=GHfgxZ5l;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=kqL4orWw;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=GHfgxZ5l;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=kqL4orWw;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750765AbeBUVx7 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 16:53:59 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43132 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeBUVx6 (ORCPT
+        id S1751296AbeBUXXZ (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 18:23:25 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41145 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbeBUXXX (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 16:53:58 -0500
+        Wed, 21 Feb 2018 18:23:23 -0500
 From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
 To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
-Cc: Fathi Boudra <fathi.boudra@linaro.org>,
+Cc: andy.shevchenko@gmail.com, Fathi Boudra <fathi.boudra@linaro.org>,
+        =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
         Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Shuah Khan <shuah@kernel.org>,
         linux-gpio@vger.kernel.org (open list:GPIO MOCKUP DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] selftests: gpio: restructure Makefile
-Date: Wed, 21 Feb 2018 15:52:43 -0600
-Message-Id: <1519249964-1630-1-git-send-email-daniel.diaz@linaro.org>
+Subject: [PATCH v2] selftests: gpio: restructure Makefile
+Date: Wed, 21 Feb 2018 17:22:52 -0600
+Message-Id: <1519255373-10071-1-git-send-email-daniel.diaz@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519249964-1630-1-git-send-email-daniel.diaz@linaro.org>
+References: <1519249964-1630-1-git-send-email-daniel.diaz@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593049130388691991?=
-X-GMAIL-MSGID: =?utf-8?q?1593049130388691991?=
+X-GMAIL-MSGID: =?utf-8?q?1593054756132505729?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Fathi Boudra <fathi.boudra@linaro.org>
 
+This patch cleans up the Makefile by restructuring a couple of
+things, namely:
+1) change explicit paths in targets for variables
+2) substitute a variable (BINARIES) for another, part of the
+   selftests build system (TEST_PROGS_EXTENDED)
+3) proper cleaning up of the EXTRA objects
+
+The resulting Makefile is much more readable and manageable.
+
 Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 ---
+v2: Add commit description
+
  tools/testing/selftests/gpio/Makefile | 36 +++++++++++++++++------------------
  1 file changed, 17 insertions(+), 19 deletions(-)
 
