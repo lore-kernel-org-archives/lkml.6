@@ -1,53 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeBUIH1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:07:27 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:41783 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeBUIDy (ORCPT
+        id S1752025AbeBUIJw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 03:09:52 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38892 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeBUIJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:03:54 -0500
-X-Google-Smtp-Source: AH8x2241EGOPDqvcZ0TBOFuNTr4HTjqZ8lvD3dSWHuZ3/o7RabugoZc2c/wMs2NaYXYciXYRwDZfAg==
-From: hans.ml.holmberg@owltronix.com
-To: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <jg@lightnvm.io>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 1/3] lightnvm: pblk: delete writer kick timer before stopping thread
-Date: Wed, 21 Feb 2018 09:02:59 +0100
-Message-Id: <1519200181-10886-2-git-send-email-hans.ml.holmberg@owltronix.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519200181-10886-1-git-send-email-hans.ml.holmberg@owltronix.com>
-References: <1519200181-10886-1-git-send-email-hans.ml.holmberg@owltronix.com>
+        Wed, 21 Feb 2018 03:09:49 -0500
+X-Google-Smtp-Source: AH8x226rjxbH1osZxpIXNvPrJsqJtjH9aaoGeprBz5OBJ11wzCda0hQQyprLsqz6PSWY7awt+MQl/Q==
+Date: Wed, 21 Feb 2018 09:09:44 +0100
+From: Juri Lelli <juri.lelli@gmail.com>
+To: Christopher =?iso-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
+Message-ID: <20180221080944.GB8032@localhost.localdomain>
+References: <20180215154318.15894-1-chrisadr@gentoo.org>
+ <20180215165212.GB25181@hirez.programming.kicks-ass.net>
+ <20180216094432.GG8032@localhost.localdomain>
+ <1518787521.2464.20.camel@gentoo.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518787521.2464.20.camel@gentoo.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On 16/02/18 08:25, Christopher Díaz Riveros wrote:
+> El vie, 16-02-2018 a las 10:44 +0100, Juri Lelli escribió:
+> > On 15/02/18 17:52, Peter Zijlstra wrote:
+> > > On Thu, Feb 15, 2018 at 10:43:18AM -0500, Christopher Diaz Riveros
+> > > wrote:
+> > 
+> > [...]
+> > 
+> > > > @@ -437,20 +437,28 @@ struct sched_dl_entity {
+> > > >  	 * during sched_setattr(), they will remain the same
+> > > > until
+> > > >  	 * the next sched_setattr().
+> > > >  	 */
+> > > > -	u64				dl_runtime;	/*
+> > > > Maximum runtime for each instance	*/
+> > > > -	u64				dl_deadline;	/
+> > > > * Relative deadline of each instance	*/
+> > > > -	u64				dl_period;	/*
+> > > > Separation of two instances (period) */
+> > > > -	u64				dl_bw;		
+> > > > /* dl_runtime / dl_period		*/
+> > > > -	u64				dl_density;	/*
+> > > > dl_runtime / dl_deadline		*/
+> > > > +	/* Maximum runtime for each instance	*/
+> > > > +	u64				dl_runtime;
+> > > > +	/* Relative deadline of each instance	*/
+> > > > +	u64				dl_deadline;
+> > > > +	/* Separation of two instances (period) */
+> > > > +	u64				dl_period;
+> > > > +	/* dl_runtime / dl_period		*/
+> > > > +	u64				dl_bw;
+> > > > +	/* dl_runtime / dl_deadline		*/
+> > > > +	u64				dl_density;
+> > > 
+> > > That's a whole lot less readable :/
+> > 
+> > Yep. :(
+> 
+> Thank you all for the feedback, I'll consider this patch as NACK. Sorry
+>  for wasting time in a low quality patch. I'll prepare a better one
+> next time :)
 
-Unless we delete the timer that wakes up the write thread
-before we stop the thread we risk re-starting the thread, so
-delete the timer first.
+No problem, thanks actually to seeing if things can be cleaned up. :)
 
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
----
- drivers/lightnvm/pblk-init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+While going through that struct again I was thinking that we might want
+to completely remove inline comments and put them in the above comment
+block(s), as we already have for bool flags:
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index a2b54a8..862ac4e 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -923,9 +923,9 @@ static void pblk_writer_stop(struct pblk *pblk)
- 	WARN(pblk_rb_sync_count(&pblk->rwb),
- 			"Stopping not fully synced write buffer\n");
- 
-+	del_timer_sync(&pblk->wtimer);
- 	if (pblk->writer_ts)
- 		kthread_stop(pblk->writer_ts);
--	del_timer(&pblk->wtimer);
- }
- 
- static void pblk_free(struct pblk *pblk)
--- 
-2.7.4
+  /*
+   * Some bool flags:
+   *
+   * @dl_throttled tells if we exhausted the runtime. If so, the
+   * task has to wait for a replenishment to be performed at the
+   * next firing of dl_timer.
+   [...]
+
+Would it be OK and any better?
+
+Thanks,
+
+- Juri
