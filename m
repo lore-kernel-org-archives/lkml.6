@@ -1,224 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753953AbeBURES (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:04:18 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38526 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938793AbeBURAT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:00:19 -0500
-X-Google-Smtp-Source: AH8x2259eHlOsoU8Tl1A3U1RxkFPA3t1P+AdfM3zFFwKRFDlHkNoHA91z+DK9WAXLvgny6Earnk8CQ==
-Date: Wed, 21 Feb 2018 18:00:16 +0100
-From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
-To: Andy Shevchenko <andy@infradead.org>
-Cc: Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/7] platform/x86: topstar-laptop: use consistent naming
- scheme
-Message-ID: <4e73ff0de19be2973df565ad0074fb8b58e3937d.1519231939.git.gdouezangrard@gmail.com>
-References: <cover.1519231939.git.gdouezangrard@gmail.com>
+        id S1754052AbeBURFe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:05:34 -0500
+Received: from vern.gendns.com ([206.190.152.46]:55067 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752394AbeBURFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 12:05:30 -0500
+Subject: =?UTF-8?Q?Re:_[PATCH_v7_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
+ <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
+ <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <ebc57f3b-4f5d-612f-5b63-ddda4dd25031@lechnology.com>
+Date: Wed, 21 Feb 2018 11:05:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1519231939.git.gdouezangrard@gmail.com>
+In-Reply-To: <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* use module prefix naming scheme for functions and programming
-constructs,
+On 02/21/2018 06:01 AM, Bartosz Golaszewski wrote:
+> 2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
+>>>
+>>> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>
+>>>> This series converts mach-davinci to use the common clock framework.
+>>>>
+>>>>
+>>>
+>>> Hi David,
+>>>
+>>> just some quick results from today's playing with v7.
+>>>
+>>> I started out with da850-lcdk with my standard rootfs over NFS. I was
+>>> not able to boot to console so far. The first problem is that mdio
+>>> fails to probe:
+>>>
+>>> libphy: Fixed MDIO Bus: probed
+>>> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
+>>> davinci_mdio 1e24000.mdio: no live phy, scanning all
+>>> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
+>>> digging I noticed that the supplied clock rate differs
+>>> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
+>>> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
+>>> not help like with lcdc.
+>>
+>>
+>> Can you post the output of this command so that I can see how your
+>> clocks are setup:
+>>
+>> cat /sys/kernel/debug/clk/clk_summary
+>>
+>>
+>>>
+>>> After that, the boot just hangs without ever getting to emac's probe.
+>>
+>>
+>> Using your workaround, can you run:
+>>
+>> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+>>
+>> If you see:
+>>    1e27000.clock-controller: emac  off-0
+>>
+>> then genpd is not working like it is supposed to. You should see something
+>> like this for device that are working:
+>>            1e27000.clock-controller: uart2  on
+>>      /devices/platform/soc@1c00000/1d0d000.serial        active
+>>
+>>
+>>>
+>>> Once I set the emac clock to always enabled (a workaround that was
+>>> necessary with v6, but could be dropped with my first
+>>> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
+>>> pointer dereference:
+>>
+>>
+>> I noticed this too when adding the power-domains property to some device
+>> tree nodes. This is part of the reason why I didn't add it everywhere.
+>> I wasn't able to figure out the cause of this yet. As a work around
+>> though, please try removing the power-domains property from the emac
+>> and mdio nodes and use your previous workaround of having an always
+>> enabled clock.
+>>
+>>
+> 
+> When I use any of the workarounds I just keep getting more problems
+> (e.g. [1] from blk and pinctrl). I only had a couple hours today to
+> play with it but it seems to me we have some memory corruption
+> somewhere. I'll check the initialization order of all the frameworks
+> involved tomorrow.
+> 
+> Best regards,
+> Bartosz
+> 
+> [1] https://pastebin.com/75mkkuJL
+> 
 
-* consistent label names
-
-Signed-off-by: Guillaume Douézan-Grard <gdouezangrard@gmail.com>
----
- drivers/platform/x86/topstar-laptop.c | 82 +++++++++++++++++------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/platform/x86/topstar-laptop.c b/drivers/platform/x86/topstar-laptop.c
-index b4807b868a69..17f22a085d9a 100644
---- a/drivers/platform/x86/topstar-laptop.c
-+++ b/drivers/platform/x86/topstar-laptop.c
-@@ -21,10 +21,10 @@
- #include <linux/input.h>
- #include <linux/input/sparse-keymap.h>
- 
--#define ACPI_TOPSTAR_CLASS "topstar"
-+#define TOPSTAR_LAPTOP_CLASS "topstar"
- 
--struct topstar_hkey {
--	struct input_dev *inputdev;
-+struct topstar_laptop {
-+	struct input_dev *input;
- };
- 
- static const struct key_entry topstar_keymap[] = {
-@@ -57,11 +57,11 @@ static const struct key_entry topstar_keymap[] = {
- 	{ KE_END, 0 }
- };
- 
--static void acpi_topstar_notify(struct acpi_device *device, u32 event)
-+static void topstar_acpi_notify(struct acpi_device *device, u32 event)
- {
- 	static bool dup_evnt[2];
- 	bool *dup;
--	struct topstar_hkey *hkey = acpi_driver_data(device);
-+	struct topstar_laptop *topstar = acpi_driver_data(device);
- 
- 	/* 0x83 and 0x84 key events comes duplicated... */
- 	if (event == 0x83 || event == 0x84) {
-@@ -73,11 +73,11 @@ static void acpi_topstar_notify(struct acpi_device *device, u32 event)
- 		*dup = true;
- 	}
- 
--	if (!sparse_keymap_report_event(hkey->inputdev, event, 1, true))
-+	if (!sparse_keymap_report_event(topstar->input, event, 1, true))
- 		pr_info("unknown event = 0x%02x\n", event);
- }
- 
--static int acpi_topstar_fncx_switch(struct acpi_device *device, bool state)
-+static int topstar_acpi_fncx_switch(struct acpi_device *device, bool state)
- {
- 	acpi_status status;
- 
-@@ -91,72 +91,72 @@ static int acpi_topstar_fncx_switch(struct acpi_device *device, bool state)
- 	return 0;
- }
- 
--static int acpi_topstar_init_hkey(struct topstar_hkey *hkey)
-+static int topstar_input_init(struct topstar_laptop *topstar)
- {
- 	struct input_dev *input;
--	int error;
-+	int err;
- 
- 	input = input_allocate_device();
- 	if (!input)
- 		return -ENOMEM;
- 
- 	input->name = "Topstar Laptop extra buttons";
--	input->phys = "topstar/input0";
-+	input->phys = TOPSTAR_LAPTOP_CLASS "/input0";
- 	input->id.bustype = BUS_HOST;
- 
--	error = sparse_keymap_setup(input, topstar_keymap, NULL);
--	if (error) {
-+	err = sparse_keymap_setup(input, topstar_keymap, NULL);
-+	if (err) {
- 		pr_err("Unable to setup input device keymap\n");
- 		goto err_free_dev;
- 	}
- 
--	error = input_register_device(input);
--	if (error) {
-+	err = input_register_device(input);
-+	if (err) {
- 		pr_err("Unable to register input device\n");
- 		goto err_free_dev;
- 	}
- 
--	hkey->inputdev = input;
-+	topstar->input = input;
- 	return 0;
- 
-- err_free_dev:
-+err_free_dev:
- 	input_free_device(input);
--	return error;
-+	return err;
- }
- 
--static int acpi_topstar_add(struct acpi_device *device)
-+static int topstar_acpi_add(struct acpi_device *device)
- {
--	struct topstar_hkey *tps_hkey;
-+	struct topstar_laptop *topstar;
- 
--	tps_hkey = kzalloc(sizeof(struct topstar_hkey), GFP_KERNEL);
--	if (!tps_hkey)
-+	topstar = kzalloc(sizeof(struct topstar_laptop), GFP_KERNEL);
-+	if (!topstar)
- 		return -ENOMEM;
- 
- 	strcpy(acpi_device_name(device), "Topstar TPSACPI");
--	strcpy(acpi_device_class(device), ACPI_TOPSTAR_CLASS);
-+	strcpy(acpi_device_class(device), TOPSTAR_LAPTOP_CLASS);
- 
--	if (acpi_topstar_fncx_switch(device, true))
--		goto add_err;
-+	if (topstar_acpi_fncx_switch(device, true))
-+		goto err_free;
- 
--	if (acpi_topstar_init_hkey(tps_hkey))
--		goto add_err;
-+	if (topstar_input_init(topstar))
-+		goto err_free;
- 
--	device->driver_data = tps_hkey;
-+	device->driver_data = topstar;
- 	return 0;
- 
--add_err:
--	kfree(tps_hkey);
-+err_free:
-+	kfree(topstar);
- 	return -ENODEV;
- }
- 
--static int acpi_topstar_remove(struct acpi_device *device)
-+static int topstar_acpi_remove(struct acpi_device *device)
- {
--	struct topstar_hkey *tps_hkey = acpi_driver_data(device);
-+	struct topstar_laptop *topstar = acpi_driver_data(device);
- 
--	acpi_topstar_fncx_switch(device, false);
-+	topstar_acpi_fncx_switch(device, false);
- 
--	input_unregister_device(tps_hkey->inputdev);
--	kfree(tps_hkey);
-+	input_unregister_device(topstar->input);
-+	kfree(topstar);
- 
- 	return 0;
- }
-@@ -168,14 +168,14 @@ static const struct acpi_device_id topstar_device_ids[] = {
- };
- MODULE_DEVICE_TABLE(acpi, topstar_device_ids);
- 
--static struct acpi_driver acpi_topstar_driver = {
-+static struct acpi_driver topstar_acpi_driver = {
- 	.name = "Topstar laptop ACPI driver",
--	.class = ACPI_TOPSTAR_CLASS,
-+	.class = TOPSTAR_LAPTOP_CLASS,
- 	.ids = topstar_device_ids,
- 	.ops = {
--		.add = acpi_topstar_add,
--		.remove = acpi_topstar_remove,
--		.notify = acpi_topstar_notify,
-+		.add = topstar_acpi_add,
-+		.remove = topstar_acpi_remove,
-+		.notify = topstar_acpi_notify,
- 	},
- };
- 
-@@ -183,7 +183,7 @@ static int __init topstar_laptop_init(void)
- {
- 	int ret;
- 
--	ret = acpi_bus_register_driver(&acpi_topstar_driver);
-+	ret = acpi_bus_register_driver(&topstar_acpi_driver);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -194,7 +194,7 @@ static int __init topstar_laptop_init(void)
- 
- static void __exit topstar_laptop_exit(void)
- {
--	acpi_bus_unregister_driver(&acpi_topstar_driver);
-+	acpi_bus_unregister_driver(&topstar_acpi_driver);
- }
- 
- module_init(topstar_laptop_init);
--- 
-2.16.1
+I wonder if we need to delete all of the __init and __initconst attributes
+now that this has been converted to platform devices.
