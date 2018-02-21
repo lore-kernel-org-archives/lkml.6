@@ -1,56 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeBUU1J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:27:09 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38306 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeBUU1I (ORCPT
+        id S1751413AbeBUU10 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:27:26 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52794 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeBUU1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:27:08 -0500
-Date: Wed, 21 Feb 2018 12:27:07 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] proc: use set_puts() at /proc/*/wchan
-Message-Id: <20180221122707.69398914a45486a741bdad96@linux-foundation.org>
-In-Reply-To: <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
-References: <20180217072011.GB16074@avx2>
-        <CAHp75Vd9ZnC059W2n5=Rx_gz3GN0LORPwt=_AdG5GZPJAUTasw@mail.gmail.com>
-        <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
-        <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Feb 2018 15:27:24 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
+Date: Wed, 21 Feb 2018 22:28:06 +0200
+Message-ID: <56271779.hLAmkO6BAC@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180220085857.GC7203@w540>
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org> <1963190.TI9O1pFqZp@avalon> <20180220085857.GC7203@w540>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018 09:57:49 +0100 Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
+Hi Jacopo,
 
-> On 2018-02-21 01:02, Andrew Morton wrote:
-> > On Sat, 17 Feb 2018 16:06:42 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
+> On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
+> > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
+> >> The sensor driver sets mbus format colorspace information and sizes,
+> >> but not ycbcr encoding, quantization and xfer function. When supplied
+> >> with an badly initialized mbus frame format structure, those fields
+> >> need to be set explicitly not to leave them uninitialized. This is
+> >> tested by v4l2-compliance, which supplies a mbus format description
+> >> structure and checks for all fields to be properly set.
+> >> 
+> >> Without this commit, v4l2-compliance fails when testing formats with:
+> >> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+> >> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> ---
+> >> 
+> >>  drivers/media/i2c/ov7670.c | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >> 
+> >> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> >> index 25b26d4..61c472e 100644
+> >> --- a/drivers/media/i2c/ov7670.c
+> >> +++ b/drivers/media/i2c/ov7670.c
+> >> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct
+> >> v4l2_subdev
+> >> *sd, fmt->height = wsize->height;
+> >> 
+> >>  	fmt->colorspace = ov7670_formats[index].colorspace;
 > > 
-> >> On Sat, Feb 17, 2018 at 9:20 AM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >>> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> >>
-> >>
-> >>> -               seq_printf(m, "%s", symname);
-> >>> +               seq_puts(m, symname);
-> >>
-> >> While this might have no security concerns, the pattern might be
-> >> brainlessly used by some janitors and there would have security
-> >> implications.
+> > On a side note, if I'm not mistaken the colorspace field is set to SRGB
+> > for all entries. Shouldn't you hardcode it here and remove the field ?
 > > 
-> > And I'd like to see a changelog, please.  One which explains why
-> > `symname' cannot have a %s (etc) in it, and never will.
+> >> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
+> >> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
+> >> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
+> > 
+> > How about setting the values explicitly instead of relying on defaults ?
+> > That would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
+> > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if
+> > the sensor outputs limited or full range ?
 > 
-> OK, since #youtoo: It doesn't _matter_ if symname is "%pHAHAHA %fooled
-> you <unicode for evil grin emoji>", seq_puts does not interpret it at
-> all. There are _never_ security implications with the above replacement.
-> Sure, seq_printf(m, symname) would be bad, but that's not what is being
-> done.
+> This actually makes me wonder if those informations (ycbcb_enc,
+> quantization and xfer_func) shouldn't actually be part of the
+> supported format list... I blindly added those default fields in the
+> try_fmt function, but I doubt they applies to all supported formats.
+> 
+> Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
+> RGB 565) and 1 raw format (BGGR). I now have a question here:
+> 
+> 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
+> applies to RGB and raw formats? I don't think so, and what value is
+> the correct one for the ycbcr_enc field in this case? I assume
+> xfer_func and quantization applies to all formats instead..
 
-doh, OK, sorry. RTFP, Andrew.
+There's no encoding for RGB formats if I understand things correctly, so I'd 
+set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function and the 
+quantization apply to all formats, but I'd be surprised to find a sensor 
+outputting limited range for RGB.
+
+Have you been able to check whether the sensor outputs limited range of full 
+range YUV ? If it outputs full range you can hardcode quantization to 
+V4L2_QUANTIZATION_FULL_RANGE for all formats.
+
+> >>  	info->format = *fmt;
+> >>  	
+> >>  	return 0;
+
+-- 
+Regards,
+
+Laurent Pinchart
