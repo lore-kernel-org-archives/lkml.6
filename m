@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225+StsUj7iMY00h0+ZCyt9cfbbkNMBXjImkktmO/Uw5Si8vi491IRJPwQqXhr6BmRWYwuBQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519218074; cv=none;
+X-Google-Smtp-Source: AH8x227iVVI8yom7hG8Vs4Zfv8kM0Xl4yLCowyJhyj0l6U59SP+/Gh9cplA99Zh2nan0Nj/wAA5E
+ARC-Seal: i=1; a=rsa-sha256; t=1519218072; cv=none;
         d=google.com; s=arc-20160816;
-        b=kS5KyDwkz6PJDuLTE1s2SJFSgqp7QDGtGk/VAIhyq2Ajq9LZGiFOxJVogLjx1gzwW6
-         4WshFGpw/Sxm/a8BzCQGyVB5AiYFPp7S0FGlp5VuuT7iaUAy2RwANuck8QKABG1L1u1J
-         YuO6y/H6hCCaxO9iqxwVENCM1swZX7RYgegyxQ8j0T+QKTv3Tp8vP3ckqIuRCrhWDaNB
-         Jbj4WKewVNJMh9vGG8s7eLQSdYHh4hQ04StXtWw4gaHtXuTr/P6N6FEWJJoPiN34fCwg
-         05Zqsw8OmpBMhUSPziafxuKohzOcTa8bcOyz3XWGztizWJ6Tj2scSo/5q+yTyhBb2XmD
-         c0LA==
+        b=p+sr1O5SyPYNWDSih7o5/GlpRkcI+oa27a93dotk7B/IzN2jFcJAINEIJmR6zBUG6R
+         tdr49uGgyuj6DhWisp9hhcvxhCt/cJ30Ibuwx5h4X0HAc42aSYRXEOHwywAPE3d8f7qM
+         IRqcY5iMpAQTkpGWF4WLBB3Agc00Qo4Y9kauMwBPm9/K3XIUNIf9vTrDtHWqsLC0iTmB
+         xVasi/tbe7V7qxM0E9FyqGP1EtWH/RWNl4rnKsfZCDIzkEMgNZMmZxuX0utHQ1pGdvfc
+         LF2MjB1FFpbwpggR0U18CbSSXAtgmPL4TsjUaZ4zlXwWvgCm5Ot0+pN9CASXVzbgI+te
+         pQCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R09VEhQjgBEy+0hTVRqXIZi0sk8ctZmVIw21bdYi+5M=;
-        b=MpU1D52gHb6G/7H7HrQ4IABzSHwqbohEaXzeMyVy6ttab0IDTojEkgVgEodXVeRwsQ
-         +7P9r5EDUmFWzgEvVdRp9RWHqOh8uf5M6rfbEoMw9H6Pj0S6AIOVypCuIpzgFsb+xQ2B
-         nxVC4hpHWQVE3Xki9xLigwibZYE7qR9XdVNVM7x7sG5kq95z4upALUQ1/uLuSbOh7eUc
-         U7OD7ZRzhq3ZTiG7BRZu3SaWU50cRy170ohpc6FzqE6liZOgz5jACBj4+Anlv+Xv8IWL
-         MfzjC+jVsL6WpjROTU+6uAxDHKN3OmBaCf9viP3yI2en4NhOv85FWZsZFHmvu9+5DPnr
-         gZfQ==
+        bh=WTNs2sNbpQK9IHMyCiE5kKAEeglJx4Jh5+TlDVeyf0E=;
+        b=uVC1gBsCh6zaoL3v+cdbCQLPrmzZySuPhLfS9WJdRTI5JsiXmjaspn+b/HTqTXpyMe
+         VPnOur7LHamL/2EDJjJyFm3V9rGBKe+36dKf4VKmtackrxYs3kR31aVjGtxagbAHdOV/
+         AzTvUqhx0aMcnpquae28+GkNTC30buVa8MZelCJUpxhmrU/L9auiC0Mc6y/HbaACjE+2
+         pjNisJSHnU375rzvl0C0s5CsI5QbKIAPGcwi1C/ZNu9O/NvTBY6yu1hnQvvDo+8ll9La
+         KIF3qmvyhP6Tp1F0DWBNIlfWkrAqkDUow+JVM0CUjE8aytKEVDjZCF1gH5ET7sDqFjUI
+         RO4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.14 031/167] arm: spear600: Add missing interrupt-parent of rtc
-Date: Wed, 21 Feb 2018 13:47:22 +0100
-Message-Id: <20180221124526.286308472@linuxfoundation.org>
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 039/167] x86: PM: Make APM idle driver initialize polling state
+Date: Wed, 21 Feb 2018 13:47:30 +0100
+Message-Id: <20180221124526.733831265@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014648939162547?=
-X-GMAIL-MSGID: =?utf-8?q?1593015612299407459?=
+X-GMAIL-THRID: =?utf-8?q?1593015610134726356?=
+X-GMAIL-MSGID: =?utf-8?q?1593015610134726356?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 6ffb5b4f248fe53e0361b8cbc2a523b432566442 upstream.
+commit f859422075165e32c00c8d75d63f300015cc07ae upstream.
 
-The interrupt-parent of rtc was missing, add it.
+Update the APM driver overlooked by commit 1b39e3f813b4 (cpuidle: Make
+drivers initialize polling state) to initialize the polling state like
+the other cpuidle drivers modified by that commit to prevent cpuidle
+from crashing.
 
-Fixes: 8113ba917dfa ("ARM: SPEAr: DT: Update device nodes")
-Cc: stable@vger.kernel.org # v3.8+
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Fixes: 1b39e3f813b4 (cpuidle: Make drivers initialize polling state)
+Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/spear600.dtsi |    1 +
+ arch/x86/kernel/apm_32.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/spear600.dtsi
-+++ b/arch/arm/boot/dts/spear600.dtsi
-@@ -194,6 +194,7 @@
- 			rtc: rtc@fc900000 {
- 				compatible = "st,spear600-rtc";
- 				reg = <0xfc900000 0x1000>;
-+				interrupt-parent = <&vic0>;
- 				interrupts = <10>;
- 				status = "disabled";
- 			};
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -2389,6 +2389,7 @@ static int __init apm_init(void)
+ 	if (HZ != 100)
+ 		idle_period = (idle_period * HZ) / 100;
+ 	if (idle_threshold < 100) {
++		cpuidle_poll_state_init(&apm_idle_driver);
+ 		if (!cpuidle_register_driver(&apm_idle_driver))
+ 			if (cpuidle_register_device(&apm_cpuidle_device))
+ 				cpuidle_unregister_driver(&apm_idle_driver);
