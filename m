@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226LmIJHJv8CQmQZcPtCL1k0TixP4WTz5r115pfwJz15AdRdUgzeBKTi+MYPcLPgxnIIucSf
-ARC-Seal: i=1; a=rsa-sha256; t=1519218562; cv=none;
+X-Google-Smtp-Source: AH8x225rGhbq8P8fLGrZN4nAXflGshtZMemNeyxD768hfRS5eKojBi+13o2m6YEvEe/qr2V12YnK
+ARC-Seal: i=1; a=rsa-sha256; t=1519218559; cv=none;
         d=google.com; s=arc-20160816;
-        b=FjV25Yu1MYyIG4EsGgB3LGG9LbrRXXnnIwLZKvqtb7toVbVIJc2oLCaD6/9Ii2qui5
-         BoQankzdFNgsdDhlIUmTqREGi0MAvjrbVYrXjl3ygFqd/C4x4himtxpWYJMZtmn1GQgY
-         qR2s0XlXj6USII+OWRINXtHtAswBsXAd7aLII7s5vxOLHTlmX8k22ay/QXd2n0XdJ4ws
-         Qm+eSzUH0tw0DODcgI8RXkS1kX3udsZ6hqRbxGZJYEvhbGuVtnfJuUWz/l9BHNgzu+mR
-         astmEHBQj1GD2GQ5Z5sMpi/AJcp6Y0xcmqdnvDzIuzG4ZxKNkVeJj6bmS3smLEoIMmJN
-         R9XQ==
+        b=cxqiapqI4pVICCxA++g3Xl7y9Px+s+xY42+ewARX6NYbFa4cwTaxD0BNIEJLG9dHxr
+         Gp7dcNpJXvULse4y73z3Lq0BeoI3VnWzwgF7BtJUSRoLpyeMzJn2SMEWRjnXdrWe2Sja
+         swVL5C4cSH1xloMcoxLgn4LLUtgxMbuhHiw1e2xK4PCEAlNRqMX9iE05RRYAwbANKR7d
+         fia38nAfbUlVbgE5m8V2vqnYVwTu67b0Ip3sIqzPcKD04wHjjado6qZvd1SEuHuIWNop
+         FUGLAF2M6hBElJQ44Ux5EK3t/dxF2cEK34eNaWxnQtf46AxFhnpbTm4ZhR0jrNX+1jls
+         7hvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fhyX205zNX6orm9c9M1eZGGaKeV1ukebj2eD2JP5Rxs=;
-        b=xoPDpRLs2rskxG4ZoKi0x/clalWm1jHu3EB8/dH/d+BleAeHcB/f5yz66h/uXaBwLw
-         WAU1bEsrRAZ5WN8YTuVmglGD6gYlOYB8iOP4lrxfEqF7JCyeSbRUSjXPmP67cA1jxZW1
-         keT9fI0M5SvExEl9DrDpi/w7UWaOX0EFFSw/8Oz7tkJEMm8uVqyRepTH+kJIeRzNZewy
-         YGMcZvMvjDcIL8nlNg7+GR+C0GCqCKFnXWZoaMgobfySYUU9oPMXiRyg+rWALp9aqOKX
-         c0j/yXzFzu7/wi31Tp8ZKb9AtPQVgV5NUtUb6O/3iRVBfo9yfqvh5RkRXteJ6/45zYTQ
-         oEAw==
+        bh=1dxmYKDRwsGGjuQMLdHcRNxM+Y2eBkzcGGmw7zwBwKE=;
+        b=OAtNhnP3PSHab2B/jWXCjY3Tpci7RkaxHPcl6NQdaBk7t76shCtfVauMgDr+PtQGWv
+         SQpceiew6QdB7UWPJoZ76AiMGoreowSMMFjZhL3sS7Ug6M5tK2cgNQ9u5tNAS/ChVEs1
+         +IbX0IMH30pqI3igPx9GUHBJGzs1C6F6nxke4HVlnk4oxdlWUF8eKosbLlas4Ajuyi/Y
+         TFhm//EUBbL0WSkwK8kdLLpwGERgpbE36qbKQD60REOiTfdcvBd/NGx3zykbFxmE0SaQ
+         1nMK2JCfjTjziB2lCUNzJk4+uu4ZAWCJNxrZXtHVgm01+smeRaMTuGkEttq0+HBPfvJO
+         vhWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,26 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rui Wang <rui.y.wang@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Hugh Dickins <hughd@google.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Kees Cook <keescook@google.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
+	Linux-MM <linux-mm@kvack.org>,
+	Rik van Riel <riel@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	dave.hansen@linux.intel.com,
+	Will Deacon <will.deacon@arm.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 083/163] selftests/x86/mpx: Fix incorrect bounds with old _sigfault
-Date: Wed, 21 Feb 2018 13:48:32 +0100
-Message-Id: <20180221124535.007730540@linuxfoundation.org>
+Subject: [PATCH 4.15 082/163] x86/mm: Rename flush_tlb_single() and flush_tlb_one() to __flush_tlb_one_[user|kernel]()
+Date: Wed, 21 Feb 2018 13:48:31 +0100
+Message-Id: <20180221124534.963291472@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -44,8 +55,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015332922490474?=
-X-GMAIL-MSGID: =?utf-8?q?1593016123280105246?=
+X-GMAIL-THRID: =?utf-8?q?1593015648381488533?=
+X-GMAIL-MSGID: =?utf-8?q?1593016120517834914?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,89 +64,288 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rui Wang <rui.y.wang@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 961888b1d76d84efc66a8f5604b06ac12ac2f978 upstream.
+commit 1299ef1d8870d2d9f09a5aadf2f8b2c887c2d033 upstream.
 
-For distributions with old userspace header files, the _sigfault
-structure is different. mpx-mini-test fails with the following
-error:
+flush_tlb_single() and flush_tlb_one() sound almost identical, but
+they really mean "flush one user translation" and "flush one kernel
+translation".  Rename them to flush_tlb_one_user() and
+flush_tlb_one_kernel() to make the semantics more obvious.
 
-  [root@Purley]# mpx-mini-test_64 tabletest
-  XSAVE is supported by HW & OS
-  XSAVE processor supported state mask: 0x2ff
-  XSAVE OS supported state mask: 0x2ff
-   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
-    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
-  starting mpx bounds table test
-  ERROR: siginfo bounds do not match shadow bounds for register 0
+[ I was looking at some PTI-related code, and the flush-one-address code
+  is unnecessarily hard to understand because the names of the helpers are
+  uninformative.  This came up during PTI review, but no one got around to
+  doing it. ]
 
-Fix it by using the correct offset of _lower/_upper in _sigfault.
-RHEL needs this patch to work.
-
-Signed-off-by: Rui Wang <rui.y.wang@intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-MM <linux-mm@kvack.org>
+Cc: Rik van Riel <riel@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@linux.intel.com
-Fixes: e754aedc26ef ("x86/mpx, selftests: Add MPX self test")
-Link: http://lkml.kernel.org/r/1513586050-1641-1-git-send-email-rui.y.wang@intel.com
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/3303b02e3c3d049dc5235d5651e0ae6d29a34354.1517414378.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/mpx-mini-test.c |   32 ++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/paravirt.h       |    4 ++--
+ arch/x86/include/asm/paravirt_types.h |    2 +-
+ arch/x86/include/asm/pgtable_32.h     |    2 +-
+ arch/x86/include/asm/tlbflush.h       |   27 ++++++++++++++++++++-------
+ arch/x86/kernel/paravirt.c            |    6 +++---
+ arch/x86/mm/init_64.c                 |    2 +-
+ arch/x86/mm/ioremap.c                 |    2 +-
+ arch/x86/mm/kmmio.c                   |    2 +-
+ arch/x86/mm/pgtable_32.c              |    2 +-
+ arch/x86/mm/tlb.c                     |    6 +++---
+ arch/x86/platform/uv/tlb_uv.c         |    2 +-
+ arch/x86/xen/mmu_pv.c                 |    6 +++---
+ include/trace/events/xen.h            |    2 +-
+ 13 files changed, 39 insertions(+), 26 deletions(-)
 
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -315,11 +315,39 @@ static inline void *__si_bounds_upper(si
- 	return si->si_upper;
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -297,9 +297,9 @@ static inline void __flush_tlb_global(vo
+ {
+ 	PVOP_VCALL0(pv_mmu_ops.flush_tlb_kernel);
  }
+-static inline void __flush_tlb_single(unsigned long addr)
++static inline void __flush_tlb_one_user(unsigned long addr)
+ {
+-	PVOP_VCALL1(pv_mmu_ops.flush_tlb_single, addr);
++	PVOP_VCALL1(pv_mmu_ops.flush_tlb_one_user, addr);
+ }
+ 
+ static inline void flush_tlb_others(const struct cpumask *cpumask,
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -217,7 +217,7 @@ struct pv_mmu_ops {
+ 	/* TLB operations */
+ 	void (*flush_tlb_user)(void);
+ 	void (*flush_tlb_kernel)(void);
+-	void (*flush_tlb_single)(unsigned long addr);
++	void (*flush_tlb_one_user)(unsigned long addr);
+ 	void (*flush_tlb_others)(const struct cpumask *cpus,
+ 				 const struct flush_tlb_info *info);
+ 
+--- a/arch/x86/include/asm/pgtable_32.h
++++ b/arch/x86/include/asm/pgtable_32.h
+@@ -61,7 +61,7 @@ void paging_init(void);
+ #define kpte_clear_flush(ptep, vaddr)		\
+ do {						\
+ 	pte_clear(&init_mm, (vaddr), (ptep));	\
+-	__flush_tlb_one((vaddr));		\
++	__flush_tlb_one_kernel((vaddr));		\
+ } while (0)
+ 
+ #endif /* !__ASSEMBLY__ */
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -140,7 +140,7 @@ static inline unsigned long build_cr3_no
  #else
-+
-+/*
-+ * This deals with old version of _sigfault in some distros:
-+ *
-+
-+old _sigfault:
-+        struct {
-+            void *si_addr;
-+	} _sigfault;
-+
-+new _sigfault:
-+	struct {
-+		void __user *_addr;
-+		int _trapno;
-+		short _addr_lsb;
-+		union {
-+			struct {
-+				void __user *_lower;
-+				void __user *_upper;
-+			} _addr_bnd;
-+			__u32 _pkey;
-+		};
-+	} _sigfault;
-+ *
-+ */
-+
- static inline void **__si_bounds_hack(siginfo_t *si)
- {
- 	void *sigfault = &si->_sifields._sigfault;
- 	void *end_sigfault = sigfault + sizeof(si->_sifields._sigfault);
--	void **__si_lower = end_sigfault;
-+	int *trapno = (int*)end_sigfault;
-+	/* skip _trapno and _addr_lsb */
-+	void **__si_lower = (void**)(trapno + 2);
- 
- 	return __si_lower;
- }
-@@ -331,7 +359,7 @@ static inline void *__si_bounds_lower(si
- 
- static inline void *__si_bounds_upper(siginfo_t *si)
- {
--	return (*__si_bounds_hack(si)) + sizeof(void *);
-+	return *(__si_bounds_hack(si) + 1);
- }
+ #define __flush_tlb() __native_flush_tlb()
+ #define __flush_tlb_global() __native_flush_tlb_global()
+-#define __flush_tlb_single(addr) __native_flush_tlb_single(addr)
++#define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
  #endif
  
+ static inline bool tlb_defer_switch_to_init_mm(void)
+@@ -400,7 +400,7 @@ static inline void __native_flush_tlb_gl
+ /*
+  * flush one page in the user mapping
+  */
+-static inline void __native_flush_tlb_single(unsigned long addr)
++static inline void __native_flush_tlb_one_user(unsigned long addr)
+ {
+ 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+ 
+@@ -437,18 +437,31 @@ static inline void __flush_tlb_all(void)
+ /*
+  * flush one page in the kernel mapping
+  */
+-static inline void __flush_tlb_one(unsigned long addr)
++static inline void __flush_tlb_one_kernel(unsigned long addr)
+ {
+ 	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ONE);
+-	__flush_tlb_single(addr);
++
++	/*
++	 * If PTI is off, then __flush_tlb_one_user() is just INVLPG or its
++	 * paravirt equivalent.  Even with PCID, this is sufficient: we only
++	 * use PCID if we also use global PTEs for the kernel mapping, and
++	 * INVLPG flushes global translations across all address spaces.
++	 *
++	 * If PTI is on, then the kernel is mapped with non-global PTEs, and
++	 * __flush_tlb_one_user() will flush the given address for the current
++	 * kernel address space and for its usermode counterpart, but it does
++	 * not flush it for other address spaces.
++	 */
++	__flush_tlb_one_user(addr);
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	/*
+-	 * __flush_tlb_single() will have cleared the TLB entry for this ASID,
+-	 * but since kernel space is replicated across all, we must also
+-	 * invalidate all others.
++	 * See above.  We need to propagate the flush to all other address
++	 * spaces.  In principle, we only need to propagate it to kernelmode
++	 * address spaces, but the extra bookkeeping we would need is not
++	 * worth it.
+ 	 */
+ 	invalidate_other_asid();
+ }
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -200,9 +200,9 @@ static void native_flush_tlb_global(void
+ 	__native_flush_tlb_global();
+ }
+ 
+-static void native_flush_tlb_single(unsigned long addr)
++static void native_flush_tlb_one_user(unsigned long addr)
+ {
+-	__native_flush_tlb_single(addr);
++	__native_flush_tlb_one_user(addr);
+ }
+ 
+ struct static_key paravirt_steal_enabled;
+@@ -401,7 +401,7 @@ struct pv_mmu_ops pv_mmu_ops __ro_after_
+ 
+ 	.flush_tlb_user = native_flush_tlb,
+ 	.flush_tlb_kernel = native_flush_tlb_global,
+-	.flush_tlb_single = native_flush_tlb_single,
++	.flush_tlb_one_user = native_flush_tlb_one_user,
+ 	.flush_tlb_others = native_flush_tlb_others,
+ 
+ 	.pgd_alloc = __paravirt_pgd_alloc,
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -256,7 +256,7 @@ static void __set_pte_vaddr(pud_t *pud,
+ 	 * It's enough to flush this one mapping.
+ 	 * (PGE mappings get flushed as well)
+ 	 */
+-	__flush_tlb_one(vaddr);
++	__flush_tlb_one_kernel(vaddr);
+ }
+ 
+ void set_pte_vaddr_p4d(p4d_t *p4d_page, unsigned long vaddr, pte_t new_pte)
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -820,5 +820,5 @@ void __init __early_set_fixmap(enum fixe
+ 		set_pte(pte, pfn_pte(phys >> PAGE_SHIFT, flags));
+ 	else
+ 		pte_clear(&init_mm, addr, pte);
+-	__flush_tlb_one(addr);
++	__flush_tlb_one_kernel(addr);
+ }
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -168,7 +168,7 @@ static int clear_page_presence(struct km
+ 		return -1;
+ 	}
+ 
+-	__flush_tlb_one(f->addr);
++	__flush_tlb_one_kernel(f->addr);
+ 	return 0;
+ }
+ 
+--- a/arch/x86/mm/pgtable_32.c
++++ b/arch/x86/mm/pgtable_32.c
+@@ -63,7 +63,7 @@ void set_pte_vaddr(unsigned long vaddr,
+ 	 * It's enough to flush this one mapping.
+ 	 * (PGE mappings get flushed as well)
+ 	 */
+-	__flush_tlb_one(vaddr);
++	__flush_tlb_one_kernel(vaddr);
+ }
+ 
+ unsigned long __FIXADDR_TOP = 0xfffff000;
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -492,7 +492,7 @@ static void flush_tlb_func_common(const
+ 	 *    flush that changes context.tlb_gen from 2 to 3.  If they get
+ 	 *    processed on this CPU in reverse order, we'll see
+ 	 *     local_tlb_gen == 1, mm_tlb_gen == 3, and end != TLB_FLUSH_ALL.
+-	 *    If we were to use __flush_tlb_single() and set local_tlb_gen to
++	 *    If we were to use __flush_tlb_one_user() and set local_tlb_gen to
+ 	 *    3, we'd be break the invariant: we'd update local_tlb_gen above
+ 	 *    1 without the full flush that's needed for tlb_gen 2.
+ 	 *
+@@ -513,7 +513,7 @@ static void flush_tlb_func_common(const
+ 
+ 		addr = f->start;
+ 		while (addr < f->end) {
+-			__flush_tlb_single(addr);
++			__flush_tlb_one_user(addr);
+ 			addr += PAGE_SIZE;
+ 		}
+ 		if (local)
+@@ -660,7 +660,7 @@ static void do_kernel_range_flush(void *
+ 
+ 	/* flush range by one by one 'invlpg' */
+ 	for (addr = f->start; addr < f->end; addr += PAGE_SIZE)
+-		__flush_tlb_one(addr);
++		__flush_tlb_one_kernel(addr);
+ }
+ 
+ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -299,7 +299,7 @@ static void bau_process_message(struct m
+ 		local_flush_tlb();
+ 		stat->d_alltlb++;
+ 	} else {
+-		__flush_tlb_single(msg->address);
++		__flush_tlb_one_user(msg->address);
+ 		stat->d_onetlb++;
+ 	}
+ 	stat->d_requestee++;
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1300,12 +1300,12 @@ static void xen_flush_tlb(void)
+ 	preempt_enable();
+ }
+ 
+-static void xen_flush_tlb_single(unsigned long addr)
++static void xen_flush_tlb_one_user(unsigned long addr)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb_single(addr);
++	trace_xen_mmu_flush_tlb_one_user(addr);
+ 
+ 	preempt_disable();
+ 
+@@ -2370,7 +2370,7 @@ static const struct pv_mmu_ops xen_mmu_o
+ 
+ 	.flush_tlb_user = xen_flush_tlb,
+ 	.flush_tlb_kernel = xen_flush_tlb,
+-	.flush_tlb_single = xen_flush_tlb_single,
++	.flush_tlb_one_user = xen_flush_tlb_one_user,
+ 	.flush_tlb_others = xen_flush_tlb_others,
+ 
+ 	.pgd_alloc = xen_pgd_alloc,
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -368,7 +368,7 @@ TRACE_EVENT(xen_mmu_flush_tlb,
+ 	    TP_printk("%s", "")
+ 	);
+ 
+-TRACE_EVENT(xen_mmu_flush_tlb_single,
++TRACE_EVENT(xen_mmu_flush_tlb_one_user,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
+ 	    TP_STRUCT__entry(
