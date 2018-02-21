@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227T1TNKa7zl7vFS6hT3pKKSFXWLODl/54TKPX/2XGyMB/JKnamaPmDh2Fsu4AetKARCcKu0
-ARC-Seal: i=1; a=rsa-sha256; t=1519218344; cv=none;
+X-Google-Smtp-Source: AH8x224alGH5rS0zXfNzqybKGupa3SdfoRfh4s4EvySjbuD1FfpOYfLG64Vt0WIBaa1uMf58dai2
+ARC-Seal: i=1; a=rsa-sha256; t=1519218341; cv=none;
         d=google.com; s=arc-20160816;
-        b=ekpgk/nOKHNhLuk9yYY5LwA8mvovIUyyg2zoLlygBqpuwExGEaKXkNsBVbj8xrd+FJ
-         NEzVEW0ki7/rWaf1Hoqaair+M3BIzbSB1lAPwDRkUxmlLfS4RdNjqwQ0+HSA0P9P0cHS
-         sbdmR0coUWR2uWCmuqBVVkwqaSjSUjwSDIQmLv0uasVSw0O4GYziWGnhB6edX4H7ptBb
-         sRG5HpCYAGG3R6lcIhUrThvt8E0tNViYJ+i0IWBML0S8H9gmWoD9+z654ouIiL0zEacR
-         TkKPOmR9ixSvtbdJkO2vZXPHVA65VW2/JbnwcOVsqNnlfVdBHRcQjltm6LPOwle6WCV1
-         BA4Q==
+        b=kKfTHm7sojJXHn8W1C+28LILauLA0IOuQibqYcr0ZWTqg+9xpkVUp7MCHoEqZeqGyj
+         OHK8elOvGKMafy/+raCg5+H+FUuelkbm4C5Lx+FMlWFtxF2TViMEmjnu2dhiQ1WmyrvE
+         1y3C5SmhF9Q/yZjP/DuiCnHYKykVNkqFC7lRDVFPFh3meGUY+a+b73Sbvg3QVycTOxGU
+         RcEq6+28ON11EpqdASJoLGkqpdpuHaIWLJ8qBArStRxcx28Uih6sSPKEORkamvQqQP/S
+         1u6SNsemfAPwjbr13ClS8W3C5wgLG4301BKLk9Q8QcfgYzg60827TkrVOuBR7iM/2uHc
+         8Htg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=28u55Ujy9BX5tBebhR1wqMJukLn5DhV6sH0cDA1NDS0=;
-        b=YX/pFZVhJRWKTNqakteFapIqJaGOydqUW5GQ6CON9u0n+mIUcg+7NeMtdqf4rx74Iw
-         L2MeWXjiwj4J5/VqbDhPQX3mY068h2B96s2YnOaJyMVw36tGnGt3x3eXuue7T23MzT5H
-         fklXjw8VZDyfVWh/a+Z4AyagaHvvldwQxPCo/l4z/zMvz1If+Cd+miv5B2oKgDrBDUJt
-         kILtfd7k+o/loc0LSEncXZBIOMhS0URS+bNtTCC7Y1Uppl0JG669eQY4gWbDUGcf0K8N
-         6nz/wXw5IvUJLyPbi8kcubwxweJ3YWSNQCHfjQJcxlpuNvD9vM76FmRhbEF7OKAUegXB
-         7Q3A==
+        bh=cCb592ArN7coyaVbkTPlqm0Hv1+dES2XfFRfyWAOqto=;
+        b=MyQzZCDDqNFwrGkwIFiJ8drhr2YsJ6hD4q2WFegblb4mQBCuH5nALIhVeW5OoZYcxr
+         oFKu8C6LIlSbocfRxQMQuprm72EgHk61uMB6YmI7t3dqXpbXroa+UqH7x27ZYlw3FDwZ
+         bQLil53OvEGCcr5YpxrMw08MTO94KBHO8dKPC+r+si1mP5ohHZTAqJ5ToGVZg8iY/jSP
+         BHuX7SpBPM8SmIKWmtD/MWF97ouZA0zi86D+C8Je3TfGGt0rH+7czB4A/i5XuyeePgrE
+         wmw3P10ARlnLwCC/5CMv83UN2OsdxpfskjFLbl0KiM5b69e0gPkZiTHlZNAlxKqakyFY
+         fKzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	linux-usb@vger.kernel.org,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.14 151/167] usb: Move USB_UHCI_BIG_ENDIAN_* out of USB_SUPPORT
-Date: Wed, 21 Feb 2018 13:49:22 +0100
-Message-Id: <20180221124533.069049354@linuxfoundation.org>
+	Mikulas Patocka <mpatocka@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 150/167] mvpp2: fix multicast address filter
+Date: Wed, 21 Feb 2018 13:49:21 +0100
+Message-Id: <20180221124533.009238638@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015246018600835?=
-X-GMAIL-MSGID: =?utf-8?q?1593015894538940334?=
+X-GMAIL-THRID: =?utf-8?q?1593014704162058522?=
+X-GMAIL-MSGID: =?utf-8?q?1593015891438468142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,69 +49,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit ec897569ad7dbc6d595873a487c3fac23f463f76 upstream.
+commit 7ac8ff95f48cbfa609a060fd6a1e361dd62feeb3 upstream.
 
-Move the Kconfig symbols USB_UHCI_BIG_ENDIAN_MMIO and
-USB_UHCI_BIG_ENDIAN_DESC out of drivers/usb/host/Kconfig, which is
-conditional upon USB && USB_SUPPORT, so that it can be freely selected
-by platform Kconfig symbols in architecture code.
+IPv6 doesn't work on the MacchiatoBIN board. It is caused by broken
+multicast address filter in the mvpp2 driver.
 
-For example once the MIPS_GENERIC platform selects are fixed in commit
-2e6522c56552 ("MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN"), the MIPS
-32r6_defconfig warns like so:
+The driver loads doesn't load any multicast entries if "allmulti" is not
+set. This condition should be reversed.
 
-warning: (MIPS_GENERIC) selects USB_UHCI_BIG_ENDIAN_MMIO which has unmet direct dependencies (USB_SUPPORT && USB)
-warning: (MIPS_GENERIC) selects USB_UHCI_BIG_ENDIAN_DESC which has unmet direct dependencies (USB_SUPPORT && USB)
+The condition !netdev_mc_empty(dev) is useless (because
+netdev_for_each_mc_addr is nop if the list is empty).
 
-Fixes: 2e6522c56552 ("MIPS: Fix typo BIG_ENDIAN to CPU_BIG_ENDIAN")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Patchwork: https://patchwork.linux-mips.org/patch/18559/
+This patch also fixes a possible overflow of the multicast list - if
+mvpp2_prs_mac_da_accept fails, we set the allmulti flag and retry.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/Kconfig      |    8 ++++++++
- drivers/usb/host/Kconfig |    8 --------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -19,6 +19,14 @@ config USB_EHCI_BIG_ENDIAN_MMIO
- config USB_EHCI_BIG_ENDIAN_DESC
- 	bool
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6888,6 +6888,7 @@ static void mvpp2_set_rx_mode(struct net
+ 	int id = port->id;
+ 	bool allmulti = dev->flags & IFF_ALLMULTI;
  
-+config USB_UHCI_BIG_ENDIAN_MMIO
-+	bool
-+	default y if SPARC_LEON
-+
-+config USB_UHCI_BIG_ENDIAN_DESC
-+	bool
-+	default y if SPARC_LEON
-+
- menuconfig USB_SUPPORT
- 	bool "USB support"
- 	depends on HAS_IOMEM
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -637,14 +637,6 @@ config USB_UHCI_ASPEED
-        bool
-        default y if ARCH_ASPEED
++retry:
+ 	mvpp2_prs_mac_promisc_set(priv, id, dev->flags & IFF_PROMISC);
+ 	mvpp2_prs_mac_multi_set(priv, id, MVPP2_PE_MAC_MC_ALL, allmulti);
+ 	mvpp2_prs_mac_multi_set(priv, id, MVPP2_PE_MAC_MC_IP6, allmulti);
+@@ -6895,9 +6896,13 @@ static void mvpp2_set_rx_mode(struct net
+ 	/* Remove all port->id's mcast enries */
+ 	mvpp2_prs_mcast_del_all(priv, id);
  
--config USB_UHCI_BIG_ENDIAN_MMIO
--	bool
--	default y if SPARC_LEON
--
--config USB_UHCI_BIG_ENDIAN_DESC
--	bool
--	default y if SPARC_LEON
--
- config USB_FHCI_HCD
- 	tristate "Freescale QE USB Host Controller support"
- 	depends on OF_GPIO && QE_GPIO && QUICC_ENGINE
+-	if (allmulti && !netdev_mc_empty(dev)) {
+-		netdev_for_each_mc_addr(ha, dev)
+-			mvpp2_prs_mac_da_accept(priv, id, ha->addr, true);
++	if (!allmulti) {
++		netdev_for_each_mc_addr(ha, dev) {
++			if (mvpp2_prs_mac_da_accept(priv, id, ha->addr, true)) {
++				allmulti = true;
++				goto retry;
++			}
++		}
+ 	}
+ }
+ 
