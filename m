@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217368-2-3233145766212706929
+X-Cyrus-Session-Id: sloti22d1t05-1521561-1519217343-5-10056535323261888357
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519217368; b=rNDUH/Fpmmq+8OKVt7FieUSfH0eIr0Iyo9BBqt6eUv07TF7
-    0F+qFz2JiZ+2Vt38uC3Je7qG9Ff3HpvoSkpD22xxmEUTAb45Rd38I02lbFtPfONk
-    Vog3IQPbgMkYoBq1VzYWocCbpvTD/DEvUktMKQmTZ/nB3XcBCu92yK7UOOdn5Iyp
-    qvJotEvDM9Qe/4IaC8WGfVFflCH+cwrUioWi4nRvmbufnUSWe5BJZRnBUpU111tb
-    rp3K/GS6Ahhogov61VGQu3r+7gjQSrXCeY8BE2dhyS8K8+XYarLmPxEG56ImUg4c
-    n4PB/p74Rju/0AQ2SJLvYQRU8Yaz8897w6FQzrg==
+    t=1519217343; b=pwxp6chf9AVqPmgtvDEJeQeb174m5tkgDrfy2n6TvZ67tPd
+    Gvyi8K7xQ8T4DQYqb6z1gopDsSEYtU99OHxj8M9i7HZWd4/Z/fC/ixH2k7fD8ljP
+    TNvv9nBtRYiIaZHjCfxz2gU8UaAzbPh6MQiXGJFNMOivmm+86qw4y+P3ntMe836p
+    VOYzNCXh6tyYbCzTiVohARUTAIPEvSMMv0LAHnU17B7OcXkvH8kbjYSo6rt+VTVZ
+    V5ySzJhtVcWupCXKe5zDCCS647DUIYn8b0AVLIRzoDMGwWwTE1F4+RqyTTdOLK0y
+    Bi7kD7ywiB5/92T2koXuBQog2AYKeYPWp93DuMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519217368; bh=HO4gGedURhgZzV0zfS1aye2kG2
-    nZ0C+fiQozhbsUg+0=; b=UiXCPQWJmawd+INmH32DLcwx1gIhKz/idezcJlKqlj
-    jWmCKq21jqvWehHakT+CuM9dhUxJlMLlIQ0KILhwzP7n0eqL99wPp6wX1LJeMxc/
-    95T3ncTxEEogMmGWKVLOg+3XHp761TtcnFz9QwrOqtObEyio70IJNHHpTCbn15yL
-    XmHJvDDT6E91RYG456Qf5fSz9x0dHVZ/aAvpHixE0fmGGjUksh+I+IsA6Li0APlG
-    zG09qG8EVVMbYWUFkC8Grs0Ox0SV8XJwpRilwVxF0u8yh5BtRxEmlNJ/a8seX3H5
-    DL/bDBVHDEaKwB/Dqg/A611ZPmzBKd+PQ8OfHXfISzBg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519217343; bh=BTWWqZEL7rumeA7PmAXgL6XuqB
+    cVAj4mqlF1bbrAC9Q=; b=E+Qf5T9Pwt0WgXC+WCHO6ed3uGNXQVLIHPUiGBy7Lr
+    QmiPJ3cAIKOejFgy0QeV0NwYwYsS80TsIi2UhGk/8FJxi8iCdjb83h2VeMbSdRrg
+    aA34Dd5ap3SZ7mp87su6Urji1fXnxSz33Dr4PW89S9pqgUhKqSKkOeudFbRvIe3n
+    fVHzFco5jifb3uKCgCFCHZdoWycsWEi2h+s5aP7W48hy2Jci541yl1uAbdMjingD
+    bDG8W7cXihxFHe9Jq9g6jJd77MjAJdR4qDORSfw199FcTPV9wumEe3T/E3F4tXC6
+    BMaepoWG1BC6+BLRZDLv4ITrS7DOPs+rOqN/zmeNBifQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753079AbeBUMtB (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 07:49:01 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59686 "EHLO
+        id S933915AbeBUMq2 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 07:46:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933913AbeBUMq2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:28 -0500
+        with ESMTP id S933905AbeBUMq0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 03/33] s390: fix handling of -1 in set{,fs}[gu]id16 syscalls
-Date: Wed, 21 Feb 2018 13:44:46 +0100
-Message-Id: <20180221124409.732728033@linuxfoundation.org>
+        stable@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 12/33] rtc-opal: Fix handling of firmware error codes, prevent busy loops
+Date: Wed, 21 Feb 2018 13:44:55 +0100
+Message-Id: <20180221124410.314449386@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -79,60 +78,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eugene Syromiatnikov <esyr@redhat.com>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
 
-commit 6dd0d2d22aa363fec075cb2577ba273ac8462e94 upstream.
+commit 5b8b58063029f02da573120ef4dc9079822e3cda upstream.
 
-For some reason, the implementation of some 16-bit ID system calls
-(namely, setuid16/setgid16 and setfsuid16/setfsgid16) used type cast
-instead of low2highgid/low2highuid macros for converting [GU]IDs, which
-led to incorrect handling of value of -1 (which ought to be considered
-invalid).
+According to the OPAL docs:
+  skiboot-5.2.5/doc/opal-api/opal-rtc-read-3.txt
+  skiboot-5.2.5/doc/opal-api/opal-rtc-write-4.txt
 
-Discovered by strace test suite.
+OPAL_HARDWARE may be returned from OPAL_RTC_READ or OPAL_RTC_WRITE and
+this indicates either a transient or permanent error.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Prior to this patch, Linux was not dealing with OPAL_HARDWARE being a
+permanent error particularly well, in that you could end up in a busy
+loop.
+
+This was not too hard to trigger on an AMI BMC based OpenPOWER machine
+doing a continuous "ipmitool mc reset cold" to the BMC, the result of
+that being that we'd get stuck in an infinite loop in
+opal_get_rtc_time().
+
+We now retry a few times before returning the error higher up the
+stack.
+
+Fixes: 16b1d26e77b1 ("rtc/tpo: Driver to support rtc and wakeup on PowerNV platform")
+Cc: stable@vger.kernel.org # v3.19+
+Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/compat_linux.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/rtc/rtc-opal.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kernel/compat_linux.c
-+++ b/arch/s390/kernel/compat_linux.c
-@@ -110,7 +110,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setregid16,
- 
- COMPAT_SYSCALL_DEFINE1(s390_setgid16, u16, gid)
+--- a/drivers/rtc/rtc-opal.c
++++ b/drivers/rtc/rtc-opal.c
+@@ -58,6 +58,7 @@ static void tm_to_opal(struct rtc_time *
+ static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
  {
--	return sys_setgid((gid_t)gid);
-+	return sys_setgid(low2highgid(gid));
- }
+ 	long rc = OPAL_BUSY;
++	int retries = 10;
+ 	u32 y_m_d;
+ 	u64 h_m_s_ms;
+ 	__be32 __y_m_d;
+@@ -67,8 +68,11 @@ static int opal_get_rtc_time(struct devi
+ 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
+-		else
++		else if (retries-- && (rc == OPAL_HARDWARE
++				       || rc == OPAL_INTERNAL_ERROR))
+ 			msleep(10);
++		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
++			break;
+ 	}
  
- COMPAT_SYSCALL_DEFINE2(s390_setreuid16, u16, ruid, u16, euid)
-@@ -120,7 +120,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setreuid16,
- 
- COMPAT_SYSCALL_DEFINE1(s390_setuid16, u16, uid)
+ 	if (rc != OPAL_SUCCESS)
+@@ -84,6 +88,7 @@ static int opal_get_rtc_time(struct devi
+ static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
  {
--	return sys_setuid((uid_t)uid);
-+	return sys_setuid(low2highuid(uid));
- }
+ 	long rc = OPAL_BUSY;
++	int retries = 10;
+ 	u32 y_m_d = 0;
+ 	u64 h_m_s_ms = 0;
  
- COMPAT_SYSCALL_DEFINE3(s390_setresuid16, u16, ruid, u16, euid, u16, suid)
-@@ -173,12 +173,12 @@ COMPAT_SYSCALL_DEFINE3(s390_getresgid16,
+@@ -92,8 +97,11 @@ static int opal_set_rtc_time(struct devi
+ 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
+-		else
++		else if (retries-- && (rc == OPAL_HARDWARE
++				       || rc == OPAL_INTERNAL_ERROR))
+ 			msleep(10);
++		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
++			break;
+ 	}
  
- COMPAT_SYSCALL_DEFINE1(s390_setfsuid16, u16, uid)
- {
--	return sys_setfsuid((uid_t)uid);
-+	return sys_setfsuid(low2highuid(uid));
- }
- 
- COMPAT_SYSCALL_DEFINE1(s390_setfsgid16, u16, gid)
- {
--	return sys_setfsgid((gid_t)gid);
-+	return sys_setfsgid(low2highgid(gid));
- }
- 
- static int groups16_to_user(u16 __user *grouplist, struct group_info *group_info)
+ 	return rc == OPAL_SUCCESS ? 0 : -EIO;
