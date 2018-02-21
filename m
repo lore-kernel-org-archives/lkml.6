@@ -1,227 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933188AbeBUKbB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:31:01 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45801 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbeBUKa6 (ORCPT
+        id S933202AbeBUKbJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:31:09 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34805 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeBUKbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:30:58 -0500
-X-Google-Smtp-Source: AH8x224BRcR/3X/RNSWzXPCmFM7r66UtV6a8altB8iukqAZ3BpD9oBKCfIFZb0FF/0+4+ot0l8fLqL2+65jFX/Sab5Q=
+        Wed, 21 Feb 2018 05:31:07 -0500
+Date: Wed, 21 Feb 2018 02:28:37 -0800
+From: tip-bot for Mel Gorman <tipbot@zytor.com>
+Message-ID: <tip-082f764a2f3f2968afa1a0b04a1ccb1b70633844@git.kernel.org>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, matt@codeblueprint.co.uk, peterz@infradead.org,
+        mingo@kernel.org, mgorman@techsingularity.net, hpa@zytor.com,
+        efault@gmx.de, ggherdovich@suse.cz
+Reply-To: hpa@zytor.com, efault@gmx.de, ggherdovich@suse.cz, mingo@kernel.org,
+        peterz@infradead.org, mgorman@techsingularity.net,
+        torvalds@linux-foundation.org, matt@codeblueprint.co.uk,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+In-Reply-To: <20180213133730.24064-4-mgorman@techsingularity.net>
+References: <20180213133730.24064-4-mgorman@techsingularity.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Do not migrate on wake_affine_weight()
+ if weights are equal
+Git-Commit-ID: 082f764a2f3f2968afa1a0b04a1ccb1b70633844
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <a5050f68-3adb-6973-9164-1bb43272cbd0@linaro.org>
-References: <CALAqxLVn9r9R-wnrZbrFqYfwqZD-tegbJrZLsUeBjjBc4_Q89w@mail.gmail.com>
- <1496686434-13181-1-git-send-email-daniel.lezcano@linaro.org>
- <CAPDyKFqWptneK2V7wCR8LGbgU7=U9kBCKkHrtgGmZKmNQJ4s7g@mail.gmail.com>
- <20170609154652.GG2244@mai> <CAK8P3a1PsFcqLC95rSQf6EdkqhQ6sE3OXC9gDQ8TLp2mTVO3pw@mail.gmail.com>
- <CALAqxLXtLc16zT9AFaHXbbQp-Vf3GNOJ1nb7PoUJgj22rh=X-w@mail.gmail.com>
- <CAK8P3a0L6QNAJf6DB876DFHf7aGcD=uwxOUB36LKr-AX67VYAA@mail.gmail.com>
- <20170612093853.GB2261@mai> <CAK8P3a1DbjovHF3QX9OuPA1q4XAEj1KackgKqGvceDWL3f1cJg@mail.gmail.com>
- <a5050f68-3adb-6973-9164-1bb43272cbd0@linaro.org>
-From: Riku Voipio <riku.voipio@linaro.org>
-Date: Wed, 21 Feb 2018 12:30:56 +0200
-Message-ID: <CAAqcGHn=AOFjNx_oNM7DRxrwjNAkiM9AhQ54kPjQLhki-aMPwg@mail.gmail.com>
-Subject: Re: [PATCH] ARM64: Kconfig: Fix the missing hi655x common clk
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wei Xu <xuwei5@hisilicon.com>, John Stultz <john.stultz@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LAV5Fu014500
 
-On 16 February 2018 at 19:35, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> On 12/06/2017 23:12, Arnd Bergmann wrote:
->> On Mon, Jun 12, 2017 at 11:38 AM, Daniel Lezcano
->> <daniel.lezcano@linaro.org> wrote:
->>> On Fri, Jun 09, 2017 at 10:48:13PM +0200, Arnd Bergmann wrote:
->>>> On Fri, Jun 9, 2017 at 10:15 PM, John Stultz <john.stultz@linaro.org> wrote:
->>>>> On Fri, Jun 9, 2017 at 1:06 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>>>>> On Fri, Jun 9, 2017 at 5:46 PM, Daniel Lezcano
->>>>>> <daniel.lezcano@linaro.org> wrote:
->>>>>>
->>>>>> Yes, but I'm not sure this is the right patch either. We tend to not
->>>>>> use 'select' for user-visible drivers, and most hisilicon platforms
->>>>>> won't need this driver.
->>>>>>
->>>>>> I think it would be more consistent to add this to the defconfig
->>>>>> and regard it as a user error when the driver is disabled on a
->>>>>> machine that needs it.
->>>>>
->>>>> Maybe the select is not exactly in the right place, but I don't really
->>>>> feel like a pmic on an SoC is a "user-visible driver". I deal with the
->>>>> board often and when the new dependency was made on the clk, I would
->>>>> have never have found it on my own w/o Ulf and Daniel pointing out
->>>>> what I needed to enable.
->>>>
->>>> What I meant is that the Kconfig option is user-visible. On a very high
->>>> level, this is a result of arch/arm64/Kconfig.platforms listing only
->>>> very broad categories of SoCs, in many cases only the manufacturers
->>>> of very different chip families, which then control the visibility of the
->>>> individual Kconfig items for things like pinctrl or clk.
->>>>
->>>> I now see that MFD_HI655X_PMIC is the top-level driver that you
->>>> have to select before enabling COMMON_CLK_HI655X, so the
->>>> patch is actually broken unless it actually selects both.
->>>>
->>>> How about simply adding a 'default MFD_HI655X_PMIC' to
->>>> COMMON_CLK_HI655X to enable it unless it is explicitly
->>>> turned off?
->>>
->>> Actually, I share John's opinion.
->>>
->>> Ideally when we choose a platform, all the relevants devices configuration
->>> options should be selected automatically from a single topmost node of a tree
->>> (platform selection) to all the nodes corresponding to the devices, leaving the
->>> user to select one simple option without knowledge of the SoC hardware
->>> internals.
->>>
->>> If the user is expert in the platform and knows exactly what he does, then he
->>> can select an _EXPERT_ like option and be able to disable some drivers.
->>>
->>> It is how I tend to write the Kconfig options, so the 'default MFD_HI655X_PMIC'
->>> is confusing for me. Wouldn't make sense to select COMMON_CLK_HI655X when
->>> MFD_HI655X_PMIC is enabled?
->>
->> I don't think it's that easy. When you do that, MFD_HI655X_PMIC gains
->> a dependency on COMMON_CLK and will again cause a warning on
->> machines that disable that during compile testing.
->>
->> Using 'select' for user-selectable options generally leads to problems,
->> and you are better off avoiding it. If you want to make the symbol impossible
->> to turn off for non-EXPERT configurations, you can write it like
->>
->> config COMMON_CLK_HI655X
->>         tristate "Clock driver for Hi655x" if EXPERT
->>         depends on (MFD_HI655X_PMIC || COMPILE_TEST)
->>         depends on REGMAP
->>         default MFD_HI655X_PMIC
->>
->> That way the option is completely hidden for non-EXPERT,
->> but still has the right default otherwise, and the dependencies
->> are tracked right for compile-testing.
->
-> What about the options:
+Commit-ID:  082f764a2f3f2968afa1a0b04a1ccb1b70633844
+Gitweb:     https://git.kernel.org/tip/082f764a2f3f2968afa1a0b04a1ccb1b70633844
+Author:     Mel Gorman <mgorman@techsingularity.net>
+AuthorDate: Tue, 13 Feb 2018 13:37:27 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 08:49:08 +0100
 
-First, as distros, automatic selection down from selecting ARCH_X is
-preferred over
-defconfigs. However, we also prefer to build everything possible as
-modules, so "default Y"
-is sometimes too strong.
+sched/fair: Do not migrate on wake_affine_weight() if weights are equal
 
-> CONFIG_HI3660_MBOX
-> CONFIG_HI6220_MBOX
+wake_affine_weight() will consider migrating a task to, or near, the current
+CPU if there is a load imbalance. If the CPUs share LLC then either CPU
+is valid as a search-for-idle-sibling target and equally appropriate for
+stacking two tasks on one CPU if an idle sibling is unavailable. If they do
+not share cache then a cross-node migration potentially impacts locality
+so while they are equal from a CPU capacity point of view, they are not
+equal in terms of memory locality. In either case, it's more appropriate
+to migrate only if there is a difference in their effective load.
 
-These are tristate and platorms can boot without them.
+This patch modifies wake_affine_weight() to only consider migrating a task
+if there is a load imbalance for normal wakeups but will allow potential
+stacking if the loads are equal and it's a sync wakeup.
 
-> CONFIG_STUB_CLK_HI6220
-> CONFIG_STUB_CLK_HI3660
+For the most part, the different in performance is marginal. For example,
+on a 4-socket server running netperf UDP_STREAM on localhost the differences
+are as follows:
 
-These are bool, so default Y is ok.
+                                      4.15.0                 4.15.0
+                                       16rc0          noequal-v1r23
+ Hmean     send-64         355.47 (   0.00%)      349.50 (  -1.68%)
+ Hmean     send-128        697.98 (   0.00%)      693.35 (  -0.66%)
+ Hmean     send-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
+ Hmean     send-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
+ Hmean     send-2048      9637.02 (   0.00%)     9601.34 (  -0.37%)
+ Hmean     send-3312     14355.37 (   0.00%)    14414.51 (   0.41%)
+ Hmean     send-4096     16464.97 (   0.00%)    16301.37 (  -0.99%)
+ Hmean     send-8192     26722.42 (   0.00%)    26428.95 (  -1.10%)
+ Hmean     send-16384    38137.81 (   0.00%)    38046.11 (  -0.24%)
+ Hmean     recv-64         355.47 (   0.00%)      349.50 (  -1.68%)
+ Hmean     recv-128        697.98 (   0.00%)      693.35 (  -0.66%)
+ Hmean     recv-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
+ Hmean     recv-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
+ Hmean     recv-2048      9636.95 (   0.00%)     9601.30 (  -0.37%)
+ Hmean     recv-3312     14355.32 (   0.00%)    14414.48 (   0.41%)
+ Hmean     recv-4096     16464.74 (   0.00%)    16301.16 (  -0.99%)
+ Hmean     recv-8192     26721.63 (   0.00%)    26428.17 (  -1.10%)
+ Hmean     recv-16384    38136.00 (   0.00%)    38044.88 (  -0.24%)
+ Stddev    send-64           7.30 (   0.00%)        4.75 (  34.96%)
+ Stddev    send-128         15.15 (   0.00%)       22.38 ( -47.66%)
+ Stddev    send-256         13.99 (   0.00%)       19.14 ( -36.81%)
+ Stddev    send-1024       105.73 (   0.00%)       67.38 (  36.27%)
+ Stddev    send-2048       294.57 (   0.00%)      223.88 (  24.00%)
+ Stddev    send-3312       302.28 (   0.00%)      271.74 (  10.10%)
+ Stddev    send-4096       195.92 (   0.00%)      121.10 (  38.19%)
+ Stddev    send-8192       399.71 (   0.00%)      563.77 ( -41.04%)
+ Stddev    send-16384     1163.47 (   0.00%)     1103.68 (   5.14%)
+ Stddev    recv-64           7.30 (   0.00%)        4.75 (  34.96%)
+ Stddev    recv-128         15.15 (   0.00%)       22.38 ( -47.66%)
+ Stddev    recv-256         13.99 (   0.00%)       19.14 ( -36.81%)
+ Stddev    recv-1024       105.73 (   0.00%)       67.38 (  36.27%)
+ Stddev    recv-2048       294.59 (   0.00%)      223.89 (  24.00%)
+ Stddev    recv-3312       302.24 (   0.00%)      271.75 (  10.09%)
+ Stddev    recv-4096       196.03 (   0.00%)      121.14 (  38.20%)
+ Stddev    recv-8192       399.86 (   0.00%)      563.65 ( -40.96%)
+ Stddev    recv-16384     1163.79 (   0.00%)     1103.86 (   5.15%)
 
-> Would make sense to do something like:
+The difference in overall performance is marginal but note that most
+measurements are less variable. There were similar observations for other
+netperf comparisons. hackbench with sockets or threads with processes or
+threads showed minor difference with some reduction of migration. tbench
+showed only marginal differences that were within the noise. dbench,
+regardless of filesystem, showed minor differences all of which are
+within noise. Multiple machines, both UMA and NUMA were tested without
+any regressions showing up.
 
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index b9546ab..3a07dfe 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -517,7 +517,6 @@ CONFIG_COMMON_CLK_CS2000_CP=y
->  CONFIG_COMMON_CLK_S2MPS11=y
->  CONFIG_CLK_QORIQ=y
->  CONFIG_COMMON_CLK_PWM=y
-> -CONFIG_STUB_CLK_HI3660=y
->  CONFIG_COMMON_CLK_QCOM=y
->  CONFIG_QCOM_CLK_SMD_RPM=y
->  CONFIG_IPQ_GCC_8074=y
-> @@ -529,8 +528,6 @@ CONFIG_HWSPINLOCK_QCOM=y
->  CONFIG_ARM_MHU=y
->  CONFIG_PLATFORM_MHU=y
->  CONFIG_BCM2835_MBOX=y
-> -CONFIG_HI3660_MBOX=y
-> -CONFIG_HI6220_MBOX=y
->  CONFIG_ROCKCHIP_IOMMU=y
->  CONFIG_ARM_SMMU=y
->  CONFIG_ARM_SMMU_V3=y
-> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-> index 1bd4355..becdb1d 100644
-> --- a/drivers/clk/hisilicon/Kconfig
-> +++ b/drivers/clk/hisilicon/Kconfig
-> @@ -44,14 +44,17 @@ config RESET_HISI
->           Build reset controller driver for HiSilicon device chipsets.
->
->  config STUB_CLK_HI6220
-> -       bool "Hi6220 Stub Clock Driver"
-> -       depends on COMMON_CLK_HI6220 && MAILBOX
-> -       default ARCH_HISI
-> +       bool "Hi6220 Stub Clock Driver" if EXPERT
-> +       depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
-> +       depends on MAILBOX
-> +       default COMMON_CLK_HI6220
->         help
->           Build the Hisilicon Hi6220 stub clock driver.
->
->  config STUB_CLK_HI3660
-> -       bool "Hi3660 Stub Clock Driver"
-> -       depends on COMMON_CLK_HI3660 && MAILBOX
-> +       bool "Hi3660 Stub Clock Driver" if EXPERT
-> +       depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
-> +       depends on MAILBOX
-> +       default COMMON_CLK_HI3660
->         help
->           Build the Hisilicon Hi3660 stub clock driver.
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index de8390d4..8d1726c 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -109,16 +109,19 @@ config TI_MESSAGE_MANAGER
->           platform has support for the hardware block.
->
->  config HI3660_MBOX
-> -       tristate "Hi3660 Mailbox"
-> -       depends on ARCH_HISI && OF
-> +       tristate "Hi3660 Mailbox" if EXPERT
-> +       depends on (ARCH_HISI || COMPILE_TEST)
-> +       depends on OF
-> +       default ARCH_HISI
->         help
->           An implementation of the hi3660 mailbox. It is used to send message
->           between application processors and other processors/MCU/DSP. Select
->           Y here if you want to use Hi3660 mailbox controller.
+The biggest risk with a patch like this is affecting wakeup latencies.
+However, the schbench load from Facebook which is very sensitive to wakeup
+latency showed a mixed result with mostly improvements in wakeup latency:
 
-Which kernel tree is this from? I don't see this driver in mainline.
+                                      4.15.0                 4.15.0
+                                       16rc0          noequal-v1r23
+ Lat 50.00th-qrtle-1        38.00 (   0.00%)       38.00 (   0.00%)
+ Lat 75.00th-qrtle-1        49.00 (   0.00%)       41.00 (  16.33%)
+ Lat 90.00th-qrtle-1        52.00 (   0.00%)       50.00 (   3.85%)
+ Lat 95.00th-qrtle-1        54.00 (   0.00%)       51.00 (   5.56%)
+ Lat 99.00th-qrtle-1        63.00 (   0.00%)       60.00 (   4.76%)
+ Lat 99.50th-qrtle-1        66.00 (   0.00%)       61.00 (   7.58%)
+ Lat 99.90th-qrtle-1        78.00 (   0.00%)       65.00 (  16.67%)
+ Lat 50.00th-qrtle-2        38.00 (   0.00%)       38.00 (   0.00%)
+ Lat 75.00th-qrtle-2        42.00 (   0.00%)       43.00 (  -2.38%)
+ Lat 90.00th-qrtle-2        46.00 (   0.00%)       48.00 (  -4.35%)
+ Lat 95.00th-qrtle-2        49.00 (   0.00%)       50.00 (  -2.04%)
+ Lat 99.00th-qrtle-2        55.00 (   0.00%)       57.00 (  -3.64%)
+ Lat 99.50th-qrtle-2        58.00 (   0.00%)       60.00 (  -3.45%)
+ Lat 99.90th-qrtle-2        65.00 (   0.00%)       68.00 (  -4.62%)
+ Lat 50.00th-qrtle-4        41.00 (   0.00%)       41.00 (   0.00%)
+ Lat 75.00th-qrtle-4        45.00 (   0.00%)       46.00 (  -2.22%)
+ Lat 90.00th-qrtle-4        50.00 (   0.00%)       50.00 (   0.00%)
+ Lat 95.00th-qrtle-4        54.00 (   0.00%)       53.00 (   1.85%)
+ Lat 99.00th-qrtle-4        61.00 (   0.00%)       61.00 (   0.00%)
+ Lat 99.50th-qrtle-4        65.00 (   0.00%)       64.00 (   1.54%)
+ Lat 99.90th-qrtle-4        76.00 (   0.00%)       82.00 (  -7.89%)
+ Lat 50.00th-qrtle-8        48.00 (   0.00%)       46.00 (   4.17%)
+ Lat 75.00th-qrtle-8        55.00 (   0.00%)       54.00 (   1.82%)
+ Lat 90.00th-qrtle-8        60.00 (   0.00%)       59.00 (   1.67%)
+ Lat 95.00th-qrtle-8        63.00 (   0.00%)       63.00 (   0.00%)
+ Lat 99.00th-qrtle-8        71.00 (   0.00%)       69.00 (   2.82%)
+ Lat 99.50th-qrtle-8        74.00 (   0.00%)       73.00 (   1.35%)
+ Lat 99.90th-qrtle-8        98.00 (   0.00%)       90.00 (   8.16%)
+ Lat 50.00th-qrtle-16       56.00 (   0.00%)       55.00 (   1.79%)
+ Lat 75.00th-qrtle-16       68.00 (   0.00%)       67.00 (   1.47%)
+ Lat 90.00th-qrtle-16       77.00 (   0.00%)       78.00 (  -1.30%)
+ Lat 95.00th-qrtle-16       82.00 (   0.00%)       84.00 (  -2.44%)
+ Lat 99.00th-qrtle-16       90.00 (   0.00%)       93.00 (  -3.33%)
+ Lat 99.50th-qrtle-16       93.00 (   0.00%)       97.00 (  -4.30%)
+ Lat 99.90th-qrtle-16      110.00 (   0.00%)      110.00 (   0.00%)
+ Lat 50.00th-qrtle-32       68.00 (   0.00%)       62.00 (   8.82%)
+ Lat 75.00th-qrtle-32       90.00 (   0.00%)       83.00 (   7.78%)
+ Lat 90.00th-qrtle-32      110.00 (   0.00%)      100.00 (   9.09%)
+ Lat 95.00th-qrtle-32      122.00 (   0.00%)      111.00 (   9.02%)
+ Lat 99.00th-qrtle-32      145.00 (   0.00%)      133.00 (   8.28%)
+ Lat 99.50th-qrtle-32      154.00 (   0.00%)      143.00 (   7.14%)
+ Lat 99.90th-qrtle-32     2316.00 (   0.00%)      515.00 (  77.76%)
+ Lat 50.00th-qrtle-35       69.00 (   0.00%)       72.00 (  -4.35%)
+ Lat 75.00th-qrtle-35       92.00 (   0.00%)       95.00 (  -3.26%)
+ Lat 90.00th-qrtle-35      111.00 (   0.00%)      114.00 (  -2.70%)
+ Lat 95.00th-qrtle-35      122.00 (   0.00%)      124.00 (  -1.64%)
+ Lat 99.00th-qrtle-35      142.00 (   0.00%)      144.00 (  -1.41%)
+ Lat 99.50th-qrtle-35      150.00 (   0.00%)      154.00 (  -2.67%)
+ Lat 99.90th-qrtle-35     6104.00 (   0.00%)     5640.00 (   7.60%)
 
->
->  config HI6220_MBOX
-> -       tristate "Hi6220 Mailbox"
-> -       depends on ARCH_HISI
-> +       tristate "Hi6220 Mailbox" if EXPERT
-> +       depends on (ARCH_HISI || COMPILE_TEST)
-> +       default ARCH_HISI
->         help
->           An implementation of the hi6220 mailbox. It is used to send message
->           between application processors and MCU. Say Y here if you want to
->
->
->
->
-> --
->  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Giovanni Gherdovich <ggherdovich@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180213133730.24064-4-mgorman@techsingularity.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ae3e6f8..a07920f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5747,7 +5747,16 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
+ 	prev_eff_load *= capacity_of(this_cpu);
+ 
+-	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
++	/*
++	 * If sync, adjust the weight of prev_eff_load such that if
++	 * prev_eff == this_eff that select_idle_sibling() will consider
++	 * stacking the wakee on top of the waker if no other CPU is
++	 * idle.
++	 */
++	if (sync)
++		prev_eff_load += 1;
++
++	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+ }
+ 
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
