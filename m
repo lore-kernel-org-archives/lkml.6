@@ -1,66 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeBUSXq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:23:46 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:57233 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbeBUSXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:23:45 -0500
-Date: Wed, 21 Feb 2018 19:23:40 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
-Message-ID: <20180221182340.wvdvgtv5pw7pvd3v@verge.net.au>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
- <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
- <20180221100716.GF7203@w540>
- <cbeb1b6b-1b02-7665-0f1f-847ab8de69e3@cogentembedded.com>
- <20180221173106.vgyshbz3kkc4p3cu@verge.net.au>
- <321c6c8c-8853-ac00-7567-c0be82b510f4@cogentembedded.com>
- <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
+        id S1752381AbeBUS0L (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:26:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44118 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751890AbeBUS0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:26:09 -0500
+Date: Wed, 21 Feb 2018 19:25:53 +0100
+From: Borislav Petkov <bp@suse.de>
+To: Ashok Raj <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: Re: [PATCH 2/3] x86/microcode/intel: Perform a cache flush before
+ ucode update.
+Message-ID: <20180221182553.GD16888@pd.tnic>
+References: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
+ <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 08:53:53PM +0300, Sergei Shtylyov wrote:
-> On 02/21/2018 08:38 PM, Sergei Shtylyov wrote:
+On Wed, Feb 21, 2018 at 08:49:43AM -0800, Ashok Raj wrote:
+> Microcode updates can be safer if the caches are clean.
+> Some of the issues around in certain Broadwell parts
+> can be addressed by doing a full cache flush.
 
-...
+Take that text...
 
-> >>>>>> +			clocks = <&cpg CPG_MOD 812>;
-> >>>>>> +			power-domains = <&sysc 32>;
-> >>>>>> +			resets = <&cpg 812>;
-> >>>>>> +			phy-mode = "rgmii-txid";
-> >>>>>
-> >>>>>    Why not just "rgmii"? TX delay is a board specific detail, no?
-> >>>>>
-> >>>> I admit I took this one straight from r8a7796 dtsi.
-> >>>> Would you like to me resend and change this?
-> >>>
-> >>>    Yes, unless Simon would fix it while merging...
-> >>
-> >> Can I confirm the desired change is s/rgmii-txid/rgmii/ ?
-> > 
-> >    Yes.
 > 
->    Apparently that means that this prop should be overridden in the board file
-> (which may not be an easy task given the board is Salvator-XS again).
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Cc: X86 ML <x86@kernel.org>
+> Cc: LKML <linux-kernel@vger.kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Boris Petkov <bp@suse.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+> ---
+>  arch/x86/kernel/cpu/microcode/intel.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> [...]
+> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+> index eff80df..5d32724 100644
+> --- a/arch/x86/kernel/cpu/microcode/intel.c
+> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+> @@ -589,6 +589,7 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
+>  	if (!mc)
+>  		return 0;
+>  
 
-Can we override it in r8a77965-salvator-x.dts or r8a77965-salvator-xs.dts?
+... and put it here as a comment.
 
-I feel that I'm missing an important point here.
+> +	wbinvd();
+
+This definitely needs to be native_wbinvd(). Early mode don't love pvops.
+
+>  	/* write microcode via MSR 0x79 */
+>  	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+>  
+> @@ -805,6 +806,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
+>  		return UCODE_OK;
+>  	}
+
+
+Ditto.
+
+> +	wbinvd();
+>  	/* write microcode via MSR 0x79 */
+>  	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+>  
+> -- 
+> 2.7.4
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
