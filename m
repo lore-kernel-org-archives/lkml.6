@@ -1,64 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932551AbeBUSyc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:54:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46020 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932270AbeBUSy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:54:26 -0500
-Date: Wed, 21 Feb 2018 19:54:25 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Dan Rue <dan.rue@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] mm, hugetlb: further simplify hugetlb allocation API
-Message-ID: <20180221185425.GK2231@dhcp22.suse.cz>
-References: <20180103093213.26329-1-mhocko@kernel.org>
- <20180103093213.26329-6-mhocko@kernel.org>
- <20180221042457.uolmhlmv5je5dqx7@xps>
- <20180221095526.GB2231@dhcp22.suse.cz>
- <20180221100107.GC2231@dhcp22.suse.cz>
- <840f8c4f-0994-fa7d-0b8d-ad2c8d77c67d@oracle.com>
+        id S1752732AbeBUTAz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:00:55 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34581 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752578AbeBUTAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 14:00:53 -0500
+X-Google-Smtp-Source: AH8x225fvAHI3fPQwEe5nsAyNffn18Ig2xc517PohgDJh70nzSy1zrcGsmMhAoQo5etT6oarQXY1R+1wnIJmBCpKC0E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <840f8c4f-0994-fa7d-0b8d-ad2c8d77c67d@oracle.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180221124707.26308-2-embedded24@evers-fischer.de>
+References: <20180221124707.26308-1-embedded24@evers-fischer.de> <20180221124707.26308-2-embedded24@evers-fischer.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Feb 2018 21:00:51 +0200
+Message-ID: <CAHp75VfgqqkLq0PbC0SBMCyCLqqoNZcUW0xngjacEL0VtAskmg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
+To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-02-18 09:59:40, Mike Kravetz wrote:
-> On 02/21/2018 02:01 AM, Michal Hocko wrote:
-> > On Wed 21-02-18 10:55:26, Michal Hocko wrote:
-> > Hmm, I guess I can see it. Does the following help?
-> > ---
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 7c204e3d132b..a963f2034dfc 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -1583,7 +1583,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
-> >  		page = NULL;
-> >  	} else {
-> >  		h->surplus_huge_pages++;
-> > -		h->nr_huge_pages_node[page_to_nid(page)]++;
-> > +		h->surplus_huge_pages_node[page_to_nid(page)]++;
-> >  	}
-> >  
-> >  out_unlock:
-> 
-> I thought we had this corrected in a previous version of the patch.
-> My apologies for not looking more closely at this version.
+On Wed, Feb 21, 2018 at 2:47 PM, Rolf Evers-Fischer
+<embedded24@evers-fischer.de> wrote:
 
-I must have screwed up when rebasing. I remember I was splitting this
-patch...
+> This commit decreases the number of jump labels and ensures
+> that the next commit doesn't increase the number of occurrences
+> of 'kfree(func_name)'.
 
-> FWIW,
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
 
-Thanks!
+First of all, this shouldn't be here.
+
+> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+
+Looks like bipolar disorder?
+
+To the topic.
+This is a slow path and your change makes code slightly less readable
+b/c of patterns used in the kernel.
+
 -- 
-Michal Hocko
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
