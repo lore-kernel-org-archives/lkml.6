@@ -1,83 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752971AbeBUJDF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:03:05 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:54274 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbeBUJDC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:03:02 -0500
-X-Google-Smtp-Source: AH8x225frB1QXFS0d33u0KGALoQGEu5zgpXfc1BhK1ZqPokDSRZQunRjZfe5fgmQyUMeANLSNETTL6nfXAF2xqb2CS8=
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <20180215182208.35003-2-joe.konno@linux.intel.com> <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
- <20180220211849.fqjb6rdmypl6opir@agluck-desk> <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
- <20180220233008.55rfm7zw62hrao5p@agluck-desk> <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com> <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 21 Feb 2018 09:03:00 +0000
-Message-ID: <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Luck, Tony" <tony.luck@intel.com>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <matthew.garrett@nebula.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Matthew Garrett <mjg59@google.com>, Peter Jones <pjones@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753002AbeBUJDr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:03:47 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37564 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751461AbeBUJDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 04:03:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="176895204"
+From: Haiyue Wang <haiyue.wang@linux.intel.com>
+To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
+Subject: [PATCH ipmi/kcs_bmc v3] ipmi: kcs_bmc: make the code be more clean
+Date: Wed, 21 Feb 2018 17:04:40 +0800
+Message-Id: <1519203880-3497-1-git-send-email-haiyue.wang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 February 2018 at 02:16, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Feb 20, 2018 at 5:05 PM, Luck, Tony <tony.luck@intel.com> wrote:
->>>> EFI[1] stinks. Reading any file in /sys/firmware/efi/efivars/ generates
->>>> 4 (yes FOUR!) SMIs.
->>
->>> Is that actualkly the normal implementation?
->>
->> I don't know if there are other implementations. This is what I see on my
->> lab system.
->
-> Ok. I'm not a huge fan of EFI. Over-designed to the hilt. Happily at
-> least the loadable drivers are a thing of the past.
->
+Modify the file read and write operation API's parameter declaration to
+meet the name convention.
 
-I don't think there is any disagreement on that aspect of the discussion.
+Rename the helper function by following the to_<xxx>() name style.
 
-> Do we have a list of things normal users care about? Because one thing
-> that would solve it is caching of the values. We don't want to do that
-> in general, but maybe we could just do it for the subset that we think
-> are "user accessible".
->
-> Although maybe just that "rate limit" thing would be simplest.
->
+Update the poll API with the new type '__poll_t', this is new commit from
+linux-4.16-rc1.
 
-The thing I like about rate limiting (for everyone including root) is
-that it does not break anybody's workflow (unless EFI variable access
-occurs on a hot path, in which case you're either a) asking for it, or
-b) the guy trying to DoS us), and that it can make exploitation of any
-potential Spectre v1 vulnerabilities impractical at the same time. At
-present, we don't know if this is a concern, but we cannot rule it
-out, and what we do know is that those shiny new Spectre-proof kernels
-that we will have any day now will be running on systems with UEFI
-firmware that may contain vulnerable code paths and may never get
-updated. Perhaps I am being overly paranoid here, but if we end up
-adding rate limiting, let's just apply it to root as well.
+Correct the header files comment style for 'SPDX-License-Identifier'.
 
-> I don't want to break existing users, although it's not entirely clear
-> to me if there are any real use cases that matter to users. If tpmtotp
-> is the main case, maybe that can be changed to work around it and just
-> cache a value or something?
->
-> So I could imagine just applying Joe's / Andy's patch to see if
-> anybody even notices. But if somebody does, we'd have to go to the
-> alternatives anyway.
->
->                 Linus
+Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+
+---
+v2 -> v3:
+ - Make the commit message be more understandable.
+
+v1 -> v2:
+ - Add 'SPDX-License-Identifier' style for header files modification.
+---
+ drivers/char/ipmi/kcs_bmc.c        | 32 +++++++++++++++++---------------
+ drivers/char/ipmi/kcs_bmc.h        |  6 ++++--
+ drivers/char/ipmi/kcs_bmc_aspeed.c |  4 +++-
+ include/uapi/linux/ipmi_bmc.h      |  6 ++++--
+ 4 files changed, 28 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
+index 6476bfb..fbfc05e 100644
+--- a/drivers/char/ipmi/kcs_bmc.c
++++ b/drivers/char/ipmi/kcs_bmc.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+-// Copyright (c) 2015-2018, Intel Corporation.
++/*
++ * Copyright (c) 2015-2018, Intel Corporation.
++ */
+ 
+ #define pr_fmt(fmt) "kcs-bmc: " fmt
+ 
+@@ -242,14 +244,14 @@ int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
+ }
+ EXPORT_SYMBOL(kcs_bmc_handle_event);
+ 
+-static inline struct kcs_bmc *file_to_kcs_bmc(struct file *filp)
++static inline struct kcs_bmc *to_kcs_bmc(struct file *filp)
+ {
+ 	return container_of(filp->private_data, struct kcs_bmc, miscdev);
+ }
+ 
+ static int kcs_bmc_open(struct inode *inode, struct file *filp)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
+ 	int ret = 0;
+ 
+ 	spin_lock_irq(&kcs_bmc->lock);
+@@ -262,25 +264,25 @@ static int kcs_bmc_open(struct inode *inode, struct file *filp)
+ 	return ret;
+ }
+ 
+-static unsigned int kcs_bmc_poll(struct file *filp, poll_table *wait)
++static __poll_t kcs_bmc_poll(struct file *filp, poll_table *wait)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
+-	unsigned int mask = 0;
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
++	__poll_t mask = 0;
+ 
+ 	poll_wait(filp, &kcs_bmc->queue, wait);
+ 
+ 	spin_lock_irq(&kcs_bmc->lock);
+ 	if (kcs_bmc->data_in_avail)
+-		mask |= POLLIN;
++		mask |= EPOLLIN;
+ 	spin_unlock_irq(&kcs_bmc->lock);
+ 
+ 	return mask;
+ }
+ 
+-static ssize_t kcs_bmc_read(struct file *filp, char *buf,
+-			    size_t count, loff_t *offset)
++static ssize_t kcs_bmc_read(struct file *filp, char __user *buf,
++			    size_t count, loff_t *ppos)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
+ 	bool data_avail;
+ 	size_t data_len;
+ 	ssize_t ret;
+@@ -339,10 +341,10 @@ static ssize_t kcs_bmc_read(struct file *filp, char *buf,
+ 	return ret;
+ }
+ 
+-static ssize_t kcs_bmc_write(struct file *filp, const char *buf,
+-			     size_t count, loff_t *offset)
++static ssize_t kcs_bmc_write(struct file *filp, const char __user *buf,
++			     size_t count, loff_t *ppos)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
+ 	ssize_t ret;
+ 
+ 	/* a minimum response size '3' : netfn + cmd + ccode */
+@@ -378,7 +380,7 @@ static ssize_t kcs_bmc_write(struct file *filp, const char *buf,
+ static long kcs_bmc_ioctl(struct file *filp, unsigned int cmd,
+ 			  unsigned long arg)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
+ 	long ret = 0;
+ 
+ 	spin_lock_irq(&kcs_bmc->lock);
+@@ -410,7 +412,7 @@ static long kcs_bmc_ioctl(struct file *filp, unsigned int cmd,
+ 
+ static int kcs_bmc_release(struct inode *inode, struct file *filp)
+ {
+-	struct kcs_bmc *kcs_bmc = file_to_kcs_bmc(filp);
++	struct kcs_bmc *kcs_bmc = to_kcs_bmc(filp);
+ 
+ 	spin_lock_irq(&kcs_bmc->lock);
+ 	kcs_bmc->running = 0;
+diff --git a/drivers/char/ipmi/kcs_bmc.h b/drivers/char/ipmi/kcs_bmc.h
+index c19501d..69d9a70 100644
+--- a/drivers/char/ipmi/kcs_bmc.h
++++ b/drivers/char/ipmi/kcs_bmc.h
+@@ -1,5 +1,7 @@
+-// SPDX-License-Identifier: GPL-2.0
+-// Copyright (c) 2015-2018, Intel Corporation.
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2015-2018, Intel Corporation.
++ */
+ 
+ #ifndef __KCS_BMC_H__
+ #define __KCS_BMC_H__
+diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
+index 0c4d1a3..dba6075 100644
+--- a/drivers/char/ipmi/kcs_bmc_aspeed.c
++++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+-// Copyright (c) 2015-2018, Intel Corporation.
++/*
++ * Copyright (c) 2015-2018, Intel Corporation.
++ */
+ 
+ #define pr_fmt(fmt) "aspeed-kcs-bmc: " fmt
+ 
+diff --git a/include/uapi/linux/ipmi_bmc.h b/include/uapi/linux/ipmi_bmc.h
+index 2f9f97e..d3efacd 100644
+--- a/include/uapi/linux/ipmi_bmc.h
++++ b/include/uapi/linux/ipmi_bmc.h
+@@ -1,5 +1,7 @@
+-// SPDX-License-Identifier: GPL-2.0
+-// Copyright (c) 2015-2018, Intel Corporation.
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2015-2018, Intel Corporation.
++ */
+ 
+ #ifndef _UAPI_LINUX_IPMI_BMC_H
+ #define _UAPI_LINUX_IPMI_BMC_H
+-- 
+2.7.4
