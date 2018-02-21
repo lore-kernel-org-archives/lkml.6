@@ -1,63 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966028AbeBUPYK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:24:10 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50478 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936132AbeBUPYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965988AbeBUPYI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:24:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935786AbeBUPYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Feb 2018 10:24:06 -0500
-Subject: Re: [PATCH 2/3] sysctl: Warn when a clamped sysctl parameter is set
- out of range
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-References: <1519059231-2456-1-git-send-email-longman@redhat.com>
- <1519059231-2456-3-git-send-email-longman@redhat.com>
- <20180220151705.8b4519f105db8f5c119015f0@linux-foundation.org>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <60a7ee3c-d6f9-c124-b0a0-e31bafa7a62e@redhat.com>
-Date: Wed, 21 Feb 2018 10:24:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C6F217A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x226ygZFnZQrBBMLPSfRI95It3twsSRoaB63K7Kv/QEJjcGjX8sbqr9mpLqNzXj+1nMMTS9catzL6nTPYiww5h0c=
 MIME-Version: 1.0
-In-Reply-To: <20180220151705.8b4519f105db8f5c119015f0@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+In-Reply-To: <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 09:23:44 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
+Message-ID: <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
+Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20/2018 06:17 PM, Andrew Morton wrote:
-> On Mon, 19 Feb 2018 11:53:50 -0500 Waiman Long <longman@redhat.com> wrote:
+On Wed, Feb 21, 2018 at 4:21 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Laurent,
 >
->> Even with clamped sysctl parameters, it is still not that straight
->> forward to figure out the exact range of those parameters. One may
->> try to write extreme parameter values to see if they get clamped.
->> To make it easier, a warning with the expected range will now be
->> printed in the kernel ring buffer when a clamped sysctl parameter
->> receives an out of range value.
-> This assumes that do_proc_dointvec_minmax_conv() and
-> do_proc_douintvec_minmax_conv() are only ever called by privileged
-> userspace.  Because we mustn't give unprivileged applications a way to
-> spam the kernel logs.
+> On Wed, Feb 21, 2018 at 12:10 AM, Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+>> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>>
+>> Changesets are very powerful, but the lack of a helper API
+>> makes using them cumbersome. Introduce a simple copy based
+>> API that makes things considerably easier.
+>>
+>> To wit, adding a property using the raw API.
+>>
+>>         struct property *prop;
+>>         prop = kzalloc(sizeof(*prop)), GFP_KERNEL);
+>>         prop->name = kstrdup("compatible");
+>>         prop->value = kstrdup("foo,bar");
+>>         prop->length = strlen(prop->value) + 1;
+>>         of_changeset_add_property(ocs, np, prop);
+>>
+>> while using the helper API
+>>
+>>         of_changeset_add_property_string(ocs, np, "compatible",
+>>                         "foo,bar");
+>>
+>> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>> [Fixed memory leak in __of_changeset_add_update_property_copy()]
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 >
-> That's presumably true in the case of the caller you just added, but I
-> don't see what we can do to guarantee this in the future, so perhaps we
-> should add some permission check to the pr_warn()?
->
-Good point. Beside adding security check, another alternative is to use
-some kind of warn_once() for each sysctl parameter. That will limit the
-amount of spamming that is possible. It will require adding a flag to
-the ctl_table to mark an  entry as warned. I think that will be less
-tricky than adding permission check.
+> You missed one fix I have in my topic/overlays branch
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/overlays&id=150f95b9dec77ce371c229f7ac4d6dd8620bef4a
 
-I can also use the new flag to designate that a sysctl parameter need to
-be clamped to the range instead of failing when out of range. With that,
-I don't need to introduce new clamping APIs. I can use the existing
-ones. I will work on v2 patch with that change.
+Are you planning to try to upstream all this? If not, I'll get Frank
+to keep changing the overlay API to make carrying it out of tree more
+painful. :)
 
-Thanks,
-Longman
+Rob
