@@ -1,190 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751863AbeBUH31 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 02:29:27 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:47789 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751295AbeBUH3Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 02:29:25 -0500
-Subject: Re: [RFCv4 01/21] media: add request API core and UAPI
-To: Alexandre Courbot <acourbot@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180220044425.169493-1-acourbot@chromium.org>
- <20180220044425.169493-2-acourbot@chromium.org>
- <5fd863ad-a0fe-88d7-05bd-90c2b4096145@xs4all.nl>
- <CAPBb6MUUuo+50zfs-XaRcVD6sV3uaownVeFKgX=A6NkTO1he1w@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c016f8f1-06f3-cc3b-03d1-7a17c39dbec0@xs4all.nl>
-Date: Wed, 21 Feb 2018 08:29:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1751893AbeBUHbj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 02:31:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:33285 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbeBUHbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 02:31:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="28690543"
+Date: Wed, 21 Feb 2018 09:31:32 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] tpm: Trigger only missing TPM 2.0 self tests
+Message-ID: <20180221073132.vrznvdp5oh7w6n53@linux.intel.com>
+References: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MUUuo+50zfs-XaRcVD6sV3uaownVeFKgX=A6NkTO1he1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJQhrrwLWYlRPHy2JaYi4SJPDBFzWNSYAvXsdMP9eRE2T/5LA8tlD65iCewRUElLRlPdsHC3YQQH+8MUzzb/RD13OwKf9j5Md/42jOWeNwwVBZWTvCvP
- g+wQP24coEFTxwe2rxojBXYMoibYcEiQZWkf/EYlU69kv7HQaZJrRpsa61AjeswQ7V5cd73PNapPi72yv0a3UQDUr1UFPjHo5JZ3Bi8prEYB6bpr2m/YZIOQ
- c0EZsodU9Rz91b5rvqNS2TBYo8xVrS5gzz4A8cElbSR4Qlsa+B+QXR0YRyJx8VnB6pSw7s7CyW+em/lKCmGH8lzJKS07VEK4n9f4xxOHQJlPiELE8IL0wJXP
- WibeEiQBnxvDmkXXmX/flhDxo/7xo/lH+pv5TOdmT3Bn1qukYpQjTBcfvkIhCntigFti6Jy4ArytU3QuAimeRjSfSs47FU5EC2FtIOHeKWmG6TpKCz2xQ72m
- iJIULhlZJZOyIbYU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 07:01 AM, Alexandre Courbot wrote:
-> Hi Hans,
+On Wed, Feb 21, 2018 at 12:53:47AM +0200, Jarkko Sakkinen wrote:
+> From: Alexander Steffen <Alexander.Steffen@infineon.com>
 > 
-> On Tue, Feb 20, 2018 at 7:36 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 02/20/18 05:44, Alexandre Courbot wrote:
-
-<snip>
-
->>> +#define MEDIA_REQUEST_IOC(__cmd, func)                                       \
->>> +     [_IOC_NR(MEDIA_REQUEST_IOC_##__cmd) - 0x80] = {                 \
->>> +             .cmd = MEDIA_REQUEST_IOC_##__cmd,                       \
->>> +             .fn = func,                                             \
->>> +     }
->>> +
->>> +struct media_request_ioctl_info {
->>> +     unsigned int cmd;
->>> +     long (*fn)(struct media_request *req);
->>> +};
->>> +
->>> +static const struct media_request_ioctl_info ioctl_info[] = {
->>> +     MEDIA_REQUEST_IOC(SUBMIT, media_request_ioctl_submit),
->>> +     MEDIA_REQUEST_IOC(REINIT, media_request_ioctl_reinit),
->>
->> There are only two ioctls, so there is really no need for the
->> MEDIA_REQUEST_IOC define. Just keep it simple.
+> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
+> (necessitating a reboot). The problem seems to be that the TPM gets into a
+> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
+> all tests have run to completion), but instead returns TPM_RC_TESTING
+> (meaning some tests are still running in the background).  There are
+> various theories that resending the self-test command actually causes the
+> tests to restart and thus triggers more TPM_RC_TESTING returns until the
+> timeout is exceeded.
 > 
-> The number of times it is used doesn't change the fact that it helps
-> with readability IMHO.
-
-But this macro just boils down to:
-
-static const struct media_request_ioctl_info ioctl_info[] = {
-	{ MEDIA_REQUEST_IOC_SUBMIT, media_request_ioctl_submit },
-	{ MEDIA_REQUEST_IOC_REINIT, media_request_ioctl_reinit },
-};
-
-It's absolutely identical! So it seems senseless to me.
-
+> There are several issues here: firstly being we shouldn't slow down the
+> boot sequence waiting for the self test to complete once the TPM
+> backgrounds them.  It will actually make available all functions that have
+> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
+> command.  So the fix is to kick off self tests once and if they return
+> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
+> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
+> (which it might if they send a command that needs a TPM subsystem which is
+> still under test), we loop in tpm_transmit_cmd until either a timeout or we
+> don't get a TPM_RC_TESTING return.
 > 
->>
->>> +};
->>> +
->>> +static long media_request_ioctl(struct file *filp, unsigned int cmd,
->>> +                             unsigned long __arg)
->>> +{
->>> +     struct media_request *req = filp->private_data;
->>> +     const struct media_request_ioctl_info *info;
->>> +
->>> +     if ((_IOC_NR(cmd) < 0x80) ||
->>
->> Why start the ioctl number at 0x80? Why not just 0?
->> It avoids all this hassle with the 0x80 offset.
-
-There is no clash with the MC ioctls, so I really don't believe the 0x80
-offset is needed.
-
->>
->>> +          _IOC_NR(cmd) >= 0x80 + ARRAY_SIZE(ioctl_info) ||
->>> +          ioctl_info[_IOC_NR(cmd) - 0x80].cmd != cmd)
->>> +             return -ENOIOCTLCMD;
->>> +
->>> +     info = &ioctl_info[_IOC_NR(cmd) - 0x80];
->>> +
->>> +     return info->fn(req);
->>> +}
-
-<snip>
-
->>> diff --git a/include/uapi/linux/media-request.h b/include/uapi/linux/media-request.h
->>> new file mode 100644
->>> index 000000000000..5d30f731a442
->>> --- /dev/null
->>> +++ b/include/uapi/linux/media-request.h
->>> @@ -0,0 +1,37 @@
->>> +/*
->>> + * Media requests UAPI
->>> + *
->>> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> + * GNU General Public License for more details.
->>> + */
->>> +
->>> +#ifndef __LINUX_MEDIA_REQUEST_H
->>> +#define __LINUX_MEDIA_REQUEST_H
->>> +
->>> +#ifndef __KERNEL__
->>> +#include <stdint.h>
->>> +#endif
->>> +#include <linux/ioctl.h>
->>> +#include <linux/types.h>
->>> +#include <linux/version.h>
->>> +
->>> +/* Only check that requests can be used, do not allocate */
->>> +#define MEDIA_REQUEST_FLAG_TEST                      0x00000001
->>> +
->>> +struct media_request_new {
->>> +     __u32 flags;
->>> +     __s32 fd;
->>> +} __attribute__ ((packed));
->>> +
->>> +#define MEDIA_REQUEST_IOC_SUBMIT       _IO('|',  128)
->>> +#define MEDIA_REQUEST_IOC_REINIT       _IO('|',  129)
->>> +
->>> +#endif
->>>
->>
->> I need to think a bit more on this internal API, so I might come back
->> to this patch for more comments.
+> Finally, there have been observations of strange returns from a partial
+> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
+> any unexpected return from a partial self test as an indication we need to
+> run a full self test.
 > 
-> I think I should probably elaborate on why I think it is advantageous
-> to have these ioctls handled here.
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+> Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
 
-Sorry for the confusion, I was not actually referring to these ioctls.
-In fact, I really like them. It was more a general comment about the
-request API core.
+Fixes tag is in wrong format. Should be 12 characters of the hash and
+short summary in parentheses:
 
-I should have been more clear.
+Fixes: 2482b1bba512 ("tpm: Trigger only missing TPM 2.0 self tests")
 
-Regards,
-
-	Hans
-
-> 
-> One of the reasons if that it does not force user-space to keep track
-> of who issued the request to operate on it. Semantically, the only
-> device a request could be submitted to is the device that produced it
-> anyway, so since that argument is constant we may as well get rid of
-> it (and we also don't need to pass the request FD as argument
-> anymore).
-> 
-> It also gives us more freedom when designing new request-related
-> ioctls: before, all request-related operations were multiplexed under
-> a single MEDIA_IOC_REQUEST_CMD ioctl, which cmd field indicated the
-> actual operation to perform. With this design, all the arguments must
-> fit within the media_request_cmd structure, which may cause confusion
-> as it will have to be variable-sized. I am thinking in particular
-> about a future atomic-like API to set topology, controls and buffers
-> related to a request all at the same time. Having it as a request
-> ioctl seems perfectly fitting to me.
-> 
+/Jarkko
