@@ -1,63 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751904AbeBUSVV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:21:21 -0500
-Received: from mga12.intel.com ([192.55.52.136]:25386 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751734AbeBUSVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:21:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,375,1515484800";
-   d="scan'208";a="202749398"
-Date: Wed, 21 Feb 2018 10:21:04 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <matthew.garrett@nebula.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
-Message-ID: <20180221182104.GI3231@tassilo.jf.intel.com>
-References: <20180215182208.35003-2-joe.konno@linux.intel.com>
- <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
- <20180220211849.fqjb6rdmypl6opir@agluck-desk>
- <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
- <20180220233008.55rfm7zw62hrao5p@agluck-desk>
- <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
- <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
- <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
- <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
+        id S1752073AbeBUSWE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:22:04 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:32972 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751914AbeBUSWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:22:01 -0500
+X-Google-Smtp-Source: AG47ELspmRHIHfE7Y5ctWCGjlAC1iVPu8LoRm4ZfDi6hb3uMx5mwzkcBrCi+I+qGaX+ii90YkTCbW0/qfnMrzMGnvQk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
+References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
+ <1518701959-22899-2-git-send-email-tali.perry1@gmail.com> <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
+ <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop> <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
+ <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
+From: Brendan Higgins <brendanhiggins@google.com>
+Date: Wed, 21 Feb 2018 10:22:00 -0800
+Message-ID: <CAFd5g470T=bd-mg2C8DerOx0p7Nj2A6JhS0GueP8y8DLr3JN0w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
+To: Rob Herring <robh@kernel.org>
+Cc: Tali Perry <tali.perry1@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> But it should be fairly easy to just add a 'struct ratelimit_state' to
-> 'struct user_struct', and then you can easily just use
-> 
->    '&file->f_cred->user->ratelimit'
-> 
-> and you're done. Make sure the initial root user has it unlimited, and
-> limit it to something reasonable for all other user allocations.
+On Wed, Feb 21, 2018 at 5:23 AM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Feb 20, 2018 at 10:47 PM, Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+>> On Mon, Feb 19, 2018 at 6:49 AM, Rob Herring <robh@kernel.org> wrote:
+>>> On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
+>>>> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
+>>>> >
+>>>> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+>>>> >
+>>>>  <snip>
+>>>>
+>>>> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
+>>>> clocks (moved from drivers/clk/clk-npcm7xx.c):
+>>>> https://www.spinics.net/lists/arm-kernel/msg634678.html
+>>>
+>>> No, binding docs, dts files and driver code should all be separate
+>>> patches.
+>>
+>> My mistake. This patch has a dt-bindings include file; should the include file
+>> go in here, with the dtsi changes, or in its own separate patch?
+>
+> It defines the binding, so with the binding documentation.
+>
 
-How about uid name spaces? Someone untrusted in a container could 
-create a lot of uids and switch between them.
+So two things, first off, the include file I was asking about is not a dtsi, but
+a file that defines a bunch of macros for referencing clocks. I don't know if
+that makes a difference.
 
-A global rate limit seems better. While in theory it allows DoS
-it's probably not worse than a lot of others we have with
-other resources, and it's relatively harmless.
+Second, the patch that I referenced above, "[PATCH v2 1/1] npcm750: add fixed
+clocks (moved from drivers/clk/clk-npcm7xx.c):
+https://www.spinics.net/lists/arm-kernel/msg634678.html", *does* contain a dtsi
+and nothing else, and defines these bindings, which is why I thought it went in
+with the binding docs.
 
--Andi
+Cheers
