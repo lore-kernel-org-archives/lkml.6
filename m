@@ -1,75 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937520AbeBUPMC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:12:02 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58213 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934062AbeBUPL7 (ORCPT
+        id S965985AbeBUPME (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:12:04 -0500
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:39392 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934737AbeBUPMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:11:59 -0500
-Subject: Re: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio
- irqchip
-To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <c7b7066a-001a-4a4f-d68b-e143ede411a5@st.com>
-Date: Wed, 21 Feb 2018 16:11:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Wed, 21 Feb 2018 10:12:00 -0500
+X-Google-Smtp-Source: AH8x227lbMPtCkaLVwnfkSgdG2zphrDy8nqGGBX6ynZ0oPBEvpvO7kVIGNKFGTa5mo2YCAYpJ3K65Q==
+Message-ID: <1519225917.55655.42.camel@gmail.com>
+Subject: Re: [PATCH] netlink: put module reference if dump start fails
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: David Miller <davem@davemloft.net>,
+        "Berg, Johannes" <johannes.berg@intel.com>,
+        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Date: Wed, 21 Feb 2018 07:11:57 -0800
+In-Reply-To: <CAHmME9px8Bwjz-D0dbSgm3vRPiEaBavEaG=2bGWC0_L3api5rw@mail.gmail.com>
+References: <20180221034159.14685-1-Jason@zx2c4.com>
+         <1519192048.55655.35.camel@gmail.com>
+         <CAHmME9px8Bwjz-D0dbSgm3vRPiEaBavEaG=2bGWC0_L3api5rw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_05:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Radoslaw,
-
-On 02/21/2018 02:50 PM, Radoslaw Pietrzyk wrote:
-> 	- removes unneeded irq_chip.irq_eoi callback
-> 	- adds irq_chip.irq_set_wake callback for possible
-> 	in the future GPIO wakeup
+On Wed, 2018-02-21 at 15:54 +0100, Jason A. Donenfeld wrote:
+> On Wed, Feb 21, 2018 at 6:47 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> > > This probably should be queued up for stable.
+> > 
+> > When was the bug added ? This would help a lot stable teams ...
 > 
-> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
-> ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index 617df16..5b1740d 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -268,10 +268,10 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
->   
->   static struct irq_chip stm32_gpio_irq_chip = {
->   	.name           = "stm32gpio",
-> -	.irq_eoi	= irq_chip_eoi_parent,
->   	.irq_mask       = irq_chip_mask_parent,
->   	.irq_unmask     = irq_chip_unmask_parent,
->   	.irq_set_type   = irq_chip_set_type_parent,
-> +	.irq_set_wake   = irq_chip_set_wake_parent,
-Thanks, this one was in my backlog.
+> This needs to be backported to 4.16-rc0+, 4.15+, 4.14+, 4.13.14+, and 4.9.63+.
 
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+I guess I should have asked you to provide an appropriate Fixes: tag,
+clearly identifying the commit that added the bug.
 
+Fixes: 12-digit-sha1 ("patch title")
 
->   	.irq_request_resources = stm32_gpio_irq_request_resources,
->   	.irq_release_resources = stm32_gpio_irq_release_resources,
->   };
-> 
+Thanks.
