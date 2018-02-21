@@ -1,30 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965781AbeBURBy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:01:54 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53431 "EHLO
+        id S938882AbeBURC0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:02:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51135 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932317AbeBURBu (ORCPT
+        with ESMTP id S933512AbeBURCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:01:50 -0500
-Date: Wed, 21 Feb 2018 09:01:11 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-f3d415ea46968ae1f9cbb9e201601d7207ce74c7@git.kernel.org>
-Cc: bp@alien8.de, hpa@zytor.com, mingo@kernel.org, jpoimboe@redhat.com,
-        torvalds@linux-foundation.org, dwmw2@infradead.org, brgerst@gmail.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        dvlasenk@redhat.com, linux@dominikbrodowski.net, tglx@linutronix.de,
-        luto@kernel.org
-Reply-To: dwmw2@infradead.org, bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        dvlasenk@redhat.com, tglx@linutronix.de, linux@dominikbrodowski.net,
-        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180220210113.6725-7-linux@dominikbrodowski.net>
-References: <20180220210113.6725-7-linux@dominikbrodowski.net>
+        Wed, 21 Feb 2018 12:02:23 -0500
+Date: Wed, 21 Feb 2018 09:01:40 -0800
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-33352244706369ea6736781ae41fe41692eb69bb@git.kernel.org>
+Cc: torvalds@linux-foundation.org, jpoimboe@redhat.com, bp@suse.de,
+        hpa@zytor.com, rostedt@goodmis.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, jbaron@akamai.com, peterz@infradead.org,
+        mingo@kernel.org
+Reply-To: jbaron@akamai.com, peterz@infradead.org, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        bp@suse.de, torvalds@linux-foundation.org, hpa@zytor.com,
+        jpoimboe@redhat.com
+In-Reply-To: <c52825c73f3a174e8398b6898284ec20d4deb126.1519051220.git.jpoimboe@redhat.com>
+References: <c52825c73f3a174e8398b6898284ec20d4deb126.1519051220.git.jpoimboe@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Open-code switch_to_thread_stack()
-Git-Commit-ID: f3d415ea46968ae1f9cbb9e201601d7207ce74c7
+Subject: [tip:x86/pti] jump_label: Explicitly disable jump labels in __init
+ code
+Git-Commit-ID: 33352244706369ea6736781ae41fe41692eb69bb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,188 +36,121 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f3d415ea46968ae1f9cbb9e201601d7207ce74c7
-Gitweb:     https://git.kernel.org/tip/f3d415ea46968ae1f9cbb9e201601d7207ce74c7
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Tue, 20 Feb 2018 22:01:13 +0100
+Commit-ID:  33352244706369ea6736781ae41fe41692eb69bb
+Gitweb:     https://git.kernel.org/tip/33352244706369ea6736781ae41fe41692eb69bb
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Tue, 20 Feb 2018 11:37:51 -0600
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 16:54:05 +0100
 
-x86/entry/64: Open-code switch_to_thread_stack()
+jump_label: Explicitly disable jump labels in __init code
 
-Open-code the two instances which called switch_to_thread_stack(). This
-allows us to remove the wrapper around DO_SWITCH_TO_THREAD_STACK.
+After initmem has been freed, any jump labels in __init code are
+prevented from being written to by the kernel_text_address() check in
+__jump_label_update().  However, this check is quite broad.  If
+kernel_text_address() were to return false for any other reason, the
+jump label write would fail silently with no warning.
 
-While at it, update the UNWIND hint to reflect where the IRET frame is,
-and update the commentary to reflect what we are actually doing here.
+For jump labels in module init code, entry->code is set to zero to
+indicate that the entry is disabled.  Do the same thing for core kernel
+init code.  This makes the behavior more consistent, and will also make
+it more straightforward to detect non-init jump label write failures in
+the next patch.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jason Baron <jbaron@akamai.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180220210113.6725-7-linux@dominikbrodowski.net
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/c52825c73f3a174e8398b6898284ec20d4deb126.1519051220.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/entry_64.S        | 76 +++++++++++++++++++++-------------------
- arch/x86/entry/entry_64_compat.S | 17 +++++++--
- 2 files changed, 55 insertions(+), 38 deletions(-)
+ include/linux/jump_label.h |  3 +++
+ init/main.c                |  2 ++
+ kernel/jump_label.c        | 16 ++++++++++++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 42a4b65..d5c7f18 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -538,17 +538,48 @@ END(irq_entries_start)
- .endm
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index b6a29c1..2168cc6 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -151,6 +151,7 @@ extern struct jump_entry __start___jump_table[];
+ extern struct jump_entry __stop___jump_table[];
  
- /*
-- * Switch to the thread stack.  This is called with the IRET frame and
-- * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
-- * space has not been allocated for them.)
-+ * Interrupt entry helper function.
-+ *
-+ * Entry runs with interrupts off. Stack layout at entry:
-+ * +----------------------------------------------------+
-+ * | regs->ss						|
-+ * | regs->rsp						|
-+ * | regs->eflags					|
-+ * | regs->cs						|
-+ * | regs->ip						|
-+ * +----------------------------------------------------+
-+ * | regs->orig_ax = ~(interrupt number)		|
-+ * +----------------------------------------------------+
-+ * | return address					|
-+ * +----------------------------------------------------+
-  */
--.macro DO_SWITCH_TO_THREAD_STACK
-+ENTRY(interrupt_entry)
-+	UNWIND_HINT_FUNC
-+	ASM_CLAC
-+	cld
+ extern void jump_label_init(void);
++extern void jump_label_invalidate_init(void);
+ extern void jump_label_lock(void);
+ extern void jump_label_unlock(void);
+ extern void arch_jump_label_transform(struct jump_entry *entry,
+@@ -198,6 +199,8 @@ static __always_inline void jump_label_init(void)
+ 	static_key_initialized = true;
+ }
+ 
++static inline void jump_label_invalidate_init(void) {}
 +
-+	testb	$3, CS-ORIG_RAX+8(%rsp)
-+	jz	1f
-+	SWAPGS
+ static __always_inline bool static_key_false(struct static_key *key)
+ {
+ 	if (unlikely(static_key_count(key) > 0))
+diff --git a/init/main.c b/init/main.c
+index a8100b9..969eaf1 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -89,6 +89,7 @@
+ #include <linux/io.h>
+ #include <linux/cache.h>
+ #include <linux/rodata_test.h>
++#include <linux/jump_label.h>
+ 
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -1000,6 +1001,7 @@ static int __ref kernel_init(void *unused)
+ 	/* need to finish all async __init code before freeing the memory */
+ 	async_synchronize_full();
+ 	ftrace_free_init_mem();
++	jump_label_invalidate_init();
+ 	free_initmem();
+ 	mark_readonly();
+ 	system_state = SYSTEM_RUNNING;
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index b451709..b717765 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -16,6 +16,7 @@
+ #include <linux/jump_label_ratelimit.h>
+ #include <linux/bug.h>
+ #include <linux/cpu.h>
++#include <asm/sections.h>
+ 
+ #ifdef HAVE_JUMP_LABEL
+ 
+@@ -417,6 +418,20 @@ void __init jump_label_init(void)
+ 	cpus_read_unlock();
+ }
+ 
++/* Disable any jump label entries in __init code */
++void __init jump_label_invalidate_init(void)
++{
++	struct jump_entry *iter_start = __start___jump_table;
++	struct jump_entry *iter_stop = __stop___jump_table;
++	struct jump_entry *iter;
 +
-+	/*
-+	 * Switch to the thread stack. The IRET frame and orig_ax are
-+	 * on the stack, as well as the return address. RDI..R12 are
-+	 * not (yet) on the stack and space has not (yet) been
-+	 * allocated for them.
-+	 */
- 	pushq	%rdi
++	for (iter = iter_start; iter < iter_stop; iter++) {
++		if (iter->code >= (unsigned long)_sinittext &&
++		    iter->code < (unsigned long)_einittext)
++			iter->code = 0;
++	}
++}
 +
- 	/* Need to switch before accessing the thread stack. */
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
- 	movq	%rsp, %rdi
- 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
--	UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
-+
-+	 /*
-+	  * We have RDI, return address, and orig_ax on the stack on
-+	  * top of the IRET frame. That means offset=24
-+	  */
-+	UNWIND_HINT_IRET_REGS base=%rdi offset=24
+ #ifdef CONFIG_MODULES
  
- 	pushq	7*8(%rdi)		/* regs->ss */
- 	pushq	6*8(%rdi)		/* regs->rsp */
-@@ -560,25 +591,6 @@ END(irq_entries_start)
- 	UNWIND_HINT_FUNC
+ static enum jump_label_type jump_label_init_type(struct jump_entry *entry)
+@@ -633,6 +648,7 @@ static void jump_label_del_module(struct module *mod)
+ 	}
+ }
  
- 	movq	(%rdi), %rdi
--.endm
--
--/*
-- * Interrupt entry/exit.
-- *
-- * Interrupt entry points save only callee clobbered registers in fast path.
-- *
-- * Entry runs with interrupts off.
-- */
--/* 8(%rsp): ~(interrupt number) */
--ENTRY(interrupt_entry)
--	UNWIND_HINT_FUNC
--	ASM_CLAC
--	cld
--
--	testb	$3, CS-ORIG_RAX+8(%rsp)
--	jz	1f
--	SWAPGS
--	DO_SWITCH_TO_THREAD_STACK
- 1:
- 
- 	PUSH_AND_CLEAR_REGS save_ret=1
-@@ -592,7 +604,7 @@ ENTRY(interrupt_entry)
- 	 *
- 	 * We need to tell lockdep that IRQs are off.  We can't do this until
- 	 * we fix gsbase, and we should do it before enter_from_user_mode
--	 * (which can take locks).  Since TRACE_IRQS_OFF idempotent,
-+	 * (which can take locks).  Since TRACE_IRQS_OFF is idempotent,
- 	 * the simplest way to handle it is to just call it twice if
- 	 * we enter from user mode.  There's no reason to optimize this since
- 	 * TRACE_IRQS_OFF is a no-op if lockdep is off.
-@@ -609,6 +621,9 @@ ENTRY(interrupt_entry)
- 	ret
- END(interrupt_entry)
- 
-+
-+/* Interrupt entry/exit. */
-+
- 	/*
- 	 * The interrupt stubs push (~vector+0x80) onto the stack and
- 	 * then jump to common_interrupt.
-@@ -878,17 +893,6 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
-  */
- #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
- 
--#if defined(CONFIG_IA32_EMULATION)
--/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
--ENTRY(switch_to_thread_stack)
--	UNWIND_HINT_FUNC
--
--	DO_SWITCH_TO_THREAD_STACK
--
--	ret
--END(switch_to_thread_stack)
--#endif
--
- .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
- ENTRY(\sym)
- 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 364ea4a..e811dd9 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -347,10 +347,23 @@ ENTRY(entry_INT80_compat)
- 	 */
- 	movl	%eax, %eax
- 
-+	/* switch to thread stack expects orig_ax and rdi to be pushed */
- 	pushq	%rax			/* pt_regs->orig_ax */
-+	pushq	%rdi			/* pt_regs->di */
-+
-+	/* Need to switch before accessing the thread stack. */
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-+	movq	%rsp, %rdi
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-+
-+	pushq	6*8(%rdi)		/* regs->ss */
-+	pushq	5*8(%rdi)		/* regs->rsp */
-+	pushq	4*8(%rdi)		/* regs->eflags */
-+	pushq	3*8(%rdi)		/* regs->cs */
-+	pushq	2*8(%rdi)		/* regs->ip */
-+	pushq	1*8(%rdi)		/* regs->orig_ax */
- 
--	/* switch to thread stack expects orig_ax to be pushed */
--	call	switch_to_thread_stack
-+	movq	(%rdi), %rdi		/* restore %rdi */
- 
- 	pushq	%rdi			/* pt_regs->di */
- 	pushq	%rsi			/* pt_regs->si */
++/* Disable any jump label entries in module init code */
+ static void jump_label_invalidate_module_init(struct module *mod)
+ {
+ 	struct jump_entry *iter_start = mod->jump_entries;
