@@ -1,110 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751510AbeBUFj7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 00:39:59 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:64995 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeBUFj5 (ORCPT
+        id S1751501AbeBUFpy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 00:45:54 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:18195 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750738AbeBUFpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 00:39:57 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180221053955epoutp04e4d77f7f8c1d03e0eb2d77d777de3ca9~VQLTvS-pC2303823038epoutp04P
-X-AuditID: b6c32a47-19fff7000000100c-1b-5a8d062ac799
-Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix out-of-bounds access through DT
- alias
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Message-id: <7b59b34b-92ee-da85-9c76-1d7f8f72c318@samsung.com>
-Date: Wed, 21 Feb 2018 14:39:53 +0900
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
-        Thunderbird/52.5.0
-MIME-version: 1.0
-In-reply-to: <CAMuHMdWa5RgkGCAucN5ykGRW=FdHUZw=+t5jMAsKhdixMUSQzQ@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmha4WW2+UwZo2YYv5R86xWsydPYnR
-        4tmtvUwWl3fNYbM48r+f0eL42nAHNo+JZ3U97lzbw+Zx6HAHo8fnTXIBLFGpNhmpiSmpRQqp
-        ecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAq5UUyhJzSoFCAYnFxUr6
-        djZF+aUlqQoZ+cUltkrRhoZGeoYG5npGRkZ6JsaxVkamQCUJqRk/ms6zFZznrFj6/zRTA+MK
-        9i5GTg4JAROJhYdvMHcxcnEICexglDjwsoERwvnOKHHv9VOmLkYOsKo9zSoQ8d2MEm2zX0IV
-        3WOUePqnkRVklLBAgMTd5oMsILaIQKzE8vUNYGOZBd4zSmyc8oAZJMEmoCOx/dtxJhCbV8BO
-        ovnvB7A4i4CqxKvpk8AGiQqESRyd+YkRokZQ4sfke2BDOQWCJV593gEWZxbQlHjxZRILhC0u
-        0dx6E8qWl9i85i0zxG8H2CQ2Pi2HsF0k+rv2M0LYwhKvjm+B+l9a4tmqjVDxdkaJs7OFQY6W
-        EJjCKLFiRjcTRMJY4tnCLiaIBXwSHYf/skOChVeio00IosRDoqXpPQuE7SjxcRvIL6AQesQo
-        saupnXECo9wsJP/MQvLDLCQ/zELywwJGllWMYqkFxbnpqcVGBcZ6xYm5xaV56XrJ+bmbGMFJ
-        T8t9B+O2cz6HGAU4GJV4eC10eqKEWBPLiitzDzFKcDArifBW/wcK8aYkVlalFuXHF5XmpBYf
-        YjQFhvdEZinR5HxgQs4riTc0sTQwMTMzMjezACY3cd7WAJcoIYH0xJLU7NTUgtQimD4mDk6p
-        Bkb1/bOYf/2+PbXdRurUfkH/eg0ro99BE49HWq3Z26prkeFf3G3+TlfP7gD3TQ+952KBRzat
-        fO/+xWbi0nL9mw17bCptp0nds59xTJzf92Ql67S/c+dvMpgZHZ612UN9ZdztEP4fV+V0Dsy7
-        F7Rc88pj9o8vCr1cxUSXrZbNErFTe8ov9WTrJUElluKMREMt5qLiRAAPXWT8kAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsVy+t9jAV1Ntt4ogyUvZSzmHznHajF39iRG
-        i2e39jJZXN41h83iyP9+Rovja8Md2DwmntX1uHNtD5vHocMdjB6fN8kFsERx2aSk5mSWpRbp
-        2yVwZfxoOs9WcJ6zYun/00wNjCvYuxg5OCQETCT2NKt0MXJxCAnsZJTo/fiTBcJ5wCjx5Opc
-        pi5GTg5hAT+Jw28WsIE0iAjESuxqrQWpYRb4yChx7P4OqIZHjBIP/h8Aa2AT0JHY/u04mM0r
-        YCfR/PcDM4jNIqAq8Wr6JFYQW1QgTKJn02VGiBpBiR+T77GA2JwCwRL/JrxjBlnGLKAuMWVK
-        LkiYWUBcorn1JguELS+xec1b5gmMArOQdM9C6JiFpGMWko4FjCyrGCVTC4pz03OLjQqM8lLL
-        9YoTc4tL89L1kvNzNzECQ33bYa3+HYyPl8QfYhTgYFTi4bXQ6YkSYk0sK67MPcQowcGsJMJb
-        /R8oxJuSWFmVWpQfX1Sak1p8iFGag0VJnJc//1ikkEB6YklqdmpqQWoRTJaJg1OqgXF3thJ3
-        3N0pngbGzqpPJ6+42OG2JOC+1QGtJRbKRgZSPx+9zF7+7a3JOa0Le4uW9L197+7uVpPE9uVZ
-        cL34ckf7rwnX73FPkNZ5/3xte/7F/bnbn8yIC3/s0J3S82S+mkCQkATfvM4bvzS+Hl0YfiD6
-        7A23dasnLniz8L/Cy497WzbE2KX1fVuvxFKckWioxVxUnAgAzThWm3ECAAA=
-X-CMS-MailID: 20180221053953epcas2p2fbc857bb70566d31cb6b58fa6410e9c0
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180220105101epcas1p32dced553004bbcb54512e5c144ca2a1c
-X-RootMTR: 20180220105101epcas1p32dced553004bbcb54512e5c144ca2a1c
-References: <1519117393-31302-1-git-send-email-geert+renesas@glider.be>
-        <CGME20180220105101epcas1p32dced553004bbcb54512e5c144ca2a1c@epcas1p3.samsung.com>
-        <CAMuHMdWa5RgkGCAucN5ykGRW=FdHUZw=+t5jMAsKhdixMUSQzQ@mail.gmail.com>
+        Wed, 21 Feb 2018 00:45:52 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1L5iKjR027718
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Petr Vorel <petr.vorel@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: [PATCH] kconfig: Print reverse dependencies in groups
+Date: Wed, 21 Feb 2018 14:44:15 +0900
+Message-Id: <1519191855-27943-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-On 02/20/2018 07:50 PM, Geert Uytterhoeven wrote:
-> On Tue, Feb 20, 2018 at 10:03 AM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> The hs_timing_cfg[] array is indexed using a value derived from the
->> "mshcN" alias in DT, which may lead to an out-of-bounds access.
->>
->> Fix this by adding a range check.
->>
->> Fixes: 7d92895208a008a2 ("mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias")
-> 
-> Oops
-> 
-> Fixes: 361c7fe9b02eee7e ("mmc: dw_mmc-k3: add sd support for hi3660")
+This patch requires the following as a pre-requisite:
+https://patchwork.kernel.org/patch/10229545/
 
-Could you resend the patch with changing commit-msg?
-Then i will pick yours.
+These two will work equivalently to the following three:
 
-Best Regards,
-Jaehoon Chung
+https://patchwork.kernel.org/patch/10226951/
+https://patchwork.kernel.org/patch/10226953/
+https://patchwork.kernel.org/patch/10226955/
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+
+ scripts/kconfig/expr.c | 18 ++++++++++++------
+ scripts/kconfig/expr.h |  3 ++-
+ scripts/kconfig/menu.c | 10 ++++++----
+ 3 files changed, 20 insertions(+), 11 deletions(-)
+
+diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+index cd3a8f5..49376e1 100644
+--- a/scripts/kconfig/expr.c
++++ b/scripts/kconfig/expr.c
+@@ -1323,19 +1323,25 @@ void expr_gstr_print(struct expr *e, struct gstr *gs)
+  */
+ static void expr_print_revdep(struct expr *e,
+ 			      void (*fn)(void *, struct symbol *, const char *),
+-			      void *data)
++			      void *data, tristate pr_type, const char **title)
+ {
+ 	if (e->type == E_OR) {
+-		expr_print_revdep(e->left.expr, fn, data);
+-		expr_print_revdep(e->right.expr, fn, data);
+-	} else {
++		expr_print_revdep(e->left.expr, fn, data, pr_type, title);
++		expr_print_revdep(e->right.expr, fn, data, pr_type, title);
++	} else if (expr_calc_value(e) == pr_type) {
++		if (*title) {
++			fn(data, NULL, *title);
++			*title = NULL;
++		}
++
+ 		fn(data, NULL, "  - ");
+ 		expr_print(e, fn, data, E_NONE);
+ 		fn(data, NULL, "\n");
+ 	}
+ }
+ 
+-void expr_gstr_print_revdep(struct expr *e, struct gstr *gs)
++void expr_gstr_print_revdep(struct expr *e, struct gstr *gs,
++			    tristate pr_type, const char *title)
+ {
+-	expr_print_revdep(e, expr_print_gstr_helper, gs);
++	expr_print_revdep(e, expr_print_gstr_helper, gs, pr_type, &title);
+ }
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index c16e82e..8dbf2a4 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -310,7 +310,8 @@ struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
+ void expr_fprint(struct expr *e, FILE *out);
+ struct gstr; /* forward */
+ void expr_gstr_print(struct expr *e, struct gstr *gs);
+-void expr_gstr_print_revdep(struct expr *e, struct gstr *gs);
++void expr_gstr_print_revdep(struct expr *e, struct gstr *gs,
++			    tristate pr_type, const char *title);
+ 
+ static inline int expr_is_yes(struct expr *e)
+ {
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 7e70be3..3b9beca 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -827,14 +827,16 @@ static void get_symbol_str(struct gstr *r, struct symbol *sym,
+ 
+ 	get_symbol_props_str(r, sym, P_SELECT, _("  Selects: "));
+ 	if (sym->rev_dep.expr) {
+-		str_append(r, _("  Selected by: \n"));
+-		expr_gstr_print_revdep(sym->rev_dep.expr, r);
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, yes, "  Selected by [y]\n");
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, mod, "  Selected by [m]\n");
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, no, "  Selected by [n]\n");
+ 	}
+ 
+ 	get_symbol_props_str(r, sym, P_IMPLY, _("  Implies: "));
+ 	if (sym->implied.expr) {
+-		str_append(r, _("  Implied by: \n"));
+-		expr_gstr_print_revdep(sym->implied.expr, r);
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, yes, "  Implied by [y]\n");
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, mod, "  Implied by [m]\n");
++		expr_gstr_print_revdep(sym->rev_dep.expr, r, no, "  Implied by [n]\n");
+ 	}
+ 
+ 	str_append(r, "\n\n");
+-- 
+2.7.4
