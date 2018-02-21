@@ -1,45 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752387AbeBUJAS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:00:18 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:43215 "EHLO
+        id S1752890AbeBUJBd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:01:33 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:43256 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeBUJAR (ORCPT
+        with ESMTP id S1752493AbeBUJAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:00:17 -0500
+        Wed, 21 Feb 2018 04:00:32 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
-To: arm@kernel.org, linux-arm-kernel@axis.com, devicetree@vger.kernel.org
-Cc: Niklas Cassel <niklass@axis.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/8] ARTPEC-6 ARM SoC device tree updates
-Date: Wed, 21 Feb 2018 09:59:52 +0100
-Message-Id: <20180221090000.18091-1-niklas.cassel@axis.com>
+To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
+        Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/8] ARM: dts: artpec: add and utilize artpec6 pin controller
+Date: Wed, 21 Feb 2018 09:59:57 +0100
+Message-Id: <20180221090000.18091-6-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180221090000.18091-1-niklas.cassel@axis.com>
+References: <20180221090000.18091-1-niklas.cassel@axis.com>
 X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add node for the pin controller used in the artpec6 SoC,
+and start using it for the exising UARTs.
 
-Here comes some ARTPEC-6 ARM SoC device tree updates.
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ arch/arm/boot/dts/artpec6.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Regards,
-Niklas
-
-Niklas Cassel (8):
-  ARM: dts: artpec: disable Accelerator Coherency Port
-  ARM: dts: artpec: use 1 GiB RAM
-  ARM: dts: artpec: remove 0x prefix from clkctrl unit address
-  ARM: dts: artpec: migrate ethernet to stmmac binding
-  ARM: dts: artpec: add and utilize artpec6 pin controller
-  ARM: dts: artpec: add and utilize nbpfaxi DMA controllers
-  ARM: dts: artpec: add disabled node for PCIe endpoint mode
-  ARM: dts: artpec: add node for hardware crypto accelerator
-
- arch/arm/boot/dts/artpec6-devboard.dts |   3 +-
- arch/arm/boot/dts/artpec6.dtsi         | 163 +++++++++++++++++++++++++++++++--
- 2 files changed, 155 insertions(+), 11 deletions(-)
-
+diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
+index 981aecd27b0b..7a6d8f39823a 100644
+--- a/arch/arm/boot/dts/artpec6.dtsi
++++ b/arch/arm/boot/dts/artpec6.dtsi
+@@ -180,6 +180,32 @@
+ 		status = "disabled";
+ 	};
+ 
++	pinctrl: pinctrl@f801d000 {
++		compatible = "axis,artpec6-pinctrl";
++		reg = <0xf801d000 0x400>;
++
++		pinctrl_uart0: uart0grp {
++			function = "uart0";
++			groups = "uart0grp2";
++			bias-pull-up;
++		};
++		pinctrl_uart1: uart1grp {
++			function = "uart1";
++			groups = "uart1grp0";
++			bias-pull-up;
++		};
++		pinctrl_uart2: uart2grp {
++			function = "uart2";
++			groups = "uart2grp1";
++			bias-pull-up;
++		};
++		pinctrl_uart3: uart3grp {
++			function = "uart3";
++			groups = "uart3grp0";
++			bias-pull-up;
++		};
++	};
++
+ 	amba@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <0x1>;
+@@ -238,6 +264,8 @@
+ 			clocks = <&clkctrl ARTPEC6_CLK_UART_REFCLK>,
+ 				<&clkctrl ARTPEC6_CLK_UART_PCLK>;
+ 			clock-names = "uart_clk", "apb_pclk";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_uart0>;
+ 			status = "disabled";
+ 		};
+ 		uart1: serial@f8037000 {
+@@ -247,6 +275,8 @@
+ 			clocks = <&clkctrl ARTPEC6_CLK_UART_REFCLK>,
+ 				<&clkctrl ARTPEC6_CLK_UART_PCLK>;
+ 			clock-names = "uart_clk", "apb_pclk";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_uart1>;
+ 			status = "disabled";
+ 		};
+ 		uart2: serial@f8038000 {
+@@ -256,6 +286,8 @@
+ 			clocks = <&clkctrl ARTPEC6_CLK_UART_REFCLK>,
+ 				<&clkctrl ARTPEC6_CLK_UART_PCLK>;
+ 			clock-names = "uart_clk", "apb_pclk";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_uart2>;
+ 			status = "disabled";
+ 		};
+ 		uart3: serial@f8039000 {
+@@ -265,6 +297,8 @@
+ 			clocks = <&clkctrl ARTPEC6_CLK_UART_REFCLK>,
+ 				<&clkctrl ARTPEC6_CLK_UART_PCLK>;
+ 			clock-names = "uart_clk", "apb_pclk";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_uart3>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.14.2
