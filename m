@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225CZhHesgZ95wFKubR5wzn1LZg80Iw0qhlY7lGb34o2No4wJ44Sq135ho6R8fTROL+UkMxY
-ARC-Seal: i=1; a=rsa-sha256; t=1519218496; cv=none;
+X-Google-Smtp-Source: AH8x226kH/wyzDDGO8CG9mipLcmfLZeViAvTWAr8qY9P+5+S4Cw3PLoo1AAsr81QGTYripkqTktz
+ARC-Seal: i=1; a=rsa-sha256; t=1519218492; cv=none;
         d=google.com; s=arc-20160816;
-        b=hyysXexiJINiWS9wyHdtwernxZ4te2R9NV4k5xc3EVedAYrHGC7Y/D9vSJuZaM4jh/
-         a9l7M7NFMFSkzK6lVNkBZ1i5Ia5IcaTkhB9DLHk33yufvuEacqNtp/trBg1Pf3Wo1DB9
-         qePrjQXoJlGsBj4Cq9w4Rpkx+R7fz0FPEOp1LPFSSSGkKmM9nBxXlSzQlQpJbEJ6Gsyp
-         vMulQotKrIxASIRevT97iy1UF/GuuJHakU61cknm5+Cbu5MxyW0ToFymCLSDNk/mceJ3
-         QEpZpzWILpf04aDRlKnR/pA2Gr4GQ6JFNrJOQ5xopCPT7ntwLoN6WLa6xKxPuNpio/R7
-         nKDQ==
+        b=gwua90qGzypIfm9QBoZPI1BeHEvXJCbN5obBLkfUHf3yKPcO+1vUgCn0rN50xR+j8w
+         6QPaRp6GQvZioVjGQm7le3U5nxujWjuB7SDiX1+V1TVyxL3pSvsWo51uSItIXCiq7Uo7
+         nZhSqonD/hkCqSzsX0/tQdFYdoGiYFsBDb0vbRGwHf6V0G6qx2MXDTTkc5sWg2AO6HYH
+         porM00sBColcXg4TzRGHCyf1O9ZKmpQyKUw00Iu56qPbtAtDJYWUV5ilhXF0fx/Cp0ET
+         9LVpHhNnktFPCsxo7lWqZToPDi7Drdq2kzxzTHxXkfhVqjufqdb5Oj0IQOnpa5dnRy+T
+         u8nA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VQCg1C1Zxk1uyQ4k2gNj30A0fepMN9hSqIy6pg/d9a4=;
-        b=kgGC4GgDib6/77XoEfgXUKUCELgtOPxNS1lk10HurrnuwxvCC3tFah+7P9R+Kvywzf
-         jGbwwKbC2X09cGEl3yrtQwp8P39SgfQV9OA1pIt2g+WuukoUJtzwWHN6vrMjHEuMn72H
-         /9bEbNsIYIVldrC8+pooURhKg7bT2fJYGZn+A4sXC3VOCvvxmorT+Rvj3vlvOmQZ9/+R
-         9pzFl1TWDAKKnSAnIUeXP9GBGBLVBbDXX6F3Wss8KuFtwyuI3CM4pB9vVV8wBs8o2xgn
-         iVNe+ZGDhQ+wJBf9VBDIJGYN7Yoffi4F+W+/+ViFCSU+h8SpR/40g6jvJ2ySMNq6G5W9
-         lFqQ==
+        bh=CsWYPUOvUnsvAJu/BoKlAEuLvySHcJskzN8FWNGOoIQ=;
+        b=CGEe1JVi+1GEHmR0pf1KTbJkS+8b7PHxj1LhJULD/X2pL0ALaCsGzbNwtP9SiuHlS6
+         jd3kxWmFQkK/eKwbcqr2MXSEFeXNt1J8o93l33oOy1dbtg3Z06LOxWOoDCUrKUfhphOo
+         CybackRI99zxbqcS0HKUNTE2TWmZYnI4wG6vL4tsCWikF6d3WKYoPI2PPt22Bkft57fT
+         bbw4hvqtE3/ysixOlsvASo/4m5a9zdaSqndlDlj6vZJZEExgwFYRHYsJ+shGYlN2LF3+
+         OdBb6AXZLD6IZ9HTe3oZ7RFfC+DbmWS7uUuPkDdbW3w53l7R8gHw0ENMmGCRmtTXCKO7
+         bJwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 025/163] dma-buf: fix reservation_object_wait_timeout_rcu once more v2
-Date: Wed, 21 Feb 2018 13:47:34 +0100
-Message-Id: <20180221124531.588509234@linuxfoundation.org>
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 024/163] powerpc/xive: Use hw CPU ids when configuring the CPU queues
+Date: Wed, 21 Feb 2018 13:47:33 +0100
+Message-Id: <20180221124531.527849949@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015448910696170?=
-X-GMAIL-MSGID: =?utf-8?q?1593016054388816383?=
+X-GMAIL-THRID: =?utf-8?q?1593015443174391988?=
+X-GMAIL-MSGID: =?utf-8?q?1593016050093703730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +49,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian König <ckoenig.leichtzumerken@gmail.com>
+From: Cédric Le Goater <clg@kaod.org>
 
-commit 5bffee867df7494ecd32c1e6ec4e8fc934c521b7 upstream.
+commit 8e036c8d30a2cd9d8fc7442fbf6824e0a3e986e7 upstream.
 
-We need to set shared_count even if we already have a fence to wait for.
+The CPU event notification queues on sPAPR should be configured using
+a hardware CPU identifier.
 
-v2: init i to -1 as well
+The problem did not show up on the Power Hypervisor because pHyp
+supports 8 threads per core which keeps CPU number contiguous. This is
+not the case on all sPAPR virtual machines, some use SMT=1.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Cc: stable@vger.kernel.org
-Tested-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180122200003.6665-1-christian.koenig@amd.com
+Also improve error logging by adding the CPU number.
+
+Fixes: eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Cédric Le Goater <clg@kaod.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma-buf/reservation.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/powerpc/sysdev/xive/spapr.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/dma-buf/reservation.c
-+++ b/drivers/dma-buf/reservation.c
-@@ -455,13 +455,15 @@ long reservation_object_wait_timeout_rcu
- 					 unsigned long timeout)
- {
- 	struct dma_fence *fence;
--	unsigned seq, shared_count, i = 0;
-+	unsigned seq, shared_count;
- 	long ret = timeout ? timeout : 1;
-+	int i;
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -356,7 +356,8 @@ static int xive_spapr_configure_queue(u3
  
- retry:
- 	shared_count = 0;
- 	seq = read_seqcount_begin(&obj->seq);
- 	rcu_read_lock();
-+	i = -1;
- 
- 	fence = rcu_dereference(obj->fence_excl);
- 	if (fence && !test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
-@@ -477,14 +479,14 @@ retry:
- 		fence = NULL;
+ 	rc = plpar_int_get_queue_info(0, target, prio, &esn_page, &esn_size);
+ 	if (rc) {
+-		pr_err("Error %lld getting queue info prio %d\n", rc, prio);
++		pr_err("Error %lld getting queue info CPU %d prio %d\n", rc,
++		       target, prio);
+ 		rc = -EIO;
+ 		goto fail;
  	}
+@@ -370,7 +371,8 @@ static int xive_spapr_configure_queue(u3
+ 	/* Configure and enable the queue in HW */
+ 	rc = plpar_int_set_queue_config(flags, target, prio, qpage_phys, order);
+ 	if (rc) {
+-		pr_err("Error %lld setting queue for prio %d\n", rc, prio);
++		pr_err("Error %lld setting queue for CPU %d prio %d\n", rc,
++		       target, prio);
+ 		rc = -EIO;
+ 	} else {
+ 		q->qpage = qpage;
+@@ -389,8 +391,8 @@ static int xive_spapr_setup_queue(unsign
+ 	if (IS_ERR(qpage))
+ 		return PTR_ERR(qpage);
  
--	if (!fence && wait_all) {
-+	if (wait_all) {
- 		struct reservation_object_list *fobj =
- 						rcu_dereference(obj->fence);
+-	return xive_spapr_configure_queue(cpu, q, prio, qpage,
+-					  xive_queue_shift);
++	return xive_spapr_configure_queue(get_hard_smp_processor_id(cpu),
++					  q, prio, qpage, xive_queue_shift);
+ }
  
- 		if (fobj)
- 			shared_count = fobj->shared_count;
+ static void xive_spapr_cleanup_queue(unsigned int cpu, struct xive_cpu *xc,
+@@ -399,10 +401,12 @@ static void xive_spapr_cleanup_queue(uns
+ 	struct xive_q *q = &xc->queue[prio];
+ 	unsigned int alloc_order;
+ 	long rc;
++	int hw_cpu = get_hard_smp_processor_id(cpu);
  
--		for (i = 0; i < shared_count; ++i) {
-+		for (i = 0; !fence && i < shared_count; ++i) {
- 			struct dma_fence *lfence = rcu_dereference(fobj->shared[i]);
+-	rc = plpar_int_set_queue_config(0, cpu, prio, 0, 0);
++	rc = plpar_int_set_queue_config(0, hw_cpu, prio, 0, 0);
+ 	if (rc)
+-		pr_err("Error %ld setting queue for prio %d\n", rc, prio);
++		pr_err("Error %ld setting queue for CPU %d prio %d\n", rc,
++		       hw_cpu, prio);
  
- 			if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT,
+ 	alloc_order = xive_alloc_order(xive_queue_shift);
+ 	free_pages((unsigned long)q->qpage, alloc_order);
