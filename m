@@ -1,29 +1,29 @@
-Return-Path: <kernel-hardening-return-11841-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225CI17/ZRMn3jCPIDNsAAWLBz4tXrbYiGyw9zBMkXvc5SzvjKojpuQDimZPNatt/Z5ZShvG
-ARC-Seal: i=1; a=rsa-sha256; t=1519175614; cv=none;
+Return-Path: <kernel-hardening-return-11842-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x227G+9fJJJe79ub5YOkRncJBWgucvhBHByrnTZychdGIaHUgwThh5MapBa8REwp9Oh/0bZZN
+ARC-Seal: i=1; a=rsa-sha256; t=1519175621; cv=none;
         d=google.com; s=arc-20160816;
-        b=k32JBo/tC5Wolot3lDdm7uzmrOZkldY5OC9TkgY/RvLuoir59jKnKVD/VIM5NFM7yZ
-         CXD5k4kNPiLIuGh51Hnm4RcG7fFarfdxWAYmsuVJj0ncqVOwVOoAgCe6QxewWV2Djatl
-         dbSZiGIAzHPwmEQ+/E3CwNtKpRJ1TkkkZH9O4nOEb+tJQ0L3dL1XVbMz6cPFcrkAqu6v
-         wI44XXSvf2EJCeBhAPOCA0sN6zfHCCfjmp4Fnbk2KcEWALk/oHAWzzl+CKkLn+fFUam2
-         00jBiBadnoADPhyXxz8IVerz68R/d+c9/Bx/I+7KdQKGcXeJeYZ6QCnV+8kn28yMcA2a
-         iAgg==
+        b=nsgeemnqVZm1Sr3TEM8rVUvmNLuqfbdJ6nqQQ7kNyMXGxns09VIA10umtBfC2Y+iIp
+         oLVIw/Wr/us59hCWpiEsln0pqI01AghEYAEhwTQv3fwZajGMTZ4xL0k8Oq3DFcNtP3kZ
+         UG5UUuQknOLf2KEcAITvCM7CgotkIP7e1hEbJcG/zS5bTCt1YRyagPkyPaGziP3ROWgy
+         /TSbcTKVkaAR+7yOmgbdIWNb8swn9K/9H2MDO0rMLEBssHPAvPASuu9RcaHV4DivATA8
+         NBYZJs+YObIyXMP9EhIok6ucf0wi02+tvRqBnBRwNUMb62k9G3Wuze6mpj9swgLOsDMf
+         Xwrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:message-id:date:subject:cc:to:from:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=2DodRybBUoVpk+tBN8BpkouRwrJdqiuqgtWyrevh6EI=;
-        b=oBipg8QA5NSmkvf3faQ4TIANmbrHwq842GEE164gof+k78tIw9RI3b4YHxWTfRF4En
-         oqjdz2HDcBvJAiA6ea6V3R9UwXE7BdPovAtP+WR35tFobt+aXFqr7LlNeA/iU8oJyTt4
-         ChLSqI9AWKOojh3a7YTAEftMp43Rdl4UtHUbSJ5XOBrMrNaEu/jkb7U6TmgMWJlP/AIj
-         xPDS7PfqNThguYP0JkoABUfgOgc/y9vOYE4JBXMK+aymrOrsy96Ho1rSgIW15EfA5+3G
-         OHjn+b0uC/oxpCfR1U4hBEnUlku6I2U8MX9MXPTKwD6yL4n8xUjkonzwhoxA4wMKDM4x
-         BRgw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=sHXLkDbyoOLxAFqvpD+Mk/KrvARUuBBOb3/j7JVFxQA=;
+        b=JVBG7cSUiVprpqUHge/F4Ae9gypX9OJ5DkfRHE4SNQab8q4GY39z4LUPnsFreJZbIh
+         0tH6pNX1R+GSwCR8xe5N4pktyrNURS4edq3ymF89olmmQop5c1hxeAZ/Al2lk6WBMYXq
+         By9mmE8MctmW/xBMOKCOe4Z61MtcEPS6ABu8vuFfjUwdNBCwkmsglwRl+OreOHAdwRki
+         nA8Ba/YPM6kG2WGUWNRwWEKHEqC5+3nCQ0vYMmggeBAZg8wFX3ah3OUwFlvyNtLi9h/b
+         1QhDnnNgAH6fGdGtARaZuNRQXCGpJaGttCXBtJjwbbr/JcU0bUn8o3Nsr11XDW+gFbPQ
+         PFEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11841-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11841-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11842-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11842-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11841-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11841-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11842-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11842-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -39,39 +39,42 @@ Cc: Laura Abbott <labbott@redhat.com>,
 	kernel-hardening@lists.openwall.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Stackleak for arm64
-Date: Tue, 20 Feb 2018 17:13:01 -0800
-Message-Id: <20180221011303.20392-1-labbott@redhat.com>
+Subject: [PATCH 1/2] stackleak: Update for arm64
+Date: Tue, 20 Feb 2018 17:13:02 -0800
+Message-Id: <20180221011303.20392-2-labbott@redhat.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <dc76a745-3fa7-4023-dcc1-3df18c9461a6@redhat.com>
+In-Reply-To: <20180221011303.20392-1-labbott@redhat.com>
+References: <20180221011303.20392-1-labbott@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592971089304510513?=
-X-GMAIL-MSGID: =?utf-8?q?1592971089304510513?=
+X-GMAIL-THRID: =?utf-8?q?1592971096374608879?=
+X-GMAIL-MSGID: =?utf-8?q?1592971096374608879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the arm64 version of the STACKLEAK plugin originall from
-grsecurity. See
-https://marc.info/?l=kernel-hardening&m=151880470609808 for the
-full x86 version. This is based on top of Kees' branch for stackleak
-and has been cleaned up to use a few macros from that branch.
 
-Comments welcome, if there are no major objections Kees will queue this
-up to get some CI testing. This passed both of the LKDTM tests.
+arm64 has another layer of indirection in the RTL.
+Account for this in the plugin.
 
-Laura Abbott (2):
-  stackleak: Update for arm64
-  arm64: Clear the stack
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ scripts/gcc-plugins/stackleak_plugin.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- arch/arm64/Kconfig                     |   1 +
- arch/arm64/include/asm/processor.h     |   6 ++
- arch/arm64/kernel/asm-offsets.c        |   3 +
- arch/arm64/kernel/entry.S              | 108 +++++++++++++++++++++++++++++++++
- arch/arm64/kernel/process.c            |  16 +++++
- drivers/firmware/efi/libstub/Makefile  |   3 +-
- scripts/Makefile.gcc-plugins           |   5 +-
- scripts/gcc-plugins/stackleak_plugin.c |   5 ++
- 8 files changed, 145 insertions(+), 2 deletions(-)
-
+diff --git a/scripts/gcc-plugins/stackleak_plugin.c b/scripts/gcc-plugins/stackleak_plugin.c
+index 6fc991c98d8b..7dfaa027423f 100644
+--- a/scripts/gcc-plugins/stackleak_plugin.c
++++ b/scripts/gcc-plugins/stackleak_plugin.c
+@@ -244,6 +244,11 @@ static unsigned int stackleak_final_execute(void)
+ 		 * that insn.
+ 		 */
+ 		body = PATTERN(insn);
++		/* arm64 is different */
++		if (GET_CODE(body) == PARALLEL) {
++			body = XEXP(body, 0);
++			body = XEXP(body, 0);
++		}
+ 		if (GET_CODE(body) != CALL)
+ 			continue;
+ 
 -- 
 2.14.3
