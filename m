@@ -1,120 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeBUSUM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:20:12 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35458 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbeBUSUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:20:09 -0500
-X-Google-Smtp-Source: AH8x224ltY9b0o5wOXxK1JnfnSjTKHaaopeuoxZ5X7EIZBWjLTPmzTy0j1AKYIPAGWZFuK7PvN0SCte7miXBMaOzYYU=
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vd=dww8AQM4tC5Z38i4PNaV4vxMFsTf=ozJ1Yw3Gd9DWg@mail.gmail.com>
-References: <20180220090827.913-1-ard.biesheuvel@linaro.org>
- <20180220090827.913-3-ard.biesheuvel@linaro.org> <CAHp75VeUJpXLpL55erp+uoMH4jqppoG5zTt1DcffqNYPsJMdUQ@mail.gmail.com>
- <CAKv+Gu8A1YKr5t0B=Fe2sF6+QT9iCVeRW+99K37g22viEoismA@mail.gmail.com> <CAHp75Vd=dww8AQM4tC5Z38i4PNaV4vxMFsTf=ozJ1Yw3Gd9DWg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 21 Feb 2018 18:20:08 +0000
-Message-ID: <CAKv+Gu_5N3bTAasc5Gt0pTo-s3mMdqmvt-C=GM0ACkkptyrN-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i2c: add support for Socionext SynQuacer I2C controller
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
+        id S1751904AbeBUSVV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:21:21 -0500
+Received: from mga12.intel.com ([192.55.52.136]:25386 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751734AbeBUSVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:21:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,375,1515484800";
+   d="scan'208";a="202749398"
+Date: Wed, 21 Feb 2018 10:21:04 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Joe Konno <joe.konno@linux.intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
+        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+Message-ID: <20180221182104.GI3231@tassilo.jf.intel.com>
+References: <20180215182208.35003-2-joe.konno@linux.intel.com>
+ <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk>
+ <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+ <20180220233008.55rfm7zw62hrao5p@agluck-desk>
+ <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
+ <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
+ <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
+ <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 February 2018 at 19:39, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Tue, Feb 20, 2018 at 8:04 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 20 February 2018 at 14:02, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>> On Tue, Feb 20, 2018 at 11:08 AM, Ard Biesheuvel
->>> <ard.biesheuvel@linaro.org> wrote:
->
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>
->>> Shouldn't be // ?
->
->> IIUC, this applies to .h files only, and /* */ is preferred for .c files.
->
-> Other way around.
->
-> Documentation/process/license-rules.rst
->
+> But it should be fairly easy to just add a 'struct ratelimit_state' to
+> 'struct user_struct', and then you can easily just use
+> 
+>    '&file->f_cred->user->ratelimit'
+> 
+> and you're done. Make sure the initial root user has it unlimited, and
+> limit it to something reasonable for all other user allocations.
 
-OK got it
+How about uid name spaces? Someone untrusted in a container could 
+create a lot of uids and switch between them.
 
->>>> +#define WAIT_PCLK(n, rate)     ndelay((((1000000000 +  (rate) - 1) / \
->>>> +                                        (rate) + n - 1) / n) + 10)
->>>
->>> This split makes it harder to catch the calculus.
->>> Also, you can use DIV_ROUND_UP(), though it longer, but adds a bit of
->>> clarity to the calculus.
->
->> Yeah. This was present in the original code, and I tried to avoid
->> touching it :-)
->
-> Yeah, but below there are several instances with DIV_ROUND_UP().
->
+A global rate limit seems better. While in theory it allows DoS
+it's probably not worse than a lot of others we have with
+other resources, and it's relatively harmless.
 
-I'll replace it with the equivalent
-
-#define WAIT_PCLK(n, rate) \
-    ndelay(DIV_ROUND_UP(DIV_ROUND_UP(1000000000, rate), n) + 10)
-
->>>> +static void synquacer_i2c_stop(struct synquacer_i2c *i2c, int ret)
->>>> +{
->>>> +       dev_dbg(i2c->dev, "STOP\n");
->>>
->>> Hmm... Can't use FTRACE ?
->
->> What do you mean?
->
-> The message kinda useless, esp. if you can enable functional tracing.
-> I saw a lot of debugging messages in the code, perhaps it makes sense
-> at some point to make some trace points in I2C core and leave only HW
-> related here.
->
-
-OK, I will just drop it.
-
->>>> +       if (dev_of_node(&pdev->dev)) {
->>>> +               i2c->clk = devm_clk_get(&pdev->dev, "pclk");
->>>> +               if (IS_ERR(i2c->clk)) {
->>>> +                       dev_err(&pdev->dev, "cannot get clock\n");
->>>> +                       return PTR_ERR(i2c->clk);
->>>> +               }
->>>> +               dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
->>>> +
->>>> +               i2c->clkrate = clk_get_rate(i2c->clk);
->>>> +               dev_dbg(&pdev->dev, "clock rate %d\n", i2c->clkrate);
->>>> +               clk_prepare_enable(i2c->clk);
->>>> +       } else {
->>>
->>>> +               ret = device_property_read_u32(&pdev->dev,
->>>> +                                              "socionext,pclk-rate",
->>>> +                                              &i2c->clkrate);
->>>
->>> I suppose for ACPI we just register a fixed rate clock and use it in
->>> the driver in the same way as in OF case.
->>> I guess at some point we even can provide a generic clock provider for
->>> ACPI based on rate property.
->
->> Is there a question here? Do you want me to change anything?
->
-> Is it opener for discussion. At least in the drivers we have done for
-> x86 we do the way I described.
->
-> See, for example, drivers/mfd/intel-lpss.c
->
-
-OK, I see what you mean now. But for this driver, creating a fixed
-rate clock with no controls whatsoever, only to interrogate it for its
-rate (which we retrieved from the ACPI device node in the first place)
-seems rather pointless to me. Am I missing something here?
+-Andi
