@@ -1,81 +1,79 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AH8x22790EwbCHqENKey669K627HXs4Hn+X0kGIAQnBHRTMggGKoeoBhk1OZ19f3Sl2YgklH4jJJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519209585; cv=none;
+Return-Path: <dan.carpenter@oracle.com>
+X-Google-Smtp-Source: AH8x224xMNPf0kZNI0WVRPAS6rIzrMYeTACpH24F5ljiNfTKsgb0d5+1y1yV32yCU995Ly9ebIBC
+ARC-Seal: i=1; a=rsa-sha256; t=1519209976; cv=none;
         d=google.com; s=arc-20160816;
-        b=lvbg9R/nL5sUITk2TjyeFq5ssHGpBj3dxUtq2AHITX5HflmV4fd1achpLYvqGlqJAG
-         daTxTcYlXDO+boNwwKoUWsCVRGf1Zpnzr3dAtpRhDrCoo3uR3EPQFXNtmsJqow5QBBAV
-         lCuIdirFGAMC8Hoj7IBEHAP14QMSqpefJJX0DJBsna+qE5atWL6SY9oDJjKtOteZADrE
-         Z+Xt25jKSQ12X1FEqrKifKqQ0fOfig6hLtuc2s45QRMZJm4pd6EA9okm4nXyvcf0NMqT
-         SKGCSGLNNdbkK6AEfkI69nHj7mvyttqQY04MK/zJD9gXIFgpDxpE0o6deSddo6Un7nJE
-         suzg==
+        b=ojXk4zrrSQjcmVVQfmo5MCoFX3f/uCqXxswpkYNtcM8z+hzI5bLhyxA86ElVXt4B8g
+         eIOaENC8qb2yj4qxFABOd3m2pOt6IpWl04yneEJMJNu54nywz9d1ySVGEyfeIElyk4ie
+         LJfbEVskdJFR85Nrq1K+POTjXOhc+grdff7iJubTPP6yaeacgevHUKpDtXhShv3FT9sj
+         DjikHDM31snzNzuSB8/PRHfY/9nReeSzs/5fAYnNwk2O50GEVouCqXA8Cc6QqvzYeHdl
+         gyR6RufENKWcoCWuC81zXdZ9IhEJan2E5bHBbT9PX0+RRi3djH+euGDzH82eL9cu56AT
+         BlqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=gqFkM6tLXbIWR/1StCcEHk3BSlxRXFJ9BQOyidEv0Ek=;
-        b=PtHF3kM8bt2gn2ZyMda33dqD+L00HvXCBhjH1nm1r32vJbJdGNku6l4JmScASIvf/Y
-         vmnoDoWOopvnZAB2Tdy6UTIQunymjhfTU4fb1tGzyEs9OlZ1+IjlXNpzymuJEBxRmltc
-         YR/a+kqfhKH2WgGg+AaHMBAk5Gme+m52fww6XPIdoFQ6FfvqmbVh9WDxOdMufGzzab/8
-         lanDvWXAP/j5VYXNeBDjMAFliLKKTBfkD2UvpEs9UMRwS6JbYHBITMyLBN2jPL9vMWT2
-         M7VN6OpB0LO/dGvt0dZzFgMXnhDTnbFCRQ+tgHFkJ335N6OsUrPyHpxvtzBAWKdZLiMU
-         FWFA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=oZV6V5mGeBRy9Xktbb6tA0ASA5GFk0pbZ7hSWHUjQV8=;
+        b=aob2jMKLkmT5MaaS6OB2MFYqWPo7QLdlbuzt2Puexf5078w4EY4xk4rR3Jx7wV5lNZ
+         FWddgL/4HOrbBSF0pCST3kHSc6OpkOs9UTDagAq5rCocdBdlGwEZ1WHmY76kAJT28eqf
+         xYcZZOG7KLg3RX1ml/oBE/OWsvfaQuE1WdPFC4rd9FOR6UJeP2brllOjil0ZPl2PI8GC
+         LHCKbIA7ydrYszVXUvk/1ZCINNguF4RS6+maGsz2ZCExZsbQK+C9T7J+LVFZ02n6lkfE
+         diz5VH5RxAVJRewoG6aCFJ4hIGq+zrviKC7bf5Pda0GHsDuxC6J+sxq/0DY3aDuztuHE
+         LMKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=o6Ri5gMm;
+       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	jonathankim@gctsemi.com,
-	deanahn@gctsemi.com,
-	dan.carpenter@oracle.com
-Cc: devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Quytelda Kahja <quytelda@tamalin.org>,
-	Quytelda Kahja <quytelda@gmail.com>
-Subject: [PATCH] Staging: gdm724x: hci: Changed camel-case to snake-case.
-Date: Wed, 21 Feb 2018 02:39:28 -0800
-Message-Id: <20180221103928.19599-1-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-X-Provags-ID: V03:K0:Te1WrJXnXUOWRQStest5303pcFZXj2hB2pdlbDWeK3Mc/XlZ6bH
- 5Frchhf82DMcCB74iKTvS5b7S3JiBPjP1ZWmJK5j/3vQA8IgoqIyS+mcr1l9oXvOevRwFnC
- pAlS1368UR+AVrEVV2MXhSRAaxISthIOl0FCvW37s9pZTfAzq6T23TxWLCEEXItI0E5CadU
- UXVhDDuuBV0Ns6gyikCzw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:yOrDBp1mxcc=:CYY5yYcUJZVLUgCZmfdwtr
- r0XgjUcrcHPfdIvyKKcZifHHQGqGKNaL4ZpS8EP59+ZTyk9s3qvo7otngyUOAHwMLcx/jJs/8
- Od3BfJZEwyvACB7qLQymnMNg+IN+Jq7dk9bhxsTrtVHwK4Tml757WRBHlGbJkiSYBMRGugR8l
- QPp3BIqsM/OyU2r80EUSrhfWHbZT+TSEzMEZHX9Jub+pEqnlbUnSwcITdt04jjkX7BK8HMZxR
- GyR8/Egzmkr0jf4GnnKUbFVdYkhspVw8IePb6M6/osbpXXgMV/kR9bGQ55uhFJyrUWAu47K/z
- mqUoR9DaXE2LLLardDHjtzlSUFTeK31c8oXnSucLGhk8eMR30rHgafDznejw+B1Zz7W+5sl5d
- 4E/7OE7tDsXFZrIum9Dh1LdrFNHihLEDNF+ZxpBy7fMiYy/7A0eIDKtGPqFWFxiFWB1uh2h1h
- u4xkJEpfvV6mxqC9jO2nr2HPa+roO2vuvk175DLB4QMP0dLyW3NbLbycnL8l7K333pjkSE0eA
- GOlJNjCXIY0DCjr17ie7qUuLMeFiBR5nzGbuA3YsiOTjrsU7qEjsJfdJRdox9df6e/1VN+nMV
- 2ygeUpI5J4jUja2d0gGCYUH3lJPxDO4tQ85fqIx5MpGu2MRjHCDG/jCRaMG1FqsCNu4oETsbi
- +og0bz5op5eifT1rOocuziibqFQadJZL7ruAikITGbp0KkcyoH120DRUsA0Ov13ezSuVh7vYe
- Ww4vADy+UjJtRoVedci40pswLWbSugS4i7Khjw==
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=o6Ri5gMm;
+       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Wed, 21 Feb 2018 13:45:58 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Quytelda Kahja <quytelda@tamalin.org>
+Cc: gregkh@linuxfoundation.org, jonathankim@gctsemi.com, deanahn@gctsemi.com,
+        devel@driverdev.osuosl.org, Quytelda Kahja <quytelda@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: gdm724x: hci: Changed camel-case to snake-case.
+Message-ID: <20180221104558.r7qgxyqshy37gej6@mwanda>
+References: <20180221103928.19599-1-quytelda@tamalin.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221103928.19599-1-quytelda@tamalin.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8810 signatures=668675
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802210132
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593006710117877151?=
-X-GMAIL-MSGID: =?utf-8?q?1593006710117877151?=
+X-GMAIL-MSGID: =?utf-8?q?1593007120185064859?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Changed a variable name from camel to snake case to fix a coding style
-issue.
+On Wed, Feb 21, 2018 at 02:39:28AM -0800, Quytelda Kahja wrote:
+> Changed a variable name from camel to snake case to fix a coding style
+> issue.
+> 
+> Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
+> ---
+>  drivers/staging/gdm724x/hci_packet.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
+> index 22ce8b9477b6..f8837c7103ac 100644
+> --- a/drivers/staging/gdm724x/hci_packet.h
+> +++ b/drivers/staging/gdm724x/hci_packet.h
+> @@ -50,7 +50,7 @@ struct tlv {
+>  struct sdu_header {
+>  	__dev16 cmd_evt;
+>  	__dev16 len;
+> -	__dev32 dftEpsId;
+> +	__dev32 dft_eps_ID;
 
-Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
----
- drivers/staging/gdm724x/hci_packet.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I bet this is a part of the user space ABI or there is a specific reason
+for the name to match the spec or something so it can't be changed...
 
-diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
-index 22ce8b9477b6..f8837c7103ac 100644
---- a/drivers/staging/gdm724x/hci_packet.h
-+++ b/drivers/staging/gdm724x/hci_packet.h
-@@ -50,7 +50,7 @@ struct tlv {
- struct sdu_header {
- 	__dev16 cmd_evt;
- 	__dev16 len;
--	__dev32 dftEpsId;
-+	__dev32 dft_eps_ID;
- 	__dev32 bearer_ID;
- 	__dev32 nic_type;
- } __packed;
--- 
-2.16.2
+regards,
+dan carpenter
