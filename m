@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225a9kRjyJpyNWQzFj3l8/qc+nHT/9LZYiqvzc/IYnLSXhus2kQ9PSTRcV0aOuheFEbCvYaR
-ARC-Seal: i=1; a=rsa-sha256; t=1519218371; cv=none;
+X-Google-Smtp-Source: AH8x225y0z5MqoeMjljpXvPokEXATEpc/QTAInUBJDlwGZsJwS2aKDdp0ZQmnqm69u7wsn8UhGQk
+ARC-Seal: i=1; a=rsa-sha256; t=1519218366; cv=none;
         d=google.com; s=arc-20160816;
-        b=JYI102Pb7hFfg27TibazUv1/oesxf0q8tR9flID/n23YAdmtjAYmVGhGiL35YrHxDW
-         KjLGARniRjl+vZVPV0rP8llMsKLfWZk1SGQVZ65mQPc/3j1CdwyFkO0BiSHLGf1b7goX
-         09rv/hKZJwXHlR2gJCvc4c6DcAp++tniTd+9i/aEreuuSHHloJdKw/tsWYteKhaJT+Pc
-         pJSaBCr0QrF8zY16PZ5YdgTy7CqxJYoDjExarIWyI0dNYDQjNAkmHCMZXjuFZagtY6gk
-         uW2bwen8BldLXwbFCetFy+slxjeb6WLqBqhtP3n9IP1PR07XveaMErAHG1Yraqnq5mlT
-         8Qfw==
+        b=Yp0Z9lyYWIVFLxcXqwRx5bnDQBhrltxKkun6yGIK1aLB8qtj0zyu+uo5No4FcLUQg9
+         8r/xuLcMc4z4nG9mAu/BYVmU2RlwEge81WNraRm7s1ogmltspsH8Dtgw/NgWlMr4J4ps
+         ZdcTmz2OXRDcOPlj44wwyFjPsqU08+0v0Qc+VOzpeLnZxwX8VWEd6rRgWv2cFmhvRgF+
+         c0GB5PdPwtwoXP8zUGhXL9lo/ZaJtX+c2sjY0jnyLzqC9j8t9J8u7CZD3ttc5gjQGBTh
+         RsYMCtsddEp2fgPEMzDjumTeMggBqp6wOO2yutbnZPVjJ6fVJuP1JhXIQxXJIW6ikNGQ
+         UMFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mNnhNLganIqW1Dcc+gnYfxMfkri6ACaQVpLrl547akQ=;
-        b=fRwcXX+fjr8cN8buIWpw82WNu8ui1gR3UeXCRjBRqwEwmAiJsl8nO7Yk8EUtsZrLDD
-         SOweU5vU1B197n2JxlQWeviB+7MTIzkKGRCRcbUXuMLNs48jEoJ/4pK476qhbByF3jCA
-         QEtfj/gfpwbfKEJ9oLqOnaKPdXvt0tr0Ky3G4NxZ4l9G5CZqQ/ZW7zPS9iTVtCncW6wu
-         4RGlxYvVJz21tnC8IzmHggJSvnJabsnbRcT3f5NB1wFEISdmHvY+vcEMpc8o5RhwskTy
-         YdnURCAtph/6UokNXbd6i7HDxy7PCH+fjKejDCO7NA44tBkkKh4Lv7m9LZrAyJC7Z878
-         aXww==
+        bh=GrHHLsISn+fwFs3S9M0N1ykWB3c1J0WGypeOw7I8TcI=;
+        b=EFx/m05nOx8ZkF9Sr1wrIWrEm58ixwRDS+p/QaeGIUeb2h0EZ7BmAWI+OSIvhN6Rlh
+         1T3G46JmojkL+ssSR5lLzhiJsntR71B28CM8Er8SsvrKArRdx76DhI+1v5wRCCAKa6rm
+         DFZno4BM4tGa1EHnnvQj3BGFU01veGW2nr1M7nHvJ3D0DXsHmcxIPmzY1wziqeRMFfRz
+         rtcfkqeOXHuZAu+e/oKJZeB/d4gHOB1eiHyxPCXqRVI+AifYvD+a7wvG4bOoLdQTZ0mr
+         qv1KZ7Ww4Cumm/FXwVqBrhVkVFG3n4aZ1zjmyz+HOYQZIVez3WgpjLJAeMzz9RpuUwZS
+         LkfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xinming Hu <huxm@marvell.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.15 016/163] mwifiex: resolve reset vs. remove()/shutdown() deadlocks
-Date: Wed, 21 Feb 2018 13:47:25 +0100
-Message-Id: <20180221124531.017523032@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Mike Galbraith <efault@gmx.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.15 014/163] swiotlb: suppress warning when __GFP_NOWARN is set
+Date: Wed, 21 Feb 2018 13:47:23 +0100
+Message-Id: <20180221124530.872594930@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015425897320755?=
-X-GMAIL-MSGID: =?utf-8?q?1593015923353247425?=
+X-GMAIL-THRID: =?utf-8?q?1593015420254067670?=
+X-GMAIL-MSGID: =?utf-8?q?1593015917455479564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Christian König <ckoenig.leichtzumerken@gmail.com>
 
-commit a64e7a79dd6030479caad603c8d78e6c9c14904f upstream.
+commit d0bc0c2a31c95002d37c3cc511ffdcab851b3256 upstream.
 
-Commit b014e96d1abb ("PCI: Protect pci_error_handlers->reset_notify()
-usage with device_lock()") resolves races between driver reset and
-removal, but it introduces some new deadlock problems. If we see a
-timeout while we've already started suspending, removing, or shutting
-down the driver, we might see:
+TTM tries to allocate coherent memory in chunks of 2MB first to improve
+TLB efficiency and falls back to allocating 4K pages if that fails.
 
-(a) a worker thread, running mwifiex_pcie_work() ->
-    mwifiex_pcie_card_reset_work() -> pci_reset_function()
-(b) a removal thread, running mwifiex_pcie_remove() ->
-    mwifiex_free_adapter() -> mwifiex_unregister() ->
-    mwifiex_cleanup_pcie() -> cancel_work_sync(&card->work)
+Suppress the warning when the 2MB allocations fails since there is a
+valid fall back path.
 
-Unfortunately, mwifiex_pcie_remove() already holds the device lock that
-pci_reset_function() is now requesting, and so we see a deadlock.
-
-It's necessary to cancel and synchronize our outstanding work before
-tearing down the driver, so we can't have this work wait indefinitely
-for the lock.
-
-It's reasonable to only "try" to reset here, since this will mostly
-happen for cases where it's already difficult to reset the firmware
-anyway (e.g., while we're suspending or powering off the system). And if
-reset *really* needs to happen, we can always try again later.
-
-Fixes: b014e96d1abb ("PCI: Protect pci_error_handlers->reset_notify() usage with device_lock()")
-Cc: <stable@vger.kernel.org>
-Cc: Xinming Hu <huxm@marvell.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Reported-by: Mike Galbraith <efault@gmx.de>
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=104082
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/pcie.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ lib/swiotlb.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/pcie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
-@@ -2781,7 +2781,10 @@ static void mwifiex_pcie_card_reset_work
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -586,7 +586,7 @@ phys_addr_t swiotlb_tbl_map_single(struc
+ 
+ not_found:
+ 	spin_unlock_irqrestore(&io_tlb_lock, flags);
+-	if (printk_ratelimit())
++	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
+ 		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+ 	return SWIOTLB_MAP_ERROR;
+ found:
+@@ -713,6 +713,7 @@ void *
+ swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+ 		       dma_addr_t *dma_handle, gfp_t flags)
  {
- 	struct pcie_service_card *card = adapter->card;
++	bool warn = !(flags & __GFP_NOWARN);
+ 	dma_addr_t dev_addr;
+ 	void *ret;
+ 	int order = get_order(size);
+@@ -738,8 +739,8 @@ swiotlb_alloc_coherent(struct device *hw
+ 		 * GFP_DMA memory; fall back on map_single(), which
+ 		 * will grab memory from the lowest available address range.
+ 		 */
+-		phys_addr_t paddr = map_single(hwdev, 0, size,
+-					       DMA_FROM_DEVICE, 0);
++		phys_addr_t paddr = map_single(hwdev, 0, size, DMA_FROM_DEVICE,
++					       warn ? 0 : DMA_ATTR_NO_WARN);
+ 		if (paddr == SWIOTLB_MAP_ERROR)
+ 			goto err_warn;
  
--	pci_reset_function(card->dev);
-+	/* We can't afford to wait here; remove() might be waiting on us. If we
-+	 * can't grab the device lock, maybe we'll get another chance later.
-+	 */
-+	pci_try_reset_function(card->dev);
+@@ -769,9 +770,11 @@ swiotlb_alloc_coherent(struct device *hw
+ 	return ret;
+ 
+ err_warn:
+-	pr_warn("swiotlb: coherent allocation failed for device %s size=%zu\n",
+-		dev_name(hwdev), size);
+-	dump_stack();
++	if (warn && printk_ratelimit()) {
++		pr_warn("swiotlb: coherent allocation failed for device %s size=%zu\n",
++			dev_name(hwdev), size);
++		dump_stack();
++	}
+ 
+ 	return NULL;
  }
- 
- static void mwifiex_pcie_work(struct work_struct *work)
