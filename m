@@ -1,67 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeBUIz3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:55:29 -0500
-Received: from sauhun.de ([88.99.104.3]:44127 "EHLO pokefinder.org"
+        id S1752261AbeBUI5x (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 03:57:53 -0500
+Received: from mail01.prevas.se ([62.95.78.3]:10906 "EHLO mail01.prevas.se"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751682AbeBUIz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:55:28 -0500
-Date: Wed, 21 Feb 2018 09:55:26 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Patryk Kocielnik <pkocieln@mion.elka.pw.edu.pl>
-Cc: baohua@kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Patryk Kocielnik <patryk@kocielnik.pl>,
-        Patryk Kocielnik <patryk.kocielnik@gmail.com>
-Subject: Re: [PATCH] i2c: busses: i2c-sirf: Fix spelling: "formular" ->
- "formula".
-Message-ID: <20180221085526.xjx2fhgrsmydvkfn@ninjato>
-References: <20180126201926.18804-1-patryk@kocielnik.pl>
+        id S1752179AbeBUI5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 03:57:51 -0500
+X-IronPort-AV: E=Sophos;i="5.46,543,1511823600";
+   d="scan'208";a="3278863"
+Subject: Re: [PATCH 2/2] proc: use set_puts() at /proc/*/wchan
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180217072011.GB16074@avx2>
+ <CAHp75Vd9ZnC059W2n5=Rx_gz3GN0LORPwt=_AdG5GZPJAUTasw@mail.gmail.com>
+ <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Message-ID: <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
+Date: Wed, 21 Feb 2018 09:57:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w7l4whywwedpccya"
-Content-Disposition: inline
-In-Reply-To: <20180126201926.18804-1-patryk@kocielnik.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.16.8.31]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-02-21 01:02, Andrew Morton wrote:
+> On Sat, 17 Feb 2018 16:06:42 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> 
+>> On Sat, Feb 17, 2018 at 9:20 AM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>>> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+>>
+>>
+>>> -               seq_printf(m, "%s", symname);
+>>> +               seq_puts(m, symname);
+>>
+>> While this might have no security concerns, the pattern might be
+>> brainlessly used by some janitors and there would have security
+>> implications.
+> 
+> And I'd like to see a changelog, please.  One which explains why
+> `symname' cannot have a %s (etc) in it, and never will.
 
---w7l4whywwedpccya
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, since #youtoo: It doesn't _matter_ if symname is "%pHAHAHA %fooled
+you <unicode for evil grin emoji>", seq_puts does not interpret it at
+all. There are _never_ security implications with the above replacement.
+Sure, seq_printf(m, symname) would be bad, but that's not what is being
+done.
 
-On Fri, Jan 26, 2018 at 09:19:26PM +0100, Patryk Kocielnik wrote:
-> Fix spelling.
->=20
-> Signed-off-by: Patryk Kocielnik <patryk.kocielnik@gmail.com>
+AFAICT, this should always lead to slightly smaller code (one less
+parameter passed) and in all likelyhood also slightly faster (no format
+interpretation, no slow char-by-char handling by the string() function
+etc.). So the only case where I'd think this should not necessarily be
+done would be in a long sequence of seq_printf, where only one or two
+could be replaced by seq_puts/seq_putc.
 
-Applied to for-current, thanks!
-
-Please check for surrounding typos, too, to reduce the amount of
-patches. There was another typo in "Initalisation". I fixed that now.
-
-
---w7l4whywwedpccya
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqNM/4ACgkQFA3kzBSg
-Kbbvmw//doSXKdJuMFmGDpOVSIY7lC40H/PMTEQKLmwHITABvhVRT4LE9CgLp6qY
-sdNWiIEWOhuyv/gs1uQKuvM7Fa2a9TOklcLeId5HqqjD49tM3xDFjC/29wSm2DDc
-RGdnA80yNK7rD1+cRxfNloM+pxrVlQi+Cws/yTn0GLa7WsP97RUkpooW5tWJsZEX
-oBIbC0r1YlLFpIfPSt/nxjzC5/vzQVz+B74qM6wAExsDUblwfqmL9XLDZVmtdRHe
-naKWK67CTikMawRBGqD1vtJVSaHOm6t82EjazGy4wsMNFFo/ouL3DcKTRxHhomxi
-FfPbwpLrKYpg4G/6+LITy97FGh8a3mo02a6TAnYSCV0o0/ziEvZ5awkxW8fPdu3s
-EIJqPT5HlnavvOhv9hM2+V+4AggxdDg+Q+x/7e+LnCX/jHySCSX2IBF1U8gQ4EO1
-Tn3c64KmYoryyLvhsS0ZqPIKmb71wckjGZvTRZckxQYYm6C5zz7tHIu1LyczOc9r
-s6dU9REjRx60V4XJoBjgSMGuijBNlCijFwXZNEXqtL3Usz3cLG/F4roOcr/ujjn1
-sw6mCLKY18uL/5ID1NNGD7Pmx+ZaweO/FxV9wXZ7L57yto0Q3Eljl5SoedYEegiv
-IK5nu4kSG+7oTW6fJkq6JS1CSvHeokqEDc5aJwmDLM8zs7TIO6k=
-=ICWu
------END PGP SIGNATURE-----
-
---w7l4whywwedpccya--
+Rasmus
