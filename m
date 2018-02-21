@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218945-2-12815822149303557481
+X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218925-2-15089992854197667916
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218944; b=FdUqAI5FTaDRKq2BYkPIryAMTeBhFH37nJCuWpo4uaDQm5H
-    Qhs8KMPyGvVaijTWgkpo/ZWxoAS6JVVF/Oj79bbpulKFXThh1CRXv0tBIIVmurrh
-    vN81fMiLHmuY/JqrNTCHFCqXxoAlNljq6JRree/lgR5pvg23LCqURDb5ScJmtCSi
-    VeqGgXxxffpgqKROOUNFQEXciZnpEMFVhlo+XlTp1xp5AV6QmGUCS8O/Eqf07g5I
-    rwGGXPqBdJLKTzszur/STolvOrYVnmTuhSvNgz8jy9XGlvK55nSNBXY21XhZjjhF
-    J8654G7sJiH7PlypPFjIcsJTVzKTkT7enddrLyA==
+    t=1519218924; b=P3/Rf/f1PN2pdMBDTEHF16IcSUJL+AXqUhjt7ZGXDHjBZ32
+    0BwAdR7HbNSzU2HsJfPAtuei/LhsVultvItaQJdmljx9hiWyHHClw2xnIVS7NCrP
+    Nww0CnxG05EItdmQc5WQmv9Kf68FtblXHQlRyajsiu3VxVkO/OPOO5aWF3i5iGKk
+    KyKtj8vORc4F+jV+aJUxL5gfoc2/y6nMY/vDNgBMPmxo0wJqdQTqeUZJ9lnQr4lS
+    OlrO3A0w5DYbG87SOWgPxdMifIzatpYP93umNEkNP1lDj2f3hgAzVbx+NX3GGL+p
+    pq78RjpYnZ2R6bYxs7/YxknxlxqGebHYncaXLBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218944; bh=1tM63cIlhnrPG1+r8Q9DMmOd5/
-    KZKehmOodDv80CQxk=; b=NDrFjdQEt6wmBoTONy+Lew8OIuFfUEsp1JAxohblG6
-    X1uHSN7dDqfJllv1J4i+9ijK54ngkdAo+pxdBSTVrBB5Y+xVjZdUQyc5OVkup7uY
-    wSpCKMETltkfUantbQovGVlrJmvOCImMzwoQL0kncbVxyhv+PFk2TIDA24VY1BSM
-    D4OuwCOesHxjqRmMYebR1wtECa0uBOwxnGWOrXoV9asu0kCk8GgZR+IMkloMEZYC
-    ZIcz8o04BOA7kx77OGR+bPNYw2OCDDi0z5vQWZo1v8iohE2N8Yj/y1NgZtE6yrMu
-    DxM6bhrKHT7b0v34Cj0Y7hT6S3mzpw/czDiKjS/dssXA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519218924; bh=uMUmJZgjlFe9Xpa/GZ8XILGuWW
+    6brjRNP+6JlSW3kdk=; b=N0W8Rw5VkP8gHlZR+0g2qv67YiscXsxCTWYUMmu5Ym
+    ajmk0EsQU3Yaxtq6NTxVsCoGKPTIvX1cd9MfCqw3aufmlhQgWK2z0YIrTLqotPKb
+    wiodKkHCk/HtQ1SJKab1T1md6lhmkkxkND7ckUrLa7WbM7cUCy2q84WiGrquJjxp
+    bIk/vKXHEcIYNP5CWHmU0VDEyQcsSmnT1AvWoV6DAy7OedkJf9m2bfeleRdr2eUO
+    VimCdxfvw1sotXL/tnpTHcyce0WZ56/hIwtTvM2OdUJOnzBC9NWmkF3lRWoK0EX/
+    Kec23N2/IZJ6p8IB58cd+BJeftr/ZItyFID4kKX5NGiw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeBUNP1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:15:27 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45958 "EHLO
+        id S932542AbeBUNPJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:15:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965693AbeBUNNL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:11 -0500
+        with ESMTP id S1753648AbeBUNNT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:19 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "yinbo.zhu" <yinbo.zhu@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH 4.15 163/163] mmc: sdhci-of-esdhc: fix the mmc error after sleep on ls1046ardb
-Date: Wed, 21 Feb 2018 13:49:52 +0100
-Message-Id: <20180221124538.908072794@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 135/163] Btrfs: fix deadlock in run_delalloc_nocow
+Date: Wed, 21 Feb 2018 13:49:24 +0100
+Message-Id: <20180221124537.653207010@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -81,55 +78,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: yinbo.zhu <yinbo.zhu@nxp.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit f2bc600008bd6f7f5d0b6b56238d14f95cd454d2 upstream.
+commit e89166990f11c3f21e1649d760dd35f9e410321c upstream.
 
-When system wakes up from sleep on ls1046ardb, the SD operation fails
-with mmc error messages since ESDHC_TB_EN bit couldn't be cleaned by
-eSDHC_SYSCTL[RSTA]. It's proper to clean this bit in esdhc_reset()
-rather than in probe.
+@cur_offset is not set back to what it should be (@cow_start) if
+btrfs_next_leaf() returns something wrong, and the range [cow_start,
+cur_offset) remains locked forever.
 
-Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
-Acked-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+cc: <stable@vger.kernel.org>
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/btrfs/inode.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -589,10 +589,18 @@ static void esdhc_pltfm_set_bus_width(st
- 
- static void esdhc_reset(struct sdhci_host *host, u8 mask)
- {
-+	u32 val;
-+
- 	sdhci_reset(host, mask);
- 
- 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
- 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-+
-+	if (mask & SDHCI_RESET_ALL) {
-+		val = sdhci_readl(host, ESDHC_TBCTL);
-+		val &= ~ESDHC_TB_EN;
-+		sdhci_writel(host, val, ESDHC_TBCTL);
-+	}
- }
- 
- /* The SCFG, Supplemental Configuration Unit, provides SoC specific
-@@ -785,10 +793,6 @@ static void esdhc_init(struct platform_d
- 	pltfm_host = sdhci_priv(host);
- 	esdhc = sdhci_pltfm_priv(pltfm_host);
- 
--	val = sdhci_readl(host, ESDHC_TBCTL);
--	val &= ~ESDHC_TB_EN;
--	sdhci_writel(host, val, ESDHC_TBCTL);
--
- 	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1330,8 +1330,11 @@ next_slot:
+ 		leaf = path->nodes[0];
+ 		if (path->slots[0] >= btrfs_header_nritems(leaf)) {
+ 			ret = btrfs_next_leaf(root, path);
+-			if (ret < 0)
++			if (ret < 0) {
++				if (cow_start != (u64)-1)
++					cur_offset = cow_start;
+ 				goto error;
++			}
+ 			if (ret > 0)
+ 				break;
+ 			leaf = path->nodes[0];
