@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeBUU50 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:57:26 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46968 "EHLO
+        id S1751833AbeBUVQ7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 16:16:59 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:46984 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751567AbeBUU5Y (ORCPT
+        with ESMTP id S1751609AbeBUU50 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:57:24 -0500
+        Wed, 21 Feb 2018 15:57:26 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 023/100] rtc: ds1347: stop validating rtc_time in .read_time
-Date: Wed, 21 Feb 2018 21:55:18 +0100
-Message-Id: <20180221205635.31314-24-alexandre.belloni@bootlin.com>
+Subject: [PATCH 036/100] rtc: m48t35: stop validating rtc_time in .read_time
+Date: Wed, 21 Feb 2018 21:55:31 +0100
+Message-Id: <20180221205635.31314-37-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
 References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
@@ -26,21 +26,21 @@ It is not necessary to call it just before returning from the callback.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-ds1347.c | 2 +-
+ drivers/rtc/rtc-m48t35.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-ds1347.c b/drivers/rtc/rtc-ds1347.c
-index ccfc9d43eb1e..938512c676ee 100644
---- a/drivers/rtc/rtc-ds1347.c
-+++ b/drivers/rtc/rtc-ds1347.c
-@@ -66,7 +66,7 @@ static int ds1347_read_time(struct device *dev, struct rtc_time *dt)
- 	dt->tm_wday = bcd2bin(buf[5]) - 1;
- 	dt->tm_year = bcd2bin(buf[6]) + 100;
+diff --git a/drivers/rtc/rtc-m48t35.c b/drivers/rtc/rtc-m48t35.c
+index 810f4ea481e4..0cf6507de3c7 100644
+--- a/drivers/rtc/rtc-m48t35.c
++++ b/drivers/rtc/rtc-m48t35.c
+@@ -84,7 +84,7 @@ static int m48t35_read_time(struct device *dev, struct rtc_time *tm)
+ 		tm->tm_year += 100;
  
--	return rtc_valid_tm(dt);
+ 	tm->tm_mon--;
+-	return rtc_valid_tm(tm);
 +	return 0;
  }
  
- static int ds1347_set_time(struct device *dev, struct rtc_time *dt)
+ static int m48t35_set_time(struct device *dev, struct rtc_time *tm)
 -- 
 2.16.1
