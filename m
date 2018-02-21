@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ciTNISfk9PTlaMXoG3x95wrUF8u6ExIqOFq4HcGNFomWooHI23cR8A7v04U1ZP7FwhbMq
-ARC-Seal: i=1; a=rsa-sha256; t=1519217129; cv=none;
+X-Google-Smtp-Source: AH8x2264EyfGfbKGFRdPclBZgA4DyofiY62UcL0TN1RTXJugisOtX1SzjDwTzxCUrNtA/EbM/GQn
+ARC-Seal: i=1; a=rsa-sha256; t=1519217126; cv=none;
         d=google.com; s=arc-20160816;
-        b=ngaEkyl24FqQc6igjfxGp/ktNTtGta15SQxM1Gl1liSi6LRiVecr8c19jA+vvZjGU9
-         u/YeLCTCepl2Pts/DdHBucaUZuxFQyVl7AdYerTvOmw1LhNjzKXEU0dTSAROSlzqRit+
-         j2fyJtAgXblml8GiNdXeeJu79rA+OLR8fEPglZAuwDK791uoDX38cyzsl6uA8cgP9GEg
-         eR1iuwS5PrMmjmSTKPBTlf+3U8fYUzm8l/m8g9io+RuljAhMRsDW31GZcaSAgXm33op7
-         l7/4GMHSQvCRnzupsHonP2CMxSpX0rP7Fzt75uxQZKgWLNoPS0xauq+Qr2WECH81qpe1
-         CBEA==
+        b=qC2jgQA9TJQEHCykwlvxOwhnYjbwTAx0OzvXHhSBVV2x2QwN8olc/szzHND0F6YGrZ
+         bCd1yLkrARrZHlvA176R5wb7EUe4fFRhv+h826yg7uFqflEHWczIHcPJifAiWl1/yP2I
+         hqRVnFXZJGJBGItoll3bg7cnY7LmVDV9S+nPfkR95AAa7CJcUGOHx8IKOkCBOLsdyAF1
+         QGEfpHQrG3tNjzeAvwhTkYA2k0BqGfHrq1lvL2SDkCC3Zz4IT6VntiWLjBqCLc5g/894
+         XL/GaKKOVjhjugoZ3PezL0fPfI8kgcZBAtfRds/rKLw8EDlWiTYXi6WwSP0sQ7sCdxS9
+         FyQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rL02OBrOxOlquNATJUIW/6l4n+rYs5NFV+aZPTvThlA=;
-        b=NqGUugcnQUdy14bf/AKJ6Yfx6oJnW72sWbg0fwFNYHi0FkzQPrhgw22wxndfokPDq3
-         NfQtXdtrfIWLDB18MnP3VHmjLbtmLkrVCXjBwHVOdOeWaFsWTIStDBhjj8v53QopSSWC
-         91BHwOX+KNQg7AF0eJAutjliIuUxLz6S6jR9wp8PGaZekQF8yI4GesTxFkQ8g/44K8AZ
-         lKfTrS5hMfSfYGNP9O6GwfvR/1/u9FPlLoGhmMKJUa+g0NuN16SEDQDdjOnOaCoh9hCp
-         +NFvhdHaoNtWZNtR2LtcUK0xUNx9jRXgi27EQsNXY6vDQwcv5bUu7tlyL/zRfjnm47l3
-         6BRw==
+        bh=/08wzJ1GhmbQumW5I2T7MFnrQO34iaAvtU+/sIxHsA8=;
+        b=yKuKMpVeKwzEG8Db8ok/q3gaFjiHLipvSgrM5FzzWY0/oD+wJkPodBx8R+Smjff1q0
+         QxQ9tlBeYC/jmy0Y8nOGDVhY4ycNkHzPDfmKV4GSJa2eGZLlF8QLC2wi9IwZJQdFvA3l
+         k48kpbcgCqx3QanU/j+Cqkhyg+RWg15z4ekAdldjMmdSdMJjm437meicXN6az12J99gg
+         tax50NYOqOaDrmPlqqLCKrgXE6WUCM/28lFEMVzYBmBRCzC+RTRwepjHaXcdpQFt44jh
+         ghjMToKHT4wgfyfeg84XIEtz6lBqpadviEfkTWbWXwHFg6mIRxSQITNP1BWAtaiwu7So
+         ynxg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhouyi Zhou <zhouzhouyi@gmail.com>,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 13/33] ext4: save error to disk in __ext4_grp_locked_error()
-Date: Wed, 21 Feb 2018 13:44:56 +0100
-Message-Id: <20180221124410.358901912@linuxfoundation.org>
+	Patrice Chotard <patrice.chotard@st.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.4 04/33] ARM: dts: STi: Add gpio polarity for "hdmi,hpd-gpio" property
+Date: Wed, 21 Feb 2018 13:44:47 +0100
+Message-Id: <20180221124409.769957350@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014620343797175?=
-X-GMAIL-MSGID: =?utf-8?q?1593014620343797175?=
+X-GMAIL-THRID: =?utf-8?q?1593014617824025062?=
+X-GMAIL-MSGID: =?utf-8?q?1593014617824025062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +49,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+From: Patrice Chotard <patrice.chotard@st.com>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
+commit 7ac1f59c09a61e6af6622df6809e003b0af07f3d upstream.
 
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
+The GPIO polarity is missing in the hdmi,hpd-gpio property, this
+fixes the following DT warnings:
 
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
+arch/arm/boot/dts/stih410-b2120.dtb: Warning (gpios_property): hdmi,hpd-gpio property
+size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+arch/arm/boot/dts/stih407-b2120.dtb: Warning (gpios_property): hdmi,hpd-gpio property
+size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
+
+arch/arm/boot/dts/stih410-b2260.dtb: Warning (gpios_property): hdmi,hpd-gpio property
+size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
+
+[arnd: marked Cc:stable since this warning shows up with the latest dtc
+       by default, and is more likely to actually cause problems than the
+       other patches from this series]
+
 Cc: stable@vger.kernel.org
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/stih407.dtsi |    3 ++-
+ arch/arm/boot/dts/stih410.dtsi |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -688,6 +688,7 @@ __acquires(bitlock)
- 	}
+--- a/arch/arm/boot/dts/stih407.dtsi
++++ b/arch/arm/boot/dts/stih407.dtsi
+@@ -8,6 +8,7 @@
+  */
+ #include "stih407-clock.dtsi"
+ #include "stih407-family.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ / {
+ 	soc {
+ 		sti-display-subsystem {
+@@ -112,7 +113,7 @@
+ 					 <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>;
  
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
+-				hdmi,hpd-gpio = <&pio5 3>;
++				hdmi,hpd-gpio = <&pio5 3 GPIO_ACTIVE_LOW>;
+ 				reset-names = "hdmi";
+ 				resets = <&softreset STIH407_HDMI_TX_PHY_SOFTRESET>;
+ 				ddc = <&hdmiddc>;
+--- a/arch/arm/boot/dts/stih410.dtsi
++++ b/arch/arm/boot/dts/stih410.dtsi
+@@ -9,6 +9,7 @@
+ #include "stih410-clock.dtsi"
+ #include "stih407-family.dtsi"
+ #include "stih410-pinctrl.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ / {
+ 	aliases {
+ 		bdisp0 = &bdisp0;
+@@ -203,7 +204,7 @@
+ 					 <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>;
+ 
+-				hdmi,hpd-gpio = <&pio5 3>;
++				hdmi,hpd-gpio = <&pio5 3 GPIO_ACTIVE_LOW>;
+ 				reset-names = "hdmi";
+ 				resets = <&softreset STIH407_HDMI_TX_PHY_SOFTRESET>;
+ 				ddc = <&hdmiddc>;
