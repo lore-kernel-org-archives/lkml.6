@@ -1,121 +1,93 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-171462-1519307068-2-15960017412490686289
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519307068; b=cl6yvjkVp5gggFtyjjG+9nsqHkmljcShFFHmeWMM63L7ZSo
-    JPwFoBP0UbAukfAbFTMHAgvWHcY/yu3GUejkerIUcUeV0irMUBcF7klei5+xP6k3
-    tqh9ymuiSliGy9wJvAB6pwNVSLlf+1jecyuhuxXUAqaKQrPN2q55fi6T7NQKPQyJ
-    HAh0+UC0J7azqsYMN39UHHqZzdTkhIVjeCDBfMRtv6bvo9axF0RW7cIl1ZzSU2Pa
-    N2DYqamIbnWACA52ykmvP1K55wacHEPIC5aslyZaMPzC6zS9fvcXRCQdqoE8bx9Z
-    vcIKfVkc1cA6n4xfc1MKM3VHHfFMDkLe8FmujtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519307068; bh=F
-    Ew9N8kbrrxMYMM4xiqrzp3RnlUVL4cAWindRpMCDGs=; b=GMsKfqnNa+b9+c/cO
-    MRGJuIBzRWo3Ic8Ps5vBTGl0d/CV0t+mLMMQd5Gyj0vhFY3iprgeU8h2QYFOsvXo
-    Y6o09MzUuU26yqEOmA1r11SSBbgPEe73KZ3EpYop6g3GU2SY2BsL82n46Cc7qp0e
-    eAUHkWIwHMiXC1CN/Nhe6OLGfQBETYidNI2UFC3o5VkOUgRVpeXPr91UlinWnOFI
-    BFyV39dw6/xJbb70r1zoEWI/hndPJHh8DAUJmOvqPjTbLLoG1Sb19pBMXn8m8A3F
-    V8BGZaWi0lEz3iIWtrwASj8WzRdFHhZCKukZe3a+nVc5ENlOEdKHlH3Aj9Rp5X1x
-    fps3w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 22 Feb 2018 14:44:21 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] Staging: gdm724x: hci: Changed camel-case to snake-case.
-Message-ID: <20180222134421.GA19182@kroah.com>
-References: <20180221103928.19599-1-quytelda@tamalin.org>
- <20180221104558.r7qgxyqshy37gej6@mwanda>
+Return-Path: <quytelda@tamalin.org>
+X-Google-Smtp-Source: AG47ELvxQ4loTzIcNZ5Vn9MLy3VX041eKOf69P6E12GKSPXiM7A1zkrP4S17YsoeslrlBs/lLdiB
+ARC-Seal: i=1; a=rsa-sha256; t=1519211756; cv=none;
+        d=google.com; s=arc-20160816;
+        b=THt9K658dyZZ+HrZ63bfx12J+CG/qN9WN6+22TIWyizNU+HzmZ/cX5Tz9QgMGCC8GN
+         pabWeCfyjuXhYjudFBZYhUbzwppMB6VTQ2PKhYVdcH048BpHsNuc0YuN/UvFChFNCmJJ
+         g9nf0b5ZQAF8s+UjJhVsMLaLR7gRWEryWBREUI5AVQzFS4i5N9kr+jird3mtuyuyiMr+
+         2TjFMsVj88nYGC03uE5+lCQw9o6M8DVdbY/s3owQQcUU0wFuEYhgWsP2PgWLWLk/nrAU
+         poiEO8Osz4KUJI/UzGnYbcOKsDfdVdy8Kh+fu7/Z0UPq5baT+NjOU/OnSJm6/gYQVqdm
+         eBuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:arc-authentication-results;
+        bh=RBqTTkiE1AAMt/5qIvZUDySK1NRpiQMBCDQDUOfums4=;
+        b=rrvRFdRPMbleCyLHEO1TXMec1Gv1P+fnCEuzyEqphzguimFjXhXzOS4IPDwPEaoXBO
+         +3RRvF896cn2lbPhTOPYRHEzWS9SlmiQKy+BR/83qS/RRtXKOqO1nK6y6Mz+NTn/0M2n
+         GXMrk+2L0CGUK4uNWZQ/hRgIaY8gYhHP/ScFkQGqd2i3lWFckq89RcFrT5a0oazq2TZy
+         h0TglJH6KdjxIcW1qjqaNIrq2HDaDj6HHBt4Kwq1vpTLilxYoTvqR3V8+s/LDSwS7MwR
+         rhG2kL8OiKcV3N2g6olXmDFpIYgKiAC6EJ78AUNCieE5807LrVEZ6YLNUp3xcKvobP1w
+         UoMg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 MIME-Version: 1.0
-Content-Disposition: inline
 In-Reply-To: <20180221104558.r7qgxyqshy37gej6@mwanda>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, jonathankim@gctsemi.com,
- linux-kernel@vger.kernel.org, deanahn@gctsemi.com,
- Quytelda Kahja <quytelda@gmail.com>, Quytelda Kahja <quytelda@tamalin.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+References: <20180221103928.19599-1-quytelda@tamalin.org> <20180221104558.r7qgxyqshy37gej6@mwanda>
+From: Quytelda Kahja <quytelda@tamalin.org>
+Date: Wed, 21 Feb 2018 03:15:54 -0800
+X-Gmail-Original-Message-ID: <CAFLvi21KhXb0+Z3V6Dfv9QrK3via_r6Ggoku5D3mpG5NEYeQ7g@mail.gmail.com>
+Message-ID: <CAFLvi21KhXb0+Z3V6Dfv9QrK3via_r6Ggoku5D3mpG5NEYeQ7g@mail.gmail.com>
+Subject: Re: [PATCH] Staging: gdm724x: hci: Changed camel-case to snake-case.
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, jonathankim@gctsemi.com,
+	deanahn@gctsemi.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K0:flmPbj76D8nxUUTrMqsepVCJqkhrubqrrv3BTzF34hYKbLsvUOi
+ 1Zn5LNMALqRaobzA8q52eFCRT0UAjl8BEEaCV29wNEelIvSr7WHhwZQWb/LVd3iGdkjXorw
+ 86liDpd3JBNIstHDDUYumDWf5//wH5AH1/DGEhbwG0uPuwBbOnyr83dWgepnlQ0wCkZdRgF
+ +kHylJe+GFjPr3jZ8ECoA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:K0pM5QqAiQ4=:aFT0A6y0WZDwRgALCCKr8h
+ s7L2bWUfLoPoA8dmgNhFroV5LJs5YjGkqKjrIw+i1BUGC5QcpW0oeldvGf+VceJtX3Nl4kuzl
+ +BBe7ssAjGzhreKiAW8oBElp19hc8pwebRdknf9MJXgfwYfpzJ3m2KOGmSaNmSqqkZkqSbwxU
+ E2uhyUO5in3NotGmsR4+s7cS6B5nMZygfl+AV3BObMqqS725M2jitwBqVgis+rDYJXc6x8p7o
+ TxwedC7fPEwczkQZV0jsklZwmHlr6w57qLq5EcFV2nW8Rb+o3rWfaUmYdmlvxX3jcIeUPlift
+ iTuPgQ5EokZZMtncsuOvGEfn+DtSIGDCxF7t0LTcDewWsbWxLC9jZyGlFSCVxmJLxzXrizT3Z
+ Ls4mLW7t8J+PiKSHN+Kv/bitm4X5q+u1L4gkqHw/ttiT5YFs20am2HrLz4KlPV1tKGYOh7x7r
+ LEOkC+GsIWNJutnEhGldaDTdlxMT0jCOQpe2wyeb2HJ83Oyv71xDBJOB9W968ki62liaVlVLK
+ DDaA7jECXskpbhG4SFiCtKf2p7uhLFH/W87VwYV0h5Ub2WFeF7dE+AVPOdBeZ8xr0YVuBgNBw
+ dgKOWKIFhkoqnTqazesMeo/zOtGV0VX+wHeHrJEspm5B7A+PraDGvnazIaVSyuCsDGNDg2lZh
+ ucTaa0nL06gILLd7ub0RHmfEGLCBEZEvjPHoOdyNZjfpay+8nXYX6k4KVzbyQzrWu7T9XDzPn
+ 8EdZrzn78LBvqqPj9hhzHpTZboB8TLXVw8HWAghMcn3//BwU+ckC0w+QjF0=
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593006710117877151?=
+X-GMAIL-MSGID: =?utf-8?q?1593008987244911818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 01:45:58PM +0300, Dan Carpenter wrote:
+That could be the case, though I'm not sure where to find any specs.
+Though looking through the history of this driver, it seems that some
+of the variable names have been slowly changing from camel case to
+snake case.
+
+Thanks,
+Quytelda Kahja
+
+On Wed, Feb 21, 2018 at 2:45 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > On Wed, Feb 21, 2018 at 02:39:28AM -0800, Quytelda Kahja wrote:
-> > Changed a variable name from camel to snake case to fix a coding style
-> > issue.
-> > 
-> > Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
-> > ---
-> >  drivers/staging/gdm724x/hci_packet.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
-> > index 22ce8b9477b6..f8837c7103ac 100644
-> > --- a/drivers/staging/gdm724x/hci_packet.h
-> > +++ b/drivers/staging/gdm724x/hci_packet.h
-> > @@ -50,7 +50,7 @@ struct tlv {
-> >  struct sdu_header {
-> >  	__dev16 cmd_evt;
-> >  	__dev16 len;
-> > -	__dev32 dftEpsId;
-> > +	__dev32 dft_eps_ID;
-> 
+>> Changed a variable name from camel to snake case to fix a coding style
+>> issue.
+>>
+>> Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
+>> ---
+>>  drivers/staging/gdm724x/hci_packet.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
+>> index 22ce8b9477b6..f8837c7103ac 100644
+>> --- a/drivers/staging/gdm724x/hci_packet.h
+>> +++ b/drivers/staging/gdm724x/hci_packet.h
+>> @@ -50,7 +50,7 @@ struct tlv {
+>>  struct sdu_header {
+>>       __dev16 cmd_evt;
+>>       __dev16 len;
+>> -     __dev32 dftEpsId;
+>> +     __dev32 dft_eps_ID;
+>
 > I bet this is a part of the user space ABI or there is a specific reason
 > for the name to match the spec or something so it can't be changed...
-
-This structure is not even used anywhere :(
-
-Quytelda, can you just remove all unused structure definitions from this
-driver?  That would be a much better patch here instead of changing a
-structure field that no one uses.
-
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+>
+> regards,
+> dan carpenter
+>
