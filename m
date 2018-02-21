@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224mLHwzgMlbi1YNU8PtOHMImZz4Xu0RNHtruE8BFMqb850TSD5npJmf8kFRWbogzTb/j7OV
-ARC-Seal: i=1; a=rsa-sha256; t=1519218066; cv=none;
+X-Google-Smtp-Source: AH8x227eqaO+TZDdLx0LXwePyQQ2rr2pyXdpKT6sv+Nwk5VIt6ggkq3ofCFk+nYEGTbCNk1+cnTA
+ARC-Seal: i=1; a=rsa-sha256; t=1519218065; cv=none;
         d=google.com; s=arc-20160816;
-        b=eCgL8qNOJQq2gTCRjLK1TB5fij2fMkaKjKE815mTKki0f+I9+vLfOldt5OR9P2KhxX
-         E9z+hc2vD3aqCSCZgd9xPN4PjH3iRmwDLfD+ql81NoJpcfZ2V0PplaCB5pNjZBomPi12
-         xuxnxNZACTDPDHGEeeNQf2ehxh3QiA0SV96z92R20Pxwe8DA/2RTwNvS7JSnXvaFwThT
-         EpNXnYAzxdUqnznBPj3Mekq7Ha7+YPpJPbZL4ac4wgwisNaLbfZgyg5iRjXZ9u7EZHQL
-         bSGQLG7mM7WQtSXKKJDWukhI7pZTIl2O4zdamnOZTn0QILIuNQ6uRxWpaQtp8Xx93j0E
-         Ap9A==
+        b=F7rv532XToYISO7cD+y3orAfcKpRGWb7dLd/vUcHHxTt6aisF86gfskYc49l0mUI60
+         Fm0tfjyL6E6WcXbrrRT7ENlzzi7oAAD/xL25nHax1ODeQk9GuCfM+Gav/vmP/uJm1CLN
+         r5JIhK5Sjs94KNUE20b7tfh710ZP5/7DkfZEJP5JpefybDr7RUN/kDqn4oMhEAJkT6PR
+         HH6lkV1R0ZlJecqwOm+fCpjAcis9TXA02DaYcFfNZkf3xCukMfQZC4JAKNKx5Bquj4in
+         EKAc9KTb8qyE9qMgki0yOm2feMR/Z1jbVMQcs4xvvnw1mHMdLqQLSse9uHMTZVVPVi98
+         fRuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FJIojE1tdp6BNS6GY3xEFe0M7oYwH4u/hpw1bUm72ZQ=;
-        b=guIHztQNmgPtQPyY3/Ey7vgu3TG6hEhGcxg/rY/SChr3JU7DlkZRI+i77NBTJr45kZ
-         llcv6BhFhdWcEZx69ZJL5S1XYxy+rcgOqgxWSJb88tcyn/waXo5v5bewt0z+bbupAUU8
-         +S3vk9DzO6z6Q5scToAH3hPbuUtnATpWObbRoVZA/vI3C2KuwB50nez6zSLZ+/r/eqdR
-         n5p6l1aGHTUXJmZ7juNXD2bvRFcJsjOP+yx6i7hXIDTYdJW+S2nwMh15IVnWdheY8Wnw
-         N4/v+2I88LOcwA7Gu79R3KrJcJEgTFOrx5TLA+nli81ryQ27Qo54Syc6bP5wNSm4eeXy
-         Spog==
+        bh=gnSwNIoMBZJcF7o4xhBfLuNubPpdV/rtB2N5JhQ1AOU=;
+        b=L+tH/LIbpzzU0dvK5BxWGHFA08DgKb71xA4GQY9JG90Ui+4Rx+FhkwzV+Urd5MgQJS
+         TpiZ5giTDZdnCgBFaFLzrn0i4PtJc5SA1NYggN1Ig3qNHTTAV10tohKJmMowNfVo5ezm
+         7y+Unlb3WnI749tDzLCcLoKcruJ/sD+/CTnW1re/DiMHr3zdi1skZsx3mE3p4PSoQBAZ
+         3m0q7w4EB5l87bvo5wZslHHTdJVVPcnlrsoFOL/5ENOqYMAYCtIQckvB6ZdiigFZ+SGE
+         e8FViUSGV0QirdvivKtaWAr3iNwUqNBkMSGAS84/HTgyou+y4Bhh1zkqgndeSr74opzF
+         cNFg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	kbuild test robot <fengguang.wu@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux@dominikbrodowski.net,
+	kbuild-all@01.org,
+	tipbuild@zytor.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 066/167] x86/entry/64: Remove the unused icebp macro
-Date: Wed, 21 Feb 2018 13:47:57 +0100
-Message-Id: <20180221124528.124865774@linuxfoundation.org>
+Subject: [PATCH 4.14 065/167] x86/entry/64: Fix paranoid_entry() frame pointer warning
+Date: Wed, 21 Feb 2018 13:47:56 +0100
+Message-Id: <20180221124528.068393172@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -50,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015603424118021?=
-X-GMAIL-MSGID: =?utf-8?q?1593015603424118021?=
+X-GMAIL-THRID: =?utf-8?q?1593015601626745893?=
+X-GMAIL-MSGID: =?utf-8?q?1593015601626745893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,42 +56,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit b498c261107461d5c42140dfddd05df83d8ca078 upstream.
+commit b3ccefaed922529e6a67de7b30af5aa38c76ace9 upstream.
 
-That macro was touched around 2.5.8 times, judging by the full history
-linux repo, but it was unused even then. Get rid of it already.
+With the following commit:
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+  f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+
+... one of my suggested improvements triggered a frame pointer warning:
+
+  arch/x86/entry/entry_64.o: warning: objtool: paranoid_entry()+0x11: call without frame pointer save/setup
+
+The warning is correct for the build-time code, but it's actually not
+relevant at runtime because of paravirt patching.  The paravirt swapgs
+call gets replaced with either a SWAPGS instruction or NOPs at runtime.
+
+Go back to the previous behavior by removing the ELF function annotation
+for paranoid_entry() and adding an unwind hint, which effectively
+silences the warning.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux@dominikbrodowski.net
-Link: http://lkml.kernel.org/r/20180212201318.GD14640@pd.tnic
+Cc: kbuild-all@01.org
+Cc: tipbuild@zytor.com
+Fixes: f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+Link: http://lkml.kernel.org/r/20180212174503.5acbymg5z6p32snu@treble
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/entry/entry_64.S |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -159,10 +159,6 @@ For 32-bit we have the following convent
- 	.if \pop_rdi
- 	popq %rdi
- 	.endif
--	.endm
--
--	.macro icebp
--	.byte 0xf1
- .endm
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1122,6 +1122,7 @@ idtentry machine_check		do_mce			has_err
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+ ENTRY(paranoid_entry)
++	UNWIND_HINT_FUNC
+ 	cld
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1135,7 +1136,7 @@ ENTRY(paranoid_entry)
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+-ENDPROC(paranoid_entry)
++END(paranoid_entry)
  
  /*
+  * "Paranoid" exit path from exception stack.  This is invoked
