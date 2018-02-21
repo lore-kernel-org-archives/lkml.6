@@ -1,159 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966012AbeBUPQ5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:16:57 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49624 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754471AbeBUPQx (ORCPT
+        id S937628AbeBUPQz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:16:55 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:43060 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754665AbeBUPQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:16:53 -0500
-Date: Wed, 21 Feb 2018 16:16:44 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 07/11] media: i2c: ov772x: Support frame interval
- handling
-Message-ID: <20180221151644.GI7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
- <f154f229-6977-4d3e-38b9-6d1669adbf91@xs4all.nl>
+        Wed, 21 Feb 2018 10:16:52 -0500
+X-Google-Smtp-Source: AH8x225u33VSwFQkldyuOnJxQP1MAvL1Ipgcz0K3MZ4Mg/O0IItD2qBcMPi9PVFq6MsFZljOslEls6FMG5pMHvR9/u4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f154f229-6977-4d3e-38b9-6d1669adbf91@xs4all.nl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180221145033.13781-1-enric.balletbo@collabora.com>
+References: <20180221145033.13781-1-enric.balletbo@collabora.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Feb 2018 17:16:51 +0200
+Message-ID: <CAHp75Vf3fKen1mHGrKK0NjaCoiNwS_x91+5cfv4RPqSKAfTSQQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] platform/chrome: mfd/cros_ec_dev: Add sysfs entry to
+ set keyboard wake lid angle
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com, groeck@chromium.org, gwendal@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
-
-On Wed, Feb 21, 2018 at 01:12:14PM +0100, Hans Verkuil wrote:
-
-[snip]
-
-> > +static int ov772x_g_frame_interval(struct v4l2_subdev *sd,
-> > +				   struct v4l2_subdev_frame_interval *ival)
-> > +{
-> > +	struct ov772x_priv *priv = to_ov772x(sd);
-> > +	struct v4l2_fract *tpf = &ival->interval;
-> > +
-> > +	memset(ival->reserved, 0, sizeof(ival->reserved));
+On Wed, Feb 21, 2018 at 4:50 PM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> From: Gwendal Grignou <gwendal@chromium.org>
 >
-> This memset...
+> This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
+> used to set and get the keyboard wake lid angle. This attribute is
+> present only if 2 accelerometers are controlled by the EC.
 >
-> > +	tpf->numerator = 1;
-> > +	tpf->denominator = priv->fps;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int ov772x_s_frame_interval(struct v4l2_subdev *sd,
-> > +				   struct v4l2_subdev_frame_interval *ival)
-> > +{
-> > +	struct ov772x_priv *priv = to_ov772x(sd);
-> > +	struct v4l2_fract *tpf = &ival->interval;
-> > +
-> > +	memset(ival->reserved, 0, sizeof(ival->reserved));
->
-> ... and this memset can be dropped. The core code will memset this for you.
->
->
+> This patch also moves the cros_ec features check before the device is
+> added so the features map obtained from the EC is ready on time.
 
-I see! Ok, I'll drop them in v10
+> +/* Keyboard wake angle control */
+> +static ssize_t show_kb_wake_angle(struct device *dev,
+> +                                 struct device_attribute *attr, char *buf)
+> +{
+> +       struct ec_response_motion_sense *resp;
+> +       struct ec_params_motion_sense *param;
+> +       struct cros_ec_command *msg;
+> +       int ret;
 
-> > +
-> > +	return ov772x_set_frame_rate(priv, tpf, priv->cfmt, priv->win);
-> > +}
-> > +
-> >  static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
-> >  {
-> >  	struct ov772x_priv *priv = container_of(ctrl->handler,
-> > @@ -757,6 +905,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
-> >  			     const struct ov772x_win_size *win)
-> >  {
-> >  	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-> > +	struct v4l2_fract tpf;
-> >  	int ret;
-> >  	u8  val;
-> >
-> > @@ -885,6 +1034,13 @@ static int ov772x_set_params(struct ov772x_priv *priv,
-> >  	if (ret < 0)
-> >  		goto ov772x_set_fmt_error;
-> >
-> > +	/* COM4, CLKRC: Set pixel clock and framerate. */
-> > +	tpf.numerator = 1;
-> > +	tpf.denominator = priv->fps;
-> > +	ret = ov772x_set_frame_rate(priv, &tpf, cfmt, win);
-> > +	if (ret < 0)
-> > +		goto ov772x_set_fmt_error;
-> > +
-> >  	/*
-> >  	 * set COM8
-> >  	 */
-> > @@ -1043,6 +1199,24 @@ static const struct v4l2_subdev_core_ops ov772x_subdev_core_ops = {
-> >  	.s_power	= ov772x_s_power,
-> >  };
-> >
-> > +static int ov772x_enum_frame_interval(struct v4l2_subdev *sd,
-> > +				      struct v4l2_subdev_pad_config *cfg,
-> > +				      struct v4l2_subdev_frame_interval_enum *fie)
-> > +{
-> > +	if (fie->pad || fie->index >= OV772X_N_FRAME_INTERVALS)
-> > +		return -EINVAL;
-> > +
-> > +	if (fie->width != VGA_WIDTH && fie->width != QVGA_WIDTH)
-> > +		return -EINVAL;
-> > +	if (fie->height != VGA_HEIGHT && fie->height != QVGA_HEIGHT)
-> > +		return -EINVAL;
-> > +
-> > +	fie->interval.numerator = 1;
-> > +	fie->interval.denominator = ov772x_frame_intervals[fie->index];
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
-> >  		struct v4l2_subdev_pad_config *cfg,
-> >  		struct v4l2_subdev_mbus_code_enum *code)
-> > @@ -1055,14 +1229,17 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
-> >  }
-> >
-> >  static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
-> > -	.s_stream	= ov772x_s_stream,
-> > +	.s_stream		= ov772x_s_stream,
-> > +	.s_frame_interval	= ov772x_s_frame_interval,
-> > +	.g_frame_interval	= ov772x_g_frame_interval,
-> >  };
-> >
-> >  static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
-> > -	.enum_mbus_code = ov772x_enum_mbus_code,
-> > -	.get_selection	= ov772x_get_selection,
-> > -	.get_fmt	= ov772x_get_fmt,
-> > -	.set_fmt	= ov772x_set_fmt,
-> > +	.enum_frame_interval	= ov772x_enum_frame_interval,
-> > +	.enum_mbus_code		= ov772x_enum_mbus_code,
-> > +	.get_selection		= ov772x_get_selection,
-> > +	.get_fmt		= ov772x_get_fmt,
-> > +	.set_fmt		= ov772x_set_fmt,
+> +       struct cros_ec_dev *ec = container_of(
+> +                       dev, struct cros_ec_dev, class_dev);
+
+First of all, do not split lines like this.
+Second, consider just to add a preparatory patch which introduces
+
+#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
+
+and use it here.
+
+> +
+> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+> +       if (!msg)
+> +               return -ENOMEM;
+> +
+> +       param = (struct ec_params_motion_sense *)msg->data;
+> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
+> +       msg->version = 2;
+> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
+> +       param->kb_wake_angle.data = EC_MOTION_SENSE_NO_VALUE;
+> +       msg->outsize = sizeof(*param);
+> +       msg->insize = sizeof(*resp);
+> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+> +       if (ret < 0)
+> +               goto exit;
+> +       resp = (struct ec_response_motion_sense *)msg->data;
+
+> +       ret = scnprintf(buf, PAGE_SIZE, "%d\n",
+> +                       resp->kb_wake_angle.ret);
+
+Looks like one line.
+
+> +exit:
+> +       kfree(msg);
+> +       return ret;
+> +}
+> +
+> +static ssize_t store_kb_wake_angle(struct device *dev,
+> +                                  struct device_attribute *attr,
+> +                                  const char *buf, size_t count)
+> +{
+> +       struct ec_params_motion_sense *param;
+> +       struct cros_ec_command *msg;
+> +       int ret;
+> +       struct cros_ec_dev *ec = container_of(
+> +                       dev, struct cros_ec_dev, class_dev);
+> +       u16 angle;
+> +
+> +       ret = kstrtou16(buf, 0, &angle);
+> +       if (ret)
+> +               return ret;
+> +
+> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+> +       if (!msg)
+> +               return -ENOMEM;
+> +
+> +       param = (struct ec_params_motion_sense *)msg->data;
+> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
+> +       msg->version = 2;
+> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
+> +       param->kb_wake_angle.data = angle;
+> +       msg->outsize = sizeof(*param);
+> +       msg->insize = sizeof(struct ec_response_motion_sense);
+> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+> +       kfree(msg);
+> +       if (ret < 0)
+> +               return ret;
+> +       return count;
+> +}
+> +
+>  /* Module initialization */
 >
-> Shouldn't these last four ops be added in the previous patch?
-> They don't have anything to do with the frame interval support.
->
+>  static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
+>  static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
+>  static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
+> +static DEVICE_ATTR(kb_wake_angle, S_IWUSR | S_IRUGO, show_kb_wake_angle,
+> +                  store_kb_wake_angle);
 
-If you look closely you'll notice I have just re-aligned them, since I
-was at there to add enum_frame_interval operation
+Consider to switch to
 
-> Anyway, after taking care of the memsets and these four ops you can add
-> my:
->
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+DEVICE_ATTR_RO()
+DEVICE_ATTR_RW()
 
-Thanks
-   j
+-- 
+With Best Regards,
+Andy Shevchenko
