@@ -1,142 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965765AbeBUNN5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:13:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54502 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752681AbeBUNNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:13:54 -0500
-Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
- <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
- <44a7d9dc-f6f3-e003-44d6-b0c4aa7dc046@arm.com>
- <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
-From: Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
-Date: Wed, 21 Feb 2018 13:13:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S936504AbeBUNPq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:15:46 -0500
+Received: from ozlabs.org ([103.22.144.67]:59407 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754542AbeBUNNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:13:09 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] cpufreq: powernv: Check negative value returned by cpufreq_table_find_index_dl()
+In-Reply-To: <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
+References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <20180212102900.GU28462@vireshk-i7> <874lmasxxx.fsf@concordia.ellerman.id.au> <20180221055450.GO28462@vireshk-i7> <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
+Date: Thu, 22 Feb 2018 00:13:03 +1100
+Message-ID: <87vaeqqye8.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/16/2018 01:44 PM, Vincent Guittot wrote:
-> On 16 February 2018 at 13:13, Valentin Schneider
-> <valentin.schneider@arm.com> wrote:
->> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
->>> Stopped the periodic update of blocked load when all idle CPUs have fully
->>> decayed. We introduce a new nohz.has_blocked that reflect if some idle
->>> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
->>> is set everytime that a Idle CPU can have blocked load and it is then clear
->>> when no more blocked load has been detected during an update. We don't need
->>> atomic operation but only to make cure of the right ordering when updating
->>> nohz.idle_cpus_mask and nohz.has_blocked.
->>>
->>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> ---
->>>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
->>>  kernel/sched/sched.h |   1 +
->>>  2 files changed, 102 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 7af1fa9..5a6835e 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>>
->>> [...]
->>> @@ -9383,11 +9452,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>                * work being done for other cpus. Next load
->>>                * balancing owner will pick it up.
->>>                */
->>> -             if (need_resched())
->>> -                     break;
->>> +             if (need_resched()) {
->>> +                     has_blocked_load = true;
->>> +                     goto abort;
->>> +             }
->>>
->>>               rq = cpu_rq(balance_cpu);
->>>
+"Rafael J. Wysocki" <rafael@kernel.org> writes:
+
+> On Wed, Feb 21, 2018 at 6:54 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>> On 21-02-18, 16:39, Michael Ellerman wrote:
+>>> Viresh Kumar <viresh.kumar@linaro.org> writes:
 >>
->> I'd say it's safe to do the following here. The flag is raised in
->> nohz_balance_enter_idle() before the smp_mb(), so we won't skip a CPU
->> that just got added to nohz.idle_cpus_mask.
-> 
-> rq->has_blocked_load will be set before the barrier only if
-> nohz_tick_stopped is not already set,
-> Otherwise, we skip cpumask update and the barrier in  nohz_balance_enter_idle
-> 
-
-Right, forgot about that bit. I think it's still fine because:
-- nohz_balance_enter_idle() can't be called before the last running task is
-dequeued, which requires the rq lock.
-- update_blocked_averages takes the rq lock and clears rq->has_blocked_load
-with the lock held.
-
-So even though we could have some very unlikely scenario where a CPU quickly
-goes out/in of idle after nohz.idle_cpus_mask has been read, the blocked load
-itself is safe so rq->has_blocked_load will end up being set correctly.
-(Took me a while to see it that way)
-
-
-BTW, with the current set on Peter's sched/testing, update_nohz_stats()
-is called here, which doesn't do the update if !rq->has_blocked_load
-(Although that check is done without lock/barrier, so maybe we could not see
-a CPU that just went idle ?)
-
-I have one more question on that bit:
-
-
-		has_blocked_load |= update_nohz_stats(rq, true);
-
-		/*
-		 * If time for next balance is due,
-		 * do the balance.
-		 */
-		if (time_after_eq(jiffies, rq->next_balance)) {
-			struct rq_flags rf;
-
-			rq_lock_irqsave(rq, &rf);
-			update_rq_clock(rq);
-			cpu_load_update_idle(rq);
-			rq_unlock_irqrestore(rq, &rf);
-
-			if (flags & NOHZ_BALANCE_KICK)
-				rebalance_domains(rq, CPU_IDLE);
-		}
-
-		if (time_after(next_balance, rq->next_balance)) {
-			next_balance = rq->next_balance;
-			update_next_balance = 1;
-		}
-
-
-Now that I think about it, shouldn't we always have a 'continue' after
-the blocked load update if (flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK ?
-AFAICT we don't want to push the next_balance forward, only the next_blocked.
-That would also take care of not doing the load balance.
+>>> > AFAICT, you will get -1 here only if the freq table had no valid
+>>> > frequencies (or the freq table is empty). Why would that happen ?
+>>>
+>>> Bugs?
 >>
->>                 /*
->>                  * This cpu doesn't have any remaining blocked load, skip it.
->>                  * It's sane to do this because this flag is raised in
->>                  * nohz_balance_enter_idle()
->>                  */
->>                 if ((flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK &&
->>                     !rq->has_blocked_load)
->>                         continue;
->>
->>> +             update_blocked_averages(rq->cpu);
->>> +             has_blocked_load |= rq->has_blocked_load;
->>> +
+>> The cupfreq driver shouldn't have registered itself in that case (i.e.
+>> if the cpufreq table is empty).
+>
+> To be precise, ->init() should fail as that's where the table is
+> created.  The registration fails as a result then.
+>
+> But what if the bug is that ->init() doesn't fail when it should?
+>
+> I guess the core could double check the frequency table after ->init()
+> if ->target_index is not NULL.
+>
+> The overall point here is that if you get a negative index in
+> ->fast_switch(), that's way too late anyway and we should be able to
+> catch that error much earlier.
+
+OK.
+
+Still it's one thing for the driver to print a warning and bail out,
+it's another to access off the front of an array and keep running using
+some junk values, or oops (though not in this case because the array
+happens to be static).
+
+cheers
