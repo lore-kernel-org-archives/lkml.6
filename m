@@ -1,621 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937453AbeBUON7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:13:59 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34813 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935305AbeBUONy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:13:54 -0500
-X-Google-Smtp-Source: AH8x226AoSgtV2rUdichevY9vU1esmze5RP2k9Rx7uUv4llzJPBv9rMbH5B1c8FQBtCncTWKItchbZv/3BRDxqBEQPQ=
+        id S937486AbeBUOPu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:15:50 -0500
+Received: from mail-co1nam03on0066.outbound.protection.outlook.com ([104.47.40.66]:14190
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935321AbeBUOPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:15:45 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [PATCH v2 1/2] KVM: x86: Add a framework for supporting MSR-based
+ features
+To: Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20180215231156.31016.79657.stgit@tlendack-t1.amdoffice.net>
+ <20180215231206.31016.78914.stgit@tlendack-t1.amdoffice.net>
+ <00583b68-d599-b709-133a-3741c258df13@redhat.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <7f6a78ae-abab-2a03-aebd-e43e6fe168b4@amd.com>
+Date: Wed, 21 Feb 2018 08:15:36 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180220193306.28748-2-rodrigorivascosta@gmail.com>
-References: <20180220193306.28748-1-rodrigorivascosta@gmail.com> <20180220193306.28748-2-rodrigorivascosta@gmail.com>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Wed, 21 Feb 2018 15:13:53 +0100
-Message-ID: <CAO-hwJJ8mhTCJ3xnEO3Vi6FeY-5=uHG9yN+BYbWe0sa2VD1siw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] HID: add driver for Valve Steam Controller
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00583b68-d599-b709-133a-3741c258df13@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: DM5PR21CA0066.namprd21.prod.outlook.com
+ (2603:10b6:3:129::28) To CY4PR12MB1143.namprd12.prod.outlook.com
+ (2603:10b6:903:38::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 0f3e5ca1-231e-4b71-8130-08d579359874
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:CY4PR12MB1143;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1143;3:OufnP6L5vWm84uS5hn7sPovZRg8b9QhImDSh+suYmPad/XG7I9m3YZ+T/cNGZCHDbeaODAJ5163uZFBPx9IJI7GW2cHmaJNUVfmo/98zfpy+6d31RbtUxckHpYhhANPs7f/AEe8lsPcy4fQ7Nxecc7YayCR0BeIxGklFUW86pYJac8yHpApSNzXl6sLOjuoZ89sJ6EIGCnMpo9Om2/ezXOeYKraqAqY1HJthfvA0M1Y6TtA4vktleVloztbkjI3L;25:gE7Z62Dk78VSK8RC07//3fOFmIDxxd7iDT6p/pAxbsxvo+GutEWX+DWrBk/IaOQxfLNOM+Ao4evtcuweuQ1xxsf1ikH9f7eg9aMXH3yuHxcpgypLAiB0YFecyyK66lgm7BEA7QNP20QR8nhNS1gvBZnLNnhvqp7G/05Q1fiHw+BL3ZNs/VhkH+ZQ15YIABEX3LRZruwMs//YjhYfBpNeclk1HmTfPU9ZHExI1w8WggoCa8xtdXeptEA0odpWYUmeOdJJOvEtj7x+JUgBuZQhERHp3b/Nn4Y6TL9ZdRKbiu0J55W8JvlyjIsLwhEUDAqAuD8eWg/2aIGXLrLzy2zDQg==;31:YtCeyz9FhZnVCT6yXwd5JpPH8Cv/z6GIRVJ/mmknnvm7ML0nEQtqOcFULZiXGVx3W69rsdT/yV6fv6Ay6ommgNQLtXXfvvJin8rPJXkXcrB9WWN+ytr3Kkqf28iA7IXYmn2MVHNkEGZ4hXV7u5ydh2vDaet2kQbq42iKCoDLXmnHw01iLhM45VEVslObQr/X+whzchAhy2QC08z60/oo114s4KudrbjD3Jrq/vnW4Zk=
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1143:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1143;20:AHxMcirRWdq8UH+Hmuiccq49mhO5RGoxrJqrsU6m/xxHKdG48qeJWbApthN6EEeYdWtTpvgzNn/lVxUD4F2bxK96ITz5UvyFH080O9Q4xSqbFZYMGPJhDpibsc6V8Sg6RJHrkLhE9L4LF4dnNs4xo/iv/UuTItsG2DI9/JD/Xjs754dT909A9DIT4AM1EHQIdANcHvyQHrTgzp1dscNp56p1J0GMepi+o7Rv77qzRLfrKm9i6EqnRbK2scU3J27ljXizNa1XzYyLbGw0clcp+HiZWlDcNd5CTg/WENqiHTBdFmVCWGrgHWQP85nVjQ4C7MabIV/nzKSFLAj37MofNwZrH243ALZ9EffPfO+/G5LALHjfU/5PJWP2k/xRxMGEn1AYU+RCy6Sw9HCwdlH9WwBzxg5faOFk1rwLSzhGPnmS7uxK1XH0WFyHI9J4LtRpU4mph08xlDP/OVAuozUpGtB1XsVdJ7cphtFLMPzOsvXs1jQF31PmMQaYEFMsCcSU;4:TsP6Kn//XaihmCAZYoaxviEZSI5jQGi//CYWMJSks6en2pZazXoi149vk8Dn7lMeXKHWHfPEEPcyu+qLgz3xI0m81yxU5LvexURn5/ynthPJ6vu6HcQVqqqU5FEGv/Z1licNkOtk65qn4r0kWEiCkrIBSeh+QM5gttGuSTqaYIh6Vv5TvyL/7UmBonWJxcZ2jFOfocSeB/CSCPGmpyWM6YrIkkLO4zc4GgmKarqAyGo2sfIABvOsC/EeX4ITiKYQN2kqOGv1GjsgzJu68dkGMA==
+X-Microsoft-Antispam-PRVS: <CY4PR12MB1143C131AA3CEA8BF606B3E4ECCE0@CY4PR12MB1143.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001068)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231101)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:CY4PR12MB1143;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1143;
+X-Forefront-PRVS: 0590BBCCBC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(346002)(39860400002)(376002)(396003)(39380400002)(366004)(189003)(199004)(229853002)(2906002)(16526019)(105586002)(186003)(106356001)(54906003)(68736007)(31686004)(8936002)(86362001)(3846002)(6116002)(58126008)(8676002)(5660300001)(81156014)(81166006)(36756003)(65826007)(305945005)(47776003)(6486002)(52146003)(53936002)(2950100002)(7736002)(6246003)(65956001)(25786009)(31696002)(478600001)(72206003)(52116002)(53546011)(386003)(64126003)(76176011)(230700001)(6666003)(4326008)(77096007)(16576012)(23676004)(66066001)(2486003)(26005)(97736004)(65806001)(316002)(3260700006)(50466002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1143;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjEyTUIxMTQzOzIzOmFNWDVWYkxsL0hRYVRRelFVL0VkcS9DeVpT?=
+ =?utf-8?B?Y0xUaDVZaExYY3p2eWhPZGxiUFdmZUMya3A2VWVhZ1hTWEFRWnRrWGU1U2s3?=
+ =?utf-8?B?NkV6Nng3amh4WnkxZ0JoOWNJS0ZJUEhlOUxLZXlMMXV0M2RDUkszemhPdkJh?=
+ =?utf-8?B?alFRakczYTBDRlRKT1FxY0xYdjA0QTQ4c0k5Q0QralByZStDdzNvOWpSSENl?=
+ =?utf-8?B?OE05anpLWG9IQXRVaGZhMkk1L3NqT3ZIeHBmb3JtMWE4dy8xQnpqa1FVb1Zp?=
+ =?utf-8?B?d085ZEJDSlBwbjNPaVFYRXdzRGxPVlhJS2xLdkFlY08vZ3F3Zi9mMFpmaDBq?=
+ =?utf-8?B?WHZVYUtNTEM2dENjL2FLWm1DTTVWUE9QdHloelJOQnJ3a1FrbzZ3SEdsNWUv?=
+ =?utf-8?B?dDMyamgraGp6WDhWOTBqdnBDSFc4NU0wYS82RXhtSlQ0YWRIYjg4clhGNkZP?=
+ =?utf-8?B?S1dKZHBJNU9OWDZhSDBlY1lkZzVDRk90emQwazl0dk9QZWpSbFFlL21ySytp?=
+ =?utf-8?B?MkRzdUZBZ01pM0JIcUc4UnlXZ2xjKzZCeTh2emwza0U1WWlvcXhXU2NLSmky?=
+ =?utf-8?B?eWdLaVlRbG50QitLZ1Z3cTMwYXRnRElsVnpzR0Ric0xlcUcwUTlkaXpMUisw?=
+ =?utf-8?B?REl4cjhOcjRjRWFOdzJjYk8zOCtIZ0tZUlBKbHN2TUJBZlQ1bFRLMjdtNHNv?=
+ =?utf-8?B?cWRJTWUwUFNHUXhDUVhBSHhWL28ydGlDSzYveFFVYnZ3QzZ4RGE4S1BQQTk0?=
+ =?utf-8?B?YjFPSjZaWm02dVZJRVR0M0E1OGVKd0hhckt0eUJKZnNWdm5TSDRTK3BNbDJ1?=
+ =?utf-8?B?N3kyeE1RcXFvWDhwdVpBRUp2Y25jbUVmcjB0aG9mdVZuaUsrelVVQlQrZE05?=
+ =?utf-8?B?QjlLQnVLa1JsVVAyeGFHRzJaQjZQV281SXY1WHBBa1FtOWJhNTMzWVZOekNr?=
+ =?utf-8?B?WW16cmVWbVhkVHlucGRVVC9PcVNxRHUvNklVdTR5SzJ2YUlwUGlwaWk4bGFh?=
+ =?utf-8?B?TTBkeGlIT2hyTTQ0ZmM5NmV1d1c0WFMxN1hXV1dQeERJUXA4Mlo1dStjY2Uv?=
+ =?utf-8?B?aUJhbDljQ29OWlRJK29WVllETitXVUJwL2ZxS0xySG9iS0NaMDZqaWcrNGd3?=
+ =?utf-8?B?WUg2YkpDWENKVmc0MCtGanU0NDg2cEN1cXBjZkhON0xVSDZ4ck1rSlUybU96?=
+ =?utf-8?B?L2FOVW9vS3JIVkpiWVRWSDNPWXA0b1VwZncxbHlMU01wV1NndUg4UDA1Yzhr?=
+ =?utf-8?B?MGpVa21kTVRyTzc4WGpyWmFhaU5lSzgwZld0Y2habnk2ZFVwU3hKSHR2TnZk?=
+ =?utf-8?B?OVBsaTMvU2NzYXlHQkUrWVZaalRCVjRybDMxRkdqa2RTT0FWVCtzL0FtWGlT?=
+ =?utf-8?B?MDFGRlFWUmd3SHQ2Szc0SE1BbWV3T3NpMGI2dmtyOU1LVVBmTUZIbG16bVZ3?=
+ =?utf-8?B?S3ppenhEK2JDNzZuYnMyQUduMkpPMEJhVnZiOXFja1lGRmp6UkJKVnAxMGJF?=
+ =?utf-8?B?SGdWSkZTZTR3WkRwM2xHVDVlQjVad01BY2FaQXdlSGlhY1hPUlM1VEJEUitk?=
+ =?utf-8?B?Q1J6SzBZQmdiTm9uemFOUHE4WU5McTVSZWRwMHFHcE5OR0JKdFo1eDl1UURU?=
+ =?utf-8?B?aHpvR1pFdVo0NERidzVjWjRBMWdYM1FodzRXbWlsTHIyU1l1MitWQUZpNzEr?=
+ =?utf-8?B?ZG02N29LN25KVHYwR2lROFNvbjRWZzRYTTUxeVQ4OFVEa3htc3g1eTQ4REE1?=
+ =?utf-8?B?K1FFS2g4REs5WThoZEFGTlQwZnY1YkRXbCtHb3dtbzN3OWk4M1p2amxEZlVO?=
+ =?utf-8?B?NktweHRjWDVKelVhNHg0YVR2aExuSENQOFIrUDZvcmdaeGJ0aXhFUzRXaG5R?=
+ =?utf-8?Q?QU+Mr1TTuig=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1143;6:GYpWNv18Q75ofhwy6WBu24rrsf2242R4vdiCkHaXWpD6HAkAv3i5LbGoJ5sX1knVGptP8YaHn/BUzrXJB6/mEhSk/Y1iH83J+WdqB3bUtRR+XD+sdw1oplZ/0MVmr1m+jjHhaMjSt7/5oZZ3LUmCY2w4SdO6SchbiS1IC4uD/EmVvnnQiCK4sfwurpdReoU6ko3gK///2CuR/kt4vyHKIk+If78dRKEc8QvhJmu5e3k82JJTP+65rsS8EHMnjd12OVApW9d7PWc/uxqfKEFQVw3XCa227EGf0x8VPvMXX3XHgdb+6DaLbYWC7KF9SKTWz3jCtzG80EKQXLDAc+JBSwB9iU2LVktqwuOJvWV6dNU=;5:P3jH6BoQOAabYd5vpM0mmUgWMv45ZUUEV/lArvBkJn5nlDF/Cfpxq+Oyh8RFkklLyQHFsCi1Z3zpJDlBt04jZtuqr4jM1hZEMa0WAiAd9u5wXjueTALKft44uXLKigPsmkA8tN2h3l+WTsAEEMbKiJ+jcN4vF8+NN+6qPW91C1E=;24:f9xgficDc+yNa/weHC7YHiAM3rLHSsSNaJFmSagoArtpMb7rxLLRwhC8W3RLC+UXllfTZrWdMiPKZ86Lb2VPxyZKCc0J3nfbfnMKPUuSCLA=;7:wR2DEXWfk9TW4OmROdmuSQbPlhnIV2XLx3ADLtQx4Rjx2NnjGW5XNpqB+b2e/zbfMx6x088gcdmDzHqyzLciBBomUF2kdiuJ+uQxMOyo3YNpvfN7qfVf1PoJc7Y8gcmQyoEB3ratMxm4tId669v/LaNaf4oEknFFBu+aY0r0MkqasBR/fNvvpElFdpDxPWVrz7bIAd8xbxQsNo11s7RqDj+7xeJli6RBgHYZkiVbO6w3SXwNBBNrShJzVbp/KApw
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1143;20:xxQj7E6zsSeGr3dCNijiRjEH9o+FeMtHvliCMtubPVlg2jIazrPNY65uilJ4maoyU8uQZjFhoiaMi2izf+giaSbx3SdHq45WhndSNauOHIIi5mN5V+IXR9jb9qVROyn4j+M4INn4SupNQkEEU4kiR1Ud6b+ncetntZDPOtnPXPhRJv8lISuyxcwvR+VVAPNh+2LnqAgnbn5QS+W3H9rD5823uZ4QdGa6cXnm/lUyMatcyJ2jx1PLWvQT/7zaZx+T
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2018 14:15:43.6574 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f3e5ca1-231e-4b71-8130-08d579359874
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1143
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 8:33 PM, Rodrigo Rivas Costa
-<rodrigorivascosta@gmail.com> wrote:
-> There are two ways to connect the Steam Controller: directly to the USB
-> or with the USB wireless adapter.  Both methods are similar, but the
-> wireless adapter can connect up to 4 devices at the same time.
->
-> The wired device will appear as 3 interfaces: a virtual mouse, a virtual
-> keyboard and a custom HID device.
->
-> The wireless device will appear as 5 interfaces: a virtual keyboard and
-> 4 custom HID devices, that will remain silent until a device is actually
-> connected.
->
-> The custom HID device has a report descriptor with all vendor specific
-> usages, so the hid-generic is not very useful. In a PC/SteamBox Valve
-> Steam Client provices a software translation by using direct USB access
-> and a creates a uinput virtual gamepad.
->
-> This driver was reverse engineered to provide direct kernel support in
-> case you cannot, or do not want to, use Valve Steam Client. It disables
-> the virtual keyboard and mouse, as they are not so useful when you have
-> a working gamepad.
->
-> Working: buttons, axes, pads, wireless connect/disconnect.
->
-> TO-DO: Battery, force-feedback, accelerometer/gyro, led, beeper...
->
-> Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-> ---
->  drivers/hid/Kconfig      |   8 +
->  drivers/hid/Makefile     |   1 +
->  drivers/hid/hid-ids.h    |   4 +
->  drivers/hid/hid-quirks.c |   4 +
->  drivers/hid/hid-steam.c  | 478 +++++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 495 insertions(+)
->  create mode 100644 drivers/hid/hid-steam.c
->
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 19c499f5623d..6e80fbf04e03 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -823,6 +823,14 @@ config HID_SPEEDLINK
->         ---help---
->         Support for Speedlink Vicious and Divine Cezanne mouse.
->
-> +config HID_STEAM
-> +       tristate "Steam Controller support"
-> +       depends on HID
-> +       ---help---
-> +       Say Y here if you have a Steam Controller if you want to use it
-> +       without running the Steam Client. It supports both the wired and
-> +       the wireless adaptor.
-> +
->  config HID_STEELSERIES
->         tristate "Steelseries SRW-S1 steering wheel support"
->         depends on HID
-> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> index eb13b9e92d85..60a8abf84682 100644
-> --- a/drivers/hid/Makefile
-> +++ b/drivers/hid/Makefile
-> @@ -95,6 +95,7 @@ obj-$(CONFIG_HID_SAMSUNG)     += hid-samsung.o
->  obj-$(CONFIG_HID_SMARTJOYPLUS) += hid-sjoy.o
->  obj-$(CONFIG_HID_SONY)         += hid-sony.o
->  obj-$(CONFIG_HID_SPEEDLINK)    += hid-speedlink.o
-> +obj-$(CONFIG_HID_STEAM)                += hid-steam.o
->  obj-$(CONFIG_HID_STEELSERIES)  += hid-steelseries.o
->  obj-$(CONFIG_HID_SUNPLUS)      += hid-sunplus.o
->  obj-$(CONFIG_HID_GREENASIA)    += hid-gaff.o
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index 43ddcdfbd0da..be31a3c20818 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -988,6 +988,10 @@
->  #define USB_VENDOR_ID_STANTUM_SITRONIX         0x1403
->  #define USB_DEVICE_ID_MTP_SITRONIX             0x5001
->
-> +#define USB_VENDOR_ID_VALVE                    0x28de
-> +#define USB_DEVICE_ID_STEAM_CONTROLLER         0x1102
-> +#define USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS        0x1142
-> +
->  #define USB_VENDOR_ID_STEELSERIES      0x1038
->  #define USB_DEVICE_ID_STEELSERIES_SRWS1        0x1410
->
-> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> index 5f6035a5ce36..72ac972dc00b 100644
-> --- a/drivers/hid/hid-quirks.c
-> +++ b/drivers/hid/hid-quirks.c
-> @@ -629,6 +629,10 @@ static const struct hid_device_id hid_have_special_driver[] = {
->  #if IS_ENABLED(CONFIG_HID_SPEEDLINK)
->         { HID_USB_DEVICE(USB_VENDOR_ID_X_TENSIONS, USB_DEVICE_ID_SPEEDLINK_VAD_CEZANNE) },
->  #endif
-> +#if IS_ENABLED(CONFIG_HID_STEAM)
-> +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER) },
-> +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS) },
-> +#endif
+On 2/21/2018 5:41 AM, Paolo Bonzini wrote:
+> On 16/02/2018 00:12, Tom Lendacky wrote:
+>> +static u32 msr_based_features[] = {
+>> +};
+>> +
+>> +static unsigned int num_msr_based_features = ARRAY_SIZE(msr_based_features);
+>> +
+>>  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer)
+>>  {
+>>  	if (efer & efer_reserved_bits)
+>> @@ -2785,6 +2794,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>>  	case KVM_CAP_SET_BOOT_CPU_ID:
+>>   	case KVM_CAP_SPLIT_IRQCHIP:
+>>  	case KVM_CAP_IMMEDIATE_EXIT:
+>> +	case KVM_CAP_GET_MSR_FEATURES:
+>>  		r = 1;
+>>  		break;
+>>  	case KVM_CAP_ADJUST_CLOCK:
+>> @@ -4410,6 +4420,47 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>>  			r = kvm_x86_ops->mem_enc_unreg_region(kvm, &region);
+>>  		break;
+>>  	}
+>> +	case KVM_GET_MSR_INDEX_LIST: {
+>> +		struct kvm_msr_list __user *user_msr_list = argp;
+>> +		struct kvm_msr_list msr_list;
+>> +		unsigned int n;
+>> +
+>> +		r = -EFAULT;
+>> +		if (copy_from_user(&msr_list, user_msr_list, sizeof(msr_list)))
+>> +			goto out;
+>> +		n = msr_list.nmsrs;
+>> +		msr_list.nmsrs = num_msr_based_features;
+>> +		if (copy_to_user(user_msr_list, &msr_list, sizeof(msr_list)))
+>> +			goto out;
+>> +		r = -E2BIG;
+>> +		if (n < msr_list.nmsrs)
+>> +			goto out;
+>> +		r = -EFAULT;
+>> +		if (copy_to_user(user_msr_list->indices, &msr_based_features,
+>> +				 num_msr_based_features * sizeof(u32)))
+>> +			goto out;
+>> +		r = 0;
+>> +		break;
+> 
+> I think it's better to have some logic in kvm_init_msr_list, to filter
+> the MSR list based on whatever MSRs the backend provides.
 
-In addition to the discussion in 0/3, I wonder if you should not
-remove this hunk. Unless having hid-generic binding the device before
-your hid-steam driver, it would be better not force the Steam boxes to
-use your driver.
+Ok, that's what I had originally and then you said to just return the full
+list and let KVM_GET_MSR return a 0 or 1 if it was supported. I can switch
+it back.
 
-I'll sneak in the discussion in 0/3.
+> 
+>> +	}
+>> +	case KVM_GET_MSR: {
+> 
+> It's not that the API isn't usable, KVM_GET_MSR is fine for what we need
+> here (it's not a fast path), but it's a bit confusing to have
+> KVM_GET_MSR and KVM_GET_MSRS.
+> 
+> I see two possibilities:
+> 
+> 1) reuse KVM_GET_MSRS as in the previous version.  It's okay to
+> cut-and-paste code from msr_io.
 
-Cheers,
-Benjamin
+If I go back to trimming the list based on support, then KVM_GET_MSRS can
+be used.
 
->  #if IS_ENABLED(CONFIG_HID_STEELSERIES)
->         { HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_SRWS1) },
->  #endif
-> diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-> new file mode 100644
-> index 000000000000..7b2f16b7bb49
-> --- /dev/null
-> +++ b/drivers/hid/hid-steam.c
-> @@ -0,0 +1,478 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * HID driver for Valve Steam Controller
-> + *
-> + * Supports both the wired and wireless interfaces.
-> + *
-> + * Copyright (c) 2018 Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/input.h>
-> +#include <linux/hid.h>
-> +#include <linux/module.h>
-> +#include <linux/workqueue.h>
-> +#include "hid-ids.h"
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>");
-> +
-> +#define STEAM_QUIRK_WIRELESS           BIT(0)
-> +
-> +/* Touch pads are 40 mm in diameter and 65535 units */
-> +#define STEAM_PAD_RESOLUTION 1638
-> +/* Trigger runs are about 5 mm and 256 units */
-> +#define STEAM_TRIGGER_RESOLUTION 51
-> +
-> +struct steam_device {
-> +       spinlock_t lock;
-> +       struct hid_device *hdev;
-> +       struct input_dev *input;
-> +       unsigned long quirks;
-> +       struct work_struct work_connect;
-> +       bool connected;
-> +};
-> +
-> +static int steam_input_open(struct input_dev *dev)
-> +{
-> +       struct steam_device *steam = input_get_drvdata(dev);
-> +
-> +       return hid_hw_open(steam->hdev);
-> +}
-> +
-> +static void steam_input_close(struct input_dev *dev)
-> +{
-> +       struct steam_device *steam = input_get_drvdata(dev);
-> +
-> +       hid_hw_close(steam->hdev);
-> +}
-> +
-> +static int steam_register(struct steam_device *steam)
-> +{
-> +       struct hid_device *hdev = steam->hdev;
-> +       struct input_dev *input;
-> +       int ret;
-> +
-> +       hid_info(hdev, "Steam Controller connected");
-> +
-> +       input = input_allocate_device();
-> +       if (!input)
-> +               return -ENOMEM;
-> +
-> +       input_set_drvdata(input, steam);
-> +       input->dev.parent = &hdev->dev;
-> +       input->open = steam_input_open;
-> +       input->close = steam_input_close;
-> +
-> +       input->name = (steam->quirks & STEAM_QUIRK_WIRELESS) ?
-> +               "Wireless Steam Controller" :
-> +               "Steam Controller";
-> +       input->phys = hdev->phys;
-> +       input->uniq = hdev->uniq;
-> +       input->id.bustype = hdev->bus;
-> +       input->id.vendor = hdev->vendor;
-> +       input->id.product = hdev->product;
-> +       input->id.version = hdev->version;
-> +
-> +       input_set_capability(input, EV_KEY, BTN_TR2);
-> +       input_set_capability(input, EV_KEY, BTN_TL2);
-> +       input_set_capability(input, EV_KEY, BTN_TR);
-> +       input_set_capability(input, EV_KEY, BTN_TL);
-> +       input_set_capability(input, EV_KEY, BTN_Y);
-> +       input_set_capability(input, EV_KEY, BTN_B);
-> +       input_set_capability(input, EV_KEY, BTN_X);
-> +       input_set_capability(input, EV_KEY, BTN_A);
-> +       input_set_capability(input, EV_KEY, BTN_SELECT);
-> +       input_set_capability(input, EV_KEY, BTN_MODE);
-> +       input_set_capability(input, EV_KEY, BTN_START);
-> +       input_set_capability(input, EV_KEY, BTN_GEAR_DOWN);
-> +       input_set_capability(input, EV_KEY, BTN_GEAR_UP);
-> +       input_set_capability(input, EV_KEY, BTN_THUMBR);
-> +       input_set_capability(input, EV_KEY, BTN_THUMBL);
-> +
-> +       input_set_abs_params(input, ABS_Z, 0, 255, 0, 0);
-> +       input_set_abs_params(input, ABS_RZ, 0, 255, 0, 0);
-> +       input_set_abs_params(input, ABS_X, -32767, 32767, 0, 0);
-> +       input_set_abs_params(input, ABS_Y, -32767, 32767, 0, 0);
-> +       input_set_abs_params(input, ABS_RX, -32767, 32767, 0, 0);
-> +       input_set_abs_params(input, ABS_RY, -32767, 32767, 0, 0);
-> +       input_set_abs_params(input, ABS_HAT0X, -1, 1, 0, 0);
-> +       input_set_abs_params(input, ABS_HAT0Y, -1, 1, 0, 0);
-> +       input_abs_set_res(input, ABS_X, STEAM_PAD_RESOLUTION);
-> +       input_abs_set_res(input, ABS_Y, STEAM_PAD_RESOLUTION);
-> +       input_abs_set_res(input, ABS_RX, STEAM_PAD_RESOLUTION);
-> +       input_abs_set_res(input, ABS_RY, STEAM_PAD_RESOLUTION);
-> +       input_abs_set_res(input, ABS_Z, STEAM_TRIGGER_RESOLUTION);
-> +       input_abs_set_res(input, ABS_RZ, STEAM_TRIGGER_RESOLUTION);
-> +
-> +       ret = input_register_device(input);
-> +       if (ret)
-> +               goto input_register_fail;
-> +
-> +       steam->input = input;
-> +
-> +       return 0;
-> +
-> +input_register_fail:
-> +       input_free_device(input);
-> +       return ret;
-> +}
-> +
-> +static void steam_unregister(struct steam_device *steam)
-> +{
-> +       if (steam->input) {
-> +               hid_info(steam->hdev, "Steam Controller disconnected");
-> +               input_unregister_device(steam->input);
-> +               steam->input = NULL;
-> +       }
-> +}
-> +
-> +static void steam_work_connect_cb(struct work_struct *work)
-> +{
-> +       struct steam_device *steam = container_of(work, struct steam_device,
-> +                                                       work_connect);
-> +       unsigned long flags;
-> +       bool connected;
-> +       int ret;
-> +
-> +       spin_lock_irqsave(&steam->lock, flags);
-> +       connected = steam->connected;
-> +       spin_unlock_irqrestore(&steam->lock, flags);
-> +
-> +       if (connected) {
-> +               if (steam->input) {
-> +                       dbg_hid("%s: already connected\n", __func__);
-> +                       return;
-> +               }
-> +               ret = steam_register(steam);
-> +               if (ret) {
-> +                       hid_err(steam->hdev,
-> +                               "%s:steam_register failed with error %d\n",
-> +                               __func__, ret);
-> +                       return;
-> +               }
-> +       } else {
-> +               steam_unregister(steam);
-> +       }
-> +}
-> +
-> +static bool steam_is_valve_interface(struct hid_device *hdev)
-> +{
-> +       struct hid_report_enum *rep_enum;
-> +       struct hid_report *hreport;
-> +
-> +       /*
-> +        * The wired device creates 3 interfaces:
-> +        *  0: emulated mouse.
-> +        *  1: emulated keyboard.
-> +        *  2: the real game pad.
-> +        * The wireless device creates 5 interfaces:
-> +        *  0: emulated keyboard.
-> +        *  1-4: slots where up to 4 real game pads will be connected to.
-> +        * We know which one is the real gamepad interface because they are the
-> +        * only ones with a feature report.
-> +        */
-> +       rep_enum = &hdev->report_enum[HID_FEATURE_REPORT];
-> +       list_for_each_entry(hreport, &rep_enum->report_list, list) {
-> +               /* should we check hreport->id == 0? */
-> +               return true;
-> +       }
-> +       return false;
-> +}
-> +
-> +static int steam_probe(struct hid_device *hdev,
-> +                               const struct hid_device_id *id)
-> +{
-> +       struct steam_device *steam;
-> +       int ret;
-> +
-> +       ret = hid_parse(hdev);
-> +       if (ret) {
-> +               hid_err(hdev,
-> +                       "%s:parse of hid interface failed\n", __func__);
-> +               return ret;
-> +       }
-> +
-> +       /*
-> +        * Since we have a proper gamepad now, we can ignore the virtual
-> +        * mouse and keyboard.
-> +        */
-> +       if (!steam_is_valve_interface(hdev))
-> +               return -ENODEV;
-> +
-> +       steam = devm_kzalloc(&hdev->dev,
-> +                       sizeof(struct steam_device), GFP_KERNEL);
-> +       if (!steam)
-> +               return -ENOMEM;
-> +
-> +       spin_lock_init(&steam->lock);
-> +       steam->hdev = hdev;
-> +       hid_set_drvdata(hdev, steam);
-> +       steam->quirks = id->driver_data;
-> +       INIT_WORK(&steam->work_connect, steam_work_connect_cb);
-> +
-> +       ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-> +       if (ret) {
-> +               hid_err(hdev,
-> +                       "%s:hid_hw_start failed with error %d\n",
-> +                       __func__, ret);
-> +               goto hid_hw_start_fail;
-> +       }
-> +
-> +       if (steam->quirks & STEAM_QUIRK_WIRELESS) {
-> +               ret = hid_hw_open(hdev);
-> +               if (ret) {
-> +                       hid_err(hdev,
-> +                               "%s:hid_hw_open for wireless\n",
-> +                               __func__);
-> +                       goto hid_hw_open_fail;
-> +               }
-> +               hid_info(hdev, "Steam wireless receiver connected");
-> +       } else {
-> +               ret = steam_register(steam);
-> +               if (ret) {
-> +                       hid_err(hdev,
-> +                               "%s:steam_register failed with error %d\n",
-> +                               __func__, ret);
-> +                       goto input_register_fail;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +input_register_fail:
-> +hid_hw_open_fail:
-> +       hid_hw_stop(hdev);
-> +hid_hw_start_fail:
-> +       cancel_work_sync(&steam->work_connect);
-> +       hid_set_drvdata(hdev, NULL);
-> +       return ret;
-> +}
-> +
-> +static void steam_remove(struct hid_device *hdev)
-> +{
-> +       struct steam_device *steam = hid_get_drvdata(hdev);
-> +
-> +       if (steam->quirks & STEAM_QUIRK_WIRELESS) {
-> +               hid_info(hdev, "Steam wireless receiver disconnected");
-> +               hid_hw_close(hdev);
-> +       }
-> +       hid_hw_stop(hdev);
-> +       cancel_work_sync(&steam->work_connect);
-> +       steam_unregister(steam);
-> +       hid_set_drvdata(hdev, NULL);
-> +}
-> +
-> +static void steam_do_connect_event(struct steam_device *steam, bool connected)
-> +{
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&steam->lock, flags);
-> +       steam->connected = connected;
-> +       spin_unlock_irqrestore(&steam->lock, flags);
-> +
-> +       if (schedule_work(&steam->work_connect) == 0)
-> +               dbg_hid("%s: connected=%d event already queued\n",
-> +                               __func__, connected);
-> +}
-> +
-> +/*
-> + * The size for this message payload is 60.
-> + * The known values are:
-> + *  (* values are not sent through wireless)
-> + *  (* accelerator/gyro is disabled by default)
-> + *  Offset| Type  | Mapped to |Meaning
-> + * -------+-------+-----------+--------------------------
-> + *  4-7   | u32   | --        | sequence number
-> + *  8-10  | 24bit | see below | buttons
-> + *  11    | u8    | ABS_Z     | left trigger
-> + *  12    | u8    | ABS_RZ    | right trigger
-> + *  13-15 | --    | --        | always 0
-> + *  16-17 | s16   | ABS_X     | X value
-> + *  18-19 | s16   | ABS_Y     | Y value
-> + *  20-21 | s16   | ABS_RX    | right-pad X value
-> + *  22-23 | s16   | ABS_RY    | right-pad Y value
-> + *  24-25 | s16   | --        | * left trigger
-> + *  26-27 | s16   | --        | * right trigger
-> + *  28-29 | s16   | --        | * accelerometer X value
-> + *  30-31 | s16   | --        | * accelerometer Y value
-> + *  32-33 | s16   | --        | * accelerometer Z value
-> + *  34-35 | s16   | --        | gyro X value
-> + *  36-36 | s16   | --        | gyro Y value
-> + *  38-39 | s16   | --        | gyro Z value
-> + *  40-41 | s16   | --        | quaternion W value
-> + *  42-43 | s16   | --        | quaternion X value
-> + *  44-45 | s16   | --        | quaternion Y value
-> + *  46-47 | s16   | --        | quaternion Z value
-> + *  48-49 | --    | --        | always 0
-> + *  50-51 | s16   | --        | * left trigger (uncalibrated)
-> + *  52-53 | s16   | --        | * right trigger (uncalibrated)
-> + *  54-55 | s16   | --        | * joystick X value (uncalibrated)
-> + *  56-57 | s16   | --        | * joystick Y value (uncalibrated)
-> + *  58-59 | s16   | --        | * left-pad X value
-> + *  60-61 | s16   | --        | * left-pad Y value
-> + *  62-63 | u16   | --        | * battery voltage
-> + *
-> + * The buttons are:
-> + *  Bit  | Mapped to  | Description
-> + * ------+------------+--------------------------------
-> + *  8.0  | BTN_TR2    | right trigger fully pressed
-> + *  8.1  | BTN_TL2    | left trigger fully pressed
-> + *  8.2  | BTN_TR     | right shoulder
-> + *  8.3  | BTN_TL     | left shoulder
-> + *  8.4  | BTN_Y      | button Y
-> + *  8.5  | BTN_B      | button B
-> + *  8.6  | BTN_X      | button X
-> + *  8.7  | BTN_A      | button A
-> + *  9.0  | -ABS_HAT0Y | lef-pad up
-> + *  9.1  | +ABS_HAT0X | lef-pad right
-> + *  9.2  | -ABS_HAT0X | lef-pad left
-> + *  9.3  | +ABS_HAT0Y | lef-pad down
-> + *  9.4  | BTN_SELECT | menu left
-> + *  9.5  | BTN_MODE   | steam logo
-> + *  9.6  | BTN_START  | menu right
-> + *  9.7  | BTN_GEAR_DOWN | left back lever
-> + * 10.0  | BTN_GEAR_UP   | right back lever
-> + * 10.1  | --         | left-pad clicked
-> + * 10.2  | BTN_THUMBR | right-pad clicked
-> + * 10.3  | --         | left-pad touched
-> + * 10.4  | --         | right-pad touched
-> + * 10.5  | --         | unknown
-> + * 10.6  | BTN_THUMBL | joystick clicked
-> + * 10.7  | --         | lpad_and_joy
-> + */
-> +
-> +static void steam_do_input_event(struct steam_device *steam, u8 *data)
-> +{
-> +       struct input_dev *input = steam->input;
-> +
-> +       /* 24 bits of buttons */
-> +       u8 b8, b9, b10;
-> +
-> +       /*
-> +        * If we get input events from the wireless without a 'connected'
-> +        * event, just connect it now.
-> +        * This can happen if we bind the HID device with the controller
-> +        * already paired.
-> +        */
-> +       if (unlikely(!input)) {
-> +               dbg_hid("%s: input data without connect event\n", __func__);
-> +               steam_do_connect_event(steam, true);
-> +               return;
-> +       }
-> +
-> +       input_report_abs(input, ABS_Z, data[11]);
-> +       input_report_abs(input, ABS_RZ, data[12]);
-> +
-> +       input_report_abs(input, ABS_X,
-> +                       (s16) le16_to_cpup((__le16 *)(data + 16)));
-> +       input_report_abs(input, ABS_Y,
-> +                       -(s16) le16_to_cpup((__le16 *)(data + 18)));
-> +       input_report_abs(input, ABS_RX,
-> +                       (s16) le16_to_cpup((__le16 *)(data + 20)));
-> +       input_report_abs(input, ABS_RY,
-> +                       -(s16) le16_to_cpup((__le16 *)(data + 22)));
-> +
-> +       b8 = data[8];
-> +       b9 = data[9];
-> +       b10 = data[10];
-> +
-> +       input_event(input, EV_KEY, BTN_TR2, !!(b8 & 0x01));
-> +       input_event(input, EV_KEY, BTN_TL2, !!(b8 & 0x02));
-> +       input_event(input, EV_KEY, BTN_TR, !!(b8 & 0x04));
-> +       input_event(input, EV_KEY, BTN_TL, !!(b8 & 0x08));
-> +       input_event(input, EV_KEY, BTN_Y, !!(b8 & 0x10));
-> +       input_event(input, EV_KEY, BTN_B, !!(b8 & 0x20));
-> +       input_event(input, EV_KEY, BTN_X, !!(b8 & 0x40));
-> +       input_event(input, EV_KEY, BTN_A, !!(b8 & 0x80));
-> +       input_event(input, EV_KEY, BTN_SELECT, !!(b9 & 0x10));
-> +       input_event(input, EV_KEY, BTN_MODE, !!(b9 & 0x20));
-> +       input_event(input, EV_KEY, BTN_START, !!(b9 & 0x40));
-> +       input_event(input, EV_KEY, BTN_GEAR_DOWN, !!(b9 & 0x80));
-> +       input_event(input, EV_KEY, BTN_GEAR_UP, !!(b10 & 0x01));
-> +       input_event(input, EV_KEY, BTN_THUMBR, !!(b10 & 0x04));
-> +       input_event(input, EV_KEY, BTN_THUMBL, !!(b10 & 0x40));
-> +
-> +       input_report_abs(input, ABS_HAT0X,
-> +                       !!(b9 & 0x02) - !!(b9 & 0x04));
-> +       input_report_abs(input, ABS_HAT0Y,
-> +                       !!(b9 & 0x08) - !!(b9 & 0x01));
-> +
-> +       input_sync(input);
-> +}
-> +
-> +static int steam_raw_event(struct hid_device *hdev,
-> +                       struct hid_report *report, u8 *data,
-> +                       int size)
-> +{
-> +       struct steam_device *steam = hid_get_drvdata(hdev);
-> +
-> +       /*
-> +        * All messages are size=64, all values little-endian.
-> +        * The format is:
-> +        *  Offset| Meaning
-> +        * -------+--------------------------------------------
-> +        *  0-1   | always 0x01, 0x00, maybe protocol version?
-> +        *  2     | type of message
-> +        *  3     | length of the real payload (not checked)
-> +        *  4-n   | payload data, depends on the type
-> +        *
-> +        * There are these known types of message:
-> +        *  0x01: input data (60 bytes)
-> +        *  0x03: wireless connect/disconnect (1 byte)
-> +        *  0x04: battery status (11 bytes)
-> +        */
-> +
-> +       if (size != 64 || data[0] != 1 || data[1] != 0)
-> +               return 0;
-> +
-> +       switch (data[2]) {
-> +       case 0x01:
-> +               steam_do_input_event(steam, data);
-> +               break;
-> +       case 0x03:
-> +               /*
-> +                * The payload of this event is a single byte:
-> +                *  0x01: disconnected.
-> +                *  0x02: connected.
-> +                */
-> +               switch (data[4]) {
-> +               case 0x01:
-> +                       steam_do_connect_event(steam, false);
-> +                       break;
-> +               case 0x02:
-> +                       steam_do_connect_event(steam, true);
-> +                       break;
-> +               }
-> +               break;
-> +       case 0x04:
-> +               /* TODO battery status */
-> +               break;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static const struct hid_device_id steam_controllers[] = {
-> +       { /* Wired Steam Controller */
-> +         HID_USB_DEVICE(USB_VENDOR_ID_VALVE,
-> +               USB_DEVICE_ID_STEAM_CONTROLLER)
-> +       },
-> +       { /* Wireless Steam Controller */
-> +         HID_USB_DEVICE(USB_VENDOR_ID_VALVE,
-> +               USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS),
-> +         .driver_data = STEAM_QUIRK_WIRELESS
-> +       },
-> +       {}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(hid, steam_controllers);
-> +
-> +static struct hid_driver steam_controller_driver = {
-> +       .name = "hid-steam",
-> +       .id_table = steam_controllers,
-> +       .probe = steam_probe,
-> +       .remove = steam_remove,
-> +       .raw_event = steam_raw_event,
-> +};
-> +
-> +module_hid_driver(steam_controller_driver);
-> --
-> 2.16.1
->
+Thanks,
+Tom
+
+> 
+> 2) find a name for KVM_GET_MSR that is better and different from
+> KVM_GET_MSRS.  KVM_GET_HOST_MSR or KVM_GET_HOST_FEATURE_MSR come to
+> mind, but I'm obviously open to other suggestions.
+> 
+> Thanks!
+> 
+> Paolo
+> 
+>> +		struct kvm_msr_entry __user *user_msr = argp;
+>> +		struct kvm_msr_entry msr;
+>> +
+>> +		r = -EFAULT;
+>> +		if (copy_from_user(&msr, user_msr, sizeof(msr)))
+>> +			goto out;
+>> +
+>> +		r = 1;
+>> +		if (!kvm_x86_ops->msr_feature || kvm_x86_ops->msr_feature(&msr))
+>> +			goto out;
+>> +
+>> +		r = -EFAULT;
+>> +		if (copy_to_user(user_msr, &msr, sizeof(msr)))
+>> +			goto out;
+>> +
+>> +		r = 0;
+>> +		break;
+>> +	}
+> 
