@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227NxiRfx6/hD0jV1/EuBz8XJChuPfEQWHdDtghc32Z4otV4H9njjMR0UHEwtjXlHPQHujYN
-ARC-Seal: i=1; a=rsa-sha256; t=1519217964; cv=none;
+X-Google-Smtp-Source: AH8x227GG3VgkfT+Ca2Mndhf0ahXqQenQOMC+O57+TAFVEUOad6ZxjBpDzHhyRexlxO7FRK8DyMb
+ARC-Seal: i=1; a=rsa-sha256; t=1519217961; cv=none;
         d=google.com; s=arc-20160816;
-        b=v/CpUSxwkS1SztmqwxiiTTWNfZrXfRNz//YP/tgt+QkmkM7eWGRtj3xAqOWSi3yCIU
-         frHPCCjlbLp3NxNHsjREM8e3Cw1cmRbiaiUz8Q2nd9TNt2SUEaB4Kjj6MBHSctib4o34
-         jyv8A40v3iq18gGQzVJ4m/1MhhHTXiqi5QhiDNb42vJznmM2bqAcpqeLbC3FOJPEJ8Ks
-         MuE6WpD+57HoRt0upzDSHaSwjRAQdxtvj5ngUuKxkthHJk88O9PqDDVbVqzKf5hSQ1rk
-         Cy6dNrF9LpGIlLACM9ddr+XJQfvZu/AMRfGeQ1m0NBqACERfHuooiuZCGT7P3e7ep+6o
-         BEBg==
+        b=vP6JTIuKqOmUzmZF9J5g1IiwPKHAxmWidg/iwxFmgcEOHEgSatVMeNq0gKSJtrsmBx
+         br+uqvKkW7yB/D7L2fOdHD6SEDzq0uT79GvFtWWwpsjo2ISAc+UGq/jfXho42KDgm9ut
+         umvpMn/o6GOVcGYDJXn3pb49+JgcRrje1vY9wNdQiiZsbaOo+whe84t4Hg7qmJQSUSyj
+         BVT8+4Dy46olNFHLNsgcVG2aETwxTaunCp2+d6iD0sZ9lKpu12wdRxfYKVGAd8y2ZoIY
+         ffujvYcOyfJfxFUPC5GDTD/H6YWB4OH8JUPjBStx/Hh+BzVqgJNpzDawCRMwbel1N9T/
+         FuWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HcmMe7RSf9Ju3n1xJTuKg/nuMUiTjajycO4b50EmFJQ=;
-        b=rM9B+Tqmy/ImTEbe/Zhq5scFx0Rcp9V/ram1MKUOQgzqOlvhH50YMw+IboSSsHyzGG
-         H6CkxTc9zFxdtL+TsSzFIV4eWY9mdIXbSlN2XTing1Kz9RR3Sk3SR2L0y50fGssSbMGT
-         woCMs4rSVWdoJhqht1hDyMrWPv+z3DZvj6CbXg7lKUY6FbWVrriS0y94qwI6AC0oI3hH
-         SAEWqvGq4DnGtDPenkethoSCE4Nv2LSyehW47pN3UTgQNUTVEaRLQ6dX3TbTtgdubBiv
-         /1LcS3hprqcL2JTOAqDqSDpPLp4QWKXZqNo2ed0Dtrhutqa47sGGhOJYIrItACO/kdV+
-         SvIQ==
+        bh=r2MWAtFYe4o5jz8PB6h6F0XV/1RGvAGXMhX7a5MMsjM=;
+        b=HQXEQhx0Z3J+0zNYaCflHqpMp0aqMh0iszExuPHhX4kJZaJgYfIUX6et9uwa3vmIF8
+         5jWfSYgJdpsZMlKVC2KGueObXHMhwalDyL3nZSfOdexsbssVTVLfwaRBy6n/y0tsRF22
+         ArQcuxFqbDYrjZcnukC/HCBTg6bXZUoACKEvi9vFftWpsjNDC9PzCAABiVJy3+u3vp3Y
+         M1fvPp1HY4TNWtDfooeXADo1mkJukdq0MZmjfKU0GWlToDEBO7lOZxPM18hKvDkGwy6e
+         4UQheN82PJOzpVRcQL6biD8ckAa1Ltt2vTVpPZ6fIYwGZsPS0SQ8v06sdV9w/+QbXgY4
+         pl2A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 041/167] x86/entry/64/compat: Clear registers for compat syscalls, to reduce speculation attack surface
-Date: Wed, 21 Feb 2018 13:47:32 +0100
-Message-Id: <20180221124526.835017151@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.14 032/167] arm: spear13xx: Fix dmas cells
+Date: Wed, 21 Feb 2018 13:47:23 +0100
+Message-Id: <20180221124526.340922603@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -49,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015388581637403?=
-X-GMAIL-MSGID: =?utf-8?q?1593015496229681171?=
+X-GMAIL-THRID: =?utf-8?q?1593014663549542696?=
+X-GMAIL-MSGID: =?utf-8?q?1593015493666703542?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,112 +50,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee upstream.
+commit cdd10409914184c7eee5ae3e11beb890c9c16c61 upstream.
 
-At entry userspace may have populated registers with values that could
-otherwise be useful in a speculative execution attack. Clear them to
-minimize the kernel's attack surface.
+The "dmas" cells for the designware DMA controller need to have only 3
+properties apart from the phandle: request line, src master and
+destination master. But the commit 6e8887f60f60 updated it incorrectly
+while moving from platform code to DT. Fix it.
 
-Originally-From: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org # v3.10+
+Fixes: 6e8887f60f60 ("ARM: SPEAr13xx: Pass generic DW DMAC platform data from DT")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_64_compat.S |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ Documentation/devicetree/bindings/dma/snps-dma.txt |    2 +-
+ arch/arm/boot/dts/spear1340.dtsi                   |    4 ++--
+ arch/arm/boot/dts/spear13xx.dtsi                   |    6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -85,15 +85,25 @@ ENTRY(entry_SYSENTER_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
-+	xorq	%r15, %r15		/* nospec   r15 */
- 	cld
+--- a/Documentation/devicetree/bindings/dma/snps-dma.txt
++++ b/Documentation/devicetree/bindings/dma/snps-dma.txt
+@@ -64,6 +64,6 @@ Example:
+ 		reg = <0xe0000000 0x1000>;
+ 		interrupts = <0 35 0x4>;
+ 		dmas = <&dmahost 12 0 1>,
+-			<&dmahost 13 0 1 0>;
++			<&dmahost 13 1 0>;
+ 		dma-names = "rx", "rx";
+ 	};
+--- a/arch/arm/boot/dts/spear1340.dtsi
++++ b/arch/arm/boot/dts/spear1340.dtsi
+@@ -142,8 +142,8 @@
+ 				reg = <0xb4100000 0x1000>;
+ 				interrupts = <0 105 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x600 0 0 1>, /* 0xC << 11 */
+-					<&dwdma0 0x680 0 1 0>; /* 0xD << 7 */
++				dmas = <&dwdma0 12 0 1>,
++					<&dwdma0 13 1 0>;
+ 				dma-names = "tx", "rx";
+ 			};
  
- 	/*
-@@ -214,15 +224,25 @@ GLOBAL(entry_SYSCALL_compat_after_hwfram
- 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   $0			/* pt_regs->r12 = 0 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   $0			/* pt_regs->r13 = 0 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   $0			/* pt_regs->r14 = 0 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   $0			/* pt_regs->r15 = 0 */
-+	xorq	%r15, %r15		/* nospec   r15 */
+--- a/arch/arm/boot/dts/spear13xx.dtsi
++++ b/arch/arm/boot/dts/spear13xx.dtsi
+@@ -100,7 +100,7 @@
+ 			reg = <0xb2800000 0x1000>;
+ 			interrupts = <0 29 0x4>;
+ 			status = "disabled";
+-			dmas = <&dwdma0 0 0 0 0>;
++			dmas = <&dwdma0 0 0 0>;
+ 			dma-names = "data";
+ 		};
  
- 	/*
- 	 * User mode is traced as though IRQs are on, and SYSENTER
-@@ -338,15 +358,25 @@ ENTRY(entry_INT80_compat)
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
- 	pushq   $0			/* pt_regs->r8  = 0 */
-+	xorq	%r8, %r8		/* nospec   r8 */
- 	pushq   $0			/* pt_regs->r9  = 0 */
-+	xorq	%r9, %r9		/* nospec   r9 */
- 	pushq   $0			/* pt_regs->r10 = 0 */
-+	xorq	%r10, %r10		/* nospec   r10 */
- 	pushq   $0			/* pt_regs->r11 = 0 */
-+	xorq	%r11, %r11		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
-+	xorl	%ebx, %ebx		/* nospec   rbx */
- 	pushq   %rbp                    /* pt_regs->rbp */
-+	xorl	%ebp, %ebp		/* nospec   rbp */
- 	pushq   %r12                    /* pt_regs->r12 */
-+	xorq	%r12, %r12		/* nospec   r12 */
- 	pushq   %r13                    /* pt_regs->r13 */
-+	xorq	%r13, %r13		/* nospec   r13 */
- 	pushq   %r14                    /* pt_regs->r14 */
-+	xorq	%r14, %r14		/* nospec   r14 */
- 	pushq   %r15                    /* pt_regs->r15 */
-+	xorq	%r15, %r15		/* nospec   r15 */
- 	cld
+@@ -290,8 +290,8 @@
+ 				#size-cells = <0>;
+ 				interrupts = <0 31 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x2000 0 0 0>, /* 0x4 << 11 */
+-					<&dwdma0 0x0280 0 0 0>;  /* 0x5 << 7 */
++				dmas = <&dwdma0 4 0 0>,
++					<&dwdma0 5 0 0>;
+ 				dma-names = "tx", "rx";
+ 			};
  
- 	/*
