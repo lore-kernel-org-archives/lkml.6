@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2263AmMoqiOYhkcZjeyml7xKxS9ijmAsd3ttJm3H5V++XZcw0olSLlk/C/gaQ+aqCFmA3E1V
-ARC-Seal: i=1; a=rsa-sha256; t=1519218520; cv=none;
+X-Google-Smtp-Source: AH8x225F4X4nFpJDHSWr7Clf5ikeptyRCgFQAGxJLOHc76kiUoFdIBwPQMumr3hlAZ3niXo6B5Bu
+ARC-Seal: i=1; a=rsa-sha256; t=1519218517; cv=none;
         d=google.com; s=arc-20160816;
-        b=VvqYCI1gCNtf5hKd7UEOT8ViJcosvju0go56WP0wtRsrtLOos+GFfg2djGT/MF6y/d
-         HbIVly1Emh47aQ1jhOhZ447oT2FlfzGdxKRD9O+IvUcH1kIe2ZWwgVuwFgRLTniWSX4k
-         p5yaCVKGGYdChdBmEO+vRWkg1N1HSpuokDbxCB7xG363TLCS1rVm0uOFaOYvzqzaMXAv
-         LqW4OcYcjX9nzyXiyfPjJlC/4aCPUuqsyaoEl3IdukYEJfBOZ0oTYhLA7GVcajelnG7s
-         UkVqetvfXG1T7OSroO39xmGZrt5Ed+C+gzIgQkz7N1HJ4lrYG+yW1TNSu3PtQXhweSUO
-         Lu4g==
+        b=rTdiHBHm0xhZW2FCzvHTRhg7sCjAE0buZ1Ul3g7aQOXBoz0cLNjNwKSx88L3ymoxx3
+         TqXk9D27/ZeNeKUQXZCkAechi/tboecLPmRi3q0fxf/aNs0wa15nSOI4KdHxDoKTe3yS
+         Bxh+qhjTv5KlDBoj0U6V8+58l9Nk134FSAbyVduS6asa4THEWpTXeWvgFOetEsxXASYZ
+         miCQ75Jb3eWMqDhUTwOrmHoQkyWY2nPQXes7BnnUmC50GdqR0HX8FA7m14DuLzbfy7S9
+         pkCqEU/bLs6KYNgSN5TQEW8C86/tiPDrMpa63qc78rsHDFsDqUQQkPGdOpkWysVVfBNr
+         CB0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Zt11f7o1/xKfS0nwUMI5kZuxrVbo8nocck3cbpkgJG4=;
-        b=AVVkuvKHsVTcALkYkY060brwIx3RcG9oTjDl3Wcu33kGSrKvGphI0zvwkicNfoLrGv
-         w1dj/Uc0mu9syWhnxflpUcfsR3uRVs/AOC5yn6xLqnxThKpMxvdVspMHsSnp9nwS7rIK
-         J18mzXIhE0bZlhOe4LWC8LoQ5FYmlf08PuCQ/n/nlTnf0n04Jjy2wHLEc6kxtZDt91yq
-         fEBwjsZTMYPpVo/tO6pp+i8XNlaQYxXby+EtLqzhxCGqNYUfcesMBPyWSpfKEGch9vpu
-         fs3xCeRN5bMqgB+nyRbDq8mmWHeTQ+/libblmFctMM2po6QUmV368an5/QtPgDjTEG4j
-         BYbQ==
+        bh=NlbnTRWm6OdVVLlSKzsfK6h9c86VADZZMgBQQcXc5NM=;
+        b=ssakc8l3vbxptgvJViQ9FYzOyvpjkFRSYT69Paz0x7DlWvEkZlkSXHVBpYPgZwuz6u
+         Hljxovo0eezVyG2oHFlMAyZtie2gSWHaKHbR1cGn7yvLVOl3RKI6SqFAmK95Xc1ra1hD
+         1T8nlr2GlhrRMjQqtUzyArFaHcOQ9EjvYe+ND66u3UGkA8ETHL8MGjlQkNi4Z6PKkVa1
+         uWx1sK0NJlup0Vas6n2K3peE+yh8PrlaeX4JqYNWE9jvkB7P0qUT/IL/c1Nu6Vjln4/6
+         wqtX5AfKONGbb/CVa9nNxaTbWgj7+Ltaq9o/s9bu2yMzWy2NITZrAHFaD1+k5JSW/akm
+         2rOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
 	Dominik Brodowski <linux@dominikbrodowski.net>,
 	Andrew Lutomirski <luto@kernel.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org
-Subject: [PATCH 4.15 069/163] selftests/x86: Clean up and document sscanf() usage
-Date: Wed, 21 Feb 2018 13:48:18 +0100
-Message-Id: <20180221124534.300516334@linuxfoundation.org>
+	shuah@kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 068/163] selftests/x86: Fix vDSO selftest segfault for vsyscall=none
+Date: Wed, 21 Feb 2018 13:48:17 +0100
+Message-Id: <20180221124534.239668731@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -46,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015713811581521?=
-X-GMAIL-MSGID: =?utf-8?q?1593016079162298404?=
+X-GMAIL-THRID: =?utf-8?q?1593015606048915198?=
+X-GMAIL-MSGID: =?utf-8?q?1593016076552612339?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,100 +57,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit d8e92de8ef952bed88c56c7a44c02d8dcae0984e upstream.
+commit 198ee8e17502da2634f7366395db1d77630e0219 upstream.
 
-Replace a couple of magically connected buffer length literal constants with
-a common definition that makes their relationship obvious. Also document
-why our sscanf() usage is safe.
+The vDSO selftest tries to execute a vsyscall unconditionally, even if it
+is not present on the test system (e.g. if booted with vsyscall=none or
+with CONFIG_LEGACY_VSYSCALL_NONE=y set. Fix this by copying (and tweaking)
+the vsyscall check from test_vsyscall.c
 
-No intended functional changes.
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andrew Lutomirski <luto@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kselftest@vger.kernel.org
 Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211205924.GA23210@light.dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211111013.16888-3-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/test_vdso.c     |   11 ++++++++---
- tools/testing/selftests/x86/test_vsyscall.c |   11 ++++++++---
- 2 files changed, 16 insertions(+), 6 deletions(-)
+ tools/testing/selftests/x86/test_vdso.c |   50 +++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
 --- a/tools/testing/selftests/x86/test_vdso.c
 +++ b/tools/testing/selftests/x86/test_vdso.c
-@@ -26,6 +26,9 @@
- # endif
- #endif
+@@ -28,18 +28,52 @@
  
-+/* max length of lines in /proc/self/maps - anything longer is skipped here */
-+#define MAPS_LINE_LEN 128
-+
  int nerrs = 0;
  
- typedef long (*getcpu_t)(unsigned *, unsigned *, void *);
-@@ -37,17 +40,19 @@ static void *vsyscall_getcpu(void)
- {
- #ifdef __x86_64__
- 	FILE *maps;
--	char line[128];
-+	char line[MAPS_LINE_LEN];
- 	bool found = false;
- 
- 	maps = fopen("/proc/self/maps", "r");
- 	if (!maps) /* might still be present, but ignore it here, as we test vDSO not vsyscall */
- 		return NULL;
- 
--	while (fgets(line, sizeof(line), maps)) {
-+	while (fgets(line, MAPS_LINE_LEN, maps)) {
- 		char r, x;
- 		void *start, *end;
--		char name[128];
-+		char name[MAPS_LINE_LEN];
++typedef long (*getcpu_t)(unsigned *, unsigned *, void *);
 +
-+		/* sscanf() is safe here as strlen(name) >= strlen(line) */
- 		if (sscanf(line, "%p-%p %c-%cp %*x %*x:%*x %*u %s",
- 			   &start, &end, &r, &x, name) != 5)
- 			continue;
---- a/tools/testing/selftests/x86/test_vsyscall.c
-+++ b/tools/testing/selftests/x86/test_vsyscall.c
-@@ -33,6 +33,9 @@
- # endif
++getcpu_t vgetcpu;
++getcpu_t vdso_getcpu;
++
++static void *vsyscall_getcpu(void)
++{
+ #ifdef __x86_64__
+-# define VSYS(x) (x)
++	FILE *maps;
++	char line[128];
++	bool found = false;
++
++	maps = fopen("/proc/self/maps", "r");
++	if (!maps) /* might still be present, but ignore it here, as we test vDSO not vsyscall */
++		return NULL;
++
++	while (fgets(line, sizeof(line), maps)) {
++		char r, x;
++		void *start, *end;
++		char name[128];
++		if (sscanf(line, "%p-%p %c-%cp %*x %*x:%*x %*u %s",
++			   &start, &end, &r, &x, name) != 5)
++			continue;
++
++		if (strcmp(name, "[vsyscall]"))
++			continue;
++
++		/* assume entries are OK, as we test vDSO here not vsyscall */
++		found = true;
++		break;
++	}
++
++	fclose(maps);
++
++	if (!found) {
++		printf("Warning: failed to find vsyscall getcpu\n");
++		return NULL;
++	}
++	return (void *) (0xffffffffff600800);
+ #else
+-# define VSYS(x) 0
++	return NULL;
  #endif
++}
  
-+/* max length of lines in /proc/self/maps - anything longer is skipped here */
-+#define MAPS_LINE_LEN 128
-+
- static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
- 		       int flags)
+-typedef long (*getcpu_t)(unsigned *, unsigned *, void *);
+-
+-const getcpu_t vgetcpu = (getcpu_t)VSYS(0xffffffffff600800);
+-getcpu_t vdso_getcpu;
+ 
+-void fill_function_pointers()
++static void fill_function_pointers()
  {
-@@ -98,7 +101,7 @@ static int init_vsys(void)
- #ifdef __x86_64__
- 	int nerrs = 0;
- 	FILE *maps;
--	char line[128];
-+	char line[MAPS_LINE_LEN];
- 	bool found = false;
- 
- 	maps = fopen("/proc/self/maps", "r");
-@@ -108,10 +111,12 @@ static int init_vsys(void)
- 		return 0;
- 	}
- 
--	while (fgets(line, sizeof(line), maps)) {
-+	while (fgets(line, MAPS_LINE_LEN, maps)) {
- 		char r, x;
- 		void *start, *end;
--		char name[128];
-+		char name[MAPS_LINE_LEN];
+ 	void *vdso = dlopen("linux-vdso.so.1",
+ 			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
+@@ -54,6 +88,8 @@ void fill_function_pointers()
+ 	vdso_getcpu = (getcpu_t)dlsym(vdso, "__vdso_getcpu");
+ 	if (!vdso_getcpu)
+ 		printf("Warning: failed to find getcpu in vDSO\n");
 +
-+		/* sscanf() is safe here as strlen(name) >= strlen(line) */
- 		if (sscanf(line, "%p-%p %c-%cp %*x %*x:%*x %*u %s",
- 			   &start, &end, &r, &x, name) != 5)
- 			continue;
++	vgetcpu = (getcpu_t) vsyscall_getcpu();
+ }
+ 
+ static long sys_getcpu(unsigned * cpu, unsigned * node,
