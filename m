@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218858-2-15713371502176876297
+X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218825-2-7543774147312876383
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218857; b=HHEI930Ojis/HhGoe5dGNoW7Tx+1OUIH0AvJbDIcniqB4iV
-    mE3HGKroGWbenGyw8mOATT/zHehQ02fpO281FeqbCVXJeoDiO5sAhyuJyY2z9Eup
-    RWHVUwvG32yo71z0APlCfJqa+gGMA302OmscH9R7+uxNuZtfc7qM4FgsHaoWXmQ0
-    iDew19DYSuiCyjbfk/7bBqZFEyzhmLTQyueGsAdYh3SMYfsboizMoSPx436U864O
-    Fk2LMjlLdbnJYoXvenhKZAYn0Re9BYbI7984yZH7qJdV60G/XCwsDJG4DUuZ0wdy
-    yz5GkTYOFJElORjSMQ/dwgZ+WbbK81jASmvTUVQ==
+    t=1519218825; b=bH4T+0GBr1xMkcvesnHuHX4Rzhx7FQ1TzaESm1pVBYhCUd0
+    xNCJ/dRo1zKqGsOyr0jpp5S4jpGG3BUZlXfEHuZFoFz84+iS2p21h1vQ6ziA2w1O
+    oWAPXyK7xzGX1L9jh8GWH+snI+OHdxxNm+e/FYRuKvHv3LzVJJ9lik43gicwKZF0
+    rVhjzEgPkPuknAnzw1vVX3oJoEZSbM43rjRuUwXSDt+ttHsLdwo0Kkp/+4gydbRM
+    rbWH7gWA6fKTAYUaqjSkUZuljl6FzLJTiRXt2CNxXGPA6EDJa38/ajj0LgSmR6b/
+    I/NyxQPBFmuFzhLg6CtkEAYTGfv6FWITUSQuTTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218857; bh=O9DPCyTsY3vqHtNmCu2CMvnWek
-    K7mTkRpyWSOYgeiWg=; b=kpiwPnaJKTiFVwY+9OWo9TTjJApheGWPVQNcdMjU4g
-    Cki9V4fDa+HdZm8a/kcRn5pIcjt2NagCKthdQxcFdwWwxsoQiH5gUADVbI0K9d5c
-    csgP4ZNUwux4ZwkdZLO1IWIB7vbb6AmgYIbmqnst8y255dUU4xS33Ra6+lHf3AdV
-    shR4SBzvpzvkfCDIY7cRuwUviuWAfC+w59aBblpjNNAg5um0iiMuMM9WAfQ+zYp4
-    xr0JV6gBK4ZmhF7MdqvDoPYnKAJuy/7c9KcRh+kETuvYogDc2EBPuXjd3OcYpqvn
-    HH5jPqmbt2cVDFjZGbW3n7Ixog09J3MnmM/TPpfJnluQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519218825; bh=vN90t4oNKSlNbU95QRVX9BU+fI
+    vzfvSbrLvgCAWfjxg=; b=J27otDX+pgga8sk3klg9NuEuB9HHGYlDLhI1UAR85T
+    rAK7nxAxzExiEHdNn17HbBz/Vypbfzt9A7Y1KUcWzvjczWJSN56H1/2EmQlU+vov
+    Aydt0rvWJt92sTmitzaoWyl4I0cJLqMG4Wiu/oIDqCbYzESBUM2a0L24yL7TzAiP
+    0jZVXbc5avZKdgofgn5CnAEtJn0gyk3yo+0LSmgHnz/Puh1BVkUDCy3kDrDFplPJ
+    oeQVAbTciFZ0U1lY3mc4VC+k4Bmu/wJudca0PlmT+RyPvAZPDfDg1HWKUXR4C43/
+    hSn6szu7iUNa+kds7DZeeRGQ63/b7sol6psKQhjzPprw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965743AbeBUNNc (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:13:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46068 "EHLO
+        id S1753216AbeBUNN3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:13:29 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965740AbeBUNNb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:31 -0500
+        with ESMTP id S1754572AbeBUNN1 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:27 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.15 129/163] xprtrdma: Fix calculation of ri_max_send_sges
-Date: Wed, 21 Feb 2018 13:49:18 +0100
-Message-Id: <20180221124537.261537429@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 138/163] Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
+Date: Wed, 21 Feb 2018 13:49:27 +0100
+Message-Id: <20180221124537.793312598@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -80,75 +79,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 1179e2c27efe21167ec9d882b14becefba2ee990 upstream.
+commit e8f1bc1493855e32b7a2a019decc3c353d94daf6 upstream.
 
-Commit 16f906d66cd7 ("xprtrdma: Reduce required number of send
-SGEs") introduced the rpcrdma_ia::ri_max_send_sges field. This fixes
-a problem where xprtrdma would not work if the device's max_sge
-capability was small (low single digits).
+This regression is introduced in
+commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction").
 
-At least RPCRDMA_MIN_SEND_SGES are needed for the inline parts of
-each RPC. ri_max_send_sges is set to this value:
+There are two problems,
 
-  ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
+a) it is ->destroy_inode() that does the final free on inode, not
+   ->evict_inode(),
+b) clear_inode() must be called before ->evict_inode() returns.
 
-Then when marshaling each RPC, rpcrdma_args_inline uses that value
-to determine whether the device has enough Send SGEs to convey an
-NFS WRITE payload inline, or whether instead a Read chunk is
-required.
+This could end up hitting BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+in evict() because I_CLEAR is set in clear_inode().
 
-More recently, commit ae72950abf99 ("xprtrdma: Add data structure to
-manage RDMA Send arguments") used the ri_max_send_sges value to
-calculate the size of an array, but that commit erroneously assumed
-ri_max_send_sges contains a value similar to the device's max_sge,
-and not one that was reduced by the minimum SGE count.
-
-This assumption results in the calculated size of the sendctx's
-Send SGE array to be too small. When the array is used to marshal
-an RPC, the code can write Send SGEs into the following sendctx
-element in that array, corrupting it. When the device's max_sge is
-large, this issue is entirely harmless; but it results in an oops
-in the provider's post_send method, if dev.attrs.max_sge is small.
-
-So let's straighten this out: ri_max_send_sges will now contain a
-value with the same meaning as dev.attrs.max_sge, which makes
-the code easier to understand, and enables rpcrdma_sendctx_create
-to calculate the size of the SGE array correctly.
-
-Reported-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Fixes: 16f906d66cd7 ("xprtrdma: Reduce required number of send SGEs")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Tested-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Cc: stable@vger.kernel.org # v4.10+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction")
+Cc: <stable@vger.kernel.org> # v4.7-rc6+
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xprtrdma/rpc_rdma.c |    2 +-
- net/sunrpc/xprtrdma/verbs.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/xprtrdma/rpc_rdma.c
-+++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-@@ -143,7 +143,7 @@ static bool rpcrdma_args_inline(struct r
- 	if (xdr->page_len) {
- 		remaining = xdr->page_len;
- 		offset = offset_in_page(xdr->page_base);
--		count = 0;
-+		count = RPCRDMA_MIN_SEND_SGES;
- 		while (remaining) {
- 			remaining -= min_t(unsigned int,
- 					   PAGE_SIZE - offset, remaining);
---- a/net/sunrpc/xprtrdma/verbs.c
-+++ b/net/sunrpc/xprtrdma/verbs.c
-@@ -509,7 +509,7 @@ rpcrdma_ep_create(struct rpcrdma_ep *ep,
- 		pr_warn("rpcrdma: HCA provides only %d send SGEs\n", max_sge);
- 		return -ENOMEM;
- 	}
--	ia->ri_max_send_sges = max_sge - RPCRDMA_MIN_SEND_SGES;
-+	ia->ri_max_send_sges = max_sge;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5266,7 +5266,7 @@ void btrfs_evict_inode(struct inode *ino
+ 	trace_btrfs_inode_evict(inode);
  
- 	if (ia->ri_device->attrs.max_qp_wr <= RPCRDMA_BACKWARD_WRS) {
- 		dprintk("RPC:       %s: insufficient wqe's available\n",
+ 	if (!root) {
+-		kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
++		clear_inode(inode);
+ 		return;
+ 	}
+ 
