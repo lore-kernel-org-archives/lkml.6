@@ -1,133 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937628AbeBUPQz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:16:55 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43060 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754665AbeBUPQw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:16:52 -0500
-X-Google-Smtp-Source: AH8x225u33VSwFQkldyuOnJxQP1MAvL1Ipgcz0K3MZ4Mg/O0IItD2qBcMPi9PVFq6MsFZljOslEls6FMG5pMHvR9/u4=
+        id S938126AbeBUPTp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:19:45 -0500
+Received: from mga07.intel.com ([134.134.136.100]:53440 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934517AbeBUPTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 10:19:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="19736559"
+Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private
+ objects
+To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: Archit Taneja <architt@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>
+References: <20180221143730.30285-1-robdclark@gmail.com>
+ <20180221143730.30285-2-robdclark@gmail.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <d159d04e-8e92-eb03-c65a-f625021b8f9f@linux.intel.com>
+Date: Wed, 21 Feb 2018 16:19:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221145033.13781-1-enric.balletbo@collabora.com>
-References: <20180221145033.13781-1-enric.balletbo@collabora.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Feb 2018 17:16:51 +0200
-Message-ID: <CAHp75Vf3fKen1mHGrKK0NjaCoiNwS_x91+5cfv4RPqSKAfTSQQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] platform/chrome: mfd/cros_ec_dev: Add sysfs entry to
- set keyboard wake lid angle
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com, groeck@chromium.org, gwendal@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180221143730.30285-2-robdclark@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 4:50 PM, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
-> From: Gwendal Grignou <gwendal@chromium.org>
+Hey,
+
+Op 21-02-18 om 15:37 schreef Rob Clark:
+> Follow the same pattern of locking as with other state objects.  This
+> avoids boilerplate in the driver.
+I'm afraid this will prohibit any uses of this on i915, since it still uses legacy lock_all().
+
+Oh well, afaict nothing in i915 uses private objects, so I don't think it's harmful. :)
+
+Could you cc intel-gfx just in case?
+> Signed-off-by: Rob Clark <robdclark@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 9 ++++++++-
+>  include/drm/drm_atomic.h     | 5 +++++
+>  2 files changed, 13 insertions(+), 1 deletion(-)
 >
-> This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
-> used to set and get the keyboard wake lid angle. This attribute is
-> present only if 2 accelerometers are controlled by the EC.
->
-> This patch also moves the cros_ec features check before the device is
-> added so the features map obtained from the EC is ready on time.
-
-> +/* Keyboard wake angle control */
-> +static ssize_t show_kb_wake_angle(struct device *dev,
-> +                                 struct device_attribute *attr, char *buf)
-> +{
-> +       struct ec_response_motion_sense *resp;
-> +       struct ec_params_motion_sense *param;
-> +       struct cros_ec_command *msg;
-> +       int ret;
-
-> +       struct cros_ec_dev *ec = container_of(
-> +                       dev, struct cros_ec_dev, class_dev);
-
-First of all, do not split lines like this.
-Second, consider just to add a preparatory patch which introduces
-
-#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
-
-and use it here.
-
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index fc8c4da409ff..004e621ab307 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -1078,6 +1078,8 @@ drm_atomic_private_obj_init(struct drm_private_obj *obj,
+>  {
+>  	memset(obj, 0, sizeof(*obj));
+>  
+> +	drm_modeset_lock_init(&obj->lock);
 > +
-> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
-> +       if (!msg)
-> +               return -ENOMEM;
+>  	obj->state = state;
+>  	obj->funcs = funcs;
+>  }
+> @@ -1093,6 +1095,7 @@ void
+>  drm_atomic_private_obj_fini(struct drm_private_obj *obj)
+>  {
+>  	obj->funcs->atomic_destroy_state(obj, obj->state);
+> +	drm_modeset_lock_fini(&obj->lock);
+>  }
+>  EXPORT_SYMBOL(drm_atomic_private_obj_fini);
+>  
+> @@ -1113,7 +1116,7 @@ struct drm_private_state *
+>  drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+>  				 struct drm_private_obj *obj)
+>  {
+> -	int index, num_objs, i;
+> +	int index, num_objs, i, ret;
+>  	size_t size;
+>  	struct __drm_private_objs_state *arr;
+>  	struct drm_private_state *obj_state;
+> @@ -1122,6 +1125,10 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+>  		if (obj == state->private_objs[i].ptr)
+>  			return state->private_objs[i].state;
+>  
+> +	ret = drm_modeset_lock(&obj->lock, state->acquire_ctx);
+> +	if (ret)
+> +		return ERR_PTR(ret);
 > +
-> +       param = (struct ec_params_motion_sense *)msg->data;
-> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
-> +       msg->version = 2;
-> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
-> +       param->kb_wake_angle.data = EC_MOTION_SENSE_NO_VALUE;
-> +       msg->outsize = sizeof(*param);
-> +       msg->insize = sizeof(*resp);
-> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-> +       if (ret < 0)
-> +               goto exit;
-> +       resp = (struct ec_response_motion_sense *)msg->data;
-
-> +       ret = scnprintf(buf, PAGE_SIZE, "%d\n",
-> +                       resp->kb_wake_angle.ret);
-
-Looks like one line.
-
-> +exit:
-> +       kfree(msg);
-> +       return ret;
-> +}
+>  	num_objs = state->num_private_objs + 1;
+>  	size = sizeof(*state->private_objs) * num_objs;
+>  	arr = krealloc(state->private_objs, size, GFP_KERNEL);
+> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> index 09076a625637..9ae53b73c9d2 100644
+> --- a/include/drm/drm_atomic.h
+> +++ b/include/drm/drm_atomic.h
+> @@ -218,6 +218,11 @@ struct drm_private_state_funcs {
+>   * &drm_modeset_lock is required to duplicate and update this object's state.
+>   */
+>  struct drm_private_obj {
+> +	/**
+> +	 * @lock: Modeset lock to protect the state object.
+> +	 */
+> +	struct drm_modeset_lock lock;
 > +
-> +static ssize_t store_kb_wake_angle(struct device *dev,
-> +                                  struct device_attribute *attr,
-> +                                  const char *buf, size_t count)
-> +{
-> +       struct ec_params_motion_sense *param;
-> +       struct cros_ec_command *msg;
-> +       int ret;
-> +       struct cros_ec_dev *ec = container_of(
-> +                       dev, struct cros_ec_dev, class_dev);
-> +       u16 angle;
-> +
-> +       ret = kstrtou16(buf, 0, &angle);
-> +       if (ret)
-> +               return ret;
-> +
-> +       msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
-> +       if (!msg)
-> +               return -ENOMEM;
-> +
-> +       param = (struct ec_params_motion_sense *)msg->data;
-> +       msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
-> +       msg->version = 2;
-> +       param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
-> +       param->kb_wake_angle.data = angle;
-> +       msg->outsize = sizeof(*param);
-> +       msg->insize = sizeof(struct ec_response_motion_sense);
-> +       ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-> +       kfree(msg);
-> +       if (ret < 0)
-> +               return ret;
-> +       return count;
-> +}
-> +
->  /* Module initialization */
->
->  static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
->  static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
->  static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
-> +static DEVICE_ATTR(kb_wake_angle, S_IWUSR | S_IRUGO, show_kb_wake_angle,
-> +                  store_kb_wake_angle);
-
-Consider to switch to
-
-DEVICE_ATTR_RO()
-DEVICE_ATTR_RW()
-
--- 
-With Best Regards,
-Andy Shevchenko
+>  	/**
+>  	 * @state: Current atomic state for this driver private object.
+>  	 */
