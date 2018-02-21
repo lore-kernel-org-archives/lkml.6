@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224rGP/XJmoKc7MK2WHklAcVJTLIQWrdW4lEn95VUQbXOfMCoYy/dguDhGXqPIoOF/0e3JkT
+X-Google-Smtp-Source: AH8x2242m6l2kiupOI+urOl0JrdP/XDToYfL3J1iNFLYS5CN/MXi5aYfpYMQqO4LGAqb8nn/VrZ1
 ARC-Seal: i=1; a=rsa-sha256; t=1519218673; cv=none;
         d=google.com; s=arc-20160816;
-        b=YZERwornPu1xPury95fZKmxilkVjSE9g2hGi6SJfBeKmP4bCbUB28G8nV6iGirfm4C
-         RhtEjr8w9LpTYD9YzChzs86zvDZAbZ7Upy/y1ZwCZZIBVd0JKRWaBxjoeXu1rgeBTBcC
-         sdgBfJ1YtTY/VrAYEux3T1jEF5L0rUlwglvsPt4hw9NZPj/d7LLhu5NY8uOMdZPHqJC0
-         KMrQgauovLFChrUSM0LOnnruivvQN6CUy+sihEXDPIIq1y7tfpBv0n8jMig8OxHRr7Sx
-         sjqJRg1GDt3tKSa5gQ2QLZZ/FdsRAe2TRV6hauDRt4Zg7cA3CFd/dBNWeU0Z6DBrQ2h+
-         TYZw==
+        b=VTy+xIzKkj7Vt08ahzFBW+bbaqlVdCM9w8epfHdyQVSXrBFphu2WVw97SYn5gntAeO
+         OKhs+pmjkK2CZSNr4P9QV9hoAtayPqmbhQNzGx4W7WbB/8iHRZMLBj3nYU/OWU+3iGLV
+         w/viZDooYqhIN9LyvS+cwno1sdH4gDqrNtWZmyPyIdk2WOjEcPRpc96P4ba1tg0nV79i
+         dlr8GYPsFx2f+BXPnyKe45TkXA2b2qzakNCBITLpip+peCG6S+e+BmzUkzHJN4jJYRL4
+         lVj41XLL2BS0+ehx2Z2sxtRIx4Bod0X3XHy9WASTDiDv4AiVzKYkSLYecUHfs9ZFToDl
+         LT6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6MW8nKrSIhrb0r8U3a9J89FdhDMFVKDTQu8A7WCp2Ok=;
-        b=kOlsWQ8/nD72GynfYQsvbQ0YeV0T5bSbdAY70FGlNQUcgJe97bBN1x/0nz8SXMsovN
-         sqZt2I2F3IcBUngx6aU/yQmcs6dV4Zs0mPDOCSw0zeTbb2b3FmkG/5HNtRV4THCmso5q
-         LIEYkzYOgGYpk+dKQjprnRXWSeNn2sh/ZRI2lFtv2O+VLg9UDokmDsa3+nRrte/IzcPI
-         zkct0HA8f9f0YkaDlIV491XG407oBej7ZrfpatB+nRGT9R+2iiuB5t3iSC7gCyX4nqcw
-         kLemRH/jqPgXLSdb+mVYlVa77AUs49HA+J2LFC7Ep0Zy4jY2asmLJUyoOYwfJM708hw5
-         B0EQ==
+        bh=lN9+M/0E6+Yglned9kcF0w1VCzjqkJ3McQwtjJH5+5w=;
+        b=xfduME5ff9nWDiNKfCjCP3w6TQZUcacks9QZqAgyB+GRbWklwr+St9i7x0XjT/1Bnk
+         JMnGj1rCn6nUDrYV0h9VjjvrQs5wcy5O/pJEgZbZ3OYFfj3vqshZFyqieokhq4VqZJ79
+         2xyilv7CpdAXc5JHMno9pxLguoZ1CP13Q3PoaNaWS+AmPIQZHB+g61wkMFs9bybhi/w2
+         sGSUuHrNedpLVxEHKIq//7mscIx+sHw5QcsdJu3XG10aoD67ygj6Eg5GjuZYeo1QttK7
+         is+WOUZUhCntKejGlI7CM8i2vUQXfx2GWrZXmz12GcpH7cOsr4KaPW+AZhx8EDNrYNCU
+         wgxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Yehezkel Bernat <yehezkel.bernat@intel.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Andreas Noever <andreas.noever@gmail.com>
-Subject: [PATCH 4.15 117/163] PCI: pciehp: Assume NoCompl+ for Thunderbolt ports
-Date: Wed, 21 Feb 2018 13:49:06 +0100
-Message-Id: <20180221124536.606429707@linuxfoundation.org>
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Johan Hovold <johan@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.15 118/163] PCI: keystone: Fix interrupt-controller-node lookup
+Date: Wed, 21 Feb 2018 13:49:07 +0100
+Message-Id: <20180221124536.658501195@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593016239425186791?=
-X-GMAIL-MSGID: =?utf-8?q?1593016239425186791?=
+X-GMAIL-THRID: =?utf-8?q?1593015295362303272?=
+X-GMAIL-MSGID: =?utf-8?q?1593016240086732462?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,78 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit 493fb50e958c1c6deef7feff0b8c3855def78d75 upstream.
+commit eac56aa3bc8af3d9b9850345d0f2da9d83529134 upstream.
 
-Certain Thunderbolt 1 controllers claim to support Command Completed events
-(value of 0b in the No Command Completed Support field of the Slot
-Capabilities register) but in reality they neither set the Command
-Completed bit in the Slot Status register nor signal a Command Completed
-interrupt:
+Fix child-node lookup during initialisation which was using the wrong
+OF-helper and ended up searching the whole device tree depth-first
+starting at the parent rather than just matching on its children.
 
-  8086:1513  CV82524  [Light Ridge 4C  2010]
-  8086:151a  DSL2310  [Eagle Ridge 2C  2011]
-  8086:151b  CVL2510  [Light Peak 2C   2010]
-  8086:1547  DSL3510  [Cactus Ridge 4C 2012]
-  8086:1548  DSL3310  [Cactus Ridge 2C 2012]
-  8086:1549  DSL2210  [Port Ridge 1C   2011]
+To make things worse, the parent pci node could end up being prematurely
+freed as of_find_node_by_name() drops a reference to its first argument.
+Any matching child interrupt-controller node was also leaked.
 
-All known newer chips (Redwood Ridge and onwards) set No Command Completed
-Support, indicating that they do not support Command Completed events.
-
-The user-visible impact is that after unplugging such a device, 2 seconds
-elapse until pciehp is unbound.  That's because on ->remove,
-pcie_write_cmd() is called via pcie_disable_notification() and every call
-to pcie_write_cmd() takes 2 seconds (1 second for each invocation of
-pcie_wait_cmd()):
-
-  [  337.942727] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x1038 (issued 21176 msec ago)
-  [  340.014735] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x0000 (issued 2072 msec ago)
-
-That by itself has always been unpleasant, but the situation has become
-worse with commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown"):  Now pciehp is unbound on ->shutdown.  Because Thunderbolt
-controllers typically have 4 hotplug ports, every reboot and shutdown is
-now delayed by 8 seconds, plus another 2 seconds for every attached
-Thunderbolt 1 device.
-
-Thunderbolt hotplug slots are not physical slots that one inserts cards
-into, but rather logical hotplug slots implemented in silicon.  Devices
-appear beyond those logical slots once a PCI tunnel is established on top
-of the Thunderbolt Converged I/O switch.  One would expect commands written
-to the Slot Control register to be executed immediately by the silicon, so
-for simplicity we always assume NoCompl+ for Thunderbolt ports.
-
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Sinan Kaya <okaya@codeaurora.org>
-Cc: Yehezkel Bernat <yehezkel.bernat@intel.com>
-Cc: Michael Jamet <michael.jamet@intel.com>
-Cc: Andreas Noever <andreas.noever@gmail.com>
+Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
+Cc: stable <stable@vger.kernel.org>     # 3.18
+Acked-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+[lorenzo.pieralisi@arm.com: updated commit subject]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp_hpc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pci/dwc/pci-keystone.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -848,6 +848,13 @@ struct controller *pcie_init(struct pcie
- 	if (pdev->hotplug_user_indicators)
- 		slot_cap &= ~(PCI_EXP_SLTCAP_AIP | PCI_EXP_SLTCAP_PIP);
+--- a/drivers/pci/dwc/pci-keystone.c
++++ b/drivers/pci/dwc/pci-keystone.c
+@@ -178,7 +178,7 @@ static int ks_pcie_get_irq_controller_in
+ 	}
  
-+	/*
-+	 * We assume no Thunderbolt controllers support Command Complete events,
-+	 * but some controllers falsely claim they do.
-+	 */
-+	if (pdev->is_thunderbolt)
-+		slot_cap |= PCI_EXP_SLTCAP_NCCS;
+ 	/* interrupt controller is in a child node */
+-	*np_temp = of_find_node_by_name(np_pcie, controller);
++	*np_temp = of_get_child_by_name(np_pcie, controller);
+ 	if (!(*np_temp)) {
+ 		dev_err(dev, "Node for %s is absent\n", controller);
+ 		return -EINVAL;
+@@ -187,6 +187,7 @@ static int ks_pcie_get_irq_controller_in
+ 	temp = of_irq_count(*np_temp);
+ 	if (!temp) {
+ 		dev_err(dev, "No IRQ entries in %s\n", controller);
++		of_node_put(*np_temp);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -204,6 +205,8 @@ static int ks_pcie_get_irq_controller_in
+ 			break;
+ 	}
+ 
++	of_node_put(*np_temp);
 +
- 	ctrl->slot_cap = slot_cap;
- 	mutex_init(&ctrl->ctrl_lock);
- 	init_waitqueue_head(&ctrl->queue);
+ 	if (temp) {
+ 		*num_irqs = temp;
+ 		return 0;
