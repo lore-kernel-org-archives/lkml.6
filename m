@@ -1,54 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937713AbeBUOdn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:33:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934437AbeBUOdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:33:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 601B02178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 21 Feb 2018 11:33:37 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 2/2] perf, tools, stat: Reset ids counter when retrying
- events
-Message-ID: <20180221143337.GC24416@kernel.org>
+        id S937747AbeBUOdR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:33:17 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934488AbeBUOdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:33:14 -0500
+Date: Wed, 21 Feb 2018 15:33:11 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 1/2] perf, tools, stat: Use xyarray dimensions to iterate
+ fds
+Message-ID: <20180221143311.GC2565@krava>
 References: <20171006020029.13339-1-andi@firstfloor.org>
- <20171006020029.13339-2-andi@firstfloor.org>
- <20180221143117.GB2565@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221143117.GB2565@krava>
-X-Url: http://acmel.wordpress.com
+In-Reply-To: <20171006020029.13339-1-andi@firstfloor.org>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Feb 21, 2018 at 03:31:17PM +0100, Jiri Olsa escreveu:
-> On Thu, Oct 05, 2017 at 07:00:29PM -0700, Andi Kleen wrote:
-> > From: Andi Kleen <ak@linux.intel.com>
+On Thu, Oct 05, 2017 at 07:00:28PM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> ouch, sry for overlooking this
+> Now that the xyarray stores the dimensions we can use those
+> to iterate over the FDs for a evsel.
 > 
-> > 
-> > perf stat can retry opening events. After opening an file descriptor
-> > it adds the ids to the ecsel. Each event keeps a running
-> > count of ids. When we decide to close an evsel and retry
-> > with a different configuration this count needs to be reset,
-> > otherwise it can overflow the buffer.
-> 
-> how can this happen? we call store_counter_ids at the
-> end of the loop, when the evsel is all done and can't
-> be reconfigured
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
 
-Yeah, I couldn't figure out the exact sequence, but I think that we need
-to reset those hash tables when doing a perf_evlist__close(), no? I.e.
-when we open we may get new ids, so need to rehash?
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-- Arnaldo
+thanks,
+jirka
+
+> ---
+>  tools/perf/builtin-stat.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index dd525417880a..3c697118e44b 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -557,14 +557,13 @@ static int perf_stat_synthesize_config(bool is_pipe)
+>  
+>  #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
+>  
+> -static int __store_counter_ids(struct perf_evsel *counter,
+> -			       struct cpu_map *cpus,
+> -			       struct thread_map *threads)
+> +static int __store_counter_ids(struct perf_evsel *counter)
+>  {
+>  	int cpu, thread;
+>  
+> -	for (cpu = 0; cpu < cpus->nr; cpu++) {
+> -		for (thread = 0; thread < threads->nr; thread++) {
+> +	for (cpu = 0; cpu < xyarray__max_x(counter->fd); cpu++) {
+> +		for (thread = 0; thread < xyarray__max_y(counter->fd);
+> +		     thread++) {
+>  			int fd = FD(counter, cpu, thread);
+>  
+>  			if (perf_evlist__id_add_fd(evsel_list, counter,
+> @@ -584,7 +583,7 @@ static int store_counter_ids(struct perf_evsel *counter)
+>  	if (perf_evsel__alloc_id(counter, cpus->nr, threads->nr))
+>  		return -ENOMEM;
+>  
+> -	return __store_counter_ids(counter, cpus, threads);
+> +	return __store_counter_ids(counter);
+>  }
+>  
+>  static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+> -- 
+> 2.13.6
+> 
