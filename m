@@ -1,172 +1,72 @@
-Return-Path: <BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x227p2RIoAdTcagFEBPw4OpARSREcEUAQezlujCbffDvoHrV20uRJDx72o0o9Yg4vEkkYO4Ag
-ARC-Seal: i=1; a=rsa-sha256; t=1519210813; cv=none;
+Return-Path: <peterz@infradead.org>
+X-Google-Smtp-Source: AH8x225GEWK0UHRQpldbfOj9fqmT57IQmUy3jK7e3/ptSFc5SZo9eMbD/yBNDswZWd6EoX8jIgg/
+ARC-Seal: i=1; a=rsa-sha256; t=1519217658; cv=none;
         d=google.com; s=arc-20160816;
-        b=k1d+64ofxZ3l4Otm5mFeNs/4TU9JRvuWOkoVdD0zsfQ+aiJbYXJNjDkz6E7GYuOwdA
-         EEQ5qpKnfWLy4fZB+maBnem2+XdOrRmJegumWZ4dZhfnqprMQLlLW1Gr35/gcjy2tmN4
-         ziUadwv2kML4mVW1WaOk8n7B1B7Q3ZEv8k8OnkOgqisB/BZpaVHtnUFPQlmptu900SO6
-         Swa7WCPPb5vFSFTpeA3Z7cq4pHSxUVFkmY0qqDIro9TFLyXxT9ECn44S4KtcossjKZAK
-         cx3sRysO/7t4QC4bZKc53YdvMlVzDkfkFNCXnGp1ixD0pTpdao3gSPzrV4pet9i7Sgxf
-         b/uw==
+        b=LbtLuBkkDngDOC+JhKpg2SEgud092UG+zteeb0rvzviXq29+3LLGFvisEEpMha2XjQ
+         47AB4BVS5onyYakqtCIww+X308MJ9zoj23vCm5uHe6t+Kk2frBCC5XAaDsebdVdOJJsN
+         bP7aSwdCuzw4zFTLSQMtQMFXVvyU8iguzj+mhCWEqYd8+gdsHT/HhINt0Jon1xKQHi9z
+         P/R0jHgbNSnvVQrk6JLIwGsuCFHxn5VKQxTCmj6JgAI4KfuEg1Giy/r0i0FtD/GEIaga
+         11Fwq4p+Nb+qRoFU57deL4lSAFcNLzY79x28wm7L9hzWpJ/aMPuyQgt4bTEuyqvLMPMH
+         UBDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:date:face:references:in-reply-to:to:from:subject
-         :message-id:dkim-signature:arc-authentication-results;
-        bh=gulcejs6qe165++yQJwsVWzf6AmthCl5b8LaXGAazDo=;
-        b=xyEmrv9Cu8DOfaE+rRqtL2Kg+4GIp+gWIDZpERcR8Ja78+o8xBe9gJxE1zpdkGSHQp
-         cFAGF25WCTZjQvvqZOT+fR847v29so1/N/tJJjfp8krVQMsy6S9tuV5X5SwmAyrc9Qrc
-         11loX+uH/Mv02DdARlWCbFEXl8EYhuKW4XoBvVyb78rf0U1lQkR4SGKWXOEcYg8vhOKd
-         FcQUfTe9JKl5utZYYnWCrs5dt05U3ufu2QrqFrmiTdPJ6t4sjugA2p7nTUfvvf6GRhPp
-         p1K25PrpvS0Kek8Kb2yJIMq1FOcWEDFlDdvBaW71ceaAIB8IANbFQGlrRnqcPyJx9tx9
-         5WjA==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=HF2BIsBrZGZrbPmRg+h0tIkrhsZC8kBISduPYdzrkFQ=;
+        b=RUJ8/RRVsb/092YRqxhcOoaenjy/AOpH9W4gqfFceuUCkWXe8dgEmkzSBsg+3gdVum
+         gzAk9suCUExHQ+NSYVSNCpfWicjtBjhuM+mhzuachChflCwy7aD12a2G5f+jWJS6s7al
+         32SJ9eVZOM/7ETpk43eKZ9jYd0RdzWSmpGkRiZqG50NU9SKK6W/kO/Br7vq8BAelYNa9
+         jkn+wtY7a4LHamcUd3BBpwlz7FOsuzLfAm5tMZ21eeo/ElCEsFR33fYPGtkIQWCScR3P
+         euBRwqh3BR3kdtLfg9AsilhiLKaPKA1955QpC/EvYzJpuezP7+9x1zcuMLTb/fXDWy9R
+         vqjA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=ge4p5ULz;
-       spf=pass (google.com: best guess record for domain of batv+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=RwgQsnFk;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=ge4p5ULz;
-       spf=pass (google.com: best guess record for domain of batv+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org designates 90.155.92.209 as permitted sender) smtp.mailfrom=BATV+274cafb1adda017a556b+5295+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1519210754.6482.43.camel@infradead.org>
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=RwgQsnFk;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Date: Wed, 21 Feb 2018 13:53:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: hpa@zytor.com, luto@kernel.org, arjan@linux.intel.com,
+	tglx@linutronix.de, dan.j.williams@intel.com,
+	torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+	mingo@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
+	dave.hansen@linux.intel.com, jpoimboe@redhat.com,
+	linux-tip-commits@vger.kernel.org
 Subject: Re: [tip:x86/pti] objtool, retpolines: Integrate objtool with
  retpoline support more closely
-From: David Woodhouse <dwmw2@infradead.org>
-To: peterz@infradead.org, hpa@zytor.com, luto@kernel.org,
- arjan@linux.intel.com,  tglx@linutronix.de, dan.j.williams@intel.com,
- torvalds@linux-foundation.org,  gregkh@linuxfoundation.org,
- mingo@kernel.org, bp@alien8.de,  linux-kernel@vger.kernel.org,
- dave.hansen@linux.intel.com, jpoimboe@redhat.com,
- linux-tip-commits@vger.kernel.org
-In-Reply-To: <tip-b4879c9b99a43e6c580d563f292a569a016af2a4@git.kernel.org>
+Message-ID: <20180221125357.GJ25201@hirez.programming.kicks-ass.net>
 References: <tip-b4879c9b99a43e6c580d563f292a569a016af2a4@git.kernel.org>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-CtEaLTaYWA1XtRuUFs1W"
-Date: Wed, 21 Feb 2018 10:59:14 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+ <1519210754.6482.43.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519210754.6482.43.camel@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593007031866628709?=
-X-GMAIL-MSGID: =?utf-8?q?1593007998166247217?=
+X-GMAIL-MSGID: =?utf-8?q?1593015174903272818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, Feb 21, 2018 at 10:59:14AM +0000, David Woodhouse wrote:
+> On Wed, 2018-02-21 at 02:34 -0800, tip-bot for Peter Zijlstra wrote:
+> > 
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -489,6 +489,11 @@ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> >  KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> >  endif
+> >  
+> > +ifneq ($(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register),)
+> > +  CC_HAS_RETPOLINE := 1
+> > +endif
+> > +export CC_HAS_RETPOLINE
+> > +
+> 
+> That isn't the same as the check in arch/x86/Makefile.
 
---=-CtEaLTaYWA1XtRuUFs1W
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2018-02-21 at 02:34 -0800, tip-bot for Peter Zijlstra wrote:
->=20
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -489,6 +489,11 @@ KBUILD_CFLAGS +=3D $(CLANG_TARGET) $(CLANG_GCC_TC)
-> =C2=A0KBUILD_AFLAGS +=3D $(CLANG_TARGET) $(CLANG_GCC_TC)
-> =C2=A0endif
-> =C2=A0
-> +ifneq ($(call cc-option,-mindirect-branch=3Dthunk-extern -mindirect-bran=
-ch-register),)
-> +=C2=A0 CC_HAS_RETPOLINE :=3D 1
-> +endif
-> +export CC_HAS_RETPOLINE
-> +
-
-That isn't the same as the check in arch/x86/Makefile.
-
---=-CtEaLTaYWA1XtRuUFs1W
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMjExMDU5MTRaMC8GCSqG
-SIb3DQEJBDEiBCAtD3zZ/p+/cpHkwKdkW82VqUPkJg0SSW93fiMLMooVQjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAJc6biq+vfbA
-S8yiikN488RCeMIYlY41YsjRKjMBV64CQK/zIKCvisZz25dZT3PDf4p32Z3zCKX/j54x59jGelAA
-SDEN/KA/kRmu2x2ko/rpjgSz7+pl86CDkXenoPsJloDz8s7XFyV3Vd5S/poDCrxdzm/Gdqo9R4vP
-mrP4V1uKHmt8axTkjnofFmU3XI9LJQnKYI3J7hsUzoY1EFnE8qgn+XIdt1430BBg8dV2zQqKIbH2
-7aQyBtUd6XLLFiIIrzDPvkC3PPOssl8z9SdrtgwxO4+BPLDDd8HoxUz4fBjO45qpzITKrHNLj2Xb
-EpuD3ssXZ8ibfNfgMu5vITr/Zi0AAAAAAAA=
-
-
---=-CtEaLTaYWA1XtRuUFs1W--
+That's because this crossed with the llvm cruft, right? I'll have a
+look.
