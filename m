@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751921AbeBUVRk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 16:17:40 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46973 "EHLO
+        id S1751765AbeBUVS0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 16:18:26 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:46974 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbeBUU5Z (ORCPT
+        with ESMTP id S1751571AbeBUU5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:57:25 -0500
+        Wed, 21 Feb 2018 15:57:24 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 037/100] rtc: m48t59: stop validating rtc_time in .read_time
-Date: Wed, 21 Feb 2018 21:55:32 +0100
-Message-Id: <20180221205635.31314-38-alexandre.belloni@bootlin.com>
+Subject: [PATCH 027/100] rtc: ds2404: stop validating rtc_time in .read_time
+Date: Wed, 21 Feb 2018 21:55:22 +0100
+Message-Id: <20180221205635.31314-28-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
 References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
@@ -26,21 +26,21 @@ It is not necessary to call it just before returning from the callback.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-m48t59.c | 2 +-
+ drivers/rtc/rtc-ds2404.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
-index c6af83505448..52c7e35a5860 100644
---- a/drivers/rtc/rtc-m48t59.c
-+++ b/drivers/rtc/rtc-m48t59.c
-@@ -105,7 +105,7 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	dev_dbg(dev, "RTC read time %04d-%02d-%02d %02d/%02d/%02d\n",
- 		tm->tm_year + 1900, tm->tm_mon, tm->tm_mday,
- 		tm->tm_hour, tm->tm_min, tm->tm_sec);
--	return rtc_valid_tm(tm);
+diff --git a/drivers/rtc/rtc-ds2404.c b/drivers/rtc/rtc-ds2404.c
+index 9a1582ed7070..b886b6a5c178 100644
+--- a/drivers/rtc/rtc-ds2404.c
++++ b/drivers/rtc/rtc-ds2404.c
+@@ -207,7 +207,7 @@ static int ds2404_read_time(struct device *dev, struct rtc_time *dt)
+ 	time = le32_to_cpu(time);
+ 
+ 	rtc_time_to_tm(time, dt);
+-	return rtc_valid_tm(dt);
 +	return 0;
  }
  
- static int m48t59_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ static int ds2404_set_mmss(struct device *dev, unsigned long secs)
 -- 
 2.16.1
