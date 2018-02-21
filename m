@@ -1,121 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933083AbeBUL3Z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 06:29:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932077AbeBUL3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 06:29:23 -0500
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        geert@linux-m68k.org, tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
- <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
- <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
- <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
- <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
- <20180221113217.11bb1c69.cohuck@redhat.com>
- <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
- <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
- <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
-From: Thomas Huth <thuth@redhat.com>
-Message-ID: <5dfa9213-0e63-54d0-8700-1ced4efd4c28@redhat.com>
-Date: Wed, 21 Feb 2018 12:29:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933123AbeBULez (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 06:34:55 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:38754 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932119AbeBULey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 06:34:54 -0500
+X-Google-Smtp-Source: AH8x227P+ifXivRdXybRdKwpjOpOpfoNUYHZy1MhktMeezmeXWUpwCAZSBt5errFzW77yyb4N52480d/GQY3t5MHhMM=
 MIME-Version: 1.0
-In-Reply-To: <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180221034938.GE14844@lunn.ch>
+References: <20180220162519.1498223-1-arnd@arndb.de> <20180220162519.1498223-2-arnd@arndb.de>
+ <20180221034938.GE14844@lunn.ch>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 21 Feb 2018 12:34:53 +0100
+X-Google-Sender-Auth: pcnD0eaBm6yztiV_r32rirAlU9k
+Message-ID: <CAK8P3a3QKm0jUJ5vThV94Vjg+RFKhcLk36d5yZGmOFzMtGBmfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: orion: mark orion_ge00_mvmdio_bus_name as const
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: arm-soc <arm@kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.02.2018 12:22, Christian Borntraeger wrote:
-> 
-> 
-> On 02/21/2018 12:14 PM, Thomas Huth wrote:
->> On 21.02.2018 12:09, Christian Borntraeger wrote:
->>>
->>>
->>> On 02/21/2018 11:32 AM, Cornelia Huck wrote:
->>>> On Wed, 21 Feb 2018 11:22:38 +0100
->>>> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
->>>>
->>>>> On 02/21/2018 11:05 AM, Christian Borntraeger wrote:
->>>>>>
->>>>>>
->>>>>> On 02/19/2018 05:38 PM, Farhan Ali wrote:  
->>>>>>>
->>>>>>>
->>>>>>> On 02/19/2018 11:25 AM, Thomas Huth wrote:  
->>>>>>>> On 19.02.2018 16:47, Farhan Ali wrote:  
->>>>>>>>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
->>>>>>>>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
->>>>>>>>> "Graphics support" menu for S390. But if we enable VT layer for S390,
->>>>>>>>> we would also need to enable the dummy console. So let's remove the
->>>>>>>>> HAS_IOMEM dependency.
->>>>>>>>>
->>>>>>>>> Move this dependency to sub menu items and console drivers that use
->>>>>>>>> io memory.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
->>>>>>>>> ---
->>>>>>>>>   drivers/video/Kconfig         | 21 +++++++++++----------
->>>>>>>>>   drivers/video/console/Kconfig |  4 ++--
->>>>>>>>>   2 files changed, 13 insertions(+), 12 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
->>>>>>>>> index 3c20af9..8f10915 100644
->>>>>>>>> --- a/drivers/video/Kconfig
->>>>>>>>> +++ b/drivers/video/Kconfig
->>>>>>>>> @@ -3,7 +3,6 @@
->>>>>>>>>   #
->>>>>>>>>     menu "Graphics support"
->>>>>>>>> -    depends on HAS_IOMEM
->>>>>>>>>     config HAVE_FB_ATMEL
->>>>>>>>>       bool
->>>>>>>>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
->>>>>>>>>   config SH_LCD_MIPI_DSI
->>>>>>>>>       bool
->>>>>>>>>   -source "drivers/char/agp/Kconfig"
->>>>>>>>> +if HAS_IOMEM
->>>>>>>>> +    source "drivers/char/agp/Kconfig"
->>>>>>>>>   -source "drivers/gpu/vga/Kconfig"
->>>>>>>>> +    source "drivers/gpu/vga/Kconfig"
->>>>>>>>>   -source "drivers/gpu/host1x/Kconfig"
->>>>>>>>> -source "drivers/gpu/ipu-v3/Kconfig"
->>>>>>>>> +    source "drivers/gpu/host1x/Kconfig"
->>>>>>>>> +    source "drivers/gpu/ipu-v3/Kconfig"
->>>>>>>>>   -source "drivers/gpu/drm/Kconfig"
->>>>>>>>> +    source "drivers/gpu/drm/Kconfig"  
->>>>>>
->>>>>>
->>>>>> Hmmm, looks like that this makes it impossible to select VIRTIO_GPU - need still more
->>>>>> work.
->>>>>>   
->>>>> Sorry my fault. I had CONFIG_PCI disabled.
->>>>
->>>> That smells like the s390 HAS_IOMEM stuff needs more work -- I guess
->>>> that you want to enable a ccw virtio-gpu device, not a pci one, right?
->>>
->>> It is a ccw virtio-gpu. But s390 has no IOMEM without CONFIG_PCI, so you cannot
->>> select VIRTIO_GPU, which needs DRM, which need IOMEM.
+On Wed, Feb 21, 2018 at 4:49 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> On Tue, Feb 20, 2018 at 05:24:51PM +0100, Arnd Bergmann wrote:
+>> A section type mismatch warning shows up when building with LTO,
+>> since orion_ge00_mvmdio_bus_name was put in __initconst but not marked
+>> const itself:
 >>
->> So the 'source "drivers/gpu/drm/Kconfig"' should maybe rather reside
->> outside of the "if HAS_IOMEM" path? Or does it not compile anymore that way?
-> 
-> virtio-gpu depends on drm. So in essence it boils down to if you want virtio-gpu
-> you also need to enable PCI, even if the actual channel is ccw.
+>> include/linux/of.h: In function 'spear_setup_of_timer':
+>> arch/arm/mach-spear/time.c:207:34: error: 'timer_of_match' causes a section type conflict with 'orion_ge00_mvmdio_bus_name'
+>>  static const struct of_device_id timer_of_match[] __initconst = {
+>>                                   ^
+>> arch/arm/plat-orion/common.c:475:32: note: 'orion_ge00_mvmdio_bus_name' was declared here
+>>  static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
+>>
+>> This marks it const as well.
+>
+> Hi Arnd
+>
+> I'm not sure this is the correct fix. orion_ge00_mvmdio_bus_name is
+> assigned to orion_ge00_switch_board_info->bus_id. This is then passed
+> to mdiobus_register_board_info() which makes a copy of
+> orion_ge00_switch_board_info and adds it to its linked list. The
+> original orion_ge00_switch_board_info will get freed since it is
+> __initdata, but the copy still has a pointer to
+> orion_ge00_mvmdio_bus_name, which also gets freed.
+>
+> I think the correct fix is to remove the __initconst from
+> orion_ge00_mvmdio_bus_name. Marking it const is however valid.
 
-But if you need to enable PCI to get IOMEM, I wonder why this patch here
-is needed at all? The Graphics menu / VT dummy console should be
-available in the config if IOMEM is enabled anyway?
+I looked at it some more and agree with your analysis, thanks for your
+review!
 
- Thomas
+I also checked the only other user of mdiobus_register_board_info(),
+and made sure it does not have this problem.
+
+I've prepared a new patch now, will send that after some more testing.
+
+      Arnd
