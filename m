@@ -1,78 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751559AbeBUFyz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 00:54:55 -0500
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:40468 "EHLO
-        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751369AbeBUFyy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 00:54:54 -0500
-X-Google-Smtp-Source: AH8x226DsFnDjSN1ekEXrhjZI8oz+wQVLmCP4jYnrpPay3QdxG8eNqAA8NF81YuuwPLp+ytwKyHLRw==
-Date: Wed, 21 Feb 2018 11:24:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>, rjw@rjwysocki.net,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] cpufreq: powernv: Check  negative value returned by
- cpufreq_table_find_index_dl()
-Message-ID: <20180221055450.GO28462@vireshk-i7>
-References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <20180212102900.GU28462@vireshk-i7>
- <874lmasxxx.fsf@concordia.ellerman.id.au>
+        id S1751580AbeBUF6y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 00:58:54 -0500
+Received: from mga06.intel.com ([134.134.136.31]:49914 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751369AbeBUF6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 00:58:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,542,1511856000";
+   d="scan'208";a="19910867"
+Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
+ pseudo-locking core
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
+        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+ <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
+ <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
+ <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <9bb96e22-fe30-67dd-4d1d-fb850e321a2f@intel.com>
+Date: Tue, 20 Feb 2018 21:58:50 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874lmasxxx.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-02-18, 16:39, Michael Ellerman wrote:
-> Viresh Kumar <viresh.kumar@linaro.org> writes:
+Hi Thomas,
 
-> > AFAICT, you will get -1 here only if the freq table had no valid
-> > frequencies (or the freq table is empty). Why would that happen ?
+On 2/20/2018 3:21 PM, Thomas Gleixner wrote:
+> On Tue, 20 Feb 2018, Reinette Chatre wrote:
+>> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
+>>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
+>>>
+>>> Are you really sure that the life time rules of plr are correct vs. an
+>>> application which still has the locked memory mapped? i.e. the following
+>>> operation:
+>>
+>> You are correct. I am not preventing an administrator from removing the
+>> pseudo-locked region if it is in use. I will fix that.
 > 
-> Bugs?
+> The removal is fine and you cannot prevent it w/o introducing a mess, but
+> you have to make sure that the PLR and the mapped memory are not
+> vanishing. The refcount rules I outlined are exactly doing that.
 
-The cupfreq driver shouldn't have registered itself in that case (i.e.
-if the cpufreq table is empty).
+Thank you for catching my misunderstanding. Will do.
 
-> Or if you ask for a target_freq that is higher than anything in the
-> table.
+>> Thank you so much for taking the time to do this thorough review and to
+>> make these suggestions. While I am still digesting the details I do
+>> intend to follow all (as well as the ones earlier I did not explicitly
+>> respond to).
+> 
+> Make your mind up and tell me where I'm wrong before you implement the crap
+> I suggested blindly, as that will just cause the next reviewer (me or
+> someone else) to tell _you_ that it is crap :)
 
-You will still get a valid index in that case.
+Will do. I need more time to digest your suggestions because your
+thorough review provided me plenty to consider.
 
-There is only once case where we return -1, when the cpufreq table
-doesn't have any valid frequencies.
+>> Keeping the CLOSID associated with the pseudo-locked region will surely
+>> make the above simpler since CLOSID's are association with resource
+>> groups (represented by the directories). I would like to highlight that
+>> on some platforms there are only a few (for example, 4) CLOSIDs
+>> available. Not releasing a CLOSID would thus reduce available CLOSIDs
+>> that are already limited. These platforms do have smaller possible
+>> bitmasks though (for example, 8 possible bits), which may make light of
+>> this concern. I thus just add it as informational to the consequence of
+>> this simplification.
+> 
+> Yes. If you have 4 CLOSIDs and only 8 CBM bits it really does not matter
+> much.
+> 
+>>> Now the remaining thing is the memory allocation and the mmap itself. I
+>>> really dislike the preallocation of memory right at setup time. Ideally
+>>> that should be an allocation of the application itself, but the horrid
+>>> wbinvd stuff kinda prevents that. With that restriction we are more or less
+>>> bound to immediate allocation and population.
+>>
+>> Acknowledged. I am not sure if the current permissions would support
+>> such a dynamic setup though. At this time the system administrator is
+>> the one that sets up the pseudo-locked region and can through
+>> permissions of the character device provide access to these regions to
+>> user space applications.
+> 
+> You still would need some interface, e.g. character device which allows you
+> to hand in the pointer to the user allocated memory and do the cache
+> priming. So you could use the same permission setup for that character
+> device.
+> 
+> The other problem is that we'd need to have MAP_CONTIG first so you
+> actually can allocate physically contigous memory from user space. Mike is
+> working on that, but it's not available today. The only way to do so today
+> (with lots of waste) would be MAP_HUGETLB, which might be an acceptable
+> constraint up to the point where MAP_CONTIG is available.
 
-> Or the API changes, and we forget to update this call site.
+I recorded this in a pseudo-locking task list as something to consider
+if the wbinvd requirement goes away at some point.
 
-I am not sure we can do much about that right now.
+> Though this all depends on the ability to remove the wbinvd
+> requirement. But even if we can remove that we'd still need to be aware
+> that the cache priming loop which needs to run with interrupts disabled is
+> expensive as well and can introduce undesired latencies. Needs all some
+> thought...
 
-> If you're saying that cpufreq_table_find_index_dl() can NEVER fail,
-
-Yes, if we have at least one valid frequency in the table, otherwise
-the cpufreq driver shouldn't have registered itself.
-
-> then
-> write it so that it can never fail and change it to return unsigned int.
-
-But what should we do when there is no frequency in the cpufreq table?
-Just in case where a driver is buggy and tries to call this routine
-for an invalid table.
-
-> Having it potentially return -1, which is then used to index an array
-> and not handling that is just asking for bugs to happen.
-
-I understand what you are trying to say here, but I don't know what
-can be done to prevent this here.
-
-What we can do is change the return type to void and pass a int
-pointer to the routine, but that wouldn't change anything at all. That
-pointers variable can still have -1 in it.
-
--- 
-viresh
+Reinette
