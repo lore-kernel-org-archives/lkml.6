@@ -1,92 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeBUS0L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:26:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44118 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751890AbeBUS0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:26:09 -0500
-Date: Wed, 21 Feb 2018 19:25:53 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: Re: [PATCH 2/3] x86/microcode/intel: Perform a cache flush before
- ucode update.
-Message-ID: <20180221182553.GD16888@pd.tnic>
-References: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
- <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
+        id S1752779AbeBUS30 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:29:26 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:57307 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeBUS3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:29:24 -0500
+Date: Wed, 21 Feb 2018 19:29:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 08:49:43AM -0800, Ashok Raj wrote:
-> Microcode updates can be safer if the caches are clean.
-> Some of the issues around in certain Broadwell parts
-> can be addressed by doing a full cache flush.
-
-Take that text...
-
+On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
+> Add Capture Engine Unit (CEU) node to device tree.
 > 
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> Cc: X86 ML <x86@kernel.org>
-> Cc: LKML <linux-kernel@vger.kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Boris Petkov <bp@suse.de>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-> ---
->  arch/x86/kernel/cpu/microcode/intel.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index eff80df..5d32724 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -589,6 +589,7 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
->  	if (!mc)
->  		return 0;
->  
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-... and put it here as a comment.
-
-> +	wbinvd();
-
-This definitely needs to be native_wbinvd(). Early mode don't love pvops.
-
->  	/* write microcode via MSR 0x79 */
->  	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
->  
-> @@ -805,6 +806,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
->  		return UCODE_OK;
->  	}
-
-
-Ditto.
-
-> +	wbinvd();
->  	/* write microcode via MSR 0x79 */
->  	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
->  
-> -- 
-> 2.7.4
-> 
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+This patch depends on the binding for "renesas,r7s72100-ceu".
+Please repost or otherwise ping me once that dependency has been accepted.
