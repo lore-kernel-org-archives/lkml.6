@@ -1,49 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751350AbeBUURS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:17:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35458 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeBUURQ (ORCPT
+        id S1751365AbeBUUSn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:18:43 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57960 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbeBUUSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:17:16 -0500
-Date: Wed, 21 Feb 2018 12:17:15 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Shakeel Butt <shakeelb@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Cgroups <cgroups@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH v5 2/2] mm/memcontrol.c: Reduce reclaim retries in
- mem_cgroup_resize_limit()
-Message-Id: <20180221121715.0233d34dda330c56e1a9db5f@linux-foundation.org>
-In-Reply-To: <20180119151118.GE6584@dhcp22.suse.cz>
-References: <20171220102429.31601-1-aryabinin@virtuozzo.com>
-        <20180119132544.19569-1-aryabinin@virtuozzo.com>
-        <20180119132544.19569-2-aryabinin@virtuozzo.com>
-        <20180119133510.GD6584@dhcp22.suse.cz>
-        <CALvZod7HS6P0OU6Rps8JeMJycaPd4dF5NjxV8k1y2-yosF2bdA@mail.gmail.com>
-        <20180119151118.GE6584@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Feb 2018 15:18:42 -0500
+Date: Wed, 21 Feb 2018 20:18:40 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Brijesh Singh <brijesh.singh@amd.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>,
+        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH] KVM: SVM: Fix sparse: incorrect type in argument 1
+ (different base types)
+Message-ID: <20180221201839.GK30522@ZenIV.linux.org.uk>
+References: <20180219161228.46931-1-brijesh.singh@amd.com>
+ <20180221174910.GI30522@ZenIV.linux.org.uk>
+ <f55f25f6-559d-bb93-5605-af66678438c2@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f55f25f6-559d-bb93-5605-af66678438c2@amd.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Jan 2018 16:11:18 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+On Wed, Feb 21, 2018 at 01:59:55PM -0600, Brijesh Singh wrote:
 
-> And to be honest, I do not really see why keeping retrying from
-> mem_cgroup_resize_limit should be so much faster than keep retrying from
-> the direct reclaim path. We are doing SWAP_CLUSTER_MAX batches anyway.
-> mem_cgroup_resize_limit loop adds _some_ overhead but I am not really
-> sure why it should be that large.
+> Sure, checking access_ok() does not guarantee that later
+> copy_from_user() will not fail. But it does eliminate one possible
+> reason for the failure. We are trying to validate most of the user
+> inputs before we invoke  SEV command.
 
-Maybe restarting the scan lots of times results in rescanning lots of
-ineligible pages at the start of the list before doing useful work?
+That makes no sense whatsoever.  If user is deliberately fuzzing
+your code or trying to DoS it, that "validation" doesn't buy you
+anything - they can just as well feed you NULL, after all.
 
-Andrey, are you able to determine where all that CPU time is being spent?
-
-Thanks.
+What is the rationale for that?  "Userland is accidentally feeding
+us garbage pointers" is the case where slowness is the least of your
+concerns...
