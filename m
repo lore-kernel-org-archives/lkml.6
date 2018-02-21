@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225yJz3g4b/NtfZvqlRy7ZyLYmeOhdkpgXU93bbClRsKhD8fKKteON759OrYGeHKtrH3MZHo
-ARC-Seal: i=1; a=rsa-sha256; t=1519218248; cv=none;
+X-Google-Smtp-Source: AH8x22748CtMV7cJOERmRF0maRWhlGRS8cIKm2vRYvQ6qjvNrDoAc32HKCzX3pZ9AtoEpESSihEV
+ARC-Seal: i=1; a=rsa-sha256; t=1519218244; cv=none;
         d=google.com; s=arc-20160816;
-        b=SQFnfaBTO085xT/smJ9fENAnGusAsV+17T5F4JISoyq2++qPoTrQ8bG4gCgjlDJwsq
-         tWpLeeUAu1vZCRju75Qm7CEXrILZwAdA9Oap4vND/i3vJ4UOx6vt+6cha7tyoGo7QgaV
-         VRi8ytL1hyRLW1pVw93JefyF3ND0CvapmcLXmFLlo2Pm5tM2qOSPDK74CpzPnvlvS4UJ
-         NwaBK70ewOVd9ELSrmEpfez5YhVcoPHA+16Uqj4Ga8FgzK4RdG4SCpYrhBF5/fTMlV3q
-         yh/bbl6kAq1mp9o5UnSRlh3+yF0wCnhywbm9MCNUh+POE2Ywz9p3rn+HW9gk1ZnLfpdN
-         qptA==
+        b=i0jldh9Junh5LG6R5nn4L3J7TkE6JnmXIAjbBvASLRdYHY7gq80dQjzUMe0l46TWtZ
+         uO9FhZDeXLR4fpGEeYlGjpmpgMnZXYw8k0Sm/BHM75d03KnSzQRxuYwcQwgsgj5tUdaz
+         yivcUxfQX6NiV0N0YL4r2ppsw73wADdzcf1M23NrgcMmkJSFsJ20uLrdrm8S9k8zRWip
+         GgHRa/Z9Dd9owNcG4LLdxB4ozPTKHSQTZ/cGyuTv7bGDIB6YLRZdVMG6nT5/pwPdfEEC
+         r6Uee+5JGMMeitDeuuqLcKIxzmOb6CoohQ1PWtQceGiaJU/6szfShph8TTYtmOJWDIzQ
+         0vhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UQPlcDH8j6xo1QkpeDzgpHqN2e3AOMGKC2GxHsozpTk=;
-        b=KHwj4/T+AIeg5/mUNz9UuTiy0iu/kJE7vH0w/9c3KOL9GmnRN/fs68zsrjA6qsxrn3
-         dJpbAXtzfusWrwQTMrvDTsLgepaHb0TfUkTEmw2YDsex2KYPDNXYodMCX8ZAClE/lPCH
-         0nome50R4aZ9HIcjF77jetZVkJja+3WS5aG40mxqiIuN927f2gcpkXnZQGo0YOYAmHeu
-         Im7dS37jlVcGLOyEJTclB94z2QufSTcdBOOvu1hCSLP0KE4fNxYQYe2iixpi34tam5dB
-         +OwBw2X0sy55wR08pO5AGm26vaKoFNk/vuV0r4w4NIvPO0I30mdW578IfdA/ZIZenK4n
-         gtUw==
+        bh=nx+H9/MmP6lfQV6DMC8tZ5+eJLR6g7dJKscFMzz9eDo=;
+        b=UCqw/VMljBVwkTu0RwFpvqrOEvPTrsjbQY9x3pM3akQXku4Smv4xHSNg1tLPckBRE8
+         gjnTzY5AQerRjRRmE0tRP2+WDAZk6JCI+DyShb9WCWq4wsBAShM+oRunIE4RnM1UDchv
+         xqJo6R6AfY37XQZF5yy8rcCOggjVtwG8qPh9K+hsTbGbDdXz4l6Lx6lpzweGtd/0V+2X
+         tNLtMc79n12mZCYrbZstQynZH7FNYrBJnWBX4fvstpvKn82/C4pDbih3t5HLdmWpYgp2
+         USxC4O8Gll7EVEwzqaqVg2BUAPcdNsEv9LPH9F6LlPZ58S2nnKh49GjZcuuIJJnuS5RY
+         3DcA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Liu Bo <bo.li.liu@oracle.com>,
+	Nikolay Borisov <nborisov@suse.com>,
 	Josef Bacik <jbacik@fb.com>,
 	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 138/167] Btrfs: fix use-after-free on root->orphan_block_rsv
-Date: Wed, 21 Feb 2018 13:49:09 +0100
-Message-Id: <20180221124532.199522834@linuxfoundation.org>
+Subject: [PATCH 4.14 137/167] Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
+Date: Wed, 21 Feb 2018 13:49:08 +0100
+Message-Id: <20180221124532.132874262@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015793947174912?=
-X-GMAIL-MSGID: =?utf-8?q?1593015793947174912?=
+X-GMAIL-THRID: =?utf-8?q?1593015210708041633?=
+X-GMAIL-MSGID: =?utf-8?q?1593015790196521052?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,117 +53,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 1a932ef4e47984dee227834667b5ff5a334e4805 upstream.
+commit e8f1bc1493855e32b7a2a019decc3c353d94daf6 upstream.
 
-I got these from running generic/475,
+This regression is introduced in
+commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction").
 
-WARNING: CPU: 0 PID: 26384 at fs/btrfs/inode.c:3326 btrfs_orphan_commit_root+0x1ac/0x2b0 [btrfs]
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-IP: btrfs_block_rsv_release+0x1c/0x70 [btrfs]
-Call Trace:
-  btrfs_orphan_release_metadata+0x9f/0x200 [btrfs]
-  btrfs_orphan_del+0x10d/0x170 [btrfs]
-  btrfs_setattr+0x500/0x640 [btrfs]
-  notify_change+0x7ae/0x870
-  do_truncate+0xca/0x130
-  vfs_truncate+0x2ee/0x3d0
-  do_sys_truncate+0xaf/0xf0
-  SyS_truncate+0xe/0x10
-  entry_SYSCALL_64_fastpath+0x1f/0x96
+There are two problems,
 
-The race is between btrfs_orphan_commit_root and btrfs_orphan_del,
-        t1                                        t2
-btrfs_orphan_commit_root                     btrfs_orphan_del
-   spin_lock
-   check (&root->orphan_inodes)
-   root->orphan_block_rsv = NULL;
-   spin_unlock
-                                             atomic_dec(&root->orphan_inodes);
-                                             access root->orphan_block_rsv
+a) it is ->destroy_inode() that does the final free on inode, not
+   ->evict_inode(),
+b) clear_inode() must be called before ->evict_inode() returns.
 
-Accessing root->orphan_block_rsv must be done before decreasing
-root->orphan_inodes.
+This could end up hitting BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+in evict() because I_CLEAR is set in clear_inode().
 
-cc: <stable@vger.kernel.org> v3.12+
-Fixes: 703c88e03524 ("Btrfs: fix tracking of orphan inode count")
+Fixes: commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction")
+Cc: <stable@vger.kernel.org> # v4.7-rc6+
 Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ fs/btrfs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -3371,6 +3371,11 @@ int btrfs_orphan_add(struct btrfs_trans_
- 		ret = btrfs_orphan_reserve_metadata(trans, inode);
- 		ASSERT(!ret);
- 		if (ret) {
-+			/*
-+			 * dec doesn't need spin_lock as ->orphan_block_rsv
-+			 * would be released only if ->orphan_inodes is
-+			 * zero.
-+			 */
- 			atomic_dec(&root->orphan_inodes);
- 			clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 				  &inode->runtime_flags);
-@@ -3385,12 +3390,17 @@ int btrfs_orphan_add(struct btrfs_trans_
- 	if (insert >= 1) {
- 		ret = btrfs_insert_orphan_item(trans, root, btrfs_ino(inode));
- 		if (ret) {
--			atomic_dec(&root->orphan_inodes);
- 			if (reserve) {
- 				clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 					  &inode->runtime_flags);
- 				btrfs_orphan_release_metadata(inode);
- 			}
-+			/*
-+			 * btrfs_orphan_commit_root may race with us and set
-+			 * ->orphan_block_rsv to zero, in order to avoid that,
-+			 * decrease ->orphan_inodes after everything is done.
-+			 */
-+			atomic_dec(&root->orphan_inodes);
- 			if (ret != -EEXIST) {
- 				clear_bit(BTRFS_INODE_HAS_ORPHAN_ITEM,
- 					  &inode->runtime_flags);
-@@ -3422,28 +3432,26 @@ static int btrfs_orphan_del(struct btrfs
- {
- 	struct btrfs_root *root = inode->root;
- 	int delete_item = 0;
--	int release_rsv = 0;
- 	int ret = 0;
+@@ -5318,7 +5318,7 @@ void btrfs_evict_inode(struct inode *ino
+ 	trace_btrfs_inode_evict(inode);
  
--	spin_lock(&root->orphan_lock);
- 	if (test_and_clear_bit(BTRFS_INODE_HAS_ORPHAN_ITEM,
- 			       &inode->runtime_flags))
- 		delete_item = 1;
+ 	if (!root) {
+-		kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
++		clear_inode(inode);
+ 		return;
+ 	}
  
-+	if (delete_item && trans)
-+		ret = btrfs_del_orphan_item(trans, root, btrfs_ino(inode));
-+
- 	if (test_and_clear_bit(BTRFS_INODE_ORPHAN_META_RESERVED,
- 			       &inode->runtime_flags))
--		release_rsv = 1;
--	spin_unlock(&root->orphan_lock);
-+		btrfs_orphan_release_metadata(inode);
- 
--	if (delete_item) {
-+	/*
-+	 * btrfs_orphan_commit_root may race with us and set ->orphan_block_rsv
-+	 * to zero, in order to avoid that, decrease ->orphan_inodes after
-+	 * everything is done.
-+	 */
-+	if (delete_item)
- 		atomic_dec(&root->orphan_inodes);
--		if (trans)
--			ret = btrfs_del_orphan_item(trans, root,
--						    btrfs_ino(inode));
--	}
--
--	if (release_rsv)
--		btrfs_orphan_release_metadata(inode);
- 
- 	return ret;
- }
