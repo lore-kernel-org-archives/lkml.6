@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeBUU5m (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:57:42 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46992 "EHLO
+        id S1751821AbeBUU5l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:57:41 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:46988 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbeBUU5d (ORCPT
+        with ESMTP id S1751717AbeBUU5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Feb 2018 15:57:33 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 040/100] rtc: max6916: stop validating rtc_time in .read_time
-Date: Wed, 21 Feb 2018 21:55:35 +0100
-Message-Id: <20180221205635.31314-41-alexandre.belloni@bootlin.com>
+Subject: [PATCH 041/100] rtc: max8997: stop validating rtc_time in .read_time
+Date: Wed, 21 Feb 2018 21:55:36 +0100
+Message-Id: <20180221205635.31314-42-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
 References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
@@ -26,21 +26,21 @@ It is not necessary to call it just before returning from the callback.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-max6916.c | 2 +-
+ drivers/rtc/rtc-max8997.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-max6916.c b/drivers/rtc/rtc-max6916.c
-index 623ab27b2757..7e908a490cf6 100644
---- a/drivers/rtc/rtc-max6916.c
-+++ b/drivers/rtc/rtc-max6916.c
-@@ -75,7 +75,7 @@ static int max6916_read_time(struct device *dev, struct rtc_time *dt)
- 	dt->tm_wday = bcd2bin(buf[5]) - 1;
- 	dt->tm_year = bcd2bin(buf[6]) + 100;
+diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
+index db984d4bf952..e8cee123e8aa 100644
+--- a/drivers/rtc/rtc-max8997.c
++++ b/drivers/rtc/rtc-max8997.c
+@@ -153,7 +153,7 @@ static int max8997_rtc_read_time(struct device *dev, struct rtc_time *tm)
  
--	return rtc_valid_tm(dt);
+ 	max8997_rtc_data_to_tm(data, tm, info->rtc_24hr_mode);
+ 
+-	return rtc_valid_tm(tm);
 +	return 0;
  }
  
- static int max6916_set_time(struct device *dev, struct rtc_time *dt)
+ static int max8997_rtc_set_time(struct device *dev, struct rtc_time *tm)
 -- 
 2.16.1
