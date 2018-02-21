@@ -1,91 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936898AbeBUNef (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:34:35 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42123 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933203AbeBUNe3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:34:29 -0500
-X-Google-Smtp-Source: AH8x22490o/xZHGEvLmPheGAbK2K6D9Ik4FfdUpetHwW8hn3SkD0H1QMNHNMlyf94X9vM+hBdIuvNg==
-Date: Wed, 21 Feb 2018 14:34:26 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
-Message-ID: <20180221133426.fcad5xieuvukdluv@pali>
-References: <20180213085030.kiksdi2a7ksae5wz@pali>
- <20180213132726.GD5453@intel.com>
- <20180213133842.i5z5jj3sllorsy2w@pali>
- <20180213153654.GG5453@intel.com>
- <20180213160437.gy5luyygjvuktuqx@pali>
- <20180213161221.GK5453@intel.com>
- <20180213174341.abcjlfjymxbcz25t@pali>
- <20180213174556.GM5453@intel.com>
- <20180219093650.avb4xipvflfd2kel@pali>
- <20180221132853.GM5453@intel.com>
+        id S937127AbeBUNoK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:44:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:64978 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936663AbeBUNoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:44:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="176944773"
+Subject: Re: [PATCH V4 1/5] perf/x86/intel: Fix event update for auto-reload
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, acme@kernel.org,
+        tglx@linutronix.de, jolsa@redhat.com, eranian@google.com,
+        ak@linux.intel.com
+References: <1518474035-21006-1-git-send-email-kan.liang@linux.intel.com>
+ <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
+ <20180221103247.GL25181@hirez.programming.kicks-ass.net>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <cac32cb6-e99a-2df7-e756-0498cf06598d@linux.intel.com>
+Date: Wed, 21 Feb 2018 08:43:47 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180221132853.GM5453@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180221103247.GL25181@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LDYdM5012785
 
-On Wednesday 21 February 2018 15:28:53 Ville Syrjälä wrote:
-> On Mon, Feb 19, 2018 at 10:36:50AM +0100, Pali Rohár wrote:
-> > On Tuesday 13 February 2018 19:45:56 Ville Syrjälä wrote:
-> > > On Tue, Feb 13, 2018 at 06:43:41PM +0100, Pali Rohár wrote:
-> > > > On Tuesday 13 February 2018 18:12:21 Ville Syrjälä wrote:
-> > > > > On Tue, Feb 13, 2018 at 05:04:37PM +0100, Pali Rohár wrote:
-> > > > > > So it can be done only once after reboot? Or only prior to booting kernel?
-> > > > > 
-> > > > > Never.
-> > > > 
-> > > > Never? Now I'm lost. Why then dmesg message instruct user to try set up
-> > > > it in BIOS if you say it is never possible?
-> > > 
-> > > You can change it in the BIOS. No way to change it from the operating system.
-> > 
-> > Hi! Can you explain it a bit more?
-> > 
-> > What does it mean "in BIOS"? Prior switching from 16bit real mode to
-> > protected or long? Or before exiting EFI boot services? Or before
-> > booting kernel (when initialize memory mapping)?
+
+
+On 2/21/2018 5:32 AM, Peter Zijlstra wrote:
+> On Mon, Feb 12, 2018 at 02:20:31PM -0800, kan.liang@linux.intel.com wrote:
+>> @@ -1389,8 +1456,22 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs)
+>>   
+>>   	ds->pebs_index = ds->pebs_buffer_base;
+>>   
+>> -	if (unlikely(base >= top))
+>> +	if (unlikely(base >= top)) {
+>> +		/*
+>> +		 * The drain_pebs() could be called twice in a short period
+>> +		 * for auto-reload event in pmu::read(). There are no
+>> +		 * overflows have happened in between.
+>> +		 * It needs to call intel_pmu_save_and_restart_reload() to
+>> +		 * update the event->count for this case.
+>> +		 */
+>> +		for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled,
+>> +				 x86_pmu.max_pebs_events) {
+>> +			event = cpuc->events[bit];
+>> +			if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
+>> +				intel_pmu_save_and_restart_reload(event, 0);
+>> +		}
+>>   		return;
+>> +	}
+>>   
+>>   	for (at = base; at < top; at += x86_pmu.pebs_record_size) {
+>>   		struct pebs_record_nhm *p = at;
 > 
-> The BIOS is a black box, no one really knows what it's doing. The stolen
-> memory is carved out pretty early I think (alongside other carved out
-> chunks for SMM and whatnot). And once that's done the BIOS usually locks
-> down stuff like this (the hw has magic write once lock bits for various
-> registers) so there's just no way to change things afterwards.
+> Is there a reason you didn't do intel_pmu_drain_pebs_core() ?
+>
 
-Thank you for explanation. So real problem with changing size of stolen
-memory is that BIOS "may" lock future changes.
+Right, I forgot that the drain_pebs_core() also has auto_reload support.
+Sorry for that.
+I will re-send all patches.
 
-Is there any documentation for this Intel GPU stolen memory? I hope that
-I should be able at least to read status of that lock registers -- to
-prove that size of stolen memory is locked and cannot be changed.
+Thanks,
+Kan
 
-> > 
-> > I still do not see reason nor understand why this cannot be possible
-> > either in bootloader (e.g. grub2) or prior to loading bootloader which
-> > runs in protected or long mode.
-> > 
-> > It is because BIOS uses some undocumented call/procedure which sets that
-> > amount of memory and it is unknown how to do it?
-> > 
-> > -- 
-> > Pali Rohár
-> > pali.rohar@gmail.com
 > 
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -1435,8 +1435,11 @@ static void intel_pmu_drain_pebs_core(st
+>   		return;
+>   
+>   	n = top - at;
+> -	if (n <= 0)
+> +	if (n <= 0) {
+> +		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
+> +			intel_pmu_save_and_restart_reload(event, 0);
+>   		return;
+> +	}
+>   
+>   	__intel_pmu_pebs_event(event, iregs, at, top, 0, n);
+>   }
+> 
