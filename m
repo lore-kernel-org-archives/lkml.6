@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226uLNrEhgexeJ+M76gr/3gXssA9Sj5gbjFe24ckRZNOcwMwCu3/U+i9O+UuHL4qy6yqdv/f
-ARC-Seal: i=1; a=rsa-sha256; t=1519218192; cv=none;
+X-Google-Smtp-Source: AH8x2249QuNo6QVmRyRKnLdsuJEsJa+UNhatGf0Bu5RUr2LA6Wz/m0sikK/Zvoauh13EFS4pDdKU
+ARC-Seal: i=1; a=rsa-sha256; t=1519218188; cv=none;
         d=google.com; s=arc-20160816;
-        b=bHaRWLO2rEidvzZiiHKq4KtfM8VG/aLf5YP4K8PdB6/9ZwD6CCC3HdWKDRkQYCumFO
-         LPqw6fCtwseIx7f/1o0hzroKma0MExgGMNuitpGf5raT876WlsmlC+dDF2GpRQfAXwGe
-         4UE8xV3G+AOIZg4wwcsXwgwjTLSXwzVKj5SyF94POvti/WwlmD5znUT+gMEPO6SaCrQw
-         VukLxps3JcWQZul2a27rwm1ZKwrNs4YnveMzexOtzT7M7lBkPX6qcrniCc3G9+CQB9Zs
-         SAglvPX2sShO1XsQCrrZ6M55aRwcYTEHzUa+lM0QSJZHlwth4GONrKBErb7V6zaCN/Ab
-         avrA==
+        b=MIMf/BTZDad3Nj9EsfnpV44d3K4ii9FZf1BiXCSRDil/M6AgpPPklofjnM/j1GiGF5
+         JQ4N9lDuoqfg+yIcm4G3XWowzQX6hhDArf2C3GKM77C9dnVxE5STyAkfs368yIPVp2AQ
+         L1hbfpQpXN7X8nW2NqFBGqtF/Ll0gaKxl1hURP0ajYUog9AeINUTy4iLhBzehxpYUqPf
+         c4vd/AENF91iQSb4eCU/IzsAqgdbn+K9oNm7rEiAgmEu34akdKZbZweOVyy3RZKbxGdv
+         Jm/FcMRJ/UzbUVG7MKK86d7uscoGADF5WcaLaobFulD6fkNrYqkQ2E74CVHiofr+KW4s
+         CWrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=b9aG563JFQcT+7awFLQQ+pmOol7GPukjk4RzbIEtXzs=;
-        b=o3bKEWzoEE7ig4O7+CaTnv3G7GFdOoc0dG1Ak1qLJvIEZpoD/0LBT5NsEpDZrmmlcF
-         fYsSy5iPD+IUpCs1ApNZPmC19FXLoq/K8ayM+0J8gSkFjFuOVBnArkq/apb/adsiwLJt
-         WLpSvmCjftul4k6i4Onludn5fybWl705kvkBS16YcHHVcw1WEOI7fwqjJwguBj5QAG1l
-         4rocNpy79LRbbvQgGSX5blP1fxEUc/11T0j7mhr3q125XSljXYZYHvGK3rcyU1/LfGdA
-         8NkuMF8gXGkC4cQNnToemoIjiYi1HOHbGr5hWxTkVTQagDbsEdYy7m2nWmJnyuwG/SDL
-         EJAg==
+        bh=SerRLLUxeNLXq6dQ496/TQeBvzHiqxRFzpUWJMQaEzo=;
+        b=0Rd83SNB7pzM5Yfc0ZlrgkfPqpWbWbRjXJFms8NT7e9G7bJXmX9MrQQDMdlHKuBChi
+         97CEVio8YUJfHUMy/oQsU80SyZlLBalDF5rL2xRu+vjJalJ7pf8Zr0A0oMwKcnd5svNE
+         Y/O3WLn/NoWH4KLqHK2ipeq3pszNYrA4RGidLkmqCcIJw5/YV8yCgFCxgeGfXeLO+OWo
+         TvJUU7APLqzBOd9Z1SZ9v39EjlJMYsxMPCzl7N92B1xztFc84d+izRlweZP4MV2en4NB
+         IQ7heTMy+xA7cpFJ4WLCsj3DX12J2Z+3eWJ4aqQhwvxbOBJmdYQr7+XZvc2D19KiULFx
+         cetw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bhavesh Davda <bhavesh.davda@oracle.com>,
-	Joao Martins <joao.m.martins@oracle.com>,
+	Simon Gaiser <simon@invisiblethingslab.com>,
 	Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.14 120/167] xenbus: track caller request id
-Date: Wed, 21 Feb 2018 13:48:51 +0100
-Message-Id: <20180221124531.071007801@linuxfoundation.org>
+Subject: [PATCH 4.14 119/167] xen: Fix {set,clear}_foreign_p2m_mapping on autotranslating guests
+Date: Wed, 21 Feb 2018 13:48:50 +0100
+Message-Id: <20180221124531.004925786@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015734784139984?=
-X-GMAIL-MSGID: =?utf-8?q?1593015734784139984?=
+X-GMAIL-THRID: =?utf-8?q?1593015731101166414?=
+X-GMAIL-MSGID: =?utf-8?q?1593015731101166414?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,93 +49,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joao Martins <joao.m.martins@oracle.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
 
-commit 29fee6eed2811ff1089b30fc579a2d19d78016ab upstream.
+commit 781198f1f373c3e350dbeb3af04a7d4c81c1b8d7 upstream.
 
-Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent
-xenstore accesses") optimized xenbus concurrent accesses but in doing so
-broke UABI of /dev/xen/xenbus. Through /dev/xen/xenbus applications are in
-charge of xenbus message exchange with the correct header and body. Now,
-after the mentioned commit the replies received by application will no
-longer have the header req_id echoed back as it was on request (see
-specification below for reference), because that particular field is being
-overwritten by kernel.
+Commit 82616f9599a7 ("xen: remove tests for pvh mode in pure pv paths")
+removed the check for autotranslation from {set,clear}_foreign_p2m_mapping
+but those are called by grant-table.c also on PVH/HVM guests.
 
-struct xsd_sockmsg
-{
-  uint32_t type;  /* XS_??? */
-  uint32_t req_id;/* Request identifier, echoed in daemon's response.  */
-  uint32_t tx_id; /* Transaction id (0 if not related to a transaction). */
-  uint32_t len;   /* Length of data following this. */
-
-  /* Generally followed by nul-terminated string(s). */
-};
-
-Before there was only one request at a time so req_id could simply be
-forwarded back and forth. To allow simultaneous requests we need a
-different req_id for each message thus kernel keeps a monotonic increasing
-counter for this field and is written on every request irrespective of
-userspace value.
-
-Forwarding again the req_id on userspace requests is not a solution because
-we would open the possibility of userspace-generated req_id colliding with
-kernel ones. So this patch instead takes another route which is to
-artificially keep user req_id while keeping the xenbus logic as is. We do
-that by saving the original req_id before xs_send(), use the private kernel
-counter as req_id and then once reply comes and was validated, we restore
-back the original req_id.
-
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: fd8aa9095a ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
-Reported-by: Bhavesh Davda <bhavesh.davda@oracle.com>
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+Cc: <stable@vger.kernel.org> # 4.14
+Fixes: 82616f9599a7 ("xen: remove tests for pvh mode in pure pv paths")
+Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
 Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/xenbus/xenbus.h       |    1 +
- drivers/xen/xenbus/xenbus_comms.c |    1 +
- drivers/xen/xenbus/xenbus_xs.c    |    3 +++
- 3 files changed, 5 insertions(+)
+ arch/x86/xen/p2m.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/xen/xenbus/xenbus.h
-+++ b/drivers/xen/xenbus/xenbus.h
-@@ -76,6 +76,7 @@ struct xb_req_data {
- 	struct list_head list;
- 	wait_queue_head_t wq;
- 	struct xsd_sockmsg msg;
-+	uint32_t caller_req_id;
- 	enum xsd_sockmsg_type type;
- 	char *body;
- 	const struct kvec *vec;
---- a/drivers/xen/xenbus/xenbus_comms.c
-+++ b/drivers/xen/xenbus/xenbus_comms.c
-@@ -309,6 +309,7 @@ static int process_msg(void)
- 			goto out;
+--- a/arch/x86/xen/p2m.c
++++ b/arch/x86/xen/p2m.c
+@@ -694,6 +694,9 @@ int set_foreign_p2m_mapping(struct gntta
+ 	int i, ret = 0;
+ 	pte_t *pte;
  
- 		if (req->state == xb_req_state_wait_reply) {
-+			req->msg.req_id = req->caller_req_id;
- 			req->msg.type = state.msg.type;
- 			req->msg.len = state.msg.len;
- 			req->body = state.body;
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -227,6 +227,8 @@ static void xs_send(struct xb_req_data *
- 	req->state = xb_req_state_queued;
- 	init_waitqueue_head(&req->wq);
++	if (xen_feature(XENFEAT_auto_translated_physmap))
++		return 0;
++
+ 	if (kmap_ops) {
+ 		ret = HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,
+ 						kmap_ops, count);
+@@ -736,6 +739,9 @@ int clear_foreign_p2m_mapping(struct gnt
+ {
+ 	int i, ret = 0;
  
-+	/* Save the caller req_id and restore it later in the reply */
-+	req->caller_req_id = req->msg.req_id;
- 	req->msg.req_id = xs_request_enter(req);
- 
- 	mutex_lock(&xb_write_mutex);
-@@ -310,6 +312,7 @@ static void *xs_talkv(struct xenbus_tran
- 	req->num_vecs = num_vecs;
- 	req->cb = xs_wake_up;
- 
-+	msg.req_id = 0;
- 	msg.tx_id = t.id;
- 	msg.type = type;
- 	msg.len = 0;
++	if (xen_feature(XENFEAT_auto_translated_physmap))
++		return 0;
++
+ 	for (i = 0; i < count; i++) {
+ 		unsigned long mfn = __pfn_to_mfn(page_to_pfn(pages[i]));
+ 		unsigned long pfn = page_to_pfn(pages[i]);
