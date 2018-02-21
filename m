@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227pQHmcH7lrYS2c7m1TW96JJNcOoICaQcPVIkYRfI5fG9cWOsWbl8x1YUlZGspdDatweREP
-ARC-Seal: i=1; a=rsa-sha256; t=1519217744; cv=none;
+X-Google-Smtp-Source: AH8x225eTRtFT0uBzrdiEclcg/+/EFqDOU4i+d7wQHjdN6yuVhWWdmBtP+K/YT0HHHLfmmlMEExY
+ARC-Seal: i=1; a=rsa-sha256; t=1519217739; cv=none;
         d=google.com; s=arc-20160816;
-        b=MCJPLci7NXFyvDsNUqyKUP2aeStqZKrhXHC5fwpzX6a9o0YG1FZjni0Z12lTIhZpsn
-         JRDAS8O/QKVP2zA9N+Y9jydqCtAgwdrNKXFNgA6Qp35NF5hymi33NO9a+IDkGMheW/mM
-         flOqNmymxThI1G50sEWjgMUInI+CGH8tc4VSUpIw30nWNT2+gHjncX04prU1cHUkzijy
-         H6CLE0v82kvbsShWgWUxkD5/Z9bvRFSRsXZ8h8fOTi4Mpe7tErA6I/1x7vc1ciugdW+e
-         3rT0BlikC0ARUrFEfzTbawBfr0WV8QkuJI3xecc/m4buhZ3obfidKrcUms4jnjtVP84/
-         J6sQ==
+        b=KBJ48/NTeY4rXFskhn4qwANmcrNquY8pwtIKJUy2D7TpF6x9lXoI3KxowNv3mTOdSv
+         HnTWb/tjeLlSuwcNr6N9FqSH/ekz9aPx6hnGX7yzsUPgJmnDgylNfTrr8j7CUvWXcL2C
+         8/j2kOOXFHH2H1SmYLIdK12rSXrZ4Zm8Uc6rJwFELelynpx1P3XaDr0f0UVQ5qm05pTs
+         xjfOkf5LJ8nr3SgwGiLYGgGKQ0T7YLi5L57wpgqjVpdVPgeIMuoApipHN5NsADxkgBje
+         HhE0W8LuO2K6p+iiuxD4/whukUqCDSYHVb3KhxmTeSDYQsPB6xmUukwhGOKVJqmPnNFS
+         S8sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wj1Vy4FBQahwvnhyqEn5pBg4WyLq8uaXNJFzK5NWjj4=;
-        b=alPdiTBTVg63qHaRmH/xyRhKgV9BwrAead4aj4AbisFYP/9U6BLrJ9D9+seqAFL1UO
-         5mjkbMCoXwnQ7SGFdcucBgHy4vGg+tSA2NcuBHzlbDqxHdKeyVc5w8slXjXmq7eUpa5J
-         FC2GMhf56aLUfUeoyQOSr+oceCGVlvrvs682HRETbPYJNl1Go48kIdojRCeaDN8dFA5g
-         QaxsnS2+xwoFZjRkt8q9m1fMiF7idp7bL8NzFTVhceBqYiy8LvKaWt8yEawsmNo+Aa8g
-         fDnERtGGbH25bVbbcBTjbmE4w7kfi04VOp9pbaEHNQKAtFfwOJ/xjabioCpfzKKAorCj
-         iwug==
+        bh=d3qtNRPfD+ZF6rwYpvz81E14UtHRhKnti8Rul1fGPqE=;
+        b=TofNjr1lrAAi9sZ1+s20wUkIT1JheeCBhew4JvrItJGibteFSpJDgGiW1fjdmMIF7v
+         ctYYNgGLhYDx5Iip5qpBW5qRk8uRkI8AeYl/3zjRTvMQGLBFR+C6d6WLTsOljGROe3qR
+         oD/OnlO1Iwbso1dOwl9/2EFJ0cDWdsiEL7i9BUv1XyBxeSQTs61jYgJuXkgm+NFLf8ry
+         aTDDTMqaGjD8HskTumWe2EwDweTY8pdlT56JtvqugOrR1FgeIqk2Q+LYjGkun5pTqPid
+         zMMuTFyrOJ37FuTWpnGLh7X9ncQJoYhX0j9XZ2v5L1KDvNn/IBIt1HfzvjuxT6CM0wVI
+         MLvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Moni Shoua <monis@mellanox.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 38/77] RDMA/rxe: Fix a race condition related to the QP error state
-Date: Wed, 21 Feb 2018 13:48:47 +0100
-Message-Id: <20180221124433.780975956@linuxfoundation.org>
+	Jack Morgenstein <jackm@dev.mellanox.co.il>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 36/77] IB/mlx4: Fix incorrectly releasing steerable UD QPs when have only ETH ports
+Date: Wed, 21 Feb 2018 13:48:45 +0100
+Message-Id: <20180221124433.700079464@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015265740362558?=
-X-GMAIL-MSGID: =?utf-8?q?1593015265740362558?=
+X-GMAIL-THRID: =?utf-8?q?1593014606648192784?=
+X-GMAIL-MSGID: =?utf-8?q?1593015260127559433?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +50,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 6f301e06de4cf9ab7303f5acd43e64fcd4aa04be upstream.
+commit 852f6927594d0d3e8632c889b2ab38cbc46476ad upstream.
 
-The following sequence:
-* Change queue pair state into IB_QPS_ERR.
-* Post a work request on the queue pair.
+Allocating steerable UD QPs depends on having at least one IB port,
+while releasing those QPs does not.
 
-Triggers the following race condition in the rdma_rxe driver:
-* rxe_qp_error() triggers an asynchronous call of rxe_completer(), the function
-  that examines the QP send queue.
-* rxe_post_send() posts a work request on the QP send queue.
+As a result, when there are only ETH ports, the IB (RoCE) driver
+requests releasing a qp range whose base qp is zero, with
+qp count zero.
 
-If rxe_completer() runs prior to rxe_post_send(), it will drain the send
-queue and the driver will assume no further action is necessary.
-However, once we post the send to the send queue, because the queue is
-in error, no send completion will ever happen and the send will get
-stuck.  In order to process the send, we need to make sure that
-rxe_completer() gets run after a send is posted to a queue pair in an
-error state.  This patch ensures that happens.
+When SR-IOV is enabled, and the VF driver is running on a VM over
+a hypervisor which treats such qp release calls as errors
+(rather than NOPs), we see lines in the VM message log like:
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Moni Shoua <monis@mellanox.com>
-Cc: <stable@vger.kernel.org> # v4.8
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+ mlx4_core 0002:00:02.0: Failed to release qp range base:0 cnt:0
+
+Fix this by adding a check for a zero count in mlx4_release_qp_range()
+(which thus treats releasing 0 qps as a nop), and eliminating the
+check for device managed flow steering when releasing steerable UD QPs.
+(Freeing ib_uc_qpns_bitmap unconditionally is also OK, since it
+remains NULL when steerable UD QPs are not allocated).
+
+Fixes: 4196670be786 ("IB/mlx4: Don't allocate range of steerable UD QPs for Ethernet-only device")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_verbs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/mlx4/main.c       |   13 +++++--------
+ drivers/net/ethernet/mellanox/mlx4/qp.c |    3 +++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_verbs.c
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
-@@ -848,6 +848,8 @@ static int rxe_post_send_kernel(struct r
- 			(queue_count(qp->sq.queue) > 1);
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2928,9 +2928,8 @@ err_steer_free_bitmap:
+ 	kfree(ibdev->ib_uc_qpns_bitmap);
  
- 	rxe_run_task(&qp->req.task, must_sched);
-+	if (unlikely(qp->req.state == QP_STATE_ERROR))
-+		rxe_run_task(&qp->comp.task, 1);
+ err_steer_qp_release:
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED)
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
+ err_counter:
+ 	for (i = 0; i < ibdev->num_ports; ++i)
+ 		mlx4_ib_delete_counters_table(ibdev, &ibdev->counters_table[i]);
+@@ -3035,11 +3034,9 @@ static void mlx4_ib_remove(struct mlx4_d
+ 		ibdev->iboe.nb.notifier_call = NULL;
+ 	}
  
- 	return err;
- }
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED) {
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
+-		kfree(ibdev->ib_uc_qpns_bitmap);
+-	}
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
++	kfree(ibdev->ib_uc_qpns_bitmap);
+ 
+ 	iounmap(ibdev->uar_map);
+ 	for (p = 0; p < ibdev->num_ports; ++p)
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -286,6 +286,9 @@ void mlx4_qp_release_range(struct mlx4_d
+ 	u64 in_param = 0;
+ 	int err;
+ 
++	if (!cnt)
++		return;
++
+ 	if (mlx4_is_mfunc(dev)) {
+ 		set_param_l(&in_param, base_qpn);
+ 		set_param_h(&in_param, cnt);
