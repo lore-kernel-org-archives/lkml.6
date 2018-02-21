@@ -1,129 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966287AbeBUSEy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:04:54 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:35670 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934173AbeBUSEw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:04:52 -0500
-X-Google-Smtp-Source: AH8x224joKV/RvH3XN8jpLG/ML8/kNI3xh2H4aqUvIIC4ZLLmdJgWHNZg3L33Enkh0ii1FYB87Dfhm3k1K9Zwp/oFuI=
+        id S1030214AbeBUSGB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:06:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42359 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934173AbeBUSGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 13:06:00 -0500
+Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900
+ SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc: linus.walleij@linaro.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-6-manivannan.sadhasivam@linaro.org>
+ <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
+ <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Organization: SUSE Linux GmbH
+Message-ID: <ac193690-220e-4160-5dd5-6ddeaea4d5d0@suse.de>
+Date: Wed, 21 Feb 2018 19:05:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221143954.zlwau63wx75ixslv@salmiak>
-References: <20180220224624.GA28218@beast> <20180221111823.GB32331@e103592.cambridge.arm.com>
- <20180221143954.zlwau63wx75ixslv@salmiak>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 21 Feb 2018 10:04:47 -0800
-X-Google-Sender-Auth: RZOyeBcKUOG42sMT31LzrCqiRZg
-Message-ID: <CAGXu5j+UN2-9Dh2ExD0EXUeEpcFLTp3hgWWZHFzRMdECpgeH+g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: cpufeature: Trim feature reporting and include PAN emulation
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Dave Martin <Dave.Martin@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 6:39 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Wed, Feb 21, 2018 at 11:18:27AM +0000, Dave Martin wrote:
->> On Tue, Feb 20, 2018 at 02:46:24PM -0800, Kees Cook wrote:
->> > The PAN emulation notification was only happening for non-boot CPUs
->> > if CPU capabilities had already been configured. This seems to be the
->> > wrong place, as it's system-wide and isn't attached to capabilities,
->> > so its reporting didn't normally happen. Instead, report it once from
->> > the boot CPU. Additionally removes the redundant "feature" word from the
->> > "CPU features:" line.
->> >
->> > Before (redundant "feature", and missing PAN emulation report):
->> >
->> >  SMP: Total of 4 processors activated.
->> >  CPU features: detected feature: 32-bit EL0 Support
->> >  CPU features: detected feature: Kernel page table isolation (KPTI)
->> >  CPU: All CPU(s) started at EL2
->> >
->> > After:
->> >
->> >  SMP: Total of 4 processors activated.
->> >  CPU features: detected: 32-bit EL0 Support
->> >  CPU features: detected: Kernel page table isolation (KPTI)
->> >  CPU features: emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching
->> >  CPU: All CPU(s) started at EL2
->> >
->> > Signed-off-by: Kees Cook <keescook@chromium.org>
->> > ---
->> >  arch/arm64/kernel/cpufeature.c | 8 ++++----
->> >  1 file changed, 4 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> > index 29b1f873e337..6c799ca58b53 100644
->> > --- a/arch/arm64/kernel/cpufeature.c
->> > +++ b/arch/arm64/kernel/cpufeature.c
->> > @@ -1333,9 +1333,6 @@ static void verify_local_cpu_capabilities(void)
->> >
->> >     if (system_supports_sve())
->> >             verify_sve_features();
->> > -
->> > -   if (system_uses_ttbr0_pan())
->> > -           pr_info("Emulating Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
->> >  }
->> >
->> >  void check_local_cpu_capabilities(void)
->> > @@ -1360,7 +1357,7 @@ void check_local_cpu_capabilities(void)
->> >
->> >  static void __init setup_feature_capabilities(void)
->> >  {
->> > -   update_cpu_capabilities(arm64_features, "detected feature:");
->> > +   update_cpu_capabilities(arm64_features, "detected:");
+Am 21.02.2018 um 15:58 schrieb Manivannan Sadhasivam:
+> Hi Rob,
+> On Mon, Feb 19, 2018 at 02:35:23PM -0600, Rob Herring wrote:
+>> On Sun, Feb 18, 2018 at 02:14:28AM +0530, Manivannan Sadhasivam wrote:
+>>> Add gpio nodes for Actions Semi S900 SoC.
+>>>
+>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> ---
+>>>  .../devicetree/bindings/gpio/actions,owl-gpio.txt         | 15 +++++++++++++++
+>>>  1 file changed, 15 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>>> new file mode 100644
+>>> index 000000000000..4cd4cb7bfd1b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+>>> @@ -0,0 +1,15 @@
+>>> +* Actions Semi OWL GPIO controller bindings
+>>> +
+>>> +- compatible      : Should be "actions,s900-gpio"
+>>> +- reg             : Address and range of the GPIO controller registers.
+>>> +- gpio-controller : Marks the device node as a GPIO controller.
+>>> +- #gpio-cells     : Should be <2>. The first cell is the gpio number and
+>>> +                    the second cell is used to specify optional parameters.
 >>
->> Although I get what you're saying about redundant use of the word
->> "features", this feels like cosmetic churn that is unrelated to the
->> problem this patch is addressing.
->
-> Given it seems sensible, shall we just split that into a separate patch?
->
-> FWIW, for a patch with just this change:
->
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Sure!
-
->> It could be worth reviewing the CPU errata messages and other
->> miscellaneous printks together to make them less verbose and more
->> consistent all in one go, but that would be a separate patch...
+>> Doesn't do interrupts?
 >>
->> >     enable_cpu_capabilities(arm64_features);
->> >  }
->> >
->> > @@ -1394,6 +1391,9 @@ void __init setup_cpu_features(void)
->> >     if (system_supports_32bit_el0())
->> >             setup_elf_hwcaps(compat_elf_hwcaps);
->> >
->> > +   if (system_uses_ttbr0_pan())
->> > +           pr_info("emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
->> > +
->>
->> Moving this seems sensible.  The other option would be to paste it into
->> update_cpu_capabilities(), but the message would still potentially get
->> printed multiple times, so that doesn't feel like the right approach.
->
-> I think that more ideally, we'd give this an entry in the arm64_features array,
-> but because it's effectively a negative feature, it's a little tricky.
+> Interrupt support will be added once this base driver gets in.
+> One step at a time ;-)
 
-Yeah, I looked at that but it seemed like it would needlessly burn a
-capability bit for no real gain.
+Rob rejected that step-by-step approach for my RDA Micro bindings, which
+is why it is currently stuck. ;)
 
-> This also looks fine to me, so FWIW:
->
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks, I'll split the patches!
-
--Kees
+Regards,
+Andreas
 
 -- 
-Kees Cook
-Pixel Security
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
