@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754142AbeBUMXj (ORCPT <rfc822;w@1wt.eu>);
+        id S1754180AbeBUMXs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:23:48 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49322 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754092AbeBUMXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Feb 2018 07:23:39 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5655 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752480AbeBUMXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:23:37 -0500
 From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To: <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
         <pmorel@linux.vnet.ibm.com>
 CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
         Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v4 2/6] vfio/type1: Check reserve region conflict and update iova list
-Date: Wed, 21 Feb 2018 12:22:05 +0000
-Message-ID: <20180221122209.9292-3-shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v4 6/6] vfio/type1: remove duplicate retrieval of reserved regions.
+Date: Wed, 21 Feb 2018 12:22:09 +0000
+Message-ID: <20180221122209.9292-7-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
 References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
@@ -26,150 +26,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This retrieves the reserved regions associated with dev group and
-checks for conflicts with any existing dma mappings. Also update
-the iova list excluding the reserved regions.
+As we now already have the reserved regions list, just pass that into
+vfio_iommu_has_sw_msi() fn.
 
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index ac6772d..66c57ee 100644
+index c08adb5..56f68b1 100644
 --- a/drivers/vfio/vfio_iommu_type1.c
 +++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1301,6 +1301,82 @@ static int vfio_iommu_aper_resize(struct list_head *iova,
- 	return 0;
+@@ -1192,15 +1192,13 @@ static struct vfio_group *find_iommu_group(struct vfio_domain *domain,
+ 	return NULL;
  }
  
-+/*
-+ * Check reserved region conflicts with existing dma mappings
-+ */
-+static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-+				struct list_head *resv_regions)
-+{
-+	struct iommu_resv_region *region;
-+
-+	/* Check for conflict with existing dma mappings */
-+	list_for_each_entry(region, resv_regions, list) {
-+		if (vfio_find_dma(iommu, region->start, region->length))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/*
-+ * Check iova region overlap with  reserved regions and
-+ * exclude them from the iommu iova range
-+ */
-+static int vfio_iommu_resv_exclude(struct list_head *iova,
-+					struct list_head *resv_regions)
-+{
-+	struct iommu_resv_region *resv;
-+	struct vfio_iova *n, *next;
-+
-+	list_for_each_entry(resv, resv_regions, list) {
-+		phys_addr_t start, end;
-+
-+		start = resv->start;
-+		end = resv->start + resv->length - 1;
-+
-+		list_for_each_entry_safe(n, next, iova, list) {
-+			int ret = 0;
-+
-+			/* No overlap */
-+			if ((start > n->end) || (end < n->start))
-+				continue;
-+			/*
-+			 * Insert a new node if current node overlaps with the
-+			 * reserve region to exlude that from valid iova range.
-+			 * Note that, new node is inserted before the current
-+			 * node and finally the current node is deleted keeping
-+			 * the list updated and sorted.
-+			 */
-+			if (start > n->start)
-+				ret = vfio_iommu_iova_insert(&n->list,
-+							n->start, start - 1);
-+			if (!ret && end < n->end)
-+				ret = vfio_iommu_iova_insert(&n->list,
-+							end + 1, n->end);
-+			if (ret)
-+				return ret;
-+
-+			list_del(&n->list);
-+			kfree(n);
-+		}
-+	}
-+
-+	if (list_empty(iova))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static void vfio_iommu_resv_free(struct list_head *resv_regions)
-+{
-+	struct iommu_resv_region *n, *next;
-+
-+	list_for_each_entry_safe(n, next, resv_regions, list) {
-+		list_del(&n->list);
-+		kfree(n);
-+	}
-+}
-+
- static void vfio_iommu_iova_free(struct list_head *iova)
+-static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
++static bool vfio_iommu_has_sw_msi(struct list_head *group_resv_regions,
++						phys_addr_t *base)
  {
- 	struct vfio_iova *n, *next;
-@@ -1354,6 +1430,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	phys_addr_t resv_msi_base;
- 	struct iommu_domain_geometry geo;
- 	LIST_HEAD(iova_copy);
-+	LIST_HEAD(group_resv_regions);
+-	struct list_head group_resv_regions;
+-	struct iommu_resv_region *region, *next;
++	struct iommu_resv_region *region;
+ 	bool ret = false;
  
- 	mutex_lock(&iommu->lock);
- 
-@@ -1432,6 +1509,13 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 		goto out_detach;
+-	INIT_LIST_HEAD(&group_resv_regions);
+-	iommu_get_group_resv_regions(group, &group_resv_regions);
+-	list_for_each_entry(region, &group_resv_regions, list) {
++	list_for_each_entry(region, group_resv_regions, list) {
+ 		/*
+ 		 * The presence of any 'real' MSI regions should take
+ 		 * precedence over the software-managed one if the
+@@ -1216,8 +1214,7 @@ static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
+ 			ret = true;
+ 		}
  	}
+-	list_for_each_entry_safe(region, next, &group_resv_regions, list)
+-		kfree(region);
++
+ 	return ret;
+ }
  
-+	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
-+
-+	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
-+		ret = -EINVAL;
-+		goto out_detach;
-+	}
-+
- 	/* Get a copy of the current iova list and work on it */
- 	ret = vfio_iommu_iova_get_copy(iommu, &iova_copy);
- 	if (ret)
-@@ -1442,6 +1526,10 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+@@ -1552,7 +1549,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
  	if (ret)
  		goto out_detach;
  
-+	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
-+	if (ret)
-+		goto out_detach;
-+
- 	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
+-	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
++	resv_msi = vfio_iommu_has_sw_msi(&group_resv_regions, &resv_msi_base);
  
  	INIT_LIST_HEAD(&domain->group_list);
-@@ -1502,6 +1590,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	/* Delete the old one and insert new iova list */
- 	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
- 	mutex_unlock(&iommu->lock);
-+	vfio_iommu_resv_free(&group_resv_regions);
- 
- 	return 0;
- 
-@@ -1510,6 +1599,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- out_domain:
- 	iommu_domain_free(domain->domain);
- 	vfio_iommu_iova_free(&iova_copy);
-+	vfio_iommu_resv_free(&group_resv_regions);
- out_free:
- 	kfree(domain);
- 	kfree(group);
+ 	list_add(&group->next, &domain->group_list);
 -- 
 2.7.4
