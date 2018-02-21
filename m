@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225Hh/+N0GyvHrTazYDe/JxYH5dE7bcBQRgyAATU7WwBgFyMvUNLo6ud0sH8QW8X9HPDt+r1
-ARC-Seal: i=1; a=rsa-sha256; t=1519218727; cv=none;
+X-Google-Smtp-Source: AH8x227Fch+ePxk6fBo4Tn3m3pPhPKHTuijJVeq8BvjIBZapMC7oWnZbYpsAmQBfzhD1T3RMLIc0
+ARC-Seal: i=1; a=rsa-sha256; t=1519218724; cv=none;
         d=google.com; s=arc-20160816;
-        b=onOwxgK3T+bwrdMD4WvIkupfQwJbCIJH0FnU5zsrv23bblpWuu0MKbNGPFFe/MjebY
-         2fgwOH6J8ibMH2XFcfmui85JZSV746JALdsFWf6J/Rg1I/4BxR7XTmL4s4BqB42e3Yvs
-         J7IlAQabg9q79ZqGWceaSD1lMxsUX2V6MIbcDjtIwPG4p+/FdZyTzgoQjPLPZaYtDRbV
-         ZAmGegpep9V4XhWJO/SwnaSEW7V+2GJaNDPDfNxezkAJ7tqLhtgiuoTAe+L1aR1utG02
-         20+brnOX/iHxct+MrusIBhSbiabT6Rg1oniEwDOLuziZQwJi7RAEY9kgZbw3zC4TJhzl
-         EfCA==
+        b=faIZ3cfFUxxneJT6lAy9/c4Tsv8GuHaQpGOdadV2sT4viWMRDUA3djoJLK+7DbTRcZ
+         crGsEp3WvaW30GwBcauRg524qqm78Mk7V9bvgWzBM9Gf9xrAQ/Ez1IsTxcry/a7CuaFd
+         T7z5rpcClkLiR+Tp2ozyu68Jy4A8AH8Mw2SwNChszjlE3ohK8fOvgvDfxDIh9g041XT4
+         sf+W+sLuKdzrzjsNnk18t+CqA4P4Ui84/MauGS/DIAiW6zsybBjMHMU80U+Ni4VUd40r
+         UmspO3EM/McUqxPnUTz0/5d4rIyrR34/F+3Uk0StMSRkEY1N7sEYQKCt2a9SteirQOCs
+         duAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rPJjBEo3oEAwtrS463PlIpEzTXA5NYrh0IYVUc120eg=;
-        b=U+Mam6J+P74kl4Yynhmu4D3ut7903Nw9l1X4Q8s3yzQdpe9IoMBV1h6TgFpma5MFdr
-         9wTAU+2KPjut6S6jntltE2AwxHLAfL7IphcWLZdZZekUdGSw/vJulg0iW75YX8GbACd4
-         Ui8vhLWspKzEaDZzLiymKO+yu3Z4rn73bGXRmoGc1Cg4/xXPT4Bp8DLOvXaCBSVFLyVx
-         Kgd6Rq5opyQjTHYL0YuyRA5VHiUcbMFgk6fBdYkuIqStmWL4iflRtzIkpQNJK2C2BGgI
-         4/+qTRCxtSzrGW2UwLfxB53p6N8U8w1WMnW7ykd2940ndw2xPGC2QWK5yWb8eD7UsR9K
-         XTiw==
+        bh=ygCTCIq97QRFD3uUgz/oZySp/KITJUmQyURfW+DgHW0=;
+        b=EGWSjIxvE2nE6OS222IMkLIaXv7rj/bNJIQwl1m3aAVqxkgFYvmn0HH1XpphGZe5DC
+         dhTddMNUWEY1Mkt+21v+FCN9Y3H6f0T7qnwBpv/2u6uMP49CQrtdsj9p0WdEF+eIL6y7
+         AsBKoAhsc1mLRyoDhxPrgA4eg5Z9yA84xX3N5aMGVSrZHD03zqERCRg+PFMy3D81PjU5
+         RJcCmG4LWz8cWygKCYTJ5llIHpd+oziAFEg7Xah6pj73L9uKywxBJAejM9HHxphdB3H7
+         mvJvjvOUig34AOxLfabbl+CdvHKQ8pv+VocWVWwMgYSmo6uOyys8C8Vm9dpDktEyKwOU
+         SuCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hui Wang <hui.wang@canonical.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 143/163] ALSA: hda - Fix headset mic detection problem for two Dell machines
-Date: Wed, 21 Feb 2018 13:49:32 +0100
-Message-Id: <20180221124538.015670189@linuxfoundation.org>
+	Stefan Agner <stefan@agner.ch>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.15 142/163] mtd: nand: vf610: set correct ooblayout
+Date: Wed, 21 Feb 2018 13:49:31 +0100
+Message-Id: <20180221124537.974148710@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014646341023518?=
-X-GMAIL-MSGID: =?utf-8?q?1593016296765889527?=
+X-GMAIL-THRID: =?utf-8?q?1593015219498083011?=
+X-GMAIL-MSGID: =?utf-8?q?1593016293926360543?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 3f2f7c553d077be6a30cb96b2976a2c940bf5335 upstream.
+commit ea56fb282368ea08c2a313af6b55cb597aec4db1 upstream.
 
-One of them has the codec of alc256 and the other one has the codec
-of alc289.
+With commit 3cf32d180227 ("mtd: nand: vf610: switch to
+mtd_ooblayout_ops") the driver started to use the NAND cores
+default large page ooblayout. However, shortly after commit
+6a623e076944 ("mtd: nand: add ooblayout for old hamming layout")
+changed the default layout to the old hamming layout, which is
+not what vf610_nfc is using. Specify the default large page
+layout explicitly.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 6a623e076944 ("mtd: nand: add ooblayout for old hamming layout")
+Cc: <stable@vger.kernel.org> # v4.12+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/mtd/nand/vf610_nfc.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6613,6 +6613,11 @@ static const struct snd_hda_pin_quirk al
- 		{0x14, 0x90170110},
- 		{0x21, 0x02211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0x90a60130},
-+		{0x14, 0x90170110},
-+		{0x14, 0x01011020},
-+		{0x21, 0x0221101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC256_STANDARD_PINS),
- 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1043, "ASUS", ALC256_FIXUP_ASUS_MIC,
- 		{0x14, 0x90170110},
-@@ -6681,6 +6686,10 @@ static const struct snd_hda_pin_quirk al
- 		{0x12, 0x90a60120},
- 		{0x14, 0x90170110},
- 		{0x21, 0x0321101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0xb7a60130},
-+		{0x14, 0x90170110},
-+		{0x21, 0x04211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0290, 0x103c, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1,
- 		ALC290_STANDARD_PINS,
- 		{0x15, 0x04211040},
+--- a/drivers/mtd/nand/vf610_nfc.c
++++ b/drivers/mtd/nand/vf610_nfc.c
+@@ -752,10 +752,8 @@ static int vf610_nfc_probe(struct platfo
+ 		if (mtd->oobsize > 64)
+ 			mtd->oobsize = 64;
+ 
+-		/*
+-		 * mtd->ecclayout is not specified here because we're using the
+-		 * default large page ECC layout defined in NAND core.
+-		 */
++		/* Use default large page ECC layout defined in NAND core */
++		mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
+ 		if (chip->ecc.strength == 32) {
+ 			nfc->ecc_mode = ECC_60_BYTE;
+ 			chip->ecc.bytes = 60;
