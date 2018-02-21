@@ -1,327 +1,321 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeBUESD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 23:18:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751459AbeBUESA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 23:18:00 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E68721741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
-        Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 5/7] sched/isolation: Offload residual 1Hz scheduler tick
-Date: Wed, 21 Feb 2018 05:17:27 +0100
-Message-Id: <1519186649-3242-6-git-send-email-frederic@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519186649-3242-1-git-send-email-frederic@kernel.org>
-References: <1519186649-3242-1-git-send-email-frederic@kernel.org>
+        id S1751360AbeBUEZC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 23:25:02 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45686 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBUEZA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 23:25:00 -0500
+X-Google-Smtp-Source: AG47ELtySaK6l1vWi3NT8i4+ZRLLfEcCzQ55TGDmsssPUo4oJraTMYD2isEHY3JC+7WAvlxOH90nWg==
+Date: Tue, 20 Feb 2018 22:24:57 -0600
+From: Dan Rue <dan.rue@linaro.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 5/6] mm, hugetlb: further simplify hugetlb allocation API
+Message-ID: <20180221042457.uolmhlmv5je5dqx7@xps>
+References: <20180103093213.26329-1-mhocko@kernel.org>
+ <20180103093213.26329-6-mhocko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180103093213.26329-6-mhocko@kernel.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a CPU runs in full dynticks mode, a 1Hz tick remains in order to
-keep the scheduler stats alive. However this residual tick is a burden
-for bare metal tasks that can't stand any interruption at all, or want
-to minimize them.
+On Wed, Jan 03, 2018 at 10:32:12AM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Hugetlb allocator has several layer of allocation functions depending
+> and the purpose of the allocation. There are two allocators depending
+> on whether the page can be allocated from the page allocator or we need
+> a contiguous allocator. This is currently opencoded in alloc_fresh_huge_page
+> which is the only path that might allocate giga pages which require the
+> later allocator. Create alloc_fresh_huge_page which hides this
+> implementation detail and use it in all callers which hardcoded the
+> buddy allocator path (__hugetlb_alloc_buddy_huge_page). This shouldn't
+> introduce any funtional change because both migration and surplus
+> allocators exlude giga pages explicitly.
+> 
+> While we are at it let's do some renaming. The current scheme is not
+> consistent and overly painfull to read and understand. Get rid of prefix
+> underscores from most functions. There is no real reason to make names
+> longer.
+> * alloc_fresh_huge_page is the new layer to abstract underlying
+>   allocator
+> * __hugetlb_alloc_buddy_huge_page becomes shorter and neater
+>   alloc_buddy_huge_page.
+> * Former alloc_fresh_huge_page becomes alloc_pool_huge_page because we put
+>   the new page directly to the pool
+> * alloc_surplus_huge_page can drop the opencoded prep_new_huge_page code
+>   as it uses alloc_fresh_huge_page now
+> * others lose their excessive prefix underscores to make names shorter
 
-The usual boot parameters "nohz_full=" or "isolcpus=nohz" will now
-outsource these scheduler ticks to the global workqueue so that a
-housekeeping CPU handles those remotely. The sched_class::task_tick()
-implementations have been audited and look safe to be called remotely
-as the target runqueue and its current task are passed in parameter
-and don't seem to be accessed locally.
+Hi Michal -
 
-Note that in the case of using isolcpus, it's still up to the user to
-affine the global workqueues to the housekeeping CPUs through
-/sys/devices/virtual/workqueue/cpumask or domains isolation
-"isolcpus=nohz,domain".
+We (Linaro) run the libhugetlbfs test suite continuously against
+mainline and recently (Feb 1), the 'counters' test started failing on
+with the following error:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Chris Metcalf <cmetcalf@mellanox.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/core.c      | 92 ++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sched/deadline.c  |  8 +++++
- kernel/sched/fair.c      |  7 +++-
- kernel/sched/idle_task.c |  8 +++++
- kernel/sched/isolation.c |  4 +++
- kernel/sched/rt.c        |  8 +++++
- kernel/sched/sched.h     |  2 ++
- kernel/sched/stop_task.c |  8 +++++
- 8 files changed, 136 insertions(+), 1 deletion(-)
+    root@localhost:~# mount_point="/mnt/hugetlb/"
+    root@localhost:~# echo 200 > /proc/sys/vm/nr_hugepages
+    root@localhost:~# mkdir -p "${mount_point}"
+    root@localhost:~# mount -t hugetlbfs hugetlbfs "${mount_point}"
+    root@localhost:~# export LD_LIBRARY_PATH=/root/libhugetlbfs/libhugetlbfs-2.20/obj64
+    root@localhost:~# /root/libhugetlbfs/libhugetlbfs-2.20/tests/obj64/counters
+    Starting testcase "/root/libhugetlbfs/libhugetlbfs-2.20/tests/obj64/counters", pid 3319
+    Base pool size: 0
+    Clean...
+    FAIL    Line 326: Bad HugePages_Total: expected 0, actual 1
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e72ca3c..5dfef45 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3125,6 +3125,96 @@ u64 scheduler_tick_max_deferment(void)
- 
- 	return jiffies_to_nsecs(next - now);
- }
-+
-+struct tick_work {
-+	int			cpu;
-+	struct delayed_work	work;
-+};
-+
-+static struct tick_work __percpu *tick_work_cpu;
-+
-+static void sched_tick_remote(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct tick_work *twork = container_of(dwork, struct tick_work, work);
-+	int cpu = twork->cpu;
-+	struct rq *rq = cpu_rq(cpu);
-+	struct rq_flags rf;
-+
-+	/*
-+	 * Handle the tick only if it appears the remote CPU is running in full
-+	 * dynticks mode. The check is racy by nature, but missing a tick or
-+	 * having one too much is no big deal because the scheduler tick updates
-+	 * statistics and checks timeslices in a time-independent way, regardless
-+	 * of when exactly it is running.
-+	 */
-+	if (!idle_cpu(cpu) && tick_nohz_tick_stopped_cpu(cpu)) {
-+		struct task_struct *curr;
-+		u64 delta;
-+
-+		rq_lock_irq(rq, &rf);
-+		update_rq_clock(rq);
-+		curr = rq->curr;
-+		delta = rq_clock_task(rq) - curr->se.exec_start;
-+
-+		/*
-+		 * Make sure the next tick runs within a reasonable
-+		 * amount of time.
-+		 */
-+		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-+		curr->sched_class->task_tick(rq, curr, 0);
-+		rq_unlock_irq(rq, &rf);
-+	}
-+
-+	/*
-+	 * Run the remote tick once per second (1Hz). This arbitrary
-+	 * frequency is large enough to avoid overload but short enough
-+	 * to keep scheduler internal stats reasonably up to date.
-+	 */
-+	queue_delayed_work(system_unbound_wq, dwork, HZ);
-+}
-+
-+static void sched_tick_start(int cpu)
-+{
-+	struct tick_work *twork;
-+
-+	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
-+		return;
-+
-+	WARN_ON_ONCE(!tick_work_cpu);
-+
-+	twork = per_cpu_ptr(tick_work_cpu, cpu);
-+	twork->cpu = cpu;
-+	INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
-+	queue_delayed_work(system_unbound_wq, &twork->work, HZ);
-+}
-+
-+#ifdef CONFIG_HOTPLUG_CPU
-+static void sched_tick_stop(int cpu)
-+{
-+	struct tick_work *twork;
-+
-+	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
-+		return;
-+
-+	WARN_ON_ONCE(!tick_work_cpu);
-+
-+	twork = per_cpu_ptr(tick_work_cpu, cpu);
-+	cancel_delayed_work_sync(&twork->work);
-+}
-+#endif /* CONFIG_HOTPLUG_CPU */
-+
-+int __init sched_tick_offload_init(void)
-+{
-+	tick_work_cpu = alloc_percpu(struct tick_work);
-+	BUG_ON(!tick_work_cpu);
-+
-+	return 0;
-+}
-+
-+#else /* !CONFIG_NO_HZ_FULL */
-+static inline void sched_tick_start(int cpu) { }
-+static inline void sched_tick_stop(int cpu) { }
- #endif
- 
- #if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
-@@ -5786,6 +5876,7 @@ int sched_cpu_starting(unsigned int cpu)
- {
- 	set_cpu_rq_start_time(cpu);
- 	sched_rq_cpu_starting(cpu);
-+	sched_tick_start(cpu);
- 	return 0;
- }
- 
-@@ -5797,6 +5888,7 @@ int sched_cpu_dying(unsigned int cpu)
- 
- 	/* Handle pending wakeups and then migrate everything off */
- 	sched_ttwu_pending();
-+	sched_tick_stop(cpu);
- 
- 	rq_lock_irqsave(rq, &rf);
- 	if (rq->rd) {
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9df0978..65cd5ea 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1776,6 +1776,14 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
- 		enqueue_pushable_dl_task(rq, p);
- }
- 
-+/*
-+ * scheduler tick hitting a task of our scheduling class.
-+ *
-+ * NOTE: This function can be called remotely by the tick offload that
-+ * goes along full dynticks. Therefore no local assumption can be made
-+ * and everything must be accessed through the @rq and @curr passed in
-+ * parameters.
-+ */
- static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
- {
- 	update_curr_dl(rq);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5eb3ffc..94d4da5 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9440,7 +9440,12 @@ static void rq_offline_fair(struct rq *rq)
- #endif /* CONFIG_SMP */
- 
- /*
-- * scheduler tick hitting a task of our scheduling class:
-+ * scheduler tick hitting a task of our scheduling class.
-+ *
-+ * NOTE: This function can be called remotely by the tick offload that
-+ * goes along full dynticks. Therefore no local assumption can be made
-+ * and everything must be accessed through the @rq and @curr passed in
-+ * parameters.
-  */
- static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- {
-diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
-index d518664..e1b46e0 100644
---- a/kernel/sched/idle_task.c
-+++ b/kernel/sched/idle_task.c
-@@ -51,6 +51,14 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
- 	rq_last_tick_reset(rq);
- }
- 
-+/*
-+ * scheduler tick hitting a task of our scheduling class.
-+ *
-+ * NOTE: This function can be called remotely by the tick offload that
-+ * goes along full dynticks. Therefore no local assumption can be made
-+ * and everything must be accessed through the @rq and @curr passed in
-+ * parameters.
-+ */
- static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
- {
- }
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index a2500c4..39f340d 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -13,6 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/static_key.h>
- #include <linux/ctype.h>
-+#include "sched.h"
- 
- DEFINE_STATIC_KEY_FALSE(housekeeping_overriden);
- EXPORT_SYMBOL_GPL(housekeeping_overriden);
-@@ -61,6 +62,9 @@ void __init housekeeping_init(void)
- 
- 	static_branch_enable(&housekeeping_overriden);
- 
-+	if (housekeeping_flags & HK_FLAG_TICK)
-+		sched_tick_offload_init();
-+
- 	/* We need at least one CPU to handle housekeeping work */
- 	WARN_ON_ONCE(cpumask_empty(housekeeping_mask));
- }
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index aad49451..c80563b 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2292,6 +2292,14 @@ static void watchdog(struct rq *rq, struct task_struct *p)
- static inline void watchdog(struct rq *rq, struct task_struct *p) { }
- #endif
- 
-+/*
-+ * scheduler tick hitting a task of our scheduling class.
-+ *
-+ * NOTE: This function can be called remotely by the tick offload that
-+ * goes along full dynticks. Therefore no local assumption can be made
-+ * and everything must be accessed through the @rq and @curr passed in
-+ * parameters.
-+ */
- static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
- {
- 	struct sched_rt_entity *rt_se = &p->rt;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index fb5fc458..c1c7c78 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1574,6 +1574,7 @@ extern void post_init_entity_util_avg(struct sched_entity *se);
- 
- #ifdef CONFIG_NO_HZ_FULL
- extern bool sched_can_stop_tick(struct rq *rq);
-+extern int __init sched_tick_offload_init(void);
- 
- /*
-  * Tick may be needed by tasks in the runqueue depending on their policy and
-@@ -1598,6 +1599,7 @@ static inline void sched_update_tick_dependency(struct rq *rq)
- 		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
- }
- #else
-+static inline int sched_tick_offload_init(void) { return 0; }
- static inline void sched_update_tick_dependency(struct rq *rq) { }
- #endif
- 
-diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
-index 210b1f2..ea8d2b6 100644
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -75,6 +75,14 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
- 	cgroup_account_cputime(curr, delta_exec);
- }
- 
-+/*
-+ * scheduler tick hitting a task of our scheduling class.
-+ *
-+ * NOTE: This function can be called remotely by the tick offload that
-+ * goes along full dynticks. Therefore no local assumption can be made
-+ * and everything must be accessed through the @rq and @curr passed in
-+ * parameters.
-+ */
- static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
- {
- }
--- 
-2.7.4
+Line 326 refers to the test source @
+https://github.com/libhugetlbfs/libhugetlbfs/blob/master/tests/counters.c#L326
+
+I bisected the failure to this commit. The problem is seen on multiple
+architectures (tested x86-64 and arm64).
+
+Thanks,
+Dan
+
+> 
+> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+> Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/hugetlb.c | 78 ++++++++++++++++++++++++++++++++----------------------------
+>  1 file changed, 42 insertions(+), 36 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 7dc80cbe8e89..60acd3e93a95 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1378,7 +1378,7 @@ pgoff_t __basepage_index(struct page *page)
+>  	return (index << compound_order(page_head)) + compound_idx;
+>  }
+>  
+> -static struct page *__hugetlb_alloc_buddy_huge_page(struct hstate *h,
+> +static struct page *alloc_buddy_huge_page(struct hstate *h,
+>  		gfp_t gfp_mask, int nid, nodemask_t *nmask)
+>  {
+>  	int order = huge_page_order(h);
+> @@ -1396,34 +1396,49 @@ static struct page *__hugetlb_alloc_buddy_huge_page(struct hstate *h,
+>  	return page;
+>  }
+>  
+> +/*
+> + * Common helper to allocate a fresh hugetlb page. All specific allocators
+> + * should use this function to get new hugetlb pages
+> + */
+> +static struct page *alloc_fresh_huge_page(struct hstate *h,
+> +		gfp_t gfp_mask, int nid, nodemask_t *nmask)
+> +{
+> +	struct page *page;
+> +
+> +	if (hstate_is_gigantic(h))
+> +		page = alloc_gigantic_page(h, gfp_mask, nid, nmask);
+> +	else
+> +		page = alloc_buddy_huge_page(h, gfp_mask,
+> +				nid, nmask);
+> +	if (!page)
+> +		return NULL;
+> +
+> +	if (hstate_is_gigantic(h))
+> +		prep_compound_gigantic_page(page, huge_page_order(h));
+> +	prep_new_huge_page(h, page, page_to_nid(page));
+> +
+> +	return page;
+> +}
+> +
+>  /*
+>   * Allocates a fresh page to the hugetlb allocator pool in the node interleaved
+>   * manner.
+>   */
+> -static int alloc_fresh_huge_page(struct hstate *h, nodemask_t *nodes_allowed)
+> +static int alloc_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed)
+>  {
+>  	struct page *page;
+>  	int nr_nodes, node;
+>  	gfp_t gfp_mask = htlb_alloc_mask(h) | __GFP_THISNODE;
+>  
+>  	for_each_node_mask_to_alloc(h, nr_nodes, node, nodes_allowed) {
+> -		if (hstate_is_gigantic(h))
+> -			page = alloc_gigantic_page(h, gfp_mask,
+> -					node, nodes_allowed);
+> -		else
+> -			page = __hugetlb_alloc_buddy_huge_page(h, gfp_mask,
+> -					node, nodes_allowed);
+> +		page = alloc_fresh_huge_page(h, gfp_mask, node, nodes_allowed);
+>  		if (page)
+>  			break;
+> -
+>  	}
+>  
+>  	if (!page)
+>  		return 0;
+>  
+> -	if (hstate_is_gigantic(h))
+> -		prep_compound_gigantic_page(page, huge_page_order(h));
+> -	prep_new_huge_page(h, page, page_to_nid(page));
+>  	put_page(page); /* free it into the hugepage allocator */
+>  
+>  	return 1;
+> @@ -1537,7 +1552,7 @@ int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
+>  /*
+>   * Allocates a fresh surplus page from the page allocator.
+>   */
+> -static struct page *__alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+> +static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  		int nid, nodemask_t *nmask)
+>  {
+>  	struct page *page = NULL;
+> @@ -1550,7 +1565,7 @@ static struct page *__alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  		goto out_unlock;
+>  	spin_unlock(&hugetlb_lock);
+>  
+> -	page = __hugetlb_alloc_buddy_huge_page(h, gfp_mask, nid, nmask);
+> +	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask);
+>  	if (!page)
+>  		goto out_unlock;
+>  
+> @@ -1567,16 +1582,8 @@ static struct page *__alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  		put_page(page);
+>  		page = NULL;
+>  	} else {
+> -		int r_nid;
+> -
+>  		h->surplus_huge_pages++;
+> -		h->nr_huge_pages++;
+> -		INIT_LIST_HEAD(&page->lru);
+> -		r_nid = page_to_nid(page);
+> -		set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
+> -		set_hugetlb_cgroup(page, NULL);
+> -		h->nr_huge_pages_node[r_nid]++;
+> -		h->surplus_huge_pages_node[r_nid]++;
+> +		h->nr_huge_pages_node[page_to_nid(page)]++;
+>  	}
+>  
+>  out_unlock:
+> @@ -1585,7 +1592,7 @@ static struct page *__alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  	return page;
+>  }
+>  
+> -static struct page *__alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+> +static struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  		int nid, nodemask_t *nmask)
+>  {
+>  	struct page *page;
+> @@ -1593,7 +1600,7 @@ static struct page *__alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  	if (hstate_is_gigantic(h))
+>  		return NULL;
+>  
+> -	page = __hugetlb_alloc_buddy_huge_page(h, gfp_mask, nid, nmask);
+> +	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask);
+>  	if (!page)
+>  		return NULL;
+>  
+> @@ -1601,7 +1608,6 @@ static struct page *__alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  	 * We do not account these pages as surplus because they are only
+>  	 * temporary and will be released properly on the last reference
+>  	 */
+> -	prep_new_huge_page(h, page, page_to_nid(page));
+>  	SetPageHugeTemporary(page);
+>  
+>  	return page;
+> @@ -1611,7 +1617,7 @@ static struct page *__alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+>   * Use the VMA's mpolicy to allocate a huge page from the buddy.
+>   */
+>  static
+> -struct page *__alloc_buddy_huge_page_with_mpol(struct hstate *h,
+> +struct page *alloc_buddy_huge_page_with_mpol(struct hstate *h,
+>  		struct vm_area_struct *vma, unsigned long addr)
+>  {
+>  	struct page *page;
+> @@ -1621,7 +1627,7 @@ struct page *__alloc_buddy_huge_page_with_mpol(struct hstate *h,
+>  	nodemask_t *nodemask;
+>  
+>  	nid = huge_node(vma, addr, gfp_mask, &mpol, &nodemask);
+> -	page = __alloc_surplus_huge_page(h, gfp_mask, nid, nodemask);
+> +	page = alloc_surplus_huge_page(h, gfp_mask, nid, nodemask);
+>  	mpol_cond_put(mpol);
+>  
+>  	return page;
+> @@ -1642,7 +1648,7 @@ struct page *alloc_huge_page_node(struct hstate *h, int nid)
+>  	spin_unlock(&hugetlb_lock);
+>  
+>  	if (!page)
+> -		page = __alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
+> +		page = alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
+>  
+>  	return page;
+>  }
+> @@ -1665,7 +1671,7 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
+>  	}
+>  	spin_unlock(&hugetlb_lock);
+>  
+> -	return __alloc_migrate_huge_page(h, gfp_mask, preferred_nid, nmask);
+> +	return alloc_migrate_huge_page(h, gfp_mask, preferred_nid, nmask);
+>  }
+>  
+>  /*
+> @@ -1693,7 +1699,7 @@ static int gather_surplus_pages(struct hstate *h, int delta)
+>  retry:
+>  	spin_unlock(&hugetlb_lock);
+>  	for (i = 0; i < needed; i++) {
+> -		page = __alloc_surplus_huge_page(h, htlb_alloc_mask(h),
+> +		page = alloc_surplus_huge_page(h, htlb_alloc_mask(h),
+>  				NUMA_NO_NODE, NULL);
+>  		if (!page) {
+>  			alloc_ok = false;
+> @@ -2030,7 +2036,7 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
+>  	page = dequeue_huge_page_vma(h, vma, addr, avoid_reserve, gbl_chg);
+>  	if (!page) {
+>  		spin_unlock(&hugetlb_lock);
+> -		page = __alloc_buddy_huge_page_with_mpol(h, vma, addr);
+> +		page = alloc_buddy_huge_page_with_mpol(h, vma, addr);
+>  		if (!page)
+>  			goto out_uncharge_cgroup;
+>  		if (!avoid_reserve && vma_has_reserves(vma, gbl_chg)) {
+> @@ -2170,7 +2176,7 @@ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
+>  		if (hstate_is_gigantic(h)) {
+>  			if (!alloc_bootmem_huge_page(h))
+>  				break;
+> -		} else if (!alloc_fresh_huge_page(h,
+> +		} else if (!alloc_pool_huge_page(h,
+>  					 &node_states[N_MEMORY]))
+>  			break;
+>  		cond_resched();
+> @@ -2290,7 +2296,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+>  	 * First take pages out of surplus state.  Then make up the
+>  	 * remaining difference by allocating fresh huge pages.
+>  	 *
+> -	 * We might race with __alloc_surplus_huge_page() here and be unable
+> +	 * We might race with alloc_surplus_huge_page() here and be unable
+>  	 * to convert a surplus huge page to a normal huge page. That is
+>  	 * not critical, though, it just means the overall size of the
+>  	 * pool might be one hugepage larger than it needs to be, but
+> @@ -2313,7 +2319,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+>  		/* yield cpu to avoid soft lockup */
+>  		cond_resched();
+>  
+> -		ret = alloc_fresh_huge_page(h, nodes_allowed);
+> +		ret = alloc_pool_huge_page(h, nodes_allowed);
+>  		spin_lock(&hugetlb_lock);
+>  		if (!ret)
+>  			goto out;
+> @@ -2333,7 +2339,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+>  	 * By placing pages into the surplus state independent of the
+>  	 * overcommit value, we are allowing the surplus pool size to
+>  	 * exceed overcommit. There are few sane options here. Since
+> -	 * __alloc_surplus_huge_page() is checking the global counter,
+> +	 * alloc_surplus_huge_page() is checking the global counter,
+>  	 * though, we'll note that we're not allowed to exceed surplus
+>  	 * and won't grow the pool anywhere else. Not until one of the
+>  	 * sysctls are changed, or the surplus pages go out of use.
+> -- 
+> 2.15.1
+> 
