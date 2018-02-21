@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224yGyb2hshYufEWAm1e2t6DrdiPct5ZX0EpuRknPQz0S33M8iJvuCj4LTpQRalfME67SGu8
-ARC-Seal: i=1; a=rsa-sha256; t=1519217987; cv=none;
+X-Google-Smtp-Source: AH8x224n+M5ZD2MYSEU97Ye4XsiRe550d/Nw9hKRrGTAP7Ibbeg3Vl/xIC1nysMiytgS0mqX1ooV
+ARC-Seal: i=1; a=rsa-sha256; t=1519217978; cv=none;
         d=google.com; s=arc-20160816;
-        b=FOFucwQSHfM8YmmpcLdjqWSnotI8PtJYt3UqIPssHUfydLP1EdpHhKvhgHA0t/pJi1
-         xCc1DCYnNXQ/sZIY4zUmyB/J6YvvAlR0Dd2gIUfs84f1sPhuHEYbc907UKXce2VQo0kD
-         GvZr56HyoRKL8BpspJGlzDwbLB8c8mvqfxwdQuAkcxMPmL8jau9lXntinQOE/rs1HGGu
-         4rmreaHDYD1ye/rYiJQg8EQRTJeHLhKqoHQg9jqQ4d61zaoo2dHTNlZTgVkBd1iHdMtY
-         OxhUeH3qMIws1tqV/hp5Ix/Q/ViTcDmsSCEDPz3xiXjLMmHEooGJsKhs6Io0YvTESQgq
-         8ERg==
+        b=BaEIp7/sO21gBav8TDKBaNeNjcsgL6xdZRvcRdELHhBbcyISswVTXeuClHbnFjkuWd
+         Y9qWmwl4ZF3DjMv0grYZZMQfhN+4BjgBdJa4qXXBpilxZbSeEpKqdD/deLnkdzgGFe00
+         7G3OkPdO4RkDX11xkCBsSTBzwh+LHV0aihwHtMW1n2Ry2wiToNQStcNvshCbc/HBWmh+
+         XybrYeBDvsunNHOZHNuD2QiUM8n7PL4U1okEJXzpZFJTPTqKZDQyBYBGibFRJw5rbDHC
+         UoTPT73EkavyZbz8PkOJj8zQqsyQ35T539r26myXyVLHCL5SH3cHp0SPQvoAyJPX7ilI
+         rZJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=g9d6LcMq+4VRcWi11RTTPW2ALjqzYwDNIW6jkIwWUkY=;
-        b=oo1cl/uS5FwOpstO1L71wMKF2/Kr+nVH/9izJzemaSdfbfz5nGApIh7vXvEIBXUXLY
-         hkvuetgVem3ey2Viwd+RKiC3se7mVLhxcpVjvVdqUR9kT9kzMM5pL5z4ksxEQD1rI1h6
-         S8sFy0DNXQOZLgmZbNfw8tXKwUmdEjHpDxtYokxziMlvQszh6/Bv0b06WBKOEwrwu7PH
-         wYaZCVOfBf5zHmzJFnvLTVXwXz3d5xHOWxvSIp1Ef/at/oaExYLY4hgCJQPGwU6UmPyr
-         a3eKnvZUnlOACaoIsQY+4ry0vfBKFFXc5GQeqib4wdRuVYUO8zTuMkj2Dner5dZjE17+
-         jBzw==
+        bh=xSd7CzgKUUxhAiMb9lTSNSQ+N3+IgEytBY/SR9qoepQ=;
+        b=g8Cfs5IUsKF5Tr/vnldri7PIVV+fxw9MYDp8OxZa0+VT4jSEVsuDpIPP1IB6H33aPH
+         ypLM1aDfwVx22GDUe7VqJxnhdoNuuU9oxm2MJKZEOLfHSh8YxWlwSknglfdSEt5Sn91Y
+         lNMADiNh/rXq2srm8VeXj3/UbZcSRwDA2JfjUhcvz91kzCFTGq0NqhjJYtWuHPvqaO70
+         tHud/eDfFnduYobEEIC4SCcu8RPx+RB9eCdFMidzvlQZASpG81ErlquprZEGplkbGAec
+         ltOUKVgOSwxOxcnVAWgc+REVFocCEk5qYBJ5L6XFVnw2cNsOiuzkiQGOPtmQ6Ep9UxMH
+         cYRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,25 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arjan van de Ven <arjan.van.de.ven@intel.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	dave.hansen@intel.com,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 049/167] x86/speculation: Correct Speculation Control microcode blacklist again
-Date: Wed, 21 Feb 2018 13:47:40 +0100
-Message-Id: <20180221124527.231407622@linuxfoundation.org>
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 046/167] powerpc/mm/radix: Split linear mapping on hot-unplug
+Date: Wed, 21 Feb 2018 13:47:37 +0100
+Message-Id: <20180221124527.090861168@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -54,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015397085448987?=
-X-GMAIL-MSGID: =?utf-8?q?1593015519918493871?=
+X-GMAIL-THRID: =?utf-8?q?1593015510974851849?=
+X-GMAIL-MSGID: =?utf-8?q?1593015510974851849?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,73 +49,171 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Balbir Singh <bsingharora@gmail.com>
 
-commit d37fc6d360a404b208547ba112e7dabb6533c7fc upstream.
+commit 4dd5f8a99e791a8c6500e3592f3ce81ae7edcde1 upstream.
 
-Arjan points out that the Intel document only clears the 0xc2 microcode
-on *some* parts with CPUID 506E3 (INTEL_FAM6_SKYLAKE_DESKTOP stepping 3).
-For the Skylake H/S platform it's OK but for Skylake E3 which has the
-same CPUID it isn't (yet) cleared.
+This patch splits the linear mapping if the hot-unplug range is
+smaller than the mapping size. The code detects if the mapping needs
+to be split into a smaller size and if so, uses the stop machine
+infrastructure to clear the existing mapping and then remap the
+remaining range using a smaller page size.
 
-So removing it from the blacklist was premature. Put it back for now.
+The code will skip any region of the mapping that overlaps with kernel
+text and warn about it once. We don't want to remove a mapping where
+the kernel text and the LMB we intend to remove overlap in the same
+TLB mapping as it may affect the currently executing code.
 
-Also, Arjan assures me that the 0x84 microcode for Kaby Lake which was
-featured in one of the early revisions of the Intel document was never
-released to the public, and won't be until/unless it is also validated
-as safe. So those can change to 0x80 which is what all *other* versions
-of the doc have identified.
+I've tested these changes under a kvm guest with 2 vcpus, from a split
+mapping point of view, some of the caveats mentioned above applied to
+the testing I did.
 
-Once the retrospective testing of existing public microcodes is done, we
-should be back into a mode where new microcodes are only released in
-batches and we shouldn't even need to update the blacklist for those
-anyway, so this tweaking of the list isn't expected to be a thing which
-keeps happening.
-
-Requested-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1518449255-2182-1-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 4b5d62ca17a1 ("powerpc/mm: add radix__remove_section_mapping()")
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+[mpe: Tweak change log to match updated behaviour]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/powerpc/mm/pgtable-radix.c |   95 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 74 insertions(+), 21 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -116,13 +116,14 @@ struct sku_microcode {
- 	u32 microcode;
- };
- static const struct sku_microcode spectre_bad_microcodes[] = {
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
-+	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+--- a/arch/powerpc/mm/pgtable-radix.c
++++ b/arch/powerpc/mm/pgtable-radix.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_fdt.h>
+ #include <linux/mm.h>
+ #include <linux/string_helpers.h>
++#include <linux/stop_machine.h>
+ 
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+@@ -671,6 +672,30 @@ static void free_pmd_table(pmd_t *pmd_st
+ 	pud_clear(pud);
+ }
+ 
++struct change_mapping_params {
++	pte_t *pte;
++	unsigned long start;
++	unsigned long end;
++	unsigned long aligned_start;
++	unsigned long aligned_end;
++};
++
++static int stop_machine_change_mapping(void *data)
++{
++	struct change_mapping_params *params =
++			(struct change_mapping_params *)data;
++
++	if (!data)
++		return -1;
++
++	spin_unlock(&init_mm.page_table_lock);
++	pte_clear(&init_mm, params->aligned_start, params->pte);
++	create_physical_mapping(params->aligned_start, params->start);
++	create_physical_mapping(params->end, params->aligned_end);
++	spin_lock(&init_mm.page_table_lock);
++	return 0;
++}
++
+ static void remove_pte_table(pte_t *pte_start, unsigned long addr,
+ 			     unsigned long end)
+ {
+@@ -699,6 +724,52 @@ static void remove_pte_table(pte_t *pte_
+ 	}
+ }
+ 
++/*
++ * clear the pte and potentially split the mapping helper
++ */
++static void split_kernel_mapping(unsigned long addr, unsigned long end,
++				unsigned long size, pte_t *pte)
++{
++	unsigned long mask = ~(size - 1);
++	unsigned long aligned_start = addr & mask;
++	unsigned long aligned_end = addr + size;
++	struct change_mapping_params params;
++	bool split_region = false;
++
++	if ((end - addr) < size) {
++		/*
++		 * We're going to clear the PTE, but not flushed
++		 * the mapping, time to remap and flush. The
++		 * effects if visible outside the processor or
++		 * if we are running in code close to the
++		 * mapping we cleared, we are in trouble.
++		 */
++		if (overlaps_kernel_text(aligned_start, addr) ||
++			overlaps_kernel_text(end, aligned_end)) {
++			/*
++			 * Hack, just return, don't pte_clear
++			 */
++			WARN_ONCE(1, "Linear mapping %lx->%lx overlaps kernel "
++				  "text, not splitting\n", addr, end);
++			return;
++		}
++		split_region = true;
++	}
++
++	if (split_region) {
++		params.pte = pte;
++		params.start = addr;
++		params.end = end;
++		params.aligned_start = addr & ~(size - 1);
++		params.aligned_end = min_t(unsigned long, aligned_end,
++				(unsigned long)__va(memblock_end_of_DRAM()));
++		stop_machine(stop_machine_change_mapping, &params, NULL);
++		return;
++	}
++
++	pte_clear(&init_mm, addr, pte);
++}
++
+ static void remove_pmd_table(pmd_t *pmd_start, unsigned long addr,
+ 			     unsigned long end)
+ {
+@@ -714,13 +785,7 @@ static void remove_pmd_table(pmd_t *pmd_
+ 			continue;
+ 
+ 		if (pmd_huge(*pmd)) {
+-			if (!IS_ALIGNED(addr, PMD_SIZE) ||
+-			    !IS_ALIGNED(next, PMD_SIZE)) {
+-				WARN_ONCE(1, "%s: unaligned range\n", __func__);
+-				continue;
+-			}
+-
+-			pte_clear(&init_mm, addr, (pte_t *)pmd);
++			split_kernel_mapping(addr, end, PMD_SIZE, (pte_t *)pmd);
+ 			continue;
+ 		}
+ 
+@@ -745,13 +810,7 @@ static void remove_pud_table(pud_t *pud_
+ 			continue;
+ 
+ 		if (pud_huge(*pud)) {
+-			if (!IS_ALIGNED(addr, PUD_SIZE) ||
+-			    !IS_ALIGNED(next, PUD_SIZE)) {
+-				WARN_ONCE(1, "%s: unaligned range\n", __func__);
+-				continue;
+-			}
+-
+-			pte_clear(&init_mm, addr, (pte_t *)pud);
++			split_kernel_mapping(addr, end, PUD_SIZE, (pte_t *)pud);
+ 			continue;
+ 		}
+ 
+@@ -777,13 +836,7 @@ static void remove_pagetable(unsigned lo
+ 			continue;
+ 
+ 		if (pgd_huge(*pgd)) {
+-			if (!IS_ALIGNED(addr, PGDIR_SIZE) ||
+-			    !IS_ALIGNED(next, PGDIR_SIZE)) {
+-				WARN_ONCE(1, "%s: unaligned range\n", __func__);
+-				continue;
+-			}
+-
+-			pte_clear(&init_mm, addr, (pte_t *)pgd);
++			split_kernel_mapping(addr, end, PGDIR_SIZE, (pte_t *)pgd);
+ 			continue;
+ 		}
+ 
