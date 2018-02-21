@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227GcocnEH5EwRgqrxo/j/mc8ouClUYMmZZDbY+J5s7L346Oqhz4SEDdfgR85sKAYz834Axb
-ARC-Seal: i=1; a=rsa-sha256; t=1519218157; cv=none;
+X-Google-Smtp-Source: AH8x226zbY6DX01geIIa9nKzubOoobzdb0QRe+crwx2eVZWNaFH/mBdRcG+5V+4fiG7BBgm/wTkV
+ARC-Seal: i=1; a=rsa-sha256; t=1519218155; cv=none;
         d=google.com; s=arc-20160816;
-        b=C5gxH11YD9+UylTMp5lBOmBdT3bDY+BZncl5A3yFDqwvXax9GfWkjY/V23iMVR7HYn
-         rdpVYMljKU88J36gi/pB57dUT1AR892LzoQSRgfEh+uNbZ1wLGLtSfFu1LyNGPhWSVB+
-         Bmh0znB4m/1dCPx/RiAH4K9NDoaYiEcaclx6j8vQb5NHgjYr042G4Kko+6OtBfazadNI
-         8CnHJcEFUB+pmV5NOpV9R7GJayF+8Mv6VLCjFgcf2EqBrvafFBJ5T/Nzj+YMwsy8gLNg
-         /RxGNzs5Y5BfrQ8Nud17/iC/X4e4yW7T0BeuR3uBLo5S2BpSVbg7E67/XfwlkUwdCM9G
-         zM6g==
+        b=kq8TetdfDLIdbSchuWInAQ71/dbVJkehYS3Kn4NG87JfGRJBbHqsIsY2GOLuEtwdh8
+         +jWteVW8DctD8LQumjmdTM8ggr8wbbNP83nfY9QRF5gxPAmvrlhq3eOCvuwm9C9V1xSy
+         w/KZg2h8Yrj3o+07ydw66Bh9uzXGOpKA480ZYR4cR/ip1yEj+NeDBQCn+tlyEa8uBgNS
+         rzl/F9NC3EUD7JAejcCkfNPOEOZ+xvsiFIpynU92kctTteRSeFwjm9WOO0rz7ffsO5ze
+         EpXMjJQAomPRcBQ/Rml1dAygWHC0IZ220ynkYjunMz+iy/CeS6p0xpqWa8bmAPkWGVL0
+         ji3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IUhXd/q4O3JekHvFu0IEZuyB3DHtP+MvpdBJ8O5vqJA=;
-        b=bWG7KCA7kcBMXnRK1v0sS/gCfGHEw7U64y4W/G3ird0y5AhME4wQhQEr1hqQc0TNWJ
-         Tsvf3hVb4mGAd/gKfsTAY8oGTKK8l17yTWleNdFmuS/EjoF9jaGlxtDIo1cyy0iteb/M
-         crHPNyHgIqcx+BqPo40urknt0mXODctKKtUUrvRKe70hCRpc5bmv2VQNQEawaSdl2m4r
-         cUrz3KBFUyu9jaGKnAt9nw4tQ6pDlq26uUeYBmdJijVf0cZ9vQulnYSkppa0AJX/quAP
-         ZrTU/sjJC/gkFS9dEme9k+qGrQfJLC41d3cSvoaZK8qx41CoNf/lHt3Q+AVoV9o+tEnU
-         B/7g==
+        bh=cMDC29GkbSDMk4jO4klZcguiAt21ZJg+Qp8vjbLRMJI=;
+        b=lridyYB4mFqu2IqYunjbKOdMvdhr4ik8DOxuWWHY7VVsVUSvY6DRNYVP+va1nB95UX
+         XnePaHRV0bJXMrUAtaQcIJLKZuQg0SuZ1dsn6NC98+88kiUyBQf8rCegzI1VOClL8/E/
+         Nn0SuJFHfUO0904FsYGp3vNwzYPjHHDhmPz7ULaquz2U9dzu6A2VZbW14WpgUCmPbMf5
+         hqEjoJt6yxoaiuts9TTYAVq8j3+XxL3hzC46D4UpKFW/lyPjuN/JicUpCnmznJ4Tu0h1
+         PP0+E/lPz+AHK0h8F+UoVwTT+NtP5ULZAZnr1eMkZ55FPZLwK5BgQ6P/Z9T6VCCucb7w
+         6+Ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
 	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	Dmitry Safonov <dsafonov@virtuozzo.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	kbuild test robot <fengguang.wu@intel.com>,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 073/167] objtool: Fix segfault in ignore_unreachable_insn()
-Date: Wed, 21 Feb 2018 13:48:04 +0100
-Message-Id: <20180221124528.486326973@linuxfoundation.org>
+Subject: [PATCH 4.14 072/167] selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
+Date: Wed, 21 Feb 2018 13:48:03 +0100
+Message-Id: <20180221124528.441870850@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -50,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015699116643894?=
-X-GMAIL-MSGID: =?utf-8?q?1593015699116643894?=
+X-GMAIL-THRID: =?utf-8?q?1593015696449113507?=
+X-GMAIL-MSGID: =?utf-8?q?1593015696449113507?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,65 +56,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit fe24e27128252c230a34a6c628da2bf1676781ea upstream.
+commit 9279ddf23ce78ff2676e8e8e19fec0f022c26d04 upstream.
 
-Peter Zijlstra's patch for converting WARN() to use UD2 triggered a
-bunch of false "unreachable instruction" warnings, which then triggered
-a seg fault in ignore_unreachable_insn().
+The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
+hard-coded 32-bit syscall numbers and call "int $0x80".
 
-The seg fault happened when it tried to dereference a NULL 'insn->func'
-pointer.  Thanks to static_cpu_has(), some functions can jump to a
-non-function area in the .altinstr_aux section.  That breaks
-ignore_unreachable_insn()'s assumption that it's always inside the
-original function.
+This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
 
-Make sure ignore_unreachable_insn() only follows jumps within the
-current function.
+Therefore, do not build these tests if we cannot build 32-bit binaries
+(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
 
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com
+Cc: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org
+Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ tools/testing/selftests/x86/Makefile |   20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1935,13 +1935,19 @@ static bool ignore_unreachable_insn(stru
- 		if (is_kasan_insn(insn) || is_ubsan_insn(insn))
- 			return true;
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -5,16 +5,26 @@ include ../lib.mk
  
--		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest) {
--			insn = insn->jump_dest;
--			continue;
-+		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
-+			if (insn->jump_dest &&
-+			    insn->jump_dest->func == insn->func) {
-+				insn = insn->jump_dest;
-+				continue;
-+			}
+ .PHONY: all all_32 all_64 warn_32bit_failure clean
+ 
+-TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
+-			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
++UNAME_M := $(shell uname -m)
++CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
++CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
 +
-+			break;
- 		}
++TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
++			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
+ 			protection_keys test_vdso test_vsyscall
+ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+ TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
++# Some selftests require 32bit support enabled also on 64bit systems
++TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
  
- 		if (insn->offset + insn->len >= insn->func->offset + insn->func->len)
- 			break;
+-TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
++TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
+ TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
++ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
++TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
++endif
 +
- 		insn = list_next_entry(insn, list);
- 	}
+ BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
+ BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
  
+@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,
+ 
+ CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
+ 
+-UNAME_M := $(shell uname -m)
+-CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
+-CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+-
+ ifeq ($(CAN_BUILD_I386),1)
+ all: all_32
+ TEST_PROGS += $(BINARIES_32)
