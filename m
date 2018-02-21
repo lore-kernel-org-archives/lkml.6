@@ -1,102 +1,388 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeBUMLw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:11:52 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40690 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751675AbeBUMLu (ORCPT
+        id S933450AbeBUMMW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:12:22 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:58237 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751675AbeBUMMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:11:50 -0500
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: Thomas Huth <thuth@redhat.com>, Farhan Ali <alifm@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, geert@linux-m68k.org,
-        tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
- <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
- <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
- <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
- <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
- <20180221113217.11bb1c69.cohuck@redhat.com>
- <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
- <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
- <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
- <5dfa9213-0e63-54d0-8700-1ced4efd4c28@redhat.com>
- <f6db4d0a-3578-4162-5de7-6e699f7a02c2@de.ibm.com>
- <20180221130755.17d15f89.cohuck@redhat.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 21 Feb 2018 13:11:42 +0100
+        Wed, 21 Feb 2018 07:12:19 -0500
+Subject: Re: [PATCH v9 07/11] media: i2c: ov772x: Support frame interval
+ handling
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f154f229-6977-4d3e-38b9-6d1669adbf91@xs4all.nl>
+Date: Wed, 21 Feb 2018 13:12:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180221130755.17d15f89.cohuck@redhat.com>
+In-Reply-To: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022112-0040-0000-0000-000004360818
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022112-0041-0000-0000-000020D81C84
-Message-Id: <6c1daae4-e1f6-5627-9023-f03d986c5639@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802210149
+X-CMAE-Envelope: MS4wfGFYR7t2VnGrfmFXBmPp7g7BE8q52tzaSs1lkYNvY/Z+mzlPrcok8VvhzUVoex5UlXB741UwplnWuTgIwtr0lN9XaKqKS11bu/qr824cJ6jcUawQqRzh
+ fP8jP4Cj955Sb+q1Nv4Wg0RYxUcMclvGnf9TRciy8tFEEUYYrAJdIacgczObyMGcve/QlzWX0MIW39VXXFO0wJmVZkk31lM12c5spAMceJYobc9HtuWsUngX
+ 5gqGsjTkeojpnb9o/w53Ei28rFfvsTcf686yOOZ2YzezMPCnohIi70hjPx+mhYNpun3iXbUzM1J6R6jPv9zaoTpPyVe8d8QxOX0684npGSc7cJ7cqMfW2jc2
+ 7ncTDOZqST1KBAiVLk+FO5g1RqjZZu/dgAedTvBTy4qUOonxknpJyto587khe7XLzYXCVTB920yE42ZvB8avo3IhOTwrKm85trsT1JmX4rbajCY6+23dg3RT
+ TCqx1zIW8r+LPsdHlkDa7JqMNTqz5+Ib97i9ZfdpXHC+I89agHwT46kFATSfjsmX8jJ3EkNWjpnSvF/8wmDApyvNP0nnoP7PTUF/LUccCUPD6AIjsFK4Uhjd
+ Ciq4ohB38FJUw6iioWAXuCbas/iGfOTVq0JskWQMAOsNcQ3jqxiZeLFD1RCzuTRvcYxcRop1zrWRsuF/R0JDFJlNf8TC3iiRmJ5XIY+qqv0dyRckzyPQXGW9
+ 3LVOOLzSY5txhY0I1lKm2QRxzDF/dsxwsqU5YkhddCIx4llWiyte16VWVvET9im8GV2NRtxjVERwmFpBDK37fpTdeGNHpG7GjygzmE1oP+XX0L55e/nCLw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/19/18 17:59, Jacopo Mondi wrote:
+> Add support to ov772x driver for frame intervals handling and enumeration.
+> Tested with 10MHz and 24MHz input clock at VGA and QVGA resolutions for
+> 10, 15 and 30 frame per second rates.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/media/i2c/ov772x.c | 212 +++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 195 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+> index 23106d7..eba71d9 100644
+> --- a/drivers/media/i2c/ov772x.c
+> +++ b/drivers/media/i2c/ov772x.c
+> @@ -250,6 +250,7 @@
+>  #define AEC_1p2         0x10	/*  01: 1/2  window */
+>  #define AEC_1p4         0x20	/*  10: 1/4  window */
+>  #define AEC_2p3         0x30	/*  11: Low 2/3 window */
+> +#define COM4_RESERVED   0x01	/* Reserved bit */
+> 
+>  /* COM5 */
+>  #define AFR_ON_OFF      0x80	/* Auto frame rate control ON/OFF selection */
+> @@ -267,6 +268,10 @@
+>  				/* AEC max step control */
+>  #define AEC_NO_LIMIT    0x01	/*   0 : AEC incease step has limit */
+>  				/*   1 : No limit to AEC increase step */
+> +/* CLKRC */
+> +				/* Input clock divider register */
+> +#define CLKRC_RESERVED  0x80	/* Reserved bit */
+> +#define CLKRC_DIV(n)    ((n) - 1)
+> 
+>  /* COM7 */
+>  				/* SCCB Register Reset */
+> @@ -373,6 +378,19 @@
+>  #define VERSION(pid, ver) ((pid<<8)|(ver&0xFF))
+> 
+>  /*
+> + * PLL multipliers
+> + */
+> +struct {
+> +	unsigned int mult;
+> +	u8 com4;
+> +} ov772x_pll[] = {
+> +	{ 1, PLL_BYPASS, },
+> +	{ 4, PLL_4x, },
+> +	{ 6, PLL_6x, },
+> +	{ 8, PLL_8x, },
+> +};
+> +
+> +/*
+>   * struct
+>   */
+> 
+> @@ -388,6 +406,7 @@ struct ov772x_color_format {
+>  struct ov772x_win_size {
+>  	char                     *name;
+>  	unsigned char             com7_bit;
+> +	unsigned int		  sizeimage;
+>  	struct v4l2_rect	  rect;
+>  };
+> 
+> @@ -404,6 +423,7 @@ struct ov772x_priv {
+>  	unsigned short                    flag_hflip:1;
+>  	/* band_filter = COM8[5] ? 256 - BDBASE : 0 */
+>  	unsigned short                    band_filter;
+> +	unsigned int			  fps;
+>  };
+> 
+>  /*
+> @@ -487,27 +507,35 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+> 
+>  static const struct ov772x_win_size ov772x_win_sizes[] = {
+>  	{
+> -		.name     = "VGA",
+> -		.com7_bit = SLCT_VGA,
+> +		.name		= "VGA",
+> +		.com7_bit	= SLCT_VGA,
+> +		.sizeimage	= 510 * 748,
+>  		.rect = {
+> -			.left = 140,
+> -			.top = 14,
+> -			.width = VGA_WIDTH,
+> -			.height = VGA_HEIGHT,
+> +			.left	= 140,
+> +			.top	= 14,
+> +			.width	= VGA_WIDTH,
+> +			.height	= VGA_HEIGHT,
+>  		},
+>  	}, {
+> -		.name     = "QVGA",
+> -		.com7_bit = SLCT_QVGA,
+> +		.name		= "QVGA",
+> +		.com7_bit	= SLCT_QVGA,
+> +		.sizeimage	= 278 * 576,
+>  		.rect = {
+> -			.left = 252,
+> -			.top = 6,
+> -			.width = QVGA_WIDTH,
+> -			.height = QVGA_HEIGHT,
+> +			.left	= 252,
+> +			.top	= 6,
+> +			.width	= QVGA_WIDTH,
+> +			.height	= QVGA_HEIGHT,
+>  		},
+>  	},
+>  };
+> 
+>  /*
+> + * frame rate settings lists
+> + */
+> +unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
+> +#define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
+> +
+> +/*
+>   * general function
+>   */
+> 
+> @@ -574,6 +602,126 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
+>  	return 0;
+>  }
+> 
+> +static int ov772x_set_frame_rate(struct ov772x_priv *priv,
+> +				 struct v4l2_fract *tpf,
+> +				 const struct ov772x_color_format *cfmt,
+> +				 const struct ov772x_win_size *win)
+> +{
+> +	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
+> +	unsigned long fin = clk_get_rate(priv->clk);
+> +	unsigned int fps = tpf->numerator ?
+> +			   tpf->denominator / tpf->numerator :
+> +			   tpf->denominator;
+> +	unsigned int best_diff;
+> +	unsigned int fsize;
+> +	unsigned int pclk;
+> +	unsigned int diff;
+> +	unsigned int idx;
+> +	unsigned int i;
+> +	u8 clkrc = 0;
+> +	u8 com4 = 0;
+> +	int ret;
+> +
+> +	/* Approximate to the closest supported frame interval. */
+> +	best_diff = ~0L;
+> +	for (i = 0, idx = 0; i < OV772X_N_FRAME_INTERVALS; i++) {
+> +		diff = abs(fps - ov772x_frame_intervals[i]);
+> +		if (diff < best_diff) {
+> +			idx = i;
+> +			best_diff = diff;
+> +		}
+> +	}
+> +	fps = ov772x_frame_intervals[idx];
+> +
+> +	/* Use image size (with blankings) to calculate desired pixel clock. */
+> +	if ((cfmt->com7 & OFMT_MASK) == OFMT_RGB ||
+> +	    (cfmt->com7 & OFMT_MASK) == OFMT_YUV)
+> +		fsize = win->sizeimage * 2;
+> +	else if ((cfmt->com7 & OFMT_MASK) == OFMT_BRAW)
+> +		fsize = win->sizeimage;
+> +
+> +	pclk = fps * fsize;
+> +
+> +	/*
+> +	 * Pixel clock generation circuit is pretty simple:
+> +	 *
+> +	 * Fin -> [ / CLKRC_div] -> [ * PLL_mult] -> pclk
+> +	 *
+> +	 * Try to approximate the desired pixel clock testing all available
+> +	 * PLL multipliers (1x, 4x, 6x, 8x) and calculate corresponding
+> +	 * divisor with:
+> +	 *
+> +	 * div = PLL_mult * Fin / pclk
+> +	 *
+> +	 * and re-calculate the pixel clock using it:
+> +	 *
+> +	 * pclk = Fin * PLL_mult / CLKRC_div
+> +	 *
+> +	 * Choose the PLL_mult and CLKRC_div pair that gives a pixel clock
+> +	 * closer to the desired one.
+> +	 *
+> +	 * The desired pixel clock is calculated using a known frame size
+> +	 * (blanking included) and FPS.
+> +	 */
+> +	best_diff = ~0L;
+> +	for (i = 0; i < ARRAY_SIZE(ov772x_pll); i++) {
+> +		unsigned int pll_mult = ov772x_pll[i].mult;
+> +		unsigned int pll_out = pll_mult * fin;
+> +		unsigned int t_pclk;
+> +		unsigned int div;
+> +
+> +		if (pll_out < pclk)
+> +			continue;
+> +
+> +		div = DIV_ROUND_CLOSEST(pll_out, pclk);
+> +		t_pclk = DIV_ROUND_CLOSEST(fin * pll_mult, div);
+> +		diff = abs(pclk - t_pclk);
+> +		if (diff < best_diff) {
+> +			best_diff = diff;
+> +			clkrc = CLKRC_DIV(div);
+> +			com4 = ov772x_pll[i].com4;
+> +		}
+> +	}
+> +
+> +	ret = ov772x_write(client, COM4, com4 | COM4_RESERVED);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ov772x_write(client, CLKRC, clkrc | CLKRC_RESERVED);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	tpf->numerator = 1;
+> +	tpf->denominator = fps;
+> +	priv->fps = tpf->denominator;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov772x_g_frame_interval(struct v4l2_subdev *sd,
+> +				   struct v4l2_subdev_frame_interval *ival)
+> +{
+> +	struct ov772x_priv *priv = to_ov772x(sd);
+> +	struct v4l2_fract *tpf = &ival->interval;
+> +
+> +	memset(ival->reserved, 0, sizeof(ival->reserved));
+
+This memset...
+
+> +	tpf->numerator = 1;
+> +	tpf->denominator = priv->fps;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov772x_s_frame_interval(struct v4l2_subdev *sd,
+> +				   struct v4l2_subdev_frame_interval *ival)
+> +{
+> +	struct ov772x_priv *priv = to_ov772x(sd);
+> +	struct v4l2_fract *tpf = &ival->interval;
+> +
+> +	memset(ival->reserved, 0, sizeof(ival->reserved));
+
+... and this memset can be dropped. The core code will memset this for you.
 
 
-On 02/21/2018 01:07 PM, Cornelia Huck wrote:
-[...]
->>> But if you need to enable PCI to get IOMEM, I wonder why this patch here
->>> is needed at all? The Graphics menu / VT dummy console should be
->>> available in the config if IOMEM is enabled anyway?  
->>
->> That is a good question. With CONFIG_PCI=y I can select virtio-gpu and dummy-console.
->> IIRC the issue was that with patch 3 we can have the situation where we have
->> CONFIG_VT = y and CONFIG_DUMMY_CONSOLE=n and this will crash early during boot as
->> conswitchp is NULL. 
+> +
+> +	return ov772x_set_frame_rate(priv, tpf, priv->cfmt, priv->win);
+> +}
+> +
+>  static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
+>  {
+>  	struct ov772x_priv *priv = container_of(ctrl->handler,
+> @@ -757,6 +905,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+>  			     const struct ov772x_win_size *win)
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
+> +	struct v4l2_fract tpf;
+>  	int ret;
+>  	u8  val;
 > 
-> So in practice, CONFIG_VT depends on "there's a console available, even
-> if it's only the dummy one"?
+> @@ -885,6 +1034,13 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+>  	if (ret < 0)
+>  		goto ov772x_set_fmt_error;
+> 
+> +	/* COM4, CLKRC: Set pixel clock and framerate. */
+> +	tpf.numerator = 1;
+> +	tpf.denominator = priv->fps;
+> +	ret = ov772x_set_frame_rate(priv, &tpf, cfmt, win);
+> +	if (ret < 0)
+> +		goto ov772x_set_fmt_error;
+> +
+>  	/*
+>  	 * set COM8
+>  	 */
+> @@ -1043,6 +1199,24 @@ static const struct v4l2_subdev_core_ops ov772x_subdev_core_ops = {
+>  	.s_power	= ov772x_s_power,
+>  };
+> 
+> +static int ov772x_enum_frame_interval(struct v4l2_subdev *sd,
+> +				      struct v4l2_subdev_pad_config *cfg,
+> +				      struct v4l2_subdev_frame_interval_enum *fie)
+> +{
+> +	if (fie->pad || fie->index >= OV772X_N_FRAME_INTERVALS)
+> +		return -EINVAL;
+> +
+> +	if (fie->width != VGA_WIDTH && fie->width != QVGA_WIDTH)
+> +		return -EINVAL;
+> +	if (fie->height != VGA_HEIGHT && fie->height != QVGA_HEIGHT)
+> +		return -EINVAL;
+> +
+> +	fie->interval.numerator = 1;
+> +	fie->interval.denominator = ov772x_frame_intervals[fie->index];
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+>  		struct v4l2_subdev_pad_config *cfg,
+>  		struct v4l2_subdev_mbus_code_enum *code)
+> @@ -1055,14 +1229,17 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+>  }
+> 
+>  static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
+> -	.s_stream	= ov772x_s_stream,
+> +	.s_stream		= ov772x_s_stream,
+> +	.s_frame_interval	= ov772x_s_frame_interval,
+> +	.g_frame_interval	= ov772x_g_frame_interval,
+>  };
+> 
+>  static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
+> -	.enum_mbus_code = ov772x_enum_mbus_code,
+> -	.get_selection	= ov772x_get_selection,
+> -	.get_fmt	= ov772x_get_fmt,
+> -	.set_fmt	= ov772x_set_fmt,
+> +	.enum_frame_interval	= ov772x_enum_frame_interval,
+> +	.enum_mbus_code		= ov772x_enum_mbus_code,
+> +	.get_selection		= ov772x_get_selection,
+> +	.get_fmt		= ov772x_get_fmt,
+> +	.set_fmt		= ov772x_set_fmt,
 
-Yes. Maybe we should simple move dummy_console outside of drivers/video/console/Kconfig
-into something that is always available.
+Shouldn't these last four ops be added in the previous patch?
+They don't have anything to do with the frame interval support.
 
+Anyway, after taking care of the memsets and these four ops you can add
+my:
+
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
+
+	Hans
+
+>  };
 > 
->> This patches goal was to always enable dummy console even without
->> PCI, but it obviously fails to do so.
+>  static const struct v4l2_subdev_ops ov772x_subdev_ops = {
+> @@ -1134,6 +1311,7 @@ static int ov772x_probe(struct i2c_client *client,
 > 
-> OTOH, the dummy console really should not depend on anything, as it is
-> only doing dummy things.
+>  	priv->cfmt = &ov772x_cfmts[0];
+>  	priv->win = &ov772x_win_sizes[0];
+> +	priv->fps = 15;
 > 
->>
->> So what about allowing CONFIG_VT on s390 only if we have PCI?
->>
->>
->> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
->> index 84810075a6a0..1c7fe09d6f90 100644
->> --- a/drivers/tty/Kconfig
->> +++ b/drivers/tty/Kconfig
->> @@ -11,7 +11,7 @@ if TTY
->>  
->>  config VT
->>         bool "Virtual terminal" if EXPERT
->> -       depends on !UML
->> +       depends on !UML && (!S390 || PCI)
->>         select INPUT
->>         default y
->>         ---help---
->>
-> 
-> Would cover your use case, but feels wrong to me... config dependencies
-> aren't fun :/
+>  	ret = v4l2_async_register_subdev(&priv->subdev);
+>  	if (ret)
+> --
+> 2.7.4
 > 
