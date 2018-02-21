@@ -1,114 +1,501 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752012AbeBUTkj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 14:40:39 -0500
-Received: from mail-dm3nam03on0047.outbound.protection.outlook.com ([104.47.41.47]:26031
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751699AbeBUTjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 14:39:48 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com;
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v3 0/2] KVM: MSR-based features
-To: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Radim =?utf-8?b?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Date: Wed, 21 Feb 2018 13:39:41 -0600
-Message-ID: <20180221193941.12005.34137.stgit@tlendack-t1.amdoffice.net>
-User-Agent: StGit/0.17.1-dirty
+        id S1751017AbeBUTpx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 14:45:53 -0500
+Received: from mail-vk0-f74.google.com ([209.85.213.74]:49527 "EHLO
+        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeBUTpu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 14:45:50 -0500
+X-Google-Smtp-Source: AH8x225L8FyAUqtnQBEmGqAVdNt+Nfv6yuEsRwZbvr1xir1HixZDD4X2+61s/wVF8h1QUrijlyfMWy5PjsKG
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: DM5PR21CA0030.namprd21.prod.outlook.com
- (2603:10b6:3:ed::16) To MWHPR12MB1149.namprd12.prod.outlook.com
- (2603:10b6:300:e::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 2d34a8e5-ed72-4595-9105-08d57962dcd6
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1149;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;3:Z5MMrPOzRSGAYJ43EEayfQcahPCArJbLYEOmIjHi7OpMcSFg6s/hpS+bQRHe0nIfNVm1WB1Vj19Ub1xsZdkimZRh4md9qwFC0ekVRLokoWgOBrsmOYVSchvyD5GhXssAKjoYYo73DmClWTuiPEEKqOthyrcRdU6uME61eMlx0oSLzb5x9BA93+yJEX+9BYVXw5H0z81j3VBcLFIg8bYVCl//2mgpnssH2FfM1+h5EWxlmTYxVCJt7w3TX75WWSl7;25:wjiq26fgTcOQgU8hHzRYb0KZGOm2Y456aBb6LNOw+hbqtdtf8onfilZGT+sMpa4FzBxgVYVyOqzmCrnF7q1Hiw8MabjTcm204ZAO002PFcIC0mB/BCiHneRl75nXxwKoABSXqaDIzXs8aGO8KdfTjOO7s9xI0SzdSXBuvYgQYVqC8BJuLgSG0mKC4RDgRuKlMdye5WXsc9U6/GIH+o7KqGE7QRGme5voBtl+xk+a5POcoYCwkFvcEGEl/B3jdxyEiQZo0RBndQwk424K3LEorP3pblrmYqnMZazp8eXxe++kaoju69pLCl5sRjPO3K/ZZAeA5E3TA7FVWsOchrSw/g==;31:9qg5yoiruJO7n7dEoW10kwcqYXp1CIgpCPz+tofiRvPjfUV7CO9ArDICve9JF1p/5xSyyx3PkZYnx/VtV0L8qdzaK0v0kwTBMDJYskUnsMS3ezHKmeVAtUt56qeNOh5RFiKM5vhCYQ2jvePNQRgQVN04Lnh97NL8kQ7/u6lCTnclJ93m8w+9NGmz0Qu1njN4mKdkqPu+bQDOrukrS22wNyPAZrc6QAj3Z17hy+HZeLw=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1149:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;20:K8GZSsY6kYaTRFckPY4Rpe3C7xsk08po0d5Eh7gHRcDpVVavL5UuQr2VlWBu1EKB6D/ptmxbBp+/6ptjcm4H616ksAwn3IhXJolIq/DKa02b7vN2UNvKZHwCXwVKyWJWnRYVWSfqdAfTJNO/7V27PRp3RryPzuCQS8KLW+TsLabBhdlrS+P0FEL3uwJrizyCSzO988Jv5FFADwkjgkYb9vb6Imb+RX6KDdwn+MFOpQaig6rkO1r/tKrHF6p7VI5yE82mjSLBu533hU7Lv3uCJRl5+KO/4qFfIDziZH3jjAucvRfF2XVRWsPvTtU6pWcbOJv4h2NiFR8ehjlik/sAQoRR5ke+1zNs+0ACAPXsIvdKr2LWVkPhNyQP/G9lE/Fuf/9Y8OoVEZHvK6w7ZNlxP+7q0ALIUT/d1tOPjVAzwrnpBl8N5iLEoqvpeYhfiliPYN+Fm04S5AZURUFm9C1CJqkBEvaRWBscioiSpcFr7fBzNEGtjGVAW57C5Uep+Yrv;4:sC1JVF/iI+hPorcZe19Tnw5RcO3GEFnUSE7QKo9FURjz9XpW2qFQ2JLdJH1ypaVGJFvVIcKEr0mQn+MF3g5hv2mKMrLt57XbckMdUoSo8V3fBowYTKNW9McrzIKVxcJzkHxEns0lZRk4NvJPOUGOK0kGyBgEupmPte1y7aMS+CTyGgdtEb04DI3nJZizCeKChyM1BzeIr90h43x+PLVfpMceYCS0bRaxo9zlcsyJiKLgkY1LHYjjm1mvfoBYESJxreaqmKzaOfsMW1vkfNVjDdkv/iJttauKSdhdxDT0euztp+9Tpbv8r7NeomOnuoIW
-X-Microsoft-Antispam-PRVS: <MWHPR12MB11498647287780989A5C68B4ECCE0@MWHPR12MB1149.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(84791874153150);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001070)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR12MB1149;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1149;
-X-Forefront-PRVS: 0590BBCCBC
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(39840400004)(366004)(346002)(376002)(189003)(199004)(3846002)(86362001)(16526019)(6116002)(9686003)(55016002)(386003)(26005)(6506007)(47776003)(72206003)(186003)(53936002)(50466002)(6306002)(66066001)(68736007)(2906002)(966005)(1076002)(230700001)(103116003)(69596002)(478600001)(97746001)(8936002)(58126008)(54906003)(316002)(6666003)(4326008)(53416004)(7736002)(305945005)(8676002)(105586002)(106356001)(81166006)(5660300001)(23676004)(25786009)(2486003)(81156014)(97736004)(7696005)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1149;H:tlendack-t1.amdoffice.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxMTQ5OzIzOjZSblF1RnR1MEhSc21yOVdzajhYVG5PVHBu?=
- =?utf-8?B?L3pYb2lUc3ZZTHdic3lMRXdNYUNRNXdYbXEzb2dqYXBvNmVVTFpnL3g4UG5U?=
- =?utf-8?B?bGdvQ3htcHB2a2VvbzlaZExMNU9GNjlGb2pIUDFRNitpK1h0QW5lUnRkYmlp?=
- =?utf-8?B?OUx4cE5NSVg3Q0JBd3Q2ZFE0NVVQdk4vVEM3ak9iN1RzV1JFQkVEMXpsbk1v?=
- =?utf-8?B?dm85MkEwKzZDRlZEUHh5L2RiZ3g5TmI3VFhPZFJEK29IcC9OMlZXNTFmRTUw?=
- =?utf-8?B?NDltUUlkQVdpMStKRk5FN1hacTlBdFVoZXp1QU5PRmRVVXQraUtOM3NTQmxY?=
- =?utf-8?B?U05SUi9nUlEzTXpwTklJRkdsV29mSE1oRStMZWE3bUdlVFVINUVTVUVIQkJJ?=
- =?utf-8?B?YjhKYXhWUTREN3lyQy9QMTBkQTJDRVJFbmx0OTFCYmdJMjBQTDhyZ3Q4Vkpu?=
- =?utf-8?B?Ym10R1pTS3ZmcFVySS91dE5ZbnZuaGYwTUdkV3RZTXpmNnYyVjM2L05Sa1A1?=
- =?utf-8?B?T3BmY1MzVUQyZkRncEMwUFZFR3VwOW5DSzM1MXJwb3Q0dVBDVGlQd01PTkJO?=
- =?utf-8?B?cUpnekRQeVE4S1JhZmVJU1UyOGRNak5ETEJWUjFrR3FwMTBuUVkvUU9sUDZh?=
- =?utf-8?B?TSsrNkNDWW91QlVNTFFDWnRoeEx0cEFpdkduNWdqNTNVNUUremhqU3QydFdU?=
- =?utf-8?B?MzhMeUx4QWE0NCsza2VxR2xoTmI0NG9oZEtPOVB6N0I3YndJWWx5dE1rbkZj?=
- =?utf-8?B?cWZNU3hIZnd5ekFYZXBLbUpoMzdjQ2JhOWVMdHFWRkdhQ0FIUHRVaGdzS0Fa?=
- =?utf-8?B?YnlKUEhXdWNmanM3MUVvWXdGbzZRY0VGOHdoUHhETXdKRFZGMGF6N2htSzkz?=
- =?utf-8?B?UTdyNEhGS0RwSnBGZ2FURVFRbmVGSUFpOG02L0Q5c1Rhcmtma0dBLzRMSXNa?=
- =?utf-8?B?dm92YS9SZ0t4V2QxVE9zU0hTYUtHdU00TEEyR0NSczBYcFhvd2s5amQ4Sncv?=
- =?utf-8?B?b2tibXdrRW9VTnB2a2QyNWRlOWlKcTZHL3FiRHdZa284dHNnMzVjbE42ZU9J?=
- =?utf-8?B?WUordWlxSW1TcWl5dlEreTFod0JHK0t0d2hSS0VwenUwUmF2MU1JMGswbVUz?=
- =?utf-8?B?anhPdlBVOVc3ZThuNlhDa3JXbzRnbHpIL2J6MEZEZ0xIZEl1RGRKZzJnNXYx?=
- =?utf-8?B?MnRqVUxQS2luU3VnWHJQME0zTUNEQmJVWGpidWpIQnFDbW5FOEFORW16V0Rz?=
- =?utf-8?B?YncvWEdacFhpWDhCeEVESFErRTRXcmNVZDJ5dUY1RVlmMzlPNzlCNGZxWEVX?=
- =?utf-8?B?ZHo2c1ZmeFlyaThCdHlQbUhVMUR6RGROdWNMN1NOOS9zWnRpemdreGFpaXoy?=
- =?utf-8?B?WFlIY0NIL2YyamRZcmt5YVB3aWJXMUNXcUlBQlk5S253dFdCOEppN2lTS0s3?=
- =?utf-8?B?bWdNa2RDNVVXLzVudzBNRWdLOTQ1anp0ZlgrYytGZ1J6aTk1cXQ3Z2t6aFh4?=
- =?utf-8?B?UlNrUEpEcWk0RTZiUWxabWpqUEZjR254RUZFSnFVbytrQW9TQndQSmUwc2V4?=
- =?utf-8?B?eFBaemROVjluWms1bUorcDRWTkUxYTNrUU1LQmRweDNyZGhjSUd2bjdKOGMz?=
- =?utf-8?B?aE1wdWwyQ2s4OEVLdGZlN3lSSFdQTWk3V1U3Wnd0QVd5ekxodU82T3ZRPT0=?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;6:TZzKl++fdzVTj1KZ/mPmgpsBsaRLmkehfDkYA2GuPO1DETLA94KKfidMJwlnEn/3G8dkChWdvtzi87Z2TYvIgvesqbGV7HigigkDc+Q0z93E1rAT8l6j8GtDB/OoSbkOMAvQm30CLhcS7uA3+yMPDTFVrJCHJXXMQl8YlJTc2LK0tMWD1AVHiAWS1wz0JKE57iwkglS+e+DJ14Hx5jJxtjl2eTyvQS2zKksB+fpZKkoTMToFA0gw1s7WJMo7XhRpRcKfLEDNIj7FOsH2Fa5f8wAN1+6552f5PiSsYLQUKMTC+WW6cFcsoAszEF2Q49s7xHxKVdPWA2mWyt9NG3tb/gHgErODlNq3BqHFLbNePZo=;5:BKmYCAe7f+uZ54oyIDFtKuYgz+bkwAC4+HANVWLtAxl5rv+Ov0dzRsJvClhLJNDV/2NOqQkevMhPKrTsIf9kPgKzqyG31N7TLK/r6pz5hGRw4Tvsu0aWpY0B7ThWk0/oPEDC2o4vvOau96IDGpK/KHq5AXIJ2IVZpuxuSwJYoOo=;24:Pi8kGFGkLAi/0naFwbVg5qmsVh2M7n37mgFnRwCjNDqQWabDJx284L6mYp8UjqAMs5riJfZKBVodWOimmExOT3XyjkpJsXDGudL1epm4jAU=;7:YLhL3CuLdQ0hodn2vHv21StpSb3wnIqiWb/hydzPG+znpoH5NmeX9mMKJ+iESL2f93aqax1mhm99qBeey+H7Onf3/u3rMAfYTHjrVp0uQsOKNUSITeDdz1HzbInFYILQy9oEkh7D6qkfChA2WoUuukjbCG/HzPz20LZPZRhMB3vfZXgnFLyuOY9oSoyr6QTriGuZGfcGwFsThLGpgbjh2km2B9HdHUg41TPkMCofbjFqrPlsTDCaBFXLj8dFQUVX
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;20:mYN1ZBI2giDANM8jMasbzzAsj70XLO/RkntQVBA90c3he5795bfSZFFlaihICy5ovVM0vymHj2R6FvnRdRQVGY8AjB+MAum5FN9RhuPPkAHPfUniUhc/OKo1dMPY2tlbpeScEfzGKNBR1RRY3asBXDXeWJRCV0qstOlaNES3Qw4njmztKVRONivwOVm4Yf+PXc5BPTnPoVPgfA46go/EgCG+mGTCPemRpWONJdGs123+mQ9zkasOBow43Y2sJgKn
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2018 19:39:45.5348 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d34a8e5-ed72-4595-9105-08d57962dcd6
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1149
+Date: Wed, 21 Feb 2018 20:45:25 +0100
+In-Reply-To: <20180221125512.8265-1-delroth@google.com>
+Message-Id: <20180221194526.49183-1-delroth@google.com>
+References: <20180221125512.8265-1-delroth@google.com>
+X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
+Subject: [PATCH v2 1/2] iio: light: add driver for bh1730fvc chips
+From: Pierre Bourdon <delroth@google.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Pierre Bourdon <delroth@google.com>, linux-iio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following series implements support within KVM for MSR-based features.
-The first patch creates the MSR-based feature framework used to retrieve
-the available MSR-based features.  The second patch makes use of the
-framework to allow a guest to determine if the LFENCE instruction is
-serializing on AMD processors.
+Ambient light sensor that supports visible light and IR measurements and
+configurable gain/integration time.
 
-This series is based on the master branch of the KVM git tree.
+Changed in v2:
+* Split off DT documentation change into a separate commit.
+* Use i2c's probe_new.
 
-https://git.kernel.org/pub/scm/virt/kvm/kvm.git
-
+Signed-off-by: Pierre Bourdon <delroth@google.com>
 ---
+ drivers/iio/light/Kconfig  |  10 +
+ drivers/iio/light/Makefile |   1 +
+ drivers/iio/light/bh1730.c | 414 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 425 insertions(+)
+ create mode 100644 drivers/iio/light/bh1730.c
 
-Changes from v2:
-- Moved back to initializing the MSR-based feature list in kvm_init_msr_list()
-  (based on the kvm_x86_ops callback return code)
-- Removed the definition of KVM_GET_MSR and switched back to using KVM_GET_MSRS
-- Consolidated the documentation to group the ioctl usage and describe the usage
-  specific to the version of the ioctl used.
-
-Tom Lendacky (2):
-      KVM: x86: Add a framework for supporting MSR-based features
-      KVM: SVM: Add MSR-based feature support for serializing LFENCE
-
-
- Documentation/virtual/kvm/api.txt |   29 +++++++++++----
- arch/x86/include/asm/kvm_host.h   |    2 +
- arch/x86/kvm/svm.c                |   43 ++++++++++++++++++++++
- arch/x86/kvm/x86.c                |   72 +++++++++++++++++++++++++++++++++++--
- include/uapi/linux/kvm.h          |    1 +
- 5 files changed, 136 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+index 93fd421b10d7..286a7f78762b 100644
+--- a/drivers/iio/light/Kconfig
++++ b/drivers/iio/light/Kconfig
+@@ -63,6 +63,16 @@ config APDS9960
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called apds9960
+ 
++config BH1730
++	tristate "ROHM BH1730 ambient light sensor"
++	depends on I2C
++	help
++	 Say Y here to build support for the ROHM BH1730FVC ambient
++	 light sensor.
++
++	 To compile this driver as a module, choose M here: the module will
++	 be called bh1730.
++
+ config BH1750
+ 	tristate "ROHM BH1750 ambient light sensor"
+ 	depends on I2C
+diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+index f714067a7816..eb9010a10536 100644
+--- a/drivers/iio/light/Makefile
++++ b/drivers/iio/light/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_ADJD_S311)		+= adjd_s311.o
+ obj-$(CONFIG_AL3320A)		+= al3320a.o
+ obj-$(CONFIG_APDS9300)		+= apds9300.o
+ obj-$(CONFIG_APDS9960)		+= apds9960.o
++obj-$(CONFIG_BH1730)		+= bh1730.o
+ obj-$(CONFIG_BH1750)		+= bh1750.o
+ obj-$(CONFIG_BH1780)		+= bh1780.o
+ obj-$(CONFIG_CM32181)		+= cm32181.o
+diff --git a/drivers/iio/light/bh1730.c b/drivers/iio/light/bh1730.c
+new file mode 100644
+index 000000000000..7f1c50b3c55b
+--- /dev/null
++++ b/drivers/iio/light/bh1730.c
+@@ -0,0 +1,414 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ROHM BH1730 ambient light sensor driver
++ *
++ * Copyright (c) 2018 Google, Inc.
++ * Author: Pierre Bourdon <delroth@google.com>
++ *
++ * Based on a previous non-iio BH1730FVC driver:
++ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
++ * Author: Won Huh <won.huh@samsung.com>
++ *
++ * Data sheets:
++ *  http://www.rohm.com/web/global/datasheet/BH1730FVC/bh1730fvc-e
++ */
++
++#include <linux/delay.h>
++#include <linux/i2c.h>
++#include <linux/iio/iio.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/time.h>
++
++#define BH1730_CMD_BIT BIT(7)
++
++#define BH1730_REG_CONTROL	0x00
++#define BH1730_REG_TIMING	0x01
++#define BH1730_REG_INTERRUPT	0x02
++#define BH1730_REG_THLLOW	0x03
++#define BH1730_REG_THLHIGH	0x04
++#define BH1730_REG_THHLOW	0x05
++#define BH1730_REG_THHHIGH	0x06
++#define BH1730_REG_GAIN		0x07
++#define BH1730_REG_ID		0x12
++#define BH1730_REG_DATA0LOW	0x14
++#define BH1730_REG_DATA0HIGH	0x15
++#define BH1730_REG_DATA1LOW	0x16
++#define BH1730_REG_DATA1HIGH	0x17
++
++#define BH1730_CONTROL_POWER_ON		BIT(0)
++#define BH1730_CONTROL_MEASURE		BIT(1)
++
++#define BH1730_INTERNAL_CLOCK_NS	2800ULL
++
++#define BH1730_DEFAULT_INTEG_MS		150
++
++enum bh1730_gain {
++	BH1730_GAIN_1X = 0,
++	BH1730_GAIN_2X,
++	BH1730_GAIN_64X,
++	BH1730_GAIN_128X,
++};
++
++struct bh1730_data {
++	struct i2c_client *client;
++	enum bh1730_gain gain;
++	int itime;
++};
++
++static int bh1730_read_word(struct bh1730_data *bh1730, u8 reg)
++{
++	int ret = i2c_smbus_read_word_data(bh1730->client,
++					   BH1730_CMD_BIT | reg);
++	if (ret < 0)
++		dev_err(&bh1730->client->dev,
++			"i2c read failed error %d, register %01x\n",
++			ret, reg);
++	return ret;
++}
++
++static int bh1730_write(struct bh1730_data *bh1730, u8 reg, u8 val)
++{
++	int ret = i2c_smbus_write_byte_data(bh1730->client,
++					    BH1730_CMD_BIT | reg,
++					    val);
++	if (ret < 0)
++		dev_err(&bh1730->client->dev,
++			"i2c write failed error %d, register %01x\n",
++			ret, reg);
++	return ret;
++}
++
++static int gain_setting_to_multiplier(enum bh1730_gain gain)
++{
++	switch (gain) {
++	case BH1730_GAIN_1X:
++		return 1;
++	case BH1730_GAIN_2X:
++		return 2;
++	case BH1730_GAIN_64X:
++		return 64;
++	case BH1730_GAIN_128X:
++		return 128;
++	default:
++		return -1;
++	}
++}
++
++static int bh1730_gain_multiplier(struct bh1730_data *bh1730)
++{
++	int multiplier = gain_setting_to_multiplier(bh1730->gain);
++
++	if (multiplier < 0) {
++		dev_warn(&bh1730->client->dev,
++			 "invalid gain multiplier settings: %d\n",
++			 bh1730->gain);
++		bh1730->gain = BH1730_GAIN_1X;
++		multiplier = 1;
++	}
++
++	return multiplier;
++}
++
++static u64 bh1730_itime_ns(struct bh1730_data *bh1730)
++{
++	return BH1730_INTERNAL_CLOCK_NS * 964 * (256 - bh1730->itime);
++}
++
++static int bh1730_set_gain(struct bh1730_data *bh1730, enum bh1730_gain gain)
++{
++	int ret = bh1730_write(bh1730, BH1730_REG_GAIN, gain);
++
++	if (ret < 0)
++		return ret;
++
++	bh1730->gain = gain;
++	return 0;
++}
++
++static int bh1730_set_integration_time_ms(struct bh1730_data *bh1730,
++					  int time_ms)
++{
++	int ret;
++	u64 time_ns = time_ms * (u64)NSEC_PER_MSEC;
++	u64 itime_step_ns = BH1730_INTERNAL_CLOCK_NS * 964;
++	int itime = 256 - (int)DIV_ROUND_CLOSEST_ULL(time_ns, itime_step_ns);
++
++	/* ITIME == 0 is reserved for manual integration mode. */
++	if (itime <= 0 || itime > 255) {
++		dev_warn(&bh1730->client->dev,
++			 "integration time out of range: %dms\n", time_ms);
++		return -ERANGE;
++	}
++
++	ret = bh1730_write(bh1730, BH1730_REG_TIMING, itime);
++	if (ret < 0)
++		return ret;
++
++	bh1730->itime = itime;
++	return 0;
++}
++
++static void bh1730_wait_for_next_measurement(struct bh1730_data *bh1730)
++{
++	ndelay(bh1730_itime_ns(bh1730) + BH1730_INTERNAL_CLOCK_NS * 714);
++}
++
++static int bh1730_adjust_gain(struct bh1730_data *bh1730)
++{
++	int visible, ir, highest, ret, i;
++
++	visible = bh1730_read_word(bh1730, BH1730_REG_DATA0LOW);
++	if (visible < 0)
++		return visible;
++
++	ir = bh1730_read_word(bh1730, BH1730_REG_DATA1LOW);
++	if (ir < 0)
++		return ir;
++
++	highest = max(visible, ir);
++
++	/*
++	 * If the read value is being clamped, assume the worst and go to the
++	 * lowest possible gain. The alternative is doing multiple
++	 * recalibrations, which would be slower and have the same effect.
++	 */
++	if (highest == USHRT_MAX)
++		highest *= 128;
++	else
++		highest = (highest * 128) / bh1730_gain_multiplier(bh1730);
++
++	/*
++	 * Find the lowest gain multiplier which puts the measured values
++	 * above 1024. This threshold is chosen to match the gap between 2X
++	 * multiplier and 64X (next available) while keeping some margin.
++	 */
++	for (i = BH1730_GAIN_1X; i < BH1730_GAIN_128X; ++i) {
++		int adj = highest * gain_setting_to_multiplier(i) / 128;
++
++		if (adj >= 1024)
++			break;
++	}
++
++	if (i != bh1730->gain) {
++		ret = bh1730_set_gain(bh1730, i);
++		if (ret < 0)
++			return ret;
++
++		bh1730_wait_for_next_measurement(bh1730);
++	}
++	return 0;
++}
++
++static s64 bh1730_get_millilux(struct bh1730_data *bh1730)
++{
++	int visible, ir, visible_coef, ir_coef;
++	u64 itime_us = bh1730_itime_ns(bh1730) / NSEC_PER_USEC;
++	u64 millilux;
++
++	visible = bh1730_read_word(bh1730, BH1730_REG_DATA0LOW);
++	if (visible < 0)
++		return visible;
++
++	ir = bh1730_read_word(bh1730, BH1730_REG_DATA1LOW);
++	if (ir < 0)
++		return ir;
++
++	if (ir * 1000 / visible < 500) {
++		visible_coef = 5002;
++		ir_coef = 7502;
++	} else if (ir * 1000 / visible < 754) {
++		visible_coef = 2250;
++		ir_coef = 2000;
++	} else if (ir * 1000 / visible < 1029) {
++		visible_coef = 1999;
++		ir_coef = 1667;
++	} else if (ir * 1000 / visible < 1373) {
++		visible_coef = 885;
++		ir_coef = 583;
++	} else if (ir * 1000 / visible < 1879) {
++		visible_coef = 309;
++		ir_coef = 165;
++	} else {
++		return 0;
++	}
++
++	millilux = (u64)USEC_PER_MSEC * (visible_coef * visible - ir_coef * ir);
++	millilux /= bh1730_gain_multiplier(bh1730);
++	millilux *= 103;
++	millilux /= itime_us;
++	return millilux;
++}
++
++static int bh1730_power_on(struct bh1730_data *bh1730)
++{
++	return bh1730_write(bh1730, BH1730_REG_CONTROL,
++			    BH1730_CONTROL_POWER_ON | BH1730_CONTROL_MEASURE);
++}
++
++static int bh1730_set_defaults(struct bh1730_data *bh1730)
++{
++	int ret;
++
++	ret = bh1730_set_gain(bh1730, BH1730_GAIN_1X);
++	if (ret < 0)
++		return ret;
++
++	ret = bh1730_set_integration_time_ms(bh1730, BH1730_DEFAULT_INTEG_MS);
++	if (ret < 0)
++		return ret;
++
++	bh1730_wait_for_next_measurement(bh1730);
++	return 0;
++}
++
++static int bh1730_power_off(struct bh1730_data *bh1730)
++{
++	return bh1730_write(bh1730, BH1730_REG_CONTROL, 0);
++}
++
++static int bh1730_read_raw(struct iio_dev *indio_dev,
++			   struct iio_chan_spec const *chan,
++			   int *val, int *val2, long mask)
++{
++	struct bh1730_data *bh1730 = iio_priv(indio_dev);
++	int ret;
++	s64 millilux;
++
++	ret = bh1730_adjust_gain(bh1730);
++	if (ret < 0)
++		return ret;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_PROCESSED:
++		millilux = bh1730_get_millilux(bh1730);
++		if (millilux < 0)
++			return millilux;
++		*val = millilux / 1000;
++		*val2 = (millilux % 1000) * 1000;
++		return IIO_VAL_INT_PLUS_MICRO;
++	case IIO_CHAN_INFO_RAW:
++		switch (chan->channel2) {
++		case IIO_MOD_LIGHT_CLEAR:
++			ret = bh1730_read_word(bh1730, BH1730_REG_DATA0LOW);
++			if (ret < 0)
++				return ret;
++			*val = ret;
++			return IIO_VAL_INT;
++		case IIO_MOD_LIGHT_IR:
++			ret = bh1730_read_word(bh1730, BH1730_REG_DATA1LOW);
++			if (ret < 0)
++				return ret;
++			*val = ret;
++			return IIO_VAL_INT;
++		default:
++			return -EINVAL;
++		}
++	case IIO_CHAN_INFO_SCALE:
++		*val = bh1730_gain_multiplier(bh1730);
++		return IIO_VAL_INT;
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct iio_info bh1730_info = {
++	.read_raw = bh1730_read_raw,
++};
++
++static const struct iio_chan_spec bh1730_channels[] = {
++	{
++		.type = IIO_LIGHT,
++		.modified = 1,
++		.channel2 = IIO_MOD_LIGHT_BOTH,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
++	},
++	{
++		.type = IIO_LIGHT,
++		.modified = 1,
++		.channel2 = IIO_MOD_LIGHT_CLEAR,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++	},
++	{
++		.type = IIO_LIGHT,
++		.modified = 1,
++		.channel2 = IIO_MOD_LIGHT_IR,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++	},
++};
++
++static int bh1730_probe(struct i2c_client *client)
++{
++	struct bh1730_data *bh1730;
++	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
++	struct iio_dev *indio_dev;
++	int ret;
++
++	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE))
++		return -EIO;
++
++	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*bh1730));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	bh1730 = iio_priv(indio_dev);
++	bh1730->client = client;
++	i2c_set_clientdata(client, indio_dev);
++
++	ret = bh1730_power_on(bh1730);
++	if (ret < 0)
++		return ret;
++
++	ret = bh1730_set_defaults(bh1730);
++	if (ret < 0)
++		return ret;
++
++	indio_dev->dev.parent = &client->dev;
++	indio_dev->info = &bh1730_info;
++	indio_dev->name = "bh1730";
++	indio_dev->channels = bh1730_channels;
++	indio_dev->num_channels = ARRAY_SIZE(bh1730_channels);
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	ret = iio_device_register(indio_dev);
++	if (ret)
++		goto out_power_off;
++	return 0;
++
++out_power_off:
++	bh1730_power_off(bh1730);
++	return ret;
++}
++
++static int bh1730_remove(struct i2c_client *client)
++{
++	struct iio_dev *indio_dev = i2c_get_clientdata(client);
++	struct bh1730_data *bh1730 = iio_priv(indio_dev);
++
++	iio_device_unregister(indio_dev);
++	return bh1730_power_off(bh1730);
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id of_bh1730_match[] = {
++	{ .compatible = "rohm,bh1730fvc" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, of_bh1730_match);
++#endif
++
++static struct i2c_driver bh1730_driver = {
++	.probe_new = bh1730_probe,
++	.remove = bh1730_remove,
++	.driver = {
++		.name = "bh1730",
++		.of_match_table = of_match_ptr(of_bh1730_match),
++	},
++};
++module_i2c_driver(bh1730_driver);
++
++MODULE_AUTHOR("Pierre Bourdon <delroth@google.com>");
++MODULE_DESCRIPTION("ROHM BH1730FVC driver");
++MODULE_LICENSE("GPL v2");
 -- 
-Tom Lendacky
+2.16.1.291.g4437f3f132-goog
