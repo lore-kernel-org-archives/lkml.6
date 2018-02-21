@@ -1,22 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934144AbeBURTo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:19:44 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36678 "EHLO
+        id S934240AbeBURUI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:20:08 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:37384 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754791AbeBURT0 (ORCPT
+        with ESMTP id S1754791AbeBURUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:19:26 -0500
+        Wed, 21 Feb 2018 12:20:01 -0500
 From: Khalid Aziz <khalid.aziz@oracle.com>
-To: davem@davemloft.net, dave.hansen@linux.intel.com
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, anthony.yznaga@oracle.com,
-        mingo@kernel.org, rob.gardner@oracle.com, ebiederm@xmission.com,
-        vegard.nossum@oracle.com, jane.chu@oracle.com,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+To: akpm@linux-foundation.org, davem@davemloft.net,
+        dave.hansen@linux.intel.com, arnd@arndb.de
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, ross.zwisler@linux.intel.com, dave.jiang@intel.com,
+        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
+        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
+        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, sparclinux@vger.kernel.org,
         Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v12 05/11] sparc64: Add handler for "Memory Corruption Detected" trap
-Date: Wed, 21 Feb 2018 10:15:47 -0700
-Message-Id: <2aa37a8e033c98990afba8b76ab602ceb45931f5.1519227112.git.khalid.aziz@oracle.com>
+Subject: [PATCH v12 02/11] mm, swap: Add infrastructure for saving page metadata on swap
+Date: Wed, 21 Feb 2018 10:15:44 -0700
+Message-Id: <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
 References: <cover.1519227112.git.khalid.aziz@oracle.com>
@@ -31,104 +35,124 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-M7 and newer processors add a "Memory corruption Detected" trap with
-the addition of ADI feature. This trap is vectored into kernel by HV
-through resumable error trap with error attribute for the resumable
-error set to 0x00000800.
+If a processor supports special metadata for a page, for example ADI
+version tags on SPARC M7, this metadata must be saved when the page is
+swapped out. The same metadata must be restored when the page is swapped
+back in. This patch adds two new architecture specific functions -
+arch_do_swap_page() to be called when a page is swapped in, and
+arch_unmap_one() to be called when a page is being unmapped for swap
+out. These architecture hooks allow page metadata to be saved if the
+architecture supports it.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 Cc: Khalid Aziz <khalid@gonehiking.org>
+Acked-by: Jerome Marchand <jmarchan@redhat.com>
 Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
-v7:
-	- new patch split off from patch 4/4 in v6
+v8:
+	- Fixed an erroneous "}"
+v6:
+	- Updated parameter list for arch_do_swap_page() and
+	  arch_unmap_one()
+v5:
+	- Replaced set_swp_pte() function with new architecture
+	  functions arch_do_swap_page() and arch_unmap_one()
 
- arch/sparc/kernel/traps_64.c | 59 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ include/asm-generic/pgtable.h | 36 ++++++++++++++++++++++++++++++++++++
+ mm/memory.c                   |  1 +
+ mm/rmap.c                     | 14 ++++++++++++++
+ 3 files changed, 51 insertions(+)
 
-diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index d273a65a0a10..f36a40217f6c 100644
---- a/arch/sparc/kernel/traps_64.c
-+++ b/arch/sparc/kernel/traps_64.c
-@@ -1870,6 +1870,7 @@ struct sun4v_error_entry {
- #define SUN4V_ERR_ATTRS_ASI		0x00000080
- #define SUN4V_ERR_ATTRS_PRIV_REG	0x00000100
- #define SUN4V_ERR_ATTRS_SPSTATE_MSK	0x00000600
-+#define SUN4V_ERR_ATTRS_MCD		0x00000800
- #define SUN4V_ERR_ATTRS_SPSTATE_SHFT	9
- #define SUN4V_ERR_ATTRS_MODE_MSK	0x03000000
- #define SUN4V_ERR_ATTRS_MODE_SHFT	24
-@@ -2067,6 +2068,56 @@ static void sun4v_log_error(struct pt_regs *regs, struct sun4v_error_entry *ent,
- 	}
- }
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 2cfa3075d148..6fbbc0b6c05e 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -400,6 +400,42 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
  
-+/* Handle memory corruption detected error which is vectored in
-+ * through resumable error trap.
++#ifndef __HAVE_ARCH_DO_SWAP_PAGE
++/*
++ * Some architectures support metadata associated with a page. When a
++ * page is being swapped out, this metadata must be saved so it can be
++ * restored when the page is swapped back in. SPARC M7 and newer
++ * processors support an ADI (Application Data Integrity) tag for the
++ * page as metadata for the page. arch_do_swap_page() can restore this
++ * metadata when a page is swapped back in.
 + */
-+void do_mcd_err(struct pt_regs *regs, struct sun4v_error_entry ent)
++static inline void arch_do_swap_page(struct mm_struct *mm,
++				     struct vm_area_struct *vma,
++				     unsigned long addr,
++				     pte_t pte, pte_t oldpte)
 +{
-+	siginfo_t info;
 +
-+	if (notify_die(DIE_TRAP, "MCD error", regs, 0, 0x34,
-+		       SIGSEGV) == NOTIFY_STOP)
-+		return;
-+
-+	if (regs->tstate & TSTATE_PRIV) {
-+		/* MCD exception could happen because the task was
-+		 * running a system call with MCD enabled and passed a
-+		 * non-versioned pointer or pointer with bad version
-+		 * tag to the system call. In such cases, hypervisor
-+		 * places the address of offending instruction in the
-+		 * resumable error report. This is a deferred error,
-+		 * so the read/write that caused the trap was potentially
-+		 * retired long time back and we may have no choice
-+		 * but to send SIGSEGV to the process.
-+		 */
-+		const struct exception_table_entry *entry;
-+
-+		entry = search_exception_tables(regs->tpc);
-+		if (entry) {
-+			/* Looks like a bad syscall parameter */
-+#ifdef DEBUG_EXCEPTIONS
-+			pr_emerg("Exception: PC<%016lx> faddr<UNKNOWN>\n",
-+				 regs->tpc);
-+			pr_emerg("EX_TABLE: insn<%016lx> fixup<%016lx>\n",
-+				 ent.err_raddr, entry->fixup);
-+#endif
-+			regs->tpc = entry->fixup;
-+			regs->tnpc = regs->tpc + 4;
-+			return;
-+		}
-+	}
-+
-+	/* Send SIGSEGV to the userspace process with the right signal
-+	 * code
-+	 */
-+	info.si_signo = SIGSEGV;
-+	info.si_errno = 0;
-+	info.si_code = SEGV_ADIDERR;
-+	info.si_addr = (void __user *)ent.err_raddr;
-+	info.si_trapno = 0;
-+	force_sig_info(SIGSEGV, &info, current);
 +}
++#endif
 +
- /* We run with %pil set to PIL_NORMAL_MAX and PSTATE_IE enabled in %pstate.
-  * Log the event and clear the first word of the entry.
-  */
-@@ -2104,6 +2155,14 @@ void sun4v_resum_error(struct pt_regs *regs, unsigned long offset)
- 		goto out;
- 	}
++#ifndef __HAVE_ARCH_UNMAP_ONE
++/*
++ * Some architectures support metadata associated with a page. When a
++ * page is being swapped out, this metadata must be saved so it can be
++ * restored when the page is swapped back in. SPARC M7 and newer
++ * processors support an ADI (Application Data Integrity) tag for the
++ * page as metadata for the page. arch_unmap_one() can save this
++ * metadata on a swap-out of a page.
++ */
++static inline int arch_unmap_one(struct mm_struct *mm,
++				  struct vm_area_struct *vma,
++				  unsigned long addr,
++				  pte_t orig_pte)
++{
++	return 0;
++}
++#endif
++
+ #ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+ #define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
+ #endif
+diff --git a/mm/memory.c b/mm/memory.c
+index 5fcfc24904d1..aed37325d94e 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3053,6 +3053,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 	if (pte_swp_soft_dirty(vmf->orig_pte))
+ 		pte = pte_mksoft_dirty(pte);
+ 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
++	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
+ 	vmf->orig_pte = pte;
  
-+	/* If this is a memory corruption detected error vectored in
-+	 * by HV through resumable error trap, call the handler
-+	 */
-+	if (local_copy.err_attrs & SUN4V_ERR_ATTRS_MCD) {
-+		do_mcd_err(regs, local_copy);
-+		return;
-+	}
+ 	/* ksm created a completely new copy */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 47db27f8049e..144c66e688a9 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1497,6 +1497,14 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 				(flags & (TTU_MIGRATION|TTU_SPLIT_FREEZE))) {
+ 			swp_entry_t entry;
+ 			pte_t swp_pte;
 +
- 	sun4v_log_error(regs, &local_copy, cpu,
- 			KERN_ERR "RESUMABLE ERROR",
- 			&sun4v_resum_oflow_cnt);
++			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
++				set_pte_at(mm, address, pvmw.pte, pteval);
++				ret = false;
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
++
+ 			/*
+ 			 * Store the pfn of the page in a special migration
+ 			 * pte. do_swap_page() will wait until the migration
+@@ -1556,6 +1564,12 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 				page_vma_mapped_walk_done(&pvmw);
+ 				break;
+ 			}
++			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
++				set_pte_at(mm, address, pvmw.pte, pteval);
++				ret = false;
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
+ 			if (list_empty(&mm->mmlist)) {
+ 				spin_lock(&mmlist_lock);
+ 				if (list_empty(&mm->mmlist))
 -- 
 2.11.0
