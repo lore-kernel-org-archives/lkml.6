@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2262w1oELD7Zr0utOnYifiFbvRHgHn5t3XfnNxFTVt9zMM0K8cMrqvsgWhGI63s4sF9AQMKh
-ARC-Seal: i=1; a=rsa-sha256; t=1519217148; cv=none;
+X-Google-Smtp-Source: AH8x224wCjQxDaRY3gHsn7hGQ5RxweJ7WFhQTQ+xmcChid0tB2W5f7GzGQr0l+1zXH80laRBcz26
+ARC-Seal: i=1; a=rsa-sha256; t=1519217145; cv=none;
         d=google.com; s=arc-20160816;
-        b=pxy9BT9/Goboe6P5oXKLe5p0ufd14/q1DY/ek//Q4p8qisIYx1B0h8W4SWaNlGxbrj
-         JtOlQdS9Ygb+k2wa8CJLT6NFXocaHRbe9gfUKj5yg+ojftjOoG55LWmRqnUpzC/ZDl8x
-         Ft3ibcaYmwDLIY/fOnz24j8o8BxG/TeHnMGoFXEvunpxkIPKs3jFn5EyUHGujMcJIWAX
-         e463QK5MZz4PyP2uT1yTsk18JhayXkHQouNbRXcKhT/x9CFxuS/QRd8Kg+OQQEcswGag
-         I+etmhdoQrNWyv7QUHFX5lnuHXeopLLLezSKN6AxoAVRHh49NiT8CaXfKLfc2LJueq4I
-         9VRg==
+        b=WrATkGqAhedPmWFcsff7nG8xb5HtIrkdAnFffyDwRBjlunxxnpOfQIAqgw10w6gGMe
+         Fsstd6TAtbhEaKIF4Yg9DM+D2+TaTIlnmUDfzp4qXf//tAwltmr4rNZsWK+O6B5E8LIO
+         YpjJWIz2n730whntLjcheat0IiZWTZch9bCX8sMdBfg7/2FDcWy0GJCIaE7A8IEg5ECW
+         ILiomLd3ubsVl6CgX0UVLnJnl1NX3pV6KwVgMNKSn8M3P7g4JR8DKuJgaSvdy/tWDG8B
+         z4HS8+H51TPiKyfY4lfrqACcWgq27e88zMfZ2iSWy4NAP2wpK1hGk5rKiU8PJYh1+4Qd
+         mTow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tfiytU9hJOiuIEJJiEB1Wzm0ZQZQfy0epZ1v2NMD9M8=;
-        b=jZbcFbOoYykgPIM3CP7YhqyiHFHZsNGsMEcZiVS7XLrsG7+Imt7UpjqwvvwimrCbfF
-         ezuoagaxaOnIoATLbB0FiPSl2U8Zl+chN3zRgfRbeaJKymGAD9zVpcYz+xkvoaD0J/MC
-         a4arap8TtDzaGmIwr01MjGDICoS0HKembX45PKDZErBmy5S/ct3H+czbr5/RJuDy4BEk
-         TmeBNuVnejXOl3nmFho/RCSxytswu2yiBkGqUK6XFVWSlBZZku+LQqeD80vIKAdsw5mH
-         WNEdYj19gTshq1BIqli/xOEgexwfEnT7lNbFfYGrDoorJ82BnULp0WA6qDuD/uEm+XY3
-         ETCg==
+        bh=MEMYijsZvJsy79WK83pWpP3NVssbxUPdhOq9N4IaFTs=;
+        b=1HhWwjt53U532u0IgrZi5rsenv9Owag8FUM/nV/UyDUf0nw7ptaQYtswNBhhdouivo
+         oR10rsRRhzzI1WkvkmSJs4NYLlzD6XoTCjqUWNP6lC8pgVkCQXNs2wbB3cUJ0DyvXCLt
+         JNEppLGANQWLcrcKWHlnzdYD9H7186DD2Rh5Z8szB3J49ijlkYhXNY/F8oHrhW0NcTFk
+         /tFboA4FIkp9V3b5yI8j35F82kbetapwJJUw8m1Q4HvasJHPUmpjZl/+VJFdpg0ZfLOG
+         wffLa+M6lPC1ErPYmhlWEldyQ8qQ7l4AKShbqVYqvqj2T7nugirOmLCvmRQl4EeKNlij
+         UUhw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Liu Bo <bo.li.liu@oracle.com>,
 	Josef Bacik <jbacik@fb.com>,
 	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 20/33] Btrfs: fix crash due to not cleaning up tree log blocks dirty bits
-Date: Wed, 21 Feb 2018 13:45:03 +0100
-Message-Id: <20180221124410.645285301@linuxfoundation.org>
+Subject: [PATCH 4.4 19/33] Btrfs: fix deadlock in run_delalloc_nocow
+Date: Wed, 21 Feb 2018 13:45:02 +0100
+Message-Id: <20180221124410.602319680@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014640364522424?=
-X-GMAIL-MSGID: =?utf-8?q?1593014640364522424?=
+X-GMAIL-THRID: =?utf-8?q?1593014637413119175?=
+X-GMAIL-MSGID: =?utf-8?q?1593014637413119175?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,61 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 1846430c24d66e85cc58286b3319c82cd54debb2 upstream.
+commit e89166990f11c3f21e1649d760dd35f9e410321c upstream.
 
-In cases that the whole fs flips into readonly status due to failures in
-critical sections, then log tree's blocks are still dirty, and this leads
-to a crash during umount time, the crash is about use-after-free,
+@cur_offset is not set back to what it should be (@cow_start) if
+btrfs_next_leaf() returns something wrong, and the range [cow_start,
+cur_offset) remains locked forever.
 
-umount
- -> close_ctree
-    -> stop workers
-    -> iput(btree_inode)
-       -> iput_final
-          -> write_inode_now
-	     -> ...
-	       -> queue job on stop'd workers
-
-cc: <stable@vger.kernel.org> v3.12+
-Fixes: 681ae50917df ("Btrfs: cleanup reserved space when freeing tree log on error")
+cc: <stable@vger.kernel.org>
 Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
 Reviewed-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/btrfs/inode.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2445,6 +2445,9 @@ static noinline int walk_down_log_tree(s
- 							next);
- 					btrfs_wait_tree_block_writeback(next);
- 					btrfs_tree_unlock(next);
-+				} else {
-+					if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
-+						clear_extent_buffer_dirty(next);
- 				}
- 
- 				WARN_ON(root_owner !=
-@@ -2524,6 +2527,9 @@ static noinline int walk_up_log_tree(str
- 							next);
- 					btrfs_wait_tree_block_writeback(next);
- 					btrfs_tree_unlock(next);
-+				} else {
-+					if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
-+						clear_extent_buffer_dirty(next);
- 				}
- 
- 				WARN_ON(root_owner != BTRFS_TREE_LOG_OBJECTID);
-@@ -2600,6 +2606,9 @@ static int walk_log_tree(struct btrfs_tr
- 				clean_tree_block(trans, log->fs_info, next);
- 				btrfs_wait_tree_block_writeback(next);
- 				btrfs_tree_unlock(next);
-+			} else {
-+				if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
-+					clear_extent_buffer_dirty(next);
- 			}
- 
- 			WARN_ON(log->root_key.objectid !=
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1292,8 +1292,11 @@ next_slot:
+ 		leaf = path->nodes[0];
+ 		if (path->slots[0] >= btrfs_header_nritems(leaf)) {
+ 			ret = btrfs_next_leaf(root, path);
+-			if (ret < 0)
++			if (ret < 0) {
++				if (cow_start != (u64)-1)
++					cur_offset = cow_start;
+ 				goto error;
++			}
+ 			if (ret > 0)
+ 				break;
+ 			leaf = path->nodes[0];
