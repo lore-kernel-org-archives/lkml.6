@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935493AbeBUQVA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:21:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49634 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932767AbeBUQU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:20:58 -0500
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz>
-References: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz> <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz> <20180111120157.23qceywzi6omvvkb@dwarf.suse.cz> <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk> <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk> <20180111115915.dejachty3l7fwpmf@dwarf.suse.cz> <4582.1516120311@warthog.procyon.org.uk> <24618.1516206864@warthog.procyon.org.uk>
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        gnomes@lxorguk.ukuu.org.uk, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jforbes@redhat.com,
-        Chun-Yi Lee <joeyli.kernel@gmail.com>
-Subject: Re: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+        id S935570AbeBUQZN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:25:13 -0500
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:39142 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeBUQZL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:25:11 -0500
+X-Google-Smtp-Source: AH8x2248AEUdRxJk/5O2piSN4Du+8a6jpBep2ySCfjcVe6bdTIN5FlEnw5vYqCOrQoX83CLfXgQg3l1dreISh4GrEXw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <23575.1519230051.1@warthog.procyon.org.uk>
-Date: Wed, 21 Feb 2018 16:20:51 +0000
-Message-ID: <23576.1519230051@warthog.procyon.org.uk>
+In-Reply-To: <4ba9dc3045e997d3e07218c80ed20591137cdc41.1519228823.git.gdouezangrard@gmail.com>
+References: <cover.1519228823.git.gdouezangrard@gmail.com> <4ba9dc3045e997d3e07218c80ed20591137cdc41.1519228823.git.gdouezangrard@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Feb 2018 18:25:10 +0200
+Message-ID: <CAHp75VcQ+u6knQp=85y=BbFX5CmN47woxkqx1RsUrhJwwZdHuw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] platform/x86: topstar-laptop: add Topstar
+ U931/RVP7 WLAN LED workaround
+To: =?UTF-8?Q?Guillaume_Dou=C3=A9zan=2DGrard?=
+        <gdouezangrard@gmail.com>
+Cc: Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LGPHVv008340
 
-Jiri Bohac <jbohac@suse.cz> wrote:
+On Wed, Feb 21, 2018 at 6:10 PM, Guillaume Douézan-Grard
+<gdouezangrard@gmail.com> wrote:
+> Topstar U931 laptops provide a LED synced with the WLAN adapter
+> hard-blocking state. Unfortunately, some models seem to be defective,
+> making impossible to hard-block the adapter with the WLAN switch and
+> thus the LED is useless.
+>
+> An ACPI method is available to programmatically control this switch and
+> it indirectly allows to control the LED.
+>
+> This commit registers the LED within the corresponding subsystem, making
+> possible for instance to use an rfkill-based trigger to synchronize the
+> LED with the device state.
+>
+> This workaround is enabled automatically for Topstar U931/RVP7 laptops
+> based on a DMI check.
 
-> Key verification may and will fail for lots of reasons which is
-> just going to make a user's life harder. E.g. you want to kexec
-> an old kernel with an expired key. Or your date is just wrong and
-> you get -EKEYEXPIRED.
+> - * ACPI driver for Topstar notebooks (hotkeys support only)
+> + * Topstar Laptop ACPI Extras driver
 
-Note that we can't check for expired keys as we can't trust the system clock
-to be correct at this point.
+Nope.
+I think it's previous one.
 
-> Also, only now I found that some of the error codes the crypto
-> code returns yield really confusing messages (e.g.
-> kexec_file_load of an unsigned kernel returns -ELIBBAD which
-> makes kexec exit with "kexec_file_load failed: Accessing a
-> corrupted shared library").
-
-Yeah, that should be fixed.
-
-> Maybe the error code could be unified to -EKEYREJECTED for all
-> sorts of key verification failures?
-
-Things like ENOMEM and EINTR definitely need to stay separate (not that I
-allow interruption at the moment).
-
-ENOKEY (couldn't find matching key), EINVAL (didn't recognise identifier),
-ENOPKG (couldn't find a crypto algo) and EBADMSG (couldn't parse signature)
-are arguable.  I think there's a valid case for treating ENOKEY, EINVAL and
-ENOPKG differently to EKEYREJECTED - more so for ENOKEY.  In my opinion,
-ENOKEY, EINVAL and ENOPKG are not fatal errors if we're not enforcing
-signature checking, but EKEYREJECTED and EBADMSG are.
-
-David
+-- 
+With Best Regards,
+Andy Shevchenko
