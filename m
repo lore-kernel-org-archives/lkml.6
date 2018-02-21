@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225vSWQp8kNi9N5kxu5Y3RY+f99py1lKCpNJUeUzhFOaK8bNLYFsmtnhwIcyTlWXX/E9ik6E
-ARC-Seal: i=1; a=rsa-sha256; t=1519217153; cv=none;
+X-Google-Smtp-Source: AH8x226lG6/JFq7D73gAAcVlo1+AGZbJHVCV2qDp6FGOFh8Dx6cTvMl1iTlX51R+yf+hS5SlAW6p
+ARC-Seal: i=1; a=rsa-sha256; t=1519217151; cv=none;
         d=google.com; s=arc-20160816;
-        b=bgDn2PFyCw536uwMJCTFbbg5pMlhK328I8vyRqZOMbV3N9URDdjXA8/ldajxpZ+m9I
-         u8WWO5A8q8GqwRwxPoh9mMyv9FeAhBNBTl/jXiyYWDWuI2jVzz9M/Ifksp5ec1vBgzC+
-         Ir/+wgWCJBy30GxFv0vfB3h6xg5Ryzs1SvcKzn3z397Iyu2I85q0WjAgo9+2sleb+kFf
-         R+yOSPJX+fWuY7srw8xsgVpcLDR6+AU0vMsqc3wuMHY31LYE+tfJkSbiFxr/1nwgEUfr
-         JP9wujoGLFbDupfMzFhpBg0xnd9aHjs6nnWYmlC7tSY+WsqKDLln38lC9WUEIm4Snjcl
-         OCQQ==
+        b=ymOtZGEpgUhNdUcLp2FEq3rRdJuiMSJoTrFS1c1lza3g78WIetBvMF1s+AXnfMuXAt
+         BF9OVtaVT4jvRpidlB2z0Kc11Ui6EzRQXFzh5eHWzXo4Pi15S4uWzeTG2vNDopFz4Mi5
+         0/mRUS/KFIclY4PNJLOnSvUZf3kS+IZOjbDTrKIhs7qT0LTJa6ZVTj+kzFJSsi80H3rE
+         PLBWVibSgo1qs6BjZ8OZhAaQkMAtZlsacs1nlRmFe9zV/34FOzTJpFXJa1T/y/WQNCJU
+         HbqGtxUa5B2NkBYrbLv0EItHlRkPyyLvGKJXaa49yG4xASgDT/F0TTD2tX5n2m7Khtvz
+         +r4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TbisU96MRe2skCx7OgjTtKX5PJCXvn6QNEzjFenml5k=;
-        b=rU7HyIZnFd71FvLD5SpQ843GlBnxwivyETox3BXfzMrjcqU0dPeh3V5ysfFGoQBdCd
-         7CCfjpLX3ec8IZ2hdd8MWsVJbsigtkw7ppVacC3URePJzTOFgAawkNEclB/MSi60RmNX
-         PBaqJ72uSa6URoDeQI6vreOqZhFYvAMerA6exgOsSbiw/qypY3iX3ypns6cINRZXfxsd
-         qfU7TTKKpJFBB1NNHBAYD2+1eTHyxMRXsADN4ZbnY7K8hhVbBdSSzjvjQdHR9jUqMHXD
-         S4yU7tO3wq6TZnxgZ2Ak0HTUTQvpiEr9TRT1Jf+yZLI666VIA40C+8GOH7X5y9UqPmHV
-         T9Lw==
+        bh=E2RiUa3t1kn/KpNChWtIfTStG05p5VE3EgJmkjPBfMw=;
+        b=bAU+Edn/nfZ/QsDqa9vt6SeoXpDmvdT6cNymLryxc7/+88Z4dwBT5qdwWLaacQxVTt
+         KiUDcWKxjN+cmuJBQfB5XCtKZwtrkImMxWdb9o0KFbRlzMxcVYiJvIwfnSMBl5t+dztd
+         nc/h4V6WBc6fG731Q/HvtEzJZc0DuI1l8Y+Z+c6FkdVNzlg0aj5+rIYcSXJqZcMH7etm
+         qfzZlpyTIMVgwsrcPgAiEY2PA9ZyCwHbCb0h78s/VgWmZWUwQFgVQmdMkscGYrnu1a5c
+         HPb9raH4o02bnlTgES17jmUoAedxcAJmOVUUHO997WeQsLZRYwP+e/2db7vzC23ojFr9
+         Adiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hui Wang <hui.wang@canonical.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 22/33] ALSA: hda - Fix headset mic detection problem for two Dell machines
-Date: Wed, 21 Feb 2018 13:45:05 +0100
-Message-Id: <20180221124410.768273041@linuxfoundation.org>
+	Liu Bo <bo.li.liu@oracle.com>,
+	Josef Bacik <jbacik@fb.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 21/33] Btrfs: fix unexpected -EEXIST when creating new inode
+Date: Wed, 21 Feb 2018 13:45:04 +0100
+Message-Id: <20180221124410.701736732@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014646341023518?=
-X-GMAIL-MSGID: =?utf-8?q?1593014646341023518?=
+X-GMAIL-THRID: =?utf-8?q?1593014643316551271?=
+X-GMAIL-MSGID: =?utf-8?q?1593014643316551271?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 3f2f7c553d077be6a30cb96b2976a2c940bf5335 upstream.
+commit 900c9981680067573671ecc5cbfa7c5770be3a40 upstream.
 
-One of them has the codec of alc256 and the other one has the codec
-of alc289.
+The highest objectid, which is assigned to new inode, is decided at
+the time of initializing fs roots.  However, in cases where log replay
+gets processed, the btree which fs root owns might be changed, so we
+have to search it again for the highest objectid, otherwise creating
+new inode would end up with -EEXIST.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+cc: <stable@vger.kernel.org> v4.4-rc6+
+Fixes: f32e48e92596 ("Btrfs: Initialize btrfs_root->highest_objectid when loading tree root and subvolume roots")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/btrfs/tree-log.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5976,6 +5976,11 @@ static const struct snd_hda_pin_quirk al
- 		{0x14, 0x90170110},
- 		{0x21, 0x02211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0x90a60130},
-+		{0x14, 0x90170110},
-+		{0x14, 0x01011020},
-+		{0x21, 0x0221101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC256_STANDARD_PINS),
- 	SND_HDA_PIN_QUIRK(0x10ec0280, 0x103c, "HP", ALC280_FIXUP_HP_GPIO4,
- 		{0x12, 0x90a60130},
-@@ -6031,6 +6036,10 @@ static const struct snd_hda_pin_quirk al
- 		{0x12, 0x90a60120},
- 		{0x14, 0x90170110},
- 		{0x21, 0x0321101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
-+		{0x12, 0xb7a60130},
-+		{0x14, 0x90170110},
-+		{0x21, 0x04211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0290, 0x103c, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1,
- 		ALC290_STANDARD_PINS,
- 		{0x15, 0x04211040},
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -26,6 +26,7 @@
+ #include "print-tree.h"
+ #include "backref.h"
+ #include "hash.h"
++#include "inode-map.h"
+ 
+ /* magic values for the inode_only field in btrfs_log_inode:
+  *
+@@ -5523,6 +5524,23 @@ again:
+ 						      path);
+ 		}
+ 
++		if (!ret && wc.stage == LOG_WALK_REPLAY_ALL) {
++			struct btrfs_root *root = wc.replay_dest;
++
++			btrfs_release_path(path);
++
++			/*
++			 * We have just replayed everything, and the highest
++			 * objectid of fs roots probably has changed in case
++			 * some inode_item's got replayed.
++			 *
++			 * root->objectid_mutex is not acquired as log replay
++			 * could only happen during mount.
++			 */
++			ret = btrfs_find_highest_objectid(root,
++						  &root->highest_objectid);
++		}
++
+ 		key.offset = found_key.offset - 1;
+ 		wc.replay_dest->log_root = NULL;
+ 		free_extent_buffer(log->node);
