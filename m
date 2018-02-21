@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227vwLTUbfZP8+JnnqK52OJehF8uvqCWK/mdL6AvW08ToFwjuIXpvRxxIxCVfo/VSqhFYdTz
-ARC-Seal: i=1; a=rsa-sha256; t=1519218290; cv=none;
+X-Google-Smtp-Source: AH8x227hFLvxEoLdVxUGQYUt2piMlhHVyrWSLX70fliwlGYjeHrAeIMQ5S2cuQMDba9iZWwDL93N
+ARC-Seal: i=1; a=rsa-sha256; t=1519218287; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gd/QpPWpYd6J/bo5ycOjUIV2tTG5bnMacnPW3gZ0jUH/DO0UA+yDR1Z/SiyLUIVK7s
-         Tsdc6HJE6NexPSRd68K4zsC/7aS1q/ywgfkG8hwbDjUnhPb2WmsqTN4GfktdfLN9AXoB
-         3lLetlIEYgy0hquIl45INr5uHd8lhmVfcqc2NR2TcDu/1zgVea+Y/IZuscGcZU0mzlvf
-         /MNNPL/yMYTldCC6OeiWRGm/Iw8BAXJC6yCEUHIvZM1a9zOT0K4F8fUg1HNBsrOSNUQX
-         fbMRdjozV4tzpsXZVSIdFUFB2h6LKZBkRF55j+DiXncKbIrj3Hi0TNABu8J8zfW7/xe0
-         sPDA==
+        b=J3frhHV59a7ayAo+9vyWiKSAnX9fwcjHKt2VLuIQBw+iu+s5+0NKDqvXDkhp2E8dBE
+         kscp3vYSLNKpiKsUtrnRY5fKqUrxJG6bw7q/wdr469ytRWKcHyG7Jn518HuzHWdPpg2i
+         BMadsbfwVWuYBSEG4FXz4OHLeqGVWcfEnoCGguRPuLIEoUhePXtkjbBLCyP7DlOZEwl2
+         3dT4vm8LsS3w7PIYtR0ojzJ4P2+zO2wILVPWjqGq1+uNMCgY62wyOpdGY+SbbXnmzWQC
+         SdFHA3z1j7wVfcAnu2eL13lF+N2JwNkTgq1FRIS0/2J4soAoBgV2KtdVH46lyixqipXo
+         JVqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TZna0AA5n9gUfnhaN14tyBx6xppCJxuVoPLyzAS3nfc=;
-        b=qWI7QYYhbAlRJG+H9ERe3+IewT7jf90anSZqbHjSjgKhXuR3OuzfhOt1DyfFOAVu28
-         VeEHX5YSUAMwFLsJRdpW9j4cdikWChzx2MK+AnmcXwdt5PP3ggmeLoqqjZ9Xf37Kdfw7
-         m95f3kv3ajCIzsD7yOtbUvnqHIT5YrW0SHy4YMrZqYX/xgZFnyy2pi8REXBxRH3LPff5
-         DRsG8Ra3HLgvJpP9YMcux2RbHrifQmC9QKudc6ttjxipyPHja1x7+5IBG67qc+XdnPIr
-         h3YAZ0zPe6UH5YWQGIMncgib2F5SSSb5px/Fxw2lcM2+sAXbM7smHw4eYk5T+z/ODb45
-         sCfA==
+        bh=PS9+wcZdPucFewta+94a/B/1aq6fnfeEs+8LmoRXr2o=;
+        b=AFbJRoRvi49iNW8xY+AZMa4/U8o4zRE3+dbmPxRT5nynrW5F9nJHTaIQHdUSVQlqwB
+         nmQMdC1ZJER/eNj/PQrZlO/fwNKzDIC44KWHFD7wsUmV52Os2aTkHW/rbmN/nhNcjtyo
+         rFq/xhNobt+AHge4uqm9lpP3xgGqkJMfeAAbKIci6Xwo5UWWy7ERh0nsjsGnC/F/D7WX
+         4d0qrIz/p3LSbeP1ihklRv71DAhwGwk3RxQGX0MAWSRLZbzM/QyZrwFCY93M71nxK8UH
+         eF7WNv3ds4LU5z608v5p5Tr8MrWggsh0tZA+w45kUuZ6KRV8CYWAFzksYYgCbrDnEMn7
+         NYhg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 155/167] ARM: dts: exynos: fix RTC interrupt for exynos5410
-Date: Wed, 21 Feb 2018 13:49:26 +0100
-Message-Id: <20180221124533.318978056@linuxfoundation.org>
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.14 154/167] Bluetooth: BT_HCIUART now depends on SERIAL_DEV_BUS
+Date: Wed, 21 Feb 2018 13:49:25 +0100
+Message-Id: <20180221124533.283031693@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015353422054787?=
-X-GMAIL-MSGID: =?utf-8?q?1593015838257789636?=
+X-GMAIL-THRID: =?utf-8?q?1593015835567100549?=
+X-GMAIL-MSGID: =?utf-8?q?1593015835567100549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 5628a8ca14149ba4226e3bdce3a04c3b688435ad upstream.
+commit 05e89fb576f580ac95e7a5d00bdb34830b09671a upstream.
 
-According to the comment added to exynos_dt_pmu_match[] in commit
-8b283c025443 ("ARM: exynos4/5: convert pmu wakeup to stacked domains"),
-the RTC is not able to wake up the system through the PMU on Exynos5410,
-unlike Exynos5420.
+It is no longer possible to build BT_HCIUART into the kernel
+when SERIAL_DEV_BUS is a loadable module, even if none of the
+SERIAL_DEV_BUS based implementations are selected:
 
-However, when the RTC DT node got added, it was a straight copy of
-the Exynos5420 node, which now causes a warning from dtc.
+drivers/bluetooth/hci_ldisc.o: In function `hci_uart_set_flow_control':
+hci_ldisc.c:(.text+0xb40): undefined reference to `serdev_device_set_flow_control'
+hci_ldisc.c:(.text+0xb5c): undefined reference to `serdev_device_set_tiocm'
 
-This removes the incorrect interrupt-parent, which should get the
-interrupt working and avoid the warning.
+This adds a dependency to avoid the broken configuration.
 
-Fixes: e1e146b1b062 ("ARM: dts: exynos: Add RTC and I2C to Exynos5410")
+Fixes: 7841d554809b ("Bluetooth: hci_uart_set_flow_control: Fix NULL deref when using serdev")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5410.dtsi |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/bluetooth/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -333,7 +333,6 @@
- &rtc {
- 	clocks = <&clock CLK_RTC>;
- 	clock-names = "rtc";
--	interrupt-parent = <&pmu_system_controller>;
- 	status = "disabled";
- };
+--- a/drivers/bluetooth/Kconfig
++++ b/drivers/bluetooth/Kconfig
+@@ -66,6 +66,7 @@ config BT_HCIBTSDIO
  
+ config BT_HCIUART
+ 	tristate "HCI UART driver"
++	depends on SERIAL_DEV_BUS || !SERIAL_DEV_BUS
+ 	depends on TTY
+ 	help
+ 	  Bluetooth HCI UART driver.
+@@ -80,7 +81,6 @@ config BT_HCIUART
+ config BT_HCIUART_SERDEV
+ 	bool
+ 	depends on SERIAL_DEV_BUS && BT_HCIUART
+-	depends on SERIAL_DEV_BUS=y || SERIAL_DEV_BUS=BT_HCIUART
+ 	default y
+ 
+ config BT_HCIUART_H4
