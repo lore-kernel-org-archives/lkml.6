@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226kSBYNe4Z+aCeASeK2Y5xpVKmzZ7ulfMo0DR8WcBunNNoMDx9ReDPwFLiTUnpM8T6fyl4x
-ARC-Seal: i=1; a=rsa-sha256; t=1519218027; cv=none;
+X-Google-Smtp-Source: AH8x224K+f+Fhh3+lXPSQPxyjsNbDPgt3s83NEOT3dXMaAUBwMv24nBPU5gQK5N0qzHPRnc/IW6O
+ARC-Seal: i=1; a=rsa-sha256; t=1519218025; cv=none;
         d=google.com; s=arc-20160816;
-        b=vNuchjrE78WcRpnGbQtTQkXIvtni9Xw0oT8SXdjhJ5pHHqHdHduOK0x0gXAKX3l3/G
-         ARKAwIE4D4HaH25NpVQmn2V5nJpiCv1e9apnaax3+u81Z/N175+MAoPhS+qWx18FD/n8
-         y3+63AaEyhF91nfpAo6+eBa9fRZrbOAvXR9X0WhIcEyl2/XGwvOEfyz3nVXeJpOxrsNC
-         V1PidC1FgyTJQk44CzGFqqI4tDBF8N4hofTBr7kQqecgEyR/YKPIHf/IY1mzm8Jhjnlm
-         FHKh8KHmaIstfHijM/hQimk5zv4PpZhUfzAUHdsvQWbU5bhkK46ZmAIKK2UtgUXOlunu
-         wJFg==
+        b=tSZNi8xAzqO5YGCTrjBcJSZZUn/r4MFMzQp2izQhm8i2frRvWenT4q8fRxZheFgPyb
+         BDbGsjhCF+Nb0EvYswSba6QRpx4B7GTbctj7ryLFT8VTtNL95tRl6YFSDPYqkyPdyaL5
+         zem2dAzdsWQmh2qfylBohR/SZkD1S0hDH4m0XHi3vSg1GsV/6kMY9DArb/BgFSPurGGO
+         O8TW2qPmtGe5aa2tg7futDJNOIZ+hx4nIEYTiuL9Tj3qewYjQo3rACUS/uB5OXYfEYyu
+         LCmNYU2v7U5vA9aH4/lFzffuXy3K7hflAMXijhPlZ+HvWfBZobH6ajUh1fuwaRgC4UVl
+         s4ag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UTGsppAcigaA/E8z9Q00CqDTt4s6/tgWKAMCZTa3qBs=;
-        b=B/TMRmHF2it4mtXHwsAgn7v6LBvZuBomnDlQ7WbugQMOfD3ySONlte+AwatMFtpVpL
-         kMm4n6/xD1KBrrxpxsLxWbPV+qG68BxB2owekF4z7C49OAvetKWmc7lkjEVPbH86//WI
-         W25s3SxnomDHkFO3hpOitml7FkK7lTxSiLMEsQCEWHXSgDjvR8UK9JM6xr9zyQGm4dUg
-         LCNpp3ifj5qT/K+HGsmydTGja2sNSlxSnOmc+OwieDEwm1UO8cvhr58ZoYjWLO7RtleO
-         aL6SSwNm+Nyubvtyc0NGrrMwhtgFatIzh8wh6gb5TDcNL4P+Y+W57gmHeqT3yj4McrAq
-         ipBg==
+        bh=buDHblVIAPOdR4xOOCsjkb9UTbTuSAskpWfdH8s5kKg=;
+        b=NIYPvDzqXwOuojgYSp+Mp6yh3X2y4sL7bKuAMfxca9nY+X4ynz9vEIaOPSsL4+G7fT
+         7M2Jq49zR5VYx2S8Z8HKa/P4WPMdg2CAor7K3vodvczYMAkeIPm0fh/4xiAzViIPie7/
+         oil1UPfuHS9Qxbf/6PDqxbpksnGQtfKdGtWxqy7LNhWMTeqmluKgBH0mlh4rq+iRTElg
+         dnVtZeRG7ymIrLcOQMHzKcQ2MVvhhssd9iMi8EyErdlOoRFPTDsAebb9ilWZxHs2jI3/
+         IcwIQHu/4XVF22wbTutY/FtpfdWUwtT/6WWp7bT37ZKI1uf414wtqDofT/YsErKKrueb
+         MK6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	dan.j.williams@intel.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 061/167] x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS macro
-Date: Wed, 21 Feb 2018 13:47:52 +0100
-Message-Id: <20180221124527.840118966@linuxfoundation.org>
+	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+	Chris Wilson <chris@chris-wilson.co.uk>
+Subject: [PATCH 4.14 034/167] drm/i915: add GT number to intel_device_info
+Date: Wed, 21 Feb 2018 13:47:25 +0100
+Message-Id: <20180221124526.468091141@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -50,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015562439488858?=
-X-GMAIL-MSGID: =?utf-8?q?1593015562439488858?=
+X-GMAIL-THRID: =?utf-8?q?1593015559788989868?=
+X-GMAIL-MSGID: =?utf-8?q?1593015559788989868?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,99 +49,578 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
 
-commit 3f01daecd545e818098d84fd1ad43e19a508d705 upstream.
+commit 0890540e21cf1156b4cf960a4c1c734db4e816f9 upstream.
 
-Those instances where ALLOC_PT_GPREGS_ON_STACK is called just before
-SAVE_AND_CLEAR_REGS can trivially be replaced by PUSH_AND_CLEAN_REGS.
-This macro uses PUSH instead of MOV and should therefore be faster, at
-least on newer CPUs.
+Up to Coffeelake we could deduce this GT number from the device ID.
+This doesn't seem to be the case anymore. This change reorders pciids
+per GT and adds a gt field to intel_device_info. We set this field on
+the following platforms :
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-5-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+   - SNB/IVB/HSW/BDW/SKL/KBL/CFL/CNL
+
+Before & After :
+
+$ modinfo drivers/gpu/drm/i915/i915.ko | grep ^alias | wc -l
+209
+
+v2: Add SNB & IVB (Chris)
+
+v3: Fix compilation error in early-quirks (Lionel)
+
+v4: Fix inconsistency between FEATURE/PLATFORM macros (Ville)
+
+Signed-off-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20170830161208.29221-2-lionel.g.landwerlin@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h  |   36 ++++++++++++++++++++++++++++++++++++
- arch/x86/entry/entry_64.S |    6 ++----
- 2 files changed, 38 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.h |    1 
+ drivers/gpu/drm/i915/i915_pci.c |  193 +++++++++++++++++++++++++++++++---------
+ include/drm/i915_pciids.h       |  152 +++++++++++++++++++------------
+ 3 files changed, 246 insertions(+), 100 deletions(-)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -137,6 +137,42 @@ For 32-bit we have the following convent
- 	UNWIND_HINT_REGS offset=\offset
- 	.endm
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -842,6 +842,7 @@ struct intel_device_info {
+ 	u8 gen;
+ 	u16 gen_mask;
+ 	enum intel_platform platform;
++	u8 gt; /* GT number, 0 if undefined */
+ 	u8 ring_mask; /* Rings supported by the HW */
+ 	u8 num_rings;
+ #define DEFINE_FLAG(name) u8 name:1
+--- a/drivers/gpu/drm/i915/i915_pci.c
++++ b/drivers/gpu/drm/i915/i915_pci.c
+@@ -224,15 +224,34 @@ static const struct intel_device_info in
+ 	GEN_DEFAULT_PIPEOFFSETS, \
+ 	CURSOR_OFFSETS
  
-+	.macro PUSH_AND_CLEAR_REGS
-+	/*
-+	 * Push registers and sanitize registers of values that a
-+	 * speculation attack might otherwise want to exploit. The
-+	 * lower registers are likely clobbered well before they
-+	 * could be put to use in a speculative execution gadget.
-+	 * Interleave XOR with PUSH for better uop scheduling:
-+	 */
-+	pushq   %rdi		/* pt_regs->di */
-+	pushq   %rsi		/* pt_regs->si */
-+	pushq   %rdx		/* pt_regs->dx */
-+	pushq   %rcx		/* pt_regs->cx */
-+	pushq   %rax		/* pt_regs->ax */
-+	pushq   %r8		/* pt_regs->r8 */
-+	xorq    %r8, %r8	/* nospec   r8 */
-+	pushq   %r9		/* pt_regs->r9 */
-+	xorq    %r9, %r9	/* nospec   r9 */
-+	pushq   %r10		/* pt_regs->r10 */
-+	xorq    %r10, %r10	/* nospec   r10 */
-+	pushq   %r11		/* pt_regs->r11 */
-+	xorq    %r11, %r11	/* nospec   r11*/
-+	pushq	%rbx		/* pt_regs->rbx */
-+	xorl    %ebx, %ebx	/* nospec   rbx*/
-+	pushq	%rbp		/* pt_regs->rbp */
-+	xorl    %ebp, %ebp	/* nospec   rbp*/
-+	pushq	%r12		/* pt_regs->r12 */
-+	xorq    %r12, %r12	/* nospec   r12*/
-+	pushq	%r13		/* pt_regs->r13 */
-+	xorq    %r13, %r13	/* nospec   r13*/
-+	pushq	%r14		/* pt_regs->r14 */
-+	xorq    %r14, %r14	/* nospec   r14*/
-+	pushq	%r15		/* pt_regs->r15 */
-+	xorq    %r15, %r15	/* nospec   r15*/
-+	UNWIND_HINT_REGS
-+	.endm
+-static const struct intel_device_info intel_sandybridge_d_info = {
+-	GEN6_FEATURES,
+-	.platform = INTEL_SANDYBRIDGE,
++#define SNB_D_PLATFORM \
++	GEN6_FEATURES, \
++	.platform = INTEL_SANDYBRIDGE
 +
- 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
- 	popq %r15
- 	popq %r14
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -560,8 +560,7 @@ END(irq_entries_start)
- 	call	switch_to_thread_stack
- 1:
++static const struct intel_device_info intel_sandybridge_d_gt1_info = {
++	SNB_D_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_sandybridge_d_gt2_info = {
++	SNB_D_PLATFORM,
++	.gt = 2,
++};
++
++#define SNB_M_PLATFORM \
++	GEN6_FEATURES, \
++	.platform = INTEL_SANDYBRIDGE, \
++	.is_mobile = 1
++
++
++static const struct intel_device_info intel_sandybridge_m_gt1_info = {
++	SNB_M_PLATFORM,
++	.gt = 1,
+ };
  
--	ALLOC_PT_GPREGS_ON_STACK
--	SAVE_AND_CLEAR_REGS
-+	PUSH_AND_CLEAR_REGS
- 	ENCODE_FRAME_POINTER
+-static const struct intel_device_info intel_sandybridge_m_info = {
+-	GEN6_FEATURES,
+-	.platform = INTEL_SANDYBRIDGE,
+-	.is_mobile = 1,
++static const struct intel_device_info intel_sandybridge_m_gt2_info = {
++	SNB_M_PLATFORM,
++	.gt = 2,
+ };
  
- 	testb	$3, CS(%rsp)
-@@ -1106,8 +1105,7 @@ ENTRY(xen_failsafe_callback)
- 	addq	$0x30, %rsp
- 	UNWIND_HINT_IRET_REGS
- 	pushq	$-1 /* orig_ax = -1 => not a system call */
--	ALLOC_PT_GPREGS_ON_STACK
--	SAVE_AND_CLEAR_REGS
-+	PUSH_AND_CLEAR_REGS
- 	ENCODE_FRAME_POINTER
- 	jmp	error_exit
- END(xen_failsafe_callback)
+ #define GEN7_FEATURES  \
+@@ -249,22 +268,41 @@ static const struct intel_device_info in
+ 	GEN_DEFAULT_PIPEOFFSETS, \
+ 	IVB_CURSOR_OFFSETS
+ 
+-static const struct intel_device_info intel_ivybridge_d_info = {
+-	GEN7_FEATURES,
+-	.platform = INTEL_IVYBRIDGE,
+-	.has_l3_dpf = 1,
++#define IVB_D_PLATFORM \
++	GEN7_FEATURES, \
++	.platform = INTEL_IVYBRIDGE, \
++	.has_l3_dpf = 1
++
++static const struct intel_device_info intel_ivybridge_d_gt1_info = {
++	IVB_D_PLATFORM,
++	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_ivybridge_m_info = {
+-	GEN7_FEATURES,
+-	.platform = INTEL_IVYBRIDGE,
+-	.is_mobile = 1,
+-	.has_l3_dpf = 1,
++static const struct intel_device_info intel_ivybridge_d_gt2_info = {
++	IVB_D_PLATFORM,
++	.gt = 2,
++};
++
++#define IVB_M_PLATFORM \
++	GEN7_FEATURES, \
++	.platform = INTEL_IVYBRIDGE, \
++	.is_mobile = 1, \
++	.has_l3_dpf = 1
++
++static const struct intel_device_info intel_ivybridge_m_gt1_info = {
++	IVB_M_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_ivybridge_m_gt2_info = {
++	IVB_M_PLATFORM,
++	.gt = 2,
+ };
+ 
+ static const struct intel_device_info intel_ivybridge_q_info = {
+ 	GEN7_FEATURES,
+ 	.platform = INTEL_IVYBRIDGE,
++	.gt = 2,
+ 	.num_pipes = 0, /* legal, last one wins */
+ 	.has_l3_dpf = 1,
+ };
+@@ -299,10 +337,24 @@ static const struct intel_device_info in
+ 	.has_rc6p = 0 /* RC6p removed-by HSW */, \
+ 	.has_runtime_pm = 1
+ 
+-static const struct intel_device_info intel_haswell_info = {
+-	HSW_FEATURES,
+-	.platform = INTEL_HASWELL,
+-	.has_l3_dpf = 1,
++#define HSW_PLATFORM \
++	HSW_FEATURES, \
++	.platform = INTEL_HASWELL, \
++	.has_l3_dpf = 1
++
++static const struct intel_device_info intel_haswell_gt1_info = {
++	HSW_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_haswell_gt2_info = {
++	HSW_PLATFORM,
++	.gt = 2,
++};
++
++static const struct intel_device_info intel_haswell_gt3_info = {
++	HSW_PLATFORM,
++	.gt = 3,
+ };
+ 
+ #define BDW_FEATURES \
+@@ -318,12 +370,27 @@ static const struct intel_device_info in
+ 	.gen = 8, \
+ 	.platform = INTEL_BROADWELL
+ 
+-static const struct intel_device_info intel_broadwell_info = {
++static const struct intel_device_info intel_broadwell_gt1_info = {
++	BDW_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_broadwell_gt2_info = {
+ 	BDW_PLATFORM,
++	.gt = 2,
++};
++
++static const struct intel_device_info intel_broadwell_rsvd_info = {
++	BDW_PLATFORM,
++	.gt = 3,
++	/* According to the device ID those devices are GT3, they were
++	 * previously treated as not GT3, keep it like that.
++	 */
+ };
+ 
+ static const struct intel_device_info intel_broadwell_gt3_info = {
+ 	BDW_PLATFORM,
++	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+ };
+ 
+@@ -358,13 +425,29 @@ static const struct intel_device_info in
+ 	.has_guc = 1, \
+ 	.ddb_size = 896
+ 
+-static const struct intel_device_info intel_skylake_info = {
++static const struct intel_device_info intel_skylake_gt1_info = {
+ 	SKL_PLATFORM,
++	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_skylake_gt3_info = {
++static const struct intel_device_info intel_skylake_gt2_info = {
+ 	SKL_PLATFORM,
+-	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
++	.gt = 2,
++};
++
++#define SKL_GT3_PLUS_PLATFORM \
++	SKL_PLATFORM, \
++	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING
++
++
++static const struct intel_device_info intel_skylake_gt3_info = {
++	SKL_GT3_PLUS_PLATFORM,
++	.gt = 3,
++};
++
++static const struct intel_device_info intel_skylake_gt4_info = {
++	SKL_GT3_PLUS_PLATFORM,
++	.gt = 4,
+ };
+ 
+ #define GEN9_LP_FEATURES \
+@@ -416,12 +499,19 @@ static const struct intel_device_info in
+ 	.has_guc = 1, \
+ 	.ddb_size = 896
+ 
+-static const struct intel_device_info intel_kabylake_info = {
++static const struct intel_device_info intel_kabylake_gt1_info = {
+ 	KBL_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_kabylake_gt2_info = {
++	KBL_PLATFORM,
++	.gt = 2,
+ };
+ 
+ static const struct intel_device_info intel_kabylake_gt3_info = {
+ 	KBL_PLATFORM,
++	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+ };
+ 
+@@ -434,20 +524,28 @@ static const struct intel_device_info in
+ 	.has_guc = 1, \
+ 	.ddb_size = 896
+ 
+-static const struct intel_device_info intel_coffeelake_info = {
++static const struct intel_device_info intel_coffeelake_gt1_info = {
++	CFL_PLATFORM,
++	.gt = 1,
++};
++
++static const struct intel_device_info intel_coffeelake_gt2_info = {
+ 	CFL_PLATFORM,
++	.gt = 2,
+ };
+ 
+ static const struct intel_device_info intel_coffeelake_gt3_info = {
+ 	CFL_PLATFORM,
++	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+ };
+ 
+-static const struct intel_device_info intel_cannonlake_info = {
++static const struct intel_device_info intel_cannonlake_gt2_info = {
+ 	BDW_FEATURES,
+ 	.is_alpha_support = 1,
+ 	.platform = INTEL_CANNONLAKE,
+ 	.gen = 10,
++	.gt = 2,
+ 	.ddb_size = 1024,
+ 	.has_csr = 1,
+ 	.color = { .degamma_lut_size = 0, .gamma_lut_size = 1024 }
+@@ -476,31 +574,40 @@ static const struct pci_device_id pciidl
+ 	INTEL_PINEVIEW_IDS(&intel_pineview_info),
+ 	INTEL_IRONLAKE_D_IDS(&intel_ironlake_d_info),
+ 	INTEL_IRONLAKE_M_IDS(&intel_ironlake_m_info),
+-	INTEL_SNB_D_IDS(&intel_sandybridge_d_info),
+-	INTEL_SNB_M_IDS(&intel_sandybridge_m_info),
++	INTEL_SNB_D_GT1_IDS(&intel_sandybridge_d_gt1_info),
++	INTEL_SNB_D_GT2_IDS(&intel_sandybridge_d_gt2_info),
++	INTEL_SNB_M_GT1_IDS(&intel_sandybridge_m_gt1_info),
++	INTEL_SNB_M_GT2_IDS(&intel_sandybridge_m_gt2_info),
+ 	INTEL_IVB_Q_IDS(&intel_ivybridge_q_info), /* must be first IVB */
+-	INTEL_IVB_M_IDS(&intel_ivybridge_m_info),
+-	INTEL_IVB_D_IDS(&intel_ivybridge_d_info),
+-	INTEL_HSW_IDS(&intel_haswell_info),
++	INTEL_IVB_M_GT1_IDS(&intel_ivybridge_m_gt1_info),
++	INTEL_IVB_M_GT2_IDS(&intel_ivybridge_m_gt2_info),
++	INTEL_IVB_D_GT1_IDS(&intel_ivybridge_d_gt1_info),
++	INTEL_IVB_D_GT2_IDS(&intel_ivybridge_d_gt2_info),
++	INTEL_HSW_GT1_IDS(&intel_haswell_gt1_info),
++	INTEL_HSW_GT2_IDS(&intel_haswell_gt2_info),
++	INTEL_HSW_GT3_IDS(&intel_haswell_gt3_info),
+ 	INTEL_VLV_IDS(&intel_valleyview_info),
+-	INTEL_BDW_GT12_IDS(&intel_broadwell_info),
++	INTEL_BDW_GT1_IDS(&intel_broadwell_gt1_info),
++	INTEL_BDW_GT2_IDS(&intel_broadwell_gt2_info),
+ 	INTEL_BDW_GT3_IDS(&intel_broadwell_gt3_info),
+-	INTEL_BDW_RSVD_IDS(&intel_broadwell_info),
++	INTEL_BDW_RSVD_IDS(&intel_broadwell_rsvd_info),
+ 	INTEL_CHV_IDS(&intel_cherryview_info),
+-	INTEL_SKL_GT1_IDS(&intel_skylake_info),
+-	INTEL_SKL_GT2_IDS(&intel_skylake_info),
++	INTEL_SKL_GT1_IDS(&intel_skylake_gt1_info),
++	INTEL_SKL_GT2_IDS(&intel_skylake_gt2_info),
+ 	INTEL_SKL_GT3_IDS(&intel_skylake_gt3_info),
+-	INTEL_SKL_GT4_IDS(&intel_skylake_gt3_info),
++	INTEL_SKL_GT4_IDS(&intel_skylake_gt4_info),
+ 	INTEL_BXT_IDS(&intel_broxton_info),
+ 	INTEL_GLK_IDS(&intel_geminilake_info),
+-	INTEL_KBL_GT1_IDS(&intel_kabylake_info),
+-	INTEL_KBL_GT2_IDS(&intel_kabylake_info),
++	INTEL_KBL_GT1_IDS(&intel_kabylake_gt1_info),
++	INTEL_KBL_GT2_IDS(&intel_kabylake_gt2_info),
+ 	INTEL_KBL_GT3_IDS(&intel_kabylake_gt3_info),
+ 	INTEL_KBL_GT4_IDS(&intel_kabylake_gt3_info),
+-	INTEL_CFL_S_IDS(&intel_coffeelake_info),
+-	INTEL_CFL_H_IDS(&intel_coffeelake_info),
+-	INTEL_CFL_U_IDS(&intel_coffeelake_gt3_info),
+-	INTEL_CNL_IDS(&intel_cannonlake_info),
++	INTEL_CFL_S_GT1_IDS(&intel_coffeelake_gt1_info),
++	INTEL_CFL_S_GT2_IDS(&intel_coffeelake_gt2_info),
++	INTEL_CFL_H_GT2_IDS(&intel_coffeelake_gt2_info),
++	INTEL_CFL_U_GT3_IDS(&intel_coffeelake_gt3_info),
++	INTEL_CNL_U_GT2_IDS(&intel_cannonlake_gt2_info),
++	INTEL_CNL_Y_GT2_IDS(&intel_cannonlake_gt2_info),
+ 	{0, 0, 0}
+ };
+ MODULE_DEVICE_TABLE(pci, pciidlist);
+--- a/include/drm/i915_pciids.h
++++ b/include/drm/i915_pciids.h
+@@ -118,92 +118,125 @@
+ #define INTEL_IRONLAKE_M_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0046, info)
+ 
+-#define INTEL_SNB_D_IDS(info) \
++#define INTEL_SNB_D_GT1_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0102, info), \
+-	INTEL_VGA_DEVICE(0x0112, info), \
+-	INTEL_VGA_DEVICE(0x0122, info), \
+ 	INTEL_VGA_DEVICE(0x010A, info)
+ 
+-#define INTEL_SNB_M_IDS(info) \
+-	INTEL_VGA_DEVICE(0x0106, info), \
++#define INTEL_SNB_D_GT2_IDS(info) \
++	INTEL_VGA_DEVICE(0x0112, info), \
++	INTEL_VGA_DEVICE(0x0122, info)
++
++#define INTEL_SNB_D_IDS(info) \
++	INTEL_SNB_D_GT1_IDS(info), \
++	INTEL_SNB_D_GT2_IDS(info)
++
++#define INTEL_SNB_M_GT1_IDS(info) \
++	INTEL_VGA_DEVICE(0x0106, info)
++
++#define INTEL_SNB_M_GT2_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0116, info), \
+ 	INTEL_VGA_DEVICE(0x0126, info)
+ 
++#define INTEL_SNB_M_IDS(info) \
++	INTEL_SNB_M_GT1_IDS(info), \
++	INTEL_SNB_M_GT2_IDS(info)
++
++#define INTEL_IVB_M_GT1_IDS(info) \
++	INTEL_VGA_DEVICE(0x0156, info) /* GT1 mobile */
++
++#define INTEL_IVB_M_GT2_IDS(info) \
++	INTEL_VGA_DEVICE(0x0166, info) /* GT2 mobile */
++
+ #define INTEL_IVB_M_IDS(info) \
+-	INTEL_VGA_DEVICE(0x0156, info), /* GT1 mobile */ \
+-	INTEL_VGA_DEVICE(0x0166, info)  /* GT2 mobile */
++	INTEL_IVB_M_GT1_IDS(info), \
++	INTEL_IVB_M_GT2_IDS(info)
+ 
+-#define INTEL_IVB_D_IDS(info) \
++#define INTEL_IVB_D_GT1_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0152, info), /* GT1 desktop */ \
++	INTEL_VGA_DEVICE(0x015a, info)  /* GT1 server */
++
++#define INTEL_IVB_D_GT2_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0162, info), /* GT2 desktop */ \
+-	INTEL_VGA_DEVICE(0x015a, info), /* GT1 server */ \
+ 	INTEL_VGA_DEVICE(0x016a, info)  /* GT2 server */
+ 
++#define INTEL_IVB_D_IDS(info) \
++	INTEL_IVB_D_GT1_IDS(info), \
++	INTEL_IVB_D_GT2_IDS(info)
++
+ #define INTEL_IVB_Q_IDS(info) \
+ 	INTEL_QUANTA_VGA_DEVICE(info) /* Quanta transcode */
+ 
+-#define INTEL_HSW_IDS(info) \
++#define INTEL_HSW_GT1_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0402, info), /* GT1 desktop */ \
+-	INTEL_VGA_DEVICE(0x0412, info), /* GT2 desktop */ \
+-	INTEL_VGA_DEVICE(0x0422, info), /* GT3 desktop */ \
+ 	INTEL_VGA_DEVICE(0x040a, info), /* GT1 server */ \
+-	INTEL_VGA_DEVICE(0x041a, info), /* GT2 server */ \
+-	INTEL_VGA_DEVICE(0x042a, info), /* GT3 server */ \
+ 	INTEL_VGA_DEVICE(0x040B, info), /* GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x041B, info), /* GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x042B, info), /* GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x040E, info), /* GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x041E, info), /* GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x042E, info), /* GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0C02, info), /* SDV GT1 desktop */ \
+-	INTEL_VGA_DEVICE(0x0C12, info), /* SDV GT2 desktop */ \
+-	INTEL_VGA_DEVICE(0x0C22, info), /* SDV GT3 desktop */ \
+ 	INTEL_VGA_DEVICE(0x0C0A, info), /* SDV GT1 server */ \
+-	INTEL_VGA_DEVICE(0x0C1A, info), /* SDV GT2 server */ \
+-	INTEL_VGA_DEVICE(0x0C2A, info), /* SDV GT3 server */ \
+ 	INTEL_VGA_DEVICE(0x0C0B, info), /* SDV GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x0C1B, info), /* SDV GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x0C2B, info), /* SDV GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0C0E, info), /* SDV GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x0C1E, info), /* SDV GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x0C2E, info), /* SDV GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0A02, info), /* ULT GT1 desktop */ \
+-	INTEL_VGA_DEVICE(0x0A12, info), /* ULT GT2 desktop */ \
+-	INTEL_VGA_DEVICE(0x0A22, info), /* ULT GT3 desktop */ \
+ 	INTEL_VGA_DEVICE(0x0A0A, info), /* ULT GT1 server */ \
+-	INTEL_VGA_DEVICE(0x0A1A, info), /* ULT GT2 server */ \
+-	INTEL_VGA_DEVICE(0x0A2A, info), /* ULT GT3 server */ \
+ 	INTEL_VGA_DEVICE(0x0A0B, info), /* ULT GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x0A1B, info), /* ULT GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x0A2B, info), /* ULT GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0D02, info), /* CRW GT1 desktop */ \
+-	INTEL_VGA_DEVICE(0x0D12, info), /* CRW GT2 desktop */ \
+-	INTEL_VGA_DEVICE(0x0D22, info), /* CRW GT3 desktop */ \
+ 	INTEL_VGA_DEVICE(0x0D0A, info), /* CRW GT1 server */ \
+-	INTEL_VGA_DEVICE(0x0D1A, info), /* CRW GT2 server */ \
+-	INTEL_VGA_DEVICE(0x0D2A, info), /* CRW GT3 server */ \
+ 	INTEL_VGA_DEVICE(0x0D0B, info), /* CRW GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x0D1B, info), /* CRW GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x0D2B, info), /* CRW GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0D0E, info), /* CRW GT1 reserved */ \
+-	INTEL_VGA_DEVICE(0x0D1E, info), /* CRW GT2 reserved */ \
+-	INTEL_VGA_DEVICE(0x0D2E, info),  /* CRW GT3 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0406, info), /* GT1 mobile */ \
++	INTEL_VGA_DEVICE(0x0C06, info), /* SDV GT1 mobile */ \
++	INTEL_VGA_DEVICE(0x0A06, info), /* ULT GT1 mobile */ \
++	INTEL_VGA_DEVICE(0x0A0E, info), /* ULX GT1 mobile */ \
++	INTEL_VGA_DEVICE(0x0D06, info)  /* CRW GT1 mobile */
++
++#define INTEL_HSW_GT2_IDS(info) \
++	INTEL_VGA_DEVICE(0x0412, info), /* GT2 desktop */ \
++	INTEL_VGA_DEVICE(0x041a, info), /* GT2 server */ \
++	INTEL_VGA_DEVICE(0x041B, info), /* GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x041E, info), /* GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x0C12, info), /* SDV GT2 desktop */ \
++	INTEL_VGA_DEVICE(0x0C1A, info), /* SDV GT2 server */ \
++	INTEL_VGA_DEVICE(0x0C1B, info), /* SDV GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x0C1E, info), /* SDV GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x0A12, info), /* ULT GT2 desktop */ \
++	INTEL_VGA_DEVICE(0x0A1A, info), /* ULT GT2 server */ \
++	INTEL_VGA_DEVICE(0x0A1B, info), /* ULT GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x0D12, info), /* CRW GT2 desktop */ \
++	INTEL_VGA_DEVICE(0x0D1A, info), /* CRW GT2 server */ \
++	INTEL_VGA_DEVICE(0x0D1B, info), /* CRW GT2 reserved */ \
++	INTEL_VGA_DEVICE(0x0D1E, info), /* CRW GT2 reserved */ \
+ 	INTEL_VGA_DEVICE(0x0416, info), /* GT2 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0426, info), /* GT2 mobile */ \
+-	INTEL_VGA_DEVICE(0x0C06, info), /* SDV GT1 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0C16, info), /* SDV GT2 mobile */ \
+-	INTEL_VGA_DEVICE(0x0C26, info), /* SDV GT3 mobile */ \
+-	INTEL_VGA_DEVICE(0x0A06, info), /* ULT GT1 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0A16, info), /* ULT GT2 mobile */ \
+-	INTEL_VGA_DEVICE(0x0A26, info), /* ULT GT3 mobile */ \
+-	INTEL_VGA_DEVICE(0x0A0E, info), /* ULX GT1 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0A1E, info), /* ULX GT2 mobile */ \
++	INTEL_VGA_DEVICE(0x0D16, info)  /* CRW GT2 mobile */
++
++#define INTEL_HSW_GT3_IDS(info) \
++	INTEL_VGA_DEVICE(0x0422, info), /* GT3 desktop */ \
++	INTEL_VGA_DEVICE(0x042a, info), /* GT3 server */ \
++	INTEL_VGA_DEVICE(0x042B, info), /* GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x042E, info), /* GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0C22, info), /* SDV GT3 desktop */ \
++	INTEL_VGA_DEVICE(0x0C2A, info), /* SDV GT3 server */ \
++	INTEL_VGA_DEVICE(0x0C2B, info), /* SDV GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0C2E, info), /* SDV GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0A22, info), /* ULT GT3 desktop */ \
++	INTEL_VGA_DEVICE(0x0A2A, info), /* ULT GT3 server */ \
++	INTEL_VGA_DEVICE(0x0A2B, info), /* ULT GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0D22, info), /* CRW GT3 desktop */ \
++	INTEL_VGA_DEVICE(0x0D2A, info), /* CRW GT3 server */ \
++	INTEL_VGA_DEVICE(0x0D2B, info), /* CRW GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0D2E, info), /* CRW GT3 reserved */ \
++	INTEL_VGA_DEVICE(0x0C26, info), /* SDV GT3 mobile */ \
++	INTEL_VGA_DEVICE(0x0A26, info), /* ULT GT3 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0A2E, info), /* ULT GT3 reserved */ \
+-	INTEL_VGA_DEVICE(0x0D06, info), /* CRW GT1 mobile */ \
+-	INTEL_VGA_DEVICE(0x0D16, info), /* CRW GT2 mobile */ \
+ 	INTEL_VGA_DEVICE(0x0D26, info)  /* CRW GT3 mobile */
+ 
++#define INTEL_HSW_IDS(info) \
++	INTEL_HSW_GT1_IDS(info), \
++	INTEL_HSW_GT2_IDS(info), \
++	INTEL_HSW_GT3_IDS(info)
++
+ #define INTEL_VLV_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x0f30, info), \
+ 	INTEL_VGA_DEVICE(0x0f31, info), \
+@@ -212,17 +245,19 @@
+ 	INTEL_VGA_DEVICE(0x0157, info), \
+ 	INTEL_VGA_DEVICE(0x0155, info)
+ 
+-#define INTEL_BDW_GT12_IDS(info)  \
++#define INTEL_BDW_GT1_IDS(info)  \
+ 	INTEL_VGA_DEVICE(0x1602, info), /* GT1 ULT */ \
+ 	INTEL_VGA_DEVICE(0x1606, info), /* GT1 ULT */ \
+ 	INTEL_VGA_DEVICE(0x160B, info), /* GT1 Iris */ \
+ 	INTEL_VGA_DEVICE(0x160E, info), /* GT1 ULX */ \
+-	INTEL_VGA_DEVICE(0x1612, info), /* GT2 Halo */ \
++	INTEL_VGA_DEVICE(0x160A, info), /* GT1 Server */ \
++	INTEL_VGA_DEVICE(0x160D, info)  /* GT1 Workstation */
++
++#define INTEL_BDW_GT2_IDS(info)  \
++	INTEL_VGA_DEVICE(0x1612, info), /* GT2 Halo */	\
+ 	INTEL_VGA_DEVICE(0x1616, info), /* GT2 ULT */ \
+ 	INTEL_VGA_DEVICE(0x161B, info), /* GT2 ULT */ \
+-	INTEL_VGA_DEVICE(0x161E, info),  /* GT2 ULX */ \
+-	INTEL_VGA_DEVICE(0x160A, info), /* GT1 Server */ \
+-	INTEL_VGA_DEVICE(0x160D, info), /* GT1 Workstation */ \
++	INTEL_VGA_DEVICE(0x161E, info), /* GT2 ULX */ \
+ 	INTEL_VGA_DEVICE(0x161A, info), /* GT2 Server */ \
+ 	INTEL_VGA_DEVICE(0x161D, info)  /* GT2 Workstation */
+ 
+@@ -243,7 +278,8 @@
+ 	INTEL_VGA_DEVICE(0x163D, info)  /* Workstation */
+ 
+ #define INTEL_BDW_IDS(info) \
+-	INTEL_BDW_GT12_IDS(info), \
++	INTEL_BDW_GT1_IDS(info), \
++	INTEL_BDW_GT2_IDS(info), \
+ 	INTEL_BDW_GT3_IDS(info), \
+ 	INTEL_BDW_RSVD_IDS(info)
+ 
+@@ -335,20 +371,22 @@
+ 	INTEL_KBL_GT4_IDS(info)
+ 
+ /* CFL S */
+-#define INTEL_CFL_S_IDS(info) \
++#define INTEL_CFL_S_GT1_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x3E90, info), /* SRV GT1 */ \
+-	INTEL_VGA_DEVICE(0x3E93, info), /* SRV GT1 */ \
++	INTEL_VGA_DEVICE(0x3E93, info)  /* SRV GT1 */
++
++#define INTEL_CFL_S_GT2_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x3E91, info), /* SRV GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E92, info), /* SRV GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E96, info)  /* SRV GT2 */
+ 
+ /* CFL H */
+-#define INTEL_CFL_H_IDS(info) \
++#define INTEL_CFL_H_GT2_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x3E9B, info), /* Halo GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E94, info)  /* Halo GT2 */
+ 
+ /* CFL U */
+-#define INTEL_CFL_U_IDS(info) \
++#define INTEL_CFL_U_GT3_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x3EA6, info), /* ULT GT3 */ \
+ 	INTEL_VGA_DEVICE(0x3EA7, info), /* ULT GT3 */ \
+ 	INTEL_VGA_DEVICE(0x3EA8, info), /* ULT GT3 */ \
