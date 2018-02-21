@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeBUIEG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:04:06 -0500
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:42114 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751843AbeBUIEA (ORCPT
+        id S1752006AbeBUIEM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 03:04:12 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44913 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751843AbeBUIEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:04:00 -0500
-X-Google-Smtp-Source: AH8x226piYxdZCMHaHZeXO2hcN8swAuXDshicPEQfkYo43jcVpLhUKqteVAsfI6oqVACKDmxOx4pSw==
+        Wed, 21 Feb 2018 03:04:07 -0500
+X-Google-Smtp-Source: AH8x224+TtG5mvA/sPr7CZZCjIg7/NoATE07Kvfi0TkbFRHDySMx90om/mC19wZpKNEh+z3Gr52Keg==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH 4/9] drm/xen-front: Implement Xen event channel handling
-Date: Wed, 21 Feb 2018 10:03:37 +0200
-Message-Id: <1519200222-20623-5-git-send-email-andr2000@gmail.com>
+Subject: [PATCH 8/9] drm/xen-front: Implement GEM operations
+Date: Wed, 21 Feb 2018 10:03:41 +0200
+Message-Id: <1519200222-20623-9-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
 References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
@@ -27,130 +27,765 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Handle Xen event channels:
-  - create for all configured connectors and publish
-    corresponding ring references and event channels in Xen store,
-    so backend can connect
-  - implement event channels interrupt handlers
-  - create and destroy event channels with respect to Xen bus state
+Implement GEM handling depending on driver mode of operation:
+depending on the requirements for the para-virtualized environment, namely
+requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+host and guest environments, number of operating modes of para-virtualized
+display driver are supported:
+ - display buffers can be allocated by either frontend driver or backend
+ - display buffers can be allocated to be contiguous in memory or not
+
+Note! Frontend driver itself has no dependency on contiguous memory for
+its operation.
+
+1. Buffers allocated by the frontend driver.
+
+The below modes of operation are configured at compile-time via
+frontend driver's kernel configuration.
+
+1.1. Front driver configured to use GEM CMA helpers
+     This use-case is useful when used with accompanying DRM/vGPU driver in
+     guest domain which was designed to only work with contiguous buffers,
+     e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+     contiguous PRIME buffers, thus requiring frontend driver to provide
+     such. In order to implement this mode of operation para-virtualized
+     frontend driver can be configured to use GEM CMA helpers.
+
+1.2. Front driver doesn't use GEM CMA
+     If accompanying drivers can cope with non-contiguous memory then, to
+     lower pressure on CMA subsystem of the kernel, driver can allocate
+     buffers from system memory.
+
+Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+may require IOMMU support on the platform, so accompanying DRM/vGPU
+hardware can still reach display buffer memory while importing PRIME
+buffers from the frontend driver.
+
+2. Buffers allocated by the backend
+
+This mode of operation is run-time configured via guest domain configuration
+through XenStore entries.
+
+For systems which do not provide IOMMU support, but having specific
+requirements for display buffers it is possible to allocate such buffers
+at backend side and share those with the frontend.
+For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+physically contiguous memory, this allows implementing zero-copying
+use-cases.
+
+Note! Configuration options 1.1 (contiguous display buffers) and 2 (backend
+allocated buffers) are not supported at the same time.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/gpu/drm/xen/Makefile                |   1 +
- drivers/gpu/drm/xen/xen_drm_front.c         |  16 +-
- drivers/gpu/drm/xen/xen_drm_front.h         |  22 ++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 399 ++++++++++++++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  89 +++++++
- 5 files changed, 526 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+ drivers/gpu/drm/xen/Kconfig                 |  13 +
+ drivers/gpu/drm/xen/Makefile                |   6 +
+ drivers/gpu/drm/xen/xen_drm_front.h         |  74 ++++++
+ drivers/gpu/drm/xen/xen_drm_front_drv.c     |  80 ++++++-
+ drivers/gpu/drm/xen/xen_drm_front_drv.h     |   1 +
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     | 360 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |  46 ++++
+ drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  93 +++++++
+ 8 files changed, 667 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
 
+diff --git a/drivers/gpu/drm/xen/Kconfig b/drivers/gpu/drm/xen/Kconfig
+index 4cca160782ab..4f4abc91f3b6 100644
+--- a/drivers/gpu/drm/xen/Kconfig
++++ b/drivers/gpu/drm/xen/Kconfig
+@@ -15,3 +15,16 @@ config DRM_XEN_FRONTEND
+ 	help
+ 	  Choose this option if you want to enable a para-virtualized
+ 	  frontend DRM/KMS driver for Xen guest OSes.
++
++config DRM_XEN_FRONTEND_CMA
++	bool "Use DRM CMA to allocate dumb buffers"
++	depends on DRM_XEN_FRONTEND
++	select DRM_KMS_CMA_HELPER
++	select DRM_GEM_CMA_HELPER
++	help
++	  Use DRM CMA helpers to allocate display buffers.
++	  This is useful for the use-cases when guest driver needs to
++	  share or export buffers to other drivers which only expect
++	  contiguous buffers.
++	  Note: in this mode driver cannot use buffers allocated
++	  by the backend.
 diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
-index 0a2eae757f0c..4ce7756b8437 100644
+index 4fcb0da1a9c5..12376ec78fbc 100644
 --- a/drivers/gpu/drm/xen/Makefile
 +++ b/drivers/gpu/drm/xen/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- drm_xen_front-objs := xen_drm_front.o \
-+		      xen_drm_front_evtchnl.o \
+@@ -8,4 +8,10 @@ drm_xen_front-objs := xen_drm_front.o \
+ 		      xen_drm_front_shbuf.o \
  		      xen_drm_front_cfg.o
  
- obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-index 0a90c474c7ce..b558e0ae3b33 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -25,9 +25,15 @@
- #include <xen/interface/io/displif.h>
- 
- #include "xen_drm_front.h"
-+#include "xen_drm_front_evtchnl.h"
++ifeq ($(CONFIG_DRM_XEN_FRONTEND_CMA),y)
++	drm_xen_front-objs += xen_drm_front_gem_cma.o
++else
++	drm_xen_front-objs += xen_drm_front_gem.o
++endif
 +
-+static struct xen_drm_front_ops front_ops = {
-+	/* placeholder for now */
-+};
+ obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+index 9ed5bfb248d0..c6f52c892434 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.h
++++ b/drivers/gpu/drm/xen/xen_drm_front.h
+@@ -34,6 +34,80 @@
  
- static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
+ struct xen_drm_front_drm_pipeline;
+ 
++/*
++ *******************************************************************************
++ * Para-virtualized DRM/KMS frontend driver
++ *******************************************************************************
++ * This frontend driver implements Xen para-virtualized display
++ * according to the display protocol described at
++ * include/xen/interface/io/displif.h
++ *
++ *******************************************************************************
++ * Driver modes of operation in terms of display buffers used
++ *******************************************************************************
++ * Depending on the requirements for the para-virtualized environment, namely
++ * requirements dictated by the accompanying DRM/(v)GPU drivers running in both
++ * host and guest environments, number of operating modes of para-virtualized
++ * display driver are supported:
++ *  - display buffers can be allocated by either frontend driver or backend
++ *  - display buffers can be allocated to be contiguous in memory or not
++ *
++ * Note! Frontend driver itself has no dependency on contiguous memory for
++ *       its operation.
++ *
++ *******************************************************************************
++ * 1. Buffers allocated by the frontend driver.
++ *******************************************************************************
++ *
++ * The below modes of operation are configured at compile-time via
++ * frontend driver's kernel configuration.
++ *
++ * 1.1. Front driver configured to use GEM CMA helpers
++ *      This use-case is useful when used with accompanying DRM/vGPU driver in
++ *      guest domain which was designed to only work with contiguous buffers,
++ *      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
++ *      contiguous PRIME buffers, thus requiring frontend driver to provide
++ *      such. In order to implement this mode of operation para-virtualized
++ *      frontend driver can be configured to use GEM CMA helpers.
++ *
++ * 1.2. Front driver doesn't use GEM CMA
++ *      If accompanying drivers can cope with non-contiguous memory then, to
++ *      lower pressure on CMA subsystem of the kernel, driver can allocate
++ *      buffers from system memory.
++ *
++ * Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
++ *   may require IOMMU support on the platform, so accompanying DRM/vGPU
++ *   hardware can still reach display buffer memory while importing PRIME
++ *   buffers from the frontend driver.
++ *
++ *******************************************************************************
++ * 2. Buffers allocated by the backend
++ *******************************************************************************
++ *
++ * This mode of operation is run-time configured via guest domain configuration
++ * through XenStore entries.
++ *
++ * For systems which do not provide IOMMU support, but having specific
++ * requirements for display buffers it is possible to allocate such buffers
++ * at backend side and share those with the frontend.
++ * For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
++ * physically contiguous memory, this allows implementing zero-copying
++ * use-cases.
++ *
++ *******************************************************************************
++ * Driver limitations
++ *******************************************************************************
++ * 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
++ *    allocated buffers) are not supported at the same time.
++ *
++ * 2. Only primary plane without additional properties is supported.
++ *
++ * 3. Only one video mode supported which is configured via XenStore.
++ *
++ * 4. All CRTCs operate at fixed frequency of 60Hz.
++ *
++ ******************************************************************************/
++
+ struct xen_drm_front_ops {
+ 	int (*mode_set)(struct xen_drm_front_drm_pipeline *pipeline,
+ 			uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.c b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+index e8862d26ba27..35e7e9cda9d1 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_drv.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+@@ -23,12 +23,58 @@
+ #include "xen_drm_front.h"
+ #include "xen_drm_front_cfg.h"
+ #include "xen_drm_front_drv.h"
++#include "xen_drm_front_gem.h"
+ #include "xen_drm_front_kms.h"
+ 
+ static int dumb_create(struct drm_file *filp,
+ 		struct drm_device *dev, struct drm_mode_create_dumb *args)
  {
-+	xen_drm_front_evtchnl_free_all(front_info);
+-	return -EINVAL;
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
++	struct drm_gem_object *obj;
++	int ret;
++
++	ret = drm_info->gem_ops->dumb_create(filp, dev, args);
++	if (ret)
++		goto fail;
++
++	obj = drm_gem_object_lookup(filp, args->handle);
++	if (!obj) {
++		ret = -ENOENT;
++		goto fail_destroy;
++	}
++
++	drm_gem_object_unreference_unlocked(obj);
++
++	/*
++	 * In case of CONFIG_DRM_XEN_FRONTEND_CMA gem_obj is constructed
++	 * via DRM CMA helpers and doesn't have ->pages allocated
++	 * (xendrm_gem_get_pages will return NULL), but instead can provide
++	 * sg table
++	 */
++	if (drm_info->gem_ops->get_pages(obj))
++		ret = drm_info->front_ops->dbuf_create_from_pages(
++				drm_info->front_info,
++				xen_drm_front_dbuf_to_cookie(obj),
++				args->width, args->height, args->bpp,
++				args->size,
++				drm_info->gem_ops->get_pages(obj));
++	else
++		ret = drm_info->front_ops->dbuf_create_from_sgt(
++				drm_info->front_info,
++				xen_drm_front_dbuf_to_cookie(obj),
++				args->width, args->height, args->bpp,
++				args->size,
++				drm_info->gem_ops->prime_get_sg_table(obj));
++	if (ret)
++		goto fail_destroy;
++
++	return 0;
++
++fail_destroy:
++	drm_gem_dumb_destroy(filp, dev, args->handle);
++fail:
++	DRM_ERROR("Failed to create dumb buffer: %d\n", ret);
++	return ret;
  }
  
- static int backend_on_initwait(struct xen_drm_front_info *front_info)
-@@ -41,16 +47,23 @@ static int backend_on_initwait(struct xen_drm_front_info *front_info)
- 		return ret;
+ static void free_object(struct drm_gem_object *obj)
+@@ -37,6 +83,7 @@ static void free_object(struct drm_gem_object *obj)
  
- 	DRM_INFO("Have %d conector(s)\n", cfg->num_connectors);
--	return 0;
-+	/* Create event channels for all connectors and publish */
-+	ret = xen_drm_front_evtchnl_create_all(front_info, &front_ops);
+ 	drm_info->front_ops->dbuf_destroy(drm_info->front_info,
+ 			xen_drm_front_dbuf_to_cookie(obj));
++	drm_info->gem_ops->free_object_unlocked(obj);
+ }
+ 
+ static void on_frame_done(struct platform_device *pdev,
+@@ -60,32 +107,52 @@ static void lastclose(struct drm_device *dev)
+ 
+ static int gem_mmap(struct file *filp, struct vm_area_struct *vma)
+ {
+-	return -EINVAL;
++	struct drm_file *file_priv = filp->private_data;
++	struct drm_device *dev = file_priv->minor->dev;
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
++
++	return drm_info->gem_ops->mmap(filp, vma);
+ }
+ 
+ static struct sg_table *prime_get_sg_table(struct drm_gem_object *obj)
+ {
+-	return NULL;
++	struct xen_drm_front_drm_info *drm_info;
++
++	drm_info = obj->dev->dev_private;
++	return drm_info->gem_ops->prime_get_sg_table(obj);
+ }
+ 
+ static struct drm_gem_object *prime_import_sg_table(struct drm_device *dev,
+ 		struct dma_buf_attachment *attach, struct sg_table *sgt)
+ {
+-	return NULL;
++	struct xen_drm_front_drm_info *drm_info;
++
++	drm_info = dev->dev_private;
++	return drm_info->gem_ops->prime_import_sg_table(dev, attach, sgt);
+ }
+ 
+ static void *prime_vmap(struct drm_gem_object *obj)
+ {
+-	return NULL;
++	struct xen_drm_front_drm_info *drm_info;
++
++	drm_info = obj->dev->dev_private;
++	return drm_info->gem_ops->prime_vmap(obj);
+ }
+ 
+ static void prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+ {
++	struct xen_drm_front_drm_info *drm_info;
++
++	drm_info = obj->dev->dev_private;
++	drm_info->gem_ops->prime_vunmap(obj, vaddr);
+ }
+ 
+ static int prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+ {
+-	return -EINVAL;
++	struct xen_drm_front_drm_info *drm_info;
++
++	drm_info = obj->dev->dev_private;
++	return drm_info->gem_ops->prime_mmap(obj, vma);
+ }
+ 
+ static const struct file_operations xendrm_fops = {
+@@ -147,6 +214,7 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
+ 
+ 	drm_info->front_ops = front_ops;
+ 	drm_info->front_ops->on_frame_done = on_frame_done;
++	drm_info->gem_ops = xen_drm_front_gem_get_ops();
+ 	drm_info->front_info = cfg->front_info;
+ 
+ 	dev = drm_dev_alloc(&xen_drm_driver, &pdev->dev);
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.h b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+index 563318b19f34..34228eb86255 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_drv.h
++++ b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+@@ -43,6 +43,7 @@ struct xen_drm_front_drm_pipeline {
+ struct xen_drm_front_drm_info {
+ 	struct xen_drm_front_info *front_info;
+ 	struct xen_drm_front_ops *front_ops;
++	const struct xen_drm_front_gem_ops *gem_ops;
+ 	struct drm_device *drm_dev;
+ 	struct xen_drm_front_cfg *cfg;
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+new file mode 100644
+index 000000000000..367e08f6a9ef
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -0,0 +1,360 @@
++/*
++ *  Xen para-virtual DRM device
++ *
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License as published by
++ *   the Free Software Foundation; either version 2 of the License, or
++ *   (at your option) any later version.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#include "xen_drm_front_gem.h"
++
++#include <drm/drmP.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_fb_helper.h>
++#include <drm/drm_gem.h>
++
++#include <linux/dma-buf.h>
++#include <linux/scatterlist.h>
++#include <linux/shmem_fs.h>
++
++#include <xen/balloon.h>
++
++#include "xen_drm_front.h"
++#include "xen_drm_front_drv.h"
++#include "xen_drm_front_shbuf.h"
++
++struct xen_gem_object {
++	struct drm_gem_object base;
++
++	size_t num_pages;
++	struct page **pages;
++
++	/* set for buffers allocated by the backend */
++	bool be_alloc;
++
++	/* this is for imported PRIME buffer */
++	struct sg_table *sgt_imported;
++};
++
++static inline struct xen_gem_object *to_xen_gem_obj(
++		struct drm_gem_object *gem_obj)
++{
++	return container_of(gem_obj, struct xen_gem_object, base);
++}
++
++static int gem_alloc_pages_array(struct xen_gem_object *xen_obj,
++		size_t buf_size)
++{
++	xen_obj->num_pages = DIV_ROUND_UP(buf_size, PAGE_SIZE);
++	xen_obj->pages = kvmalloc_array(xen_obj->num_pages,
++			sizeof(struct page *), GFP_KERNEL);
++	return xen_obj->pages == NULL ? -ENOMEM : 0;
++}
++
++static void gem_free_pages_array(struct xen_gem_object *xen_obj)
++{
++	kvfree(xen_obj->pages);
++	xen_obj->pages = NULL;
++}
++
++static struct xen_gem_object *gem_create_obj(struct drm_device *dev,
++	size_t size)
++{
++	struct xen_gem_object *xen_obj;
++	int ret;
++
++	xen_obj = kzalloc(sizeof(*xen_obj), GFP_KERNEL);
++	if (!xen_obj)
++		return ERR_PTR(-ENOMEM);
++
++	ret = drm_gem_object_init(dev, &xen_obj->base, size);
++	if (ret < 0) {
++		kfree(xen_obj);
++		return ERR_PTR(ret);
++	}
++
++	return xen_obj;
++}
++
++static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
++{
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
++	struct xen_gem_object *xen_obj;
++	int ret;
++
++	size = round_up(size, PAGE_SIZE);
++	xen_obj = gem_create_obj(dev, size);
++	if (IS_ERR_OR_NULL(xen_obj))
++		return xen_obj;
++
++	if (drm_info->cfg->be_alloc) {
++		/*
++		 * backend will allocate space for this buffer, so
++		 * only allocate array of pointers to pages
++		 */
++		xen_obj->be_alloc = true;
++		ret = gem_alloc_pages_array(xen_obj, size);
++		if (ret < 0) {
++			gem_free_pages_array(xen_obj);
++			goto fail;
++		}
++
++		ret = alloc_xenballooned_pages(xen_obj->num_pages,
++				xen_obj->pages);
++		if (ret < 0) {
++			DRM_ERROR("Cannot allocate %zu ballooned pages: %d\n",
++					xen_obj->num_pages, ret);
++			goto fail;
++		}
++
++		return xen_obj;
++	}
++	/*
++	 * need to allocate backing pages now, so we can share those
++	 * with the backend
++	 */
++	xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
++	xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
++	if (IS_ERR_OR_NULL(xen_obj->pages)) {
++		ret = PTR_ERR(xen_obj->pages);
++		xen_obj->pages = NULL;
++		goto fail;
++	}
++
++	return xen_obj;
++
++fail:
++	DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
++	return ERR_PTR(ret);
++}
++
++static struct xen_gem_object *gem_create_with_handle(struct drm_file *filp,
++		struct drm_device *dev, size_t size, uint32_t *handle)
++{
++	struct xen_gem_object *xen_obj;
++	struct drm_gem_object *gem_obj;
++	int ret;
++
++	xen_obj = gem_create(dev, size);
++	if (IS_ERR_OR_NULL(xen_obj))
++		return xen_obj;
++
++	gem_obj = &xen_obj->base;
++	ret = drm_gem_handle_create(filp, gem_obj, handle);
++	/* handle holds the reference */
++	drm_gem_object_unreference_unlocked(gem_obj);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	return xen_obj;
++}
++
++static int gem_dumb_create(struct drm_file *filp, struct drm_device *dev,
++		struct drm_mode_create_dumb *args)
++{
++	struct xen_gem_object *xen_obj;
++
++	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
++	args->size = args->pitch * args->height;
++
++	xen_obj = gem_create_with_handle(filp, dev, args->size, &args->handle);
++	if (IS_ERR_OR_NULL(xen_obj))
++		return xen_obj == NULL ? -ENOMEM : PTR_ERR(xen_obj);
++
++	return 0;
++}
++
++static void gem_free_object(struct drm_gem_object *gem_obj)
++{
++	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
++
++	if (xen_obj->base.import_attach) {
++		drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt_imported);
++		gem_free_pages_array(xen_obj);
++	} else {
++		if (xen_obj->pages) {
++			if (xen_obj->be_alloc) {
++				free_xenballooned_pages(xen_obj->num_pages,
++						xen_obj->pages);
++				gem_free_pages_array(xen_obj);
++			} else
++				drm_gem_put_pages(&xen_obj->base,
++						xen_obj->pages, true, false);
++		}
++	}
++	drm_gem_object_release(gem_obj);
++	kfree(xen_obj);
++}
++
++static struct page **gem_get_pages(struct drm_gem_object *gem_obj)
++{
++	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
++
++	return xen_obj->pages;
++}
++
++static struct sg_table *gem_get_sg_table(struct drm_gem_object *gem_obj)
++{
++	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
++
++	if (!xen_obj->pages)
++		return NULL;
++
++	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
++}
++
++static struct drm_gem_object *gem_import_sg_table(struct drm_device *dev,
++		struct dma_buf_attachment *attach, struct sg_table *sgt)
++{
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
++	struct xen_gem_object *xen_obj;
++	size_t size;
++	int ret;
++
++	size = attach->dmabuf->size;
++	xen_obj = gem_create_obj(dev, size);
++	if (IS_ERR_OR_NULL(xen_obj))
++		return ERR_CAST(xen_obj);
++
++	ret = gem_alloc_pages_array(xen_obj, size);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	xen_obj->sgt_imported = sgt;
++
++	ret = drm_prime_sg_to_page_addr_arrays(sgt, xen_obj->pages,
++			NULL, xen_obj->num_pages);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	/*
++	 * N.B. Although we have an API to create display buffer from sgt
++	 * we use pages API, because we still need those for GEM handling,
++	 * e.g. for mapping etc.
++	 */
++	ret = drm_info->front_ops->dbuf_create_from_pages(
++			drm_info->front_info,
++			xen_drm_front_dbuf_to_cookie(&xen_obj->base),
++			0, 0, 0, size, xen_obj->pages);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	DRM_DEBUG("Imported buffer of size %zu with nents %u\n",
++		size, sgt->nents);
++
++	return &xen_obj->base;
++}
++
++static int gem_mmap_obj(struct xen_gem_object *xen_obj,
++		struct vm_area_struct *vma)
++{
++	unsigned long addr = vma->vm_start;
++	int i;
++
++	/*
++	 * clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
++	 * vm_pgoff (used as a fake buffer offset by DRM) to 0 as we want to map
++	 * the whole buffer.
++	 */
++	vma->vm_flags &= ~VM_PFNMAP;
++	vma->vm_flags |= VM_MIXEDMAP;
++	vma->vm_pgoff = 0;
++	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
++
++	/*
++	 * vm_operations_struct.fault handler will be called if CPU access
++	 * to VM is here. For GPUs this isn't the case, because CPU
++	 * doesn't touch the memory. Insert pages now, so both CPU and GPU are
++	 * happy.
++	 * FIXME: as we insert all the pages now then no .fault handler must
++	 * be called, so don't provide one
++	 */
++	for (i = 0; i < xen_obj->num_pages; i++) {
++		int ret;
++
++		ret = vm_insert_page(vma, addr, xen_obj->pages[i]);
++		if (ret < 0) {
++			DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
++			return ret;
++		}
++
++		addr += PAGE_SIZE;
++	}
++	return 0;
++}
++
++static int gem_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	struct xen_gem_object *xen_obj;
++	struct drm_gem_object *gem_obj;
++	int ret;
++
++	ret = drm_gem_mmap(filp, vma);
 +	if (ret < 0)
 +		return ret;
 +
-+	return xen_drm_front_evtchnl_publish_all(front_info);
- }
- 
- static int backend_on_connected(struct xen_drm_front_info *front_info)
- {
-+	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_CONNECTED);
- 	return 0;
- }
- 
- static void backend_on_disconnected(struct xen_drm_front_info *front_info)
- {
-+	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_DISCONNECTED);
- 	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
- }
- 
-@@ -133,6 +146,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
- 	}
- 
- 	front_info->xb_dev = xb_dev;
-+	spin_lock_init(&front_info->io_lock);
- 	dev_set_drvdata(&xb_dev->dev, front_info);
- 	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
- }
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
-index 62b0d4e3e12b..13f22736ae02 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.h
-+++ b/drivers/gpu/drm/xen/xen_drm_front.h
-@@ -21,8 +21,30 @@
- 
- #include "xen_drm_front_cfg.h"
- 
-+#ifndef GRANT_INVALID_REF
-+/*
-+ * Note on usage of grant reference 0 as invalid grant reference:
-+ * grant reference 0 is valid, but never exposed to a PV driver,
-+ * because of the fact it is already in use/reserved by the PV console.
-+ */
-+#define GRANT_INVALID_REF	0
-+#endif
++	gem_obj = vma->vm_private_data;
++	xen_obj = to_xen_gem_obj(gem_obj);
++	return gem_mmap_obj(xen_obj, vma);
++}
 +
-+struct xen_drm_front_ops {
-+	/* CAUTION! this is called with a spin_lock held! */
-+	void (*on_frame_done)(struct platform_device *pdev,
-+			int conn_idx, uint64_t fb_cookie);
++static void *gem_prime_vmap(struct drm_gem_object *gem_obj)
++{
++	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
++
++	if (!xen_obj->pages)
++		return NULL;
++
++	return vmap(xen_obj->pages, xen_obj->num_pages,
++			VM_MAP, pgprot_writecombine(PAGE_KERNEL));
++}
++
++static void gem_prime_vunmap(struct drm_gem_object *gem_obj, void *vaddr)
++{
++	vunmap(vaddr);
++}
++
++static int gem_prime_mmap(struct drm_gem_object *gem_obj,
++	struct vm_area_struct *vma)
++{
++	struct xen_gem_object *xen_obj;
++	int ret;
++
++	ret = drm_gem_mmap_obj(gem_obj, gem_obj->size, vma);
++	if (ret < 0)
++		return ret;
++
++	xen_obj = to_xen_gem_obj(gem_obj);
++	return gem_mmap_obj(xen_obj, vma);
++}
++
++static const struct xen_drm_front_gem_ops xen_drm_gem_ops = {
++	.free_object_unlocked  = gem_free_object,
++	.prime_get_sg_table    = gem_get_sg_table,
++	.prime_import_sg_table = gem_import_sg_table,
++
++	.prime_vmap            = gem_prime_vmap,
++	.prime_vunmap          = gem_prime_vunmap,
++	.prime_mmap            = gem_prime_mmap,
++
++	.dumb_create           = gem_dumb_create,
++
++	.mmap                  = gem_mmap,
++
++	.get_pages             = gem_get_pages,
 +};
 +
- struct xen_drm_front_info {
- 	struct xenbus_device *xb_dev;
-+	/* to protect data between backend IO code and interrupt handler */
-+	spinlock_t io_lock;
-+	/* virtual DRM platform device */
-+	struct platform_device *drm_pdev;
-+
-+	int num_evt_pairs;
-+	struct xen_drm_front_evtchnl_pair *evt_pairs;
- 	struct xen_drm_front_cfg cfg;
- };
- 
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
++const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void)
++{
++	return &xen_drm_gem_ops;
++}
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.h b/drivers/gpu/drm/xen/xen_drm_front_gem.h
 new file mode 100644
-index 000000000000..697a0e4dcaed
+index 000000000000..d1e1711cc3fc
 --- /dev/null
-+++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-@@ -0,0 +1,399 @@
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.h
+@@ -0,0 +1,46 @@
++/*
++ *  Xen para-virtual DRM device
++ *
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License as published by
++ *   the Free Software Foundation; either version 2 of the License, or
++ *   (at your option) any later version.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#ifndef __XEN_DRM_FRONT_GEM_H
++#define __XEN_DRM_FRONT_GEM_H
++
++#include <drm/drmP.h>
++
++struct xen_drm_front_gem_ops {
++	void (*free_object_unlocked)(struct drm_gem_object *obj);
++
++	struct sg_table *(*prime_get_sg_table)(struct drm_gem_object *obj);
++	struct drm_gem_object *(*prime_import_sg_table)(struct drm_device *dev,
++			struct dma_buf_attachment *attach,
++			struct sg_table *sgt);
++	void *(*prime_vmap)(struct drm_gem_object *obj);
++	void (*prime_vunmap)(struct drm_gem_object *obj, void *vaddr);
++	int (*prime_mmap)(struct drm_gem_object *obj,
++			struct vm_area_struct *vma);
++
++	int (*dumb_create)(struct drm_file *file_priv, struct drm_device *dev,
++			struct drm_mode_create_dumb *args);
++
++	int (*mmap)(struct file *filp, struct vm_area_struct *vma);
++
++	struct page **(*get_pages)(struct drm_gem_object *obj);
++};
++
++const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void);
++
++#endif /* __XEN_DRM_FRONT_GEM_H */
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c b/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+new file mode 100644
+index 000000000000..5ffcbfa652d5
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+@@ -0,0 +1,93 @@
 +/*
 + *  Xen para-virtual DRM device
 + *
@@ -170,480 +805,79 @@ index 000000000000..697a0e4dcaed
 + */
 +
 +#include <drm/drmP.h>
-+
-+#include <linux/errno.h>
-+#include <linux/irq.h>
-+
-+#include <xen/xenbus.h>
-+#include <xen/events.h>
-+#include <xen/grant_table.h>
++#include <drm/drm_gem.h>
++#include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_gem_cma_helper.h>
 +
 +#include "xen_drm_front.h"
-+#include "xen_drm_front_evtchnl.h"
++#include "xen_drm_front_drv.h"
++#include "xen_drm_front_gem.h"
 +
-+static irqreturn_t evtchnl_interrupt_ctrl(int irq, void *dev_id)
++static struct drm_gem_object *gem_import_sg_table(struct drm_device *dev,
++		struct dma_buf_attachment *attach, struct sg_table *sgt)
 +{
-+	struct xen_drm_front_evtchnl *evtchnl = dev_id;
-+	struct xen_drm_front_info *front_info = evtchnl->front_info;
-+	struct xendispl_resp *resp;
-+	RING_IDX i, rp;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&front_info->io_lock, flags);
-+
-+	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
-+		goto out;
-+
-+again:
-+	rp = evtchnl->u.req.ring.sring->rsp_prod;
-+	/* ensure we see queued responses up to rp */
-+	virt_rmb();
-+
-+	for (i = evtchnl->u.req.ring.rsp_cons; i != rp; i++) {
-+		resp = RING_GET_RESPONSE(&evtchnl->u.req.ring, i);
-+		if (unlikely(resp->id != evtchnl->evt_id))
-+			continue;
-+
-+		switch (resp->operation) {
-+		case XENDISPL_OP_PG_FLIP:
-+		case XENDISPL_OP_FB_ATTACH:
-+		case XENDISPL_OP_FB_DETACH:
-+		case XENDISPL_OP_DBUF_CREATE:
-+		case XENDISPL_OP_DBUF_DESTROY:
-+		case XENDISPL_OP_SET_CONFIG:
-+			evtchnl->u.req.resp_status = resp->status;
-+			complete(&evtchnl->u.req.completion);
-+			break;
-+
-+		default:
-+			DRM_ERROR("Operation %d is not supported\n",
-+				resp->operation);
-+			break;
-+		}
-+	}
-+
-+	evtchnl->u.req.ring.rsp_cons = i;
-+
-+	if (i != evtchnl->u.req.ring.req_prod_pvt) {
-+		int more_to_do;
-+
-+		RING_FINAL_CHECK_FOR_RESPONSES(&evtchnl->u.req.ring,
-+				more_to_do);
-+		if (more_to_do)
-+			goto again;
-+	} else
-+		evtchnl->u.req.ring.sring->rsp_event = i + 1;
-+
-+out:
-+	spin_unlock_irqrestore(&front_info->io_lock, flags);
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
-+{
-+	struct xen_drm_front_evtchnl *evtchnl = dev_id;
-+	struct xen_drm_front_info *front_info = evtchnl->front_info;
-+	struct xendispl_event_page *page = evtchnl->u.evt.page;
-+	uint32_t cons, prod;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&front_info->io_lock, flags);
-+	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
-+		goto out;
-+
-+	prod = page->in_prod;
-+	/* ensure we see ring contents up to prod */
-+	virt_rmb();
-+	if (prod == page->in_cons)
-+		goto out;
-+
-+	for (cons = page->in_cons; cons != prod; cons++) {
-+		struct xendispl_evt *event;
-+
-+		event = &XENDISPL_IN_RING_REF(page, cons);
-+		if (unlikely(event->id != evtchnl->evt_id++))
-+			continue;
-+
-+		switch (event->type) {
-+		case XENDISPL_EVT_PG_FLIP:
-+			evtchnl->u.evt.front_ops->on_frame_done(
-+				front_info->drm_pdev, evtchnl->index,
-+				event->op.pg_flip.fb_cookie);
-+			break;
-+		}
-+	}
-+	page->in_cons = cons;
-+	/* ensure ring contents */
-+	virt_wmb();
-+
-+out:
-+	spin_unlock_irqrestore(&front_info->io_lock, flags);
-+	return IRQ_HANDLED;
-+}
-+
-+static void evtchnl_free(struct xen_drm_front_info *front_info,
-+		struct xen_drm_front_evtchnl *evtchnl)
-+{
-+	unsigned long page = 0;
-+
-+	if (evtchnl->type == EVTCHNL_TYPE_REQ)
-+		page = (unsigned long)evtchnl->u.req.ring.sring;
-+	else if (evtchnl->type == EVTCHNL_TYPE_EVT)
-+		page = (unsigned long)evtchnl->u.evt.page;
-+	if (!page)
-+		return;
-+
-+	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
-+
-+	if (evtchnl->type == EVTCHNL_TYPE_REQ) {
-+		/* release all who still waits for response if any */
-+		evtchnl->u.req.resp_status = -EIO;
-+		complete_all(&evtchnl->u.req.completion);
-+	}
-+
-+	if (evtchnl->irq)
-+		unbind_from_irqhandler(evtchnl->irq, evtchnl);
-+
-+	if (evtchnl->port)
-+		xenbus_free_evtchn(front_info->xb_dev, evtchnl->port);
-+
-+	/* end access and free the page */
-+	if (evtchnl->gref != GRANT_INVALID_REF)
-+		gnttab_end_foreign_access(evtchnl->gref, 0, page);
-+
-+	if (evtchnl->type == EVTCHNL_TYPE_REQ)
-+		evtchnl->u.req.ring.sring = NULL;
-+	else
-+		evtchnl->u.evt.page = NULL;
-+
-+	memset(evtchnl, 0, sizeof(*evtchnl));
-+}
-+
-+static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
-+		struct xen_drm_front_evtchnl *evtchnl,
-+		enum xen_drm_front_evtchnl_type type)
-+{
-+	struct xenbus_device *xb_dev = front_info->xb_dev;
-+	unsigned long page;
-+	grant_ref_t gref;
-+	irq_handler_t handler;
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
++	struct drm_gem_object *gem_obj;
++	struct drm_gem_cma_object *cma_obj;
 +	int ret;
 +
-+	memset(evtchnl, 0, sizeof(*evtchnl));
-+	evtchnl->type = type;
-+	evtchnl->index = index;
-+	evtchnl->front_info = front_info;
-+	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
-+	evtchnl->gref = GRANT_INVALID_REF;
++	gem_obj = drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
++	if (IS_ERR_OR_NULL(gem_obj))
++		return gem_obj;
 +
-+	page = get_zeroed_page(GFP_NOIO | __GFP_HIGH);
-+	if (!page) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
++	cma_obj = to_drm_gem_cma_obj(gem_obj);
 +
-+	if (type == EVTCHNL_TYPE_REQ) {
-+		struct xen_displif_sring *sring;
-+
-+		init_completion(&evtchnl->u.req.completion);
-+		sring = (struct xen_displif_sring *)page;
-+		SHARED_RING_INIT(sring);
-+		FRONT_RING_INIT(&evtchnl->u.req.ring,
-+				sring, XEN_PAGE_SIZE);
-+
-+		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
-+		if (ret < 0)
-+			goto fail;
-+
-+		handler = evtchnl_interrupt_ctrl;
-+	} else {
-+		evtchnl->u.evt.page = (struct xendispl_event_page *)page;
-+
-+		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
-+				virt_to_gfn((void *)page), 0);
-+		if (ret < 0)
-+			goto fail;
-+
-+		gref = ret;
-+		handler = evtchnl_interrupt_evt;
-+	}
-+	evtchnl->gref = gref;
-+
-+	ret = xenbus_alloc_evtchn(xb_dev, &evtchnl->port);
++	ret = drm_info->front_ops->dbuf_create_from_sgt(
++			drm_info->front_info,
++			xen_drm_front_dbuf_to_cookie(gem_obj),
++			0, 0, 0, gem_obj->size,
++			drm_gem_cma_prime_get_sg_table(gem_obj));
 +	if (ret < 0)
-+		goto fail;
++		return ERR_PTR(ret);
 +
-+	ret = bind_evtchn_to_irqhandler(evtchnl->port,
-+			handler, 0, xb_dev->devicetype, evtchnl);
-+	if (ret < 0)
-+		goto fail;
++	DRM_DEBUG("Imported CMA buffer of size %zu\n", gem_obj->size);
 +
-+	evtchnl->irq = ret;
-+	return 0;
-+
-+fail:
-+	DRM_ERROR("Failed to allocate ring: %d\n", ret);
-+	return ret;
++	return gem_obj;
 +}
 +
-+int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info,
-+		struct xen_drm_front_ops *front_ops)
++static int gem_dumb_create(struct drm_file *filp, struct drm_device *dev,
++	struct drm_mode_create_dumb *args)
 +{
-+	struct xen_drm_front_cfg *cfg;
-+	int ret, conn;
++	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
 +
-+	cfg = &front_info->cfg;
-+
-+	front_info->evt_pairs = devm_kcalloc(&front_info->xb_dev->dev,
-+			cfg->num_connectors,
-+			sizeof(struct xen_drm_front_evtchnl_pair), GFP_KERNEL);
-+	if (!front_info->evt_pairs) {
-+		ret = -ENOMEM;
-+		goto fail;
++	if (drm_info->cfg->be_alloc) {
++		/* This use-case is not yet supported and probably won't be */
++		DRM_ERROR("Backend allocated buffers and CMA helpers are not supported at the same time\n");
++		return -EINVAL;
 +	}
 +
-+	for (conn = 0; conn < cfg->num_connectors; conn++) {
-+		ret = evtchnl_alloc(front_info, conn,
-+				&front_info->evt_pairs[conn].req,
-+				EVTCHNL_TYPE_REQ);
-+		if (ret < 0) {
-+			DRM_ERROR("Error allocating control channel\n");
-+			goto fail;
-+		}
-+
-+		ret = evtchnl_alloc(front_info, conn,
-+				&front_info->evt_pairs[conn].evt,
-+				EVTCHNL_TYPE_EVT);
-+		if (ret < 0) {
-+			DRM_ERROR("Error allocating in-event channel\n");
-+			goto fail;
-+		}
-+
-+		front_info->evt_pairs[conn].evt.u.evt.front_ops = front_ops;
-+	}
-+	front_info->num_evt_pairs = cfg->num_connectors;
-+	return 0;
-+
-+fail:
-+	xen_drm_front_evtchnl_free_all(front_info);
-+	return ret;
++	return drm_gem_cma_dumb_create(filp, dev, args);
 +}
 +
-+static int evtchnl_publish(struct xenbus_transaction xbt,
-+		struct xen_drm_front_evtchnl *evtchnl, const char *path,
-+		const char *node_ring, const char *node_chnl)
++static struct page **gem_get_pages(struct drm_gem_object *gem_obj)
 +{
-+	struct xenbus_device *xb_dev = evtchnl->front_info->xb_dev;
-+	int ret;
-+
-+	/* write control channel ring reference */
-+	ret = xenbus_printf(xbt, path, node_ring, "%u", evtchnl->gref);
-+	if (ret < 0) {
-+		xenbus_dev_error(xb_dev, ret, "writing ring-ref");
-+		return ret;
-+	}
-+
-+	/* write event channel ring reference */
-+	ret = xenbus_printf(xbt, path, node_chnl, "%u", evtchnl->port);
-+	if (ret < 0) {
-+		xenbus_dev_error(xb_dev, ret, "writing event channel");
-+		return ret;
-+	}
-+
-+	return 0;
++	return NULL;
 +}
 +
-+int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info)
-+{
-+	struct xenbus_transaction xbt;
-+	struct xen_drm_front_cfg *plat_data;
-+	int ret, conn;
++static const struct xen_drm_front_gem_ops xen_drm_front_gem_cma_ops = {
++	.free_object_unlocked  = drm_gem_cma_free_object,
++	.prime_get_sg_table    = drm_gem_cma_prime_get_sg_table,
++	.prime_import_sg_table = gem_import_sg_table,
 +
-+	plat_data = &front_info->cfg;
++	.prime_vmap            = drm_gem_cma_prime_vmap,
++	.prime_vunmap          = drm_gem_cma_prime_vunmap,
++	.prime_mmap            = drm_gem_cma_prime_mmap,
 +
-+again:
-+	ret = xenbus_transaction_start(&xbt);
-+	if (ret < 0) {
-+		xenbus_dev_fatal(front_info->xb_dev, ret,
-+				"starting transaction");
-+		return ret;
-+	}
++	.dumb_create           = gem_dumb_create,
 +
-+	for (conn = 0; conn < plat_data->num_connectors; conn++) {
-+		ret = evtchnl_publish(xbt,
-+				&front_info->evt_pairs[conn].req,
-+				plat_data->connectors[conn].xenstore_path,
-+				XENDISPL_FIELD_REQ_RING_REF,
-+				XENDISPL_FIELD_REQ_CHANNEL);
-+		if (ret < 0)
-+			goto fail;
++	.mmap                  = drm_gem_cma_mmap,
 +
-+		ret = evtchnl_publish(xbt,
-+				&front_info->evt_pairs[conn].evt,
-+				plat_data->connectors[conn].xenstore_path,
-+				XENDISPL_FIELD_EVT_RING_REF,
-+				XENDISPL_FIELD_EVT_CHANNEL);
-+		if (ret < 0)
-+			goto fail;
-+	}
-+
-+	ret = xenbus_transaction_end(xbt, 0);
-+	if (ret < 0) {
-+		if (ret == -EAGAIN)
-+			goto again;
-+
-+		xenbus_dev_fatal(front_info->xb_dev, ret,
-+				"completing transaction");
-+		goto fail_to_end;
-+	}
-+
-+	return 0;
-+
-+fail:
-+	xenbus_transaction_end(xbt, 1);
-+
-+fail_to_end:
-+	xenbus_dev_fatal(front_info->xb_dev, ret, "writing Xen store");
-+	return ret;
-+}
-+
-+void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl)
-+{
-+	int notify;
-+
-+	evtchnl->u.req.ring.req_prod_pvt++;
-+	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&evtchnl->u.req.ring, notify);
-+	if (notify)
-+		notify_remote_via_irq(evtchnl->irq);
-+}
-+
-+void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
-+		enum xen_drm_front_evtchnl_state state)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	if (!front_info->evt_pairs)
-+		return;
-+
-+	spin_lock_irqsave(&front_info->io_lock, flags);
-+	for (i = 0; i < front_info->num_evt_pairs; i++) {
-+		front_info->evt_pairs[i].req.state = state;
-+		front_info->evt_pairs[i].evt.state = state;
-+	}
-+	spin_unlock_irqrestore(&front_info->io_lock, flags);
-+
-+}
-+
-+void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info)
-+{
-+	int i;
-+
-+	if (!front_info->evt_pairs)
-+		return;
-+
-+	for (i = 0; i < front_info->num_evt_pairs; i++) {
-+		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
-+		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
-+	}
-+
-+	devm_kfree(&front_info->xb_dev->dev, front_info->evt_pairs);
-+	front_info->evt_pairs = NULL;
-+}
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
-new file mode 100644
-index 000000000000..e72d3aa68b4e
---- /dev/null
-+++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
-@@ -0,0 +1,89 @@
-+/*
-+ *  Xen para-virtual DRM device
-+ *
-+ *   This program is free software; you can redistribute it and/or modify
-+ *   it under the terms of the GNU General Public License as published by
-+ *   the Free Software Foundation; either version 2 of the License, or
-+ *   (at your option) any later version.
-+ *
-+ *   This program is distributed in the hope that it will be useful,
-+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *   GNU General Public License for more details.
-+ *
-+ * Copyright (C) 2016-2018 EPAM Systems Inc.
-+ *
-+ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-+ */
-+
-+#ifndef __XEN_DRM_FRONT_EVTCHNL_H_
-+#define __XEN_DRM_FRONT_EVTCHNL_H_
-+
-+#include <linux/completion.h>
-+#include <linux/types.h>
-+
-+#include <xen/interface/io/ring.h>
-+#include <xen/interface/io/displif.h>
-+
-+/*
-+ * All operations which are not connector oriented use this ctrl event channel,
-+ * e.g. fb_attach/destroy which belong to a DRM device, not to a CRTC.
-+ */
-+#define GENERIC_OP_EVT_CHNL	0
-+
-+enum xen_drm_front_evtchnl_state {
-+	EVTCHNL_STATE_DISCONNECTED,
-+	EVTCHNL_STATE_CONNECTED,
++	.get_pages             = gem_get_pages,
 +};
 +
-+enum xen_drm_front_evtchnl_type {
-+	EVTCHNL_TYPE_REQ,
-+	EVTCHNL_TYPE_EVT,
-+};
-+
-+struct xen_drm_front_drm_info;
-+
-+struct xen_drm_front_evtchnl {
-+	struct xen_drm_front_info *front_info;
-+	int gref;
-+	int port;
-+	int irq;
-+	int index;
-+	enum xen_drm_front_evtchnl_state state;
-+	enum xen_drm_front_evtchnl_type type;
-+	/* either response id or incoming event id */
-+	uint16_t evt_id;
-+	/* next request id or next expected event id */
-+	uint16_t evt_next_id;
-+	union {
-+		struct {
-+			struct xen_displif_front_ring ring;
-+			struct completion completion;
-+			/* latest response status */
-+			int resp_status;
-+		} req;
-+		struct {
-+			struct xendispl_event_page *page;
-+			struct xen_drm_front_ops *front_ops;
-+		} evt;
-+	} u;
-+};
-+
-+struct xen_drm_front_evtchnl_pair {
-+	struct xen_drm_front_evtchnl req;
-+	struct xen_drm_front_evtchnl evt;
-+};
-+
-+int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info,
-+		struct xen_drm_front_ops *front_ops);
-+
-+int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info);
-+
-+void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl);
-+
-+void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
-+		enum xen_drm_front_evtchnl_state state);
-+
-+void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info);
-+
-+#endif /* __XEN_DRM_FRONT_EVTCHNL_H_ */
++const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void)
++{
++	return &xen_drm_front_gem_cma_ops;
++}
 -- 
 2.7.4
