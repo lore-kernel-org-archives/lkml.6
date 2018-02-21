@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226HpZpG//+nFaGNBMofJB67Obnlwlsr2eBeOVTqu2qCUqebuF5MDfQrBqbofOSnPQjaD9sZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519218000; cv=none;
+X-Google-Smtp-Source: AH8x225IkrbmA6NmaVkHJqA0+dVUVYFMd3vqmfyysS1i0ck5hdAWX0/x9Vr2UrPWaje1CTA3iY5B
+ARC-Seal: i=1; a=rsa-sha256; t=1519217997; cv=none;
         d=google.com; s=arc-20160816;
-        b=hJwDM0W1q2OytJtYF2tiiPAIAMx/AHTmpLX0dH7TAvn1VOrvvdkTTZ/ReTIHe9Msnx
-         rlEkzNThsx0kHRs4OOADJemxKITeoW/g0smTOMnPSTOWMiaLscVyrrNYS5jkIxmfkQGe
-         p6TbtUt1LEOb6cRyPTVYdGL1IkZy108ROUTYnT9GcdAISPTEAghfKyx3Vh5Q4Kpxq1pE
-         zKHnCQPFAe+r5hEj7rOcMUA8ouPc1GzPjbGKnnxHrBNlhrWyvddkM2bDk+y+1Hvdamwh
-         MzGCwZ+3DgcIBcGbQNcJcm4E3bu1lOSegksRX5vkLMxFI76Ll4y+Ne2yeUbTW0wBGQP4
-         m2Yg==
+        b=Yw7irEK85yPH/0Crk6x1Ri4ikNutP6QAsSBx67nYQpS9Jq/T41yyzvNp+9bdUw1uyj
+         BNSosmRqoqhywjfnbILFNF983Yte0Wtc9tMhw+73xZObKiQWRzWqLmzAt9GlMaCWP05W
+         4xWF0siyA0kS2sVm9XYCCdaIMC3TJ9rwXAfVUsx5FSu+10hT6x49sdl90LXMA1EXuEqm
+         +8Qw9OHbFaJ4/Sm+FPUVVWjutz2iXSjpV70l0fOs3auvk2K5ynao7vy0js2qtw2PGZyl
+         6BL22ECriMB6y7Ihw4ZVXHEpj1QYGZfh/4ctsyfHklnavzcvrAsh4T+YYtqLDK0znr48
+         WUnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=w1HH9x+jfpvDbWXOH15traTsflm0//gMKiTaplQKIzQ=;
-        b=fOs2JPXhpE3/gF8PIIUdPGqCQV3ndFk52zYSZwtv2t6tFU7rBepZTcSF6h3myI0NdM
-         HMRLnJrzCe8r2shv0Rqqf9W4wxmipA97pYxLAwafK7rLvslU7eqCKT1dyDXlUgEFXzEN
-         BZ6QZzsXXMJFJh7KwPJoWIve6XLKzzxIKosfJ5ztg5Tl17DXZmnBOf4gjKb5bwny9dD6
-         hf5M+QLW83vUldFtEx50mu8n4+Ha+iVIzbAxGZKZGiy2SLJyvS1DQTCF+DdibPACWokz
-         tL1VzJtPNPOQtzvRqXgr/M4E7U8w9ENTfGnj9vRoMND1kQuF0FXN81k2TMAD4mD7OeM1
-         eXwg==
+        bh=S6BdgEWOYqUH/O/MrHgIj07FsqUD4uFX1erd7KnKD6I=;
+        b=tGVQMaMgC5/xYnQU2C0UXoJ4gJY8VVE3xn9eUUdoeK85qdwpdXdY1rawPipbisomDp
+         jqzbE6Zt6Un99lN2/Obp+ctjwSwcYNfGU3sRbga4ObRJecYRWrYzWSjpZRyUai7Ti7Qv
+         gxJBl7ZZynEjdOhtRKG8wsYrzWsSaSpMA7pp5ZpV6VkKiVk7z65v2DPJ8sAN+mbjmDzB
+         Qfk0VZd/JN2S0p/2aQd5CZMSvZ6ObtVjOzOtrAuXiOfa8uCnQbmAwwyNQDqc8htCgrQq
+         gs+TtNu+xwue9StZBwcP8+rBntv7wbAUIAuWr1RBVdv81Nlg5NQyFm8kv2ZROaVGLx+h
+         kacQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,6 +28,7 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	KarimAllah Ahmed <karahmed@amazon.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
+	Jim Mattson <jmattson@google.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
@@ -42,13 +43,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	arjan.van.de.ven@intel.com,
 	dave.hansen@intel.com,
-	jmattson@google.com,
 	kvm@vger.kernel.org,
 	sironi@amazon.de,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 053/167] KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we have a valid L02 MSR bitmap
-Date: Wed, 21 Feb 2018 13:47:44 +0100
-Message-Id: <20180221124527.451887429@linuxfoundation.org>
+Subject: [PATCH 4.14 052/167] X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
+Date: Wed, 21 Feb 2018 13:47:43 +0100
+Message-Id: <20180221124527.388537081@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -58,8 +58,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015534029730793?=
-X-GMAIL-MSGID: =?utf-8?q?1593015534029730793?=
+X-GMAIL-THRID: =?utf-8?q?1593015311446762291?=
+X-GMAIL-MSGID: =?utf-8?q?1593015531781859560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -69,24 +69,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: KarimAllah Ahmed <karahmed@amazon.de>
 
-commit 3712caeb14dcb33fb4d5114f14c0beef10aca101 upstream.
+commit 206587a9fb764d71f035dc7f6d3b6488f5d5b304 upstream.
 
-We either clear the CPU_BASED_USE_MSR_BITMAPS and end up intercepting all
-MSR accesses or create a valid L02 MSR bitmap and use that. This decision
-has to be made every time we evaluate whether we are going to generate the
-L02 MSR bitmap.
+These two variables should check whether SPEC_CTRL and PRED_CMD are
+supposed to be passed through to L2 guests or not. While
+msr_write_intercepted_l01 would return 'true' if it is not passed through.
 
-Before commit:
-
-  d28b387fb74d ("KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
-
-... this was probably OK since the decision was always identical.
-
-This is no longer the case now since the MSR bitmap might actually
-change once we decide to not intercept SPEC_CTRL and PRED_CMD.
+So just invert the result of msr_write_intercepted_l01 to implement the
+correct semantics.
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -102,26 +96,27 @@ Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: arjan.van.de.ven@intel.com
 Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
 Cc: kvm@vger.kernel.org
 Cc: sironi@amazon.de
-Link: http://lkml.kernel.org/r/1518305967-31356-6-git-send-email-dwmw@amazon.co.uk
+Fixes: 086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
+Link: http://lkml.kernel.org/r/1518305967-31356-5-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -10127,7 +10127,8 @@ static void nested_get_vmcs12_pages(stru
- 	if (cpu_has_vmx_msr_bitmap() &&
- 	    nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS) &&
- 	    nested_vmx_merge_msr_bitmap(vcpu, vmcs12))
--		;
-+		vmcs_set_bits(CPU_BASED_VM_EXEC_CONTROL,
-+			      CPU_BASED_USE_MSR_BITMAPS);
- 	else
- 		vmcs_clear_bits(CPU_BASED_VM_EXEC_CONTROL,
- 				CPU_BASED_USE_MSR_BITMAPS);
+@@ -10216,8 +10216,8 @@ static inline bool nested_vmx_merge_msr_
+ 	 *    updated to reflect this when L1 (or its L2s) actually write to
+ 	 *    the MSR.
+ 	 */
+-	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
+-	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
++	bool pred_cmd = !msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
++	bool spec_ctrl = !msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
+ 
+ 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
+ 	    !pred_cmd && !spec_ctrl)
