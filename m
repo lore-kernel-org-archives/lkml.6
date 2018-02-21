@@ -1,132 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932981AbeBUKV5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:21:57 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34003 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932631AbeBUKVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:21:52 -0500
-X-Google-Smtp-Source: AG47ELsa9eOZB7q+lxPhLROnxm/cK6g1fI2oN2hEP+TEx/1/np01nJzaLRmoYJZWMrdCTZcrCT0Kpy6klBdri5zSOOk=
-MIME-Version: 1.0
-In-Reply-To: <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Feb 2018 11:21:50 +0100
-X-Google-Sender-Auth: hssHMDE-t_z5XBxKm4JdIqPpmhs
-Message-ID: <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com>
-Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S932987AbeBUKW2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:22:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57750 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932714AbeBUKTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 05:19:20 -0500
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/8] x86/MCE: Put private structures and definitions into the internal header
+Date: Wed, 21 Feb 2018 11:18:53 +0100
+Message-Id: <20180221101900.10326-2-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180221101900.10326-1-bp@alien8.de>
+References: <20180221101900.10326-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+From: Borislav Petkov <bp@suse.de>
 
-On Wed, Feb 21, 2018 at 12:10 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
->
-> Changesets are very powerful, but the lack of a helper API
-> makes using them cumbersome. Introduce a simple copy based
-> API that makes things considerably easier.
->
-> To wit, adding a property using the raw API.
->
->         struct property *prop;
->         prop = kzalloc(sizeof(*prop)), GFP_KERNEL);
->         prop->name = kstrdup("compatible");
->         prop->value = kstrdup("foo,bar");
->         prop->length = strlen(prop->value) + 1;
->         of_changeset_add_property(ocs, np, prop);
->
-> while using the helper API
->
->         of_changeset_add_property_string(ocs, np, "compatible",
->                         "foo,bar");
->
-> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> [Fixed memory leak in __of_changeset_add_update_property_copy()]
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+... because they don't need to be exported outside of MCE.
 
-You missed one fix I have in my topic/overlays branch
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/overlays&id=150f95b9dec77ce371c229f7ac4d6dd8620bef4a
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/mce.h                | 52 -------------------------------
+ arch/x86/kernel/cpu/mcheck/mce-internal.h | 52 +++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 52 deletions(-)
 
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-
-> +/**
-> + * of_changeset_add_property_u32 - Create a new u32 property
-> + *
-> + * @ocs:       changeset pointer
-> + * @np:                device node pointer
-> + * @name:      name of the property
-> + * @val:       value in host endian format
-> + *
-> + * Adds a u32 property to the changeset.
-> + *
-> + * Returns zero on success, a negative error value otherwise.
-> + */
-> +static inline int of_changeset_add_property_u32(struct of_changeset *ocs,
-> +               struct device_node *np, const char *name, u32 val)
-> +{
-> +       val = cpu_to_be32(val);
-
-You must use an intermediate, to avoid complaints from sparse:
-
-    __be32 x = cpu_to_be32(val);
-
-> +       return __of_changeset_add_update_property_copy(ocs, np, name, &val,
-> +                       sizeof(val), false);
-
-s/val/x/
-
-> +}
-> +
-> +/**
-> + * of_changeset_update_property_u32 - Update u32 property
-> + *
-> + * @ocs:       changeset pointer
-> + * @np:                device node pointer
-> + * @name:      name of the property
-> + * @val:       value in host endian format
-> + *
-> + * Updates a u32 property to the changeset.
-> + *
-> + * Returns zero on success, a negative error value otherwise.
-> + */
-> +static inline int of_changeset_update_property_u32(
-> +       struct of_changeset *ocs, struct device_node *np,
-> +       const char *name, u32 val)
-> +{
-> +       val = cpu_to_be32(val);
-
-Oh, a new one.
-
-> +       return __of_changeset_add_update_property_copy(ocs, np, name, &val,
-> +                       sizeof(val), true);
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 96ea4b5ba658..c3fb9a792e13 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -138,58 +138,6 @@ struct mce_log_buffer {
+ 	struct mce entry[MCE_LOG_LEN];
+ };
+ 
+-struct mca_config {
+-	bool dont_log_ce;
+-	bool cmci_disabled;
+-	bool lmce_disabled;
+-	bool ignore_ce;
+-	bool disabled;
+-	bool ser;
+-	bool recovery;
+-	bool bios_cmci_threshold;
+-	u8 banks;
+-	s8 bootlog;
+-	int tolerant;
+-	int monarch_timeout;
+-	int panic_timeout;
+-	u32 rip_msr;
+-};
+-
+-struct mce_vendor_flags {
+-	/*
+-	 * Indicates that overflow conditions are not fatal, when set.
+-	 */
+-	__u64 overflow_recov	: 1,
+-
+-	/*
+-	 * (AMD) SUCCOR stands for S/W UnCorrectable error COntainment and
+-	 * Recovery. It indicates support for data poisoning in HW and deferred
+-	 * error interrupts.
+-	 */
+-	      succor		: 1,
+-
+-	/*
+-	 * (AMD) SMCA: This bit indicates support for Scalable MCA which expands
+-	 * the register space for each MCA bank and also increases number of
+-	 * banks. Also, to accommodate the new banks and registers, the MCA
+-	 * register space is moved to a new MSR range.
+-	 */
+-	      smca		: 1,
+-
+-	      __reserved_0	: 61;
+-};
+-
+-struct mca_msr_regs {
+-	u32 (*ctl)	(int bank);
+-	u32 (*status)	(int bank);
+-	u32 (*addr)	(int bank);
+-	u32 (*misc)	(int bank);
+-};
+-
+-extern struct mce_vendor_flags mce_flags;
+-
+-extern struct mca_msr_regs msr_ops;
+-
+ enum mce_notifier_prios {
+ 	MCE_PRIO_FIRST		= INT_MAX,
+ 	MCE_PRIO_SRAO		= INT_MAX - 1,
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+index aa0d5df9dc60..986c8dd2d320 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-internal.h
++++ b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+@@ -113,6 +113,58 @@ static inline void mce_register_injector_chain(struct notifier_block *nb)	{ }
+ static inline void mce_unregister_injector_chain(struct notifier_block *nb)	{ }
+ #endif
+ 
++struct mca_config {
++	bool dont_log_ce;
++	bool cmci_disabled;
++	bool lmce_disabled;
++	bool ignore_ce;
++	bool disabled;
++	bool ser;
++	bool recovery;
++	bool bios_cmci_threshold;
++	u8 banks;
++	s8 bootlog;
++	int tolerant;
++	int monarch_timeout;
++	int panic_timeout;
++	u32 rip_msr;
++};
++
+ extern struct mca_config mca_cfg;
+ 
++struct mce_vendor_flags {
++	/*
++	 * Indicates that overflow conditions are not fatal, when set.
++	 */
++	__u64 overflow_recov	: 1,
++
++	/*
++	 * (AMD) SUCCOR stands for S/W UnCorrectable error COntainment and
++	 * Recovery. It indicates support for data poisoning in HW and deferred
++	 * error interrupts.
++	 */
++	      succor		: 1,
++
++	/*
++	 * (AMD) SMCA: This bit indicates support for Scalable MCA which expands
++	 * the register space for each MCA bank and also increases number of
++	 * banks. Also, to accommodate the new banks and registers, the MCA
++	 * register space is moved to a new MSR range.
++	 */
++	      smca		: 1,
++
++	      __reserved_0	: 61;
++};
++
++extern struct mce_vendor_flags mce_flags;
++
++struct mca_msr_regs {
++	u32 (*ctl)	(int bank);
++	u32 (*status)	(int bank);
++	u32 (*addr)	(int bank);
++	u32 (*misc)	(int bank);
++};
++
++extern struct mca_msr_regs msr_ops;
++
+ #endif /* __X86_MCE_INTERNAL_H__ */
+-- 
+2.13.0
