@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2258p9YThpkdMRV0UYf5/QLbJAAlXMx678zgdiz9e/ROt6fkmRzyN7mkTV/LtdlGe6DNO1XK
-ARC-Seal: i=1; a=rsa-sha256; t=1519218721; cv=none;
+X-Google-Smtp-Source: AH8x226bOwsJ6uP2eeH+LU1CEpRf7wesaprIl+8Ra1RJo87RJ3LwsqO80HMnZ+PHDJeQs7LTN3Fz
+ARC-Seal: i=1; a=rsa-sha256; t=1519218719; cv=none;
         d=google.com; s=arc-20160816;
-        b=MKDYZjWiizubAXn1Gu7NSClGIphy5cmjWeM0QQsFaggeLzU9SYUWMHHWFlgz4HzrG7
-         K7LKfkazLENQ0oDTJGjoq1aTWL2LmGsouhYMxVLP0AAoVVt25j3EwHFx308mGvje46u/
-         PKyL445xxdAAnuNiABLuBc9tp2fTKBQHGQAj4lYCC4XrF5jIyTFew1bJWnNO0W8KYqP0
-         FRL7T+qOmWm0hklc2nodKiKXit1VpTffVWj6kqT/AzwpbqWf0CZFHZRbgqs5iqm+xK2I
-         TegtYStzYujw/92Nu+H51Cgw57Ka7hwBrN3CD3DOhqyY3I5pm04Z9VPgAtmo4sjpsqd+
-         LMhQ==
+        b=UtWyL4yDmxrFm+Ugu10S5DM8QYiAp/lPaOssAy0VxC08raj3Gs+DmWQmY+6UslhDBR
+         ovm+sxl8KS4TJBf9XdMmyvTCBQL/8ILhzQ65252DYKJSeq4VDfkyMXiy1gFAdo2korig
+         pwvCjjHAh1yEGLdw82kbHTRFC+vJhedVPJvd/voovb2IfgTY5lOhgjdUICMynqrzAEn2
+         gZwZxtTmbAng9Sq/cjnGMLb8Pla4QsdUG2j5w3v6bMG6FakRUpuK5U1FVavDvaJEWJqm
+         RJbdmtoBKUGPZ8EwU+4+0vfKeibN6ECaT/Rt3cM8nQ20jhy0G6Ae9KHytrD0mNL1hAIR
+         6eqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QBwTSRP3e4CDA/4j4ofTm2NRl0umK7RXC6XZMzDdNM4=;
-        b=fIFGTfWEsXzmVLrbDoYGKVDEw9VFxkJf0Jj8mKn7SCvsBLL79FTWbVd5o3fxoS5OZs
-         HgYArwvLknmSWCjPlId2YzR7bsz4iwV3C0jFckDmu9ZYqRctdscOY31Z6E8UdG/yYe6j
-         VdT1+wHySQSF9wlDRO+8uUuCFFWrArqWFQowRZOwLaJJ6tCXjGowrAo2HzLUtteko4R+
-         TwKlYVRL6wHIHGllagOfctRIKE9uzdOpPR6b+eURUqDY+WcAGSv9RgVYSz9TqiErmRZj
-         QSyuyHmjjMZ9w9Rlz3Xa4DyuTb0JOsCaguagDbxqcIrHRkYHQJq9cCKJG4ojX4VMXmUX
-         +QfQ==
+        bh=fq97V0IvyheZAOsKjczYKWEHIF5XT+saDchIHb6aA/0=;
+        b=kInS1PAFgtj4rRngpiN/85l8i5Q85V6EeL5jNVmpQJChk9MqI+Nezfofb/rglDie7/
+         7soNeVdLpXCcyEkESwRe9WAztT41WKU4/2EuuqeZAtYw4K9ZECvq9u6eZtu9MqiYKUeR
+         xjnF8Lp+iDRPm7+6GFOReVS/sXEkVhObNOC+DOiWkQ28Wta9Nj37fwevwCxgkpGYS+qE
+         99et48cLtyZvKQaev4FjRYGFIdbEbOVMUehaBp1RG0EJzKSfVB65SiHbChPwD3Gq8m1d
+         VFPopC0ww3SWESjo6hkQqV9/l3hRDo9w8f0F7eQQRaoULrBN2PVbWKvn0CgU5i538qNO
+         U66Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Greg Kurz <groug@kaod.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.15 141/163] 9p/trans_virtio: discard zero-length reply
-Date: Wed, 21 Feb 2018 13:49:30 +0100
-Message-Id: <20180221124537.930777399@linuxfoundation.org>
+	Liu Bo <bo.li.liu@oracle.com>,
+	Josef Bacik <jbacik@fb.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 140/163] Btrfs: fix unexpected -EEXIST when creating new inode
+Date: Wed, 21 Feb 2018 13:49:29 +0100
+Message-Id: <20180221124537.888018974@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015216279733219?=
-X-GMAIL-MSGID: =?utf-8?q?1593016290538774343?=
+X-GMAIL-THRID: =?utf-8?q?1593014643316551271?=
+X-GMAIL-MSGID: =?utf-8?q?1593016287583731759?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,34 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kurz <groug@kaod.org>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 26d99834f89e76514076d9cd06f61e56e6a509b8 upstream.
+commit 900c9981680067573671ecc5cbfa7c5770be3a40 upstream.
 
-When a 9p request is successfully flushed, the server is expected to just
-mark it as used without sending a 9p reply (ie, without writing data into
-the buffer). In this case, virtqueue_get_buf() will return len == 0 and
-we must not report a REQ_STATUS_RCVD status to the client, otherwise the
-client will erroneously assume the request has not been flushed.
+The highest objectid, which is assigned to new inode, is decided at
+the time of initializing fs roots.  However, in cases where log replay
+gets processed, the btree which fs root owns might be changed, so we
+have to search it again for the highest objectid, otherwise creating
+new inode would end up with -EEXIST.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+cc: <stable@vger.kernel.org> v4.4-rc6+
+Fixes: f32e48e92596 ("Btrfs: Initialize btrfs_root->highest_objectid when loading tree root and subvolume roots")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/trans_virtio.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -160,7 +160,8 @@ static void req_done(struct virtqueue *v
- 		spin_unlock_irqrestore(&chan->lock, flags);
- 		/* Wakeup if anyone waiting for VirtIO ring space. */
- 		wake_up(chan->vc_wq);
--		p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
-+		if (len)
-+			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
- 	}
- }
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -28,6 +28,7 @@
+ #include "hash.h"
+ #include "compression.h"
+ #include "qgroup.h"
++#include "inode-map.h"
  
+ /* magic values for the inode_only field in btrfs_log_inode:
+  *
+@@ -5715,6 +5716,23 @@ again:
+ 						      path);
+ 		}
+ 
++		if (!ret && wc.stage == LOG_WALK_REPLAY_ALL) {
++			struct btrfs_root *root = wc.replay_dest;
++
++			btrfs_release_path(path);
++
++			/*
++			 * We have just replayed everything, and the highest
++			 * objectid of fs roots probably has changed in case
++			 * some inode_item's got replayed.
++			 *
++			 * root->objectid_mutex is not acquired as log replay
++			 * could only happen during mount.
++			 */
++			ret = btrfs_find_highest_objectid(root,
++						  &root->highest_objectid);
++		}
++
+ 		key.offset = found_key.offset - 1;
+ 		wc.replay_dest->log_root = NULL;
+ 		free_extent_buffer(log->node);
