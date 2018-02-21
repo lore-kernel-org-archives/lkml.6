@@ -1,151 +1,99 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226bdpWeUJKmQws4TS5Iui66xAFbBK0k8Qlis0NKxLXASzfmLYIelpilokdhM+mnEu+AYtHT
-ARC-Seal: i=1; a=rsa-sha256; t=1519676151; cv=none;
+Return-Path: <arend.vanspriel@broadcom.com>
+X-Google-Smtp-Source: AH8x224x7pMSxo0EwAmRQKMOkCGIP0LEI7+012IOBOWzdVXbnzAShaopoci7BJeWSVu7hg1nMfL3
+ARC-Seal: i=1; a=rsa-sha256; t=1519210241; cv=none;
         d=google.com; s=arc-20160816;
-        b=knRwourw8noTtZHqWCFC81TZ7rCdCIs/sTbDoNyRFm4q5y+xzxRyL4/2uUwfCMqB3B
-         lrGUSAj79Wz9O7dgQ3FV35/nXaYwpEZMrPSaNr+fKiZz8f4mMnPDmuk2C0aR95OSGk6n
-         AT2ckZFJS0PbJ6PaO5xj/0ekv8pw2yxsJhVgwWXBm8FbcFVlIsfYJk7gLI/aOcxG0+e7
-         O0KGhaukm21c9ICWv15KC2VCehWwaduJ7jzgIRKC2QyQ4IwkivlEnP/WDcj3mQHBkmuq
-         Kv4GIzpywSA8vyFUjB6e79+/yO7xrKd924ieNSr6Td1rYS2BZ+wxMPECURu7JLCsRfBM
-         f0cQ==
+        b=HIvP65o4PZy1Iz9g++ghfGcWaeUIazVkrMU8M1QLmzQubf09hL27jmSL1K36QHmaAT
+         mg1RJ/CA918DKsrvt+z+/i4MyHtpxI0Sf64X8+AX6inWsE9HNgZy+5ZW/+Tq5HD0AiFz
+         KAXqg+LNlFB1plKtQxOl3oSo0G+tg/uCXgF+rfq35/wH7o4Hp4ckuk3A6sTYOhCMk6ad
+         mZN650sAnRxjUywipV7FYsONjUuf3SCELQi/YQh3XhMG005wPzPBNbDiweTnMmJsciWR
+         rXjce6OSssdMzlS1ge5L/cv6VzbabuUfsB0wV8BgXwxvC94ir/CHsTnMUjOUMfzbY0jY
+         hw1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=8G9qa0eDUptpjwV9QBWtYjwwgvAqTTe66wVCe8s01OU=;
-        b=pSeBagD/ZrMC9fV2dJvSCWnvLDe80bEfJMxTwDaNfsB5Fpo2inpf+WkKqp6VuZo0NW
-         s4Vt2xBUEB6fmdS6nw5QfqiY6nZCR8pb82affSb7R6+aVbC+KDTyaQ8favHcrxAfIMd2
-         zqqfsu0tuOT8Wq8m830wepoMLpvz5iDa+GPjSuXNGZ1GfHOhPeyoi0jiFtJpLlv9FYpz
-         jaD5gj3Qnpy6shmkeYSrS0BqUBnhWYebjFNL9Yntl5AjvgTCvUZ33BBoKyy1EIwVXWou
-         7luAAaDn2/ugFxNkujkrSmHVH/qxEN7Lg0sf8A4Ri4ZVDKhXOhV5TLsKBH3jLVz5FExq
-         9Ycg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=h7B7Cayff3+sxPAQJUBJ/PYpSfS7fMUMwOyQkvTrOGM=;
+        b=ce3JZCq6afJtKHRM5hehPMTC1q/zxFAJMaBVx3SrZl6LxKyrQpO3O/3cjjBnCkj3e4
+         2kTWl4aL3Rvq7BYWwv16RXryaQ0TC5+5jA+sapqmxllRV84gZti3G9bD/fEPX9HTXt+Q
+         crV3WT460WYfQ75hZS2Ycto5twQ3dRrD9uy6vIs3B/m34TvVqaM7kCunpLDuAF5Bynqi
+         hRha9UiA/xWX9suPMpXPcSzeHu3gJX5tokq8QiRVCKkmhdMbrlCI2QGUKmuPbM3auvoX
+         t4cvImB0vfgP2xe56oR/GPX52ZbBcQyi/6Nj0F9PA2Jm1TRJ0ufM5q/ZKZLoXmIqFZ9+
+         AsfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Krzysztof Piotr Oledzki <ole@ans.pl>
-Subject: [PATCH 3.18 01/13] netfilter: drop outermost socket lock in getsockopt()
-Date: Mon, 26 Feb 2018 21:15:29 +0100
-Message-Id: <20180226201527.311780415@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180226201527.242286068@linuxfoundation.org>
-References: <20180226201527.242286068@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+To: Kalle Valo <kvalo@codeaurora.org>,
+	Marcel Holtmann <marcel@holtmann.org>
+Cc: linux-wireless@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject: [PATCH 0/3] drivers: support for sysfs initiated coredump
+Date: Wed, 21 Feb 2018 11:50:17 +0100
+Message-Id: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593495940069905483?=
-X-GMAIL-MSGID: =?utf-8?q?1593495940069905483?=
+X-GMAIL-THRID: =?utf-8?q?1593007398481717171?=
+X-GMAIL-MSGID: =?utf-8?q?1593007398481717171?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+This series is intended for 4.17 adding support for sysfs initiated
+coredump. This uses new functionality that was added in drivers base.
+Device drivers can now implement a .coredump() callback upon which a
+sysfs entry is created when the device is bound to the driver. From
+user-space a device coredump can be initiated. The easiest way is by
+going the drivers entry and enter into the bound device folder like
+this:
 
-------------------
+  # cd /sys/bus/pci/drivers/brcmfmac/0000:02:00.0
+  # echo 1 > coredump
+  # ls /sys/class/devcoredump/
+  devcd1	disabled
+  # ls -l /sys/class/devcoredump/devcd1/
+  total 0
+  -rw------- 1 root root    0 Feb 19 23:49 data
+  lrwxrwxrwx 1 root root    0 Feb 19 23:49 failing_device ->
+  	../../../pci0000:00/0000:00:1c.0/0000:02:00.0
+  drwxr-xr-x 2 root root    0 Feb 19 23:49 power
+  lrwxrwxrwx 1 root root    0 Feb 19 23:49 subsystem ->
+  	../../../../class/devcoredump
+  -rw-r--r-- 1 root root 4096 Feb 19 23:49 uevent
 
-From: Paolo Abeni <pabeni@redhat.com>
+The device driver can implement the .coredump() callback as they like.
+The use of the dev_coredump api is not enforced although the sysfs entry
+is only created when CONFIG_DEV_COREDUMP is selected.
 
-commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
+Apart from brcmfmac, the other drivers used dev_coredump api and had a
+mechanism in place through debugfs, which is removed in these patches.
+With these patches initiating the coredump can be done without selecting
+CONFIG_DEBUGFS. No attempt was made to look for drivers providing some sore
+of coredump functionality by other means than the dev_coredump api.
 
-The Syzbot reported a possible deadlock in the netfilter area caused by
-rtnl lock, xt lock and socket lock being acquired with a different order
-on different code paths, leading to the following backtrace:
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
+The first 2 patches apply to the master branch of the wireless-drivers-next
+repository. The last patch applies to the master branch of the bluetooth-next.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.15.0+ #301 Not tainted
-------------------------------------------------------
-syzkaller233489/4179 is trying to acquire lock:
-  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
-net/core/rtnetlink.c:74
+Arend van Spriel (3):
+  brcmfmac: add support for sysfs initiated coredump
+  mwifiex: support sysfs initiated device coredump
+  btmrvl: support sysfs initiated firmware coredump
 
-but task is already holding lock:
-  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
-xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
+ drivers/bluetooth/btmrvl_debugfs.c                 | 31 ----------------------
+ drivers/bluetooth/btmrvl_drv.h                     |  2 --
+ drivers/bluetooth/btmrvl_main.c                    |  6 -----
+ drivers/bluetooth/btmrvl_sdio.c                    | 18 ++++++++-----
+ .../wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c  |  1 +
+ .../net/wireless/broadcom/brcm80211/brcmfmac/bus.h |  2 ++
+ .../wireless/broadcom/brcm80211/brcmfmac/core.c    |  7 +++++
+ .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    |  1 +
+ drivers/net/wireless/marvell/mwifiex/debugfs.c     | 31 +---------------------
+ drivers/net/wireless/marvell/mwifiex/pcie.c        | 19 +++++++++++--
+ drivers/net/wireless/marvell/mwifiex/sdio.c        | 13 +++++++++
+ drivers/net/wireless/marvell/mwifiex/usb.c         | 14 ++++++++++
+ 12 files changed, 68 insertions(+), 77 deletions(-)
 
-which lock already depends on the new lock.
-===
-
-Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
-only in the required scope"), we already acquire the socket lock in
-the innermost scope, where needed. In such commit I forgot to remove
-the outer-most socket lock from the getsockopt() path, this commit
-addresses the issues dropping it now.
-
-v1 -> v2: fix bad subj, added relavant 'fixes' tag
-
-Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
-Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
-Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
-Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
-Suggested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/ipv4/ip_sockglue.c   |    7 +------
- net/ipv6/ipv6_sockglue.c |   10 ++--------
- 2 files changed, 3 insertions(+), 14 deletions(-)
-
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1375,10 +1375,7 @@ int ip_getsockopt(struct sock *sk, int l
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
-@@ -1410,9 +1407,7 @@ int compat_ip_getsockopt(struct sock *sk
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
- 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
--		release_sock(sk);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 		return err;
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -1314,10 +1314,7 @@ int ipv6_getsockopt(struct sock *sk, int
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = nf_getsockopt(sk, PF_INET6, optname, optval,
--				&len);
--		release_sock(sk);
-+		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
-@@ -1356,10 +1353,7 @@ int compat_ipv6_getsockopt(struct sock *
- 		if (get_user(len, optlen))
- 			return -EFAULT;
- 
--		lock_sock(sk);
--		err = compat_nf_getsockopt(sk, PF_INET6,
--					   optname, optval, &len);
--		release_sock(sk);
-+		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
- 		if (err >= 0)
- 			err = put_user(len, optlen);
- 	}
+-- 
+1.9.1
