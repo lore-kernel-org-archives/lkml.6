@@ -1,54 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755124AbeBUSNr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:13:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60684 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbeBUSNq (ORCPT
+        id S934425AbeBUSOF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:14:05 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755127AbeBUSOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:13:46 -0500
-From: Colin King <colin.king@canonical.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: remove redundant initialization of pointer 'p'
-Date: Wed, 21 Feb 2018 18:13:40 +0000
-Message-Id: <20180221181340.7596-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 21 Feb 2018 13:14:03 -0500
+Date: Wed, 21 Feb 2018 10:14:10 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] tools/memory-model: update: remove rb-dep,
+ smp_read_barrier_depends, and lockless_dereference
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180221160602.GD3617@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
+ <20180221175857.GA23000@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221175857.GA23000@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022118-0056-0000-0000-00000421B08F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008571; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00993061; UDB=6.00504567; IPR=6.00772405;
+ MB=3.00019675; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-21 18:13:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022118-0057-0000-0000-00000863B63C
+Message-Id: <20180221181410.GL3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802210219
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Feb 21, 2018 at 06:58:57PM +0100, Andrea Parri wrote:
+> On Wed, Feb 21, 2018 at 12:15:56PM -0500, Alan Stern wrote:
+> > Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
+> > smp_read_barrier_depends, and lockless_dereference") was accidentally
+> > merged too early, while it was still in RFC form.  This patch adds in
+> > the missing pieces.
+> > 
+> > Akira pointed out some typos in the original patch, and he noted that
+> > cheatsheet.txt should be updated to indicate how unsuccessful RMW
+> > operations relate to address dependencies.
+> > 
+> > Andrea pointed out that the macro for rcu_dereference() in linux.def
+> > should now use the "once" annotation instead of "deref".  He also
+> > suggested that the comments should mention commit 5a8897cc7631
+> > ("locking/atomics/alpha: Add smp_read_barrier_depends() to
+> > _release()/_relaxed() atomics") as an important precursor, and he
+> > contributed commit cb13b424e986 ("locking/xchg/alpha: Add
+> > unconditional memory barrier to cmpxchg()"), another prerequisite.
+> > 
+> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > Suggested-by: Akira Yokosawa <akiyks@gmail.com>
+> > Suggested-by: Andrea Parri <parri.andrea@gmail.com>
+> > Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
+> 
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
-Pointer p is initialized with a value that is never read and is later
-re-assigned a new value, hence the initialization is redundant and can
-be removed.
+Applied, thank you!
 
-Cleans up clang warning:
-fs/f2fs/extent_cache.c:463:19: warning: Value stored to 'p' during
-its initialization is never read
+							Thanx, Paul
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/f2fs/extent_cache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index ff2352a0ed15..956b2744386b 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -460,7 +460,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
- 				struct rb_node *insert_parent)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct rb_node **p = &et->root.rb_node;
-+	struct rb_node **p;
- 	struct rb_node *parent = NULL;
- 	struct extent_node *en = NULL;
- 
--- 
-2.15.1
+> Thanks,
+>   Andrea
+> 
+> 
+> > 
+> > ---
+> > 
+> >  tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
+> >  tools/memory-model/Documentation/explanation.txt |    4 ++--
+> >  tools/memory-model/linux-kernel.def              |    2 +-
+> >  3 files changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
+> > ===================================================================
+> > --- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
+> > +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
+> > @@ -1,11 +1,11 @@
+> >                                    Prior Operation     Subsequent Operation
+> >                                    ---------------  ---------------------------
+> >                                 C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
+> > -                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
+> > +                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
+> >  
+> >  Store, e.g., WRITE_ONCE()            Y                                       Y
+> > -Load, e.g., READ_ONCE()              Y                              Y        Y
+> > -Unsuccessful RMW operation           Y                              Y        Y
+> > +Load, e.g., READ_ONCE()              Y                          Y   Y        Y
+> > +Unsuccessful RMW operation           Y                          Y   Y        Y
+> >  rcu_dereference()                    Y                          Y   Y        Y
+> >  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
+> >  Successful *_release()         C        Y  Y    Y     W                      Y
+> > Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+> > ===================================================================
+> > --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
+> > +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+> > @@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
+> >  executed on C before the fence (i.e., those which precede the fence in
+> >  program order).
+> >  
+> > -read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
+> > +read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
+> >  other properties which we discuss later.
+> >  
+> >  
+> > @@ -1138,7 +1138,7 @@ final effect is that even though the two
+> >  program order, it appears that they aren't.
+> >  
+> >  This could not have happened if the local cache had processed the
+> > -incoming stores in FIFO order.  In constrast, other architectures
+> > +incoming stores in FIFO order.  By contrast, other architectures
+> >  maintain at least the appearance of FIFO order.
+> >  
+> >  In practice, this difficulty is solved by inserting a special fence
+> > Index: usb-4.x/tools/memory-model/linux-kernel.def
+> > ===================================================================
+> > --- usb-4.x.orig/tools/memory-model/linux-kernel.def
+> > +++ usb-4.x/tools/memory-model/linux-kernel.def
+> > @@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
+> >  smp_store_release(X,V) { __store{release}(*X,V); }
+> >  smp_load_acquire(X) __load{acquire}(*X)
+> >  rcu_assign_pointer(X,V) { __store{release}(X,V); }
+> > -rcu_dereference(X) __load{deref}(X)
+> > +rcu_dereference(X) __load{once}(X)
+> >  
+> >  // Fences
+> >  smp_mb() { __fence{mb} ; }
+> > 
+> 
