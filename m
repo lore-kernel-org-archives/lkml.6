@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227kvV24Y1SPdszzogh6sF7ki+SC2HbpVh7arr0Hvmkrl3eMBO74N/+uzAwP8+TNCAp/KyAV
-ARC-Seal: i=1; a=rsa-sha256; t=1519218601; cv=none;
+X-Google-Smtp-Source: AH8x2249HzsSm50g1+qFygkBX5c3I8wS2LpAjbcFGhguw+8IdSDsotuG3B46fvzo51bsPsqdsKw1
+ARC-Seal: i=1; a=rsa-sha256; t=1519218599; cv=none;
         d=google.com; s=arc-20160816;
-        b=rrTwFzesjGqS3J1Jwi+fxzgnksuZpu+CUa+guTQvneyPjk/hmykfc+HD0senYcisKB
-         UnePzfM36mAQVy3K8QuHbc9H6mCEdWIKWkavoAzMNu6NE/1CdHvpvZa8Ia5JyRtDTjxB
-         m81t+1IKTA1xRvXEgeI8eZwweWgqngSIcFVmsL0YZCeJVoLWPiqx7t4ZML73rNqJUaPG
-         q4Bc9xpICMul6lXS+prCL2SJhHvSb6iU4bfD4m2/zQMJLlQ2zXUGgzLl8T36F9TIfSe6
-         nbEl6h19wvwGfrarmq74DWlnf56ZCnxe7a7vJJr56A5IZptwwt+uxzzoR63AMEGuFetz
-         ZTag==
+        b=ILO7p2ZuivH9VppLMRF1wUXitZWU8IH72fvZQXFdGPVTC2D6rFMeijlPWV1KXPmpI5
+         uhmfatJxXi4Z7IbHCSpXHeRm4eSwARBnef321cAQryBdlhQ+6H7M/yN7s6AsJUzsC7Rf
+         r05RElyhmeABzw2zC+7j13Wh40sZDPLDv5ehFehdPX8XKSFNdmI0tujpANSrXM5Azhye
+         p6XZ42c3WDAeEq/u6pndpdO4iDZCEyPTWf6XS1KCjX/rJTlRX9EysdB1BjSglQZrQe8R
+         ynUba2TNTwUKnrOifFnd8gVgZZrg/K4B1b39OkALXFO6y/2gC2e2gP0LkvEKhX0AHqwl
+         TgQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=y3sX7qBhDOvM8L4D/Pp9dE8pjVPeYRtenk2kF6iJ21Y=;
-        b=afAp1My54K3GgudSnVy96WNvQzKIrRSzdVMqWF4F+sbsVi5rrxLAGa17x8sduipjvH
-         cF4joNLtdEMcZdVPqRUF9KDckdl96cl1HoHZVpZIhRqeJGzSJ1/BEucT09UNVwgVnXhB
-         yaLTxvJRUDHIfOkMcdm2ywi5Nc+3XfLFMHTiClQ0ZQztiakaGQx+l2RCAQ/hpoYCLz69
-         CMS5FfPvKbPLAd1xGjukOcJiuhvXeXnH9gDsVnGACrEp5odKlb6bjC9B/4Wis0qoYIIe
-         kEvlvVnE1ZuLwYlwgqAUnEWPl6Q7wIXcgcksuEu5CQaVxp9JtkpHXcJQGuzyRm39Grxy
-         aMIg==
+        bh=h+rh9CtVQJhNQgA4EZMv1G6FmaI1rCqNbJlzrISOHMY=;
+        b=ibwIGZe9xftwcfXlSG83VoOamS1y+X1gDA9y8DFmVFaTptVbF6zujHdd+TqPmyisSS
+         wbZ0bgVm6TVCu3uFEHeKXYDMztCN2JTvfhiY5eVQm57huewgkBEDiMxzC8+N0YdTpBp9
+         S8wyyXwkNcoLdiTGlTz2tvg/jRcGFk4IQZspJ9EXnle/2lyj0GCK9BbVYpkBhTqTYgiu
+         7zlsNLia7AXpx45HEqCqCxrbRGZJdEpWjbAJxF9b5dYGJ+4fC+FZJ/nG8eOBN3dtZRkz
+         VCvucq0HHjUA0kDzxeUwjbgW2+d6SVsIgq+Lcw7p5NIWCPKDRUWe9ggtuEdkWJNxYSi1
+         D+Lw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	dan.j.williams@intel.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 063/163] x86/entry/64: Use PUSH_AND_CLEAN_REGS in more cases
-Date: Wed, 21 Feb 2018 13:48:12 +0100
-Message-Id: <20180221124533.950615182@linuxfoundation.org>
+Subject: [PATCH 4.15 062/163] x86/entry/64: Introduce the PUSH_AND_CLEAN_REGS macro
+Date: Wed, 21 Feb 2018 13:48:11 +0100
+Message-Id: <20180221124533.890417390@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015566176751887?=
-X-GMAIL-MSGID: =?utf-8?q?1593016164311843536?=
+X-GMAIL-THRID: =?utf-8?q?1593015562439488858?=
+X-GMAIL-MSGID: =?utf-8?q?1593016161935127665?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,13 +61,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 30907fd13bb593202574bb20af58d67c70a1ee14 upstream.
+commit 3f01daecd545e818098d84fd1ad43e19a508d705 upstream.
 
-entry_SYSCALL_64_after_hwframe() and nmi() can be converted to use
-PUSH_AND_CLEAN_REGS instead of opencoded variants thereof. Due to
-the interleaving, the additional XOR-based clearing of R8 and R9
-in entry_SYSCALL_64_after_hwframe() should not have any noticeable
-negative implications.
+Those instances where ALLOC_PT_GPREGS_ON_STACK is called just before
+SAVE_AND_CLEAR_REGS can trivially be replaced by PUSH_AND_CLEAN_REGS.
+This macro uses PUSH instead of MOV and should therefore be faster, at
+least on newer CPUs.
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
@@ -80,116 +79,79 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-6-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211104949.12992-5-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h  |    6 ++--
- arch/x86/entry/entry_64.S |   65 ++--------------------------------------------
- 2 files changed, 6 insertions(+), 65 deletions(-)
+ arch/x86/entry/calling.h  |   36 ++++++++++++++++++++++++++++++++++++
+ arch/x86/entry/entry_64.S |    6 ++----
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -137,7 +137,7 @@ For 32-bit we have the following convent
+@@ -137,6 +137,42 @@ For 32-bit we have the following convent
  	UNWIND_HINT_REGS offset=\offset
  	.endm
  
--	.macro PUSH_AND_CLEAR_REGS
-+	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -147,9 +147,9 @@ For 32-bit we have the following convent
- 	 */
- 	pushq   %rdi		/* pt_regs->di */
- 	pushq   %rsi		/* pt_regs->si */
--	pushq   %rdx		/* pt_regs->dx */
-+	pushq	\rdx		/* pt_regs->dx */
- 	pushq   %rcx		/* pt_regs->cx */
--	pushq   %rax		/* pt_regs->ax */
-+	pushq   \rax		/* pt_regs->ax */
- 	pushq   %r8		/* pt_regs->r8 */
- 	xorq    %r8, %r8	/* nospec   r8 */
- 	pushq   %r9		/* pt_regs->r9 */
++	.macro PUSH_AND_CLEAR_REGS
++	/*
++	 * Push registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
++	pushq   %rdi		/* pt_regs->di */
++	pushq   %rsi		/* pt_regs->si */
++	pushq   %rdx		/* pt_regs->dx */
++	pushq   %rcx		/* pt_regs->cx */
++	pushq   %rax		/* pt_regs->ax */
++	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
++	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
++	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
++	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
++	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
++	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
++	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
++	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
++	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
++	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
++	UNWIND_HINT_REGS
++	.endm
++
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -227,35 +227,8 @@ ENTRY(entry_SYSCALL_64)
- 	pushq	%rcx				/* pt_regs->ip */
- GLOBAL(entry_SYSCALL_64_after_hwframe)
- 	pushq	%rax				/* pt_regs->orig_ax */
--	pushq	%rdi				/* pt_regs->di */
--	pushq	%rsi				/* pt_regs->si */
--	pushq	%rdx				/* pt_regs->dx */
--	pushq	%rcx				/* pt_regs->cx */
--	pushq	$-ENOSYS			/* pt_regs->ax */
--	pushq	%r8				/* pt_regs->r8 */
--	pushq	%r9				/* pt_regs->r9 */
--	pushq	%r10				/* pt_regs->r10 */
--	/*
--	 * Clear extra registers that a speculation attack might
--	 * otherwise want to exploit. Interleave XOR with PUSH
--	 * for better uop scheduling:
--	 */
--	xorq	%r10, %r10			/* nospec   r10 */
--	pushq	%r11				/* pt_regs->r11 */
--	xorq	%r11, %r11			/* nospec   r11 */
--	pushq	%rbx				/* pt_regs->rbx */
--	xorl	%ebx, %ebx			/* nospec   rbx */
--	pushq	%rbp				/* pt_regs->rbp */
--	xorl	%ebp, %ebp			/* nospec   rbp */
--	pushq	%r12				/* pt_regs->r12 */
--	xorq	%r12, %r12			/* nospec   r12 */
--	pushq	%r13				/* pt_regs->r13 */
--	xorq	%r13, %r13			/* nospec   r13 */
--	pushq	%r14				/* pt_regs->r14 */
--	xorq	%r14, %r14			/* nospec   r14 */
--	pushq	%r15				/* pt_regs->r15 */
--	xorq	%r15, %r15			/* nospec   r15 */
--	UNWIND_HINT_REGS
-+
-+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
+@@ -564,8 +564,7 @@ END(irq_entries_start)
+ 	call	switch_to_thread_stack
+ 1:
  
- 	TRACE_IRQS_OFF
- 
-@@ -1388,39 +1361,7 @@ ENTRY(nmi)
- 	pushq	1*8(%rdx)	/* pt_regs->rip */
- 	UNWIND_HINT_IRET_REGS
- 	pushq   $-1		/* pt_regs->orig_ax */
--	pushq   %rdi		/* pt_regs->di */
--	pushq   %rsi		/* pt_regs->si */
--	pushq   (%rdx)		/* pt_regs->dx */
--	pushq   %rcx		/* pt_regs->cx */
--	pushq   %rax		/* pt_regs->ax */
--	/*
--	 * Sanitize registers of values that a speculation attack
--	 * might otherwise want to exploit. The lower registers are
--	 * likely clobbered well before they could be put to use in
--	 * a speculative execution gadget. Interleave XOR with PUSH
--	 * for better uop scheduling:
--	 */
--	pushq   %r8		/* pt_regs->r8 */
--	xorq    %r8, %r8	/* nospec   r8 */
--	pushq   %r9		/* pt_regs->r9 */
--	xorq    %r9, %r9	/* nospec   r9 */
--	pushq   %r10		/* pt_regs->r10 */
--	xorq    %r10, %r10	/* nospec   r10 */
--	pushq   %r11		/* pt_regs->r11 */
--	xorq    %r11, %r11	/* nospec   r11*/
--	pushq	%rbx		/* pt_regs->rbx */
--	xorl    %ebx, %ebx	/* nospec   rbx*/
--	pushq	%rbp		/* pt_regs->rbp */
--	xorl    %ebp, %ebp	/* nospec   rbp*/
--	pushq	%r12		/* pt_regs->r12 */
--	xorq    %r12, %r12	/* nospec   r12*/
--	pushq	%r13		/* pt_regs->r13 */
--	xorq    %r13, %r13	/* nospec   r13*/
--	pushq	%r14		/* pt_regs->r14 */
--	xorq    %r14, %r14	/* nospec   r14*/
--	pushq	%r15		/* pt_regs->r15 */
--	xorq    %r15, %r15	/* nospec   r15*/
--	UNWIND_HINT_REGS
-+	PUSH_AND_CLEAR_REGS rdx=(%rdx)
+-	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_AND_CLEAR_REGS
++	PUSH_AND_CLEAR_REGS
  	ENCODE_FRAME_POINTER
  
- 	/*
+ 	testb	$3, CS(%rsp)
+@@ -1112,8 +1111,7 @@ ENTRY(xen_failsafe_callback)
+ 	addq	$0x30, %rsp
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+-	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_AND_CLEAR_REGS
++	PUSH_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
