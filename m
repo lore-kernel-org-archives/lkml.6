@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224O8IhalbUb9DnbE7ilD5fiKEb1IqvlC5FMEMcldhe2ms/sUKa/OQb1W5lOR/3FsDuXqots
-ARC-Seal: i=1; a=rsa-sha256; t=1519218708; cv=none;
+X-Google-Smtp-Source: AH8x226Fzb4L+CO820Xug+ubajs4mvhEH9WmDb9BG6hBvcoKJ290FtRYsB1DgJQK2wiflXuNIGEF
+ARC-Seal: i=1; a=rsa-sha256; t=1519218705; cv=none;
         d=google.com; s=arc-20160816;
-        b=G8MIPmBjfik/ks+mmE1B6D/yZuTuj4+4YRjnvYcqZI0wCwkgjYmn9VV8nY7nKIRQ13
-         UBS3yt2i2v52YvxYUs882+k1yCVMadKfNRikCacxvYHiD+a+FACxVyTggBImjDj911yU
-         dMr/WpcAVuNmk1dMJg7p5AgeI9CgpZnvIr9wz3ZsTwDhN6lzm6lpi+9Ety2/OxN/qZzJ
-         QsVRP5220YKFlzpQo9wx+q85a06abQfFaWJqc3oXOZdPVuWVqHNwoi237SyBMGalEgI5
-         q8LmDT+Lok+RJikxhmNsaNWy92RobFA6A4EhV4eRDi7/H2n4eJ+IteqcAT9QdY78SSFa
-         WWBA==
+        b=oVw2Z9il9X7si5PwZhXz2PdtmNqFKsxQFhnBM9pDBLp75C8lrU2sN9OYu9bB3mIxHr
+         yo1OYQO+zt2IKr3tX9tSREP0Fe5PQbdgIPQQYvpCHetBYaqYV91u+yDkHLR1nh9x5Ens
+         rbJBJnBSXdv9SL4SALhzqUsjnbfhqUN2ePJDqLUxkQVtA67vIO0w1aJpiDyUEDyXbhUE
+         nl/pKmwtDyA4kIURGqbE39lJZrDu83gsAWwpdwYCl6oJ7MgTYWyPE8j1+m4jXVI5Ms/5
+         ruSPg3NdMeL4SvszOVu46n2JvfaH7Rj7x/pxnDUp+zdgQjPlD42nZ88vgFrThMY29zRY
+         A0Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZkBuKJ3Cy2EuRntMh31vUlR5hzWQqVpAr/xzTrvRc6s=;
-        b=xuSye/Z0Nm2wbUbZVmJE2i2gAiTq+HrZWdyEYFcPLF1oKJ+KnCCeJ3cDvyZB9CI6Xa
-         55JbeN14TjbxZvACn48dvAOkVsayRnEwdOh+Ysjt/oeX9s8ac79Sc3sGpVlvfPG0vJWH
-         JQvNpsTNHZFG9qnuj2YaOB/7gzSMI3Wce7gva2IFcpHRsuTtCmRno5EcE0ekwaoW3ihg
-         eeEYs+Fokw3HzD+vOoHI1a9rQ9Ou4j24hjIGtvbPmEebVfJ00D2ss/O8TPDp3FIf0OEi
-         xTvjumvTp8912gpGu3cgzN6ZtjitlsihwxMA6hARBFyHV9HuFXPrIG0ewbdZAlq0DDsp
-         UPmw==
+        bh=yaDIxE3oYVTOJIfJOXf2bs2/2DYqMxO84IxCRS17yhU=;
+        b=m8MF+htGRrjEwO1yUzde+gLGEYVdBdonkZcysSEyWQfoX8oyyj/ikcoOlPkF3jxedd
+         WYIIbaydm1WwRRa7pE783iiRg/Yb+8CddOpLCafkl+ADlBRYn8+4OEF4mPvwtD7p54Xh
+         jOmKpLlLCSZQj6erFO4ZRHSjWjryAXQDqhRdEM4J9x2VRzxdRkXZQteWitszeQKnAo2B
+         ExeHFg/+6N/lg+7nJCm3w0MlTTmPCwMCnr5gUuPBlzewIFAQ2dwln5M3abYlv9Mif5fF
+         CXtpdLH8aMv6lHVjWEbkzv/lZpMtb8s9jiWW4DrhYeR3jWnCcWBYF6JKguoFOesxTtI5
+         WM4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pierre Ossman <pierre@ossman.eu>,
-	=?UTF-8?q?Beno=C3=AEt=20Th=C3=A9baudeau?= <benoit@wsystem.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Benjamin Beckmeyer <beckmeyer.b@rittal.de>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.15 101/163] mmc: sdhci: Implement an SDHCI-specific bounce buffer
-Date: Wed, 21 Feb 2018 13:48:50 +0100
-Message-Id: <20180221124535.879165421@linuxfoundation.org>
+	Alexander Potapenko <glider@google.com>,
+	Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.15 100/163] mbcache: initialize entry->e_referenced in mb_cache_entry_create()
+Date: Wed, 21 Feb 2018 13:48:49 +0100
+Message-Id: <20180221124535.820576980@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -45,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015680926226129?=
-X-GMAIL-MSGID: =?utf-8?q?1593016275959228719?=
+X-GMAIL-THRID: =?utf-8?q?1593015301228685105?=
+X-GMAIL-MSGID: =?utf-8?q?1593016273756488531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,302 +49,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Alexander Potapenko <glider@google.com>
 
-commit bd9b902798ab14d19ca116b10bde581ddff8f905 upstream.
+commit 3876bbe27d04b848750d5310a37d6b76b593f648 upstream.
 
-The bounce buffer is gone from the MMC core, and now we found out
-that there are some (crippled) i.MX boards out there that have broken
-ADMA (cannot do scatter-gather), and also broken PIO so they must
-use SDMA. Closer examination shows a less significant slowdown
-also on SDMA-only capable Laptop hosts.
+KMSAN reported use of uninitialized |entry->e_referenced| in a condition
+in mb_cache_shrink():
 
-SDMA sets down the number of segments to one, so that each segment
-gets turned into a singular request that ping-pongs to the block
-layer before the next request/segment is issued.
+==================================================================
+BUG: KMSAN: use of uninitialized memory in mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
+CPU: 2 PID: 816 Comm: kswapd1 Not tainted 4.11.0-rc5+ #2877
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
+01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:16 [inline]
+ dump_stack+0x172/0x1c0 lib/dump_stack.c:52
+ kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:927
+ __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:469
+ mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
+ mb_cache_scan+0x67/0x80 fs/mbcache.c:321
+ do_shrink_slab mm/vmscan.c:397 [inline]
+ shrink_slab+0xc3d/0x12d0 mm/vmscan.c:500
+ shrink_node+0x208f/0x2fd0 mm/vmscan.c:2603
+ kswapd_shrink_node mm/vmscan.c:3172 [inline]
+ balance_pgdat mm/vmscan.c:3289 [inline]
+ kswapd+0x160f/0x2850 mm/vmscan.c:3478
+ kthread+0x46c/0x5f0 kernel/kthread.c:230
+ ret_from_fork+0x29/0x40 arch/x86/entry/entry_64.S:430
+chained origin:
+ save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:317 [inline]
+ kmsan_internal_chain_origin+0x12a/0x1f0 mm/kmsan/kmsan.c:547
+ __msan_store_shadow_origin_1+0xac/0x110 mm/kmsan/kmsan_instr.c:257
+ mb_cache_entry_create+0x3b3/0xc60 fs/mbcache.c:95
+ ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
+ ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
+ ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
+ ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
+ ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
+ __vfs_setxattr+0x703/0x790 fs/xattr.c:149
+ __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
+ vfs_setxattr fs/xattr.c:223 [inline]
+ setxattr+0x6ae/0x790 fs/xattr.c:449
+ path_setxattr+0x1eb/0x380 fs/xattr.c:468
+ SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
+ SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
+ entry_SYSCALL_64_fastpath+0x13/0x94
+origin:
+ save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
+ kmsan_internal_poison_shadow+0xb1/0x1a0 mm/kmsan/kmsan.c:198
+ kmsan_kmalloc+0x7f/0xe0 mm/kmsan/kmsan.c:337
+ kmem_cache_alloc+0x1c2/0x1e0 mm/slub.c:2766
+ mb_cache_entry_create+0x283/0xc60 fs/mbcache.c:86
+ ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
+ ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
+ ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
+ ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
+ ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
+ __vfs_setxattr+0x703/0x790 fs/xattr.c:149
+ __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
+ vfs_setxattr fs/xattr.c:223 [inline]
+ setxattr+0x6ae/0x790 fs/xattr.c:449
+ path_setxattr+0x1eb/0x380 fs/xattr.c:468
+ SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
+ SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
+ entry_SYSCALL_64_fastpath+0x13/0x94
+==================================================================
 
-Apparently it happens a lot that the block layer send requests
-that include a lot of physically discontiguous segments. My guess
-is that this phenomenon is coming from the file system.
-
-These devices that cannot handle scatterlists in hardware can see
-major benefits from a DMA-contiguous bounce buffer.
-
-This patch accumulates those fragmented scatterlists in a physically
-contiguous bounce buffer so that we can issue bigger DMA data chunks
-to/from the card.
-
-When tested with a PCI-integrated host (1217:8221) that
-only supports SDMA:
-0b:00.0 SD Host controller: O2 Micro, Inc. OZ600FJ0/OZ900FJ0/OZ600FJS
-        SD/MMC Card Reader Controller (rev 05)
-This patch gave ~1Mbyte/s improved throughput on large reads and
-writes when testing using iozone than without the patch.
-
-dmesg:
-sdhci-pci 0000:0b:00.0: SDHCI controller found [1217:8221] (rev 5)
-mmc0 bounce up to 128 segments into one, max segment size 65536 bytes
-mmc0: SDHCI controller on PCI [0000:0b:00.0] using DMA
-
-On the i.MX SDHCI controllers on the crippled i.MX 25 and i.MX 35
-the patch restores the performance to what it was before we removed
-the bounce buffers.
-
-Cc: Pierre Ossman <pierre@ossman.eu>
-Cc: Benoît Thébaudeau <benoit@wsystem.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Benjamin Beckmeyer <beckmeyer.b@rittal.de>
-Cc: stable@vger.kernel.org # v4.14+
-Fixes: de3ee99b097d ("mmc: Delete bounce buffer handling")
-Tested-by: Benjamin Beckmeyer <beckmeyer.b@rittal.de>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: stable@vger.kernel.org # v4.6
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci.c |  164 ++++++++++++++++++++++++++++++++++++++++++++---
- drivers/mmc/host/sdhci.h |    3 
- 2 files changed, 159 insertions(+), 8 deletions(-)
+ fs/mbcache.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -21,6 +21,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/slab.h>
- #include <linux/scatterlist.h>
-+#include <linux/sizes.h>
- #include <linux/swiotlb.h>
- #include <linux/regulator/consumer.h>
- #include <linux/pm_runtime.h>
-@@ -502,8 +503,35 @@ static int sdhci_pre_dma_transfer(struct
- 	if (data->host_cookie == COOKIE_PRE_MAPPED)
- 		return data->sg_count;
- 
--	sg_count = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
--			      mmc_get_dma_dir(data));
-+	/* Bounce write requests to the bounce buffer */
-+	if (host->bounce_buffer) {
-+		unsigned int length = data->blksz * data->blocks;
-+
-+		if (length > host->bounce_buffer_size) {
-+			pr_err("%s: asked for transfer of %u bytes exceeds bounce buffer %u bytes\n",
-+			       mmc_hostname(host->mmc), length,
-+			       host->bounce_buffer_size);
-+			return -EIO;
-+		}
-+		if (mmc_get_dma_dir(data) == DMA_TO_DEVICE) {
-+			/* Copy the data to the bounce buffer */
-+			sg_copy_to_buffer(data->sg, data->sg_len,
-+					  host->bounce_buffer,
-+					  length);
-+		}
-+		/* Switch ownership to the DMA */
-+		dma_sync_single_for_device(host->mmc->parent,
-+					   host->bounce_addr,
-+					   host->bounce_buffer_size,
-+					   mmc_get_dma_dir(data));
-+		/* Just a dummy value */
-+		sg_count = 1;
-+	} else {
-+		/* Just access the data directly from memory */
-+		sg_count = dma_map_sg(mmc_dev(host->mmc),
-+				      data->sg, data->sg_len,
-+				      mmc_get_dma_dir(data));
-+	}
- 
- 	if (sg_count == 0)
- 		return -ENOSPC;
-@@ -673,6 +701,14 @@ static void sdhci_adma_table_post(struct
- 	}
- }
- 
-+static u32 sdhci_sdma_address(struct sdhci_host *host)
-+{
-+	if (host->bounce_buffer)
-+		return host->bounce_addr;
-+	else
-+		return sg_dma_address(host->data->sg);
-+}
-+
- static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- {
- 	u8 count;
-@@ -858,8 +894,8 @@ static void sdhci_prepare_data(struct sd
- 					     SDHCI_ADMA_ADDRESS_HI);
- 		} else {
- 			WARN_ON(sg_cnt != 1);
--			sdhci_writel(host, sg_dma_address(data->sg),
--				SDHCI_DMA_ADDRESS);
-+			sdhci_writel(host, sdhci_sdma_address(host),
-+				     SDHCI_DMA_ADDRESS);
- 		}
- 	}
- 
-@@ -2248,7 +2284,12 @@ static void sdhci_pre_req(struct mmc_hos
- 
- 	mrq->data->host_cookie = COOKIE_UNMAPPED;
- 
--	if (host->flags & SDHCI_REQ_USE_DMA)
-+	/*
-+	 * No pre-mapping in the pre hook if we're using the bounce buffer,
-+	 * for that we would need two bounce buffers since one buffer is
-+	 * in flight when this is getting called.
-+	 */
-+	if (host->flags & SDHCI_REQ_USE_DMA && !host->bounce_buffer)
- 		sdhci_pre_dma_transfer(host, mrq->data, COOKIE_PRE_MAPPED);
- }
- 
-@@ -2352,8 +2393,45 @@ static bool sdhci_request_done(struct sd
- 		struct mmc_data *data = mrq->data;
- 
- 		if (data && data->host_cookie == COOKIE_MAPPED) {
--			dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
--				     mmc_get_dma_dir(data));
-+			if (host->bounce_buffer) {
-+				/*
-+				 * On reads, copy the bounced data into the
-+				 * sglist
-+				 */
-+				if (mmc_get_dma_dir(data) == DMA_FROM_DEVICE) {
-+					unsigned int length = data->bytes_xfered;
-+
-+					if (length > host->bounce_buffer_size) {
-+						pr_err("%s: bounce buffer is %u bytes but DMA claims to have transferred %u bytes\n",
-+						       mmc_hostname(host->mmc),
-+						       host->bounce_buffer_size,
-+						       data->bytes_xfered);
-+						/* Cap it down and continue */
-+						length = host->bounce_buffer_size;
-+					}
-+					dma_sync_single_for_cpu(
-+						host->mmc->parent,
-+						host->bounce_addr,
-+						host->bounce_buffer_size,
-+						DMA_FROM_DEVICE);
-+					sg_copy_from_buffer(data->sg,
-+						data->sg_len,
-+						host->bounce_buffer,
-+						length);
-+				} else {
-+					/* No copying, just switch ownership */
-+					dma_sync_single_for_cpu(
-+						host->mmc->parent,
-+						host->bounce_addr,
-+						host->bounce_buffer_size,
-+						mmc_get_dma_dir(data));
-+				}
-+			} else {
-+				/* Unmap the raw data */
-+				dma_unmap_sg(mmc_dev(host->mmc), data->sg,
-+					     data->sg_len,
-+					     mmc_get_dma_dir(data));
-+			}
- 			data->host_cookie = COOKIE_UNMAPPED;
- 		}
- 	}
-@@ -2636,7 +2714,8 @@ static void sdhci_data_irq(struct sdhci_
- 		 */
- 		if (intmask & SDHCI_INT_DMA_END) {
- 			u32 dmastart, dmanow;
--			dmastart = sg_dma_address(host->data->sg);
-+
-+			dmastart = sdhci_sdma_address(host);
- 			dmanow = dmastart + host->data->bytes_xfered;
- 			/*
- 			 * Force update to the next DMA block boundary.
-@@ -3217,6 +3296,68 @@ void __sdhci_read_caps(struct sdhci_host
- }
- EXPORT_SYMBOL_GPL(__sdhci_read_caps);
- 
-+static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
-+{
-+	struct mmc_host *mmc = host->mmc;
-+	unsigned int max_blocks;
-+	unsigned int bounce_size;
-+	int ret;
-+
-+	/*
-+	 * Cap the bounce buffer at 64KB. Using a bigger bounce buffer
-+	 * has diminishing returns, this is probably because SD/MMC
-+	 * cards are usually optimized to handle this size of requests.
-+	 */
-+	bounce_size = SZ_64K;
-+	/*
-+	 * Adjust downwards to maximum request size if this is less
-+	 * than our segment size, else hammer down the maximum
-+	 * request size to the maximum buffer size.
-+	 */
-+	if (mmc->max_req_size < bounce_size)
-+		bounce_size = mmc->max_req_size;
-+	max_blocks = bounce_size / 512;
-+
-+	/*
-+	 * When we just support one segment, we can get significant
-+	 * speedups by the help of a bounce buffer to group scattered
-+	 * reads/writes together.
-+	 */
-+	host->bounce_buffer = devm_kmalloc(mmc->parent,
-+					   bounce_size,
-+					   GFP_KERNEL);
-+	if (!host->bounce_buffer) {
-+		pr_err("%s: failed to allocate %u bytes for bounce buffer, falling back to single segments\n",
-+		       mmc_hostname(mmc),
-+		       bounce_size);
-+		/*
-+		 * Exiting with zero here makes sure we proceed with
-+		 * mmc->max_segs == 1.
-+		 */
-+		return 0;
-+	}
-+
-+	host->bounce_addr = dma_map_single(mmc->parent,
-+					   host->bounce_buffer,
-+					   bounce_size,
-+					   DMA_BIDIRECTIONAL);
-+	ret = dma_mapping_error(mmc->parent, host->bounce_addr);
-+	if (ret)
-+		/* Again fall back to max_segs == 1 */
-+		return 0;
-+	host->bounce_buffer_size = bounce_size;
-+
-+	/* Lie about this since we're bouncing */
-+	mmc->max_segs = max_blocks;
-+	mmc->max_seg_size = bounce_size;
-+	mmc->max_req_size = bounce_size;
-+
-+	pr_info("%s bounce up to %u segments into one, max segment size %u bytes\n",
-+		mmc_hostname(mmc), max_blocks, bounce_size);
-+
-+	return 0;
-+}
-+
- int sdhci_setup_host(struct sdhci_host *host)
- {
- 	struct mmc_host *mmc;
-@@ -3713,6 +3854,13 @@ int sdhci_setup_host(struct sdhci_host *
- 	 */
- 	mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
- 
-+	if (mmc->max_segs == 1) {
-+		/* This may alter mmc->*_blk_* parameters */
-+		ret = sdhci_allocate_bounce_buffer(host);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- 
- unreg:
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -440,6 +440,9 @@ struct sdhci_host {
- 
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
-+	char *bounce_buffer;	/* For packing SDMA reads/writes */
-+	dma_addr_t bounce_addr;
-+	unsigned int bounce_buffer_size;
- 
- 	const struct sdhci_ops *ops;	/* Low level hw interface */
- 
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -94,6 +94,7 @@ int mb_cache_entry_create(struct mb_cach
+ 	entry->e_key = key;
+ 	entry->e_value = value;
+ 	entry->e_reusable = reusable;
++	entry->e_referenced = 0;
+ 	head = mb_cache_entry_head(cache, key);
+ 	hlist_bl_lock(head);
+ 	hlist_bl_for_each_entry(dup, dup_node, head, e_hash_list) {
