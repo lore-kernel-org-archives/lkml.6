@@ -1,64 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeBUI5x (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:57:53 -0500
-Received: from mail01.prevas.se ([62.95.78.3]:10906 "EHLO mail01.prevas.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752179AbeBUI5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:57:51 -0500
-X-IronPort-AV: E=Sophos;i="5.46,543,1511823600";
-   d="scan'208";a="3278863"
-Subject: Re: [PATCH 2/2] proc: use set_puts() at /proc/*/wchan
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180217072011.GB16074@avx2>
- <CAHp75Vd9ZnC059W2n5=Rx_gz3GN0LORPwt=_AdG5GZPJAUTasw@mail.gmail.com>
- <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Message-ID: <317b6413-0a46-8f5c-ad24-c5e183bc9a7a@prevas.dk>
-Date: Wed, 21 Feb 2018 09:57:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180220160212.8f3942d40e0b4014e2aa457c@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.16.8.31]
+        id S1752485AbeBUJAU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:00:20 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:43219 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751760AbeBUJAR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 04:00:17 -0500
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
+        Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/8] ARM: dts: artpec: use 1 GiB RAM
+Date: Wed, 21 Feb 2018 09:59:54 +0100
+Message-Id: <20180221090000.18091-3-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180221090000.18091-1-niklas.cassel@axis.com>
+References: <20180221090000.18091-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-21 01:02, Andrew Morton wrote:
-> On Sat, 17 Feb 2018 16:06:42 +0200 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> 
->> On Sat, Feb 17, 2018 at 9:20 AM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
->>> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
->>
->>
->>> -               seq_printf(m, "%s", symname);
->>> +               seq_puts(m, symname);
->>
->> While this might have no security concerns, the pattern might be
->> brainlessly used by some janitors and there would have security
->> implications.
-> 
-> And I'd like to see a changelog, please.  One which explains why
-> `symname' cannot have a %s (etc) in it, and never will.
+There has never been an artpec6 devboard produced
+with less than 1 GiB RAM.
 
-OK, since #youtoo: It doesn't _matter_ if symname is "%pHAHAHA %fooled
-you <unicode for evil grin emoji>", seq_puts does not interpret it at
-all. There are _never_ security implications with the above replacement.
-Sure, seq_printf(m, symname) would be bad, but that's not what is being
-done.
+Increase the default value to 1 GiB RAM, so that we
+can netboot with large initramfs without going OOM.
 
-AFAICT, this should always lead to slightly smaller code (one less
-parameter passed) and in all likelyhood also slightly faster (no format
-interpretation, no slow char-by-char handling by the string() function
-etc.). So the only case where I'd think this should not necessarily be
-done would be in a long sequence of seq_printf, where only one or two
-could be replaced by seq_puts/seq_putc.
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ arch/arm/boot/dts/artpec6-devboard.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rasmus
+diff --git a/arch/arm/boot/dts/artpec6-devboard.dts b/arch/arm/boot/dts/artpec6-devboard.dts
+index 9dfe845694cf..502f3de6dc5b 100644
+--- a/arch/arm/boot/dts/artpec6-devboard.dts
++++ b/arch/arm/boot/dts/artpec6-devboard.dts
+@@ -26,7 +26,7 @@
+ 
+ 	memory {
+ 		device_type = "memory";
+-		reg = <0x0 0x10000000>;
++		reg = <0x0 0x40000000>;
+ 	};
+ };
+ 
+-- 
+2.14.2
