@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226uod/0halBY8RHhFKbscGTZgJpmcNq3dvO7sR7suVm0EajgV1bXRCP8edhx4yp3xu0WPRc
-ARC-Seal: i=1; a=rsa-sha256; t=1519218540; cv=none;
+X-Google-Smtp-Source: AH8x226yFoDbYInkLl40LyxIt+XtafvCZy+7fMHV700LZl/eUOCpj9btJJA4SIlxWuoayewYqK6U
+ARC-Seal: i=1; a=rsa-sha256; t=1519218537; cv=none;
         d=google.com; s=arc-20160816;
-        b=rvASFB8u5YqnCPDy2VGkzRfch8/rM7ol+RX4snWiHjABp8ipRghMdE5ZY/5Qd7zjhC
-         G9d7zoRsmqXvdRaoxmkGIxPxrwIR6UBtkWUB1h7Lun0hlm4EjCTJMzvewVOIbBgGvF+3
-         +6AjM+q9UTUcw0cUaY2M3G97vo/qKFBvqWYp6SJYPctAS0Gp8n8djGI29OpOyxEhtuon
-         Ge2ECuMDPm68yuU8lTI2NvcR7MBSkbQrSMvGLDTETOF24YOIppmZETDD6/UTW8uzIq/i
-         LttQ2rZw1IlVzwe64e4w14VP5k084gZULHhgam6sH+vliRCetYapNNFcke4u5TEQJrD8
-         pyaw==
+        b=BxvvX7nnrVw7eFAxbbFqwosYjDPc+HwZFKShaThMr6rcdOvP1sdou/cI2qHP/8eZQ8
+         lq8sRmEcYkSp8xeP74vCjcTVkybNoGWvpKffkksah2gTHtKy9MD29QJDKr+yYaT59hJ8
+         t8Cwh/MII2/zSWxxnvV0efCEnOBXTOkqJx2bjxh/FiPoekqEffjHbjlKJjpS4v5OQemZ
+         +tg1Q0iil3Ffby/PnGJlls22CxqlZ0VkVKVhvIuGDRh4WCfropfsOWskVij0JenrRXg1
+         L9ZOMdTR/QurLFZMcrdpO9ZAK0tIG1rG20zU2vciC8TGa3nrR+ZNUYtOzIagZIPNKXi6
+         BZIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fYhbAyBa1ZxojxECUdhhR3E+zSSJ0nce+7qEfp/xQ00=;
-        b=C01OKNvPJksb5ypfvxztOEz4ueEdOejfsn3WCbT2IrVs2wFrVRoK1MVdsiVGS+UnOM
-         MgiLUyNlbl7Vd0xy0vRR1GfnchoytOhZ9s9AplvmxPPaKapZwrwz2fqTIPtBsw0GIX+H
-         UO74qqMMCTDVvInWOVKteIMjyzH8kZ91ib0fbDs+FmD0pgjhfNeCPyChCgMyaiLiF1zE
-         AHNIEGNf1v1aW9er+fUr+SD9k4bXUrcPDIW1KwQpRPD51Yk1IyhqzaVeFy6pVbXJMxU/
-         u6loorNDh9CHIWEjFkIXPgVctN95DFoPhykjsFj1kq55PBGiJUlTuMeC4czhLN6lyeCI
-         RDNg==
+        bh=3ptuJ51Rs7HbZlnE3uVygS+gNPzV0V2yqOV5v3feltA=;
+        b=pE/WpxawcuQgB8d0u57WLS6Ol2Vx12SSbTOH4zBpObo974aBgBScZGLeGDnmRzazjJ
+         AgpxjdM6/oWhEMKAa8Zbk0MiB2mzDcKfUnq6OnmcLjFSf4JjlMpbV/BSpcQ61THDsnRj
+         gkYQa5frdld0VcIH1RwIByyKm1VTsEDbYf7JTSZM78FLCoMVS6ONed/kMza9IImxuCHl
+         fdIjtAcfdvPjyof5vEBQXdsn1ODiDqRqI3kZxZbuuC2Oe82h6Tcboiobw1//kd6sRVTb
+         YWe8qgNgOHyoOH3G2edlX0yfMfRbehueSiYoPcjWVVc6m4dNKkPprUuNc5Zidi4iy/or
+         uBQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 075/163] selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
-Date: Wed, 21 Feb 2018 13:48:24 +0100
-Message-Id: <20180221124534.621749390@linuxfoundation.org>
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.15 057/163] platform/x86: wmi: fix off-by-one write in wmi_dev_probe()
+Date: Wed, 21 Feb 2018 13:48:06 +0100
+Message-Id: <20180221124533.615600146@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -47,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015696449113507?=
-X-GMAIL-MSGID: =?utf-8?q?1593016100153627974?=
+X-GMAIL-THRID: =?utf-8?q?1593016097107439174?=
+X-GMAIL-MSGID: =?utf-8?q?1593016097107439174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,74 +49,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit 9279ddf23ce78ff2676e8e8e19fec0f022c26d04 upstream.
+commit 6e1d8ea90932f77843730ada0bfea63093b7212a upstream.
 
-The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
-hard-coded 32-bit syscall numbers and call "int $0x80".
+wmi_dev_probe() allocates one byte less than necessary, thus
+subsequent sprintf() call writes trailing zero past the end
+of the 'buf':
 
-This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
+    BUG: KASAN: slab-out-of-bounds in vsnprintf+0xda4/0x1240
+    Write of size 1 at addr ffff880423529caf by task kworker/1:1/32
 
-Therefore, do not build these tests if we cannot build 32-bit binaries
-(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
+    Call Trace:
+     dump_stack+0xb3/0x14d
+     print_address_description+0xd7/0x380
+     kasan_report+0x166/0x2b0
+     vsnprintf+0xda4/0x1240
+     sprintf+0x9b/0xd0
+     wmi_dev_probe+0x1c3/0x400
+     driver_probe_device+0x5d1/0x990
+     bus_for_each_drv+0x109/0x190
+     __device_attach+0x217/0x360
+     bus_probe_device+0x1ad/0x260
+     deferred_probe_work_func+0x10f/0x5d0
+     process_one_work+0xa8b/0x1dc0
+     worker_thread+0x20d/0x17d0
+     kthread+0x311/0x3d0
+     ret_from_fork+0x3a/0x50
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+    Allocated by task 32:
+     kasan_kmalloc+0xa0/0xd0
+     __kmalloc+0x14f/0x3e0
+     wmi_dev_probe+0x182/0x400
+     driver_probe_device+0x5d1/0x990
+     bus_for_each_drv+0x109/0x190
+     __device_attach+0x217/0x360
+     bus_probe_device+0x1ad/0x260
+     deferred_probe_work_func+0x10f/0x5d0
+     process_one_work+0xa8b/0x1dc0
+     worker_thread+0x20d/0x17d0
+     kthread+0x311/0x3d0
+     ret_from_fork+0x3a/0x50
+
+Increment allocation size to fix this.
+
+Fixes: 44b6b7661132 ("platform/x86: wmi: create userspace interface for drivers")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/platform/x86/wmi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -5,16 +5,26 @@ include ../lib.mk
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -933,7 +933,7 @@ static int wmi_dev_probe(struct device *
+ 			goto probe_failure;
+ 		}
  
- .PHONY: all all_32 all_64 warn_32bit_failure clean
- 
--TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
--			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
-+UNAME_M := $(shell uname -m)
-+CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
-+CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
-+
-+TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
-+			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
- 			protection_keys test_vdso test_vsyscall
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
-+# Some selftests require 32bit support enabled also on 64bit systems
-+TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
- 
--TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
-+TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
- TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
-+ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
-+TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
-+endif
-+
- BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
- BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
- 
-@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,
- 
- CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
- 
--UNAME_M := $(shell uname -m)
--CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
--CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
--
- ifeq ($(CAN_BUILD_I386),1)
- all: all_32
- TEST_PROGS += $(BINARIES_32)
+-		buf = kmalloc(strlen(wdriver->driver.name) + 4, GFP_KERNEL);
++		buf = kmalloc(strlen(wdriver->driver.name) + 5, GFP_KERNEL);
+ 		if (!buf) {
+ 			ret = -ENOMEM;
+ 			goto probe_string_failure;
