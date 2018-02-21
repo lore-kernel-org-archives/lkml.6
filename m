@@ -1,95 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938020AbeBUQue (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:50:34 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:33838 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S933336AbeBUQuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:50:32 -0500
-Date: Wed, 21 Feb 2018 11:50:31 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        <akiyks@gmail.com>, <nborisov@suse.com>
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S lock-based
- external-view litmus test
-In-Reply-To: <20180221161223.GE3617@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1802211148390.2032-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S938090AbeBUQux (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:50:53 -0500
+Received: from mga07.intel.com ([134.134.136.100]:58836 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937563AbeBUQtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:49:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,545,1511856000";
+   d="scan'208";a="20034212"
+From: Ashok Raj <ashok.raj@intel.com>
+To: bp@suse.de
+Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: [PATCH 2/3] x86/microcode/intel: Perform a cache flush before ucode update.
+Date: Wed, 21 Feb 2018 08:49:43 -0800
+Message-Id: <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
+References: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018, Paul E. McKenney wrote:
+Microcode updates can be safer if the caches are clean.
+Some of the issues around in certain Broadwell parts
+can be addressed by doing a full cache flush.
 
-> On Wed, Feb 21, 2018 at 10:09:00AM -0500, Alan Stern wrote:
-> > On Tue, 20 Feb 2018, Paul E. McKenney wrote:
-> > 
-> > > From: Alan Stern <stern@rowland.harvard.edu>
-> > > 
-> > > This commit adds a litmus test in which P0() and P1() form a lock-based S
-> > > litmus test, with the addition of P2(), which observes P0()'s and P1()'s
-> > 
-> > Why do you call this an "S" litmus test?  Isn't ISA2 a better 
-> > description?
-> 
-> Indeed, the name of the test is in fact ISA2.
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Boris Petkov <bp@suse.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+---
+ arch/x86/kernel/cpu/microcode/intel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Sure; and the Changelog entry should reflect this.
-
-> > > accesses with a full memory barrier but without the lock.  This litmus
-> > > test asks whether writes carried out by two different processes under the
-> > > same lock will be seen in order by a third process not holding that lock.
-> > > The answer to this question is "yes" for all architectures supporting
-> > > the Linux kernel, but is "no" according to the current version of LKMM.
-> > > 
-> > > A patch to LKMM is under development.
-> > > 
-> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > ---
-> > >  .../ISA2+pooncelock+pooncelock+pombonce.litmus     | 41 ++++++++++++++++++++++
-> > >  1 file changed, 41 insertions(+)
-> > >  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> > 
-> > Aren't these tests supposed to be described in litmus-tests/README?
-
-You apparently missed this recommendation.
-
-> > > diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> > > new file mode 100644
-> > > index 000000000000..7a39a0aaa976
-> > > --- /dev/null
-> > > +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> > > @@ -0,0 +1,41 @@
-> > > +C ISA2+pooncelock+pooncelock+pombonce.litmus
-> > > +
-> > > +(*
-> > > + * Result: Sometimes
-> > > + *
-> > > + * This test shows that the ordering provided by a lock-protected S
-> > > + * litmus test (P0() and P1()) are not visible to external process P2().
-> > > + * This is likely to change soon.
-> > 
-> > That last line may be premature.  We haven't reached any consensus on 
-> > how RISC-V will handle this.  If RISC-V allows the test then the memory 
-> > model can't forbid it.
-> 
-> Agreed.  How about this?  If the RISC-V question is answered by the
-> end of next week, I update accordingly.  If not, I update the comment
-> to give the details.
-
-The README also should be updated.
-
-> Hey, at least having the memory model go in at about the same time as
-> a new architecture is giving us good practice!  ;-)
-
-Hopefully things will settle down in a week or two.
-
-Alan
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index eff80df..5d32724 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -589,6 +589,7 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
+ 	if (!mc)
+ 		return 0;
+ 
++	wbinvd();
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -805,6 +806,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 		return UCODE_OK;
+ 	}
+ 
++	wbinvd();
+ 	/* write microcode via MSR 0x79 */
+ 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+-- 
+2.7.4
