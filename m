@@ -1,61 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754269AbeBUNYO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:24:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753180AbeBUNYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:24:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9591217A0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x225oDH7an3a+FMuEDI39cELszblfpHdBYMFvM+hM49ILnAft8S044xdvJ+6/VbIp5taDGq/iWDWgG6FnoSdO18k=
+        id S965767AbeBUNZH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:25:07 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35676 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932152AbeBUNZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:25:05 -0500
+X-Google-Smtp-Source: AH8x226WZMPPyWT4GUbrE/yrZUtr5MOTkw6rJMFaVqdXUlYtr1J3DmIDnGK8Hd5x3N5SoHn15pmUSA==
+Date: Wed, 21 Feb 2018 14:24:55 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xchg/alpha: Add unconditional memory barrier to cmpxchg
+Message-ID: <20180221132455.GA16111@andrea>
+References: <1519152356-4804-1-git-send-email-parri.andrea@gmail.com>
+ <20180221112137.GA6165@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
-References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
- <1518701959-22899-2-git-send-email-tali.perry1@gmail.com> <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
- <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop> <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 21 Feb 2018 07:23:50 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
-Message-ID: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
-To: Brendan Higgins <brendanhiggins@google.com>
-Cc: Tali Perry <tali.perry1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221112137.GA6165@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 10:47 PM, Brendan Higgins
-<brendanhiggins@google.com> wrote:
-> On Mon, Feb 19, 2018 at 6:49 AM, Rob Herring <robh@kernel.org> wrote:
->> On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
->>> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
->>> >
->>> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
->>> >
->>>  <snip>
->>>
->>> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
->>> clocks (moved from drivers/clk/clk-npcm7xx.c):
->>> https://www.spinics.net/lists/arm-kernel/msg634678.html
->>
->> No, binding docs, dts files and driver code should all be separate
->> patches.
->
-> My mistake. This patch has a dt-bindings include file; should the include file
-> go in here, with the dtsi changes, or in its own separate patch?
+On Wed, Feb 21, 2018 at 11:21:38AM +0000, Will Deacon wrote:
+> Hi Andrea,
+> 
+> On Tue, Feb 20, 2018 at 07:45:56PM +0100, Andrea Parri wrote:
+> > Continuing along with the fight against smp_read_barrier_depends() [1]
+> > (or rather, against its improper use), add an unconditional barrier to
+> > cmpxchg.  This guarantees that dependency ordering is preserved when a
+> > dependency is headed by an unsuccessful cmpxchg.  As it turns out, the
+> > change could enable further simplification of LKMM as proposed in [2].
+> > 
+> > [1] https://marc.info/?l=linux-kernel&m=150884953419377&w=2
+> >     https://marc.info/?l=linux-kernel&m=150884946319353&w=2
+> >     https://marc.info/?l=linux-kernel&m=151215810824468&w=2
+> >     https://marc.info/?l=linux-kernel&m=151215816324484&w=2
+> > 
+> > [2] https://marc.info/?l=linux-kernel&m=151881978314872&w=2
+> > 
+> > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> > Acked-by: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> > Cc: Alan Stern <stern@rowland.harvard.edu>
+> > Cc: Richard Henderson <rth@twiddle.net>
+> > Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> > Cc: Matt Turner <mattst88@gmail.com>
+> > Cc: linux-alpha@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > ---
+> >  arch/alpha/include/asm/xchg.h | 15 +++++++--------
+> >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
+> > index 68dfb3cb71454..e2660866ce972 100644
+> > --- a/arch/alpha/include/asm/xchg.h
+> > +++ b/arch/alpha/include/asm/xchg.h
+> > @@ -128,10 +128,9 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
+> >   * store NEW in MEM.  Return the initial value in MEM.  Success is
+> >   * indicated by comparing RETURN with OLD.
+> >   *
+> > - * The memory barrier should be placed in SMP only when we actually
+> > - * make the change. If we don't change anything (so if the returned
+> > - * prev is equal to old) then we aren't acquiring anything new and
+> > - * we don't need any memory barrier as far I can tell.
+> > + * The memory barrier is placed in SMP unconditionally, in order to
+> > + * guarantee that dependency ordering is preserved when a dependency
+> > + * is headed by an unsuccessful operation.
+> >   */
+> >  
+> >  static inline unsigned long
+> > @@ -150,8 +149,8 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
+> >  	"	or	%1,%2,%2\n"
+> >  	"	stq_c	%2,0(%4)\n"
+> >  	"	beq	%2,3f\n"
+> > -		__ASM__MB
+> >  	"2:\n"
+> > +		__ASM__MB
+> >  	".subsection 2\n"
+> >  	"3:	br	1b\n"
+> >  	".previous"
+> 
+> It might be better just to add smp_read_barrier_depends() into the cmpxchg
+> macro, then remove all of the __ASM__MB stuff.
 
-It defines the binding, so with the binding documentation.
+Mmh, it might be better to add smp_mb() into the cmpxchg macro (after the
+operation), then remove all the __ASM__MB stuff.
 
-Rob
+
+> 
+> That said, I don't actually understand how the Alpha cmpxchg or xchg
+> implementations satisfy the memory model, since they only appear to have
+> a barrier after the operation.
+> 
+> So MP using xchg:
+> 
+> WRITE_ONCE(x, 1)
+> xchg(y, 1)
+> 
+> smp_load_acquire(y) == 1
+> READ_ONCE(x) == 0
+> 
+> would be allowed. What am I missing?
+
+Good question ;-)  The absence of an smp_mb() (or of an __ASM__MB) before
+the operation did upset me.
+
+If this question remains pending, I'll send a patch to add these barriers.
+
+
+> 
+> Since I'm in the mood for dumb questions, do we need to care about
+> this_cpu_cmpxchg? I'm sure I've seen code that allows concurrent access to
+> per-cpu variables, but the asm-generic implementation of this_cpu_cmpxchg
+> doesn't use READ_ONCE.
+
+Frankly, I'm not sure if this's an issue in the generic implementation of
+this_cpu_* or, rather, in that code.  let me dig a bit more into this ...
+
+  Andrea
+
+
+> 
+> Will
