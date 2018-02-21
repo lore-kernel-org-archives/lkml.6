@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeBUUai (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:30:38 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:44129 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeBUUag (ORCPT
+        id S1751432AbeBUUbB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:31:01 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:51752 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751252AbeBUUaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:30:36 -0500
+        Wed, 21 Feb 2018 15:30:55 -0500
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Miklos Szeredi <mszeredi@redhat.com>
 Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
@@ -15,38 +15,37 @@ Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
         Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Wed, 21 Feb 2018 14:29:04 -0600
-Message-Id: <20180221202908.17258-1-ebiederm@xmission.com>
+Date: Wed, 21 Feb 2018 14:29:06 -0600
+Message-Id: <20180221202908.17258-3-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <878tbmf5vl.fsf@xmission.com>
 References: <878tbmf5vl.fsf@xmission.com>
-X-XM-SPF: eid=1eob29-0004Av-OP;;;mid=<20180221202908.17258-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18PfmmiM+0n2MYUJGb2DFx+FxTY7zvf8ao=
+X-XM-SPF: eid=1eob2T-0004Av-Gj;;;mid=<20180221202908.17258-3-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19iE0VWn2G/SMQhwxDjQYdNQCx6z3IaITs=
 X-SA-Exim-Connect-IP: 174.19.85.160
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.0 TVD_RCVD_IP Message was received from an IP address
         *  0.7 XMSubLong Long Subject
-        *  0.5 XMGappySubj_01 Very gappy subject
         *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 598 ms - load_scoreonly_sql: 0.10 (0.0%),
-        signal_user_changed: 3.6 (0.6%), b_tie_ro: 2.4 (0.4%), parse: 1.34 (0.2%),
-        extract_message_metadata: 28 (4.6%), get_uri_detail_list: 2.7 (0.5%),
-        tests_pri_-1000: 11 (1.9%), tests_pri_-950: 2.3 (0.4%), tests_pri_-900: 1.94
-        (0.3%), tests_pri_-400: 41 (6.8%), check_bayes: 38 (6.4%), b_tokenize: 11
-        (1.9%), b_tok_get_all: 8 (1.3%), b_comp_prob: 4.9 (0.8%), b_tok_touch_all: 10
-        (1.7%), b_finish: 0.95 (0.2%), tests_pri_0: 476 (79.5%),
-        check_dkim_signature: 1.57 (0.3%), check_dkim_adsp: 6 (1.0%), tests_pri_500:
-        27 (4.6%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v6 1/5] fuse: Remove the buggy retranslation of pids in fuse_dev_do_read
+X-Spam-Timing: total 480 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.6 (0.7%), b_tie_ro: 2.6 (0.5%), parse: 1.41 (0.3%),
+        extract_message_metadata: 19 (4.0%), get_uri_detail_list: 6 (1.3%),
+        tests_pri_-1000: 6 (1.2%), tests_pri_-950: 1.03 (0.2%), tests_pri_-900: 0.92
+        (0.2%), tests_pri_-400: 42 (8.8%), check_bayes: 41 (8.5%), b_tokenize: 15
+        (3.1%), b_tok_get_all: 15 (3.0%), b_comp_prob: 2.5 (0.5%), b_tok_touch_all: 6
+        (1.3%), b_finish: 0.96 (0.2%), tests_pri_0: 397 (82.8%),
+        check_dkim_signature: 0.50 (0.1%), check_dkim_adsp: 2.9 (0.6%),
+        tests_pri_500: 4.6 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v6 3/5] fuse: Support fuse filesystems outside of init_user_ns
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -54,53 +53,300 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the point of fuse_dev_do_read the user space process that initiated the
-action on the fuse filesystem may no longer exist.  The process have been
-killed or may have fired an asynchronous request and exited.
+In order to support mounts from namespaces other than init_user_ns,
+fuse must translate uids and gids to/from the userns of the process
+servicing requests on /dev/fuse. This patch does that, with a couple
+of restrictions on the namespace:
 
-If the initial process has exited the code "pid_vnr(find_pid_ns(in->h.pid,
-fc->pid_ns)" will either return a pid of 0, or in the unlikely event that
-the pid has been reallocated it can return practically any pid.  Any pid is
-possible as the pid allocator allocates pid numbers in different pid
-namespaces independently.
+ - The userns for the fuse connection is fixed to the namespace
+   from which /dev/fuse is opened.
 
-The only way to make translation in fuse_dev_do_read reliable is to call
-get_pid in fuse_req_init_context, and pid_vnr followed by put_pid in
-fuse_dev_do_read.  That reference counting in other contexts has been shown
-to bounce cache lines between processors and in general be slow.  So that is
-not desirable.
+ - The namespace must be the same as s_user_ns.
 
-The only known user of running the fuse server in a different pid namespace
-from the filesystem does not care what the pids are in the fuse messages
-so removing this code should not matter.
+These restrictions simplify the implementation by avoiding the need to
+pass around userns references and by allowing fuse to rely on the
+checks in setattr_prepare for ownership changes.  Either restriction
+could be relaxed in the future if needed.
 
-Getting the translation to a server running outside of the pid namespace
-of a container can still be achieved by playing setns games at mount time.
-It is also possible to add an option to pass a pid namespace into the fuse
-filesystem at mount time.
+For cuse the userns used is the opener of /dev/cuse.  Semantically the
+cuse support does not appear safe for unprivileged users.  Practically
+the permissions on /dev/cuse only make it accessible to the global root
+user.  If something slips through the cracks in a user namespace the only
+users who will be able to use the cuse device are those users mapped into
+the user namespace.
 
-Fixes: 5d6d3a301c4e ("fuse: allow server to run in different pid_ns")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Translation in the posix acl is updated to use the uuser namespace of
+the filesystem.  Avoiding cases which might bypass this translation is
+handled in a following change.
+
+This change is stronlgy based on a similar change from Seth Forshee
+and Dongsu Park.
+
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: <seth.forshee@canonical.com>
+Cc: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/fuse/dev.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/fuse/acl.c    |  4 ++--
+ fs/fuse/cuse.c   |  7 ++++++-
+ fs/fuse/dev.c    |  4 ++--
+ fs/fuse/dir.c    | 14 +++++++-------
+ fs/fuse/fuse_i.h |  6 +++++-
+ fs/fuse/inode.c  | 31 +++++++++++++++++++------------
+ 6 files changed, 41 insertions(+), 25 deletions(-)
 
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index ec85765502f1..5a48cee6d7d3 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -34,7 +34,7 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type)
+ 		return ERR_PTR(-ENOMEM);
+ 	size = fuse_getxattr(inode, name, value, PAGE_SIZE);
+ 	if (size > 0)
+-		acl = posix_acl_from_xattr(&init_user_ns, value, size);
++		acl = posix_acl_from_xattr(fc->user_ns, value, size);
+ 	else if ((size == 0) || (size == -ENODATA) ||
+ 		 (size == -EOPNOTSUPP && fc->no_getxattr))
+ 		acl = NULL;
+@@ -81,7 +81,7 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ 		if (!value)
+ 			return -ENOMEM;
+ 
+-		ret = posix_acl_to_xattr(&init_user_ns, acl, value, size);
++		ret = posix_acl_to_xattr(fc->user_ns, acl, value, size);
+ 		if (ret < 0) {
+ 			kfree(value);
+ 			return ret;
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index e9e97803442a..036ee477669e 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -48,6 +48,7 @@
+ #include <linux/stat.h>
+ #include <linux/module.h>
+ #include <linux/uio.h>
++#include <linux/user_namespace.h>
+ 
+ #include "fuse_i.h"
+ 
+@@ -498,7 +499,11 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
+-	fuse_conn_init(&cc->fc);
++	/*
++	 * Limit the cuse channel to requests that can
++	 * be represented in file->f_cred->user_ns.
++	 */
++	fuse_conn_init(&cc->fc, file->f_cred->user_ns);
+ 
+ 	fud = fuse_dev_alloc(&cc->fc);
+ 	if (!fud) {
 diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5d06384c2cae..0fb58f364fa6 100644
+index 216db3f51a31..338cfda3eb8f 100644
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -1260,12 +1260,6 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
- 	in = &req->in;
- 	reqsize = in->h.len;
+@@ -114,8 +114,8 @@ static void __fuse_put_request(struct fuse_req *req)
  
--	if (task_active_pid_ns(current) != fc->pid_ns) {
--		rcu_read_lock();
--		in->h.pid = pid_vnr(find_pid_ns(in->h.pid, fc->pid_ns));
--		rcu_read_unlock();
--	}
--
- 	/* If request is too large, reply with an error and restart the read */
- 	if (nbytes < reqsize) {
- 		req->out.h.error = -EIO;
+ static bool fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
+ {
+-	req->in.h.uid = from_kuid(&init_user_ns, current_fsuid());
+-	req->in.h.gid = from_kgid(&init_user_ns, current_fsgid());
++	req->in.h.uid = from_kuid(fc->user_ns, current_fsuid());
++	req->in.h.gid = from_kgid(fc->user_ns, current_fsgid());
+ 	req->in.h.pid = pid_nr_ns(task_pid(current), fc->pid_ns);
+ 
+ 	return (req->in.h.uid != ((uid_t)-1)) && (req->in.h.gid != ((gid_t)-1));
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 24967382a7b1..ad1cfac1942f 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -858,8 +858,8 @@ static void fuse_fillattr(struct inode *inode, struct fuse_attr *attr,
+ 	stat->ino = attr->ino;
+ 	stat->mode = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+ 	stat->nlink = attr->nlink;
+-	stat->uid = make_kuid(&init_user_ns, attr->uid);
+-	stat->gid = make_kgid(&init_user_ns, attr->gid);
++	stat->uid = make_kuid(fc->user_ns, attr->uid);
++	stat->gid = make_kgid(fc->user_ns, attr->gid);
+ 	stat->rdev = inode->i_rdev;
+ 	stat->atime.tv_sec = attr->atime;
+ 	stat->atime.tv_nsec = attr->atimensec;
+@@ -1475,17 +1475,17 @@ static bool update_mtime(unsigned ivalid, bool trust_local_mtime)
+ 	return true;
+ }
+ 
+-static void iattr_to_fattr(struct iattr *iattr, struct fuse_setattr_in *arg,
+-			   bool trust_local_cmtime)
++static void iattr_to_fattr(struct fuse_conn *fc, struct iattr *iattr,
++			   struct fuse_setattr_in *arg, bool trust_local_cmtime)
+ {
+ 	unsigned ivalid = iattr->ia_valid;
+ 
+ 	if (ivalid & ATTR_MODE)
+ 		arg->valid |= FATTR_MODE,   arg->mode = iattr->ia_mode;
+ 	if (ivalid & ATTR_UID)
+-		arg->valid |= FATTR_UID,    arg->uid = from_kuid(&init_user_ns, iattr->ia_uid);
++		arg->valid |= FATTR_UID,    arg->uid = from_kuid(fc->user_ns, iattr->ia_uid);
+ 	if (ivalid & ATTR_GID)
+-		arg->valid |= FATTR_GID,    arg->gid = from_kgid(&init_user_ns, iattr->ia_gid);
++		arg->valid |= FATTR_GID,    arg->gid = from_kgid(fc->user_ns, iattr->ia_gid);
+ 	if (ivalid & ATTR_SIZE)
+ 		arg->valid |= FATTR_SIZE,   arg->size = iattr->ia_size;
+ 	if (ivalid & ATTR_ATIME) {
+@@ -1646,7 +1646,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	memset(&outarg, 0, sizeof(outarg));
+-	iattr_to_fattr(attr, &inarg, trust_local_cmtime);
++	iattr_to_fattr(fc, attr, &inarg, trust_local_cmtime);
+ 	if (file) {
+ 		struct fuse_file *ff = file->private_data;
+ 		inarg.valid |= FATTR_FH;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c4c093bbf456..7772e2b4057e 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -26,6 +26,7 @@
+ #include <linux/xattr.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/refcount.h>
++#include <linux/user_namespace.h>
+ 
+ /** Max number of pages that can be used in a single read request */
+ #define FUSE_MAX_PAGES_PER_REQ 32
+@@ -466,6 +467,9 @@ struct fuse_conn {
+ 	/** The pid namespace for this mount */
+ 	struct pid_namespace *pid_ns;
+ 
++	/** The user namespace for this mount */
++	struct user_namespace *user_ns;
++
+ 	/** Maximum read size */
+ 	unsigned max_read;
+ 
+@@ -870,7 +874,7 @@ struct fuse_conn *fuse_conn_get(struct fuse_conn *fc);
+ /**
+  * Initialize fuse_conn
+  */
+-void fuse_conn_init(struct fuse_conn *fc);
++void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns);
+ 
+ /**
+  * Release reference to fuse_conn
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bbfd2b..e018dc3999f4 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -171,8 +171,8 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
+ 	inode->i_ino     = fuse_squash_ino(attr->ino);
+ 	inode->i_mode    = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+ 	set_nlink(inode, attr->nlink);
+-	inode->i_uid     = make_kuid(&init_user_ns, attr->uid);
+-	inode->i_gid     = make_kgid(&init_user_ns, attr->gid);
++	inode->i_uid     = make_kuid(fc->user_ns, attr->uid);
++	inode->i_gid     = make_kgid(fc->user_ns, attr->gid);
+ 	inode->i_blocks  = attr->blocks;
+ 	inode->i_atime.tv_sec   = attr->atime;
+ 	inode->i_atime.tv_nsec  = attr->atimensec;
+@@ -477,7 +477,8 @@ static int fuse_match_uint(substring_t *s, unsigned int *res)
+ 	return err;
+ }
+ 
+-static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
++static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev,
++			  struct user_namespace *user_ns)
+ {
+ 	char *p;
+ 	memset(d, 0, sizeof(struct fuse_mount_data));
+@@ -513,7 +514,7 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
+ 		case OPT_USER_ID:
+ 			if (fuse_match_uint(&args[0], &uv))
+ 				return 0;
+-			d->user_id = make_kuid(current_user_ns(), uv);
++			d->user_id = make_kuid(user_ns, uv);
+ 			if (!uid_valid(d->user_id))
+ 				return 0;
+ 			d->user_id_present = 1;
+@@ -522,7 +523,7 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
+ 		case OPT_GROUP_ID:
+ 			if (fuse_match_uint(&args[0], &uv))
+ 				return 0;
+-			d->group_id = make_kgid(current_user_ns(), uv);
++			d->group_id = make_kgid(user_ns, uv);
+ 			if (!gid_valid(d->group_id))
+ 				return 0;
+ 			d->group_id_present = 1;
+@@ -565,8 +566,8 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+ 	struct super_block *sb = root->d_sb;
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ 
+-	seq_printf(m, ",user_id=%u", from_kuid_munged(&init_user_ns, fc->user_id));
+-	seq_printf(m, ",group_id=%u", from_kgid_munged(&init_user_ns, fc->group_id));
++	seq_printf(m, ",user_id=%u", from_kuid_munged(fc->user_ns, fc->user_id));
++	seq_printf(m, ",group_id=%u", from_kgid_munged(fc->user_ns, fc->group_id));
+ 	if (fc->default_permissions)
+ 		seq_puts(m, ",default_permissions");
+ 	if (fc->allow_other)
+@@ -597,7 +598,7 @@ static void fuse_pqueue_init(struct fuse_pqueue *fpq)
+ 	fpq->connected = 1;
+ }
+ 
+-void fuse_conn_init(struct fuse_conn *fc)
++void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns)
+ {
+ 	memset(fc, 0, sizeof(*fc));
+ 	spin_lock_init(&fc->lock);
+@@ -621,6 +622,7 @@ void fuse_conn_init(struct fuse_conn *fc)
+ 	fc->attr_version = 1;
+ 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
++	fc->user_ns = get_user_ns(user_ns);
+ }
+ EXPORT_SYMBOL_GPL(fuse_conn_init);
+ 
+@@ -630,6 +632,7 @@ void fuse_conn_put(struct fuse_conn *fc)
+ 		if (fc->destroy_req)
+ 			fuse_request_free(fc->destroy_req);
+ 		put_pid_ns(fc->pid_ns);
++		put_user_ns(fc->user_ns);
+ 		fc->release(fc);
+ 	}
+ }
+@@ -1061,7 +1064,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	sb->s_flags &= ~(SB_NOSEC | SB_I_VERSION);
+ 
+-	if (!parse_fuse_opt(data, &d, is_bdev))
++	if (!parse_fuse_opt(data, &d, is_bdev, sb->s_user_ns))
+ 		goto err;
+ 
+ 	if (is_bdev) {
+@@ -1086,8 +1089,12 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (!file)
+ 		goto err;
+ 
+-	if ((file->f_op != &fuse_dev_operations) ||
+-	    (file->f_cred->user_ns != &init_user_ns))
++	/*
++	 * Require mount to happen from the same user namespace which
++	 * opened /dev/fuse to prevent potential attacks.
++	 */
++	if (file->f_op != &fuse_dev_operations ||
++	    file->f_cred->user_ns != sb->s_user_ns)
+ 		goto err_fput;
+ 
+ 	fc = kmalloc(sizeof(*fc), GFP_KERNEL);
+@@ -1095,7 +1102,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (!fc)
+ 		goto err_fput;
+ 
+-	fuse_conn_init(fc);
++	fuse_conn_init(fc, sb->s_user_ns);
+ 	fc->release = fuse_free_conn;
+ 
+ 	fud = fuse_dev_alloc(fc);
 -- 
 2.14.1
