@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeBUID4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:03:56 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45750 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbeBUIDx (ORCPT
+        id S1751977AbeBUIEG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 03:04:06 -0500
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:42114 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751843AbeBUIEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:03:53 -0500
-X-Google-Smtp-Source: AH8x226F5++OX+lCkXc+RGqyvKFnTmqreywuMNRhmZVI3mhjtK2OJMJu18Yo3gsOxs2mJIDLxndANw==
+        Wed, 21 Feb 2018 03:04:00 -0500
+X-Google-Smtp-Source: AH8x226piYxdZCMHaHZeXO2hcN8swAuXDshicPEQfkYo43jcVpLhUKqteVAsfI6oqVACKDmxOx4pSw==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -15,177 +15,635 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH 0/9] drm/xen-front: Add support for Xen PV display frontend
-Date: Wed, 21 Feb 2018 10:03:33 +0200
-Message-Id: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+Subject: [PATCH 4/9] drm/xen-front: Implement Xen event channel handling
+Date: Wed, 21 Feb 2018 10:03:37 +0200
+Message-Id: <1519200222-20623-5-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Hello!
+Handle Xen event channels:
+  - create for all configured connectors and publish
+    corresponding ring references and event channels in Xen store,
+    so backend can connect
+  - implement event channels interrupt handlers
+  - create and destroy event channels with respect to Xen bus state
 
-This patch series adds support for Xen [1] para-virtualized
-frontend display driver. It implements the protocol from
-include/xen/interface/io/displif.h [2].
-Accompanying backend [3] is implemented as a user-space application
-and its helper library [4], capable of running as a Weston client
-or DRM master.
-Configuration of both backend and frontend is done via 
-Xen guest domain configuration options [5].
-
-*******************************************************************************
-* Driver limitations
-*******************************************************************************
- 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
-    allocated buffers) below are not supported at the same time.
-
- 2. Only primary plane without additional properties is supported.
-
- 3. Only one video mode supported which resolution is configured via XenStore.
-
- 4. All CRTCs operate at fixed frequency of 60Hz.
-
-*******************************************************************************
-* Driver modes of operation in terms of display buffers used
-*******************************************************************************
- Depending on the requirements for the para-virtualized environment, namely
- requirements dictated by the accompanying DRM/(v)GPU drivers running in both
- host and guest environments, number of operating modes of para-virtualized
- display driver are supported:
-  - display buffers can be allocated by either frontend driver or backend
-  - display buffers can be allocated to be contiguous in memory or not
-
- Note! Frontend driver itself has no dependency on contiguous memory for
-       its operation.
-
-*******************************************************************************
-* 1. Buffers allocated by the frontend driver.
-*******************************************************************************
-
- The below modes of operation are configured at compile-time via
- frontend driver's kernel configuration.
-
- 1.1. Front driver configured to use GEM CMA helpers
-      This use-case is useful when used with accompanying DRM/vGPU driver in
-      guest domain which was designed to only work with contiguous buffers,
-      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
-      contiguous PRIME buffers, thus requiring frontend driver to provide
-      such. In order to implement this mode of operation para-virtualized
-      frontend driver can be configured to use GEM CMA helpers.
-
- 1.2. Front driver doesn't use GEM CMA
-      If accompanying drivers can cope with non-contiguous memory then, to
-      lower pressure on CMA subsystem of the kernel, driver can allocate
-      buffers from system memory.
-
- Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
-   may require IOMMU support on the platform, so accompanying DRM/vGPU
-   hardware can still reach display buffer memory while importing PRIME
-   buffers from the frontend driver.
-
-*******************************************************************************
-* 2. Buffers allocated by the backend
-*******************************************************************************
-
- This mode of operation is run-time configured via guest domain configuration
- through XenStore entries.
-
- For systems which do not provide IOMMU support, but having specific
- requirements for display buffers it is possible to allocate such buffers
- at backend side and share those with the frontend.
- For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
- physically contiguous memory, this allows implementing zero-copying
- use-cases.
-
-
-I would like to thank at least, but not at last the following
-people/communities who helped this driver to happen ;)
-
-1. My team at EPAM for continuous support
-2. Xen community for answering tons of questions on different
-modes of operation of the driver with respect to virtualized
-environment.
-3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
-4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
-5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
-
-Thank you,
-Oleksandr Andrushchenko
-
-P.S. There are two dependencies for this driver limiting some of the
-use-cases which are on review now:
-1. "drm/simple_kms_helper: Add {enable|disable}_vblank callback support" [9]
-2. "drm/simple_kms_helper: Fix NULL pointer dereference with no active CRTC" [10]
-
-[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
-[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
-[3] https://github.com/xen-troops/displ_be
-[4] https://github.com/xen-troops/libxenbe
-[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
-[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
-[7] https://www.spinics.net/lists/dri-devel/msg164102.html
-[8] https://www.spinics.net/lists/dri-devel/msg164463.html
-[9] https://patchwork.freedesktop.org/series/38073/
-[10] https://patchwork.freedesktop.org/series/38139/
-
-Oleksandr Andrushchenko (9):
-  drm/xen-front: Introduce Xen para-virtualized frontend driver
-  drm/xen-front: Implement Xen bus state handling
-  drm/xen-front: Read driver configuration from Xen store
-  drm/xen-front: Implement Xen event channel handling
-  drm/xen-front: Implement handling of shared display buffers
-  drm/xen-front: Introduce DRM/KMS virtual display driver
-  drm/xen-front: Implement KMS/connector handling
-  drm/xen-front: Implement GEM operations
-  drm/xen-front: Implement communication with backend
-
- drivers/gpu/drm/Kconfig                     |   2 +
- drivers/gpu/drm/Makefile                    |   1 +
- drivers/gpu/drm/xen/Kconfig                 |  30 ++
- drivers/gpu/drm/xen/Makefile                |  17 +
- drivers/gpu/drm/xen/xen_drm_front.c         | 712 ++++++++++++++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front.h         | 154 ++++++
- drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  84 ++++
- drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  45 ++
- drivers/gpu/drm/xen/xen_drm_front_conn.c    | 125 +++++
- drivers/gpu/drm/xen/xen_drm_front_conn.h    |  35 ++
- drivers/gpu/drm/xen/xen_drm_front_drv.c     | 294 ++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_drv.h     |  73 +++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 399 ++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  89 ++++
- drivers/gpu/drm/xen/xen_drm_front_gem.c     | 360 ++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_gem.h     |  46 ++
- drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  93 ++++
- drivers/gpu/drm/xen/xen_drm_front_kms.c     | 299 ++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_kms.h     |  30 ++
- drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 430 +++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  80 ++++
- 21 files changed, 3398 insertions(+)
- create mode 100644 drivers/gpu/drm/xen/Kconfig
- create mode 100644 drivers/gpu/drm/xen/Makefile
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+---
+ drivers/gpu/drm/xen/Makefile                |   1 +
+ drivers/gpu/drm/xen/xen_drm_front.c         |  16 +-
+ drivers/gpu/drm/xen/xen_drm_front.h         |  22 ++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 399 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  89 +++++++
+ 5 files changed, 526 insertions(+), 1 deletion(-)
  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
 
+diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+index 0a2eae757f0c..4ce7756b8437 100644
+--- a/drivers/gpu/drm/xen/Makefile
++++ b/drivers/gpu/drm/xen/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ drm_xen_front-objs := xen_drm_front.o \
++		      xen_drm_front_evtchnl.o \
+ 		      xen_drm_front_cfg.o
+ 
+ obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+index 0a90c474c7ce..b558e0ae3b33 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -25,9 +25,15 @@
+ #include <xen/interface/io/displif.h>
+ 
+ #include "xen_drm_front.h"
++#include "xen_drm_front_evtchnl.h"
++
++static struct xen_drm_front_ops front_ops = {
++	/* placeholder for now */
++};
+ 
+ static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
+ {
++	xen_drm_front_evtchnl_free_all(front_info);
+ }
+ 
+ static int backend_on_initwait(struct xen_drm_front_info *front_info)
+@@ -41,16 +47,23 @@ static int backend_on_initwait(struct xen_drm_front_info *front_info)
+ 		return ret;
+ 
+ 	DRM_INFO("Have %d conector(s)\n", cfg->num_connectors);
+-	return 0;
++	/* Create event channels for all connectors and publish */
++	ret = xen_drm_front_evtchnl_create_all(front_info, &front_ops);
++	if (ret < 0)
++		return ret;
++
++	return xen_drm_front_evtchnl_publish_all(front_info);
+ }
+ 
+ static int backend_on_connected(struct xen_drm_front_info *front_info)
+ {
++	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_CONNECTED);
+ 	return 0;
+ }
+ 
+ static void backend_on_disconnected(struct xen_drm_front_info *front_info)
+ {
++	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_DISCONNECTED);
+ 	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
+ }
+ 
+@@ -133,6 +146,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
+ 	}
+ 
+ 	front_info->xb_dev = xb_dev;
++	spin_lock_init(&front_info->io_lock);
+ 	dev_set_drvdata(&xb_dev->dev, front_info);
+ 	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
+ }
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+index 62b0d4e3e12b..13f22736ae02 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.h
++++ b/drivers/gpu/drm/xen/xen_drm_front.h
+@@ -21,8 +21,30 @@
+ 
+ #include "xen_drm_front_cfg.h"
+ 
++#ifndef GRANT_INVALID_REF
++/*
++ * Note on usage of grant reference 0 as invalid grant reference:
++ * grant reference 0 is valid, but never exposed to a PV driver,
++ * because of the fact it is already in use/reserved by the PV console.
++ */
++#define GRANT_INVALID_REF	0
++#endif
++
++struct xen_drm_front_ops {
++	/* CAUTION! this is called with a spin_lock held! */
++	void (*on_frame_done)(struct platform_device *pdev,
++			int conn_idx, uint64_t fb_cookie);
++};
++
+ struct xen_drm_front_info {
+ 	struct xenbus_device *xb_dev;
++	/* to protect data between backend IO code and interrupt handler */
++	spinlock_t io_lock;
++	/* virtual DRM platform device */
++	struct platform_device *drm_pdev;
++
++	int num_evt_pairs;
++	struct xen_drm_front_evtchnl_pair *evt_pairs;
+ 	struct xen_drm_front_cfg cfg;
+ };
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+new file mode 100644
+index 000000000000..697a0e4dcaed
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+@@ -0,0 +1,399 @@
++/*
++ *  Xen para-virtual DRM device
++ *
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License as published by
++ *   the Free Software Foundation; either version 2 of the License, or
++ *   (at your option) any later version.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#include <drm/drmP.h>
++
++#include <linux/errno.h>
++#include <linux/irq.h>
++
++#include <xen/xenbus.h>
++#include <xen/events.h>
++#include <xen/grant_table.h>
++
++#include "xen_drm_front.h"
++#include "xen_drm_front_evtchnl.h"
++
++static irqreturn_t evtchnl_interrupt_ctrl(int irq, void *dev_id)
++{
++	struct xen_drm_front_evtchnl *evtchnl = dev_id;
++	struct xen_drm_front_info *front_info = evtchnl->front_info;
++	struct xendispl_resp *resp;
++	RING_IDX i, rp;
++	unsigned long flags;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++
++	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
++		goto out;
++
++again:
++	rp = evtchnl->u.req.ring.sring->rsp_prod;
++	/* ensure we see queued responses up to rp */
++	virt_rmb();
++
++	for (i = evtchnl->u.req.ring.rsp_cons; i != rp; i++) {
++		resp = RING_GET_RESPONSE(&evtchnl->u.req.ring, i);
++		if (unlikely(resp->id != evtchnl->evt_id))
++			continue;
++
++		switch (resp->operation) {
++		case XENDISPL_OP_PG_FLIP:
++		case XENDISPL_OP_FB_ATTACH:
++		case XENDISPL_OP_FB_DETACH:
++		case XENDISPL_OP_DBUF_CREATE:
++		case XENDISPL_OP_DBUF_DESTROY:
++		case XENDISPL_OP_SET_CONFIG:
++			evtchnl->u.req.resp_status = resp->status;
++			complete(&evtchnl->u.req.completion);
++			break;
++
++		default:
++			DRM_ERROR("Operation %d is not supported\n",
++				resp->operation);
++			break;
++		}
++	}
++
++	evtchnl->u.req.ring.rsp_cons = i;
++
++	if (i != evtchnl->u.req.ring.req_prod_pvt) {
++		int more_to_do;
++
++		RING_FINAL_CHECK_FOR_RESPONSES(&evtchnl->u.req.ring,
++				more_to_do);
++		if (more_to_do)
++			goto again;
++	} else
++		evtchnl->u.req.ring.sring->rsp_event = i + 1;
++
++out:
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
++{
++	struct xen_drm_front_evtchnl *evtchnl = dev_id;
++	struct xen_drm_front_info *front_info = evtchnl->front_info;
++	struct xendispl_event_page *page = evtchnl->u.evt.page;
++	uint32_t cons, prod;
++	unsigned long flags;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
++		goto out;
++
++	prod = page->in_prod;
++	/* ensure we see ring contents up to prod */
++	virt_rmb();
++	if (prod == page->in_cons)
++		goto out;
++
++	for (cons = page->in_cons; cons != prod; cons++) {
++		struct xendispl_evt *event;
++
++		event = &XENDISPL_IN_RING_REF(page, cons);
++		if (unlikely(event->id != evtchnl->evt_id++))
++			continue;
++
++		switch (event->type) {
++		case XENDISPL_EVT_PG_FLIP:
++			evtchnl->u.evt.front_ops->on_frame_done(
++				front_info->drm_pdev, evtchnl->index,
++				event->op.pg_flip.fb_cookie);
++			break;
++		}
++	}
++	page->in_cons = cons;
++	/* ensure ring contents */
++	virt_wmb();
++
++out:
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++	return IRQ_HANDLED;
++}
++
++static void evtchnl_free(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_evtchnl *evtchnl)
++{
++	unsigned long page = 0;
++
++	if (evtchnl->type == EVTCHNL_TYPE_REQ)
++		page = (unsigned long)evtchnl->u.req.ring.sring;
++	else if (evtchnl->type == EVTCHNL_TYPE_EVT)
++		page = (unsigned long)evtchnl->u.evt.page;
++	if (!page)
++		return;
++
++	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
++
++	if (evtchnl->type == EVTCHNL_TYPE_REQ) {
++		/* release all who still waits for response if any */
++		evtchnl->u.req.resp_status = -EIO;
++		complete_all(&evtchnl->u.req.completion);
++	}
++
++	if (evtchnl->irq)
++		unbind_from_irqhandler(evtchnl->irq, evtchnl);
++
++	if (evtchnl->port)
++		xenbus_free_evtchn(front_info->xb_dev, evtchnl->port);
++
++	/* end access and free the page */
++	if (evtchnl->gref != GRANT_INVALID_REF)
++		gnttab_end_foreign_access(evtchnl->gref, 0, page);
++
++	if (evtchnl->type == EVTCHNL_TYPE_REQ)
++		evtchnl->u.req.ring.sring = NULL;
++	else
++		evtchnl->u.evt.page = NULL;
++
++	memset(evtchnl, 0, sizeof(*evtchnl));
++}
++
++static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
++		struct xen_drm_front_evtchnl *evtchnl,
++		enum xen_drm_front_evtchnl_type type)
++{
++	struct xenbus_device *xb_dev = front_info->xb_dev;
++	unsigned long page;
++	grant_ref_t gref;
++	irq_handler_t handler;
++	int ret;
++
++	memset(evtchnl, 0, sizeof(*evtchnl));
++	evtchnl->type = type;
++	evtchnl->index = index;
++	evtchnl->front_info = front_info;
++	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
++	evtchnl->gref = GRANT_INVALID_REF;
++
++	page = get_zeroed_page(GFP_NOIO | __GFP_HIGH);
++	if (!page) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	if (type == EVTCHNL_TYPE_REQ) {
++		struct xen_displif_sring *sring;
++
++		init_completion(&evtchnl->u.req.completion);
++		sring = (struct xen_displif_sring *)page;
++		SHARED_RING_INIT(sring);
++		FRONT_RING_INIT(&evtchnl->u.req.ring,
++				sring, XEN_PAGE_SIZE);
++
++		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
++		if (ret < 0)
++			goto fail;
++
++		handler = evtchnl_interrupt_ctrl;
++	} else {
++		evtchnl->u.evt.page = (struct xendispl_event_page *)page;
++
++		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
++				virt_to_gfn((void *)page), 0);
++		if (ret < 0)
++			goto fail;
++
++		gref = ret;
++		handler = evtchnl_interrupt_evt;
++	}
++	evtchnl->gref = gref;
++
++	ret = xenbus_alloc_evtchn(xb_dev, &evtchnl->port);
++	if (ret < 0)
++		goto fail;
++
++	ret = bind_evtchn_to_irqhandler(evtchnl->port,
++			handler, 0, xb_dev->devicetype, evtchnl);
++	if (ret < 0)
++		goto fail;
++
++	evtchnl->irq = ret;
++	return 0;
++
++fail:
++	DRM_ERROR("Failed to allocate ring: %d\n", ret);
++	return ret;
++}
++
++int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_ops *front_ops)
++{
++	struct xen_drm_front_cfg *cfg;
++	int ret, conn;
++
++	cfg = &front_info->cfg;
++
++	front_info->evt_pairs = devm_kcalloc(&front_info->xb_dev->dev,
++			cfg->num_connectors,
++			sizeof(struct xen_drm_front_evtchnl_pair), GFP_KERNEL);
++	if (!front_info->evt_pairs) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	for (conn = 0; conn < cfg->num_connectors; conn++) {
++		ret = evtchnl_alloc(front_info, conn,
++				&front_info->evt_pairs[conn].req,
++				EVTCHNL_TYPE_REQ);
++		if (ret < 0) {
++			DRM_ERROR("Error allocating control channel\n");
++			goto fail;
++		}
++
++		ret = evtchnl_alloc(front_info, conn,
++				&front_info->evt_pairs[conn].evt,
++				EVTCHNL_TYPE_EVT);
++		if (ret < 0) {
++			DRM_ERROR("Error allocating in-event channel\n");
++			goto fail;
++		}
++
++		front_info->evt_pairs[conn].evt.u.evt.front_ops = front_ops;
++	}
++	front_info->num_evt_pairs = cfg->num_connectors;
++	return 0;
++
++fail:
++	xen_drm_front_evtchnl_free_all(front_info);
++	return ret;
++}
++
++static int evtchnl_publish(struct xenbus_transaction xbt,
++		struct xen_drm_front_evtchnl *evtchnl, const char *path,
++		const char *node_ring, const char *node_chnl)
++{
++	struct xenbus_device *xb_dev = evtchnl->front_info->xb_dev;
++	int ret;
++
++	/* write control channel ring reference */
++	ret = xenbus_printf(xbt, path, node_ring, "%u", evtchnl->gref);
++	if (ret < 0) {
++		xenbus_dev_error(xb_dev, ret, "writing ring-ref");
++		return ret;
++	}
++
++	/* write event channel ring reference */
++	ret = xenbus_printf(xbt, path, node_chnl, "%u", evtchnl->port);
++	if (ret < 0) {
++		xenbus_dev_error(xb_dev, ret, "writing event channel");
++		return ret;
++	}
++
++	return 0;
++}
++
++int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info)
++{
++	struct xenbus_transaction xbt;
++	struct xen_drm_front_cfg *plat_data;
++	int ret, conn;
++
++	plat_data = &front_info->cfg;
++
++again:
++	ret = xenbus_transaction_start(&xbt);
++	if (ret < 0) {
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				"starting transaction");
++		return ret;
++	}
++
++	for (conn = 0; conn < plat_data->num_connectors; conn++) {
++		ret = evtchnl_publish(xbt,
++				&front_info->evt_pairs[conn].req,
++				plat_data->connectors[conn].xenstore_path,
++				XENDISPL_FIELD_REQ_RING_REF,
++				XENDISPL_FIELD_REQ_CHANNEL);
++		if (ret < 0)
++			goto fail;
++
++		ret = evtchnl_publish(xbt,
++				&front_info->evt_pairs[conn].evt,
++				plat_data->connectors[conn].xenstore_path,
++				XENDISPL_FIELD_EVT_RING_REF,
++				XENDISPL_FIELD_EVT_CHANNEL);
++		if (ret < 0)
++			goto fail;
++	}
++
++	ret = xenbus_transaction_end(xbt, 0);
++	if (ret < 0) {
++		if (ret == -EAGAIN)
++			goto again;
++
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				"completing transaction");
++		goto fail_to_end;
++	}
++
++	return 0;
++
++fail:
++	xenbus_transaction_end(xbt, 1);
++
++fail_to_end:
++	xenbus_dev_fatal(front_info->xb_dev, ret, "writing Xen store");
++	return ret;
++}
++
++void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl)
++{
++	int notify;
++
++	evtchnl->u.req.ring.req_prod_pvt++;
++	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&evtchnl->u.req.ring, notify);
++	if (notify)
++		notify_remote_via_irq(evtchnl->irq);
++}
++
++void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
++		enum xen_drm_front_evtchnl_state state)
++{
++	unsigned long flags;
++	int i;
++
++	if (!front_info->evt_pairs)
++		return;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++	for (i = 0; i < front_info->num_evt_pairs; i++) {
++		front_info->evt_pairs[i].req.state = state;
++		front_info->evt_pairs[i].evt.state = state;
++	}
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++
++}
++
++void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info)
++{
++	int i;
++
++	if (!front_info->evt_pairs)
++		return;
++
++	for (i = 0; i < front_info->num_evt_pairs; i++) {
++		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
++		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
++	}
++
++	devm_kfree(&front_info->xb_dev->dev, front_info->evt_pairs);
++	front_info->evt_pairs = NULL;
++}
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+new file mode 100644
+index 000000000000..e72d3aa68b4e
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+@@ -0,0 +1,89 @@
++/*
++ *  Xen para-virtual DRM device
++ *
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License as published by
++ *   the Free Software Foundation; either version 2 of the License, or
++ *   (at your option) any later version.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#ifndef __XEN_DRM_FRONT_EVTCHNL_H_
++#define __XEN_DRM_FRONT_EVTCHNL_H_
++
++#include <linux/completion.h>
++#include <linux/types.h>
++
++#include <xen/interface/io/ring.h>
++#include <xen/interface/io/displif.h>
++
++/*
++ * All operations which are not connector oriented use this ctrl event channel,
++ * e.g. fb_attach/destroy which belong to a DRM device, not to a CRTC.
++ */
++#define GENERIC_OP_EVT_CHNL	0
++
++enum xen_drm_front_evtchnl_state {
++	EVTCHNL_STATE_DISCONNECTED,
++	EVTCHNL_STATE_CONNECTED,
++};
++
++enum xen_drm_front_evtchnl_type {
++	EVTCHNL_TYPE_REQ,
++	EVTCHNL_TYPE_EVT,
++};
++
++struct xen_drm_front_drm_info;
++
++struct xen_drm_front_evtchnl {
++	struct xen_drm_front_info *front_info;
++	int gref;
++	int port;
++	int irq;
++	int index;
++	enum xen_drm_front_evtchnl_state state;
++	enum xen_drm_front_evtchnl_type type;
++	/* either response id or incoming event id */
++	uint16_t evt_id;
++	/* next request id or next expected event id */
++	uint16_t evt_next_id;
++	union {
++		struct {
++			struct xen_displif_front_ring ring;
++			struct completion completion;
++			/* latest response status */
++			int resp_status;
++		} req;
++		struct {
++			struct xendispl_event_page *page;
++			struct xen_drm_front_ops *front_ops;
++		} evt;
++	} u;
++};
++
++struct xen_drm_front_evtchnl_pair {
++	struct xen_drm_front_evtchnl req;
++	struct xen_drm_front_evtchnl evt;
++};
++
++int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_ops *front_ops);
++
++int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info);
++
++void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl);
++
++void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
++		enum xen_drm_front_evtchnl_state state);
++
++void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info);
++
++#endif /* __XEN_DRM_FRONT_EVTCHNL_H_ */
 -- 
 2.7.4
