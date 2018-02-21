@@ -1,101 +1,411 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755013AbeBURtQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:49:16 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54372 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966069AbeBURtN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S966092AbeBURtN (ORCPT <rfc822;w@1wt.eu>);
         Wed, 21 Feb 2018 12:49:13 -0500
-Date: Wed, 21 Feb 2018 17:49:10 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Brijesh Singh <brijesh.singh@amd.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Borislav Petkov <bp@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] KVM: SVM: Fix sparse: incorrect type in argument 1
- (different base types)
-Message-ID: <20180221174910.GI30522@ZenIV.linux.org.uk>
-References: <20180219161228.46931-1-brijesh.singh@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180219161228.46931-1-brijesh.singh@amd.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47243 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933603AbeBURtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 12:49:07 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v10 10/10] arch: sh: migor: Use new renesas-ceu camera driver
+Date: Wed, 21 Feb 2018 18:48:04 +0100
+Message-Id: <1519235284-32286-11-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:12:28AM -0600, Brijesh Singh wrote:
-> Fix sparse: incorrect type in argument 1 (different base types). Typecast
-> the userspace address argument.
+Migo-R platform uses sh_mobile_ceu camera driver, which is now being
+replaced by a proper V4L2 camera driver named 'renesas-ceu'.
 
-Better question: why the hell do we want that access_ok(), anyway?  The only
-thing we do to params.uaddr is
-        if (blob) {
-                if (copy_to_user((void __user *)(uintptr_t)params.uaddr, blob, params.len))
-                        ret = -EFAULT;
-        }
+Move Migo-R platform to use the v4l2 renesas-ceu camera driver
+interface and get rid of soc_camera defined components used to register
+sensor drivers and of platform specific enable/disable routines.
 
-downstream.  What does that access_ok() buy us?  It does not guarantee that
-copy_to_user() won't fail.  It does not clamp params.len (we'd just done
-that explicitly).  So why not somethings like this:
+Register clock source and GPIOs for sensor drivers, so they can use
+clock and gpio APIs.
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index b3e488a74828..ba2c1a606985 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -6239,13 +6239,15 @@ static int sev_launch_measure(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 	struct kvm_sev_info *sev = &kvm->arch.sev_info;
- 	struct sev_data_launch_measure *data;
- 	struct kvm_sev_launch_measure params;
-+	void __user *measure = (void __user *)(uintptr_t)argp->data;
-+	void __user *p = NULL;
- 	void *blob = NULL;
- 	int ret;
+Also, memory for CEU video buffers is now reserved with membocks APIs,
+and need to be declared as dma_coherent during machine initialization to
+remove that architecture specific part from CEU driver.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ arch/sh/boards/mach-migor/setup.c      | 225 +++++++++++++++------------------
+ arch/sh/kernel/cpu/sh4a/clock-sh7722.c |   2 +-
+ 2 files changed, 101 insertions(+), 126 deletions(-)
+
+diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
+index 0bcbe58..271dfc2 100644
+--- a/arch/sh/boards/mach-migor/setup.c
++++ b/arch/sh/boards/mach-migor/setup.c
+@@ -1,17 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas System Solutions Asia Pte. Ltd - Migo-R
+  *
+  * Copyright (C) 2008 Magnus Damm
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
++#include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/input.h>
+ #include <linux/input/sh_keysc.h>
++#include <linux/memblock.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mtd/physmap.h>
+ #include <linux/mfd/tmio.h>
+@@ -23,10 +22,11 @@
+ #include <linux/delay.h>
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/machine.h>
+ #include <linux/videodev2.h>
+ #include <linux/sh_intc.h>
+ #include <video/sh_mobile_lcdc.h>
+-#include <media/drv-intf/sh_mobile_ceu.h>
++#include <media/drv-intf/renesas-ceu.h>
+ #include <media/i2c/ov772x.h>
+ #include <media/soc_camera.h>
+ #include <media/i2c/tw9910.h>
+@@ -45,6 +45,9 @@
+  * 0x18000000       8GB    8   NAND Flash (K9K8G08U0A)
+  */
  
- 	if (!sev_guest(kvm))
- 		return -ENOTTY;
++#define CEU_BUFFER_MEMORY_SIZE		(4 << 20)
++static phys_addr_t ceu_dma_membase;
++
+ static struct smc91x_platdata smc91x_info = {
+ 	.flags = SMC91X_USE_16BIT | SMC91X_NOWAIT,
+ };
+@@ -301,65 +304,24 @@ static struct platform_device migor_lcdc_device = {
+ 	},
+ };
  
--	if (copy_from_user(&params, (void __user *)(uintptr_t)argp->data, sizeof(params)))
-+	if (copy_from_user(&params, measure, sizeof(params)))
- 		return -EFAULT;
- 
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
-@@ -6256,17 +6258,13 @@ static int sev_launch_measure(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 	if (!params.len)
- 		goto cmd;
- 
--	if (params.uaddr) {
-+	p = (void __user *)(uintptr_t)params.uaddr;
-+	if (p) {
- 		if (params.len > SEV_FW_BLOB_MAX_SIZE) {
- 			ret = -EINVAL;
- 			goto e_free;
- 		}
- 
--		if (!access_ok(VERIFY_WRITE, params.uaddr, params.len)) {
--			ret = -EFAULT;
--			goto e_free;
--		}
+-static struct clk *camera_clk;
+-static DEFINE_MUTEX(camera_lock);
 -
- 		ret = -ENOMEM;
- 		blob = kmalloc(params.len, GFP_KERNEL);
- 		if (!blob)
-@@ -6290,13 +6288,13 @@ static int sev_launch_measure(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		goto e_free_blob;
+-static void camera_power_on(int is_tw)
+-{
+-	mutex_lock(&camera_lock);
+-
+-	/* Use 10 MHz VIO_CKO instead of 24 MHz to work
+-	 * around signal quality issues on Panel Board V2.1.
+-	 */
+-	camera_clk = clk_get(NULL, "video_clk");
+-	clk_set_rate(camera_clk, 10000000);
+-	clk_enable(camera_clk);	/* start VIO_CKO */
+-
+-	/* use VIO_RST to take camera out of reset */
+-	mdelay(10);
+-	if (is_tw) {
+-		gpio_set_value(GPIO_PTT2, 0);
+-		gpio_set_value(GPIO_PTT0, 0);
+-	} else {
+-		gpio_set_value(GPIO_PTT0, 1);
+-	}
+-	gpio_set_value(GPIO_PTT3, 0);
+-	mdelay(10);
+-	gpio_set_value(GPIO_PTT3, 1);
+-	mdelay(10); /* wait to let chip come out of reset */
+-}
+-
+-static void camera_power_off(void)
+-{
+-	clk_disable(camera_clk); /* stop VIO_CKO */
+-	clk_put(camera_clk);
+-
+-	gpio_set_value(GPIO_PTT3, 0);
+-	mutex_unlock(&camera_lock);
+-}
+-
+-static int ov7725_power(struct device *dev, int mode)
+-{
+-	if (mode)
+-		camera_power_on(0);
+-	else
+-		camera_power_off();
+-
+-	return 0;
+-}
+-
+-static int tw9910_power(struct device *dev, int mode)
+-{
+-	if (mode)
+-		camera_power_on(1);
+-	else
+-		camera_power_off();
+-
+-	return 0;
+-}
+-
+-static struct sh_mobile_ceu_info sh_mobile_ceu_info = {
+-	.flags = SH_CEU_FLAG_USE_8BIT_BUS,
++static struct ceu_platform_data ceu_pdata = {
++	.num_subdevs			= 2,
++	.subdevs = {
++		{ /* [0] = ov772x */
++			.flags		= 0,
++			.bus_width	= 8,
++			.bus_shift	= 0,
++			.i2c_adapter_id	= 0,
++			.i2c_address	= 0x21,
++		},
++		{ /* [1] = tw9910 */
++			.flags		= 0,
++			.bus_width	= 8,
++			.bus_shift	= 0,
++			.i2c_adapter_id	= 0,
++			.i2c_address	= 0x45,
++		},
++	},
+ };
  
- 	if (blob) {
--		if (copy_to_user((void __user *)(uintptr_t)params.uaddr, blob, params.len))
-+		if (copy_to_user(p, blob, params.len))
- 			ret = -EFAULT;
- 	}
+ static struct resource migor_ceu_resources[] = {
+@@ -373,18 +335,32 @@ static struct resource migor_ceu_resources[] = {
+ 		.start  = evt2irq(0x880),
+ 		.flags  = IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* place holder for contiguous memory */
+-	},
+ };
  
- done:
- 	params.len = data->len;
--	if (copy_to_user((void __user *)(uintptr_t)argp->data, &params, sizeof(params)))
-+	if (copy_to_user(measure, &params, sizeof(params)))
- 		ret = -EFAULT;
- e_free_blob:
- 	kfree(blob);
+ static struct platform_device migor_ceu_device = {
+-	.name		= "sh_mobile_ceu",
+-	.id             = 0, /* "ceu0" clock */
++	.name		= "renesas-ceu",
++	.id             = 0, /* ceu.0 */
+ 	.num_resources	= ARRAY_SIZE(migor_ceu_resources),
+ 	.resource	= migor_ceu_resources,
+ 	.dev	= {
+-		.platform_data	= &sh_mobile_ceu_info,
++		.platform_data	= &ceu_pdata,
++	},
++};
++
++/* Powerdown/reset gpios for CEU image sensors */
++static struct gpiod_lookup_table ov7725_gpios = {
++	.dev_id		= "0-0021",
++	.table		= {
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT0, "pwdn", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
++	},
++};
++
++static struct gpiod_lookup_table tw9910_gpios = {
++	.dev_id		= "0-0045",
++	.table		= {
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
+ 	},
+ };
+ 
+@@ -423,6 +399,15 @@ static struct platform_device sdhi_cn9_device = {
+ 	},
+ };
+ 
++static struct ov772x_camera_info ov7725_info = {
++	.flags		= 0,
++};
++
++static struct tw9910_video_info tw9910_info = {
++	.buswidth       = 8,
++	.mpout          = TW9910_MPO_FIELD,
++};
++
+ static struct i2c_board_info migor_i2c_devices[] = {
+ 	{
+ 		I2C_BOARD_INFO("rs5c372b", 0x32),
+@@ -434,51 +419,13 @@ static struct i2c_board_info migor_i2c_devices[] = {
+ 	{
+ 		I2C_BOARD_INFO("wm8978", 0x1a),
+ 	},
+-};
+-
+-static struct i2c_board_info migor_i2c_camera[] = {
+ 	{
+ 		I2C_BOARD_INFO("ov772x", 0x21),
++		.platform_data = &ov7725_info,
+ 	},
+ 	{
+ 		I2C_BOARD_INFO("tw9910", 0x45),
+-	},
+-};
+-
+-static struct ov772x_camera_info ov7725_info;
+-
+-static struct soc_camera_link ov7725_link = {
+-	.power		= ov7725_power,
+-	.board_info	= &migor_i2c_camera[0],
+-	.i2c_adapter_id	= 0,
+-	.priv		= &ov7725_info,
+-};
+-
+-static struct tw9910_video_info tw9910_info = {
+-	.buswidth	= SOCAM_DATAWIDTH_8,
+-	.mpout		= TW9910_MPO_FIELD,
+-};
+-
+-static struct soc_camera_link tw9910_link = {
+-	.power		= tw9910_power,
+-	.board_info	= &migor_i2c_camera[1],
+-	.i2c_adapter_id	= 0,
+-	.priv		= &tw9910_info,
+-};
+-
+-static struct platform_device migor_camera[] = {
+-	{
+-		.name	= "soc-camera-pdrv",
+-		.id	= 0,
+-		.dev	= {
+-			.platform_data = &ov7725_link,
+-		},
+-	}, {
+-		.name	= "soc-camera-pdrv",
+-		.id	= 1,
+-		.dev	= {
+-			.platform_data = &tw9910_link,
+-		},
++		.platform_data = &tw9910_info,
+ 	},
+ };
+ 
+@@ -486,12 +433,9 @@ static struct platform_device *migor_devices[] __initdata = {
+ 	&smc91x_eth_device,
+ 	&sh_keysc_device,
+ 	&migor_lcdc_device,
+-	&migor_ceu_device,
+ 	&migor_nor_flash_device,
+ 	&migor_nand_flash_device,
+ 	&sdhi_cn9_device,
+-	&migor_camera[0],
+-	&migor_camera[1],
+ };
+ 
+ extern char migor_sdram_enter_start;
+@@ -501,6 +445,8 @@ extern char migor_sdram_leave_end;
+ 
+ static int __init migor_devices_setup(void)
+ {
++	struct clk *video_clk;
++
+ 	/* register board specific self-refresh code */
+ 	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF,
+ 					&migor_sdram_enter_start,
+@@ -620,20 +566,8 @@ static int __init migor_devices_setup(void)
+ 	gpio_request(GPIO_FN_VIO_D9, NULL);
+ 	gpio_request(GPIO_FN_VIO_D8, NULL);
+ 
+-	gpio_request(GPIO_PTT3, NULL); /* VIO_RST */
+-	gpio_direction_output(GPIO_PTT3, 0);
+-	gpio_request(GPIO_PTT2, NULL); /* TV_IN_EN */
+-	gpio_direction_output(GPIO_PTT2, 1);
+-	gpio_request(GPIO_PTT0, NULL); /* CAM_EN */
+-#ifdef CONFIG_SH_MIGOR_RTA_WVGA
+-	gpio_direction_output(GPIO_PTT0, 0);
+-#else
+-	gpio_direction_output(GPIO_PTT0, 1);
+-#endif
+ 	__raw_writew(__raw_readw(PORT_MSELCRB) | 0x2000, PORT_MSELCRB); /* D15->D8 */
+ 
+-	platform_resource_setup_memory(&migor_ceu_device, "ceu", 4 << 20);
+-
+ 	/* SIU: Port B */
+ 	gpio_request(GPIO_FN_SIUBOLR, NULL);
+ 	gpio_request(GPIO_FN_SIUBOBT, NULL);
+@@ -647,9 +581,36 @@ static int __init migor_devices_setup(void)
+ 	 */
+ 	__raw_writew(__raw_readw(PORT_MSELCRA) | 1, PORT_MSELCRA);
+ 
++	 /*
++	  * Use 10 MHz VIO_CKO instead of 24 MHz to work around signal quality
++	  * issues on Panel Board V2.1.
++	  */
++	video_clk = clk_get(NULL, "video_clk");
++	if (!IS_ERR(video_clk)) {
++		clk_set_rate(video_clk, clk_round_rate(video_clk, 10000000));
++		clk_put(video_clk);
++	}
++
++	/* Add a clock alias for ov7725 xclk source. */
++	clk_add_alias("xclk", "0-0021", "video_clk", NULL);
++
++	/* Register GPIOs for video sources. */
++	gpiod_add_lookup_table(&ov7725_gpios);
++	gpiod_add_lookup_table(&tw9910_gpios);
++
+ 	i2c_register_board_info(0, migor_i2c_devices,
+ 				ARRAY_SIZE(migor_i2c_devices));
+ 
++	/* Initialize CEU platform device separately to map memory first */
++	device_initialize(&migor_ceu_device.dev);
++	arch_setup_pdev_archdata(&migor_ceu_device);
++	dma_declare_coherent_memory(&migor_ceu_device.dev,
++				    ceu_dma_membase, ceu_dma_membase,
++				    ceu_dma_membase + CEU_BUFFER_MEMORY_SIZE - 1,
++				    DMA_MEMORY_EXCLUSIVE);
++
++	platform_device_add(&migor_ceu_device);
++
+ 	return platform_add_devices(migor_devices, ARRAY_SIZE(migor_devices));
+ }
+ arch_initcall(migor_devices_setup);
+@@ -665,10 +626,24 @@ static int migor_mode_pins(void)
+ 	return MODE_PIN0 | MODE_PIN1 | MODE_PIN5;
+ }
+ 
++/* Reserve a portion of memory for CEU buffers */
++static void __init migor_mv_mem_reserve(void)
++{
++	phys_addr_t phys;
++	phys_addr_t size = CEU_BUFFER_MEMORY_SIZE;
++
++	phys = memblock_alloc_base(size, PAGE_SIZE, MEMBLOCK_ALLOC_ANYWHERE);
++	memblock_free(phys, size);
++	memblock_remove(phys, size);
++
++	ceu_dma_membase = phys;
++}
++
+ /*
+  * The Machine Vector
+  */
+ static struct sh_machine_vector mv_migor __initmv = {
+ 	.mv_name		= "Migo-R",
+ 	.mv_mode_pins		= migor_mode_pins,
++	.mv_mem_reserve		= migor_mv_mem_reserve,
+ };
+diff --git a/arch/sh/kernel/cpu/sh4a/clock-sh7722.c b/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
+index 8f07a1a..d85091e 100644
+--- a/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
++++ b/arch/sh/kernel/cpu/sh4a/clock-sh7722.c
+@@ -223,7 +223,7 @@ static struct clk_lookup lookups[] = {
+ 	CLKDEV_DEV_ID("sh-vou.0", &mstp_clks[HWBLK_VOU]),
+ 	CLKDEV_CON_ID("jpu0", &mstp_clks[HWBLK_JPU]),
+ 	CLKDEV_CON_ID("beu0", &mstp_clks[HWBLK_BEU]),
+-	CLKDEV_DEV_ID("sh_mobile_ceu.0", &mstp_clks[HWBLK_CEU]),
++	CLKDEV_DEV_ID("renesas-ceu.0", &mstp_clks[HWBLK_CEU]),
+ 	CLKDEV_CON_ID("veu0", &mstp_clks[HWBLK_VEU]),
+ 	CLKDEV_CON_ID("vpu0", &mstp_clks[HWBLK_VPU]),
+ 	CLKDEV_DEV_ID("sh_mobile_lcdc_fb.0", &mstp_clks[HWBLK_LCDC]),
+-- 
+2.7.4
