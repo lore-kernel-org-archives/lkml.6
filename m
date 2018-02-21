@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224beR6aGZZjQkKs4hJNVEsdzOImYRUdHp7hI7k6jHL8aWSy+IoJ3/Wvl/BiSXVh4zRFUzDf
-ARC-Seal: i=1; a=rsa-sha256; t=1519217897; cv=none;
+X-Google-Smtp-Source: AH8x227Zz/S3mJdSc0KiYWtaVGMt+Q7V8BwfvGln2h1HZ974mFTEzvyoFpvqcuOaJk/HEsLvfQ9K
+ARC-Seal: i=1; a=rsa-sha256; t=1519217894; cv=none;
         d=google.com; s=arc-20160816;
-        b=nCm1H5xh38emyUqMjLiQa/VWjaUl+EwwQi2ajtS2DTyVZfrNezGhIAQtrGP/gfKfgh
-         UdsLMZLJTtv1jyGm5sTOG9/Dgy+j/+ou09eluSWFxhV7XB5uQJNSVBiGPl7AgB8Sz54x
-         fV6ifu9Jk2eDFat6pF9ckErmBmaHVndsXOgf6Ki7yb4mMUZ+iz/6lDi66UuJXpUZl895
-         9okIB5JGIKoJT9lEPSZ/yFBa87RF5FKr5S+QGxYG/IEtRbJHM6Cl2r21xPDSVzhTOWa5
-         myzmqZcM/UdPiZDHYA4g/J6GtkAaO+gdxUwvgmUZHyfvCx34pbc8jPnG0YS31INFJukt
-         WQKA==
+        b=KiDfWvuCw711FUMnCHv9+MjyyA2AF9BObTnyCEEZ9FwL3Xn3eBkSViJDxxeJSJUf8v
+         R171e9kgS8aVMX+iW0ngProIOABOSg0AqZBH6cAXXCIZmhzNuNE8ALGToTrSitnSMTaS
+         fY+OoO8MfFz4+/LdjhFI4M8gOsDkgbu0At2XhfjmD1MQC6q8MBR/Yhj+NWWSnOW4f+Tf
+         6yJEmKOzgxbXr929LGumGkUTN9wvnQmxulybahyp3r43bgJMEBJQibrbPRXfBYwieg/K
+         uQo3D/qScVWJ2iTRSLXp2pCtV/OADAu1L4szOZv/2UO8DxfPqszPyhtp3O+VfD33dn4n
+         P9NA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tHI60DHSl2mdorovP1x8B1vBfYgC8NZyS6KI8EZ7KrQ=;
-        b=0cXYNCwfXWII90PsXZVdQiPFZdvtN003PQeQXqwEAofRqPvxweTuKDLwBPYxuL0XMQ
-         DdZtTI8IV/a3BmzEeJxjw8CG72gonTzLHOdczAyWJpDEoGVMwsJU6PFDXy5qFyjt+TO1
-         ulw+YICKG9T2tHWKABxJDNIb4HNsTyNZohgKCMtph2oTCOuRkkImODQhxTgjjmAIG4VA
-         i9EoyJccazP86XEl6a4EUOwudhu5l9TQjhxYr1pW7QFCbkiOEVag0KD8ADCcLpHk3e28
-         W1J6vQI/Y/eIxlHctUZyqhpIDvLFRyficv9nezs4jIR0B8RG0FWruimtatoTBLNhOjT0
-         LDUA==
+        bh=fJXuzVnp9m4s/5YKu5VXfwWY7nm6y4gNLHInkFS+lgY=;
+        b=h2jnVXg92bjoFQJ+UZWtROgLUG3wtHkQkaloLWxnYMEUSMfxSGZV3czNGrv6hyqs5I
+         1EGJcLCpbp13+jwnm+n5g0Vt7CsX0edgvtTcEYS++0R5GSuwoYYHFMhbmYKfjVCnMQ7l
+         E7PrfZ3dI+J0mEfZtAWbXeY+ijZdDvXkuqTKTd2zEL5FNhCb+8ZMjbTL4hvcLGad069R
+         xjB2xYbJKjOzWrXg83WAks48rMtup+bYmZyf7aDpOnpQCNbFg00M2ZxA9quY0e2I55kr
+         EQCSYJCSeIB6uPt1RBY+ORBlnzkYGqx6n7Fu8hHK+q7uWmAl5JXvXs6HXGIlanv2q+HY
+         M2MA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xinming Hu <huxm@marvell.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 017/167] mwifiex: resolve reset vs. remove()/shutdown() deadlocks
-Date: Wed, 21 Feb 2018 13:47:08 +0100
-Message-Id: <20180221124525.562795649@linuxfoundation.org>
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 4.14 016/167] PM / devfreq: Propagate error from devfreq_add_device()
+Date: Wed, 21 Feb 2018 13:47:07 +0100
+Message-Id: <20180221124525.508310083@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015425897320755?=
-X-GMAIL-MSGID: =?utf-8?q?1593015425897320755?=
+X-GMAIL-THRID: =?utf-8?q?1593014614609921492?=
+X-GMAIL-MSGID: =?utf-8?q?1593015423257339424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit a64e7a79dd6030479caad603c8d78e6c9c14904f upstream.
+commit d1bf2d30728f310f72296b54f0651ecdb09cbb12 upstream.
 
-Commit b014e96d1abb ("PCI: Protect pci_error_handlers->reset_notify()
-usage with device_lock()") resolves races between driver reset and
-removal, but it introduces some new deadlock problems. If we see a
-timeout while we've already started suspending, removing, or shutting
-down the driver, we might see:
+Propagate the error of devfreq_add_device() in devm_devfreq_add_device()
+rather than statically returning ENOMEM. This makes it slightly faster
+to pinpoint the cause of a returned error.
 
-(a) a worker thread, running mwifiex_pcie_work() ->
-    mwifiex_pcie_card_reset_work() -> pci_reset_function()
-(b) a removal thread, running mwifiex_pcie_remove() ->
-    mwifiex_free_adapter() -> mwifiex_unregister() ->
-    mwifiex_cleanup_pcie() -> cancel_work_sync(&card->work)
-
-Unfortunately, mwifiex_pcie_remove() already holds the device lock that
-pci_reset_function() is now requesting, and so we see a deadlock.
-
-It's necessary to cancel and synchronize our outstanding work before
-tearing down the driver, so we can't have this work wait indefinitely
-for the lock.
-
-It's reasonable to only "try" to reset here, since this will mostly
-happen for cases where it's already difficult to reset the firmware
-anyway (e.g., while we're suspending or powering off the system). And if
-reset *really* needs to happen, we can always try again later.
-
-Fixes: b014e96d1abb ("PCI: Protect pci_error_handlers->reset_notify() usage with device_lock()")
-Cc: <stable@vger.kernel.org>
-Cc: Xinming Hu <huxm@marvell.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 8cd84092d35e ("PM / devfreq: Add resource-managed function for devfreq device")
+Cc: stable@vger.kernel.org
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/pcie.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/devfreq/devfreq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/pcie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
-@@ -2781,7 +2781,10 @@ static void mwifiex_pcie_card_reset_work
- {
- 	struct pcie_service_card *card = adapter->card;
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -676,7 +676,7 @@ struct devfreq *devm_devfreq_add_device(
+ 	devfreq = devfreq_add_device(dev, profile, governor_name, data);
+ 	if (IS_ERR(devfreq)) {
+ 		devres_free(ptr);
+-		return ERR_PTR(-ENOMEM);
++		return devfreq;
+ 	}
  
--	pci_reset_function(card->dev);
-+	/* We can't afford to wait here; remove() might be waiting on us. If we
-+	 * can't grab the device lock, maybe we'll get another chance later.
-+	 */
-+	pci_try_reset_function(card->dev);
- }
- 
- static void mwifiex_pcie_work(struct work_struct *work)
+ 	*ptr = devfreq;
