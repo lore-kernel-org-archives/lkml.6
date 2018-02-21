@@ -1,210 +1,358 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3286258-1519662521-2-13205373086165523154
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1756774-1519225355-2-7434785796291750900
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='74.125.83.68', Host='mail-pg0-f68.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: leechu729@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519662521; b=DmT/R19zzvAPWu+Xjumw5cNBljU8Jy6Ozei3CBQaLwslXxX
-    u1mMrCBGxQnqzNYY+Aqqw371fblBJSwu3IQM9QTn3dUXdDNwX2VTS6Wl/69YeJPc
-    D5As4hBacm0glv3xC2winu5cRLU5+3/b9ahQZ27/fVr6L5QHBByRCoLyxEVG6t7+
-    AyDceVrUZdvNBzABbj26WMM/0Wmymi6Ljv7q7xMZj7MisZBPc2eiEglzrsi68Xm7
-    8tyLXWGEY7SdQiG86sOdlFYMQHaZpP6AHaFsEMNPnr6dIVioK49h5g5aq1iRj2ol
-    epp3EeJHR0/2JPWg75EhHS8Gpsp8JYFSugMqonA==
+    t=1519225354; b=Y1x8dTra93lIo1ETKNerF6JqVwXYjxPyxQwYOcGuT+64XJi
+    5elWtrN1myzLE7eG8mhMSyWn0k0h7uN3Vor/y4/9yDJZoZkKNwuFuJASW2pS/+Gi
+    8FhELW/jpM8h6IND9q8WIQpWraGSV0HFl2oxYxy34bmZfht/1mo3F6N4Jk6uVDpr
+    XEvn1pSLSL3UFmciEmuzGqScMDt4UmUWeof4tLwiKcgVo/4eO9mnx5yziADdwfom
+    GaFIBolqVytI7s2G8q1/lYfNgLovL7FylGY3AjEMpUwJI7XuF+btHvcK4ihKHhl1
+    38ndSRYHC5m69o4On+EmR04T/weiafcVLtbWNyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519662521; bh=u
-    5JwjT6JKNQN/q9QuhtBhLAb9RxA8EiDQHoY/vCd8/Y=; b=lxQ4cy9gC+Gp/0fGT
-    AMy8x8kcVMe/4es5RFqEzcfSdktS7bEm4j0lSCJAghmvz7tXRxgmG2X7ELVQ4Tgs
-    7/xfjjUv2R1lg6Q52d5v8O9aYKjuJ7YFU2qXe6/Yn3gulreVJBJZialrY3KOq/g6
-    uie6mNFHe8B71iHlug2gtKlWJelwtCG0cgzxDv3j6YZ0SlTD1AG/wi1yxmAPjcdq
-    TS2076hbouinJvoKPvCMxEnhpVD6P4sJPzx5qitzXAU8XKikM2zhMXHttrEJvi07
-    h8f1zID1jMYV/Nd3BOTLi6+Zz2RKABYGHbxK/i5LZ0s7ipkshwqYfdk6ceynb+CX
-    HPgmA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=GmyF4Clg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1519225354; bh=/rZmRk6YgaBF762eSlidPHlobwsLampqY4hcYj
+    yBUa4=; b=HlMHaMNpgMYkV27jIkWO6NKoqi179n/y/2AP7xFTIsxh65Xne+9n3t
+    nj2jO0T0YO98Uvbx2mNNs9WrKkPFaO6omqh/imsUELPIvwAO/5xebuj9USj/Rhg3
+    e+uSdgWZG71VdUU9iw4lKcG5cPZj6vNM11YOpozWtNSWJVUar00PQ6kRADQfX2Pp
+    E8ni7lsRnUuHpSc3O03mkiyw8urYvBhYy+0wexsny6CCzPXu3Roxt2UeDas2UWge
+    OYcO7zC0aecZ08S7X0FGXMwRo2V+i5yBXkBEAODFkHHhHXBKyzFdkNJ0WU2/523z
+    1hgVJdxECqb+ml7EvXckRkFAX4vfNfcw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jkpX3bdI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YhQjKXRx;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=GmyF4Clg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jkpX3bdI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pg0-f68.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YhQjKXRx;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ruxandra.radulescu@nxp.com;
-From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH 1/4] staging: fsl-mc/dpio: Fix incorrect casts
-Date: Mon, 26 Feb 2018 10:28:04 -0600
-Message-Id: <20180226162807.20649-2-ruxandra.radulescu@nxp.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180226162807.20649-1-ruxandra.radulescu@nxp.com>
-References: <20180226162807.20649-1-ruxandra.radulescu@nxp.com>
-MIME-Version: 1.0
-X-Originating-IP: [192.88.168.1]
-X-ClientProxiedBy: DM5PR10CA0018.namprd10.prod.outlook.com (2603:10b6:4:2::28)
- To DB6PR0402MB2696.eurprd04.prod.outlook.com
- (2603:10a6:4:94::10)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 200e2994-cd03-44e8-6661-08d57d35f648
-X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);
- SRVR:DB6PR0402MB2696;
-X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
- 3:matKbCasCjZ3cZNG9HpsvgXZ9v6gXIW4rKUcRiBq/1qJJvWNVxRMtxUKOhEKxy346Z7sAe/FtNJgl2tbI0BrZlvAyiGj0HC0MUwDV4Bo8VAJqSedZQGCUzd+axfzjfdZrb4P5BlvX/duUJFQMalHVGKaDOX/zIW2A6WKXxuvb61gk3bGBllJUQwMNkmqBhg/AYx16FB7DAhlh0qWZKsJ9O/+NKJuevtk/a3QNn8+HB3oFOaV9j2Dn4qy3nUS7Xm1;
- 25:XHkitSXc2/Su9TtQETjHqapsgcwhQMc0mEb3ngQMWX4PLprN5DrIRk+/UJtloeea1sm8kxSkAgPrgEXFipBSHraFvbRZNZ53QYcT3xLA+g7nYoECz4Q0cLn3AgNvwag0S9YdutVBeF2Swh5IgZUb5t2+FNFsDBpk28IJlq/Td6959p+L/sSf0q8J1b9AyQaAnGgk0ytyIMCpr1uNWGCTgS7N51LTmnKSSXeYtsAPTEEF9qrsnyXXJEHDtAmiitU8dEd7JlLLYRVEAjMPtAz6RIYb23rLDGLPvewUm8eXNvESckvFTzw8chUxON0+rckRLPxufnLkbU2xiPscGgUUZA==;
- 31:ZyvqZsoYdabePxH6tCqjJKKbbdqtc4cUL2uLyoybikYSm3HwHU7aFWF5ZunTiLv8P5eyc3JwIAlw6dVzQkdCHjXUgi45gQsckFTYiNUypJoo0S/vEXmjO+vlHI6ZvJTVTwnn6iCSpO8r5RFD6SQFCu1Uxwt2DbeEkwSPWonhJqlF6LTYrf0VGsDNA0TbxuUiBf2azWvD6aNAOLe1+s6evbfPQmqsUFxnCiVZvWcM4Co=
-X-MS-TrafficTypeDiagnostic: DB6PR0402MB2696:
-X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
- 20:+LHQsz0MPM8ZSPSrH9GH4bdpsQgozrNlmYed0/JU2mN145efgG9pIKdIzVKhCfiOGDwvSsXyBh017ia1X8eQB25Ulj0ykb2NaJJJib8QxQZk+NM0MZRr82IcJTZ2A/l+BBp8GgN6v7e1xdqfARO6CcnbrhXgkjt6FwogMxDcFJRSoqxCgODsPQP3Y4S9iso53pLRBfU9/an+Ko5tAjw5VR8QTt2/OCBVlywl0MZnPRtdv7rK/AV/WqAaMWsfTwfWVvjX/pyOK9YCK7s938vBM9ZGybKHhHVok6SQ//Mp4QDMK/CXeQ6GDG7oy2jH+b9Ab72UOYNxEk30T0WkCweRONDmkhf+u/aZfxPimyYsssbyAzMBu39FBVJFHSgkEv2dZjlrP5e4b6qYPh1xFitXV4tbBaknta0dsEmuosI14kJSzIMsC97hvWvJXoWLsA9jzuYbRRyJy0qZ22TMBy1AmIDcqT+MHOT8QvgVa7DVbnoOgW8zXNLvQhmlwlXdfyQ7;
- 4:/uHYR//d1cfLfIT+FeBYrcXgYANOhWr2V61QSDvKfowG2ABIciSzCzvf35+jFH7Ykla81u+VsFOLfhpxmEHx+6nzS2TovQw1ZQX66c/BB8aqFcscRVi92So/J5buR73wiK9rCMzHAAEUXzgXFK8Y1gAgqqoP13xFjGUqKU2kdaavc84PX7j152kEDWpVmLvPF8OhYTSNQoZUZ8qKxGpw7BhQ2yjeBMQzyHJwDs2QfJU5jEV5pOEcpywFUhnvENaXpriyFVTf0nwdj+goJzqVhoCN1w1KOEQ980qfv6owKoO13qy3ZwZpIB8lUOX72EpQ
-X-Microsoft-Antispam-PRVS: <DB6PR0402MB269656A73BAB67BBEBB7BF5294C10@DB6PR0402MB2696.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501161)(6055026)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);
- SRVR:DB6PR0402MB2696; BCL:0; PCL:0; RULEID:; SRVR:DB6PR0402MB2696;
-X-Forefront-PRVS: 05954A7C45
-X-Forefront-Antispam-Report: SFV:NSPM;
- SFS:(10009020)(396003)(39860400002)(346002)(366004)(39380400002)(376002)(199004)(189003)(2361001)(51416003)(106356001)(50466002)(26005)(16526019)(478600001)(316002)(186003)(105586002)(52116002)(305945005)(7736002)(16586007)(81166006)(25786009)(97736004)(5660300001)(2351001)(86362001)(2906002)(8676002)(2950100002)(6666003)(66066001)(36756003)(4326008)(6486002)(47776003)(6916009)(53936002)(48376002)(81156014)(59450400001)(76176011)(68736007)(6512007)(8936002)(386003)(6506007)(50226002)(1076002)(6116002)(3846002);
- DIR:OUT; SFP:1101; SCL:1; SRVR:DB6PR0402MB2696; H:rhuath.am.freescale.net;
- FPR:; SPF:None; PTR:InfoNoRecords; A:1; MX:1; LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; DB6PR0402MB2696;
- 23:w3i4qgfh8Y8oZcu66vCqk+k3/1YuPrqCUTD4Wyx?=
- =?us-ascii?Q?00FkbVLwFMFveGEX9oRxnNZoF5tUKkcsyzg5vNo56mZaxuiZ+Z75Jirsj03E?=
- =?us-ascii?Q?C1XoQOzS6YeNt246H+dsrKkBk/WyCBZYG7DYm1R1fRBQFUuDNtATapylkH9S?=
- =?us-ascii?Q?guwSTQ10GLqTSzBQkFbICkrsGr6DPWnTk5olGFLq99HowUD818dgKXAJifUm?=
- =?us-ascii?Q?lMrm/wZaY6s8HwA/kKJNOlP5cx3XYXtvZhav1ZYamJUXjMcY1usU6df+hp1N?=
- =?us-ascii?Q?KomN7JF5Le00xvTXNo1HBIiGuhcWUsBLlfcGES+HTGNJ2rE8pkUDxn5ebjCN?=
- =?us-ascii?Q?mp9ScK2+NesTkitwb/wUjpQAgFDWutXFgAY0eA9NK99/uyRixJIs5y2K3jol?=
- =?us-ascii?Q?UKNrO48ZmoV4WtdOknWNnRfaanlV8Qc9w+gy/QQGwEK3xHs/9qIzHncf+mzi?=
- =?us-ascii?Q?E5W4RWFjClI0xqV6v/NyYwfVyhh+uYrP9ecXjMgDeAyaPCT7pEX5iJSdK0HN?=
- =?us-ascii?Q?4tveSfdZUoEXF8GwsbNodiQjFuGsZkkxeBMlmc2aMz0hJPXZSDEPObGtoMid?=
- =?us-ascii?Q?VA2ldRptQ1UlaNf2EXvP8Rg953H/3crai9/CUKvRCecnyzczb7580n1x+YvH?=
- =?us-ascii?Q?ZP6Z43A6eTSwGBqZvXIfSIz5N5CvARSY0S/WOZJG/8Dt6hP+ep+HzoEDEU/a?=
- =?us-ascii?Q?v143j30Xg2Qt5v5Vx4vq78jdKm+xMEa9299jg2RLPzTY6KYkAL9jCh66VhyQ?=
- =?us-ascii?Q?O6X6A6AbOoNf4pk5KFsgIbTBEPNHFMx90BqiLzYw56ybgplmkQD/TLu2/1sb?=
- =?us-ascii?Q?G/U4tAPgdLI0GZPkEz3rs2iQt5xrt6RO8uzaV35XDh1AAoC8ioz9I+DJfa5G?=
- =?us-ascii?Q?qhsSUWgSbPJj4G4vHsoQI3o1GHi0BMY6Pv3Lv5YQmyLBRBp6fhT9bqpZbcJv?=
- =?us-ascii?Q?IukaKX4fmS2AXMvF4q3aN+NIPtRGQw1uB1+8o2Lh2Tym0OcpD0waPKLjuj4L?=
- =?us-ascii?Q?cU5DfHgafGitqRTH8XKSlVH54FpluPlbY6IoHERL/XjZyqcJo/H0dfGpXwBz?=
- =?us-ascii?Q?CH4B5ykcT+IDX6jARQRVrRwqnUWBpS/7l1s8evVTADy79Yn4r8RDtRuu3omC?=
- =?us-ascii?Q?YoxyfnnTgK3l1aoJcTQzfA8rWIccblx4Ygf/CgSKzU68dK7yc+mT0Lz03WzU?=
- =?us-ascii?Q?65mw27UmFEDEgMw8=3D?=
-X-Microsoft-Exchange-Diagnostics: 1; DB6PR0402MB2696;
- 6:IbDHSlpf3pjlIaeLPkT7k/9UUQ58U0mRM9BkgP5Pgum5agxvFh9xm+w5x+k35TKemY2TE+kXDjqdrNZT4cci2MarnxLjPSDHQ1oakVQqXEwzezbmEzURxpiRozdXG+xOb4eYd544fDcRKObukJ5tmeaEi0HSkhmeGMsxFIKOxJ/m9r54j6pOB2yLh61YeqPkgcxroGrEi25+hryelQVfCUr2YLMnzWFFLFreuijP4E/d+mLHofEds9Pzn/fFyqdfTDHQoVDPN4tUqFwBkNXLm2OW78pOCENzhYsMSfwZnyTicXM2TnOm4W8Po+Zi4qxukSOi8pFIi8VsUdlT+Lyz7oM5/ndNGacsUwz8pwEkCqk=;
- 5:qAYqXb7HDelLlrlPwEtxCCM1YuHN3lBbnvJUV8n485QRT+z0ezOzcrYakbJagSLAlZD/00wz1eIw/j4BzOJL86jpGrqosfCOWiiqZriax2oYmziNpJYPKqb2OWaaq+3cX3oY1WXrxWJNoxpf0+vJyUNhrmtlRRP5X+0E0uAavjo=;
- 24:a//oWV4oQtKFhZfjEy0+rDqQfJp5FYZmIvm3mxLQ22Ab8CyWpEx1cu3v0LS83pTKpwMkAM51Tlk/SVku8gpVJBFdRIWOaSBfWp+bB27vvsM=;
- 7:UkDgP6EN4AXJPXZ4JlE8c7kawNN8de6c1t9VKe1ySGJ2o+CXRB6qmFFDHxEPxhCaa1F9Zk6Fuq33OeklmtebOF4lGEiyZHcaXeMc8YX1L0CMLlAHUb+OLJxfk4RU0igdCahCUjqSIJrZn5xgnDEb/4t+++qAV5lwjwGHeMy0iIBUpHIg9bGREN3lKCHv8n+a2z36OVCIfr1zUF9uFzjW3WfgQOvVb/XWIwPMqtCReGq8Ne64h8gylzYBbypvM44m
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2018 16:28:24.9284 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 200e2994-cd03-44e8-6661-08d57d35f648
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2696
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, roy.pledge@nxp.com, bogdan.purcareata@nxp.com,
- linux-kernel@vger.kernel.org, laurentiu.tudor@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Google-Smtp-Source: AH8x226fcY6qretXWv7wlihNt8bcQVuluTMNtu1HfjR0vNpsy1Ew+JCgeDVb65bPOBidsRJ021FjTA==
+From: ShuFanLee <leechu729@gmail.com>
+To: heikki.krogerus@linux.intel.com,
+	linux@roeck-us.net,
+	greg@kroah.com
+Cc: shufan_lee@richtek.com,
+	cy_huang@richtek.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] staging: typec: handle vendor defined part and modify drp toggling flow
+Date: Wed, 21 Feb 2018 23:02:23 +0800
+Message-Id: <1519225343-2929-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The DPIO driver incorrectly assumes virtual addresses are always
-64b long, which causes compiler errors when building for a 32b
-platform.
+From: ShuFanLee <shufan_lee@richtek.com>
 
-Fix this by using explicit casts to uintptr_t where necessary.
+Handle vendor defined behavior in tcpci_init, tcpci_set_vconn and export tcpci_irq.
+More operations can be extended in tcpci_data if needed.
+According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+TCPC shall not start DRP toggling until subsequently the TCPM
+writes to the COMMAND register to start DRP toggling.
+DRP toggling flow is chagned as following:
+  - Write DRP = 0 & Rd/Rd
+  - Write DRP = 1
+  - Set LOOK4CONNECTION command
 
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Signed-off-by: ShuFanLee <shufan_lee@richtek.com>
 ---
- drivers/staging/fsl-mc/bus/dpio/dpio-service.c | 4 ++--
- drivers/staging/fsl-mc/bus/dpio/qbman-portal.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/typec/tcpci.c | 128 +++++++++++++++++++++++++++++++++---------
+ drivers/staging/typec/tcpci.h |  13 +++++
+ 2 files changed, 115 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/staging/fsl-mc/bus/dpio/dpio-service.c b/drivers/staging/fsl-mc/bus/dpio/dpio-service.c
-index 1acff7e..14ed2be 100644
---- a/drivers/staging/fsl-mc/bus/dpio/dpio-service.c
-+++ b/drivers/staging/fsl-mc/bus/dpio/dpio-service.c
-@@ -192,7 +192,7 @@ irqreturn_t dpaa2_io_irq(struct dpaa2_io *obj)
- 			u64 q64;
+ patch changelogs between v1 & v2
+ - Remove unnecessary i2c_client in the structure of tcpci
+ - Rename structure of tcpci_vendor_data to tcpci_data
+ - Not exporting tcpci read/write wrappers but register i2c regmap in glue driver
+ - Add set_vconn ops in tcpci_data
+   (It is necessary for RT1711H to enable/disable idle mode before disabling/enabling vconn)
+ - Export tcpci_irq so that vendor can call it in their own IRQ handler
+
+ patch changelogs between v2 & v3
+ - Change the return type of tcpci_irq from int to irqreturn_t
+
+diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+index 9bd4412..4959c69 100644
+--- a/drivers/staging/typec/tcpci.c
++++ b/drivers/staging/typec/tcpci.c
+@@ -21,7 +21,6 @@
  
- 			q64 = qbman_result_SCN_ctx(dq);
--			ctx = (void *)q64;
-+			ctx = (void *)(uintptr_t)q64;
- 			ctx->cb(ctx);
- 		} else {
- 			pr_crit("fsl-mc-dpio: Unrecognised/ignored DQRR entry\n");
-@@ -237,7 +237,7 @@ int dpaa2_io_service_register(struct dpaa2_io *d,
- 		return -ENODEV;
+ struct tcpci {
+ 	struct device *dev;
+-	struct i2c_client *client;
  
- 	ctx->dpio_id = d->dpio_desc.dpio_id;
--	ctx->qman64 = (u64)ctx;
-+	ctx->qman64 = (u64)(uintptr_t)ctx;
- 	ctx->dpio_private = d;
- 	spin_lock_irqsave(&d->lock_notifications, irqflags);
- 	list_add(&ctx->node, &d->notifications);
-diff --git a/drivers/staging/fsl-mc/bus/dpio/qbman-portal.c b/drivers/staging/fsl-mc/bus/dpio/qbman-portal.c
-index 376e9ed..f57c151 100644
---- a/drivers/staging/fsl-mc/bus/dpio/qbman-portal.c
-+++ b/drivers/staging/fsl-mc/bus/dpio/qbman-portal.c
-@@ -497,7 +497,7 @@ void qbman_pull_desc_set_storage(struct qbman_pull_desc *d,
- 				 int stash)
+ 	struct tcpm_port *port;
+ 
+@@ -30,6 +29,12 @@ struct tcpci {
+ 	bool controls_vbus;
+ 
+ 	struct tcpc_dev tcpc;
++	struct tcpci_data *data;
++};
++
++struct tcpci_chip {
++	struct tcpci *tcpci;
++	struct tcpci_data data;
+ };
+ 
+ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+@@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+ 	return container_of(tcpc, struct tcpci, tcpc);
+ }
+ 
+-static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+-			u16 *val)
++static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
  {
- 	/* save the virtual address */
--	d->rsp_addr_virt = (u64)storage;
-+	d->rsp_addr_virt = (u64)(uintptr_t)storage;
+ 	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+ }
+@@ -98,8 +102,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 				    enum typec_cc_status cc)
+ {
++	int ret;
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+-	unsigned int reg = TCPC_ROLE_CTRL_DRP;
++	unsigned int reg = (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
  
- 	if (!storage) {
- 		d->verb &= ~(1 << QB_VDQCR_VERB_RLS_SHIFT);
-@@ -590,7 +590,7 @@ int qbman_swp_pull(struct qbman_swp *s, struct qbman_pull_desc *d)
- 		atomic_inc(&s->vdq.available);
- 		return -EBUSY;
+ 	switch (cc) {
+ 	default:
+@@ -117,7 +123,19 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 		break;
  	}
--	s->vdq.storage = (void *)d->rsp_addr_virt;
-+	s->vdq.storage = (void *)(uintptr_t)d->rsp_addr_virt;
- 	p = qbman_get_cmd(s, QBMAN_CENA_SWP_VDQCR);
- 	p->numf = d->numf;
- 	p->tok = QMAN_DQ_TOKEN_VALID;
+ 
+-	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	usleep_range(500, 1000);
++	reg |= TCPC_ROLE_CTRL_DRP;
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
++			   TCPC_CMD_LOOK4CONNECTION);
++	if (ret < 0)
++		return ret;
++	return 0;
+ }
+ 
+ static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+@@ -178,6 +196,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc, bool enable)
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+ 	int ret;
+ 
++	/* Handle vendor set vconn */
++	if (tcpci->data) {
++		if (tcpci->data->set_vconn) {
++			ret = tcpci->data->set_vconn(tcpci, tcpci->data,
++						     enable);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	ret = regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+ 			   enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+ 	if (ret < 0)
+@@ -323,6 +351,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	if (time_after(jiffies, timeout))
+ 		return -ETIMEDOUT;
+ 
++	/* Handle vendor init */
++	if (tcpci->data) {
++		if (tcpci->data->init) {
++			ret = tcpci->data->init(tcpci, tcpci->data);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	/* Clear all events */
+ 	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+ 	if (ret < 0)
+@@ -344,9 +381,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+ }
+ 
+-static irqreturn_t tcpci_irq(int irq, void *dev_id)
++static irqreturn_t _tcpci_irq(int irq, void *dev_id)
+ {
+ 	struct tcpci *tcpci = dev_id;
++
++	return tcpci_irq(tcpci);
++}
++
++irqreturn_t tcpci_irq(struct tcpci *tcpci)
++{
+ 	u16 status;
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
+@@ -412,6 +455,7 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 
+ 	return IRQ_HANDLED;
+ }
++EXPORT_SYMBOL_GPL(tcpci_irq);
+ 
+ static const struct regmap_config tcpci_regmap_config = {
+ 	.reg_bits = 8,
+@@ -435,22 +479,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+ 	return 0;
+ }
+ 
+-static int tcpci_probe(struct i2c_client *client,
+-		       const struct i2c_device_id *i2c_id)
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data)
+ {
+ 	struct tcpci *tcpci;
+ 	int err;
+ 
+-	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
++	tcpci = devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+ 	if (!tcpci)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+-	tcpci->client = client;
+-	tcpci->dev = &client->dev;
+-	i2c_set_clientdata(client, tcpci);
+-	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+-	if (IS_ERR(tcpci->regmap))
+-		return PTR_ERR(tcpci->regmap);
++	tcpci->dev = dev;
++	tcpci->data = data;
++	tcpci->regmap = data->regmap;
+ 
+ 	tcpci->tcpc.init = tcpci_init;
+ 	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+@@ -467,27 +507,63 @@ static int tcpci_probe(struct i2c_client *client,
+ 
+ 	err = tcpci_parse_config(tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
++
++	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
++	if (PTR_ERR_OR_ZERO(tcpci->port))
++		return ERR_CAST(tcpci->port);
+ 
+-	/* Disable chip interrupts */
+-	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
++	return tcpci;
++}
++EXPORT_SYMBOL_GPL(tcpci_register_port);
++
++void tcpci_unregister_port(struct tcpci *tcpci)
++{
++	tcpm_unregister_port(tcpci->port);
++}
++EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+ 
+-	err = devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+-					tcpci_irq,
++static int tcpci_probe(struct i2c_client *client,
++		       const struct i2c_device_id *i2c_id)
++{
++	struct tcpci_chip *chip;
++	int err;
++	u16 val = 0;
++
++	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->data.regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
++	if (IS_ERR(chip->data.regmap))
++		return PTR_ERR(chip->data.regmap);
++
++	/* Disable chip interrupts before requesting irq */
++	err = regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val,
++			       sizeof(u16));
++	if (err < 0)
++		return err;
++
++	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					_tcpci_irq,
+ 					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+-					dev_name(tcpci->dev), tcpci);
++					dev_name(&client->dev), chip);
+ 	if (err < 0)
+ 		return err;
+ 
+-	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+-	return PTR_ERR_OR_ZERO(tcpci->port);
++	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
++	if (PTR_ERR_OR_ZERO(chip->tcpci))
++		return PTR_ERR(chip->tcpci);
++
++	i2c_set_clientdata(client, chip);
++	return 0;
+ }
+ 
+ static int tcpci_remove(struct i2c_client *client)
+ {
+-	struct tcpci *tcpci = i2c_get_clientdata(client);
++	struct tcpci_chip *chip = i2c_get_clientdata(client);
+ 
+-	tcpm_unregister_port(tcpci->port);
++	tcpci_unregister_port(chip->tcpci);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+index fdfb06c..40025b2 100644
+--- a/drivers/staging/typec/tcpci.h
++++ b/drivers/staging/typec/tcpci.h
+@@ -59,6 +59,7 @@
+ #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+ 
+ #define TCPC_CC_STATUS			0x1d
++#define TCPC_CC_STATUS_DRPRST		BIT(5)
+ #define TCPC_CC_STATUS_TERM		BIT(4)
+ #define TCPC_CC_STATUS_CC2_SHIFT	2
+ #define TCPC_CC_STATUS_CC2_MASK		0x3
+@@ -121,4 +122,16 @@
+ #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+ #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+ 
++struct tcpci;
++struct tcpci_data {
++	struct regmap *regmap;
++	int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
++	int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
++			 bool enable);
++};
++
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
++void tcpci_unregister_port(struct tcpci *tcpci);
++irqreturn_t tcpci_irq(struct tcpci *tcpci);
++
+ #endif /* __LINUX_USB_TCPCI_H */
 -- 
-2.7.4
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+1.9.1
