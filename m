@@ -1,44 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752428AbeBUIaY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 03:30:24 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:36411 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751830AbeBUIaX (ORCPT
+        id S1752466AbeBUIcQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 03:32:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49246 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752319AbeBUIcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 03:30:23 -0500
-Date: Wed, 21 Feb 2018 09:30:32 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-cc: Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Wanpeng Li <kernellwp@gmail.com>,
-        Mike Galbraith <efault@gmx.de>, Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH 7/7] sched/isolation: Update nohz documentation to explain
- tick offload
-In-Reply-To: <1519186649-3242-8-git-send-email-frederic@kernel.org>
-Message-ID: <alpine.DEB.2.21.1802210930180.24268@nanos.tec.linutronix.de>
-References: <1519186649-3242-1-git-send-email-frederic@kernel.org> <1519186649-3242-8-git-send-email-frederic@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 21 Feb 2018 03:32:14 -0500
+Date: Wed, 21 Feb 2018 09:32:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        joshi.k@samsung.com
+Subject: Re: [PATCH] blk: optimization for classic polling
+Message-ID: <20180221083208.GH25314@hirez.programming.kicks-ass.net>
+References: <CGME20180208143655epcas1p444bf34705526b7839a5a135f82761aad@epcas1p4.samsung.com>
+ <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+ <20180220132137.GG25314@hirez.programming.kicks-ass.net>
+ <35a2d52e-dd40-d130-85d9-5f3ffe0d28af@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35a2d52e-dd40-d130-85d9-5f3ffe0d28af@kernel.dk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Wed, 21 Feb 2018, Frederic Weisbecker wrote:
-
-> Update the documentation to reflect the 1Hz tick offload changes.
+On Tue, Feb 20, 2018 at 12:37:07PM -1000, Jens Axboe wrote:
+> On 2/20/18 3:21 AM, Peter Zijlstra wrote:
+> > On Sun, May 30, 2083 at 09:51:06AM +0530, Nitesh Shetty wrote:
+> >> This removes the dependency on interrupts to wake up task. Set task
+> >> state as TASK_RUNNING, if need_resched() returns true,
+> >> while polling for IO completion.
+> >> Earlier, polling task used to sleep, relying on interrupt to wake it up.
+> >> This made some IO take very long when interrupt-coalescing is enabled in
+> >> NVMe.
+> > 
+> > This is a horrible Changelog.. it does not in fact explain why the patch
+> > works or is correct.
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Yeah, that should have been improved.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Being ever more forgetful (I blame the kids) I find Changelogs more and
+more important, ymmv ;-)
+
+> > Also, set_current_state(TASK_RUNNING) is dodgy (similarly in
+> > __blk_mq_poll), why do you need that memory barrier?
+> 
+> I pointed that out in the review, and v2 fixed it. v2 is the
+> one that got merged.
+
+Right missed that. In fact, possibly the only reason I saw this is that
+Nitesh had this computer configured wrong and the email is from the
+future and thus the very first entry in my lkml folder.
