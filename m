@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226rkIQnAOdE09BFRVZB58BRzwfATfLNdh3/cOVXsz0wbyibFX7r9rhKGoOhZmdUUpGvIsN4
-ARC-Seal: i=1; a=rsa-sha256; t=1519217919; cv=none;
+X-Google-Smtp-Source: AH8x225qIhJ4Slb4prEyHcu20+O7rsNKDHt5fvYchs6NKOPBiQgScUxZVj+UOyholz69uS5Vk5Ht
+ARC-Seal: i=1; a=rsa-sha256; t=1519217916; cv=none;
         d=google.com; s=arc-20160816;
-        b=UlnHpVfmnmoW1vkMPUIpzxXLKsBvyzorZVLaj/ZCcneuhbSg1mvLaaz6dC66UUEiBx
-         osY7X+G1YNyI5azy4mBOq6v4Evv2FYgmbLXO+cD3pxamW+aErk7y9XnAMnnI+vkvo8i0
-         up8TrI8hdSb90GczNQimJTIaelC74m8ggjWKNzfaAevOjySsOMtBkRnqknNAS4GxjVQe
-         l3nolLAf638ZJdkdDP8oFgtxUCUbqNV6A1uAHooKiJ6TzjNXmnY+/DvWU98WoIuaoPRa
-         3zpNIlMSmDhUx5kaYKjCbNXHUBd2IQBvbKjBeqKhL3yiDbHMaLZyI/YwAqjzQ5u+IEq4
-         gqVg==
+        b=t6T5AAQAcl2bd9aVxTC8lZhjyp61Vmj78yF/6J68wf5BgfkAeEc8t7hd1M3L/uG2eC
+         QNM64OhDDiAO02XljxxvcGdVGTAR/NB1thed0fNMYCmdH+4vkuItKM+CHOJJO2JTBaQl
+         pNiYiTziXcCt/sC6x2ouqrngDTEwLe3koPH3shTZfhXOLRkkheiQ4GX3ZaTcbKiXgUWD
+         DRi7o3H+0lWJqnPEsBxrcR0aRXk6byhk6NAaZYUJwUO4tzXhkW6sgmOCHtgQA8uBMs0K
+         ++rWz8IhfdEy2YO34g8I1nuQ/oypENl3XYmqz0L/7bFdzlX+w2iJrJXpwAAj01uzg46Z
+         nccg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l/S8ijsTLzkXN47tsM/w8hJG2S5fz6UgnAfKpAveq64=;
-        b=w3GFetc3Tb46LcgD5cAwAmVK2Rvq1aNt/SBlBVUUlPtfIT9zTq1Ne31b1Tr5k5fTpU
-         j+Zc3RKqUnPB+d6ALfakJO/bC7m4gzQ26INyABn57OX+VTx/mdkWo+9aFO3/oCQzRFKt
-         8wARlItkOqMDkVl+OcaCwuc/8wkaqmc02nphUvHQgESRc7kPh9SWFKTdBOci1Ei9SP1G
-         jC2plHZ7c1/lObCWk7Y3UjQqyQixOMWdQ5LmIXPVwh4xhJH7rrldoVq8IJFiNbxNgPZy
-         DlFvZPMt1g3LGYeIw7kCdLu48YsQVJp4JNuYx9iuPPsnzlYizw7WHop8mDnMUrJ7Rbg1
-         Hanw==
+        bh=nOX/y/0NpW7XAca7kZjYAt8iWbl9SEpT3dHzurtOG3o=;
+        b=PYirJqHhojjrrNXlvgK9tVTsMdA3B00utKQs/XMscvBDWAC0qc1LJJxZtp1gsGfQKN
+         AVkT8H6kWIAbZsWJv6iNbu5NYZ1beD7GMx+MdCWu/BQNprtPvAAcdx1yAFR1tRgOJmdI
+         z9hsvcvSa9ygdZ7MquRTyq8zHSN9nBcO80giKXijKRGPwqJUtk3ebyCQepRUZiVdKLyb
+         MgHf0uetT3tQiYFVB8NZYIwe9nglLWuNNvXHXAeEp4gTkJ1fT8I3En4Ng1hWuBR2/CSZ
+         6HvPa+WA9DERRxrsPnNBuxAJWlnMXDH52a3Ft3tsMWPb/roC9CxC8updB87jH7fjc1iG
+         Cm4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 024/167] dma-buf: fix reservation_object_wait_timeout_rcu once more v2
-Date: Wed, 21 Feb 2018 13:47:15 +0100
-Message-Id: <20180221124525.938218796@linuxfoundation.org>
+	Pedro Miraglia Franco de Carvalho <pedromfc@br.ibm.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: [PATCH 4.14 023/167] powerpc: Fix DABR match on hash based systems
+Date: Wed, 21 Feb 2018 13:47:14 +0100
+Message-Id: <20180221124525.888731903@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015448910696170?=
-X-GMAIL-MSGID: =?utf-8?q?1593015448910696170?=
+X-GMAIL-THRID: =?utf-8?q?1593015445978597806?=
+X-GMAIL-MSGID: =?utf-8?q?1593015445978597806?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian König <ckoenig.leichtzumerken@gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit 5bffee867df7494ecd32c1e6ec4e8fc934c521b7 upstream.
+commit f23ab3efb1b30cc5c5ef5ae4ef294ed467f30675 upstream.
 
-We need to set shared_count even if we already have a fence to wait for.
+Commit 398a719d34a1 ("powerpc/mm: Update bits used to skip hash_page")
+mistakenly dropped the DSISR_DABRMATCH bit from the mask of bit tested
+to skip trying to hash a page.
 
-v2: init i to -1 as well
+As a result, the DABR matches would no longer be detected.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Cc: stable@vger.kernel.org
-Tested-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180122200003.6665-1-christian.koenig@amd.com
+This adds it back. We open code it in the 2 places where it matters
+rather than fold it into DSISR_BAD_FAULT_32S/64S because this isn't
+technically a bad fault and while we would never hit it with the
+current code, I prefer if page_fault_is_bad() didn't trigger on these.
+
+Fixes: 398a719d34a1 ("powerpc/mm: Update bits used to skip hash_page")
+Cc: stable@vger.kernel.org # v4.14
+Tested-by: Pedro Miraglia Franco de Carvalho <pedromfc@br.ibm.com>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/dma-buf/reservation.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/dma-buf/reservation.c
-+++ b/drivers/dma-buf/reservation.c
-@@ -455,13 +455,15 @@ long reservation_object_wait_timeout_rcu
- 					 unsigned long timeout)
- {
- 	struct dma_fence *fence;
--	unsigned seq, shared_count, i = 0;
-+	unsigned seq, shared_count;
- 	long ret = timeout ? timeout : 1;
-+	int i;
- 
- retry:
- 	shared_count = 0;
- 	seq = read_seqcount_begin(&obj->seq);
- 	rcu_read_lock();
-+	i = -1;
- 
- 	fence = rcu_dereference(obj->fence_excl);
- 	if (fence && !test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
-@@ -477,14 +479,14 @@ retry:
- 		fence = NULL;
- 	}
- 
--	if (!fence && wait_all) {
-+	if (wait_all) {
- 		struct reservation_object_list *fobj =
- 						rcu_dereference(obj->fence);
- 
- 		if (fobj)
- 			shared_count = fobj->shared_count;
- 
--		for (i = 0; i < shared_count; ++i) {
-+		for (i = 0; !fence && i < shared_count; ++i) {
- 			struct dma_fence *lfence = rcu_dereference(fobj->shared[i]);
- 
- 			if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT,
+---
+ arch/powerpc/kernel/exceptions-64s.S |    2 +-
+ arch/powerpc/kernel/head_32.S        |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -1617,7 +1617,7 @@ USE_TEXT_SECTION()
+ 	.balign	IFETCH_ALIGN_BYTES
+ do_hash_page:
+ 	#ifdef CONFIG_PPC_STD_MMU_64
+-	lis	r0,DSISR_BAD_FAULT_64S@h
++	lis	r0,(DSISR_BAD_FAULT_64S|DSISR_DABRMATCH)@h
+ 	ori	r0,r0,DSISR_BAD_FAULT_64S@l
+ 	and.	r0,r4,r0		/* weird error? */
+ 	bne-	handle_page_fault	/* if not, try to insert a HPTE */
+--- a/arch/powerpc/kernel/head_32.S
++++ b/arch/powerpc/kernel/head_32.S
+@@ -388,7 +388,7 @@ DataAccess:
+ 	EXCEPTION_PROLOG
+ 	mfspr	r10,SPRN_DSISR
+ 	stw	r10,_DSISR(r11)
+-	andis.	r0,r10,DSISR_BAD_FAULT_32S@h
++	andis.	r0,r10,(DSISR_BAD_FAULT_32S|DSISR_DABRMATCH)@h
+ 	bne	1f			/* if not, try to put a PTE */
+ 	mfspr	r4,SPRN_DAR		/* into the hash table */
+ 	rlwinm	r3,r10,32-15,21,21	/* DSISR_STORE -> _PAGE_RW */
