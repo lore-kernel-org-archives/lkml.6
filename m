@@ -1,111 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966104AbeBUPrY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:47:24 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:45695 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934310AbeBUPrW (ORCPT
+        id S938419AbeBUPtG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:49:06 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:32837 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938400AbeBUPtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:47:22 -0500
-Date: Wed, 21 Feb 2018 16:47:12 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Message-ID: <20180221154712.GJ7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-12-git-send-email-jacopo+renesas@jmondi.org>
- <1963190.TI9O1pFqZp@avalon>
- <20180220085857.GC7203@w540>
+        Wed, 21 Feb 2018 10:49:03 -0500
+X-Google-Smtp-Source: AH8x227aTIHW8u7TCiC1/x5W+cPSCcjIX35RBbvcG07DBmmCMhbxTnT8tmqGEA1H4WdRge/Wb5TOeQ==
+Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
+ <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
+ <20180221100716.GF7203@w540>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <cbeb1b6b-1b02-7665-0f1f-847ab8de69e3@cogentembedded.com>
+Date: Wed, 21 Feb 2018 18:48:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <20180221100716.GF7203@w540>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180220085857.GC7203@w540>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello again,
+Hello!
 
-On Tue, Feb 20, 2018 at 09:58:57AM +0100, jacopo mondi wrote:
-> Hi Laurent,
->
-> On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
-> > Hi Jacopo,
-> >
-> > Thank you for the patch.
-> >
-> > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
-> > > The sensor driver sets mbus format colorspace information and sizes,
-> > > but not ycbcr encoding, quantization and xfer function. When supplied
-> > > with an badly initialized mbus frame format structure, those fields
-> > > need to be set explicitly not to leave them uninitialized. This is
-> > > tested by v4l2-compliance, which supplies a mbus format description
-> > > structure and checks for all fields to be properly set.
-> > >
-> > > Without this commit, v4l2-compliance fails when testing formats with:
-> > > fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/media/i2c/ov7670.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > > index 25b26d4..61c472e 100644
-> > > --- a/drivers/media/i2c/ov7670.c
-> > > +++ b/drivers/media/i2c/ov7670.c
-> > > @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev
-> > > *sd, fmt->height = wsize->height;
-> > >  	fmt->colorspace = ov7670_formats[index].colorspace;
-> >
-> > On a side note, if I'm not mistaken the colorspace field is set to SRGB for
-> > all entries. Shouldn't you hardcode it here and remove the field ?
-> >
-> > > +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-> > > +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-> > > +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-> >
-> > How about setting the values explicitly instead of relying on defaults ? That
-> > would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
-> > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if the
-> > sensor outputs limited or full range ?
-> >
->
-> This actually makes me wonder if those informations (ycbcb_enc,
-> quantization and xfer_func) shouldn't actually be part of the
-> supported format list... I blindly added those default fields in the
-> try_fmt function, but I doubt they applies to all supported formats.
->
-> Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
-> RGB 565) and 1 raw format (BGGR). I now have a question here:
->
-> 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
-> applies to RGB and raw formats? I don't think so, and what value is
-> the correct one for the ycbcr_enc field in this case? I assume
-> xfer_func and quantization applies to all formats instead..
->
+On 02/21/2018 01:07 PM, jacopo mondi wrote:
 
-What if I repropose this as separate patch not part of the CEU series
-in order not to hold back v10 (which I hope will be the last CEU
-iteration)?
+>>> Populate the ethernet@e6800000 device node to enable Ethernet interface
+>>> for R-Car M3-N (r8a77965) SoC.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>> ---
+>>> v1 -> v2:
+>>> - Replace ALWAYS_ON power area identifier with numeric constant
+>>> ---
+>>>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++++-
+>>>  1 file changed, 42 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+>>> index 55f05f7..c249895 100644
+>>> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+>>> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+>>> @@ -520,7 +520,48 @@
+>>>  		};
+>>>
+>>>  		avb: ethernet@e6800000 {
+>>> -			/* placeholder */
+>>> +			compatible = "renesas,etheravb-r8a77965",
+>>> +				     "renesas,etheravb-rcar-gen3";
+>>> +			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+>>> +			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			interrupt-names = "ch0", "ch1", "ch2", "ch3",
+>>> +					  "ch4", "ch5", "ch6", "ch7",
+>>> +					  "ch8", "ch9", "ch10", "ch11",
+>>> +					  "ch12", "ch13", "ch14", "ch15",
+>>> +					  "ch16", "ch17", "ch18", "ch19",
+>>> +					  "ch20", "ch21", "ch22", "ch23",
+>>> +					  "ch24";
+>>> +			clocks = <&cpg CPG_MOD 812>;
+>>> +			power-domains = <&sysc 32>;
+>>> +			resets = <&cpg 812>;
+>>> +			phy-mode = "rgmii-txid";
+>>
+>>    Why not just "rgmii"? TX delay is a board specific detail, no?
+>>
+> 
+> I admit I took this one straight from r8a7796 dtsi.
+> Would you like to me resend and change this?
+
+   Yes, unless Simon would fix it while merging...
 
 > Thanks
 >    j
->
-> > >  	info->format = *fmt;
-> > >
-> > >  	return 0;
-> >
-> > --
-> > Regards,
-> >
-> > Laurent Pinchart
-> >
+> 
+>>> +			#address-cells = <1>;
+>>> +			#size-cells = <0>;
+>>> +			status = "disabled";
+>>>  		};
+>>>
+>>>  		csi20: csi2@fea80000 {
+
+MBR, Sergei
