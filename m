@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218909-2-11729501942910315472
+X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218894-2-14548008424695772540
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218908; b=okWlQPPO5gFq08bVykzP6Dqr83bn05XiD5EU2df2VFdLgOB
-    bEbD2R9ZNDEZaY43HmwPoaCblbJDnmDjh3s0Y9AVkFbojFF96i5wv1Xx4xpijTXJ
-    iO8/u1S7fH7lABTDpURsVhMvO0efE38neGcKrsMWr5z/NACdJr2lsoxU0pA0wJHz
-    m2U5Ns8hwQdDiFFm2PRJ85uN657RhZLRa379VZ+tPMjcf1MmCWD3lW6er72o3iAK
-    7XFQrsjQj6UcGYNAGIaLedqHqsccaE3hbSBSjc++Q8Dpa68kkpp5AjqznIr9274K
-    alL10g/ngqE8AGfhwm/BeXGGXdTzMhEJCN69bAg==
+    t=1519218893; b=uFgRHf6+UeFYPAUKZT4+qizuFwQjZHFpu00XG9+4Q3Iv5ql
+    IeYxnREON0Fmk6Pl+UZWBWP9wL8aTLMQeOFlEpwIjGjXBdLaD/8DeLnmi7ZeXbLq
+    8BOwL441F4AUlNrknQtEjmPvoRuHBRnM/tJta1sOxNtLXBNDmiMfFFJq/8BckaYz
+    5sDg/yf1uMzQaWsnvR+voD4WKnw8G17rYxCs6GK/X9EE8dar9I/OXiuHD87RNsr9
+    bQwkGCxlNsDJ5FZqCJ7mbailQqcJPqmFcrIZtieXImHFyULnw2YzocxFrAMtQrxr
+    qbnLaDDNTSrRG3Tnu7SvM6vtT8C+GdLr28csDpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218908; bh=hadewxZHm/0fGiSNmT3kTEWm9B
-    9N2OMB8dxu7i8Srf8=; b=Ys5djejiRZ7svBz629iC95bw85AghB2+zNgeD1EDTh
-    QHKhhGCMr9m9uRr07x2fMU1tHg+NixFtXXHC+VS8b6mLNQZMv9vQ2GHG05jFviJR
-    zFHSzlQOI/RkcnTG7/FxZ8blFcaV+3pPoyCrPlzkf/6Hw91e7NKsl62Le3Q4UGXZ
-    i9adKe5UhAnAQb73uMb4LP+kstOrx8pqb/iS8XCWdBqycPnlXWbI9GZs1fX9x5fY
-    LYv9LGYDCln+71Nf4LSbR1i9eZcuNTx/k1RME5GyWZbe7+yAkV0ACCso+S0Ao4XD
-    c4beVsWWTfAhTL7HFkcCmSjZzu73o+3Z57qT8trRXS+A==
+    :list-id; s=arctest; t=1519218893; bh=9EdFVSYaorMUNh6JXp+e8Mkfrp
+    uw158akSWVcU4LBRA=; b=RjFYwvejfXd6LptQYWzs2lTZL5rUtM3m5tPEldURij
+    1ieeIE3vgQBR6ohSqFavlRuTqu3RpqCgamHHYBLMBBh0eBnSiZ93/1dcV/bkws8K
+    MWm7MLxBpAbJ1CSvBQoIGh1Euhr4D2VlGU14qIJNjNZeztfnQcm3oC4XhbH8TD4R
+    LDm0QpcsOSEMTM18WBsWh1oTbFLepxg/DsPf1PnOfo8WrHXqnR7CfmriT5FFdUxL
+    mhDl6S10Z7tfFhgvdVO2rKQlEJLORQYqmNxWzVaPXdyYjR0WumfhFJrl5Dn635VL
+    qnod13mcx19721ALy/VNjQTqyS00fAg68O2nzflhMVJg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965707AbeBUNNT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:13:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46002 "EHLO
+        id S1753837AbeBUNOh (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:14:37 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753216AbeBUNNQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:16 -0500
+        with ESMTP id S965724AbeBUNNW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.15 134/163] dm: correctly handle chained bios in dec_pending()
-Date: Wed, 21 Feb 2018 13:49:23 +0100
-Message-Id: <20180221124537.599868211@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 136/163] Btrfs: fix crash due to not cleaning up tree log blocks dirty bits
+Date: Wed, 21 Feb 2018 13:49:25 +0100
+Message-Id: <20180221124537.701931714@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -78,52 +78,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 8dd601fa8317243be887458c49f6c29c2f3d719f upstream.
+commit 1846430c24d66e85cc58286b3319c82cd54debb2 upstream.
 
-dec_pending() is given an error status (possibly 0) to be recorded
-against a bio.  It can be called several times on the one 'struct
-dm_io', and it is careful to only assign a non-zero error to
-io->status.  However when it then assigned io->status to bio->bi_status,
-it is not careful and could overwrite a genuine error status with 0.
+In cases that the whole fs flips into readonly status due to failures in
+critical sections, then log tree's blocks are still dirty, and this leads
+to a crash during umount time, the crash is about use-after-free,
 
-This can happen when chained bios are in use.  If a bio is chained
-beneath the bio that this dm_io is handling, the child bio might
-complete and set bio->bi_status before the dm_io completes.
+umount
+ -> close_ctree
+    -> stop workers
+    -> iput(btree_inode)
+       -> iput_final
+          -> write_inode_now
+	     -> ...
+	       -> queue job on stop'd workers
 
-This has been possible since chained bios were introduced in 3.14, and
-has become a lot easier to trigger with commit 18a25da84354 ("dm: ensure
-bio submission follows a depth-first tree walk") as that commit caused
-dm to start using chained bios itself.
-
-A particular failure mode is that if a bio spans an 'error' target and a
-working target, the 'error' fragment will complete instantly and set the
-->bi_status, and the other fragment will normally complete a little
-later, and will clear ->bi_status.
-
-The fix is simply to only assign io_error to bio->bi_status when
-io_error is not zero.
-
-Reported-and-tested-by: Milan Broz <gmazyland@gmail.com>
-Cc: stable@vger.kernel.org (v3.14+)
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+cc: <stable@vger.kernel.org> v3.12+
+Fixes: 681ae50917df ("Btrfs: cleanup reserved space when freeing tree log on error")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -817,7 +817,8 @@ static void dec_pending(struct dm_io *io
- 			queue_io(md, bio);
- 		} else {
- 			/* done with normal IO or empty flush */
--			bio->bi_status = io_error;
-+			if (io_error)
-+				bio->bi_status = io_error;
- 			bio_endio(bio);
- 		}
- 	}
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2494,6 +2494,9 @@ static noinline int walk_down_log_tree(s
+ 					clean_tree_block(fs_info, next);
+ 					btrfs_wait_tree_block_writeback(next);
+ 					btrfs_tree_unlock(next);
++				} else {
++					if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
++						clear_extent_buffer_dirty(next);
+ 				}
+ 
+ 				WARN_ON(root_owner !=
+@@ -2574,6 +2577,9 @@ static noinline int walk_up_log_tree(str
+ 					clean_tree_block(fs_info, next);
+ 					btrfs_wait_tree_block_writeback(next);
+ 					btrfs_tree_unlock(next);
++				} else {
++					if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
++						clear_extent_buffer_dirty(next);
+ 				}
+ 
+ 				WARN_ON(root_owner != BTRFS_TREE_LOG_OBJECTID);
+@@ -2652,6 +2658,9 @@ static int walk_log_tree(struct btrfs_tr
+ 				clean_tree_block(fs_info, next);
+ 				btrfs_wait_tree_block_writeback(next);
+ 				btrfs_tree_unlock(next);
++			} else {
++				if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
++					clear_extent_buffer_dirty(next);
+ 			}
+ 
+ 			WARN_ON(log->root_key.objectid !=
