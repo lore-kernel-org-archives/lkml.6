@@ -1,96 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937994AbeBUOuA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:50:00 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54836 "EHLO
+        id S938019AbeBUOun (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:50:43 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54852 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932826AbeBUOtT (ORCPT
+        with ESMTP id S932826AbeBUOum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:49:19 -0500
+        Wed, 21 Feb 2018 09:50:42 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>
 Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
         groeck@chromium.org, gwendal@chromium.org
-Subject: [PATCH 1/3] platform/chrome: cros_ec_sysfs: Modify error handling
-Date: Wed, 21 Feb 2018 15:49:07 +0100
-Message-Id: <20180221144909.13461-2-enric.balletbo@collabora.com>
+Subject: [PATCH 3/3] platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake lid angle
+Date: Wed, 21 Feb 2018 15:50:33 +0100
+Message-Id: <20180221145033.13781-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180221144909.13461-1-enric.balletbo@collabora.com>
-References: <20180221144909.13461-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gwendal Grignou <gwendal@chromium.org>
 
-When accessing a sysfs attribute, if the EC command fails, -EPROTO is
-now returned instead of an error message as it is unlikely an app is
-parsing the error message to do something meaningful.
-Also, this patch makes use of cros_ec_cmd_xfer_status() instead of
-cros_ec_cmd_xfer() so an error message is printed in the syslog.
+This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
+used to set and get the keyboard wake lid angle. This attribute is
+present only if 2 accelerometers are controlled by the EC.
+
+This patch also moves the cros_ec features check before the device is
+added so the features map obtained from the EC is ready on time.
 
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- drivers/platform/chrome/cros_ec_sysfs.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+ drivers/mfd/cros_ec_dev.c               | 19 ++++----
+ drivers/platform/chrome/cros_ec_sysfs.c | 83 +++++++++++++++++++++++++++++++++
+ include/linux/mfd/cros_ec.h             |  1 +
+ 3 files changed, 94 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index da0a719d32f7..c03621e523a3 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -114,15 +114,9 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	msg->command = EC_CMD_REBOOT_EC + ec->cmd_offset;
- 	msg->outsize = sizeof(*param);
- 	msg->insize = 0;
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
--	if (ret < 0) {
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+	if (ret < 0)
- 		count = ret;
--		goto exit;
--	}
--	if (msg->result != EC_RES_SUCCESS) {
--		dev_dbg(ec->dev, "EC result %d\n", msg->result);
--		count = -EINVAL;
--	}
- exit:
- 	kfree(msg);
- 	return count;
-@@ -150,17 +144,11 @@ static ssize_t show_ec_version(struct device *dev,
- 	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*r_ver);
- 	msg->outsize = 0;
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		count = ret;
- 		goto exit;
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 9d4b74404f49..48eac38a7d62 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -485,15 +485,6 @@ static int ec_device_probe(struct platform_device *pdev)
+ 		goto failed;
  	}
--	if (msg->result != EC_RES_SUCCESS) {
--		count = scnprintf(buf, PAGE_SIZE,
--				  "ERROR: EC returned %d\n", msg->result);
--		goto exit;
+ 
+-	retval = cdev_device_add(&ec->cdev, &ec->class_dev);
+-	if (retval) {
+-		dev_err(dev, "cdev_device_add failed => %d\n", retval);
+-		goto failed;
 -	}
 -
- 	r_ver = (struct ec_response_get_version *)msg->data;
- 	/* Strings should be null-terminated, but let's be sure. */
- 	r_ver->version_string_ro[sizeof(r_ver->version_string_ro) - 1] = '\0';
-@@ -255,14 +243,9 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 	msg->command = EC_CMD_FLASH_INFO + ec->cmd_offset;
- 	msg->insize = sizeof(*resp);
- 	msg->outsize = 0;
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
+-	if (cros_ec_debugfs_init(ec))
+-		dev_warn(dev, "failed to create debugfs directory\n");
+-
+ 	/* check whether this EC is a sensor hub. */
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+ 		cros_ec_sensors_register(ec);
+@@ -514,6 +505,16 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	/* Take control of the lightbar from the EC. */
+ 	lb_manual_suspend_ctrl(ec, 1);
+ 
++	/* We can now add the sysfs class, we know which parameter to show */
++	retval = cdev_device_add(&ec->cdev, &ec->class_dev);
++	if (retval) {
++		dev_err(dev, "cdev_device_add failed => %d\n", retval);
++		goto failed;
++	}
++
++	if (cros_ec_debugfs_init(ec))
++		dev_warn(dev, "failed to create debugfs directory\n");
++
+ 	return 0;
+ 
+ failed:
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index c03621e523a3..ae50a5342d58 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -259,21 +259,104 @@ static ssize_t show_ec_flashinfo(struct device *dev,
+ 	return ret;
+ }
+ 
++/* Keyboard wake angle control */
++static ssize_t show_kb_wake_angle(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct ec_response_motion_sense *resp;
++	struct ec_params_motion_sense *param;
++	struct cros_ec_command *msg;
++	int ret;
++	struct cros_ec_dev *ec = container_of(
++			dev, struct cros_ec_dev, class_dev);
++
++	msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	param = (struct ec_params_motion_sense *)msg->data;
++	msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
++	msg->version = 2;
++	param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
++	param->kb_wake_angle.data = EC_MOTION_SENSE_NO_VALUE;
++	msg->outsize = sizeof(*param);
++	msg->insize = sizeof(*resp);
 +	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = scnprintf(buf, PAGE_SIZE,
--				"ERROR: EC returned %d\n", msg->result);
--		goto exit;
--	}
++	if (ret < 0)
++		goto exit;
++	resp = (struct ec_response_motion_sense *)msg->data;
++	ret = scnprintf(buf, PAGE_SIZE, "%d\n",
++			resp->kb_wake_angle.ret);
++exit:
++	kfree(msg);
++	return ret;
++}
++
++static ssize_t store_kb_wake_angle(struct device *dev,
++				   struct device_attribute *attr,
++				   const char *buf, size_t count)
++{
++	struct ec_params_motion_sense *param;
++	struct cros_ec_command *msg;
++	int ret;
++	struct cros_ec_dev *ec = container_of(
++			dev, struct cros_ec_dev, class_dev);
++	u16 angle;
++
++	ret = kstrtou16(buf, 0, &angle);
++	if (ret)
++		return ret;
++
++	msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	param = (struct ec_params_motion_sense *)msg->data;
++	msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
++	msg->version = 2;
++	param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
++	param->kb_wake_angle.data = angle;
++	msg->outsize = sizeof(*param);
++	msg->insize = sizeof(struct ec_response_motion_sense);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
++	kfree(msg);
++	if (ret < 0)
++		return ret;
++	return count;
++}
++
+ /* Module initialization */
  
- 	resp = (struct ec_response_flash_info *)msg->data;
+ static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
+ static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
+ static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
++static DEVICE_ATTR(kb_wake_angle, S_IWUSR | S_IRUGO, show_kb_wake_angle,
++		   store_kb_wake_angle);
  
+ static struct attribute *__ec_attrs[] = {
++	&dev_attr_kb_wake_angle.attr,
+ 	&dev_attr_reboot.attr,
+ 	&dev_attr_version.attr,
+ 	&dev_attr_flashinfo.attr,
+ 	NULL,
+ };
+ 
++static umode_t cros_ec_ctrl_visible(struct kobject *kobj,
++				    struct attribute *a, int n)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
++					      class_dev);
++
++	if (a == &dev_attr_kb_wake_angle.attr && !ec->has_kb_wake_angle)
++		return 0;
++
++	return a->mode;
++}
++
+ struct attribute_group cros_ec_attr_group = {
+ 	.attrs = __ec_attrs,
++	.is_visible = cros_ec_ctrl_visible,
+ };
+ EXPORT_SYMBOL(cros_ec_attr_group);
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index 804b3ddbf819..951c27333d46 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -191,6 +191,7 @@ struct cros_ec_dev {
+ 	struct cros_ec_device *ec_dev;
+ 	struct device *dev;
+ 	struct cros_ec_debugfs *debug_info;
++	bool has_kb_wake_angle;
+ 	u16 cmd_offset;
+ 	u32 features[2];
+ };
 -- 
 2.16.1
