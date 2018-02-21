@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227YCaQv2Smm5wpcBDHs+LNyrRk2+w1EO24nbb0gPxtkz/MwQXFKdIFXyYal7GFvLVVgSC4i
-ARC-Seal: i=1; a=rsa-sha256; t=1519217864; cv=none;
+X-Google-Smtp-Source: AH8x226CnBpYsQ/3jrajAxr8l8Deji+Kq8zd2tk2KTklNjQX4mhHsfhhgVDuWyVzER6uzSwt2Obf
+ARC-Seal: i=1; a=rsa-sha256; t=1519217861; cv=none;
         d=google.com; s=arc-20160816;
-        b=qp/NK11JkKuQeNsUDAT+wYoZAC5cfRF2VkvFdJAmKIWmwxKXcztQ+rxndyqJtZ2n1E
-         XxDTOYgzABTxk5s8aaKOCfZu59QyZkk+MzwiffzF2Q+sCTGb4rDinw4rswkp/NfmTZn5
-         ypuj9ot39/QSanj65+UGtX9z1LQHjeJcdw1UQhb4C7wkMhIMyyukXkBR5VIMFRq3AR/1
-         vUsb9gu3EZd1FJm7MIOFw2I9QmyPw7QEQlxM0bPMY2Ui/VRQhTi3QSl1jnq0AZTxaX0u
-         M+6JKqswuD1B87+N2dofWHBcmpCWTJ3aovcvGoai5yw6rsBVzORvPXjtktSv0SCRTWKF
-         4uZw==
+        b=VuJSozgzGgn86/tubxLow2nHsLtpl91a/4ImEz5rtKkLZ6YUA226hXNiJrOUlJ2rhe
+         yhYLR6TT4HOATMEM97+w8Ky95Q9L4cpqP3ORavq1VpD7oNee9wt11XDpdAzeYk0vhlU/
+         23nC7fWI0XBB8BkYEZBvJ/+vHBJZwAFYBGPhTVyenMOX8/oYmdDZkp2QacYNd5JTBX0L
+         96iG/oZnO18PSHvZV6nrEBS006ReRiD027tI3GPzIttNy5Nts+4tNICKj7Blo/Q+PFug
+         r1GL/aJPwulELAMpFek+ZpDUzXNorcWWampL1sWLlPTOg1j4ScCOwwJQ97EHo4zOda5C
+         pwAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gZCZy5abDw1+B1mpijWaHgjeAY1JNuzQ79pKS8cw7sY=;
-        b=c0HVwYvLor5GME9iCcPFpz8QgZfo9T9dlJTtcc5ApXP7wFEruFVHf7tqsuyU7trDMl
-         DQvRVdt5wczNTHgdeRqhy8SUQLvsHRn4ELUeXmuWx2OoV9B2bzBFzvxWaXOTVJ7FyZdC
-         Xoq53vaQExN+qh43RXFBDOJX1950Q+XqnUExfE6faN2fzPpBv3PdIJw+tJGp90SyofDt
-         4ixijpzjEueFMxLhe+YRnZjseEGpyQqlpc8Jg8DGOlXGJytlg0MejqXaPux4OcNltfA9
-         aNGbFiU8PNVrU/uEKK/Ms3lO9cqBdejSSqVI8CyaXAihKWVTdkzcKVJZtXhhU9Gm0fuN
-         FX4w==
+        bh=zxrfJOUf2Y6Y7cm2maE/u3CLEJDwkz+EtjFTD5AT4Og=;
+        b=NGzJBaqG7ACq/qzitMP48hbOcLqIY7mPq4Hivmm3r3fq5CPG2nmCadxaNyENLacRLV
+         j9GLA0kVQx1gWupAS+1mF7D7VXPZkQi3KFDBzcjkV5JVYIxnpapn+M5J1UZmFDcJTtli
+         OKfey+GLOLIA7MSGoTLWSd8aLOuDCL00yhl4ncxQ2c/ffUoAJyOgA65Z1QpP8ThTKBGS
+         ONE9Vh+yL0crp0xj1/q5ewxWH6UqcdQZBUulX8IE5tr3d+JnO47v7AbZjaGgMeFlg+iH
+         H+fOXFhLGxQqBjb17k8suxM09lnyvr8vvz6G86UNhtUmjCuaDbe2dXFXiHG3FdEigRXP
+         BI+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 51/77] compiler-gcc.h: Introduce __optimize function attribute
-Date: Wed, 21 Feb 2018 13:49:00 +0100
-Message-Id: <20180221124434.371604297@linuxfoundation.org>
+	Dan Williams <dan.j.williams@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 50/77] x86/entry/64/compat: Clear registers for compat syscalls, to reduce speculation attack surface
+Date: Wed, 21 Feb 2018 13:48:59 +0100
+Message-Id: <20180221124434.315881447@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015391246785093?=
-X-GMAIL-MSGID: =?utf-8?q?1593015391246785093?=
+X-GMAIL-THRID: =?utf-8?q?1593015388581637403?=
+X-GMAIL-MSGID: =?utf-8?q?1593015388581637403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,46 +58,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit df5d45aa08f848b79caf395211b222790534ccc7 upstream.
+commit 6b8cf5cc9965673951f1ab3f0e3cf23d06e3e2ee upstream.
 
-Create a new function attribute __optimize, which allows to specify an
-optimization level on a per-function basis.
+At entry userspace may have populated registers with values that could
+otherwise be useful in a speculative execution attack. Clear them to
+minimize the kernel's attack surface.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Originally-From: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/151787989697.7847.4083702787288600552.stgit@dwillia2-desk3.amr.corp.intel.com
+[ Made small improvements to the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-gcc.h |    4 ++++
- include/linux/compiler.h     |    4 ++++
- 2 files changed, 8 insertions(+)
+ arch/x86/entry/entry_64_compat.S |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -187,6 +187,10 @@
- #endif /* __CHECKER__ */
- #endif /* GCC_VERSION >= 40300 */
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -83,15 +83,25 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
++	xorq	%r8, %r8		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
++	xorq	%r9, %r9		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
++	xorq	%r10, %r10		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
++	xorq	%r11, %r11		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
++	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
++	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   $0			/* pt_regs->r12 = 0 */
++	xorq	%r12, %r12		/* nospec   r12 */
+ 	pushq   $0			/* pt_regs->r13 = 0 */
++	xorq	%r13, %r13		/* nospec   r13 */
+ 	pushq   $0			/* pt_regs->r14 = 0 */
++	xorq	%r14, %r14		/* nospec   r14 */
+ 	pushq   $0			/* pt_regs->r15 = 0 */
++	xorq	%r15, %r15		/* nospec   r15 */
+ 	cld
  
-+#if GCC_VERSION >= 40400
-+#define __optimize(level)	__attribute__((__optimize__(level)))
-+#endif /* GCC_VERSION >= 40400 */
-+
- #if GCC_VERSION >= 40500
+ 	/*
+@@ -209,15 +219,25 @@ ENTRY(entry_SYSCALL_compat)
+ 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
++	xorq	%r8, %r8		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
++	xorq	%r9, %r9		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
++	xorq	%r10, %r10		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
++	xorq	%r11, %r11		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
++	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
++	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   $0			/* pt_regs->r12 = 0 */
++	xorq	%r12, %r12		/* nospec   r12 */
+ 	pushq   $0			/* pt_regs->r13 = 0 */
++	xorq	%r13, %r13		/* nospec   r13 */
+ 	pushq   $0			/* pt_regs->r14 = 0 */
++	xorq	%r14, %r14		/* nospec   r14 */
+ 	pushq   $0			/* pt_regs->r15 = 0 */
++	xorq	%r15, %r15		/* nospec   r15 */
  
- #ifndef __CHECKER__
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -469,6 +469,10 @@ static __always_inline void __write_once
- # define __native_word(t) (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
- #endif
+ 	/*
+ 	 * User mode is traced as though IRQs are on, and SYSENTER
+@@ -320,15 +340,25 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
++	xorq	%r8, %r8		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
++	xorq	%r9, %r9		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
++	xorq	%r10, %r10		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
++	xorq	%r11, %r11		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
++	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp */
++	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   %r12                    /* pt_regs->r12 */
++	xorq	%r12, %r12		/* nospec   r12 */
+ 	pushq   %r13                    /* pt_regs->r13 */
++	xorq	%r13, %r13		/* nospec   r13 */
+ 	pushq   %r14                    /* pt_regs->r14 */
++	xorq	%r14, %r14		/* nospec   r14 */
+ 	pushq   %r15                    /* pt_regs->r15 */
++	xorq	%r15, %r15		/* nospec   r15 */
+ 	cld
  
-+#ifndef __optimize
-+# define __optimize(level)
-+#endif
-+
- /* Compile time object size, -1 for unknown */
- #ifndef __compiletime_object_size
- # define __compiletime_object_size(obj) -1
+ 	/*
