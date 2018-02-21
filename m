@@ -1,57 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932677AbeBUKBK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:01:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57033 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932381AbeBUKBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:01:09 -0500
-Date: Wed, 21 Feb 2018 11:01:07 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Dan Rue <dan.rue@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] mm, hugetlb: further simplify hugetlb allocation API
-Message-ID: <20180221100107.GC2231@dhcp22.suse.cz>
-References: <20180103093213.26329-1-mhocko@kernel.org>
- <20180103093213.26329-6-mhocko@kernel.org>
- <20180221042457.uolmhlmv5je5dqx7@xps>
- <20180221095526.GB2231@dhcp22.suse.cz>
+        id S932692AbeBUKCP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:02:15 -0500
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:35738 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932631AbeBUKCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 05:02:14 -0500
+X-Google-Smtp-Source: AH8x225mDITwHTqhhDWXYamugjEK+SM9phqchC9gLdJ+Wtw2zX+573S7BGZXwxk8sqTp3Njxi+J9mw==
+Date: Wed, 21 Feb 2018 15:32:09 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] cpufreq: powernv: Check negative value returned by
+ cpufreq_table_find_index_dl()
+Message-ID: <20180221100209.GP28462@vireshk-i7>
+References: <1518430876-24464-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <20180212102900.GU28462@vireshk-i7>
+ <874lmasxxx.fsf@concordia.ellerman.id.au>
+ <20180221055450.GO28462@vireshk-i7>
+ <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221095526.GB2231@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAJZ5v0jEg7FELH6mBY16mB5sfo7s2mbH2SGheH4KVeKLnStjjg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-02-18 10:55:26, Michal Hocko wrote:
-> On Tue 20-02-18 22:24:57, Dan Rue wrote:
-[...]
-> > I bisected the failure to this commit. The problem is seen on multiple
-> > architectures (tested x86-64 and arm64).
+On 21-02-18, 10:27, Rafael J. Wysocki wrote:
+> To be precise, ->init() should fail as that's where the table is
+> created.  The registration fails as a result then.
 > 
-> The patch shouldn't have introduced any functional changes IIRC. But let
-> me have a look
+> But what if the bug is that ->init() doesn't fail when it should?
+> 
+> I guess the core could double check the frequency table after ->init()
+> if ->target_index is not NULL.
+> 
+> The overall point here is that if you get a negative index in
+> ->fast_switch(), that's way too late anyway and we should be able to
+> catch that error much earlier.
 
-Hmm, I guess I can see it. Does the following help?
----
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 7c204e3d132b..a963f2034dfc 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1583,7 +1583,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
- 		page = NULL;
- 	} else {
- 		h->surplus_huge_pages++;
--		h->nr_huge_pages_node[page_to_nid(page)]++;
-+		h->surplus_huge_pages_node[page_to_nid(page)]++;
- 	}
- 
- out_unlock:
+I don't want to end up doing double checking as some of it is already
+done at init, but let me check on what can be done.
+
 -- 
-Michal Hocko
-SUSE Labs
+viresh
