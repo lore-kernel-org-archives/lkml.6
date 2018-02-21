@@ -1,153 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935662AbeBUNcH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:32:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57190 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933525AbeBUNKi (ORCPT
+        id S936898AbeBUNef (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:34:35 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42123 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933203AbeBUNe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:10:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB4D260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-Reply-To: shankerd@codeaurora.org
-Subject: Re: [PATCH v2] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Thomas Speier <tspeier@codeaurora.org>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1519095546-24420-1-git-send-email-shankerd@codeaurora.org>
- <20180221111233.gylb6v4yxqnn6gyj@localhost>
-From: Shanker Donthineni <shankerd@codeaurora.org>
-Message-ID: <23d70753-a628-f2e4-84df-39e4021337f5@codeaurora.org>
-Date: Wed, 21 Feb 2018 07:10:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 21 Feb 2018 08:34:29 -0500
+X-Google-Smtp-Source: AH8x22490o/xZHGEvLmPheGAbK2K6D9Ik4FfdUpetHwW8hn3SkD0H1QMNHNMlyf94X9vM+hBdIuvNg==
+Date: Wed, 21 Feb 2018 14:34:26 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
+Message-ID: <20180221133426.fcad5xieuvukdluv@pali>
+References: <20180213085030.kiksdi2a7ksae5wz@pali>
+ <20180213132726.GD5453@intel.com>
+ <20180213133842.i5z5jj3sllorsy2w@pali>
+ <20180213153654.GG5453@intel.com>
+ <20180213160437.gy5luyygjvuktuqx@pali>
+ <20180213161221.GK5453@intel.com>
+ <20180213174341.abcjlfjymxbcz25t@pali>
+ <20180213174556.GM5453@intel.com>
+ <20180219093650.avb4xipvflfd2kel@pali>
+ <20180221132853.GM5453@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180221111233.gylb6v4yxqnn6gyj@localhost>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20180221132853.GM5453@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LDYdM5012785
 
-Hi Catalin,
+On Wednesday 21 February 2018 15:28:53 Ville Syrjälä wrote:
+> On Mon, Feb 19, 2018 at 10:36:50AM +0100, Pali Rohár wrote:
+> > On Tuesday 13 February 2018 19:45:56 Ville Syrjälä wrote:
+> > > On Tue, Feb 13, 2018 at 06:43:41PM +0100, Pali Rohár wrote:
+> > > > On Tuesday 13 February 2018 18:12:21 Ville Syrjälä wrote:
+> > > > > On Tue, Feb 13, 2018 at 05:04:37PM +0100, Pali Rohár wrote:
+> > > > > > So it can be done only once after reboot? Or only prior to booting kernel?
+> > > > > 
+> > > > > Never.
+> > > > 
+> > > > Never? Now I'm lost. Why then dmesg message instruct user to try set up
+> > > > it in BIOS if you say it is never possible?
+> > > 
+> > > You can change it in the BIOS. No way to change it from the operating system.
+> > 
+> > Hi! Can you explain it a bit more?
+> > 
+> > What does it mean "in BIOS"? Prior switching from 16bit real mode to
+> > protected or long? Or before exiting EFI boot services? Or before
+> > booting kernel (when initialize memory mapping)?
+> 
+> The BIOS is a black box, no one really knows what it's doing. The stolen
+> memory is carved out pretty early I think (alongside other carved out
+> chunks for SMM and whatnot). And once that's done the BIOS usually locks
+> down stuff like this (the hw has magic write once lock bits for various
+> registers) so there's just no way to change things afterwards.
 
-On 02/21/2018 05:12 AM, Catalin Marinas wrote:
-> On Mon, Feb 19, 2018 at 08:59:06PM -0600, Shanker Donthineni wrote:
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index f55fe5b..4061210 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -1095,6 +1095,27 @@ config ARM64_RAS_EXTN
->>  	  and access the new registers if the system supports the extension.
->>  	  Platform RAS features may additionally depend on firmware support.
->>  
->> +config ARM64_CACHE_IDC
->> +	bool "Enable support for DCache clean PoU optimization"
->> +	default y
->> +	help
->> +	  The data cache clean to the point of unification is not required
->> +	  for instruction to be data coherence if CTR_EL0.IDC has value 1.
->> +
->> +	  Selecting this feature will allow the kernel to optimize the POU
->> +	  cache maintaince operations where it requires 'DC CVAU'.
->> +
->> +config ARM64_CACHE_DIC
->> +	bool "Enable support for ICache invalidation PoU optimization"
->> +	default y
->> +	help
->> +	  Instruction cache invalidation to the point of unification is not
->> +	  required for instruction to be data coherence if CTR_EL0.DIC has
->> +	  value 1.
->> +
->> +	  Selecting this feature will allow the kernel to optimize the POU
->> +	  cache maintaince operations where it requires 'IC IVAU'.
-> 
-> A single Kconfig entry is sufficient for both features.
-> 
+Thank you for explanation. So real problem with changing size of stolen
+memory is that BIOS "may" lock future changes.
 
-I'll do in v3 patch.
+Is there any documentation for this Intel GPU stolen memory? I hope that
+I should be able at least to read status of that lock registers -- to
+prove that size of stolen memory is locked and cannot be changed.
 
->> @@ -864,6 +864,22 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
->>  					ID_AA64PFR0_FP_SHIFT) < 0;
->>  }
->>  
->> +#ifdef CONFIG_ARM64_CACHE_IDC
->> +static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
->> +			  int __unused)
->> +{
->> +	return !!(read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_IDC_SHIFT));
->> +}
->> +#endif
->> +
->> +#ifdef CONFIG_ARM64_CACHE_DIC
->> +static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
->> +			  int __unused)
->> +{
->> +	return !!(read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_DIC_SHIFT));
->> +}
->> +#endif
+> > 
+> > I still do not see reason nor understand why this cannot be possible
+> > either in bootloader (e.g. grub2) or prior to loading bootloader which
+> > runs in protected or long mode.
+> > 
+> > It is because BIOS uses some undocumented call/procedure which sets that
+> > amount of memory and it is unknown how to do it?
+> > 
+> > -- 
+> > Pali Rohár
+> > pali.rohar@gmail.com
 > 
-> Nitpick: no need for !! since the function type is bool already.
-> 
-
-Sure, I'll remove '!!'.
-
->> diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
->> index 758bde7..7d37d71 100644
->> --- a/arch/arm64/mm/cache.S
->> +++ b/arch/arm64/mm/cache.S
->> @@ -50,6 +50,9 @@ ENTRY(flush_icache_range)
->>   */
->>  ENTRY(__flush_cache_user_range)
->>  	uaccess_ttbr0_enable x2, x3, x4
->> +alternative_if ARM64_HAS_CACHE_IDC
->> +	b	8f
->> +alternative_else_nop_endif
->>  	dcache_line_size x2, x3
->>  	sub	x3, x2, #1
->>  	bic	x4, x0, x3
->> @@ -60,6 +63,11 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
->>  	b.lo	1b
->>  	dsb	ish
->>  
->> +8:
->> +alternative_if ARM64_HAS_CACHE_DIC
->> +	mov	x0, #0
->> +	b	1f
->> +alternative_else_nop_endif
->> 	invalidate_icache_by_line x0, x1, x2, x3, 9f
->> 	mov	x0, #0
->>  1:
-> 
-> You can add another label at mov x0, #0 below this hunk and keep a
-> single instruction in the alternative path.
-> 
-> However, my worry is that in an implementation with DIC set, we also
-> skip the DSB/ISB sequence in the invalidate_icache_by_line macro. For
-> example, in an implementation with transparent PoU, we could have:
-> 
-> 	str	<some instr>, [addr]
-> 	// no cache maintenance or barrier
-> 	br	<addr>
-> 
-
-Thanks for pointing out the missing barriers. I think it make sense to follow
-the existing barrier semantics in order to avoid the unknown things.
- 
-> Is an ISB required between the instruction store and execution? I would
-> say yes but maybe Will has a better opinion here.
-> 
-Agree, an ISB is required especially for self-modifying code. I'll include in v3 patch. 
 
 -- 
-Shanker Donthineni
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Pali Rohár
+pali.rohar@gmail.com
