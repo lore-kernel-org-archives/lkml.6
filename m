@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227QRuFYs6H7lb1bkzLcGVk1gpMGEqxUcjeWaI/Rhlc9qz7q58cyhNg41S6wWC5uOvCTOxhN
-ARC-Seal: i=1; a=rsa-sha256; t=1519218313; cv=none;
+X-Google-Smtp-Source: AH8x2269l5AJ7V5LnLUTya4TWfl6tV6Oo5XMYza/ISfmJt8ToMDKhZji2xrSDWCtpqhq+CgyCsRL
+ARC-Seal: i=1; a=rsa-sha256; t=1519218310; cv=none;
         d=google.com; s=arc-20160816;
-        b=Nd9/MmY3Gd6HUUGiHUwm7XZsZJvji3U/kGyYzPhl1roAx/97XeXuRH3ro7H4j6spc8
-         W8Yi5CVpb/Wnkg0fAnTyWUaM6MtK2GwuSgEcXCcvdEbHCJ2Z+2Pyeui3LYfpeV39dq8I
-         8mzne7JHpCXeedQZEBctsGE0HkDX6puKX8aCjTDHBgj2H2AeV71COmLaKaNmmlNEuxl/
-         xmRDnVSjUh580yygDSTJDZU3XHNqvJ4ZaWxeGVHXijFikxdxUKiftlIEhhPttdYQa5k6
-         H/ckD6Zxi8Xi89FDg9+91/X9aclQtmqYY49yAyl2fx47jf6N4ZaWR6oXZqBdqq0dx2Tc
-         bIrg==
+        b=lE7287weYISTOPvUu6jAxY46vkMaiqrkwXiVkVFFoZDW5VY8ETcAJF/rSfRgLwuaDP
+         rGBW2aT518FVHjjfSjCIw4wQ62Gb3jckftWvnzLJzZF8pJjcACMHj1sUoUNZtZL51KwI
+         Gt+9AuIKKkqGKtUVb3/DkwtRZ0EmdaNuz4VVJp1RTfIXlMNHmKUvJZPHZFXYTId2Kyxe
+         wUvpiY2W5ZtqS23X8qXPbrcnorIQ50LbpkOo3R/0EjKFRUwcDNSXZP/yZazGOmnB2CI2
+         VPdKbbVRjopckbY3E/5vOQ40wQfMVAVSNK07CiU47dviJBurXxDDbc+BeBXCR0eCw0P9
+         xuJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=419zeNo2zwrp1LU9I2aT5Ot2Hj2XgzcUIjbdWtR1nv8=;
-        b=06vsxL5ltYGLVrkKBDonRZOhGn/8NU+YLINsrS1CLbiXCXBf68cCB8ZGegb4EfPO0q
-         yGKRTPGBET4IZyTqKgpRGfnzfdyosqi9leYjNtrYQ0Jml6JmKaL2ileb2apG0bCodsdF
-         UsNSyf1tKmXhA+liSE4YCbcbGp/tRqsbSZqvZlCOGcM/GPmjl4xeF6DLt+fsPBzbc7XM
-         DhWH8sxmgRfyI+c36U0SrCrcypPgbM56aOfkjfbQg5LTrJTvHlrrUebz+h49/l4nGrx1
-         kXDtVWgvBwf/Rf7duPxENrEtC4zGhHmTPk8IrHdIVQBcWPoQ1PhKt1XViRRRx2uAzbtm
-         cklg==
+        bh=+AfJG9YcrQQ5Pu33rO4bjUv6YUC6mJ8syYge8Soy+5A=;
+        b=MP1sDcDS/B/uW6mrludOkpCXCUz58cDW8+OtEB6HimN1Hv4ewxE1LpEyIWYpEGIYh1
+         1x31DWvE2Qj4ZZCtyVwWWuDlCo64EH8aLHowkMC7qnfniyfz13X//7OxkNmBc+hbtlxr
+         E499pGLztsxGyEyHvC4CWarWZR1iDNqhVzroc+9tOtpIDF+KnKesYj5ZT2RKr02IPHfE
+         jIXej4YJkKbEcPttMt2nDcCXuz6t1Va/rLKHUD8LyhvGFNUvURQJgZO8sMtZHOsAm+Jr
+         ImlIuBw5iKmQiaW1ZDIDIHhsyE87Vtkh5AiKSJnlYwalN4UoOFv/PiSWraHmDPcPM31U
+         go/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kailang Yang <kailang@realtek.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 145/167] ALSA: hda/realtek - Enable Thinkpad Dock device for ALC298 platform
-Date: Wed, 21 Feb 2018 13:49:16 +0100
-Message-Id: <20180221124532.679279282@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 162/167] media: r820t: fix r820t_write_reg for KASAN
+Date: Wed, 21 Feb 2018 13:49:33 +0100
+Message-Id: <20180221124533.710405666@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015231097340128?=
-X-GMAIL-MSGID: =?utf-8?q?1593015862158733030?=
+X-GMAIL-THRID: =?utf-8?q?1593014700913189109?=
+X-GMAIL-MSGID: =?utf-8?q?1593015859443966988?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,103 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 61fcf8ece9b6b09450250c4ca40cc3b81a96a68d upstream.
+commit 16c3ada89cff9a8c2a0eea34ffa1aa20af3f6008 upstream.
 
-Thinkpad Dock device support for ALC298 platform.
-It need to use SSID for the quirk table.
-Because IdeaPad also has ALC298 platform.
-Use verb for the quirk table will confuse.
+With CONFIG_KASAN, we get an overly long stack frame due to inlining
+the register access functions:
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+drivers/media/tuners/r820t.c: In function 'generic_set_freq.isra.7':
+drivers/media/tuners/r820t.c:1334:1: error: the frame size of 2880 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+
+This is caused by a gcc bug that has now been fixed in gcc-8.
+To work around the problem, we can pass the register data
+through a local variable that older gcc versions can optimize
+out as well.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/media/tuners/r820t.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4827,6 +4827,28 @@ static void alc_fixup_tpt440_dock(struct
- 	}
+--- a/drivers/media/tuners/r820t.c
++++ b/drivers/media/tuners/r820t.c
+@@ -396,9 +396,11 @@ static int r820t_write(struct r820t_priv
+ 	return 0;
  }
  
-+static void alc_fixup_tpt470_dock(struct hda_codec *codec,
-+				  const struct hda_fixup *fix, int action)
-+{
-+	static const struct hda_pintbl pincfgs[] = {
-+		{ 0x17, 0x21211010 }, /* dock headphone */
-+		{ 0x19, 0x21a11010 }, /* dock mic */
-+		{ }
-+	};
-+	struct alc_spec *spec = codec->spec;
-+
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-+		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
-+		/* Enable DOCK device */
-+		snd_hda_codec_write(codec, 0x17, 0,
-+			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
-+		/* Enable DOCK device */
-+		snd_hda_codec_write(codec, 0x19, 0,
-+			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
-+		snd_hda_apply_pincfgs(codec, pincfgs);
-+	}
-+}
-+
- static void alc_shutup_dell_xps13(struct hda_codec *codec)
+-static int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
++static inline int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
  {
- 	struct alc_spec *spec = codec->spec;
-@@ -5301,6 +5323,7 @@ enum {
- 	ALC700_FIXUP_INTEL_REFERENCE,
- 	ALC274_FIXUP_DELL_BIND_DACS,
- 	ALC274_FIXUP_DELL_AIO_LINEOUT_VERB,
-+	ALC298_FIXUP_TPT470_DOCK,
- };
+-	return r820t_write(priv, reg, &val, 1);
++	u8 tmp = val; /* work around GCC PR81715 with asan-stack=1 */
++
++	return r820t_write(priv, reg, &tmp, 1);
+ }
  
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6126,6 +6149,12 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC274_FIXUP_DELL_BIND_DACS
- 	},
-+	[ALC298_FIXUP_TPT470_DOCK] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_tpt470_dock,
-+		.chained = true,
-+		.chain_id = ALC293_FIXUP_LENOVO_SPK_NOISE
-+	},
- };
+ static int r820t_read_cache_reg(struct r820t_priv *priv, int reg)
+@@ -411,17 +413,18 @@ static int r820t_read_cache_reg(struct r
+ 		return -EINVAL;
+ }
  
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -6307,8 +6336,16 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x2218, "Thinkpad X1 Carbon 2nd", ALC292_FIXUP_TPT440_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2223, "ThinkPad T550", ALC292_FIXUP_TPT440_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2226, "ThinkPad X250", ALC292_FIXUP_TPT440_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x222d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x222e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2231, "Thinkpad T560", ALC292_FIXUP_TPT460),
- 	SND_PCI_QUIRK(0x17aa, 0x2233, "Thinkpad", ALC292_FIXUP_TPT460),
-+	SND_PCI_QUIRK(0x17aa, 0x2245, "Thinkpad T470", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x2246, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x2247, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
-@@ -6329,7 +6366,12 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x5050, "Thinkpad T560p", ALC292_FIXUP_TPT460),
- 	SND_PCI_QUIRK(0x17aa, 0x5051, "Thinkpad L460", ALC292_FIXUP_TPT460),
- 	SND_PCI_QUIRK(0x17aa, 0x5053, "Thinkpad T460", ALC292_FIXUP_TPT460),
-+	SND_PCI_QUIRK(0x17aa, 0x505d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x505f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x5062, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x5109, "Thinkpad", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
-+	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
- 	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
- 	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
+-static int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
++static inline int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
+ 				u8 bit_mask)
+ {
++	u8 tmp = val;
+ 	int rc = r820t_read_cache_reg(priv, reg);
+ 
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	val = (rc & ~bit_mask) | (val & bit_mask);
++	tmp = (rc & ~bit_mask) | (tmp & bit_mask);
+ 
+-	return r820t_write(priv, reg, &val, 1);
++	return r820t_write(priv, reg, &tmp, 1);
+ }
+ 
+ static int r820t_read(struct r820t_priv *priv, u8 reg, u8 *val, int len)
