@@ -1,37 +1,40 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226VLUSEZoVxsJyCOBv/icpf5MuQUow7OaLk70Mo/ypQEHxwrQYMD3Tw1JN13mN8x2k3/Ydc
-ARC-Seal: i=1; a=rsa-sha256; t=1519217822; cv=none;
+X-Google-Smtp-Source: AH8x225KwAKYldlcYz7zmmaxAdMHN7XixcMm8aC5xz6fV/2LqyWKCM5ePMdgpCgNvL4duKMAcAMU
+ARC-Seal: i=1; a=rsa-sha256; t=1519217819; cv=none;
         d=google.com; s=arc-20160816;
-        b=lA0nY9HIv/qBaCPj14clEaQnDB2/JEdFXsgvppi1hNeO/PCgGJVRz/DHvgW/hLFe8Z
-         4J0vNrMCKuhSjKna47lp/7gz53+c3OAch4VUdTntrWXJBHrjvkLPsHSAxZUzTAsZciQj
-         OsXKvCZI3w9CnlzXp8VmlZ6OJ8TuewO4PKLLx83VellK5W5lrSJVNaHO5ouQXWUsD32h
-         R5zuQoeJw0RLQ7E6eCiI4Otx6tpOmc6HnmlaF1YEx8TxxnghaCwn+ny4Xila0iAx0x/E
-         0O51gnlPWsswOB8bGFIxIipuPJHK2VYx183qobyZaQNGNgPwuq0yv87lflGyLIu8779P
-         O4zw==
+        b=lhGI6UnJU5nVvUBmdxaqacCW+hTY4/MKBTxcLIEFWstdN6dTknNFrjT9ncnRdmaIkg
+         Cwv+Sgp5ECnmqejirMNLuAjkS0NtxLnkDOyRTvz0OzV8t6yeZuYiDQg9hSyzNFzqa4XW
+         G5pen7n6Fz4bypESI3ScWTFQLHTVPC0aLLw9jNVwIX9wsGYix1x2wpXQYc4VrBW1zXsr
+         66DCncwXN/nI0EG8OAjtUnad2d0xLMlHJosVLI2r5HT2j+GkGw9QCFwzqijrN/K74Pc4
+         ZWaUQnzpMfRbPLvHS7YMYSqvU98vJy4eEtgVWTL20vsr5Y6ltu/P5h2o3bGTHZAbv1v6
+         xVIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=h2tJU5yIbVfo7xp82p9W7PYWseznl3CzuZI5DWZ5Y4k=;
-        b=I0uY9NcQp7Bftk1SGIwzjdYJdQq/ivrdmMnfjN3e1IW0GeaL3GBtkPDExlnQamLJqY
-         n89SDeZHcpV/x57stJBCG6GYhXG24gJ8iegUVQhHK2OWI9ZRZzLng1SaDfQ6pF1dnjR0
-         4a2cxH7alGHWMCqZONCIuRhA4Phrw6oT14IW7oNR1ouSGgvE4zgEVNiQwl0QK2W7+UkN
-         2GUEntNhZfwn/An4tkHK/3SET+swXdHHBAkuYhJiwcKup2UFnHg0NaVX0ztBdXaOUhZo
-         28IihSVMeC3n4ixH9CBQcUw1lZjFoK7BR8bWfrd2dpbNpPJ66XtQy9aAlP9DYkobF8y2
-         AGUQ==
+        bh=Nrg6SK5pQln0VGu3wWdJvszVCMb+87hRH72Jifrc1Hs=;
+        b=iwVS11t+iChja4O1GwMS/U5xsBT2+NLY1UMElcqPxy6LuZcFlVJoh4oN6jIkOvpo5s
+         sP1G7msgsKlaU0QHrUlzMP5+f2MQZJfEZdzUf1ZNNHPPuOG2YSRtCZFylaTe0+azSW0o
+         dnvyw4jQAeZVO+NSgy0utmfQPL24HTAgoEfc8ww0MPYxRoNgqB6HaQ+fXzchrx2NmpR6
+         B/DosIgcjrk0/oWbAY/4+zo+sjvEKU+6V5sheRpkFxFeGj68faXEcTh3hg4hMbqiLJla
+         6Ir4YFGYjQdl/ufeRwqZqW/SAg7jqed53woee1rz4N2k/NbjDkUWDgo10Fm/bKmnwkDM
+         r5Jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kees Cook <keescook@chromium.org>,
-	Hugh Dickins <hughd@google.com>
-Subject: [PATCH 4.9 67/77] x86: fix build warnign with 32-bit PAE
-Date: Wed, 21 Feb 2018 13:49:16 +0100
-Message-Id: <20180221124435.030654100@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 66/77] x86/cpu: Change type of x86_cache_size variable to unsigned int
+Date: Wed, 21 Feb 2018 13:49:15 +0100
+Message-Id: <20180221124434.993910471@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014689163586116?=
-X-GMAIL-MSGID: =?utf-8?q?1593015347295352632?=
+X-GMAIL-THRID: =?utf-8?q?1593014675451742666?=
+X-GMAIL-MSGID: =?utf-8?q?1593015343979455239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +53,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
+From: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-I ran into a 4.9 build warning in randconfig testing, starting with the
-KAISER patches:
+commit 24dbc6000f4b9b0ef5a9daecb161f1907733765a upstream.
 
-arch/x86/kernel/ldt.c: In function 'alloc_ldt_struct':
-arch/x86/include/asm/pgtable_types.h:208:24: error: large integer implicitly truncated to unsigned type [-Werror=overflow]
- #define __PAGE_KERNEL  (__PAGE_KERNEL_EXEC | _PAGE_NX)
-                        ^
-arch/x86/kernel/ldt.c:81:6: note: in expansion of macro '__PAGE_KERNEL'
-      __PAGE_KERNEL);
-      ^~~~~~~~~~~~~
+Currently, x86_cache_size is of type int, which makes no sense as we
+will never have a valid cache size equal or less than 0. So instead of
+initializing this variable to -1, it can perfectly be initialized to 0
+and use it as an unsigned variable instead.
 
-I originally ran into this last year when the patches were part of linux-next,
-and tried to work around it by using the proper 'pteval_t' types consistently,
-but that caused additional problems.
-
-This takes a much simpler approach, and makes the argument type of the dummy
-helper always 64-bit, which is wide enough for any page table layout and
-won't hurt since this call is just an empty stub anyway.
-
-Fixes: 8f0baadf2bea ("kaiser: merged update")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Hugh Dickins <hughd@google.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Addresses-Coverity-ID: 1464429
+Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/kaiser.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/kaiser.h
-+++ b/include/linux/kaiser.h
-@@ -32,7 +32,7 @@ static inline void kaiser_init(void)
+---
+ arch/x86/include/asm/processor.h      |    2 +-
+ arch/x86/kernel/cpu/common.c          |    2 +-
+ arch/x86/kernel/cpu/microcode/intel.c |    2 +-
+ arch/x86/kernel/cpu/proc.c            |    4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -113,7 +113,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	/* in KB - valid for CPUS which support this call: */
+-	int			x86_cache_size;
++	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+ 	/* Cache QoS architectural values: */
+ 	int			x86_cache_max_rmid;	/* max index */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1144,7 +1144,7 @@ static void identify_cpu(struct cpuinfo_
+ 	int i;
+ 
+ 	c->loops_per_jiffy = loops_per_jiffy;
+-	c->x86_cache_size = -1;
++	c->x86_cache_size = 0;
+ 	c->x86_vendor = X86_VENDOR_UNKNOWN;
+ 	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
+ 	c->x86_vendor_id[0] = '\0'; /* Unset */
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -1132,7 +1132,7 @@ static struct microcode_ops microcode_in
+ 
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
  {
- }
- static inline int kaiser_add_mapping(unsigned long addr,
--				     unsigned long size, unsigned long flags)
-+				     unsigned long size, u64 flags)
- {
- 	return 0;
- }
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 
+ 	do_div(llc_size, c->x86_max_cores);
+ 
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -87,8 +87,8 @@ static int show_cpuinfo(struct seq_file
+ 	}
+ 
+ 	/* Cache size */
+-	if (c->x86_cache_size >= 0)
+-		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
++	if (c->x86_cache_size)
++		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
+ 
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
