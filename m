@@ -1,103 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753188AbeBUJQB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:16:01 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38686 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752323AbeBUJP6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:15:58 -0500
-X-Google-Smtp-Source: AH8x226FVXUSvejBa/vs8zIw2YtJlcJExUqJvNbf/J2m+2NjBzIuo1H3/zqNrCW/DdoNy6lNTlJc2g==
-Date: Wed, 21 Feb 2018 10:15:53 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code:
- section
-Message-ID: <20180221091553.gxnvhbitiewo2mjc@gmail.com>
-References: <20180219202826.19797-1-bp@alien8.de>
- <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
- <20180220192956.si2a6m3ckskexvte@treble>
- <20180220204435.GC24320@pd.tnic>
+        id S932077AbeBUJQM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:16:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52733 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752323AbeBUJQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 04:16:08 -0500
+Subject: Re: [RFC PATCH tip] x86/acpi: u64_x86_init_noop() can be static
+To: Ingo Molnar <mingo@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <201802202043.UzW7iu9d%fengguang.wu@intel.com>
+ <20180220123819.GA20499@lkp-wsm-ep1>
+ <20180221085148.rs3t7zad73wbpktm@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <bad54214-f182-d1ed-9593-3ffc66aa33b4@suse.com>
+Date: Wed, 21 Feb 2018 10:16:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180220204435.GC24320@pd.tnic>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180221085148.rs3t7zad73wbpktm@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Borislav Petkov <bp@alien8.de> wrote:
-
-> On Tue, Feb 20, 2018 at 01:29:56PM -0600, Josh Poimboeuf wrote:
-> > > Maybe this series already has this side-effect, but I'd really love to
-> > > see oopses show the code bytes for each kernel entry, not just the
-> > > innermode one.  We already dump full regs including RIP -- adding
-> > > Code: should be easy and would be very helpful.
-> > 
-> > Just to clarify, I think you want to show the Code: around regs->ip
-> > every time we show the registers?
+On 21/02/18 09:51, Ingo Molnar wrote:
 > 
-> It is an easy change to always dump Code: section when we dump RIP:.
-> I.e., something like this:
+> * kbuild test robot <fengguang.wu@intel.com> wrote:
 > 
-> [   33.192733] BUG: unable to handle kernel NULL pointer dereference at           (null)
-> [   33.196510] IP: sysrq_handle_crash+0x17/0x20
-> [   33.196691] PGD 78b12067 P4D 78b12067 PUD 78b7f067 PMD 0 
-> [   33.196691] Oops: 0002 [#1] PREEMPT SMP
-> [   33.196691] Modules linked in:
-> [   33.196691] CPU: 6 PID: 3686 Comm: bash Not tainted 4.16.0-rc1+ #5
-> [   33.196691] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   33.196691] RIP: 0010:sysrq_handle_crash+0x17/0x20
-> [   33.196691] RSP: 0018:ffffc9000054bdf0 EFLAGS: 00010246
-> [   33.196691] Code: eb d1 e8 5d 17 b7 ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 e8 c6 24 bd ff c7 05 24 a2 19 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 c3 0f 1f 44 00 00 e8 86 21 c2 ff fb e9 
-> [   33.196691] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-> [   33.196691] RDX: 0000000000000000 RSI: ffffffff8110145a RDI: 0000000000000063
-> [   33.196691] RBP: ffffffff82271400 R08: 0000000000000183 R09: 000000000002e771
-> [   33.196691] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000a
-> [   33.196691] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [   33.196691] FS:  00007ffff7fdb700(0000) GS:ffff88007ed80000(0000) knlGS:0000000000000000
-> [   33.196691] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   33.196691] CR2: 0000000000000000 CR3: 000000007aa9e000 CR4: 00000000000406e0
-> [   33.196691] Call Trace:
-> [   33.196691]  __handle_sysrq+0x9e/0x160
-> [   33.196691]  write_sysrq_trigger+0x2b/0x30
-> [   33.196691]  proc_reg_write+0x38/0x70
-> [   33.196691]  __vfs_write+0x36/0x160
-> [   33.196691]  ? __fd_install+0x69/0x110
-> [   33.196691]  ? preempt_count_add+0x74/0xb0
-> [   33.196691]  ? _raw_spin_lock+0x13/0x30
-> [   33.196691]  ? set_close_on_exec+0x41/0x80
-> [   33.196691]  ? preempt_count_sub+0xa8/0x100
-> [   33.196691]  vfs_write+0xc0/0x190
-> [   33.196691]  SyS_write+0x64/0xe0
-> [   33.196691]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> [   33.196691]  do_syscall_64+0x70/0x130
-> [   33.196691]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> [   33.196691] RIP: 0033:0x7ffff74b9620
-> [   33.196691] RSP: 002b:00007fffffffe7a8 EFLAGS: 00000246
-> [   33.196691] Code: ff 73 01 c3 48 8b 0d 68 98 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d bd f1 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 ce 8f 01 00 48 89 04 
-> [   33.196691]  ORIG_RAX: 0000000000000001
-> [   33.196691] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007ffff74b9620
-> [   33.196691] RDX: 0000000000000002 RSI: 0000000000705408 RDI: 0000000000000001
-> [   33.196691] RBP: 0000000000705408 R08: 000000000000000a R09: 00007ffff7fdb700
-> [   33.196691] R10: 00007ffff77826a0 R11: 0000000000000246 R12: 00007ffff77842a0
-> [   33.196691] R13: 0000000000000002 R14: 0000000000000001 R15: 0000000000000000
-> [   33.196691] Code: eb d1 e8 5d 17 b7 ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 e8 c6 24 bd ff c7 05 24 a2 19 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 c3 0f 1f 44 00 00 e8 86 21 c2 ff fb e9 
-> [   33.196691] RIP: sysrq_handle_crash+0x17/0x20 RSP: ffffc9000054bdf0
-> [   33.196691] CR2: 0000000000000000
-> [   33.301033] ---[ end trace b97275941de8c6f4 ]---
-> [   33.302600] Kernel panic - not syncing: Fatal exception
-> [   33.304529] Kernel Offset: disabled
-> [   33.304973] ---[ end Kernel panic - not syncing: Fatal exception
+>>
+>> Fixes: 62d8b7fba8d3 ("x86/acpi: Add a new x86_init_acpi structure to x86_init_ops")
+>> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+>> ---
+>>  0 files changed
+> 
+> -ENOPATCH?
 
-That looks really useful!
+I'll send a patch to add "static" to the noop functions of x86_init.c
+(not only the new one).
 
-Thanks,
 
-	Ingo
+Juergen
