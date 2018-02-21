@@ -1,120 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753961AbeBUMDf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:03:35 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:34199 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751180AbeBUMDc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:03:32 -0500
-Subject: Re: [PATCH v9 03/11] media: platform: Add Renesas CEU driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl>
-Date: Wed, 21 Feb 2018 13:03:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1752115AbeBUMIC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:08:02 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41302 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751401AbeBUMIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 07:08:00 -0500
+Date: Wed, 21 Feb 2018 13:07:55 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Thomas Huth <thuth@redhat.com>, Farhan Ali <alifm@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, geert@linux-m68k.org,
+        tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for
+ Graphics support
+Message-ID: <20180221130755.17d15f89.cohuck@redhat.com>
+In-Reply-To: <f6db4d0a-3578-4162-5de7-6e699f7a02c2@de.ibm.com>
+References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
+        <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
+        <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+        <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
+        <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
+        <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
+        <20180221113217.11bb1c69.cohuck@redhat.com>
+        <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
+        <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
+        <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
+        <5dfa9213-0e63-54d0-8700-1ced4efd4c28@redhat.com>
+        <f6db4d0a-3578-4162-5de7-6e699f7a02c2@de.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfC3//5bGcprgwYjS3yJWpcn2SlUK3APAVGsHbEZgaspwkEG0TxTP0MPvdVG1kRoDHUOITr/u7Wu8IGCHuEfc4CgXZHyhJqtsTXxbw3q9bCK8Qx9pT6iB
- m7UZ+UyuBJ1+YfCcYWlswuVpOz2gI/3/bq3IEotWVKxLvqYdt6TyvWMf6Dxcpw7zygSZArBocxaliUUaJ9GEjN5QIoR5PMn/nCiuC4vkl0Iqk7Bif6DhOFhy
- 9zieTN8DehihZ9eOUg+3jIoxQGwGp8PcxX/AGNWEkT1zbP3xCYavL2pcXjrj3VFKJXmWwNKG6xuRYG/TEwhAVACKkIOtaogVONxtAvXggcacjCNVQiqIf6E0
- 8+hzPtTCaYw+gn0C8xMi1lXebsMEViXCqsyGUjNId6B9dMSwZAC1Fyv43647WyIlfeMl4lEu6NblBkPVzyeVnhgNhlqnfQ0u3GTyTLRFqJCbhDqSsBOPZkbH
- xMmLz/9s0Gy0ohMd+DksmHIkjVc0J8TIEDFbSJr9wQyh/HVZhexY4I2CFYBzbfXi22jg7hr3NRdYoTwJbqH3WquNp19kUZ9qdYZBIAPwKW2NEbr1AiYOytVv
- 5kHE2ESMR2g5VzlwU/MTXjCvFlxGVtBb2heDqSAjKRpKPMdWqGkFX/IPImTyIpGfEMlSKoAkSdfCEcBjVDeaNM0zVj1kNJ+SxFmM2ZINK6ACsWt5/aAdo7Pi
- lnlSMDF8RsWDXmvAt1H5cqCYHG++MB07fvZxcTRsHXIevZU8CQqxDhznhCX3kPz2YWoIwOPI9F5j2TQhJVw0JU3OtWgrqkL0XGUFBfOsBWWP57kIyxZ+qg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/19/18 17:59, Jacopo Mondi wrote:
-> Add driver for Renesas Capture Engine Unit (CEU).
+On Wed, 21 Feb 2018 12:49:35 +0100
+Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+
+> On 02/21/2018 12:29 PM, Thomas Huth wrote:
+> > On 21.02.2018 12:22, Christian Borntraeger wrote:  
+> >>
+> >>
+> >> On 02/21/2018 12:14 PM, Thomas Huth wrote:  
+> >>> On 21.02.2018 12:09, Christian Borntraeger wrote:  
+> >>>>
+> >>>>
+> >>>> On 02/21/2018 11:32 AM, Cornelia Huck wrote:  
+> >>>>> On Wed, 21 Feb 2018 11:22:38 +0100
+> >>>>> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+> >>>>>  
+> >>>>>> On 02/21/2018 11:05 AM, Christian Borntraeger wrote:  
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> On 02/19/2018 05:38 PM, Farhan Ali wrote:    
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 02/19/2018 11:25 AM, Thomas Huth wrote:    
+> >>>>>>>>> On 19.02.2018 16:47, Farhan Ali wrote:    
+> >>>>>>>>>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
+> >>>>>>>>>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
+> >>>>>>>>>> "Graphics support" menu for S390. But if we enable VT layer for S390,
+> >>>>>>>>>> we would also need to enable the dummy console. So let's remove the
+> >>>>>>>>>> HAS_IOMEM dependency.
+> >>>>>>>>>>
+> >>>>>>>>>> Move this dependency to sub menu items and console drivers that use
+> >>>>>>>>>> io memory.
+> >>>>>>>>>>
+> >>>>>>>>>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
+> >>>>>>>>>> ---
+> >>>>>>>>>>   drivers/video/Kconfig         | 21 +++++++++++----------
+> >>>>>>>>>>   drivers/video/console/Kconfig |  4 ++--
+> >>>>>>>>>>   2 files changed, 13 insertions(+), 12 deletions(-)
+> >>>>>>>>>>
+> >>>>>>>>>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> >>>>>>>>>> index 3c20af9..8f10915 100644
+> >>>>>>>>>> --- a/drivers/video/Kconfig
+> >>>>>>>>>> +++ b/drivers/video/Kconfig
+> >>>>>>>>>> @@ -3,7 +3,6 @@
+> >>>>>>>>>>   #
+> >>>>>>>>>>     menu "Graphics support"
+> >>>>>>>>>> -    depends on HAS_IOMEM
+> >>>>>>>>>>     config HAVE_FB_ATMEL
+> >>>>>>>>>>       bool
+> >>>>>>>>>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
+> >>>>>>>>>>   config SH_LCD_MIPI_DSI
+> >>>>>>>>>>       bool
+> >>>>>>>>>>   -source "drivers/char/agp/Kconfig"
+> >>>>>>>>>> +if HAS_IOMEM
+> >>>>>>>>>> +    source "drivers/char/agp/Kconfig"
+> >>>>>>>>>>   -source "drivers/gpu/vga/Kconfig"
+> >>>>>>>>>> +    source "drivers/gpu/vga/Kconfig"
+> >>>>>>>>>>   -source "drivers/gpu/host1x/Kconfig"
+> >>>>>>>>>> -source "drivers/gpu/ipu-v3/Kconfig"
+> >>>>>>>>>> +    source "drivers/gpu/host1x/Kconfig"
+> >>>>>>>>>> +    source "drivers/gpu/ipu-v3/Kconfig"
+> >>>>>>>>>>   -source "drivers/gpu/drm/Kconfig"
+> >>>>>>>>>> +    source "drivers/gpu/drm/Kconfig"    
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> Hmmm, looks like that this makes it impossible to select VIRTIO_GPU - need still more
+> >>>>>>> work.
+> >>>>>>>     
+> >>>>>> Sorry my fault. I had CONFIG_PCI disabled.  
+> >>>>>
+> >>>>> That smells like the s390 HAS_IOMEM stuff needs more work -- I guess
+> >>>>> that you want to enable a ccw virtio-gpu device, not a pci one, right?  
+> >>>>
+> >>>> It is a ccw virtio-gpu. But s390 has no IOMEM without CONFIG_PCI, so you cannot
+> >>>> select VIRTIO_GPU, which needs DRM, which need IOMEM.  
+> >>>
+> >>> So the 'source "drivers/gpu/drm/Kconfig"' should maybe rather reside
+> >>> outside of the "if HAS_IOMEM" path? Or does it not compile anymore that way?  
+> >>
+> >> virtio-gpu depends on drm. So in essence it boils down to if you want virtio-gpu
+> >> you also need to enable PCI, even if the actual channel is ccw.  
+> > 
+> > But if you need to enable PCI to get IOMEM, I wonder why this patch here
+> > is needed at all? The Graphics menu / VT dummy console should be
+> > available in the config if IOMEM is enabled anyway?  
 > 
-> The CEU interface supports capturing 'data' (YUV422) and 'images'
-> (NV[12|21|16|61]).
+> That is a good question. With CONFIG_PCI=y I can select virtio-gpu and dummy-console.
+> IIRC the issue was that with patch 3 we can have the situation where we have
+> CONFIG_VT = y and CONFIG_DUMMY_CONSOLE=n and this will crash early during boot as
+> conswitchp is NULL. 
+
+So in practice, CONFIG_VT depends on "there's a console available, even
+if it's only the dummy one"?
+
+> This patches goal was to always enable dummy console even without
+> PCI, but it obviously fails to do so.
+
+OTOH, the dummy console really should not depend on anything, as it is
+only doing dummy things.
+
 > 
-> This driver aims to replace the soc_camera-based sh_mobile_ceu one.
+> So what about allowing CONFIG_VT on s390 only if we have PCI?
 > 
-> Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
-> platform GR-Peach.
 > 
-> Tested with ov7725 camera sensor on SH4 platform Migo-R.
+> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> index 84810075a6a0..1c7fe09d6f90 100644
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -11,7 +11,7 @@ if TTY
+>  
+>  config VT
+>         bool "Virtual terminal" if EXPERT
+> -       depends on !UML
+> +       depends on !UML && (!S390 || PCI)
+>         select INPUT
+>         default y
+>         ---help---
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  drivers/media/platform/Kconfig       |    9 +
->  drivers/media/platform/Makefile      |    1 +
->  drivers/media/platform/renesas-ceu.c | 1661 ++++++++++++++++++++++++++++++++++
->  3 files changed, 1671 insertions(+)
->  create mode 100644 drivers/media/platform/renesas-ceu.c
-> 
 
-<snip>
-
-> +static int ceu_s_input(struct file *file, void *priv, unsigned int i)
-> +{
-> +	struct ceu_device *ceudev = video_drvdata(file);
-> +	struct ceu_subdev *ceu_sd_old;
-> +	int ret;
-> +
-> +	if (i >= ceudev->num_sd)
-> +		return -EINVAL;
-> +
-> +	if (vb2_is_streaming(&ceudev->vb2_vq))
-> +		return -EBUSY;
-> +
-> +	if (i == ceudev->sd_index)
-> +		return 0;
-> +
-> +	ceu_sd_old = ceudev->sd;
-> +	ceudev->sd = &ceudev->subdevs[i];
-> +
-> +	/* Make sure we can generate output image formats. */
-> +	ret = ceu_init_formats(ceudev);
-
-Why is this done for every s_input? I would expect that this is done only once
-for each subdev.
-
-I also expect to see a ceu_set_default_fmt() call here. Or that the v4l2_pix is kept
-in ceu_subdev (i.e. per subdev) instead of a single fmt in cuedev. I think I prefer
-that over configuring a new default format every time you switch inputs.
-
-This code will work for two subdevs with exactly the same formats/properties. But
-switching between e.g. a sensor and a video receiver will leave things in an
-inconsistent state as far as I can see.
-
-E.g. if input 1 is the video receiver then switching to that input and running
-'v4l2-ctl -V' will show the sensor format, not the video receiver format.
-
-> +	if (ret) {
-> +		ceudev->sd = ceu_sd_old;
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* now that we're sure we can use the sensor, power off the old one. */
-> +	v4l2_subdev_call(ceu_sd_old->v4l2_sd, core, s_power, 0);
-> +	v4l2_subdev_call(ceudev->sd->v4l2_sd, core, s_power, 1);
-> +
-> +	ceudev->sd_index = i;
-> +
-> +	return 0;
-> +}
-
-The remainder of this driver looks good.
-
-Regards,
-
-	Hans
+Would cover your use case, but feels wrong to me... config dependencies
+aren't fun :/
