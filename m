@@ -1,176 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938760AbeBUQ7z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:59:55 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34407 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933341AbeBUQ7v (ORCPT
+        id S938776AbeBURAE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:00:04 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38394 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933341AbeBURAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:59:51 -0500
-Date: Wed, 21 Feb 2018 08:59:13 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-2ba6474104a1132c4af9f6dc42c6bfe3ca71f8c7@git.kernel.org>
-Cc: luto@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        dwmw2@infradead.org, linux@dominikbrodowski.net, tglx@linutronix.de,
-        brgerst@gmail.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, bp@alien8.de, jpoimboe@redhat.com,
-        mingo@kernel.org, dvlasenk@redhat.com
-Reply-To: mingo@kernel.org, jpoimboe@redhat.com, bp@alien8.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        dvlasenk@redhat.com, peterz@infradead.org, dwmw2@infradead.org,
-        luto@kernel.org, hpa@zytor.com, brgerst@gmail.com,
-        linux@dominikbrodowski.net, tglx@linutronix.de
-In-Reply-To: <20180220210113.6725-3-linux@dominikbrodowski.net>
-References: <20180220210113.6725-3-linux@dominikbrodowski.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Move ENTER_IRQ_STACK from interrupt
- macro to interrupt_entry
-Git-Commit-ID: 2ba6474104a1132c4af9f6dc42c6bfe3ca71f8c7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Feb 2018 12:00:00 -0500
+X-Google-Smtp-Source: AH8x225a/8J9HVTgsdSHVvaPCLy4tRRaK/pl9TQWMnBznzqp2oVLnHElFDmJW3+njtm9mxbVGUHdgQ==
+Date: Wed, 21 Feb 2018 17:59:57 +0100
+From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
+To: Andy Shevchenko <andy@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/7] Topstar U931/RVP7 ACPI LED Workaround
+Message-ID: <cover.1519231939.git.gdouezangrard@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2ba6474104a1132c4af9f6dc42c6bfe3ca71f8c7
-Gitweb:     https://git.kernel.org/tip/2ba6474104a1132c4af9f6dc42c6bfe3ca71f8c7
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Tue, 20 Feb 2018 22:01:09 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 16:54:03 +0100
+Hi Andy,
 
-x86/entry/64: Move ENTER_IRQ_STACK from interrupt macro to interrupt_entry
+Thank you for your review. Changes since the previous submission are
+highlighted below.
 
-Moving the switch to IRQ stack from the interrupt macro to the helper
-function requires some trickery: All ENTER_IRQ_STACK really cares about
-is where the "original" stack -- meaning the GP registers etc. -- is
-stored. Therefore, we need to offset the stored RSP value by 8 whenever
-ENTER_IRQ_STACK is called from within a function. In such cases, and
-after switching to the IRQ stack, we need to push the "original" return
-address (i.e. the return address from the call to the interrupt entry
-function) to the IRQ stack.
+On Topstar U931/RVP7 Notebooks, an issue prevents the WLAN toggle key
+from being properly managed by the Embedded Controller and successfully
+disconnect the adapter. A specific ACPI method allows to toggle the WLAN
+LED state regardless.
 
-This trickery allows us to carve another .85k from the text size (it
-would be more except for the additional unwind hints):
+Based on a DMI check, the LED is registered within the corresponding
+subsystem, making possible to use a software-based trigger (rfkill for
+instance, to synchronize the LED with the network interface state).
 
-   text	   data	    bss	    dec	    hex	filename
-  18006	      0	      0	  18006	   4656	entry_64.o-orig
-  17158	      0	      0	  17158	   4306	entry_64.o
+Thank you for your time,
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180220210113.6725-3-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/entry_64.S | 56 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 38 insertions(+), 18 deletions(-)
+--
+Guillaume Douézan-Grard
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index b0ae0c3..7a6ae19 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -448,9 +448,19 @@ END(irq_entries_start)
-  *
-  * The invariant is that, if irq_count != -1, then the IRQ stack is in use.
-  */
--.macro ENTER_IRQ_STACK regs=1 old_rsp
-+.macro ENTER_IRQ_STACK regs=1 old_rsp save_ret=0
- 	DEBUG_ENTRY_ASSERT_IRQS_OFF
-+
-+	.if \save_ret
-+	/*
-+	 * If save_ret is set, the original stack contains one additional
-+	 * entry -- the return address. Therefore, move the address one
-+	 * entry below %rsp to \old_rsp.
-+	 */
-+	leaq	8(%rsp), \old_rsp
-+	.else
- 	movq	%rsp, \old_rsp
-+	.endif
- 
- 	.if \regs
- 	UNWIND_HINT_REGS base=\old_rsp
-@@ -496,6 +506,15 @@ END(irq_entries_start)
- 	.if \regs
- 	UNWIND_HINT_REGS indirect=1
- 	.endif
-+
-+	.if \save_ret
-+	/*
-+	 * Push the return address to the stack. This return address can
-+	 * be found at the "real" original RSP, which was offset by 8 at
-+	 * the beginning of this macro.
-+	 */
-+	pushq	-8(\old_rsp)
-+	.endif
- .endm
- 
- /*
-@@ -531,22 +550,7 @@ ENTRY(interrupt_entry)
- 	PUSH_AND_CLEAR_REGS save_ret=1
- 	ENCODE_FRAME_POINTER 8
- 
--	ret
--END(interrupt_entry)
--
--/* 0(%rsp): ~(interrupt number) */
--	.macro interrupt func
--	cld
--
--	testb	$3, CS-ORIG_RAX(%rsp)
--	jz	1f
--	SWAPGS
--	call	switch_to_thread_stack
--1:
--
--	call	interrupt_entry
--
--	testb	$3, CS(%rsp)
-+	testb	$3, CS+8(%rsp)
- 	jz	1f
- 
- 	/*
-@@ -564,10 +568,26 @@ END(interrupt_entry)
- 	CALL_enter_from_user_mode
- 
- 1:
--	ENTER_IRQ_STACK old_rsp=%rdi
-+	ENTER_IRQ_STACK old_rsp=%rdi save_ret=1
- 	/* We entered an interrupt context - irqs are off: */
- 	TRACE_IRQS_OFF
- 
-+	ret
-+END(interrupt_entry)
-+
-+/* 0(%rsp): ~(interrupt number) */
-+	.macro interrupt func
-+	cld
-+
-+	testb	$3, CS-ORIG_RAX(%rsp)
-+	jz	1f
-+	SWAPGS
-+	call	switch_to_thread_stack
-+1:
-+
-+	call	interrupt_entry
-+
-+	UNWIND_HINT_REGS indirect=1
- 	call	\func	/* rdi points to pt_regs */
- 	.endm
- 
+
+Changes since v4:
+
+* move module description comment change from patch 5 to 4,
+* fix SDPX identifiers mismatch.
+
+
+Changes since v3:
+
+* fix revert commit message format and wrapping,
+* update module description while actually doing the changes,
+* switch to SDPX identifiers.
+
+
+Changes since v2:
+
+* revert an older conversion from a generic module to an acpi driver
+module instead of undoing it manually,
+* separate commits for the renaming and the spliting phases,
+* DMI-based check instead of a module parameter,
+* copyright and minor fixes put at the end.
+
+
+Changes since v1:
+
+* leave devices names unchanged for ABI compatibility,
+* fix label names,
+* separate module authors definition,
+* add commit description to Patch 3.
+
+
+Guillaume Douézan-Grard (7):
+  platform/x86: topstar-laptop: revert "convert to module_acpi_driver()"
+  platform/x86: topstar-laptop: use consistent naming scheme
+  platform/x86: topstar-laptop: split ACPI events and input handling
+  platform/x86: topstar-laptop: add platform device
+  platform/x86: topstar-laptop: add Topstar U931/RVP7 WLAN LED
+    workaround
+  platform/x86: topstar-laptop: update copyright and fix some comments
+  platform/x86: topstar-laptop: replace licence text with SPDX tag
+
+ drivers/platform/x86/Kconfig          |   2 +
+ drivers/platform/x86/topstar-laptop.c | 363 +++++++++++++++++++++++++++-------
+ 2 files changed, 291 insertions(+), 74 deletions(-)
+
+-- 
+2.16.1
