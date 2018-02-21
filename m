@@ -1,76 +1,107 @@
-Return-Path: <gnomes@lxorguk.ukuu.org.uk>
-X-Google-Smtp-Source: AH8x2276U2+Iu916qjmrDImshZnd5EUMCvy+1bYAmq7vESpO+hhZX/IOlOtdyhzxBXbRJN39lAnZ
-ARC-Seal: i=1; a=rsa-sha256; t=1517954446; cv=none;
+Return-Path: <arnd@arndb.de>
+X-Google-Smtp-Source: AH8x226FZRXh/y+G40rcCk5wAjj0c7AQQe++1NNKi93g+EfJih2/wMPBFQLovO1lOnVM6bp9+MV3
+ARC-Seal: i=1; a=rsa-sha256; t=1519230580; cv=none;
         d=google.com; s=arc-20160816;
-        b=Oo/pdHcEjFdw92y6sAKKghMsemY5uBgTz6mB2HOrucXEm30kRYITONoTaT2JBLmHF3
-         30cW0oh5HRN8Yp3+sgoqsVELv2C3z/xiQzQ5n026Z7B3ZzqYP/YuArPUe8zwyRGl875J
-         MbYnIQuOX+js+UTi1wvi1r6fdM8NLDQMqEVmCL/arPSt2jugqbSvUkzcwzHAFxrjwOJq
-         c/Fb3kIqovddcvckjjCjjMDRn/Yz1JngDlo7sSmBig95b9hSr1bQwFnuGC2c4Jiqp0DV
-         IPzjDJcrrpNWdpuhOMP7KKJpCdqsBQB5Kw2q1i2tRSH3CFJU6gYHgSA9hPo9a0MFFG2I
-         MjHw==
+        b=BMALfRFWHTDQtLYGTs9+Dyb3kx00ggSrommScLZHyQiHgaO4fpeLEyUvm+pgVcOyrZ
+         tCQJTYOz2xLawi2vzNG48VBO8mkihsUWwh6LIyFQ89ymtccHGreYnEUi902YYVnXq6Jw
+         Wm5wtj581NkCEBCzgG8lhJ6F+pj7dIRTueVAcVLXoBBLiPLo9mLERRq8C5aqZ74ouRD7
+         BmRbAwZhE61Liyy+iVJW6eKz6cneKGNbJ+Na71JdssuTozFCDAguRABI/pgcPwCL4JGi
+         TF/Plkp97P+p3Ba8dTmgTMkmJywKHIT27tjnsF/46jdmNVWLyaqsBl7F5zhYMqZQFJEh
+         jlog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=QP+E2ncN2U67KhSW7/qYZrXeK7VmVtCEqFY0njwrD1U=;
-        b=iQx5kbfKIRKkR/KOsbUl5PuanPYOWp9h5CXtSvhZBeCxcxBJMxpEKN3c17rx6g9ubz
-         RqyNvqdWdmcZ+ODK0vZcpCvzkBUFsFDWSrWElxzzuqAuJ3Jj5DBlwf6/0u4qU1ONsZjP
-         /aO4zvKinE1OuNvvJQGp6dJx86KBRSYKp+csNvUOcdhost+D1IvoDlfraOfaSHOJd7RF
-         ovYGR27JzQG6vX8iyCt4sSQ+n+eA5ET3L0DYNI2YshkIiIjROqipkZlTBIadbYjoKAag
-         ZxRfiUlmx0ycSIFxleg/5dooYyadFK6bwMEh5xmF1AqdDRuJiPZccWcbtMKB180RN415
-         etnQ==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=974TurxzdMZA3QNPEYbi7aZ/24izTI8Eo/cbfktWrzc=;
+        b=hxCl5+hgydyZnkmhaSOLi5+/dO/m9Nzd89hEqVjwWjMTb4nSzj8UKIRS+GZhwTtHf8
+         pCg41PGMt+B9eV2nT+f4LD4GpCfU9hvJnmGdHiULei5wCqFbLausz+gAA26NYtZmZvgk
+         ARZRx3rbespMY9u+t+UCtgp34YdV9G/U/kyATrfOdlcQJmRvmktJsOym2Bh5wNeZFD1H
+         rSjmszjNSa+2mB0t61mtn4e2n+JNfo/80o2XLkbxOCuzDnevHfS1SpWzT5psdJQIprPf
+         fxACysMDswvUFnlOcmvRpLV8VQaKyH/xwKKG/Et3uX58Xc/uzRc5J0NV0ffYhChbEeiv
+         l2fg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
+       spf=neutral (google.com: 212.227.17.13 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
-Date: Tue, 6 Feb 2018 21:59:59 +0000
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To: tedheadster <tedheadster@gmail.com>
-Cc: whiteheadm@acm.org, David Woodhouse <dwmw2@infradead.org>,
-        Guenter Roeck
- <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hugh
- Dickins <hughd@google.com>, dave.hansen@linux.intel.com,
-        jikos@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Kees Cook <keescook@chromium.org>, Jamie
- Iles <jamie@jamieiles.com>,
-        eduval@amazon.com, labbott@redhat.com,
-        Rik van
- Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUG] x86 : i486 reporting to be vulnerable to
- Meltdown/Spectre_V1/Spectre_V2
-Message-ID: <20180206215959.0f640736@alans-desktop>
-In-Reply-To: <CAP8WD_Ztwp3dLvv+kbQ9QizWHWCwpZnnXxQ++Z0OVnLnaj01+Q@mail.gmail.com>
-References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
-	<1517643438.31953.108.camel@infradead.org>
-	<CAP8WD_Yrp5g6YZwV+XQTx93YpTakWEL8MD+p0bZDaPi3-r88JQ@mail.gmail.com>
-	<20180206190233.GA10476@kroah.com>
-	<1517944227.3677.15.camel@infradead.org>
-	<20180206191355.GA7424@roeck-us.net>
-	<1517944648.3677.18.camel@infradead.org>
-	<CAP8WD_Znj+zG6hVD3zV+9tTJs0OEZtbQTy=XGOj3hurtRRXhVQ@mail.gmail.com>
-	<CAP8WD_Ztwp3dLvv+kbQ9QizWHWCwpZnnXxQ++Z0OVnLnaj01+Q@mail.gmail.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+       spf=neutral (google.com: 212.227.17.13 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+From: Arnd Bergmann <arnd@arndb.de>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	"chunfeng.yun@mediatek.com" <chunfeng.yun@mediatek.com>,
+	Chaotian Jing <chaotian.jing@mediatek.com>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v4.15-stable] arm64: dts: add #cooling-cells to CPU nodes
+Date: Wed, 21 Feb 2018 17:29:19 +0100
+Message-Id: <20180221162934.2728048-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:uNkGNBlvrEa55WbfB0nHtYFneKFfOvoB9YRgz03CE7u7kjrPWot
+ KjpNI2VMT9cWd/fRgMG5uRybow1uOo/h9C/K1hM/rK4GontSZxjFLSGFwo4p/k0EynA61Yw
+ BUL88Fjd7k46wYYNt7A0z5RgKz0ObCiDtPxlv1Z5Hezplk2iCKa0M/Z/SaZahc7jTszn5id
+ CTfZbBL7F/4peXlsNaDLQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Q14ngxBjUtU=:+Hhxn74rXINi6o9bAJxw/3
+ xfZ+DiNAbNAMsWrOKwQAwwP6UgzsUnnozIsBIHNhd+UQubgiIL3QN9pywntkn97B+xE7TkoV2
+ BLnOp/7GM0isxu2MHW2Q2+XE3ofO4JkD+ErqB9Dhqji8KPHPLBb3Gea/48UyLQ/dEiIitVjly
+ fSYj0KYprPCreQjj4OehaeYq54Ce7Y0+Vs1NhsFP6FIm3OxGl1earjU8/gvq7ipVEsiSmZbHD
+ oclMOaBL3fhO1+HlTkwR3RZUT31TZp9XTcR3MhkbnMevQMdVY9+tds91OFcTFyeUxzJyKnfiE
+ /KVuZGk+pPOjfYhzkMrDzPQrqgPlFeEdFxWcDzQ/64ZCyE3FnsOhGbmQdCRt6cKepclffz4ce
+ 3QjShKWdlx9WFdzkGOFukJ371qTI6w0iAewTblLsBeG0+QPCXJIZLSLo2QFczrbxPxrgOnw9t
+ ItUQVCH5g+qIK9VY9aQXc2dv8F70aYaMt4GRnmO0urKT8s7gT4EHJvQ1zdovfbyue2BJbvx7Q
+ YLLq/wvKD78pADLRXOV6WcN/7F95CuTc5gjGp8PGeQJ3Yi/QP0EiJG+7K3ULU8DzHu6zkFf2h
+ ss99LTtwiJBjBEipOR9K/gEroYHqOe65geh3Syk8nka2M4uq+FA3t9VyynCt/Vz9FgG2ykDE1
+ UkhEUvHR1skj5U3liBzZuLpk8V3f7nRaHf0cJ+E+MtpdD1wDxSYbs88xDL5IR2ma00XWc+GxH
+ YESJslxEHSKN5mUXnlyVT7Ts1iTU+X4ynkMGdw==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591354140743903681?=
-X-GMAIL-MSGID: =?utf-8?q?1591690601973013096?=
+X-GMAIL-THRID: =?utf-8?q?1593028724477169828?=
+X-GMAIL-MSGID: =?utf-8?q?1593028724477169828?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> If that is correct (and I might be wrong), then I am up to date and I
-> am still getting the following in /proc/cpuinfo on my Pentium 4M i686:
-> 
-> bugs  : cpu_meltdown spectre_v1 spectre_v2
-> 
-> - Matthew
+commit acbf76ee05067c3942852019993f7beb69a0f45f upstream.
 
-That's an interesting museum piece. It's a Northwood core so I believe
-the reporting is correct.
+dtc complains about the lack of #coolin-cells properties for the
+CPU nodes that are referred to as "cooling-device":
 
-Alan
+arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@0 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@0:cooling-device[0])
+arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@100 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@1:cooling-device[0])
+
+Apparently this property must be '<2>' to match the binding.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+[arnd: backported to 4.15]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index 26396ef53bde..ea407aff1251 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -81,6 +81,7 @@
+ 			reg = <0x000>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -97,6 +98,7 @@
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu3: cpu@101 {
+-- 
+2.9.0
