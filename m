@@ -1,44 +1,48 @@
 Return-Path: <khalid.aziz@oracle.com>
-X-Google-Smtp-Source: AH8x2254ii+ZbNrnmJRvGRs4wx1bHfAmdBBKe8f0IInwzd7vOmN5SJkOBo7kkS1kmKHsE8JRqmqC
-ARC-Seal: i=1; a=rsa-sha256; t=1519233430; cv=none;
+X-Google-Smtp-Source: AG47ELukgwSXaVgAajLEd+/Fhd1zDg/V9FHk+sy9zoo/hzmZB2aCpKHzfAjV0N/FSk0LmgNF1SrG
+ARC-Seal: i=1; a=rsa-sha256; t=1519233428; cv=none;
         d=google.com; s=arc-20160816;
-        b=0iB2BZzoaLgq/Yn5vc0LtpSzowQ83/0Goh4uYDS1VUj+F6W6uChuh5XYhch4vJ3zbO
-         nwQe/zWWUj12efIwSfDcivQFCW266MfD55blhU7ASg1M6BtuRWMcfvGDETtq/YgG0Xqg
-         ucL4KZ7QABJ/MqNhTL46eIUjwxgKPYP9PzP0Z55r+YxL/OCt1BgwA829LSaVTuORExan
-         JJz1CWsCbwGOb/NxQiKr+GEWfLUIBsosPtM9skDBDYksRhpkKO3z4LOawammkY2IuZ3O
-         UNprMKJUeFi/Jmgru4EWBAFlE9QL3Kvmakz+6/SNYiZ3VZh/JhgHoluV9GvO6Gt4EH05
-         ggjA==
+        b=fEpH5GMwjCPRskWN5vNSJpAjf3moTP3CTASblLEN3nmHXEuudyh2BmPiUAQTiIAfDa
+         OXWqUQcOPpyZZv7pVuCtuf3dQPtcdNrQ/P0Q/+B7qYALOCgkPwpeOPht/5uJLG61/P1x
+         /oKQ2P8hjdAzWDddNwc/Z1joOrnowNRi9TKHRFTL+vhS1MkMBVO8mEFkVpsDaWH7EJrr
+         tpf7/cHf8s5WkDHeFFah7EeM5dOWzplOOYlKX4N2DRh4huLMKFVnKHEB45cXYWLJLUsd
+         JnXiMBLbxFLZs5dLWaXzsrWNVrjjh9lSmyCSV554+xWy/KHwA0u5ER+1+ZenstsxscNn
+         UEsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tCTL3CQSduIq8z3H2Wb2Tf1MgfNVCO58ITvnVMKN+Fc=;
-        b=mI9H31AJZWO46Gs7UUOx7aBN/D074865xCbLuSJGl0k66JWB2rISKTbEMP9ORQOj0q
-         y0GRaXcT6ICKp0Ei6cyu2ztE/ALibfepbF20Og1p0FyqnsOA1X5DaPsvZYS48nazF8hz
-         DT7iCv4enFVi4oUVjyaJtR/4ZWc+YsNUb3t+HCbns6cdW3LBOhdtViumKB/wAVi1r2Ja
-         n1qrgmoIbXIxr/HKmLwrCRLT5T/tcQf0PGLaMUnt0YMHv4SisKXEfu60HCZu0+Dv2Okl
-         oijizPzEFLuXZGOhn3Y/NcrwlcUpvodrFbrXsi42B+IyLi74FKWMNJykN2V6dCBLjoLV
-         A8zw==
+        bh=CfPN416hNk7O/SFwFYICp0ePG5NnhyNSFp1VFAjCCiQ=;
+        b=Seyqxh4WmwGqUgbxSIvgYhxGTCesliAHSHkCw1/z23MP+kOcuS8lo+S3P9J2loJFOl
+         yZv4S3xrJWhZqUYY1KW/9NZ6F7nX3H/wXb8a4UTQGMNZbBBgCKLnXH2Q6b2ACOO9zkwD
+         TqybFT8Pel2bZYEjce3Z4hPO6/z0Xb4pGCIamzUMLR2XxrZNRbR2tbcCYT+FVY3lzt28
+         h2MbctoAoX3MfJBmAVOHzt1a1kbNIwDBcBvt22YCAK3XWrIcshUeMsi09Je3+ayuzXd+
+         Gam0X0X6hHH0uLq8zsqdOPmTUlUXsmc3aHEvSD23XGmWsquT9DEK2gnSa/vCzqkmZGdc
+         e7ew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=QLRoAaTx;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=VFauYRsn;
        spf=pass (google.com: domain of khalid.aziz@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=QLRoAaTx;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=VFauYRsn;
        spf=pass (google.com: domain of khalid.aziz@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=khalid.aziz@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Khalid Aziz <khalid.aziz@oracle.com>
 To: davem@davemloft.net, dave.hansen@linux.intel.com
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, anthony.yznaga@oracle.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org,
-        nagarathnam.muthusamy@oracle.com, nick.alcock@oracle.com,
-        kstewart@linuxfoundation.org, jag.raman@oracle.com,
-        shannon.nelson@oracle.com, liam.merwick@oracle.com, mhocko@suse.com,
-        pombredanne@nexb.com, dwindsor@gmail.com, elena.reshetova@intel.com,
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, mhocko@suse.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        tglx@linutronix.de, kstewart@linuxfoundation.org,
+        vijay.ac.kumar@oracle.com, kirill.shutemov@linux.intel.com,
+        nitin.m.gupta@oracle.com, tom.hromatka@oracle.com,
+        allen.pais@oracle.com, rob.gardner@oracle.com,
+        david.j.aldridge@oracle.com, bob.picco@oracle.com,
+        steven.sistare@oracle.com, pasha.tatashin@oracle.com,
+        vegard.nossum@oracle.com, pombredanne@nexb.com, ebiederm@xmission.com,
+        jane.chu@oracle.com, anthony.yznaga@oracle.com,
         linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
         Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v12 06/11] sparc64: Add auxiliary vectors to report platform ADI properties
-Date: Wed, 21 Feb 2018 10:15:48 -0700
-Message-Id: <a69f584f353ece247da108e7f149f22ea75d695d.1519227112.git.khalid.aziz@oracle.com>
+Subject: [PATCH v12 03/11] sparc64: Add support for ADI register fields, ASIs and traps
+Date: Wed, 21 Feb 2018 10:15:45 -0700
+Message-Id: <919fe74b146b0ba8a156212254c46d752902a079.1519227112.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
 References: <cover.1519227112.git.khalid.aziz@oracle.com>
@@ -50,291 +54,286 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1802210211
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593031713197290647?=
-X-GMAIL-MSGID: =?utf-8?q?1593031713197290647?=
+X-GMAIL-THRID: =?utf-8?q?1593031711599966148?=
+X-GMAIL-MSGID: =?utf-8?q?1593031711599966148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-ADI feature on M7 and newer processors has three important properties
-relevant to userspace apps using ADI capabilities - (1) Size of block of
-memory an ADI version tag applies to, (2) Number of uppermost bits in
-virtual address used to encode ADI tag, and (3) The value M7 processor
-will force the ADI tags to if it detects uncorrectable error in an ADI
-tagged cacheline. Kernel can retrieve these properties for a platform
-through machine description provided by the firmware. This patch adds
-code to retrieve these properties and report them to userspace through
-auxiliary vectors.
+SPARC M7 processor adds new control register fields, ASIs and a new
+trap to support the ADI (Application Data Integrity) feature. This
+patch adds definitions for these register fields, ASIs and a handler
+for the new precise memory corruption detected trap.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 Cc: Khalid Aziz <khalid@gonehiking.org>
 Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
-v11:
-	- Rebased to 4.15
 v10:
 	- Updated copyright
 v8:
-	- Added AT_ADI_UEONADI back
-v7:
-	- new patch split off from patch 4/4 in v6
+	- Minor print formatting change as suggested by checkpatch
+v6:
+	- Added a missing nop in the delay slot in sun4v_mcd_detect_precise
 
- arch/sparc/include/asm/adi.h         |  6 +++
- arch/sparc/include/asm/adi_64.h      | 47 ++++++++++++++++++
- arch/sparc/include/asm/elf_64.h      |  5 ++
- arch/sparc/include/uapi/asm/auxvec.h | 11 +++++
- arch/sparc/kernel/Makefile           |  1 +
- arch/sparc/kernel/adi_64.c           | 96 ++++++++++++++++++++++++++++++++++++
- arch/sparc/kernel/mdesc.c            |  2 +
- 7 files changed, 168 insertions(+)
- create mode 100644 arch/sparc/include/asm/adi.h
- create mode 100644 arch/sparc/include/asm/adi_64.h
- create mode 100644 arch/sparc/kernel/adi_64.c
+v5:
+	- Fixed indentation issues in assembly code
 
-diff --git a/arch/sparc/include/asm/adi.h b/arch/sparc/include/asm/adi.h
+v4:
+	- Broke patch up into smaller patches
+
+v3:
+	- Removed CONFIG_SPARC_ADI
+	- Replaced prctl commands with mprotect
+	- Added auxiliary vectors for ADI parameters
+	- Enabled ADI for swappable pages
+
+v2:
+	- Fixed a build error
+
+ arch/sparc/include/asm/hypervisor.h  |  2 ++
+ arch/sparc/include/asm/pgtable_64.h  |  2 ++
+ arch/sparc/include/asm/ttable.h      | 10 +++++++
+ arch/sparc/include/uapi/asm/asi.h    |  5 ++++
+ arch/sparc/include/uapi/asm/pstate.h | 10 +++++++
+ arch/sparc/kernel/entry.h            |  3 ++
+ arch/sparc/kernel/head_64.S          |  1 +
+ arch/sparc/kernel/sun4v_mcd.S        | 18 ++++++++++++
+ arch/sparc/kernel/traps_64.c         | 54 ++++++++++++++++++++++++++++++++++++
+ arch/sparc/kernel/ttable_64.S        |  6 ++--
+ 10 files changed, 109 insertions(+), 2 deletions(-)
+ create mode 100644 arch/sparc/kernel/sun4v_mcd.S
+
+diff --git a/arch/sparc/include/asm/hypervisor.h b/arch/sparc/include/asm/hypervisor.h
+index ab9c6b027b75..08650d503cc2 100644
+--- a/arch/sparc/include/asm/hypervisor.h
++++ b/arch/sparc/include/asm/hypervisor.h
+@@ -570,6 +570,8 @@ struct hv_fault_status {
+ #define HV_FAULT_TYPE_RESV1	13
+ #define HV_FAULT_TYPE_UNALIGNED	14
+ #define HV_FAULT_TYPE_INV_PGSZ	15
++#define HV_FAULT_TYPE_MCD	17
++#define HV_FAULT_TYPE_MCD_DIS	18
+ /* Values 16 --> -2 are reserved.  */
+ #define HV_FAULT_TYPE_MULTIPLE	-1
+ 
+diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
+index 339920fdf9ed..619332a44402 100644
+--- a/arch/sparc/include/asm/pgtable_64.h
++++ b/arch/sparc/include/asm/pgtable_64.h
+@@ -164,6 +164,8 @@ bool kern_addr_valid(unsigned long addr);
+ #define _PAGE_E_4V	  _AC(0x0000000000000800,UL) /* side-Effect          */
+ #define _PAGE_CP_4V	  _AC(0x0000000000000400,UL) /* Cacheable in P-Cache */
+ #define _PAGE_CV_4V	  _AC(0x0000000000000200,UL) /* Cacheable in V-Cache */
++/* Bit 9 is used to enable MCD corruption detection instead on M7 */
++#define _PAGE_MCD_4V      _AC(0x0000000000000200,UL) /* Memory Corruption    */
+ #define _PAGE_P_4V	  _AC(0x0000000000000100,UL) /* Privileged Page      */
+ #define _PAGE_EXEC_4V	  _AC(0x0000000000000080,UL) /* Executable Page      */
+ #define _PAGE_W_4V	  _AC(0x0000000000000040,UL) /* Writable             */
+diff --git a/arch/sparc/include/asm/ttable.h b/arch/sparc/include/asm/ttable.h
+index ede2b66cf4a0..8f6469408019 100644
+--- a/arch/sparc/include/asm/ttable.h
++++ b/arch/sparc/include/asm/ttable.h
+@@ -219,6 +219,16 @@
+ 	nop;						\
+ 	nop;
+ 
++#define SUN4V_MCD_PRECISE				\
++	ldxa	[%g0] ASI_SCRATCHPAD, %g2;		\
++	ldx	[%g2 + HV_FAULT_D_ADDR_OFFSET], %g4;	\
++	ldx	[%g2 + HV_FAULT_D_CTX_OFFSET], %g5;	\
++	ba,pt	%xcc, etrap;				\
++	 rd	%pc, %g7;				\
++	ba,pt	%xcc, sun4v_mcd_detect_precise;		\
++	 nop;						\
++	nop;
++
+ /* Before touching these macros, you owe it to yourself to go and
+  * see how arch/sparc64/kernel/winfixup.S works... -DaveM
+  *
+diff --git a/arch/sparc/include/uapi/asm/asi.h b/arch/sparc/include/uapi/asm/asi.h
+index d371b269571a..fbb30a5b082f 100644
+--- a/arch/sparc/include/uapi/asm/asi.h
++++ b/arch/sparc/include/uapi/asm/asi.h
+@@ -145,6 +145,8 @@
+  * ASIs, "(4V)" designates SUN4V specific ASIs.  "(NG4)" designates SPARC-T4
+  * and later ASIs.
+  */
++#define ASI_MCD_PRIV_PRIMARY	0x02 /* (NG7) Privileged MCD version VA	*/
++#define ASI_MCD_REAL		0x05 /* (NG7) Privileged MCD version PA	*/
+ #define ASI_PHYS_USE_EC		0x14 /* PADDR, E-cachable		*/
+ #define ASI_PHYS_BYPASS_EC_E	0x15 /* PADDR, E-bit			*/
+ #define ASI_BLK_AIUP_4V		0x16 /* (4V) Prim, user, block ld/st	*/
+@@ -245,6 +247,9 @@
+ #define ASI_UDBL_CONTROL_R	0x7f /* External UDB control regs rd low*/
+ #define ASI_INTR_R		0x7f /* IRQ vector dispatch read	*/
+ #define ASI_INTR_DATAN_R	0x7f /* (III) In irq vector data reg N	*/
++#define ASI_MCD_PRIMARY		0x90 /* (NG7) MCD version load/store	*/
++#define ASI_MCD_ST_BLKINIT_PRIMARY	\
++				0x92 /* (NG7) MCD store BLKINIT primary	*/
+ #define ASI_PIC			0xb0 /* (NG4) PIC registers		*/
+ #define ASI_PST8_P		0xc0 /* Primary, 8 8-bit, partial	*/
+ #define ASI_PST8_S		0xc1 /* Secondary, 8 8-bit, partial	*/
+diff --git a/arch/sparc/include/uapi/asm/pstate.h b/arch/sparc/include/uapi/asm/pstate.h
+index b6999c9e7e86..ceca96e685c2 100644
+--- a/arch/sparc/include/uapi/asm/pstate.h
++++ b/arch/sparc/include/uapi/asm/pstate.h
+@@ -11,7 +11,12 @@
+  * -----------------------------------------------------------------------
+  *  63  12  11   10    9     8    7   6   5     4     3     2     1    0
+  */
++/* IG on V9 conflicts with MCDE on M7. PSTATE_MCDE will only be used on
++ * processors that support ADI which do not use IG, hence there is no
++ * functional conflict
++ */
+ #define PSTATE_IG   _AC(0x0000000000000800,UL) /* Interrupt Globals.	*/
++#define PSTATE_MCDE _AC(0x0000000000000800,UL) /* MCD Enable		*/
+ #define PSTATE_MG   _AC(0x0000000000000400,UL) /* MMU Globals.		*/
+ #define PSTATE_CLE  _AC(0x0000000000000200,UL) /* Current Little Endian.*/
+ #define PSTATE_TLE  _AC(0x0000000000000100,UL) /* Trap Little Endian.	*/
+@@ -48,7 +53,12 @@
+ #define TSTATE_ASI	_AC(0x00000000ff000000,UL) /* AddrSpace ID.	*/
+ #define TSTATE_PIL	_AC(0x0000000000f00000,UL) /* %pil (Linux traps)*/
+ #define TSTATE_PSTATE	_AC(0x00000000000fff00,UL) /* PSTATE.		*/
++/* IG on V9 conflicts with MCDE on M7. TSTATE_MCDE will only be used on
++ * processors that support ADI which do not support IG, hence there is
++ * no functional conflict
++ */
+ #define TSTATE_IG	_AC(0x0000000000080000,UL) /* Interrupt Globals.*/
++#define TSTATE_MCDE	_AC(0x0000000000080000,UL) /* MCD enable.       */
+ #define TSTATE_MG	_AC(0x0000000000040000,UL) /* MMU Globals.	*/
+ #define TSTATE_CLE	_AC(0x0000000000020000,UL) /* CurrLittleEndian.	*/
+ #define TSTATE_TLE	_AC(0x0000000000010000,UL) /* TrapLittleEndian.	*/
+diff --git a/arch/sparc/kernel/entry.h b/arch/sparc/kernel/entry.h
+index 7378567b601f..c746c0fd5d6b 100644
+--- a/arch/sparc/kernel/entry.h
++++ b/arch/sparc/kernel/entry.h
+@@ -160,6 +160,9 @@ void sun4v_resum_overflow(struct pt_regs *regs);
+ void sun4v_nonresum_error(struct pt_regs *regs,
+ 			  unsigned long offset);
+ void sun4v_nonresum_overflow(struct pt_regs *regs);
++void sun4v_mem_corrupt_detect_precise(struct pt_regs *regs,
++				      unsigned long addr,
++				      unsigned long context);
+ 
+ extern unsigned long sun4v_err_itlb_vaddr;
+ extern unsigned long sun4v_err_itlb_ctx;
+diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
+index a41e6e16eb36..540bfc98472c 100644
+--- a/arch/sparc/kernel/head_64.S
++++ b/arch/sparc/kernel/head_64.S
+@@ -897,6 +897,7 @@ sparc64_boot_end:
+ #include "syscalls.S"
+ #include "helpers.S"
+ #include "sun4v_tlb_miss.S"
++#include "sun4v_mcd.S"
+ #include "sun4v_ivec.S"
+ #include "ktlb.S"
+ #include "tsb.S"
+diff --git a/arch/sparc/kernel/sun4v_mcd.S b/arch/sparc/kernel/sun4v_mcd.S
 new file mode 100644
-index 000000000000..acad0d04e4c6
+index 000000000000..d6c69ebca110
 --- /dev/null
-+++ b/arch/sparc/include/asm/adi.h
-@@ -0,0 +1,6 @@
-+#ifndef ___ASM_SPARC_ADI_H
-+#define ___ASM_SPARC_ADI_H
-+#if defined(__sparc__) && defined(__arch64__)
-+#include <asm/adi_64.h>
-+#endif
-+#endif
-diff --git a/arch/sparc/include/asm/adi_64.h b/arch/sparc/include/asm/adi_64.h
-new file mode 100644
-index 000000000000..85f7a763af85
---- /dev/null
-+++ b/arch/sparc/include/asm/adi_64.h
-@@ -0,0 +1,47 @@
-+/* adi_64.h: ADI related data structures
++++ b/arch/sparc/kernel/sun4v_mcd.S
+@@ -0,0 +1,18 @@
++/* sun4v_mcd.S: Sun4v memory corruption detected precise exception handler
 + *
-+ * Copyright (c) 2016 Oracle and/or its affiliates. All rights reserved.
-+ * Author: Khalid Aziz (khalid.aziz@oracle.com)
++ * Copyright (c) 2015 Oracle and/or its affiliates. All rights reserved.
++ * Authors: Bob Picco <bob.picco@oracle.com>,
++ *          Khalid Aziz <khalid.aziz@oracle.com>
 + *
 + * This work is licensed under the terms of the GNU GPL, version 2.
 + */
-+#ifndef __ASM_SPARC64_ADI_H
-+#define __ASM_SPARC64_ADI_H
++	.text
++	.align 32
 +
-+#include <linux/types.h>
-+
-+#ifndef __ASSEMBLY__
-+
-+struct adi_caps {
-+	__u64 blksz;
-+	__u64 nbits;
-+	__u64 ue_on_adi;
-+};
-+
-+struct adi_config {
-+	bool enabled;
-+	struct adi_caps caps;
-+};
-+
-+extern struct adi_config adi_state;
-+
-+extern void mdesc_adi_init(void);
-+
-+static inline bool adi_capable(void)
-+{
-+	return adi_state.enabled;
-+}
-+
-+static inline unsigned long adi_blksize(void)
-+{
-+	return adi_state.caps.blksz;
-+}
-+
-+static inline unsigned long adi_nbits(void)
-+{
-+	return adi_state.caps.nbits;
-+}
-+
-+#endif	/* __ASSEMBLY__ */
-+
-+#endif	/* !(__ASM_SPARC64_ADI_H) */
-diff --git a/arch/sparc/include/asm/elf_64.h b/arch/sparc/include/asm/elf_64.h
-index 25340df3570c..7e078bc73ef5 100644
---- a/arch/sparc/include/asm/elf_64.h
-+++ b/arch/sparc/include/asm/elf_64.h
-@@ -10,6 +10,7 @@
- #include <asm/processor.h>
- #include <asm/extable_64.h>
- #include <asm/spitfire.h>
-+#include <asm/adi.h>
++sun4v_mcd_detect_precise:
++	mov	%l4, %o1
++	mov 	%l5, %o2
++	call	sun4v_mem_corrupt_detect_precise
++	 add	%sp, PTREGS_OFF, %o0
++	ba,a,pt	%xcc, rtrap
++	 nop
+diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
+index 0a56dc257cb9..fc73baa588f6 100644
+--- a/arch/sparc/kernel/traps_64.c
++++ b/arch/sparc/kernel/traps_64.c
+@@ -2656,6 +2656,60 @@ void sun4v_do_mna(struct pt_regs *regs, unsigned long addr, unsigned long type_c
+ 	force_sig_info(SIGBUS, &info, current);
+ }
  
- /*
-  * Sparc section types
-@@ -215,9 +216,13 @@ extern unsigned int vdso_enabled;
- 
- #define	ARCH_DLINFO							\
- do {									\
-+	extern struct adi_config adi_state;				\
- 	if (vdso_enabled)						\
- 		NEW_AUX_ENT(AT_SYSINFO_EHDR,				\
- 			    (unsigned long)current->mm->context.vdso);	\
-+	NEW_AUX_ENT(AT_ADI_BLKSZ, adi_state.caps.blksz);		\
-+	NEW_AUX_ENT(AT_ADI_NBITS, adi_state.caps.nbits);		\
-+	NEW_AUX_ENT(AT_ADI_UEONADI, adi_state.caps.ue_on_adi);		\
- } while (0)
- 
- struct linux_binprm;
-diff --git a/arch/sparc/include/uapi/asm/auxvec.h b/arch/sparc/include/uapi/asm/auxvec.h
-index 5f80a70cc901..f9937ccfcd99 100644
---- a/arch/sparc/include/uapi/asm/auxvec.h
-+++ b/arch/sparc/include/uapi/asm/auxvec.h
-@@ -3,6 +3,17 @@
- 
- #define AT_SYSINFO_EHDR		33
- 
-+#ifdef CONFIG_SPARC64
-+/* Avoid overlap with other AT_* values since they are consolidated in
-+ * glibc and any overlaps can cause problems
++/* sun4v_mem_corrupt_detect_precise() - Handle precise exception on an ADI
++ * tag mismatch.
++ *
++ * ADI version tag mismatch on a load from memory always results in a
++ * precise exception. Tag mismatch on a store to memory will result in
++ * precise exception if MCDPER or PMCDPER is set to 1.
 + */
-+#define AT_ADI_BLKSZ	48
-+#define AT_ADI_NBITS	49
-+#define AT_ADI_UEONADI	50
++void sun4v_mem_corrupt_detect_precise(struct pt_regs *regs, unsigned long addr,
++				      unsigned long context)
++{
++	siginfo_t info;
 +
-+#define AT_VECTOR_SIZE_ARCH	4
-+#else
- #define AT_VECTOR_SIZE_ARCH	1
++	if (notify_die(DIE_TRAP, "memory corruption precise exception", regs,
++		       0, 0x8, SIGSEGV) == NOTIFY_STOP)
++		return;
++
++	if (regs->tstate & TSTATE_PRIV) {
++		/* MCD exception could happen because the task was running
++		 * a system call with MCD enabled and passed a non-versioned
++		 * pointer or pointer with bad version tag to  the system
++		 * call.
++		 */
++		const struct exception_table_entry *entry;
++
++		entry = search_exception_tables(regs->tpc);
++		if (entry) {
++			/* Looks like a bad syscall parameter */
++#ifdef DEBUG_EXCEPTIONS
++			pr_emerg("Exception: PC<%016lx> faddr<UNKNOWN>\n",
++				 regs->tpc);
++			pr_emerg("EX_TABLE: insn<%016lx> fixup<%016lx>\n",
++				 regs->tpc, entry->fixup);
 +#endif
- 
- #endif /* !(__ASMSPARC_AUXVEC_H) */
-diff --git a/arch/sparc/kernel/Makefile b/arch/sparc/kernel/Makefile
-index cc97545737f0..76cb57750dda 100644
---- a/arch/sparc/kernel/Makefile
-+++ b/arch/sparc/kernel/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_SPARC64)   += visemul.o
- obj-$(CONFIG_SPARC64)   += hvapi.o
- obj-$(CONFIG_SPARC64)   += sstate.o
- obj-$(CONFIG_SPARC64)   += mdesc.o
-+obj-$(CONFIG_SPARC64)   += adi_64.o
- obj-$(CONFIG_SPARC64)	+= pcr.o
- obj-$(CONFIG_SPARC64)	+= nmi.o
- obj-$(CONFIG_SPARC64_SMP) += cpumap.o
-diff --git a/arch/sparc/kernel/adi_64.c b/arch/sparc/kernel/adi_64.c
-new file mode 100644
-index 000000000000..8fb72585d9f1
---- /dev/null
-+++ b/arch/sparc/kernel/adi_64.c
-@@ -0,0 +1,96 @@
-+/* adi_64.c: support for ADI (Application Data Integrity) feature on
-+ * sparc m7 and newer processors. This feature is also known as
-+ * SSM (Silicon Secured Memory).
-+ *
-+ * Copyright (C) 2016 Oracle and/or its affiliates. All rights reserved.
-+ * Author: Khalid Aziz (khalid.aziz@oracle.com)
-+ *
-+ * This work is licensed under the terms of the GNU GPL, version 2.
-+ */
-+#include <linux/init.h>
-+#include <asm/mdesc.h>
-+#include <asm/adi_64.h>
-+
-+struct adi_config adi_state;
-+
-+/* mdesc_adi_init() : Parse machine description provided by the
-+ *	hypervisor to detect ADI capabilities
-+ *
-+ * Hypervisor reports ADI capabilities of platform in "hwcap-list" property
-+ * for "cpu" node. If the platform supports ADI, "hwcap-list" property
-+ * contains the keyword "adp". If the platform supports ADI, "platform"
-+ * node will contain "adp-blksz", "adp-nbits" and "ue-on-adp" properties
-+ * to describe the ADI capabilities.
-+ */
-+void __init mdesc_adi_init(void)
-+{
-+	struct mdesc_handle *hp = mdesc_grab();
-+	const char *prop;
-+	u64 pn, *val;
-+	int len;
-+
-+	if (!hp)
-+		goto adi_not_found;
-+
-+	pn = mdesc_node_by_name(hp, MDESC_NODE_NULL, "cpu");
-+	if (pn == MDESC_NODE_NULL)
-+		goto adi_not_found;
-+
-+	prop = mdesc_get_property(hp, pn, "hwcap-list", &len);
-+	if (!prop)
-+		goto adi_not_found;
-+
-+	/*
-+	 * Look for "adp" keyword in hwcap-list which would indicate
-+	 * ADI support
-+	 */
-+	adi_state.enabled = false;
-+	while (len) {
-+		int plen;
-+
-+		if (!strcmp(prop, "adp")) {
-+			adi_state.enabled = true;
-+			break;
++			regs->tpc = entry->fixup;
++			regs->tnpc = regs->tpc + 4;
++			return;
 +		}
-+
-+		plen = strlen(prop) + 1;
-+		prop += plen;
-+		len -= plen;
++		pr_emerg("%s: ADDR[%016lx] CTX[%lx], going.\n",
++			 __func__, addr, context);
++		die_if_kernel("MCD precise", regs);
 +	}
 +
-+	if (!adi_state.enabled)
-+		goto adi_not_found;
-+
-+	/* Find the ADI properties in "platform" node. If all ADI
-+	 * properties are not found, ADI support is incomplete and
-+	 * do not enable ADI in the kernel.
-+	 */
-+	pn = mdesc_node_by_name(hp, MDESC_NODE_NULL, "platform");
-+	if (pn == MDESC_NODE_NULL)
-+		goto adi_not_found;
-+
-+	val = (u64 *) mdesc_get_property(hp, pn, "adp-blksz", &len);
-+	if (!val)
-+		goto adi_not_found;
-+	adi_state.caps.blksz = *val;
-+
-+	val = (u64 *) mdesc_get_property(hp, pn, "adp-nbits", &len);
-+	if (!val)
-+		goto adi_not_found;
-+	adi_state.caps.nbits = *val;
-+
-+	val = (u64 *) mdesc_get_property(hp, pn, "ue-on-adp", &len);
-+	if (!val)
-+		goto adi_not_found;
-+	adi_state.caps.ue_on_adi = *val;
-+
-+	mdesc_release(hp);
-+	return;
-+
-+adi_not_found:
-+	adi_state.enabled = false;
-+	adi_state.caps.blksz = 0;
-+	adi_state.caps.nbits = 0;
-+	if (hp)
-+		mdesc_release(hp);
++	if (test_thread_flag(TIF_32BIT)) {
++		regs->tpc &= 0xffffffff;
++		regs->tnpc &= 0xffffffff;
++	}
++	info.si_signo = SIGSEGV;
++	info.si_code = SEGV_ADIPERR;
++	info.si_errno = 0;
++	info.si_addr = (void __user *) addr;
++	info.si_trapno = 0;
++	force_sig_info(SIGSEGV, &info, current);
 +}
-diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
-index 418592a09b41..39a2503fa3e1 100644
---- a/arch/sparc/kernel/mdesc.c
-+++ b/arch/sparc/kernel/mdesc.c
-@@ -22,6 +22,7 @@
- #include <linux/uaccess.h>
- #include <asm/oplib.h>
- #include <asm/smp.h>
-+#include <asm/adi.h>
- 
- /* Unlike the OBP device tree, the machine description is a full-on
-  * DAG.  An arbitrary number of ARCs are possible from one
-@@ -1345,5 +1346,6 @@ void __init sun4v_mdesc_init(void)
- 
- 	cur_mdesc = hp;
- 
-+	mdesc_adi_init();
- 	report_platform_properties();
- }
++
+ void do_privop(struct pt_regs *regs)
+ {
+ 	enum ctx_state prev_state = exception_enter();
+diff --git a/arch/sparc/kernel/ttable_64.S b/arch/sparc/kernel/ttable_64.S
+index 18685fe69b91..86e737e59c7e 100644
+--- a/arch/sparc/kernel/ttable_64.S
++++ b/arch/sparc/kernel/ttable_64.S
+@@ -26,8 +26,10 @@ tl0_ill:	membar #Sync
+ 		TRAP_7INSNS(do_illegal_instruction)
+ tl0_privop:	TRAP(do_privop)
+ tl0_resv012:	BTRAP(0x12) BTRAP(0x13) BTRAP(0x14) BTRAP(0x15) BTRAP(0x16) BTRAP(0x17)
+-tl0_resv018:	BTRAP(0x18) BTRAP(0x19) BTRAP(0x1a) BTRAP(0x1b) BTRAP(0x1c) BTRAP(0x1d)
+-tl0_resv01e:	BTRAP(0x1e) BTRAP(0x1f)
++tl0_resv018:	BTRAP(0x18) BTRAP(0x19)
++tl0_mcd:	SUN4V_MCD_PRECISE
++tl0_resv01b:	BTRAP(0x1b)
++tl0_resv01c:	BTRAP(0x1c) BTRAP(0x1d)	BTRAP(0x1e) BTRAP(0x1f)
+ tl0_fpdis:	TRAP_NOSAVE(do_fpdis)
+ tl0_fpieee:	TRAP_SAVEFPU(do_fpieee)
+ tl0_fpother:	TRAP_NOSAVE(do_fpother_check_fitos)
 -- 
 2.11.0
