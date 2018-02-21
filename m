@@ -1,101 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966180AbeBUSCg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:02:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60181 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938969AbeBUSCe (ORCPT
+        id S966287AbeBUSEy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:04:54 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:35670 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934173AbeBUSEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:02:34 -0500
-Date: Wed, 21 Feb 2018 10:01:07 -0800
-From: tip-bot for Yazen Ghannam <tipbot@zytor.com>
-Message-ID: <tip-27bd59502702fe51d9eb00450a75b727ec6bfcb4@git.kernel.org>
-Cc: bp@alien8.de, linux-edac@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, tony.luck@intel.com, hpa@zytor.com,
-        tglx@linutronix.de, bp@suse.de, yazen.ghannam@amd.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Reply-To: bp@suse.de, yazen.ghannam@amd.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, mingo@kernel.org, tony.luck@intel.com,
-        hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <20180221101900.10326-8-bp@alien8.de>
-References: <20180221101900.10326-8-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/mce/AMD: Get address from already initialized
- block
-Git-Commit-ID: 27bd59502702fe51d9eb00450a75b727ec6bfcb4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Feb 2018 13:04:52 -0500
+X-Google-Smtp-Source: AH8x224joKV/RvH3XN8jpLG/ML8/kNI3xh2H4aqUvIIC4ZLLmdJgWHNZg3L33Enkh0ii1FYB87Dfhm3k1K9Zwp/oFuI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180221143954.zlwau63wx75ixslv@salmiak>
+References: <20180220224624.GA28218@beast> <20180221111823.GB32331@e103592.cambridge.arm.com>
+ <20180221143954.zlwau63wx75ixslv@salmiak>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 21 Feb 2018 10:04:47 -0800
+X-Google-Sender-Auth: RZOyeBcKUOG42sMT31LzrCqiRZg
+Message-ID: <CAGXu5j+UN2-9Dh2ExD0EXUeEpcFLTp3hgWWZHFzRMdECpgeH+g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: cpufeature: Trim feature reporting and include PAN emulation
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  27bd59502702fe51d9eb00450a75b727ec6bfcb4
-Gitweb:     https://git.kernel.org/tip/27bd59502702fe51d9eb00450a75b727ec6bfcb4
-Author:     Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate: Wed, 21 Feb 2018 11:18:59 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 17:00:55 +0100
+On Wed, Feb 21, 2018 at 6:39 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Wed, Feb 21, 2018 at 11:18:27AM +0000, Dave Martin wrote:
+>> On Tue, Feb 20, 2018 at 02:46:24PM -0800, Kees Cook wrote:
+>> > The PAN emulation notification was only happening for non-boot CPUs
+>> > if CPU capabilities had already been configured. This seems to be the
+>> > wrong place, as it's system-wide and isn't attached to capabilities,
+>> > so its reporting didn't normally happen. Instead, report it once from
+>> > the boot CPU. Additionally removes the redundant "feature" word from the
+>> > "CPU features:" line.
+>> >
+>> > Before (redundant "feature", and missing PAN emulation report):
+>> >
+>> >  SMP: Total of 4 processors activated.
+>> >  CPU features: detected feature: 32-bit EL0 Support
+>> >  CPU features: detected feature: Kernel page table isolation (KPTI)
+>> >  CPU: All CPU(s) started at EL2
+>> >
+>> > After:
+>> >
+>> >  SMP: Total of 4 processors activated.
+>> >  CPU features: detected: 32-bit EL0 Support
+>> >  CPU features: detected: Kernel page table isolation (KPTI)
+>> >  CPU features: emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching
+>> >  CPU: All CPU(s) started at EL2
+>> >
+>> > Signed-off-by: Kees Cook <keescook@chromium.org>
+>> > ---
+>> >  arch/arm64/kernel/cpufeature.c | 8 ++++----
+>> >  1 file changed, 4 insertions(+), 4 deletions(-)
+>> >
+>> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> > index 29b1f873e337..6c799ca58b53 100644
+>> > --- a/arch/arm64/kernel/cpufeature.c
+>> > +++ b/arch/arm64/kernel/cpufeature.c
+>> > @@ -1333,9 +1333,6 @@ static void verify_local_cpu_capabilities(void)
+>> >
+>> >     if (system_supports_sve())
+>> >             verify_sve_features();
+>> > -
+>> > -   if (system_uses_ttbr0_pan())
+>> > -           pr_info("Emulating Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
+>> >  }
+>> >
+>> >  void check_local_cpu_capabilities(void)
+>> > @@ -1360,7 +1357,7 @@ void check_local_cpu_capabilities(void)
+>> >
+>> >  static void __init setup_feature_capabilities(void)
+>> >  {
+>> > -   update_cpu_capabilities(arm64_features, "detected feature:");
+>> > +   update_cpu_capabilities(arm64_features, "detected:");
+>>
+>> Although I get what you're saying about redundant use of the word
+>> "features", this feels like cosmetic churn that is unrelated to the
+>> problem this patch is addressing.
+>
+> Given it seems sensible, shall we just split that into a separate patch?
+>
+> FWIW, for a patch with just this change:
+>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-x86/mce/AMD: Get address from already initialized block
+Sure!
 
-The block address is saved after the block is initialized when
-threshold_init_device() is called.
+>> It could be worth reviewing the CPU errata messages and other
+>> miscellaneous printks together to make them less verbose and more
+>> consistent all in one go, but that would be a separate patch...
+>>
+>> >     enable_cpu_capabilities(arm64_features);
+>> >  }
+>> >
+>> > @@ -1394,6 +1391,9 @@ void __init setup_cpu_features(void)
+>> >     if (system_supports_32bit_el0())
+>> >             setup_elf_hwcaps(compat_elf_hwcaps);
+>> >
+>> > +   if (system_uses_ttbr0_pan())
+>> > +           pr_info("emulated: Privileged Access Never (PAN) using TTBR0_EL1 switching\n");
+>> > +
+>>
+>> Moving this seems sensible.  The other option would be to paste it into
+>> update_cpu_capabilities(), but the message would still potentially get
+>> printed multiple times, so that doesn't feel like the right approach.
+>
+> I think that more ideally, we'd give this an entry in the arm64_features array,
+> but because it's effectively a negative feature, it's a little tricky.
 
-Use the saved block address, if available, rather than trying to
-rediscover it.
+Yeah, I looked at that but it seemed like it would needlessly burn a
+capability bit for no real gain.
 
-This will avoid a call trace, when resuming from suspend, due to the
-rdmsr_safe_on_cpu() call in get_block_address(). The rdmsr_safe_on_cpu()
-call issues an IPI but we're running with interrupts disabled. This
-triggers:
+> This also looks fine to me, so FWIW:
+>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-    WARNING: CPU: 0 PID: 11523 at kernel/smp.c:291 smp_call_function_single+0xdc/0xe0
+Thanks, I'll split the patches!
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org> # 4.14.x
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180221101900.10326-8-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+-Kees
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index d8ba9d0..12bc286 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -436,6 +436,21 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
- {
- 	u32 addr = 0, offset = 0;
- 
-+	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
-+		return addr;
-+
-+	/* Get address from already initialized block. */
-+	if (per_cpu(threshold_banks, cpu)) {
-+		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
-+
-+		if (bankp && bankp->blocks) {
-+			struct threshold_block *blockp = &bankp->blocks[block];
-+
-+			if (blockp)
-+				return blockp->address;
-+		}
-+	}
-+
- 	if (mce_flags.smca) {
- 		if (smca_get_bank_type(bank) == SMCA_RESERVED)
- 			return addr;
+-- 
+Kees Cook
+Pixel Security
