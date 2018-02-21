@@ -1,84 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933177AbeBUKah (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:30:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60575 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbeBUKaf (ORCPT
+        id S933188AbeBUKbB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:31:01 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45801 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeBUKa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:30:35 -0500
-Date: Wed, 21 Feb 2018 02:28:08 -0800
-From: tip-bot for Mel Gorman <tipbot@zytor.com>
-Message-ID: <tip-eeb60398639143c11ff2c8b509e3a471411bb5d3@git.kernel.org>
-Cc: hpa@zytor.com, efault@gmx.de, matt@codeblueprint.co.uk,
-        torvalds@linux-foundation.org, mingo@kernel.org, ggherdovich@suse.cz,
-        mgorman@techsingularity.net, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mgorman@techsingularity.net, ggherdovich@suse.cz, tglx@linutronix.de,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, matt@codeblueprint.co.uk, efault@gmx.de,
-        hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <20180213133730.24064-3-mgorman@techsingularity.net>
-References: <20180213133730.24064-3-mgorman@techsingularity.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Defer calculation of 'prev_eff_load'
- in wake_affine_weight() until needed
-Git-Commit-ID: eeb60398639143c11ff2c8b509e3a471411bb5d3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Feb 2018 05:30:58 -0500
+X-Google-Smtp-Source: AH8x224BRcR/3X/RNSWzXPCmFM7r66UtV6a8altB8iukqAZ3BpD9oBKCfIFZb0FF/0+4+ot0l8fLqL2+65jFX/Sab5Q=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <a5050f68-3adb-6973-9164-1bb43272cbd0@linaro.org>
+References: <CALAqxLVn9r9R-wnrZbrFqYfwqZD-tegbJrZLsUeBjjBc4_Q89w@mail.gmail.com>
+ <1496686434-13181-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAPDyKFqWptneK2V7wCR8LGbgU7=U9kBCKkHrtgGmZKmNQJ4s7g@mail.gmail.com>
+ <20170609154652.GG2244@mai> <CAK8P3a1PsFcqLC95rSQf6EdkqhQ6sE3OXC9gDQ8TLp2mTVO3pw@mail.gmail.com>
+ <CALAqxLXtLc16zT9AFaHXbbQp-Vf3GNOJ1nb7PoUJgj22rh=X-w@mail.gmail.com>
+ <CAK8P3a0L6QNAJf6DB876DFHf7aGcD=uwxOUB36LKr-AX67VYAA@mail.gmail.com>
+ <20170612093853.GB2261@mai> <CAK8P3a1DbjovHF3QX9OuPA1q4XAEj1KackgKqGvceDWL3f1cJg@mail.gmail.com>
+ <a5050f68-3adb-6973-9164-1bb43272cbd0@linaro.org>
+From: Riku Voipio <riku.voipio@linaro.org>
+Date: Wed, 21 Feb 2018 12:30:56 +0200
+Message-ID: <CAAqcGHn=AOFjNx_oNM7DRxrwjNAkiM9AhQ54kPjQLhki-aMPwg@mail.gmail.com>
+Subject: Re: [PATCH] ARM64: Kconfig: Fix the missing hi655x common clk
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wei Xu <xuwei5@hisilicon.com>, John Stultz <john.stultz@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LAV5Fu014500
 
-Commit-ID:  eeb60398639143c11ff2c8b509e3a471411bb5d3
-Gitweb:     https://git.kernel.org/tip/eeb60398639143c11ff2c8b509e3a471411bb5d3
-Author:     Mel Gorman <mgorman@techsingularity.net>
-AuthorDate: Tue, 13 Feb 2018 13:37:26 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 08:49:07 +0100
+On 16 February 2018 at 19:35, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+> On 12/06/2017 23:12, Arnd Bergmann wrote:
+>> On Mon, Jun 12, 2017 at 11:38 AM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>> On Fri, Jun 09, 2017 at 10:48:13PM +0200, Arnd Bergmann wrote:
+>>>> On Fri, Jun 9, 2017 at 10:15 PM, John Stultz <john.stultz@linaro.org> wrote:
+>>>>> On Fri, Jun 9, 2017 at 1:06 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>>>>> On Fri, Jun 9, 2017 at 5:46 PM, Daniel Lezcano
+>>>>>> <daniel.lezcano@linaro.org> wrote:
+>>>>>>
+>>>>>> Yes, but I'm not sure this is the right patch either. We tend to not
+>>>>>> use 'select' for user-visible drivers, and most hisilicon platforms
+>>>>>> won't need this driver.
+>>>>>>
+>>>>>> I think it would be more consistent to add this to the defconfig
+>>>>>> and regard it as a user error when the driver is disabled on a
+>>>>>> machine that needs it.
+>>>>>
+>>>>> Maybe the select is not exactly in the right place, but I don't really
+>>>>> feel like a pmic on an SoC is a "user-visible driver". I deal with the
+>>>>> board often and when the new dependency was made on the clk, I would
+>>>>> have never have found it on my own w/o Ulf and Daniel pointing out
+>>>>> what I needed to enable.
+>>>>
+>>>> What I meant is that the Kconfig option is user-visible. On a very high
+>>>> level, this is a result of arch/arm64/Kconfig.platforms listing only
+>>>> very broad categories of SoCs, in many cases only the manufacturers
+>>>> of very different chip families, which then control the visibility of the
+>>>> individual Kconfig items for things like pinctrl or clk.
+>>>>
+>>>> I now see that MFD_HI655X_PMIC is the top-level driver that you
+>>>> have to select before enabling COMMON_CLK_HI655X, so the
+>>>> patch is actually broken unless it actually selects both.
+>>>>
+>>>> How about simply adding a 'default MFD_HI655X_PMIC' to
+>>>> COMMON_CLK_HI655X to enable it unless it is explicitly
+>>>> turned off?
+>>>
+>>> Actually, I share John's opinion.
+>>>
+>>> Ideally when we choose a platform, all the relevants devices configuration
+>>> options should be selected automatically from a single topmost node of a tree
+>>> (platform selection) to all the nodes corresponding to the devices, leaving the
+>>> user to select one simple option without knowledge of the SoC hardware
+>>> internals.
+>>>
+>>> If the user is expert in the platform and knows exactly what he does, then he
+>>> can select an _EXPERT_ like option and be able to disable some drivers.
+>>>
+>>> It is how I tend to write the Kconfig options, so the 'default MFD_HI655X_PMIC'
+>>> is confusing for me. Wouldn't make sense to select COMMON_CLK_HI655X when
+>>> MFD_HI655X_PMIC is enabled?
+>>
+>> I don't think it's that easy. When you do that, MFD_HI655X_PMIC gains
+>> a dependency on COMMON_CLK and will again cause a warning on
+>> machines that disable that during compile testing.
+>>
+>> Using 'select' for user-selectable options generally leads to problems,
+>> and you are better off avoiding it. If you want to make the symbol impossible
+>> to turn off for non-EXPERT configurations, you can write it like
+>>
+>> config COMMON_CLK_HI655X
+>>         tristate "Clock driver for Hi655x" if EXPERT
+>>         depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+>>         depends on REGMAP
+>>         default MFD_HI655X_PMIC
+>>
+>> That way the option is completely hidden for non-EXPERT,
+>> but still has the right default otherwise, and the dependencies
+>> are tracked right for compile-testing.
+>
+> What about the options:
 
-sched/fair: Defer calculation of 'prev_eff_load' in wake_affine_weight() until needed
+First, as distros, automatic selection down from selecting ARCH_X is
+preferred over
+defconfigs. However, we also prefer to build everything possible as
+modules, so "default Y"
+is sometimes too strong.
 
-On sync wakeups, the previous CPU effective load may not be used so delay
-the calculation until it's needed.
+> CONFIG_HI3660_MBOX
+> CONFIG_HI6220_MBOX
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Giovanni Gherdovich <ggherdovich@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180213133730.24064-3-mgorman@techsingularity.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These are tristate and platorms can boot without them.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0132572..ae3e6f8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5724,7 +5724,6 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 	unsigned long task_load;
- 
- 	this_eff_load = target_load(this_cpu, sd->wake_idx);
--	prev_eff_load = source_load(prev_cpu, sd->wake_idx);
- 
- 	if (sync) {
- 		unsigned long current_load = task_h_load(current);
-@@ -5742,6 +5741,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		this_eff_load *= 100;
- 	this_eff_load *= capacity_of(prev_cpu);
- 
-+	prev_eff_load = source_load(prev_cpu, sd->wake_idx);
- 	prev_eff_load -= task_load;
- 	if (sched_feat(WA_BIAS))
- 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
+> CONFIG_STUB_CLK_HI6220
+> CONFIG_STUB_CLK_HI3660
+
+These are bool, so default Y is ok.
+
+> Would make sense to do something like:
+
+>
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index b9546ab..3a07dfe 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -517,7 +517,6 @@ CONFIG_COMMON_CLK_CS2000_CP=y
+>  CONFIG_COMMON_CLK_S2MPS11=y
+>  CONFIG_CLK_QORIQ=y
+>  CONFIG_COMMON_CLK_PWM=y
+> -CONFIG_STUB_CLK_HI3660=y
+>  CONFIG_COMMON_CLK_QCOM=y
+>  CONFIG_QCOM_CLK_SMD_RPM=y
+>  CONFIG_IPQ_GCC_8074=y
+> @@ -529,8 +528,6 @@ CONFIG_HWSPINLOCK_QCOM=y
+>  CONFIG_ARM_MHU=y
+>  CONFIG_PLATFORM_MHU=y
+>  CONFIG_BCM2835_MBOX=y
+> -CONFIG_HI3660_MBOX=y
+> -CONFIG_HI6220_MBOX=y
+>  CONFIG_ROCKCHIP_IOMMU=y
+>  CONFIG_ARM_SMMU=y
+>  CONFIG_ARM_SMMU_V3=y
+> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+> index 1bd4355..becdb1d 100644
+> --- a/drivers/clk/hisilicon/Kconfig
+> +++ b/drivers/clk/hisilicon/Kconfig
+> @@ -44,14 +44,17 @@ config RESET_HISI
+>           Build reset controller driver for HiSilicon device chipsets.
+>
+>  config STUB_CLK_HI6220
+> -       bool "Hi6220 Stub Clock Driver"
+> -       depends on COMMON_CLK_HI6220 && MAILBOX
+> -       default ARCH_HISI
+> +       bool "Hi6220 Stub Clock Driver" if EXPERT
+> +       depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
+> +       depends on MAILBOX
+> +       default COMMON_CLK_HI6220
+>         help
+>           Build the Hisilicon Hi6220 stub clock driver.
+>
+>  config STUB_CLK_HI3660
+> -       bool "Hi3660 Stub Clock Driver"
+> -       depends on COMMON_CLK_HI3660 && MAILBOX
+> +       bool "Hi3660 Stub Clock Driver" if EXPERT
+> +       depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
+> +       depends on MAILBOX
+> +       default COMMON_CLK_HI3660
+>         help
+>           Build the Hisilicon Hi3660 stub clock driver.
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index de8390d4..8d1726c 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -109,16 +109,19 @@ config TI_MESSAGE_MANAGER
+>           platform has support for the hardware block.
+>
+>  config HI3660_MBOX
+> -       tristate "Hi3660 Mailbox"
+> -       depends on ARCH_HISI && OF
+> +       tristate "Hi3660 Mailbox" if EXPERT
+> +       depends on (ARCH_HISI || COMPILE_TEST)
+> +       depends on OF
+> +       default ARCH_HISI
+>         help
+>           An implementation of the hi3660 mailbox. It is used to send message
+>           between application processors and other processors/MCU/DSP. Select
+>           Y here if you want to use Hi3660 mailbox controller.
+
+Which kernel tree is this from? I don't see this driver in mainline.
+
+>
+>  config HI6220_MBOX
+> -       tristate "Hi6220 Mailbox"
+> -       depends on ARCH_HISI
+> +       tristate "Hi6220 Mailbox" if EXPERT
+> +       depends on (ARCH_HISI || COMPILE_TEST)
+> +       default ARCH_HISI
+>         help
+>           An implementation of the hi6220 mailbox. It is used to send message
+>           between application processors and MCU. Say Y here if you want to
+>
+>
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
