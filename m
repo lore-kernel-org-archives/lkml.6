@@ -1,114 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932326AbeBURP6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:15:58 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:33982 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1754432AbeBURP5 (ORCPT
+        id S933907AbeBURSD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:18:03 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:52730 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933402AbeBURR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:15:57 -0500
-Date: Wed, 21 Feb 2018 12:15:56 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Andrea Parri <parri.andrea@gmail.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: [PATCH] tools/memory-model: update: remove rb-dep, smp_read_barrier_depends,
- and lockless_dereference
-In-Reply-To: <20180221160602.GD3617@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1802211214070.2032-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Wed, 21 Feb 2018 12:17:59 -0500
+From: Khalid Aziz <khalid.aziz@oracle.com>
+To: davem@davemloft.net, dave.hansen@linux.intel.com
+Cc: Khalid Aziz <khalid.aziz@oracle.com>, rob.gardner@oracle.com,
+        anthony.yznaga@oracle.com, jane.chu@oracle.com, mingo@kernel.org,
+        ebiederm@xmission.com, vegard.nossum@oracle.com,
+        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>
+Subject: [PATCH v12 04/11] sparc64: Add HV fault type handlers for ADI related faults
+Date: Wed, 21 Feb 2018 10:15:46 -0700
+Message-Id: <ce772518871b086e08a7d2570132035564251f5c.1519227112.git.khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=914
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802210211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit bf28ae562744 ("tools/memory-model: Remove rb-dep,
-smp_read_barrier_depends, and lockless_dereference") was accidentally
-merged too early, while it was still in RFC form.  This patch adds in
-the missing pieces.
+ADI (Application Data Integrity) feature on M7 and newer processors
+adds new fault types for hypervisor - Invalid ASI and MCD disabled.
+This patch expands data access exception handler to handle these
+faults.
 
-Akira pointed out some typos in the original patch, and he noted that
-cheatsheet.txt should be updated to indicate how unsuccessful RMW
-operations relate to address dependencies.
-
-Andrea pointed out that the macro for rcu_dereference() in linux.def
-should now use the "once" annotation instead of "deref".  He also
-suggested that the comments should mention commit 5a8897cc7631
-("locking/atomics/alpha: Add smp_read_barrier_depends() to
-_release()/_relaxed() atomics") as an important precursor, and he
-contributed commit cb13b424e986 ("locking/xchg/alpha: Add
-unconditional memory barrier to cmpxchg()"), another prerequisite.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Suggested-by: Akira Yokosawa <akiyks@gmail.com>
-Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-Fixes: bf28ae562744 ("tools/memory-model: Remove rb-dep, smp_read_barrier_depends, and lockless_dereference")
-
+Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Khalid Aziz <khalid@gonehiking.org>
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
+v7:
+	- new patch split off from patch 4/4 in v6
 
- tools/memory-model/Documentation/cheatsheet.txt  |    6 +++---
- tools/memory-model/Documentation/explanation.txt |    4 ++--
- tools/memory-model/linux-kernel.def              |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ arch/sparc/kernel/traps_64.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-===================================================================
---- usb-4.x.orig/tools/memory-model/Documentation/cheatsheet.txt
-+++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-@@ -1,11 +1,11 @@
-                                   Prior Operation     Subsequent Operation
-                                   ---------------  ---------------------------
-                                C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
--                              __  ----  -  -  ---  ----  -  -  --  --  ---  --
-+                              --  ----  -  -  ---  ----  -  -  --  --  ---  --
+diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
+index fc73baa588f6..d273a65a0a10 100644
+--- a/arch/sparc/kernel/traps_64.c
++++ b/arch/sparc/kernel/traps_64.c
+@@ -397,12 +397,35 @@ void sun4v_data_access_exception(struct pt_regs *regs, unsigned long addr, unsig
+ 	if (is_no_fault_exception(regs))
+ 		return;
  
- Store, e.g., WRITE_ONCE()            Y                                       Y
--Load, e.g., READ_ONCE()              Y                              Y        Y
--Unsuccessful RMW operation           Y                              Y        Y
-+Load, e.g., READ_ONCE()              Y                          Y   Y        Y
-+Unsuccessful RMW operation           Y                          Y   Y        Y
- rcu_dereference()                    Y                          Y   Y        Y
- Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
- Successful *_release()         C        Y  Y    Y     W                      Y
-Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-===================================================================
---- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-+++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-@@ -826,7 +826,7 @@ A-cumulative; they only affect the propa
- executed on C before the fence (i.e., those which precede the fence in
- program order).
+-	info.si_signo = SIGSEGV;
++	/* MCD (Memory Corruption Detection) disabled trap (TT=0x19) in HV
++	 * is vectored thorugh data access exception trap with fault type
++	 * set to HV_FAULT_TYPE_MCD_DIS. Check for MCD disabled trap.
++	 * Accessing an address with invalid ASI for the address, for
++	 * example setting an ADI tag on an address with ASI_MCD_PRIMARY
++	 * when TTE.mcd is not set for the VA, is also vectored into
++	 * kerbel by HV as data access exception with fault type set to
++	 * HV_FAULT_TYPE_INV_ASI.
++	 */
+ 	info.si_errno = 0;
+-	info.si_code = SEGV_MAPERR;
+ 	info.si_addr = (void __user *) addr;
+ 	info.si_trapno = 0;
+-	force_sig_info(SIGSEGV, &info, current);
++	switch (type) {
++	case HV_FAULT_TYPE_INV_ASI:
++		info.si_signo = SIGILL;
++		info.si_code = ILL_ILLADR;
++		force_sig_info(SIGILL, &info, current);
++		break;
++	case HV_FAULT_TYPE_MCD_DIS:
++		info.si_signo = SIGSEGV;
++		info.si_code = SEGV_ACCADI;
++		force_sig_info(SIGSEGV, &info, current);
++		break;
++	default:
++		info.si_signo = SIGSEGV;
++		info.si_code = SEGV_MAPERR;
++		force_sig_info(SIGSEGV, &info, current);
++		break;
++	}
+ }
  
--read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
-+read_read_lock(), rcu_read_unlock(), and synchronize_rcu() fences have
- other properties which we discuss later.
- 
- 
-@@ -1138,7 +1138,7 @@ final effect is that even though the two
- program order, it appears that they aren't.
- 
- This could not have happened if the local cache had processed the
--incoming stores in FIFO order.  In constrast, other architectures
-+incoming stores in FIFO order.  By contrast, other architectures
- maintain at least the appearance of FIFO order.
- 
- In practice, this difficulty is solved by inserting a special fence
-Index: usb-4.x/tools/memory-model/linux-kernel.def
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.def
-+++ usb-4.x/tools/memory-model/linux-kernel.def
-@@ -13,7 +13,7 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
- smp_store_release(X,V) { __store{release}(*X,V); }
- smp_load_acquire(X) __load{acquire}(*X)
- rcu_assign_pointer(X,V) { __store{release}(X,V); }
--rcu_dereference(X) __load{deref}(X)
-+rcu_dereference(X) __load{once}(X)
- 
- // Fences
- smp_mb() { __fence{mb} ; }
+ void sun4v_data_access_exception_tl1(struct pt_regs *regs, unsigned long addr, unsigned long type_ctx)
+-- 
+2.11.0
