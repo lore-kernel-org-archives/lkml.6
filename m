@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Zz/S3mJdSc0KiYWtaVGMt+Q7V8BwfvGln2h1HZ974mFTEzvyoFpvqcuOaJk/HEsLvfQ9K
-ARC-Seal: i=1; a=rsa-sha256; t=1519217894; cv=none;
+X-Google-Smtp-Source: AH8x227gzzK1hDctDlyqchVeFMO2glC8WHkaZ8Y6xU84FMJ+9ynOdlX0vMxRq20+kZfnkZL2l3/K
+ARC-Seal: i=1; a=rsa-sha256; t=1519217891; cv=none;
         d=google.com; s=arc-20160816;
-        b=KiDfWvuCw711FUMnCHv9+MjyyA2AF9BObTnyCEEZ9FwL3Xn3eBkSViJDxxeJSJUf8v
-         R171e9kgS8aVMX+iW0ngProIOABOSg0AqZBH6cAXXCIZmhzNuNE8ALGToTrSitnSMTaS
-         fY+OoO8MfFz4+/LdjhFI4M8gOsDkgbu0At2XhfjmD1MQC6q8MBR/Yhj+NWWSnOW4f+Tf
-         6yJEmKOzgxbXr929LGumGkUTN9wvnQmxulybahyp3r43bgJMEBJQibrbPRXfBYwieg/K
-         uQo3D/qScVWJ2iTRSLXp2pCtV/OADAu1L4szOZv/2UO8DxfPqszPyhtp3O+VfD33dn4n
-         P9NA==
+        b=WNHU8VzpPhOuDAyFsd06jodLgQNwdzR87njubf3oHRa4tMz4eQaoifP6rT+qZs8zp9
+         xb271476/Qi9blVLLlW53CzJ7A9ctYe+yHvsyjVdr1eP4enDwFm/p4ziPrUhOZ/GEtT7
+         G9KAzr4tfUTyc96oysZemK+A929d0ChJH+SMZ18Ui3XyVcTzmHzwtN3/nmg4amBetfTw
+         hFoQxIeb06AU6U7UNIWMKjglXeVCY++N2fxWVM1/k966muUaP4Awl16Gqxz4NEN1DElm
+         f34Y6H5cdhfYAJuFW+T8Lc+a0SLthSB7fPsVzkixcMMNsIvRWZIUrqUu+BYnfceyVRH8
+         6B2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fJXuzVnp9m4s/5YKu5VXfwWY7nm6y4gNLHInkFS+lgY=;
-        b=h2jnVXg92bjoFQJ+UZWtROgLUG3wtHkQkaloLWxnYMEUSMfxSGZV3czNGrv6hyqs5I
-         1EGJcLCpbp13+jwnm+n5g0Vt7CsX0edgvtTcEYS++0R5GSuwoYYHFMhbmYKfjVCnMQ7l
-         E7PrfZ3dI+J0mEfZtAWbXeY+ijZdDvXkuqTKTd2zEL5FNhCb+8ZMjbTL4hvcLGad069R
-         xjB2xYbJKjOzWrXg83WAks48rMtup+bYmZyf7aDpOnpQCNbFg00M2ZxA9quY0e2I55kr
-         EQCSYJCSeIB6uPt1RBY+ORBlnzkYGqx6n7Fu8hHK+q7uWmAl5JXvXs6HXGIlanv2q+HY
-         M2MA==
+        bh=HqsdRS5bl2vI7YwONHlC2bonYK2JNqJYYOxYsa3Qzh8=;
+        b=ohAShA4OYtCXcC2Vo+0+ol6ey+wmgkGd4p0kiJxM/b3eKvpipoPTd+eCBGe8pq6n7j
+         ypwJmLcUwzgNnbBHgSoTaxs7bEQ4K4FNrtp7ySJc2Ubs50jnnbG6jRpDnWrARzWJODKF
+         Tj517J3eKJwSUdzU/0nvT2Rl6UmYA+0SCeZ7psSStIUeFAu6DzcaajhMvThJ60e44a+V
+         6DLAMljOkqT6NdfLcDcWV32vnuflzoBuBmqoFs67+sKmuJ7hCnxBPx2Xst+SMckAqyMa
+         WL5fmCnqWdPeCwhiPmZGIeliz/lIuGctWQUdCB0mQCQNWHpWEgvfhdrR+3wePQ88nM56
+         NViw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 4.14 016/167] PM / devfreq: Propagate error from devfreq_add_device()
-Date: Wed, 21 Feb 2018 13:47:07 +0100
-Message-Id: <20180221124525.508310083@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Mike Galbraith <efault@gmx.de>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.14 015/167] swiotlb: suppress warning when __GFP_NOWARN is set
+Date: Wed, 21 Feb 2018 13:47:06 +0100
+Message-Id: <20180221124525.450387495@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014614609921492?=
-X-GMAIL-MSGID: =?utf-8?q?1593015423257339424?=
+X-GMAIL-THRID: =?utf-8?q?1593015420254067670?=
+X-GMAIL-MSGID: =?utf-8?q?1593015420254067670?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Christian König <ckoenig.leichtzumerken@gmail.com>
 
-commit d1bf2d30728f310f72296b54f0651ecdb09cbb12 upstream.
+commit d0bc0c2a31c95002d37c3cc511ffdcab851b3256 upstream.
 
-Propagate the error of devfreq_add_device() in devm_devfreq_add_device()
-rather than statically returning ENOMEM. This makes it slightly faster
-to pinpoint the cause of a returned error.
+TTM tries to allocate coherent memory in chunks of 2MB first to improve
+TLB efficiency and falls back to allocating 4K pages if that fails.
 
-Fixes: 8cd84092d35e ("PM / devfreq: Add resource-managed function for devfreq device")
-Cc: stable@vger.kernel.org
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Suppress the warning when the 2MB allocations fails since there is a
+valid fall back path.
+
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Reported-by: Mike Galbraith <efault@gmx.de>
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=104082
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/devfreq/devfreq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/swiotlb.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -676,7 +676,7 @@ struct devfreq *devm_devfreq_add_device(
- 	devfreq = devfreq_add_device(dev, profile, governor_name, data);
- 	if (IS_ERR(devfreq)) {
- 		devres_free(ptr);
--		return ERR_PTR(-ENOMEM);
-+		return devfreq;
- 	}
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -585,7 +585,7 @@ phys_addr_t swiotlb_tbl_map_single(struc
  
- 	*ptr = devfreq;
+ not_found:
+ 	spin_unlock_irqrestore(&io_tlb_lock, flags);
+-	if (printk_ratelimit())
++	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
+ 		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+ 	return SWIOTLB_MAP_ERROR;
+ found:
+@@ -712,6 +712,7 @@ void *
+ swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+ 		       dma_addr_t *dma_handle, gfp_t flags)
+ {
++	bool warn = !(flags & __GFP_NOWARN);
+ 	dma_addr_t dev_addr;
+ 	void *ret;
+ 	int order = get_order(size);
+@@ -737,8 +738,8 @@ swiotlb_alloc_coherent(struct device *hw
+ 		 * GFP_DMA memory; fall back on map_single(), which
+ 		 * will grab memory from the lowest available address range.
+ 		 */
+-		phys_addr_t paddr = map_single(hwdev, 0, size,
+-					       DMA_FROM_DEVICE, 0);
++		phys_addr_t paddr = map_single(hwdev, 0, size, DMA_FROM_DEVICE,
++					       warn ? 0 : DMA_ATTR_NO_WARN);
+ 		if (paddr == SWIOTLB_MAP_ERROR)
+ 			goto err_warn;
+ 
+@@ -768,9 +769,11 @@ swiotlb_alloc_coherent(struct device *hw
+ 	return ret;
+ 
+ err_warn:
+-	pr_warn("swiotlb: coherent allocation failed for device %s size=%zu\n",
+-		dev_name(hwdev), size);
+-	dump_stack();
++	if (warn && printk_ratelimit()) {
++		pr_warn("swiotlb: coherent allocation failed for device %s size=%zu\n",
++			dev_name(hwdev), size);
++		dump_stack();
++	}
+ 
+ 	return NULL;
+ }
