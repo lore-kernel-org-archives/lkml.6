@@ -1,132 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932551AbeBUQ2f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:28:35 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:41476 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932328AbeBUQ2d (ORCPT
+        id S932741AbeBUQaf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:30:35 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37526 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932686AbeBUQad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:28:33 -0500
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-To: jacopo mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519059584-30844-12-git-send-email-jacopo+renesas@jmondi.org>
- <1963190.TI9O1pFqZp@avalon> <20180220085857.GC7203@w540>
- <20180221154712.GJ7203@w540>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <287b38a5-d952-7600-2180-df08ab002b03@xs4all.nl>
-Date: Wed, 21 Feb 2018 17:28:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 21 Feb 2018 11:30:33 -0500
+Date: Wed, 21 Feb 2018 17:30:30 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-rt-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Subject: [PATCH RT] net: use task_struct instead of CPU number as the queue
+ owner on -RT
+Message-ID: <20180221163030.467igkfyu3bxa7ew@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180221154712.GJ7203@w540>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfO2GE4kV2s8ncU2rlI79soF2w9Ao5ZxFALm/6f+jcoYHZxB+vZtuauzWSUHdQB9aEvJOrsIh441hk3Sx1zfp3DH4BsNTU1AbOQh8IDTXy2eauYj0lehp
- zgfFzPK9PvGO9q/hMiCK81bu1wJl3eUZfnI1iPh9TkfCBTjRx2XY1KLPhGGMjdVaIeOUv6vkuQHDBbHKXPjx35ukbo5B85j+OT+TOe7cgGZb+ADztBl6S5qs
- T8daXWLv2bt9JTLrKWC4kPNuhhVmOpfL1OqbwTvoGNFlrbG0WzrbmnT6Xe8QJXyvCtZhrpsGdg5obQBvcrFTBU/ftnriCj8pe4z9N95h0d/F3vRUpv0ejG9p
- cjWBFk11HKE2N2ZKvbihMM1w2G8vA5lFbXE9bhBweObIbQIBqVhmrIYa6/Ay1vMt+2uAGTE/D8J5wZLAWJGLv1VCLrWQt/gRGU570QG6vDmjGlywYU+vIcgH
- OFZNU8kkgkXTZ38/GFv2taGE14EObibnYbchi62RUyRXHvIin/Lg2ZtTtv/lpola3UVNMEtN4VaK6qv/3L29ntA7UOp6jciBS4rI2pX1ObYlFO0Qeqak8rS8
- yB0=
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 04:47 PM, jacopo mondi wrote:
-> Hello again,
-> 
-> On Tue, Feb 20, 2018 at 09:58:57AM +0100, jacopo mondi wrote:
->> Hi Laurent,
->>
->> On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
->>> Hi Jacopo,
->>>
->>> Thank you for the patch.
->>>
->>> On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
->>>> The sensor driver sets mbus format colorspace information and sizes,
->>>> but not ycbcr encoding, quantization and xfer function. When supplied
->>>> with an badly initialized mbus frame format structure, those fields
->>>> need to be set explicitly not to leave them uninitialized. This is
->>>> tested by v4l2-compliance, which supplies a mbus format description
->>>> structure and checks for all fields to be properly set.
->>>>
->>>> Without this commit, v4l2-compliance fails when testing formats with:
->>>> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
->>>>
->>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>>> ---
->>>>  drivers/media/i2c/ov7670.c | 4 ++++
->>>>  1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
->>>> index 25b26d4..61c472e 100644
->>>> --- a/drivers/media/i2c/ov7670.c
->>>> +++ b/drivers/media/i2c/ov7670.c
->>>> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev
->>>> *sd, fmt->height = wsize->height;
->>>>  	fmt->colorspace = ov7670_formats[index].colorspace;
->>>
->>> On a side note, if I'm not mistaken the colorspace field is set to SRGB for
->>> all entries. Shouldn't you hardcode it here and remove the field ?
->>>
->>>> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
->>>> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
->>>> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
->>>
->>> How about setting the values explicitly instead of relying on defaults ? That
->>> would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
->>> V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if the
->>> sensor outputs limited or full range ?
->>>
->>
->> This actually makes me wonder if those informations (ycbcb_enc,
->> quantization and xfer_func) shouldn't actually be part of the
->> supported format list... I blindly added those default fields in the
->> try_fmt function, but I doubt they applies to all supported formats.
->>
->> Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
->> RGB 565) and 1 raw format (BGGR). I now have a question here:
->>
->> 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
->> applies to RGB and raw formats? I don't think so, and what value is
->> the correct one for the ycbcr_enc field in this case? I assume
->> xfer_func and quantization applies to all formats instead..
->>
-> 
-> What if I repropose this as separate patch not part of the CEU series
-> in order not to hold back v10 (which I hope will be the last CEU
-> iteration)?
+In commit ("net: move xmit_recursion to per-task variable on -RT") the
+recursion level was changed to be per-task since we can get preempted in
+BH on -RT. The lock owner should consequently be recorded as the task
+that holds the lock and not the CPU. Otherwise we trigger the "Dead loop
+on virtual device" warning on SMP systems.
 
-I would definitely be fine with that. We first need to define what
-exactly should be done by drivers. See also this thread:
+Cc: stable-rt@vger.kernel.org
+Reported-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/netdevice.h | 54 +++++++++++++++++++++++++++++++++++++++++------
+ net/core/dev.c            |  6 +++++-
+ 2 files changed, 53 insertions(+), 7 deletions(-)
 
-https://www.spinics.net/lists/linux-renesas-soc/msg23888.html
-
-I'll work on that going forward as part of the compliance tests.
-
-Regards,
-
-	Hans
-
-> 
->> Thanks
->>    j
->>
->>>>  	info->format = *fmt;
->>>>
->>>>  	return 0;
->>>
->>> --
->>> Regards,
->>>
->>> Laurent Pinchart
->>>
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index dea370d31dc3..cd0f34dfc5f4 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -583,7 +583,11 @@ struct netdev_queue {
+  * write-mostly part
+  */
+ 	spinlock_t		_xmit_lock ____cacheline_aligned_in_smp;
++#ifdef CONFIG_PREEMPT_RT_FULL
++	struct task_struct	*xmit_lock_owner;
++#else
+ 	int			xmit_lock_owner;
++#endif
+ 	/*
+ 	 * Time (in jiffies) of last Tx
+ 	 */
+@@ -3547,10 +3551,48 @@ static inline u32 netif_msg_init(int debug_value, int default_msg_enable_bits)
+ 	return (1 << debug_value) - 1;
+ }
+ 
++#ifdef CONFIG_PREEMPT_RT_FULL
++static inline void netdev_queue_set_owner(struct netdev_queue *txq, int cpu)
++{
++	txq->xmit_lock_owner = current;
++}
++
++static inline void netdev_queue_clear_owner(struct netdev_queue *txq)
++{
++	txq->xmit_lock_owner = NULL;
++}
++
++static inline bool netdev_queue_has_owner(struct netdev_queue *txq)
++{
++	if (txq->xmit_lock_owner != NULL)
++		return true;
++	return false;
++}
++
++#else
++
++static inline void netdev_queue_set_owner(struct netdev_queue *txq, int cpu)
++{
++	txq->xmit_lock_owner = cpu;
++}
++
++static inline void netdev_queue_clear_owner(struct netdev_queue *txq)
++{
++	txq->xmit_lock_owner = -1;
++}
++
++static inline bool netdev_queue_has_owner(struct netdev_queue *txq)
++{
++	if (txq->xmit_lock_owner != -1)
++		return true;
++	return false;
++}
++#endif
++
+ static inline void __netif_tx_lock(struct netdev_queue *txq, int cpu)
+ {
+ 	spin_lock(&txq->_xmit_lock);
+-	txq->xmit_lock_owner = cpu;
++	netdev_queue_set_owner(txq, cpu);
+ }
+ 
+ static inline bool __netif_tx_acquire(struct netdev_queue *txq)
+@@ -3567,32 +3609,32 @@ static inline void __netif_tx_release(struct netdev_queue *txq)
+ static inline void __netif_tx_lock_bh(struct netdev_queue *txq)
+ {
+ 	spin_lock_bh(&txq->_xmit_lock);
+-	txq->xmit_lock_owner = smp_processor_id();
++	netdev_queue_set_owner(txq, smp_processor_id());
+ }
+ 
+ static inline bool __netif_tx_trylock(struct netdev_queue *txq)
+ {
+ 	bool ok = spin_trylock(&txq->_xmit_lock);
+ 	if (likely(ok))
+-		txq->xmit_lock_owner = smp_processor_id();
++		netdev_queue_set_owner(txq, smp_processor_id());
+ 	return ok;
+ }
+ 
+ static inline void __netif_tx_unlock(struct netdev_queue *txq)
+ {
+-	txq->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(txq);
+ 	spin_unlock(&txq->_xmit_lock);
+ }
+ 
+ static inline void __netif_tx_unlock_bh(struct netdev_queue *txq)
+ {
+-	txq->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(txq);
+ 	spin_unlock_bh(&txq->_xmit_lock);
+ }
+ 
+ static inline void txq_trans_update(struct netdev_queue *txq)
+ {
+-	if (txq->xmit_lock_owner != -1)
++	if (netdev_queue_has_owner(txq))
+ 		txq->trans_start = jiffies;
+ }
+ 
+diff --git a/net/core/dev.c b/net/core/dev.c
+index cd0fdfefdd99..489906baead1 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3486,7 +3486,11 @@ static int __dev_queue_xmit(struct sk_buff *skb, void *accel_priv)
+ 	if (dev->flags & IFF_UP) {
+ 		int cpu = smp_processor_id(); /* ok because BHs are off */
+ 
++#ifdef CONFIG_PREEMPT_RT_FULL
++		if (txq->xmit_lock_owner != current) {
++#else
+ 		if (txq->xmit_lock_owner != cpu) {
++#endif
+ 			if (unlikely(xmit_rec_read() > XMIT_RECURSION_LIMIT))
+ 				goto recursion_alert;
+ 
+@@ -7493,7 +7497,7 @@ static void netdev_init_one_queue(struct net_device *dev,
+ 	/* Initialize queue lock */
+ 	spin_lock_init(&queue->_xmit_lock);
+ 	netdev_set_xmit_lockdep_class(&queue->_xmit_lock, dev->type);
+-	queue->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(queue);
+ 	netdev_queue_numa_node_write(queue, NUMA_NO_NODE);
+ 	queue->dev = dev;
+ #ifdef CONFIG_BQL
+-- 
+2.16.1
