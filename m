@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932453AbeBUJbM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:31:12 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33109 "EHLO
+        id S932470AbeBUJbR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:31:17 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36367 "EHLO
         mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753304AbeBUJ1S (ORCPT
+        with ESMTP id S1753288AbeBUJ1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:27:18 -0500
-X-Google-Smtp-Source: AH8x22490nLtKuw12XcxX07D5yZBQJ/gIrB36KYIuoDAF3IgS8cA+BPNUaLnWBpV0hDORkdCHchnNg==
+        Wed, 21 Feb 2018 04:27:16 -0500
+X-Google-Smtp-Source: AH8x226Y5sokNqRqkOunE8D90X0hxaXnKz+pQrEss+fl0vDwXjd/ChUDBsF027PlryvGQ2K4PZYD7Q==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 07/20] lightnvm: rename sect_* to sec_*
-Date: Wed, 21 Feb 2018 10:26:45 +0100
-Message-Id: <1519205218-26994-8-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 05/20] lightnvm: rename number of channels and luns
+Date: Wed, 21 Feb 2018 10:26:43 +0100
+Message-Id: <1519205218-26994-6-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
 References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
@@ -27,182 +27,361 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename abbreviations for sector from sect_* to sec_* as most of the code
-uses this format and it is confusing when using the different
-structures.
+Normalize nomenclature for naming number of channels and number of luns
+in order to improve readability. Use num_ch and num_lun.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c  | 8 ++++----
- drivers/lightnvm/pblk-sysfs.c | 4 ++--
- drivers/lightnvm/pblk.h       | 8 ++++----
- drivers/nvme/host/lightnvm.c  | 8 ++++----
- include/linux/lightnvm.h      | 8 ++++----
- 5 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/lightnvm/core.c      | 69 ++++++++++++++++++++++----------------------
+ drivers/lightnvm/pblk-core.c |  4 +--
+ drivers/lightnvm/pblk-init.c | 16 +++++-----
+ drivers/lightnvm/pblk.h      |  6 ++--
+ drivers/nvme/host/lightnvm.c | 20 ++++++-------
+ include/linux/lightnvm.h     |  8 ++---
+ 6 files changed, 61 insertions(+), 62 deletions(-)
 
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index dc9ec6baff45..f70a907223e2 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -36,13 +36,13 @@ static DECLARE_RWSEM(nvm_lock);
+ /* Map between virtual and physical channel and lun */
+ struct nvm_ch_map {
+ 	int ch_off;
+-	int nr_luns;
++	int num_lun;
+ 	int *lun_offs;
+ };
+ 
+ struct nvm_dev_map {
+ 	struct nvm_ch_map *chnls;
+-	int nr_chnls;
++	int num_ch;
+ };
+ 
+ static struct nvm_target *nvm_find_target(struct nvm_dev *dev, const char *name)
+@@ -115,15 +115,15 @@ static void nvm_remove_tgt_dev(struct nvm_tgt_dev *tgt_dev, int clear)
+ 	struct nvm_dev_map *dev_map = tgt_dev->map;
+ 	int i, j;
+ 
+-	for (i = 0; i < dev_map->nr_chnls; i++) {
++	for (i = 0; i < dev_map->num_ch; i++) {
+ 		struct nvm_ch_map *ch_map = &dev_map->chnls[i];
+ 		int *lun_offs = ch_map->lun_offs;
+ 		int ch = i + ch_map->ch_off;
+ 
+ 		if (clear) {
+-			for (j = 0; j < ch_map->nr_luns; j++) {
++			for (j = 0; j < ch_map->num_lun; j++) {
+ 				int lun = j + lun_offs[j];
+-				int lunid = (ch * dev_geo->nr_luns) + lun;
++				int lunid = (ch * dev_geo->num_lun) + lun;
+ 
+ 				WARN_ON(!test_and_clear_bit(lunid,
+ 							dev->lun_map));
+@@ -149,47 +149,46 @@ static struct nvm_tgt_dev *nvm_create_tgt_dev(struct nvm_dev *dev,
+ 	struct nvm_dev_map *dev_rmap = dev->rmap;
+ 	struct nvm_dev_map *dev_map;
+ 	struct ppa_addr *luns;
+-	int nr_luns = lun_end - lun_begin + 1;
+-	int luns_left = nr_luns;
+-	int nr_chnls = nr_luns / dev_geo->nr_luns;
+-	int nr_chnls_mod = nr_luns % dev_geo->nr_luns;
+-	int bch = lun_begin / dev_geo->nr_luns;
+-	int blun = lun_begin % dev_geo->nr_luns;
++	int num_lun = lun_end - lun_begin + 1;
++	int luns_left = num_lun;
++	int num_ch = num_lun / dev_geo->num_lun;
++	int num_ch_mod = num_lun % dev_geo->num_lun;
++	int bch = lun_begin / dev_geo->num_lun;
++	int blun = lun_begin % dev_geo->num_lun;
+ 	int lunid = 0;
+ 	int lun_balanced = 1;
+-	int sec_per_lun, prev_nr_luns;
++	int sec_per_lun, prev_num_lun;
+ 	int i, j;
+ 
+-	nr_chnls = (nr_chnls_mod == 0) ? nr_chnls : nr_chnls + 1;
++	num_ch = (num_ch_mod == 0) ? num_ch : num_ch + 1;
+ 
+ 	dev_map = kmalloc(sizeof(struct nvm_dev_map), GFP_KERNEL);
+ 	if (!dev_map)
+ 		goto err_dev;
+ 
+-	dev_map->chnls = kcalloc(nr_chnls, sizeof(struct nvm_ch_map),
+-								GFP_KERNEL);
++	dev_map->chnls = kcalloc(num_ch, sizeof(struct nvm_ch_map), GFP_KERNEL);
+ 	if (!dev_map->chnls)
+ 		goto err_chnls;
+ 
+-	luns = kcalloc(nr_luns, sizeof(struct ppa_addr), GFP_KERNEL);
++	luns = kcalloc(num_lun, sizeof(struct ppa_addr), GFP_KERNEL);
+ 	if (!luns)
+ 		goto err_luns;
+ 
+-	prev_nr_luns = (luns_left > dev_geo->nr_luns) ?
+-					dev_geo->nr_luns : luns_left;
+-	for (i = 0; i < nr_chnls; i++) {
++	prev_num_lun = (luns_left > dev_geo->num_lun) ?
++					dev_geo->num_lun : luns_left;
++	for (i = 0; i < num_ch; i++) {
+ 		struct nvm_ch_map *ch_rmap = &dev_rmap->chnls[i + bch];
+ 		int *lun_roffs = ch_rmap->lun_offs;
+ 		struct nvm_ch_map *ch_map = &dev_map->chnls[i];
+ 		int *lun_offs;
+-		int luns_in_chnl = (luns_left > dev_geo->nr_luns) ?
+-					dev_geo->nr_luns : luns_left;
++		int luns_in_chnl = (luns_left > dev_geo->num_lun) ?
++					dev_geo->num_lun : luns_left;
+ 
+-		if (lun_balanced && prev_nr_luns != luns_in_chnl)
++		if (lun_balanced && prev_num_lun != luns_in_chnl)
+ 			lun_balanced = 0;
+ 
+ 		ch_map->ch_off = ch_rmap->ch_off = bch;
+-		ch_map->nr_luns = luns_in_chnl;
++		ch_map->num_lun = luns_in_chnl;
+ 
+ 		lun_offs = kcalloc(luns_in_chnl, sizeof(int), GFP_KERNEL);
+ 		if (!lun_offs)
+@@ -211,22 +210,22 @@ static struct nvm_tgt_dev *nvm_create_tgt_dev(struct nvm_dev *dev,
+ 		luns_left -= luns_in_chnl;
+ 	}
+ 
+-	dev_map->nr_chnls = nr_chnls;
++	dev_map->num_ch = num_ch;
+ 
+ 	tgt_dev = kmalloc(sizeof(struct nvm_tgt_dev), GFP_KERNEL);
+ 	if (!tgt_dev)
+ 		goto err_ch;
+ 
+ 	/* Target device only owns a portion of the physical device */
+-	tgt_dev->geo.nr_chnls = nr_chnls;
+-	tgt_dev->geo.nr_luns = (lun_balanced) ? prev_nr_luns : -1;
+-	tgt_dev->geo.all_luns = nr_luns;
+-	tgt_dev->geo.all_chunks = nr_luns * dev_geo->c.num_chk;
++	tgt_dev->geo.num_ch = num_ch;
++	tgt_dev->geo.num_lun = (lun_balanced) ? prev_num_lun : -1;
++	tgt_dev->geo.all_luns = num_lun;
++	tgt_dev->geo.all_chunks = num_lun * dev_geo->c.num_chk;
+ 
+ 	tgt_dev->geo.op = op;
+ 
+ 	sec_per_lun = dev_geo->c.clba * dev_geo->c.num_chk;
+-	tgt_dev->geo.total_secs = nr_luns * sec_per_lun;
++	tgt_dev->geo.total_secs = num_lun * sec_per_lun;
+ 
+ 	tgt_dev->geo.c = dev_geo->c;
+ 
+@@ -511,20 +510,20 @@ static int nvm_register_map(struct nvm_dev *dev)
+ 	if (!rmap)
+ 		goto err_rmap;
+ 
+-	rmap->chnls = kcalloc(dev_geo->nr_chnls, sizeof(struct nvm_ch_map),
++	rmap->chnls = kcalloc(dev_geo->num_ch, sizeof(struct nvm_ch_map),
+ 								GFP_KERNEL);
+ 	if (!rmap->chnls)
+ 		goto err_chnls;
+ 
+-	for (i = 0; i < dev_geo->nr_chnls; i++) {
++	for (i = 0; i < dev_geo->num_ch; i++) {
+ 		struct nvm_ch_map *ch_rmap;
+ 		int *lun_roffs;
+-		int luns_in_chnl = dev_geo->nr_luns;
++		int luns_in_chnl = dev_geo->num_lun;
+ 
+ 		ch_rmap = &rmap->chnls[i];
+ 
+ 		ch_rmap->ch_off = -1;
+-		ch_rmap->nr_luns = luns_in_chnl;
++		ch_rmap->num_lun = luns_in_chnl;
+ 
+ 		lun_roffs = kcalloc(luns_in_chnl, sizeof(int), GFP_KERNEL);
+ 		if (!lun_roffs)
+@@ -554,7 +553,7 @@ static void nvm_unregister_map(struct nvm_dev *dev)
+ 	struct nvm_dev_map *rmap = dev->rmap;
+ 	int i;
+ 
+-	for (i = 0; i < dev_geo->nr_chnls; i++)
++	for (i = 0; i < dev_geo->num_ch; i++)
+ 		kfree(rmap->chnls[i].lun_offs);
+ 
+ 	kfree(rmap->chnls);
+@@ -910,7 +909,7 @@ static int nvm_init(struct nvm_dev *dev)
+ 	pr_info("nvm: registered %s [%u/%u/%u/%u/%u]\n",
+ 			dev->name, dev_geo->c.ws_min, dev_geo->c.ws_opt,
+ 			dev_geo->c.num_chk, dev_geo->all_luns,
+-			dev_geo->nr_chnls);
++			dev_geo->num_ch);
+ 	return 0;
+ err:
+ 	pr_err("nvm: failed to initialize nvm\n");
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 519af8b9eab7..7c726003a8d2 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1752,10 +1752,10 @@ void pblk_up_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_lun *rlun;
+-	int nr_luns = geo->all_luns;
++	int num_lun = geo->all_luns;
+ 	int bit = -1;
+ 
+-	while ((bit = find_next_bit(lun_bitmap, nr_luns, bit + 1)) < nr_luns) {
++	while ((bit = find_next_bit(lun_bitmap, num_lun, bit + 1)) < num_lun) {
+ 		rlun = &pblk->luns[bit];
+ 		up(&rlun->wr_sem);
+ 	}
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 455fc63a9409..6bf51ef8f516 100644
+index 95ecb0ec736b..455fc63a9409 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -179,16 +179,16 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
- 	dst->blk_len = src->blk_len;
- 	dst->pg_len = src->pg_len;
- 	dst->pln_len = src->pln_len;
--	dst->sect_len = src->sect_len;
-+	dst->sec_len = src->sec_len;
+@@ -162,15 +162,15 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
+ 	int power_len;
  
--	dst->sect_offset = 0;
--	dst->pln_offset = dst->sect_len;
-+	dst->sec_offset = 0;
-+	dst->pln_offset = dst->sec_len;
- 	dst->ch_offset = dst->pln_offset + dst->pln_len;
- 	dst->lun_offset = dst->ch_offset + dst->ch_len;
- 	dst->pg_offset = dst->lun_offset + dst->lun_len;
- 	dst->blk_offset = dst->pg_offset + dst->pg_len;
+ 	/* Re-calculate channel and lun format to adapt to configuration */
+-	power_len = get_count_order(geo->nr_chnls);
+-	if (1 << power_len != geo->nr_chnls) {
++	power_len = get_count_order(geo->num_ch);
++	if (1 << power_len != geo->num_ch) {
+ 		pr_err("pblk: supports only power-of-two channel config.\n");
+ 		return -EINVAL;
+ 	}
+ 	dst->ch_len = power_len;
  
--	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
-+	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
- 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
- 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
- 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 5eb21a279361..81288aa9162a 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -128,7 +128,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 			ppaf->blk_offset, ppaf->blk_len,
- 			ppaf->pg_offset, ppaf->pg_len,
- 			ppaf->pln_offset, ppaf->pln_len,
--			ppaf->sect_offset, ppaf->sect_len);
-+			ppaf->sec_offset, ppaf->sec_len);
+-	power_len = get_count_order(geo->nr_luns);
+-	if (1 << power_len != geo->nr_luns) {
++	power_len = get_count_order(geo->num_lun);
++	if (1 << power_len != geo->num_lun) {
+ 		pr_err("pblk: supports only power-of-two LUN config.\n");
+ 		return -EINVAL;
+ 	}
+@@ -498,7 +498,7 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
+ 	int i;
  
- 	sz += snprintf(page + sz, PAGE_SIZE - sz,
- 		"device:ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
-@@ -137,7 +137,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 			geo_ppaf->blk_offset, geo_ppaf->blk_len,
- 			geo_ppaf->pg_offset, geo_ppaf->pg_len,
- 			geo_ppaf->pln_offset, geo_ppaf->pln_len,
--			geo_ppaf->sect_offset, geo_ppaf->sect_len);
-+			geo_ppaf->sec_offset, geo_ppaf->sec_len);
+ 	/* TODO: Implement unbalanced LUN support */
+-	if (geo->nr_luns < 0) {
++	if (geo->num_lun < 0) {
+ 		pr_err("pblk: unbalanced LUN config.\n");
+ 		return -EINVAL;
+ 	}
+@@ -510,9 +510,9 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
  
- 	return sz;
- }
+ 	for (i = 0; i < geo->all_luns; i++) {
+ 		/* Stripe across channels */
+-		int ch = i % geo->nr_chnls;
+-		int lun_raw = i / geo->nr_chnls;
+-		int lunid = lun_raw + ch * geo->nr_luns;
++		int ch = i % geo->num_ch;
++		int lun_raw = i / geo->num_ch;
++		int lunid = lun_raw + ch * geo->num_lun;
+ 
+ 		rlun = &pblk->luns[i];
+ 		rlun->bppa = luns[lunid];
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 1f32284b0aec..4f7a365436f1 100644
+index 67ffb53608f7..1f32284b0aec 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -957,7 +957,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
- 	ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
- 	ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
- 	ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
--	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sect_offset;
-+	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
+@@ -941,7 +941,7 @@ static inline int pblk_ppa_to_line(struct ppa_addr p)
  
- 	return ppa;
+ static inline int pblk_ppa_to_pos(struct nvm_geo *geo, struct ppa_addr p)
+ {
+-	return p.g.lun * geo->nr_chnls + p.g.ch;
++	return p.g.lun * geo->num_ch + p.g.ch;
  }
-@@ -973,7 +973,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
- 	paddr |= (u64)p.g.lun << ppaf->lun_offset;
- 	paddr |= (u64)p.g.pg << ppaf->pg_offset;
- 	paddr |= (u64)p.g.pl << ppaf->pln_offset;
--	paddr |= (u64)p.g.sec << ppaf->sect_offset;
-+	paddr |= (u64)p.g.sec << ppaf->sec_offset;
  
- 	return paddr;
- }
-@@ -998,7 +998,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
- 		ppa64.g.blk = (ppa32 & ppaf->blk_mask) >> ppaf->blk_offset;
- 		ppa64.g.pg = (ppa32 & ppaf->pg_mask) >> ppaf->pg_offset;
- 		ppa64.g.pl = (ppa32 & ppaf->pln_mask) >> ppaf->pln_offset;
--		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sect_offset;
-+		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sec_offset;
- 	}
+ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+@@ -1214,8 +1214,8 @@ static inline int pblk_boundary_ppa_checks(struct nvm_tgt_dev *tgt_dev,
+ 		ppa = &ppas[i];
  
- 	return ppa64;
-@@ -1022,7 +1022,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
- 		ppa32 |= ppa64.g.blk << ppaf->blk_offset;
- 		ppa32 |= ppa64.g.pg << ppaf->pg_offset;
- 		ppa32 |= ppa64.g.pl << ppaf->pln_offset;
--		ppa32 |= ppa64.g.sec << ppaf->sect_offset;
-+		ppa32 |= ppa64.g.sec << ppaf->sec_offset;
- 	}
- 
- 	return ppa32;
+ 		if (!ppa->c.is_cached &&
+-				ppa->g.ch < geo->nr_chnls &&
+-				ppa->g.lun < geo->nr_luns &&
++				ppa->g.ch < geo->num_ch &&
++				ppa->g.lun < geo->num_lun &&
+ 				ppa->g.pl < geo->c.num_pln &&
+ 				ppa->g.blk < geo->c.num_chk &&
+ 				ppa->g.pg < geo->c.num_pg &&
 diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index bd97672e0b4f..cca32da05316 100644
+index 71b4ac57a668..f22331e61cef 100644
 --- a/drivers/nvme/host/lightnvm.c
 +++ b/drivers/nvme/host/lightnvm.c
-@@ -262,21 +262,21 @@ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
- 	dst->blk_len = src->blk_len;
- 	dst->pg_len = src->pg_len;
- 	dst->pln_len = src->pln_len;
--	dst->sect_len = src->sec_len;
-+	dst->sec_len = src->sec_len;
+@@ -299,9 +299,9 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+ 	dev_geo->major_ver_id = id->ver_id;
+ 	dev_geo->minor_ver_id = 2;
  
- 	dst->ch_offset = src->ch_offset;
- 	dst->lun_offset = src->lun_offset;
- 	dst->blk_offset = src->blk_offset;
- 	dst->pg_offset = src->pg_offset;
- 	dst->pln_offset = src->pln_offset;
--	dst->sect_offset = src->sec_offset;
-+	dst->sec_offset = src->sec_offset;
+-	dev_geo->nr_chnls = src->num_ch;
+-	dev_geo->nr_luns = src->num_lun;
+-	dev_geo->all_luns = dev_geo->nr_chnls * dev_geo->nr_luns;
++	dev_geo->num_ch = src->num_ch;
++	dev_geo->num_lun = src->num_lun;
++	dev_geo->all_luns = dev_geo->num_ch * dev_geo->num_lun;
  
- 	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
- 	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
- 	dst->blk_mask = ((1ULL << dst->blk_len) - 1) << dst->blk_offset;
- 	dst->pg_mask = ((1ULL << dst->pg_len) - 1) << dst->pg_offset;
- 	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
--	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
-+	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
- }
+ 	dev_geo->c.num_chk = le16_to_cpu(src->num_chk);
+ 	dev_geo->c.csecs = le16_to_cpu(src->csecs);
+@@ -387,9 +387,9 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+ 		return -EINVAL;
+ 	}
  
- static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
-@@ -956,7 +956,7 @@ static ssize_t nvm_dev_attr_show_ppaf(struct nvm_addr_format_12 *ppaf,
- 				ppaf->pln_offset, ppaf->pln_len,
- 				ppaf->blk_offset, ppaf->blk_len,
- 				ppaf->pg_offset, ppaf->pg_len,
--				ppaf->sect_offset, ppaf->sect_len);
-+				ppaf->sec_offset, ppaf->sec_len);
- }
+-	dev_geo->nr_chnls = le16_to_cpu(id->num_grp);
+-	dev_geo->nr_luns = le16_to_cpu(id->num_pu);
+-	dev_geo->all_luns = dev_geo->nr_chnls * dev_geo->nr_luns;
++	dev_geo->num_ch = le16_to_cpu(id->num_grp);
++	dev_geo->num_lun = le16_to_cpu(id->num_pu);
++	dev_geo->all_luns = dev_geo->num_ch * dev_geo->num_lun;
  
- static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 	dev_geo->c.num_chk = le32_to_cpu(id->num_chk);
+ 	dev_geo->c.clba = le32_to_cpu(id->clba);
+@@ -980,9 +980,9 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 	} else if (strcmp(attr->name, "flash_media_type") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fmtype);
+ 	} else if (strcmp(attr->name, "num_channels") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->nr_chnls);
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+ 	} else if (strcmp(attr->name, "num_luns") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->nr_luns);
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_lun);
+ 	} else if (strcmp(attr->name, "num_planes") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.num_pln);
+ 	} else if (strcmp(attr->name, "num_blocks") == 0) {	/* u16 */
+@@ -1030,9 +1030,9 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+ 	attr = &dattr->attr;
+ 
+ 	if (strcmp(attr->name, "groups") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->nr_chnls);
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+ 	} else if (strcmp(attr->name, "punits") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->nr_luns);
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_lun);
+ 	} else if (strcmp(attr->name, "chunks") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.num_chk);
+ 	} else if (strcmp(attr->name, "clba") == 0) {
 diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 02f1fd617781..ccc5faa63cb7 100644
+index 5af0b8837095..28d429e0a1c9 100644
 --- a/include/linux/lightnvm.h
 +++ b/include/linux/lightnvm.h
-@@ -163,14 +163,14 @@ struct nvm_addr_format_12 {
- 	u8	blk_len;
- 	u8	pg_len;
- 	u8	pln_len;
--	u8	sect_len;
-+	u8	sec_len;
+@@ -246,8 +246,8 @@ struct nvm_dev_geo {
+ 	u8	minor_ver_id;
  
- 	u8	ch_offset;
- 	u8	lun_offset;
- 	u8	blk_offset;
- 	u8	pg_offset;
- 	u8	pln_offset;
--	u8	sect_offset;
-+	u8	sec_offset;
+ 	/* full device geometry */
+-	u16	nr_chnls;
+-	u16	nr_luns;
++	u16	num_ch;
++	u16	num_lun;
  
- 	u64	ch_mask;
- 	u64	lun_mask;
-@@ -399,7 +399,7 @@ static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev *tgt_dev,
- 	l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
- 	l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
- 	l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
--	l.ppa |= ((u64)r.g.sec) << ppaf->sect_offset;
-+	l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
+ 	/* calculated values */
+ 	u16	all_luns;
+@@ -323,8 +323,8 @@ enum {
+ /* Instance geometry */
+ struct nvm_geo {
+ 	/* instance specific geometry */
+-	int nr_chnls;
+-	int nr_luns;		/* per channel */
++	int num_ch;
++	int num_lun;		/* per channel */
  
- 	return l;
- }
-@@ -419,7 +419,7 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_tgt_dev *tgt_dev,
- 	l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
- 	l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
- 	l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
--	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sect_offset;
-+	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
+ 	int op;
  
- 	return l;
- }
 -- 
 2.7.4
