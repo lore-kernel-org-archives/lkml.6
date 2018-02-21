@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255FBc47amMRUq1oEvan5mkQsa/iZuzBZZjizhKaup0B5+Gv2R7ISICQ+saYMMUz7Fn651p
-ARC-Seal: i=1; a=rsa-sha256; t=1519217989; cv=none;
+X-Google-Smtp-Source: AH8x224yGyb2hshYufEWAm1e2t6DrdiPct5ZX0EpuRknPQz0S33M8iJvuCj4LTpQRalfME67SGu8
+ARC-Seal: i=1; a=rsa-sha256; t=1519217987; cv=none;
         d=google.com; s=arc-20160816;
-        b=Eu5p72QRCwaTcy9dcY7rM8RsYX1ksMUDULBzQO1JhpNy0or8oYAdJD/4hWxhoZy3hD
-         Kx9EJ7K/39xeL12D62lhbYykOCD1D5MDUcHkoUhvvmgZbPMN2XDBcPdJgu7Sh2ZilkPa
-         Qi0WYsPJcEB9OmB6JSEM8ENzKVjKApJzNme2gnylzOoo++2upM/W6VcLRoEZx/IoZ90G
-         SEu7QezucNuL6T3i3tdRrDp5TDtu02IKp3dbXU1xFFDGcol7y0W0kBXEz2rNbeOCqIJJ
-         Jl/jV6GtJ7gxR/PVTtwt4r/0iJSPGWLUhjEY3EqjeHB5ti08q53KbXtOqz2bc73jLSQM
-         6GJw==
+        b=FOFucwQSHfM8YmmpcLdjqWSnotI8PtJYt3UqIPssHUfydLP1EdpHhKvhgHA0t/pJi1
+         xCc1DCYnNXQ/sZIY4zUmyB/J6YvvAlR0Dd2gIUfs84f1sPhuHEYbc907UKXce2VQo0kD
+         GvZr56HyoRKL8BpspJGlzDwbLB8c8mvqfxwdQuAkcxMPmL8jau9lXntinQOE/rs1HGGu
+         4rmreaHDYD1ye/rYiJQg8EQRTJeHLhKqoHQg9jqQ4d61zaoo2dHTNlZTgVkBd1iHdMtY
+         OxhUeH3qMIws1tqV/hp5Ix/Q/ViTcDmsSCEDPz3xiXjLMmHEooGJsKhs6Io0YvTESQgq
+         8ERg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D1npkwQD9eBXWujLLQOlStuGM048SS5muEkvkoq8Bhs=;
-        b=jbsyTB/ca9EKhBDjMXGGmqrfXEXd7s9z/nwDqSfpaRMqy3PZy7+pUXCq5785VJcHBP
-         sM3mONh8eKlr35X6IrzbN2rX9EehGEr4qV/hhGoE+uhsigziUrkHW60Gs1bvw0OiQZZc
-         w9tlMPzHIILv4KS8PNX5OyNeKDRL+YXSTveuPB485AXj/QkTXnUPHwLGG+BpdMCJ7eGi
-         pP9Hux6UDbCXKxgPA0tbwFwp2qTz1dIXa6KBqElwiU0bc7yAB9Skncw9/3pFjYnFhc0c
-         iIa6QN9kZJUuGlS8fs8QBCCOvUDOsc6cIF97hoP0gmSk9Svi8hnf48TE1HUgGLGLfMP0
-         E97A==
+        bh=g9d6LcMq+4VRcWi11RTTPW2ALjqzYwDNIW6jkIwWUkY=;
+        b=oo1cl/uS5FwOpstO1L71wMKF2/Kr+nVH/9izJzemaSdfbfz5nGApIh7vXvEIBXUXLY
+         hkvuetgVem3ey2Viwd+RKiC3se7mVLhxcpVjvVdqUR9kT9kzMM5pL5z4ksxEQD1rI1h6
+         S8sFy0DNXQOZLgmZbNfw8tXKwUmdEjHpDxtYokxziMlvQszh6/Bv0b06WBKOEwrwu7PH
+         wYaZCVOfBf5zHmzJFnvLTVXwXz3d5xHOWxvSIp1Ef/at/oaExYLY4hgCJQPGwU6UmPyr
+         a3eKnvZUnlOACaoIsQY+4ry0vfBKFFXc5GQeqib4wdRuVYUO8zTuMkj2Dner5dZjE17+
+         jBzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,6 +26,7 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Arjan van de Ven <arjan.van.de.ven@intel.com>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
@@ -37,18 +38,13 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	arjan.van.de.ven@intel.com,
 	dave.hansen@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
 	kvm@vger.kernel.org,
 	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	sironi@amazon.de,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 050/167] Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()"
-Date: Wed, 21 Feb 2018 13:47:41 +0100
-Message-Id: <20180221124527.275276976@linuxfoundation.org>
+Subject: [PATCH 4.14 049/167] x86/speculation: Correct Speculation Control microcode blacklist again
+Date: Wed, 21 Feb 2018 13:47:40 +0100
+Message-Id: <20180221124527.231407622@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -58,8 +54,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015522884375203?=
-X-GMAIL-MSGID: =?utf-8?q?1593015522884375203?=
+X-GMAIL-THRID: =?utf-8?q?1593015397085448987?=
+X-GMAIL-MSGID: =?utf-8?q?1593015519918493871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -69,15 +65,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit f208820a321f9b23d77d7eed89945d862d62a3ed upstream.
+commit d37fc6d360a404b208547ba112e7dabb6533c7fc upstream.
 
-This reverts commit 64e16720ea0879f8ab4547e3b9758936d483909b.
+Arjan points out that the Intel document only clears the 0xc2 microcode
+on *some* parts with CPUID 506E3 (INTEL_FAM6_SKYLAKE_DESKTOP stepping 3).
+For the Skylake H/S platform it's OK but for Skylake E3 which has the
+same CPUID it isn't (yet) cleared.
 
-We cannot call C functions like that, without marking all the
-call-clobbered registers as, well, clobbered. We might have got away
-with it for now because the __ibp_barrier() function was *fairly*
-unlikely to actually use any other registers. But no. Just no.
+So removing it from the blacklist was premature. Put it back for now.
 
+Also, Arjan assures me that the 0x84 microcode for Kaby Lake which was
+featured in one of the early revisions of the Intel document was never
+released to the public, and won't be until/unless it is also validated
+as safe. So those can change to 0x80 which is what all *other* versions
+of the doc have identified.
+
+Once the retrospective testing of existing public microcodes is done, we
+should be back into a mode where new microcodes are only released in
+batches and we shouldn't even need to update the blacklist for those
+anyway, so this tweaking of the list isn't expected to be a thing which
+keeps happening.
+
+Requested-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -92,63 +101,35 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: arjan.van.de.ven@intel.com
 Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
 Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: sironi@amazon.de
-Link: http://lkml.kernel.org/r/1518305967-31356-3-git-send-email-dwmw@amazon.co.uk
+Link: http://lkml.kernel.org/r/1518449255-2182-1-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/nospec-branch.h |   13 +++++++++----
- arch/x86/include/asm/processor.h     |    3 ---
- arch/x86/kernel/cpu/bugs.c           |    6 ------
- 3 files changed, 9 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/intel.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
- 
- static inline void indirect_branch_prediction_barrier(void)
- {
--	alternative_input("",
--			  "call __ibp_barrier",
--			  X86_FEATURE_USE_IBPB,
--			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
-+	asm volatile(ALTERNATIVE("",
-+				 "movl %[msr], %%ecx\n\t"
-+				 "movl %[val], %%eax\n\t"
-+				 "movl $0, %%edx\n\t"
-+				 "wrmsr",
-+				 X86_FEATURE_USE_IBPB)
-+		     : : [msr] "i" (MSR_IA32_PRED_CMD),
-+			 [val] "i" (PRED_CMD_IBPB)
-+		     : "eax", "ecx", "edx", "memory");
- }
- 
- #endif /* __ASSEMBLY__ */
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -968,7 +968,4 @@ bool xen_set_default_idle(void);
- 
- void stop_this_cpu(void *dummy);
- void df_debug(struct pt_regs *regs, long error_code);
--
--void __ibp_barrier(void);
--
- #endif /* _ASM_X86_PROCESSOR_H */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -337,9 +337,3 @@ ssize_t cpu_show_spectre_v2(struct devic
- 		       spectre_v2_module_string());
- }
- #endif
--
--void __ibp_barrier(void)
--{
--	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
--}
--EXPORT_SYMBOL_GPL(__ibp_barrier);
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -116,13 +116,14 @@ struct sku_microcode {
+ 	u32 microcode;
+ };
+ static const struct sku_microcode spectre_bad_microcodes[] = {
+-	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
+-	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
+-	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
+-	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
+-	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x80 },
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x80 },
++	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x80 },
++	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x80 },
++	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
++	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
