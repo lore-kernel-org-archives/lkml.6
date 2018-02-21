@@ -1,66 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218022-3-12592331452899637331
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218022; b=hGzdO4PKnDVVkuqvEoYNJz2fX/a+zb42mzPFss5vVgFZ0lm
-    VYTur2krfk0fcEmuM23RtSSSpkx6oxs9HrVJm+atWwb19K96UsVrH/Z8avmmYnEc
-    sxtBO+lN8ibxCrHlDWqVwtwnP+KsH6zL3VlIwA5UKLhFEFrHTaigpqonZyc81WFz
-    CDPtBUOg4jrEH6Ec7evBnSAVchDgMt3UQwbbjwDgKi4PwU1zRqvPKTbdUUq8GcYA
-    dQWPNUBW2sCoh16onO9SfyJQVdh36NjIibGVof2M7sW2dAGpwMZmsMUQT7P8XlR3
-    aafe1Lxmhsk3g7qKez3tOBlTnndIXxV8xLqYpAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218022; bh=mBXUC8flRhccTjLmWoLz/g3kRq
-    WxtbcwvznA3d+QjMQ=; b=pe4tUUIJEkDw59SJpvfFQtw7FFdedohrf5OXMk9cIx
-    adg+EpeGzQgFmPoi57uprd2r1KgezueQO9gXfhrZwptCI2Ou4U3XzhcUcwk9Vg4F
-    a5zAfWLDW2zQ/xEKn6gMFFCbPhXNRAaPUZhaXbXGC6xB9BsrRVf/Lrxrf5whnJPt
-    1T2MG9VSy4+bw2M8oELh8CxqZcCR4fq3lsEGp63+iwpS/VTcRHjyVVhIhXANYnpY
-    Y8a0igdo7bfesPDh7tdgFTJYeB8DnIS20kZbficGVlzV2bTFOnqAKU521RMz8LZb
-    8K0tTJo4cCeeySXkB934595knDODWrn7HcTRcOkS/15w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935251AbeBUNAI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:00:08 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36852 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932948AbeBUNAG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:00:06 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225UEhGlcg2JssyIEJ+lB/Akjaq3CzWXMZfYfC4FXzkwjVnM6lGEoVzbRD2f8PIghr44toxD
+ARC-Seal: i=1; a=rsa-sha256; t=1519218022; cv=none;
+        d=google.com; s=arc-20160816;
+        b=vm+NsS8wwTqL5/vgGgjZORwh0JvHRriykWdEsjMLxkWcEWebNzNYerBhSgKXPGyWkb
+         39uvlSKj+YRw8rzvc0laFeSfJA5ISxHUy2vwl+9hxulWozoNVnwELPqasSw3cPQmiP5j
+         YUPBxA0eikI+iMziC/WInJLfd0qLgU9fKOzUR0oIsMAPDBGrWZvvg9rvmL9C3G3+/dPd
+         iKCHkJI94+KvKs3xKE9AIkaGsvwUgC+vCIC9+ZpkTIfN+KaONTm2fdmP/iQcIBmjNsIc
+         IwOkX4akj3ysvHdTF1N7OgUX/5IaNRL8H1r6nOVo++qGePi8olE+Gf3cwHH0c6KlS3wC
+         1L5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=wJb0BqxCRMq5HKLc9DLVOJKc3lKkKbDe9VQucmZkNVU=;
+        b=fDEc1D0WRx7z5s88mTsb8ekEQ5CYQWv2LBLRfpOkGSkndIXbmkVs8wU9Bf3AAUXGGm
+         tiDIxLORcWAsJKmpAfc0E2+oij64fBNQC4/EMHLSBTGOZ+YAamAp3hyS8fEWcF2b48yu
+         2k6Du7xmHCH3s9DU6nJYzdKz88DO+dJokh2k8XBp8b5vFGSWhRuMSlAm4W9qcuhX/2it
+         AZkhY4uHAAYv5YzopeLYshWcagn7QyvvUTcjpbLQB1wF7u0JOBpJhoIMS+YBQoNwHq5t
+         efdmvZUaPU6apUdmnVwcj8GjilzUz2eOJJcX0GErcexm4HAN/aYV5NWZE6gGbQvfrgIE
+         3X+w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 055/167] PM / runtime: Update links_count also if !CONFIG_SRCU
-Date: Wed, 21 Feb 2018 13:47:46 +0100
-Message-Id: <20180221124527.550243966@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	dan.j.williams@intel.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 060/167] x86/entry/64: Interleave XOR register clearing with PUSH instructions
+Date: Wed, 21 Feb 2018 13:47:51 +0100
+Message-Id: <20180221124527.797749407@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -68,9 +48,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593015557071139759?=
+X-GMAIL-MSGID: =?utf-8?q?1593015557071139759?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,34 +59,183 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 433986c2c265d106d6a8e88006e0131fefc92b7b upstream.
+commit f7bafa2b05ef25eda1d9179fd930b0330cf2b7d1 upstream.
 
-Commit baa8809f6097 (PM / runtime: Optimize the use of device links)
-added an invocation of pm_runtime_drop_link() to __device_link_del().
-However there are two variants of that function, one for CONFIG_SRCU and
-another for !CONFIG_SRCU, and the commit only modified the former.
+Same as is done for syscalls, interleave XOR with PUSH instructions
+for exceptions/interrupts, in order to minimize the cost of the
+additional instructions required for register clearing.
 
-Fixes: baa8809f6097 (PM / runtime: Optimize the use of device links)
-Cc: v4.10+ <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180211104949.12992-4-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/entry/calling.h  |   40 +++++++++++++++++++---------------------
+ arch/x86/entry/entry_64.S |   30 +++++++++++++++++++++---------
+ 2 files changed, 40 insertions(+), 30 deletions(-)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -313,6 +313,9 @@ static void __device_link_del(struct dev
- 	dev_info(link->consumer, "Dropping the link to %s\n",
- 		 dev_name(link->supplier));
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -101,44 +101,42 @@ For 32-bit we have the following convent
+ 	addq	$-(15*8), %rsp
+ 	.endm
  
-+	if (link->flags & DL_FLAG_PM_RUNTIME)
-+		pm_runtime_drop_link(link->consumer);
-+
- 	list_del(&link->s_node);
- 	list_del(&link->c_node);
- 	device_link_free(link);
+-	.macro SAVE_REGS offset=0
++	.macro SAVE_AND_CLEAR_REGS offset=0
++	/*
++	 * Save registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
+ 	movq %rdi, 14*8+\offset(%rsp)
+ 	movq %rsi, 13*8+\offset(%rsp)
+ 	movq %rdx, 12*8+\offset(%rsp)
+ 	movq %rcx, 11*8+\offset(%rsp)
+ 	movq %rax, 10*8+\offset(%rsp)
+ 	movq %r8,  9*8+\offset(%rsp)
++	xorq %r8, %r8				/* nospec r8 */
+ 	movq %r9,  8*8+\offset(%rsp)
++	xorq %r9, %r9				/* nospec r9 */
+ 	movq %r10, 7*8+\offset(%rsp)
++	xorq %r10, %r10				/* nospec r10 */
+ 	movq %r11, 6*8+\offset(%rsp)
++	xorq %r11, %r11				/* nospec r11 */
+ 	movq %rbx, 5*8+\offset(%rsp)
++	xorl %ebx, %ebx				/* nospec rbx */
+ 	movq %rbp, 4*8+\offset(%rsp)
++	xorl %ebp, %ebp				/* nospec rbp */
+ 	movq %r12, 3*8+\offset(%rsp)
++	xorq %r12, %r12				/* nospec r12 */
+ 	movq %r13, 2*8+\offset(%rsp)
++	xorq %r13, %r13				/* nospec r13 */
+ 	movq %r14, 1*8+\offset(%rsp)
++	xorq %r14, %r14				/* nospec r14 */
+ 	movq %r15, 0*8+\offset(%rsp)
++	xorq %r15, %r15				/* nospec r15 */
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
+ 
+-	/*
+-	 * Sanitize registers of values that a speculation attack
+-	 * might otherwise want to exploit. The lower registers are
+-	 * likely clobbered well before they could be put to use in
+-	 * a speculative execution gadget:
+-	 */
+-	.macro CLEAR_REGS_NOSPEC
+-	xorl %ebp, %ebp
+-	xorl %ebx, %ebx
+-	xorq %r8, %r8
+-	xorq %r9, %r9
+-	xorq %r10, %r10
+-	xorq %r11, %r11
+-	xorq %r12, %r12
+-	xorq %r13, %r13
+-	xorq %r14, %r14
+-	xorq %r15, %r15
+-	.endm
+-
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+@@ -177,7 +175,7 @@ For 32-bit we have the following convent
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
++ * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -561,8 +561,7 @@ END(irq_entries_start)
+ 1:
+ 
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 
+ 	testb	$3, CS(%rsp)
+@@ -1108,8 +1107,7 @@ ENTRY(xen_failsafe_callback)
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1153,8 +1151,7 @@ idtentry machine_check		do_mce			has_err
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1205,8 +1202,7 @@ END(paranoid_exit)
+ ENTRY(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+@@ -1393,18 +1389,34 @@ ENTRY(nmi)
+ 	pushq   (%rdx)		/* pt_regs->dx */
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   %rax		/* pt_regs->ax */
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might otherwise want to exploit. The lower registers are
++	 * likely clobbered well before they could be put to use in
++	 * a speculative execution gadget. Interleave XOR with PUSH
++	 * for better uop scheduling:
++	 */
+ 	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
+ 	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
+ 	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
+ 	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
+ 	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
+ 	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
+ 	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
+ 	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
+ 	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
+ 	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 
+ 	/*
