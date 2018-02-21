@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2242590hQqsspV63i8J7jJLoAhLDJsZ8CdxmH3tXjbwhLsBOHZWkZFR1yRsLaqqqYzYtuw0I
-ARC-Seal: i=1; a=rsa-sha256; t=1519218531; cv=none;
+X-Google-Smtp-Source: AH8x227msyoQTjlX4MeuNhDqjv5EmU+0EVTBM50pZGBStFbHfZvQQbJkusQ/RZRF3OVPxbcil70n
+ARC-Seal: i=1; a=rsa-sha256; t=1519218528; cv=none;
         d=google.com; s=arc-20160816;
-        b=uVOO2Cbk7mUY02RbDD7Ko+rn5d811fM+2EFJcFQ+Fp5i6UqLJhtCre4EiNSlgKdizL
-         mzcO7yK5rSqv0szgWFyWHfGdS/ZWzEVm7IGF6JgVYN4iDFgA57RNa+26Z6hCFjbmnZVc
-         dq0CqgFPnbLUIb2GNC3Ms+T91kd6rYHIbfoEoDRqTqL+ses8T4B/4CiRBFPLHztdaNCJ
-         0iIGoZJYa6CGb/gluvOWqoZRtElLHp97Wm4ZIlerAKHpsrhNu3DxURJCy6JqoD8VltPg
-         LHvV3/m5nLWpb44cScnbvFcGwy1GlYPamnF1c0M7idOb3dkS/BlLBMwH1Rq3UrVPzfXE
-         HqPg==
+        b=PvbtWKBkSB7zLCuF4FHKFKJa9HMg7gBlJtIPd+dNXtlCwtdankG6HCEJiGYQUZ7m0U
+         +qN/KoRdI57kO5AdKJ6cSlGjrjQn6xt1Pk2g7ffh+HfkdcorFYhP/vi+aCO/gLvmOH00
+         HSmCTU0Trg8QEdZus6mdpjYON3E2UNtJNi8UtWpgAPQCxzIcrEjytPEEUw32/tn1pO9y
+         yDzh/VoaOpyuGA2OFkN9sQIbLUkPGdUih/GGvY2dcHSy2v5pvhdkaBLaa0kIWTJM9pZS
+         gjI/lbLz52CV3u4pMjsxvm2suO/mBSiLw2W+BWMiUd/Bk7wkbnE2xQanMVL+uBCBpXpb
+         G+KA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rz5MshDy8zEB+rPDtuXCDPczHieCfYcqEV7sROw+BgI=;
-        b=ncjNvuLG4CTXd2MjC7MfYYfVuCuzc5Y0JLnF6PIEwIPtkNhjFtBjGPGg+uORV039VJ
-         wpPnPxjCwTlsfhWjYt3KxqmG7JAKXeHdgeFmiqvJJwT3Wf2vWGo2uYKy5mLUXU7LN1Cq
-         lsToJCHAucR6laHsAfHzfBoRGM9VOD6xDMZb8qciMfqsFd2lTfYahjUms8duz2RO4tT2
-         QnXrMzrd0FY3g32FDBVueqHYObJnWHVj7BUmU09baVh8QuqZurG7Glf8Ilm7gGOTOb6h
-         I221mHZXCTXmXzJYjci6sVG+HNa6eta0HGMgJe1ybLJoIspyh1SJtzB4+lDwdM4JyYBo
-         KR6w==
+        bh=51uDIkuAcO4LROAke0bL18Hh9Tvi+7HzWsz6jbvFLMk=;
+        b=UZvUkQMRc0v4+hZKMa/HZYooBX2Ku5Qc/SVB7Oo4N5F4sDzdaZsFGHC1RQwk9XaBHa
+         VBueF0ZO1CAd7+EAPI9nykLA95PSiYAqLfaJv/VvVXxKfVkTN7yGz4H5Es+9q1SBrB6v
+         Jr6T6I3zXdRZavaZKRhP4SkTw0uvvXQ26GENPTBH1sOF6gX03CAP+aSz8kTOq6Csvap7
+         zlD4MbH3TxWRrtJplpsJX5WWXyLFUR6o6wC1E6A3NrGJIhtTYpl5KvlbpCTrMnYTx7b3
+         pRQjmzELHJAcH3Uk42AoOuheKV6Yw2AeE3LqmLp8cG/5QNl5C6IlprbmwM6TdrHLboV+
+         lG5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 4.15 073/163] gfs2: Fixes to "Implement iomap for block_map"
-Date: Wed, 21 Feb 2018 13:48:22 +0100
-Message-Id: <20180221124534.510590725@linuxfoundation.org>
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dmitry Safonov <dsafonov@virtuozzo.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 072/163] selftests/x86: Do not rely on "int $0x80" in test_mremap_vdso.c
+Date: Wed, 21 Feb 2018 13:48:21 +0100
+Message-Id: <20180221124534.459673249@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593016090861214809?=
-X-GMAIL-MSGID: =?utf-8?q?1593016090861214809?=
+X-GMAIL-THRID: =?utf-8?q?1593015323232886251?=
+X-GMAIL-MSGID: =?utf-8?q?1593016087735785566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,116 +56,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 49edd5bf429c405b3a7f75503845d9f66a47dd4b upstream.
+commit 2cbc0d66de0480449c75636f55697c7ff3af61fc upstream.
 
-It turns out that commit 3974320ca6 "Implement iomap for block_map"
-introduced a few bugs that trigger occasional failures with xfstest
-generic/476:
+On 64-bit builds, we should not rely on "int $0x80" working (it only does if
+CONFIG_IA32_EMULATION=y is enabled).
 
-In gfs2_iomap_begin, we jump to do_alloc when we determine that we are
-beyond the end of the allocated metadata (height > ip->i_height).
-There, we can end up calling hole_size with a metapath that doesn't
-match the current metadata tree, which doesn't make sense.  After
-untangling the code at do_alloc, fix this by checking if the block we
-are looking for is within the range of allocated metadata.
+Without this patch, the move test may succeed, but the "int $0x80" causes
+a segfault, resulting in a false negative output of this self-test.
 
-In addition, add a BUG() in case gfs2_iomap_begin is accidentally called
-for reading stuffed files: this is handled separately.  Make sure we
-don't truncate iomap->length for reads beyond the end of the file; in
-that case, the entire range counts as a hole.
-
-Finally, revert to taking a bitmap write lock when doing allocations.
-It's unclear why that change didn't lead to any failures during testing.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org
+Link: http://lkml.kernel.org/r/20180211111013.16888-4-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/bmap.c |   43 +++++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
+ tools/testing/selftests/x86/test_mremap_vdso.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -736,7 +736,7 @@ int gfs2_iomap_begin(struct inode *inode
- 	__be64 *ptr;
- 	sector_t lblock;
- 	sector_t lend;
--	int ret;
-+	int ret = 0;
- 	int eob;
- 	unsigned int len;
- 	struct buffer_head *bh;
-@@ -748,12 +748,14 @@ int gfs2_iomap_begin(struct inode *inode
- 		goto out;
- 	}
+--- a/tools/testing/selftests/x86/test_mremap_vdso.c
++++ b/tools/testing/selftests/x86/test_mremap_vdso.c
+@@ -90,8 +90,12 @@ int main(int argc, char **argv, char **e
+ 			vdso_size += PAGE_SIZE;
+ 		}
  
--	if ((flags & IOMAP_REPORT) && gfs2_is_stuffed(ip)) {
--		gfs2_stuffed_iomap(inode, iomap);
--		if (pos >= iomap->length)
--			return -ENOENT;
--		ret = 0;
--		goto out;
-+	if (gfs2_is_stuffed(ip)) {
-+		if (flags & IOMAP_REPORT) {
-+			gfs2_stuffed_iomap(inode, iomap);
-+			if (pos >= iomap->length)
-+				ret = -ENOENT;
-+			goto out;
-+		}
-+		BUG_ON(!(flags & IOMAP_WRITE));
- 	}
- 
- 	lblock = pos >> inode->i_blkbits;
-@@ -764,7 +766,7 @@ int gfs2_iomap_begin(struct inode *inode
- 	iomap->type = IOMAP_HOLE;
- 	iomap->length = (u64)(lend - lblock) << inode->i_blkbits;
- 	iomap->flags = IOMAP_F_MERGED;
--	bmap_lock(ip, 0);
-+	bmap_lock(ip, flags & IOMAP_WRITE);
- 
- 	/*
- 	 * Directory data blocks have a struct gfs2_meta_header header, so the
-@@ -807,27 +809,28 @@ int gfs2_iomap_begin(struct inode *inode
- 		iomap->flags |= IOMAP_F_BOUNDARY;
- 	iomap->length = (u64)len << inode->i_blkbits;
- 
--	ret = 0;
--
- out_release:
- 	release_metapath(&mp);
--	bmap_unlock(ip, 0);
-+	bmap_unlock(ip, flags & IOMAP_WRITE);
- out:
- 	trace_gfs2_iomap_end(ip, iomap, ret);
- 	return ret;
- 
- do_alloc:
--	if (!(flags & IOMAP_WRITE)) {
--		if (pos >= i_size_read(inode)) {
-+	if (flags & IOMAP_WRITE) {
-+		ret = gfs2_iomap_alloc(inode, iomap, flags, &mp);
-+	} else if (flags & IOMAP_REPORT) {
-+		loff_t size = i_size_read(inode);
-+		if (pos >= size)
- 			ret = -ENOENT;
--			goto out_release;
--		}
--		ret = 0;
--		iomap->length = hole_size(inode, lblock, &mp);
--		goto out_release;
-+		else if (height <= ip->i_height)
-+			iomap->length = hole_size(inode, lblock, &mp);
-+		else
-+			iomap->length = size - pos;
-+	} else {
-+		if (height <= ip->i_height)
-+			iomap->length = hole_size(inode, lblock, &mp);
- 	}
--
--	ret = gfs2_iomap_alloc(inode, iomap, flags, &mp);
- 	goto out_release;
- }
++#ifdef __i386__
+ 		/* Glibc is likely to explode now - exit with raw syscall */
+ 		asm volatile ("int $0x80" : : "a" (__NR_exit), "b" (!!ret));
++#else /* __x86_64__ */
++		syscall(SYS_exit, ret);
++#endif
+ 	} else {
+ 		int status;
  
