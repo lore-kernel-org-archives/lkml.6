@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935570AbeBUQZN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:25:13 -0500
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:39142 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932318AbeBUQZL (ORCPT
+        id S935677AbeBUQ0S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:26:18 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:40384 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeBUQ0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:25:11 -0500
-X-Google-Smtp-Source: AH8x2248AEUdRxJk/5O2piSN4Du+8a6jpBep2ySCfjcVe6bdTIN5FlEnw5vYqCOrQoX83CLfXgQg3l1dreISh4GrEXw=
+        Wed, 21 Feb 2018 11:26:16 -0500
+X-Google-Smtp-Source: AH8x224hfViiERPAgYghXViB8lwAptLuUXGjmU8IqwLdIAQdY4grstg5lWEtOHmbVbo2EBa6niczbXSOhw1C+7i8J2Y=
 MIME-Version: 1.0
-In-Reply-To: <4ba9dc3045e997d3e07218c80ed20591137cdc41.1519228823.git.gdouezangrard@gmail.com>
-References: <cover.1519228823.git.gdouezangrard@gmail.com> <4ba9dc3045e997d3e07218c80ed20591137cdc41.1519228823.git.gdouezangrard@gmail.com>
+In-Reply-To: <4c78b9aa890eebda69bbfff71b5de04b574bef49.1519228823.git.gdouezangrard@gmail.com>
+References: <cover.1519228823.git.gdouezangrard@gmail.com> <4c78b9aa890eebda69bbfff71b5de04b574bef49.1519228823.git.gdouezangrard@gmail.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 21 Feb 2018 18:25:10 +0200
-Message-ID: <CAHp75VcQ+u6knQp=85y=BbFX5CmN47woxkqx1RsUrhJwwZdHuw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] platform/x86: topstar-laptop: add Topstar
- U931/RVP7 WLAN LED workaround
+Date: Wed, 21 Feb 2018 18:26:15 +0200
+Message-ID: <CAHp75VfFoU3sM9oE=NTZQRetsngsf_c0aZUggevb1StFXO6rxw@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] platform/x86: topstar-laptop: replace licence text
+ with SPDX tag
 To: =?UTF-8?Q?Guillaume_Dou=C3=A9zan=2DGrard?=
         <gdouezangrard@gmail.com>
 Cc: Andy Shevchenko <andy@infradead.org>,
@@ -27,30 +27,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LGPHVv008340
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1LGQMkO008732
 
 On Wed, Feb 21, 2018 at 6:10 PM, Guillaume Douézan-Grard
 <gdouezangrard@gmail.com> wrote:
-> Topstar U931 laptops provide a LED synced with the WLAN adapter
-> hard-blocking state. Unfortunately, some models seem to be defective,
-> making impossible to hard-block the adapter with the WLAN switch and
-> thus the LED is useless.
->
-> An ACPI method is available to programmatically control this switch and
-> it indirectly allows to control the LED.
->
-> This commit registers the LED within the corresponding subsystem, making
-> possible for instance to use an rfkill-based trigger to synchronize the
-> LED with the device state.
->
-> This workaround is enabled automatically for Topstar U931/RVP7 laptops
-> based on a DMI check.
+> Replace verbatim GPLv2 license copy with SPDX identifier.
 
-> - * ACPI driver for Topstar notebooks (hotkeys support only)
-> + * Topstar Laptop ACPI Extras driver
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 
-Nope.
-I think it's previous one.
+It doesn't much.
+
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
 
 -- 
 With Best Regards,
