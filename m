@@ -1,116 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeBUJVF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:21:05 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54469 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752798AbeBUJVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:21:00 -0500
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 01/10] regmap: mmio: Add function to attach a clock
-Date: Wed, 21 Feb 2018 10:20:25 +0100
-Message-Id: <1155920db000d014fd1cd604ed48d1b9a8f64ac1.1519204731.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
-References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
-In-Reply-To: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
-References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
+        id S932261AbeBUJXE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:23:04 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:49350 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932069AbeBUJXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 04:23:01 -0500
+Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13
+ 9360
+To: Mario Limonciello <mario.limonciello@dell.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        it+linux-input@molgen.mpg.de, linux@leemhuis.info
+References: <5a74e1a7-2083-c6b2-f51a-f44908ac8bc4@molgen.mpg.de>
+ <20180130175017.72inurhk5l7tcvae@dtor-ws>
+ <20180130180736.ehucqywbz7zdl4v7@dtor-ws>
+ <f02b699d-b130-c09f-3e09-db62ecf2df2c@molgen.mpg.de>
+ <609c1f35df7346da8ac1d12c35e04cf7@ausx13mpc120.AMER.DELL.COM>
+ <b9223169-2282-4ada-999a-7f50d205ca7d@molgen.mpg.de>
+ <33355407b8d74575bab0c36e442141ea@ausx13mpc120.AMER.DELL.COM>
+From: Paul Menzel <pmenzel+linux-input@molgen.mpg.de>
+Message-ID: <9e83b8b4-7ea5-d286-a559-66e000df7da1@molgen.mpg.de>
+Date: Wed, 21 Feb 2018 10:22:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <33355407b8d74575bab0c36e442141ea@ausx13mpc120.AMER.DELL.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Dear Mario,
 
-regmap_init_mmio_clk allows to specify a clock that needs to be enabled
-while accessing the registers.
 
-However, that clock is retrieved through its clock ID, which means it will
-lookup that clock based on the current device that registers the regmap,
-and, in the DT case, will only look in that device OF node.
+Thank you for your reply.
 
-This might be problematic if the clock to enable is stored in another node.
-Let's add a function that allows to attach a clock that has already been
-retrieved to a regmap in order to fix this.
+Am 15.02.2018 um 16:22 schrieb Mario.Limonciello@dell.com:
+>> -----Original Message-----
+>> From: Paul Menzel [mailto:pmenzel+linux-input@molgen.mpg.de]
+>> Sent: Thursday, February 15, 2018 2:26 AM
+>> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; Dmitry Torokhov
+>> <dmitry.torokhov@gmail.com>
+>> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; it+linux-
+>> input@molgen.mpg.de; linux@leemhuis.info
+>> Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13 9360
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/base/regmap/regmap-mmio.c | 24 ++++++++++++++++++++++++
- include/linux/regmap.h            |  3 +++
- 2 files changed, 27 insertions(+)
+>> On 02/14/18 18:11, Mario.Limonciello@dell.com wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Paul Menzel [mailto:pmenzel+linux-input@molgen.mpg.de]
+>>>> Sent: Wednesday, February 14, 2018 10:41 AM
+>>>> To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>>> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; it+linux-
+>>>> input@molgen.mpg.de; Limonciello, Mario <Mario_Limonciello@Dell.com>;
+>>>> Thorsten Leemhuis <linux@leemhuis.info>
+>>>> Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13 9360
+>>
+>>>> On 01/30/18 19:07, Dmitry Torokhov wrote:
+>>>>> On Tue, Jan 30, 2018 at 09:52:45AM -0800, Dmitry Torokhov wrote:
+>>>>
+>>>>>> On Tue, Jan 30, 2018 at 06:36:34PM +0100, Paul Menzel wrote:
+>>>>
+>>>>>>> I do not know, when it started, but with Linux 4.14-rc8 and 4.15,
+>>>>>>> benchmarking suspend and resume time with `sleepgraph.py` [1][2], there is a
+>>>>>>> regression, that i8042 AUX port [serio1] suspend takes a second on Dell XPS
+>>>>>>> 13 9360 and TUXEDO Book 1406.
+>>>>>>
+>>>>>> It would be really helpful to know when the regression started.
+>>>>>
+>>>>> So the reason it takes longer is because the touchpad does not want to
+>>>>> talk to us for some reason and we wait until commands time out:
+>>>>>
+>>>>> [   94.591636] calling  serio1+ @ 2299, parent: i8042
+>>>>> [   94.794292] psmouse serio1: Failed to disable mouse on isa0060/serio1
+>>>>> [   95.593303] call serio1+ returned 0 after 974280 usecs
+>>>>>
+>>>>> but it is not clear why it happens, I do not think we changed anything
+>>>>> in that path for a while, so it might be some other change affecting
+>>>>> things indirectly. I'm afraid you'll have to narrow the scope, and
+>>>>> ideally bisect.
+>>>
+>>> Please keep in mind the XPS 9360 has a touchpad that can operate in I2C
+>>> or PS2 modes.  It's connected to both buses and with the right initialization
+>>> sequence will come up in I2C mode.
+>>>
+>>> Assuming Paul M. has compiled and used hid-multitouch and i2c-hid the
+>>> touchpad should be operating in I2C mode.
+>>>
+>>> When this happens I expect that the touchpad shouldn't be responding
+>>> to PS2 commands.
+>>>
+>>> As a debugging tactic, you may consider to unload psmouse before
+>>> suspend and still see the touchpad operational.
+>>
+>> Thank you! Unloading *psmouse* with `sudo modprobe -r psmouse` indeed
+>> worked on the Dell XPS 13 9360, that means, the cursor is still functioning.
+>>
+>>>> Thank you for your replies. First of all, it looks like *only* the Dell
+>>>> system is effected as I was unable to reproduce it on the TUXEDO Book
+>>>> 1406. I have to verify that by finding old log files.
+>>>
+>>> Does this other laptop you are drawing a comparison to also have a
+>>> touchpad that can operate in multiple modes?
+>>>
+>>> To make an accurate comparison you should determine what mode it's in.
+>>
+>> Yeah, removing the module *psmouse*, the cursor didn’t work there
+>> anymore. I was really sure, that I saw that problem once on the TUXEDO
+>> device too, but must have been mistaken, that’s why I corrected it.
+>> Sorry for the misunderstanding.
+>>
+>> So, why does *psmouse* get loaded on the Dell XPS 13 9360 since at least
+>> Linux 4.13? Or where the modules added causing the touchpad to operate
+>> in I2C mode, which causes PS2 to stop to work?
+> 
+> It was like that before this laptop even launched to the market.
+> It's been like that since way before 4.13.  I want to say maybe 3.13ish is when
+> I2C mode would come up instead.
 
-diff --git a/drivers/base/regmap/regmap-mmio.c b/drivers/base/regmap/regmap-mmio.c
-index 5189fd6182f6..5cadfd3394d8 100644
---- a/drivers/base/regmap/regmap-mmio.c
-+++ b/drivers/base/regmap/regmap-mmio.c
-@@ -28,6 +28,8 @@
- struct regmap_mmio_context {
- 	void __iomem *regs;
- 	unsigned val_bytes;
-+
-+	bool attached_clk;
- 	struct clk *clk;
- 
- 	void (*reg_write)(struct regmap_mmio_context *ctx,
-@@ -363,4 +365,26 @@ struct regmap *__devm_regmap_init_mmio_clk(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(__devm_regmap_init_mmio_clk);
- 
-+int regmap_mmio_attach_clk(struct regmap *map, struct clk *clk)
-+{
-+	struct regmap_mmio_context *ctx = map->bus_context;
-+
-+	ctx->clk = clk;
-+	ctx->attached_clk = true;
-+
-+	return clk_prepare(ctx->clk);
-+}
-+EXPORT_SYMBOL_GPL(regmap_mmio_attach_clk);
-+
-+void regmap_mmio_detach_clk(struct regmap *map)
-+{
-+	struct regmap_mmio_context *ctx = map->bus_context;
-+
-+	clk_unprepare(ctx->clk);
-+
-+	ctx->attached_clk = false;
-+	ctx->clk = NULL;
-+}
-+EXPORT_SYMBOL_GPL(regmap_mmio_detach_clk);
-+
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 6a3aeba40e9e..5f7ad0552c03 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -21,6 +21,7 @@
- #include <linux/lockdep.h>
- 
- struct module;
-+struct clk;
- struct device;
- struct i2c_client;
- struct irq_domain;
-@@ -905,6 +906,8 @@ bool regmap_ac97_default_volatile(struct device *dev, unsigned int reg);
- 	__regmap_lockdep_wrapper(__devm_regmap_init_sdw, #config,	\
- 				sdw, config)
- 
-+int regmap_mmio_attach_clk(struct regmap *map, struct clk *clk);
-+void regmap_mmio_detach_clk(struct regmap *map);
- void regmap_exit(struct regmap *map);
- int regmap_reinit_cache(struct regmap *map,
- 			const struct regmap_config *config);
--- 
-git-series 0.9.1
+Indeed, analyzing the behavior on the current 8th generation Dell XPS 13 
+93*7*0 with the shipped Ubuntu with Linux 4.4.0-112-generic, the same 
+delay is visible.
+
+> The order of events goes something like this:
+> 1) Touchpad is initially in PS2 mode
+> 2) psmouse loads
+> 3) It reports that it may be supportable by a different bus
+> 4) The sequence to switch to I2C mode happens
+> 5) i2c-hid and hid-multitouch get loaded
+> 6) psmouse is no longer functional
+> 
+> Dmitry is there a way that we can connect the two events?  When i2c-hid finds
+> the touchpad notify psmouse to unload or at least stop trying to access it to prevent
+> the problem Paul is talking about with suspend?
+
+That would be great. Please tell me, if there is a bug tracker, where 
+this issue should reported to to track it.
+
+
+Kind regards,
+
+Paul
