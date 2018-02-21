@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224yAJ5RhqTiq87BTLBmYN5LDI0LG9zHGObdUEmHpYDZsi98TuArKN4Kepv0w90J5TgiVF5T
-ARC-Seal: i=1; a=rsa-sha256; t=1519218111; cv=none;
+X-Google-Smtp-Source: AH8x224VZwM9I1DJ17jBcLpAAnXCDV9+vhZN1A7Lje8+sKUpjaum2H40iL6VU06UOhBnwEYPTFlM
+ARC-Seal: i=1; a=rsa-sha256; t=1519218110; cv=none;
         d=google.com; s=arc-20160816;
-        b=ql0gGW6AarV/U1/5RR9eRAXDLq2LrBDazlDX10Ct/5+9jCI45YiSbNO32+IXO3HVlF
-         uaHPLFdqXAX8ke+Q9Gm8Hbs03eoK4jqtIXNI4FY3DYVbh0NglDtkx5uTlJLdM/hPhd0z
-         52BNDvccyMtOlcJe+72RJt29OUUDdvwUvjpHNx13SWrHSk49n2Yn7A7zDBhnOsxMvyL/
-         bwUujphJsRca0Hm+V5HgLH73NUBZJu3sM6Y/DS5N7O5q4GkVPcu0sQ+W0ijbvpnD3qHa
-         0NZ5Fb1bghra0fJgiPEGxNr94GUMQY/yLaYF8oqGjdoNaT+w3CKGiazBCkBMksn7tuRw
-         unSA==
+        b=kBfMl0xtSq/If6aez8RB+nCe5Uc2Y6g4qhVG14cNEbnctz/tMYHef+/n0XV7M6gSMS
+         9w2mAZJUZVOdYTigaL+OzjhCMMfLawKEydk6ZRRBD+3kJXEZJlWAIQVZ2fdygZrbwOKR
+         n30rvbCmijRSWD39WgZNyXPKJ8y6AL4C6R3uX/8JLZL1pvXZ5fZ2fVCaHHD31lDeMbp2
+         0dFa8yWa0Wjaxl9/TFG3ZeukFByaG9VaK3woxbzHPqQawx+c2thTbUqH39Iw/B0HddhY
+         fKvFS2/a6eypps/7xIZOdSPDTLrS0sD/Vrla/5lZ1PmQcP3I2VBHw1l329NFaCd/dzkI
+         SICw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=I382qqmQhxsQ+OdkH41f2noaG9Uwz2eWe0zraP4OHVo=;
-        b=yJf+TnjbKv7ehct08DAz2y4foSXK+wojCQTts6CSc0epcGQb+GBJJLow4N4o9u0ViR
-         d623uf1ccoZDfqsJdPMRClSg027Um8tP4on8i1+KrIwd/MIfetli06Xg1gc2hFUktS94
-         nAA2mdJHHsP7ZgMX9K5EmNof2XGwH7MTlvzDdW21FWRuwmfdeDXml8cfu3gO1bmkg3H4
-         hlGqYphxp7lUBIOr4sGITw33HuFijob4q+RNQs40c3WImdkDnxuEAtaQTgWeNoahsGtp
-         zHQs83mP1a+OpEQgSZNsMZUN/ZfK38PzW6xvT21Xr57AL9KSYuy005J3IuFlwp0dLuJY
-         G3KA==
+        bh=/8bgk6VdOZASwngdA2yRbKckVQqW7q4ajyOm1D3IyzY=;
+        b=NFK0siXcVERNZBBgdgPptASys5Zqp24sl7vH1vtzCSHQ/A9yEgd/TJ+VuGClQNBp3N
+         3RlaPR4Qod7UvxtK2QK5wXJIce16cfhAysPwQsdcGG8o4hroRtjf44GVPUPDb5gSl5sp
+         GXUQN3yQKgTVI+lG59QfKVtjTS/gPe6AkS57tQeISAULuO9NrflwR8wE6Prku9AhlY+B
+         4veklT5XJxX1/bKrutKLPU8vf5LbDNyv8d3uqg9gAYHQIRshBro+ZQL6anrUY8GYstfr
+         E4FXfgdPOA41sj/Cl7xNo6JWz1N10pqcxSnf3591g1zT0Uj37AObsiCm6Nd7NedsmHSo
+         i5PQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jia Zhang <qianyue.zj@alibaba-inc.com>,
+	Rui Wang <rui.y.wang@intel.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	bp@alien8.de,
-	tony.luck@intel.com,
+	dave.hansen@linux.intel.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 086/167] x86/cpu: Rename cpu_data.x86_mask to cpu_data.x86_stepping
-Date: Wed, 21 Feb 2018 13:48:17 +0100
-Message-Id: <20180221124529.111309429@linuxfoundation.org>
+Subject: [PATCH 4.14 085/167] selftests/x86/mpx: Fix incorrect bounds with old _sigfault
+Date: Wed, 21 Feb 2018 13:48:16 +0100
+Message-Id: <20180221124529.064601061@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015338576980962?=
-X-GMAIL-MSGID: =?utf-8?q?1593015650960452682?=
+X-GMAIL-THRID: =?utf-8?q?1593015332922490474?=
+X-GMAIL-MSGID: =?utf-8?q?1593015649582907014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,737 +53,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jia Zhang <qianyue.zj@alibaba-inc.com>
+From: Rui Wang <rui.y.wang@intel.com>
 
-commit b399151cb48db30ad1e0e93dd40d68c6d007b637 upstream.
+commit 961888b1d76d84efc66a8f5604b06ac12ac2f978 upstream.
 
-x86_mask is a confusing name which is hard to associate with the
-processor's stepping.
+For distributions with old userspace header files, the _sigfault
+structure is different. mpx-mini-test fails with the following
+error:
 
-Additionally, correct an indent issue in lib/cpu.c.
+  [root@Purley]# mpx-mini-test_64 tabletest
+  XSAVE is supported by HW & OS
+  XSAVE processor supported state mask: 0x2ff
+  XSAVE OS supported state mask: 0x2ff
+   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
+    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
+  starting mpx bounds table test
+  ERROR: siginfo bounds do not match shadow bounds for register 0
 
-Signed-off-by: Jia Zhang <qianyue.zj@alibaba-inc.com>
-[ Updated it to more recent kernels. ]
+Fix it by using the correct offset of _lower/_upper in _sigfault.
+RHEL needs this patch to work.
+
+Signed-off-by: Rui Wang <rui.y.wang@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: tony.luck@intel.com
-Link: http://lkml.kernel.org/r/1514771530-70829-1-git-send-email-qianyue.zj@alibaba-inc.com
+Cc: dave.hansen@linux.intel.com
+Fixes: e754aedc26ef ("x86/mpx, selftests: Add MPX self test")
+Link: http://lkml.kernel.org/r/1513586050-1641-1-git-send-email-rui.y.wang@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/core.c          |    2 +-
- arch/x86/events/intel/lbr.c           |    2 +-
- arch/x86/events/intel/p6.c            |    2 +-
- arch/x86/include/asm/acpi.h           |    2 +-
- arch/x86/include/asm/processor.h      |    2 +-
- arch/x86/kernel/amd_nb.c              |    2 +-
- arch/x86/kernel/apic/apic.c           |    6 +++---
- arch/x86/kernel/asm-offsets_32.c      |    2 +-
- arch/x86/kernel/cpu/amd.c             |   28 ++++++++++++++--------------
- arch/x86/kernel/cpu/centaur.c         |    4 ++--
- arch/x86/kernel/cpu/common.c          |    8 ++++----
- arch/x86/kernel/cpu/cyrix.c           |    2 +-
- arch/x86/kernel/cpu/intel.c           |   18 +++++++++---------
- arch/x86/kernel/cpu/intel_rdt.c       |    2 +-
- arch/x86/kernel/cpu/microcode/intel.c |    4 ++--
- arch/x86/kernel/cpu/mtrr/generic.c    |    2 +-
- arch/x86/kernel/cpu/mtrr/main.c       |    4 ++--
- arch/x86/kernel/cpu/proc.c            |    4 ++--
- arch/x86/kernel/head_32.S             |    4 ++--
- arch/x86/kernel/mpparse.c             |    2 +-
- arch/x86/lib/cpu.c                    |    2 +-
- drivers/char/hw_random/via-rng.c      |    2 +-
- drivers/cpufreq/acpi-cpufreq.c        |    2 +-
- drivers/cpufreq/longhaul.c            |    6 +++---
- drivers/cpufreq/p4-clockmod.c         |    2 +-
- drivers/cpufreq/powernow-k7.c         |    2 +-
- drivers/cpufreq/speedstep-centrino.c  |    4 ++--
- drivers/cpufreq/speedstep-lib.c       |    6 +++---
- drivers/crypto/padlock-aes.c          |    2 +-
- drivers/edac/amd64_edac.c             |    2 +-
- drivers/hwmon/coretemp.c              |    6 +++---
- drivers/hwmon/hwmon-vid.c             |    2 +-
- drivers/hwmon/k10temp.c               |    2 +-
- drivers/hwmon/k8temp.c                |    2 +-
- drivers/video/fbdev/geode/video_gx.c  |    2 +-
- 35 files changed, 73 insertions(+), 73 deletions(-)
+ tools/testing/selftests/x86/mpx-mini-test.c |   32 ++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3559,7 +3559,7 @@ static int intel_snb_pebs_broken(int cpu
- 		break;
- 
- 	case INTEL_FAM6_SANDYBRIDGE_X:
--		switch (cpu_data(cpu).x86_mask) {
-+		switch (cpu_data(cpu).x86_stepping) {
- 		case 6: rev = 0x618; break;
- 		case 7: rev = 0x70c; break;
- 		}
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -1186,7 +1186,7 @@ void __init intel_pmu_lbr_init_atom(void
- 	 * on PMU interrupt
- 	 */
- 	if (boot_cpu_data.x86_model == 28
--	    && boot_cpu_data.x86_mask < 10) {
-+	    && boot_cpu_data.x86_stepping < 10) {
- 		pr_cont("LBR disabled due to erratum");
- 		return;
- 	}
---- a/arch/x86/events/intel/p6.c
-+++ b/arch/x86/events/intel/p6.c
-@@ -234,7 +234,7 @@ static __initconst const struct x86_pmu
- 
- static __init void p6_pmu_rdpmc_quirk(void)
- {
--	if (boot_cpu_data.x86_mask < 9) {
-+	if (boot_cpu_data.x86_stepping < 9) {
- 		/*
- 		 * PPro erratum 26; fixed in stepping 9 and above.
- 		 */
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -94,7 +94,7 @@ static inline unsigned int acpi_processo
- 	if (boot_cpu_data.x86 == 0x0F &&
- 	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
- 	    boot_cpu_data.x86_model <= 0x05 &&
--	    boot_cpu_data.x86_mask < 0x0A)
-+	    boot_cpu_data.x86_stepping < 0x0A)
- 		return 1;
- 	else if (boot_cpu_has(X86_BUG_AMD_APIC_C1E))
- 		return 1;
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -91,7 +91,7 @@ struct cpuinfo_x86 {
- 	__u8			x86;		/* CPU family */
- 	__u8			x86_vendor;	/* CPU vendor */
- 	__u8			x86_model;
--	__u8			x86_mask;
-+	__u8			x86_stepping;
- #ifdef CONFIG_X86_64
- 	/* Number of 4K pages in DTLB/ITLB combined(in pages): */
- 	int			x86_tlbsize;
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -235,7 +235,7 @@ int amd_cache_northbridges(void)
- 	if (boot_cpu_data.x86 == 0x10 &&
- 	    boot_cpu_data.x86_model >= 0x8 &&
- 	    (boot_cpu_data.x86_model > 0x9 ||
--	     boot_cpu_data.x86_mask >= 0x1))
-+	     boot_cpu_data.x86_stepping >= 0x1))
- 		amd_northbridges.flags |= AMD_NB_L3_INDEX_DISABLE;
- 
- 	if (boot_cpu_data.x86 == 0x15)
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -553,7 +553,7 @@ static DEFINE_PER_CPU(struct clock_event
- 
- static u32 hsx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x02: return 0x3a; /* EP */
- 	case 0x04: return 0x0f; /* EX */
- 	}
-@@ -563,7 +563,7 @@ static u32 hsx_deadline_rev(void)
- 
- static u32 bdx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x02: return 0x00000011;
- 	case 0x03: return 0x0700000e;
- 	case 0x04: return 0x0f00000c;
-@@ -575,7 +575,7 @@ static u32 bdx_deadline_rev(void)
- 
- static u32 skx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x03: return 0x01000136;
- 	case 0x04: return 0x02000014;
- 	}
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -18,7 +18,7 @@ void foo(void)
- 	OFFSET(CPUINFO_x86, cpuinfo_x86, x86);
- 	OFFSET(CPUINFO_x86_vendor, cpuinfo_x86, x86_vendor);
- 	OFFSET(CPUINFO_x86_model, cpuinfo_x86, x86_model);
--	OFFSET(CPUINFO_x86_mask, cpuinfo_x86, x86_mask);
-+	OFFSET(CPUINFO_x86_stepping, cpuinfo_x86, x86_stepping);
- 	OFFSET(CPUINFO_cpuid_level, cpuinfo_x86, cpuid_level);
- 	OFFSET(CPUINFO_x86_capability, cpuinfo_x86, x86_capability);
- 	OFFSET(CPUINFO_x86_vendor_id, cpuinfo_x86, x86_vendor_id);
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -119,7 +119,7 @@ static void init_amd_k6(struct cpuinfo_x
- 		return;
- 	}
- 
--	if (c->x86_model == 6 && c->x86_mask == 1) {
-+	if (c->x86_model == 6 && c->x86_stepping == 1) {
- 		const int K6_BUG_LOOP = 1000000;
- 		int n;
- 		void (*f_vide)(void);
-@@ -149,7 +149,7 @@ static void init_amd_k6(struct cpuinfo_x
- 
- 	/* K6 with old style WHCR */
- 	if (c->x86_model < 8 ||
--	   (c->x86_model == 8 && c->x86_mask < 8)) {
-+	   (c->x86_model == 8 && c->x86_stepping < 8)) {
- 		/* We can only write allocate on the low 508Mb */
- 		if (mbytes > 508)
- 			mbytes = 508;
-@@ -168,7 +168,7 @@ static void init_amd_k6(struct cpuinfo_x
- 		return;
- 	}
- 
--	if ((c->x86_model == 8 && c->x86_mask > 7) ||
-+	if ((c->x86_model == 8 && c->x86_stepping > 7) ||
- 	     c->x86_model == 9 || c->x86_model == 13) {
- 		/* The more serious chips .. */
- 
-@@ -221,7 +221,7 @@ static void init_amd_k7(struct cpuinfo_x
- 	 * are more robust with CLK_CTL set to 200xxxxx instead of 600xxxxx
- 	 * As per AMD technical note 27212 0.2
- 	 */
--	if ((c->x86_model == 8 && c->x86_mask >= 1) || (c->x86_model > 8)) {
-+	if ((c->x86_model == 8 && c->x86_stepping >= 1) || (c->x86_model > 8)) {
- 		rdmsr(MSR_K7_CLK_CTL, l, h);
- 		if ((l & 0xfff00000) != 0x20000000) {
- 			pr_info("CPU: CLK_CTL MSR was %x. Reprogramming to %x\n",
-@@ -241,12 +241,12 @@ static void init_amd_k7(struct cpuinfo_x
- 	 * but they are not certified as MP capable.
- 	 */
- 	/* Athlon 660/661 is valid. */
--	if ((c->x86_model == 6) && ((c->x86_mask == 0) ||
--	    (c->x86_mask == 1)))
-+	if ((c->x86_model == 6) && ((c->x86_stepping == 0) ||
-+	    (c->x86_stepping == 1)))
- 		return;
- 
- 	/* Duron 670 is valid */
--	if ((c->x86_model == 7) && (c->x86_mask == 0))
-+	if ((c->x86_model == 7) && (c->x86_stepping == 0))
- 		return;
- 
- 	/*
-@@ -256,8 +256,8 @@ static void init_amd_k7(struct cpuinfo_x
- 	 * See http://www.heise.de/newsticker/data/jow-18.10.01-000 for
- 	 * more.
- 	 */
--	if (((c->x86_model == 6) && (c->x86_mask >= 2)) ||
--	    ((c->x86_model == 7) && (c->x86_mask >= 1)) ||
-+	if (((c->x86_model == 6) && (c->x86_stepping >= 2)) ||
-+	    ((c->x86_model == 7) && (c->x86_stepping >= 1)) ||
- 	     (c->x86_model > 7))
- 		if (cpu_has(c, X86_FEATURE_MP))
- 			return;
-@@ -583,7 +583,7 @@ static void early_init_amd(struct cpuinf
- 	/*  Set MTRR capability flag if appropriate */
- 	if (c->x86 == 5)
- 		if (c->x86_model == 13 || c->x86_model == 9 ||
--		    (c->x86_model == 8 && c->x86_mask >= 8))
-+		    (c->x86_model == 8 && c->x86_stepping >= 8))
- 			set_cpu_cap(c, X86_FEATURE_K6_MTRR);
- #endif
- #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_PCI)
-@@ -769,7 +769,7 @@ static void init_amd_zn(struct cpuinfo_x
- 	 * Fix erratum 1076: CPB feature bit not being set in CPUID. It affects
- 	 * all up to and including B1.
- 	 */
--	if (c->x86_model <= 1 && c->x86_mask <= 1)
-+	if (c->x86_model <= 1 && c->x86_stepping <= 1)
- 		set_cpu_cap(c, X86_FEATURE_CPB);
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -315,11 +315,39 @@ static inline void *__si_bounds_upper(si
+ 	return si->si_upper;
  }
- 
-@@ -880,11 +880,11 @@ static unsigned int amd_size_cache(struc
- 	/* AMD errata T13 (order #21922) */
- 	if ((c->x86 == 6)) {
- 		/* Duron Rev A0 */
--		if (c->x86_model == 3 && c->x86_mask == 0)
-+		if (c->x86_model == 3 && c->x86_stepping == 0)
- 			size = 64;
- 		/* Tbird rev A1/A2 */
- 		if (c->x86_model == 4 &&
--			(c->x86_mask == 0 || c->x86_mask == 1))
-+			(c->x86_stepping == 0 || c->x86_stepping == 1))
- 			size = 256;
- 	}
- 	return size;
-@@ -1021,7 +1021,7 @@ static bool cpu_has_amd_erratum(struct c
- 	}
- 
- 	/* OSVW unavailable or ID unknown, match family-model-stepping range */
--	ms = (cpu->x86_model << 4) | cpu->x86_mask;
-+	ms = (cpu->x86_model << 4) | cpu->x86_stepping;
- 	while ((range = *erratum++))
- 		if ((cpu->x86 == AMD_MODEL_RANGE_FAMILY(range)) &&
- 		    (ms >= AMD_MODEL_RANGE_START(range)) &&
---- a/arch/x86/kernel/cpu/centaur.c
-+++ b/arch/x86/kernel/cpu/centaur.c
-@@ -136,7 +136,7 @@ static void init_centaur(struct cpuinfo_
- 			clear_cpu_cap(c, X86_FEATURE_TSC);
- 			break;
- 		case 8:
--			switch (c->x86_mask) {
-+			switch (c->x86_stepping) {
- 			default:
- 			name = "2";
- 				break;
-@@ -211,7 +211,7 @@ centaur_size_cache(struct cpuinfo_x86 *c
- 	 *  - Note, it seems this may only be in engineering samples.
- 	 */
- 	if ((c->x86 == 6) && (c->x86_model == 9) &&
--				(c->x86_mask == 1) && (size == 65))
-+				(c->x86_stepping == 1) && (size == 65))
- 		size -= 1;
- 	return size;
- }
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -707,7 +707,7 @@ void cpu_detect(struct cpuinfo_x86 *c)
- 		cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
- 		c->x86		= x86_family(tfms);
- 		c->x86_model	= x86_model(tfms);
--		c->x86_mask	= x86_stepping(tfms);
-+		c->x86_stepping	= x86_stepping(tfms);
- 
- 		if (cap0 & (1<<19)) {
- 			c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
-@@ -1162,7 +1162,7 @@ static void identify_cpu(struct cpuinfo_
- 	c->loops_per_jiffy = loops_per_jiffy;
- 	c->x86_cache_size = -1;
- 	c->x86_vendor = X86_VENDOR_UNKNOWN;
--	c->x86_model = c->x86_mask = 0;	/* So far unknown... */
-+	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
- 	c->x86_vendor_id[0] = '\0'; /* Unset */
- 	c->x86_model_id[0] = '\0';  /* Unset */
- 	c->x86_max_cores = 1;
-@@ -1353,8 +1353,8 @@ void print_cpu_info(struct cpuinfo_x86 *
- 
- 	pr_cont(" (family: 0x%x, model: 0x%x", c->x86, c->x86_model);
- 
--	if (c->x86_mask || c->cpuid_level >= 0)
--		pr_cont(", stepping: 0x%x)\n", c->x86_mask);
-+	if (c->x86_stepping || c->cpuid_level >= 0)
-+		pr_cont(", stepping: 0x%x)\n", c->x86_stepping);
- 	else
- 		pr_cont(")\n");
- }
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -215,7 +215,7 @@ static void init_cyrix(struct cpuinfo_x8
- 
- 	/* common case step number/rev -- exceptions handled below */
- 	c->x86_model = (dir1 >> 4) + 1;
--	c->x86_mask = dir1 & 0xf;
-+	c->x86_stepping = dir1 & 0xf;
- 
- 	/* Now cook; the original recipe is by Channing Corn, from Cyrix.
- 	 * We do the same thing for each generation: we work out
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -146,7 +146,7 @@ static bool bad_spectre_microcode(struct
- 
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
--		    c->x86_mask == spectre_bad_microcodes[i].stepping)
-+		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
- 			return (c->microcode <= spectre_bad_microcodes[i].microcode);
- 	}
- 	return false;
-@@ -193,7 +193,7 @@ static void early_init_intel(struct cpui
- 	 * need the microcode to have already been loaded... so if it is
- 	 * not, recommend a BIOS update and disable large pages.
- 	 */
--	if (c->x86 == 6 && c->x86_model == 0x1c && c->x86_mask <= 2 &&
-+	if (c->x86 == 6 && c->x86_model == 0x1c && c->x86_stepping <= 2 &&
- 	    c->microcode < 0x20e) {
- 		pr_warn("Atom PSE erratum detected, BIOS microcode update recommended\n");
- 		clear_cpu_cap(c, X86_FEATURE_PSE);
-@@ -209,7 +209,7 @@ static void early_init_intel(struct cpui
- 
- 	/* CPUID workaround for 0F33/0F34 CPU */
- 	if (c->x86 == 0xF && c->x86_model == 0x3
--	    && (c->x86_mask == 0x3 || c->x86_mask == 0x4))
-+	    && (c->x86_stepping == 0x3 || c->x86_stepping == 0x4))
- 		c->x86_phys_bits = 36;
- 
- 	/*
-@@ -307,7 +307,7 @@ int ppro_with_ram_bug(void)
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
- 	    boot_cpu_data.x86 == 6 &&
- 	    boot_cpu_data.x86_model == 1 &&
--	    boot_cpu_data.x86_mask < 8) {
-+	    boot_cpu_data.x86_stepping < 8) {
- 		pr_info("Pentium Pro with Errata#50 detected. Taking evasive action.\n");
- 		return 1;
- 	}
-@@ -324,7 +324,7 @@ static void intel_smp_check(struct cpuin
- 	 * Mask B, Pentium, but not Pentium MMX
- 	 */
- 	if (c->x86 == 5 &&
--	    c->x86_mask >= 1 && c->x86_mask <= 4 &&
-+	    c->x86_stepping >= 1 && c->x86_stepping <= 4 &&
- 	    c->x86_model <= 3) {
- 		/*
- 		 * Remember we have B step Pentia with bugs
-@@ -367,7 +367,7 @@ static void intel_workarounds(struct cpu
- 	 * SEP CPUID bug: Pentium Pro reports SEP but doesn't have it until
- 	 * model 3 mask 3
- 	 */
--	if ((c->x86<<8 | c->x86_model<<4 | c->x86_mask) < 0x633)
-+	if ((c->x86<<8 | c->x86_model<<4 | c->x86_stepping) < 0x633)
- 		clear_cpu_cap(c, X86_FEATURE_SEP);
- 
- 	/*
-@@ -385,7 +385,7 @@ static void intel_workarounds(struct cpu
- 	 * P4 Xeon erratum 037 workaround.
- 	 * Hardware prefetcher may cause stale data to be loaded into the cache.
- 	 */
--	if ((c->x86 == 15) && (c->x86_model == 1) && (c->x86_mask == 1)) {
-+	if ((c->x86 == 15) && (c->x86_model == 1) && (c->x86_stepping == 1)) {
- 		if (msr_set_bit(MSR_IA32_MISC_ENABLE,
- 				MSR_IA32_MISC_ENABLE_PREFETCH_DISABLE_BIT) > 0) {
- 			pr_info("CPU: C0 stepping P4 Xeon detected.\n");
-@@ -400,7 +400,7 @@ static void intel_workarounds(struct cpu
- 	 * Specification Update").
- 	 */
- 	if (boot_cpu_has(X86_FEATURE_APIC) && (c->x86<<8 | c->x86_model<<4) == 0x520 &&
--	    (c->x86_mask < 0x6 || c->x86_mask == 0xb))
-+	    (c->x86_stepping < 0x6 || c->x86_stepping == 0xb))
- 		set_cpu_bug(c, X86_BUG_11AP);
- 
- 
-@@ -647,7 +647,7 @@ static void init_intel(struct cpuinfo_x8
- 		case 6:
- 			if (l2 == 128)
- 				p = "Celeron (Mendocino)";
--			else if (c->x86_mask == 0 || c->x86_mask == 5)
-+			else if (c->x86_stepping == 0 || c->x86_stepping == 5)
- 				p = "Celeron-A";
- 			break;
- 
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -771,7 +771,7 @@ static __init void rdt_quirks(void)
- 			cache_alloc_hsw_probe();
- 		break;
- 	case INTEL_FAM6_SKYLAKE_X:
--		if (boot_cpu_data.x86_mask <= 4)
-+		if (boot_cpu_data.x86_stepping <= 4)
- 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
- 	}
- }
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -921,7 +921,7 @@ static bool is_blacklisted(unsigned int
- 	 */
- 	if (c->x86 == 6 &&
- 	    c->x86_model == INTEL_FAM6_BROADWELL_X &&
--	    c->x86_mask == 0x01 &&
-+	    c->x86_stepping == 0x01 &&
- 	    llc_size_per_core > 2621440 &&
- 	    c->microcode < 0x0b000021) {
- 		pr_err_once("Erratum BDF90: late loading with revision < 0x0b000021 (0x%x) disabled.\n", c->microcode);
-@@ -944,7 +944,7 @@ static enum ucode_state request_microcod
- 		return UCODE_NFOUND;
- 
- 	sprintf(name, "intel-ucode/%02x-%02x-%02x",
--		c->x86, c->x86_model, c->x86_mask);
-+		c->x86, c->x86_model, c->x86_stepping);
- 
- 	if (request_firmware_direct(&firmware, name, device)) {
- 		pr_debug("data file %s load failed\n", name);
---- a/arch/x86/kernel/cpu/mtrr/generic.c
-+++ b/arch/x86/kernel/cpu/mtrr/generic.c
-@@ -859,7 +859,7 @@ int generic_validate_add_page(unsigned l
- 	 */
- 	if (is_cpu(INTEL) && boot_cpu_data.x86 == 6 &&
- 	    boot_cpu_data.x86_model == 1 &&
--	    boot_cpu_data.x86_mask <= 7) {
-+	    boot_cpu_data.x86_stepping <= 7) {
- 		if (base & ((1 << (22 - PAGE_SHIFT)) - 1)) {
- 			pr_warn("mtrr: base(0x%lx000) is not 4 MiB aligned\n", base);
- 			return -EINVAL;
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -711,8 +711,8 @@ void __init mtrr_bp_init(void)
- 			if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
- 			    boot_cpu_data.x86 == 0xF &&
- 			    boot_cpu_data.x86_model == 0x3 &&
--			    (boot_cpu_data.x86_mask == 0x3 ||
--			     boot_cpu_data.x86_mask == 0x4))
-+			    (boot_cpu_data.x86_stepping == 0x3 ||
-+			     boot_cpu_data.x86_stepping == 0x4))
- 				phys_addr = 36;
- 
- 			size_or_mask = SIZE_OR_MASK_BITS(phys_addr);
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -72,8 +72,8 @@ static int show_cpuinfo(struct seq_file
- 		   c->x86_model,
- 		   c->x86_model_id[0] ? c->x86_model_id : "unknown");
- 
--	if (c->x86_mask || c->cpuid_level >= 0)
--		seq_printf(m, "stepping\t: %d\n", c->x86_mask);
-+	if (c->x86_stepping || c->cpuid_level >= 0)
-+		seq_printf(m, "stepping\t: %d\n", c->x86_stepping);
- 	else
- 		seq_puts(m, "stepping\t: unknown\n");
- 	if (c->microcode)
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -37,7 +37,7 @@
- #define X86		new_cpu_data+CPUINFO_x86
- #define X86_VENDOR	new_cpu_data+CPUINFO_x86_vendor
- #define X86_MODEL	new_cpu_data+CPUINFO_x86_model
--#define X86_MASK	new_cpu_data+CPUINFO_x86_mask
-+#define X86_STEPPING	new_cpu_data+CPUINFO_x86_stepping
- #define X86_HARD_MATH	new_cpu_data+CPUINFO_hard_math
- #define X86_CPUID	new_cpu_data+CPUINFO_cpuid_level
- #define X86_CAPABILITY	new_cpu_data+CPUINFO_x86_capability
-@@ -332,7 +332,7 @@ ENTRY(startup_32_smp)
- 	shrb $4,%al
- 	movb %al,X86_MODEL
- 	andb $0x0f,%cl		# mask mask revision
--	movb %cl,X86_MASK
-+	movb %cl,X86_STEPPING
- 	movl %edx,X86_CAPABILITY
- 
- .Lis486:
---- a/arch/x86/kernel/mpparse.c
-+++ b/arch/x86/kernel/mpparse.c
-@@ -407,7 +407,7 @@ static inline void __init construct_defa
- 	processor.apicver = mpc_default_type > 4 ? 0x10 : 0x01;
- 	processor.cpuflag = CPU_ENABLED;
- 	processor.cpufeature = (boot_cpu_data.x86 << 8) |
--	    (boot_cpu_data.x86_model << 4) | boot_cpu_data.x86_mask;
-+	    (boot_cpu_data.x86_model << 4) | boot_cpu_data.x86_stepping;
- 	processor.featureflag = boot_cpu_data.x86_capability[CPUID_1_EDX];
- 	processor.reserved[0] = 0;
- 	processor.reserved[1] = 0;
---- a/arch/x86/lib/cpu.c
-+++ b/arch/x86/lib/cpu.c
-@@ -18,7 +18,7 @@ unsigned int x86_model(unsigned int sig)
+ #else
++
++/*
++ * This deals with old version of _sigfault in some distros:
++ *
++
++old _sigfault:
++        struct {
++            void *si_addr;
++	} _sigfault;
++
++new _sigfault:
++	struct {
++		void __user *_addr;
++		int _trapno;
++		short _addr_lsb;
++		union {
++			struct {
++				void __user *_lower;
++				void __user *_upper;
++			} _addr_bnd;
++			__u32 _pkey;
++		};
++	} _sigfault;
++ *
++ */
++
+ static inline void **__si_bounds_hack(siginfo_t *si)
  {
- 	unsigned int fam, model;
+ 	void *sigfault = &si->_sifields._sigfault;
+ 	void *end_sigfault = sigfault + sizeof(si->_sifields._sigfault);
+-	void **__si_lower = end_sigfault;
++	int *trapno = (int*)end_sigfault;
++	/* skip _trapno and _addr_lsb */
++	void **__si_lower = (void**)(trapno + 2);
  
--	 fam = x86_family(sig);
-+	fam = x86_family(sig);
+ 	return __si_lower;
+ }
+@@ -331,7 +359,7 @@ static inline void *__si_bounds_lower(si
  
- 	model = (sig >> 4) & 0xf;
- 
---- a/drivers/char/hw_random/via-rng.c
-+++ b/drivers/char/hw_random/via-rng.c
-@@ -162,7 +162,7 @@ static int via_rng_init(struct hwrng *rn
- 	/* Enable secondary noise source on CPUs where it is present. */
- 
- 	/* Nehemiah stepping 8 and higher */
--	if ((c->x86_model == 9) && (c->x86_mask > 7))
-+	if ((c->x86_model == 9) && (c->x86_stepping > 7))
- 		lo |= VIA_NOISESRC2;
- 
- 	/* Esther */
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -629,7 +629,7 @@ static int acpi_cpufreq_blacklist(struct
- 	if (c->x86_vendor == X86_VENDOR_INTEL) {
- 		if ((c->x86 == 15) &&
- 		    (c->x86_model == 6) &&
--		    (c->x86_mask == 8)) {
-+		    (c->x86_stepping == 8)) {
- 			pr_info("Intel(R) Xeon(R) 7100 Errata AL30, processors may lock up on frequency changes: disabling acpi-cpufreq\n");
- 			return -ENODEV;
- 		    }
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@ -775,7 +775,7 @@ static int longhaul_cpu_init(struct cpuf
- 		break;
- 
- 	case 7:
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 0:
- 			longhaul_version = TYPE_LONGHAUL_V1;
- 			cpu_model = CPU_SAMUEL2;
-@@ -787,7 +787,7 @@ static int longhaul_cpu_init(struct cpuf
- 			break;
- 		case 1 ... 15:
- 			longhaul_version = TYPE_LONGHAUL_V2;
--			if (c->x86_mask < 8) {
-+			if (c->x86_stepping < 8) {
- 				cpu_model = CPU_SAMUEL2;
- 				cpuname = "C3 'Samuel 2' [C5B]";
- 			} else {
-@@ -814,7 +814,7 @@ static int longhaul_cpu_init(struct cpuf
- 		numscales = 32;
- 		memcpy(mults, nehemiah_mults, sizeof(nehemiah_mults));
- 		memcpy(eblcr, nehemiah_eblcr, sizeof(nehemiah_eblcr));
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 0 ... 1:
- 			cpu_model = CPU_NEHEMIAH;
- 			cpuname = "C3 'Nehemiah A' [C5XLOE]";
---- a/drivers/cpufreq/p4-clockmod.c
-+++ b/drivers/cpufreq/p4-clockmod.c
-@@ -168,7 +168,7 @@ static int cpufreq_p4_cpu_init(struct cp
+ static inline void *__si_bounds_upper(siginfo_t *si)
+ {
+-	return (*__si_bounds_hack(si)) + sizeof(void *);
++	return *(__si_bounds_hack(si) + 1);
+ }
  #endif
  
- 	/* Errata workaround */
--	cpuid = (c->x86 << 8) | (c->x86_model << 4) | c->x86_mask;
-+	cpuid = (c->x86 << 8) | (c->x86_model << 4) | c->x86_stepping;
- 	switch (cpuid) {
- 	case 0x0f07:
- 	case 0x0f0a:
---- a/drivers/cpufreq/powernow-k7.c
-+++ b/drivers/cpufreq/powernow-k7.c
-@@ -131,7 +131,7 @@ static int check_powernow(void)
- 		return 0;
- 	}
- 
--	if ((c->x86_model == 6) && (c->x86_mask == 0)) {
-+	if ((c->x86_model == 6) && (c->x86_stepping == 0)) {
- 		pr_info("K7 660[A0] core detected, enabling errata workarounds\n");
- 		have_a0 = 1;
- 	}
---- a/drivers/cpufreq/speedstep-centrino.c
-+++ b/drivers/cpufreq/speedstep-centrino.c
-@@ -37,7 +37,7 @@ struct cpu_id
- {
- 	__u8	x86;            /* CPU family */
- 	__u8	x86_model;	/* model */
--	__u8	x86_mask;	/* stepping */
-+	__u8	x86_stepping;	/* stepping */
- };
- 
- enum {
-@@ -277,7 +277,7 @@ static int centrino_verify_cpu_id(const
- {
- 	if ((c->x86 == x->x86) &&
- 	    (c->x86_model == x->x86_model) &&
--	    (c->x86_mask == x->x86_mask))
-+	    (c->x86_stepping == x->x86_stepping))
- 		return 1;
- 	return 0;
- }
---- a/drivers/cpufreq/speedstep-lib.c
-+++ b/drivers/cpufreq/speedstep-lib.c
-@@ -272,9 +272,9 @@ unsigned int speedstep_detect_processor(
- 		ebx = cpuid_ebx(0x00000001);
- 		ebx &= 0x000000FF;
- 
--		pr_debug("ebx value is %x, x86_mask is %x\n", ebx, c->x86_mask);
-+		pr_debug("ebx value is %x, x86_stepping is %x\n", ebx, c->x86_stepping);
- 
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 4:
- 			/*
- 			 * B-stepping [M-P4-M]
-@@ -361,7 +361,7 @@ unsigned int speedstep_detect_processor(
- 				msr_lo, msr_hi);
- 		if ((msr_hi & (1<<18)) &&
- 		    (relaxed_check ? 1 : (msr_hi & (3<<24)))) {
--			if (c->x86_mask == 0x01) {
-+			if (c->x86_stepping == 0x01) {
- 				pr_debug("early PIII version\n");
- 				return SPEEDSTEP_CPU_PIII_C_EARLY;
- 			} else
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -512,7 +512,7 @@ static int __init padlock_init(void)
- 
- 	printk(KERN_NOTICE PFX "Using VIA PadLock ACE for AES algorithm.\n");
- 
--	if (c->x86 == 6 && c->x86_model == 15 && c->x86_mask == 2) {
-+	if (c->x86 == 6 && c->x86_model == 15 && c->x86_stepping == 2) {
- 		ecb_fetch_blocks = MAX_ECB_FETCH_BLOCKS;
- 		cbc_fetch_blocks = MAX_CBC_FETCH_BLOCKS;
- 		printk(KERN_NOTICE PFX "VIA Nano stepping 2 detected: enabling workaround.\n");
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3147,7 +3147,7 @@ static struct amd64_family_type *per_fam
- 	struct amd64_family_type *fam_type = NULL;
- 
- 	pvt->ext_model  = boot_cpu_data.x86_model >> 4;
--	pvt->stepping	= boot_cpu_data.x86_mask;
-+	pvt->stepping	= boot_cpu_data.x86_stepping;
- 	pvt->model	= boot_cpu_data.x86_model;
- 	pvt->fam	= boot_cpu_data.x86;
- 
---- a/drivers/hwmon/coretemp.c
-+++ b/drivers/hwmon/coretemp.c
-@@ -268,13 +268,13 @@ static int adjust_tjmax(struct cpuinfo_x
- 	for (i = 0; i < ARRAY_SIZE(tjmax_model_table); i++) {
- 		const struct tjmax_model *tm = &tjmax_model_table[i];
- 		if (c->x86_model == tm->model &&
--		    (tm->mask == ANY || c->x86_mask == tm->mask))
-+		    (tm->mask == ANY || c->x86_stepping == tm->mask))
- 			return tm->tjmax;
- 	}
- 
- 	/* Early chips have no MSR for TjMax */
- 
--	if (c->x86_model == 0xf && c->x86_mask < 4)
-+	if (c->x86_model == 0xf && c->x86_stepping < 4)
- 		usemsr_ee = 0;
- 
- 	if (c->x86_model > 0xe && usemsr_ee) {
-@@ -425,7 +425,7 @@ static int chk_ucode_version(unsigned in
- 	 * Readings might stop update when processor visited too deep sleep,
- 	 * fixed for stepping D0 (6EC).
- 	 */
--	if (c->x86_model == 0xe && c->x86_mask < 0xc && c->microcode < 0x39) {
-+	if (c->x86_model == 0xe && c->x86_stepping < 0xc && c->microcode < 0x39) {
- 		pr_err("Errata AE18 not fixed, update BIOS or microcode of the CPU!\n");
- 		return -ENODEV;
- 	}
---- a/drivers/hwmon/hwmon-vid.c
-+++ b/drivers/hwmon/hwmon-vid.c
-@@ -293,7 +293,7 @@ u8 vid_which_vrm(void)
- 	if (c->x86 < 6)		/* Any CPU with family lower than 6 */
- 		return 0;	/* doesn't have VID */
- 
--	vrm_ret = find_vrm(c->x86, c->x86_model, c->x86_mask, c->x86_vendor);
-+	vrm_ret = find_vrm(c->x86, c->x86_model, c->x86_stepping, c->x86_vendor);
- 	if (vrm_ret == 134)
- 		vrm_ret = get_via_model_d_vrm();
- 	if (vrm_ret == 0)
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -179,7 +179,7 @@ static bool has_erratum_319(struct pci_d
- 	 * and AM3 formats, but that's the best we can do.
- 	 */
- 	return boot_cpu_data.x86_model < 4 ||
--	       (boot_cpu_data.x86_model == 4 && boot_cpu_data.x86_mask <= 2);
-+	       (boot_cpu_data.x86_model == 4 && boot_cpu_data.x86_stepping <= 2);
- }
- 
- static int k10temp_probe(struct pci_dev *pdev,
---- a/drivers/hwmon/k8temp.c
-+++ b/drivers/hwmon/k8temp.c
-@@ -187,7 +187,7 @@ static int k8temp_probe(struct pci_dev *
- 		return -ENOMEM;
- 
- 	model = boot_cpu_data.x86_model;
--	stepping = boot_cpu_data.x86_mask;
-+	stepping = boot_cpu_data.x86_stepping;
- 
- 	/* feature available since SH-C0, exclude older revisions */
- 	if ((model == 4 && stepping == 0) ||
---- a/drivers/video/fbdev/geode/video_gx.c
-+++ b/drivers/video/fbdev/geode/video_gx.c
-@@ -127,7 +127,7 @@ void gx_set_dclk_frequency(struct fb_inf
- 	int timeout = 1000;
- 
- 	/* Rev. 1 Geode GXs use a 14 MHz reference clock instead of 48 MHz. */
--	if (cpu_data(0).x86_mask == 1) {
-+	if (cpu_data(0).x86_stepping == 1) {
- 		pll_table = gx_pll_table_14MHz;
- 		pll_table_len = ARRAY_SIZE(gx_pll_table_14MHz);
- 	} else {
