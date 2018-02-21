@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2264NkAyNVreH3IU6AoABsdJ61JUXqjc/Qf5A2pXNb7VLhoAkUM0tlPVe0Gvq5j9Fegqxi7k
-ARC-Seal: i=1; a=rsa-sha256; t=1519217178; cv=none;
+X-Google-Smtp-Source: AH8x225yDX8OohGj/IjY8B62MpICQI6aUsXByXwq249por9Yhmb/SdG177aQXcLl+2GBaK5tjB20
+ARC-Seal: i=1; a=rsa-sha256; t=1519217173; cv=none;
         d=google.com; s=arc-20160816;
-        b=AjFeVuhUEc9F+M3m5Th0wGzJ+mJJ+mG3tgzyJW3y8TLXzLDwKFztVQGvjdXQcmsaf1
-         CrTyI4QwjpsoxOc5emSSWMx12iQ3PV5lmcU5o16yEX3QeRFFd9/wHjgYPQoCYe5Bzln8
-         9OQCFK1MgLe2YnlZwodebWEO+Q1DJUKk7ZLZcHQjYpHGMN+7mJ43Sm1Jccu7pBRmnf71
-         RX1SypwbhHZYx6bCbqPvNLMWIM0+8Zkyop3Prq2dOgoldD18JSSO7M2ZhRs0pSVRVpfD
-         lTP1A4l9piHFCdVxsIQDeyMfgfTXoHiR1afoTZNRLd8aO0Oh9rQYm+pA/O2fmZC/pXHS
-         4Z0g==
+        b=AE0EfGGaPUmxeMFJe0GLJX0ZiiO6GKir84N8B48i3Y5qWPftn3tGi1ndum6IQ33xUv
+         WcG7rUOi/jTdzYM4JoR7LlWoVDAbstvy+SJdgpv/QIVc3/dE8ZcK35zOk4iYVpcxLIZL
+         KIs6om70LY37qlBgQBGt23P+hrm2MK9zvPOik3wW2y64LeKPdkZ3vlSQHW61Hy7TIP+m
+         R/BVj+fhGXpeZ4ujMvZWPcD/li4maJhza+ft/fOOrS1lscvuI2dArnnQdNEtr13X29sD
+         YAEO3yL37WiTTKs1/u1xyvdNRVb0G4L7gfl/YsnRhBzerMFNknGEbCNLOSSWXXGebiU0
+         vX+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=M8iBuSL1rEWmZlhVKv5Nbamf5XWfVyc7aKpbmUGxDQ4=;
-        b=l0jq39A6DknU79hHpkz36ES0xTnX9WXQlesgae8menmbpzdzOIS7myg/Ajphe80EGQ
-         /ThF+I3W3i6yHcTMWxcjNAzNEUkdU5yD7AQQWEZpUGDKfTKLw/n9UkgRurgAPN/P9RSy
-         VgIuNB2gMR2M3r9BnxZSjM/BuOgpIWxr+5WkxqFa+/SVUUzRg04Hgdgg4MEfLhhFBJi7
-         bMA22Nr+lNULDEPWfIc+uSG3uHbi+3K6YZ/dqs4BsAIX9DCmnGPXEh/amOM0MkDOe2R3
-         iz5UAU3elhkP1Hixp+VBftNYDuU8VVJ/kYvSo6A1F0Zi4+Awijd/edMZdT8+9diJplFC
-         1NKA==
+        bh=/CuKOqVdhKngZ/qDkLWkFqM7iOQv54txb3z20f0TofE=;
+        b=rmDtXx65K1pFXENmryRNzOh4ksZenc5IRAbQVXjyeF/piaLr15xC77aHZtwiECuC61
+         KdiHTO4r80WGl0imOvQNW5zga8BtNZOFw4OXK4DknTcjbrupo2JwWrVduQ9Zp6PPw/TO
+         xWrMx2+QWGQmARLrDJ/wfxxV2T8bEJYX0uBMBAOOzMIzeHjdklJOZGWYNWZAPA865WoM
+         P3xoMdN7bPEMox1updqBLz2VlSdUHHXWetK28iAZG0d3bLXJe9BsuuBM5noTAar6jhZa
+         5Vp4hw5qZZaTix0C++Od7Lgpj1liGV/7j1mBjFwm1J9KsrgfKVpvEvGtRIOIt6dM9wWy
+         ZEcw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,29 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Filippo Sironi <sironi@amazon.de>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	arjan.van.de.ven@intel.com,
-	dave.hansen@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	rkrcmar@redhat.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 09/33] KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
-Date: Wed, 21 Feb 2018 13:44:52 +0100
-Message-Id: <20180221124410.165090932@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.4 07/33] arm: spear13xx: Fix spics gpio controllers warning
+Date: Wed, 21 Feb 2018 13:44:50 +0100
+Message-Id: <20180221124410.022395334@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -58,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014672537786742?=
-X-GMAIL-MSGID: =?utf-8?q?1593014672537786742?=
+X-GMAIL-THRID: =?utf-8?q?1593014666669772873?=
+X-GMAIL-MSGID: =?utf-8?q?1593014666669772873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,95 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 928a4c39484281f8ca366f53a1db79330d058401 upstream.
+commit f8975cb1b8a36d0839b6365235778dd9df1d04ca upstream.
 
-With retpoline, tight loops of "call this function for every XXX" are
-very much pessimised by taking a prediction miss *every* time. This one
-is by far the biggest contributor to the guest launch time with retpoline.
+This fixes the following warning by also sending the flags argument for
+gpio controllers:
 
-By marking the iterator slot_handle_…() functions always_inline, we can
-ensure that the indirect function call can be optimised away into a
-direct call and it actually generates slightly smaller code because
-some of the other conditionals can get optimised away too.
+Property 'cs-gpios', cell 6 is not a phandle reference in
+/ahb/apb/spi@e0100000
 
-Performance is now pretty close to what we see with nospectre_v2 on
-the command line.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Filippo Sironi <sironi@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Filippo Sironi <sironi@amazon.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1518305967-31356-4-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 8113ba917dfa ("ARM: SPEAr: DT: Update device nodes")
+Cc: stable@vger.kernel.org # v3.8+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mmu.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/spear1310-evb.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4503,7 +4503,7 @@ void kvm_mmu_setup(struct kvm_vcpu *vcpu
- typedef bool (*slot_level_handler) (struct kvm *kvm, unsigned long *rmap);
+--- a/arch/arm/boot/dts/spear1310-evb.dts
++++ b/arch/arm/boot/dts/spear1310-evb.dts
+@@ -349,7 +349,7 @@
+ 			spi0: spi@e0100000 {
+ 				status = "okay";
+ 				num-cs = <3>;
+-				cs-gpios = <&gpio1 7 0>, <&spics 0>, <&spics 1>;
++				cs-gpios = <&gpio1 7 0>, <&spics 0 0>, <&spics 1 0>;
  
- /* The caller should hold mmu-lock before calling this function. */
--static bool
-+static __always_inline bool
- slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, int start_level, int end_level,
- 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
-@@ -4533,7 +4533,7 @@ slot_handle_level_range(struct kvm *kvm,
- 	return flush;
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		  slot_level_handler fn, int start_level, int end_level,
- 		  bool lock_flush_tlb)
-@@ -4544,7 +4544,7 @@ slot_handle_level(struct kvm *kvm, struc
- 			lock_flush_tlb);
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		      slot_level_handler fn, bool lock_flush_tlb)
- {
-@@ -4552,7 +4552,7 @@ slot_handle_all_level(struct kvm *kvm, s
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, bool lock_flush_tlb)
- {
-@@ -4560,7 +4560,7 @@ slot_handle_large_level(struct kvm *kvm,
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		 slot_level_handler fn, bool lock_flush_tlb)
- {
+ 				stmpe610@0 {
+ 					compatible = "st,stmpe610";
