@@ -1,106 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933359AbeBUKjV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:39:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58245 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbeBUKjT (ORCPT
+        id S933372AbeBUKjw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:39:52 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36517 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeBUKju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:39:19 -0500
-Date: Wed, 21 Feb 2018 02:38:51 -0800
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-85c615eb52222bc5fab6c7190d146bc59fac289e@git.kernel.org>
-Cc: peterz@infradead.org, msebor@gcc.gnu.org,
-        torvalds@linux-foundation.org, arnd@arndb.de, mingo@kernel.org,
-        tglx@linutronix.de, jeyu@kernel.org, hpa@zytor.com, rric@kernel.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, keescook@chromium.org, rric@kernel.org,
-        hpa@zytor.com, jeyu@kernel.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, arnd@arndb.de, mingo@kernel.org,
-        msebor@gcc.gnu.org, peterz@infradead.org
-In-Reply-To: <20180220205826.2008875-1-arnd@arndb.de>
-References: <20180220205826.2008875-1-arnd@arndb.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] x86/oprofile: Fix bogus GCC-8 warning in
- nmi_setup()
-Git-Commit-ID: 85c615eb52222bc5fab6c7190d146bc59fac289e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Feb 2018 05:39:50 -0500
+X-Google-Smtp-Source: AG47ELuXJTlGTFYC+/Haq6e5EcD3ETIrhrvhAYHQ6QBvFl04gi/bXxQ3+kR+35cszKznGD3LbXNTeBPUzzATmzBY/BA=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
+References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
+From: =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>
+Date: Wed, 21 Feb 2018 11:39:49 +0100
+Message-ID: <CAM4jgCqPwHiqi9ecehE6wXi1fevSbqUSB3ABVNHXD1NCstGVZw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        linux-input <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  85c615eb52222bc5fab6c7190d146bc59fac289e
-Gitweb:     https://git.kernel.org/tip/85c615eb52222bc5fab6c7190d146bc59fac289e
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Tue, 20 Feb 2018 21:58:21 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 09:54:17 +0100
+Hi Rodrigo,
 
-x86/oprofile: Fix bogus GCC-8 warning in nmi_setup()
+I have written a kernel driver [1], some time ago. I did not submit it
+for merging in the main-line because I thought that would mess with
+user-space drivers. If your driver create an input device, a
+user-space driver will have to disable it before creating its own. I
+guess libusb based drivers will detach the kernel driver and will be
+fine. But it is not as simple if you use hidraw. And there may be some
+state problem as Pierre-Loup already said.
 
-GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
-data from CPU 0 to all other CPUs, which when building a non-SMP
-kernel turns into a memcpy() with identical source and destination
-pointers:
+A few more tips about your discussion with Pierre-Loup (sorry I am not
+replying to the answers directly, it's hard to insert myself in this
+long discussion):
 
- arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
- arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
-   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          per_cpu(cpu_msrs, 0).multiplex,
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          sizeof(struct op_msr) * model->num_virt_counters);
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
- arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
- arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+Beside Ynsta's driver, you may have a look at my own user-space driver
+[2] or Dennis Hamester's library scraw [3].
 
-I have analyzed a number of such warnings now: some are valid and the
-GCC warning is welcome. Others turned out to be false-positives, and
-GCC was changed to not warn about those any more. This is a corner case
-that is a false-positive but the GCC developers feel it's better to keep
-warning about it.
+You can enable and disable the accel and gyro when the separate input
+device is opened or closed to save battery. My kernel driver does it,
+IIRC I have taken the idea from the wiimote driver. Note that there is
+an issue with joydev using the accel/gyro input device. hid-sony
+solved it by adding an exception in joydev driver (joydev_blacklist in
+drivers/input/joydev.c).
 
-In this case, it seems best to work around it by telling GCC
-a little more clearly that this code path is never hit with
-an IS_ENABLED() configuration check.
+In my driver, I split the left pad and left stick events by looking at
+the left pad touch bit. It works well as long as they are not used at
+the same time. When they both being used the data alternate between
+left pad and left stick data, the touch bit is set accordingly so axis
+data is easy to use, but it looks like the left touch pad is being
+tapped very fast.
 
-Cc:stable as we also want old kernels to build cleanly with GCC-8.
+[1]: https://github.com/cvuchener/steamcontroller-linux-kernel
+[2]: https://github.com/cvuchener/input-scripts/tree/master/src/daemon/steamcontroller
+[3]: https://gitlab.com/dennis-hamester/scraw)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Sebor <msebor@gcc.gnu.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: oprofile-list@lists.sf.net
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/oprofile/nmi_int.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/oprofile/nmi_int.c b/arch/x86/oprofile/nmi_int.c
-index 174c597..a7a7677 100644
---- a/arch/x86/oprofile/nmi_int.c
-+++ b/arch/x86/oprofile/nmi_int.c
-@@ -460,7 +460,7 @@ static int nmi_setup(void)
- 		goto fail;
- 
- 	for_each_possible_cpu(cpu) {
--		if (!cpu)
-+		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
- 			continue;
- 
- 		memcpy(per_cpu(cpu_msrs, cpu).counters,
+2018-02-20 20:33 GMT+01:00 Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>:
+> This patchset implements a driver for Valve Steam Controller, based on a
+> reverse analysis by myself.
+>
+> Notable changes from patchset v1:
+>  * Remove references to USB. Now the interesting interfaces are selected by
+>    looking for the ones with feature reports.
+>  * Feature reports buffers are allocated with hid_alloc_report_buf().
+>  * Feature report length is checked, to avoid overflows in case of
+>    corrupt/malicius USB devices.
+>  * Resolution added to the ABS axes.
+>  * A lot of minor cleanups.
+>
+> Rodrigo Rivas Costa (3):
+>   HID: add driver for Valve Steam Controller
+>   HID: steam: add serial number information.
+>   HID: steam: add battery device.
+>
+>  drivers/hid/Kconfig      |   8 +
+>  drivers/hid/Makefile     |   1 +
+>  drivers/hid/hid-ids.h    |   4 +
+>  drivers/hid/hid-quirks.c |   4 +
+>  drivers/hid/hid-steam.c  | 703 +++++++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 720 insertions(+)
+>  create mode 100644 drivers/hid/hid-steam.c
+>
+> --
+> 2.16.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
