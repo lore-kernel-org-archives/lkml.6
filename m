@@ -1,32 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965925AbeBUNxl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:53:41 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42106 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbeBUNxh (ORCPT
+        id S965149AbeBUN4j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:56:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52348 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933206AbeBUNE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:53:37 -0500
-X-Google-Smtp-Source: AH8x226kzIM2eFImFoOxv3gp9DZA+bO2+r2JufFeSIfgwhPm3MzMij/J4RRKjWV3mLEZu2NxRaOaFrd5o0g8AKdu0k8=
+        Wed, 21 Feb 2018 08:04:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9FFEF6019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shajit@codeaurora.org
+Subject: Re: [PATCH 1/2] soc: qcom: rmtfs-mem: Add support for assigning
+ memory to remote
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>,
+        Govind Singh <govinds@qti.qualcomm.com>,
+        Shon Parate <sparate@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180213013724.3177-1-bjorn.andersson@linaro.org>
+From: Jitendra Sharma <shajit@codeaurora.org>
+Message-ID: <7d9ab926-a0cd-267e-6c85-3e3af2467e97@codeaurora.org>
+Date: Wed, 21 Feb 2018 18:34:23 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221122719.GI29460@jhogan-linux.mipstec.com>
-References: <20180220234443.GA27059@roeck-us.net> <20180221122719.GI29460@jhogan-linux.mipstec.com>
-From: Graham Whaley <graham.whaley@gmail.com>
-Date: Wed, 21 Feb 2018 13:53:36 +0000
-Message-ID: <CAF9eJumGiRs3x5=nnOpFDGOJ0hmkmESwMjd_oKP7za=3rV6ucg@mail.gmail.com>
-Subject: Re: metag build errors in mainline kernel
-To: James Hogan <james.hogan@mips.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-        linux-metag@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180213013724.3177-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hmm.. ancient shelved toolchain. Perhaps this is the excuse we need to
-> say goodbye to arch/metag/...
+Hi Bjorn,
 
-I too was wondering - that one day there will come a time when the
-toolkit will be too old and there will be no updates....
 
-Graham
+On 2/13/2018 7:07 AM, Bjorn Andersson wrote:
+> On some platform the remote processor's memory map is not statically
+> configured in TrustZone, so each memory region that is to be accessed by
+> the remote needs a call into TrustZone to set up the remote's
+> permissions.
+>
+> Implement this for the rmtfs memory driver, to give the modem on 8996
+> access to the shared file system buffers.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>   drivers/soc/qcom/Kconfig     |  1 +
+>   drivers/soc/qcom/rmtfs_mem.c | 34 ++++++++++++++++++++++++++++++++++
+>   2 files changed, 35 insertions(+)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index e050eb83341d..a993d19fa562 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -47,6 +47,7 @@ config QCOM_QMI_HELPERS
+>   config QCOM_RMTFS_MEM
+>   	tristate "Qualcomm Remote Filesystem memory driver"
+>   	depends on ARCH_QCOM
+> +	select QCOM_SCM
+>   	help
+>   	  The Qualcomm remote filesystem memory driver is used for allocating
+>   	  and exposing regions of shared memory with remote processors for the
+> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+> index 0a43b2e8906f..c8999e38b005 100644
+> --- a/drivers/soc/qcom/rmtfs_mem.c
+> +++ b/drivers/soc/qcom/rmtfs_mem.c
+> @@ -37,6 +37,8 @@ struct qcom_rmtfs_mem {
+>   	phys_addr_t size;
+>   
+>   	unsigned int client_id;
+> +
+> +	unsigned int perms;
+>   };
+>   
+>   static ssize_t qcom_rmtfs_mem_show(struct device *dev,
+> @@ -151,9 +153,11 @@ static void qcom_rmtfs_mem_release_device(struct device *dev)
+>   static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+>   {
+>   	struct device_node *node = pdev->dev.of_node;
+> +	struct qcom_scm_vmperm perms[2];
+>   	struct reserved_mem *rmem;
+>   	struct qcom_rmtfs_mem *rmtfs_mem;
+>   	u32 client_id;
+> +	u32 vmid;
+>   	int ret;
+>   
+>   	rmem = of_reserved_mem_lookup(node);
+> @@ -204,10 +208,31 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+>   
+>   	rmtfs_mem->dev.release = qcom_rmtfs_mem_release_device;
+>   
+> +	ret = of_property_read_u32(node, "qcom,vmid", &vmid);
+> +	if (ret < 0 && ret != -EINVAL) {
+> +		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
+> +		goto remove_cdev;
+> +	} else if (!ret) {
+> +		perms[0].vmid = QCOM_SCM_VMID_HLOS;
+> +		perms[0].perm = QCOM_SCM_PERM_RW;
+> +		perms[1].vmid = vmid;
+> +		perms[1].perm = QCOM_SCM_PERM_RW;
+> +
+> +		rmtfs_mem->perms = BIT(QCOM_SCM_VMID_HLOS);
+> +		ret = qcom_scm_assign_mem(rmtfs_mem->addr, rmtfs_mem->size,
+> +					  &rmtfs_mem->perms, perms, 2);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev, "assign memory failed\n");
+> +			goto remove_cdev;
+> +		}
+> +	}
+> +
+I have a query here,
+We assigned memory ownership to modem at boot up. In case of errors in 
+other parts of driver, where we are returning, have we assigned memory 
+back to HLOS
+>   	dev_set_drvdata(&pdev->dev, rmtfs_mem);
+>   
+>   	return 0;
+>   
+> +remove_cdev:
+> +	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
+>   put_device:
+>   	put_device(&rmtfs_mem->dev);
+>   
+> @@ -217,6 +242,15 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+>   static int qcom_rmtfs_mem_remove(struct platform_device *pdev)
+>   {
+>   	struct qcom_rmtfs_mem *rmtfs_mem = dev_get_drvdata(&pdev->dev);
+> +	struct qcom_scm_vmperm perm;
+> +
+> +	if (rmtfs_mem->perms) {
+> +		perm.vmid = QCOM_SCM_VMID_HLOS;
+> +		perm.perm = QCOM_SCM_PERM_RW;
+> +
+> +		qcom_scm_assign_mem(rmtfs_mem->addr, rmtfs_mem->size,
+> +				    &rmtfs_mem->perms, &perm, 1);
+> +	}
+>   
+>   	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
+>   	put_device(&rmtfs_mem->dev);
