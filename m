@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933211AbeBUKbh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:31:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34653 "EHLO
+        id S933221AbeBUKcH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:32:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47849 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbeBUKbg (ORCPT
+        with ESMTP id S932751AbeBUKcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:31:36 -0500
-Date: Wed, 21 Feb 2018 02:29:07 -0800
-From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-24d0c1d6e65f635b2c0684d0a42ff6c0674aa0e6@git.kernel.org>
-Cc: torvalds@linux-foundation.org, hpa@zytor.com, ggherdovich@suse.cz,
-        efault@gmx.de, mgorman@techsingularity.net, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk
-Reply-To: torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, mgorman@techsingularity.net,
-        efault@gmx.de, ggherdovich@suse.cz, matt@codeblueprint.co.uk,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180213133730.24064-5-mgorman@techsingularity.net>
-References: <20180213133730.24064-5-mgorman@techsingularity.net>
+        Wed, 21 Feb 2018 05:32:05 -0500
+Date: Wed, 21 Feb 2018 02:29:37 -0800
+From: tip-bot for Mel Gorman <tipbot@zytor.com>
+Message-ID: <tip-2c83362734dad8e48ccc0710b5cd2436a0323893@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk, hpa@zytor.com,
+        torvalds@linux-foundation.org, peterz@infradead.org, mingo@kernel.org,
+        mgorman@techsingularity.net, tglx@linutronix.de, efault@gmx.de,
+        ggherdovich@suse.cz
+Reply-To: hpa@zytor.com, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, efault@gmx.de, ggherdovich@suse.cz,
+        tglx@linutronix.de, mgorman@techsingularity.net,
+        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <20180213133730.24064-6-mgorman@techsingularity.net>
+References: <20180213133730.24064-6-mgorman@techsingularity.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Do not migrate due to a sync wakeup on
- exit
-Git-Commit-ID: 24d0c1d6e65f635b2c0684d0a42ff6c0674aa0e6
+Subject: [tip:sched/core] sched/fair: Consider SD_NUMA when selecting the
+ most idle group to schedule on
+Git-Commit-ID: 2c83362734dad8e48ccc0710b5cd2436a0323893
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,26 +36,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  24d0c1d6e65f635b2c0684d0a42ff6c0674aa0e6
-Gitweb:     https://git.kernel.org/tip/24d0c1d6e65f635b2c0684d0a42ff6c0674aa0e6
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Tue, 13 Feb 2018 13:37:28 +0000
+Commit-ID:  2c83362734dad8e48ccc0710b5cd2436a0323893
+Gitweb:     https://git.kernel.org/tip/2c83362734dad8e48ccc0710b5cd2436a0323893
+Author:     Mel Gorman <mgorman@techsingularity.net>
+AuthorDate: Tue, 13 Feb 2018 13:37:29 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 08:49:42 +0100
+CommitDate: Wed, 21 Feb 2018 08:49:43 +0100
 
-sched/fair: Do not migrate due to a sync wakeup on exit
+sched/fair: Consider SD_NUMA when selecting the most idle group to schedule on
 
-When a task exits, it notifies the parent that it has exited. This is a
-sync wakeup and the exiting task may pull the parent towards the wakers
-CPU. For simple workloads like using a shell, it was observed that the
-shell is pulled across nodes by exiting processes. This is daft as the
-parent may be long-lived and properly placed. This patch special cases a
-sync wakeup on exit to avoid pulling tasks across nodes. Testing on a range
-of workloads and machines showed very little differences in performance
-although there was a small 3% boost on some machines running a shellscript
-intensive workload (git regression test suite).
+find_idlest_group() compares a local group with each other group to select
+the one that is most idle. When comparing groups in different NUMA domains,
+a very slight imbalance is enough to select a remote NUMA node even if the
+runnable load on both groups is 0 or close to 0. This ignores the cost of
+remote accesses entirely and is a problem when selecting the CPU for a
+newly forked task to run on.  This is problematic when a forking server
+is almost guaranteed to run on a remote node incurring numerous remote
+accesses and potentially causing automatic NUMA balancing to try migrate
+the task back or migrate the data to another node. Similar weirdness is
+observed if a basic shell command pipes output to another as each process
+in the pipeline is likely to start on different nodes and then get adjusted
+later by wake_affine().
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+This patch adds imbalance to remote domains when considering whether to
+select CPUs from remote domains. If the local domain is selected, imbalance
+will still be used to try select a CPU from a lower scheduler domain's group
+instead of stacking tasks on the same CPU.
+
+A variety of workloads and machines were tested and as expected, there is no
+difference on UMA. The difference on NUMA can be dramatic. This is a comparison
+of elapsed times running the git regression test suite. It's fork-intensive with
+short-lived processes:
+
+                                  4.15.0                 4.15.0
+                            noexit-v1r23           sdnuma-v1r23
+ Elapsed min          1706.06 (   0.00%)     1435.94 (  15.83%)
+ Elapsed mean         1709.53 (   0.00%)     1436.98 (  15.94%)
+ Elapsed stddev          2.16 (   0.00%)        1.01 (  53.38%)
+ Elapsed coeffvar        0.13 (   0.00%)        0.07 (  44.54%)
+ Elapsed max          1711.59 (   0.00%)     1438.01 (  15.98%)
+
+               4.15.0      4.15.0
+         noexit-v1r23 sdnuma-v1r23
+ User         5434.12     5188.41
+ System       4878.77     3467.09
+ Elapsed     10259.06     8624.21
+
+That shows a considerable reduction in elapsed times. It's important to
+note that automatic NUMA balancing does not affect this load as processes
+are too short-lived.
+
+There is also a noticable impact on hackbench such as this example using
+processes and pipes:
+
+ hackbench-process-pipes
+                               4.15.0                 4.15.0
+                         noexit-v1r23           sdnuma-v1r23
+ Amean     1        1.0973 (   0.00%)      0.9393 (  14.40%)
+ Amean     4        1.3427 (   0.00%)      1.3730 (  -2.26%)
+ Amean     7        1.4233 (   0.00%)      1.6670 ( -17.12%)
+ Amean     12       3.0250 (   0.00%)      3.3013 (  -9.13%)
+ Amean     21       9.0860 (   0.00%)      9.5343 (  -4.93%)
+ Amean     30      14.6547 (   0.00%)     13.2433 (   9.63%)
+ Amean     48      22.5447 (   0.00%)     20.4303 (   9.38%)
+ Amean     79      29.2010 (   0.00%)     26.7853 (   8.27%)
+ Amean     110     36.7443 (   0.00%)     35.8453 (   2.45%)
+ Amean     141     45.8533 (   0.00%)     42.6223 (   7.05%)
+ Amean     172     55.1317 (   0.00%)     50.6473 (   8.13%)
+ Amean     203     64.4420 (   0.00%)     58.3957 (   9.38%)
+ Amean     234     73.2293 (   0.00%)     67.1047 (   8.36%)
+ Amean     265     80.5220 (   0.00%)     75.7330 (   5.95%)
+ Amean     296     88.7567 (   0.00%)     82.1533 (   7.44%)
+
+It's not a universal win as there are occasions when spreading wide and
+quickly is a benefit but it's more of a win than it is a loss. For other
+workloads, there is little difference but netperf is interesting. Without
+the patch, the server and client starts on different nodes but quickly get
+migrated due to wake_affine. Hence, the difference is overall performance
+is marginal but detectable:
+
+                                      4.15.0                 4.15.0
+                                noexit-v1r23           sdnuma-v1r23
+ Hmean     send-64         349.09 (   0.00%)      354.67 (   1.60%)
+ Hmean     send-128        699.16 (   0.00%)      702.91 (   0.54%)
+ Hmean     send-256       1316.34 (   0.00%)     1350.07 (   2.56%)
+ Hmean     send-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
+ Hmean     send-2048      9705.19 (   0.00%)     9687.44 (  -0.18%)
+ Hmean     send-3312     14359.48 (   0.00%)    14577.64 (   1.52%)
+ Hmean     send-4096     16324.20 (   0.00%)    16393.62 (   0.43%)
+ Hmean     send-8192     26112.61 (   0.00%)    26877.26 (   2.93%)
+ Hmean     send-16384    37208.44 (   0.00%)    38683.43 (   3.96%)
+ Hmean     recv-64         349.09 (   0.00%)      354.67 (   1.60%)
+ Hmean     recv-128        699.16 (   0.00%)      702.91 (   0.54%)
+ Hmean     recv-256       1316.34 (   0.00%)     1350.07 (   2.56%)
+ Hmean     recv-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
+ Hmean     recv-2048      9705.16 (   0.00%)     9687.43 (  -0.18%)
+ Hmean     recv-3312     14359.42 (   0.00%)    14577.59 (   1.52%)
+ Hmean     recv-4096     16323.98 (   0.00%)    16393.55 (   0.43%)
+ Hmean     recv-8192     26111.85 (   0.00%)    26876.96 (   2.93%)
+ Hmean     recv-16384    37206.99 (   0.00%)    38682.41 (   3.97%)
+
+However, what is very interesting is how automatic NUMA balancing behaves.
+Each netperf instance runs long enough for balancing to activate:
+
+ NUMA base PTE updates             4620        1473
+ NUMA huge PMD updates                0           0
+ NUMA page range updates           4620        1473
+ NUMA hint faults                  4301        1383
+ NUMA hint local faults            1309         451
+ NUMA hint local percent             30          32
+ NUMA pages migrated               1335         491
+ AutoNUMA cost                      21%          6%
+
+There is an unfortunate number of remote faults although tracing indicated
+that the vast majority are in shared libraries. However, the tendency to
+start tasks on the same node if there is capacity means that there were
+far fewer PTE updates and faults incurred overall.
+
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Giovanni Gherdovich <ggherdovich@suse.cz>
@@ -64,22 +161,32 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180213133730.24064-5-mgorman@techsingularity.net
+Link: http://lkml.kernel.org/r/20180213133730.24064-6-mgorman@techsingularity.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a07920f..302dda8 100644
+index 302dda8..94aea5b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6350,7 +6350,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 	int cpu = smp_processor_id();
- 	int new_cpu = prev_cpu;
- 	int want_affine = 0;
--	int sync = wake_flags & WF_SYNC;
-+	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
+@@ -5911,6 +5911,18 @@ skip_spare:
+ 	if (!idlest)
+ 		return NULL;
  
- 	if (sd_flag & SD_BALANCE_WAKE) {
- 		record_wakee(p);
++	/*
++	 * When comparing groups across NUMA domains, it's possible for the
++	 * local domain to be very lightly loaded relative to the remote
++	 * domains but "imbalance" skews the comparison making remote CPUs
++	 * look much more favourable. When considering cross-domain, add
++	 * imbalance to the runnable load on the remote node and consider
++	 * staying local.
++	 */
++	if ((sd->flags & SD_NUMA) &&
++	    min_runnable_load + imbalance >= this_runnable_load)
++		return NULL;
++
+ 	if (min_runnable_load > (this_runnable_load + imbalance))
+ 		return NULL;
+ 
