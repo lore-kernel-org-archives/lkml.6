@@ -1,305 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeBUUiI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:38:08 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60700 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeBUUiG (ORCPT
+        id S1751359AbeBUUkw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:40:52 -0500
+Received: from mail-io0-f172.google.com ([209.85.223.172]:41612 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbeBUUku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:38:06 -0500
-Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-pci@vger.kernel.org,
-        Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org,
-        David Ahern <david.ahern@oracle.com>, TJ <linux@iam.tj>
-References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <79dde4e9-3134-e444-83a1-d1012f7a0384@oracle.com>
-Date: Wed, 21 Feb 2018 13:37:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 21 Feb 2018 15:40:50 -0500
+X-Google-Smtp-Source: AH8x225ALYgUIVWUQ18cRaaOHrYGPSasIvRCXKnE9oQ3Dr1C5LpTnCJHLAcVexpvmMiTerD/r3I5PHpEbJK+gnWiH/8=
 MIME-Version: 1.0
-In-Reply-To: <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: multipart/mixed;
- boundary="------------29A4D87929B444C6E726A4C6"
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802210247
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
+References: <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk> <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+ <20180220233008.55rfm7zw62hrao5p@agluck-desk> <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
+ <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
+ <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
+ <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
+ <20180221182104.GI3231@tassilo.jf.intel.com> <20180221194731.t7jowrmicvaggu3x@agluck-desk>
+ <CA+55aFzy89V13rSxGQy77Bb08qpUpH+J=trcjooKQhsAFbgrVw@mail.gmail.com> <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Feb 2018 12:40:48 -0800
+X-Google-Sender-Auth: YRQyTjqRwBUWthmIdpRK0y3Hkbw
+Message-ID: <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Joe Konno <joe.konno@linux.intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
+        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------29A4D87929B444C6E726A4C6
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Wed, Feb 21, 2018 at 11:58 AM, Luck, Tony <tony.luck@intel.com> wrote:
+>
+> How are you envisioning this rate-limiting to be implemented? Are
+> you going to fail an EFI call if the rate is too high?  I'm thinking that
+> we just add a delay to each call so that we can't exceed the limit.
 
-On 02/20/2018 04:39 PM, Bjorn Helgaas wrote:
-> 
-> Both these patches are on my pci/sparc branch and appeared in the
-> Feb 19 linux-next tree.
-> 
-> Any testing and feedback (especially on the second patch, which should
-> change /proc/iomem) would be great.
-> 
-> They're headed for v4.17 unless I hear about issues.
-> 
-> It would be useful to hear about what's still broken so I can try to
-> pull in the other patches.
-> 
+Delaying sounds ok, I guess.
 
-Hi Bjorn,
+But the "obvious" implementation may be simple:
 
-I tested these two patches on an M7 machine. With these two patches, one 
-of the PCI devices was able to claim BAR 0 which it fails to without 
-these patches. This device happens to be a NIC, so with these two 
-patches, the NIC finally works on my test machine. I have attached log 
-showing all the failures to claim a BAR. First file is from 4.16-rc2 
-while the second one is from 4.16-rc2+these two patches. There still are 
-a number of failures to claim BAR even with these two patches.
+    static void efi_ratelimit(void)
+    {
+        static DEFINE_RATELIMIT_STATE(ratelimit, HZ, 100);
 
-I am also attaching /proc/iomem for the 4.16-rc2 kernel and 4.16-rc2 
-with these two patches.
+        if (!__ratelimit(&ratelimit))
+                msleep(10);
+        }
+    }
 
---
-Khalid
+but the above is actually completely broken.
 
---------------29A4D87929B444C6E726A4C6
-Content-Type: text/plain; charset=UTF-8;
- name="log.rc2"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="log.rc2"
+Why? If you have multiple processes, they can each only do a hundred
+per second, but globally they can do millions per second by just
+having a few thousand threads. They all sleep, but..
 
-cGNpIDAwMDA6MDM6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDAgW21lbSAweDIwMDAxMDAwMDAw
-MDAtMHgyMDAwMTAwN2ZmZmZmIDY0Yml0IHByZWZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3
-aW5kb3cKcGNpIDAwMDA6MDM6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMDAw
-MDAxMDAwMDAtMHgyMDAwMDAwMTdmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93
-CnBjaSAwMDAwOjAzOjAwLjE6IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMTgw
-MDAwLTB4MjAwMDAwMDFmZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kg
-MDAwMDowMzowMC4yOiBjYW4ndCBjbGFpbSBCQVIgMyBbbWVtIDB4MjAwMDEwMGQxMDAwMC0w
-eDIwMDAxMDBkMTdmZmYgNjRiaXQgcHJlZl06IGFkZHJlc3MgY29uZmxpY3Qgd2l0aCAwMDAw
-OjAzOjAwLjEgW21lbSAweDIwMDAxMDBiOTAwMDAtMHgyMDAwMTAwZDhmZmZmIDY0Yml0IHBy
-ZWZdCnBjaSAwMDAwOjAzOjAwLjI6IGNhbid0IGNsYWltIEJBUiA3IFttZW0gMHgyMDAwMTAw
-ZTIwMDAwLTB4MjAwMDEwMTAxZmZmZiA2NGJpdCBwcmVmXTogYWRkcmVzcyBjb25mbGljdCB3
-aXRoIDAwMDA6MDM6MDAuMSBbbWVtIDB4MjAwMDEwMTAwMDAwMC0weDIwMDAxMDE3ZmZmZmYg
-NjRiaXQgcHJlZl0KcGNpIDAwMDA6MDM6MDAuMjogY2FuJ3QgY2xhaW0gQkFSIDEwIFttZW0g
-MHgyMDAwMTAxMDIwMDAwLTB4MjAwMDEwMTA5ZmZmZiA2NGJpdCBwcmVmXTogYWRkcmVzcyBj
-b25mbGljdCB3aXRoIDAwMDA6MDM6MDAuMSBbbWVtIDB4MjAwMDEwMTAwMDAwMC0weDIwMDAx
-MDE3ZmZmZmYgNjRiaXQgcHJlZl0KcGNpIDAwMDA6MDM6MDAuMzogY2FuJ3QgY2xhaW0gQkFS
-IDMgW21lbSAweDIwMDAxMDBkMTgwMDAtMHgyMDAwMTAwZDFmZmZmIDY0Yml0IHByZWZdOiBh
-ZGRyZXNzIGNvbmZsaWN0IHdpdGggMDAwMDowMzowMC4xIFttZW0gMHgyMDAwMTAwYjkwMDAw
-LTB4MjAwMDEwMGQ4ZmZmZiA2NGJpdCBwcmVmXQpwY2kgMDAwMDowNDowMC4wOiBjYW4ndCBj
-bGFpbSBCQVIgMCBbbWVtIDB4MjAwMDExMDAwMDAwMC0weDIwMDAxMTAwMGZmZmYgNjRiaXRd
-OiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDQ6MDAuMDogY2FuJ3Qg
-Y2xhaW0gQkFSIDIgW21lbSAweDIwMDAxMTAwMTAwMDAtMHgyMDAwMTEwMDExZmZmIDY0Yml0
-XTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0
-IGNsYWltIEJBUiAxIFttZW0gMHgyMDIwMTIwMDAwMDAwLTB4MjAyMDEyMDAwZmZmZiA2NGJp
-dF06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4n
-dCBjbGFpbSBCQVIgMyBbbWVtIDB4MjAyMDEyMDA0MDAwMC0weDIwMjAxMjAwN2ZmZmYgNjRi
-aXRdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2Fu
-J3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMjAwMTAxMDAwMDAtMHgyMDIwMDEwMWZmZmZmXTog
-bm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNs
-YWltIEJBUiA3IFttZW0gMHgyMDIwMTIwMTgwMDAwLTB4MjAyMDEyMDI3ZmZmZiA2NGJpdF06
-IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4ndCBj
-bGFpbSBCQVIgOSBbbWVtIDB4MjAyMDEyMDI4MDAwMC0weDIwMjAxMjA2N2ZmZmYgNjRiaXRd
-OiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKaTQwZSAwMDAwOjAzOjAwLjA6IEJBUiAw
-OiBjYW4ndCByZXNlcnZlIFttZW0gc2l6ZSAweDAwODAwMDAwIDY0Yml0IHByZWZdCg==
---------------29A4D87929B444C6E726A4C6
-Content-Type: text/plain; charset=UTF-8;
- name="log.rc2-bjorn"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="log.rc2-bjorn"
+So how do you restrict it *globally*?
 
-cGNpIDAwMDA6MDA6MDEuMDogY2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDAwMDAwMTAw
-MDAwLTB4MjAwMDAwMDJmZmZmZl06IGFkZHJlc3MgY29uZmxpY3Qgd2l0aCBWaWRlbyBSQU0g
-YXJlYSBbPz8/IDB4MjAwMDAwMDFhMDAwMC0weDIwMDAwMDAxYmZmZmYgZmxhZ3MgMHg4MDAw
-MDAwMF0KcGNpIDAwMDA6MDE6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDAw
-MDAwMTAwMDAwLTB4MjAwMDAwMDJmZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRv
-dwpwY2kgMDAwMDowMjowMS4wOiBjYW4ndCBjbGFpbSBCQVIgMTQgW21lbSAweDIwMDAwMDAx
-MDAwMDAtMHgyMDAwMDAwMmZmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBj
-aSAwMDAwOjAzOjAwLjA6IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMTAwMDAw
-LTB4MjAwMDAwMDE3ZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAw
-MDowMzowMC4xOiBjYW4ndCBjbGFpbSBCQVIgNiBbbWVtIDB4MjAwMDAwMDE4MDAwMC0weDIw
-MDAwMDAxZmZmZmZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDM6
-MDAuMjogY2FuJ3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMDAwMDAyMDAwMDAtMHgyMDAwMDAw
-MjdmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAwOjAzOjAwLjM6
-IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMjgwMDAwLTB4MjAwMDAwMDJmZmZm
-Zl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMDowNDowMC4wOiBjYW4n
-dCBjbGFpbSBCQVIgMCBbbWVtIDB4MjAwMDExMDAwMDAwMC0weDIwMDAxMTAwMGZmZmYgNjRi
-aXRdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDQ6MDAuMDogY2Fu
-J3QgY2xhaW0gQkFSIDIgW21lbSAweDIwMDAxMTAwMTAwMDAtMHgyMDAwMTEwMDExZmZmIDY0
-Yml0XTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjAwOjAyLjA6IGNh
-bid0IGNsYWltIEJBUiAxNCBbbWVtIDB4MjAyMDAwMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZd
-OiBhZGRyZXNzIGNvbmZsaWN0IHdpdGggVmlkZW8gUkFNIGFyZWEgWz8/PyAweDIwMjAwMDAx
-YTAwMDAtMHgyMDIwMDAwMWJmZmZmIGZsYWdzIDB4ODAwMDAwMDBdCnBjaSAwMDAxOjA1OjAw
-LjA6IGNhbid0IGNsYWltIEJBUiAxNCBbbWVtIDB4MjAyMDAwMDEwMDAwMC0weDIwMjAwMTAx
-ZmZmZmZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6MDY6MDQuMDog
-Y2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDIwMDAwMTAwMDAwLTB4MjAyMDAwODBmZmZm
-Zl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTowNjowNS4wOiBjYW4n
-dCBjbGFpbSBCQVIgMTQgW21lbSAweDIwMjAwMDgxMDAwMDAtMHgyMDIwMDEwMGZmZmZmXTog
-bm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjA2OjE3LjA6IGNhbid0IGNs
-YWltIEJBUiAxNCBbbWVtIDB4MjAyMDAxMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZdOiBubyBj
-b21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2FuJ3QgY2xhaW0g
-QkFSIDEgW21lbSAweDIwMjAxMjAwMDAwMDAtMHgyMDIwMTIwMDBmZmZmIDY0Yml0XTogbm8g
-Y29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNsYWlt
-IEJBUiAzIFttZW0gMHgyMDIwMTIwMDQwMDAwLTB4MjAyMDEyMDA3ZmZmZiA2NGJpdF06IG5v
-IGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4ndCBjbGFp
-bSBCQVIgNiBbbWVtIDB4MjAyMDAxMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZdOiBubyBjb21w
-YXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2FuJ3QgY2xhaW0gQkFS
-IDcgW21lbSAweDIwMjAxMjAwODAwMDAtMHgyMDIwMTIwMTdmZmZmIDY0Yml0XTogbm8gY29t
-cGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNsYWltIEJB
-UiA5IFttZW0gMHgyMDIwMTIwMTgwMDAwLTB4MjAyMDEyMDU3ZmZmZiA2NGJpdF06IG5vIGNv
-bXBhdGlibGUgYnJpZGdlIHdpbmRvdwo=
---------------29A4D87929B444C6E726A4C6
-Content-Type: text/plain; charset=UTF-8;
- name="iomem.rc2"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="iomem.rc2"
+If you put this all inside a lock like a mutex, you can generate
+basically arbitrary delays, and you're back to the DoS schenario. A
+fair lock will allow thousands of waiters to line up and make the
+delay be
 
-NTA0MDAwMDAtOGZlYzlmZmYgOiBTeXN0ZW0gUkFNCjkwMDAwMDAwLTFmZWZmZmZmZmYgOiBT
-eXN0ZW0gUkFNCjQwMDAwMDAwMDAwMC00MDFmZWY1Y2ZmZmYgOiBTeXN0ZW0gUkFNCiAgNDAw
-MDAwMDA0MDAwLTQwMDAwMDZkYTkzZiA6IEtlcm5lbCBjb2RlCiAgNDAwMDAwNmRhOTQwLTQw
-MDAwMGE5OTg1ZiA6IEtlcm5lbCBkYXRhCiAgNDAwMDAwYjQ0MDAwLTQwMDAwMGQwNDUxNyA6
-IEtlcm5lbCBic3MKMjAwMDAwMDEwMDAwMC0yMDAwMDdlZmZmZmZmIDogL3BjaUAzMDAKICAy
-MDAwMDAwMWEwMDAwLTIwMDAwMDAxYmZmZmYgOiBWaWRlbyBSQU0gYXJlYQogIDIwMDAwMDAx
-YzAwMDAtMjAwMDAwMDFjN2ZmZiA6IFZpZGVvIFJPTQogIDIwMDAwMDAxZjAwMDAtMjAwMDAw
-MDFmZmZmZiA6IFN5c3RlbSBST00KICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAzZmZmZmYgOiBQ
-Q0kgQnVzIDAwMDA6MDEKICAgIDIwMDAwMDAyMDAwMDAtMjAwMDAwMDNmZmZmZiA6IFBDSSBC
-dXMgMDAwMDowMgogICAgICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAzZmZmZmYgOiBQQ0kgQnVz
-IDAwMDA6MDMKICAgICAgICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAyN2ZmZmYgOiAwMDAwOjAz
-OjAwLjIKICAgICAgICAyMDAwMDAwMjgwMDAwLTIwMDAwMDAyZmZmZmYgOiAwMDAwOjAzOjAw
-LjMKICAyMDAwMDAwNDAwMDAwLTIwMDAwMTAzZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDYKICAg
-IDIwMDAwMDA0MDAwMDAtMjAwMDAxMDNmZmZmZiA6IFBDSSBCdXMgMDAwMDowNwogICAgICAy
-MDAwMDAwNDAwMDAwLTIwMDAwMDgzZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDgKICAgICAgMjAw
-MDAwODQwMDAwMC0yMDAwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAwOjI4CjIwMDAxMDAwMDAw
-MDAtMjAwMGRmZmZmZmZmZiA6IC9wY2lAMzAwCiAgMjAwMDEwMDEwMDAwMC0yMDAwMTIwMGZm
-ZmZmIDogUENJIEJ1cyAwMDAwOjAxCiAgICAyMDAwMTAwMTAwMDAwLTIwMDAxMjAwZmZmZmYg
-OiBQQ0kgQnVzIDAwMDA6MDIKICAgICAgMjAwMDEwMDEwMDAwMC0yMDAwMTEwMGZmZmZmIDog
-UENJIEJ1cyAwMDAwOjAzCiAgICAgICAgMjAwMDEwMDgwMDAwMC0yMDAwMTAwODA3ZmZmIDog
-MDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMDgwODAwMC0yMDAwMTAwODBmZmZmIDogMDAw
-MDowMzowMC4xCiAgICAgICAgICAyMDAwMTAwODA4MDAwLTIwMDAxMDA4MGZmZmYgOiBpNDBl
-CiAgICAgICAgMjAwMDEwMDkxMDAwMC0yMDAwMTAwYjBmZmZmIDogMDAwMDowMzowMC4wCiAg
-ICAgICAgMjAwMDEwMGIxMDAwMC0yMDAwMTAwYjhmZmZmIDogMDAwMDowMzowMC4wCiAgICAg
-ICAgMjAwMDEwMGI5MDAwMC0yMDAwMTAwZDhmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAg
-ICAyMDAwMTAwZDEwMDAwLTIwMDAxMDBkMTdmZmYgOiBpNDBlCiAgICAgICAgICAyMDAwMTAw
-ZDE4MDAwLTIwMDAxMDBkMWZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMGQ5MDAwMC0yMDAw
-MTAwZTBmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMTAwMDAwMC0yMDAwMTAx
-N2ZmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAxMDAwMDAwLTIwMDAxMDE3
-ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMTgwMDAwMC0yMDAwMTAxZmZmZmZmIDogMDAw
-MDowMzowMC4yCiAgICAgICAgICAyMDAwMTAxODAwMDAwLTIwMDAxMDFmZmZmZmYgOiBpNDBl
-CiAgICAgICAgMjAwMDEwMjAwMDAwMC0yMDAwMTAyN2ZmZmZmIDogMDAwMDowMzowMC4zCiAg
-ICAgICAgICAyMDAwMTAyMDAwMDAwLTIwMDAxMDI3ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAw
-MDEwMjkwMDAwMC0yMDAwMTAyYWZmZmZmIDogMDAwMDowMzowMC4zCiAgICAgICAgMjAwMDEw
-MmIwMDAwMC0yMDAwMTAyYjdmZmZmIDogMDAwMDowMzowMC4zCiAgICAgICAgMjAwMDExMDAw
-MDAwMC0yMDAwMTEwMDBmZmZmIDogeGhjaS1oY2QKICAgICAgMjAwMDExMDEwMDAwMC0yMDAw
-MTIwMGZmZmZmIDogUENJIEJ1cyAwMDAwOjA0CiAgMjAwMDEyMDEwMDAwMC0yMDAwMTQwMGZm
-ZmZmIDogUENJIEJ1cyAwMDAwOjA2CiAgICAyMDAwMTIwMTAwMDAwLTIwMDAxNDAwZmZmZmYg
-OiBQQ0kgQnVzIDAwMDA6MDcKICAgICAgMjAwMDEyMDEwMDAwMC0yMDAwMTMwMGZmZmZmIDog
-UENJIEJ1cyAwMDAwOjA4CiAgICAgIDIwMDAxMzAxMDAwMDAtMjAwMDE0MDBmZmZmZiA6IFBD
-SSBCdXMgMDAwMDoyOAoyMDIwMDAwMTAwMDAwLTIwMjAwN2VmZmZmZmYgOiAvcGNpQDMwMgog
-IDIwMjAwMDAxYTAwMDAtMjAyMDAwMDFiZmZmZiA6IFZpZGVvIFJBTSBhcmVhCiAgMjAyMDAw
-MDFjMDAwMC0yMDIwMDAwMWM3ZmZmIDogVmlkZW8gUk9NCiAgMjAyMDAwMDFmMDAwMC0yMDIw
-MDAwMWZmZmZmIDogU3lzdGVtIFJPTQogIDIwMjAwMDAyMDAwMDAtMjAyMDAwMDJmZmZmZiA6
-IFBDSSBCdXMgMDAwMTowMQogICAgMjAyMDAwMDIwMDAwMC0yMDIwMDAwMmZmZmZmIDogUENJ
-IEJ1cyAwMDAxOjAyCiAgICAgIDIwMjAwMDAyMDAwMDAtMjAyMDAwMDJmZmZmZiA6IFBDSSBC
-dXMgMDAwMTowMwogIDIwMjAwMDAzMDAwMDAtMjAyMDAxMDNmZmZmZiA6IFBDSSBCdXMgMDAw
-MTowNQogICAgMjAyMDAwMDMwMDAwMC0yMDIwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAxOjA2
-CiAgICAgIDIwMjAwMDAzMDAwMDAtMjAyMDAwODJmZmZmZiA6IFBDSSBCdXMgMDAwMTowNwog
-ICAgICAyMDIwMDA4MzAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MmQKICAg
-ICAgMjAyMDAxMDMwMDAwMC0yMDIwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAxOjU0CjIwMjAx
-MDAwMDAwMDAtMjAyMGRmZmZmZmZmZiA6IC9wY2lAMzAyCiAgMjAyMDEwMDEwMDAwMC0yMDIw
-MjEwMGZmZmZmIDogUENJIEJ1cyAwMDAxOjAxCiAgICAyMDIwMTAwMTAwMDAwLTIwMjAyMTAw
-ZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDIKICAgICAgMjAyMDEwMDEwMDAwMC0yMDIwMjEwMGZm
-ZmZmIDogUENJIEJ1cyAwMDAxOjAzCiAgICAgICAgMjAyMDEwMDEwODAwMC0yMDIwMTAwMTg3
-ZmZmIDogMDAwMTowMzowMC4wCiAgICAgICAgMjAyMDEwMDE4ODAwMC0yMDIwMTAwMjA3ZmZm
-IDogMDAwMTowMzowMC4wCiAgICAgICAgMjAyMDEwODAwMDAwMC0yMDIwMTBmZmZmZmZmIDog
-MDAwMTowMzowMC4wCiAgICAgICAgMjAyMDExMDEwMDAwMC0yMDIwMjEwMGZmZmZmIDogMDAw
-MTowMzowMC4wCiAgMjAyMDIxMDEwMDAwMC0yMDIwMjQwMGZmZmZmIDogUENJIEJ1cyAwMDAx
-OjA1CiAgICAyMDIwMjEwMTAwMDAwLTIwMjAyNDAwZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDYK
-ICAgICAgMjAyMDIxMDEwMDAwMC0yMDIwMjIwMGZmZmZmIDogUENJIEJ1cyAwMDAxOjA3CiAg
-ICAgIDIwMjAyMjAxMDAwMDAtMjAyMDIzMDBmZmZmZiA6IFBDSSBCdXMgMDAwMToyZAogICAg
-ICAgIDIwMjAyMzAwMDAwMDAtMjAyMDIzMDAwZmZmZiA6IG1wdDNzYXMKICAgICAgICAyMDIw
-MjMwMDQwMDAwLTIwMjAyMzAwN2ZmZmYgOiBtcHQzc2FzCiAgICAgIDIwMjAyMzAxMDAwMDAt
-MjAyMDI0MDBmZmZmZiA6IFBDSSBCdXMgMDAwMTo1NAo=
---------------29A4D87929B444C6E726A4C6
-Content-Type: text/plain; charset=UTF-8;
- name="iomem.rc2-bjorn"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="iomem.rc2-bjorn"
+But maybe I'm missing some really obvious way. You *can* make the
+msleep be a spinning wait instead, and rely on the scheduler, I guess.
 
-MDAwYzAwMDAtMDAwYzdmZmYgOiBWaWRlbyBST00KMDAwZjAwMDAtMDAwZmZmZmYgOiBTeXN0
-ZW0gUk9NCjUwNDAwMDAwLThmZWM5ZmZmIDogU3lzdGVtIFJBTQo5MDAwMDAwMC0xZmVmZmZm
-ZmZmIDogU3lzdGVtIFJBTQo0MDAwMDAwMDAwMDAtNDAxZmVmNWNmZmZmIDogU3lzdGVtIFJB
-TQogIDQwMDAwMDAwNDAwMC00MDAwMDA2ZGE5M2YgOiBLZXJuZWwgY29kZQogIDQwMDAwMDZk
-YTk0MC00MDAwMDBhOTk4ZGYgOiBLZXJuZWwgZGF0YQogIDQwMDAwMGI0NDAwMC00MDAwMDBk
-MDQ1MTcgOiBLZXJuZWwgYnNzCjIwMDAwMDAxMDAwMDAtMjAwMDA3ZWZmZmZmZiA6IC9wY2lA
-MzAwCiAgMjAwMDAwMDFhMDAwMC0yMDAwMDAwMWJmZmZmIDogVmlkZW8gUkFNIGFyZWEKICAy
-MDAwMDAwMzAwMDAwLTIwMDAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDYKICAgIDIwMDAw
-MDAzMDAwMDAtMjAwMDAxMDJmZmZmZiA6IFBDSSBCdXMgMDAwMDowNwogICAgICAyMDAwMDAw
-MzAwMDAwLTIwMDAwMDgyZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDgKICAgICAgMjAwMDAwODMw
-MDAwMC0yMDAwMDEwMmZmZmZmIDogUENJIEJ1cyAwMDAwOjI4CjIwMDAxMDAwMDAwMDAtMjAw
-MGRmZmZmZmZmZiA6IC9wY2lAMzAwCiAgMjAwMDEwMDAwMDAwMC0yMDAwMTFmZmZmZmZmIDog
-UENJIEJ1cyAwMDAwOjAxCiAgICAyMDAwMTAwMDAwMDAwLTIwMDAxMWZmZmZmZmYgOiBQQ0kg
-QnVzIDAwMDA6MDIKICAgICAgMjAwMDEwMDAwMDAwMC0yMDAwMTBmZmZmZmZmIDogUENJIEJ1
-cyAwMDAwOjAzCiAgICAgICAgMjAwMDEwMDAwMDAwMC0yMDAwMTAwN2ZmZmZmIDogMDAwMDow
-MzowMC4wCiAgICAgICAgICAyMDAwMTAwMDAwMDAwLTIwMDAxMDA3ZmZmZmYgOiBpNDBlCiAg
-ICAgICAgMjAwMDEwMDgwMDAwMC0yMDAwMTAwODA3ZmZmIDogMDAwMDowMzowMC4wCiAgICAg
-ICAgICAyMDAwMTAwODAwMDAwLTIwMDAxMDA4MDdmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEw
-MDgwODAwMC0yMDAwMTAwODBmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAw
-ODA4MDAwLTIwMDAxMDA4MGZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMDgxMDAwMC0yMDAw
-MTAwYTBmZmZmIDogMDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMGExMDAwMC0yMDAwMTAw
-YThmZmZmIDogMDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMGE5MDAwMC0yMDAwMTAwYzhm
-ZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMGM5MDAwMC0yMDAwMTAwZDBmZmZm
-IDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMGQxMDAwMC0yMDAwMTAwZDE3ZmZmIDog
-MDAwMDowMzowMC4yCiAgICAgICAgICAyMDAwMTAwZDEwMDAwLTIwMDAxMDBkMTdmZmYgOiBp
-NDBlCiAgICAgICAgMjAwMDEwMGQxODAwMC0yMDAwMTAwZDFmZmZmIDogMDAwMDowMzowMC4z
-CiAgICAgICAgICAyMDAwMTAwZDE4MDAwLTIwMDAxMDBkMWZmZmYgOiBpNDBlCiAgICAgICAg
-MjAwMDEwMGQyMDAwMC0yMDAwMTAwZjFmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgMjAw
-MDEwMGYyMDAwMC0yMDAwMTAwZjlmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgMjAwMDEw
-MTAwMDAwMC0yMDAwMTAxN2ZmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAx
-MDAwMDAwLTIwMDAxMDE3ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMTgwMDAwMC0yMDAw
-MTAxZmZmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgICAyMDAwMTAxODAwMDAwLTIwMDAx
-MDFmZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMjAwMDAwMC0yMDAwMTAyN2ZmZmZmIDog
-MDAwMDowMzowMC4zCiAgICAgICAgICAyMDAwMTAyMDAwMDAwLTIwMDAxMDI3ZmZmZmYgOiBp
-NDBlCiAgICAgICAgMjAwMDEwMjgwMDAwMC0yMDAwMTAyOWZmZmZmIDogMDAwMDowMzowMC4z
-CiAgICAgICAgMjAwMDEwMmEwMDAwMC0yMDAwMTAyYTdmZmZmIDogMDAwMDowMzowMC4zCiAg
-ICAgIDIwMDAxMTAwMDAwMDAtMjAwMDExZmZmZmZmZiA6IFBDSSBCdXMgMDAwMDowNAogICAg
-ICAgIDIwMDAxMTAwMDAwMDAtMjAwMDExMDAwZmZmZiA6IHhoY2ktaGNkCiAgMjAwMDEyMDAw
-MDAwMC0yMDAwMTNmZmZmZmZmIDogUENJIEJ1cyAwMDAwOjA2CiAgICAyMDAwMTIwMDAwMDAw
-LTIwMDAxM2ZmZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDcKICAgICAgMjAwMDEyMDAwMDAwMC0y
-MDAwMTJmZmZmZmZmIDogUENJIEJ1cyAwMDAwOjA4CiAgICAgIDIwMDAxMzAwMDAwMDAtMjAw
-MDEzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMDoyOAoyMDIwMDAwMTAwMDAwLTIwMjAwN2VmZmZm
-ZmYgOiAvcGNpQDMwMgogIDIwMjAwMDAxYTAwMDAtMjAyMDAwMDFiZmZmZiA6IFZpZGVvIFJB
-TSBhcmVhCiAgMjAyMDAwMDIwMDAwMC0yMDIwMDEwMmZmZmZmIDogUENJIEJ1cyAwMDAxOjA1
-CiAgICAyMDIwMDAwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDYKICAg
-ICAgMjAyMDAwMDIwMDAwMC0yMDIwMDA4MWZmZmZmIDogUENJIEJ1cyAwMDAxOjA3CiAgICAg
-IDIwMjAwMDgyMDAwMDAtMjAyMDAxMDFmZmZmZiA6IFBDSSBCdXMgMDAwMToyZAogICAgICAy
-MDIwMDEwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6NTQKICAgICAgICAy
-MDIwMDEwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiAwMDAxOjU0OjAwLjAKMjAyMDEwMDAwMDAw
-MC0yMDIwZGZmZmZmZmZmIDogL3BjaUAzMDIKICAyMDIwMTAwMDAwMDAwLTIwMjAyMGZmZmZm
-ZmYgOiBQQ0kgQnVzIDAwMDE6MDEKICAgIDIwMjAxMDAwMDAwMDAtMjAyMDIwZmZmZmZmZiA6
-IFBDSSBCdXMgMDAwMTowMgogICAgICAyMDIwMTAwMDAwMDAwLTIwMjAyMGZmZmZmZmYgOiBQ
-Q0kgQnVzIDAwMDE6MDMKICAgICAgICAyMDIwMTAwMDAwMDAwLTIwMjAxMDAwMDNmZmYgOiAw
-MDAxOjAzOjAwLjAKICAgICAgICAyMDIwMTAwMDA0MDAwLTIwMjAxMDAwMDdmZmYgOiAwMDAx
-OjAzOjAwLjAKICAgICAgICAyMDIwMTAwMDA4MDAwLTIwMjAxMDAwODdmZmYgOiAwMDAxOjAz
-OjAwLjAKICAgICAgICAyMDIwMTAwMDg4MDAwLTIwMjAxMDAxMDdmZmYgOiAwMDAxOjAzOjAw
-LjAKICAgICAgICAyMDIwMTA4MDAwMDAwLTIwMjAxMGZmZmZmZmYgOiAwMDAxOjAzOjAwLjAK
-ICAgICAgICAyMDIwMTEwMDAwMDAwLTIwMjAyMGZmZmZmZmYgOiAwMDAxOjAzOjAwLjAKICAy
-MDIwMjEwMDAwMDAwLTIwMjAyM2ZmZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDUKICAgIDIwMjAy
-MTAwMDAwMDAtMjAyMDIzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMTowNgogICAgICAyMDIwMjEw
-MDAwMDAwLTIwMjAyMWZmZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDcKICAgICAgMjAyMDIyMDAw
-MDAwMC0yMDIwMjJmZmZmZmZmIDogUENJIEJ1cyAwMDAxOjJkCiAgICAgIDIwMjAyMzAwMDAw
-MDAtMjAyMDIzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMTo1NAogICAgICAgIDIwMjAyMzAwMDAw
-MDAtMjAyMDIzMDAwZmZmZiA6IG1wdDNzYXMKICAgICAgICAyMDIwMjMwMDQwMDAwLTIwMjAy
-MzAwN2ZmZmYgOiBtcHQzc2FzCg==
---------------29A4D87929B444C6E726A4C6--
+Or maybe I'm just stupid and am overlooking the obvious case.
+
+Again, making the ratelimiting be per-user makes all of these issues
+go away. Then one user cannot delay another one.
+
+             Linus
