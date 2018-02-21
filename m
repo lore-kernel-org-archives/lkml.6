@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217273-5-13769221368656012160
+X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217272-2-125973693939538209
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519217273; b=tqm2bXsVn6rzRiuB2cqQCIEK2TQKU5hSVL/zhQ8ofJJQtPB
-    4GS/QsIPT4QfAPBXrleHYgoj8EtSoqLjQBY1ll5P1K5RHr0+wtnYTQ7hBB8+W5ve
-    Sy4EjF8rQzyM6IG2Thgi8+SKJbrVq04TWxW5eBzveyIrIlXQUDq6f3LN4IunovQe
-    X82e84eoI3aPfee/PYdr1tMx+Lr1+X85Ns85q2zIVGF824nz4zfSbsOcMQhzY76e
-    jtimLyJXMU6rX3TVXLKDh9W6wnRGL3eLqABcHc75el0RJBpgwH654uNhGtV7knVD
-    TnARIPTSiRjeLPg35xvJ1p3v3W41pUS7jWq8QIg==
+    t=1519217272; b=QshygcnbQ/u0Fiuliu9kbGjbcZIfhACpR9Ni9RYX8YYhfpx
+    8MEwkYlLcR/f98sBZ/Y+Lj0fJSK5+YwzGhG6Wa9IBR86gMf4qw/CwS9bwXs8d/SQ
+    0hiCQmYugSngUBDqbe7pB1r8YZFRH1BH7t7x0whNLGpcUBV1X2uvYRuwtlTR7UJ6
+    FVWprZMI1P5gVWrNfzs/SKAasjDOsXWKtmh/r7vPRsSslz9zOvd++4A5X2l4qzO9
+    cf4XNnuoeRfJ9TDbYKskqWcmLmC8KHs6rC2Is9zWk30vJ82+WusWfTaqtXw4SGa6
+    Mn+/8vwVzDuW9J6hbcP3N6mOmUDLo+qJ1+6YHpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519217273; bh=9nHG8vTnzcwMPmBbNS4JVjHOpz
-    Mwj+6VQk12fAr59ME=; b=XObbUN2MVFUL7CaqK5eaWeQytF227uIuLN8oMVMvVx
-    CWRXPaZm5VPyTKHJCgyJb/IS6Rv3B555IU1nJB9AhmBv1nRFMfAuJZhv08iQRJmb
-    akc/bJhJFl1F4Edy3mXOFxAkruR+kqQ7Rpr4eC04VxfWMzxSEh5P+Ocsl/2V16p8
-    IuuDZkafrYsWIuGwxx+jB6lAUnRlIh46zCPE2hevJ6Quuvc5L4EvbTe/RMLtYakn
-    ZoIw4DkBLElpn7QOcD7vCD1ZjV3xWgQTx+umMnbYhur8dYVGcoBbDcO7OC5gbkU5
-    pp/wUnPkfo2SfConWJ8Q5dJ0+oIYFr6wspv/g93HejOA==
+    :list-id; s=arctest; t=1519217272; bh=gNYWuvGFOLOjfQ1JJRPcLxHHlW
+    zx3RMa/ptBAV9MNKU=; b=uSjhlg0tbbUPe/RnVKFpn1PW7iAgSAO7YAz6GJJWvA
+    qOOrqm6FHMROLSnmdUAkL5pZFiqWn386Mpqj3BNxqYmgRCvIYOblv73ysv5bh+s3
+    hKwPK4bDnePvkwGifrD6nQbSPOtaCMnVWh8ExrOQ7HeTH7jowViD5meIWbhTbs/a
+    fusyqULJV6Hyhbn/119eune5EpmaA2v5DTGnj76RgSJOTZSySTR6itJW6gyvfaxN
+    3NdH/ZT7e8k9Gp1jxbCI4lEjP1oBMpznvq1dk//FZwOGDAUXNBSAUHA8PgVsoBYW
+    tZi9bSyeX9ExF38tWiS8EiFc4ivORdaN/6pweFxPZC/w==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752342AbeBUMr1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 07:47:27 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60054 "EHLO
+        id S933944AbeBUMqi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 07:46:38 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933948AbeBUMqj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:39 -0500
+        with ESMTP id S933905AbeBUMqg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:36 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.4 31/33] ARM: pxa/tosa-bt: add MODULE_LICENSE tag
-Date: Wed, 21 Feb 2018 13:45:14 +0100
-Message-Id: <20180221124411.167024968@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Vegard Nossum <vegard.nossum@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 4.4 30/33] vfs: dont do RCU lookup of empty pathnames
+Date: Wed, 21 Feb 2018 13:45:13 +0100
+Message-Id: <20180221124411.128121753@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -78,31 +81,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 3343647813fdf0f2409fbf5816ee3e0622168079 upstream.
+commit c0eb027e5aef70b71e5a38ee3e264dc0b497f343 upstream.
 
-Without this tag, we get a build warning:
+Normal pathname lookup doesn't allow empty pathnames, but using
+AT_EMPTY_PATH (with name_to_handle_at() or fstatat(), for example) you
+can trigger an empty pathname lookup.
 
-WARNING: modpost: missing MODULE_LICENSE() in arch/arm/mach-pxa/tosa-bt.o
+And not only is the RCU lookup in that case entirely unnecessary
+(because we'll obviously immediately finalize the end result), it is
+actively wrong.
 
-For completeness, I'm also adding author and description fields.
+Why? An empth path is a special case that will return the original
+'dirfd' dentry - and that dentry may not actually be RCU-free'd,
+resulting in a potential use-after-free if we were to initialize the
+path lazily under the RCU read lock and depend on complete_walk()
+finalizing the dentry.
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Found by syzkaller and KASAN.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Eric Biggers <ebiggers3@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-pxa/tosa-bt.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/namei.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm/mach-pxa/tosa-bt.c
-+++ b/arch/arm/mach-pxa/tosa-bt.c
-@@ -132,3 +132,7 @@ static struct platform_driver tosa_bt_dr
- 	},
- };
- module_platform_driver(tosa_bt_driver);
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2000,6 +2000,9 @@ static const char *path_init(struct name
+ 	int retval = 0;
+ 	const char *s = nd->name->name;
+ 
++	if (!*s)
++		flags &= ~LOOKUP_RCU;
 +
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Dmitry Baryshkov");
-+MODULE_DESCRIPTION("Bluetooth built-in chip control");
+ 	nd->last_type = LAST_ROOT; /* if there are only slashes... */
+ 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
+ 	nd->depth = 0;
