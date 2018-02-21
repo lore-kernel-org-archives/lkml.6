@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751745AbeBUGCP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 01:02:15 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39158 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeBUGCK (ORCPT
+        id S1751763AbeBUGCV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 01:02:21 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45253 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeBUGCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 01:02:10 -0500
-X-Google-Smtp-Source: AG47ELv5aJQIDsh8jBxT/wmy1a8h6wD11555JiAQLF+6UVIV3HZXPfGktYfCTcPhTP24Oo91l9PcPQ==
+        Wed, 21 Feb 2018 01:02:16 -0500
+X-Google-Smtp-Source: AG47ELt6MCuQpMJtymhxl/X53SiBjnfO+9fJpiRvVrRqtuBgi/EqTXWAroywALcNdTR5uPsvEMji7g==
 MIME-Version: 1.0
-In-Reply-To: <86ad101f-f400-c7fd-2aa5-4dc618973f3d@xs4all.nl>
+In-Reply-To: <ea10280d-bfb4-b1af-79cc-64f40e1007f1@xs4all.nl>
 References: <20180220044425.169493-1-acourbot@chromium.org>
- <20180220044425.169493-14-acourbot@chromium.org> <86ad101f-f400-c7fd-2aa5-4dc618973f3d@xs4all.nl>
+ <20180220044425.169493-17-acourbot@chromium.org> <ea10280d-bfb4-b1af-79cc-64f40e1007f1@xs4all.nl>
 From: Alexandre Courbot <acourbot@chromium.org>
-Date: Wed, 21 Feb 2018 15:01:46 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MVH0ezPye53MOL1fwuU5SEAMamG-S0jkJoF2Kp-LVok+A@mail.gmail.com>
-Message-ID: <CAPBb6MVH0ezPye53MOL1fwuU5SEAMamG-S0jkJoF2Kp-LVok+A@mail.gmail.com>
-Subject: Re: [RFCv4 13/21] media: videobuf2-v4l2: support for requests
+Date: Wed, 21 Feb 2018 15:01:53 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MU+uFyNdEbXavEWO5_AQrYT8d3qBXqZ0LuvLpU_qy-xNA@mail.gmail.com>
+Message-ID: <CAPBb6MU+uFyNdEbXavEWO5_AQrYT8d3qBXqZ0LuvLpU_qy-xNA@mail.gmail.com>
+Subject: Re: [RFCv4 16/21] v4l2: video_device: support for creating requests
 To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -32,138 +32,176 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 1:18 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+On Wed, Feb 21, 2018 at 1:35 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
 > On 02/20/2018 05:44 AM, Alexandre Courbot wrote:
->> Add a new vb2_qbuf_request() (a request-aware version of vb2_qbuf())
->> that request-aware drivers can call to queue a buffer into a request
->> instead of directly into the vb2 queue if relevent.
->>
->> This function expects that drivers invoking it are using instances of
->> v4l2_request_entity and v4l2_request_entity_data to describe their
->> entity and entity data respectively.
->>
->> Also add the vb2_request_submit() helper function which drivers can
->> invoke in order to queue all the buffers previously queued into a
->> request into the regular vb2 queue.
+>> Add a new VIDIOC_NEW_REQUEST ioctl, which allows to instanciate requests
+>> on devices that support the request API. Requests created that way can
+>> only control the device they originate from, making them suitable for
+>> simple devices, but not complex pipelines.
 >>
 >> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 >> ---
->>  .../media/common/videobuf2/videobuf2-v4l2.c   | 129 +++++++++++++++++-
->>  include/media/videobuf2-v4l2.h                |  59 ++++++++
->>  2 files changed, 187 insertions(+), 1 deletion(-)
+>>  Documentation/ioctl/ioctl-number.txt |  1 +
+>>  drivers/media/v4l2-core/v4l2-dev.c   |  2 ++
+>>  drivers/media/v4l2-core/v4l2-ioctl.c | 25 +++++++++++++++++++++++++
+>>  include/media/v4l2-dev.h             |  2 ++
+>>  include/uapi/linux/videodev2.h       |  3 +++
+>>  5 files changed, 33 insertions(+)
 >>
+>> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+>> index 6501389d55b9..afdc9ed255b0 100644
+>> --- a/Documentation/ioctl/ioctl-number.txt
+>> +++ b/Documentation/ioctl/ioctl-number.txt
+>> @@ -286,6 +286,7 @@ Code  Seq#(hex)   Include File            Comments
+>>                                       <mailto:oe@port.de>
+>>  'z'  10-4F   drivers/s390/crypto/zcrypt_api.h        conflict!
+>>  '|'  00-7F   linux/media.h
+>> +'|'  80-9F   linux/media-request.h
+>>  0x80 00-1F   linux/fb.h
+>>  0x89 00-06   arch/x86/include/asm/sockios.h
+>>  0x89 0B-DF   linux/sockios.h
 >
-> <snip>
->
->> @@ -776,10 +899,14 @@ EXPORT_SYMBOL_GPL(vb2_ioctl_querybuf);
->>  int vb2_ioctl_qbuf(struct file *file, void *priv, struct v4l2_buffer *p)
->>  {
->>       struct video_device *vdev = video_devdata(file);
->> +     struct v4l2_fh *fh = NULL;
->> +
->> +     if (test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags))
->> +             fh = file->private_data;
->
-> No need for this. All drivers using vb2 will also use v4l2_fh.
+> This ^^^^ doesn't belong in this patch.
 
-Fixed.
+Do you mean we need a separate patch for this?
 
 >
+>> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+>> index 0301fe426a43..062ebee5bffc 100644
+>> --- a/drivers/media/v4l2-core/v4l2-dev.c
+>> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+>> @@ -559,6 +559,8 @@ static void determine_valid_ioctls(struct video_device *vdev)
+>>               set_bit(_IOC_NR(VIDIOC_TRY_EXT_CTRLS), valid_ioctls);
+>>       if (vdev->ctrl_handler || ops->vidioc_querymenu)
+>>               set_bit(_IOC_NR(VIDIOC_QUERYMENU), valid_ioctls);
+>> +     if (vdev->req_mgr)
+>> +             set_bit(_IOC_NR(VIDIOC_NEW_REQUEST), valid_ioctls);
+>>       SET_VALID_IOCTL(ops, VIDIOC_G_FREQUENCY, vidioc_g_frequency);
+>>       SET_VALID_IOCTL(ops, VIDIOC_S_FREQUENCY, vidioc_s_frequency);
+>>       SET_VALID_IOCTL(ops, VIDIOC_LOG_STATUS, vidioc_log_status);
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> index ab4968ea443f..a45fe078f8ae 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -21,6 +21,7 @@
 >>
->>       if (vb2_queue_is_busy(vdev, file))
->>               return -EBUSY;
->> -     return vb2_qbuf(vdev->queue, p);
->> +     return vb2_qbuf_request(vdev->queue, p, fh ? fh->entity : NULL);
+>>  #include <linux/videodev2.h>
+>>
+>> +#include <media/media-request.h>
+>>  #include <media/v4l2-common.h>
+>>  #include <media/v4l2-ioctl.h>
+>>  #include <media/v4l2-ctrls.h>
+>> @@ -842,6 +843,13 @@ static void v4l_print_freq_band(const void *arg, bool write_only)
+>>                       p->rangehigh, p->modulation);
 >>  }
->>  EXPORT_SYMBOL_GPL(vb2_ioctl_qbuf);
 >>
->> diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
->> index 3d5e2d739f05..d4dfa266a0da 100644
->> --- a/include/media/videobuf2-v4l2.h
->> +++ b/include/media/videobuf2-v4l2.h
->> @@ -23,6 +23,12 @@
->>  #error VB2_MAX_PLANES != VIDEO_MAX_PLANES
->>  #endif
->>
->> +struct media_entity;
->> +struct v4l2_fh;
->> +struct media_request;
->> +struct media_request_entity;
->> +struct v4l2_request_entity_data;
+>> +static void vidioc_print_new_request(const void *arg, bool write_only)
+>> +{
+>> +     const struct media_request_new *new = arg;
 >> +
->>  /**
->>   * struct vb2_v4l2_buffer - video buffer information for v4l2.
->>   *
->> @@ -116,6 +122,59 @@ int vb2_prepare_buf(struct vb2_queue *q, struct v4l2_buffer *b);
->>   */
->>  int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b);
+>> +     pr_cont("fd=0x%x\n", new->fd);
+>
+> I'd use %d since fds are typically shown as signed integers.
+
+Right.
+
+>
+>> +}
+>> +
+>>  static void v4l_print_edid(const void *arg, bool write_only)
+>>  {
+>>       const struct v4l2_edid *p = arg;
+>> @@ -2486,6 +2494,22 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
+>>       return -ENOTTY;
+>>  }
 >>
+>> +static int vidioc_new_request(const struct v4l2_ioctl_ops *ops,
+>> +                           struct file *file, void *fh, void *arg)
+>> +{
 >> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
+>> +     struct media_request_new *new = arg;
+>> +     struct video_device *vfd = video_devdata(file);
 >> +
->> +/**
->> + * vb2_qbuf_request() - Queue a buffer, with request support
->> + * @q:               pointer to &struct vb2_queue with videobuf2 queue.
->> + * @b:               buffer structure passed from userspace to
->> + *           &v4l2_ioctl_ops->vidioc_qbuf handler in driver
->> + * @entity:  request entity to queue for if requests are used.
->> + *
->> + * Should be called from &v4l2_ioctl_ops->vidioc_qbuf handler of a driver.
->> + *
->> + * If requests are not in use, calling this is equivalent to calling vb2_qbuf().
->> + *
->> + * If the request_fd member of b is set, then the buffer represented by b is
->> + * queued in the request instead of the vb2 queue. The buffer will be passed
->> + * to the vb2 queue when the request is submitted.
+>> +     if (!vfd->req_mgr)
+>> +             return -ENOTTY;
+>> +
+>> +     return media_request_ioctl_new(vfd->req_mgr, new);
+>> +#else
+>> +     return -ENOTTY;
+>> +#endif
+>> +}
 >
-> I would definitely also prepare the buffer at this time. That way you'll see any
-> errors relating to the prepare early on.
+> You don't need the #ifdef's here. media_request_ioctl_new() will be stubbed if
+> CONFIG_MEDIA_REQUEST_API isn't set.
 
-I was wondering about that, so glad to have your opinion on this. Will
-make sure buffers are prepared before queuing them to a request.
+Correct.
 
 >
->> + *
->> + * The return values from this function are intended to be directly returned
->> + * from &v4l2_ioctl_ops->vidioc_qbuf handler in driver.
->> + */
->> +int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
->> +                  struct media_request_entity *entity);
 >> +
->> +/**
->> + * vb2_request_submit() - Queue all the buffers in a v4l2 request.
->> + * @data:    request entity data to queue buffers of
->> + *
->> + * This function should be called from the media_request_entity_ops::submit
->> + * hook for instances of media_request_v4l2_entity_data. It will immediately
->> + * queue all the request-bound buffers to their respective vb2 queues.
->> + *
->> + * Errors from vb2_core_qbuf() are returned if something happened. Also, since
->> + * v4l2 request entities require at least one buffer for the request to trigger,
->> + * this function will return -EINVAL if no buffer have been bound at all for
->> + * this entity.
->> + */
->> +int vb2_request_submit(struct v4l2_request_entity_data *data);
->> +
->> +#else /* CONFIG_MEDIA_REQUEST_API */
->> +
->> +static inline int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
->> +                                struct media_request_entity *entity)
->> +{
->> +     return vb2_qbuf(q, b);
->> +}
->> +
->> +static inline int vb2_request_submit(struct v4l2_request_entity_data *data)
->> +{
->> +     return -ENOTSUPP;
->> +}
->> +
->> +#endif /* CONFIG_MEDIA_REQUEST_API */
->> +
->>  /**
->>   * vb2_expbuf() - Export a buffer as a file descriptor
->>   * @q:               pointer to &struct vb2_queue with videobuf2 queue.
+>>  struct v4l2_ioctl_info {
+>>       unsigned int ioctl;
+>>       u32 flags;
+>> @@ -2617,6 +2641,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
+>>       IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
+>>       IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
+>>       IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
+>> +     IOCTL_INFO_FNC(VIDIOC_NEW_REQUEST, vidioc_new_request, vidioc_print_new_request, 0),
+>>  };
+>>  #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
 >>
+>> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+>> index 53f32022fabe..e6c4e10889bc 100644
+>> --- a/include/media/v4l2-dev.h
+>> +++ b/include/media/v4l2-dev.h
+>> @@ -209,6 +209,7 @@ struct v4l2_file_operations {
+>>   * @entity: &struct media_entity
+>>   * @intf_devnode: pointer to &struct media_intf_devnode
+>>   * @pipe: &struct media_pipeline
+>> + * @req_mgr: request manager to use if this device supports creating requests
+>>   * @fops: pointer to &struct v4l2_file_operations for the video device
+>>   * @device_caps: device capabilities as used in v4l2_capabilities
+>>   * @dev: &struct device for the video device
+>> @@ -251,6 +252,7 @@ struct video_device
+>>       struct media_intf_devnode *intf_devnode;
+>>       struct media_pipeline pipe;
+>>  #endif
+>> +     struct media_request_mgr *req_mgr;
+>>       const struct v4l2_file_operations *fops;
+>>
+>>       u32 device_caps;
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index 91cfe0cbd5c5..35706204e81d 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -63,6 +63,7 @@
+>>  #include <linux/compiler.h>
+>>  #include <linux/ioctl.h>
+>>  #include <linux/types.h>
+>> +#include <linux/media-request.h>
+>>  #include <linux/v4l2-common.h>
+>>  #include <linux/v4l2-controls.h>
+>>
+>> @@ -2407,6 +2408,8 @@ struct v4l2_create_buffers {
+>>
+>>  #define VIDIOC_QUERY_EXT_CTRL        _IOWR('V', 103, struct v4l2_query_ext_ctrl)
+>>
+>> +#define VIDIOC_NEW_REQUEST   _IOWR('V', 104, struct media_request_new)
 >
-> Regards,
+> Hmm, I probably call this VIDIOC_CREATE_REQUEST (analogous to CREATE_BUFS).
+> Ditto struct media_create_request and MEDIA_IOC_CREATE_REQUEST.
+
+Agree, it is better to keep consistency somehow.
+
 >
->         Hans
+> I'm still not convinced this is the right approach (as opposed to using the media
+> device node). I plan to dig deeper into the data structures tomorrow morning.
+
+I see no reason why this would not work. This seems more elegant than
+relying on the media node for this, and also does not require pulling
+the whole media controller support just to use requests on a simple
+codec or m2m device.
+
+But of course, I may not be seeing everything. :)
+
+Thanks for the review!
+Alex.
