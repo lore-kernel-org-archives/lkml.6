@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226wVlh90Z1+UgBuQMVdHKxPQL7sY0zWrDcTiqpyp+BKIROd+nX24DkkgBYK8HFtFgvA2LgW
-ARC-Seal: i=1; a=rsa-sha256; t=1519218475; cv=none;
+X-Google-Smtp-Source: AH8x2247S3+keF+BKKLe4WiftAj/KiIOWbr5BNMdsaJD+ZRJeKHJRYWeQnlL7ZAQ2gUTQYHOpxt1
+ARC-Seal: i=1; a=rsa-sha256; t=1519218472; cv=none;
         d=google.com; s=arc-20160816;
-        b=VPaTLHhKo7yr31oTc6stHHIXPClO293gmPkq2/C/emo9GY8TSWta2lxkAA7qblyfZi
-         ggEstVja2ww5kkdOsy+OiNRN/YN1H4N/vdX21RtetlxOeYb5YYSUcLUES5+LHz/bSqdL
-         GLp40KWBESKq47h04vWimHJsrNAUT26OM4XHH7+7uQLn1EqUNhvSJkhmKYGv/GMgqT7p
-         EsKiNv9xRIdSx31RPS1JFZxGeN02D4svyFZnUSXUwBQ73dfbvhODd6W0CCvpT8SkaTxc
-         fKdgEUDRE6ZeZGOFIAP3F7mU1W7GKvWT5s0+KwjjA47PpRYxiM3EbUKng7eqQAW514iM
-         Xo+g==
+        b=SNoNCDHFvqDWXpZ9d0a4j/3+UMEr2aliOk5B3Phd1+GVY60sNr/Qm1SkeYqZuP0F61
+         XQ8oHHq6qPC2vdSuXhrVPTsjIx2xefnM0wQz+W/vFdBFVI2XdKTwMpFMQubalT2K8DnD
+         mOOp5aGTgkCz8HPAbh1MQNNwGU455gK8LbrCymeXMafmUIoS6p47H4ItVeU9TeXuXYJZ
+         OxhkrmvztaBNfGzTPckYZ4jujtHn9X+WReGtnkUnEJIs35T5SXEynoauRhS1BjknFr4Z
+         ixLxpRmvsx7rTS1sC+vqWK/h+3qBn5OnuZHiOj14FlehJTR+NZLwyq6eRrYE/g+9G5DB
+         NWKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fwGEWyfSHVv7dS+upjuqKRx4TOE+keTE4eWeZjtjjR4=;
-        b=mRZMD2/yOXr/PxRL/aFLmouZWxoO+uYUlgKA7LSuksgSWdmmpmWDfBgtgZQHj70YDj
-         86J+cBIT77eRCLCfTOsi1NbRx5EJ7XSMmJMBI6nQW3v/h4Slu8w3RsqV/oN8LPB1OXHK
-         8A1QHVYAueXcPU0SPylaBjofmSvT08ylOsgBV1i3zh1HDHFLr3RngMNIJhEx4KWJXYU5
-         IRy13RYw3BM4MssR7rIlKl1SxXcZbKzoBoI6ybtSB98VeZipIyA/nCDMIC5XRIOPDLwl
-         kPhhaKE3fhualgoG/1IzMwgdpcfQ3HyOmasVd559jz7w0zzXw2IbwJ6U2VlWQMB+xGJr
-         dQ4w==
+        bh=Inin2PbMTQ0UfH7+5UDOrkOgAab3di9rryWkev2IMyk=;
+        b=c4Ya2rZ+yG6QN3b1JmFB71y6lH/2/wLeQe1UdvUg5KoAdbuocsxBQwH5QS3wx2ejDT
+         A2Wm/TXueICZIjpwE0ZZGZXGGsz2TRU16kaQ1TwheTAXIUEV6YD5MkmROQeqCaLOJdOj
+         CgtihwU6XGFKQztRSLBnTO4NUiO0QQpHi75Av6alBm17BbS+xXuexA8G8htuaT0s+zUV
+         OoC6GEycG1dhw4TZzgSLvc3COYCdi9dvfPsMtK/8F/Xlr9X4uZ4LTZOBr4NsAVvogXa9
+         dd91YEjDt4zimWzBdqhpBmQwwoYaKePq0OErK1i1GLm17t2yAaD28E0Bm9LH64crCoJO
+         dG1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,7 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Filippo Sironi <sironi@amazon.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
-	Paolo Bonzini <pbonzini@redhat.com>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
 	Borislav Petkov <bp@alien8.de>,
@@ -37,6 +34,7 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	David Woodhouse <dwmw2@infradead.org>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	arjan.van.de.ven@intel.com,
@@ -44,11 +42,13 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	jmattson@google.com,
 	karahmed@amazon.de,
 	kvm@vger.kernel.org,
+	pbonzini@redhat.com,
 	rkrcmar@redhat.com,
+	sironi@amazon.de,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 051/163] KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
-Date: Wed, 21 Feb 2018 13:48:00 +0100
-Message-Id: <20180221124533.270579119@linuxfoundation.org>
+Subject: [PATCH 4.15 050/163] Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()"
+Date: Wed, 21 Feb 2018 13:47:59 +0100
+Message-Id: <20180221124533.207352393@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -58,8 +58,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015306559718735?=
-X-GMAIL-MSGID: =?utf-8?q?1593016031995067003?=
+X-GMAIL-THRID: =?utf-8?q?1593015522884375203?=
+X-GMAIL-MSGID: =?utf-8?q?1593016029355445278?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -69,25 +69,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 928a4c39484281f8ca366f53a1db79330d058401 upstream.
+commit f208820a321f9b23d77d7eed89945d862d62a3ed upstream.
 
-With retpoline, tight loops of "call this function for every XXX" are
-very much pessimised by taking a prediction miss *every* time. This one
-is by far the biggest contributor to the guest launch time with retpoline.
+This reverts commit 64e16720ea0879f8ab4547e3b9758936d483909b.
 
-By marking the iterator slot_handle_…() functions always_inline, we can
-ensure that the indirect function call can be optimised away into a
-direct call and it actually generates slightly smaller code because
-some of the other conditionals can get optimised away too.
+We cannot call C functions like that, without marking all the
+call-clobbered registers as, well, clobbered. We might have got away
+with it for now because the __ibp_barrier() function was *fairly*
+unlikely to actually use any other registers. But no. Just no.
 
-Performance is now pretty close to what we see with nospectre_v2 on
-the command line.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Filippo Sironi <sironi@amazon.de>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -96,6 +87,7 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: arjan.van.de.ven@intel.com
@@ -103,59 +95,60 @@ Cc: dave.hansen@intel.com
 Cc: jmattson@google.com
 Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
 Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1518305967-31356-4-git-send-email-dwmw@amazon.co.uk
+Cc: sironi@amazon.de
+Link: http://lkml.kernel.org/r/1518305967-31356-3-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mmu.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   13 +++++++++----
+ arch/x86/include/asm/processor.h     |    3 ---
+ arch/x86/kernel/cpu/bugs.c           |    6 ------
+ 3 files changed, 9 insertions(+), 13 deletions(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5058,7 +5058,7 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
- typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
  
- /* The caller should hold mmu-lock before calling this function. */
--static bool
-+static __always_inline bool
- slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, int start_level, int end_level,
- 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
-@@ -5088,7 +5088,7 @@ slot_handle_level_range(struct kvm *kvm,
- 	return flush;
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		  slot_level_handler fn, int start_level, int end_level,
- 		  bool lock_flush_tlb)
-@@ -5099,7 +5099,7 @@ slot_handle_level(struct kvm *kvm, struc
- 			lock_flush_tlb);
- }
- 
--static bool
-+static __always_inline bool
- slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		      slot_level_handler fn, bool lock_flush_tlb)
+ static inline void indirect_branch_prediction_barrier(void)
  {
-@@ -5107,7 +5107,7 @@ slot_handle_all_level(struct kvm *kvm, s
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+-	alternative_input("",
+-			  "call __ibp_barrier",
+-			  X86_FEATURE_USE_IBPB,
+-			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
++	asm volatile(ALTERNATIVE("",
++				 "movl %[msr], %%ecx\n\t"
++				 "movl %[val], %%eax\n\t"
++				 "movl $0, %%edx\n\t"
++				 "wrmsr",
++				 X86_FEATURE_USE_IBPB)
++		     : : [msr] "i" (MSR_IA32_PRED_CMD),
++			 [val] "i" (PRED_CMD_IBPB)
++		     : "eax", "ecx", "edx", "memory");
  }
  
--static bool
-+static __always_inline bool
- slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, bool lock_flush_tlb)
- {
-@@ -5115,7 +5115,7 @@ slot_handle_large_level(struct kvm *kvm,
- 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
- }
+ #endif /* __ASSEMBLY__ */
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -969,7 +969,4 @@ bool xen_set_default_idle(void);
  
--static bool
-+static __always_inline bool
- slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		 slot_level_handler fn, bool lock_flush_tlb)
- {
+ void stop_this_cpu(void *dummy);
+ void df_debug(struct pt_regs *regs, long error_code);
+-
+-void __ibp_barrier(void);
+-
+ #endif /* _ASM_X86_PROCESSOR_H */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -337,9 +337,3 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 		       spectre_v2_module_string());
+ }
+ #endif
+-
+-void __ibp_barrier(void)
+-{
+-	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
+-}
+-EXPORT_SYMBOL_GPL(__ibp_barrier);
