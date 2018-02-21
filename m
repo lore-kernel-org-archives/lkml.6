@@ -1,142 +1,343 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966302AbeBUQMV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:12:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932757AbeBUQMS (ORCPT
+        id S938601AbeBUQOd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:14:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56098 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753264AbeBUQOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:12:18 -0500
-Date: Wed, 21 Feb 2018 08:12:23 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com, nborisov@suse.com
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
- lock-based external-view litmus test
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1802211001030.2032-100000@iolanthe.rowland.org>
+        Wed, 21 Feb 2018 11:14:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04774605FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH v3] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Philip Elcan <pelcan@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1519220946-13901-1-git-send-email-shankerd@codeaurora.org>
+ <20180221150929.hkvtwu4fgfeis5cy@salmiak>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <5be4684b-e2d8-1b3b-4c96-03c7dae0b619@codeaurora.org>
+Date: Wed, 21 Feb 2018 10:14:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802211001030.2032-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022116-0024-0000-0000-0000032A35D1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008570; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00993020; UDB=6.00504543; IPR=6.00772365;
- MB=3.00019674; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-21 16:12:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022116-0025-0000-0000-0000471A2E76
-Message-Id: <20180221161223.GE3617@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802210196
+In-Reply-To: <20180221150929.hkvtwu4fgfeis5cy@salmiak>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:09:00AM -0500, Alan Stern wrote:
-> On Tue, 20 Feb 2018, Paul E. McKenney wrote:
-> 
-> > From: Alan Stern <stern@rowland.harvard.edu>
-> > 
-> > This commit adds a litmus test in which P0() and P1() form a lock-based S
-> > litmus test, with the addition of P2(), which observes P0()'s and P1()'s
-> 
-> Why do you call this an "S" litmus test?  Isn't ISA2 a better 
-> description?
+Hi Mark,
 
-Indeed, the name of the test is in fact ISA2.
+On 02/21/2018 09:09 AM, Mark Rutland wrote:
+> On Wed, Feb 21, 2018 at 07:49:06AM -0600, Shanker Donthineni wrote:
+>> The DCache clean & ICache invalidation requirements for instructions
+>> to be data coherence are discoverable through new fields in CTR_EL0.
+>> The following two control bits DIC and IDC were defined for this
+>> purpose. No need to perform point of unification cache maintenance
+>> operations from software on systems where CPU caches are transparent.
+>>
+>> This patch optimize the three functions __flush_cache_user_range(),
+>> clean_dcache_area_pou() and invalidate_icache_range() if the hardware
+>> reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
+>> instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
+>> in order to avoid the unnecessary overhead.
+>>
+>> CTR_EL0.DIC: Instruction cache invalidation requirements for
+>>  instruction to data coherence. The meaning of this bit[29].
+>>   0: Instruction cache invalidation to the point of unification
+>>      is required for instruction to data coherence.
+>>   1: Instruction cache cleaning to the point of unification is
+>>       not required for instruction to data coherence.
+>>
+>> CTR_EL0.IDC: Data cache clean requirements for instruction to data
+>>  coherence. The meaning of this bit[28].
+>>   0: Data cache clean to the point of unification is required for
+>>      instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+>>      or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+>>   1: Data cache clean to the point of unification is not required
+>>      for instruction to data coherence.
+>>
+>> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+>> ---
+>> Changes since v2:
+>>   -Included barriers, DSB/ISB with DIC set, and DSB with IDC set.
+>>   -Single Kconfig option.
+>>
+>> Changes since v1:
+>>   -Reworded commit text.
+>>   -Used the alternatives framework as Catalin suggested.
+>>   -Rebased on top of https://patchwork.kernel.org/patch/10227927/
+>>
+>>  arch/arm64/Kconfig               | 12 ++++++++++++
+>>  arch/arm64/include/asm/cache.h   |  5 +++++
+>>  arch/arm64/include/asm/cpucaps.h |  4 +++-
+>>  arch/arm64/kernel/cpufeature.c   | 40 ++++++++++++++++++++++++++++++++++------
+>>  arch/arm64/mm/cache.S            | 21 +++++++++++++++++++--
+>>  5 files changed, 73 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index f55fe5b..82b8053 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -1095,6 +1095,18 @@ config ARM64_RAS_EXTN
+>>  	  and access the new registers if the system supports the extension.
+>>  	  Platform RAS features may additionally depend on firmware support.
+>>  
+>> +config ARM64_SKIP_CACHE_POU
+>> +	bool "Enable support to skip cache POU operations"
+>> +	default y
+>> +	help
+>> +	  Explicit point of unification cache operations can be eliminated
+>> +	  in software if the hardware handles transparently. The new bits in
+>> +	  CTR_EL0, CTR_EL0.DIC and CTR_EL0.IDC indicates the hardware
+>> +	  capabilities of ICache and DCache POU requirements.
+>> +
+>> +	  Selecting this feature will allow the kernel to optimize the POU
+>> +	  cache maintaince operations where it requires 'D{I}C C{I}VAU'
+>> +
+>>  endmenu
+> 
+> Is it worth having a config option for this at all? The savings from turning
+> this off seem trivial.
+> 
+>>  
+>>  config ARM64_SVE
+>> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+>> index ea9bb4e..e22178b 100644
+>> --- a/arch/arm64/include/asm/cache.h
+>> +++ b/arch/arm64/include/asm/cache.h
+>> @@ -20,8 +20,13 @@
+>>  
+>>  #define CTR_L1IP_SHIFT		14
+>>  #define CTR_L1IP_MASK		3
+>> +#define CTR_DMLINE_SHIFT	16
+>> +#define CTR_ERG_SHIFT		20
+>>  #define CTR_CWG_SHIFT		24
+>>  #define CTR_CWG_MASK		15
+>> +#define CTR_IDC_SHIFT		28
+>> +#define CTR_DIC_SHIFT		29
+>> +#define CTR_B31_SHIFT		31
+>>  
+>>  #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+>>  
+>> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+>> index bb26382..8dd42ae 100644
+>> --- a/arch/arm64/include/asm/cpucaps.h
+>> +++ b/arch/arm64/include/asm/cpucaps.h
+>> @@ -45,7 +45,9 @@
+>>  #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+>>  #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+>>  #define ARM64_HAS_RAS_EXTN			26
+>> +#define ARM64_HAS_CACHE_IDC			27
+>> +#define ARM64_HAS_CACHE_DIC			28
+>>  
+>> -#define ARM64_NCAPS				27
+>> +#define ARM64_NCAPS				29
+>>  
+>>  #endif /* __ASM_CPUCAPS_H */
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index ff8a6e9..12e100a 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
+>>  };
+>>  
+>>  static const struct arm64_ftr_bits ftr_ctr[] = {
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, CTR_B31_SHIFT, 1, 1),         /* RES1 */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
+>>  	/*
+>>  	 * Linux can handle differing I-cache policies. Userspace JITs will
+>>  	 * make use of *minLine.
+>> @@ -864,6 +864,20 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
+>>  					ID_AA64PFR0_FP_SHIFT) < 0;
+>>  }
+>>  
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
+>> +			  int __unused)
+>> +{
+>> +	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_IDC_SHIFT));
+>> +}
+>> +
+>> +static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
+>> +			  int __unused)
+>> +{
+>> +	return (read_sanitised_ftr_reg(SYS_CTR_EL0) & (1UL << CTR_DIC_SHIFT));
+>> +}
+>> +#endif
+>> +
+>>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>>  static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>>  
+>> @@ -1100,6 +1114,20 @@ static int cpu_copy_el2regs(void *__unused)
+>>  		.enable = cpu_clear_disr,
+>>  	},
+>>  #endif /* CONFIG_ARM64_RAS_EXTN */
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +	{
+>> +		.desc = "DCache clean to POU",
+> 
+> This description is confusing, and sounds like it's describing DC CVAU, rather
+> than the ability to ellide it. How about:
+> 
 
-> > accesses with a full memory barrier but without the lock.  This litmus
-> > test asks whether writes carried out by two different processes under the
-> > same lock will be seen in order by a third process not holding that lock.
-> > The answer to this question is "yes" for all architectures supporting
-> > the Linux kernel, but is "no" according to the current version of LKMM.
-> > 
-> > A patch to LKMM is under development.
-> > 
-> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > ---
-> >  .../ISA2+pooncelock+pooncelock+pombonce.litmus     | 41 ++++++++++++++++++++++
-> >  1 file changed, 41 insertions(+)
-> >  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> 
-> Aren't these tests supposed to be described in litmus-tests/README?
-> 
-> > diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> > new file mode 100644
-> > index 000000000000..7a39a0aaa976
-> > --- /dev/null
-> > +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-> > @@ -0,0 +1,41 @@
-> > +C ISA2+pooncelock+pooncelock+pombonce.litmus
-> > +
-> > +(*
-> > + * Result: Sometimes
-> > + *
-> > + * This test shows that the ordering provided by a lock-protected S
-> > + * litmus test (P0() and P1()) are not visible to external process P2().
-> > + * This is likely to change soon.
-> 
-> That last line may be premature.  We haven't reached any consensus on 
-> how RISC-V will handle this.  If RISC-V allows the test then the memory 
-> model can't forbid it.
+Sure, I'll take your suggestion.
 
-Agreed.  How about this?  If the RISC-V question is answered by the
-end of next week, I update accordingly.  If not, I update the comment
-to give the details.
-
-Hey, at least having the memory model go in at about the same time as
-a new architecture is giving us good practice!  ;-)
-
-							Thanx, Paul
-
-> Alan
+> 		.desc = "D-cache maintenance ellision (IDC)"
 > 
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *x, int *y, spinlock_t *mylock)
-> > +{
-> > +	spin_lock(mylock);
-> > +	WRITE_ONCE(*x, 1);
-> > +	WRITE_ONCE(*y, 1);
-> > +	spin_unlock(mylock);
-> > +}
-> > +
-> > +P1(int *y, int *z, spinlock_t *mylock)
-> > +{
-> > +	int r0;
-> > +
-> > +	spin_lock(mylock);
-> > +	r0 = READ_ONCE(*y);
-> > +	WRITE_ONCE(*z, 1);
-> > +	spin_unlock(mylock);
-> > +}
-> > +
-> > +P2(int *x, int *z)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r2 = READ_ONCE(*z);
-> > +	smp_mb();
-> > +	r1 = READ_ONCE(*x);
-> > +}
-> > +
-> > +exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
-> > 
+>> +		.capability = ARM64_HAS_CACHE_IDC,
+>> +		.def_scope = SCOPE_SYSTEM,
+>> +		.matches = has_cache_idc,
+>> +	},
+>> +	{
+>> +		.desc = "ICache invalidation to POU",
 > 
+> ... and correspondingly:
 > 
+> 		.desc = "I-cache maintenance ellision (DIC)"
+> 
+>> +		.capability = ARM64_HAS_CACHE_DIC,
+>> +		.def_scope = SCOPE_SYSTEM,
+>> +		.matches = has_cache_dic,
+>> +	},
+>> +#endif /* CONFIG_ARM64_CACHE_DIC */
+>>  	{},
+>>  };
+>>  
+>> diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+>> index 758bde7..76c55ef 100644
+>> --- a/arch/arm64/mm/cache.S
+>> +++ b/arch/arm64/mm/cache.S
+>> @@ -50,6 +50,9 @@ ENTRY(flush_icache_range)
+>>   */
+>>  ENTRY(__flush_cache_user_range)
+>>  	uaccess_ttbr0_enable x2, x3, x4
+>> +alternative_if ARM64_HAS_CACHE_IDC
+>> +	b	7f
+>> +alternative_else_nop_endif
+> 
+> As there's no ifdef here, this will always result in an alternative entry, no?
+> 
+
+Yes it always enable alternative entry, If you want I can put ifdef guard.
+
+> ... and likewise for hte other asm.
+> 
+>>  	dcache_line_size x2, x3
+>>  	sub	x3, x2, #1
+>>  	bic	x4, x0, x3
+>> @@ -58,10 +61,14 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+>>  	add	x4, x4, x2
+>>  	cmp	x4, x1
+>>  	b.lo	1b
+>> -	dsb	ish
+>> +7:	dsb	ish
+> 
+> I *think* that with IDC set, we can make this a DSB ISHST. We're trying to
+> ensure that prior stores are visible, and ISHST is sufficient for that.
+> 
+
+The reason I used ISH instead of ISHST to simplify the code changes. I don't see
+any correctness issue using ISH...
+ 
+>> +alternative_if ARM64_HAS_CACHE_DIC
+>> +	isb
+> 
+> Why have we gained an ISB here if DIC is set?
+> 
+
+I believe synchronization barrier (ISB) is required here to support self-modifying/jump-labels
+code. 
+  
+> This is for a user address, and I can't see why DIC would imply we need an
+> extra ISB kernel-side.
+> 
+
+This is for user and kernel addresses, alternatives and jumplabel patching logic
+calls flush_icache_range().
+
+>> +	b	8f
+>> +alternative_else_nop_endif
+>>  	invalidate_icache_by_line x0, x1, x2, x3, 9f
+>> -	mov	x0, #0
+>> +8:	mov	x0, #0
+>>  1:
+>>  	uaccess_ttbr0_disable x1, x2
+>>  	ret
+>> @@ -80,6 +87,12 @@ ENDPROC(__flush_cache_user_range)
+>>   *	- end     - virtual end address of region
+>>   */
+>>  ENTRY(invalidate_icache_range)
+>> +alternative_if ARM64_HAS_CACHE_DIC
+>> +	mov	x0, xzr
+>> +	dsb	ish
+> 
+> Do we actually need a DSB in this case?
+> 
+
+I'll remove if everyone agree.
+
+Will, Can you comment on this?
+
+> As-is, this function *only* invalidates the I-cache, so we already assume that
+> the data is visible at the PoU at this point. I don't see what extra gaurantee
+> we'd need the DSB for.
+> 
+>> +	isb
+> 
+> We could theoretically need this (though AFAICT, KVM is the only user of this,
+> and doesn't).
+> 
+>> +	ret
+>> +alternative_else_nop_endif
+>>  	uaccess_ttbr0_enable x2, x3, x4
+>>  
+>>  	invalidate_icache_by_line x0, x1, x2, x3, 2f
+>> @@ -116,6 +129,10 @@ ENDPIPROC(__flush_dcache_area)
+>>   *	- size    - size in question
+>>   */
+>>  ENTRY(__clean_dcache_area_pou)
+>> +alternative_if ARM64_HAS_CACHE_IDC
+>> +	dsb	ish
+> 
+> As above, I think this can be DSB ISHST.
+> 
+
+I'll change to DSB ISHST in v4 patch.
+
+> Thanks,
+> Mark.
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
+-- 
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
