@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933378AbeBUKnq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:43:46 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36373 "EHLO
+        id S1753581AbeBUKoX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:44:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36785 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932863AbeBUKno (ORCPT
+        with ESMTP id S1751920AbeBUKoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:43:44 -0500
-Date: Wed, 21 Feb 2018 02:43:23 -0800
-From: "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-8f7f2fbd00898deaf01e05a00095411811befd64@git.kernel.org>
-Cc: akiyks@gmail.com, mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, mingo@kernel.org, akiyks@gmail.com
-In-Reply-To: <1519169112-20593-9-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1519169112-20593-9-git-send-email-paulmck@linux.vnet.ibm.com>
+        Wed, 21 Feb 2018 05:44:22 -0500
+Date: Wed, 21 Feb 2018 02:43:59 -0800
+From: tip-bot for Alan Stern <tipbot@zytor.com>
+Message-ID: <tip-556bb7d252ae42d4653557325670e665087c38ad@git.kernel.org>
+Cc: paulmck@linux.vnet.ibm.com, hpa@zytor.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        peterz@infradead.org, stern@rowland.harvard.edu, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Reply-To: peterz@infradead.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        stern@rowland.harvard.edu
+In-Reply-To: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Add required herd7 version
- to README file
-Git-Commit-ID: 8f7f2fbd00898deaf01e05a00095411811befd64
+Subject: [tip:locking/core] tools/memory-model: Add a S lock-based
+ external-view litmus test
+Git-Commit-ID: 556bb7d252ae42d4653557325670e665087c38ad
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,27 +36,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8f7f2fbd00898deaf01e05a00095411811befd64
-Gitweb:     https://git.kernel.org/tip/8f7f2fbd00898deaf01e05a00095411811befd64
-Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-AuthorDate: Tue, 20 Feb 2018 15:25:09 -0800
+Commit-ID:  556bb7d252ae42d4653557325670e665087c38ad
+Gitweb:     https://git.kernel.org/tip/556bb7d252ae42d4653557325670e665087c38ad
+Author:     Alan Stern <stern@rowland.harvard.edu>
+AuthorDate: Tue, 20 Feb 2018 15:25:10 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 09:58:15 +0100
 
-tools/memory-model: Add required herd7 version to README file
+tools/memory-model: Add a S lock-based external-view litmus test
 
-LKMM and the herd7 tool are co-evolving, and out-of-date herd7 tools
-produce inaccurate results, often with no obvious error messages.  This
-commit therefore adds the required herd7 version to the LKMM README file.
+This commit adds a litmus test in which P0() and P1() form a lock-based S
+litmus test, with the addition of P2(), which observes P0()'s and P1()'s
+accesses with a full memory barrier but without the lock.  This litmus
+test asks whether writes carried out by two different processes under the
+same lock will be seen in order by a third process not holding that lock.
+The answer to this question is "yes" for all architectures supporting
+the Linux kernel, but is "no" according to the current version of LKMM.
 
-Longer term, it would be good if .cat files could specify the required
-version in a manner allowing herd7 to produce clear diagnostics.
+A patch to LKMM is under development.
 
-Suggested-by: Akira Yokosawa <akiyks@gmail.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akiyks@gmail.com
 Cc: boqun.feng@gmail.com
 Cc: dhowells@redhat.com
 Cc: j.alglave@ucl.ac.uk
@@ -63,25 +69,47 @@ Cc: luc.maranget@inria.fr
 Cc: nborisov@suse.com
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
-Cc: stern@rowland.harvard.edu
 Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/1519169112-20593-9-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/README | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ ...ce.litmus => ISA2+pooncelock+pooncelock+pombonce.litmus} | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/memory-model/README b/tools/memory-model/README
-index 91414a4..ea950c5 100644
---- a/tools/memory-model/README
-+++ b/tools/memory-model/README
-@@ -20,7 +20,8 @@ that litmus test to be exercised within the Linux kernel.
- REQUIREMENTS
- ============
+diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+similarity index 55%
+copy from tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
+copy to tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+index 10a2aa0..7a39a0a 100644
+--- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
++++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+@@ -1,11 +1,11 @@
+-C Z6.0+pooncelock+pooncelock+pombonce
++C ISA2+pooncelock+pooncelock+pombonce.litmus
  
--The "herd7" and "klitmus7" tools must be downloaded separately:
-+Version 7.48 of the "herd7" and "klitmus7" tools must be downloaded
-+separately:
+ (*
+  * Result: Sometimes
+  *
+- * This example demonstrates that a pair of accesses made by different
+- * processes each while holding a given lock will not necessarily be
+- * seen as ordered by a third process not holding that lock.
++ * This test shows that the ordering provided by a lock-protected S
++ * litmus test (P0() and P1()) are not visible to external process P2().
++ * This is likely to change soon.
+  *)
  
-   https://github.com/herd/herdtools7
+ {}
+@@ -31,10 +31,11 @@ P1(int *y, int *z, spinlock_t *mylock)
+ P2(int *x, int *z)
+ {
+ 	int r1;
++	int r2;
  
+-	WRITE_ONCE(*z, 2);
++	r2 = READ_ONCE(*z);
+ 	smp_mb();
+ 	r1 = READ_ONCE(*x);
+ }
+ 
+-exists (1:r0=1 /\ z=2 /\ 2:r1=0)
++exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
