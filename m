@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226Ki2bt6DED+BpiboxnFMleoij5lksMCCWS7ZJYd1CQkiZ8dGyEi2NLHw6YmIKhTC9ss7dN
-ARC-Seal: i=1; a=rsa-sha256; t=1519218525; cv=none;
+X-Google-Smtp-Source: AH8x22719E+0m3o1L5B7tQrmTIkiKMwKXbt2yMvzbR/FuvjAMoeDPFQP9301tmwCbPsYW1rWBNzt
+ARC-Seal: i=1; a=rsa-sha256; t=1519218523; cv=none;
         d=google.com; s=arc-20160816;
-        b=JGiySRLgia4fFbldDfR83Cbly8erM/zYl9+HDxECeARYZCBMSGUtObgUJGXn+Fal8Z
-         xDUTY0tzWHNkuQ20gKR3Pot7+iOpGzHL1N7ReZFMPCF+qeIQYvAvqulD9yMbiUPSdyj6
-         Vn8C9O0ajmyVcLC2O6NNeeOOF54h37HRyH+WlXdkMqRZXXOsY6q+Zq5wAvtSZ4lGjXQf
-         sZdey2SChyUKVrahNJNMoUqqadqUyh8RCdkVU3t0ZZfPlMulxD5m92nmMxAz82Iyo9fN
-         XHCHkWcS5t55OrjvYVGi74J+S0RzXG7RHxCKy1UsawIMn5jsEDbA1oc9tRPB6NmxbDqM
-         AP0Q==
+        b=bSEYyGVerEcJgi4qGdvmXrF0zxfRqloprVxWxz7NSxgZedGGf1afLOdVg80p+QGimI
+         kM8Klxw8Ev6ymDDsPIlO4SoFRQL7gwPUg11Vyb11CB9zurdAX3nwWvyvB+xdzlQu7GS3
+         TFxjHaY3MRFV15UkTCfVAWHvxXV5uCO+FGRJFx/m5swH8w6feGzvG2HQFXZi1+xc9iLG
+         GYQaJF1Uwes9R+HmIdXDKR3Q2x57OuWw+kEjsZWJeleyqMylvKMAwylpx3fLfNydBk0i
+         jYellviU7wNm/vyZ112tvYr8uG2+dMlzog+7ymNIiRzhdday2oj68BgHlxEDH7jpyrut
+         ejsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5yNl0+fMmcMT8fZ3hf7cH6mQckbbmeNOtvHeAiVhNaM=;
-        b=Dfz5jh/BDQhdrEgqgsdwzjYSbS+1Uzqdn+kjqbBotXgCt3AAErM7J3U9ArEbtQPi0N
-         S5x7aQXyafklxopJC+RMXr11w2pcNoSOsR48VUXt6M9kvRfFTtOvt22LQ4WBDtAjnZkP
-         rbYqRGc0cKDEIfOn45Tebgfy7KnTJJRn/uI/wRqK5KRg6pyeZuiPvnYQlH+v/pxTWc2C
-         iDnaZ0X1Ye2HcYjV3Bb9sSkp44xkY37GNmuYtF2UfUb3gNMTQPsKE7Pk7JZJMfL3maEZ
-         fqV4i/Afb3FlTX0bLz3S2OiBLGdH3Eo174O2MRrAWjj5fE5/L/iMPHNGy0GqFvl4+i4O
-         4X6w==
+        bh=lkClBmAEzOUa/k9ReFfM77TC7uFvsWoKBqWq4CV2B7k=;
+        b=pvX/Xht9Ib8M3rqTjqawH1iI3O4soDahcQer0FMY6v9XNNQ7zmLa6vj1usfQArEfMF
+         Q+RoQ5rgANuYyctNxAEP1i8ufne7myEfIHKREGS24xrAX5YYAwvIx746H6YjhURElYJ5
+         J25aZQybHIFsKPEwEXk4dN9sHkkYPz1bPWfNKAXa2PbWf70jjyRw7JMt0dIZyAn8iehI
+         ywxwO6Sa/QkZLFdrXTpa+Nh6BKb8w0nqwIk0mIyPflfCTlsSquPou91/RiyQDSaW1kgr
+         Zu2kwJpsxGnLztwUytYmvZxFgYtzQVOtgt2zN3tz9M4zb1JLmJ3/+EBX6Yi8BsMLuPlz
+         MXCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
+	Andy Lutomirski <luto@kernel.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 071/163] selftests/x86: Fix build bug caused by the 5lvl test which has been moved to the VM directory
-Date: Wed, 21 Feb 2018 13:48:20 +0100
-Message-Id: <20180221124534.416192368@linuxfoundation.org>
+Subject: [PATCH 4.15 070/163] selftests/x86/pkeys: Remove unused functions
+Date: Wed, 21 Feb 2018 13:48:19 +0100
+Message-Id: <20180221124534.355357045@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593016085281418652?=
-X-GMAIL-MSGID: =?utf-8?q?1593016085281418652?=
+X-GMAIL-THRID: =?utf-8?q?1593015321225692352?=
+X-GMAIL-MSGID: =?utf-8?q?1593016081976520959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,33 +54,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit 7f95122067ab26fb8344b2a9de64ffbd0fea0010 upstream.
+commit ce676638fe7b284132a7d7d5e7e7ad81bab9947e upstream.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+This also gets rid of two build warnings:
+
+  protection_keys.c: In function ‘dumpit’:
+  protection_keys.c:419:3: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+     write(1, buf, nr_read);
+     ^~~~~~~~~~~~~~~~~~~~~~
+
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Fixes: 235266b8e11c "selftests/vm: move 128TB mmap boundary test to generic directory"
-Link: http://lkml.kernel.org/r/20180211111013.16888-2-linux@dominikbrodowski.net
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/x86/protection_keys.c |   28 --------------------------
+ 1 file changed, 28 deletions(-)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -11,7 +11,7 @@ TARGETS_C_BOTHBITS := single_step_syscal
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
--TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip 5lvl
-+TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -393,34 +393,6 @@ pid_t fork_lazy_child(void)
+ 	return forkret;
+ }
  
- TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
- TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
+-void davecmp(void *_a, void *_b, int len)
+-{
+-	int i;
+-	unsigned long *a = _a;
+-	unsigned long *b = _b;
+-
+-	for (i = 0; i < len / sizeof(*a); i++) {
+-		if (a[i] == b[i])
+-			continue;
+-
+-		dprintf3("[%3d]: a: %016lx b: %016lx\n", i, a[i], b[i]);
+-	}
+-}
+-
+-void dumpit(char *f)
+-{
+-	int fd = open(f, O_RDONLY);
+-	char buf[100];
+-	int nr_read;
+-
+-	dprintf2("maps fd: %d\n", fd);
+-	do {
+-		nr_read = read(fd, &buf[0], sizeof(buf));
+-		write(1, buf, nr_read);
+-	} while (nr_read > 0);
+-	close(fd);
+-}
+-
+ #define PKEY_DISABLE_ACCESS    0x1
+ #define PKEY_DISABLE_WRITE     0x2
+ 
