@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225B/DrtnVMlwqNy3yywazNdfsDl5MXMV/6buo4qHTufOx9eEh2SzhxDy5Ydr6mPBu0ztZkY
-ARC-Seal: i=1; a=rsa-sha256; t=1519218509; cv=none;
+X-Google-Smtp-Source: AH8x227pd4YS8MqB5ukWHAdMoGuhQKzyRDBSaZ/jebn/xJ44jG8u/dLL5ENsxUSRSzJdezL11hg2
+ARC-Seal: i=1; a=rsa-sha256; t=1519218506; cv=none;
         d=google.com; s=arc-20160816;
-        b=fS3M/vkWcbRfuwAy1gKJJrONm/FPDRNxv3vU94muDMVupVDeYnrpg8nMdQN/fDJdyI
-         YLcbrWChp17frKCC26BgeEyFGjjgaIdid9qAYQIwiceX2v2Op2hjXbD1eycV7AsLqs0u
-         64hQjG7M3r/ICrW3tMTtXKP8dVDkwcqWOeY60nhL4DggS0y1j3VhATBS/G1fRcRCwRQB
-         T+G5XHE3+A7i5aXv35bbXTCxunbhdGZB6fpwOZf3ww6/Jzv+wo2Bb3gYdB4QyEJTQ5WE
-         2ajKKlZ/ezWAAk6nBaUcnsy2s0KKt25MemHG3TI5hVaZQbQCOq6PS2RV9oxty1fmRGa8
-         D+hw==
+        b=cvWLMP1ggUtSPdrhesE+VE/qeo9f2JLG49q2bK82Us/mG9HbrRbqTvyxAfhjvv7NE+
+         +X0l8uEGvq6nc96sDTy5JuDpEXd+UnFM+CNSjFQz/tNqEqvG3FhqZmSnS6XgeWoiE4NK
+         pncLXcgMb7B4F0a8LyaMOQl7fvq/xHwV1ExbHsiUNC98YFz/AWohhJ2MYct0n1GyxNHG
+         UURUWEStFDeDck4THHhuTGextPyAUpK8ktPywhNMmejrp5cIs9zA3HlaOdaFzO6cuisR
+         oyeH6s+vaIbR5bL21laChF/2DCpt2KFRCh+LjNA+EIEAc+8KvDfENRVtaedy14SDiFEc
+         yJiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=N5zlt/L+9uOA5RQIJq0X8SeLGBVaH2DuJc44Dbv/Np8=;
-        b=b/t28NN0EMih0QuCUJi3d73hZbYDfRPvcPtv/4an4zl5l8LO1kap6XoEj/WV1wV250
-         0OpI1vFb4uNLyENpJHhogD2TG47w0kdL4h9riJWi9w/+jvNB6AUuKpF/q4xg5X7LcOsL
-         FpeWio5p7B0wEIGE6xSOns9wd/x7AqW0xNhbdS7dYieetO35ajFcluYlcwMvDr3Rk+D+
-         UlAvFa8uXVLxzBUKnUwpBg/7+7kkfyvbpFujCgMC3GCa1JDqR4M9+1i08vl2qO1FpPK8
-         3H/kjLOh3lRySpcC4gXIjl4nh5C+rXFdF2msaBvAyFPBcBksh+VvUY0WZQXA+y7Tlc0e
-         3eJQ==
+        bh=YE8RsRqJ1A1rPlq27eqCT9C8RLBU4+CluCMfTPjZydM=;
+        b=btodMWBiCw9LXIi+FbweIBfjs5h7QfpN7bOX6bcRTtzWPV78HlQPxBUHy/mDaT2dsa
+         PZs2icbxkf64qdVCcT2Ss39f5vUwpjmSTLAKKPLMg+Xt/vooOZx2bRYYg7wkHRllUI6B
+         DpvJJ/pHcS246MjM1dIj8NKi0MDPwylV/mWwSoi9meXAuNnHvIIEr1gvnpGVdqy+62pz
+         NAkZslPJPVSIwW8T9OQrfwC20FVbrlG8JOL/tvXeeLqcsaNcyJCjFg2mpfDsHWWdSemJ
+         4/AiwIGew8xRlxf7SocjiywNkMZHt6dduG54ndOqLBWZtkKvH0LTvdFtKGvGxlZva+c8
+         2BqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	dan.j.williams@intel.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 065/163] x86/entry/64: Indent PUSH_AND_CLEAR_REGS and POP_REGS properly
-Date: Wed, 21 Feb 2018 13:48:14 +0100
-Message-Id: <20180221124534.049388365@linuxfoundation.org>
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.15 056/163] PM: cpuidle: Fix cpuidle_poll_state_init() prototype
+Date: Wed, 21 Feb 2018 13:48:05 +0100
+Message-Id: <20180221124533.550598179@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -50,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015601288879092?=
-X-GMAIL-MSGID: =?utf-8?q?1593016068087096177?=
+X-GMAIL-THRID: =?utf-8?q?1593015545701185591?=
+X-GMAIL-MSGID: =?utf-8?q?1593016064579449476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,60 +48,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 92816f571af81e9a71cc6f3dc8ce1e2fcdf7b6b8 upstream.
+commit d7212cfb05ba802bea4dd6c90d61cfe6366ea224 upstream.
 
-... same as the other macros in arch/x86/entry/calling.h
+Commit f85942207516 (x86: PM: Make APM idle driver initialize polling
+state) made apm_init() call cpuidle_poll_state_init(), but that only
+is defined for CONFIG_CPU_IDLE set, so make the empty stub of it
+available for CONFIG_CPU_IDLE unset too to fix the resulting build
+issue.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-8-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: f85942207516 (x86: PM: Make APM idle driver initialize polling state)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/cpuidle.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -97,7 +97,7 @@ For 32-bit we have the following convent
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -225,7 +225,7 @@ static inline void cpuidle_coupled_paral
+ }
+ #endif
  
- #define SIZEOF_PTREGS	21*8
- 
--	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
-+.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -131,9 +131,9 @@ For 32-bit we have the following convent
- 	pushq	%r15		/* pt_regs->r15 */
- 	xorq    %r15, %r15	/* nospec   r15*/
- 	UNWIND_HINT_REGS
--	.endm
-+.endm
- 
--	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
-+.macro POP_REGS pop_rdi=1 skip_r11rcx=0
- 	popq %r15
- 	popq %r14
- 	popq %r13
-@@ -163,7 +163,7 @@ For 32-bit we have the following convent
- 
- 	.macro icebp
- 	.byte 0xf1
--	.endm
-+.endm
- 
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+-#ifdef CONFIG_ARCH_HAS_CPU_RELAX
++#if defined(CONFIG_CPU_IDLE) && defined(CONFIG_ARCH_HAS_CPU_RELAX)
+ void cpuidle_poll_state_init(struct cpuidle_driver *drv);
+ #else
+ static inline void cpuidle_poll_state_init(struct cpuidle_driver *drv) {}
