@@ -1,85 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936753AbeBUN3D (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:29:03 -0500
-Received: from mga14.intel.com ([192.55.52.115]:56866 "EHLO mga14.intel.com"
+        id S936737AbeBUN2y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:28:54 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41360 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933705AbeBUN27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:28:59 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
-   d="scan'208";a="19990838"
-Date: Wed, 21 Feb 2018 15:28:53 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
-Message-ID: <20180221132853.GM5453@intel.com>
-References: <20180206152143.vea6si7ncjj7sxyq@pali>
- <20180213085030.kiksdi2a7ksae5wz@pali>
- <20180213132726.GD5453@intel.com>
- <20180213133842.i5z5jj3sllorsy2w@pali>
- <20180213153654.GG5453@intel.com>
- <20180213160437.gy5luyygjvuktuqx@pali>
- <20180213161221.GK5453@intel.com>
- <20180213174341.abcjlfjymxbcz25t@pali>
- <20180213174556.GM5453@intel.com>
- <20180219093650.avb4xipvflfd2kel@pali>
+        id S933705AbeBUN2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:28:51 -0500
+Date: Wed, 21 Feb 2018 14:28:37 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: X86 ML <x86@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/8] x86/MCE: Put private structures and definitions into
+ the internal header
+Message-ID: <20180221132837.GB9989@pd.tnic>
+References: <20180221101900.10326-1-bp@alien8.de>
+ <20180221101900.10326-2-bp@alien8.de>
+ <20180221113905.hwderlbfbx2dkisn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180219093650.avb4xipvflfd2kel@pali>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180221113905.hwderlbfbx2dkisn@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:36:50AM +0100, Pali Rohár wrote:
-> On Tuesday 13 February 2018 19:45:56 Ville Syrjälä wrote:
-> > On Tue, Feb 13, 2018 at 06:43:41PM +0100, Pali Rohár wrote:
-> > > On Tuesday 13 February 2018 18:12:21 Ville Syrjälä wrote:
-> > > > On Tue, Feb 13, 2018 at 05:04:37PM +0100, Pali Rohár wrote:
-> > > > > So it can be done only once after reboot? Or only prior to booting kernel?
-> > > > 
-> > > > Never.
-> > > 
-> > > Never? Now I'm lost. Why then dmesg message instruct user to try set up
-> > > it in BIOS if you say it is never possible?
-> > 
-> > You can change it in the BIOS. No way to change it from the operating system.
+On Wed, Feb 21, 2018 at 12:39:05PM +0100, Ingo Molnar wrote:
+> Hm, this doesn't apply to latest upstream anymore:
 > 
-> Hi! Can you explain it a bit more?
+>  Hunk #1 FAILED at 113.
+>  1 out of 1 hunk FAILED -- saving rejects to file arch/x86/kernel/cpu/mcheck/mce-internal.h.rej
 > 
-> What does it mean "in BIOS"? Prior switching from 16bit real mode to
-> protected or long? Or before exiting EFI boot services? Or before
-> booting kernel (when initialize memory mapping)?
+> mind forward porting it?
 
-The BIOS is a black box, no one really knows what it's doing. The stolen
-memory is carved out pretty early I think (alongside other carved out
-chunks for SMM and whatnot). And once that's done the BIOS usually locks
-down stuff like this (the hw has magic write once lock bits for various
-registers) so there's just no way to change things afterwards.
+Ah, you took Tony's patch in the meantime. Ok, here's a new version.
+The others I'm not sending again as they should apply ok with a small
+offset.
 
-> 
-> I still do not see reason nor understand why this cannot be possible
-> either in bootloader (e.g. grub2) or prior to loading bootloader which
-> runs in protected or long mode.
-> 
-> It is because BIOS uses some undocumented call/procedure which sets that
-> amount of memory and it is unknown how to do it?
-> 
-> -- 
-> Pali Rohár
-> pali.rohar@gmail.com
+Thx.
+
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Mon, 20 Nov 2017 17:18:25 +0100
+Subject: [PATCH] x86/MCE: Put private structures and definitions into the internal header
+
+... because they don't need to be exported outside of MCE.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/mce.h                | 52 ----------------------------
+ arch/x86/kernel/cpu/mcheck/mce-internal.h | 56 +++++++++++++++++++++++++++++--
+ 2 files changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 96ea4b5ba658..c3fb9a792e13 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -138,58 +138,6 @@ struct mce_log_buffer {
+ 	struct mce entry[MCE_LOG_LEN];
+ };
+ 
+-struct mca_config {
+-	bool dont_log_ce;
+-	bool cmci_disabled;
+-	bool lmce_disabled;
+-	bool ignore_ce;
+-	bool disabled;
+-	bool ser;
+-	bool recovery;
+-	bool bios_cmci_threshold;
+-	u8 banks;
+-	s8 bootlog;
+-	int tolerant;
+-	int monarch_timeout;
+-	int panic_timeout;
+-	u32 rip_msr;
+-};
+-
+-struct mce_vendor_flags {
+-	/*
+-	 * Indicates that overflow conditions are not fatal, when set.
+-	 */
+-	__u64 overflow_recov	: 1,
+-
+-	/*
+-	 * (AMD) SUCCOR stands for S/W UnCorrectable error COntainment and
+-	 * Recovery. It indicates support for data poisoning in HW and deferred
+-	 * error interrupts.
+-	 */
+-	      succor		: 1,
+-
+-	/*
+-	 * (AMD) SMCA: This bit indicates support for Scalable MCA which expands
+-	 * the register space for each MCA bank and also increases number of
+-	 * banks. Also, to accommodate the new banks and registers, the MCA
+-	 * register space is moved to a new MSR range.
+-	 */
+-	      smca		: 1,
+-
+-	      __reserved_0	: 61;
+-};
+-
+-struct mca_msr_regs {
+-	u32 (*ctl)	(int bank);
+-	u32 (*status)	(int bank);
+-	u32 (*addr)	(int bank);
+-	u32 (*misc)	(int bank);
+-};
+-
+-extern struct mce_vendor_flags mce_flags;
+-
+-extern struct mca_msr_regs msr_ops;
+-
+ enum mce_notifier_prios {
+ 	MCE_PRIO_FIRST		= INT_MAX,
+ 	MCE_PRIO_SRAO		= INT_MAX - 1,
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+index e956eb267061..ed3c5aee22cf 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-internal.h
++++ b/arch/x86/kernel/cpu/mcheck/mce-internal.h
+@@ -113,8 +113,6 @@ static inline void mce_register_injector_chain(struct notifier_block *nb)	{ }
+ static inline void mce_unregister_injector_chain(struct notifier_block *nb)	{ }
+ #endif
+ 
+-extern struct mca_config mca_cfg;
+-
+ #ifndef CONFIG_X86_64
+ /*
+  * On 32-bit systems it would be difficult to safely unmap a poison page
+@@ -130,4 +128,58 @@ static inline void mce_unmap_kpfn(unsigned long pfn) {}
+ #define mce_unmap_kpfn mce_unmap_kpfn
+ #endif
+ 
++struct mca_config {
++	bool dont_log_ce;
++	bool cmci_disabled;
++	bool lmce_disabled;
++	bool ignore_ce;
++	bool disabled;
++	bool ser;
++	bool recovery;
++	bool bios_cmci_threshold;
++	u8 banks;
++	s8 bootlog;
++	int tolerant;
++	int monarch_timeout;
++	int panic_timeout;
++	u32 rip_msr;
++};
++
++extern struct mca_config mca_cfg;
++
++struct mce_vendor_flags {
++	/*
++	 * Indicates that overflow conditions are not fatal, when set.
++	 */
++	__u64 overflow_recov	: 1,
++
++	/*
++	 * (AMD) SUCCOR stands for S/W UnCorrectable error COntainment and
++	 * Recovery. It indicates support for data poisoning in HW and deferred
++	 * error interrupts.
++	 */
++	      succor		: 1,
++
++	/*
++	 * (AMD) SMCA: This bit indicates support for Scalable MCA which expands
++	 * the register space for each MCA bank and also increases number of
++	 * banks. Also, to accommodate the new banks and registers, the MCA
++	 * register space is moved to a new MSR range.
++	 */
++	      smca		: 1,
++
++	      __reserved_0	: 61;
++};
++
++extern struct mce_vendor_flags mce_flags;
++
++struct mca_msr_regs {
++	u32 (*ctl)	(int bank);
++	u32 (*status)	(int bank);
++	u32 (*addr)	(int bank);
++	u32 (*misc)	(int bank);
++};
++
++extern struct mca_msr_regs msr_ops;
++
+ #endif /* __X86_MCE_INTERNAL_H__ */
+-- 
+2.13.0
 
 -- 
-Ville Syrjälä
-Intel OTC
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
