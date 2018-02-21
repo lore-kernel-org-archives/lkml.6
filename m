@@ -1,71 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeBUSWE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 13:22:04 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:32972 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751914AbeBUSWB (ORCPT
+        id S1752221AbeBUSXq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 13:23:46 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:57233 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751585AbeBUSXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 13:22:01 -0500
-X-Google-Smtp-Source: AG47ELspmRHIHfE7Y5ctWCGjlAC1iVPu8LoRm4ZfDi6hb3uMx5mwzkcBrCi+I+qGaX+ii90YkTCbW0/qfnMrzMGnvQk=
+        Wed, 21 Feb 2018 13:23:45 -0500
+Date: Wed, 21 Feb 2018 19:23:40 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
+Message-ID: <20180221182340.wvdvgtv5pw7pvd3v@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
+ <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
+ <20180221100716.GF7203@w540>
+ <cbeb1b6b-1b02-7665-0f1f-847ab8de69e3@cogentembedded.com>
+ <20180221173106.vgyshbz3kkc4p3cu@verge.net.au>
+ <321c6c8c-8853-ac00-7567-c0be82b510f4@cogentembedded.com>
+ <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
-References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
- <1518701959-22899-2-git-send-email-tali.perry1@gmail.com> <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
- <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop> <CAFd5g44argF0oaOq7fOM0YbCBK5h8NyRia+H8CbRC5qAQHe5WA@mail.gmail.com>
- <CAL_JsqKq-+fKapT6RKwqBubRuJszpKMJevS7NOObPP-bVA2_kw@mail.gmail.com>
-From: Brendan Higgins <brendanhiggins@google.com>
-Date: Wed, 21 Feb 2018 10:22:00 -0800
-Message-ID: <CAFd5g470T=bd-mg2C8DerOx0p7Nj2A6JhS0GueP8y8DLr3JN0w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
-To: Rob Herring <robh@kernel.org>
-Cc: Tali Perry <tali.perry1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 5:23 AM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Feb 20, 2018 at 10:47 PM, Brendan Higgins
-> <brendanhiggins@google.com> wrote:
->> On Mon, Feb 19, 2018 at 6:49 AM, Rob Herring <robh@kernel.org> wrote:
->>> On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
->>>> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
->>>> >
->>>> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
->>>> >
->>>>  <snip>
->>>>
->>>> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
->>>> clocks (moved from drivers/clk/clk-npcm7xx.c):
->>>> https://www.spinics.net/lists/arm-kernel/msg634678.html
->>>
->>> No, binding docs, dts files and driver code should all be separate
->>> patches.
->>
->> My mistake. This patch has a dt-bindings include file; should the include file
->> go in here, with the dtsi changes, or in its own separate patch?
->
-> It defines the binding, so with the binding documentation.
->
+On Wed, Feb 21, 2018 at 08:53:53PM +0300, Sergei Shtylyov wrote:
+> On 02/21/2018 08:38 PM, Sergei Shtylyov wrote:
 
-So two things, first off, the include file I was asking about is not a dtsi, but
-a file that defines a bunch of macros for referencing clocks. I don't know if
-that makes a difference.
+...
 
-Second, the patch that I referenced above, "[PATCH v2 1/1] npcm750: add fixed
-clocks (moved from drivers/clk/clk-npcm7xx.c):
-https://www.spinics.net/lists/arm-kernel/msg634678.html", *does* contain a dtsi
-and nothing else, and defines these bindings, which is why I thought it went in
-with the binding docs.
+> >>>>>> +			clocks = <&cpg CPG_MOD 812>;
+> >>>>>> +			power-domains = <&sysc 32>;
+> >>>>>> +			resets = <&cpg 812>;
+> >>>>>> +			phy-mode = "rgmii-txid";
+> >>>>>
+> >>>>>    Why not just "rgmii"? TX delay is a board specific detail, no?
+> >>>>>
+> >>>> I admit I took this one straight from r8a7796 dtsi.
+> >>>> Would you like to me resend and change this?
+> >>>
+> >>>    Yes, unless Simon would fix it while merging...
+> >>
+> >> Can I confirm the desired change is s/rgmii-txid/rgmii/ ?
+> > 
+> >    Yes.
+> 
+>    Apparently that means that this prop should be overridden in the board file
+> (which may not be an easy task given the board is Salvator-XS again).
+> 
+> [...]
 
-Cheers
+Can we override it in r8a77965-salvator-x.dts or r8a77965-salvator-xs.dts?
+
+I feel that I'm missing an important point here.
