@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227shHnNu4GuLSPNiJFeYyjxcTzvx+4fa7JXmyPdivj/bQa7ZM1mTw2kpp0VMF2aKz77FsvH
-ARC-Seal: i=1; a=rsa-sha256; t=1519217858; cv=none;
+X-Google-Smtp-Source: AH8x227enyeS26xbqXVhKO32O3G23NSho9QeFUjvImLQKtWDKeNhh1B6OujpH0Gx/PIvCatBB2kt
+ARC-Seal: i=1; a=rsa-sha256; t=1519217856; cv=none;
         d=google.com; s=arc-20160816;
-        b=Po8IyBojg3Q5Xclnuw8Kqewd3NznzK/WNZJuKYIr5WbOtFqihP6NfPOFfWS9v8uSZv
-         SR9CUWJENt+lG/q5kzDGt8Tz7qdCasuFiYH61y8HthCjT/QpbzNndR2B9MM4F0OrBHbE
-         ABkN4IBDkXPufzbD/DHlDnMf3QBQ495M0cDJcLmyojspCfpHXa9Ef2R/d2lfoVzi5wMv
-         PP5ikNAF6MVGY/krNtd4lmF6DB1LCMxlDgIQKFGR9+/6BXnlvTjOWCnGjs7VShHiqqBB
-         ngJ/OgibjoHXVoEShbpAS6Fmw0KtPU39/QOGGbsXecltSE9p2H545Bu+rp66bcTcyagP
-         6gxg==
+        b=GGXui8VhDe+58ZQefGszXEGCmrtfo4+sIfh9e2bfIeCgCHNMtV/f7Yk1gwXwL9qCEX
+         4KeHzNFC4BlgGTKsC0PU3dPEv/tNvHzGgynbEomQ74JUysekJkmEglTSHprvtyOB4bG/
+         oaQdVvn4ETgLYjtyjmXAT4F/J3YlzidcR6pM1VZB/BaK0Hrli9dDxBLcZII/8B7vLzru
+         MkKq35hjs1SAyMalP2ulE62uaKtVzN1nhrqZIggqqLfVqIGtrZuo0yHF6dRpv7/Nk0Tt
+         Se1pHCjpQ3CGLWvTbClTovTxAuqjOK1XCeJNxENk8+eE5cLdcFuuhkLIdKmFuc7ASdXp
+         LJbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r58Jd+Z+/Bqpwz26SW17aQOOG4OybgaT9z4vzM8Npxs=;
-        b=efU2LUBcRJSpQoiec/F32X/Z45e9sC9rd3vmSIzltn5i3VKRtFXrPy2libysK9nLLB
-         SbZeJVhfl1JVKFsxxWQr1sh9BsXrZ180VayhvPubbNJZXvtozt8+o1eB9T5/cJIKzVh5
-         3LFk+OkVmRR3TtiXObx5X1TNDTkH/Sn+77wT82txwvXkMS/yhw0a2n++rxDj/s4MBA2a
-         QkiRQwOHcfgbgF49mXvuTfZC4jZrKyJaNyYFa6sQ90lNmKyoEAnArYh0sP685u/K1qNA
-         8bz3gF98Sindq9yZl8Wl0nZcpyI4s8R9O4zhKo++ptj09/10tNdYaFLtoroOCZ6E9UnN
-         dlgw==
+        bh=UvlS0ty97SQqJuINR1n1gEp4duIemwIun5kL/p0/knk=;
+        b=AbfMDqsEyytZ4mUuEQbEQpodQ72gqNwq/QTPn7MKskOjJRgsTM7Dhh9x9La8DkB1i/
+         FP+FwCdiBiyLbPAakOEWMwp2lNxSCowIZRYuSW6z92aVL27tzKA1a4TJzDAXeWqwABaD
+         sG5FCHQHZp7//mmaL27EAKpBz3A6kMB9WRWb0r24XMeC5rGTzgzC8D4zZqhkhz313dLb
+         flDz0pSBDA4YmwM5OVZsZ2oMDxrkPQq6fc/WiREGVXUZ3uQI0gRFN6mhcEMa4WgFdvIm
+         Pt+wT9Qb7ovNmu4zctu4II7zhdw1e4TCI9Lv7vihs66l81WMPmz9q+F2pbquDPpQbPq+
+         dSxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Viresh Kumar <viresh.kumar@linaro.org>,
 	Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.9 49/77] arm: spear13xx: Fix spics gpio controllers warning
-Date: Wed, 21 Feb 2018 13:48:58 +0100
-Message-Id: <20180221124434.262520347@linuxfoundation.org>
+Subject: [PATCH 4.9 48/77] arm: spear13xx: Fix dmas cells
+Date: Wed, 21 Feb 2018 13:48:57 +0100
+Message-Id: <20180221124434.210290172@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014666669772873?=
-X-GMAIL-MSGID: =?utf-8?q?1593015385638510839?=
+X-GMAIL-THRID: =?utf-8?q?1593014663549542696?=
+X-GMAIL-MSGID: =?utf-8?q?1593015382949880285?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,33 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit f8975cb1b8a36d0839b6365235778dd9df1d04ca upstream.
+commit cdd10409914184c7eee5ae3e11beb890c9c16c61 upstream.
 
-This fixes the following warning by also sending the flags argument for
-gpio controllers:
+The "dmas" cells for the designware DMA controller need to have only 3
+properties apart from the phandle: request line, src master and
+destination master. But the commit 6e8887f60f60 updated it incorrectly
+while moving from platform code to DT. Fix it.
 
-Property 'cs-gpios', cell 6 is not a phandle reference in
-/ahb/apb/spi@e0100000
-
-Fixes: 8113ba917dfa ("ARM: SPEAr: DT: Update device nodes")
-Cc: stable@vger.kernel.org # v3.8+
+Cc: stable@vger.kernel.org # v3.10+
+Fixes: 6e8887f60f60 ("ARM: SPEAr13xx: Pass generic DW DMAC platform data from DT")
 Reported-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/spear1310-evb.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/dma/snps-dma.txt |    2 +-
+ arch/arm/boot/dts/spear1340.dtsi                   |    4 ++--
+ arch/arm/boot/dts/spear13xx.dtsi                   |    6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/arm/boot/dts/spear1310-evb.dts
-+++ b/arch/arm/boot/dts/spear1310-evb.dts
-@@ -349,7 +349,7 @@
- 			spi0: spi@e0100000 {
- 				status = "okay";
- 				num-cs = <3>;
--				cs-gpios = <&gpio1 7 0>, <&spics 0>, <&spics 1>;
-+				cs-gpios = <&gpio1 7 0>, <&spics 0 0>, <&spics 1 0>;
+--- a/Documentation/devicetree/bindings/dma/snps-dma.txt
++++ b/Documentation/devicetree/bindings/dma/snps-dma.txt
+@@ -63,6 +63,6 @@ Example:
+ 		interrupts = <0 35 0x4>;
+ 		status = "disabled";
+ 		dmas = <&dmahost 12 0 1>,
+-			<&dmahost 13 0 1 0>;
++			<&dmahost 13 1 0>;
+ 		dma-names = "rx", "rx";
+ 	};
+--- a/arch/arm/boot/dts/spear1340.dtsi
++++ b/arch/arm/boot/dts/spear1340.dtsi
+@@ -141,8 +141,8 @@
+ 				reg = <0xb4100000 0x1000>;
+ 				interrupts = <0 105 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x600 0 0 1>, /* 0xC << 11 */
+-					<&dwdma0 0x680 0 1 0>; /* 0xD << 7 */
++				dmas = <&dwdma0 12 0 1>,
++					<&dwdma0 13 1 0>;
+ 				dma-names = "tx", "rx";
+ 			};
  
- 				stmpe610@0 {
- 					compatible = "st,stmpe610";
+--- a/arch/arm/boot/dts/spear13xx.dtsi
++++ b/arch/arm/boot/dts/spear13xx.dtsi
+@@ -100,7 +100,7 @@
+ 			reg = <0xb2800000 0x1000>;
+ 			interrupts = <0 29 0x4>;
+ 			status = "disabled";
+-			dmas = <&dwdma0 0 0 0 0>;
++			dmas = <&dwdma0 0 0 0>;
+ 			dma-names = "data";
+ 		};
+ 
+@@ -288,8 +288,8 @@
+ 				#size-cells = <0>;
+ 				interrupts = <0 31 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x2000 0 0 0>, /* 0x4 << 11 */
+-					<&dwdma0 0x0280 0 0 0>;  /* 0x5 << 7 */
++				dmas = <&dwdma0 4 0 0>,
++					<&dwdma0 5 0 0>;
+ 				dma-names = "tx", "rx";
+ 			};
+ 
