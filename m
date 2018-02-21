@@ -1,60 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeBUDmK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 22:42:10 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:51897 "EHLO frisell.zx2c4.com"
+        id S1751360AbeBUDtv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 22:49:51 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:60772 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751135AbeBUDmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 22:42:09 -0500
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: davem@davemloft.net, johannes.berg@intel.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH] netlink: put module reference if dump start fails
-Date: Wed, 21 Feb 2018 04:41:59 +0100
-Message-Id: <20180221034159.14685-1-Jason@zx2c4.com>
+        id S1750829AbeBUDtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Feb 2018 22:49:50 -0500
+Date: Wed, 21 Feb 2018 04:49:38 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: orion: mark orion_ge00_mvmdio_bus_name as const
+Message-ID: <20180221034938.GE14844@lunn.ch>
+References: <20180220162519.1498223-1-arnd@arndb.de>
+ <20180220162519.1498223-2-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180220162519.1498223-2-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before, if cb->start() failed, the module reference would never be put,
-because cb->cb_running is intentionally false at this point. Users are
-generally annoyed by this because they can no longer unload modules that
-leak references. Also, it may be possible to tediously wrap a reference
-counter back to zero, especially since module.c still uses atomic_inc
-instead of refcount_inc.
+On Tue, Feb 20, 2018 at 05:24:51PM +0100, Arnd Bergmann wrote:
+> A section type mismatch warning shows up when building with LTO,
+> since orion_ge00_mvmdio_bus_name was put in __initconst but not marked
+> const itself:
+> 
+> include/linux/of.h: In function 'spear_setup_of_timer':
+> arch/arm/mach-spear/time.c:207:34: error: 'timer_of_match' causes a section type conflict with 'orion_ge00_mvmdio_bus_name'
+>  static const struct of_device_id timer_of_match[] __initconst = {
+>                                   ^
+> arch/arm/plat-orion/common.c:475:32: note: 'orion_ge00_mvmdio_bus_name' was declared here
+>  static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
+>
+> This marks it const as well.
 
-This patch expands the error path to simply call module_put if
-cb->start() fails.
+Hi Arnd
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
-This probably should be queued up for stable.
+I'm not sure this is the correct fix. orion_ge00_mvmdio_bus_name is
+assigned to orion_ge00_switch_board_info->bus_id. This is then passed
+to mdiobus_register_board_info() which makes a copy of
+orion_ge00_switch_board_info and adds it to its linked list. The
+original orion_ge00_switch_board_info will get freed since it is
+__initdata, but the copy still has a pointer to
+orion_ge00_mvmdio_bus_name, which also gets freed.
 
- net/netlink/af_netlink.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I think the correct fix is to remove the __initconst from
+orion_ge00_mvmdio_bus_name. Marking it const is however valid.
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 2ad445c1d27c..07e8478068f0 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2308,7 +2308,7 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
- 	if (cb->start) {
- 		ret = cb->start(cb);
- 		if (ret)
--			goto error_unlock;
-+			goto error_put;
- 	}
- 
- 	nlk->cb_running = true;
-@@ -2328,6 +2328,8 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
- 	 */
- 	return -EINTR;
- 
-+error_put:
-+	module_put(control->module);
- error_unlock:
- 	sock_put(sk);
- 	mutex_unlock(nlk->cb_mutex);
--- 
-2.16.1
+	Andrew
