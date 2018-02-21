@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2260N+au5EGNwnICyb+JVbqWsi/sW8uZ9piU1tekLaIq2YZZoTzSL11AeV6nTNIASzXhDm4t
-ARC-Seal: i=1; a=rsa-sha256; t=1519217797; cv=none;
+X-Google-Smtp-Source: AH8x226oARUxEebGiB+yVOgvbMXBXTdzrEM6I0VR41fsOLykf3rgewnoTiZ/2UwMiX7WkDLM0grA
+ARC-Seal: i=1; a=rsa-sha256; t=1519217794; cv=none;
         d=google.com; s=arc-20160816;
-        b=FVXPqLKh3k3GVI23ZJNM5NpvXcmfsEuCKKrXIsAg3iDfGsK5R/jm/jtD21pM9QNLyF
-         7HUl/PRC0u22iFNkauft2HKphMJWdz/zU7vqiqgYdjqIrdyxpUDndaTLny5lV8b6lobO
-         lXzXiy/OJrXZmd5rQaQaI9JYa4UCwzL0YghIxjNmu3q7jMo7xZue1F8Rte2ZdHW5W3qm
-         QRVPj8CzvKfY3xf1Ojc8ATNgOWx+YJiFlMTTwrPwfJCz71Xb/823jSdhk+pAQLsyLI/h
-         eR37RmuZE0xiTJvYbtv+Ae0fHsSqxl/bD+mKLWN/7ybQCI5AD7/6JGpH3fi3MfnlUsSo
-         CvTA==
+        b=ksZPSYkUAjOTrZmlvpFEw++lrkD0tau2jhc/xxjVlhGxxzs9VjGOpk86tcUOY0gLeN
+         wNhh0XpDHGwVgFJYZKpBJIKcicHQG6/m6nWaKpN670Rv7ak1AGA6NF7h3Wh6FDK/h/Go
+         JSxEcjrvuBQJJwqwTj4PyJ+sWlDj7Fjk3xIrFQRWXizZ4lw//iTDJFLeIF3PNO2Ri6yS
+         YrLgG3Bv5Mi6zSkuJoI08xfL+UatlzaS6lZj22jTVdyCoVUCIX6lvDGCaNFySCwy1lh2
+         NV/w8VCEqk1Xb0OOlJ+bAm9b1pthnZJ55733z4kuL2gbyf/4YVi4M1esQ9bnyDt1uOZT
+         VDDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=x8ypUCiXQof5bRFtQsaKSO3q9lyajvuO27aPFGhS/cs=;
-        b=famBnfuX7D9RYarRq1egWxS1jcjqv5W+FO9G7qJj7+AeKu+iZcDS5HVyt5xMlfGWfL
-         rIfhI6mqMS1RduAdDmZbkueCQdkS3iGAexmhLCUA/JQRvvKUmLYybnuAvaODs+YdoWY5
-         7gSpedos1Nz8Apvte5VL9B5ZuAzQzcxr5IaPODrWJVY+qniufz4wQaP3jVdH/xab3x00
-         OGi4moldpmhWDejSUPU9Fl2xDNbU7aMBrRND0Dq6A53XTcBBaY6S6OdFlmX67y8Y487l
-         gs00mDyPmBNRLgbPkt8deYfk1s7Gyrt3OAyTNC+ooJCzHLZWR5iW4KmvwrRUhOK3p+w3
-         1J4A==
+        bh=6MdcRUcwWqKbOQmF725ABrbD8S7td8dsUX7YOg2JONA=;
+        b=PV9kv5MtakyDjIbP4RHA8QrQqQ6CHVT0QYHv219hFjZvv7musFITxU9N996Y4oUI5L
+         CnDlH0J5Ye6QZYl7b1sHorEzF+2qDcX4hTq8HdAhF7rqcuMILvjIGAB63zSO17oxQaXd
+         LYsxHdsBAH3Cmr2ZEzp86G8Qtkqb3FbKaHZCV4R3tMXh4sFBAyomF+qk+ev0fgvOaYRw
+         fdiZ+gzeV6xc/fuICICls4VE1mp5Cax5l2YZ6bXwi+6g9lHrLR+N3m2EvnlWeh+S/OH8
+         E+i9uepejVzARf20gcFBK+OtdjEyV2BW2Zbuua03J5F/kqsmFYPIbFcKG1Ayenk1xVk7
+         sSSA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
-	Andy Lutomirski <luto@kernel.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 57/77] selftests/x86/pkeys: Remove unused functions
-Date: Wed, 21 Feb 2018 13:49:06 +0100
-Message-Id: <20180221124434.617897595@linuxfoundation.org>
+Subject: [PATCH 4.9 56/77] x86/speculation: Clean up various Spectre related details
+Date: Wed, 21 Feb 2018 13:49:05 +0100
+Message-Id: <20180221124434.575054820@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -45,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015321225692352?=
-X-GMAIL-MSGID: =?utf-8?q?1593015321225692352?=
+X-GMAIL-THRID: =?utf-8?q?1593015317807560579?=
+X-GMAIL-MSGID: =?utf-8?q?1593015317807560579?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,63 +61,141 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Ingo Molnar <mingo@kernel.org>
 
-commit ce676638fe7b284132a7d7d5e7e7ad81bab9947e upstream.
+commit 21e433bdb95bdf3aa48226fd3d33af608437f293 upstream.
 
-This also gets rid of two build warnings:
+Harmonize all the Spectre messages so that a:
 
-  protection_keys.c: In function ‘dumpit’:
-  protection_keys.c:419:3: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
-     write(1, buf, nr_read);
-     ^~~~~~~~~~~~~~~~~~~~~~
+    dmesg | grep -i spectre
 
+... gives us most Spectre related kernel boot messages.
+
+Also fix a few other details:
+
+ - clarify a comment about firmware speculation control
+
+ - s/KPTI/PTI
+
+ - remove various line-breaks that made the code uglier
+
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/protection_keys.c |   28 --------------------------
- 1 file changed, 28 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   28 +++++++++++-----------------
+ 1 file changed, 11 insertions(+), 17 deletions(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -381,34 +381,6 @@ pid_t fork_lazy_child(void)
- 	return forkret;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -161,8 +161,7 @@ static enum spectre_v2_mitigation_cmd __
+ 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
+ 		return SPECTRE_V2_CMD_NONE;
+ 	else {
+-		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
+-					  sizeof(arg));
++		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
+ 		if (ret < 0)
+ 			return SPECTRE_V2_CMD_AUTO;
+ 
+@@ -174,8 +173,7 @@ static enum spectre_v2_mitigation_cmd __
+ 		}
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n",
+-			       mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
+@@ -184,8 +182,7 @@ static enum spectre_v2_mitigation_cmd __
+ 	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
+ 	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
+ 	    !IS_ENABLED(CONFIG_RETPOLINE)) {
+-		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
++		pr_err("%s selected but not compiled in. Switching to AUTO select\n", mitigation_options[i].option);
+ 		return SPECTRE_V2_CMD_AUTO;
+ 	}
+ 
+@@ -255,14 +252,14 @@ static void __init spectre_v2_select_mit
+ 			goto retpoline_auto;
+ 		break;
+ 	}
+-	pr_err("kernel not compiled with retpoline; no mitigation available!");
++	pr_err("Spectre mitigation: kernel not compiled with retpoline; no mitigation available!");
+ 	return;
+ 
+ retpoline_auto:
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+ 	retpoline_amd:
+ 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
+-			pr_err("LFENCE not serializing. Switching to generic retpoline\n");
++			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
+ 			goto retpoline_generic;
+ 		}
+ 		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
+@@ -280,7 +277,7 @@ retpoline_auto:
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+ 	/*
+-	 * If neither SMEP or KPTI are available, there is a risk of
++	 * If neither SMEP nor PTI are available, there is a risk of
+ 	 * hitting userspace addresses in the RSB after a context switch
+ 	 * from a shallow call stack to a deeper one. To prevent this fill
+ 	 * the entire RSB, even when using IBRS.
+@@ -294,21 +291,20 @@ retpoline_auto:
+ 	if ((!boot_cpu_has(X86_FEATURE_KAISER) &&
+ 	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
+ 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+-		pr_info("Filling RSB on context switch\n");
++		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+ 	}
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier if supported */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+-		pr_info("Enabling Indirect Branch Prediction Barrier\n");
++		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+ 	}
  }
  
--void davecmp(void *_a, void *_b, int len)
--{
--	int i;
--	unsigned long *a = _a;
--	unsigned long *b = _b;
--
--	for (i = 0; i < len / sizeof(*a); i++) {
--		if (a[i] == b[i])
--			continue;
--
--		dprintf3("[%3d]: a: %016lx b: %016lx\n", i, a[i], b[i]);
--	}
--}
--
--void dumpit(char *f)
--{
--	int fd = open(f, O_RDONLY);
--	char buf[100];
--	int nr_read;
--
--	dprintf2("maps fd: %d\n", fd);
--	do {
--		nr_read = read(fd, &buf[0], sizeof(buf));
--		write(1, buf, nr_read);
--	} while (nr_read > 0);
--	close(fd);
--}
--
- #define PKEY_DISABLE_ACCESS    0x1
- #define PKEY_DISABLE_WRITE     0x2
+ #undef pr_fmt
  
+ #ifdef CONFIG_SYSFS
+-ssize_t cpu_show_meltdown(struct device *dev,
+-			  struct device_attribute *attr, char *buf)
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
+ 		return sprintf(buf, "Not affected\n");
+@@ -317,16 +313,14 @@ ssize_t cpu_show_meltdown(struct device
+ 	return sprintf(buf, "Vulnerable\n");
+ }
+ 
+-ssize_t cpu_show_spectre_v1(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
++ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
+ 		return sprintf(buf, "Not affected\n");
+ 	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ }
+ 
+-ssize_t cpu_show_spectre_v2(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
++ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
