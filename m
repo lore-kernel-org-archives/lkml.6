@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1546708-1519218825-2-7543774147312876383
+X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218805-2-14089200014710879454
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218825; b=bH4T+0GBr1xMkcvesnHuHX4Rzhx7FQ1TzaESm1pVBYhCUd0
-    xNCJ/dRo1zKqGsOyr0jpp5S4jpGG3BUZlXfEHuZFoFz84+iS2p21h1vQ6ziA2w1O
-    oWAPXyK7xzGX1L9jh8GWH+snI+OHdxxNm+e/FYRuKvHv3LzVJJ9lik43gicwKZF0
-    rVhjzEgPkPuknAnzw1vVX3oJoEZSbM43rjRuUwXSDt+ttHsLdwo0Kkp/+4gydbRM
-    rbWH7gWA6fKTAYUaqjSkUZuljl6FzLJTiRXt2CNxXGPA6EDJa38/ajj0LgSmR6b/
-    I/NyxQPBFmuFzhLg6CtkEAYTGfv6FWITUSQuTTQ==
+    t=1519218805; b=Jdmdme7KvVpce6xFDAqln2f6q7MF4bBnQF23/7deEqgueDF
+    t3ruJJ+oJt6Iz52/R0JsAO6tlW0+ZMWrybk/QRpjE2UEpt7KA6GzFF8DseXtHIoP
+    SILriBeZ635RgLXkvHXzD0CPDmm24qZIPYKsG8CxtcoYT7IIpg/X+/T8mm3Kq4o7
+    PIGnOt0kd0M5y3TqB+MUVWd227/APbr1eQ73UcQVFydoiuID4zeSOWHHP4ba/da9
+    8cf9RZmzGK+Qdts3gCTKmQ8ZL+wy2XuhD+L4FV0K8PqZEQ+fKDw6M/v9oy0fwDVZ
+    4zEuXugEkQQvMj2HenYmx36Er0HpTw6t4BCI2CQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218825; bh=vN90t4oNKSlNbU95QRVX9BU+fI
-    vzfvSbrLvgCAWfjxg=; b=J27otDX+pgga8sk3klg9NuEuB9HHGYlDLhI1UAR85T
-    rAK7nxAxzExiEHdNn17HbBz/Vypbfzt9A7Y1KUcWzvjczWJSN56H1/2EmQlU+vov
-    Aydt0rvWJt92sTmitzaoWyl4I0cJLqMG4Wiu/oIDqCbYzESBUM2a0L24yL7TzAiP
-    0jZVXbc5avZKdgofgn5CnAEtJn0gyk3yo+0LSmgHnz/Puh1BVkUDCy3kDrDFplPJ
-    oeQVAbTciFZ0U1lY3mc4VC+k4Bmu/wJudca0PlmT+RyPvAZPDfDg1HWKUXR4C43/
-    hSn6szu7iUNa+kds7DZeeRGQ63/b7sol6psKQhjzPprw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519218805; bh=TZuQIvJJJx9szFGOHZGNWWSSU7
+    MCpfi+nRTFS3+qMYc=; b=seA4cZIxsamYgH51Al51Mz1INjBhKjflhbUhLhEeBl
+    dLDpcxDPM22527ocE9jCxGMqu4n0kpbqMbw+yHMlYlj9Aba+XsjfIIYI4RRM9S5g
+    NkZGzYiqYXcRr+bhbM5fJOEIBO3bqB021o8eYPfltnaajeTTO4yXL3ueblejl92m
+    F+a6HzOwmr7RIZtzAh4FUfP09ClLVEKuKXr291jL4EN4XabnzWXSKolbElJ+kYqq
+    aNVpNZXv2VQFE11QwQaeB5HxL5GhBJylesx9OEguHM/Ca6uErohBL7Gm8zWeqrE5
+    lLBMpYxURcC9i+TAXb/UKdMSRuUAMmMlzbgZ7mhaj0iQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeBUNN3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:13:29 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46060 "EHLO
+        id S1753552AbeBUNNS (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 08:13:18 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45972 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754572AbeBUNN1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:27 -0500
+        with ESMTP id S1753150AbeBUNNN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:13:13 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 138/163] Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
-Date: Wed, 21 Feb 2018 13:49:27 +0100
-Message-Id: <20180221124537.793312598@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Florian Westphal <fw@strlen.de>,
+        Nicholas Bellinger <nab@linux-iscsi.org>
+Subject: [PATCH 4.15 133/163] iscsi-target: make sure to wake up sleeping login worker
+Date: Wed, 21 Feb 2018 13:49:22 +0100
+Message-Id: <20180221124537.534820304@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -79,42 +79,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit e8f1bc1493855e32b7a2a019decc3c353d94daf6 upstream.
+commit 1c130ae00b769a2e2df41bad3d6051ee8234b636 upstream.
 
-This regression is introduced in
-commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction").
+Mike Christie reports:
+  Starting in 4.14 iscsi logins will fail around 50% of the time.
 
-There are two problems,
+Problem appears to be that iscsi_target_sk_data_ready() callback may
+return without doing anything in case it finds the login work queue
+is still blocked in sock_recvmsg().
 
-a) it is ->destroy_inode() that does the final free on inode, not
-   ->evict_inode(),
-b) clear_inode() must be called before ->evict_inode() returns.
+Nicholas Bellinger says:
+  It would indicate users providing their own ->sk_data_ready() callback
+  must be responsible for waking up a kthread context blocked on
+  sock_recvmsg(..., MSG_WAITALL), when a second ->sk_data_ready() is
+  received before the first sock_recvmsg(..., MSG_WAITALL) completes.
 
-This could end up hitting BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-in evict() because I_CLEAR is set in clear_inode().
+So, do this and invoke the original data_ready() callback -- in
+case of tcp sockets this takes care of waking the thread.
 
-Fixes: commit 3d48d9810de4 ("btrfs: Handle uninitialised inode eviction")
-Cc: <stable@vger.kernel.org> # v4.7-rc6+
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Disclaimer: I do not understand why this problem did not show up before
+tcp prequeue removal.
+
+(Drop WARN_ON usage - nab)
+
+Reported-by: Mike Christie <mchristi@redhat.com>
+Bisected-by: Mike Christie <mchristi@redhat.com>
+Tested-by: Mike Christie <mchristi@redhat.com>
+Diagnosed-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Fixes: e7942d0633c4 ("tcp: remove prequeue support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Cc: stable@vger.kernel.org # 4.14+
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/iscsi/iscsi_target_nego.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5266,7 +5266,7 @@ void btrfs_evict_inode(struct inode *ino
- 	trace_btrfs_inode_evict(inode);
- 
- 	if (!root) {
--		kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
-+		clear_inode(inode);
+--- a/drivers/target/iscsi/iscsi_target_nego.c
++++ b/drivers/target/iscsi/iscsi_target_nego.c
+@@ -432,6 +432,9 @@ static void iscsi_target_sk_data_ready(s
+ 	if (test_and_set_bit(LOGIN_FLAGS_READ_ACTIVE, &conn->login_flags)) {
+ 		write_unlock_bh(&sk->sk_callback_lock);
+ 		pr_debug("Got LOGIN_FLAGS_READ_ACTIVE=1, conn: %p >>>>\n", conn);
++		if (iscsi_target_sk_data_ready == conn->orig_data_ready)
++			return;
++		conn->orig_data_ready(sk);
  		return;
  	}
  
