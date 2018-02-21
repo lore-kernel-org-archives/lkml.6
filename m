@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225dyhI87sAxeCcMBJ2VkVq9+k5Pke+Oe+0j7hC+FEe9JQ+JpikhAfYpKRurwX/bBpEKUqEY
-ARC-Seal: i=1; a=rsa-sha256; t=1519217922; cv=none;
+X-Google-Smtp-Source: AH8x226rkIQnAOdE09BFRVZB58BRzwfATfLNdh3/cOVXsz0wbyibFX7r9rhKGoOhZmdUUpGvIsN4
+ARC-Seal: i=1; a=rsa-sha256; t=1519217919; cv=none;
         d=google.com; s=arc-20160816;
-        b=OSAMwggjTk1y0vr0sGN/eoly74PJEsyRYpSaWypY47Hsaz7F9RufV0plbBCFll51e6
-         hPo3Zwgyyr6QPqWsk5qroHA+Vjh7Ehd5KN8mdr0WPjoq7uQ/ORZWw+wWAksu20D/SGKE
-         rD6jQqWAnO5xLL/ZPD3UQwj562qKDip1VrRM4QyOpf1V52INm4HEBfeuiyc/rinR4bKH
-         jvxSJrmIBgh0c9HnmL8y0O25gHzyHuYDp1EXDUEaBsdfAPUOVji7UUif3RVeP3SFeM3i
-         CjNsd94Qu3PEHknobGpeIgajo227TyVVvCicWRbXITRCNtiyeoNMklis9cpEVn/Zfssv
-         Iekg==
+        b=UlnHpVfmnmoW1vkMPUIpzxXLKsBvyzorZVLaj/ZCcneuhbSg1mvLaaz6dC66UUEiBx
+         osY7X+G1YNyI5azy4mBOq6v4Evv2FYgmbLXO+cD3pxamW+aErk7y9XnAMnnI+vkvo8i0
+         up8TrI8hdSb90GczNQimJTIaelC74m8ggjWKNzfaAevOjySsOMtBkRnqknNAS4GxjVQe
+         l3nolLAf638ZJdkdDP8oFgtxUCUbqNV6A1uAHooKiJ6TzjNXmnY+/DvWU98WoIuaoPRa
+         3zpNIlMSmDhUx5kaYKjCbNXHUBd2IQBvbKjBeqKhL3yiDbHMaLZyI/YwAqjzQ5u+IEq4
+         gqVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KbVLJWM0lAxA1TP595FTro2I0QE3q5I1GANigiKcupE=;
-        b=WObzOadvQQ/ia4pzfYCInTva3BTXIRsQUn2lHE2gBcJ6eyKypiMjkLUTFZVaX4ZjEa
-         DpjCv+/d4HCkqVs0mjf5Dpf8ISBaQdwjeONcNJ9Upqln+tWLukNoS0iPBS4l3pSPcluA
-         pbwoRxFgAfkvjVMMkMFk93zIxUTnjoBO90NYT4FQgJ86oeNpS/iEi2vMYPGnXjx2LmLy
-         iitVsT+DOgaTKGttSQLBedjWErpoNCFHX43H90kYq26jtV9oPL8nr1RR+0wpgrl3EKjt
-         6ko4bmI2kbcZPNtsCjg/vU3LeOu7p8Ce5MSm/NikAB8+KBcre2TldQoE+MeFppV23nZe
-         U8Rw==
+        bh=l/S8ijsTLzkXN47tsM/w8hJG2S5fz6UgnAfKpAveq64=;
+        b=w3GFetc3Tb46LcgD5cAwAmVK2Rvq1aNt/SBlBVUUlPtfIT9zTq1Ne31b1Tr5k5fTpU
+         j+Zc3RKqUnPB+d6ALfakJO/bC7m4gzQ26INyABn57OX+VTx/mdkWo+9aFO3/oCQzRFKt
+         8wARlItkOqMDkVl+OcaCwuc/8wkaqmc02nphUvHQgESRc7kPh9SWFKTdBOci1Ei9SP1G
+         jC2plHZ7c1/lObCWk7Y3UjQqyQixOMWdQ5LmIXPVwh4xhJH7rrldoVq8IJFiNbxNgPZy
+         DlFvZPMt1g3LGYeIw7kCdLu48YsQVJp4JNuYx9iuPPsnzlYizw7WHop8mDnMUrJ7Rbg1
+         Hanw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eugene Syromiatnikov <esyr@redhat.com>,
-	Heiko Carstens <heiko.carstens@de.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 025/167] s390: fix handling of -1 in set{,fs}[gu]id16 syscalls
-Date: Wed, 21 Feb 2018 13:47:16 +0100
-Message-Id: <20180221124525.983812041@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 024/167] dma-buf: fix reservation_object_wait_timeout_rcu once more v2
+Date: Wed, 21 Feb 2018 13:47:15 +0100
+Message-Id: <20180221124525.938218796@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014683983574350?=
-X-GMAIL-MSGID: =?utf-8?q?1593015452233341958?=
+X-GMAIL-THRID: =?utf-8?q?1593015448910696170?=
+X-GMAIL-MSGID: =?utf-8?q?1593015448910696170?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eugene Syromiatnikov <esyr@redhat.com>
+From: Christian König <ckoenig.leichtzumerken@gmail.com>
 
-commit 6dd0d2d22aa363fec075cb2577ba273ac8462e94 upstream.
+commit 5bffee867df7494ecd32c1e6ec4e8fc934c521b7 upstream.
 
-For some reason, the implementation of some 16-bit ID system calls
-(namely, setuid16/setgid16 and setfsuid16/setfsgid16) used type cast
-instead of low2highgid/low2highuid macros for converting [GU]IDs, which
-led to incorrect handling of value of -1 (which ought to be considered
-invalid).
+We need to set shared_count even if we already have a fence to wait for.
 
-Discovered by strace test suite.
+v2: init i to -1 as well
 
+Signed-off-by: Christian König <christian.koenig@amd.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Tested-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180122200003.6665-1-christian.koenig@amd.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/compat_linux.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/dma-buf/reservation.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/s390/kernel/compat_linux.c
-+++ b/arch/s390/kernel/compat_linux.c
-@@ -110,7 +110,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setregid16,
- 
- COMPAT_SYSCALL_DEFINE1(s390_setgid16, u16, gid)
+--- a/drivers/dma-buf/reservation.c
++++ b/drivers/dma-buf/reservation.c
+@@ -455,13 +455,15 @@ long reservation_object_wait_timeout_rcu
+ 					 unsigned long timeout)
  {
--	return sys_setgid((gid_t)gid);
-+	return sys_setgid(low2highgid(gid));
- }
+ 	struct dma_fence *fence;
+-	unsigned seq, shared_count, i = 0;
++	unsigned seq, shared_count;
+ 	long ret = timeout ? timeout : 1;
++	int i;
  
- COMPAT_SYSCALL_DEFINE2(s390_setreuid16, u16, ruid, u16, euid)
-@@ -120,7 +120,7 @@ COMPAT_SYSCALL_DEFINE2(s390_setreuid16,
+ retry:
+ 	shared_count = 0;
+ 	seq = read_seqcount_begin(&obj->seq);
+ 	rcu_read_lock();
++	i = -1;
  
- COMPAT_SYSCALL_DEFINE1(s390_setuid16, u16, uid)
- {
--	return sys_setuid((uid_t)uid);
-+	return sys_setuid(low2highuid(uid));
- }
+ 	fence = rcu_dereference(obj->fence_excl);
+ 	if (fence && !test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
+@@ -477,14 +479,14 @@ retry:
+ 		fence = NULL;
+ 	}
  
- COMPAT_SYSCALL_DEFINE3(s390_setresuid16, u16, ruid, u16, euid, u16, suid)
-@@ -173,12 +173,12 @@ COMPAT_SYSCALL_DEFINE3(s390_getresgid16,
+-	if (!fence && wait_all) {
++	if (wait_all) {
+ 		struct reservation_object_list *fobj =
+ 						rcu_dereference(obj->fence);
  
- COMPAT_SYSCALL_DEFINE1(s390_setfsuid16, u16, uid)
- {
--	return sys_setfsuid((uid_t)uid);
-+	return sys_setfsuid(low2highuid(uid));
- }
+ 		if (fobj)
+ 			shared_count = fobj->shared_count;
  
- COMPAT_SYSCALL_DEFINE1(s390_setfsgid16, u16, gid)
- {
--	return sys_setfsgid((gid_t)gid);
-+	return sys_setfsgid(low2highgid(gid));
- }
+-		for (i = 0; i < shared_count; ++i) {
++		for (i = 0; !fence && i < shared_count; ++i) {
+ 			struct dma_fence *lfence = rcu_dereference(fobj->shared[i]);
  
- static int groups16_to_user(u16 __user *grouplist, struct group_info *group_info)
+ 			if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT,
