@@ -1,68 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1521561-1519218323-2-1197087992056546260
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519218323; b=Uv/LrzDmBbaYDNCZl13s8fgDzW+STX9jCJRvZDEA+dH51tW
-    9rQ+cP4qPu2PYu3L4u4oPYaqT36R6j6EUnijpTlh7Fcp3QzZuOhO5anlEoSuuKWR
-    h2tV7VlAxgZSHA2SNDySMFMQnML4a0Llziqq09L6/7/Ubb67DrWEDqK6MshQ6D5t
-    5lzJeah4DqzwRFP0tpPJKSsqa5AeFbaPJzGgkcgVlq1K3y6NuP8RHrNmXR39OBzv
-    +fBj+sXNC3UojhVEbVbi0akb4nkUImCVNNdo3WB13DJd8GgcUi6dOIkUXSE4/WjE
-    DOhipQpaPYaCA7y8mBHHAmfpfp+GlUDC1Z7UW/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519218323; bh=d+eNRiNLIoyZ/2UgQTN8DCL8zB
-    m8FiDSXe4okGhD74c=; b=NoHuBPAnDKRJELA/+haqFLfK+CCHbffwPLp9DqOF+N
-    3yndtQHqsGtPCl7Rsja9K8GExfVVnVCJDqoizKQMLOvwKxwEHyvXZJ9pd51Y29cm
-    qvuVFIORgEYSSB5bNu4Rdoe8rq7jwgwHWEUkk0JfGxZURExiQvrz3661u6JL6y4E
-    u3+2mmA9KbZjY+OC2FrwdfYx6hobw1yZ/KaHGOAa5DW+S20Lk4FwQDAs8YAIJTRX
-    BgMRUKL8EYxR4cXlTCM1ncT2YZg699sZEPBLABH5agqviIhRa4tL9V2Ch/t9YFck
-    LoW3edMfNY5YWlvMflVz+0lZgeyEs+2NdyRE+gdTQKwA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964819AbeBUNFT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 08:05:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40234 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935998AbeBUNFR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 08:05:17 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225xIq0OBeVLOAxOySWWmnG42o0WO5d6k8Nz6SYq2sgKNWhJADbIKnCsLdm/qSQ2iIpxMSZa
+ARC-Seal: i=1; a=rsa-sha256; t=1519218321; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oCaMb0zhzwJvBdVnk27+kNpZql+/tt1m+GTxyYUS7ylgpZr2O4hmmrswVMcZwAVKJx
+         ej0030Y/doepsA0rDvuRDTamDRM4irVFdoomAGwaH4EUH5VtTCUT3DVRwfGdbwzr8CFs
+         Uv864Vj4vp/dX0nh8N5jEnyAKIohhoMP8YGYu/zUf/3+6UIDmUDYG2w9lbgOyH6XJP90
+         ybutW+/qS95mb01gfa0QD6ZwTOAUYG7su3cfaVAZXFJX7k4BRqUJschQ1plvHuM5ZWdW
+         7b1Mkkz3VhcwEIO/3hBWAae80UJhyDgGLJX7rciH06sAeCWaIpz3HZXgwsgIwGpxEwJv
+         /IPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=oiRx7AWrZQMgmO5i8Eps/kA3BeG5UONLyLQXibLhIsA=;
+        b=Ser3EQViCDn7xJQbQnQ20pH5yYETfVOehGMW4jO8hj3osLMwUizgOvt+nhbnHp/jj4
+         yyXKIhrdlDnuiwABJT/lOsU8f8sVQ0cD90dyEjcyu7rBuiU3+UnkfSkyvuGC0VyeeBjy
+         38SosYEOQrreclAcR6r/Y93qPfuE7rcBikoasrkf97QUFfxPgCnxt5z/sMc+3ID1iJ52
+         8jFHCZhfRh/jXVfA8e60x3cHPtrl6zLIFPzLlavJdXuEDw1Ke08M3RKw9BZQsSUNBSr+
+         OTH3QPj1dFLnqiTgJRytn6cH34Tqi6xz/rPHURy+q3uSa/t9WpJSeZ+qazrTQkgOmI1b
+         faHg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "yinbo.zhu" <yinbo.zhu@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH 4.14 164/167] mmc: sdhci-of-esdhc: fix eMMC couldnt work after kexec
-Date: Wed, 21 Feb 2018 13:49:35 +0100
-Message-Id: <20180221124533.823064941@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"yinbo.zhu" <yinbo.zhu@nxp.com>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: [PATCH 4.14 165/167] mmc: sdhci-of-esdhc: fix the mmc error after sleep on ls1046ardb
+Date: Wed, 21 Feb 2018 13:49:36 +0100
+Message-Id: <20180221124533.880414341@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -70,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593015379524832660?=
+X-GMAIL-MSGID: =?utf-8?q?1593015871115518258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,32 +54,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: yinbo.zhu <yinbo.zhu@nxp.com>
 
-commit 97618aca1440b5addc5c3d78659d3e176be23b80 upstream.
+commit f2bc600008bd6f7f5d0b6b56238d14f95cd454d2 upstream.
 
-The bit eSDHC_TBCTL[TB_EN] couldn't be reset by eSDHC_SYSCTL[RSTA] which is
-used to reset for all. The driver should make sure it's cleared before card
-initialization, otherwise the initialization would fail.
+When system wakes up from sleep on ls1046ardb, the SD operation fails
+with mmc error messages since ESDHC_TB_EN bit couldn't be cleaned by
+eSDHC_SYSCTL[RSTA]. It's proper to clean this bit in esdhc_reset()
+rather than in probe.
 
 Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
+Acked-by: Yangbo Lu <yangbo.lu@nxp.com>
 Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mmc/host/sdhci-of-esdhc.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 --- a/drivers/mmc/host/sdhci-of-esdhc.c
 +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -785,6 +785,10 @@ static void esdhc_init(struct platform_d
+@@ -589,10 +589,18 @@ static void esdhc_pltfm_set_bus_width(st
+ 
+ static void esdhc_reset(struct sdhci_host *host, u8 mask)
+ {
++	u32 val;
++
+ 	sdhci_reset(host, mask);
+ 
+ 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+ 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
++
++	if (mask & SDHCI_RESET_ALL) {
++		val = sdhci_readl(host, ESDHC_TBCTL);
++		val &= ~ESDHC_TB_EN;
++		sdhci_writel(host, val, ESDHC_TBCTL);
++	}
+ }
+ 
+ /* The SCFG, Supplemental Configuration Unit, provides SoC specific
+@@ -785,10 +793,6 @@ static void esdhc_init(struct platform_d
  	pltfm_host = sdhci_priv(host);
  	esdhc = sdhci_pltfm_priv(pltfm_host);
  
-+	val = sdhci_readl(host, ESDHC_TBCTL);
-+	val &= ~ESDHC_TB_EN;
-+	sdhci_writel(host, val, ESDHC_TBCTL);
-+
+-	val = sdhci_readl(host, ESDHC_TBCTL);
+-	val &= ~ESDHC_TB_EN;
+-	sdhci_writel(host, val, ESDHC_TBCTL);
+-
  	host_ver = sdhci_readw(host, SDHCI_HOST_VERSION);
  	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
  			     SDHCI_VENDOR_VER_SHIFT;
