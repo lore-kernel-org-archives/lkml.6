@@ -1,92 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933233AbeBUKcX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:32:23 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34460 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932751AbeBUKcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:32:21 -0500
-Date: Wed, 21 Feb 2018 11:32:17 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, geert@linux-m68k.org,
-        tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for
- Graphics support
-Message-ID: <20180221113217.11bb1c69.cohuck@redhat.com>
-In-Reply-To: <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
-        <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
-        <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
-        <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
-        <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
-        <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
-Organization: Red Hat GmbH
+        id S933246AbeBUKcn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:32:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58567 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeBUKck (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 05:32:40 -0500
+Date: Wed, 21 Feb 2018 02:30:07 -0800
+From: tip-bot for Mel Gorman <tipbot@zytor.com>
+Message-ID: <tip-7347fc87dfe6b7315e74310ee1243dc222c68086@git.kernel.org>
+Cc: tglx@linutronix.de, mgorman@techsingularity.net,
+        torvalds@linux-foundation.org, ggherdovich@suse.cz,
+        peterz@infradead.org, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, efault@gmx.de, hpa@zytor.com,
+        mingo@kernel.org
+Reply-To: mgorman@techsingularity.net, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com, efault@gmx.de,
+        linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
+        peterz@infradead.org, ggherdovich@suse.cz
+In-Reply-To: <20180213133730.24064-7-mgorman@techsingularity.net>
+References: <20180213133730.24064-7-mgorman@techsingularity.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/numa: Delay retrying placement for automatic
+ NUMA balance after wake_affine()
+Git-Commit-ID: 7347fc87dfe6b7315e74310ee1243dc222c68086
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018 11:22:38 +0100
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+Commit-ID:  7347fc87dfe6b7315e74310ee1243dc222c68086
+Gitweb:     https://git.kernel.org/tip/7347fc87dfe6b7315e74310ee1243dc222c68086
+Author:     Mel Gorman <mgorman@techsingularity.net>
+AuthorDate: Tue, 13 Feb 2018 13:37:30 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 08:49:45 +0100
 
-> On 02/21/2018 11:05 AM, Christian Borntraeger wrote:
-> > 
-> > 
-> > On 02/19/2018 05:38 PM, Farhan Ali wrote:  
-> >>
-> >>
-> >> On 02/19/2018 11:25 AM, Thomas Huth wrote:  
-> >>> On 19.02.2018 16:47, Farhan Ali wrote:  
-> >>>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
-> >>>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
-> >>>> "Graphics support" menu for S390. But if we enable VT layer for S390,
-> >>>> we would also need to enable the dummy console. So let's remove the
-> >>>> HAS_IOMEM dependency.
-> >>>>
-> >>>> Move this dependency to sub menu items and console drivers that use
-> >>>> io memory.
-> >>>>
-> >>>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
-> >>>> ---
-> >>>>   drivers/video/Kconfig         | 21 +++++++++++----------
-> >>>>   drivers/video/console/Kconfig |  4 ++--
-> >>>>   2 files changed, 13 insertions(+), 12 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-> >>>> index 3c20af9..8f10915 100644
-> >>>> --- a/drivers/video/Kconfig
-> >>>> +++ b/drivers/video/Kconfig
-> >>>> @@ -3,7 +3,6 @@
-> >>>>   #
-> >>>>     menu "Graphics support"
-> >>>> -    depends on HAS_IOMEM
-> >>>>     config HAVE_FB_ATMEL
-> >>>>       bool
-> >>>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
-> >>>>   config SH_LCD_MIPI_DSI
-> >>>>       bool
-> >>>>   -source "drivers/char/agp/Kconfig"
-> >>>> +if HAS_IOMEM
-> >>>> +    source "drivers/char/agp/Kconfig"
-> >>>>   -source "drivers/gpu/vga/Kconfig"
-> >>>> +    source "drivers/gpu/vga/Kconfig"
-> >>>>   -source "drivers/gpu/host1x/Kconfig"
-> >>>> -source "drivers/gpu/ipu-v3/Kconfig"
-> >>>> +    source "drivers/gpu/host1x/Kconfig"
-> >>>> +    source "drivers/gpu/ipu-v3/Kconfig"
-> >>>>   -source "drivers/gpu/drm/Kconfig"
-> >>>> +    source "drivers/gpu/drm/Kconfig"  
-> > 
-> > 
-> > Hmmm, looks like that this makes it impossible to select VIRTIO_GPU - need still more
-> > work.
-> >   
-> Sorry my fault. I had CONFIG_PCI disabled.
+sched/numa: Delay retrying placement for automatic NUMA balance after wake_affine()
 
-That smells like the s390 HAS_IOMEM stuff needs more work -- I guess
-that you want to enable a ccw virtio-gpu device, not a pci one, right?
+If wake_affine() pulls a task to another node for any reason and the node is
+no longer preferred then temporarily stop automatic NUMA balancing pulling
+the task back. Otherwise, tasks with a strong waker/wakee relationship
+may constantly fight automatic NUMA balancing over where a task should
+be placed.
+
+Once again netperf is interesting here. The performance barely changes
+but automatic NUMA balancing is interesting:
+
+ Hmean     send-64         354.67 (   0.00%)      352.15 (  -0.71%)
+ Hmean     send-128        702.91 (   0.00%)      693.84 (  -1.29%)
+ Hmean     send-256       1350.07 (   0.00%)     1344.19 (  -0.44%)
+ Hmean     send-1024      5124.38 (   0.00%)     4941.24 (  -3.57%)
+ Hmean     send-2048      9687.44 (   0.00%)     9624.45 (  -0.65%)
+ Hmean     send-3312     14577.64 (   0.00%)    14514.35 (  -0.43%)
+ Hmean     send-4096     16393.62 (   0.00%)    16488.30 (   0.58%)
+ Hmean     send-8192     26877.26 (   0.00%)    26431.63 (  -1.66%)
+ Hmean     send-16384    38683.43 (   0.00%)    38264.91 (  -1.08%)
+ Hmean     recv-64         354.67 (   0.00%)      352.15 (  -0.71%)
+ Hmean     recv-128        702.91 (   0.00%)      693.84 (  -1.29%)
+ Hmean     recv-256       1350.07 (   0.00%)     1344.19 (  -0.44%)
+ Hmean     recv-1024      5124.38 (   0.00%)     4941.24 (  -3.57%)
+ Hmean     recv-2048      9687.43 (   0.00%)     9624.45 (  -0.65%)
+ Hmean     recv-3312     14577.59 (   0.00%)    14514.35 (  -0.43%)
+ Hmean     recv-4096     16393.55 (   0.00%)    16488.20 (   0.58%)
+ Hmean     recv-8192     26876.96 (   0.00%)    26431.29 (  -1.66%)
+ Hmean     recv-16384    38682.41 (   0.00%)    38263.94 (  -1.08%)
+
+ NUMA alloc hit                 1465986     1423090
+ NUMA alloc miss                      0           0
+ NUMA interleave hit                  0           0
+ NUMA alloc local               1465897     1423003
+ NUMA base PTE updates             1473        1420
+ NUMA huge PMD updates                0           0
+ NUMA page range updates           1473        1420
+ NUMA hint faults                  1383        1312
+ NUMA hint local faults             451         124
+ NUMA hint local percent             32           9
+
+There is a slight degrading in performance but there are slightly fewer
+NUMA faults. There is a large drop in the percentage of local faults but
+the bulk of migrations for netperf are in small shared libraries so it's
+reflecting the fact that automatic NUMA balancing has backed off. This is
+a case where despite wake_affine() and automatic NUMA balancing fighting
+for placement that there is a marginal benefit to rescheduling to local
+data quickly. However, it should be noted that wake_affine() and automatic
+NUMA balancing fighting each other constantly is undesirable.
+
+However, the benefit in other cases is large. This is the result for NAS
+with the D class sizing on a 4-socket machine:
+
+ nas-mpi
+                           4.15.0                 4.15.0
+                     sdnuma-v1r23       delayretry-v1r23
+ Time cg.D      557.00 (   0.00%)      431.82 (  22.47%)
+ Time ep.D       77.83 (   0.00%)       79.01 (  -1.52%)
+ Time is.D       26.46 (   0.00%)       26.64 (  -0.68%)
+ Time lu.D      727.14 (   0.00%)      597.94 (  17.77%)
+ Time mg.D      191.35 (   0.00%)      146.85 (  23.26%)
+
+               4.15.0      4.15.0
+         sdnuma-v1r23delayretry-v1r23
+ User        75665.20    70413.30
+ System      20321.59     8861.67
+ Elapsed       766.13      634.92
+
+ Minor Faults                  16528502     7127941
+ Major Faults                      4553        5068
+ NUMA alloc local               6963197     6749135
+ NUMA base PTE updates        366409093   107491434
+ NUMA huge PMD updates           687556      198880
+ NUMA page range updates      718437765   209317994
+ NUMA hint faults              13643410     4601187
+ NUMA hint local faults         9212593     3063996
+ NUMA hint local percent             67          66
+
+Note the massive reduction in system CPU usage even though the percentage
+of local faults is barely affected. There is a massive reduction in the
+number of PTE updates showing that automatic NUMA balancing has backed off.
+A critical observation is also that there is a massive reduction in minor
+faults which is due to far fewer NUMA hinting faults being trapped.
+
+There were questions on NAS OMP and how it behaved related to threads
+being bound to CPUs. First, there are more gains than losses with this
+patch applied and a reduction in system CPU usage:
+
+nas-omp
+                      4.16.0-rc1             4.16.0-rc1
+                     sdnuma-v2r1        delayretry-v2r1
+Time bt.D      436.71 (   0.00%)      430.05 (   1.53%)
+Time cg.D      201.02 (   0.00%)      180.87 (  10.02%)
+Time ep.D       32.84 (   0.00%)       32.68 (   0.49%)
+Time is.D        9.63 (   0.00%)        9.64 (  -0.10%)
+Time lu.D      331.20 (   0.00%)      304.80 (   7.97%)
+Time mg.D       54.87 (   0.00%)       52.72 (   3.92%)
+Time sp.D     1108.78 (   0.00%)      917.10 (  17.29%)
+Time ua.D      378.81 (   0.00%)      398.83 (  -5.28%)
+
+          4.16.0-rc1  4.16.0-rc1
+         sdnuma-v2r1delayretry-v2r1
+User       305633.08   296751.91
+System        451.75      357.80
+Elapsed      2595.73     2368.13
+
+However, it does not close the gap between binding and being unbound. There
+is negligible difference between the performance of the baseline and a
+patched kernel when threads are bound so it is not presented here:
+
+                      4.16.0-rc1             4.16.0-rc1
+                 delayretry-bind     delayretry-unbound
+Time bt.D      385.02 (   0.00%)      430.05 ( -11.70%)
+Time cg.D      144.02 (   0.00%)      180.87 ( -25.59%)
+Time ep.D       32.85 (   0.00%)       32.68 (   0.52%)
+Time is.D       10.52 (   0.00%)        9.64 (   8.37%)
+Time lu.D      285.31 (   0.00%)      304.80 (  -6.83%)
+Time mg.D       43.21 (   0.00%)       52.72 ( -22.01%)
+Time sp.D      820.24 (   0.00%)      917.10 ( -11.81%)
+Time ua.D      337.09 (   0.00%)      398.83 ( -18.32%)
+
+          4.16.0-rc1  4.16.0-rc1
+        delayretry-binddelayretry-unbound
+User       277731.25   296751.91
+System        261.29      357.80
+Elapsed      2100.55     2368.13
+
+Unfortunately, while performance is improved by the patch, there is still
+quite a long way to go before it's equivalent to hard binding.
+
+Other workloads like hackbench, tbench, dbench and schbench are barely
+affected. dbench shows a mix of gains and losses depending on the machine
+although in general, the results are more stable.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Giovanni Gherdovich <ggherdovich@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180213133730.24064-7-mgorman@techsingularity.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 94aea5b..33662a3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1869,6 +1869,7 @@ static int task_numa_migrate(struct task_struct *p)
+ static void numa_migrate_preferred(struct task_struct *p)
+ {
+ 	unsigned long interval = HZ;
++	unsigned long numa_migrate_retry;
+ 
+ 	/* This task has no NUMA fault statistics yet */
+ 	if (unlikely(p->numa_preferred_nid == -1 || !p->numa_faults))
+@@ -1876,7 +1877,18 @@ static void numa_migrate_preferred(struct task_struct *p)
+ 
+ 	/* Periodically retry migrating the task to the preferred node */
+ 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
+-	p->numa_migrate_retry = jiffies + interval;
++	numa_migrate_retry = jiffies + interval;
++
++	/*
++	 * Check that the new retry threshold is after the current one. If
++	 * the retry is in the future, it implies that wake_affine has
++	 * temporarily asked NUMA balancing to backoff from placement.
++	 */
++	if (numa_migrate_retry > p->numa_migrate_retry)
++		return;
++
++	/* Safe to try placing the task on the preferred node */
++	p->numa_migrate_retry = numa_migrate_retry;
+ 
+ 	/* Success if task is already running on preferred CPU */
+ 	if (task_node(p) == p->numa_preferred_nid)
+@@ -5759,6 +5771,48 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+ }
+ 
++#ifdef CONFIG_NUMA_BALANCING
++static void
++update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
++{
++	unsigned long interval;
++
++	if (!static_branch_likely(&sched_numa_balancing))
++		return;
++
++	/* If balancing has no preference then continue gathering data */
++	if (p->numa_preferred_nid == -1)
++		return;
++
++	/*
++	 * If the wakeup is not affecting locality then it is neutral from
++	 * the perspective of NUMA balacing so continue gathering data.
++	 */
++	if (cpu_to_node(prev_cpu) == cpu_to_node(target))
++		return;
++
++	/*
++	 * Temporarily prevent NUMA balancing trying to place waker/wakee after
++	 * wakee has been moved by wake_affine. This will potentially allow
++	 * related tasks to converge and update their data placement. The
++	 * 4 * numa_scan_period is to allow the two-pass filter to migrate
++	 * hot data to the wakers node.
++	 */
++	interval = max(sysctl_numa_balancing_scan_delay,
++			 p->numa_scan_period << 2);
++	p->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
++
++	interval = max(sysctl_numa_balancing_scan_delay,
++			 current->numa_scan_period << 2);
++	current->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
++}
++#else
++static void
++update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
++{
++}
++#endif
++
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 		       int this_cpu, int prev_cpu, int sync)
+ {
+@@ -5774,6 +5828,7 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 	if (target == nr_cpumask_bits)
+ 		return prev_cpu;
+ 
++	update_wa_numa_placement(p, prev_cpu, target);
+ 	schedstat_inc(sd->ttwu_move_affine);
+ 	schedstat_inc(p->se.statistics.nr_wakeups_affine);
+ 	return target;
