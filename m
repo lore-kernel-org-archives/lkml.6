@@ -1,95 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753152AbeBUJUw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:20:52 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54438 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752502AbeBUJUu (ORCPT
+        id S1753282AbeBUJ1O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:27:14 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45905 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753121AbeBUJ1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:20:50 -0500
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 00/10] drm/sun4i: Allwinner MIPI-DSI support
-Date: Wed, 21 Feb 2018 10:20:24 +0100
-Message-Id: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.14.3
+        Wed, 21 Feb 2018 04:27:11 -0500
+X-Google-Smtp-Source: AH8x226EqO5MYdk2e7tQsoCgw+jfIdhtpw/b/AoL2B9gdJthx7+L/mChZk8KKq6ETwYVQrtwyUqQ/w==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH V2 00/20] lightnvm: pblk: implement 2.0 support
+Date: Wed, 21 Feb 2018 10:26:38 +0100
+Message-Id: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Changes since V1:
 
-Here is an preliminary version of the MIPI-DSI support for the Allwinner
-SoCs.
+Apply Matias' feedback:
+  - Rebase on top of Matias' latest patches.
+  - Use nvme_get_log_ext to submit report chunk and export it.
+  - Re-write report chunk based on Matias' suggestions. Here, I
+    maintained the lba interface, but it was necessary to redo the
+    address formatting to match the chunk log page format. For pblk,
+    this means a double address transformation, but it enables the
+    standard path to use lbas, plus, this is not in the fast path.
+  - Fold address format together with address transformations.
+  - Split the generic geometry patch in different patches.
+  - Remove refactoring of ligthnvm's core sysfs.
 
-This controller can be found on a number of recent SoCs, such as the
-A31, A33 or the A64.
+Feedback not applied:
+  - Not letting pblk know about 1.2 and 2.0 bad block paths. Since the
+    interfaces for get/set bad block and report chunk are so different,
+    moving this logic to core adds assumptions on how the targets would
+    want to get the data back. A way of doing this is creating a logical
+    report chunk on the 1.2 path, but this would mean that values like
+    the wear-index are invalid, which requires the target knowledge. I'm
+    open to suggestions here.
 
-Given the sparse documentation, there's a number of obscure areas, but
-the current implementation has been tested with a 4-lanes DSI panel on
-an A33.
+Also:
+  - Do some further renamings
+  - Create a generic address format to make it explicit where we share
+    1.2 and 2.0 fields to avoid address formatting in the fast path.
+  - Add new fields to sysfs to complete spec and show major/minor
+    versions (version and subversion to respect current interface).
 
-The support is a bit rough around the edges at the time, and some artifacts
-are still shown on the screen for some reasons. Wider testing with
-different display will hopefully nail those down.
+Implement 2.0 support in pblk. This includes the address formatting and
+mapping paths, as well as the sysfs entries for them.
 
-Let me know what you think,
-Maxime
+Javier
 
-Changes from v1:
-  - Rebased on 4.16-rc1
-  - Constified a few function arguments and structures
-  - Reworked the DT binding example a bit
-  - Reworked the panel driver to check for DSI return codes, and use DCS
-    helpers when possible
+Javier González (20):
+  lightnvm: simplify geometry structure.
+  lightnvm: add controller capabilities to 2.0
+  lightnvm: fix capabilities for 2.0 sysfs
+  lightnvm: add minor version to generic geometry
+  lightnvm: rename number of channels and luns
+  lightnvm: add shorten OCSSD version in geo
+  lightnvm: rename sect_* to sec_*
+  lightnvm: complete geo structure with maxoc*
+  lightnvm: use generic identify structure
+  lightnvm: pblk: rename ppaf* to addrf*
+  lightnvm: pblk: check for supported version
+  lightnvm: complete 2.0 values in sysfs
+  lightnvm: add support for 2.0 address format
+  lightnvm: make address conversions depend on generic device
+  nvme: make nvme_get_log_ext available
+  lightnvm: implement get log report chunk helpers
+  lightnvm: define chunk states
+  lightnvm: pblk: implement get log report chunk
+  lightnvm: pblk: refactor init/exit sequences
+  lightnvm: pblk: implement 2.0 support
 
-Maxime Ripard (10):
-  regmap: mmio: Add function to attach a clock
-  drm/sun4i: tcon: Add TRI finish interrupt for vblank
-  drm/sun4i: Protect the TCON pixel clocks
-  dt-bindings: display: Add Allwinner MIPI-DSI bindings
-  drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
-  dt-bindings: vendor: Add Huarui Lighting
-  dt-bindings: panel: Add Huarui LHR050H41 panel documentation
-  drm/panel: Add Huarui LHR050H41 panel driver
-  arm: dts: sun8i: a33: Add the DSI-related nodes
-  [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
+ drivers/lightnvm/core.c          | 205 +++++-----
+ drivers/lightnvm/pblk-core.c     | 141 +++++--
+ drivers/lightnvm/pblk-gc.c       |   2 +-
+ drivers/lightnvm/pblk-init.c     | 787 +++++++++++++++++++++++----------------
+ drivers/lightnvm/pblk-read.c     |   2 +-
+ drivers/lightnvm/pblk-recovery.c |  14 +-
+ drivers/lightnvm/pblk-rl.c       |   2 +-
+ drivers/lightnvm/pblk-sysfs.c    | 130 ++++++-
+ drivers/lightnvm/pblk-write.c    |   2 +-
+ drivers/lightnvm/pblk.h          | 253 +++++++++----
+ drivers/nvme/host/lightnvm.c     | 480 ++++++++++++++++--------
+ drivers/nvme/host/nvme.h         |   3 +
+ include/linux/lightnvm.h         | 338 +++++++++++------
+ 13 files changed, 1546 insertions(+), 813 deletions(-)
 
- Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt |   19 +-
- Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt        |   84 +++++-
- Documentation/devicetree/bindings/vendor-prefixes.txt                |    1 +-
- arch/arm/boot/dts/sun8i-a33.dtsi                                     |   35 ++-
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts                         |   39 +++-
- drivers/base/regmap/regmap-mmio.c                                    |   24 ++-
- drivers/gpu/drm/panel/Kconfig                                        |    9 +-
- drivers/gpu/drm/panel/Makefile                                       |    1 +-
- drivers/gpu/drm/panel/panel-huarui-lhr050h41.c                       |  506 +++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/Kconfig                                        |   10 +-
- drivers/gpu/drm/sun4i/Makefile                                       |    4 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                                   |  115 ++++++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                                   |   46 +++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                              |  297 +++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                               | 1111 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                               |   67 ++++-
- include/linux/regmap.h                                               |    3 +-
- 17 files changed, 2366 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/huarui,lhr050h41.txt
- create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
- create mode 100644 drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-
-base-commit: 91ab883eb21325ad80f3473633f794c78ac87f51
 -- 
-git-series 0.9.1
+2.7.4
