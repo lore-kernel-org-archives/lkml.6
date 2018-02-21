@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227aa54VsM8qZxa5Pw7OEq9tRVC47ol0MUKJdycdBcFd9/CRVSwB42IuWrfHH3DFYa63QiFf
-ARC-Seal: i=1; a=rsa-sha256; t=1519218126; cv=none;
+X-Google-Smtp-Source: AH8x225e9BPN+YXwtmKb++UVU+2bTB+zpKM/4RBWlK0TWtU7G+kXYYatv2lEH+qr+rnMXbgftiDm
+ARC-Seal: i=1; a=rsa-sha256; t=1519218123; cv=none;
         d=google.com; s=arc-20160816;
-        b=TVoJGqBUN2RpF8CKqSc0E8f+cdTdUKV2GRFko0SYimJ4kpHyIpgKWEQ1hR+/AeEJGI
-         iButqxG9gfP/MLDCIaMvBo5Dc1a1tOt/IP8SH4zsiikfykstdkrhCCiG0L0fR8RFRfGG
-         WScl3Q2rGClNLuZW9cTSwtVsa1CMrtQj/mwarNjknMdiBniMNZNwf/dN91qLhX3j1JUC
-         TJQcaBjNGLMqgkqiElratV68ULR4K/ou+rTCynvuIPEohBjYR8B0ThTTkwCEm2vvPUmh
-         ncU+Jkw8pZNujzFm8ARUddLQDyoSSu2oWKcl4YzYbBy7ZinTbOcqN0NTmO9vu3e+Q7li
-         gEoA==
+        b=eVvewwRYzcxMaTV8u9qnSwhAqxWgCy+J4rvxc5QxZG+075TR06I7NRZFfIfyGTaqUD
+         DUwo/vr0w79YW06ntK1zFKpKv6WcYGh3gCgQGpNChleE8Nl9f1iyK4oo1I4FDMhxlAGp
+         ec4BwrdeScsLczNkP5l9zNyOvZt2pdHrtYcDpEm8XTP3d2XA76ZTZDvhOnvlgvHKRc2o
+         CnyzbvaxBpQ4xtw/sV3VgYXIxoM2Pzp6+NsNK/4/79PhPEemDS/e0nNKWzDUBMzuhDqr
+         yVBYVYIgLRZy+vL76jp8KuP5mdndSTRm0JnqgSpTFxyNEFAtUYAMjpPXWV9oQ+nHdTeL
+         oWnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Gfo75UsbqhBRN2n9elV/539YFiw/uVpRfP4o7nlwh8U=;
-        b=BdyMiSr3A8gq6Blv+pKTlm/RtL0Mr2UBfeH59bCN6Ro6olwMedwGkLoYtrvGio6X+8
-         l0k8WFMCW0x9j6cg1od542XIiDnmlJuh6CGEKyRPbyoUvWXJPPadclL9C8gvKV9/x5Px
-         FkW8hmRlbRT4kndxGYibvcib8tLNZk68wZ90C3bvKTihtkOiXi2rZQtdPNgN1cOLd955
-         aNagKdlQ5WQ3O7wLyaqeWIP+QoDynEe6KzjAWlvgwCcP/iBZubhH/Dgu3MNMyq/tb7qN
-         5y0XyullBYjyYAM6Js+M+jwtOx9mv/hC0kmOT/nJ7M38zLD2aAeti19ZpGAEdBR14cTM
-         XrIg==
+        bh=yQDtLKXwANYFIx5u5+lZPfG9e7OvaOb0J0iGtVxAfK0=;
+        b=wlNJpTRJEC7ggFwEgzg1q05CKS8rNqpXkGjkSJsJEASn9wKqeuzu8jyLIseZuxM1ib
+         jhQMO1Mi8MOh0ckyF9wONiBJm2DZbv15w9mmdSjJ4CDm2aK0RztDixf4OS+5lBuAjcg8
+         qxv9uiiiIO/+g+30btkDQ3feMczPbzoXdB9e9XSXh72icxY6tnu///R4CnoasTY7m1uC
+         ntLmBLEeCTG2ofN/OLIyjuVUhLxm9C0ZGAnypf9YCSxwSjp+UQInkaUyoBcE0qEo/I9Z
+         FpgD4PAIvemjoReRlPQtlotUqGXymA60EIKJL6VWpoH7yAbhcar5TQ0T2Uxecgbul2za
+         mIiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 096/167] drm/radeon: Add dpm quirk for Jet PRO (v2)
-Date: Wed, 21 Feb 2018 13:48:27 +0100
-Message-Id: <20180221124529.597127832@linuxfoundation.org>
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.14 095/167] arm64: Add missing Falkor part number for branch predictor hardening
+Date: Wed, 21 Feb 2018 13:48:26 +0100
+Message-Id: <20180221124529.552294901@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015178749380896?=
-X-GMAIL-MSGID: =?utf-8?q?1593015666206083426?=
+X-GMAIL-THRID: =?utf-8?q?1593015663325630622?=
+X-GMAIL-MSGID: =?utf-8?q?1593015663325630622?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
 
-commit 239b5f64e12b1f09f506c164dff0374924782979 upstream.
+commit 16e574d762ac5512eb922ac0ac5eed360b7db9d8 upstream.
 
-Fixes stability issues.
+References to CPU part number MIDR_QCOM_FALKOR were dropped from the
+mailing list patch due to mainline/arm64 branch dependency. So this
+patch adds the missing part number.
 
-v2: clamp sclk to 600 Mhz
-
-Bug: https://bugs.freedesktop.org/show_bug.cgi?id=103370
-Acked-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: ec82b567a74f ("arm64: Implement branch predictor hardening for Falkor")
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/si_dpm.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/kernel/cpu_errata.c |    9 +++++++++
+ arch/arm64/kvm/hyp/switch.c    |    4 +++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -2984,6 +2984,11 @@ static void si_apply_state_adjust_rules(
- 		    (rdev->pdev->device == 0x6667)) {
- 			max_sclk = 75000;
- 		}
-+		if ((rdev->pdev->revision == 0xC3) ||
-+		    (rdev->pdev->device == 0x6665)) {
-+			max_sclk = 60000;
-+			max_mclk = 80000;
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -408,6 +408,15 @@ const struct arm64_cpu_capabilities arm6
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
++		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
++		.enable = qcom_enable_link_stack_sanitization,
++	},
++	{
++		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
++		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
++	},
++	{
++		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+ 		.enable = enable_smccc_arch_workaround_1,
+ 	},
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -371,8 +371,10 @@ again:
+ 		u32 midr = read_cpuid_id();
+ 
+ 		/* Apply BTAC predictors mitigation to all Falkor chips */
+-		if ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1)
++		if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
++		    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1)) {
+ 			__qcom_hyp_sanitize_btac_predictors();
 +		}
- 	} else if (rdev->family == CHIP_OLAND) {
- 		if ((rdev->pdev->revision == 0xC7) ||
- 		    (rdev->pdev->revision == 0x80) ||
+ 	}
+ 
+ 	fp_enabled = __fpsimd_enabled();
