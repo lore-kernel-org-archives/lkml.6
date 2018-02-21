@@ -1,98 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeBUG2L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 01:28:11 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33535 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeBUG2K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 01:28:10 -0500
-X-Google-Smtp-Source: AH8x225sbeAEmlpkhgBaCEYIarINMFQdO5YMkSdtArfBiXcVKbmhkKPzsJZGbTV+s2y93JUjuco0Toy1AGjjbTP0hjA=
-MIME-Version: 1.0
-In-Reply-To: <20180220153857.dee8f7d5c904cd7219529312@linux-foundation.org>
-References: <20180213014220.2464-1-ying.huang@intel.com> <20180213154123.9f4ef9e406ea8365ca46d9c5@linux-foundation.org>
- <87fu64jthz.fsf@yhuang-dev.intel.com> <20180216153823.ad74f1d2c157adc67ed2c970@linux-foundation.org>
- <CAC=cRTMuDtuwCqTK+0UfaTrKcVHzuN4YkHLnH3Yn7FkxknKXtw@mail.gmail.com> <20180220153857.dee8f7d5c904cd7219529312@linux-foundation.org>
-From: huang ying <huang.ying.caritas@gmail.com>
-Date: Wed, 21 Feb 2018 14:28:08 +0800
-Message-ID: <CAC=cRTP1=PLbiL+VCy3xa4DkQj4j5=M_+eNEGqCRtW0hcbekQw@mail.gmail.com>
-Subject: Re: [PATCH -mm -v5 RESEND] mm, swap: Fix race between swapoff and
- some swap operations
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, Shaohua Li <shli@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>, jglisse@redhat.com,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>, Rik van Riel <riel@redhat.com>,
-        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
-        Aaron Lu <aaron.lu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751401AbeBUGwD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 01:52:03 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750740AbeBUGwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 01:52:02 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] audit: return on memory error to avoid null pointer dereference
+Date: Wed, 21 Feb 2018 01:47:34 -0500
+Message-Id: <c2736eba58e5eb8e1f977ff1d0a98644592be847.1519194702.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 7:38 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Sun, 18 Feb 2018 09:06:47 +0800 huang ying <huang.ying.caritas@gmail.com> wrote:
->
->> >> >> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
->> >> >> +{
->> >> >> +  struct swap_info_struct *si;
->> >> >> +  unsigned long type, offset;
->> >> >> +
->> >> >> +  if (!entry.val)
->> >> >> +          goto out;
->> >> >> +  type = swp_type(entry);
->> >> >> +  if (type >= nr_swapfiles)
->> >> >> +          goto bad_nofile;
->> >> >> +  si = swap_info[type];
->> >> >> +
->> >> >> +  preempt_disable();
->> >> >
->> >> > This preempt_disable() is later than I'd expect.  If a well-timed race
->> >> > occurs, `si' could now be pointing at a defunct entry.  If that
->> >> > well-timed race include a swapoff AND a swapon, `si' could be pointing
->> >> > at the info for a new device?
->> >>
->> >> struct swap_info_struct pointed to by swap_info[] will never be freed.
->> >> During swapoff, we only free the memory pointed to by the fields of
->> >> struct swap_info_struct.  And when swapon, we will always reuse
->> >> swap_info[type] if it's not NULL.  So it should be safe to dereference
->> >> swap_info[type] with preemption enabled.
->> >
->> > That's my point.  If there's a race window during which there is a
->> > parallel swapoff+swapon, this swap_info_struct may now be in use for a
->> > different device?
->>
->> Yes.  It's possible.  And the caller of get_swap_device() can live
->> with it if the swap_info_struct has been fully initialized.  For
->> example, for the race in the patch description,
->>
->> do_swap_page
->>   swapin_readahead
->>     __read_swap_cache_async
->>       swapcache_prepare
->>         __swap_duplicate
->>
->> in __swap_duplicate(), it's possible that the swap device returned by
->> get_swap_device() is different from the swap device when
->> __swap_duplicate() call get_swap_device().  But the struct_info_struct
->> has been fully initialized, so __swap_duplicate() can reference
->> si->swap_map[] safely.  And we will check si->swap_map[] before any
->> further operation.  Even if the swap entry is swapped out again for
->> the new swap device, we will check the page table again in
->> do_swap_page().  So there is no functionality problem.
->
-> That's rather revolting.  Can we tighten this up?  Or at least very
-> loudly document it?
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-TBH, I think my original fix patch which uses a reference count in
-swap_info_struct is easier to be understood.  But I understand it has
-its own drawbacks too.  Anyway, unless there are some better ideas to
-resolve this, I will send out a new version with more document.
+See: https://github.com/linux-audit/audit-kernel/issues/76
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ kernel/audit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best Regards,
-Huang, Ying
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 196d327..31cb11d 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1063,6 +1063,8 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+ 		return;
+ 
+ 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
+-- 
+1.8.3.1
