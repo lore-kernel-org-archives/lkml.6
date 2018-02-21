@@ -1,197 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938427AbeBUPyP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:54:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:64848 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937781AbeBUPyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:54:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
-   d="scan'208";a="28781441"
-Date: Wed, 21 Feb 2018 17:54:10 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private
- objects
-Message-ID: <20180221155410.GQ5453@intel.com>
-References: <20180221143730.30285-1-robdclark@gmail.com>
- <20180221143730.30285-2-robdclark@gmail.com>
- <20180221144919.GN5453@intel.com>
- <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
- <20180221150727.GO5453@intel.com>
- <CAF6AEGucNXQZjKaL4KYXSnax=kFiurmsgxKHP9t5ycy_tbmj7g@mail.gmail.com>
- <20180221152720.GP5453@intel.com>
- <CAF6AEGs+_gjEzueON9Rz8ce9xzHKhkdR2yQGfSpC=6DQV19V2A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGs+_gjEzueON9Rz8ce9xzHKhkdR2yQGfSpC=6DQV19V2A@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        id S966091AbeBUQCX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:02:23 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33896 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbeBUQCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:02:21 -0500
+X-Google-Smtp-Source: AH8x224xR8DEEc5V0TZvZU9QfbRGSEWHaW5HLoLobeOBkqSmmPXO2MUcmAPAERfVZv3tm/Y4BLF+Vw==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 00/10] Add Actions Semi S900 pinctrl and gpio support
+Date: Wed, 21 Feb 2018 21:30:34 +0530
+Message-Id: <20180221160044.15089-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:36:06AM -0500, Rob Clark wrote:
-> On Wed, Feb 21, 2018 at 10:27 AM, Ville Syrjälä
-> <ville.syrjala@linux.intel.com> wrote:
-> > On Wed, Feb 21, 2018 at 10:20:03AM -0500, Rob Clark wrote:
-> >> On Wed, Feb 21, 2018 at 10:07 AM, Ville Syrjälä
-> >> <ville.syrjala@linux.intel.com> wrote:
-> >> > On Wed, Feb 21, 2018 at 09:54:49AM -0500, Rob Clark wrote:
-> >> >> On Wed, Feb 21, 2018 at 9:49 AM, Ville Syrjälä
-> >> >> <ville.syrjala@linux.intel.com> wrote:
-> >> >> > On Wed, Feb 21, 2018 at 09:37:21AM -0500, Rob Clark wrote:
-> >> >> >> Follow the same pattern of locking as with other state objects.  This
-> >> >> >> avoids boilerplate in the driver.
-> >> >> >
-> >> >> > I'm not sure we really want to do this. What if the driver wants a
-> >> >> > custom locking scheme for this state?
-> >> >>
-> >> >> That seems like something we want to discourage, ie. all the more
-> >> >> reason for this patch.
-> >> >>
-> >> >> There is no reason drivers could not split their global state into
-> >> >> multiple private objs's, each with their own lock, for more fine
-> >> >> grained locking.  That is basically the only valid reason I can think
-> >> >> of for "custom locking".
-> >> >
-> >> > In i915 we have at least one case that would want something close to an
-> >> > rwlock. Any crtc lock is enough for read, need all of them for write.
-> >> > Though if we wanted to use private objs for that we might need to
-> >> > actually make the states refcounted as well, otherwise I can imagine
-> >> > we might land in some use-after-free issues once again.
-> >> >
-> >> > Maybe we could duplicate the state into per-crtc and global copies, but
-> >> > then we have to keep all of those in sync somehow which doesn't sound
-> >> > particularly pleasant.
-> >>
-> >> Or just keep your own driver lock for read, and use that plus the core
-> >> modeset lock for write?
-> >
-> > If we can't add the private obj to the state we can't really use it.
-> >
-> 
-> I'm not sure why that is strictly true (that you need to add it to the
-> state if for read-only), since you'd be guarding it with your own
-> driver read-lock you can just priv->foo_state->bar.
-> 
-> Since it is read-only access, there is no roll-back to worry about for
-> test-only or failed atomic_check()s..
+This patchset adds pinctrl and gpio support for Actions Semi S900 SoC.
+Pinctrl and gpio subsystems share the common set of register range but
+implemented as individual drivers for making it less complex.
 
-That would be super ugly. We want to access the information the same
-way whether it has been modified or not.
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
 
-> 
-> BR,
-> -R
-> 
-> 
-> >>
-> >> BR,
-> >> -R
-> >>
-> >> >
-> >> >>
-> >> >> (And ofc drivers could add there own locks in addition to what is done
-> >> >> by core, but I'd rather look at that on a case by case basis, rather
-> >> >> than it being part of the boilerplate in each driver.)
-> >> >>
-> >> >> BR,
-> >> >> -R
-> >> >>
-> >> >> >>
-> >> >> >> Signed-off-by: Rob Clark <robdclark@gmail.com>
-> >> >> >> ---
-> >> >> >>  drivers/gpu/drm/drm_atomic.c | 9 ++++++++-
-> >> >> >>  include/drm/drm_atomic.h     | 5 +++++
-> >> >> >>  2 files changed, 13 insertions(+), 1 deletion(-)
-> >> >> >>
-> >> >> >> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> >> >> >> index fc8c4da409ff..004e621ab307 100644
-> >> >> >> --- a/drivers/gpu/drm/drm_atomic.c
-> >> >> >> +++ b/drivers/gpu/drm/drm_atomic.c
-> >> >> >> @@ -1078,6 +1078,8 @@ drm_atomic_private_obj_init(struct drm_private_obj *obj,
-> >> >> >>  {
-> >> >> >>       memset(obj, 0, sizeof(*obj));
-> >> >> >>
-> >> >> >> +     drm_modeset_lock_init(&obj->lock);
-> >> >> >> +
-> >> >> >>       obj->state = state;
-> >> >> >>       obj->funcs = funcs;
-> >> >> >>  }
-> >> >> >> @@ -1093,6 +1095,7 @@ void
-> >> >> >>  drm_atomic_private_obj_fini(struct drm_private_obj *obj)
-> >> >> >>  {
-> >> >> >>       obj->funcs->atomic_destroy_state(obj, obj->state);
-> >> >> >> +     drm_modeset_lock_fini(&obj->lock);
-> >> >> >>  }
-> >> >> >>  EXPORT_SYMBOL(drm_atomic_private_obj_fini);
-> >> >> >>
-> >> >> >> @@ -1113,7 +1116,7 @@ struct drm_private_state *
-> >> >> >>  drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
-> >> >> >>                                struct drm_private_obj *obj)
-> >> >> >>  {
-> >> >> >> -     int index, num_objs, i;
-> >> >> >> +     int index, num_objs, i, ret;
-> >> >> >>       size_t size;
-> >> >> >>       struct __drm_private_objs_state *arr;
-> >> >> >>       struct drm_private_state *obj_state;
-> >> >> >> @@ -1122,6 +1125,10 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
-> >> >> >>               if (obj == state->private_objs[i].ptr)
-> >> >> >>                       return state->private_objs[i].state;
-> >> >> >>
-> >> >> >> +     ret = drm_modeset_lock(&obj->lock, state->acquire_ctx);
-> >> >> >> +     if (ret)
-> >> >> >> +             return ERR_PTR(ret);
-> >> >> >> +
-> >> >> >>       num_objs = state->num_private_objs + 1;
-> >> >> >>       size = sizeof(*state->private_objs) * num_objs;
-> >> >> >>       arr = krealloc(state->private_objs, size, GFP_KERNEL);
-> >> >> >> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> >> >> >> index 09076a625637..9ae53b73c9d2 100644
-> >> >> >> --- a/include/drm/drm_atomic.h
-> >> >> >> +++ b/include/drm/drm_atomic.h
-> >> >> >> @@ -218,6 +218,11 @@ struct drm_private_state_funcs {
-> >> >> >>   * &drm_modeset_lock is required to duplicate and update this object's state.
-> >> >> >>   */
-> >> >> >>  struct drm_private_obj {
-> >> >> >> +     /**
-> >> >> >> +      * @lock: Modeset lock to protect the state object.
-> >> >> >> +      */
-> >> >> >> +     struct drm_modeset_lock lock;
-> >> >> >> +
-> >> >> >>       /**
-> >> >> >>        * @state: Current atomic state for this driver private object.
-> >> >> >>        */
-> >> >> >> --
-> >> >> >> 2.14.3
-> >> >> >>
-> >> >> >> _______________________________________________
-> >> >> >> dri-devel mailing list
-> >> >> >> dri-devel@lists.freedesktop.org
-> >> >> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >> >> >
-> >> >> > --
-> >> >> > Ville Syrjälä
-> >> >> > Intel OTC
-> >> >
-> >> > --
-> >> > Ville Syrjälä
-> >> > Intel OTC
-> >
-> > --
-> > Ville Syrjälä
-> > Intel OTC
+gpio-line-names has been added for the Bubblegum-96 board matching the
+96Boards CE specification v1.0.
+
+Both pinctrl and gpio drivers are verified using the Bubblegum-96 board.
+
+This patchset depends on the clock driver which is still under review:
+https://lkml.org/lkml/2018/2/9/831
+
+There is also S500 pinctrl and gpio driver developed by Andreas Farber
+independently to this patchset.
+https://github.com/afaerber/linux/commits/bg96-next
+
+If this patchseries seems to be good enough to add base OWL pinctrl and
+gpio support. Then, we may decide on adding S500 support on top of this later
+by reusing the pinctrl definitions from Andreas.
+
+Thanks,
+Mani
+
+Changes in v2:
+
+* Implemented each GPIO bank as its own gpio-controller
+* Added gpio-ranges property
+* Modified pin group to follow pad names instead of register names
+* Incorporated review comments from Andy
+* Incorporated review comments from Andreas
+* Fixed the MODULE_LICENSE with respect to SPDX tag
+* Added Reviewed by tag from Rob for pinctrl binding
+
+Manivannan Sadhasivam (10):
+  dt-bindings: pinctrl: Add bindings for Actions S900 SoC
+  arm64: dts: actions: Add pinctrl node for S900
+  arm64: actions: Enable PINCTRL in platforms Kconfig
+  pinctrl: actions: Add Actions S900 pinctrl driver
+  dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+  arm64: dts: actions: Add S900 gpio nodes
+  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+  gpio: Add gpio driver for Actions OWL S900 SoC
+  MAINTAINERS: Add reviewer for ACTIONS platforms
+  MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
+
+ .../devicetree/bindings/gpio/actions,owl-gpio.txt  |   76 +
+ .../bindings/pinctrl/actions,s900-pinctrl.txt      |  178 ++
+ MAINTAINERS                                        |    5 +
+ arch/arm64/Kconfig.platforms                       |    1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |  201 ++
+ arch/arm64/boot/dts/actions/s900.dtsi              |   54 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-owl.c                            |  219 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/actions/Kconfig                    |   12 +
+ drivers/pinctrl/actions/Makefile                   |    2 +
+ drivers/pinctrl/actions/pinctrl-owl.c              |  571 +++++
+ drivers/pinctrl/actions/pinctrl-owl.h              |  178 ++
+ drivers/pinctrl/actions/pinctrl-s900.c             | 2505 ++++++++++++++++++++
+ 16 files changed, 4013 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+ create mode 100644 drivers/gpio/gpio-owl.c
+ create mode 100644 drivers/pinctrl/actions/Kconfig
+ create mode 100644 drivers/pinctrl/actions/Makefile
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.c
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.h
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s900.c
 
 -- 
-Ville Syrjälä
-Intel OTC
+2.14.1
