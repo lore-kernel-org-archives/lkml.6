@@ -1,183 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937109AbeBUOAN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:00:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933118AbeBUOAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:00:10 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4F320C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 21 Feb 2018 11:00:02 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 2/2] perf, tools, stat: Reset ids counter when retrying
- events
-Message-ID: <20180221140002.GB24416@kernel.org>
-References: <20171006020029.13339-1-andi@firstfloor.org>
- <20171006020029.13339-2-andi@firstfloor.org>
+        id S937332AbeBUOCd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:02:33 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:38321 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933186AbeBUNDF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:03:05 -0500
+Subject: Re: [PATCH v9 03/11] media: platform: Add Renesas CEU driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519059584-30844-4-git-send-email-jacopo+renesas@jmondi.org>
+ <024c232f-bd43-42a9-25e7-0fbe71edbcb0@xs4all.nl> <2908261.btsdL5a7UQ@avalon>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <19015eda-c830-f987-92fa-49a407033ada@xs4all.nl>
+Date: Wed, 21 Feb 2018 14:02:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171006020029.13339-2-andi@firstfloor.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <2908261.btsdL5a7UQ@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfG0AYon64C6NHIyyrttOOShw81KLWk1WWFRCYx2erJB1Yk2ZMi+GLaCf11UDy7tWm3WI5A4UwKIr9y2vPBA2Br1nQW+KKOrAcXZaHlcFVrzzk2x5E8bw
+ COA0HRx8Cs4fWsS0GAz6nUkrKMpDRVYEzAEm8gxFkRDFOiACz0ysPq3HjeW6p010neCbnvsOYGMzjHEVqeDHLvu1ygLboPW0FBxeq3GdqvHteoosPdnX9IFq
+ DDtqAFxpAkcdzPwj5sb2BYIHtdYEaC6gqnOjt38siKAI7P+UUi80GxvzYx30jriOe5qMScL3XwbPNMAAWjrlz79jhnzgrxedKdpl5WpNb/o2Yy/PF6I4ZjV3
+ iokAekBeCKx8C+AqFUJ9RwfXAi88N+orhXXBrDx3s8u9jlYv1Flzl0nQiIvKebv2+Cg3xTbqV93Ijc3ExIj9ykHroLXiR8L9WC1xL5N+qTN6N1byvhYAqpxl
+ J4LQHYM+f/kYFyI/jDPC/1niebLheDyU2tajsV3DOhvcK4Ej7Rx6dFEXsG7hPbcg54VW0hwdEjqsG+bYGL/nuc3Eb83n1H2fbqVmo6SsND2AvxV6tGxTqMq5
+ 06ef0PM/KLStHLpVnAjYI1p5iRGJRL2RCgS+5/CpTtGDIoI+vm/BhnbPR66OsOBtLOPE6+dr/MmPk0+TPFDlNAZ74M9+aA1pg7wccby5KSAZNeuK6hVlYGBY
+ X2H3Q8IG+UW53Ra7uTm/L37VDUzsVGi60cMYO447YlFYJ685WNuvIXgl1A1J2ycvVrn7l8h3moQ5rQovMMWjbbg9Tz0LqE7+QxxmTThlRL9oqZOwpxPKp4QW
+ sT7Wxc6Zj/8os+I2iM7xh78745bCS9XctZUqlRriOJetpxciuxFkMydUxMNiG/Wp9ThdLAgInud8X1la9vAzcXMh7dttB6XugCq+NjUrh2Akejseic0qKA79
+ I7xlHMoIOFuUBkug9kNIQj6S0q6b27bjs9Vj0sB6wryNoHFa
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Oct 05, 2017 at 07:00:29PM -0700, Andi Kleen escreveu:
-> From: Andi Kleen <ak@linux.intel.com>
+On 02/21/18 13:29, Laurent Pinchart wrote:
+> Hi Hans,
 > 
-> perf stat can retry opening events. After opening an file descriptor
-> it adds the ids to the ecsel. Each event keeps a running
-> count of ids.
+> On Wednesday, 21 February 2018 14:03:24 EET Hans Verkuil wrote:
+>> On 02/19/18 17:59, Jacopo Mondi wrote:
+>>> Add driver for Renesas Capture Engine Unit (CEU).
+>>>
+>>> The CEU interface supports capturing 'data' (YUV422) and 'images'
+>>> (NV[12|21|16|61]).
+>>>
+>>> This driver aims to replace the soc_camera-based sh_mobile_ceu one.
+>>>
+>>> Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
+>>> platform GR-Peach.
+>>>
+>>> Tested with ov7725 camera sensor on SH4 platform Migo-R.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>> ---
+>>>
+>>>  drivers/media/platform/Kconfig       |    9 +
+>>>  drivers/media/platform/Makefile      |    1 +
+>>>  drivers/media/platform/renesas-ceu.c | 1661 +++++++++++++++++++++++++++++
+>>>  3 files changed, 1671 insertions(+)
+>>>  create mode 100644 drivers/media/platform/renesas-ceu.c
+>>
+>> <snip>
+>>
+>>> +static int ceu_s_input(struct file *file, void *priv, unsigned int i)
+>>> +{
+>>> +	struct ceu_device *ceudev = video_drvdata(file);
+>>> +	struct ceu_subdev *ceu_sd_old;
+>>> +	int ret;
+>>> +
+>>> +	if (i >= ceudev->num_sd)
+>>> +		return -EINVAL;
+>>> +
+>>> +	if (vb2_is_streaming(&ceudev->vb2_vq))
+>>> +		return -EBUSY;
+>>> +
+>>> +	if (i == ceudev->sd_index)
+>>> +		return 0;
+>>> +
+>>> +	ceu_sd_old = ceudev->sd;
+>>> +	ceudev->sd = &ceudev->subdevs[i];
+>>> +
+>>> +	/* Make sure we can generate output image formats. */
+>>> +	ret = ceu_init_formats(ceudev);
+>>
+>> Why is this done for every s_input? I would expect that this is done only
+>> once for each subdev.
+>>
+>> I also expect to see a ceu_set_default_fmt() call here. Or that the v4l2_pix
+>> is kept in ceu_subdev (i.e. per subdev) instead of a single fmt in cuedev.
+>> I think I prefer that over configuring a new default format every time you
+>> switch inputs.
+> 
+> What does userspace expect today ? I don't think we document anywhere that 
+> formats are stored per-input in drivers. The VIDIOC_S_INPUT documentation is 
+> very vague:
+> 
+> "To select a video input applications store the number of the desired input in 
+> an integer and call the VIDIOC_S_INPUT ioctl with a pointer to this integer. 
+> Side effects are possible. For example inputs may support different video 
+> standards, so the driver may implicitly switch the current standard. Because 
+> of these possible side effects applications must select an input before 
+> querying or negotiating any other parameters."
+> 
+> I understand that as meaning "anything can happen when you switch inputs, so 
+> be prepared to reconfigure everything explicitly without assuming any 
+> particular parameter to have a sane value".
+> 
+>> This code will work for two subdevs with exactly the same
+>> formats/properties. But switching between e.g. a sensor and a video
+>> receiver will leave things in an inconsistent state as far as I can see.
+>>
+>> E.g. if input 1 is the video receiver then switching to that input and
+>> running 'v4l2-ctl -V' will show the sensor format, not the video receiver
+>> format.
+> 
+> I agree that the format should be consistent with the selected input, as 
+> calling VIDIOC_S_INPUT immediately followed by a stream start sequence without 
+> configuring formats should work (but produce a format that is not known to 
+> userspace). My question is whether we should reset to a default format for the 
+> newly select input, or switch back to the previously set format. I'd tend to 
+> go for the former to keep as little state as possible, but I'm open to 
+> counter-proposals.
 
-Ok, and that is done in perf_evlist__id_add() where we also add things
-to the evlist->heads hashtable, shouldn't we remove all these before
-retrying? I.e. perf_evlist__close() shouldn't be resetting that
-hashtable?
+What to do is up to the driver. My personal preference is to make it persistent
+per input, but that's just me. I won't block the other approach (resetting it
+to a default). Be aware that for video receivers the format depends on the current
+selected standard as well. I think the code does that correctly already, but it
+would be good to verify if possible.
 
-I.e. like in the following patch? Jiri? Namhyung?
+BTW, I think it is right that the spec isn't specific about what changes when
+you switch inputs. It can be quite complex for drivers to handle this and it
+is not unreasonable in my view for userspace to just assume it needs to configure
+from scratch after switching inputs.
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 7b7d535396f7..e8942456106e 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -37,13 +37,18 @@
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
- 
--void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
--		       struct thread_map *threads)
-+static void perf_evlist__init_heads(struct perf_evlist *evlist)
- {
- 	int i;
- 
- 	for (i = 0; i < PERF_EVLIST__HLIST_SIZE; ++i)
- 		INIT_HLIST_HEAD(&evlist->heads[i]);
-+}
-+
-+void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
-+		       struct thread_map *threads)
-+{
-+	perf_evlist__init_heads(evlist);
- 	INIT_LIST_HEAD(&evlist->entries);
- 	perf_evlist__set_maps(evlist, cpus, threads);
- 	fdarray__init(&evlist->pollfd, 64);
-@@ -1381,8 +1386,11 @@ void perf_evlist__close(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel;
- 
--	evlist__for_each_entry_reverse(evlist, evsel)
-+	evlist__for_each_entry_reverse(evlist, evsel) {
- 		perf_evsel__close(evsel);
-+	}
-+
-+	perf_evlist__init_heads(evlist);
- }
- 
- static int perf_evlist__create_syswide_maps(struct perf_evlist *evlist)
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ef351688b797..fba708bc9d98 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1932,6 +1932,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
- 
- 	perf_evsel__close_fd(evsel);
- 	perf_evsel__free_fd(evsel);
-+	evsel->ids = 0;
- }
- 
- int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
+Regards,
 
-> When we decide to close an evsel and retry
-> with a different configuration this count needs to be reset,
-> otherwise it can overflow the buffer.
+	Hans
+
 > 
-> Always reset the ids count.
+>>> +	if (ret) {
+>>> +		ceudev->sd = ceu_sd_old;
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	/* now that we're sure we can use the sensor, power off the old one. */
+>>> +	v4l2_subdev_call(ceu_sd_old->v4l2_sd, core, s_power, 0);
+>>> +	v4l2_subdev_call(ceudev->sd->v4l2_sd, core, s_power, 1);
+>>> +
+>>> +	ceudev->sd_index = i;
+>>> +
+>>> +	return 0;
+>>> +}
+>>
+>> The remainder of this driver looks good.
 > 
-> This fixes the following problem, triggered by a complex perf
-> stat configuration.
-> 
-> ==666== ERROR: AddressSanitizer: heap-buffer-overflow on address 0x600600001500 at pc 0x59dfd7 bp 0x7ffc6b397000 sp 0x7ffc6b396ff8
-> WRITE of size 8 at 0x600600001500 thread T0
->     #0 0x59dfd6 in perf_evlist__id_add /home/ak/hle/linux-hle-2.6/tools/perf/util/evlist.c:515
->     #1 0x59e291 in perf_evlist__id_add_fd /home/ak/hle/linux-hle-2.6/tools/perf/util/evlist.c:555
->     #2 0x4865c6 in __store_counter_ids /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:570
->     #3 0x4867d0 in store_counter_ids /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:587
->     #4 0x487521 in __run_perf_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:703
->     #5 0x487d6d in run_perf_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:805
->     #6 0x492914 in cmd_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:2839
->     #7 0x57479a in run_builtin /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:296
->     #8 0x574b5f in handle_internal_command /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:348
->     #9 0x574e3c in run_argv /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:392
->     #10 0x575401 in main /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:536
->     #11 0x7f7597af96e4 in __libc_start_main (/lib64/libc.so.6+0x206e4)
->     #12 0x444598 in _start /home/abuild/rpmbuild/BUILD/glibc-2.22/csu/../sysdeps/x86_64/start.S:118
-> 0x600600001500 is located 0 bytes to the right of 32-byte region [0x6006000014e0,0x600600001500)
-> allocated by thread T0 here:
->     #0 0x7f759a698ab5 in calloc (/usr/lib64/libasan.so.0+0x15ab5)
->     #1 0x5a6045 in zalloc /home/ak/hle/linux-hle-2.6/tools/perf/util/util.h:22
->     #2 0x5ab51a in perf_evsel__alloc_id /home/ak/hle/linux-hle-2.6/tools/perf/util/evsel.c:1158
->     #3 0x4867ae in store_counter_ids /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:584
->     #4 0x487521 in __run_perf_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:703
->     #5 0x487d6d in run_perf_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:805
->     #6 0x492914 in cmd_stat /home/ak/hle/linux-hle-2.6/tools/perf/builtin-stat.c:2839
->     #7 0x57479a in run_builtin /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:296
->     #8 0x574b5f in handle_internal_command /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:348
->     #9 0x574e3c in run_argv /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:392
->     #10 0x575401 in main /home/ak/hle/linux-hle-2.6/tools/perf/perf.c:536
->     #11 0x7f7597af96e4 in __libc_start_main (/lib64/libc.so.6+0x206e4)
-> SUMMARY: AddressSanitizer: heap-buffer-overflow /home/ak/hle/linux-hle-2.6/tools/perf/util/evlist.c:515 perf_evlist__id_add
-> Shadow bytes around the buggy address:
->   0x0c013fff8250: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
->   0x0c013fff8260: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
->   0x0c013fff8270: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
->   0x0c013fff8280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
->   0x0c013fff8290: fa fa fa fa fa fa fa fa fa fa fa fa 00 00 00 00
-> =>0x0c013fff82a0:[fa]fa 00 00 00 00 fa fa 00 00 00 00 fa fa 00 00
->   0x0c013fff82b0: 00 00 fa fa 00 00 00 00 fa fa 00 00 00 00 fa fa
->   0x0c013fff82c0: 00 00 00 00 fa fa 00 00 00 00 fa fa 00 00 00 00
->   0x0c013fff82d0: fa fa 00 00 00 00 fa fa 00 00 00 00 fa fa 00 00
->   0x0c013fff82e0: 00 00 fa fa 00 00 00 00 fa fa 00 00 00 00 fa fa
->   0x0c013fff82f0: 00 00 00 00 fa fa 00 00 00 00 fa fa 00 00 00 00
-> Shadow byte legend (one shadow byte represents 8 application bytes):
->   Addressable:           00
->   Partially addressable: 01 02 03 04 05 06 07
->   Heap left redzone:     fa
->   Heap righ redzone:     fb
->   Freed Heap region:     fd
->   Stack left redzone:    f1
->   Stack mid redzone:     f2
->   Stack right redzone:   f3
->   Stack partial redzone: f4
->   Stack after return:    f5
->   Stack use after scope: f8
->   Global redzone:        f9
->   Global init order:     f6
->   Poisoned by user:      f7
->   ASan internal:         fe
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> ---
->  tools/perf/builtin-stat.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 3c697118e44b..b54ec8497f97 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -652,6 +652,7 @@ static int __run_perf_stat(int argc, const char **argv)
->  
->  	evlist__for_each_entry(evsel_list, counter) {
->  try_again:
-> +		counter->ids = 0;
->  		if (create_perf_stat_counter(counter) < 0) {
->  
->  			/* Weak group failed. Reset the group. */
-> -- 
-> 2.13.6
