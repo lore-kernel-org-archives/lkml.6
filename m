@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753513AbeBUKmC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:42:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36231 "EHLO
+        id S1753529AbeBUKmV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:42:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41503 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753145AbeBUKlr (ORCPT
+        with ESMTP id S1751717AbeBUKmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:41:47 -0500
-Date: Wed, 21 Feb 2018 02:41:23 -0800
+        Wed, 21 Feb 2018 05:42:20 -0500
+Date: Wed, 21 Feb 2018 02:41:54 -0800
 From: "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-62155147048f6c811b82cbb53bee246aee083774@git.kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, paulmck@linux.vnet.ibm.com,
-        mingo@kernel.org, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-        paulmck@linux.vnet.ibm.com, mingo@kernel.org
-In-Reply-To: <1519169112-20593-5-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1519169112-20593-5-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <tip-65b65f8e8b941785b0a08cf24ffd7084c8df327c@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org, mingo@kernel.org, torvalds@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org
+In-Reply-To: <1519169112-20593-6-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1519169112-20593-6-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] README: Fix a couple of punctuation errors
-Git-Commit-ID: 62155147048f6c811b82cbb53bee246aee083774
+Subject: [tip:locking/core] MAINTAINERS: Add Akira Yokosawa as an LKMM
+ reviewer
+Git-Commit-ID: 65b65f8e8b941785b0a08cf24ffd7084c8df327c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,14 +34,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  62155147048f6c811b82cbb53bee246aee083774
-Gitweb:     https://git.kernel.org/tip/62155147048f6c811b82cbb53bee246aee083774
+Commit-ID:  65b65f8e8b941785b0a08cf24ffd7084c8df327c
+Gitweb:     https://git.kernel.org/tip/65b65f8e8b941785b0a08cf24ffd7084c8df327c
 Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-AuthorDate: Tue, 20 Feb 2018 15:25:05 -0800
+AuthorDate: Tue, 20 Feb 2018 15:25:06 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 09:58:14 +0100
 
-README: Fix a couple of punctuation errors
+MAINTAINERS: Add Akira Yokosawa as an LKMM reviewer
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
@@ -57,30 +58,21 @@ Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
 Cc: stern@rowland.harvard.edu
 Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/1519169112-20593-5-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1519169112-20593-6-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/litmus-tests/README | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-index 9a3bb59..dca7d823 100644
---- a/tools/memory-model/litmus-tests/README
-+++ b/tools/memory-model/litmus-tests/README
-@@ -23,14 +23,14 @@ IRIW+mbonceonces+OnceOnce.litmus
- 	between each pairs of reads.  In other words, is smp_mb()
- 	sufficient to cause two different reading processes to agree on
- 	the order of a pair of writes, where each write is to a different
--	variable by a different process.
-+	variable by a different process?
- 
- IRIW+poonceonces+OnceOnce.litmus
- 	Test of independent reads from independent writes with nothing
- 	between each pairs of reads.  In other words, is anything at all
- 	needed to cause two different reading processes to agree on the
- 	order of a pair of writes, where each write is to a different
--	variable by a different process.
-+	variable by a different process?
- 
- ISA2+poonceonces.litmus
- 	As below, but with store-release replaced with WRITE_ONCE()
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42da350..1dd9cc2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8159,6 +8159,7 @@ M:	David Howells <dhowells@redhat.com>
+ M:	Jade Alglave <j.alglave@ucl.ac.uk>
+ M:	Luc Maranget <luc.maranget@inria.fr>
+ M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++R:	Akira Yokosawa <akiyks@gmail.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
