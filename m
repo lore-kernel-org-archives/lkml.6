@@ -1,65 +1,74 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1049172-1519203472-2-13379654360782283195
+X-Cyrus-Session-Id: sloti22d1t05-1659370-1519223249-2-17761477521609824853
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519203472; b=mnqqDX5iWtqw8OEPNNGFuQOFb8QdbMG0TGchtzVS9c0evOz
-    nizhGbpQvWlOprlOYj3itNciCkV6EdVYwUPvwwA1NfCbiOAfXQrEXPvoST6/BNkB
-    93SFWKSvWJWDRz7T1Eso58utjT3V77fWCdOqNo0hlOeBqbFw15CsnpuG6X/aMn2L
-    qVIdRSoVdD4rk1mAyXnU6Rs8xmB4vgCBNo4ZcbG/DOFZG8BEGk05lNo8j6vAJ3B8
-    5cEMJlaQ1D/MraUNuVpa/Mb3jj0Bq7r+2Mo6202tn1wNJXtWlpmLqQfRGBTLiCWM
-    +6RS++s2ffX2wxvDfbafIQ6q0mAqunkGGJLMVtg==
+    t=1519223248; b=D8hfCjjpBI5PfYmO95edW2SdaIKd3bJK7wk52rjbdzLbfVD
+    51InLV500I3AD0MdqA9UkvUUj4c9T2HXWgnj8/xSqWIVafjL4uoojVjq86tG1uQn
+    nrMb2Al+mZXiJCqaEn0UK68A9mHIxfZ+XxAWOhSQ+jgcru+cl5T2wh4rKccwW1tx
+    pNwEWTQADmo6/4liO2sqx/7El2y20C8vzjxLIE2T9nef4+iHnxEbIiZcLTL4z+7V
+    hOcOS2YVBDezjfWlF3vdUzHW2ym+r5zStaKmXpcFWc25W8d8F7o3cUOoo/5gHHkd
+    9QhyyhuOtV40MEzzj44zE4I1XEkoCdsrO9f5aaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519203472;
-    bh=mr7gf62V4U79ARIUVqoHcehBY8W4+5Q5P3QG9FN85nA=; b=qQXoLruzgQIU
-    oNW/twa2K3BJ3l0wJsYszqjOjW/7klBIa4KScbg9JkX0dth9z9+eESXQ3wi9k+TP
-    jrdU8AC2tkevXzj6sLQrJOUYTDVllbm1wv0CvBeomHcQvddsTN55xuLr0/zX7jOT
-    TRiYHnn1S1UgauYJ7pZkQnECVUJabENppeu3lAQ/V0F2pJfREidh46toR30S7xWw
-    QA9CTKZmkmdGCW/oPw53WTS1jp5rmNtc0d02JnxDsJBCnVVCSxGPrcYi/Qxc7uX1
-    Cnp3Mp8vlU6wqIx5hM6/pXPE1KAU8JQRoDZpvVBKrmfckge5jQyD4NFvCJ1CsZsV
-    iSDMp3tIMg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=Y1lBWqEJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519223248; bh=LT+VWAEwR+wkIvszlDysFRVgpSBwNXEHsVkimt
+    Adewo=; b=QhdNmp4JrD7j7w//yPVc9K5yVg4eo6p4lNkXzPYC47Joovst2r6hqT
+    g/DU9aUb0GBxbnbRikrVTEU8oy3jko3DcKWPMXieqiUljOGbg+qF02TQlYVLzxp2
+    Tz7VmHqKYyF3W8CUB/lMvDG7sHw+hn/Dv/d+VOq+M3OiFjmjPvZiIgS4odEfAVev
+    vUpN3TZ/xQDeSwCUnwNbdLHnsVpveeXJASkyjf9LeJmW4NF7t/965gMhQV4cRPqc
+    uRZ4KUPUQEwC3WZAbwfUvDj6yFDp9upbW63iuPlTChjWNBcHvSxHp/gSSIDU4Oh1
+    0ziZjUcNHtvTCOtHtkAveebxQFkIaPDA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=oxk9jS0W x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gUdcLVoT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=Y1lBWqEJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=oxk9jS0W x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gUdcLVoT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeBUI5h (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 03:57:37 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54321 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbeBUI4M (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 21 Feb 2018 03:56:12 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180221085610euoutp01f870dbf6b39d0cce3651c10cd745f702~VS2p-qCeU2475124751euoutp01K
-X-AuditID: cbfec7f2-5ffe19c000011644-4b-5a8d3429323a
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
+        id S934772AbeBUO1P (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 09:27:15 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33086 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934654AbeBUO1N (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 21 Feb 2018 09:27:13 -0500
+X-Google-Smtp-Source: AG47ELsFG1V8RLu4HWkxP6xjyUtmkvBhCAfvoUSOoRPMZWQw8rFf5loFcuUoqRyXXOy0thLNFjDX66ixWKXwm2Lu8oQ=
+MIME-Version: 1.0
+In-Reply-To: <20180221085541.14556-6-a.hajda@samsung.com>
+References: <CGME20180221085608eucas1p162d2e579a1cc887672b722458edb98fe@eucas1p1.samsung.com>
+ <20180221085541.14556-1-a.hajda@samsung.com> <20180221085541.14556-6-a.hajda@samsung.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Feb 2018 16:27:11 +0200
+Message-ID: <CAHp75VdxGDCGQBN05bL3_h8P62-v6+5oGW3M7CA+701o15ZXnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] extcon: add possibility to get extcon device by OF node
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>,
@@ -69,161 +78,54 @@ Cc: Andrzej Hajda <a.hajda@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Archit Taneja <architt@codeaurora.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH v4 5/6] extcon: add possibility to get extcon device by OF
- node
-Date: Wed, 21 Feb 2018 09:55:40 +0100
-Message-id: <20180221085541.14556-6-a.hajda@samsung.com>
-X-Mailer: git-send-email 2.16.1
-In-reply-to: <20180221085541.14556-1-a.hajda@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsWy7djPc7qaJr1RBlOOCFncWneO1aKp4y2r
-        xcYZ61ktrn95zmox/whQ7MrX92wWk+5PYLE4f34Du0XnxCXsFpseX2O1uLxrDpvFjPP7mCwW
-        LWtltlh75C67xdLrF5ksWvceYXcQ8Fgzbw2jx+W+XiaP2R0zWT02repk87jffZzJY/OSeo++
-        LasYPT5vkgvgiOKySUnNySxLLdK3S+DKOHtjB3vBZ6mKQ8++MjUwHhfrYuTkkBAwkfh6dSF7
-        FyMXh5DACkaJyXv2MEE4nxklPt15zgJT9WLhZBaIxDJGifs7dzFCOP8ZJb4cXcoGUsUmoCnx
-        d/NNMFtEIFbi3aVdzCBFzAIXWCQunH7FDpIQFgiUmL/1EZjNIqAqsXfmTrAGXgELifeLP7BD
-        rJOXOPymiRXE5hSwlPi9dxLYIAmB22wSr842MUEUuUi0P/jACmELS7w6vgWqWUais+MgE0RD
-        N6PEqX2dUN1TGCXOv7oM1W0tcfj4RbBuZgE+iUnbpgMVcQDFeSU62oQgSjwkvm7rgyp3lJi6
-        4y0rxM89jBL7J79in8AotYCRYRWjeGppcW56arFhXmq5XnFibnFpXrpecn7uJkZgUjj97/in
-        HYxfLyUdYhTgYFTi4bXQ6YkSYk0sK67MPcQowcGsJMJbKdQbJcSbklhZlVqUH19UmpNafIhR
-        moNFSZw3TqMuSkggPbEkNTs1tSC1CCbLxMEp1cDYsDzt2ylrfvWDl40nTZC+FKJ7RvhhQGDD
-        C7cZxiebr3I9dZRa4lH3eZFEo1K41FatJVse3z15fMcvqYoCf78by8s8zbOabLs4m9bHWcbd
-        Sd4Z/CXFhT9pvuXq02fYj3EZWR00cPtl/vxs/bMWc/tjIhX+hsJn18uvabMRv+audaFgymvf
-        u0ZKLMUZiYZazEXFiQBGfLpuBgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsVy+t/xa7oaJr1RBl//GFvcWneO1aKp4y2r
-        xcYZ61ktrn95zmox/whQ7MrX92wWk+5PYLE4f34Du0XnxCXsFpseX2O1uLxrDpvFjPP7mCwW
-        LWtltlh75C67xdLrF5ksWvceYXcQ8Fgzbw2jx+W+XiaP2R0zWT02repk87jffZzJY/OSeo++
-        LasYPT5vkgvgiOKySUnNySxLLdK3S+DKOHtjB3vBZ6mKQ8++MjUwHhfrYuTkkBAwkXixcDIL
-        iC0ksIRR4tX58C5GLiC7kUni0L0dYAk2AU2Jv5tvsoHYIgKxEm9PfWYGKWIWuMAi8XviTHaQ
-        hLCAv8TThTfAbBYBVYm9M3eCNfAKWEi8X/yBHWKbvMThN02sIDangKXE772TmCE2W0h8OPeV
-        fQIjzwJGhlWMIqmlxbnpucWGesWJucWleel6yfm5mxiBIbvt2M/NOxgvbQw+xCjAwajEw2uh
-        0xMlxJpYVlyZe4hRgoNZSYS3Uqg3Sog3JbGyKrUoP76oNCe1+BCjNAeLkjjveYPKKCGB9MSS
-        1OzU1ILUIpgsEwenVAOjn7vLB44aOf0kOR2pAONbcyoTepMP9aZ4H7yqXGI0JzFlXfnSEzYp
-        iwyO9PHO/PvpXU5pbVyuv8FXEelXmWfy9vxkLfnQnn9jh+7zdYLmSy/mrbK2P2Yz6avpae1t
-        4v8btv7//L8zd5+BYcq+wPDnRd13v2ZMjHMvcmFaLTd17ZIe2a38JeeVWIozEg21mIuKEwGD
-        oLF2VQIAAA==
-X-CMS-MailID: 20180221085608eucas1p162d2e579a1cc887672b722458edb98fe
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180221085608eucas1p162d2e579a1cc887672b722458edb98fe
-X-RootMTR: 20180221085608eucas1p162d2e579a1cc887672b722458edb98fe
-References: <20180221085541.14556-1-a.hajda@samsung.com>
-        <CGME20180221085608eucas1p162d2e579a1cc887672b722458edb98fe@eucas1p1.samsung.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org, USB <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since extcon property is not allowed in DT, extcon subsystem requires
-another way to get extcon device. Lets try the simplest approach - get
-edev by of_node.
+On Wed, Feb 21, 2018 at 10:55 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> Since extcon property is not allowed in DT, extcon subsystem requires
+> another way to get extcon device. Lets try the simplest approach - get
+> edev by of_node.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-v2: changed label to follow local convention (Chanwoo)
----
- drivers/extcon/extcon.c | 44 ++++++++++++++++++++++++++++++++++----------
- include/linux/extcon.h  |  6 ++++++
- 2 files changed, 40 insertions(+), 10 deletions(-)
+> +/*
+> + * extcon_get_edev_by_of_node - Get the extcon device from devicetree.
+> + * @node       : OF node identyfying edev
+> + *
+> + * Return the pointer of extcon device if success or ERR_PTR(err) if fail.
+> + */
+> +struct extcon_dev *extcon_get_edev_by_of_node(struct device_node *node)
 
-diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-index cb38c2747684..c4972c4cb3bd 100644
---- a/drivers/extcon/extcon.c
-+++ b/drivers/extcon/extcon.c
-@@ -1336,6 +1336,28 @@ void extcon_dev_unregister(struct extcon_dev *edev)
- EXPORT_SYMBOL_GPL(extcon_dev_unregister);
- 
- #ifdef CONFIG_OF
-+
-+/*
-+ * extcon_get_edev_by_of_node - Get the extcon device from devicetree.
-+ * @node	: OF node identyfying edev
-+ *
-+ * Return the pointer of extcon device if success or ERR_PTR(err) if fail.
-+ */
-+struct extcon_dev *extcon_get_edev_by_of_node(struct device_node *node)
-+{
-+	struct extcon_dev *edev;
-+
-+	mutex_lock(&extcon_dev_list_lock);
-+	list_for_each_entry(edev, &extcon_dev_list, entry)
-+		if (edev->dev.parent && edev->dev.parent->of_node == node)
-+			goto out;
-+	edev = ERR_PTR(-EPROBE_DEFER);
-+out:
-+	mutex_unlock(&extcon_dev_list_lock);
-+
-+	return edev;
-+}
-+
- /*
-  * extcon_get_edev_by_phandle - Get the extcon device from devicetree.
-  * @dev		: the instance to the given device
-@@ -1363,25 +1385,27 @@ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
- 		return ERR_PTR(-ENODEV);
- 	}
- 
--	mutex_lock(&extcon_dev_list_lock);
--	list_for_each_entry(edev, &extcon_dev_list, entry) {
--		if (edev->dev.parent && edev->dev.parent->of_node == node) {
--			mutex_unlock(&extcon_dev_list_lock);
--			of_node_put(node);
--			return edev;
--		}
--	}
--	mutex_unlock(&extcon_dev_list_lock);
-+	edev = extcon_get_edev_by_of_node(node);
- 	of_node_put(node);
- 
--	return ERR_PTR(-EPROBE_DEFER);
-+	return edev;
- }
-+
- #else
-+
-+struct extcon_dev *extcon_get_edev_by_of_node(struct device_node *node)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
- {
- 	return ERR_PTR(-ENOSYS);
- }
-+
- #endif /* CONFIG_OF */
-+
-+EXPORT_SYMBOL_GPL(extcon_get_edev_by_of_node);
- EXPORT_SYMBOL_GPL(extcon_get_edev_by_phandle);
- 
- /**
-diff --git a/include/linux/extcon.h b/include/linux/extcon.h
-index 6d94e82c8ad9..b47e0c7f01fe 100644
---- a/include/linux/extcon.h
-+++ b/include/linux/extcon.h
-@@ -230,6 +230,7 @@ extern void devm_extcon_unregister_notifier_all(struct device *dev,
-  * Following APIs get the extcon_dev from devicetree or by through extcon name.
-  */
- extern struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name);
-+extern struct extcon_dev *extcon_get_edev_by_of_node(struct device_node *node);
- extern struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
- 						     int index);
- 
-@@ -283,6 +284,11 @@ static inline struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
- 	return ERR_PTR(-ENODEV);
- }
- 
-+static inline struct extcon_dev *extcon_get_edev_by_of_node(struct device_node *node)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
- static inline struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
- 				int index)
- {
+First of all, the all other similar cases use "_by_node" in the name.
+Second, it's not _get_, it's _find_.
+
+> +{
+> +       struct extcon_dev *edev;
+> +
+> +       mutex_lock(&extcon_dev_list_lock);
+> +       list_for_each_entry(edev, &extcon_dev_list, entry)
+> +               if (edev->dev.parent && edev->dev.parent->of_node == node)
+> +                       goto out;
+> +       edev = ERR_PTR(-EPROBE_DEFER);
+> +out:
+> +       mutex_unlock(&extcon_dev_list_lock);
+> +
+> +       return edev;
+
+Can't it be done using bus_find_device()?
+
+> +}
+
+See good example in i2c-core-of.c
+
+of_find_i2c_adapter_by_node()
+of_get_i2c_adapter_by_node()
+
 -- 
-2.16.1
-
+With Best Regards,
+Andy Shevchenko
