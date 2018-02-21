@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeBUJAt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 04:00:49 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:43314 "EHLO
+        id S1752387AbeBUJAS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 04:00:18 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:43215 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752542AbeBUJAr (ORCPT
+        with ESMTP id S1750752AbeBUJAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 04:00:47 -0500
+        Wed, 21 Feb 2018 04:00:17 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
-To: arm@kernel.org, Jesper Nilsson <jespern@axis.com>,
-        Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] ARM: dts: artpec: add node for hardware crypto accelerator
-Date: Wed, 21 Feb 2018 10:00:00 +0100
-Message-Id: <20180221090000.18091-9-niklas.cassel@axis.com>
+To: arm@kernel.org, linux-arm-kernel@axis.com, devicetree@vger.kernel.org
+Cc: Niklas Cassel <niklass@axis.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] ARTPEC-6 ARM SoC device tree updates
+Date: Wed, 21 Feb 2018 09:59:52 +0100
+Message-Id: <20180221090000.18091-1-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180221090000.18091-1-niklas.cassel@axis.com>
-References: <20180221090000.18091-1-niklas.cassel@axis.com>
 X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add node for the hardware crypto acceleration used in the artpec6 SoC.
+Hello,
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
- arch/arm/boot/dts/artpec6.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Here comes some ARTPEC-6 ARM SoC device tree updates.
 
-diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
-index b7720be8afb1..3e4115c2cd75 100644
---- a/arch/arm/boot/dts/artpec6.dtsi
-+++ b/arch/arm/boot/dts/artpec6.dtsi
-@@ -232,6 +232,12 @@
- 		ranges;
- 		dma-ranges;
- 
-+		crypto@f4264000 {
-+			compatible = "axis,artpec6-crypto";
-+			reg = <0xf4264000 0x4000>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		dma0: dma@f8019000 {
- 			compatible = "renesas,nbpfaxi64dmac8b16";
- 			reg = <0xf8019000 0x400>;
+Regards,
+Niklas
+
+Niklas Cassel (8):
+  ARM: dts: artpec: disable Accelerator Coherency Port
+  ARM: dts: artpec: use 1 GiB RAM
+  ARM: dts: artpec: remove 0x prefix from clkctrl unit address
+  ARM: dts: artpec: migrate ethernet to stmmac binding
+  ARM: dts: artpec: add and utilize artpec6 pin controller
+  ARM: dts: artpec: add and utilize nbpfaxi DMA controllers
+  ARM: dts: artpec: add disabled node for PCIe endpoint mode
+  ARM: dts: artpec: add node for hardware crypto accelerator
+
+ arch/arm/boot/dts/artpec6-devboard.dts |   3 +-
+ arch/arm/boot/dts/artpec6.dtsi         | 163 +++++++++++++++++++++++++++++++--
+ 2 files changed, 155 insertions(+), 11 deletions(-)
+
 -- 
 2.14.2
