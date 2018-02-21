@@ -1,84 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751405AbeBUB7F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 20:59:05 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:49028 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750781AbeBUB7E (ORCPT
+        id S1751368AbeBUCQW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 21:16:22 -0500
+Received: from mail-it0-f41.google.com ([209.85.214.41]:52516 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeBUCQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 20:59:04 -0500
-Subject: Re: [RFC PATCH V2 13/22] x86/intel_rdt: Support schemata write -
- pseudo-locking core
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Reinette Chatre <reinette.chatre@intel.com>
-Cc: fenghua.yu@intel.com, tony.luck@intel.com, gavin.hindman@intel.com,
-        vikas.shivappa@linux.intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <dbf01ddf087e4597f86a85c1c91c1fc942e70269.1518443616.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1802200059240.1853@nanos.tec.linutronix.de>
- <6c960fc0-820e-757c-2770-d770647e63d6@intel.com>
- <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <2db87a79-e13f-ad6b-c399-1ad58585f38e@oracle.com>
-Date: Tue, 20 Feb 2018 17:58:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 20 Feb 2018 21:16:21 -0500
+X-Google-Smtp-Source: AH8x226aVLgAO9IsE3zNOGO9J1I4UW8EybtzYU+M2EKYBGVEEzpFoqtpVJSBaVN5nLnvM/ch5q/puRi2S1jnIAAjyME=
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1802202355240.24268@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8810 signatures=668675
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802210022
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <20180215182208.35003-2-joe.konno@linux.intel.com> <6680a760-eb30-4daf-2dad-a9628f1c15a8@kernel.org>
+ <20180220211849.fqjb6rdmypl6opir@agluck-desk> <CA+55aFzjyB=E+=q-W9oYZ7Py7nJwm8YQHFjfbWTib6wvkP9B_A@mail.gmail.com>
+ <20180220233008.55rfm7zw62hrao5p@agluck-desk> <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 20 Feb 2018 18:16:19 -0800
+X-Google-Sender-Auth: hKcliz5w_28v3nvOv13_ZEw48VQ
+Message-ID: <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/efivarfs: restrict inode permissions
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Joe Konno <joe.konno@linux.intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Matthew Garrett <mjg59@google.com>, Peter Jones <pjones@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20/2018 03:21 PM, Thomas Gleixner wrote:
-> On Tue, 20 Feb 2018, Reinette Chatre wrote:
->> On 2/20/2018 9:15 AM, Thomas Gleixner wrote:
->>> On Tue, 13 Feb 2018, Reinette Chatre wrote:
->>>
->>> Now the remaining thing is the memory allocation and the mmap itself. I
->>> really dislike the preallocation of memory right at setup time. Ideally
->>> that should be an allocation of the application itself, but the horrid
->>> wbinvd stuff kinda prevents that. With that restriction we are more or less
->>> bound to immediate allocation and population.
->>
->> Acknowledged. I am not sure if the current permissions would support
->> such a dynamic setup though. At this time the system administrator is
->> the one that sets up the pseudo-locked region and can through
->> permissions of the character device provide access to these regions to
->> user space applications.
-> 
-> You still would need some interface, e.g. character device which allows you
-> to hand in the pointer to the user allocated memory and do the cache
-> priming. So you could use the same permission setup for that character
-> device.
-> 
-> The other problem is that we'd need to have MAP_CONTIG first so you
-> actually can allocate physically contigous memory from user space. Mike is
-> working on that, but it's not available today. The only way to do so today
-> (with lots of waste) would be MAP_HUGETLB, which might be an acceptable
-> constraint up to the point where MAP_CONTIG is available.
+On Tue, Feb 20, 2018 at 5:05 PM, Luck, Tony <tony.luck@intel.com> wrote:
+>>> EFI[1] stinks. Reading any file in /sys/firmware/efi/efivars/ generates
+>>> 4 (yes FOUR!) SMIs.
+>
+>> Is that actualkly the normal implementation?
+>
+> I don't know if there are other implementations. This is what I see on my
+> lab system.
 
-Just to clarify, there is not any activity on exposing a general purpose
-MAP_CONTIG interface to user space.  When initially proposed, MAP_CONTIG
-was shot down and the suggestion was to create a new in kernel interface
-to make allocation of contiguous pages easier.  The initial use case was
-a driver which could use the new internal interface as part of it's
-mmap() routine to give contiguous regions to user space.
+Ok. I'm not a huge fan of EFI. Over-designed to the hilt. Happily at
+least the loadable drivers are a thing of the past.
 
-Reinette is using this new interface, but that must be for the ?immediate
-allocation? case you are trying to move away from.  Sorry, I have not been
-following development of this feature.
+Do we have a list of things normal users care about? Because one thing
+that would solve it is caching of the values. We don't want to do that
+in general, but maybe we could just do it for the subset that we think
+are "user accessible".
 
-If you would have to create a device to accept a user buffer, could you
-perhaps use the same device to create/hand out a contiguous mapping?
--- 
-Mike Kravetz
+Although maybe just that "rate limit" thing would be simplest.
+
+I don't want to break existing users, although it's not entirely clear
+to me if there are any real use cases that matter to users. If tpmtotp
+is the main case, maybe that can be changed to work around it and just
+cache a value or something?
+
+So I could imagine just applying Joe's / Andy's patch to see if
+anybody even notices. But if somebody does, we'd have to go to the
+alternatives anyway.
+
+                Linus
