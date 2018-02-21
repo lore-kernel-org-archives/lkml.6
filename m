@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeBUGCV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 01:02:21 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45253 "EHLO
+        id S1751819AbeBUGDA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 01:03:00 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39480 "EHLO
         mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeBUGCQ (ORCPT
+        with ESMTP id S1751648AbeBUGBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 01:02:16 -0500
-X-Google-Smtp-Source: AG47ELt6MCuQpMJtymhxl/X53SiBjnfO+9fJpiRvVrRqtuBgi/EqTXWAroywALcNdTR5uPsvEMji7g==
+        Wed, 21 Feb 2018 01:01:53 -0500
+X-Google-Smtp-Source: AH8x226u9QBZOYyD3GK7obttz+AxMfqWiYDlwI7uyiu3Boasefb0Dg6++uY8T4lHVaZFbTHI2Wk/Zw==
 MIME-Version: 1.0
-In-Reply-To: <ea10280d-bfb4-b1af-79cc-64f40e1007f1@xs4all.nl>
+In-Reply-To: <eac9e222-b605-77b6-4428-66e20f3d1269@xs4all.nl>
 References: <20180220044425.169493-1-acourbot@chromium.org>
- <20180220044425.169493-17-acourbot@chromium.org> <ea10280d-bfb4-b1af-79cc-64f40e1007f1@xs4all.nl>
+ <20180220044425.169493-11-acourbot@chromium.org> <eac9e222-b605-77b6-4428-66e20f3d1269@xs4all.nl>
 From: Alexandre Courbot <acourbot@chromium.org>
-Date: Wed, 21 Feb 2018 15:01:53 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MU+uFyNdEbXavEWO5_AQrYT8d3qBXqZ0LuvLpU_qy-xNA@mail.gmail.com>
-Message-ID: <CAPBb6MU+uFyNdEbXavEWO5_AQrYT8d3qBXqZ0LuvLpU_qy-xNA@mail.gmail.com>
-Subject: Re: [RFCv4 16/21] v4l2: video_device: support for creating requests
+Date: Wed, 21 Feb 2018 15:01:31 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXFTfG2zrK0eU0J6ibdmVqQJH8T6TN2uBhjTRagbzC+yA@mail.gmail.com>
+Message-ID: <CAPBb6MXFTfG2zrK0eU0J6ibdmVqQJH8T6TN2uBhjTRagbzC+yA@mail.gmail.com>
+Subject: Re: [RFCv4 10/21] videodev2.h: Add request_fd field to v4l2_buffer
 To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -26,182 +26,145 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 1:35 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 02/20/2018 05:44 AM, Alexandre Courbot wrote:
->> Add a new VIDIOC_NEW_REQUEST ioctl, which allows to instanciate requests
->> on devices that support the request API. Requests created that way can
->> only control the device they originate from, making them suitable for
->> simple devices, but not complex pipelines.
+On Wed, Feb 21, 2018 at 12:20 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 02/20/18 05:44, Alexandre Courbot wrote:
+>> From: Hans Verkuil <hans.verkuil@cisco.com>
 >>
+>> When queuing buffers allow for passing the request that should
+>> be associated with this buffer.
+>>
+>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>> [acourbot@chromium.org: make request ID 32-bit]
 >> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 >> ---
->>  Documentation/ioctl/ioctl-number.txt |  1 +
->>  drivers/media/v4l2-core/v4l2-dev.c   |  2 ++
->>  drivers/media/v4l2-core/v4l2-ioctl.c | 25 +++++++++++++++++++++++++
->>  include/media/v4l2-dev.h             |  2 ++
->>  include/uapi/linux/videodev2.h       |  3 +++
->>  5 files changed, 33 insertions(+)
+>>  drivers/media/common/videobuf2/videobuf2-v4l2.c | 2 +-
+>>  drivers/media/usb/cpia2/cpia2_v4l.c             | 2 +-
+>>  drivers/media/v4l2-core/v4l2-compat-ioctl32.c   | 9 ++++++---
+>>  drivers/media/v4l2-core/v4l2-ioctl.c            | 4 ++--
+>>  include/uapi/linux/videodev2.h                  | 3 ++-
+>>  5 files changed, 12 insertions(+), 8 deletions(-)
 >>
->> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
->> index 6501389d55b9..afdc9ed255b0 100644
->> --- a/Documentation/ioctl/ioctl-number.txt
->> +++ b/Documentation/ioctl/ioctl-number.txt
->> @@ -286,6 +286,7 @@ Code  Seq#(hex)   Include File            Comments
->>                                       <mailto:oe@port.de>
->>  'z'  10-4F   drivers/s390/crypto/zcrypt_api.h        conflict!
->>  '|'  00-7F   linux/media.h
->> +'|'  80-9F   linux/media-request.h
->>  0x80 00-1F   linux/fb.h
->>  0x89 00-06   arch/x86/include/asm/sockios.h
->>  0x89 0B-DF   linux/sockios.h
->
-> This ^^^^ doesn't belong in this patch.
-
-Do you mean we need a separate patch for this?
-
->
->> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
->> index 0301fe426a43..062ebee5bffc 100644
->> --- a/drivers/media/v4l2-core/v4l2-dev.c
->> +++ b/drivers/media/v4l2-core/v4l2-dev.c
->> @@ -559,6 +559,8 @@ static void determine_valid_ioctls(struct video_device *vdev)
->>               set_bit(_IOC_NR(VIDIOC_TRY_EXT_CTRLS), valid_ioctls);
->>       if (vdev->ctrl_handler || ops->vidioc_querymenu)
->>               set_bit(_IOC_NR(VIDIOC_QUERYMENU), valid_ioctls);
->> +     if (vdev->req_mgr)
->> +             set_bit(_IOC_NR(VIDIOC_NEW_REQUEST), valid_ioctls);
->>       SET_VALID_IOCTL(ops, VIDIOC_G_FREQUENCY, vidioc_g_frequency);
->>       SET_VALID_IOCTL(ops, VIDIOC_S_FREQUENCY, vidioc_s_frequency);
->>       SET_VALID_IOCTL(ops, VIDIOC_LOG_STATUS, vidioc_log_status);
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> index 886a2d8d5c6c..6d4d184aa68e 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> @@ -203,7 +203,7 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
+>>       b->timestamp = ns_to_timeval(vb->timestamp);
+>>       b->timecode = vbuf->timecode;
+>>       b->sequence = vbuf->sequence;
+>> -     b->reserved2 = 0;
+>> +     b->request_fd = 0;
+>>       b->reserved = 0;
+>>
+>>       if (q->is_multiplanar) {
+>> diff --git a/drivers/media/usb/cpia2/cpia2_v4l.c b/drivers/media/usb/cpia2/cpia2_v4l.c
+>> index 99f106b13280..af42ce3ceb48 100644
+>> --- a/drivers/media/usb/cpia2/cpia2_v4l.c
+>> +++ b/drivers/media/usb/cpia2/cpia2_v4l.c
+>> @@ -948,7 +948,7 @@ static int cpia2_dqbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
+>>       buf->sequence = cam->buffers[buf->index].seq;
+>>       buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+>>       buf->length = cam->frame_size;
+>> -     buf->reserved2 = 0;
+>> +     buf->request_fd = 0;
+>>       buf->reserved = 0;
+>>       memset(&buf->timecode, 0, sizeof(buf->timecode));
+>>
+>> diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+>> index 5198c9eeb348..32bf47489a2e 100644
+>> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+>> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+>> @@ -386,7 +386,7 @@ struct v4l2_buffer32 {
+>>               __s32           fd;
+>>       } m;
+>>       __u32                   length;
+>> -     __u32                   reserved2;
+>> +     __s32                   request_fd;
+>>       __u32                   reserved;
+>>  };
+>>
+>> @@ -486,6 +486,7 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp,
+>>  {
+>>       u32 type;
+>>       u32 length;
+>> +     s32 request_fd;
+>>       enum v4l2_memory memory;
+>>       struct v4l2_plane32 __user *uplane32;
+>>       struct v4l2_plane __user *uplane;
+>> @@ -500,7 +501,9 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp,
+>>           get_user(memory, &up->memory) ||
+>>           put_user(memory, &kp->memory) ||
+>>           get_user(length, &up->length) ||
+>> -         put_user(length, &kp->length))
+>> +         put_user(length, &kp->length) ||
+>> +         get_user(request_fd, &up->request_fd) ||
+>> +         put_user(request_fd, &kp->request_fd))
+>>               return -EFAULT;
+>>
+>>       if (V4L2_TYPE_IS_OUTPUT(type))
+>> @@ -604,7 +607,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *kp,
+>>           assign_in_user(&up->timestamp.tv_usec, &kp->timestamp.tv_usec) ||
+>>           copy_in_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
+>>           assign_in_user(&up->sequence, &kp->sequence) ||
+>> -         assign_in_user(&up->reserved2, &kp->reserved2) ||
+>> +         assign_in_user(&up->request_fd, &kp->request_fd) ||
+>>           assign_in_user(&up->reserved, &kp->reserved) ||
+>>           get_user(length, &kp->length) ||
+>>           put_user(length, &up->length))
 >> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->> index ab4968ea443f..a45fe078f8ae 100644
+>> index 260288ca4f55..7bfeaf233d5a 100644
 >> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 >> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->> @@ -21,6 +21,7 @@
+>> @@ -437,13 +437,13 @@ static void v4l_print_buffer(const void *arg, bool write_only)
+>>       const struct v4l2_plane *plane;
+>>       int i;
 >>
->>  #include <linux/videodev2.h>
+>> -     pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, flags=0x%08x, field=%s, sequence=%d, memory=%s",
+>> +     pr_cont("%02ld:%02d:%02d.%08ld index=%d, type=%s, request_fd=%u, flags=0x%08x, field=%s, sequence=%d, memory=%s",
+>>                       p->timestamp.tv_sec / 3600,
+>>                       (int)(p->timestamp.tv_sec / 60) % 60,
+>>                       (int)(p->timestamp.tv_sec % 60),
+>>                       (long)p->timestamp.tv_usec,
+>>                       p->index,
+>> -                     prt_names(p->type, v4l2_type_names),
+>> +                     prt_names(p->type, v4l2_type_names), p->request_fd,
+>>                       p->flags, prt_names(p->field, v4l2_field_names),
+>>                       p->sequence, prt_names(p->memory, v4l2_memory_names));
 >>
->> +#include <media/media-request.h>
->>  #include <media/v4l2-common.h>
->>  #include <media/v4l2-ioctl.h>
->>  #include <media/v4l2-ctrls.h>
->> @@ -842,6 +843,13 @@ static void v4l_print_freq_band(const void *arg, bool write_only)
->>                       p->rangehigh, p->modulation);
->>  }
->>
->> +static void vidioc_print_new_request(const void *arg, bool write_only)
->> +{
->> +     const struct media_request_new *new = arg;
->> +
->> +     pr_cont("fd=0x%x\n", new->fd);
->
-> I'd use %d since fds are typically shown as signed integers.
-
-Right.
-
->
->> +}
->> +
->>  static void v4l_print_edid(const void *arg, bool write_only)
->>  {
->>       const struct v4l2_edid *p = arg;
->> @@ -2486,6 +2494,22 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
->>       return -ENOTTY;
->>  }
->>
->> +static int vidioc_new_request(const struct v4l2_ioctl_ops *ops,
->> +                           struct file *file, void *fh, void *arg)
->> +{
->> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
->> +     struct media_request_new *new = arg;
->> +     struct video_device *vfd = video_devdata(file);
->> +
->> +     if (!vfd->req_mgr)
->> +             return -ENOTTY;
->> +
->> +     return media_request_ioctl_new(vfd->req_mgr, new);
->> +#else
->> +     return -ENOTTY;
->> +#endif
->> +}
->
-> You don't need the #ifdef's here. media_request_ioctl_new() will be stubbed if
-> CONFIG_MEDIA_REQUEST_API isn't set.
-
-Correct.
-
->
->> +
->>  struct v4l2_ioctl_info {
->>       unsigned int ioctl;
->>       u32 flags;
->> @@ -2617,6 +2641,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
->>       IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
->>       IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
->>       IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
->> +     IOCTL_INFO_FNC(VIDIOC_NEW_REQUEST, vidioc_new_request, vidioc_print_new_request, 0),
->>  };
->>  #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
->>
->> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
->> index 53f32022fabe..e6c4e10889bc 100644
->> --- a/include/media/v4l2-dev.h
->> +++ b/include/media/v4l2-dev.h
->> @@ -209,6 +209,7 @@ struct v4l2_file_operations {
->>   * @entity: &struct media_entity
->>   * @intf_devnode: pointer to &struct media_intf_devnode
->>   * @pipe: &struct media_pipeline
->> + * @req_mgr: request manager to use if this device supports creating requests
->>   * @fops: pointer to &struct v4l2_file_operations for the video device
->>   * @device_caps: device capabilities as used in v4l2_capabilities
->>   * @dev: &struct device for the video device
->> @@ -251,6 +252,7 @@ struct video_device
->>       struct media_intf_devnode *intf_devnode;
->>       struct media_pipeline pipe;
->>  #endif
->> +     struct media_request_mgr *req_mgr;
->>       const struct v4l2_file_operations *fops;
->>
->>       u32 device_caps;
 >> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->> index 91cfe0cbd5c5..35706204e81d 100644
+>> index 982718965180..4fd46ae8fad5 100644
 >> --- a/include/uapi/linux/videodev2.h
 >> +++ b/include/uapi/linux/videodev2.h
->> @@ -63,6 +63,7 @@
->>  #include <linux/compiler.h>
->>  #include <linux/ioctl.h>
->>  #include <linux/types.h>
->> +#include <linux/media-request.h>
->>  #include <linux/v4l2-common.h>
->>  #include <linux/v4l2-controls.h>
->>
->> @@ -2407,6 +2408,8 @@ struct v4l2_create_buffers {
->>
->>  #define VIDIOC_QUERY_EXT_CTRL        _IOWR('V', 103, struct v4l2_query_ext_ctrl)
->>
->> +#define VIDIOC_NEW_REQUEST   _IOWR('V', 104, struct media_request_new)
+>> @@ -909,6 +909,7 @@ struct v4l2_plane {
+>>   * @length:  size in bytes of the buffer (NOT its payload) for single-plane
+>>   *           buffers (when type != *_MPLANE); number of elements in the
+>>   *           planes array for multi-plane buffers
+>> + * @request_fd: fd of the request that this buffer should use
+>>   *
+>>   * Contains data exchanged by application and driver using one of the Streaming
+>>   * I/O methods.
+>> @@ -932,7 +933,7 @@ struct v4l2_buffer {
+>>               __s32           fd;
+>>       } m;
+>>       __u32                   length;
+>> -     __u32                   reserved2;
+>> +     __s32                   request_fd;
 >
-> Hmm, I probably call this VIDIOC_CREATE_REQUEST (analogous to CREATE_BUFS).
-> Ditto struct media_create_request and MEDIA_IOC_CREATE_REQUEST.
-
-Agree, it is better to keep consistency somehow.
-
+> This should be:
 >
-> I'm still not convinced this is the right approach (as opposed to using the media
-> device node). I plan to dig deeper into the data structures tomorrow morning.
+>         union {
+>                 __s32           request_fd;
+>                 __u32           reserved2;
+>         };
+>
+> Otherwise any existing application that sets 'reserved2 = 0;' would fail.
+> I encountered this issue when compiling v4l-utils.
 
-I see no reason why this would not work. This seems more elegant than
-relying on the media node for this, and also does not require pulling
-the whole media controller support just to use requests on a simple
-codec or m2m device.
-
-But of course, I may not be seeing everything. :)
-
-Thanks for the review!
-Alex.
+Fixed, thanks!
