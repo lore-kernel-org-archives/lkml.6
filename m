@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2262tn1nCCYXPFvk16RJdtTQ7a4TW7F9OsGpWvKrMH8AHecopK4nS+IrY0b7ggPYJ/zbU/xr
-ARC-Seal: i=1; a=rsa-sha256; t=1519218405; cv=none;
+X-Google-Smtp-Source: AH8x2267lm1dGpVktJr4EHF1RCasPd2gVVOXdlym0ZZ6oMC4mbdxQ9hPVJjBTovM4KCriqnKm+ry
+ARC-Seal: i=1; a=rsa-sha256; t=1519218402; cv=none;
         d=google.com; s=arc-20160816;
-        b=mu1dSOldRN3WZWZkzfkD1LlrRoNZO78bPML8caPXF6X0ZlN2nW4Q4qV7c00ZHEp94e
-         SdPNOpdOnDVZDJkMcTM1Ar79UKrZR2/cUD46eVYKZOKZU+h8CT0JYRyft0HCV9c2/cRb
-         qrmKs1SfZhI2A6CWHSF70SMujAxw3QKYv2mlwaaVJ732jYoDbbyIdjhYQgmpLFtCwO1a
-         9z5qk9wTeMcv7iOIWwz6IMcsBvSLQHBQ5KtfSmIPXWOz3FSuvMkRlAduCy6PJawm4ywE
-         E8TTTxOhIhSSdpsHzAL5eQ5pcm0y6zbuV/KpKy/H8s7AH8UOsbvOLWZmAKbtj6LKZhZk
-         fpgA==
+        b=v3Y3+Dxl9bHNLcjJxLFOE5SDmPGhYDEmPzzN2OpBLr82f1F8W2NsZTzSJMJAH7zvX5
+         L/E2h1wfHDIsxSx2QjXoWmTf+T/keRSy62T24UjpPLOXMwfWz2S/D6eJD2hMGeDz0wzp
+         H+vFD/4UHO+y5zf+G9AWCKmw3n/QNCWzOArys2LfKNHwpxgYCWnUfROwkxgOgj4K9oj5
+         s6x/M8URRXjyVLxTeVSxjM5Y8d7HHVoxx734+egtF9ejPAllUDPXVlX/ulkNnzMSoCg/
+         73biRUQZOs1Le6V+txsX2yl33R/LOEGmHnt76z3qcQUm3WXJK1FMZC7mrtjoD5nis3kB
+         0vRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xPsNAltHZILAgK7nzj2s65oSrMcEnFSjokgBddJfTmQ=;
-        b=sAJg8Th+6QlRN6Yg9gbJuTC5gW9Z1dmLD5dnhUzV19KZ8ehsFmexKIiL4h5kEY+WsZ
-         TXvQ9M+n1gW8il8I/2zR6+wq/nyFVuSMhK9RNqx7i2IzcrqEnIsdXICCaE43zDnrt3U5
-         fP2Uqzs3SM1o67gSQZ8Ao97raOpfXyG4otoqxQ0nJ2dwI6J66SYs1KRFlR46Dq42Z0Uq
-         IPVsdJPx3XfR6U/DTLUWTsv2RZaGPdlgZwBfUT3ge0y1nU8fNN4ECAws0aF9RywqUmfx
-         j0N7diVMUEp3QiPAHpCZXq6B0RO0r1yM4G7OqRUXLBQf055J4kRalSMY5YnDPYCSQ121
-         CESg==
+        bh=cxoNes1bUGZMCmnx0Zk0c54cZRyYsz4en8OWWSGXvB0=;
+        b=V1NKhDSUOi26+9BYX4Ia+507hW/F0cLmFAKJSxZZcWISGJ/ieoZafaX/TcK/PC8k9L
+         IeAlimDDwp9PveHbgjVabtus9I1/O+hklGzXRkdNsH3nNXJJqZB5lW/GLAPK+LapGVvI
+         r34TY2IUqVPxai8oJjay1YkPi/xy3A78LmzTN2E13x5Dr01Hs0AZR5XBKRpGGHJlfo9A
+         KIuvne+YzOmEmffLDZyNXevbafSxPZrgBrgtKF3PziojGSowLbfb4BsdaV3TP4YtAdgH
+         2aADj3UGpNU7vdHD2k60yaIzos9EP6A2QEB6xPb7hU4aMR1qKuFDnBmlIB3gzvrUaCXl
+         9BFw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.15 028/163] ARM: lpc3250: fix uda1380 gpio numbers
-Date: Wed, 21 Feb 2018 13:47:37 +0100
-Message-Id: <20180221124531.779446069@linuxfoundation.org>
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 019/163] powerpc/radix: Remove trace_tlbie call from radix__flush_tlb_all
+Date: Wed, 21 Feb 2018 13:47:28 +0100
+Message-Id: <20180221124531.198406709@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -39,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015399989445570?=
-X-GMAIL-MSGID: =?utf-8?q?1593015958525449357?=
+X-GMAIL-THRID: =?utf-8?q?1593015431627887973?=
+X-GMAIL-MSGID: =?utf-8?q?1593015955262231195?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,57 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit ca32e0c4bf9ca4b87089c5a5ce945e5f2ec890da upstream.
+commit 8d81296cfcce89013a714feb8d25004a156f8181 upstream.
 
-dtc warns about obviously incorrect GPIO numbers for the audio codec
-on both lpc32xx boards:
+radix__flush_tlb_all() is called only in kexec path in real mode and any
+tracepoints at this stage will make kexec to fail if enabled.
 
-arch/arm/boot/dts/lpc3250-phy3250.dtb: Warning (gpios_property): reset-gpio property size (12) too small for cell size 3 in /ahb/apb/i2c@400A0000/uda1380@18
-arch/arm/boot/dts/lpc3250-phy3250.dtb: Warning (gpios_property): power-gpio property size (12) too small for cell size 3 in /ahb/apb/i2c@400A0000/uda1380@18
-arch/arm/boot/dts/lpc3250-ea3250.dtb: Warning (gpios_property): reset-gpio property size (12) too small for cell size 3 in /ahb/apb/i2c@400A0000/uda1380@18
-arch/arm/boot/dts/lpc3250-ea3250.dtb: Warning (gpios_property): power-gpio property size (12) too small for cell size 3 in /ahb/apb/i2c@400A0000/uda1380@18
+To verify enable tlbie trace before kexec.
 
-It looks like the nodes are written for a different binding that combines
-the GPIO number into a single number rather than a bank/number pair.
-I found the right numbers on stackexchange.com, so this patch fixes
-the warning and has a reasonable chance of getting things to actually
-work.
+$ echo 1 > /sys/kernel/debug/tracing/events/powerpc/tlbie/enable
+== kexec into new kernel and kexec fails.
 
-Cc: stable@vger.kernel.org
-Link: https://unix.stackexchange.com/questions/59497/alsa-asoc-how-to-correctly-load-devices-drivers/62217#62217
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fix this by not calling trace_tlbie from radix__flush_tlb_all().
+
+Fixes: 0428491cba92 ("powerpc/mm: Trace tlbie(l) instructions")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/lpc3250-ea3250.dts  |    4 ++--
- arch/arm/boot/dts/lpc3250-phy3250.dts |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/mm/tlb-radix.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/arm/boot/dts/lpc3250-ea3250.dts
-+++ b/arch/arm/boot/dts/lpc3250-ea3250.dts
-@@ -156,8 +156,8 @@
- 	uda1380: uda1380@18 {
- 		compatible = "nxp,uda1380";
- 		reg = <0x18>;
--		power-gpio = <&gpio 0x59 0>;
--		reset-gpio = <&gpio 0x51 0>;
-+		power-gpio = <&gpio 3 10 0>;
-+		reset-gpio = <&gpio 3 2 0>;
- 		dac-clk = "wspll";
- 	};
+--- a/arch/powerpc/mm/tlb-radix.c
++++ b/arch/powerpc/mm/tlb-radix.c
+@@ -600,14 +600,12 @@ void radix__flush_tlb_all(void)
+ 	 */
+ 	asm volatile(PPC_TLBIE_5(%0, %4, %3, %2, %1)
+ 		     : : "r"(rb), "i"(r), "i"(1), "i"(ric), "r"(rs) : "memory");
+-	trace_tlbie(0, 0, rb, rs, ric, prs, r);
+ 	/*
+ 	 * now flush host entires by passing PRS = 0 and LPID == 0
+ 	 */
+ 	asm volatile(PPC_TLBIE_5(%0, %4, %3, %2, %1)
+ 		     : : "r"(rb), "i"(r), "i"(prs), "i"(ric), "r"(0) : "memory");
+ 	asm volatile("eieio; tlbsync; ptesync": : :"memory");
+-	trace_tlbie(0, 0, rb, 0, ric, prs, r);
+ }
  
---- a/arch/arm/boot/dts/lpc3250-phy3250.dts
-+++ b/arch/arm/boot/dts/lpc3250-phy3250.dts
-@@ -81,8 +81,8 @@
- 	uda1380: uda1380@18 {
- 		compatible = "nxp,uda1380";
- 		reg = <0x18>;
--		power-gpio = <&gpio 0x59 0>;
--		reset-gpio = <&gpio 0x51 0>;
-+		power-gpio = <&gpio 3 10 0>;
-+		reset-gpio = <&gpio 3 2 0>;
- 		dac-clk = "wspll";
- 	};
- 
+ void radix__flush_tlb_pte_p9_dd1(unsigned long old_pte, struct mm_struct *mm,
