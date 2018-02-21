@@ -1,94 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932708AbeBUKFy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:05:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51152 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932670AbeBUKFx (ORCPT
+        id S932724AbeBUKHY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:07:24 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:36300 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932670AbeBUKHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:05:53 -0500
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Farhan Ali <alifm@linux.vnet.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc: geert@linux-m68k.org, tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
- <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
- <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 21 Feb 2018 11:05:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Feb 2018 05:07:23 -0500
+Date: Wed, 21 Feb 2018 11:07:16 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
+Message-ID: <20180221100716.GF7203@w540>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
+ <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022110-0040-0000-0000-00000435FAC0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022110-0041-0000-0000-000020D80E8D
-Message-Id: <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802210123
+Content-Disposition: inline
+In-Reply-To: <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sergei,
 
+On Tue, Feb 20, 2018 at 06:30:56PM +0300, Sergei Shtylyov wrote:
+> On 02/20/2018 06:12 PM, Jacopo Mondi wrote:
+>
+> > Populate the ethernet@e6800000 device node to enable Ethernet interface
+> > for R-Car M3-N (r8a77965) SoC.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > ---
+> > v1 -> v2:
+> > - Replace ALWAYS_ON power area identifier with numeric constant
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++++-
+> >  1 file changed, 42 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > index 55f05f7..c249895 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > @@ -520,7 +520,48 @@
+> >  		};
+> >
+> >  		avb: ethernet@e6800000 {
+> > -			/* placeholder */
+> > +			compatible = "renesas,etheravb-r8a77965",
+> > +				     "renesas,etheravb-rcar-gen3";
+> > +			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+> > +			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "ch0", "ch1", "ch2", "ch3",
+> > +					  "ch4", "ch5", "ch6", "ch7",
+> > +					  "ch8", "ch9", "ch10", "ch11",
+> > +					  "ch12", "ch13", "ch14", "ch15",
+> > +					  "ch16", "ch17", "ch18", "ch19",
+> > +					  "ch20", "ch21", "ch22", "ch23",
+> > +					  "ch24";
+> > +			clocks = <&cpg CPG_MOD 812>;
+> > +			power-domains = <&sysc 32>;
+> > +			resets = <&cpg 812>;
+> > +			phy-mode = "rgmii-txid";
+>
+>    Why not just "rgmii"? TX delay is a board specific detail, no?
+>
 
-On 02/19/2018 05:38 PM, Farhan Ali wrote:
-> 
-> 
-> On 02/19/2018 11:25 AM, Thomas Huth wrote:
->> On 19.02.2018 16:47, Farhan Ali wrote:
->>> The 'commit e25df1205f37 ("[S390] Kconfig: menus with depends on HAS_IOMEM.")'
->>> added the HAS_IOMEM dependecy for "Graphics support". This disabled the
->>> "Graphics support" menu for S390. But if we enable VT layer for S390,
->>> we would also need to enable the dummy console. So let's remove the
->>> HAS_IOMEM dependency.
->>>
->>> Move this dependency to sub menu items and console drivers that use
->>> io memory.
->>>
->>> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
->>> ---
->>>   drivers/video/Kconfig         | 21 +++++++++++----------
->>>   drivers/video/console/Kconfig |  4 ++--
->>>   2 files changed, 13 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
->>> index 3c20af9..8f10915 100644
->>> --- a/drivers/video/Kconfig
->>> +++ b/drivers/video/Kconfig
->>> @@ -3,7 +3,6 @@
->>>   #
->>>     menu "Graphics support"
->>> -    depends on HAS_IOMEM
->>>     config HAVE_FB_ATMEL
->>>       bool
->>> @@ -11,20 +10,22 @@ config HAVE_FB_ATMEL
->>>   config SH_LCD_MIPI_DSI
->>>       bool
->>>   -source "drivers/char/agp/Kconfig"
->>> +if HAS_IOMEM
->>> +    source "drivers/char/agp/Kconfig"
->>>   -source "drivers/gpu/vga/Kconfig"
->>> +    source "drivers/gpu/vga/Kconfig"
->>>   -source "drivers/gpu/host1x/Kconfig"
->>> -source "drivers/gpu/ipu-v3/Kconfig"
->>> +    source "drivers/gpu/host1x/Kconfig"
->>> +    source "drivers/gpu/ipu-v3/Kconfig"
->>>   -source "drivers/gpu/drm/Kconfig"
->>> +    source "drivers/gpu/drm/Kconfig"
+I admit I took this one straight from r8a7796 dtsi.
+Would you like to me resend and change this?
 
+Thanks
+   j
 
-Hmmm, looks like that this makes it impossible to select VIRTIO_GPU - need still more
-work.
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			status = "disabled";
+> >  		};
+> >
+> >  		csi20: csi2@fea80000 {
+> >
+>
+> MBR, Sergei
