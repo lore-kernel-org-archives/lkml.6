@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224yjLzcAAxo+LTtrREDjNtbVsaHUXCTc2/uZoBTVhzbpui41Sw3WPqH2x2JoSjTIyxcOBG5
-ARC-Seal: i=1; a=rsa-sha256; t=1519218455; cv=none;
+X-Google-Smtp-Source: AH8x227jJr2eN3/+jlTVmO7L5R1rOEjBd4VYC/H1MgjGFhOL4VU191IL/ShGZE8vNSBX4iSn6o+g
+ARC-Seal: i=1; a=rsa-sha256; t=1519218453; cv=none;
         d=google.com; s=arc-20160816;
-        b=In1UH21BLs/3L9csviGhx39RHBw5zLEnUjKR3+a09TmyPcEjwZTkppix2Elpzj/lOU
-         BeNSXQiChQybgNdYLdPP6B4SJja5PgPr/hr75tveXXtx/2xizymd6dwBu6QANqZze/Eq
-         3JI8JoTgwApWGH4ZFlktdU/O8T67y5Dgbv8uog6k8Glmluv2zetMdy+rzWGrwLXe/oso
-         DMHgVkB+gaTPAv4QZaYZvtjSUp1JrzRpRSaAQUHWnl3rdsjFa0f3k3bbF1E21W1uq1aJ
-         926Atve0DxQbciy4FCrro+plC67RkdQVzznM7m0Ep1jCm3CnZ0OQ5UpdDOl90Z4d9eal
-         gmSQ==
+        b=VEs0KebVZ4HU19P3HHRgmPILmptC5GBB61k8/lqgmsRPZSQ3VoS9k9cuegzZLm45Z+
+         +PMZjN7GGSYQrGPeEmFLztKjivZtENjBLwWjIkwOK8JVo47zQR6KB18dxQGAvB3Uru0q
+         nb5cDPtAVia427urcNwiP2HyrWZFFjAtUlnCc6dNnlXysokr4R0D3OHLAL1lub8FN8Wp
+         BJ5Ti0Qj5X4Gb3d4Z15Pr0BCWciQxfPLupnup8ADre0aj/9GrAMQZX2vEw58Ll7bNENe
+         JJNSfJTTtn7hKzVo5vhbx/mAYBdL1dvYInxaG0DVaVvj3zON7Mf9Jc+kIFscWy8XBIe0
+         RYRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zTT57gAReJU3Tho7ytFz2xLMMiPbhHc4x4XGM4Vpupc=;
-        b=aUgcdIM9VsszoMGtmqw1l75W/Gr0cXavVsxCXZTizW82aI0Lpr1u3/wdcz1fkxZgCt
-         Z2IPWT8nMeL/wiajmu5JXbWcERKeu624UHAtPvYyfFuhNcxNZVsZzVxbH3/lTMa6aG9b
-         yLYB2bI/wtkfSl9dUptfwm8o+4YvCBEuyMTUE4v+O8EMnSk3hQOhU+3mA51dWVhWpTQ0
-         K0/VYbdoZqDxquhyrCYpZwIgxkSHW/O3QkbvVFvetfw3mU/G74S0P7lpoXY+Rw+YkCc5
-         EWKoX7ROvA3boOsxe7b97POPSjBjGu7m5/geUOflX6qdc97xrf40sf2Qbnk/gQ0h02fZ
-         kvlw==
+        bh=k+t8u7JcVsvl0giMpyL8IaxN3/83a3sYGmRRYgX4CS4=;
+        b=ooPC37iKrRWpNalqiZk5zy4mKfdkhlQPG5BmJZpGfBOTxgeCWhe9EzWVgAhvkjEITE
+         qhX8TzkQX+EbiKEm9arOFtClpuEL/ag0CJDNPI5DoQ/vsoJuQe++JtvoBOGHUm6chN0y
+         O4BZy5uv6hHrT3QKalfsKVq9+YWPMMEYfX//KHJYargBMFk1tROfpOGGc0cIGePYRk/H
+         +DGTGdE+njgC/gdQUI2uE0VqwhOUITAbFaCuoi8lJDqvBA5CC106/HCO/IzeLbHZWr19
+         pnvyNa09AErSPwXZK3B2NIRhdn2KeT1nWIhmRkdW9yg/ywICdldUNuAtL6Uwck2S98ch
+         zfEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Artem Savkov <artem.savkov@gmail.com>,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 045/163] crypto: sun4i_ss_prng - convert lock to _bh in sun4i_ss_prng_generate
-Date: Wed, 21 Feb 2018 13:47:54 +0100
-Message-Id: <20180221124532.874587428@linuxfoundation.org>
+Subject: [PATCH 4.15 044/163] crypto: sun4i_ss_prng - fix return value of sun4i_ss_prng_generate
+Date: Wed, 21 Feb 2018 13:47:53 +0100
+Message-Id: <20180221124532.814246374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015507939746969?=
-X-GMAIL-MSGID: =?utf-8?q?1593016011333554892?=
+X-GMAIL-THRID: =?utf-8?q?1593015504980249643?=
+X-GMAIL-MSGID: =?utf-8?q?1593016008639622585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +52,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Artem Savkov <artem.savkov@gmail.com>
 
-commit 2e7d1d61ea6c0f1c4da5eb82cafac750d55637a7 upstream.
+commit dd78c832ffaf86eb6434e56de4bc3bc31f03f771 upstream.
 
-Lockdep detects a possible deadlock in sun4i_ss_prng_generate() and
-throws an "inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage" warning.
-Disabling softirqs to fix this.
+According to crypto/rng.h generate function should return 0 on success
+and < 0 on error.
 
 Fixes: b8ae5c7387ad ("crypto: sun4i-ss - support the Security System PRNG")
 Signed-off-by: Artem Savkov <artem.savkov@gmail.com>
+Acked-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/sunxi-ss/sun4i-ss-prng.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/sunxi-ss/sun4i-ss-prng.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
 +++ b/drivers/crypto/sunxi-ss/sun4i-ss-prng.c
-@@ -28,7 +28,7 @@ int sun4i_ss_prng_generate(struct crypto
- 	algt = container_of(alg, struct sun4i_ss_alg_template, alg.rng);
- 	ss = algt->ss;
- 
--	spin_lock(&ss->slock);
-+	spin_lock_bh(&ss->slock);
- 
- 	writel(mode, ss->base + SS_CTL);
- 
-@@ -51,6 +51,6 @@ int sun4i_ss_prng_generate(struct crypto
- 	}
+@@ -52,5 +52,5 @@ int sun4i_ss_prng_generate(struct crypto
  
  	writel(0, ss->base + SS_CTL);
--	spin_unlock(&ss->slock);
-+	spin_unlock_bh(&ss->slock);
- 	return 0;
+ 	spin_unlock(&ss->slock);
+-	return dlen;
++	return 0;
  }
