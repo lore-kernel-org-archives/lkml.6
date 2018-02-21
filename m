@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751407AbeBUXxG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 18:53:06 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37970 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeBUXxE (ORCPT
+        id S1751440AbeBUXxJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 18:53:09 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46008 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751383AbeBUXxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 18:53:04 -0500
-X-Google-Smtp-Source: AH8x226+1tz+C1IXapquseb2US6sJXK7RmwUIaSEAMJkHhsP2aVGTZtNycUypBdLGVdUJluNqdGKFg==
+        Wed, 21 Feb 2018 18:53:06 -0500
+X-Google-Smtp-Source: AH8x226//I4uGiKszE76+TqbG/ojkVi/9TlQeu4kATnWLRcan9MXULDxJ0ypQBMj9bmKgWzefjF7KQ==
 From: Ram Pai <linuxram@us.ibm.com>
 To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
 Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
@@ -18,55 +18,77 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
         linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
         msuchanek@suse.com
-Subject: [PATCH v12 0/3] mm, x86, powerpc: Enhancements to Memory Protection Keys.
-Date: Wed, 21 Feb 2018 15:52:15 -0800
-Message-Id: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
+Subject: [PATCH v12 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
+Date: Wed, 21 Feb 2018 15:52:16 -0800
+Message-Id: <1519257138-23797-2-git-send-email-linuxram@us.ibm.com>
 X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
+References: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series provides arch-neutral enhancements to
-enable memory-keys on new architecutes, and the corresponding
-changes in x86 and powerpc specific code to support that.
+VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+is enabled. Powerpc also needs these bits. Hence lets define the
+VM_PKEY_BITx bits for any architecture that enables
+CONFIG_ARCH_HAS_PKEYS.
 
-a) Provides ability to support upto 32 keys.  PowerPC
-	can handle 32 keys and hence needs this.
+cc: Dave Hansen <dave.hansen@intel.com>
+cc: Michael Ellermen <mpe@ellerman.id.au>
+cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+---
+ fs/proc/task_mmu.c |    4 ++--
+ include/linux/mm.h |    9 +++++----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-b) Arch-neutral code; and not the arch-specific code,
-   determines the format of the string, that displays the key
-   for each vma in smaps.
-
-History:
--------
-version v12:
-	(1) fixed compilation errors seen with various x86
-		configs.
-version v11:
-	(1) code that displays key in smaps is not any more
-		defined under CONFIG_ARCH_HAS_PKEYS.
-       	    - Comment by Eric W. Biederman and Michal Hocko
-	(2) merged two patches that implemented (1).
-		- comment by Michal Hocko
-
-version prior to v11:
-	(1) used one additional bit from VM_HIGH_ARCH_*
-       		to support 32 keys.
-	    - Suggestion by Dave Hansen.
-	(2) powerpc specific changes to support memory keys.
-
-Ram Pai (3):
-  mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS
-    is enabled
-  mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
-  mm, x86, powerpc: display pkey in smaps only if arch supports pkeys
-
- arch/powerpc/include/asm/mmu_context.h |    5 -----
- arch/x86/include/asm/mmu_context.h     |    5 -----
- arch/x86/include/asm/pkeys.h           |    1 +
- arch/x86/kernel/fpu/xstate.c           |    5 +++++
- arch/x86/kernel/setup.c                |    8 --------
- fs/proc/task_mmu.c                     |   15 ++++++++-------
- include/linux/mm.h                     |   12 +++++++-----
- include/linux/pkeys.h                  |    7 ++++++-
- 8 files changed, 27 insertions(+), 31 deletions(-)
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index ec6d298..6b996d0 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -679,13 +679,13 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_MERGEABLE)]	= "mg",
+ 		[ilog2(VM_UFFD_MISSING)]= "um",
+ 		[ilog2(VM_UFFD_WP)]	= "uw",
+-#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ 		/* These come out via ProtectionKey: */
+ 		[ilog2(VM_PKEY_BIT0)]	= "",
+ 		[ilog2(VM_PKEY_BIT1)]	= "",
+ 		[ilog2(VM_PKEY_BIT2)]	= "",
+ 		[ilog2(VM_PKEY_BIT3)]	= "",
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
+ 	};
+ 	size_t i;
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42..ad207ad 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -228,15 +228,16 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ 
+-#if defined(CONFIG_X86)
+-# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+-#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+ # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
+ # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
++
++#if defined(CONFIG_X86)
++# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+ # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
+ #elif defined(CONFIG_PARISC)
+-- 
+1.7.1
