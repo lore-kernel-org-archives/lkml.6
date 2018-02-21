@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224yiPGFBYpujof/gaRgxucLtr6B4zBZblmYtR5DylP6sPfLCNVoEtO2y/QvTS1zhbUaNh9k
-ARC-Seal: i=1; a=rsa-sha256; t=1519217801; cv=none;
+X-Google-Smtp-Source: AH8x227UxgvPpIeRhiJZuO8oVGKeeC8qKF3NG7o+TpuWuXTffAFpozIS0SbFLirEttqfHduN4met
+ARC-Seal: i=1; a=rsa-sha256; t=1519217799; cv=none;
         d=google.com; s=arc-20160816;
-        b=OYXkfYrbmoYOWJmdsZxr+QBSXVzYK38fsak6j8d9CeaMOj6+RuJmb/t4T17D6vJQLF
-         vl7odDK2v/XXkSNmonYkITe+BflnoQGFfwI9xVzWPmhlv7w95M/Qq3hNtRATbYRBv3Um
-         iGRi/8CwO0so2F/RM3fD/xi0j7Yu4mNHevnPWwC9+3FItE1wFC8rBRpnjs8AUwXlMmwV
-         dfhm6Gh2VF2YEqiU+jmKzdVVdQ9nd+4gGCt2d/9YTDc+7n6CVr1XoMgcYL6CbS6uLah+
-         iAUgJ4lpfCtt5KrSpyI5VATW6amoAF8nN2LMOuBpoSLU2/dQOmYsoxcKlpaVLp9HLzn0
-         zESw==
+        b=VTiPHZTSp4PsT0BcW8CFJlM3hlypgnHHL6YZdOgrfEEew1NKgXiYEVewFZqwsA5wmr
+         n+A5QlwuFn8j9pudXCm7Mmb6XXl1BOP2s4CWL3wgvLjM7sLTXPlsQ6LRg4/P6RwrOlfT
+         uL8hCIc08JvsOx4lF94lzWCq9UI+NfEZz4yo1kKrNz1Hh/uy3wZAQ7L/sS2fXVu/mnRH
+         mN32bQ3+HRr6fiheEln7Hr3zegh304c3YFSZ8WASfXCKjGOTmWyO07TIGxpu7vWOvnhI
+         sUJ8k49hvCGakJBCwaqNHee79qoZfGhgK1BnJg9Dy+SSD1x2VKplk7DoT+zQV/E6dlKE
+         +YeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xSGdFAOge+ggrr+Mr9cfaaoioIc4nsNctXl6vcvDWV8=;
-        b=mDWSQX2T+wZrQKbfdd5EmX+3eeDvXatdkAxsdJ0iqmZfNWwjJYfKyOQXEzxqRQzRdZ
-         TN3gk+D19Zjsord4u6KKei4+WhW2vbOm36TIxwLbajWVXgQH8UTgSk+WMjmwhELTqPPu
-         NzTdoayaXvWeQaGd3w/g16NGHEY25TzC3eKMZcermslgW/oINalX5V7T0moSVmu36xBh
-         dGv8m2zpNgLHvmSjMzKfxMK+HZNKsriDuRuVOwEiOH+ElsJ/ElAA4Oacamuk372lHgH7
-         gjLrz63sU0DthPk7PCu7KIaUMKI3oOCq/if7DP5z08i0OGFprSUboeHut6dr5DC9L3MJ
-         canA==
+        bh=jW0c0fpBLDpDsmq8oT5HrKiMSCo/ECGuEc+xRommPXU=;
+        b=k9wW31d7NV2M3F6CWVE/msVnizOdRZFfSP1vWx41mTWTlWuqUfJdi3KI3YwJmFf4FO
+         ZaCXLWPP9m7JrauCZypoKHSmhhT68H3F7nBb/JjxYW+UFcPOK7yk9ApKM5260iYveYdq
+         3yjCtsyxqZ0Q112CAN9hhYGVRAjisEXisAugGM6lE3ZKu8lJERGZgvuZvKCZqEa1EOBv
+         u+HUZOUzGxfrjrnWOZ1+S4jnDnzXI7DC6NVW0B4G8i6Uw2swgwv+aCPO8YNXDWvnYrGq
+         eQlrPPmwPLUH8enBemtgA/ogMmL1odiSRmiImL1sRsmukPcjW2HXCUiBkuqNcDe5TXV1
+         7plw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -35,9 +35,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kselftest@vger.kernel.org,
 	shuah@kernel.org,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 59/77] selftests/x86: Do not rely on "int $0x80" in single_step_syscall.c
-Date: Wed, 21 Feb 2018 13:49:08 +0100
-Message-Id: <20180221124434.697287368@linuxfoundation.org>
+Subject: [PATCH 4.9 58/77] selftests/x86: Do not rely on "int $0x80" in test_mremap_vdso.c
+Date: Wed, 21 Feb 2018 13:49:07 +0100
+Message-Id: <20180221124434.659368600@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015325375300324?=
-X-GMAIL-MSGID: =?utf-8?q?1593015325375300324?=
+X-GMAIL-THRID: =?utf-8?q?1593015323232886251?=
+X-GMAIL-MSGID: =?utf-8?q?1593015323232886251?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,13 +58,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 4105c69703cdeba76f384b901712c9397b04e9c2 upstream.
+commit 2cbc0d66de0480449c75636f55697c7ff3af61fc upstream.
 
 On 64-bit builds, we should not rely on "int $0x80" working (it only does if
-CONFIG_IA32_EMULATION=y is enabled). To keep the "Set TF and check int80"
-test running on 64-bit installs with CONFIG_IA32_EMULATION=y enabled, build
-this test only if we can also build 32-bit binaries (which should be a
-good approximation for that).
+CONFIG_IA32_EMULATION=y is enabled).
+
+Without this patch, the move test may succeed, but the "int $0x80" causes
+a segfault, resulting in a false negative output of this self-test.
 
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -74,55 +74,26 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kselftest@vger.kernel.org
 Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-5-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211111013.16888-4-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile              |    2 ++
- tools/testing/selftests/x86/single_step_syscall.c |    5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/test_mremap_vdso.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -26,11 +26,13 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.s
- ifeq ($(CAN_BUILD_I386),1)
- all: all_32
- TEST_PROGS += $(BINARIES_32)
-+EXTRA_CFLAGS += -DCAN_BUILD_32
- endif
+--- a/tools/testing/selftests/x86/test_mremap_vdso.c
++++ b/tools/testing/selftests/x86/test_mremap_vdso.c
+@@ -90,8 +90,12 @@ int main(int argc, char **argv, char **e
+ 			vdso_size += PAGE_SIZE;
+ 		}
  
- ifeq ($(CAN_BUILD_X86_64),1)
- all: all_64
- TEST_PROGS += $(BINARIES_64)
-+EXTRA_CFLAGS += -DCAN_BUILD_64
- endif
- 
- all_32: $(BINARIES_32)
---- a/tools/testing/selftests/x86/single_step_syscall.c
-+++ b/tools/testing/selftests/x86/single_step_syscall.c
-@@ -119,7 +119,9 @@ static void check_result(void)
- 
- int main()
- {
-+#ifdef CAN_BUILD_32
- 	int tmp;
++#ifdef __i386__
+ 		/* Glibc is likely to explode now - exit with raw syscall */
+ 		asm volatile ("int $0x80" : : "a" (__NR_exit), "b" (!!ret));
++#else /* __x86_64__ */
++		syscall(SYS_exit, ret);
 +#endif
+ 	} else {
+ 		int status;
  
- 	sethandler(SIGTRAP, sigtrap, 0);
- 
-@@ -139,12 +141,13 @@ int main()
- 		      : : "c" (post_nop) : "r11");
- 	check_result();
- #endif
--
-+#ifdef CAN_BUILD_32
- 	printf("[RUN]\tSet TF and check int80\n");
- 	set_eflags(get_eflags() | X86_EFLAGS_TF);
- 	asm volatile ("int $0x80" : "=a" (tmp) : "a" (SYS_getpid)
- 			: INT80_CLOBBERS);
- 	check_result();
-+#endif
- 
- 	/*
- 	 * This test is particularly interesting if fast syscalls use
