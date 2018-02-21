@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225IkrbmA6NmaVkHJqA0+dVUVYFMd3vqmfyysS1i0ck5hdAWX0/x9Vr2UrPWaje1CTA3iY5B
-ARC-Seal: i=1; a=rsa-sha256; t=1519217997; cv=none;
+X-Google-Smtp-Source: AH8x226h6S+R2gWDFitBd6PehMbAzcdr1DuH7MNIlB3txesl7MRfeuEHxk6M+1w1+ev/MDoeHhps
+ARC-Seal: i=1; a=rsa-sha256; t=1519217995; cv=none;
         d=google.com; s=arc-20160816;
-        b=Yw7irEK85yPH/0Crk6x1Ri4ikNutP6QAsSBx67nYQpS9Jq/T41yyzvNp+9bdUw1uyj
-         BNSosmRqoqhywjfnbILFNF983Yte0Wtc9tMhw+73xZObKiQWRzWqLmzAt9GlMaCWP05W
-         4xWF0siyA0kS2sVm9XYCCdaIMC3TJ9rwXAfVUsx5FSu+10hT6x49sdl90LXMA1EXuEqm
-         +8Qw9OHbFaJ4/Sm+FPUVVWjutz2iXSjpV70l0fOs3auvk2K5ynao7vy0js2qtw2PGZyl
-         6BL22ECriMB6y7Ihw4ZVXHEpj1QYGZfh/4ctsyfHklnavzcvrAsh4T+YYtqLDK0znr48
-         WUnA==
+        b=p7jpP57OKrafcy5J2My2ahasqttL1lyhXw0SwEGnUEQqA73y19ZKQS9Am73j5PMK97
+         0YmZbPWDsSydMLRrLR1LD4vv/FiFEFJvpxC5SoOVkv0SPfEZvycz1bBj+CE8OEGOEmv9
+         D7uM8Zadsee66bY15DoeTouQh6ljIcxFc0AkzKPaT1KPGe5L9iQOA+wleLfk8UYtWrG2
+         btVbYz7XyzeT4DKRhyb4LLvunFP/JATrKlgaTE6mKFRa3c9l3FaNw0ocFMKmfUmKYoys
+         N3/gK2rJVck8CsBBa682YRxGfbZ+AsP9frzbmdx4Doc9KvStK51MPKtpQHMIyCEQ4Unu
+         fU8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=S6BdgEWOYqUH/O/MrHgIj07FsqUD4uFX1erd7KnKD6I=;
-        b=tGVQMaMgC5/xYnQU2C0UXoJ4gJY8VVE3xn9eUUdoeK85qdwpdXdY1rawPipbisomDp
-         jqzbE6Zt6Un99lN2/Obp+ctjwSwcYNfGU3sRbga4ObRJecYRWrYzWSjpZRyUai7Ti7Qv
-         gxJBl7ZZynEjdOhtRKG8wsYrzWsSaSpMA7pp5ZpV6VkKiVk7z65v2DPJ8sAN+mbjmDzB
-         Qfk0VZd/JN2S0p/2aQd5CZMSvZ6ObtVjOzOtrAuXiOfa8uCnQbmAwwyNQDqc8htCgrQq
-         gs+TtNu+xwue9StZBwcP8+rBntv7wbAUIAuWr1RBVdv81Nlg5NQyFm8kv2ZROaVGLx+h
-         kacQ==
+        bh=LcYlzSkbyXS7tWP0Zi1/gm++a19QCLZGgU4pAYatS5g=;
+        b=wLNK9ps+R8Jdcc6LtJt6gSEhw/TivJoWzmy1RiSAC1QnXuzcBz220Hq1VDcbMBWL+x
+         651/hkLkQRLwXXCv4EiRt6HQd9EQ+KOYIg2whDyHRdncvkAYEabeonpMqqgsafUlYcNT
+         j0iMkJUCEnRZB4/FjqqvqvtjzykmpRUC+tFCLX9s5KPLFlIB4mjq3v8UE+o1kv3jsk0/
+         gS+2vkrA5otFvYQBfPcC5aesdc5KENo8HBtwHSK/B4V735TbnzX65Vfu4PP6Og+3Ue6U
+         PZWntkyORLt0iURucT1HRxD3XveArGWKYvIB/eJ1e1F+2QBvT4kUY/jX3f4Aio6Ajooy
+         08nQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,9 +26,9 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	KarimAllah Ahmed <karahmed@amazon.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Filippo Sironi <sironi@amazon.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
-	Jim Mattson <jmattson@google.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
@@ -37,18 +37,18 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	David Woodhouse <dwmw2@infradead.org>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	arjan.van.de.ven@intel.com,
 	dave.hansen@intel.com,
+	jmattson@google.com,
+	karahmed@amazon.de,
 	kvm@vger.kernel.org,
-	sironi@amazon.de,
+	rkrcmar@redhat.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 052/167] X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
-Date: Wed, 21 Feb 2018 13:47:43 +0100
-Message-Id: <20180221124527.388537081@linuxfoundation.org>
+Subject: [PATCH 4.14 051/167] KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
+Date: Wed, 21 Feb 2018 13:47:42 +0100
+Message-Id: <20180221124527.332064034@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -58,8 +58,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015311446762291?=
-X-GMAIL-MSGID: =?utf-8?q?1593015531781859560?=
+X-GMAIL-THRID: =?utf-8?q?1593015306559718735?=
+X-GMAIL-MSGID: =?utf-8?q?1593015529059354224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,20 +67,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: KarimAllah Ahmed <karahmed@amazon.de>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 206587a9fb764d71f035dc7f6d3b6488f5d5b304 upstream.
+commit 928a4c39484281f8ca366f53a1db79330d058401 upstream.
 
-These two variables should check whether SPEC_CTRL and PRED_CMD are
-supposed to be passed through to L2 guests or not. While
-msr_write_intercepted_l01 would return 'true' if it is not passed through.
+With retpoline, tight loops of "call this function for every XXX" are
+very much pessimised by taking a prediction miss *every* time. This one
+is by far the biggest contributor to the guest launch time with retpoline.
 
-So just invert the result of msr_write_intercepted_l01 to implement the
-correct semantics.
+By marking the iterator slot_handle_…() functions always_inline, we can
+ensure that the indirect function call can be optimised away into a
+direct call and it actually generates slightly smaller code because
+some of the other conditionals can get optimised away too.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Performance is now pretty close to what we see with nospectre_v2 on
+the command line.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Filippo Sironi <sironi@amazon.de>
 Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -90,33 +96,66 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: arjan.van.de.ven@intel.com
 Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
-Cc: sironi@amazon.de
-Fixes: 086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
-Link: http://lkml.kernel.org/r/1518305967-31356-5-git-send-email-dwmw@amazon.co.uk
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1518305967-31356-4-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/mmu.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10216,8 +10216,8 @@ static inline bool nested_vmx_merge_msr_
- 	 *    updated to reflect this when L1 (or its L2s) actually write to
- 	 *    the MSR.
- 	 */
--	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
--	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
-+	bool pred_cmd = !msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
-+	bool spec_ctrl = !msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5063,7 +5063,7 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
+ typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
  
- 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
- 	    !pred_cmd && !spec_ctrl)
+ /* The caller should hold mmu-lock before calling this function. */
+-static bool
++static __always_inline bool
+ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			slot_level_handler fn, int start_level, int end_level,
+ 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
+@@ -5093,7 +5093,7 @@ slot_handle_level_range(struct kvm *kvm,
+ 	return flush;
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		  slot_level_handler fn, int start_level, int end_level,
+ 		  bool lock_flush_tlb)
+@@ -5104,7 +5104,7 @@ slot_handle_level(struct kvm *kvm, struc
+ 			lock_flush_tlb);
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		      slot_level_handler fn, bool lock_flush_tlb)
+ {
+@@ -5112,7 +5112,7 @@ slot_handle_all_level(struct kvm *kvm, s
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			slot_level_handler fn, bool lock_flush_tlb)
+ {
+@@ -5120,7 +5120,7 @@ slot_handle_large_level(struct kvm *kvm,
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		 slot_level_handler fn, bool lock_flush_tlb)
+ {
