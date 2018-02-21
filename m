@@ -1,110 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965194AbeBURAy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:00:54 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52383 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964941AbeBURAv (ORCPT
+        id S965317AbeBURBC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:01:02 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36637 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964941AbeBURA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:00:51 -0500
-Date: Wed, 21 Feb 2018 09:00:12 -0800
-From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-3aa99fc3e708b9cd9b4cfe2df0b7a66cf293e3cf@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, bp@alien8.de,
-        peterz@infradead.org, dwmw2@infradead.org, jpoimboe@redhat.com,
-        luto@kernel.org, linux@dominikbrodowski.net,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        dvlasenk@redhat.com, brgerst@gmail.com
-Reply-To: dvlasenk@redhat.com, brgerst@gmail.com, linux-kernel@vger.kernel.org,
-        dwmw2@infradead.org, jpoimboe@redhat.com, luto@kernel.org,
-        linux@dominikbrodowski.net, torvalds@linux-foundation.org,
-        tglx@linutronix.de, bp@alien8.de, peterz@infradead.org, hpa@zytor.com,
-        mingo@kernel.org
-In-Reply-To: <20180220210113.6725-5-linux@dominikbrodowski.net>
-References: <20180220210113.6725-5-linux@dominikbrodowski.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Remove 'interrupt' macro
-Git-Commit-ID: 3aa99fc3e708b9cd9b4cfe2df0b7a66cf293e3cf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Feb 2018 12:00:57 -0500
+X-Google-Smtp-Source: AH8x226xCzEefyI0vZVCgYJgRk6cC9GN95yBAa9ZFzS9nlmcFFnv6QRWMEm/QyQb2FhEBs9K1JwrSw==
+Date: Wed, 21 Feb 2018 18:00:54 +0100
+From: Guillaume =?utf-8?Q?Dou=C3=A9zan-Grard?= <gdouezangrard@gmail.com>
+To: Andy Shevchenko <andy@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 6/7] platform/x86: topstar-laptop: update copyright and
+ fix some comments
+Message-ID: <b8a1d1bfda183abb178cab4d8db145a447985957.1519231939.git.gdouezangrard@gmail.com>
+References: <cover.1519231939.git.gdouezangrard@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1519231939.git.gdouezangrard@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3aa99fc3e708b9cd9b4cfe2df0b7a66cf293e3cf
-Gitweb:     https://git.kernel.org/tip/3aa99fc3e708b9cd9b4cfe2df0b7a66cf293e3cf
-Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Tue, 20 Feb 2018 22:01:11 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 21 Feb 2018 16:54:04 +0100
+Add myself as an author of the driver.
 
-x86/entry/64: Remove 'interrupt' macro
-
-It is now trivial to call interrupt_entry() and then the actual worker.
-Therefore, remove the interrupt macro and open code it all.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180220210113.6725-5-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Guillaume Douézan-Grard <gdouezangrard@gmail.com>
 ---
- arch/x86/entry/entry_64.S | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/platform/x86/topstar-laptop.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index b45d766..8ea03cf 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -608,14 +608,6 @@ ENTRY(interrupt_entry)
- 	ret
- END(interrupt_entry)
+diff --git a/drivers/platform/x86/topstar-laptop.c b/drivers/platform/x86/topstar-laptop.c
+index 30a6c5cbc58f..294729c98267 100644
+--- a/drivers/platform/x86/topstar-laptop.c
++++ b/drivers/platform/x86/topstar-laptop.c
+@@ -2,9 +2,10 @@
+  * Topstar Laptop ACPI Extras driver
+  *
+  * Copyright (c) 2009 Herton Ronaldo Krzesinski <herton@mandriva.com.br>
++ * Copyright (c) 2018 Guillaume Douézan-Grard
+  *
+  * Implementation inspired by existing x86 platform drivers, in special
+- * asus/eepc/fujitsu-laptop, thanks to their authors
++ * asus/eepc/fujitsu-laptop, thanks to their authors.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -397,5 +398,6 @@ module_init(topstar_laptop_init);
+ module_exit(topstar_laptop_exit);
  
--/* 0(%rsp): ~(interrupt number) */
--	.macro interrupt func
--	call	interrupt_entry
--
--	UNWIND_HINT_REGS indirect=1
--	call	\func	/* rdi points to pt_regs */
--	.endm
--
- 	/*
- 	 * The interrupt stubs push (~vector+0x80) onto the stack and
- 	 * then jump to common_interrupt.
-@@ -624,7 +616,9 @@ END(interrupt_entry)
- common_interrupt:
- 	ASM_CLAC
- 	addq	$-0x80, (%rsp)			/* Adjust vector to [-256, -1] range */
--	interrupt do_IRQ
-+	call	interrupt_entry
-+	UNWIND_HINT_REGS indirect=1
-+	call	do_IRQ	/* rdi points to pt_regs */
- 	/* 0(%rsp): old RSP */
- ret_from_intr:
- 	DISABLE_INTERRUPTS(CLBR_ANY)
-@@ -820,7 +814,9 @@ ENTRY(\sym)
- 	ASM_CLAC
- 	pushq	$~(\num)
- .Lcommon_\sym:
--	interrupt \do_sym
-+	call	interrupt_entry
-+	UNWIND_HINT_REGS indirect=1
-+	call	\do_sym	/* rdi points to pt_regs */
- 	jmp	ret_from_intr
- END(\sym)
- .endm
+ MODULE_AUTHOR("Herton Ronaldo Krzesinski");
++MODULE_AUTHOR("Guillaume Douézan-Grard");
+ MODULE_DESCRIPTION("Topstar Laptop ACPI Extras driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.16.1
