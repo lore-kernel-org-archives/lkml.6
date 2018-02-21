@@ -1,71 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965741AbeBUPC3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 10:02:29 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:58009 "EHLO pegase1.c-s.fr"
+        id S937062AbeBUPFs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 10:05:48 -0500
+Received: from mga03.intel.com ([134.134.136.65]:30248 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934232AbeBUPC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 10:02:27 -0500
-Subject: Re: [PATCH 0/6] DISCONTIGMEM support for PPC32
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc: linuxppc-dev@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20180220161424.5421-1-j.neuschaefer@gmx.net>
- <193a407d-e6b8-9e29-af47-3d401b6414a0@c-s.fr>
- <20180221144240.pfu2run3pixt3pzo@latitude>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <a36983ec-5e97-e968-8143-1b2615ea55f8@c-s.fr>
-Date: Wed, 21 Feb 2018 16:02:25 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932826AbeBUPFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 10:05:46 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="29603251"
+Date: Wed, 21 Feb 2018 23:05:29 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: kbuild-all@01.org, Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [RFC PATCH] drm/panel: lhr050h41_init[] can be static
+Message-ID: <20180221150529.GA934@lkp-wsm-ep2>
+References: <33efcb267bc513bb19551f1ffdcf578ebfb90369.1519204731.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180221144240.pfu2run3pixt3pzo@latitude>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33efcb267bc513bb19551f1ffdcf578ebfb90369.1519204731.git-series.maxime.ripard@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Fixes: dcfac3b68dfb ("drm/panel: Add Huarui LHR050H41 panel driver")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ panel-huarui-lhr050h41.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 21/02/2018 à 15:42, Jonathan Neuschäfer a écrit :
-> Hi,
-> 
-> On Wed, Feb 21, 2018 at 08:06:10AM +0100, Christophe LEROY wrote:
->>
->>
->> Le 20/02/2018 à 17:14, Jonathan Neuschäfer a écrit :
->>> This patchset adds support for DISCONTIGMEM on 32-bit PowerPC. This is
->>> required to properly support the Nintendo Wii's memory layout, in which
->>> there are two blocks of RAM and MMIO in the middle.
->>>
->>> Previously, this memory layout was handled by code that joins the two
->>> RAM blocks into one, reserves the MMIO hole, and permits allocations of
->>> reserved memory in ioremap. This hack didn't work with resource-based
->>> allocation (as used for example in the GPIO driver for Wii[1]), however.
->>>
->>> After this patchset, users of the Wii can either select CONFIG_FLATMEM
->>> to get the old behaviour, or CONFIG_DISCONTIGMEM to get the new
->>> behaviour.
->>
->> My question might me stupid, as I don't know PCC64 in deep, but when looking
->> at page_is_ram() in arch/powerpc/mm/mem.c, I have the feeling the PPC64
->> implements ram by blocks. Isn't it what you are trying to achieve ? Wouldn't
->> it be feasible to map to what's done in PPC64 for PPC32 ?
-> 
-> Using page_is_ram in __ioremap_caller and the same memblock-based
-> approach that's used on PPC64 on PPC32 *should* work, but I think due to
-> the following line in initmem_init, it won't:
-> 
-> 	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
-
-Can't we just fix that ?
-
-Christophe
-
-> 
-> 
-> Thanks,
-> Jonathan Neuschäfer
-> 
+diff --git a/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c b/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
+index f73d484..f71030e 100644
+--- a/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
++++ b/drivers/gpu/drm/panel/panel-huarui-lhr050h41.c
+@@ -66,7 +66,7 @@ struct lhr050h41_instr {
+ 		},					\
+ 	}
+ 
+-struct lhr050h41_instr lhr050h41_init[] = {
++static struct lhr050h41_instr lhr050h41_init[] = {
+ 	LHR050H41_SWITCH_PAGE_INSTR(3),
+ 	LHR050H41_COMMAND_INSTR(0x01, 0x00),
+ 	LHR050H41_COMMAND_INSTR(0x02, 0x00),
