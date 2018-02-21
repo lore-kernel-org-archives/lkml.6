@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227kyjmkwgqrFkSBfkkdJuFdgcQtgbXFrAV4RKZ4MAT3+5KqqP69EUw/CH4At8q+vV6wN02Q
-ARC-Seal: i=1; a=rsa-sha256; t=1519218335; cv=none;
+X-Google-Smtp-Source: AH8x224GVRij3cCp//hdDjOu0GB29IOIG7y5b0+5qKhIhdQgXviNlv66/cG8LtFxaub53KKiKAti
+ARC-Seal: i=1; a=rsa-sha256; t=1519218332; cv=none;
         d=google.com; s=arc-20160816;
-        b=vsqcmTgw78l9MkduFzhNCVD2ou/vQyLr7vWtF4DNx6XyHpyTpFmr4TDEFJP6ndSW7L
-         /FnFPUmmqC93crwz290CrFm9GB9FhKSvUULnK7g9zG85wnCFwWHS552Lm/hpO+O3ZAE0
-         3Qd03hwlGmyT15Z1ziguTji9wTQFMTAPKHuLvOwbuC0Jjpe3xkV6yz4LhOQ6bkzPIxsV
-         mzOGv28A42vy6EmwYia3JNZ8/d4zNjBkcXm9y2hn/mdU1AhWG6PEu31DYJ4ph0IHhHcZ
-         4+ZczMb63W3juIoZdKN+scCQ+okU0cIf8Y3axabh65F8Gppyia1jKTmvcProEAa1KG7K
-         mpqQ==
+        b=H0fYLytqfZP3f3dzIT7b+Ym5wRkSj6R+KSGVnrO/CZmsGltuuOsJy8N0etRycb6o/j
+         cSazHUpSnmbJn+GxNyl1slo6fTXkdbQ99vCas9590fXo31B5OYxGdMUjiEd1za0tn8zE
+         kU8zsxHxxqc6YwidhbJ5yJGjSiZINo13zu5oIOSQcl+Vj6ZnEiUe00WOAeJZ9FlC11kq
+         /6v9DlpGc+TWMmkiAg4TLB/bqBaH+CAX4qh6Z5nTyW1nP6VLmtNVKytDXvppMxzRUk8u
+         gIF59Zl7MJP/7J/pTT5Ntrd4Wp700oW1IMkXGsOHEO9F2UJe4etqJtKJUsLvuR2LZ/gx
+         NO1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Xcu7RDQo9NTJFBpuAV6nV/9/l/52uQZJsx8/sSgkiOo=;
-        b=NfmRB1yJoqnBLMS2QG2Sm+cnmdBjfFj5QffnvU7it1AwxlvKs1PvBkS6ZtN/nlmKU/
-         zDIwgp1KSzWQCZHCbj/4pue/uEqFKe9R8SFl6up/Pt2nQUwuLhQ7tR+ParGBgx36A/Ak
-         SwSb4EEC4c9XrKF4eDiWfu8aK3z2xlvg4TeTz0IY0GhZ7W4NzPrEy49j/yOEVIsMbafK
-         +kOeZBteoJm/StiLF8AI0CHWhGmqUIWAEnGWqgYVcXRQXxuKmBr+pPd9cG8M2HQjd6os
-         sy3pCY6x961/xhGI1gayIw9/A7eaHu9c7d2TAS3eo1rW7q1Oq4gSnPxIBkGZvTPX96O3
-         A9dw==
+        bh=PmMD4Rmi7Nkd8nQ+hq8UpR+MUU2sSBr3bJoGdOgrRTs=;
+        b=Yd2y/uI0V6/+s79F4BXKGGcjZwD63vBBZmiV1H8KBGZeN76bNpY8IV/tCpxWjCHbvb
+         Ui6/OjHE9b42H2AX2dZ/Y64MI0zq3TRqCablSey30oFliaWQfuYf7Av3zYULuS1L30Ay
+         wicsn/mYUFr388/D+lNpL3f0xPA0uNIMfXZoraFmLB/VvcqToHPwKHgA+7vadpcpmefI
+         zSXAd5BBf01i5fB43VmG2yvfPrGkCNuJttHw3MDCF331pHpHut7Sd4LBAJZZvs4yA/Bp
+         U/S2h8hembyl7zrxVCNpqMFjCccEg2rsooyC1+JX7INzNe5LBsmBRWLuGjyYKbJzCOO7
+         MHUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Mack <daniel@zonque.org>,
+	Lassi Ylikojola <lassi.ylikojola@gmail.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 148/167] ALSA: usb: add more device quirks for USB DSD devices
-Date: Wed, 21 Feb 2018 13:49:19 +0100
-Message-Id: <20180221124532.849565593@linuxfoundation.org>
+Subject: [PATCH 4.14 147/167] ALSA: usb-audio: add implicit fb quirk for Behringer UFX1204
+Date: Wed, 21 Feb 2018 13:49:18 +0100
+Message-Id: <20180221124532.800858600@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015885600564211?=
-X-GMAIL-MSGID: =?utf-8?q?1593015885600564211?=
+X-GMAIL-THRID: =?utf-8?q?1593014658063044518?=
+X-GMAIL-MSGID: =?utf-8?q?1593015882438515785?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Mack <daniel@zonque.org>
+From: Lassi Ylikojola <lassi.ylikojola@gmail.com>
 
-commit 7c74866baef1827e18f8269aec85030063520bd4 upstream.
+commit 5e35dc0338d85ccebacf3f77eca1e5dea73155e8 upstream.
 
-Add some more devices that need quirks to handle DSD modes correctly.
+Add quirk to ensure a sync endpoint is properly configured.
+This patch is a fix for same symptoms on Behringer UFX1204 as patch
+from Albertto Aquirre on Dec 8 2016 for Axe-Fx II.
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reported-and-tested-by: Thomas Gresens <tgresens@gmail.com>
+Signed-off-by: Lassi Ylikojola <lassi.ylikojola@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/usb/pcm.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1369,8 +1369,11 @@ u64 snd_usb_interface_dsd_format_quirks(
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
- 		break;
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -357,6 +357,15 @@ static int set_sync_ep_implicit_fb_quirk
  
--	/* Amanero Combo384 USB interface with native DSD support */
--	case USB_ID(0x16d0, 0x071a):
-+	/* Amanero Combo384 USB based DACs with native DSD support */
-+	case USB_ID(0x16d0, 0x071a):  /* Amanero - Combo384 */
-+	case USB_ID(0x2ab6, 0x0004):  /* T+A DAC8DSD-V2.0, MP1000E-V2.0, MP2000R-V2.0, MP2500R-V2.0, MP3100HV-V2.0 */
-+	case USB_ID(0x2ab6, 0x0005):  /* T+A USB HD Audio 1 */
-+	case USB_ID(0x2ab6, 0x0006):  /* T+A USB HD Audio 2 */
- 		if (fp->altsetting == 2) {
- 			switch (le16_to_cpu(chip->dev->descriptor.bcdDevice)) {
- 			case 0x199:
+ 		alts = &iface->altsetting[1];
+ 		goto add_sync_ep;
++	case USB_ID(0x1397, 0x0002):
++		ep = 0x81;
++		iface = usb_ifnum_to_if(dev, 1);
++
++		if (!iface || iface->num_altsetting == 0)
++			return -EINVAL;
++
++		alts = &iface->altsetting[1];
++		goto add_sync_ep;
+ 
+ 	}
+ 	if (attr == USB_ENDPOINT_SYNC_ASYNC &&
