@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753675AbeBUKrr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 05:47:47 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49861 "EHLO
+        id S933450AbeBUKsL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 05:48:11 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58189 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752178AbeBUKrp (ORCPT
+        with ESMTP id S932789AbeBUKsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 05:47:45 -0500
-Date: Wed, 21 Feb 2018 02:47:05 -0800
+        Wed, 21 Feb 2018 05:48:09 -0500
+Date: Wed, 21 Feb 2018 02:47:33 -0800
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-9aaa78dee43a61febabddeab44ea9da90dd05ba8@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        mingo@kernel.org, dwmw2@infradead.org, jpoimboe@redhat.com,
-        brgerst@gmail.com, hpa@zytor.com, bp@alien8.de, luto@kernel.org,
-        dvlasenk@redhat.com, torvalds@linux-foundation.org, tglx@linutronix.de,
-        peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
-        dvlasenk@redhat.com, peterz@infradead.org, brgerst@gmail.com,
-        luto@kernel.org, bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
-        dwmw2@infradead.org, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net
-In-Reply-To: <20180220210113.6725-5-linux@dominikbrodowski.net>
-References: <20180220210113.6725-5-linux@dominikbrodowski.net>
+Message-ID: <tip-a2bb5db1193effd900216a62a6d03d177c26ab02@git.kernel.org>
+Cc: luto@kernel.org, brgerst@gmail.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+        linux@dominikbrodowski.net, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, dvlasenk@redhat.com, mingo@kernel.org,
+        tglx@linutronix.de, jpoimboe@redhat.com
+Reply-To: bp@alien8.de, peterz@infradead.org, luto@kernel.org,
+        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, tglx@linutronix.de, linux@dominikbrodowski.net,
+        dwmw2@infradead.org, torvalds@linux-foundation.org,
+        dvlasenk@redhat.com, mingo@kernel.org
+In-Reply-To: <20180220210113.6725-6-linux@dominikbrodowski.net>
+References: <20180220210113.6725-6-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Remove 'interrupt' macro
-Git-Commit-ID: 9aaa78dee43a61febabddeab44ea9da90dd05ba8
+Subject: [tip:x86/pti] x86/entry/64: Move ASM_CLAC to interrupt_entry()
+Git-Commit-ID: a2bb5db1193effd900216a62a6d03d177c26ab02
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,74 +37,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9aaa78dee43a61febabddeab44ea9da90dd05ba8
-Gitweb:     https://git.kernel.org/tip/9aaa78dee43a61febabddeab44ea9da90dd05ba8
+Commit-ID:  a2bb5db1193effd900216a62a6d03d177c26ab02
+Gitweb:     https://git.kernel.org/tip/a2bb5db1193effd900216a62a6d03d177c26ab02
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Tue, 20 Feb 2018 22:01:11 +0100
+AuthorDate: Tue, 20 Feb 2018 22:01:12 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 21 Feb 2018 10:04:47 +0100
 
-x86/entry/64: Remove 'interrupt' macro
+x86/entry/64: Move ASM_CLAC to interrupt_entry()
 
-It is now trivial to call interrupt_entry() and then the actual worker.
-Therefore, remove the interrupt macro and open code it all.
+Moving ASM_CLAC to interrupt_entry means two instructions (addq / pushq
+and call interrupt_entry) are not covered by it. However, it offers a
+noticeable size reduction (-.2k):
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+   text	   data	    bss	    dec	    hex	filename
+  16882	      0	      0	  16882	   41f2	entry_64.o-orig
+  16623	      0	      0	  16623	   40ef	entry_64.o
+
+Suggested-by: Brian Gerst <brgerst@gmail.com>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180220210113.6725-5-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180220210113.6725-6-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/entry_64.S | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/entry/entry_64.S | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index b45d766..8ea03cf 100644
+index 8ea03cf..42a4b65 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -608,14 +608,6 @@ ENTRY(interrupt_entry)
- 	ret
- END(interrupt_entry)
+@@ -572,6 +572,7 @@ END(irq_entries_start)
+ /* 8(%rsp): ~(interrupt number) */
+ ENTRY(interrupt_entry)
+ 	UNWIND_HINT_FUNC
++	ASM_CLAC
+ 	cld
  
--/* 0(%rsp): ~(interrupt number) */
--	.macro interrupt func
--	call	interrupt_entry
--
--	UNWIND_HINT_REGS indirect=1
--	call	\func	/* rdi points to pt_regs */
--	.endm
--
- 	/*
- 	 * The interrupt stubs push (~vector+0x80) onto the stack and
- 	 * then jump to common_interrupt.
-@@ -624,7 +616,9 @@ END(interrupt_entry)
+ 	testb	$3, CS-ORIG_RAX+8(%rsp)
+@@ -614,7 +615,6 @@ END(interrupt_entry)
+ 	 */
+ 	.p2align CONFIG_X86_L1_CACHE_SHIFT
  common_interrupt:
- 	ASM_CLAC
+-	ASM_CLAC
  	addq	$-0x80, (%rsp)			/* Adjust vector to [-256, -1] range */
--	interrupt do_IRQ
-+	call	interrupt_entry
-+	UNWIND_HINT_REGS indirect=1
-+	call	do_IRQ	/* rdi points to pt_regs */
- 	/* 0(%rsp): old RSP */
- ret_from_intr:
- 	DISABLE_INTERRUPTS(CLBR_ANY)
-@@ -820,7 +814,9 @@ ENTRY(\sym)
- 	ASM_CLAC
+ 	call	interrupt_entry
+ 	UNWIND_HINT_REGS indirect=1
+@@ -811,7 +811,6 @@ END(common_interrupt)
+ .macro apicinterrupt3 num sym do_sym
+ ENTRY(\sym)
+ 	UNWIND_HINT_IRET_REGS
+-	ASM_CLAC
  	pushq	$~(\num)
  .Lcommon_\sym:
--	interrupt \do_sym
-+	call	interrupt_entry
-+	UNWIND_HINT_REGS indirect=1
-+	call	\do_sym	/* rdi points to pt_regs */
- 	jmp	ret_from_intr
- END(\sym)
- .endm
+ 	call	interrupt_entry
