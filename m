@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224lsqcxiKQUe1aHqslPszgFlDGNPmpdVpB6bDV+tEcSrFqIihJZiiBbDPWhw2i1FznlYl5d
-ARC-Seal: i=1; a=rsa-sha256; t=1519218118; cv=none;
+X-Google-Smtp-Source: AH8x225aJQi9C8rAqhRjAfl1WOIrPL/vKuWo3Uz/ov1NO3Vu63NTvSNl05F3IV8g/6drW4gVTPAI
+ARC-Seal: i=1; a=rsa-sha256; t=1519218116; cv=none;
         d=google.com; s=arc-20160816;
-        b=vDEr7pmkxzKd/GpuTNSfJ7wVfFR0G7yFFd1u0XTa/zH0jItgEn/bfOEt6rs5E+5MOq
-         yrhkbx6zVTBixucZ3QriVYB8EJqtnKj9nt8VVmNkgNNZI59sPVbCBoO+r4Mc70ZrSgv4
-         3rGM2J16cbgLyVDEgFk4uBhsPSUukvOA0Ra0pWYBye7ZygosvKOx+9GIAk6Az9gKHLKs
-         PlDZzUc0SPiTrut5GDe8odR1IIspdLyQ5msB9Zakgpf8eWliAKKdTyb6WbOkK7xxX9Du
-         b5j8bgQO36Bm//MaP77lPjdNhp9E7i9i7ZD6+voXYxeOAhivRZlGnoxRUJTt2+IcNvbi
-         cU/Q==
+        b=iVuDjRIlULi19HLbIczzV++RduCy//LS0SESf0S6Tm82X7zOhhiRv90tkhVlFORWJ9
+         qTEZAC+LugWqvLnZvcX1LVnJCIqUJBKHtcE85ocNaxmFgAQe0hr3aczJu3wkR4Rz+SKg
+         ZYTNX575DRONfh7OPgT6frAGi8LmtU4Q2p0fezPuOgfvgaDFIUfrUtRfgunAzupdwZs9
+         2k0eH+G1MiKTkMQp+GP9dQeRaWKeWSNmxKye5B9RA9MQnF3NXfICjnpAYtNUFyMUOE+e
+         R3h/iAFupFR5sjHnSHJWxwx9jnNNVOWacKyg3wnt0TP+xutwdBmsNf9lEzsLN52PNGVG
+         A1ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yGHdZj3jvA/+pyYEet7cpbiFLHC+lpZR32+JunoDwoE=;
-        b=R6E3U2kiRYuNops0Ot8FyH/DWb2oLijnNbIpVdFtrbn7lLmBo7lGCkelvMOj5SFISF
-         D8Sp7ASRv6oMbMg6hn995x6FaeXUy7bnc7vt40j/RGM0000tLvi1Ji2kJXgOhmTW3mha
-         7LSUPNafwKKQNZ8VMOdHNMHFcHRUcTS26vGOyob2fVpyjqCs1fQSxHQ1LjG0vGJQPrXa
-         ptnj96v9PyEz11HZLv7kvuh8ghfF9ChcsY2kM0FrQcGF/AKxuHvJm5d1DY5FfZZYelhb
-         jY1FY7aD81v8eQiqT53g4GQzHZSkN1x1EO9Nqcu7sgJxzVIAjzwDSClp96pAA9gttm1B
-         bxrw==
+        bh=+6LCxXoPhtLbFY8cKoqz+I4sPa6sEhrw3Uw2Y7sWJBc=;
+        b=PHvNZJmim2xGOxXO2gPDg1gDpQq+P550Bb/etEjBCSqb9/69SNvNXHu0nmz3NrxvLe
+         pJgU6Id7HGGJqgWE8ibttc2OzxNh3kMvaPVM4pq31Plisii42SHYeOpgsgEkMjxoA8XQ
+         nzQXVSJvurL3DaZOgmgQPAQC3PUxqTkiAZTYhCFZqClqzZVVZYuI6cT4n5s6UJRrWKJr
+         JEBgE/jVHnkTa6lSDIu3Kt+66a1XqwBk1gI+zSG3Q+2OJRHVoN6QA8ZDnPJVZRy8p7wq
+         fIcvEK8A0cJF7vzJLbnVGZCJoIQRRTHmpPW+5cWYGnroPFbCv3dEvCAsQPp1dYLoIFpg
+         uFnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ray Strode <rstrode@redhat.com>,
-	Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.14 092/167] drm/qxl: unref cursor bo when finished with it
-Date: Wed, 21 Feb 2018 13:48:23 +0100
-Message-Id: <20180221124529.402128391@linuxfoundation.org>
+	Tom St Denis <tom.stdenis@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 091/167] drm/ttm: Fix buf pointer update in ttm_bo_vm_access_kmap() (v2)
+Date: Wed, 21 Feb 2018 13:48:22 +0100
+Message-Id: <20180221124529.357764492@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015657382738159?=
-X-GMAIL-MSGID: =?utf-8?q?1593015657382738159?=
+X-GMAIL-THRID: =?utf-8?q?1593015655908445899?=
+X-GMAIL-MSGID: =?utf-8?q?1593015655908445899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ray Strode <rstrode@redhat.com>
+From: Tom St Denis <tom.stdenis@amd.com>
 
-commit 16c6db3688734b27487a42d0c2a1062d0b2bad03 upstream.
+commit 95244db2d3f743f37e69446a2807dd1a42750542 upstream.
 
-qxl_cursor_atomic_update allocs a bo for the cursor that
-it never frees up at the end of the function.
+The buf pointer was not being incremented inside the loop
+meaning the same block of data would be read or written
+repeatedly.
+(v2) Change 'buf' pointer to uint8_t* type
 
-This commit fixes that.
-
-Signed-off-by: Ray Strode <rstrode@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Fixes: 09ac4fcb3f25 ("drm/ttm: Implement vm_operations_struct.access v2")
+
+Signed-off-by: Tom St Denis <tom.stdenis@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/qxl/qxl_display.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_bo_vm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -564,7 +564,7 @@ static void qxl_cursor_atomic_update(str
- 	struct qxl_cursor_cmd *cmd;
- 	struct qxl_cursor *cursor;
- 	struct drm_gem_object *obj;
--	struct qxl_bo *cursor_bo, *user_bo = NULL;
-+	struct qxl_bo *cursor_bo = NULL, *user_bo = NULL;
- 	int ret;
- 	void *user_ptr;
- 	int size = 64*64*4;
-@@ -634,6 +634,8 @@ static void qxl_cursor_atomic_update(str
- 	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
- 	qxl_release_fence_buffer_objects(release);
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -299,7 +299,7 @@ static void ttm_bo_vm_close(struct vm_ar
  
-+	qxl_bo_unref(&cursor_bo);
-+
- 	return;
+ static int ttm_bo_vm_access_kmap(struct ttm_buffer_object *bo,
+ 				 unsigned long offset,
+-				 void *buf, int len, int write)
++				 uint8_t *buf, int len, int write)
+ {
+ 	unsigned long page = offset >> PAGE_SHIFT;
+ 	unsigned long bytes_left = len;
+@@ -328,6 +328,7 @@ static int ttm_bo_vm_access_kmap(struct
+ 		ttm_bo_kunmap(&map);
  
- out_backoff:
+ 		page++;
++		buf += bytes;
+ 		bytes_left -= bytes;
+ 		offset = 0;
+ 	} while (bytes_left);
