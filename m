@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227FdFiujOrpjj0z9AOfl9l5aFf7Dl8nS/P/Kaf7XtmByqDeC+NspaXoehD2Puw4JuCxbUAY
-ARC-Seal: i=1; a=rsa-sha256; t=1519217945; cv=none;
+X-Google-Smtp-Source: AH8x227Ixtl1W7T8ZCcibGTs2oQDKU12Vi90gzFOBmLgJ58v8rr36dcaLoH4x/Tuv2bTWBbxp3R+
+ARC-Seal: i=1; a=rsa-sha256; t=1519217941; cv=none;
         d=google.com; s=arc-20160816;
-        b=kG/ZCccvk/Ois3UblxwlsJKvHJ9ErfeNmic8GIMEIvz/aTm46J/hKdhYQFJbrn4ONu
-         mGSluo2WzgKJGzmnwZo2I/SDy6nvsOc/vKARwF3JZupMqCGCPc/WIMdNxPu+vT8snO8K
-         SkuMbkNUCl3WRu16zQeTFJngA568xQU06zA4tS7PwS7N+x2MJgIBvn/BJmfmwLxf7NdP
-         Hs+OIs++vXmqRhhqqv9HvKUE4INZ6it2jRrVzXZCQBt8YPTqB8pkM5AFiOpeif0DvjS9
-         goTdx9Jlpmp/9vGDDjLvJp5aH8MMKXebmIalGYxzUSUZO3RiyKntKIgKc8DgCoG7SzPj
-         OBYw==
+        b=jjRkA7Csf6DFj76rYx1nPdS5GKL+abj7Ff6jsH8HnU6vGv48aAAyO0edJsFLOn6q7m
+         D08diMyRXKApOKpeSzUxc0eK1RiKrZeWoVcKOvXSILMctCMiHpnQbg602cZANfehoioc
+         E4w5k44Rc2RVl2HIM699mu94KnB7d5bm9xtePKxSwmrJmdEj87XP327tTdLCYua7zLBH
+         eZRuLqozYvUBVY4LlNr1ScgOBy7ZSM/TdTrYUIJlFsc1E+DThceQPu2gkrxU5Lij8lvO
+         nUsEoHWvOgiJ1G5AkJX+Kw/7HdC4mITXvXSbjg1qCYBEPC/2gUWX7B8zWtCxA/WVT9CC
+         8u5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pR6sla89HwPxSpGKYPlk1irQC40aHqJyO0vLDxGoJmI=;
-        b=BBQMjRMraz1dpN8WnREDIvuyIMTyzTT2fKRuY8XVRzT6zXi0hYzMsrUFdcuu/CH50a
-         XyS5WmufFPVlb+Tye4mMWtFVjEF5GZnb39jQQpUZWCM5fZ3tWRKk20rFE1giHrxElMhj
-         AO1/v6OX81fQZoQPxt1ePnwsBpbOChFBlLcHFo1vkeJkVsGfJRB/no747+rP5+eS/JN0
-         RPHsLE8q7lpkEipPWRMjXRUANM4QC/0E8UBwsnJZ00rgcT9S6urNyupf1XnYjG+UdbnK
-         4ELSdr0rP9RirTUHJQeuweNRUkD6Os1cdx2NR9xAxoZewwNXUQS2Oxt4TbP0BwLGFqqS
-         GxnA==
+        bh=WzxRa4jOFXKoz3akqAi7X+9IesgJWJLBBYeIsQdUpvs=;
+        b=GGBSB+PhPjlSg5oHXlhTRROxcIJ/krlQ5d+yHQEZjruhdISOpiCeccihE1F8hvmQwW
+         m8OudBmegNoVk29wngacozKBtSu0XQl+pcuaoVym85xGqkwnsO1zphI+qAYgR3mjYUDM
+         tCu4rJ0FMfpnD2gMgrKdNo/wNZtTXdFERzdMZ3WPlgbrOItaulYUdVrH/QVjkzLOK/4v
+         yfORjxW7Rmm+it5EsS5Epdn4K0ciKJcEY5ZtOwF3W9qKhcS5k/5s3QkcebjNDZeXt/65
+         EwQHe/ICPnpFOqqPQylomXFgXx0eQWpd7x0SLS60OK9kKhpag2wUfOCf+Ruialgw+ESA
+         petA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jack Morgenstein <jackm@dev.mellanox.co.il>,
-	Leon Romanovsky <leon@kernel.org>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 005/167] IB/mlx4: Fix incorrectly releasing steerable UD QPs when have only ETH ports
-Date: Wed, 21 Feb 2018 13:46:56 +0100
-Message-Id: <20180221124524.932553978@linuxfoundation.org>
+Subject: [PATCH 4.14 004/167] IB/qib: Fix comparison error with qperf compare/swap test
+Date: Wed, 21 Feb 2018 13:46:55 +0100
+Message-Id: <20180221124524.874583902@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014606648192784?=
-X-GMAIL-MSGID: =?utf-8?q?1593015475741133609?=
+X-GMAIL-THRID: =?utf-8?q?1593015257383542372?=
+X-GMAIL-MSGID: =?utf-8?q?1593015472000029540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,78 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit 852f6927594d0d3e8632c889b2ab38cbc46476ad upstream.
+commit 87b3524cb5058fdc7c2afdb92bdb2e079661ddc4 upstream.
 
-Allocating steerable UD QPs depends on having at least one IB port,
-while releasing those QPs does not.
+This failure exists with qib:
 
-As a result, when there are only ETH ports, the IB (RoCE) driver
-requests releasing a qp range whose base qp is zero, with
-qp count zero.
+ver_rc_compare_swap:
+mismatch, sequence 2, expected 123456789abcdef, got 0
 
-When SR-IOV is enabled, and the VF driver is running on a VM over
-a hypervisor which treats such qp release calls as errors
-(rather than NOPs), we see lines in the VM message log like:
+The request builder was using the incorrect inlines to
+build the request header resulting in incorrect data
+in the atomic header.
 
- mlx4_core 0002:00:02.0: Failed to release qp range base:0 cnt:0
+Fix by using the appropriate inlines to create the request.
 
-Fix this by adding a check for a zero count in mlx4_release_qp_range()
-(which thus treats releasing 0 qps as a nop), and eliminating the
-check for device managed flow steering when releasing steerable UD QPs.
-(Freeing ib_uc_qpns_bitmap unconditionally is also OK, since it
-remains NULL when steerable UD QPs are not allocated).
-
-Fixes: 4196670be786 ("IB/mlx4: Don't allocate range of steerable UD QPs for Ethernet-only device")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Fixes: 261a4351844b ("IB/qib,IB/hfi: Use core common header file")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx4/main.c       |   13 +++++--------
- drivers/net/ethernet/mellanox/mlx4/qp.c |    3 +++
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/qib/qib_rc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2972,9 +2972,8 @@ err_steer_free_bitmap:
- 	kfree(ibdev->ib_uc_qpns_bitmap);
- 
- err_steer_qp_release:
--	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED)
--		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
--				      ibdev->steer_qpn_count);
-+	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
-+			      ibdev->steer_qpn_count);
- err_counter:
- 	for (i = 0; i < ibdev->num_ports; ++i)
- 		mlx4_ib_delete_counters_table(ibdev, &ibdev->counters_table[i]);
-@@ -3079,11 +3078,9 @@ static void mlx4_ib_remove(struct mlx4_d
- 		ibdev->iboe.nb.notifier_call = NULL;
- 	}
- 
--	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED) {
--		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
--				      ibdev->steer_qpn_count);
--		kfree(ibdev->ib_uc_qpns_bitmap);
--	}
-+	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
-+			      ibdev->steer_qpn_count);
-+	kfree(ibdev->ib_uc_qpns_bitmap);
- 
- 	iounmap(ibdev->uar_map);
- 	for (p = 0; p < ibdev->num_ports; ++p)
---- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-@@ -287,6 +287,9 @@ void mlx4_qp_release_range(struct mlx4_d
- 	u64 in_param = 0;
- 	int err;
- 
-+	if (!cnt)
-+		return;
-+
- 	if (mlx4_is_mfunc(dev)) {
- 		set_param_l(&in_param, base_qpn);
- 		set_param_h(&in_param, cnt);
+--- a/drivers/infiniband/hw/qib/qib_rc.c
++++ b/drivers/infiniband/hw/qib/qib_rc.c
+@@ -434,13 +434,13 @@ no_flow_control:
+ 				qp->s_state = OP(COMPARE_SWAP);
+ 				put_ib_ateth_swap(wqe->atomic_wr.swap,
+ 						  &ohdr->u.atomic_eth);
+-				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
+-						  &ohdr->u.atomic_eth);
++				put_ib_ateth_compare(wqe->atomic_wr.compare_add,
++						     &ohdr->u.atomic_eth);
+ 			} else {
+ 				qp->s_state = OP(FETCH_ADD);
+ 				put_ib_ateth_swap(wqe->atomic_wr.compare_add,
+ 						  &ohdr->u.atomic_eth);
+-				put_ib_ateth_swap(0, &ohdr->u.atomic_eth);
++				put_ib_ateth_compare(0, &ohdr->u.atomic_eth);
+ 			}
+ 			put_ib_ateth_vaddr(wqe->atomic_wr.remote_addr,
+ 					   &ohdr->u.atomic_eth);
