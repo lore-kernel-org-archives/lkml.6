@@ -1,71 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938090AbeBUQux (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:50:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:58836 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937563AbeBUQtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:49:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,545,1511856000";
-   d="scan'208";a="20034212"
-From: Ashok Raj <ashok.raj@intel.com>
-To: bp@suse.de
-Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH 2/3] x86/microcode/intel: Perform a cache flush before ucode update.
-Date: Wed, 21 Feb 2018 08:49:43 -0800
-Message-Id: <1519231784-9941-3-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
-References: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
+        id S938630AbeBUQvC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:51:02 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:55560 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932706AbeBUQu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:50:58 -0500
+Date: Wed, 21 Feb 2018 17:50:54 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 03/19] soc: renesas: Identify R-Car M3-N
+Message-ID: <20180221165053.xx6gqdyja2zfghmy@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVw4OSPP7XYLGuE7SfVjOk_6VK847NdsVwszBX9XshQ3A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVw4OSPP7XYLGuE7SfVjOk_6VK847NdsVwszBX9XshQ3A@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Microcode updates can be safer if the caches are clean.
-Some of the issues around in certain Broadwell parts
-can be addressed by doing a full cache flush.
+On Tue, Feb 20, 2018 at 04:40:34PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Add support for indentifying R-Car M3-N (R8A77965) SoC.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/drivers/soc/renesas/renesas-soc.c
+> > +++ b/drivers/soc/renesas/renesas-soc.c
+> > @@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
+> >         .id     = 0x54,
+> >  };
+> >
+> > +static const struct renesas_soc soc_rcar_m3_n __initconst __maybe_unused = {
+> > +       .family = &fam_rcar_gen3,
+> > +       .id     = 0x55,
+> > +};
+> 
+> Note that the list was sorted by SoC part number.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Boris Petkov <bp@suse.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Thanks, I have moved the above structure to between
+the similar structure for m3_w and v3m. The result is below.
+
+> > +
+> >  static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
+> >         .family = &fam_rcar_gen3,
+> >         .id     = 0x56,
+> > @@ -214,6 +219,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+> >  #ifdef CONFIG_ARCH_R8A7796
+> >         { .compatible = "renesas,r8a7796",      .data = &soc_rcar_m3_w },
+> >  #endif
+> > +#ifdef CONFIG_ARCH_R8A77965
+> > +       { .compatible = "renesas,r8a77965",     .data = &soc_rcar_m3_n },
+> > +#endif
+> >  #ifdef CONFIG_ARCH_R8A77970
+> >         { .compatible = "renesas,r8a77970",     .data = &soc_rcar_v3m },
+> >  #endif
+
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH] soc: renesas: Identify R-Car M3-N
+
+Add support for indentifying R-Car M3-N (R8A77965) SoC.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index eff80df..5d32724 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -589,6 +589,7 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
- 	if (!mc)
- 		return 0;
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 000834321774..ea71c413c926 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -144,6 +144,11 @@ static const struct renesas_soc soc_rcar_m3_w __initconst __maybe_unused = {
+ 	.id	= 0x52,
+ };
  
-+	wbinvd();
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -805,6 +806,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		return UCODE_OK;
- 	}
- 
-+	wbinvd();
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
++static const struct renesas_soc soc_rcar_m3_n __initconst __maybe_unused = {
++	.family = &fam_rcar_gen3,
++	.id     = 0x55,
++};
++
+ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen3,
+ 	.id	= 0x54,
+@@ -214,6 +219,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7796
+ 	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
+ #endif
++#ifdef CONFIG_ARCH_R8A77965
++	{ .compatible = "renesas,r8a77965",	.data = &soc_rcar_m3_n },
++#endif
+ #ifdef CONFIG_ARCH_R8A77970
+ 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
+ #endif
 -- 
-2.7.4
+2.11.0
