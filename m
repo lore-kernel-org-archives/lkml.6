@@ -1,58 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935359AbeBUNAk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:00:40 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44013 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935329AbeBUNAe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:00:34 -0500
-X-Google-Smtp-Source: AH8x226pnJpc3Uvgv+Nk5b0a+icWx8acsneLCVbV/NGLwrn6qQWQgin+eUBUb8DkS5WuHvZH43Uml+l8ECGROQrZNN0=
+        id S965765AbeBUNN5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:13:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54502 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752681AbeBUNNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:13:54 -0500
+Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
+ <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
+ <44a7d9dc-f6f3-e003-44d6-b0c4aa7dc046@arm.com>
+ <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
+Date: Wed, 21 Feb 2018 13:13:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-PR4mS+oB6fdGhpG3Fp+OhZUr=KkbueOoC9YpmDQgeqQ@mail.gmail.com>
-References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-4-arnd@arndb.de>
- <CAKv+Gu-Be_saZeHzpWrjJBdeiOSJih0H-d1pjkpj+sq7ytLVyw@mail.gmail.com>
- <CAK8P3a11uyLcB=42ZTFOMDvxv5XZ3tCPh+f_MN6SEAjmPRRjtg@mail.gmail.com> <CAKv+Gu-PR4mS+oB6fdGhpG3Fp+OhZUr=KkbueOoC9YpmDQgeqQ@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 21 Feb 2018 14:00:33 +0100
-X-Google-Sender-Auth: W-86kbpHQ2J8hcgGH_d_MCGDMhA
-Message-ID: <CAK8P3a15V4wHQJ=kjZz-V-R1HuP4pd3m+FoZbt_myvUCR6souw@mail.gmail.com>
-Subject: Re: [PATCH 3/7] [HACK] pass endianess flag to LTO linker
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Nicolas Pitre <nico@linaro.org>, Andi Kleen <ak@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 11:09 AM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 21 February 2018 at 09:48, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Wed, Feb 21, 2018 at 9:37 AM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 20 February 2018 at 21:59, Arnd Bergmann <arnd@arndb.de> wrote:
->
->> In some cases we turn off
->> some optimization step for a file, we might remove '-pg', or build for
->> a particular target architecture. Do we have to turn off -flto for any file
->> that requires this for correct behavior?
+On 02/16/2018 01:44 PM, Vincent Guittot wrote:
+> On 16 February 2018 at 13:13, Valentin Schneider
+> <valentin.schneider@arm.com> wrote:
+>> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
+>>> Stopped the periodic update of blocked load when all idle CPUs have fully
+>>> decayed. We introduce a new nohz.has_blocked that reflect if some idle
+>>> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
+>>> is set everytime that a Idle CPU can have blocked load and it is then clear
+>>> when no more blocked load has been detected during an update. We don't need
+>>> atomic operation but only to make cure of the right ordering when updating
+>>> nohz.idle_cpus_mask and nohz.has_blocked.
+>>>
+>>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>>> ---
+>>>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
+>>>  kernel/sched/sched.h |   1 +
+>>>  2 files changed, 102 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 7af1fa9..5a6835e 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>>
+>>> [...]
+>>> @@ -9383,11 +9452,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>>                * work being done for other cpus. Next load
+>>>                * balancing owner will pick it up.
+>>>                */
+>>> -             if (need_resched())
+>>> -                     break;
+>>> +             if (need_resched()) {
+>>> +                     has_blocked_load = true;
+>>> +                     goto abort;
+>>> +             }
+>>>
+>>>               rq = cpu_rq(balance_cpu);
+>>>
 >>
->
-> Excellent question. I think the problem is that the file boundary is
-> becoming blurred with LTO, and so any option that is absolutely
-> required to build a single file correctly may need to be applied to
-> vmlinux as a whole. Whether that is the case for any particular option
-> depends on which compiler pass(es) is (are) affected by the option,
-> i.e., whether it is taken into account when creating the intermediate
-> representation.
+>> I'd say it's safe to do the following here. The flag is raised in
+>> nohz_balance_enter_idle() before the smp_mb(), so we won't skip a CPU
+>> that just got added to nohz.idle_cpus_mask.
+> 
+> rq->has_blocked_load will be set before the barrier only if
+> nohz_tick_stopped is not already set,
+> Otherwise, we skip cpumask update and the barrier in  nohz_balance_enter_idle
+> 
 
-Newer compilers are able to change both the optimization and warning
-flags per function using a #pragma or _Pragma() directive or
-function attributes.
-There has been some recent discussion about requiring a newer gcc
-version, so if we do that, we could perhaps replace all the existing
-CFLAGS overrides with those pragmas.
+Right, forgot about that bit. I think it's still fine because:
+- nohz_balance_enter_idle() can't be called before the last running task is
+dequeued, which requires the rq lock.
+- update_blocked_averages takes the rq lock and clears rq->has_blocked_load
+with the lock held.
 
-     Arnd
+So even though we could have some very unlikely scenario where a CPU quickly
+goes out/in of idle after nohz.idle_cpus_mask has been read, the blocked load
+itself is safe so rq->has_blocked_load will end up being set correctly.
+(Took me a while to see it that way)
+
+
+BTW, with the current set on Peter's sched/testing, update_nohz_stats()
+is called here, which doesn't do the update if !rq->has_blocked_load
+(Although that check is done without lock/barrier, so maybe we could not see
+a CPU that just went idle ?)
+
+I have one more question on that bit:
+
+
+		has_blocked_load |= update_nohz_stats(rq, true);
+
+		/*
+		 * If time for next balance is due,
+		 * do the balance.
+		 */
+		if (time_after_eq(jiffies, rq->next_balance)) {
+			struct rq_flags rf;
+
+			rq_lock_irqsave(rq, &rf);
+			update_rq_clock(rq);
+			cpu_load_update_idle(rq);
+			rq_unlock_irqrestore(rq, &rf);
+
+			if (flags & NOHZ_BALANCE_KICK)
+				rebalance_domains(rq, CPU_IDLE);
+		}
+
+		if (time_after(next_balance, rq->next_balance)) {
+			next_balance = rq->next_balance;
+			update_next_balance = 1;
+		}
+
+
+Now that I think about it, shouldn't we always have a 'continue' after
+the blocked load update if (flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK ?
+AFAICT we don't want to push the next_balance forward, only the next_blocked.
+That would also take care of not doing the load balance.
+>>
+>>                 /*
+>>                  * This cpu doesn't have any remaining blocked load, skip it.
+>>                  * It's sane to do this because this flag is raised in
+>>                  * nohz_balance_enter_idle()
+>>                  */
+>>                 if ((flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK &&
+>>                     !rq->has_blocked_load)
+>>                         continue;
+>>
+>>> +             update_blocked_averages(rq->cpu);
+>>> +             has_blocked_load |= rq->has_blocked_load;
+>>> +
