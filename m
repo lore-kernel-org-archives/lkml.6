@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224/Sl9JlCUz8/zFsVAcKseuKKwS/9gShl2btI1Q7QwVhi3C66mBRXQG6XX+6RJdmihizJ3u
-ARC-Seal: i=1; a=rsa-sha256; t=1519217700; cv=none;
+X-Google-Smtp-Source: AH8x224HhWipolTyFmgdbw0xz8N4poKlCt3/4f17ykBpj0434OJQjxzB9fUuDaTqCycDZdA05S7F
+ARC-Seal: i=1; a=rsa-sha256; t=1519217697; cv=none;
         d=google.com; s=arc-20160816;
-        b=Et8eAssFrqnB82bjHG3CjisdBGm9GIjbYobUQ2M/1TJWNph2Jp8JF8Pkmyi2o2Azd8
-         X8v4vgxF4mHRkciFkBHW89LtIKDupNGZHtj6FskFvcZbuZhVVQzM94/dZhjSMM8zzfTD
-         TBdrLSw+JMTVpAVOl5OBIG8woodZgF2krzYtz9sdR4VEeU+0u9YlSGLBfFp7gFyjgZCP
-         FtUjUdkfDx/t9W/uGyXoShxYOLK+vTw5CcWVNX7ONGsoTpQH64cIR/L/gHESfFpm+aE0
-         InfXmgGiyc7dKau5wBxc1UoCpC/Y9qr4RRvjsQyoJygGOh6g9GhdV3lPofHB/WtI0H60
-         0BNA==
+        b=T1oEfYcJvPhbClXWUg0kTZS51uE5p5FKvNq7dMGeDK/IAffki9+z1Zp94FwqVpOHra
+         xe9CYrchzmZN7ofpjgHkGhUtR8EbnXd5mfgHp6Y++RPR4iDCUf4Yx6/9jCNs+aGzJsBl
+         ut8LEgTLP3NHmhdn7/49/7t/n5y+oRUEy8977kxef0dD4zxzX/zq66SnoSfy6IFuJUC7
+         IkISI+6NIB+SfCipjL5xaxcfsa4FuNE5OcRSoVoRhaHPXkwyp5wIGy7w7JJGR6UWk1LH
+         suJ43+i/b4I1/xszSVHZ1IS6HPh+JUuJnRgQuYvxLt5m4smr/FrI6kf5jUOjwTnX6Bmt
+         0hXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7Yh02EqzXGKssB8s/W5rRmb4uTuOdBqgT9i6t+y/db0=;
-        b=n6VNaJp7ecXZ9IQYFMTjIHfl9BBLr8+KkVaqXb7m4nRm73vlf0ZNafCnOVx7rQ2ei3
-         SyfjLbiPL4n2RFlMNjN0I45QfFq139JgyM9H6NPjEyWwFHkSqDfXmd72H2Ds9EyfOsV6
-         oHYWbLx5lZG/XkZP7ZG/ufsb3vc7F4kkTa069jRMxvl1wQGa3WyLV8H7Z4VTri64kuKo
-         b9AY2skwb4K0XVDgEgTrlwNyxjVoEDg6y7Z9XTtIZ+jx4Fz7yB3PFITO7VHHXrb3vnk5
-         bvY9xBwvmvT1StegiwiWGEK9Nv/I23dlAAFp6V0syQSFSwiZbBhsekyGN8KwNfR5rzcb
-         fI9w==
+        bh=Nn4CxJkf06pHhRRfrHCF7VzhUJkCs9Q//h9T/tiljpE=;
+        b=w8zVwnW2OV68+kV2mr+hisLGt7928NITDu6q13vW7PMon5vF4uf3lTZKu9vHlaxvjI
+         hSpcf8U1jAPsjKVvfQJKH6fSOTqXOZDq5yCgjTTdbAegVgcWFOq3bpbVtAz77dy2etyT
+         Ukc+wicV+Kxa4O+lQHzDaDmwox05AgX1Lgtq2BS8tYAZzv8s9MRB7gUlooZ3ly8JIowV
+         47ichiPT4RFppub9Vx5RMBYXYC9PCQ8SBLnu8z6To1PNk0F2jG7TbGarjRttRDxLDyga
+         Xp+Pa5KQZa5Mvd2IcYJnezZWYnDXQ0pZE590erPuYnRCo+hQWcVQ7jB6Z3+XGRczfZXL
+         orZw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.9 24/77] mtd: nand: vf610: set correct ooblayout
-Date: Wed, 21 Feb 2018 13:48:33 +0100
-Message-Id: <20180221124433.204290521@linuxfoundation.org>
+	Greg Kurz <groug@kaod.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.9 23/77] 9p/trans_virtio: discard zero-length reply
+Date: Wed, 21 Feb 2018 13:48:32 +0100
+Message-Id: <20180221124433.163224691@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015219498083011?=
-X-GMAIL-MSGID: =?utf-8?q?1593015219498083011?=
+X-GMAIL-THRID: =?utf-8?q?1593015216279733219?=
+X-GMAIL-MSGID: =?utf-8?q?1593015216279733219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,40 +49,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Greg Kurz <groug@kaod.org>
 
-commit ea56fb282368ea08c2a313af6b55cb597aec4db1 upstream.
+commit 26d99834f89e76514076d9cd06f61e56e6a509b8 upstream.
 
-With commit 3cf32d180227 ("mtd: nand: vf610: switch to
-mtd_ooblayout_ops") the driver started to use the NAND cores
-default large page ooblayout. However, shortly after commit
-6a623e076944 ("mtd: nand: add ooblayout for old hamming layout")
-changed the default layout to the old hamming layout, which is
-not what vf610_nfc is using. Specify the default large page
-layout explicitly.
+When a 9p request is successfully flushed, the server is expected to just
+mark it as used without sending a 9p reply (ie, without writing data into
+the buffer). In this case, virtqueue_get_buf() will return len == 0 and
+we must not report a REQ_STATUS_RCVD status to the client, otherwise the
+client will erroneously assume the request has not been flushed.
 
-Fixes: 6a623e076944 ("mtd: nand: add ooblayout for old hamming layout")
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/vf610_nfc.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/9p/trans_virtio.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/vf610_nfc.c
-+++ b/drivers/mtd/nand/vf610_nfc.c
-@@ -752,10 +752,8 @@ static int vf610_nfc_probe(struct platfo
- 		if (mtd->oobsize > 64)
- 			mtd->oobsize = 64;
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -160,7 +160,8 @@ static void req_done(struct virtqueue *v
+ 		spin_unlock_irqrestore(&chan->lock, flags);
+ 		/* Wakeup if anyone waiting for VirtIO ring space. */
+ 		wake_up(chan->vc_wq);
+-		p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
++		if (len)
++			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
+ 	}
+ }
  
--		/*
--		 * mtd->ecclayout is not specified here because we're using the
--		 * default large page ECC layout defined in NAND core.
--		 */
-+		/* Use default large page ECC layout defined in NAND core */
-+		mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
- 		if (chip->ecc.strength == 32) {
- 			nfc->ecc_mode = ECC_60_BYTE;
- 			chip->ecc.bytes = 60;
