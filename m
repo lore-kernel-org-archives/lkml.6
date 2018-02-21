@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217272-2-125973693939538209
+X-Cyrus-Session-Id: sloti22d1t05-1474421-1519217246-2-8109900754010280937
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519217272; b=QshygcnbQ/u0Fiuliu9kbGjbcZIfhACpR9Ni9RYX8YYhfpx
-    8MEwkYlLcR/f98sBZ/Y+Lj0fJSK5+YwzGhG6Wa9IBR86gMf4qw/CwS9bwXs8d/SQ
-    0hiCQmYugSngUBDqbe7pB1r8YZFRH1BH7t7x0whNLGpcUBV1X2uvYRuwtlTR7UJ6
-    FVWprZMI1P5gVWrNfzs/SKAasjDOsXWKtmh/r7vPRsSslz9zOvd++4A5X2l4qzO9
-    cf4XNnuoeRfJ9TDbYKskqWcmLmC8KHs6rC2Is9zWk30vJ82+WusWfTaqtXw4SGa6
-    Mn+/8vwVzDuW9J6hbcP3N6mOmUDLo+qJ1+6YHpg==
+    t=1519217245; b=USpFsRPPHNuwwTp5NL+88cLcoM2hzq2nFE3B5syyEQfyGPb
+    GKov11ZvipppKPyKegg19l+6nXZe6lSna9DvjAIuMidrbY8pp3rzwdp9BDFI4rZF
+    RttNQjhOirZXNdVJvQrCdfB9+i+en4vKeD4Hl0lygI5zCRZqIQTdKsdcC7m9Jjgf
+    E7d1DJwovOjj8tgxcVFZrQ0qpD753i7okNpUnc8/td/QJ7YFs7IkFUxZOLtEDzzV
+    H/4D8vTYEINX2Q30F2NFZloBDzTssyhcc5Xg+wpi7upsD6rcGVSxjM6/MABpb7YM
+    OQzpA3bGrMNxlsYAuislAKAWabH+EkAFF/rpA8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519217272; bh=gNYWuvGFOLOjfQ1JJRPcLxHHlW
-    zx3RMa/ptBAV9MNKU=; b=uSjhlg0tbbUPe/RnVKFpn1PW7iAgSAO7YAz6GJJWvA
-    qOOrqm6FHMROLSnmdUAkL5pZFiqWn386Mpqj3BNxqYmgRCvIYOblv73ysv5bh+s3
-    hKwPK4bDnePvkwGifrD6nQbSPOtaCMnVWh8ExrOQ7HeTH7jowViD5meIWbhTbs/a
-    fusyqULJV6Hyhbn/119eune5EpmaA2v5DTGnj76RgSJOTZSySTR6itJW6gyvfaxN
-    3NdH/ZT7e8k9Gp1jxbCI4lEjP1oBMpznvq1dk//FZwOGDAUXNBSAUHA8PgVsoBYW
-    tZi9bSyeX9ExF38tWiS8EiFc4ivORdaN/6pweFxPZC/w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519217245; bh=7E8WGg/iEcP6z5gcSWhUM16a2Z
+    +00A0+a2D4SMwPBUg=; b=kerxENuuJ2x74BX4P2MFBMcU3msoxt9uI2qlJtKXe+
+    a8QUNnCTJ9Gahw3CtGKWJul4q0yEX901moZXZ06T9ZkOKVMSfC3EYNmKHg7ku4lz
+    DBbRBoosxIBEDHbrxlzoi2tlBKTqSZtZ/uRAzm3yz5oNr3g8lyySWeYCJCpx6aID
+    MVqoJw0vYIt6aMy0wrcKLaPH1XNuMgLARsonSZQz+wVlHPgRAm2XidskI3oVup/8
+    I94k/AwC8sQFqSw2eRVPs2arSRVOM5xuYB8oRTSIsjqUO9PlMYuc3xsBjrEi9Y0X
+    bds23McVHaTlrkHcue68d6uYZW7+30xFmhVqDNvytdtQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933944AbeBUMqi (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 07:46:38 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59960 "EHLO
+        id S933905AbeBUMqq (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 07:46:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60158 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933905AbeBUMqg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:36 -0500
+        with ESMTP id S933973AbeBUMqo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 07:46:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Vegard Nossum <vegard.nossum@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 4.4 30/33] vfs: dont do RCU lookup of empty pathnames
-Date: Wed, 21 Feb 2018 13:45:13 +0100
-Message-Id: <20180221124411.128121753@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 33/33] media: r820t: fix r820t_write_reg for KASAN
+Date: Wed, 21 Feb 2018 13:45:16 +0100
+Message-Id: <20180221124411.244585350@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
 References: <20180221124409.564661689@linuxfoundation.org>
@@ -81,46 +78,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit c0eb027e5aef70b71e5a38ee3e264dc0b497f343 upstream.
+commit 16c3ada89cff9a8c2a0eea34ffa1aa20af3f6008 upstream.
 
-Normal pathname lookup doesn't allow empty pathnames, but using
-AT_EMPTY_PATH (with name_to_handle_at() or fstatat(), for example) you
-can trigger an empty pathname lookup.
+With CONFIG_KASAN, we get an overly long stack frame due to inlining
+the register access functions:
 
-And not only is the RCU lookup in that case entirely unnecessary
-(because we'll obviously immediately finalize the end result), it is
-actively wrong.
+drivers/media/tuners/r820t.c: In function 'generic_set_freq.isra.7':
+drivers/media/tuners/r820t.c:1334:1: error: the frame size of 2880 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
 
-Why? An empth path is a special case that will return the original
-'dirfd' dentry - and that dentry may not actually be RCU-free'd,
-resulting in a potential use-after-free if we were to initialize the
-path lazily under the RCU read lock and depend on complete_walk()
-finalizing the dentry.
+This is caused by a gcc bug that has now been fixed in gcc-8.
+To work around the problem, we can pass the register data
+through a local variable that older gcc versions can optimize
+out as well.
 
-Found by syzkaller and KASAN.
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-Acked-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers3@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/tuners/r820t.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2000,6 +2000,9 @@ static const char *path_init(struct name
- 	int retval = 0;
- 	const char *s = nd->name->name;
+--- a/drivers/media/tuners/r820t.c
++++ b/drivers/media/tuners/r820t.c
+@@ -410,9 +410,11 @@ static int r820t_write(struct r820t_priv
+ 	return 0;
+ }
  
-+	if (!*s)
-+		flags &= ~LOOKUP_RCU;
+-static int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
++static inline int r820t_write_reg(struct r820t_priv *priv, u8 reg, u8 val)
+ {
+-	return r820t_write(priv, reg, &val, 1);
++	u8 tmp = val; /* work around GCC PR81715 with asan-stack=1 */
 +
- 	nd->last_type = LAST_ROOT; /* if there are only slashes... */
- 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
- 	nd->depth = 0;
++	return r820t_write(priv, reg, &tmp, 1);
+ }
+ 
+ static int r820t_read_cache_reg(struct r820t_priv *priv, int reg)
+@@ -425,17 +427,18 @@ static int r820t_read_cache_reg(struct r
+ 		return -EINVAL;
+ }
+ 
+-static int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
++static inline int r820t_write_reg_mask(struct r820t_priv *priv, u8 reg, u8 val,
+ 				u8 bit_mask)
+ {
++	u8 tmp = val;
+ 	int rc = r820t_read_cache_reg(priv, reg);
+ 
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	val = (rc & ~bit_mask) | (val & bit_mask);
++	tmp = (rc & ~bit_mask) | (tmp & bit_mask);
+ 
+-	return r820t_write(priv, reg, &val, 1);
++	return r820t_write(priv, reg, &tmp, 1);
+ }
+ 
+ static int r820t_read(struct r820t_priv *priv, u8 reg, u8 *val, int len)
