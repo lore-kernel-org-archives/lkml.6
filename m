@@ -1,70 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938864AbeBURBi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:01:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54574 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932317AbeBURBf (ORCPT
+        id S965781AbeBURBy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:01:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53431 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932317AbeBURBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:01:35 -0500
-Date: Wed, 21 Feb 2018 09:01:29 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: Use higher-order pages in vmalloc
-Message-ID: <20180221170129.GB27687@bombadil.infradead.org>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
- <151670493255.658225.2881484505285363395.stgit@buzz>
- <20180221154214.GA4167@bombadil.infradead.org>
- <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
+        Wed, 21 Feb 2018 12:01:50 -0500
+Date: Wed, 21 Feb 2018 09:01:11 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-f3d415ea46968ae1f9cbb9e201601d7207ce74c7@git.kernel.org>
+Cc: bp@alien8.de, hpa@zytor.com, mingo@kernel.org, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org, dwmw2@infradead.org, brgerst@gmail.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        dvlasenk@redhat.com, linux@dominikbrodowski.net, tglx@linutronix.de,
+        luto@kernel.org
+Reply-To: dwmw2@infradead.org, bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        dvlasenk@redhat.com, tglx@linutronix.de, linux@dominikbrodowski.net,
+        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180220210113.6725-7-linux@dominikbrodowski.net>
+References: <20180220210113.6725-7-linux@dominikbrodowski.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Open-code switch_to_thread_stack()
+Git-Commit-ID: f3d415ea46968ae1f9cbb9e201601d7207ce74c7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 08:16:22AM -0800, Dave Hansen wrote:
-> On 02/21/2018 07:42 AM, Matthew Wilcox wrote:
-> > This prompted me to write a patch I've been meaning to do for a while,
-> > allocating large pages if they're available to satisfy vmalloc.  I thought
-> > it would save on touching multiple struct pages, but it turns out that
-> > the checking code we currently have in the free_pages path requires you
-> > to have initialised all of the tail pages (maybe we can make that code
-> > conditional ...)
-> 
-> What the concept here?  If we can use high-order pages for vmalloc() at
-> the moment, we *should* use them?
+Commit-ID:  f3d415ea46968ae1f9cbb9e201601d7207ce74c7
+Gitweb:     https://git.kernel.org/tip/f3d415ea46968ae1f9cbb9e201601d7207ce74c7
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Tue, 20 Feb 2018 22:01:13 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 21 Feb 2018 16:54:05 +0100
 
-Right.  It helps with fragmentation if we can keep higher-order
-allocations together.
+x86/entry/64: Open-code switch_to_thread_stack()
 
-> One of the coolest things about vmalloc() is that it can do large
-> allocations without consuming large (high-order) pages, so it has very
-> few side-effects compared to doing a bunch of order-0 allocations.  This
-> patch seems to propose removing that cool thing.  Even trying the
-> high-order allocation could kick off a bunch of reclaim and compaction
-> that was not there previously.
+Open-code the two instances which called switch_to_thread_stack(). This
+allows us to remove the wrapper around DO_SWITCH_TO_THREAD_STACK.
 
-Yes, that's one of the debatable things.  It'd be nice to have a GFP
-flag that stopped after calling get_page_from_freelist() and didn't try
-to do compaction or reclaim.
+While at it, update the UNWIND hint to reflect where the IRET frame is,
+and update the commentary to reflect what we are actually doing here.
 
-> If you could take this an only _opportunistically_ allocate large pages,
-> it could be a more universal win.  You could try to make sure that no
-> compaction or reclaim is done for the large allocation.  Or, maybe you
-> only try it if there are *only* high-order pages in the allocator that
-> would have been broken down into order-0 *anyway*.
-> 
-> I'm not sure it's worth it, though.  I don't see a lot of folks
-> complaining about vmalloc()'s speed or TLB impact.
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180220210113.6725-7-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/entry_64.S        | 76 +++++++++++++++++++++-------------------
+ arch/x86/entry/entry_64_compat.S | 17 +++++++--
+ 2 files changed, 55 insertions(+), 38 deletions(-)
 
-No, I'm not sure it's worth it either, although Konstantin's mail
-suggesting improvements in fork speed were possible by avoiding vmalloc
-reminded me that I'd been meaning to give this a try.
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 42a4b65..d5c7f18 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -538,17 +538,48 @@ END(irq_entries_start)
+ .endm
+ 
+ /*
+- * Switch to the thread stack.  This is called with the IRET frame and
+- * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
+- * space has not been allocated for them.)
++ * Interrupt entry helper function.
++ *
++ * Entry runs with interrupts off. Stack layout at entry:
++ * +----------------------------------------------------+
++ * | regs->ss						|
++ * | regs->rsp						|
++ * | regs->eflags					|
++ * | regs->cs						|
++ * | regs->ip						|
++ * +----------------------------------------------------+
++ * | regs->orig_ax = ~(interrupt number)		|
++ * +----------------------------------------------------+
++ * | return address					|
++ * +----------------------------------------------------+
+  */
+-.macro DO_SWITCH_TO_THREAD_STACK
++ENTRY(interrupt_entry)
++	UNWIND_HINT_FUNC
++	ASM_CLAC
++	cld
++
++	testb	$3, CS-ORIG_RAX+8(%rsp)
++	jz	1f
++	SWAPGS
++
++	/*
++	 * Switch to the thread stack. The IRET frame and orig_ax are
++	 * on the stack, as well as the return address. RDI..R12 are
++	 * not (yet) on the stack and space has not (yet) been
++	 * allocated for them.
++	 */
+ 	pushq	%rdi
++
+ 	/* Need to switch before accessing the thread stack. */
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+ 	movq	%rsp, %rdi
+ 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+-	UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
++
++	 /*
++	  * We have RDI, return address, and orig_ax on the stack on
++	  * top of the IRET frame. That means offset=24
++	  */
++	UNWIND_HINT_IRET_REGS base=%rdi offset=24
+ 
+ 	pushq	7*8(%rdi)		/* regs->ss */
+ 	pushq	6*8(%rdi)		/* regs->rsp */
+@@ -560,25 +591,6 @@ END(irq_entries_start)
+ 	UNWIND_HINT_FUNC
+ 
+ 	movq	(%rdi), %rdi
+-.endm
+-
+-/*
+- * Interrupt entry/exit.
+- *
+- * Interrupt entry points save only callee clobbered registers in fast path.
+- *
+- * Entry runs with interrupts off.
+- */
+-/* 8(%rsp): ~(interrupt number) */
+-ENTRY(interrupt_entry)
+-	UNWIND_HINT_FUNC
+-	ASM_CLAC
+-	cld
+-
+-	testb	$3, CS-ORIG_RAX+8(%rsp)
+-	jz	1f
+-	SWAPGS
+-	DO_SWITCH_TO_THREAD_STACK
+ 1:
+ 
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+@@ -592,7 +604,7 @@ ENTRY(interrupt_entry)
+ 	 *
+ 	 * We need to tell lockdep that IRQs are off.  We can't do this until
+ 	 * we fix gsbase, and we should do it before enter_from_user_mode
+-	 * (which can take locks).  Since TRACE_IRQS_OFF idempotent,
++	 * (which can take locks).  Since TRACE_IRQS_OFF is idempotent,
+ 	 * the simplest way to handle it is to just call it twice if
+ 	 * we enter from user mode.  There's no reason to optimize this since
+ 	 * TRACE_IRQS_OFF is a no-op if lockdep is off.
+@@ -609,6 +621,9 @@ ENTRY(interrupt_entry)
+ 	ret
+ END(interrupt_entry)
+ 
++
++/* Interrupt entry/exit. */
++
+ 	/*
+ 	 * The interrupt stubs push (~vector+0x80) onto the stack and
+ 	 * then jump to common_interrupt.
+@@ -878,17 +893,6 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
+  */
+ #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
+ 
+-#if defined(CONFIG_IA32_EMULATION)
+-/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
+-ENTRY(switch_to_thread_stack)
+-	UNWIND_HINT_FUNC
+-
+-	DO_SWITCH_TO_THREAD_STACK
+-
+-	ret
+-END(switch_to_thread_stack)
+-#endif
+-
+ .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
+ ENTRY(\sym)
+ 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 364ea4a..e811dd9 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -347,10 +347,23 @@ ENTRY(entry_INT80_compat)
+ 	 */
+ 	movl	%eax, %eax
+ 
++	/* switch to thread stack expects orig_ax and rdi to be pushed */
+ 	pushq	%rax			/* pt_regs->orig_ax */
++	pushq	%rdi			/* pt_regs->di */
++
++	/* Need to switch before accessing the thread stack. */
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
++	movq	%rsp, %rdi
++	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
++
++	pushq	6*8(%rdi)		/* regs->ss */
++	pushq	5*8(%rdi)		/* regs->rsp */
++	pushq	4*8(%rdi)		/* regs->eflags */
++	pushq	3*8(%rdi)		/* regs->cs */
++	pushq	2*8(%rdi)		/* regs->ip */
++	pushq	1*8(%rdi)		/* regs->orig_ax */
+ 
+-	/* switch to thread stack expects orig_ax to be pushed */
+-	call	switch_to_thread_stack
++	movq	(%rdi), %rdi		/* restore %rdi */
+ 
+ 	pushq	%rdi			/* pt_regs->di */
+ 	pushq	%rsi			/* pt_regs->si */
