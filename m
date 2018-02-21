@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225tlkI8ZjksrvyzO33+GlsRHG+Pf2NHdaW4/K57tWpRqf0I3OToUrXO/RbqNBDqBm99DuIv
-ARC-Seal: i=1; a=rsa-sha256; t=1519218148; cv=none;
+X-Google-Smtp-Source: AH8x2251ruI9fJk2wQRMoBq5kxXg50Q4eTUEQq1YCXA6lQ34TJwCLatvxZukP9EXMepL9A78QnYA
+ARC-Seal: i=1; a=rsa-sha256; t=1519218145; cv=none;
         d=google.com; s=arc-20160816;
-        b=L9NyqjKvlSDDvVVcBgov5I84pppi+ckByiRFMB5pKr76Wf/p4WeMjxsRTzUnIHS/ev
-         1spafbwIRYS5lcf/24co5czsOHtJH3qyfaRnVQovHxliIsz20lc47nZLY47eKew/eDID
-         3w14vopKGVNb+cFgvkrD2XCBclTuQZieopmQeBUlFySpZOFeudwfxQpmbeUng4hPzFle
-         bmsqNDplIgCwnG9jlOmeXjx8NNInUOf2GO42n2hTkzcrb/GAQv2csSAetPjOiuT/euPy
-         YlmNyTtDV0gRNihzcj49dNNlh4KbrQd1SPiTFBTJ/MqO6edK/PPOxV/WJjXPF2o210wj
-         Arrw==
+        b=TLRh0vTaHV7Td2H8gfyfTKHGBVUGPHJTtR6TGjlSE1NkpCHZHxyGqldqyr+m1ToEvQ
+         D3dcEiDZ6FqIMRkRLuWSVRhdmi9fMmSJCxcbN3y+4UbPUWf2YTqC3yZBTNTOVymTq70p
+         AReXC51JNke9e6Si5rZPcazvx02cbTmkl1nlJ2/yZ+zOZi9jevZuXHdYadNZgjG/0eg3
+         znfNHuMOsyIc/kWyu0Ki4CgfgHxlOH7wMI2WtENayA7p34A2JxSRuiXKM0FOw9/KWwOm
+         NNiUEcHZsdpUcRpuiaLYYvlwsaVDxh5/7B3kgvlGt6CbiQtJaDwdXWrWxiJODjXRn/BX
+         UK7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=P/iIGKHFhL3Uz5Qr4vowLEqg8gzF/Mk58IpLM+qaJv4=;
-        b=FGqBMYkc3QhK3UPXUc1/ZGvvJxLOzox5DNNfPR8xsTD7FL974Oe1b0wu104sii3zjY
-         cEEFncZ4QOc8KuWtjeAd8+KFDpDlnxim7Cj7MNr49Oj+nRf0jnnzIkjepwkpH5gOA8vP
-         sA35kfsszPjQcb9QkHtQkTQNpM4NuoOX5piC9JlTn3X6VoBLydp919TFM5iQHEORSyDv
-         Iq7ZKkaRAdY86rG5QmP8Gh8EcwJrfnKbfBYY1zNW+8F6vtZjXHi1LOqYMtiy58ffedQd
-         rqMa35X2qaxBqL0na9+5e8C44BcNXrtSOqWYxm9WcRF3cjdGeRTmEzQYqoC5MBimZM+B
-         1cNA==
+        bh=pM8E0E9HtNkwpKzyesgp/+UyBk0zqgZE6enbO5uHy5w=;
+        b=sLuaY4BWqdNG3gAI3io8/TqeN98TqvwPMzj/FKVB60vGNoCibLr9MyaAgeJlTV8yMr
+         227krsFt3FCiWZriwcH6b5ucJj+HgPPMGL0enflFPIA1M6oZsVFfhAGtBV2Jk8Aq0NCm
+         DT+rfUCguklnu4w0fM7j6hkTdAW+hB0nyuPuVfR4ng8FKzGrGKSJiHVctnvk98MKFqhc
+         AcjBAaKM/CmXlJQO1b+6bG2QQ6+O1yf9VxeBKDrdy8++fvxNebeuVoF//Je7fsLzAe7C
+         KDFKsfGieo6g27ctAxU5cZoH0kNBubvdfC5fQ6fqmxhcQJmkqYgjnQycjUCVcyaJKFHK
+         qbVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 103/167] mlx5: fix mlx5_get_vector_affinity to start from completion vector 0
-Date: Wed, 21 Feb 2018 13:48:34 +0100
-Message-Id: <20180221124529.994563545@linuxfoundation.org>
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 102/167] Revert "mmc: meson-gx: include tx phase in the tuning process"
+Date: Wed, 21 Feb 2018 13:48:33 +0100
+Message-Id: <20180221124529.945115035@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015689231116812?=
-X-GMAIL-MSGID: =?utf-8?q?1593015689231116812?=
+X-GMAIL-THRID: =?utf-8?q?1593015686210679851?=
+X-GMAIL-MSGID: =?utf-8?q?1593015686210679851?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +49,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 2572cf57d75a7f91835d9a38771e9e76d575d122 upstream.
+commit fe0e58048f005fdce315eb4d185e5c160be4ac01 upstream.
 
-The consumers of this routine expects the affinity map of of vector
-index relative to the first completion vector. The upper layers are
-not aware of internal/private completion vectors that mlx5 allocates
-for its own usage.
+This reverts commit 0a44697627d17a66d7dc98f17aeca07ca79c5c20.
 
-Hence, return the affinity map of vector index relative to the first
-completion vector.
+This commit was initially intended to fix problems with hs200 and hs400
+on some boards, mainly the odroid-c2. The OC2 (Rev 0.2) I have performs
+well in this modes, so I could not confirm these issues.
 
-Fixes: 05e0cc84e00c ("net/mlx5: Fix get vector affinity helper function")
-Reported-by: Logan Gunthorpe <logang@deltatee.com>
-Tested-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Cc: <stable@vger.kernel.org> # v4.15
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+We've had several reports about the issues being still present on (some)
+OC2, so apparently, this change does not do what it was supposed to do.
+Maybe the eMMC signal quality is on the edge on the board. This may
+explain the variability we see in term of stability, but this is just a
+guess. Lowering the max_frequency to 100Mhz seems to do trick for those
+affected by the issue
+
+Worse, the commit created new issues (CRC errors and hangs) on other
+boards, such as the kvim 1 and 2, the p200 or the libretech-cc.
+
+According to amlogic, the Tx phase should not be tuned and left in its
+default configuration, so it is best to just revert the commit.
+
+Fixes: 0a44697627d1 ("mmc: meson-gx: include tx phase in the tuning process")
+Cc: <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/mlx5/driver.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/meson-gx-mmc.c |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1201,7 +1201,7 @@ mlx5_get_vector_affinity(struct mlx5_cor
- 	int eqn;
- 	int err;
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -716,22 +716,6 @@ static int meson_mmc_clk_phase_tuning(st
+ static int meson_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ {
+ 	struct meson_host *host = mmc_priv(mmc);
+-	int ret;
+-
+-	/*
+-	 * If this is the initial tuning, try to get a sane Rx starting
+-	 * phase before doing the actual tuning.
+-	 */
+-	if (!mmc->doing_retune) {
+-		ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
+-
+-		if (ret)
+-			return ret;
+-	}
+-
+-	ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->tx_clk);
+-	if (ret)
+-		return ret;
  
--	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
-+	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
- 	if (err)
- 		return NULL;
+ 	return meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
+ }
+@@ -762,9 +746,8 @@ static void meson_mmc_set_ios(struct mmc
+ 		if (!IS_ERR(mmc->supply.vmmc))
+ 			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, ios->vdd);
+ 
+-		/* Reset phases */
++		/* Reset rx phase */
+ 		clk_set_phase(host->rx_clk, 0);
+-		clk_set_phase(host->tx_clk, 270);
+ 
+ 		break;
  
