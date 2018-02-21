@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ffHNpiVL9qCkifcJJM7VTXt800sw7Ph4gwc2MPBe4AUOjyrXsDKd2Ue7MxXDkNs2Z2IPE
-ARC-Seal: i=1; a=rsa-sha256; t=1519218330; cv=none;
+X-Google-Smtp-Source: AH8x226LT/gth/fqFThcmyk+Cw7J8yQbpgrijmdfMR3TeSdbChg1RWAq85XhwoPwYyJ2WFdxSwTN
+ARC-Seal: i=1; a=rsa-sha256; t=1519218327; cv=none;
         d=google.com; s=arc-20160816;
-        b=uJIF8mHvYLzamhSLgOotgTgt1fmphDZ98z2IFB8KRaUF+qaSLMoATYRH1Ij4NRjClz
-         agjZbKmBs8RW3zVgey7mIRT4+JymXjJMPSn27hoA+CvgMJd6kum8Kg42BVP+eNysOk//
-         ERRQwTA94z/nOByhdKJQRFLrzHIQt0UfYoRr7KN+yDQcQtys9uS0hfU+m8G/7m+OskVR
-         DTLHGk1Vw/cyz3ILe8Q0T1C3NlY2wBbyoqxefrPD/HbebxDUJ4A7lkU6zJdFZYk5gK3y
-         RKeW7m0uJNSGcp2lYwF3iOkTskf8lVVOzcjS+mVEWs8Eabsg3waGH10dGwhTbQWjprdf
-         IFxQ==
+        b=PPfoGV9t4Vk+IL6Fm6kGraI6H+QOQKmzwptGqla0VyKVyhsW3B49/zSwYmPOsv+bMt
+         nzcQZqPzUKlNLb5J9vgYi00ClnJ7L/Yja+BaPTpG/pvo5veOvU4XYnIzFMjgAKi1yhoM
+         HrkLv0sCJAiwGjXThY3U9hu3/Ax5KwAqegqZ06Ufap56vvyE8XoPPEFs42keIJ8keji2
+         fulumiYyKqjWCxXXFz/ObOnNg8K6oEpLVFzszrj2N+QkGJZETMcS7ouGGVRn43JkaLQD
+         HyBDnb5Yq1KwP2EEfMaI6e6uMRRORO17zg8mfsZX6hKFj1KQPIXJx+MveZDnXFgJMmZa
+         HBUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AMQjcLSz70PbfXpD7YIuqeu3XsCvL1jqDObnkBBuGG8=;
-        b=LTmITp1ivAec+6iXhWlrYJ9kNSO70/GMlpH5f4KcpGZIjPv2zKbNm+3f3WJjWcdlqh
-         gsfql1T4gDd8DjYvbmvteT+R9ju+w63ESvL2Fn96hWK17H8MWnKY9qvfULYSNSp5KuC0
-         v98EdVn2rewOGlrs+JrVRlTHmXSFJ4iPSqrvztEAeYQgaLbZo09nbRu+jQ9NG4JEmNka
-         57ylwTXdgPbjjh35+EOhvE1s0e6VO+6yFGsS2VLEdkXxXkNsXPkIFmKNAmbKt5gQJHvF
-         akWx0yzubk6RDmgEvjQ+KnpzYlGHENDBvBoMy+C6xoPWULJMdjuWcjKjYKsZGMIYS6CC
-         mrRw==
+        bh=AWNFayF8jj0hQQOzuBqbxGC7UEgpGqaZoV3NLL/oKLA=;
+        b=wnFoNVb9qsIxhAnU7zYACvFlLZzbLJkzTxn5uG5JSEQywcxHKWK1lmDPRWoVSeSTVW
+         l3xphPJBV0H92dLR+/iIdhsN+ZBLj3kKDWyiTBnrm28QpkyHT6pm9hh7iyXctXWgN7YN
+         2EsVpeXPFcLxE7PvX6YPFw1EcMag2OD3TAwhs+kk3zp1k9B2aJ/zhRPCydUJDs8v5GOO
+         WsL1zjVd+F3P/yMFcd2Tbb41AvBmatjNKNih+FLtRlY7cPCj7kWVQcPMbeuYFSO8Lmt1
+         /HWv4h17pUo3rEyolniJJBfzuvSgexVW/8HZW/mLh1c1hxDD5FwEmbE61SSmlP0lTGAm
+         NyRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan-Marek Glogowski <glogow@fbihome.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 146/167] ALSA: hda/realtek: PCI quirk for Fujitsu U7x7
-Date: Wed, 21 Feb 2018 13:49:17 +0100
-Message-Id: <20180221124532.747878165@linuxfoundation.org>
+	Niklas Cassel <niklas.cassel@axis.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 167/167] ovl: hash directory inodes for fsnotify
+Date: Wed, 21 Feb 2018 13:49:38 +0100
+Message-Id: <20180221124533.986181369@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014654795810271?=
-X-GMAIL-MSGID: =?utf-8?q?1593015880162674824?=
+X-GMAIL-THRID: =?utf-8?q?1593015876541198850?=
+X-GMAIL-MSGID: =?utf-8?q?1593015876541198850?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,81 +50,139 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan-Marek Glogowski <glogow@fbihome.de>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit fdcc968a3b290407bcba9d4c90e2fba6d8d928f1 upstream.
+commit 31747eda41ef3c30c09c5c096b380bf54013746a upstream.
 
-These laptops have a combined jack to attach headsets, the U727 on
-the left, the U757 on the right, but a headsets microphone doesn't
-work. Using hdajacksensetest I found that pin 0x19 changed the
-present state when plugging the headset, in addition to 0x21, but
-didn't have the correct configuration (shown as "Not connected").
+fsnotify pins a watched directory inode in cache, but if directory dentry
+is released, new lookup will allocate a new dentry and a new inode.
+Directory events will be notified on the new inode, while fsnotify listener
+is watching the old pinned inode.
 
-So this sets the configuration to the same values as the headphone
-pin 0x21 except for the device type microphone, which makes it
-work correctly. With the patch the configured pins for U727 are
+Hash all directory inodes to reuse the pinned inode on lookup. Pure upper
+dirs are hashes by real upper inode, merge and lower dirs are hashed by
+real lower inode.
 
-Pin 0x12 (Internal Mic, Mobile-In): present = No
-Pin 0x14 (Internal Speaker): present = No
-Pin 0x19 (Black Mic, Left side): present = No
-Pin 0x1d (Internal Aux): present = No
-Pin 0x21 (Black Headphone, Left side): present = No
+The reference to lower inode was being held by the lower dentry object
+in the overlay dentry (oe->lowerstack[0]). Releasing the overlay dentry
+may drop lower inode refcount to zero. Add a refcount on behalf of the
+overlay inode to prevent that.
 
-Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+As a by-product, hashing directory inodes also detects multiple
+redirected dirs to the same lower dir and uncovered redirected dir
+target on and returns -ESTALE on lookup.
+
+The reported issue dates back to initial version of overlayfs, but this
+patch depends on ovl_inode code that was introduced in kernel v4.13.
+
+Cc: <stable@vger.kernel.org> #v4.13
+Reported-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Tested-by: Niklas Cassel <niklas.cassel@axis.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ fs/overlayfs/inode.c |   37 +++++++++++++++++++++++++++----------
+ fs/overlayfs/super.c |    1 +
+ fs/overlayfs/util.c  |    4 ++--
+ 3 files changed, 30 insertions(+), 12 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3355,6 +3355,19 @@ static void alc269_fixup_pincfg_no_hp_to
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
- }
- 
-+static void alc269_fixup_pincfg_U7x7_headset_mic(struct hda_codec *codec,
-+						 const struct hda_fixup *fix,
-+						 int action)
-+{
-+	unsigned int cfg_headphone = snd_hda_codec_get_pincfg(codec, 0x21);
-+	unsigned int cfg_headset_mic = snd_hda_codec_get_pincfg(codec, 0x19);
-+
-+	if (cfg_headphone && cfg_headset_mic == 0x411111f0)
-+		snd_hda_codec_set_pincfg(codec, 0x19,
-+			(cfg_headphone & ~AC_DEFCFG_DEVICE) |
-+			(AC_JACK_MIC_IN << AC_DEFCFG_DEVICE_SHIFT));
-+}
-+
- static void alc269_fixup_hweq(struct hda_codec *codec,
- 			       const struct hda_fixup *fix, int action)
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -579,6 +579,16 @@ static int ovl_inode_set(struct inode *i
+ static bool ovl_verify_inode(struct inode *inode, struct dentry *lowerdentry,
+ 			     struct dentry *upperdentry)
  {
-@@ -5228,6 +5241,7 @@ enum {
- 	ALC269_FIXUP_LIFEBOOK_EXTMIC,
- 	ALC269_FIXUP_LIFEBOOK_HP_PIN,
- 	ALC269_FIXUP_LIFEBOOK_NO_HP_TO_LINEOUT,
-+	ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC,
- 	ALC269_FIXUP_AMIC,
- 	ALC269_FIXUP_DMIC,
- 	ALC269VB_FIXUP_AMIC,
-@@ -5434,6 +5448,10 @@ static const struct hda_fixup alc269_fix
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc269_fixup_pincfg_no_hp_to_lineout,
- 	},
-+	[ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc269_fixup_pincfg_U7x7_headset_mic,
-+	},
- 	[ALC269_FIXUP_AMIC] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
-@@ -6308,6 +6326,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x10cf, 0x159f, "Lifebook E780", ALC269_FIXUP_LIFEBOOK_NO_HP_TO_LINEOUT),
- 	SND_PCI_QUIRK(0x10cf, 0x15dc, "Lifebook T731", ALC269_FIXUP_LIFEBOOK_HP_PIN),
- 	SND_PCI_QUIRK(0x10cf, 0x1757, "Lifebook E752", ALC269_FIXUP_LIFEBOOK_HP_PIN),
-+	SND_PCI_QUIRK(0x10cf, 0x1629, "Lifebook U7x7", ALC255_FIXUP_LIFEBOOK_U7x7_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
- 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
- 	SND_PCI_QUIRK(0x144d, 0xc109, "Samsung Ativ book 9 (NP900X3G)", ALC269_FIXUP_INV_DMIC),
++	if (S_ISDIR(inode->i_mode)) {
++		/* Real lower dir moved to upper layer under us? */
++		if (!lowerdentry && ovl_inode_lower(inode))
++			return false;
++
++		/* Lookup of an uncovered redirect origin? */
++		if (!upperdentry && ovl_inode_upper(inode))
++			return false;
++	}
++
+ 	/*
+ 	 * Allow non-NULL lower inode in ovl_inode even if lowerdentry is NULL.
+ 	 * This happens when finding a copied up overlay inode for a renamed
+@@ -606,6 +616,8 @@ struct inode *ovl_get_inode(struct dentr
+ 	struct inode *inode;
+ 	/* Already indexed or could be indexed on copy up? */
+ 	bool indexed = (index || (ovl_indexdir(dentry->d_sb) && !upperdentry));
++	struct dentry *origin = indexed ? lowerdentry : NULL;
++	bool is_dir;
+ 
+ 	if (WARN_ON(upperdentry && indexed && !lowerdentry))
+ 		return ERR_PTR(-EIO);
+@@ -614,15 +626,19 @@ struct inode *ovl_get_inode(struct dentr
+ 		realinode = d_inode(lowerdentry);
+ 
+ 	/*
+-	 * Copy up origin (lower) may exist for non-indexed upper, but we must
+-	 * not use lower as hash key in that case.
+-	 * Hash inodes that are or could be indexed by origin inode and
+-	 * non-indexed upper inodes that could be hard linked by upper inode.
++	 * Copy up origin (lower) may exist for non-indexed non-dir upper, but
++	 * we must not use lower as hash key in that case.
++	 * Hash non-dir that is or could be indexed by origin inode.
++	 * Hash dir that is or could be merged by origin inode.
++	 * Hash pure upper and non-indexed non-dir by upper inode.
+ 	 */
+-	if (!S_ISDIR(realinode->i_mode) && (upperdentry || indexed)) {
+-		struct inode *key = d_inode(indexed ? lowerdentry :
+-						      upperdentry);
+-		unsigned int nlink;
++	is_dir = S_ISDIR(realinode->i_mode);
++	if (is_dir)
++		origin = lowerdentry;
++
++	if (upperdentry || origin) {
++		struct inode *key = d_inode(origin ?: upperdentry);
++		unsigned int nlink = is_dir ? 1 : realinode->i_nlink;
+ 
+ 		inode = iget5_locked(dentry->d_sb, (unsigned long) key,
+ 				     ovl_inode_test, ovl_inode_set, key);
+@@ -643,8 +659,9 @@ struct inode *ovl_get_inode(struct dentr
+ 			goto out;
+ 		}
+ 
+-		nlink = ovl_get_nlink(lowerdentry, upperdentry,
+-				      realinode->i_nlink);
++		/* Recalculate nlink for non-dir due to indexing */
++		if (!is_dir)
++			nlink = ovl_get_nlink(lowerdentry, upperdentry, nlink);
+ 		set_nlink(inode, nlink);
+ 	} else {
+ 		inode = new_inode(dentry->d_sb);
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -200,6 +200,7 @@ static void ovl_destroy_inode(struct ino
+ 	struct ovl_inode *oi = OVL_I(inode);
+ 
+ 	dput(oi->__upperdentry);
++	iput(oi->lower);
+ 	kfree(oi->redirect);
+ 	ovl_dir_cache_free(inode);
+ 	mutex_destroy(&oi->lock);
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -253,7 +253,7 @@ void ovl_inode_init(struct inode *inode,
+ 	if (upperdentry)
+ 		OVL_I(inode)->__upperdentry = upperdentry;
+ 	if (lowerdentry)
+-		OVL_I(inode)->lower = d_inode(lowerdentry);
++		OVL_I(inode)->lower = igrab(d_inode(lowerdentry));
+ 
+ 	ovl_copyattr(d_inode(upperdentry ?: lowerdentry), inode);
+ }
+@@ -269,7 +269,7 @@ void ovl_inode_update(struct inode *inod
+ 	 */
+ 	smp_wmb();
+ 	OVL_I(inode)->__upperdentry = upperdentry;
+-	if (!S_ISDIR(upperinode->i_mode) && inode_unhashed(inode)) {
++	if (inode_unhashed(inode)) {
+ 		inode->i_private = upperinode;
+ 		__insert_inode_hash(inode, (unsigned long) upperinode);
+ 	}
