@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227NTgCXhMyjPmzllOHOePAdzYrZxBhqD07BFzWBSAJxEQdV+DkQBV1m3TK1lB+JJeDEAzQ4
-ARC-Seal: i=1; a=rsa-sha256; t=1519218702; cv=none;
+X-Google-Smtp-Source: AH8x226/oaTazT8Mz1acJKpMXQN8y9SrugW1H85hIjpXVTkopG3huh6EuHke5L9SheWO3gur3F2x
+ARC-Seal: i=1; a=rsa-sha256; t=1519218700; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jvw5O/I9dz5rD0a+7SB9P1iVOhW4EgbOuoaxfsDm6R6fW7DPPkGevvfLCxd36RPrGR
-         MfDWZMkBFJWdKqC47cZrQrWecb2M5uU+Up56Dg28w6s3NwxPvMfN4hHLeWV7IQq4Nw2N
-         jx8zLehoc0AD79ymh2guW9vmpTgshDaQbFfeKtbjE3EqOkOt5S7x/0eKKubcm+4j2APp
-         xFWwWEqJVxwIlOoenL0yhnFCnmIrcsgHtKqy5cSFpmDmEgCfopq7r4QBP0BCe4f85kqp
-         dXjnwtZ5SAXnuS6En1yEvjU6RkVsHu1TPLSFejB8eOjewrPEGijzlA486pRSDhY6BQ3G
-         TgAg==
+        b=vrO06T7sNuwBDdrZlGfQ+ReGfm3hpR+n7oV4/eatS7886cPQyvZNw0RyL8oPf0pZSY
+         0m5FwlgQ4SNk6zBaK/zXpGi9i+6dcg9pG1aeKkSSjZ+SxcJg96S3JbGdKS+7trCDezvH
+         UtvKihZWOKYluLLH4+HXWXOZ8qeOZ5ziZOZ813e9K2bV6vrrKOCWfN/to3ENsZMKJdtZ
+         jVKrAa2Bo6ebdGCXxj9Va+cnDS+dQq6mkhg/CPHdp6XBD8oXGrGslwbNEE4nydMboW9E
+         R6AUHyY2sdwHJB6bfT1qtSz2poyky569SoRP6k5VkTKYnrnN7JoJIBxoQsqUA2ATW1HS
+         QpSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Tjf2ZxS0mULtNKE7gLRXOFf5GWjx7zDqeVAzKPvQbO0=;
-        b=gD3NV7g0BgIQCPVcdimwANTAvjcX53knedQb2VuWgREphli3EZdTLG1APLhp8PB5Kj
-         XOwtF+l1WJcSFxEkOX0/Q+L5CnufkTlpeOr1YYxAHhBQE9u+5w2/SLcUnvzuwNJlrlQF
-         f/2DhzFtWgW8VpNtCKd7Mtqf8j9f7c3L2oBB5jGrdLHr/4khSKQaV5rlNrA50BPjl9JI
-         M68a3Ms62UAJItnBxx06NcqvkB7R5krbA7Y7vLvAhhfYz3sGho4nHM2Tvs9hEyW+AmVX
-         vVqNnPejU/K3+TQ7DWt3IkTTXEC5ED13u361GuUwZvozDfgoNGE5ecPYU2Z9/1J2gkwO
-         vFIw==
+        bh=1RzssPTA5Tcsfw+vpzbz4NENjigZ4vyYAWDAqxgU5b0=;
+        b=QdBLoA6hDuvrxzSxKwnUa8nXiwIR7suPzeWH1ifaSnzRNSYUuvnhxeuOLWxrY1IGMY
+         vmV89EO8TNgYk4H2BgU+mZWAEz0yYykHfuM4HG0oRIpLIbH4tkiHPC9AQkb2r7+8S5aw
+         lHfGCqCaDR0mXfwmtljYobialAwT+Ujc6WA/+sgW30+jYXJduUyRlfYKUy2AtQBFTajl
+         1q9brkd3Ta3Z+pbl3VHEOVA+AU3fxY+OooPzT+t/iIYSinQSWYduCIG2DUTI+hANnqZx
+         CuThOR8beagbwGKVibjUMuCDjR2/tQ+h955clPkjWu8A9ikAVsHHfPwhLVUqEUH1x6dP
+         SVXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stewart Smith <stewart@linux.vnet.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.15 099/163] rtc-opal: Fix handling of firmware error codes, prevent busy loops
-Date: Wed, 21 Feb 2018 13:48:48 +0100
-Message-Id: <20180221124535.766623327@linuxfoundation.org>
+	Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	yasu.isimatu@gmail.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 098/163] x86/smpboot: Fix uncore_pci_remove() indexing bug when hot-removing a physical CPU
+Date: Wed, 21 Feb 2018 13:48:47 +0100
+Message-Id: <20180221124535.713836865@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014681201227169?=
-X-GMAIL-MSGID: =?utf-8?q?1593016270077660133?=
+X-GMAIL-THRID: =?utf-8?q?1593016267461386549?=
+X-GMAIL-MSGID: =?utf-8?q?1593016267461386549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,80 +53,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-commit 5b8b58063029f02da573120ef4dc9079822e3cda upstream.
+commit 295cc7eb314eb3321fb6d67ca6f7305f5c50d10f upstream.
 
-According to the OPAL docs:
-  skiboot-5.2.5/doc/opal-api/opal-rtc-read-3.txt
-  skiboot-5.2.5/doc/opal-api/opal-rtc-write-4.txt
+When a physical CPU is hot-removed, the following warning messages
+are shown while the uncore device is removed in uncore_pci_remove():
 
-OPAL_HARDWARE may be returned from OPAL_RTC_READ or OPAL_RTC_WRITE and
-this indicates either a transient or permanent error.
+  WARNING: CPU: 120 PID: 5 at arch/x86/events/intel/uncore.c:988
+  uncore_pci_remove+0xf1/0x110
+  ...
+  CPU: 120 PID: 5 Comm: kworker/u1024:0 Not tainted 4.15.0-rc8 #1
+  Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+  ...
+  Call Trace:
+  pci_device_remove+0x36/0xb0
+  device_release_driver_internal+0x145/0x210
+  pci_stop_bus_device+0x76/0xa0
+  pci_stop_root_bus+0x44/0x60
+  acpi_pci_root_remove+0x1f/0x80
+  acpi_bus_trim+0x54/0x90
+  acpi_bus_trim+0x2e/0x90
+  acpi_device_hotplug+0x2bc/0x4b0
+  acpi_hotplug_work_fn+0x1a/0x30
+  process_one_work+0x141/0x340
+  worker_thread+0x47/0x3e0
+  kthread+0xf5/0x130
 
-Prior to this patch, Linux was not dealing with OPAL_HARDWARE being a
-permanent error particularly well, in that you could end up in a busy
-loop.
+When uncore_pci_remove() runs, it tries to get the package ID to
+clear the value of uncore_extra_pci_dev[].dev[] by using
+topology_phys_to_logical_pkg(). The warning messesages are
+shown because topology_phys_to_logical_pkg() returns -1.
 
-This was not too hard to trigger on an AMI BMC based OpenPOWER machine
-doing a continuous "ipmitool mc reset cold" to the BMC, the result of
-that being that we'd get stuck in an infinite loop in
-opal_get_rtc_time().
+  arch/x86/events/intel/uncore.c:
+  static void uncore_pci_remove(struct pci_dev *pdev)
+  {
+  ...
+          phys_id = uncore_pcibus_to_physid(pdev->bus);
+  ...
+                  pkg = topology_phys_to_logical_pkg(phys_id); // returns -1
+                  for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
+                          if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
+                                  uncore_extra_pci_dev[pkg].dev[i] = NULL;
+                                  break;
+                          }
+                  }
+                  WARN_ON_ONCE(i >= UNCORE_EXTRA_PCI_DEV_MAX); // <=========== HERE!!
 
-We now retry a few times before returning the error higher up the
-stack.
+topology_phys_to_logical_pkg() tries to find
+cpuinfo_x86->phys_proc_id that matches the phys_pkg argument.
 
-Fixes: 16b1d26e77b1 ("rtc/tpo: Driver to support rtc and wakeup on PowerNV platform")
-Cc: stable@vger.kernel.org # v3.19+
-Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+  arch/x86/kernel/smpboot.c:
+  int topology_phys_to_logical_pkg(unsigned int phys_pkg)
+  {
+          int cpu;
+
+          for_each_possible_cpu(cpu) {
+                  struct cpuinfo_x86 *c = &cpu_data(cpu);
+
+                  if (c->initialized && c->phys_proc_id == phys_pkg)
+                          return c->logical_proc_id;
+          }
+          return -1;
+  }
+
+However, the phys_proc_id was already set to 0 by remove_siblinginfo()
+when the CPU was offlined.
+
+So, topology_phys_to_logical_pkg() cannot find the correct
+logical_proc_id and always returns -1.
+
+As the result, uncore_pci_remove() calls WARN_ON_ONCE() and the warning
+messages are shown.
+
+What is worse is that the bogus 'pkg' index results in two bugs:
+
+ - We dereference uncore_extra_pci_dev[] with a negative index
+ - We fail to clean up a stale pointer in uncore_extra_pci_dev[][]
+
+To fix these bugs, remove the clearing of ->phys_proc_id from remove_siblinginfo().
+
+This should not cause any problems, because ->phys_proc_id is not
+used after it is hot-removed and it is re-set while hot-adding.
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: yasu.isimatu@gmail.com
+Cc: <stable@vger.kernel.org>
+Fixes: 30bb9811856f ("x86/topology: Avoid wasting 128k for package id array")
+Link: http://lkml.kernel.org/r/ed738d54-0f01-b38b-b794-c31dc118c207@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/rtc-opal.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/kernel/smpboot.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/rtc/rtc-opal.c
-+++ b/drivers/rtc/rtc-opal.c
-@@ -58,6 +58,7 @@ static void tm_to_opal(struct rtc_time *
- static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d;
- 	u64 h_m_s_ms;
- 	__be32 __y_m_d;
-@@ -67,8 +68,11 @@ static int opal_get_rtc_time(struct devi
- 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
- 	}
- 
- 	if (rc != OPAL_SUCCESS)
-@@ -84,6 +88,7 @@ static int opal_get_rtc_time(struct devi
- static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
- {
- 	long rc = OPAL_BUSY;
-+	int retries = 10;
- 	u32 y_m_d = 0;
- 	u64 h_m_s_ms = 0;
- 
-@@ -92,8 +97,11 @@ static int opal_set_rtc_time(struct devi
- 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
--		else
-+		else if (retries-- && (rc == OPAL_HARDWARE
-+				       || rc == OPAL_INTERNAL_ERROR))
- 			msleep(10);
-+		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
-+			break;
- 	}
- 
- 	return rc == OPAL_SUCCESS ? 0 : -EIO;
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1431,7 +1431,6 @@ static void remove_siblinginfo(int cpu)
+ 	cpumask_clear(cpu_llc_shared_mask(cpu));
+ 	cpumask_clear(topology_sibling_cpumask(cpu));
+ 	cpumask_clear(topology_core_cpumask(cpu));
+-	c->phys_proc_id = 0;
+ 	c->cpu_core_id = 0;
+ 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+ 	recompute_smt_state();
