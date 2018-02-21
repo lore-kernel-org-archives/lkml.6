@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2243hrd8K+bvM+y6VcEbmT2XVzhQ0qZgGqJQAkgMnnZICA8U4LGgWuWz0LbbbZewtNaJi5BN
-ARC-Seal: i=1; a=rsa-sha256; t=1519218163; cv=none;
+X-Google-Smtp-Source: AH8x227ZmsT+tZYcLGejPJkMuLQa9Dszc7qv6YZbh8+Me6JjeCtk5rzt0bO/WiUxeNWyAsYN/DCZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519218160; cv=none;
         d=google.com; s=arc-20160816;
-        b=NgS4S+mQiKv7iWXMeY5Ups+T28RFwBFPiLbacbDdIczdKcbuXHyfNmq1CbcvuVnizJ
-         pQhMrxS6mV+lsY99y/sQQdLx0kdSKsHr114Sab2ZUYCNsaJJehREa7WjmZv/ljjcij9R
-         eI3tbukJcOwgC+5oDDVXRjipS4Orio8fvaYULZJlWGwZr6KatJaweAjEkpo8PEhOB5Cb
-         crkwXNVeWipsCfWLOveX3t78qEVOwPzHdQ9uRb0GuKbtTo7Miu8UU1PRJSN3WEIs6Co7
-         /gYscR0Nvi4j0vnCPsuTAxzYWzP+TgW5zj+CiG3MxA9jtqs1Y5K8jIbGXwA7uW4PTSID
-         d24g==
+        b=bzdD44lXnFw1bkeeLpca7HeFhBL3QDPhF6Kf6Uqj0Mim81bVXCB+QkwyteCRvHIyhI
+         nyNbNIjpci/DrDSTi8Ncc2NGOeBI0rozfz6Oj3jDl7MJ/+fgE3ak/y7EPckGnKvzX6w0
+         DWu0PqF0pMRyJdinzB+MSn+Ux2tVurnPQy1adnXQXFi/M8cD1XEc13y9OwCZHbtoAacf
+         iIeVgJ6rdFyw9jJjaquxS7IS/uX2HtCjmdaig/T5lJ+r1IrxD6tZOsFNRN+2hYJa6UOF
+         8YVwICioQti/FYgOtqMObvskr5cZ+inYH9a0uwmiVFFPMORudsdXc4zwbFhi/BViB09n
+         4luQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YAoWYNgsYbCYEK8TT+5YRQ2+CqRjAToWWUokFZ5povI=;
-        b=BZcR8lOdnaOu939BddV0i9f+ajiuadoo1F2+CXLfUJkoloi4ZipJQKElZvike7uNjm
-         W+YVMlL1Y/O02+Su/s5ozsxEI9j7o6trYhWbSjlVPqnMk7gRpNVkw0m2XNCxwx/RJGE3
-         FX3XgpFeK+uf9Qzge7jkVSonyKmu6NjfGUnavTrLTbTlat8hMiqwBrGGqSV0McCLqdy2
-         CXuqoXi3IY81By7BSUAdMSpOoEwqz+c/DAGaD6Goyp1+6twpfjiQ0S3XdaHsd2no/qEU
-         FiCJdQkg2KLL6/8d7YFE20z3eY+JImqDkr6vDGwdi/lkOvB6bTsfsEmInNfToBBul1by
-         iVEA==
+        bh=1l7Op4mP7uSFi1e45VVkBfw/ICHXLackO58zSk13O08=;
+        b=PcfK6NPipclWVErPZZHJURdwL2dsiTcDzQuSRZiWcMyXhOo19HC5VodIvgK/m8FKmk
+         KGOyLIQFBAukYQ4pNjjFtbjXqAl4kHWEU/sAC5Btd5Nj9iu2zUXRgdngNt0TJVPL5I1f
+         BmiiYj0LHuGHcDaf3TTB65AZWcPlzBnK2lCoUN+oAPtGIG4PhRZP99YXSlUjg0px/sXE
+         K3az+bjKpwkmF/4r1d6NfnEZbGdrU3QFfBjIxR2eJEZjvY5LY4kJQGsVBWasnidnt2Qm
+         Om6o//rRjsNQ4231VRsPy5RT5a/JAhH/tQ8WseXtxGgLUBumyZdRpJBrurQDFCp2pdNZ
+         7quA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
 	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Andy Lutomirski <luto@kernel.org>,
 	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
 	Brian Gerst <brgerst@gmail.com>,
 	Denys Vlasenko <dvlasenk@redhat.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	kbuild test robot <fengguang.wu@intel.com>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 075/167] x86/debug: Use UD2 for WARN()
-Date: Wed, 21 Feb 2018 13:48:06 +0100
-Message-Id: <20180221124528.580750096@linuxfoundation.org>
+Subject: [PATCH 4.14 074/167] x86/debug, objtool: Annotate WARN()-related UD2 as reachable
+Date: Wed, 21 Feb 2018 13:48:05 +0100
+Message-Id: <20180221124528.538238500@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 References: <20180221124524.639039577@linuxfoundation.org>
@@ -49,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015704879461165?=
-X-GMAIL-MSGID: =?utf-8?q?1593015704879461165?=
+X-GMAIL-THRID: =?utf-8?q?1593015701695663855?=
+X-GMAIL-MSGID: =?utf-8?q?1593015701695663855?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,87 +59,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 3b3a371cc9bc980429baabe0a8e5f307f3d1f463 upstream.
+commit 2b5db66862b95532cb6cca8165ae6eb73633cf85 upstream.
 
-Since the Intel SDM added an ModR/M byte to UD0 and binutils followed
-that specification, we now cannot disassemble our kernel anymore.
+By default, objtool assumes that a UD2 is a dead end.  This is mainly
+because GCC 7+ sometimes inserts a UD2 when it detects a divide-by-zero
+condition.
 
-This now means Intel and AMD disagree on the encoding of UD0. And instead
-of playing games with additional bytes that are valid ModR/M and single
-byte instructions (0xd6 for instance), simply use UD2 for both WARN() and
-BUG().
+Now that WARN() is moving back to UD2, annotate the code after it as
+reachable so objtool can follow the code flow.
 
-Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180208194406.GD25181@hirez.programming.kicks-ass.net
+Cc: kbuild test robot <fengguang.wu@intel.com>
+Link: http://lkml.kernel.org/r/0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/bug.h |   15 ++++++---------
- arch/x86/kernel/traps.c    |    2 +-
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/bug.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/arch/x86/include/asm/bug.h
 +++ b/arch/x86/include/asm/bug.h
-@@ -5,23 +5,20 @@
- #include <linux/stringify.h>
- 
- /*
-- * Since some emulators terminate on UD2, we cannot use it for WARN.
-- * Since various instruction decoders disagree on the length of UD1,
-- * we cannot use it either. So use UD0 for WARN.
-+ * Despite that some emulators terminate on UD2, we use it for WARN().
-  *
-- * (binutils knows about "ud1" but {en,de}codes it as 2 bytes, whereas
-- *  our kernel decoder thinks it takes a ModRM byte, which seems consistent
-- *  with various things like the Intel SDM instruction encoding rules)
-+ * Since various instruction decoders/specs disagree on the encoding of
-+ * UD0/UD1.
-  */
- 
--#define ASM_UD0		".byte 0x0f, 0xff"
-+#define ASM_UD0		".byte 0x0f, 0xff" /* + ModRM (for Intel) */
- #define ASM_UD1		".byte 0x0f, 0xb9" /* + ModRM */
- #define ASM_UD2		".byte 0x0f, 0x0b"
- 
- #define INSN_UD0	0xff0f
- #define INSN_UD2	0x0b0f
- 
--#define LEN_UD0		2
-+#define LEN_UD2		2
- 
- #ifdef CONFIG_GENERIC_BUG
- 
-@@ -79,7 +76,7 @@ do {								\
- 
- #define __WARN_FLAGS(flags)					\
- do {								\
--	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
-+	_BUG_FLAGS(ASM_UD2, BUGFLAG_WARNING|(flags));		\
- 	annotate_reachable();					\
+@@ -77,7 +77,11 @@ do {								\
+ 	unreachable();						\
  } while (0)
  
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -181,7 +181,7 @@ int fixup_bug(struct pt_regs *regs, int
- 		break;
+-#define __WARN_FLAGS(flags)	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags))
++#define __WARN_FLAGS(flags)					\
++do {								\
++	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
++	annotate_reachable();					\
++} while (0)
  
- 	case BUG_TRAP_TYPE_WARN:
--		regs->ip += LEN_UD0;
-+		regs->ip += LEN_UD2;
- 		return 1;
- 	}
+ #include <asm-generic/bug.h>
  
