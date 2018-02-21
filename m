@@ -1,31 +1,31 @@
 Return-Path: <rrajk@nvidia.com>
-X-Google-Smtp-Source: AH8x225lROdWH7T5I9DXJzNTg7LFD6arslzK3CjD1jIM/ETQ45V0pTwsTyOVh1wujw1oicrG+Yve
-ARC-Seal: i=1; a=rsa-sha256; t=1519196423; cv=none;
+X-Google-Smtp-Source: AG47ELu/YY2sf4rKXd7SrIhxRC7O6rEJWHwiloDWJb8p+oFKmbMe2gcfHuSgf3g+bskUhzquTUlQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519196401; cv=none;
         d=google.com; s=arc-20160816;
-        b=J352J9mYQWk+SYmggft0Z9ehryWNaA0/GKsD8Hz25UG+JRxRxYI0ohqOxfDyZWl2/E
-         aqXjQQcQ4SbYLCMBViEKAmployl7dsN50aZBKwOvaudZYdfzb3NNSQ2Ss/xIe2TKIa4I
-         NNaqLpfpSY8i8IIP8ocG0LclTtBEn6IXpLu5GwQmqoYo8G+IMU8Z8wpuaYOI+8S2eI4S
-         igHJX0eCCDYSRfeH72N6w0PWNput1WxQ1OD9GS4u2haiO23l39JNpeSEkWY9HK63fiEL
-         X6lUU9yfe1KiIjHZ9nZeGjH++8Uk0a6oKgA1SUh/CDY18KZczFNjgCudOp2Yfvr91pQ8
-         ZGsQ==
+        b=HnCswe9iUFZonCEKR5SMHIg98IibFwAY2KTmbEe0JpRo+asbY6pFy3RYAqkCvBsz9V
+         t1I3rly+1bQBM/lFPizJB2HqMK5OclZwaMN5zfohBVq1AN4hF7x36ltgjxZDRYtE8ut9
+         co6BbFCKl/Gnxz4gYXzx+PCOAn3PowgWAeSqX4OCRqd8qgHbT3PsFu6P2+aBrUZT0Bvd
+         cLhdwg8lPkHykhii34NYJKG1uEVWzr2leLwImHbwm1Z6ZFgwlflUPDpQCmiOqFVIWoUj
+         ygjOx/+8JPsH7VJqSKBkSSQmeaTQsOKiwP9aQnSuPvh+bi+BbHqOm/y4QVLiIU6fABb3
+         XqQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=PyK3N3I3jFVv3LwVXAan44NRFfJtHC66jZZkcraMgm4=;
-        b=N3sMSL8xLYT5NGSKXgRBvfINpqXObUbK9qey53//HFCHzMtND99F6wGPVAa5iCtX3Z
-         vFr9dUCuXHmfoJ5hJbBUgr7aTBUvphFoSin4KfhdccUSAN822rkw9RCea2/yQThmORHu
-         A+TCJh5o//Y1S0Vhl81I576UhOptTY1Gu88sFjn2f9MCXSnvD2l1zHKfYmBLt3DLUrQQ
-         28XlC0U2nu4X4pRzBxF37C3K13XvVDMJlsH11SM5aMtjzLJGlXYbdzB+JcY/SFpHCL68
-         zmMbixS9jjp1GRQJrXTRtrVjqi1G+J7hYBsDrZSzAA0V3UQ25C164yh+mmYjryrU1Yam
-         448w==
+        bh=Zkzsd45GOQK4qdErtazaxQwyAwbXnyZ49lGFMObF+TE=;
+        b=dWf7CMvYoPFxvrtvsBF6dzhxysB4++EhucW53f8GWFwOlNBhkHvzGGJrBxAsxIqTj/
+         pMBf2EVG8Rg6n+oJqnGpoaR8G4gnpmX3CgKlD3ElS1zpKj4X3YxVZ2e/+vyYiIyYZpdQ
+         ADTyrkpleO433m7rAJ2FLt7bLob2qHAzycJAPkeXGAnI/y3Wiljvan+htsb7F9ZtVqiK
+         S6GAEGBtADIc3KscQoAwnrGX2R+ACglzTlDotOZtQEpThtnWKS65CGAz7I8bB12cMiaX
+         m/imiFHNeyjczJFDdEdaGhWOC6ZtMb5fXvISNA9ZG0eZdtvYwCg2k3b+DbtOQHJc15eq
+         hMDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 X-PGP-Universal: processed;
-	by hqpgpgate101.nvidia.com on Tue, 20 Feb 2018 23:00:22 -0800
+	by hqpgpgate101.nvidia.com on Tue, 20 Feb 2018 23:00:00 -0800
 From: Rajkumar Rampelli <rrajk@nvidia.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
 	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
@@ -41,62 +41,60 @@ CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
 	<rrajk@nvidia.com>
-Subject: [PATCH 06/10] arm64: tegra: Add Tachometer Controller on Tegra186
-Date: Wed, 21 Feb 2018 12:28:55 +0530
-Message-ID: <1519196339-9377-7-git-send-email-rrajk@nvidia.com>
+Subject: [PATCH 04/10] hwmon: generic-pwm-tachometer: Add DT binding details
+Date: Wed, 21 Feb 2018 12:28:53 +0530
+Message-ID: <1519196339-9377-5-git-send-email-rrajk@nvidia.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
 References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592992909578156623?=
-X-GMAIL-MSGID: =?utf-8?q?1592992909578156623?=
+X-GMAIL-THRID: =?utf-8?q?1592992886059931447?=
+X-GMAIL-MSGID: =?utf-8?q?1592992886059931447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The NVIDIA Tegra186 SoC has a Tachometer Controller that analyzes the
-PWM signal of a Fan and reports the period value through pwm interface.
+Add DT binding details for the PWM based generic tachometer
+driver which gets the period of the PWM tach-output from Fan
+via PWM IP having capability of capturing the signal.
 
 Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  5 +++++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 11 +++++++++++
- 2 files changed, 16 insertions(+)
+ .../bindings/hwmon/generic-pwm-tachometer.txt      | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/generic-pwm-tachometer.txt
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index bd5305a..13c3e59 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -172,4 +172,9 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/hwmon/generic-pwm-tachometer.txt b/Documentation/devicetree/bindings/hwmon/generic-pwm-tachometer.txt
+new file mode 100644
+index 0000000..3541fe5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/generic-pwm-tachometer.txt
+@@ -0,0 +1,25 @@
++Device tree bindings for fan tach output connected to PWM controller with
++PWM capture capability.
 +
-+	tachometer@39c0000 {
-+		nvidia,pulse-per-rev = <2>;
-+		nvidia,capture-window-len = <2>;
-+	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b762227..8f2d598 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1031,4 +1031,15 @@
- 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 		interrupt-parent = <&gic>;
- 	};
++Required properties:
++- compatible : Should be "generic-pwm-tachometer"
++- pwms       : PWM handle. Please refer pwm.txt DT binding for more details.
 +
++Example:
 +	tegra_tachometer: tachometer@39c0000 {
 +		compatible = "nvidia,tegra186-pwm-tachometer";
 +		reg = <0x0 0x039c0000 0x0 0x10>;
-+		#pwm-cells = <2>;
-+		clocks = <&bpmp TEGRA186_CLK_TACH>;
++		clocks = <&bpmp_clks TEGRA194_CLK_TACH>;
 +		clock-names = "tachometer";
-+		resets = <&bpmp TEGRA186_RESET_TACH>;
++		resets = <&bpmp_resets TEGRA194_RESET_TACH>;
 +		reset-names = "tachometer";
-+		status = "disabled";
++		nvidia,pulse-per-rev = <2>;
++		nvidia,sampling-window = <2>;
++		status = "okay";
 +	};
- };
++
++	generic_pwm_tachometer {
++		compatible = "generic-pwm-tachometer";
++		pwms = <&tegra_tachometer 0 1000000>;
++		status = "okay";
++	};
 -- 
 2.1.4
