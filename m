@@ -1,198 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938019AbeBUOun (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 09:50:43 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54852 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932826AbeBUOum (ORCPT
+        id S938005AbeBUOue (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 09:50:34 -0500
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:46692 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932826AbeBUOuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:50:42 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Lee Jones <lee.jones@linaro.org>, Benson Leung <bleung@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
-        groeck@chromium.org, gwendal@chromium.org
-Subject: [PATCH 3/3] platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake lid angle
-Date: Wed, 21 Feb 2018 15:50:33 +0100
-Message-Id: <20180221145033.13781-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
+        Wed, 21 Feb 2018 09:50:32 -0500
+X-Google-Smtp-Source: AH8x224KC/ouafXcw50ItpLaUT2PG4BNH94k3gSLwQZdf0Nryr/Z2zKiMs6DWINJbOsjsuF7KjsDXVtlX2eWg/tByPE=
+MIME-Version: 1.0
+In-Reply-To: <20180220174446.7784-3-k.marinushkin@gmail.com>
+References: <20180220174446.7784-1-k.marinushkin@gmail.com> <20180220174446.7784-3-k.marinushkin@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Feb 2018 16:50:30 +0200
+Message-ID: <CAHp75Vc451W4GvvVCv-70EO6Cgn99Y+HV9xb530nJ72aT79rLQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 2/2] ASoC: topology: Add missing clock gating
+ parameter when parsing hw_configs
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gwendal Grignou <gwendal@chromium.org>
+On Tue, Feb 20, 2018 at 7:44 PM, Kirill Marinushkin
+<k.marinushkin@gmail.com> wrote:
+> Clock gating parameter is a part of `dai_fmt`. It is supported by
+> `alsa-lib` when creating a topology binary file, but ignored by kernel
+> when loading this topology file.
 
-This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
-used to set and get the keyboard wake lid angle. This attribute is
-present only if 2 accelerometers are controlled by the EC.
+> +               /* clock gating */
+> +               if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
+> +                       link->dai_fmt |= SND_SOC_DAIFMT_GATED;
 
-This patch also moves the cros_ec features check before the device is
-added so the features map obtained from the EC is ready on time.
+> +               else if (hw_config->clock_gated ==
+> +                        SND_SOC_TPLG_DAI_CLK_GATE_CONT)
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- drivers/mfd/cros_ec_dev.c               | 19 ++++----
- drivers/platform/chrome/cros_ec_sysfs.c | 83 +++++++++++++++++++++++++++++++++
- include/linux/mfd/cros_ec.h             |  1 +
- 3 files changed, 94 insertions(+), 9 deletions(-)
+A nit, I would leave it on the same line, even if it ~2-3 characters
+longer than 80.
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 9d4b74404f49..48eac38a7d62 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -485,15 +485,6 @@ static int ec_device_probe(struct platform_device *pdev)
- 		goto failed;
- 	}
- 
--	retval = cdev_device_add(&ec->cdev, &ec->class_dev);
--	if (retval) {
--		dev_err(dev, "cdev_device_add failed => %d\n", retval);
--		goto failed;
--	}
--
--	if (cros_ec_debugfs_init(ec))
--		dev_warn(dev, "failed to create debugfs directory\n");
--
- 	/* check whether this EC is a sensor hub. */
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
-@@ -514,6 +505,16 @@ static int ec_device_probe(struct platform_device *pdev)
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
-+	/* We can now add the sysfs class, we know which parameter to show */
-+	retval = cdev_device_add(&ec->cdev, &ec->class_dev);
-+	if (retval) {
-+		dev_err(dev, "cdev_device_add failed => %d\n", retval);
-+		goto failed;
-+	}
-+
-+	if (cros_ec_debugfs_init(ec))
-+		dev_warn(dev, "failed to create debugfs directory\n");
-+
- 	return 0;
- 
- failed:
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index c03621e523a3..ae50a5342d58 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -259,21 +259,104 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 	return ret;
- }
- 
-+/* Keyboard wake angle control */
-+static ssize_t show_kb_wake_angle(struct device *dev,
-+				  struct device_attribute *attr, char *buf)
-+{
-+	struct ec_response_motion_sense *resp;
-+	struct ec_params_motion_sense *param;
-+	struct cros_ec_command *msg;
-+	int ret;
-+	struct cros_ec_dev *ec = container_of(
-+			dev, struct cros_ec_dev, class_dev);
-+
-+	msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	param = (struct ec_params_motion_sense *)msg->data;
-+	msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
-+	msg->version = 2;
-+	param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
-+	param->kb_wake_angle.data = EC_MOTION_SENSE_NO_VALUE;
-+	msg->outsize = sizeof(*param);
-+	msg->insize = sizeof(*resp);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+	if (ret < 0)
-+		goto exit;
-+	resp = (struct ec_response_motion_sense *)msg->data;
-+	ret = scnprintf(buf, PAGE_SIZE, "%d\n",
-+			resp->kb_wake_angle.ret);
-+exit:
-+	kfree(msg);
-+	return ret;
-+}
-+
-+static ssize_t store_kb_wake_angle(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	struct ec_params_motion_sense *param;
-+	struct cros_ec_command *msg;
-+	int ret;
-+	struct cros_ec_dev *ec = container_of(
-+			dev, struct cros_ec_dev, class_dev);
-+	u16 angle;
-+
-+	ret = kstrtou16(buf, 0, &angle);
-+	if (ret)
-+		return ret;
-+
-+	msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	param = (struct ec_params_motion_sense *)msg->data;
-+	msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
-+	msg->version = 2;
-+	param->cmd = MOTIONSENSE_CMD_KB_WAKE_ANGLE;
-+	param->kb_wake_angle.data = angle;
-+	msg->outsize = sizeof(*param);
-+	msg->insize = sizeof(struct ec_response_motion_sense);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+	kfree(msg);
-+	if (ret < 0)
-+		return ret;
-+	return count;
-+}
-+
- /* Module initialization */
- 
- static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
- static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
- static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
-+static DEVICE_ATTR(kb_wake_angle, S_IWUSR | S_IRUGO, show_kb_wake_angle,
-+		   store_kb_wake_angle);
- 
- static struct attribute *__ec_attrs[] = {
-+	&dev_attr_kb_wake_angle.attr,
- 	&dev_attr_reboot.attr,
- 	&dev_attr_version.attr,
- 	&dev_attr_flashinfo.attr,
- 	NULL,
- };
- 
-+static umode_t cros_ec_ctrl_visible(struct kobject *kobj,
-+				    struct attribute *a, int n)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
-+					      class_dev);
-+
-+	if (a == &dev_attr_kb_wake_angle.attr && !ec->has_kb_wake_angle)
-+		return 0;
-+
-+	return a->mode;
-+}
-+
- struct attribute_group cros_ec_attr_group = {
- 	.attrs = __ec_attrs,
-+	.is_visible = cros_ec_ctrl_visible,
- };
- EXPORT_SYMBOL(cros_ec_attr_group);
- 
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 804b3ddbf819..951c27333d46 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -191,6 +191,7 @@ struct cros_ec_dev {
- 	struct cros_ec_device *ec_dev;
- 	struct device *dev;
- 	struct cros_ec_debugfs *debug_info;
-+	bool has_kb_wake_angle;
- 	u16 cmd_offset;
- 	u32 features[2];
- };
+> +                       link->dai_fmt |= SND_SOC_DAIFMT_CONT;
+> +
+
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
