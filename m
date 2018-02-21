@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936846AbeBUNaZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 08:30:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49121 "EHLO mx2.suse.de"
+        id S936856AbeBUNal (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 08:30:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49099 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934906AbeBUN3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 08:29:51 -0500
+        id S934839AbeBUN3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 08:29:47 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v8 8/8] livepatch: Atomic replace and cumulative patches documentation
-Date: Wed, 21 Feb 2018 14:29:14 +0100
-Message-Id: <20180221132914.4809-9-pmladek@suse.com>
+Subject: [PATCH v8 5/8] livepatch: Support separate list for replaced patches.
+Date: Wed, 21 Feb 2018 14:29:11 +0100
+Message-Id: <20180221132914.4809-6-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180221132914.4809-1-pmladek@suse.com>
 References: <20180221132914.4809-1-pmladek@suse.com>
@@ -24,103 +24,125 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User documentation for the atomic replace feature. It makes it easier
-to maintain livepatches using so-called cumulative patches.
+From: Jason Baron <jbaron@akamai.com>
 
+We are going to add a feature called atomic replace. It will allow to
+create a patch that would replace all already registered patches.
+
+The replaced patches will stay registered because they are typically
+unregistered by some package uninstall scripts. But we will remove
+these patches from @klp_patches list to keep the enabled patch
+on the bottom of the stack. Otherwise, we would need to implement
+rather complex logic for moving the patches on the stack. Also
+it would complicate implementation of the atomic replace feature.
+It is not worth it.
+
+As a result, we will have patches that are registered but that
+are no longer usable. Let's get prepared for this and use
+a better descriptive name for klp_is_patch_registered() function.
+
+Also create separate list for the replaced patches and allow to
+unregister them. Alternative solution would be to add a flag
+into struct klp_patch. Note that patch->kobj.state_initialized
+is not safe because it can be cleared outside klp_mutex.
+
+This patch does not change the existing behavior.
+
+Signed-off-by: Jason Baron <jbaron@akamai.com>
+[pmladek@suse.com: Split and renamed klp_is_patch_usable()]
 Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 ---
- Documentation/livepatch/cumulative-patches.txt | 83 ++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 Documentation/livepatch/cumulative-patches.txt
+ kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
-new file mode 100644
-index 000000000000..c041fc1bd259
---- /dev/null
-+++ b/Documentation/livepatch/cumulative-patches.txt
-@@ -0,0 +1,83 @@
-+===================================
-+Atomic Replace & Cumulative Patches
-+===================================
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index ab1f6a371fc8..fd0296859ff4 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
+ 
+ static LIST_HEAD(klp_patches);
+ 
++/*
++ * List of 'replaced' patches that have been replaced by a patch that has the
++ * 'replace' bit set. When they are added to this list, they are disabled and
++ * can not be re-enabled, but they can be unregistered().
++ */
++static LIST_HEAD(klp_replaced_patches);
 +
-+There might be dependencies between livepatches. If multiple patches need
-+to do different changes to the same function(s) then we need to define
-+an order in which the patches will be installed. And function implementations
-+from any newer livepatch must be done on top of the older ones.
+ static struct kobject *klp_root_kobj;
+ 
+ static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
+@@ -108,17 +115,28 @@ static void klp_find_object_module(struct klp_object *obj)
+ 	mutex_unlock(&module_mutex);
+ }
+ 
+-static bool klp_is_patch_registered(struct klp_patch *patch)
++static bool klp_is_patch_in_list(struct klp_patch *patch,
++				 struct list_head *head)
+ {
+ 	struct klp_patch *mypatch;
+ 
+-	list_for_each_entry(mypatch, &klp_patches, list)
++	list_for_each_entry(mypatch, head, list)
+ 		if (mypatch == patch)
+ 			return true;
+ 
+ 	return false;
+ }
+ 
++static bool klp_is_patch_usable(struct klp_patch *patch)
++{
++	return klp_is_patch_in_list(patch, &klp_patches);
++}
 +
-+This might become a maintenance nightmare. Especially if anyone would want
-+to remove a patch that is in the middle of the stack.
++static bool klp_is_patch_replaced(struct klp_patch *patch)
++{
++	return klp_is_patch_in_list(patch, &klp_replaced_patches);
++}
 +
-+An elegant solution comes with the feature called "Atomic Replace". It allows
-+to create so called "Cumulative Patches". They include all wanted changes
-+from all older livepatches and completely replace them in one transition.
-+
-+Usage
-+-----
-+
-+The atomic replace can be enabled by setting "replace" flag in struct klp_patch,
-+for example:
-+
-+	static struct klp_patch patch = {
-+		.mod = THIS_MODULE,
-+		.objs = objs,
-+		.replace = true,
-+	};
-+
-+Such a patch is added on top of the livepatch stack when registered. It can
-+be enabled even when some earlier patches have not been enabled yet.
-+
-+All processes are then migrated to use the code only from the new patch.
-+Once the transition is finished, all older patches are removed from the stack
-+of patches. Even the older not-enabled patches mentioned above.
-+
-+Ftrace handlers are transparently removed from functions that are no
-+longer modified by the new cumulative patch.
-+
-+As a result, the livepatch author might maintain sources only for one
-+cumulative patch. It helps to keep the patch consistent while adding or
-+removing various fixes or features.
-+
-+
-+Limitations:
-+------------
-+
-+  + Replaced patches can no longer be enabled. But if the transition
-+    to the cumulative patch was not forced, the kernel modules with
-+    the older livepatches can be removed and eventually added again.
-+
-+    A good practice is to set .replace flag in any released livepatch.
-+    Then re-adding an older livepatch is equivalent to downgrading
-+    to that patch. This is safe as long as the livepatches do _not_ do
-+    extra modifications in (un)patching callbacks or in the module_init()
-+    or module_exit() functions, see below.
-+
-+
-+  + Only the (un)patching callbacks from the _new_ cumulative livepatch are
-+    executed. Any callbacks from the replaced patches are ignored.
-+
-+    By other words, the cumulative patch is responsible for doing any actions
-+    that are necessary to properly replace any older patch.
-+
-+    As a result, it might be dangerous to replace newer cumulative patches by
-+    older ones. The old livepatches might not provide the necessary callbacks.
-+
-+    This might be seen as a limitation in some scenarios. But it makes the life
-+    easier in many others. Only the new cumulative livepatch knows what
-+    fixes/features are added/removed and what special actions are necessary
-+    for a smooth transition.
-+
-+    In each case, it would be a nightmare to think about the order of
-+    the various callbacks and their interactions if the callbacks from all
-+    enabled patches were called.
-+
-+
-+  + There is no special handling of shadow variables. Livepatch authors
-+    must create their own rules how to pass them from one cumulative
-+    patch to the other. Especially they should not blindly remove them
-+    in module_exit() functions.
-+
-+    A good practice might be to remove shadow variables in the post-unpatch
-+    callback. It is called only when the livepatch is properly disabled.
+ static bool klp_initialized(void)
+ {
+ 	return !!klp_root_kobj;
+@@ -375,7 +393,7 @@ int klp_disable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -475,7 +493,7 @@ int klp_enable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -516,7 +534,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		/*
+ 		 * Module with the patch could either disappear meanwhile or is
+ 		 * not properly initialized yet.
+@@ -971,7 +989,7 @@ int klp_unregister_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch) && !klp_is_patch_replaced(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
 -- 
 2.13.6
