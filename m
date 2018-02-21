@@ -1,131 +1,305 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeBUUbx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 15:31:53 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:52959 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeBUUbt (ORCPT
+        id S1751336AbeBUUiI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 15:38:08 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60700 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbeBUUiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 15:31:49 -0500
-Subject: Re: [PATCH 1/3] ARC: mcip: halt GFRC together with ARC cores
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        <linux-kernel@vger.kernel.org>
-Newsgroups: gmane.linux.kernel.arc,gmane.linux.kernel
-References: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <a4a20519-e8b0-3522-0528-6de2595635ed@synopsys.com>
-Date: Wed, 21 Feb 2018 12:31:40 -0800
+        Wed, 21 Feb 2018 15:38:06 -0500
+Subject: Re: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-pci@vger.kernel.org,
+        Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org,
+        David Ahern <david.ahern@oracle.com>, TJ <linux@iam.tj>
+References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
+From: Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <79dde4e9-3134-e444-83a1-d1012f7a0384@oracle.com>
+Date: Wed, 21 Feb 2018 13:37:45 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20180220233935.GE32228@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: multipart/mixed;
+ boundary="------------29A4D87929B444C6E726A4C6"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802210247
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugeniy,
+This is a multi-part message in MIME format.
+--------------29A4D87929B444C6E726A4C6
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 02/21/2018 01:40 AM, Eugeniy Paltsev wrote:
-> Currently GFRC is running regardless state of ARC cores in the SMP cluster.
-> That means even if ARC cores are halted when doing JTAG debugging GFRC
-> [our source of wall-time] continues to run giving us unexpected warnings
-> once we allow ARC cores to run due to some tasks being stuck for too
-> long.
-
-This patch is definitely nicer than previous version. Thx.
-
-
-> Starting from ARC HS v3.0
-
- From the STAR fix, it seem this was fixed in HS 2.1c, so you should be able to 
-test it on HSDK, which was my next question: where and how did you test this and 
-verify that it works as we think it does. I tried the patch on HSDK and I still 
-see the rcu_preempt self-detected stall error splat when running hackbench and 
-pausing the target with Metaware debugger. Perhaps we need to write a small test 
-case to check what's going on. Also try that on AXS103 release which is definitely 
-HS 3.0 !
-
-
-> it's possible to tie GFRC to state of up-to 4
-> ARC cores with help of GFRC's CORE register where we set a mask for
-> cores which state we need to rely on.
+On 02/20/2018 04:39 PM, Bjorn Helgaas wrote:
 > 
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> ---
-> NOTE: with this patch previous patch is not required:
-> http://patchwork.ozlabs.org/patch/875091/
+> Both these patches are on my pci/sparc branch and appeared in the
+> Feb 19 linux-next tree.
 > 
->   arch/arc/kernel/mcip.c | 23 +++++++++++++++++++++++
->   include/soc/arc/mcip.h |  2 ++
->   2 files changed, 25 insertions(+)
+> Any testing and feedback (especially on the second patch, which should
+> change /proc/iomem) would be great.
 > 
-> diff --git a/arch/arc/kernel/mcip.c b/arch/arc/kernel/mcip.c
-> index f61a52b..e87a4ea 100644
-> --- a/arch/arc/kernel/mcip.c
-> +++ b/arch/arc/kernel/mcip.c
-> @@ -22,10 +22,33 @@ static DEFINE_RAW_SPINLOCK(mcip_lock);
->   
->   static char smp_cpuinfo_buf[128];
->   
-> +/*
-> + * Set mask to halt GFRC if any online core in SMP cluster is halted.
-> + * Only works for ARC HS v3.0+, on earlier versions has no effect.
-> + */
-> +static void mcip_update_gfrc_halt_mask(int cpu)
-> +{
-> +	struct mcip_bcr mp;
-> +	u32 gfrc_halt_mask;
-> +
-> +	READ_BCR(ARC_REG_MCIP_BCR, mp);
-> +
-> +	if (!mp.gfrc)
-> +		return;
-> +
-
-In theory this could be called concurrently by multiple cpus and mcip doesn't 
-guarantee any internal serialization/buffering. Granted, current use case is fine 
-as mcip_setup_per_cpu --> plat_smp_ops.init_per_cpu is serialized by master core, 
-we could run into issue when say cpu hot plug etc works. So better to wrap this 
-inside the spinlock which we already have.
-
-> +	__mcip_cmd(CMD_GFRC_READ_CORE, 0);
-> +	gfrc_halt_mask = read_aux_reg(ARC_REG_MCIP_READBACK);
-> +	gfrc_halt_mask |= BIT(cpu);
-> +	__mcip_cmd_data(CMD_GFRC_SET_CORE, 0, gfrc_halt_mask);
-> +}
-> +
->   static void mcip_setup_per_cpu(int cpu)
->   {
->   	smp_ipi_irq_setup(cpu, IPI_IRQ);
->   	smp_ipi_irq_setup(cpu, SOFTIRQ_IRQ);
-
-Please move the bcr readout / gfrc check here so in future we can do any more 
-checks as well.
-
-> +
-> +	/* Update GFRC halt mask as new CPU came online */
-> +	mcip_update_gfrc_halt_mask(cpu);
->   }
->   
->   static void mcip_ipi_send(int cpu)
-> diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
-> index c2d1b15..a156fa5 100644
-> --- a/include/soc/arc/mcip.h
-> +++ b/include/soc/arc/mcip.h
-> @@ -40,6 +40,8 @@ struct mcip_cmd {
->   
->   #define CMD_GFRC_READ_LO		0x42
->   #define CMD_GFRC_READ_HI		0x43
-> +#define CMD_GFRC_SET_CORE		0x47
-> +#define CMD_GFRC_READ_CORE		0x48
->   
->   #define CMD_IDU_ENABLE			0x71
->   #define CMD_IDU_DISABLE			0x72
+> They're headed for v4.17 unless I hear about issues.
 > 
+> It would be useful to hear about what's still broken so I can try to
+> pull in the other patches.
+> 
+
+Hi Bjorn,
+
+I tested these two patches on an M7 machine. With these two patches, one 
+of the PCI devices was able to claim BAR 0 which it fails to without 
+these patches. This device happens to be a NIC, so with these two 
+patches, the NIC finally works on my test machine. I have attached log 
+showing all the failures to claim a BAR. First file is from 4.16-rc2 
+while the second one is from 4.16-rc2+these two patches. There still are 
+a number of failures to claim BAR even with these two patches.
+
+I am also attaching /proc/iomem for the 4.16-rc2 kernel and 4.16-rc2 
+with these two patches.
+
+--
+Khalid
+
+--------------29A4D87929B444C6E726A4C6
+Content-Type: text/plain; charset=UTF-8;
+ name="log.rc2"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="log.rc2"
+
+cGNpIDAwMDA6MDM6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDAgW21lbSAweDIwMDAxMDAwMDAw
+MDAtMHgyMDAwMTAwN2ZmZmZmIDY0Yml0IHByZWZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3
+aW5kb3cKcGNpIDAwMDA6MDM6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMDAw
+MDAxMDAwMDAtMHgyMDAwMDAwMTdmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93
+CnBjaSAwMDAwOjAzOjAwLjE6IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMTgw
+MDAwLTB4MjAwMDAwMDFmZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kg
+MDAwMDowMzowMC4yOiBjYW4ndCBjbGFpbSBCQVIgMyBbbWVtIDB4MjAwMDEwMGQxMDAwMC0w
+eDIwMDAxMDBkMTdmZmYgNjRiaXQgcHJlZl06IGFkZHJlc3MgY29uZmxpY3Qgd2l0aCAwMDAw
+OjAzOjAwLjEgW21lbSAweDIwMDAxMDBiOTAwMDAtMHgyMDAwMTAwZDhmZmZmIDY0Yml0IHBy
+ZWZdCnBjaSAwMDAwOjAzOjAwLjI6IGNhbid0IGNsYWltIEJBUiA3IFttZW0gMHgyMDAwMTAw
+ZTIwMDAwLTB4MjAwMDEwMTAxZmZmZiA2NGJpdCBwcmVmXTogYWRkcmVzcyBjb25mbGljdCB3
+aXRoIDAwMDA6MDM6MDAuMSBbbWVtIDB4MjAwMDEwMTAwMDAwMC0weDIwMDAxMDE3ZmZmZmYg
+NjRiaXQgcHJlZl0KcGNpIDAwMDA6MDM6MDAuMjogY2FuJ3QgY2xhaW0gQkFSIDEwIFttZW0g
+MHgyMDAwMTAxMDIwMDAwLTB4MjAwMDEwMTA5ZmZmZiA2NGJpdCBwcmVmXTogYWRkcmVzcyBj
+b25mbGljdCB3aXRoIDAwMDA6MDM6MDAuMSBbbWVtIDB4MjAwMDEwMTAwMDAwMC0weDIwMDAx
+MDE3ZmZmZmYgNjRiaXQgcHJlZl0KcGNpIDAwMDA6MDM6MDAuMzogY2FuJ3QgY2xhaW0gQkFS
+IDMgW21lbSAweDIwMDAxMDBkMTgwMDAtMHgyMDAwMTAwZDFmZmZmIDY0Yml0IHByZWZdOiBh
+ZGRyZXNzIGNvbmZsaWN0IHdpdGggMDAwMDowMzowMC4xIFttZW0gMHgyMDAwMTAwYjkwMDAw
+LTB4MjAwMDEwMGQ4ZmZmZiA2NGJpdCBwcmVmXQpwY2kgMDAwMDowNDowMC4wOiBjYW4ndCBj
+bGFpbSBCQVIgMCBbbWVtIDB4MjAwMDExMDAwMDAwMC0weDIwMDAxMTAwMGZmZmYgNjRiaXRd
+OiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDQ6MDAuMDogY2FuJ3Qg
+Y2xhaW0gQkFSIDIgW21lbSAweDIwMDAxMTAwMTAwMDAtMHgyMDAwMTEwMDExZmZmIDY0Yml0
+XTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0
+IGNsYWltIEJBUiAxIFttZW0gMHgyMDIwMTIwMDAwMDAwLTB4MjAyMDEyMDAwZmZmZiA2NGJp
+dF06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4n
+dCBjbGFpbSBCQVIgMyBbbWVtIDB4MjAyMDEyMDA0MDAwMC0weDIwMjAxMjAwN2ZmZmYgNjRi
+aXRdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2Fu
+J3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMjAwMTAxMDAwMDAtMHgyMDIwMDEwMWZmZmZmXTog
+bm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNs
+YWltIEJBUiA3IFttZW0gMHgyMDIwMTIwMTgwMDAwLTB4MjAyMDEyMDI3ZmZmZiA2NGJpdF06
+IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4ndCBj
+bGFpbSBCQVIgOSBbbWVtIDB4MjAyMDEyMDI4MDAwMC0weDIwMjAxMjA2N2ZmZmYgNjRiaXRd
+OiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKaTQwZSAwMDAwOjAzOjAwLjA6IEJBUiAw
+OiBjYW4ndCByZXNlcnZlIFttZW0gc2l6ZSAweDAwODAwMDAwIDY0Yml0IHByZWZdCg==
+--------------29A4D87929B444C6E726A4C6
+Content-Type: text/plain; charset=UTF-8;
+ name="log.rc2-bjorn"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="log.rc2-bjorn"
+
+cGNpIDAwMDA6MDA6MDEuMDogY2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDAwMDAwMTAw
+MDAwLTB4MjAwMDAwMDJmZmZmZl06IGFkZHJlc3MgY29uZmxpY3Qgd2l0aCBWaWRlbyBSQU0g
+YXJlYSBbPz8/IDB4MjAwMDAwMDFhMDAwMC0weDIwMDAwMDAxYmZmZmYgZmxhZ3MgMHg4MDAw
+MDAwMF0KcGNpIDAwMDA6MDE6MDAuMDogY2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDAw
+MDAwMTAwMDAwLTB4MjAwMDAwMDJmZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRv
+dwpwY2kgMDAwMDowMjowMS4wOiBjYW4ndCBjbGFpbSBCQVIgMTQgW21lbSAweDIwMDAwMDAx
+MDAwMDAtMHgyMDAwMDAwMmZmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBj
+aSAwMDAwOjAzOjAwLjA6IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMTAwMDAw
+LTB4MjAwMDAwMDE3ZmZmZl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAw
+MDowMzowMC4xOiBjYW4ndCBjbGFpbSBCQVIgNiBbbWVtIDB4MjAwMDAwMDE4MDAwMC0weDIw
+MDAwMDAxZmZmZmZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDM6
+MDAuMjogY2FuJ3QgY2xhaW0gQkFSIDYgW21lbSAweDIwMDAwMDAyMDAwMDAtMHgyMDAwMDAw
+MjdmZmZmXTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAwOjAzOjAwLjM6
+IGNhbid0IGNsYWltIEJBUiA2IFttZW0gMHgyMDAwMDAwMjgwMDAwLTB4MjAwMDAwMDJmZmZm
+Zl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMDowNDowMC4wOiBjYW4n
+dCBjbGFpbSBCQVIgMCBbbWVtIDB4MjAwMDExMDAwMDAwMC0weDIwMDAxMTAwMGZmZmYgNjRi
+aXRdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDA6MDQ6MDAuMDogY2Fu
+J3QgY2xhaW0gQkFSIDIgW21lbSAweDIwMDAxMTAwMTAwMDAtMHgyMDAwMTEwMDExZmZmIDY0
+Yml0XTogbm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjAwOjAyLjA6IGNh
+bid0IGNsYWltIEJBUiAxNCBbbWVtIDB4MjAyMDAwMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZd
+OiBhZGRyZXNzIGNvbmZsaWN0IHdpdGggVmlkZW8gUkFNIGFyZWEgWz8/PyAweDIwMjAwMDAx
+YTAwMDAtMHgyMDIwMDAwMWJmZmZmIGZsYWdzIDB4ODAwMDAwMDBdCnBjaSAwMDAxOjA1OjAw
+LjA6IGNhbid0IGNsYWltIEJBUiAxNCBbbWVtIDB4MjAyMDAwMDEwMDAwMC0weDIwMjAwMTAx
+ZmZmZmZdOiBubyBjb21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6MDY6MDQuMDog
+Y2FuJ3QgY2xhaW0gQkFSIDE0IFttZW0gMHgyMDIwMDAwMTAwMDAwLTB4MjAyMDAwODBmZmZm
+Zl06IG5vIGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTowNjowNS4wOiBjYW4n
+dCBjbGFpbSBCQVIgMTQgW21lbSAweDIwMjAwMDgxMDAwMDAtMHgyMDIwMDEwMGZmZmZmXTog
+bm8gY29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjA2OjE3LjA6IGNhbid0IGNs
+YWltIEJBUiAxNCBbbWVtIDB4MjAyMDAxMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZdOiBubyBj
+b21wYXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2FuJ3QgY2xhaW0g
+QkFSIDEgW21lbSAweDIwMjAxMjAwMDAwMDAtMHgyMDIwMTIwMDBmZmZmIDY0Yml0XTogbm8g
+Y29tcGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNsYWlt
+IEJBUiAzIFttZW0gMHgyMDIwMTIwMDQwMDAwLTB4MjAyMDEyMDA3ZmZmZiA2NGJpdF06IG5v
+IGNvbXBhdGlibGUgYnJpZGdlIHdpbmRvdwpwY2kgMDAwMTo1NDowMC4wOiBjYW4ndCBjbGFp
+bSBCQVIgNiBbbWVtIDB4MjAyMDAxMDEwMDAwMC0weDIwMjAwMTAxZmZmZmZdOiBubyBjb21w
+YXRpYmxlIGJyaWRnZSB3aW5kb3cKcGNpIDAwMDE6NTQ6MDAuMDogY2FuJ3QgY2xhaW0gQkFS
+IDcgW21lbSAweDIwMjAxMjAwODAwMDAtMHgyMDIwMTIwMTdmZmZmIDY0Yml0XTogbm8gY29t
+cGF0aWJsZSBicmlkZ2Ugd2luZG93CnBjaSAwMDAxOjU0OjAwLjA6IGNhbid0IGNsYWltIEJB
+UiA5IFttZW0gMHgyMDIwMTIwMTgwMDAwLTB4MjAyMDEyMDU3ZmZmZiA2NGJpdF06IG5vIGNv
+bXBhdGlibGUgYnJpZGdlIHdpbmRvdwo=
+--------------29A4D87929B444C6E726A4C6
+Content-Type: text/plain; charset=UTF-8;
+ name="iomem.rc2"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="iomem.rc2"
+
+NTA0MDAwMDAtOGZlYzlmZmYgOiBTeXN0ZW0gUkFNCjkwMDAwMDAwLTFmZWZmZmZmZmYgOiBT
+eXN0ZW0gUkFNCjQwMDAwMDAwMDAwMC00MDFmZWY1Y2ZmZmYgOiBTeXN0ZW0gUkFNCiAgNDAw
+MDAwMDA0MDAwLTQwMDAwMDZkYTkzZiA6IEtlcm5lbCBjb2RlCiAgNDAwMDAwNmRhOTQwLTQw
+MDAwMGE5OTg1ZiA6IEtlcm5lbCBkYXRhCiAgNDAwMDAwYjQ0MDAwLTQwMDAwMGQwNDUxNyA6
+IEtlcm5lbCBic3MKMjAwMDAwMDEwMDAwMC0yMDAwMDdlZmZmZmZmIDogL3BjaUAzMDAKICAy
+MDAwMDAwMWEwMDAwLTIwMDAwMDAxYmZmZmYgOiBWaWRlbyBSQU0gYXJlYQogIDIwMDAwMDAx
+YzAwMDAtMjAwMDAwMDFjN2ZmZiA6IFZpZGVvIFJPTQogIDIwMDAwMDAxZjAwMDAtMjAwMDAw
+MDFmZmZmZiA6IFN5c3RlbSBST00KICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAzZmZmZmYgOiBQ
+Q0kgQnVzIDAwMDA6MDEKICAgIDIwMDAwMDAyMDAwMDAtMjAwMDAwMDNmZmZmZiA6IFBDSSBC
+dXMgMDAwMDowMgogICAgICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAzZmZmZmYgOiBQQ0kgQnVz
+IDAwMDA6MDMKICAgICAgICAyMDAwMDAwMjAwMDAwLTIwMDAwMDAyN2ZmZmYgOiAwMDAwOjAz
+OjAwLjIKICAgICAgICAyMDAwMDAwMjgwMDAwLTIwMDAwMDAyZmZmZmYgOiAwMDAwOjAzOjAw
+LjMKICAyMDAwMDAwNDAwMDAwLTIwMDAwMTAzZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDYKICAg
+IDIwMDAwMDA0MDAwMDAtMjAwMDAxMDNmZmZmZiA6IFBDSSBCdXMgMDAwMDowNwogICAgICAy
+MDAwMDAwNDAwMDAwLTIwMDAwMDgzZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDgKICAgICAgMjAw
+MDAwODQwMDAwMC0yMDAwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAwOjI4CjIwMDAxMDAwMDAw
+MDAtMjAwMGRmZmZmZmZmZiA6IC9wY2lAMzAwCiAgMjAwMDEwMDEwMDAwMC0yMDAwMTIwMGZm
+ZmZmIDogUENJIEJ1cyAwMDAwOjAxCiAgICAyMDAwMTAwMTAwMDAwLTIwMDAxMjAwZmZmZmYg
+OiBQQ0kgQnVzIDAwMDA6MDIKICAgICAgMjAwMDEwMDEwMDAwMC0yMDAwMTEwMGZmZmZmIDog
+UENJIEJ1cyAwMDAwOjAzCiAgICAgICAgMjAwMDEwMDgwMDAwMC0yMDAwMTAwODA3ZmZmIDog
+MDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMDgwODAwMC0yMDAwMTAwODBmZmZmIDogMDAw
+MDowMzowMC4xCiAgICAgICAgICAyMDAwMTAwODA4MDAwLTIwMDAxMDA4MGZmZmYgOiBpNDBl
+CiAgICAgICAgMjAwMDEwMDkxMDAwMC0yMDAwMTAwYjBmZmZmIDogMDAwMDowMzowMC4wCiAg
+ICAgICAgMjAwMDEwMGIxMDAwMC0yMDAwMTAwYjhmZmZmIDogMDAwMDowMzowMC4wCiAgICAg
+ICAgMjAwMDEwMGI5MDAwMC0yMDAwMTAwZDhmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAg
+ICAyMDAwMTAwZDEwMDAwLTIwMDAxMDBkMTdmZmYgOiBpNDBlCiAgICAgICAgICAyMDAwMTAw
+ZDE4MDAwLTIwMDAxMDBkMWZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMGQ5MDAwMC0yMDAw
+MTAwZTBmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMTAwMDAwMC0yMDAwMTAx
+N2ZmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAxMDAwMDAwLTIwMDAxMDE3
+ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMTgwMDAwMC0yMDAwMTAxZmZmZmZmIDogMDAw
+MDowMzowMC4yCiAgICAgICAgICAyMDAwMTAxODAwMDAwLTIwMDAxMDFmZmZmZmYgOiBpNDBl
+CiAgICAgICAgMjAwMDEwMjAwMDAwMC0yMDAwMTAyN2ZmZmZmIDogMDAwMDowMzowMC4zCiAg
+ICAgICAgICAyMDAwMTAyMDAwMDAwLTIwMDAxMDI3ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAw
+MDEwMjkwMDAwMC0yMDAwMTAyYWZmZmZmIDogMDAwMDowMzowMC4zCiAgICAgICAgMjAwMDEw
+MmIwMDAwMC0yMDAwMTAyYjdmZmZmIDogMDAwMDowMzowMC4zCiAgICAgICAgMjAwMDExMDAw
+MDAwMC0yMDAwMTEwMDBmZmZmIDogeGhjaS1oY2QKICAgICAgMjAwMDExMDEwMDAwMC0yMDAw
+MTIwMGZmZmZmIDogUENJIEJ1cyAwMDAwOjA0CiAgMjAwMDEyMDEwMDAwMC0yMDAwMTQwMGZm
+ZmZmIDogUENJIEJ1cyAwMDAwOjA2CiAgICAyMDAwMTIwMTAwMDAwLTIwMDAxNDAwZmZmZmYg
+OiBQQ0kgQnVzIDAwMDA6MDcKICAgICAgMjAwMDEyMDEwMDAwMC0yMDAwMTMwMGZmZmZmIDog
+UENJIEJ1cyAwMDAwOjA4CiAgICAgIDIwMDAxMzAxMDAwMDAtMjAwMDE0MDBmZmZmZiA6IFBD
+SSBCdXMgMDAwMDoyOAoyMDIwMDAwMTAwMDAwLTIwMjAwN2VmZmZmZmYgOiAvcGNpQDMwMgog
+IDIwMjAwMDAxYTAwMDAtMjAyMDAwMDFiZmZmZiA6IFZpZGVvIFJBTSBhcmVhCiAgMjAyMDAw
+MDFjMDAwMC0yMDIwMDAwMWM3ZmZmIDogVmlkZW8gUk9NCiAgMjAyMDAwMDFmMDAwMC0yMDIw
+MDAwMWZmZmZmIDogU3lzdGVtIFJPTQogIDIwMjAwMDAyMDAwMDAtMjAyMDAwMDJmZmZmZiA6
+IFBDSSBCdXMgMDAwMTowMQogICAgMjAyMDAwMDIwMDAwMC0yMDIwMDAwMmZmZmZmIDogUENJ
+IEJ1cyAwMDAxOjAyCiAgICAgIDIwMjAwMDAyMDAwMDAtMjAyMDAwMDJmZmZmZiA6IFBDSSBC
+dXMgMDAwMTowMwogIDIwMjAwMDAzMDAwMDAtMjAyMDAxMDNmZmZmZiA6IFBDSSBCdXMgMDAw
+MTowNQogICAgMjAyMDAwMDMwMDAwMC0yMDIwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAxOjA2
+CiAgICAgIDIwMjAwMDAzMDAwMDAtMjAyMDAwODJmZmZmZiA6IFBDSSBCdXMgMDAwMTowNwog
+ICAgICAyMDIwMDA4MzAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MmQKICAg
+ICAgMjAyMDAxMDMwMDAwMC0yMDIwMDEwM2ZmZmZmIDogUENJIEJ1cyAwMDAxOjU0CjIwMjAx
+MDAwMDAwMDAtMjAyMGRmZmZmZmZmZiA6IC9wY2lAMzAyCiAgMjAyMDEwMDEwMDAwMC0yMDIw
+MjEwMGZmZmZmIDogUENJIEJ1cyAwMDAxOjAxCiAgICAyMDIwMTAwMTAwMDAwLTIwMjAyMTAw
+ZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDIKICAgICAgMjAyMDEwMDEwMDAwMC0yMDIwMjEwMGZm
+ZmZmIDogUENJIEJ1cyAwMDAxOjAzCiAgICAgICAgMjAyMDEwMDEwODAwMC0yMDIwMTAwMTg3
+ZmZmIDogMDAwMTowMzowMC4wCiAgICAgICAgMjAyMDEwMDE4ODAwMC0yMDIwMTAwMjA3ZmZm
+IDogMDAwMTowMzowMC4wCiAgICAgICAgMjAyMDEwODAwMDAwMC0yMDIwMTBmZmZmZmZmIDog
+MDAwMTowMzowMC4wCiAgICAgICAgMjAyMDExMDEwMDAwMC0yMDIwMjEwMGZmZmZmIDogMDAw
+MTowMzowMC4wCiAgMjAyMDIxMDEwMDAwMC0yMDIwMjQwMGZmZmZmIDogUENJIEJ1cyAwMDAx
+OjA1CiAgICAyMDIwMjEwMTAwMDAwLTIwMjAyNDAwZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDYK
+ICAgICAgMjAyMDIxMDEwMDAwMC0yMDIwMjIwMGZmZmZmIDogUENJIEJ1cyAwMDAxOjA3CiAg
+ICAgIDIwMjAyMjAxMDAwMDAtMjAyMDIzMDBmZmZmZiA6IFBDSSBCdXMgMDAwMToyZAogICAg
+ICAgIDIwMjAyMzAwMDAwMDAtMjAyMDIzMDAwZmZmZiA6IG1wdDNzYXMKICAgICAgICAyMDIw
+MjMwMDQwMDAwLTIwMjAyMzAwN2ZmZmYgOiBtcHQzc2FzCiAgICAgIDIwMjAyMzAxMDAwMDAt
+MjAyMDI0MDBmZmZmZiA6IFBDSSBCdXMgMDAwMTo1NAo=
+--------------29A4D87929B444C6E726A4C6
+Content-Type: text/plain; charset=UTF-8;
+ name="iomem.rc2-bjorn"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="iomem.rc2-bjorn"
+
+MDAwYzAwMDAtMDAwYzdmZmYgOiBWaWRlbyBST00KMDAwZjAwMDAtMDAwZmZmZmYgOiBTeXN0
+ZW0gUk9NCjUwNDAwMDAwLThmZWM5ZmZmIDogU3lzdGVtIFJBTQo5MDAwMDAwMC0xZmVmZmZm
+ZmZmIDogU3lzdGVtIFJBTQo0MDAwMDAwMDAwMDAtNDAxZmVmNWNmZmZmIDogU3lzdGVtIFJB
+TQogIDQwMDAwMDAwNDAwMC00MDAwMDA2ZGE5M2YgOiBLZXJuZWwgY29kZQogIDQwMDAwMDZk
+YTk0MC00MDAwMDBhOTk4ZGYgOiBLZXJuZWwgZGF0YQogIDQwMDAwMGI0NDAwMC00MDAwMDBk
+MDQ1MTcgOiBLZXJuZWwgYnNzCjIwMDAwMDAxMDAwMDAtMjAwMDA3ZWZmZmZmZiA6IC9wY2lA
+MzAwCiAgMjAwMDAwMDFhMDAwMC0yMDAwMDAwMWJmZmZmIDogVmlkZW8gUkFNIGFyZWEKICAy
+MDAwMDAwMzAwMDAwLTIwMDAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDYKICAgIDIwMDAw
+MDAzMDAwMDAtMjAwMDAxMDJmZmZmZiA6IFBDSSBCdXMgMDAwMDowNwogICAgICAyMDAwMDAw
+MzAwMDAwLTIwMDAwMDgyZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDgKICAgICAgMjAwMDAwODMw
+MDAwMC0yMDAwMDEwMmZmZmZmIDogUENJIEJ1cyAwMDAwOjI4CjIwMDAxMDAwMDAwMDAtMjAw
+MGRmZmZmZmZmZiA6IC9wY2lAMzAwCiAgMjAwMDEwMDAwMDAwMC0yMDAwMTFmZmZmZmZmIDog
+UENJIEJ1cyAwMDAwOjAxCiAgICAyMDAwMTAwMDAwMDAwLTIwMDAxMWZmZmZmZmYgOiBQQ0kg
+QnVzIDAwMDA6MDIKICAgICAgMjAwMDEwMDAwMDAwMC0yMDAwMTBmZmZmZmZmIDogUENJIEJ1
+cyAwMDAwOjAzCiAgICAgICAgMjAwMDEwMDAwMDAwMC0yMDAwMTAwN2ZmZmZmIDogMDAwMDow
+MzowMC4wCiAgICAgICAgICAyMDAwMTAwMDAwMDAwLTIwMDAxMDA3ZmZmZmYgOiBpNDBlCiAg
+ICAgICAgMjAwMDEwMDgwMDAwMC0yMDAwMTAwODA3ZmZmIDogMDAwMDowMzowMC4wCiAgICAg
+ICAgICAyMDAwMTAwODAwMDAwLTIwMDAxMDA4MDdmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEw
+MDgwODAwMC0yMDAwMTAwODBmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAw
+ODA4MDAwLTIwMDAxMDA4MGZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMDgxMDAwMC0yMDAw
+MTAwYTBmZmZmIDogMDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMGExMDAwMC0yMDAwMTAw
+YThmZmZmIDogMDAwMDowMzowMC4wCiAgICAgICAgMjAwMDEwMGE5MDAwMC0yMDAwMTAwYzhm
+ZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMGM5MDAwMC0yMDAwMTAwZDBmZmZm
+IDogMDAwMDowMzowMC4xCiAgICAgICAgMjAwMDEwMGQxMDAwMC0yMDAwMTAwZDE3ZmZmIDog
+MDAwMDowMzowMC4yCiAgICAgICAgICAyMDAwMTAwZDEwMDAwLTIwMDAxMDBkMTdmZmYgOiBp
+NDBlCiAgICAgICAgMjAwMDEwMGQxODAwMC0yMDAwMTAwZDFmZmZmIDogMDAwMDowMzowMC4z
+CiAgICAgICAgICAyMDAwMTAwZDE4MDAwLTIwMDAxMDBkMWZmZmYgOiBpNDBlCiAgICAgICAg
+MjAwMDEwMGQyMDAwMC0yMDAwMTAwZjFmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgMjAw
+MDEwMGYyMDAwMC0yMDAwMTAwZjlmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgMjAwMDEw
+MTAwMDAwMC0yMDAwMTAxN2ZmZmZmIDogMDAwMDowMzowMC4xCiAgICAgICAgICAyMDAwMTAx
+MDAwMDAwLTIwMDAxMDE3ZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMTgwMDAwMC0yMDAw
+MTAxZmZmZmZmIDogMDAwMDowMzowMC4yCiAgICAgICAgICAyMDAwMTAxODAwMDAwLTIwMDAx
+MDFmZmZmZmYgOiBpNDBlCiAgICAgICAgMjAwMDEwMjAwMDAwMC0yMDAwMTAyN2ZmZmZmIDog
+MDAwMDowMzowMC4zCiAgICAgICAgICAyMDAwMTAyMDAwMDAwLTIwMDAxMDI3ZmZmZmYgOiBp
+NDBlCiAgICAgICAgMjAwMDEwMjgwMDAwMC0yMDAwMTAyOWZmZmZmIDogMDAwMDowMzowMC4z
+CiAgICAgICAgMjAwMDEwMmEwMDAwMC0yMDAwMTAyYTdmZmZmIDogMDAwMDowMzowMC4zCiAg
+ICAgIDIwMDAxMTAwMDAwMDAtMjAwMDExZmZmZmZmZiA6IFBDSSBCdXMgMDAwMDowNAogICAg
+ICAgIDIwMDAxMTAwMDAwMDAtMjAwMDExMDAwZmZmZiA6IHhoY2ktaGNkCiAgMjAwMDEyMDAw
+MDAwMC0yMDAwMTNmZmZmZmZmIDogUENJIEJ1cyAwMDAwOjA2CiAgICAyMDAwMTIwMDAwMDAw
+LTIwMDAxM2ZmZmZmZmYgOiBQQ0kgQnVzIDAwMDA6MDcKICAgICAgMjAwMDEyMDAwMDAwMC0y
+MDAwMTJmZmZmZmZmIDogUENJIEJ1cyAwMDAwOjA4CiAgICAgIDIwMDAxMzAwMDAwMDAtMjAw
+MDEzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMDoyOAoyMDIwMDAwMTAwMDAwLTIwMjAwN2VmZmZm
+ZmYgOiAvcGNpQDMwMgogIDIwMjAwMDAxYTAwMDAtMjAyMDAwMDFiZmZmZiA6IFZpZGVvIFJB
+TSBhcmVhCiAgMjAyMDAwMDIwMDAwMC0yMDIwMDEwMmZmZmZmIDogUENJIEJ1cyAwMDAxOjA1
+CiAgICAyMDIwMDAwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDYKICAg
+ICAgMjAyMDAwMDIwMDAwMC0yMDIwMDA4MWZmZmZmIDogUENJIEJ1cyAwMDAxOjA3CiAgICAg
+IDIwMjAwMDgyMDAwMDAtMjAyMDAxMDFmZmZmZiA6IFBDSSBCdXMgMDAwMToyZAogICAgICAy
+MDIwMDEwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiBQQ0kgQnVzIDAwMDE6NTQKICAgICAgICAy
+MDIwMDEwMjAwMDAwLTIwMjAwMTAyZmZmZmYgOiAwMDAxOjU0OjAwLjAKMjAyMDEwMDAwMDAw
+MC0yMDIwZGZmZmZmZmZmIDogL3BjaUAzMDIKICAyMDIwMTAwMDAwMDAwLTIwMjAyMGZmZmZm
+ZmYgOiBQQ0kgQnVzIDAwMDE6MDEKICAgIDIwMjAxMDAwMDAwMDAtMjAyMDIwZmZmZmZmZiA6
+IFBDSSBCdXMgMDAwMTowMgogICAgICAyMDIwMTAwMDAwMDAwLTIwMjAyMGZmZmZmZmYgOiBQ
+Q0kgQnVzIDAwMDE6MDMKICAgICAgICAyMDIwMTAwMDAwMDAwLTIwMjAxMDAwMDNmZmYgOiAw
+MDAxOjAzOjAwLjAKICAgICAgICAyMDIwMTAwMDA0MDAwLTIwMjAxMDAwMDdmZmYgOiAwMDAx
+OjAzOjAwLjAKICAgICAgICAyMDIwMTAwMDA4MDAwLTIwMjAxMDAwODdmZmYgOiAwMDAxOjAz
+OjAwLjAKICAgICAgICAyMDIwMTAwMDg4MDAwLTIwMjAxMDAxMDdmZmYgOiAwMDAxOjAzOjAw
+LjAKICAgICAgICAyMDIwMTA4MDAwMDAwLTIwMjAxMGZmZmZmZmYgOiAwMDAxOjAzOjAwLjAK
+ICAgICAgICAyMDIwMTEwMDAwMDAwLTIwMjAyMGZmZmZmZmYgOiAwMDAxOjAzOjAwLjAKICAy
+MDIwMjEwMDAwMDAwLTIwMjAyM2ZmZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDUKICAgIDIwMjAy
+MTAwMDAwMDAtMjAyMDIzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMTowNgogICAgICAyMDIwMjEw
+MDAwMDAwLTIwMjAyMWZmZmZmZmYgOiBQQ0kgQnVzIDAwMDE6MDcKICAgICAgMjAyMDIyMDAw
+MDAwMC0yMDIwMjJmZmZmZmZmIDogUENJIEJ1cyAwMDAxOjJkCiAgICAgIDIwMjAyMzAwMDAw
+MDAtMjAyMDIzZmZmZmZmZiA6IFBDSSBCdXMgMDAwMTo1NAogICAgICAgIDIwMjAyMzAwMDAw
+MDAtMjAyMDIzMDAwZmZmZiA6IG1wdDNzYXMKICAgICAgICAyMDIwMjMwMDQwMDAwLTIwMjAy
+MzAwN2ZmZmYgOiBtcHQzc2FzCg==
+--------------29A4D87929B444C6E726A4C6--
