@@ -1,84 +1,86 @@
 Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AH8x224oWPGH8PFtBxcPfdL6TNI3mwdU44hp6AypoygeJjVmwQFWH1Z/EVl5njyBLaEX7zMyOdOV
-ARC-Seal: i=1; a=rsa-sha256; t=1519245338; cv=none;
+X-Google-Smtp-Source: AH8x224Mbkq29HhaAiNHUIGpEUVLqs4Vam4H87BglJNw0/yyYnRP30S2WKq1dKWVjCrI/pDfU/2h
+ARC-Seal: i=1; a=rsa-sha256; t=1519229786; cv=none;
         d=google.com; s=arc-20160816;
-        b=OAJqW0z1X1nHyZ/zhzs6ZQNdii0ecVdM23T/zhHSACNIkSkEETn60RUGE/emVa8yyR
-         SOplGGg+uthVUGaeFWwIE8tssemmto8vQmcu6fI2ceyHZ6Vk0d87tyPcqfJwR3zzqGFq
-         BoRZ8JLN9rbObBbAbw76dhoXe53HhPcgavKo3j151actog+Z4HpEbu39wZc1B+IGX5UT
-         v3hE6IFKXP02fG4RNXc9+LoTg3BrvB7HvJgQcLNlj9+dYGdZAiU0ez5AygU/XfuT6RhK
-         i5eXJSv0RGzC37DIZr7bhfxHE3sqk8S3u0PdlwYbqQi6Dk87XgqaZ/PqCNiI77R0Q+2v
-         n3uQ==
+        b=pRODxolQgtkcqgmA3ZB/DTZU2gsIZucxJxAG4TNntdmOQPUduk1/85um989Pqi0/YD
+         NuawVTP3aBBB1AgOrXanXfGVP0HRvUlzxg3+2+BBmsLi79kAwp6RF5OQ1iMXDKzz2SHq
+         8+xWdXLAHLp/LSiWK/Eu8SesAJBN6/SL2Cxn0Xg+GyW5OM7u4/iHR71Nc5A4NtpFxJwc
+         k5gWQ2/kZQQdHjWfptOTH5XhJCjhdhr+/EFMLlPwAR/VcZlIWyZanLS14Y4FBPM0i1UU
+         D9JFwRJKS5iqfLfC92anGGLEP4zdeV80G78VXAOiP7z8x9y2RF815RekFe+XkgUvA4YN
+         o42g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=dNDZxezFyoblRh2Kg9qU4mEl2BOT8IccJwbbOQvqjE4=;
-        b=fjjswZJP+ZKzQ2Q5lhNWDII7ye+5CubHI0FYSoOBxjyheQr818ip9c1iLP9QgY8ouh
-         yCyKNE8JliOfqBv5cceFUmGVB/Gz3Ox+oM00YbLOdxPZFi65c7okFlAYSjm6CHvhbhhJ
-         Xc8PYMLtFwNiLe8DHZl/8AEYHTsRTftkoRYSIjiTauZmi5yg6oXa3xG5shQEeM7fciAw
-         QgNfQ/bsdzb5XFWWWnTBO4TGwFRRF22Peuk7p9SGoutHOZPozwolea7YLIWQgVbivQwz
-         tn0Y8xmMFaR7sAjJ/lDJtC3rMS8//NM1fiyHcviK3tKR0qChJ4lb8ME3Pj1d4qqpRE/7
-         djQg==
+        bh=66GXAcM+2sV/MureZW836ChXGo0li9SbZPLoMVoZ7NE=;
+        b=FZOIWmBql0vhDJ1KyKivw+/Ev/H0sMVDW3V5iYKZGI4bFrSBfOnjY6YRg51F+xJmRT
+         Vxjk/jjmt8r2FCe0qzbiL6aoF3oSZrIj7pagJ2ieFvIk/FnGHg6RDSIUDAVF3T0Yjo2R
+         QlpYYZEh9/h52Wfi6Wh7/GXIchIrE9ELk80DkD7r/FYlqQr6akqggrFQwPKyZj88elYh
+         FxDlTmA/4tpx8VKI6wq1Kj/f02QRdNBfGfsW7Ave0omr7e4//xIApK1LAtQTcG1DMbC3
+         blB4SX9wYkzfM7tJdL2xHhIcOZ/wWYWnQHOOtdBZB50JBUDxMIuovPl/G7mW2v57scBN
+         n5Nw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,375,1515484800";
-   d="scan'208";a="205995936"
-Subject: Re: [PATCH v2 2/8] [PATCH 2/8] Documentations: dt-bindings: Add a
- document of PECI adapter driver for Aspeed AST24xx/25xx SoCs
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: joel@jms.id.au, andrew@aj.id.au, arnd@arndb.de,
- gregkh@linuxfoundation.org, jdelvare@suse.com, linux@roeck-us.net,
- benh@kernel.crashing.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- openbmc@lists.ozlabs.org
-References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
- <20180221161606.32247-3-jae.hyun.yoo@linux.intel.com>
- <20180221171349.GG29204@lunn.ch>
+X-IronPort-AV: E=Sophos;i="5.46,543,1511856000";
+   d="scan'208";a="29617858"
 From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <4afd2fec-b015-72d4-300e-3dd7696f6ff0@linux.intel.com>
-Date: Wed, 21 Feb 2018 12:35:35 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180221171349.GG29204@lunn.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: joel@jms.id.au,
+	andrew@aj.id.au,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	benh@kernel.crashing.org,
+	andrew@lunn.ch
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v2 8/8] [PATCH 8/8] Add a maintainer for the PECI subsystem
+Date: Wed, 21 Feb 2018 08:16:06 -0800
+Message-Id: <20180221161606.32247-9-jae.hyun.yoo@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
+References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593027883264098537?=
-X-GMAIL-MSGID: =?utf-8?q?1593044200647285287?=
+X-GMAIL-THRID: =?utf-8?q?1593027892847299682?=
+X-GMAIL-MSGID: =?utf-8?q?1593027892847299682?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2/21/2018 9:13 AM, Andrew Lunn wrote:
-> On Wed, Feb 21, 2018 at 08:16:00AM -0800, Jae Hyun Yoo wrote:
->> This commit adds a dt-bindings document of PECI adapter driver for Aspeed
->> AST24xx/25xx SoCs.
-> 
-> Hi Jae
-> 
-> It would be good to separate this into two. One binding document for a
-> generic adaptor, with a generic PECI bus, and generic client
-> devices. List all the properties you expect at the generic level.
-> 
-> Then have an aspeed specific binding for those properties which are
-> specific to the Aspeed adaptor.
-> 
+This commit adds a maintainer information for the PECI subsystem.
 
-That makes sense. I'll add generic PECI bus/adapter/client and Aspeed 
-specific documents as separated.
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> 	 Andrew
->   
-> 
-
-Thanks again for sharing your time to review it. I really appreciate it.
-
-BR,
-Jae
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93a12af4f180..f9c302cbb76b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10830,6 +10830,15 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/peaq-wmi.c
+ 
++PECI SUBSYSTEM
++M:	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/peci/
++F:	drivers/peci/
++F:	drivers/hwmon/peci-*.c
++F:	include/linux/peci.h
++F:	include/uapi/linux/peci-ioctl.h
++
+ PER-CPU MEMORY ALLOCATOR
+ M:	Tejun Heo <tj@kernel.org>
+ M:	Christoph Lameter <cl@linux.com>
+-- 
+2.16.1
