@@ -1,55 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932364AbeBUMYx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:24:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36078 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751877AbeBUMYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:24:51 -0500
-Date: Wed, 21 Feb 2018 04:24:45 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, kasan-dev@googlegroups.com
-Subject: Re: [PATCH 1/4] vmalloc: add vm_flags argument to internal
- __vmalloc_node()
-Message-ID: <20180221122444.GA11791@bombadil.infradead.org>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
+        id S1754228AbeBUMZK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:25:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752618AbeBUMZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 07:25:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F1A2178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 21 Feb 2018 09:25:05 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Sangwon Hong <qpakzk@gmail.com>, linux-kernel@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>, Taeung Song <treeze.taeung@gmail.com>,
+        kernel-team@lge.com
+Subject: Re: [PATCH] perf kallsyms: Fix the usage on the man page
+Message-ID: <20180221122505.GA24416@kernel.org>
+References: <1518377864-20353-1-git-send-email-qpakzk@gmail.com>
+ <20180212015021.GB31513@sejong>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <151670492223.658225.4605377710524021456.stgit@buzz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180212015021.GB31513@sejong>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 01:55:22PM +0300, Konstantin Khlebnikov wrote:
-> This allows to set VM_USERMAP in vmalloc_user() and vmalloc_32_user()
-> directly at allocation and avoid find_vm_area() call.
+Em Mon, Feb 12, 2018 at 10:50:21AM +0900, Namhyung Kim escreveu:
+> On Mon, Feb 12, 2018 at 04:37:44AM +0900, Sangwon Hong wrote:
+> > First, all man pages highlight only perf and subcommands except perf
+> > kallsyms, which includes the full usage. Fix it for commands to monopolize
+> > underlines.
+> > 
+> > Second, options can skip when executing perf kallsyms, so add square
+> > brackets between <option>.
+> > 
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Taeung Song <treeze.taeung@gmail.com>
+> > Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
+> 
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-While reviewing this patch, I came across this infelicity ...
+Thanks, applied.
 
-have I understood correctly?
-
-diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-index e13d911251e7..9060f80b4a41 100644
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -631,11 +631,10 @@ int kasan_module_alloc(void *addr, size_t size)
- 	ret = __vmalloc_node_range(shadow_size, 1, shadow_start,
- 			shadow_start + shadow_size,
- 			GFP_KERNEL | __GFP_ZERO,
--			PAGE_KERNEL, VM_NO_GUARD, NUMA_NO_NODE,
-+			PAGE_KERNEL, VM_NO_GUARD | VM_KASAN, NUMA_NO_NODE,
- 			__builtin_return_address(0));
- 
- 	if (ret) {
--		find_vm_area(addr)->flags |= VM_KASAN;
- 		kmemleak_ignore(ret);
- 		return 0;
- 	}
+- Arnaldo
