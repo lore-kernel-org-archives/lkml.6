@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224gyS/ui8b2710vvs6uvYZtXYaeG1KdOpUhNZo616/Lc2PoqN56vmyfeCXrPn4r3eWOq/h9
-ARC-Seal: i=1; a=rsa-sha256; t=1519217780; cv=none;
+X-Google-Smtp-Source: AH8x224jnCmu6VHJBiQyZBeVgQUiVuHUkYKSxDD+7DVzxGL1n/zKnVL4Fn8sMGxBwsWuT6qqUF8R
+ARC-Seal: i=1; a=rsa-sha256; t=1519217778; cv=none;
         d=google.com; s=arc-20160816;
-        b=0cMu5VqGBundI8zK89ynhoZwOuDPO8NvC4w97dU+otVFBdcx4A8J38MTHL5Ezyd5r8
-         rfKsN52fa5Q3uI51QNSNdsKaWmM1Ts140sknpZZJswYFgFNykgSpekEgzzLoIUZwP3zx
-         vB8yVegluVg2G5NiAGqYLTsmCaJYx+VGgBkm0v+BLACDIz1IN1BiPmohxCZvMhDlYdxc
-         fYJqYfVV46u6V5Z0C6Tvq5KlMqS31qyMJnFWH83u7xjNls7r5u5vugvjlJaOU2JkD6NW
-         UFZ5CpNB8ZI95CgyN05aNv26DyzUPB4CdLkfYAoOiZOuoLPk9sIjJijQLQfjYT+lhZ1S
-         AQ5A==
+        b=arXTbpKeJy8wcRqan8+SPHPGd1PS6essMLasgFJvxkkerqczz6qb+h3VVwCkosHNCX
+         kOstqMiFP4WaaJO7Rlqdfr/puH5/vfcu51RxnAJlxD0HvTthYAJjqXFOeWRx1GDeJFm9
+         v/oasBNuXPVSTtnHiKvlba3f60vNRPxP4xmERzZHPu1RYIoaLhRMmcZHY817RqUqmhG9
+         Uk+zFulwjCPcp0aK66HRVbm2l5O4WsPVFCZGcTCMHRJANeibR2XgqpjUpxHSu2YjxuHL
+         gZdUrYu8NivDJW3gDi2Yt9z0eSaPIjL38gzuuXCv6xcLmFXXktmAgHLJZdYk+Yx97PQj
+         n5zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/UGUaKQBJVdfacaI8AZrLnWU1DO8O/tjEOYWZTjQ6Mc=;
-        b=iFwalbmD0hsBKDZEpClmKeQ1oq1+qMd38ScPg5JZIXG46vJB9+4FLJnod2cUBLAecm
-         z0lABY2G3O8ENBOBDLijlre6QI+k3kzeATrwOzsxWym2+LuRiD2M6kGnzoovoYWiWQ7L
-         8uOmopcIf847/K8cY0Pp2S1Xp6/K3p0kg31+xRycWT31xewwrceAUIbtEvwg0MS6bGM4
-         8Je05tbHsUc1xd5xh4AtzFJ4K69q7elBJy89MUuxufP5KUl1ftWy+f3E+ENraI36S36I
-         emFRGZZUZxvhqA4smVcTIlh8uz03Umui8w81OO5IuRv2H/c3I7yxvNwbS6vdsOamKSyf
-         H8nw==
+        bh=7lkwW6svWujFH7SvJ5w2i3iqwOpJLGqRaJGkqrX8btA=;
+        b=xAiu8JwGQ6uxudJFbnnHxnhtT6WHtb/SQyzD886cFqsu26onEMFIOe1XB0nE8DD0br
+         /m6ZdmvpfCObW2UV4Ah4dQUn/fuzrSOmbqJkl6AcK1IJ6hs/2jQHO1XfdZ0NffFAdenr
+         L+YalxTiAONOfNa06rbcUYu3E4elUC3kq6z4Z7ofPH8EExggKZrrdE/RbLPtPLvO4W9x
+         NHMQJ5TjMgbApnACvv/JqPl4mBpiMdVNl8I6ptaaO+Ag6BSt/9vCueK5q2WCtTprrt3+
+         R7SvT7nZUTaDKwoCuQLh54RmSKOea1C6zqFyHyUpXHPpgSA010/cPiwCLdAvEJXsl0wf
+         adTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 45/77] ARM: dts: STi: Add gpio polarity for "hdmi,hpd-gpio" property
-Date: Wed, 21 Feb 2018 13:48:54 +0100
-Message-Id: <20180221124434.085414330@linuxfoundation.org>
+	Alexander Potapenko <glider@google.com>,
+	Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.9 05/77] mbcache: initialize entry->e_referenced in mb_cache_entry_create()
+Date: Wed, 21 Feb 2018 13:48:14 +0100
+Message-Id: <20180221124432.394552147@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 References: <20180221124432.172390020@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014617824025062?=
-X-GMAIL-MSGID: =?utf-8?q?1593015303723452948?=
+X-GMAIL-THRID: =?utf-8?q?1593015301228685105?=
+X-GMAIL-MSGID: =?utf-8?q?1593015301228685105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,71 +49,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Alexander Potapenko <glider@google.com>
 
-commit 7ac1f59c09a61e6af6622df6809e003b0af07f3d upstream.
+commit 3876bbe27d04b848750d5310a37d6b76b593f648 upstream.
 
-The GPIO polarity is missing in the hdmi,hpd-gpio property, this
-fixes the following DT warnings:
+KMSAN reported use of uninitialized |entry->e_referenced| in a condition
+in mb_cache_shrink():
 
-arch/arm/boot/dts/stih410-b2120.dtb: Warning (gpios_property): hdmi,hpd-gpio property
-size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
+==================================================================
+BUG: KMSAN: use of uninitialized memory in mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
+CPU: 2 PID: 816 Comm: kswapd1 Not tainted 4.11.0-rc5+ #2877
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs
+01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:16 [inline]
+ dump_stack+0x172/0x1c0 lib/dump_stack.c:52
+ kmsan_report+0x12a/0x180 mm/kmsan/kmsan.c:927
+ __msan_warning_32+0x61/0xb0 mm/kmsan/kmsan_instr.c:469
+ mb_cache_shrink+0x3b4/0xc50 fs/mbcache.c:287
+ mb_cache_scan+0x67/0x80 fs/mbcache.c:321
+ do_shrink_slab mm/vmscan.c:397 [inline]
+ shrink_slab+0xc3d/0x12d0 mm/vmscan.c:500
+ shrink_node+0x208f/0x2fd0 mm/vmscan.c:2603
+ kswapd_shrink_node mm/vmscan.c:3172 [inline]
+ balance_pgdat mm/vmscan.c:3289 [inline]
+ kswapd+0x160f/0x2850 mm/vmscan.c:3478
+ kthread+0x46c/0x5f0 kernel/kthread.c:230
+ ret_from_fork+0x29/0x40 arch/x86/entry/entry_64.S:430
+chained origin:
+ save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:317 [inline]
+ kmsan_internal_chain_origin+0x12a/0x1f0 mm/kmsan/kmsan.c:547
+ __msan_store_shadow_origin_1+0xac/0x110 mm/kmsan/kmsan_instr.c:257
+ mb_cache_entry_create+0x3b3/0xc60 fs/mbcache.c:95
+ ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
+ ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
+ ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
+ ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
+ ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
+ __vfs_setxattr+0x703/0x790 fs/xattr.c:149
+ __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
+ vfs_setxattr fs/xattr.c:223 [inline]
+ setxattr+0x6ae/0x790 fs/xattr.c:449
+ path_setxattr+0x1eb/0x380 fs/xattr.c:468
+ SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
+ SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
+ entry_SYSCALL_64_fastpath+0x13/0x94
+origin:
+ save_stack_trace+0x37/0x40 arch/x86/kernel/stacktrace.c:59
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:302 [inline]
+ kmsan_internal_poison_shadow+0xb1/0x1a0 mm/kmsan/kmsan.c:198
+ kmsan_kmalloc+0x7f/0xe0 mm/kmsan/kmsan.c:337
+ kmem_cache_alloc+0x1c2/0x1e0 mm/slub.c:2766
+ mb_cache_entry_create+0x283/0xc60 fs/mbcache.c:86
+ ext4_xattr_cache_insert fs/ext4/xattr.c:1647 [inline]
+ ext4_xattr_block_set+0x4c82/0x5530 fs/ext4/xattr.c:1022
+ ext4_xattr_set_handle+0x1332/0x20a0 fs/ext4/xattr.c:1252
+ ext4_xattr_set+0x4d2/0x680 fs/ext4/xattr.c:1306
+ ext4_xattr_trusted_set+0x8d/0xa0 fs/ext4/xattr_trusted.c:36
+ __vfs_setxattr+0x703/0x790 fs/xattr.c:149
+ __vfs_setxattr_noperm+0x27a/0x6f0 fs/xattr.c:180
+ vfs_setxattr fs/xattr.c:223 [inline]
+ setxattr+0x6ae/0x790 fs/xattr.c:449
+ path_setxattr+0x1eb/0x380 fs/xattr.c:468
+ SYSC_lsetxattr+0x8d/0xb0 fs/xattr.c:490
+ SyS_lsetxattr+0x77/0xa0 fs/xattr.c:486
+ entry_SYSCALL_64_fastpath+0x13/0x94
+==================================================================
 
-arch/arm/boot/dts/stih407-b2120.dtb: Warning (gpios_property): hdmi,hpd-gpio property
-size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
-
-arch/arm/boot/dts/stih410-b2260.dtb: Warning (gpios_property): hdmi,hpd-gpio property
-size (8) too small for cell size 2 in /soc/sti-display-subsystem/sti-hdmi@8d04000
-
-[arnd: marked Cc:stable since this warning shows up with the latest dtc
-       by default, and is more likely to actually cause problems than the
-       other patches from this series]
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: stable@vger.kernel.org # v4.6
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/stih407.dtsi |    3 ++-
- arch/arm/boot/dts/stih410.dtsi |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/mbcache.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/stih407.dtsi
-+++ b/arch/arm/boot/dts/stih407.dtsi
-@@ -8,6 +8,7 @@
-  */
- #include "stih407-clock.dtsi"
- #include "stih407-family.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- / {
- 	soc {
- 		sti-display-subsystem {
-@@ -122,7 +123,7 @@
- 					 <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>;
- 
--				hdmi,hpd-gpio = <&pio5 3>;
-+				hdmi,hpd-gpio = <&pio5 3 GPIO_ACTIVE_LOW>;
- 				reset-names = "hdmi";
- 				resets = <&softreset STIH407_HDMI_TX_PHY_SOFTRESET>;
- 				ddc = <&hdmiddc>;
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -9,6 +9,7 @@
- #include "stih410-clock.dtsi"
- #include "stih407-family.dtsi"
- #include "stih410-pinctrl.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- / {
- 	aliases {
- 		bdisp0 = &bdisp0;
-@@ -213,7 +214,7 @@
- 					 <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>;
- 
--				hdmi,hpd-gpio = <&pio5 3>;
-+				hdmi,hpd-gpio = <&pio5 3 GPIO_ACTIVE_LOW>;
- 				reset-names = "hdmi";
- 				resets = <&softreset STIH407_HDMI_TX_PHY_SOFTRESET>;
- 				ddc = <&hdmiddc>;
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -93,6 +93,7 @@ int mb_cache_entry_create(struct mb_cach
+ 	entry->e_key = key;
+ 	entry->e_block = block;
+ 	entry->e_reusable = reusable;
++	entry->e_referenced = 0;
+ 	head = mb_cache_entry_head(cache, key);
+ 	hlist_bl_lock(head);
+ 	hlist_bl_for_each_entry(dup, dup_node, head, e_hash_list) {
