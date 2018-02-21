@@ -1,96 +1,88 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1270479-1519212201-2-11899713998198747930
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519212201; b=jVGnMZiG2A3OwHQWu44qhFL91ICzfWkPLs7SYEbMb4mGlJc
-    969iO3/trDRVgm21Hzo9X7u393jW8SVWqi5IKFbm4gpyxzHw0Kv75b22uickhR7R
-    fs1zmjvKP0N6Nl30x5XJYBQO8sp7cCxFAYfXq4rFXLY7gkQncuXZbaAbVyoYBzn+
-    Kc0ws2Rqr/hgsVclVFX+uSMlo4sPsrAimtF860a2zdWq4XOWeS3GHXUttTFT8kBP
-    PAwofgcjAyNe560cJbB92ta3L55zlUEu6GTQ4gDoqk6SGVb0Y1GPEMLH0nfoD6sv
-    X8FBLnzybGnnf+Uxpg17nzoQ+K9M6AZ5H6N/3QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519212201; bh=PSUPPqEEMdk/skkcvO3fUHcCSB
-    F85Ub73W3HqIR9ebE=; b=uHtbqjLU+NbfQNRN1NyxevCZhkWRlePETKDA0lAm6h
-    YFJVNhEaNTR0iQiy8Em7Z+RV6YZOKPDbiU+SK4v18UpkfpHpbC3a1vswZjfCdK9E
-    BoHJ2ZcN0peGY9Jszun9dyDKm6+CQtyMi/ZMRxXkRPQsrho400ViP9py9xfAuLzq
-    BLN5fXXK4frnIAgzmc2e7Hj9FF+tAs4INSakHmFyaNm+mkM5lXlmIxLv1LbXoBXw
-    6sgROHJr+fUeqH4uF7S+iXmllh2LJa6b87YxHJAXF9v+OPc9OGHtBCdNXYeKcr/j
-    duG5yOWTP6/2DNQQTrN+Yoc3uCjc9mRrt8/E5OfFG2jA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753517AbeBULXS (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 06:23:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33460 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752932AbeBULXR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 06:23:17 -0500
-Date: Wed, 21 Feb 2018 12:23:19 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Max Ivanov <ivanov.maxim@gmail.com>
-Cc: Hannes Reinecke <hare@suse.de>, stable@vger.kernel.org,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Kyle Fortin <kyle.fortin@oracle.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        labbott@redhat.com
-Subject: Re: iSCSI session logout regression after fbce4d97fd ("scsi: fixup
- kernel warning during rmmod()")
-Message-ID: <20180221112319.GA18634@kroah.com>
-References: <CALQ-8CJ8biPVCKvg+Gri9Am+TRBP0Rw-cWL42U2F_z8VvWTNfg@mail.gmail.com>
- <c35cd314-9dad-5d25-4627-1cc8687dbf7f@suse.de>
- <CALQ-8CKP7GcK-oVwaWz3ZU0qvBOj19eJTwJf0cYQz4Di1Q3n3A@mail.gmail.com>
+Return-Path: <mhocko@kernel.org>
+X-Google-Smtp-Source: AH8x226Ve5BoKPaM6F4P4mCLN0nvSKpsk2EuHG9y43sHSycv+X+cf8VQSpbdbn18pj2AwBDKMgjX
+ARC-Seal: i=1; a=rsa-sha256; t=1519208188; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DIt5u3Z1W4a7RlQkzvrw7q1DVpKp6n2PgdwMouM8ZnPDNtDgNZDc4usJvT3Re9ZVaa
+         I1h9lx+ywvRXelB8XkFz7cbczeWtM6zx8w5A7iDdMO8EJqlJvKPfEoAeDQT1lB3avuF3
+         5cxggrJ5CTac67W4mxvaUooE1G/SUIn24OmWnUODiwDlUqOlhHudw8j2q6bvbEOpX/WP
+         uPQ3kCkogD6IPWc0whk56cPjPaxRlBNyILI2JTKBURQGsWcgxOcFC57h06Vb6oVYppdz
+         KnVKtRWjT/kcqo4F79SSsQBfsTHHFfFUv3CqfXPvt9Dlu3kmsOWaGwEeDYKHfnou1/Y1
+         13+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=CA61Oz7mb4FO6GVP5AjnfObvDMERsDaNEjGggWvF0AM=;
+        b=d7pLVNLf9Gr4OxCWLkrCr+4EAUBNXGGTnruSbxyDhmhnT8joJfBH7LUuVJs9bjeF3Y
+         nFtdz2f3jU10qrBmVZ0Ad6xOG1u45bOPU1kRNukuAD5K4EgpShIFnp0/HpUm1UNiHaOt
+         71troxS13wWSWZmivZNI8jB0EyeibLgTLD+qyfRuxjkkqsNOe1gI1i7wYnAhWbemofQt
+         Ol+M0GmdAVjCC4OI0Y65u1ddAz1C6Wt6cYWJSGcXthATdIuBgxWIhnTihBPgYOH9mql4
+         ShtgtsPsexkB8lQwgig0U9/ikC7QorufTJL/F7ItseKusEPwvXY7Bx2zu3Cr5ohC6wLe
+         4Ftg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
+Date: Wed, 21 Feb 2018 11:16:26 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm@kvack.org
+Subject: Re: [PATCH] mm/page_poison: Make early_page_poison_param __init
+Message-ID: <20180221101626.GA14384@dhcp22.suse.cz>
+References: <20180117034757.27024-1-douly.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALQ-8CKP7GcK-oVwaWz3ZU0qvBOj19eJTwJf0cYQz4Di1Q3n3A@mail.gmail.com>
+In-Reply-To: <20180117034757.27024-1-douly.fnst@cn.fujitsu.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1589809968797570691?=
+X-GMAIL-MSGID: =?utf-8?q?1593005245904636253?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 11:27:07PM +0000, Max Ivanov wrote:
-> > As already explained in the previous mail, there is a fixup for this in
-> > commit 81b6c9998979 ('scsi: core: check for device state in
-> > __scsi_remove_target()').
-> > Please check if this is applied, too.
+On Wed 17-01-18 11:47:57, Dou Liyang wrote:
+> The early_param() is only called during kernel initialization, So Linux
+> marks the function of it with __init macro to save memory.
 > 
-> I tested commit 81b6c9998979 cherry-picked on top of 4.14.20 and it
-> indeed solves the problem.
+> But it forgot to mark the early_page_poison_param(). So, Make it __init
+> as well.
 > 
-> Can it be backported to 4.14 LTS, please?
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-Now queued up, thanks.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-greg k-h
+> ---
+>  mm/page_poison.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page_poison.c b/mm/page_poison.c
+> index e83fd44867de..aa2b3d34e8ea 100644
+> --- a/mm/page_poison.c
+> +++ b/mm/page_poison.c
+> @@ -9,7 +9,7 @@
+>  
+>  static bool want_page_poisoning __read_mostly;
+>  
+> -static int early_page_poison_param(char *buf)
+> +static int __init early_page_poison_param(char *buf)
+>  {
+>  	if (!buf)
+>  		return -EINVAL;
+> -- 
+> 2.14.3
+> 
+> 
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
