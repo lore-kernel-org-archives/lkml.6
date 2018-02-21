@@ -1,50 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964914AbeBUQUV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 11:20:21 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43152 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753851AbeBUQUT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:20:19 -0500
-X-Google-Smtp-Source: AH8x227ySo8T2zdczvsZ9pyXWJPD3NYodf2W0lhEfy3y6ZR4CJhTFydeoqlYXzbu7R+iocmWyNEMSA==
-Subject: Re: [PATCH] ARM: dtc: tegra: enable front panel leds in TrimSlice
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180219201623.6987-1-tmn505@gmail.com>
- <57945bd2-d8c2-f7bc-f01f-29d679762446@wwwdotorg.org>
-From: Tomasz Maciej Nowak <tmn505@gmail.com>
-Message-ID: <873b01dc-3ca5-3151-2654-a8272cb9dd88@gmail.com>
-Date: Wed, 21 Feb 2018 17:20:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935493AbeBUQVA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 11:21:00 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932767AbeBUQU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:20:58 -0500
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz>
+References: <20180119125425.l72meyyc2qtrriwe@dwarf.suse.cz> <20180116193936.oiycvwlk5xy3gm77@dwarf.suse.cz> <20180111120157.23qceywzi6omvvkb@dwarf.suse.cz> <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk> <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk> <20180111115915.dejachty3l7fwpmf@dwarf.suse.cz> <4582.1516120311@warthog.procyon.org.uk> <24618.1516206864@warthog.procyon.org.uk>
+To: Jiri Bohac <jbohac@suse.cz>
+Cc: dhowells@redhat.com, linux-security-module@vger.kernel.org,
+        gnomes@lxorguk.ukuu.org.uk, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jforbes@redhat.com,
+        Chun-Yi Lee <joeyli.kernel@gmail.com>
+Subject: Re: [PATCH 08a/30] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
 MIME-Version: 1.0
-In-Reply-To: <57945bd2-d8c2-f7bc-f01f-29d679762446@wwwdotorg.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: pl-PL
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <23575.1519230051.1@warthog.procyon.org.uk>
+Date: Wed, 21 Feb 2018 16:20:51 +0000
+Message-ID: <23576.1519230051@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-W dniu 20.02.2018 o 20:55, Stephen Warren pisze:
-> On 02/19/2018 01:16 PM, Tomasz Maciej Nowak wrote:
->> Adds device nodes for two front panel LEDs.
-> 
-> Why do you need to change the pinmux settings? Configuring a pin as a 
-> GPIO should override any pinmux special function selection and hence 
-> make it irrelevant, so I don't think you should need to change the pinmux.
+Jiri Bohac <jbohac@suse.cz> wrote:
 
-At first I did exactly that without changing the pinmux, but the LEDs 
-didn't light up. After that I compared with CompuLab source tree [1]. 
-The pinmux was specified as in my patch. With this change the LEDs are 
-fully functional.
+> Key verification may and will fail for lots of reasons which is
+> just going to make a user's life harder. E.g. you want to kexec
+> an old kernel with an expired key. Or your date is just wrong and
+> you get -EKEYEXPIRED.
 
-1. 
-https://gitorious.org/trimslice-kernel/trimslice-kernel?p=trimslice-kernel:trimslice-kernel.git;a=blob;f=arch/arm/mach-tegra/board-trimslice-pinmux.c;h=cc6d5225d97eb9327c820bf1d5b2bc16ab8c6dda;hb=d25bf45d6314089489b30d218ed8a0d6d94417f9#l45
+Note that we can't check for expired keys as we can't trust the system clock
+to be correct at this point.
 
--- 
-Tomek
+> Also, only now I found that some of the error codes the crypto
+> code returns yield really confusing messages (e.g.
+> kexec_file_load of an unsigned kernel returns -ELIBBAD which
+> makes kexec exit with "kexec_file_load failed: Accessing a
+> corrupted shared library").
+
+Yeah, that should be fixed.
+
+> Maybe the error code could be unified to -EKEYREJECTED for all
+> sorts of key verification failures?
+
+Things like ENOMEM and EINTR definitely need to stay separate (not that I
+allow interruption at the moment).
+
+ENOKEY (couldn't find matching key), EINVAL (didn't recognise identifier),
+ENOPKG (couldn't find a crypto algo) and EBADMSG (couldn't parse signature)
+are arguable.  I think there's a valid case for treating ENOKEY, EINVAL and
+ENOPKG differently to EKEYREJECTED - more so for ENOKEY.  In my opinion,
+ENOKEY, EINVAL and ENOPKG are not fatal errors if we're not enforcing
+signature checking, but EKEYREJECTED and EBADMSG are.
+
+David
