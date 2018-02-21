@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227IATPQ5LOr68Fzv6PtWNwSyAiwFQXa04NSsJI7QcQkq/icDmsjcmnbLCZDy68ACy0OqMne
-ARC-Seal: i=1; a=rsa-sha256; t=1519218467; cv=none;
+X-Google-Smtp-Source: AH8x226E/j1GCQ54b+nNW7shmf+lMT3LPiWdAHhyu8jLzPyT3okc0JX1hq3Gzft/6N9PV7nVFoEH
+ARC-Seal: i=1; a=rsa-sha256; t=1519218464; cv=none;
         d=google.com; s=arc-20160816;
-        b=ABgeoNgnqkGeYm734SARynhOqghHbt36OmGzRxCzEg+SZmFjOc/dN/d6ka3QIIzAKI
-         IXot71/oFfaRxKSUbz9b2Sr3LJW/3CPN+9VxVXbT4IuiEOeWszoadRdXQlY1ikQPEg5I
-         vjH7P3Q6DsyNzRj4Uf/hU1fFP9A8RZOvHH151n965k6srl/gUouRthagLGDsBckp2vFz
-         GAD5M3qa1qmFP4FHKUUT4+Cw6++XedzyBmaAmVbSltaSbIJxUPY+OXfHeJ6zXNiNU3gY
-         KoI/ul/vah+5UzX1r+sg6oqe8sh2S2xYX1SwIV90PAsw1Sp8fXzDLWI09kjeWVg6UFVT
-         0SRg==
+        b=duKP/nbxwCweybg3cT/ZuYHxzzhTCZ8szBDdSHTHbll7/kQIDfWyngR6Lyf0gnnfU4
+         aT51UT4vS6+4NWyvqdsMAbYdBandhWObaaXmIy4D1bM4LYsacXttPMFEaB4KNW4GClvJ
+         9bZYlWlIO2aNpwImTj22OXarqwfU8Yn9QZYO5K4uYxG9HeVYeci/OEZDuTpcbSVB89Y0
+         8t3bUUqfl+bXFDew3zPyfIY49LmskZt28DtyG30yVP50oO+HtYp3vPM+WjjtZJp00z8u
+         /1gyqq2bjJJqHaevoFy2XEYTRZnlKjSgW7O7CvmQobooGIwXWXpAln0BTsUVE5kB6t70
+         ROVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=828aESnEcU9d9YxSt0HKeFYwtu84eUG3qALX5Bnjhlw=;
-        b=eHkR14hmkDUhUUgmp1wW5a+MurAeMeBUZNJATS2k02GfYAHJY43Xaugn5ip75gHrZJ
-         jJSjzzcjFVJkjUeBGoGSH3OJjvmqmMYFHMrJYBLGUmdDiT/XFBbv+nDzrLk3VfIv4iqb
-         e0wEzDf6aReb5AJVuFyY/3GSv9gAqimTlEyUIZe3tdE921ThTIVF00VvkpEm4Lj0Xwkw
-         RfA503q4VwAj9iCXiBcomJpk+b6mSj6N/kg9slc7/AyQKhdsvgnzVyea7OdbLEc+OqBS
-         vRvil/g76t3+B6NFtQ5tYhf0SUaGc0wj+OMedA8FUcwUhN88u4otz8DXt4aRQY0MqT2G
-         cInA==
+        bh=RuA5c/LmOFURFp+guAoyZjASXZin3YZa/GPEnNsM0c0=;
+        b=rV5iVujrIoWeOtESxJUqG3p1L040OySxdVJZRA77zsSQpKSjMyxc5KNlqLlg+dG7nr
+         N+nTAYWfeubkzJCHnFaBgbMuxKzm+3tKBvQswry25ZLw/AlpDkWJOzRKJoMrSpyWhluA
+         YXG3s6S64m5S1EBPLskCYOjGgitiTJ9zy7AQLe4om006rfVyhde9qcPnVRkMRzjJDe/F
+         sfZy3zJP+7fXtFC9XS5W7M9H6j8JUglK16XbRlWLz4DZVgkDSsij10FjdgDGeqqHzeG8
+         P8K4QNAA1Q4tU3dCsRBTspKYQ7kRX6NaXUfICVqkbDE3jC8MF/nZZrZsazJrDn6vRvg6
+         OzJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,28 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	arjan.van.de.ven@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	sironi@amazon.de,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 048/163] x86/speculation: Update Speculation Control microcode blacklist
-Date: Wed, 21 Feb 2018 13:47:57 +0100
-Message-Id: <20180221124533.076476577@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 021/163] powerpc/vas: Dont set uses_vas for kernel windows
+Date: Wed, 21 Feb 2018 13:47:30 +0100
+Message-Id: <20180221124531.343806093@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 References: <20180221124529.931834518@linuxfoundation.org>
@@ -57,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015394020607855?=
-X-GMAIL-MSGID: =?utf-8?q?1593016023330059856?=
+X-GMAIL-THRID: =?utf-8?q?1593016020843689294?=
+X-GMAIL-MSGID: =?utf-8?q?1593016020843689294?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -66,64 +50,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 1751342095f0d2b36fa8114d8e12c5688c455ac4 upstream.
+commit b00b62898631b756c3e123542bbb0487aa343dd9 upstream.
 
-Intel have retroactively blessed the 0xc2 microcode on Skylake mobile
-and desktop parts, and the Gemini Lake 0x22 microcode is apparently fine
-too. We blacklisted the latter purely because it was present with all
-the other problematic ones in the 2018-01-08 release, but now it's
-explicitly listed as OK.
+cp_abort is only required for user windows, because kernel context
+must not be preempted between a copy/paste pair.
 
-We still list 0x84 for the various Kaby Lake / Coffee Lake parts, as
-that appeared in one version of the blacklist and then reverted to
-0x80 again. We can change it if 0x84 is actually announced to be safe.
+Without this patch, the init task gets used_vas set when it runs the
+nx842_powernv_init initcall, which opens windows for kernel usage.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: sironi@amazon.de
-Link: http://lkml.kernel.org/r/1518305967-31356-2-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+used_vas is then never cleared anywhere, so it gets propagated into
+all other tasks. It's a property of the address space, so it should
+really be cleared when a new mm is created (or in dup_mmap if the
+mmaps are marked as VM_DONTCOPY). For now we seem to have no such
+driver, so leave that for another patch.
+
+Fixes: 6c8e6bb2a52d ("powerpc/vas: Add support for user receive window")
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/powerpc/platforms/powernv/vas-window.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -123,8 +123,6 @@ static const struct sku_microcode spectr
- 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
--	{ INTEL_FAM6_SKYLAKE_MOBILE,	0x03,	0xc2 },
--	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
-@@ -136,8 +134,6 @@ static const struct sku_microcode spectr
- 	{ INTEL_FAM6_HASWELL_X,		0x02,	0x3b },
- 	{ INTEL_FAM6_HASWELL_X,		0x04,	0x10 },
- 	{ INTEL_FAM6_IVYBRIDGE_X,	0x04,	0x42a },
--	/* Updated in the 20180108 release; blacklist until we know otherwise */
--	{ INTEL_FAM6_ATOM_GEMINI_LAKE,	0x01,	0x22 },
- 	/* Observed in the wild */
- 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x06,	0x61b },
- 	{ INTEL_FAM6_SANDYBRIDGE_X,	0x07,	0x712 },
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -1063,16 +1063,16 @@ struct vas_window *vas_tx_win_open(int v
+ 			rc = PTR_ERR(txwin->paste_kaddr);
+ 			goto free_window;
+ 		}
++	} else {
++		/*
++		 * A user mapping must ensure that context switch issues
++		 * CP_ABORT for this thread.
++		 */
++		rc = set_thread_uses_vas();
++		if (rc)
++			goto free_window;
+ 	}
+ 
+-	/*
+-	 * Now that we have a send window, ensure context switch issues
+-	 * CP_ABORT for this thread.
+-	 */
+-	rc = -EINVAL;
+-	if (set_thread_uses_vas() < 0)
+-		goto free_window;
+-
+ 	set_vinst_win(vinst, txwin);
+ 
+ 	return txwin;
