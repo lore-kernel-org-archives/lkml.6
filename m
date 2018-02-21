@@ -1,642 +1,100 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227JM7hKuDdrQCqutQQY2m+sXpkATgg+XzbMuC8ktTPulCpPJU2F9j4p2+MHyWT1jXndiPhz
-ARC-Seal: i=1; a=rsa-sha256; t=1519414602; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AbKtMEKDh41WVvfAzk9efADO6Hn6H4IVL8XOErOXjVyfIsZ1E+OHPcxqYMBybBNSn+
-         M4vxpVtuZ/sNJLhoMcw9Uu4XzQdZkmidFFFQvxQarFxyiw77v08DfvYmfLTN0IVyKV8H
-         T6Ojkwg2cQuDAt+xMi6zLCOy8H1sns3jFHTLanO/mKMUkSy6mJesQ+xOpPunYZmZgXHS
-         Briyrz/kc/1ezmnSEOltdEd9xqumaxPf33EwjvmYNS0+SJo0z7ho0BhTznCOB8Tg7GSi
-         fxMmmxlPs8BN0tYo+5sU3KCZR8wpkbVXSJh37NVNcpyScnsG5SCeGLJzHIqekCzwMWgH
-         oxYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:user-agent:in-reply-to
-         :content-disposition:mime-version:references:reply-to:subject:cc:to
-         :from:date:arc-authentication-results;
-        bh=c+hDBZgaIPMjI2k/Wji0ZJiRolstIfAT5z+goIuNGJg=;
-        b=o7v+KOMztg/eAyYaDZ549ALkMIaVZbX3KgdcyLKktjJNj+gyarjq4IJbH2omfHPlmC
-         ziCu1QD8AsFgSz8cJNk4ZkRTiEoAr3RKK5wcDVY2BnyNCCc1NH1PMgCEJ8gUQ8O3+kWd
-         qSpxsjOILNWNwQy5hqa2MWsgWDoTxnt6svn5WcKxhvGBiS/0Cg8/zbaZMWmaIMQO+62k
-         zqE9+nbT/BhOz674l5VJ/dfxoATFkob0ORQ0PWhgBlOQlkMHTvBcrheK0DVk5U6A97t7
-         YLqMvP34gb5MferCduLed81dqapKdIR4E94oTB93CWgNaxyKs23Nvk7zdzqFiSrUWK4m
-         huFg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2503644-1519249308-2-12206476026743235487
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519249308; b=Weya+iVIMncBTKQgSu/jXzQGYZzZt/kM3Y1UlicE4zDuDdP
+    PoUUbGIWr6J8P8Vp/EnpiDYQgOXM+akAPSVVZU4ZmPmZdRn81hu7brwvXlbC8/OE
+    Tya7DnCPbpTh3CZGbFCPjP3Af7IOMN0Rka9PFyRCI9xGF61+sb33+jjMdP5UmSS7
+    GuDyGQj+Q44V6hcSvZp/LDmCWXuTEZLYZdJ8+ocPWLTQpTfSHKfHhOS/qJhP+6M6
+    1RKMXkJwJ96KumxjRSac47bJnafMuChkAgCYKXyj9d11fBBUyKl+mP3RIcxHsK4G
+    ygSlTdddcem2FkjCSoLWQl6j+2KnvStE6SF6Xrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1519249308; bh=rzn/OvWCrHIy+q12kzHWP4mAat
+    InSoLdTmvOmQ4eUdM=; b=Xozz6tzhgTb10kCnlqJcdXpyH4s55pKuFpQxTAjFs6
+    CSx8QLFJ9o5gvnY+WraXXF0V+TJE1lW42hZTxP5o3ajIkFbl0Hui4NAKwCj2JUuL
+    IgJ9bvXfRxx5yj3RvGG7lOyQSMbDjJcVdUlPH+P0XF2Gfpqexrvvmq8JNg6QaHxS
+    fZnme1mIJOr336ivn+1QsT43y3AKwnFY6OUx7G1uG6NmaY2mn4yamZfo9E+YImQm
+    kuGFAe/GC3tQ7Qt8g+a4AZCT2Cn4NlPBLVY24p7/33eR8aSTVdHGjMa3uPokdHt6
+    ijTc+Gzk4z1kFS/lxFd/fkbt/wqykNc9K+M3hVyf4PXw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ht661+eC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dLTSLu0x;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ht661+eC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dLTSLu0x;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934748AbeBWSuf (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 23 Feb 2018 13:50:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60422 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934450AbeBWSuc (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 23 Feb 2018 13:50:32 -0500
-Date: Fri, 23 Feb 2018 10:50:20 -0800
-From: Ram Pai <linuxram@us.ibm.com>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 1/2] selftests/powerpc: Add ptrace tests for Protection
- Key registers
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180223183344.21038-1-bauerman@linux.vnet.ibm.com>
+        id S1751119AbeBUVlp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Feb 2018 16:41:45 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35949 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbeBUVlo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Feb 2018 16:41:44 -0500
+X-Google-Smtp-Source: AH8x225oNxwNblsT5gXldGUxU6WyPTyoAyVmsEQXvNL4HpXkWtc8kBEVYgaH2c1JO63377aUOZw7Gg==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: x86@kernel.org,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jim Mattson <jmattson@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH 0/3] x86/pti: KVM: fixes and optimizations for IBRS
+Date: Wed, 21 Feb 2018 22:41:34 +0100
+Message-Id: <1519249297-73718-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223183344.21038-1-bauerman@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18022318-0016-0000-0000-0000052919F5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022318-0017-0000-0000-000028653918
-Message-Id: <20180223185020.GI5559@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802230229
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593217776641690695?=
-X-GMAIL-MSGID: =?utf-8?q?1593221686401677684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 03:33:43PM -0300, Thiago Jung Bauermann wrote:
-> This test exercises read and write access to the AMR, IAMR and UAMOR.
-> 
+Three tiny patches fixing bugs and optimizing the IBRS code.  These
+are all fairly obvious, but they escaped review.  They should go in
+through the x86/pti tree and should apply to both 4.9 and 4.14 trees.
 
-Tested-by: Ram Pai <linuxram@us.ibm.com>
-Acked-by: Ram Pai <linuxram@us.ibm.com>
+Thanks!
 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> ---
->  tools/testing/selftests/powerpc/include/reg.h      |   1 +
->  tools/testing/selftests/powerpc/ptrace/Makefile    |   5 +-
->  tools/testing/selftests/powerpc/ptrace/child.h     | 130 ++++++++
->  .../testing/selftests/powerpc/ptrace/ptrace-pkey.c | 326 +++++++++++++++++++++
->  tools/testing/selftests/powerpc/ptrace/ptrace.h    |  37 +++
->  5 files changed, 498 insertions(+), 1 deletion(-)
->  create mode 100644 tools/testing/selftests/powerpc/ptrace/child.h
->  create mode 100644 tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
-> 
-> diff --git a/tools/testing/selftests/powerpc/include/reg.h b/tools/testing/selftests/powerpc/include/reg.h
-> index 4afdebcce4cd..7f348c059bc2 100644
-> --- a/tools/testing/selftests/powerpc/include/reg.h
-> +++ b/tools/testing/selftests/powerpc/include/reg.h
-> @@ -54,6 +54,7 @@
->  #define SPRN_DSCR_PRIV 0x11	/* Privilege State DSCR */
->  #define SPRN_DSCR      0x03	/* Data Stream Control Register */
->  #define SPRN_PPR       896	/* Program Priority Register */
-> +#define SPRN_AMR       13	/* Authority Mask Register - problem state */
-> 
->  /* TEXASR register bits */
->  #define TEXASR_FC	0xFE00000000000000
-> diff --git a/tools/testing/selftests/powerpc/ptrace/Makefile b/tools/testing/selftests/powerpc/ptrace/Makefile
-> index 480305266504..707ba734faf2 100644
-> --- a/tools/testing/selftests/powerpc/ptrace/Makefile
-> +++ b/tools/testing/selftests/powerpc/ptrace/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
->                ptrace-tar ptrace-tm-tar ptrace-tm-spd-tar ptrace-vsx ptrace-tm-vsx \
-> -              ptrace-tm-spd-vsx ptrace-tm-spr
-> +              ptrace-tm-spd-vsx ptrace-tm-spr ptrace-pkey
-> 
->  include ../../lib.mk
-> 
-> @@ -9,6 +9,9 @@ all: $(TEST_PROGS)
-> 
->  CFLAGS += -m64 -I../../../../../usr/include -I../tm -mhtm -fno-pie
-> 
-> +ptrace-pkey: ../harness.c ../utils.c ../lib/reg.S ptrace.h child.h ptrace-pkey.c
-> +	$(LINK.c) $^ $(LDLIBS) -pthread -o $@
-> +
->  $(TEST_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
-> 
->  clean:
-> diff --git a/tools/testing/selftests/powerpc/ptrace/child.h b/tools/testing/selftests/powerpc/ptrace/child.h
-> new file mode 100644
-> index 000000000000..40c1a6d92111
-> --- /dev/null
-> +++ b/tools/testing/selftests/powerpc/ptrace/child.h
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Helper functions to sync execution between parent and child processes.
-> + *
-> + * Copyright 2018, Thiago Jung Bauermann, IBM Corporation.
-> + */
-> +#include <stdio.h>
-> +#include <stdbool.h>
-> +#include <semaphore.h>
-> +
-> +/*
-> + * Information in a shared memory location for synchronization between child and
-> + * parent.
-> + */
-> +struct child_sync {
-> +	/* The parent waits on this semaphore. */
-> +	sem_t sem_parent;
-> +
-> +	/* If true, the child should give up as well. */
-> +	bool parent_gave_up;
-> +
-> +	/* The child waits on this semaphore. */
-> +	sem_t sem_child;
-> +
-> +	/* If true, the parent should give up as well. */
-> +	bool child_gave_up;
-> +};
-> +
-> +#define CHILD_FAIL_IF(x, sync)						\
-> +	do {								\
-> +		if (x) {						\
-> +			fprintf(stderr,					\
-> +				"[FAIL] Test FAILED on line %d\n", __LINE__); \
-> +			(sync)->child_gave_up = true;			\
-> +			prod_parent(sync);				\
-> +			return 1;					\
-> +		}							\
-> +	} while (0)
-> +
-> +#define PARENT_FAIL_IF(x, sync)						\
-> +	do {								\
-> +		if (x) {						\
-> +			fprintf(stderr,					\
-> +				"[FAIL] Test FAILED on line %d\n", __LINE__); \
-> +			(sync)->parent_gave_up = true;			\
-> +			prod_child(sync);				\
-> +			return 1;					\
-> +		}							\
-> +	} while (0)
-> +
-> +int init_child_sync(struct child_sync *sync)
-> +{
-> +	int ret;
-> +
-> +	ret = sem_init(&sync->sem_parent, 1, 0);
-> +	if (ret) {
-> +		perror("Semaphore initialization failed");
-> +		return 1;
-> +	}
-> +
-> +	ret = sem_init(&sync->sem_child, 1, 0);
-> +	if (ret) {
-> +		perror("Semaphore initialization failed");
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +void destroy_child_sync(struct child_sync *sync)
-> +{
-> +	sem_destroy(&sync->sem_parent);
-> +	sem_destroy(&sync->sem_child);
-> +}
-> +
-> +int wait_child(struct child_sync *sync)
-> +{
-> +	int ret;
-> +
-> +	/* Wait until the child prods us. */
-> +	ret = sem_wait(&sync->sem_parent);
-> +	if (ret) {
-> +		perror("Error waiting for child");
-> +		return 1;
-> +	}
-> +
-> +	return sync->child_gave_up;
-> +}
-> +
-> +int prod_child(struct child_sync *sync)
-> +{
-> +	int ret;
-> +
-> +	/* Unblock the child now. */
-> +	ret = sem_post(&sync->sem_child);
-> +	if (ret) {
-> +		perror("Error prodding child");
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int wait_parent(struct child_sync *sync)
-> +{
-> +	int ret;
-> +
-> +	/* Wait until the parent prods us. */
-> +	ret = sem_wait(&sync->sem_child);
-> +	if (ret) {
-> +		perror("Error waiting for parent");
-> +		return 1;
-> +	}
-> +
-> +	return sync->parent_gave_up;
-> +}
-> +
-> +int prod_parent(struct child_sync *sync)
-> +{
-> +	int ret;
-> +
-> +	/* Unblock the parent now. */
-> +	ret = sem_post(&sync->sem_parent);
-> +	if (ret) {
-> +		perror("Error prodding parent");
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c b/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
-> new file mode 100644
-> index 000000000000..8332b9338d39
-> --- /dev/null
-> +++ b/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
-> @@ -0,0 +1,326 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Ptrace test for Memory Protection Key registers
-> + *
-> + * Copyright (C) 2015 Anshuman Khandual, IBM Corporation.
-> + * Copyright (C) 2018 IBM Corporation.
-> + */
-> +#include "ptrace.h"
-> +#include "child.h"
-> +
-> +#ifndef __NR_pkey_alloc
-> +#define __NR_pkey_alloc		384
-> +#endif
-> +
-> +#ifndef __NR_pkey_free
-> +#define __NR_pkey_free		385
-> +#endif
-> +
-> +#ifndef NT_PPC_PKEY
-> +#define NT_PPC_PKEY		0x110
-> +#endif
-> +
-> +#ifndef PKEY_DISABLE_EXECUTE
-> +#define PKEY_DISABLE_EXECUTE	0x4
-> +#endif
-> +
-> +#define AMR_BITS_PER_PKEY 2
-> +#define PKEY_REG_BITS (sizeof(u64) * 8)
-> +#define pkeyshift(pkey) (PKEY_REG_BITS - ((pkey + 1) * AMR_BITS_PER_PKEY))
-> +
-> +static const char user_read[] = "[User Read (Running)]";
-> +static const char user_write[] = "[User Write (Running)]";
-> +static const char ptrace_read_running[] = "[Ptrace Read (Running)]";
-> +static const char ptrace_write_running[] = "[Ptrace Write (Running)]";
-> +
-> +/* Information shared between the parent and the child. */
-> +struct shared_info {
-> +	struct child_sync child_sync;
-> +
-> +	/* AMR value the parent expects to read from the child. */
-> +	unsigned long amr1;
-> +
-> +	/* AMR value the parent is expected to write to the child. */
-> +	unsigned long amr2;
-> +
-> +	/* AMR value that ptrace should refuse to write to the child. */
-> +	unsigned long amr3;
-> +
-> +	/* IAMR value the parent expects to read from the child. */
-> +	unsigned long expected_iamr;
-> +
-> +	/* UAMOR value the parent expects to read from the child. */
-> +	unsigned long expected_uamor;
-> +
-> +	/*
-> +	 * IAMR and UAMOR values that ptrace should refuse to write to the child
-> +	 * (even though they're valid ones) because userspace doesn't have
-> +	 * access to those registers.
-> +	 */
-> +	unsigned long new_iamr;
-> +	unsigned long new_uamor;
-> +};
-> +
-> +static int sys_pkey_alloc(unsigned long flags, unsigned long init_access_rights)
-> +{
-> +	return syscall(__NR_pkey_alloc, flags, init_access_rights);
-> +}
-> +
-> +static int sys_pkey_free(int pkey)
-> +{
-> +	return syscall(__NR_pkey_free, pkey);
-> +}
-> +
-> +static int child(struct shared_info *info)
-> +{
-> +	unsigned long reg;
-> +	bool disable_execute = true;
-> +	int pkey1, pkey2, pkey3;
-> +	int ret;
-> +
-> +	/* Wait until parent fills out the initial register values. */
-> +	ret = wait_parent(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Get some pkeys so that we can change their bits in the AMR. */
-> +	pkey1 = sys_pkey_alloc(0, PKEY_DISABLE_EXECUTE);
-> +	if (pkey1 < 0) {
-> +		pkey1 = sys_pkey_alloc(0, 0);
-> +		CHILD_FAIL_IF(pkey1 < 0, &info->child_sync);
-> +
-> +		disable_execute = false;
-> +	}
-> +
-> +	pkey2 = sys_pkey_alloc(0, 0);
-> +	CHILD_FAIL_IF(pkey2 < 0, &info->child_sync);
-> +
-> +	pkey3 = sys_pkey_alloc(0, 0);
-> +	CHILD_FAIL_IF(pkey3 < 0, &info->child_sync);
-> +
-> +	info->amr1 |= 3ul << pkeyshift(pkey1);
-> +	info->amr2 |= 3ul << pkeyshift(pkey2);
-> +	info->amr3 |= info->amr2 | 3ul << pkeyshift(pkey3);
-> +
-> +	if (disable_execute)
-> +		info->expected_iamr |= 1ul << pkeyshift(pkey1);
-> +
-> +	info->expected_uamor |= 3ul << pkeyshift(pkey1) |
-> +				3ul << pkeyshift(pkey2);
-> +	info->new_iamr |= 1ul << pkeyshift(pkey1) | 1ul << pkeyshift(pkey2);
-> +	info->new_uamor |= 3ul << pkeyshift(pkey1);
-> +
-> +	/*
-> +	 * We won't use pkey3. We just want a plausible but invalid key to test
-> +	 * whether ptrace will let us write to AMR bits we are not supposed to.
-> +	 *
-> +	 * This also tests whether the kernel restores the UAMOR permissions
-> +	 * after a key is freed.
-> +	 */
-> +	sys_pkey_free(pkey3);
-> +
-> +	printf("%-30s AMR: %016lx pkey1: %d pkey2: %d pkey3: %d\n",
-> +	       user_write, info->amr1, pkey1, pkey2, pkey3);
-> +
-> +	mtspr(SPRN_AMR, info->amr1);
-> +
-> +	/* Wait for parent to read our AMR value and write a new one. */
-> +	ret = prod_parent(&info->child_sync);
-> +	CHILD_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_parent(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reg = mfspr(SPRN_AMR);
-> +
-> +	printf("%-30s AMR: %016lx\n", user_read, reg);
-> +
-> +	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
-> +
-> +	/*
-> +	 * Wait for parent to try to write an invalid AMR value.
-> +	 */
-> +	ret = prod_parent(&info->child_sync);
-> +	CHILD_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_parent(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reg = mfspr(SPRN_AMR);
-> +
-> +	printf("%-30s AMR: %016lx\n", user_read, reg);
-> +
-> +	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
-> +
-> +	/*
-> +	 * Wait for parent to try to write an IAMR and a UAMOR value. We can't
-> +	 * verify them, but we can verify that the AMR didn't change.
-> +	 */
-> +	ret = prod_parent(&info->child_sync);
-> +	CHILD_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_parent(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reg = mfspr(SPRN_AMR);
-> +
-> +	printf("%-30s AMR: %016lx\n", user_read, reg);
-> +
-> +	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
-> +
-> +	/* Now let parent now that we are finished. */
-> +
-> +	ret = prod_parent(&info->child_sync);
-> +	CHILD_FAIL_IF(ret, &info->child_sync);
-> +
-> +	return TEST_PASS;
-> +}
-> +
-> +static int parent(struct shared_info *info, pid_t pid)
-> +{
-> +	unsigned long regs[3];
-> +	int ret, status;
-> +
-> +	/*
-> +	 * Get the initial values for AMR, IAMR and UAMOR and communicate them
-> +	 * to the child.
-> +	 */
-> +	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	info->amr1 = info->amr2 = info->amr3 = regs[0];
-> +	info->expected_iamr = info->new_iamr = regs[1];
-> +	info->expected_uamor = info->new_uamor = regs[2];
-> +
-> +	/* Wake up child so that it can set itself up. */
-> +	ret = prod_child(&info->child_sync);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_child(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Verify that we can read the pkey registers from the child. */
-> +	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
-> +	       ptrace_read_running, regs[0], regs[1], regs[2]);
-> +
-> +	PARENT_FAIL_IF(regs[0] != info->amr1, &info->child_sync);
-> +	PARENT_FAIL_IF(regs[1] != info->expected_iamr, &info->child_sync);
-> +	PARENT_FAIL_IF(regs[2] != info->expected_uamor, &info->child_sync);
-> +
-> +	/* Write valid AMR value in child. */
-> +	ret = ptrace_write_regs(pid, NT_PPC_PKEY, &info->amr2, 1);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx\n", ptrace_write_running, info->amr2);
-> +
-> +	/* Wake up child so that it can verify it changed. */
-> +	ret = prod_child(&info->child_sync);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_child(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Write invalid AMR value in child. */
-> +	ret = ptrace_write_regs(pid, NT_PPC_PKEY, &info->amr3, 1);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx\n", ptrace_write_running, info->amr3);
-> +
-> +	/* Wake up child so that it can verify it didn't change. */
-> +	ret = prod_child(&info->child_sync);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait_child(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Try to write to IAMR. */
-> +	regs[0] = info->amr1;
-> +	regs[1] = info->new_iamr;
-> +	ret = ptrace_write_regs(pid, NT_PPC_PKEY, regs, 2);
-> +	PARENT_FAIL_IF(!ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx IAMR: %016lx\n",
-> +	       ptrace_write_running, regs[0], regs[1]);
-> +
-> +	/* Try to write to IAMR and UAMOR. */
-> +	regs[2] = info->new_uamor;
-> +	ret = ptrace_write_regs(pid, NT_PPC_PKEY, regs, 3);
-> +	PARENT_FAIL_IF(!ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
-> +	       ptrace_write_running, regs[0], regs[1], regs[2]);
-> +
-> +	/* Verify that all registers still have their expected values. */
-> +	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
-> +	       ptrace_read_running, regs[0], regs[1], regs[2]);
-> +
-> +	PARENT_FAIL_IF(regs[0] != info->amr2, &info->child_sync);
-> +	PARENT_FAIL_IF(regs[1] != info->expected_iamr, &info->child_sync);
-> +	PARENT_FAIL_IF(regs[2] != info->expected_uamor, &info->child_sync);
-> +
-> +	/* Wake up child so that it can verify AMR didn't change and wrap up. */
-> +	ret = prod_child(&info->child_sync);
-> +	PARENT_FAIL_IF(ret, &info->child_sync);
-> +
-> +	ret = wait(&status);
-> +	if (ret != pid) {
-> +		printf("Child's exit status not captured\n");
-> +		ret = TEST_PASS;
-> +	} else if (!WIFEXITED(status)) {
-> +		printf("Child exited abnormally\n");
-> +		ret = TEST_FAIL;
-> +	} else
-> +		ret = WEXITSTATUS(status) ? TEST_FAIL : TEST_PASS;
-> +
-> +	return ret;
-> +}
-> +
-> +static int ptrace_pkey(void)
-> +{
-> +	struct shared_info *info;
-> +	int shm_id;
-> +	int ret;
-> +	pid_t pid;
-> +
-> +	shm_id = shmget(IPC_PRIVATE, sizeof(*info), 0777 | IPC_CREAT);
-> +	info = shmat(shm_id, NULL, 0);
-> +
-> +	ret = init_child_sync(&info->child_sync);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pid = fork();
-> +	if (pid < 0) {
-> +		perror("fork() failed");
-> +		ret = TEST_FAIL;
-> +	} else if (pid == 0)
-> +		ret = child(info);
-> +	else
-> +		ret = parent(info, pid);
-> +
-> +	shmdt(info);
-> +
-> +	if (pid) {
-> +		destroy_child_sync(&info->child_sync);
-> +		shmctl(shm_id, IPC_RMID, NULL);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	return test_harness(ptrace_pkey, "ptrace_pkey");
-> +}
-> diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace.h b/tools/testing/selftests/powerpc/ptrace/ptrace.h
-> index 19fb825270a1..d2c9c4c2b5ee 100644
-> --- a/tools/testing/selftests/powerpc/ptrace/ptrace.h
-> +++ b/tools/testing/selftests/powerpc/ptrace/ptrace.h
-> @@ -102,6 +102,43 @@ int cont_trace(pid_t child)
->  	return TEST_PASS;
->  }
-> 
-> +int ptrace_read_regs(pid_t child, unsigned long type, unsigned long regs[],
-> +		     int n)
-> +{
-> +	struct iovec iov;
-> +	long ret;
-> +
-> +	FAIL_IF(start_trace(child));
-> +
-> +	iov.iov_base = regs;
-> +	iov.iov_len = n * sizeof(unsigned long);
-> +
-> +	ret = ptrace(PTRACE_GETREGSET, child, type, &iov);
-> +	FAIL_IF(ret != 0);
-> +
-> +	FAIL_IF(stop_trace(child));
-> +
-> +	return TEST_PASS;
-> +}
-> +
-> +long ptrace_write_regs(pid_t child, unsigned long type, unsigned long regs[],
-> +		       int n)
-> +{
-> +	struct iovec iov;
-> +	long ret;
-> +
-> +	FAIL_IF(start_trace(child));
-> +
-> +	iov.iov_base = regs;
-> +	iov.iov_len = n * sizeof(unsigned long);
-> +
-> +	ret = ptrace(PTRACE_SETREGSET, child, type, &iov);
-> +
-> +	FAIL_IF(stop_trace(child));
-> +
-> +	return ret;
-> +}
-> +
->  /* TAR, PPR, DSCR */
->  int show_tar_registers(pid_t child, unsigned long *out)
->  {
+Paolo
+
+Paolo Bonzini (3):
+  KVM: x86: use native MSR ops for SPEC_CTRL
+  KVM: nVMX: fix wrong condition for SPEC_CTRL and PRED_CMD MSRs
+  KVM: VMX: mark RDMSR path as unlikely
+
+ arch/x86/kvm/svm.c |  9 +++++----
+ arch/x86/kvm/vmx.c | 15 ++++++++-------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
 
 -- 
-Ram Pai
-
+1.8.3.1
