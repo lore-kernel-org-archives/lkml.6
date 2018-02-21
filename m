@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753138AbeBUMtB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 07:49:01 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:59443 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeBUMs6 (ORCPT
+        id S932593AbeBUMyN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 07:54:13 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38366 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752961AbeBUMyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 07:48:58 -0500
-From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-To: kishon@ti.com
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Subject: [PATCH 2/2] pci: endpoint: Fix kernel panic after put_device()
-Date: Wed, 21 Feb 2018 13:47:07 +0100
-Message-Id: <20180221124707.26308-3-embedded24@evers-fischer.de>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180221124707.26308-1-embedded24@evers-fischer.de>
-References: <20180221124707.26308-1-embedded24@evers-fischer.de>
-X-Provags-ID: V03:K0:JwJ/PfeHxSwfIMXtK4QFiis5MSUcVoLgvdEtHowPBz0oSiYNicF
- DE949BCZzIFC67BeYK41ZZBmnpoZfnLnTrG5krJ9t9Z4se1Txl0ITkMA7x9n9oV4Z1EfcZ+
- osujVQxYWwrkdZ6VsOC+iSlXASEFZgXg05nOWcOsVNaNOEzc2Np32rIeKeLiI/ctu+15Mkc
- 750XwoosDRd4CBs5flAzQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ohABFLfiUhc=:5K899OOLiScZ9SN2JzhLu6
- frtHJ7ywB2crpn61Ly3vudhkrYLDlO62E1+0Vu8wZzAHdo9yqHXy9hqq1wuq2RpLeps8JvCx/
- TlDZMsFgqF2n0iw9X6MkyE2+hOavDpDlD7Mi5TQ/sQq2mDaQ1m83DuUWq/AfArcKQXZr6zw3R
- MDZbeOdjZVN2/DtetJ6JJ4XYnwygmnvA2oKJsHdxKxD6GJU95At66b+zmEM9Pbal8WugKuZf+
- ToO1x185ZQBD0ryvyxpyXg+D9r832g9mY9jBxAcHpQvBFOMicvMyB+NFmdSc9hEp2yKmyDfaA
- ltO+GrmnZmrFDHK8dRmJrlWkaI8maLZ3BZHEpO69/C4eryriab9n0xEhxOlnWglpiNdvU1AHD
- 6Q3D0+yGApBEtAzD0IRsidg+sOtVX4l3M7WNY4jrHc27U9UqrAE5RY5H0elA9E5w6Ar5Oj+Ah
- 6cg+EBrDDfM+1G+OWxOfNFYDCAx/Y+5+cOEzgIEQJt5Y/Je2gWHi2AiXaMSk4I3/XZ8CwJcMI
- fX+uo6rtRa5obTUCWTkHvxxVL7ehJp4V+33jwY/DfzVI5zEyHWM7dwmCwOSHKra5PnR16jRXd
- QzT0VYSshV81bL8ZdtouFkw7UGCd1EnFkS52TmUu2CSoR5PwjAOwfc73II49EYidAS9X71HZE
- t1feHN2EO7/N0zkh6SLzvo5cgVOcXp4G/7J7Tp7W93PAXZouRUQjXvnh2gyP/4x/+eiFHi93x
- 64Sna70fMGT6JfgmLZrxKOiDKR7GeratQ3JtkA==
+        Wed, 21 Feb 2018 07:54:11 -0500
+X-Google-Smtp-Source: AH8x227nzcm5g9E481puoiEgpy10vfYHg6MFLq5U0sdryUoztt6OgAzRsBLLBGbwLdSARs2aSA/a7w==
+Date: Wed, 21 Feb 2018 18:24:07 +0530
+From: gaurav jindal <gauravjindal1104@gmail.com>
+To: peterz@infradead.org, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH]sched: completion: use bool in try_wait_for_completion
+Message-ID: <20180221125407.GA14292@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Variable ret in try_wait_for_completion can have only true/false values. Since
+the return type of the function is also bool, variable ret should have data
+type as bool in place of int.
+Moreover, the size of bool in many platforms is 1 byte whereas size of int is
+4 bytes(though architecture dependent). Modifying the data type reduces the 
+size consumed for the stack.
 
-'put_device()' calls the relase function 'pci_epf_dev_release()',
-which already frees 'epf->name' and 'epf'.
+Signed-off-by: Gaurav Jindal<gauravjindal1104@gmail.com>
 
-Therefore we must not free them again after 'put_device()'.
-
-Change-Id: I14ca19f96abfbbb489dd1f4d489e085329d7112e
-Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
 ---
- drivers/pci/endpoint/pci-epf-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 23d0e128d1a5..3718b4c5814a 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -243,7 +243,7 @@ struct pci_epf *pci_epf_create(const char *name)
- 
- put_dev:
- 	put_device(dev);
--	kfree(epf->name);
-+	return ERR_PTR(ret);
- 
- free_epf:
- 	kfree(epf);
--- 
-2.16.2
+diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+index 0926aef..3e15e8d 100644
+--- a/kernel/sched/completion.c
++++ b/kernel/sched/completion.c
+@@ -283,7 +283,7 @@ int __sched wait_for_completion_killable(struct completion *x)
+ bool try_wait_for_completion(struct completion *x)
+ {
+ 	unsigned long flags;
+-	int ret = 1;
++	bool ret = true;
+
+ 	/*
+ 	 * Since x->done will need to be locked only
+@@ -292,11 +292,11 @@ bool try_wait_for_completion(struct completion *x)
+ 	 * return early in the blocking case.
+ 	 */
+ 	if (!READ_ONCE(x->done))
+-		return 0;
++		return false;
+
+ 	spin_lock_irqsave(&x->wait.lock, flags);
+ 	if (!x->done)
+-		ret = 0;
++		ret = false;
+ 	else if (x->done != UINT_MAX)
+ 		x->done--;
+ 	spin_unlock_irqrestore(&x->wait.lock, flags);
