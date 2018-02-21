@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227dZmHDjuHVkVRh3EH/S7pAlKFjf52RHWWHyPL50+ptsIZm3ehAZVokfiLzZnlieV4E8+zQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519225153; cv=none;
+X-Google-Smtp-Source: AH8x226NfDqiJ/+DXhWaXTtVNA44JxuaWf4zxu8l1xMis3Raq8aQ97hui8b3BxjeCj1fT2elNkow
+ARC-Seal: i=1; a=rsa-sha256; t=1519225064; cv=none;
         d=google.com; s=arc-20160816;
-        b=qNRoA/x22tZQqVY45mWTWuu3C+so5zgv2et9UUlC8/cvwkQlq2F2IAlKX/pVPxRYb1
-         d8Kdy+vepCVlDCcP06TRlAx/wbZCLYzihjuyDieSWo/jbYkGSUGtejsu3GulB56FMqhw
-         ORkeRmkUhWHgZxC7gLPmWdSKyCc5Zf4SeAlfWwQNKaz46wKGq1bdhwlgzT/YtsjTatsb
-         xUk2RXy2C+hf8FAs5f8CappYGZuoavC+ILugRNoZ5t8rAJjGzuPfMDQXYPlKhO+XLY39
-         sclFgKCqzOy5K/ZeguQapKPafEapTcHvGzNj9fOmgjOOSqqkU3Hv8uKYYnXDGWzTUD64
-         zaQQ==
+        b=DlGx5uR9+dON2UP9BAHivRiLKm27wHfHkeiZtpPO8ErSQxmFxAtohpwOsZ41gQKJ9s
+         skruDPAByJ946IuzQs9SinVCKJIyWNaeOaiQU1c3Z4/OE/kooPSgfAUm87lT9dESZEJv
+         zNeMTs0tefgoEOGDwe/d/ApHz38ZkXBHZPlyt+mx3IjbY1Jo8eNm/4dRqT6pbVm/RUn1
+         WnTIAHs0Mx4mD/QOMRKqh1AykhFvhs0TLWo8e20qD3neXuIvftUpXWXAWqLuglDx7hyj
+         6BjuqljjQQqOwsj840hBLzoZcn3Gf2XtJF6Fq5/P6wNmoWFBqRa9M7qH4o7wob7Afwsa
+         ovgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=TY2s9KrVP/9sPYVewtdqeaafSPc5UxC2Al0lnDqE7bw=;
-        b=tclNPwXHzxinCYYx+lj1jQs0V9EFexJXb5F1mY4qjPWstIVoxw4qPtRFrqTTd2N/gw
-         fr+fVQxQC4yF3S6QqJmyCm+cZlX/py6DgLAVvEsG2ciaS7lq2KNAe5ilyM51ohSPjxkh
-         5Lg/EZ+qxplbYqmiZVWXR1T1o90ZgJwdHMwMYV44h3y1ae+q1tkx6R+ZP0XWf7hiDzgM
-         AOugz9iH84wxBB2cgy1yKRfkbpZm1xRkycFE32YhjW/ABmwpc93WuEed5ckB9ZA0gJP9
-         8iSlHzDhX9wOHZB4t/hXbAAakb74V/ULsEQ7gvCi3am/htDoeDIADIZA7VbHV7pLZAeJ
-         2PMg==
+        bh=W8yQDQu7EemafJASYnuyhW4bX1ksI/tfDBnRYFUMERE=;
+        b=ppRV/3JnxcYIGMonnn59am+5XFhblqaECIcn+wQ9d2WRGS8MJBDN7EG8H0pTTxVW3S
+         xBCPpdhn6pPKI6NJIslM34jV7IyshIxmcFwopz/guQSFss7AqhHx7LamDGO8G833R1ha
+         w4YYcryu2tRZayQAzg9NuUUYvSD5M5EhPK3vga1bHN+Gqbn5dvfrl3e1uv52xnpqLmuq
+         kwmc0wNHMKhxdQLBdBqKeXhVqqQK1wKoowTizQLvFc5Wkk7hNzszTKiyUTdECmbtFfny
+         5OkcAdsjaHpOtbhZkvIluq2NykGEDTDYZc8fGbXUXlTZPd69iFzj/Wsbx7MlpoVvzk/l
+         lCtQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937062AbeBUO7A (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 09:59:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
+        id S935922AbeBUO5c (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 09:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935439AbeBUO67 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:58:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B83D205F4
+        id S932826AbeBUO5b (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 21 Feb 2018 09:57:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC461205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v2 09/17] tracing: probeevent: Append traceprobe_ for exported function
-Date: Wed, 21 Feb 2018 23:58:35 +0900
-Message-Id: <151922511518.6217.2924410291515219270.stgit@devbox>
+Subject: [PATCH v2 06/17] tracing: probeevent: Remove NOKPROBE_SYMBOL from print functions
+Date: Wed, 21 Feb 2018 23:57:07 +0900
+Message-Id: <151922502764.6217.6652071625580117591.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <151922484560.6217.1143686155616343906.stgit@devbox>
 References: <151922484560.6217.1143686155616343906.stgit@devbox>
@@ -54,90 +54,40 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593023034916410919?=
-X-GMAIL-MSGID: =?utf-8?q?1593023034916410919?=
+X-GMAIL-THRID: =?utf-8?q?1593022941296181673?=
+X-GMAIL-MSGID: =?utf-8?q?1593022941296181673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Append traceprobe_ for exported function set_print_fmt() as
-same as other functions.
+Remove unneeded NOKPROBE_SYMBOL from print functions since
+the print functions are only used when printing out the
+trace data, and not from kprobe handler.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_kprobe.c |    4 ++--
- kernel/trace/trace_probe.c  |    2 +-
- kernel/trace/trace_probe.h  |    2 +-
- kernel/trace/trace_uprobe.c |    4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ kernel/trace/trace_probe.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index ee41d5700e25..ec20f0b56cfe 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1305,7 +1305,7 @@ static int register_kprobe_event(struct trace_kprobe *tk)
- 
- 	init_trace_event_call(tk, call);
- 
--	if (set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0)
-+	if (traceprobe_set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0)
- 		return -ENOMEM;
- 	ret = register_trace_event(&call->event);
- 	if (!ret) {
-@@ -1362,7 +1362,7 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
- 
- 	init_trace_event_call(tk, &tk->tp.call);
- 
--	if (set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0) {
-+	if (traceprobe_set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0) {
- 		ret = -ENOMEM;
- 		goto error;
- 	}
 diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index cd87490b3492..8d43f377143d 100644
+index 4f5447cec44a..37bdd56b4988 100644
 --- a/kernel/trace/trace_probe.c
 +++ b/kernel/trace/trace_probe.c
-@@ -504,7 +504,7 @@ static int __set_print_fmt(struct trace_probe *tp, char *buf, int len,
- 	return pos;
+@@ -43,8 +43,7 @@ int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, void *data, void *ent)\
+ 	trace_seq_printf(s, fmt, *(type *)data);			\
+ 	return !trace_seq_has_overflowed(s);				\
+ }									\
+-const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;				\
+-NOKPROBE_SYMBOL(PRINT_TYPE_FUNC_NAME(tname));
++const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;
+ 
+ DEFINE_BASIC_PRINT_TYPE_FUNC(u8,  u8,  "%u")
+ DEFINE_BASIC_PRINT_TYPE_FUNC(u16, u16, "%u")
+@@ -71,7 +70,6 @@ int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
+ 				 (const char *)get_loc_data(data, ent));
+ 	return !trace_seq_has_overflowed(s);
  }
+-NOKPROBE_SYMBOL(PRINT_TYPE_FUNC_NAME(string));
  
--int set_print_fmt(struct trace_probe *tp, bool is_return)
-+int traceprobe_set_print_fmt(struct trace_probe *tp, bool is_return)
- {
- 	int len;
- 	char *print_fmt;
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index d1b8bd74bf56..3bc43c1ce628 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -266,7 +266,7 @@ extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+ const char PRINT_TYPE_FMT_NAME(string)[] = "\\\"%s\\\"";
  
- extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
- 
--extern int set_print_fmt(struct trace_probe *tp, bool is_return);
-+extern int traceprobe_set_print_fmt(struct trace_probe *tp, bool is_return);
- 
- #ifdef CONFIG_PERF_EVENTS
- extern struct trace_event_call *
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index de4f91bb313a..fafd48310823 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -1314,7 +1314,7 @@ static int register_uprobe_event(struct trace_uprobe *tu)
- 
- 	init_trace_event_call(tu, call);
- 
--	if (set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0)
-+	if (traceprobe_set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0)
- 		return -ENOMEM;
- 
- 	ret = register_trace_event(&call->event);
-@@ -1388,7 +1388,7 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	tu->filename = kstrdup(name, GFP_KERNEL);
- 	init_trace_event_call(tu, &tu->tp.call);
- 
--	if (set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0) {
-+	if (traceprobe_set_print_fmt(&tu->tp, is_ret_probe(tu)) < 0) {
- 		ret = -ENOMEM;
- 		goto error;
- 	}
 
