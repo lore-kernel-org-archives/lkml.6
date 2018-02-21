@@ -1,158 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934240AbeBURUI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 12:20:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:37384 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754791AbeBURUB (ORCPT
+        id S934342AbeBURUb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 12:20:31 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:55927 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934251AbeBURU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 12:20:01 -0500
-From: Khalid Aziz <khalid.aziz@oracle.com>
-To: akpm@linux-foundation.org, davem@davemloft.net,
-        dave.hansen@linux.intel.com, arnd@arndb.de
-Cc: Khalid Aziz <khalid.aziz@oracle.com>, kirill.shutemov@linux.intel.com,
-        mhocko@suse.com, ross.zwisler@linux.intel.com, dave.jiang@intel.com,
-        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
-        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
-        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, sparclinux@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>
-Subject: [PATCH v12 02/11] mm, swap: Add infrastructure for saving page metadata on swap
-Date: Wed, 21 Feb 2018 10:15:44 -0700
-Message-Id: <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1519227112.git.khalid.aziz@oracle.com>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802210211
+        Wed, 21 Feb 2018 12:20:28 -0500
+Date: Wed, 21 Feb 2018 18:20:24 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 14/19] ARM64: dts: r8a77965: Add SCIF device nodes
+Message-ID: <20180221172024.k7eqivf7xzksl32y@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-15-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519139541-18783-15-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a processor supports special metadata for a page, for example ADI
-version tags on SPARC M7, this metadata must be saved when the page is
-swapped out. The same metadata must be restored when the page is swapped
-back in. This patch adds two new architecture specific functions -
-arch_do_swap_page() to be called when a page is swapped in, and
-arch_unmap_one() to be called when a page is being unmapped for swap
-out. These architecture hooks allow page metadata to be saved if the
-architecture supports it.
+On Tue, Feb 20, 2018 at 04:12:16PM +0100, Jacopo Mondi wrote:
+> Add SCIF[0-5] device nodes for M3-N (r8a77965) SoC.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Khalid Aziz <khalid@gonehiking.org>
-Acked-by: Jerome Marchand <jmarchan@redhat.com>
-Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
-v8:
-	- Fixed an erroneous "}"
-v6:
-	- Updated parameter list for arch_do_swap_page() and
-	  arch_unmap_one()
-v5:
-	- Replaced set_swp_pte() function with new architecture
-	  functions arch_do_swap_page() and arch_unmap_one()
+Thanks, applied with prefix updated to:
 
- include/asm-generic/pgtable.h | 36 ++++++++++++++++++++++++++++++++++++
- mm/memory.c                   |  1 +
- mm/rmap.c                     | 14 ++++++++++++++
- 3 files changed, 51 insertions(+)
-
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 2cfa3075d148..6fbbc0b6c05e 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -400,6 +400,42 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- #endif
- 
-+#ifndef __HAVE_ARCH_DO_SWAP_PAGE
-+/*
-+ * Some architectures support metadata associated with a page. When a
-+ * page is being swapped out, this metadata must be saved so it can be
-+ * restored when the page is swapped back in. SPARC M7 and newer
-+ * processors support an ADI (Application Data Integrity) tag for the
-+ * page as metadata for the page. arch_do_swap_page() can restore this
-+ * metadata when a page is swapped back in.
-+ */
-+static inline void arch_do_swap_page(struct mm_struct *mm,
-+				     struct vm_area_struct *vma,
-+				     unsigned long addr,
-+				     pte_t pte, pte_t oldpte)
-+{
-+
-+}
-+#endif
-+
-+#ifndef __HAVE_ARCH_UNMAP_ONE
-+/*
-+ * Some architectures support metadata associated with a page. When a
-+ * page is being swapped out, this metadata must be saved so it can be
-+ * restored when the page is swapped back in. SPARC M7 and newer
-+ * processors support an ADI (Application Data Integrity) tag for the
-+ * page as metadata for the page. arch_unmap_one() can save this
-+ * metadata on a swap-out of a page.
-+ */
-+static inline int arch_unmap_one(struct mm_struct *mm,
-+				  struct vm_area_struct *vma,
-+				  unsigned long addr,
-+				  pte_t orig_pte)
-+{
-+	return 0;
-+}
-+#endif
-+
- #ifndef __HAVE_ARCH_PGD_OFFSET_GATE
- #define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
- #endif
-diff --git a/mm/memory.c b/mm/memory.c
-index 5fcfc24904d1..aed37325d94e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3053,6 +3053,7 @@ int do_swap_page(struct vm_fault *vmf)
- 	if (pte_swp_soft_dirty(vmf->orig_pte))
- 		pte = pte_mksoft_dirty(pte);
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
-+	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
- 	vmf->orig_pte = pte;
- 
- 	/* ksm created a completely new copy */
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 47db27f8049e..144c66e688a9 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1497,6 +1497,14 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				(flags & (TTU_MIGRATION|TTU_SPLIT_FREEZE))) {
- 			swp_entry_t entry;
- 			pte_t swp_pte;
-+
-+			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
-+				set_pte_at(mm, address, pvmw.pte, pteval);
-+				ret = false;
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
-+
- 			/*
- 			 * Store the pfn of the page in a special migration
- 			 * pte. do_swap_page() will wait until the migration
-@@ -1556,6 +1564,12 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				page_vma_mapped_walk_done(&pvmw);
- 				break;
- 			}
-+			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
-+				set_pte_at(mm, address, pvmw.pte, pteval);
-+				ret = false;
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
- 			if (list_empty(&mm->mmlist)) {
- 				spin_lock(&mmlist_lock);
- 				if (list_empty(&mm->mmlist))
--- 
-2.11.0
+arm64: dts: renesas: r8a77965:
