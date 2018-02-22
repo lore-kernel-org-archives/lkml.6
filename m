@@ -1,111 +1,288 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeBVUip (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:38:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751645AbeBVUim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:38:42 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D6156019F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-Message-ID: <5A8F2A4F.5020105@codeaurora.org>
-Date: Thu, 22 Feb 2018 12:38:39 -0800
-From: Saravana Kannan <skannan@codeaurora.org>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
-MIME-Version: 1.0
-To: Mark Rutland <mark.rutland@arm.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>, will.deacon@arm.com,
-        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
-        peterz@infradead.org, jonathan.cameron@huawei.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
-        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org,
-        avilaj@codeaurora.org
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-References: <20180102112533.13640-1-suzuki.poulose@arm.com> <20180102112533.13640-9-suzuki.poulose@arm.com> <5A8E2BCE.3050509@codeaurora.org> <20180222113352.oeedj7upx3zxvdcc@lakrids.cambridge.arm.com>
-In-Reply-To: <20180222113352.oeedj7upx3zxvdcc@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1751709AbeBVUjB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:39:01 -0500
+Received: from mga03.intel.com ([134.134.136.65]:28493 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751412AbeBVUhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 15:37:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,378,1515484800";
+   d="scan'208";a="20092929"
+Subject: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
+To: linux-kernel@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, aarcange@redhat.com,
+        luto@kernel.org, torvalds@linux-foundation.org, keescook@google.com,
+        hughd@google.com, jgross@suse.com, x86@kernel.org, namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Thu, 22 Feb 2018 12:37:00 -0800
+References: <20180222203651.B776810C@viggo.jf.intel.com>
+In-Reply-To: <20180222203651.B776810C@viggo.jf.intel.com>
+Message-Id: <20180222203700.3FDE6BFD@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 03:33 AM, Mark Rutland wrote:
-> On Wed, Feb 21, 2018 at 06:32:46PM -0800, Saravana Kannan wrote:
->> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
->>> +static int dsu_pmu_event_init(struct perf_event *event)
->>> +{
->>> +	struct dsu_pmu *dsu_pmu = to_dsu_pmu(event->pmu);
->>> +
->>> +	if (event->attr.type != event->pmu->type)
->>> +		return -ENOENT;
->>
->> You are checking if the caller set the attr.type "correctly".
->
-> This is necessary for the case where perf_init_event() falls back to
-> iterating over the list of PMUs, if event->attr.type wasn't found in the
-> idr.
->
-> Without this, we'd erroneously check events intended for other PMUs.
-> So this is correct, and necessary.
 
-Right, I'm aware of this. Which is why I also mentioned below that we 
-can't just blindly delete this.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
->>> +static int dsu_pmu_device_probe(struct platform_device *pdev)
->
->>> +	rc = perf_pmu_register(&dsu_pmu->pmu, name, -1);
->>
->> You are passing in -1 here. Which means the event type is assigned by the
->> perf framework. perf framework uses idr_alloc(&pmu_idr, ...) to get the id.
->> So the id assigned is going to depend on the probe order among the different
->> PMU drivers in the board/platform. So, this seems pretty random.
->
-> The dynamic IDs are supposed to by looked up by name.
->
-> Each PMU has a folder: /sys/bus/event_source/devices/$PMU
->
-> ... with /sys/bus/event_source/devices/$PMU/type giving the type.
->
->> How is the caller supposed to know what to set the "type" to?
->
-> The perf tools understand this already. If you do:
->
-> perf stat -e $PMU/config=0xf00/
->
-> ... they will look up the type for that PMU and use it automatically.
->
+A PTE is constructed from a physical address and a pgprotval_t.
+__PAGE_KERNEL, for instance, is a pgprot_t and must be converted
+into a pgprotval_t before it can be used to create a PTE.  This is
+done implicitly within functions like set_pte() by massage_pgprot().
 
-Ah, thanks! This finally explains how this is supposed to work from 
-userspace.
+However, this makes it very challenging to set bits (and keep them
+set) if your bit is being filtered out by massage_pgprot().
 
->> You also can't just delete the check in dsu_pmu_event_init() because the
->> event numbers you expose overlap with the per-CPU event numbers.
->
-> The type check is necessary and cannot be deleted. It provides a
-> namespace for the event IDs.
+This moves the bit filtering out of set_pte() and friends.  For
+users of PAGE_KERNEL*, filtering will be done automatically inside
+those macros but for users of __PAGE_KERNEL*, they need to do their
+own filtering now.
 
-Right. Which is my point too.
+Note that we also just move pfn_pte/pmd/pud() over to check_pgprot()
+instead of massage_pgprot().  This way, we still *look* for
+unsupported bits and properly warn about them if we find them.  This
+might happen if an unfiltered __PAGE_KERNEL* value was passed in,
+for instance.
 
->> I'm not exactly sure if we can add entries to perf_type_id. If that's
->> allowed maybe we need to add something line PERF_TYPE_DSU and use that?
->>
->> Or if that's not allowed then would it be better to offset the DSU PMU
->> events by some number (say 0x1000) and then delete the event type check or
->> pass PERF_TYPE_RAW to perf_pmu_register()?
->
-> As above, neither of these should be necessary.
->
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: x86@kernel.org
+Cc: Nadav Amit <namit@vmware.com>
+---
 
-For the userspace interface. How about the kernel interface though?
-perf_event_create_kernel_counter() takes attr.type as an input. But 
-there's no way to look up the DSU PMU's "type".
+ b/arch/x86/include/asm/pgtable.h |   24 +++++++++++++++++++-----
+ b/arch/x86/kernel/head64.c       |    2 ++
+ b/arch/x86/kernel/ldt.c          |    6 +++++-
+ b/arch/x86/mm/ident_map.c        |    3 +++
+ b/arch/x86/mm/iomap_32.c         |    6 ++++++
+ b/arch/x86/mm/kasan_init_64.c    |   14 +++++++++++++-
+ b/arch/x86/power/hibernate_64.c  |   20 +++++++++++++++-----
+ b/mm/early_ioremap.c             |    3 +++
+ 8 files changed, 66 insertions(+), 12 deletions(-)
 
-Thanks,
-Saravana
-
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff -puN arch/x86/include/asm/pgtable.h~x86-no-auto-massage arch/x86/include/asm/pgtable.h
+--- a/arch/x86/include/asm/pgtable.h~x86-no-auto-massage	2018-02-22 12:36:19.752036551 -0800
++++ b/arch/x86/include/asm/pgtable.h	2018-02-22 12:36:19.769036551 -0800
+@@ -526,22 +526,36 @@ static inline pgprotval_t massage_pgprot
+ 	return protval;
+ }
+ 
++static inline pgprotval_t check_pgprot(pgprot_t pgprot)
++{
++	pgprotval_t massaged_val = massage_pgprot(pgprot);
++
++	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
++		  "attempted to set unsupported pgprot: %016lx "
++		  "bits: %016lx supported: %016lx\n",
++		  pgprot_val(pgprot),
++		  pgprot_val(pgprot) ^ massaged_val,
++		  __supported_pte_mask);
++
++	return massaged_val;
++}
++
+ static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
+ {
+ 	return __pte(((phys_addr_t)page_nr << PAGE_SHIFT) |
+-		     massage_pgprot(pgprot));
++		     check_pgprot(pgprot));
+ }
+ 
+ static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
+ {
+ 	return __pmd(((phys_addr_t)page_nr << PAGE_SHIFT) |
+-		     massage_pgprot(pgprot));
++		     check_pgprot(pgprot));
+ }
+ 
+ static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
+ {
+ 	return __pud(((phys_addr_t)page_nr << PAGE_SHIFT) |
+-		     massage_pgprot(pgprot));
++		     check_pgprot(pgprot));
+ }
+ 
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+@@ -553,7 +567,7 @@ static inline pte_t pte_modify(pte_t pte
+ 	 * the newprot (if present):
+ 	 */
+ 	val &= _PAGE_CHG_MASK;
+-	val |= massage_pgprot(newprot) & ~_PAGE_CHG_MASK;
++	val |= check_pgprot(newprot) & ~_PAGE_CHG_MASK;
+ 
+ 	return __pte(val);
+ }
+@@ -563,7 +577,7 @@ static inline pmd_t pmd_modify(pmd_t pmd
+ 	pmdval_t val = pmd_val(pmd);
+ 
+ 	val &= _HPAGE_CHG_MASK;
+-	val |= massage_pgprot(newprot) & ~_HPAGE_CHG_MASK;
++	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
+ 
+ 	return __pmd(val);
+ }
+diff -puN arch/x86/kernel/head64.c~x86-no-auto-massage arch/x86/kernel/head64.c
+--- a/arch/x86/kernel/head64.c~x86-no-auto-massage	2018-02-22 12:36:19.754036551 -0800
++++ b/arch/x86/kernel/head64.c	2018-02-22 12:36:19.769036551 -0800
+@@ -129,6 +129,8 @@ unsigned long __head __startup_64(unsign
+ 	pud[i + 1] = (pudval_t)pmd + pgtable_flags;
+ 
+ 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
++	/* Filter out unsupported __PAGE_KERNEL_* bits: */
++	pmd_entry |= __supported_pte_mask;
+ 	pmd_entry += sme_get_me_mask();
+ 	pmd_entry +=  physaddr;
+ 
+diff -puN arch/x86/kernel/ldt.c~x86-no-auto-massage arch/x86/kernel/ldt.c
+--- a/arch/x86/kernel/ldt.c~x86-no-auto-massage	2018-02-22 12:36:19.756036551 -0800
++++ b/arch/x86/kernel/ldt.c	2018-02-22 12:36:19.769036551 -0800
+@@ -145,6 +145,7 @@ map_ldt_struct(struct mm_struct *mm, str
+ 		unsigned long offset = i << PAGE_SHIFT;
+ 		const void *src = (char *)ldt->entries + offset;
+ 		unsigned long pfn;
++		pgprot_t pte_prot;
+ 		pte_t pte, *ptep;
+ 
+ 		va = (unsigned long)ldt_slot_va(slot) + offset;
+@@ -163,7 +164,10 @@ map_ldt_struct(struct mm_struct *mm, str
+ 		 * target via some kernel interface which misses a
+ 		 * permission check.
+ 		 */
+-		pte = pfn_pte(pfn, __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL));
++	       	pte_prot = __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL);
++		/* Filter out unsuppored __PAGE_KERNEL* bits: */
++		pgprot_val(pte_prot) |= __supported_pte_mask;
++		pte = pfn_pte(pfn, pte_prot);
+ 		set_pte_at(mm, va, ptep, pte);
+ 		pte_unmap_unlock(ptep, ptl);
+ 	}
+diff -puN arch/x86/mm/ident_map.c~x86-no-auto-massage arch/x86/mm/ident_map.c
+--- a/arch/x86/mm/ident_map.c~x86-no-auto-massage	2018-02-22 12:36:19.758036551 -0800
++++ b/arch/x86/mm/ident_map.c	2018-02-22 12:36:19.769036551 -0800
+@@ -98,6 +98,9 @@ int kernel_ident_mapping_init(struct x86
+ 	if (!info->kernpg_flag)
+ 		info->kernpg_flag = _KERNPG_TABLE;
+ 
++	/* Filter out unsupported __PAGE_KERNEL_* bits: */
++	info->kernpg_flag &= __default_kernel_pte_mask;
++
+ 	for (; addr < end; addr = next) {
+ 		pgd_t *pgd = pgd_page + pgd_index(addr);
+ 		p4d_t *p4d;
+diff -puN arch/x86/mm/iomap_32.c~x86-no-auto-massage arch/x86/mm/iomap_32.c
+--- a/arch/x86/mm/iomap_32.c~x86-no-auto-massage	2018-02-22 12:36:19.760036551 -0800
++++ b/arch/x86/mm/iomap_32.c	2018-02-22 12:36:19.770036551 -0800
+@@ -44,6 +44,9 @@ int iomap_create_wc(resource_size_t base
+ 		return ret;
+ 
+ 	*prot = __pgprot(__PAGE_KERNEL | cachemode2protval(pcm));
++	/* Filter out unsupported __PAGE_KERNEL* bits: */
++	pgprot_val(*prot) &= __default_kernel_pte_mask;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(iomap_create_wc);
+@@ -88,6 +91,9 @@ iomap_atomic_prot_pfn(unsigned long pfn,
+ 		prot = __pgprot(__PAGE_KERNEL |
+ 				cachemode2protval(_PAGE_CACHE_MODE_UC_MINUS));
+ 
++	/* Filter out unsupported __PAGE_KERNEL* bits: */
++	pgprot_val(prot) &= __default_kernel_pte_mask;
++
+ 	return (void __force __iomem *) kmap_atomic_prot_pfn(pfn, prot);
+ }
+ EXPORT_SYMBOL_GPL(iomap_atomic_prot_pfn);
+diff -puN arch/x86/mm/kasan_init_64.c~x86-no-auto-massage arch/x86/mm/kasan_init_64.c
+--- a/arch/x86/mm/kasan_init_64.c~x86-no-auto-massage	2018-02-22 12:36:19.761036551 -0800
++++ b/arch/x86/mm/kasan_init_64.c	2018-02-22 12:36:19.770036551 -0800
+@@ -263,6 +263,12 @@ void __init kasan_early_init(void)
+ 	pudval_t pud_val = __pa_nodebug(kasan_zero_pmd) | _KERNPG_TABLE;
+ 	p4dval_t p4d_val = __pa_nodebug(kasan_zero_pud) | _KERNPG_TABLE;
+ 
++	/* Mask out unsupported __PAGE_KERNEL bits: */
++	pte_val &= __default_kernel_pte_mask;
++	pmd_val &= __default_kernel_pte_mask;
++	pud_val &= __default_kernel_pte_mask;
++	p4d_val &= __default_kernel_pte_mask;
++
+ 	for (i = 0; i < PTRS_PER_PTE; i++)
+ 		kasan_zero_pte[i] = __pte(pte_val);
+ 
+@@ -365,7 +371,13 @@ void __init kasan_init(void)
+ 	 */
+ 	memset(kasan_zero_page, 0, PAGE_SIZE);
+ 	for (i = 0; i < PTRS_PER_PTE; i++) {
+-		pte_t pte = __pte(__pa(kasan_zero_page) | __PAGE_KERNEL_RO | _PAGE_ENC);
++		pte_t pte;
++		pgprot_t prot;
++
++		prot = __pgprot(__PAGE_KERNEL_RO | _PAGE_ENC);
++		pgprot_val(prot) &= __default_kernel_pte_mask;
++
++		pte = __pte(__pa(kasan_zero_page) | pgprot_val(prot));
+ 		set_pte(&kasan_zero_pte[i], pte);
+ 	}
+ 	/* Flush TLBs again to be sure that write protection applied. */
+diff -puN arch/x86/power/hibernate_64.c~x86-no-auto-massage arch/x86/power/hibernate_64.c
+--- a/arch/x86/power/hibernate_64.c~x86-no-auto-massage	2018-02-22 12:36:19.763036551 -0800
++++ b/arch/x86/power/hibernate_64.c	2018-02-22 12:36:19.770036551 -0800
+@@ -51,6 +51,12 @@ static int set_up_temporary_text_mapping
+ 	pmd_t *pmd;
+ 	pud_t *pud;
+ 	p4d_t *p4d;
++	pgprot_t pgtable_prot = __pgprot(_KERNPG_TABLE);
++	pgprot_t pmd_text_prot = __pgprot(__PAGE_KERNEL_LARGE_EXEC);
++
++	/* Filter out unsupported __PAGE_KERNEL* bits: */
++	pgprot_val(pmd_text_prot) &= __default_kernel_pte_mask;
++	pgprot_val(pgtable_prot)  &= __default_kernel_pte_mask;
+ 
+ 	/*
+ 	 * The new mapping only has to cover the page containing the image
+@@ -81,15 +87,19 @@ static int set_up_temporary_text_mapping
+ 		return -ENOMEM;
+ 
+ 	set_pmd(pmd + pmd_index(restore_jump_address),
+-		__pmd((jump_address_phys & PMD_MASK) | __PAGE_KERNEL_LARGE_EXEC));
++		__pmd((jump_address_phys & PMD_MASK) | pgprot_val(pmd_text_prot)));
+ 	set_pud(pud + pud_index(restore_jump_address),
+-		__pud(__pa(pmd) | _KERNPG_TABLE));
++		__pud(__pa(pmd) | pgprot_val(pgtable_prot)));
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
+-		set_p4d(p4d + p4d_index(restore_jump_address), __p4d(__pa(pud) | _KERNPG_TABLE));
+-		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(p4d) | _KERNPG_TABLE));
++		p4d_t new_p4d = __p4d(__pa(pud) | pgprot_val(pgtable_prot));
++		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
++
++		set_p4d(p4d + p4d_index(restore_jump_address), new_p4d);
++		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	} else {
+ 		/* No p4d for 4-level paging: point the pgd to the pud page table */
+-		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(pud) | _KERNPG_TABLE));
++		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
++		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	}
+ 
+ 	return 0;
+diff -puN mm/early_ioremap.c~x86-no-auto-massage mm/early_ioremap.c
+--- a/mm/early_ioremap.c~x86-no-auto-massage	2018-02-22 12:36:19.765036551 -0800
++++ b/mm/early_ioremap.c	2018-02-22 12:36:19.770036551 -0800
+@@ -113,6 +113,9 @@ __early_ioremap(resource_size_t phys_add
+ 
+ 	WARN_ON(system_state >= SYSTEM_RUNNING);
+ 
++	/* Sanitize 'prot' against any unsupported bits: */
++	pgprot_val(prot) &= __default_kernel_pte_mask;
++
+ 	slot = -1;
+ 	for (i = 0; i < FIX_BTMAPS_SLOTS; i++) {
+ 		if (!prev_map[i]) {
+_
