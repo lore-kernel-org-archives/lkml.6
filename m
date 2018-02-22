@@ -1,97 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753085AbeBVJaT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:30:19 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:58591 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752857AbeBVJaR (ORCPT
+        id S1753163AbeBVJaz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:30:55 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46411 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753090AbeBVJax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:30:17 -0500
-Date: Thu, 22 Feb 2018 10:30:15 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
-        robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 6/7] arm: dts: sun8i: a83t: Fix undefined offset with
- virtual timer
-Message-ID: <20180222103015.40249fee@dell-desktop.home>
-In-Reply-To: <823f256a-3240-7bb4-cc0b-711108f3076c@arm.com>
-References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
-        <20180219081837.15482-7-mylene.josserand@bootlin.com>
-        <823f256a-3240-7bb4-cc0b-711108f3076c@arm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 22 Feb 2018 04:30:53 -0500
+X-Google-Smtp-Source: AH8x2251paWPGBBSa1uA01Xnlh7gGN0ynImkOgI73F4tc5GFd/D0KibaKmOiGLFWPsBPjdciulGYOg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <c016f8f1-06f3-cc3b-03d1-7a17c39dbec0@xs4all.nl>
+References: <20180220044425.169493-1-acourbot@chromium.org>
+ <20180220044425.169493-2-acourbot@chromium.org> <5fd863ad-a0fe-88d7-05bd-90c2b4096145@xs4all.nl>
+ <CAPBb6MUUuo+50zfs-XaRcVD6sV3uaownVeFKgX=A6NkTO1he1w@mail.gmail.com> <c016f8f1-06f3-cc3b-03d1-7a17c39dbec0@xs4all.nl>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Thu, 22 Feb 2018 18:30:30 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXmALFZp+EB8BjKnYO7FYV3eU9LisJwR4Qp265GRhA3eg@mail.gmail.com>
+Message-ID: <CAPBb6MXmALFZp+EB8BjKnYO7FYV3eU9LisJwR4Qp265GRhA3eg@mail.gmail.com>
+Subject: Re: [RFCv4 01/21] media: add request API core and UAPI
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Wed, Feb 21, 2018 at 4:29 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 02/21/2018 07:01 AM, Alexandre Courbot wrote:
+>> Hi Hans,
+>>
+>> On Tue, Feb 20, 2018 at 7:36 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>> On 02/20/18 05:44, Alexandre Courbot wrote:
+>
+> <snip>
+>
+>>>> +#define MEDIA_REQUEST_IOC(__cmd, func)                                       \
+>>>> +     [_IOC_NR(MEDIA_REQUEST_IOC_##__cmd) - 0x80] = {                 \
+>>>> +             .cmd = MEDIA_REQUEST_IOC_##__cmd,                       \
+>>>> +             .fn = func,                                             \
+>>>> +     }
+>>>> +
+>>>> +struct media_request_ioctl_info {
+>>>> +     unsigned int cmd;
+>>>> +     long (*fn)(struct media_request *req);
+>>>> +};
+>>>> +
+>>>> +static const struct media_request_ioctl_info ioctl_info[] = {
+>>>> +     MEDIA_REQUEST_IOC(SUBMIT, media_request_ioctl_submit),
+>>>> +     MEDIA_REQUEST_IOC(REINIT, media_request_ioctl_reinit),
+>>>
+>>> There are only two ioctls, so there is really no need for the
+>>> MEDIA_REQUEST_IOC define. Just keep it simple.
+>>
+>> The number of times it is used doesn't change the fact that it helps
+>> with readability IMHO.
+>
+> But this macro just boils down to:
+>
+> static const struct media_request_ioctl_info ioctl_info[] = {
+>         { MEDIA_REQUEST_IOC_SUBMIT, media_request_ioctl_submit },
+>         { MEDIA_REQUEST_IOC_REINIT, media_request_ioctl_reinit },
+> };
+>
+> It's absolutely identical! So it seems senseless to me.
 
-Thank you for the review!
+This expands to more than that - the index needs to be offset by 0x80,
+something we probably don't want to repeat every line.
 
-On Tue, 20 Feb 2018 18:07:54 +0000
-Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+>>
+>>>
+>>>> +};
+>>>> +
+>>>> +static long media_request_ioctl(struct file *filp, unsigned int cmd,
+>>>> +                             unsigned long __arg)
+>>>> +{
+>>>> +     struct media_request *req = filp->private_data;
+>>>> +     const struct media_request_ioctl_info *info;
+>>>> +
+>>>> +     if ((_IOC_NR(cmd) < 0x80) ||
+>>>
+>>> Why start the ioctl number at 0x80? Why not just 0?
+>>> It avoids all this hassle with the 0x80 offset.
+>
+> There is no clash with the MC ioctls, so I really don't believe the 0x80
+> offset is needed.
 
-> Hi Mylène,
-> 
-> On 19/02/18 08:18, Mylène Josserand wrote:
-> > The ARM architected timers use an offset between their physical and
-> > virtual counters. That offset should be configured by the bootloader
-> > in CNTVOFF.
-> > 
-> > However, the A83t bootloader fails to do so, and we end up with an
-> > undefined offset (which in our case is random), meaning that each CPU
-> > will have a different time, which isn't working very well.
-> > 
-> > Fix that by setting the arm,cpu-registers-not-fw-configured that will
-> > make Linux use the physical timers instead of the virtual ones. One
-> > possible side effect would be that the virtualization features would
-> > be disabled. However, due to the way the GIC has been integrated in
-> > the system, it is already unusable so we're effectively not losing any
-> > feature.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  arch/arm/boot/dts/sun8i-a83t.dtsi | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > index e97a6d17b8d0..b9bdb891cf2f 100644
-> > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > @@ -123,6 +123,7 @@
-> >  			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> >  			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> >  			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> > +		arm,cpu-registers-not-fw-configured;
-> >  	};
-> >  
-> >  	clocks {
-> >   
-> 
-> Is the firmware dropping you in the kernel in secure or non-secure mode?
+I suppose your comment in patch 16 supersedes this one. :)
 
-For sun8i-a83t, the kernel is in secure mode.
-
-> 
-> If the later, what you have is the only solution. If the former, that
-> I'd suggest you adopt what we already have for the Renesas stuff (see
-> arch/arm/mach-shmobile/headsmp-apmu.S and commit 3fd45a136ff6).
-> 
-> It would allow you to use the virtual timer as intended.
-
-Okay, thanks for the commit pointed, I will try to adopt what it is done
-for Renesas.
-
-Best regards,
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+>
+>>>
+>>>> +          _IOC_NR(cmd) >= 0x80 + ARRAY_SIZE(ioctl_info) ||
+>>>> +          ioctl_info[_IOC_NR(cmd) - 0x80].cmd != cmd)
+>>>> +             return -ENOIOCTLCMD;
+>>>> +
+>>>> +     info = &ioctl_info[_IOC_NR(cmd) - 0x80];
+>>>> +
+>>>> +     return info->fn(req);
+>>>> +}
+>
+> <snip>
+>
+>>>> diff --git a/include/uapi/linux/media-request.h b/include/uapi/linux/media-request.h
+>>>> new file mode 100644
+>>>> index 000000000000..5d30f731a442
+>>>> --- /dev/null
+>>>> +++ b/include/uapi/linux/media-request.h
+>>>> @@ -0,0 +1,37 @@
+>>>> +/*
+>>>> + * Media requests UAPI
+>>>> + *
+>>>> + * Copyright (C) 2018, The Chromium OS Authors.  All rights reserved.
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License version 2 as
+>>>> + * published by the Free Software Foundation.
+>>>> + *
+>>>> + * This program is distributed in the hope that it will be useful,
+>>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>> + * GNU General Public License for more details.
+>>>> + */
+>>>> +
+>>>> +#ifndef __LINUX_MEDIA_REQUEST_H
+>>>> +#define __LINUX_MEDIA_REQUEST_H
+>>>> +
+>>>> +#ifndef __KERNEL__
+>>>> +#include <stdint.h>
+>>>> +#endif
+>>>> +#include <linux/ioctl.h>
+>>>> +#include <linux/types.h>
+>>>> +#include <linux/version.h>
+>>>> +
+>>>> +/* Only check that requests can be used, do not allocate */
+>>>> +#define MEDIA_REQUEST_FLAG_TEST                      0x00000001
+>>>> +
+>>>> +struct media_request_new {
+>>>> +     __u32 flags;
+>>>> +     __s32 fd;
+>>>> +} __attribute__ ((packed));
+>>>> +
+>>>> +#define MEDIA_REQUEST_IOC_SUBMIT       _IO('|',  128)
+>>>> +#define MEDIA_REQUEST_IOC_REINIT       _IO('|',  129)
+>>>> +
+>>>> +#endif
+>>>>
+>>>
+>>> I need to think a bit more on this internal API, so I might come back
+>>> to this patch for more comments.
+>>
+>> I think I should probably elaborate on why I think it is advantageous
+>> to have these ioctls handled here.
+>
+> Sorry for the confusion, I was not actually referring to these ioctls.
+> In fact, I really like them. It was more a general comment about the
+> request API core.
+>
+> I should have been more clear.
+>
+> Regards,
+>
+>         Hans
+>
+>>
+>> One of the reasons if that it does not force user-space to keep track
+>> of who issued the request to operate on it. Semantically, the only
+>> device a request could be submitted to is the device that produced it
+>> anyway, so since that argument is constant we may as well get rid of
+>> it (and we also don't need to pass the request FD as argument
+>> anymore).
+>>
+>> It also gives us more freedom when designing new request-related
+>> ioctls: before, all request-related operations were multiplexed under
+>> a single MEDIA_IOC_REQUEST_CMD ioctl, which cmd field indicated the
+>> actual operation to perform. With this design, all the arguments must
+>> fit within the media_request_cmd structure, which may cause confusion
+>> as it will have to be variable-sized. I am thinking in particular
+>> about a future atomic-like API to set topology, controls and buffers
+>> related to a request all at the same time. Having it as a request
+>> ioctl seems perfectly fitting to me.
+>>
+>
