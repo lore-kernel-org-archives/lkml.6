@@ -1,67 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933276AbeBVQDP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:03:15 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:47064 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933068AbeBVQDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:03:13 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R851e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0SyMKCt._1519315380;
-Subject: Re: [PATCH] [v2] debugobjects: fix debug_objects_freed accounting
-To: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-References: <20180222155335.1647466-1-arnd@arndb.de>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <f5507df5-eb0a-60d7-1122-6b4a324681dd@linux.alibaba.com>
-Date: Thu, 22 Feb 2018 08:02:57 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S933291AbeBVQEg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:04:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39004 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933029AbeBVQEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:04:34 -0500
+Date: Thu, 22 Feb 2018 11:04:32 -0500
+From: Mike Snitzer <snitzer@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        Mikulas Patocka <mpatocka@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Aliaksei Karaliou <akaraliou.dev@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: dm-bufio: avoid false-positive Wmaybe-uninitialized warning
+Message-ID: <20180222160432.GA16971@redhat.com>
+References: <20180222155627.1800948-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20180222155335.1647466-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222155627.1800948-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 22 2018 at 10:56am -0500,
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-
-On 2/22/18 7:52 AM, Arnd Bergmann wrote:
-> The removal of the batched object freeing has caused the debug_objects_freed
-> to become read-only, and the reading is inside an ifdef, so gcc warns that it
-> is completely unused without CONFIG_DEBUG_FS:
->
-> lib/debugobjects.c:71:14: error: 'debug_objects_freed' defined but not used [-Werror=unused-variable]
->
-> Assuming we are still interested in this number, this adds back code to
-> keep track of the freed objects.
->
-> Fixes: 636e1970fd7d ("debugobjects: Use global free list in free_object()")
-> Suggested-by: Waiman Long <longman@redhat.com>
+> gcc-6.3 and earlier show a new warning after a seemingly unrelated change
+> to the arm64 PAGE_KERNEL definition:
+> 
+> In file included from drivers/md/dm-bufio.c:14:0:
+> drivers/md/dm-bufio.c: In function 'alloc_buffer':
+> include/linux/sched/mm.h:182:56: warning: 'noio_flag' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   current->flags = (current->flags & ~PF_MEMALLOC_NOIO) | flags;
+>                                                         ^
+> 
+> The same warning happened earlier on linux-3.18 for MIPS and I did a
+> workaround for that, but now it's come back.
+> 
+> gcc-7 and newer are apparently smart enough to figure this out, and
+> other architectures don't show it, so the best I could come up with is
+> to rework the caller slightly in a way that makes it obvious enough to
+> all arm64 compilers what is happening here.
+> 
+> Fixes: 41acec624087 ("arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()")
+> Link: https://patchwork.kernel.org/patch/9692829/
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> --
-> v2: simplify the counting as pointed out by Longman
-
-Thanks for catching this.
-
-Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
-
 > ---
->   lib/debugobjects.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index faab2c4ea024..105ecfc47d8c 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -233,6 +233,7 @@ static void free_obj_work(struct work_struct *work)
->   	 */
->   	if (obj_nr_tofree) {
->   		hlist_move_list(&obj_to_free, &tofree);
-> +		debug_objects_freed += obj_nr_tofree;
->   		obj_nr_tofree = 0;
->   	}
->   	raw_spin_unlock_irqrestore(&pool_lock, flags);
+>  drivers/md/dm-bufio.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+> index 414c9af54ded..e7ad6fc6a5ea 100644
+> --- a/drivers/md/dm-bufio.c
+> +++ b/drivers/md/dm-bufio.c
+> @@ -413,13 +413,13 @@ static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+>  	 * as if GFP_NOIO was specified.
+>  	 */
+>  
+> -	if (gfp_mask & __GFP_NORETRY)
+> +	if (gfp_mask & __GFP_NORETRY) {
+>  		noio_flag = memalloc_noio_save();
+> -
+> -	ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+> -
+> -	if (gfp_mask & __GFP_NORETRY)
+> +		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+>  		memalloc_noio_restore(noio_flag);
+> +	} else {
+> +		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+> +	}
+>  
+>  	return ptr;
+>  }
+
+Mikulas already sent a fix for this:
+https://patchwork.kernel.org/patch/10211631/
+
+But I like yours a bit better, though I'll likely move the declaration
+of 'noio_flag' temporary inside the conditional.
+
+Anyway, I'll get this fixed up shortly, thanks.
+
+Mike
