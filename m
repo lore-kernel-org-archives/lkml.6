@@ -1,79 +1,121 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AH8x224xMNPf0kZNI0WVRPAS6rIzrMYeTACpH24F5ljiNfTKsgb0d5+1y1yV32yCU995Ly9ebIBC
-ARC-Seal: i=1; a=rsa-sha256; t=1519209976; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ojXk4zrrSQjcmVVQfmo5MCoFX3f/uCqXxswpkYNtcM8z+hzI5bLhyxA86ElVXt4B8g
-         eIOaENC8qb2yj4qxFABOd3m2pOt6IpWl04yneEJMJNu54nywz9d1ySVGEyfeIElyk4ie
-         LJfbEVskdJFR85Nrq1K+POTjXOhc+grdff7iJubTPP6yaeacgevHUKpDtXhShv3FT9sj
-         DjikHDM31snzNzuSB8/PRHfY/9nReeSzs/5fAYnNwk2O50GEVouCqXA8Cc6QqvzYeHdl
-         gyR6RufENKWcoCWuC81zXdZ9IhEJan2E5bHBbT9PX0+RRi3djH+euGDzH82eL9cu56AT
-         BlqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=oZV6V5mGeBRy9Xktbb6tA0ASA5GFk0pbZ7hSWHUjQV8=;
-        b=aob2jMKLkmT5MaaS6OB2MFYqWPo7QLdlbuzt2Puexf5078w4EY4xk4rR3Jx7wV5lNZ
-         FWddgL/4HOrbBSF0pCST3kHSc6OpkOs9UTDagAq5rCocdBdlGwEZ1WHmY76kAJT28eqf
-         xYcZZOG7KLg3RX1ml/oBE/OWsvfaQuE1WdPFC4rd9FOR6UJeP2brllOjil0ZPl2PI8GC
-         LHCKbIA7ydrYszVXUvk/1ZCINNguF4RS6+maGsz2ZCExZsbQK+C9T7J+LVFZ02n6lkfE
-         diz5VH5RxAVJRewoG6aCFJ4hIGq+zrviKC7bf5Pda0GHsDuxC6J+sxq/0DY3aDuztuHE
-         LMKQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=o6Ri5gMm;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=o6Ri5gMm;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Wed, 21 Feb 2018 13:45:58 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Cc: gregkh@linuxfoundation.org, jonathankim@gctsemi.com, deanahn@gctsemi.com,
-        devel@driverdev.osuosl.org, Quytelda Kahja <quytelda@gmail.com>,
-        linux-kernel@vger.kernel.org
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-171462-1519307068-2-15960017412490686289
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519307068; b=cl6yvjkVp5gggFtyjjG+9nsqHkmljcShFFHmeWMM63L7ZSo
+    JPwFoBP0UbAukfAbFTMHAgvWHcY/yu3GUejkerIUcUeV0irMUBcF7klei5+xP6k3
+    tqh9ymuiSliGy9wJvAB6pwNVSLlf+1jecyuhuxXUAqaKQrPN2q55fi6T7NQKPQyJ
+    HAh0+UC0J7azqsYMN39UHHqZzdTkhIVjeCDBfMRtv6bvo9axF0RW7cIl1ZzSU2Pa
+    N2DYqamIbnWACA52ykmvP1K55wacHEPIC5aslyZaMPzC6zS9fvcXRCQdqoE8bx9Z
+    vcIKfVkc1cA6n4xfc1MKM3VHHfFMDkLe8FmujtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519307068; bh=F
+    Ew9N8kbrrxMYMM4xiqrzp3RnlUVL4cAWindRpMCDGs=; b=GMsKfqnNa+b9+c/cO
+    MRGJuIBzRWo3Ic8Ps5vBTGl0d/CV0t+mLMMQd5Gyj0vhFY3iprgeU8h2QYFOsvXo
+    Y6o09MzUuU26yqEOmA1r11SSBbgPEe73KZ3EpYop6g3GU2SY2BsL82n46Cc7qp0e
+    eAUHkWIwHMiXC1CN/Nhe6OLGfQBETYidNI2UFC3o5VkOUgRVpeXPr91UlinWnOFI
+    BFyV39dw6/xJbb70r1zoEWI/hndPJHh8DAUJmOvqPjTbLLoG1Sb19pBMXn8m8A3F
+    V8BGZaWi0lEz3iIWtrwASj8WzRdFHhZCKukZe3a+nVc5ENlOEdKHlH3Aj9Rp5X1x
+    fps3w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Thu, 22 Feb 2018 14:44:21 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Subject: Re: [PATCH] Staging: gdm724x: hci: Changed camel-case to snake-case.
-Message-ID: <20180221104558.r7qgxyqshy37gej6@mwanda>
+Message-ID: <20180222134421.GA19182@kroah.com>
 References: <20180221103928.19599-1-quytelda@tamalin.org>
+ <20180221104558.r7qgxyqshy37gej6@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221103928.19599-1-quytelda@tamalin.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8810 signatures=668675
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802210132
+In-Reply-To: <20180221104558.r7qgxyqshy37gej6@mwanda>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, jonathankim@gctsemi.com,
+ linux-kernel@vger.kernel.org, deanahn@gctsemi.com,
+ Quytelda Kahja <quytelda@gmail.com>, Quytelda Kahja <quytelda@tamalin.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593006710117877151?=
-X-GMAIL-MSGID: =?utf-8?q?1593007120185064859?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 02:39:28AM -0800, Quytelda Kahja wrote:
-> Changed a variable name from camel to snake case to fix a coding style
-> issue.
+On Wed, Feb 21, 2018 at 01:45:58PM +0300, Dan Carpenter wrote:
+> On Wed, Feb 21, 2018 at 02:39:28AM -0800, Quytelda Kahja wrote:
+> > Changed a variable name from camel to snake case to fix a coding style
+> > issue.
+> > 
+> > Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
+> > ---
+> >  drivers/staging/gdm724x/hci_packet.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
+> > index 22ce8b9477b6..f8837c7103ac 100644
+> > --- a/drivers/staging/gdm724x/hci_packet.h
+> > +++ b/drivers/staging/gdm724x/hci_packet.h
+> > @@ -50,7 +50,7 @@ struct tlv {
+> >  struct sdu_header {
+> >  	__dev16 cmd_evt;
+> >  	__dev16 len;
+> > -	__dev32 dftEpsId;
+> > +	__dev32 dft_eps_ID;
 > 
-> Signed-off-by: Quytelda Kahja <quytelda@gmail.com>
-> ---
->  drivers/staging/gdm724x/hci_packet.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/gdm724x/hci_packet.h b/drivers/staging/gdm724x/hci_packet.h
-> index 22ce8b9477b6..f8837c7103ac 100644
-> --- a/drivers/staging/gdm724x/hci_packet.h
-> +++ b/drivers/staging/gdm724x/hci_packet.h
-> @@ -50,7 +50,7 @@ struct tlv {
->  struct sdu_header {
->  	__dev16 cmd_evt;
->  	__dev16 len;
-> -	__dev32 dftEpsId;
-> +	__dev32 dft_eps_ID;
+> I bet this is a part of the user space ABI or there is a specific reason
+> for the name to match the spec or something so it can't be changed...
 
-I bet this is a part of the user space ABI or there is a specific reason
-for the name to match the spec or something so it can't be changed...
+This structure is not even used anywhere :(
 
-regards,
-dan carpenter
+Quytelda, can you just remove all unused structure definitions from this
+driver?  That would be a much better patch here instead of changing a
+structure field that no one uses.
+
+thanks,
+
+greg k-h
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
