@@ -1,68 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753434AbeBVKUp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:20:45 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49438 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753386AbeBVKUm (ORCPT
+        id S1753387AbeBVKVg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:21:36 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35113 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753198AbeBVKVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:20:42 -0500
-Date: Thu, 22 Feb 2018 11:20:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Daniel Lustig <dlustig@nvidia.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        nborisov@suse.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
- lock-based external-view litmus test
-Message-ID: <20180222102026.GT25235@hirez.programming.kicks-ass.net>
-References: <20180220232405.GA19274@linux.vnet.ibm.com>
- <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180222032349.klcuiq23f52sfop6@tardis>
- <20180222041357.GB2855@linux.vnet.ibm.com>
- <20180222052746.vofmqbpnmfahck3z@tardis>
- <fad8e18b-ef5a-5bc0-5d87-6fad2e9f7c95@nvidia.com>
- <20180222100636.GP25201@hirez.programming.kicks-ass.net>
+        Thu, 22 Feb 2018 05:21:34 -0500
+X-Google-Smtp-Source: AH8x2248m2snDBWGyugC1ohGx6nVQ4RECoAEoI+ojea8bAa9tPAamXQYSJYTAf8JVDwyuW+igLcQ6w==
+From: Marco Martin <notmart@gmail.com>
+To: Jeremy Cline <jeremy@jcline.org>
+Cc: Mario Limonciello <mario.limonciello@dell.com>,
+        Pali =?ISO-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+Date: Thu, 22 Feb 2018 11:21:31 +0100
+Message-ID: <1628582.nV6hDClBbL@phobos>
+In-Reply-To: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
+References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222100636.GP25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MALeVN006077
 
-On Thu, Feb 22, 2018 at 11:06:36AM +0100, Peter Zijlstra wrote:
-> On Wed, Feb 21, 2018 at 09:42:08PM -0800, Daniel Lustig wrote:
-> > And yes, if we go with a purely RCpc interpretation of acquire and
-> > release, then I don't believe the writes in the previous critical
-> > section would be ordered with the writes in the subsequent critical
-> > section.
+On giovedì 22 febbraio 2018 06:14:07 CET Jeremy Cline wrote:
+> Hey folks,
 > 
-> Excuse my ignorance (also jumping in the middle of things), but how can
-> this be?
-> 
-> spin_unlock() is a store-release, this means the write to the lock word
-> must happen after any stores inside the critical section.
-> 
-> spin_lock() is a load-acquire + test-and-set-ctrl-dep, we'll only
-> proceed with the critical section if we observe the lock 'unlocked',
-> which also means we must observe the stores prior to the unlock.
-> 
-> And both the ctrl-dep and the ACQUIRE ensure future stores cannot happen
-> before.
-> 
-> So while the lock store and subsequent critical section stores are
-> unordered, I don't see how it would be possible to not be ordered
-> against stores from a previous critical section.
-> 
+> Commit 30323fb6d552c41997baca5292bf7001366cab57 (Support tablet mode
+> switch) causes the keyboard on my XPS 13 to stop working. This
+> particular model has a touch screen (which I've disabled in the BIOS),
+> but isn't a 2-in-1 with a tablet mode. My guess is it's being put in
+> tablet mode and that's disabling the keyboard? In any case, I'm happy
+> to test fixes and provide any necessary information.
 
-Or are we talking about a third party observing while not partaking in
-the lock-chain? Then I agree, the stores can be observed out of order by
-this 3rd actor.
+30323fb6d552c41997baca5292bf7001366cab57 initializes the switch to the correct 
+state, in theory, it seems VGBS() is returning the wrong thing? could it 
+report it has the switch and in a closed state even if it doesn't have it?
+ also seems device specific, on my inspiron6352 if i go in teblet mode the 
+keyboard keeps working until i fold it completely (which i don't know/don't 
+think is something detectable at all from the software side)
+
+can you test with the command evtest (if an external keyboard works, or via 
+ssh)?, then looking at the state of the intel virtual button driver it should 
+show you the current state of the switch
+
+-- 
+Marco Martin
