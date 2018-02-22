@@ -1,80 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932253AbeBVMDF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:03:05 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:4383 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932121AbeBVMC5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:02:57 -0500
-X-IronPort-AV: E=Sophos;i="5.47,377,1515481200";
-   d="scan'208";a="12245955"
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-        <airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-        <jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-        <rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
-        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v3 02/10] pwm: clps711x: populate PWM mode in of_xlate function
-Date: Thu, 22 Feb 2018 14:01:13 +0200
-Message-ID: <1519300881-8136-3-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+        id S932105AbeBVMND (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:13:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40020 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753570AbeBVMNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:13:02 -0500
+Date: Thu, 22 Feb 2018 12:13:01 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm_spe: include linux/vmalloc.h for vmap()
+Message-ID: <20180222121301.GA1591@arm.com>
+References: <20180222114716.1356279-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222114716.1356279-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
+On Thu, Feb 22, 2018 at 12:47:05PM +0100, Arnd Bergmann wrote:
+> On linux-next, I get a build failure in some configurations:
+> 
+> drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_setup_aux':
+> drivers/perf/arm_spe_pmu.c:857:14: error: implicit declaration of function 'vmap'; did you mean 'swap'? [-Werror=implicit-function-declaration]
+>   buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
+>               ^~~~
+>               swap
+> drivers/perf/arm_spe_pmu.c:857:37: error: 'VM_MAP' undeclared (first use in this function); did you mean 'VM_MPX'?
+>   buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
+>                                      ^~~~~~
+>                                      VM_MPX
+> drivers/perf/arm_spe_pmu.c:857:37: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_free_aux':
+> drivers/perf/arm_spe_pmu.c:878:2: error: implicit declaration of function 'vunmap'; did you mean 'iounmap'? [-Werror=implicit-function-declaration]
+> 
+> vmap() is declared in linux/vmalloc.h, so we should include that header file.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/pwm/pwm-clps711x.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Thanks, Arnd. I'll pick this up for 4.17.
 
-diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
-index 26ec24e457b1..2a4d31ab3af0 100644
---- a/drivers/pwm/pwm-clps711x.c
-+++ b/drivers/pwm/pwm-clps711x.c
-@@ -109,10 +109,20 @@ static const struct pwm_ops clps711x_pwm_ops = {
- static struct pwm_device *clps711x_pwm_xlate(struct pwm_chip *chip,
- 					     const struct of_phandle_args *args)
- {
-+	struct pwm_device *pwm;
-+	struct pwm_caps caps;
-+
- 	if (args->args[0] >= chip->npwm)
- 		return ERR_PTR(-EINVAL);
- 
--	return pwm_request_from_chip(chip, args->args[0], NULL);
-+	pwm = pwm_request_from_chip(chip, args->args[0], NULL);
-+	if (IS_ERR(pwm))
-+		return pwm;
-+
-+	pwm_get_caps(chip, pwm, &caps);
-+	pwm->args.mode = BIT(ffs(caps.modes) - 1);
-+
-+	return pwm;
- }
- 
- static int clps711x_pwm_probe(struct platform_device *pdev)
--- 
-2.7.4
+Will
