@@ -1,124 +1,97 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x227Sch0tBQFP0hQC2GEBoxmMp4UMXw8njtlR/3HZ3e0ZDJKvBJ/fgUvXsTDi9vus23tM/bjZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519224966; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JRf2M1ZZQ4/E0nUykhmktVZfQwxPQrJPFs7BReiPQ05TjZKyQWehKgvux1dfLAqjG6
-         BkF0wF+l9f9mnFRX7P5VmIzcxCEqoY83R8vff+Oe3WwtOE6tcKNR6A7GepitrzHioGVi
-         QGmL3pWWVue5vqWsZ2wSXoH4bZKABOPTgmwb6X4nDNDXi/Mylfu+ZvRIE76canK6fJaY
-         HSU/eaXuib+ZqHO9+zXZ4z0E1yRPmtNa409gi4ogSwlm8ZcfgvL6EqTdSjer0eQc/qrD
-         B6mk5IMzwAgPykYlwVMouxVc8geg+YbIvOflcrccoGK72r5O9hlboH7lF9TfLUl+QbUA
-         0KPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dmarc-filter:arc-authentication-results;
-        bh=ROLfIujIxGgXBYkZ9XBsMoCYyAz6jbwvTxn4Cz5wcCc=;
-        b=Gpi4hC2YxV/eEvgE038fJQ71EcQzLbOwOWKGqEV9ZToq7rzuyMquH+rIoLrxtE8jyA
-         tQwuYgX2rwbzBNDcaE3kskFsA7en2yWoPAMckIE/iEqjVk1hk0LooaKlhFp3BAWd2JN8
-         3G9TNKA+DlIIHWj5qLmXySAT0+/Y4z6QNR0/e6yJtK1GHk9MfDUz4yegDRJtS75YVaC/
-         T9XFQDyWWT58Wycg2UnTAHAlvO5CQPVzIPibGGMCOK7jrq1c0P6Hp3xGgTiqcw6Ti0D+
-         tYYpdchj5YxtVmATsPqmk6fk/M4vYqJLInrXUHI9cy2LYRiuAQQ7Rs2wbl5z4X3UiGjr
-         fMfA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937392AbeBUO4G (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 09:56:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936893AbeBUO4E (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 09:56:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770B1205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: [PATCH v2 03/17] selftests: ftrace: Add a testcase for string type with kprobe_event
-Date: Wed, 21 Feb 2018 23:55:40 +0900
-Message-Id: <151922494028.6217.2260900936608276328.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <151922484560.6217.1143686155616343906.stgit@devbox>
-References: <151922484560.6217.1143686155616343906.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+Return-Path: <sfr@canb.auug.org.au>
+X-Cyrus-Session-Id: sloti22d1t05-1141254-1519336337-3-9067053357802966590
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='103.22.144.67', Host='ozlabs.org', Country='AU', FromHeader='au',
+  MailFrom='au'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: sfr@canb.auug.org.au
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519336336; b=QQ6PKPUHwBvqg+T2Tc7bsE3SHeEudC8mVVZHaw9qBVGIO7g
+    JmF1IRXJuQIk5d3FMOKb1vXZhQCysKXbGe/FTd6rHk4+GfCIqAoc/5f8MierPl9m
+    Iy4td4uE0bECBRKKxfN5/KI58lo4P39igaAXTpxfn0c0TdIletVolanfid7lhOyU
+    o60tpzjG8rvfXk/aqNOwh+R+c4WH6qacOg/AA1g5SaIH/rirz3IDfETS39jPgM0h
+    +DiaTG45Nl9pGu88vxVNdyJdSsuEiJjNliTE25BocjINtW5vumh8FQTR3fTEAjOy
+    RqpG5UAFwVqhOBNXQX9gPbDV0Xgt1SOBkmBkBOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type; s=arctest; t=1519336336; bh=DvQtB7Tv
+    XNkzimRJLVY2Hzj1S6eLxYHA+ou+llbTJcY=; b=bhd8GKraV9C8EoQG85q5/cnL
+    A8/T3qZDEMt0+thWJOrUZjdOsdsJ6IGcoc3l7aYu+fIj8nTAjs8Gi+MCQRZ1nPE6
+    nVcmWk5xUPI8PYInEz1cCfLPpzthHtZZdm5GRrjsh1yZlUp9i5G5djDhLp8gmr8V
+    fACHIlvshKplGh0dhXsSnNmAVS+uxaok0q3HjGj2sxp5TVhF7xi76wCWuRcCmHfq
+    xntqVNNpEgT7MVOoxcixwVfEYLjFPJUoYLAFIsjHI1Y85+1rp6zYyv/3f3iMFlnl
+    ErhXrR/pD45tvJknPETIeJVAdBzzGsC6eJ1mrrv55AKP2NREfz2ISYRj+YUlLg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cjvLx6ZO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cjvLx6ZO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Date: Fri, 23 Feb 2018 08:51:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+Subject: linux-next: Signed-off-by missing for commit in the staging tree
+Message-ID: <20180223085137.625574c2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Dk8PI7qbJ9IeIbOrbNb95PE"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593022838638842956?=
-X-GMAIL-MSGID: =?utf-8?q?1593022838638842956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a testcase for string type with kprobe event.
-This tests good/bad syntax combinations and also
-the traced data is correct in several way.
+--Sig_/Dk8PI7qbJ9IeIbOrbNb95PE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   46 ++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+Hi Greg,
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-new file mode 100644
-index 000000000000..5ba73035e1d9
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -0,0 +1,46 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event string type argument
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+case `uname -m` in
-+x86_64)
-+  ARG2=%si
-+  OFFS=8
-+;;
-+i[3456]86)
-+  ARG2=%cx
-+  OFFS=4
-+;;
-+aarch64)
-+  ARG2=%x1
-+  OFFS=8
-+;;
-+arm*)
-+  ARG2=%r1
-+  OFFS=4
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
-+esac
-+
-+: "Test get argument (1)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+
-+echo 0 > events/kprobes/testprobe/enable
-+: "Test get argument (2)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test1 test2 >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+
-+echo 0 > events/enable
-+echo > kprobe_events
+Commit
 
+  cc738c1a69da ("staging: lustre: opencode cfs_cap_{raise, lower, raised}")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Dk8PI7qbJ9IeIbOrbNb95PE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqPO2kACgkQAVBC80lX
+0Gy/DggAlXspU8m5/CBOLHJEaDFfBZs6Opuh8186wj4e6WkDAAtnKyd/8H2bkVva
+07+eZRzmQmPf4iujP978bwFo642JED87zu0Lh/Yt4/kcjowicYKVqK1QpxgLAkhT
+in6NIK04Y6MaH9Zx+r1kN4B8ykHOMsJnTp2iPgHmrGhCdGTqdyhZ/nS7qqSygzhV
+nRymUzEQbzgvEu/nLPQGT0Awluc2Z/SqlYJCm0Zh6O90HZddeGqsnyPL2zYyYsuj
+q/mdvvVDqfozO4V46f0oP1Psk3f6JrGUK5AuG8KZj2pTq7Js52inZqp1xDn8LhtP
+JmF7ErkLIW+CeWBRCdDkP3ELy2Fnaw==
+=kxtJ
+-----END PGP SIGNATURE-----
+
+--Sig_/Dk8PI7qbJ9IeIbOrbNb95PE--
