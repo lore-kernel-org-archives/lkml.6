@@ -1,115 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933366AbeBVQod (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:44:33 -0500
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:45499 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933197AbeBVQob (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:44:31 -0500
-X-Google-Smtp-Source: AG47ELvPJ1xpPi37pzCFCDGZQIFZUoZFKRCZOG1BA9Np07Wz3dORSMZFJCQAKHKiZmAbYpY6VxjkDBYnO6vwa/ybF0c=
+        id S933380AbeBVQok (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:44:40 -0500
+Received: from vern.gendns.com ([206.190.152.46]:51464 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933281AbeBVQoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:44:32 -0500
+Subject: Re: [PATCH v4] reset: add support for non-DT systems
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
+References: <20180219165837.28913-1-brgl@bgdev.pl>
+ <72cd2af4-ed6b-8c1b-2488-b999976b894a@lechnology.com>
+ <1519123185.3470.5.camel@pengutronix.de>
+ <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
+ <1519299294.7447.4.camel@pengutronix.de>
+From: David Lechner <david@lechnology.com>
+Message-ID: <91e55d2b-abd0-35b4-cc18-98a96288f8de@lechnology.com>
+Date: Thu, 22 Feb 2018 10:44:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180222144844.g4p2diu3cnbr7sx3@quack2.suse.cz>
-References: <20180221030101.221206-1-shakeelb@google.com> <20180221030101.221206-4-shakeelb@google.com>
- <20180222134944.GK30681@dhcp22.suse.cz> <20180222144844.g4p2diu3cnbr7sx3@quack2.suse.cz>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 22 Feb 2018 08:44:29 -0800
-Message-ID: <CAHbLzkpdQxxHqiexyR5OYHKuZEq4uzthY4Of+APQqyE+dk3ZOg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] fs: fsnotify: account fsnotify metadata to kmemcg
-To: Jan Kara <jack@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeelb@google.com>,
-        Amir Goldstein <amir73il@gmail.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519299294.7447.4.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 6:48 AM, Jan Kara <jack@suse.cz> wrote:
-> On Thu 22-02-18 14:49:44, Michal Hocko wrote:
->> On Tue 20-02-18 19:01:01, Shakeel Butt wrote:
->> > A lot of memory can be consumed by the events generated for the huge or
->> > unlimited queues if there is either no or slow listener. This can cause
->> > system level memory pressure or OOMs. So, it's better to account the
->> > fsnotify kmem caches to the memcg of the listener.
->>
->> How much memory are we talking about here?
->
-> 32 bytes per event (on 64-bit) which is small but the number of events is
-> not limited in any way (if the creator uses a special flag and has
-> CAP_SYS_ADMIN). In the thread [1] a guy from Alibaba wanted this feature so
-> among cloud people there is apparently some demand to have a way to limit
-> memory usage of such application...
-
-Yes, I'm the guy from Alibaba :-) We did run into such issue
-occasionally, then I proposed the patch to account fsnotify kmem in
-memcg although we fixed the bug in user space applications later.
-However, such accounting still sounds useful to me.
-
->
->> > There are seven fsnotify kmem caches and among them allocations from
->> > dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
->> > inotify_inode_mark_cachep happens in the context of syscall from the
->> > listener. So, SLAB_ACCOUNT is enough for these caches.
->> >
->> > The objects from fsnotify_mark_connector_cachep are not accounted as
->> > they are small compared to the notification mark or events and it is
->> > unclear whom to account connector to since it is shared by all events
->> > attached to the inode.
->> >
->> > The allocations from the event caches happen in the context of the event
->> > producer. For such caches we will need to remote charge the allocations
->> > to the listener's memcg. Thus we save the memcg reference in the
->> > fsnotify_group structure of the listener.
->>
->> Is it typical that the listener lives in a different memcg and if yes
->> then cannot this cause one memcg to OOM/DoS the one with the listener?
->
-> We have been through these discussions already in [1] back in November :).
-> I can understand the wish to limit memory usage of an application using
-> unlimited fanotify queues. And yes, it may mean that it will be easier for
-> an attacker to get it oom-killed (currently the malicious app would drive
-> the whole system oom which will presumably take a bit more effort as there
-> is more memory to consume). But then I expect this is what admin prefers
-> when he limits memory usage of fanotify listener.
->
-> I cannot tell how common it is for producer and listener to be in different
-> memcgs. From Alibaba request it seems it happens...
-
-For our usecase, we didn't have producers and listeners in the
-different memcgs (Please see the original discussion here
-https://lkml.org/lkml/2017/10/20/819). The different memcg accounting
-problem is raised by Amir since the accounting might be unfair if the
-listeners don't consume events and heuristic if producer and listener
-are in the different memcgs.
-
-However, we don't have strong demand on this from our perspective for
-the time being. So, I didn't continue to move forward on this
-approach.
-
-Regards,
-Yang
+On 02/22/2018 05:34 AM, Philipp Zabel wrote:
+> On Tue, 2018-02-20 at 10:40 -0600, David Lechner wrote:
+> [...]
+>>> In your case the platform code that adds the lookup may be identical to
+>>> the code that registers the struct reset_controller_dev, but that
+>>> doesn't have to be the case. I'm not sure how that is supposed to work
+>>> for the phy framework (I see no platform code adding phy lookups, only
+>>> drivers).
+>>>
+>> In our use case, we would be adding the lookup in the driver rather than
+>> in the platform code, which is why I am suggesting doing it like the phy
+>> framework.
+> 
+> Shouldn't it be the job of the platform code to describe the connections
+> between reset controller and peripheral module reset
+> inputs?
 
 
->
->                                                                 Honza
->
-> [1] https://lkml.org/lkml/2017/10/27/523
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
->
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+I guess that depends on who you ask. There are many clock driver that
+register clkdev lookups in drivers/clk/, so that is what we have done
+with the clock driver we are working on. The clock device is also the
+reset controller, so it makes sense to me to register the reset lookup
+in the same place that we are registering the clkdev lookup.
+
+We have a platform_device_id for each possible configuration, so that
+it works very much like the device tree compatible string. You register
+a platform device in the board file with the proper name and the driver
+takes care of the reset because it knows which connections there are
+based on the device name.
