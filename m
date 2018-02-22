@@ -1,146 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932104AbeBVLkh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:40:37 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41298 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753640AbeBVLkU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:40:20 -0500
-X-Google-Smtp-Source: AH8x225w5Ef5tuQXeSedKxPESXdMPn8bLmdgJ3fXrR8vXAmGm5852BjBoDdny1fzFHgnfMkJMA+O2Zq/TFWN5dHeOqU=
+        id S932135AbeBVLkr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:40:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753747AbeBVLkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:40:46 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3F721796
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Thu, 22 Feb 2018 12:40:42 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 013/100] rtc: cpcap: stop validating rtc_time in
+ .read_time
+Message-ID: <20180222114042.7kpgq67raje7wbyz@earth.universe>
+References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
+ <20180221205635.31314-14-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180221202908.17258-4-ebiederm@xmission.com>
-References: <878tbmf5vl.fsf@xmission.com> <20180221202908.17258-4-ebiederm@xmission.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Thu, 22 Feb 2018 12:40:18 +0100
-Message-ID: <CAOssrKeNLBeMkMrrCeRBO9Z80zFxCCEygKL3DErnQ9xBoLkH0g@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] fuse: Ensure posix acls are translated outside of init_user_ns
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3cxjms7q5mhycwfo"
+Content-Disposition: inline
+In-Reply-To: <20180221205635.31314-14-alexandre.belloni@bootlin.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 9:29 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Ensure the translation happens by failing to read or write
-> posix acls when the filesystem has not indicated it supports
-> posix acls.
 
-For the first iteration this is fine, but  we could convert the raw
-xattrs as well, if we later want to, right?
+--3cxjms7q5mhycwfo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Miklos
+Hi,
 
->
-> This ensures that modern cached posix acl support is available
-> and used when dealing with posix acls.  This is important
-> because only that path has the code to convernt the uids and
-> gids in posix acls into the user namespace of a fuse filesystem.
->
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+On Wed, Feb 21, 2018 at 09:55:08PM +0100, Alexandre Belloni wrote:
+> The RTC core is always calling rtc_valid_tm after the read_time callback.
+> It is not necessary to call it just before returning from the callback.
+>=20
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
->  fs/fuse/fuse_i.h |  1 +
->  fs/fuse/inode.c  |  7 +++++++
->  fs/fuse/xattr.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 51 insertions(+)
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 7772e2b4057e..986fa2b043ab 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -979,6 +979,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
->  int fuse_removexattr(struct inode *inode, const char *name);
->  extern const struct xattr_handler *fuse_xattr_handlers[];
->  extern const struct xattr_handler *fuse_acl_xattr_handlers[];
-> +extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
->
->  struct posix_acl;
->  struct posix_acl *fuse_get_acl(struct inode *inode, int type);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index e018dc3999f4..a52cf2019a58 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1097,6 +1097,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
->             file->f_cred->user_ns != sb->s_user_ns)
->                 goto err_fput;
->
-> +       /*
-> +        * If we are not in the initial user namespace posix
-> +        * acls must be translated.
-> +        */
-> +       if (sb->s_user_ns != &init_user_ns)
-> +               sb->s_xattr = fuse_no_acl_xattr_handlers;
-> +
->         fc = kmalloc(sizeof(*fc), GFP_KERNEL);
->         err = -ENOMEM;
->         if (!fc)
-> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-> index 3caac46b08b0..433717640f78 100644
-> --- a/fs/fuse/xattr.c
-> +++ b/fs/fuse/xattr.c
-> @@ -192,6 +192,26 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
->         return fuse_setxattr(inode, name, value, size, flags);
+>  drivers/rtc/rtc-cpcap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/rtc/rtc-cpcap.c b/drivers/rtc/rtc-cpcap.c
+> index 3a0333e1f21a..a8856f2b9bc2 100644
+> --- a/drivers/rtc/rtc-cpcap.c
+> +++ b/drivers/rtc/rtc-cpcap.c
+> @@ -119,7 +119,7 @@ static int cpcap_rtc_read_time(struct device *dev, st=
+ruct rtc_time *tm)
+> =20
+>  	cpcap2rtc_time(tm, &cpcap_tm);
+> =20
+> -	return rtc_valid_tm(tm);
+> +	return 0;
 >  }
->
-> +static bool no_xattr_list(struct dentry *dentry)
-> +{
-> +       return false;
-> +}
-> +
-> +static int no_xattr_get(const struct xattr_handler *handler,
-> +                       struct dentry *dentry, struct inode *inode,
-> +                       const char *name, void *value, size_t size)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +static int no_xattr_set(const struct xattr_handler *handler,
-> +                       struct dentry *dentry, struct inode *nodee,
-> +                       const char *name, const void *value,
-> +                       size_t size, int flags)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
->  static const struct xattr_handler fuse_xattr_handler = {
->         .prefix = "",
->         .get    = fuse_xattr_get,
-> @@ -209,3 +229,26 @@ const struct xattr_handler *fuse_acl_xattr_handlers[] = {
->         &fuse_xattr_handler,
->         NULL
->  };
-> +
-> +static const struct xattr_handler fuse_no_acl_access_xattr_handler = {
-> +       .name  = XATTR_NAME_POSIX_ACL_ACCESS,
-> +       .flags = ACL_TYPE_ACCESS,
-> +       .list  = no_xattr_list,
-> +       .get   = no_xattr_get,
-> +       .set   = no_xattr_set,
-> +};
-> +
-> +static const struct xattr_handler fuse_no_acl_default_xattr_handler = {
-> +       .name  = XATTR_NAME_POSIX_ACL_DEFAULT,
-> +       .flags = ACL_TYPE_ACCESS,
-> +       .list  = no_xattr_list,
-> +       .get   = no_xattr_get,
-> +       .set   = no_xattr_set,
-> +};
-> +
-> +const struct xattr_handler *fuse_no_acl_xattr_handlers[] = {
-> +       &fuse_no_acl_access_xattr_handler,
-> +       &fuse_no_acl_default_xattr_handler,
-> +       &fuse_xattr_handler,
-> +       NULL
-> +};
-> --
-> 2.14.1
->
+> =20
+>  static int cpcap_rtc_set_time(struct device *dev, struct rtc_time *tm)
+
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+
+-- Sebastian
+
+--3cxjms7q5mhycwfo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqOrDcACgkQ2O7X88g7
++ppjzw//UebQxXzcI0HNj3maCsHnQTMQ7v5OjaqgrFkMuARmRFN8QLQAu3vqROfH
+GJ9IJ/yyzvx9oMuJ3YBlLVz4fQcru/IVEgkBk1kmk2vt5wadRMcWvs0hAFhvmKNZ
+zBhONVPqanI12/3YbYlBAIAPONyiULUZ3BfXyz5PeXj5KellD69Tdg1UMrHFDiT5
+y86TPx/WHmRvJP2F63b3JznpX9brvnKSMWbp27C/aGNWi1aJbf9NCQTImlxlxeSX
+uxyxjy13jvAShc/46jQfRSt8tFdmcAgU1dUJfHbHG/QkqN6giKEh6fBl8vhWRTb6
+5JnlTh1moKzfZDjfFefOSOE61URtqAtXV/2a/8dPS7srAYsjv7SUA4Iizfch+8ll
+ZIlzvM3UxwKvy8cxmhZhp82RfVEr2+5/Z+q8SSpfaWwbg0FVhQfmoGp7UK9XfRPD
+1mvS6VQnv8oJGbSF9Zc3dgDcuLKcor1dCcgg/hKNbf3W9qIxnJIoEAoE+23lzh3u
+cb+SyQQGY0hQECQ5Z+jNo12JTZ3uVEwCv9RRfbDWU21joENZHSNz3GGa/mO9eENX
+oCoC8Q3YdZA/ZIFKVvl5MRZS/EJu2yNuP3srzmszBUHLoDIpG2rLxKfmOPWqWCNm
+UVABV/52UMY5BQNrC3DwV1v/+eUBuWMVdyLQGNUZvtBazJergX8=
+=y3bA
+-----END PGP SIGNATURE-----
+
+--3cxjms7q5mhycwfo--
