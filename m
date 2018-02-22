@@ -1,283 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeBVHnJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:43:09 -0500
-Received: from mga14.intel.com ([192.55.52.115]:32647 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752561AbeBVHnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:43:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="206056107"
-Subject: Re: [PATCH V15 06/22] mmc: block: Add blk-mq support
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bough Chen <haibo.chen@nxp.com>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <dongas86@gmail.com>,
-        Das Asutosh <asutoshd@codeaurora.org>,
-        Zhangfei Gao <zhangfei.gao@gmail.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>
-References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
- <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
- <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
-Date: Thu, 22 Feb 2018 09:42:19 +0200
+        id S1752664AbeBVHoE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:44:04 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35695 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751669AbeBVHoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 02:44:02 -0500
+X-Google-Smtp-Source: AH8x225LkDH/6bbEddpAtDqL1rMcHorWBuP4YW2A+5yrJv5GTLCWejsfJzGAEbS7T6JQwfQTegQYHA==
+Subject: Re: [PATCH 07/20] lightnvm: rename sect_* to sec_*
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+ <1519205218-26994-8-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <7dc355a2-b3a2-28f3-a595-42822129f456@lightnvm.io>
+Date: Thu, 22 Feb 2018 08:43:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1519205218-26994-8-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/18 22:50, Dmitry Osipenko wrote:
-> On 29.11.2017 16:41, Adrian Hunter wrote:
->> Define and use a blk-mq queue. Discards and flushes are processed
->> synchronously, but reads and writes asynchronously. In order to support
->> slow DMA unmapping, DMA unmapping is not done until after the next request
->> is started. That means the request is not completed until then. If there is
->> no next request then the completion is done by queued work.
+On 02/21/2018 10:26 AM, Javier González wrote:
+> Rename abbreviations for sector from sect_* to sec_* as most of the code
+> uses this format and it is confusing when using the different
+> structures.
 > 
-> Hello,
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-init.c  | 8 ++++----
+>   drivers/lightnvm/pblk-sysfs.c | 4 ++--
+>   drivers/lightnvm/pblk.h       | 8 ++++----
+>   drivers/nvme/host/lightnvm.c  | 8 ++++----
+>   include/linux/lightnvm.h      | 8 ++++----
+>   5 files changed, 18 insertions(+), 18 deletions(-)
 > 
-> I'm using (running linux-next and doing some upstream development for) some old
-> NVIDIA Tegra tablet that has built-in (internal) and external MMC's and with the
-> blk-mq being enabled I'm observing a soft lockup. The lockup seems is
-> reproducible quite reliably by running fsck on any MMC partition, sometimes
-> kernels lockups on boot during probing partitions table (weirdly only when both
-> SDHCI's are present, i.e. internal storage enabled in DT and external SD is
-> inserted/enabled) and it also lockups pretty quickly in a case of just a general
-> use. Reverting mmc/ commits up to 1bec43a3b18 ("Remove option not to use
-> blk-mq") and disabling CONFIG_MMC_MQ_DEFAULT makes everything working fine
-> again. There is also a third SDHCI populated with built-in WiFi/Bluetooth SDIO
-> and I'm observing odd MMC timeouts with the blk-mq enabled, disabling
-> CONFIG_MMC_MQ_DEFAULT fixes these timeouts as well.
+> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+> index 455fc63a9409..6bf51ef8f516 100644
+> --- a/drivers/lightnvm/pblk-init.c
+> +++ b/drivers/lightnvm/pblk-init.c
+> @@ -179,16 +179,16 @@ static int pblk_set_addrf_12(struct nvm_geo *geo,
+>   	dst->blk_len = src->blk_len;
+>   	dst->pg_len = src->pg_len;
+>   	dst->pln_len = src->pln_len;
+> -	dst->sect_len = src->sect_len;
+> +	dst->sec_len = src->sec_len;
+>   
+> -	dst->sect_offset = 0;
+> -	dst->pln_offset = dst->sect_len;
+> +	dst->sec_offset = 0;
+> +	dst->pln_offset = dst->sec_len;
+>   	dst->ch_offset = dst->pln_offset + dst->pln_len;
+>   	dst->lun_offset = dst->ch_offset + dst->ch_len;
+>   	dst->pg_offset = dst->lun_offset + dst->lun_len;
+>   	dst->blk_offset = dst->pg_offset + dst->pg_len;
+>   
+> -	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
+> +	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
+>   	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
+>   	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
+>   	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
+> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+> index 5eb21a279361..81288aa9162a 100644
+> --- a/drivers/lightnvm/pblk-sysfs.c
+> +++ b/drivers/lightnvm/pblk-sysfs.c
+> @@ -128,7 +128,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+>   			ppaf->blk_offset, ppaf->blk_len,
+>   			ppaf->pg_offset, ppaf->pg_len,
+>   			ppaf->pln_offset, ppaf->pln_len,
+> -			ppaf->sect_offset, ppaf->sect_len);
+> +			ppaf->sec_offset, ppaf->sec_len);
+>   
+>   	sz += snprintf(page + sz, PAGE_SIZE - sz,
+>   		"device:ch:%d/%d,lun:%d/%d,blk:%d/%d,pg:%d/%d,pl:%d/%d,sec:%d/%d\n",
+> @@ -137,7 +137,7 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+>   			geo_ppaf->blk_offset, geo_ppaf->blk_len,
+>   			geo_ppaf->pg_offset, geo_ppaf->pg_len,
+>   			geo_ppaf->pln_offset, geo_ppaf->pln_len,
+> -			geo_ppaf->sect_offset, geo_ppaf->sect_len);
+> +			geo_ppaf->sec_offset, geo_ppaf->sec_len);
+>   
+>   	return sz;
+>   }
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 1f32284b0aec..4f7a365436f1 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -957,7 +957,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+>   	ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
+>   	ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
+>   	ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
+> -	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sect_offset;
+> +	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
+>   
+>   	return ppa;
+>   }
+> @@ -973,7 +973,7 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
+>   	paddr |= (u64)p.g.lun << ppaf->lun_offset;
+>   	paddr |= (u64)p.g.pg << ppaf->pg_offset;
+>   	paddr |= (u64)p.g.pl << ppaf->pln_offset;
+> -	paddr |= (u64)p.g.sec << ppaf->sect_offset;
+> +	paddr |= (u64)p.g.sec << ppaf->sec_offset;
+>   
+>   	return paddr;
+>   }
+> @@ -998,7 +998,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
+>   		ppa64.g.blk = (ppa32 & ppaf->blk_mask) >> ppaf->blk_offset;
+>   		ppa64.g.pg = (ppa32 & ppaf->pg_mask) >> ppaf->pg_offset;
+>   		ppa64.g.pl = (ppa32 & ppaf->pln_mask) >> ppaf->pln_offset;
+> -		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sect_offset;
+> +		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sec_offset;
+>   	}
+>   
+>   	return ppa64;
+> @@ -1022,7 +1022,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
+>   		ppa32 |= ppa64.g.blk << ppaf->blk_offset;
+>   		ppa32 |= ppa64.g.pg << ppaf->pg_offset;
+>   		ppa32 |= ppa64.g.pl << ppaf->pln_offset;
+> -		ppa32 |= ppa64.g.sec << ppaf->sect_offset;
+> +		ppa32 |= ppa64.g.sec << ppaf->sec_offset;
+>   	}
+>   
+>   	return ppa32;
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index bd97672e0b4f..cca32da05316 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -262,21 +262,21 @@ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
+>   	dst->blk_len = src->blk_len;
+>   	dst->pg_len = src->pg_len;
+>   	dst->pln_len = src->pln_len;
+> -	dst->sect_len = src->sec_len;
+> +	dst->sec_len = src->sec_len;
+>   
+>   	dst->ch_offset = src->ch_offset;
+>   	dst->lun_offset = src->lun_offset;
+>   	dst->blk_offset = src->blk_offset;
+>   	dst->pg_offset = src->pg_offset;
+>   	dst->pln_offset = src->pln_offset;
+> -	dst->sect_offset = src->sec_offset;
+> +	dst->sec_offset = src->sec_offset;
+>   
+>   	dst->ch_mask = ((1ULL << dst->ch_len) - 1) << dst->ch_offset;
+>   	dst->lun_mask = ((1ULL << dst->lun_len) - 1) << dst->lun_offset;
+>   	dst->blk_mask = ((1ULL << dst->blk_len) - 1) << dst->blk_offset;
+>   	dst->pg_mask = ((1ULL << dst->pg_len) - 1) << dst->pg_offset;
+>   	dst->pln_mask = ((1ULL << dst->pln_len) - 1) << dst->pln_offset;
+> -	dst->sec_mask = ((1ULL << dst->sect_len) - 1) << dst->sect_offset;
+> +	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
+>   }
+>   
+>   static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+> @@ -956,7 +956,7 @@ static ssize_t nvm_dev_attr_show_ppaf(struct nvm_addr_format_12 *ppaf,
+>   				ppaf->pln_offset, ppaf->pln_len,
+>   				ppaf->blk_offset, ppaf->blk_len,
+>   				ppaf->pg_offset, ppaf->pg_len,
+> -				ppaf->sect_offset, ppaf->sect_len);
+> +				ppaf->sec_offset, ppaf->sec_len);
+>   }
+>   
+>   static ssize_t nvm_dev_attr_show_12(struct device *dev,
+> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+> index 02f1fd617781..ccc5faa63cb7 100644
+> --- a/include/linux/lightnvm.h
+> +++ b/include/linux/lightnvm.h
+> @@ -163,14 +163,14 @@ struct nvm_addr_format_12 {
+>   	u8	blk_len;
+>   	u8	pg_len;
+>   	u8	pln_len;
+> -	u8	sect_len;
+> +	u8	sec_len;
+>   
+>   	u8	ch_offset;
+>   	u8	lun_offset;
+>   	u8	blk_offset;
+>   	u8	pg_offset;
+>   	u8	pln_offset;
+> -	u8	sect_offset;
+> +	u8	sec_offset;
+>   
+>   	u64	ch_mask;
+>   	u64	lun_mask;
+> @@ -399,7 +399,7 @@ static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev *tgt_dev,
+>   	l.ppa |= ((u64)r.g.blk) << ppaf->blk_offset;
+>   	l.ppa |= ((u64)r.g.pg) << ppaf->pg_offset;
+>   	l.ppa |= ((u64)r.g.pl) << ppaf->pln_offset;
+> -	l.ppa |= ((u64)r.g.sec) << ppaf->sect_offset;
+> +	l.ppa |= ((u64)r.g.sec) << ppaf->sec_offset;
+>   
+>   	return l;
+>   }
+> @@ -419,7 +419,7 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_tgt_dev *tgt_dev,
+>   	l.g.blk = (r.ppa & ppaf->blk_mask) >> ppaf->blk_offset;
+>   	l.g.pg = (r.ppa & ppaf->pg_mask) >> ppaf->pg_offset;
+>   	l.g.pl = (r.ppa & ppaf->pln_mask) >> ppaf->pln_offset;
+> -	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sect_offset;
+> +	l.g.sec = (r.ppa & ppaf->sec_mask) >> ppaf->sec_offset;
+>   
+>   	return l;
+>   }
 > 
-> Any thoughts?
 
-SDIO (unless it is a combo card) should be unaffected by changes to the
-block driver.
-
-I don't have any ideas.  Adding more NVIDIA people.
-
-> 
-> WiFi issue
-> ========================
-> 
-> [   38.247006] mmc2: Timeout waiting for hardware interrupt.
-> [   38.247027] brcmfmac: brcmf_escan_timeout: timer expired
-> [   38.247036] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [   38.247047] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000001
-> [   38.247055] mmc2: sdhci: Blk size:  0x00007008 | Blk cnt:  0x00000000
-> [   38.247062] mmc2: sdhci: Argument:  0x21000008 | Trn mode: 0x00000013
-> [   38.247070] mmc2: sdhci: Present:   0x01d70000 | Host ctl: 0x00000013
-> [   38.247077] mmc2: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-> [   38.247084] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
-> [   38.247091] mmc2: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
-> [   38.247098] mmc2: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02fc000b
-> [   38.247105] mmc2: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-> [   38.247112] mmc2: sdhci: Caps:      0x61ff30b0 | Caps_1:   0x00000000
-> [   38.247119] mmc2: sdhci: Cmd:       0x0000353a | Max curr: 0x00000001
-> [   38.247126] mmc2: sdhci: Resp[0]:   0x00001800 | Resp[1]:  0x08002db5
-> [   38.247133] mmc2: sdhci: Resp[2]:   0x16da8000 | Resp[3]:  0x00000400
-> [   38.247139] mmc2: sdhci: Host ctl2: 0x00000000
-> [   38.247146] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x17c47200
-> [   38.247152] mmc2: sdhci: ============================================
-> [   38.247250] brcmfmac: brcmf_sdio_readframes: read 520 bytes from channel 1
-> failed: -84
-> [   38.247274] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
-> [   40.807019] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
-> [   40.807042] brcmfmac: brcmf_notify_escan_complete: Scan abort failed
-> [   48.487007] mmc2: Timeout waiting for hardware interrupt.
-> [   48.487057] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [   48.487096] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000001
-> [   48.487128] mmc2: sdhci: Blk size:  0x00007040 | Blk cnt:  0x00000001
-> [   48.487160] mmc2: sdhci: Argument:  0x21000040 | Trn mode: 0x00000013
-> [   48.487191] mmc2: sdhci: Present:   0x01d70000 | Host ctl: 0x00000013
-> [   48.487221] mmc2: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-> [   48.487251] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
-> [   48.487281] mmc2: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
-> [   48.487313] mmc2: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02fc000b
-> [   48.487343] mmc2: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-> [   48.487374] mmc2: sdhci: Caps:      0x61ff30b0 | Caps_1:   0x00000000
-> [   48.487404] mmc2: sdhci: Cmd:       0x0000353a | Max curr: 0x00000001
-> [   48.487435] mmc2: sdhci: Resp[0]:   0x00001000 | Resp[1]:  0x08002db5
-> [   48.487466] mmc2: sdhci: Resp[2]:   0x16da8000 | Resp[3]:  0x00000400
-> [   48.487493] mmc2: sdhci: Host ctl2: 0x00000000
-> [   48.487525] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x17c47200
-> [   48.487552] mmc2: sdhci: ============================================
-> [   48.487749] brcmfmac: brcmf_sdio_readframes: read 480 bytes from channel 1
-> failed: -84
-> [   48.487822] brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
-> 
-> 
-> Soft lockup issue
-> ========================
-> 
-> # fsck -f /dev/disk/by-uuid/6768309f-3545-49d5-9ac7-d5be24d35ef2
-> fsck из util-linux 2.30.2
-> e2fsck 1.43.9 (8-Feb-2018)
-> Проход 1: Проверка inodes, блокs, а также размеров
-> Pass 2: Checking каталог structure
-> Pass 3: Checking каталог connectivity
-> Pass 4: Checking reference counts
-> Pass 5: Checking группа summary information
-> ....
-> 
-> [  125.925436] INFO: task kworker/0:3H:263 blocked for more than 60 seconds.
-> [  125.925496]       Not tainted
-> 4.16.0-rc2-next-20180220-00101-gaefde91c3955-dirty #2041
-> [  125.925530] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
-> [  125.925562] kworker/0:3H    D    0   263      2 0x00000000
-> [  125.925653] Workqueue: kblockd mmc_blk_mq_complete_work
-> [  125.925747] [<c0b991cc>] (__schedule) from [<c0b998f0>] (schedule+0x60/0xcc)
-> [  125.925805] [<c0b998f0>] (schedule) from [<c086c870>]
-> (__mmc_claim_host+0xdc/0x24c)
-> [  125.925849] [<c086c870>] (__mmc_claim_host) from [<c08750bc>]
-
-That claim host should not be there.  Here is a fix for that:
-
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index 908e4db03535..62049f95116b 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -932,9 +932,7 @@ static int mmc_read_bkops_status(struct mmc_card *card)
- 	int err;
- 	u8 *ext_csd;
-
--	mmc_claim_host(card->host);
- 	err = mmc_get_ext_csd(card, &ext_csd);
--	mmc_release_host(card->host);
- 	if (err)
- 		return err;
-
-> (mmc_start_bkops+0x4c/0x190)
-> [  125.925895] [<c08750bc>] (mmc_start_bkops) from [<c087d254>]
-> (mmc_blk_urgent_bkops+0x48/0x5c)
-> [  125.925945] [<c087d254>] (mmc_blk_urgent_bkops) from [<c087f2e0>]
-> (mmc_blk_mq_complete_prev_req.part.5+0x74/0x210)
-> [  125.925995] [<c087f2e0>] (mmc_blk_mq_complete_prev_req.part.5) from
-> [<c08813d0>] (mmc_blk_mq_complete_work+0x30/0x34)
-> [  125.926049] [<c08813d0>] (mmc_blk_mq_complete_work) from [<c014306c>]
-> (process_one_work+0x1f8/0x584)
-> [  125.926093] [<c014306c>] (process_one_work) from [<c014402c>]
-> (worker_thread+0x68/0x5d4)
-> [  125.926144] [<c014402c>] (worker_thread) from [<c014965c>] (kthread+0x178/0x184)
-> [  125.926188] [<c014965c>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> [  125.926209] Exception stack(0xd579ffb0 to 0xd579fff8)
-> [  125.926239] ffa0:                                     00000000 00000000
-> 00000000 00000000
-> [  125.926272] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000
-> 00000000 00000000
-> [  125.926301] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [  125.926361] INFO: task fsck.ext4:471 blocked for more than 60 seconds.
-> [  125.926399]       Not tainted
-> 4.16.0-rc2-next-20180220-00101-gaefde91c3955-dirty #2041
-> [  125.926427] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
-> [  125.926455] fsck.ext4       D    0   471    470 0x00000000
-> [  125.926536] [<c0b991cc>] (__schedule) from [<c0b998f0>] (schedule+0x60/0xcc)
-> [  125.926593] [<c0b998f0>] (schedule) from [<c015823c>] (io_schedule+0x20/0x40)
-> [  125.926654] [<c015823c>] (io_schedule) from [<c0220acc>]
-> (wait_on_page_bit+0x120/0x144)
-> [  125.926705] [<c0220acc>] (wait_on_page_bit) from [<c0220bc4>]
-> (__filemap_fdatawait_range+0xd4/0x114)
-> [  125.926757] [<c0220bc4>] (__filemap_fdatawait_range) from [<c0223784>]
-> (file_write_and_wait_range+0x98/0xb4)
-> [  125.926810] [<c0223784>] (file_write_and_wait_range) from [<c02c0300>]
-> (blkdev_fsync+0x2c/0x5c)
-> [  125.926867] [<c02c0300>] (blkdev_fsync) from [<c02b7ce8>]
-> (vfs_fsync_range+0x4c/0xb0)
-> [  125.926912] [<c02b7ce8>] (vfs_fsync_range) from [<c02b7dd4>] (do_fsync+0x4c/0x74)
-> [  125.926954] [<c02b7dd4>] (do_fsync) from [<c02b80a0>] (SyS_fsync+0x1c/0x20)
-> [  125.926996] [<c02b80a0>] (SyS_fsync) from [<c0101000>]
-> (ret_fast_syscall+0x0/0x54)
-> [  125.927016] Exception stack(0xd5631fa8 to 0xd5631ff0)
-> [  125.927050] 1fa0:                   00480fc8 00481108 00000004 00481108
-> 00000000 00000000
-> [  125.927086] 1fc0: 00480fc8 00481108 00000000 00000076 00000000 7f2bb750
-> 00483268 bec602e8
-> [  125.927113] 1fe0: 00000076 bec60288 b6de5e8b b6d67cf6
-> [  177.015618] random: crng init done
-> [  187.365434] INFO: task kworker/0:3H:263 blocked for more than 60 seconds.
-> [  187.365491]       Not tainted
-> 4.16.0-rc2-next-20180220-00101-gaefde91c3955-dirty #2041
-> [  187.365524] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
-> [  187.365556] kworker/0:3H    D    0   263      2 0x00000000
-> [  187.365647] Workqueue: kblockd mmc_blk_mq_complete_work
-> [  187.365741] [<c0b991cc>] (__schedule) from [<c0b998f0>] (schedule+0x60/0xcc)
-> [  187.365798] [<c0b998f0>] (schedule) from [<c086c870>]
-> (__mmc_claim_host+0xdc/0x24c)
-> [  187.365842] [<c086c870>] (__mmc_claim_host) from [<c08750bc>]
-> (mmc_start_bkops+0x4c/0x190)
-> [  187.365887] [<c08750bc>] (mmc_start_bkops) from [<c087d254>]
-> (mmc_blk_urgent_bkops+0x48/0x5c)
-> [  187.365936] [<c087d254>] (mmc_blk_urgent_bkops) from [<c087f2e0>]
-> (mmc_blk_mq_complete_prev_req.part.5+0x74/0x210)
-> [  187.365986] [<c087f2e0>] (mmc_blk_mq_complete_prev_req.part.5) from
-> [<c08813d0>] (mmc_blk_mq_complete_work+0x30/0x34)
-> [  187.366039] [<c08813d0>] (mmc_blk_mq_complete_work) from [<c014306c>]
-> (process_one_work+0x1f8/0x584)
-> [  187.366083] [<c014306c>] (process_one_work) from [<c014402c>]
-> (worker_thread+0x68/0x5d4)
-> [  187.366134] [<c014402c>] (worker_thread) from [<c014965c>] (kthread+0x178/0x184)
-> [  187.366178] [<c014965c>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> [  187.366200] Exception stack(0xd579ffb0 to 0xd579fff8)
-> [  187.366229] ffa0:                                     00000000 00000000
-> 00000000 00000000
-> [  187.366262] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000
-> 00000000 00000000
-> [  187.366291] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [  187.366350] INFO: task fsck.ext4:471 blocked for more than 60 seconds.
-> [  187.366388]       Not tainted
-> 4.16.0-rc2-next-20180220-00101-gaefde91c3955-dirty #2041
-> [  187.366416] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
-> [  187.366445] fsck.ext4       D    0   471    470 0x00000000
-> [  187.366526] [<c0b991cc>] (__schedule) from [<c0b998f0>] (schedule+0x60/0xcc)
-> [  187.366582] [<c0b998f0>] (schedule) from [<c015823c>] (io_schedule+0x20/0x40)
-> [  187.366644] [<c015823c>] (io_schedule) from [<c0220acc>]
-> (wait_on_page_bit+0x120/0x144)
-> [  187.366693] [<c0220acc>] (wait_on_page_bit) from [<c0220bc4>]
-> (__filemap_fdatawait_range+0xd4/0x114)
-> [  187.366745] [<c0220bc4>] (__filemap_fdatawait_range) from [<c0223784>]
-> (file_write_and_wait_range+0x98/0xb4)
-> [  187.366799] [<c0223784>] (file_write_and_wait_range) from [<c02c0300>]
-> (blkdev_fsync+0x2c/0x5c)
-> [  187.366857] [<c02c0300>] (blkdev_fsync) from [<c02b7ce8>]
-> (vfs_fsync_range+0x4c/0xb0)
-> [  187.366902] [<c02b7ce8>] (vfs_fsync_range) from [<c02b7dd4>] (do_fsync+0x4c/0x74)
-> [  187.366944] [<c02b7dd4>] (do_fsync) from [<c02b80a0>] (SyS_fsync+0x1c/0x20)
-> [  187.366987] [<c02b80a0>] (SyS_fsync) from [<c0101000>]
-> (ret_fast_syscall+0x0/0x54)
-> [  187.367008] Exception stack(0xd5631fa8 to 0xd5631ff0)
-> [  187.367041] 1fa0:                   00480fc8 00481108 00000004 00481108
-> 00000000 00000000
-> [  187.367078] 1fc0: 00480fc8 00481108 00000000 00000076 00000000 7f2bb750
-> 00483268 bec602e8
-> [  187.367103] 1fe0: 00000076 bec60288 b6de5e8b b6d67cf6
-> 
+Looks good, I'll pick up when rebased. This could properly be part of 
+another patch set with cleanups, as it is not 2.0 specific.
