@@ -1,70 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933585AbeBVSCo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 13:02:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55191 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933478AbeBVSCm (ORCPT
+        id S933625AbeBVSE2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 13:04:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933516AbeBVSEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 13:02:42 -0500
-X-Google-Smtp-Source: AH8x22494Dhxf9SMtRxXH8IgkpBE6quEw4BrYGqJ4i3F/gaPQqZ2/cO5d9ARf3aSnUcDOMaCUTk235OeBsgOdsbFvYY=
+        Thu, 22 Feb 2018 13:04:25 -0500
+Date: Thu, 22 Feb 2018 10:04:20 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180222180420.GA17956@infradead.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222160217.GA18243@infradead.org>
+ <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1043d995-1448-3c0c-8052-8c31d18343d1@caviumnetworks.com>
-References: <1516253964-4615-1-git-send-email-george.cherian@cavium.com> <1043d995-1448-3c0c-8052-8c31d18343d1@caviumnetworks.com>
-From: dann frazier <dann.frazier@canonical.com>
-Date: Thu, 22 Feb 2018 11:02:38 -0700
-Message-ID: <CALdTtnv12uzaVQLzEMOgPdN6wqo=UAdm+_nhDhcf5Jr2zY=4hA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] i2c: xlp9xx: return ENXIO on slave address NACK
-To: George Cherian <gcherian@caviumnetworks.com>
-Cc: George Cherian <george.cherian@cavium.com>,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        wsa@the-dreams.de, Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 7:28 AM, George Cherian
-<gcherian@caviumnetworks.com> wrote:
-> Gentle Ping on this series.
+On Thu, Feb 22, 2018 at 09:14:11AM -0800, Max Filippov wrote:
+> On Thu, Feb 22, 2018 at 8:02 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> > I'd love to see dead architecture ports dropped if they really are
+> > more or less abandoned.  In addition to your missing gcc port ones
+> > above (minus openrisc) it seems like frv and m32r certainly qualify,
+> > and xtensa seems to be going that way with the glibc port being dropped
+> > now.
+> 
+> It's not that it's been dropped, there have never been an official glibc
+> port for xtensa, but we're working to get one.
 
-I've been using these on a few Cavium Sabre boards, which previously
-had an unusable system interface (/dev/ipmi) due to timeouts or just
-enumerations failures. So, fwiw:
-
-Tested-by: dann frazier <dann.frazier@canonical.com>
-
- -dann
-
-> On 01/18/2018 11:09 AM, George Cherian wrote:
->>
->> From: Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
->>
->> Fix the driver violation of the common practice to return
->> ENXIO error on a slave address NACK.
->>
->> Signed-off-by: Dmitry Bazhenov <dmitry.bazhenov@auriga.com>
->> Signed-off-by: George Cherian <george.cherian@cavium.com>
->> ---
->>   drivers/i2c/busses/i2c-xlp9xx.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-xlp9xx.c
->> b/drivers/i2c/busses/i2c-xlp9xx.c
->> index b970bf8..6d78cdc 100644
->> --- a/drivers/i2c/busses/i2c-xlp9xx.c
->> +++ b/drivers/i2c/busses/i2c-xlp9xx.c
->> @@ -324,7 +324,8 @@ static int xlp9xx_i2c_xfer_msg(struct xlp9xx_i2c_dev
->> *priv, struct i2c_msg *msg,
->>                 dev_dbg(priv->dev, "transfer error %x!\n", priv->msg_err);
->>                 if (priv->msg_err & XLP9XX_I2C_INTEN_BUSERR)
->>                         xlp9xx_i2c_init(priv);
->> -               return -EIO;
->> +               return (priv->msg_err & XLP9XX_I2C_INTEN_NACKADDR) ?
->> +                       -ENXIO : -EIO;
->>         }
->>         if (timeleft == 0) {
->>
->
-> Regards
-> -George
+Ah sorry - I meant to say tile not xtensa when writing this.
