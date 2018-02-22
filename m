@@ -1,225 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeBVVqK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 16:46:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39532 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751330AbeBVVqH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:46:07 -0500
-Date: Thu, 22 Feb 2018 13:46:25 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Richard Henderson <rth@twiddle.net>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] locking/xchg/alpha: Use smp_mb() in place of
- __ASM__MB
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1519291469-5702-1-git-send-email-parri.andrea@gmail.com>
+        id S1751581AbeBVVqt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:46:49 -0500
+Received: from mail-co1nam03on0057.outbound.protection.outlook.com ([104.47.40.57]:15274
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751330AbeBVVqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 16:46:47 -0500
+From: Nadav Amit <namit@vmware.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@google.com" <keescook@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
+Thread-Topic: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
+Thread-Index: AQHTrBzqLWZEXxxoAECD29jfAs2S86Ow9QeA
+Date: Thu, 22 Feb 2018 21:46:44 +0000
+Message-ID: <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
+References: <20180222203651.B776810C@viggo.jf.intel.com>
+ <20180222203700.3FDE6BFD@viggo.jf.intel.com>
+In-Reply-To: <20180222203700.3FDE6BFD@viggo.jf.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR05MB1877;7:Iy2iNHOJRS42gRQeXlxpSFRZdv1z8aHHFYDhJY/2jsQ1hyY28TZzewBa/fy/+nCBbX04RmF1edWNeXlHq19xmsBP5KC2KymWA06Ptk/FXHW8jVqduyCrYO2ftCoYaVJsbRdG8WQgNM1HuGKKP+DjsIJYamJ1JcxdbBFjwfjw3hYG6UEQSm0BZzSG/GmLhhqVJytZ+kXD7rD6Kl9CyIcoWAf0/svgE3rR1qjb0pIeUgvAK7G314+iTZrZrJq50G32;20:H9joHYhm9usfcdPzFiDNm/dfnF9N/KqJ3CxYHPkFKe0l3U+iL13iZc9M/xrX5rhTQ/2DwBbOBN71DC8dFZk9Lc9ZFs7no55/e4KftQpeKAceDzHFSGX3cGgZLZEa/GcSl612fMXrkURsPJnLX3ryx7ye4QO9ROMkaatqQ9zgE1o=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: fae2a4a1-7ae6-4b21-1bb4-08d57a3dc3fd
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BY2PR05MB1877;
+x-ms-traffictypediagnostic: BY2PR05MB1877:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com;
+x-microsoft-antispam-prvs: <BY2PR05MB18773291CEE969D2CA38DDD1D0CD0@BY2PR05MB1877.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231166)(944501161)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:BY2PR05MB1877;BCL:0;PCL:0;RULEID:;SRVR:BY2PR05MB1877;
+x-forefront-prvs: 059185FE08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39380400002)(346002)(376002)(39860400002)(199004)(189003)(6116002)(102836004)(83716003)(86362001)(6512007)(77096007)(26005)(186003)(82746002)(6506007)(53936002)(2900100001)(105586002)(14454004)(76176011)(4326008)(6916009)(2950100002)(316002)(25786009)(3660700001)(229853002)(478600001)(54906003)(6486002)(6436002)(5660300001)(6246003)(305945005)(7736002)(97736004)(106356001)(68736007)(99286004)(8676002)(3846002)(3280700002)(81156014)(81166006)(8936002)(2906002)(36756003)(33656002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR05MB1877;H:BY2PR05MB2215.namprd05.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: jY+RwLxk8Z0KMNkMvhUuXtkUCDB9SezVGEwllITmUaddsPY+3HrhG3UnLWua5YSWV3EaTwEAEePskhLYvYBH3CnpCSDsIZTDy6OVpzIl28L8v2FGQp2F5E1RnckO11jK3DWKe9D552aUuYZSZWdIUAjRsJZKcQfh4For/+9U01E=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E427F660BC01134296139F62A24CF4E7@namprd05.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519291469-5702-1-git-send-email-parri.andrea@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022221-0040-0000-0000-000003FBA110
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008578; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00993612; UDB=6.00504897; IPR=6.00772952;
- MB=3.00019694; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 21:46:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022221-0041-0000-0000-000007FCA824
-Message-Id: <20180222214625.GM2855@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802220269
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fae2a4a1-7ae6-4b21-1bb4-08d57a3dc3fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2018 21:46:44.0812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR05MB1877
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MLkqj4027314
 
-On Thu, Feb 22, 2018 at 10:24:29AM +0100, Andrea Parri wrote:
-> Replace each occurrence of __ASM__MB with a (trailing) smp_mb() in
-> xchg(), cmpxchg(), and remove the now unused __ASM__MB definitions;
-> this improves readability, with no additional synchronization cost.
-> 
-> Suggested-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Dave Hansen <dave.hansen@linux.intel.com> wrote:
 
-I am a bit confused by the use of out-of-line branches to do a backwards
-branch, but those were in place to start with.  Maybe the point is to
-defeat backwards-branch prediction or some such.
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> 
+> +static inline pgprotval_t check_pgprot(pgprot_t pgprot)
+> +{
+> +	pgprotval_t massaged_val = massage_pgprot(pgprot);
+> +
+> +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
+> +		  "attempted to set unsupported pgprot: %016lx "
+> +		  "bits: %016lx supported: %016lx\n",
+> +		  pgprot_val(pgprot),
+> +		  pgprot_val(pgprot) ^ massaged_val,
+> +		  __supported_pte_mask);
 
-Regardless...
-
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> Cc: Matt Turner <mattst88@gmail.com>
-> Cc: Richard Henderson <rth@twiddle.net>
-> Cc: linux-alpha@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/alpha/include/asm/cmpxchg.h |  6 ------
->  arch/alpha/include/asm/xchg.h    | 16 ++++++++--------
->  2 files changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/alpha/include/asm/cmpxchg.h b/arch/alpha/include/asm/cmpxchg.h
-> index 46ebf14aed4e5..8a2b331e43feb 100644
-> --- a/arch/alpha/include/asm/cmpxchg.h
-> +++ b/arch/alpha/include/asm/cmpxchg.h
-> @@ -6,7 +6,6 @@
->   * Atomic exchange routines.
->   */
-> 
-> -#define __ASM__MB
->  #define ____xchg(type, args...)		__xchg ## type ## _local(args)
->  #define ____cmpxchg(type, args...)	__cmpxchg ## type ## _local(args)
->  #include <asm/xchg.h>
-> @@ -33,10 +32,6 @@
->  	cmpxchg_local((ptr), (o), (n));					\
->  })
-> 
-> -#ifdef CONFIG_SMP
-> -#undef __ASM__MB
-> -#define __ASM__MB	"\tmb\n"
-> -#endif
->  #undef ____xchg
->  #undef ____cmpxchg
->  #define ____xchg(type, args...)		__xchg ##type(args)
-> @@ -64,7 +59,6 @@
->  	cmpxchg((ptr), (o), (n));					\
->  })
-> 
-> -#undef __ASM__MB
->  #undef ____cmpxchg
-> 
->  #endif /* _ALPHA_CMPXCHG_H */
-> diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
-> index e2660866ce972..e1facf6fc2446 100644
-> --- a/arch/alpha/include/asm/xchg.h
-> +++ b/arch/alpha/include/asm/xchg.h
-> @@ -28,12 +28,12 @@ ____xchg(_u8, volatile char *m, unsigned long val)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%3)\n"
->  	"	beq	%2,2f\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"2:	br	1b\n"
->  	".previous"
->  	: "=&r" (ret), "=&r" (val), "=&r" (tmp), "=&r" (addr64)
->  	: "r" ((long)m), "1" (val) : "memory");
-> +	smp_mb();
-> 
->  	return ret;
->  }
-> @@ -52,12 +52,12 @@ ____xchg(_u16, volatile short *m, unsigned long val)
->  	"	or	%1,%2,%2\n"
->  	"	stq_c	%2,0(%3)\n"
->  	"	beq	%2,2f\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"2:	br	1b\n"
->  	".previous"
->  	: "=&r" (ret), "=&r" (val), "=&r" (tmp), "=&r" (addr64)
->  	: "r" ((long)m), "1" (val) : "memory");
-> +	smp_mb();
-> 
->  	return ret;
->  }
-> @@ -72,12 +72,12 @@ ____xchg(_u32, volatile int *m, unsigned long val)
->  	"	bis $31,%3,%1\n"
->  	"	stl_c %1,%2\n"
->  	"	beq %1,2f\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"2:	br 1b\n"
->  	".previous"
->  	: "=&r" (val), "=&r" (dummy), "=m" (*m)
->  	: "rI" (val), "m" (*m) : "memory");
-> +	smp_mb();
-> 
->  	return val;
->  }
-> @@ -92,12 +92,12 @@ ____xchg(_u64, volatile long *m, unsigned long val)
->  	"	bis $31,%3,%1\n"
->  	"	stq_c %1,%2\n"
->  	"	beq %1,2f\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"2:	br 1b\n"
->  	".previous"
->  	: "=&r" (val), "=&r" (dummy), "=m" (*m)
->  	: "rI" (val), "m" (*m) : "memory");
-> +	smp_mb();
-> 
->  	return val;
->  }
-> @@ -150,12 +150,12 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
->  	"2:\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
->  	: "=&r" (prev), "=&r" (new), "=&r" (tmp), "=&r" (cmp), "=&r" (addr64)
->  	: "r" ((long)m), "Ir" (old), "1" (new) : "memory");
-> +	smp_mb();
-> 
->  	return prev;
->  }
-> @@ -177,12 +177,12 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
->  	"	stq_c	%2,0(%4)\n"
->  	"	beq	%2,3f\n"
->  	"2:\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br	1b\n"
->  	".previous"
->  	: "=&r" (prev), "=&r" (new), "=&r" (tmp), "=&r" (cmp), "=&r" (addr64)
->  	: "r" ((long)m), "Ir" (old), "1" (new) : "memory");
-> +	smp_mb();
-> 
->  	return prev;
->  }
-> @@ -200,12 +200,12 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
->  	"	stl_c %1,%2\n"
->  	"	beq %1,3f\n"
->  	"2:\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
->  	: "=&r"(prev), "=&r"(cmp), "=m"(*m)
->  	: "r"((long) old), "r"(new), "m"(*m) : "memory");
-> +	smp_mb();
-> 
->  	return prev;
->  }
-> @@ -223,12 +223,12 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
->  	"	stq_c %1,%2\n"
->  	"	beq %1,3f\n"
->  	"2:\n"
-> -		__ASM__MB
->  	".subsection 2\n"
->  	"3:	br 1b\n"
->  	".previous"
->  	: "=&r"(prev), "=&r"(cmp), "=m"(*m)
->  	: "r"((long) old), "r"(new), "m"(*m) : "memory");
-> +	smp_mb();
-> 
->  	return prev;
->  }
-> -- 
-> 2.7.4
-> 
+Perhaps use VM_WARN_ONCE instead to avoid any overhead on production
+systems?
