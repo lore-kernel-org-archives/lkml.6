@@ -1,5 +1,5 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2826656-1519648688-2-734645854471908906
+X-Cyrus-Session-Id: sloti22d1t05-713482-1519321797-2-866166894333976275
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,29 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519648684; b=nBomUCpx5IEr04u9jVdOfdd2nOy/YjULz0a1N7gIN4wpjuH
-    aQSsLwxe7C5hI6un4BjVWNI2f0Uuj9/yHFJv4VvN1JddEsYo0s9cBL4t2A67Tlqb
-    ExTmZas14wPUn0WPWlFySHNBN/mazYA36uqCPwCsylWj6DnacQfrlw/1yAWCD8+E
-    A+cCqJnXzwxWtrp3aBPmsWJeoPXiOVuCRcj4amw3FwQY86GlAuaQdUEzvRsRfg5V
-    /HfPMqwGdYT7dVrrz/8MSf9sWJCWwng2/S4ltcTlxly/yaQGgzc/hs/luiOZjrpL
-    qjFIY2F3XsopR0ZjzBsG99Oj5IB73TU6fUR32ng==
+    t=1519321797; b=CVpJ4SSTVG4LmRg890mm5ZgQb3URNyKCwu0ddNVLGxRjUm9
+    7QgnWofw/KTx3L1VQTM4ogBjSUwrSJrEGg4UasQKHzBzoFNRLGCwh3wrSVZrs7Sf
+    1muUw7oVmE68SDAmZKKXzMDjAouX4RVkOVbLs3ucEfT+Ef5sqScESdHv1s81jD4n
+    oiPZXJH7p48sCbIuEIIUGvjQh/eDAzbFkTwW21KgPY7rcD92hriQyGPmP7hY3vb5
+    ArAjHnqpSnC5foRyaCOPN54psrOgW1iER1e58/s+qP54QxMYl5jOl6lQQIWQ7VHZ
+    RZFt1DZoGU+PGBjUhYtUTXilp8+6B6kZ3vJu7iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:cc:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519648684; bh=Iyofr0tBFuR1Ui/5xWXJ3ujU87wNy82N6R15uDgXOlU=; b=q
-    K63v8J6LizzFTyQmGbTdqkn/N+aQKN6oa+DwFScROEHGk3DL1jrsxIq5g7BI+WLB
-    eWPmgJov3UfVIaexQkE7/1Wk8giTakLCKwArrJ+yisBhEO+3xrbtVUONjvGLawfX
-    g+EJDPzPQmCMLpO8dCAX+7dcrVTsUklcLk7pF1R84o0N3FlnjRI298Fb/yp1cZ7F
-    BQO2828XEMp7+H7fVnkW16/ApXWKgjUcp3Phal9HnewFGC63NzG4WYvhHj3lIec3
-    LzShv7YQm1kkQimP+YZ2Ti1oZVM0JP8pnrjHPShc/FRtsEVjHiHdhzgpXovNwjLy
-    ixGZupiwap0ZJF2fPNxiA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519321797; bh=3obFTH9qLPtg8DinRB+Tvv4k4q
+    9uq40ESBaaPIYWQzA=; b=effTPULgiRu6TpJPFmiD8TjF7NbIruHatGM36uQPMN
+    3AjQrpU6rbLetcfpxsgT5agoIPbErC4iqK/mcScgd7rsfjeGt21c+U73hCL9qjcR
+    iXHC4z/GiasAaBmVOrmH1g96sphd7OJ9vDwOd1yguAdKaxJxKPPtgWOR0Nj+IVqn
+    DhlghFCttLuGiIBnpj/8mbyRuBXAxUjSciqppCXZa+GLSftP15IuADi6RFmD6oFT
+    Z3P5JChwwQhN1gKD5JHSN863iljlbbi+dZur/YJGLbBp3x8ioOQ7YwNNVstVlSDs
+    yPZIo1Z5Fi0K+B0dPJs4SdGAEGk9a+eYxZbn55zK2aZQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=huawei.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
@@ -48,39 +47,27 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=huawei.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeBZMiC (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 07:38:02 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5674 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752590AbeBZMiB (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 26 Feb 2018 07:38:01 -0500
-Subject: Re: [RFC PATCH 0/2] serial: 8250_dw: IO space + polling mode support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <p.zabel@pengutronix.de>, <heiko@sntech.de>,
+        id S933446AbeBVRtz (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 12:49:55 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54863 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933441AbeBVRty (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 22 Feb 2018 12:49:54 -0500
+From: John Garry <john.garry@huawei.com>
+To: <andriy.shevchenko@linux.intel.com>, <gregkh@linuxfoundation.org>,
+        <slaby@suse.com>, <p.zabel@pengutronix.de>, <heiko@sntech.de>,
         <ed.blake@sondrel.com>, <jhogan@kernel.org>
-References: <1519324923-196857-1-git-send-email-john.garry@huawei.com>
- <1519381801.10722.103.camel@linux.intel.com>
- <3c4c5f58-a661-13c8-cc1c-8d43828982cb@huawei.com>
- <1519407117.10722.124.camel@linux.intel.com>
- <88214a3e-82cc-c931-804c-7dc90fb8721f@huawei.com>
- <1519638828.10722.153.camel@linux.intel.com>
- <7221877b-a84a-63a1-ef86-1991f358df72@huawei.com>
- <1519644517.10722.179.camel@linux.intel.com>
- <b5904a5a-66d8-4385-cc5b-a52529e9d28f@huawei.com>
- <1519647669.10722.184.camel@linux.intel.com>
 CC: <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <19f8ce20-db49-68a9-e2fa-a45284d08837@huawei.com>
-Date: Mon, 26 Feb 2018 12:37:25 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+Subject: [RFC PATCH 2/2] serial: 8250_dw: support polling mode
+Date: Fri, 23 Feb 2018 02:42:03 +0800
+Message-ID: <1519324923-196857-3-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519324923-196857-1-git-send-email-john.garry@huawei.com>
+References: <1519324923-196857-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1519647669.10722.184.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
@@ -88,112 +75,42 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 26/02/2018 12:21, Andy Shevchenko wrote:
-> On Mon, 2018-02-26 at 11:56 +0000, John Garry wrote:
->>>>>>> Why you can't do properly in ACPI?
->>>>>
->>>>> No answer here either.
->>>>>
->>>>> Sorry, but with this level of communication it's no go for the
->>>>> series.
->>>>>
->>>>
->>>> Sorry if my answers did not tell you want you want to know.
->>>>
->>>> My point was that the 8250_pnp driver would be used for a
->>>> pnp_device,
->>>> but we are creating a platform device for this UART slave so would
->>>> require a platform device driver, that which 8250_dw.c is. But I
->>>> will
->>>> check on pnp device support.
->>
->> Hi Andy,
->>
->>> Perhaps it's not visible, though below is a description of the
->>> drivers
->>> we have:
->>>
->>> 8250_dw - OF/ACPI driver for Synopsys DW (+ DW DMA)
->>> 8250_lpss - PCI driver for Synopsys DW (+ DW DMA)
->>> 8250_of -  generic 8250 compatible driver for OF
->>> 8250_pci - generic 8250 compatible driver for PCI
->>> 8250_pnp - generic 8250 compatible driver for ACPI
->>>
->>> 8250_* (except core parts) - custom glue drivers per some IPs
->>>
->>> By description you gave your driver fits 8250_pnp if ACPI tables
->>> crafted
->>> properly.
->>>
->>> Share the ACPI excerpt and we can discuss further how to improve
->>> them.
->>>
+It would be useful to make this driver support some
+8250-compatible devices which have no interrupt line.
 
-Hi Andy,
+For these, we allow for no interrupt, and will fallback on
+polling mode.
 
->>
->> For a bit of background, MFD support was discussed here initially:
->> https://lkml.org/lkml/2017/6/13/796
->>
->> Here is the ACPI table:
->> Scope(_SB) {
->>    Device (LPC0) {
->>      Name (_HID, "HISI0191")  // HiSi LPC
->>      Name (_CRS, ResourceTemplate () {
->>        Memory32Fixed (ReadWrite, 0xa01b0000, 0x1000)
->>      })
->>    }
->>
->>    Device (LPC0.CON0) {
->>      Name (_HID, "HISI1031")
->>      // Name (_CID, "PNP0501") // cannot support PNP
->>      Name (LORS, ResourceTemplate() {
->>        QWordIO (
->>          ResourceConsumer,
->>      MinNotFixed,     // _MIF
->>      MaxNotFixed,     // _MAF
->>      PosDecode,
->>      EntireRange,
->>      0x0,             // _GRA
->>      0x2F8,           // _MIN
->
->>      0x3fff,          // _MAX
->
-> Shouldn't be 0x2ff ?
+Note: the 8250 dt bindings state that "interrupts"
+is a required property:
+"interrupts : should contain uart interrupt."
 
-Yes, something like this. I have asked for it to be fixed.
+But the 8250_of.c driver can live without it. So
+this patch is going this way also.
 
->
->>      0x0,             // _TRA
->>      0x08,            // _LEN
->>      , ,
->>      IO02
->>
->>
->> The latest framework changes and host driver patchset are here:
->> https://lkml.org/lkml/2018/2/19/465
->>
->
-> It still doesn't explain impediments you have.
->
-> Just few approaches comes to my mind:
->  - move UART outside of parent device
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-In this case the UART would not be a child and would not be enumerated 
-to have the correct iobase.
-
->  - register PNP driver manually for that cell instead of MFD
-
-Maybe it could work.
-
->  - use serial8250 platform driver (I totally forgot that we have a
-> generic platform driver, so, it might be what you need to use at the
-> end)
-
-Let me check this also. I am not fimilar.
-
->
-
-Thanks for the support!
-John
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 28fbc8f..3154988 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -422,9 +422,10 @@ static int dw8250_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (irq < 0) {
+-		if (irq != -EPROBE_DEFER)
+-			dev_err(dev, "cannot get irq\n");
+-		return irq;
++		if (irq == -EPROBE_DEFER)
++			return irq;
++		dev_warn(dev, "cannot get irq, using polling mode\n");
++		irq = 0;
+ 	}
+ 
+ 	spin_lock_init(&p->lock);
+-- 
+1.9.1
 
