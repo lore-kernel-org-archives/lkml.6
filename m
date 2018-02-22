@@ -1,69 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753756AbeBVLqQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:46:16 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:35343 "EHLO
+        id S932075AbeBVLrh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:47:37 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:45489 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753669AbeBVLqO (ORCPT
+        with ESMTP id S1753643AbeBVLrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:46:14 -0500
+        Thu, 22 Feb 2018 06:47:35 -0500
 From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
-        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] debugobjects: fix debug_objects_freed accounting
-Date: Thu, 22 Feb 2018 12:45:41 +0100
-Message-Id: <20180222114558.1307380-1-arnd@arndb.de>
+To: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf: arm_spe: include linux/vmalloc.h for vmap()
+Date: Thu, 22 Feb 2018 12:47:05 +0100
+Message-Id: <20180222114716.1356279-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:cv9ijHo7ZeRAQpPkzyp2qVSZq1VUAHliVNOUbFKk6nn6SOU8t8E
- lvocAVJ0/NDTFhg8EYz4SQcV24Kr4WxFGpS/xO/WqjdDLZemRueHv6W78zDgAnY9W5VDNPJ
- O/zRpM4z+fgaob8GaOVtEfclwX/ttCRWEZPKTVgeFmfUTmYG7QXo1jpMz6yITvV01x6sVrX
- CPEQ6BhnYkcfpnjharD9Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6EL7XNZxzr8=:seSiOaR+vBfzbPdglocrP3
- bEPjm3TaTbiDTH2IRNLjNb8UirmObSj/Qt1GDzdRv6QqtORuQsT9XqKwjwqKhkoFXWnLUlHut
- 8vlywkcEKPNIy/Y36eCw8gz4LskogXFS2v0FmCctJA/9iWDHV4xifSmntMtJFDqlzZux6ByGN
- 7KpcbgJfcPhDcQs5GW3VyDPci5mhAS+4k4nL1VWMIcHTqXS8DDreAjEbrxjdXZwvVhNBTu7qE
- owVmY0MAim2X2HoTEDzN1Bso+ssj8Gc0nbM3QQ4UL90lZ8whpaib9v+3fp5Hr8JszeLxbkriM
- +qBUDNTU7FfHTNepBaL/vrGlCGqN/d6idCXbWlG8bjQ05ZLkS2n/MtO4PwyzSZiRteX8xDgyZ
- +0Dtap1BGWXIRqfILn5TMQvAW7gaPAQGZB/6+o7Hg+Qg9wNR3tTmdAJJ1t0UllDl5eAWL46/R
- VAGm50jY+SGV+MmzZGy7pOy1u5LXr8aBwKp6EJe9YTz+gqyNigXcODr0yVFPsH5eJBey78xGP
- vXO4LoQ81RWumiV2jATInOGRDaqwgATtricm7K7vPb9D6Zl8A+6uYoGHQxwQaQvI/2XTxdHkP
- vpi9QM8hsbtKs9ftIN5zgnP+4Epn3dTcXIiQxpGDwhcffdhKhlJyYzDyv3TOuUOIWRPwzduX3
- GfF//sqbWhylQI/n0bstEkoKILkfmmvdyfMWp2g7CCyfY3vL9XEnQigeMqxiDFBv0nI4KEQEe
- hl5Uaiu0oge3qwHsYMxoP0MUTMZoSM55XoAWNg==
+X-Provags-ID: V03:K0:kDZ+7QZ7NrD/C7S2P+HPTbK/O8yThCN48zqcbkRYWFT1wzvCxal
+ wXV+xQJVxflzRsNoCHJPLWnjVepmHIDcCk58ZzJfthzhJbwSAyfB+mfSVvwmcQiFNv30a0a
+ xBRiVs+pl5MvnyRZuCiXQb00q9zZo4c6YsjkwD9eZTmANR3UEQ4xhqM3DMH5vtRD9AySxY7
+ tqcvY3orN936w/sHs7O3Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KJgSgmJCbs8=:VbO1kYaZbq1cNe8itM+SW8
+ luFfFcJ7uJjnwjavLtgAN4zIcRhL7rPkDjSbml0Nr9076oNJ7M3lu3R5Qts82LkfM8bTfDB+B
+ Ih0UOLAHvIjP1Cu3k8Ard73QyltRC7jFc4jRZzFMEwxxj7WxP8ywN0jFVZFglk1LJF+PphF9P
+ OIpCcS1u4aL7UAmNMAaYSKHYpHcaSetcGoh7CUifNoW0gyZ8j3uLCG0Gef0n6qLghvoJ5qX/z
+ FdyykW817Y7w8+EF3eeMlhK+IzzA9ERXF7Voz+pe1heB+oppiyuNd97oAqGcgB0GrEn79bCES
+ CgauwLpWOLMaBlBauT03HirsJy4LsWzIK4px5kteJI5mcw7e+kGVi4rgw8WxfveVDijtRyY/K
+ jqOLLa327KeiRaE9BmUIbHL+mGJONJPYG0hnsiUlDlu+pNn6SSQAGGxqrV9dmkFMh2D5NXDuk
+ icZFfanYiCmHrGtsBfv+5Ud0xy+/kv3wGGLed/l/FqV4BGRuUaGF6FfKTPAck3eKbVvMPVOyr
+ cz7lNhFLYek4mwce8hTdXC+XFOwZ6ET+PfLF24cuY4wkOUoSmWCGM2zyH/uKWS8NGi/kFPDDn
+ X6EWSNW6ABGjJoP8DUUwYlMVQzkR7CU/rHgBxyVBzRwB8fyWiep6w/iZAtA9vJgXnez/WljfU
+ DQlvxitdEP8IXfP/229VOZjYgVOxEFlZ63M/76gGvXdS8vNNyAlEV16KjCCttfye/g+yG1Vtv
+ NAyFA/qb6juU5RqXIKJWEFlzc3BCk1czzO141Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The removal of the batched object freeing has caused the debug_objects_freed
-to become read-only, and the reading is inside an ifdef, so gcc warns that it
-is completely unused without CONFIG_DEBUG_FS:
+On linux-next, I get a build failure in some configurations:
 
-lib/debugobjects.c:71:14: error: 'debug_objects_freed' defined but not used [-Werror=unused-variable]
+drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_setup_aux':
+drivers/perf/arm_spe_pmu.c:857:14: error: implicit declaration of function 'vmap'; did you mean 'swap'? [-Werror=implicit-function-declaration]
+  buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
+              ^~~~
+              swap
+drivers/perf/arm_spe_pmu.c:857:37: error: 'VM_MAP' undeclared (first use in this function); did you mean 'VM_MPX'?
+  buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
+                                     ^~~~~~
+                                     VM_MPX
+drivers/perf/arm_spe_pmu.c:857:37: note: each undeclared identifier is reported only once for each function it appears in
+drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_free_aux':
+drivers/perf/arm_spe_pmu.c:878:2: error: implicit declaration of function 'vunmap'; did you mean 'iounmap'? [-Werror=implicit-function-declaration]
 
-Assuming we are still interested in this number, this adds back code to
-count every instance we are about to free while we still hold the spinlock.
+vmap() is declared in linux/vmalloc.h, so we should include that header file.
 
-Fixes: 636e1970fd7d ("debugobjects: Use global free list in free_object()")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- lib/debugobjects.c | 3 +++
- 1 file changed, 3 insertions(+)
+I have not bisected what caused this problem, presumably some other
+header stopped including vmlinux.h.
+---
+ drivers/perf/arm_spe_pmu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index faab2c4ea024..748288dba512 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -235,6 +235,9 @@ static void free_obj_work(struct work_struct *work)
- 		hlist_move_list(&obj_to_free, &tofree);
- 		obj_nr_tofree = 0;
- 	}
-+	hlist_for_each_entry(obj, &tofree, node)
-+		debug_objects_freed++;
-+
- 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 51b40aecb776..f90672516ada 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -32,6 +32,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
  
- 	hlist_for_each_entry_safe(obj, tmp, &tofree, node) {
+ #include <asm/sysreg.h>
+ 
 -- 
 2.9.0
