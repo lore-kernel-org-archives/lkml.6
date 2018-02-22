@@ -1,122 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753170AbeBVJi2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:38:28 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:42925 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752961AbeBVJi0 (ORCPT
+        id S1753210AbeBVJjP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:39:15 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36062 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753094AbeBVJjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:38:26 -0500
-Subject: Re: [RFCv4 01/21] media: add request API core and UAPI
-To: Alexandre Courbot <acourbot@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180220044425.169493-1-acourbot@chromium.org>
- <20180220044425.169493-2-acourbot@chromium.org>
- <5fd863ad-a0fe-88d7-05bd-90c2b4096145@xs4all.nl>
- <CAPBb6MUUuo+50zfs-XaRcVD6sV3uaownVeFKgX=A6NkTO1he1w@mail.gmail.com>
- <c016f8f1-06f3-cc3b-03d1-7a17c39dbec0@xs4all.nl>
- <CAPBb6MXmALFZp+EB8BjKnYO7FYV3eU9LisJwR4Qp265GRhA3eg@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <591e7b83-9322-bf73-c762-6709c811d9de@xs4all.nl>
-Date: Thu, 22 Feb 2018 10:38:17 +0100
+        Thu, 22 Feb 2018 04:39:12 -0500
+X-Google-Smtp-Source: AH8x225HGscRDtCJxO2Ktd54ZLyGJx51x5iWtmwqlOOlgw4JOsBKjomq+cVMli1Fi56FipDv2r/ZRg==
+Subject: Re: [PATCH 03/20] lightnvm: fix capabilities for 2.0 sysfs
+To: Javier Gonzalez <javier@cnexlabs.com>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+ <1519205218-26994-4-git-send-email-javier@cnexlabs.com>
+ <23b494fb-264d-a8ef-6172-5330d5a63bea@lightnvm.io>
+ <19BA9139-DB6D-4A9B-A0B4-72F38BE648E9@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <616ad3c9-b10c-0439-2d63-5e9e25abce84@lightnvm.io>
+Date: Thu, 22 Feb 2018 10:39:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXmALFZp+EB8BjKnYO7FYV3eU9LisJwR4Qp265GRhA3eg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMTa//nD4+e1/4KvVK0dXV9XnlOLtOaQGK0OM+RQBpqPdZM7C9JivYRgfjev2uA2tAfyeSS2dHWgJPjlFW0IXE3ma5P/oL3zwsg3aawy2apl/5CLGd1/
- dX12y/WIj27J0p1YCYcle9TzvkPE2HyidkNPZwC0vdxihfgI7DWYCcKGRFT3ZrdTEEtCJeTfTghD2lq0H1gyl/6IP++FIkm06QCQptZIvuvPUMuXdvBDDFn0
- UocVxvX6saFGUg1u/mLmeIMpT2VCdJm2k3DVFeuPSSdfqxksmXoALM1DRIOn5vE2HJHcELrDQN899hcx5sT0TVIqBLo4VTb0e/AwM2Sl44nSGm3O5jfZw/8X
- gXuZohfXQWU0rdvP58xFn7Id6V9FVV6uV2/pwvH/YOwZ7+69bhfq7ZCZ8inFdrx5hlJ69PFtfKTAgyeNmAFoJRAkUYZpHmLuXKQnHd5IGshQL01673KxXbIO
- C3PnfFwTckrgQ47Hw1A/sQxpvbWKRQe3BCsZHQSCxWibORJjgmcXnzd9cpAl2z03mIMiDbZJ0TyOLdRkUutxN7f8A/2NyjMnMojOFHqfKwuNjuzg22iFHzM/
- V94=
+In-Reply-To: <19BA9139-DB6D-4A9B-A0B4-72F38BE648E9@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/18 10:30, Alexandre Courbot wrote:
-> On Wed, Feb 21, 2018 at 4:29 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 02/21/2018 07:01 AM, Alexandre Courbot wrote:
->>> Hi Hans,
->>>
->>> On Tue, Feb 20, 2018 at 7:36 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>> On 02/20/18 05:44, Alexandre Courbot wrote:
+On 02/22/2018 08:47 AM, Javier Gonzalez wrote:
+>> On 22 Feb 2018, at 08.28, Matias Bjørling <mb@lightnvm.io> wrote:
 >>
->> <snip>
+>> On 02/21/2018 10:26 AM, Javier González wrote:
+>>> Both 1.2 and 2.0 specs define a field for media and controller
+>>> capabilities. Also, 1.2 defines a separate field dedicated to device
+>>> capabilities.
+>>> In 2.0 sysfs, this values have been mixed. Revert them to the right
+>>> value.
+>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>> ---
+>>>   drivers/nvme/host/lightnvm.c | 18 +++++++++---------
+>>>   1 file changed, 9 insertions(+), 9 deletions(-)
+>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>>> index 969bb874850c..598abba66f52 100644
+>>> --- a/drivers/nvme/host/lightnvm.c
+>>> +++ b/drivers/nvme/host/lightnvm.c
+>>> @@ -914,8 +914,8 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+>>>     	if (strcmp(attr->name, "version") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->ver_id);
+>>> -	} else if (strcmp(attr->name, "capabilities") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
+>>> +	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
+>>>   	} else if (strcmp(attr->name, "read_typ") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.trdt);
+>>>   	} else if (strcmp(attr->name, "read_max") == 0) {
+>>> @@ -993,8 +993,8 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbem);
+>>>   	} else if (strcmp(attr->name, "multiplane_modes") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mpos);
+>>> -	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mccap);
+>>> +	} else if (strcmp(attr->name, "capabilities") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.cap);
+>>>   	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", NVM_MAX_VLBA);
+>>>   	} else {
+>>> @@ -1055,7 +1055,7 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>>     /* general attributes */
+>>>   static NVM_DEV_ATTR_RO(version);
+>>> -static NVM_DEV_ATTR_RO(capabilities);
+>>> +static NVM_DEV_ATTR_RO(media_capabilities);
+>>>     static NVM_DEV_ATTR_RO(read_typ);
+>>>   static NVM_DEV_ATTR_RO(read_max);
+>>> @@ -1080,12 +1080,12 @@ static NVM_DEV_ATTR_12_RO(prog_max);
+>>>   static NVM_DEV_ATTR_12_RO(erase_typ);
+>>>   static NVM_DEV_ATTR_12_RO(erase_max);
+>>>   static NVM_DEV_ATTR_12_RO(multiplane_modes);
+>>> -static NVM_DEV_ATTR_12_RO(media_capabilities);
+>>> +static NVM_DEV_ATTR_12_RO(capabilities);
+>>>   static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>>>     static struct attribute *nvm_dev_attrs_12[] = {
+>>>   	&dev_attr_version.attr,
+>>> -	&dev_attr_capabilities.attr,
+>>> +	&dev_attr_media_capabilities.attr,
+>>>     	&dev_attr_vendor_opcode.attr,
+>>>   	&dev_attr_device_mode.attr,
+>>> @@ -1108,7 +1108,7 @@ static struct attribute *nvm_dev_attrs_12[] = {
+>>>   	&dev_attr_erase_typ.attr,
+>>>   	&dev_attr_erase_max.attr,
+>>>   	&dev_attr_multiplane_modes.attr,
+>>> -	&dev_attr_media_capabilities.attr,
+>>> +	&dev_attr_capabilities.attr,
+>>>   	&dev_attr_max_phys_secs.attr,
+>>>     	NULL,
+>>> @@ -1134,7 +1134,7 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>>>     static struct attribute *nvm_dev_attrs_20[] = {
+>>>   	&dev_attr_version.attr,
+>>> -	&dev_attr_capabilities.attr,
+>>> +	&dev_attr_media_capabilities.attr,
+>>>     	&dev_attr_groups.attr,
+>>>   	&dev_attr_punits.attr,
 >>
->>>>> +#define MEDIA_REQUEST_IOC(__cmd, func)                                       \
->>>>> +     [_IOC_NR(MEDIA_REQUEST_IOC_##__cmd) - 0x80] = {                 \
->>>>> +             .cmd = MEDIA_REQUEST_IOC_##__cmd,                       \
->>>>> +             .fn = func,                                             \
->>>>> +     }
->>>>> +
->>>>> +struct media_request_ioctl_info {
->>>>> +     unsigned int cmd;
->>>>> +     long (*fn)(struct media_request *req);
->>>>> +};
->>>>> +
->>>>> +static const struct media_request_ioctl_info ioctl_info[] = {
->>>>> +     MEDIA_REQUEST_IOC(SUBMIT, media_request_ioctl_submit),
->>>>> +     MEDIA_REQUEST_IOC(REINIT, media_request_ioctl_reinit),
->>>>
->>>> There are only two ioctls, so there is really no need for the
->>>> MEDIA_REQUEST_IOC define. Just keep it simple.
->>>
->>> The number of times it is used doesn't change the fact that it helps
->>> with readability IMHO.
->>
->> But this macro just boils down to:
->>
->> static const struct media_request_ioctl_info ioctl_info[] = {
->>         { MEDIA_REQUEST_IOC_SUBMIT, media_request_ioctl_submit },
->>         { MEDIA_REQUEST_IOC_REINIT, media_request_ioctl_reinit },
->> };
->>
->> It's absolutely identical! So it seems senseless to me.
+>> With the mccap changes, it should make sense to keep the capabilities
+>> as is.
 > 
-> This expands to more than that - the index needs to be offset by 0x80,
-> something we probably don't want to repeat every line.
+> The change adds mccap, but sysfs points to cap, which is wrong. This
+> patch is needed. Otherwise, we change the name of mccap to cap, which
+> is _very_ confusing to people familiar to both specs. We can change
+> the name of mccap to cap in a future spec revision.
 > 
->>
->>>
->>>>
->>>>> +};
->>>>> +
->>>>> +static long media_request_ioctl(struct file *filp, unsigned int cmd,
->>>>> +                             unsigned long __arg)
->>>>> +{
->>>>> +     struct media_request *req = filp->private_data;
->>>>> +     const struct media_request_ioctl_info *info;
->>>>> +
->>>>> +     if ((_IOC_NR(cmd) < 0x80) ||
->>>>
->>>> Why start the ioctl number at 0x80? Why not just 0?
->>>> It avoids all this hassle with the 0x80 offset.
->>
->> There is no clash with the MC ioctls, so I really don't believe the 0x80
->> offset is needed.
+> Javier
 > 
-> I suppose your comment in patch 16 supersedes this one. :)
 
-Yes, it does. I realized later why this was done like this.
-
-That said, I don't like the magic value. Something like this might be
-cleaner:
-
-	const unsigned int first_ioc_nr = _IOC_NR(MEDIA_REQUEST_IOC_SUBMIT);
-
-Then use first_ioc_nr (or nr_offset or whatever) instead of 0x80.
-
-Regards,
-
-	Hans
+Think of the sysfs capabilities as an abstract value that defines 
+generic capabilities. It is not directly tied to either 1.2 or 2.0.
