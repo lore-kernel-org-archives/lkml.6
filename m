@@ -1,95 +1,113 @@
-Return-Path: <outreachy-kernel+bncBCS4V27AVMBBBJFHXPKAKGQEPTGB64I@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1519309733; cv=pass;
+Return-Path: <outreachy-kernel+bncBD2YBJOB4QPBBLVPXPKAKGQED4QNQZQ@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1519310766; cv=pass;
         d=google.com; s=arc-20160816;
-        b=Sft9uX90UYZh19pf9Z7VJQe7+TSKoiQb9ck0a+9VqPqZOCYpDm+gM6vBQ2tUDRIbvK
-         SGSPChMcwaz6XHqQzaTRZweMOs3CRDHCuP2kYtJM5GT3f3OKNBSpOQer8qKR+untlgPx
-         mrdJFW9Mx4eUHPQJ8hg/XfqTYVtuKQweUQqJN+30FuJFrczgAAwf1vLpciyOB2EfwwJi
-         7zrs1XF/hiKAWgwV5CAxvLVZastbOMAl53apzBTGakUvqnNNgShys6uJVMO/zMs3PSnw
-         ARjsTZJnIBL+b69amjx4UVOUZ8YCjp7WU0td7F5ny+vq/uNWII+6x5mzzXn1eAsW+A7L
-         xsKg==
+        b=mSK1td8mV/cGlKivThU627TOVnhY0hECi1wSmC1XJ5IDRM+Rd0LOwe+DiKQpWgdl3B
+         uYI7URW9e0OLBdo6VdJcFcDz+1YnMYBoKhMb3QUvDkmOojbzimEtpyY0Ufpc0VosN7lv
+         ZjY5hZV9F/os7EblSDWZWdjBBXlX8YAq9VdZzaw81EOkgNbZB64CWLTINiUioPi6tKU2
+         iyR+ZKjh0ZuqeLuLTySZY9i9K/fXC547JYuDNLudrkZJF5MoHbUqOxtGx41IparsAi1w
+         Lh/mJAP47/LJPdpfXxX0pxVnQdbCe3Ux2fAh7gphH0uQdoc/LN0C6n6wjyQwv6MqPI4U
+         TbQQ==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature
-         :arc-authentication-results:arc-message-signature
-         :arc-authentication-results;
-        bh=/1SEeFl+mfHPHtifZR60Ejm47F1yRkquXh7fdcrxG6A=;
-        b=oyjTFXMbaMM4rkJHozGEiYT32b1Ta7tSgzlEiU9WUps7n554QFOo9HglNlOCI0wIhl
-         abygoj5SO1FqaKEu+3MZ4bNKw+V7gbIyLGZDN/5Qn0lndvks8XYovWyfM+o12/K8L1O7
-         G6/pMKa/nVc9WzDvXCT+yyDP+Y0VEkSDWzngtSNeEOLldrl5GdnEWOczj97i+GvzMYrV
-         dmgpU7CULm3iyL75Pb4ue1ByImuLjWIbNxjQsdi1vjD0eRuroeN+AfFmlOFtx5YCYmWT
-         yk78iqdr2jrCkmuS7trKlYByzhNHfWxEGF3gdQ3u0lNiICUg7lF63iAoQayT+HPeaTh+
-         82yA==
+         :mailing-list:precedence:content-transfer-encoding:mime-version
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:dkim-signature:arc-authentication-results
+         :arc-message-signature:arc-authentication-results;
+        bh=tHnPPxjfSYQ1WHvOTd+oRPICzETb3WJifCBxVzgwtYs=;
+        b=th7VHz56EsuZzbpj2Q0IcrEHWGvMIhpaXZ3DmCFdkN+OvFU8bveBoV6cDLpIs1qFNp
+         cJE0lWppMvxGj7I+Hbn7FcS48dYfb/HYe96p0b7JnSE6rVC78ackiQOL2QV+7nBcChZy
+         Ti/1RxAWQf3cVHl1YQ7wK+7KPoij6ICSAxycHImEa4vcsJHxd5k18KXxzM6oF/G/QEZJ
+         clPdZuSMCvunECMGeePJkjZbB6vNEWKH+C5iTozdGkjBZ/Gq4DOiXHT1iOtU1QmOhzKq
+         ASUHu9z0VgvRhmpsZp87Q/VurZOwlUynasGhoSsNiuLUi1L2RyLx5I+R21pRJPcDybkG
+         ZWyw==
 ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=AiWDjWNW;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcs4v27avmbbbjfhxpkakgqeptgb64i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCS4V27AVMBBBJFHXPKAKGQEPTGB64I@googlegroups.com
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=JAot+aqo;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=F8f/Gz+x;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbblvpxpkakgqed4qnqzq@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBLVPXPKAKGQED4QNQZQ@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=AiWDjWNW;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcs4v27avmbbbjfhxpkakgqeptgb64i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCS4V27AVMBBBJFHXPKAKGQEPTGB64I@googlegroups.com
-ARC-Seal: i=2; a=rsa-sha256; t=1519309732; cv=pass;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=JAot+aqo;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=F8f/Gz+x;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbd2ybjob4qpbblvpxpkakgqed4qnqzq@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBD2YBJOB4QPBBLVPXPKAKGQED4QNQZQ@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1519310766; cv=pass;
         d=google.com; s=arc-20160816;
-        b=DzVBiOZJPeJOuRIhYoO/yELvZCq0tQo8/hIUTbVzDTeiauy/OLbls9LTpaMCJAgVy1
-         /gyTc3fqGpos005da1mwnNZ54bQddE8HpkQDzdzV4cAi8Lx/N0lMSuGfm0YjKOs0vDhD
-         Rie3c7BFOvb0TBZS14ojHCKX033tDI84iPgo5rSRNayxlZugPsbKetdFTJH6gGWqQnMe
-         6Z0/nER4b2c86eKraHB90JeZga0WoxQeqhaqTKNnz6Dq4vYyEH3MwLJuKOO5RBkJWPyw
-         x3rICUwsLUQrZ/ePhKwGll2MbQeWzJ2za+0jbzDLs3zp8IDBAMOxnp8MHMSo37xou7z/
-         Fjzw==
+        b=mtkFIsdpgpj/zoiQW8lq/SFmvPoHSCWJmSb+EbuIwT3DCoMcxcwNYpwWY2J3LMSDIF
+         ba009EIeSK1LuB+2H5aJqlrtkx8qJArXlcZ7AmDztzyHtwgj3MiKEvVHzZ0u4uN2QnPv
+         Eee1eKiiH0MnOhW0s5X9IfsBQEXAVNvCtC9KDEMhUgWSDya1pTGxpnJ1kHOOCs2bsPUV
+         UuyfyQtKVSxlSaPE/GwgqJRnSmzgVcz8vMiMqF1crNA4S2uLE1zo1oudPuFnz+RyPaRS
+         maolFGf75oWaPIyuDQkfY5jWXSoRdtzg5kAJa9C/RR5Aa38Mim662EGw5MJABxxiUbt6
+         QB/g==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature
-         :arc-authentication-results;
-        bh=/1SEeFl+mfHPHtifZR60Ejm47F1yRkquXh7fdcrxG6A=;
-        b=I3xmeIa1CS+trK/FjJMYoCSLLVdeCusnznXA8XEAIhecPhGb+V5DYrMSoadh8tCDDK
-         NA0UesHtZZzcT6Fd+pvRWTmtFCHlXE1v262XAlO2nidq/2nYjKI/OctpQw3g15U2pczM
-         jkWq8bOxe51N/+jHMlH/bpwskV1ETnyrknmTeK6V6E+QoStTzarCatQQH71R7GDiot5F
-         /NNhgcrVJKWbhBNz7xgmlzGEfmgu0BKIq1Dl0ahkspuSefME/HPPPIOX/ULSwu5YE/8C
-         28DoPYW/UNMsshyXPtdOx5ZjClJ0ubjOBuu8BGLCtVnXX6cXMAKPmDR77VJjDhGO7vVc
-         W2cw==
+         :mailing-list:precedence:content-transfer-encoding:mime-version
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=tHnPPxjfSYQ1WHvOTd+oRPICzETb3WJifCBxVzgwtYs=;
+        b=XaKu0biN/GZ8jsBvjMlaMKxw93oZWaCopdb44QakcJdLHvmSWVlhoQEhghK3sekIju
+         NrKT+xQL77qiXh2vgR3d2sZS59+rH55OoNKyEcY1IkCRIDqw74pRBycOFfdUXsyEymsw
+         k/OdKXDMJFq//CHgi/dIs6nS5FzOQR3Gzuka0a3fOtpYgIcg/H21W6hGyNj5ElRvwBmh
+         TITF0Y1GXo5BmU4wPO4ECy2uS21KUOzlRI8DeFTkipTA0XsVnacq4pr4zA4upvneiFH8
+         q9pkvfaS7NjXX2nP7nHQY39mf+St2XWjW0H2lTI/4zV+5x1qMMWxBehJVJMeWEsZhlcD
+         z4vg==
 ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       spf=softfail (google.com: domain of transitioning richard@nod.at does not designate 109.75.188.150 as permitted sender) smtp.mailfrom=richard@nod.at
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hRu0AVgt;
+       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c05::22d as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AH8x22672eeAJOfbt216jEiirEUKrYAjQtZRT/Agm9BuZL0AYYVPX86exSB/a2n55QEHyYz81Se/ww==
+X-Google-Smtp-Source: AH8x225MrP9bceKXXUmg0B/GxCIEz8D7TGA1XhOtt3ydkU9T4BH13lasCQGhIJkHgWtmIAJ6yxZtww==
 X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1519309731; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1519310765; cv=none;
         d=google.com; s=arc-20160816;
-        b=DBbMCIFJpfMBpUuk43VbN8eoG6yQv8POA7T+dxtoRe3xyRvkLQ0ShDMEay0GwUKKQv
-         FYqB01B469scS9pL58+824p29N+uT+t4c4fvKs4yVxNm0Udwzh3AnACzRDGBP6B0Ah9o
-         qJhn8KbXznXW/Wven4FKjxXgNOmPGHHZZq9DMOfUoLQ2DNq5hzDyxmqzbfwMnFvwiOem
-         PGTQmOuw7j9da9bvbI6eZmfAJqaxgXupyC6vG4NGhmsmQdBh+Ano/kgAlY2sOD6eYpzb
-         UY26/OfKVD54AxlhO1yZleqAPPNl+hh2zP7XgujB4cUKFlTwfX8Vewvn5szB1lvnT4nK
-         l/bQ==
+        b=Q1W2S0/zq2vUoTbNpGPOSFk9EF+akbFPjaa/Ow6p00V5NxC0GECohh6NIZd+0OpSr5
+         5NA4JNm6Qygt5bvPsf2DJ0j/jRhSyBavFIfA8Yc+NihHdL1UaHAwLHFB19VaHD20cSEk
+         snRw+sgU6RI5Vlv9IGIeLuewjQUmsOlc3a0ZEUmnlY2SPxSz6HkeODzTOQSBCpaWu+7H
+         ZP++1N0UA5ybjAalQCqZZMXEgwWtMLId9AOp+JOZ3MHzfl/RsET5C51Ytc18/jrxd/O5
+         4aiww62lhcry1+VJlIEamu9uROZNyObtMj4FDjgwLRRLL10Yxeqsf6dobz3X1QMTlWW4
+         iG4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=2AWHWEyfHETZACdElTNj0crLyXtwBXp2Dyiou2ec84c=;
-        b=fBXXxQg3xrmmF4yx+1yzbTwy4eZF9GYzwKCDQ2fF17zd81cOjfGCcntTF9J9s8wxNW
-         nSvWrptlTBf0fY43kPoLuvO1zW5XocaBji2kYP5S6X4wwC3N4fT2duACMm5IXAqeikXS
-         Vyj6nRjqaub64+KlOKhk75P0kXIQ5RE1dymKuh8oMtnTLFmYdlNYCOMudJ6gMR+92vY7
-         ueU970Koln64f65e5NMN+gqwWuuSGWjXgEzTuh25btaFIjnNUUZFeE9WLgxODB+dFAAj
-         5tNanPI8p2EijPc3I96tZwlYoYYu0I1Rx3/rG62QvAjMiFQcZvn/+E8Z1Q720RoV4V+M
-         jCuA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:dkim-signature
+         :arc-authentication-results;
+        bh=1glkP170wbFmWUaThfP+JyIssl2xfJx+z7YpVx/f61k=;
+        b=mB0zkO4TdSdRwIzhD4GKMmYxE7VcORY1HriLiO2Er6LbyZiPAead6xYVpb8piWAW0k
+         K268jssxS92v6XJydyuRcJdCsah7qJDTJY6BlyVXOfVyj2qTbfvstHZYgjk7YgZeWRF/
+         +TnwS2eQL0i3ZrPtc8+DV1milGYcdXWR/C6wz9PrO+mJ/v917CmWBWZPJtoYxC23JoHg
+         p5IyJbyyWhtoU48F9kZnqnpQAdnxLsv3Dg8tYat3sx9jnXjJG83EQS0VmFcwS4z2eCq2
+         aiOvb5B7r3uoEzmzGnCB+TEBN8GJzn6QjpiSTQ0BgBcgu0uOfTsJMc7hZaZ+uoYMTp7w
+         kwWg==
 ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       spf=softfail (google.com: domain of transitioning richard@nod.at does not designate 109.75.188.150 as permitted sender) smtp.mailfrom=richard@nod.at
-From: Richard Weinberger <richard@nod.at>
-To: Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc: boris.brezillon@free-electrons.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr, maximlevitsky@gmail.com, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, ezequiel@vanguardiasur.com.ar, outreachy-kernel@googlegroups.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hRu0AVgt;
+       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 2607:f8b0:400e:c05::22d as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Message-ID: <1519310758.2359.3.camel@gmail.com>
 Subject: [Outreachy kernel] Re: [PATCH NAND v3] mtd: nand: Replace printk()
  with appropriate pr_*() macro
-Date: Thu, 22 Feb 2018 15:30:09 +0100
-Message-ID: <2093598.TLbMltDcSo@blindfold>
-In-Reply-To: <1519305014-2547-1-git-send-email-shreeya.patel23498@gmail.com>
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
+To: Richard Weinberger <richard@nod.at>
+Cc: boris.brezillon@free-electrons.com, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com,
+ cyrille.pitchen@wedev4u.fr,  maximlevitsky@gmail.com,
+ linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ ezequiel@vanguardiasur.com.ar,  outreachy-kernel@googlegroups.com
+Date: Thu, 22 Feb 2018 20:15:58 +0530
+In-Reply-To: <2093598.TLbMltDcSo@blindfold>
 References: <1519305014-2547-1-git-send-email-shreeya.patel23498@gmail.com>
-MIME-Version: 1.0
+	 <2093598.TLbMltDcSo@blindfold>
 Content-Type: text/plain; charset="UTF-8"
-X-Original-Sender: richard@nod.at
-X-Original-Authentication-Results: gmr-mx.google.com;       spf=softfail
- (google.com: domain of transitioning richard@nod.at does not designate
- 109.75.188.150 as permitted sender) smtp.mailfrom=richard@nod.at
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: shreeya.patel23498@gmail.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@gmail.com header.s=20161025 header.b=hRu0AVgt;       spf=pass
+ (google.com: domain of shreeya.patel23498@gmail.com designates
+ 2607:f8b0:400e:c05::22d as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
 X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
 X-Google-Group-Id: 672804067692
@@ -100,33 +118,47 @@ List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegro
  <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593106783204445682?=
-X-GMAIL-MSGID: =?utf-8?q?1593111722938928556?=
+X-GMAIL-MSGID: =?utf-8?q?1593112806250791022?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Am Donnerstag, 22. Februar 2018, 14:10:14 CET schrieb Shreeya Patel:
-> @@ -438,7 +438,7 @@ static void __init doc2000_count_chips(struct mtd_info
-> *mtd) break;
->  	}
->  	doc->chips_per_floor = i;
-> -	printk(KERN_DEBUG "Detected %d chips per floor.\n", i);
-> +	pr_debug("Detected %d chips per floor.\n", i);
+On Thu, 2018-02-22 at 15:30 +0100, Richard Weinberger wrote:
+> Am Donnerstag, 22. Februar 2018, 14:10:14 CET schrieb Shreeya Patel:
+> >=20
+> > @@ -438,7 +438,7 @@ static void __init doc2000_count_chips(struct
+> > mtd_info
+> > *mtd) break;
+> > =C2=A0	}
+> > =C2=A0	doc->chips_per_floor =3D i;
+> > -	printk(KERN_DEBUG "Detected %d chips per floor.\n", i);
+> > +	pr_debug("Detected %d chips per floor.\n", i);
+> <bike-shedding>
+>=20
+> You are aware of the fact that printk(KERN_DEBUG and pr_debug() are
+> not=C2=A0
+> equivalent?
+> Not a big deal, just want to make sure that you understand what you
+> are doing.=C2=A0
 
-<bike-shedding>
+Actually pr_debug() shouldn't be used here.
 
-You are aware of the fact that printk(KERN_DEBUG and pr_debug() are not 
-equivalent?
-Not a big deal, just want to make sure that you understand what you are doing. 
-:-)
+We usually don't prefer pr_debug for drivers, instead we use dev_dbg.
+But as Boris told me that it will be better to first having changed all
+printks to pr_*() macro and then think about dev_*() macros.
 
-</bike-shedding>
+> :-)
+>=20
+> </bike-shedding>
+>=20
+> Thanks,
+> //richard
 
-Thanks,
-//richard
-
--- 
-You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+--=20
+You received this message because you are subscribed to the Google Groups "=
+outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to outreachy-kernel+unsubscribe@googlegroups.com.
 To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/2093598.TLbMltDcSo%40blindfold.
+To view this discussion on the web visit https://groups.google.com/d/msgid/=
+outreachy-kernel/1519310758.2359.3.camel%40gmail.com.
 For more options, visit https://groups.google.com/d/optout.
