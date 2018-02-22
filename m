@@ -1,58 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753379AbeBVKST (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:18:19 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49515 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753189AbeBVKSS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:18:18 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: George Cherian <gcherian@caviumnetworks.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, Jayachandran.Nair@cavium.com,
-        Robert.Richter@cavium.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
-Date: Thu, 22 Feb 2018 11:19:12 +0100
-Message-ID: <1606177.uAVMQdvpea@aspire.rjw.lan>
-In-Reply-To: <20180222083543.GA14945@wunner.de>
-References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com> <20180221232040.GA52685@bhelgaas-glaptop.roam.corp.google.com> <20180222083543.GA14945@wunner.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1753395AbeBVKSn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:18:43 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753189AbeBVKSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 05:18:41 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: silead_dmi: Add DMI match for the I.T.Works TW701 tablet
+Date: Thu, 22 Feb 2018 11:18:38 +0100
+Message-Id: <20180222101838.3675-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, February 22, 2018 9:35:43 AM CET Lukas Wunner wrote:
-> On Wed, Feb 21, 2018 at 05:20:40PM -0600, Bjorn Helgaas wrote:
-> > On Wed, Feb 21, 2018 at 04:25:08PM +0530, George Cherian wrote:
-> > > I have found another configuration where this fails.
-> > > Following is the configuration
-> > > 1) Connected a PCIe Intel i40 card under the root port.
-> > > 2) unbind the i40 driver and bind with vfio-pci driver.
-> > > 3) Run lspci in a loop. "lspci -s xx:xx.xx -vvv"
-> > > 
-> > > I get the same synchronous external abort.
-> > > In this case the vfio-pci driver probe it moves the device (i40) to
-> > > D3hot provided disable_idle_d3 is not set. lspci tries to do
-> > > the config_access which fails with synchronous external abort when
-> > > the root port transitions to D3hot.
-> > 
-> > It *looks* like rpm_resume() should resume parent devices, i.e., the
-> > root port, but I don't know that code at all.
-> 
-> It does that unless the ignore_children flag is set, which only few
-> drivers do.
+The I.T.Works TW701 7" tablet is a differently branded version of the
+same generic 7" Windows tablet as the Trekstor ST70416-6. Add a DMI
+match-table entry for it pointing to the Trekstor's touchscreen info.
 
-Right.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/silead_dmi.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-And the PCIe port driver doesn't do that in particular, so PCIe ports
-should be resumed by the resume of devices below them.
-
-Thanks,
-Rafael
+diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/silead_dmi.c
+index 3a624090191d..1091539fa230 100644
+--- a/drivers/platform/x86/silead_dmi.c
++++ b/drivers/platform/x86/silead_dmi.c
+@@ -446,6 +446,15 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 			DMI_MATCH(DMI_BOARD_NAME, "X3 Plus"),
+ 		},
+ 	},
++	{
++		/* I.T.Works TW701 */
++		.driver_data = (void *)&surftab_wintron70_st70416_6_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "i71c"),
++			DMI_MATCH(DMI_BIOS_VERSION, "itWORKS.G.WI71C.JGBMRB"),
++		},
++	},
+ 	{ },
+ };
+ 
+-- 
+2.14.3
