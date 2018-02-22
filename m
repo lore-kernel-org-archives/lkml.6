@@ -1,58 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751330AbeBVS6s (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 13:58:48 -0500
-Received: from smtp1.it.da.ut.ee ([193.40.5.66]:33768 "EHLO smtp1.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751158AbeBVS6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 13:58:46 -0500
-Date: Thu, 22 Feb 2018 20:58:41 +0200 (EET)
-From: Meelis Roos <mroos@linux.ee>
-To: esc.storagedev@microsemi.com
-cc: linux-scsi@vger.kernel.org,
-        Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: hpsa crashes on boot in 4.16-rc2-00062
-Message-ID: <alpine.LRH.2.21.1802222043240.9192@math.ut.ee>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1751350AbeBVTAh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:00:37 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38117 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751155AbeBVTAe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:00:34 -0500
+X-Google-Smtp-Source: AG47ELuQlOpeUcTl0vWxQ0zp+PozbxE7wVYA1ae/xxUVmdskL2mOHdcJXidZ0n3phQZm5tHd1xuz6M0gRbr4RcHJcsU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180222144844.g4p2diu3cnbr7sx3@quack2.suse.cz>
+References: <20180221030101.221206-1-shakeelb@google.com> <20180221030101.221206-4-shakeelb@google.com>
+ <20180222134944.GK30681@dhcp22.suse.cz> <20180222144844.g4p2diu3cnbr7sx3@quack2.suse.cz>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Thu, 22 Feb 2018 11:00:25 -0800
+Message-ID: <CALvZod4m7naivyVDtFrGmDKeqaWrWuXynVhw32DVLB935RQJYA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] fs: fsnotify: account fsnotify metadata to kmemcg
+To: Jan Kara <jack@suse.cz>
+Cc: Michal Hocko <mhocko@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This happens on a HP DL360 G6 with Smart Array 410i.
+On Thu, Feb 22, 2018 at 6:48 AM, Jan Kara <jack@suse.cz> wrote:
+> On Thu 22-02-18 14:49:44, Michal Hocko wrote:
+>> On Tue 20-02-18 19:01:01, Shakeel Butt wrote:
+>> > A lot of memory can be consumed by the events generated for the huge or
+>> > unlimited queues if there is either no or slow listener. This can cause
+>> > system level memory pressure or OOMs. So, it's better to account the
+>> > fsnotify kmem caches to the memcg of the listener.
+>>
+>> How much memory are we talking about here?
+>
+> 32 bytes per event (on 64-bit) which is small but the number of events is
+> not limited in any way (if the creator uses a special flag and has
+> CAP_SYS_ADMIN). In the thread [1] a guy from Alibaba wanted this feature so
+> among cloud people there is apparently some demand to have a way to limit
+> memory usage of such application...
+>
+>> > There are seven fsnotify kmem caches and among them allocations from
+>> > dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
+>> > inotify_inode_mark_cachep happens in the context of syscall from the
+>> > listener. So, SLAB_ACCOUNT is enough for these caches.
+>> >
+>> > The objects from fsnotify_mark_connector_cachep are not accounted as
+>> > they are small compared to the notification mark or events and it is
+>> > unclear whom to account connector to since it is shared by all events
+>> > attached to the inode.
+>> >
+>> > The allocations from the event caches happen in the context of the event
+>> > producer. For such caches we will need to remote charge the allocations
+>> > to the listener's memcg. Thus we save the memcg reference in the
+>> > fsnotify_group structure of the listener.
+>>
+>> Is it typical that the listener lives in a different memcg and if yes
+>> then cannot this cause one memcg to OOM/DoS the one with the listener?
+>
+> We have been through these discussions already in [1] back in November :).
+> I can understand the wish to limit memory usage of an application using
+> unlimited fanotify queues. And yes, it may mean that it will be easier for
+> an attacker to get it oom-killed (currently the malicious app would drive
+> the whole system oom which will presumably take a bit more effort as there
+> is more memory to consume). But then I expect this is what admin prefers
+> when he limits memory usage of fanotify listener.
+>
 
-Will try to bisect.
-
-IO completion timeout could be because of some IRQ toubles?
-
-(sorry, the rest has scrolled away in ilo2 textcons)
-
-[  242.655025] Call Trace:                                                      
-[  242.655077]  ? __schedule+0x1dd/0x5e0                                        
-[  242.655130]  schedule+0x23/0x70                                              
-[  242.655182]  schedule_timeout+0xe1/0x290                                     
-[  242.655236]  io_schedule_timeout+0x14/0x40                                   
-[  242.655290]  wait_for_completion_io+0xa4/0x120                               
-[  242.655346]  ? wake_up_q+0x70/0x70                                           
-[  242.655401]  hpsa_scsi_do_simple_cmd+0xa7/0xf0                               
-[  242.655456]  hpsa_scsi_do_simple_cmd_with_retry+0x4a/0x150                   
-[  242.655512]  hpsa_scsi_do_inquiry+0x5d/0xc0                                  
-[  242.655567]  hpsa_scan_start+0xf67/0x1fa0                                    
-[  242.655621]  ? sched_clock_local+0x12/0x80                                   
-[  242.655675]  ? sched_clock_local+0x12/0x80                                   
-[  242.655729]  ? select_idle_sibling+0x21/0x3b0                                
-[  242.655785]  ? do_scsi_scan_host+0x2d/0x90                                   
-[  242.655839]  do_scsi_scan_host+0x2d/0x90                                     
-[  242.655892]  do_scan_async+0x12/0x180                                        
-[  242.655945]  async_run_entry_fn+0x2c/0x140                                   
-[  242.656002]  process_one_work+0x1a6/0x320                                    
-[  242.656062]  worker_thread+0x26/0x3c0                                        
-[  242.656115]  ? create_worker+0x190/0x190                                     
-[  242.656170]  kthread+0x107/0x120                                             
-[  242.656222]  ? kthread_create_worker_on_cpu+0x70/0x70                        
-[  242.656278]  ret_from_fork+0x35/0x40  
-
-
--- 
-Meelis Roos (mroos@linux.ee)
+Just one clarification, currently the kernel does not trigger
+oom-killer for allocations hitting memcg limit in the context of
+syscalls but rather return an ENOMEM (after trying memcg reclaim). Jan
+has already posted a patch to handle those ENOMEMs.
