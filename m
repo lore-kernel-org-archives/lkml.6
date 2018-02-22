@@ -1,34 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933261AbeBVQTk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:19:40 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:51076 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933222AbeBVQTd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:19:33 -0500
-X-Google-Smtp-Source: AH8x224OSFNyQA46F5CoW7ZLzW+Hvg6lITJ6tWIKhJEjo7OkQrYKrmkY64qEHChbPO76qjECGxrAu2kOsxtcz3vnpyo=
-MIME-Version: 1.0
-In-Reply-To: <20180222072459.GA9891@saruman>
-References: <20180221233825.10024-1-jhogan@kernel.org> <20180221233825.10024-2-jhogan@kernel.org>
- <ea057277-fc48-3961-681d-385023741cdb@roeck-us.net> <20180222072459.GA9891@saruman>
-From: Graham Whaley <graham.whaley@gmail.com>
-Date: Thu, 22 Feb 2018 16:19:31 +0000
-Message-ID: <CAF9eJumRb0voffQXqWg5goO8=1KNpivrefLtLCUUh_4k6g7+JQ@mail.gmail.com>
-Subject: Re: [PATCH 01/13] metag: Remove arch/metag/
-To: James Hogan <jhogan@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-metag@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S933285AbeBVQUT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:20:19 -0500
+Received: from vps.xff.cz ([195.181.215.36]:52164 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933134AbeBVQUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:20:16 -0500
+From: megous@megous.com
+To: dev@linux-sunxi.org
+Cc: Ondrej Jirman <megous@megous.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
+        A10),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH RFC] drm/sun4i: Enable the output on the pins (tcon0)
+Date: Thu, 22 Feb 2018 17:12:17 +0100
+Message-Id: <20180222161217.23904-1-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> >
->> > So lets call it a day and drop the Meta architecture port from the
->> > kernel. RIP Meta.
+From: Ondrej Jirman <megous@megous.com>
 
-Oh, and James, I meant to ask/note - I guess that just leaves parisc
-using STACK_GROWSUP... shame we could not ditch that as well then eh?
+I noticed that with 4.16-rc1 LVDS output on A83T based TBS A711 tablet doesn't
+work (there's output but it's garbled). I compared some older patches for LVDS
+support with the mainlined ones and this change is missing from mainline Linux.
 
- Graham
+I don't know what the register does exactly and the harcoded register value
+doesn't inspire much confidence that it will work in a general case, so I'm
+sending this RFC.
+
+This patch fixes the issue on A83T.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 3c15cf24b503..51740ddb4b32 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -335,6 +335,9 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
+ 			   SUN4I_TCON_GCTL_IOMAP_MASK,
+ 			   SUN4I_TCON_GCTL_IOMAP_TCON0);
++
++	/* Enable the output on the pins */
++	regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0xe0000000);
+ }
+ 
+ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+-- 
+2.16.2
