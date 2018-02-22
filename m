@@ -1,46 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932559AbeBVNAC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:00:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45554 "EHLO mx2.suse.de"
+        id S932586AbeBVNA0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:00:26 -0500
+Received: from mga04.intel.com ([192.55.52.120]:48484 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932269AbeBVM77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:59:59 -0500
-Date: Thu, 22 Feb 2018 13:59:55 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mm-commits@vger.kernel.org,
-        sfr@canb.auug.org.au,
-        richard -rw- weinberger <richard.weinberger@gmail.com>
-Subject: Re: mmotm 2018-02-21-14-48 uploaded (mm/page_alloc.c on UML)
-Message-ID: <20180222125955.GD30681@dhcp22.suse.cz>
-References: <20180221224839.MqsDtkGCK%akpm@linux-foundation.org>
- <7bcc52db-57eb-45b0-7f20-c93a968599cd@infradead.org>
- <20180222072037.GC30681@dhcp22.suse.cz>
- <20180222103832.GA11623@vmlxhi-102.adit-jv.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222103832.GA11623@vmlxhi-102.adit-jv.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S932199AbeBVM72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:59:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
+   d="scan'208";a="177232562"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/4] ACPI / sleep: Re-use new dmi_get_bios_year() helper
+Date: Thu, 22 Feb 2018 14:59:22 +0200
+Message-Id: <20180222125923.57385-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-02-18 11:38:32, Eugeniu Rosca wrote:
-> Hi Michal,
-> 
-> Please, let me know if any action is expected from my end.
+...instead of open coding its functionality.
 
-I do not thing anything is really needed right now. If you have a strong
-opinion about the solution (ifdef vs. noop stub) then speak up.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/acpi/sleep.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> Thank you for your support and sorry for the ifdef troubles.
-
-No troubles at all. It was me who pushed you this direction...
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index 46cde0912762..b35923e3a926 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -376,12 +376,10 @@ void __init acpi_sleep_no_blacklist(void)
+ 
+ static void __init acpi_sleep_dmi_check(void)
+ {
+-	int year;
+-
+ 	if (ignore_blacklist)
+ 		return;
+ 
+-	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year >= 2012)
++	if (dmi_get_bios_year() >= 2012)
+ 		acpi_nvs_nosave_s3();
+ 
+ 	dmi_check_system(acpisleep_dmi_table);
 -- 
-Michal Hocko
-SUSE Labs
+2.16.1
