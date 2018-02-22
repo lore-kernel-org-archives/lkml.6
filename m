@@ -1,55 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeBVVwt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 16:52:49 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35397 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751359AbeBVVws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:52:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,380,1515484800";
-   d="scan'208";a="19718524"
-Subject: Re: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
-To: Nadav Amit <namit@vmware.com>
-References: <20180222203651.B776810C@viggo.jf.intel.com>
- <20180222203700.3FDE6BFD@viggo.jf.intel.com>
- <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "keescook@google.com" <keescook@google.com>,
-        "hughd@google.com" <hughd@google.com>,
-        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <754bf1d5-759b-0162-98ae-1800f075b8eb@linux.intel.com>
-Date: Thu, 22 Feb 2018 13:52:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751629AbeBVVy2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:54:28 -0500
+Received: from mail-it0-f43.google.com ([209.85.214.43]:50321 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbeBVVy0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 16:54:26 -0500
+X-Google-Smtp-Source: AH8x226JCttXwPpSemRDMo0yOM1EK2VYG+pHaLV1oNP2WxeCdtweKDvZC5qWI+b0IptJYXpYd22VRyZwuBC7xFj7+nQ=
 MIME-Version: 1.0
-In-Reply-To: <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+55aFywUNouK-Y1qbnkwxM3G_WLdDVFdC0po-Xj01G4UsfSAw@mail.gmail.com>
+References: <20180222174140.GA3154@beast> <CA+55aFxDh-69p0Lr52icct6-3PGcsHaZmMqHwks8HptdmdxvTg@mail.gmail.com>
+ <66556bf7-3e67-5793-081e-76a01f598374@prevas.dk> <CA+55aFywUNouK-Y1qbnkwxM3G_WLdDVFdC0po-Xj01G4UsfSAw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Feb 2018 13:54:25 -0800
+X-Google-Sender-Auth: daCeVIh5uHRJhUebjrOfEWOtLzQ
+Message-ID: <CA+55aFyHhbw0VDeUOaxj1UWr7AH=8n_jg8_cXH29+avKg0rcpQ@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig.h: Include compiler types to avoid missed
+ struct attributes
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Kees Cook <keescook@chromium.org>,
+        Patrick McLean <chutzpah@gentoo.org>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 01:46 PM, Nadav Amit wrote:
->>
->> +static inline pgprotval_t check_pgprot(pgprot_t pgprot)
->> +{
->> +	pgprotval_t massaged_val = massage_pgprot(pgprot);
->> +
->> +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
->> +		  "attempted to set unsupported pgprot: %016lx "
->> +		  "bits: %016lx supported: %016lx\n",
->> +		  pgprot_val(pgprot),
->> +		  pgprot_val(pgprot) ^ massaged_val,
->> +		  __supported_pte_mask);
-> Perhaps use VM_WARN_ONCE instead to avoid any overhead on production
-> systems?
+On Thu, Feb 22, 2018 at 1:23 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hah. So it was the lack of kconfig.h dependency that bit my testing ;)
 
-Sounds sane enough.  I'll change it.
+Confirmed. Rasmus was right, doing a full build after cleaning
+everything up did fix this. So it's really just <linux/kconfig.h>
+itself that is missing from dependencies.
+
+              Linus
