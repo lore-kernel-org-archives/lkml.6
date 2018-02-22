@@ -1,127 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932209AbeBVMOM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:14:12 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33612 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753712AbeBVMOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:14:10 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Date: Thu, 22 Feb 2018 14:14:53 +0200
-Message-ID: <2864762.IPlziE6Y0S@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180222120412.GL7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org> <56271779.hLAmkO6BAC@avalon> <20180222120412.GL7203@w540>
+        id S1753802AbeBVMP0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:15:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42253 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753640AbeBVMPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:15:25 -0500
+Date: Thu, 22 Feb 2018 13:15:06 +0100
+From: Borislav Petkov <bp@suse.de>
+To: "Raj, Ashok" <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: Re: [v2 1/3] x86/microcode/intel: Check microcode revision before
+ updating sibling threads
+Message-ID: <20180222121506.GC27489@pd.tnic>
+References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
+ <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
+ <20180222110056.GA27489@pd.tnic>
+ <20180222115554.GA3797@araj-mobl1.jf.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180222115554.GA3797@araj-mobl1.jf.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Thu, Feb 22, 2018 at 03:55:54AM -0800, Raj, Ashok wrote:
+> The current code wasn't trying to enforce checking the loaded microcode revision on a thread
+> before attempting to load the microcode. While you comeback from resume, if C0T0 already
+> is up, and we loaded the early microcode, then when handling C0T1 there is no need to 
+> do a wrmsrl to reapply microcode since its already loaded as part of C0T0. 
 
-On Thursday, 22 February 2018 14:04:12 EET jacopo mondi wrote:
-> On Wed, Feb 21, 2018 at 10:28:06PM +0200, Laurent Pinchart wrote:
-> > On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
-> > > On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
-> > > > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
-> > > >> The sensor driver sets mbus format colorspace information and sizes,
-> > > >> but not ycbcr encoding, quantization and xfer function. When supplied
-> > > >> with an badly initialized mbus frame format structure, those fields
-> > > >> need to be set explicitly not to leave them uninitialized. This is
-> > > >> tested by v4l2-compliance, which supplies a mbus format description
-> > > >> structure and checks for all fields to be properly set.
-> > > >> 
-> > > >> Without this commit, v4l2-compliance fails when testing formats with:
-> > > >> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
-> > > >> 
-> > > >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > >> ---
-> > > >> 
-> > > >>  drivers/media/i2c/ov7670.c | 4 ++++
-> > > >>  1 file changed, 4 insertions(+)
-> > > >> 
-> > > >> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > > >> index 25b26d4..61c472e 100644
-> > > >> --- a/drivers/media/i2c/ov7670.c
-> > > >> +++ b/drivers/media/i2c/ov7670.c
-> > > >> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct
-> > > >> v4l2_subdev
-> > > >> *sd, fmt->height = wsize->height;
-> > > >> 
-> > > >>  	fmt->colorspace = ov7670_formats[index].colorspace;
-> > > > 
-> > > > On a side note, if I'm not mistaken the colorspace field is set to
-> > > > SRGB
-> > > > for all entries. Shouldn't you hardcode it here and remove the field ?
-> > > > 
-> > > >> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-> > > >> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-> > > >> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-> > > > 
-> > > > How about setting the values explicitly instead of relying on defaults
-> > > > ?
-> > > > That would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
-> > > > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see
-> > > > if
-> > > > the sensor outputs limited or full range ?
-> > > 
-> > > This actually makes me wonder if those informations (ycbcb_enc,
-> > > quantization and xfer_func) shouldn't actually be part of the
-> > > supported format list... I blindly added those default fields in the
-> > > try_fmt function, but I doubt they applies to all supported formats.
-> > > 
-> > > Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
-> > > RGB 565) and 1 raw format (BGGR). I now have a question here:
-> > > 
-> > > 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
-> > > applies to RGB and raw formats? I don't think so, and what value is
-> > > the correct one for the ycbcr_enc field in this case? I assume
-> > > xfer_func and quantization applies to all formats instead..
-> > 
-> > There's no encoding for RGB formats if I understand things correctly, so
-> > I'd set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function and
-> > the quantization apply to all formats, but I'd be surprised to find a
-> > sensor outputting limited range for RGB.
-> 
-> Ack, we got the same understanding for RGB formats. I wonder if for
-> those formats we wouldn't need a V4L2_YCBCR_ENC_NONE or similar...
+And I'm asking exactly this: is it simply "we don't need to do WRMSR" or
+"we should not"?
 
-That, or explicitly documenting that when the format is not YUV the field 
-should be set by both drivers and applications to V4L2_YCBCR_ENC_DEFAULT when 
-written and ignored when read.
+Because avoiding the WRMSR costs more than simply doing it and letting
+the HT thread ignore the supplied microcode.
 
-> > Have you been able to check whether the sensor outputs limited range of
-> > full range YUV ? If it outputs full range you can hardcode quantization
-> > to V4L2_QUANTIZATION_FULL_RANGE for all formats.
-> 
-> In YUYV mode, I see values > 0xf0 ( > 240, which is the max value for
-> CbCr samples in limited quantization range), so I assume quantization
-> is full range.
-
-It should be, yes. What's the minimum and maximum values you get ?
-
-> Actually the hardest part here was having a white enough surface to
-> point the sensor to :)
-
-Pointing a flashlight to the sensor usually does the trick.
-
-> >>>>  	info->format = *fmt;
-> >>>>  	
-> >>>>  	return 0;
+If it is "we don't need to but there's nothing wrong when we do it" then
+we don't need this patch. And I'm pretty sure "nothing wrong when we do
+it" would be the answer. Otherwise we have bigger problems.
 
 -- 
-Regards,
+Regards/Gruss,
+    Boris.
 
-Laurent Pinchart
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
