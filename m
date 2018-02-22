@@ -1,93 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933260AbeBVQxQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:53:16 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45014 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933139AbeBVQxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:53:15 -0500
-Subject: Re: [PATCH v4] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Shanker Donthineni <shankerd@codeaurora.org>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1519311090-19998-1-git-send-email-shankerd@codeaurora.org>
- <20180222152244.zozx2tlptgnnfu6b@lakrids.cambridge.arm.com>
- <32c8cfd3-2883-177b-7736-1bb6ab679df4@arm.com>
- <20180222163330.o5lqant4fjenapcz@lakrids.cambridge.arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2d4e89d3-f930-bf99-1cf6-e989bd88fa00@arm.com>
-Date: Thu, 22 Feb 2018 16:53:12 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933307AbeBVQyG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:54:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36404 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933139AbeBVQyF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:54:05 -0500
+Date: Thu, 22 Feb 2018 08:54:25 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [QUESTION] srcu: Remove the SCAN2 state
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1519257447-4232-1-git-send-email-byungchul.park@lge.com>
+ <20180222021147.GA2855@linux.vnet.ibm.com>
+ <fb00133e-776b-50c7-1a46-b56c3339622b@lge.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222163330.o5lqant4fjenapcz@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb00133e-776b-50c7-1a46-b56c3339622b@lge.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022216-0048-0000-0000-0000023DD7C6
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008577; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00993514; UDB=6.00504839; IPR=6.00772854;
+ MB=3.00019692; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 16:54:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022216-0049-0000-0000-000044385AB9
+Message-Id: <20180222165425.GE2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220213
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/18 16:33, Mark Rutland wrote:
-> On Thu, Feb 22, 2018 at 04:28:03PM +0000, Robin Murphy wrote:
->> [Apologies to keep elbowing in, and if I'm being thick here...]
->>
->> On 22/02/18 15:22, Mark Rutland wrote:
->>> On Thu, Feb 22, 2018 at 08:51:30AM -0600, Shanker Donthineni wrote:
->>>> +#define CTR_B31_SHIFT		31
->>>
->>> Since this is just a RES1 bit, I think we don't need a mnemonic for it,
->>> but I'll defer to Will and Catalin on that.
->>>
->>>>    ENTRY(invalidate_icache_range)
->>>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
->>>> +alternative_if ARM64_HAS_CACHE_DIC
->>>> +	mov	x0, xzr
->>>> +	dsb	ishst
->>>> +	isb
->>>> +	ret
->>>> +alternative_else_nop_endif
->>>> +#endif
->>>
->>> As commented on v3, I don't believe you need the DSB here. If prior
->>> stores haven't been completed at this point, the existing implementation
->>> would not work correctly here.
->>
->> True in terms of ordering between stores prior to entry and the IC IVAU
->> itself, but what about the DSH ISH currently issued *after* the IC IVAU
->> before returning? Is provably impossible that existing callers might be
->> relying on that ordering *anything*, or would we risk losing something
->> subtle by effectively removing it?
+On Thu, Feb 22, 2018 at 02:05:18PM +0900, Byungchul Park wrote:
+> On 2/22/2018 11:11 AM, Paul E. McKenney wrote:
+> >On Thu, Feb 22, 2018 at 08:57:27AM +0900, Byungchul Park wrote:
+> >>Hello,
+> >>
+> >>I'm sorry for bothering you, and I seem to be obviously missing
+> >>something, but I'm really wondering why we check try_check_zero()
+> >>again in the state, SCAN1, for the previous srcu_idx.
+> >>
+> >>I mean, since we've already checked try_check_zero() in the previous
+> >>grace period and gotten 'true' as a return value, all readers who see
+> >>the flipped idx via srcu_flip() won't update the src_{lock,unlock}_count
+> >>for the previous idx until it gets flipped back again.
+> >>
+> >>Is there any reasons we check try_check_zero() again in the state, SCAN1?
+> >>Is there any problems if the following patch's applied?
+> >
+> >Indeed there are!  Removing the second scan exposes us to a nasty race
+> >condition where a reader is preempted (or interrupted or whatever) just
 > 
-> AFAIK, the only caller of this is KVM, before page table updates occur
-> to add execute permissions to the page this is applied to.
+> Indeed! I missed the cases. It should be as it is.
 > 
-> At least in that case, I do not beleive there would be breakage.
+> Thanks a lot for pointing it out.
+
+Heh!  Everyone I know, myself included, who has written such an algorithm
+has had this bug in their initial version.  In one case, the algorithm
+was published in a high-end journal and the bug not spotted for more than
+a decade.  I suppose I could brag about Mathieu's and my offerings having
+been corrected before we published, but the fact remains that an earlier
+publication of mine gave the aforementioned algorithm from the high-end
+journal as an alternative implementation, and I did not spot the bug.
+Nor did any of my co-authors.  ;-)
+
+							Thanx, Paul
+
+> >after fetching its counter.  A detailed explanation for an essentially
 > 
-> If we're worried about subtleties in callers, then we'd need to stick
-> with DSB ISH rather than optimising to DSH ISHST.
-
-Hmm, I probably am just squawking needlessly. It is indeed hard to 
-imagine how callers could be relying on the invalidating the I-cache for 
-ordering unless doing something unreasonably stupid, and if the current 
-caller is clearly OK then there should be nothing to worry about.
-
-This *has* helped me realise that I was indeed being somewhat thick 
-before, because the existing barrier is of course not about memory 
-ordering per se, but about completing the maintenance operation. Hooray 
-for overloaded semantics...
-
-On a different track, I'm now wondering whether the extra complexity of 
-these alternatives might justify removing some obvious duplication and 
-letting __flush_cache_user_range() branch directly into 
-invalidate_icache_range(), or might that adversely affect the user fault 
-fixup path?
-
-Robin.
+> -- 
+> Thanks,
+> Byungchul
+> 
