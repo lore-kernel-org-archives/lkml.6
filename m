@@ -1,116 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933499AbeBVRdi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:33:38 -0500
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:38087 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933201AbeBVRdg (ORCPT
+        id S933524AbeBVRds (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:33:48 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36635 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933505AbeBVRdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:33:36 -0500
-X-Google-Smtp-Source: AH8x2251XT7UltaRKb21zWILsG3JdUl70+4Gb7wtyFdryRkUS86w6pFDmWJsrepheHVvEaiWa0kSSg==
-Subject: Re: kernel BUG at mm/khugepaged.c:533 on 4.15.3
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Linux-MM <linux-mm@kvack.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <2a152301-0535-6cb6-8823-44035f007fae@redhat.com>
- <20180221091445.iqtncxx66etpqamt@node.shutemov.name>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <70a4ca16-0d54-5df4-15bb-fdf1538ef080@redhat.com>
-Date: Thu, 22 Feb 2018 09:33:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 22 Feb 2018 12:33:45 -0500
+X-Google-Smtp-Source: AG47ELvE93vLmiJBt+K1hT3h1h68jukQck56AiivS7ycux/phZVqxhGizK0vlm+Qzeg2DxFr1tqT5a3ejEEi1pzNrpg=
 MIME-Version: 1.0
-In-Reply-To: <20180221091445.iqtncxx66etpqamt@node.shutemov.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CANoH8WgoPbhh+OS-HQD5uk3xbedrqHnwufJ9Bj4hSEuuTBkapw@mail.gmail.com>
+References: <CANoH8WgoPbhh+OS-HQD5uk3xbedrqHnwufJ9Bj4hSEuuTBkapw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 22 Feb 2018 19:33:44 +0200
+Message-ID: <CAHp75VfEc0a_Fff1znWVos3rPzCGsvGLGX7NgH_bH96egree7A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86: Fix Intel Edison module stuck reboot
+To: Sebastian Panceac <sebastian@resin.io>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 01:14 AM, Kirill A. Shutemov wrote:
-> On Mon, Feb 19, 2018 at 10:51:01AM -0800, Laura Abbott wrote:
->> Hi,
->>
->> Fedora got a bug report of a BUG with 4.15.3:
->> (https://bugzilla.redhat.com/show_bug.cgi?id=1546709)
-> 
-> Is it new to v4.15 kernel?
-> I don't see any recent change that could cause it.
-> 
+On Thu, Feb 22, 2018 at 11:27 AM, Sebastian Panceac <sebastian@resin.io> wrote:
+>
+> When powering Intel Edison module with 3.3V, the "reboot" command makes the module stuck.
+> If the module is powered at a greater voltage, like 4.4V(as the Edison Mini Breakout board does), reboot works OK.
+> This patch fixes the reboot problem for Intel Edison powered at 3.3V.
 
-The original reporter only saw it on 4.15 but another reporter
-saw it on 4.14.13 (I only found this out after I sent the
-e-mail). So I suspect the bug may have been latent but
-hard to trigger.
+Unfortunately it doesn't explain the root cause. OTOH it seems no one
+has any means to find it, no documentation, no person responsible for
+Edison firmware responsive.
 
-> 
->> page:fffffac1800a0000 count:513 mapcount:1 mapping:ffff95657ef359a1 index:0x7f95d3400 compound_mapcount: 0
->> flags: 0xffffe00048268(uptodate|lru|active|owner_priv_1|head|swapbacked)
->> raw: 000ffffe00048268 ffff95657ef359a1 00000007f95d3400 0000020100000000
->> raw: fffffac18edea9a0 fffffac18e7085a0 00000000000db400 ffff9567a3269800
->> page dumped because: VM_BUG_ON_PAGE(PageCompound(page))
->> page->mem_cgroup:ffff9567a3269800
->> ------------[ cut here ]------------
->> kernel BUG at mm/khugepaged.c:533!
->> invalid opcode: 0000 [#1] SMP PTI
->> Modules linked in: vhost_net vhost tap fuse xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 tun ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack libcrc32c iptable_mangle iptable_raw iptable_security ebtable_filter ebtables ip6table_filter ip6_tables sunrpc vfat fat rmi_smbus rmi_core arc4 intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_hdmi iwlmvm kvm_intel iTCO_wdt mac80211 snd_hda_codec_realtek iTCO_vendor_support mei_wdt kvm snd_hda_codec_generic irqbypass intel_cstate snd_hda_intel intel_uncore iwlwifi uvcvideo intel_rapl_perf
->> snd_hda_codec videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core snd_hda_core cfg80211 videodev snd_hwdep snd_seq snd_seq_device snd_pcm media mei_me snd_timer thinkpad_acpi wmi_bmof rtsx_pci_ms joydev tpm_tis memstick i2c_i801 mei tpm_tis_core snd soundcore intel_pch_thermal tpm shpchp rfkill dm_crypt hid_logitech_hidpp hid_logitech_dj mmc_block nouveau i915 rtsx_pci_sdmmc mmc_core mxm_wmi ttm e1000e i2c_algo_bit drm_kms_helper crct10dif_pclmul crc32_pclmul crc32c_intel ptp drm ghash_clmulni_intel serio_raw rtsx_pci pps_core wmi video
->> CPU: 2 PID: 66 Comm: khugepaged Not tainted 4.15.3-300.fc27.x86_64 #1
->> Hardware name: LENOVO 20FXS0BB14/20FXS0BB14, BIOS R07ET63W (2.03 ) 03/15/2016
->> RIP: 0010:khugepaged+0x1af6/0x2130
->> RSP: 0018:ffffacacc1b4bdc0 EFLAGS: 00010282
->> RAX: 0000000000000021 RBX: fffffac1800a0000 RCX: 0000000000000006
->> RDX: 0000000000000000 RSI: 0000000000000086 RDI: ffff9567c14968f0
->> RBP: fffffac18e3a5b40 R08: 00000000000004a8 R09: 0000000000000004
->> R10: ffffacacc1b4bd70 R11: ffffffffb995b1ed R12: 00007f95f7e00000
->> R13: ffff95661113eaf0 R14: ffff9567a9ea0000 R15: 8000000002800825
->> FS:  0000000000000000(0000) GS:ffff9567c1480000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000481046 CR3: 00000002ee20a005 CR4: 00000000003626e0
->> Call Trace:
->> ? finish_wait+0x80/0x80
->> ? collapse_shmem+0xdd0/0xdd0
->> kthread+0x113/0x130
->> ? kthread_create_worker_on_cpu+0x70/0x70
->> ret_from_fork+0x35/0x40
->> Code: ff e9 e7 fd ff ff bb 07 00 00 00 49 89 c7 e9 20 fb ff ff 48 83 ea 01 e9 66 fc ff ff 48 c7 c6 d8 3f 0a b9 48 89 df e8 0a 82 fa ff <0f> 0b 31 c9 4c 89 fa 48 89 de 4c 89 f7 e8 58 f1 fd ff e9 2e fa
->> RIP: khugepaged+0x1af6/0x2130 RSP: ffffacacc1b4bdc0
->> ---[ end trace a734c2f4d682e3bd ]---
->>
->> Reporter said it happened several times. Config is attached.
->> Any ideas?
-> 
-> Looks like somebody managed to insert THP into the range in split it back
-> between khugepaged_scan_pmd() and __collapse_huge_page_isolate().
-> 
-> That's rather unlikely chain of events, but I don't see other option.
-> 
-> Could you check if this works:
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index b7e2268dfc9a..c15da1ea7e63 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -530,7 +530,12 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->   			goto out;
->   		}
->   
-> -		VM_BUG_ON_PAGE(PageCompound(page), page);
-> +		/* TODO: teach khugepaged to collapse THP mapped with pte */
-> +		if (PageCompound(page)) {
-> +			result = SCAN_PAGE_COMPOUND;
-> +			goto out;
-> +		}
-> +
->   		VM_BUG_ON_PAGE(!PageAnon(page), page);
->   
->   		/*
-> 
+At least what I would like to mention that this copies a behaviour of
+official BSP for Edison, where RESET command applied by default (and
+BOOT is enforced by user via kernel command line).
 
-I asked the reporter(s) to test with this patch. I'll let you know
-if I hear any results.
+Perhaps someone can dig an internet to see what BOOT SCU command means.
 
-Thanks,
-Laura
+Your patch is mangled. Can you use `git send-email` directly?
+
+> Signed-off-by: Sebastian Panceac <sebastian@resin.io>
+> ---
+> arch/x86/platform/intel-mid/intel-mid.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
+> index 12a2725..d2b2e9f 100644
+> --- a/arch/x86/platform/intel-mid/intel-mid.c
+> +++ b/arch/x86/platform/intel-mid/intel-mid.c
+> @@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
+>
+> static void intel_mid_reboot(void)
+> {
+> - intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
+> + intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
+> }
+>
+> static unsigned long __init intel_mid_calibrate_tsc(void)
+> --
+> 2.7.4
+
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
