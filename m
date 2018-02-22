@@ -1,71 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932334AbeBVM5L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:57:11 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44528 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753750AbeBVM5I (ORCPT
+        id S932372AbeBVM6a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:58:30 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:39584 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753719AbeBVM63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:57:08 -0500
-X-Google-Smtp-Source: AG47ELtTlVgrz8ce5zdau7VcZrNF/zDKKg9/BGEH96pGsHYrGXUCLPrmBC/8LojqNyPf0eLuJuKUCL4yWHc6jbnyfyM=
+        Thu, 22 Feb 2018 07:58:29 -0500
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "Vineet Gupta" <Vineet.Gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>
+Subject: Re: [PATCH 1/3] ARC: mcip: halt GFRC together with ARC cores
+Thread-Topic: [PATCH 1/3] ARC: mcip: halt GFRC together with ARC cores
+Thread-Index: AQHTqvgMORbrZZk760yisL1Avwo/taOvP0EAgAA1WACAAN5YAA==
+Date: Thu, 22 Feb 2018 12:58:25 +0000
+Message-ID: <1519304304.2982.21.camel@synopsys.com>
+References: <20180221094027.12674-1-Eugeniy.Paltsev@synopsys.com>
+         <a4a20519-e8b0-3522-0528-6de2595635ed@synopsys.com>
+         <8c86b9f9-a4b7-1217-7cf3-1d8891292679@synopsys.com>
+In-Reply-To: <8c86b9f9-a4b7-1217-7cf3-1d8891292679@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.43]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <368A055D7FF0F042B653A64601EEC3CB@internal.synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <20180209120732.17863-3-j.neuschaefer@gmx.net>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net> <20180209120732.17863-3-j.neuschaefer@gmx.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 13:57:07 +0100
-Message-ID: <CACRpkdZKLm2owgVu7-f80dOdQDzQKCbO2Vvh3QHfOpEzndMxxg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>,
-        linux-gpio@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Albert Herranz <albert_herranz@yahoo.es>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MCvGWb017185
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MCwa1a017574
 
-On Fri, Feb 9, 2018 at 1:07 PM, Jonathan Neuschäfer
-<j.neuschaefer@gmx.net> wrote:
+Hi Vineet,
 
-> The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
-> that supports a configurable number of pins (up to 32), interrupts, and
-> some special mechanisms to share the controller between the system's
-> security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
-> not supported.
->
-> This patch adds a basic driver for this GPIO controller. Interrupt
-> support will come in a later patch.
->
-> This patch is based on code developed by Albert Herranz and the GameCube
-> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> has grown quite dissimilar.
->
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> Cc: Albert Herranz <albert_herranz@yahoo.es>
-> Cc: Segher Boessenkool <segher@kernel.crashing.org>
-> <---
->
-> v3:
-> - Do some style cleanups, as suggest by Andy Shevchenko
+On Wed, 2018-02-21 at 15:42 -0800, Vineet Gupta wrote:
+> On 02/21/2018 12:31 PM, Vineet Gupta wrote:
+> > Hi Eugeniy,
+> > 
+> > > Starting from ARC HS v3.0
+> > 
+> >  From the STAR fix, it seem this was fixed in HS 2.1c, so you should be able to 
+> > test it on HSDK, which was my next question: where and how did you test this and 
+> > verify that it works as we think it does. I tried the patch on HSDK and I still 
+> > see the rcu_preempt self-detected stall error splat when running hackbench and 
+> > pausing the target with Metaware debugger. Perhaps we need to write a small test 
+> > case to check what's going on. Also try that on AXS103 release which is definitely 
+> > HS 3.0 !
+> 
+> So I tried this on both.
+>   - HSDK   (HS 2.1c): Doesn't work
+>   - AXS103 (HS 3.0) : Works
 
-Patch applied to the GPIO tree for v4.17 with all the review tags.
+I checked the HS_3.00a and HS_2.1c documentation - GFRC HALT commands/settings exist
+only in HS_3.00a.
 
-I just folded the changelog into the commit message, for new
-drivers it is sometimes useful to keep these around in
-git actually.
+> 
+> Fortunately we can read (yet another BCR: GFRC_BUILD) and infer whether this is 
+> supported or not. So add that check in mcip_update_gfrc_halt_mask()
 
-If any further changes are needed we can just patch on top
-of this.
+Ok, I'll add GFRC_BUILD read.
 
-It's a very pretty driver, good work!
+> > > it's possible to tie GFRC to state of up-to 4
+> > > ARC cores with help of GFRC's CORE register where we set a mask for
+> > > cores which state we need to rely on.
+> 
+> On second thoughts, do we really have to do this per cpu. Just write 0xf once just 
+> as Alexey did in first iteration.
 
-Yours,
-Linus Walleij
+And we will face with same problems like with MCIP debug.
+Remember what happens when we launch kernel on one CPU on board which has several CPUs.
+
+> In theory this could be called concurrently by multiple cpus and mcip doesn't 
+> guarantee any internal serialization/buffering. Granted, current use
+case is fine 
+> as mcip_setup_per_cpu --> plat_smp_ops.init_per_cpu is serialized by master core, 
+> we could run into issue when say cpu hot plug etc
+works. So better to wrap this 
+> inside the spinlock which we already have.
+
+Yep, I was also thinking about adding the spinlock here...
+I'll add it in next patch version.
+
+> -Vineet
+-- 
+ Eugeniy Paltsev
