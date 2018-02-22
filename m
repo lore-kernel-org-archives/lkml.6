@@ -1,39 +1,39 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225+IYpb8uSIjthlKFzE/DQDYWNhZnVRDVs1OV8qtIHQOsm40Ogw5M74DklXJUgP/8u9jJ0l
-ARC-Seal: i=1; a=rsa-sha256; t=1519264850; cv=none;
+X-Google-Smtp-Source: AH8x226P094W4vQL9WuBnGdiLCeiXqxWx+fvef6IQZwkd4qGrTVDp12dywKDm0fpNLh7SwZNz0Ap
+ARC-Seal: i=1; a=rsa-sha256; t=1519264833; cv=none;
         d=google.com; s=arc-20160816;
-        b=shpUJNTRdjsVLw4g+LFXpkkbMRHEI1g07eH7dspSQwyE59UC3tK9Ke/3dhoMLEgaJY
-         N4d8qk8frX3e5AIgXSur0iJ3DbDn4AKPRok6mXzAenNLZabxpFB/2yLIUakO7MupoCfk
-         c48AwZxP8p4zjP/kRwGiu71erul0aBJ+AzAzjRa2kx6Z3HqN4440PgUwGUGbUoZRbBwo
-         BzyGFfjySUlIePUvTz+fZaolxuQFOcQ6TDoDKz3GI7TOueN611pgOjhdN/cJ5DlVhusn
-         bMuA/VQ/fgjCmCCIP5Yv9yAC5crtmxsHDUdC8//kINbGho1zq2xEDIbue4rBt7fRe8dJ
-         C5CQ==
+        b=H5jUbzxDPkX803Q3cYdHMAXCYo9OWjf4E0BnShzxAmnaK2Yjwyzw1bQ/md3IBTk+Vg
+         ifey4xXySo1L4IMVpObqPj0iBqZmQbmz4/X3YS3XuT5yfURpl6JILsYdwotXvK1iq//9
+         h5EYGH1eqBdzjK3a6Fc7npQCIfnw3gB7VVKiu7hgv8HzxUEdlYeWDI4m+H119qLVnc+x
+         itZB3rQ7u7afWxseb1U8yiZZ73AWbpOEJRrjlSgA5TVSpLPSJiKHwiItgWZOgsSFsrct
+         ZRdHybNu6ZNUrOlTEaRvc1EigDhp/7IAssNsd0A2KrS063YixHUzyaZyqBZfgEICXzR+
+         a5Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=biCPTncNRu6Xjk5AGsLJvTpMmjtKMSbBkQ3hnJlBaqw=;
-        b=M0SBJvov5OSrL8iM1Abzw8AmhS5SVeHg6CXIaIr74Z45nNN5ergkP6ErKfgtEZu22h
-         xfniGU3EyC7C5sxMjBNq6p31qnyu+3iIYRx0D1i4eK8qE7JqLRMl5uVivEnmAqqm5X9m
-         jRrwY+QZY6cs3IYEleGKgSmV5R0UYyhnKQj9L0YITMwU6tvJWFlDRvsD0d1fVo9pGqJK
-         XdG+U2bw9s0BB1o+AB6V7yUfb+Kn6z4Wube6Q0sa8FLw1xh/9cdBJCsm9yBcfWYhwliE
-         znpB76Biua7Dr2v6msws9ig+2zidLENDGwKS8qxAfaK4E5QSxZ87Fpy8EIk+bLCxik8L
-         /W8w==
+        bh=2LKR9x3N6qyD+dcLiierQ79FIEOB6rJZ8+h9mUGUtPk=;
+        b=rId//nw7HXYFoX6NaTrabr58u2DUs1m/Er84vvR/wi6vRtyEHKbzCc89njeDBzdwml
+         A9LFYRu3T+TZA7rvN9Sf8hPjlfJOmhthozwebEVREuIIRnEjakLQO1iwN1l+xDJpDOcc
+         c6PD349wZElPrwdvJDOd2v3DYzmaninAVN4i/Aw9uDMvV9UkKy8XWZGE/THn7m3UGT7m
+         46m/J/GV4JEsgNGnXtQF8u3vaezCwILAvxXrjNr/4umQ5NAasebY+5VrpttDN9JEv7Ry
+         BhvnRVcKfc/IVPToaXCyE5ubeTXlJTiSE9BpZAHUiA7YM7lunTfuvXs4ATCxqVFG/ZoS
+         N1hw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=WpMWJwIz;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=hgeF4R2f;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=WpMWJwIz;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=hgeF4R2f;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752122AbeBVCAg (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 21:00:36 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:34583 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbeBVB4l (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
+        id S1752000AbeBVB4l (ORCPT <rfc822;gregkh@linuxfoundation.org>);
         Wed, 21 Feb 2018 20:56:41 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44187 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751943AbeBVB4i (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 21 Feb 2018 20:56:38 -0500
 From: Ram Pai <linuxram@us.ibm.com>
 To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
 Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
@@ -45,76 +45,46 @@ Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
         bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
         linuxram@us.ibm.com, arnd@arndb.de
-Subject: [PATCH v12 09/22] selftests/vm: fix alloc_random_pkey() to make it really random
-Date: Wed, 21 Feb 2018 17:55:28 -0800
-Message-Id: <1519264541-7621-10-git-send-email-linuxram@us.ibm.com>
+Subject: [PATCH v12 08/22] selftests/vm: clear the bits in shadow reg when a pkey is freed.
+Date: Wed, 21 Feb 2018 17:55:27 -0800
+Message-Id: <1519264541-7621-9-git-send-email-linuxram@us.ibm.com>
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 References: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593064660294767595?=
-X-GMAIL-MSGID: =?utf-8?q?1593064660294767595?=
+X-GMAIL-THRID: =?utf-8?q?1593064595048468921?=
+X-GMAIL-MSGID: =?utf-8?q?1593064641721887167?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-alloc_random_pkey() was allocating the same pkey every time.
-Not all pkeys were geting tested. fixed it.
+When a key is freed, the  key  is  no  more  effective.
+Clear the bits corresponding to the pkey in the shadow
+register. Otherwise  it  will carry some spurious bits
+which can trigger false-positive asserts.
 
 cc: Dave Hansen <dave.hansen@intel.com>
 cc: Florian Weimer <fweimer@redhat.com>
 Signed-off-by: Ram Pai <linuxram@us.ibm.com>
 ---
- tools/testing/selftests/vm/protection_keys.c |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+ tools/testing/selftests/vm/protection_keys.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
 diff --git a/tools/testing/selftests/vm/protection_keys.c b/tools/testing/selftests/vm/protection_keys.c
-index aaf9f09..2e4b636 100644
+index ca54a95..aaf9f09 100644
 --- a/tools/testing/selftests/vm/protection_keys.c
 +++ b/tools/testing/selftests/vm/protection_keys.c
-@@ -24,6 +24,7 @@
- #define _GNU_SOURCE
- #include <errno.h>
- #include <linux/futex.h>
-+#include <time.h>
- #include <sys/time.h>
- #include <sys/syscall.h>
- #include <string.h>
-@@ -602,13 +603,15 @@ int alloc_random_pkey(void)
- 	int alloced_pkeys[NR_PKEYS];
- 	int nr_alloced = 0;
- 	int random_index;
+@@ -582,6 +582,9 @@ int alloc_pkey(void)
+ int sys_pkey_free(unsigned long pkey)
+ {
+ 	int ret = syscall(SYS_pkey_free, pkey);
 +
- 	memset(alloced_pkeys, 0, sizeof(alloced_pkeys));
-+	srand((unsigned int)time(NULL));
- 
- 	/* allocate every possible key and make a note of which ones we got */
- 	max_nr_pkey_allocs = NR_PKEYS;
--	max_nr_pkey_allocs = 1;
- 	for (i = 0; i < max_nr_pkey_allocs; i++) {
- 		int new_pkey = alloc_pkey();
-+
- 		if (new_pkey < 0)
- 			break;
- 		alloced_pkeys[nr_alloced++] = new_pkey;
-@@ -624,13 +627,14 @@ int alloc_random_pkey(void)
- 	/* go through the allocated ones that we did not want and free them */
- 	for (i = 0; i < nr_alloced; i++) {
- 		int free_ret;
-+
- 		if (!alloced_pkeys[i])
- 			continue;
- 		free_ret = sys_pkey_free(alloced_pkeys[i]);
- 		pkey_assert(!free_ret);
- 	}
--	dprintf1("%s()::%d, ret: %d pkey_reg: 0x%x shadow: 0x%x\n", __func__,
--			__LINE__, ret, __rdpkey_reg(), shadow_pkey_reg);
-+	dprintf1("%s()::%d, ret: %d pkey_reg: 0x%x shadow: 0x%016lx\n",
-+		__func__, __LINE__, ret, __rdpkey_reg(), shadow_pkey_reg);
++	if (!ret)
++		shadow_pkey_reg &= reset_bits(pkey, PKEY_DISABLE_ACCESS);
+ 	dprintf1("%s(pkey=%ld) syscall ret: %d\n", __func__, pkey, ret);
  	return ret;
  }
- 
 -- 
 1.7.1
 
