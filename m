@@ -1,71 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933022AbeBVPSf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:18:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:10713 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932846AbeBVPST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:18:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="20015780"
-From: Anna Karbownik <anna.karbownik@intel.com>
-To: mchehab@kernel.org, bp@alien8.de, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@oracle.com, tony.luck@intel.com, jim.m.snow@intel.com,
-        qiuxu.zhuo@intel.com, lukasz.odzioba@intel.com,
-        krzysztof.paliswiat@intel.com, anna.karbownik@intel.com
-Subject: [PATCH 1/1] EDAC, sb_edac: Fix out of bound write during DIMM configuration on KNL
-Date: Thu, 22 Feb 2018 16:18:13 +0100
-Message-Id: <1519312693-4789-1-git-send-email-anna.karbownik@intel.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S932924AbeBVPUR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:20:17 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21386 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932744AbeBVPUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:20:14 -0500
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
+ driver
+Thread-Topic: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
+ driver
+Thread-Index: AQHToOkB1gg/oaB2TkqIj2Qyt+f60KOwarQAgAAj2wA=
+Date: Thu, 22 Feb 2018 15:19:46 +0000
+Message-ID: <c44b4b09-8c28-5168-136f-c72c291d7b7b@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+ <CACRpkdZxJhntgHwgsg=P98i0aGnXSQ2rXO16H0U=cJ+sBbF27g@mail.gmail.com>
+In-Reply-To: <CACRpkdZxJhntgHwgsg=P98i0aGnXSQ2rXO16H0U=cJ+sBbF27g@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7CC796D646A239409EA3DC0E782F1B18@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MFKMlU006310
 
-From: akarbown <anna.karbownik@intel.com>
 
-In one of the previous patches we decreased NUM_CHANNELS from 8 to 4, but
-it is not enough for Knights Landing which supports up to 6 channels.
 
-This caused unattended writes to pvt->mirror_mode and pvt->tolm variables
-which don't pay critical role on KNL code path, so driver was somehow functional.
+On 02/22/2018 02:11 PM, Linus Walleij wrote:
+> On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
+> 
+>> +Required properties:
+>> +- compatible: must be "st,mfx"
+> 
+> I bet this should be more specific. Tomorrow there will be a new
+> version of this expander and then we will wish that we used
+> a more specific compatible for the first one.
+> 
+> Does this chip have any kind of product number on it?
+> 
+> Else I would be tempted to use the compatible "st,mfx-0000"
+> or something, indicating it is the first of its kind.
+> 
 
-The easiest way of fixing it is to change NUM_CHANNELS to 6.
-An alternative solution would be to restructure KNL part of the driver to
-2MC/3channel representation.
+This chip has a FW version. So, I agree, I should use a compatible that 
+reflects this FW version.
 
-Fixes: 3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Anna Karbownik <anna.karbownik@intel.com>
----
- drivers/edac/sb_edac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> +- reg: I2C address of the device
+>> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
+>> +- interrupt-parent: interrupt controller MFX is connected to
+>> +- interrupt-controller: marks the device as an interrupt controller
+>> +- #interrupt-cells: should be <1>, index of the interrupt within the
+>> +  controller, in accordance with the "one cell" variant of
+>> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
+> 
+> Seems fine.
+> 
+>> +Optional nodes:
+>> +
+>> +* GPIO eXpander
+>> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
+>> +alternate GPIOs if the main functions are not used (touchscreen controller and
+>> +IDD measurement not enabled).
+> 
+> Apparenly Rob thinks this should go elsewhere.
+> 
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index f34430f..8721002 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -279,7 +279,7 @@ static inline int sad_pkg(const struct interleave_pkg *table, u32 reg,
-  * sbridge structs
-  */
- 
--#define NUM_CHANNELS		4	/* Max channels per MC */
-+#define NUM_CHANNELS		6	/* Max channels per MC */
- #define MAX_DIMMS		3	/* Max DIMMS per channel */
- #define KNL_MAX_CHAS		38	/* KNL max num. of Cache Home Agents */
- #define KNL_MAX_CHANNELS	6	/* KNL max num. of PCI channels */
--- 
-1.8.3.1
+It would go with gpio/pinctrl driver, so in dt-bindings/(gpio|pinctrl).
 
---------------------------------------------------------------------
+Regards,
+Amelie
 
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek
-przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by
-others is strictly prohibited.
+>> +- gpio-controller: marks the device node as a GPIO controller
+>> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
+>> +  controller, the second cell is the gpio flags in accordance with
+>> +  <dt-bindings/gpio/st-mfx-gpio.h>.
+> 
+> Let's discuss these extra GPIO flag bindings separately.
+> 
+> Yours,
+> Linus Walleij
+> 
