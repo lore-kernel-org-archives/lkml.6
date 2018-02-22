@@ -1,55 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932474AbeBVM7X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:59:23 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47524 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932199AbeBVM7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:59:17 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 2/5] regmap: Remove unnecessary printk for failed allocation
-Date: Thu, 22 Feb 2018 12:59:11 +0000
-Message-ID: <20180222125914.17016-2-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180222125914.17016-1-ckeepax@opensource.cirrus.com>
-References: <20180222125914.17016-1-ckeepax@opensource.cirrus.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=793 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802220164
+        id S932540AbeBVM7d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:59:33 -0500
+Received: from mga17.intel.com ([192.55.52.151]:16589 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932502AbeBVM73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:59:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
+   d="scan'208";a="29845355"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
+Date: Thu, 22 Feb 2018 14:59:20 +0200
+Message-Id: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/base/regmap/regmap.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+It's used in several places and more users may come.
+By using this helper they may create a slightly cleaner code.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 8a6de76f89bb..c84c4d5d2df7 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2052,10 +2052,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 			return -EINVAL;
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/dmi.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/linux/dmi.h b/include/linux/dmi.h
+index 46e151172d95..241c27008c70 100644
+--- a/include/linux/dmi.h
++++ b/include/linux/dmi.h
+@@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
  
- 		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
--		if (!wval) {
--			dev_err(map->dev, "Error in memory allocation\n");
-+		if (!wval)
- 			return -ENOMEM;
--		}
+ #endif
+ 
++static inline int dmi_get_bios_year(void)
++{
++	int year;
++	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
++	return year;
++}
 +
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(wval + i);
- 
+ #endif	/* __DMI_H__ */
 -- 
-2.11.0
+2.16.1
