@@ -1,33 +1,33 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x224IQMeIQl74lEKIBRnNIK4qMcateiWg5TNmneNF/f0mhNGVzIqq44CCQCAnp02PN2gflnPY
-ARC-Seal: i=1; a=rsa-sha256; t=1519285606; cv=none;
+X-Google-Smtp-Source: AH8x22585XD1VojyaHs8hY3jb+L7LDWX/zMN1fN2KbeglS9aIqufYOA5h/zNrrKsYaDWXlY+GtKI
+ARC-Seal: i=1; a=rsa-sha256; t=1519285602; cv=none;
         d=google.com; s=arc-20160816;
-        b=sT3K27nP0pqHHX8Tw8twJqGXeVDiClTHjLb2AfL/e8mB0dYJyNVOgkP5JKz2BLCaqt
-         /2Nt8A87CZ9rc0U1/Vxk3N1zDDTR/Dn6CAwssNr4CDjvnouwftxm5wb9vmFT7F3CVF19
-         tuIQurpoa+zt/13GNVntPa1IPF1w8FXjS+Ve+eKvnLKAxYj5i5MOYXQtvPmUhcuxOT+J
-         ujYsHh3F2ljXyFd0gVSI2zozoDPKqBPMpByng0QgPvorkgFYciJD1g3+R9qJ9u18rGaf
-         AQUKgxiQonhCOQ6flujEzHOUVcwU+cZYPpng8zR/ete4BEG/8vhIebZILfnlsvwPwDDR
-         5vzw==
+        b=spvkhAxCLgiJRKqF3qjSt7UulnOZSr4jet/Luz3xeb1anqmmuuQi9lEF8cakX81cJc
+         K0W6EtZKYW8TdqarNy3tBeXeTFVzhsosWNMN1AsS3F8cbueyZLuRaVQr58HPdzUrNKFc
+         rfH3HALUV1dz7CQLyJBMU00hzNFC7sEHmNVJ7V1oJFjv3YXv808oumXxaQT2S9pGdRi6
+         6rmSEq5jgZavpH5ezbcjeZzAXxACVyyTs8E3/TkennU7Oz/0N8zKnOlPtqLxF89VRBqB
+         eQi0zZKXecnKvQO9m4XfPvtxhJTyBwXYkYGYT152VK38abZIF0Jm/mkEHbAnJ07fWe0w
+         +DbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=bdwDvlfMapBRyMKuu0l7BS0cu/DWiMi4hUei9b2ZnOk=;
-        b=hO7CN1v6RZ/6aZfMAmgZBRvuzI+0jS/x69au37jhlsKj2xeZqRzX6ueID9jRL6W8C/
-         M8xXUZO9EnJZAEcoHHPlNCOq1FMsrTNmqrU1QYMEuVeoa54AyBKKglZ+DKZuGPvflCrJ
-         M8NZ3QPkJK2jdLP/wBkz10kbWNtFsLshO9goZQ8VMFd8LNGBTrE7kYt0xFjmzL7N53rK
-         eZDONViml2ffYeKTjLpKSBA3tpISf2OXpObxyIWqEsnZ6RkbA8D+gaJLl4DE/kKNdFCa
-         I868Kw50JC2jL8wxo7afRnKweYVZ92uV5BOyXd8ll4B+J7lpP1biFWdE+G5WeokB01fH
-         aTcA==
+        bh=m8qGhUFA9VkH7IuJYKyL2k7UfRBEOosG5dCFie1bMaQ=;
+        b=FXjyZNGh5y7gzdkQs8+n57DlrOm4gAtj7AJsl9DSN6XqpoibqNTnebnWoT2Ypr2ob7
+         mxz928vLgq677my+GqCtDYf4S2tII0uuC5LmHblrqL6ca85K3Enp/hxA+u6KjnBNI8R5
+         O0MGsh2DKP+ktjFMQLO6+d8i3dm7h/uEZ7Uh1kfCv9417zpiiHZq8Tg66kzH85Xx0cD8
+         dsG6SjPGvoX8o4kGVu3MhCV6DHwXyk2yFwGCAgROT2qEUQv2N1T6cNbgc07+V0RwalWJ
+         5b5BGV5yEy2tHxhNzZcF3TGAIUz/DuPYdEdJ6fqAE7dACPERFFedwa7QFSiqlQTkWWBZ
+         NN4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Szix2YhJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=CpUa+1Z4;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=W4f54il7;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=W4f54il7;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Szix2YhJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=CpUa+1Z4;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=W4f54il7;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=W4f54il7;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B24096079B
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABCA3609EF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
 From: Oza Pawandeep <poza@codeaurora.org>
@@ -44,142 +44,91 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v9 6/7] PCI: Unify wait for link active into generic pci
-Date: Thu, 22 Feb 2018 13:16:10 +0530
-Message-Id: <1519285571-5634-7-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v9 5/7] PCI/AER: Unify aer error defines at single space
+Date: Thu, 22 Feb 2018 13:16:09 +0530
+Message-Id: <1519285571-5634-6-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519285571-5634-1-git-send-email-poza@codeaurora.org>
 References: <1519285571-5634-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086424372892434?=
-X-GMAIL-MSGID: =?utf-8?q?1593086424372892434?=
+X-GMAIL-THRID: =?utf-8?q?1593086419214751308?=
+X-GMAIL-MSGID: =?utf-8?q?1593086419214751308?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clients such as pciehp, dpc are using pcie_wait_link_active, which waits
-till the link becomes active or inactive.
-
-Made generic function and moved it to drivers/pci/pci.c
+This patch moves AER error defines to drivers/pci/pci.h.
+So that it unifies the error repoting codes at single place along with dpc
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8..a133b8b 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -231,25 +231,12 @@ bool pciehp_check_link_active(struct controller *ctrl)
- 	return ret;
- }
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 1efefe9..7ae9bb3 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -56,6 +56,7 @@
+ #include <ras/ras_event.h>
  
--static void __pcie_wait_link_active(struct controller *ctrl, bool active)
-+static bool pcie_wait_link_active(struct controller *ctrl)
- {
--	int timeout = 1000;
+ #include "apei-internal.h"
++#include "../../pci/pci.h"
+ 
+ #define GHES_PFX	"GHES: "
+ 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 124f42e..b0e63b5 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -343,7 +343,11 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
+ void pci_enable_acs(struct pci_dev *dev);
+ 
+ /* PCI error reporting and recovery */
+-#define DPC_FATAL	4
++#define AER_NONFATAL		0
++#define AER_FATAL		1
++#define AER_CORRECTABLE		2
++
++#define DPC_FATAL		4
+ 
+ void pci_do_recovery(struct pci_dev *dev, int severity);
+ 
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+index 6a352e6..4c59f37 100644
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+@@ -19,6 +19,7 @@
+ #include <linux/cper.h>
+ 
+ #include "aerdrv.h"
++#include "../../pci.h"
+ #include <ras/ras_event.h>
+ 
+ #define AER_AGENT_RECEIVER		0
+diff --git a/include/linux/aer.h b/include/linux/aer.h
+index 8f87bbe..3eac8ed 100644
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@ -11,10 +11,6 @@
+ #include <linux/errno.h>
+ #include <linux/types.h>
+ 
+-#define AER_NONFATAL			0
+-#define AER_FATAL			1
+-#define AER_CORRECTABLE			2
 -
--	if (pciehp_check_link_active(ctrl) == active)
--		return;
--	while (timeout > 0) {
--		msleep(10);
--		timeout -= 10;
--		if (pciehp_check_link_active(ctrl) == active)
--			return;
--	}
--	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
--			active ? "set" : "cleared");
--}
-+	struct pci_dev *pdev = ctrl_dev(ctrl);
-+	bool active = true;
+ struct pci_dev;
  
--static void pcie_wait_link_active(struct controller *ctrl)
--{
--	__pcie_wait_link_active(ctrl, true);
-+	return pci_wait_for_link(pdev, active);
- }
+ struct aer_header_log_regs {
+diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+index 9c68986..d75c75b 100644
+--- a/include/ras/ras_event.h
++++ b/include/ras/ras_event.h
+@@ -13,6 +13,7 @@
+ #include <linux/aer.h>
+ #include <linux/cper.h>
+ #include <linux/mm.h>
++#include "../../../drivers/pci/pci.h"
  
- static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd1..5440696 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4176,6 +4176,40 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
- 	return 0;
- }
- 
-+/**
-+ * pci__wait_for_link - Wait for link till its active/inactive
-+ * @pdev: Bridge device
-+ * @active: waiting for active or inactive ?
-+ *
-+ * Use this to wait till link becomes active or inactive.
-+ */
-+bool pci_wait_for_link(struct pci_dev *pdev, bool active)
-+{
-+	int timeout = 1000;
-+	bool ret;
-+	u16 lnk_status;
-+
-+	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-+
-+	while ((ret != active) && (timeout > 0)) {
-+		msleep(10);
-+		timeout -= 10;
-+		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-+	}
-+
-+	if (ret == active)
-+		return true;
-+
-+	dev_printk(KERN_DEBUG, &pdev->dev,
-+		   "Data Link Layer Link Active not %s in 1000 msec\n",
-+		   active ? "set" : "cleared");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL(pci_wait_for_link);
-+
- void pci_reset_secondary_bus(struct pci_dev *dev)
- {
- 	u16 ctrl;
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index 208b427..fce4518 100644
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -122,19 +122,10 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
- 
- static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- {
--	unsigned long timeout = jiffies + HZ;
- 	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 lnk_status;
-+	bool active = false;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	}
--	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
--		dev_warn(dev, "Link state not disabled for DPC event\n");
-+	pci_wait_for_link(pdev, active);
- }
- 
- /**
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 024a1be..cb674c3 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1195,6 +1195,7 @@ int pci_add_ext_cap_save_buffer(struct pci_dev *dev,
- int pci_request_selected_regions(struct pci_dev *, int, const char *);
- int pci_request_selected_regions_exclusive(struct pci_dev *, int, const char *);
- void pci_release_selected_regions(struct pci_dev *, int);
-+bool pci_wait_for_link(struct pci_dev *pdev, bool active);
- 
- /* drivers/pci/bus.c */
- struct pci_bus *pci_bus_get(struct pci_bus *bus);
+ /*
+  * MCE Extended Error Log trace event
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
 a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
