@@ -1,140 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932589AbeBVNgl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:36:41 -0500
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:37320 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932555AbeBVNgh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:36:37 -0500
-X-Google-Smtp-Source: AG47ELsilYHTuO7j7ruqSOCDcjcCfrPnGasKNuNTz4zb8N36nEmLAQY/4MqAtvsbgCb7mjt9EzJwmm19ik7svD8qxpk=
+        id S932609AbeBVNgu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:36:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48221 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932356AbeBVNgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:36:46 -0500
+Date: Thu, 22 Feb 2018 14:36:43 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: Use higher-order pages in vmalloc
+Message-ID: <20180222133643.GJ30681@dhcp22.suse.cz>
+References: <151670492223.658225.4605377710524021456.stgit@buzz>
+ <151670493255.658225.2881484505285363395.stgit@buzz>
+ <20180221154214.GA4167@bombadil.infradead.org>
+ <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
+ <20180221170129.GB27687@bombadil.infradead.org>
+ <20180222065943.GA30681@dhcp22.suse.cz>
+ <20180222122254.GA22703@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdQy-Y3mDh++sfFPhV3o544J-K_P9DMuzWZq9XCfESH5A@mail.gmail.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
- <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com> <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
- <ebc57f3b-4f5d-612f-5b63-ddda4dd25031@lechnology.com> <CAMRc=MdQy-Y3mDh++sfFPhV3o544J-K_P9DMuzWZq9XCfESH5A@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 22 Feb 2018 14:36:36 +0100
-Message-ID: <CAMRc=MeeAH0ObZS6kMNZnVj27Yjb+C7PCp+EyC8Tz1G9zwNo1g@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v7_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-        =?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222122254.GA22703@bombadil.infradead.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-21 18:46 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> 2018-02-21 18:05 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 02/21/2018 06:01 AM, Bartosz Golaszewski wrote:
->>>
->>> 2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
->>>>
->>>> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
->>>>>
->>>>>
->>>>> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->>>>>>
->>>>>>
->>>>>> This series converts mach-davinci to use the common clock framework.
->>>>>>
->>>>>>
->>>>>
->>>>> Hi David,
->>>>>
->>>>> just some quick results from today's playing with v7.
->>>>>
->>>>> I started out with da850-lcdk with my standard rootfs over NFS. I was
->>>>> not able to boot to console so far. The first problem is that mdio
->>>>> fails to probe:
->>>>>
->>>>> libphy: Fixed MDIO Bus: probed
->>>>> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
->>>>> davinci_mdio 1e24000.mdio: no live phy, scanning all
->>>>> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
->>>>> digging I noticed that the supplied clock rate differs
->>>>> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
->>>>> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
->>>>> not help like with lcdc.
->>>>
->>>>
->>>>
->>>> Can you post the output of this command so that I can see how your
->>>> clocks are setup:
->>>>
->>>> cat /sys/kernel/debug/clk/clk_summary
->>>>
->>>>
->>>>>
->>>>> After that, the boot just hangs without ever getting to emac's probe.
->>>>
->>>>
->>>>
->>>> Using your workaround, can you run:
->>>>
->>>> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->>>>
->>>> If you see:
->>>>    1e27000.clock-controller: emac  off-0
->>>>
->>>> then genpd is not working like it is supposed to. You should see
->>>> something
->>>> like this for device that are working:
->>>>            1e27000.clock-controller: uart2  on
->>>>      /devices/platform/soc@1c00000/1d0d000.serial        active
->>>>
->>>>
->>>>>
->>>>> Once I set the emac clock to always enabled (a workaround that was
->>>>> necessary with v6, but could be dropped with my first
->>>>> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
->>>>> pointer dereference:
->>>>
->>>>
->>>>
->>>> I noticed this too when adding the power-domains property to some device
->>>> tree nodes. This is part of the reason why I didn't add it everywhere.
->>>> I wasn't able to figure out the cause of this yet. As a work around
->>>> though, please try removing the power-domains property from the emac
->>>> and mdio nodes and use your previous workaround of having an always
->>>> enabled clock.
->>>>
->>>>
->>>
->>> When I use any of the workarounds I just keep getting more problems
->>> (e.g. [1] from blk and pinctrl). I only had a couple hours today to
->>> play with it but it seems to me we have some memory corruption
->>> somewhere. I'll check the initialization order of all the frameworks
->>> involved tomorrow.
->>>
->>> Best regards,
->>> Bartosz
->>>
->>> [1] https://pastebin.com/75mkkuJL
->>>
->>
->> I wonder if we need to delete all of the __init and __initconst attributes
->> now that this has been converted to platform devices.
->>
->
-> Duh... Of course we do. IIRC everything in the init section gets
-> removed after late_initcall. I'll test that tomorrow.
->
-> Bart
+On Thu 22-02-18 04:22:54, Matthew Wilcox wrote:
+> On Thu, Feb 22, 2018 at 07:59:43AM +0100, Michal Hocko wrote:
+> > On Wed 21-02-18 09:01:29, Matthew Wilcox wrote:
+> > > Right.  It helps with fragmentation if we can keep higher-order
+> > > allocations together.
+> > 
+> > Hmm, wouldn't it help if we made vmalloc pages migrateable instead? That
+> > would help the compaction and get us to a lower fragmentation longterm
+> > without playing tricks in the allocation path.
+> 
+> I was wondering about that possibility.  If we want to migrate a page
+> then we have to shoot down the PTE across all CPUs, copy the data to the
+> new page, and insert the new PTE.  Copying 4kB doesn't take long; if you
+> have 12GB/s (current example on Wikipedia: dual-channel memory and one
+> DDR2-800 module per channel gives a theoretical bandwidth of 12.8GB/s)
+> then we should be able to copy a page in 666ns).  So there's no problem
+> holding a spinlock for it.
+> 
+> But we can't handle a fault in vmalloc space today.  It's handled in
+> arch-specific code, see vmalloc_fault() in arch/x86/mm/fault.c
+> If we're going to do this, it'll have to be something arches opt into
+> because I'm not taking on the job of fixing every architecture!
 
-It's not that. Not only anyway as it doesn't fix anything, I'm getting
-the exact same panics. I tried to play with various settings, like
-initializing the platform driver later in the boot sequence etc. but
-haven't yet figured out what's going on.
+yes.
 
-Bart
+> > Maybe we should consider kvmalloc for the kernel stack?
+> 
+> We'd lose the guard page, so it'd have to be something we let the
+> sysadmin decide to do.
+
+ohh, right, I forgot about the guard page.
+-- 
+Michal Hocko
+SUSE Labs
