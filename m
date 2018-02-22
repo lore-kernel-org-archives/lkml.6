@@ -1,64 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932769AbeBVO7n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:59:43 -0500
-Received: from mail.kapsi.fi ([91.232.154.25]:33759 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753858AbeBVO7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:59:42 -0500
-Subject: Re: [PATCH] cpufreq: tegra186: Break after initialization is done for
- policy->cpu
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <77d470741dab32c2076a35253b9c0c2f0136583b.1519293292.git.viresh.kumar@linaro.org>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <f8bf4df3-6bf4-dc01-4445-33abec1ad6f9@kapsi.fi>
-Date: Thu, 22 Feb 2018 16:59:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S932891AbeBVPAk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:00:40 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54665 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753858AbeBVPAf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:00:35 -0500
+X-Google-Smtp-Source: AG47ELumYOZT9m2/EPeW1dOGGoTqNDyzSHvvZGvHIsGOTcJtwLOEpwDsRCCBM8JYVTI7uww/7uNzoVSa3BlD/P+jr50=
 MIME-Version: 1.0
-In-Reply-To: <77d470741dab32c2076a35253b9c0c2f0136583b.1519293292.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.248.219.42
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <7efffc52-1332-5d98-e6b8-634d5ee9082e@lechnology.com>
+References: <1516566774-1786-1-git-send-email-david@lechnology.com>
+ <CACRpkdbKWrdnbBp2e1kFd_3fYZxtWKnWPPgOd_FXSvXcOetLwA@mail.gmail.com> <7efffc52-1332-5d98-e6b8-634d5ee9082e@lechnology.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 16:00:34 +0100
+Message-ID: <CACRpkdYPVOP_O+TWg3qHiRq_d18rW33sv96dOqyPHeC4U0-rJQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: suppress error message on EPROBE_DEFER
+To: David Lechner <david@lechnology.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 11:54 AM, Viresh Kumar wrote:
-> There are two clusters (2 + 4 CPUs) on this platform and a separate
-> cpufreq policy is available for each of the CPUs. The loop in
-> tegra186_cpufreq_init() tries to find the structure for the right CPU
-> and finish initialization. But it is missing a `break` statement at the
-> end, which forces it to restart the loop even when the CPU already
-> matched and initialization is done.
-> 
-> Fix that by adding the missing `break` statement.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->   drivers/cpufreq/tegra186-cpufreq.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-> index fe7875311d62..771df649ceb9 100644
-> --- a/drivers/cpufreq/tegra186-cpufreq.c
-> +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> @@ -79,6 +79,7 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
->   		policy->driver_data =
->   			data->regs + info->offset + EDVD_CORE_VOLT_FREQ(core);
->   		cpufreq_table_validate_and_show(policy, cluster->table);
-> +		break;
->   	}
->   
->   	policy->cpuinfo.transition_latency = 300 * 1000;
-> 
+On Sun, Feb 18, 2018 at 4:47 AM, David Lechner <david@lechnology.com> wrote:
+> On 02/07/2018 06:57 AM, Linus Walleij wrote:
+>>
+>> On Sun, Jan 21, 2018 at 9:32 PM, David Lechner <david@lechnology.com>
+>> wrote:
+>>
+>>> This suppresses printing an error message during probe of gpio drivers
+>>> when the error is EPROBE_DEFER.
+>>>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>
+>>
+>> I'm not sure about this.
+>>
+>> GPIO can be very basic system components. If we don't
+>> print this, defer a few times (for some reason) and then
+>> the kernel gives up on retrying, silently (as it happens)
+>> there is no trace in dmesg of what happened. That makes
+>> things hard to debug.
+>>
+>> This happened to me with some other driver, so it is not
+>> a made up example.
+>>
+>> What about an explicit deferral message for now?
+>
+>
+> so you mean something like this?
+>
+> if (err == -EPROBE_DEFER)
+>         dev_info(dev, "deferring probe\n")
+> else
+>         dev_err(dev, "... failed to register\n")
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Yes exactly.
+
+It has been brought to my attention that people are especially
+allergic to dmesg messages containing the word "failed". So
+if that is the problem, let's avoid it like this.
+
+Yours,
+Linus Walleij
