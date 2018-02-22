@@ -1,301 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeBVXIa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:08:30 -0500
-Received: from mail-bn3nam01on0071.outbound.protection.outlook.com ([104.47.33.71]:20512
+        id S1751973AbeBVXLp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:11:45 -0500
+Received: from mail-bn3nam01on0080.outbound.protection.outlook.com ([104.47.33.80]:42477
         "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751968AbeBVXHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:07:38 -0500
+        id S1751432AbeBVXLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 18:11:44 -0500
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=David.Daney@cavium.com;
-From: David Daney <david.daney@cavium.com>
-To: linux-mips@linux-mips.org, ralf@linux-mips.org,
-        James Hogan <james.hogan@mips.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Steven J. Hill" <steven.hill@cavium.com>, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        David Daney <david.daney@cavium.com>
-Subject: [PATCH v8 3/4] staging: octeon: Remove USE_ASYNC_IOBDMA macro.
-Date: Thu, 22 Feb 2018 15:07:15 -0800
-Message-Id: <20180222230716.21442-4-david.daney@cavium.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180222230716.21442-1-david.daney@cavium.com>
-References: <20180222230716.21442-1-david.daney@cavium.com>
+ smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [RFC][PATCH 03/10] x86/mm: introduce "default" kernel PTE mask
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "keescook@google.com" <keescook@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
+References: <20180222203651.B776810C@viggo.jf.intel.com>
+ <20180222203656.25C9B4EC@viggo.jf.intel.com>
+ <57A9625E-3F25-402B-8B54-129A68449C48@vmware.com>
+ <61c68587-3ad5-edf7-539c-8af99c6220ea@linux.intel.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <5b801b73-bedd-e7f5-765a-6e00759a5786@amd.com>
+Date: Thu, 22 Feb 2018 17:11:36 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [50.233.148.156]
-X-ClientProxiedBy: CO2PR07CA0064.namprd07.prod.outlook.com (2603:10b6:100::32)
- To DM5PR07MB3180.namprd07.prod.outlook.com (2603:10b6:3:df::14)
+In-Reply-To: <61c68587-3ad5-edf7-539c-8af99c6220ea@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: DM3PR12CA0088.namprd12.prod.outlook.com
+ (2603:10b6:0:57::32) To MWHPR12MB1149.namprd12.prod.outlook.com
+ (2603:10b6:300:e::13)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0addedfd-2032-4f9a-3449-08d57a490e88
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR07MB3180;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3180;3:OtWlBBF1w0XvQ0g3c3AXQ5zmJQOXPS/d3hY+H+MzPvkvLBfVmC2qmjX1fFZYtn9LtH6efNDMI3b4oJ0vRnDuqGx/ZxbE7gC39qvHtzXrPa1lcyIueGYZzenJFSKO64jg+Hm5SAg946rnUwIAxILuLYkKEdVMgGHJ/WNWOtkoKDbYyuLkgo0wrn4jkAhOjf5gaKYpw2vYEQkBZlAgnWOjmp2dA1WeWKgz/k0r3uWEhZLogRd43h8qddqolRrVsl2M;25:JRG/dLL5PQIfbc30YuzLoINAOLcEmku/QY/r/rfFAfF3EiE/fsuWtCVraNNCBxP/P4yO2b/R1Nb3ilgnk7KoZh42AcXF3kpF+oyzsd/vGWxLbT2I4Ho+jaV8CmfYxY/X5b1PcSC+hBrlQLUjsSYtVyKnCUBaguNDfR/IHyfE7jbOXu4A0hnKZe6IjG4n/O96OSSgh6obPe8ln27NjdQ7tTWmX3WKA8KyR/I4R3cEoFi88zsvzqf41ASfTdj5sAzZ1qpE/Hmotgh8E9bG27j+HmEw6AJrqPp3Zee+CAc0wnk+EKyDEWLX6/yVJtjeUq6mQxQYtOtlqTjBplAo0MsZ1Q==;31:gvnaGnhHOjF2OInoe2X/nG9wPNiRPyyo44olyFqJTl17VZj8qPEfu11gA/UtZn+ORlVJtWNYEXkJI9BordPcgRJRbOZiO4u+6CAZW84ZBo2PjHZQtaUvO3R80wUQWr177q/+dn8ZVFm4SwIh6gTPc8NdhiCWrLFJitqqO4J6sXHnweEgYtEw234PpA0pXiG40l0qKWyDxSQPPLlPZXc9+wl89bdboKXVaglpgKhVUxI=
-X-MS-TrafficTypeDiagnostic: DM5PR07MB3180:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3180;20:uUPS8MJmM4FxfBCFn3BcsLaJsuy5S6TlFoY31FB9+GmsEKtrb82T4tqJLBOL5MUerS7/ZmdggS9DQFtdjFLd5zMt7vsXVqJRfDdOrVSVZTlV9+iaUWcnMvZOsDiVOXFUJHxFs6ivOESUPVPv/R5mndUgwvZvjZ8qIoaoeh9orfRIl6DB3FZvNhiq1c49myXyLmUHkbyCAyviBzI9VzytCski7BgnQQUjt+jjwNGOIJABK8x1JUTGwP3HiyosonJoFHyWAK1eQ40zY3KbwUz9+eCw/mWHHrtz6EK1XYVz3agu52ghtr2wkZ9AXGMdun1uD+cwjKh7qBLTpZ2w04rvIDME6KvTnusOOhfjucS9ctk4+14YUMJ4uzaO2awXTfu3sFQA0kUc0CzGt6X45maWzBBsZ3leutoTBWfyFF7Zcz4+c+lFYqoe6BvNSBIIDVkwKDKHwB16vO0jD2OXQtAg7qa0jq+ZabMBB3Vaxl4IpTimuhKJG26ISGzfrRJoUJ+y;4:pVt3ankVIqtFI0b+RATWZk7k1HmKkS+mhJAD/lg/YmD7R7pROpsamRU3xTxUOpKhSpsey/H4SOxUMVGPeMakcCbke72nrtNmAxbXGHJD5/SX6egRh9OecokKu9GaFn8FKLo7DQNUTVPu0N+4r7NuNHP4x0ZGN3wBRb/ixepvJDp5ZsXu4yKPS9ok4qaO2HJC66FozaxWaH0YYE5zh2SaNegvEtpZ0N5ANpwgxpQ8tGcJO6mycSStd8uKHg4ov/Y9W/wwR73KhyIy57nudieh/Q==
-X-Microsoft-Antispam-PRVS: <DM5PR07MB31803382BA10247E265BAE0E97CD0@DM5PR07MB3180.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231101)(944501161)(3002001)(6041288)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR07MB3180;BCL:0;PCL:0;RULEID:;SRVR:DM5PR07MB3180;
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 8679bc97-c1db-42b7-0c85-08d57a49a196
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1149;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;3:5eR7RSIqNiV8gZesuxOw7rzDXjwoE93N1KD6vdiDrf0/rDgCkft81H1ytrsvivGoZdJrANwWuW+CMxhFeUOQC9HVWUtl6xz+qeoRzv1FJJhVG+FxoyL20X5qB+n33HYpxsEBJ7k87rtvDgaT9mQvrJVtZ/I0gfLhPU4+4APW8h+R+pOOhey2rw+bioxwNW+X2qBiVzvYDnPgCpPQf4Q33lKF7XvNPJz/DAUIYrjWznFt91F+MMgElUCIpnjKrrqZ;25:9xJTjsEc2O8bmJqdhHiXmXw6wnf9dQbh9RAESMm90nMN/RcyA8Kbm34Ux3d+VBa2TRzLU8pH4hJEMWA+Pubxhm4/+16f0h3v84G+u//zkoMnFXFK9VNtCRoF/bNEOJceYPqz2QCKLC8cbqq/DWkWSAZgrulT9s8bInXOvv6ZhciiUAdq+B3T1NDxT+UHFENHm1HXpUDZx5nNPZIR1S9ER4i2cerAlr+2mzu0hT3YtINoQPY15K7ohq9ncEIbuJOx7IEcVnOHGevdTcjDBqK2YZpRhcW93jBaOy2uZlFZwDJEfAwotYu3PUOFIGZkAxPdEmckQLUPzxJvjz5PxawiOA==;31:u8I3BJPHep/TKEI6pVRR/NVfDa2BWlBJlyyRljIC3KLUXARac6DL7QdgynsKK4vBaSgQMDyJ8S3dsjh5zZRMN+f1kkhvPq2SDy5bXfxtH3Gp1OxqQpm4U5/pE7HV/gbvafwPBoKNPoKupimH/3W9vHkKdxMjlaOsa6sDGgJZELqLb5Hxwq8gFbD6JAVbTNfaXWDHuTiWZXlVPtMOaUMQ7kF+ZBRkCIq9iv0gg9Pj3AA=
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1149:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;20:iUh6gO1NBH07eOZb6FHEBzQBy51SDr3iJ2j/JjYljxUkyhKjGJkqo8cG5ZUpufoU9nPNkjvWw5MkhyBtix8h2KObRKTq7hJYBnCrrk/PZyfmYZJT4KRAbknAWX9VVWy/VWUlbo/abM/Df69ASkDaZnXqi9pOlkRZgigsLehq8F8+w1dca14s8oMKHRhgUFO+4jId3+AKdCaYRbuwA+hSRWa/O/eAHaan2C6c1P+bvyT8xhcpYGKsWR44Tz8bKAyEKAiSFEBULpHL/398w0Zid0jl2gH3iWj/sGCpy9msckzsqQpDQiZy1pHHbqvPfzzUsoLm/O7N7/UxuEj1j9BOxwtSzwJDU/s8/McDM8qH4RU0omJi0oWLLC6/8BvlRvy7g11er+KE/Tbf3Gpv+kYMOZiaopQEwZMztPRPrNIC+50R9OoSlpBCREXK2eTFpCkZp+LnbBdUgnqUWO2jjqAvXXSx78lthC4ALmnsbXDzyJf8C+r9xB4yr5b0jv0HhxCz;4:VQx53T7iGdDA7d/Mc6VGobNuOW+kk7IypqFqJ/fb3RBFYcxneCna78oeX/6b/GmqCPZU53GPDaA+vdMO6JewOzhulJ70C4BRc1Q8DDhmGh+iwkDnWZ2sUlW3iT5UeBbhSZmLPTS6vxqT5h5RjqIH0pgpqcnd3vJqxk6WDtc6C6Xowwq/Nord6bK1w3nJpI6pIJsOZ80KpXViVETdVCvl2xRHDbeE7iMKFAMsijQlyUGRXVCVRAE3JzULQdyBT5yYannghp334cgQGE0SGemlfLercpCI9Ta4AUYOYSHsaThopt5db84ip0ocpSozoM1X
+X-Microsoft-Antispam-PRVS: <MWHPR12MB11494E740AA55D9DFB9269CDECCD0@MWHPR12MB1149.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(228905959029699);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(8121501046)(5005006)(3231101)(944501161)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1149;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1149;
 X-Forefront-PRVS: 059185FE08
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(39380400002)(346002)(366004)(189003)(199004)(53936002)(305945005)(53416004)(66066001)(107886003)(6486002)(69596002)(47776003)(6512007)(386003)(59450400001)(6506007)(26005)(5660300001)(50466002)(8676002)(81166006)(16526019)(81156014)(478600001)(316002)(16586007)(54906003)(8936002)(72206003)(48376002)(25786009)(4326008)(105586002)(50226002)(186003)(68736007)(3846002)(6116002)(2950100002)(1076002)(6916009)(6666003)(36756003)(2906002)(7736002)(52116002)(86362001)(76176011)(106356001)(97736004)(51416003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB3180;H:ddl.caveonetworks.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB3180;23:02vTn/DnTObEeXoAIVufDPKrJKGMi5+Av4ckrv5rS?=
- =?us-ascii?Q?Gpc4IUcevajkeAdCK3fvCohMu3Ok/UJZkiasyRjuYlOBXxDlv+WX8tjhchBn?=
- =?us-ascii?Q?Mt8YPSUkZRNbrQXsQORNtZbBzWv+bywCGcy9q5rP66zObYF0xMA2qD+8pf1O?=
- =?us-ascii?Q?LRKOIP2mIPIab5I9aUI4UKnDL50g3w/XxBF0B80meOguOOTBP0eqtC0jJZmt?=
- =?us-ascii?Q?SFn8uD/g2dqY3RHTwuXBYYFgK8IfnkgoIroraFyRGVjj6xvhEiRsViFD9J0K?=
- =?us-ascii?Q?lOhYgwg03cTC6vSZ6Ma8YKEu7xJGq+ygMdnS4UafztMn7ZS6QopH+xsNSA9/?=
- =?us-ascii?Q?yoLAwRaaPcNda5P2/W/u5DI8dPy8JvpwXDlyzRPQr2U0yzkCoejbW0sv9CwN?=
- =?us-ascii?Q?M7UL0OCsFyKpLaseyvKe5RiDTK3Nmf4dUIu+q9IAgwYrbqj8eSZX5JyzP6Ki?=
- =?us-ascii?Q?hiw2d8dV0dc9o78PWxvUmGW1zHXnUwRAXRhoWk3uUXUDZirn67zEh6WgAHmm?=
- =?us-ascii?Q?Ulhzs9DBOuHz7Tay6HiAONmv16YJwithsJs+m8YgBsNQ9Vz5E+HjrdLoSJjp?=
- =?us-ascii?Q?qzsUpvfNKiIPc4gNxz4LN4iqd+kNmwII0/TncKf8q8GxJ0mPsCa8MFWGiOy/?=
- =?us-ascii?Q?8XrZ75845WDupTV8AhppwR/8kLnnBh2+vKqqNSHY8ML1QqrzZn/0V4xXhny/?=
- =?us-ascii?Q?NdSVMOmBr16gpSGHTQkvnS+6jzbjiCK9gC3nub55ipoce/TWYPaGuIqNPMXZ?=
- =?us-ascii?Q?LpLaZxbu4U/yLY5qK3g1CAUbnGW2UiSPZaLmhc+y/9ZnZZ3D05GXlNDqnm/i?=
- =?us-ascii?Q?h02oC3NW6heEueiz0utMSzlEKjoiWvx6sOHLXQ0stuiPY58vHRxe5lA19+rx?=
- =?us-ascii?Q?tAGmBuVO+o004rcmcrjo9dozlnCxP8unGaOraGtmEDGfNymoyaM+ibRXw3ZZ?=
- =?us-ascii?Q?CqRhwHy1KdRfxxvKbLR1SWgp2KErLuKdYgKYk6B0aKdv2nGsj8xUDsfsQYVJ?=
- =?us-ascii?Q?C5JMvvYTO30aRRL8RfoBm3dpAk0hsAnS9swafM6ZxRVEjGosrrC+C8WfB9/l?=
- =?us-ascii?Q?IiGtVqOZgly2ZxFmiwTboMwHaUCHqbAPjlVbBc5WRZtXYadBYwugRvLnRkzA?=
- =?us-ascii?Q?KxxkyLN0qjAFwdnqofCzKMorGJ8wZu0uu7ITqTWqYOAWs+T7Y/5uygx5+sIo?=
- =?us-ascii?Q?S+M/xECnhrhngTNGzbNzTigAYE649RhrY71fepIueyii9E28bnl6P6tNZT7W?=
- =?us-ascii?Q?eW+oOX6AKU0hogGBTQ=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3180;6:zrLTMcq8Kgtj7F+ENHDRfRDZMZH90IM5Jm/MHrVOlCfhO1L0yE7qIc3pQzu0J27oZgZn3v59b2tbJewE/ev2i/kpvVZaY2/VOoGY5xok66A8NA2D7zhL2kO0gY6kDhqj2MvK7Pa7ffZ+E1uzuj7CqtIS1kqy1b7LS4ntXZYsNXmFd3enQneaOWFrOQlhHH9NDAB3kbp22cTuUOve968kf3tWF3T3XHCwr33czZFgGsLgogQVjv0qjo6G7JrY21rVESJK7k2V8feRE0ENfxq3Q9j4UjCQ6kwu0IEJ0+Q4wGtjs4MQ0QcTiIZyyXHK3lKTtKklb7ejDtV6i8KKxqdsRBusN46ceCxlYl8GAShFGhQ=;5:LOfURH1ttJnpB2lSbNMZJPq5L29sWoQSp4AzPCvzzvxGxEoyNbU3KoAyl9u9xy3jEGoFc+RspoADiHc2bjf9NcM0HJcNw0Jl7b35NDFGrzyLUm2XaDZJ1xxnCrW5BdnrlM/ZfvvwemtKTFjPTSNMcPxI+7dwbfRL15/4Y/cXsNQ=;24:tBEJ0gVeW3c5eVJvOI4rMulZI3mE8Pnj3tejJ22RkSjF9b1knrVK25Mltp+3E8mzVllJOejscPlMqklhJSPg+qU/Yw4D0as0FLSJ2EzHjUI=;7:dCQpa2jcU/rVWHzZx7qHpr2nyvZXGg0ZPAMbsNtwIRaXM7ufBVj9DZVamdLTkB4gTQLztUolEWTeXbr8y0mhQrE5Iygx5tfwsO+BLNxI9DaW/3edLkh4H3xvgoPz8r1MKCQysHClfbQoPsjgL0XPUVqO+UpKH7HTLjDJVHUkBN3wgb49WTGWZzpSYp03WVtYZtdqvry4PgVZ3uaESB7HrjIvbqTx2U/X1lDNoZc6jzCZLNmFF0Ue0SStYMsuZv5Q
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(376002)(346002)(396003)(39380400002)(39860400002)(189003)(199004)(65826007)(478600001)(6486002)(106356001)(36756003)(186003)(26005)(31696002)(16526019)(77096007)(2950100002)(53546011)(386003)(7416002)(6666003)(93886005)(2906002)(68736007)(50466002)(47776003)(230700001)(6116002)(3846002)(64126003)(72206003)(97736004)(7736002)(65956001)(65806001)(66066001)(305945005)(5660300001)(31686004)(105586002)(76176011)(229853002)(86362001)(6246003)(2486003)(52146003)(23676004)(8676002)(53936002)(8936002)(3260700006)(81166006)(81156014)(110136005)(54906003)(52116002)(4326008)(25786009)(316002)(58126008)(16576012);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1149;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxMTQ5OzIzOlR1aXVIUURkcTFDa013NlBjZjIyd3Y5R2NR?=
+ =?utf-8?B?MjBDWlhtdHJhU1hDRHlpcmxpL3dHdzVSMk9xWUwyY2JuVkV2SnpEVWNDVXhW?=
+ =?utf-8?B?eEN1WS81NEo3eEdpNEZocUIxL09EbEVEUmdjd3FlUDdvcTFqN3drOHVlRE9V?=
+ =?utf-8?B?aTdxSGlDK2hUYjE3M2hNclM2dERqMHpCWjlmenIvZUg0R0pwbzJHejBmU25O?=
+ =?utf-8?B?bXltd0d0bnhxNldQYUpGSDhnbHI3eGdnR3BKd1RnbjNGYncwL3VIZzVlMVdR?=
+ =?utf-8?B?aDZUWlFnTFozQjFRMGZmSnlNM1o4R2VGUThBUWVyUEJxRDVNYlBxMUVqQzZw?=
+ =?utf-8?B?aGhXRTU4RE1qSFBiazAyU0tRZVZSTEJnb1JvWGNqRjA1bGExcGYxU2FNd2Va?=
+ =?utf-8?B?d2x6dFBObEhxajg1SHRiQmhRaWVrejgvdHlzeTk3MUREVU9yT2NmUm1IS1BW?=
+ =?utf-8?B?RVh1SWxocTUxYldtYkNPVXRvWnBkNTZsdlFOR3p0bjJCK3NydmlabUIySlg4?=
+ =?utf-8?B?UFN6L29OS1VyTHcyR2JHRDB2VjBsK0x1ZHdoNEZRdksyclErcXRDbHFGV2NT?=
+ =?utf-8?B?bXozNk5EdnYwTkVSZjhCNVA2REdydXhLTjY1QVgwSG9YbjRSQ3NsekJzT0c3?=
+ =?utf-8?B?eTNKczl2T3p0MkJRcTBYOU5oV1BOaXp5N0F5NFVvaUhqUi9Ca3M4dDNjWkJ0?=
+ =?utf-8?B?Z3pWT1IrczkzYnB5bjVPTXdKdHZyVFROUzZHcW9NVDl0M28xUWRxM09EN0s5?=
+ =?utf-8?B?OE0rMWpEd25BNVhJN0JZWGlReGxLaUNrc2xrMVRSN1k3THUzOUFUS3ZPcURa?=
+ =?utf-8?B?L0ZGRFJ0NjBpK0RnbDNaQlNobUJseXJZWDNZVkxzSmZpYWlZZEt3VEx2U0RI?=
+ =?utf-8?B?aFJGc29QcE5yMytrQ0s5akNKMmN5UmJuS08wT1hJYXhiTEFlK2lNaUhKUDBD?=
+ =?utf-8?B?eGI1dENoZVFUNVZRTll5d21CL2hXOW9nRmhSU2hRUU4vcHFtYXBxbDk3NXU0?=
+ =?utf-8?B?RUtXQzRtZTM1NHd1MEtUT29RSUlveTlYaVZ2RWg2UmpqYktaZUcwdnFpTW9p?=
+ =?utf-8?B?RjNJTUZnc2VTV0daS2FtRU5yZ09JT0kxcXZDR3NzSWpnaUUvK2txckpYdWMz?=
+ =?utf-8?B?ajAyeVU2cVVaYWxjdk1yVDRORGtFVUJFdU5INHVOYVB4TjFlaXBwVUhDNWRW?=
+ =?utf-8?B?MXNUU0RFSnNQa2Q3MTF2L1U3b2xyZElBUlBKakJPeWZocU5GM1lFSndVSDQ5?=
+ =?utf-8?B?NWFVZ3BrLzdOVlVZWGZkVDZxODFiLzMra0ZEbklMWEVyLzgxYytOY1Vub29J?=
+ =?utf-8?B?RHZFZWxMWUtGWlhPWnZGekRad204aTN0TXFCYU0ra3UzR3ViZWFZQmwvZ2lG?=
+ =?utf-8?B?aUJtR29vTWtkWk1KVG5SN3kvOEpWNDVrOXE5MHFwODR2Y1B3eVhvbjdzM0R1?=
+ =?utf-8?B?R2l2cDZ3S0JVaVV1OERnL2dwb0Yza29uTzQvZlZucW5VMlFlMUNvRmNLeU5l?=
+ =?utf-8?B?NGtvNVg4azlqUlYvNmg4TFJ4cEczaFNnT0lwWHVQQ0phWHkvNm40VEJ1QlZo?=
+ =?utf-8?B?cUY5Z3g5YVgxRUtRblVIOGhpTFhJNUN0RVVuZDlJOHVWd3BiVEhCL1ZrQTBQ?=
+ =?utf-8?B?Vks5UThCNmxuaG54RTBEY1c3YXFJSUxYdnBaYyt5TWJ2STZWcDd4Zk5SMkFB?=
+ =?utf-8?B?WS9tRTl3S1RpYkltVlJhN0tCUUlUaFlsWVBxTkU1NUZZdEl5R3c5UzJiajFV?=
+ =?utf-8?B?VDBvcGdySFgvamhqR21pK0w0YWlBdGxaV0p5TTFlNXNtNktvQnRFbVlQWDdZ?=
+ =?utf-8?B?bG4xcnZCUkdFVTJidHBwc0g1dUN6NUhHVjFkKzI2YUdPTVNycmtRRXg5MW11?=
+ =?utf-8?B?VTU3UHI1c2N1NTZNRnh2MzlkbEhLV2JoWU5wY2pRNER3NnhuS2JsaVh6a0l0?=
+ =?utf-8?Q?zkuENAncmAnxrCAOXMs9fu6RhIaOZg=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;6:GSAHhk36SAg2xabGVnZUWJKyIeHDCL6uDe6TTeELiO6D316qL6Uq6CYV95t99A1a9j9Q9hakxUzrO4ntazeG84PowUPSlYBST/YRd617wRBiCsWaRF8vijjlBQwonetZVkGHwoeP0zBOdMLlhGbgAVAuNUEhvSkqWZFtxDiPFqoSkew8CeuX5HBUmQc39tUpx5FMby9nNXVFkaSRRERv5HfWtX6J9HbaUd3SDUdp8T0fnZQxtT38zC4i+oVsyFIE/0CXqHVqHQOAZlwE4qI4O9xfhwe8CIvJhf7eFM+J1lH1jyui2OqteZlk+UivTPOjl26diE/J7HRoHs7GKRpDxARpmixjPPlp58kPDQD7xyE=;5:5AIQxob7Qw/3zARreDP4TXoZcI0ki41csinXu9oNIo+mP5BXLjW8X5L8UEKCIVfWkWUJIEKAwBHe1kgKsgZVgitHSVsdWnqV95N43LjEe5XaSbIl/YVaH+1HhIGxiKeWzWCC/LNhDKHvtXdF4JEkRYT5VzKu2pbaIUCLHHIuKGs=;24:Y/xpU+/kzfRAeNqDJ99DR9JETU+M8YoBgyhqVW4cCJeONLF+V224KvsD4zCU6XQ3nhaRk5XEy7/338KgouS72bMXDf0FvCcrYob1yjzw8UM=;7:Td1TpakuVGjaqNjTeXPTsh4MBtLtXNeXpS5za6D22DjYfkc4vOmvS1cvP9xqjA81GS3OpJ8hwLPXAMCEwdomOGXBOABLeoET7lz6Ckyv6LmkbauKHWJSFuVg4TAZpbjmI2NaKd5gtEXo8knaS5+shP+fFv48gag2vtIkekKHwA2KMEmzV0U2G6qJXGQ9rKdNnU6kq1C1Bg1/FkbC1sugHh0yqJ0OHyUPKxMdfDsS9pY9VUpxx6kxYZzwRjCqaJ/L
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2018 23:07:33.1551 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0addedfd-2032-4f9a-3449-08d57a490e88
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1149;20:z63YiE/FjdxX5dKnNFzBJynsTtwlNtAAk5QSL91x1B+arlxe6lPQzAuWUUy2IprF0hOH39lV/mibmSguyuhRN57NTrl+CGgn+mqMCz13nGrL+eF3JYQmA8KeCZ5GiCJuZ7CD/o3Sisfhd0tLHsYjdnyXLMmHyyMY6GJ/9JRLLa+4hAtzNLhZ2h0awiukvSn+hx5YOJ+dxxVVxRWT3qPiCzcByuzNAAanLeSMQJGpK7bvLSxT2lFNti9rgBPhF5Rf
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2018 23:11:39.4022 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8679bc97-c1db-42b7-0c85-08d57a49a196
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB3180
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous patch sets USE_ASYNC_IOBDMA to 1 unconditionally.  Remove
-USE_ASYNC_IOBDMA from all if statements.  Remove dead code caused by
-the change.
+On 2/22/2018 4:26 PM, Dave Hansen wrote:
+> On 02/22/2018 02:21 PM, Nadav Amit wrote:
+>> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>>> From: Dave Hansen <dave.hansen@linux.intel.com>
+>>> The __PAGE_KERNEL_* page permissions are "raw".  They contain bits
+>>> that may or may not be supported on the current processor.  They
+>>> need to be filtered by a mask (currently __supported_pte_mask) to
+>>> turn them into a value that we can actually set in a PTE.
+>>>
+>>> These __PAGE_KERNEL_* values all contain _PAGE_GLOBAL.  But, with
+>>> PTI, we want to be able to support _PAGE_GLOBAL (have the bit set
+>>> in __supported_pte_mask) but not have it appear in any of these
+>>> masks by default.
+>>
+>> There might be a potential issue with this approach. __supported_pte_mask is
+>> exported, so out-of-tree modules might use it. They therefore can
+>> unknowingly use this value to set PTEs with _PAGE_GLOBAL set.
+> 
+> I don't think we can help out-of-tree modules getting this wrong.
+> They're OK if they use PAGE_KERNEL*, btw.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David Daney <david.daney@cavium.com>
----
- drivers/staging/octeon/ethernet-defines.h |  6 ---
- drivers/staging/octeon/ethernet-rx.c      | 25 ++++-----
- drivers/staging/octeon/ethernet-tx.c      | 85 ++++++++++---------------------
- 3 files changed, 37 insertions(+), 79 deletions(-)
+You will probably need to change __default_kernel_pte_mask to be an
+EXPORT_SYMBOL instead of an EXPORT_SYMBOL_GPL for (some) out-of-tree
+modules.
 
-diff --git a/drivers/staging/octeon/ethernet-defines.h b/drivers/staging/octeon/ethernet-defines.h
-index 33c71f86890b..15db928c4712 100644
---- a/drivers/staging/octeon/ethernet-defines.h
-+++ b/drivers/staging/octeon/ethernet-defines.h
-@@ -7,10 +7,6 @@
- 
- /*
-  * A few defines are used to control the operation of this driver:
-- *  USE_ASYNC_IOBDMA
-- *      Use asynchronous IO access to hardware. This uses Octeon's asynchronous
-- *      IOBDMAs to issue IO accesses without stalling. Set this to zero
-- *      to disable this. Note that IOBDMAs require CVMSEG.
-  *  REUSE_SKBUFFS_WITHOUT_FREE
-  *      Allows the TX path to free an skbuff into the FPA hardware pool. This
-  *      can significantly improve performance for forwarding and bridging, but
-@@ -29,8 +25,6 @@
- #define REUSE_SKBUFFS_WITHOUT_FREE  1
- #endif
- 
--#define USE_ASYNC_IOBDMA	1
--
- /* Maximum number of SKBs to try to free per xmit packet. */
- #define MAX_OUT_QUEUE_DEPTH 1000
- 
-diff --git a/drivers/staging/octeon/ethernet-rx.c b/drivers/staging/octeon/ethernet-rx.c
-index 5e271245273c..c1ae60ce11f5 100644
---- a/drivers/staging/octeon/ethernet-rx.c
-+++ b/drivers/staging/octeon/ethernet-rx.c
-@@ -198,11 +198,9 @@ static int cvm_oct_poll(struct oct_rx_group *rx_group, int budget)
- 	/* Prefetch cvm_oct_device since we know we need it soon */
- 	prefetch(cvm_oct_device);
- 
--	if (USE_ASYNC_IOBDMA) {
--		/* Save scratch in case userspace is using it */
--		CVMX_SYNCIOBDMA;
--		old_scratch = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
--	}
-+	/* Save scratch in case userspace is using it */
-+	CVMX_SYNCIOBDMA;
-+	old_scratch = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
- 
- 	/* Only allow work for our group (and preserve priorities) */
- 	if (OCTEON_IS_MODEL(OCTEON_CN68XX)) {
-@@ -217,10 +215,8 @@ static int cvm_oct_poll(struct oct_rx_group *rx_group, int budget)
- 			       BIT(rx_group->group));
- 	}
- 
--	if (USE_ASYNC_IOBDMA) {
--		cvmx_pow_work_request_async(CVMX_SCR_SCRATCH, CVMX_POW_NO_WAIT);
--		did_work_request = 1;
--	}
-+	cvmx_pow_work_request_async(CVMX_SCR_SCRATCH, CVMX_POW_NO_WAIT);
-+	did_work_request = 1;
- 
- 	while (rx_count < budget) {
- 		struct sk_buff *skb = NULL;
-@@ -229,7 +225,7 @@ static int cvm_oct_poll(struct oct_rx_group *rx_group, int budget)
- 		cvmx_wqe_t *work;
- 		int port;
- 
--		if (USE_ASYNC_IOBDMA && did_work_request)
-+		if (did_work_request)
- 			work = cvmx_pow_work_response_async(CVMX_SCR_SCRATCH);
- 		else
- 			work = cvmx_pow_work_request_sync(CVMX_POW_NO_WAIT);
-@@ -257,7 +253,7 @@ static int cvm_oct_poll(struct oct_rx_group *rx_group, int budget)
- 			sizeof(void *));
- 		prefetch(pskb);
- 
--		if (USE_ASYNC_IOBDMA && rx_count < (budget - 1)) {
-+		if (rx_count < (budget - 1)) {
- 			cvmx_pow_work_request_async_nocheck(CVMX_SCR_SCRATCH,
- 							    CVMX_POW_NO_WAIT);
- 			did_work_request = 1;
-@@ -400,10 +396,9 @@ static int cvm_oct_poll(struct oct_rx_group *rx_group, int budget)
- 		cvmx_write_csr(CVMX_POW_PP_GRP_MSKX(coreid), old_group_mask);
- 	}
- 
--	if (USE_ASYNC_IOBDMA) {
--		/* Restore the scratch area */
--		cvmx_scratch_write64(CVMX_SCR_SCRATCH, old_scratch);
--	}
-+	/* Restore the scratch area */
-+	cvmx_scratch_write64(CVMX_SCR_SCRATCH, old_scratch);
-+
- 	cvm_oct_rx_refill_pool(0);
- 
- 	return rx_count;
-diff --git a/drivers/staging/octeon/ethernet-tx.c b/drivers/staging/octeon/ethernet-tx.c
-index df3441b815bb..2aa5fcb7ee32 100644
---- a/drivers/staging/octeon/ethernet-tx.c
-+++ b/drivers/staging/octeon/ethernet-tx.c
-@@ -176,23 +176,18 @@ int cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
- 		qos = 0;
- 	}
- 
--	if (USE_ASYNC_IOBDMA) {
--		/* Save scratch in case userspace is using it */
--		CVMX_SYNCIOBDMA;
--		old_scratch = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
--		old_scratch2 = cvmx_scratch_read64(CVMX_SCR_SCRATCH + 8);
--
--		/*
--		 * Fetch and increment the number of packets to be
--		 * freed.
--		 */
--		cvmx_fau_async_fetch_and_add32(CVMX_SCR_SCRATCH + 8,
--					       FAU_NUM_PACKET_BUFFERS_TO_FREE,
--					       0);
--		cvmx_fau_async_fetch_and_add32(CVMX_SCR_SCRATCH,
--					       priv->fau + qos * 4,
--					       MAX_SKB_TO_FREE);
--	}
-+	/* Save scratch in case userspace is using it */
-+	CVMX_SYNCIOBDMA;
-+	old_scratch = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
-+	old_scratch2 = cvmx_scratch_read64(CVMX_SCR_SCRATCH + 8);
-+
-+	/* Fetch and increment the number of packets to be freed. */
-+	cvmx_fau_async_fetch_and_add32(CVMX_SCR_SCRATCH + 8,
-+				       FAU_NUM_PACKET_BUFFERS_TO_FREE,
-+				       0);
-+	cvmx_fau_async_fetch_and_add32(CVMX_SCR_SCRATCH,
-+				       priv->fau + qos * 4,
-+				       MAX_SKB_TO_FREE);
- 
- 	/*
- 	 * We have space for 6 segment pointers, If there will be more
-@@ -201,22 +196,11 @@ int cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
- 	if (unlikely(skb_shinfo(skb)->nr_frags > 5)) {
- 		if (unlikely(__skb_linearize(skb))) {
- 			queue_type = QUEUE_DROP;
--			if (USE_ASYNC_IOBDMA) {
--				/*
--				 * Get the number of skbuffs in use
--				 * by the hardware
--				 */
--				CVMX_SYNCIOBDMA;
--				skb_to_free =
--					cvmx_scratch_read64(CVMX_SCR_SCRATCH);
--			} else {
--				/*
--				 * Get the number of skbuffs in use
--				 * by the hardware
--				 */
--				skb_to_free = cvmx_fau_fetch_and_add32(
--					priv->fau + qos * 4, MAX_SKB_TO_FREE);
--			}
-+			/* Get the number of skbuffs in use by the
-+			 * hardware
-+			 */
-+			CVMX_SYNCIOBDMA;
-+			skb_to_free = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
- 			skb_to_free = cvm_oct_adjust_skb_to_free(skb_to_free,
- 								 priv->fau +
- 								 qos * 4);
-@@ -384,18 +368,10 @@ int cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
- 		pko_command.s.ipoffp1 = skb_network_offset(skb) + 1;
- 	}
- 
--	if (USE_ASYNC_IOBDMA) {
--		/* Get the number of skbuffs in use by the hardware */
--		CVMX_SYNCIOBDMA;
--		skb_to_free = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
--		buffers_to_free = cvmx_scratch_read64(CVMX_SCR_SCRATCH + 8);
--	} else {
--		/* Get the number of skbuffs in use by the hardware */
--		skb_to_free = cvmx_fau_fetch_and_add32(priv->fau + qos * 4,
--						       MAX_SKB_TO_FREE);
--		buffers_to_free =
--		    cvmx_fau_fetch_and_add32(FAU_NUM_PACKET_BUFFERS_TO_FREE, 0);
--	}
-+	/* Get the number of skbuffs in use by the hardware */
-+	CVMX_SYNCIOBDMA;
-+	skb_to_free = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
-+	buffers_to_free = cvmx_scratch_read64(CVMX_SCR_SCRATCH + 8);
- 
- 	skb_to_free = cvm_oct_adjust_skb_to_free(skb_to_free,
- 						 priv->fau + qos * 4);
-@@ -413,9 +389,7 @@ int cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
- 	} else {
- 		queue_type = QUEUE_HW;
- 	}
--	if (USE_ASYNC_IOBDMA)
--		cvmx_fau_async_fetch_and_add32(
--				CVMX_SCR_SCRATCH, FAU_TOTAL_TX_TO_CLEAN, 1);
-+	cvmx_fau_async_fetch_and_add32(CVMX_SCR_SCRATCH, FAU_TOTAL_TX_TO_CLEAN, 1);
- 
- 	spin_lock_irqsave(&priv->tx_free_list[qos].lock, flags);
- 
-@@ -485,16 +459,11 @@ int cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
- 		dev_kfree_skb_any(t);
- 	}
- 
--	if (USE_ASYNC_IOBDMA) {
--		CVMX_SYNCIOBDMA;
--		total_to_clean = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
--		/* Restore the scratch area */
--		cvmx_scratch_write64(CVMX_SCR_SCRATCH, old_scratch);
--		cvmx_scratch_write64(CVMX_SCR_SCRATCH + 8, old_scratch2);
--	} else {
--		total_to_clean = cvmx_fau_fetch_and_add32(
--						FAU_TOTAL_TX_TO_CLEAN, 1);
--	}
-+	CVMX_SYNCIOBDMA;
-+	total_to_clean = cvmx_scratch_read64(CVMX_SCR_SCRATCH);
-+	/* Restore the scratch area */
-+	cvmx_scratch_write64(CVMX_SCR_SCRATCH, old_scratch);
-+	cvmx_scratch_write64(CVMX_SCR_SCRATCH + 8, old_scratch2);
- 
- 	if (total_to_clean & 0x3ff) {
- 		/*
--- 
-2.14.3
+Thanks,
+Tom
+
+> 
