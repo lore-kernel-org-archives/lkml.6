@@ -1,30 +1,30 @@
-Return-Path: <kernel-hardening-return-11876-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x227OGqVWIXsQUfokprLUAozp0dZQNuwO752gN9zoxsZ19piqke/EZlnJTrNO/dIzq7Hp/jlJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519257248; cv=none;
+Return-Path: <kernel-hardening-return-11882-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x227tw1iCZwtABFuWRu1oLNVhmb5zA0oVnMmYJZMLh7nfKSCHGJxjq0Jy4xFAKVAAbh21P4LS
+ARC-Seal: i=1; a=rsa-sha256; t=1519263345; cv=none;
         d=google.com; s=arc-20160816;
-        b=rDCDzDUDAreAVwd5i1QtlQXBpBoe/iezJZFKQilooEqAxxidcXdlXLhnGZHaoQfaJh
-         OTjf4uEEtaBcJxO/3+cH493kkFgMLCt5qYURpkONxqwbH4HIwMBUo0rYmW2j3Be2paR/
-         6XKxd8xpN3cmZhlYbc9fBgM3gB/SH/IZXZT0Tx5PA/8tUQ7md/x+5M4INGhTrLj/hrGG
-         1DdAA3+BrmQgFR5RP/8DbSegpV7l0xa6QxHWjRxm/uzrkTj6pQV9mOw01p/Hwcfo87vz
-         HvjSYgtTuTPbJ8w9ILQpli4ZmHlfKaFD7HEcKqlSA9NVwE/HLXvkcAj7F9oSLhk1NBcs
-         2Z8g==
+        b=ENE9TM/Jm2hNaSq5UOlmoNX54OdlNVCpntHx+rgolpjTKbYcH+HJm9NpB3Adaidcj2
+         CIU0o9X7PUTt5gSJ1n+KwPVyxneuiimNj8N7ymMX7F/Odc7waWuSc1i+STbfQYZAzVNX
+         z0pK/T/ITsrXjk8EkjwlmXXvBKw16AlZGIKfmQ8SKMtXgxgZ7c792dauKVc7qLWumCGj
+         8N5KIOLnT0jxLTyo0+NlBkXh3cmGI8VDfedGOobwbOjOTGPBdn66MpC7ifltNBX33aU3
+         tCo3D4ae54d63mwtA1z4+wWJ9/UQfwHXSRd5df49HuM2cFm4SM4UJ6EIXs2dDb8dVXQP
+         usNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+         :user-agent:date:message-id:references:cc:to:from:subject
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=0WlztGgbQii/9TgilIMvLLbvNEk7PCw4zc49qg8p8Xo=;
-        b=W4pYrFhNZHMdWTq2pQCJqnhIz9XvAJBgEMeJ+gO0ahOWF7qDJM9qUrmyDV2OsgozdO
-         X+N1dqOv6t8giEv5rb+gvV2bcbJuAnKM8vFdWzYsC5Y+LXX4+QRI6Ss63q7bGRCO832Y
-         +epRfc0nZvt6Iihri/Ipe79691nR31f6fTj38AjlmwzkkXgXAOk2CdzuWlYgjNAuNH42
-         6DLQxw4q/SKpsOyuKjd4y/Kif5KQwbqBFXjtJJl9I8/YACkT2r2kGzh09VZmgOSFDTHZ
-         cCGNHSYjfXp5+0n6A4qGzXUuI7H4be4VMXcTOghqtRJUYrMObITp/RXNCIUH7B/TZ90w
-         rNRg==
+        bh=RtLQ00sMRRLxLpl5Nx34qkWy28XwafRAvmlOVRbfe2E=;
+        b=RSWrmDsypaT+TLBZC0tIZLieZvLWOKLnbzAwDQYAOfSU+eJmlYvwN35G2E7Y9hNsf4
+         VbvjaDefbxQy9bnYaZMPB0ucDgkZ1At6x02UOkXNcmTgtWYbj65hfqYWIkuAVVF4E+cG
+         IwP3pUe0lCQmegt/TF1QKT2cvBCvR4PTflMVZR8A/fgVNH/vFq7uQUEyV4g7fHLmtDGW
+         rM+jQ4W40t6GSeowZXcNQrxN7vcjddhBk5Wyb6PdkM6/EL66X0OIZndF8CW7ZIOTIPSQ
+         lDod+kB71hbZHrxiU7LsjzYnoDK/z32/EhvMtCjlzwZdowvkMcCUy15lPcmcGYQTjV0D
+         21Gg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11876-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11876-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11882-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11882-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11876-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11876-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-11882-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11882-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -32,6 +32,7 @@ List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 Subject: Re: [PATCH 2/2] arm64: Clear the stack
+From: Laura Abbott <labbott@redhat.com>
 To: Mark Rutland <mark.rutland@arm.com>
 Cc: Alexander Popov <alex.popov@linux.com>, Kees Cook
  <keescook@chromium.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
@@ -40,237 +41,28 @@ Cc: Alexander Popov <alex.popov@linux.com>, Kees Cook
 References: <20180221011303.20392-1-labbott@redhat.com>
  <20180221011303.20392-3-labbott@redhat.com>
  <20180221153850.ywpzsigfnz3etoun@salmiak>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <3b76d238-e10a-9abf-c9cb-6d3738eb7896@redhat.com>
-Date: Wed, 21 Feb 2018 15:53:35 -0800
+ <3b76d238-e10a-9abf-c9cb-6d3738eb7896@redhat.com>
+Message-ID: <572af610-c20f-e826-f124-8df47680795b@redhat.com>
+Date: Wed, 21 Feb 2018 17:35:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221153850.ywpzsigfnz3etoun@salmiak>
+In-Reply-To: <3b76d238-e10a-9abf-c9cb-6d3738eb7896@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592971106986303834?=
-X-GMAIL-MSGID: =?utf-8?q?1593056688449590857?=
+X-GMAIL-MSGID: =?utf-8?q?1593063081549325549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/21/2018 07:38 AM, Mark Rutland wrote:
-> Hi Laura,
+On 02/21/2018 03:53 PM, Laura Abbott wrote:
+>> I *think* this should happen in finish_ret_to_user a few lines down, since we
+>> can call C code if we branch to work_pending, dirtying the stack.
+>>
 > 
-> On Tue, Feb 20, 2018 at 05:13:03PM -0800, Laura Abbott wrote:
->> Implementation of stackleak based heavily on the x86 version
-> 
-> Neat!
-> 
->> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
->> index ec2ee720e33e..b909b436293a 100644
->> --- a/arch/arm64/kernel/entry.S
->> +++ b/arch/arm64/kernel/entry.S
->> @@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
->>   
->>   	.text
->>   
->> +	.macro	erase_kstack
->> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
->> +	bl	__erase_kstack
->> +#endif
->> +	.endm
->>   /*
->>    * Exception vectors.
->>    */
->> @@ -901,6 +906,7 @@ work_pending:
->>    */
->>   ret_to_user:
->>   	disable_daif
->> +	erase_kstack
-> 
-> I *think* this should happen in finish_ret_to_user a few lines down, since we
-> can call C code if we branch to work_pending, dirtying the stack.
-> 
+> I think you're right but this didn't immediately work when I tried it.
+> I'll have to dig into this some more.
 
-I think you're right but this didn't immediately work when I tried it.
-I'll have to dig into this some more.
-
->>   	ldr	x1, [tsk, #TSK_TI_FLAGS]
->>   	and	x2, x1, #_TIF_WORK_MASK
->>   	cbnz	x2, work_pending
->> @@ -1337,3 +1343,105 @@ alternative_else_nop_endif
->>   ENDPROC(__sdei_asm_handler)
->>   NOKPROBE(__sdei_asm_handler)
->>   #endif /* CONFIG_ARM_SDE_INTERFACE */
->> +
->> +/*
->> + * This is what the stack looks like
->> + *
->> + * +---+ <- task_stack_page(p) + THREAD_SIZE
->> + * |   |
->> + * +---+ <- task_stack_page(p) + THREAD_START_SP
->> + * |   |
->> + * |   |
->> + * +---+ <- task_pt_regs(p)
-> 
-> THREAD_START_SP got killed off in commit 34be98f4944f9907 as part of the
-> VMAP_STACK rework, so this can be:
-> 
->        +---+ <- task_stack_page(p) + THREAD_SIZE
->        |   |
->        |   |
->        +---+ <- task_pt_regs(p)
->         ...
-> 
-
-Good point.
-
->> + * |   |
->> + * |   |
->> + * |   | <- current_sp
->> + * ~~~~~
->> + *
->> + * ~~~~~
->> + * |   | <- lowest_stack
->> + * |   |
->> + * |   |
->> + * +---+ <- task_stack_page(p)
->> + *
->> + * This function is desgned to poison the memory between the lowest_stack
->> + * and the current stack pointer. After clearing the stack, the lowest
->> + * stack is reset.
->> + */
->> +
->> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
->> +ENTRY(__erase_kstack)
->> +	mov	x10, x0	// save x0 for the fast path
-> 
-> AFAICT, we only call this from ret_to_user, where x0 doesn't need to be
-> preserved.
-> 
-> Is that for ret_fast_syscall? In some cases, ret_fast_syscall can bypass
-> ret_to_user and calls kernel_exit directly, so we might need a call there.
-> 
-
-This was a hold over when I was experimenting with calling  erase_kstack
-more places, one of which came through ret_fast_syscall. I realized
-later that the erase was unnecessary but accidentally kept the saving
-in. I'll see about removing it assuming we don't decide later to put
-a call on the fast path.
-
->> +
->> +	get_thread_info	x0
->> +	ldr	x1, [x0, #TSK_TI_LOWEST_STACK]
->> +
->> +	/* get the number of bytes to check for lowest stack */
->> +	mov	x3, x1
->> +	and	x3, x3, #THREAD_SIZE - 1
->> +	lsr	x3, x3, #3
->> +
->> +	/* generate addresses from the bottom of the stack */
->> +	mov	x4, sp
->> +	movn	x2, #THREAD_SIZE - 1
->> +	and	x1, x4, x2
-> 
-> Can we replace the MOVN;AND with a single instruction to clear the low bits?
-> e.g.
-> 
-> 	mov	x4, sp
-> 	bic	x1, x4, #THREAD_SIZE - 1
-> 
-> ... IIUC BIC is an alias for the bitfield instructions, though I can't recall
-> exactly which one(s).
-> 
-
-Good suggestion.
-
->> +
->> +	mov	x2, #STACKLEAK_POISON
->> +
->> +	mov	x5, #0
->> +1:
->> +	/*
->> +	 * As borrowed from the x86 logic, start from the lowest_stack
->> +	 * and go to the bottom to find the poison value.
->> +	 * The check of 16 is to hopefully avoid false positives.
->> +	 */
->> +	cbz	x3, 4f
->> +	ldr	x4, [x1, x3, lsl #3]
->> +	cmp	x4, x2
->> +	csinc	x5, xzr, x5, ne
->> +	tbnz	x5, #STACKLEAK_POISON_CHECK_DEPTH/4, 4f	// found 16 poisons?
->> +	sub	x3, x3, #1
->> +	b	1b
->> +
->> +4:
->> +	/* total number of bytes to poison */
->> +	add     x5, x1, x3, lsl #3
->> +	mov	x4, sp
->> +	sub     x8, x4, x5
->> +
->> +	cmp     x8, #THREAD_SIZE // sanity check the range
->> +	b.lo    5f
->> +	ASM_BUG()
->> +
->> +5:
->> +	/*
->> +	 * We may have hit a path where the stack did not get used,
->> +	 * no need to do anything here
->> +	 */
->> +	cbz	x8, 7f
->> +
->> +	sub	x8, x8, #1 // don't poison the current stack pointer
->> +
->> +	lsr     x8, x8, #3
->> +	add     x3, x3, x8
->> +
->> +	/*
->> +	 * The logic of this loop ensures the last stack word isn't
->> +	 * ovewritten.
->> +	 */
-> 
-> Is that to ensure that we don't clobber the word at the current sp value?
-> 
-
-Correct.
-
->> +6:
->> +	cbz     x8, 7f
->> +	str     x2, [x1, x3, lsl #3]
->> +	sub     x3, x3, #1
->> +	sub     x8, x8, #1
->> +	b	6b
->> +
->> +	/* Reset the lowest stack to the top of the stack */
->> +7:
->> +	mov	x1, sp
->> +	str	x1, [x0, #TSK_TI_LOWEST_STACK]
->> +
->> +	mov	x0, x10
->> +	ret
->> +ENDPROC(__erase_kstack)
->> +#endif
-> 
-> [...]
-> 
->> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
->> index 7b3ba40f0745..35ebbc1b17ff 100644
->> --- a/drivers/firmware/efi/libstub/Makefile
->> +++ b/drivers/firmware/efi/libstub/Makefile
->> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
->>   KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
->>   				   -D__NO_FORTIFY \
->>   				   $(call cc-option,-ffreestanding) \
->> -				   $(call cc-option,-fno-stack-protector)
->> +				   $(call cc-option,-fno-stack-protector) \
->> +				   $(DISABLE_STACKLEAK_PLUGIN)
-> 
-> I believe the KVM hyp code will also need to opt-out of this.
-> 
-
-I'll double check that.
-
-> Thanks,
-> Mark.
-> 
-
-Thanks,
-Laura
+Okay I figured this out. Not corrupting registers works wonders.
