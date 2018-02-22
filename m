@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932128AbeBVLTR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:19:17 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36311 "EHLO
+        id S932141AbeBVLTW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:19:22 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34173 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932102AbeBVLTN (ORCPT
+        with ESMTP id S932102AbeBVLTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:19:13 -0500
-X-Google-Smtp-Source: AH8x224EZXUzNuowppjUa13egEQllXZo6MM0vCeEUfsQI8y3m0emWy7M9HcVcuLr5HMc1MXYRNOvIg==
+        Thu, 22 Feb 2018 06:19:19 -0500
+X-Google-Smtp-Source: AH8x224DTkyO0eHBg4JS/ZPshnhS8hMudMmiRutpXJu0CoFWt3BgMM0UjTeFxKKvtNAKdM7T1lUWtg==
 From: AKASHI Takahiro <takahiro.akashi@linaro.org>
 To: catalin.marinas@arm.com, will.deacon@arm.com,
         bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
@@ -18,9 +18,9 @@ To: catalin.marinas@arm.com, will.deacon@arm.com,
 Cc: kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v8 04/13] x86: kexec_file: factor out elf core header related functions
-Date: Thu, 22 Feb 2018 20:17:23 +0900
-Message-Id: <20180222111732.23051-5-takahiro.akashi@linaro.org>
+Subject: [PATCH v8 05/13] kexec_file, x86: move re-factored code to generic side
+Date: Thu, 22 Feb 2018 20:17:24 +0900
+Message-Id: <20180222111732.23051-6-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180222111732.23051-1-takahiro.akashi@linaro.org>
 References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
@@ -28,279 +28,413 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-exclude_mem_range() and prepare_elf64_headers() can be re-used on other
-architectures, including arm64, as well. So let them factored out so as to
-move them to generic side in the next patch.
-
-fill_up_crash_elf_data() can potentially be commonalized for most
-architectures who want to go through io resources (/proc/iomem) for a list
-of "System RAM", but leave it private for now.
+In the previous patch, commonly-used routines were carved out. Now place
+them in kexec common code.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
 Cc: Dave Young <dyoung@redhat.com>
 Cc: Vivek Goyal <vgoyal@redhat.com>
 Cc: Baoquan He <bhe@redhat.com>
 ---
- arch/x86/kernel/crash.c | 235 +++++++++++++++++++++---------------------------
- 1 file changed, 103 insertions(+), 132 deletions(-)
+ arch/x86/kernel/crash.c | 183 ------------------------------------------------
+ include/linux/kexec.h   |  19 +++++
+ kernel/kexec_file.c     | 175 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 194 insertions(+), 183 deletions(-)
 
 diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index 10e74d4778a1..5c19cfbf3b85 100644
+index 5c19cfbf3b85..3e4f3980688d 100644
 --- a/arch/x86/kernel/crash.c
 +++ b/arch/x86/kernel/crash.c
-@@ -41,32 +41,14 @@
- /* Alignment required for elf header segment */
- #define ELF_CORE_HEADER_ALIGN   4096
+@@ -38,19 +38,6 @@
+ #include <asm/virtext.h>
+ #include <asm/intel_pt.h>
  
--/* This primarily represents number of split ranges due to exclusion */
--#define CRASH_MAX_RANGES	16
+-/* Alignment required for elf header segment */
+-#define ELF_CORE_HEADER_ALIGN   4096
 -
- struct crash_mem_range {
- 	u64 start, end;
- };
- 
- struct crash_mem {
--	unsigned int nr_ranges;
--	struct crash_mem_range ranges[CRASH_MAX_RANGES];
+-struct crash_mem_range {
+-	u64 start, end;
 -};
 -
--/* Misc data about ram ranges needed to prepare elf headers */
--struct crash_elf_data {
--	struct kimage *image;
--	/*
--	 * Total number of ram ranges we have after various adjustments for
--	 * crash reserved region, etc.
--	 */
- 	unsigned int max_nr_ranges;
+-struct crash_mem {
+-	unsigned int max_nr_ranges;
+-	unsigned int nr_ranges;
+-	struct crash_mem_range ranges[0];
+-};
 -
--	/* Pointer to elf header */
--	void *ehdr;
--	/* Pointer to next phdr */
--	void *bufp;
--	struct crash_mem mem;
-+	unsigned int nr_ranges;
-+	struct crash_mem_range ranges[0];
- };
- 
  /* Used while preparing memory map entries for second kernel */
-@@ -217,29 +199,32 @@ static int get_nr_ram_ranges_callback(struct resource *res, void *arg)
+ struct crash_memmap_data {
+ 	struct boot_params *params;
+@@ -224,77 +211,6 @@ static struct crash_mem *fill_up_crash_elf_data(void)
+ 	return cmem;
+ }
+ 
+-static int crash_exclude_mem_range(struct crash_mem *mem,
+-		unsigned long long mstart, unsigned long long mend)
+-{
+-	int i, j;
+-	unsigned long long start, end;
+-	struct crash_mem_range temp_range = {0, 0};
+-
+-	for (i = 0; i < mem->nr_ranges; i++) {
+-		start = mem->ranges[i].start;
+-		end = mem->ranges[i].end;
+-
+-		if (mstart > end || mend < start)
+-			continue;
+-
+-		/* Truncate any area outside of range */
+-		if (mstart < start)
+-			mstart = start;
+-		if (mend > end)
+-			mend = end;
+-
+-		/* Found completely overlapping range */
+-		if (mstart == start && mend == end) {
+-			mem->ranges[i].start = 0;
+-			mem->ranges[i].end = 0;
+-			if (i < mem->nr_ranges - 1) {
+-				/* Shift rest of the ranges to left */
+-				for (j = i; j < mem->nr_ranges - 1; j++) {
+-					mem->ranges[j].start =
+-						mem->ranges[j+1].start;
+-					mem->ranges[j].end =
+-							mem->ranges[j+1].end;
+-				}
+-			}
+-			mem->nr_ranges--;
+-			return 0;
+-		}
+-
+-		if (mstart > start && mend < end) {
+-			/* Split original range */
+-			mem->ranges[i].end = mstart - 1;
+-			temp_range.start = mend + 1;
+-			temp_range.end = end;
+-		} else if (mstart != start)
+-			mem->ranges[i].end = mstart - 1;
+-		else
+-			mem->ranges[i].start = mend + 1;
+-		break;
+-	}
+-
+-	/* If a split happend, add the split to array */
+-	if (!temp_range.end)
+-		return 0;
+-
+-	/* Split happened */
+-	if (i == mem->max_nr_ranges - 1)
+-		return -ENOMEM;
+-
+-	/* Location where new range should go */
+-	j = i + 1;
+-	if (j < mem->nr_ranges) {
+-		/* Move over all ranges one slot towards the end */
+-		for (i = mem->nr_ranges - 1; i >= j; i--)
+-			mem->ranges[i + 1] = mem->ranges[i];
+-	}
+-
+-	mem->ranges[j].start = temp_range.start;
+-	mem->ranges[j].end = temp_range.end;
+-	mem->nr_ranges++;
+-	return 0;
+-}
+-
+ /*
+  * Look for any unwanted ranges between mstart, mend and remove them. This
+  * might lead to split and split ranges are put in cmem->ranges[] array
+@@ -329,105 +245,6 @@ static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
  	return 0;
  }
  
--
- /* Gather all the required information to prepare elf headers for ram regions */
--static void fill_up_crash_elf_data(struct crash_elf_data *ced,
--				   struct kimage *image)
-+static struct crash_mem *fill_up_crash_elf_data(void)
- {
- 	unsigned int nr_ranges = 0;
--
--	ced->image = image;
-+	struct crash_mem *cmem;
- 
- 	walk_system_ram_res(0, -1, &nr_ranges,
- 				get_nr_ram_ranges_callback);
- 
--	ced->max_nr_ranges = nr_ranges;
-+	/*
-+	 * Exclusion of crash region and/or crashk_low_res may cause
-+	 * another range split. So add extra two slots here.
-+	 */
-+	nr_ranges += 2;
-+	cmem = vmalloc(sizeof(struct crash_mem) +
-+			sizeof(struct crash_mem_range) * nr_ranges);
-+	if (!cmem)
-+		return NULL;
- 
--	/* Exclusion of crash region could split memory ranges */
--	ced->max_nr_ranges++;
-+	cmem->max_nr_ranges = nr_ranges;
-+	cmem->nr_ranges = 0;
- 
--	/* If crashk_low_res is not 0, another range split possible */
--	if (crashk_low_res.end)
--		ced->max_nr_ranges++;
-+	return cmem;
- }
- 
--static int exclude_mem_range(struct crash_mem *mem,
-+static int crash_exclude_mem_range(struct crash_mem *mem,
- 		unsigned long long mstart, unsigned long long mend)
- {
- 	int i, j;
-@@ -293,10 +278,8 @@ static int exclude_mem_range(struct crash_mem *mem,
- 		return 0;
- 
- 	/* Split happened */
--	if (i == CRASH_MAX_RANGES - 1) {
--		pr_err("Too many crash ranges after split\n");
-+	if (i == mem->max_nr_ranges - 1)
- 		return -ENOMEM;
--	}
- 
- 	/* Location where new range should go */
- 	j = i + 1;
-@@ -314,27 +297,20 @@ static int exclude_mem_range(struct crash_mem *mem,
- 
- /*
-  * Look for any unwanted ranges between mstart, mend and remove them. This
-- * might lead to split and split ranges are put in ced->mem.ranges[] array
-+ * might lead to split and split ranges are put in cmem->ranges[] array
-  */
--static int elf_header_exclude_ranges(struct crash_elf_data *ced,
--		unsigned long long mstart, unsigned long long mend)
-+static int elf_header_exclude_ranges(struct crash_mem *cmem)
- {
--	struct crash_mem *cmem = &ced->mem;
- 	int ret = 0;
- 
--	memset(cmem->ranges, 0, sizeof(cmem->ranges));
--
--	cmem->ranges[0].start = mstart;
--	cmem->ranges[0].end = mend;
--	cmem->nr_ranges = 1;
--
- 	/* Exclude crashkernel region */
--	ret = exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
-+	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
- 	if (ret)
- 		return ret;
- 
- 	if (crashk_low_res.end) {
--		ret = exclude_mem_range(cmem, crashk_low_res.start, crashk_low_res.end);
-+		ret = crash_exclude_mem_range(cmem, crashk_low_res.start,
-+							crashk_low_res.end);
- 		if (ret)
- 			return ret;
- 	}
-@@ -344,70 +320,29 @@ static int elf_header_exclude_ranges(struct crash_elf_data *ced,
- 
- static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
- {
--	struct crash_elf_data *ced = arg;
+-static int crash_prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
+-					void **addr, unsigned long *sz)
+-{
 -	Elf64_Ehdr *ehdr;
 -	Elf64_Phdr *phdr;
+-	unsigned long nr_cpus = num_possible_cpus(), nr_phdr, elf_sz;
+-	unsigned char *buf;
+-	unsigned int cpu, i;
+-	unsigned long long notes_addr;
 -	unsigned long mstart, mend;
--	struct kimage *image = ced->image;
--	struct crash_mem *cmem;
--	int ret, i;
-+	struct crash_mem *cmem = arg;
- 
--	ehdr = ced->ehdr;
 -
--	/* Exclude unwanted mem ranges */
--	ret = elf_header_exclude_ranges(ced, res->start, res->end);
--	if (ret)
--		return ret;
+-	/* extra phdr for vmcoreinfo elf note */
+-	nr_phdr = nr_cpus + 1;
+-	nr_phdr += cmem->nr_ranges;
 -
--	/* Go through all the ranges in ced->mem.ranges[] and prepare phdr */
--	cmem = &ced->mem;
+-	/*
+-	 * kexec-tools creates an extra PT_LOAD phdr for kernel text mapping
+-	 * area on x86_64 (ffffffff80000000 - ffffffffa0000000).
+-	 * I think this is required by tools like gdb. So same physical
+-	 * memory will be mapped in two elf headers. One will contain kernel
+-	 * text virtual addresses and other will have __va(physical) addresses.
+-	 */
 -
+-	nr_phdr++;
+-	elf_sz = sizeof(Elf64_Ehdr) + nr_phdr * sizeof(Elf64_Phdr);
+-	elf_sz = ALIGN(elf_sz, ELF_CORE_HEADER_ALIGN);
+-
+-	buf = vzalloc(elf_sz);
+-	if (!buf)
+-		return -ENOMEM;
+-
+-	ehdr = (Elf64_Ehdr *)buf;
+-	phdr = (Elf64_Phdr *)(ehdr + 1);
+-	memcpy(ehdr->e_ident, ELFMAG, SELFMAG);
+-	ehdr->e_ident[EI_CLASS] = ELFCLASS64;
+-	ehdr->e_ident[EI_DATA] = ELFDATA2LSB;
+-	ehdr->e_ident[EI_VERSION] = EV_CURRENT;
+-	ehdr->e_ident[EI_OSABI] = ELF_OSABI;
+-	memset(ehdr->e_ident + EI_PAD, 0, EI_NIDENT - EI_PAD);
+-	ehdr->e_type = ET_CORE;
+-	ehdr->e_machine = ELF_ARCH;
+-	ehdr->e_version = EV_CURRENT;
+-	ehdr->e_phoff = sizeof(Elf64_Ehdr);
+-	ehdr->e_ehsize = sizeof(Elf64_Ehdr);
+-	ehdr->e_phentsize = sizeof(Elf64_Phdr);
+-
+-	/* Prepare one phdr of type PT_NOTE for each present cpu */
+-	for_each_present_cpu(cpu) {
+-		phdr->p_type = PT_NOTE;
+-		notes_addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpu));
+-		phdr->p_offset = phdr->p_paddr = notes_addr;
+-		phdr->p_filesz = phdr->p_memsz = sizeof(note_buf_t);
+-		(ehdr->e_phnum)++;
+-		phdr++;
+-	}
+-
+-	/* Prepare one PT_NOTE header for vmcoreinfo */
+-	phdr->p_type = PT_NOTE;
+-	phdr->p_offset = phdr->p_paddr = paddr_vmcoreinfo_note();
+-	phdr->p_filesz = phdr->p_memsz = VMCOREINFO_NOTE_SIZE;
+-	(ehdr->e_phnum)++;
+-	phdr++;
+-
+-	/* Prepare PT_LOAD type program header for kernel text region */
+-	if (kernel_map) {
+-		phdr->p_type = PT_LOAD;
+-		phdr->p_flags = PF_R|PF_W|PF_X;
+-		phdr->p_vaddr = (Elf64_Addr)_text;
+-		phdr->p_filesz = phdr->p_memsz = _end - _text;
+-		phdr->p_offset = phdr->p_paddr = __pa_symbol(_text);
+-		ehdr->e_phnum++;
+-		phdr++;
+-	}
+-
+-	/* Go through all the ranges in cmem->ranges[] and prepare phdr */
 -	for (i = 0; i < cmem->nr_ranges; i++) {
 -		mstart = cmem->ranges[i].start;
 -		mend = cmem->ranges[i].end;
 -
--		phdr = ced->bufp;
--		ced->bufp += sizeof(Elf64_Phdr);
--
 -		phdr->p_type = PT_LOAD;
 -		phdr->p_flags = PF_R|PF_W|PF_X;
 -		phdr->p_offset  = mstart;
--
--		/*
--		 * If a range matches backup region, adjust offset to backup
--		 * segment.
--		 */
--		if (mstart == image->arch.backup_src_start &&
--		    (mend - mstart + 1) == image->arch.backup_src_sz)
--			phdr->p_offset = image->arch.backup_load_addr;
 -
 -		phdr->p_paddr = mstart;
 -		phdr->p_vaddr = (unsigned long long) __va(mstart);
 -		phdr->p_filesz = phdr->p_memsz = mend - mstart + 1;
 -		phdr->p_align = 0;
 -		ehdr->e_phnum++;
+-		phdr++;
 -		pr_debug("Crash PT_LOAD elf header. phdr=%p vaddr=0x%llx, paddr=0x%llx, sz=0x%llx e_phnum=%d p_offset=0x%llx\n",
 -			phdr, phdr->p_vaddr, phdr->p_paddr, phdr->p_filesz,
 -			ehdr->e_phnum, phdr->p_offset);
 -	}
-+	cmem->ranges[cmem->nr_ranges].start = res->start;
-+	cmem->ranges[cmem->nr_ranges].end = res->end;
-+	cmem->nr_ranges++;
+-
+-	*addr = buf;
+-	*sz = elf_sz;
+-	return 0;
+-}
+-
+ /* Prepare elf headers. Return addr and size */
+ static int prepare_elf_headers(struct kimage *image, void **addr,
+ 					unsigned long *sz)
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 325980537125..0b10c7f7cca8 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -163,6 +163,25 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+ 			       int (*func)(struct resource *, void *));
+ extern int kexec_add_buffer(struct kexec_buf *kbuf);
+ int kexec_locate_mem_hole(struct kexec_buf *kbuf);
++
++/* Alignment required for elf header segment */
++#define ELF_CORE_HEADER_ALIGN   4096
++
++struct crash_mem_range {
++	u64 start, end;
++};
++
++struct crash_mem {
++	unsigned int max_nr_ranges;
++	unsigned int nr_ranges;
++	struct crash_mem_range ranges[0];
++};
++
++extern int crash_exclude_mem_range(struct crash_mem *mem,
++				   unsigned long long mstart,
++				   unsigned long long mend);
++extern int crash_prepare_elf64_headers(struct crash_mem *mem, int kernel_map,
++				       void **addr, unsigned long *sz);
+ #endif /* CONFIG_KEXEC_FILE */
  
--	return ret;
-+	return 0;
+ struct kimage {
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index a6d14a768b3e..3f506774f32e 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -22,6 +22,11 @@
+ #include <linux/ima.h>
+ #include <crypto/hash.h>
+ #include <crypto/sha.h>
++#include <linux/elf.h>
++#include <linux/elfcore.h>
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <linux/slab.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmalloc.h>
+ #include "kexec_internal.h"
+@@ -1077,3 +1082,173 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
+ 	return 0;
  }
- 
--static int prepare_elf64_headers(struct crash_elf_data *ced,
--		void **addr, unsigned long *sz)
-+static int crash_prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
-+					void **addr, unsigned long *sz)
- {
- 	Elf64_Ehdr *ehdr;
- 	Elf64_Phdr *phdr;
- 	unsigned long nr_cpus = num_possible_cpus(), nr_phdr, elf_sz;
--	unsigned char *buf, *bufp;
--	unsigned int cpu;
+ #endif /* CONFIG_ARCH_HAS_KEXEC_PURGATORY */
++
++int crash_exclude_mem_range(struct crash_mem *mem,
++			    unsigned long long mstart, unsigned long long mend)
++{
++	int i, j;
++	unsigned long long start, end;
++	struct crash_mem_range temp_range = {0, 0};
++
++	for (i = 0; i < mem->nr_ranges; i++) {
++		start = mem->ranges[i].start;
++		end = mem->ranges[i].end;
++
++		if (mstart > end || mend < start)
++			continue;
++
++		/* Truncate any area outside of range */
++		if (mstart < start)
++			mstart = start;
++		if (mend > end)
++			mend = end;
++
++		/* Found completely overlapping range */
++		if (mstart == start && mend == end) {
++			mem->ranges[i].start = 0;
++			mem->ranges[i].end = 0;
++			if (i < mem->nr_ranges - 1) {
++				/* Shift rest of the ranges to left */
++				for (j = i; j < mem->nr_ranges - 1; j++) {
++					mem->ranges[j].start =
++						mem->ranges[j+1].start;
++					mem->ranges[j].end =
++							mem->ranges[j+1].end;
++				}
++			}
++			mem->nr_ranges--;
++			return 0;
++		}
++
++		if (mstart > start && mend < end) {
++			/* Split original range */
++			mem->ranges[i].end = mstart - 1;
++			temp_range.start = mend + 1;
++			temp_range.end = end;
++		} else if (mstart != start)
++			mem->ranges[i].end = mstart - 1;
++		else
++			mem->ranges[i].start = mend + 1;
++		break;
++	}
++
++	/* If a split happened, add the split to array */
++	if (!temp_range.end)
++		return 0;
++
++	/* Split happened */
++	if (i == mem->max_nr_ranges - 1)
++		return -ENOMEM;
++
++	/* Location where new range should go */
++	j = i + 1;
++	if (j < mem->nr_ranges) {
++		/* Move over all ranges one slot towards the end */
++		for (i = mem->nr_ranges - 1; i >= j; i--)
++			mem->ranges[i + 1] = mem->ranges[i];
++	}
++
++	mem->ranges[j].start = temp_range.start;
++	mem->ranges[j].end = temp_range.end;
++	mem->nr_ranges++;
++	return 0;
++}
++
++int crash_prepare_elf64_headers(struct crash_mem *mem, int kernel_map,
++			  void **addr, unsigned long *sz)
++{
++	Elf64_Ehdr *ehdr;
++	Elf64_Phdr *phdr;
++	unsigned long nr_cpus = num_possible_cpus(), nr_phdr, elf_sz;
 +	unsigned char *buf;
 +	unsigned int cpu, i;
- 	unsigned long long notes_addr;
--	int ret;
++	unsigned long long notes_addr;
 +	unsigned long mstart, mend;
- 
- 	/* extra phdr for vmcoreinfo elf note */
- 	nr_phdr = nr_cpus + 1;
--	nr_phdr += ced->max_nr_ranges;
-+	nr_phdr += cmem->nr_ranges;
- 
- 	/*
- 	 * kexec-tools creates an extra PT_LOAD phdr for kernel text mapping
-@@ -425,9 +360,8 @@ static int prepare_elf64_headers(struct crash_elf_data *ced,
- 	if (!buf)
- 		return -ENOMEM;
- 
--	bufp = buf;
--	ehdr = (Elf64_Ehdr *)bufp;
--	bufp += sizeof(Elf64_Ehdr);
++
++	/* extra phdr for vmcoreinfo elf note */
++	nr_phdr = nr_cpus + 1;
++	nr_phdr += mem->nr_ranges;
++
++	/*
++	 * kexec-tools creates an extra PT_LOAD phdr for kernel text mapping
++	 * area (for example, ffffffff80000000 - ffffffffa0000000 on x86_64).
++	 * I think this is required by tools like gdb. So same physical
++	 * memory will be mapped in two elf headers. One will contain kernel
++	 * text virtual addresses and other will have __va(physical) addresses.
++	 */
++
++	nr_phdr++;
++	elf_sz = sizeof(Elf64_Ehdr) + nr_phdr * sizeof(Elf64_Phdr);
++	elf_sz = ALIGN(elf_sz, ELF_CORE_HEADER_ALIGN);
++
++	buf = vzalloc(elf_sz);
++	if (!buf)
++		return -ENOMEM;
++
 +	ehdr = (Elf64_Ehdr *)buf;
 +	phdr = (Elf64_Phdr *)(ehdr + 1);
- 	memcpy(ehdr->e_ident, ELFMAG, SELFMAG);
- 	ehdr->e_ident[EI_CLASS] = ELFCLASS64;
- 	ehdr->e_ident[EI_DATA] = ELFDATA2LSB;
-@@ -443,42 +377,51 @@ static int prepare_elf64_headers(struct crash_elf_data *ced,
- 
- 	/* Prepare one phdr of type PT_NOTE for each present cpu */
- 	for_each_present_cpu(cpu) {
--		phdr = (Elf64_Phdr *)bufp;
--		bufp += sizeof(Elf64_Phdr);
- 		phdr->p_type = PT_NOTE;
- 		notes_addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpu));
- 		phdr->p_offset = phdr->p_paddr = notes_addr;
- 		phdr->p_filesz = phdr->p_memsz = sizeof(note_buf_t);
- 		(ehdr->e_phnum)++;
++	memcpy(ehdr->e_ident, ELFMAG, SELFMAG);
++	ehdr->e_ident[EI_CLASS] = ELFCLASS64;
++	ehdr->e_ident[EI_DATA] = ELFDATA2LSB;
++	ehdr->e_ident[EI_VERSION] = EV_CURRENT;
++	ehdr->e_ident[EI_OSABI] = ELF_OSABI;
++	memset(ehdr->e_ident + EI_PAD, 0, EI_NIDENT - EI_PAD);
++	ehdr->e_type = ET_CORE;
++	ehdr->e_machine = ELF_ARCH;
++	ehdr->e_version = EV_CURRENT;
++	ehdr->e_phoff = sizeof(Elf64_Ehdr);
++	ehdr->e_ehsize = sizeof(Elf64_Ehdr);
++	ehdr->e_phentsize = sizeof(Elf64_Phdr);
++
++	/* Prepare one phdr of type PT_NOTE for each present cpu */
++	for_each_present_cpu(cpu) {
++		phdr->p_type = PT_NOTE;
++		notes_addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpu));
++		phdr->p_offset = phdr->p_paddr = notes_addr;
++		phdr->p_filesz = phdr->p_memsz = sizeof(note_buf_t);
++		(ehdr->e_phnum)++;
 +		phdr++;
- 	}
- 
- 	/* Prepare one PT_NOTE header for vmcoreinfo */
--	phdr = (Elf64_Phdr *)bufp;
--	bufp += sizeof(Elf64_Phdr);
- 	phdr->p_type = PT_NOTE;
- 	phdr->p_offset = phdr->p_paddr = paddr_vmcoreinfo_note();
- 	phdr->p_filesz = phdr->p_memsz = VMCOREINFO_NOTE_SIZE;
- 	(ehdr->e_phnum)++;
++	}
++
++	/* Prepare one PT_NOTE header for vmcoreinfo */
++	phdr->p_type = PT_NOTE;
++	phdr->p_offset = phdr->p_paddr = paddr_vmcoreinfo_note();
++	phdr->p_filesz = phdr->p_memsz = VMCOREINFO_NOTE_SIZE;
++	(ehdr->e_phnum)++;
 +	phdr++;
- 
--#ifdef CONFIG_X86_64
- 	/* Prepare PT_LOAD type program header for kernel text region */
--	phdr = (Elf64_Phdr *)bufp;
--	bufp += sizeof(Elf64_Phdr);
--	phdr->p_type = PT_LOAD;
--	phdr->p_flags = PF_R|PF_W|PF_X;
--	phdr->p_vaddr = (Elf64_Addr)_text;
--	phdr->p_filesz = phdr->p_memsz = _end - _text;
--	phdr->p_offset = phdr->p_paddr = __pa_symbol(_text);
--	(ehdr->e_phnum)++;
--#endif
++
++	/* Prepare PT_LOAD type program header for kernel text region */
 +	if (kernel_map) {
 +		phdr->p_type = PT_LOAD;
 +		phdr->p_flags = PF_R|PF_W|PF_X;
@@ -310,18 +444,11 @@ index 10e74d4778a1..5c19cfbf3b85 100644
 +		ehdr->e_phnum++;
 +		phdr++;
 +	}
- 
--	/* Prepare PT_LOAD headers for system ram chunks. */
--	ced->ehdr = ehdr;
--	ced->bufp = bufp;
--	ret = walk_system_ram_res(0, -1, ced,
--			prepare_elf64_ram_headers_callback);
--	if (ret < 0)
--		return ret;
-+	/* Go through all the ranges in cmem->ranges[] and prepare phdr */
-+	for (i = 0; i < cmem->nr_ranges; i++) {
-+		mstart = cmem->ranges[i].start;
-+		mend = cmem->ranges[i].end;
++
++	/* Go through all the ranges in mem->ranges[] and prepare phdr */
++	for (i = 0; i < mem->nr_ranges; i++) {
++		mstart = mem->ranges[i].start;
++		mend = mem->ranges[i].end;
 +
 +		phdr->p_type = PT_LOAD;
 +		phdr->p_flags = PF_R|PF_W|PF_X;
@@ -337,79 +464,10 @@ index 10e74d4778a1..5c19cfbf3b85 100644
 +			phdr, phdr->p_vaddr, phdr->p_paddr, phdr->p_filesz,
 +			ehdr->e_phnum, phdr->p_offset);
 +	}
- 
- 	*addr = buf;
- 	*sz = elf_sz;
-@@ -489,18 +432,46 @@ static int prepare_elf64_headers(struct crash_elf_data *ced,
- static int prepare_elf_headers(struct kimage *image, void **addr,
- 					unsigned long *sz)
- {
--	struct crash_elf_data *ced;
--	int ret;
-+	struct crash_mem *cmem;
-+	Elf64_Ehdr *ehdr;
-+	Elf64_Phdr *phdr;
-+	int ret, i;
- 
--	ced = kzalloc(sizeof(*ced), GFP_KERNEL);
--	if (!ced)
-+	cmem = fill_up_crash_elf_data();
-+	if (!cmem)
- 		return -ENOMEM;
- 
--	fill_up_crash_elf_data(ced, image);
-+	ret = walk_system_ram_res(0, -1, cmem,
-+				prepare_elf64_ram_headers_callback);
-+	if (ret)
-+		goto out;
 +
-+	/* Exclude unwanted mem ranges */
-+	ret = elf_header_exclude_ranges(cmem);
-+	if (ret)
-+		goto out;
- 
- 	/* By default prepare 64bit headers */
--	ret =  prepare_elf64_headers(ced, addr, sz);
--	kfree(ced);
-+	ret =  crash_prepare_elf64_headers(cmem,
-+				(int)IS_ENABLED(CONFIG_X86_64), addr, sz);
-+	if (ret)
-+		goto out;
-+
-+	/*
-+	 * If a range matches backup region, adjust offset to backup
-+	 * segment.
-+	 */
-+	ehdr = (Elf64_Ehdr *)*addr;
-+	phdr = (Elf64_Phdr *)(ehdr + 1);
-+	for (i = 0; i < ehdr->e_phnum; phdr++, i++)
-+		if (phdr->p_type == PT_LOAD &&
-+				phdr->p_paddr == image->arch.backup_src_start &&
-+				phdr->p_memsz == image->arch.backup_src_sz) {
-+			phdr->p_offset = image->arch.backup_load_addr;
-+			break;
-+		}
-+out:
-+	vfree(cmem);
- 	return ret;
- }
- 
-@@ -546,14 +517,14 @@ static int memmap_exclude_ranges(struct kimage *image, struct crash_mem *cmem,
- 	/* Exclude Backup region */
- 	start = image->arch.backup_load_addr;
- 	end = start + image->arch.backup_src_sz - 1;
--	ret = exclude_mem_range(cmem, start, end);
-+	ret = crash_exclude_mem_range(cmem, start, end);
- 	if (ret)
- 		return ret;
- 
- 	/* Exclude elf header region */
- 	start = image->arch.elf_load_addr;
- 	end = start + image->arch.elf_headers_sz - 1;
--	return exclude_mem_range(cmem, start, end);
-+	return crash_exclude_mem_range(cmem, start, end);
- }
- 
- /* Prepare memory map for crash dump kernel */
++	*addr = buf;
++	*sz = elf_sz;
++	return 0;
++}
 -- 
 2.16.2
