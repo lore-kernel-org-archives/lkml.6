@@ -1,179 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeBVGHV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 01:07:21 -0500
-Received: from mail-io0-f169.google.com ([209.85.223.169]:46188 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBVGHS (ORCPT
+        id S1752491AbeBVGJb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 01:09:31 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33313 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeBVGJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 01:07:18 -0500
-X-Google-Smtp-Source: AG47ELvbNnxuhaIkNjrDt0hGZKIGUjCmxcg82dKbRu22OC+MvuwZSHyEwGojc5AzV3hd1ifXqw10Vg==
-Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <d6b14861-68c9-eacb-469a-219745badb9f@gmail.com>
-Date: Wed, 21 Feb 2018 22:07:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Feb 2018 01:09:30 -0500
+X-Google-Smtp-Source: AH8x225YJAMh9n+KbIwX+XacfDEr16r2DDzHm8VvBqtA0940hJsBDniAP6QzDrIEX8FmpQfX8Jeqng==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        daniel.vetter@intel.com
+Cc: gustavo@padovan.org, airlied@linux.ie, seanpaul@chromium.org,
+        andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v1] drm/simple_kms_helper: Fix NULL pointer dereference with no active CRTC
+Date: Thu, 22 Feb 2018 08:09:19 +0200
+Message-Id: <1519279759-7803-1-git-send-email-andr2000@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20/18 15:10, Laurent Pinchart wrote:
-> Hello,
-> 
-> This patch series addresses a design mistake that dates back from the initial
-> DU support. Support for the LVDS encoders, which are IP cores separate from
-> the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
-> described through a single DT node.
-> 
-> To fix the, patches 01/16 and 02/16 define new DT bindings for the LVDS
-> encoders, and deprecate their description inside the DU bindings. To retain
-> backward compatibility with existing DT, patches 03/16 to 08/16 then patch the
-> device tree at runtime to convert the legacy bindings to the new ones.
-> 
-> With the DT side addressed, patch 09/16 converts the LVDS support code to a
-> separate bridge driver. Patches 11/16 to 16/16 then update all the device tree
-> sources to the new DU and LVDS encoders bindings.
-> 
-> I decided to go for live DT patching in patch 08/16 because implementing
-> support for both the legacy and new bindings in the driver would have been
-> very intrusive, and prevented further cleanups. This version relies more
-> heavily on overlays to avoid touching the internals of the OF core compared to
-> v2, even if manual fixes to the device tree are still needed.
-> 
-> Compared to v3, this series uses the OF changeset API to update properties
-> instead of accessing the internals of the property structure. This removes the
-> local implementation of functions to look up nodes by path and update
-> properties. In order to do this, I pulled in Pantelis' patch series titled
-> "[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
-> rebased it while taking two small review comments into account.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Wait a minute!  Why are you putting a patch set to modify core devicetree
-in the middle of a driver series.  Please pull it out to a separate series.
+It is possible that drm_simple_kms_plane_atomic_check called
+with no CRTC set, e.g. when user-space application sets CRTC_ID/FB_ID
+to 0 before doing any actual drawing. This leads to NULL pointer
+dereference because in this case new CRTC state is NULL and must be
+checked before accessing.
 
-I'll try to look at the patches, as they are in this series, sometime
-tomorrow.  I have a vague memory of unresolved issues from the last
-time they were proposed.
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Thanks,
+---
+Changes since initial:
+- re-worked checks for null CRTC as suggested by Daniel Vetter
+---
+ drivers/gpu/drm/drm_simple_kms_helper.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Frank
-
-
-> 
-> Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
-> now a dependency, I'd need you to merge them early (ideally on top of
-> v4.16-rc1) and provide a stable branch, or get your ack to merge them through
-> Dave's tree if they don't conflict with what you have and will queue for
-> v4.17.
-> 
-> This version also drops the small fix to the Porter board device tree that has
-> been queued for v4.17 already.
-> 
-> Compared to v2, the biggest change is in patch 03/16. Following Rob's and
-> Frank's reviews it was clear that modifying the unflattened DT structure of
-> the overlay before applying it wasn't popular. I have thus decided to use one
-> overlay source per SoC to move as much of the DT changes to the overlay as
-> possible, and only perform manual modifications (that are still needed as some
-> of the information is board-specific) on the system DT after applying the
-> overlay. As a result the overlay is parsed and applied without being modified.
-> 
-> Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
-> and incorporate review feedback as described by the changelogs of individual
-> patches.
-> 
-> 
-> Laurent Pinchart (11):
->   dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
->   dt-bindings: display: renesas: Deprecate LVDS support in the DU
->     bindings
->   drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
->   drm: rcar-du: Convert LVDS encoder code to bridge driver
->   ARM: dts: r8a7790: Convert to new LVDS DT bindings
->   ARM: dts: r8a7791: Convert to new LVDS DT bindings
->   ARM: dts: r8a7792: Convert to new DU DT bindings
->   ARM: dts: r8a7793: Convert to new LVDS DT bindings
->   ARM: dts: r8a7794: Convert to new DU DT bindings
->   arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
->   arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
-> 
-> Pantelis Antoniou (5):
->   of: dynamic: Add __of_node_dupv()
->   of: changesets: Introduce changeset helper methods
->   of: changeset: Add of_changeset_node_move method
->   of: unittest: changeset helpers
->   i2c: demux: Use changeset helpers for clarity
-> 
->  .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
->  .../devicetree/bindings/display/renesas,du.txt     |  31 +-
->  MAINTAINERS                                        |   1 +
->  arch/arm/boot/dts/r8a7790-lager.dts                |  22 +-
->  arch/arm/boot/dts/r8a7790.dtsi                     |  64 ++-
->  arch/arm/boot/dts/r8a7791-koelsch.dts              |  10 +-
->  arch/arm/boot/dts/r8a7791-porter.dts               |  16 +-
->  arch/arm/boot/dts/r8a7791.dtsi                     |  36 +-
->  arch/arm/boot/dts/r8a7792.dtsi                     |   1 -
->  arch/arm/boot/dts/r8a7793-gose.dts                 |  10 +-
->  arch/arm/boot/dts/r8a7793.dtsi                     |  37 +-
->  arch/arm/boot/dts/r8a7794.dtsi                     |   1 -
->  .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   3 +-
->  .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  36 +-
->  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  36 +-
->  drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
->  drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
->  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
->  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
->  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
->  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
->  drivers/gpu/drm/rcar-du/rcar_du_of.c               | 307 ++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  81 ++++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  55 +++
->  drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
->  drivers/i2c/muxes/i2c-demux-pinctrl.c              |  12 +-
->  drivers/of/dynamic.c                               | 317 ++++++++++++-
->  drivers/of/unittest.c                              |  54 +++
->  include/linux/of.h                                 | 337 +++++++++++++
->  43 files changed, 2199 insertions(+), 710 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
-> 
+diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
+index 9ca8a4a59b74..4a1dbd88b1ec 100644
+--- a/drivers/gpu/drm/drm_simple_kms_helper.c
++++ b/drivers/gpu/drm/drm_simple_kms_helper.c
+@@ -121,12 +121,6 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
+ 	pipe = container_of(plane, struct drm_simple_display_pipe, plane);
+ 	crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
+ 						   &pipe->crtc);
+-	if (!crtc_state->enable)
+-		return 0; /* nothing to check when disabling or disabled */
+-
+-	if (crtc_state->enable)
+-		drm_mode_get_hv_timing(&crtc_state->mode,
+-				       &clip.x2, &clip.y2);
+ 
+ 	ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
+ 						  &clip,
+@@ -137,7 +131,9 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
+ 		return ret;
+ 
+ 	if (!plane_state->visible)
+-		return -EINVAL;
++		return 0;
++
++	drm_mode_get_hv_timing(&crtc_state->mode, &clip.x2, &clip.y2);
+ 
+ 	if (!pipe->funcs || !pipe->funcs->check)
+ 		return 0;
+-- 
+2.7.4
