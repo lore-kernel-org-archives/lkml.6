@@ -1,139 +1,337 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753280AbeBVJwP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:52:15 -0500
-Received: from mail-cys01nam02on0067.outbound.protection.outlook.com ([104.47.37.67]:41696
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753101AbeBVJwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:52:11 -0500
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: Re: [PATCH 08/20] lightnvm: complete geo structure with maxoc*
-Thread-Topic: [PATCH 08/20] lightnvm: complete geo structure with maxoc*
-Thread-Index: AQHTqvYt5cpllOgM1U67HfLhiBYBOqOwDE2AgAACtoCAAB7QAIAAAdgA
-Date: Thu, 22 Feb 2018 09:52:09 +0000
-Message-ID: <BA0987F5-AEA5-43BD-A065-3BF72E9A8676@cnexlabs.com>
-References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
- <1519205218-26994-9-git-send-email-javier@cnexlabs.com>
- <5e2948ed-19a8-7bd5-6c50-df37a1454d16@lightnvm.io>
- <F70FB36A-967C-4B37-8037-C550249A0C3B@cnexlabs.com>
- <ec5d6c53-c3a1-7d66-9db7-407a519f0feb@lightnvm.io>
-In-Reply-To: <ec5d6c53-c3a1-7d66-9db7-407a519f0feb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com;
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR06MB3474;7:DwgHwuF8I7+fM2XzOMHzXnin2/PQfx1aV+cyGj2F61dYwrL3pozlSBL5IfvCo6GKKKYwPv03AQ0NTbjTp74lpq0Zo4N0hmtK8I14AI9Qb5PToAzIcCTWVJ8Rf3qLLwDXisQ/CYzCSci6S3JcweovHd4j2lzdLrjvdAa4DYY85Hl9C0q1iyAWE9Nnu7bYP7SHRtEYk/KJMxIa5nz7cYSMCzrimHisM4mBtYILGNukPryowjQbIOWlG/TpFl3uOPbj
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 99451bc8-8169-47ba-1264-08d579d9f0bd
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(49563074)(7193020);SRVR:BN6PR06MB3474;
-x-ms-traffictypediagnostic: BN6PR06MB3474:
-x-microsoft-antispam-prvs: <BN6PR06MB34740BAB6BE79EED0D9EF67DBACD0@BN6PR06MB3474.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001077)(102415395)(6040501)(2401047)(5005006)(8121501046)(3231101)(944501161)(3002001)(10201501046)(93006095)(93001095)(6041288)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR06MB3474;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB3474;
-x-forefront-prvs: 059185FE08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(346002)(366004)(39840400004)(199004)(189003)(6116002)(186003)(3846002)(53546011)(36756003)(3660700001)(26005)(6506007)(59450400001)(86362001)(478600001)(102836004)(5660300001)(53936002)(97736004)(81166006)(4326008)(99286004)(316002)(25786009)(76176011)(54906003)(305945005)(68736007)(81156014)(3280700002)(7736002)(105586002)(33656002)(77096007)(8676002)(106356001)(93886005)(229853002)(82746002)(2906002)(66066001)(99936001)(8936002)(2950100002)(2900100001)(6916009)(83716003)(6246003)(5890100001)(6436002)(6486002)(6512007)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB3474;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: lpneSnqwuo+DQTCfXKao6hmC9xPKDvum7yHPAkdeXLn1wk3J567yJ12Hor5CVuLlQuF58U848ageWFsT69xaUV4YpN6gfgMaPyfqRxQCg8ranr1t+XaPAL9VjLUop4vmdnjVddyTCrc3IlwFrBHDMIN5MhJvZ3RedbA9qzX7JHY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_CBF59D61-849B-47ED-B402-37E9C9C2565D";
-        protocol="application/pgp-signature"; micalg=pgp-sha512
+        id S1753365AbeBVJwV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:52:21 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44911 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753101AbeBVJwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:52:17 -0500
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH] media: stm32-dcmi: add JPEG support
+Date: Thu, 22 Feb 2018 10:51:50 +0100
+Message-ID: <1519293110-20059-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99451bc8-8169-47ba-1264-08d579d9f0bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2018 09:52:09.5486
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB3474
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_CBF59D61-849B-47ED-B402-37E9C9C2565D
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+Add DCMI JPEG support.
 
-> On 22 Feb 2018, at 10.45, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 02/22/2018 08:55 AM, Javier Gonzalez wrote:
->>> On 22 Feb 2018, at 08.45, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
->>>=20
->>> On 02/21/2018 10:26 AM, Javier Gonz=C3=A1lez wrote:
->>>> Complete the generic geometry structure with the maxoc and maxocpu
->>>> felds, present in the 2.0 spec.
->>>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->>>> ---
->>>>  drivers/nvme/host/lightnvm.c | 4 ++++
->>>>  include/linux/lightnvm.h     | 2 ++
->>>>  2 files changed, 6 insertions(+)
->>>> diff --git a/drivers/nvme/host/lightnvm.c =
-b/drivers/nvme/host/lightnvm.c
->>>> index cca32da05316..9c1f8225c4e1 100644
->>>> --- a/drivers/nvme/host/lightnvm.c
->>>> +++ b/drivers/nvme/host/lightnvm.c
->>>> @@ -318,6 +318,8 @@ static int nvme_nvm_setup_12(struct =
-nvme_nvm_id12 *id,
->>>>  	dev_geo->c.ws_min =3D sec_per_pg;
->>>>  	dev_geo->c.ws_opt =3D sec_per_pg;
->>>>  	dev_geo->c.mw_cunits =3D 8;		/* default to MLC safe =
-values */
->>>> +	dev_geo->c.maxoc =3D dev_geo->all_luns;	/* default to 1 chunk =
-per LUN */
->>>> +	dev_geo->c.maxocpu =3D 1;			/* default to 1 =
-chunk per LUN */
->>>=20
->>> One can't assume that it is 1 open chunk per lun. If you need this =
-for specific hardware, make a quirk for it.
->> Which default you want for 1.2 if not specified then? I use 1 because =
-it
->> has been the implicit default until now.
->=20
-> INT_MAX, since it then allows the maximum of open chunks. It cannot be =
-assumed that other 1.2 devices is limited to a single open chunk.
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 195 +++++++++++++++++++++++-------
+ 1 file changed, 148 insertions(+), 47 deletions(-)
 
-So you want the default to be that all blocks on the device can be
-opened at the same time. Interesting... I guess that such a SSD will
-have a AA battery attached to it, but fine by me if that's how you want
-it.
-
-Assuming this, can we instead set it to the reported number of chunks,
-since this is the hard limit anyway.
-
-Javier
-
---Apple-Mail=_CBF59D61-849B-47ED-B402-37E9C9C2565D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlqOksYACgkQIX4xUKFR
-nnQ8YBAA35N6XX/ZmZpJaUmD/6aXZaApD1nlJYznVb0Lw0MnCzF9rkDOLT05kiDH
-t4Kx8m7H7Cll4ICzOVDbR2LDRaSgxnHawtUpnl9y6+OfUXlgjubU1zCAVydf++Yq
-cP7No0gIYgYlpe34cJ521T7tr/5u+0SCXS6vIQkBdzEaYocCGjPkPDnvur+Oy9aB
-Whr2Mi6NEBKTSjexd1OL9k6e846awNyNJgq7ffX7NlG5Jjo9bjTbD/MZEBcS6mdn
-pVgbSIEy2PPl+KflXefJYYStWLT42GfmFPWRnXqdh2ajndWbzxtmfs1rklvQeM7E
-c8Bm0PniARxIEwIvHdc6j9rIfYEXpcekfvSPS3SDCfV9T72xj87MYeBuvGWZd90n
-tFOpWjP2EYck6imIBLe3yFw5XnuqbgvkxNhyP2xccMP3YQ7c3YuqARQD7mYMf9Sw
-VhzSZzEWPUQCM8mEYa4qHKlRvoOWrg5s0Lq7wrQ/0Wjw0ngOqoIz+mwOTxL+ZpNg
-DxA5UXbKOXEkp2FwTHfcnGqGYBdUwNC0pM2Ol9QzjYrDWqp/Psn6pZvetG0oU68u
-g78EDzRus5zIyt0Ljf3Iz86jmo83YALlee+ZNSOdnpqPo05IRa+HVsnzIddFfjYQ
-QO0ccPcy+LhbpSIY75ymUriibhQeRnklQPvT+fLkcyYOtN6ql5I=
-=naPr
------END PGP SIGNATURE-----
-
---Apple-Mail=_CBF59D61-849B-47ED-B402-37E9C9C2565D--
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 269e963..7eaaf7c 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -93,6 +93,11 @@ enum state {
+ #define MIN_HEIGHT	16U
+ #define MAX_HEIGHT	2048U
+ 
++#define MIN_JPEG_WIDTH	16U
++#define MAX_JPEG_WIDTH	2592U
++#define MIN_JPEG_HEIGHT	16U
++#define MAX_JPEG_HEIGHT	2592U
++
+ #define TIMEOUT_MS	1000
+ 
+ struct dcmi_graph_entity {
+@@ -191,14 +196,67 @@ static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
+ 
+ static int dcmi_start_capture(struct stm32_dcmi *dcmi);
+ 
++static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
++			     struct dcmi_buf *buf,
++			     size_t bytesused,
++			     int err)
++{
++	struct vb2_v4l2_buffer *vbuf;
++
++	if (!buf)
++		return;
++
++	vbuf = &buf->vb;
++
++	vbuf->sequence = dcmi->sequence++;
++	vbuf->field = V4L2_FIELD_NONE;
++	vbuf->vb2_buf.timestamp = ktime_get_ns();
++	vb2_set_plane_payload(&vbuf->vb2_buf, 0, bytesused);
++	vb2_buffer_done(&vbuf->vb2_buf,
++			err ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
++	dev_dbg(dcmi->dev, "buffer[%d] done seq=%d, bytesused=%zu\n",
++		vbuf->vb2_buf.index, vbuf->sequence, bytesused);
++
++	dcmi->buffers_count++;
++	dcmi->active = NULL;
++}
++
++static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
++{
++	spin_lock_irq(&dcmi->irqlock);
++
++	if (dcmi->state != RUNNING) {
++		spin_unlock_irq(&dcmi->irqlock);
++		return -EINVAL;
++	}
++
++	/* Restart a new DMA transfer with next buffer */
++	if (list_empty(&dcmi->buffers)) {
++		dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
++			__func__);
++		dcmi->errors_count++;
++		dcmi->active = NULL;
++
++		spin_unlock_irq(&dcmi->irqlock);
++		return -EINVAL;
++	}
++
++	dcmi->active = list_entry(dcmi->buffers.next,
++				  struct dcmi_buf, list);
++	list_del_init(&dcmi->active->list);
++
++	spin_unlock_irq(&dcmi->irqlock);
++
++	return dcmi_start_capture(dcmi);
++}
++
+ static void dcmi_dma_callback(void *param)
+ {
+ 	struct stm32_dcmi *dcmi = (struct stm32_dcmi *)param;
+ 	struct dma_chan *chan = dcmi->dma_chan;
+ 	struct dma_tx_state state;
+ 	enum dma_status status;
+-
+-	spin_lock_irq(&dcmi->irqlock);
++	struct dcmi_buf *buf = dcmi->active;
+ 
+ 	/* Check DMA status */
+ 	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
+@@ -216,53 +274,18 @@ static void dcmi_dma_callback(void *param)
+ 	case DMA_COMPLETE:
+ 		dev_dbg(dcmi->dev, "%s: Received DMA_COMPLETE\n", __func__);
+ 
+-		if (dcmi->active) {
+-			struct dcmi_buf *buf = dcmi->active;
+-			struct vb2_v4l2_buffer *vbuf = &dcmi->active->vb;
+-
+-			vbuf->sequence = dcmi->sequence++;
+-			vbuf->field = V4L2_FIELD_NONE;
+-			vbuf->vb2_buf.timestamp = ktime_get_ns();
+-			vb2_set_plane_payload(&vbuf->vb2_buf, 0, buf->size);
+-			vb2_buffer_done(&vbuf->vb2_buf, VB2_BUF_STATE_DONE);
+-			dev_dbg(dcmi->dev, "buffer[%d] done seq=%d\n",
+-				vbuf->vb2_buf.index, vbuf->sequence);
+-
+-			dcmi->buffers_count++;
+-			dcmi->active = NULL;
+-		}
+-
+-		/* Restart a new DMA transfer with next buffer */
+-		if (dcmi->state == RUNNING) {
+-			if (list_empty(&dcmi->buffers)) {
+-				dev_err(dcmi->dev, "%s: No more buffer queued, cannot capture buffer\n",
+-					__func__);
+-				dcmi->errors_count++;
+-				dcmi->active = NULL;
+-
+-				spin_unlock_irq(&dcmi->irqlock);
+-				return;
+-			}
+-
+-			dcmi->active = list_entry(dcmi->buffers.next,
+-						  struct dcmi_buf, list);
+-
+-			list_del_init(&dcmi->active->list);
+-
+-			spin_unlock_irq(&dcmi->irqlock);
+-			if (dcmi_start_capture(dcmi))
+-				dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
+-					__func__);
+-			return;
+-		}
++		/* Return buffer to V4L2 */
++		dcmi_buffer_done(dcmi, buf, buf->size, 0);
+ 
++		/* Restart capture */
++		if (dcmi_restart_capture(dcmi))
++			dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
++				__func__);
+ 		break;
+ 	default:
+ 		dev_err(dcmi->dev, "%s: Received unknown status\n", __func__);
+ 		break;
+ 	}
+-
+-	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
+@@ -355,6 +378,52 @@ static void dcmi_set_crop(struct stm32_dcmi *dcmi)
+ 	reg_set(dcmi->regs, DCMI_CR, CR_CROP);
+ }
+ 
++static void dcmi_process_jpeg(struct stm32_dcmi *dcmi)
++{
++	struct dma_tx_state state;
++	enum dma_status status;
++	struct dma_chan *chan = dcmi->dma_chan;
++	struct dcmi_buf *buf = dcmi->active;
++
++	if (!buf)
++		return;
++
++	/*
++	 * Because of variable JPEG buffer size sent by sensor,
++	 * DMA transfer never completes due to transfer size
++	 * never reached.
++	 * In order to ensure that all the JPEG data are transferred
++	 * in active buffer memory, DMA is drained.
++	 * Then DMA tx status gives the amount of data transferred
++	 * to memory, which is then returned to V4L2 through the active
++	 * buffer payload.
++	 */
++
++	/* Drain DMA */
++	dmaengine_synchronize(chan);
++
++	/* Get DMA residue to get JPEG size */
++	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
++	if (status != DMA_ERROR && state.residue < buf->size) {
++		/* Return JPEG buffer to V4L2 with received JPEG buffer size */
++		dcmi_buffer_done(dcmi, buf, buf->size - state.residue, 0);
++	} else {
++		dcmi->errors_count++;
++		dev_err(dcmi->dev, "%s: Cannot get JPEG size from DMA\n",
++			__func__);
++		/* Return JPEG buffer to V4L2 in ERROR state */
++		dcmi_buffer_done(dcmi, buf, 0, -EIO);
++	}
++
++	/* Abort DMA operation */
++	dmaengine_terminate_all(dcmi->dma_chan);
++
++	/* Restart capture */
++	if (dcmi_restart_capture(dcmi))
++		dev_err(dcmi->dev, "%s: Cannot restart capture on JPEG received\n",
++			__func__);
++}
++
+ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ {
+ 	struct stm32_dcmi *dcmi = arg;
+@@ -379,6 +448,14 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 			dcmi->overrun_count++;
+ 	}
+ 
++	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG &&
++	    dcmi->misr & IT_FRAME) {
++		/* JPEG received */
++		spin_unlock_irq(&dcmi->irqlock);
++		dcmi_process_jpeg(dcmi);
++		return IRQ_HANDLED;
++	}
++
+ 	spin_unlock_irq(&dcmi->irqlock);
+ 	return IRQ_HANDLED;
+ }
+@@ -552,6 +629,10 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	if (dcmi->do_crop)
+ 		dcmi_set_crop(dcmi);
+ 
++	/* Enable jpeg capture */
++	if (dcmi->sd_format->fourcc == V4L2_PIX_FMT_JPEG)
++		reg_set(dcmi->regs, DCMI_CR, CR_CM);/* Snapshot mode */
++
+ 	/* Enable dcmi */
+ 	reg_set(dcmi->regs, DCMI_CR, CR_ENABLE);
+ 
+@@ -752,6 +833,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
+ 	struct v4l2_subdev_format format = {
+ 		.which = V4L2_SUBDEV_FORMAT_TRY,
+ 	};
++	bool do_crop;
+ 	int ret;
+ 
+ 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
+@@ -761,10 +843,19 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
+ 	}
+ 
+ 	/* Limit to hardware capabilities */
+-	pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
+-	pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
++	if (pix->pixelformat == V4L2_PIX_FMT_JPEG) {
++		pix->width = clamp(pix->width, MIN_JPEG_WIDTH, MAX_JPEG_WIDTH);
++		pix->height =
++			clamp(pix->height, MIN_JPEG_HEIGHT, MAX_JPEG_HEIGHT);
++	} else {
++		pix->width = clamp(pix->width, MIN_WIDTH, MAX_WIDTH);
++		pix->height = clamp(pix->height, MIN_HEIGHT, MAX_HEIGHT);
++	}
++
++	/* No crop if JPEG is requested */
++	do_crop = dcmi->do_crop && (pix->pixelformat != V4L2_PIX_FMT_JPEG);
+ 
+-	if (dcmi->do_crop && dcmi->num_of_sd_framesizes) {
++	if (do_crop && dcmi->num_of_sd_framesizes) {
+ 		struct dcmi_framesize outer_sd_fsize;
+ 		/*
+ 		 * If crop is requested and sensor have discrete frame sizes,
+@@ -788,7 +879,7 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
+ 	sd_fsize.width = pix->width;
+ 	sd_fsize.height = pix->height;
+ 
+-	if (dcmi->do_crop) {
++	if (do_crop) {
+ 		struct v4l2_rect c = dcmi->crop;
+ 		struct v4l2_rect max_rect;
+ 
+@@ -843,6 +934,10 @@ static int dcmi_set_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Disable crop if JPEG is requested */
++	if (pix->pixelformat == V4L2_PIX_FMT_JPEG)
++		dcmi->do_crop = false;
++
+ 	/* pix to mbus format */
+ 	v4l2_fill_mbus_format(mf, pix,
+ 			      sd_format->mbus_code);
+@@ -895,6 +990,8 @@ static int dcmi_enum_fmt_vid_cap(struct file *file, void  *priv,
+ 		return -EINVAL;
+ 
+ 	f->pixelformat = dcmi->sd_formats[f->index]->fourcc;
++	if (f->pixelformat == V4L2_PIX_FMT_JPEG)
++		f->flags |= V4L2_FMT_FLAG_COMPRESSED;
+ 	return 0;
+ }
+ 
+@@ -1315,6 +1412,10 @@ static int dcmi_set_default_fmt(struct stm32_dcmi *dcmi)
+ 		.fourcc = V4L2_PIX_FMT_UYVY,
+ 		.mbus_code = MEDIA_BUS_FMT_UYVY8_2X8,
+ 		.bpp = 2,
++	}, {
++		.fourcc = V4L2_PIX_FMT_JPEG,
++		.mbus_code = MEDIA_BUS_FMT_JPEG_1X8,
++		.bpp = 1,
+ 	},
+ };
+ 
+-- 
+1.9.1
