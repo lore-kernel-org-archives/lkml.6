@@ -1,61 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932792AbeBVOXH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:23:07 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40196 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932726AbeBVOXE (ORCPT
+        id S932812AbeBVOXU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:23:20 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43057 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932726AbeBVOXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:23:04 -0500
-X-Google-Smtp-Source: AH8x224EVsAfXw5GMg/b0GhOJ9eZ6rqy441u2Li1U2BQsyPW77/N3+9Zl0slW1EKHhBEtK0tm9WWkMha1Tm4RO7mxV0=
+        Thu, 22 Feb 2018 09:23:17 -0500
+X-Google-Smtp-Source: AH8x225xm/makvHDxhgteYbT+lRUt5+og9eCm9LYcu/up0InGWD91jABHrMc/szy1dAWErBjnBYkuw==
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v4 0/4] Enable CAAM on i.MX7s fix TrustZone issues
+Date: Thu, 22 Feb 2018 14:22:46 +0000
+Message-Id: <20180222142250.31348-1-rui.silva@linaro.org>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be> <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 15:23:03 +0100
-Message-ID: <CACRpkdZ4oPmc5ithggUVMd6_MStMLs59mi3yV4e+ym4UgF5H5A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+For v4 I am taking over this patch series as all the left over patches were
+implemented by me.
 
-> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
-> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
-> block's module clock (if exists) is manually kept running during system
-> suspend, to make sure the device stays active.
->
-> However, this explicit clock handling is merely a workaround for a
-> failure to properly communicate wakeup information to the device core.
->
-> Instead, set the device's power.wakeup_path field, to indicate this
-> device is part of the wakeup path.  Depending on the PM Domain's
-> active_wakeup configuration, the genpd core code will keep the device
-> enabled (and the clock running) during system suspend when needed.
-> This allows for the removal of all explicit clock handling code from the
-> driver.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+V4:
+- removed patch: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
+already initialized from the series since Horia presented a better fix for the
+ endless loop in case of fail to acquire DECO:
+ 225ece3e7dad4 crypto: caam - fix endless loop when DECO acquire fails
+- add Fabio Estevam reviewed by tag in PATCH 3/3.
+- removed CAAM ERA from dts since bootloader will add it - Horia.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+V3:
+- Added Cc: clk driver maintainers - Fabio Estevam
+- Added Cc: i.MX arch maintainers - Fabio Estevam
+- Removed bouncing email address for Herbert Xu
 
-Can I apply this and only this patch to GPIO?
+V2-resend:
+- Patch 0005 lost in the ether - resending
 
-Should it be applied for fixes, next?
+V2:
+- Endian detection is ok with TrustZone enabled Horia.
+  Endian detection logic tested with TrustZone enabled. The register that
+  this relies on though isn't affected by the lock-down in the first page.
+  Assuming set of affected registers is actually just the 'deco' registers
+  though there is no formal statement of that, that I am aware of.
 
-Else please funnel this through the irqchip tree with my
-ACK.
+- Moving of TrustZone work-around into u-boot
+  This set actually doesn't need to deal with TrustZone at all now but, for
+  the sake of consistency keeping thread title
 
-Yours,
-Linus Walleij
+  https://patchwork.ozlabs.org/patch/866460/
+  https://patchwork.ozlabs.org/patch/866462/
+  https://patchwork.ozlabs.org/patch/865890/
+
+- Reworded endless loop fix to read a bit better
+
+- Fixes to DTS additions - Rui
+
+- Fixes to number of clocks declared - Rui
+
+V1:
+This patch-set enables CAAM on the i.MX7s and fixes a number of issues
+identified with the CAAM driver and hardware when TrustZone mode is
+enabled.
+
+The first block of patches are simple bug-fixes, followed by a second block
+of patches which are simple enabling patches for the i.MX7Solo - note we
+aren't enabling for the i.MX7Dual since we don't have hardware to test that
+out but it should be a 1:1 mapping for others to enable when appropriate.
+
+Cheers,
+    Rui
+
+Rui Miguel Silva (4):
+  crypto: caam - Fix null dereference at error path
+  crypto: caam - do not use mem and emi_slow clock for imx7x
+  clk: imx7d: add CAAM clock
+  ARM: dts: imx7s: add CAAM device node
+
+ arch/arm/boot/dts/imx7s.dtsi            | 30 +++++++++++++++++++++++
+ drivers/clk/imx/clk-imx7d.c             |  1 +
+ drivers/crypto/caam/ctrl.c              | 42 +++++++++++++++++++--------------
+ include/dt-bindings/clock/imx7d-clock.h |  3 ++-
+ 4 files changed, 57 insertions(+), 19 deletions(-)
+
+-- 
+2.16.2
