@@ -1,107 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933252AbeBVQbC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:31:02 -0500
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:53512 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932942AbeBVQbB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:31:01 -0500
-X-Google-Smtp-Source: AH8x224scwErQYYYy+gh41eYwXMciqVQbmpWSz1WqOmFSHsrwcKJlTYGB8kd+ry06QzWw+e1K2FBdQ==
-X-ME-Sender: <xms:QfCOWiF3Os260mjHWvnUPbvZM2H-RP24q0PDjYJ7oQC92OISgaQxYA>
-Date: Fri, 23 Feb 2018 00:34:26 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 05/17] lockdep: Extend __bfs() to
- work with multiple kinds of dependencies
-Message-ID: <20180222163426.fcfq6ubq25ipxhfb@tardis>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-6-boqun.feng@gmail.com>
- <20180222142614.GR25201@hirez.programming.kicks-ass.net>
- <20180222151210.jwxjchywk4jfecyf@tardis>
- <20180222160811.GT25201@hirez.programming.kicks-ass.net>
+        id S933329AbeBVQhU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:37:20 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933187AbeBVQhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:37:19 -0500
+Date: Thu, 22 Feb 2018 17:37:15 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: uprobes/perf: KASAN: use-after-free in uprobe_perf_close
+Message-ID: <20180222163715.GA1485@redhat.com>
+References: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="teayzfysboz73akb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222160811.GT25201@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/22, Prashant Bhole wrote:
+>
+> Hi,
+> I encountered following BUG caught by KASAN with recent kernels when trying
+> out [BCC project] bcc/testing/python/test_usdt2.py
+> Tried with v4.12, it was reproducible.
+>
+> --- KASAN log ---
+> BUG: KASAN: use-after-free in uprobe_perf_close+0x118/0x1a0
+> Read of size 4 at addr ffff8800bb2db4cc by task test_usdt2.py/1265
+>
+> CPU: 2 PID: 1265 Comm: test_usdt2.py Not tainted 4.16.0-rc2-next-20180220+
+> #38
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26
+> 04/01/2014
+> Call Trace:
+>  dump_stack+0x5c/0x80
+>  print_address_description+0x73/0x290
+>  kasan_report+0x257/0x380
+>  ? uprobe_perf_close+0x118/0x1a0
+>  uprobe_perf_close+0x118/0x1a0
 
---teayzfysboz73akb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Thu, Feb 22, 2018 at 05:08:11PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 11:12:10PM +0800, Boqun Feng wrote:
-> > On Thu, Feb 22, 2018 at 03:26:14PM +0100, Peter Zijlstra wrote:
-> > > On Thu, Feb 22, 2018 at 03:08:52PM +0800, Boqun Feng wrote:
-> > > > Now we have four kinds of dependencies in the dependency graph, and=
- not
-> > > > all the pathes carry strong dependencies, for example:
-> > > >=20
-> > > > 	Given lock A, B, C, if we have:
-> > > >=20
-> > > > 	CPU1			CPU2
-> > > > 	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D		=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > > > 	write_lock(A);		read_lock(B);
-> > > > 	read_lock(B);		write_lock(C);
-> > > >=20
-> > > > 	then we have dependencies A--(NR)-->B, and B--(RN)-->C, (NR and
-> > > > 	RN are to indicate the dependency kind), A actually doesn't have
-> > > > 	strong dependency to C(IOW, C doesn't depend on A), to see this,
-> > > > 	let's say we have a third CPU3 doing:
-> > > >=20
-> > > > 	CPU3:
-> > > > 	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > 	write_lock(C);
-> > > > 	write_lock(A);
-> > > >=20
-> > > > 	, this is not a deadlock. However if we change the read_lock()
-> > > > 	on CPU2 to a write_lock(), it's a deadlock then.
-> > > >=20
-> > > > 	So A --(NR)--> B --(RN)--> C is not a strong dependency path but
-> > > > 	A --(NR)--> B --(NN)-->C is a strong dependency path.
-> > >=20
-> > > I'm not really satisfied with the above reasoning. I don't disagree, =
-but
-> > > if possible it would be nice to have something a little more solid.
-> > >=20
-> >=20
-> > What do you mean by "solid"? You mean "A --(NR)--> B --(NN)-->C" is too
-> > abstract, and want something like the below instead:
->=20
-> The above description mostly leaves it as an exercise to the reader to
-> 'proof' ignoring *R -> R* is both safe and complete while that is the
-> main argument.
->=20
+> Freed by task 1265:
+>  __kasan_slab_free+0x135/0x180
+>  kmem_cache_free+0xaf/0x230
+>  rcu_process_callbacks+0x559/0xd90
+>  __do_softirq+0x125/0x3a2
 
-OK, so I have some 'proof' in patch #16. I could move that proof in the
-commit log or merge that patch with this one?
+Hmm. this looks strange, I do not see no __put_task_struct/free_task in this
+trace... OK, nevermind.
 
-Regards,
-Boqun
+> After debugging, found that uprobe_perf_close() is called after task has
+> been terminated and uprobe_perf_close() tries to access task_struct of the
+> terminated process.
 
---teayzfysboz73akb
-Content-Type: application/pgp-signature; name="signature.asc"
+Oh. You can't imagine how much I forgot this code ;) I will recheck, but at
+first glance you are right. We can't rely on _free_event()->put_ctx() which
+does put_task_struct() after event->destroy(), the exiting task does
+put_task_struct(current) itself and sets child_ctx->task = TASK_TOMBSTONE in
+perf_event_exit_task_context().
 
------BEGIN PGP SIGNATURE-----
+In short, nothing protects event->hw.target. But uprobe_perf_open() should be
+safe, perf_init_event() is called when the caller has the additional reference.
 
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqO8Q4ACgkQSXnow7UH
-+rgVwgf+LRmoCdppTtUO5/xOARdx4mEcWipD9wS6C9aXQNA+w2s20O7IsAj5bFL+
-KvdI9c9lQsL4CDbu0kcfa9WkvlGtTLvVxmx9f4hghJBOWTeOckHKpSuKkc4fmhcA
-uoIePgIzjwRddutY0Fy/VkqRj/6gJiQ7fzL8bCJ+xQfnt1bulzq7jIkvyfKDzU30
-g7axpUpZZ5WwaZaXRdUeFr3ZIJitJo7b2p9apN5TB0Ue34hPS0qoOVdeOdFth8rJ
-+tMsIunU+4OoD/+mQ/2BnWiZEI4tMQqc8VgAsupSTVo/n5APvCqAj+0klTz0Cb9l
-MMvBpTvU5T5wvpo3Jl7gBRL8wyNNUA==
-=mUwR
------END PGP SIGNATURE-----
+I am wondering if this was wrong from the very beginning or it was broken later,
+but I won't even try to check.
 
---teayzfysboz73akb--
+>  static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event
+> *event)
+>  {
+> +    int err = 0;
+>      bool done;
+> 
+>      write_lock(&tu->filter.rwlock);
+> @@ -1054,9 +1055,12 @@ static int uprobe_perf_close(struct trace_uprobe *tu,
+> struct perf_event *event)
+>      write_unlock(&tu->filter.rwlock);
+> 
+>      if (!done)
+> -        return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
+> +        err =  uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
+> 
+> -    return 0;
+> +    if (event->hw.target)
+> +        put_task_struct(event->hw.target);
+> +
+> +    return err;
+>  }
+
+No need to delay put_task_struct(), you can call it right after "done = ..."
+in the "if (event->hw.target)" block and simplify this change.
+
+However. Probably this is the simplest fix, but it doesn't look nice. We do not
+really need task_struct, we need its ->mm. PF_EXITING check can be removed, this
+is a minor optimization.
+
+perhaps we can add _something_ like
+
+	struct mm_struct *uprobe_event_mm(event)
+	{
+		// needs rcu_read_lock/READ_ONCE/etc
+		if (event->ctx &&
+		    event->ctx->task && event->ctx->task != TASK_TOMBSTONE)
+			return event->ctx->task->mm;
+
+		return NULL;
+	}
+
+and use it instead of event->hw.target->mm ... Not sure.
+
+
+And. What about other users of event->hw.target? Say, task_bp_pinned(). It doesn't
+dereference this pointer, How can we trust the result of "iter->hw.target == tsk"
+if hw.target can be freed and then re-alloced?
+
+
+This all makes me think that we should change (fix) kernel/events/core.c...
+
+Oleg.
