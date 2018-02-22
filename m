@@ -1,77 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933043AbeBVPeP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:34:15 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60031 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932874AbeBVPeN (ORCPT
+        id S933061AbeBVPe0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:34:26 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39078 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932897AbeBVPeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:34:13 -0500
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thu, 22 Feb 2018 10:34:23 -0500
+X-Google-Smtp-Source: AH8x225vkLvqaeDC/NvfBr8bfRSIx0yQnf7aedg05HNfrFOHq7rgdw4MLc1bvfpq7vRZpsTGrHW6LRVgTiuvlJL+EIE=
+MIME-Version: 1.0
+In-Reply-To: <1519079371-25493-1-git-send-email-david@lechnology.com>
+References: <1519079371-25493-1-git-send-email-david@lechnology.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 16:34:22 +0100
+Message-ID: <CACRpkdb=wOomi4QxvXLdNJVfB-rvGfKE+QZvmxvT2SzVDjH4tw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: da850: use gpio-ranges
+To: David Lechner <david@lechnology.com>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
- eXpander
-Thread-Topic: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
- eXpander
-Thread-Index: AQHToOkDMk7LryqMCE6GHDVul6FkVaOwdNKAgAAdlIA=
-Date: Thu, 22 Feb 2018 15:33:31 +0000
-Message-ID: <2440a092-507d-bc39-6ed6-4a4ee094da7a@st.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
- <CACRpkdaeFXuB1Qv-vqNpf4pHsAysiYh03_gfNoRdHBh1pN_Amw@mail.gmail.com>
-In-Reply-To: <CACRpkdaeFXuB1Qv-vqNpf4pHsAysiYh03_gfNoRdHBh1pN_Amw@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E024ED14A7477541AA91EDA73DF3AA9A@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
- signatures=0
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MFYKEi010732
 
+On Mon, Feb 19, 2018 at 11:29 PM, David Lechner <david@lechnology.com> wrote:
 
+> This makes use of the gpio-ranges feature that connects GPIO
+> controllers and PINMUX controllers.
+>
+> In da850.dtsi, pinctrl-single,gpio-range is added to the pinmux node
+> and gpio-ranges is added to the GPIO node. Unfortunately, the way the
+> pinctrl-single driver enumerates the pins (starting with LSB) causes
+> them to be in reverse order compared to the way the gpios are assigned.
+> As a result, we have to declare the mapping for each GPIO individually.
+>
+> This also lets us remove all of the GPIO pinmuxes from
+> da850-lego-ev3.dts. (Other da850 boards do not currently have any
+> GPIO pinmuxes declared.)
+>
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-On 02/22/2018 02:47 PM, Linus Walleij wrote:
-> On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
-> 
->> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
->> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
->> when other MFX features are not enabled.
->>
->> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> 
-> As mentioned I think this driver needs to:
-> 
-> - Move to drivers/pinctrl/pinctrl-stmfx.c similar to the sx150x controller.
-> - Pass a regmap around instead of the custom accessor functions.
+Nice,
+Acked-by: Linus Walleij <linus.wallei@linaro.org>
 
-I study this right now!
-Thanks,
-Amelie
+> +                       gpio-ranges = <&pmx_core   0  15 1>,
+> +                                     <&pmx_core   1  14 1>,
+> +                                     <&pmx_core   2  13 1>,
+> +                                     <&pmx_core   3  12 1>,
+> +                                     <&pmx_core   4  11 1>,
+> +                                     <&pmx_core   5  10 1>,
+> +                                     <&pmx_core   6   9 1>,
+> +                                     <&pmx_core   7   8 1>,
+> +                                     <&pmx_core   8   7 1>,
+> +                                     <&pmx_core   9   6 1>,
+> +                                     <&pmx_core  10   5 1>,
+> +                                     <&pmx_core  11   4 1>,
+> +                                     <&pmx_core  12   3 1>,
+> +                                     <&pmx_core  13   2 1>,
+> +                                     <&pmx_core  14   1 1>,
+> +                                     <&pmx_core  15   0 1>,
 
-> - Maybe refactor and reuse STMPE infrastructure
-> 
-> Yours,
-> Linus Walleij
-> 
+Heh the map moves backward how funny.
+
+Sorry that we don't have an option to map that
+any better in the ranges but hey, this works.
+
+Yours,
+Linus Walleij
