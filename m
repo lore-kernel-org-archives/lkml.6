@@ -1,124 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeBVKmK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:42:10 -0500
-Received: from mail-ot0-f176.google.com ([74.125.82.176]:46190 "EHLO
-        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753288AbeBVKmI (ORCPT
+        id S1753545AbeBVKmU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:42:20 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:53549 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753288AbeBVKmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:42:08 -0500
-X-Google-Smtp-Source: AG47ELsdm7LddcEvGMh6N3WBaWXHSJJwoZofZSGS4Dx6r4Q+17GgRGiKde7fCCrQJ+WEvFz61jZV4Q==
-X-ME-Sender: <xms:e56OWlbJEt3QGrMldr0OMP1cledVVHzv-t7CtNhP3xXS_wkql0KR8g>
-Date: Thu, 22 Feb 2018 18:45:32 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Daniel Lustig <dlustig@nvidia.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        nborisov@suse.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
- lock-based external-view litmus test
-Message-ID: <20180222104532.6znly3zespgfga4i@tardis>
-References: <20180220232405.GA19274@linux.vnet.ibm.com>
- <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180222032349.klcuiq23f52sfop6@tardis>
- <20180222041357.GB2855@linux.vnet.ibm.com>
- <20180222052746.vofmqbpnmfahck3z@tardis>
- <fad8e18b-ef5a-5bc0-5d87-6fad2e9f7c95@nvidia.com>
- <20180222065847.zqiquiyehvzgiiht@tardis>
- <20180222101504.GQ25201@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ci7ab5w6tv3ramfs"
-Content-Disposition: inline
-In-Reply-To: <20180222101504.GQ25201@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+        Thu, 22 Feb 2018 05:42:15 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Martin Sebor <msebor@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/boot/compressed/64: fix warning for 32-bit trampoline copy
+Date: Thu, 22 Feb 2018 11:40:41 +0100
+Message-Id: <20180222104101.2717185-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:nwtsDGuwVnHQeaBF/rZl7gABQXzM1b2vJfMPiRgofzqW0w2rzog
+ sP+IswSU3DF1RKjGW+iBbAAXIRqGSQywqClDFAPvMeUhLxSWQnL5CIZC4Qb1HFeLLIEZ329
+ djeM0KGJtg/ew5+0b1Kg2oRblPL+H0ar9jU3CmK2nmKC+mFWMrmMb3fwP0mPjeXqJNxfk/5
+ i33n5urDquFH1qgqDuB1Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:T87I09TTYPE=:LwXMmkJMCYjpml/buLxBQ9
+ YORWeLt2BSOJzptMII65IdK/ULCitgbKmN3mmXuseP4A7DXIhu9M3JGBbVJ3347BsOUBcv3eB
+ uJ1fb6n8CEG0AXwU7NUYILeSOFKAI4M/pQCB7DgjOA7m2d4Q1BVmPzSI1iX94e8aS19d3DqJ+
+ HG0Mg1P/yrHUL81tdqYSVAONR/3zMKV3fbzLzUgQboJZ/SJy4UCG2qGhDk5VvCfSbbHHBhBG5
+ +Xn6mXmbmajKTqvd5ZtlnCn6bLWN50qOwEjmAUXDZ9/eOatSkVH5YLW0oC8tbeoCSpcbgND1a
+ 5W9lMJ2EHVAT6HboTmvZVnV/cijz978YmFT60lUQuzPvmyon6JBjpxx1A/CyHlPfi8I7LjABm
+ gJ3jOASM4tjNg9YMLuJEGq21QVI8peUoQ58cOMtpj+ullklM/EKR1HDLDz+7JdA3BEQLHg74/
+ wAgk7KchtMFQyQWyFNZFpoLrJh9AUgxyZkmlPZcsILNM34HnbiJNQsidDkk7oAy/mpJQl2sQ3
+ bzFZbf5icKj4t0jz5rZc0WAuajZedXsVFINV5QzDa3ctx3kDs9VXM2gpulkClTpoijVzp8yKq
+ eVtQVHO7ceXRQmmCIhduZRpltu1Wb0rvOfp4EdG5yXvdwWX+olTxGqPLz4DMixDYTo2vDQxwb
+ cKrqK6kQIvXAisSqX54lj13gaawWDHqACG0wPmug+JAt1b067CptmyhyUmO31EBKzCFbPrZ1r
+ qJUBOHL1mo0xcEn22JtRueLfa+GpgYAN3iqgqQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+gcc-8 warns that we copy TRAMPOLINE_32BIT_CODE_SIZE bytes from the pointer
+to the function into actual trampoline, when that pointer is only 8 bytes:
 
---ci7ab5w6tv3ramfs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In file included from arch/x86/boot/compressed/pgtable_64.c:3:
+arch/x86/boot/compressed/pgtable_64.c: In function 'paging_prepare':
+arch/x86/boot/compressed/../string.h:18:23: error: '__builtin_memcpy' reading 96 bytes from a region of size 8 [-Werror=stringop-overflow=]
+ #define memcpy(d,s,l) __builtin_memcpy(d,s,l)
+                       ^~~~~~~~~~~~~~~~~~~~~~~
+arch/x86/boot/compressed/pgtable_64.c:62:2: note: in expansion of macro 'memcpy'
+  memcpy(trampoline + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
+  ^~~~~~
 
-On Thu, Feb 22, 2018 at 11:15:04AM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 02:58:47PM +0800, Boqun Feng wrote:
-> > > And yes, if we go with a purely RCpc interpretation of acquire and
-> > > release, then I don't believe the writes in the previous critical
-> > > section would be ordered with the writes in the subsequent critical
-> > > section.  That's really all the argument boils down to.  We'd like
-> >=20
-> > I think atomics in Linux kernel(and in LKMM) are purely RCpc, right?
-> > Alan and Andrea?=20
-> >=20
-> > And we are not going to change it, are we?
-> >=20
-> > If atomics in Linux kernel are purely RCpc, then it cerntainly makes
-> > sense for riscv to provide purely RCpc atomics.
->=20
-> So there's 3 things:
->=20
->   smp_load_acquire(), smp_store_release()
->=20
->   atomic*_{acquire,release}()
->=20
->   *_{lock,unlock}();
->=20
-> Which are all quite distinct.
->=20
-> smp_load_acquire() and smp_store_release() are RCpc, and there is no
-> discussion of ever wanting to change that.
->=20
-> The atomics also follow this and are RCpc, in fact the RELEASE only
-> applies to the STORE and the ACQUIRE only applies to the LOAD of the
-> atomics.
->=20
-> The locking primitives OTOH we would really rather like to be RCsc, and
-> everybody except PPC has them as such, PPC being the only one having
-> RCpc locks.
->=20
-> I read the part you quoted from Daniel as being purely about spinlocks,
-> the 'critical section' wording being a dead give away, so I'm then
-> somewhat confused why you talk about atomics.
+I assume what was intended here is to copy the trampoline itself rather than
+the pointer to the trampoline.
 
-Maybe it's me who misunderstand Daniel's words. But my understanding is
-that riscv people are on a debate about whether their "RCpc" atomic
-instructions need to be more strict: release+acquire pair orders two
-writes. And I thought that atomics(including RmW atomics) in kernel only
-have purely RCpc semantics, which I needed to check with you guy. And if
-I'm right, it's cerntainly fine for riscv "RCpc" instruction to be
-purely RCpc.
+Cc: Martin Sebor <msebor@gmail.com>
+Fixes: b91993a87aff ("x86/boot/compressed/64: Prepare trampoline memory")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This is a fairly new warning in gcc, it's possible that the code is
+correct and the warning message got it wrong, please double-check this.
 
-Note that even on PPC, the release+acquire pair of atomics orders writes
-before and after, and on x86, writes are ordered since it's TSO. So
-strictly speaking, I think our current implementation of atomics are a
-little more strict than purely RCpc. If we think this is an requirement
-for implementation of atomic primitives, than the current version of
-riscv's "RCpc" atomics don't suffice.
+Was the 32-bit trampoline code in the 64-bit decompressor tested successfully?
+---
+ arch/x86/boot/compressed/pgtable_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Boqun
-
---ci7ab5w6tv3ramfs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqOn0gACgkQSXnow7UH
-+rgiBQgAqeS8IrnlHw0UjeeKk0dteFu5Z/677/DyBE8hO7Jo280fXe64EoU2d0XH
-BD3g7plUWVB2NxzWYZkePnYuZD34Rqtknt6Do+liuaeB/ifEeRMCZ+51nHaNA5Id
-jF0sr36/QcjAe7IVPloimH7q72+HEJ1NGt2FvDNPCoHrcCEUoQPxuIPRaUX6ePey
-vD63CQSy/fSNoCGzMYOsgmMNWtzYkTm3HGJNSn1KJ8mTy7KU1m0FBAc/ZBXyUBb2
-HkweoPDZmpP+S2FwIVs8HAIVeASIEKQKnruZ357DCGq94MwjUBhkmBAVveDj0A/L
-Upy6iXq352/mRmj0FzOy3ltkSBxqMg==
-=G/un
------END PGP SIGNATURE-----
-
---ci7ab5w6tv3ramfs--
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index dad5da7b4c1a..35a0542fe397 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -60,7 +60,7 @@ struct paging_config paging_prepare(void)
+ 
+ 	/* Copy trampoline code in place */
+ 	memcpy(trampoline + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
+-			&trampoline_32bit_src, TRAMPOLINE_32BIT_CODE_SIZE);
++			trampoline_32bit_src, TRAMPOLINE_32BIT_CODE_SIZE);
+ 
+ 	/*
+ 	 * Set up a new page table that will be used for switching from 4-
+-- 
+2.9.0
