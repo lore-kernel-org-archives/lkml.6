@@ -1,63 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeBVTyY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:54:24 -0500
-Received: from muru.com ([72.249.23.125]:57908 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750776AbeBVTyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:54:22 -0500
-Date: Thu, 22 Feb 2018 11:54:19 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
-Message-ID: <20180222195418.GC5184@atomide.com>
-References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
- <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
- <20180216113008.GB5886@sirena.org.uk>
- <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
- <20180216134448.GI5886@sirena.org.uk>
- <20180216141237.rd75sbix7bopi7zu@earth.universe>
- <20180216151609.GK5886@sirena.org.uk>
- <20180216155706.GS6364@atomide.com>
- <20180219130514.GC32761@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180219130514.GC32761@sirena.org.uk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1751376AbeBVTy6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:54:58 -0500
+Received: from s3.sipsolutions.net ([144.76.63.242]:46070 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbeBVTy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:54:57 -0500
+Message-ID: <1519329289.2637.12.camel@sipsolutions.net>
+Subject: Re: nla_put_string() vs NLA_STRING
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Kees Cook <keescook@google.com>, Thomas Graf <tgraf@suug.ch>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>
+Date: Thu, 22 Feb 2018 20:54:49 +0100
+In-Reply-To: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com> (sfid-20180221_070030_986418_27F469F1)
+References: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
+         (sfid-20180221_070030_986418_27F469F1)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mark Brown <broonie@kernel.org> [180219 12:05]:
-> On Fri, Feb 16, 2018 at 07:57:07AM -0800, Tony Lindgren wrote:
-> > One advantage of using a compatible property for the pmic subdevices
-> > though is that it leaves out a dependency between various device
-> > drivers things happen automagically. The mfd core driver can be
-> > minimal and just implement interrupt handling and regmap. So no need
-> > to to parse the child nodes in the pmic mfd driver :)
-> 
-> There's no need to do that anyway - with a MFD the child devices can
-> assume that they're part of the MFD and reference their parent.
-> 
-> > So personally I'd prefer the option that requires least amount
-> > of custom code if compatible vs no compatible property is the
-> > only issue here.
-> 
-> It's a few lines of code to register the child devices from code rather
-> than the DT, and keeps it out of the ABI.
+On Tue, 2018-02-20 at 22:00 -0800, Kees Cook wrote:
 
-OK yeah that's a good point with avoiding the ABI. Seems
-we still want the dts child node(s) though. That way audio
-device can be disabled for devices where audio is not wired
-up at all on this PMIC.
+> It seems that in at least one case[1], nla_put_string() is being used
+> on an NLA_STRING, which lacks a NULL terminator, which leads to
+> silliness when nla_put_string() uses strlen() to figure out the size:
 
-Regards,
+Fun! I'm not a big fan of the whole NLA_STRING thing with or without
+NUL terminator anyway, it's a bit confusing at times :-)
 
-Tony
+> This is a problem at least here:
+> 
+> struct regulatory_request {
+> ...
+> char alpha2[2];
+> ...
+> 
+> static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
+> ...
+> [NL80211_ATTR_REG_ALPHA2] = { .type = NLA_STRING, .len = 2 },
+> ...
+
+Yeah, this is clearly stupid. We already fixed one of these, see commit
+a5fe8e7695dc ("regulatory: add NUL to alpha2"). I'll fix up the second
+one too.
+
+> So, this specific problem needs fixing (in at least two places calling
+> nla_put_string(msg, NL80211_ATTR_REG_ALPHA2, ...)). While I suspect
+> it's only ever written an extra byte from the following variable in
+> the structure which is an enum nl80211_dfs_regions, 
+
+Only one, since the other has alpha2[3] already :-)
+
+And in that case, yes, on little endian and only if the dfs region is
+non-zero, though the dfs region was added later so dunno what else
+there was - but certainly this struct would have always contained some
+enum value that had zero-bytes.
+
+> I worry there
+> might be a lot more of these (though I'd hope unterminated strings are
+> uncommon for internal representation).
+
+Generally they are, I'd argue.
+
+> And more generally, it seems
+> like only the NLA _input_ functions actually check nla_policy details.
+> It seems that the output functions should do the same too, yes?
+
+It doesn't really work that way - there's no real guarantee that the
+policy is symmetric on input/output.
+
+johannes
