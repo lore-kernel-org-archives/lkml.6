@@ -1,69 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933512AbeBVR2Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:28:16 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46423 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933210AbeBVR2F (ORCPT
+        id S933543AbeBVR3L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:29:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41612 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933390AbeBVR3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:28:05 -0500
-X-Google-Smtp-Source: AH8x224qmhYTkFLS8+Wd9obrR/5i8DO+qUH4tEQJajv2rd6Wo1TfKozU3RgtKmsW6XquaRP3nX51YhwIxRwUCLGPbOg=
+        Thu, 22 Feb 2018 12:29:09 -0500
+Date: Thu, 22 Feb 2018 18:29:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 07/17] lockdep: Adjust
+ check_redundant() for recursive read change
+Message-ID: <20180222172906.GU25201@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-8-boqun.feng@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1519300881-8136-7-git-send-email-claudiu.beznea@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-7-git-send-email-claudiu.beznea@microchip.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 22 Feb 2018 19:28:03 +0200
-Message-ID: <CAHp75Ver6GuKSDooAr2DW+eqt=B3p8O+X6+rOSWNgfhHxgVqNQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] pwm: add PWM modes
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Alexander Shiyan <shc_work@mail.ru>, kgene@kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        kamil@wypas.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, milo.kim@ti.com,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-pwm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-hwmon@vger.kernel.org, linux-input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222070904.548-8-boqun.feng@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 2:01 PM, Claudiu Beznea
-<claudiu.beznea@microchip.com> wrote:
-> Add PWM normal and complementary modes.
+On Thu, Feb 22, 2018 at 03:08:54PM +0800, Boqun Feng wrote:
+> As we have four kinds of dependencies now, check_redundant() should only
+> report redundant if we have a dependency path which is equal or
+> _stronger_ than the current dependency. For example if in
+> check_prev_add() we have:
+> 
+> 	prev->read == 2 && next->read != 2
+> 
+> , we should only report redundant if we find a path like:
+> 
+> 	prev--(RN)-->....--(*N)-->next
+> 
+> and if we have:
+> 
+> 	prev->read == 2 && next->read == 2
+> 
+> , we could report redundant if we find a path like:
+> 
+> 	prev--(RN)-->....--(*N)-->next
+> 
+> or
+> 
+> 	prev--(RN)-->....--(*R)-->next
+> 
+> To do so, we need to pass the recursive-read status of @next into
+> check_redundant().
 
-> +- PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
-> +channels two outputs); if not specified, the default for PWM channel will
-> +be used
+Very hard to read that.
 
-What DT stands for?
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  kernel/locking/lockdep.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index e1be088a34c4..0b0ad3db78b4 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -1338,9 +1338,12 @@ print_circular_bug_header(struct lock_list *entry, unsigned int depth,
+>  	return 0;
+>  }
+>  
+> -static inline int class_equal(struct lock_list *entry, void *data)
+> +static inline int hlock_equal(struct lock_list *entry, void *data)
+>  {
+> -	return entry->class == data;
+> +	struct held_lock *hlock = (struct held_lock *)data;
+> +
+> +	return hlock_class(hlock) == entry->class &&
+> +	       (hlock->read == 2 || !entry->is_rr);
+>  }
 
--- 
-With Best Regards,
-Andy Shevchenko
+So I guess @data = @next, and we're checking if @prev -> @next already
+exists.
+
+Since we only care about forward dependencies, @next->read==2 means *R
+and if so, any existing link is equal or stronger. If @next->read!=2, it
+means *N and we must regard *R as weaker and not match.
+
+OK, that seems to be fine, but again, that function _really_ could do
+with a comment.
