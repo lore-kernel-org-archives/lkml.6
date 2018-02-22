@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeBVHF7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:05:59 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54015 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752534AbeBVHFy (ORCPT
+        id S1752614AbeBVHGH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:06:07 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52580 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbeBVHGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:05:54 -0500
-X-Google-Smtp-Source: AH8x226qITSytU30tNuiZQDdCMA3E7JPojqM7SMm0yGT1x4x17vd+gTyk89U6m9G/gn0v+I7Fg4oxQ==
-X-ME-Sender: <xms:zmuOWjbk1ELHTkFr3E9-H7gu4-LKSlxd7mmHkF0LdtvAM_MknRy2Tw>
+        Thu, 22 Feb 2018 02:06:03 -0500
+X-Google-Smtp-Source: AH8x225gX50yWEeotSF6EKkfy1Rn4FS7ggeOF2nW8G/vKFTRToPTvRAXAtP1/P++2LOF51eHAT6ISA==
+X-ME-Sender: <xms:12uOWkKHeFYtKrdIR9IeQhd5VisMLQxWCF4IYyj8MHHeJV2WNHICxg>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 01/17] lockdep: Demagic the return value of BFS
-Date: Thu, 22 Feb 2018 15:08:48 +0800
-Message-Id: <20180222070904.548-2-boqun.feng@gmail.com>
+        Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION)
+Subject: [RFC tip/locking/lockdep v5 03/17] lockdep: Redefine LOCK_*_STATE* bits
+Date: Thu, 22 Feb 2018 15:08:50 +0800
+Message-Id: <20180222070904.548-4-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,322 +25,218 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__bfs() could return four magic numbers:
+There are three types of lock acquisitions: write, non-recursive read
+and recursive read, among which write locks and non-recursive read locks
+have no difference from a viewpoint for deadlock detections, because a
+write acquisition of the corresponding lock on an independent CPU or
+task makes a non-recursive read lock act as a write lock in the sense of
+deadlock. So we could treat them as the same type(named as
+"non-recursive lock") in lockdep.
 
-	1: search succeeds, but none match.
-	0: search succeeds, find one match.
-	-1: search fails because of the cq is full.
-	-2: search fails because a invalid node is found.
+As in the irq lock inversion detection(safe->unsafe deadlock detection),
+we used to differ write lock with read lock(non-recursive and
+recursive ones), such a classification could be improved as
+non-recursive read lock behaves the same as write lock, so this patch
+redefines the meanings of LOCK_{USED_IN, ENABLED}_STATE*.
 
-This patch cleans things up by using a enum type for the return value
-of __bfs() and its friends, this improves the code readability of the
-code, and further, could help if we want to extend the BFS.
+old:
+	LOCK_* : stands for write lock
+	LOCK_*_READ: stands for read lock(non-recursive and recursive)
+new:
+	LOCK_* : stands for non-recursive(write lock and non-recursive
+	read lock)
+	LOCK_*_RR: stands for recursive read lock
+
+Such a change is needed for a future improvement on recursive read
+related irq inversion deadlock detection.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- kernel/locking/lockdep.c | 136 ++++++++++++++++++++++++++++-------------------
- 1 file changed, 80 insertions(+), 56 deletions(-)
+ Documentation/locking/lockdep-design.txt |  6 +++---
+ kernel/locking/lockdep.c                 | 28 ++++++++++++++--------------
+ kernel/locking/lockdep_internals.h       | 16 ++++++++--------
+ kernel/locking/lockdep_proc.c            | 12 ++++++------
+ 4 files changed, 31 insertions(+), 31 deletions(-)
 
+diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
+index 9de1c158d44c..382bc25589c2 100644
+--- a/Documentation/locking/lockdep-design.txt
++++ b/Documentation/locking/lockdep-design.txt
+@@ -30,9 +30,9 @@ State
+ The validator tracks lock-class usage history into 4n + 1 separate state bits:
+ 
+ - 'ever held in STATE context'
+-- 'ever held as readlock in STATE context'
++- 'ever held as recursive readlock in STATE context'
+ - 'ever held with STATE enabled'
+-- 'ever held as readlock with STATE enabled'
++- 'ever held as recurisve readlock with STATE enabled'
+ 
+ Where STATE can be either one of (kernel/locking/lockdep_states.h)
+  - hardirq
+@@ -51,7 +51,7 @@ locking error messages, inside curlies. A contrived example:
+     (&sio_locks[i].lock){-.-...}, at: [<c02867fd>] mutex_lock+0x21/0x24
+ 
+ 
+-The bit position indicates STATE, STATE-read, for each of the states listed
++The bit position indicates STATE, STATE-RR, for each of the states listed
+ above, and the character displayed in each indicates:
+ 
+    '.'  acquired while irqs disabled and not in irq context
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 89b5f83f1969..9b2e318bcc81 100644
+index c80f8276ceaa..5e6bf8d6954d 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -984,21 +984,52 @@ static inline int get_lock_depth(struct lock_list *child)
- 	}
- 	return depth;
- }
-+/*
-+ * Return values of a bfs search:
-+ *
-+ * BFS_E* indicates an error
-+ * BFS_R* indicates a result(match or not)
-+ *
-+ * BFS_EINVALIDNODE: Find a invalid node in the graph.
-+ *
-+ * BFS_EQUEUEFULL: The queue is full while doing the bfs.
-+ *
-+ * BFS_RMATCH: Find the matched node in the graph, and put that node * into
-+ *            *@target_entry.
-+ *
-+ * BFS_RNOMATCH: Haven't found the matched node and keep *@target_entry
-+ *              _unchanged_.
-+ */
-+enum bfs_result {
-+	BFS_EINVALIDNODE = -2,
-+	BFS_EQUEUEFULL = -1,
-+	BFS_RMATCH = 0,
-+	BFS_RNOMATCH = 1,
-+};
+@@ -448,10 +448,10 @@ DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
+  */
  
--static int __bfs(struct lock_list *source_entry,
--		 void *data,
--		 int (*match)(struct lock_list *entry, void *data),
--		 struct lock_list **target_entry,
--		 int forward)
-+/*
-+ * bfs_result < 0 means error
-+ */
-+
-+static inline bool bfs_error(enum bfs_result res)
-+{
-+	return res < 0;
-+}
-+
-+static enum bfs_result __bfs(struct lock_list *source_entry,
-+			     void *data,
-+			     int (*match)(struct lock_list *entry, void *data),
-+			     struct lock_list **target_entry,
-+			     int forward)
+ #define __USAGE(__STATE)						\
+-	[LOCK_USED_IN_##__STATE] = "IN-"__stringify(__STATE)"-W",	\
+-	[LOCK_ENABLED_##__STATE] = __stringify(__STATE)"-ON-W",		\
+-	[LOCK_USED_IN_##__STATE##_READ] = "IN-"__stringify(__STATE)"-R",\
+-	[LOCK_ENABLED_##__STATE##_READ] = __stringify(__STATE)"-ON-R",
++	[LOCK_USED_IN_##__STATE] = "IN-"__stringify(__STATE),		\
++	[LOCK_ENABLED_##__STATE] = __stringify(__STATE)"-ON",		\
++	[LOCK_USED_IN_##__STATE##_RR] = "IN-"__stringify(__STATE)"-RR",	\
++	[LOCK_ENABLED_##__STATE##_RR] = __stringify(__STATE)"-ON-RR",
+ 
+ static const char *usage_str[] =
  {
- 	struct lock_list *entry;
- 	struct list_head *head;
- 	struct circular_queue *cq = &lock_cq;
--	int ret = 1;
-+	enum bfs_result ret = BFS_RNOMATCH;
+@@ -492,7 +492,7 @@ void get_usage_chars(struct lock_class *class, char usage[LOCK_USAGE_CHARS])
  
- 	if (match(source_entry, data)) {
- 		*target_entry = source_entry;
--		ret = 0;
-+		ret = BFS_RMATCH;
- 		goto exit;
- 	}
+ #define LOCKDEP_STATE(__STATE) 						\
+ 	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE);	\
+-	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE##_READ);
++	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE##_RR);
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
  
-@@ -1019,7 +1050,7 @@ static int __bfs(struct lock_list *source_entry,
- 		__cq_dequeue(cq, (unsigned long *)&lock);
+@@ -1645,7 +1645,7 @@ static const char *state_names[] = {
  
- 		if (!lock->class) {
--			ret = -2;
-+			ret = BFS_EINVALIDNODE;
- 			goto exit;
+ static const char *state_rnames[] = {
+ #define LOCKDEP_STATE(__STATE) \
+-	__stringify(__STATE)"-READ",
++	__stringify(__STATE)"-RR",
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
+ };
+@@ -3039,14 +3039,14 @@ static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
+ 	 * mark the lock as used in these contexts:
+ 	 */
+ 	if (!hlock->trylock) {
+-		if (hlock->read) {
++		if (hlock->read == 2) {
+ 			if (curr->hardirq_context)
+ 				if (!mark_lock(curr, hlock,
+-						LOCK_USED_IN_HARDIRQ_READ))
++						LOCK_USED_IN_HARDIRQ_RR))
+ 					return 0;
+ 			if (curr->softirq_context)
+ 				if (!mark_lock(curr, hlock,
+-						LOCK_USED_IN_SOFTIRQ_READ))
++						LOCK_USED_IN_SOFTIRQ_RR))
+ 					return 0;
+ 		} else {
+ 			if (curr->hardirq_context)
+@@ -3058,13 +3058,13 @@ static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
  		}
+ 	}
+ 	if (!hlock->hardirqs_off) {
+-		if (hlock->read) {
++		if (hlock->read == 2) {
+ 			if (!mark_lock(curr, hlock,
+-					LOCK_ENABLED_HARDIRQ_READ))
++					LOCK_ENABLED_HARDIRQ_RR))
+ 				return 0;
+ 			if (curr->softirqs_enabled)
+ 				if (!mark_lock(curr, hlock,
+-						LOCK_ENABLED_SOFTIRQ_READ))
++						LOCK_ENABLED_SOFTIRQ_RR))
+ 					return 0;
+ 		} else {
+ 			if (!mark_lock(curr, hlock,
+@@ -3170,9 +3170,9 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
+ 	switch (new_bit) {
+ #define LOCKDEP_STATE(__STATE)			\
+ 	case LOCK_USED_IN_##__STATE:		\
+-	case LOCK_USED_IN_##__STATE##_READ:	\
++	case LOCK_USED_IN_##__STATE##_RR:	\
+ 	case LOCK_ENABLED_##__STATE:		\
+-	case LOCK_ENABLED_##__STATE##_READ:
++	case LOCK_ENABLED_##__STATE##_RR:
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
+ 		ret = mark_lock_irq(curr, this, new_bit);
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index d459d624ba2a..93002d337936 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -13,9 +13,9 @@
+ enum lock_usage_bit {
+ #define LOCKDEP_STATE(__STATE)		\
+ 	LOCK_USED_IN_##__STATE,		\
+-	LOCK_USED_IN_##__STATE##_READ,	\
++	LOCK_USED_IN_##__STATE##_RR,	\
+ 	LOCK_ENABLED_##__STATE,		\
+-	LOCK_ENABLED_##__STATE##_READ,
++	LOCK_ENABLED_##__STATE##_RR,
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
+ 	LOCK_USED,
+@@ -30,9 +30,9 @@ enum lock_usage_bit {
+ enum {
+ #define LOCKDEP_STATE(__STATE)						\
+ 	__LOCKF(USED_IN_##__STATE)					\
+-	__LOCKF(USED_IN_##__STATE##_READ)				\
++	__LOCKF(USED_IN_##__STATE##_RR)				\
+ 	__LOCKF(ENABLED_##__STATE)					\
+-	__LOCKF(ENABLED_##__STATE##_READ)
++	__LOCKF(ENABLED_##__STATE##_RR)
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
+ 	__LOCKF(USED)
+@@ -41,10 +41,10 @@ enum {
+ #define LOCKF_ENABLED_IRQ (LOCKF_ENABLED_HARDIRQ | LOCKF_ENABLED_SOFTIRQ)
+ #define LOCKF_USED_IN_IRQ (LOCKF_USED_IN_HARDIRQ | LOCKF_USED_IN_SOFTIRQ)
  
-@@ -1036,12 +1067,12 @@ static int __bfs(struct lock_list *source_entry,
- 				mark_lock_accessed(entry, lock);
- 				if (match(entry, data)) {
- 					*target_entry = entry;
--					ret = 0;
-+					ret = BFS_RMATCH;
- 					goto exit;
- 				}
- 
- 				if (__cq_enqueue(cq, (unsigned long)entry)) {
--					ret = -1;
-+					ret = BFS_EQUEUEFULL;
- 					goto exit;
- 				}
- 				cq_depth = __cq_get_elem_count(cq);
-@@ -1054,19 +1085,21 @@ static int __bfs(struct lock_list *source_entry,
- 	return ret;
- }
- 
--static inline int __bfs_forwards(struct lock_list *src_entry,
--			void *data,
--			int (*match)(struct lock_list *entry, void *data),
--			struct lock_list **target_entry)
-+static inline enum bfs_result
-+__bfs_forwards(struct lock_list *src_entry,
-+	       void *data,
-+	       int (*match)(struct lock_list *entry, void *data),
-+	       struct lock_list **target_entry)
- {
- 	return __bfs(src_entry, data, match, target_entry, 1);
- 
- }
- 
--static inline int __bfs_backwards(struct lock_list *src_entry,
--			void *data,
--			int (*match)(struct lock_list *entry, void *data),
--			struct lock_list **target_entry)
-+static inline enum bfs_result
-+__bfs_backwards(struct lock_list *src_entry,
-+		void *data,
-+		int (*match)(struct lock_list *entry, void *data),
-+		struct lock_list **target_entry)
- {
- 	return __bfs(src_entry, data, match, target_entry, 0);
- 
-@@ -1299,13 +1332,13 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+-#define LOCKF_ENABLED_IRQ_READ \
+-		(LOCKF_ENABLED_HARDIRQ_READ | LOCKF_ENABLED_SOFTIRQ_READ)
+-#define LOCKF_USED_IN_IRQ_READ \
+-		(LOCKF_USED_IN_HARDIRQ_READ | LOCKF_USED_IN_SOFTIRQ_READ)
++#define LOCKF_ENABLED_IRQ_RR \
++		(LOCKF_ENABLED_HARDIRQ_RR | LOCKF_ENABLED_SOFTIRQ_RR)
++#define LOCKF_USED_IN_IRQ_RR \
++		(LOCKF_USED_IN_HARDIRQ_RR | LOCKF_USED_IN_SOFTIRQ_RR)
  
  /*
-  * Prove that the dependency graph starting at <entry> can not
-- * lead to <target>. Print an error and return 0 if it does.
-+ * lead to <target>. Print an error and return BFS_RMATCH if it does.
-  */
--static noinline int
-+static noinline enum bfs_result
- check_noncircular(struct lock_list *root, struct lock_class *target,
--		struct lock_list **target_entry)
-+		  struct lock_list **target_entry)
- {
--	int result;
-+	enum bfs_result result;
+  * CONFIG_LOCKDEP_SMALL is defined for sparc. Sparc requires .text,
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index ad69bbc9bd28..630a6bc6e24c 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -252,17 +252,17 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 			nr_hardirq_safe++;
+ 		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ)
+ 			nr_hardirq_unsafe++;
+-		if (class->usage_mask & LOCKF_USED_IN_IRQ_READ)
++		if (class->usage_mask & LOCKF_USED_IN_IRQ_RR)
+ 			nr_irq_read_safe++;
+-		if (class->usage_mask & LOCKF_ENABLED_IRQ_READ)
++		if (class->usage_mask & LOCKF_ENABLED_IRQ_RR)
+ 			nr_irq_read_unsafe++;
+-		if (class->usage_mask & LOCKF_USED_IN_SOFTIRQ_READ)
++		if (class->usage_mask & LOCKF_USED_IN_SOFTIRQ_RR)
+ 			nr_softirq_read_safe++;
+-		if (class->usage_mask & LOCKF_ENABLED_SOFTIRQ_READ)
++		if (class->usage_mask & LOCKF_ENABLED_SOFTIRQ_RR)
+ 			nr_softirq_read_unsafe++;
+-		if (class->usage_mask & LOCKF_USED_IN_HARDIRQ_READ)
++		if (class->usage_mask & LOCKF_USED_IN_HARDIRQ_RR)
+ 			nr_hardirq_read_safe++;
+-		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_READ)
++		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_RR)
+ 			nr_hardirq_read_unsafe++;
  
- 	debug_atomic_inc(nr_cyclic_checks);
- 
-@@ -1314,11 +1347,11 @@ check_noncircular(struct lock_list *root, struct lock_class *target,
- 	return result;
- }
- 
--static noinline int
-+static noinline enum bfs_result
- check_redundant(struct lock_list *root, struct lock_class *target,
- 		struct lock_list **target_entry)
- {
--	int result;
-+	enum bfs_result result;
- 
- 	debug_atomic_inc(nr_redundant_checks);
- 
-@@ -1347,15 +1380,12 @@ static inline int usage_match(struct lock_list *entry, void *bit)
-  *
-  * Return 0 if such a node exists in the subgraph, and put that node
-  * into *@target_entry.
-- *
-- * Return 1 otherwise and keep *@target_entry unchanged.
-- * Return <0 on error.
-  */
--static int
-+static enum bfs_result
- find_usage_forwards(struct lock_list *root, enum lock_usage_bit bit,
- 			struct lock_list **target_entry)
- {
--	int result;
-+	enum bfs_result result;
- 
- 	debug_atomic_inc(nr_find_usage_forwards_checks);
- 
-@@ -1367,18 +1397,12 @@ find_usage_forwards(struct lock_list *root, enum lock_usage_bit bit,
- /*
-  * Find a node in the backwards-direction dependency sub-graph starting
-  * at @root->class that matches @bit.
-- *
-- * Return 0 if such a node exists in the subgraph, and put that node
-- * into *@target_entry.
-- *
-- * Return 1 otherwise and keep *@target_entry unchanged.
-- * Return <0 on error.
-  */
--static int
-+static enum bfs_result
- find_usage_backwards(struct lock_list *root, enum lock_usage_bit bit,
- 			struct lock_list **target_entry)
- {
--	int result;
-+	enum bfs_result result;
- 
- 	debug_atomic_inc(nr_find_usage_backwards_checks);
- 
-@@ -1586,18 +1610,18 @@ check_usage(struct task_struct *curr, struct held_lock *prev,
- 
- 	this.class = hlock_class(prev);
- 	ret = find_usage_backwards(&this, bit_backwards, &target_entry);
--	if (ret < 0)
-+	if (bfs_error(ret))
- 		return print_bfs_bug(ret);
--	if (ret == 1)
--		return ret;
-+	if (ret == BFS_RNOMATCH)
-+		return 1;
- 
- 	that.parent = NULL;
- 	that.class = hlock_class(next);
- 	ret = find_usage_forwards(&that, bit_forwards, &target_entry1);
--	if (ret < 0)
-+	if (bfs_error(ret))
- 		return print_bfs_bug(ret);
--	if (ret == 1)
--		return ret;
-+	if (ret == BFS_RNOMATCH)
-+		return 1;
- 
- 	return print_bad_irq_dependency(curr, &this, &that,
- 			target_entry, target_entry1,
-@@ -1834,10 +1858,10 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	       struct held_lock *next, int distance, struct stack_trace *trace,
- 	       int (*save)(struct stack_trace *trace))
- {
--	struct lock_list *uninitialized_var(target_entry);
- 	struct lock_list *entry;
-+	enum bfs_result ret;
- 	struct lock_list this;
--	int ret;
-+	struct lock_list *uninitialized_var(target_entry);
- 
- 	/*
- 	 * Prove that the new <prev> -> <next> dependency would not
-@@ -1851,7 +1875,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	this.class = hlock_class(next);
- 	this.parent = NULL;
- 	ret = check_noncircular(&this, hlock_class(prev), &target_entry);
--	if (unlikely(!ret)) {
-+	if (unlikely(ret == BFS_RMATCH)) {
- 		if (!trace->entries) {
- 			/*
- 			 * If @save fails here, the printing might trigger
-@@ -1862,7 +1886,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 		}
- 		return print_circular_bug(&this, target_entry, next, prev, trace);
- 	}
--	else if (unlikely(ret < 0))
-+	else if (unlikely(bfs_error(ret)))
- 		return print_bfs_bug(ret);
- 
- 	if (!check_prev_add_irq(curr, prev, next))
-@@ -1900,11 +1924,11 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	this.class = hlock_class(prev);
- 	this.parent = NULL;
- 	ret = check_redundant(&this, hlock_class(next), &target_entry);
--	if (!ret) {
-+	if (ret == BFS_RMATCH) {
- 		debug_atomic_inc(nr_redundant);
- 		return 2;
- 	}
--	if (ret < 0)
-+	if (bfs_error(ret))
- 		return print_bfs_bug(ret);
- 
- 
-@@ -2633,16 +2657,16 @@ static int
- check_usage_forwards(struct task_struct *curr, struct held_lock *this,
- 		     enum lock_usage_bit bit, const char *irqclass)
- {
--	int ret;
-+	enum bfs_result ret;
- 	struct lock_list root;
- 	struct lock_list *uninitialized_var(target_entry);
- 
- 	root.parent = NULL;
- 	root.class = hlock_class(this);
- 	ret = find_usage_forwards(&root, bit, &target_entry);
--	if (ret < 0)
-+	if (bfs_error(ret))
- 		return print_bfs_bug(ret);
--	if (ret == 1)
-+	if (ret == BFS_RNOMATCH)
- 		return ret;
- 
- 	return print_irq_inversion_bug(curr, &root, target_entry,
-@@ -2657,17 +2681,17 @@ static int
- check_usage_backwards(struct task_struct *curr, struct held_lock *this,
- 		      enum lock_usage_bit bit, const char *irqclass)
- {
--	int ret;
-+	enum bfs_result ret;
- 	struct lock_list root;
- 	struct lock_list *uninitialized_var(target_entry);
- 
- 	root.parent = NULL;
- 	root.class = hlock_class(this);
- 	ret = find_usage_backwards(&root, bit, &target_entry);
--	if (ret < 0)
-+	if (bfs_error(ret))
- 		return print_bfs_bug(ret);
--	if (ret == 1)
--		return ret;
-+	if (ret == BFS_RNOMATCH)
-+		return 1;
- 
- 	return print_irq_inversion_bug(curr, &root, target_entry,
- 					this, 0, irqclass);
+ #ifdef CONFIG_PROVE_LOCKING
 -- 
 2.16.1
