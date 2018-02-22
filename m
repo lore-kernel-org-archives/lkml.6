@@ -1,117 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932152AbeBVLz6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:55:58 -0500
-Received: from mga18.intel.com ([134.134.136.126]:6880 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932073AbeBVLz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:55:56 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="20246429"
-Date: Thu, 22 Feb 2018 03:55:54 -0800
-From: "Raj, Ashok" <ashok.raj@intel.com>
-To: Borislav Petkov <bp@suse.de>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [v2 1/3] x86/microcode/intel: Check microcode revision before
- updating sibling threads
-Message-ID: <20180222115554.GA3797@araj-mobl1.jf.intel.com>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
- <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
- <20180222110056.GA27489@pd.tnic>
+        id S932161AbeBVL4Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:56:25 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46843 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753649AbeBVL4X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:56:23 -0500
+X-Google-Smtp-Source: AH8x22713UMIjwtf24X/16ryltHbbDFvzP+leghMXPa0eNG2wzHW0/R7DtfL4a0E03JMI1pZEyayvkNzJHs494LxV/k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222110056.GA27489@pd.tnic>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <201802220830.S3PHpwWI%fengguang.wu@intel.com>
+References: <20180221144909.13461-3-enric.balletbo@collabora.com> <201802220830.S3PHpwWI%fengguang.wu@intel.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Thu, 22 Feb 2018 12:56:22 +0100
+Message-ID: <CAFqH_508wFpG8QRTrYKddiO9Cs0-oPSagGS6hkjvzQuQzROUxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
+To: kbuild test robot <lkp@intel.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        kbuild-all@01.org, Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Shawn Nematbakhsh <shawnn@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 12:00:57PM +0100, Borislav Petkov wrote:
-> > 
-> > Updates:
-> > v2: Address Boris's to cleanup apply_microcode_intel
-> > v3: Fixups per Ingo: Spell Checks
-> 
-> That changelog...
-> 
-> > ---
-> 
-> ... comes under this line so that it can be ignored by tools.
+Hi Lee,
 
-Oops! using stg, and try to not remember too many things and write it up here.
-Will remember to move things next time around.
+2018-02-22 1:25 GMT+01:00 kbuild test robot <lkp@intel.com>:
+> Hi Shawn,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on ljones-mfd/for-mfd-next]
+> [also build test ERROR on v4.16-rc2 next-20180221]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Enric-Balletbo-i-Serra/platform-chrome-cros_ec-debugfs-and-sysfs-updates/20180222-074242
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+> config: i386-randconfig-s0-201807 (attached as .config)
+> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/platform/chrome/cros_ec_debugfs.c: In function 'cros_ec_pdinfo_read':
+>>> drivers/platform/chrome/cros_ec_debugfs.c:221:16: error: 'EC_USB_PD_MAX_PORTS' undeclared (first use in this function)
+>      char read_buf[EC_USB_PD_MAX_PORTS * 40], *p = read_buf;
+>                    ^~~~~~~~~~~~~~~~~~~
+>    drivers/platform/chrome/cros_ec_debugfs.c:221:16: note: each undeclared identifier is reported only once for each function it appears in
+>    drivers/platform/chrome/cros_ec_debugfs.c:221:7: warning: unused variable 'read_buf' [-Wunused-variable]
+>      char read_buf[EC_USB_PD_MAX_PORTS * 40], *p = read_buf;
+>           ^~~~~~~~
+>    drivers/platform/chrome/cros_ec_debugfs.c:269:1: warning: control reaches end of non-void function [-Wreturn-type]
+>     }
+>     ^
+>
+> vim +/EC_USB_PD_MAX_PORTS +221 drivers/platform/chrome/cros_ec_debugfs.c
+>
+>    215
+>    216  static ssize_t cros_ec_pdinfo_read(struct file *file,
+>    217                                     char __user *user_buf,
+>    218                                     size_t count,
+>    219                                     loff_t *ppos)
+>    220  {
+>  > 221          char read_buf[EC_USB_PD_MAX_PORTS * 40], *p = read_buf;
+>    222          struct cros_ec_debugfs *debug_info = file->private_data;
+>    223          struct cros_ec_device *ec_dev = debug_info->ec->ec_dev;
+>    224
+>    225          struct {
+>    226                  struct cros_ec_command msg;
+>    227                  union {
+>    228                          struct ec_response_usb_pd_control_v1 resp;
+>    229                          struct ec_params_usb_pd_control params;
+>    230                  };
+>    231          } __packed ec_buf;
+>    232
+>    233          struct cros_ec_command *msg;
+>    234          struct ec_response_usb_pd_control_v1 *resp;
+>    235          struct ec_params_usb_pd_control *params;
+>    236
+>    237          int i;
+>    238
+>    239          msg = &ec_buf.msg;
+>    240          params = (struct ec_params_usb_pd_control *)msg->data;
+>    241          resp = (struct ec_response_usb_pd_control_v1 *)msg->data;
+>    242
+>    243          msg->command = EC_CMD_USB_PD_CONTROL;
+>    244          msg->version = 1;
+>    245          msg->insize = sizeof(*resp);
+>    246          msg->outsize = sizeof(*params);
+>    247
+>    248          /*
+>    249           * Read status from all PD ports until failure, typically caused
+>    250           * by attempting to read status on a port that doesn't exist.
+>    251           */
+>    252          for (i = 0; i < EC_USB_PD_MAX_PORTS; ++i) {
+>    253                  params->port = i;
+>    254                  params->role = 0;
+>    255                  params->mux = 0;
+>    256                  params->swap = 0;
+>    257
+>    258                  if (cros_ec_cmd_xfer_status(ec_dev, msg) < 0)
+>    259                          break;
+>    260
+>    261                  p += scnprintf(p, sizeof(read_buf) + read_buf - p,
+>    262                          "p%d: %s en:%.2x role:%.2x pol:%.2x\n",
+>    263                          i, resp->state, resp->enabled, resp->role,
+>    264                          resp->polarity);
+>    265          }
+>    266
+>    267          return simple_read_from_buffer(user_buf, count, ppos,
+>    268                                         read_buf, p - read_buf);
+>    269  }
+>    270
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-> 
-> >  arch/x86/kernel/cpu/microcode/intel.c | 28 +++++++++++++++++++++++++---
-> >  1 file changed, 25 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> > index 09b95a7..137c9f5 100644
-> > --- a/arch/x86/kernel/cpu/microcode/intel.c
-> > +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> > @@ -589,6 +589,18 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
-> >  	if (!mc)
-> >  		return 0;
-> >  
-> > +	rev = intel_get_microcode_revision();
-> 
-> Ok, so I'm still wondering what this patch is trying to achieve.
-> 
-> intel_get_microcode_revision() does already *two* MSR reads and a CPUID.
-> So it is not speed improvements - it actually makes loading slower due to that
-> checking.
+Looks like I missed to add a dependency on this patch [1] here. I
+think that the series that contains the dependency is farther to be
+accepted than these. So maybe what we could do is include the missing
+dependency here. What would you prefer, I send a new version with the
+missing patch included or you just pick the patch from the other
+series? The patch was already acked by you.
 
-Not a speed improvement.. Hopefully i didn't mislead somewhere :-(
-> 
-> So why are we doing this again?
+Thanks,
+  Enric
 
-When you have two HT threads of the same core. Updating microcode on one of the threads
-is just good enough. The recommendation for HT siblings is as follows.
-
-Core C0 has two threads C0T0, and C0T1
-
-- Not to simultaneously load microcode on both threads.
-- (NEW) not to perform ucode load when the other HT thread is active. 
-  Its safe to spin on a cached variable (like what the patch3 is trying to achieve)
-
-The current code wasn't trying to enforce checking the loaded microcode revision on a thread
-before attempting to load the microcode. While you comeback from resume, if C0T0 already
-is up, and we loaded the early microcode, then when handling C0T1 there is no need to 
-do a wrmsrl to reapply microcode since its already loaded as part of C0T0. 
-
-This way we don't need any quiese of C0T0 while bringing up C0T1. We need to skip 
-the loading process avoid doing the ucode load in this case.
-
-Hope this helps.. and if you need this as part of the file/commit log, we should
-add that.
-
-        rev = intel_get_microcode_revision();                                         
-
-        /*
-         * Its possible the microcode got updated
-         * because its sibling update was done earlier.
-         * Skip the update in that case.
-         */
-        if (rev >= mc->hdr.rev) {
-                uci->cpu_sig.rev = rev;<----- Maybe we can avoid this in early load?
-                return UCODE_OK;
-        }
-
-        /*
-         * Microcode updates can be safer if the caches are clean.
-         * Some of the issues around in certain Broadwell parts
-         * can be addressed by doing a full cache flush.
-         */
-        native_wbinvd();
-
-        /* write microcode via MSR 0x79 */
-        native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+[1] https://lkml.org/lkml/2018/1/23/217
