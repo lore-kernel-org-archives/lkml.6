@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933306AbeBVRCR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:02:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45216 "EHLO
+        id S933398AbeBVRC1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:02:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45246 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933193AbeBVRCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:02:15 -0500
+        id S933193AbeBVRCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 12:02:19 -0500
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
@@ -17,113 +17,92 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Morten Rasmussen <morten.rasmussen@arm.com>,
         Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
         Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: [PATCH v5 0/4] Utilization estimation (util_est) for FAIR tasks
-Date: Thu, 22 Feb 2018 17:01:49 +0000
-Message-Id: <20180222170153.673-1-patrick.bellasi@arm.com>
+Subject: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
+Date: Thu, 22 Feb 2018 17:01:50 +0000
+Message-Id: <20180222170153.673-2-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180222170153.673-1-patrick.bellasi@arm.com>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, here is an update of [1], based on today's tip/sched/core [2], which
-targets two main things:
+The util_avg signal computed by PELT is too variable for some use-cases.
+For example, a big task waking up after a long sleep period will have its
+utilization almost completely decayed. This introduces some latency before
+schedutil will be able to pick the best frequency to run a task.
 
-1) Add the required/missing {READ,WRITE}_ONCE compiler barriers
+The same issue can affect task placement. Indeed, since the task
+utilization is already decayed at wakeup, when the task is enqueued in a
+CPU, this can result in a CPU running a big task as being temporarily
+represented as being almost empty. This leads to a race condition where
+other tasks can be potentially allocated on a CPU which just started to run
+a big task which slept for a relatively long period.
 
-   AFAIU, we wanted those barriers for lock-less synchronization between:
-   - enqueue/dequeue calls: which are serialized by the RQ lock but where we
-     read/modify util_est signals which can be _read concurrently_ from other
-     code paths.
-   - load balancer related functions: which are not serialized by the RQ lock
-     but read util_est signals updated by the enqueue/dequeue calls.
+Moreover, the PELT utilization of a task can be updated every [ms], thus
+making it a continuously changing value for certain longer running
+tasks. This means that the instantaneous PELT utilization of a RUNNING
+task is not really meaningful to properly support scheduler decisions.
 
-   However, after noticing this commit:
+For all these reasons, a more stable signal can do a better job of
+representing the expected/estimated utilization of a task/cfs_rq.
+Such a signal can be easily created on top of PELT by still using it as
+an estimator which produces values to be aggregated on meaningful
+events.
 
-      7bd3e239d6c6 locking: Remove atomicy checks from {READ,WRITE}_ONCE
+This patch adds a simple implementation of util_est, a new signal built on
+top of PELT's util_avg where:
 
-   I'm still a bit confused on the real need of these calls mainly because:
-   a) they are not the proper mechanism to grant atomic load/stores, for
-      example when we need to access u64 values while running on a 32bit
-      target.
-   b) apart from possible load/store tearing issues, I was not able to see
-      other scenarios, among the ones described in [3] which potentially
-      apply to the code of these patches.
+    util_est(task) = max(task::util_avg, f(task::util_avg@dequeue_times))
 
-   Thus, to avoid load/store tearing, in principle I would have used:
-   - WRITE_ONCE only on RQ-locked serialized code.
-     Where we read/modify util_est signals, in order to properly publish it to
-     concurrently running load balancer code.
-   - READ_ONCE only from _non_ RQ-lock serialized code.
-     Where we read only util_est signals.
+This allows to remember how big a task has been reported by PELT in its
+previous activations via the function: f(task::util_avg@dequeue_times).
 
-   To my understanding this should be just good enough also to document the
-   concurrent access to some shared variables while still allowing the compiler
-   to optimize some load from the RQ-lock serialized code.
+If a task should change its behavior and it runs even longer in a new
+activation, after a certain time its util_est will just track the
+original PELT signal (i.e. task::util_avg).
 
-   All that considered, my last question on this point is: can we remove the
-   READ_ONCE()s from RQ-lock serialized code?
+The estimated utilization of cfs_rq is defined only for root ones.
+That's because the only sensible consumer of this signal are the
+scheduler and schedutil when looking for the overall CPU utilization due
+to FAIR tasks.
+For this reason, the estimated utilization of a root cfs_rq is simply
+defined as:
 
-2) Ensure the feature can be safely turned on by default
+    util_est(cfs_rq) = max(cfs_rq::util_avg, cfs_rq::util_est_runnable)
 
-   Estimated utilization of Tasks and RQs is a feature which can benefit mainly
-   lightly utilized systems, where you can have tasks which sleep for
-   relatively long time but we still want to be fast on ramping-up the OPPs
-   once they wake up.
+where:
 
-   However, since Peter proposed to have this scheduler feature turned on by
-   default, we did spent a bit more time focusing on hackbench to verify it
-   will not hurt server/HPC classes of workloads.
+    cfs_rq::util_est_runnable = sum(util_est(task))
+                                for each RUNNABLE task on that root cfs_rq
 
-   The main discovery has been that, if we properly configure hackbench
-   to have an high rate of enqueue/dequeue events, despite the few instructions
-   util_est adds, the overheads starts to become more noticeable.
-   That's the reason of the last patch we added to this series, which changelog
-   should be good enough to describe the issue and the proposed solution.
+It's worth to note that the estimated utilization is tracked only for
+objects of interests, specifically:
+ - Tasks: to better support tasks placement decisions
+ - root cfs_rqs: to better support both tasks placement decisions as
+                 well as frequencies selection
 
-   Experiments including this patch have been run on a dual socket
-   Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz, using precisely this
-   configuration:
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
 
-   - cpusets to isolate one single socket for the execution of hackbench on
-     just 10 of the available 20 cores.
-     This allows to avoid NUMA load balancer side effects which we noticed
-     affect quite a lot the variance across multiple experiments.
-
-   - CPUFreq powersave policy, with the intel_pstate driver configured in
-     passive mode and the scaling_max_freq set to the scaling_min_freq.
-     This allows to rule out thermal and/or turbo boost side effects.
-
-   - hackbench configured to run 120 iterations of:
-
-        perf bench sched messaging --pipe --thread --group 8 --loop 5000
-
-   which, in the above setup, corresponds to ~11s completion time for each
-   iteration using 320 tasks.
-
-   In the above setup, this configuration seems to maximize the rate of
-   wakeup/sleep events thus better stressing the enqueue/dequeue code paths.
-   Here are the stats we collected for the completion times:
-
-        	count mean	std	 min	50%    95%	99%	 max
-    before	120.0 11.010342 0.375753 10.104 11.046 11.54155 11.69629 11.751
-    after	120.0 11.041117 0.375429 10.015 11.072 11.59070 11.67720 11.692
-
-    after vs before: +0.3%  on mean
-    after vs before: -0.2%  on 99% percentile
-
-Results on ARM (Android) devices have been collected and reported in a previous
-posting [4] and they showed negligible overhead compared to the corresponding
-power/performance benefits.
-
+---
 Changes in v5:
- - rebased on today's tip/sched/core (commit 083c6eeab2cc, based on v4.16-rc2)
- - update util_est only on util_avg updates
  - add documentation for "struct util_est"
  - always use int instead of long whenever possible (Peter)
  - pass cfs_rq to util_est_{en,de}queue (Peter)
  - pass task_sleep to util_est_dequeue
  - use singe WRITE_ONCE at dequeue time
- - add some missing {READ,WRITE}_ONCE
+ - add some other missing {READ,WRITE}_ONCE
  - add task_util_est() for code consistency
 
 Changes in v4:
@@ -132,46 +111,255 @@ Changes in v4:
  - using util_est's "enqueued" for both se and cfs_rqs (Joel)
  - update margin check to use more ASM friendly code (Peter)
  - optimize EWMA updates (Peter)
- - ensure cpu_util_wake() is cpu_capacity_orig()'s clamped (Pavan)
- - simplify cpu_util_cfs() integration (Dietmar)
 
 Changes in v3:
  - rebased on today's tip/sched/core (commit 07881166a892)
  - moved util_est into sched_avg (Peter)
  - use {READ,WRITE}_ONCE() for EWMA updates (Peter)
  - using unsigned int to fit all sched_avg into a single 64B cache line
- - schedutil integration using Juri's cpu_util_cfs()
- - first patch dropped since it's already queued in tip/sched/core
 
 Changes in v2:
- - rebased on top of v4.15-rc2
+ - rebase on top of v4.15-rc2
  - tested that overhauled PELT code does not affect the util_est
+---
+ include/linux/sched.h   |  29 +++++++++++++
+ kernel/sched/debug.c    |   4 ++
+ kernel/sched/fair.c     | 109 +++++++++++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/features.h |   5 +++
+ 4 files changed, 146 insertions(+), 1 deletion(-)
 
-Cheers Patrick
-
-.:: References
-==============
-[1] https://lkml.org/lkml/2018/2/6/356
-    20180206144131.31233-1-patrick.bellasi@arm.com
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-    sched/core (commit 083c6eeab2cc)
-[3] Documentation/memory-barriers.txt (Line 1508)
-    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/memory-barriers.txt?h=v4.16-rc2#n1508
-[4] https://lkml.org/lkml/2018/1/23/645
-    20180123180847.4477-1-patrick.bellasi@arm.com
-
-Patrick Bellasi (4):
-  sched/fair: add util_est on top of PELT
-  sched/fair: use util_est in LB and WU paths
-  sched/cpufreq_schedutil: use util_est for OPP selection
-  sched/fair: update util_est only on util_avg updates
-
- include/linux/sched.h   |  29 +++++++
- kernel/sched/debug.c    |   4 +
- kernel/sched/fair.c     | 221 ++++++++++++++++++++++++++++++++++++++++++++++--
- kernel/sched/features.h |   5 ++
- kernel/sched/sched.h    |   7 +-
- 5 files changed, 259 insertions(+), 7 deletions(-)
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b161ef8a902e..14b1a6ce6298 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -275,6 +275,34 @@ struct load_weight {
+ 	u32				inv_weight;
+ };
+ 
++/**
++ * Estimation Utilization for FAIR tasks.
++ *
++ * Support data structure to track an Exponential Weighted Moving Average
++ * (EWMA) of a FAIR task's utilization. New samples are added to the moving
++ * average each time a task completes an activation. Sample's weight is
++ * chosen so that the EWMA will be relatively insensitive to transient changes
++ * to the task's workload.
++ *
++ * @enqueued: instantaneous estimated utilization of a task/cpu
++ *      task: the task's util_avg at last task dequeue time
++ *    cfs_rq: the sum of util_est.enqueued for each RUNNABLE task on that CPU
++ *
++ *  Thus, the util_est.enqueued of a task represents the contribution on the
++ *  estimated utilization of the CPU where that task is currently enqueued.
++ *
++ * @ewma: the Exponential Weighted Moving Average (EWMA) utilization of a task
++ *  Only for tasks we track a moving average of the past instantaneous
++ *  estimated utilization. This allows to absorb sporadic drops in
++ *  utilization of an otherwise almost periodic task.
++ *
++ */
++struct util_est {
++	unsigned int			enqueued;
++	unsigned int			ewma;
++#define UTIL_EST_WEIGHT_SHIFT		2
++};
++
+ /*
+  * The load_avg/util_avg accumulates an infinite geometric series
+  * (see __update_load_avg() in kernel/sched/fair.c).
+@@ -336,6 +364,7 @@ struct sched_avg {
+ 	unsigned long			load_avg;
+ 	unsigned long			runnable_load_avg;
+ 	unsigned long			util_avg;
++	struct util_est			util_est;
+ };
+ 
+ struct sched_statistics {
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 1ca0130ed4f9..d4eb5532ea6b 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -567,6 +567,8 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 			cfs_rq->avg.runnable_load_avg);
+ 	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
+ 			cfs_rq->avg.util_avg);
++	SEQ_printf(m, "  .%-30s: %u\n", "util_est_enqueued",
++			cfs_rq->avg.util_est.enqueued);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.load_avg",
+ 			cfs_rq->removed.load_avg);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.util_avg",
+@@ -1018,6 +1020,8 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
+ 	P(se.avg.runnable_load_avg);
+ 	P(se.avg.util_avg);
+ 	P(se.avg.last_update_time);
++	P(se.avg.util_est.ewma);
++	P(se.avg.util_est.enqueued);
+ #endif
+ 	P(policy);
+ 	P(prio);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e1febd252a84..c8526687f107 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5205,6 +5205,23 @@ static inline void hrtick_update(struct rq *rq)
+ }
+ #endif
+ 
++static inline unsigned long task_util(struct task_struct *p);
++static inline unsigned long _task_util_est(struct task_struct *p);
++
++static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
++				    struct task_struct *p)
++{
++	unsigned int enqueued;
++
++	if (!sched_feat(UTIL_EST))
++		return;
++
++	/* Update root cfs_rq's estimated utilization */
++	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
++	enqueued += _task_util_est(p);
++	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
++}
++
+ /*
+  * The enqueue_task method is called before nr_running is
+  * increased. Here we update the fair scheduling stats and
+@@ -5257,9 +5274,86 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!se)
+ 		add_nr_running(rq, 1);
+ 
++	util_est_enqueue(&rq->cfs, p);
+ 	hrtick_update(rq);
+ }
+ 
++/*
++ * Check if a (signed) value is within a specified (unsigned) margin,
++ * based on the observation that:
++ *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
++ *
++ * NOTE: this only works when value + maring < INT_MAX.
++ */
++static inline bool within_margin(int value, int margin)
++{
++	return ((unsigned int)(value + margin - 1) < (2 * margin - 1));
++}
++
++static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
++				    struct task_struct *p,
++				    bool task_sleep)
++{
++	long last_ewma_diff;
++	struct util_est ue;
++
++	if (!sched_feat(UTIL_EST))
++		return;
++
++	/*
++	 * Update root cfs_rq's estimated utilization
++	 *
++	 * If *p is the last task then the root cfs_rq's estimated utilization
++	 * of a CPU is 0 by definition.
++	 */
++	ue.enqueued = 0;
++	if (cfs_rq->nr_running) {
++		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
++		ue.enqueued -= min_t(unsigned int, ue.enqueued,
++				     _task_util_est(p));
++	}
++	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
++
++	/*
++	 * Skip update of task's estimated utilization when the task has not
++	 * yet completed an activation, e.g. being migrated.
++	 */
++	if (!task_sleep)
++		return;
++
++	/*
++	 * Skip update of task's estimated utilization when its EWMA is
++	 * already ~1% close to its last activation value.
++	 */
++	ue = READ_ONCE(p->se.avg.util_est);
++	ue.enqueued = task_util(p);
++	last_ewma_diff = ue.enqueued - ue.ewma;
++	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
++		return;
++
++	/*
++	 * Update Task's estimated utilization
++	 *
++	 * When *p completes an activation we can consolidate another sample
++	 * of the task size. This is done by storing the current PELT value
++	 * as ue.enqueued and by using this value to update the Exponential
++	 * Weighted Moving Average (EWMA):
++	 *
++	 *  ewma(t) = w *  task_util(p) + (1-w) * ewma(t-1)
++	 *          = w *  task_util(p) +         ewma(t-1)  - w * ewma(t-1)
++	 *          = w * (task_util(p) -         ewma(t-1)) +     ewma(t-1)
++	 *          = w * (      last_ewma_diff            ) +     ewma(t-1)
++	 *          = w * (last_ewma_diff  +  ewma(t-1) / w)
++	 *
++	 * Where 'w' is the weight of new samples, which is configured to be
++	 * 0.25, thus making w=1/4 ( >>= UTIL_EST_WEIGHT_SHIFT)
++	 */
++	ue.ewma <<= UTIL_EST_WEIGHT_SHIFT;
++	ue.ewma  += last_ewma_diff;
++	ue.ewma >>= UTIL_EST_WEIGHT_SHIFT;
++	WRITE_ONCE(p->se.avg.util_est, ue);
++}
++
+ static void set_next_buddy(struct sched_entity *se);
+ 
+ /*
+@@ -5316,6 +5410,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!se)
+ 		sub_nr_running(rq, 1);
+ 
++	util_est_dequeue(&rq->cfs, p, task_sleep);
+ 	hrtick_update(rq);
+ }
+ 
+@@ -5834,7 +5929,6 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 	return target;
+ }
+ 
+-static inline unsigned long task_util(struct task_struct *p);
+ static unsigned long cpu_util_wake(int cpu, struct task_struct *p);
+ 
+ static unsigned long capacity_spare_wake(int cpu, struct task_struct *p)
+@@ -6356,6 +6450,19 @@ static inline unsigned long task_util(struct task_struct *p)
+ 	return p->se.avg.util_avg;
+ }
+ 
++
++static inline unsigned long _task_util_est(struct task_struct *p)
++{
++	struct util_est ue = READ_ONCE(p->se.avg.util_est);
++
++	return max(ue.ewma, ue.enqueued);
++}
++
++static inline unsigned long task_util_est(struct task_struct *p)
++{
++	return max(READ_ONCE(p->se.avg.util_avg), _task_util_est(p));
++}
++
+ /*
+  * cpu_util_wake: Compute cpu utilization with any contributions from
+  * the waking task p removed.
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 9552fd5854bf..c459a4b61544 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -85,3 +85,8 @@ SCHED_FEAT(ATTACH_AGE_LOAD, true)
+ SCHED_FEAT(WA_IDLE, true)
+ SCHED_FEAT(WA_WEIGHT, true)
+ SCHED_FEAT(WA_BIAS, true)
++
++/*
++ * UtilEstimation. Use estimated CPU utilization.
++ */
++SCHED_FEAT(UTIL_EST, false)
 -- 
 2.15.1
