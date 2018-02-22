@@ -1,69 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932609AbeBVNgu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:36:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48221 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932356AbeBVNgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:36:46 -0500
-Date: Thu, 22 Feb 2018 14:36:43 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: Use higher-order pages in vmalloc
-Message-ID: <20180222133643.GJ30681@dhcp22.suse.cz>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
- <151670493255.658225.2881484505285363395.stgit@buzz>
- <20180221154214.GA4167@bombadil.infradead.org>
- <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
- <20180221170129.GB27687@bombadil.infradead.org>
- <20180222065943.GA30681@dhcp22.suse.cz>
- <20180222122254.GA22703@bombadil.infradead.org>
+        id S932640AbeBVNi1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:38:27 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:56800 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932491AbeBVNiZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:38:25 -0500
+Date: Thu, 22 Feb 2018 21:38:13 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Joel Fernandes <joelf@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] crypto: omap: Improve a size determination in three
+ functions
+Message-ID: <20180222133813.GB28447@gondor.apana.org.au>
+References: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
+ <0a45e47f-5ed0-5dd6-7545-adc8df2d7972@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222122254.GA22703@bombadil.infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <0a45e47f-5ed0-5dd6-7545-adc8df2d7972@users.sourceforge.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-02-18 04:22:54, Matthew Wilcox wrote:
-> On Thu, Feb 22, 2018 at 07:59:43AM +0100, Michal Hocko wrote:
-> > On Wed 21-02-18 09:01:29, Matthew Wilcox wrote:
-> > > Right.  It helps with fragmentation if we can keep higher-order
-> > > allocations together.
-> > 
-> > Hmm, wouldn't it help if we made vmalloc pages migrateable instead? That
-> > would help the compaction and get us to a lower fragmentation longterm
-> > without playing tricks in the allocation path.
+On Wed, Feb 14, 2018 at 04:26:36PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Feb 2018 16:12:05 +0100
 > 
-> I was wondering about that possibility.  If we want to migrate a page
-> then we have to shoot down the PTE across all CPUs, copy the data to the
-> new page, and insert the new PTE.  Copying 4kB doesn't take long; if you
-> have 12GB/s (current example on Wikipedia: dual-channel memory and one
-> DDR2-800 module per channel gives a theoretical bandwidth of 12.8GB/s)
-> then we should be able to copy a page in 666ns).  So there's no problem
-> holding a spinlock for it.
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
 > 
-> But we can't handle a fault in vmalloc space today.  It's handled in
-> arch-specific code, see vmalloc_fault() in arch/x86/mm/fault.c
-> If we're going to do this, it'll have to be something arches opt into
-> because I'm not taking on the job of fixing every architecture!
-
-yes.
-
-> > Maybe we should consider kvmalloc for the kernel stack?
+> This issue was detected by using the Coccinelle software.
 > 
-> We'd lose the guard page, so it'd have to be something we let the
-> sysadmin decide to do.
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/crypto/omap-aes.c  | 3 +--
+>  drivers/crypto/omap-des.c  | 3 +--
+>  drivers/crypto/omap-sham.c | 3 +--
+>  3 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
+> index a2bac3b869b6..82282a5e9b3f 100644
+> --- a/drivers/crypto/omap-aes.c
+> +++ b/drivers/crypto/omap-aes.c
+> @@ -1032,14 +1032,13 @@ static int omap_aes_get_res_pdev(struct omap_aes_dev *dd,
+>  static int omap_aes_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct omap_aes_dev *dd;
+>  	struct crypto_alg *algp;
+>  	struct aead_alg *aalg;
+>  	struct resource res;
+>  	int err = -ENOMEM, i, j, irq = -1;
+>  	u32 reg;
+> +	struct omap_aes_dev *dd = devm_kzalloc(dev, sizeof(*dd), GFP_KERNEL);
+>  
+> -	dd = devm_kzalloc(dev, sizeof(struct omap_aes_dev), GFP_KERNEL);
 
-ohh, right, I forgot about the guard page.
+I'm fine with sizeof(*dd) but please don't combine the allocation
+with the declaration.
+
+Thanks,
 -- 
-Michal Hocko
-SUSE Labs
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
