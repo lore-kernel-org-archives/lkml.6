@@ -1,153 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753310AbeBVJuu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:50:50 -0500
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:39272 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753129AbeBVJun (ORCPT
+        id S1753350AbeBVJvO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:51:14 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15590 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753183AbeBVJtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:50:43 -0500
-X-Google-Smtp-Source: AH8x225j+K7aRQPoqf5WIlL3o4RzTqxc745UBKJCM87R7Z600fqQywhL5jZ7LX7jE4FQTAGzOymzI2ujkI0UcJ1+IxU=
+        Thu, 22 Feb 2018 04:49:52 -0500
+From: Hugues Fruchet <hugues.fruchet@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>
+Subject: [PATCH v2] media: stm32-dcmi: fix lock scheme
+Date: Thu, 22 Feb 2018 10:49:14 +0100
+Message-ID: <1519292954-19733-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <001a113f753879e5060565bf321f@google.com>
-References: <001a113f753879e5060565bf321f@google.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Thu, 22 Feb 2018 10:50:42 +0100
-Message-ID: <CADvbK_eandMH1aZvKnzdX=3xdS0NSo6_NAeCrKasqA9EON4B0A@mail.gmail.com>
-Subject: Re: WARNING: refcount bug in sock_wfree
-To: syzbot <syzbot+98a809ad0f54884bde26@syzkaller.appspotmail.com>
-Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 9:59 PM, syzbot
-<syzbot+98a809ad0f54884bde26@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> 79c0ef3e85c015b0921a8fd5dd539d1480e9cd6c (Mon Feb 19 19:58:19 2018 +0000)
-> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
->
-> So far this crash happened 2 times on
-> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/master.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+98a809ad0f54884bde26@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
-> IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
-> IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
-> audit: type=1400 audit(1519151768.973:11): avc:  denied  { sys_chroot } for
-> pid=4169 comm="syz-executor5" capability=18
-> scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=cap_userns
-> permissive=1
-> ------------[ cut here ]------------
-> refcount_t: underflow; use-after-free.
-> WARNING: CPU: 0 PID: 5074 at lib/refcount.c:187
-> refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-> Kernel panic - not syncing: panic_on_warn set ...
-It seems that we also need to process the chunks in
-outqueue->control_chunk_list in sctp_for_each_tx_datachunk()
-when peeling off.
+Fix lock scheme leading to spurious freeze.
 
->
-> CPU: 0 PID: 5074 Comm: syz-executor5 Not tainted 4.16.0-rc2+ #322
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  __warn+0x1dc/0x200 kernel/panic.c:547
->  report_bug+0x211/0x2d0 lib/bug.c:184
->  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
-> RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-> RSP: 0018:ffff8801cf2b6490 EFLAGS: 00010282
-> RAX: dffffc0000000008 RBX: 0000000000000401 RCX: ffffffff815abdbe
-> RDX: 0000000000000000 RSI: 1ffff10039e56c42 RDI: 1ffff10039e56c17
-> RBP: ffff8801cf2b6520 R08: 1ffff10039e56bd9 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff10039e56c93
-> R13: 00000000ffffff01 R14: 0000000000000500 R15: ffff8801ae3c69fc
->  sock_wfree+0xa6/0x140 net/core/sock.c:1819
->  sctp_wfree+0x2eb/0x670 net/sctp/socket.c:8065
->  skb_release_head_state+0x124/0x260 net/core/skbuff.c:612
->  skb_release_all+0x15/0x60 net/core/skbuff.c:625
->  __kfree_skb net/core/skbuff.c:641 [inline]
->  consume_skb+0x153/0x490 net/core/skbuff.c:701
->  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1450 [inline]
->  sctp_chunk_put+0x29c/0x420 net/sctp/sm_make_chunk.c:1477
->  sctp_chunk_free+0x53/0x60 net/sctp/sm_make_chunk.c:1464
->  __sctp_outq_teardown+0x244/0x1230 net/sctp/outqueue.c:234
->  sctp_outq_free+0x15/0x20 net/sctp/outqueue.c:291
->  sctp_association_free+0x2d0/0x930 net/sctp/associola.c:356
->  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:939 [inline]
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1343 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1210 [inline]
->  sctp_do_sm+0x32e3/0x6ed0 net/sctp/sm_sideeffect.c:1181
->  sctp_primitive_ABORT+0xa0/0xd0 net/sctp/primitive.c:119
->  sctp_close+0x266/0x9a0 net/sctp/socket.c:1539
->  inet_release+0xed/0x1c0 net/ipv4/af_inet.c:427
->  sock_release+0x8d/0x1e0 net/socket.c:595
->  sock_close+0x16/0x20 net/socket.c:1149
->  __fput+0x327/0x7e0 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
->  do_group_exit+0x149/0x400 kernel/exit.c:968
->  get_signal+0x73a/0x16d0 kernel/signal.c:2469
->  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
->  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6e5/0x940 arch/x86/entry/common.c:292
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x453da9
-> RSP: 002b:00007f297546ace8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: fffffffffffffe00 RBX: 000000000072bf80 RCX: 0000000000453da9
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bf80
-> RBP: 000000000072bf80 R08: 0000000000000000 R09: 000000000072bf58
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000a3e8ef R14: 00007f297546b9c0 R15: 0000000000000001
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+---
+version 2:
+  - dcmi_buf_queue() refactor to avoid to have "else" after "return"
+    (warning detected by checkpatch.pl --strict -f stm32-dcmi.c)
+
+ drivers/media/platform/stm32/stm32-dcmi.c | 57 +++++++++++++------------------
+ 1 file changed, 24 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 2fd8bed..5de18ad 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -197,7 +197,7 @@ static void dcmi_dma_callback(void *param)
+ 	struct dma_tx_state state;
+ 	enum dma_status status;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	/* Check DMA status */
+ 	status = dmaengine_tx_status(chan, dcmi->dma_cookie, &state);
+@@ -239,7 +239,7 @@ static void dcmi_dma_callback(void *param)
+ 				dcmi->errors_count++;
+ 				dcmi->active = NULL;
+ 
+-				spin_unlock(&dcmi->irqlock);
++				spin_unlock_irq(&dcmi->irqlock);
+ 				return;
+ 			}
+ 
+@@ -248,13 +248,11 @@ static void dcmi_dma_callback(void *param)
+ 
+ 			list_del_init(&dcmi->active->list);
+ 
+-			if (dcmi_start_capture(dcmi)) {
++			spin_unlock_irq(&dcmi->irqlock);
++			if (dcmi_start_capture(dcmi))
+ 				dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
+ 					__func__);
+-
+-				spin_unlock(&dcmi->irqlock);
+-				return;
+-			}
++			return;
+ 		}
+ 
+ 		break;
+@@ -263,7 +261,7 @@ static void dcmi_dma_callback(void *param)
+ 		break;
+ 	}
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irq(&dcmi->irqlock);
+ }
+ 
+ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
+@@ -360,7 +358,7 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ {
+ 	struct stm32_dcmi *dcmi = arg;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	/* Stop capture is required */
+ 	if (dcmi->state == STOPPING) {
+@@ -370,7 +368,7 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 
+ 		complete(&dcmi->complete);
+ 
+-		spin_unlock(&dcmi->irqlock);
++		spin_unlock_irq(&dcmi->irqlock);
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -383,35 +381,34 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
+ 			 __func__);
+ 
+ 		dcmi->errors_count++;
+-		dmaengine_terminate_all(dcmi->dma_chan);
+-
+ 		dev_dbg(dcmi->dev, "Restarting capture after DCMI error\n");
+ 
+-		if (dcmi_start_capture(dcmi)) {
++		spin_unlock_irq(&dcmi->irqlock);
++		dmaengine_terminate_all(dcmi->dma_chan);
++
++		if (dcmi_start_capture(dcmi))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
+ 				__func__);
+-
+-			spin_unlock(&dcmi->irqlock);
+-			return IRQ_HANDLED;
+-		}
++		return IRQ_HANDLED;
+ 	}
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irq(&dcmi->irqlock);
+ 	return IRQ_HANDLED;
+ }
+ 
+ static irqreturn_t dcmi_irq_callback(int irq, void *arg)
+ {
+ 	struct stm32_dcmi *dcmi = arg;
++	unsigned long flags;
+ 
+-	spin_lock(&dcmi->irqlock);
++	spin_lock_irqsave(&dcmi->irqlock, flags);
+ 
+ 	dcmi->misr = reg_read(dcmi->regs, DCMI_MIS);
+ 
+ 	/* Clear interrupt */
+ 	reg_set(dcmi->regs, DCMI_ICR, IT_FRAME | IT_OVR | IT_ERR);
+ 
+-	spin_unlock(&dcmi->irqlock);
++	spin_unlock_irqrestore(&dcmi->irqlock, flags);
+ 
+ 	return IRQ_WAKE_THREAD;
+ }
+@@ -490,9 +487,8 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+ 	struct stm32_dcmi *dcmi =  vb2_get_drv_priv(vb->vb2_queue);
+ 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+ 	struct dcmi_buf *buf = container_of(vbuf, struct dcmi_buf, vb);
+-	unsigned long flags = 0;
+ 
+-	spin_lock_irqsave(&dcmi->irqlock, flags);
++	spin_lock_irq(&dcmi->irqlock);
+ 
+ 	if ((dcmi->state == RUNNING) && (!dcmi->active)) {
+ 		dcmi->active = buf;
+@@ -500,19 +496,15 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+ 		dev_dbg(dcmi->dev, "Starting capture on buffer[%d] queued\n",
+ 			buf->vb.vb2_buf.index);
+ 
+-		if (dcmi_start_capture(dcmi)) {
++		spin_unlock_irq(&dcmi->irqlock);
++		if (dcmi_start_capture(dcmi))
+ 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
+ 				__func__);
+-
+-			spin_unlock_irqrestore(&dcmi->irqlock, flags);
+-			return;
+-		}
+ 	} else {
+ 		/* Enqueue to video buffers list */
+ 		list_add_tail(&buf->list, &dcmi->buffers);
++		spin_unlock_irq(&dcmi->irqlock);
+ 	}
+-
+-	spin_unlock_irqrestore(&dcmi->irqlock, flags);
+ }
+ 
+ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+@@ -598,20 +590,17 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 
+ 	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
+ 
++	spin_unlock_irq(&dcmi->irqlock);
+ 	ret = dcmi_start_capture(dcmi);
+ 	if (ret) {
+ 		dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
+ 			__func__);
+-
+-		spin_unlock_irq(&dcmi->irqlock);
+ 		goto err_subdev_streamoff;
+ 	}
+ 
+ 	/* Enable interruptions */
+ 	reg_set(dcmi->regs, DCMI_IER, IT_FRAME | IT_OVR | IT_ERR);
+ 
+-	spin_unlock_irq(&dcmi->irqlock);
+-
+ 	return 0;
+ 
+ err_subdev_streamoff:
+@@ -654,7 +643,9 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
+ 		dev_err(dcmi->dev, "%s: Failed to stop streaming, subdev streamoff error (%d)\n",
+ 			__func__, ret);
+ 
++	spin_lock_irq(&dcmi->irqlock);
+ 	dcmi->state = STOPPING;
++	spin_unlock_irq(&dcmi->irqlock);
+ 
+ 	timeout = wait_for_completion_interruptible_timeout(&dcmi->complete,
+ 							    time_ms);
+-- 
+1.9.1
