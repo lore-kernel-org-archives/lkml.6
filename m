@@ -1,48 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933143AbeBVQC0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:02:26 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43260 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932952AbeBVQCV (ORCPT
+        id S933241AbeBVQGk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:06:40 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35215 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933181AbeBVQGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:02:21 -0500
-Date: Thu, 22 Feb 2018 08:02:17 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
-        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180222160217.GA18243@infradead.org>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+        Thu, 22 Feb 2018 11:06:37 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/4] v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
+Date: Thu, 22 Feb 2018 18:07:20 +0200
+Message-ID: <2482046.sGQsectxr6@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com> <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
-> There are also a couple of architectures that are more or less
-> unmaintained but do have working gcc support: FR-V and M32R
-> have been orphaned for a while and are not getting updated
-> MN10300 is still maintained officially by David Howells but doesn't
-> seem any more active than the other two, the last real updates were
-> in 2013.
+Hi Wolfram,
 
-I'd love to see dead architecture ports dropped if they really are
-more or less abandoned.  In addition to your missing gcc port ones
-above (minus openrisc) it seems like frv and m32r certainly qualify,
-and xtensa seems to be going that way with the glibc port being dropped
-now.
+Thank you for the patch.
+
+On Monday, 5 February 2018 22:09:58 EET Wolfram Sang wrote:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift. No regression since the mask has not been used yet.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Oops.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and taken in my tree.
+
+> ---
+> Only build tested. To be applied individually per subsystem.
+> 
+>  drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_regs.h
+> b/drivers/media/platform/vsp1/vsp1_regs.h index
+> 26c4ffad2f4656..b1912c83a1dae2 100644
+> --- a/drivers/media/platform/vsp1/vsp1_regs.h
+> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
+> @@ -225,7 +225,7 @@
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_RATIO	(1 << 8)
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_IMAGE	(2 << 8)
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_BOTH	(3 << 8)
+> -#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff < 0)
+> +#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff << 0)
+>  #define VI6_RPF_MULT_ALPHA_RATIO_SHIFT	0
+> 
+>  /* ------------------------------------------------------------------------
+
+-- 
+Regards,
+
+Laurent Pinchart
