@@ -1,93 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeBVAeQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 19:34:16 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751270AbeBVAeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:34:15 -0500
-Message-ID: <1519259648.3171.43.camel@redhat.com>
-Subject: Re: [PATCH] audit: return on memory error to avoid null pointer
- dereference
-From: Eric Paris <eparis@redhat.com>
-To: Paul Moore <paul@paul-moore.com>, Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Steve Grubb <sgrubb@redhat.com>
-Date: Wed, 21 Feb 2018 16:34:08 -0800
-In-Reply-To: <CAHC9VhQ0QEJ9Gt=0em_u=sSHze-Af2AVbf72ARoAAoHf33_-Og@mail.gmail.com>
-References: <2000f6951431b4f19947d7aa41bb8efd2fe3f15b.1519196084.git.rgb@redhat.com>
-         <CAHC9VhQnVHgX99k2wTWyyxdaep-6k1WBnJ7t-AZmMNZJc_SN0A@mail.gmail.com>
-         <CAHC9VhQ0QEJ9Gt=0em_u=sSHze-Af2AVbf72ARoAAoHf33_-Og@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751607AbeBVAhz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 19:37:55 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42993 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeBVAhw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 19:37:52 -0500
+X-Google-Smtp-Source: AH8x224ht6O8IidyYa9JFWu9Ke8KWW0ZoZSMbKStK+ZfGufAQSYB6IhJrdPImaNvVCGZ+9mKnMttpQ==
+Date: Wed, 21 Feb 2018 16:37:50 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>
+Subject: [PATCH] doc: process: Add "Root-caused-by" and "Suggested-by"
+Message-ID: <20180222003749.GA4724@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think if we went back and looked at history we'd see that all of the
-code originally had none of the if(!ab) checks after allocation and
-they just sorta slowly crept in over time. I prefer this pattern, but
-it used to be the opposite everywhere.
+As recently pointed out by Linus, "Root-caused-by" is a good tag to include
+since it can indicate significantly more work than "just" a Reported-by.
+This adds it and "Suggested-by" (which was also missing) to the documented
+list of tags. Additionally updates checkpatch.pl to match the process docs.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ Documentation/process/5.Posting.rst | 7 +++++++
+ scripts/checkpatch.pl               | 2 ++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
+index 645fa9c7388a..2ff01f76f02a 100644
+--- a/Documentation/process/5.Posting.rst
++++ b/Documentation/process/5.Posting.rst
+@@ -234,6 +234,13 @@ The tags in common use are:
+    people who test our code and let us know when things do not work
+    correctly.
+ 
++ - Suggested-by: names a person who suggested the solution, but may not
++   have constructed the full patch. A weaker version of `Co-Developed-by`.
++
++ - Root-caused-by: names a person who diagnosed the root cause of a
++   problem. This usually indicates significantly more work than a simple
++   `Reported-by`.
++
+  - Cc: the named person received a copy of the patch and had the
+    opportunity to comment on it.
+ 
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 3d4040322ae1..a1ab82e70b54 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -464,9 +464,11 @@ our $logFunctions = qr{(?x:
+ our $signature_tags = qr{(?xi:
+ 	Signed-off-by:|
+ 	Acked-by:|
++	Co-Developed-by:|
+ 	Tested-by:|
+ 	Reviewed-by:|
+ 	Reported-by:|
++	Root-caused-by:|
+ 	Suggested-by:|
+ 	To:|
+ 	Cc:
+-- 
+2.7.4
 
 
-On Wed, 2018-02-21 at 19:02 -0500, Paul Moore wrote:
-> On Wed, Feb 21, 2018 at 6:49 PM, Paul Moore <paul@paul-moore.com>
-> wrote:
-> > On Wed, Feb 21, 2018 at 4:30 AM, Richard Guy Briggs <rgb@redhat.com
-> > > wrote:
-> > > If there is a memory allocation error when trying to change an
-> > > audit
-> > > kernel feature value, the ignored allocation error will trigger a
-> > > NULL
-> > > pointer dereference oops on subsequent use of that
-> > > pointer.  Return
-> > > instead.
-> > > 
-> > > Passes audit-testsuite.
-> > > See: https://github.com/linux-audit/audit-kernel/issues/76
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  kernel/audit.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > 
-> > Thanks, merged.
-> > 
-> > In the future a "[PATCH v2]" prefix would be appreciated for
-> > patches
-> > like this, it makes things a little easier in my inbox.
-> 
-> After merging this I went through all the other callers to see if
-> they
-> suffered the same mistake and everyone except for IMA was checking
-> the
-> returned pointer for NULL.  Upon looking at the IMA code, and the
-> audit code which is called, I realized we are actually "ok" as
-> audit_log_task_info(), audit_log_format(), audit_log_end(), and
-> others
-> all check for a NULL audit_buffer at the very top of the functions.
-> I'm going to leave this patch merged, it's a good practice after all,
-> but I don't believe that unpatched systems are in any danger of
-> oops'ing here.
-> 
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index 5c25449..2de74be 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -1059,6 +1059,8 @@ static void audit_log_feature_change(int
-> > > which, u32 old_feature, u32 new_feature
-> > >                 return;
-> > > 
-> > >         ab = audit_log_start(NULL, GFP_KERNEL,
-> > > AUDIT_FEATURE_CHANGE);
-> > > +       if (!ab)
-> > > +               return;
-> > >         audit_log_task_info(ab, current);
-> > >         audit_log_format(ab, " feature=%s old=%u new=%u
-> > > old_lock=%u new_lock=%u res=%d",
-> > >                          audit_feature_names[which],
-> > > !!old_feature, !!new_feature,
-> > > --
-> > > 1.8.3.1
-> 
-> 
+-- 
+Kees Cook
+Pixel Security
