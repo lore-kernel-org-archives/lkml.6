@@ -1,87 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932513AbeBVMRb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:17:31 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:63181 "EHLO
+        id S932396AbeBVMQl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:16:41 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:61683 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753716AbeBVMRa (ORCPT
+        with ESMTP id S932344AbeBVMQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:17:30 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w1MCFdUD020774
+        Thu, 22 Feb 2018 07:16:34 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w1MCFdUH020774
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Howells <dhowells@redhat.com>,
         linux-arm-kernel@lists.infradead.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        linux-m68k@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v3 0/5] linux/const.h: cleanups of macros such as UL(), _BITUL(), BIT() etc.
-Date: Thu, 22 Feb 2018 21:15:10 +0900
-Message-Id: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/5] linux/const.h: refactor _BITUL and _BITULL a bit
+Date: Thu, 22 Feb 2018 21:15:14 +0900
+Message-Id: <1519301715-31798-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Minor cleanups available by _UL and _ULL.
 
-ARM, ARM64, UniCore32 define UL() as a shorthand of _AC(..., UL).
-More architectures may introduce it in the future.
-
-UL() is arch-agnostic, and useful. So let's move it to
-include/linux/const.h
-
-Currently, <asm/memory.h> must be included to use UL().
-It pulls in more bloats just for defining some bit macros.
-
-I posted V2 one year ago.
-
-The previous posts are:
-https://patchwork.kernel.org/patch/9498273/
-https://patchwork.kernel.org/patch/9498275/
-https://patchwork.kernel.org/patch/9498269/
-https://patchwork.kernel.org/patch/9498271/
-
-At that time, what blocked this series was a comment from
-David Howells:
-  You need to be very careful doing this.  Some userspace stuff
-  depends on the guard macro names on the kernel header files.
-
-(https://patchwork.kernel.org/patch/9498275/)
-
-Looking at the code closer, I noticed this is not a problem.
-
-See the following line.
-https://github.com/torvalds/linux/blob/v4.16-rc2/scripts/headers_install.sh#L40
-
-scripts/headers_install.sh rips off _UAPI prefix from guard macro names.
-
-I ran "make headers_install" and confirmed the result is what I expect.
-
-So, we can prefix the include guard of include/uapi/linux/const.h,
-and add a new include/linux/const.h.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+V2: https://patchwork.kernel.org/patch/9498269/
 
 
+Changes in v3: None
+Changes in v2: None
 
-Masahiro Yamada (5):
-  linux/const.h: prefix include guard of uapi/linux/const.h with _UAPI
-  m68k: rename UL() to TO_UL()
-  linux/const.h: move UL() macro to include/linux/const.h
-  linux/const.h: refactor _BITUL and _BITULL a bit
-  linux/const.h: move BIT(_ULL) to linux/const.h for use in assembly
+ include/uapi/linux/const.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/include/asm/memory.h       |  6 ------
- arch/arm64/include/asm/memory.h     |  6 ------
- arch/m68k/mm/init.c                 |  6 +++---
- arch/unicore32/include/asm/memory.h |  6 ------
- include/linux/bitops.h              |  3 +--
- include/linux/const.h               | 12 ++++++++++++
- include/uapi/linux/const.h          | 13 ++++++++-----
- 7 files changed, 24 insertions(+), 28 deletions(-)
- create mode 100644 include/linux/const.h
-
+diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
+index 09bc0e0..5ed721a 100644
+--- a/include/uapi/linux/const.h
++++ b/include/uapi/linux/const.h
+@@ -25,7 +25,7 @@
+ #define _UL(x)		(_AC(x, UL))
+ #define _ULL(x)		(_AC(x, ULL))
+ 
+-#define _BITUL(x)	(_AC(1,UL) << (x))
+-#define _BITULL(x)	(_AC(1,ULL) << (x))
++#define _BITUL(x)	(_UL(1) << (x))
++#define _BITULL(x)	(_ULL(1) << (x))
+ 
+ #endif /* _UAPI_LINUX_CONST_H */
 -- 
 2.7.4
