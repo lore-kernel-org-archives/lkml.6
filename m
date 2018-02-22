@@ -1,128 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753439AbeBVKhy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:37:54 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39864 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753380AbeBVKhr (ORCPT
+        id S1753510AbeBVKmK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:42:10 -0500
+Received: from mail-ot0-f176.google.com ([74.125.82.176]:46190 "EHLO
+        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753288AbeBVKmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:37:47 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 01/10] dt-bindings: media: Add Renesas CEU bindings
-Date: Thu, 22 Feb 2018 11:37:17 +0100
-Message-Id: <1519295846-11612-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 22 Feb 2018 05:42:08 -0500
+X-Google-Smtp-Source: AG47ELsdm7LddcEvGMh6N3WBaWXHSJJwoZofZSGS4Dx6r4Q+17GgRGiKde7fCCrQJ+WEvFz61jZV4Q==
+X-ME-Sender: <xms:e56OWlbJEt3QGrMldr0OMP1cledVVHzv-t7CtNhP3xXS_wkql0KR8g>
+Date: Thu, 22 Feb 2018 18:45:32 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Daniel Lustig <dlustig@nvidia.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+        nborisov@suse.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
+ lock-based external-view litmus test
+Message-ID: <20180222104532.6znly3zespgfga4i@tardis>
+References: <20180220232405.GA19274@linux.vnet.ibm.com>
+ <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180222032349.klcuiq23f52sfop6@tardis>
+ <20180222041357.GB2855@linux.vnet.ibm.com>
+ <20180222052746.vofmqbpnmfahck3z@tardis>
+ <fad8e18b-ef5a-5bc0-5d87-6fad2e9f7c95@nvidia.com>
+ <20180222065847.zqiquiyehvzgiiht@tardis>
+ <20180222101504.GQ25201@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ci7ab5w6tv3ramfs"
+Content-Disposition: inline
+In-Reply-To: <20180222101504.GQ25201@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+--ci7ab5w6tv3ramfs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..3fc66df
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,81 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
-+
-+The Capture Engine Unit is the image capture interface found in the Renesas
-+SH Mobile and RZ SoCs.
-+
-+The interface supports a single parallel input with data bus width of 8 or 16
-+bits.
-+
-+Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
-+  and RZ/A1M SoCs.
-+- reg: Registers address base and size.
-+- interrupts: The interrupt specifier.
-+
-+The CEU supports a single parallel input and should contain a single 'port'
-+subnode with a single 'endpoint'. Connection to input devices are modeled
-+according to the video interfaces OF bindings specified in:
-+Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Optional endpoint properties applicable to parallel input bus described in
-+the above mentioned "video-interfaces.txt" file are supported.
-+
-+- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+
-+Example:
-+
-+The example describes the connection between the Capture Engine Unit and an
-+OV7670 image sensor connected to i2c1 interface.
-+
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,r7s72100-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
-+
-+			hsync-active = <1>;
-+			vsync-active = <0>;
-+		};
-+	};
-+};
-+
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
-+
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				hsync-active = <1>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
+On Thu, Feb 22, 2018 at 11:15:04AM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 02:58:47PM +0800, Boqun Feng wrote:
+> > > And yes, if we go with a purely RCpc interpretation of acquire and
+> > > release, then I don't believe the writes in the previous critical
+> > > section would be ordered with the writes in the subsequent critical
+> > > section.  That's really all the argument boils down to.  We'd like
+> >=20
+> > I think atomics in Linux kernel(and in LKMM) are purely RCpc, right?
+> > Alan and Andrea?=20
+> >=20
+> > And we are not going to change it, are we?
+> >=20
+> > If atomics in Linux kernel are purely RCpc, then it cerntainly makes
+> > sense for riscv to provide purely RCpc atomics.
+>=20
+> So there's 3 things:
+>=20
+>   smp_load_acquire(), smp_store_release()
+>=20
+>   atomic*_{acquire,release}()
+>=20
+>   *_{lock,unlock}();
+>=20
+> Which are all quite distinct.
+>=20
+> smp_load_acquire() and smp_store_release() are RCpc, and there is no
+> discussion of ever wanting to change that.
+>=20
+> The atomics also follow this and are RCpc, in fact the RELEASE only
+> applies to the STORE and the ACQUIRE only applies to the LOAD of the
+> atomics.
+>=20
+> The locking primitives OTOH we would really rather like to be RCsc, and
+> everybody except PPC has them as such, PPC being the only one having
+> RCpc locks.
+>=20
+> I read the part you quoted from Daniel as being purely about spinlocks,
+> the 'critical section' wording being a dead give away, so I'm then
+> somewhat confused why you talk about atomics.
+
+Maybe it's me who misunderstand Daniel's words. But my understanding is
+that riscv people are on a debate about whether their "RCpc" atomic
+instructions need to be more strict: release+acquire pair orders two
+writes. And I thought that atomics(including RmW atomics) in kernel only
+have purely RCpc semantics, which I needed to check with you guy. And if
+I'm right, it's cerntainly fine for riscv "RCpc" instruction to be
+purely RCpc.
+
+Note that even on PPC, the release+acquire pair of atomics orders writes
+before and after, and on x86, writes are ordered since it's TSO. So
+strictly speaking, I think our current implementation of atomics are a
+little more strict than purely RCpc. If we think this is an requirement
+for implementation of atomic primitives, than the current version of
+riscv's "RCpc" atomics don't suffice.
+
+Regards,
+Boqun
+
+--ci7ab5w6tv3ramfs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqOn0gACgkQSXnow7UH
++rgiBQgAqeS8IrnlHw0UjeeKk0dteFu5Z/677/DyBE8hO7Jo280fXe64EoU2d0XH
+BD3g7plUWVB2NxzWYZkePnYuZD34Rqtknt6Do+liuaeB/ifEeRMCZ+51nHaNA5Id
+jF0sr36/QcjAe7IVPloimH7q72+HEJ1NGt2FvDNPCoHrcCEUoQPxuIPRaUX6ePey
+vD63CQSy/fSNoCGzMYOsgmMNWtzYkTm3HGJNSn1KJ8mTy7KU1m0FBAc/ZBXyUBb2
+HkweoPDZmpP+S2FwIVs8HAIVeASIEKQKnruZ357DCGq94MwjUBhkmBAVveDj0A/L
+Upy6iXq352/mRmj0FzOy3ltkSBxqMg==
+=G/un
+-----END PGP SIGNATURE-----
+
+--ci7ab5w6tv3ramfs--
