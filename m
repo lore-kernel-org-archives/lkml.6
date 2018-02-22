@@ -1,69 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933241AbeBVQGk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:06:40 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35215 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933181AbeBVQGh (ORCPT
+        id S933126AbeBVQHm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:07:42 -0500
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35249 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933068AbeBVQHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:06:37 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/4] v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
-Date: Thu, 22 Feb 2018 18:07:20 +0200
-Message-ID: <2482046.sGQsectxr6@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com> <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
+        Thu, 22 Feb 2018 11:07:39 -0500
+X-Google-Smtp-Source: AH8x227vNN/I4QoWkiuFLtd5x4c2q5CuxZvGUCU48c5iFfuSKj69bxiQTaTTS3Mqzx2var8/y4q1ggwqpXgdZOYbKJ0=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+From: Lennox Wu <lennox.wu@gmail.com>
+Date: Fri, 23 Feb 2018 00:07:37 +0800
+Message-ID: <CAF0htA5vB=ikfjNi__X2zMkTDGt4er+fVB2G+FL7HpaKHa7j4A@mail.gmail.com>
+Subject: Re: Removing architectures without upstream gcc support
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Hi all,
+We agree to remove the Score arch.
+I have discussed the status with Sunplus, and they plan to replace the
+arch with ARM.
+I will make a request to remove Linux kernel, too.
+Best,
+Lennox
 
-Thank you for the patch.
-
-On Monday, 5 February 2018 22:09:58 EET Wolfram Sang wrote:
-> Due to a typo, the mask was destroyed by a comparison instead of a bit
-> shift. No regression since the mask has not been used yet.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Oops.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and taken in my tree.
-
-> ---
-> Only build tested. To be applied individually per subsystem.
-> 
->  drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_regs.h
-> b/drivers/media/platform/vsp1/vsp1_regs.h index
-> 26c4ffad2f4656..b1912c83a1dae2 100644
-> --- a/drivers/media/platform/vsp1/vsp1_regs.h
-> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
-> @@ -225,7 +225,7 @@
->  #define VI6_RPF_MULT_ALPHA_P_MMD_RATIO	(1 << 8)
->  #define VI6_RPF_MULT_ALPHA_P_MMD_IMAGE	(2 << 8)
->  #define VI6_RPF_MULT_ALPHA_P_MMD_BOTH	(3 << 8)
-> -#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff < 0)
-> +#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff << 0)
->  #define VI6_RPF_MULT_ALPHA_RATIO_SHIFT	0
-> 
->  /* ------------------------------------------------------------------------
-
--- 
-Regards,
-
-Laurent Pinchart
+2018-02-22 23:45 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+> While building the cross-toolchains, I noticed that overall, we can build almost
+> all linux target architectures with upstream binutils and gcc these days,
+> however there are still some exceptions, and I'd like to find out if anyone
+> has objections to removing the ones that do not have upstream support.
+> This are the four architectures I found:
+>
+> * score (s+core, sunplus core) was a proprietary RISC architecture
+>   made by sunplus. It is unclear if they still ship any products based on
+>   this architecture, all they list is either ARM Cortex-A9 or an unspecified
+>   RISC core that could be any of arm, mips, nds32, arc, xtensa or
+>   something completely different. The two maintainers have both left the
+>   company many years ago and have not contributed any patches in
+>   at least five years. There was an upstream gcc port, which was marked
+>   'obsolete' in 2013 and got removed in gcc-5.0.
+>   I conclude that this is dead in Linux and can be removed
+>
+> * unicore32 was a research project at Peking University with a SoC
+>   based on the Intel PXA design. No gcc source code has ever been
+>   published, the only toolchain available is a set of binaries that include
+>   a gcc-4.4 compiler. The project page at
+>   http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
+>   not been modified since 2011. The maintainer still Acks patches
+>   and has last sent a pull request in 2014 and last sent a patch of
+>   his own in 2012 when the project appears to have stalled.
+>   I would suggest removing this one.
+>
+> * Hexagon is Qualcomm's DSP architecture. It is being actively used
+>   in all Snapdragon ARM SoCs, but the kernel code appears to be
+>   the result of a failed research project to make a standalone Hexagon
+>   SoC without an ARM core. There is some information about the
+>   project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
+>   https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
+>   There is a port to gcc-4.5 on the project page, which is evidently
+>   abandoned, but there is an active upstream LLVM port that is
+>   apparently used to build non-Linux programs.
+>   I would consider this one a candidate for removal as well, given that
+>   there were never any machines outside of Qualcomm that used this,
+>   and they are no longer interested themselves.
+>
+> * Meta was ImgTec's own architecture and they upstreamed the kernel
+>   port just before they acquired MIPS. Apparently Meta was abandoned
+>   shortly afterwards and disappeared from imgtec's website in 2014.
+>   The maintainer is still fixing bugs in the port, but I could not find
+>   any toolchain more recent than
+>   https://github.com/img-meta/metag-buildroot/tree/metag-core/toolchain/gcc/4.2.4
+>   Not sure about this one, I'd be interested in more background
+>   from James Hogan, who probably has an opinion and might have
+>   newer toolchain sources.
+>
+> * OpenRISC is a RISC architecture with a free license and an
+>   active community. It seems to have lost a bit of steam after RISC-V
+>   is rapidly taking over that niche, but there are chips out there and
+>   the design isn't going away. Listing it here for completeness only
+>   because there is no upstream gcc port yet, but this will hopefully
+>   change in the future based on
+>   https://lists.librecores.org/pipermail/openrisc/2018-January/000958.html
+>   and I had no problems locating the gcc-7.x tree for building my
+>   toolchains. The port is actively being maintained.
+>
+> There are also a couple of architectures that are more or less
+> unmaintained but do have working gcc support: FR-V and M32R
+> have been orphaned for a while and are not getting updated
+> MN10300 is still maintained officially by David Howells but doesn't
+> seem any more active than the other two, the last real updates were
+> in 2013.
+>
+>        Arnd
