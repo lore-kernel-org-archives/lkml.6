@@ -1,72 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933380AbeBVQok (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:44:40 -0500
-Received: from vern.gendns.com ([206.190.152.46]:51464 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933281AbeBVQoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:44:32 -0500
-Subject: Re: [PATCH v4] reset: add support for non-DT systems
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
-References: <20180219165837.28913-1-brgl@bgdev.pl>
- <72cd2af4-ed6b-8c1b-2488-b999976b894a@lechnology.com>
- <1519123185.3470.5.camel@pengutronix.de>
- <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
- <1519299294.7447.4.camel@pengutronix.de>
-From: David Lechner <david@lechnology.com>
-Message-ID: <91e55d2b-abd0-35b4-cc18-98a96288f8de@lechnology.com>
-Date: Thu, 22 Feb 2018 10:44:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S933313AbeBVQrY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:47:24 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:46042 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933142AbeBVQrX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:47:23 -0500
+Date: Thu, 22 Feb 2018 17:45:32 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
+ suspend-to-idle
+Message-ID: <20180222164532.GA15359@light.dominikbrodowski.net>
+References: <4287858.bFmM5lK9H6@aspire.rjw.lan>
+ <20180220213839.GA12082@light.dominikbrodowski.net>
+ <3352336.6IBe4RuE7s@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1519299294.7447.4.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3352336.6IBe4RuE7s@aspire.rjw.lan>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 05:34 AM, Philipp Zabel wrote:
-> On Tue, 2018-02-20 at 10:40 -0600, David Lechner wrote:
-> [...]
->>> In your case the platform code that adds the lookup may be identical to
->>> the code that registers the struct reset_controller_dev, but that
->>> doesn't have to be the case. I'm not sure how that is supposed to work
->>> for the phy framework (I see no platform code adding phy lookups, only
->>> drivers).
->>>
->> In our use case, we would be adding the lookup in the driver rather than
->> in the platform code, which is why I am suggesting doing it like the phy
->> framework.
-> 
-> Shouldn't it be the job of the platform code to describe the connections
-> between reset controller and peripheral module reset
-> inputs?
+On Wed, Feb 21, 2018 at 01:24:16PM +0100, Rafael J. Wysocki wrote:
+> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
+> to indicate that socket_early_resume() has already run for the
+> socket in which case socket_suspend() will do minimum handling
+> and return 0.
 
+That looks to be *too* minimal: For example, yenta_socket does some
+socket set-up in ->init(), which is called by socket_early_resume().
+That needs to be undone by ->suspend(). What about this variant
+(untested, not even compile-tested)?
 
-I guess that depends on who you ask. There are many clock driver that
-register clkdev lookups in drivers/clk/, so that is what we have done
-with the clock driver we are working on. The clock device is also the
-reset controller, so it makes sense to me to register the reset lookup
-in the same place that we are registering the clkdev lookup.
+Oh, and
+	a) does this need -stable tags, and
+	b) do you want to push it yourself, or should it go through the
+	   PCMCIA tree?
 
-We have a platform_device_id for each possible configuration, so that
-it works very much like the device tree compatible string. You register
-a platform device in the board file with the proper name and the driver
-takes care of the reset because it knows which connections there are
-based on the device name.
+Thanks,
+	Dominik
+
+---
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Date: Wed, 21 Feb 2018 13:24:16 +0100
+Subject: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
+ suspend-to-idle
+
+There is a problem with PCMCIA system resume callbacks with respect
+to suspend-to-idle in which the ->suspend_noirq() callback may be
+invoked after the ->resume_noirq() one without resuming the system
+entirely in some cases.  This doesn't work for PCMCIA because of
+the lack of symmetry between its system suspend and system resume
+"noirq" callbacks.
+
+The system resume handling in PCMCIA is split between
+socket_early_resume() and socket_late_resume() which are called in
+different phases of system resume and both need to run for
+socket_suspend() (invoked by the system suspend "noirq" callback)
+to work.  Specifically, socket_suspend() returns an error when
+called after socket_early_resume() without socket_late_resume(),
+so if the suspend-to-idle core detects a spurious wakeup event and
+attempts to put the system back to sleep, that is aborted by the
+error coming from socket_suspend().
+
+Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
+to indicate that socket_early_resume() has already run for the
+socket in which case socket_suspend() will do minimum handling
+and return 0.
+
+This change has been tested on my venerable Toshiba Portege R500
+(which is where the problem has been discovered in the first place),
+but admittedly I have no PCMCIA cards to test along with the socket
+itself.
+
+Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+
+diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
+index c3b615c94b4b..513b2d4d5b20 100644
+--- a/drivers/pcmcia/cs.c
++++ b/drivers/pcmcia/cs.c
+@@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_socket *skt)
+ 
+ static int socket_suspend(struct pcmcia_socket *skt)
+ {
+-	if (skt->state & SOCKET_SUSPEND)
++	if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
+ 		return -EBUSY;
+ 
+ 	mutex_lock(&skt->ops_mutex);
+-	skt->suspended_state = skt->state;
++	/* store state on first suspend, but not after spurious wakeups */
++	if !(skt->state & SOCKET_IN_RESUME)
++		skt->suspended_state = skt->state;
+ 
+ 	skt->socket = dead_socket;
+ 	skt->ops->set_socket(skt, &skt->socket);
+ 	if (skt->ops->suspend)
+ 		skt->ops->suspend(skt);
+ 	skt->state |= SOCKET_SUSPEND;
++	skt->state &= ~(SOCKET_IN_RESUME);
+ 	mutex_unlock(&skt->ops_mutex);
+ 	return 0;
+ }
+@@ -475,6 +478,7 @@ static int socket_early_resume(struct pcmcia_socket *skt)
+ 	skt->ops->set_socket(skt, &skt->socket);
+ 	if (skt->state & SOCKET_PRESENT)
+ 		skt->resume_status = socket_setup(skt, resume_delay);
++	skt->state |= SOCKET_IN_RESUME;
+ 	mutex_unlock(&skt->ops_mutex);
+ 	return 0;
+ }
+@@ -484,7 +488,7 @@ static int socket_late_resume(struct pcmcia_socket *skt)
+ 	int ret = 0;
+ 
+ 	mutex_lock(&skt->ops_mutex);
+-	skt->state &= ~SOCKET_SUSPEND;
++	skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
+ 	mutex_unlock(&skt->ops_mutex);
+ 
+ 	if (!(skt->state & SOCKET_PRESENT)) {
+diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
+index 6765beadea95..03ec43802909 100644
+--- a/drivers/pcmcia/cs_internal.h
++++ b/drivers/pcmcia/cs_internal.h
+@@ -70,6 +70,7 @@ struct pccard_resource_ops {
+ /* Flags in socket state */
+ #define SOCKET_PRESENT		0x0008
+ #define SOCKET_INUSE		0x0010
++#define SOCKET_IN_RESUME	0x0040
+ #define SOCKET_SUSPEND		0x0080
+ #define SOCKET_WIN_REQ(i)	(0x0100<<(i))
+ #define SOCKET_CARDBUS		0x8000
