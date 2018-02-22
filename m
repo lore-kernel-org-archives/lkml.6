@@ -1,68 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751312AbeBVUIM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:08:12 -0500
-Received: from anholt.net ([50.246.234.109]:35688 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750776AbeBVUIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:08:11 -0500
-From: Eric Anholt <eric@anholt.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Stephen Boyd <sboyd@codeaurora.org>, Tom Cooksey <tom.cooksey@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/p[111: add CONFIG_OF dependency
-In-Reply-To: <20180222162420.2825703-1-arnd@arndb.de>
-References: <20180222162420.2825703-1-arnd@arndb.de>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Thu, 22 Feb 2018 12:08:08 -0800
-Message-ID: <878tbkaitz.fsf@anholt.net>
+        id S1751426AbeBVUIw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:08:52 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42041 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750826AbeBVUIs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 15:08:48 -0500
+X-Google-Smtp-Source: AH8x225waQVuC1JHLBGHI24IQ11QN2S4rakmxUQzNq0lE+Qrj7LaLuNDbKEVW9K6JFulTGqI7J9FcA==
+Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
+To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+References: <20180222143825.1517-1-marcel@ziswiler.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <278c02d3-7fc2-a92e-b309-1da8116e7c41@gmail.com>
+Date: Thu, 22 Feb 2018 23:08:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <20180222143825.1517-1-marcel@ziswiler.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On 22.02.2018 17:38, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+> during registration") ULPI has been broken on Tegra20 leading to the
+> following error message during boot:
+> 
+> [    1.974698] ulpi_phy_power_on: ulpi write failed
+> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
+> 
+> Debugging through the changes and finally also consulting the TRM
+> revealed that rather than the CDEV2 clock off OSC requiring such pin
+> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+> just worked by chance of that one having been enabled which Stephen's
+> commit now changed when reparenting sclk away from pll_p_out4 leaving
+> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+> as the ULPI PHY clock.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Indeed CDEV2 clock doesn't exist on Tegra, but there is a CDEV2 pinmux pad
+group. Looks like another clk-related relic from downstream driver that was
+borrowed to upstream and stayed unnoticed for a long time.
 
-> We cannot select a symbol without meeting its other dependencies:
->
-> warning: (DRM_PL111) selects DRM_DUMB_VGA_DAC which has unmet direct dependencies (HAS_IOMEM && DRM && DRM_BRIDGE && OF)
-> drivers/gpu/drm/bridge/dumb-vga-dac.c: In function 'dumb_vga_probe':
-> drivers/gpu/drm/bridge/dumb-vga-dac.c:207:13: error: 'struct drm_bridge' has no member named 'of_node'
->   vga->bridge.of_node = pdev->dev.of_node;
->              ^
->
-> Here it seems reasonable to depend on CONFIG_OF, as all platforms
-> using this driver already require that anyway.
+I think in practice all T20 boards have CDEV2 configured to PLL_P_OUT4, so this
+patch is correct to me. Probably it would also worth to set CDEV2 parent to
+PLL_P_OUT4 in the clk driver for DT backwards compatibility or even make clk
+driver to read the CDEV2 pinmux config and set the proper parent based on it.
+CC'ed Peter.
 
-Looks like we'll be going with
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-https://patchwork.freedesktop.org/patch/205580/
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqPIygACgkQtdYpNtH8
-nugBJQ//Q4AzkWW4EpUVzY0YWgKs0fvcC0IiH0PDba6Z4WLKAAkC0fxHNlh65MwW
-8OklOV5aaoikY0DmSs15ls0CIr5kFReGllTav/u+Os0oHLfehh9uAm9m4VXbkNsU
-hCD6uQx56Jq4uXgxlYeM602aKlOChz+cFyhtuUneRGzqrQtPrl5T4hZ+59gUra6l
-F4RRg/K9BsHNiarcAO5O8Ttz1ZTNSRzj2k2g+AM0iyFaTGhpN29Nls4oavJSFTSC
-NG46D0t0Ogzr7EGRE4RX7dpsMds3/6XE8P+NWEgOCGtb4PkOmFtttG25WtgbKU4J
-LelbcGMRBMO8wd5Z6Ajp3U0jdn7JLPmhK+jUxmoLGMZbwj2+F9O7RePSoj7l2SF7
-XdUUBdqMQoIHu4rTEljZiTb7TtnWzPxYpYYxJG911VQUQJR75w76LzpDWPz47Ipf
-YAmcDa22xMTHQ0ec4nwsEtHm1xdWpHHByDCcWVNb8J76Bw013Gs8fRP3XKT7IgX7
-21Zqju0rAZrD9qDJo/CpK90PUk6yCGpGysmGOjD35lznPTUsY/umL9RnZrUGa6j9
-fift1TRKXUitpCUWxls3H25X2OFyDYn6K+OsyR9yJIVY75LEN+8XTes830rouMqL
-goVDDVQf5X3TliN6p5grdelA7feKzt3mNNE4cIbst1AEs+i68Is=
-=QxGZ
------END PGP SIGNATURE-----
---=-=-=--
+> ---
+> 
+> Changes in v2:
+> - Updated device tree binding documentation as well.
+> - CCing Dmitry as well.
+> 
+>  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4 +++-
+>  arch/arm/boot/dts/tegra20.dtsi                                   | 2 +-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
+> index a9aa79fb90ed..1aa6f2674af5 100644
+> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
+> @@ -21,7 +21,9 @@ Required properties :
+>     - timer: The timeout clock (clk_m). Present if phy_type == utmi.
+>     - utmi-pads: The clock needed to access the UTMI pad control registers.
+>       Present if phy_type == utmi.
+> -   - ulpi-link: The clock Tegra provides to the ULPI PHY (cdev2).
+> +   - ulpi-link: The clock Tegra provides to the ULPI PHY (usually pad DAP_MCLK2
+> +     with pad group aka "nvidia,pins" cdev2 and pin mux option config aka
+> +     "nvidia,function" pllp_out4).
+>       Present if phy_type == ulpi, and ULPI link mode is in use.
+>   - resets : Must contain an entry for each entry in reset-names.
+>     See ../reset/reset.txt for details.
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 864a95872b8d..e05b6bb2599f 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -741,7 +741,7 @@
+>  		phy_type = "ulpi";
+>  		clocks = <&tegra_car TEGRA20_CLK_USB2>,
+>  			 <&tegra_car TEGRA20_CLK_PLL_U>,
+> -			 <&tegra_car TEGRA20_CLK_CDEV2>;
+> +			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
+>  		clock-names = "reg", "pll_u", "ulpi-link";
+>  		resets = <&tegra_car 58>, <&tegra_car 22>;
+>  		reset-names = "usb", "utmi-pads";
+> 
