@@ -1,89 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933220AbeBVQTH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:19:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53774 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933108AbeBVQTE (ORCPT
+        id S933261AbeBVQTk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:19:40 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:51076 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933222AbeBVQTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:19:04 -0500
-Date: Thu, 22 Feb 2018 08:18:59 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Mario.Limonciello@dell.com
-Cc: notmart@gmail.com, jeremy@jcline.org, pali.rohar@gmail.com,
-        andriy.shevchenko@linux.intel.com, mjg59@srcf.ucam.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
-Message-ID: <20180222161859.GA19843@fury>
-References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
- <1628582.nV6hDClBbL@phobos>
- <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
- <CAD6_Bos5Qrvz=Mr_rYCZXZ1s=5+8rawfZXxzXSvyc-tLBO07fg@mail.gmail.com>
- <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
+        Thu, 22 Feb 2018 11:19:33 -0500
+X-Google-Smtp-Source: AH8x224OSFNyQA46F5CoW7ZLzW+Hvg6lITJ6tWIKhJEjo7OkQrYKrmkY64qEHChbPO76qjECGxrAu2kOsxtcz3vnpyo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180222072459.GA9891@saruman>
+References: <20180221233825.10024-1-jhogan@kernel.org> <20180221233825.10024-2-jhogan@kernel.org>
+ <ea057277-fc48-3961-681d-385023741cdb@roeck-us.net> <20180222072459.GA9891@saruman>
+From: Graham Whaley <graham.whaley@gmail.com>
+Date: Thu, 22 Feb 2018 16:19:31 +0000
+Message-ID: <CAF9eJumRb0voffQXqWg5goO8=1KNpivrefLtLCUUh_4k6g7+JQ@mail.gmail.com>
+Subject: Re: [PATCH 01/13] metag: Remove arch/metag/
+To: James Hogan <jhogan@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-metag@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 03:21:45PM +0000, Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Marco Martin [mailto:notmart@gmail.com]
-> > Sent: Thursday, February 22, 2018 9:16 AM
-> > To: Jeremy Cline <jeremy@jcline.org>
-> > Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Pali Rohár
-> > <pali.rohar@gmail.com>; Andy Shevchenko <andriy.shevchenko@linux.intel.com>;
-> > Matthew Garrett <mjg59@srcf.ucam.org>; Darren Hart <dvhart@infradead.org>;
-> > Platform Driver <platform-driver-x86@vger.kernel.org>; Linux Kernel Mailing List
-> > <linux-kernel@vger.kernel.org>
-> > Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
-> > 
-> > On Thu, Feb 22, 2018 at 3:08 PM, Jeremy Cline <jeremy@jcline.org> wrote:
-> > > Input driver version is 1.0.1
-> > > Input device ID: bus 0x19 vendor 0x0 product 0x0 version 0x0
-> > > Input device name: "Intel Virtual Button driver"
-> > > Supported events:
-> > >   Event type 0 (EV_SYN)
-> > >   Event type 1 (EV_KEY)
-> > >     Event code 114 (KEY_VOLUMEDOWN)
-> > >     Event code 115 (KEY_VOLUMEUP)
-> > >     Event code 116 (KEY_POWER)
-> > >     Event code 125 (KEY_LEFTMETA)
-> > >     Event code 240 (KEY_UNKNOWN)
-> > >     Event code 561 (?)
-> > >   Event type 4 (EV_MSC)
-> > >     Event code 4 (MSC_SCAN)
-> > >   Event type 5 (EV_SW)
-> > >     Event code 1 (SW_TABLET_MODE) state 1
-> > > Properties:
-> > > Testing ... (interrupt to exit)
-> > 
-> > Indeed, it's thinking a switch exists and that is on, which is wrong,
-> > then i guess VGBS() reports a wrong status..
-> > Mario, do you have any ideas about that?
-> > 
-> > --
-> > Marco Martin
-> 
-> I guess that means we got this wrong and the patch should be reverted
-> until we figure this out.
-> 
-> Jeremy,
-> 
-> Can you please confirm what BIOS version you are on?
-> Also Is this a 9360 with 7th or 8th gen Intel CPU?
-> 
-> I'll see if I can find out anything more relative to this.
+>> >
+>> > So lets call it a day and drop the Meta architecture port from the
+>> > kernel. RIP Meta.
 
-Watching closely.
+Oh, and James, I meant to ask/note - I guess that just leaves parisc
+using STACK_GROWSUP... shame we could not ditch that as well then eh?
 
-Mario, do you want me to revert immediately, or wait until you've had a couple
-rounds of Q&A here?
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+ Graham
