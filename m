@@ -1,69 +1,105 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x226/6wI7TNo8M/PYoU52eU7OShQ9S5mJfQrNu33soavXHQOmfeR/FhNmTeEHs4F2oo7qsNTX
-ARC-Seal: i=1; a=rsa-sha256; t=1519363674; cv=none;
+X-Google-Smtp-Source: AH8x225jIzt7CxHQI0SDlSe7JqYhwff764UO/qY4Eg1zVqlRsQion8/Spbxy9AzQftOhR3+AXGt3
+ARC-Seal: i=1; a=rsa-sha256; t=1519315349; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y5GR9mvW+3hRGnnKbfrSF9b2qVkOqpNkTTZwypYyGT0+S9eyokiMjy39SUOZ+DQ2vA
-         ooa8/to8GaKXqF3UYoAxQCfGfXo87/T0Ptz2E8aSE2ThC3J0azDluigoZ3lc571u187s
-         W0kUB6f1JWfbv/v+9121avIXm8/TCZoWP3BhA63W6U4/gG6yeyKD4Ee+4auvXcvqPJIH
-         aV+OAT+6GLQaH1Di+cZ9rq6wd0wVfsGITUfrPGhhI+JlwtuU0JeNzId3ybGQfQjl9T9u
-         AmukZ5hv1RyCFDUTwxPYRv6lXwu2hrfONQvhP0x6+TaTYY+X8u20ZbiNQ3D0aW/4Sk4m
-         NX2g==
+        b=tX72MVc0KGj3Fe0XDV7TSKUuQ2Y5C0n5vv+nyerPU3fyGu4shNwp1bhYVBFGKIyv+g
+         VdqM3/p2CFfLxGc6t/JH2XMwy89tKlP2XgvGdJ+ZB7Mqh7k2xLAiSGEXwv/e+ueoC33p
+         rRmk4Mtz8qp6ZfpaLwfN+xErnMD6IrGgSI0Y8sPtSI11vON5pDIK0Us85ze0hm4RBTLU
+         EKNgeZT8yDqYAN2IX5hptvdv4teV3WiUvyTsRuVy5HBsg3kvkmN9qk6/vD5EweZbCkLD
+         nlaDajHf6kR7K0/JECuEm1pRVmwbKOLqkIg5PQHs1KqIDJZrZlFLPrEYltPPwhxEvoBf
+         OHhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=vHGlYwWdEPw3LsuEbVmfh4mIMbtzlw8KhEW4FE35WGg=;
-        b=kzhI3CFGKdqGGQEPdKtmR9lHWiss7EVRM7h7/WBVQCkUWpt/6V0lU4oyJrsrZzDJYr
-         Xty5FOcnQPCDRz2Tht5sLhCIXTS9rUupRh8BQlidGqboR2/oau6Ui3hz529rgORCj0+A
-         WYhf6Bt544JYga/D58RQgL/R1IY8ycInGbXTXaGvjr4Xz3E9JRIquGJjXHoxaZIAq93m
-         aB+TMR9ETSe9ok7xwJKkpcXhOd6hsFKmb77VGqeFp4lr8WKQxsZbWnGArNUNIZ4vgRlf
-         lBYakeDj8Y2u/AWWlQk39a/AXA5PCt/nLVzy1YXAD3Xhbl4HvCi0Ra1nC1rAxuohLcL3
-         3SvA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=RaKMbTFB5oF00Hf2eKXWu7Ptl/gIUMxWoq4RM47QGhw=;
+        b=Y+7elL9Zvq71aZL+pLVCr2G7HGzFHAZanKCZzuBhjGRoTidrDlSJ9MO/4ih+o1tfHH
+         PRic0Ivmf4rVOwJot/XF/Gs+eLba8tA0x3Q186vjHoM3d84MWPdHJ+VWjLbRhTRvaBPg
+         RUi0zyu7FjVJHFdM1rN9PkTTtn0FntdjeI+Msghyvpw0To1n0e46x2PNkMy4idFpWV+w
+         GlWOrF4gtCtZ3xJM8JDrsKQOOUCFu9gwNbHjeV5vok+zrQdgRZRmVgcoRW4WWDdHHuLt
+         DwTMGXoNBUuQJD1w8yVuNl0KpbK9iK/2pmuD/GeJaQ6+mVZezcxBizO4KSSkMdQA/y3r
+         rk8g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HmwR+hMV;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eSW4PSGd;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=adKIJpQ8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Qbgr7bBO;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HmwR+hMV;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eSW4PSGd;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=adKIJpQ8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Qbgr7bBO;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 23 Feb 2018 10:57:53 +0530
-From: poza@codeaurora.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v10 3/7] PCI/ERR: add mutex to synchronize recovery
-In-Reply-To: <20180222183602.GC6267@infradead.org>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0D4D6081C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v10 1/7] PCI/AER: Rename error recovery to generic pci naming
+Date: Thu, 22 Feb 2018 21:32:06 +0530
+Message-Id: <1519315332-26852-2-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519315332-26852-1-git-send-email-poza@codeaurora.org>
 References: <1519315332-26852-1-git-send-email-poza@codeaurora.org>
- <1519315332-26852-4-git-send-email-poza@codeaurora.org>
- <20180222183602.GC6267@infradead.org>
-Message-ID: <2f79e5c643858e13f5ac9d6aef6e536c@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086412177501980?=
-X-GMAIL-MSGID: =?utf-8?q?1593168284398739933?=
+X-GMAIL-THRID: =?utf-8?q?1593086403303503248?=
+X-GMAIL-MSGID: =?utf-8?q?1593117612398262737?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-02-23 00:06, Christoph Hellwig wrote:
-> On Thu, Feb 22, 2018 at 09:32:08PM +0530, Oza Pawandeep wrote:
->> This patch protects pci_do_recovery with mutex.
-> 
-> Do we really want a global mutex for this and not one per root complex
-> at very least?
+This patch renames error recovery to generic name with pci prefix
 
-This protects pcie_do_recovery, which is called by port service drivers.
-mainly aer and dpc as of now. so the association is not root complex 
-agents
-instead service drivers who attempts to do link recovery.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-so I think we are good here.
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index a4bfea5..306bf2f 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -478,7 +478,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ }
+ 
+ /**
+- * do_recovery - handle nonfatal/fatal error recovery process
++ * pci_do_recovery - handle nonfatal/fatal error recovery process
+  * @dev: pointer to a pci_dev data structure of agent detecting an error
+  * @severity: error severity type
+  *
+@@ -486,7 +486,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+  * error detected message to all downstream drivers within a hierarchy in
+  * question and return the returned code.
+  */
+-static void do_recovery(struct pci_dev *dev, int severity)
++static void pci_do_recovery(struct pci_dev *dev, int severity)
+ {
+ 	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
+ 	enum pci_channel_state state;
+@@ -566,7 +566,7 @@ static void handle_error_source(struct pcie_device *aerdev,
+ 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
+ 					info->status);
+ 	} else
+-		do_recovery(dev, info->severity);
++		pci_do_recovery(dev, info->severity);
+ }
+ 
+ #ifdef CONFIG_ACPI_APEI_PCIEAER
+@@ -631,7 +631,7 @@ static void aer_recover_work_func(struct work_struct *work)
+ 		}
+ 		cper_print_aer(pdev, entry.severity, entry.regs);
+ 		if (entry.severity != AER_CORRECTABLE)
+-			do_recovery(pdev, entry.severity);
++			pci_do_recovery(pdev, entry.severity);
+ 		pci_dev_put(pdev);
+ 	}
+ }
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
