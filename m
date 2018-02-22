@@ -1,68 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752691AbeBVIKW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:10:22 -0500
-Received: from www.zeus03.de ([194.117.254.33]:39028 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752553AbeBVIKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:10:21 -0500
-Date: Thu, 22 Feb 2018 09:10:18 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: James Hogan <jhogan@kernel.org>
-Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 13/13] i2c: img-scb: Drop METAG dependency
-Message-ID: <20180222081018.tc3jcuwl6yfrxroh@katana>
-References: <20180221233825.10024-1-jhogan@kernel.org>
- <20180221233825.10024-14-jhogan@kernel.org>
+        id S1752639AbeBVISZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:18:25 -0500
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:51729 "EHLO
+        anchovy3.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752628AbeBVISY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 03:18:24 -0500
+Subject: Re: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
+To: Julia Lawall <julia.lawall@lip6.fr>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180221192807.qfyhp7z27f6r6p47@smtp.gmail.com>
+ <alpine.DEB.2.20.1802212101160.2292@hadrien>
+From: Phil Reid <preid@electromag.com.au>
+Message-ID: <6d7692ef-0929-7ef2-a1c5-989593f02b1c@electromag.com.au>
+Date: Thu, 22 Feb 2018 16:11:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n5ojqysm46o3f7dt"
-Content-Disposition: inline
-In-Reply-To: <20180221233825.10024-14-jhogan@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.DEB.2.20.1802212101160.2292@hadrien>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22/02/2018 04:01, Julia Lawall wrote:
+> 
+> On Wed, 21 Feb 2018, Rodrigo Siqueira wrote:
+> 
+>> This patch fixes the checkpatch.pl warning:
+>>
+>> drivers/iio/dummy/iio_dummy_evgen.c:151: WARNING: Symbolic permissions
+>> 'S_IWUSR' are not preferred. Consider using octal permissions '0200'.
+> I haven't studied up on it in great detail, but isn't there a more
+> specific macro that doesn't need a permission argument at all?
+> 
 
---n5ojqysm46o3f7dt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Probably thinking of IIO_DEVICE_ATTR_RO / IIO_DEVICE_ATTR_WO
+But they don't provide flexibility for the show / store method.
 
-On Wed, Feb 21, 2018 at 11:38:25PM +0000, James Hogan wrote:
-> Now that arch/metag/ has been removed, remove the METAG dependency from
-> the IMG SCB I2C device driver. The hardware is also present on MIPS SoCs
-> so the driver still has value.
->=20
-> Signed-off-by: James Hogan <jhogan@kernel.org>
-
-I'd think it should go with the rest of this series? For that:
-
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-
-Let me know if I should rather pick this up individually.
-
-
---n5ojqysm46o3f7dt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqOeuUACgkQFA3kzBSg
-KbYNNw//VozjiVfGaMsSs0jUmsTVvWIAmvkuD59HTdA/N6nMBdcB/axq9PpSHT0J
-KXGrGHOf9QtEJeXzydzIRDevKPAePLZjvGjIfZVqrXTOsOqOMngLkE+z8KT6KIN2
-UdUCY8kDjoK9CcghAsvIB9FX7hHD2qnZhmm6iWc46PG5zu8LaeCTIw8g7CUE97c/
-O7xTtp2wImMWQvizlEAI1GWEvOokPcMYRDH9LVNc6ZlprSPAzXLJaAupdA/cNADv
-scD4mHz2ZPjEI4N/H6Z8fuF/7DnNGktMfPhum5NZyYayDJ8oslMTqmyEFQ8vtqDt
-Wo113+VG3aWi1J/F7l7NeSnQixsvgUERrKutIxvGHSr4H5WXPQFYVJrcmybxfLzo
-5YBpX0DDpJfB+Kwr0SjYBJmJKIeSjjMOvaljjknsWKuCH6RNO5DlUcLt4t5OfoO9
-g7ZuoNr9DL+ZoVpl3lWUtE4DkDjqhqwyRxTgr9xQC9bKa8Ya727yCCP6eMV7W94W
-tdrvnMjZrgpqDmt1BsC5bqwU1/zgtV5SGv+3hdn7wJsvGlOfV4b9jUhQgvhZUorF
-Rq8H0hTAaARId5cC2ChIppjrsjT86FbSGp75qhU0wnzmdwol4X8fg1PmEbO6iwgr
-rAV6/2EoqWYw3P54QgWnfhcz3PgCTQBGcZs5mpQW/Mxd8sIMfX4=
-=9OYz
------END PGP SIGNATURE-----
-
---n5ojqysm46o3f7dt--
+-- 
+Regards
+Phil Reid
