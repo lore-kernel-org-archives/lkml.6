@@ -1,91 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753676AbeBVLeA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:34:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39410 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753531AbeBVLd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:33:58 -0500
-Date: Thu, 22 Feb 2018 11:33:53 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, will.deacon@arm.com,
-        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
-        peterz@infradead.org, jonathan.cameron@huawei.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
-        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org,
-        avilaj@codeaurora.org
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-Message-ID: <20180222113352.oeedj7upx3zxvdcc@lakrids.cambridge.arm.com>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5A8E2BCE.3050509@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5A8E2BCE.3050509@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932093AbeBVLe7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:34:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59563 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753669AbeBVLe5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:34:57 -0500
+Message-ID: <1519299294.7447.4.camel@pengutronix.de>
+Subject: Re: [PATCH v4] reset: add support for non-DT systems
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
+Date: Thu, 22 Feb 2018 12:34:54 +0100
+In-Reply-To: <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
+References: <20180219165837.28913-1-brgl@bgdev.pl>
+         <72cd2af4-ed6b-8c1b-2488-b999976b894a@lechnology.com>
+         <1519123185.3470.5.camel@pengutronix.de>
+         <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 06:32:46PM -0800, Saravana Kannan wrote:
-> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
-> > +static int dsu_pmu_event_init(struct perf_event *event)
-> > +{
-> > +	struct dsu_pmu *dsu_pmu = to_dsu_pmu(event->pmu);
-> > +
-> > +	if (event->attr.type != event->pmu->type)
-> > +		return -ENOENT;
-> 
-> You are checking if the caller set the attr.type "correctly".
-
-This is necessary for the case where perf_init_event() falls back to
-iterating over the list of PMUs, if event->attr.type wasn't found in the
-idr.
-
-Without this, we'd erroneously check events intended for other PMUs.
-So this is correct, and necessary.
-
+On Tue, 2018-02-20 at 10:40 -0600, David Lechner wrote:
 [...]
+> > In your case the platform code that adds the lookup may be identical to
+> > the code that registers the struct reset_controller_dev, but that
+> > doesn't have to be the case. I'm not sure how that is supposed to work
+> > for the phy framework (I see no platform code adding phy lookups, only
+> > drivers).
+> > 
+> In our use case, we would be adding the lookup in the driver rather than
+> in the platform code, which is why I am suggesting doing it like the phy
+> framework.
 
-> > +static int dsu_pmu_device_probe(struct platform_device *pdev)
+Shouldn't it be the job of the platform code to describe the connections
+between reset controller and peripheral module reset
+inputs?
 
-> > +	rc = perf_pmu_register(&dsu_pmu->pmu, name, -1);
-> 
-> You are passing in -1 here. Which means the event type is assigned by the
-> perf framework. perf framework uses idr_alloc(&pmu_idr, ...) to get the id.
-> So the id assigned is going to depend on the probe order among the different
-> PMU drivers in the board/platform. So, this seems pretty random.
-
-The dynamic IDs are supposed to by looked up by name.
-
-Each PMU has a folder: /sys/bus/event_source/devices/$PMU
-
-... with /sys/bus/event_source/devices/$PMU/type giving the type.
-
-> How is the caller supposed to know what to set the "type" to?
-
-The perf tools understand this already. If you do:
-
-perf stat -e $PMU/config=0xf00/
-
-... they will look up the type for that PMU and use it automatically.
-
-> You also can't just delete the check in dsu_pmu_event_init() because the
-> event numbers you expose overlap with the per-CPU event numbers.
-
-The type check is necessary and cannot be deleted. It provides a
-namespace for the event IDs.
-
-> I'm not exactly sure if we can add entries to perf_type_id. If that's
-> allowed maybe we need to add something line PERF_TYPE_DSU and use that?
-> 
-> Or if that's not allowed then would it be better to offset the DSU PMU
-> events by some number (say 0x1000) and then delete the event type check or
-> pass PERF_TYPE_RAW to perf_pmu_register()?
-
-As above, neither of these should be necessary.
-
-Thanks,
-Mark.
+regards
+Philipp
