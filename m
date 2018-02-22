@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932075AbeBVLrh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:47:37 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:45489 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753643AbeBVLrf (ORCPT
+        id S932125AbeBVLr6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:47:58 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:56576 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753673AbeBVLr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:47:35 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: arm_spe: include linux/vmalloc.h for vmap()
-Date: Thu, 22 Feb 2018 12:47:05 +0100
-Message-Id: <20180222114716.1356279-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:kDZ+7QZ7NrD/C7S2P+HPTbK/O8yThCN48zqcbkRYWFT1wzvCxal
- wXV+xQJVxflzRsNoCHJPLWnjVepmHIDcCk58ZzJfthzhJbwSAyfB+mfSVvwmcQiFNv30a0a
- xBRiVs+pl5MvnyRZuCiXQb00q9zZo4c6YsjkwD9eZTmANR3UEQ4xhqM3DMH5vtRD9AySxY7
- tqcvY3orN936w/sHs7O3Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:KJgSgmJCbs8=:VbO1kYaZbq1cNe8itM+SW8
- luFfFcJ7uJjnwjavLtgAN4zIcRhL7rPkDjSbml0Nr9076oNJ7M3lu3R5Qts82LkfM8bTfDB+B
- Ih0UOLAHvIjP1Cu3k8Ard73QyltRC7jFc4jRZzFMEwxxj7WxP8ywN0jFVZFglk1LJF+PphF9P
- OIpCcS1u4aL7UAmNMAaYSKHYpHcaSetcGoh7CUifNoW0gyZ8j3uLCG0Gef0n6qLghvoJ5qX/z
- FdyykW817Y7w8+EF3eeMlhK+IzzA9ERXF7Voz+pe1heB+oppiyuNd97oAqGcgB0GrEn79bCES
- CgauwLpWOLMaBlBauT03HirsJy4LsWzIK4px5kteJI5mcw7e+kGVi4rgw8WxfveVDijtRyY/K
- jqOLLa327KeiRaE9BmUIbHL+mGJONJPYG0hnsiUlDlu+pNn6SSQAGGxqrV9dmkFMh2D5NXDuk
- icZFfanYiCmHrGtsBfv+5Ud0xy+/kv3wGGLed/l/FqV4BGRuUaGF6FfKTPAck3eKbVvMPVOyr
- cz7lNhFLYek4mwce8hTdXC+XFOwZ6ET+PfLF24cuY4wkOUoSmWCGM2zyH/uKWS8NGi/kFPDDn
- X6EWSNW6ABGjJoP8DUUwYlMVQzkR7CU/rHgBxyVBzRwB8fyWiep6w/iZAtA9vJgXnez/WljfU
- DQlvxitdEP8IXfP/229VOZjYgVOxEFlZ63M/76gGvXdS8vNNyAlEV16KjCCttfye/g+yG1Vtv
- NAyFA/qb6juU5RqXIKJWEFlzc3BCk1czzO141Q==
+        Thu, 22 Feb 2018 06:47:57 -0500
+Date: Thu, 22 Feb 2018 19:47:41 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
+Cc: Christophe LEROY <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping
+ outside the requests
+Message-ID: <20180222114741.GA27631@gondor.apana.org.au>
+References: <e47bf94ae44f23230b1647e31c9623f1075d3b79.1507284818.git.christophe.leroy@c-s.fr>
+ <VI1PR0402MB3342A0A8530F74D408CA2F0298FC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+ <2338eb8d-a26a-9722-d667-5a9785b32977@c-s.fr>
+ <VI1PR0402MB3342D90D574C8829701882BE98C90@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+ <630c313c-5eca-224d-a5ac-fb3f2783573a@c-s.fr>
+ <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+ <d5809df9-fc17-03da-b7f4-038d973dbd1f@c-s.fr>
+ <VI1PR0402MB334299B37F17771BFA9AFDDA98C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+ <20180220103436.GA20571@gondor.apana.org.au>
+ <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On linux-next, I get a build failure in some configurations:
+On Tue, Feb 20, 2018 at 11:32:25AM +0000, Horia Geantă wrote:
+>
+> If final/finup is optional, how is the final hash supposed to be retrieved?
 
-drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_setup_aux':
-drivers/perf/arm_spe_pmu.c:857:14: error: implicit declaration of function 'vmap'; did you mean 'swap'? [-Werror=implicit-function-declaration]
-  buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
-              ^~~~
-              swap
-drivers/perf/arm_spe_pmu.c:857:37: error: 'VM_MAP' undeclared (first use in this function); did you mean 'VM_MPX'?
-  buf->base = vmap(pglist, nr_pages, VM_MAP, PAGE_KERNEL);
-                                     ^~~~~~
-                                     VM_MPX
-drivers/perf/arm_spe_pmu.c:857:37: note: each undeclared identifier is reported only once for each function it appears in
-drivers/perf/arm_spe_pmu.c: In function 'arm_spe_pmu_free_aux':
-drivers/perf/arm_spe_pmu.c:878:2: error: implicit declaration of function 'vunmap'; did you mean 'iounmap'? [-Werror=implicit-function-declaration]
+Sometimes the computation ends with a partial hash, that's what
+export is for.  Also it is completely legal to abandon the hash
+state entirely.
 
-vmap() is declared in linux/vmalloc.h, so we should include that header file.
+> According to documentation, these are the accepted flows (with the option to
+> export/import a partial hash b/w update and final/finup):
+> 
+> .init() -> .update() -> .final()
+>             ^    |         |
+>             '----'         '---> HASH
+> 
+> .init() -> .update() -> .finup()
+>             ^    |         |
+>             '----'         '---> HASH
+> 
+>            .digest()
+>                |
+>                '---------------> HASH
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I have not bisected what caused this problem, presumably some other
-header stopped including vmlinux.h.
----
- drivers/perf/arm_spe_pmu.c | 1 +
- 1 file changed, 1 insertion(+)
+The documentation is simply incomplete in this regard.
 
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index 51b40aecb776..f90672516ada 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -32,6 +32,7 @@
- #include <linux/perf_event.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/vmalloc.h>
- 
- #include <asm/sysreg.h>
- 
+Cheers,
 -- 
-2.9.0
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
