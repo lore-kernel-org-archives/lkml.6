@@ -1,79 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932782AbeBVOom (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:44:42 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:40514 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932564AbeBVOoj (ORCPT
+        id S932791AbeBVOq6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:46:58 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:35028 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753805AbeBVOq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:44:39 -0500
-X-Google-Smtp-Source: AH8x2241rSkudPuXZE86l7gyh6BjKT6VpNthN2VZSEavMIsBrQ8OAYdRSzfAdO2Rky3ZFG8YLDfoRC2ChVtqxExF3lY=
+        Thu, 22 Feb 2018 09:46:56 -0500
+X-Google-Smtp-Source: AH8x227L9s2OxuLjeETvbyV+CrFsl/VzvTiSC4a6rLid/EMtETe9V1AcHdoHCWD55sP1pom/IIycfjvp9y7kRmVjceM=
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdZ4oPmc5ithggUVMd6_MStMLs59mi3yV4e+ym4UgF5H5A@mail.gmail.com>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
- <1518443713-1835-4-git-send-email-geert+renesas@glider.be> <CACRpkdZ4oPmc5ithggUVMd6_MStMLs59mi3yV4e+ym4UgF5H5A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Feb 2018 15:44:37 +0100
-X-Google-Sender-Auth: 0pr8Epn_jC6mKZQUoSqkaD-tCF8
-Message-ID: <CAMuHMdXXvwREAZwaeb6heN296OJKOugzR9oD9_M4x6dBc7A69g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>,
+In-Reply-To: <20180214155512.17218-1-ckeepax@opensource.cirrus.com>
+References: <20180214155512.17218-1-ckeepax@opensource.cirrus.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 15:46:55 +0100
+Message-ID: <CACRpkda3Tc0U_UJAyu-Jhja3E8xg2FRcswcxe2hMofrrXLTAEQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mfd: arizona: Update reset pin to use GPIOD
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, Feb 14, 2018 at 4:55 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-On Thu, Feb 22, 2018 at 3:23 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+> Now GPIOD has support for both pdata systems and for non-standard DT
+> bindings the Arizona reset GPIO can be converted to use it.
 >
->> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
->> block's module clock (if exists) is manually kept running during system
->> suspend, to make sure the device stays active.
->>
->> However, this explicit clock handling is merely a workaround for a
->> failure to properly communicate wakeup information to the device core.
->>
->> Instead, set the device's power.wakeup_path field, to indicate this
->> device is part of the wakeup path.  Depending on the PM Domain's
->> active_wakeup configuration, the genpd core code will keep the device
->> enabled (and the clock running) during system suspend when needed.
->> This allows for the removal of all explicit clock handling code from the
->> driver.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Can I apply this and only this patch to GPIO?
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+(...)
+> +       pdata->reset = devm_gpiod_get_from_of_node(arizona->dev,
+> +                                                  arizona->dev->of_node,
+> +                                                  "wlf,reset", 0,
+> +                                                  GPIOD_OUT_LOW,
+> +                                                  "arizona /RESET");
 
-Yes please.
+It seems this call is really useful.
 
-> Should it be applied for fixes, next?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-No, as it depends on infrastructure (device_set_wakeup_path()) and fixes
-(various "Keep wakeup sources active during system suspend") in v4.16-rc1.
+Also thanks for testing this API, I had nothing to test it on...
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
