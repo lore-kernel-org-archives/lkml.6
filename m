@@ -1,224 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeBVAO2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 19:14:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751168AbeBVAO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:14:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AC021796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x226a0pVhIg3Yz9f7OxwrWjW+u6v1NcGdzQ9bvbzS8kdIY7c7qVEOdXZHb0hjH0f3pdvrFroqvYvjNmUycHXJ7bw=
+        id S1751476AbeBVAPN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 19:15:13 -0500
+Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:49262 "EHLO
+        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751381AbeBVAPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 19:15:11 -0500
+Subject: Re: [PATCH v2 0/3] new driver for Valve Steam Controller
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+CC: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
+References: <20180220193306.28748-1-rodrigorivascosta@gmail.com>
+ <673a2510-7d82-1b24-1085-9f5aa2bb9998@valvesoftware.com>
+ <20180220232035.GA28798@casa>
+ <52b10af3-d93b-34b2-e6ba-22621511b16f@valvesoftware.com>
+ <20180221202107.GA21140@casa>
+From: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Message-ID: <77b62733-a1ed-16f2-f942-39c27c0f5924@valvesoftware.com>
+Date: Wed, 21 Feb 2018 16:13:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-2-srinivas.kandagatla@linaro.org> <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
- <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org> <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
- <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 21 Feb 2018 18:14:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
-Message-ID: <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Mark Brown <broonie@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180221202107.GA21140@casa>
+Content-Language: en-US
+X-Mlf-Version: 8.3.2.6535
+X-Mlf-UniqueId: o201802220015070050422
+X-MC-Unique: A7Xk9JrOOhy5SymAp3amkQ-1
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1M0FJbS005650
 
-On Tue, Feb 20, 2018 at 3:33 AM, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
-> Thanks for your review comments,
->
->
-> On 18/02/18 23:04, Rob Herring wrote:
->>
->> On Wed, Feb 14, 2018 at 09:13:23AM +0000, Srinivas Kandagatla wrote:
->>>
->>> Thanks for the review,
->>>
->>> On 13/02/18 23:12, Rob Herring wrote:
->>>>
->>>> On Tue, Feb 13, 2018 at 04:58:13PM +0000, srinivas.kandagatla@linaro.org
->>>> wrote:
->>>>>
->>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>>>
->>>>> This patch add dt bindings for Qualcomm APR (Asynchronous Packet
->>>>> Router)
->>>>> bus driver. This bus is used for communicating with DSP which provides
->>>>> audio and various other services to cpu.
->>>>>
->>>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>>> ---
->>>>>    .../devicetree/bindings/soc/qcom/qcom,apr.txt      | 83
->>>>> ++++++++++++++++++++++
->>>>>    1 file changed, 83 insertions(+)
->>>>>    create mode 100644
->>>>> Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->>>>> b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->>>>> new file mode 100644
->>>>> index 000000000000..1b95fbfed348
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->>>>> @@ -0,0 +1,83 @@
->>>>> +Qualcomm APR (Asynchronous Packet Router) binding
->>>>> +
->>>>> +This binding describes the Qualcomm APR. APR is a IPC protocol for
->>>>> +communication between Application processor and QDSP. APR is mainly
->>>>> +used for audio/voice services on the QDSP.
->>>>> +
->>>>> +- compatible:
->>>>> +       Usage: required
->>>>> +       Value type: <stringlist>
->>>>> +       Definition: must be "qcom,apr-v<VERSION-NUMBER>", example
->>>>> "qcom,apr-v2"
->>>>> +
->>>>> +- qcom,apr-dest-domain-id
->>>>> +       Usage: required
->>>>> +       Value type: <prop-encoded-array>
->>>>> +       Definition: Destination processor ID.
->>>>> +       Possible values are :
->>>>> +                       1 - APR simulator
->>>>> +                       2 - PC
->>>>> +                       3 - MODEM
->>>>> +                       4 - ADSP
->>>>> +                       5 - APPS
->>>>> +                       6 - MODEM2
->>>>> +                       7 - APPS2
->>>>> +
->>>>> += APR SERVICES
->>>>> +Each subnode of the APR node can represent service tied to this apr.
->>>>> The name
->>>>> +of the nodes are not important. The properties of these nodes are
->>>>> defined
->>>>> +by the individual bindings for the specific service
->>>>> +- but must contain the following property:
->>>>> +
->>>
->>> ...
->>>>>
->>>>> += APR DEVICES:
->>>>> +Each subnode of the APR node can represent devices tied to this apr,
->>>>> like
->>>>> +sound-card. The properties of these nodes are defined by the
->>>>> individual
->>>>> +bindings for the specific device.
->>>>
->>>>
->>>> It's not a good design generally to mix different types of nodes at one
->>>> level.
->>>
->>>
->>> I agree, may be I can split the services and devices into different
->>> subnodes
->>> like below, which should avoid mixing different types of nodes.
->>>
->>> Does this sound good to you?
->>
->>
->> Seems your original example wasn't so complete...
->>
-> Yep, I will fix it in next version.
->>
->> I don't see why you need all these nodes in the first place. For a
->> single SoC, how much does all this vary?
->>
-> It might not vary for a given SoC, but It does vary across the SoCs.
-> Also the versions of each service are independent to each other.
 
-Not sure I follow the last statement. Meaning firmware updates change
-the services?
 
-I don't see any versioning of services here.
-
->
->>>
->>> apr {
->>>          compatible = "qcom,apr-v2";
->>>          qcom,smd-channels = "apr_audio_svc";
->>>          qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
->>>
->>>          apr-services {
->>>                  q6core {
->>>                          qcom,apr-svc-name = "CORE";
->>>                          qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
->>>                          compatible = "qcom,q6core";
->>>                  };
->>>
->>>                  q6afe: q6afe {
->>>                          compatible = "qcom,q6afe";
->>>                          qcom,apr-svc-name = "AFE";
->>>                          qcom,apr-svc-id = <APR_SVC_AFE>;
->>>                          #sound-dai-cells = <1>;
->>>                  };
->>>
->>>                  q6asm: q6asm {
->>>                          compatible = "qcom,q6asm";
->>>                          qcom,apr-svc-name = "ASM";
->>>                          qcom,apr-svc-id = <APR_SVC_ASM>;
->>>                          #sound-dai-cells = <1>;
->>>                  };
->>>
->>>                  q6adm: q6adm {
->>>                          compatible = "qcom,q6adm";
->>>                          qcom,apr-svc-name = "ADM";
->>>                          qcom,apr-svc-id = <APR_SVC_ADM>;
->>>                          #sound-dai-cells = <0>;
->>>                  };
+On 02/21/2018 12:21 PM, Rodrigo Rivas Costa wrote:
+> On Tue, Feb 20, 2018 at 04:09:39PM -0800, Pierre-Loup A. Griffais wrote:
+>> On 02/20/2018 03:20 PM, Rodrigo Rivas Costa wrote:
+>>> On Tue, Feb 20, 2018 at 02:29:48PM -0800, Pierre-Loup A. Griffais wrote:
+>>> About the left trackpad/joystick, currently I'm not treating them
+>>> different. I'm out of ABS axes, and anyway, it is not likely that the
+>>> left pad and the joystick be used at the same time (I only have one left
+>>> thumb). Nevertheless, if we really want to make them apart, we can use
+>>> bits 10.3 (lpad_touch) and 10.7 (lpad_and_joy) together. I described the
+>>> details in [2], but I'm not currently doing that in this driver.
 >>
+>> I didn't necessarily mean exposing it, but in the event a user is using both
+>> at the same time (it happens, using claw grip with some games is necessary
+>> to use the D-pad while deflecting the stick), then you'll most likely run
+>> into issues unless you demux the inbound data, since we were also out of
+>> left analog fields and mux them together if used at the same time. Not sure
+>> if you're already handling that case, but not doing it would result in the
+>> stick appearing to fully deflect every other input report if the user is
+>> doing both at the same time.
+> 
+> "Claw grip"? Is that a real thing? Yes, it is! Well, you're totally
+> right. I think that it will be best to fully separate the left-pad and
+> the joystick. Maybe the left-pad can be mapped to ABS_HAT1{X,Y]...
+> 
+>>> About the gyroscope/acceleration/quaternion, you know the issue
+>>> that the wireless gives gyro plus quat but no accel, while the wired
+>>> gives all three. My general idea is to create an additional input device
+>>> with INPUT_PROP_ACCELEROMETER to expose what is available. Pity is that
+>>> the wireless gives no accel, maybe there is some command to enable it?
 >>
->> All these DAI nodes could be a single node and the cell value be the
->> svc-id?
->
-> No, DAI's here are both backends and frontends, and some of the services
-> like core, USM are not DAI's
->
-> Are you also saying that we should have a single driver entity for all these
-> services?
-
-DT nodes do not equate driver entities. A driver can instantiate other drivers.
-
-Am I saying a single DT node for this? Yes, perhaps.
-
->
+>> It should be three neighboring bits for that setting; does this not work for
+>> you?
 >>
->>>          };
->>>
->>>          apr-devices {
->>>                  audio {
->>>                          compatible = "qcom,msm8996-snd-card";
+>> // Bitmask that define which IMU features to enable.
+>> typedef enum
+>> {
+>> 	SETTING_GYRO_MODE_OFF				= 0x0000,
+>> 	SETTING_GYRO_MODE_STEERING			= 0x0001,
+>> 	SETTING_GYRO_MODE_TILT				= 0x0002,
+>> 	SETTING_GYRO_MODE_SEND_ORIENTATION	= 0x0004,
+>> 	SETTING_GYRO_MODE_SEND_RAW_ACCEL	= 0x0008,
+>> 	SETTING_GYRO_MODE_SEND_RAW_GYRO		= 0x0010,
+>> } SettingGyroMode;
+> 
+> Thanks for that, it will be useful! Those are the values to be written
+> to what I called "register 0x30" with {0x87 0x03 0x30 X 0x00}. Currently
+> I am writing 0x14 to enable and 0x00 to disable. I suspected it was a
+> bit-field...
+> 
+>> In general I'm concerned about sending of the gyro-enable message
+>> potentially impairing Steam functionality if it's running at the same time
+>> (eg. if gyro gets disabled over the radio while Steam still needs it), or
+>> sending any stateful messages to the device. For instance, are you ever
+>> sending the "blank configuration" setting? I assume you must be or users
+>> would still get keyboard/mouse input over these USB endpoints while trying
+>> to interact with the controller. But sending this after Steam programmed a
+>> setting, or instructed the controller to go back to lizard mode because it
+>> was requested by a configuration, would be problematic.
+> 
+> Sure, but this patchset should be safe, shouldn't it?
+> Maube future patches that play with the gyro/force-feedback could be
+> disabled by default, and could need a module parameter to be enabled.
+> That way Steam Client will work out-of-the-box anywhere but proficient
+> users could use the extra functionality easily.
+> 
+> Related to that, Benjamin Tissoires replied to 1/3:
+>>> --- a/drivers/hid/hid-quirks.c
+>>> +++ b/drivers/hid/hid-quirks.c
+>>> @@ -629,6 +629,10 @@ static const struct hid_device_id
+>>> hid_have_special_driver[] = {
+>>>   #if IS_ENABLED(CONFIG_HID_SPEEDLINK)
+>>>          { HID_USB_DEVICE(USB_VENDOR_ID_X_TENSIONS,
+>>>          USB_DEVICE_ID_SPEEDLINK_VAD_CEZANNE) },
+>>>   #endif
+>>> +#if IS_ENABLED(CONFIG_HID_STEAM)
+>>> +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER) },
+>>> +       { HID_USB_DEVICE(USB_VENDOR_ID_VALVE, USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS) },
+>>> +#endif
 >>
->>
->> This is a pseudo device. Why not put it at the top level like other
->> sound cards?
->
->
-> APR bus depends on the state of DSP services, which can go off if the DSP
-> crashes or DSP is stopped. If we remove this sound card out of apr bus then
-> the sound card dependency on apr bus is totally lost.
->
-> Main purpose of having sound card under this bus is that the sound card
-> should register/unregister depending up the apr channel presence/absence
-> respectively.
+>> In addition to the discussion in 0/3, I wonder if you should not
+>> remove this hunk. Unless having hid-generic binding the device before
+>> your hid-steam driver, it would be better not force the Steam boxes to
+>> use your driver.
+> 
+> I don't really see the point on that. If we do that I'll have to unbind
+> and bind the device manually, and that is a pain, and impossible without
+> root (my ultimate goal is to use this controller with my Tizen TV ;-P).
+> 
+> And anyway this driver is mostly harmless, the only visible changes from
+> userspace are the new input and power devices, and that the virtual
+> keyboard/mouse are no more. If the virtual devices are really missed we
+> could use:
+> 
+> 	hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+> 
+> on them, maybe with a module parameter? Note that one of the first
+> things the Steam Client does is to disable the virtual devices (with a
+> command to the device).
+> (TBH I always had the impression that those virtual devices are there
+> to move the Grub menu...)
+> 
+> If Valve people really feel that this driver is not needed for SteamOS,
+> because the Steam Client is always running, then SteamOS can always do
+> CONFIG_HID_STEAM=n.
 
-Okay, that seems sensible.
+Yes, certainly; that isn't really the usecase I'm worried about. What 
+I'm worried about is behavior changing for existing users of the 
+controller on normal desktop distributions. Currently the Steam client 
+will program these pieces of state (enable/disable direct keyboard/mouse 
+HID functionality, enable/disable gyro/accel) based on the user's 
+configuration, and a user getting a kernel update that includes a driver 
+that also programs that without their intervention is bound to affect 
+the behavior. If there was a way to make it so the states won't be 
+programmed until it's pretty clear the user is trying to use that 
+driver's functionality, that would feel safer.
 
-Rob
+Thanks,
+  - Pierre-Loup
+
+> 
+> Regards.
+> Rodrigo
+> 
