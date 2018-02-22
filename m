@@ -1,68 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932592AbeBVNTV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:19:21 -0500
-Received: from mga02.intel.com ([134.134.136.20]:42673 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932392AbeBVNTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:19:19 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="36634696"
-Date: Thu, 22 Feb 2018 05:19:18 -0800
-From: "Raj, Ashok" <ashok.raj@intel.com>
-To: Borislav Petkov <bp@suse.de>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [v2 1/3] x86/microcode/intel: Check microcode revision before
- updating sibling threads
-Message-ID: <20180222131918.GB3797@araj-mobl1.jf.intel.com>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
- <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
- <20180222110056.GA27489@pd.tnic>
- <20180222115554.GA3797@araj-mobl1.jf.intel.com>
- <20180222121506.GC27489@pd.tnic>
+        id S932465AbeBVNU4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:20:56 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43370 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753821AbeBVNUy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:20:54 -0500
+X-Google-Smtp-Source: AH8x225evFuJYLgzaQM6u7WGQcSbtQE1mx+eenaQwu7uyJRa1/jXjsh9GSmP8UoHKi7R3/Vd1Hna3yAYC52aDR5YZ1M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222121506.GC27489@pd.tnic>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1519301715-31798-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com> <1519301715-31798-3-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Feb 2018 14:20:53 +0100
+X-Google-Sender-Auth: op229qQY1w2L_e9xythnvFaSKVU
+Message-ID: <CAMuHMdXsobaUdxMO-3=B56_2pQ2MzG7vxOqt+GzG_OC1T5bL7w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] m68k: rename UL() to TO_UL()
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 01:15:06PM +0100, Borislav Petkov wrote:
-> On Thu, Feb 22, 2018 at 03:55:54AM -0800, Raj, Ashok wrote:
-> > The current code wasn't trying to enforce checking the loaded microcode revision on a thread
-> > before attempting to load the microcode. While you comeback from resume, if C0T0 already
-> > is up, and we loaded the early microcode, then when handling C0T1 there is no need to 
-> > do a wrmsrl to reapply microcode since its already loaded as part of C0T0. 
-> 
-> And I'm asking exactly this: is it simply "we don't need to do WRMSR" or
-> "we should not"?
-> 
-> Because avoiding the WRMSR costs more than simply doing it and letting
-> the HT thread ignore the supplied microcode.
+Hi Yamada-san,
 
-This isn't a simple WRMSR like others. Microcode engine needs to do 
-a bunch of validation.
+On Thu, Feb 22, 2018 at 1:15 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> ARM, ARM64 and UniCore32 define UL(x) like follows:
+>   #define UL(x) _AC(x, UL)
+>
+> While, M68K defines it differently:
+>   #define UL(x) ((unsigned long) (x))
+>
+> I want to move the former to a common header.  Beforehand, this
+> commit renames the latter to avoid name conflict.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> V2: https://patchwork.kernel.org/patch/9498273/
+>
+> Changes in v3: None
+> Changes in v2:
+>  - Split out as a prerequisite patch
+>
+>  arch/m68k/mm/init.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
+> index e85acd1..583a8e5 100644
+> --- a/arch/m68k/mm/init.c
+> +++ b/arch/m68k/mm/init.c
+> @@ -122,9 +122,9 @@ void free_initmem(void)
+>
+>  void __init print_memmap(void)
+>  {
+> -#define UL(x) ((unsigned long) (x))
+> -#define MLK(b, t) UL(b), UL(t), (UL(t) - UL(b)) >> 10
+> -#define MLM(b, t) UL(b), UL(t), (UL(t) - UL(b)) >> 20
+> +#define TO_UL(x) ((unsigned long) (x))
+> +#define MLK(b, t) TO_UL(b), TO_UL(t), (TO_UL(t) - TO_UL(b)) >> 10
+> +#define MLM(b, t) TO_UL(b), TO_UL(t), (TO_UL(t) - TO_UL(b)) >> 20
+>  #define MLK_ROUNDUP(b, t) b, t, DIV_ROUND_UP(((t) - (b)), 1024)
 
-> 
-> If it is "we don't need to but there's nothing wrong when we do it" then
-> we don't need this patch. And I'm pretty sure "nothing wrong when we do
-> it" would be the answer. Otherwise we have bigger problems.
+Please note that this code patch is scheduled for removal in v4.17, cfr.
+"[PATCH] m68k/mm: Stop printing the virtual memory layout"
+(https://lkml.org/lkml/2018/2/12/97).
 
-In the past the only guidance was to not load microcode at the same time to the 
-thread siblings of a core. We now have new guidance that the sibling must be 
-spinning and not doing other things that can introduce instability around loading 
-microcode.
+Gr{oetje,eeting}s,
 
-I think its safer to not load when its not required vs forcing a load and depending
-on the microcode interface to not interfere. If the rules change in future we don't
-have to adapt again.
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
