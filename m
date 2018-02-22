@@ -1,52 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933625AbeBVSE2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 13:04:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33088 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933516AbeBVSEZ (ORCPT
+        id S933652AbeBVSEz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 13:04:55 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36535 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933516AbeBVSEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 13:04:25 -0500
-Date: Thu, 22 Feb 2018 10:04:20 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
-        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180222180420.GA17956@infradead.org>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222160217.GA18243@infradead.org>
- <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
+        Thu, 22 Feb 2018 13:04:53 -0500
+X-Google-Smtp-Source: AH8x224kMt+FSnpmvkBL7mwd+CnTQtTPG52HsgLBb2ndu1wZnDO+riGLE7DaCIUrJqZg8U79HTHoJPoCraJPf25WVaY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180222174140.GA3154@beast>
+References: <20180222174140.GA3154@beast>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Feb 2018 10:04:52 -0800
+X-Google-Sender-Auth: Pwuz0dsKas8WpvE0c3hri21dMAQ
+Message-ID: <CA+55aFxDh-69p0Lr52icct6-3PGcsHaZmMqHwks8HptdmdxvTg@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig.h: Include compiler types to avoid missed
+ struct attributes
+To: Kees Cook <keescook@chromium.org>
+Cc: Patrick McLean <chutzpah@gentoo.org>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 09:14:11AM -0800, Max Filippov wrote:
-> On Thu, Feb 22, 2018 at 8:02 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> > I'd love to see dead architecture ports dropped if they really are
-> > more or less abandoned.  In addition to your missing gcc port ones
-> > above (minus openrisc) it seems like frv and m32r certainly qualify,
-> > and xtensa seems to be going that way with the glibc port being dropped
-> > now.
-> 
-> It's not that it's been dropped, there have never been an official glibc
-> port for xtensa, but we're working to get one.
+On Thu, Feb 22, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
+>
+> Updated to include Tested-by. Linus, this looks ready to go.
 
-Ah sorry - I meant to say tile not xtensa when writing this.
+Ok, applied.
+
+I'm a bit worried that this ends up bypassing our automatic dependency
+generation.
+
+Lookie here (in a fully built tree):
+
+    find . -name '*.o.cmd' |
+        xargs grep -L linux/compiler_types.h |
+        xargs grep -l linux/kconfig.h |
+        while read i; do
+            j=$(echo $i | sed 's/\.o.cmd$/\.c/' | sed 's:/\.:/:');
+            test -f $j && echo $j;
+        done
+
+shows that a number of files don't end up depending on that header
+file, even though it's included (that "grep -l linux/kconfig,h"
+triggers on the command itself having that "-include linux/kconfig.h"
+line).
+
+It looks like "gcc -M" just doesn't list any files that get included
+on the command line with "-include".
+
+Now, there are very *few* files that don't end up eventually including
+linux/compiler_types.h _some_ way, and I checked them all, and they
+really are so trivial that this doesn't matter.
+
+But it worries me a bit regardless.
+
+              Linus
