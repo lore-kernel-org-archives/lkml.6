@@ -1,133 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932595AbeBVNk2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:40:28 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:52288 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932414AbeBVNk0 (ORCPT
+        id S932601AbeBVNmo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:42:44 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:56814 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932356AbeBVNmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:40:26 -0500
-Date: Thu, 22 Feb 2018 14:40:04 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>, Daniel Lustig <dlustig@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-Message-ID: <20180222134004.GN25181@hirez.programming.kicks-ass.net>
-References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+        Thu, 22 Feb 2018 08:42:42 -0500
+Date: Thu, 22 Feb 2018 21:42:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Rice <rob.rice@broadcom.com>, Steve Lin <steven.lin1@broadcom.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] crypto: bcm: One function call less in do_shash()
+ after error detection
+Message-ID: <20180222134231.GC28447@gondor.apana.org.au>
+References: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
+ <55bdcf76-f1c9-180d-6798-959e617b10ac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <55bdcf76-f1c9-180d-6798-959e617b10ac@users.sourceforge.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 01:19:50PM +0100, Andrea Parri wrote:
+On Wed, Feb 14, 2018 at 10:40:26PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Feb 2018 22:22:20 +0100
+> 
+> The kfree() function was called in one case by the do_shash() function
+> during error handling even if the passed variable contained a null pointer.
+> 
+> * Reorder two function calls at the end.
+> 
+> * Add a jump target.
 
-> C unlock-lock-read-ordering
-> 
-> {}
-> /* s initially owned by P1 */
-> 
-> P0(int *x, int *y)
-> {
-> 	WRITE_ONCE(*x, 1);
-> 	smp_wmb();
-> 	WRITE_ONCE(*y, 1);
-> }
-> 
-> P1(int *x, int *y, spinlock_t *s)
-> {
-> 	int r0;
-> 	int r1;
-> 
-> 	r0 = READ_ONCE(*y);
-> 	spin_unlock(s);
-> 	spin_lock(s);
-> 	r1 = READ_ONCE(*y);
-> }
-> 
-> exists (1:r0=1 /\ 1:r1=0)
-> 
-> RISCV RISCV-unlock-lock-read-ordering
-> {
-> 0:x2=x; 0:x4=y;
-> 1:x2=y; 1:x4=x; 1:x6=s;
-> s=1;
-> }
->  P0           |  P1                      ;
->  ori x1,x0,1  | lw x1,0(x2)              ;
->  sw x1,0(x2)  | amoswap.w.rl x0,x0,(x6)  ;
->  fence w,w    | ori x5,x0,1              ;
->  ori x3,x0,1  | amoswap.w.aq x0,x5,(x6)  ;
->  sw x3,0(x4)  | lw x3,0(x4)              ;
-> exists
-> (1:x1=1 /\ 1:x3=0)
+This patch is pointless as kfree on NULL is a no-op.
 
-So I would indeed expect this to be forbidden. Could someone please
-explain how this could be allowed?
-
-> C unlock-lock-write-ordering
-> 
-> {}
-> /* s initially owned by P0 */
-> 
-> P0(int *x, int *y, spinlock_t *s)
-> {
-> 	WRITE_ONCE(*x, 1);
-> 	spin_unlock(s);
-> 	spin_lock(s);
-> 	WRITE_ONCE(*y, 1);
-> }
-> 
-> P1(int *x, int *y)
-> {
-> 	int r0;
-> 	int r1;
-> 
-> 	r0 = READ_ONCE(*y);
-> 	smp_rmb();
-> 	r1 = READ_ONCE(*y);
-> }
-> 
-> exists (1:r0=1 /\ 1:r1=0)
-> 
-> RISCV RISCV-unlock-lock-write-ordering
-> {
-> 0:x2=x; 0:x4=y; 0:x6=s;
-> 1:x2=y; 1:x4=x;
-> s=1;
-> }
->  P0                       | P1           ;
->  ori x1,x0,1              | lw x1,0(x2)  ;
->  sw x1,0(x2)              | fence r,r    ;
->  amoswap.w.rl x0,x0,(x6)  | lw x3,0(x4)  ;
->  ori x5,x0,1              |              ;
->  amoswap.w.aq x0,x5,(x6)  |              ;
->  ori x3,x0,1              |              ;
->  sw x3,0(x4)              |              ;
-> exists
-> (1:x1=1 /\ 1:x3=0)
-
-And here I think the RISCV conversion is flawed, there should be a ctrl
-dependency. The second store-word in P0 should depend on the result of
-amoswap.w.aq being 0.
-
-(strictly speaking there should be a ctrl-dep in the read example too,
-except it'd be pointless for ordering reads, so I accept it being left
-out)
-
-Again, I cannot see how this could be allowed.
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
