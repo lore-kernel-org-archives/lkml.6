@@ -1,78 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751607AbeBVAhz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 19:37:55 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42993 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeBVAhw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:37:52 -0500
-X-Google-Smtp-Source: AH8x224ht6O8IidyYa9JFWu9Ke8KWW0ZoZSMbKStK+ZfGufAQSYB6IhJrdPImaNvVCGZ+9mKnMttpQ==
-Date: Wed, 21 Feb 2018 16:37:50 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>
-Subject: [PATCH] doc: process: Add "Root-caused-by" and "Suggested-by"
-Message-ID: <20180222003749.GA4724@beast>
+        id S1751587AbeBVAuh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 19:50:37 -0500
+Received: from fieldses.org ([173.255.197.46]:41866 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeBVAuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 19:50:35 -0500
+Date: Wed, 21 Feb 2018 19:50:35 -0500
+From: "J . Bruce Fields" <bfields@fieldses.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lockd: make nlm_ntf_refcnt and nlm_ntf_wq static
+Message-ID: <20180222005035.GG6535@fieldses.org>
+References: <20180207102947.29292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180207102947.29292-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As recently pointed out by Linus, "Root-caused-by" is a good tag to include
-since it can indicate significantly more work than "just" a Reported-by.
-This adds it and "Suggested-by" (which was also missing) to the documented
-list of tags. Additionally updates checkpatch.pl to match the process docs.
+Thanks, applying.--b.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- Documentation/process/5.Posting.rst | 7 +++++++
- scripts/checkpatch.pl               | 2 ++
- 2 files changed, 9 insertions(+)
-
-diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-index 645fa9c7388a..2ff01f76f02a 100644
---- a/Documentation/process/5.Posting.rst
-+++ b/Documentation/process/5.Posting.rst
-@@ -234,6 +234,13 @@ The tags in common use are:
-    people who test our code and let us know when things do not work
-    correctly.
- 
-+ - Suggested-by: names a person who suggested the solution, but may not
-+   have constructed the full patch. A weaker version of `Co-Developed-by`.
-+
-+ - Root-caused-by: names a person who diagnosed the root cause of a
-+   problem. This usually indicates significantly more work than a simple
-+   `Reported-by`.
-+
-  - Cc: the named person received a copy of the patch and had the
-    opportunity to comment on it.
- 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 3d4040322ae1..a1ab82e70b54 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -464,9 +464,11 @@ our $logFunctions = qr{(?x:
- our $signature_tags = qr{(?xi:
- 	Signed-off-by:|
- 	Acked-by:|
-+	Co-Developed-by:|
- 	Tested-by:|
- 	Reviewed-by:|
- 	Reported-by:|
-+	Root-caused-by:|
- 	Suggested-by:|
- 	To:|
- 	Cc:
--- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+On Wed, Feb 07, 2018 at 10:29:47AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variables nlm_ntf_refcnt and nlm_ntf_wq are local to the source and
+> do not need to be in global scope, so make them static.
+> 
+> Cleans up sparse warnings:
+> fs/lockd/svc.c:60:10: warning: symbol 'nlm_ntf_refcnt' was not declared.
+> Should it be static?
+> fs/lockd/svc.c:61:1: warning: symbol 'nlm_ntf_wq' was not declared.
+> Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/lockd/svc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+> index 9c36d614bf89..346ed161756d 100644
+> --- a/fs/lockd/svc.c
+> +++ b/fs/lockd/svc.c
+> @@ -57,8 +57,8 @@ static struct task_struct	*nlmsvc_task;
+>  static struct svc_rqst		*nlmsvc_rqst;
+>  unsigned long			nlmsvc_timeout;
+>  
+> -atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
+> -DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
+> +static atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
+> +static DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
+>  
+>  unsigned int lockd_net_id;
+>  
+> -- 
+> 2.15.1
