@@ -1,71 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751438AbeBVTR0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:17:26 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39949 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbeBVTRA (ORCPT
+        id S1751454AbeBVTSG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:18:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45834 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeBVTSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:17:00 -0500
-X-Google-Smtp-Source: AG47ELulsE24IPt3MZjZ7hFOeXHDqgt7D0p/oUz6u9tq81cYcxz4r4r1kXnB0GcKhFXvElj8Muk4+w==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        jassisinghbrar@gmail.com, andy.shevchenko@gmail.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v2 1/2] dt-bindings: i2c: add binding for Socionext SynQuacer I2C
-Date: Thu, 22 Feb 2018 19:16:46 +0000
-Message-Id: <20180222191647.4727-2-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
-References: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
+        Thu, 22 Feb 2018 14:18:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD6136030F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date: Thu, 22 Feb 2018 13:17:58 -0600
+From: Richard Kuo <rkuo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hexagon@vger.kernel.org, Chen Liqin <liqin.linux@gmail.com>,
+        Lennox Wu <lennox.wu@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180222191758.GB5180@codeaurora.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a binding for the I2C controller that can be found in the Socionext
-SynQuacer SoC. Note that this is the exact same IP as the Fujitsu F_I2C.
+On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
+> * Hexagon is Qualcomm's DSP architecture. It is being actively used
+>   in all Snapdragon ARM SoCs, but the kernel code appears to be
+>   the result of a failed research project to make a standalone Hexagon
+>   SoC without an ARM core. There is some information about the
+>   project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
+>   https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
+>   There is a port to gcc-4.5 on the project page, which is evidently
+>   abandoned, but there is an active upstream LLVM port that is
+>   apparently used to build non-Linux programs.
+>   I would consider this one a candidate for removal as well, given that
+>   there were never any machines outside of Qualcomm that used this,
+>   and they are no longer interested themselves.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- Documentation/devicetree/bindings/i2c/i2c-synquacer.txt | 29 ++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+It's difficult for me to speak to the decisions as I can understand
+your point of view, but maybe I can speak to some of the status.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
-new file mode 100644
-index 000000000000..4d0bb6a71211
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
-@@ -0,0 +1,29 @@
-+Socionext SynQuacer I2C
-+
-+Required properties:
-+- compatible      : Must be "socionext,synquacer-i2c"
-+- reg             : Offset and length of the register set for the device
-+- interrupts      : the interrupt specifier
-+- #address-cells  : Must be <1>;
-+- #size-cells     : Must be <0>;
-+- clock-names     : Must contain "pclk".
-+- clocks          : Must contain an entry for each name in clock-names.
-+                    (See the common clock bindings.)
-+
-+Optional properties:
-+- clock-frequency : Desired I2C bus clock frequency in Hz. As only Normal and
-+                    Fast modes are supported, possible values are 100000 and
-+                    400000.
-+
-+Example :
-+
-+    i2c@51210000 {
-+        compatible = "socionext,synquacer-i2c";
-+        reg = <0x51210000 0x1000>;
-+        interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clock-names = "pclk";
-+        clocks = <&clk_i2c>;
-+        clock-frequency = <400000>;
-+    };
+We still use the port internally for kicking the tools around and other
+research projects.  As you noticed we're not doing gcc anymore; we're
+using LLVM for both kernel and userspace.  Yes there have been some
+caveats but it does work within confines.
+
+Time is unfortunately just limited for me to upstream some of my kernel
+fixes and cleanups, and there are some things that just haven't shown
+up externally yet.
+
+However, as James Hogan mentioned, having it in the tree really has been
+useful because it gets included in the various upstream changes and
+fixes, which we appreciate.
+
+So hopefully this will help inform the decision a little better.
+
+If you have any other questions please let me know.
+
+
+Thanks,
+Richard Kuo
+
+
+
 -- 
-2.11.0
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
