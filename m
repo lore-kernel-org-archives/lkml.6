@@ -1,49 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932649AbeBVNrn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:47:43 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36382 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932579AbeBVNrk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:47:40 -0500
-X-Google-Smtp-Source: AG47ELsiktiefI9NXB3AQbAzs2jXmtV0wG1nNhm95f2aBrRci/KEKIJAQsGoyG6DyEaATpmblARXUZMlzjGAebcm9tc=
+        id S932657AbeBVNtu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:49:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49590 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932564AbeBVNts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:49:48 -0500
+Date: Thu, 22 Feb 2018 14:49:44 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] fs: fsnotify: account fsnotify metadata to kmemcg
+Message-ID: <20180222134944.GK30681@dhcp22.suse.cz>
+References: <20180221030101.221206-1-shakeelb@google.com>
+ <20180221030101.221206-4-shakeelb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com> <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:47:39 +0100
-Message-ID: <CACRpkdaeFXuB1Qv-vqNpf4pHsAysiYh03_gfNoRdHBh1pN_Amw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function eXpander
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-gpio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221030101.221206-4-shakeelb@google.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
+On Tue 20-02-18 19:01:01, Shakeel Butt wrote:
+> A lot of memory can be consumed by the events generated for the huge or
+> unlimited queues if there is either no or slow listener. This can cause
+> system level memory pressure or OOMs. So, it's better to account the
+> fsnotify kmem caches to the memcg of the listener.
 
-> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
-> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
-> when other MFX features are not enabled.
->
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+How much memory are we talking about here?
 
-As mentioned I think this driver needs to:
+> There are seven fsnotify kmem caches and among them allocations from
+> dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
+> inotify_inode_mark_cachep happens in the context of syscall from the
+> listener. So, SLAB_ACCOUNT is enough for these caches.
+> 
+> The objects from fsnotify_mark_connector_cachep are not accounted as
+> they are small compared to the notification mark or events and it is
+> unclear whom to account connector to since it is shared by all events
+> attached to the inode.
+> 
+> The allocations from the event caches happen in the context of the event
+> producer. For such caches we will need to remote charge the allocations
+> to the listener's memcg. Thus we save the memcg reference in the
+> fsnotify_group structure of the listener.
 
-- Move to drivers/pinctrl/pinctrl-stmfx.c similar to the sx150x controller.
-- Pass a regmap around instead of the custom accessor functions.
-- Maybe refactor and reuse STMPE infrastructure
+Is it typical that the listener lives in a different memcg and if yes
+then cannot this cause one memcg to OOM/DoS the one with the listener?
 
-Yours,
-Linus Walleij
+> This patch has also moved the members of fsnotify_group to keep the
+> size same, at least for 64 bit build, even with additional member by
+> filling the holes.
+> 
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+[...]
+-- 
+Michal Hocko
+SUSE Labs
