@@ -1,105 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752846AbeBVIfv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:35:51 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:38419 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752765AbeBVIfr (ORCPT
+        id S1752907AbeBVIhq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:37:46 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:59727 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeBVIho (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:35:47 -0500
-From: John Ogness <john.ogness@linutronix.de>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] fs/dcache: Avoid the try_lock loop in d_delete()
-References: <20180216150933.971-1-john.ogness@linutronix.de>
-        <20180216150933.971-4-john.ogness@linutronix.de>
-        <20180222051857.GL30522@ZenIV.linux.org.uk>
-Date: Thu, 22 Feb 2018 09:35:42 +0100
-In-Reply-To: <20180222051857.GL30522@ZenIV.linux.org.uk> (Al Viro's message of
-        "Thu, 22 Feb 2018 05:18:57 +0000")
-Message-ID: <87bmgh4e1t.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Thu, 22 Feb 2018 03:37:44 -0500
+Date: Thu, 22 Feb 2018 08:32:42 +0000
+From: James Hogan <james.hogan@mips.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: <linux-metag@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH 13/13] i2c: img-scb: Drop METAG dependency
+Message-ID: <20180222083242.GP29460@jhogan-linux.mipstec.com>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+ <20180221233825.10024-14-jhogan@kernel.org>
+ <20180222081018.tc3jcuwl6yfrxroh@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="A6Z7MKnLVMfR85kG"
+Content-Disposition: inline
+In-Reply-To: <20180222081018.tc3jcuwl6yfrxroh@katana>
+User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Originating-IP: [192.168.154.110]
+X-BESS-ID: 1519288649-298554-5177-41482-1
+X-BESS-VER: 2018.2-r1802152108
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190296
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-22, Al Viro <viro@ZenIV.linux.org.uk> wrote:
->> @@ -2378,22 +2420,36 @@ void d_delete(struct dentry * dentry)
->>  	/*
->>  	 * Are we the only user?
->>  	 */
->> -again:
->>  	spin_lock(&dentry->d_lock);
->> +again:
->>  	inode = dentry->d_inode;
->>  	isdir = S_ISDIR(inode->i_mode);
->>  	if (dentry->d_lockref.count == 1) {
->> -		if (!spin_trylock(&inode->i_lock)) {
->> -			spin_unlock(&dentry->d_lock);
->> -			cpu_relax();
->> +		/*
->> +		 * Lock the inode. Might drop dentry->d_lock temporarily
->> +		 * which allows inode to change. Start over if that happens.
->> +		 */
->> +		if (!dentry_lock_inode(dentry))
->>  			goto again;
->
-> IDGI.  First of all, why do we need to fetch ->d_inode (and calculate
-> isdir) before that dentry_lock_inode() of yours? That's at least
-> partially understandable in the current version, where we need inode
-> in d_delete() scope, but here it looks bloody odd.
+--A6Z7MKnLVMfR85kG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I tried to change the function as little as possible. You are right that
-it now looks odd. I seem to have missed the forest for the trees.
+On Thu, Feb 22, 2018 at 09:10:18AM +0100, Wolfram Sang wrote:
+> On Wed, Feb 21, 2018 at 11:38:25PM +0000, James Hogan wrote:
+> > Now that arch/metag/ has been removed, remove the METAG dependency from
+> > the IMG SCB I2C device driver. The hardware is also present on MIPS SoCs
+> > so the driver still has value.
+> >=20
+> > Signed-off-by: James Hogan <jhogan@kernel.org>
+>=20
+> I'd think it should go with the rest of this series? For that:
+>=20
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+>=20
+> Let me know if I should rather pick this up individually.
 
-> And if you move those fetches past the call of dentry_lock_inode(),
-> you suddenly get the life much simpler:
->
-> 	grab d_lock
-> 	if d_count is greater than 1, drop it and bugger off
-> 	while !dentry_lock_inode(dentry)
-> 		;
-> 	fetch inode
-> 	recheck d_count, in the unlikely case when it's greater than 1,
-> 			drop and bugger off
-> 	clear CANT_MOUNT
-> 	calculate isdir
-> 	unlink_inode
-> 	fsnotify shite
->
-> I mean, do we really want to keep rechecking d_count on each loop
-> iteration?  What does it buy us?  Sure, we want to recheck in the end
-> for correctness sake, but...
+Yes, I'll take this with the others.
 
-I have been unable to produce a test case where dentry_lock_inode() can
-fail. AFAICT it is not possible from userspace. Perhaps some filesystem
-could trigger it. But if it would fail, getting the refcount to increase
-in the dropped d_lock window is quite easy to reproduce. And in that
-case we wouldn't need to keep trying to aquire the inode lock and could
-just drop.
-        
-> It might make sense to move the loop inside dentry_lock_inode(), IMO.
+Thanks
+James
 
-Agreed. I will change dentry_lock_inode() so that it will only fail if
-the refcount changes. If there are inode changes, it will loop
-internally. That will change your suggestion to:
+--A6Z7MKnLVMfR85kG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
- 	grab d_lock
- 	if d_count is greater than 1
- 	 	drop it and bugger off
- 	if !dentry_lock_inode(dentry)
-	 	drop it and bugger off
- 	fetch inode
- 	clear CANT_MOUNT
- 	calculate isdir
- 	unlink_inode
- 	fsnotify shite
+-----BEGIN PGP SIGNATURE-----
 
-John Ogness
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqOgCoACgkQbAtpk944
+dnoEfRAAvetw227IMWNxH/EkIZ00ZxT+gco6oAtkTRFAx3HBKbDqWeDlNjqPEMCz
+nCsx9+EyZva7k7D+htaXJIpVLIpL5mqYi8VbHvRhSDUBd/XcuXCLitoWfRjAswXu
+yt3s1QYB1Ec3yzMMNF7/V5oWnnyUcNB/IQmqZAzMA7PKtp5O5H8+6OyrjrayYCE3
+MoNeg6fuWDhT3MrqDFhiB1WZG95E+GP7R31R8qq532JPQljysAG0Oz6Ej3pYGiN8
+2y4wCb42IYxmVEYFBQrWAKukZz1POuGhcPmoHAhbWj3+FE+wMx2mJAXQnZa4RC42
+fTrlmBwVyPDOrjV1foY+9KTuv/PJuVDlIMMxP9YTqNS4Kk4I6qRpi7BfPevUcM7G
++zYYd7VCvHYUOKfNwB2iqInLDAeTR2J80UAxM5pGRf+MN2kluPh5wOpbqA/pD5mn
+TIbwXJP7AKFjbCRSdHYkqpU+LtkbAvKDE/PjoiMWgjw7Edx+5j5gv9uAtqZ2uO5J
+zecN6mLH4HpYXGGNSKGuVhDQXx4B8JkJCgOxyxD/R29rquHZ/NfuVNgIKkro0zzB
+9JNRLRDictWmW+hs3HLmxN0COH4KBROIrds8O3iI5adOWba6Bdlm9Mmsc13+oAdl
+GbA2RJNOozB5HCkk4f3Rx26NFoXw/blgUA4Iq7X2DiDiBIbTY8o=
+=dchJ
+-----END PGP SIGNATURE-----
+
+--A6Z7MKnLVMfR85kG--
