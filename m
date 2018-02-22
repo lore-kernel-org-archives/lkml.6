@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeBVIWU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:22:20 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32983 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752628AbeBVIWI (ORCPT
+        id S1752779AbeBVI0H (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:26:07 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:35124 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752701AbeBVI0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:22:08 -0500
-X-Google-Smtp-Source: AH8x225p+P7ygdgUpWxcCTruH0XYy9zADR4vFnoxOWpj5X0P0hiOQys0rc6XoqrXXC9ASiAClMHo9g==
-From: Corentin Labbe <clabbe@baylibre.com>
-To: David1.Zhou@amd.com, airlied@linux.ie, alexander.deucher@amd.com,
-        christian.koenig@amd.com, david1.zhou@amd.com, Dieter@nuetzel-hh.de,
-        l.stach@pengutronix.de
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 2/2] drm/amd: Remove inclusion of non-existing include directories
-Date: Thu, 22 Feb 2018 08:21:49 +0000
-Message-Id: <1519287709-28638-2-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519287709-28638-1-git-send-email-clabbe@baylibre.com>
-References: <1519287709-28638-1-git-send-email-clabbe@baylibre.com>
+        Thu, 22 Feb 2018 03:26:05 -0500
+Date: Thu, 22 Feb 2018 11:25:27 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: "daniel.baluta@gmail.com" <daniel.baluta@gmail.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>
+Subject: Re: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
+Message-ID: <20180222082527.wbiztlla4aondbeu@mwanda>
+References: <20180221192807.qfyhp7z27f6r6p47@smtp.gmail.com>
+ <CAEnQRZBq3G+RPq66ObW+CM2A9BOE_tBn-fC++Ksy+O_nEFfz9Q@mail.gmail.com>
+ <20180222074318.qsf7x4jnyhvasq5u@mwanda>
+ <1519286013.13463.59.camel@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519286013.13463.59.camel@nxp.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8811 signatures=668676
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=405
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802220108
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fix the following build warnings:
-  CC [M]  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.o
-cc1: warning: ../display/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: ../display/include: No such file or directory [-Wmissing-include-dirs]
-  CC [M]  drivers/gpu/drm/amd/amdgpu/amdgpu_device.o
-cc1: warning: ../display/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: ../display/include: No such file or directory [-Wmissing-include-dirs]
-[...]
-This warning is shown for each file in amdgpu directory, so it spams a lot.
+> > Also who cares?  The commit message is perfectly clear.
+> 
+> I do care about newcomers really learning on how to write a proper
+> commit message.
+> 
+> The commit messsage should really say why the patch is needed, no what the patch does.
+> 
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/gpu/drm/amd/display/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+It fixes a checkpatch warning.  The warning was right there in the patch
+description!
 
-diff --git a/drivers/gpu/drm/amd/display/Makefile b/drivers/gpu/drm/amd/display/Makefile
-index c27c81cdeed3..22c72dffdf98 100644
---- a/drivers/gpu/drm/amd/display/Makefile
-+++ b/drivers/gpu/drm/amd/display/Makefile
-@@ -26,8 +26,6 @@
- 
- AMDDALPATH = $(RELATIVE_AMD_DISPLAY_PATH)
- 
--subdir-ccflags-y += -I$(AMDDALPATH)/ -I$(AMDDALPATH)/include
--
- subdir-ccflags-y += -I$(FULL_AMD_DISPLAY_PATH)/dc/inc/
- subdir-ccflags-y += -I$(FULL_AMD_DISPLAY_PATH)/dc/inc/hw
- subdir-ccflags-y += -I$(FULL_AMD_DISPLAY_PATH)/modules/inc
--- 
-2.16.1
+> After several trivial patches newcomers will get into more serious stuff and I wouldn't
+> want to see a patch with commit message like this:
+> 
+> iio: Change bit 1 of status register
+> 
+
+You seem to be complaining about about an imaginary patch from the
+future???  If you've really built a time machine then focus on killing
+Hitler instead of complaining about trivial bullshit.
+
+regards,
+dan carpenter
