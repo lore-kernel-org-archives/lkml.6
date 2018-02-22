@@ -1,94 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932889AbeBVO0v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:26:51 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:40835 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932726AbeBVO0s (ORCPT
+        id S932940AbeBVO1A (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:27:00 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55309 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932692AbeBVO0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:26:48 -0500
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
-Subject: [BUG] ARCv2: MCIP: GFRC: mcip cmd/readback concurrency
-Thread-Topic: [BUG] ARCv2: MCIP: GFRC: mcip cmd/readback concurrency
-Thread-Index: AQHTq+kqpL2oAa7DC0yw5+SmDRy3Nw==
-Date: Thu, 22 Feb 2018 14:26:44 +0000
-Message-ID: <1519309604.2982.27.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.43]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <54992489DC61334FA9DC8672D2BBD554@internal.synopsys.com>
+        Thu, 22 Feb 2018 09:26:55 -0500
+Date: Thu, 22 Feb 2018 15:26:35 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
+Message-ID: <20180222142635.GN7203@w540>
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <2864762.IPlziE6Y0S@avalon>
+ <20180222123600.GM7203@w540>
+ <4525290.Vz7vJ24K7t@avalon>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4525290.Vz7vJ24K7t@avalon>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MEQuU0017102
 
-To read any data from ARconnect we have special interface
-which includes two AUX registers: MCIP_CMD and MCIP_READBACK.
-We write command to MCIP_CMD and read data from MCIP_READBACK
-after that.
+Hi Laurent,
 
-We have only one instance of this registers per cluster, so we need
-to held global lock before access them. This lock is defined
-in arch/arc/kernel/mcip.c
+On Thu, Feb 22, 2018 at 02:47:06PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> On Thursday, 22 February 2018 14:36:00 EET jacopo mondi wrote:
+> > On Thu, Feb 22, 2018 at 02:14:53PM +0200, Laurent Pinchart wrote:
+> > > On Thursday, 22 February 2018 14:04:12 EET jacopo mondi wrote:
+> > >> On Wed, Feb 21, 2018 at 10:28:06PM +0200, Laurent Pinchart wrote:
+> > >>> On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
+>
+> [snip]
+>
+> > >>>> This actually makes me wonder if those informations (ycbcb_enc,
+> > >>>> quantization and xfer_func) shouldn't actually be part of the
+> > >>>> supported format list... I blindly added those default fields in the
+> > >>>> try_fmt function, but I doubt they applies to all supported formats.
+> > >>>>
+> > >>>> Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
+> > >>>> RGB 565) and 1 raw format (BGGR). I now have a question here:
+> > >>>>
+> > >>>> 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
+> > >>>> applies to RGB and raw formats? I don't think so, and what value is
+> > >>>> the correct one for the ycbcr_enc field in this case? I assume
+> > >>>> xfer_func and quantization applies to all formats instead..
+> > >>>
+> > >>> There's no encoding for RGB formats if I understand things correctly,
+> > >>> so I'd set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function
+> > >>> and the quantization apply to all formats, but I'd be surprised to find
+> > >>> a sensor outputting limited range for RGB.
+> > >>
+> > >> Ack, we got the same understanding for RGB formats. I wonder if for
+> > >> those formats we wouldn't need a V4L2_YCBCR_ENC_NONE or similar...
+> > >
+> > > That, or explicitly documenting that when the format is not YUV the field
+> > > should be set by both drivers and applications to V4L2_YCBCR_ENC_DEFAULT
+> > > when written and ignored when read.
+> >
+> > Well, if no encoding is performed because the color encoding scheme is
+> > RGB, the colorspace does anyway define an encoding method, so it seems
+> > to me the latter is more appropriate (use DEFAULT and ignore when read).
+> >
+> > That's anyway just my opinion, but I could send a patch for
+> > documentation and see what feedback it gets.
+> >
+> > >>> Have you been able to check whether the sensor outputs limited range
+> > >>> of full range YUV ? If it outputs full range you can hardcode
+> > >>> quantization to V4L2_QUANTIZATION_FULL_RANGE for all formats.
+> > >>
+> > >> In YUYV mode, I see values > 0xf0 ( > 240, which is the max value for
+> > >> CbCr samples in limited quantization range), so I assume quantization
+> > >> is full range.
+> > >
+> > > It should be, yes. What's the minimum and maximum values you get ?
+> >
+> > From a white surface:
+> > min = 0x39
+> > max = 0xfc
+> >
+> > From a black surface:
+> > min = 0x00 (with 62 occurrences)
+> > max = 0x8b
+> >
+> > I guess that's indeed full range quantization
+>
+> Could you check Y and UV separately ?
+>
+> #!/usr/bin/python
+>
+> import sys
+>
+> def main(argv):
+>     if len(argv) != 2:
+>         print('Usage: %s <file>' % argv[0])
+>         return 1
+>
+>     data = open(argv[1], 'rb').read()
+>
+>     y_min = 255
+>     y_max = 0
+>     uv_min = 255
+>     uv_max = 0
+>
+>     for i in range(len(data) // 2):
+>         y = data[2*i]
+>         uv = data[2*i]
+
+uv = data[2*i+1]
+
+>
+>         y_min = min(y_min, y)
+>         y_max = max(y_max, y)
+>         uv_min = min(uv_min, uv)
+>         uv_max = max(uv_max, uv)
+>
+>     print('Y [%u, %u] UV [%u, %u]' % (y_min, y_max, uv_min, uv_max))
+>     return 0
+>
+> if __name__ == '__main__':
+>     sys.exit(main(sys.argv))
+>
 
 
-To read GFRC value we also use MCIP_CMD/MCIP_READBACK pair, but 
-we take only local lock instead of global 'mcip_lock' lock:
+White image:
+Y [57, 252] UV [105, 145]
 
----------->[drivers/clocksource/arc_timer.c]<----------
-static u64 arc_read_gfrc(struct clocksource *cs)
-{
-	unsigned long flags;
-	u32 l, h;
-
-	local_irq_save(flags);
-
-	__mcip_cmd(CMD_GFRC_READ_LO, 0);
-	l = read_aux_reg(ARC_REG_MCIP_READBACK);
-
-	__mcip_cmd(CMD_GFRC_READ_HI, 0);
-	h = read_aux_reg(ARC_REG_MCIP_READBACK);
-
-	local_irq_restore(flags);
-
-	return (((u64)h) << 32) | l;
-}
--------------------------->8---------------------------
-
-So we can break any command (like inter core interrupt send)
-which uses MCIP_CMD/MCIP_READBACK pair when we read time from GFRC. 
-
-One possible solution is to create function like gfrc_read() in mcip.c
-which will use global 'mcip_lock' and call it from current 'arc_read_gfrc'
-function.
-
-Or we can create a wrapper like 'mcip_read' in arch/arc/kernel/mcip.c
-with next functionality:
-------->8--------
-u32 mcip_read(u32 cmd)
-{
-	u32 ret;
-
-	raw_spin_lock_irqsave(&mcip_lock);
-
-	__mcip_cmd(cmd, 0);
-	ret = read_aux_reg(ARC_REG_MCIP_READBACK);
-
-	raw_spin_unlock_irqrestore(&mcip_lock);
-
-	return ret;
-}
-------->8--------
-
--- 
- Eugeniy Paltsev
+Black image:
+Y [0, 32] UV [116, 139]
