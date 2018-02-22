@@ -1,100 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932549AbeBVNIx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:08:53 -0500
-Received: from gofer.mess.org ([88.97.38.141]:37577 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932505AbeBVNIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:08:45 -0500
-Date: Thu, 22 Feb 2018 13:01:31 +0000
-From: Sean Young <sean@mess.org>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
-        krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
-        sboyd@codeaurora.org, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
-        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
-        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        mchehab@kernel.org, lee.jones@linaro.org, daniel.thompson@linaro.org,
-        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Message-ID: <20180222130131.46fcuurp4h6dc7wb@gofer.mess.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+        id S932413AbeBVNLa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:11:30 -0500
+Received: from mail-io0-f179.google.com ([209.85.223.179]:34261 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932102AbeBVNL1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:11:27 -0500
+X-Google-Smtp-Source: AG47ELvqIZs2a0LUjBtF95/Qf3MOKXhA+MNcdXU+MSdLHG/5PPxMBxWNHpp7yMJHZXWZobPRqJY1o/dFvjXt7EgGvmo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com> <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 14:11:26 +0100
+Message-ID: <CACRpkdZxJhntgHwgsg=P98i0aGnXSQ2rXO16H0U=cJ+sBbF27g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander driver
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-gpio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
-> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
-> were adapted to this change.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
+On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
 
--snip-
+> +Required properties:
+> +- compatible: must be "st,mfx"
 
-> diff --git a/drivers/media/rc/ir-rx51.c b/drivers/media/rc/ir-rx51.c
-> index 49265f02e772..a971b02ea021 100644
-> --- a/drivers/media/rc/ir-rx51.c
-> +++ b/drivers/media/rc/ir-rx51.c
-> @@ -55,10 +55,13 @@ static int init_timing_params(struct ir_rx51 *ir_rx51)
->  {
->  	struct pwm_device *pwm = ir_rx51->pwm;
->  	int duty, period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, ir_rx51->freq);
-> +	struct pwm_caps caps = { };
->  
->  	duty = DIV_ROUND_CLOSEST(ir_rx51->duty_cycle * period, 100);
->  
-> -	pwm_config(pwm, duty, period);
-> +	pwm_get_caps(pwm->chip, pwm, &caps);
+I bet this should be more specific. Tomorrow there will be a new
+version of this expander and then we will wish that we used
+a more specific compatible for the first one.
+
+Does this chip have any kind of product number on it?
+
+Else I would be tempted to use the compatible "st,mfx-0000"
+or something, indicating it is the first of its kind.
+
+> +- reg: I2C address of the device
+> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
+> +- interrupt-parent: interrupt controller MFX is connected to
+> +- interrupt-controller: marks the device as an interrupt controller
+> +- #interrupt-cells: should be <1>, index of the interrupt within the
+> +  controller, in accordance with the "one cell" variant of
+> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
+
+Seems fine.
+
+> +Optional nodes:
 > +
-> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
->  
->  	return 0;
->  }
-> diff --git a/drivers/media/rc/pwm-ir-tx.c b/drivers/media/rc/pwm-ir-tx.c
-> index 27d0f5837a76..c630e1b450a3 100644
-> --- a/drivers/media/rc/pwm-ir-tx.c
-> +++ b/drivers/media/rc/pwm-ir-tx.c
-> @@ -61,6 +61,7 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
->  {
->  	struct pwm_ir *pwm_ir = dev->priv;
->  	struct pwm_device *pwm = pwm_ir->pwm;
-> +	struct pwm_caps caps = { };
->  	int i, duty, period;
->  	ktime_t edge;
->  	long delta;
-> @@ -68,7 +69,9 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
->  	period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, pwm_ir->carrier);
->  	duty = DIV_ROUND_CLOSEST(pwm_ir->duty_cycle * period, 100);
->  
-> -	pwm_config(pwm, duty, period);
-> +	pwm_get_caps(pwm->chip, pwm, &caps);
-> +
-> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
->  
->  	edge = ktime_get();
->  
+> +* GPIO eXpander
+> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
+> +alternate GPIOs if the main functions are not used (touchscreen controller and
+> +IDD measurement not enabled).
 
-The two PWM rc-core drivers need PWM_MODE(NORMAL), not the first available
-mode that the device supports. If mode normal is not supported, then probe
-should fail.
+Apparenly Rob thinks this should go elsewhere.
 
+> +- gpio-controller: marks the device node as a GPIO controller
+> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
+> +  controller, the second cell is the gpio flags in accordance with
+> +  <dt-bindings/gpio/st-mfx-gpio.h>.
 
-Sean
+Let's discuss these extra GPIO flag bindings separately.
+
+Yours,
+Linus Walleij
