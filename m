@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeBVJPv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:15:51 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752892AbeBVJPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:15:50 -0500
-Date: Thu, 22 Feb 2018 17:15:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com, tglx@linutronix.de
-Subject: Re: [PATCH v2 0/3] mm/sparse: Optimize memmap allocation during
- sparse_init()
-Message-ID: <20180222091546.GA693@localhost.localdomain>
-References: <20180222091130.32165-1-bhe@redhat.com>
+        id S1753111AbeBVJXk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:23:40 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48622 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752857AbeBVJXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:23:39 -0500
+Date: Thu, 22 Feb 2018 10:23:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code:
+ section
+Message-ID: <20180222092327.GM25201@hirez.programming.kicks-ass.net>
+References: <20180219202826.19797-1-bp@alien8.de>
+ <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
+ <20180220192956.si2a6m3ckskexvte@treble>
+ <20180220204435.GC24320@pd.tnic>
+ <20180221091553.gxnvhbitiewo2mjc@gmail.com>
+ <20180221175429.GC9989@pd.tnic>
+ <CA+55aFxOcAdN4mnK49F1ObiXoyB2xaREd04JGosgxTd_ufuzpg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222091130.32165-1-bhe@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CA+55aFxOcAdN4mnK49F1ObiXoyB2xaREd04JGosgxTd_ufuzpg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/18 at 05:11pm, Baoquan He wrote:
-> This is v2 post. V1 can be found here:
-> https://www.spinics.net/lists/linux-mm/msg144486.html
+On Wed, Feb 21, 2018 at 01:39:52PM -0800, Linus Torvalds wrote:
+> showing with a hung kernel. And most of the above is actually
+> completely useless. Those are the *usermode* registers it shows, not
+> the kernel registers at the time of the crash (the final rip/rsp/code
+> lines are for the actual kernel crash, but I'm talking about the
+> register dump above it).
 > 
-> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
-> are allocated with the size of NR_MEM_SECTIONS. They are used to store
-> each memory section's usemap and mem map if marked as present. In
-> 5-level paging mode, this will cost 512M memory though they will be
-> released at the end of sparse_init(). System with few memory, like
-> kdump kernel which usually only has about 256M, will fail to boot
-> because of allocation failure if CONFIG_X86_5LEVEL=y.
+> So notice how most of the *useful* data has actually scrolled off the
+> screen and is all gone because the machine is hung. Instead, we've
+> added stuff that doesn't help at all, usually.
 > 
-> In this patchset, optimize the memmap allocation code to only use
-> usemap_map and map_map with the size of nr_present_sections. This
-> makes kdump kernel boot up with normal crashkernel='' setting when
-> CONFIG_X86_5LEVEL=y.
+> It's not just that last patch, obviously. The big hunk o fuser
+> register dumping is actually from Josh's trace improvements. But the
+> above really is a great example of how we have made oopses *harder* to
+> read by trying to add more data. They have gotten messier, but they
+> have also gotten so verbose that the *good* stuff has all scrolled
+> away.
+> 
+> So I think we should take a hard look at that "more data is better".
+> Look at the above 25 lines and tell me - is that actually 25 useful
+> lines for debugging a crash in sysrq_handle_crash?
 
-Sorry, forgot adding the change log.
+So being one to only use machines that have a serial line this does not
+really affect me; but it would appear to me that it might make sense to
+try and reverse the entire dump.
 
-v1-v2:
-  Split out the nr_present_sections adding as a single patch for easier
-  reviewing.
+That is 'obviously' going to be rather tricky, because we'll have to
+print in the direct reverse direction we discover the data and the only
+way to do that is with extra buffers, which adds extra complexity to
+something we want absolutely robust.
 
-  Rewrite patch log according to Dave's suggestion.
-
-  Fix code bug in patch 0002 reported by test robot.
-
-> 
-> Baoquan He (3):
->   mm/sparse: Add a static variable nr_present_sections
->   mm/sparsemem: Defer the ms->section_mem_map clearing
->   mm/sparse: Optimize memmap allocation during sparse_init()
-> 
->  mm/sparse-vmemmap.c |  9 +++++----
->  mm/sparse.c         | 54 +++++++++++++++++++++++++++++++++++------------------
->  2 files changed, 41 insertions(+), 22 deletions(-)
-> 
-> -- 
-> 2.13.6
-> 
+But a simply line based reverse of the output would get us the most
+useful data last, just what we want.
