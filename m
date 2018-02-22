@@ -1,50 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933078AbeBVPQV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:16:21 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55495 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932869AbeBVPQS (ORCPT
+        id S933107AbeBVPQb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:16:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56780 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932869AbeBVPQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:16:18 -0500
-X-Google-Smtp-Source: AG47ELu6wBntezwBux9A1uzqaVEtW7JIuw5SpdQwt5WC2F4aZPVmj0pGf4Mzqa7YORrXy/ZcHIfk1CqIwzPVnO3kwnI=
+        Thu, 22 Feb 2018 10:16:29 -0500
+Date: Thu, 22 Feb 2018 16:16:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 06/17] lockdep: Support deadlock
+ detection for recursive read in check_noncircular()
+Message-ID: <20180222151626.GU25235@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-7-boqun.feng@gmail.com>
+ <20180222145434.GS25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <1534276cb63d1e9e6dd139b4edceedbe728f65f5.1514578085.git.vilhelm.gray@gmail.com>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com> <1534276cb63d1e9e6dd139b4edceedbe728f65f5.1514578085.git.vilhelm.gray@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 16:16:17 +0100
-Message-ID: <CACRpkdaw75RH_WR4Ta9AmqNmGnaPhFKK2HfC=m8SNabACs95vg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] gpio: Change ISA_BUS_API dependency to selection
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222145434.GS25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Thu, Feb 22, 2018 at 03:54:34PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 03:08:53PM +0800, Boqun Feng wrote:
+> 
+> > +static inline int hlock_conflict(struct lock_list *entry, void *data)
+> > +{
+> > +	struct held_lock *hlock = (struct held_lock *)data;
+> > +
+> > +	return hlock_class(hlock) == entry->class &&
+> > +	       (hlock->read != 2 || !entry->is_rr);
+> > +}
+> 
+> Bah, brain hurts.
+> 
+> So before we add prev -> this, relation, we check if there's a this ->
+> prev relation already in the graph -- if so that would be a problem.
+> 
+> The above function has @data == @prev (__bfs_forward starts at @this,
+> looking for @prev), and the above patch augments the 'class_equal' test
+> with @prev not having read==2 or @entry not having xr;
+> 
+> This is because.... (insert brain hurt)
 
-> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
-> driver. The ISA bus driver does not perform any hardware interaction,
-> and is instead just a thin layer of software abstraction to eliminate
-> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
-> has no dependencies and does not jeopardize the integrity of the system
-> when enabled, drivers should select it when the ISA bus driver
-> functionality is needed.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+(hlock->read != 2 || !entry->have_xr) := !(hlock->read == 2 && entry->have_xr)
 
-Patch applied to the GPIO tree for v4.17.
+hlock->read == 2 := prev->read == 2
+entry->have_xr means the last fwd link has read==2.
 
-Can you confirm that we don't have any dangling ISA
-drivers not using this?
+Together this gives that:
 
-Yours,
-Linus Walleij
+  @prev (Rx) ---> X ---> @entry (xR)
+
+does not form a cycle, because:
+
+  @enrty (xR) -> @prev (Rx)
+
+is not strong and can be ignored.
+
+Did I get that right? If so, the Changelog needs serious help and code
+does too.
