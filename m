@@ -1,47 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeBVRM0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:12:26 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45677 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933139AbeBVRMY (ORCPT
+        id S933375AbeBVROP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:14:15 -0500
+Received: from mail-yw0-f176.google.com ([209.85.161.176]:46955 "EHLO
+        mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933148AbeBVROM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:12:24 -0500
-X-Google-Smtp-Source: AH8x225U/nEgEUzcVaedJ8wfns4ZHdze97PyO0jppHXREZsZfUR/ftvv4fgrJdzNyHQzSwsxLFR1f+uZOgwQx+9iPZg=
+        Thu, 22 Feb 2018 12:14:12 -0500
+X-Google-Smtp-Source: AH8x227bfJYgcHRdZExjXDPJeNuVSPde/s8o8pAnTMWGgUiq3LheOlZVHSz2UCwU99hhkXqhhq2hILi9aS5N7AO2gzE=
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.20.1802221710110.1801@5HSWXM1.fritz.box>
-References: <20180221124707.26308-1-embedded24@evers-fischer.de>
- <20180221124707.26308-2-embedded24@evers-fischer.de> <CAHp75VfgqqkLq0PbC0SBMCyCLqqoNZcUW0xngjacEL0VtAskmg@mail.gmail.com>
- <alpine.LNX.2.20.1802221710110.1801@5HSWXM1.fritz.box>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 22 Feb 2018 19:12:23 +0200
-Message-ID: <CAHp75Vcp=OkkTcM+jey_YqCDo52BOFP0XH4cd8HWmReej=-5dQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+In-Reply-To: <20180222160217.GA18243@infradead.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222160217.GA18243@infradead.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Thu, 22 Feb 2018 09:14:11 -0800
+Message-ID: <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
+Subject: Re: Removing architectures without upstream gcc support
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+        Richard Kuo <rkuo@codeaurora.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 6:21 PM, Rolf Evers-Fischer
-<embedded24@evers-fischer.de> wrote:
-> On Wed, 21 Feb 2018, Andy Shevchenko wrote:
+On Thu, Feb 22, 2018 at 8:02 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> I'd love to see dead architecture ports dropped if they really are
+> more or less abandoned.  In addition to your missing gcc port ones
+> above (minus openrisc) it seems like frv and m32r certainly qualify,
+> and xtensa seems to be going that way with the glibc port being dropped
+> now.
 
->> This is a slow path and your change makes code slightly less readable
->> b/c of patterns used in the kernel.
->>
-> I see. It is probably not a good idea to free the
-> memory in the middle of the function.
-> If you don't mind, I will remove this patch and change the other
-> one accordingly.
-
-Sounds good to me!
+It's not that it's been dropped, there have never been an official glibc
+port for xtensa, but we're working to get one.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Thanks.
+-- Max
