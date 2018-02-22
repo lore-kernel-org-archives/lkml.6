@@ -1,77 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeBVXRm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:17:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50472 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751432AbeBVXRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:17:41 -0500
-Date: Thu, 22 Feb 2018 15:17:38 -0800
-From: Jeremy McNicoll <jmcnicol@redhat.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-Subject: Re: [07/18] thunderbolt: Handle rejected Thunderbolt devices
-Message-ID: <20180222231736.GA628@mini-rhel.redhat.com>
-References: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
+        id S1751619AbeBVXT4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:19:56 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46112 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751436AbeBVXTz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 18:19:55 -0500
+Subject: Re: [PATCH 3/9] drm/xen-front: Read driver configuration from Xen
+ store
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-4-git-send-email-andr2000@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <74f01442-2e9e-5de7-3a8d-f5c12d9e8667@oracle.com>
+Date: Thu, 22 Feb 2018 18:20:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180213170018.9780-8-mika.westerberg@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1519200222-20623-4-git-send-email-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802220290
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 08:00:07PM +0300, Mika Westerberg wrote:
-> The ICM firmware may reject devices for different reasons, even if we
-> have asked it to accept anything. If we notice a device is rejected, we
-> just log the event and bail out.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/thunderbolt/icm.c     | 6 ++++++
->  drivers/thunderbolt/tb_msgs.h | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-> index 611d28e8e5f2..34d7740d1cbd 100644
-> --- a/drivers/thunderbolt/icm.c
-> +++ b/drivers/thunderbolt/icm.c
-> @@ -410,6 +410,12 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
->  		ICM_LINK_INFO_DEPTH_SHIFT;
->  	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
->  
-> +	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
-> +		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
-> +			link, depth);
-
-This kind of condition sounds more like an error instead of info.
-Please bump this up to tb_WARN/tb_warn ideally tb_err().
-
-BTW - why do we have tb_WARN and tb_warn in drivers/thunderbolt/tb.h ?
-
--jeremy
-
-> +		return;
-> +	}
+On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
 > +
->  	ret = icm->get_route(tb, link, depth, &route);
->  	if (ret) {
->  		tb_err(tb, "failed to find route string for switch at %u.%u\n",
-> diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
-> index b0a092baa605..476bc04cac6c 100644
-> --- a/drivers/thunderbolt/tb_msgs.h
-> +++ b/drivers/thunderbolt/tb_msgs.h
-> @@ -176,6 +176,7 @@ struct icm_fr_event_device_connected {
->  #define ICM_LINK_INFO_DEPTH_SHIFT	4
->  #define ICM_LINK_INFO_DEPTH_MASK	GENMASK(7, 4)
->  #define ICM_LINK_INFO_APPROVED		BIT(8)
-> +#define ICM_LINK_INFO_REJECTED		BIT(9)
->  
->  struct icm_fr_pkg_approve_device {
->  	struct icm_pkg_header hdr;
+> +static int cfg_connector(struct xen_drm_front_info *front_info,
+> +		struct xen_drm_front_cfg_connector *connector,
+> +		const char *path, int index)
+> +{
+> +	char *connector_path;
+> +
+> +	connector_path = devm_kasprintf(&front_info->xb_dev->dev,
+> +			GFP_KERNEL, "%s/%d", path, index);
+> +	if (!connector_path)
+> +		return -ENOMEM;
+> +
+> +	connector->xenstore_path = connector_path;
+> +	if (xenbus_scanf(XBT_NIL, connector_path, XENDISPL_FIELD_RESOLUTION,
+> +			"%d" XENDISPL_RESOLUTION_SEPARATOR "%d",
+> +			&connector->width, &connector->height) < 0) {
+> +		/* either no entry configured or wrong resolution set */
+> +		connector->width = 0;
+> +		connector->height = 0;
+
+Do you also need to set connector->xenstore_path to NULL? Or maybe just
+set it after xenbus_scanf() call.
+
+-boris
