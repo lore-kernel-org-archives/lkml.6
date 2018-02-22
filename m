@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752710AbeBVHGb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:06:31 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56043 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752478AbeBVHG1 (ORCPT
+        id S1752726AbeBVHGf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:06:35 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33353 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752478AbeBVHGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:06:27 -0500
-X-Google-Smtp-Source: AH8x227ay375DxmxUyZ6R0ChbSkIRRqdvctnfW92+ULyJxvvoRk62gKDIjFHuIFCYNNXoEt+8Ilv1w==
-X-ME-Sender: <xms:8GuOWjJFXMsJkIdhsEiAGfbffHrnKmuqvXZ6gX2_7qhVAIFtwhPAFA>
+        Thu, 22 Feb 2018 02:06:31 -0500
+X-Google-Smtp-Source: AH8x225xu3ByqnLfiIPlBcipUoDHce5aNe0qU635f18ihjdP5uUUjv1N9YUN4JvOwfdGK2sftxOKGw==
+X-ME-Sender: <xms:9GuOWihMLnakub2voxIqKS1EEKhfO_mMP0o9cYYKnw8sEHwoYbyujA>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 09/17] lockdep: Add recursive read locks into dependency graph
-Date: Thu, 22 Feb 2018 15:08:56 +0800
-Message-Id: <20180222070904.548-10-boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v5 10/17] lockdep/selftest: Add a R-L/L-W test case specific to chain cache behavior
+Date: Thu, 22 Feb 2018 15:08:57 +0800
+Message-Id: <20180222070904.548-11-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,47 +24,83 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we have all the fundamental to handle recursive read locks, we now
-add them into the dependency graph.
+As our chain cache doesn't differ read/write locks, so even we can
+detect a read-lock/lock-write deadlock in check_noncircular(), we can
+still be fooled if a read-lock/lock-read case(which is not a deadlock)
+comes first.
+
+So introduce this test case to test specific to the chain cache behavior
+on detecting recursive read lock related deadlocks.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- kernel/locking/lockdep.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ lib/locking-selftest.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index bd3eef664f9d..254f90bade54 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2038,16 +2038,6 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	if (!check_prev_add_irq(curr, prev, next))
- 		return 0;
+diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+index b5c1293ce147..700f9aa19db6 100644
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -395,6 +395,49 @@ static void rwsem_ABBA1(void)
+ 	MU(Y1); // should fail
+ }
  
--	/*
--	 * For recursive read-locks we do all the dependency checks,
--	 * but we dont store read-triggered dependencies (only
--	 * write-triggered dependencies). This ensures that only the
--	 * write-side dependencies matter, and that if for example a
--	 * write-lock never takes any other locks, then the reads are
--	 * equivalent to a NOP.
--	 */
--	if (next->read == 2 || prev->read == 2)
--		return 1;
++/*
++ * read_lock(A)
++ * spin_lock(B)
++ *		spin_lock(B)
++ *		write_lock(A)
++ *
++ * This test case is aimed at poking whether the chain cache prevents us from
++ * detecting a read-lock/lock-write deadlock: if the chain cache doesn't differ
++ * read/write locks, the following case may happen
++ *
++ * 	{ read_lock(A)->lock(B) dependency exists }
++ *
++ * 	P0:
++ * 	lock(B);
++ * 	read_lock(A);
++ *
++ *	{ Not a deadlock, B -> A is added in the chain cache }
++ *
++ *	P1:
++ *	lock(B);
++ *	write_lock(A);
++ *
++ *	{ B->A found in chain cache, not reported as a deadlock }
++ *
++ */
++static void rlock_chaincache_ABBA1(void)
++{
++	RL(X1);
++	L(Y1);
++	U(Y1);
++	RU(X1);
++
++	L(Y1);
++	RL(X1);
++	RU(X1);
++	U(Y1);
++
++	L(Y1);
++	WL(X1);
++	WU(X1);
++	U(Y1); // should fail
++}
++
+ /*
+  * read_lock(A)
+  * spin_lock(B)
+@@ -2055,6 +2098,10 @@ void locking_selftest(void)
+ 	pr_cont("             |");
+ 	dotest(rwsem_ABBA3, FAILURE, LOCKTYPE_RWSEM);
+ 
++	print_testname("chain cached mixed R-L/L-W ABBA");
++	pr_cont("             |");
++	dotest(rlock_chaincache_ABBA1, FAILURE, LOCKTYPE_RWLOCK);
++
+ 	printk("  --------------------------------------------------------------------------\n");
+ 
  	/*
- 	 * Is the <prev> -> <next> dependency already present?
- 	 *
-@@ -2151,11 +2141,7 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 		int distance = curr->lockdep_depth - depth + 1;
- 		hlock = curr->held_locks + depth - 1;
- 
--		/*
--		 * Only non-recursive-read entries get new dependencies
--		 * added:
--		 */
--		if (hlock->read != 2 && hlock->check) {
-+		if (hlock->check) {
- 			int ret = check_prev_add(curr, hlock, next, distance, &trace, save_trace);
- 			if (!ret)
- 				return 0;
 -- 
 2.16.1
