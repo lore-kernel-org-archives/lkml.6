@@ -1,69 +1,41 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2903091-1519260756-2-14944975731084266024
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519260756; b=WDGpuANYmZIFxm6lk3boW/SOO6bOMtJkp5w4xpimk3nIAZx
-    b7/L73J3ajk03GnaK33OnASi+u37K+SOlDGrpVK+VSdpQwlkpB0VG40SBjluc7vB
-    ICp1aCNPGlx1x9kuNVaO5EeJpyUv1yIx3p3pJuvQd2XVT8D3+MhrzxPmSWQEXi8G
-    hQXtOeeMx9gBWyUeGgAG5H+LJ7Va4iaFU89CscKV6gQyy/XqDHe6NH5rdmKEiqFW
-    JjA2bkrD3wedUoOGJqgRviqF4digzcxdllFrrbbb3oblSbl5IQYrA1QvAdJCA6mh
-    IiKpyWDjtHWzkC+so5/2E2pSfGyv3W+Ui8i56hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1519260756; bh=FkL5Ykr9ncp9w2C0FlnMy3d4PV
-    s4p1h9yTPdjJh4ot8=; b=jA+LL4FybqoYrQdf+MBatBNAh2iQRT1H5rmzvTblxs
-    XZPyqNshJ4ibY0Rajhh7abH+0rPCAdgnorrW5lC3ccfh38PZjTHFOfhDmcV/75bf
-    t8lAiiTVW5U/ce2mkfUiakJ/3OZfiwU5syZUfR5OKpqFNG7/67TzIq6ok8k8legy
-    i/2oYm6NhWptdVYBDVwZVC3HiLu0qpQr5oEHrUnAQ52ZazqHRS/lX5nPOlAwSX5+
-    hurOKdBM7f6Q9UgwKKvyFAny/uSfQc3Ar5x3TeWbUCUKptPytCNcy5kLSnZjvXPu
-    l95OBGY4UJHs61ZXy1YEo6xOodtmnczUMbg8zaMbMsUg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dk-develop.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dk-develop.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dk-develop.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dk-develop.de header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeBVAwT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Feb 2018 19:52:19 -0500
-Received: from hs01.dk-develop.de ([213.136.71.231]:34377 "EHLO
-        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751605AbeBVAwS (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 21 Feb 2018 19:52:18 -0500
+Return-Path: <danilokrummrich@dk-develop.de>
+X-Google-Smtp-Source: AH8x2245oLLsNsMWOgulGukVK7TeCxo640f7NEX/57Nu4u4P2PIQWMhCZWF8cApUnhHKQvuWLTiw
+ARC-Seal: i=1; a=rsa-sha256; t=1519260383; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ADJ5snoEB58kxxa4scqTe7/+qmHKZLR+jvexfp5Sa7GAgV3cmbDa5atWOseZmMl3jt
+         6iqKTlNSN9fTq/DC4ZEVJtH6wryZkWnjJQcSzRNG/CMEi57gCIlFekY7XgFcyBJ8Yo6q
+         ye8qoJlzGDjn2k9UUKS5GnG2ASClJTgINnxGtUznJ6GlFlM+5qzuKaFboDJ8568isXqn
+         p/puNSZWHISMVbfjlCfkTFNp6XcbLLdDQBo9aEll0zbGn9yQe1b3lILJDthWlQEF2J+x
+         9H8KFdvImMo5WMPNEDXjUeSf1c43ZfCy5HzdG4/xsYNPXdBz3c279eD0CCexg08ptUj0
+         IYYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=haMQbohAktrjzeke0oIcC3n2Ae82vBDcaAJZC5yEDFE=;
+        b=CDBElFORgr2vmDxTVCUxEYdihgypDUqQZbB93Zx7ghHfSd6ktneUMI3xFx6P1DE44q
+         +4+G/AKq/UYblgAdEejZMc6tTRIEbcT35s02SjkUBOgBMYhPx0pKNsapOK3zf1H4PcZo
+         zjvMmXnnyV2jYa1dDX0RpW7IZGywOkGE4tirClJdpC8rGZtJTd5Xlu8jleNKinUK8dZQ
+         dCK6vcRcSeb1XDDNhenZ6lzjMtawoSntPyW7e3IU8BbPtwFkc6JxfxLfAvsSWMx9F5ss
+         sdTu9Jf2ypyYrHJPGeHMyYOOlpeLQudUfW7bEunDu1ZCFFsx6c/1R6MIF8jtRKQauvb8
+         dx/w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of danilokrummrich@dk-develop.de designates 213.136.71.231 as permitted sender) smtp.mailfrom=danilokrummrich@dk-develop.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of danilokrummrich@dk-develop.de designates 213.136.71.231 as permitted sender) smtp.mailfrom=danilokrummrich@dk-develop.de
 From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: gregkh@linuxfoundation.org, felipe.balbi@linux.intel.com
-Cc: linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kai.heng.feng@canonical.com,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>
-Subject: [PATCH v2] usb: quirks: add control message delay for 1b1c:1b20
-Date: Thu, 22 Feb 2018 01:51:46 +0100
-Message-Id: <20180222005146.4451-1-danilokrummrich@dk-develop.de>
+To: gregkh@linuxfoundation.org,
+	felipe.balbi@linux.intel.com
+Cc: linux-usb@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kai.heng.feng@canonical.com,
+	Danilo Krummrich <danilokrummrich@dk-develop.de>
+Subject: [PATCH] usb: quirks: add control message delay for 1b1c:1b20
+Date: Thu, 22 Feb 2018 01:46:18 +0100
+Message-Id: <20180222004618.3854-1-danilokrummrich@dk-develop.de>
 X-Mailer: git-send-email 2.14.1
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593059976085062981?=
+X-GMAIL-MSGID: =?utf-8?q?1593059976085062981?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -99,15 +71,13 @@ delays, even on fast machines.
 
 Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
 ---
-v2: remove empty line in usb_get_descriptor() added by accident
----
- drivers/usb/core/message.c | 4 ++++
+ drivers/usb/core/message.c | 5 +++++
  drivers/usb/core/quirks.c  | 3 ++-
  include/linux/usb/quirks.h | 3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index 77001bcfc504..a4025760dd84 100644
+index 77001bcfc504..cbab2a99ce16 100644
 --- a/drivers/usb/core/message.c
 +++ b/drivers/usb/core/message.c
 @@ -150,6 +150,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
@@ -121,6 +91,14 @@ index 77001bcfc504..a4025760dd84 100644
  	kfree(dr);
  
  	return ret;
+@@ -642,6 +646,7 @@ int usb_get_descriptor(struct usb_device *dev, unsigned char type,
+ 				USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
+ 				(type << 8) + index, 0, buf, size,
+ 				USB_CTRL_GET_TIMEOUT);
++
+ 		if (result <= 0 && result != -ETIMEDOUT)
+ 			continue;
+ 		if (result > 1 && ((u8 *)buf)[1] != type) {
 diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
 index 4024926c1d68..4450bec7f3af 100644
 --- a/drivers/usb/core/quirks.c
@@ -149,4 +127,3 @@ index f1fcec2fd5f8..b7a99ce56bc9 100644
  #endif /* __LINUX_USB_QUIRKS_H */
 -- 
 2.14.1
-
