@@ -1,85 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933088AbeBVPvs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:51:48 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:54796 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933002AbeBVPvr (ORCPT
+        id S933046AbeBVPxy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:53:54 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:51233 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933000AbeBVPxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:51:47 -0500
-Date: Thu, 22 Feb 2018 16:51:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 05/17] lockdep: Extend __bfs() to
- work with multiple kinds of dependencies
-Message-ID: <20180222155143.GV25235@hirez.programming.kicks-ass.net>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-6-boqun.feng@gmail.com>
- <20180222142614.GR25201@hirez.programming.kicks-ass.net>
- <20180222151210.jwxjchywk4jfecyf@tardis>
- <20180222153034.GO25181@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222153034.GO25181@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 22 Feb 2018 10:53:53 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Waiman Long <longman@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] debugobjects: fix debug_objects_freed accounting
+Date: Thu, 22 Feb 2018 16:52:58 +0100
+Message-Id: <20180222155335.1647466-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:P+O6ZlvA5LYEhiXqK4cG8ZD7VaPEWheZVYbeHgy3hi9xyvgxX7k
+ evBmRTYlEJ1TyenPO8RPH3rEKCv+P9zvsvOdyTThtUOTaTBosmlD4/ksgh519Tz58JxnO3B
+ nE2KQzHeq+hYwnQ2O5Z7eIUkwKB8Enq7jgyFVkKL/pWjZDmdX3DNLuxhYquIABKoXu0aSAP
+ FKJNlr9ke/eaAhyJOXZaA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8lKGIdJrr/I=:HUhNNFTBw+eYo+BKo8dbMy
+ i9RmoJLMnkQjsfgYs0Zyoz8MweMnZDUwIe4cKy6kWLZ4IwMSSP4RSBVHmwdLh7pLGFl0F6nA2
+ AAoFhmWkA7PQRiHh1QsuAlIP0tT30LH9uSjqbQgJHehA4OgcIWjiSBuQjlymAhpXpiCDJcWYM
+ Djagox4WX+LGXf4GtMpnEUxuNtW3bDsInM753pu1/1QbtFeyvBvOJzf0pkzhfSObMN274l3Ta
+ yDl+yeg5tYgW2szUFT063v0TxkD5CT4JIvb6gnNC5y2TSs/JJT90n4aKw5OeW35P7ZH5HXp2Z
+ 8TEb+oSF8gPqffRE3duY9viCA7vbIh+942EwbDYHA1ic0U6HBMSO550Q7DOI5Kmnuz04tU/gN
+ nhZuYfaiCmjcY5TL+sxTaxacBzpIL3yKYP8T8vI3/1c3kRcTvTz1x4Hqc40O39mYWtQOqYM6K
+ R9KzNZpriWnjcBLPYDftdvNUTDL58BAcqcUX76UIQv2bQ1nxP04Eai5U6nfIYY/nVtKElOCw7
+ G2jyGRgbmvdOqKT2T6NifmC4tv+drqfYftjhFAAZipu0dvcrnp5J4Cn1lcwuywUNtuJ7pzVNQ
+ hFfc6svyhYMJ69P1swuq0dmeDGd/snf/hmI6qfmIWKHYu/fXbouky16kjIOCpPBurUQHbvztH
+ +er07F9OYJwiKq4vzoZRpvLwRV7ntGo+wF8d9SDFMD4F0Gmg7f7aoHilFUztZXjYgH7WXfzJn
+ YTUjKnmEKTdNTEyjtoDdgszDAw8ecvKUoG+93g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 04:30:34PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 11:12:10PM +0800, Boqun Feng wrote:
-> > On Thu, Feb 22, 2018 at 03:26:14PM +0100, Peter Zijlstra wrote:
-> 
-> > > However, I would suggest:
-> > > 
-> > > static inline bool is_xr(u16 dep)
-> > > {
-> > > 	return !!(dep & (DEP_NR_MASK | DEP_RR_MASK));
-> > > }
-> > > 
-> > > static inline bool is_rx(u16 dep)
-> > > {
-> > > 	return !!(dep & (DEP_RN_MASK | DEP_RR_MASK));
-> > > }
-> > > 
-> > > 		/* Skip *R -> R* relations */
-> > > 		if (have_xr && is_rx(entry->dep))
-> > > 			continue;
-> > 
-> > I don't think this works, if we pick a *R for previous entry, and for
-> > current entry, we have RR, NN and NR, your approach will skip the
-> > current entry, but actually we can pick NN or NR (of course, in __bfs(),
-> > we can greedily pick NN, because if NR causes a deadlock, so does NN).
-> 
-> I don't get it, afaict my suggestion is identical.
-> 
-> You skip condition: pick_dep() < 0, evaluates to:
-> 
-> 	is_rr && (!NN_MASK && !NR_MASK) :=
-> 	is_rr && (RN_MASK | RR_MASK)
-> 
-> Which is exactly what I have.
+The removal of the batched object freeing has caused the debug_objects_freed
+to become read-only, and the reading is inside an ifdef, so gcc warns that it
+is completely unused without CONFIG_DEBUG_FS:
 
-Ooh, I think I see what I did wrong, would something like:
+lib/debugobjects.c:71:14: error: 'debug_objects_freed' defined but not used [-Werror=unused-variable]
 
-	if (have_xr && !is_nx(entry-dep))
+Assuming we are still interested in this number, this adds back code to
+keep track of the freed objects.
 
-work? That's a lot harder to argue about though, still much better than
-that tri-state pick thing.
+Fixes: 636e1970fd7d ("debugobjects: Use global free list in free_object()")
+Suggested-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--
+v2: simplify the counting as pointed out by Longman
+---
+ lib/debugobjects.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> If that is satisfied, you set entry->is_rr to pick_dep(), which his
-> harder to evaluate, but is something like:
-> 
-> 	is_rr && NR_MASK || !(NN_MASK | RN_MASK) :=
-> 	is_rr && NR_MASK || (NR_MASK | RR_MASK) :=
-> 	(NR_MASK | RR_MASK)
-> 
-> (because is_rr && RR_MASK will have been skipped)
-> 
-> > > 
-> > > 		entry->have_xr = is_xr(entry->dep);
-
-This one I think is still correct though.
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index faab2c4ea024..105ecfc47d8c 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -233,6 +233,7 @@ static void free_obj_work(struct work_struct *work)
+ 	 */
+ 	if (obj_nr_tofree) {
+ 		hlist_move_list(&obj_to_free, &tofree);
++		debug_objects_freed += obj_nr_tofree;
+ 		obj_nr_tofree = 0;
+ 	}
+ 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+-- 
+2.9.0
