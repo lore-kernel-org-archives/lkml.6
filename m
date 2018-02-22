@@ -1,78 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeBVXA5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:00:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51508 "EHLO mail.kernel.org"
+        id S1751896AbeBVXDb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:03:31 -0500
+Received: from verein.lst.de ([213.95.11.211]:58327 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751669AbeBVXAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:00:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CAA421716
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 22 Feb 2018 17:00:52 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
-        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
-        yamada.masahiro@socionext.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
-Message-ID: <20180222230052.GA14632@bhelgaas-glaptop.roam.corp.google.com>
-References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
- <20180206221106.16620-1-ulfalizer@gmail.com>
+        id S1751432AbeBVXDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 18:03:30 -0500
+Date: Fri, 23 Feb 2018 00:03:29 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: miles.chen@mediatek.com, Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH] lib/dma-debug.c: fix memory leakage
+Message-ID: <20180222230329.GA2820@lst.de>
+References: <1519298540-3071-1-git-send-email-miles.chen@mediatek.com> <6df7e9bd-2203-0692-97e4-8c6434304b0f@arm.com> <1519298540-3071-1-git-send-email-miles.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180206221106.16620-1-ulfalizer@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <6df7e9bd-2203-0692-97e4-8c6434304b0f@arm.com> <1519298540-3071-1-git-send-email-miles.chen@mediatek.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 11:11:06PM +0100, Ulf Magnusson wrote:
-> 'default N' should be 'default n', though they happen to have the same
-> effect here, due to undefined symbols (N in this case) evaluating to n
-> in a tristate sense.
-> 
-> Remove the default instead of changing it. bool and tristate symbols
-> implicitly default to n.
-
-s/bool/Bool/
-
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
-> 
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Since only this patch was posted to linux-pci, I assume it will be merged
-via some other tree.
-
-> ---
-> Changes in v2:
-> Make it clear that Kconfig is involved.
-> 
->  drivers/pci/host/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index a4ed7484d127..dc8a2a175f19 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -215,7 +215,6 @@ config PCIE_TANGO_SMP8759
->  config VMD
->  	depends on PCI_MSI && X86_64 && SRCU
->  	tristate "Intel Volume Management Device Driver"
-> -	default N
->  	---help---
->  	  Adds support for the Intel Volume Management Device (VMD). VMD is a
->  	  secondary PCI host bridge that allows PCI Express root ports,
-> -- 
-> 2.14.1
-> 
+Thanks, applied to the dma mapping tree for 4.16, including the Fixes
+tag.
