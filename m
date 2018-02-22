@@ -1,119 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751577AbeBVTIM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:08:12 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34468 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbeBVTGm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:06:42 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
-Date: Thu, 22 Feb 2018 20:06:06 +0100
-Message-Id: <1519326370-15805-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1751608AbeBVTIT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:08:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57933 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751411AbeBVTIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:08:16 -0500
+Date: Thu, 22 Feb 2018 20:08:14 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-security-module@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jforbes@redhat.com
+Subject: Re: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
+ locked down
+Message-ID: <20180222190814.a5mavnqvii5i6ptf@dwarf.suse.cz>
+References: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
+ <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+ <8846.1519309243@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "#address-cells" and "#size-cells" properties to all place-holder nodes
-that have children nodes defined by salvator-x[s].dtsi device tree.
+On Thu, Feb 22, 2018 at 02:20:43PM +0000, David Howells wrote:
+> commit 87a39b258eca2e15884ee90c3fcd5758d6057b17
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Thu Feb 22 13:42:04 2018 +0000
+> 
+>     kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+>     
+>     This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+>     kernel needs to prevent unsigned kernel images to be loaded with
 
-This silences the following DTC compiler warnings:
-Warning (reg_format): "reg" property in /soc/.. has invalid length (4 bytes)
-(#address-cells == 2, #size-cells == 1)
-Warning (avoid_default_addr_size): Relying on default #address-cells
-value for /soc/...
-Warning (avoid_default_addr_size): Relying on default #size-cells value
-for /soc/...
+s/to be loaded/from being loaded/
+(my own mistake :-))
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Otherwise looks good. Thanks for improving my idea.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4d9bba9..ab46cd2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -521,6 +521,9 @@
- 		};
- 
- 		avb: ethernet@e6800000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
- 			/* placeholder */
- 		};
-@@ -528,11 +531,21 @@
- 		csi20: csi2@fea80000 {
- 			reg = <0 0xfea80000 0 0x10000>;
- 			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
- 		csi40: csi2@feaa0000 {
- 			reg = <0 0xfeaa0000 0 0x10000>;
- 			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
- 		vin0: video@e6ef0000 {
-@@ -611,6 +624,9 @@
- 		};
- 
- 		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe6510000 0 0x40>;
- 			/* placeholder */
- 		};
-@@ -621,6 +637,9 @@
- 		};
- 
- 		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe66d8000 0 0x40>;
- 			/* placeholder */
- 		};
-@@ -636,6 +655,9 @@
- 		};
- 
- 		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe60b0000 0 0x425>;
- 			/* placeholder */
- 		};
-@@ -681,6 +703,9 @@
- 			/* placeholder */
- 
- 			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
- 				port@0 {
- 					reg = <0>;
- 					du_out_rgb: endpoint {
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+
 -- 
-2.7.4
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
