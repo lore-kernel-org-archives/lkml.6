@@ -1,47 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933503AbeBVRai (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:30:38 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:36281 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933390AbeBVRah (ORCPT
+        id S933471AbeBVRcb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:32:31 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34085 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933201AbeBVRc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:30:37 -0500
-X-Google-Smtp-Source: AH8x2268KMbX7NrHeCbYMT5sYmeE+FBeaTIOqBa9YfxNjotgmCgDLPUp8NcJS8ihBtGYhnCwaQnuTba8JudhCYAJgMM=
+        Thu, 22 Feb 2018 12:32:29 -0500
+X-Google-Smtp-Source: AG47ELu5KuuCZGpJkrMJRQROMfRanDjfxn1N13hQ2bUU85r6Aq1Rxmk8h4rlgnq3dlbcByIVa8W5eHhNn6jKGuqv34M=
 MIME-Version: 1.0
-In-Reply-To: <20180222130738.GG30681@dhcp22.suse.cz>
-References: <20180212133731.GE3443@dhcp22.suse.cz> <87r2ppvaeq.fsf@concordia.ellerman.id.au>
- <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
- <87d1192nzc.fsf@concordia.ellerman.id.au> <20180213103213.GP3443@dhcp22.suse.cz>
- <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com>
- <20180214092045.GZ3443@dhcp22.suse.cz> <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
- <20180222130738.GG30681@dhcp22.suse.cz>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 22 Feb 2018 09:30:35 -0800
-X-Google-Sender-Auth: 8kCDMolcIjqZARdIbna8vGXMyUc
-Message-ID: <CAGXu5jLLDOqoSn9usuA-pRLb5X=zK6MYdUVMPEh7x7oMgnU5cQ@mail.gmail.com>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+In-Reply-To: <20180222164532.GA15359@light.dominikbrodowski.net>
+References: <4287858.bFmM5lK9H6@aspire.rjw.lan> <20180220213839.GA12082@light.dominikbrodowski.net>
+ <3352336.6IBe4RuE7s@aspire.rjw.lan> <20180222164532.GA15359@light.dominikbrodowski.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 Feb 2018 18:32:28 +0100
+X-Google-Sender-Auth: UpAACaXB8JzM1PDrMGHAwJdxFzY
+Message-ID: <CAJZ5v0jyuMsVfyT-UNMqPdu33yLCRtQAwVUcOx1Hfr4FgKzZyw@mail.gmail.com>
+Subject: Re: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during suspend-to-idle
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 5:07 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Wed 14-02-18 09:14:47, Kees Cook wrote:
-> [...]
->> I can send it through my seccomp tree via James Morris.
+On Thu, Feb 22, 2018 at 5:45 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> On Wed, Feb 21, 2018 at 01:24:16PM +0100, Rafael J. Wysocki wrote:
+>> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
+>> to indicate that socket_early_resume() has already run for the
+>> socket in which case socket_suspend() will do minimum handling
+>> and return 0.
 >
-> Could you please do it?
+> That looks to be *too* minimal: For example, yenta_socket does some
+> socket set-up in ->init(), which is called by socket_early_resume().
+> That needs to be undone by ->suspend().
 
-Hi! Yes, sorry, this fell through the cracks. Now applied.
+I see.
 
--Kees
+> What about this variant (untested, not even compile-tested)?
 
--- 
-Kees Cook
-Pixel Security
+It looks fine to me, I'll test it later today.
+
+> Oh, and
+>         a) does this need -stable tags, and
+
+Not right away I guess, but I will ask the -stable maintainers to pick
+it up at one point if there are no problems reported with it.
+
+>         b) do you want to push it yourself, or should it go through the
+>            PCMCIA tree?
+
+I'll take care of it.
+
+Thanks,
+Rafael
+
+
+> ---
+> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Date: Wed, 21 Feb 2018 13:24:16 +0100
+> Subject: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
+>  suspend-to-idle
+>
+> There is a problem with PCMCIA system resume callbacks with respect
+> to suspend-to-idle in which the ->suspend_noirq() callback may be
+> invoked after the ->resume_noirq() one without resuming the system
+> entirely in some cases.  This doesn't work for PCMCIA because of
+> the lack of symmetry between its system suspend and system resume
+> "noirq" callbacks.
+>
+> The system resume handling in PCMCIA is split between
+> socket_early_resume() and socket_late_resume() which are called in
+> different phases of system resume and both need to run for
+> socket_suspend() (invoked by the system suspend "noirq" callback)
+> to work.  Specifically, socket_suspend() returns an error when
+> called after socket_early_resume() without socket_late_resume(),
+> so if the suspend-to-idle core detects a spurious wakeup event and
+> attempts to put the system back to sleep, that is aborted by the
+> error coming from socket_suspend().
+>
+> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
+> to indicate that socket_early_resume() has already run for the
+> socket in which case socket_suspend() will do minimum handling
+> and return 0.
+>
+> This change has been tested on my venerable Toshiba Portege R500
+> (which is where the problem has been discovered in the first place),
+> but admittedly I have no PCMCIA cards to test along with the socket
+> itself.
+>
+> Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> [linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
+> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+>
+> diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
+> index c3b615c94b4b..513b2d4d5b20 100644
+> --- a/drivers/pcmcia/cs.c
+> +++ b/drivers/pcmcia/cs.c
+> @@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_socket *skt)
+>
+>  static int socket_suspend(struct pcmcia_socket *skt)
+>  {
+> -       if (skt->state & SOCKET_SUSPEND)
+> +       if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
+>                 return -EBUSY;
+>
+>         mutex_lock(&skt->ops_mutex);
+> -       skt->suspended_state = skt->state;
+> +       /* store state on first suspend, but not after spurious wakeups */
+> +       if !(skt->state & SOCKET_IN_RESUME)
+> +               skt->suspended_state = skt->state;
+>
+>         skt->socket = dead_socket;
+>         skt->ops->set_socket(skt, &skt->socket);
+>         if (skt->ops->suspend)
+>                 skt->ops->suspend(skt);
+>         skt->state |= SOCKET_SUSPEND;
+> +       skt->state &= ~(SOCKET_IN_RESUME);
+>         mutex_unlock(&skt->ops_mutex);
+>         return 0;
+>  }
+> @@ -475,6 +478,7 @@ static int socket_early_resume(struct pcmcia_socket *skt)
+>         skt->ops->set_socket(skt, &skt->socket);
+>         if (skt->state & SOCKET_PRESENT)
+>                 skt->resume_status = socket_setup(skt, resume_delay);
+> +       skt->state |= SOCKET_IN_RESUME;
+>         mutex_unlock(&skt->ops_mutex);
+>         return 0;
+>  }
+> @@ -484,7 +488,7 @@ static int socket_late_resume(struct pcmcia_socket *skt)
+>         int ret = 0;
+>
+>         mutex_lock(&skt->ops_mutex);
+> -       skt->state &= ~SOCKET_SUSPEND;
+> +       skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
+>         mutex_unlock(&skt->ops_mutex);
+>
+>         if (!(skt->state & SOCKET_PRESENT)) {
+> diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
+> index 6765beadea95..03ec43802909 100644
+> --- a/drivers/pcmcia/cs_internal.h
+> +++ b/drivers/pcmcia/cs_internal.h
+> @@ -70,6 +70,7 @@ struct pccard_resource_ops {
+>  /* Flags in socket state */
+>  #define SOCKET_PRESENT         0x0008
+>  #define SOCKET_INUSE           0x0010
+> +#define SOCKET_IN_RESUME       0x0040
+>  #define SOCKET_SUSPEND         0x0080
+>  #define SOCKET_WIN_REQ(i)      (0x0100<<(i))
+>  #define SOCKET_CARDBUS         0x8000
