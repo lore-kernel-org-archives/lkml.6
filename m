@@ -1,80 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753517AbeBVLIA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:08:00 -0500
-Received: from sauhun.de ([88.99.104.3]:48993 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753279AbeBVLH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:07:58 -0500
-Date: Thu, 22 Feb 2018 12:07:54 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v5 6/8] i2c: demux: Use changeset helpers for clarity
-Message-ID: <20180222110754.snkn7sgy4cyj7kq4@ninjato>
-References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdVy9=e5eZZTdV6E=apvHxL3n5Qqob2JE+FsON3RG-JWWg@mail.gmail.com>
- <2195898.2J8Qfnu3DQ@avalon>
+        id S1753598AbeBVLLA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:11:00 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35211 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753279AbeBVLK6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:10:58 -0500
+X-Google-Smtp-Source: AH8x226EmC/mCdtKcRyT79hHRNFe2nQAvaYQVHVcbxVrQU+FUvQihqQCGZFr6N9ElQv1XtkgQ/aIXw==
+Subject: Re: [PATCH 03/20] lightnvm: fix capabilities for 2.0 sysfs
+To: Javier Gonzalez <javier@cnexlabs.com>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+ <1519205218-26994-4-git-send-email-javier@cnexlabs.com>
+ <23b494fb-264d-a8ef-6172-5330d5a63bea@lightnvm.io>
+ <19BA9139-DB6D-4A9B-A0B4-72F38BE648E9@cnexlabs.com>
+ <616ad3c9-b10c-0439-2d63-5e9e25abce84@lightnvm.io>
+ <A949EA48-27DF-4370-B213-3A4CE4E4F7D1@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e4ac9c84-3dd5-41e3-8190-905d2a7f5d5d@lightnvm.io>
+Date: Thu, 22 Feb 2018 12:10:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zchw23fcb7jg5anu"
-Content-Disposition: inline
-In-Reply-To: <2195898.2J8Qfnu3DQ@avalon>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <A949EA48-27DF-4370-B213-3A4CE4E4F7D1@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/22/2018 11:25 AM, Javier Gonzalez wrote:
+> 
+> 
+>> On 22 Feb 2018, at 10.39, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 02/22/2018 08:47 AM, Javier Gonzalez wrote:
+>>>> On 22 Feb 2018, at 08.28, Matias Bjørling <mb@lightnvm.io> wrote:
+>>>>
+>>>>> On 02/21/2018 10:26 AM, Javier González wrote:
+>>>>> Both 1.2 and 2.0 specs define a field for media and controller
+>>>>> capabilities. Also, 1.2 defines a separate field dedicated to device
+>>>>> capabilities.
+>>>>> In 2.0 sysfs, this values have been mixed. Revert them to the right
+>>>>> value.
+>>>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>>>> ---
+>>>>>   drivers/nvme/host/lightnvm.c | 18 +++++++++---------
+>>>>>   1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>>>>> index 969bb874850c..598abba66f52 100644
+>>>>> --- a/drivers/nvme/host/lightnvm.c
+>>>>> +++ b/drivers/nvme/host/lightnvm.c
+>>>>> @@ -914,8 +914,8 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+>>>>>         if (strcmp(attr->name, "version") == 0) {
+>>>>>           return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->ver_id);
+>>>>> -    } else if (strcmp(attr->name, "capabilities") == 0) {
+>>>>> -        return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
+>>>>> +    } else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>>>> +        return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
+>>>>>       } else if (strcmp(attr->name, "read_typ") == 0) {
+>>>>>           return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.trdt);
+>>>>>       } else if (strcmp(attr->name, "read_max") == 0) {
+>>>>> @@ -993,8 +993,8 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>>>           return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbem);
+>>>>>       } else if (strcmp(attr->name, "multiplane_modes") == 0) {
+>>>>>           return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mpos);
+>>>>> -    } else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>>>> -        return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mccap);
+>>>>> +    } else if (strcmp(attr->name, "capabilities") == 0) {
+>>>>> +        return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.cap);
+>>>>>       } else if (strcmp(attr->name, "max_phys_secs") == 0) {
+>>>>>           return scnprintf(page, PAGE_SIZE, "%u\n", NVM_MAX_VLBA);
+>>>>>       } else {
+>>>>> @@ -1055,7 +1055,7 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>>>>     /* general attributes */
+>>>>>   static NVM_DEV_ATTR_RO(version);
+>>>>> -static NVM_DEV_ATTR_RO(capabilities);
+>>>>> +static NVM_DEV_ATTR_RO(media_capabilities);
+>>>>>     static NVM_DEV_ATTR_RO(read_typ);
+>>>>>   static NVM_DEV_ATTR_RO(read_max);
+>>>>> @@ -1080,12 +1080,12 @@ static NVM_DEV_ATTR_12_RO(prog_max);
+>>>>>   static NVM_DEV_ATTR_12_RO(erase_typ);
+>>>>>   static NVM_DEV_ATTR_12_RO(erase_max);
+>>>>>   static NVM_DEV_ATTR_12_RO(multiplane_modes);
+>>>>> -static NVM_DEV_ATTR_12_RO(media_capabilities);
+>>>>> +static NVM_DEV_ATTR_12_RO(capabilities);
+>>>>>   static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>>>>>     static struct attribute *nvm_dev_attrs_12[] = {
+>>>>>       &dev_attr_version.attr,
+>>>>> -    &dev_attr_capabilities.attr,
+>>>>> +    &dev_attr_media_capabilities.attr,
+>>>>>         &dev_attr_vendor_opcode.attr,
+>>>>>       &dev_attr_device_mode.attr,
+>>>>> @@ -1108,7 +1108,7 @@ static struct attribute *nvm_dev_attrs_12[] = {
+>>>>>       &dev_attr_erase_typ.attr,
+>>>>>       &dev_attr_erase_max.attr,
+>>>>>       &dev_attr_multiplane_modes.attr,
+>>>>> -    &dev_attr_media_capabilities.attr,
+>>>>> +    &dev_attr_capabilities.attr,
+>>>>>       &dev_attr_max_phys_secs.attr,
+>>>>>         NULL,
+>>>>> @@ -1134,7 +1134,7 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>>>>>     static struct attribute *nvm_dev_attrs_20[] = {
+>>>>>       &dev_attr_version.attr,
+>>>>> -    &dev_attr_capabilities.attr,
+>>>>> +    &dev_attr_media_capabilities.attr,
+>>>>>         &dev_attr_groups.attr,
+>>>>>       &dev_attr_punits.attr,
+>>>>
+>>>> With the mccap changes, it should make sense to keep the capabilities
+>>>> as is.
+>>> The change adds mccap, but sysfs points to cap, which is wrong. This
+>>> patch is needed. Otherwise, we change the name of mccap to cap, which
+>>> is _very_ confusing to people familiar to both specs. We can change
+>>> the name of mccap to cap in a future spec revision.
+>>> Javier
+>>
+>> Think of the sysfs capabilities as an abstract value that defines generic capabilities. It is not directly tied to either 1.2 or 2.0.
+> 
+> I’m thinking about the user looking at sysfs and at the spec at the same time - I myself get confused when names don’t match.
+> 
+> Anyway, I’ll keep it the way it was and add a comment for clarification. Would that work for you?
+> 
 
---zchw23fcb7jg5anu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > Why? ePAPR says "okay", "disabled", "fail", or "fail-sss".
-> >=20
-> > Sorry for missing this in the previous round.
->=20
-> That was per Wolfram's request, and because the existing code uses "ok". =
-I'm=20
-> personally fine with any.
-
-I did? Well, today I don't have a strong preference. Any is fine with
-me, too.
-
-
---zchw23fcb7jg5anu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqOpIcACgkQFA3kzBSg
-KbY/Lw//Wu6/UUii+3Pppq877QvjFQWj7sOO8l/Qpko2IH5z7CriP+6V8A9NMBeL
-CnSfbosoDBCiASIK4HUu+NU4XxtWc2kC3dap8nKfY+mUg+hcLYjkPQyJedkDS/IC
-5LsYayvWr6P5rkDBF3fpSfOdkI55T30u5k4N4bZfNjQ8y6kHVFnLJXISQ6HB/feO
-nKhWnL9A3Fc4TA9/iibB/qFOb7aQn4SRJy/KyZAIlUAxi3UQPlkRQVzrVXy/l8DM
-vdvbonQkJtgJs173LtDmXfGKDf1PKsUD5YkBvM3oAbyn+BjnJqUKjJxHR4xk3V4j
-CKaMHisEUPjJJgun3MUwd8+lF6j5z29OcZTqVz6ez6VQC5yXyyGP8BFbOxGsl2wZ
-5+u4H52x2ZXlhoT0WlyPSZb0MH+k6Rem7Dkt1FExyiILPZ2QFbp71ypfRFoRsWRc
-nZRyXFDsD/AZdOepedxyUihI2fzLCHDcscEGUptAuFBhMkJmp0C6CsebABFsK0ib
-rmlNrwhqXnWcTqYSP7XsKboKy3GVG3ph9BoPye+kUyZ/K4taTitAUxoqWcOKkFG/
-4poPQKZiifP5DraddGVLSMI+Bcj4Ly2/0eVvz89HDzHPgZHwmX8lxtqjmYYM20d/
-uiGf72jB4Cl0eeqL+NMbmegS1LjE4iivcMRAxEO5d9rv204azpU=
-=qf5c
------END PGP SIGNATURE-----
-
---zchw23fcb7jg5anu--
+That works. One may also wait until it is going to be used, e.g., when 
+vector copy is implemented. Then it's natural to revisit.
