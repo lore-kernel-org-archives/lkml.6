@@ -1,104 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeBVJgQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:36:16 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47185 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753090AbeBVJgO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:36:14 -0500
-Message-ID: <1519292164.7447.1.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] vfio: platform: Add generic DT reset support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Thu, 22 Feb 2018 10:36:04 +0100
-In-Reply-To: <CAMuHMdXSwsH82U8P3N6jXef72ZP0iiZgzkgEuKhUsqoYmpW93g@mail.gmail.com>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
-         <1518539815-13774-3-git-send-email-geert+renesas@glider.be>
-         <1519231860.3405.11.camel@pengutronix.de>
-         <CAMuHMdXSwsH82U8P3N6jXef72ZP0iiZgzkgEuKhUsqoYmpW93g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1753213AbeBVJgx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:36:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32772 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752991AbeBVJgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:36:51 -0500
+From: Jason Wang <jasowang@redhat.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mst@redhat.com, christoffer.dall@linaro.org,
+        sergei.shtylyov@cogentembedded.com, Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net v3 1/2] Revert "tuntap: add missing xdp flush"
+Date: Thu, 22 Feb 2018 17:36:45 +0800
+Message-Id: <1519292206-6384-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+This reverts commit 762c330d670e3d4b795cf7a8d761866fdd1eef49. The
+reason is we try to batch packets for devmap which causes calling
+xdp_do_flush() in the process context. Simply disabling preemption
+may not work since process may move among processors which lead
+xdp_do_flush() to miss some flushes on some processors.
 
-On Thu, 2018-02-22 at 09:50 +0100, Geert Uytterhoeven wrote:
-[...]
-> > > @@ -127,8 +134,15 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
-> > >               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
-> > >                                                       &vdev->reset_module);
-> > >       }
-> > > +     if (vdev->of_reset)
-> > > +             return 0;
-> > > +
-> > > +     vdev->reset_control = __of_reset_control_get(vdev->device->of_node,
-> > > +                                                  NULL, 0, false, false);
-> > > +     if (!IS_ERR(vdev->reset_control))
-> > > +             return 0;
-> > 
-> > if you assign to a local variable first here:
-> > 
-> >         struct reset_control *rstc;
-> > 
-> >          ...
-> > 
-> >         rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
-> >         if (!IS_ERR(rstc)) {
-> >                 vdev->reset_control = rstc;
-> >                 return 0;
-> >         }
-> > 
-> > Also, please don't use __of_reset_control_get directly.
-> 
-> OK, apparently I didn't read <linux/reset.h> beyond the first #else...
+So simply revert the patch, a follow-up patch will add the xdp flush
+correctly.
 
-I don't blame you, this is missing some documentation.
+Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
+Fixes: 762c330d670e ("tuntap: add missing xdp flush")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/tun.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-> > > @@ -217,6 +233,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
-> > >       } else if (vdev->of_reset) {
-> > >               dev_info(vdev->device, "reset\n");
-> > >               return vdev->of_reset(vdev);
-> > > +     } else if (!IS_ERR_OR_NULL(vdev->reset_control)) {
-> > > +             dev_info(vdev->device, "reset\n");
-> > > +             return reset_control_reset(vdev->reset_control);
-> > 
-> >         } else {
-> >                 if (vdev->reset_control)
-> >                         dev_info(vdev->device, "reset\n");
-> >                 return reset_control_reset(vdev->reset_control);
-> > 
-> > >       }
-> 
-> I'd like to keep the "else if", as that's the pattern used by the blocks above.
-
-my bad, there's more code after this.
-
-	} else if (vdev->reset_control) {
-		dev_info(vdev->device, "reset\n");
-		return reset_control_reset(vdev->reset_control);
-	}
-
-is better as it doesn't lose the warning if vdev->reset_control == NULL.
-It seems I've focused too much on getting rid of the IS_ERR_OR_NULL
-macro.
-
-regards
-Philipp
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index b52258c..2823a4a 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -181,7 +181,6 @@ struct tun_file {
+ 	struct tun_struct *detached;
+ 	struct ptr_ring tx_ring;
+ 	struct xdp_rxq_info xdp_rxq;
+-	int xdp_pending_pkts;
+ };
+ 
+ struct tun_flow_entry {
+@@ -1662,7 +1661,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 		case XDP_REDIRECT:
+ 			get_page(alloc_frag->page);
+ 			alloc_frag->offset += buflen;
+-			++tfile->xdp_pending_pkts;
+ 			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
+ 			if (err)
+ 				goto err_redirect;
+@@ -1984,11 +1982,6 @@ static ssize_t tun_chr_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	result = tun_get_user(tun, tfile, NULL, from,
+ 			      file->f_flags & O_NONBLOCK, false);
+ 
+-	if (tfile->xdp_pending_pkts) {
+-		tfile->xdp_pending_pkts = 0;
+-		xdp_do_flush_map();
+-	}
+-
+ 	tun_put(tun);
+ 	return result;
+ }
+@@ -2325,13 +2318,6 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 	ret = tun_get_user(tun, tfile, m->msg_control, &m->msg_iter,
+ 			   m->msg_flags & MSG_DONTWAIT,
+ 			   m->msg_flags & MSG_MORE);
+-
+-	if (tfile->xdp_pending_pkts >= NAPI_POLL_WEIGHT ||
+-	    !(m->msg_flags & MSG_MORE)) {
+-		tfile->xdp_pending_pkts = 0;
+-		xdp_do_flush_map();
+-	}
+-
+ 	tun_put(tun);
+ 	return ret;
+ }
+@@ -3163,7 +3149,6 @@ static int tun_chr_open(struct inode *inode, struct file * file)
+ 	sock_set_flag(&tfile->sk, SOCK_ZEROCOPY);
+ 
+ 	memset(&tfile->tx_ring, 0, sizeof(tfile->tx_ring));
+-	tfile->xdp_pending_pkts = 0;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
