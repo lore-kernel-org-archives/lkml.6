@@ -1,74 +1,89 @@
-Return-Path: <andrew@lunn.ch>
-X-Google-Smtp-Source: AH8x226hP3qua6hneUazOEjzhDjE7A6+X+IW4NGKX+bxHL8iHL7L6wu9Z7qt2YfrhG/alSqH4Nzp
-ARC-Seal: i=1; a=rsa-sha256; t=1519259856; cv=none;
+Return-Path: <jae.hyun.yoo@linux.intel.com>
+X-Google-Smtp-Source: AH8x227Q4xbeJeUF3hxpWrmIFmUP3QzAJcWa3OQzt4OiU6EJUax130+PwLQQfA/e92xwnalSThL6
+ARC-Seal: i=1; a=rsa-sha256; t=1519262969; cv=none;
         d=google.com; s=arc-20160816;
-        b=j3JpezCFklfEPqW+A0manFJwQVgxYz61rjSfIJWEbejivdhxA2uPL0PBgcEqqmnwrP
-         IzYhftUKsiP11WVfxEip6jdg6Fy1Ai29zlPIZ7Fxd/JHI1mT8PGCx/6N0YTcfwPS1Als
-         zG6Gs2r88MXpA2BVxeAo1QslUdzEZV/s3UJayw0tilCfwGi8JWLt7OmBkGkBNjF014QR
-         hqRYnwbcVxcguMCZM6YxkrM+moNrOM0qGohjEnF2R3vP16vzOgUL2y2khCkGuPQqDBHV
-         ut6Oa1hcnagWv4Efd8RwiUBepj4K56Jngj7qTUIDiqRWuctNg0Svd3X31+Tr9VLWYTif
-         vEAw==
+        b=Z/tPxiKAFkovGq+J2j4UqHah2zRolRi4tfs3zH10hTfiJDP4YE9ITXALaT5aoPGJQk
+         K1XibV67UgDtg92Z7VwSv0wqw0jDTrhWBHQoXC1rUEt4DJqlH6bZnzljiaZ5tQkr/yxh
+         pKhoWaLSvOphU6XEJhsi17lVDe757VklnaY/+z77QA76vgZHYlYhbV8fDLhmSiedFNAH
+         +f/2KyqW2lhFPRP8PWKTbwjf4d03vlLiwEXNHQMxQlI3+F0BYBugyUfh9lkqmxlaq1oM
+         hJaQxqdPty6LiLSsD+QUPSk18PPhtmiyWp4LAWoNyUioTBXu6sRDazLX1HmO/Y32jdFK
+         Z5Rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=kiMGOIPGWWr68BNAvR7Mq34VCt2OkZo3EsFWRY27ocs=;
-        b=KULLC/sthemGWhfo5qvsBi0zq4tXYdE1YOHpuJFzQ3Gn1rNPvUjbgLHsWY8DVaEgDv
-         BYMv2m49k5BENPIJgFUl9KETeK2BSrP+IjKZdTEJK5XYvdHGpLF8ZsSjhjlyNW+G6oiG
-         k3SsLFpBxvECf9Hn170u0K80FONXTUw7DMUVmIxXeM6wQ5rXWqQzrORWfm3Dznjt9KWE
-         0FPcKgW7TzUF+6xOiaQWy6TYKQ+chx/hF1KFRhoNFGtS7QcX97hxiUbQqPtivOklm/2f
-         o8LEP9w95bUC20XIKelJwFxFo1wp2YE6ifHmoZ7kSsgDt6W+cVj0gU+FoHR62mR1mMug
-         dDpA==
+        bh=orFUi0a2cexnt/HO3+V4Bw4PJAem06I+4U5Q9HKbXaM=;
+        b=TSzjr3JP82XUJC9yR/W4AMiVYz3oYhwbvU0oLg+0DTR3j/8k9nNS3gKMTRncazRlx0
+         nK9FDnwJgceAM0uGnkeyEHOwMb5Z2jdYSszvdicEXV+ll3jgkkvkMNyeBqedk5zaH6J6
+         xt/aMaCmE+mKoKXuI5t5JUTC9MWojK5J4sjGbthT19BCM6t7PmIL5tWsttFGxFYgNWtK
+         oaa89TfAHzdzJq2FFlueJbsocDsCFLAovmnT+GpQn1wwniCA/neuihWwfk1x3DpGK3S8
+         grvD1Doq/C+JZqkz4hAPg5zpSRFdm1LmP4gDf3dfN30YJAXuP1dwie9R/fcoOAXwLjuJ
+         yRjA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=zLjSbd+e;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=zLjSbd+e;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
-Date: Thu, 22 Feb 2018 01:37:20 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, joel@jms.id.au, andrew@aj.id.au,
-	arnd@arndb.de, gregkh@linuxfoundation.org, jdelvare@suse.com,
-	benh@kernel.crashing.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	openbmc@lists.ozlabs.org
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,376,1515484800";
+   d="scan'208";a="206056238"
 Subject: Re: [PATCH v2 7/8] [PATCH 7/8] drivers/hwmon: Add a generic PECI
  hwmon client driver
-Message-ID: <20180222003720.GA25250@lunn.ch>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Guenter Roeck <linux@roeck-us.net>, joel@jms.id.au, andrew@aj.id.au,
+ arnd@arndb.de, gregkh@linuxfoundation.org, jdelvare@suse.com,
+ benh@kernel.crashing.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ openbmc@lists.ozlabs.org
 References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
  <20180221161606.32247-8-jae.hyun.yoo@linux.intel.com>
  <20180221182608.GA11635@roeck-us.net>
  <618f34cd-ee43-d8e4-4fb0-3c23bf03835f@linux.intel.com>
  <20180221214859.GA30263@roeck-us.net>
  <576a50c6-c302-654c-ceb3-aaf820b7738a@linux.intel.com>
+ <20180222003720.GA25250@lunn.ch>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <b506b4b1-7e7d-abd6-bac2-c45e7c1e0aae@linux.intel.com>
+Date: Wed, 21 Feb 2018 17:29:27 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <576a50c6-c302-654c-ceb3-aaf820b7738a@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180222003720.GA25250@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593027891482896135?=
-X-GMAIL-MSGID: =?utf-8?q?1593059423289949942?=
+X-GMAIL-MSGID: =?utf-8?q?1593062687428855636?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> But even with this change, it still needs to use delayed creation
-> because BMC side kernel doesn't know how many DIMMs are populated on
-> a remote server before the remote server completes its memory
-> training and testing in BIOS, but it needs to check the remote
-> server's CPU temperature as immediate as possible to make
-> appropriate thermal control based on the remote CPU's temperature to
-> avoid any critical thermal issue. What would be a better solution in
-> this case?
+On 2/21/2018 4:37 PM, Andrew Lunn wrote:
+>> But even with this change, it still needs to use delayed creation
+>> because BMC side kernel doesn't know how many DIMMs are populated on
+>> a remote server before the remote server completes its memory
+>> training and testing in BIOS, but it needs to check the remote
+>> server's CPU temperature as immediate as possible to make
+>> appropriate thermal control based on the remote CPU's temperature to
+>> avoid any critical thermal issue. What would be a better solution in
+>> this case?
+> 
+> You could change this driver so that it supports one DIMM.  Move the
+> 'hotplug' part into another driver which creates and destroys
+> instances of the hwmon DIMM device as the DIMMS come and go.
+> 
+> Also, do you need to handle CPU hotplug? You could split the CPU
+> temperature part into a separate hwmon driver? And again create and
+> destroy devices as CPUs come and go?
+> 
+> 	Andrew
+> 
 
-You could change this driver so that it supports one DIMM.  Move the
-'hotplug' part into another driver which creates and destroys
-instances of the hwmon DIMM device as the DIMMS come and go.
+That seems like a possible option. I'll rewrite the hwmon driver again 
+like that.
 
-Also, do you need to handle CPU hotplug? You could split the CPU
-temperature part into a separate hwmon driver? And again create and
-destroy devices as CPUs come and go?
+Thanks for the good idea. :)
 
-	Andrew
+Jae
