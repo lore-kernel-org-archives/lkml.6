@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeBVVLA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 16:11:00 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46871 "EHLO
+        id S1751423AbeBVVLS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:11:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47719 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbeBVVK7 (ORCPT
+        with ESMTP id S1751165AbeBVVLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:10:59 -0500
-Date: Thu, 22 Feb 2018 13:09:49 -0800
+        Thu, 22 Feb 2018 16:11:17 -0500
+Date: Thu, 22 Feb 2018 13:10:17 -0800
 From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-651ca2c00405a2ae3870cc0b4f15a182eb6fbe26@git.kernel.org>
-Cc: delamonpansie@gmail.com, rdunlap@infradead.org, peterz@infradead.org,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Reply-To: delamonpansie@gmail.com, rdunlap@infradead.org, peterz@infradead.org,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-In-Reply-To: <20180222112316.849980972@linutronix.de>
-References: <20180222112316.849980972@linutronix.de>
+Message-ID: <tip-f60606c4ce402963dc552c62910ffa7080b4a628@git.kernel.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, rdunlap@infradead.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        delamonpansie@gmail.com
+Reply-To: delamonpansie@gmail.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, rdunlap@infradead.org,
+        tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20180222112316.930791749@linutronix.de>
+References: <20180222112316.930791749@linutronix.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] genirq/matrix: Handle CPU offlining proper
-Git-Commit-ID: 651ca2c00405a2ae3870cc0b4f15a182eb6fbe26
+Subject: [tip:x86/urgent] x86/apic/vector: Handle vector release on CPU
+ unplug correctly
+Git-Commit-ID: f60606c4ce402963dc552c62910ffa7080b4a628
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,90 +34,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  651ca2c00405a2ae3870cc0b4f15a182eb6fbe26
-Gitweb:     https://git.kernel.org/tip/651ca2c00405a2ae3870cc0b4f15a182eb6fbe26
+Commit-ID:  f60606c4ce402963dc552c62910ffa7080b4a628
+Gitweb:     https://git.kernel.org/tip/f60606c4ce402963dc552c62910ffa7080b4a628
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 22 Feb 2018 12:08:05 +0100
+AuthorDate: Thu, 22 Feb 2018 12:08:06 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 22 Feb 2018 22:05:43 +0100
+CommitDate: Thu, 22 Feb 2018 22:05:44 +0100
 
-genirq/matrix: Handle CPU offlining proper
+x86/apic/vector: Handle vector release on CPU unplug correctly
 
-At CPU hotunplug the corresponding per cpu matrix allocator is shut down and
-the allocated interrupt bits are discarded under the assumption that all
-allocated bits have been either migrated away or shut down through the
-managed interrupts mechanism.
+When a irq vector is replaced, then the previous vector is normally
+released when the first interrupt happens on the new vector. If the target
+CPU of the previous vector is already offline when the new vector is
+installed, then the previous vector is silently discarded, which leads to
+accounting issues causing suspend failures and other problems.
 
-This is not true because interrupts which are not started up might have a
-vector allocated on the outgoing CPU. When the interrupt is started up
-later or completely shutdown and freed then the allocated vector is handed
-back, triggering warnings or causing accounting issues which result in
-suspend failures and other issues.
+Adjust the logic so that the previous vector is freed in the underlying
+matrix allocator to ensure that the accounting stays correct.
 
-Change the CPU hotplug mechanism of the matrix allocator so that the
-remaining allocations at unplug time are preserved and global accounting at
-hotplug is correctly readjusted to take the dormant vectors into account.
-
-Fixes: 2f75d9e1c905 ("genirq: Implement bitmap matrix allocator")
+Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
 Reported-by: Yuriy Vostrikov <delamonpansie@gmail.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Yuriy Vostrikov <delamonpansie@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Randy Dunlap <rdunlap@infradead.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180222112316.849980972@linutronix.de
+Link: https://lkml.kernel.org/r/20180222112316.930791749@linutronix.de
 
 ---
- kernel/irq/matrix.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ arch/x86/kernel/apic/vector.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
-index 5187dfe..4c57704 100644
---- a/kernel/irq/matrix.c
-+++ b/kernel/irq/matrix.c
-@@ -16,6 +16,7 @@ struct cpumap {
- 	unsigned int		available;
- 	unsigned int		allocated;
- 	unsigned int		managed;
-+	bool			initialized;
- 	bool			online;
- 	unsigned long		alloc_map[IRQ_MATRIX_SIZE];
- 	unsigned long		managed_map[IRQ_MATRIX_SIZE];
-@@ -81,9 +82,11 @@ void irq_matrix_online(struct irq_matrix *m)
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index 3cc471b..a82ea2e 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -134,21 +134,40 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+ {
+ 	struct apic_chip_data *apicd = apic_chip_data(irqd);
+ 	struct irq_desc *desc = irq_data_to_desc(irqd);
++	bool managed = irqd_affinity_is_managed(irqd);
  
- 	BUG_ON(cm->online);
+ 	lockdep_assert_held(&vector_lock);
  
--	bitmap_zero(cm->alloc_map, m->matrix_bits);
--	cm->available = m->alloc_size - (cm->managed + m->systembits_inalloc);
--	cm->allocated = 0;
-+	if (!cm->initialized) {
-+		cm->available = m->alloc_size;
-+		cm->available -= cm->managed + m->systembits_inalloc;
-+		cm->initialized = true;
-+	}
- 	m->global_available += cm->available;
- 	cm->online = true;
- 	m->online_maps++;
-@@ -370,14 +373,16 @@ void irq_matrix_free(struct irq_matrix *m, unsigned int cpu,
- 	if (WARN_ON_ONCE(bit < m->alloc_start || bit >= m->alloc_end))
- 		return;
+ 	trace_vector_update(irqd->irq, newvec, newcpu, apicd->vector,
+ 			    apicd->cpu);
  
--	if (cm->online) {
--		clear_bit(bit, cm->alloc_map);
--		cm->allocated--;
-+	clear_bit(bit, cm->alloc_map);
-+	cm->allocated--;
-+
-+	if (cm->online)
- 		m->total_allocated--;
--		if (!managed) {
--			cm->available++;
-+
-+	if (!managed) {
-+		cm->available++;
-+		if (cm->online)
- 			m->global_available++;
--		}
+-	/* Setup the vector move, if required  */
+-	if (apicd->vector && cpu_online(apicd->cpu)) {
++	/*
++	 * If there is no vector associated or if the associated vector is
++	 * the shutdown vector, which is associated to make PCI/MSI
++	 * shutdown mode work, then there is nothing to release. Clear out
++	 * prev_vector for this and the offlined target case.
++	 */
++	apicd->prev_vector = 0;
++	if (!apic->vector || apicd->vector == MANAGED_IRQ_SHUTDOWN_VECTOR)
++		goto setnew;
++	/*
++	 * If the target CPU of the previous vector is online, then mark
++	 * the vector as move in progress and store it for cleanup when the
++	 * first interrupt on the new vector arrives. If the target CPU is
++	 * offline then the regular release mechanism via the cleanup
++	 * vector is not possible and the vector can be immediately freed
++	 * in the underlying matrix allocator.
++	 */
++	if (cpu_online(apicd->cpu)) {
+ 		apicd->move_in_progress = true;
+ 		apicd->prev_vector = apicd->vector;
+ 		apicd->prev_cpu = apicd->cpu;
+ 	} else {
+-		apicd->prev_vector = 0;
++		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
++				managed);
  	}
- 	trace_irq_matrix_free(bit, cpu, m, cm);
- }
+ 
++setnew:
+ 	apicd->vector = newvec;
+ 	apicd->cpu = newcpu;
+ 	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
