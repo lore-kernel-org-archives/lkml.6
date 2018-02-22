@@ -1,115 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeBVH2i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:28:38 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43967 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbeBVH2g (ORCPT
+        id S1752575AbeBVHdk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:33:40 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36917 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751681AbeBVHdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:28:36 -0500
-X-Google-Smtp-Source: AH8x224yXSEhNDshV6SEoVsgMd2ILD5e7RcftVDlHS66UQN8X+TPx65kIz4pR9HQP6/jyJRk8qZQgw==
-Subject: Re: [PATCH 03/20] lightnvm: fix capabilities for 2.0 sysfs
-To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
-References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
- <1519205218-26994-4-git-send-email-javier@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <23b494fb-264d-a8ef-6172-5330d5a63bea@lightnvm.io>
-Date: Thu, 22 Feb 2018 08:28:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 22 Feb 2018 02:33:38 -0500
+X-Google-Smtp-Source: AH8x224q6UhtevMb1G5hk2lNe2ohrlbDgnCR9CYcaGTP2MfCkyHiPZS5mDvIYRa9sJTUJ23x36YIrA==
+From: carmark.dlut@gmail.com
+Cc: Lei Xue <carmark.dlut@gmail.com>, David Howells <dhowells@redhat.com>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] fscache: fix a kernel BUG at fs/fscache/operation.c:69!
+Date: Thu, 22 Feb 2018 15:33:30 +0800
+Message-Id: <20180222073330.36259-1-carmark.dlut@gmail.com>
+X-Mailer: git-send-email 2.14.3 (Apple Git-98)
 MIME-Version: 1.0
-In-Reply-To: <1519205218-26994-4-git-send-email-javier@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 10:26 AM, Javier González wrote:
-> Both 1.2 and 2.0 specs define a field for media and controller
-> capabilities. Also, 1.2 defines a separate field dedicated to device
-> capabilities.
-> 
-> In 2.0 sysfs, this values have been mixed. Revert them to the right
-> value.
-> 
-> Signed-off-by: Javier González <javier@cnexlabs.com>
-> ---
->   drivers/nvme/host/lightnvm.c | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-> index 969bb874850c..598abba66f52 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -914,8 +914,8 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
->   
->   	if (strcmp(attr->name, "version") == 0) {
->   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->ver_id);
-> -	} else if (strcmp(attr->name, "capabilities") == 0) {
-> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
-> +	} else if (strcmp(attr->name, "media_capabilities") == 0) {
-> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
->   	} else if (strcmp(attr->name, "read_typ") == 0) {
->   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.trdt);
->   	} else if (strcmp(attr->name, "read_max") == 0) {
-> @@ -993,8 +993,8 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
->   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbem);
->   	} else if (strcmp(attr->name, "multiplane_modes") == 0) {
->   		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mpos);
-> -	} else if (strcmp(attr->name, "media_capabilities") == 0) {
-> -		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mccap);
-> +	} else if (strcmp(attr->name, "capabilities") == 0) {
-> +		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.cap);
->   	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
->   		return scnprintf(page, PAGE_SIZE, "%u\n", NVM_MAX_VLBA);
->   	} else {
-> @@ -1055,7 +1055,7 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
->   
->   /* general attributes */
->   static NVM_DEV_ATTR_RO(version);
-> -static NVM_DEV_ATTR_RO(capabilities);
-> +static NVM_DEV_ATTR_RO(media_capabilities);
->   
->   static NVM_DEV_ATTR_RO(read_typ);
->   static NVM_DEV_ATTR_RO(read_max);
-> @@ -1080,12 +1080,12 @@ static NVM_DEV_ATTR_12_RO(prog_max);
->   static NVM_DEV_ATTR_12_RO(erase_typ);
->   static NVM_DEV_ATTR_12_RO(erase_max);
->   static NVM_DEV_ATTR_12_RO(multiplane_modes);
-> -static NVM_DEV_ATTR_12_RO(media_capabilities);
-> +static NVM_DEV_ATTR_12_RO(capabilities);
->   static NVM_DEV_ATTR_12_RO(max_phys_secs);
->   
->   static struct attribute *nvm_dev_attrs_12[] = {
->   	&dev_attr_version.attr,
-> -	&dev_attr_capabilities.attr,
-> +	&dev_attr_media_capabilities.attr,
->   
->   	&dev_attr_vendor_opcode.attr,
->   	&dev_attr_device_mode.attr,
-> @@ -1108,7 +1108,7 @@ static struct attribute *nvm_dev_attrs_12[] = {
->   	&dev_attr_erase_typ.attr,
->   	&dev_attr_erase_max.attr,
->   	&dev_attr_multiplane_modes.attr,
-> -	&dev_attr_media_capabilities.attr,
-> +	&dev_attr_capabilities.attr,
->   	&dev_attr_max_phys_secs.attr,
->   
->   	NULL,
-> @@ -1134,7 +1134,7 @@ static NVM_DEV_ATTR_20_RO(reset_max);
->   
->   static struct attribute *nvm_dev_attrs_20[] = {
->   	&dev_attr_version.attr,
-> -	&dev_attr_capabilities.attr,
-> +	&dev_attr_media_capabilities.attr,
->   
->   	&dev_attr_groups.attr,
->   	&dev_attr_punits.attr,
-> 
+From: Lei Xue <carmark.dlut@gmail.com>
 
-With the mccap changes, it should make sense to keep the capabilities as is.
+There is a potential race in fscache operation enqueuing for reading and
+copying multiple pages from cachefiles to netfs.
+Under some heavy load system, it will happen very often.
+
+If this race occurs, an oops similar to the following is seen:
+
+ kernel BUG at fs/fscache/operation.c:69!
+ invalid opcode: 0000 [#1] SMP
+ …
+ #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
+ #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
+ #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
+ #3 [ffff883fff083a30] die at ffffffff8101859b
+ #4 [ffff883fff083a60] do_trap at ffffffff8163d860
+ #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
+ #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
+    [exception RIP: fscache_enqueue_operation+246]
+    RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
+    RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
+    RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
+    RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
+    R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
+    R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+ #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
+ #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
+ #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
+
+Signed-off-by: Lei Xue <carmark.dlut@gmail.com>
+---
+ fs/cachefiles/rdwr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 883bc7bb12c5..9d5d13e150fb 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -58,9 +58,9 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 
+ 	spin_lock(&object->work_lock);
+ 	list_add_tail(&monitor->op_link, &monitor->op->to_do);
++	fscache_enqueue_retrieval(monitor->op);
+ 	spin_unlock(&object->work_lock);
+ 
+-	fscache_enqueue_retrieval(monitor->op);
+ 	return 0;
+ }
+ 
+-- 
+2.14.3 (Apple Git-98)
