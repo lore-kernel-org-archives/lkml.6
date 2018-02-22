@@ -1,131 +1,151 @@
-Return-Path: <rafael.j.wysocki@intel.com>
-X-Google-Smtp-Source: AH8x224TaSh65Xg5m8IkD8AE/3Db0HDHmKfd7SRTCZKAp2RzPwQtMxDcuM+9FY6C1ldDPKPqNyt9
-ARC-Seal: i=1; a=rsa-sha256; t=1519306317; cv=none;
+Return-Path: <rjwysocki@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519320252; cv=none;
         d=google.com; s=arc-20160816;
-        b=ANw/Hgcasxmx77jNyrErDnwQfup/AMk2ZnDXCXi9iUlQ8H6z6PFI/Cctho3VoFX4cK
-         y1dILGWiKSem/JqoccLCBfOcljZUpEadPOSdS235BAzIGnyEgbJONC+D8FjqjdjkUG87
-         Z1EcAr0o7AtWeNVa4oLciI6+3w/RxZCwgd2IhllNSCLZ9S81Ypr/P3O6XaN+pcTw0xpu
-         VD/OoaByWeH3LIxZwmoKLN4nJEJtEQrnKPONml49Atl1opHDwly12VqXpAXTD3orB5BA
-         zxNWcnkxL1kLG2hTt7mIH7gkV00f114WGdAFNP3Woaxqp08dJFphLYPpXttRvb3RNsJX
-         Js3g==
+        b=dmhdvSsyFOcP6+8UzewQHs8UwM0anrYzuESu2N0TD1F1pRpoV0u1TJT3rIkUHFcGgc
+         XzK68cciKP4RfBnW4gqWH9olGr5I1Cyo54qyCRBDErXLEE1UYjmUbkWg7/nQsQJfxL7t
+         E2eVg2FX0/r8sey81Ux4LHN6jBZMVo/cmAjnEM75hN+zLIdzQSfgKG1bRdTzD5Ug5cz7
+         KIQ2x3u4HhFl1S9EyzkWgHXUTVWJNYG8G+HfQlOxUBJ9NCADVp9sLI2runtojnUnntgf
+         HQRyMMiJOpSBJn2Q5eUIB3tRLknKUN6niFw+zGBOHtpPPRZjt7Ul0WF3yEc6CjXUtdB8
+         xEbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:cc:to
-         :subject:arc-authentication-results;
-        bh=rF5185uwy2ykuYkyjJeNwTqaWdVKxXqn64ifofv8Tio=;
-        b=wBtPqxNR0zCOFlDJeKvhUqbJYvlmNOyMB5onqVQijGpD1edUc31BfAqi4moFgeNfLb
-         rEMxfy3XSH6+MpoEjvzwNwKsdrYy8i+GFEmTobsOIhQtTe0yEZIyIDghFxPxmxEnKgU6
-         tuy9NlYBD4mt42cOCzQ9OLCSwS4nrFvfAC356+ox8UC1eLdjQ0c8Iuz3BU/57iiSLJGt
-         dv7UHacieKA0dApGF2MggtrfRAEV7ZItpX5XQNJ7pxsIIHEfryb9C4cw5Fg4uzhUkaQd
-         MEwOL+O8jpUX3+DBmtZqDqB/tecJjP95kFYVAyWKwbDg9Ft4tIBrDlRziOCOZkQM2XSr
-         lPuQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=H4nlkKSvgH6/ZnNgXdXhxkgutKXxNf1u+DP0z7j/Nys=;
+        b=yrpgpVGWMbJcljJBalCgRf3wm3Q2Yl3yo6xBLxdgjsFl0mK8eJcxb4dv1aIuzA/ZAv
+         DIVfg60dKvJsFv6CkEhHD7O6Qs7zo9wEOANyCsGmhY/Jx9n4wpyfJXtYY5zloZoWXujc
+         oNRjyMvLEUhH7JMzHgCjim8kJb0jCDSWCbTDbyjOdTG7K11fmLyskqAGA9DPPoQPzAaz
+         2xEyS0hdPosgym7IreOCLbH3Pri/8AbEyPqTtNm68EC2cKWsZuuK6aPZMjq44mp7jm0d
+         iTMn6tEtqOHLU5XxHkUCqZKr+2Xq1QqqcOxXdk9q9EgfV5BN6j2H0kMdo8IJOpadDC+c
+         5dkg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rafael.j.wysocki@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=rafael.j.wysocki@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TA8XJUeO;
+       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rafael.j.wysocki@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=rafael.j.wysocki@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="177240041"
-Subject: Re: [PATCH v1 2/2] PCI: Allow user to request power management of
- conventional and hotplug bridges
-To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>,
- Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
- Mathias Nyman <mathias.nyman@intel.com>, Linux PM
- <linux-pm@vger.kernel.org>, Mika Westerberg
- <mika.westerberg@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Peter Wu <peter@lekensteyn.nl>, Qipeng Zha <qipeng.zha@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andreas Noever <andreas.noever@gmail.com>, Dave Airlie <airlied@gmail.com>,
- Qi Zheng <qi.zheng@intel.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TA8XJUeO;
+       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
+X-Google-Smtp-Source: AG47ELtZHTELlrHiS2kU4LFb0Ue/4iqm1xhu/aGcC+T3c1yOcv37Xv/NPmlkvzBegTiqIS5o+tbS6/URnackhDg96eE=
+MIME-Version: 1.0
+Sender: rjwysocki@gmail.com
+In-Reply-To: <93faaf7b-5f9a-72e7-7816-47b83887740d@intel.com>
 References: <151908155159.37696.9710083237704994886.stgit@bhelgaas-glaptop.roam.corp.google.com>
  <151908204614.37696.12828004282495415825.stgit@bhelgaas-glaptop.roam.corp.google.com>
  <CAJZ5v0irpPi4PXPHWaSpa3=MpUY4Sg3C-iHd0LPQN+FN-VTRpQ@mail.gmail.com>
  <20180220181554.GA32228@bhelgaas-glaptop.roam.corp.google.com>
- <20180222131834.GA5527@wunner.de>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <93faaf7b-5f9a-72e7-7816-47b83887740d@intel.com>
-Date: Thu, 22 Feb 2018 14:31:52 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180222131834.GA5527@wunner.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+ <20180222131834.GA5527@wunner.de> <93faaf7b-5f9a-72e7-7816-47b83887740d@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 Feb 2018 18:24:12 +0100
+X-Google-Sender-Auth: Y1rlqqt1hRxhMeDkxnjCJGb1DH8
+Message-ID: <CAJZ5v0jy8Bz1xe_rVFkbzKeS04N=mBihaB6rgnL_g6myqXFGgw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] PCI: Allow user to request power management of
+ conventional and hotplug bridges
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linux PCI <linux-pci@vger.kernel.org>, Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+	Mathias Nyman <mathias.nyman@intel.com>, Linux PM <linux-pm@vger.kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Wu <peter@lekensteyn.nl>,
+	Qipeng Zha <qipeng.zha@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andreas Noever <andreas.noever@gmail.com>, Dave Airlie <airlied@gmail.com>,
+	Qi Zheng <qi.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592872976935903628?=
-X-GMAIL-MSGID: =?utf-8?q?1593108141855291535?=
+X-GMAIL-MSGID: =?utf-8?q?1593122753341640237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2/22/2018 2:18 PM, Lukas Wunner wrote:
-> On Tue, Feb 20, 2018 at 12:15:54PM -0600, Bjorn Helgaas wrote:
->> Basically I was hoping to partially rectify what I think was a mistake
->> on my part when we merged this.  9d26d3a8f1b0 ("PCI: Put PCIe ports
->> into D3 during suspend") is somewhat misleading because it suggests
->> that PCI bridge power management can only be supported on non-hotplug
->> PCIe ports, when in fact this was mostly a question of testing and "we
->> know this works on the systems we care about so we're going to
->> minimize our risk by excluding others".  These constraints seem pretty
->> Intel-centric and it's not clear how or whether they apply to other
->> architectures.
+On Thu, Feb 22, 2018 at 2:31 PM, Rafael J. Wysocki
+<rafael.j.wysocki@intel.com> wrote:
+> On 2/22/2018 2:18 PM, Lukas Wunner wrote:
 >>
->> Adding the comments will help with that some, but in general I don't
->> like to artificially limit feature support because it reduces testing
->> exposure and makes future maintenance more difficult.
+>> On Tue, Feb 20, 2018 at 12:15:54PM -0600, Bjorn Helgaas wrote:
+>>>
+>>> Basically I was hoping to partially rectify what I think was a mistake
+>>> on my part when we merged this.  9d26d3a8f1b0 ("PCI: Put PCIe ports
+>>> into D3 during suspend") is somewhat misleading because it suggests
+>>> that PCI bridge power management can only be supported on non-hotplug
+>>> PCIe ports, when in fact this was mostly a question of testing and "we
+>>> know this works on the systems we care about so we're going to
+>>> minimize our risk by excluding others".  These constraints seem pretty
+>>> Intel-centric and it's not clear how or whether they apply to other
+>>> architectures.
+>>>
+>>> Adding the comments will help with that some, but in general I don't
+>>> like to artificially limit feature support because it reduces testing
+>>> exposure and makes future maintenance more difficult.
+>>>
+>>> For example, we disallow D3 for hotplug bridges.  I don't think the
+>>> spec requires that, so the fact that we put that limitation in
+>>> suggests that there was some issue we didn't fully understand, and now
+>>> it will be hard to go back and figure that out if and when we *do*
+>>> want to support D3 for hotplug bridges.
 >>
->> For example, we disallow D3 for hotplug bridges.  I don't think the
->> spec requires that, so the fact that we put that limitation in
->> suggests that there was some issue we didn't fully understand, and now
->> it will be hard to go back and figure that out if and when we *do*
->> want to support D3 for hotplug bridges.
-> Some x86 machines which handle hotplug in firmware, rather than natively
-> by the OS, require that the OS doesn't transition them to D3hot behind
-> the firmware's back.  That's the reason why Mika excluded them from
-> runtime PM:
-> https://bugzilla.kernel.org/show_bug.cgi?id=53811
+>> Some x86 machines which handle hotplug in firmware, rather than natively
+>> by the OS, require that the OS doesn't transition them to D3hot behind
+>> the firmware's back.  That's the reason why Mika excluded them from
+>> runtime PM:
+>> https://bugzilla.kernel.org/show_bug.cgi?id=53811
+>>
+>> If the OS handles hotplug natively, transitioning the ports to D3hot
+>> should be fine in theory.  I submitted this series last May to extend
+>> runtime PM to those:
+>> https://www.spinics.net/lists/linux-pci/msg60962.html
+>>
+>> However Ashok Raj tested them on a Xeon-SP system and got Hardware Errors:
+>> https://lkml.org/lkml/2017/5/3/480
+>>
+>> I'm not sure if I've done anything wrong in that series or if we're
+>> dealing with an incompatibility of this particular platform with D3hot
+>> on hotplug ports.
 >
-> If the OS handles hotplug natively, transitioning the ports to D3hot
-> should be fine in theory.  I submitted this series last May to extend
-> runtime PM to those:
-> https://www.spinics.net/lists/linux-pci/msg60962.html
 >
-> However Ashok Raj tested them on a Xeon-SP system and got Hardware Errors:
-> https://lkml.org/lkml/2017/5/3/480
+> Thanks for mentioning that, and for the pointers!
 >
-> I'm not sure if I've done anything wrong in that series or if we're
-> dealing with an incompatibility of this particular platform with D3hot
-> on hotplug ports.
-
-Thanks for mentioning that, and for the pointers!
-
-> We do need runtime PM on hotplug ports to power off Thunderbolt
-> controllers when nothing is plugged in.  That saves 1.5 W, so a
-> noticeable amount of power.  I was going to respin the series one
-> of these days, I think the best I can do is continue to forbid
-> runtime PM on hotplug ports by default, but whitelist it for
-> Thunderbolt and allow manually enabling it on other platforms via
-> the command line.  That way, vendors are put in a position to
-> validate their platforms for runtime PM of hotplug ports, and
-> perhaps someday we can enable it for all platforms by default,
-> but with a BIOS cut-off date.
+>> We do need runtime PM on hotplug ports to power off Thunderbolt
+>> controllers when nothing is plugged in.  That saves 1.5 W, so a
+>> noticeable amount of power.  I was going to respin the series one
+>> of these days, I think the best I can do is continue to forbid
+>> runtime PM on hotplug ports by default, but whitelist it for
+>> Thunderbolt and allow manually enabling it on other platforms via
+>> the command line.  That way, vendors are put in a position to
+>> validate their platforms for runtime PM of hotplug ports, and
+>> perhaps someday we can enable it for all platforms by default,
+>> but with a BIOS cut-off date.
+>>
+>> As for the existing 2015 cut-off for non-hotplug ports, I remember
+>> Rafael writing that we may try to slowly push the cut-off further
+>> back into the past and stop as soon as problems are reported.
+>> That hasn't happened yet because noone had a need for it.
 >
-> As for the existing 2015 cut-off for non-hotplug ports, I remember
-> Rafael writing that we may try to slowly push the cut-off further
-> back into the past and stop as soon as problems are reported.
-> That hasn't happened yet because noone had a need for it.
+>
+> Right.
+>
+> There's more background related to this particular thing worth mentioning
+> IMO.  I'll write about it later today.
 
-Right.
+It is generally advisable to realize that in many cases platform
+validation is relative to the specific software stack the given
+platform is going to ship with.  If there are hardware (firmware,
+similar) features in the platform that aren't exercised by that
+software stack, they may receive limited testing coverage and they may
+not be reliable in practice even though the formal specification of
+the hardware etc may require them to be functional.
 
-There's more background related to this particular thing worth 
-mentioning IMO.  I'll write about it later today.
+Now, I'm not aware of any OS doing PCI-to-PCI bridge power management
+in a serious way.  It is formally there in the PCI PM spec, but it is
+optional and that spec itself was separate from the PCI proper in the
+past.  AFAICS, PM is mandatory in PCIe only.
+
+For this reason, there is a huge risk related to enabling PM on
+PCI-to-PCI bridges which is why we don't do that.
+
+Also nobody hadn't really done runtime PM even on PCIe in practice
+before 2009 and power management of ports started to be done in the
+Windows 8 time frame, presumably because of Connected Standby.  It
+generally is risky to assume it to work in hardware that shipped
+earlier and that's the reason for the cut-off date: we knew that there
+had to be a cut-off, but there's no reliable science on how far in the
+past to put it, so we chose a date relatively close to "now" with an
+option to move it back if need be.
 
 Thanks,
 Rafael
