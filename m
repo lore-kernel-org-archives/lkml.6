@@ -1,138 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeBVBpM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 20:45:12 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35851 "EHLO mga05.intel.com"
+        id S1751803AbeBVBwU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 20:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751732AbeBVBpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 20:45:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,376,1515484800";
-   d="scan'208";a="19499276"
-Date: Wed, 21 Feb 2018 17:45:06 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Subject: [PATCH] efivarfs: Limit the rate for non-root to read files
-Message-ID: <20180222014505.2l76ccrrs36y3b26@agluck-desk>
-References: <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
- <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
- <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
- <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
- <20180221182104.GI3231@tassilo.jf.intel.com>
- <20180221194731.t7jowrmicvaggu3x@agluck-desk>
- <CA+55aFzy89V13rSxGQy77Bb08qpUpH+J=trcjooKQhsAFbgrVw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
- <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
+        id S1751645AbeBVBwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 20:52:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9315B20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 21 Feb 2018 20:52:15 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 04/13] Drop a bunch of metag references
+Message-ID: <20180221205215.40fa4407@gandalf.local.home>
+In-Reply-To: <20180221233825.10024-5-jhogan@kernel.org>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+        <20180221233825.10024-5-jhogan@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each read from a file in efivarfs results in two calls to EFI
-(one to get the file size, another to get the actual data).
+On Wed, 21 Feb 2018 23:38:16 +0000
+James Hogan <jhogan@kernel.org> wrote:
 
-On X86 these EFI calls result in broadcast system management
-interrupts (SMI) which affect performance of the whole system.
-A malicious user can loop performing reads from efivarfs bringing
-the system to its knees.
+> Now that arch/metag/ has been removed, drop a bunch of metag references
+> in various codes across the whole tree:
+>  - VM_GROWSUP and __VM_ARCH_PECIFIC_1.
+>  - MT_METAG_* ELF note types.
+>  - METAG Kconfig dependencies (FRAME_POINTER) and ranges
+>    (MAX_STACK_SIZE_MB).
+>  - metag cases in tools (checkstack.pl, recordmcount.c, perf).
+> 
+> Signed-off-by: James Hogan <jhogan@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-metag@vger.kernel.org
+> ---
+>  include/linux/mm.h             |  2 --
 
-Linus suggested per-user rate limit to solve this.
+>  include/trace/events/mmflags.h |  2 +-
 
-So we add a ratelimit structure to "user_struct" and initialize
-it for the root user for no limit. When allocating user_struct for
-other users we set the limit to 100 per second. This could be used
-for other places that want to limit the rate of some detrimental
-user action.
+>  include/uapi/linux/elf.h       |  3 ---
+>  lib/Kconfig.debug              |  2 +-
+>  mm/Kconfig                     |  7 +++----
+>  scripts/checkstack.pl          |  4 ----
 
-In efivarfs if the limit is exceeded when reading, we sleep for 10ms.
+>  scripts/recordmcount.c         | 20 --------------------
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- fs/efivarfs/file.c         | 4 ++++
- include/linux/sched/user.h | 4 ++++
- kernel/user.c              | 3 +++
- 3 files changed, 11 insertions(+)
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index 5f22e74bbade..7bcf5b041028 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/efi.h>
-+#include <linux/delay.h>
- #include <linux/fs.h>
- #include <linux/slab.h>
- #include <linux/mount.h>
-@@ -74,6 +75,9 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
- 	ssize_t size = 0;
- 	int err;
- 
-+	if (!__ratelimit(&file->f_cred->user->ratelimit))
-+		usleep_range(10000, 10000);
-+
- 	err = efivar_entry_size(var, &datasize);
- 
- 	/*
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index 0dcf4e480ef7..96fe289c4c6e 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/uidgid.h>
- #include <linux/atomic.h>
-+#include <linux/ratelimit.h>
- 
- struct key;
- 
-@@ -41,6 +42,9 @@ struct user_struct {
-     defined(CONFIG_NET)
- 	atomic_long_t locked_vm;
- #endif
-+
-+	/* Miscellaneous per-user rate limit */
-+	struct ratelimit_state ratelimit;
- };
- 
- extern int uids_sysfs_init(void);
-diff --git a/kernel/user.c b/kernel/user.c
-index 9a20acce460d..36288d840675 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -101,6 +101,7 @@ struct user_struct root_user = {
- 	.sigpending	= ATOMIC_INIT(0),
- 	.locked_shm     = 0,
- 	.uid		= GLOBAL_ROOT_UID,
-+	.ratelimit	= RATELIMIT_STATE_INIT(root_user.ratelimit, 0, 0),
- };
- 
- /*
-@@ -191,6 +192,8 @@ struct user_struct *alloc_uid(kuid_t uid)
- 
- 		new->uid = uid;
- 		atomic_set(&new->__count, 1);
-+		ratelimit_state_init(&new->ratelimit, HZ, 100);
-+		ratelimit_set_flags(&new->ratelimit, RATELIMIT_MSG_ON_RELEASE);
- 
- 		/*
- 		 * Before adding this, check whether we raced
--- 
-2.14.1
+-- Steve
+
+
+>  tools/perf/perf-sys.h          |  4 ----
+>  8 files changed, 5 insertions(+), 39 deletions(-)
+
+
+
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> index dbe1bb058c09..a81cffb76d89 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -115,7 +115,7 @@ IF_HAVE_PG_IDLE(PG_idle,		"idle"		)
+>  #define __VM_ARCH_SPECIFIC_1 {VM_PAT,     "pat"           }
+>  #elif defined(CONFIG_PPC)
+>  #define __VM_ARCH_SPECIFIC_1 {VM_SAO,     "sao"           }
+> -#elif defined(CONFIG_PARISC) || defined(CONFIG_METAG) || defined(CONFIG_IA64)
+> +#elif defined(CONFIG_PARISC) || defined(CONFIG_IA64)
+>  #define __VM_ARCH_SPECIFIC_1 {VM_GROWSUP,	"growsup"	}
+>  #elif !defined(CONFIG_MMU)
+>  #define __VM_ARCH_SPECIFIC_1 {VM_MAPPED_COPY,"mappedcopy"	}
+
+
+> diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+> index 16e086dcc567..8c9691c3329e 100644
+> --- a/scripts/recordmcount.c
+> +++ b/scripts/recordmcount.c
+> @@ -33,20 +33,6 @@
+>  #include <string.h>
+>  #include <unistd.h>
+>  
+> -/*
+> - * glibc synced up and added the metag number but didn't add the relocations.
+> - * Work around this in a crude manner for now.
+> - */
+> -#ifndef EM_METAG
+> -#define EM_METAG      174
+> -#endif
+> -#ifndef R_METAG_ADDR32
+> -#define R_METAG_ADDR32                   2
+> -#endif
+> -#ifndef R_METAG_NONE
+> -#define R_METAG_NONE                     3
+> -#endif
+> -
+>  #ifndef EM_AARCH64
+>  #define EM_AARCH64	183
+>  #define R_AARCH64_NONE		0
+> @@ -538,12 +524,6 @@ do_file(char const *const fname)
+>  			gpfx = '_';
+>  			break;
+>  	case EM_IA_64:	 reltype = R_IA64_IMM64;   gpfx = '_'; break;
+> -	case EM_METAG:	 reltype = R_METAG_ADDR32;
+> -			 altmcount = "_mcount_wrapper";
+> -			 rel_type_nop = R_METAG_NONE;
+> -			 /* We happen to have the same requirement as MIPS */
+> -			 is_fake_mcount32 = MIPS32_is_fake_mcount;
+> -			 break;
+>  	case EM_MIPS:	 /* reltype: e_class    */ gpfx = '_'; break;
+>  	case EM_PPC:	 reltype = R_PPC_ADDR32;   gpfx = '_'; break;
+>  	case EM_PPC64:	 reltype = R_PPC64_ADDR64; gpfx = '_'; break;
