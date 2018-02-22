@@ -1,81 +1,126 @@
-Return-Path: <kernel-hardening-return-11818-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x224p3Ig/bUyz3X502hinhEmhzV2ObvfhnRrHIVxKWYASfNy42CWhK8kt/Y89/klFwIzo0pln
-ARC-Seal: i=1; a=rsa-sha256; t=1519008690; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AH8x227KB9c/TiFwyC3yPGsU+zswcMM8yn5HgeIkyJ+qC6Uehp5x7RJBHIN6VYNf5j0XOnX6+EL4
+ARC-Seal: i=1; a=rsa-sha256; t=1519264959; cv=none;
         d=google.com; s=arc-20160816;
-        b=zy4AebXxM63WQkoI4XE+m+Xvr8ajdPXJuOBve9Kw/P9Gv3/0Dl6yqJ7bmtMeofkGB6
-         K3ZS7a3aW/2aZ3QBQFPFBf3rSIMBNL1H9W2o8w5WuLBN6JdIekoq25ggvxtld0nDK9sj
-         wHintlZVQc12okk8xTie+9O5yXoxEI6eRgibb9MXj6l1SrYLDqnvvSR22Nz5vNs3ASRl
-         dMEv0ZTntPBW4TZgTEATAiQny+yZXUvWy4rUEFq/fhpp6EqDdwfEqXlIO7FZ/Yzz+6vo
-         Jkr5yudnz7u7gUUugY4U22QxFr4NhZ1QGzzOzP7loks+oV4VsApqqT9buuC4XxQI0gxV
-         v86w==
+        b=IooibpwnZ88yH7RyPg/95cvCsaMwHbKc8x3pJSoP7ZUYq2tBdJgfqdgPYMQixlchow
+         n2qIlNC+d1zPebbcqGXX7AoUG7NgZ6sUiB3wgcyTxNYrq91hex2CN2JFmUCHyXTL42s4
+         9LtR4WxW2BW6mpUeqdT2QZQ6ZA3YRktFU0ATxMFnOGkk/h0g11DRBCgd0mBtkHTkg2kP
+         q67M7dtJq7Qf6P1FESHer+0SLNgQx2wXYJAjr4Sv2QCirXYo8BA2UywtslMG3GXbEHjD
+         AOAqTE1gBHJ6XOBWpplA6kzuuoFb9/nku2ps7cPymfBuuqyRTLm2z1u7FE+KtrcMmxVa
+         IFYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=wNKDrZ+zIgYg1yyn1wDiQdiQjjWWzuKIOYt96iYicug=;
-        b=wDQJW43YYukVte78XxOh2ImjBqKCyGAha9mYsgUAmDQWCnwpfIB+PZye4duVAim62C
-         GtX2NiavS2l6JeiikumpkOCyQhXDlScgqrsljUjzbpa6lWPBcUMB3wJqgcuFEB4hppn8
-         08YlWCfGhhIn74XJ6Qa+YPqP9Ji8W5Sx06ZlzjVjKsJlPe+LV8XchQ6FEEX17O4wufkS
-         OlyCGTGT0Y+Ce1iZqk4pB5gnLLNpvjwkkanz/LdW5dHGxVfI3VemfkWCDDWUa5OPlq49
-         aIi/fkDSpZqAG6iLQB3m/WU7mQ8uysBeHvu9wZi+fw74pR/eoUT8+WdjxcWyJ6uqvoxm
-         /e+Q==
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=uOdaqE02KDvBnwisFhHKehPlYYEGpBfdpKTa7MF8pwY=;
+        b=bOqyqoRiAV6I8RFy8v7kZEPAg8iOHpvJ6bDmLVj0LDiQHKV+aTOUA8lUraLG//pF24
+         UKzjWs5H3gxIvnrheOoKFnzvBMlH4nJNBKoTO1GcFYnVSBcQDMr1o258mWo2/tKescH1
+         6Vo9bgCA1orpSny0npTkY3Qglfae2XasfbHYV+FH5tAkrbzn/xyMUy+GT5qhfzQ2yCwc
+         21b4Ca2bbmVJRiOO91zoHf2xRJihchwC/JsKQfrR0TuHFM6whi1+N5/+U2yrUeQrgKWb
+         //Pup3t46q3tDxDg+tsmc/KNoSi4TgV8s6UVc0qoRJLycjZGvD0kL1SH7Yibzr/fvIzu
+         r/uw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=NNMRITuz;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=QPo0GJMy;
-       spf=pass (google.com: domain of kernel-hardening-return-11818-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11818-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=KIoV3kOE;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=NNMRITuz;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=QPo0GJMy;
-       spf=pass (google.com: domain of kernel-hardening-return-11818-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11818-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:lTuKWvsI4i8LGoWT9uffqMzWVge5xxNw2ptt6fO7lAdhGGCJUkrgHQ>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Kernel Hardening <kernel-hardening@lists.openwall.com>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	Tycho Andersen <tycho@tycho.ws>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/4] leaking_addresses: do not parse binary files
-Date: Mon, 19 Feb 2018 13:50:46 +1100
-Message-Id: <1519008649-15782-2-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519008649-15782-1-git-send-email-me@tobin.cc>
-References: <1519008649-15782-1-git-send-email-me@tobin.cc>
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=KIoV3kOE;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751812AbeBVB4Q (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 20:56:16 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:37310 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751798AbeBVB4O (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 21 Feb 2018 20:56:14 -0500
+From: Ram Pai <linuxram@us.ibm.com>
+To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, akpm@linux-foundation.org, dave.hansen@intel.com,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
+        linuxram@us.ibm.com, arnd@arndb.de
+Subject: [PATCH v12 00/22] selftests, powerpc, x86 : Memory Protection Keys
+Date: Wed, 21 Feb 2018 17:55:19 -0800
+Message-Id: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592796056681057091?=
-X-GMAIL-MSGID: =?utf-8?q?1592796056681057091?=
+X-GMAIL-THRID: =?utf-8?q?1593064774462844473?=
+X-GMAIL-MSGID: =?utf-8?q?1593064774462844473?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently script parses binary files.  Since we are scanning for
-readable kernel addresses there is no need to parse binary files.  We
-can use Perl to check if file is binary and skip parsing it if so.
+Memory protection keys enables an application to protect its address space from
+inadvertent access by its own code.
 
-Do not parse binary files.
+This feature is now enabled on powerpc architecture and integrated in
+4.16-rc1.  The patches move the selftests to arch neutral directory
+and enhance their test coverage. 
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- scripts/leaking_addresses.pl | 4 ++++
- 1 file changed, 4 insertions(+)
+Test
+----
+Verified for correctness on powerpc
+and on x86 architectures(using EC2 ubuntu VM instance).
 
-diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-index 05906f6cf6b9..3d5c3096aac8 100755
---- a/scripts/leaking_addresses.pl
-+++ b/scripts/leaking_addresses.pl
-@@ -462,6 +462,10 @@ sub parse_file
- 		return;
- 	}
- 
-+	if (! -T $file) {
-+		return;
-+	}
-+
- 	if (skip_parse($file)) {
- 		dprint "skipping file: $file\n";
- 		return;
--- 
-2.7.4
+History:
+-------
+
+version 12: 
+	(1) fixed the offset of pkey field in the siginfo structure for
+		x86_64 and powerpc. And tries to use the actual field
+		if the headers have it defined.
+version 11:
+	(1) fixed a deadlock in the ptrace testcase.
+
+version 10 and prior:
+	(1) moved the testcase to arch neutral directory
+	(2) split the changes into incremental patches.
+
+Ram Pai (21):
+  selftests/x86: Move protecton key selftest to arch neutral directory
+  selftests/vm: rename all references to pkru to a generic name
+  selftests/vm: move generic definitions to header file
+  selftests/vm: typecast the pkey register
+  selftests/vm: generic function to handle shadow key register
+  selftests/vm: fix the wrong assert in pkey_disable_set()
+  selftests/vm: fixed bugs in pkey_disable_clear()
+  selftests/vm: clear the bits in shadow reg when a pkey is freed.
+  selftests/vm: fix alloc_random_pkey() to make it really random
+  selftests/vm: introduce two arch independent abstraction
+  selftests/vm: pkey register should match shadow pkey
+  selftests/vm: generic cleanup
+  selftests/vm: powerpc implementation for generic abstraction
+  selftests/vm: clear the bits in shadow reg when a pkey is freed.
+  selftests/vm: powerpc implementation to check support for pkey
+  selftests/vm: fix an assertion in test_pkey_alloc_exhaust()
+  selftests/vm: associate key on a mapped page and detect access
+    violation
+  selftests/vm: associate key on a mapped page and detect write
+    violation
+  selftests/vm: detect write violation on a mapped access-denied-key
+    page
+  selftests/vm: testcases must restore pkey-permissions
+  selftests/vm: sub-page allocator
+
+Thiago Jung Bauermann (1):
+  selftests/vm: Fix deadlock in protection_keys.c
+
+ tools/testing/selftests/vm/Makefile           |    1 +
+ tools/testing/selftests/vm/pkey-helpers.h     |  434 ++++++++
+ tools/testing/selftests/vm/protection_keys.c  | 1471 +++++++++++++++++++++++++
+ tools/testing/selftests/x86/Makefile          |    2 +-
+ tools/testing/selftests/x86/pkey-helpers.h    |  223 ----
+ tools/testing/selftests/x86/protection_keys.c | 1407 -----------------------
+ 6 files changed, 1907 insertions(+), 1631 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/pkey-helpers.h
+ create mode 100644 tools/testing/selftests/vm/protection_keys.c
+ delete mode 100644 tools/testing/selftests/x86/pkey-helpers.h
+ delete mode 100644 tools/testing/selftests/x86/protection_keys.c
+
