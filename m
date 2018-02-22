@@ -1,60 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933059AbeBVPuj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:50:39 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44572 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932980AbeBVPuh (ORCPT
+        id S933088AbeBVPvs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:51:48 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54796 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933002AbeBVPvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:50:37 -0500
-X-Google-Smtp-Source: AH8x225IOI7S6hAKz2QNokYJQWrdv3P41cr8p4jpj8k1CVkimKdID0rqSFTmjE2thBp5x6gtteRNVu/jcPMa847xfPM=
+        Thu, 22 Feb 2018 10:51:47 -0500
+Date: Thu, 22 Feb 2018 16:51:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 05/17] lockdep: Extend __bfs() to
+ work with multiple kinds of dependencies
+Message-ID: <20180222155143.GV25235@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-6-boqun.feng@gmail.com>
+ <20180222142614.GR25201@hirez.programming.kicks-ass.net>
+ <20180222151210.jwxjchywk4jfecyf@tardis>
+ <20180222153034.GO25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <26d1b3f2-fc7d-2644-5bdb-5238766fc4d4@redhat.com>
-References: <20180222114558.1307380-1-arnd@arndb.de> <26d1b3f2-fc7d-2644-5bdb-5238766fc4d4@redhat.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Feb 2018 16:50:36 +0100
-X-Google-Sender-Auth: LoUf7MK6LYn1dV-Bp0P3tguIjkQ
-Message-ID: <CAK8P3a0z4FV5Y7XqMPzJ_WpPAx+pqr9OVR9JKm2+6ramSiqAsw@mail.gmail.com>
-Subject: Re: [PATCH] debugobjects: fix debug_objects_freed accounting
-To: Waiman Long <longman@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>, Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222153034.GO25181@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 2:58 PM, Waiman Long <longman@redhat.com> wrote:
-> On 02/22/2018 06:45 AM, Arnd Bergmann wrote:
->> The removal of the batched object freeing has caused the debug_objects_freed
->> to become read-only, and the reading is inside an ifdef, so gcc warns that it
->> is completely unused without CONFIG_DEBUG_FS:
->>
->> lib/debugobjects.c:71:14: error: 'debug_objects_freed' defined but not used [-Werror=unused-variable]
->>
->> Assuming we are still interested in this number, this adds back code to
->> count every instance we are about to free while we still hold the spinlock.
->>
->> Fixes: 636e1970fd7d ("debugobjects: Use global free list in free_object()")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  lib/debugobjects.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
->> index faab2c4ea024..748288dba512 100644
->> --- a/lib/debugobjects.c
->> +++ b/lib/debugobjects.c
->> @@ -235,6 +235,9 @@ static void free_obj_work(struct work_struct *work)
->>               hlist_move_list(&obj_to_free, &tofree);
->
-> It would be simpler to just do:
->                debug_objects_freed += obj_nr_tofree;
->
+On Thu, Feb 22, 2018 at 04:30:34PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 11:12:10PM +0800, Boqun Feng wrote:
+> > On Thu, Feb 22, 2018 at 03:26:14PM +0100, Peter Zijlstra wrote:
+> 
+> > > However, I would suggest:
+> > > 
+> > > static inline bool is_xr(u16 dep)
+> > > {
+> > > 	return !!(dep & (DEP_NR_MASK | DEP_RR_MASK));
+> > > }
+> > > 
+> > > static inline bool is_rx(u16 dep)
+> > > {
+> > > 	return !!(dep & (DEP_RN_MASK | DEP_RR_MASK));
+> > > }
+> > > 
+> > > 		/* Skip *R -> R* relations */
+> > > 		if (have_xr && is_rx(entry->dep))
+> > > 			continue;
+> > 
+> > I don't think this works, if we pick a *R for previous entry, and for
+> > current entry, we have RR, NN and NR, your approach will skip the
+> > current entry, but actually we can pick NN or NR (of course, in __bfs(),
+> > we can greedily pick NN, because if NR causes a deadlock, so does NN).
+> 
+> I don't get it, afaict my suggestion is identical.
+> 
+> You skip condition: pick_dep() < 0, evaluates to:
+> 
+> 	is_rr && (!NN_MASK && !NR_MASK) :=
+> 	is_rr && (RN_MASK | RR_MASK)
+> 
+> Which is exactly what I have.
 
-Right, I missed that, sending v2 now.
+Ooh, I think I see what I did wrong, would something like:
 
-Thanks for the review!
+	if (have_xr && !is_nx(entry-dep))
 
-        Arnd
+work? That's a lot harder to argue about though, still much better than
+that tri-state pick thing.
+
+> If that is satisfied, you set entry->is_rr to pick_dep(), which his
+> harder to evaluate, but is something like:
+> 
+> 	is_rr && NR_MASK || !(NN_MASK | RN_MASK) :=
+> 	is_rr && NR_MASK || (NR_MASK | RR_MASK) :=
+> 	(NR_MASK | RR_MASK)
+> 
+> (because is_rr && RR_MASK will have been skipped)
+> 
+> > > 
+> > > 		entry->have_xr = is_xr(entry->dep);
+
+This one I think is still correct though.
