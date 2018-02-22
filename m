@@ -1,107 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751426AbeBVUIw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:08:52 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42041 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeBVUIs (ORCPT
+        id S1751296AbeBVUPy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:15:54 -0500
+Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61]:40954 "EHLO
+        a8-61.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750776AbeBVUPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:08:48 -0500
-X-Google-Smtp-Source: AH8x225waQVuC1JHLBGHI24IQ11QN2S4rakmxUQzNq0lE+Qrj7LaLuNDbKEVW9K6JFulTGqI7J9FcA==
-Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
-To: Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-References: <20180222143825.1517-1-marcel@ziswiler.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <278c02d3-7fc2-a92e-b309-1da8116e7c41@gmail.com>
-Date: Thu, 22 Feb 2018 23:08:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Feb 2018 15:15:52 -0500
+Date: Thu, 22 Feb 2018 20:15:51 +0000
+From: Jeremy Cline <jeremy@jcline.org>
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Alex Hung <alex.hung@canonical.com>
+Subject: Re: [PATCH] platform/x86: Only activate tablet mode switch on
+ 2-in-1's
+Message-ID: <01000161bf28670e-bfeaa576-853c-4760-a362-d6abdaa474f1-000000@email.amazonses.com>
+References: <1519329522-16919-1-git-send-email-mario.limonciello@dell.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222143825.1517-1-marcel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519329522-16919-1-git-send-email-mario.limonciello@dell.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-SES-Outgoing: 2018.02.22-54.240.8.61
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.02.2018 17:38, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Thu, Feb 22, 2018 at 01:58:42PM -0600, Mario Limonciello wrote:
+> Some laptops such as the XPS 9360 support the intel-vbtn INT33D6
+> interface but don't initialize the bit that intel-vbtn uses to
+> represent switching tablet mode.
 > 
-> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
-> during registration") ULPI has been broken on Tegra20 leading to the
-> following error message during boot:
+> By running this only on real 2-in-1's it shouldn't cause false
+> positives.
 > 
-> [    1.974698] ulpi_phy_power_on: ulpi write failed
-> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
-> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
-> 
-> Debugging through the changes and finally also consulting the TRM
-> revealed that rather than the CDEV2 clock off OSC requiring such pin
-> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
-> just worked by chance of that one having been enabled which Stephen's
-> commit now changed when reparenting sclk away from pll_p_out4 leaving
-> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
-> as the ULPI PHY clock.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
-Indeed CDEV2 clock doesn't exist on Tegra, but there is a CDEV2 pinmux pad
-group. Looks like another clk-related relic from downstream driver that was
-borrowed to upstream and stayed unnoticed for a long time.
-
-I think in practice all T20 boards have CDEV2 configured to PLL_P_OUT4, so this
-patch is correct to me. Probably it would also worth to set CDEV2 parent to
-PLL_P_OUT4 in the clk driver for DT backwards compatibility or even make clk
-driver to read the CDEV2 pinmux config and set the proper parent based on it.
-CC'ed Peter.
-
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-
+> Fixes: 30323fb6d5 ("Support tablet mode switch")
+> Reported-by: Jeremy Cline <jeremy@jcline.org>
+> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
 > ---
+> Note: I also moved the code for detecting tablet into it's own
+> function.  To keep things under 80 lines with if statements was
+> making the code very unreadable otherwise.
 > 
-> Changes in v2:
-> - Updated device tree binding documentation as well.
-> - CCing Dmitry as well.
+>  drivers/platform/x86/intel-vbtn.c | 46 ++++++++++++++++++++++++---------------
+>  1 file changed, 29 insertions(+), 17 deletions(-)
 > 
->  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt | 4 +++-
->  arch/arm/boot/dts/tegra20.dtsi                                   | 2 +-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+> diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
+> index b703d6f..8173307 100644
+> --- a/drivers/platform/x86/intel-vbtn.c
+> +++ b/drivers/platform/x86/intel-vbtn.c
+> @@ -7,6 +7,7 @@
+>   */
+>  
+>  #include <linux/acpi.h>
+> +#include <linux/dmi.h>
+>  #include <linux/input.h>
+>  #include <linux/input/sparse-keymap.h>
+>  #include <linux/kernel.h>
+> @@ -97,9 +98,35 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+>  	dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
+>  }
+>  
+> -static int intel_vbtn_probe(struct platform_device *device)
+> +static void detect_tablet_mode(struct platform_device *device)
+>  {
+> +	const char *chassis_type = dmi_get_system_info(DMI_CHASSIS_TYPE);
+> +	struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
+> +	acpi_handle handle = ACPI_HANDLE(&device->dev);
+>  	struct acpi_buffer vgbs_output = { ACPI_ALLOCATE_BUFFER, NULL };
+> +	union acpi_object *obj;
+> +	acpi_status status;
+> +	int m;
+> +
+> +	if (!(chassis_type && strcmp(chassis_type, "31") == 0))
+> +		goto out;
+> +
+> +	status = acpi_evaluate_object(handle, "VGBS", NULL, &vgbs_output);
+> +	if (ACPI_FAILURE(status))
+> +		goto out;
+> +
+> +	obj = vgbs_output.pointer;
+> +	if (!(obj && obj->type == ACPI_TYPE_INTEGER))
+> +		goto out;
+> +
+> +	m = !(obj->integer.value & TABLET_MODE_FLAG);
+> +	input_report_switch(priv->input_dev, SW_TABLET_MODE, m);
+> +out:
+> +	kfree(vgbs_output.pointer);
+> +}
+> +
+> +static int intel_vbtn_probe(struct platform_device *device)
+> +{
+>  	acpi_handle handle = ACPI_HANDLE(&device->dev);
+>  	struct intel_vbtn_priv *priv;
+>  	acpi_status status;
+> @@ -122,22 +149,7 @@ static int intel_vbtn_probe(struct platform_device *device)
+>  		return err;
+>  	}
+>  
+> -	/*
+> -	 * VGBS being present and returning something means we have
+> -	 * a tablet mode switch.
+> -	 */
+> -	status = acpi_evaluate_object(handle, "VGBS", NULL, &vgbs_output);
+> -	if (ACPI_SUCCESS(status)) {
+> -		union acpi_object *obj = vgbs_output.pointer;
+> -
+> -		if (obj && obj->type == ACPI_TYPE_INTEGER) {
+> -			int m = !(obj->integer.value & TABLET_MODE_FLAG);
+> -
+> -			input_report_switch(priv->input_dev, SW_TABLET_MODE, m);
+> -		}
+> -	}
+> -
+> -	kfree(vgbs_output.pointer);
+> +	detect_tablet_mode(device);
+>  
+>  	status = acpi_install_notify_handler(handle,
+>  					     ACPI_DEVICE_NOTIFY,
+> -- 
+> 2.7.4
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
-> index a9aa79fb90ed..1aa6f2674af5 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
-> @@ -21,7 +21,9 @@ Required properties :
->     - timer: The timeout clock (clk_m). Present if phy_type == utmi.
->     - utmi-pads: The clock needed to access the UTMI pad control registers.
->       Present if phy_type == utmi.
-> -   - ulpi-link: The clock Tegra provides to the ULPI PHY (cdev2).
-> +   - ulpi-link: The clock Tegra provides to the ULPI PHY (usually pad DAP_MCLK2
-> +     with pad group aka "nvidia,pins" cdev2 and pin mux option config aka
-> +     "nvidia,function" pllp_out4).
->       Present if phy_type == ulpi, and ULPI link mode is in use.
->   - resets : Must contain an entry for each entry in reset-names.
->     See ../reset/reset.txt for details.
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 864a95872b8d..e05b6bb2599f 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -741,7 +741,7 @@
->  		phy_type = "ulpi";
->  		clocks = <&tegra_car TEGRA20_CLK_USB2>,
->  			 <&tegra_car TEGRA20_CLK_PLL_U>,
-> -			 <&tegra_car TEGRA20_CLK_CDEV2>;
-> +			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
->  		clock-names = "reg", "pll_u", "ulpi-link";
->  		resets = <&tegra_car 58>, <&tegra_car 22>;
->  		reset-names = "usb", "utmi-pads";
-> 
+
+Tested-by: Jeremy Cline <jeremy@jcline.org>
+
+
+Regards,
+Jeremy
