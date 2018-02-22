@@ -1,191 +1,162 @@
-Return-Path: <amelie.delaunay@st.com>
-X-Google-Smtp-Source: AH8x227LFOEQzI/j2myp29GkB9bmMmoB6vDnXgT4MhYoJj91Q225QeWrBCu7Ctux1f41vDxY5Fcc
-ARC-Seal: i=1; a=rsa-sha256; t=1519294682; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yQViTROfOgZFqxyGPbdEnQ1L0C4Ooz6H2HSugWfhVp+G2elZ05G8JfjC3/VeiyyJeT
-         HHV2awBxtEp71O6i113dLj93k1175wKjhs+fMs5B4SOauVJqfMR/q38uA5sjNr3YDhqj
-         ZGWoaFrl6aXZvUcgMX1I2oXbYBgB9gEnE6dOhn1x67VFTg5vqSRPLWrLL0vcqKijYdvl
-         ZHKpA+5y8v7Qdh1Vy+JPrWeEwiYVQ5wbJVnSaS7z/7lMWqLIdfgIa4J8ubQG4HUThXg5
-         4APGKuNZj5ae+NqEmgt+cFceH2sXxEZHndjzDjN9UHYaZLnpu2ZWF0TuIfW3BE/u/Vf2
-         N9Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id:user-agent
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from
-         :arc-authentication-results;
-        bh=vWHLF8f341DJHaQ0ZVoDWdoclNs3xAdrTW86+3PWP78=;
-        b=RK+zz/b8Cm6BmTfcTUkBi29KpeRpnRAGgew4Eemr4N4+PO/ztlEJRORrqEJTrpDUGG
-         P39sej9YjMFqdC0befdr/n1FLqfhKLJjBFiAae7uqep+ZCMDXoMZWimiXks8EYY4m+l3
-         +iZvjtPs72ClP2p68iOY18YXRKdrF3HBqNPUmC/vxJ9C7O4QNfJFljYYLsFiXItIdrj8
-         biIdeuv9oLvIGXj4946VpLwvtbTLDQelcBlh0cenqyztW5ejTaCsHlKfo3+mcHdDJ+LJ
-         5Fq7KM6tXl5vfpuSfwjzKF0EWAeNhfVV3bpvJ+FtGg5T4foMob6Ghs4RWRh0iv7PK+3L
-         DCMw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of amelie.delaunay@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Alan Stern <stern@rowland.harvard.edu>, Roger Quadros <rogerq@ti.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Tony Prisk
-	<linux@prisktech.co.nz>,
-        "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-757654-1519324092-2-2965964700874527077
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='edu', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519324091; b=TlzWDV+dwwb1VdlLkIX24Xndix0zEnrnocl6z4ERMkMy0tU
+    8whguYA4OZSpfB1rTJybs9EJFqGtXCPlJuBD5tD3yPjE3GWyS4bOxabcwGlkry+F
+    FbGGO3UrBEezo7in0ImYLjxuvYz/PTiDvPuLBmQJErnViZcbxZfl+MqMj3AEdx+8
+    Dnmikxdt9XBDCcqXM7YaFFQUfjVe+NKkgkr6V0+VIH1WqNB0h61DVtTshT4xDGxx
+    6iYZRtCZJzXhQJUqNnk60YzxtYodmBM7JJFg9ZqrXXmLlRBhUk9B63dGmtLV2FjX
+    jC+lT4OBjbF290LBUjaugrXXgg/Xq24z1m/JdRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
+    :message-id:mime-version:content-type:sender:list-id; s=arctest;
+    t=1519324091; bh=dWYUPctTyz+RhMal7QO/1wYfWA+fucgDSfsLsPbMEiU=; b=
+    uQuUEWWXK8RDI21dD08hBEUMuJRclpd8XgAHSFojN3Morzh2Bd/DCsHc8YyyZmGx
+    7pUpSRME8oONGtDwgPuoUHXBcY+bctnJ9RGUkNUmJUFysvJWhm1Y0q6OginZNQzC
+    nDuTCzPmpAABymzxa54zsAHR5Mc1u9srx7VtlaOm0HvwDEjR0uYW24e60q9NxPYi
+    2T3xXO24b3HUxYTOxbZ8gbW5mxfffmcwh9ddAmqtvOqAUar49OmCNFaTTVXhUim+
+    aDoheaYfC/Cjea7f3tG+0VPJRJQoJ7shwx0RT4j9g9hCbVCKQTXxQ1Ta024DLHGh
+    SqTtu5g+KnJ5OMuZ8087Jg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933759AbeBVS15 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 13:27:57 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:48394 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S933521AbeBVS14 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 22 Feb 2018 13:27:56 -0500
+Date: Thu, 22 Feb 2018 13:27:54 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+cc: Roger Quadros <rogerq@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
+        <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v2] usb: host: ehci-platform: add support for optional
  external vbus supply
-Thread-Topic: [PATCH v2] usb: host: ehci-platform: add support for optional
- external vbus supply
-Thread-Index: AQHTqkp3rnXPTZ4feU61xpBLtCmRWqOtQQQAgAAMt4CAAB4FgIAAGxYAgAKglwA=
-Date: Thu, 22 Feb 2018 10:17:52 +0000
-Message-ID: <ec064186-9b0b-eeb4-5501-6bbc1e90da79@st.com>
-References: <Pine.LNX.4.44L0.1802201300400.1428-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1802201300400.1428-100000@iolanthe.rowland.org>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7EE5E52768CD28489DF40538AF765236@st.com>
-Content-Transfer-Encoding: base64
+In-Reply-To: <ec064186-9b0b-eeb4-5501-6bbc1e90da79@st.com>
+Message-ID: <Pine.LNX.4.44L0.1802221325220.1295-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
- signatures=0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592910586052663664?=
-X-GMAIL-MSGID: =?utf-8?q?1593095940083336667?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGksDQoNCk9uIDAyLzIwLzIwMTggMDc6MTAgUE0sIEFsYW4gU3Rlcm4gd3JvdGU6DQo+IE9uIFR1
-ZSwgMjAgRmViIDIwMTgsIFJvZ2VyIFF1YWRyb3Mgd3JvdGU6DQo+IA0KPj4gT24gMjAvMDIvMTgg
-MTY6NDYsIEFtZWxpZSBERUxBVU5BWSB3cm90ZToNCj4+PiBIaSwNCj4+Pg0KPj4+IE9uIDAyLzIw
-LzIwMTggMDM6MDAgUE0sIFJvZ2VyIFF1YWRyb3Mgd3JvdGU6DQo+Pj4+IEhpLA0KPj4+Pg0KPj4+
-PiBPbiAyMC8wMi8xOCAxNDo1OCwgQW1lbGllIERlbGF1bmF5IHdyb3RlOg0KPj4+Pj4gT24gc29t
-ZSBib2FyZHMsIGVzcGVjaWFsbHkgd2hlbiB2YnVzIHN1cHBseSByZXF1aXJlcyBsYXJnZSBjdXJy
-ZW50LA0KPj4+Pj4gYW5kIHRoZSBjaGFyZ2UgcHVtcCBvbiB0aGUgUEhZIGlzbid0IGVub3VnaCwg
-YW4gZXh0ZXJuYWwgdmJ1cyBwb3dlciBzd2l0Y2gNCj4+Pj4+IG1heSBiZSB1c2VkLg0KPj4+Pj4g
-QWRkIHN1cHBvcnQgZm9yIHRoaXMgb3B0aW9uYWwgZXh0ZXJuYWwgdmJ1cyBzdXBwbHkgaW4gZWhj
-aS1wbGF0Zm9ybS4NCj4+Pj4+DQo+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBBbWVsaWUgRGVsYXVuYXkg
-PGFtZWxpZS5kZWxhdW5heUBzdC5jb20+DQo+Pj4+Pg0KPj4+Pj4gLS0tDQo+Pj4+PiBDaGFuZ2Vz
-IGluIHYyOg0KPj4+Pj4gICAgKiBBZGRyZXNzIFJvZ2VyIFF1YWRyb3MgY29tbWVudHM6IG1vdmUg
-cmVndWxhdG9yX2VuYWJsZS9kaXNhYmxlIGZyb20NCj4+Pj4+IGVoY2lfcGxhdGZvcm1fcG93ZXJf
-b24vb2ZmIHRvIGVoY2lfcGxhdGZvcm1fcG9ydF9wb3dlci4NCj4+Pj4+IC0tLQ0KPj4+Pj4gICAg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi91c2ItZWhjaS50eHQgfCAgMSAr
-DQo+Pj4+PiAgICBkcml2ZXJzL3VzYi9ob3N0L2VoY2ktcGxhdGZvcm0uYyAgICAgICAgICAgICAg
-ICAgICB8IDMxICsrKysrKysrKysrKysrKysrKysrKysNCj4+Pj4+ICAgIDIgZmlsZXMgY2hhbmdl
-ZCwgMzIgaW5zZXJ0aW9ucygrKQ0KPj4+Pj4NCj4+Pj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3VzYi1laGNpLnR4dCBiL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvdXNiLWVoY2kudHh0DQo+Pj4+PiBpbmRleCAzZWZkZTEy
-Li5mYzQ4MGNkIDEwMDY0NA0KPj4+Pj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3VzYi91c2ItZWhjaS50eHQNCj4+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy91c2IvdXNiLWVoY2kudHh0DQo+Pj4+PiBAQCAtMTksNiArMTksNyBAQCBP
-cHRpb25hbCBwcm9wZXJ0aWVzOg0KPj4+Pj4gICAgIC0gcGh5cyA6IHBoYW5kbGUgKyBwaHkgc3Bl
-Y2lmaWVyIHBhaXINCj4+Pj4+ICAgICAtIHBoeS1uYW1lcyA6ICJ1c2IiDQo+Pj4+PiAgICAgLSBy
-ZXNldHMgOiBwaGFuZGxlICsgcmVzZXQgc3BlY2lmaWVyIHBhaXINCj4+Pj4+ICsgLSB2YnVzLXN1
-cHBseSA6IHBoYW5kbGUgb2YgcmVndWxhdG9yIHN1cHBseWluZyB2YnVzDQo+Pj4+PiAgICANCj4+
-Pj4NCj4+Pj4gQ2FuIHBsYXRmb3JtcyBoYXZlIG1vcmUgdGhhbiBvbmUgcmVndWxhdG9yIGUuZy4g
-b25lIHJlZ3VsYXRvciBwZXIgcG9ydD8NCj4+Pj4NCj4+Pg0KPj4+IEkgaW1hZ2luZSB0aGF0IHll
-cywgcGxhdGZvcm1zIGNvdWxkIGhhdmUgb25lIHJlZ3VsYXRvciBwZXIgcG9ydC4NCj4+PiBSZWd1
-bGF0b3IgY29uc3VtZXJzIGJpbmRpbmdzIGltcG9zZSBhIDxuYW1lPi1zdXBwbHkgcHJvcGVydHkg
-cGVyDQo+Pj4gcmVndWxhdG9yLCBzbywgd2hhdCBkbyB5b3UgdGhpbmsgYWJvdXQgOg0KPj4+IHZi
-dXMwLXN1cHBseSBmb3IgcG9ydCMwDQo+Pj4gdmJ1czEtc3VwcGx5IGZvciBwb3J0IzENCj4+PiAu
-Li4NCj4+PiB2YnVzTi1zdXBwbHkgZm9yIHBvcnQjTg0KPj4+DQo+Pj4gQW5kIHRoZW4gaW4gcHJv
-YmUsIGFsbG9jYXRlICdzdHJ1Y3QgcmVndWxhdG9yICp2YnVzX3N1cHBsaWVzJyB3aXRoIGENCj4+
-PiBzaXplIGNvcnJlc3BvbmRpbmcgdG8gJ0hDU19OX1BPUlRTKGVoY2ktPmhjc19wYXJhbXMpICog
-c2l6ZW9mKHN0cnVjdA0KPj4+IHJlZ3VsYXRvciAqKScuDQo+Pj4gQW5kIGxvb3AgdG8gZ2V0IG9w
-dGlvbmFsIHJlZ3VsYXRvciB2YnVzMCwgdmJ1czEsLi4uLCB2YnVzTi4NCj4+PiBBbmQgdGhlbiBl
-bmFibGUvZGlzYWJsZSB0aGUgY29ycmVzcG9uZGluZyByZWd1bGF0b3IgaW4NCj4+PiBlaGNpX3Bs
-YXRmb3JtX3BvcnRfcG93ZXIgdGhhbmtzIHRvIHBvcnRudW0uDQo+Pg0KPj4gTG9va3MgZmluZSB0
-byBtZSBidXQgd2UgbmVlZCB0byBnZXQgQWxhbidzIG9waW5pb24gaWYgdGhpcyBpcyB3b3J0aCB0
-aGUgZWZmb3J0Lg0KPj4gSWYgdGhlcmUgaXNuJ3QgYSBzaW5nbGUgcGxhdGZvcm0gbmVlZGluZyBp
-dCB3ZSBjb3VsZCBwcm9iYWJseSBkbyB3aXRob3V0IGl0DQo+PiBidXQgdGhlIERUIGJpbmRpbmcg
-bXVzdCBiZSBzY2FsYWJsZSB0byBhZGQgdGhpcyBmZWF0dXJlIGluIHRoZSBmdXR1cmUuDQo+IA0K
-PiBJIGFncmVlIHRoYXQgZm9yIG5vdyB0aGVyZSBkb24ndCBzZWVtIHRvIGJlIGFueSBwbGF0Zm9y
-bXMgcmVxdWlyaW5nDQo+IG1vcmUgdGhhbiBvbmUgcmVndWxhdG9yLCBidXQgdGhpcyBzaG91bGQg
-YmUgaW1wbGVtZW50ZWQgaW4gYSB3YXkgdGhhdA0KPiBjb3VsZCBiZSBleHBhbmRlZCBpZiBuZWNl
-c3NhcnkuDQo+IA0KPiBBbnl3YXksIHRoZSBiYXNpYyBpZGVhIGlzIHJlYXNvbmFibGUuICBJIGRv
-bid0IGtub3cgdG8gd2hhdCBleHRlbnQNCj4gcGVvcGxlIHdhbnQgdG8gcG93ZXItb2ZmIHRoZWly
-IEVIQ0kgcG9ydHMsIGJ1dCBpZiB0aGV5IGRvIHRoZW4gd2Ugb3VnaHQNCj4gdG8gdHVybiBvZmYg
-ZXh0ZXJuYWwgcmVndWxhdG9ycyBhdCB0aGUgc2FtZSB0aW1lLg0KPiANCj4gSXMgdGhlcmUgYSBy
-ZWFsLWxpZmUgdXNlIGNhc2UgZm9yIHRoaXM/DQo+IA0KPiBBbGFuIFN0ZXJuDQo+IA0KDQpPbiBt
-eSBzZXR1cCBJIGhhdmUgdGhlIGZvbGxvd2luZzoNCg0KICAgICAgICAgICAgICAgICAgcmVndWxh
-dG9yX19fX192YnVzDQogIF9fX19fX19fX19fX19fX19fICAgICAgICAgICAgIFwNCnwgRUhDSSBj
-b250cm9sbGVyIHwtcG9ydDAtLS0tLVtVU0IgY29ubmVjdG9yXQ0KfF9fX19fX19fX19fX19fX19f
-fC1wb3J0MS0tLS0tWA0KDQpTbywgSSBoYXZlIG9uZSByZWd1bGF0b3Igb25seSBmb3IgcG9ydDAu
-IEJ1dCBJIGNvdWxkIEkgaGF2ZSBvbmUgbW9yZSBpZiANCnBvcnQxIHdhcyBjb25uZWN0ZWQuIE15
-IGN1cnJlbnQgcmVndWxhdG9yIGNvdWxkIGFsc28gc3VwcGxpZXMgcG9ydDEuDQoNClRvIGFsbG9j
-YXRlIGEgdmJ1c19zdXBwbGllcyBhcnJheSBkZXBlbmRpbmcgb24gTl9QT1JUUywgSSBoYXZlIHRv
-IG1vdmUgDQp0aGlzIGluaXRpYWxpemF0aW9uIGZyb20gcHJvYmUgdG8gZWhjaV9wbGF0Zm9ybV9y
-ZXNldCwgYWZ0ZXIgZWhjaV9zZXR1cCANCmlzIGRvbmUuDQpUaGVuLCBJIGhhdmUgdG8gZGVmaW5l
-IGVhY2ggcmVndWxhdG9yIGlkIGRlcGVuZGluZyBvbiB0aGUgcG9ydCBudW1iZXIuDQpUaGlzIGlt
-cG9zZXMgYSBiaW5kaW5nIGxpa2UNCi0gcG9ydE5fdmJ1cy1zdXBwbHkgOiBwaGFuZGxlIG9mIHJl
-Z3VsYXRvciBzdXBwbHlpbmcgdmJ1cyBmb3IgcG9ydCBODQpCdXQgSSBkb24ndCBrbm93IGlmIHdl
-IGNhbiBkZXNjcmliZSBpdCBsaWtlIHRoaXMgaW4gZHQtYmluZGluZ3MgPw0KDQomZWhjaSB7DQoJ
-Li4uDQoJcG9ydDBfdmJ1cy1zdXBwbHkgPSA8JnZidXNfcmVnPjsNCglwb3J0MV92YnVzLXN1cHBs
-eSA9IDwmdmJ1c19yZWc+OyAvL0NvdWxkIGJlIGFub3RoZXIgcmVndWxhdG9yLCBvciBub3QgDQpz
-cGVjaWZpZWQgaWYgcG9ydCBpcyBub3QgY29ubmVjdGVkLg0KCS4uLg0KfTsNCg0KSXMgaXQgb2sg
-dG8gbW92ZSB2YnVzX3N1cHBsaWVzIGluaXRpYWxpemF0aW9uIGluIGVoY2lfcGxhdGZvcm1fcmVz
-ZXQgPw0KDQpSZWdhcmRzLA0KQW1lbGllDQoNCj4+IEFuZCB3aGF0IGlmIGl0IGlzIGdhbmdlZCBw
-b3dlcj8gaS5lLiBvbmUgcmVndWxhdG9yIGZvciBtb3JlIHRoYW4gb25lIHBvcnQuDQo+PiBQcm9i
-YWJseSB0aGV5IGFsbCBjYW4gcG9pbnQgdG8gdGhlIHNhbWUgcmVndWxhdG9yIGluc3RhbmNlIGFu
-ZCBpdCBzaG91bGQgd29yay4NCj4+DQo+Pj4NCj4+Pj4+ICAgIEV4YW1wbGUgKFNlcXVvaWEgNDQw
-RVB4KToNCj4+Pj4+ICAgICAgICBlaGNpQGUwMDAwMzAwIHsNCj4+Pj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3VzYi9ob3N0L2VoY2ktcGxhdGZvcm0uYyBiL2RyaXZlcnMvdXNiL2hvc3QvZWhjaS1w
-bGF0Zm9ybS5jDQo+Pj4+PiBpbmRleCBiMDY1YTk2Li4wNWJlMTAwIDEwMDY0NA0KPj4+Pj4gLS0t
-IGEvZHJpdmVycy91c2IvaG9zdC9laGNpLXBsYXRmb3JtLmMNCj4+Pj4+ICsrKyBiL2RyaXZlcnMv
-dXNiL2hvc3QvZWhjaS1wbGF0Zm9ybS5jDQo+Pj4+PiBAQCAtMjksNiArMjksNyBAQA0KPj4+Pj4g
-ICAgI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+Pj4+PiAgICAjaW5jbHVkZSA8bGludXgvcGh5L3Bo
-eS5oPg0KPj4+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPj4+Pj4g
-KyNpbmNsdWRlIDxsaW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4NCj4+Pj4+ICAgICNpbmNsdWRl
-IDxsaW51eC9yZXNldC5oPg0KPj4+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L3VzYi5oPg0KPj4+Pj4g
-ICAgI2luY2x1ZGUgPGxpbnV4L3VzYi9oY2QuaD4NCj4+Pj4+IEBAIC00Niw2ICs0Nyw3IEBAIHN0
-cnVjdCBlaGNpX3BsYXRmb3JtX3ByaXYgew0KPj4+Pj4gICAgCXN0cnVjdCByZXNldF9jb250cm9s
-ICpyc3RzOw0KPj4+Pj4gICAgCXN0cnVjdCBwaHkgKipwaHlzOw0KPj4+Pj4gICAgCWludCBudW1f
-cGh5czsNCj4+Pj4+ICsJc3RydWN0IHJlZ3VsYXRvciAqdmJ1c19zdXBwbHk7DQo+Pj4+PiAgICAJ
-Ym9vbCByZXNldF9vbl9yZXN1bWU7DQo+Pj4+PiAgICB9Ow0KPj4+Pj4gICAgDQo+Pj4+PiBAQCAt
-NzYsNiArNzgsMjUgQEAgc3RhdGljIGludCBlaGNpX3BsYXRmb3JtX3Jlc2V0KHN0cnVjdCB1c2Jf
-aGNkICpoY2QpDQo+Pj4+PiAgICAJcmV0dXJuIDA7DQo+Pj4+PiAgICB9DQo+Pj4+PiAgICANCj4+
-Pj4+ICtzdGF0aWMgaW50IGVoY2lfcGxhdGZvcm1fcG9ydF9wb3dlcihzdHJ1Y3QgdXNiX2hjZCAq
-aGNkLCBpbnQgcG9ydG51bSwNCj4+Pj4+ICsJCQkJICAgIGJvb2wgZW5hYmxlKQ0KPj4+Pj4gK3sN
-Cj4+Pj4+ICsJc3RydWN0IGVoY2lfcGxhdGZvcm1fcHJpdiAqcHJpdiA9IGhjZF90b19laGNpX3By
-aXYoaGNkKTsNCj4+Pj4+ICsJaW50IHJldCA9IDA7DQo+Pj4+PiArDQo+Pj4+PiArCWlmIChwcml2
-LT52YnVzX3N1cHBseSkgew0KPj4+Pj4gKwkJaWYgKGVuYWJsZSkNCj4+Pj4+ICsJCQlyZXQgPSBy
-ZWd1bGF0b3JfZW5hYmxlKHByaXYtPnZidXNfc3VwcGx5KTsNCj4+Pj4+ICsJCWVsc2UNCj4+Pj4+
-ICsJCQlyZXQgPSByZWd1bGF0b3JfZGlzYWJsZShwcml2LT52YnVzX3N1cHBseSk7DQo+Pj4+PiAr
-CQlpZiAocmV0KQ0KPj4+Pj4gKwkJCWRldl9lcnIoaGNkLT5zZWxmLmNvbnRyb2xsZXIsDQo+Pj4+
-PiArCQkJCSJmYWlsZWQgdG8gJXMgdmJ1cyBzdXBwbHk6ICVkXG4iLA0KPj4+Pj4gKwkJCQllbmFi
-bGUgPyAiZW5hYmxlIiA6ICJkaXNhYmxlIiwgcmV0KTsNCj4+Pj4+ICsJfQ0KPj4+Pj4gKwlyZXR1
-cm4gcmV0Ow0KPj4+Pj4gK30NCj4+Pj4+ICsNCj4+Pj4+ICAgIHN0YXRpYyBpbnQgZWhjaV9wbGF0
-Zm9ybV9wb3dlcl9vbihzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYpDQo+Pj4+PiAgICB7DQo+
-Pj4+PiAgICAJc3RydWN0IHVzYl9oY2QgKmhjZCA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKGRldik7
-DQo+Pj4+PiBAQCAtMTM0LDYgKzE1NSw3IEBAIHN0YXRpYyBzdHJ1Y3QgaGNfZHJpdmVyIF9fcmVh
-ZF9tb3N0bHkgZWhjaV9wbGF0Zm9ybV9oY19kcml2ZXI7DQo+Pj4+PiAgICBzdGF0aWMgY29uc3Qg
-c3RydWN0IGVoY2lfZHJpdmVyX292ZXJyaWRlcyBwbGF0Zm9ybV9vdmVycmlkZXMgX19pbml0Y29u
-c3QgPSB7DQo+Pj4+PiAgICAJLnJlc2V0ID0JCWVoY2lfcGxhdGZvcm1fcmVzZXQsDQo+Pj4+PiAg
-ICAJLmV4dHJhX3ByaXZfc2l6ZSA9CXNpemVvZihzdHJ1Y3QgZWhjaV9wbGF0Zm9ybV9wcml2KSwN
-Cj4+Pj4+ICsJLnBvcnRfcG93ZXIgPQkJZWhjaV9wbGF0Zm9ybV9wb3J0X3Bvd2VyLA0KPj4+Pj4g
-ICAgfTsNCj4+Pj4+ICAgIA0KPj4+Pj4gICAgc3RhdGljIHN0cnVjdCB1c2JfZWhjaV9wZGF0YSBl
-aGNpX3BsYXRmb3JtX2RlZmF1bHRzID0gew0KPj4+Pj4gQEAgLTI0Nyw2ICsyNjksMTUgQEAgc3Rh
-dGljIGludCBlaGNpX3BsYXRmb3JtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldikN
-Cj4+Pj4+ICAgIAlpZiAoZXJyKQ0KPj4+Pj4gICAgCQlnb3RvIGVycl9wdXRfY2xrczsNCj4+Pj4+
-ICAgIA0KPj4+Pj4gKwlwcml2LT52YnVzX3N1cHBseSA9IGRldm1fcmVndWxhdG9yX2dldF9vcHRp
-b25hbCgmZGV2LT5kZXYsICJ2YnVzIik7DQo+Pj4+PiArCWlmIChJU19FUlIocHJpdi0+dmJ1c19z
-dXBwbHkpKSB7DQo+Pj4+PiArCQllcnIgPSBQVFJfRVJSKHByaXYtPnZidXNfc3VwcGx5KTsNCj4+
-Pj4+ICsJCWlmIChlcnIgPT0gLUVOT0RFVikNCj4+Pj4+ICsJCQlwcml2LT52YnVzX3N1cHBseSA9
-IE5VTEw7DQo+Pj4+PiArCQllbHNlDQo+Pj4+PiArCQkJZ290byBlcnJfcmVzZXQ7DQo+Pj4+PiAr
-CX0NCj4+Pj4+ICsNCj4+Pj4+ICAgIAlpZiAocGRhdGEtPmJpZ19lbmRpYW5fZGVzYykNCj4+Pj4+
-ICAgIAkJZWhjaS0+YmlnX2VuZGlhbl9kZXNjID0gMTsNCj4+Pj4+ICAgIAlpZiAocGRhdGEtPmJp
-Z19lbmRpYW5fbW1pbykNCj4+Pj4+DQo+Pg0KPj4NCj4gDQo+IA0KPiA=
+On Thu, 22 Feb 2018, Amelie DELAUNAY wrote:
+
+> >>>>> --- a/Documentation/devicetree/bindings/usb/usb-ehci.txt
+> >>>>> +++ b/Documentation/devicetree/bindings/usb/usb-ehci.txt
+> >>>>> @@ -19,6 +19,7 @@ Optional properties:
+> >>>>>     - phys : phandle + phy specifier pair
+> >>>>>     - phy-names : "usb"
+> >>>>>     - resets : phandle + reset specifier pair
+> >>>>> + - vbus-supply : phandle of regulator supplying vbus
+> >>>>>    
+> >>>>
+> >>>> Can platforms have more than one regulator e.g. one regulator per port?
+> >>>>
+> >>>
+> >>> I imagine that yes, platforms could have one regulator per port.
+> >>> Regulator consumers bindings impose a <name>-supply property per
+> >>> regulator, so, what do you think about :
+> >>> vbus0-supply for port#0
+> >>> vbus1-supply for port#1
+> >>> ...
+> >>> vbusN-supply for port#N
+> >>>
+> >>> And then in probe, allocate 'struct regulator *vbus_supplies' with a
+> >>> size corresponding to 'HCS_N_PORTS(ehci->hcs_params) * sizeof(struct
+> >>> regulator *)'.
+> >>> And loop to get optional regulator vbus0, vbus1,..., vbusN.
+> >>> And then enable/disable the corresponding regulator in
+> >>> ehci_platform_port_power thanks to portnum.
+> >>
+> >> Looks fine to me but we need to get Alan's opinion if this is worth the effort.
+> >> If there isn't a single platform needing it we could probably do without it
+> >> but the DT binding must be scalable to add this feature in the future.
+> > 
+> > I agree that for now there don't seem to be any platforms requiring
+> > more than one regulator, but this should be implemented in a way that
+> > could be expanded if necessary.
+> > 
+> > Anyway, the basic idea is reasonable.  I don't know to what extent
+> > people want to power-off their EHCI ports, but if they do then we ought
+> > to turn off external regulators at the same time.
+> > 
+> > Is there a real-life use case for this?
+> > 
+> > Alan Stern
+> > 
+> 
+> On my setup I have the following:
+> 
+>                   regulator_____vbus
+>   _________________             \
+> | EHCI controller |-port0-----[USB connector]
+> |_________________|-port1-----X
+> 
+> So, I have one regulator only for port0. But I could I have one more if 
+> port1 was connected. My current regulator could also supplies port1.
+> 
+> To allocate a vbus_supplies array depending on N_PORTS, I have to move 
+> this initialization from probe to ehci_platform_reset, after ehci_setup 
+> is done.
+> Then, I have to define each regulator id depending on the port number.
+> This imposes a binding like
+> - portN_vbus-supply : phandle of regulator supplying vbus for port N
+> But I don't know if we can describe it like this in dt-bindings ?
+> 
+> &ehci {
+> 	...
+> 	port0_vbus-supply = <&vbus_reg>;
+> 	port1_vbus-supply = <&vbus_reg>; //Could be another regulator, or not 
+> specified if port is not connected.
+> 	...
+> };
+> 
+> Is it ok to move vbus_supplies initialization in ehci_platform_reset ?
+
+Yes, it's okay to move the code if you need to.
+
+However, I can not speak on the DT implications.  Someone who knows
+more about it should chime in.
+
+Alan Stern
+
