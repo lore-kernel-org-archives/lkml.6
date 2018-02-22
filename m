@@ -1,203 +1,152 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AH8x226luj/21McUVYY7ZgWy91v9Cv2UIsbeR6rZJR4y7Aply2v0z2u1xHKimtbvYiTkKmq4vwMn
-ARC-Seal: i=1; a=rsa-sha256; t=1517999520; cv=none;
+Return-Path: <jcrouse@codeaurora.org>
+X-Google-Smtp-Source: AH8x225AjlhRUbwPlChYW2tzDRZLstSrvteWn/cEUaaCecgbaZFAKJdPTPbVi9aMRgN6yk2Qu08d
+ARC-Seal: i=1; a=rsa-sha256; t=1519343525; cv=none;
         d=google.com; s=arc-20160816;
-        b=fsYHkIC0q05aDvpFIufZ7adh3S7e1AHp6LytgJa/jYQ4q8P6FZ0zetMj1urItJLUtB
-         hHmJIyA4vutLyJj7pZfk4fdJoOcJVZFW0MjdSrxz2YJBRkL9jknxzSVFMeW0UNsQCXBA
-         RAp4n874xrBgtYlU/nc8piht/mtnXI+S/rPBlsYcViruGwVu+SCr9OEgxr6B7XKaDQp4
-         9XT7p+33WYSHwmM1lotpvcwJ05VZBCNN3iZ6qAQbhnrRJ39XFz6HHaaFrGmGKnlukww2
-         5H9e729n1wZMa+92uQYXUTrM5ZF2UsMtTqXqt0b7pWIM695Nce7lED61oVEFG7XXtoDD
-         V5dQ==
+        b=qtIXSOdzw0o/KSWPSXpXyNsEZeZ6AqrvKt+JvFoV3B3uL8cbQryswwecAvDWPDsQbj
+         9dg9/HyUqTHsWSyfUL8MDPhCio78vbhBNoT5CrL2o3w6OjOm2Yu7u0MhU8jFCvAizZmr
+         2qEsTpI+C79URDrG2vQQ7WZ0Ov/IlRRDbGSlatnFOxt+0OOr96dnyQuErRWpPfi4f3qu
+         rPuYPREvKl+xbdR6LJt5OAN79XQFPvoou2TsetCTLa2qV/QoBF47ad+t07z/DcEd09mJ
+         CI0FwN79+hPWy9CcEBYrXEIAjK1+g+Hq+lFJjvi+v+ZeXqEzqiykrikIKyExQpjpaPQ0
+         1Mpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=C+b6uNMG0xjr1YoTlOhk6oXGJd8pmwrHR6U/xtY6o30=;
-        b=S72Rg0OGFuPm+VoXpm/4eoUrf5VJYE7xk58tTVUnkbNTCH9gtmLKwruPX5fwQbgbEX
-         lQMxpOM+zAcLf/eV5dDReRB6MylONQTGT4jlcTXqpSDTxsWWkikZHhBUlHYo8AVQLHAw
-         wFRZFGVoaFYA459zCE/k8UWClegJI7Zsh7lqhs3GlVeEp7Li6/t22te8mMmeQrhj4JQe
-         ZtbPOy6OP40DvBTOiYOMkkA2eppQtqpb0QMM1sk2dbFM0S2bqG8OhHglCEBlaE9Xrw1W
-         3sW47kjNh9QNz0ENByuBrSlnmTe6IXyaw6wHKsrKTA98MPf4rZD4wcy4h/ItjVS59hEb
-         LPPA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dmarc-filter
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=AhNeCVaWoPArUjcEK4nHJHm3xlXnaG7f39vsag9YQ0o=;
+        b=oQmNC3zZZPyMOBnIrbpayZunji4mSLp9CnUw7zx+HSztCjuCcRrMTnvaHqSOH5Rcfu
+         y0T6TTpb8iXG8JPOi8KXsU98bIA8CF2sY/baEC2XXcc6awgAkAq26Ubv+VLTdHUCQwmR
+         d6q3m2XXszi0u5ptUrCqTdPnnIv0bHJ67T6xOz0fWbVGka2KXYaffBP9Dwe4Av2o8u2B
+         zW8ze9wNokeH/L7lgNS1CCBAE1wXEjvMFo0VJX6FhMzUD60MQin4k1+q/AyySc3ebxov
+         VHkfDAhWVxgrkTZBDJinKDuAknKk8i5MJfj8I7f56Teb1x/b76tHOyc0tB3sdzAzwz9t
+         OZIg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=gp/fuyOH;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=WG2K7uMR;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XKCij5hO;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XKCij5hO;
+       spf=pass (google.com: domain of jcrouse@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=jcrouse@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=gp/fuyOH;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=WG2K7uMR;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4B6360272
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XKCij5hO;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XKCij5hO;
+       spf=pass (google.com: domain of jcrouse@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=jcrouse@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6B1660712
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	robin.murphy@arm.com,
-	will.deacon@arm.com,
-	robdclark@gmail.com,
-	iommu@lists.linux-foundation.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
-Cc: alex.williamson@redhat.com,
-	gregkh@linuxfoundation.org,
-	airlied@linux.ie,
-	sboyd@codeaurora.org,
-	sricharan@codeaurora.org,
-	m.szyprowski@samsung.com,
-	architt@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	vivek.gautam@codeaurora.org
-Subject: [PATCH v7 3/6] iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
-Date: Wed,  7 Feb 2018 16:01:19 +0530
-Message-Id: <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Thu, 22 Feb 2018 16:52:00 -0700
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
+	rjw@rjwysocki.net, robin.murphy@arm.com, will.deacon@arm.com,
+	robdclark@gmail.com, iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, airlied@linux.ie,
+	gregkh@linuxfoundation.org, sboyd@codeaurora.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+Message-ID: <20180222235200.GA18743@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Vivek Gautam <vivek.gautam@codeaurora.org>,
+	joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
+	rjw@rjwysocki.net, robin.murphy@arm.com, will.deacon@arm.com,
+	robdclark@gmail.com, iommu@lists.linux-foundation.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, airlied@linux.ie,
+	gregkh@linuxfoundation.org, sboyd@codeaurora.org,
+	linux-arm-msm@vger.kernel.org
 References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591737865178016622?=
-X-GMAIL-MSGID: =?utf-8?q?1591737865178016622?=
+X-GMAIL-MSGID: =?utf-8?q?1593147156246021225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sricharan R <sricharan@codeaurora.org>
+On Wed, Feb 07, 2018 at 04:01:19PM +0530, Vivek Gautam wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
+> 
+> The smmu device probe/remove and add/remove master device callbacks
+> gets called when the smmu is not linked to its master, that is without
+> the context of the master device. So calling runtime apis in those places
+> separately.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> [vivek: Cleanup pm runtime calls]
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/iommu/arm-smmu.c | 42 ++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 9e2f917e16c2..c024f69c1682 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -913,11 +913,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>  	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>  	struct arm_smmu_device *smmu = smmu_domain->smmu;
+>  	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+> -	int irq;
+> +	int ret, irq;
+>  
+>  	if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
+>  		return;
+>  
+> +	ret = pm_runtime_get_sync(smmu->dev);
+> +	if (ret)
+> +		return;
+> +
+>  	/*
+>  	 * Disable the context bank and free the page tables before freeing
+>  	 * it.
+> @@ -932,6 +936,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>  
+>  	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
+>  	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
+> +
+> +	pm_runtime_put_sync(smmu->dev);
+>  }
+>  
+>  static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
+> @@ -1407,14 +1413,22 @@ static int arm_smmu_add_device(struct device *dev)
+>  	while (i--)
+>  		cfg->smendx[i] = INVALID_SMENDX;
+>  
+> -	ret = arm_smmu_master_alloc_smes(dev);
+> +	ret = pm_runtime_get_sync(smmu->dev);
+>  	if (ret)
+>  		goto out_cfg_free;
 
-The smmu device probe/remove and add/remove master device callbacks
-gets called when the smmu is not linked to its master, that is without
-the context of the master device. So calling runtime apis in those places
-separately.
+Hey Vivek, I just hit a problem with this on sdm845. It turns out that
+pm_runtime_get_sync() returns a positive 1 if the device is already active.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-[vivek: Cleanup pm runtime calls]
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- drivers/iommu/arm-smmu.c | 42 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 38 insertions(+), 4 deletions(-)
+I hit this in the GPU code. The a6xx has two platform devices that each use a
+different sid on the iommu. The GPU is probed normally from a platform driver
+and it in turn initializes the GMU device by way of a phandle.
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 9e2f917e16c2..c024f69c1682 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -913,11 +913,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
--	int irq;
-+	int ret, irq;
- 
- 	if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
- 		return;
- 
-+	ret = pm_runtime_get_sync(smmu->dev);
-+	if (ret)
-+		return;
-+
- 	/*
- 	 * Disable the context bank and free the page tables before freeing
- 	 * it.
-@@ -932,6 +936,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 
- 	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
- 	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
-+
-+	pm_runtime_put_sync(smmu->dev);
- }
- 
- static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
-@@ -1407,14 +1413,22 @@ static int arm_smmu_add_device(struct device *dev)
- 	while (i--)
- 		cfg->smendx[i] = INVALID_SMENDX;
- 
--	ret = arm_smmu_master_alloc_smes(dev);
-+	ret = pm_runtime_get_sync(smmu->dev);
- 	if (ret)
- 		goto out_cfg_free;
- 
-+	ret = arm_smmu_master_alloc_smes(dev);
-+	if (ret)
-+		goto out_rpm_put;
-+
- 	iommu_device_link(&smmu->iommu, dev);
- 
-+	pm_runtime_put_sync(smmu->dev);
-+
- 	return 0;
- 
-+out_rpm_put:
-+	pm_runtime_put_sync(smmu->dev);
- out_cfg_free:
- 	kfree(cfg);
- out_free:
-@@ -1427,7 +1441,7 @@ static void arm_smmu_remove_device(struct device *dev)
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct arm_smmu_master_cfg *cfg;
- 	struct arm_smmu_device *smmu;
--
-+	int ret;
- 
- 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
- 		return;
-@@ -1435,8 +1449,15 @@ static void arm_smmu_remove_device(struct device *dev)
- 	cfg  = fwspec->iommu_priv;
- 	smmu = cfg->smmu;
- 
-+	ret = pm_runtime_get_sync(smmu->dev);
-+	if (ret)
-+		return;
-+
- 	iommu_device_unlink(&smmu->iommu, dev);
- 	arm_smmu_master_free_smes(fwspec);
-+
-+	pm_runtime_put_sync(smmu->dev);
-+
- 	iommu_group_remove_device(dev);
- 	kfree(fwspec->iommu_priv);
- 	iommu_fwspec_free(dev);
-@@ -2131,6 +2152,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	platform_set_drvdata(pdev, smmu);
-+
-+	pm_runtime_enable(dev);
-+
-+	err = pm_runtime_get_sync(dev);
-+	if (err)
-+		return err;
-+
- 	err = arm_smmu_device_cfg_probe(smmu);
- 	if (err)
- 		return err;
-@@ -2172,9 +2201,9 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	platform_set_drvdata(pdev, smmu);
- 	arm_smmu_device_reset(smmu);
- 	arm_smmu_test_smr_masks(smmu);
-+	pm_runtime_put_sync(dev);
- 
- 	/*
- 	 * For ACPI and generic DT bindings, an SMMU will be probed before
-@@ -2211,8 +2240,13 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
- 		dev_err(&pdev->dev, "removing device with active domains!\n");
- 
-+	pm_runtime_get_sync(smmu->dev);
- 	/* Turn the thing off */
- 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+	pm_runtime_put_sync(smmu->dev);
-+
-+	pm_runtime_disable(smmu->dev);
-+
- 	return 0;
- }
- 
+Because the GMU isn't probed with a platform driver we need to call
+of_dma_configure() on the device to set up the IOMMU for the device which ends
+up calling through this path and we discover that the smmu->dev is already
+powered (pm_runtime_get_sync returns 1).
+
+I'm not immediately sure if this is a bug on sdm845 or not because a cursory
+inspection says that the SMMU device shouldn't be powered at this time but there
+might be a connection that I'm not seeing. Obviously if the SMMU was left
+powered thats a bad thing. But putting that aside it is obvious that this
+code should be accommodating of the possibility that the device is already
+powered, and so this should be
+
+if (ret < 0)
+	goto out_cfg_free;
+
+With that the GPU/GMU successfully comes up on Sean Paul's display testing
+branch.
+
+Jordan
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
