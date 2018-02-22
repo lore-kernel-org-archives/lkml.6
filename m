@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753471AbeBVKiR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:38:17 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:51142 "EHLO
+        id S1753571AbeBVKiY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:38:24 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55865 "EHLO
         relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753519AbeBVKiO (ORCPT
+        with ESMTP id S1753519AbeBVKiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:38:14 -0500
+        Thu, 22 Feb 2018 05:38:20 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -16,9 +16,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v11 06/10] media: i2c: ov772x: Remove soc_camera dependencies
-Date: Thu, 22 Feb 2018 11:37:22 +0100
-Message-Id: <1519295846-11612-7-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v11 07/10] media: i2c: ov772x: Support frame interval handling
+Date: Thu, 22 Feb 2018 11:37:23 +0100
+Message-Id: <1519295846-11612-8-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -26,401 +26,329 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove soc_camera framework dependencies from ov772x sensor driver.
-- Handle clock and gpios
-- Register async subdevice
-- Remove soc_camera specific g/s_mbus_config operations
-- Change image format colorspace from JPEG to SRGB as the two use the
-  same colorspace information but JPEG makes assumptions on color
-  components quantization that do not apply to the sensor
-- Remove sizes crop from get_selection as driver can't scale
-- Add kernel doc to driver interface header file
-- Adjust build system
-
-This commit does not remove the original soc_camera based driver as long
-as other platforms depends on soc_camera-based CEU driver.
+Add support to ov772x driver for frame intervals handling and enumeration.
+Tested with 10MHz and 24MHz input clock at VGA and QVGA resolutions for
+10, 15 and 30 frame per second rates.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/i2c/Kconfig  |  11 +++
- drivers/media/i2c/Makefile |   1 +
- drivers/media/i2c/ov772x.c | 172 ++++++++++++++++++++++++++++++---------------
- include/media/i2c/ov772x.h |   6 +-
- 4 files changed, 133 insertions(+), 57 deletions(-)
+ drivers/media/i2c/ov772x.c | 213 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 196 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 9f18cd2..e71e968 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -645,6 +645,17 @@ config VIDEO_OV5670
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ov5670.
- 
-+config VIDEO_OV772X
-+	tristate "OmniVision OV772x sensor support"
-+	depends on I2C && VIDEO_V4L2
-+	depends on MEDIA_CAMERA_SUPPORT
-+	---help---
-+	  This is a Video4Linux2 sensor-level driver for the OmniVision
-+	  OV772x camera.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ov772x.
-+
- config VIDEO_OV7640
- 	tristate "OmniVision OV7640 sensor support"
- 	depends on I2C && VIDEO_V4L2
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index c0f94cd..b0489a1 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_VIDEO_OV5670) += ov5670.o
- obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
- obj-$(CONFIG_VIDEO_OV7640) += ov7640.o
- obj-$(CONFIG_VIDEO_OV7670) += ov7670.o
-+obj-$(CONFIG_VIDEO_OV772X) += ov772x.o
- obj-$(CONFIG_VIDEO_OV7740) += ov7740.o
- obj-$(CONFIG_VIDEO_OV9650) += ov9650.o
- obj-$(CONFIG_VIDEO_OV13858) += ov13858.o
 diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index 8063835..23106d7 100644
+index 23106d7..3edf0cb 100644
 --- a/drivers/media/i2c/ov772x.c
 +++ b/drivers/media/i2c/ov772x.c
-@@ -1,6 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -250,6 +250,7 @@
+ #define AEC_1p2         0x10	/*  01: 1/2  window */
+ #define AEC_1p4         0x20	/*  10: 1/4  window */
+ #define AEC_2p3         0x30	/*  11: Low 2/3 window */
++#define COM4_RESERVED   0x01	/* Reserved bit */
+ 
+ /* COM5 */
+ #define AFR_ON_OFF      0x80	/* Auto frame rate control ON/OFF selection */
+@@ -267,6 +268,10 @@
+ 				/* AEC max step control */
+ #define AEC_NO_LIMIT    0x01	/*   0 : AEC incease step has limit */
+ 				/*   1 : No limit to AEC increase step */
++/* CLKRC */
++				/* Input clock divider register */
++#define CLKRC_RESERVED  0x80	/* Reserved bit */
++#define CLKRC_DIV(n)    ((n) - 1)
+ 
+ /* COM7 */
+ 				/* SCCB Register Reset */
+@@ -373,6 +378,19 @@
+ #define VERSION(pid, ver) ((pid<<8)|(ver&0xFF))
+ 
  /*
-  * ov772x Camera Driver
-  *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-  * Copyright (C) 2008 Renesas Solutions Corp.
-  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
-  *
-@@ -9,27 +12,25 @@
-  * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
-  * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
++ * PLL multipliers
++ */
++static struct {
++	unsigned int mult;
++	u8 com4;
++} ov772x_pll[] = {
++	{ 1, PLL_BYPASS, },
++	{ 4, PLL_4x, },
++	{ 6, PLL_6x, },
++	{ 8, PLL_8x, },
++};
++
++/*
+  * struct
   */
  
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/i2c.h>
- #include <linux/slab.h>
--#include <linux/delay.h>
- #include <linux/v4l2-mediabus.h>
- #include <linux/videodev2.h>
+@@ -388,6 +406,7 @@ struct ov772x_color_format {
+ struct ov772x_win_size {
+ 	char                     *name;
+ 	unsigned char             com7_bit;
++	unsigned int		  sizeimage;
+ 	struct v4l2_rect	  rect;
+ };
  
- #include <media/i2c/ov772x.h>
--#include <media/soc_camera.h>
--#include <media/v4l2-clk.h>
+@@ -404,6 +423,7 @@ struct ov772x_priv {
+ 	unsigned short                    flag_hflip:1;
+ 	/* band_filter = COM8[5] ? 256 - BDBASE : 0 */
+ 	unsigned short                    band_filter;
++	unsigned int			  fps;
+ };
+ 
+ /*
+@@ -487,27 +507,34 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 
+ static const struct ov772x_win_size ov772x_win_sizes[] = {
+ 	{
+-		.name     = "VGA",
+-		.com7_bit = SLCT_VGA,
++		.name		= "VGA",
++		.com7_bit	= SLCT_VGA,
++		.sizeimage	= 510 * 748,
+ 		.rect = {
+-			.left = 140,
+-			.top = 14,
+-			.width = VGA_WIDTH,
+-			.height = VGA_HEIGHT,
++			.left	= 140,
++			.top	= 14,
++			.width	= VGA_WIDTH,
++			.height	= VGA_HEIGHT,
+ 		},
+ 	}, {
+-		.name     = "QVGA",
+-		.com7_bit = SLCT_QVGA,
++		.name		= "QVGA",
++		.com7_bit	= SLCT_QVGA,
++		.sizeimage	= 278 * 576,
+ 		.rect = {
+-			.left = 252,
+-			.top = 6,
+-			.width = QVGA_WIDTH,
+-			.height = QVGA_HEIGHT,
++			.left	= 252,
++			.top	= 6,
++			.width	= QVGA_WIDTH,
++			.height	= QVGA_HEIGHT,
+ 		},
+ 	},
+ };
+ 
+ /*
++ * frame rate settings lists
++ */
++static unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
 +
- #include <media/v4l2-ctrls.h>
--#include <media/v4l2-subdev.h>
-+#include <media/v4l2-device.h>
- #include <media/v4l2-image-sizes.h>
-+#include <media/v4l2-subdev.h>
- 
- /*
-  * register offset
-@@ -393,8 +394,10 @@ struct ov772x_win_size {
- struct ov772x_priv {
- 	struct v4l2_subdev                subdev;
- 	struct v4l2_ctrl_handler	  hdl;
--	struct v4l2_clk			 *clk;
-+	struct clk			 *clk;
- 	struct ov772x_camera_info        *info;
-+	struct gpio_desc		 *pwdn_gpio;
-+	struct gpio_desc		 *rstb_gpio;
- 	const struct ov772x_color_format *cfmt;
- 	const struct ov772x_win_size     *win;
- 	unsigned short                    flag_vflip:1;
-@@ -409,7 +412,7 @@ struct ov772x_priv {
- static const struct ov772x_color_format ov772x_cfmts[] = {
- 	{
- 		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= 0x0,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= SWAP_YUV,
-@@ -417,7 +420,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
- 	},
- 	{
- 		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= UV_ON,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= SWAP_YUV,
-@@ -425,7 +428,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
- 	},
- 	{
- 		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= 0x0,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= 0x0,
-@@ -550,7 +553,7 @@ static int ov772x_reset(struct i2c_client *client)
- }
- 
- /*
-- * soc_camera_ops function
-+ * subdev ops
++/*
+  * general function
   */
  
- static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
-@@ -650,13 +653,65 @@ static int ov772x_s_register(struct v4l2_subdev *sd,
- }
- #endif
- 
-+static int ov772x_power_on(struct ov772x_priv *priv)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-+	int ret;
-+
-+	if (priv->clk) {
-+		ret = clk_prepare_enable(priv->clk);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (priv->pwdn_gpio) {
-+		gpiod_set_value(priv->pwdn_gpio, 1);
-+		usleep_range(500, 1000);
-+	}
-+
-+	/*
-+	 * FIXME: The reset signal is connected to a shared GPIO on some
-+	 * platforms (namely the SuperH Migo-R). Until a framework becomes
-+	 * available to handle this cleanly, request the GPIO temporarily
-+	 * to avoid conflicts.
-+	 */
-+	priv->rstb_gpio = gpiod_get_optional(&client->dev, "rstb",
-+					     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->rstb_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
-+		return PTR_ERR(priv->rstb_gpio);
-+	}
-+
-+	if (priv->rstb_gpio) {
-+		gpiod_set_value(priv->rstb_gpio, 1);
-+		usleep_range(500, 1000);
-+		gpiod_set_value(priv->rstb_gpio, 0);
-+		usleep_range(500, 1000);
-+
-+		gpiod_put(priv->rstb_gpio);
-+	}
-+
-+	return 0;
-+}
-+
-+static int ov772x_power_off(struct ov772x_priv *priv)
-+{
-+	clk_disable_unprepare(priv->clk);
-+
-+	if (priv->pwdn_gpio) {
-+		gpiod_set_value(priv->pwdn_gpio, 0);
-+		usleep_range(500, 1000);
-+	}
-+
-+	return 0;
-+}
-+
- static int ov772x_s_power(struct v4l2_subdev *sd, int on)
- {
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	struct ov772x_priv *priv = to_ov772x(sd);
- 
--	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+	return on ? ov772x_power_on(priv) :
-+		    ov772x_power_off(priv);
- }
- 
- static const struct ov772x_win_size *ov772x_select_win(u32 width, u32 height)
-@@ -855,6 +910,8 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
- 		struct v4l2_subdev_pad_config *cfg,
- 		struct v4l2_subdev_selection *sel)
- {
-+	struct ov772x_priv *priv = to_ov772x(sd);
-+
- 	if (sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
- 		return -EINVAL;
- 
-@@ -863,12 +920,9 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
- 	switch (sel->target) {
- 	case V4L2_SEL_TGT_CROP_BOUNDS:
- 	case V4L2_SEL_TGT_CROP_DEFAULT:
--		sel->r.width = OV772X_MAX_WIDTH;
--		sel->r.height = OV772X_MAX_HEIGHT;
--		return 0;
- 	case V4L2_SEL_TGT_CROP:
--		sel->r.width = VGA_WIDTH;
--		sel->r.height = VGA_HEIGHT;
-+		sel->r.width = priv->win->rect.width;
-+		sel->r.height = priv->win->rect.height;
- 		return 0;
- 	default:
- 		return -EINVAL;
-@@ -914,6 +968,9 @@ static int ov772x_set_fmt(struct v4l2_subdev *sd,
- 	mf->height = win->rect.height;
- 	mf->field = V4L2_FIELD_NONE;
- 	mf->colorspace = cfmt->colorspace;
-+	mf->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-+	mf->quantization = V4L2_QUANTIZATION_DEFAULT;
-+	mf->xfer_func = V4L2_XFER_FUNC_DEFAULT;
- 
- 	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
- 		cfg->try_fmt = *mf;
-@@ -997,24 +1054,8 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+@@ -574,6 +601,128 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
  	return 0;
  }
  
--static int ov772x_g_mbus_config(struct v4l2_subdev *sd,
--				struct v4l2_mbus_config *cfg)
--{
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--
--	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
--		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_HIGH |
--		V4L2_MBUS_DATA_ACTIVE_HIGH;
--	cfg->type = V4L2_MBUS_PARALLEL;
--	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
--
--	return 0;
--}
--
++static int ov772x_set_frame_rate(struct ov772x_priv *priv,
++				 struct v4l2_fract *tpf,
++				 const struct ov772x_color_format *cfmt,
++				 const struct ov772x_win_size *win)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
++	unsigned long fin = clk_get_rate(priv->clk);
++	unsigned int fps = tpf->numerator ?
++			   tpf->denominator / tpf->numerator :
++			   tpf->denominator;
++	unsigned int best_diff;
++	unsigned int fsize;
++	unsigned int pclk;
++	unsigned int diff;
++	unsigned int idx;
++	unsigned int i;
++	u8 clkrc = 0;
++	u8 com4 = 0;
++	int ret;
++
++	/* Approximate to the closest supported frame interval. */
++	best_diff = ~0L;
++	for (i = 0, idx = 0; i < ARRAY_SIZE(ov772x_frame_intervals); i++) {
++		diff = abs(fps - ov772x_frame_intervals[i]);
++		if (diff < best_diff) {
++			idx = i;
++			best_diff = diff;
++		}
++	}
++	fps = ov772x_frame_intervals[idx];
++
++	/* Use image size (with blankings) to calculate desired pixel clock. */
++	switch (cfmt->com7 & OFMT_MASK) {
++	case OFMT_BRAW:
++		fsize = win->sizeimage;
++		break;
++	case OFMT_RGB:
++	case OFMT_YUV:
++	default:
++		fsize = win->sizeimage * 2;
++		break;
++	}
++
++	pclk = fps * fsize;
++
++	/*
++	 * Pixel clock generation circuit is pretty simple:
++	 *
++	 * Fin -> [ / CLKRC_div] -> [ * PLL_mult] -> pclk
++	 *
++	 * Try to approximate the desired pixel clock testing all available
++	 * PLL multipliers (1x, 4x, 6x, 8x) and calculate corresponding
++	 * divisor with:
++	 *
++	 * div = PLL_mult * Fin / pclk
++	 *
++	 * and re-calculate the pixel clock using it:
++	 *
++	 * pclk = Fin * PLL_mult / CLKRC_div
++	 *
++	 * Choose the PLL_mult and CLKRC_div pair that gives a pixel clock
++	 * closer to the desired one.
++	 *
++	 * The desired pixel clock is calculated using a known frame size
++	 * (blanking included) and FPS.
++	 */
++	best_diff = ~0L;
++	for (i = 0; i < ARRAY_SIZE(ov772x_pll); i++) {
++		unsigned int pll_mult = ov772x_pll[i].mult;
++		unsigned int pll_out = pll_mult * fin;
++		unsigned int t_pclk;
++		unsigned int div;
++
++		if (pll_out < pclk)
++			continue;
++
++		div = DIV_ROUND_CLOSEST(pll_out, pclk);
++		t_pclk = DIV_ROUND_CLOSEST(fin * pll_mult, div);
++		diff = abs(pclk - t_pclk);
++		if (diff < best_diff) {
++			best_diff = diff;
++			clkrc = CLKRC_DIV(div);
++			com4 = ov772x_pll[i].com4;
++		}
++	}
++
++	ret = ov772x_write(client, COM4, com4 | COM4_RESERVED);
++	if (ret < 0)
++		return ret;
++
++	ret = ov772x_write(client, CLKRC, clkrc | CLKRC_RESERVED);
++	if (ret < 0)
++		return ret;
++
++	tpf->numerator = 1;
++	tpf->denominator = fps;
++	priv->fps = tpf->denominator;
++
++	return 0;
++}
++
++static int ov772x_g_frame_interval(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_frame_interval *ival)
++{
++	struct ov772x_priv *priv = to_ov772x(sd);
++	struct v4l2_fract *tpf = &ival->interval;
++
++	tpf->numerator = 1;
++	tpf->denominator = priv->fps;
++
++	return 0;
++}
++
++static int ov772x_s_frame_interval(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_frame_interval *ival)
++{
++	struct ov772x_priv *priv = to_ov772x(sd);
++	struct v4l2_fract *tpf = &ival->interval;
++
++	return ov772x_set_frame_rate(priv, tpf, priv->cfmt, priv->win);
++}
++
+ static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
+ {
+ 	struct ov772x_priv *priv = container_of(ctrl->handler,
+@@ -757,6 +906,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+ 			     const struct ov772x_win_size *win)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
++	struct v4l2_fract tpf;
+ 	int ret;
+ 	u8  val;
+ 
+@@ -885,6 +1035,13 @@ static int ov772x_set_params(struct ov772x_priv *priv,
+ 	if (ret < 0)
+ 		goto ov772x_set_fmt_error;
+ 
++	/* COM4, CLKRC: Set pixel clock and framerate. */
++	tpf.numerator = 1;
++	tpf.denominator = priv->fps;
++	ret = ov772x_set_frame_rate(priv, &tpf, cfmt, win);
++	if (ret < 0)
++		goto ov772x_set_fmt_error;
++
+ 	/*
+ 	 * set COM8
+ 	 */
+@@ -1043,6 +1200,24 @@ static const struct v4l2_subdev_core_ops ov772x_subdev_core_ops = {
+ 	.s_power	= ov772x_s_power,
+ };
+ 
++static int ov772x_enum_frame_interval(struct v4l2_subdev *sd,
++				      struct v4l2_subdev_pad_config *cfg,
++				      struct v4l2_subdev_frame_interval_enum *fie)
++{
++	if (fie->pad || fie->index >= ARRAY_SIZE(ov772x_frame_intervals))
++		return -EINVAL;
++
++	if (fie->width != VGA_WIDTH && fie->width != QVGA_WIDTH)
++		return -EINVAL;
++	if (fie->height != VGA_HEIGHT && fie->height != QVGA_HEIGHT)
++		return -EINVAL;
++
++	fie->interval.numerator = 1;
++	fie->interval.denominator = ov772x_frame_intervals[fie->index];
++
++	return 0;
++}
++
+ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+ 		struct v4l2_subdev_pad_config *cfg,
+ 		struct v4l2_subdev_mbus_code_enum *code)
+@@ -1055,14 +1230,17 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+ }
+ 
  static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
- 	.s_stream	= ov772x_s_stream,
--	.g_mbus_config	= ov772x_g_mbus_config,
+-	.s_stream	= ov772x_s_stream,
++	.s_stream		= ov772x_s_stream,
++	.s_frame_interval	= ov772x_s_frame_interval,
++	.g_frame_interval	= ov772x_g_frame_interval,
  };
  
  static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
-@@ -1038,12 +1079,11 @@ static int ov772x_probe(struct i2c_client *client,
- 			const struct i2c_device_id *did)
- {
- 	struct ov772x_priv	*priv;
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--	struct i2c_adapter	*adapter = to_i2c_adapter(client->dev.parent);
-+	struct i2c_adapter	*adapter = client->adapter;
- 	int			ret;
+-	.enum_mbus_code = ov772x_enum_mbus_code,
+-	.get_selection	= ov772x_get_selection,
+-	.get_fmt	= ov772x_get_fmt,
+-	.set_fmt	= ov772x_set_fmt,
++	.enum_frame_interval	= ov772x_enum_frame_interval,
++	.enum_mbus_code		= ov772x_enum_mbus_code,
++	.get_selection		= ov772x_get_selection,
++	.get_fmt		= ov772x_get_fmt,
++	.set_fmt		= ov772x_set_fmt,
+ };
  
--	if (!ssdd || !ssdd->drv_priv) {
--		dev_err(&client->dev, "OV772X: missing platform data!\n");
-+	if (!client->dev.platform_data) {
-+		dev_err(&client->dev, "Missing ov772x platform data\n");
- 		return -EINVAL;
- 	}
+ static const struct v4l2_subdev_ops ov772x_subdev_ops = {
+@@ -1134,6 +1312,7 @@ static int ov772x_probe(struct i2c_client *client,
  
-@@ -1059,7 +1099,7 @@ static int ov772x_probe(struct i2c_client *client,
- 	if (!priv)
- 		return -ENOMEM;
+ 	priv->cfmt = &ov772x_cfmts[0];
+ 	priv->win = &ov772x_win_sizes[0];
++	priv->fps = 15;
  
--	priv->info = ssdd->drv_priv;
-+	priv->info = client->dev.platform_data;
- 
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov772x_subdev_ops);
- 	v4l2_ctrl_handler_init(&priv->hdl, 3);
-@@ -1073,22 +1113,42 @@ static int ov772x_probe(struct i2c_client *client,
- 	if (priv->hdl.error)
- 		return priv->hdl.error;
- 
--	priv->clk = v4l2_clk_get(&client->dev, "mclk");
-+	priv->clk = clk_get(&client->dev, "xclk");
- 	if (IS_ERR(priv->clk)) {
-+		dev_err(&client->dev, "Unable to get xclk clock\n");
- 		ret = PTR_ERR(priv->clk);
--		goto eclkget;
-+		goto error_ctrl_free;
- 	}
- 
--	ret = ov772x_video_probe(priv);
--	if (ret < 0) {
--		v4l2_clk_put(priv->clk);
--eclkget:
--		v4l2_ctrl_handler_free(&priv->hdl);
--	} else {
--		priv->cfmt = &ov772x_cfmts[0];
--		priv->win = &ov772x_win_sizes[0];
-+	priv->pwdn_gpio = gpiod_get_optional(&client->dev, "pwdn",
-+					     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->pwdn_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"pwdn\"");
-+		ret = PTR_ERR(priv->pwdn_gpio);
-+		goto error_clk_put;
- 	}
- 
-+	ret = ov772x_video_probe(priv);
-+	if (ret < 0)
-+		goto error_gpio_put;
-+
-+	priv->cfmt = &ov772x_cfmts[0];
-+	priv->win = &ov772x_win_sizes[0];
-+
-+	ret = v4l2_async_register_subdev(&priv->subdev);
-+	if (ret)
-+		goto error_gpio_put;
-+
-+	return 0;
-+
-+error_gpio_put:
-+	if (priv->pwdn_gpio)
-+		gpiod_put(priv->pwdn_gpio);
-+error_clk_put:
-+	clk_put(priv->clk);
-+error_ctrl_free:
-+	v4l2_ctrl_handler_free(&priv->hdl);
-+
- 	return ret;
- }
- 
-@@ -1096,7 +1156,9 @@ static int ov772x_remove(struct i2c_client *client)
- {
- 	struct ov772x_priv *priv = to_ov772x(i2c_get_clientdata(client));
- 
--	v4l2_clk_put(priv->clk);
-+	clk_put(priv->clk);
-+	if (priv->pwdn_gpio)
-+		gpiod_put(priv->pwdn_gpio);
- 	v4l2_device_unregister_subdev(&priv->subdev);
- 	v4l2_ctrl_handler_free(&priv->hdl);
- 	return 0;
-@@ -1119,6 +1181,6 @@ static struct i2c_driver ov772x_i2c_driver = {
- 
- module_i2c_driver(ov772x_i2c_driver);
- 
--MODULE_DESCRIPTION("SoC Camera driver for ov772x");
-+MODULE_DESCRIPTION("V4L2 driver for OV772x image sensor");
- MODULE_AUTHOR("Kuninori Morimoto");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/media/i2c/ov772x.h b/include/media/i2c/ov772x.h
-index 00dbb7c..27d087b 100644
---- a/include/media/i2c/ov772x.h
-+++ b/include/media/i2c/ov772x.h
-@@ -48,8 +48,10 @@ struct ov772x_edge_ctrl {
- 	.threshold = (t & OV772X_EDGE_THRESHOLD_MASK),	\
- }
- 
--/*
-- * ov772x camera info
-+/**
-+ * ov772x_camera_info -	ov772x driver interface structure
-+ * @flags:		Sensor configuration flags
-+ * @edgectrl:		Sensor edge control
-  */
- struct ov772x_camera_info {
- 	unsigned long		flags;
+ 	ret = v4l2_async_register_subdev(&priv->subdev);
+ 	if (ret)
 -- 
 2.7.4
