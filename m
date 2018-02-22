@@ -1,107 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeBVHeY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:34:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49416 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751681AbeBVHeW (ORCPT
+        id S1752653AbeBVHfC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:35:02 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39540 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751687AbeBVHfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:34:22 -0500
-Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-To: Farhan Ali <alifm@linux.vnet.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        geert@linux-m68k.org, tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
- <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
- <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
- <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
- <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
- <20180221113217.11bb1c69.cohuck@redhat.com>
- <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
- <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
- <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
- <5dfa9213-0e63-54d0-8700-1ced4efd4c28@redhat.com>
- <f6db4d0a-3578-4162-5de7-6e699f7a02c2@de.ibm.com>
- <20180221130755.17d15f89.cohuck@redhat.com>
- <6c1daae4-e1f6-5627-9023-f03d986c5639@de.ibm.com>
- <2170dce6-4456-3ab6-d07c-2169d99c4173@linux.vnet.ibm.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Thu, 22 Feb 2018 08:34:13 +0100
+        Thu, 22 Feb 2018 02:35:00 -0500
+X-Google-Smtp-Source: AH8x225dfgMUKpT8gkDo1VUKXigCf6K0ESgQVgiho4b2KzQ2oQuO+F9sn3qqd9CMoXLJSuZG9w5shw==
+Subject: Re: [PATCH 04/20] lightnvm: add minor version to generic geometry
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+ <1519205218-26994-5-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <abd2b8f4-58b6-c97e-58e2-e271aae1f4a0@lightnvm.io>
+Date: Thu, 22 Feb 2018 08:34:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <2170dce6-4456-3ab6-d07c-2169d99c4173@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022207-0008-0000-0000-000004D30D5F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022207-0009-0000-0000-00001E661833
-Message-Id: <2af46f6f-d225-9802-c6f9-98099fb2c2c8@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802220097
+In-Reply-To: <1519205218-26994-5-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/21/2018 05:39 PM, Farhan Ali wrote:
+On 02/21/2018 10:26 AM, Javier González wrote:
+> Separate the version between major and minor on the generic geometry.
+> Also, add a "subversion" entry to sysfs to expose the minor version
+> without breaking user space.
 > 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/core.c      |  4 ++--
+>   drivers/nvme/host/lightnvm.c | 25 ++++++++++++++++++++-----
+>   include/linux/lightnvm.h     |  3 ++-
+>   3 files changed, 24 insertions(+), 8 deletions(-)
 > 
-> On 02/21/2018 07:11 AM, Christian Borntraeger wrote:
->>
->>
->> On 02/21/2018 01:07 PM, Cornelia Huck wrote:
->> [...]
->>>>> But if you need to enable PCI to get IOMEM, I wonder why this patch here
->>>>> is needed at all? The Graphics menu / VT dummy console should be
->>>>> available in the config if IOMEM is enabled anyway?
->>>>
->>>> That is a good question. With CONFIG_PCI=y I can select virtio-gpu and dummy-console.
->>>> IIRC the issue was that with patch 3 we can have the situation where we have
->>>> CONFIG_VT = y and CONFIG_DUMMY_CONSOLE=n and this will crash early during boot as
->>>> conswitchp is NULL.
+> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+> index 42596afdf64c..dc9ec6baff45 100644
+> --- a/drivers/lightnvm/core.c
+> +++ b/drivers/lightnvm/core.c
+> @@ -897,8 +897,8 @@ static int nvm_init(struct nvm_dev *dev)
+>   		goto err;
+>   	}
+>   
+> -	pr_debug("nvm: ver:%u nvm_vendor:%x\n",
+> -				dev_geo->ver_id,
+> +	pr_debug("nvm: ver:%u.%u nvm_vendor:%x\n",
+> +				dev_geo->major_ver_id, dev_geo->minor_ver_id,
+>   				dev_geo->c.vmnt);
+>   
+>   	ret = nvm_core_init(dev);
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index 598abba66f52..71b4ac57a668 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -296,7 +296,8 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+>   	}
+>   
+>   	/* 1.2 spec. only reports a single version id - unfold */
+> -	dev_geo->ver_id = id->ver_id;
+> +	dev_geo->major_ver_id = id->ver_id;
+> +	dev_geo->minor_ver_id = 2;
+>   
+>   	dev_geo->nr_chnls = src->num_ch;
+>   	dev_geo->nr_luns = src->num_lun;
+> @@ -377,7 +378,14 @@ static void nvme_nvm_set_addr_20(struct nvm_addr_format *dst,
+>   static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+>   			     struct nvm_dev_geo *dev_geo)
+>   {
+> -	dev_geo->ver_id = id->mjr;
+> +	dev_geo->major_ver_id = id->mjr;
+> +	dev_geo->minor_ver_id = id->mnr;
+> +
+> +	if (!(dev_geo->major_ver_id == 2 && dev_geo->minor_ver_id == 0)) {
+> +		pr_err("nvm: OCSSD version not supported (v%d.%d)\n",
+> +				dev_geo->major_ver_id, dev_geo->minor_ver_id);
+> +		return -EINVAL;
+> +	}
+>   
+>   	dev_geo->nr_chnls = le16_to_cpu(id->num_grp);
+>   	dev_geo->nr_luns = le16_to_cpu(id->num_pu);
+> @@ -913,7 +921,11 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+>   	attr = &dattr->attr;
+>   
+>   	if (strcmp(attr->name, "version") == 0) {
+> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->ver_id);
+> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+> +						dev_geo->major_ver_id);
+> +	} else if (strcmp(attr->name, "subversion") == 0) {
+> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+> +						dev_geo->minor_ver_id);
+>   	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
+>   	} else if (strcmp(attr->name, "read_typ") == 0) {
+> @@ -1055,6 +1067,7 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>   
+>   /* general attributes */
+>   static NVM_DEV_ATTR_RO(version);
+> +static NVM_DEV_ATTR_RO(subversion);
+>   static NVM_DEV_ATTR_RO(media_capabilities);
+>   
+>   static NVM_DEV_ATTR_RO(read_typ);
+> @@ -1085,6 +1098,7 @@ static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>   
+>   static struct attribute *nvm_dev_attrs_12[] = {
+>   	&dev_attr_version.attr,
+> +	&dev_attr_subversion.attr,
+>   	&dev_attr_media_capabilities.attr,
+>   
+>   	&dev_attr_vendor_opcode.attr,
+> @@ -1134,6 +1148,7 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>   
+>   static struct attribute *nvm_dev_attrs_20[] = {
+>   	&dev_attr_version.attr,
+> +	&dev_attr_subversion.attr,
+>   	&dev_attr_media_capabilities.attr,
+>   
+>   	&dev_attr_groups.attr,
+> @@ -1167,7 +1182,7 @@ int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+>   	if (!ndev)
+>   		return -EINVAL;
+>   
+> -	switch (dev_geo->ver_id) {
+> +	switch (dev_geo->major_ver_id) {
+>   	case 1:
+>   		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+>   					&nvm_dev_attr_group_12);
+> @@ -1184,7 +1199,7 @@ void nvme_nvm_unregister_sysfs(struct nvme_ns *ns)
+>   	struct nvm_dev *ndev = ns->ndev;
+>   	struct nvm_dev_geo *dev_geo = &ndev->dev_geo;
+>   
+> -	switch (dev_geo->ver_id) {
+> +	switch (dev_geo->major_ver_id) {
+>   	case 1:
+>   		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+>   					&nvm_dev_attr_group_12);
+> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+> index 18e3751b1632..5af0b8837095 100644
+> --- a/include/linux/lightnvm.h
+> +++ b/include/linux/lightnvm.h
+> @@ -242,7 +242,8 @@ struct nvm_common_geo {
+>   /* Device identified geometry */
+>   struct nvm_dev_geo {
+>   	/* device reported version */
+> -	u8	ver_id;
+> +	u8	major_ver_id;
+> +	u8	minor_ver_id;
+>   
+>   	/* full device geometry */
+>   	u16	nr_chnls;
 > 
-> Yes, VT layer initializes very early in the boot process and looks for a console. If it can't find any it will crash. I believe that was the whole point of having the dummy console.
-> 
->>>
->>> So in practice, CONFIG_VT depends on "there's a console available, even
->>> if it's only the dummy one"?
->>
->> Yes. Maybe we should simple move dummy_console outside of drivers/video/console/Kconfig
->> into something that is always available.
->>
-> 
-> I agree, but where should it go? consoles are kinda tightly tied to video/Graphics Support.
-> 
->>>
->>>> This patches goal was to always enable dummy console even without
->>>> PCI, but it obviously fails to do so.
->>>
-> This patch should enable the dummy console even without PCI but we won't have DRM/Virtio GPU.
 
-
-All right. This patch then makes sure that VT does not crash since it guarantees
-that DUMMY_CONSOLE is available. If the user want to have virtio-gpu it needs to
-enable PCI due to the dependencies, but this is a different issue that we can fix
-later.
-So the patch is fine as long as you take care of these things
-
-- add missing HAS_IOMEM dependency to VGA_CONSOLE
-
-- extend "if HAS_IOMEM" in drivers/video/Kconfig to cover config items
-  previously covered by this dependency (it should start before config
-  HAVE_FB_ATMEL and end after config HDMI)
-
-as requested by Bartlomiej 
+Looks fairly good to me. Did you consider putting in the major and minor 
+version id into the version attribute? e.g., keep 1 as 1, and have 
+version 2 be exposed as 2.0?
