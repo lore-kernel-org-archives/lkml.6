@@ -1,94 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932880AbeBVO0c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:26:32 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43437 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932564AbeBVO01 (ORCPT
+        id S932889AbeBVO0v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:26:51 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:40835 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932726AbeBVO0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:26:27 -0500
-X-Google-Smtp-Source: AH8x225JhOoYMnONLlqqa2iPpwIAFoWVGq2Qzo3Yy48+IYnu7P2K85gsFvcADKmdjXbpcjjHCBoNHw==
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH] microblaze: Use generic pci_mmap_resource_range()
-To: David Woodhouse <dwmw@amazon.co.uk>, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
-From: Michal Simek <monstr@monstr.eu>
-Message-ID: <82d28f04-f196-d608-cd37-d28a9fc1bcae@monstr.eu>
-Date: Thu, 22 Feb 2018 15:26:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Feb 2018 09:26:48 -0500
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
+Subject: [BUG] ARCv2: MCIP: GFRC: mcip cmd/readback concurrency
+Thread-Topic: [BUG] ARCv2: MCIP: GFRC: mcip cmd/readback concurrency
+Thread-Index: AQHTq+kqpL2oAa7DC0yw5+SmDRy3Nw==
+Date: Thu, 22 Feb 2018 14:26:44 +0000
+Message-ID: <1519309604.2982.27.camel@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.43]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <54992489DC61334FA9DC8672D2BBD554@internal.synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="9iHJX5OJH7uahLZINhvu45qCCJRyJ4kSq"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MEQuU0017102
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---9iHJX5OJH7uahLZINhvu45qCCJRyJ4kSq
-Content-Type: multipart/mixed; boundary="n9ncCsB8SIakI1XiMcgMUinWCEJbnMVff";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: David Woodhouse <dwmw@amazon.co.uk>, bhelgaas@google.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Message-ID: <82d28f04-f196-d608-cd37-d28a9fc1bcae@monstr.eu>
-Subject: Re: [PATCH] microblaze: Use generic pci_mmap_resource_range()
-References: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
-In-Reply-To: <1519045283-22350-1-git-send-email-dwmw@amazon.co.uk>
+To read any data from ARconnect we have special interface
+which includes two AUX registers: MCIP_CMD and MCIP_READBACK.
+We write command to MCIP_CMD and read data from MCIP_READBACK
+after that.
 
---n9ncCsB8SIakI1XiMcgMUinWCEJbnMVff
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 19.2.2018 14:01, David Woodhouse wrote:
-> Commit f719582435 ("PCI: Add pci_mmap_resource_range() and use it for
-> ARM64") added this generic function with the intent of using it
-> everywhere and ultimately killing the old arch-specific implementations=
-=2E
->=20
-> Let's get on with that eradication...
->=20
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->  arch/microblaze/include/asm/pci.h |  7 +--
->  arch/microblaze/pci/pci-common.c  | 99 ++++---------------------------=
---------
->  2 files changed, 13 insertions(+), 93 deletions(-)
-
-Good to see patches for these files.
-
-Applied.
-
-Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+We have only one instance of this registers per cluster, so we need
+to held global lock before access them. This lock is defined
+in arch/arc/kernel/mcip.c
 
 
+To read GFRC value we also use MCIP_CMD/MCIP_READBACK pair, but 
+we take only local lock instead of global 'mcip_lock' lock:
 
---n9ncCsB8SIakI1XiMcgMUinWCEJbnMVff--
+---------->[drivers/clocksource/arc_timer.c]<----------
+static u64 arc_read_gfrc(struct clocksource *cs)
+{
+	unsigned long flags;
+	u32 l, h;
 
---9iHJX5OJH7uahLZINhvu45qCCJRyJ4kSq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+	local_irq_save(flags);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+	__mcip_cmd(CMD_GFRC_READ_LO, 0);
+	l = read_aux_reg(ARC_REG_MCIP_READBACK);
 
-iEYEARECAAYFAlqO0wsACgkQykllyylKDCGEXgCdGetE968BONjONgDznAUfJ/dk
-Y1sAn3+rSC3ryYigKcplFnxMd93WFU7y
-=fknL
------END PGP SIGNATURE-----
+	__mcip_cmd(CMD_GFRC_READ_HI, 0);
+	h = read_aux_reg(ARC_REG_MCIP_READBACK);
 
---9iHJX5OJH7uahLZINhvu45qCCJRyJ4kSq--
+	local_irq_restore(flags);
+
+	return (((u64)h) << 32) | l;
+}
+-------------------------->8---------------------------
+
+So we can break any command (like inter core interrupt send)
+which uses MCIP_CMD/MCIP_READBACK pair when we read time from GFRC. 
+
+One possible solution is to create function like gfrc_read() in mcip.c
+which will use global 'mcip_lock' and call it from current 'arc_read_gfrc'
+function.
+
+Or we can create a wrapper like 'mcip_read' in arch/arc/kernel/mcip.c
+with next functionality:
+------->8--------
+u32 mcip_read(u32 cmd)
+{
+	u32 ret;
+
+	raw_spin_lock_irqsave(&mcip_lock);
+
+	__mcip_cmd(cmd, 0);
+	ret = read_aux_reg(ARC_REG_MCIP_READBACK);
+
+	raw_spin_unlock_irqrestore(&mcip_lock);
+
+	return ret;
+}
+------->8--------
+
+-- 
+ Eugeniy Paltsev
