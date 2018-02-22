@@ -1,75 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752421AbeBVB6t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 20:58:49 -0500
-Received: from mail-io0-f176.google.com ([209.85.223.176]:35390 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752375AbeBVB6i (ORCPT
+        id S1751888AbeBVCL2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 21:11:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751802AbeBVCL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 20:58:38 -0500
-X-Google-Smtp-Source: AG47ELuwuZ7nJg28JjG0JhpZa0LL1iBJIu0Z0ogySXs70NYLyvuQeQqlc6nQOPyUoQU/iUxVltNVwuEE4pEXKImgEb8=
+        Wed, 21 Feb 2018 21:11:27 -0500
+Date: Wed, 21 Feb 2018 18:11:47 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [QUESTION] srcu: Remove the SCAN2 state
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1519257447-4232-1-git-send-email-byungchul.park@lge.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222014505.2l76ccrrs36y3b26@agluck-desk>
-References: <CA+55aFy8JMLjpDk+sU6pirSZdVqqHtw5oocDAEC7wcHuo5Vssw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37DE1B@ORSMSX110.amr.corp.intel.com>
- <CA+55aFwKsa6bq5SUD6wKv8znGcxqjLCPh33a3DkbnUkSfd68Yw@mail.gmail.com>
- <CAKv+Gu--iHii9SxE7RMZKdVdLvQPPGo0wdCzG30xW0+7dakbmw@mail.gmail.com>
- <CA+55aFx4Q7AzCM5mDwga6_LteNUBWQsT6nKJMjn8JcriS3ExuQ@mail.gmail.com>
- <20180221182104.GI3231@tassilo.jf.intel.com> <20180221194731.t7jowrmicvaggu3x@agluck-desk>
- <CA+55aFzy89V13rSxGQy77Bb08qpUpH+J=trcjooKQhsAFbgrVw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
- <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com> <20180222014505.2l76ccrrs36y3b26@agluck-desk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 21 Feb 2018 17:58:37 -0800
-X-Google-Sender-Auth: EODwPEEKcLlyYEJcSB_hRuKPmh4
-Message-ID: <CA+55aFzJXsPcsJ5MtsxTp2n+43xC0yGzANLNcDm1mFbZKR75FQ@mail.gmail.com>
-Subject: Re: [PATCH] efivarfs: Limit the rate for non-root to read files
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519257447-4232-1-git-send-email-byungchul.park@lge.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022202-0044-0000-0000-000003E7FD16
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008573; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00993220; UDB=6.00504663; IPR=6.00772564;
+ MB=3.00019680; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 02:11:25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022202-0045-0000-0000-00000818032A
+Message-Id: <20180222021147.GA2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 5:45 PM, Luck, Tony <tony.luck@intel.com> wrote:
->
-> Linus suggested per-user rate limit to solve this.
+On Thu, Feb 22, 2018 at 08:57:27AM +0900, Byungchul Park wrote:
+> Hello,
+> 
+> I'm sorry for bothering you, and I seem to be obviously missing
+> something, but I'm really wondering why we check try_check_zero()
+> again in the state, SCAN1, for the previous srcu_idx.
+> 
+> I mean, since we've already checked try_check_zero() in the previous
+> grace period and gotten 'true' as a return value, all readers who see
+> the flipped idx via srcu_flip() won't update the src_{lock,unlock}_count
+> for the previous idx until it gets flipped back again.
+> 
+> Is there any reasons we check try_check_zero() again in the state, SCAN1?
+> Is there any problems if the following patch's applied?
 
-Note that you also need to serialize per user, because otherwise..
+Indeed there are!  Removing the second scan exposes us to a nasty race
+condition where a reader is preempted (or interrupted or whatever) just
+after fetching its counter.  A detailed explanation for an essentially
+equivalent race in userspace RCU may be found on the second column of
+page 7 of this PDF:
 
-> +       if (!__ratelimit(&file->f_cred->user->ratelimit))
-> +               usleep_range(10000, 10000);
+http://www.computer.org/cms/Computer.org/dl/trans/td/2012/02/extras/ttd2012020375s.pdf
 
-..this doesn't really ratelimit anything, because you can just start a
-thousand threads, and they all end up being rate-limited, but they all
-just sleep for 10ms each, so you can get a hundred thousand accesses
-per second anyway.
+But please let me know if I am missing the point of your patch below.
 
-To fix that, you can either:
+							Thanx, Paul
 
- - just make it return -EAGAIN instead of sleeping (which probably
-just works fine and doesn't break anything and is simple)
-
- - add a per-user mutex, and do the usleep inside of it, so that
-anybody who tries to do a thousand threads will just be serialized by
-the mutex.
-
-Note that the mutex needs to be per-user, because otherwise it will be
-a DoS for the other users.
-
-Of course, to avoid *another* DoS, the mutex should probably be
-interruptible, and return -EAGAIN, so that you don't have a thousand
-thread waiting for the mutex and have something that is effectively
-unkillable for ten seconds.
-
-Can it be hard and annoying to avoid DoS by rate limiting? Why, yes.
-Yes it can.
-
-                Linus
+> Thanks in advance,
+> Byungchul
+> 
+> ---
+>  kernel/rcu/srcutree.c | 16 +---------------
+>  1 file changed, 1 insertion(+), 15 deletions(-)
+> 
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 39e50fe..215c44a 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -1125,24 +1125,10 @@ static void srcu_advance_state(struct srcu_struct *sp)
+>  			mutex_unlock(&sp->srcu_gp_mutex);
+>  			return; /* Someone else started the grace period. */
+>  		}
+> -	}
+> -
+> -	if (rcu_seq_state(READ_ONCE(sp->srcu_gp_seq)) == SRCU_STATE_SCAN1) {
+> -		idx = 1 ^ (sp->srcu_idx & 1);
+> -		if (!try_check_zero(sp, idx, 1)) {
+> -			mutex_unlock(&sp->srcu_gp_mutex);
+> -			return; /* readers present, retry later. */
+> -		}
+>  		srcu_flip(sp);
+> -		rcu_seq_set_state(&sp->srcu_gp_seq, SRCU_STATE_SCAN2);
+>  	}
+> 
+> -	if (rcu_seq_state(READ_ONCE(sp->srcu_gp_seq)) == SRCU_STATE_SCAN2) {
+> -
+> -		/*
+> -		 * SRCU read-side critical sections are normally short,
+> -		 * so check at least twice in quick succession after a flip.
+> -		 */
+> +	if (rcu_seq_state(READ_ONCE(sp->srcu_gp_seq)) == SRCU_STATE_SCAN1) {
+>  		idx = 1 ^ (sp->srcu_idx & 1);
+>  		if (!try_check_zero(sp, idx, 2)) {
+>  			mutex_unlock(&sp->srcu_gp_mutex);
+> -- 
+> 1.9.1
+> 
