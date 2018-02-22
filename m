@@ -1,171 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeBVVYP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 16:24:15 -0500
-Received: from mout.web.de ([212.227.17.11]:47617 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751366AbeBVVYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:24:12 -0500
-To: linux-media@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        Andi Shyti <andi.shyti@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Schwarzott <zzam@gentoo.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>,
-        Romain Reignier <r.reignier@robopec.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Santosh Kumar Singh <kumar.san1093@gmail.com>,
-        Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH v2] [media] Delete unnecessary variable initialisations in
- seven functions
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
-Date: Thu, 22 Feb 2018 22:22:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        id S1751582AbeBVVYo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:24:44 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44662 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751432AbeBVVYn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 16:24:43 -0500
+Date: Thu, 22 Feb 2018 13:24:41 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+        linux-mm@kvack.org, kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v2 1/3] mm/sparse: Add a static variable
+ nr_present_sections
+Message-Id: <20180222132441.51a8eae9e9656a82a2161070@linux-foundation.org>
+In-Reply-To: <20180222091130.32165-2-bhe@redhat.com>
+References: <20180222091130.32165-1-bhe@redhat.com>
+        <20180222091130.32165-2-bhe@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:/ZEXxDlXQ5Gui6mmiYowk5ZDZiMtb2FKs+I98/KG8RW2aT9nadY
- 8U+/6RF4ryVGCnZxWxXtQ2tq/pAru3LCj3y9SdPtUmaSLrNF0TLPmGOP/1BN8lcN3S5pRWq
- IiMKGxU9IdyzBq8M/cfblIq9CXl2pgcnTeKLdN9hDPKFQf7BIhNW1DjdOnj8v8ewjI8oMIh
- Hl6JLJ/li/y440QaW1FaA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cS69KNgsWSw=:oWH6RpID5eXbYkzu9IOc/3
- 7EpS3MaRf6Jcie4fiOUNbWKILirr9f7JEDhUAwP3B3c6cntUiylKKHu7/PDDThoJakc7NecY6
- fOdA7LmiDwWdv8B3WOEMef13Ptz1/BGXD5o0CLqD4lq31GD1lYwVeGwgOkhHurRxzDkBC7kl7
- JCmUurtgDmZud4eT95pAt2moO6/T5X7cSyGwbkK5IaQOMYCe1XPeJa9+DRXyb/dr9CL0+TEIq
- HLBXWPRX94gKlZlsKH9GRA/npBvuIqixKQHzlNB+z+ZF0rfY1abSI0vQLD+kASLdBZxLDHEOh
- ce6bw8lcdV93oDnzML34737CkYdbzaOccPDPtRjVLhZMyucbXPLAcm0cVovGOk2+XtuvqwEgQ
- +Zzqq9aGBQqHcPPeD8NqKykn35ZPXJhsp0Vcm2wN51iFW/cjTIWErUplSG2eCO/B99yG/IE2f
- T6nLH7dWgLGhIE1kamiOUTgmqHe2PNrgyTq+930Uh82nqcJQ5m78p7ej30k+wJCFIoCl4ZMnp
- 7BhUGd6A3q6+kWi2Crma8N5Mpf5KucmoZSLQcP1vOaaT3bHDVKPPIqbRP3HQkHcZaw601B/wq
- xQ+4zN4qjD3LUzGhl9pZlSCpATRorgxEm1yLd9wiKgXdiSl9OnfX5aPAO8sdcBWl6AtKxj2XQ
- 2PwxYVbA3ev9If168lu5XfWcdFzobUoB3JNXRkQTXyABpqPJ8wM+p7whcMQ2WvxgRCS8N3QY4
- PiINGwLPiLTraYtzbGVaOyWzKInMG4ymGnW/agtRqzKS14VqOoh3s3znMtiOmkjZijGKBuRVb
- qhfhj/fpW9Lt7TCQRCta3J7K/JUnVN9Ym9Bjm5FhYYz7ndct4g=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Feb 2018 21:45:47 +0100
+On Thu, 22 Feb 2018 17:11:28 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-Some local variables will be set to an appropriate value before usage.
-Thus omit explicit initialisations at the beginning of these functions.
+> It's used to record how many memory sections are marked as present
+> during system boot up, and will be used in the later patch.
+> 
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -202,6 +202,7 @@ static inline int next_present_section_nr(int section_nr)
+>  	      (section_nr <= __highest_present_section_nr));	\
+>  	     section_nr = next_present_section_nr(section_nr))
+>  
+> +static int nr_present_sections;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+I think this could be __initdata.
 
-v2:
-Hans Verkuil insisted on patch squashing. Thus some changes
-were recombined based on source files from Linux next-20180216.
-
- drivers/media/radio/radio-mr800.c             | 2 +-
- drivers/media/radio/radio-wl1273.c            | 2 +-
- drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
- drivers/media/usb/cx231xx/cx231xx-cards.c     | 2 +-
- drivers/media/usb/cx231xx/cx231xx-dvb.c       | 2 +-
- drivers/media/usb/go7007/snd-go7007.c         | 2 +-
- drivers/media/usb/tm6000/tm6000-cards.c       | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
-index dc6c4f985911..0f292c6ba338 100644
---- a/drivers/media/radio/radio-mr800.c
-+++ b/drivers/media/radio/radio-mr800.c
-@@ -511,5 +511,5 @@ static int usb_amradio_probe(struct usb_interface *intf,
- 				const struct usb_device_id *id)
- {
- 	struct amradio_device *radio;
--	int retval = 0;
-+	int retval;
- 
-diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
-index 58e944591602..8f9f8dfc3497 100644
---- a/drivers/media/radio/radio-wl1273.c
-+++ b/drivers/media/radio/radio-wl1273.c
-@@ -671,6 +671,6 @@ static int wl1273_fm_start(struct wl1273_device *radio, int new_mode)
- static int wl1273_fm_suspend(struct wl1273_device *radio)
- {
- 	struct wl1273_core *core = radio->core;
--	int r = 0;
-+	int r;
- 
- 	/* Cannot go from OFF to SUSPENDED */
-diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
-index c311f9951d80..2277e850bb5e 100644
---- a/drivers/media/radio/si470x/radio-si470x-usb.c
-+++ b/drivers/media/radio/si470x/radio-si470x-usb.c
-@@ -578,6 +578,6 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
- 	struct si470x_device *radio;
- 	struct usb_host_interface *iface_desc;
- 	struct usb_endpoint_descriptor *endpoint;
--	int i, int_end_size, retval = 0;
-+	int i, int_end_size, retval;
- 	unsigned char version_warning = 0;
- 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index f9ec7fedcd5b..14e3814f55d9 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1135,6 +1135,6 @@ static void cx231xx_config_tuner(struct cx231xx *dev)
- static int read_eeprom(struct cx231xx *dev, struct i2c_client *client,
- 		       u8 *eedata, int len)
- {
--	int ret = 0;
-+	int ret;
- 	u8 start_offset = 0;
- 	int len_todo = len;
-diff --git a/drivers/media/usb/cx231xx/cx231xx-dvb.c b/drivers/media/usb/cx231xx/cx231xx-dvb.c
-index fb5654062b1a..24ca011c49bb 100644
---- a/drivers/media/usb/cx231xx/cx231xx-dvb.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-dvb.c
-@@ -604,6 +604,6 @@ static void unregister_dvb(struct cx231xx_dvb *dvb)
- 
- static int dvb_init(struct cx231xx *dev)
- {
--	int result = 0;
-+	int result;
- 	struct cx231xx_dvb *dvb;
- 	struct i2c_adapter *tuner_i2c;
-diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
-index c618764480c6..f84a2130f033 100644
---- a/drivers/media/usb/go7007/snd-go7007.c
-+++ b/drivers/media/usb/go7007/snd-go7007.c
-@@ -227,7 +227,7 @@ int go7007_snd_init(struct go7007 *go)
- {
- 	static int dev;
- 	struct go7007_snd *gosnd;
--	int ret = 0;
-+	int ret;
- 
- 	if (dev >= SNDRV_CARDS)
- 		return -ENODEV;
-diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
-index 4d5f4cc4887e..70939e96b856 100644
---- a/drivers/media/usb/tm6000/tm6000-cards.c
-+++ b/drivers/media/usb/tm6000/tm6000-cards.c
-@@ -1174,7 +1174,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- {
- 	struct usb_device *usbdev;
- 	struct tm6000_core *dev;
--	int i, rc = 0;
-+	int i, rc;
- 	int nr = 0;
- 	char *speed;
- 
--- 
-2.16.2
+A nice comment explaining why it exists would be nice.
