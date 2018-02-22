@@ -1,81 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753195AbeBVKA5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:00:57 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35261 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752910AbeBVKAy (ORCPT
+        id S1753267AbeBVKCN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:02:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44670 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753151AbeBVKCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:00:54 -0500
-X-Google-Smtp-Source: AH8x227XUSewVUVzhvcOHxDJjo9PCZ2VO3GBV0N81WnJp0Z9OvZh3w0uaIq7xt7EFkXYv7Ov0358TQ==
-Subject: Re: [PATCH 08/20] lightnvm: complete geo structure with maxoc*
-To: Javier Gonzalez <javier@cnexlabs.com>
-Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
- <1519205218-26994-9-git-send-email-javier@cnexlabs.com>
- <5e2948ed-19a8-7bd5-6c50-df37a1454d16@lightnvm.io>
- <F70FB36A-967C-4B37-8037-C550249A0C3B@cnexlabs.com>
- <ec5d6c53-c3a1-7d66-9db7-407a519f0feb@lightnvm.io>
- <BA0987F5-AEA5-43BD-A065-3BF72E9A8676@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <9c8c1b50-0c8e-36cd-0f1d-a07753567f43@lightnvm.io>
-Date: Thu, 22 Feb 2018 11:00:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 22 Feb 2018 05:02:12 -0500
+From: Colin King <colin.king@canonical.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] HID: fix spelling mistake, "registred" -> "registered"
+Date: Thu, 22 Feb 2018 10:02:07 +0000
+Message-Id: <20180222100207.2741-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <BA0987F5-AEA5-43BD-A065-3BF72E9A8676@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 10:52 AM, Javier Gonzalez wrote:
->> On 22 Feb 2018, at 10.45, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> On 02/22/2018 08:55 AM, Javier Gonzalez wrote:
->>>> On 22 Feb 2018, at 08.45, Matias Bjørling <mb@lightnvm.io> wrote:
->>>>
->>>> On 02/21/2018 10:26 AM, Javier González wrote:
->>>>> Complete the generic geometry structure with the maxoc and maxocpu
->>>>> felds, present in the 2.0 spec.
->>>>> Signed-off-by: Javier González <javier@cnexlabs.com>
->>>>> ---
->>>>>   drivers/nvme/host/lightnvm.c | 4 ++++
->>>>>   include/linux/lightnvm.h     | 2 ++
->>>>>   2 files changed, 6 insertions(+)
->>>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
->>>>> index cca32da05316..9c1f8225c4e1 100644
->>>>> --- a/drivers/nvme/host/lightnvm.c
->>>>> +++ b/drivers/nvme/host/lightnvm.c
->>>>> @@ -318,6 +318,8 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
->>>>>   	dev_geo->c.ws_min = sec_per_pg;
->>>>>   	dev_geo->c.ws_opt = sec_per_pg;
->>>>>   	dev_geo->c.mw_cunits = 8;		/* default to MLC safe values */
->>>>> +	dev_geo->c.maxoc = dev_geo->all_luns;	/* default to 1 chunk per LUN */
->>>>> +	dev_geo->c.maxocpu = 1;			/* default to 1 chunk per LUN */
->>>>
->>>> One can't assume that it is 1 open chunk per lun. If you need this for specific hardware, make a quirk for it.
->>> Which default you want for 1.2 if not specified then? I use 1 because it
->>> has been the implicit default until now.
->>
->> INT_MAX, since it then allows the maximum of open chunks. It cannot be assumed that other 1.2 devices is limited to a single open chunk.
-> 
-> So you want the default to be that all blocks on the device can be
-> opened at the same time. Interesting... I guess that such a SSD will
-> have a AA battery attached to it, but fine by me if that's how you want
-> it.
+From: Colin Ian King <colin.king@canonical.com>
 
-I feel you're a bit sarcastic here. One may think of SLC and other 
-memories that does one-shot programming. In that case no caching is 
-needed, and therefore power-caps can be limited on the hardware.
+Trivial fix to spelling mistake in hid_err error message text.
 
-> 
-> Assuming this, can we instead set it to the reported number of chunks,
-> since this is the hard limit anyway.
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-elan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Works for me.
+diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
+index 803a725785cf..52381d1beba3 100644
+--- a/drivers/hid/hid-elan.c
++++ b/drivers/hid/hid-elan.c
+@@ -362,7 +362,7 @@ static int elan_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		return 0;
+ 
+ 	if (!drvdata->input) {
+-		hid_err(hdev, "Input device is not registred\n");
++		hid_err(hdev, "Input device is not registered\n");
+ 		ret = -ENAVAIL;
+ 		goto err;
+ 	}
+-- 
+2.15.1
