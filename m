@@ -1,191 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933540AbeBVRex (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:34:53 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:46009 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933390AbeBVReu (ORCPT
+        id S933491AbeBVRjP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:39:15 -0500
+Received: from mail-io0-f179.google.com ([209.85.223.179]:42183 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933378AbeBVRjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:34:50 -0500
-X-Google-Smtp-Source: AH8x224PAO+UqaxN7Udn+FfZf8qn/nykFSyqS6nCqZjZZHyFAZUPK22Mj4ccciocdzqaqx49J25feA==
-Date: Thu, 22 Feb 2018 09:30:08 -0800
-From: Moritz Fischer <mdf@kernel.org>
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, atull@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: fpga: Consolidate bridge properties
-Message-ID: <20180222173008.GA12391@tyrael.ni.corp.natinst.com>
-References: <20180221173306.17265-1-mdf@kernel.org>
- <8751fd85-fc84-f422-94e7-dd5689cb6922@xilinx.com>
+        Thu, 22 Feb 2018 12:39:12 -0500
+X-Google-Smtp-Source: AG47ELtJeRct+KYhxNJEealKPakxbJHvKKB2nE7KiKuJIJOqcTEqwfIc0PeMIbhW3jK/cxMY4rGbAGW9Gll2uEY2WyA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
-Content-Disposition: inline
-In-Reply-To: <8751fd85-fc84-f422-94e7-dd5689cb6922@xilinx.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180222171506.wwsichkiyc5f74pr@agluck-desk>
+References: <20180221194731.t7jowrmicvaggu3x@agluck-desk> <CA+55aFzy89V13rSxGQy77Bb08qpUpH+J=trcjooKQhsAFbgrVw@mail.gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
+ <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
+ <20180222014505.2l76ccrrs36y3b26@agluck-desk> <CA+55aFzJXsPcsJ5MtsxTp2n+43xC0yGzANLNcDm1mFbZKR75FQ@mail.gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37FE28@ORSMSX110.amr.corp.intel.com>
+ <CA+55aFy0hRexJkLbN7t31LjfGr4Ae0W5g6sBMqHHJi8aYuGKeA@mail.gmail.com>
+ <612E894E-62C8-4155-AED8-D53702EDC8DC@intel.com> <CA+55aFxeBaTbwvbWqx1MKYjKKzLUs=1O43Bx2=JaO8qrnY-8HA@mail.gmail.com>
+ <20180222171506.wwsichkiyc5f74pr@agluck-desk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Feb 2018 09:39:10 -0800
+X-Google-Sender-Auth: COh-bZA-DLmz5PO1E0WVL5TsLh4
+Message-ID: <CA+55aFyOLYAbvTX0F8WLHgBnhwAPWr7EOPbO_sEepmB5GsCBKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] efivarfs: Limit the rate for non-root to read files
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Joe Konno <joe.konno@linux.intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
+        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        James Bottomley <james.bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 22, 2018 at 9:15 AM, Luck, Tony <tony.luck@intel.com> wrote:
+>
+> In efivarfs if the limit is exceeded when reading, we take an
+> interruptible nap for 50ms and check the rate limit again.
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, turning that 'if' into a 'while' makes the sleeping work even in
+the presence of lots of threads, and that all looks very simple.
 
-On Thu, Feb 22, 2018 at 08:12:19AM +0100, Michal Simek wrote:
-> On 21.2.2018 18:33, Moritz Fischer wrote:
-> > Consolidate bridge properties in a single file, instead of duplicating
-> > the same optional property over and over again.
-> >=20
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > Cc: Alan Tull <atull@kernel.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > ---
-> >  .../devicetree/bindings/fpga/altera-fpga2sdram-bridge.txt |  5 +----
-> >  .../devicetree/bindings/fpga/altera-freeze-bridge.txt     |  5 +----
-> >  .../devicetree/bindings/fpga/altera-hps2fpga-bridge.txt   |  5 +----
-> >  Documentation/devicetree/bindings/fpga/fpga-bridge.txt    | 15 +++++++=
-++++++++
-> >  .../devicetree/bindings/fpga/xilinx-pr-decoupler.txt      |  8 ++------
-> >  5 files changed, 20 insertions(+), 18 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/fpga/fpga-bridge.=
-txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-b=
-ridge.txt b/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge=
-=2Etxt
-> > index 817a8d4bf903..5dd0ff0f7b4e 100644
-> > --- a/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.t=
-xt
-> > +++ b/Documentation/devicetree/bindings/fpga/altera-fpga2sdram-bridge.t=
-xt
-> > @@ -3,10 +3,7 @@ Altera FPGA To SDRAM Bridge Driver
-> >  Required properties:
-> >  - compatible		: Should contain "altr,socfpga-fpga2sdram-bridge"
-> > =20
-> > -Optional properties:
-> > -- bridge-enable		: 0 if driver should disable bridge at startup
-> > -			  1 if driver should enable bridge at startup
-> > -			  Default is to leave bridge in current state.
-> > +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic=
- bindings.
-> > =20
-> >  Example:
-> >  	fpga_bridge3: fpga-bridge@ffc25080 {
-> > diff --git a/Documentation/devicetree/bindings/fpga/altera-freeze-bridg=
-e.txt b/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
-> > index f8e288c71b2d..8b26fbcff3c6 100644
-> > --- a/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
-> > +++ b/Documentation/devicetree/bindings/fpga/altera-freeze-bridge.txt
-> > @@ -10,10 +10,7 @@ Required properties:
-> >  - compatible		: Should contain "altr,freeze-bridge-controller"
-> >  - regs			: base address and size for freeze bridge module
-> > =20
-> > -Optional properties:
-> > -- bridge-enable		: 0 if driver should disable bridge at startup
-> > -			  1 if driver should enable bridge at startup
-> > -			  Default is to leave bridge in current state.
-> > +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic=
- bindings.
-> > =20
-> >  Example:
-> >  	freeze-controller@100000450 {
-> > diff --git a/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bri=
-dge.txt b/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
-> > index 6406f9337eeb..68cce3945b10 100644
-> > --- a/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
-> > +++ b/Documentation/devicetree/bindings/fpga/altera-hps2fpga-bridge.txt
-> > @@ -9,10 +9,7 @@ Required properties:
-> >  - resets	: Phandle and reset specifier for this bridge's reset
-> >  - clocks	: Clocks used by this module.
-> > =20
-> > -Optional properties:
-> > -- bridge-enable	: 0 if driver should disable bridge at startup.
-> > -		  1 if driver should enable bridge at startup.
-> > -		  Default is to leave bridge in its current state.
-> > +See Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic=
- bindings.
-> > =20
-> >  Example:
-> >  	fpga_bridge0: fpga-bridge@ff400000 {
-> > diff --git a/Documentation/devicetree/bindings/fpga/fpga-bridge.txt b/D=
-ocumentation/devicetree/bindings/fpga/fpga-bridge.txt
-> > new file mode 100644
-> > index 000000000000..82607b23a287
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/fpga/fpga-bridge.txt
-> > @@ -0,0 +1,15 @@
-> > +FPGA Bridge Device Tree Binding
-> > +
-> > +Moritz Fischer 2018 (Consolidated from previous bindings)
->=20
-> nit: I would remove your name and year - it is visible from git log.
+I'm certainly ok with this. I'm assuming this has been tested and
+gives nice warnings too?
 
-Yeah can get rid of that, I copied from fpga-region.txt :)
-
->=20
-> > +
-> > +Optional properties:
-> > +- bridge-enable		: 0 if driver should disable bridge at startup
-> > +			  1 if driver should enable bridge at startup
-> > +			  Default is to leave bridge in current state.
-> > +
-> > +Example:
-> > +	fpga_bridge3: fpga-bridge@ffc25080 {
-> > +		compatible =3D "altr,socfpga-fpga2sdram-bridge";
-> > +		reg =3D <0xffc25080 0x4>;
-> > +		bridge-enable =3D <0>;
-> > +	};
-> > diff --git a/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler=
-=2Etxt b/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
-> > index 8dcfba926bc7..4284d293fa61 100644
-> > --- a/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
-> > +++ b/Documentation/devicetree/bindings/fpga/xilinx-pr-decoupler.txt
-> > @@ -18,12 +18,8 @@ Required properties:
-> >  - clocks		: input clock to IP
-> >  - clock-names		: should contain "aclk"
-> > =20
-> > -Optional properties:
-> > -- bridge-enable		: 0 if driver should disable bridge at startup
-> > -			  1 if driver should enable bridge at startup
-> > -			  Default is to leave bridge in current state.
-> > -
-> > -See Documentation/devicetree/bindings/fpga/fpga-region.txt for generic=
- bindings.
-> > +See Documentation/devicetree/bindings/fpga/fpga-region.txt and
-> > +Documentation/devicetree/bindings/fpga/fpga-bridge.txt for generic bin=
-dings.
-> > =20
-> >  Example:
-> >  	fpga-bridge@100000450 {
-> >=20
->=20
-> Acked-by: Michal Simek <michal.simek@xilinx.com>
->=20
-> Thanks,
-> Michal
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-- Moritz
-
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEowQ4eJSlIZpNWnl2UVwKRFcJcNgFAlqO/hsACgkQUVwKRFcJ
-cNhkVAf/eA8Nx34LxVVOUN/c+M/4FfBPP6Dj2cWCTsr+ixzMXEKyvP5nP79h2f+l
-rFNGAJbLs6vfvdVfvwMR6nAFr3DAp3d1upTSWMQ5bi6TwSiJpOmW/VsOa5WMf154
-hyTUsCPkdEfQUMo0j2r5rtVpuRvAanU9OM+4V4TEIyeNNe15DBh4niyQbtVL+2lb
-UaT+F3PNwA1MNxeyS5jLGBfBdoN0SpWdSP9EHm8XNwZNvWBbWh0b357W1fBsCT6Q
-C2UOhev5+klr0AQofOjdi3yanJg6SNGih7KCqtRNLhBCg7CldT8yEu8yWO7HKvHD
-ngpTOd+69E2SgNmtJSBzRuJ+1oCY3w==
-=fR1e
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
+               Linus
