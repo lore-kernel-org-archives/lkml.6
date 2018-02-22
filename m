@@ -1,77 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeBVHdk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:33:40 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36917 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751681AbeBVHdi (ORCPT
+        id S1752632AbeBVHeY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:34:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49416 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751681AbeBVHeW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:33:38 -0500
-X-Google-Smtp-Source: AH8x224q6UhtevMb1G5hk2lNe2ohrlbDgnCR9CYcaGTP2MfCkyHiPZS5mDvIYRa9sJTUJ23x36YIrA==
-From: carmark.dlut@gmail.com
-Cc: Lei Xue <carmark.dlut@gmail.com>, David Howells <dhowells@redhat.com>,
-        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] fscache: fix a kernel BUG at fs/fscache/operation.c:69!
-Date: Thu, 22 Feb 2018 15:33:30 +0800
-Message-Id: <20180222073330.36259-1-carmark.dlut@gmail.com>
-X-Mailer: git-send-email 2.14.3 (Apple Git-98)
+        Thu, 22 Feb 2018 02:34:22 -0500
+Subject: Re: [PATCH v3 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
+ support
+To: Farhan Ali <alifm@linux.vnet.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        geert@linux-m68k.org, tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
+References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
+ <2beec7645bac82e7bdef4f6df0b9f4fe28696575.1519053920.git.alifm@linux.vnet.ibm.com>
+ <cce8b082-c780-3559-4491-c39eb09482b0@redhat.com>
+ <6cae85dc-76d5-1b92-ab13-a5e441eb84a0@linux.vnet.ibm.com>
+ <faffcd8e-4ef6-64bc-ab11-9b48ca488ed6@de.ibm.com>
+ <f658ea9e-0153-a0e3-544a-8ce575284245@de.ibm.com>
+ <20180221113217.11bb1c69.cohuck@redhat.com>
+ <b742aa29-70b2-42e1-26d2-8ca0c8945863@de.ibm.com>
+ <d1a89481-e5c9-b460-ea9c-f796dc28b748@redhat.com>
+ <1f8907d4-c4a3-d41b-8834-679dcc85de4a@de.ibm.com>
+ <5dfa9213-0e63-54d0-8700-1ced4efd4c28@redhat.com>
+ <f6db4d0a-3578-4162-5de7-6e699f7a02c2@de.ibm.com>
+ <20180221130755.17d15f89.cohuck@redhat.com>
+ <6c1daae4-e1f6-5627-9023-f03d986c5639@de.ibm.com>
+ <2170dce6-4456-3ab6-d07c-2169d99c4173@linux.vnet.ibm.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Thu, 22 Feb 2018 08:34:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <2170dce6-4456-3ab6-d07c-2169d99c4173@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022207-0008-0000-0000-000004D30D5F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022207-0009-0000-0000-00001E661833
+Message-Id: <2af46f6f-d225-9802-c6f9-98099fb2c2c8@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220097
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lei Xue <carmark.dlut@gmail.com>
 
-There is a potential race in fscache operation enqueuing for reading and
-copying multiple pages from cachefiles to netfs.
-Under some heavy load system, it will happen very often.
 
-If this race occurs, an oops similar to the following is seen:
+On 02/21/2018 05:39 PM, Farhan Ali wrote:
+> 
+> 
+> On 02/21/2018 07:11 AM, Christian Borntraeger wrote:
+>>
+>>
+>> On 02/21/2018 01:07 PM, Cornelia Huck wrote:
+>> [...]
+>>>>> But if you need to enable PCI to get IOMEM, I wonder why this patch here
+>>>>> is needed at all? The Graphics menu / VT dummy console should be
+>>>>> available in the config if IOMEM is enabled anyway?
+>>>>
+>>>> That is a good question. With CONFIG_PCI=y I can select virtio-gpu and dummy-console.
+>>>> IIRC the issue was that with patch 3 we can have the situation where we have
+>>>> CONFIG_VT = y and CONFIG_DUMMY_CONSOLE=n and this will crash early during boot as
+>>>> conswitchp is NULL.
+> 
+> Yes, VT layer initializes very early in the boot process and looks for a console. If it can't find any it will crash. I believe that was the whole point of having the dummy console.
+> 
+>>>
+>>> So in practice, CONFIG_VT depends on "there's a console available, even
+>>> if it's only the dummy one"?
+>>
+>> Yes. Maybe we should simple move dummy_console outside of drivers/video/console/Kconfig
+>> into something that is always available.
+>>
+> 
+> I agree, but where should it go? consoles are kinda tightly tied to video/Graphics Support.
+> 
+>>>
+>>>> This patches goal was to always enable dummy console even without
+>>>> PCI, but it obviously fails to do so.
+>>>
+> This patch should enable the dummy console even without PCI but we won't have DRM/Virtio GPU.
 
- kernel BUG at fs/fscache/operation.c:69!
- invalid opcode: 0000 [#1] SMP
- …
- #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
- #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
- #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
- #3 [ffff883fff083a30] die at ffffffff8101859b
- #4 [ffff883fff083a60] do_trap at ffffffff8163d860
- #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
- #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
-    [exception RIP: fscache_enqueue_operation+246]
-    RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
-    RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
-    RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
-    RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
-    R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
-    R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
- #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
- #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
- #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
 
-Signed-off-by: Lei Xue <carmark.dlut@gmail.com>
----
- fs/cachefiles/rdwr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All right. This patch then makes sure that VT does not crash since it guarantees
+that DUMMY_CONSOLE is available. If the user want to have virtio-gpu it needs to
+enable PCI due to the dependencies, but this is a different issue that we can fix
+later.
+So the patch is fine as long as you take care of these things
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 883bc7bb12c5..9d5d13e150fb 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -58,9 +58,9 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 
- 	spin_lock(&object->work_lock);
- 	list_add_tail(&monitor->op_link, &monitor->op->to_do);
-+	fscache_enqueue_retrieval(monitor->op);
- 	spin_unlock(&object->work_lock);
- 
--	fscache_enqueue_retrieval(monitor->op);
- 	return 0;
- }
- 
--- 
-2.14.3 (Apple Git-98)
+- add missing HAS_IOMEM dependency to VGA_CONSOLE
+
+- extend "if HAS_IOMEM" in drivers/video/Kconfig to cover config items
+  previously covered by this dependency (it should start before config
+  HAVE_FB_ATMEL and end after config HDMI)
+
+as requested by Bartlomiej 
