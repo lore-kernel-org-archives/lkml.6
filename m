@@ -1,101 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933127AbeBVQLg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:11:36 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39570 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932952AbeBVQLe (ORCPT
+        id S933149AbeBVQON (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:14:13 -0500
+Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:47965 "EHLO
+        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933039AbeBVQOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:11:34 -0500
-X-Google-Smtp-Source: AH8x225AZpN/yZ2aoCiCNzg/JRFLPEXoYxHVsXgNe83gkL0gkNFejulq4Q/igprTCVjX+vBBYfeYSg==
-Date: Thu, 22 Feb 2018 17:11:28 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        daniel.vetter@intel.com, airlied@linux.ie
-Subject: Re: [PATCH v1] drm/simple_kms_helper: Fix NULL pointer dereference
- with no active CRTC
-Message-ID: <20180222161128.GC6419@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        daniel.vetter@intel.com, airlied@linux.ie
-References: <1519279759-7803-1-git-send-email-andr2000@gmail.com>
- <1f051697-468d-76b9-a2be-16a281f57249@epam.com>
+        Thu, 22 Feb 2018 11:14:11 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2G/AQCk645ah2Ka6ERcGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQlgQAoCoNemCCCAoEWaocXkGMKhTQCGoIUVxUBAgEBAQEBAQI?=
+ =?us-ascii?q?BAhABAQEKCwkIKC+COCKCSgEBAQQjEUUMBAIBCBEEAQEDAiMDAgICHyUBCAgCB?=
+ =?us-ascii?q?AENBQiKAwMVqyCCJ4c3DYEyghMBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+ECoI?=
+ =?us-ascii?q?nhmyBSQGBIoI+ECOCXYJlBaQKNQmRA4UCgimGKIt8jlSJVoE8NYF1cIMSgmSCE?=
+ =?us-ascii?q?ngBjBWBGQEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2G/AQCk645ah2Ka6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?lgQAoCoNemCCCAoEWaocXkGMKhTQCGoIUVxUBAgEBAQEBAQIBAhABAQEKCwkIK?=
+ =?us-ascii?q?C+COCKCSgEBAQQjEUUMBAIBCBEEAQEDAiMDAgICHyUBCAgCBAENBQiKAwMVqyC?=
+ =?us-ascii?q?CJ4c3DYEyghMBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+ECoInhmyBSQGBIoI+E?=
+ =?us-ascii?q?COCXYJlBaQKNQmRA4UCgimGKIt8jlSJVoE8NYF1cIMSgmSCEngBjBWBGQEBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.189
+X-IronPort-AV: E=Sophos;i="5.47,378,1515477600";
+   d="scan'208";a="1104760089"
+X-DLP: DLP_GlobalPCIDSS
+To: <jeremy@jcline.org>, <notmart@gmail.com>
+CC: <pali.rohar@gmail.com>, <andriy.shevchenko@linux.intel.com>,
+        <mjg59@srcf.ucam.org>, <dvhart@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: Regression: Dell XPS 13 9360 keyboard no longer works
+Thread-Topic: Regression: Dell XPS 13 9360 keyboard no longer works
+Thread-Index: AQHTq5v56OaYoDnjuECSi8YlbIDbbaOwiM4igAAAcxCAAHAoAP//n4Vw
+Date: Thu, 22 Feb 2018 16:14:08 +0000
+Message-ID: <c7694c9b4780413cb9621b0f3dd1501d@ausx13mpc120.AMER.DELL.COM>
+References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
+ <1628582.nV6hDClBbL@phobos>
+ <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
+ <CAD6_Bos5Qrvz=Mr_rYCZXZ1s=5+8rawfZXxzXSvyc-tLBO07fg@mail.gmail.com>
+ <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
+ <01000161be3d1072-1c155203-359c-4566-9af6-2ebc33ad43ee-000000@email.amazonses.com>
+In-Reply-To: <01000161be3d1072-1c155203-359c-4566-9af6-2ebc33ad43ee-000000@email.amazonses.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f051697-468d-76b9-a2be-16a281f57249@epam.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MGEHkl028076
 
-On Thu, Feb 22, 2018 at 08:12:48AM +0200, Oleksandr Andrushchenko wrote:
-> On 02/22/2018 08:09 AM, Oleksandr Andrushchenko wrote:
-> > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> > 
-> > It is possible that drm_simple_kms_plane_atomic_check called
-> > with no CRTC set, e.g. when user-space application sets CRTC_ID/FB_ID
-> > to 0 before doing any actual drawing. This leads to NULL pointer
-> > dereference because in this case new CRTC state is NULL and must be
-> > checked before accessing.
-> > 
-> > Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > 
-> > ---
-> > Changes since initial:
-> > - re-worked checks for null CRTC as suggested by Daniel Vetter
-> > ---
-> >   drivers/gpu/drm/drm_simple_kms_helper.c | 10 +++-------
-> >   1 file changed, 3 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
-> > index 9ca8a4a59b74..4a1dbd88b1ec 100644
-> > --- a/drivers/gpu/drm/drm_simple_kms_helper.c
-> > +++ b/drivers/gpu/drm/drm_simple_kms_helper.c
-> > @@ -121,12 +121,6 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
-> >   	pipe = container_of(plane, struct drm_simple_display_pipe, plane);
-> >   	crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
-> >   						   &pipe->crtc);
-> > -	if (!crtc_state->enable)
-> > -		return 0; /* nothing to check when disabling or disabled */
-> > -
-> > -	if (crtc_state->enable)
-> > -		drm_mode_get_hv_timing(&crtc_state->mode,
-> > -				       &clip.x2, &clip.y2);
-> >   	ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
-> >   						  &clip,
-> > @@ -137,7 +131,9 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
-> >   		return ret;
-> >   	if (!plane_state->visible)
-> > -		return -EINVAL;
-> Daniel, I have put your R-b tag, but I had removed suggested
-> "WARN_ON(crtc_state && crtc_state->enable);"
-> here as it fires each time when crtc_state is not NULL.
-> Please let me know if this is not ok and you want me to remove
-> your R-b tag.
+> -----Original Message-----
+> From: Jeremy Cline [mailto:jeremy@jcline.org]
+> Sent: Thursday, February 22, 2018 9:59 AM
+> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; notmart@gmail.com
+> Cc: pali.rohar@gmail.com; andriy.shevchenko@linux.intel.com;
+> mjg59@srcf.ucam.org; dvhart@infradead.org; platform-driver-
+> x86@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+> 
+> On 02/22/2018 10:21 AM, Mario.Limonciello@dell.com wrote:> I guess that
+> means we got this wrong and the patch should be reverted
+> > until we figure this out.
+> >
+> > Jeremy,
+> >
+> > Can you please confirm what BIOS version you are on?
+> > Also Is this a 9360 with 7th or 8th gen Intel CPU?
+> 
+> Hi Mario,
+> 
+> I've got BIOS version 2.5.0 with the 7th gen Intel CPU.
+> 
+> 
+> Regards,
+> Jeremy
 
-I'm a bit confused why that fires, but oh well. Applied, thanks for your
-patch.
--Daniel
+Jeremy,
 
-> > +		return 0;
-> > +
-> > +	drm_mode_get_hv_timing(&crtc_state->mode, &clip.x2, &clip.y2);
-> >   	if (!pipe->funcs || !pipe->funcs->check)
-> >   		return 0;
-> Thank you,
-> Oleksandr
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks.  Do you have any of the Dell docks (TB16/WD15)?  If so are you connected to any dock 
+when reproducing this problem?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks,
