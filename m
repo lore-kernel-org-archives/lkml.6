@@ -1,79 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeBVUpP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:45:15 -0500
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:35490 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbeBVUpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:45:12 -0500
-X-Google-Smtp-Source: AH8x224n5pNh/9aUWC/banUsk8Dt8HTmUjatbMxEZ5wE7uZ+38VV1Qy32UQfFxSU2JHdHp5hGFmybA==
-Date: Thu, 22 Feb 2018 15:45:09 -0500
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] pc104: Add EXPERT dependency for PC104 Kconfig
- option
-Message-ID: <20180222204509.GB10834@sophia>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com>
- <5c573c758e07ee9539045c1b062b9bab1ad1669c.1514578085.git.vilhelm.gray@gmail.com>
- <CACRpkdbRkyzb9aML1-TEENWfpSDtjayVB_eEm9V1JKrAfaOMVA@mail.gmail.com>
+        id S1751453AbeBVUqU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:46:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751119AbeBVUqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 15:46:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC3821741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Thu, 22 Feb 2018 21:46:15 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: "Pierre Bourdon (delroth)" <delroth@google.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Andre Heider <a.heider@gmail.com>, Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] max17042: propagate of_node to power supply device
+Message-ID: <20180222204615.ogyplmoq5oxpudtk@earth.universe>
+References: <20180220150318.138827-1-delroth@google.com>
+ <CAHp75Vck_8G=zTD4ftYC7yd+q_6XiXWvs+kX_zqr6bUtMUf4wg@mail.gmail.com>
+ <CANEr7oWE7Po4ReN8+oX4CEzrbjmnhSJpwmfgjyidB6dqP0m8Gg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="26ephqnfeu7zwo66"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbRkyzb9aML1-TEENWfpSDtjayVB_eEm9V1JKrAfaOMVA@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CANEr7oWE7Po4ReN8+oX4CEzrbjmnhSJpwmfgjyidB6dqP0m8Gg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 04:20:46PM +0100, Linus Walleij wrote:
->On Fri, Dec 29, 2017 at 9:14 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> PC/104 device driver Kconfig options previously had an implicit EXPERT
->> dependency by way of an explicit ISA_BUS_API dependency. Now that these
->> driver Kconfig options select ISA_BUS_API rather than depend on it, the
->> PC104 Kconfig option should have an explicit EXPERT dependency.
->>
->> The PC/104 form factor and bus architecture are common in embedded
->> and specialized systems, but uncommon in typical desktop setups. For
->> this reason, it is best to mask these devices and configurations via the
->> EXPERT Kconfig option because the majority of users will never need to
->> concern themselves with PC/104.
->>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->
->Patch applied to the GPIO tree for v4.17.
->
->I don't know what kind of definition of "expert" really applies here.
->
->Who in their right mind think that novices are using the kernel
->configuration interface. Isn't anyone doing kernel compiles
->entitled to be called an expert...
->
->Anyways I guess this has already been discussed.
->
->Yours,
->Linus Walleij
 
-I'm inclined to agree with you on this point. I believe there is benefit
-in masking uncommon hardware configurations such as PC/104 in order to
-reduce clutter in the menus, but you are right that "expert" sounds
-somewhat of a misnomer for this use case. I considered adding yet
-another Kconfig option to mask these options, but since Kconfig code
-isn't my forte, I ultimately decided to keep it simple and depend simply
-on EXPERT.
+--26ephqnfeu7zwo66
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The PC104 Kconfig option has been implicitly masked by EXPERT up to this
-point, so I thought it best to keep it masked as it has been thus far.
-However, since all this masking is essentially just an aesthetic matter,
-I'm somewhat indifferent and open to removing the EXPERT dependency
-as well; I'll let someone else make that call rather I.
+Hi,
 
-William Breathitt Gray
+On Tue, Feb 20, 2018 at 06:58:56PM +0100, Pierre Bourdon (delroth) wrote:
+> On Tue, Feb 20, 2018 at 6:34 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Feb 20, 2018 at 5:03 PM, Pierre Bourdon <delroth@google.com> wr=
+ote:
+> >> max17042_get_status uses the core power_supply_am_i_supplied. That
+> >> function relies on DT properties to figure out the power supply
+> >> topology, and will error out without DT.
+> >
+> >> +       psy_cfg.of_node =3D dev->of_node;
+> >
+> > Perhaps do this in general manner, see how GPIOLIB takes care of it:
+> >
+> > $ git grep -n -A4 -w CONFIG_OF_GPIO -- drivers/gpio/gpiolib.c
+> > drivers/gpio/gpiolib.c:1161:#ifdef CONFIG_OF_GPIO
+> > drivers/gpio/gpiolib.c-1162-    /* If the gpiochip has an assigned OF
+> > node this takes precedence */
+> > drivers/gpio/gpiolib.c-1163-    if (chip->of_node)
+> > drivers/gpio/gpiolib.c-1164-            gdev->dev.of_node =3D chip->of_=
+node;
+> > drivers/gpio/gpiolib.c-1165-#endif
+> > ...
+>=20
+> Makes sense. From a quick look in existing drivers, it looks like the
+> only values being used currently as psy_cfg.of_node are the nodes from
+> the parent device, so it seems like it could be made generic.
+>=20
+> Are we aware of any driver that is not propagating the of_node on
+> purpose? Is this something that should be supported? If not, I guess
+> we could get rid of power_supply_config.of_node and always use the one
+> from the parent device in __power_supply_register.
+>=20
+> (I'm very new to this codebase, sorry for the possibly dumb questions!)
+
+I think it makes sense to keep psy_cfg.of_node in case a driver
+needs to use a subnode for some reason. I think it makes sense
+to use dev->of_node as default value, though. Anyways I have
+applied this patch to my fixes branch.
+
+-- Sebastian
+
+--26ephqnfeu7zwo66
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqPLBcACgkQ2O7X88g7
++ppjFA/+PRt8FMjEIR1vVxiTVLez1RlvQjwONxqN4dWZ9tcCQC0uRwBOUp0vfEiP
+tQA/oqn/ixaiezlDRTw9p8OVxe0olbV4FCn1hcOg8FhEV4KrHsDA35mC/306XRqD
+zJql2WqNH/a77xSIuXAKTv9yNClLwXMnR/owBsF7iQBLvi4ntlUlY0lDBL9t8YFk
+LqduDO8dOeKj9XtjH/C5KxvZ9+AWi34CiMr6a2/OYggPpNMqwmB6AXgtnuv0uXmK
+3IXCDv5peb0zN/7vlbXPdNBokdePuptubQflWF8NqX9ZAyW7UmnJ2k1bqTUT33yb
+L6toWlw2Sv/3EwsaDPzaIhhmxMY10F/F9YFi+D10HkVqDYNGSlPSDiuue1RpW4uL
+gz35bFWXPbkzppZX+5h6OZL9mEp6+D01XkL+dqcvXxXSezyoSVN4vZ95y4q6N3G3
+dDmcM65Ed2kqpm+aAY9Bl0rcxm0k6d6ODqOVs6lU2anWRDX0WEW72EtEqJWclEoF
+anCmEXdObmTM6jTDX29vOLFeu0alTiP+4Vs/nzenWk2IlqCaUz0JSF1KDiCHdxSN
+3hRahF+RGOsEzY7AUNoaysemKS0A9VJGAciXVIedcfOgGbpUKOxZPuk5E3U4HHbw
+sVGdPdVDrvncynvl85SXHg3jkZf09ShMOBKUrLRLfvwIzHRIzPw=
+=AY/4
+-----END PGP SIGNATURE-----
+
+--26ephqnfeu7zwo66--
