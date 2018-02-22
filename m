@@ -1,46 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeBVXsB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:48:01 -0500
-Received: from avon.wwwdotorg.org ([104.237.132.123]:43462 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeBVXr7 (ORCPT
+        id S1752025AbeBVXsj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:48:39 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:40519 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751586AbeBVXsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:47:59 -0500
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <20180222230451.15515-1-marcel@ziswiler.com>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
-Date: Thu, 22 Feb 2018 16:47:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Feb 2018 18:48:36 -0500
+X-Google-Smtp-Source: AG47ELsv4ZDPRG3eVftqnP9FYZUfCH1YKzzx4w7SUCLmcdxYTyw9nmsOwRhGxkSgr9rEMmOXTxHDQw==
+Date: Thu, 22 Feb 2018 15:48:33 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180222234833.GA3047@roeck-us.net>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 04:04 PM, Marcel Ziswiler wrote:
-> Turns out latest upstream U-Boot does not configure/enable pllu which
-> leaves it at some default rate of 500 kHz:
+On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
+> While building the cross-toolchains, I noticed that overall, we can build almost
+> all linux target architectures with upstream binutils and gcc these days,
+> however there are still some exceptions, and I'd like to find out if anyone
+> has objections to removing the ones that do not have upstream support.
+> This are the four architectures I found:
+> 
+> * score (s+core, sunplus core) was a proprietary RISC architecture
+>   made by sunplus. It is unclear if they still ship any products based on
+>   this architecture, all they list is either ARM Cortex-A9 or an unspecified
+>   RISC core that could be any of arm, mips, nds32, arc, xtensa or
+>   something completely different. The two maintainers have both left the
+>   company many years ago and have not contributed any patches in
+>   at least five years. There was an upstream gcc port, which was marked
+>   'obsolete' in 2013 and got removed in gcc-5.0.
+>   I conclude that this is dead in Linux and can be removed
+> 
+> * unicore32 was a research project at Peking University with a SoC
+>   based on the Intel PXA design. No gcc source code has ever been
+>   published, the only toolchain available is a set of binaries that include
+>   a gcc-4.4 compiler. The project page at
+>   http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
+>   not been modified since 2011. The maintainer still Acks patches
+>   and has last sent a pull request in 2014 and last sent a patch of
+>   his own in 2012 when the project appears to have stalled.
+>   I would suggest removing this one.
+> 
 
-I assume this is only because U-Boot just happened not to access any USB 
-devices. In other words, if you break into the U-Boot boot flow and 
-explicitly initialize/access USB, then USB works both in U-Boot and in 
-the kernel even without this patch? If that's not the case, it seems 
-there's a bug in U-Boot.
+The above two would be primary removal targets for me; they are all
+but impossible to support given the toolchain limitations. Meta
+would have been another one, but James is already taking care of it.
 
-Either way, I have no issue with this patch. I just want to make sure 
-there weren't other bugs in U-Boot that needed fixing.
+Guenter
+
+> * Hexagon is Qualcomm's DSP architecture. It is being actively used
+>   in all Snapdragon ARM SoCs, but the kernel code appears to be
+>   the result of a failed research project to make a standalone Hexagon
+>   SoC without an ARM core. There is some information about the
+>   project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
+>   https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
+>   There is a port to gcc-4.5 on the project page, which is evidently
+>   abandoned, but there is an active upstream LLVM port that is
+>   apparently used to build non-Linux programs.
+>   I would consider this one a candidate for removal as well, given that
+>   there were never any machines outside of Qualcomm that used this,
+>   and they are no longer interested themselves.
+> 
+> * Meta was ImgTec's own architecture and they upstreamed the kernel
+>   port just before they acquired MIPS. Apparently Meta was abandoned
+>   shortly afterwards and disappeared from imgtec's website in 2014.
+>   The maintainer is still fixing bugs in the port, but I could not find
+>   any toolchain more recent than
+>   https://github.com/img-meta/metag-buildroot/tree/metag-core/toolchain/gcc/4.2.4
+>   Not sure about this one, I'd be interested in more background
+>   from James Hogan, who probably has an opinion and might have
+>   newer toolchain sources.
+> 
+> * OpenRISC is a RISC architecture with a free license and an
+>   active community. It seems to have lost a bit of steam after RISC-V
+>   is rapidly taking over that niche, but there are chips out there and
+>   the design isn't going away. Listing it here for completeness only
+>   because there is no upstream gcc port yet, but this will hopefully
+>   change in the future based on
+>   https://lists.librecores.org/pipermail/openrisc/2018-January/000958.html
+>   and I had no problems locating the gcc-7.x tree for building my
+>   toolchains. The port is actively being maintained.
+> 
+> There are also a couple of architectures that are more or less
+> unmaintained but do have working gcc support: FR-V and M32R
+> have been orphaned for a while and are not getting updated
+> MN10300 is still maintained officially by David Howells but doesn't
+> seem any more active than the other two, the last real updates were
+> in 2013.
+> 
+>        Arnd
