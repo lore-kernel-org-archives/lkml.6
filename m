@@ -1,47 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeBVIVw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:21:52 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:43200 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752628AbeBVIVs (ORCPT
+        id S1752813AbeBVIWJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:22:09 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33755 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752553AbeBVIWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:21:48 -0500
-X-Google-Smtp-Source: AG47ELtf0Ihn8AqXuyO1h4/3dVZPvkaGvWW1dIMohdc3GkwQRIi82BPK3oGqkKD7bPFiWq9sAhK7s3TmBtMoYgX32KE=
-MIME-Version: 1.0
-In-Reply-To: <20180221213724.810-1-alexandre.belloni@bootlin.com>
-References: <20180221213724.810-1-alexandre.belloni@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Feb 2018 09:21:47 +0100
-X-Google-Sender-Auth: Bdbi43IwL1u1FaO1-BlVmxArjhM
-Message-ID: <CAMuHMdUPJEf6-7GZQBnScgF-Kounj_QNjjR-_JjJJK+EqrpG8A@mail.gmail.com>
-Subject: Re: [PATCH] m68k: time: stop validating rtc_time in .read_time
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-m68k <linux-m68k@vger.kernel.org>, linux-rtc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 22 Feb 2018 03:22:07 -0500
+X-Google-Smtp-Source: AH8x224MmM8holItQWbkgcPPeSyqg4824jOMb6pZw9ML92EFoqRX1Ahk0g69gFeQizradvLLPmZ7Eg==
+From: Corentin Labbe <clabbe@baylibre.com>
+To: David1.Zhou@amd.com, airlied@linux.ie, alexander.deucher@amd.com,
+        christian.koenig@amd.com, david1.zhou@amd.com, Dieter@nuetzel-hh.de,
+        l.stach@pengutronix.de
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH 1/2] drm/amd: remove inclusion of non-existing scheduler directory
+Date: Thu, 22 Feb 2018 08:21:48 +0000
+Message-Id: <1519287709-28638-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+The scheduler directory was removed via commit 1b1f42d8fde4 ("drm: move amd_gpu_scheduler into common location")
+Remove it from include path.
 
-On Wed, Feb 21, 2018 at 10:37 PM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> The RTC core is always calling rtc_valid_tm after the read_time callback.
-> It is not necessary to call it just before returning from the callback.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/gpu/drm/amd/amdgpu/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thank you, will apply and queue for v4.17.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/amd/amdgpu/Makefile b/drivers/gpu/drm/amd/amdgpu/Makefile
+index d6e5b7273853..8408aeeaf6c1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Makefile
++++ b/drivers/gpu/drm/amd/amdgpu/Makefile
+@@ -30,7 +30,6 @@ FULL_AMD_DISPLAY_PATH = $(FULL_AMD_PATH)/$(DISPLAY_FOLDER_NAME)
+ ccflags-y := -I$(FULL_AMD_PATH)/include/asic_reg \
+ 	-I$(FULL_AMD_PATH)/include \
+ 	-I$(FULL_AMD_PATH)/amdgpu \
+-	-I$(FULL_AMD_PATH)/scheduler \
+ 	-I$(FULL_AMD_PATH)/powerplay/inc \
+ 	-I$(FULL_AMD_PATH)/acp/include \
+ 	-I$(FULL_AMD_DISPLAY_PATH) \
+-- 
+2.16.1
