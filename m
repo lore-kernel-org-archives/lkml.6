@@ -1,155 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933471AbeBVRcb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:32:31 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34085 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933201AbeBVRc3 (ORCPT
+        id S933499AbeBVRdi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:33:38 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:38087 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933201AbeBVRdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:32:29 -0500
-X-Google-Smtp-Source: AG47ELu5KuuCZGpJkrMJRQROMfRanDjfxn1N13hQ2bUU85r6Aq1Rxmk8h4rlgnq3dlbcByIVa8W5eHhNn6jKGuqv34M=
+        Thu, 22 Feb 2018 12:33:36 -0500
+X-Google-Smtp-Source: AH8x2251XT7UltaRKb21zWILsG3JdUl70+4Gb7wtyFdryRkUS86w6pFDmWJsrepheHVvEaiWa0kSSg==
+Subject: Re: kernel BUG at mm/khugepaged.c:533 on 4.15.3
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Linux-MM <linux-mm@kvack.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <2a152301-0535-6cb6-8823-44035f007fae@redhat.com>
+ <20180221091445.iqtncxx66etpqamt@node.shutemov.name>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <70a4ca16-0d54-5df4-15bb-fdf1538ef080@redhat.com>
+Date: Thu, 22 Feb 2018 09:33:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180222164532.GA15359@light.dominikbrodowski.net>
-References: <4287858.bFmM5lK9H6@aspire.rjw.lan> <20180220213839.GA12082@light.dominikbrodowski.net>
- <3352336.6IBe4RuE7s@aspire.rjw.lan> <20180222164532.GA15359@light.dominikbrodowski.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 22 Feb 2018 18:32:28 +0100
-X-Google-Sender-Auth: UpAACaXB8JzM1PDrMGHAwJdxFzY
-Message-ID: <CAJZ5v0jyuMsVfyT-UNMqPdu33yLCRtQAwVUcOx1Hfr4FgKzZyw@mail.gmail.com>
-Subject: Re: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during suspend-to-idle
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180221091445.iqtncxx66etpqamt@node.shutemov.name>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 5:45 PM, Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
-> On Wed, Feb 21, 2018 at 01:24:16PM +0100, Rafael J. Wysocki wrote:
->> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
->> to indicate that socket_early_resume() has already run for the
->> socket in which case socket_suspend() will do minimum handling
->> and return 0.
->
-> That looks to be *too* minimal: For example, yenta_socket does some
-> socket set-up in ->init(), which is called by socket_early_resume().
-> That needs to be undone by ->suspend().
+On 02/21/2018 01:14 AM, Kirill A. Shutemov wrote:
+> On Mon, Feb 19, 2018 at 10:51:01AM -0800, Laura Abbott wrote:
+>> Hi,
+>>
+>> Fedora got a bug report of a BUG with 4.15.3:
+>> (https://bugzilla.redhat.com/show_bug.cgi?id=1546709)
+> 
+> Is it new to v4.15 kernel?
+> I don't see any recent change that could cause it.
+> 
 
-I see.
+The original reporter only saw it on 4.15 but another reporter
+saw it on 4.14.13 (I only found this out after I sent the
+e-mail). So I suspect the bug may have been latent but
+hard to trigger.
 
-> What about this variant (untested, not even compile-tested)?
+> 
+>> page:fffffac1800a0000 count:513 mapcount:1 mapping:ffff95657ef359a1 index:0x7f95d3400 compound_mapcount: 0
+>> flags: 0xffffe00048268(uptodate|lru|active|owner_priv_1|head|swapbacked)
+>> raw: 000ffffe00048268 ffff95657ef359a1 00000007f95d3400 0000020100000000
+>> raw: fffffac18edea9a0 fffffac18e7085a0 00000000000db400 ffff9567a3269800
+>> page dumped because: VM_BUG_ON_PAGE(PageCompound(page))
+>> page->mem_cgroup:ffff9567a3269800
+>> ------------[ cut here ]------------
+>> kernel BUG at mm/khugepaged.c:533!
+>> invalid opcode: 0000 [#1] SMP PTI
+>> Modules linked in: vhost_net vhost tap fuse xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 tun ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack libcrc32c iptable_mangle iptable_raw iptable_security ebtable_filter ebtables ip6table_filter ip6_tables sunrpc vfat fat rmi_smbus rmi_core arc4 intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_hdmi iwlmvm kvm_intel iTCO_wdt mac80211 snd_hda_codec_realtek iTCO_vendor_support mei_wdt kvm snd_hda_codec_generic irqbypass intel_cstate snd_hda_intel intel_uncore iwlwifi uvcvideo intel_rapl_perf
+>> snd_hda_codec videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core snd_hda_core cfg80211 videodev snd_hwdep snd_seq snd_seq_device snd_pcm media mei_me snd_timer thinkpad_acpi wmi_bmof rtsx_pci_ms joydev tpm_tis memstick i2c_i801 mei tpm_tis_core snd soundcore intel_pch_thermal tpm shpchp rfkill dm_crypt hid_logitech_hidpp hid_logitech_dj mmc_block nouveau i915 rtsx_pci_sdmmc mmc_core mxm_wmi ttm e1000e i2c_algo_bit drm_kms_helper crct10dif_pclmul crc32_pclmul crc32c_intel ptp drm ghash_clmulni_intel serio_raw rtsx_pci pps_core wmi video
+>> CPU: 2 PID: 66 Comm: khugepaged Not tainted 4.15.3-300.fc27.x86_64 #1
+>> Hardware name: LENOVO 20FXS0BB14/20FXS0BB14, BIOS R07ET63W (2.03 ) 03/15/2016
+>> RIP: 0010:khugepaged+0x1af6/0x2130
+>> RSP: 0018:ffffacacc1b4bdc0 EFLAGS: 00010282
+>> RAX: 0000000000000021 RBX: fffffac1800a0000 RCX: 0000000000000006
+>> RDX: 0000000000000000 RSI: 0000000000000086 RDI: ffff9567c14968f0
+>> RBP: fffffac18e3a5b40 R08: 00000000000004a8 R09: 0000000000000004
+>> R10: ffffacacc1b4bd70 R11: ffffffffb995b1ed R12: 00007f95f7e00000
+>> R13: ffff95661113eaf0 R14: ffff9567a9ea0000 R15: 8000000002800825
+>> FS:  0000000000000000(0000) GS:ffff9567c1480000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000481046 CR3: 00000002ee20a005 CR4: 00000000003626e0
+>> Call Trace:
+>> ? finish_wait+0x80/0x80
+>> ? collapse_shmem+0xdd0/0xdd0
+>> kthread+0x113/0x130
+>> ? kthread_create_worker_on_cpu+0x70/0x70
+>> ret_from_fork+0x35/0x40
+>> Code: ff e9 e7 fd ff ff bb 07 00 00 00 49 89 c7 e9 20 fb ff ff 48 83 ea 01 e9 66 fc ff ff 48 c7 c6 d8 3f 0a b9 48 89 df e8 0a 82 fa ff <0f> 0b 31 c9 4c 89 fa 48 89 de 4c 89 f7 e8 58 f1 fd ff e9 2e fa
+>> RIP: khugepaged+0x1af6/0x2130 RSP: ffffacacc1b4bdc0
+>> ---[ end trace a734c2f4d682e3bd ]---
+>>
+>> Reporter said it happened several times. Config is attached.
+>> Any ideas?
+> 
+> Looks like somebody managed to insert THP into the range in split it back
+> between khugepaged_scan_pmd() and __collapse_huge_page_isolate().
+> 
+> That's rather unlikely chain of events, but I don't see other option.
+> 
+> Could you check if this works:
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index b7e2268dfc9a..c15da1ea7e63 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -530,7 +530,12 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>   			goto out;
+>   		}
+>   
+> -		VM_BUG_ON_PAGE(PageCompound(page), page);
+> +		/* TODO: teach khugepaged to collapse THP mapped with pte */
+> +		if (PageCompound(page)) {
+> +			result = SCAN_PAGE_COMPOUND;
+> +			goto out;
+> +		}
+> +
+>   		VM_BUG_ON_PAGE(!PageAnon(page), page);
+>   
+>   		/*
+> 
 
-It looks fine to me, I'll test it later today.
-
-> Oh, and
->         a) does this need -stable tags, and
-
-Not right away I guess, but I will ask the -stable maintainers to pick
-it up at one point if there are no problems reported with it.
-
->         b) do you want to push it yourself, or should it go through the
->            PCMCIA tree?
-
-I'll take care of it.
+I asked the reporter(s) to test with this patch. I'll let you know
+if I hear any results.
 
 Thanks,
-Rafael
-
-
-> ---
-> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Date: Wed, 21 Feb 2018 13:24:16 +0100
-> Subject: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
->  suspend-to-idle
->
-> There is a problem with PCMCIA system resume callbacks with respect
-> to suspend-to-idle in which the ->suspend_noirq() callback may be
-> invoked after the ->resume_noirq() one without resuming the system
-> entirely in some cases.  This doesn't work for PCMCIA because of
-> the lack of symmetry between its system suspend and system resume
-> "noirq" callbacks.
->
-> The system resume handling in PCMCIA is split between
-> socket_early_resume() and socket_late_resume() which are called in
-> different phases of system resume and both need to run for
-> socket_suspend() (invoked by the system suspend "noirq" callback)
-> to work.  Specifically, socket_suspend() returns an error when
-> called after socket_early_resume() without socket_late_resume(),
-> so if the suspend-to-idle core detects a spurious wakeup event and
-> attempts to put the system back to sleep, that is aborted by the
-> error coming from socket_suspend().
->
-> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
-> to indicate that socket_early_resume() has already run for the
-> socket in which case socket_suspend() will do minimum handling
-> and return 0.
->
-> This change has been tested on my venerable Toshiba Portege R500
-> (which is where the problem has been discovered in the first place),
-> but admittedly I have no PCMCIA cards to test along with the socket
-> itself.
->
-> Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> [linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
->
-> diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
-> index c3b615c94b4b..513b2d4d5b20 100644
-> --- a/drivers/pcmcia/cs.c
-> +++ b/drivers/pcmcia/cs.c
-> @@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_socket *skt)
->
->  static int socket_suspend(struct pcmcia_socket *skt)
->  {
-> -       if (skt->state & SOCKET_SUSPEND)
-> +       if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
->                 return -EBUSY;
->
->         mutex_lock(&skt->ops_mutex);
-> -       skt->suspended_state = skt->state;
-> +       /* store state on first suspend, but not after spurious wakeups */
-> +       if !(skt->state & SOCKET_IN_RESUME)
-> +               skt->suspended_state = skt->state;
->
->         skt->socket = dead_socket;
->         skt->ops->set_socket(skt, &skt->socket);
->         if (skt->ops->suspend)
->                 skt->ops->suspend(skt);
->         skt->state |= SOCKET_SUSPEND;
-> +       skt->state &= ~(SOCKET_IN_RESUME);
->         mutex_unlock(&skt->ops_mutex);
->         return 0;
->  }
-> @@ -475,6 +478,7 @@ static int socket_early_resume(struct pcmcia_socket *skt)
->         skt->ops->set_socket(skt, &skt->socket);
->         if (skt->state & SOCKET_PRESENT)
->                 skt->resume_status = socket_setup(skt, resume_delay);
-> +       skt->state |= SOCKET_IN_RESUME;
->         mutex_unlock(&skt->ops_mutex);
->         return 0;
->  }
-> @@ -484,7 +488,7 @@ static int socket_late_resume(struct pcmcia_socket *skt)
->         int ret = 0;
->
->         mutex_lock(&skt->ops_mutex);
-> -       skt->state &= ~SOCKET_SUSPEND;
-> +       skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
->         mutex_unlock(&skt->ops_mutex);
->
->         if (!(skt->state & SOCKET_PRESENT)) {
-> diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
-> index 6765beadea95..03ec43802909 100644
-> --- a/drivers/pcmcia/cs_internal.h
-> +++ b/drivers/pcmcia/cs_internal.h
-> @@ -70,6 +70,7 @@ struct pccard_resource_ops {
->  /* Flags in socket state */
->  #define SOCKET_PRESENT         0x0008
->  #define SOCKET_INUSE           0x0010
-> +#define SOCKET_IN_RESUME       0x0040
->  #define SOCKET_SUSPEND         0x0080
->  #define SOCKET_WIN_REQ(i)      (0x0100<<(i))
->  #define SOCKET_CARDBUS         0x8000
+Laura
