@@ -1,101 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933100AbeBVP6m (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:58:42 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:44043 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932952AbeBVP6j (ORCPT
+        id S933159AbeBVP6x (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:58:53 -0500
+Received: from a8-242.smtp-out.amazonses.com ([54.240.8.242]:41604 "EHLO
+        a8-242.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932952AbeBVP6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:58:39 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Suman Anna <s-anna@ti.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: [PATCH] soc: qcom: qmi: add CONFIG_NET dependency
-Date: Thu, 22 Feb 2018 16:57:38 +0100
-Message-Id: <20180222155833.1860318-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:oPYdjMrbokSh/dqWP98N6I9tpCGYwC8gh3npXygKphciOzk7Ul/
- HjFxB21AnKMJJroxFhxTg37OV1daCW/WwKdcNiNVub85xrIcX+bz4inUJZbTrs6x2eoup60
- 5ciQ+TJu+2Qr5DT+5bAzXxaOgf6M7d7iqOKjpTVxA8WcRjrcCZefqUF5C6rvkQChfVKOq89
- 4vahR8UiSuxmGzy53kECQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UNuTRrnqTBE=:3DrXU8BaHa28RcYkXZpe4J
- yELsU/gvPbwVpoE5f4hCUDwHKhJr1LD91RzbnGFPIu6uFgEzBJPoiWPoCu7Kx/h3Gt7Uwwigw
- sl4D0D/n612dTST1lyV1xqIfQskMdOBjBgMcEjM6996RQz9RXmTEbpN29h+Ts/nhRakhx8GSf
- 9I75CwoaHNuHVNbzkAjBFWSNsCcTGg8iCP7s12+inc9DZpkaEiyWYQUI4Vlhuv8NS2qUqJl+O
- W0MXM+tjgZ2SC+RlQ9v6mDvRLwOQGz2v6aUImotbvb52wvAFBMxr5c4qZn+QImfbAzC1ROr4j
- yEVLWJnUEOfs9CJCGUE7W2oQMfcJRuZjaxKUYXTCsi7XFsC9rv9OnqkdGIe0/qTyKa1651Zbv
- O4zrvrCTCAE9X+sQlhXIUTi6MedROGYqYwzNCb5SP9Vyy1hmVl282eMaNvwyNvnGtfw+Eduw5
- TDaT/sJjibk1xlGPRj3/tXcibPwduRaqFag1xQFpGhhTHRx5RKCzzR+V28590J1vPru6t0aBL
- uy5+rIN1i4VaAzoJKJ9sBQj0Jq0E3/3E+UxLrQVj07HyNB28CIZ4BNvXEXI8CD8AqssT8us6z
- vs6Ckc/2EqnK315iBYLjUZ/5l+9XeIlVrGrEwZfwTYauS7asdDE3c7N0XaqJd/mtZmzi6yN8u
- cb/jzl5Dm6ipocr0qrIeSk4jijXWSCCufTSNbsrl48CKRcNMl44mN15Nmn8399XoXo38OTTxo
- RYQsEeCJMMKtuSFKPR1cWU1t1sTanBctqrb0cA==
+        Thu, 22 Feb 2018 10:58:49 -0500
+From: Jeremy Cline <jeremy@jcline.org>
+Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+To: Mario.Limonciello@dell.com, notmart@gmail.com
+Cc: pali.rohar@gmail.com, andriy.shevchenko@linux.intel.com,
+        mjg59@srcf.ucam.org, dvhart@infradead.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
+ <1628582.nV6hDClBbL@phobos>
+ <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
+ <CAD6_Bos5Qrvz=Mr_rYCZXZ1s=5+8rawfZXxzXSvyc-tLBO07fg@mail.gmail.com>
+ <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
+Message-ID: <01000161be3d1072-1c155203-359c-4566-9af6-2ebc33ad43ee-000000@email.amazonses.com>
+Date: Thu, 22 Feb 2018 15:58:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SES-Outgoing: 2018.02.22-54.240.8.242
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Access to the socket API and the root network namespace is only available
-when networking is enabled:
+On 02/22/2018 10:21 AM, Mario.Limonciello@dell.com wrote:> I guess that
+means we got this wrong and the patch should be reverted
+> until we figure this out.
+> 
+> Jeremy,
+> 
+> Can you please confirm what BIOS version you are on?
+> Also Is this a 9360 with 7th or 8th gen Intel CPU?
 
-ERROR: "kernel_sendmsg" [drivers/soc/qcom/qmi_helpers.ko] undefined!
-ERROR: "sock_release" [drivers/soc/qcom/qmi_helpers.ko] undefined!
-ERROR: "sock_create_kern" [drivers/soc/qcom/qmi_helpers.ko] undefined!
-ERROR: "kernel_getsockname" [drivers/soc/qcom/qmi_helpers.ko] undefined!
-ERROR: "init_net" [drivers/soc/qcom/qmi_helpers.ko] undefined!
-ERROR: "kernel_recvmsg" [drivers/soc/qcom/qmi_helpers.ko] undefined!
+Hi Mario,
 
-Adding a dependency on CONFIG_NET lets us build it in all randconfig
-builds.
+I've got BIOS version 2.5.0 with the 7th gen Intel CPU.
 
-Fixes: 9b8a11e82615 ("soc: qcom: Introduce QMI encoder/decoder")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/remoteproc/Kconfig | 1 +
- drivers/soc/qcom/Kconfig   | 2 +-
- samples/Kconfig            | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index a3658aa01838..027274008b08 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -121,6 +121,7 @@ config QCOM_SYSMON
- 	tristate "Qualcomm sysmon driver"
- 	depends on RPMSG
- 	depends on ARCH_QCOM
-+	depends on NET
- 	select QCOM_QMI_HELPERS
- 	help
- 	  The sysmon driver implements a sysmon QMI client and a handler for
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index e050eb83341d..506763d81766 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -37,7 +37,7 @@ config QCOM_PM
- 
- config QCOM_QMI_HELPERS
- 	tristate
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM && NET
- 	help
- 	  Helper library for handling QMI encoded messages.  QMI encoded
- 	  messages are used in communication between the majority of QRTR
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 4cb8af2f810f..168291de0184 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -66,6 +66,7 @@ config SAMPLE_QMI_CLIENT
- 	tristate "Build qmi client sample -- loadable modules only"
- 	depends on m
- 	depends on ARCH_QCOM
-+	depends on NET
- 	select QCOM_QMI_HELPERS
- 	help
- 	  Build an QMI client sample driver, which demonstrates how to
--- 
-2.9.0
+Regards,
+Jeremy
