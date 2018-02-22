@@ -1,112 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752445AbeBVFmM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 00:42:12 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18953 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBVFmK (ORCPT
+        id S1752547AbeBVFtS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 00:49:18 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:28463 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751594AbeBVFtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 00:42:10 -0500
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 21 Feb 2018 21:42:09 -0800
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
- lock-based external-view litmus test
-To: Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <stern@rowland.harvard.edu>,
-        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        <nborisov@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <20180220232405.GA19274@linux.vnet.ibm.com>
- <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180222032349.klcuiq23f52sfop6@tardis>
- <20180222041357.GB2855@linux.vnet.ibm.com>
- <20180222052746.vofmqbpnmfahck3z@tardis>
-From: Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <fad8e18b-ef5a-5bc0-5d87-6fad2e9f7c95@nvidia.com>
-Date: Wed, 21 Feb 2018 21:42:08 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Feb 2018 00:49:08 -0500
+X-UUID: fd3143f42b0745c691267b93d51be434-20180222
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 2/5] soc: mediatek: update power domain data of MT2712
+Date: Thu, 22 Feb 2018 13:48:48 +0800
+Message-ID: <20180222054851.26096-4-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 2.12.5
+In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
+References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222052746.vofmqbpnmfahck3z@tardis>
-X-Originating-IP: [10.2.168.200]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/2018 9:27 PM, Boqun Feng wrote:
-> On Wed, Feb 21, 2018 at 08:13:57PM -0800, Paul E. McKenney wrote:
->> On Thu, Feb 22, 2018 at 11:23:49AM +0800, Boqun Feng wrote:
->>> On Tue, Feb 20, 2018 at 03:25:10PM -0800, Paul E. McKenney wrote:
->>>> From: Alan Stern <stern@rowland.harvard.edu>
->>>>
->>>> This commit adds a litmus test in which P0() and P1() form a lock-based S
->>>> litmus test, with the addition of P2(), which observes P0()'s and P1()'s
->>>> accesses with a full memory barrier but without the lock.  This litmus
->>>> test asks whether writes carried out by two different processes under the
->>>> same lock will be seen in order by a third process not holding that lock.
->>>> The answer to this question is "yes" for all architectures supporting
->>>
->>> Hmm.. it this true? Our spin_lock() is RCpc because of PowerPC, so
->>> spin_lock()+spin_unlock() pairs don't provide transitivity, and that's
->>> why we have smp_mb__after_unlock_lock(). Is there something I'm missing?
->>> Or there is an upcomming commit to switch PowerPC's lock implementation?
->>
->> The PowerPC lock implementation's unlock-lock pair does not order writes
->> from the previous critical section against reads from the later critical
->> section, but it does order other combinations of reads and writes.
-> 
-> Ah.. right! Thanks for the explanation ;-)
-> 
->> Some have apparently said that RISC-V 's unlock-lock pair also does not
->> order writes from the previous critical section against writes from the
->> later critical section.  And no, I don't claim to have yet gotten my
->> head around RISC-V memory ordering.  ;-)
->>
-> 
-> Me neither. Now I remember this: we have a off-list(accidentally)
-> discussion about this, and IIRC at that moment riscv people confirmed
-> that riscv's unlock-lock pair doesn't order write->write, but that was
-> before their memory model draft posted for discussions, so things may
-> change now... 
-> 
-> Besides, I think the smp_mb() on P2 can be relaxed to smp_rmb(), no?
-> 
-> Regards,
-> Boqun
-> 
->> 							Thanx, Paul
->>
+1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
+according to MT2712 ECO design change
+2. add subdomain support for MT2712
 
-As a matter of fact, the RISC-V memory model committee is debating this
-exact question at the moment.  Now that I see this thread I'll have to
-go back and catch up on what I've missed, but at least I can be on cc
-from this point on to answer any RISC-V questions that come up from
-here on.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 40 insertions(+), 2 deletions(-)
 
-(Is there some place I should add my name as a RISC-V memory model
-contact, so I don't miss threads like this in the future?)
-
-And yes, if we go with a purely RCpc interpretation of acquire and
-release, then I don't believe the writes in the previous critical
-section would be ordered with the writes in the subsequent critical
-section.  That's really all the argument boils down to.  We'd like
-to support RCpc if we can since that's all some software needs, but
-we also obviously want to make sure we can support RCsc and these
-kinds of LKMM subtleties efficiently too when needed.  So we have a
-few encoding details that we're still finalizing, because questions
-like this one are still popping up :)
-
-Let me know if you had other RISC-V-specific questions I can help
-answer.
-
-Dan
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 59bd749c2f25..edf8fd6c2c85 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.name = "mfg",
+ 		.sta_mask = PWR_STATUS_MFG,
+ 		.ctl_offs = SPM_MFG_PWR_CON,
+-		.sram_pdn_bits = GENMASK(11, 8),
+-		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_MFG},
+ 		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
+ 		.active_wakeup = true,
+ 	},
++	[MT2712_POWER_DOMAIN_MFG_SC1] = {
++		.name = "mfg_sc1",
++		.sta_mask = BIT(22),
++		.ctl_offs = 0x02c0,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC2] = {
++		.name = "mfg_sc2",
++		.sta_mask = BIT(23),
++		.ctl_offs = 0x02c4,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC3] = {
++		.name = "mfg_sc3",
++		.sta_mask = BIT(30),
++		.ctl_offs = 0x01f8,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++};
++
++static const struct scp_subdomain scp_subdomain_mt2712[] = {
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
++	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
++	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
++	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
+ };
+ 
+ /*
+@@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
+ static const struct scp_soc_data mt2712_data = {
+ 	.domains = scp_domain_data_mt2712,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.subdomains = scp_subdomain_mt2712,
++	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+-- 
+2.12.5
