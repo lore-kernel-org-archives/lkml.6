@@ -1,60 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933204AbeBVQSA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:18:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933108AbeBVQR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:17:57 -0500
-Subject: [RFC][PATCH 0/6] KEYS: Fixes
-From: David Howells <dhowells@redhat.com>
-To: jmorris@namei.org
-Cc: dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 22 Feb 2018 16:17:54 +0000
-Message-ID: <151931627456.27289.17918204393283127682.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S933220AbeBVQTH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:19:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53774 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933108AbeBVQTE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:19:04 -0500
+Date: Thu, 22 Feb 2018 08:18:59 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Mario.Limonciello@dell.com
+Cc: notmart@gmail.com, jeremy@jcline.org, pali.rohar@gmail.com,
+        andriy.shevchenko@linux.intel.com, mjg59@srcf.ucam.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+Message-ID: <20180222161859.GA19843@fury>
+References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
+ <1628582.nV6hDClBbL@phobos>
+ <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
+ <CAD6_Bos5Qrvz=Mr_rYCZXZ1s=5+8rawfZXxzXSvyc-tLBO07fg@mail.gmail.com>
+ <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 22, 2018 at 03:21:45PM +0000, Mario.Limonciello@dell.com wrote:
+> > -----Original Message-----
+> > From: Marco Martin [mailto:notmart@gmail.com]
+> > Sent: Thursday, February 22, 2018 9:16 AM
+> > To: Jeremy Cline <jeremy@jcline.org>
+> > Cc: Limonciello, Mario <Mario_Limonciello@Dell.com>; Pali Rohár
+> > <pali.rohar@gmail.com>; Andy Shevchenko <andriy.shevchenko@linux.intel.com>;
+> > Matthew Garrett <mjg59@srcf.ucam.org>; Darren Hart <dvhart@infradead.org>;
+> > Platform Driver <platform-driver-x86@vger.kernel.org>; Linux Kernel Mailing List
+> > <linux-kernel@vger.kernel.org>
+> > Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+> > 
+> > On Thu, Feb 22, 2018 at 3:08 PM, Jeremy Cline <jeremy@jcline.org> wrote:
+> > > Input driver version is 1.0.1
+> > > Input device ID: bus 0x19 vendor 0x0 product 0x0 version 0x0
+> > > Input device name: "Intel Virtual Button driver"
+> > > Supported events:
+> > >   Event type 0 (EV_SYN)
+> > >   Event type 1 (EV_KEY)
+> > >     Event code 114 (KEY_VOLUMEDOWN)
+> > >     Event code 115 (KEY_VOLUMEUP)
+> > >     Event code 116 (KEY_POWER)
+> > >     Event code 125 (KEY_LEFTMETA)
+> > >     Event code 240 (KEY_UNKNOWN)
+> > >     Event code 561 (?)
+> > >   Event type 4 (EV_MSC)
+> > >     Event code 4 (MSC_SCAN)
+> > >   Event type 5 (EV_SW)
+> > >     Event code 1 (SW_TABLET_MODE) state 1
+> > > Properties:
+> > > Testing ... (interrupt to exit)
+> > 
+> > Indeed, it's thinking a switch exists and that is on, which is wrong,
+> > then i guess VGBS() reports a wrong status..
+> > Mario, do you have any ideas about that?
+> > 
+> > --
+> > Marco Martin
+> 
+> I guess that means we got this wrong and the patch should be reverted
+> until we figure this out.
+> 
+> Jeremy,
+> 
+> Can you please confirm what BIOS version you are on?
+> Also Is this a 9360 with 7th or 8th gen Intel CPU?
+> 
+> I'll see if I can find out anything more relative to this.
 
-Hi James,
+Watching closely.
 
-Here's a collection of fixes for Linux keyrings, mostly thanks to Eric
-Biggers, if you could pass them along to Linus.  They include:
+Mario, do you want me to revert immediately, or wait until you've had a couple
+rounds of Q&A here?
 
- (1) Fix some PKCS#7 verification issues.
-
- (2) Fix handling of unsupported crypto in X.509.
-
- (3) Fix too-large allocation in big_key.
-
-The patches can be found here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=keys-fixes-20180222
-
-And also on the keys-fixes branch.
-
-David
----
-David Howells (1):
-      KEYS: Use individual pages in big_key for crypto buffers
-
-Eric Biggers (5):
-      PKCS#7: fix certificate chain verification
-      PKCS#7: fix certificate blacklisting
-      PKCS#7: fix direct verification of SignerInfo signature
-      X.509: fix BUG_ON() when hash algorithm is unsupported
-      X.509: fix NULL dereference when restricting key with unsupported_sig
-
-
- crypto/asymmetric_keys/pkcs7_trust.c  |    1 
- crypto/asymmetric_keys/pkcs7_verify.c |   12 ++--
- crypto/asymmetric_keys/public_key.c   |    4 +
- crypto/asymmetric_keys/restrict.c     |   21 ++++--
- security/keys/big_key.c               |  110 ++++++++++++++++++++++++++-------
- 5 files changed, 111 insertions(+), 37 deletions(-)
+-- 
+Darren Hart
+VMware Open Source Technology Center
