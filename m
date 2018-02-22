@@ -1,11 +1,11 @@
-Date: Thu, 22 Feb 2018 13:29:59 +0100
+Date: Thu, 22 Feb 2018 13:29:37 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: [GIT PULL] Staging/IIO fixes for 4.16-rc3
-Message-ID: <20180222122959.GA30818@kroah.com>
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.16-rc6
+Message-ID: <20180222122937.GA30727@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -19,65 +19,59 @@ The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/ tags/staging-4.16-rc2
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/ tags/char-misc-4.16-rc3
 
-for you to fetch changes up to c6754712e05317923e3f67ac01d45c7d5ec6f79f:
+for you to fetch changes up to 2a4ac172c2f257d28c47b90c9e381bec31edcc44:
 
-  Merge tag 'iio-fixes-for-4.16a' of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into staging-linus (2018-02-20 10:03:22 +0100)
+  mei: me: add cannon point device ids for 4th device (2018-02-20 08:58:42 +0100)
 
 ----------------------------------------------------------------
-Staging/IIO fixes for 4.16-rc2
+Char/Misc driver fixes for 4.16-rc3
 
-Here are a small number of staging and iio driver fixes for 4.16-rc2.
+Here are a handful of char/misc driver fixes for 4.16-rc3.
 
-The IIO fixes are all for reported things, and the android driver fixes
-also resolve some reported problems.  The remaining fsl-mc Kconfig
-change resolves a build testing error that Arnd reported.
+There are some binder driver fixes to resolve reported issues in stress
+testing the recent binder changes, some extcon driver fixes, and a few
+mei driver fixes and new device ids.
 
-All of these have been in linux-next with no reported issues.
+All of these, with the exception of the mei driver id additions, have
+been in linux-next for a while.  I forgot to push out the mei driver id
+additions to kernel.org until today, but all build tests pass with them
+enabled.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alexandru Ardelean (2):
-      staging: iio: adc: ad7192: fix external frequency setting
-      staging: iio: ad5933: switch buffer mode to software
+Alexander Usyskin (1):
+      mei: me: add cannon point device ids
 
-Andreas Klinger (1):
-      iio: srf08: fix link error "devm_iio_triggered_buffer_setup" undefined
-
-Arnd Bergmann (1):
-      staging: fsl-mc: fix build testing on x86
-
-Ben Hutchings (1):
-      staging: android: ashmem: Fix a race condition in pin ioctls
-
-Christophe JAILLET (1):
-      iio: adc: aspeed: Fix error handling path
-
-Fabrice Gasnier (1):
-      iio: adc: stm32: fix stm32h7_adc_enable error handling
+Eric Biggers (1):
+      binder: check for binder_thread allocation failure in binder_poll()
 
 Greg Kroah-Hartman (1):
-      Merge tag 'iio-fixes-for-4.16a' of git://git.kernel.org/.../jic23/iio into staging-linus
+      Merge tag 'extcon-fixes-for-4.16-rc3' of git://git.kernel.org/.../chanwoo/extcon into char-misc-linus
 
-Lars-Peter Clausen (1):
-      iio: adis_lib: Initialize trigger before requesting interrupt
+Hans de Goede (3):
+      extcon: axp288: Constify the axp288_pwr_up_down_info array
+      Revert "extcon: axp288: Redo charger type detection a couple of seconds after probe()"
+      extcon: int3496: process id-pin first so that we start with the right status
 
-Liam Mark (1):
-      staging: android: ion: Zero CMA allocated memory
+Martijn Coenen (1):
+      ANDROID: binder: synchronize_rcu() when using POLLFREE.
 
-Stefan Windfeldt-Prytz (1):
-      iio: buffer: check if a buffer has been set up when poll is called
+Todd Kjos (2):
+      ANDROID: binder: remove WARN() for redundant txn error
+      binder: replace "%p" with "%pK"
 
- drivers/iio/adc/aspeed_adc.c                    |  7 ++++---
- drivers/iio/adc/stm32-adc.c                     |  7 ++++---
- drivers/iio/imu/adis_trigger.c                  |  7 ++++---
- drivers/iio/industrialio-buffer.c               |  2 +-
- drivers/iio/proximity/Kconfig                   |  2 ++
- drivers/staging/android/ashmem.c                | 19 +++++++++--------
- drivers/staging/android/ion/ion_cma_heap.c      | 17 ++++++++++++++++
- drivers/staging/fsl-mc/bus/Kconfig              |  2 +-
- drivers/staging/iio/adc/ad7192.c                | 27 +++++++++++++++++--------
- drivers/staging/iio/impedance-analyzer/ad5933.c |  4 +---
- 10 files changed, 64 insertions(+), 30 deletions(-)
+Tomas Winkler (2):
+      mei: set device client to the disconnected state upon suspend.
+      mei: me: add cannon point device ids for 4th device
+
+ drivers/android/binder.c              | 29 ++++++++++++++++++++++------
+ drivers/extcon/extcon-axp288.c        | 36 ++++-------------------------------
+ drivers/extcon/extcon-intel-int3496.c |  3 ++-
+ drivers/misc/mei/bus.c                |  6 ------
+ drivers/misc/mei/client.c             |  6 ++++++
+ drivers/misc/mei/hw-me-regs.h         |  5 +++++
+ drivers/misc/mei/pci-me.c             |  5 +++++
+ 7 files changed, 45 insertions(+), 45 deletions(-)
