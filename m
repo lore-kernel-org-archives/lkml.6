@@ -1,110 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeBVHxj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:53:39 -0500
-Received: from mail-db5eur01on0060.outbound.protection.outlook.com ([104.47.2.60]:63216
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751657AbeBVHxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:53:37 -0500
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "daniel.baluta@gmail.com" <daniel.baluta@gmail.com>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>
-Subject: Re: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
-Thread-Topic: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
-Thread-Index: AQHTq0oe1egyu3UtxUeuw62kdr00GKOvV84AgACzOQCAAALdgA==
-Date: Thu, 22 Feb 2018 07:53:33 +0000
-Message-ID: <1519286013.13463.59.camel@nxp.com>
-References: <20180221192807.qfyhp7z27f6r6p47@smtp.gmail.com>
-         <CAEnQRZBq3G+RPq66ObW+CM2A9BOE_tBn-fC++Ksy+O_nEFfz9Q@mail.gmail.com>
-         <20180222074318.qsf7x4jnyhvasq5u@mwanda>
-In-Reply-To: <20180222074318.qsf7x4jnyhvasq5u@mwanda>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=daniel.baluta@nxp.com;
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3742;7:cCdkzDt+szPALy1Vrz/8qEsow4i+CfmSbkKfw0aYsTyl3xO/kSsWVM/7GtRPMSZcCXuxlVsemDyfQ8UjqWdy47GnAvwc0zrs/BRewQdN1RmEm1uat5QHXpyPNseKQbLOrMB/n10rZFhX6qMNgQxyfFcfNnKq0mJbmfSxOFe7w3IiPHgQPZlWpIesN3C75m8E5zn0J2hOXB12n3eYPDxEnY4wxV7Uix9Hq1g5z9m+JelFhwK38sKCpOC1FSnonS1J
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 21c95ed8-9806-4fe0-abf7-08d579c95f89
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:VI1PR0402MB3742;
-x-ms-traffictypediagnostic: VI1PR0402MB3742:
-x-microsoft-antispam-prvs: <VI1PR0402MB3742323E31D763A7F4374005F9CD0@VI1PR0402MB3742.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(788757137089);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001077)(6040501)(2401047)(8121501046)(5005006)(3231101)(944501161)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041288)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0402MB3742;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3742;
-x-forefront-prvs: 059185FE08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(39380400002)(366004)(346002)(377424004)(189003)(199004)(2501003)(68736007)(3660700001)(305945005)(7736002)(110136005)(97736004)(2900100001)(3280700002)(316002)(25786009)(99286004)(86362001)(5660300001)(6486002)(6506007)(39060400002)(2950100002)(14454004)(54906003)(4326008)(229853002)(478600001)(53546011)(66066001)(76176011)(186003)(6436002)(6512007)(106356001)(6246003)(103116003)(8936002)(8676002)(81166006)(36756003)(102836004)(26005)(2906002)(59450400001)(105586002)(5250100002)(8666007)(53936002)(7416002)(81156014)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3742;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: urd7qimdN5OesPT/kkaIIzl5CdI/G+NTLHP+v5DNBNDoSNkplNAqylmtzNe9siV7oDxG1jEPgtcLqBO3MdniWF1ggh0daDE+TEnBEbddUxMOyFfsmKSBdLzlB6O49Hlr3iQGxP8oioShJ2S2SNYZcg55K49Qjmo1TkioNo0BPWc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9F84F53A36B52D43B546DC8610CA52FA@eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21c95ed8-9806-4fe0-abf7-08d579c95f89
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2018 07:53:33.9632
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3742
+        id S1752720AbeBVHyC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:54:02 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35454 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751657AbeBVHyA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 02:54:00 -0500
+X-Google-Smtp-Source: AH8x225prJv0zFgGVZrwyXY39R7XqiONJ3S3pcMHDdCQW8/0VRYHe0Eu4IFHagR2bUQqBpmBX9TwPA==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <B3E32D7E-E531-4399-89C4-080B5A28E17D@lightnvm.io>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_AE09ABC6-6D85-4425-A0F8-542D14AEA3DF";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 04/20] lightnvm: add minor version to generic geometry
+Date: Thu, 22 Feb 2018 08:53:54 +0100
+In-Reply-To: <abd2b8f4-58b6-c97e-58e2-e271aae1f4a0@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
+ <1519205218-26994-5-git-send-email-javier@cnexlabs.com>
+ <abd2b8f4-58b6-c97e-58e2-e271aae1f4a0@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1M7riUN009345
 
-Hi Dan,
 
-On Jo, 2018-02-22 at 10:43 +0300, Dan Carpenter wrote:
-> On Wed, Feb 21, 2018 at 11:01:50PM +0200, Daniel Baluta wrote:
-> > 
-> > On Wed, Feb 21, 2018 at 9:28 PM, Rodrigo Siqueira
-> > <rodrigosiqueiramelo@gmail.com> wrote:
-> > > 
-> > > This patch fixes the checkpatch.pl warning:
-> > > 
-> > > drivers/iio/dummy/iio_dummy_evgen.c:151: WARNING: Symbolic permissions
-> > > 'S_IWUSR' are not preferred. Consider using octal permissions '0200'.
-> > > 
-> > > ... Why this "..." :)?
-> > Commit subject could be done better. It is pretty obvious from the code that
-> > we change S_IWUSR with 0200.
-> > 
-> > Better message:
-> > 
-> > iio:dummy: Fix poke_evN file permissions
-> Please stop telling people to say "Fix" when it's not a bug fix...
-> 
+--Apple-Mail=_AE09ABC6-6D85-4425-A0F8-542D14AEA3DF
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-I agree with you that here "Fix" is an overstatement.
+> On 22 Feb 2018, at 08.34, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 02/21/2018 10:26 AM, Javier Gonz=C3=A1lez wrote:
+>> Separate the version between major and minor on the generic geometry.
+>> Also, add a "subversion" entry to sysfs to expose the minor version
+>> without breaking user space.
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>> ---
+>>  drivers/lightnvm/core.c      |  4 ++--
+>>  drivers/nvme/host/lightnvm.c | 25 ++++++++++++++++++++-----
+>>  include/linux/lightnvm.h     |  3 ++-
+>>  3 files changed, 24 insertions(+), 8 deletions(-)
+>> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+>> index 42596afdf64c..dc9ec6baff45 100644
+>> --- a/drivers/lightnvm/core.c
+>> +++ b/drivers/lightnvm/core.c
+>> @@ -897,8 +897,8 @@ static int nvm_init(struct nvm_dev *dev)
+>>  		goto err;
+>>  	}
+>>  -	pr_debug("nvm: ver:%u nvm_vendor:%x\n",
+>> -				dev_geo->ver_id,
+>> +	pr_debug("nvm: ver:%u.%u nvm_vendor:%x\n",
+>> +				dev_geo->major_ver_id, =
+dev_geo->minor_ver_id,
+>>  				dev_geo->c.vmnt);
+>>    	ret =3D nvm_core_init(dev);
+>> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+>> index 598abba66f52..71b4ac57a668 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -296,7 +296,8 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 =
+*id,
+>>  	}
+>>    	/* 1.2 spec. only reports a single version id - unfold */
+>> -	dev_geo->ver_id =3D id->ver_id;
+>> +	dev_geo->major_ver_id =3D id->ver_id;
+>> +	dev_geo->minor_ver_id =3D 2;
+>>    	dev_geo->nr_chnls =3D src->num_ch;
+>>  	dev_geo->nr_luns =3D src->num_lun;
+>> @@ -377,7 +378,14 @@ static void nvme_nvm_set_addr_20(struct =
+nvm_addr_format *dst,
+>>  static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+>>  			     struct nvm_dev_geo *dev_geo)
+>>  {
+>> -	dev_geo->ver_id =3D id->mjr;
+>> +	dev_geo->major_ver_id =3D id->mjr;
+>> +	dev_geo->minor_ver_id =3D id->mnr;
+>> +
+>> +	if (!(dev_geo->major_ver_id =3D=3D 2 && dev_geo->minor_ver_id =3D=3D=
+ 0)) {
+>> +		pr_err("nvm: OCSSD version not supported (v%d.%d)\n",
+>> +				dev_geo->major_ver_id, =
+dev_geo->minor_ver_id);
+>> +		return -EINVAL;
+>> +	}
+>>    	dev_geo->nr_chnls =3D le16_to_cpu(id->num_grp);
+>>  	dev_geo->nr_luns =3D le16_to_cpu(id->num_pu);
+>> @@ -913,7 +921,11 @@ static ssize_t nvm_dev_attr_show(struct device =
+*dev,
+>>  	attr =3D &dattr->attr;
+>>    	if (strcmp(attr->name, "version") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->ver_id);
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+>> +						dev_geo->major_ver_id);
+>> +	} else if (strcmp(attr->name, "subversion") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+>> +						dev_geo->minor_ver_id);
+>>  	} else if (strcmp(attr->name, "media_capabilities") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mccap);
+>>  	} else if (strcmp(attr->name, "read_typ") =3D=3D 0) {
+>> @@ -1055,6 +1067,7 @@ static ssize_t nvm_dev_attr_show_20(struct =
+device *dev,
+>>    /* general attributes */
+>>  static NVM_DEV_ATTR_RO(version);
+>> +static NVM_DEV_ATTR_RO(subversion);
+>>  static NVM_DEV_ATTR_RO(media_capabilities);
+>>    static NVM_DEV_ATTR_RO(read_typ);
+>> @@ -1085,6 +1098,7 @@ static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>>    static struct attribute *nvm_dev_attrs_12[] =3D {
+>>  	&dev_attr_version.attr,
+>> +	&dev_attr_subversion.attr,
+>>  	&dev_attr_media_capabilities.attr,
+>>    	&dev_attr_vendor_opcode.attr,
+>> @@ -1134,6 +1148,7 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>>    static struct attribute *nvm_dev_attrs_20[] =3D {
+>>  	&dev_attr_version.attr,
+>> +	&dev_attr_subversion.attr,
+>>  	&dev_attr_media_capabilities.attr,
+>>    	&dev_attr_groups.attr,
+>> @@ -1167,7 +1182,7 @@ int nvme_nvm_register_sysfs(struct nvme_ns *ns)
+>>  	if (!ndev)
+>>  		return -EINVAL;
+>>  -	switch (dev_geo->ver_id) {
+>> +	switch (dev_geo->major_ver_id) {
+>>  	case 1:
+>>  		return sysfs_create_group(&disk_to_dev(ns->disk)->kobj,
+>>  					&nvm_dev_attr_group_12);
+>> @@ -1184,7 +1199,7 @@ void nvme_nvm_unregister_sysfs(struct nvme_ns =
+*ns)
+>>  	struct nvm_dev *ndev =3D ns->ndev;
+>>  	struct nvm_dev_geo *dev_geo =3D &ndev->dev_geo;
+>>  -	switch (dev_geo->ver_id) {
+>> +	switch (dev_geo->major_ver_id) {
+>>  	case 1:
+>>  		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+>>  					&nvm_dev_attr_group_12);
+>> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+>> index 18e3751b1632..5af0b8837095 100644
+>> --- a/include/linux/lightnvm.h
+>> +++ b/include/linux/lightnvm.h
+>> @@ -242,7 +242,8 @@ struct nvm_common_geo {
+>>  /* Device identified geometry */
+>>  struct nvm_dev_geo {
+>>  	/* device reported version */
+>> -	u8	ver_id;
+>> +	u8	major_ver_id;
+>> +	u8	minor_ver_id;
+>>    	/* full device geometry */
+>>  	u16	nr_chnls;
+>=20
+> Looks fairly good to me. Did you consider putting in the major and
+> minor version id into the version attribute? e.g., keep 1 as 1, and
+> have version 2 be exposed as 2.0?
+>=20
 
-> Also who cares?  The commit message is perfectly clear.
+Yes, we can do that. I'll do the changes for the next version.
 
-I do care about newcomers really learning on how to write a proper
-commit message.
 
-The commit messsage should really say why the patch is needed, no what the patch does.
+--Apple-Mail=_AE09ABC6-6D85-4425-A0F8-542D14AEA3DF
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-After several trivial patches newcomers will get into more serious stuff and I wouldn't
-want to see a patch with commit message like this:
+-----BEGIN PGP SIGNATURE-----
 
-iio: Change bit 1 of status register
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqOdxIACgkQYx8FO3WZ
+GMrdqhAAmIVIAO4znHtk5HpKGY4eRQbDEhgLxkQL7yjl5hQj1N/CyKmqlZnbWpU4
+kuMbLjOuoTgzrCCqwe7fqbk3Lq6yDXfFikywiOaTrg3Is/qc9saR/uWnLnsikwAA
+k8meTFG1+UjLUuQI1lZ7cnuobbv+Cgt8BQ899lVUtRdYZ002f3n5eOmSFyE6M56V
+xjpsPrlhiDE/n3i+vj8SHOGaXZz73NeO6EN7j/ePw6gyMz+UKffZCtQJ3YQystG+
+mPIIyEZUeersQbCcoK5xv7JwmC1yw+VEWqXSPD4TBFq2ik5PWu0LCwMdPkSo1dsj
+8B/9bfhVRJhiRTQcKYAANcAGHiHnSj6dRfudXfygYbcPt2FIEasjrpVUAtBKKFRF
+KOC0kVzgtKABzP9nU59qpr2RFB0Mpa37bBWxMoxY0cZl9ol1ouxoOJQgSAilZmHv
+7BFm23VMFWq0gDXhRz0sPOdjgtSqtEkDgwq9Ma7uoZunPxHwoPHowTltMc1QUkJg
+30PVjlyAFu6pTsawPLF1fk1Lt7dsWESdg1WsKxhJGMe9Q+goG7DkrAQ/g1CLm+hU
+gayhmF0J02Ap4hVGGVzZeQ5caZDbMvrbuSeGlsUu2qqdHB3WOmUK5I6o4oKOwoAn
+Zsl60kRk9DJUQYSbUhCjzkcfhwOCRmz/ngxNvMQhLK4vlDVJ6i8=
+=LJcM
+-----END PGP SIGNATURE-----
 
-but one that looks like this:
-
-iio: Set power up on chip probe
-
-thanks,
-Daniel.
+--Apple-Mail=_AE09ABC6-6D85-4425-A0F8-542D14AEA3DF--
