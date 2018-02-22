@@ -1,43 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932775AbeBVOPa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:15:30 -0500
-Received: from mail-io0-f174.google.com ([209.85.223.174]:32920 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932674AbeBVOP2 (ORCPT
+        id S932781AbeBVOQE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:16:04 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:56950 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932593AbeBVOQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:15:28 -0500
-X-Google-Smtp-Source: AG47ELtylVXSMCX8h1vRC2YBFk36+XtWgnh1Ox/4c/lAZLD2H55x1pwPy3tNPZkK7TD6BogBeTqZv8gBOozWfxmeIZY=
+        Thu, 22 Feb 2018 09:16:02 -0500
+Date: Thu, 22 Feb 2018 22:15:54 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Crypto Fixes for 4.16
+Message-ID: <20180222141554.GA29622@gondor.apana.org.au>
+References: <20161119102748.GA4277@gondor.apana.org.au>
+ <20161213132414.GA7898@gondor.apana.org.au>
+ <20170223125141.GA17400@gondor.apana.org.au>
+ <20170714141855.GA29426@gondor.apana.org.au>
+ <20170922084401.GA15541@gondor.apana.org.au>
+ <20171128230929.GA17783@gondor.apana.org.au>
+ <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au>
+ <20180212031702.GA26153@gondor.apana.org.au>
 MIME-Version: 1.0
-In-Reply-To: <df13123f-5c90-03e0-edb6-0ab9751b7aa2@users.sourceforge.net>
-References: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net> <df13123f-5c90-03e0-edb6-0ab9751b7aa2@users.sourceforge.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 15:15:27 +0100
-Message-ID: <CACRpkdZNipm4spks8wdGRwG2UwxvQ87svtV9FjiCPYnwNw-62Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: timberdale: Improve a size determination in timbgpio_probe()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212031702.GA26153@gondor.apana.org.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 9:33 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+Hi Linus: 
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:13:28 +0100
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This push fixes an oops in the s5p-sss driver when used with
+ecb(aes).
 
-Patch applied.
 
-Yours,
-Linus Walleij
+Please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+
+
+Kamil Konieczny (1):
+      crypto: s5p-sss - Fix kernel Oops in AES-ECB mode
+
+ drivers/crypto/s5p-sss.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
