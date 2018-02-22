@@ -1,80 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933539AbeBVRq4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:46:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933441AbeBVRqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:46:55 -0500
-Date: Thu, 22 Feb 2018 18:46:47 +0100
-From: Jesper Dangaard Brouer <brouer@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: brouer@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com,
-        christoffer.dall@linaro.org, sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH net v3 2/2] tuntap: correctly add the missing xdp flush
-Message-ID: <20180222184647.0e1d6631@redhat.com>
-In-Reply-To: <1519292206-6384-2-git-send-email-jasowang@redhat.com>
-References: <1519292206-6384-1-git-send-email-jasowang@redhat.com>
-        <1519292206-6384-2-git-send-email-jasowang@redhat.com>
+        id S933567AbeBVRrE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:47:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54100 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933498AbeBVRrB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 12:47:01 -0500
+Date: Thu, 22 Feb 2018 18:46:54 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 08/17] lockdep: Fix recursive read
+ lock related safe->unsafe detection
+Message-ID: <20180222174654.GW25201@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-9-boqun.feng@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222070904.548-9-boqun.feng@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018 17:36:46 +0800
-Jason Wang <jasowang@redhat.com> wrote:
-
-> Commit 762c330d670e ("tuntap: add missing xdp flush") tries to fix the
-> devmap stall caused by missed xdp flush by counting the pending xdp
-> redirected packets and flush when it exceeds NAPI_POLL_WEIGHT or
-> MSG_MORE is clear. This may lead to BUG() since xdp_do_flush() was
-> called in the process context with preemption enabled. Simply
-> disabling preemption may silence the warning but be not enough since
-> process may move between different CPUS during a batch which cause
-> xdp_do_flush() misses some CPU where the process run
-> previously. Consider the fallouts, that commit was reverted. To fix
-> the issue correctly, we can simply call xdp_do_flush() immediately
-> after xdp_do_redirect(), a side effect is that this removes any
-> possibility of batching which could be addressed in the future.
+On Thu, Feb 22, 2018 at 03:08:55PM +0800, Boqun Feng wrote:
+> There are four cases for recursive read lock realted deadlocks:
 > 
-> Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
-> Fixes: 762c330d670e ("tuntap: add missing xdp flush")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/net/tun.c | 1 +
->  1 file changed, 1 insertion(+)
+> (--(X..Y)--> means a strong dependency path starts with a --(X*)-->
+> dependency and ends with a --(*Y)-- dependency.)
 > 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 2823a4a..a363ea2 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1662,6 +1662,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  			get_page(alloc_frag->page);
->  			alloc_frag->offset += buflen;
->  			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
-> +			xdp_do_flush_map();
->  			if (err)
->  				goto err_redirect;
->  			rcu_read_unlock();
+> 1.	An irq-safe lock L1 has a dependency --(*..*)--> to an
+> 	irq-unsafe lock L2.
+> 
+> 2.	An irq-read-safe lock L1 has a dependency --(N..*)--> to an
+> 	irq-unsafe lock L2.
+> 
+> 3.	An irq-safe lock L1 has a dependency --(*..N)--> to an
+> 	irq-read-unsafe lock L2.
+> 
+> 4.	An irq-read-safe lock L1 has a dependency --(N..N)--> to an
+> 	irq-read-unsafe lock L2.
+> 
+> The current check_usage() only checks 1) and 2), so this patch adds
+> checks for 3) and 4) and makes sure when find_usage_{back,for}wards find
+> an irq-read-{,un}safe lock, the traverse path should ends at a
+> dependency --(*N)-->. Note when we search backwards, --(*N)--> indicates
+> a real dependency --(N*)-->.
 
-As you have noticed, the xdp_do_redirect() + xdp_do_flush_map() rely
-heavily on being executed in softirq/napi_schedule context.
-Particularly the map infra devmap[1]+cpumap depend on the enqueue and
-flush operation MUST happen on the same CPU (e.g. stores which
-devices needs flushing in a this_cpu_ptr bitmap [1]).
+This adds 4 __bfs() searches for every new link.
 
-What context is tun_build_skb() invoked under?
-
-Even when you call xdp_do_redirect and xdp_do_flush_map right after
-each-other, are we sure we cannot be preempted here?
-
-
-[1] https://github.com/torvalds/linux/blob/master/kernel/bpf/devmap.c#L209-L215
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Can't we make the existing traversals smarter?
