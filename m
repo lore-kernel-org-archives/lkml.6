@@ -1,186 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932088AbeBVLjv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:39:51 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37358 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932065AbeBVLjs (ORCPT
+        id S932104AbeBVLkh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:40:37 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41298 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753640AbeBVLkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:39:48 -0500
-X-Google-Smtp-Source: AH8x227etkjsSnthVWy9dzqt+mU/y8xiVIxR68eIKAB/nUuFKm4kQDOppJW4A6P9beTAoYC3pQrpP4YgqbCAOqUvNT8=
+        Thu, 22 Feb 2018 06:40:20 -0500
+X-Google-Smtp-Source: AH8x225w5Ef5tuQXeSedKxPESXdMPn8bLmdgJ3fXrR8vXAmGm5852BjBoDdny1fzFHgnfMkJMA+O2Zq/TFWN5dHeOqU=
 MIME-Version: 1.0
-In-Reply-To: <20180221171504.dac7yikrqfnjiiog@verge.net.au>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com> <20180221171504.dac7yikrqfnjiiog@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Feb 2018 12:39:46 +0100
-X-Google-Sender-Auth: F2SGiiFkvgXGkHaCMZrFQhnRP0M
-Message-ID: <CAK8P3a30pgOXvLLHe3Hb-ubPz6QeUiZKFqMZLm8Qp_7KRr7QuA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180221202908.17258-4-ebiederm@xmission.com>
+References: <878tbmf5vl.fsf@xmission.com> <20180221202908.17258-4-ebiederm@xmission.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Thu, 22 Feb 2018 12:40:18 +0100
+Message-ID: <CAOssrKeNLBeMkMrrCeRBO9Z80zFxCCEygKL3DErnQ9xBoLkH0g@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] fuse: Ensure posix acls are translated outside of init_user_ns
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 6:15 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Feb 20, 2018 at 04:46:23PM +0100, Geert Uytterhoeven wrote:
->> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> > Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
->> >
->> > Based on original work from:
->> > Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> > Magnus Damm <damm+renesas@opensource.se>
->> >
->> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks, applied with prefix updated to
->
-> "arm64: dts: renesas:"
->
-> There was some fuzz applying this patch, the result is as follows.
->
-> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Subject: [PATCH] arm64: dts: renesas: Add R-Car Salvator-x M3-N support
->
-> Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
->
-> Based on original work from:
-> Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Magnus Damm <damm+renesas@opensource.se>
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Feb 21, 2018 at 9:29 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Ensure the translation happens by failing to read or write
+> posix acls when the filesystem has not indicated it supports
+> posix acls.
 
-Something went wrong with this patch, I suspect it's missing some prerequisites
-that fill in a few more device nodes to avoid these warnings in linux-next:
+For the first iteration this is fine, but  we could convert the raw
+xattrs as well, if we later want to, right?
 
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/ethernet@e6800000/ethernet-phy@0
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e6510000/codec@10 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e6510000/clk_multiplier@4f
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/gpio@20 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/adc@7c has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/adc@7f has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/clock-generator@6a
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e60b0000/pmic@30 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@0 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@1 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@2 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/ethernet@e6800000/ethernet-phy@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/ethernet@e6800000/ethernet-phy@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e6510000/codec@10
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e6510000/codec@10
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e6510000/clk_multiplier@4f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e6510000/clk_multiplier@4f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/gpio@20
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/gpio@20
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/adc@7c
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/adc@7c
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/adc@7f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/adc@7f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/clock-generator@6a
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/clock-generator@6a
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e60b0000/pmic@30
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e60b0000/pmic@30
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@1
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@1
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@2
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@2
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(phys_property): Missing property '#phy-cells' in node
-/soc/usb-phy@e65ee000 or bad phandle (referred from
-/soc/usb@ee020000:phys[0])
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(pwms_property): Missing property '#pwm-cells' in node
-/soc/pwm@e6e31000 or bad phandle (referred from /backlight:pwms[0])
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(interrupts_property): Missing interrupt-controller or interrupt-map
-property in /soc/interrupt-controller@e61c0000
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(interrupts_property): Missing #interrupt-cells in interrupt-parent
-/soc/interrupt-controller@e61c0000
+Thanks,
+Miklos
 
-Maybe just take out the patch adding the .dts file for the time being until
-the important nodes are all in place?
-
-        Arnd
+>
+> This ensures that modern cached posix acl support is available
+> and used when dealing with posix acls.  This is important
+> because only that path has the code to convernt the uids and
+> gids in posix acls into the user namespace of a fuse filesystem.
+>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/fuse/fuse_i.h |  1 +
+>  fs/fuse/inode.c  |  7 +++++++
+>  fs/fuse/xattr.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 51 insertions(+)
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 7772e2b4057e..986fa2b043ab 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -979,6 +979,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
+>  int fuse_removexattr(struct inode *inode, const char *name);
+>  extern const struct xattr_handler *fuse_xattr_handlers[];
+>  extern const struct xattr_handler *fuse_acl_xattr_handlers[];
+> +extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
+>
+>  struct posix_acl;
+>  struct posix_acl *fuse_get_acl(struct inode *inode, int type);
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e018dc3999f4..a52cf2019a58 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1097,6 +1097,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>             file->f_cred->user_ns != sb->s_user_ns)
+>                 goto err_fput;
+>
+> +       /*
+> +        * If we are not in the initial user namespace posix
+> +        * acls must be translated.
+> +        */
+> +       if (sb->s_user_ns != &init_user_ns)
+> +               sb->s_xattr = fuse_no_acl_xattr_handlers;
+> +
+>         fc = kmalloc(sizeof(*fc), GFP_KERNEL);
+>         err = -ENOMEM;
+>         if (!fc)
+> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+> index 3caac46b08b0..433717640f78 100644
+> --- a/fs/fuse/xattr.c
+> +++ b/fs/fuse/xattr.c
+> @@ -192,6 +192,26 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
+>         return fuse_setxattr(inode, name, value, size, flags);
+>  }
+>
+> +static bool no_xattr_list(struct dentry *dentry)
+> +{
+> +       return false;
+> +}
+> +
+> +static int no_xattr_get(const struct xattr_handler *handler,
+> +                       struct dentry *dentry, struct inode *inode,
+> +                       const char *name, void *value, size_t size)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+> +static int no_xattr_set(const struct xattr_handler *handler,
+> +                       struct dentry *dentry, struct inode *nodee,
+> +                       const char *name, const void *value,
+> +                       size_t size, int flags)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>  static const struct xattr_handler fuse_xattr_handler = {
+>         .prefix = "",
+>         .get    = fuse_xattr_get,
+> @@ -209,3 +229,26 @@ const struct xattr_handler *fuse_acl_xattr_handlers[] = {
+>         &fuse_xattr_handler,
+>         NULL
+>  };
+> +
+> +static const struct xattr_handler fuse_no_acl_access_xattr_handler = {
+> +       .name  = XATTR_NAME_POSIX_ACL_ACCESS,
+> +       .flags = ACL_TYPE_ACCESS,
+> +       .list  = no_xattr_list,
+> +       .get   = no_xattr_get,
+> +       .set   = no_xattr_set,
+> +};
+> +
+> +static const struct xattr_handler fuse_no_acl_default_xattr_handler = {
+> +       .name  = XATTR_NAME_POSIX_ACL_DEFAULT,
+> +       .flags = ACL_TYPE_ACCESS,
+> +       .list  = no_xattr_list,
+> +       .get   = no_xattr_get,
+> +       .set   = no_xattr_set,
+> +};
+> +
+> +const struct xattr_handler *fuse_no_acl_xattr_handlers[] = {
+> +       &fuse_no_acl_access_xattr_handler,
+> +       &fuse_no_acl_default_xattr_handler,
+> +       &fuse_xattr_handler,
+> +       NULL
+> +};
+> --
+> 2.14.1
+>
