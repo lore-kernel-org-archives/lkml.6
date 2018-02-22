@@ -1,87 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeBVIHf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:07:35 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33857 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751687AbeBVIHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:07:34 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37167914"
-Subject: Re: [PATCH] smpboot: correctly update number of booted cores
-To: Samuel Neves <sneves@dei.uc.pt>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <hpa@zytor.com>, <x86@kernel.org>,
-        <jgross@suse.com>, <luto@kernel.org>, <prarit@redhat.com>,
-        <ak@linux.intel.com>, <vkuznets@redhat.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20180221205036.5244-1-sneves@dei.uc.pt>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <12fc2cb0-aeb8-a74e-2524-1ca97fa043a8@cn.fujitsu.com>
-Date: Thu, 22 Feb 2018 16:07:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752691AbeBVIKW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:10:22 -0500
+Received: from www.zeus03.de ([194.117.254.33]:39028 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752553AbeBVIKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 03:10:21 -0500
+Date: Thu, 22 Feb 2018 09:10:18 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 13/13] i2c: img-scb: Drop METAG dependency
+Message-ID: <20180222081018.tc3jcuwl6yfrxroh@katana>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+ <20180221233825.10024-14-jhogan@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180221205036.5244-1-sneves@dei.uc.pt>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 4A4E948AE762.ACBCE
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n5ojqysm46o3f7dt"
+Content-Disposition: inline
+In-Reply-To: <20180221233825.10024-14-jhogan@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--n5ojqysm46o3f7dt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-At 02/22/2018 04:50 AM, Samuel Neves wrote:
-> Without this fix, /proc/cpuinfo will display an incorrect amount
-> of CPU cores, after bringing them offline and online again, as
-> exemplified below:
-> 
-> $ cat /proc/cpuinfo | grep cores
-> cpu cores	: 4
-> cpu cores	: 8
-> cpu cores	: 8
-> cpu cores	: 20
-> cpu cores	: 4
-> cpu cores	: 3
-> cpu cores	: 2
-> cpu cores	: 2
-> 
-> This patch fixes this by always zeroing the booted_cores variable
-> upon turning off a logical CPU.
-> 
-> Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
+On Wed, Feb 21, 2018 at 11:38:25PM +0000, James Hogan wrote:
+> Now that arch/metag/ has been removed, remove the METAG dependency from
+> the IMG SCB I2C device driver. The hardware is also present on MIPS SoCs
+> so the driver still has value.
+>=20
+> Signed-off-by: James Hogan <jhogan@kernel.org>
 
-Yes, tested it in Qemu with 15 hot-pluggable CPUs, like below
-   ...
-   -smp 1,maxcpus=16,sockets=2,cores=4,threads=2
-   ...
+I'd think it should go with the rest of this series? For that:
 
-When a new CPU bringups a new core, for each core in package, Linux 
-increments the booted_cores for this new cpu in set_cpu_sibling_map().
-Due to the uncleared booted_cores, this incorrect number of CPU cores
-will be shown.
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
-Tested-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Let me know if I should rather pick this up individually.
 
-> ---
->   arch/x86/kernel/smpboot.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 9eee25d07586..ff99e2b6fc54 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1437,6 +1437,7 @@ static void remove_siblinginfo(int cpu)
->   	cpumask_clear(topology_sibling_cpumask(cpu));
->   	cpumask_clear(topology_core_cpumask(cpu));
->   	c->cpu_core_id = 0;
-> +	c->booted_cores = 0;
->   	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
->   	recompute_smt_state();
->   }
-> 
+
+--n5ojqysm46o3f7dt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqOeuUACgkQFA3kzBSg
+KbYNNw//VozjiVfGaMsSs0jUmsTVvWIAmvkuD59HTdA/N6nMBdcB/axq9PpSHT0J
+KXGrGHOf9QtEJeXzydzIRDevKPAePLZjvGjIfZVqrXTOsOqOMngLkE+z8KT6KIN2
+UdUCY8kDjoK9CcghAsvIB9FX7hHD2qnZhmm6iWc46PG5zu8LaeCTIw8g7CUE97c/
+O7xTtp2wImMWQvizlEAI1GWEvOokPcMYRDH9LVNc6ZlprSPAzXLJaAupdA/cNADv
+scD4mHz2ZPjEI4N/H6Z8fuF/7DnNGktMfPhum5NZyYayDJ8oslMTqmyEFQ8vtqDt
+Wo113+VG3aWi1J/F7l7NeSnQixsvgUERrKutIxvGHSr4H5WXPQFYVJrcmybxfLzo
+5YBpX0DDpJfB+Kwr0SjYBJmJKIeSjjMOvaljjknsWKuCH6RNO5DlUcLt4t5OfoO9
+g7ZuoNr9DL+ZoVpl3lWUtE4DkDjqhqwyRxTgr9xQC9bKa8Ya727yCCP6eMV7W94W
+tdrvnMjZrgpqDmt1BsC5bqwU1/zgtV5SGv+3hdn7wJsvGlOfV4b9jUhQgvhZUorF
+Rq8H0hTAaARId5cC2ChIppjrsjT86FbSGp75qhU0wnzmdwol4X8fg1PmEbO6iwgr
+rAV6/2EoqWYw3P54QgWnfhcz3PgCTQBGcZs5mpQW/Mxd8sIMfX4=
+=9OYz
+-----END PGP SIGNATURE-----
+
+--n5ojqysm46o3f7dt--
