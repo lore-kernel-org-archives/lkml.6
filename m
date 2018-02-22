@@ -1,39 +1,39 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225mxoi/LXVoF7vOTe/eoQOo2hd8mcCg4P2pqWY93xE5lbKOhurZ7Qw1vkmHdFSRLwwQvsTs
-ARC-Seal: i=1; a=rsa-sha256; t=1519264708; cv=none;
+X-Google-Smtp-Source: AH8x224GzIFooadQ175bCjbDQjc5Y7FSfYuuJv3AjemkCCxqUL2xMi0YooCAvlJ4Ij4nQwk2yUf0
+ARC-Seal: i=1; a=rsa-sha256; t=1519264686; cv=none;
         d=google.com; s=arc-20160816;
-        b=mddbXDRtcBcznxVz0IGE6rDqzxmPa9vsIvL7HiVCAazwWTJsJTS12m5vLAhCffuXTr
-         DuEUamTDxrzaaRtEWV+YMh1JfoFJQ1yY7b8qESBCVKWqJYOjSbsniO8TCjzRhReAuBe6
-         IZ028vk3i/RzRQLn+lemeaM3TG41U7DRkQQ0EBl8GFFP9gGyDjUhkMqh7gFhrZE+rmao
-         YvUiz9eSvGCzjEvVsLSoW0pkTJ1CBYlXVVhBHp+EyUJgiBrOhZ6z3qbVupSVI3wBlaVu
-         I4vrNqCHH6D9r4EbpI8ExmNuB3XZ2bxcapIXVcywwkF9TFY2QS2nUSO+iPPsSaNqF8Js
-         wCsg==
+        b=dfv/qBOtETvxJJ6pzMBEjvIBDD/8kbhpvHoqWaMgkVc1uyx2uUwB4YKpW+iLQg+bEX
+         j9nKkJr2Vy66OBK4kVq+E4NjoZUdOJqrNyxoi1AaBkieoBFov09vSSlc2/kgl/zMPydn
+         ZRBn6RbDRLI2SOj7NyYHZH/3McOo1mmoph2aKd5gl5Qz3Bsymf9LuMvaCVu0enrZr3oE
+         62Cxg2bzQ+iCqHFRbsYzgtMf145cBtFwa9fvGBeKdLXFtLDN75u6rYoUP88KVEWwC+Lo
+         IcdtSa1L7vzLFJxy+2U9HUOhiq9DlWPW1xYtJ0grqvFT8JCoKShBj6OLeVja7R3/oJW2
+         7zAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=IzhyD8+9lJa7nIEWOW55PC3YZhpIgOaTDxvdSztOExE=;
-        b=kIeH9smg6LYkuXXTDt7QszTd0EMK0dIW47xjRmFIVIjFYiB+CxPYJfIcM5V6khITv2
-         dX/EjWFCtKo5xzJnoYn0IfYkEsalTjnFjO4Ronn7PYAHVwtNbF/FKqZztfTRBqe0alkn
-         Gd+wuW2/kzKxeoDuiZirOJudTw7Zy2uwKOZSQsNd3GMDfM8uX5Fx3o1q7YAvdWjpFY+h
-         drDZphd2Lctkh0LJ3HPNnJzM4Dor9E+MAeV4JyeA4fp0Qj9rEAhL4SzDIRio9I044HWO
-         yyRcCnsULVGDTx3sY7zqzYLZC3IRsES+UnuhI3vFxjeFf0Yv4nAimVDNZd6kjYLKLvbM
-         mULw==
+        bh=2F/Ft1r/gRNR4KB0IQjN5F6/i42sOlLmKu74xl8hSm8=;
+        b=UV/pRwfzcQSAq2fRYVxlmIp6eLBDHcjHD5ShUt1RU3bfqsUgcnXmyB1J28LUU/hYlR
+         4IBCIjq1q+hpmaorpAEn6w4DJkkmZWNUu3/Vx9kB862Dzb9QN61vC2WVZS4pdtj/Uf50
+         xpEtYKdfEG8yrqbaNiv7W/zHcikepkDAVAQP6InamOOyr/BIDoEqRU4Hmj/wIgLeawlV
+         sFXoftrki/mWFZkbtRj/tc5ZOQAKfSUDX9cDd57N4agea22lcDlhAiPRORM1KzK1XukB
+         mPcgrI0lM/GgJix2Do9cj+jXxamB4uWNw7c5STBhg4GHOmYyQb9r4V5y1CryOHYEUA/y
+         zNPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=DDPJqtbe;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=ue6/fR/t;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=DDPJqtbe;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=ue6/fR/t;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752320AbeBVB6N (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 20:58:13 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39976 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751771AbeBVB50 (ORCPT
+        id S1752194AbeBVB51 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 20:57:27 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:37421 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeBVB5X (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 20:57:26 -0500
+        Wed, 21 Feb 2018 20:57:23 -0500
 From: Ram Pai <linuxram@us.ibm.com>
 To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
 Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
@@ -45,79 +45,61 @@ Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
         bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
         linuxram@us.ibm.com, arnd@arndb.de
-Subject: [PATCH v12 20/22] selftests/vm: testcases must restore pkey-permissions
-Date: Wed, 21 Feb 2018 17:55:39 -0800
-Message-Id: <1519264541-7621-21-git-send-email-linuxram@us.ibm.com>
+Subject: [PATCH v12 19/22] selftests/vm: detect write violation on a mapped access-denied-key page
+Date: Wed, 21 Feb 2018 17:55:38 -0800
+Message-Id: <1519264541-7621-20-git-send-email-linuxram@us.ibm.com>
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 References: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593064510961959598?=
-X-GMAIL-MSGID: =?utf-8?q?1593064510961959598?=
+X-GMAIL-THRID: =?utf-8?q?1593064488113796574?=
+X-GMAIL-MSGID: =?utf-8?q?1593064488113796574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Generally the signal handler restores the state of the pkey register
-before returning. However there are times when the read/write operation
-can legitamely fail without invoking the signal handler.  Eg: A
-sys_read() operaton to a write-protected page should be disallowed.  In
-such a case the state of the pkey register is not restored to its
-original state.  The test case is responsible for restoring the key
-register state to its original value.
+detect write-violation on a page to which access-disabled
+key is associated much after the page is mapped.
 
 cc: Dave Hansen <dave.hansen@intel.com>
 cc: Florian Weimer <fweimer@redhat.com>
 Signed-off-by: Ram Pai <linuxram@us.ibm.com>
 ---
- tools/testing/selftests/vm/protection_keys.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ tools/testing/selftests/vm/protection_keys.c |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
 
 diff --git a/tools/testing/selftests/vm/protection_keys.c b/tools/testing/selftests/vm/protection_keys.c
-index 437ee74..42c068a 100644
+index b685e26..437ee74 100644
 --- a/tools/testing/selftests/vm/protection_keys.c
 +++ b/tools/testing/selftests/vm/protection_keys.c
-@@ -1003,6 +1003,7 @@ void test_read_of_write_disabled_region(int *ptr, u16 pkey)
- 	ptr_contents = read_ptr(ptr);
- 	dprintf1("*ptr: %d\n", ptr_contents);
- 	dprintf1("\n");
-+	pkey_write_allow(pkey);
+@@ -1059,6 +1059,18 @@ void test_write_of_access_disabled_region(int *ptr, u16 pkey)
+ 	*ptr = __LINE__;
+ 	expected_pkey_fault(pkey);
  }
- void test_read_of_access_disabled_region(int *ptr, u16 pkey)
++
++void test_write_of_access_disabled_region_with_page_already_mapped(int *ptr,
++			u16 pkey)
++{
++	*ptr = __LINE__;
++	dprintf1("disabling access; after accessing the page, "
++		" to PKEY[%02d], doing write\n", pkey);
++	pkey_access_deny(pkey);
++	*ptr = __LINE__;
++	expected_pkey_fault(pkey);
++}
++
+ void test_kernel_write_of_access_disabled_region(int *ptr, u16 pkey)
  {
-@@ -1082,6 +1083,7 @@ void test_kernel_write_of_access_disabled_region(int *ptr, u16 pkey)
- 	ret = read(test_fd, ptr, 1);
- 	dprintf1("read ret: %d\n", ret);
- 	pkey_assert(ret);
-+	pkey_access_allow(pkey);
- }
- void test_kernel_write_of_write_disabled_region(int *ptr, u16 pkey)
- {
-@@ -1094,6 +1096,7 @@ void test_kernel_write_of_write_disabled_region(int *ptr, u16 pkey)
- 	if (ret < 0 && (DEBUG_LEVEL > 0))
- 		perror("verbose read result (OK for this to be bad)");
- 	pkey_assert(ret);
-+	pkey_write_allow(pkey);
- }
- 
- void test_kernel_gup_of_access_disabled_region(int *ptr, u16 pkey)
-@@ -1113,6 +1116,7 @@ void test_kernel_gup_of_access_disabled_region(int *ptr, u16 pkey)
- 	vmsplice_ret = vmsplice(pipe_fds[1], &iov, 1, SPLICE_F_GIFT);
- 	dprintf1("vmsplice() ret: %d\n", vmsplice_ret);
- 	pkey_assert(vmsplice_ret == -1);
-+	pkey_access_allow(pkey);
- 
- 	close(pipe_fds[0]);
- 	close(pipe_fds[1]);
-@@ -1133,6 +1137,7 @@ void test_kernel_gup_write_to_write_disabled_region(int *ptr, u16 pkey)
- 	if (DEBUG_LEVEL > 0)
- 		perror("futex");
- 	dprintf1("futex() ret: %d\n", futex_ret);
-+	pkey_write_allow(pkey);
- }
- 
- /* Assumes that all pkeys other than 'pkey' are unallocated */
+ 	int ret;
+@@ -1343,6 +1355,7 @@ void test_mprotect_pkey_on_unsupported_cpu(int *ptr, u16 pkey)
+ 	test_write_of_write_disabled_region,
+ 	test_write_of_write_disabled_region_with_page_already_mapped,
+ 	test_write_of_access_disabled_region,
++	test_write_of_access_disabled_region_with_page_already_mapped,
+ 	test_kernel_write_of_access_disabled_region,
+ 	test_kernel_write_of_write_disabled_region,
+ 	test_kernel_gup_of_access_disabled_region,
 -- 
 1.7.1
 
