@@ -1,257 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeBVUAo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:00:44 -0500
-Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:58899 "EHLO
-        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751119AbeBVUAm (ORCPT
+        id S1751357AbeBVUCX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:02:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36880 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750776AbeBVUCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:00:42 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GgAADpH49ah8uZ6ERcGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQlgQAoCoNeiiWNfIICextqhxeOTYIWCoU0AhqCFFQYAQIBAQE?=
- =?us-ascii?q?BAQECAQIQAQEBCgsJCCgvgjgigkoBAQEDASMEDUUFBwQCAQgRBAEBAQICIwMCA?=
- =?us-ascii?q?gIfJQECAQUIAgQBDQUIigMDDQirXYFtOoc4DYEyghcBAQEBAQEBAQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEdgQ+ECoIngz6CeDaBSQGBIoI+ECOCXYJlBaQKNQmRA4UCgimGKIt8j?=
- =?us-ascii?q?lSJVoE8H4ILcE+CQ4JkghJ4AYtOgRkBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2GgAADpH49ah8uZ6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?lgQAoCoNeiiWNfIICextqhxeOTYIWCoU0AhqCFFQYAQIBAQEBAQECAQIQAQEBC?=
- =?us-ascii?q?gsJCCgvgjgigkoBAQEDASMEDUUFBwQCAQgRBAEBAQICIwMCAgIfJQECAQUIAgQ?=
- =?us-ascii?q?BDQUIigMDDQirXYFtOoc4DYEyghcBAQEBAQEBAQEBAQEBAQEBAQEBAQEdgQ+EC?=
- =?us-ascii?q?oIngz6CeDaBSQGBIoI+ECOCXYJlBaQKNQmRA4UCgimGKIt8jlSJVoE8H4ILcE+?=
- =?us-ascii?q?CQ4JkghJ4AYtOgRkBAQE?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.169
-X-IronPort-AV: E=Sophos;i="5.47,378,1515477600";
-   d="scan'208";a="621361068"
-X-DLP: DLP_GlobalPCIDSS
-To: <jeremy@jcline.org>, <notmart@gmail.com>
-CC: <pali.rohar@gmail.com>, <andriy.shevchenko@linux.intel.com>,
-        <mjg59@srcf.ucam.org>, <dvhart@infradead.org>,
-        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: Regression: Dell XPS 13 9360 keyboard no longer works
-Thread-Topic: Regression: Dell XPS 13 9360 keyboard no longer works
-Thread-Index: AQHTq5v56OaYoDnjuECSi8YlbIDbbaOwiM4igAAAcxCAAHAoAP//n4VwgABlkoD//5uHsIAAa4MA//+bj0AAEvE9gAAMEpNg
-Date: Thu, 22 Feb 2018 20:00:38 +0000
-Message-ID: <7fb378d00dd946ddbeba3c45d80f60f2@ausx13mpc120.AMER.DELL.COM>
-References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
- <1628582.nV6hDClBbL@phobos>
- <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
- <CAD6_Bos5Qrvz=Mr_rYCZXZ1s=5+8rawfZXxzXSvyc-tLBO07fg@mail.gmail.com>
- <b9b9ad823d9e49df82fc4626124c2a14@ausx13mpc120.AMER.DELL.COM>
- <01000161be3d1072-1c155203-359c-4566-9af6-2ebc33ad43ee-000000@email.amazonses.com>
- <c7694c9b4780413cb9621b0f3dd1501d@ausx13mpc120.AMER.DELL.COM>
- <01000161be4dbc6d-571d7479-35a2-4c6d-b3e0-f2405fc2064a-000000@email.amazonses.com>
- <722a48c6c0354609bf34f86c4269aef9@ausx13mpc120.AMER.DELL.COM>
- <01000161be64cac2-b17509ef-f7e5-4134-9188-941d7f5ac687-000000@email.amazonses.com>
- <88473a72368b43bdacebca279092ab0f@ausx13mpc120.AMER.DELL.COM>
- <01000161bf0c3bf3-3d6f8448-0bfd-40f6-bf2c-f7034ea47002-000000@email.amazonses.com>
-In-Reply-To: <01000161bf0c3bf3-3d6f8448-0bfd-40f6-bf2c-f7034ea47002-000000@email.amazonses.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
+        Thu, 22 Feb 2018 15:02:22 -0500
+Date: Thu, 22 Feb 2018 12:02:37 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Daniel Lustig <dlustig@nvidia.com>,
+        Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
+ spin_unlock()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+ <20180222134004.GN25181@hirez.programming.kicks-ass.net>
+ <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+ <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222182717.GS25181@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022220-0008-0000-0000-000002D9D27A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008578; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00993577; UDB=6.00504877; IPR=6.00772917;
+ MB=3.00019692; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 20:02:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022220-0009-0000-0000-0000385A7283
+Message-Id: <20180222200237.GK2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1MK0m5Q017862
 
-> -----Original Message-----
-> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
-> owner@vger.kernel.org] On Behalf Of Jeremy Cline
-> Sent: Thursday, February 22, 2018 1:45 PM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; notmart@gmail.com
-> Cc: pali.rohar@gmail.com; andriy.shevchenko@linux.intel.com;
-> mjg59@srcf.ucam.org; dvhart@infradead.org; platform-driver-
-> x86@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+On Thu, Feb 22, 2018 at 07:27:17PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 10:13:17AM -0800, Paul E. McKenney wrote:
+> > So we have something that is not all that rare in the Linux kernel
+> > community, namely two conflicting more-or-less concurrent changes.
+> > This clearly needs to be resolved, either by us not strengthening the
+> > Linux-kernel memory model in the way we were planning to or by you
+> > strengthening RISC-V to be no weaker than PowerPC for these sorts of
+> > externally viewed release-acquire situations.
+> > 
+> > Other thoughts?
 > 
-> On 02/22/2018 12:05 PM, Mario.Limonciello@dell.com wrote:
-> >> -----Original Message-----
-> >> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
-> >> owner@vger.kernel.org] On Behalf Of Jeremy Cline
-> >> Sent: Thursday, February 22, 2018 10:42 AM
-> >> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; notmart@gmail.com
-> >> Cc: pali.rohar@gmail.com; andriy.shevchenko@linux.intel.com;
-> >> mjg59@srcf.ucam.org; dvhart@infradead.org; platform-driver-
-> >> x86@vger.kernel.org; linux-kernel@vger.kernel.org
-> >> Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
-> >>
-> >> On 02/22/2018 11:17 AM, Mario.Limonciello@dell.com wrote:
-> >>>> -----Original Message-----
-> >>>> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-
-> x86-
-> >>>> owner@vger.kernel.org] On Behalf Of Jeremy Cline
-> >>>> Sent: Thursday, February 22, 2018 10:17 AM
-> >>>> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; notmart@gmail.com
-> >>>> Cc: pali.rohar@gmail.com; andriy.shevchenko@linux.intel.com;
-> >>>> mjg59@srcf.ucam.org; dvhart@infradead.org; platform-driver-
-> >>>> x86@vger.kernel.org; linux-kernel@vger.kernel.org
-> >>>> Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
-> >>>>
-> >>>> On 02/22/2018 11:14 AM, Mario.Limonciello@dell.com wrote:
-> >>>>>> -----Original Message-----
-> >>>>>> From: Jeremy Cline [mailto:jeremy@jcline.org]
-> >>>>>> Sent: Thursday, February 22, 2018 9:59 AM
-> >>>>>> To: Limonciello, Mario <Mario_Limonciello@Dell.com>;
-> notmart@gmail.com
-> >>>>>> Cc: pali.rohar@gmail.com; andriy.shevchenko@linux.intel.com;
-> >>>>>> mjg59@srcf.ucam.org; dvhart@infradead.org; platform-driver-
-> >>>>>> x86@vger.kernel.org; linux-kernel@vger.kernel.org
-> >>>>>> Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
-> >>>>>>
-> >>>>>> On 02/22/2018 10:21 AM, Mario.Limonciello@dell.com wrote:> I guess
-> that
-> >>>>>> means we got this wrong and the patch should be reverted
-> >>>>>>> until we figure this out.
-> >>>>>>>
-> >>>>>>> Jeremy,
-> >>>>>>>
-> >>>>>>> Can you please confirm what BIOS version you are on?
-> >>>>>>> Also Is this a 9360 with 7th or 8th gen Intel CPU?
-> >>>>>>
-> >>>>>> Hi Mario,
-> >>>>>>
-> >>>>>> I've got BIOS version 2.5.0 with the 7th gen Intel CPU.
-> >>>>>>
-> >>>>>>
-> >>>>>> Regards,
-> >>>>>> Jeremy
-> >>>>>
-> >>>>> Jeremy,
-> >>>>>
-> >>>>> Thanks.  Do you have any of the Dell docks (TB16/WD15)?  If so are you
-> >> connected
-> >>>> to any dock
-> >>>>> when reproducing this problem?
-> >>>>
-> >>>> Mario,
-> >>>>
-> >>>> I do have a TB16. I can reproduce this whether or not I'm connected to
-> >>>> the dock, though.
-> >>>>
-> >>>>
-> >>>> Regards,
-> >>>> Jeremy
-> >>>
-> >>> Jeremy,
-> >>>
-> >>> Can you try booting up from a cold boot with it connected to see if it still
-> >> happens?
-> >>>
-> >>
-> >> Mario,
-> >>
-> >> Yup, it still happens from a cold boot when connected to the dock.
-> >
-> > OK thanks for confirming.  Here's what I've concluded:
-> >
-> > * So looking through the ACPI tables on the 9360 it initializes that status
-> > (slate vs laptop mode) bit to "slate" mode.  The 9360 isn't a 2-in1- so that
-> > seems wrong to me, but that's what it does.
-> > It only gets updated based on dock status.
-> >
-> > The 9365 (which is a 2 in 1) however seems to initialize the status properly.
-> >
-> > So that's an impasse of what to do.
-> > It's not clear to me what is really happening:
-> > a) We're missing something else in this driver (eg something else that
-> > indicates whether to trust VGBS output)
-> >
-> > b) Mis-interpreting the results from it (we shouldn't report the switch for
-> > tablet mode based on what we do)
-> >
-> > c) 9360 has a BIOS bug (seems unlikely since Windows doesn't freak out and
-> > show virtual keyboard at wrong time)
-> >
-> > I'm leaning on it's probably <a>.
-> > We should check for tablet mode should only be run if chassis type
-> > matches 2-in-1 (chassis type 0x1F).
-> >
-> > I believe that should fix the problem on the 9360, let it continue to work on
-> > the 9365 (and other 2-in-1's).
-> >
-> > Can you guys please test this?  If that works I'll split up the routine and submit
-> > it.
-> >
-> 
-> Hi Mario,
-> 
-> There's one small error in the patch, after I fixed it, it works.
-> Thanks!
+> Like said in the other email, I would _much_ prefer to not go weaker
+> than PPC, I find that PPC is already painfully weak at times.
 
-Thanks, glad to hear.  I sent it to the list separately with my cleanups and your
-fix for strcmp.
+And here are the four PowerPC litmus tests.  As expected, a
+release-acquire pair within a given process orders everything except
+for prior stores against later loads, from the viewpoint of some other
+process.
 
-If you can re-test with the cleaned up patch to add a Tested-By, that would
-be great.
+And yes, a few of the filenames are unfortunate.
 
-> 
-> > diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-> > index b703d6f..07bc489 100644
-> > --- a/drivers/platform/x86/intel-vbtn.c
-> > +++ b/drivers/platform/x86/intel-vbtn.c
-> > @@ -7,6 +7,7 @@
-> >   */
-> >
-> >  #include <linux/acpi.h>
-> > +#include <linux/dmi.h>
-> >  #include <linux/input.h>
-> >  #include <linux/input/sparse-keymap.h>
-> >  #include <linux/kernel.h>
-> > @@ -102,6 +103,7 @@ static int intel_vbtn_probe(struct platform_device
-> *device)
-> >         struct acpi_buffer vgbs_output = { ACPI_ALLOCATE_BUFFER, NULL };
-> >         acpi_handle handle = ACPI_HANDLE(&device->dev);
-> >         struct intel_vbtn_priv *priv;
-> > +       const char *chassis_type;
-> >         acpi_status status;
-> >         int err;
-> >
-> > @@ -123,22 +125,24 @@ static int intel_vbtn_probe(struct platform_device
-> *device)
-> >         }
-> >
-> >         /*
-> > -        * VGBS being present and returning something means we have
-> > -        * a tablet mode switch.
-> > +        * Running on 2-in-1 chassis, VGBS being present and
-> > +        * returning something means we have a tablet mode switch.
-> >          */
-> > -       status = acpi_evaluate_object(handle, "VGBS", NULL, &vgbs_output);
-> > -       if (ACPI_SUCCESS(status)) {
-> > -               union acpi_object *obj = vgbs_output.pointer;
-> > +       chassis_type = dmi_get_system_info(DMI_CHASSIS_TYPE);
-> > +        if (chassis_type && strcmp(chassis_type, "31")) {This should be
-> "chassis_type && strcmp(chassis_type, "31") == 0" since
-> strcmp returns 0 for equality.
-> 
-> > +               status = acpi_evaluate_object(handle, "VGBS", NULL, &vgbs_output);
-> > +               if (ACPI_SUCCESS(status)) {
-> > +                       union acpi_object *obj = vgbs_output.pointer;
-> >
-> > -               if (obj && obj->type == ACPI_TYPE_INTEGER) {
-> > -                       int m = !(obj->integer.value & TABLET_MODE_FLAG);
-> > +                       if (obj && obj->type == ACPI_TYPE_INTEGER) {
-> > +                               int m = !(obj->integer.value & TABLET_MODE_FLAG);
-> >
-> > -                       input_report_switch(priv->input_dev, SW_TABLET_MODE, m);
-> > +                               input_report_switch(priv->input_dev, SW_TABLET_MODE, m);
-> > +                       }
-> >                 }
-> > +               kfree(vgbs_output.pointer);
-> >         }
-> > -       kfree(vgbs_output.pointer);
-> > -
-> >         status = acpi_install_notify_handler(handle,
-> >                                              ACPI_DEVICE_NOTIFY,
-> >                                              notify_handler,
-> >
-> 
-> Regards,
-> Jeremy
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+PPC MP+o-r-a-o+o-rmb-o
+""
+(* 22-Feb-2018: ppcmem says "Never" *)
+{
+0:r1=1; 0:r4=x; 0:r5=y; 0:r6=z;
+1:r1=1; 1:r4=x; 1:r5=y; 1:r6=z;
+}
+ P0           | P1           ;
+ stw r1,0(r4) | lwz r7,0(r6) ;
+ lwsync       | lwsync       ;
+ stw r1,0(r5) | lwz r8,0(r4) ;
+ lwz r7,0(r5) |              ;
+ lwsync       |              ;
+ stw r1,0(r6) |              ;
+
+
+exists
+(1:r7=1 /\ 1:r8=0)
+
+------------------------------------------------------------------------
+
+PPC SB+o-r-a-o+o-rmb-o
+""
+(* 22-Feb-2018: ppcmem says "Sometimes" *)
+{
+0:r1=1; 0:r4=x; 0:r5=y; 0:r6=z;
+1:r1=1; 1:r4=x; 1:r5=y; 1:r6=z;
+}
+ P0           | P1           ;
+ stw r1,0(r4) | stw r1,0(r6) ;
+ lwsync       | lwsync       ;
+ stw r1,0(r5) | lwz r7,0(r4) ;
+ lwz r8,0(r5) |              ;
+ lwsync       |              ;
+ lwz r7,0(r6) |              ;
+
+
+exists
+(0:r7=0 /\ 1:r7=0)
+
+------------------------------------------------------------------------
+
+PPC LB+o-r-a-o+o-rmb-o
+""
+(* 22-Feb-2018: ppcmem says "Never" *)
+{
+0:r1=1; 0:r4=x; 0:r5=y; 0:r6=z;
+1:r1=1; 1:r4=x; 1:r5=y; 1:r6=z;
+}
+ P0           | P1           ;
+ lwz r7,0(r4) | lwz r7,0(r6) ;
+ lwsync       | lwsync       ;
+ stw r1,0(r5) | stw r1,0(r4) ;
+ lwz r8,0(r5) |              ;
+ lwsync       |              ;
+ stw r1,0(r6) |              ;
+
+
+exists
+(0:r7=1 /\ 1:r7=1)
+
+------------------------------------------------------------------------
+
+PPC MP+o-rmb-o+o-r-a-o.litmus
+""
+(* 22-Feb-2018: ppcmem says "Never" *)
+{
+0:r1=1; 0:r4=x; 0:r5=y; 0:r6=z;
+1:r1=1; 1:r4=x; 1:r5=y; 1:r6=z;
+}
+ P0           | P1           ;
+ lwz r7,0(r4) | stw r1,0(r6) ;
+ lwsync       | lwsync       ;
+ stw r1,0(r5) | stw r1,0(r4) ;
+ lwz r8,0(r5) |              ;
+ lwsync       |              ;
+ lwz r9,0(r6) |              ;
+
+
+exists
+(0:r7=1 /\ 0:r9=0)
