@@ -1,176 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932538AbeBVN2d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:28:33 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:50707 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753750AbeBVN2b (ORCPT
+        id S932575AbeBVN2v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:28:51 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40244 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932544AbeBVN2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:28:31 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>,
-        Niklas Cassel <niklass@axis.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: artpec-6: Add smaller groups for uarts
-Date: Thu, 22 Feb 2018 14:27:05 +0100
-Message-Id: <20180222132705.18314-1-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-X-TM-AS-GCONF: 00
+        Thu, 22 Feb 2018 08:28:48 -0500
+X-Google-Smtp-Source: AH8x227vOQL3S6bhmuO2e8cJxYK4T9SlpJyX1mRGj64KqFFEUsFYBl5yOkhKmyPm7oaCQ3qGR8RPzZQihsudXBDrMSI=
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a30pgOXvLLHe3Hb-ubPz6QeUiZKFqMZLm8Qp_7KRr7QuA@mail.gmail.com>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com>
+ <20180221171504.dac7yikrqfnjiiog@verge.net.au> <CAK8P3a30pgOXvLLHe3Hb-ubPz6QeUiZKFqMZLm8Qp_7KRr7QuA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Feb 2018 14:28:46 +0100
+X-Google-Sender-Auth: -QyQ5Olgo0fkCRqjCfYxkg17NOA
+Message-ID: <CAMuHMdXJcHLee3mn56pSpUkFie_rQFZEPf=+6MWHe+W-+bMxgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Simon Horman <horms@verge.net.au>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jesper Nilsson <jesper.nilsson@axis.com>
+Hi Arnd,
 
-Add group configuration for uarts that are cut down
-variants, the standard being full, i.e. all signals,
-flow control, i.e. rx/tx and cts/rts, and rx/tx only.
+On Thu, Feb 22, 2018 at 12:39 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Feb 21, 2018 at 6:15 PM, Simon Horman <horms@verge.net.au> wrote:
+>> On Tue, Feb 20, 2018 at 04:46:23PM +0100, Geert Uytterhoeven wrote:
+>>> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>>> > Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
+>>> >
+>>> > Based on original work from:
+>>> > Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>> > Magnus Damm <damm+renesas@opensource.se>
+>>> >
+>>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> Thanks, applied with prefix updated to
+>>
+>> "arm64: dts: renesas:"
+>>
+>> There was some fuzz applying this patch, the result is as follows.
+>>
+>> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> Subject: [PATCH] arm64: dts: renesas: Add R-Car Salvator-x M3-N support
+>>
+>> Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
+>>
+>> Based on original work from:
+>> Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Something went wrong with this patch, I suspect it's missing some prerequisites
+> that fill in a few more device nodes to avoid these warnings in linux-next:
+>
+> arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
+> (reg_format): "reg" property in /soc/ethernet@e6800000/ethernet-phy@0
+> has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
 
-This allows us to be more precise in which pins we're
-actually using.
+[...]
 
-Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
----
- drivers/pinctrl/pinctrl-artpec6.c | 66 +++++++++++++++++++++++++++++----------
- 1 file changed, 50 insertions(+), 16 deletions(-)
+> Maybe just take out the patch adding the .dts file for the time being until
+> the important nodes are all in place?
 
-diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
-index e33781cd0a05..d89dc43c5757 100644
---- a/drivers/pinctrl/pinctrl-artpec6.c
-+++ b/drivers/pinctrl/pinctrl-artpec6.c
-@@ -277,37 +277,61 @@ static const struct artpec6_pin_group artpec6_pin_groups[] = {
- 		.config = ARTPEC6_CONFIG_3,
- 	},
- 	{
--		.name = "uart0grp0",
-+		.name = "uart0grp0",	/* All pins. */
- 		.pins = uart0_pins0,
- 		.num_pins = ARRAY_SIZE(uart0_pins0),
- 		.config = ARTPEC6_CONFIG_1,
- 	},
- 	{
--		.name = "uart0grp1",
-+		.name = "uart0grp1",	/* RX/TX and RTS/CTS */
- 		.pins = uart0_pins1,
- 		.num_pins = ARRAY_SIZE(uart0_pins1),
- 		.config = ARTPEC6_CONFIG_1,
- 	},
- 	{
--		.name = "uart1grp0",
-+		.name = "uart0grp2",	/* Only RX/TX pins. */
-+		.pins = uart0_pins1,
-+		.num_pins = ARRAY_SIZE(uart0_pins1) - 2,
-+		.config = ARTPEC6_CONFIG_1,
-+	},
-+	{
-+		.name = "uart1grp0",	/* RX/TX and RTS/CTS */
- 		.pins = uart1_pins0,
- 		.num_pins = ARRAY_SIZE(uart1_pins0),
- 		.config = ARTPEC6_CONFIG_2,
- 	},
- 	{
--		.name = "uart2grp0",
-+		.name = "uart1grp1",	/* Only RX/TX pins. */
-+		.pins = uart1_pins0,
-+		.num_pins = 2,
-+		.config = ARTPEC6_CONFIG_2,
-+	},
-+	{
-+		.name = "uart2grp0",	/* Full pinout */
- 		.pins = uart2_pins0,
- 		.num_pins = ARRAY_SIZE(uart2_pins0),
- 		.config = ARTPEC6_CONFIG_1,
- 	},
- 	{
--		.name = "uart2grp1",
-+		.name = "uart2grp1",	/* RX/TX and RTS/CTS */
- 		.pins = uart2_pins1,
- 		.num_pins = ARRAY_SIZE(uart2_pins1),
- 		.config = ARTPEC6_CONFIG_1,
- 	},
- 	{
--		.name = "uart3grp0",
-+		.name = "uart2grp2",	/* Only RX/TX */
-+		.pins = uart2_pins1,
-+		.num_pins = 2,
-+		.config = ARTPEC6_CONFIG_1,
-+	},
-+	{
-+		.name = "uart3grp0",	/* RX/TX and CTS/RTS */
-+		.pins = uart3_pins0,
-+		.num_pins = ARRAY_SIZE(uart3_pins0),
-+		.config = ARTPEC6_CONFIG_0,
-+	},
-+	{
-+		.name = "uart3grp1",	/* Only RX/TX */
- 		.pins = uart3_pins0,
- 		.num_pins = ARRAY_SIZE(uart3_pins0),
- 		.config = ARTPEC6_CONFIG_0,
-@@ -319,13 +343,19 @@ static const struct artpec6_pin_group artpec6_pin_groups[] = {
- 		.config = ARTPEC6_CONFIG_2,
- 	},
- 	{
--		.name = "uart5grp0",
-+		.name = "uart5grp0",	/* TX/RX and RTS/CTS */
- 		.pins = uart5_pins0,
- 		.num_pins = ARRAY_SIZE(uart5_pins0),
- 		.config = ARTPEC6_CONFIG_2,
- 	},
- 	{
--		.name = "uart5nocts",
-+		.name = "uart5grp1",	/* Only TX/RX */
-+		.pins = uart5_pins0,
-+		.num_pins = 2,
-+		.config = ARTPEC6_CONFIG_2,
-+	},
-+	{
-+		.name = "uart5nocts",	/* TX/RX/RTS */
- 		.pins = uart5_pins0,
- 		.num_pins = ARRAY_SIZE(uart5_pins0) - 1,
- 		.config = ARTPEC6_CONFIG_2,
-@@ -457,8 +487,9 @@ static const char * const gpiogrps[] = {
- 	"cpuclkoutgrp0", "udlclkoutgrp0", "i2c1grp0", "i2c2grp0",
- 	"i2c3grp0", "i2s0grp0", "i2s1grp0", "i2srefclkgrp0",
- 	"spi0grp0", "spi1grp0", "pciedebuggrp0", "uart0grp0",
--	"uart0grp1", "uart1grp0", "uart2grp0", "uart2grp1",
--	"uart4grp0", "uart5grp0",
-+	"uart0grp1", "uart0grp2", "uart1grp0", "uart1grp1",
-+	"uart2grp0", "uart2grp1", "uart2grp2", "uart4grp0", "uart5grp0",
-+	"uart5grp1", "uart5nocts",
- };
- static const char * const cpuclkoutgrps[] = { "cpuclkoutgrp0" };
- static const char * const udlclkoutgrps[] = { "udlclkoutgrp0" };
-@@ -471,12 +502,15 @@ static const char * const i2srefclkgrps[] = { "i2srefclkgrp0" };
- static const char * const spi0grps[]	  = { "spi0grp0" };
- static const char * const spi1grps[]	  = { "spi1grp0" };
- static const char * const pciedebuggrps[] = { "pciedebuggrp0" };
--static const char * const uart0grps[]	  = { "uart0grp0", "uart0grp1" };
--static const char * const uart1grps[]	  = { "uart1grp0" };
--static const char * const uart2grps[]	  = { "uart2grp0", "uart2grp1" };
-+static const char * const uart0grps[]	  = { "uart0grp0", "uart0grp1",
-+					      "uart0grp2" };
-+static const char * const uart1grps[]	  = { "uart1grp0", "uart1grp1" };
-+static const char * const uart2grps[]	  = { "uart2grp0", "uart2grp1",
-+					      "uart2grp2" };
- static const char * const uart3grps[]	  = { "uart3grp0" };
--static const char * const uart4grps[]	  = { "uart4grp0" };
--static const char * const uart5grps[]	  = { "uart5grp0", "uart5nocts" };
-+static const char * const uart4grps[]	  = { "uart4grp0", "uart4grp1" };
-+static const char * const uart5grps[]	  = { "uart5grp0", "uart5grp1",
-+					      "uart5nocts" };
- static const char * const nandgrps[]	  = { "nandgrp0" };
- static const char * const sdio0grps[]	  = { "sdio0grp0" };
- static const char * const sdio1grps[]	  = { "sdio1grp0" };
-@@ -601,7 +635,7 @@ static int artpec6_pmx_get_functions_count(struct pinctrl_dev *pctldev)
- }
- 
- static const char *artpec6_pmx_get_fname(struct pinctrl_dev *pctldev,
--				  unsigned int function)
-+					 unsigned int function)
- {
- 	return artpec6_pmx_functions[function].name;
- }
--- 
-2.14.2
+Removing the .dts file removes the ability to boot the newly added board...
+
+The issue here is that we are sharing board .dtsi for boards that can be
+equipped with different pin-compatible SiPs (Ri-Car H3, M3-W, M3-N), while
+not all SoC support has been enabled and/or tested. As the board .dtsi
+references on-SoC devices using phandles, the new r8a77965.dtsi declares
+placeholders for the devices that are not yet enabled/tested.
+This worked fine for r8a7796.dtsi before, but causes dtc warnings due to
+recent improvements in DT validation.
+
+I think the simplest way to fix this is to add reg properties to the
+placeholders, as Simon did for the last two placeholders in r8a7796.dtsi in
+commit 4316989537a6ed53 ("arm64: dts: renesas: r8a7796: add reg properties to
+pciec[01] nodes").
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
