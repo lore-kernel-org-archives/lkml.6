@@ -1,78 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeBVKPX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:15:23 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49192 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeBVKPW (ORCPT
+        id S1753379AbeBVKST (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:18:19 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49515 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753189AbeBVKSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:15:22 -0500
-Date: Thu, 22 Feb 2018 11:15:04 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        nborisov@suse.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
- lock-based external-view litmus test
-Message-ID: <20180222101504.GQ25201@hirez.programming.kicks-ass.net>
-References: <20180220232405.GA19274@linux.vnet.ibm.com>
- <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180222032349.klcuiq23f52sfop6@tardis>
- <20180222041357.GB2855@linux.vnet.ibm.com>
- <20180222052746.vofmqbpnmfahck3z@tardis>
- <fad8e18b-ef5a-5bc0-5d87-6fad2e9f7c95@nvidia.com>
- <20180222065847.zqiquiyehvzgiiht@tardis>
+        Thu, 22 Feb 2018 05:18:18 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: George Cherian <gcherian@caviumnetworks.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, Jayachandran.Nair@cavium.com,
+        Robert.Richter@cavium.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
+Date: Thu, 22 Feb 2018 11:19:12 +0100
+Message-ID: <1606177.uAVMQdvpea@aspire.rjw.lan>
+In-Reply-To: <20180222083543.GA14945@wunner.de>
+References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com> <20180221232040.GA52685@bhelgaas-glaptop.roam.corp.google.com> <20180222083543.GA14945@wunner.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222065847.zqiquiyehvzgiiht@tardis>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:58:47PM +0800, Boqun Feng wrote:
-> > And yes, if we go with a purely RCpc interpretation of acquire and
-> > release, then I don't believe the writes in the previous critical
-> > section would be ordered with the writes in the subsequent critical
-> > section.  That's really all the argument boils down to.  We'd like
+On Thursday, February 22, 2018 9:35:43 AM CET Lukas Wunner wrote:
+> On Wed, Feb 21, 2018 at 05:20:40PM -0600, Bjorn Helgaas wrote:
+> > On Wed, Feb 21, 2018 at 04:25:08PM +0530, George Cherian wrote:
+> > > I have found another configuration where this fails.
+> > > Following is the configuration
+> > > 1) Connected a PCIe Intel i40 card under the root port.
+> > > 2) unbind the i40 driver and bind with vfio-pci driver.
+> > > 3) Run lspci in a loop. "lspci -s xx:xx.xx -vvv"
+> > > 
+> > > I get the same synchronous external abort.
+> > > In this case the vfio-pci driver probe it moves the device (i40) to
+> > > D3hot provided disable_idle_d3 is not set. lspci tries to do
+> > > the config_access which fails with synchronous external abort when
+> > > the root port transitions to D3hot.
+> > 
+> > It *looks* like rpm_resume() should resume parent devices, i.e., the
+> > root port, but I don't know that code at all.
 > 
-> I think atomics in Linux kernel(and in LKMM) are purely RCpc, right?
-> Alan and Andrea? 
-> 
-> And we are not going to change it, are we?
-> 
-> If atomics in Linux kernel are purely RCpc, then it cerntainly makes
-> sense for riscv to provide purely RCpc atomics.
+> It does that unless the ignore_children flag is set, which only few
+> drivers do.
 
-So there's 3 things:
+Right.
 
-  smp_load_acquire(), smp_store_release()
+And the PCIe port driver doesn't do that in particular, so PCIe ports
+should be resumed by the resume of devices below them.
 
-  atomic*_{acquire,release}()
-
-  *_{lock,unlock}();
-
-Which are all quite distinct.
-
-smp_load_acquire() and smp_store_release() are RCpc, and there is no
-discussion of ever wanting to change that.
-
-The atomics also follow this and are RCpc, in fact the RELEASE only
-applies to the STORE and the ACQUIRE only applies to the LOAD of the
-atomics.
-
-The locking primitives OTOH we would really rather like to be RCsc, and
-everybody except PPC has them as such, PPC being the only one having
-RCpc locks.
-
-I read the part you quoted from Daniel as being purely about spinlocks,
-the 'critical section' wording being a dead give away, so I'm then
-somewhat confused why you talk about atomics.
+Thanks,
+Rafael
