@@ -1,70 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933303AbeBVQih (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:38:37 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36136 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933164AbeBVQif (ORCPT
+        id S933340AbeBVQj3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:39:29 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:33399 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933164AbeBVQj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:38:35 -0500
-X-Google-Smtp-Source: AH8x225C26WMXDsEIoa3JzM9E0WjwmmdQaobEnV3mg8AHXTnbHV7sAJajIq6HtckNm1tVcC6O7JztULQfu1bAW/18Lc=
+        Thu, 22 Feb 2018 11:39:27 -0500
+Date: Thu, 22 Feb 2018 16:31:56 +0000
+From: James Hogan <james.hogan@mips.com>
+To: Graham Whaley <graham.whaley@gmail.com>
+CC: Guenter Roeck <linux@roeck-us.net>, <linux-metag@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/13] metag: Remove arch/metag/
+Message-ID: <20180222163156.GR29460@jhogan-linux.mipstec.com>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+ <20180221233825.10024-2-jhogan@kernel.org>
+ <ea057277-fc48-3961-681d-385023741cdb@roeck-us.net>
+ <20180222072459.GA9891@saruman>
+ <CAF9eJumRb0voffQXqWg5goO8=1KNpivrefLtLCUUh_4k6g7+JQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171214165352.27902-1-malat@debian.org>
-References: <20171214165352.27902-1-malat@debian.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Feb 2018 17:38:33 +0100
-X-Google-Sender-Auth: jOJ4dpEeNc7burH3R1oZinS8fCk
-Message-ID: <CAK8P3a1X3-kZ35aPLSn-rmHhCx2E+nBBj=57jeJtzgR5D6FrPQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: Remove leading 0x and 0s from bindings notation
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC..."
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hEarWVD7htqb1VxP"
+Content-Disposition: inline
+In-Reply-To: <CAF9eJumRb0voffQXqWg5goO8=1KNpivrefLtLCUUh_4k6g7+JQ@mail.gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Originating-IP: [192.168.154.110]
+X-BESS-ID: 1519317499-298554-21113-4677-2
+X-BESS-VER: 2018.2-r1802152108
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190307
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 14, 2017 at 5:53 PM, Mathieu Malaterre <malat@debian.org> wrote:
-> Improve the DTS files by removing all the leading "0x" and zeros to fix the
-> following dtc warnings:
->
-> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
->
-> and
->
-> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
->
-> Converted using the following command:
->
-> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -E -i -e "s/@0x([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" -e "s/@0+([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" {} +
->
-> For simplicity, two sed expressions were used to solve each warnings separately.
->
-> To make the regex expression more robust a few other issues were resolved,
-> namely setting unit-address to lower case, and adding a whitespace before the
-> the opening curly brace:
->
-> https://elinux.org/Device_Tree_Linux#Linux_conventions
->
-> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
->
-> Reported-by: David Daney <ddaney@caviumnetworks.com>
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+--hEarWVD7htqb1VxP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to fixes, thanks!
+On Thu, Feb 22, 2018 at 04:19:31PM +0000, Graham Whaley wrote:
+> >> >
+> >> > So lets call it a day and drop the Meta architecture port from the
+> >> > kernel. RIP Meta.
+>=20
+> Oh, and James, I meant to ask/note - I guess that just leaves parisc
+> using STACK_GROWSUP... shame we could not ditch that as well then eh?
 
-       Arnd
+and just blackfin with the horrible underscore symbol prefix :P
+
+Cheers
+James
+
+--hEarWVD7htqb1VxP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqO8HYACgkQbAtpk944
+dnp2hg//bXoRP/0vRSK8srMvpz6hvn1lpnAsb00LuWlD0rFHaNpcAlQ/0z6edpgx
+q6bzwuL1OZlojqXBJub8pAYbmo+pU1qvso1hNc3L0jyk2rNeVoiD11Jn1tG5PKYb
+f7VEx6jil7wrHdEVHMA3EqSEjYbuZRErj8t3FXNHjfVzl3JlDr3heoh8oN+kFTMe
+KHJq+i58/RLjW0AE2pEPC+Yx8YreoUWNLPg4nIJcAWus6p9p3BBCu8zPuCDBJ6uc
+cCdcNTUpDGqCGf63KoN9qhb0dx8I6QctktTHqZbf+Y4klc4x/OIUP9Li2S4Uc6kR
+zSpj/F6nwoXbscunkQTPZomTBW+ZNXlDqnZAU9K92SNFJpio+Km49J3RN0LpLB0p
+s2ETa3nmVcqg38DFQhpiF1sAJdOr027EMRJ7nbHO3+EitE+iHxd7GLz5Ao44DMh2
+DqvHm+rPvu1FoV9CcumsrfQ169H7oeh7G2DvW+pl82Czebh3TAW2G/4lL/UrtAb+
+rZ10UnK6wTBElJfzJ9VEwQePi3+WFcm+Z69rQ/RZ2b64jccpk2Ex5zNcqBUv3lj1
+G8hJ4pvfZaOkiH7xc0jmsFDWbiQ5YIfThTD7T5YgiIzD9dedS9ls9PrlzfIaM4Z+
+/jstYv3R1kFkYMh2NfcMzd0TsyozNzAu1COc0Tt9Vkeg2B5dlog=
+=i/xw
+-----END PGP SIGNATURE-----
+
+--hEarWVD7htqb1VxP--
