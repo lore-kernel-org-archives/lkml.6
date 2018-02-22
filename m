@@ -1,52 +1,52 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1148932-1519337443-2-581709810260894492
+X-Cyrus-Session-Id: sloti22d1t05-1141254-1519337469-2-15208879821904900495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519337442; b=EI3NiOiJDrQPTtRtwC0YUiruI7CYOZHiAZavq1BrntDBOhw
-    RvXn9tK3SK1rRbW95MJqxhuEZgWtBJOeamOWgbYuGQM3DgA9eZusBHfhdzyVeW6B
-    oqe8/joRfGgIaLICWfBBlqnY3x2+hOZmfDob8fw/D1iccM7OUZPWjQbn4Na8/O7o
-    r9MCsBn2ELa6nQN8zOmigLToty3gkmWRfPozdVkVi9ZEQG9VMH4gJb16FKYv+eJK
-    ZPZo505GzeI5BbfWa+NEmhfwDUvPCx+z2fh8aIkPBTCK052djLuY6ibxrVGKoSKD
-    0mye54U8QdvyTCWBR1ZYTwxHdQVNFNeh6h5pcJQ==
+    t=1519337468; b=E7i1BnEpKGFlIZI/p9l/ewJXPWSmr6MAfqZCKzGlGsePJaF
+    Cu1LDuG00GzgdMkurO9pqYzxUfsQnnH33aNe7gubl2StDzYa2nq+fn40ksJe8D4r
+    2/M5d5ygi4nhulfWRFM/KLCNvzOjgkoAo6fQBgA2GvPPsrg5qBR/K4hNqkVg6Uol
+    ZIfLKoYZMccCenYf3cGYdhhcnSNiF/3BBWeJA6p+Gg8cw+68oD9sXnim8Ikamppb
+    0Je6ibzARlLdlQO+BfDYEq3tassvtwNpSTzS5aEJl4NuT5lXsfI0mFSwMEmtBzUZ
+    wrBkHgDbX/XDjh6Wdf0Wd1U8zxLK1xCMebTP9Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:date:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519337442; bh=9
-    02GTlM/YfQ8HAHjofrc77xB3lHApWnfkI5g8hGLQJQ=; b=QLW60ZWVWCbtbDd5I
-    RebSJFNM8SQ7IwiXeTszRAo3Ng24Pk5Tkj1TYnuUoxhg+wpoyiXn1YJaJZViBfoj
-    eP/1XYUhmE9UvSbiy3OMyXUeJFaht0oFTpKud/5YF0ssuM+tu4N5fDDp4CPi8Dg3
-    SHArV87bDvCz4yEdz3y1jZJpuhtFPXFBc74JJDESE63rk1O94SY0flQ07Vn8J/cK
-    fODFDgaslfmektI2FF8eZtJJ8QGHjjp0tvjiiAEAEtS1jNNyOlLdeoZLRHIuxDpF
-    bFDrK8MeLZNjlyzSAWA8J19XbIyMTOwGw55j/AemVrN8TCkBAZHr678t32JGPpWt
-    tWqcA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519337468; bh=H
+    UcPIbC2P8qpXurTk2JZRbK5p5R6T43CBPZndKVI4kE=; b=kurQs80DjWMefIVe1
+    436mxwH504cVkUaO/3hwOYR8fXobwT+NNw6Tx5ucjtAPVm2aOdvotEb1DAybySvH
+    5eyPyud6MskObOJG3VkPwGQ39x+u5VvIole1l+qxFqPXDVHUHpFHtUJ5R8Hi1w8J
+    WptO5S5nDnQ0fz/R1x3Wj/caeCJzXbZCE6zX5nwNYVXl40pIzs0J+diGpu4OFWQC
+    3F4nCVIjLWTPsd2vbQ8yCM2qPKeo716ZgpBH1T4EQB00hQm+8ddUR3NFgICR+q8m
+    5C+TV6K6MeZVFJ8U5M34n2/F3fgRnew80HTR2sld4FX6IzfB6h/UJm3iSKpecp4O
+    pKlKQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
@@ -55,8 +55,11 @@ To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Fri, 23 Feb 2018 09:09:33 +1100
-Subject: [PATCH 0/3] Three lustre bugfixes
-Message-ID: <151933726925.16436.9827896439357574011.stgit@noble>
+Subject: [PATCH 3/3] staging: lustre: lnet/selftest: don't ignore status
+ from lstcon_test_add
+Message-ID: <151933737388.16436.11922095105762928334.stgit@noble>
+In-Reply-To: <151933726925.16436.9827896439357574011.stgit@noble>
+References: <151933726925.16436.9827896439357574011.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
@@ -79,31 +82,31 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-First two patches fix bugs that have been prevented the test suite
-from finished for me - now it completes with about 10% of tests
-failing.
+If lstcon_test_add sets 'ret' (passed by reference) to 1,
+then lst_test_add_ioctl() ignores the return value.
+This isn't justified - the return value must be zero for 'ret'
+to be meaningful.
 
-Third patch fixes a tiny bug I noticed while reviewing another recent
-patch to the same file.
-
-Thanks,
-NeilBrown
-
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: James Simmons <jsimmons@infradead.org>
 ---
-
-NeilBrown (3):
-      staging: lustre: lov: use correct env in lov_io_data_version_end()
-      staging: lustre: lmv: correctly iput lmo_root
-      staging: lustre: lnet/selftest: don't ignore status from lstcon_test_add
-
-
  drivers/staging/lustre/lnet/selftest/conctl.c |    2 +-
- drivers/staging/lustre/lustre/lmv/lmv_obd.c   |    2 +-
- drivers/staging/lustre/lustre/lov/lov_io.c    |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Signature
+diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
+index 51497cf9a832..a2d8092bdeb7 100644
+--- a/drivers/staging/lustre/lnet/selftest/conctl.c
++++ b/drivers/staging/lustre/lnet/selftest/conctl.c
+@@ -670,7 +670,7 @@ static int lst_test_add_ioctl(struct lstio_test_args *args)
+ 			     args->lstio_tes_param_len,
+ 			     &ret, args->lstio_tes_resultp);
+ 
+-	if (ret)
++	if (!rc && ret)
+ 		rc = (copy_to_user(args->lstio_tes_retp, &ret,
+ 				   sizeof(ret))) ? -EFAULT : 0;
+ out:
+
 
 _______________________________________________
 devel mailing list
