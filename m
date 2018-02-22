@@ -1,33 +1,34 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AH8x2247TtSws67UiW/0xk1yte4POar20MPJ/72bx5b3uSZ/MkvGHZ9qsaqPMxJ4POQOVh4IcG1i
-ARC-Seal: i=1; a=rsa-sha256; t=1519291636; cv=none;
+Return-Path: <jhogan@kernel.org>
+X-Google-Smtp-Source: AH8x226zIR//Q6AVg6RgC0yA3Phg3xbqfdjbbqZwE1TrdTfX0HqD80CYo7BU1QkL6Q6LQ/PIt/4/
+ARC-Seal: i=1; a=rsa-sha256; t=1519292952; cv=none;
         d=google.com; s=arc-20160816;
-        b=ua2ZW0D/hQG//HY9OnwYfbWAaBeLets8iUewM8PCUAhB9iBgcwk9Wz2kd9nowHm+wu
-         JUi0wyD/A8DxoPMWa4s6do0uZdf4APFlQkwRKFW6q0nxl239JndZEkh7Gjg+yhgubXCf
-         Iga5P9qKRr8MGOUvhdOTmiwxwvGOE9/Ka9zBExXyQsIMLw2o7FitMcOiJ7pgeGh42OkZ
-         zPyeriu8L4SSpRDmNsuvPPxiRg+Axx/n4c+MfZXBar9hkRZJs9SDjDvdh0iJJFtvs9Wg
-         PvdXNFfnDNn6GXtKwEvfnK3z0gjLEKMzGP18inYbUAcG9cmp+8xf38r3Ae7YxCr9RHPm
-         6FEw==
+        b=MhDQ34QDV+myPGLEYXpzLz7ViQxbTxi6jj/XHrkx4+gtkAAaRwx42WLeP9UCUW0UBt
+         OSAqlXEVvbu2DGpczkUcqwxL86Clu9nQSSQEmIjl3kgg64RTvam/eYAG1Ba1flRActQv
+         35VXzUQQvHUUkOIzk9C+OkXjz/5dC0rt4SdsPSaHeyI+2Tvz16N8OchGFsbdt1WABmdT
+         pXVN9KQIyyb5yVHgO/PfQWdR4oAB7D+9c+2LRZRLzenJGGNPSTTUWkn/hIzci4gOnO5g
+         QCv4sBZ/KPVsw7Hsxo8duwkQSs4vLqpNzCEPcyZvXEjdVS9nq7QaSbt1AFYt0I7tuPFH
+         +Wqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+         :message-id:subject:cc:to:from:date:dmarc-filter
          :arc-authentication-results;
-        bh=zpgB4wJESiDnfID8Ke3Q9Sl8TaugtvmOkDmrk2xMFIg=;
-        b=xO7ICPfvMaL+XlXDPglnDEXCQTl3ldf7dIda6paHg5I+Ou4U/d6DpZTjaiqdsw8PIw
-         jREGV6YCaK+uREneOLHa4q5CQJ8OvtKnXb3ST9al9iMn4979IUfpPgy/vVbB9v6G3X+c
-         9XgANK1SJHjwpi5VMuSGm1BFZcMZlG38DTPC5fFa0p3jUHaD07JYoATlxzX9Ewt7YKI4
-         C+zzczMlcGla12Q0JGwhWgXWYgEaLVfgthwSdEd7rLDYMpead9ZyfILl58YJPC1PEFLv
-         WnUgTjvQ8d7xL2p1CGhTucdkmPI9hl07zOkVJKc8v0TdhKkz8qpeldd9A6q+/jYdM/OF
-         K7lg==
+        bh=qVwqj8kVT+dRB5fo5kwLB9elgWxuAG6DZUFxYu8zEVA=;
+        b=cgKcCY4kpHCQnkc2i5qaBF6upQhG5mT1xtYrK24aHpr2aF+wPdT/3eCzegSeFMvMsE
+         X6+l825B8GMd0CAQ1cacIDBkwhiTegeNUDKpnrxg6SuEgtSFJKVqSLjMhhkDRhU+olCD
+         b3+4O0kAePhsUihD08o/N2/to2b2z7lA1eAQibM8eIkw5l8uvp59dP/GYJE7OWJaCF7R
+         i8NETRhz/AGactBkq6FjgHChyy6EBPPRraB/AwaztgLORGUN9F5NZUDVFQ13l4TRJtDs
+         83zPTk7uHeVocX9Ugo5XUsGby+QfeA1vuOThyF6+boj3QasVKDPZFDTf7oLHCQPmBVRa
+         EbJw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=UthkLaKn;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       spf=pass (google.com: best guess record for domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=UthkLaKn;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Date: Thu, 22 Feb 2018 10:26:54 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: James Hogan <jhogan@kernel.org>
+       spf=pass (google.com: best guess record for domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E9F21784
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 22 Feb 2018 09:48:44 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
 Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Guenter Roeck <linux@roeck-us.net>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -51,25 +52,62 @@ Cc: linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-watchdog@vger.kernel.org, linux-media@vger.kernel.org,
 	linux-i2c@vger.kernel.org
 Subject: Re: [PATCH 00/13] Remove metag architecture
-Message-ID: <20180222092654.GN25201@hirez.programming.kicks-ass.net>
+Message-ID: <20180222094844.GB9891@saruman>
 References: <20180221233825.10024-1-jhogan@kernel.org>
+ <20180222092654.GN25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
 Content-Disposition: inline
-In-Reply-To: <20180221233825.10024-1-jhogan@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180222092654.GN25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593055859238851284?=
-X-GMAIL-MSGID: =?utf-8?q?1593092747535482215?=
+X-GMAIL-MSGID: =?utf-8?q?1593094127424903240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 11:38:12PM +0000, James Hogan wrote:
-> So lets call it a day and drop the Meta architecture port from the
-> kernel. RIP Meta.
 
-So long, and thanks for all the fish!
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Nice cleanup though, most welcome :-)
+On Thu, Feb 22, 2018 at 10:26:54AM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 21, 2018 at 11:38:12PM +0000, James Hogan wrote:
+> > So lets call it a day and drop the Meta architecture port from the
+> > kernel. RIP Meta.
+>=20
+> So long, and thanks for all the fish!
+>=20
+> Nice cleanup though, most welcome :-)
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+I thought you might like it ;-)
+
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+Thanks
+James
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqOkfYACgkQbAtpk944
+dnoHNw//araZkIz0fvrAT593YR6P+Sff9uhB2R9cOsuzBhV6cv3yci06pKrMLv3u
+d5dIurnPaZB1mhADAPXB4B0jrvqx0evAJ45CKS8rAKZSjZNKrAnrEpOAlkPgo1xp
+sFPCzh98J7qcYNkR2IRDtfWbC0ARAY8iuaN8Ejc7Y25t4POGh+6ZGloBisgZq6Af
+H1IwLvM4gRTT2qkxoRO/dEECFLor06EXSp2AdibvaTb8Z00kWM8Tig+NFCRkDvR+
+PAlL7D4Iv6GEZzU2Bac6caWFcWIfV4OzOHDiFcVUWgsWveuQGiX5F4q1dJSpGgRl
+IPErO/pUMDUubn6bAZAWW/5m3VrKiyjwOixADGmY1O+LjsEjMfpO/gnuJJiDCv9J
+7JgMmz4DnNtephmG2ZQYiaM4qL4ErNW+CunOaGl/tvHBJxgpzCrcaDHmBpw1Jpvc
+FBqqz5p8G+FM+qSPIrhrymF9dhVyO9VuO8qtuVekO5PzgoGm7Gb+1gr/3brKodSd
+BN7AdOCVKn0Zpj28KRkw7nL0GQKXsH4yCou68DQxWEx0gt+aaurAIMkPsPuM2lYC
+pLqgNbj93IEYmSj0TnTcmcfVAl0WvviGbVmMo57YuU8fpFW1FHDji4R9R/zulmtF
+MCUFugKKc61StB/kH95RHaehJ6Rly+yz7ioWI5JlrwZCbNmFJKM=
+=gZvt
+-----END PGP SIGNATURE-----
+
+--SkvwRMAIpAhPCcCJ--
