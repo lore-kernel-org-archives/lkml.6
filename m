@@ -1,48 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751339AbeBVTEc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:04:32 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:50542 "EHLO
+        id S1751385AbeBVTEl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:04:41 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:50548 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750776AbeBVTEb (ORCPT
+        with ESMTP id S1751346AbeBVTEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:04:31 -0500
-Date: Thu, 22 Feb 2018 14:04:29 -0500 (EST)
-Message-Id: <20180222.140429.928803762162231850.davem@davemloft.net>
-To: dudenis2000@yahoo.ca
-Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Carrier detect ok, don't turn off negotiation
+        Thu, 22 Feb 2018 14:04:39 -0500
+Date: Thu, 22 Feb 2018 14:04:38 -0500 (EST)
+Message-Id: <20180222.140438.278807705225418710.davem@davemloft.net>
+To: Jason@zx2c4.com
+Cc: johannes.berg@intel.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netlink: put module reference if dump start fails
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <1603547691.2507241.1519184131708@mail.yahoo.com>
-References: <20180206.102943.1688399898359622454.davem@davemloft.net>
-        <2005408285.4065183.1517935842178@mail.yahoo.com>
-        <1603547691.2507241.1519184131708@mail.yahoo.com>
+In-Reply-To: <20180221034159.14685-1-Jason@zx2c4.com>
+References: <20180221034159.14685-1-Jason@zx2c4.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Du <dudenis2000@yahoo.ca>
-Date: Wed, 21 Feb 2018 03:35:31 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Wed, 21 Feb 2018 04:41:59 +0100
 
-> How  is your thinking about this patch?
+> Before, if cb->start() failed, the module reference would never be put,
+> because cb->cb_running is intentionally false at this point. Users are
+> generally annoyed by this because they can no longer unload modules that
+> leak references. Also, it may be possible to tediously wrap a reference
+> counter back to zero, especially since module.c still uses atomic_inc
+> instead of refcount_inc.
+> 
+> This patch expands the error path to simply call module_put if
+> cb->start() fails.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+> This probably should be queued up for stable.
 
-I cannot apply a patch which has been corrupted by your email client like
-this.
-
-Please send it properly again, plain ASCII text, and no trasnformations
-by your email client.
-
-You should send the patch to yourself and try to apply the patch you
-receive, do not send to the list until you can pass the test properly.
-
-Do not use attachments to fix this problem, the patch must be inline
-after your commit message and signoffs.
-
-Please read Documentation/process/submitting-patches.rst and
-Documentation/process/email-clients.rsDt for more information.
-
-Thank you.
+Applied and queued up for -stable.
