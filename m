@@ -1,125 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932417AbeBVNHn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 08:07:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46115 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932102AbeBVNHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:07:41 -0500
-Date: Thu, 22 Feb 2018 14:07:38 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc
- allyesconfig
-Message-ID: <20180222130738.GG30681@dhcp22.suse.cz>
-References: <20180212133731.GE3443@dhcp22.suse.cz>
- <87r2ppvaeq.fsf@concordia.ellerman.id.au>
- <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
- <87d1192nzc.fsf@concordia.ellerman.id.au>
- <20180213103213.GP3443@dhcp22.suse.cz>
- <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com>
- <20180214092045.GZ3443@dhcp22.suse.cz>
- <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
+        id S932449AbeBVNIC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:08:02 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932102AbeBVNH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:07:59 -0500
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
+References: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk> <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+To: linux-security-module@vger.kernel.org
+Cc: dhowells@redhat.com, jforbes@redhat.com, jbohac@suse.cz,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/30] Enforce module signatures if the kernel is locked down
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30283.1519304877.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date: Thu, 22 Feb 2018 13:07:57 +0000
+Message-ID: <30284.1519304877@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-02-18 09:14:47, Kees Cook wrote:
-[...]
-> I can send it through my seccomp tree via James Morris.
+I'm considering folding the attached changes into this patch.
 
-Could you please do it?
+It adjusts the errors generated:
 
-> >
-> > From 8d8457e96296538508e478f598d1c8b3406a8626 Mon Sep 17 00:00:00 2001
-> > From: Michal Hocko <mhocko@suse.com>
-> > Date: Wed, 14 Feb 2018 10:15:12 +0100
-> > Subject: [PATCH] samples/seccomp: do not compile when cross compiled
-> > MIME-Version: 1.0
-> > Content-Type: text/plain; charset=UTF-8
-> > Content-Transfer-Encoding: 8bit
-> >
-> > samples/seccomp relies on the host setting which is not suitable for
-> > crosscompilation and it actually fails when crosscompiling s390 and
-> > powerpc all{yes,mod}config on x86_64 with
-> >
-> > samples/seccomp/bpf-helper.h:135:2: error: #error __BITS_PER_LONG value unusable.
-> >  #error __BITS_PER_LONG value unusable.
-> >   ^
-> > In file included from samples/seccomp/bpf-fancy.c:13:0:
-> > samples/seccomp/bpf-fancy.c: In function ‘main’:
-> > samples/seccomp/bpf-fancy.c:38:11: error: ‘__NR_exit’ undeclared (first use in this function)
-> >    SYSCALL(__NR_exit, ALLOW),
-> >
-> > and many others. I am doing these for compile testing and it's been
-> > quite useful to catch issues. Crosscompiling sample code on the other
-> > hand doesn't seem all that important so it seems like the easiest way to
-> > simply disable samples/seccomp when crosscompiling.
-> >
-> > Fixing this properly is not that easy as Kees explains:
-> > : IIRC, one of the problems is with build ordering problems: the kernel
-> > : headers used by the samples aren't available when cross compiling.
-> >
-> > Acked-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  samples/seccomp/Makefile | 10 +---------
-> >  1 file changed, 1 insertion(+), 9 deletions(-)
-> >
-> > diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> > index 0e349b80686e..ba942e3ead89 100644
-> > --- a/samples/seccomp/Makefile
-> > +++ b/samples/seccomp/Makefile
-> > @@ -1,4 +1,5 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> > +ifndef CROSS_COMPILE
-> >  hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
-> >
-> >  HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
-> > @@ -16,7 +17,6 @@ HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
-> >  bpf-direct-objs := bpf-direct.o
-> >
-> >  # Try to match the kernel target.
-> > -ifndef CROSS_COMPILE
-> >  ifndef CONFIG_64BIT
-> >
-> >  # s390 has -m31 flag to build 31 bit binaries
-> > @@ -35,12 +35,4 @@ HOSTLOADLIBES_bpf-fancy += $(MFLAG)
-> >  HOSTLOADLIBES_dropper += $(MFLAG)
-> >  endif
-> >  always := $(hostprogs-m)
-> > -else
-> > -# MIPS system calls are defined based on the -mabi that is passed
-> > -# to the toolchain which may or may not be a valid option
-> > -# for the host toolchain. So disable tests if target architecture
-> > -# is MIPS but the host isn't.
-> > -ifndef CONFIG_MIPS
-> > -always := $(hostprogs-m)
-> > -endif
-> >  endif
-> > --
-> > 2.15.1
-> >
-> > --
-> > Michal Hocko
-> > SUSE Labs
-> 
-> 
-> 
-> -- 
-> Kees Cook
-> Pixel Security
+ (1) If there's no signature (ENODATA) or we can't check it (ENOPKG, ENOKEY),
+     then:
 
--- 
-Michal Hocko
-SUSE Labs
+     (a) If signatures are enforced then EKEYREJECTED is returned.
+
+     (b) If IMA will have validated the image, return 0 (okay).
+
+     (c) If there's no signature or we can't check it, but the kernel is
+	 locked down then EPERM is returned (this is then consistent with
+	 other lockdown cases).
+
+ (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
+     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we return
+     the error we got.
+
+Note that the X.509 code doesn't check for key expiry as the RTC might not be
+valid or might not have been transferred to the kernel's clock yet.
+
+David
+---
+diff --git a/kernel/module.c b/kernel/module.c
+index 1eb06a0ccbfb..62419cf48ef6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2769,8 +2769,9 @@ static inline void kmemleak_load_module(const struct module *mod,
+ static int module_sig_check(struct load_info *info, int flags,
+ 			    bool can_do_ima_check)
+ {
+-	int err = -ENOKEY;
++	int err = -ENODATA;
+ 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
++	const char *reason;
+ 	const void *mod = info->hdr;
+ 
+ 	/*
+@@ -2785,18 +2786,42 @@ static int module_sig_check(struct load_info *info, int flags,
+ 		err = mod_verify_sig(mod, &info->len);
+ 	}
+ 
+-	if (!err) {
++	switch (err) {
++	case 0:
+ 		info->sig_ok = true;
+ 		return 0;
+-	}
+ 
+-	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !sig_enforce &&
+-	    (!can_do_ima_check || !is_ima_appraise_enabled()) &&
+-	    !kernel_is_locked_down("Loading of unsigned modules"))
+-		err = 0;
++		/* We don't permit modules to be loaded into trusted kernels
++		 * without a valid signature on them, but if we're not
++		 * enforcing, certain errors are non-fatal.
++		 */
++	case -ENODATA:
++		reason = "Loading of unsigned module";
++		goto decide;
++	case -ENOPKG:
++		reason = "Loading of module with unsupported crypto";
++		goto decide;
++	case -ENOKEY:
++		reason = "Loading of module with unavailable key";
++	decide:
++		if (sig_enforce) {
++			pr_notice("%s is rejected\n", reason);
++			return -EKEYREJECTED;
++		}
+ 
+-	return err;
++		if (can_do_ima_check && is_ima_appraise_enabled())
++			return 0;
++		if (kernel_is_locked_down(reason))
++			return -EPERM;
++		return 0;
++
++		/* All other errors are fatal, including nomem, unparseable
++		 * signatures and signature check failures - even if signatures
++		 * aren't required.
++		 */
++	default:
++		return err;
++	}
+ }
+ #else /* !CONFIG_MODULE_SIG */
+ static int module_sig_check(struct load_info *info, int flags,
