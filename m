@@ -1,155 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753141AbeBVJlk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:41:40 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35433 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeBVJli (ORCPT
+        id S1753218AbeBVJmD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:42:03 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59222 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753134AbeBVJmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:41:38 -0500
-X-Google-Smtp-Source: AH8x224rZnNMFQdJFkawvmRBkiM8FoxXu9swH4HryXTlkqu/SOmsjuxh2s65I3g+f/D2lLa1LNAh2Q==
-Subject: Re: [PATCH 09/20] lightnvm: use generic identify structure
-To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-References: <1519205218-26994-1-git-send-email-javier@cnexlabs.com>
- <1519205218-26994-10-git-send-email-javier@cnexlabs.com>
- <6f76c204-847a-2f20-3070-06cb28a66555@lightnvm.io>
- <1FE350B9-E8CD-43BC-8AE8-2593A6398D3F@lightnvm.io>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <25780a53-504e-70c6-3ff4-d20c43e8e3b2@lightnvm.io>
-Date: Thu, 22 Feb 2018 10:41:35 +0100
+        Thu, 22 Feb 2018 04:42:02 -0500
+Subject: Re: [PATCH 5/6] mfd: cros_ec_dev: Check communication with ec at
+ resume
+To: Gwendal Grignou <gwendal@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+References: <20180219224111.21601-1-enric.balletbo@collabora.com>
+ <CAMHSBOVwqgTn5KAgq8Ueqh-QDMU+bfDAzQLSEk5-6pb58L8X9g@mail.gmail.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <42a823e5-ba12-2060-a2bd-44027261e26f@collabora.com>
+Date: Thu, 22 Feb 2018 10:41:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1FE350B9-E8CD-43BC-8AE8-2593A6398D3F@lightnvm.io>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAMHSBOVwqgTn5KAgq8Ueqh-QDMU+bfDAzQLSEk5-6pb58L8X9g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/2018 08:49 AM, Javier González wrote:
->> On 22 Feb 2018, at 08.47, Matias Bjørling <mb@lightnvm.io> wrote:
+Hi Gwendal,
+
+On 22/02/18 03:20, Gwendal Grignou wrote:
+> On Mon, Feb 19, 2018 at 2:41 PM, Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>> From: Gwendal Grignou <gwendal@chromium.org>
+> This patch is not needed anymore. It was added to
 >>
->> On 02/21/2018 10:26 AM, Javier González wrote:
->>> Create a generic identify structure to collect the identify information
->>> before knowing the spec. version. This forces different version paths to
->>> cast the structure to their spec structure, thus making the code less
->>> error prone and more maintainable.
->>> Signed-off-by: Javier González <javier@cnexlabs.com>
->>> ---
->>>   drivers/nvme/host/lightnvm.c | 32 ++++++++++++++++++++------------
->>>   1 file changed, 20 insertions(+), 12 deletions(-)
->>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
->>> index 9c1f8225c4e1..70dc4740f0d3 100644
->>> --- a/drivers/nvme/host/lightnvm.c
->>> +++ b/drivers/nvme/host/lightnvm.c
->>> @@ -170,6 +170,12 @@ struct nvme_nvm_id12 {
->>>   	__u8			resv2[2880];
->>>   } __packed;
->>>   +/* Generic identification structure */
->>> +struct nvme_nvm_id {
->>> +	__u8			ver_id;
->>> +	__u8			resv[4095];
->>> +} __packed;
->>> +
->>>   struct nvme_nvm_bb_tbl {
->>>   	__u8	tblid[4];
->>>   	__le16	verid;
->>> @@ -279,9 +285,10 @@ static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
->>>   	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
->>>   }
->>>   -static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
->>> +static int nvme_nvm_setup_12(struct nvme_nvm_id *gen_id,
->>>   			     struct nvm_dev_geo *dev_geo)
->>>   {
->>> +	struct nvme_nvm_id12 *id = (struct nvme_nvm_id12 *)gen_id;
->>>   	struct nvme_nvm_id12_grp *src;
->>>   	int sec_per_pg, sec_per_pl, pg_per_blk;
->>>   @@ -380,9 +387,11 @@ static void nvme_nvm_set_addr_20(struct nvm_addr_format *dst,
->>>   	dst->sec_mask = ((1ULL << dst->sec_len) - 1) << dst->sec_offset;
->>>   }
->>>   -static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
->>> +static int nvme_nvm_setup_20(struct nvme_nvm_id *gen_id,
->>>   			     struct nvm_dev_geo *dev_geo)
->>>   {
->>> +	struct nvme_nvm_id20 *id = (struct nvme_nvm_id20 *)gen_id;
->>> +
->>>   	dev_geo->major_ver_id = id->mjr;
->>>   	dev_geo->minor_ver_id = id->mnr;
->>>   @@ -427,19 +436,19 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
->>>   static int nvme_nvm_identity(struct nvm_dev *nvmdev)
->>>   {
->>>   	struct nvme_ns *ns = nvmdev->q->queuedata;
->>> -	struct nvme_nvm_id12 *id;
->>> +	struct nvme_nvm_id *nvme_nvm_id;
->>>   	struct nvme_nvm_command c = {};
->>>   	int ret;
->>>     	c.identity.opcode = nvme_nvm_admin_identity;
->>>   	c.identity.nsid = cpu_to_le32(ns->head->ns_id);
->>>   -	id = kmalloc(sizeof(struct nvme_nvm_id12), GFP_KERNEL);
->>> -	if (!id)
->>> +	nvme_nvm_id = kmalloc(sizeof(struct nvme_nvm_id), GFP_KERNEL);
->>> +	if (!nvme_nvm_id)
->>>   		return -ENOMEM;
->>>     	ret = nvme_submit_sync_cmd(ns->ctrl->admin_q, (struct nvme_command *)&c,
->>> -				id, sizeof(struct nvme_nvm_id12));
->>> +				nvme_nvm_id, sizeof(struct nvme_nvm_id));
->>>   	if (ret) {
->>>   		ret = -EIO;
->>>   		goto out;
->>> @@ -449,22 +458,21 @@ static int nvme_nvm_identity(struct nvm_dev *nvmdev)
->>>   	 * The 1.2 and 2.0 specifications share the first byte in their geometry
->>>   	 * command to make it possible to know what version a device implements.
->>>   	 */
->>> -	switch (id->ver_id) {
->>> +	switch (nvme_nvm_id->ver_id) {
->>>   	case 1:
->>> -		ret = nvme_nvm_setup_12(id, &nvmdev->dev_geo);
->>> +		ret = nvme_nvm_setup_12(nvme_nvm_id, &nvmdev->dev_geo);
->>>   		break;
->>>   	case 2:
->>> -		ret = nvme_nvm_setup_20((struct nvme_nvm_id20 *)id,
->>> -							&nvmdev->dev_geo);
->>> +		ret = nvme_nvm_setup_20(nvme_nvm_id, &nvmdev->dev_geo);
->>>   		break;
->>>   	default:
->>>   		dev_err(ns->ctrl->device, "OCSSD revision not supported (%d)\n",
->>> -							id->ver_id);
->>> +							nvme_nvm_id->ver_id);
->>>   		ret = -EINVAL;
->>>   	}
->>>     out:
->>> -	kfree(id);
->>> +	kfree(nvme_nvm_id);
->>>   	return ret;
->>>   }
->>>
+>> Send dummy command to EC at resume time, wait for status.
+>> If EC loses that command and return a status for the
+>> pre-suspend command, we will not interpret that status as an
+>> answer for an important command.
 >>
->> Thanks for another way to represent it. I want to keep the original
->> path. If we are going that down road, then one should maybe look into
->> unifying the "three" data structures, and have the version as the base
->> property and the others in each their sub data structure.
-> 
-> That's what this structure aims to do, since the version is shared. But
-> you call if you want to cast unrelated structures back an forth. I'll
-> revert it...
-> 
-> Javier
-> 
+>> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Hold on for this commit. We have only used it in 3.14 kernels. It
+> looks like the issue has been addressed by a more elegant solution at
+> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/0225a9de5971b99770344c04e0eba5b35ca68f71
 
-In that case, the patch could look like
+Just to make sure.
 
-struct nvm_id {
-	__u8 ver_id;
+I don't see this patch reverted in current chromeos-4.4, seems that both are
+applied. The patch is still there [1]. So, to double check, can I remove this
+patch from this series and add only the one that moves the system sleep pm ops
+to late?
 
-	union {
-		struct v1 {};
-		struct v2 {};
-	};
-};
+[1]
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4/drivers/platform/chrome/cros_ec_dev.c#782
 
-I'm good with just having the single cast instead of putting each under 
-a v1/v2 variable or using nvm_id first, and then goto either v1 or v2.
+>> ---
+>>  drivers/mfd/cros_ec_dev.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+>> index fc98e0564061..c901839317ae 100644
+>> --- a/drivers/mfd/cros_ec_dev.c
+>> +++ b/drivers/mfd/cros_ec_dev.c
+>> @@ -553,6 +553,16 @@ static __maybe_unused int ec_device_suspend(struct device *dev)
+>>  static __maybe_unused int ec_device_resume(struct device *dev)
+>>  {
+>>         struct cros_ec_dev *ec = dev_get_drvdata(dev);
+>> +       char msg[sizeof(struct ec_response_get_version) +
+>> +                sizeof(CROS_EC_DEV_VERSION)];
+>> +       int ret;
+>> +
+>> +       /* Be sure the communication with the EC is reestablished */
+>> +       ret = ec_get_version(ec, msg, sizeof(msg));
+>> +       if (ret < 0) {
+>> +               dev_err(ec->ec_dev->dev, "No EC response at resume: %d\n", ret);
+>> +               return 0;
+> Besides, that looks wrong, we should try to resume the lightbar.
+>> +       }
+>>
+>>         lb_resume(ec);
+>>
+>> --
+>> 2.16.1
+>>
+
+Thanks,
+  Enric
