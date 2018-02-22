@@ -1,111 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933382AbeBVQ7P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:59:15 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:32222 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933093AbeBVQ7N (ORCPT
+        id S933401AbeBVQ7Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:59:25 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38610 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933214AbeBVQ7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:59:13 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w1MGxArG006030
-X-Nifty-SrcIP: [209.85.217.180]
-X-Google-Smtp-Source: AH8x227AF6ikoRftDsU2qJhm+JGnX25+ka5jw3NHt33GVfwhyDYamwJFWq5FbgR9CVWyTSeL9+HXrjT4dbby+OPzhP4=
+        Thu, 22 Feb 2018 11:59:21 -0500
+X-Google-Smtp-Source: AH8x226Pxi2UacQS6Rvt+A7A+lc/J1SkpJ2BOGOXiE8grCfj8WdhIN+C9lW3eDzZai42BAtwAN+QPw==
+Date: Thu, 22 Feb 2018 17:59:16 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, daniel.vetter@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH 1/4] drm/simple_kms_helper: Add {enable|disable}_vblank
+ callback support
+Message-ID: <20180222165916.GD6419@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, daniel.vetter@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1518425574-32671-1-git-send-email-andr2000@gmail.com>
+ <1518425574-32671-2-git-send-email-andr2000@gmail.com>
+ <00b01a2d-ad16-e171-f52f-88fba2896386@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXsobaUdxMO-3=B56_2pQ2MzG7vxOqt+GzG_OC1T5bL7w@mail.gmail.com>
-References: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com>
- <1519301715-31798-3-git-send-email-yamada.masahiro@socionext.com> <CAMuHMdXsobaUdxMO-3=B56_2pQ2MzG7vxOqt+GzG_OC1T5bL7w@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 23 Feb 2018 01:58:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASRtGPOopLkkSf0gx8NaRyak=oEdTfuyxtaZ3gNmCeK7A@mail.gmail.com>
-Message-ID: <CAK7LNASRtGPOopLkkSf0gx8NaRyak=oEdTfuyxtaZ3gNmCeK7A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] m68k: rename UL() to TO_UL()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00b01a2d-ad16-e171-f52f-88fba2896386@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert
+On Mon, Feb 19, 2018 at 11:11:23AM +0200, Oleksandr Andrushchenko wrote:
+> ping
+> On 02/12/2018 10:52 AM, Oleksandr Andrushchenko wrote:
+> > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> > 
+> > If simple_kms_helper based driver needs to work with vblanks,
+> > then it has to provide drm_driver.{enable|disable}_vblank callbacks,
+> > because drm_simple_kms_helper.drm_crtc_funcs does not provide any.
+> > At the same time drm_driver.{enable|disable}_vblank callbacks
+> > are marked as deprecated and shouldn't be used by new drivers.
+> > 
+> > Fix this by extending drm_simple_kms_helper.drm_crtc_funcs
+> > to provide the missing callbacks.
+> > 
+> > Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-2018-02-22 22:20 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Yamada-san,
->
-> On Thu, Feb 22, 2018 at 1:15 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> ARM, ARM64 and UniCore32 define UL(x) like follows:
->>   #define UL(x) _AC(x, UL)
->>
->> While, M68K defines it differently:
->>   #define UL(x) ((unsigned long) (x))
->>
->> I want to move the former to a common header.  Beforehand, this
->> commit renames the latter to avoid name conflict.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> ---
->> V2: https://patchwork.kernel.org/patch/9498273/
->>
->> Changes in v3: None
->> Changes in v2:
->>  - Split out as a prerequisite patch
->>
->>  arch/m68k/mm/init.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
->> index e85acd1..583a8e5 100644
->> --- a/arch/m68k/mm/init.c
->> +++ b/arch/m68k/mm/init.c
->> @@ -122,9 +122,9 @@ void free_initmem(void)
->>
->>  void __init print_memmap(void)
->>  {
->> -#define UL(x) ((unsigned long) (x))
->> -#define MLK(b, t) UL(b), UL(t), (UL(t) - UL(b)) >> 10
->> -#define MLM(b, t) UL(b), UL(t), (UL(t) - UL(b)) >> 20
->> +#define TO_UL(x) ((unsigned long) (x))
->> +#define MLK(b, t) TO_UL(b), TO_UL(t), (TO_UL(t) - TO_UL(b)) >> 10
->> +#define MLM(b, t) TO_UL(b), TO_UL(t), (TO_UL(t) - TO_UL(b)) >> 20
->>  #define MLK_ROUNDUP(b, t) b, t, DIV_ROUND_UP(((t) - (b)), 1024)
->
-> Please note that this code patch is scheduled for removal in v4.17, cfr.
-> "[PATCH] m68k/mm: Stop printing the virtual memory layout"
-> (https://lkml.org/lkml/2018/2/12/97).
->
+lgtm, all 4 applied, thanks for your patches.
+-Daniel
 
-
-I see, but I do not see it in linux-next as of writing.
-
-
-Without this prerequisite, 3/5 would cause a build error.
-So, I needed to include it in this series.
-
-I am hoping this series will be picked up by Andrew Morton.
-In my understanding, he applies patches on top of the linux-next.
-
-
-I think either will happen:
-
-[1] If your patch appears in linux-next first,
-    my 2/5 will be skipped, and the rest of the series will be applied.
-
-[2] If my series is applied first,
-    Andrew will drop 2/5 when your patch appears in linux-next
-        (this is simply detected by patch conflict)
-
-
-Andrew, please correct me if I am wrong.
-
-
-Thanks!
-
+> > ---
+> >   drivers/gpu/drm/drm_simple_kms_helper.c | 24 ++++++++++++++++++++++++
+> >   include/drm/drm_simple_kms_helper.h     | 18 ++++++++++++++++++
+> >   2 files changed, 42 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
+> > index 9d3f6b70812c..9ca8a4a59b74 100644
+> > --- a/drivers/gpu/drm/drm_simple_kms_helper.c
+> > +++ b/drivers/gpu/drm/drm_simple_kms_helper.c
+> > @@ -77,6 +77,28 @@ static const struct drm_crtc_helper_funcs drm_simple_kms_crtc_helper_funcs = {
+> >   	.atomic_disable = drm_simple_kms_crtc_disable,
+> >   };
+> > +static int drm_simple_kms_crtc_enable_vblank(struct drm_crtc *crtc)
+> > +{
+> > +	struct drm_simple_display_pipe *pipe;
+> > +
+> > +	pipe = container_of(crtc, struct drm_simple_display_pipe, crtc);
+> > +	if (!pipe->funcs || !pipe->funcs->enable_vblank)
+> > +		return 0;
+> > +
+> > +	return pipe->funcs->enable_vblank(pipe);
+> > +}
+> > +
+> > +static void drm_simple_kms_crtc_disable_vblank(struct drm_crtc *crtc)
+> > +{
+> > +	struct drm_simple_display_pipe *pipe;
+> > +
+> > +	pipe = container_of(crtc, struct drm_simple_display_pipe, crtc);
+> > +	if (!pipe->funcs || !pipe->funcs->disable_vblank)
+> > +		return;
+> > +
+> > +	pipe->funcs->disable_vblank(pipe);
+> > +}
+> > +
+> >   static const struct drm_crtc_funcs drm_simple_kms_crtc_funcs = {
+> >   	.reset = drm_atomic_helper_crtc_reset,
+> >   	.destroy = drm_crtc_cleanup,
+> > @@ -84,6 +106,8 @@ static const struct drm_crtc_funcs drm_simple_kms_crtc_funcs = {
+> >   	.page_flip = drm_atomic_helper_page_flip,
+> >   	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+> >   	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+> > +	.enable_vblank = drm_simple_kms_crtc_enable_vblank,
+> > +	.disable_vblank = drm_simple_kms_crtc_disable_vblank,
+> >   };
+> >   static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
+> > diff --git a/include/drm/drm_simple_kms_helper.h b/include/drm/drm_simple_kms_helper.h
+> > index 6d9adbb46293..79567826b099 100644
+> > --- a/include/drm/drm_simple_kms_helper.h
+> > +++ b/include/drm/drm_simple_kms_helper.h
+> > @@ -93,6 +93,24 @@ struct drm_simple_display_pipe_funcs {
+> >   	 */
+> >   	void (*cleanup_fb)(struct drm_simple_display_pipe *pipe,
+> >   			   struct drm_plane_state *plane_state);
+> > +
+> > +	/**
+> > +	 * @enable_vblank:
+> > +	 *
+> > +	 * Optional, called by &drm_crtc_funcs.enable_vblank. Please read
+> > +	 * the documentation for the &drm_crtc_funcs.enable_vblank hook for
+> > +	 * more details.
+> > +	 */
+> > +	int (*enable_vblank)(struct drm_simple_display_pipe *pipe);
+> > +
+> > +	/**
+> > +	 * @disable_vblank:
+> > +	 *
+> > +	 * Optional, called by &drm_crtc_funcs.disable_vblank. Please read
+> > +	 * the documentation for the &drm_crtc_funcs.disable_vblank hook for
+> > +	 * more details.
+> > +	 */
+> > +	void (*disable_vblank)(struct drm_simple_display_pipe *pipe);
+> >   };
+> >   /**
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Best Regards
-Masahiro Yamada
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
