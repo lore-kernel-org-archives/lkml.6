@@ -1,58 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeBVSoc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 13:44:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56415 "EHLO mx2.suse.de"
+        id S1751353AbeBVSwW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 13:52:22 -0500
+Received: from muru.com ([72.249.23.125]:57876 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750765AbeBVSoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 13:44:30 -0500
-Date: Thu, 22 Feb 2018 19:44:28 +0100
-From: Jiri Bohac <jbohac@suse.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-security-module@vger.kernel.org, jforbes@redhat.com,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/30] Enforce module signatures if the kernel is locked
- down
-Message-ID: <20180222184428.yby6usf4b5pd6nrw@dwarf.suse.cz>
-References: <151024866805.28329.10437019941463042267.stgit@warthog.procyon.org.uk>
- <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
- <30284.1519304877@warthog.procyon.org.uk>
+        id S1750816AbeBVSwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 13:52:21 -0500
+Date: Thu, 22 Feb 2018 10:45:42 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Keerthy <j-keerthy@ti.com>, daniel.lezcano@linaro.org,
+        thierry.reding@gmail.com, aaro.koskinen@iki.fi,
+        Claudiu.Beznea@microchip.com, narmstrong@baylibre.com,
+        linux-pwm@vger.kernel.org, s-anna@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        sebastian.reichel@collabora.co.uk, linux-omap@vger.kernel.org,
+        robh+dt@kernel.org, t-kristo@ti.com, grygorii.strashko@ti.com
+Subject: Re: [PATCH v11 04/10] clocksource: timer-ti-dm: Replace architecture
+Message-ID: <20180222184541.GB5184@atomide.com>
+References: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
+ <1518674511-26421-5-git-send-email-j-keerthy@ti.com>
+ <20180222105713.GA30885@lenoch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30284.1519304877@warthog.procyon.org.uk>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180222105713.GA30885@lenoch>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 01:07:57PM +0000, David Howells wrote:
-> I'm considering folding the attached changes into this patch.
+* Ladislav Michl <ladis@linux-mips.org> [180222 10:58]:
+> On Thu, Feb 15, 2018 at 11:31:45AM +0530, Keerthy wrote:
+> > Replace architecture specific guard with clocksource guard.
+> > 
+> > Signed-off-by: Keerthy <j-keerthy@ti.com>
+> > Replace architecture specific defines with clocksource
 > 
-> It adjusts the errors generated:
-> 
->  (1) If there's no signature (ENODATA) or we can't check it (ENOPKG, ENOKEY),
->      then:
-> 
->      (a) If signatures are enforced then EKEYREJECTED is returned.
-> 
->      (b) If IMA will have validated the image, return 0 (okay).
-> 
->      (c) If there's no signature or we can't check it, but the kernel is
-> 	 locked down then EPERM is returned (this is then consistent with
-> 	 other lockdown cases).
-> 
->  (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
->      the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we return
->      the error we got.
-> 
-> Note that the X.509 code doesn't check for key expiry as the RTC might not be
-> valid or might not have been transferred to the kernel's clock yet.
+> This looks like a bit unussual commit log. Also, what about merging
+> it with previous patch?
 
-Looks good. 
+I'll just remove that line locally to avoid yet another set
+of patches being posted :)
 
-Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+> Btw, I tested whole serie again on the top of today's -next and it is
+> still working fine. What is preventing these patches from being merged?
 
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
+Well I noticed we need a fix for omap1 that I just posted.
+And patch 4/10 needs the following select for omap16xx that
+I'll fold in.
+
+I'll push it all to omap-for-v4.17/timer and will merge into
+my for-next after some more testing. It seems any further
+patching can be done after move to drivers.
+
+Regards,
+
+Tony
+
+8< -----------------
+--- a/arch/arm/mach-omap1/Kconfig
++++ b/arch/arm/mach-omap1/Kconfig
+@@ -30,6 +30,7 @@ config ARCH_OMAP16XX
+ 	bool "OMAP16xx Based System"
+ 	select ARCH_OMAP_OTG
+ 	select CPU_ARM926T
++	select OMAP_DM_TIMER
+ 
+ config OMAP_MUX
+ 	bool "OMAP multiplexing support"
