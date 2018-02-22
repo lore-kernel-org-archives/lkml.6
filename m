@@ -1,58 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932991AbeBVPZL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:25:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35453 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932785AbeBVPZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:25:09 -0500
-Date: Thu, 22 Feb 2018 16:25:07 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] livepatch: Allow to unpatch only functions of
- the given type
-In-Reply-To: <20180221132914.4809-5-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1802221624550.12659@pobox.suse.cz>
-References: <20180221132914.4809-1-pmladek@suse.com> <20180221132914.4809-5-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S933011AbeBVPZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:25:57 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38038 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932744AbeBVPZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:25:55 -0500
+X-Google-Smtp-Source: AH8x224PpL5VSBtdXzfw0KEV5I/uvHJCHNbMAJBMeFZCVCqOAIpuI8Qna5NPkJRcsPuPXOCLF0fRaA==
+Date: Thu, 22 Feb 2018 15:25:51 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Daniel Schultz <d.schultz@phytec.de>
+Cc: linux-kernel@vger.kernel.org, W.Egorov@phytec.de
+Subject: Re: [PATCH] mfd: rk808: Fix RK818 ID template
+Message-ID: <20180222152551.fqyujg5giivts2pf@dell>
+References: <1519293292-46451-1-git-send-email-d.schultz@phytec.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519293292-46451-1-git-send-email-d.schultz@phytec.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018, Petr Mladek wrote:
+On Thu, 22 Feb 2018, Daniel Schultz wrote:
 
-> From: Jason Baron <jbaron@akamai.com>
+> The Rockchip PMIC driver can automatically detect connected component
+> versions by reading the ID_MSB and ID_LSB registers. The probe function
+> will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
+> RK818 template ID is 0x8181.
 > 
-> We are going to add a feature called atomic replace. It will allow to
-> create a patch that would replace all already registered patches.
-> For this, we will need to dynamically create funcs and objects
-> for functions that are no longer patched.
+> This patch changes this value to 0x8180.
 > 
-> The dynamically allocated objects will not longer be needed once
-> the patch is applied.
-> 
-> This patch allows to unpatch functions of the given type. It might
-> cause that the obj->patched flag is true even when some listed
-> functions are not longer patched. This is fine as long as the
-> unpatched funcs' structures are removed right after. It will
-> be the case. Anyway, it is safe. In the worst case, it will
-> not be possible to enable the disabled functions.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Split and modified to use the generic ftype]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Miroslav Benes <mbenes@suse.cz>
+> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+> ---
+>  include/linux/mfd/rk808.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Miroslav
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
