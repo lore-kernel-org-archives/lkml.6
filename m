@@ -1,87 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752907AbeBVIhq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:37:46 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:59727 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752839AbeBVIho (ORCPT
+        id S1752925AbeBVIh6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:37:58 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33770 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752826AbeBVIh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:37:44 -0500
-Date: Thu, 22 Feb 2018 08:32:42 +0000
-From: James Hogan <james.hogan@mips.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: <linux-metag@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH 13/13] i2c: img-scb: Drop METAG dependency
-Message-ID: <20180222083242.GP29460@jhogan-linux.mipstec.com>
-References: <20180221233825.10024-1-jhogan@kernel.org>
- <20180221233825.10024-14-jhogan@kernel.org>
- <20180222081018.tc3jcuwl6yfrxroh@katana>
+        Thu, 22 Feb 2018 03:37:56 -0500
+X-Google-Smtp-Source: AH8x224QJwY+7VXQu8OjKPJNCfuCo+LgfB+aJZG3iimT92Xj7GsBE+RXOYbOj13RZv7cD8FtbppOAxQrfrz1TGMO5BA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="A6Z7MKnLVMfR85kG"
-Content-Disposition: inline
-In-Reply-To: <20180222081018.tc3jcuwl6yfrxroh@katana>
-User-Agent: Mutt/1.7.2 (2016-11-26)
-X-Originating-IP: [192.168.154.110]
-X-BESS-ID: 1519288649-298554-5177-41482-1
-X-BESS-VER: 2018.2-r1802152108
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190296
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
+References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
+ <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
+ <44a7d9dc-f6f3-e003-44d6-b0c4aa7dc046@arm.com> <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
+ <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 22 Feb 2018 09:37:34 +0100
+Message-ID: <CAKfTPtAM1z86FBqXOoEu-p2cZonUATWFq1vbZ=6pPHn9h5zM-g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
+To: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---A6Z7MKnLVMfR85kG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 21 February 2018 at 14:13, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+> On 02/16/2018 01:44 PM, Vincent Guittot wrote:
+>> On 16 February 2018 at 13:13, Valentin Schneider
+>> <valentin.schneider@arm.com> wrote:
+>>> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
+>>>> Stopped the periodic update of blocked load when all idle CPUs have fully
+>>>> decayed. We introduce a new nohz.has_blocked that reflect if some idle
+>>>> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
+>>>> is set everytime that a Idle CPU can have blocked load and it is then clear
+>>>> when no more blocked load has been detected during an update. We don't need
+>>>> atomic operation but only to make cure of the right ordering when updating
+>>>> nohz.idle_cpus_mask and nohz.has_blocked.
+>>>>
+>>>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>>>> ---
+>>>>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
+>>>>  kernel/sched/sched.h |   1 +
+>>>>  2 files changed, 102 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 7af1fa9..5a6835e 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>>
+>>>> [...]
+>>>> @@ -9383,11 +9452,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>>>                * work being done for other cpus. Next load
+>>>>                * balancing owner will pick it up.
+>>>>                */
+>>>> -             if (need_resched())
+>>>> -                     break;
+>>>> +             if (need_resched()) {
+>>>> +                     has_blocked_load = true;
+>>>> +                     goto abort;
+>>>> +             }
+>>>>
+>>>>               rq = cpu_rq(balance_cpu);
+>>>>
+>>>
+>>> I'd say it's safe to do the following here. The flag is raised in
+>>> nohz_balance_enter_idle() before the smp_mb(), so we won't skip a CPU
+>>> that just got added to nohz.idle_cpus_mask.
+>>
+>> rq->has_blocked_load will be set before the barrier only if
+>> nohz_tick_stopped is not already set,
+>> Otherwise, we skip cpumask update and the barrier in  nohz_balance_enter_idle
+>>
+>
+> Right, forgot about that bit. I think it's still fine because:
+> - nohz_balance_enter_idle() can't be called before the last running task is
+> dequeued, which requires the rq lock.
+> - update_blocked_averages takes the rq lock and clears rq->has_blocked_load
+> with the lock held.
+>
+> So even though we could have some very unlikely scenario where a CPU quickly
+> goes out/in of idle after nohz.idle_cpus_mask has been read, the blocked load
+> itself is safe so rq->has_blocked_load will end up being set correctly.
+> (Took me a while to see it that way)
+>
+>
+> BTW, with the current set on Peter's sched/testing, update_nohz_stats()
+> is called here, which doesn't do the update if !rq->has_blocked_load
+> (Although that check is done without lock/barrier, so maybe we could not see
+> a CPU that just went idle ?)
+>
+> I have one more question on that bit:
+>
+>
+>                 has_blocked_load |= update_nohz_stats(rq, true);
+>
+>                 /*
+>                  * If time for next balance is due,
+>                  * do the balance.
+>                  */
+>                 if (time_after_eq(jiffies, rq->next_balance)) {
+>                         struct rq_flags rf;
+>
+>                         rq_lock_irqsave(rq, &rf);
+>                         update_rq_clock(rq);
+>                         cpu_load_update_idle(rq);
+>                         rq_unlock_irqrestore(rq, &rf);
+>
+>                         if (flags & NOHZ_BALANCE_KICK)
+>                                 rebalance_domains(rq, CPU_IDLE);
+>                 }
+>
+>                 if (time_after(next_balance, rq->next_balance)) {
+>                         next_balance = rq->next_balance;
+>                         update_next_balance = 1;
+>                 }
+>
+>
+> Now that I think about it, shouldn't we always have a 'continue' after
+> the blocked load update if (flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK ?
+> AFAICT we don't want to push the next_balance forward, only the next_blocked.
 
-On Thu, Feb 22, 2018 at 09:10:18AM +0100, Wolfram Sang wrote:
-> On Wed, Feb 21, 2018 at 11:38:25PM +0000, James Hogan wrote:
-> > Now that arch/metag/ has been removed, remove the METAG dependency from
-> > the IMG SCB I2C device driver. The hardware is also present on MIPS SoCs
-> > so the driver still has value.
-> >=20
-> > Signed-off-by: James Hogan <jhogan@kernel.org>
->=20
-> I'd think it should go with the rest of this series? For that:
->=20
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
->=20
-> Let me know if I should rather pick this up individually.
+But we don't push next_balance forward. It just get the shortest
+next_balance and update nohz.next_balance exactly like what is done in
+full idle load balance
 
-Yes, I'll take this with the others.
+> That would also take care of not doing the load balance.
+>>>
+>>>                 /*
+>>>                  * This cpu doesn't have any remaining blocked load, skip it.
+>>>                  * It's sane to do this because this flag is raised in
+>>>                  * nohz_balance_enter_idle()
+>>>                  */
+>>>                 if ((flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK &&
+>>>                     !rq->has_blocked_load)
+>>>                         continue;
 
-Thanks
-James
+Then, it's worth keeping the call to cpu_load_update_idle(rq); which
+update the cpu_load[] array which is still used at some level
 
---A6Z7MKnLVMfR85kG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqOgCoACgkQbAtpk944
-dnoEfRAAvetw227IMWNxH/EkIZ00ZxT+gco6oAtkTRFAx3HBKbDqWeDlNjqPEMCz
-nCsx9+EyZva7k7D+htaXJIpVLIpL5mqYi8VbHvRhSDUBd/XcuXCLitoWfRjAswXu
-yt3s1QYB1Ec3yzMMNF7/V5oWnnyUcNB/IQmqZAzMA7PKtp5O5H8+6OyrjrayYCE3
-MoNeg6fuWDhT3MrqDFhiB1WZG95E+GP7R31R8qq532JPQljysAG0Oz6Ej3pYGiN8
-2y4wCb42IYxmVEYFBQrWAKukZz1POuGhcPmoHAhbWj3+FE+wMx2mJAXQnZa4RC42
-fTrlmBwVyPDOrjV1foY+9KTuv/PJuVDlIMMxP9YTqNS4Kk4I6qRpi7BfPevUcM7G
-+zYYd7VCvHYUOKfNwB2iqInLDAeTR2J80UAxM5pGRf+MN2kluPh5wOpbqA/pD5mn
-TIbwXJP7AKFjbCRSdHYkqpU+LtkbAvKDE/PjoiMWgjw7Edx+5j5gv9uAtqZ2uO5J
-zecN6mLH4HpYXGGNSKGuVhDQXx4B8JkJCgOxyxD/R29rquHZ/NfuVNgIKkro0zzB
-9JNRLRDictWmW+hs3HLmxN0COH4KBROIrds8O3iI5adOWba6Bdlm9Mmsc13+oAdl
-GbA2RJNOozB5HCkk4f3Rx26NFoXw/blgUA4Iq7X2DiDiBIbTY8o=
-=dchJ
------END PGP SIGNATURE-----
-
---A6Z7MKnLVMfR85kG--
+>>>
+>>>> +             update_blocked_averages(rq->cpu);
+>>>> +             has_blocked_load |= rq->has_blocked_load;
+>>>> +
