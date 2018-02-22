@@ -1,319 +1,143 @@
-Return-Path: <kernel-hardening-return-12031-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELs+omtss1c6BTF6n2az22QHArAWmiG4i4iZZtb58QM0pWqwgkH86AVuJ5qfQitXKCYuKqoO
-ARC-Seal: i=1; a=rsa-sha256; t=1519809772; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AH8x226FOIJrNcq3zxD9kkSB0AXU8NFLlucYKF773wyHE7boGMXeO68XCNCViXRyt0/+fE98JuGb
+ARC-Seal: i=1; a=rsa-sha256; t=1519300497; cv=none;
         d=google.com; s=arc-20160816;
-        b=h1R9OZhv/u/z0bT9DVEql8wqPDwkX5yZPWOQu+jUIffOqSgw6csbawBF3aN2ctr1Wk
-         DJqRswF0+280Y1Zk9WuRJZbghOZelwO/PJy6T55Ue9iSep8wL4ak7Xmc0ySjL3nLxtEE
-         XcUYsvEeCJ4/4h1Yda2aOQd4ObwKbAk1gEKN6AuE4YOkGZiadAQapR3F8A/9P8wExuqa
-         rjw1r9naRlBtbl3F7hSmAd9GovHs0sPjZnjLP5px1pRw0tYVx6TpfXNJ5oAMG81m3h2/
-         mS+rdJSfMltALmmhnuG8Y7POi+iIB4xgXZDusKihVWT5ILifQX3b+j5wlLN3LJC7yXSg
-         Wg7A==
+        b=MYUfZ/BniyWDPLSILssIJ95Zu+s5BtfEB8+L29ykKKCpt43G2ZhZKRFDS+VOC7hMRj
+         Dtjt1bsFAfWDwqYtkmkziIp6skgLIFQdikYMdJ48ik9pkxhTo1w4cctcgQ1GOCyfAFeR
+         KgXiDy5Hoiqam0N0PHyHFJScIE4EfcTRy1E3LCiA3TfSzE2gAFqYIPvgzJJJk9Mg3Yhy
+         VPCLREtD8yIbhzOX0TInS6EVTLslWhStnHwUEkx3L/rU3W1l17ecu73+zWsQ/GJ/M6JX
+         VWQbH65SEleeBa2X2PZtmeRB2rb77lYbix6DOBHA8QLYcLK7hW37LNYNXevqomOPHcC7
+         7Seg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=Xcvb9zJY8r6bBpA6DWD2YX1cSAodGsQm7jafOJDgjBA=;
-        b=waPpJ3g7mbYpVJSs0UgWr2yfXF9QwW546QrKkVOG8WBAnLWdLyMgRCqQUSPx0BI66M
-         wY8PtwAoaMLnckMneHVbNKaIP7AQRpsq/cUtiF2rbhZK2n84abP2xD0rOhCeAYUrqxkz
-         gQC3SxFiwB3G4KFIkSZLD8zxkm6UZCcNe3cHV/OekLnPN//31/ra2ZMiKIoMJ6H7ZxP4
-         GMWIyrhkBrw2FnpF0qfMBOC6bgTY3FyPHMSAaNjTzJlzwLipQiyGXbktRWBLnCU4ENrG
-         FugLhlNOWSAS4O06CpggUPst5mFks4r5gc5LrAVfUP/x21/WZEz2z9HDup370ekbehd1
-         S3Ug==
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=d0K5PDpkfBusnIkpa/LGaUcRvo71Fpd0jgWCc9wTgOc=;
+        b=O5kHX8cjoet/LNdmId6tnlpno637S47JmQlrPDUSS2V9ovtHyHm/TgYaY6Z0vlvThU
+         RZI+C9QXbbFZT947e6FvE4SoOMSpMp9XKSwwsJT703YtkDgHqvwF9Pob6HmNpVHU1GOb
+         ZPUeJwzP2J1N5KCpe9oFMzRQbSKron6Qacentf/Cw7Q1DX9E9flbPA6hJG7k0jRlstI2
+         TSBBf4ZCsrMKKfnRUy8F0ALl92JzqObfjcAVGapzA2wsIUhQW+/FLyOpfXciceuwZSbM
+         OXou1NVd5uxaDRP1tW/U77FNMiVfogS+NWgJ1pgttc+ZEifTX8VfdjldSj7x4UJtH0uf
+         2m4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oZHBcXLH;
-       spf=pass (google.com: domain of kernel-hardening-return-12031-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12031-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=l+wBA2hx;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oZHBcXLH;
-       spf=pass (google.com: domain of kernel-hardening-return-12031-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12031-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+RELwBqkLrpQ0zHdHM3u2FxgcKokumtSS8KpkCeUgT2g@mail.gmail.com>
-References: <1519729200-16056-1-git-send-email-s.mesoraca16@gmail.com>
- <CAGXu5jKYSRqsHo8rqvyR1ZLQ2MT+UnG=F4_RTEp7Sq9q9qsPtw@mail.gmail.com> <CAGXu5j+RELwBqkLrpQ0zHdHM3u2FxgcKokumtSS8KpkCeUgT2g@mail.gmail.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Wed, 28 Feb 2018 10:22:10 +0100
-Message-ID: <CAJHCu1LAvw5N8cXr-L8goEXUN5+jAdC4aUv3jNW0FxO9W_VH1w@mail.gmail.com>
-Subject: Re: [PATCH v4] Protected FIFOs and regular files
-To: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Laight <David.Laight@aculab.com>,
-	Ian Campbell <ijc@hellion.org.uk>, Jann Horn <jannh@google.com>,
-	Matthew Wilcox <willy@infradead.org>, Pavel Vasilyev <dixlor@gmail.com>,
-	Solar Designer <solar@openwall.com>, "Eric W. Biederman" <ebiederm@xmission.com>,
-	"Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=l+wBA2hx;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753718AbeBVLyd (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 22 Feb 2018 06:54:33 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43781 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753649AbeBVLyb (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:54:31 -0500
+From: Zong Li <zongbox@gmail.com>
+To: shuah@kernel.org, vincent.legoll@gmail.com, ast@kernel.org,
+        daniel@iogearbox.net, mcgrof@kernel.org, davem@davemloft.net,
+        keescook@chromium.org, fathi.boudra@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: zong@andestech.com, greentime@andestech.com,
+        Zong Li <zongbox@gmail.com>
+Subject: [PATCH] selftest: fix kselftest-merge depend on 'RUNTIME_TESTING_MENU'
+Date: Thu, 22 Feb 2018 19:53:07 +0800
+Message-Id: <20180222115307.15063-1-zongbox@gmail.com>
+X-Mailer: git-send-email 2.16.1
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593551596949260408?=
-X-GMAIL-MSGID: =?utf-8?q?1593636051536343824?=
+X-GMAIL-THRID: =?utf-8?q?1593102038295942155?=
+X-GMAIL-MSGID: =?utf-8?q?1593102038295942155?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-27 21:22 GMT+01:00 Kees Cook <keescook@chromium.org>:
-> On Tue, Feb 27, 2018 at 11:47 AM, Kees Cook <keescook@chromium.org> wrote:
->> On Tue, Feb 27, 2018 at 3:00 AM, Salvatore Mesoraca
->> <s.mesoraca16@gmail.com> wrote:
->>> Disallows open of FIFOs or regular files not owned by the user in world
->>> writable sticky directories, unless the owner is the same as that of
->>> the directory or the file is opened without the O_CREAT flag.
->>> The purpose is to make data spoofing attacks harder.
->>> This protection can be turned on and off separately for FIFOs and regular
->>> files via sysctl, just like the symlinks/hardlinks protection.
->>> This patch is based on Openwall's "HARDEN_FIFO" feature by Solar
->>> Designer.
->>>
->>> This is a brief list of old vulnerabilities that could have been prevented
->>> by this feature, some of them even allow for privilege escalation:
->>> CVE-2000-1134
->>> CVE-2007-3852
->>> CVE-2008-0525
->>> CVE-2009-0416
->>> CVE-2011-4834
->>> CVE-2015-1838
->>> CVE-2015-7442
->>> CVE-2016-7489
->>>
->>> This list is not meant to be complete. It's difficult to track down
->>> all vulnerabilities of this kind because they were often reported
->>> without any mention of this particular attack vector.
->>> In fact, before hardlinks/symlinks restrictions, fifos/regular
->>> files weren't the favorite vehicle to exploit them.
->>>
->>> Suggested-by: Solar Designer <solar@openwall.com>
->>> Suggested-by: Kees Cook <keescook@chromium.org>
->>> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
->>> ---
->>>
->>> Notes:
->>>     Changes in v3:
->>>         - Fixed format string for uid_t that is unsigned
->>>           (suggested by Jann Horn).
->>>     Changes in v4:
->>>         - Some English fixes (suggested by Tobin C. Harding).
->>>         - The original patchset has been split to help this part
->>>           land upstream (suggested by Solar Designer).
->>>
->>>  Documentation/sysctl/fs.txt | 36 ++++++++++++++++++++++++++
->>>  fs/namei.c                  | 61 ++++++++++++++++++++++++++++++++++++++++++---
->>>  include/linux/fs.h          |  2 ++
->>>  kernel/sysctl.c             | 18 +++++++++++++
->>>  4 files changed, 114 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
->>> index 6c00c1e..819caf8 100644
->>> --- a/Documentation/sysctl/fs.txt
->>> +++ b/Documentation/sysctl/fs.txt
->>> @@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/fs:
->>>  - overflowgid
->>>  - pipe-user-pages-hard
->>>  - pipe-user-pages-soft
->>> +- protected_fifos
->>>  - protected_hardlinks
->>> +- protected_regular
->>>  - protected_symlinks
->>>  - suid_dumpable
->>>  - super-max
->>> @@ -182,6 +184,24 @@ applied.
->>>
->>>  ==============================================================
->>>
->>> +protected_fifos:
->>> +
->>> +The intent of this protection is to avoid unintentional writes to
->>> +an attacker-controlled FIFO, where a program expected to create a regular
->>> +file.
->>> +
->>> +When set to "0", writing to FIFOs is unrestricted.
->>> +
->>> +When set to "1" don't allow O_CREAT open on FIFOs that we don't own
->>> +in world writable sticky directories, unless they are owned by the
->>> +owner of the directory.
->>> +
->>> +When set to "2" it also applies to group writable sticky directories.
->>> +
->>> +This protection is based on the restrictions in Openwall.
->>> +
->>> +==============================================================
->>> +
->>>  protected_hardlinks:
->>>
->>>  A long-standing class of security issues is the hardlink-based
->>> @@ -202,6 +222,22 @@ This protection is based on the restrictions in Openwall and grsecurity.
->>>
->>>  ==============================================================
->>>
->>> +protected_regular:
->>> +
->>> +This protection is similar to protected_fifos, but it
->>> +avoids writes to an attacker-controlled regular file, where a program
->>> +expected to create one.
->>> +
->>> +When set to "0", writing to regular files is unrestricted.
->>> +
->>> +When set to "1" don't allow O_CREAT open on regular files that we
->>> +don't own in world writable sticky directories, unless they are
->>> +owned by the owner of the directory.
->>> +
->>> +When set to "2" it also applies to group writable sticky directories.
->>> +
->>> +==============================================================
->>> +
->>>  protected_symlinks:
->>>
->>>  A long-standing class of security issues is the symlink-based
->>> diff --git a/fs/namei.c b/fs/namei.c
->>> index 921ae32..eaab668 100644
->>> --- a/fs/namei.c
->>> +++ b/fs/namei.c
->>> @@ -883,6 +883,8 @@ static inline void put_link(struct nameidata *nd)
->>>
->>>  int sysctl_protected_symlinks __read_mostly = 0;
->>>  int sysctl_protected_hardlinks __read_mostly = 0;
->>> +int sysctl_protected_fifos __read_mostly;
->>> +int sysctl_protected_regular __read_mostly;
->>>
->>>  /**
->>>   * may_follow_link - Check symlink following for unsafe situations
->>> @@ -996,6 +998,54 @@ static int may_linkat(struct path *link)
->>>         return -EPERM;
->>>  }
->>>
->>> +/**
->>> + * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
->>> + *                       should be allowed, or not, on files that already
->>> + *                       exist.
->>> + * @dir: the sticky parent directory
->>> + * @name: the file name
->>> + * @inode: the inode of the file to open
->>> + *
->>> + * Block an O_CREAT open of a FIFO (or a regular file) when:
->>> + *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
->>> + *   - the file already exists
->>> + *   - we are in a sticky directory
->>> + *   - we don't own the file
->>> + *   - the owner of the directory doesn't own the file
->>> + *   - the directory is world writable
->>> + * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
->>> + * the directory doesn't have to be world writable: being group writable will
->>> + * be enough.
->>> + *
->>> + * Returns 0 if the open is allowed, -ve on error.
->>> + */
->>> +static int may_create_in_sticky(struct dentry * const dir,
->>> +                               const unsigned char * const name,
->>> +                               struct inode * const inode)
->>> +{
->>> +       if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
->>> +           (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
->>> +           likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
->>> +           uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
->>> +           uid_eq(current_fsuid(), inode->i_uid))
->>> +               return 0;
->>> +
->>> +       if (likely(dir->d_inode->i_mode & 0002) ||
->>> +           (dir->d_inode->i_mode & 0020 &&
->>> +            ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
->>> +             (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
->>> +               pr_notice_ratelimited("denied writing in '%s' of %u.%u in a sticky directory by UID %u, EUID %u, process %s:%d.\n",
->>> +                                     name,
->>> +                                     from_kuid(&init_user_ns, inode->i_uid),
->>> +                                     from_kgid(&init_user_ns, inode->i_gid),
->>> +                                     from_kuid(&init_user_ns, current_uid()),
->>> +                                     from_kuid(&init_user_ns, current_euid()),
->>> +                                     current->comm, current->pid);
->>
->> Instead of this pr_notice_ratelimited(), I think
->> audit_log_link_denied() should be refactored and used instead. Drop
->> this line from this patch, and I think this is great as-is. The
->> logging can be separate (as it may get heavily bike-shed, as I
->> experienced with hard/symlink restrictions).
->>
->> Otherwise, I think this looks great.
->>
->> Acked-by: Kees Cook <keescook@chromium.org>
->
-> I've also tested this now; so:
->
-> Tested-by: Kees Cook <keescook@chromium.org>
->
-> # grep . /proc/sys/fs/protected_*
-> /proc/sys/fs/protected_fifos:0
-> /proc/sys/fs/protected_hardlinks:1
-> /proc/sys/fs/protected_regular:0
-> /proc/sys/fs/protected_symlinks:1
-> # cd /tmp
-> # mkfifo fifo
-> # touch regular
-> # chown nobody fifo regular
-> # chmod a+w fifo regular
-> # chmod a+w regular
-> # cat fifo > output &
-> # su - keescook
-> $ cd /tmp
-> $ python
-> ...
->>>> import os
->>>> fd = os.open("fifo", os.O_RDWR | os.O_CREAT)
->>>> os.write(fd, "OHAI\n")
-> 5
->>>> fd = os.open("regular", os.O_RDWR | os.O_CREAT)
->>>> os.write(fd, "OHAI\n")
-> 5
->>>> exit()
-> $ exit
-> # echo 1 > /proc/sys/fs/protected_fifos
-> # echo 1 > /proc/sys/fs/protected_regular
-> # su - keescook
-> $ cd /tmp
-> $ python
-> ...
->>>> import os
->>>> fd = os.open("fifo", os.O_RDWR | os.O_CREAT)
-> Traceback (most recent call last):
->   File "<stdin>", line 1, in <module>
-> OSError: [Errno 13] Permission denied: 'fifo'
->>>> fd = os.open("regular", os.O_RDWR | os.O_CREAT)
-> Traceback (most recent call last):
->   File "<stdin>", line 1, in <module>
-> OSError: [Errno 13] Permission denied: 'regular'
->
->> I'll create a branch for this on git.kernel.org and see if anything
->> surprising pops out. :)
->
-> Here it is with my suggested refactoring of the audit message:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/userspace/protected-creat
->
-> Which produces:
->
-> [  146.854080] audit: type=1703 audit(1519762816.978:95): op=fifo
-> ppid=3091 pid=3092 auid=0 uid=1000 gid=1000 euid=1000 suid=1000
-> fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts8 ses=1 comm="python"
-> exe="/usr/bin/python2.7" res=0
-> [  146.858691] audit: type=1302 audit(1519762816.978:95): item=0
-> name="/tmp/fifo" inode=531 dev=fd:01 mode=010666 ouid=65534 ogid=0
-> rdev=00:00 nametype=NORMAL cap_fp=0000000000000000
-> cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-> ...
-> [  152.993518] audit: type=1703 audit(1519762823.117:96): op=regular
-> ppid=3091 pid=3092 auid=0 uid=1000 gid=1000 euid=1000 suid=1000
-> fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts8 ses=1 comm="python"
-> exe="/usr/bin/python2.7" res=0
-> [  152.997963] audit: type=1302 audit(1519762823.117:96): item=0
-> name="/tmp/regular" inode=700 dev=fd:01 mode=0100666 ouid=65534 ogid=0
-> rdev=00:00 nametype=NORMAL cap_fp=0000000000000000
-> cap_fi=0000000000000000 cap_fe=0 cap_fver=0
->
-> and other things (uid, etc)
+Since the 'commit d3deafaa8b5c ("lib/: make RUNTIME_TESTS a menuconfig
+to ease disabling it all")', the make kselftest-merge cannot merge the
+config dependencies of kselftest to the existing .config file.
 
-Awesome! Thank you very much for your help!
+These config dependencies of kselftest need to enable the
+'CONFIG_RUNTIME_TESTING_MENU=y' at the same time.
 
-Salvatore
+Signed-off-by: Zong Li <zong@andestech.com>
+Cc: Greentime Hu <greentime@andestech.com>
+---
+ tools/testing/selftests/bpf/config         | 1 +
+ tools/testing/selftests/firmware/config    | 1 +
+ tools/testing/selftests/kmod/config        | 1 +
+ tools/testing/selftests/lib/config         | 1 +
+ tools/testing/selftests/net/config         | 1 +
+ tools/testing/selftests/static_keys/config | 1 +
+ tools/testing/selftests/sysctl/config      | 1 +
+ tools/testing/selftests/user/config        | 1 +
+ 8 files changed, 8 insertions(+)
+
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index 983dd25d49f4..d93b82144b19 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -1,3 +1,4 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_BPF=y
+ CONFIG_BPF_SYSCALL=y
+ CONFIG_NET_CLS_BPF=m
+diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
+index c8137f70e291..01d7445ef007 100644
+--- a/tools/testing/selftests/firmware/config
++++ b/tools/testing/selftests/firmware/config
+@@ -1 +1,2 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_FIRMWARE=y
+diff --git a/tools/testing/selftests/kmod/config b/tools/testing/selftests/kmod/config
+index 259f4fd6b5e2..37070985e428 100644
+--- a/tools/testing/selftests/kmod/config
++++ b/tools/testing/selftests/kmod/config
+@@ -1,3 +1,4 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_KMOD=m
+ CONFIG_TEST_LKM=m
+ CONFIG_XFS_FS=m
+diff --git a/tools/testing/selftests/lib/config b/tools/testing/selftests/lib/config
+index 126933bcc950..d1fe14c2c8cb 100644
+--- a/tools/testing/selftests/lib/config
++++ b/tools/testing/selftests/lib/config
+@@ -1,3 +1,4 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_PRINTF=m
+ CONFIG_TEST_BITMAP=m
+ CONFIG_PRIME_NUMBERS=m
+diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
+index 7177bea1fdfa..847a99873128 100644
+--- a/tools/testing/selftests/net/config
++++ b/tools/testing/selftests/net/config
+@@ -1,3 +1,4 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_USER_NS=y
+ CONFIG_BPF_SYSCALL=y
+ CONFIG_TEST_BPF=m
+diff --git a/tools/testing/selftests/static_keys/config b/tools/testing/selftests/static_keys/config
+index d538fb774b96..732d17f6b9a1 100644
+--- a/tools/testing/selftests/static_keys/config
++++ b/tools/testing/selftests/static_keys/config
+@@ -1 +1,2 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_STATIC_KEYS=m
+diff --git a/tools/testing/selftests/sysctl/config b/tools/testing/selftests/sysctl/config
+index 6ca14800d755..772ce8c3c0d9 100644
+--- a/tools/testing/selftests/sysctl/config
++++ b/tools/testing/selftests/sysctl/config
+@@ -1 +1,2 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_SYSCTL=y
+diff --git a/tools/testing/selftests/user/config b/tools/testing/selftests/user/config
+index 784ed8416324..f9f491fa4ae8 100644
+--- a/tools/testing/selftests/user/config
++++ b/tools/testing/selftests/user/config
+@@ -1 +1,2 @@
++CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_USER_COPY=m
+-- 
+2.16.1
+
