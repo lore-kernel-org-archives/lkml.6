@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932754AbeBVOUu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:20:50 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35466 "EHLO mx1.redhat.com"
+        id S932757AbeBVOV6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:21:58 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60370 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932607AbeBVOUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:20:48 -0500
+        id S932564AbeBVOVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 09:21:54 -0500
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From: David Howells <dhowells@redhat.com>
-In-Reply-To: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
-References: <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk> <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+In-Reply-To: <8846.1519309243@warthog.procyon.org.uk>
+References: <8846.1519309243@warthog.procyon.org.uk> <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk> <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 Cc: dhowells@redhat.com, gnomes@lxorguk.ukuu.org.uk,
         linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -20,232 +20,58 @@ Cc: dhowells@redhat.com, gnomes@lxorguk.ukuu.org.uk,
 Subject: Re: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is locked down
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8845.1519309243.1@warthog.procyon.org.uk>
+Content-ID: <8886.1519309313.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: 8BIT
-Date: Thu, 22 Feb 2018 14:20:43 +0000
-Message-ID: <8846.1519309243@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 14:21:53 +0000
+Message-ID: <8887.1519309313@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm intending on inserting the attached patch before this one.
+David Howells <dhowells@redhat.com> wrote:
+
+> I'm intending on inserting the attached patch before this one.
+
+And replacing this patch with the attached.
 
 David
 ---
-commit 87a39b258eca2e15884ee90c3fcd5758d6057b17
+commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
 Author: David Howells <dhowells@redhat.com>
-Date:   Thu Feb 22 13:42:04 2018 +0000
+Date:   Thu Feb 22 14:01:49 2018 +0000
 
-    kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+    kexec_file: Restrict at runtime if the kernel is locked down
     
-    This is a preparatory patch for kexec_file_load() lockdown.  A locked down
-    kernel needs to prevent unsigned kernel images to be loaded with
-    kexec_file_load().  Currently, the only way to force the signature
-    verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
-    usigned images even when the kernel is not locked down at runtime.
+    When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
+    kexec_file systemcall if the kernel is locked down unless IMA can be used
+    to validate the image.
     
-    This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
-    Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
-    turns on the signature verification but allows unsigned images to be
-    loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
-    
-    [Modified by David Howells such that:
-    
-     (1) verify_pefile_signature() differentiates between no-signature and
-         sig-didn't-match in its returned errors.
-    
-     (2) kexec fails with EKEYREJECTED and logs an appropriate message if
-         signature checking is enforced and an signature is not found, uses
-         unsupported crypto or has no matching key.
-    
-     (3) kexec fails with EKEYREJECTED if there is a signature for which we
-         have a key, but signature doesn't match - even if in non-forcing mode.
-    
-     (4) kexec fails with EBADMSG or some other error if there is a signature
-         which cannot be parsed - even if in non-forcing mode.
-    
-     (5) kexec fails with ELIBBAD if the PE file cannot be parsed to extract
-         the signature - even if in non-forcing mode.
-    
-    ]
+    [Modified by David Howells to fit with modifications to the previous patch
+     and to return -EPERM if the kernel is locked down for consistency with
+     other lockdowns]
     
     Signed-off-by: Jiri Bohac <jbohac@suse.cz>
     Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Matthew Garrett <mjg59@srcf.ucam.org>
+    Cc: Matthew Garrett <mjg59@srcf.ucam.org>
     cc: Chun-Yi Lee <jlee@suse.com>
     cc: kexec@lists.infradead.org
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c1236b187824..cb6e67b7442d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2019,20 +2019,30 @@ config KEXEC_FILE
- 	  for kernel and initramfs as opposed to list of segments as
- 	  accepted by previous system call.
- 
--config KEXEC_VERIFY_SIG
-+config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
- 	depends on KEXEC_FILE
- 	---help---
--	  This option makes kernel signature verification mandatory for
--	  the kexec_file_load() syscall.
- 
--	  In addition to that option, you need to enable signature
-+	  This option makes the kexec_file_load() syscall check for a valid
-+	  signature of the kernel image.  The image can still be loaded without
-+	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
-+	  there's a signature that we can check, then it must be valid.
-+
-+	  In addition to this option, you need to enable signature
- 	  verification for the corresponding kernel image type being
- 	  loaded in order for this to work.
- 
-+config KEXEC_SIG_FORCE
-+	bool "Require a valid signature in kexec_file_load() syscall"
-+	depends on KEXEC_SIG
-+	---help---
-+	  This option makes kernel signature verification mandatory for
-+	  the kexec_file_load() syscall.
-+
- config KEXEC_BZIMAGE_VERIFY_SIG
- 	bool "Enable bzImage signature verification support"
--	depends on KEXEC_VERIFY_SIG
-+	depends on KEXEC_SIG
- 	depends on SIGNED_PE_FILE_VERIFICATION
- 	select SYSTEM_TRUSTED_KEYRING
- 	---help---
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 1f790cf9d38f..3fbe35b923ef 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -406,7 +406,7 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	return image->fops->cleanup(image->image_loader_data);
- }
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- int arch_kexec_kernel_verify_sig(struct kimage *image, void *kernel,
- 				 unsigned long kernel_len)
- {
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index d178650fd524..4473cea1e877 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -100,7 +100,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 
- 	if (!ddir->certs.virtual_address || !ddir->certs.size) {
- 		pr_debug("Unsigned PE binary\n");
--		return -EKEYREJECTED;
-+		return -ENODATA;
- 	}
- 
- 	chkaddr(ctx->header_size, ddir->certs.virtual_address,
-@@ -408,6 +408,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
-  *  (*) 0 if at least one signature chain intersects with the keys in the trust
-  *	keyring, or:
-  *
-+ *  (*) -ENODATA if there is no signature present.
-+ *
-  *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
-  *	chain.
-  *
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index f16f6ceb3875..19652372f3ee 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -121,7 +121,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
- 			     unsigned long cmdline_len);
- typedef int (kexec_cleanup_t)(void *loader_data);
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- typedef int (kexec_verify_sig_t)(const char *kernel_buf,
- 				 unsigned long kernel_len);
- #endif
-@@ -130,7 +130,7 @@ struct kexec_file_ops {
- 	kexec_probe_t *probe;
- 	kexec_load_t *load;
- 	kexec_cleanup_t *cleanup;
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- 	kexec_verify_sig_t *verify_sig;
- #endif
- };
 diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index e5bcd94c1efb..d5931e392050 100644
+index d5931e392050..c47c4de604cd 100644
 --- a/kernel/kexec_file.c
 +++ b/kernel/kexec_file.c
-@@ -45,7 +45,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	return -EINVAL;
- }
+@@ -167,6 +167,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 		}
  
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- int __weak arch_kexec_kernel_verify_sig(struct kimage *image, void *buf,
- 					unsigned long buf_len)
- {
-@@ -116,7 +116,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			     const char __user *cmdline_ptr,
- 			     unsigned long cmdline_len, unsigned flags)
- {
--	int ret = 0;
-+	const char *reason;
-+	int ret;
- 	void *ldata;
- 	loff_t size;
- 
-@@ -135,15 +136,48 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 	if (ret)
- 		goto out;
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- 	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
- 					   image->kernel_buf_len);
--	if (ret) {
--		pr_debug("kernel signature verification failed.\n");
-+#else
-+	ret = -ENODATA;
-+#endif
+ 		ret = 0;
++		if (is_ima_appraise_enabled())
++			break;
 +
-+	switch (ret) {
-+	case 0:
-+		break;
-+
-+		/* Certain verification errors are non-fatal if we're not
-+		 * checking errors, provided we aren't mandating that there
-+		 * must be a valid signature.
-+		 */
-+	case -ENODATA:
-+		reason = "kexec of unsigned image";
-+		goto decide;
-+	case -ENOPKG:
-+		reason = "kexec of image with unsupported crypto";
-+		goto decide;
-+	case -ENOKEY:
-+		reason = "kexec of image with unavailable key";
-+	decide:
-+		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
-+			pr_notice("%s rejected\n", reason);
-+			ret = -EKEYREJECTED;
++		if (kernel_is_locked_down(reason)) {
++			ret = -EPERM;
 +			goto out;
 +		}
 +
-+		ret = 0;
-+		break;
-+
-+		/* All other errors are fatal, including nomem, unparseable
-+		 * signatures and signature check failures - even if signatures
-+		 * aren't required.
-+		 */
-+	default:
-+		pr_notice("kernel signature verification failed (%d).\n", ret);
- 		goto out;
- 	}
--	pr_debug("kernel signature verification successful.\n");
--#endif
-+
- 	/* It is possible that there no initramfs is being loaded */
- 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
- 		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
+ 		break;
+ 
+ 		/* All other errors are fatal, including nomem, unparseable
