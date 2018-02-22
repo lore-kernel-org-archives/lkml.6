@@ -1,58 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933337AbeBVQ3X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:29:23 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46924 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932942AbeBVQ3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:29:22 -0500
-Date: Thu, 22 Feb 2018 17:29:04 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: SoC fixes for 4.16
-Message-ID: <20180222162904.GA5462@piout.net>
+        id S933272AbeBVQ2J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:28:09 -0500
+Received: from foss.arm.com ([217.140.101.70]:44558 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932942AbeBVQ2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:28:07 -0500
+Subject: Re: [PATCH v4] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+To: Mark Rutland <mark.rutland@arm.com>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Cc: Philip Elcan <pelcan@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1519311090-19998-1-git-send-email-shankerd@codeaurora.org>
+ <20180222152244.zozx2tlptgnnfu6b@lakrids.cambridge.arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <32c8cfd3-2883-177b-7736-1bb6ab679df4@arm.com>
+Date: Thu, 22 Feb 2018 16:28:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180222152244.zozx2tlptgnnfu6b@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+[Apologies to keep elbowing in, and if I'm being thick here...]
 
-A single patch changing my email address. I think it is worth having it
-in MAINTAINERS sooner rather than later.
+On 22/02/18 15:22, Mark Rutland wrote:
+> On Thu, Feb 22, 2018 at 08:51:30AM -0600, Shanker Donthineni wrote:
+>> +#define CTR_B31_SHIFT		31
+> 
+> Since this is just a RES1 bit, I think we don't need a mnemonic for it,
+> but I'll defer to Will and Catalin on that.
+> 
+>>   ENTRY(invalidate_icache_range)
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +alternative_if ARM64_HAS_CACHE_DIC
+>> +	mov	x0, xzr
+>> +	dsb	ishst
+>> +	isb
+>> +	ret
+>> +alternative_else_nop_endif
+>> +#endif
+> 
+> As commented on v3, I don't believe you need the DSB here. If prior
+> stores haven't been completed at this point, the existing implementation
+> would not work correctly here.
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+True in terms of ordering between stores prior to entry and the IC IVAU 
+itself, but what about the DSH ISH currently issued *after* the IC IVAU 
+before returning? Is provably impossible that existing callers might be 
+relying on that ordering *anything*, or would we risk losing something 
+subtle by effectively removing it?
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.16-soc-fixes
-
-for you to fetch changes up to c8d5dcf122b194e897d2a6311903eae0c1023325:
-
-  MAINTAINERS: ARM: at91: update my email address (2018-02-22 16:22:15 +0100)
-
-----------------------------------------------------------------
-AT91 SOC fixes for 4.16:
-
- - change my email address
-
-----------------------------------------------------------------
-Alexandre Belloni (1):
-      MAINTAINERS: ARM: at91: update my email address
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Robin.
