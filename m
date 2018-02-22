@@ -1,93 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933432AbeBVQX3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:23:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53218 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933140AbeBVQWb (ORCPT
+        id S933282AbeBVQYY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:24:24 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38124 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933144AbeBVQTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:22:31 -0500
-From: Farhan Ali <alifm@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: thuth@redhat.com, borntraeger@de.ibm.com, cohuck@redhat.com,
-        tomi.valkeinen@ti.com, b.zolnierkie@samsung.com, geert@linux-m68k.org,
-        alifm@linux.vnet.ibm.com
-Subject: [PATCH v4 0/3] Enable CONFIG_VT support for S390
-Date: Thu, 22 Feb 2018 11:22:21 -0500
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18022216-0004-0000-0000-000013B3E5D1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008577; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00993504; UDB=6.00504833; IPR=6.00772844;
- MB=3.00019691; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 16:22:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022216-0005-0000-0000-000086318B09
-Message-Id: <cover.1519315352.git.alifm@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802220205
+        Thu, 22 Feb 2018 11:19:05 -0500
+X-Google-Smtp-Source: AH8x2260UayuUxOQEJDPiqsDi29EmgmyrhNSLzo/ei7Um40iX7KK0lURvhJP6ZXwgfz959UqThCHh8hhyYsHuFylsRo=
+MIME-Version: 1.0
+In-Reply-To: <20180222160217.GA18243@infradead.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222160217.GA18243@infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 22 Feb 2018 17:19:04 +0100
+X-Google-Sender-Auth: 9G7Yy974TTZAOIPQpKajaUYwEAg
+Message-ID: <CAK8P3a1ZMQTPq1Szvgdg3yzpr+LdsoDaO6YtzNUycYcbOzDPSQ@mail.gmail.com>
+Subject: Re: Removing architectures without upstream gcc support
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Feb 22, 2018 at 5:02 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
+>> There are also a couple of architectures that are more or less
+>> unmaintained but do have working gcc support: FR-V and M32R
+>> have been orphaned for a while and are not getting updated
+>> MN10300 is still maintained officially by David Howells but doesn't
+>> seem any more active than the other two, the last real updates were
+>> in 2013.
+>
+> I'd love to see dead architecture ports dropped if they really are
+> more or less abandoned.  In addition to your missing gcc port ones
+> above (minus openrisc) it seems like frv and m32r certainly qualify,
+> and xtensa seems to be going that way with the glibc port being dropped
+> now.
 
-This series of patches add support for an additional tty
-and console for a S390 KVM guest using a virtio-gpu device[1].
+Regarding xtensa, I looked at that one while I wrote my list and it seems
+quite a bit more active than the others. Cris and xtensa are two architectures
+that don't see much maintenance over long periods of time but occasionally
+get a proper update. For xtensa this just happened, see [1]. Unlike cris,
+xtensa is also commercially still very successful, just less so in the
+Linux+glibc space.
 
-Patch 1 enables the "Graphics support" menu which is
-needed to enable dummy console, since the VT layer needs it.
-The dependency is moved to sub menu items and console
-drivers now.
+       Arnd
 
-Patch 2 fixes few linker issues.
-
-Patch 3 add support for enabling VT layer for S390.
-
-
-ChangeLog
----------
-v3 -> v4
-   - Add r-b's.
-   - Move HAS_IOMEM dependency in drivers/video/Kconfig to cover
-     from config HAVE_FB_ATMEL to config HDMI (patch 1).
-   - Add HAS_IOMEM for VGA_CONSOLE (patch 1).
-
-v2 -> v3
-    - Move HAS_IOMEM dependency to sub menu items and console
-    drivers (patch 1)
-
-v1 -> v2
-
-v1 was posted under a different subject and here is a link to it:
-https://www.spinics.net/lists/linux-s390/msg18175.html
-
-   - Combine patch 1 and 2 from v1 into one patch (patch 1).
-   - Additional patches to enable CONFIG_VT for S390.
-
-
-Thanks
-Farhan
-
-Farhan Ali (3):
-  Kconfig : Remove HAS_IOMEM dependency for Graphics support
-  s390/char : Rename EBCDIC keymap variables
-  s390/setup : enable display support for KVM guest
-
- arch/s390/kernel/setup.c      |  2 ++
- drivers/s390/char/defkeymap.c | 66 ++++++++++++++++++++++---------------------
- drivers/s390/char/keyboard.c  | 32 ++++++++++-----------
- drivers/s390/char/keyboard.h  | 11 ++++++++
- drivers/tty/Kconfig           |  2 +-
- drivers/video/Kconfig         |  5 +++-
- drivers/video/console/Kconfig |  6 ++--
- 7 files changed, 71 insertions(+), 53 deletions(-)
-
--- 
-2.7.4
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d0bd31dc5c0b46b9c778112900cf8f910ac26e1b
