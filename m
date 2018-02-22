@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeBVX4p (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:56:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46192 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751283AbeBVX4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:56:44 -0500
-Date: Fri, 23 Feb 2018 07:56:39 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-        linux-mm@kvack.org, kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2 1/3] mm/sparse: Add a static variable
- nr_present_sections
-Message-ID: <20180222235639.GD693@localhost.localdomain>
-References: <20180222091130.32165-1-bhe@redhat.com>
- <20180222091130.32165-2-bhe@redhat.com>
- <20180222132441.51a8eae9e9656a82a2161070@linux-foundation.org>
+        id S1752012AbeBVX7j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:59:39 -0500
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41086 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbeBVX7h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 18:59:37 -0500
+X-Google-Smtp-Source: AH8x226LcRLhx8DQiHUxPsRwmARnTrctJ6Kgud8bG6YrNtjxhzioqbH59zKIU3iznxR6bTpYVFOQiQ==
+Date: Thu, 22 Feb 2018 20:59:33 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 0/7] drm/virtio: Checkpatch cleanup for virtio
+Message-ID: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222132441.51a8eae9e9656a82a2161070@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22/18 at 01:24pm, Andrew Morton wrote:
-> On Thu, 22 Feb 2018 17:11:28 +0800 Baoquan He <bhe@redhat.com> wrote:
-> 
-> > It's used to record how many memory sections are marked as present
-> > during system boot up, and will be used in the later patch.
-> > 
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -202,6 +202,7 @@ static inline int next_present_section_nr(int section_nr)
-> >  	      (section_nr <= __highest_present_section_nr));	\
-> >  	     section_nr = next_present_section_nr(section_nr))
-> >  
-> > +static int nr_present_sections;
-> 
-> I think this could be __initdata.
-> 
-> A nice comment explaining why it exists would be nice.
+This patchset fixes warnings and errors found by checkpatch.pl in the
+drm/virtio:
 
-Thanks, I will update as you suggested.
-> 
+* Removes return from void function;
+* Adds */ in block comments to separate line;
+* Adds blank line after variable declarations;
+* Adds tabs at the start of a line;
+* Replaces 'unsigned' for 'unsigned int';
+* Removes multiple blank lines;
+* Adds spaces around operators.
+
+Rodrigo Siqueira (7):
+  drm/virtio: Add tabs at the start of a line
+  drm/virtio: Add blank line after variable declarations
+  drm/virtio: Add */ in block comments to separate line
+  drm/virtio: Remove return from void function
+  drm/virtio: Replace 'unsigned' for 'unsigned int'
+  drm/virtio: Remove multiple blank lines
+  drm/virtio: Add spaces around operators
+
+ drivers/gpu/drm/virtio/virtgpu_display.c |  7 ++++---
+ drivers/gpu/drm/virtio/virtgpu_drv.c     |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_drv.h     |  8 ++++----
+ drivers/gpu/drm/virtio/virtgpu_fb.c      |  6 +++++-
+ drivers/gpu/drm/virtio/virtgpu_gem.c     |  1 +
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c   | 23 +++++++++++++----------
+ drivers/gpu/drm/virtio/virtgpu_prime.c   |  4 ++--
+ drivers/gpu/drm/virtio/virtgpu_ttm.c     |  4 +---
+ drivers/gpu/drm/virtio/virtgpu_vq.c      | 13 ++++++++-----
+ 9 files changed, 39 insertions(+), 29 deletions(-)
+
+-- 
+2.16.2
