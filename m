@@ -1,365 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933057AbeBVPgY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:36:24 -0500
-Received: from mail-co1nam03on0047.outbound.protection.outlook.com ([104.47.40.47]:27870
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S933030AbeBVPht (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:37:49 -0500
+Received: from mail-eopbgr00135.outbound.protection.outlook.com ([40.107.0.135]:34528
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932902AbeBVPgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:36:22 -0500
+        id S932902AbeBVPho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:37:44 -0500
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com;
-Subject: Re: [PATCH 3/3] x86/microcode: Quiesce all threads before a microcode
- update.
-To: "Raj, Ashok" <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-References: <1519231784-9941-1-git-send-email-ashok.raj@intel.com>
- <1519231784-9941-4-git-send-email-ashok.raj@intel.com>
- <20180221190611.GE16888@pd.tnic>
- <20180221201308.GB14170@araj-mobl1.jf.intel.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Message-ID: <533adfd7-1ca8-1e3c-87f6-d92d172c6f9d@amd.com>
-Date: Thu, 22 Feb 2018 09:36:08 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ smtp.mailfrom=aryabinin@virtuozzo.com;
+Subject: Re: [PATCH v5 2/2] mm/memcontrol.c: Reduce reclaim retries in
+ mem_cgroup_resize_limit()
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <20171220102429.31601-1-aryabinin@virtuozzo.com>
+ <20180119132544.19569-1-aryabinin@virtuozzo.com>
+ <20180119132544.19569-2-aryabinin@virtuozzo.com>
+ <20180119133510.GD6584@dhcp22.suse.cz>
+ <CALvZod7HS6P0OU6Rps8JeMJycaPd4dF5NjxV8k1y2-yosF2bdA@mail.gmail.com>
+ <20180119151118.GE6584@dhcp22.suse.cz>
+ <20180221121715.0233d34dda330c56e1a9db5f@linux-foundation.org>
+ <f3893181-67a4-aec2-9514-f141fa78a6c0@virtuozzo.com>
+ <20180222140932.GL30681@dhcp22.suse.cz>
+ <e0705720-0909-e224-4bdd-481660e516f2@virtuozzo.com>
+ <20180222153343.GN30681@dhcp22.suse.cz>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <0927bcab-7e2c-c6f9-d16a-315ac436ba98@virtuozzo.com>
+Date: Thu, 22 Feb 2018 18:38:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221201308.GB14170@araj-mobl1.jf.intel.com>
+In-Reply-To: <20180222153343.GN30681@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: CO1PR15CA0092.namprd15.prod.outlook.com
- (2603:10b6:101:21::12) To MWHPR12MB1152.namprd12.prod.outlook.com
- (2603:10b6:300:e::16)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: DB6PR0202CA0014.eurprd02.prod.outlook.com
+ (2603:10a6:4:29::24) To VI1PR08MB2829.eurprd08.prod.outlook.com
+ (2603:10a6:802:19::26)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 860fc800-786d-4896-fa96-08d57a0a0518
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1152;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1152;3:gPHlCdzxCwDuQXMckzC1PFeDHJjG0FKJn+k6eObaV66LgQ7haRsGSL3j54yrR1F3TqIGwrkz/sOzezkJNHxXbWoLt+VEJ2M85XPCgO5o4B9aMF3GuuSddYHl6piTyrctkJrO2M0gZ+Ysjx73i4t6sqiDGaIm1ehPfVnhQx11Kgfi5WRp+gpci0bRKlc65L9bKi0eko1FcjwbhBruomLP25Os2c9tdyFGWtSBBupKjvzG3CXFP70qZPSOBnYdtA+g;25:yddPjL82WvtKNTjOvwR0qZbqBallOk0ywx4YNQw1eRTmuoZF4PT9yGcKn6ICKhi/jsXPsw0Ws3V97E7mVR1GutXCImCfQn0E2otkjG1rohrw8z/tk49BSUJjRxjDtrkcGrRWA2rvdYaqCaZYhIyqdpwbjEXXQ87em6g0Vf9bDyT9T8JIjBPGRNOn2HiAB8Wlx0g+3rvQRwGwpnWDb9dHlW/1FTQ7IGMsT9rpVGW6d90xHE4J/Fo8a0/SZ28FYwBGCFuFFp822Q9GbIWQEjQn7HLqIbK+SNYVEYRkONDNYwkIiCLZ1sbxkDPhM++EHzqPaLV7rlOddsleGr98gKMjNg==;31:AErAHH94wEMR+tlGzHcuYCmqfRN0rOKJ9yMtmXPsVrDcs0R3cv7zupOyrnfxpKg869t5T3BHYTOpV1nsxD/iRfRhRHZ4YSos7jMfprzRhSUlZRbyzKvqcC7Xq0LM5j9mg+xHl+domFwh71bA2ABKIHfInMFleqT2nGJ+2modbwLTOpzcv5Fec7Qx8UdEQl38JchlgLs8gVqFK9AY9n3ecYCcApKk2Bcnz9dO/0KhDYc=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1152:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1152;20:NMRCRMA0pLOS1t3klzirPoANiFU6qTGM5rbC98hnUyq16s690IYsbfX3DruoDsuBio2uiQ2U5f1eVnZpvCYE+3IvW5glxRWRzgXyUY1QnphiXjRa+lxZIX1/JiE05x5ro0wKVFVdr46/Bmka59gQDry9y8K7+7Q0xOaPneRGHr31lYjFBIuthQkHTVmyL5ikvpgVKBaI6i4Ll8gG0nJOGfkY/f7lIKlatKHWn6BVRoXKgWyBHLADnYMx8ngR8Uak17NbsIRhZEGgbkq+FN6ATHYkrZaaT0JOzsq2wWQXdGtdq7i5LT/DhvERkOFp9Q1J6pw3NCPaqxQXwWxPiM1YfkhwfdYBIOlW1m/EGbmdiNoQGwcFfC+SiSehv72l9XTDCCTkknohrA1ecBzBQP3v72ykqAmiI0KaWH89Hqo9M6trbBuVRyJXwPRhieduXL1a97cCSVF4K62izaF93rNP1x8ukaN6gijY/MVQg3QGkbpH6tlap1f2EnH5XukcOKmS;4:yw4ImkNORbAd6nloKnYe2bXqKWuyoFVMzWnKTVhZNVwrftXXLHVE5mxAxr7Z1eWyhW6FJ401ibZAvovqNYAiw6UpqjiehWtqpl7fVMnt7VAApWBuaa05Vw2jbHDguGDhSu8nQRgR23uKKPCpYZH/+NMdHjSMHtlmC6AlOMulaPF8cGPXuwPL6HwNTHi4EI7dRim/7SUPl+1IDYINZLZJSoGItDv/TD3x2Qf69KeWZGQbaO4AgWu8NPaPj7dpF1pgs23SaYb75FK9OCu2Sv3flZGdEIrV0z5IQJQ2ZC7cVX1V60NUX8/4PBfPfgMdHLmQ
-X-Microsoft-Antispam-PRVS: <MWHPR12MB11526E8DDE86E177815A6284ECCD0@MWHPR12MB1152.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(209352067349851);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001080)(6040501)(2401047)(8121501046)(5005006)(3231101)(944501161)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041288)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1152;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1152;
+X-MS-Office365-Filtering-Correlation-Id: 063dc68c-5d54-482a-8efb-08d57a0a356c
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:VI1PR08MB2829;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2829;3:FXh33p3nWQN9F7unqpKZ5BrKk3LOMvG8dKA2mridt6jAuJz0CMNmE/LA2+/h8EqjcuS3K2NYQtvPu9oInUmPn1HegX9/gaWQmGMPM4ZIueBjltugA06f4ocwc5eAPJDpFF0mTsFhH7YynuWhSfZS6raLR/5nRQ5Po4h4YiGuaxLD6bNVDEi1ZlEJZFnk7NEzeK5TKGikhjqiE/URXyufHoDxRiTpHAPGJviSyLbf1X+KBrwrIBmChskjVlxuDugU;25:BcZG/aMa0zostkZEwD4UlHuJOoMUBL92JMJivTRd2GlcE8nw+HuWXACvQuEu9mUigTVq2FwBaCRqJcqYR2QxqHDrMhAwI0jBLthiwJJN45NNDks7cVzg2Gk8xhzE2KNWZ+MWd+rauIg8UHCZv3kR7rnlTBaCqrLejXkFllSaalRoc7Wg50N7jQx9PMOK4GXjPmCcqo3l4hpjIqnc8sAYcrZ8HwaEFdCGgBU7T/hrIzv8xFopEZwfVa27x1wO2QVXB/w5EkjAJmJdX9NJ8a4vkiKbr/pw9OV8RKeP1Ny5GtdCkcVk9Q/qWKMsFTUIqPlvuRKb8HHLYTYjaej7NltRhw==;31:+oImrhwy2LSOCS2b4hc3OUR0kekM7qDkR+Sb25R0fzCXJ9TzX83DlW4jw0cuzL+Z3mLVE2daR4182bpth3OC2t9q+ThVfK4Ag4cFDljFR5czvqBdNf+5k08ZFx+lG/rFR2nSY1PFEYaEevpyhWB3fWir/EgDmB8my6uw0eRQyN1KSraNjL4bgrHVQGnBN7HnChtrs3D3slp5sy19aatxENNxl6/Mv9btQuPaLfuJFW8=
+X-MS-TrafficTypeDiagnostic: VI1PR08MB2829:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2829;20:71CL1V/Hzt64F2Il9y5YF6laK8wk0esn5ozcqg7encEiZ5gR1ilBAW3FXch/RvZOZRKCl0vMYtF5Ry/OcjmUgtX9tZF2tlmZ9TE70CaQx9LUj7maEKLnckyPI/4rMFpMl9NZNHcHSuVhvFnDicGtJcv16MgQ81I6e4Aih3GvyAEnRoCzjYZ59YjtPRSvLIYbVC8aOZ2ZdZxQ6kBdufBNCx3uPWzK7IhkUHtZBbkPBk97VUzrcLPwUHqPS1ejImsKBtcmPuypZTusP3mgf/pb73lgf+xHOLy9OfF27FQDkVBvg7Y+c6drJSQDCnzqf/it2hMc+1IX81IPbgMiYWQDm166uZ0xV7MBAed/3bDCD6JYSTrO9ZN+WDo2UNoGmkHv5PmKzYsR4UnKPspe2iPZNdbDfoy2+tE5rmVUmVkI/wY++VaYcJeNBVixFYvFsCMyP6GslH8+zBYz2jCeER1FKrSyNJWnpGXRPefGoC54B5E6nQs9szz3wKfB6F/mENYA;4:exxnxLCWwwuJMXsFpSvpb4QGIuDlscwMVJa+I1gMpCG5TmmmZikkJrrwV9iY4wALqLzL4NIBpTvcxThCvKtmpGb9QVp0JiqLQ0jGKNr20IBCFj4VkC6Kqq5tQ/8bM/nCn/nHBST8fc4mnZCnIeoRYD9SV5q8Y0Kx0kB8Uq56RBeRyQ3164vblI1T5MQiJtyMH631nXbAaIQAg/SrpbhiG6H9XCSREj/FEqWtf7IJLxF0htnWbI+GeKPZx8YXCLpnlsgyhfB43BAm/nhRXZo5vkA9/MfvZZXMAk5mCQOKDn0O8kxQ4ILGgqjdse//yiRD
+X-Microsoft-Antispam-PRVS: <VI1PR08MB2829E7E542260B07B8F9BF10B0CD0@VI1PR08MB2829.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(17755550239193);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(10201501046)(3002001)(93006095)(93001095)(6041288)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:VI1PR08MB2829;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB2829;
 X-Forefront-PRVS: 059185FE08
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(366004)(346002)(396003)(39380400002)(376002)(51344004)(199004)(189003)(64126003)(6116002)(25786009)(3846002)(3260700006)(36756003)(186003)(229853002)(305945005)(575784001)(86362001)(77096007)(26005)(8936002)(16526019)(106356001)(68736007)(15650500001)(31696002)(59450400001)(105586002)(7736002)(93886005)(386003)(65826007)(97736004)(53546011)(23676004)(2486003)(52146003)(81156014)(50466002)(2950100002)(81166006)(2906002)(47776003)(2870700001)(5660300001)(478600001)(52116002)(4326008)(8676002)(6246003)(53936002)(110136005)(58126008)(65806001)(66066001)(16576012)(72206003)(65956001)(6666003)(54906003)(31686004)(316002)(76176011)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1152;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxMTUyOzIzOldtL011bFMwNllZbmxvUlpJRTMzc0FtVnkx?=
- =?utf-8?B?NEVFS25ORkdMWnVTVksxUXhaN3hGNWh1SHF0dDM5ZVpjRzdVUFkrU0t1Qm9t?=
- =?utf-8?B?Q2daTkxId0pZU3BIZmJTNW5sRDBJbXM2eWFvSzB2TEpCS0xNWUZYeXE0djNs?=
- =?utf-8?B?UjQyVjA2WHFWL0RIZ2xvK25RaytpMVRZN25hRDcvWE5ReUUyeWZ6LzJ2Qzl2?=
- =?utf-8?B?WkYyK2dRanoyWDBHOWg0anFPYTUzVmp0d3RWZnRSa1FRY1VGbWpQcnFsek1T?=
- =?utf-8?B?a01TMytwV1RRQk0vNlNQZXNxN1hJOEJUNC8zaGpydkFuRDNSblpWS21MN0t5?=
- =?utf-8?B?bm5SYVZLdmxwYkRQWFpFRG04Q29pYzIxTmYrbHhNVzIwUW1uMTlzTk5UQ3R5?=
- =?utf-8?B?Z0hlRE5JeTRrSGt5VXFGU3owMHB0VkEzN29zRExNY3RxNTlMdDRRYmUzcTZD?=
- =?utf-8?B?VUhXbktIQkcyajg4cWhDaWdPL0cvWE5KTVdtZzk0QjlEUUgxOFdEOWoxTTA3?=
- =?utf-8?B?VzkyZ3drY09qcUZZMzA3UDFDd0xwQjhkTFRlZnkvRzVXT3pXWEJ0Q2JaWkFK?=
- =?utf-8?B?VTlRcHByeStJT2JRemNLSVh2WjRGYnAzN2xSMWhZZFhzKzAyZkdZOUVZakk3?=
- =?utf-8?B?NmxyMnBObFJWOG1IMnViT1cyUVMzL2U1SXZrSkY0c3FKNlJRNGcrNU95M3Vw?=
- =?utf-8?B?NUVwdC9IS3dBQXJWQ0FucTZla0tEeVc4dFlwakRLOVY1ME02Mnd4K293UmEw?=
- =?utf-8?B?VmlmcSs3OHQ5d2kxQ3lQa3FyMUg4aXYzN1hjWWJFaTVNbkpENkRtV04rQ2ls?=
- =?utf-8?B?b2lKTGxCL0dQZlR0b0VIR3YzeEpzdjZ2bkJDbENSd2ZrRDVKbzBvMXkrdFBi?=
- =?utf-8?B?TkNMbWxJQUhEOG9jdWNhTng1b0diRUJzaHRsaUV0eVhBQ0dRNW9WR0JaTFo1?=
- =?utf-8?B?eGNWS201azJ4UlRPMExLNDA3UVZCVC9ieDFRa3ZjbWMvYW5TVnY5RWhLY0Nm?=
- =?utf-8?B?Z25lMHRldnNsbXQwdmZmYk5MelBqaDRxNFZOcWdRbzlSZDUyUzlwNmNMK1hB?=
- =?utf-8?B?UlJwOFpQNE5sN3owRWtoNitQOVFMc2xJc1B1WEs2QVJUTVAxVUgyVHY5OERl?=
- =?utf-8?B?Uk1RTTFzdHZGZ29CcXpGQzE0TnN2eGY1bnpob2w4OGdZa0JrNmFjSk5FZ05K?=
- =?utf-8?B?cmxqZlhEbVM0SXFieDZPd0VBc0FrRHhXdUpTdGVSVWplajU1WXlpU1pYY3h1?=
- =?utf-8?B?bTRmMFh5bmw0ODZtYVFsY0M1a3VEbkxBcU40V25BMVVHaklwRmp1dndKZzVJ?=
- =?utf-8?B?QllhWWJpOFUwQWJ4ZGFFc1B4RWZBT3VYVEZIUE9SVnJtU3lWMFdHMzJoMG1q?=
- =?utf-8?B?Z0ozdEMrWHMyME5kVGdQZFI3TlI1ekVacTJ6NmtTQitCSTVvamF5UjlGdE1a?=
- =?utf-8?B?UE9tWXlmZFBEVkk2alZiUEd1d3F4SUI0cDFpSUFsS0hONTFHTlIybDcvcDAy?=
- =?utf-8?B?cVFUemJKN0ZwZVJYcWhCZDg0bFQ2YmZVdkVISTFNM3ZnaWxLZ1JXNjVDUTJD?=
- =?utf-8?B?SnRHOURmZUpJZTNjWDlneU5YTEFDa0dpVWdsbng2dTkvZXBSdUl4N2JFTVNJ?=
- =?utf-8?B?MVNxK25Mb2M4eFFuT0VlTE52RFRYdnRSWFIxbDc4T1hpSVU0eHlCOE84QzUz?=
- =?utf-8?B?TnJ2Nm50Rjh4dS95MEJ4d3JRSkhBdHFaVjV4M2VJR2t0K1NtWVVqenNtK0F0?=
- =?utf-8?B?andrNXc0Z0JkdVNSOEVmT054OCt2ZjByS1NMSDNkZmMzSEFKVU1rT0pURmY2?=
- =?utf-8?B?N0FURnhpbEdraVRkVDFzTUU2Mkt1S0xmZVZURUVHbCtOSXRxNXBHSkRWTFN3?=
- =?utf-8?B?dWdCSTMyaS80WjUwTVUwaGVpNkl5WWhPTFVJKzV0Y3kvR25RU2h4VlRkSXJ6?=
- =?utf-8?B?Y3RyRmo3K2cxbHJ2V1pSZFFoTWFCVUxrQ2haQmp4RU9hdUNxVGhpMHhLTFNj?=
- =?utf-8?B?MDF5bGtxOThSVXZFWS9DWFgxMFRaMklCVlAvVURGZ0tFN1U2RXpFWnY2MU5F?=
- =?utf-8?Q?4raerWGDwrNIBwyFnc0lZUqdM?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1152;6:uauaCOTJCvYAm68EWmGh68fNvkfBW2skty/rbOuVtLEMVGDj2Pi4OqjO2Vc3bcHkEb/JMVbYSw8DNHUQUxAMLw6AOUHacJS6qq3pcv1w/qb7qCxR/Hv/VO3bfRaFopg+FoECEhz4wTaJZBqASbywGscpw0y2XHca9iU3p67b2v6UFn78dp51QxJKsbVCTGRrl1vTSNtR4cuFQ6NjxkKcIT9bHbs6ByCNlXmB0BKMXwEOVKNjm5wl4H006GX+mSIfDDcy0/A74HcOTpl6s7//D7MRRnClyrBViieTumzAJxLAnHCM4Fn4wYyATkKS5Yt36PCHJ4FIHpC65iLLvggclcvGk20dDI+Lsw51NtZswTg=;5:n/IKhlsGE8nx+Hg6o3yvAZUDJQS2UzpZxyAw1Gr+lP+QKUYXv4+UXoxVDQ9LjigS1HEddZvOHovtuAOnMcmLhGXnW3+X88oXTyZfJA/3XpKSShdlWDSMC+pOIrX6/zlZ5aXhWrB+dz/N8ikKoEBGseqKjjtuf5K9wYcgAOxzrjU=;24:fOzPKcLF+xk1azalP7q9KUBDtGqutSI+ny40FQa8jo407j0jzc92kpXKBrmMXs1pOY2dcL8Q5V0B8ljr2lVZXOpr4YABFMKNpbwDAEOeUeQ=;7:ZdRQ5g/TbLrltPXdQP26Nt2QoqM5FGFE9YDSChFe/1vZbyXubUfq5a+ErWJr/80l7EnfyHndgAI3L67mne/Y+E9F3KlaWbetu4UApo7Uq48c7YmR1VD1p1eDZMt+zU6HwHGj/PxLuX74YCwEDzYhnpr6PxUVFz0zv246xD/e0R6u8KoHgoTSokntnbBQYV/OpV1qVt5H8Nx7f6yU3Okt1ahk845Vab9qsSJnaAm99nNAxDLmtj/30PeRWTrVLBsV
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(366004)(376002)(346002)(39380400002)(39840400004)(396003)(377424004)(199004)(189003)(39060400002)(8936002)(25786009)(76176011)(106356001)(86362001)(8676002)(105586002)(81166006)(81156014)(59450400001)(52146003)(23676004)(31686004)(478600001)(97736004)(2486003)(93886005)(52116002)(68736007)(31696002)(6116002)(3846002)(77096007)(26005)(186003)(36756003)(6916009)(2950100002)(6666003)(47776003)(16526019)(53936002)(6246003)(230700001)(54906003)(58126008)(229853002)(316002)(386003)(4326008)(2906002)(16576012)(53546011)(65826007)(50466002)(64126003)(5660300001)(7736002)(65956001)(65806001)(6486002)(305945005)(55236004)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB2829;H:[172.16.25.12];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4TUIyODI5OzIzOnYvK1pTUWhlQ2tacHdKOU1MQUdqb2JyV0V2?=
+ =?utf-8?B?RndZb1Axc2xTeUdNTFdqdFAyczJBQlZYU1BYNzJrRzg0M1l5eVZlYW1kTkR3?=
+ =?utf-8?B?UTVueWF5TG42OXhRek8zL1dERGN5TXFFQTlYdERXeFdBeklJN2tnVU1DMnBD?=
+ =?utf-8?B?UlNUUjRjNnovaWpYM0dYbDI1R0JLbXFOeTJBTjhFNXk5Mkw3V041UHhTeVBx?=
+ =?utf-8?B?ZmR3N1ZLOE9JQ3BtQW9ZOTBRVVg1NkVyd3ZjYnl2RlY0cnp4WXhrUytOQU5R?=
+ =?utf-8?B?UXJQVGtrR0hpSUw2V3VFTEk1Vk9OWkViZ2MzQnlvRlJiNGZybjNTUklRc2tM?=
+ =?utf-8?B?SWtaVmlEdWVFVUpacnQrVTFRR3lKNlkvTVZCRjBZbDlyK2VqMWxhVEwxelRP?=
+ =?utf-8?B?dXBuSDFENWdDSjNQTE1aZ0l5K0xyTHVDUlN1cTM2VnFueGI3bXVGOFFETHhi?=
+ =?utf-8?B?R2kybkdjUExYOUdRRzZRZkpGSE51RUR1dlNhd0VPRGYzZ2MwbEJZMHZJazYy?=
+ =?utf-8?B?dmxUSmhlcUIzWjVhRUZhZEg4SUV1aVdnTGp3bnFnSVZka2RJYUhid1B6aXJN?=
+ =?utf-8?B?RC9jRXVidlpNRm0rdDR0TkZVYlJ6S0pGa25oU2VjbW5HMVNJUjJoVHc0ZUVB?=
+ =?utf-8?B?ZjBiRFkwMWQ1K2RtTExtS1VkNFltQUJwTk9SRWJ1dXpqa2hRcUR3cTBSTjJj?=
+ =?utf-8?B?bjhrNzhodS9zcUNxYklrRWQ0a1Fpc3pRUDNnRkVMaEhwZFprY0JxZExZWkEv?=
+ =?utf-8?B?MjdzNUhWNEVjb245UnFVRDlKaldaaENmclF0Ulk4SjFtNmZ4WkFQQWU0RnU5?=
+ =?utf-8?B?ZlA3WTQ0MzV1WER1b1RVT1doSXZVTFpBazZMYWJ3S211bTV2a3k2TnR4WWF3?=
+ =?utf-8?B?MXlyaFZIdnVMK3lPVVJmL2Fvb0hRb2JQbWtCYWIxdmxZNDhJQ3ExV0lRa0dR?=
+ =?utf-8?B?cXltODFScHNOU2I2TXg2TnVndGlHYU56MjdWb3Z6T05LQWtka20zejVJUXk5?=
+ =?utf-8?B?NWpWd1BraTAyODF6eGFqbGIzN2t0L2kwempmOXZ5eURsTTF0L1pPcHA1a3F5?=
+ =?utf-8?B?TjVWUUZSRW0vcU5PV21xdXQrOTV5dnpoc1VKc0pPWjJZbElQZU1KRmhSdGV6?=
+ =?utf-8?B?V2h2VHNSRUFjbWdXaTdsK0JyQlJ2TzZLT0RRUU5mQ2FqOUVvclVST1pEQks1?=
+ =?utf-8?B?YlV4OW5TVkY5TjFDY0wrNkhkSzNOOXczV3dHVTlvVEw3Z2pEZ3FrbU4rdlJO?=
+ =?utf-8?B?QlExZ3JFNFlwVGI0RVF0N3F0Vlp0b2hTTm5QSTNyOGlzVGcwVDVaTC9Bektv?=
+ =?utf-8?B?Mlhnc2N2dXREVkEzeXBSWEJTZW5QMFI1ank5V0RPR1lLWjR0Q3lGRGxRb0Jh?=
+ =?utf-8?B?MjRnbktTYWxwZTE5UXQreXpGNkZpVit1cHJTaWxUNkhZYmRsZmNlTVlMZ1dQ?=
+ =?utf-8?B?dVhVNE9VQjJManpsMmN5U1E3YzB1V0JwQkQvZFZ1SHRzYnd5eWdhWmVEMGdy?=
+ =?utf-8?B?T0NSWGd0YndNK3hiY2xUV0hMbTZ5MDNvcTR6MytJcWRRNHpIUVlVUmpTUnAv?=
+ =?utf-8?B?MWVmUXZqU1NneElpV0J5ZytrRCt5YzhSOEwxQ3lLbkx6VGdOYVErWGhyMXIv?=
+ =?utf-8?B?ekRRbHZsYVhSbVNGS3RJMVFXTDNKamx5cTlJYUdJQzFYazlVSmthTmxtMjNo?=
+ =?utf-8?B?SGM5amwyLytjNUFReFVxMXdMNGsxaXl1R3djRXhvcHNuT0dZTDVaT2V4NVAz?=
+ =?utf-8?B?NDVBa1cwQm9VdFdJbjBDMXE5OXpBcW5KUXNJOFljVmNmYm1ncGhPbWNhRWdH?=
+ =?utf-8?B?d1dkZW5vdTNZSVR0MnJXeXExUm5ENFlTMDd1OTIrYUh5MzFpdGRWbmtGUURJ?=
+ =?utf-8?B?dzlzcUdyUXpyVUR6aTZzOHZuS29JcjMzdU5RZ0tGT3l2RXY2ZkhQaVZabThN?=
+ =?utf-8?B?WkxiUm5QS2tCSCszNFZZanFrY09PRXlkYzlETkhaSXYya2hwWmpVRFB0V3dm?=
+ =?utf-8?B?cVMyU0pRWWhZb1lzRnZVNmVzQmNINlNLRWJmZz09?=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2829;6:B9r2afQalsbBYqgtL/Dkj2TSCTPiu2+GekoG76cbJGrTRheQ3TjiYs3BS4kSlVjgyWZ0RxjnH/lgIVDzYwq6deGLg8Aqf6yDYSRODOIep4IslwVBcvu1IU1XTnf80r0hgvKAWrMv7wsVVfpJym+EVhhtmMglJHwtpn4dASBFTfYY9W5S0uJoKWq9cRJ1VvteMywoz16izO6cIBoBftUK/MYGCiEQAUHp2UFKP5O5r5MCUMk3OOa28D+BxKhpN8Fh1AoPlTfVs2jTA7ir6Pds2Dhf5jRCp84+ZB88Yaar97bkfhe8a3juOqI32Ii+2cj+yFqEd4QEi/ZcHqtEOZBU2Kk/mOlluMjAes/g525Y8nY=;5:EQkcMVUyIQhD+0o7NPulaPcpvxDWhomVe672m9iymnAvDr7aOgPHDoPKcmnaHiqL+2C8FA+8ywGU+5vKmhXZ1tgay4YwKEYGsOMKnNT/VSnpZg7paZP1Y8jkmkDx2V5E8Kl8JCG8mAtAYS+3XKlB+MCdmk5LG1+EdiCBhy1TsmI=;24:cAJziarUzJVEejhAATh0DqD2MUxjw3hTOBwwETekDOAM7nUxv8U1gmHsVSVOUYjB++1dTj0agafaYQ5vZAIGuTInsHNk001MJdYtHAQDdY4=;7:GjbXufFv2bJ0HQCw9UOn3AZGWtsKM/w0sGVEpkvHfIrm/7BVdekZVluiQEdYcEuRCtyJ/HHSUCsE9G5xafjyUt5lnBiP99En0t4EZELIZ4MSpgiin3fBbuZxX+J+fbAZi2HAmTzjZ49QZkCfYEVuLpfF6chU0UQfLMq7QyGBk2G/If3UBOH3135M4H7l6SlO6ootKxdVn5VQiPAwMkQWe0dqcrv/FwJyOWc3OLRCVFgLlC1s2o73qMif/uPjLKmr
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1152;20:Isqt1J1wafF2OjXCSLGawQsQsgeXwst+aiv4N8ObbZqU2J8Ww0HABa9fNykzIZ84gsJaNWdhVsPOMIDiCLpIbM33oiPpDw+Plqs/li9MkhK0iVLZ1gE7z+2ibxnXiNPrd5vUZLUk3/wytGNzwA88sbTNnoK0A+VwJWSSS/9dMEiruzQIqZUSELIJPTKomKJCe1gs0gXNaQ9/dKA9p39EBaD5Ck4nk/YULpDqeXvHn0KKMBswn37Pn8UFETwAGbw2
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2018 15:36:18.7202 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 860fc800-786d-4896-fa96-08d57a0a0518
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2829;20:E5aWUnaKFnllCOeUHk5asvR2D+Wu1cQx4dI00hk9n06f8TQELJGAoAR/F4di7LKCBE/YwI86ZDGDFCIcJ2iwjb0Uupq8qOgJUI9zgJr3A62rWH6tl5FQQAxCl3wEgO1NMqfDUJ0KoEYDzo4Yo5yFnkW1h3J+Hwd7Vnbxl77tLhA=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2018 15:37:39.7674 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 063dc68c-5d54-482a-8efb-08d57a0a356c
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1152
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2829
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/2018 2:13 PM, Raj, Ashok wrote:
-> On Wed, Feb 21, 2018 at 08:06:11PM +0100, Borislav Petkov wrote:
->>>  arch/x86/kernel/cpu/microcode/core.c  | 113 +++++++++++++++++++++++++++++-----
+
+
+On 02/22/2018 06:33 PM, Michal Hocko wrote:
+> On Thu 22-02-18 18:13:11, Andrey Ryabinin wrote:
 >>
->> This is generic so Tom needs to ack whatever we end up doing for the AMD
->> side.
-> 
-> Yes, i did ping Tom to check if this is ok with them.
-
-I did some testing with these patches and didn't notice any issues on my
-EPYC system.  At the moment, I currently don't have access to anything
-older on which to test.  But I don't believe there should be any issues
-with this approach.  I'll retest when we get closer to the final version
-of the patch.
-
-Thanks,
-Tom
-
-> >>
->>>  arch/x86/kernel/cpu/microcode/intel.c |   1 +
->>>  2 files changed, 98 insertions(+), 16 deletions(-)
+>>
+>> On 02/22/2018 05:09 PM, Michal Hocko wrote:
+>>> On Thu 22-02-18 16:50:33, Andrey Ryabinin wrote:
+>>>> On 02/21/2018 11:17 PM, Andrew Morton wrote:
+>>>>> On Fri, 19 Jan 2018 16:11:18 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+>>>>>
+>>>>>> And to be honest, I do not really see why keeping retrying from
+>>>>>> mem_cgroup_resize_limit should be so much faster than keep retrying from
+>>>>>> the direct reclaim path. We are doing SWAP_CLUSTER_MAX batches anyway.
+>>>>>> mem_cgroup_resize_limit loop adds _some_ overhead but I am not really
+>>>>>> sure why it should be that large.
+>>>>>
+>>>>> Maybe restarting the scan lots of times results in rescanning lots of
+>>>>> ineligible pages at the start of the list before doing useful work?
+>>>>>
+>>>>> Andrey, are you able to determine where all that CPU time is being spent?
+>>>>>
+>>>>
+>>>> I should have been more specific about the test I did. The full script looks like this:
+>>>>
+>>>> mkdir -p /sys/fs/cgroup/memory/test
+>>>> echo $$ > /sys/fs/cgroup/memory/test/tasks
+>>>> cat 4G_file > /dev/null
+>>>> while true; do cat 4G_file > /dev/null; done &
+>>>> loop_pid=$!
+>>>> perf stat echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
+>>>> echo -1 > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
+>>>> kill $loop_pid
+>>>>
+>>>>
+>>>> I think the additional loops add some overhead and it's not that big by itself, but
+>>>> this small overhead allows task to refill slightly more pages, increasing
+>>>> the total amount of pages that mem_cgroup_resize_limit() need to reclaim.
+>>>>
+>>>> By using the following commands to show the the amount of reclaimed pages:
+>>>> perf record -e vmscan:mm_vmscan_memcg_reclaim_end echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
+>>>> perf script|cut -d '=' -f 2| paste -sd+ |bc
+>>>>
+>>>> I've got 1259841 pages (4.9G) with the patch vs 1394312 pages (5.4G) without it.
 >>>
->>> diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
->>> index aa1b9a4..af0aeb2 100644
->>> --- a/arch/x86/kernel/cpu/microcode/core.c
->>> +++ b/arch/x86/kernel/cpu/microcode/core.c
->>> @@ -31,6 +31,9 @@
->>>  #include <linux/cpu.h>
->>>  #include <linux/fs.h>
->>>  #include <linux/mm.h>
->>> +#include <linux/nmi.h>
->>> +#include <linux/stop_machine.h>
->>> +#include <linux/delay.h>
->>>  
->>>  #include <asm/microcode_intel.h>
->>>  #include <asm/cpu_device_id.h>
->>> @@ -489,19 +492,82 @@ static void __exit microcode_dev_exit(void)
->>>  /* fake device for request_firmware */
->>>  static struct platform_device	*microcode_pdev;
->>>  
->>> -static enum ucode_state reload_for_cpu(int cpu)
->>> +static struct ucode_update_param {
->>> +	spinlock_t ucode_lock;
->>> +	atomic_t   count;
->>> +	atomic_t   errors;
->>> +	atomic_t   enter;
->>> +	int	   timeout;
->>> +} uc_data;
->>> +
->>> +static void do_ucode_update(int cpu, struct ucode_update_param *ucd)
->>>  {
->>> -	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
->>> -	enum ucode_state ustate;
->>> +	enum ucode_state retval = 0;
->>>  
->>> -	if (!uci->valid)
->>> -		return UCODE_OK;
->>> +	spin_lock(&ucd->ucode_lock);
->>> +	retval = microcode_ops->apply_microcode(cpu);
->>> +	spin_unlock(&ucd->ucode_lock);
+>>> So how does the picture changes if you have multiple producers?
+>>>
 >>
->> What's the spinlock protecting against?
+>> Drastically, in favor of the patch. But numbers *very* fickle from run to run.
+>>
+>> Inside 5G vm with  4 cpus (qemu -m 5G -smp 4) and 4 processes in cgroup reading 1G files:
+>> "while true; do cat /1g_f$i > /dev/null; done &"
+>>
+>> with the patch:
+>> best: 1.04  secs, 9.7G reclaimed
+>> worst: 2.2 secs, 16G reclaimed.
+>>
+>> without:
+>> best: 5.4 sec, 35G reclaimed
+>> worst: 22.2 sec, 136G reclaimed
 > 
-> This is ensuring no 2 cpus do ucode update at the same time.
+> Could you also compare how much memory do we reclaim with/without the
+> patch?
 > 
-> Since all cpus wait for all the online cpus to arrive in stop_machine handler.
-> Once we let go, every cpu tries to update. This just serializes against that.
-> 
->>
->> We hold the hotplug lock and the microcode mutex. And yet interrupts are
->> still enabled. So what's up?
-> 
-> hotplug lock/microcode mutex are at global level, these are 
-> protecting individual cpus in stop machine trying to update microcode.
-> 
-> these are called while in stop_machine() so i think interrupts are disabled IRC.
-> 
->>
->>
->>> +	if (retval > UCODE_NFOUND) {
->>> +		atomic_inc(&ucd->errors);
->>
->> You don't need ->errors. Simply propagate retval from do_ucode_update().
->> Or compare ucd->count to the number of CPUs. Or something like that.
-> 
-> That's what we are doing here, but simply returning number of cpus
-> that encountered failure instead of a per-cpu retval
-> like before.
-> 
-> I use ucd->count to use as an exit rendezvous.. to make sure we leave only
-> after all cpus have done updating ucode.
-> 
->>> +		pr_warn("microcode update to cpu %d failed\n", cpu);
->>> +	}
->>> +	atomic_inc(&ucd->count);
->>> +}
->>> +
->>> +/*
->>> + * Wait for upto 1sec for all cpus
->>> + * to show up in the rendezvous function
->>> + */
->>> +#define MAX_UCODE_RENDEZVOUS	1000000000 /* nanosec */
->>
->> 				1 * NSEC_PER_SEC
->>
->>> +#define SPINUNIT		100	   /* 100ns */
->>> +
->>> +/*
->>> + * Each cpu waits for 1sec max.
->>> + */
->>> +static int ucode_wait_timedout(int *time_out, void *data)
->>> +{
->>> +	struct ucode_update_param *ucd = data;
->>> +	if (*time_out < SPINUNIT) {
->>> +		pr_err("Not all cpus entered ucode update handler %d cpus missing\n",
->>> +			(num_online_cpus() - atomic_read(&ucd->enter)));
->>> +		return 1;
->>> +	}
->>> +	*time_out -= SPINUNIT;
->>> +	touch_nmi_watchdog();
->>> +	return 0;
->>> +}
->>> +
->>> +/*
->>> + * All cpus enter here before a ucode load upto 1 sec.
->>> + * If not all cpus showed up, we abort the ucode update
->>> + * and return. ucode update is serialized with the spinlock
->>
->> ... and yet you don't check stop_machine()'s retval and issue an error
->> message that it failed.
->>
-> 
-> Will add that 
-> 
->>> + */
->>> +static int ucode_load_rendezvous(void *data)
->>
->> The correct prefix is "microcode_"
->>
->>> +{
->>> +	int cpu = smp_processor_id();
->>> +	struct ucode_update_param *ucd = data;
->>> +	int timeout = MAX_UCODE_RENDEZVOUS;
->>> +	int total_cpus = num_online_cpus();
->>>  
->>> -	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
->>> -	if (ustate != UCODE_OK)
->>> -		return ustate;
->>> +	/*
->>> +	 * Wait for all cpu's to arrive
->>> +	 */
->>> +	atomic_dec(&ucd->enter);
->>> +	while(atomic_read(&ucd->enter)) {
->>> +		if (ucode_wait_timedout(&timeout, ucd))
->>> +			return 1;
->>> +		ndelay(SPINUNIT);
->>> +	}
->>> +
->>> +	do_ucode_update(cpu, ucd);
->>>  
->>> -	return apply_microcode_on_target(cpu);
->>> +	/*
->>> +	 * Wait for all cpu's to complete
->>> +	 * ucode update
->>> +	 */
->>> +	while (atomic_read(&ucd->count) != total_cpus)
->>> +		cpu_relax();
->>> +	return 0;
->>>  }
->>>  
->>>  static ssize_t reload_store(struct device *dev,
->>> @@ -509,7 +575,6 @@ static ssize_t reload_store(struct device *dev,
->>>  			    const char *buf, size_t size)
->>>  {
->>>  	enum ucode_state tmp_ret = UCODE_OK;
->>> -	bool do_callback = false;
->>>  	unsigned long val;
->>>  	ssize_t ret = 0;
->>>  	int cpu;
->>> @@ -523,21 +588,37 @@ static ssize_t reload_store(struct device *dev,
->>>  
->>>  	get_online_cpus();
->>>  	mutex_lock(&microcode_mutex);
->>> +	/*
->>> +	 * First load the microcode file for all cpu's
->>> +	 */
->>
->> It is always "CPU" or "CPUs". Fix all misspelled places.
->>
->>>  	for_each_online_cpu(cpu) {
->>
->> You need to fail loading and not even try when not all cores are online.
->> And issue an error message.
->>
-> 
-> When we online any of the offline cpu's we do a microcode load again right? 
-> 
-> I did check with offlining 2 threads of the same core offline, then reload with a 
-> new version of microcode. Online the new cpus i did find the microcode was updated 
-> during online process.
-> 
-> Since offline ones don't participate in any OS activity  thought its ok to 
-> update everything that is available and visitible to the OS.
-> 
-> If BIOS has turned off cores due to some failures and didn't expose
-> in MADT during boot, we will never get a chance to update online.
-> 
->>> -		tmp_ret = reload_for_cpu(cpu);
->>> +		tmp_ret = microcode_ops->request_microcode_fw(cpu,
->>> +				&microcode_pdev->dev, true);
->>
->> This needs to happen only once - not per CPU. Let's simply forget
->> heterogeneous microcode revisions.
-> 
-> Sounds good.. let me take a look at this.
-> 
->>
->>>  		if (tmp_ret > UCODE_NFOUND) {
->>> -			pr_warn("Error reloading microcode on CPU %d\n", cpu);
->>> +			pr_warn("Error reloading microcode file for CPU %d\n", cpu);
->>>  
->>>  			/* set retval for the first encountered reload error */
->>>  			if (!ret)
->>>  				ret = -EINVAL;
->>
->> You can't continue loading here if you've encountered an error.
-> 
-> Sounds good.
->>
->>>  		}
->>> -
->>> -		if (tmp_ret == UCODE_UPDATED)
->>> -			do_callback = true;
->>>  	}
->>> +	pr_debug("Done loading microcode file for all cpus\n");
->>>  
->>> -	if (!ret && do_callback)
->>> +	memset(&uc_data, 0, sizeof(struct ucode_update_param));
->>> +	spin_lock_init(&uc_data.ucode_lock);
->>> +	atomic_set(&uc_data.enter, num_online_cpus());
->>> +	/*
->>> +	 * Wait for a 1 sec
->>> +	 */
->>> +	uc_data.timeout = USEC_PER_SEC;
->>> +	stop_machine(ucode_load_rendezvous, &uc_data, cpu_online_mask);
->>> +
->>> +	pr_debug("Total CPUS = %d uperrors = %d\n",
->>> +		atomic_read(&uc_data.count), atomic_read(&uc_data.errors));
->>> +
->>> +	if (atomic_read(&uc_data.errors))
->>> +		pr_warn("Update failed for %d cpus\n", atomic_read(&uc_data.errors));
->>> +	else
->>>  		microcode_check();
->>
->> This whole jumping through hoops needs to be extracted away in a
->> separate function.
-> 
-> Not sure what you mean by jumping through hoops need to be extracted away.. 
-> 
->>
->> Ok, that should be enough review for now. More with v2.
->>
->> -- 
->> Regards/Gruss,
->>     Boris.
->>
->> SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
->> -- 
+
+I did and I wrote the results. Please look again.
