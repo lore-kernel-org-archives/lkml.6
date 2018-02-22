@@ -1,53 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932093AbeBVLe7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:34:59 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59563 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753669AbeBVLe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:34:57 -0500
-Message-ID: <1519299294.7447.4.camel@pengutronix.de>
-Subject: Re: [PATCH v4] reset: add support for non-DT systems
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
-Date: Thu, 22 Feb 2018 12:34:54 +0100
-In-Reply-To: <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
-References: <20180219165837.28913-1-brgl@bgdev.pl>
-         <72cd2af4-ed6b-8c1b-2488-b999976b894a@lechnology.com>
-         <1519123185.3470.5.camel@pengutronix.de>
-         <8ef4b901-f38d-d885-e7bc-657202a2e248@lechnology.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1753658AbeBVLiZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:38:25 -0500
+Received: from foss.arm.com ([217.140.101.70]:39482 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753531AbeBVLiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:38:24 -0500
+Date: Thu, 22 Feb 2018 11:38:19 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: shankerd@codeaurora.org, Philip Elcan <pelcan@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+Message-ID: <20180222113818.6cknpwfbed2ab2nd@lakrids.cambridge.arm.com>
+References: <1519220946-13901-1-git-send-email-shankerd@codeaurora.org>
+ <20180221150929.hkvtwu4fgfeis5cy@salmiak>
+ <5be4684b-e2d8-1b3b-4c96-03c7dae0b619@codeaurora.org>
+ <0eb2d23b-cf96-c7ff-9820-16ed113f4862@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0eb2d23b-cf96-c7ff-9820-16ed113f4862@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-20 at 10:40 -0600, David Lechner wrote:
-[...]
-> > In your case the platform code that adds the lookup may be identical to
-> > the code that registers the struct reset_controller_dev, but that
-> > doesn't have to be the case. I'm not sure how that is supposed to work
-> > for the phy framework (I see no platform code adding phy lookups, only
-> > drivers).
+On Wed, Feb 21, 2018 at 04:51:40PM +0000, Robin Murphy wrote:
+> On 21/02/18 16:14, Shanker Donthineni wrote:
+> [...]
+> > > > @@ -1100,6 +1114,20 @@ static int cpu_copy_el2regs(void *__unused)
+> > > >   		.enable = cpu_clear_disr,
+> > > >   	},
+> > > >   #endif /* CONFIG_ARM64_RAS_EXTN */
+> > > > +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+> > > > +	{
+> > > > +		.desc = "DCache clean to POU",
+> > > 
+> > > This description is confusing, and sounds like it's describing DC CVAU, rather
+> > > than the ability to ellide it. How about:
 > > 
-> In our use case, we would be adding the lookup in the driver rather than
-> in the platform code, which is why I am suggesting doing it like the phy
-> framework.
+> > Sure, I'll take your suggestion.
+> 
+> Can we at least spell "elision" correctly please? ;)
 
-Shouldn't it be the job of the platform code to describe the connections
-between reset controller and peripheral module reset
-inputs?
+Argh. Yes.
 
-regards
-Philipp
+> Personally I read DIC and IDC as "D-cache to I-cache coherency" and "I-cache
+> to D-cache coherency" respectively (just my interpretation, I've not looked
+> into the spec work for any hints of rationale), but out loud those do sound
+> so poorly-defined that keeping things in terms of the required maintenance
+> probably is better.
+
+So long as we have (IDC) and (DIC) in the text to avoid ambiguity, I'm
+not that worried either way.
+
+Thanks,
+Mark.
