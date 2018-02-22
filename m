@@ -1,55 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753802AbeBVMP0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:15:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42253 "EHLO mx2.suse.de"
+        id S932172AbeBVMPa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:15:30 -0500
+Received: from mout.gmx.net ([212.227.17.22]:35501 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753640AbeBVMPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:15:25 -0500
-Date: Thu, 22 Feb 2018 13:15:06 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Raj, Ashok" <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: Re: [v2 1/3] x86/microcode/intel: Check microcode revision before
- updating sibling threads
-Message-ID: <20180222121506.GC27489@pd.tnic>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
- <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
- <20180222110056.GA27489@pd.tnic>
- <20180222115554.GA3797@araj-mobl1.jf.intel.com>
+        id S1753807AbeBVMP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:15:27 -0500
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mm@kvack.org, Joel Stanley <joel@jms.id.au>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH 0/5] PPC32/ioremap: Use memblock API to check for RAM
+Date: Thu, 22 Feb 2018 13:15:11 +0100
+Message-Id: <20180222121516.23415-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180222115554.GA3797@araj-mobl1.jf.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Provags-ID: V03:K0:gQsiFhYfVzo08wQtRSeqGLFC5PnJ/rvxEVNC2h7xNHlDQtAFmkx
+ EmJj/14wlE1RWzIpOv7a1qI4ZyDMyTmP5V3V1JZmdYHpZ/XOjC9H1qsSdnafpwH6moBvXsB
+ UymaJcgDTcaPdcC5gEOsrm7DzwNHbG39g/UpFS4ljNiQacQWwu+os+AKZH29ZSfd0Qp+114
+ 1UaplI1Uw27bB9AhP7UNA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mRRVAmOKh9g=:+6id9Ow8zog9sAaku0cX5h
+ MXETL2ANPYE3G4O7tq5/wKsLs2s6vUIOeq6oTx2HMLMyPLT9kD3phFqIo9jc/B2XcGNnpXYL/
+ UvRiReyGckf+E7GQaTZaOWtQ+pXsHUiI7dSBh86SnuNKl6LqgttAkZzRvl67QC+22EW+3HuM6
+ EFty/U6PYgE1t/c5CdqU1DQlga49m2yHzom499DgIUp0PjCTINyu4r+WJ4c33r8iVLCIvHUw7
+ ko+yenNG6+abc1ANmMTaBwxgTjXzsCq83RoX6K3QqBDhpWGjxSO70zN9zrYCI0UX+IRoFO7SP
+ JY/IhP1uyntD3WWRwjy/UXwKUhoBH2Il9engQe6N2E4hC9hiOrmxybVzPgJCY3OAuoQCEWcsW
+ IwjyYjDpI/FvWOq7OBfFP8bKx1MWu1HVHRjQS8UhGM9tngmMDyNxNn1n2MkcHPVI5t5xjYNWM
+ 5Fw2CnZGm91yYnvQvM5q2NKJZCQyuvHzZzIjpQvubXpZ2CMjN1aOm2wdjFpWP6JOdMF0MZ3qL
+ sZerGjNr7ycP566MnpT2p2klzelEOG4bvXQbgYF80LrrkW6Of+dPmbjP3tC6FIgmqg41LeEz4
+ IRT72MPPqIyL05t0PS323Zbl+nkQo3MHXYC7rRroSKclrE+xqbrc/K/CvYKtVTiocswTfeZet
+ 9Pdge3XakFxIgl5gJrU84Td0uzX85NfDWwq99Lqd/c/eIpMptwUbwgPOLVSiBEuwthSt/Ti9c
+ bKdPDw4d5aeKq9+A9AdKGJamlKXf7igasUefMGi4YmGoAPmJKB1s8trLng3Wh8JOaPiNsgSnh
+ r6amVnG9Gc7+CBn7cFWGSHCUE2oi9K0r5mHqbOCD4LOiSl0lJg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 03:55:54AM -0800, Raj, Ashok wrote:
-> The current code wasn't trying to enforce checking the loaded microcode revision on a thread
-> before attempting to load the microcode. While you comeback from resume, if C0T0 already
-> is up, and we loaded the early microcode, then when handling C0T1 there is no need to 
-> do a wrmsrl to reapply microcode since its already loaded as part of C0T0. 
+This patchset solves the same problem as my previous one[1] but follows
+a rather different approach. Instead of implementing DISCONTIGMEM for
+PowerPC32, I simply switched the "is this RAM" check in __ioremap_caller
+to the existing page_is_ram function, and unified page_is_ram to search
+memblock.memory on PPC64 and PPC32.
 
-And I'm asking exactly this: is it simply "we don't need to do WRMSR" or
-"we should not"?
+The intended result is, as before, that my Wii can allocate the MMIO
+range of its GPIO controller, which was previously not possible, because
+the reserved memory hack (__allow_ioremap_reserved) didn't affect the
+API in kernel/resource.c.
 
-Because avoiding the WRMSR costs more than simply doing it and letting
-the HT thread ignore the supplied microcode.
+Thanks to Christophe Leroy for reviewing the previous patchset.
 
-If it is "we don't need to but there's nothing wrong when we do it" then
-we don't need this patch. And I'm pretty sure "nothing wrong when we do
-it" would be the answer. Otherwise we have bigger problems.
+[1]: https://www.spinics.net/lists/kernel/msg2726786.html
+
+Jonathan Neuschäfer (5):
+  powerpc: mm: Simplify page_is_ram by using memblock_is_memory
+  powerpc: mm: Use memblock API for PPC32 page_is_ram
+  powerpc/mm/32: Use page_is_ram to check for RAM
+  powerpc: wii: Don't rely on the reserved memory hack
+  powerpc/mm/32: Remove the reserved memory hack
+
+ arch/powerpc/mm/init_32.c                |  5 -----
+ arch/powerpc/mm/mem.c                    | 12 +-----------
+ arch/powerpc/mm/mmu_decl.h               |  1 -
+ arch/powerpc/mm/pgtable_32.c             |  4 +---
+ arch/powerpc/platforms/embedded6xx/wii.c | 14 +-------------
+ 5 files changed, 3 insertions(+), 33 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+2.16.1
