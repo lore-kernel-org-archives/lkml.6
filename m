@@ -1,160 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932279AbeBVMgL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:36:11 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46217 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932077AbeBVMgI (ORCPT
+        id S932251AbeBVMhe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:37:34 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37018 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753774AbeBVMhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:36:08 -0500
-Date: Thu, 22 Feb 2018 13:36:00 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Message-ID: <20180222123600.GM7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <56271779.hLAmkO6BAC@avalon>
- <20180222120412.GL7203@w540>
- <2864762.IPlziE6Y0S@avalon>
+        Thu, 22 Feb 2018 07:37:33 -0500
+Date: Thu, 22 Feb 2018 13:37:20 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] MAINTAINERS: Update email address for Miquel Raynal
+Message-ID: <20180222133720.3d89ec11@bbrezillon>
+In-Reply-To: <20180219225759.3427-1-miquel.raynal@bootlin.com>
+References: <20180219225759.3427-1-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2864762.IPlziE6Y0S@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Mon, 19 Feb 2018 23:57:59 +0100
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-On Thu, Feb 22, 2018 at 02:14:53PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> On Thursday, 22 February 2018 14:04:12 EET jacopo mondi wrote:
-> > On Wed, Feb 21, 2018 at 10:28:06PM +0200, Laurent Pinchart wrote:
-> > > On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
-> > > > On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
-> > > > > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
-> > > > >> The sensor driver sets mbus format colorspace information and sizes,
-> > > > >> but not ycbcr encoding, quantization and xfer function. When supplied
-> > > > >> with an badly initialized mbus frame format structure, those fields
-> > > > >> need to be set explicitly not to leave them uninitialized. This is
-> > > > >> tested by v4l2-compliance, which supplies a mbus format description
-> > > > >> structure and checks for all fields to be properly set.
-> > > > >>
-> > > > >> Without this commit, v4l2-compliance fails when testing formats with:
-> > > > >> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
-> > > > >>
-> > > > >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > >> ---
-> > > > >>
-> > > > >>  drivers/media/i2c/ov7670.c | 4 ++++
-> > > > >>  1 file changed, 4 insertions(+)
-> > > > >>
-> > > > >> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > > > >> index 25b26d4..61c472e 100644
-> > > > >> --- a/drivers/media/i2c/ov7670.c
-> > > > >> +++ b/drivers/media/i2c/ov7670.c
-> > > > >> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct
-> > > > >> v4l2_subdev
-> > > > >> *sd, fmt->height = wsize->height;
-> > > > >>
-> > > > >>  	fmt->colorspace = ov7670_formats[index].colorspace;
-> > > > >
-> > > > > On a side note, if I'm not mistaken the colorspace field is set to
-> > > > > SRGB
-> > > > > for all entries. Shouldn't you hardcode it here and remove the field ?
-> > > > >
-> > > > >> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-> > > > >> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-> > > > >> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-> > > > >
-> > > > > How about setting the values explicitly instead of relying on defaults
-> > > > > ?
-> > > > > That would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
-> > > > > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see
-> > > > > if
-> > > > > the sensor outputs limited or full range ?
-> > > >
-> > > > This actually makes me wonder if those informations (ycbcb_enc,
-> > > > quantization and xfer_func) shouldn't actually be part of the
-> > > > supported format list... I blindly added those default fields in the
-> > > > try_fmt function, but I doubt they applies to all supported formats.
-> > > >
-> > > > Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
-> > > > RGB 565) and 1 raw format (BGGR). I now have a question here:
-> > > >
-> > > > 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
-> > > > applies to RGB and raw formats? I don't think so, and what value is
-> > > > the correct one for the ycbcr_enc field in this case? I assume
-> > > > xfer_func and quantization applies to all formats instead..
-> > >
-> > > There's no encoding for RGB formats if I understand things correctly, so
-> > > I'd set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function and
-> > > the quantization apply to all formats, but I'd be surprised to find a
-> > > sensor outputting limited range for RGB.
-> >
-> > Ack, we got the same understanding for RGB formats. I wonder if for
-> > those formats we wouldn't need a V4L2_YCBCR_ENC_NONE or similar...
->
-> That, or explicitly documenting that when the format is not YUV the field
-> should be set by both drivers and applications to V4L2_YCBCR_ENC_DEFAULT when
-> written and ignored when read.
->
+> Free Electrons is now Bootlin.
 
-Well, if no encoding is performed because the color encoding scheme is
-RGB, the colorspace does anyway define an encoding method, so it seems
-to me the latter is more appropriate (use DEFAULT and ignore when read).
+Applied.
 
-That's anyway just my opinion, but I could send a patch for
-documentation and see what feedback it gets.
+Thanks,
 
-> > > Have you been able to check whether the sensor outputs limited range of
-> > > full range YUV ? If it outputs full range you can hardcode quantization
-> > > to V4L2_QUANTIZATION_FULL_RANGE for all formats.
-> >
-> > In YUYV mode, I see values > 0xf0 ( > 240, which is the max value for
-> > CbCr samples in limited quantization range), so I assume quantization
-> > is full range.
->
-> It should be, yes. What's the minimum and maximum values you get ?
+Boris
 
->From a white surface:
-min = 0x39
-max = 0xfc
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .mailmap    | 1 +
+>  MAINTAINERS | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index e18cab73e209..6cc2d5a94cc2 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -126,6 +126,7 @@ Mayuresh Janorkar <mayur@ti.com>
+>  Michael Buesch <m@bues.ch>
+>  Michel Dänzer <michel@tungstengraphics.com>
+>  Miodrag Dinic <miodrag.dinic@mips.com> <miodrag.dinic@imgtec.com>
+> +Miquel Raynal <miquel.raynal@bootlin.com> <miquel.raynal@free-electrons.com>
+>  Mitesh shah <mshah@teja.com>
+>  Mohit Kumar <mohit.kumar@st.com> <mohit.kumar.dhaka@gmail.com>
+>  Morten Welinder <terra@gnome.org>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1efb94e6a8b3..1b0972015358 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8471,7 +8471,7 @@ S:	Odd Fixes
+>  F:	drivers/net/wireless/marvell/mwl8k.c
+>  
+>  MARVELL NAND CONTROLLER DRIVER
+> -M:	Miquel Raynal <miquel.raynal@free-electrons.com>
+> +M:	Miquel Raynal <miquel.raynal@bootlin.com>
+>  L:	linux-mtd@lists.infradead.org
+>  S:	Maintained
+>  F:	drivers/mtd/nand/raw/marvell_nand.c
 
->From a black surface:
-min = 0x00 (with 62 occurrences)
-max = 0x8b
 
-I guess that's indeed full range quantization
 
->
-> > Actually the hardest part here was having a white enough surface to
-> > point the sensor to :)
->
-> Pointing a flashlight to the sensor usually does the trick.
-
-I had a yellowish light that didn't work that well, I ended up putting
-a white paper sheet in front of it and then took the picture.
-
-Thanks
-  j
-
->
-> > >>>>  	info->format = *fmt;
-> > >>>>
-> > >>>>  	return 0;
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
