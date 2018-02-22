@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933070AbeBVPO3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:14:29 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41668 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932915AbeBVPO0 (ORCPT
+        id S933080AbeBVPOs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:14:48 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:57178 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932980AbeBVPOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:14:26 -0500
-X-Google-Smtp-Source: AH8x226nIDdX0YBXAFB9trFxfjlUg46zTlitrMQdcKB3iQ66Cr59pVyog9Vj8xhXHI/IXMta3DhGggWk8IOlluPHvRw=
+        Thu, 22 Feb 2018 10:14:12 -0500
+Date: Thu, 22 Feb 2018 23:13:56 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: atmel: Delete error messages for a failed memory
+ allocation in six functions
+Message-ID: <20180222151356.GM29815@gondor.apana.org.au>
+References: <77cf1006-966d-78a9-0fdc-b53ccdd80df2@users.sourceforge.net>
 MIME-Version: 1.0
-In-Reply-To: <84517171cdb142f3f04b45de6ef8daf13442a866.1514578085.git.vilhelm.gray@gmail.com>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com> <84517171cdb142f3f04b45de6ef8daf13442a866.1514578085.git.vilhelm.gray@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 16:14:24 +0100
-Message-ID: <CACRpkdYznjnQDZ6Urti9a2DYdqzWs7w8vHnc7EKkJ+V31sBb8g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iio: Change ISA_BUS_API dependency to selection
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77cf1006-966d-78a9-0fdc-b53ccdd80df2@users.sourceforge.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Thu, Feb 15, 2018 at 01:24:18PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 15 Feb 2018 11:38:30 +0100
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
-> driver. The ISA bus driver does not perform any hardware interaction,
-> and is instead just a thin layer of software abstraction to eliminate
-> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
-> has no dependencies and does not jeopardize the integrity of the system
-> when enabled, drivers should select it when the ISA bus driver
-> functionality is needed.
->
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-
-Patch applied to the GPIO tree for v4.17.
-
-Yours,
-Linus Walleij
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
