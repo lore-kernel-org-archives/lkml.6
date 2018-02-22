@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-524998-1519316540-2-14032205252271716370
+X-Cyrus-Session-Id: sloti22d1t05-553228-1519316535-2-6622990790984593673
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519316540; b=aKHE1GHR1PwbFPkYohMHhtmhgQ5mFQ85ppupA7mOjYn1NeX
-    YQ3kE+VffYl/dbotsCDa1hb8JCq37tVn6hCPycKgqcUh6d34FAjfgWlxOLBQ0qht
-    jBpIoSTGJS8lmsGCYkDE8FV52v046fNLbUTesbIVybcZPy7gmQhnq6oYo3TPpIB3
-    A4VrvTrPlZHNBe9YHOecF5VV9cI8QmeFezEfoCubxV0PuGlDKJwzvgSqiQwBoIsB
-    PTpEwMTdCaXzS5oaHRhD9e3rtKyQ4Isxhr54FWzAKzAjPurEv3eWSJfsxQY9IBVr
-    IyD+RUWjFdR17euuDcFr8DjC/8+J6FXZTVXRHYQ==
+    t=1519316534; b=PawumZCD6HINezsEXddzLskxnZTKKPYYrthfbGElfRNYqFf
+    Ou+bqVkUyKgtMIWsM+GndOrxR8vzqrIpU9lE1qj0f8Hu3friEvdKAUodKz3WEYtO
+    J6gwLpjYAY65q5HgLrmsGXTtXn+KmkaYuavd0yALSadCYyyiWpRWB05NLHqOspnK
+    AcBBGaXLw9RRG0b5bbsbRg1fkmrs/OxCEO9cNuo+LTHcJH8baT0wNBc+OG8Y6mjC
+    hegO4Jc4YmH4CPIyJbN46w0N6FNQmfjlbfMEKssvUXhU0g2oJBrCTXWfWucP9dLk
+    8EHAL9x8zCHC5zTPdlKJUV9+b9nqikKZPbiPecQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519316540; bh=8F1aLesqNETVIOIuy2z+zVr7gfAKhjharxa1qSBjLT0=; b=R
-    C/e1Uf2kuFvYrrbbQYeUu510SJYscmUCObLdpPC3qSh1EOZ/YnJhFc4P/bGiE0TY
-    58NcIAX2j0q0NoQAR9lt0uupYFaKJfvo8VCr3Rfo2MC7gTKfPrSR3Hf0wrt9sskn
-    jy0Gi1Pg8kIispi1MSjs0OX9rTscxM5LxN3D6+qdMjZ/P9qU7vV2KdYGn9NlLNJa
-    J0Fle8xS4O8lVJqIupzZuU0MwNXVNVWpDW/gzywqhuAFz5GPdwZ1KC1Q1fOmr576
-    zSr8hbxOhjrUUP1tSPzDC+tPSLrTWJ4s1Ef1cfeeFTevt4ohBeWIt9+oxUiSsm4N
-    7XxsWgDtcVZb76natgN5A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    1519316534; bh=A53B2X7IghRFKRJIEiJOcRjPCD4TKclX/dHbu8CH/OU=; b=e
+    u/FNytYGCWlMJxL8/onH09EXJ+AXEWFI+1wq9PxKV3T9OFe9YUKktM6q3oYF0kcH
+    gF1jTs1uiJ7TAfbH9ddh0vwC250hInpzSRwLrrjTHPRbyGanHhZmiN5Ulm8cwoZv
+    C1L9I2oyHdGI+BVLdESaH5v3IyNKFgACvti1T1uXJkRY8J0iERQeWpo87vBINguX
+    mbZJ7WObpbnntaXjjzpbh2ZFNVE615DOGl/6B/FBF6BstBQGdeZsX6Ue4fWO7Aj0
+    M6H75p+PFlbmnasVK1nUwD3a2u1fqh5DlPDcggmkIR39h6AvhLE0BisyzWEk3A/3
+    4bQASEJYN/ZczdBnANDvw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -49,22 +49,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933169AbeBVQU7 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 11:20:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39622 "EHLO mx1.redhat.com"
+        id S933395AbeBVQVG (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 11:21:06 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35322 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933134AbeBVQU5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:20:57 -0500
+        id S933134AbeBVQVE (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:21:04 -0500
 From: David Howells <dhowells@redhat.com>
 To: jmorris@namei.org
 Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Paolo Valente <paolo.valente@linaro.org>,
         Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 4/6] X.509: fix BUG_ON() when hash algorithm is unsupported
-Date: Thu, 22 Feb 2018 16:20:55 +0000
-Message-Id: <151931645546.27713.15009973131656269423.stgit@warthog.procyon.org.uk>
+Subject: [PATCH 5/6] X.509: fix NULL dereference when restricting key with unsupported_sig
+Date: Thu, 22 Feb 2018 16:21:02 +0000
+Message-Id: <151931646253.27713.5857757999911191687.stgit@warthog.procyon.org.uk>
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United Kingdom. Registered in England and Wales under Company Registration No. 3798903
 In-Reply-To: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
 References: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
@@ -80,46 +79,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-The X.509 parser mishandles the case where the certificate's signature's
-hash algorithm is not available in the crypto API.  In this case,
-x509_get_sig_params() doesn't allocate the cert->sig->digest buffer;
-this part seems to be intentional.  However,
-public_key_verify_signature() is still called via
-x509_check_for_self_signed(), which triggers the 'BUG_ON(!sig->digest)'.
+The asymmetric key type allows an X.509 certificate to be added even if
+its signature's hash algorithm is not available in the crypto API.  In
+that case 'payload.data[asym_auth]' will be NULL.  But the key
+restriction code failed to check for this case before trying to use the
+signature, resulting in a NULL pointer dereference in
+key_or_keyring_common() or in restrict_link_by_signature().
 
-Fix this by making public_key_verify_signature() return -ENOPKG if the
-hash buffer has not been allocated.
+Fix this by returning -ENOPKG when the signature is unsupported.
 
-Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled:
+Reproducer when all the CONFIG_CRYPTO_SHA512* options are disabled and
+keyctl has support for the 'restrict_keyring' command:
 
+    keyctl new_session
+    keyctl restrict_keyring @s asymmetric builtin_trusted
     openssl req -new -sha512 -x509 -batch -nodes -outform der \
         | keyctl padd asymmetric desc @s
 
-Fixes: 6c2dc5ae4ab7 ("X.509: Extract signature digest and make self-signed cert checks earlier")
-Reported-by: Paolo Valente <paolo.valente@linaro.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>
+Fixes: a511e1af8b12 ("KEYS: Move the point of trust determination to __key_link()")
 Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/public_key.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/asymmetric_keys/restrict.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index de996586762a..e929fe1e4106 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -79,9 +79,11 @@ int public_key_verify_signature(const struct public_key *pkey,
+diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+index 86fb68508952..7c93c7728454 100644
+--- a/crypto/asymmetric_keys/restrict.c
++++ b/crypto/asymmetric_keys/restrict.c
+@@ -67,8 +67,9 @@ __setup("ca_keys=", ca_keys_setup);
+  *
+  * Returns 0 if the new certificate was accepted, -ENOKEY if we couldn't find a
+  * matching parent certificate in the trusted list, -EKEYREJECTED if the
+- * signature check fails or the key is blacklisted and some other error if
+- * there is a matching certificate but the signature check cannot be performed.
++ * signature check fails or the key is blacklisted, -ENOPKG if the signature
++ * uses unsupported crypto, or some other error if there is a matching
++ * certificate but the signature check cannot be performed.
+  */
+ int restrict_link_by_signature(struct key *dest_keyring,
+ 			       const struct key_type *type,
+@@ -88,6 +89,8 @@ int restrict_link_by_signature(struct key *dest_keyring,
+ 		return -EOPNOTSUPP;
  
- 	BUG_ON(!pkey);
- 	BUG_ON(!sig);
--	BUG_ON(!sig->digest);
- 	BUG_ON(!sig->s);
- 
-+	if (!sig->digest)
+ 	sig = payload->data[asym_auth];
++	if (!sig)
 +		return -ENOPKG;
-+
- 	alg_name = sig->pkey_algo;
- 	if (strcmp(sig->pkey_algo, "rsa") == 0) {
- 		/* The data wangled by the RSA algorithm is typically padded
+ 	if (!sig->auth_ids[0] && !sig->auth_ids[1])
+ 		return -ENOKEY;
+ 
+@@ -139,6 +142,8 @@ static int key_or_keyring_common(struct key *dest_keyring,
+ 		return -EOPNOTSUPP;
+ 
+ 	sig = payload->data[asym_auth];
++	if (!sig)
++		return -ENOPKG;
+ 	if (!sig->auth_ids[0] && !sig->auth_ids[1])
+ 		return -ENOKEY;
+ 
+@@ -222,9 +227,9 @@ static int key_or_keyring_common(struct key *dest_keyring,
+  *
+  * Returns 0 if the new certificate was accepted, -ENOKEY if we
+  * couldn't find a matching parent certificate in the trusted list,
+- * -EKEYREJECTED if the signature check fails, and some other error if
+- * there is a matching certificate but the signature check cannot be
+- * performed.
++ * -EKEYREJECTED if the signature check fails, -ENOPKG if the signature uses
++ * unsupported crypto, or some other error if there is a matching certificate
++ * but the signature check cannot be performed.
+  */
+ int restrict_link_by_key_or_keyring(struct key *dest_keyring,
+ 				    const struct key_type *type,
+@@ -249,9 +254,9 @@ int restrict_link_by_key_or_keyring(struct key *dest_keyring,
+  *
+  * Returns 0 if the new certificate was accepted, -ENOKEY if we
+  * couldn't find a matching parent certificate in the trusted list,
+- * -EKEYREJECTED if the signature check fails, and some other error if
+- * there is a matching certificate but the signature check cannot be
+- * performed.
++ * -EKEYREJECTED if the signature check fails, -ENOPKG if the signature uses
++ * unsupported crypto, or some other error if there is a matching certificate
++ * but the signature check cannot be performed.
+  */
+ int restrict_link_by_key_or_keyring_chain(struct key *dest_keyring,
+ 					  const struct key_type *type,
