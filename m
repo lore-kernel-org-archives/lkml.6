@@ -1,87 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeBVLkr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:40:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33736 "EHLO mail.kernel.org"
+        id S932094AbeBVLod (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:44:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40403 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753747AbeBVLkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:40:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3F721796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Thu, 22 Feb 2018 12:40:42 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 013/100] rtc: cpcap: stop validating rtc_time in
- .read_time
-Message-ID: <20180222114042.7kpgq67raje7wbyz@earth.universe>
-References: <20180221205635.31314-1-alexandre.belloni@bootlin.com>
- <20180221205635.31314-14-alexandre.belloni@bootlin.com>
+        id S1753665AbeBVLoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:44:32 -0500
+Date: Thu, 22 Feb 2018 12:44:13 +0100
+From: Borislav Petkov <bp@suse.de>
+To: Ashok Raj <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: Re: [v2 3/3] x86/microcode: Quiesce all threads before a microcode
+ update.
+Message-ID: <20180222114413.GB27489@pd.tnic>
+References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
+ <1519281205-58951-4-git-send-email-ashok.raj@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3cxjms7q5mhycwfo"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180221205635.31314-14-alexandre.belloni@bootlin.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519281205-58951-4-git-send-email-ashok.raj@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---3cxjms7q5mhycwfo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Wed, Feb 21, 2018 at 09:55:08PM +0100, Alexandre Belloni wrote:
-> The RTC core is always calling rtc_valid_tm after the read_time callback.
-> It is not necessary to call it just before returning from the callback.
->=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Wed, Feb 21, 2018 at 10:33:25PM -0800, Ashok Raj wrote:
+> Microcode updates during OS load always assumed the other hyper-thread
+> was "quiet", but Linux never really did this. We've recently received
+> several issues on this, where things did not go well at scale
+> deployments, and the Intel microcode team asked us to make sure the
+> system is in a quiet state during these updates. Such updates are
+> rare events, so we use stop_machine() to ensure the whole system is
+> quiet.
+> 
+> The most robust solution is to have all the CPUs wait in
+> stop_machine() rendezvous before ucode update, and ensure we stay there
+> until all the CPUs have completed the microcode load. stop_machine ensures
+> that interrupts are disabled while waiting, and a spin_lock serializes
+> that only 1 cpu can perform the update.
+> 
+> Remember microcode resources are shared between the HT siblings of the same
+> core. So updating microcode on one thread automatically is good enough for the
+> sibling thread. Microcode update ensures that the version being updated is
+> greater than what is reported by the CPU. This ensures we do not perform a
+> redundant load on the HT sibling when one isn't necessary.
+> 
+> During early boot, we bring up one CPU at a time. Hence we only end up
+> loading for one of the sibling thread and subsequent sibling would already have
+> the latest copy of the microcode.
+> 
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Cc: X86 ML <x86@kernel.org>
+> Cc: LKML <linux-kernel@vger.kernel.org>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Boris Petkov <bp@suse.de>
+> Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+> 
+> Changes from V1:
+> - Check for return code of stop_machine
+> - When microcode file load fails, stop on first error.
+> - If any of the present CPUs are offline, then stop reload.
+> - Added more comments in commitlog and inline in file.
+> - split some functionality from reload_store() per Boris's comments.
+> 
+> What's not done from review: TBD:
+> - Load microcode file only once.
+> - Removing ucd->errors. (Gives a count of failed loads)
 > ---
->  drivers/rtc/rtc-cpcap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/rtc/rtc-cpcap.c b/drivers/rtc/rtc-cpcap.c
-> index 3a0333e1f21a..a8856f2b9bc2 100644
-> --- a/drivers/rtc/rtc-cpcap.c
-> +++ b/drivers/rtc/rtc-cpcap.c
-> @@ -119,7 +119,7 @@ static int cpcap_rtc_read_time(struct device *dev, st=
-ruct rtc_time *tm)
-> =20
->  	cpcap2rtc_time(tm, &cpcap_tm);
-> =20
-> -	return rtc_valid_tm(tm);
+>  arch/x86/kernel/cpu/microcode/core.c  | 207 ++++++++++++++++++++++++++++++----
+>  arch/x86/kernel/cpu/microcode/intel.c |   1 +
+>  2 files changed, 183 insertions(+), 25 deletions(-)
+
+Please integrate scripts/checkpatch.pl into your patch creation
+workflow. Some of the warnings/errors *actually* make sense.
+
+> diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+> index aa1b9a4..20d2cbb 100644
+> --- a/arch/x86/kernel/cpu/microcode/core.c
+> +++ b/arch/x86/kernel/cpu/microcode/core.c
+> @@ -31,6 +31,10 @@
+>  #include <linux/cpu.h>
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+> +#include <linux/nmi.h>
+> +#include <linux/stop_machine.h>
+> +#include <linux/delay.h>
+> +#include <linux/topology.h>
+>  
+>  #include <asm/microcode_intel.h>
+>  #include <asm/cpu_device_id.h>
+> @@ -489,30 +493,185 @@ static void __exit microcode_dev_exit(void)
+>  /* fake device for request_firmware */
+>  static struct platform_device	*microcode_pdev;
+>  
+> -static enum ucode_state reload_for_cpu(int cpu)
+> +static struct ucode_update_param {
+> +	spinlock_t ucode_lock;	/* Serialize microcode updates */
+> +	atomic_t   count;  	/* # of CPUs that attempt to load ucode */
+> +	atomic_t   errors; 	/* # of CPUs ucode load failed */
+> +	atomic_t   enter;  	/* ucode rendezvous count */
+> +	int	   timeout;	/* Timeout to wait for all cpus to enter */
+> +} uc_data;
+> +
+> +static int do_ucode_update(int cpu, struct ucode_update_param *ucd)
+>  {
+> -	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+> -	enum ucode_state ustate;
+> +	enum ucode_state retval = 0;
+>  
+> -	if (!uci->valid)
+> -		return UCODE_OK;
+> +	spin_lock(&ucd->ucode_lock);
+> +	retval = microcode_ops->apply_microcode(cpu);
+> +	spin_unlock(&ucd->ucode_lock);
+> +	if (retval > UCODE_NFOUND) {
+> +		atomic_inc(&ucd->errors);
+> +		pr_warn("microcode update to CPU %d failed\n", cpu);
+> +	}
+> +	atomic_inc(&ucd->count);
+> +
+> +	return retval;
+> +}
+> +
+> +/*
+> + * Wait for upto 1sec for all CPUs
+> + * to show up in the rendezvous function
+> + */
+> +#define MAX_UCODE_RENDEZVOUS	1000000000 /* nanosec */
+
+Please incorporate all review comments before sending the next version.
+I already commented here:
+
+	                                1 * NSEC_PER_SEC
+
+I don't want to be pointing out the same issues twice.
+
+> +#define SPINUNIT		100	   /* 100ns */
+> +
+> +/*
+> + * Each cpu waits for 1sec max.
+> + */
+> +static int microcode_wait_timedout(int *time_out, void *data)
+> +{
+> +	struct ucode_update_param *ucd = data;
+> +	if (*time_out < SPINUNIT) {
+> +		pr_err("Not all CPUs entered ucode update handler %d CPUs missed rendezvous\n",
+> +			(num_online_cpus() - atomic_read(&ucd->enter)));
+> +		return 1;
+> +	}
+> +	*time_out -= SPINUNIT;
+> +	touch_nmi_watchdog();
 > +	return 0;
->  }
-> =20
->  static int cpcap_rtc_set_time(struct device *dev, struct rtc_time *tm)
+> +}
+> +
+> +/*
+> + * All cpus enter here before a ucode load upto 1 sec.
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Ok, I think Ingo and I already pointed out that the proper spelling
+is "CPU" not "cpu" or "cpu's" as I see it somewhere else *still* in
+this patch. And I asked you already yesterday to go over everything and
+correct that. But you're still sending me half-baked stuff. Are you
+trying to make me ignore your patches?
 
--- Sebastian
+...
 
---3cxjms7q5mhycwfo
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +/*
+> + * loads microcode files for all cpus.
+> + * TBD: We load for each cpu which is useful
+> + * if we support hetero cores. We really don't yet
+> + * support hetero, so we could optimize this in future to load
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqOrDcACgkQ2O7X88g7
-+ppjzw//UebQxXzcI0HNj3maCsHnQTMQ7v5OjaqgrFkMuARmRFN8QLQAu3vqROfH
-GJ9IJ/yyzvx9oMuJ3YBlLVz4fQcru/IVEgkBk1kmk2vt5wadRMcWvs0hAFhvmKNZ
-zBhONVPqanI12/3YbYlBAIAPONyiULUZ3BfXyz5PeXj5KellD69Tdg1UMrHFDiT5
-y86TPx/WHmRvJP2F63b3JznpX9brvnKSMWbp27C/aGNWi1aJbf9NCQTImlxlxeSX
-uxyxjy13jvAShc/46jQfRSt8tFdmcAgU1dUJfHbHG/QkqN6giKEh6fBl8vhWRTb6
-5JnlTh1moKzfZDjfFefOSOE61URtqAtXV/2a/8dPS7srAYsjv7SUA4Iizfch+8ll
-ZIlzvM3UxwKvy8cxmhZhp82RfVEr2+5/Z+q8SSpfaWwbg0FVhQfmoGp7UK9XfRPD
-1mvS6VQnv8oJGbSF9Zc3dgDcuLKcor1dCcgg/hKNbf3W9qIxnJIoEAoE+23lzh3u
-cb+SyQQGY0hQECQ5Z+jNo12JTZ3uVEwCv9RRfbDWU21joENZHSNz3GGa/mO9eENX
-oCoC8Q3YdZA/ZIFKVvl5MRZS/EJu2yNuP3srzmszBUHLoDIpG2rLxKfmOPWqWCNm
-UVABV/52UMY5BQNrC3DwV1v/+eUBuWMVdyLQGNUZvtBazJergX8=
-=y3bA
------END PGP SIGNATURE-----
+Let's just forget the heterogeneous cores. That's just nuts.
 
---3cxjms7q5mhycwfo--
+> + * just for 1 cpu and reuse the same image for other cpus.
+> + */
+> +static int reload_microcode_files(void)
+> +{
+> +	int cpu, ret = 0;
+> +
+> +	/*
+> +	 * First load the microcode file for all cpu's
+> +	 */
+> +	for_each_online_cpu(cpu) {
+> +		ret = microcode_ops->request_microcode_fw(cpu,
+> +				&microcode_pdev->dev, true);
+
+So looking at this more:
+
+->request_microcode_fw() calls generic_load_microcode() which ends up saving the
+microcode patch for early loading: save_mc_for_early() -> save_microcode_patch()
+so the new patch is in the microcode cache.
+
+Now, apply_microcode_intel() looks for a newer patch in the cache so you
+should be able to do ->request_microcode_fw() only once on CPU 0 and
+then the patch is there.
+
+So I *think* you don't need that reload_microcode_files() dance but
+you'll have to try it.
+
+> +		if (ret > UCODE_NFOUND) {
+> +			pr_warn("Error reloading microcode file for CPU %d\n", cpu);
+> +
+> +			/*
+> +			 * set retval for the first encountered reload error
+> +			 * stop further processing of ucode loads.
+> +			 */
+> +			if (!ret)
+> +				ret = -EINVAL;
+> +			break;
+> +		}
+> +	}
+> +	return ret;
+
+Also, I'd like you to split this patch as it is becoming too big and
+unwieldy to review. Split it in logical steps which contain one logical
+change and commit message explains clearly what it is.
+
+Thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
