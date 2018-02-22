@@ -1,100 +1,72 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225Y+yXnkpdpkzr9j0mprZlDatrQAfSr6G60ySXMXkOEueQO/ZVgnJcGTvD9KgRxDL+/9dYA
-ARC-Seal: i=1; a=rsa-sha256; t=1519809184; cv=none;
+X-Google-Smtp-Source: AH8x224A4BjSkn0N/nvzqwDt1fR/UcYoHFUudGKv0zgXDSYbONl9YaLS4ZtaR5/gm1e/cFAvin+O
+ARC-Seal: i=1; a=rsa-sha256; t=1519329052; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bv2adg2rh3S7nzndRxACfjGttLoIuEpFSenfXREthaporxEox+nWLgu3cclbhDj0P/
-         VKdhu+uMMuEiesnA9dQLIosqtJgNeQwSf8LlEwfwJi0FL81jZVbL974YTqQhsizMTWDb
-         KhtePgCZK91RcobfRaGI0+fGKjwI03mZgmsDFfeuL1+QbqAPaYDWH+1pjGCaLFiHILeZ
-         T6L/DzFhOZ2aibApqzqWjPZ31BMZMbM1DOp9mbqeOkshZHMN7DhR+FxNMwJ9YYfOP8WF
-         sveTMzs/0zPCWGpZ0/gTrMbcc8CEu4yL4E61tBmxfMAIaWlJhyjUbjUn7TxaPPXUkoKv
-         2WDg==
+        b=f4CYa1874GlXRPOSz9bgAvq0xgoNH2nE+TX+Ulc7oREYM5/0gMqSjy1T9MwH31HHPm
+         mfxMjZarDAytCdEpxkATlcWpKwp2OKsp7znP5eZTLaDzGZVQJzzivzo1jA5Le1czcpwq
+         fvq+ylF3F7Weu94c3rm2tUYmESE0yrKCkjk3xtxS4CrI6yHObceWyCMZmCP55mP0js50
+         x0JcjasCHzqKBJsc141wbTAzzuvf0nt5Li95pVEjHKS1ogHLpABmGoskm8HXZGmD1Ys6
+         x1bIFAnfWzjA5BeQvwxflh2R9VBbTCeOdxCJip/F49CpYaHyCNOqaPQH7zRx9rC7srjB
+         TVHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=rONrybrJRJL3HcGIcrgcwdMcex4xZm7T55EYDhRKrUw=;
-        b=S7mjZlLeyGX5jLJTQ7H67FP9fc60k6LP9T5XbY/jqrSQfLhyaxBJl+6LGyHid86ROX
-         eoTAsXCf6m48HrXcG3LRURrjbLPZEb6H4O+Iz7crDi7NN5CPn8J4qTZB5AM9+Z098rWt
-         OGkd//vheMHmu3aRAkTSjzPAuYLNx0pA5U38s7PzI4m3JnMM1soOeOpl9gTvBphg4w41
-         OfaZVjxniEEvK6ROc/uof9FpFGPVgySPY89ETgeXLUo6MPsKbLUTEQYwyfX+123VRdk9
-         IpsxbPcw4/YIUzmdOGQJdvCkQwANFuA4Uog6gjdRV4DDc+Sx7LEeV/kIbd9utwrFu/Ku
-         AEKw==
+        h=list-id:precedence:sender:user-agent:in-reply-to
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=KgGfGDVT2iK4hoOCFVSvb2ge+0NScE1ipb7IfQo9ffQ=;
+        b=raJPzKAEgUsxJ/0OfvPgVi30IVPDGXSn/TA9XAAk5wDVa9lMUUFr2GpJ1BbmVWhWon
+         cqWm4NRAhhjSzXW7W6jGhSXYZ9qg+CeGzI3w3KQdIPAbbULrmuf9Z8FevwWYEVp9Is2v
+         30dUWp/G+Xy9egxv1MQ0DlAASt0cN/ACYBQtQit5J9phqfOUznI9XBLufeP6Mgp+qb5y
+         Qk1+1AREK9Qd7swq7FoAHSj9Y+WzuHtlPFstu+Voex+bZlDjm+zTY6tdxUi1hRx0MaO8
+         EisUJPEeRzMq+QQgZzxy3CsThypUBtkI7wra0eigi5znWoz0izjvTE2PDSkbX5iRb7h4
+         DzYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=AwRPWAsx;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=AwRPWAsx;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751744AbeB1JNE (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 28 Feb 2018 04:13:04 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42593 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbeB1JNC (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:13:02 -0500
-MIME-Version: 1.0
-In-Reply-To: <CADYN=9JgNRqs5ghv9_UU0MEEKX_kg+L2KXs3c-tXpw1m0dnxDw@mail.gmail.com>
-References: <20180222115307.15063-1-zongbox@gmail.com> <CADYN=9KgBp0+iGDL8x774UUadyo54Za4ESLPk2GUfqFz+7W02Q@mail.gmail.com>
- <CA+ZOyajDWFr9dG70uOMoreA=FALoKJCYsFRiUAkZC-a3BuojZg@mail.gmail.com> <CADYN=9JgNRqs5ghv9_UU0MEEKX_kg+L2KXs3c-tXpw1m0dnxDw@mail.gmail.com>
-From: Zong Li <zongbox@gmail.com>
-Date: Wed, 28 Feb 2018 17:13:01 +0800
-Message-ID: <CA+ZOyagCaxyrgTJ4uTqKC3zQgCG97qX+XmfQaXLUhk=MFOJyDA@mail.gmail.com>
-Subject: Re: [PATCH] selftest: fix kselftest-merge depend on 'RUNTIME_TESTING_MENU'
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: shuah@kernel.org, Vincent Legoll <vincent.legoll@gmail.com>,
-        ast@kernel.org, daniel@iogearbox.net, mcgrof@kernel.org,
-        davem@davemloft.net, Kees Cook <keescook@chromium.org>,
-        Fathi Boudra <fathi.boudra@linaro.org>, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1751338AbeBVTuv (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 22 Feb 2018 14:50:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60564 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750967AbeBVTuu (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:50:50 -0500
+Date: Thu, 22 Feb 2018 19:50:47 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Zong Li <zongbox@gmail.com>
+Cc: shuah@kernel.org, vincent.legoll@gmail.com, ast@kernel.org,
+        daniel@iogearbox.net, mcgrof@kernel.org, davem@davemloft.net,
+        keescook@chromium.org, fathi.boudra@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         zong@andestech.com, greentime@andestech.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] selftest: fix kselftest-merge depend on
+ 'RUNTIME_TESTING_MENU'
+Message-ID: <20180222195047.GC27055@wotan.suse.de>
+References: <20180222115307.15063-1-zongbox@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222115307.15063-1-zongbox@gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593102038295942155?=
-X-GMAIL-MSGID: =?utf-8?q?1593635436066281137?=
+X-GMAIL-MSGID: =?utf-8?q?1593131980537478122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-28 6:32 GMT+08:00 Anders Roxell <anders.roxell@linaro.org>:
->
-> On 23 February 2018 at 08:05, Zong Li <zongbox@gmail.com> wrote:
-> > 2018-02-23 3:57 GMT+08:00 Anders Roxell <anders.roxell@linaro.org>:
-> >> On 22 February 2018 at 12:53, Zong Li <zongbox@gmail.com> wrote:
-> >>> Since the 'commit d3deafaa8b5c ("lib/: make RUNTIME_TESTS a menuconfig
-> >>> to ease disabling it all")', the make kselftest-merge cannot merge the
-> >>> config dependencies of kselftest to the existing .config file.
-> >>>
-> >>> These config dependencies of kselftest need to enable the
-> >>> 'CONFIG_RUNTIME_TESTING_MENU=y' at the same time.
-> >>
-> >> Is this patch needed when patch sha 'f29c79906064 ("lib/Kconfig.debug: enable
-> >> RUNTIME_TESTING_MENU")' find its way into the kernel ?
-> >> I think it's in linux-next now.
-> >
-> > Thanks. The patch sha 'f29c79906064 ("lib/Kconfig.debug: enable
-> > RUNTIME_TESTING_MENU")' can resolve the make kselftest-merge
-> > on default situation, but I think the kselftest-merge should resolve
-> > the dependencies
-> > without the prerequisite, it should enable the 'RUNTIME_TESTING_MENU'
-> > when merging
-> > the config of some selftests if RUNTIME_TESTING_MENU is not set.
->
-> I see your point, but should the be enabled in a common place that
-> gets included per
-> default if running kselftest-merge and not in all config fragments?
->
-> Cheers,
-> Anders
+On Thu, Feb 22, 2018 at 07:53:07PM +0800, Zong Li wrote:
+> Since the 'commit d3deafaa8b5c ("lib/: make RUNTIME_TESTS a menuconfig
+> to ease disabling it all")', the make kselftest-merge cannot merge the
+> config dependencies of kselftest to the existing .config file.
+> 
+> These config dependencies of kselftest need to enable the
+> 'CONFIG_RUNTIME_TESTING_MENU=y' at the same time.
+> 
+> Signed-off-by: Zong Li <zong@andestech.com>
+> Cc: Greentime Hu <greentime@andestech.com>
 
-I agree with you. It is better that the config fragments of each
-selftests is responsible for
-enabling the specific configs they needed only.
-Thanks for your reply.
+Please add respective Fixes: tag with the sha1sum, and commit name.
 
-Best Regard,
-Zong Li
+  Luis
