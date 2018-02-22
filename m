@@ -1,70 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeBVVw1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 16:52:27 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34493 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeBVVwY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:52:24 -0500
-X-Google-Smtp-Source: AG47ELvSaBvhNtu9XvuXEXqrqEVLvJzquiOoP9PxHDTCc7V9Qln2qp/bnOd5T+5BFnIbKQUuIeqWmqOxd2MDgfFY9xM=
-MIME-Version: 1.0
-In-Reply-To: <20180222203651.B776810C@viggo.jf.intel.com>
+        id S1751674AbeBVVwt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:52:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:35397 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751359AbeBVVws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 16:52:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,380,1515484800";
+   d="scan'208";a="19718524"
+Subject: Re: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
+To: Nadav Amit <namit@vmware.com>
 References: <20180222203651.B776810C@viggo.jf.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 22 Feb 2018 13:52:22 -0800
-X-Google-Sender-Auth: L_4c6ut9G9LZ2v8rU7YwQORxOO4
-Message-ID: <CA+55aFy064KtXdduyM2E4rU6-ZJsOB69x2aJdZxbXgJPh2HUOQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 00/10] Use global pages with PTI
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, namit@vmware.com
-Content-Type: text/plain; charset="UTF-8"
+ <20180222203700.3FDE6BFD@viggo.jf.intel.com>
+ <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@google.com" <keescook@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <754bf1d5-759b-0162-98ae-1800f075b8eb@linux.intel.com>
+Date: Thu, 22 Feb 2018 13:52:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Side note - and this may be crazy talk - I wonder if it might make
-sense to have a mode where we allow executable read-only kernel pages
-to be marked global too (but only in the kernel mapping).
+On 02/22/2018 01:46 PM, Nadav Amit wrote:
+>>
+>> +static inline pgprotval_t check_pgprot(pgprot_t pgprot)
+>> +{
+>> +	pgprotval_t massaged_val = massage_pgprot(pgprot);
+>> +
+>> +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
+>> +		  "attempted to set unsupported pgprot: %016lx "
+>> +		  "bits: %016lx supported: %016lx\n",
+>> +		  pgprot_val(pgprot),
+>> +		  pgprot_val(pgprot) ^ massaged_val,
+>> +		  __supported_pte_mask);
+> Perhaps use VM_WARN_ONCE instead to avoid any overhead on production
+> systems?
 
-Yes, yes, that potentially means that you can run meltdown on recently
-run kernel code that is still in the TLB, but even if so, that may be
-something people are ok with.
-
-Because it would leak data that can generally be gotten other ways
-(aka "just download the vendor kernel from a website"), and from a
-security standpoint the biggest issue is likely that you can break
-KASLR. But again, that is something that some people may be perfectly
-fine with - it's certainly much less of an issue than leaking actual
-*data*.
-
-And it might be an easy option to give people, with something like
-"pti=data" or similar.
-
-It's also quite possible that depending on how separate the ITLB and
-DTLB is, an ITLB entry might not even really be amenable to Meltdown
-leaking at all.
-
-Since the pages wouldn't actually exist in the user page tables, the
-only sign of them would be in the TLB entries, and if the ITLB is
-separate enough it might be practically impossible to really use those
-ITLB entries for meltdown.
-
-Of course, maybe the performance advantage from keeping the ITLB
-entries around isn't huge, but this *may* be worth at least asking
-some Intel architects about?
-
-Because my gut feel is that a noticeable amount of the TLB cost from
-PTI comes from the code side. I suspect a lot of kernel code has a
-bigger instruction footprint than data.
-
-(And yes, like this set of global bit patches, it probably matters a
-whole lot more on CPU's that don't have PCID. With PCID it's probably
-not all that noticeable at all).
-
-             Linus
+Sounds sane enough.  I'll change it.
