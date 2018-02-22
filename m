@@ -1,71 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933371AbeBVREj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:04:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51266 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933197AbeBVREi (ORCPT
+        id S933405AbeBVREz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:04:55 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44552 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933197AbeBVREx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:04:38 -0500
-Date: Thu, 22 Feb 2018 18:04:27 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Thu, 22 Feb 2018 12:04:53 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 466716021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 22 Feb 2018 17:04:51 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: Evan Green <evgreen@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: uprobes/perf: KASAN: use-after-free in uprobe_perf_close
-Message-ID: <20180222170427.GQ25181@hirez.programming.kicks-ass.net>
-References: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
- <20180222163715.GA1485@redhat.com>
+Subject: Re: [PATCH v2 09/10] drivers: qcom: rpmh: add support for batch RPMH
+ request
+Message-ID: <20180222170451.GB7098@codeaurora.org>
+References: <20180215173507.10989-1-ilina@codeaurora.org>
+ <20180215173507.10989-10-ilina@codeaurora.org>
+ <CAE=gft7DV3semzumy+62hQgrUWUvOATJs6BKB5x0mj=0dt+Tig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180222163715.GA1485@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAE=gft7DV3semzumy+62hQgrUWUvOATJs6BKB5x0mj=0dt+Tig@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 05:37:15PM +0100, Oleg Nesterov wrote:
-> On 02/22, Prashant Bhole wrote:
+On Wed, Feb 21 2018 at 23:25 +0000, Evan Green wrote:
+>Hello Lina,
+>
+>On Thu, Feb 15, 2018 at 9:35 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>> Platform drivers need make a lot of resource state requests at the same
+>> time, say, at the start or end of an usecase. It can be quite
+>> inefficient to send each request separately. Instead they can give the
+>> RPMH library a batch of requests to be sent and wait on the whole
+>> transaction to be complete.
+>>
+>> rpmh_write_batch() is a blocking call that can be used to send multiple
+>> RPMH command sets. Each RPMH command set is set asynchronously and the
+>> API blocks until all the command sets are complete and receive their
+>> tx_done callbacks.
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>>  drivers/soc/qcom/rpmh.c | 150 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>  include/soc/qcom/rpmh.h |   8 +++
+>>  2 files changed, 158 insertions(+)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> index dff4c46be3af..6f60bb9a4dfa 100644
+>> --- a/drivers/soc/qcom/rpmh.c
+>> +++ b/drivers/soc/qcom/rpmh.c
+>[...]
+>> @@ -394,6 +537,11 @@ int rpmh_flush(struct rpmh_client *rc)
+>>         }
+>>         spin_unlock_irqrestore(&rpm->lock, flags);
+>>
+>> +       /* First flush the cached batch requests */
+>> +       ret = flush_batch(rc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         /*
+>>          * Nobody else should be calling this function other than system PM,,
+>>          * hence we can run without locks.
+This comment and the comment in the header of this function.
 
-> > After debugging, found that uprobe_perf_close() is called after task has
-> > been terminated and uprobe_perf_close() tries to access task_struct of the
-> > terminated process.
-> 
-> Oh. You can't imagine how much I forgot this code ;) I will recheck, but at
-> first glance you are right. We can't rely on _free_event()->put_ctx() which
-> does put_task_struct() after event->destroy(), the exiting task does
-> put_task_struct(current) itself and sets child_ctx->task = TASK_TOMBSTONE in
-> perf_event_exit_task_context().
-> 
-> In short, nothing protects event->hw.target. But uprobe_perf_open() should be
-> safe, perf_init_event() is called when the caller has the additional reference.
-> 
-> I am wondering if this was wrong from the very beginning or it was broken later,
-> but I won't even try to check.
+>> @@ -438,6 +586,8 @@ int rpmh_invalidate(struct rpmh_client *rc)
+>>         if (IS_ERR_OR_NULL(rc))
+>>                 return -EINVAL;
+>>
+>> +       invalidate_batch(rc);
+>> +
+>
+>Similarly to my comments in patch 7, aren't there races here with
+>adding new elements? After flush_batch, but before invalidate_batch,
+>somebody could call cache_batch, which would add new things on the end
+>of the array. These new items would be clobbered by invalidate_batch,
+>without having been flushed first.
+>
+Flush is a system PM function and is not called by drivers and is not
+expected to run conncurrently with other threads using the RPMH library.
 
-b2fe8ba674e8 ("uprobes/perf: Avoid uprobe_apply() whenever possible")
-
-Seems to have added that PF_EXITING test that dereferences the target
-pointer.
-
-> And. What about other users of event->hw.target? Say, task_bp_pinned(). It doesn't
-> dereference this pointer, How can we trust the result of "iter->hw.target == tsk"
-> if hw.target can be freed and then re-alloced?
-
-I _think_ that one is ok because it looks at available slots for the
-task at init time, at that point the target task must exist.
-
-> This all makes me think that we should change (fix) kernel/events/core.c...
-
-That's going to be mighty dodgy though, holding a reference on the task
-will avoid the task from dying which will avoid the events from being
-destroyed which will avoid the task from dying which will... if you get
-my drift :-)
-
-And I suspect the proposed patch already suffers that problem.
-pmu::destroy really should not be looking at that pointer I'm afraid.
+Thanks,
+Lina
