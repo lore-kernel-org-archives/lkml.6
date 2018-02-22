@@ -1,225 +1,101 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224usyLGYtyPY6pR6oFwhP0qytCFQLKRlhDk5HjYFXQjCRSBQF0TcXpLIw1oKTiXER3AiDVL
-ARC-Seal: i=1; a=rsa-sha256; t=1519217118; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xiXOLCE0hvx4dbubdbmQb+fs/Fc1ofVm2HkadR2ZS9yDdoyredAnRbpFnh1kfeduEg
-         3D1B3RwKDfyD5/57K8+sbl8+lDbW/PYsoTdSWwScqCzq7xUgGtdi5PLbE5H4W7NJw8Eu
-         tl7c7LnFVuZ3vHayqOpEhQg/14L0wo5vNjTgkU28y3SSkmQRqOuLD9Nov9FCfUe8IUOy
-         bBmbVYzPk1+dA5Sjv1kCBcnuObMZUgOMNMxk75WTM4x7qVSRgej4Ajrw5EnC+gDrgoin
-         rcM3xbBWROFTEqHVVBC8pLT+KhPUIsrfh65hYIppgALf12RzR0/NwWreCGxOsYRHJpRf
-         XSlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:user-agent:mime-version:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=r15GkEx7mNDOyJhkzbyPRH2BUipJOnMTEeWjA8SIfyw=;
-        b=OFBozKvaCI1Nzql62zERtLUgnnU6aw53IhXqFq2h9zgAInWQ9uxMcreL/zF7+lofr6
-         RpZ9y54J5PZiUEU6BC2rsruCWN7LhZnLeoSaOl9h50P71jyLEG7Iy50HGGYPRe07QdyB
-         hkzNKEX6p0MJAiA3KLD1r+rtcpYVdRn9UsT4UT1sl7WwLbgaLU28lj5A6ncGZBBitVk4
-         zEtbvvF43l1htssYT4QKcmFkFPTpWTUe41Agze86a4DMJXQcEcMKNavtI6fv41N8QJGc
-         IDENHVovqu7roWwcZx58QFH5IZoHSMqVLxXPPOG2Y1U3DTkXj5RuUTsmQSdQetxAxHtP
-         DxEQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuahkh@osg.samsung.com,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.4 00/33] 4.4.117-stable review
-Date: Wed, 21 Feb 2018 13:44:43 +0100
-Message-Id: <20180221124409.564661689@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-294332-1519308700-2-7940878061439938065
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519308700; b=isqL+iFV7wEt411itoevm+JAVKsiRkLpSYK75MdQDDuhrbK
+    NW0hEfSC3ZyRF9ageZieRs1tF8SqdLLadCjRd6pLDkIjJM7Oeb3tRpOHiqa4n4KC
+    VIkUDuWc6AM+JhTf40KEnGqBiLWr2SVMW+M4J2LXQ4LeuAyh4hNv3aQwhQtiWMJV
+    bVTwlOwgaFlfmMafp+olJm05pmjVgyY79oxCVFDvf+s8aGiHgdXanvBTOcwkybD7
+    9W0O88Az/lc+0lZ7//QAN4eOOWCAqXs2/MVyElowPfqxGacXEaJIKQy9Ih8dW963
+    i7utM+4h/b7lDfM96uXnfglyPvyp5hDU8QeTt7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519308700; bh=XeAvgmntjL095D8LfVusNqobudpNJjLFZ4S+dR7o6+s=; b=J
+    BBL+AEHKQTjrxPqREi2y1mKXb3sgBeFblGLVhdqLmgo1xRx1UHRGUIEpZwRGobuj
+    F0ah/AB6RSm3b4O2Y+dC6hoKDawNSde0cUvivFGWuFsEMaI2hUSMiSV8SvJ/auXx
+    dep2D1JOxkd+r7/mtdXOxb9NVdMTZANS9s7m3E3hSH8giAFUOetCUCmdl3Xt+3mK
+    zKSWUHhF2G/P7WO7sQqlr5yTnD9AW1diTNxmWqo5SUBR/Fyh+oz5ZuPKQ9ZafkVq
+    LoSqCgbAEJH+geHAYO3gW+vKX8a9MPqofJZ6QM4ONv+m+tfqzkoxYoI9EwskmRGB
+    cNFsRo++FRYokDkIlItIA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZlUBybl7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MsynONS5;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZlUBybl7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MsynONS5;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932633AbeBVOLh (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 09:11:37 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35439 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932616AbeBVOLg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 22 Feb 2018 09:11:36 -0500
+X-Google-Smtp-Source: AH8x226sz3hl3CcrR5JB20nAFCco69XF9dr2+YXoRkOOG4fch1lHjKheYhxSI6IRFoSzRheUxN5SGA==
+Subject: Re: [PATCH 4.4 00/33] 4.4.117-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180221124409.564661689@linuxfoundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <1e5834ab-5dae-8010-ce74-e201814da14b@roeck-us.net>
+Date: Thu, 22 Feb 2018 06:11:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.117-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.117-rc1
-X-KernelTest-Deadline: 2018-02-23T12:44+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180221124409.564661689@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593014609837749485?=
-X-GMAIL-MSGID: =?utf-8?q?1593014609837749485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.4.117 release.
-There are 33 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On 02/21/2018 04:44 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.117 release.
+> There are 33 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri Feb 23 12:43:54 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Responses should be made by Fri Feb 23 12:43:54 UTC 2018.
-Anything received after that time might be too late.
+Build results:
+	total: 145 pass: 145 fail: 0
+Qemu test results:
+	total: 118 pass: 118 fail: 0
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.117-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+Details are available at http://kerneltests.org/builders.
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.117-rc1
-
-Arnd Bergmann <arnd@arndb.de>
-    media: r820t: fix r820t_write_reg for KASAN
-
-Arnd Bergmann <arnd@arndb.de>
-    ARM: dts: s5pv210: add interrupt-parent for ohci
-
-Arnd Bergmann <arnd@arndb.de>
-    ARM: pxa/tosa-bt: add MODULE_LICENSE tag
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    vfs: don't do RCU lookup of empty pathnames
-
-Arnd Bergmann <arnd@arndb.de>
-    x86: fix build warnign with 32-bit PAE
-
-NeilBrown <neilb@suse.com>
-    dm: correctly handle chained bios in dec_pending()
-
-Mikulas Patocka <mpatocka@redhat.com>
-    mvpp2: fix multicast address filter
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: seq: Fix racy pool initializations
-
-Lassi Ylikojola <lassi.ylikojola@gmail.com>
-    ALSA: usb-audio: add implicit fb quirk for Behringer UFX1204
-
-Jan-Marek Glogowski <glogow@fbihome.de>
-    ALSA: hda/realtek: PCI quirk for Fujitsu U7x7
-
-Kirill Marinushkin <k.marinushkin@gmail.com>
-    ALSA: usb-audio: Fix UAC2 get_ctl request with a RANGE attribute
-
-Hui Wang <hui.wang@canonical.com>
-    ALSA: hda - Fix headset mic detection problem for two Dell machines
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: fix unexpected -EEXIST when creating new inode
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: fix crash due to not cleaning up tree log block's dirty bits
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: fix deadlock in run_delalloc_nocow
-
-Larry Finger <Larry.Finger@lwfinger.net>
-    rtlwifi: rtl8821ae: Fix connection lost problem correctly
-
-Nicolas Pitre <nicolas.pitre@linaro.org>
-    console/dummy: leave .con_font_get set to NULL
-
-Johan Hovold <johan@kernel.org>
-    video: fbdev: atmel_lcdfb: fix display-timings lookup
-
-Arnd Bergmann <arnd@arndb.de>
-    mm: hide a #warning for COMPILE_TEST
-
-Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-    ext4: correct documentation for grpid mount option
-
-Zhouyi Zhou <zhouzhouyi@gmail.com>
-    ext4: save error to disk in __ext4_grp_locked_error()
-
-Stewart Smith <stewart@linux.vnet.ibm.com>
-    rtc-opal: Fix handling of firmware error codes, prevent busy loops
-
-Julia Lawall <Julia.Lawall@lip6.fr>
-    drm/radeon: adjust tested variable
-
-Gustavo A. R. Silva <garsilva@embeddedor.com>
-    x86/cpu: Change type of x86_cache_size variable to unsigned int
-
-David Woodhouse <dwmw@amazon.co.uk>
-    KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: seq: Fix regression by incorrect ioctl_mutex usages
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    arm: spear13xx: Fix spics gpio controller's warning
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    arm: spear13xx: Fix dmas cells
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    arm: spear600: Add missing interrupt-parent of rtc
-
-Patrice Chotard <patrice.chotard@st.com>
-    ARM: dts: STi: Add gpio polarity for "hdmi,hpd-gpio" property
-
-Eugene Syromiatnikov <esyr@redhat.com>
-    s390: fix handling of -1 in set{,fs}[gu]id16 syscalls
-
-Bjorn Andersson <bjorn.andersson@linaro.org>
-    PM / devfreq: Propagate error from devfreq_add_device()
-
-Jack Morgenstein <jackm@dev.mellanox.co.il>
-    IB/mlx4: Fix incorrectly releasing steerable UD QPs when have only ETH ports
-
-
--------------
-
-Diffstat:
-
- Documentation/devicetree/bindings/dma/snps-dma.txt |  2 +-
- Documentation/filesystems/ext4.txt                 |  2 +-
- Makefile                                           |  4 ++--
- arch/arm/boot/dts/s5pv210.dtsi                     |  1 +
- arch/arm/boot/dts/spear1310-evb.dts                |  2 +-
- arch/arm/boot/dts/spear1340.dtsi                   |  4 ++--
- arch/arm/boot/dts/spear13xx.dtsi                   |  6 ++---
- arch/arm/boot/dts/spear600.dtsi                    |  1 +
- arch/arm/boot/dts/stih407.dtsi                     |  3 ++-
- arch/arm/boot/dts/stih410.dtsi                     |  3 ++-
- arch/arm/mach-pxa/tosa-bt.c                        |  4 ++++
- arch/s390/kernel/compat_linux.c                    |  8 +++----
- arch/x86/include/asm/processor.h                   |  2 +-
- arch/x86/kernel/cpu/common.c                       |  2 +-
- arch/x86/kernel/cpu/microcode/intel.c              |  2 +-
- arch/x86/kernel/cpu/proc.c                         |  4 ++--
- arch/x86/kvm/mmu.c                                 | 10 ++++----
- drivers/devfreq/devfreq.c                          |  2 +-
- drivers/gpu/drm/radeon/radeon_uvd.c                |  2 +-
- drivers/infiniband/hw/mlx4/main.c                  | 13 ++++------
- drivers/md/dm.c                                    |  3 ++-
- drivers/media/tuners/r820t.c                       | 13 ++++++----
- drivers/net/ethernet/marvell/mvpp2.c               | 11 ++++++---
- drivers/net/ethernet/mellanox/mlx4/qp.c            |  3 +++
- .../net/wireless/realtek/rtlwifi/rtl8821ae/hw.c    |  5 ++--
- drivers/net/wireless/realtek/rtlwifi/wifi.h        |  1 +
- drivers/rtc/rtc-opal.c                             | 12 ++++++++--
- drivers/video/console/dummycon.c                   |  1 -
- drivers/video/fbdev/atmel_lcdfb.c                  |  8 ++++++-
- fs/btrfs/inode.c                                   |  5 +++-
- fs/btrfs/tree-log.c                                | 27 +++++++++++++++++++++
- fs/ext4/super.c                                    |  1 +
- fs/namei.c                                         |  3 +++
- include/linux/kaiser.h                             |  2 +-
- mm/memory.c                                        |  2 +-
- sound/core/seq/seq_clientmgr.c                     | 23 ++++++++++--------
- sound/pci/hda/patch_realtek.c                      | 28 ++++++++++++++++++++++
- sound/usb/mixer.c                                  | 18 ++++++++------
- sound/usb/pcm.c                                    |  9 +++++++
- 39 files changed, 181 insertions(+), 71 deletions(-)
+Guenter
