@@ -1,377 +1,260 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1502207-1519480364-5-6545651305808721493
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES roca, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519480363; b=aqOJ5XH5KKLUjAsylvZipl+ac4J9XIlSmB1GFK3It+mGtSk
-    Q9bAfEafHLimIeWMp7Xu0dShwxSqnzPy9J18zoWvvZjV1I8dvjd/5X5Ny6RMT8xF
-    ZGlpCtrEXhRCOO+USavRacQ2HT7jaqIUVzxRdeCFTkoouDmyJtpQmFY27kuxLXr+
-    imi0hnqgIC/tFzp27x09JpKHJ1J1BBWRFJadoPnDhsHbZgOR0691bGQZRpj62kYM
-    Au0PIzM9pviVqYF94vAUbMCc5YIEiWQHFoR3lHIKRH3kq2dpGoOJDZImBKN+AMnP
-    F47ROa+RbcLoM/9H2PFdu0yAT9bGZvITjSBRtCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519480363; bh=Z
-    xUEcAzde23J4evU0JNqvNqRkwI1b9WL+O4Km5Jri1I=; b=wUa41OeniiCDUVm0S
-    V2pRpQMniIgjqyQFF3TYKya9FX7Ev9l+EbW9Uqq2Wb2QUZiqhnnYH8HDMBMl85Im
-    xaULc4ipODMEacOA7qNminCI3tX45m/gPkyCrhckRL3z2n00WjBshAd/brIWdCL3
-    k++2ffJTEHslx4vnaUwxRZ9vP8idCly9SBEesByPVMh2fv5vgqxCxBrrwbrFVzhz
-    A6cSicmjmjkAQBp/amR8odI/XxMsrsQWpvUAPTNK/0HbHgbjpZAlvU9P46cwCQtN
-    xO6rFzd3nrrwpIwQdM1o4Tcd7gRefvN2J/yCJIY7ucQZNHKA58ByHKj6QnNpgefm
-    OhEkQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=kxUSjuil x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nfSoyEmD;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=kxUSjuil x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nfSoyEmD;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELttZCrVO5rpXbdvXuci9WX7TfqdsPMqAY7uuKW6+10h5JLwM54jEPms2YkpujEBFT1v68z3CA==
-Date: Sat, 24 Feb 2018 10:52:32 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v3] staging:iio:meter: Add name to function definition
- arguments
-Message-ID: <20180224135232.tqrlssffqbcawofk@smtp.gmail.com>
-References: <20180221195435.bycvg26n6sm45lx5@smtp.gmail.com>
- <20180224134229.297acded@archlinux>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180224134229.297acded@archlinux>
-User-Agent: NeoMutt/20171215
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Hartmut Knaack <knaack.h@gmx.de>, daniel.baluta@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <idgar@virtualoco.com>
+X-Google-Smtp-Source: AH8x224bYZjxaB/P3BXAU6Q/cGDOZT7+jWmRUjXCMp2HtZGx7faIH6+IARgYUgJzKagC+yEono77
+ARC-Seal: i=1; a=rsa-sha256; t=1519316452; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FHStTToYz1C5v1wtiNTt8K/VrP8Fy/F5ibcfR123/By6ytYB8oh26YKulwemAxBGIf
+         DFoL0l6oIMhSILqucN2tJkJetqPAW3jvzqDq12BZhPX7GKk1quyyo0uvAd1Ps8drgVfh
+         AhlUaJVrym/KF422mM7e7jeJmqsTbhFZAi7qPt0CGDdlxQpBMZiuIFVA7lcwZlPoCADK
+         k4MJxiSF8xk75RkD3FqPwuzB7QqoiZutiJfIuC/yszjx/LxYpqjrZDaQZ7RtAIvbarnO
+         +oQbuQL4tatT64P88D7W1uPtDUoUXwb6oc+iduOVg2vJ/jW77wMR6z575k8vMJ7B+Umx
+         myIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=nvmv2Nx5wj/qUAYVTV8yKV8Enqo3mZPaPODsR991uMA=;
+        b=yiVzHMYuFTQTbRYH4LdeCihdu+nu4DPikPyTiHrd7+JOYp+vGYBEDkD5djKrvcjWCm
+         mjPrQw21AQtFw8/vu7REZc3ZD+xOU6CieG1JouU+L4WPdvq3SuW5UTA2m+KuwqeT568L
+         mdu9jbs26lyVHQTtH462hoO846KO1x/qi2aLGbHBN6xtQ9z3KEWWA/XglOBPiFKH3m59
+         mpfzpS9lGH8ipjIN0o2bfX+GWBACBTU0aVmG+YjiJtvVQ7BS8oMe1PXQSyLegKsCAq4G
+         lddlhhhzzva4M94r4HmWq2d3A909pi7+dinv4zCZ5aj8tJSY9BODrKc659TA8v9ddbyq
+         LTCQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=Ls7h0KbK;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=Ls7h0KbK;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+From: Or Idgar <idgar@virtualoco.com>
+To: linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de
+Cc: ghammer@redhat.com,
+	Or Idgar <oridgar@gmail.com>
+Subject: [PATCH] drivers/virt: vm_gen_counter: initial driver implementation
+Date: Thu, 22 Feb 2018 18:20:38 +0200
+Message-Id: <20180222162038.28768-1-idgar@virtualoco.com>
+X-Mailer: git-send-email 2.14.3
+X-ZohoMailClient: External
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593118768319025256?=
+X-GMAIL-MSGID: =?utf-8?q?1593118768319025256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/24, Jonathan Cameron wrote:
-> On Wed, 21 Feb 2018 16:54:35 -0300
-> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-> 
-> > This patch fixes the checkpatch.pl warning:
-> > 
-> > drivers/staging/iio/meter/ade7854.h:157: WARNING: function definition
-> > argument 'struct device *' should also have an identifier name...
-> > 
-> > This commit adds arguments names to the signature declared in the
-> > ade7854_state struct. For consistency reason, It also renames all
-> > arguments in function definitions.
-> > 
-> > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> 
-> I would have slightly preferred this as two patches - one doing the
-> renames and one introducing them where they were missing.
+From: Or Idgar <oridgar@gmail.com>
 
-Sorry, next time I will divide the patch in two parts.
+This patch is a driver which expose the Virtual Machine Generation ID
+via sysfs. The ID is a UUID value used to differentiate between virtual
+machines.
+
+The VM-Generation ID is a feature defined by Microsoft (paper:
+http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
+hypervisor vendors.
+
+Signed-off-by: Or Idgar <oridgar@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-hypervisor |  13 +++
+ drivers/misc/Kconfig                       |   6 ++
+ drivers/misc/Makefile                      |   1 +
+ drivers/misc/vmgenid.c                     | 141 +++++++++++++++++++++++++++++
+ 4 files changed, 161 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
+ create mode 100644 drivers/misc/vmgenid.c
+
+diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
+new file mode 100644
+index 000000000000..2f9a7b8eab70
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-hypervisor
+@@ -0,0 +1,13 @@
++What:		/sys/hypervisor/vm_gen_counter
++Date:		February 2018
++Contact:	Or Idgar <idgar@virtualoco.com>
++		Gal Hammer <ghammer@redhat.com>
++Description:	Expose the virtual machine generation ID. The directory
++		contains two files: "generation_id" and "raw". Both files
++		represent the same information.
++
++		"generation_id" file is a UUID string
++		representation.
++
++		"raw" file is a 128-bit integer
++		representation (binary).
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 03605f8fc0dc..5a74802bdfb4 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -500,6 +500,12 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
  
-> Applied to the togreg branch of iio.git and pushed out as testing
-> for the autobuilders to play with it.
-
-Thanks
-
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> > Changes in v2:
-> >   - Make the commit message clearer.
-> >   - Use the same arguments name across signatures and definitions.
-> > Changes in v3:
-> >   - Fix name in the email header.
-> > 
-> >  drivers/staging/iio/meter/ade7754.c     |  6 +++---
-> >  drivers/staging/iio/meter/ade7854-i2c.c | 28 ++++++++++++++--------------
-> >  drivers/staging/iio/meter/ade7854-spi.c | 28 ++++++++++++++--------------
-> >  drivers/staging/iio/meter/ade7854.h     | 28 ++++++++++++++--------------
-> >  4 files changed, 45 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/meter/ade7754.c b/drivers/staging/iio/meter/ade7754.c
-> > index 3a1e342d75fb..9aa067736715 100644
-> > --- a/drivers/staging/iio/meter/ade7754.c
-> > +++ b/drivers/staging/iio/meter/ade7754.c
-> > @@ -132,7 +132,7 @@ static int ade7754_spi_write_reg_8(struct device *dev, u8 reg_address, u8 val)
-> >  }
-> >  
-> >  static int ade7754_spi_write_reg_16(struct device *dev,
-> > -				    u8 reg_address, u16 value)
-> > +				    u8 reg_address, u16 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -140,8 +140,8 @@ static int ade7754_spi_write_reg_16(struct device *dev,
-> >  
-> >  	mutex_lock(&st->buf_lock);
-> >  	st->tx[0] = ADE7754_WRITE_REG(reg_address);
-> > -	st->tx[1] = (value >> 8) & 0xFF;
-> > -	st->tx[2] = value & 0xFF;
-> > +	st->tx[1] = (val >> 8) & 0xFF;
-> > +	st->tx[2] = val & 0xFF;
-> >  	ret = spi_write(st->us, st->tx, 3);
-> >  	mutex_unlock(&st->buf_lock);
-> >  
-> > diff --git a/drivers/staging/iio/meter/ade7854-i2c.c b/drivers/staging/iio/meter/ade7854-i2c.c
-> > index 8106f8cceeab..317e4f0d8176 100644
-> > --- a/drivers/staging/iio/meter/ade7854-i2c.c
-> > +++ b/drivers/staging/iio/meter/ade7854-i2c.c
-> > @@ -17,7 +17,7 @@
-> >  
-> >  static int ade7854_i2c_write_reg_8(struct device *dev,
-> >  				   u16 reg_address,
-> > -				   u8 value)
-> > +				   u8 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -26,7 +26,7 @@ static int ade7854_i2c_write_reg_8(struct device *dev,
-> >  	mutex_lock(&st->buf_lock);
-> >  	st->tx[0] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[1] = reg_address & 0xFF;
-> > -	st->tx[2] = value;
-> > +	st->tx[2] = val;
-> >  
-> >  	ret = i2c_master_send(st->i2c, st->tx, 3);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -36,7 +36,7 @@ static int ade7854_i2c_write_reg_8(struct device *dev,
-> >  
-> >  static int ade7854_i2c_write_reg_16(struct device *dev,
-> >  				    u16 reg_address,
-> > -				    u16 value)
-> > +				    u16 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -45,8 +45,8 @@ static int ade7854_i2c_write_reg_16(struct device *dev,
-> >  	mutex_lock(&st->buf_lock);
-> >  	st->tx[0] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[1] = reg_address & 0xFF;
-> > -	st->tx[2] = (value >> 8) & 0xFF;
-> > -	st->tx[3] = value & 0xFF;
-> > +	st->tx[2] = (val >> 8) & 0xFF;
-> > +	st->tx[3] = val & 0xFF;
-> >  
-> >  	ret = i2c_master_send(st->i2c, st->tx, 4);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -56,7 +56,7 @@ static int ade7854_i2c_write_reg_16(struct device *dev,
-> >  
-> >  static int ade7854_i2c_write_reg_24(struct device *dev,
-> >  				    u16 reg_address,
-> > -				    u32 value)
-> > +				    u32 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -65,9 +65,9 @@ static int ade7854_i2c_write_reg_24(struct device *dev,
-> >  	mutex_lock(&st->buf_lock);
-> >  	st->tx[0] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[1] = reg_address & 0xFF;
-> > -	st->tx[2] = (value >> 16) & 0xFF;
-> > -	st->tx[3] = (value >> 8) & 0xFF;
-> > -	st->tx[4] = value & 0xFF;
-> > +	st->tx[2] = (val >> 16) & 0xFF;
-> > +	st->tx[3] = (val >> 8) & 0xFF;
-> > +	st->tx[4] = val & 0xFF;
-> >  
-> >  	ret = i2c_master_send(st->i2c, st->tx, 5);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -77,7 +77,7 @@ static int ade7854_i2c_write_reg_24(struct device *dev,
-> >  
-> >  static int ade7854_i2c_write_reg_32(struct device *dev,
-> >  				    u16 reg_address,
-> > -				    u32 value)
-> > +				    u32 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -86,10 +86,10 @@ static int ade7854_i2c_write_reg_32(struct device *dev,
-> >  	mutex_lock(&st->buf_lock);
-> >  	st->tx[0] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[1] = reg_address & 0xFF;
-> > -	st->tx[2] = (value >> 24) & 0xFF;
-> > -	st->tx[3] = (value >> 16) & 0xFF;
-> > -	st->tx[4] = (value >> 8) & 0xFF;
-> > -	st->tx[5] = value & 0xFF;
-> > +	st->tx[2] = (val >> 24) & 0xFF;
-> > +	st->tx[3] = (val >> 16) & 0xFF;
-> > +	st->tx[4] = (val >> 8) & 0xFF;
-> > +	st->tx[5] = val & 0xFF;
-> >  
-> >  	ret = i2c_master_send(st->i2c, st->tx, 6);
-> >  	mutex_unlock(&st->buf_lock);
-> > diff --git a/drivers/staging/iio/meter/ade7854-spi.c b/drivers/staging/iio/meter/ade7854-spi.c
-> > index 63e200ffd1f2..72eddfec21f7 100644
-> > --- a/drivers/staging/iio/meter/ade7854-spi.c
-> > +++ b/drivers/staging/iio/meter/ade7854-spi.c
-> > @@ -17,7 +17,7 @@
-> >  
-> >  static int ade7854_spi_write_reg_8(struct device *dev,
-> >  		u16 reg_address,
-> > -		u8 value)
-> > +		u8 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -32,7 +32,7 @@ static int ade7854_spi_write_reg_8(struct device *dev,
-> >  	st->tx[0] = ADE7854_WRITE_REG;
-> >  	st->tx[1] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[2] = reg_address & 0xFF;
-> > -	st->tx[3] = value & 0xFF;
-> > +	st->tx[3] = val & 0xFF;
-> >  
-> >  	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -42,7 +42,7 @@ static int ade7854_spi_write_reg_8(struct device *dev,
-> >  
-> >  static int ade7854_spi_write_reg_16(struct device *dev,
-> >  		u16 reg_address,
-> > -		u16 value)
-> > +		u16 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -57,8 +57,8 @@ static int ade7854_spi_write_reg_16(struct device *dev,
-> >  	st->tx[0] = ADE7854_WRITE_REG;
-> >  	st->tx[1] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[2] = reg_address & 0xFF;
-> > -	st->tx[3] = (value >> 8) & 0xFF;
-> > -	st->tx[4] = value & 0xFF;
-> > +	st->tx[3] = (val >> 8) & 0xFF;
-> > +	st->tx[4] = val & 0xFF;
-> >  
-> >  	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -68,7 +68,7 @@ static int ade7854_spi_write_reg_16(struct device *dev,
-> >  
-> >  static int ade7854_spi_write_reg_24(struct device *dev,
-> >  		u16 reg_address,
-> > -		u32 value)
-> > +		u32 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -83,9 +83,9 @@ static int ade7854_spi_write_reg_24(struct device *dev,
-> >  	st->tx[0] = ADE7854_WRITE_REG;
-> >  	st->tx[1] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[2] = reg_address & 0xFF;
-> > -	st->tx[3] = (value >> 16) & 0xFF;
-> > -	st->tx[4] = (value >> 8) & 0xFF;
-> > -	st->tx[5] = value & 0xFF;
-> > +	st->tx[3] = (val >> 16) & 0xFF;
-> > +	st->tx[4] = (val >> 8) & 0xFF;
-> > +	st->tx[5] = val & 0xFF;
-> >  
-> >  	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> >  	mutex_unlock(&st->buf_lock);
-> > @@ -95,7 +95,7 @@ static int ade7854_spi_write_reg_24(struct device *dev,
-> >  
-> >  static int ade7854_spi_write_reg_32(struct device *dev,
-> >  		u16 reg_address,
-> > -		u32 value)
-> > +		u32 val)
-> >  {
-> >  	int ret;
-> >  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > @@ -110,10 +110,10 @@ static int ade7854_spi_write_reg_32(struct device *dev,
-> >  	st->tx[0] = ADE7854_WRITE_REG;
-> >  	st->tx[1] = (reg_address >> 8) & 0xFF;
-> >  	st->tx[2] = reg_address & 0xFF;
-> > -	st->tx[3] = (value >> 24) & 0xFF;
-> > -	st->tx[4] = (value >> 16) & 0xFF;
-> > -	st->tx[5] = (value >> 8) & 0xFF;
-> > -	st->tx[6] = value & 0xFF;
-> > +	st->tx[3] = (val >> 24) & 0xFF;
-> > +	st->tx[4] = (val >> 16) & 0xFF;
-> > +	st->tx[5] = (val >> 8) & 0xFF;
-> > +	st->tx[6] = val & 0xFF;
-> >  
-> >  	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> >  	mutex_unlock(&st->buf_lock);
-> > diff --git a/drivers/staging/iio/meter/ade7854.h b/drivers/staging/iio/meter/ade7854.h
-> > index c27247a7891a..a82d38224cbd 100644
-> > --- a/drivers/staging/iio/meter/ade7854.h
-> > +++ b/drivers/staging/iio/meter/ade7854.h
-> > @@ -152,20 +152,20 @@
-> >   * @rx:			receive buffer
-> >   **/
-> >  struct ade7854_state {
-> > -	struct spi_device	*spi;
-> > -	struct i2c_client	*i2c;
-> > -	int			(*read_reg_8)(struct device *, u16, u8 *);
-> > -	int			(*read_reg_16)(struct device *, u16, u16 *);
-> > -	int			(*read_reg_24)(struct device *, u16, u32 *);
-> > -	int			(*read_reg_32)(struct device *, u16, u32 *);
-> > -	int			(*write_reg_8)(struct device *, u16, u8);
-> > -	int			(*write_reg_16)(struct device *, u16, u16);
-> > -	int			(*write_reg_24)(struct device *, u16, u32);
-> > -	int			(*write_reg_32)(struct device *, u16, u32);
-> > -	int			irq;
-> > -	struct mutex		buf_lock;
-> > -	u8			tx[ADE7854_MAX_TX] ____cacheline_aligned;
-> > -	u8			rx[ADE7854_MAX_RX];
-> > +	struct spi_device *spi;
-> > +	struct i2c_client *i2c;
-> > +	int (*read_reg_8)(struct device *dev, u16 reg_address, u8 *val);
-> > +	int (*read_reg_16)(struct device *dev, u16 reg_address, u16 *val);
-> > +	int (*read_reg_24)(struct device *dev, u16 reg_address, u32 *val);
-> > +	int (*read_reg_32)(struct device *dev, u16 reg_address, u32 *val);
-> > +	int (*write_reg_8)(struct device *dev, u16 reg_address, u8 val);
-> > +	int (*write_reg_16)(struct device *dev, u16 reg_address, u16 val);
-> > +	int (*write_reg_24)(struct device *dev, u16 reg_address, u32 val);
-> > +	int (*write_reg_32)(struct device *dev, u16 reg_address, u32 val);
-> > +	int irq;
-> > +	struct mutex buf_lock;
-> > +	u8 tx[ADE7854_MAX_TX] ____cacheline_aligned;
-> > +	u8 rx[ADE7854_MAX_RX];
-> >  
-> >  };
-> >  
-> 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
++config VMGENID
++	tristate "Virtual Machine Generation ID driver"
++	help
++	  This is a Virtual Machine Generation ID driver which provides
++	  a virtual machine unique identifier.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index c3c8624f4d95..067aa666bb6a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_VMGENID)		+= vmgenid.o
+ 
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
+diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
+new file mode 100644
+index 000000000000..9d7f09f9e7bd
+--- /dev/null
++++ b/drivers/misc/vmgenid.c
+@@ -0,0 +1,141 @@
++/*
++ * Virtual Machine Generation ID driver
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
++ *	Authors:
++ *	  Or Idgar <oridgar@gmail.com>
++ *	  Gal Hammer <ghammer@redhat.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/acpi.h>
++#include <linux/uuid.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
++MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
++MODULE_DESCRIPTION("Virtual Machine Generation ID");
++MODULE_VERSION("0.1");
++
++ACPI_MODULE_NAME("vmgenid");
++
++static u64 phy_addr;
++
++static ssize_t generation_id_show(struct device *_d,
++			      struct device_attribute *attr, char *buf)
++{
++	uuid_t *uuidp;
++	ssize_t result;
++
++	uuidp = acpi_os_map_iomem(phy_addr, sizeof(uuid_t));
++	if (!uuidp)
++		return -EFAULT;
++
++	result = sprintf(buf, "%pUl\n", uuidp);
++	acpi_os_unmap_iomem(uuidp, sizeof(uuid_t));
++	return result;
++}
++static DEVICE_ATTR_RO(generation_id);
++
++static ssize_t raw_show(struct device *_d,
++			struct device_attribute *attr,
++			      char *buf)
++{
++	uuid_t *uuidp;
++
++	uuidp = acpi_os_map_iomem(phy_addr, sizeof(uuid_t));
++	if (!uuidp)
++		return -EFAULT;
++	memcpy(buf, uuidp, sizeof(uuid_t));
++	acpi_os_unmap_iomem(uuidp, sizeof(uuid_t));
++	return sizeof(uuid_t);
++}
++static DEVICE_ATTR_RO(raw);
++
++static struct attribute *vmgenid_attrs[] = {
++	&dev_attr_generation_id.attr,
++	&dev_attr_raw.attr,
++	NULL,
++};
++static const struct attribute_group vmgenid_group = {
++	.name = "vm_gen_counter",
++	.attrs = vmgenid_attrs,
++};
++
++static int get_vmgenid(acpi_handle handle)
++{
++	int i;
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	acpi_status status;
++	union acpi_object *pss;
++	union acpi_object *element;
++
++	status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
++	if (ACPI_FAILURE(status)) {
++		ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
++		return -ENODEV;
++	}
++	pss = buffer.pointer;
++	if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
++		return -EFAULT;
++
++	phy_addr = 0;
++	for (i = 0; i < pss->package.count; i++) {
++		element = &(pss->package.elements[i]);
++		if (element->type != ACPI_TYPE_INTEGER)
++			return -EFAULT;
++		phy_addr |= element->integer.value << i*32;
++	}
++	return 0;
++}
++
++static int acpi_vmgenid_add(struct acpi_device *device)
++{
++	int retval;
++
++	if (!device)
++		return -EINVAL;
++	retval = get_vmgenid(device->handle);
++	if (retval < 0)
++		return retval;
++	return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
++}
++
++static int acpi_vmgenid_remove(struct acpi_device *device)
++{
++	sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
++	return 0;
++}
++
++static const struct acpi_device_id vmgenid_ids[] = {
++	{"QEMUVGID", 0},
++	{"", 0},
++};
++
++static struct acpi_driver acpi_vmgenid_driver = {
++	.name = "vm_gen_counter",
++	.ids = vmgenid_ids,
++	.owner = THIS_MODULE,
++	.ops = {
++		.add = acpi_vmgenid_add,
++		.remove = acpi_vmgenid_remove,
++	}
++};
++
++static int __init vmgenid_init(void)
++{
++	return acpi_bus_register_driver(&acpi_vmgenid_driver);
++}
++
++static void __exit vmgenid_exit(void)
++{
++	acpi_bus_unregister_driver(&acpi_vmgenid_driver);
++}
++
++module_init(vmgenid_init);
++module_exit(vmgenid_exit);
+-- 
+2.14.3
