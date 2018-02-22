@@ -1,145 +1,99 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x227eRlPDaueGNEvITVf45hRDAzdtmiQFZIGFcrontyrTelElfdd87aPivKHHW9pVzChlzkWQ
-ARC-Seal: i=1; a=rsa-sha256; t=1519363736; cv=none;
+X-Google-Smtp-Source: AH8x224WFX/MUmFau7YdevagsslWgRF32TOZkUO3m3jLebo1TKAl2mJQtc6+erbZcJ5U0y4Rcqko
+ARC-Seal: i=1; a=rsa-sha256; t=1519315364; cv=none;
         d=google.com; s=arc-20160816;
-        b=xCsElrMwmt+B/jytScmV6oDtm76t5zxX+o/ZK4eteRIf5dXX/NBBtzzMGckJWkR6Uy
-         3RQQi6ZZZqhjL9HCDO+jtm1ffMBO+2OPVq2BzMM5sBHtjVxYZmLztVqOox+GftkS8/jm
-         icbvReJoe26PkLsK2BsNlS0tM9x9pGuh7PUUeTB3/xHTrJP8keHcon06LMlQfxBSIDtL
-         B3QdSoAUcldzg9yBiO0GIhdxR0VtCIwiSDchTboWKdzp0Og4hd30gQMMYG8hyhOleatE
-         9FOoMjj8h5epudjp2m86r79vsrzXUKTxJtXbwwcbvHDRn4SHHvkjoYJLfiqBhibFyMa9
-         oyEQ==
+        b=kljegowBlq0iZpeGroB3lOG2VKUixNDd7vwBDWPy7Hnw6A+uJCqZ6C9CXi12tZaqmd
+         9PoB/uhQVfH3Dkxw/vjau68oRhODBxztgycYfY0kdeDXRiP2VDOwWXmu7pxeg01Jxgb4
+         BZQev//G7JG7am9asxdqPj4sDkRlGxNkLUpmbcxI5D++iWRQ9AKZ24g2FUFNmzTPyQ7B
+         YK0pLLX0wD1gSfAj2VB4dPs8IAUFtBlakmMSUZoNvAPIQI0orqFJQiaMImoEbNRwaRql
+         V3QU1DKWKomj56xQ827czpoofhX+GUio3SttC6fZ8MjwB8v0ELqD+oPH+3bLEZpv0jU0
+         0hdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=oDfGhiuod3fkGEXpvxbQPFyJHZy9f9mvi3RbxktaXKo=;
-        b=qN0P7Gv457kRk0i5UH4zDpBvwYpRD0yLGUG0y4Zi5zbFK47L5wlqbQ0tOz5w5dugg0
-         ch2IYCWIoJaFutsixEG7Wi0tdX4FdLkeo8StOFF0winG1Ko8FM8CSV0Tk0Nm/Amby1b3
-         V6MGJY93Pvl2TYhcvEjltBkto5GE5zfN50q569R+XoytjBojdjRBYCs+ANPces/QhCjA
-         H7dFL8F9hByq6+QhbikDkOS1r1I0jBdNac7zGVzs5jU7mybTlQjDJFjyhT0UAEN4O1Qx
-         mTDIp42HX/OggtDstjikrf9rJT4Mnu8p1RjD3UvOnTpJ2P8by89KmYDzPMYLs6gf/y8f
-         4y9A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=BQ9xOmpdx+7MmhmvbBgaPrXlqHbjNItDnJ/z45n11ew=;
+        b=XQpEJ0+3EvMeyNMuSUiJ6oO+nVwGAIq2N7MvrmWCHLRZ7YvC7OWyrP58nt4i0uUjYP
+         XEzy/tnUsCI8GGMv0Jl/HfOi5uZ3WZ+5uyF8wxGrHvW136P29MeqQktOI6X5yhKIFyuC
+         g/u5H0JmVyfkN2YlTGf9b94qeP3k2iYrM+Jl/n7tgOdFccbNaenEa01ExfMp1qqfm9Ta
+         GTrVcO3q9lzMuI+1f1lOcombHLayAtb+szFsWMgH2aZOqvJVJCuxbO0XgNmQVbjrVVfc
+         /SVS1YmX/RnJG6VdoBe58O0VK6CSBTTEJOSCDreNy57eM5epa5knp4yEUhOnWeOfNV+C
+         eEgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=H64eYVpJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=PZ/pArLD;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=eTHxua7D;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=g0yiuWV1;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=H64eYVpJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=PZ/pArLD;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=eTHxua7D;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=g0yiuWV1;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 23 Feb 2018 10:58:54 +0530
-From: poza@codeaurora.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>,
- linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH v10 4/7] PCI/DPC: Unify and plumb error handling into DPC
-In-Reply-To: <20180222183954.GD6267@infradead.org>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E94E360F8E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v10 3/7] PCI/ERR: add mutex to synchronize recovery
+Date: Thu, 22 Feb 2018 21:32:08 +0530
+Message-Id: <1519315332-26852-4-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519315332-26852-1-git-send-email-poza@codeaurora.org>
 References: <1519315332-26852-1-git-send-email-poza@codeaurora.org>
- <1519315332-26852-5-git-send-email-poza@codeaurora.org>
- <20180222183954.GD6267@infradead.org>
-Message-ID: <29cde9310bb4977ab10c747d104dcb21@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086415695868818?=
-X-GMAIL-MSGID: =?utf-8?q?1593168348446753856?=
+X-GMAIL-THRID: =?utf-8?q?1593086412177501980?=
+X-GMAIL-MSGID: =?utf-8?q?1593117627585397329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-02-23 00:09, Christoph Hellwig wrote:
-> On Thu, Feb 22, 2018 at 09:32:09PM +0530, Oza Pawandeep wrote:
->> Current DPC driver does not do recovery, e.g. calling end-point's 
->> driver's
->> callbacks, which sanitize the sw.
->> 
->> DPC driver implements link_reset callback, and calls pci_do_recovery.
->> 
->> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
->> 
->> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->> index a5a79f0..124f42e 100644
->> --- a/drivers/pci/pci.h
->> +++ b/drivers/pci/pci.h
->> @@ -343,6 +343,8 @@ static inline resource_size_t 
->> pci_resource_alignment(struct pci_dev *dev,
->>  void pci_enable_acs(struct pci_dev *dev);
->> 
->>  /* PCI error reporting and recovery */
->> +#define DPC_FATAL	4
->> +
->>  void pci_do_recovery(struct pci_dev *dev, int severity);
->> 
->>  #ifdef CONFIG_PCIEASPM
->> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
->> index 38e40c6..208b427 100644
->> --- a/drivers/pci/pcie/pcie-dpc.c
->> +++ b/drivers/pci/pcie/pcie-dpc.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/pcieport_if.h>
->>  #include "../pci.h"
->>  #include "aer/aerdrv.h"
->> +#include "portdrv.h"
->> 
->>  struct dpc_dev {
->>  	struct pcie_device	*dev;
->> @@ -45,6 +46,60 @@ struct dpc_dev {
->>  	"Memory Request Completion Timeout",		 /* Bit Position 18 */
->>  };
->> 
->> +static int find_dpc_dev_iter(struct device *device, void *data)
->> +{
->> +	struct pcie_port_service_driver *service_driver;
->> +	struct device **dev;
->> +
->> +	dev = (struct device **) data;
->> +
->> +	if (device->bus == &pcie_port_bus_type && device->driver) {
->> +		service_driver = to_service_driver(device->driver);
-> 
-> Please move the initial assignment to the declaration line to
-> clean this up a bit:
-> 
-> 	struct device **dev = (struct device **)data;
-> 
-> Same thing happens a couple more times in this patch.
-> 
->> +EXPORT_SYMBOL(pci_find_dpc_service);
-> 
-> EXPORT_SYMBOL_GPL for PCI layer internals again - and ditto for
-> probably about everything in this series.
+This patch protects pci_do_recovery with mutex.
 
-will take care of all these comments.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-> 
->>  #if IS_ENABLED(CONFIG_PCIEAER)
->> -	/* Use the aer driver of the component firstly */
->> -	driver = pci_find_aer_service(udev);
->> +	if ((severity == AER_FATAL) ||
->> +	    (severity == AER_NONFATAL) ||
->> +	    (severity == AER_CORRECTABLE))
->> +		driver = pci_find_aer_service(udev);
->>  #endif
-> 
-> No need for the inner braces here.
-> 
->> -	if (severity == AER_FATAL)
->> +	if ((severity == AER_FATAL) ||
->> +	    (severity == DPC_FATAL))
->>  		state = pci_channel_io_frozen;
->>  	else
->>  		state = pci_channel_io_normal;
-> 
-> Same here and a few more times below.
-
-will take care
-Thanks,
-Oza.
+diff --git a/drivers/pci/pcie/pcie-err.c b/drivers/pci/pcie/pcie-err.c
+index a532fe0..8318c84 100644
+--- a/drivers/pci/pcie/pcie-err.c
++++ b/drivers/pci/pcie/pcie-err.c
+@@ -20,6 +20,8 @@
+ #include <linux/pcieport_if.h>
+ #include "portdrv.h"
+ 
++static DEFINE_MUTEX(pci_err_recovery_lock);
++
+ struct aer_broadcast_data {
+ 	enum pci_channel_state state;
+ 	enum pci_ers_result result;
+@@ -283,6 +285,8 @@ void pci_do_recovery(struct pci_dev *dev, int severity)
+ 	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
+ 	enum pci_channel_state state;
+ 
++	mutex_lock(&pci_err_recovery_lock);
++
+ 	if (severity == AER_FATAL)
+ 		state = pci_channel_io_frozen;
+ 	else
+@@ -326,9 +330,11 @@ void pci_do_recovery(struct pci_dev *dev, int severity)
+ 				report_resume);
+ 
+ 	dev_info(&dev->dev, "Device recovery successful\n");
++	mutex_unlock(&pci_err_recovery_lock);
+ 	return;
+ 
+ failed:
+ 	/* TODO: Should kernel panic here? */
+ 	dev_info(&dev->dev, "Device recovery failed\n");
++	mutex_unlock(&pci_err_recovery_lock);
+ }
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
