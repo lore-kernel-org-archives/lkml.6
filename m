@@ -1,105 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932904AbeBVOYG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:24:06 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:57912 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932638AbeBVOYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:24:02 -0500
-Subject: Re: [PATCH v4 2/5] powerpc/mm/slice: Enhance for supporting PPC32
-To: Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <01e8f783db8f4d4d41df91e0400a8634272b326f.1518226173.git.christophe.leroy@c-s.fr>
- <0ac518636ae1e601ea0732dd69b48dcd0f347285.1518226173.git.christophe.leroy@c-s.fr>
- <20180211235944.14c2be39@roar.ozlabs.ibm.com>
- <ba493b6c-c61a-5097-e896-5ae3f0128b3a@linux.vnet.ibm.com>
- <20180212093435.20200712@roar.ozlabs.ibm.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <c2d1fb88-ced1-2674-d320-8c66f6f5e5c5@c-s.fr>
-Date: Thu, 22 Feb 2018 15:24:05 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S932907AbeBVOYn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:24:43 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:54457 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932638AbeBVOYj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 09:24:39 -0500
+X-Google-Smtp-Source: AH8x2254uXF9zmY2m27SI42tAXM71ctviaRDIfPCR92hTHPmbGOm0aAQ9Qk6tEAM8q9cpoAlg7t9kA==
+Reply-To: monstr@monstr.eu
+Subject: Re: arch/microblaze/lib/fastcopy.S:33:2: error: #error Microblaze LE
+ not support ASM optimized lib func. Disable OPT_LIB_ASM.
+To: kbuild test robot <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+References: <201802200725.yWq58Mlm%fengguang.wu@intel.com>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <9947be54-1cfb-b84b-f5d7-17c2d0a2b06e@monstr.eu>
+Date: Thu, 22 Feb 2018 15:24:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180212093435.20200712@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <201802200725.yWq58Mlm%fengguang.wu@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="Q3pyFHCQaUXgw6uptCJ21QYznxbYqV5uN"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Q3pyFHCQaUXgw6uptCJ21QYznxbYqV5uN
+Content-Type: multipart/mixed; boundary="NbIYeQOaWPzo0PhPfdraQGVHlCKojZzH5";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: kbuild test robot <fengguang.wu@intel.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Message-ID: <9947be54-1cfb-b84b-f5d7-17c2d0a2b06e@monstr.eu>
+Subject: Re: arch/microblaze/lib/fastcopy.S:33:2: error: #error Microblaze LE
+ not support ASM optimized lib func. Disable OPT_LIB_ASM.
+References: <201802200725.yWq58Mlm%fengguang.wu@intel.com>
+In-Reply-To: <201802200725.yWq58Mlm%fengguang.wu@intel.com>
+
+--NbIYeQOaWPzo0PhPfdraQGVHlCKojZzH5
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+I have sent a patch for this issue.
+https://lkml.org/lkml/2018/2/22/441
+
+Thanks for reporting,
+Michal
+
+On 20.2.2018 00:25, kbuild test robot wrote:
+> Hi Arnd,
+>=20
+> FYI, the error/warning still remains.
+>=20
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git master
+> head:   79c0ef3e85c015b0921a8fd5dd539d1480e9cd6c
+> commit: 71e7673dadfdae0605d4c1f66ecb4b045c79fe0f microblaze: fix endian=
+ handling
+> date:   5 weeks ago
+> config: microblaze-mmu_defconfig (attached as .config)
+> compiler: microblaze-linux-gcc (GCC) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/s=
+bin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 71e7673dadfdae0605d4c1f66ecb4b045c79fe0f
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=3Dmicroblaze=20
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>>> arch/microblaze/lib/fastcopy.S:33:2: error: #error Microblaze LE not =
+support ASM optimized lib func. Disable OPT_LIB_ASM.
+>     #error Microblaze LE not support ASM optimized lib func. Disable OP=
+T_LIB_ASM.
+>      ^~~~~
+>=20
+> vim +33 arch/microblaze/lib/fastcopy.S
+>=20
+> de93c3c1 Michal Simek 2011-01-28 @33  #error Microblaze LE not support =
+ASM optimized lib func. Disable OPT_LIB_ASM.
+> de93c3c1 Michal Simek 2011-01-28  34  #endif
+> de93c3c1 Michal Simek 2011-01-28  35 =20
+>=20
+> :::::: The code at line 33 was first introduced by commit
+> :::::: de93c3c119382cb888ca8a94b642dbcf8035525e microblaze: Fix ASM opt=
+imized code for LE
+>=20
+> :::::: TO: Michal Simek <monstr@monstr.eu>
+> :::::: CC: Michal Simek <monstr@monstr.eu>
+>=20
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology =
+Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corpo=
+ration
+>=20
 
 
-Le 12/02/2018 à 00:34, Nicholas Piggin a écrit :
-> On Sun, 11 Feb 2018 21:04:42 +0530
-> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
-> 
->> On 02/11/2018 07:29 PM, Nicholas Piggin wrote:
->>> On Sat, 10 Feb 2018 13:54:27 +0100 (CET)
->>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>>    
->>>> In preparation for the following patch which will fix an issue on
->>>> the 8xx by re-using the 'slices', this patch enhances the
->>>> 'slices' implementation to support 32 bits CPUs.
->>>>
->>>> On PPC32, the address space is limited to 4Gbytes, hence only the low
->>>> slices will be used.
->>>>
->>>> This patch moves "slices" functions prototypes from page64.h to slice.h
->>>>
->>>> The high slices use bitmaps. As bitmap functions are not prepared to
->>>> handling bitmaps of size 0, the bitmap_xxx() calls are wrapped into
->>>> slice_bitmap_xxx() functions which will void on PPC32
->>>
->>> On this last point, I think it would be better to put these with the
->>> existing slice bitmap functions in slice.c and just have a few #ifdefs
->>> for SLICE_NUM_HIGH == 0.
->>>    
->>
->> We went back and forth with that. IMHO, we should avoid as much #ifdef
->> as possible across platforms. It helps to understand the platform
->> restrictions better as we have less and less access to these platforms.
->> The above change indicates that nohash 32 wants to use the slice code
->> and they have different restrictions. With that we now know that
->> book3s64 and nohash 32 are the two different configs using slice code.
-> 
-> I don't think it's the right place to put it. It's not platform dependent
-> so much as it just depends on whether or not you have 0 high slices as
-> a workaround for bitmap API not accepting 0 length.
-> 
-> Another platform that uses the slice code would just have to copy and
-> paste either the nop or the bitmap implementation depending if it has
-> high slices. So I don't think it's the right abstraction. And it
-> implies a bitmap operation but it very specifically only works for
-> struct slice_mask.high_slices bitmap, which is not clear. Better to
-> just work with struct slice_mask.
-> 
-> Some ifdefs inside .c code for small helper functions like this IMO isn't
-> really a big deal -- it's not worse than having it in headers. You just
-> want to avoid ifdef mess when looking at non-trivial logic.
-> 
-> static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
-> {
->      dst->low_slices |= src->low_slices;
-> #if SLICE_NUM_HIGH > 0
->      bitmap_or(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
-> #endif
-> }
-> 
-> I think that's pretty fine. If you have a singular hatred for ifdef in .c,
-> then if() works just as well.
-> 
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
-To be honest, I tend to agree with you. Therefore, after a few words
-with Michael, v5 gets rid of those obscure wrappers to come back to the 
-initial (v1) approach which was to use 'if (SLICE_NUM_HIGH)'.
-Behind the fact that it in my mind looks cleared in the code than using 
-slice_bitmap_xxx() wrappers, it also has the advantage of significantly 
-reducing the size of the patch, which is a must to be able to get it 
-applied on stable.
 
-Christophe
+
+--NbIYeQOaWPzo0PhPfdraQGVHlCKojZzH5--
+
+--Q3pyFHCQaUXgw6uptCJ21QYznxbYqV5uN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqO0p8ACgkQykllyylKDCG7QgCfchV55+qXWNnoDtzMI4ol7KZi
+DZAAnijDEkyGEGSk1ahZ+ViSbUlukUFI
+=PSnS
+-----END PGP SIGNATURE-----
+
+--Q3pyFHCQaUXgw6uptCJ21QYznxbYqV5uN--
