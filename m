@@ -1,106 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeBVC4M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 21:56:12 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:49844 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751810AbeBVC4K (ORCPT
+        id S1752076AbeBVDU0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 22:20:26 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39770 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751810AbeBVDUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 21:56:10 -0500
-X-IronPort-AV: E=Sophos;i="5.47,376,1515456000";
-   d="scan'208";a="720988724"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-CC: "hpa@zytor.com" <hpa@zytor.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH 08/10] KVM/X86: Use kvm_vcpu_map in
- emulator_cmpxchg_emulated
-Thread-Topic: [PATCH 08/10] KVM/X86: Use kvm_vcpu_map in
- emulator_cmpxchg_emulated
-Thread-Index: AQHTqzwV5FLsBskogUij6sW8WWG+qaOvuuSA
-Date: Thu, 22 Feb 2018 02:56:05 +0000
-Message-ID: <1519268165.24247.40.camel@amazon.de>
-References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
-         <1519235241-6500-9-git-send-email-karahmed@amazon.de>
-In-Reply-To: <1519235241-6500-9-git-send-email-karahmed@amazon.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B568B4929A50BF4A911B44C3C220DB8D@amazon.com>
+        Wed, 21 Feb 2018 22:20:23 -0500
+X-Google-Smtp-Source: AG47ELtLKTG0QA/NpQ6uyaFZVIb+9OThHMoJmXElgKZxIu7oLdqYZUgDXrA6+MUFpnAlVq7xCX/hHg==
+X-ME-Sender: <xms:9DaOWuzQaNRWqa_B9M3id5uisH9IXw3CG72Hmdl_DhbLCZ6Hg3F4JQ>
+Date: Thu, 22 Feb 2018 11:23:49 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, nborisov@suse.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH RFC tools/lkmm 10/12] tools/memory-model: Add a S
+ lock-based external-view litmus test
+Message-ID: <20180222032349.klcuiq23f52sfop6@tardis>
+References: <20180220232405.GA19274@linux.vnet.ibm.com>
+ <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="moha4cwfm6mgy6fw"
+Content-Disposition: inline
+In-Reply-To: <1519169112-20593-10-git-send-email-paulmck@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1M2uGpi013253
 
-On Wed, 2018-02-21 at 18:47 +0100, KarimAllah Ahmed wrote:
-> ... since using kvm_vcpu_gpa_to_page() and kmap() will only work for guest
-> memory that has a "struct page".
-> 
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+
+--moha4cwfm6mgy6fw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 20, 2018 at 03:25:10PM -0800, Paul E. McKenney wrote:
+> From: Alan Stern <stern@rowland.harvard.edu>
+>=20
+> This commit adds a litmus test in which P0() and P1() form a lock-based S
+> litmus test, with the addition of P2(), which observes P0()'s and P1()'s
+> accesses with a full memory barrier but without the lock.  This litmus
+> test asks whether writes carried out by two different processes under the
+> same lock will be seen in order by a third process not holding that lock.
+> The answer to this question is "yes" for all architectures supporting
+
+Hmm.. it this true? Our spin_lock() is RCpc because of PowerPC, so
+spin_lock()+spin_unlock() pairs don't provide transitivity, and that's
+why we have smp_mb__after_unlock_lock(). Is there something I'm missing?
+Or there is an upcomming commit to switch PowerPC's lock implementation?
+
+[Cc ppc maintainers]
+
+Regards,
+Boqun
+
+> the Linux kernel, but is "no" according to the current version of LKMM.
+>=20
+> A patch to LKMM is under development.
+>=20
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 > ---
->  arch/x86/kvm/x86.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 37f5df9..197a395 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -5013,9 +5013,9 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
->  				     unsigned int bytes,
->  				     struct x86_exception *exception)
->  {
-> +	struct kvm_host_map map;
-
-"map" here needs to be memset to '0'. Will fix in v2
-
->  	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
->  	gpa_t gpa;
-> -	struct page *page;
->  	char *kaddr;
->  	bool exchanged;
->  
-> @@ -5032,12 +5032,11 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
->  	if (((gpa + bytes - 1) & PAGE_MASK) != (gpa & PAGE_MASK))
->  		goto emul_write;
->  
-> -	page = kvm_vcpu_gfn_to_page(vcpu, gpa >> PAGE_SHIFT);
-> -	if (is_error_page(page))
-> +	if (!kvm_vcpu_map(vcpu, gpa_to_gfn(gpa), &map))
->  		goto emul_write;
->  
-> -	kaddr = kmap_atomic(page);
-> -	kaddr += offset_in_page(gpa);
-> +	kaddr = map.kaddr + offset_in_page(gpa);
+>  .../ISA2+pooncelock+pooncelock+pombonce.litmus     | 41 ++++++++++++++++=
+++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 tools/memory-model/litmus-tests/ISA2+pooncelock+poonc=
+elock+pombonce.litmus
+>=20
+> diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+p=
+ombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock=
++pombonce.litmus
+> new file mode 100644
+> index 000000000000..7a39a0aaa976
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce=
+=2Elitmus
+> @@ -0,0 +1,41 @@
+> +C ISA2+pooncelock+pooncelock+pombonce.litmus
 > +
->  	switch (bytes) {
->  	case 1:
->  		exchanged = CMPXCHG_TYPE(u8, kaddr, old, new);
-> @@ -5054,8 +5053,8 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
->  	default:
->  		BUG();
->  	}
-> -	kunmap_atomic(kaddr);
-> -	kvm_release_page_dirty(page);
+> +(*
+> + * Result: Sometimes
+> + *
+> + * This test shows that the ordering provided by a lock-protected S
+> + * litmus test (P0() and P1()) are not visible to external process P2().
+> + * This is likely to change soon.
+> + *)
 > +
-> +	kvm_vcpu_unmap(&map);
->  
->  	if (!exchanged)
->  		return X86EMUL_CMPXCHG_FAILED;
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+> +{}
+> +
+> +P0(int *x, int *y, spinlock_t *mylock)
+> +{
+> +	spin_lock(mylock);
+> +	WRITE_ONCE(*x, 1);
+> +	WRITE_ONCE(*y, 1);
+> +	spin_unlock(mylock);
+> +}
+> +
+> +P1(int *y, int *z, spinlock_t *mylock)
+> +{
+> +	int r0;
+> +
+> +	spin_lock(mylock);
+> +	r0 =3D READ_ONCE(*y);
+> +	WRITE_ONCE(*z, 1);
+> +	spin_unlock(mylock);
+> +}
+> +
+> +P2(int *x, int *z)
+> +{
+> +	int r1;
+> +	int r2;
+> +
+> +	r2 =3D READ_ONCE(*z);
+> +	smp_mb();
+> +	r1 =3D READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=3D1 /\ 2:r2=3D1 /\ 2:r1=3D0)
+> --=20
+> 2.5.2
+>=20
+
+--moha4cwfm6mgy6fw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqON8AACgkQSXnow7UH
++rhSrAf/efYzBmXqtbH/dZMeFgADgDdOVHAndf3gf30/zUhAMSspI4ZAgx/R+GC3
+fcsOaq7YYWOEepRpBjgASgjb2pXp/J483ZDGAekeZv2/9ADFngrJCu7gtGTMVG8o
+vAB7hKM+A4Pkn9SwADBVKXWdb6NpevfltLh8VX8Y/brrvdk3tjWPTLC34qElku8w
+e+4ZGOHDorjPmkCC6U7KoukBxWvG7KqdRg4P/D5azs18CHvJI7myDcDxt9WsRyC0
+u9IOTbj+QcX8/wewRYISwEFHbHA0ZVR1WcqEnmne0+IINfSyzhqyJc0V4VbWzR7d
+US877KQnFyAZAYoFQFDyp74qnQVYtQ==
+=zahK
+-----END PGP SIGNATURE-----
+
+--moha4cwfm6mgy6fw--
