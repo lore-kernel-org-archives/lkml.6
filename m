@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeBVHGX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:06:23 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52645 "EHLO
+        id S1752821AbeBVHIn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:08:43 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34914 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752656AbeBVHGS (ORCPT
+        with ESMTP id S1752659AbeBVHGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:06:18 -0500
-X-Google-Smtp-Source: AH8x224GSmaiSVOsFSzAI3Gh8uRqeWhIK76ETY86JWrg86DpFwgnI8dfj7Du3k4pgSTgthYnsrVl0w==
-X-ME-Sender: <xms:52uOWukfiO-2dtwwxwDDx_Q3-7NC43wQDcwpQcMsjV9qMo3j5FGZEw>
+        Thu, 22 Feb 2018 02:06:22 -0500
+X-Google-Smtp-Source: AH8x225rVJ03ZwtJLKgEeBcihXxz5n684sUP+dr0xYlsxLMeKrPFMjAIbU3ZeQQMuQIoYxtpOAobqw==
+X-ME-Sender: <xms:62uOWtJTrUqWAL3k-TkHTpB4W60kpWXIoT8NjC5BxBWpyXNosqVh1Q>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 07/17] lockdep: Adjust check_redundant() for recursive read change
-Date: Thu, 22 Feb 2018 15:08:54 +0800
-Message-Id: <20180222070904.548-8-boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v5 08/17] lockdep: Fix recursive read lock related safe->unsafe detection
+Date: Thu, 22 Feb 2018 15:08:55 +0800
+Message-Id: <20180222070904.548-9-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,82 +24,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we have four kinds of dependencies now, check_redundant() should only
-report redundant if we have a dependency path which is equal or
-_stronger_ than the current dependency. For example if in
-check_prev_add() we have:
+There are four cases for recursive read lock realted deadlocks:
 
-	prev->read == 2 && next->read != 2
+(--(X..Y)--> means a strong dependency path starts with a --(X*)-->
+dependency and ends with a --(*Y)-- dependency.)
 
-, we should only report redundant if we find a path like:
+1.	An irq-safe lock L1 has a dependency --(*..*)--> to an
+	irq-unsafe lock L2.
 
-	prev--(RN)-->....--(*N)-->next
+2.	An irq-read-safe lock L1 has a dependency --(N..*)--> to an
+	irq-unsafe lock L2.
 
-and if we have:
+3.	An irq-safe lock L1 has a dependency --(*..N)--> to an
+	irq-read-unsafe lock L2.
 
-	prev->read == 2 && next->read == 2
+4.	An irq-read-safe lock L1 has a dependency --(N..N)--> to an
+	irq-read-unsafe lock L2.
 
-, we could report redundant if we find a path like:
-
-	prev--(RN)-->....--(*N)-->next
-
-or
-
-	prev--(RN)-->....--(*R)-->next
-
-To do so, we need to pass the recursive-read status of @next into
-check_redundant(). This patch changes the parameter of check_redundant()
-and the match function to achieve this.
+The current check_usage() only checks 1) and 2), so this patch adds
+checks for 3) and 4) and makes sure when find_usage_{back,for}wards find
+an irq-read-{,un}safe lock, the traverse path should ends at a
+dependency --(*N)-->. Note when we search backwards, --(*N)--> indicates
+a real dependency --(N*)-->.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- kernel/locking/lockdep.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ kernel/locking/lockdep.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index e1be088a34c4..0b0ad3db78b4 100644
+index 0b0ad3db78b4..bd3eef664f9d 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -1338,9 +1338,12 @@ print_circular_bug_header(struct lock_list *entry, unsigned int depth,
- 	return 0;
- }
+@@ -1504,7 +1504,14 @@ check_redundant(struct lock_list *root, struct held_lock *target,
  
--static inline int class_equal(struct lock_list *entry, void *data)
-+static inline int hlock_equal(struct lock_list *entry, void *data)
+ static inline int usage_match(struct lock_list *entry, void *bit)
  {
--	return entry->class == data;
-+	struct held_lock *hlock = (struct held_lock *)data;
+-	return entry->class->usage_mask & (1 << (enum lock_usage_bit)bit);
++	enum lock_usage_bit ub = (enum lock_usage_bit)bit;
 +
-+	return hlock_class(hlock) == entry->class &&
-+	       (hlock->read == 2 || !entry->is_rr);
++
++	if (ub & 1)
++		return entry->class->usage_mask & (1 << ub) &&
++		       !entry->is_rr;
++	else
++		return entry->class->usage_mask & (1 << ub);
  }
  
- static inline int hlock_conflict(struct lock_list *entry, void *data)
-@@ -1480,14 +1483,14 @@ check_noncircular(struct lock_list *root, struct held_lock *target,
+ 
+@@ -1815,6 +1822,10 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
+ 			   exclusive_bit(bit), state_name(bit)))
+ 		return 0;
+ 
++	if (!check_usage(curr, prev, next, bit,
++			   exclusive_bit(bit) + 1, state_name(bit)))
++		return 0;
++
+ 	bit++; /* _READ */
+ 
+ 	/*
+@@ -1827,6 +1838,10 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
+ 			   exclusive_bit(bit), state_name(bit)))
+ 		return 0;
+ 
++	if (!check_usage(curr, prev, next, bit,
++			   exclusive_bit(bit) + 1, state_name(bit)))
++		return 0;
++
+ 	return 1;
  }
  
- static noinline enum bfs_result
--check_redundant(struct lock_list *root, struct lock_class *target,
-+check_redundant(struct lock_list *root, struct held_lock *target,
- 		struct lock_list **target_entry)
- {
- 	enum bfs_result result;
- 
- 	debug_atomic_inc(nr_redundant_checks);
- 
--	result = __bfs_forwards(root, target, class_equal, target_entry);
-+	result = __bfs_forwards(root, target, hlock_equal, target_entry);
- 
- 	return result;
- }
-@@ -2060,7 +2063,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	 * Is the <prev> -> <next> link redundant?
- 	 */
- 	bfs_init_root(&this, prev);
--	ret = check_redundant(&this, hlock_class(next), &target_entry);
-+	ret = check_redundant(&this, next, &target_entry);
- 	if (ret == BFS_RMATCH) {
- 		debug_atomic_inc(nr_redundant);
- 		return 2;
 -- 
 2.16.1
