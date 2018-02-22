@@ -1,142 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933313AbeBVQrY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:47:24 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:46042 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933142AbeBVQrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:47:23 -0500
-Date: Thu, 22 Feb 2018 17:45:32 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
- suspend-to-idle
-Message-ID: <20180222164532.GA15359@light.dominikbrodowski.net>
-References: <4287858.bFmM5lK9H6@aspire.rjw.lan>
- <20180220213839.GA12082@light.dominikbrodowski.net>
- <3352336.6IBe4RuE7s@aspire.rjw.lan>
+        id S933260AbeBVQxQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:53:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45014 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933139AbeBVQxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:53:15 -0500
+Subject: Re: [PATCH v4] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Shanker Donthineni <shankerd@codeaurora.org>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1519311090-19998-1-git-send-email-shankerd@codeaurora.org>
+ <20180222152244.zozx2tlptgnnfu6b@lakrids.cambridge.arm.com>
+ <32c8cfd3-2883-177b-7736-1bb6ab679df4@arm.com>
+ <20180222163330.o5lqant4fjenapcz@lakrids.cambridge.arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2d4e89d3-f930-bf99-1cf6-e989bd88fa00@arm.com>
+Date: Thu, 22 Feb 2018 16:53:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3352336.6IBe4RuE7s@aspire.rjw.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180222163330.o5lqant4fjenapcz@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 01:24:16PM +0100, Rafael J. Wysocki wrote:
-> Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
-> to indicate that socket_early_resume() has already run for the
-> socket in which case socket_suspend() will do minimum handling
-> and return 0.
+On 22/02/18 16:33, Mark Rutland wrote:
+> On Thu, Feb 22, 2018 at 04:28:03PM +0000, Robin Murphy wrote:
+>> [Apologies to keep elbowing in, and if I'm being thick here...]
+>>
+>> On 22/02/18 15:22, Mark Rutland wrote:
+>>> On Thu, Feb 22, 2018 at 08:51:30AM -0600, Shanker Donthineni wrote:
+>>>> +#define CTR_B31_SHIFT		31
+>>>
+>>> Since this is just a RES1 bit, I think we don't need a mnemonic for it,
+>>> but I'll defer to Will and Catalin on that.
+>>>
+>>>>    ENTRY(invalidate_icache_range)
+>>>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>>>> +alternative_if ARM64_HAS_CACHE_DIC
+>>>> +	mov	x0, xzr
+>>>> +	dsb	ishst
+>>>> +	isb
+>>>> +	ret
+>>>> +alternative_else_nop_endif
+>>>> +#endif
+>>>
+>>> As commented on v3, I don't believe you need the DSB here. If prior
+>>> stores haven't been completed at this point, the existing implementation
+>>> would not work correctly here.
+>>
+>> True in terms of ordering between stores prior to entry and the IC IVAU
+>> itself, but what about the DSH ISH currently issued *after* the IC IVAU
+>> before returning? Is provably impossible that existing callers might be
+>> relying on that ordering *anything*, or would we risk losing something
+>> subtle by effectively removing it?
+> 
+> AFAIK, the only caller of this is KVM, before page table updates occur
+> to add execute permissions to the page this is applied to.
+> 
+> At least in that case, I do not beleive there would be breakage.
+> 
+> If we're worried about subtleties in callers, then we'd need to stick
+> with DSB ISH rather than optimising to DSH ISHST.
 
-That looks to be *too* minimal: For example, yenta_socket does some
-socket set-up in ->init(), which is called by socket_early_resume().
-That needs to be undone by ->suspend(). What about this variant
-(untested, not even compile-tested)?
+Hmm, I probably am just squawking needlessly. It is indeed hard to 
+imagine how callers could be relying on the invalidating the I-cache for 
+ordering unless doing something unreasonably stupid, and if the current 
+caller is clearly OK then there should be nothing to worry about.
 
-Oh, and
-	a) does this need -stable tags, and
-	b) do you want to push it yourself, or should it go through the
-	   PCMCIA tree?
+This *has* helped me realise that I was indeed being somewhat thick 
+before, because the existing barrier is of course not about memory 
+ordering per se, but about completing the maintenance operation. Hooray 
+for overloaded semantics...
 
-Thanks,
-	Dominik
+On a different track, I'm now wondering whether the extra complexity of 
+these alternatives might justify removing some obvious duplication and 
+letting __flush_cache_user_range() branch directly into 
+invalidate_icache_range(), or might that adversely affect the user fault 
+fixup path?
 
----
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Date: Wed, 21 Feb 2018 13:24:16 +0100
-Subject: [PATCH] PCMCIA / PM: Avoid noirq suspend aborts during
- suspend-to-idle
-
-There is a problem with PCMCIA system resume callbacks with respect
-to suspend-to-idle in which the ->suspend_noirq() callback may be
-invoked after the ->resume_noirq() one without resuming the system
-entirely in some cases.  This doesn't work for PCMCIA because of
-the lack of symmetry between its system suspend and system resume
-"noirq" callbacks.
-
-The system resume handling in PCMCIA is split between
-socket_early_resume() and socket_late_resume() which are called in
-different phases of system resume and both need to run for
-socket_suspend() (invoked by the system suspend "noirq" callback)
-to work.  Specifically, socket_suspend() returns an error when
-called after socket_early_resume() without socket_late_resume(),
-so if the suspend-to-idle core detects a spurious wakeup event and
-attempts to put the system back to sleep, that is aborted by the
-error coming from socket_suspend().
-
-Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
-to indicate that socket_early_resume() has already run for the
-socket in which case socket_suspend() will do minimum handling
-and return 0.
-
-This change has been tested on my venerable Toshiba Portege R500
-(which is where the problem has been discovered in the first place),
-but admittedly I have no PCMCIA cards to test along with the socket
-itself.
-
-Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-[linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-
-diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
-index c3b615c94b4b..513b2d4d5b20 100644
---- a/drivers/pcmcia/cs.c
-+++ b/drivers/pcmcia/cs.c
-@@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_socket *skt)
- 
- static int socket_suspend(struct pcmcia_socket *skt)
- {
--	if (skt->state & SOCKET_SUSPEND)
-+	if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
- 		return -EBUSY;
- 
- 	mutex_lock(&skt->ops_mutex);
--	skt->suspended_state = skt->state;
-+	/* store state on first suspend, but not after spurious wakeups */
-+	if !(skt->state & SOCKET_IN_RESUME)
-+		skt->suspended_state = skt->state;
- 
- 	skt->socket = dead_socket;
- 	skt->ops->set_socket(skt, &skt->socket);
- 	if (skt->ops->suspend)
- 		skt->ops->suspend(skt);
- 	skt->state |= SOCKET_SUSPEND;
-+	skt->state &= ~(SOCKET_IN_RESUME);
- 	mutex_unlock(&skt->ops_mutex);
- 	return 0;
- }
-@@ -475,6 +478,7 @@ static int socket_early_resume(struct pcmcia_socket *skt)
- 	skt->ops->set_socket(skt, &skt->socket);
- 	if (skt->state & SOCKET_PRESENT)
- 		skt->resume_status = socket_setup(skt, resume_delay);
-+	skt->state |= SOCKET_IN_RESUME;
- 	mutex_unlock(&skt->ops_mutex);
- 	return 0;
- }
-@@ -484,7 +488,7 @@ static int socket_late_resume(struct pcmcia_socket *skt)
- 	int ret = 0;
- 
- 	mutex_lock(&skt->ops_mutex);
--	skt->state &= ~SOCKET_SUSPEND;
-+	skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
- 	mutex_unlock(&skt->ops_mutex);
- 
- 	if (!(skt->state & SOCKET_PRESENT)) {
-diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
-index 6765beadea95..03ec43802909 100644
---- a/drivers/pcmcia/cs_internal.h
-+++ b/drivers/pcmcia/cs_internal.h
-@@ -70,6 +70,7 @@ struct pccard_resource_ops {
- /* Flags in socket state */
- #define SOCKET_PRESENT		0x0008
- #define SOCKET_INUSE		0x0010
-+#define SOCKET_IN_RESUME	0x0040
- #define SOCKET_SUSPEND		0x0080
- #define SOCKET_WIN_REQ(i)	(0x0100<<(i))
- #define SOCKET_CARDBUS		0x8000
+Robin.
