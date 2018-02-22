@@ -1,151 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752925AbeBVIh6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 03:37:58 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33770 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752826AbeBVIh4 (ORCPT
+        id S1752866AbeBVIjs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 03:39:48 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:57079 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752774AbeBVIjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 03:37:56 -0500
-X-Google-Smtp-Source: AH8x224QJwY+7VXQu8OjKPJNCfuCo+LgfB+aJZG3iimT92Xj7GsBE+RXOYbOj13RZv7cD8FtbppOAxQrfrz1TGMO5BA=
+        Thu, 22 Feb 2018 03:39:46 -0500
+X-ME-Sender: <xms:0oGOWkkPM9E4Qkj7rD88f9vdt15kHyAFjjFxP92uJPE0zz1WnGHfoQ>
+Message-Id: <1519288786.101739.1279390200.1CD3EC51@webmail.messagingengine.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+To: Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc: linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
-References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
- <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
- <44a7d9dc-f6f3-e003-44d6-b0c4aa7dc046@arm.com> <CAKfTPtAbr2vUvw2DvVCuqCXNnSA-7LuO2EaJ59pP=oJTgQ3R_g@mail.gmail.com>
- <a351f2de-3a00-1cf8-b16f-59493c5b67f5@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 22 Feb 2018 09:37:34 +0100
-Message-ID: <CAKfTPtAM1z86FBqXOoEu-p2cZonUATWFq1vbZ=6pPHn9h5zM-g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-efbb3405
+In-Reply-To: <20180222050324.21531-1-joel@jms.id.au>
+Date: Thu, 22 Feb 2018 19:09:46 +1030
+Subject: Re: [PATCH] MAINTAINERS: Update ASPEED entry with details
+References: <20180222050324.21531-1-joel@jms.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 February 2018 at 14:13, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
-> On 02/16/2018 01:44 PM, Vincent Guittot wrote:
->> On 16 February 2018 at 13:13, Valentin Schneider
->> <valentin.schneider@arm.com> wrote:
->>> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
->>>> Stopped the periodic update of blocked load when all idle CPUs have fully
->>>> decayed. We introduce a new nohz.has_blocked that reflect if some idle
->>>> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
->>>> is set everytime that a Idle CPU can have blocked load and it is then clear
->>>> when no more blocked load has been detected during an update. We don't need
->>>> atomic operation but only to make cure of the right ordering when updating
->>>> nohz.idle_cpus_mask and nohz.has_blocked.
->>>>
->>>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>>> ---
->>>>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
->>>>  kernel/sched/sched.h |   1 +
->>>>  2 files changed, 102 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>> index 7af1fa9..5a6835e 100644
->>>> --- a/kernel/sched/fair.c
->>>> +++ b/kernel/sched/fair.c
->>>>
->>>> [...]
->>>> @@ -9383,11 +9452,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
->>>>                * work being done for other cpus. Next load
->>>>                * balancing owner will pick it up.
->>>>                */
->>>> -             if (need_resched())
->>>> -                     break;
->>>> +             if (need_resched()) {
->>>> +                     has_blocked_load = true;
->>>> +                     goto abort;
->>>> +             }
->>>>
->>>>               rq = cpu_rq(balance_cpu);
->>>>
->>>
->>> I'd say it's safe to do the following here. The flag is raised in
->>> nohz_balance_enter_idle() before the smp_mb(), so we won't skip a CPU
->>> that just got added to nohz.idle_cpus_mask.
->>
->> rq->has_blocked_load will be set before the barrier only if
->> nohz_tick_stopped is not already set,
->> Otherwise, we skip cpumask update and the barrier in  nohz_balance_enter_idle
->>
->
-> Right, forgot about that bit. I think it's still fine because:
-> - nohz_balance_enter_idle() can't be called before the last running task is
-> dequeued, which requires the rq lock.
-> - update_blocked_averages takes the rq lock and clears rq->has_blocked_load
-> with the lock held.
->
-> So even though we could have some very unlikely scenario where a CPU quickly
-> goes out/in of idle after nohz.idle_cpus_mask has been read, the blocked load
-> itself is safe so rq->has_blocked_load will end up being set correctly.
-> (Took me a while to see it that way)
->
->
-> BTW, with the current set on Peter's sched/testing, update_nohz_stats()
-> is called here, which doesn't do the update if !rq->has_blocked_load
-> (Although that check is done without lock/barrier, so maybe we could not see
-> a CPU that just went idle ?)
->
-> I have one more question on that bit:
->
->
->                 has_blocked_load |= update_nohz_stats(rq, true);
->
->                 /*
->                  * If time for next balance is due,
->                  * do the balance.
->                  */
->                 if (time_after_eq(jiffies, rq->next_balance)) {
->                         struct rq_flags rf;
->
->                         rq_lock_irqsave(rq, &rf);
->                         update_rq_clock(rq);
->                         cpu_load_update_idle(rq);
->                         rq_unlock_irqrestore(rq, &rf);
->
->                         if (flags & NOHZ_BALANCE_KICK)
->                                 rebalance_domains(rq, CPU_IDLE);
->                 }
->
->                 if (time_after(next_balance, rq->next_balance)) {
->                         next_balance = rq->next_balance;
->                         update_next_balance = 1;
->                 }
->
->
-> Now that I think about it, shouldn't we always have a 'continue' after
-> the blocked load update if (flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK ?
-> AFAICT we don't want to push the next_balance forward, only the next_blocked.
 
-But we don't push next_balance forward. It just get the shortest
-next_balance and update nohz.next_balance exactly like what is done in
-full idle load balance
 
-> That would also take care of not doing the load balance.
->>>
->>>                 /*
->>>                  * This cpu doesn't have any remaining blocked load, skip it.
->>>                  * It's sane to do this because this flag is raised in
->>>                  * nohz_balance_enter_idle()
->>>                  */
->>>                 if ((flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK &&
->>>                     !rq->has_blocked_load)
->>>                         continue;
+On Thu, 22 Feb 2018, at 15:33, Joel Stanley wrote:
+> I am interested in all ASPEED drivers, and the previous match wasn't
+> grabbing files in nested directories. Use N instead.
+> 
+> Add the arm kernel mailing list so that patches get reviewed there, and
+> the linux-aspeed list which exists only so I can use patchwork to track
+> patches.
+> 
+> Add Andrew as a reviewer, because he is involved in reviewing ASPEED
+> stuff.
+> 
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-Then, it's worth keeping the call to cpu_load_update_idle(rq); which
-update the cpu_load[] array which is still used at some level
-
->>>
->>>> +             update_blocked_averages(rq->cpu);
->>>> +             has_blocked_load |= rq->has_blocked_load;
->>>> +
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
