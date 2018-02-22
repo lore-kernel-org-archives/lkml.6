@@ -1,68 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933107AbeBVPQb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:16:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56780 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932869AbeBVPQ3 (ORCPT
+        id S932959AbeBVPSF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:18:05 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33477 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753827AbeBVPSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:16:29 -0500
-Date: Thu, 22 Feb 2018 16:16:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 06/17] lockdep: Support deadlock
- detection for recursive read in check_noncircular()
-Message-ID: <20180222151626.GU25235@hirez.programming.kicks-ass.net>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-7-boqun.feng@gmail.com>
- <20180222145434.GS25201@hirez.programming.kicks-ass.net>
+        Thu, 22 Feb 2018 10:18:02 -0500
+X-Google-Smtp-Source: AG47ELviU1HLqhBPHvs+yKLXezqZHE3A76eq6nRzSkASjvlP0UKl4IjbbQ606HcE3AR/c6SGTIPFjaM6mMFTzG2JhUA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222145434.GS25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <bc33320887f448b772004e7c5d97322abb8cae0b.1514578085.git.vilhelm.gray@gmail.com>
+References: <cover.1514578085.git.vilhelm.gray@gmail.com> <bc33320887f448b772004e7c5d97322abb8cae0b.1514578085.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 16:18:01 +0100
+Message-ID: <CACRpkdZKxHRHvURL97iS__fvx_VMtg3ZohJKt4PfFQjZgnAuCA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] isa: Remove ISA_BUS_API selection for ISA_BUS
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 03:54:34PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 03:08:53PM +0800, Boqun Feng wrote:
-> 
-> > +static inline int hlock_conflict(struct lock_list *entry, void *data)
-> > +{
-> > +	struct held_lock *hlock = (struct held_lock *)data;
-> > +
-> > +	return hlock_class(hlock) == entry->class &&
-> > +	       (hlock->read != 2 || !entry->is_rr);
-> > +}
-> 
-> Bah, brain hurts.
-> 
-> So before we add prev -> this, relation, we check if there's a this ->
-> prev relation already in the graph -- if so that would be a problem.
-> 
-> The above function has @data == @prev (__bfs_forward starts at @this,
-> looking for @prev), and the above patch augments the 'class_equal' test
-> with @prev not having read==2 or @entry not having xr;
-> 
-> This is because.... (insert brain hurt)
+On Fri, Dec 29, 2017 at 9:14 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-(hlock->read != 2 || !entry->have_xr) := !(hlock->read == 2 && entry->have_xr)
+> ISA_BUS_API is selected by drivers themselves when necessary. The
+> ISA_BUS Kconfig option is now simply a mask for true ISA device drivers
+> and relevant configuration. For now, the ISA_BUS Kconfig option is only
+> available for X86, but may be added for other arch builds in the future
+> if the need arises.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-hlock->read == 2 := prev->read == 2
-entry->have_xr means the last fwd link has read==2.
+Patch applied to the GPIO tree for v4.17.
 
-Together this gives that:
+I'd like to have some ACK from some x86 maintainer for this
+so it makes me a bit nervous.
 
-  @prev (Rx) ---> X ---> @entry (xR)
+Yet again the patch has been sitting since december with no
+comments so...
 
-does not form a cycle, because:
-
-  @enrty (xR) -> @prev (Rx)
-
-is not strong and can be ignored.
-
-Did I get that right? If so, the Changelog needs serious help and code
-does too.
+Yours,
+Linus Walleij
