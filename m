@@ -1,72 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeBVGJb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 01:09:31 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33313 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBVGJa (ORCPT
+        id S1752502AbeBVGM0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 01:12:26 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59024 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeBVGMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 01:09:30 -0500
-X-Google-Smtp-Source: AH8x225YJAMh9n+KbIwX+XacfDEr16r2DDzHm8VvBqtA0940hJsBDniAP6QzDrIEX8FmpQfX8Jeqng==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        daniel.vetter@intel.com
-Cc: gustavo@padovan.org, airlied@linux.ie, seanpaul@chromium.org,
-        andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v1] drm/simple_kms_helper: Fix NULL pointer dereference with no active CRTC
-Date: Thu, 22 Feb 2018 08:09:19 +0200
-Message-Id: <1519279759-7803-1-git-send-email-andr2000@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 22 Feb 2018 01:12:25 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BFD660712
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: andy.gross@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sboyd@codeaurora.org, evgreen@chromium.org, bjorn.andersson@linaro.org,
+        dianders@chromium.org, marc.zyngier@arm.com,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v5 0/4] Add DTS for SDM845 SoC and MTP
+Date: Thu, 22 Feb 2018 11:42:04 +0530
+Message-Id: <20180222061208.2031-1-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+These are basic device tree files needed to boot a SDM845 MTP
+board to a ramfs based serial console shell
 
-It is possible that drm_simple_kms_plane_atomic_check called
-with no CRTC set, e.g. when user-space application sets CRTC_ID/FB_ID
-to 0 before doing any actual drawing. This leads to NULL pointer
-dereference because in this case new CRTC state is NULL and must be
-checked before accessing.
+Bindings are based on whats proposed for pinctrl/serial/clock
+drivers for SDM845 SoC
+pinctrl: https://patchwork.kernel.org/patch/10157143/ (This is now pulled
+in by Linus Walleij for 4.17)
+clocks: https://lkml.org/lkml/2018/1/31/209 (under review)
+serial: https://patchwork.ozlabs.org/cover/860251/ (under review)
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+'PATCH 4/4' is based on v2 of serial patches, will need an update if
+v3 (still in the works) has further binding updates
 
----
-Changes since initial:
-- re-worked checks for null CRTC as suggested by Daniel Vetter
----
- drivers/gpu/drm/drm_simple_kms_helper.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Since 'PATCH 3/4' also adds an ITS node and keeps it disabled, we also depend
+on https://lkml.org/lkml/2018/1/29/383
 
-diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
-index 9ca8a4a59b74..4a1dbd88b1ec 100644
---- a/drivers/gpu/drm/drm_simple_kms_helper.c
-+++ b/drivers/gpu/drm/drm_simple_kms_helper.c
-@@ -121,12 +121,6 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
- 	pipe = container_of(plane, struct drm_simple_display_pipe, plane);
- 	crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
- 						   &pipe->crtc);
--	if (!crtc_state->enable)
--		return 0; /* nothing to check when disabling or disabled */
--
--	if (crtc_state->enable)
--		drm_mode_get_hv_timing(&crtc_state->mode,
--				       &clip.x2, &clip.y2);
+changes in v5:
+* Removed all instances of IRQ_TYPE_NONE
+
+changes in v4:
+* pull config changes to uart pins
+* License in device tree files is still GPL-2.0
+
+changes in v3:
+* split the pinmux/pinconf nodes across SoC/Board files
+* Fixes for issues reported with 'make dtbs W=2'
+* other minor fixes based on review
  
- 	ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
- 						  &clip,
-@@ -137,7 +131,9 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
- 		return ret;
- 
- 	if (!plane_state->visible)
--		return -EINVAL;
-+		return 0;
-+
-+	drm_mode_get_hv_timing(&crtc_state->mode, &clip.x2, &clip.y2);
- 
- 	if (!pipe->funcs || !pipe->funcs->check)
- 		return 0;
+changes in v2:
+* dropped cpu-map
+* dropped GIC_CPU_MASK_SIMPLE()
+* Added new cpu compatible for kryo385
+* added ITS node, marked as disabled
+
+Rajendra Nayak (4):
+  dt-bindings: arm: Document kryo385 cpu
+  dt-bindings: qcom: Add SDM845 bindings
+  arm64: dts: sdm845: Add minimal dts/dtsi files for sdm845 SoC and MTP
+  arm64: dts: sdm845: Add serial console support
+
+ Documentation/devicetree/bindings/arm/cpus.txt |   1 +
+ Documentation/devicetree/bindings/arm/qcom.txt |   1 +
+ arch/arm64/boot/dts/qcom/Makefile              |   1 +
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts        |  54 +++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi           | 316 +++++++++++++++++++++++++
+ 5 files changed, 373 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
+
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
