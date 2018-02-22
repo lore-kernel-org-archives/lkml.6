@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeBVHG5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:06:57 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34999 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeBVHGy (ORCPT
+        id S1752832AbeBVHHE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:07:04 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:40646 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752728AbeBVHG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:06:54 -0500
-X-Google-Smtp-Source: AH8x225j5QwxmbnlQXp3S87t3myadbWX+QafzCaLh5QvVQtMKJHJhZVAn6vWaOyuMaYgf33yPegfHg==
-X-ME-Sender: <xms:CmyOWjW_IDER1j9fPsdKt-qw3ZccnPxBfCMFINdUwAUHQjuDSuA1sQ>
+        Thu, 22 Feb 2018 02:06:59 -0500
+X-Google-Smtp-Source: AH8x226jI18OxhvTFIk2gw6rIZYb0K6UeH/IVhEkquqSCTGZFUlgQCn/Gc+JGhvuFUVeoJlrt3P+zw==
+X-ME-Sender: <xms:DmyOWsIFznJQl6DH6XSlPmWx7MQWsRjjli_czr42z56ML4kHVfEc6g>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 15/17] lockdep: Reduce the size of lock_list
-Date: Thu, 22 Feb 2018 15:09:02 +0800
-Message-Id: <20180222070904.548-16-boqun.feng@gmail.com>
+        Boqun Feng <boqun.feng@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION)
+Subject: [RFC tip/locking/lockdep v5 16/17] lockdep: Documention for recursive read lock detection reasoning
+Date: Thu, 22 Feb 2018 15:09:03 +0800
+Message-Id: <20180222070904.548-17-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,89 +26,199 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We actually only need 4 bits for lock_list::dep and 1 bit for
-lock_list::is_rr, besides lock_list::distance should always be no
-greater than MAX_LOCKDEP_DEPTH(which is 48 right now), so a u16 will
-fit, this patch then reduces the sizes of those fields to save space for
-lock_list structure, as a result we can reduce the size increment
-introduced by recursive read lock detection and keep the lock_list the
-same size as before.
+As now we support recursive read lock deadlock detection, add related
+explanation in the Documentation/lockdep/lockdep-desgin.txt:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+*	Definition of recursive read locks, non-recursive locks, strong
+	dependency path and notions of -(**)->.
+
+*	Lockdep's assumption.
+
+*	Informal proof of recursive read lock deadlock detection.
+
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
 ---
- include/linux/lockdep.h  |  6 +++---
- kernel/locking/lockdep.c | 11 ++++++-----
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ Documentation/locking/lockdep-design.txt | 170 +++++++++++++++++++++++++++++++
+ 1 file changed, 170 insertions(+)
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index a1f91f8680bd..3fce8dbf5091 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -186,11 +186,11 @@ struct lock_list {
- 	struct list_head		entry;
- 	struct lock_class		*class;
- 	struct stack_trace		trace;
--	int				distance;
-+	u16				distance;
- 	/* bitmap of different dependencies from head to this */
--	u16				dep;
-+	u8				dep;
- 	/* used by BFS to record whether this is picked as a recursive read */
--	u16				is_rr;
-+	bool				is_rr;
- 
- 	/*
- 	 * The parent field is used to implement breadth-first search, and the
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 1b981dc4c061..e8b83b36669c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -874,7 +874,7 @@ static struct lock_list *alloc_list_entry(void)
-  * Add a new dependency to the head of the list:
-  */
- static int add_lock_to_list(struct lock_class *this, struct list_head *head,
--			    unsigned long ip, int distance, unsigned int dep,
-+			    unsigned long ip, u16 distance, unsigned int dep,
- 			    struct stack_trace *trace)
- {
- 	struct lock_list *entry;
-@@ -1063,7 +1063,7 @@ static inline unsigned int calc_dep(int prev, int next)
-  * N: non-recursive lock
-  * R: recursive read lock
-  */
--static inline int pick_dep(u16 is_rr, u16 cap_dep)
-+static inline int pick_dep(bool is_rr, u8 cap_dep)
- {
- 	if (is_rr) { /* could only pick -(N*)-> */
- 		if (cap_dep & DEP_NN_MASK)
-@@ -1148,7 +1148,8 @@ static enum bfs_result __bfs(struct lock_list *source_entry,
- 	struct list_head *head;
- 	struct circular_queue *cq = &lock_cq;
- 	enum bfs_result ret = BFS_RNOMATCH;
--	int is_rr, next_is_rr;
-+	bool is_rr;
-+	int next_is_rr;
- 
- 	if (match(source_entry, data)) {
- 		*target_entry = source_entry;
-@@ -1204,7 +1205,7 @@ static enum bfs_result __bfs(struct lock_list *source_entry,
- 			next_is_rr = pick_dep(is_rr, entry->dep);
- 			if (next_is_rr < 0)
- 				continue;
--			entry->is_rr = next_is_rr;
-+			entry->is_rr = !!next_is_rr;
- 
- 			visit_lock_entry(entry, lock);
- 			if (match(entry, data)) {
-@@ -2153,7 +2154,7 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 		goto out_bug;
- 
- 	for (;;) {
--		int distance = curr->lockdep_depth - depth + 1;
-+		u16 distance = curr->lockdep_depth - depth + 1;
- 		hlock = curr->held_locks + depth - 1;
- 
- 		if (hlock->check) {
+diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
+index 382bc25589c2..fd8a8d97ce58 100644
+--- a/Documentation/locking/lockdep-design.txt
++++ b/Documentation/locking/lockdep-design.txt
+@@ -284,3 +284,173 @@ Run the command and save the output, then compare against the output from
+ a later run of this command to identify the leakers.  This same output
+ can also help you find situations where runtime lock initialization has
+ been omitted.
++
++Recursive Read Deadlock Detection:
++----------------------------------
++Lockdep now is equipped with deadlock detection for recursive read locks.
++
++Recursive read locks, as their name indicates, are the locks able to be
++acquired recursively. Unlike non-recursive read locks, recursive read locks
++only get blocked by current write lock *holders* other than write lock
++*waiters*, for example:
++
++	TASK A:			TASK B:
++
++	read_lock(X);
++
++				write_lock(X);
++
++	read_lock(X);
++
++is not a deadlock for recursive read locks, as while the task B is waiting for
++the lock X, the second read_lock() doesn't need to wait because it's a recursive
++read lock.
++
++Note that a lock can be a write lock(exclusive lock), a non-recursive read lock
++(non-recursive shared lock) or a recursive read lock(recursive shared lock),
++depending on the API used to acquire it(more specifically, the value of the
++'read' parameter for lock_acquire(...)). In other words, a single lock instance
++has three types of acquisition depending on the acquisition functions:
++exclusive, non-recursive read, and recursive read.
++
++That said, recursive read locks could introduce deadlocks too, considering the
++following:
++
++	TASK A:			TASK B:
++
++	read_lock(X);
++				read_lock(Y);
++	write_lock(Y);
++				write_lock(X);
++
++, neither task could get the write locks because the corresponding read locks
++are held by each other.
++
++Lockdep could detect recursive read lock related deadlocks. The dependencies(edges)
++in the lockdep graph are classified into four categories:
++
++1) -(NN)->: non-recursive to non-recursive dependency, non-recursive locks include
++            non-recursive read locks, write locks and exclusive locks(e.g. spinlock_t).
++	    They are treated equally in deadlock detection. "X -(NN)-> Y" means
++            X -> Y and both X and Y are non-recursive locks.
++
++2) -(RN)->: recursive to non-recursive dependency, recursive locks means recursive read
++	    locks. "X -(RN)-> Y" means X -> Y and X is recursive read lock and
++            Y is non-recursive lock.
++
++3) -(NR)->: non-recursive to recursive dependency, "X -(NR)-> Y" means X -> Y and X is
++            non-recursive lock and Y is recursive lock.
++
++4) -(RR)->: recursive to recursive dependency, "X -(RR)-> Y" means X -> Y and both X
++            and Y are recursive locks.
++
++Note that given two locks, they may have multiple dependencies between them, for example:
++
++	TASK A:
++
++	read_lock(X);
++	write_lock(Y);
++	...
++
++	TASK B:
++
++	write_lock(X);
++	write_lock(Y);
++
++, we have both X -(RN)-> Y and X -(NN)-> Y in the dependency graph.
++
++And obviously a non-recursive lock can block the corresponding recursive lock,
++and vice versa. Besides a non-recursive lock may block the other non-recursive
++lock of the same instance(e.g. a write lock may block a corresponding
++non-recursive read lock and vice versa).
++
++We use -(*N)-> for edges that is either -(RN)-> or -(NN)->, the similar for -(N*)->,
++-(*R)-> and -(R*)->
++
++A "path" is a series of conjunct dependency edges in the graph. And we define a
++"strong" path, which indicates the strong dependency throughout each dependency
++in the path, as the path that doesn't have two conjunct edges(dependencies) as
++-(*R)-> and -(R*)->. IOW, a "strong" path is a path from a lock walking to another
++through the lock dependencies, and if X -> Y -> Z in the path(where X, Y, Z are
++locks), if the walk from X to Y is through a -(NR)-> or -(RR)-> dependency, the
++walk from Y to Z must not be through a -(RN)-> or -(RR)-> dependency, otherwise
++it's not a strong path.
++
++We now prove that if a strong path forms a circle, then we have a potential deadlock.
++By "forms a circle", it means for a set of locks A0,A1...An, there is a path from
++A0 to An:
++
++	A0 -> A1 -> ... -> An
++
++and there is also a dependency An->A0. And as the circle is formed by a strong path,
++so there are no two conjunct dependency edges as -(*R)-> and -(R*)->.
++
++
++To understand the actual proof, let's look into lockdep's assumption:
++
++For each lockdep dependency A -> B, there may exist a case where someone is
++trying to acquire B with A held, and the existence of such a case is
++independent to the existences of cases for other lockdep dependencies.
++
++For example if we have two functions func1 and func2:
++
++	void func1(...) {
++		lock(A);
++		lock(B);
++		unlock(A);
++		unlock(B);
++
++		lock(C);
++		lock(A);
++		unlock(A);
++		unlock(C);
++	}
++
++	void func2(...) {
++		lock(B);
++		lock(C);
++		unlock(C);
++		unlock(B);
++	}
++
++lockdep will generate dependencies: A->B, B->C and C->A, and assume that:
++
++	there may exist a case where someone is trying to acquire B with A held,
++	there may exist a case where someone is trying to acquire C with B held,
++	and there may exist a case where someone is trying to acquire A with C held,
++
++and those three cases exist *independently*, meaning they can happen at the
++same time(which requires func1() being called simultaneously by two CPUs or
++tasks, which may be impossible due to other constraints in the real life)
++
++
++With this assumption, we can prove that if a strong dependency path forms a circle,
++then it indicates a deadlock as far as lockdep is concerned.
++
++For a strong dependency circle like:
++
++	A0 -> A1 -> ... -> An
++	^                  |
++	|                  |
++	+------------------+
++, lockdep assumes that
++
++	there may exist a case where someone is trying to acquire A1 with A0 held
++	there may exist a case where someone is trying to acquire A2 with A1 held
++	...
++	there may exist a case where someone is trying to acquire An with An-1 held
++	there may exist a case where someone is trying to acquire A0 with An held
++
++, and because it's a *strong* dependency circle for every Ai (0<=i<=n), Ai is either
++held as a non-recursive lock or someone is trying to acquire Ai as a non-recursive lock,
++which gives:
++
++*	If Ai is held as a non-recursive lock, then trying to acquire it,
++	whether as a recursive lock or not, will get blocked.
++
++*	If Ai is held as a recursive lock, then there must be someone is trying to acquire
++	it as a non-recursive lock, and because recursive locks blocks non-recursive locks,
++	then it(the "someone") will get blocked.
++
++So all the holders of A0, A1...An are blocked with A0, A1...An held by each other,
++no one can progress, therefore deadlock.
 -- 
 2.16.1
