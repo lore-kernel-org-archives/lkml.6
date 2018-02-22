@@ -1,75 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753567AbeBVLDB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:03:01 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39505 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753380AbeBVLDA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:03:00 -0500
-X-Google-Smtp-Source: AH8x224aC08u4NCS1IhwJysiVHJ9CcvT6s7Ip0TL49VgE7MLxNrT7p3J77Oc8oyIyla1Hyji8NQhrg==
-Date: Thu, 22 Feb 2018 14:02:52 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Martin Sebor <msebor@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/boot/compressed/64: fix warning for 32-bit
- trampoline copy
-Message-ID: <20180222110252.ogmn3yf6ln5edc6t@node.shutemov.name>
-References: <20180222104101.2717185-1-arnd@arndb.de>
+        id S1753517AbeBVLIA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:08:00 -0500
+Received: from sauhun.de ([88.99.104.3]:48993 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753279AbeBVLH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:07:58 -0500
+Date: Thu, 22 Feb 2018 12:07:54 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH v5 6/8] i2c: demux: Use changeset helpers for clarity
+Message-ID: <20180222110754.snkn7sgy4cyj7kq4@ninjato>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdVy9=e5eZZTdV6E=apvHxL3n5Qqob2JE+FsON3RG-JWWg@mail.gmail.com>
+ <2195898.2J8Qfnu3DQ@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zchw23fcb7jg5anu"
 Content-Disposition: inline
-In-Reply-To: <20180222104101.2717185-1-arnd@arndb.de>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <2195898.2J8Qfnu3DQ@avalon>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 11:40:41AM +0100, Arnd Bergmann wrote:
-> gcc-8 warns that we copy TRAMPOLINE_32BIT_CODE_SIZE bytes from the pointer
-> to the function into actual trampoline, when that pointer is only 8 bytes:
-> 
-> In file included from arch/x86/boot/compressed/pgtable_64.c:3:
-> arch/x86/boot/compressed/pgtable_64.c: In function 'paging_prepare':
-> arch/x86/boot/compressed/../string.h:18:23: error: '__builtin_memcpy' reading 96 bytes from a region of size 8 [-Werror=stringop-overflow=]
->  #define memcpy(d,s,l) __builtin_memcpy(d,s,l)
->                        ^~~~~~~~~~~~~~~~~~~~~~~
-> arch/x86/boot/compressed/pgtable_64.c:62:2: note: in expansion of macro 'memcpy'
->   memcpy(trampoline + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
->   ^~~~~~
-> 
-> I assume what was intended here is to copy the trampoline itself rather than
-> the pointer to the trampoline.
-> 
-> Cc: Martin Sebor <msebor@gmail.com>
-> Fixes: b91993a87aff ("x86/boot/compressed/64: Prepare trampoline memory")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> This is a fairly new warning in gcc, it's possible that the code is
-> correct and the warning message got it wrong, please double-check this.
-> 
-> Was the 32-bit trampoline code in the 64-bit decompressor tested successfully?
 
-Yes, it was. Actually it tested on every boot of any 64-bit machine.
+--zchw23fcb7jg5anu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The fix is wrong and it breaks boot. The bug is in trampoline_32bit_src
-declaration. Could you check if this helps with the warning:
 
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-index 6e0db2260147..5e0b1c4abef4 100644
---- a/arch/x86/boot/compressed/pgtable.h
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -12,7 +12,7 @@
+> > Why? ePAPR says "okay", "disabled", "fail", or "fail-sss".
+> >=20
+> > Sorry for missing this in the previous round.
+>=20
+> That was per Wolfram's request, and because the existing code uses "ok". =
+I'm=20
+> personally fine with any.
 
- #ifndef __ASSEMBLER__
+I did? Well, today I don't have a strong preference. Any is fine with
+me, too.
 
--extern void (*trampoline_32bit_src)(void *return_ptr);
-+extern void trampoline_32bit_src(void *return_ptr);
 
- #endif /* __ASSEMBLER__ */
- #endif /* BOOT_COMPRESSED_PAGETABLE_H */
--- 
- Kirill A. Shutemov
+--zchw23fcb7jg5anu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqOpIcACgkQFA3kzBSg
+KbY/Lw//Wu6/UUii+3Pppq877QvjFQWj7sOO8l/Qpko2IH5z7CriP+6V8A9NMBeL
+CnSfbosoDBCiASIK4HUu+NU4XxtWc2kC3dap8nKfY+mUg+hcLYjkPQyJedkDS/IC
+5LsYayvWr6P5rkDBF3fpSfOdkI55T30u5k4N4bZfNjQ8y6kHVFnLJXISQ6HB/feO
+nKhWnL9A3Fc4TA9/iibB/qFOb7aQn4SRJy/KyZAIlUAxi3UQPlkRQVzrVXy/l8DM
+vdvbonQkJtgJs173LtDmXfGKDf1PKsUD5YkBvM3oAbyn+BjnJqUKjJxHR4xk3V4j
+CKaMHisEUPjJJgun3MUwd8+lF6j5z29OcZTqVz6ez6VQC5yXyyGP8BFbOxGsl2wZ
+5+u4H52x2ZXlhoT0WlyPSZb0MH+k6Rem7Dkt1FExyiILPZ2QFbp71ypfRFoRsWRc
+nZRyXFDsD/AZdOepedxyUihI2fzLCHDcscEGUptAuFBhMkJmp0C6CsebABFsK0ib
+rmlNrwhqXnWcTqYSP7XsKboKy3GVG3ph9BoPye+kUyZ/K4taTitAUxoqWcOKkFG/
+4poPQKZiifP5DraddGVLSMI+Bcj4Ly2/0eVvz89HDzHPgZHwmX8lxtqjmYYM20d/
+uiGf72jB4Cl0eeqL+NMbmegS1LjE4iivcMRAxEO5d9rv204azpU=
+=qf5c
+-----END PGP SIGNATURE-----
+
+--zchw23fcb7jg5anu--
