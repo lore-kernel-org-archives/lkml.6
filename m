@@ -1,73 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932901AbeBVOXl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:23:41 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35262 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932638AbeBVOXg (ORCPT
+        id S932883AbeBVOXj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:23:39 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33709 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932851AbeBVOXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:23:36 -0500
-X-Google-Smtp-Source: AH8x225Oom/hZGynOveeycjO+qDwdtptBSNKTyyqxseyyZB3mMjf6mmYonK+DODcaz5NbgfcEGo1uA==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Subject: [PATCH] microblaze: Setup dependencies for ASM optimized lib functions
-Date: Thu, 22 Feb 2018 15:23:28 +0100
-Message-Id: <3f534814deabb151fa99938b39962afc6be69b2c.1519309405.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 22 Feb 2018 09:23:32 -0500
+X-Google-Smtp-Source: AH8x2266fdWwkPw9s1h2WE+0+68vh8veovdkIaf0ck+tBc+Ymg3oBa7Uv5UufBqerAbjmfDZNYePaQ==
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, "David S. Miller" <davem@davemloft.net>,
+        Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Subject: [PATCH v4 4/4] ARM: dts: imx7s: add CAAM device node
+Date: Thu, 22 Feb 2018 14:22:50 +0000
+Message-Id: <20180222142250.31348-5-rui.silva@linaro.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180222142250.31348-1-rui.silva@linaro.org>
+References: <20180222142250.31348-1-rui.silva@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch:
-"microblaze: Setup proper dependency for optimized lib functions"
-(sha1: 7b6ce52be3f86520524711a6f33f3866f9339694)
-didn't setup all dependencies properly.
-Optimized lib functions in C are also present for little endian
-and optimized library functions in assembler are implemented only for
-big endian version.
+Add CAAM device node to the i.MX7s device tree.
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: devicetree@vger.kernel.org
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 ---
+ arch/arm/boot/dts/imx7s.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- arch/microblaze/Kconfig.platform | 2 +-
- arch/microblaze/lib/fastcopy.S   | 4 ----
- 2 files changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/arch/microblaze/Kconfig.platform b/arch/microblaze/Kconfig.platform
-index 6996f397c16c..f7f1739c11b9 100644
---- a/arch/microblaze/Kconfig.platform
-+++ b/arch/microblaze/Kconfig.platform
-@@ -8,7 +8,6 @@ menu "Platform options"
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 9aa2bb998552..d88c179e4c00 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -822,6 +822,36 @@
+ 				status = "disabled";
+ 			};
  
- config OPT_LIB_FUNCTION
- 	bool "Optimalized lib function"
--	depends on CPU_LITTLE_ENDIAN
- 	default y
- 	help
- 	  Allows turn on optimalized library function (memcpy and memmove).
-@@ -21,6 +20,7 @@ config OPT_LIB_FUNCTION
- config OPT_LIB_ASM
- 	bool "Optimalized lib function ASM"
- 	depends on OPT_LIB_FUNCTION && (XILINX_MICROBLAZE0_USE_BARREL = 1)
-+	depends on CPU_BIG_ENDIAN
- 	default n
- 	help
- 	  Allows turn on optimalized library function (memcpy and memmove).
-diff --git a/arch/microblaze/lib/fastcopy.S b/arch/microblaze/lib/fastcopy.S
-index 62021d7e249e..fdc48bb065d8 100644
---- a/arch/microblaze/lib/fastcopy.S
-+++ b/arch/microblaze/lib/fastcopy.S
-@@ -29,10 +29,6 @@
-  *	between mem locations with size of xfer spec'd in bytes
-  */
- 
--#ifdef __MICROBLAZEEL__
--#error Microblaze LE not support ASM optimized lib func. Disable OPT_LIB_ASM.
--#endif
--
- #include <linux/linkage.h>
- 	.text
- 	.globl	memcpy
++			crypto: caam@30900000 {
++				compatible = "fsl,sec-v4.0";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				reg = <0x30900000 0x40000>;
++				ranges = <0 0x30900000 0x40000>;
++				interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_CAAM_CLK>,
++					 <&clks IMX7D_AHB_CHANNEL_ROOT_CLK>;
++				clock-names = "ipg", "aclk";
++
++				sec_jr0: jr0@1000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x1000 0x1000>;
++					interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++				};
++
++				sec_jr1: jr1@2000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x2000 0x1000>;
++					interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
++				};
++
++				sec_jr2: jr1@3000 {
++					compatible = "fsl,sec-v4.0-job-ring";
++					reg = <0x3000 0x1000>;
++					interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
++				};
++			};
++
+ 			flexcan1: can@30a00000 {
+ 				compatible = "fsl,imx7d-flexcan", "fsl,imx6q-flexcan";
+ 				reg = <0x30a00000 0x10000>;
 -- 
-1.9.1
+2.16.2
