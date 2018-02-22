@@ -1,96 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751721AbeBVUj2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:39:28 -0500
-Received: from mga18.intel.com ([134.134.136.126]:31804 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751376AbeBVUhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751749AbeBVUju (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:39:50 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:51798 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751363AbeBVUhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Feb 2018 15:37:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,378,1515484800";
-   d="scan'208";a="29098085"
-Subject: [RFC][PATCH 02/10] x86/mm: undo double _PAGE_PSE clearing
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, aarcange@redhat.com,
-        luto@kernel.org, torvalds@linux-foundation.org, keescook@google.com,
-        hughd@google.com, jgross@suse.com, x86@kernel.org, namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Thu, 22 Feb 2018 12:36:54 -0800
-References: <20180222203651.B776810C@viggo.jf.intel.com>
-In-Reply-To: <20180222203651.B776810C@viggo.jf.intel.com>
-Message-Id: <20180222203654.F87D4CFF@viggo.jf.intel.com>
+Date: Thu, 22 Feb 2018 15:37:00 -0500 (EST)
+Message-Id: <20180222.153700.511110622471984196.davem@davemloft.net>
+To: arnd@arndb.de
+Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com,
+        f.fainelli@gmail.com, brandon.streiff@ni.com, richardcochran@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dsa: ptp; mark dummy helpers as 'inline'
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180222114459.1272945-1-arnd@arndb.de>
+References: <20180222114459.1272945-1-arnd@arndb.de>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 22 Feb 2018 12:44:40 +0100
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+> Declaring a static function in a header leads to a warning every
+> time that header gets included without the function being used:
+> 
+> In file included from drivers/net/dsa/mv88e6xxx/chip.c:42:
+> drivers/net/dsa/mv88e6xxx/ptp.h:92:13: error: 'mv88e6xxx_hwtstamp_work' defined but not used [-Werror=unused-function]
+>  static long mv88e6xxx_hwtstamp_work(struct ptp_clock_info *ptp)
+> In file included from drivers/net/dsa/mv88e6xxx/chip.c:38:
+> drivers/net/dsa/mv88e6xxx/global2.h:355:12: error: 'mv88e6xxx_g2_wait' defined but not used [-Werror=unused-function]
+>  static int mv88e6xxx_g2_wait(struct mv88e6xxx_chip *chip, int reg, u16 mask)
+>             ^~~~~~~~~~~~~~~~~
+> drivers/net/dsa/mv88e6xxx/global2.h:350:12: error: 'mv88e6xxx_g2_update' defined but not used [-Werror=unused-function]
+>  static int mv88e6xxx_g2_update(struct mv88e6xxx_chip *chip, int reg, u16 update)
+>             ^~~~~~~~~~~~~~~~~~~
+> drivers/net/dsa/mv88e6xxx/global2.h:345:12: error: 'mv88e6xxx_g2_write' defined but not used [-Werror=unused-function]
+>  static int mv88e6xxx_g2_write(struct mv88e6xxx_chip *chip, int reg, u16 val)
+>             ^~~~~~~~~~~~~~~~~~
+> drivers/net/dsa/mv88e6xxx/global2.h:340:12: error: 'mv88e6xxx_g2_read' defined but not used [-Werror=unused-function]
+>  static int mv88e6xxx_g2_read(struct mv88e6xxx_chip *chip, int reg, u16 *val)
+> 
+> This marks all such functions in dsa inline to make sure we don't warn
+> about them.
+> 
+> Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+> Fixes: 0d632c3d6fe3 ("net: dsa: mv88e6xxx: add accessors for PTP/TAI registers")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-When clearing _PAGE_PRESENT on a huge page, we need to be careful
-to also clear _PAGE_PSE, otherwise it might still get confused
-for a valid large page table entry.
-
-We do that near the spot where we *set* _PAGE_PSE.  That's fine,
-but it's unnecessary.  pgprot_large_2_4k() already did it.
-
-BTW, I also noticed that pgprot_large_2_4k() and
-pgprot_4k_2_large() are not symmetric.  pgprot_large_2_4k() clears
-_PAGE_PSE (because it is aliased to _PAGE_PAT) but
-pgprot_4k_2_large() does not put _PAGE_PSE back.  Bummer.
-
-Also, add some comments and change "promote" to "move".  "Promote"
-seems an odd word to move when we are logically moving a bit to a
-lower bit position.  Also add an extra line return to make it clear
-to which line the comment applies.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@google.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: x86@kernel.org
-Cc: Nadav Amit <namit@vmware.com>
----
-
- b/arch/x86/mm/pageattr.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff -puN arch/x86/mm/pageattr.c~kpti-undo-double-_PAGE_PSE-clear arch/x86/mm/pageattr.c
---- a/arch/x86/mm/pageattr.c~kpti-undo-double-_PAGE_PSE-clear	2018-02-22 12:36:18.072036555 -0800
-+++ b/arch/x86/mm/pageattr.c	2018-02-22 12:36:18.076036555 -0800
-@@ -583,6 +583,7 @@ try_preserve_large_page(pte_t *kpte, uns
- 	 * up accordingly.
- 	 */
- 	old_pte = *kpte;
-+	/* Clear PSE (aka _PAGE_PAT) and move PAT bit to correct position */
- 	req_prot = pgprot_large_2_4k(old_prot);
- 
- 	pgprot_val(req_prot) &= ~pgprot_val(cpa->mask_clr);
-@@ -597,8 +598,6 @@ try_preserve_large_page(pte_t *kpte, uns
- 	req_prot = pgprot_clear_protnone_bits(req_prot);
-         if (pgprot_val(req_prot) & _PAGE_PRESENT)
- 		pgprot_val(req_prot) |= _PAGE_PSE;
--	else
--		pgprot_val(req_prot) &= ~_PAGE_PSE;
- 	req_prot = canon_pgprot(req_prot);
- 
- 	/*
-@@ -684,8 +683,12 @@ __split_large_page(struct cpa_data *cpa,
- 	switch (level) {
- 	case PG_LEVEL_2M:
- 		ref_prot = pmd_pgprot(*(pmd_t *)kpte);
--		/* clear PSE and promote PAT bit to correct position */
-+		/*
-+		 * Clear PSE (aka _PAGE_PAT) and move
-+		 * PAT bit to correct position.
-+		 */
- 		ref_prot = pgprot_large_2_4k(ref_prot);
-+
- 		ref_pfn = pmd_pfn(*(pmd_t *)kpte);
- 		break;
- 
-_
+Applied, thanks Arnd.
