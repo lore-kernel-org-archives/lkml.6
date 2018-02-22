@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeBVHGq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:06:46 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37356 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeBVHGm (ORCPT
+        id S1752782AbeBVHGx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:06:53 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55184 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752728AbeBVHGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:06:42 -0500
-X-Google-Smtp-Source: AH8x226sdD64MWV/Odlt9UQLo8Kg6xSsIhtEaBDMkP+AAMgNDusbT0jOhJRoV7CQoAiVGbuqGm2bTQ==
-X-ME-Sender: <xms:_muOWiDqVRaHjGhXDNaLhTwpPKq7VRhwT0L5CXt5LPKh6joZ12p2KQ>
+        Thu, 22 Feb 2018 02:06:49 -0500
+X-Google-Smtp-Source: AH8x225vBrVCHHo1nDZH6gcoVUjkJjP8mR94CqpuG3ax012rZr81VZb6M/JJBW34LM9pjOzXbzNUJw==
+X-ME-Sender: <xms:BmyOWuzeEJW_pkxNFqRcSmXI2Bw8wpawcZh64eX7YUqYheCWcMx2mg>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 12/17] lockdep/selftest: Unleash irq_read_recursion2 and add more
-Date: Thu, 22 Feb 2018 15:08:59 +0800
-Message-Id: <20180222070904.548-13-boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v5 14/17] Revert "locking/lockdep/selftests: Fix mixed read-write ABBA tests"
+Date: Thu, 22 Feb 2018 15:09:01 +0800
+Message-Id: <20180222070904.548-15-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,124 +24,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now since we can handle recursive read related irq inversion deadlocks
-correctly, uncomment the irq_read_recursion2 and add more testcases.
+This reverts commit d82fed75294229abc9d757f08a4817febae6c4f4.
+
+Since we now could handle mixed read-write deadlock detection well, the
+self tests could be detected as expected, no need to use this
+work-around.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- lib/locking-selftest.c | 59 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 47 insertions(+), 12 deletions(-)
+ lib/locking-selftest.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
 diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 700f9aa19db6..c2f06b423da8 100644
+index 6b7a28d84fc4..79270288fa28 100644
 --- a/lib/locking-selftest.c
 +++ b/lib/locking-selftest.c
-@@ -1052,20 +1052,28 @@ GENERATE_PERMUTATIONS_3_EVENTS(irq_inversion_soft_wlock)
- #define E3()				\
- 					\
- 	IRQ_ENTER();			\
--	RL(A);				\
-+	LOCK(A);			\
- 	L(B);				\
- 	U(B);				\
--	RU(A);				\
-+	UNLOCK(A);			\
- 	IRQ_EXIT();
- 
- /*
-- * Generate 12 testcases:
-+ * Generate 24 testcases:
-  */
- #include "locking-selftest-hardirq.h"
--GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_hard)
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_hard_rlock)
-+
-+#include "locking-selftest-wlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_hard_wlock)
- 
- #include "locking-selftest-softirq.h"
--GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_soft)
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_soft_rlock)
-+
-+#include "locking-selftest-wlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_soft_wlock)
- 
- #undef E1
- #undef E2
-@@ -1079,8 +1087,8 @@ GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_soft)
- 					\
- 	IRQ_DISABLE();			\
- 	L(B);				\
--	WL(A);				\
--	WU(A);				\
-+	LOCK(A);			\
-+	UNLOCK(A);			\
- 	U(B);				\
- 	IRQ_ENABLE();
- 
-@@ -1097,13 +1105,21 @@ GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion_soft)
- 	IRQ_EXIT();
- 
- /*
-- * Generate 12 testcases:
-+ * Generate 24 testcases:
-  */
- #include "locking-selftest-hardirq.h"
--// GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_hard)
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_hard_rlock)
-+
-+#include "locking-selftest-wlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_hard_wlock)
- 
- #include "locking-selftest-softirq.h"
--// GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_soft)
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_soft_rlock)
-+
-+#include "locking-selftest-wlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(irq_read_recursion2_soft_wlock)
- 
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- # define I_SPINLOCK(x)	lockdep_reset_lock(&lock_##x.dep_map)
-@@ -1256,6 +1272,25 @@ static inline void print_testname(const char *testname)
- 	dotest(name##_rlock_##nr, SUCCESS, LOCKTYPE_RWLOCK);	\
- 	pr_cont("\n");
- 
-+#define DO_TESTCASE_2RW(desc, name, nr)				\
-+	print_testname(desc"/"#nr);				\
-+	pr_cont("      |");					\
-+	dotest(name##_wlock_##nr, FAILURE, LOCKTYPE_RWLOCK);	\
-+	dotest(name##_rlock_##nr, SUCCESS, LOCKTYPE_RWLOCK);	\
-+	pr_cont("\n");
-+
-+#define DO_TESTCASE_2x2RW(desc, name, nr)			\
-+	DO_TESTCASE_2RW("hard-"desc, name##_hard, nr)		\
-+	DO_TESTCASE_2RW("soft-"desc, name##_soft, nr)		\
-+
-+#define DO_TESTCASE_6x2x2RW(desc, name)				\
-+	DO_TESTCASE_2x2RW(desc, name, 123);			\
-+	DO_TESTCASE_2x2RW(desc, name, 132);			\
-+	DO_TESTCASE_2x2RW(desc, name, 213);			\
-+	DO_TESTCASE_2x2RW(desc, name, 231);			\
-+	DO_TESTCASE_2x2RW(desc, name, 312);			\
-+	DO_TESTCASE_2x2RW(desc, name, 321);
-+
- #define DO_TESTCASE_6(desc, name)				\
- 	print_testname(desc);					\
- 	dotest(name##_spin, FAILURE, LOCKTYPE_SPIN);		\
-@@ -2114,8 +2149,8 @@ void locking_selftest(void)
- 	DO_TESTCASE_6x6("safe-A + unsafe-B #2", irqsafe4);
- 	DO_TESTCASE_6x6RW("irq lock-inversion", irq_inversion);
- 
--	DO_TESTCASE_6x2("irq read-recursion", irq_read_recursion);
--//	DO_TESTCASE_6x2B("irq read-recursion #2", irq_read_recursion2);
-+	DO_TESTCASE_6x2x2RW("irq read-recursion", irq_read_recursion);
-+	DO_TESTCASE_6x2x2RW("irq read-recursion #2", irq_read_recursion2);
- 
- 	ww_tests();
+@@ -2266,14 +2266,6 @@ void locking_selftest(void)
+ 	print_testname("mixed read-lock/lock-write ABBA");
+ 	pr_cont("             |");
+ 	dotest(rlock_ABBA1, FAILURE, LOCKTYPE_RWLOCK);
+-#ifdef CONFIG_PROVE_LOCKING
+-	/*
+-	 * Lockdep does indeed fail here, but there's nothing we can do about
+-	 * that now.  Don't kill lockdep for it.
+-	 */
+-	unexpected_testcase_failures--;
+-#endif
+-
+ 	pr_cont("             |");
+ 	dotest(rwsem_ABBA1, FAILURE, LOCKTYPE_RWSEM);
  
 -- 
 2.16.1
