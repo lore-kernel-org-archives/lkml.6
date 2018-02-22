@@ -1,184 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753494AbeBVKqi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:46:38 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:52638 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753348AbeBVKqg (ORCPT
+        id S1753499AbeBVK4Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:56:25 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54207 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753346AbeBVK4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:46:36 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180222104634epoutp01d53b700960555b4ecbec4ebe8b9782fb~VoAV8iw1r1622816228epoutp01S
-X-AuditID: b6c32a4b-cb9ff70000001126-81-5a8e9f8a14e2
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH] fanotify: allow freeze on suspend when waiting for
- response from userspace
-Reply-To: k.shubham@samsung.com
-From: Kunal Shubham <k.shubham@samsung.com>
-To: "jack@suse.cz" <jack@suse.cz>
-CC: VIVEK TRIVEDI <t.vivek@samsung.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        Kunal Shubham <k.shubham@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20180216102913.jcgvc5rhjqtzlkb6@quack2.suse.cz>
-X-Drm-Type: Y,confirm
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180222094454epcms5p15e3538bdba8bcbc036dc379583bc3a55@epcms5p1>
-Date: Thu, 22 Feb 2018 15:14:54 +0530
-X-CMS-MailID: 20180222094454epcms5p15e3538bdba8bcbc036dc379583bc3a55
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-X-MTR: 20180222094454epcms5p15e3538bdba8bcbc036dc379583bc3a55
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7bCmum7X/L4og6dbpSwurFvNaDF7ejOT
-        xcFlM5kt9uw9yWJxedccNot7b7YyWbzs28jmwO6xc9Zddo++LasYPc4sOMLu8XmTXABLFJdN
-        SmpOZllqkb5dAlfGhgvv2QtW2Fcs2cHZwLjMqouRk0NCwETi/fTF7F2MXBxCArsZJY5O3MXY
-        xcjBwSsgKPF3hzBIjbBAqsTrzTcYQWwhAXmJT4tvMkPEdSVaJqwEi7MJaEvMXbKfFcQWEVCU
-        uLvzPCvITGaB5UwSu99OY4NYxisxo/0pC4QtLbF9+VawZk4BW4kXLxdBxUUl/jQ8hbPfH5vP
-        CGGLSLTeO8sMYQtKPPi5GyouI7HywjkWkGUSAs2MEusOHGeCcHoYJR583QS12Vzi/Mn5YN28
-        Ar4Saw/+YQKxWQRUJdqO9EDVuEhM7ZoP9gIz0DvLFr5mBoUEs4CmxPpd+hAlshJTT61jAglL
-        AB198I4PRDWfRO/vJ0wwP+6YB2MrS6xqu8oKYUtKXLrazgjR6iHR+ih1AqPSLERIz0KydhbC
-        2gWMzKsYJVMLinPTU4tNC4zzUsv1ihNzi0vz0vWS83M3MYJTi5b3DsZN53wOMQpwMCrx8EaU
-        9EYJsSaWFVfmHmKU4GBWEuFdGtoXJcSbklhZlVqUH19UmpNafIhRmoNFSZzXMdAlSkggPbEk
-        NTs1tSC1CCbLxMEp1cCYFXyfv1nutqzBCx8xLsvFqlb/DfLqLLd3c7nZcJqop2gt3rpe9PYS
-        u/74bwLhdrPcm7bo+l3l+Vxta9VfOknK2bapYnvZk5urrE+yfpw5e6GdRNWf9IjpR8vMf609
-        t05H0qVeZd/iF412WVl8n069bPaXu1X3Zkc8c7O763v2isutb63ZtZVYijMSDbWYi4oTAeSS
-        Oq0pAwAA
-X-CMS-RootMailID: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-X-RootMTR: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-References: <20180216102913.jcgvc5rhjqtzlkb6@quack2.suse.cz>
-        <1518774280-38090-1-git-send-email-t.vivek@samsung.com>
-        <CGME20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae@epcms5p1>
+        Thu, 22 Feb 2018 05:56:24 -0500
+Subject: Re: [1/2] ARM: irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+To: radek <radoslaw.pietrzyk@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+References: <1519221027-4028-2-git-send-email-radoslaw.pietrzyk@gmail.com>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <d007f880-0509-e30c-4c28-94117d2f8037@st.com>
+Date: Thu, 22 Feb 2018 11:55:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1519221027-4028-2-git-send-email-radoslaw.pietrzyk@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MAkhrh008635
 
->> On Fri 16-02-18 15:14:40, t.vivek@samsung.com wrote:
->> From: Vivek Trivedi <t.vivek@samsung.com>
->> 
->> If fanotify userspace response server thread is frozen first,
->> it may fail to send response from userspace to kernel space listener.
->> In this scenario, fanotify response listener will never get response
->> from userepace and fail to suspend.
->> 
->> Use freeze-friendly wait API to handle this issue.
->> 
->> Same problem was reported here:
->> https://bbs.archlinux.org/viewtopic.php?id=232270
->> 
->> Freezing of tasks failed after 20.005 seconds
->> (1 tasks refusing to freeze, wq_busy=0)
->> 
->> Backtrace:
->> [<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
->> [<c0583584>] (schedule) from [<c01cb648>] (fanotify_handle_event+0x1c8/0x218)
->> [<c01cb480>] (fanotify_handle_event) from [<c01c8238>] (fsnotify+0x17c/0x38c)
->> [<c01c80bc>] (fsnotify) from [<c02676dc>] (security_file_open+0x88/0x8c)
->> [<c0267654>] (security_file_open) from [<c01854b0>] (do_dentry_open+0xc0/0x338)
->> [<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
->> [<c01859e4>] (vfs_open) from [<c0195480>] (do_last.isra.10+0x45c/0xcf8)
->> [<c0195024>] (do_last.isra.10) from [<c0196140>] (path_openat+0x424/0x600)
->> [<c0195d1c>] (path_openat) from [<c0197498>] (do_filp_open+0x3c/0x98)
->> [<c019745c>] (do_filp_open) from [<c0186b44>] (do_sys_open+0x120/0x1e4)
->> [<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
->> [<c0186c08>] (SyS_open) from [<c0010200>] (__sys_trace_return+0x0/0x20)
->
-> Yeah, good catch.
->
->> @@ -63,7 +64,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
->>  
->>  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
->>  
->> -	wait_event(group->fanotify_data.access_waitq, event->response);
->> +	while (!event->response)
->> +		wait_event_freezable(group->fanotify_data.access_waitq,
->> +				     event->response);
->
-> But if the process gets a signal while waiting, we will just livelock the
-> kernel in this loop as wait_event_freezable() will keep returning
-> ERESTARTSYS. So you need to be a bit more clever here...
+Hi Radek
 
-Hi Jack,
-Thanks for the quick review.
-To avoid livelock issue, is it fine to use below change? 
-If agree, I will send v2 patch.
+I've tested your change on stm32h743i-eval.dts board
+and gpio-keys tests are not functional.
+No interrupt occurs when we push or release button
+(cat /proc/interrupt).
 
-@@ -63,7 +64,11 @@ static int fanotify_get_response(struct fsnotify_group *group,
+Board: stm32h743i-eval.dts
+Test description: gpio-keys (gpioc 13 => exti 13), with gpio or 
+interrupt property.
 
-        pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+comment below
 
--       wait_event(group->fanotify_data.access_waitq, event->response);
-+       while (!event->response) {
-+               if (wait_event_freezable(group->fanotify_data.access_waitq,
-+                                       event->response))
-+                       flush_signals(current);
-+       }
+On 02/21/2018 02:50 PM, radek wrote:
+> - allocates generic chip with handle_simple_irq
+> 	which simplifies irq_domain_ops.alloc callback
+> 	- removes ack register from generic chip which is not used for
+> 	handle_simple_irq as acking is done in a chained handler
+> 	- removes unneeded irq_domain_ops.xlate callback
+> 
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+> ---
+>   drivers/irqchip/irq-stm32-exti.c | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+> index 36f0fbe..42e74e3 100644
+> --- a/drivers/irqchip/irq-stm32-exti.c
+> +++ b/drivers/irqchip/irq-stm32-exti.c
+> @@ -176,16 +176,12 @@ static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
+>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>   			    unsigned int nr_irqs, void *data)
+>   {
+> -	struct irq_chip_generic *gc;
+>   	struct irq_fwspec *fwspec = data;
+>   	irq_hw_number_t hwirq;
+>   
+>   	hwirq = fwspec->param[0];
+> -	gc = irq_get_domain_generic_chip(d, hwirq);
+>   
+>   	irq_map_generic_chip(d, virq, hwirq);
+> -	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+> -			    handle_simple_irq, NULL, NULL);
+>   
+>   	return 0;
+>   }
+> @@ -200,7 +196,6 @@ static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+>   
+>   struct irq_domain_ops irq_exti_domain_ops = {
+>   	.map	= irq_map_generic_chip,
+> -	.xlate	= irq_domain_xlate_onetwocell,
+>   	.alloc  = stm32_exti_alloc,
+>   	.free	= stm32_exti_free,
+>   };
+> @@ -231,7 +226,7 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
+>   	}
+>   
+>   	ret = irq_alloc_domain_generic_chips(domain, IRQS_PER_BANK, 1, "exti",
+> -					     handle_edge_irq, clr, 0, 0);
+> +					     handle_simple_irq, clr, 0, 0);
 
-Thanks
+EXTI hardware block is trigged on pulse event rising or failing edge.
+Why do you change to handle_simple_irq ?
 
- 
---------- Original Message ---------
-Sender : Jan Kara <jack@suse.cz>
-Date   : 2018-02-16 15:59 (GMT+5:30)
-Title  : Re: [PATCH] fanotify: allow freeze on suspend when waiting for response from userspace
-To : VIVEK TRIVEDI<t.vivek@samsung.com>
-CC : jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, PANKAJ MISHRA<pankaj.m@samsung.com>, Kunal Shubham<k.shubham@samsung.com>
- 
-On Fri 16-02-18 15:14:40, t.vivek@samsung.com wrote:
-> From: Vivek Trivedi <t.vivek@samsung.com>
-> 
-> If fanotify userspace response server thread is frozen first,
-> it may fail to send response from userspace to kernel space listener.
-> In this scenario, fanotify response listener will never get response
-> from userepace and fail to suspend.
-> 
-> Use freeze-friendly wait API to handle this issue.
-> 
-> Same problem was reported here:
-> https://bbs.archlinux.org/viewtopic.php?id=232270
-> 
-> Freezing of tasks failed after 20.005 seconds
-> (1 tasks refusing to freeze, wq_busy=0)
-> 
-> Backtrace:
-> [<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
-> [<c0583584>] (schedule) from [<c01cb648>] (fanotify_handle_event+0x1c8/0x218)
-> [<c01cb480>] (fanotify_handle_event) from [<c01c8238>] (fsnotify+0x17c/0x38c)
-> [<c01c80bc>] (fsnotify) from [<c02676dc>] (security_file_open+0x88/0x8c)
-> [<c0267654>] (security_file_open) from [<c01854b0>] (do_dentry_open+0xc0/0x338)
-> [<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
-> [<c01859e4>] (vfs_open) from [<c0195480>] (do_last.isra.10+0x45c/0xcf8)
-> [<c0195024>] (do_last.isra.10) from [<c0196140>] (path_openat+0x424/0x600)
-> [<c0195d1c>] (path_openat) from [<c0197498>] (do_filp_open+0x3c/0x98)
-> [<c019745c>] (do_filp_open) from [<c0186b44>] (do_sys_open+0x120/0x1e4)
-> [<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
-> [<c0186c08>] (SyS_open) from [<c0010200>] (__sys_trace_return+0x0/0x20)
- 
-Yeah, good catch.
- 
-> @@ -63,7 +64,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
->  
->          pr_debug("%s: group=%p event=%p\n", __func__, group, event);
->  
-> -        wait_event(group->fanotify_data.access_waitq, event->response);
-> +        while (!event->response)
-> +                wait_event_freezable(group->fanotify_data.access_waitq,
-> +                                     event->response);
- 
-But if the process gets a signal while waiting, we will just livelock the
-kernel in this loop as wait_event_freezable() will keep returning
-ERESTARTSYS. So you need to be a bit more clever here...
- 
-                                                                Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
- 
- 
+>   	if (ret) {
+>   		pr_err("%pOF: Could not allocate generic interrupt chip.\n",
+>   			node);
+> @@ -246,13 +241,10 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
+>   
+>   		gc->reg_base = base;
+>   		gc->chip_types->type = IRQ_TYPE_EDGE_BOTH;
+> -		gc->chip_types->chip.irq_ack = irq_gc_ack_set_bit;
+>   		gc->chip_types->chip.irq_mask = irq_gc_mask_clr_bit;
+>   		gc->chip_types->chip.irq_unmask = irq_gc_mask_set_bit;
+>   		gc->chip_types->chip.irq_set_type = stm32_irq_set_type;
+>   		gc->chip_types->chip.irq_set_wake = stm32_irq_set_wake;
+> -		gc->chip_types->regs.ack = stm32_bank->pr_ofst;
+> -		gc->chip_types->regs.mask = stm32_bank->imr_ofst;
+>   		gc->private = (void *)stm32_bank;
+>   
+>   		/* Determine number of irqs supported */
+> 
+
+BR
+Ludo
