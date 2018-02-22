@@ -1,126 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932476AbeBVMEX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:04:23 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:41053 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932444AbeBVMEU (ORCPT
+        id S932479AbeBVMEt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:04:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753649AbeBVMEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:04:20 -0500
-Date: Thu, 22 Feb 2018 13:04:12 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Message-ID: <20180222120412.GL7203@w540>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
- <1963190.TI9O1pFqZp@avalon>
- <20180220085857.GC7203@w540>
- <56271779.hLAmkO6BAC@avalon>
+        Thu, 22 Feb 2018 07:04:46 -0500
+Date: Thu, 22 Feb 2018 13:04:39 +0100 (CET)
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+X-X-Sender: sebott@schleppi
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
+cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kvm: fix warning for non-x86 builds
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <56271779.hLAmkO6BAC@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18022212-0040-0000-0000-000004157638
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022212-0041-0000-0000-000026188B6B
+Message-Id: <alpine.LFD.2.21.1802221301580.1603@schleppi>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220155
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+Fix the following sparse warning by moving the prototype
+of kvm_arch_mmu_notifier_invalidate_range() to linux/kvm_host.h .
 
-On Wed, Feb 21, 2018 at 10:28:06PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
-> > On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
-> > > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
-> > >> The sensor driver sets mbus format colorspace information and sizes,
-> > >> but not ycbcr encoding, quantization and xfer function. When supplied
-> > >> with an badly initialized mbus frame format structure, those fields
-> > >> need to be set explicitly not to leave them uninitialized. This is
-> > >> tested by v4l2-compliance, which supplies a mbus format description
-> > >> structure and checks for all fields to be properly set.
-> > >>
-> > >> Without this commit, v4l2-compliance fails when testing formats with:
-> > >> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
-> > >>
-> > >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > >> ---
-> > >>
-> > >>  drivers/media/i2c/ov7670.c | 4 ++++
-> > >>  1 file changed, 4 insertions(+)
-> > >>
-> > >> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > >> index 25b26d4..61c472e 100644
-> > >> --- a/drivers/media/i2c/ov7670.c
-> > >> +++ b/drivers/media/i2c/ov7670.c
-> > >> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct
-> > >> v4l2_subdev
-> > >> *sd, fmt->height = wsize->height;
-> > >>
-> > >>  	fmt->colorspace = ov7670_formats[index].colorspace;
-> > >
-> > > On a side note, if I'm not mistaken the colorspace field is set to SRGB
-> > > for all entries. Shouldn't you hardcode it here and remove the field ?
-> > >
-> > >> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-> > >> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-> > >> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-> > >
-> > > How about setting the values explicitly instead of relying on defaults ?
-> > > That would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
-> > > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see if
-> > > the sensor outputs limited or full range ?
-> >
-> > This actually makes me wonder if those informations (ycbcb_enc,
-> > quantization and xfer_func) shouldn't actually be part of the
-> > supported format list... I blindly added those default fields in the
-> > try_fmt function, but I doubt they applies to all supported formats.
-> >
-> > Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
-> > RGB 565) and 1 raw format (BGGR). I now have a question here:
-> >
-> > 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
-> > applies to RGB and raw formats? I don't think so, and what value is
-> > the correct one for the ycbcr_enc field in this case? I assume
-> > xfer_func and quantization applies to all formats instead..
->
-> There's no encoding for RGB formats if I understand things correctly, so I'd
-> set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function and the
-> quantization apply to all formats, but I'd be surprised to find a sensor
-> outputting limited range for RGB.
+  CHECK   arch/s390/kvm/../../../virt/kvm/kvm_main.c
+arch/s390/kvm/../../../virt/kvm/kvm_main.c:138:13: warning: symbol 'kvm_arch_mmu_notifier_invalidate_range' was not declared. Should it be static?
 
-Ack, we got the same understanding for RGB formats. I wonder if for
-those formats we wouldn't need a V4L2_YCBCR_ENC_NONE or similar...
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+---
+ arch/x86/include/asm/kvm_host.h | 3 ---
+ include/linux/kvm_host.h        | 3 +++
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
->
-> Have you been able to check whether the sensor outputs limited range of full
-> range YUV ? If it outputs full range you can hardcode quantization to
-> V4L2_QUANTIZATION_FULL_RANGE for all formats.
-
-In YUYV mode, I see values > 0xf0 ( > 240, which is the max value for
-CbCr samples in limited quantization range), so I assume quantization
-is full range.
-
-Actually the hardest part here was having a white enough surface to
-point the sensor to :)
-
-Thanks
-  j
-
->
-> > >>  	info->format = *fmt;
-> > >>
-> > >>  	return 0;
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index dd6f57a54a26..0a9e330b34f0 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1464,7 +1464,4 @@ static inline int kvm_cpu_get_apicid(int mps_cpu)
+ #define put_smstate(type, buf, offset, val)                      \
+ 	*(type *)((buf) + (offset) - 0x7e00) = val
+ 
+-void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+-		unsigned long start, unsigned long end);
+-
+ #endif /* _ASM_X86_KVM_HOST_H */
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index ac0062b74aed..ed3d4ddbaff3 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1272,4 +1272,7 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
+ }
+ #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
+ 
++void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
++		unsigned long start, unsigned long end);
++
+ #endif
+-- 
+2.13.4
