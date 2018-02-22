@@ -1,39 +1,39 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225M62bcwNS8VZzVshuJLt2vaoIBadPmI2u+thCnNGa11LNUIMKr65wlQvVkEx9YmM7q6C9T
-ARC-Seal: i=1; a=rsa-sha256; t=1519264871; cv=none;
+X-Google-Smtp-Source: AH8x225e+FegYTIqbwRPulsN0CEwOrynyXMnwfoX03zkkSFQCSWI9ZW5pzbe/DygAulQtC8pIkr8
+ARC-Seal: i=1; a=rsa-sha256; t=1519264869; cv=none;
         d=google.com; s=arc-20160816;
-        b=amJkhWqg+TrrXHJqwdauLm373QpPA4PvJ/iQDs3m1fxCQLzry9+Zdeyx1ccNP/FuFu
-         KEV93WAmw+fllsEeb5aF2HSf15yNx1Hm01LaECBPYKyLMs3g6IkSAoLGrfW8pJZN1h5A
-         6nbQilcR/KIq7W6jkpiDURGCqqWCFBLdzRPNCNeLw+gXZb2gneJS8Voc281T5QRs+PTV
-         a4kXS9J2P5v5OVJaHj5nR6NDegZ+nItV8kYy+EH4m8W807GCJLUfwGJeideInOwvCJq7
-         qjla8SF3jirnkWs8gxZj+6BnDrKKDYOoU1e538ZQ6ahUomNR/G2jtx7tebK1LNQKnQcN
-         +XiQ==
+        b=i3dq7g3JqzNpYyAVepRzA4aepiK53GpyCL3Sc1ycWJrZQTbeq/DK8DoVIIXH5cfgPD
+         WYJgDKC3H19iRI59Kh67hFNBzX4fFDmHUmzbl0ikHVevlXAruQS1LQBjfJXP7vXT2uDe
+         B4EkU+osqngX7y4J1MVumH0IjH7fVw9Zj4hZmZVaw0s3E4bmYbumPYdYKkbGXvHftVBF
+         eKdp8yCl7m+pm/4xAgXquBoTaAAd4xjFlAmGy3nMF+27gx+Jr9UpQyItTb4lG3LrGL1T
+         odZkWf7e3yxC1hBYmTOkRfCMRF3132jqXz3oOldUMLs1D3V3ei/1qTGK3CMIDLPWW/uF
+         59JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=uqvsRnaHRcwGE0SMac/AwzF5nxxbiG6SGM7Ny69GGAc=;
-        b=gDXYM9zL5mE+PxWu51Pw1p0N40pVfX9DbBJga6PIZVT5OZGMkLPF2VxzxNzB2Lx1Ty
-         tiKVz/9hwiY3fFI/M1M5WSGZzuQRZ5Ia88rHVgBS7iKlLJXzC2lwTh+Rlu1QDFvZFCos
-         rNzFqs20ocZuhMhtybc7ZMriKtXzJY7pH+XqgKWq7CLzgF8WSpqHc6aV8xER/Vnm74ak
-         Dn4fUYpXXJD5WesezuzO+JreK6vjny5cbsbajwgEu9kvctp7JyqykB7/bhGeRmj/sh+I
-         BCVS/mqiCtfV1LApW2bllBYp5k0MkpAQJ/2wHRLGfDso6xWQBhYaL2PjOwyg/M9EUUsx
-         p/4A==
+        bh=sv97mxweOiZD3jZb+FDvREl/KQT7v2zxhclS3+by93o=;
+        b=qccz/OPTQVpuf7YiVyCCVEebHYiO/UWQu52hjnp0YZHX4clrUTMuUWdcp5JuKEzXrG
+         yq4S/8oamNoAZCrxFwMnoe4nOh/p+amMJ1BOuG3jUD8+fRht/9v/ywu1DOszKz5+CiLl
+         pMqs4IJfc5GbDOlvHHNm6DDYh+pzPNi1vZfZhhY9vQNZWOnWDhxbfv7weQ1TtX5fsL50
+         TiwSqi2B0gl1uxhfQgs+auf5rgxfn5NZMirIqy0N2nro0kiQNOm26o+TMY3ReCvt9Q+z
+         DzPDFtuPgokfTQN8i407HPFCrNJpzWRyy/UugWuaVendypWphin6Sisdsdw4yXQXY7gg
+         qEJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=DLhGsLbd;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=D+MBVQQL;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=DLhGsLbd;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=D+MBVQQL;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeBVB4g (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 20:56:36 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:38690 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeBVB4c (ORCPT
+        id S1752160AbeBVCAz (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 21 Feb 2018 21:00:55 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:44184 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751798AbeBVB4g (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 20:56:32 -0500
+        Wed, 21 Feb 2018 20:56:36 -0500
 From: Ram Pai <linuxram@us.ibm.com>
 To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
 Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
@@ -45,44 +45,55 @@ Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
         bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
         linuxram@us.ibm.com, arnd@arndb.de
-Subject: [PATCH v12 06/22] selftests/vm: fix the wrong assert in pkey_disable_set()
-Date: Wed, 21 Feb 2018 17:55:25 -0800
-Message-Id: <1519264541-7621-7-git-send-email-linuxram@us.ibm.com>
+Subject: [PATCH v12 07/22] selftests/vm: fixed bugs in pkey_disable_clear()
+Date: Wed, 21 Feb 2018 17:55:26 -0800
+Message-Id: <1519264541-7621-8-git-send-email-linuxram@us.ibm.com>
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 References: <1519264541-7621-1-git-send-email-linuxram@us.ibm.com>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593064682238197500?=
-X-GMAIL-MSGID: =?utf-8?q?1593064682238197500?=
+X-GMAIL-THRID: =?utf-8?q?1593064680200522222?=
+X-GMAIL-MSGID: =?utf-8?q?1593064680200522222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If the flag is 0, no bits will be set. Hence we cant expect
-the resulting bitmap to have a higher value than what it
-was earlier.
+instead of clearing the bits, pkey_disable_clear() was setting
+the bits. Fixed it.
+
+Also fixed a wrong assertion in that function. When bits are
+cleared, the resulting bit value will be less than the original.
 
 cc: Dave Hansen <dave.hansen@intel.com>
 cc: Florian Weimer <fweimer@redhat.com>
 Signed-off-by: Ram Pai <linuxram@us.ibm.com>
 ---
- tools/testing/selftests/vm/protection_keys.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ tools/testing/selftests/vm/protection_keys.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/testing/selftests/vm/protection_keys.c b/tools/testing/selftests/vm/protection_keys.c
-index 83216c5..0109388 100644
+index 0109388..ca54a95 100644
 --- a/tools/testing/selftests/vm/protection_keys.c
 +++ b/tools/testing/selftests/vm/protection_keys.c
-@@ -443,7 +443,7 @@ void pkey_disable_set(int pkey, int flags)
- 	dprintf1("%s(%d) pkey_reg: 0x%lx\n",
- 		__func__, pkey, rdpkey_reg());
+@@ -461,7 +461,7 @@ void pkey_disable_clear(int pkey, int flags)
+ 			pkey, pkey, pkey_rights);
+ 	pkey_assert(pkey_rights >= 0);
+ 
+-	pkey_rights |= flags;
++	pkey_rights &= ~flags;
+ 
+ 	ret = pkey_set(pkey, pkey_rights, 0);
+ 	/* pkey_reg and flags have the same format */
+@@ -475,7 +475,7 @@ void pkey_disable_clear(int pkey, int flags)
+ 	dprintf1("%s(%d) pkey_reg: 0x%016lx\n", __func__,
+ 			pkey, rdpkey_reg());
  	if (flags)
--		pkey_assert(rdpkey_reg() > orig_pkey_reg);
-+		pkey_assert(rdpkey_reg() >= orig_pkey_reg);
- 	dprintf1("END<---%s(%d, 0x%x)\n", __func__,
- 		pkey, flags);
+-		assert(rdpkey_reg() > orig_pkey_reg);
++		assert(rdpkey_reg() < orig_pkey_reg);
  }
+ 
+ void pkey_write_allow(int pkey)
 -- 
 1.7.1
 
