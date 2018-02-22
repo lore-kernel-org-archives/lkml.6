@@ -1,92 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932085AbeBVM3d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:29:33 -0500
-Received: from mail-db5eur01on0088.outbound.protection.outlook.com ([104.47.2.88]:31968
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753702AbeBVM3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:29:31 -0500
-From: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        Christophe LEROY <christophe.leroy@c-s.fr>
-CC: "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping outside
- the requests
-Thread-Topic: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping
- outside the requests
-Thread-Index: AQHTPqPqvsZq/NPBh0+2ewavIdT74g==
-Date: Thu, 22 Feb 2018 12:29:28 +0000
-Message-ID: <AM0PR0402MB3329F899D4777EE356BBE2B698CD0@AM0PR0402MB3329.eurprd04.prod.outlook.com>
-References: <e47bf94ae44f23230b1647e31c9623f1075d3b79.1507284818.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB3342A0A8530F74D408CA2F0298FC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <2338eb8d-a26a-9722-d667-5a9785b32977@c-s.fr>
- <VI1PR0402MB3342D90D574C8829701882BE98C90@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <630c313c-5eca-224d-a5ac-fb3f2783573a@c-s.fr>
- <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <d5809df9-fc17-03da-b7f4-038d973dbd1f@c-s.fr>
- <VI1PR0402MB334299B37F17771BFA9AFDDA98C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <20180220103436.GA20571@gondor.apana.org.au>
- <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <20180222114741.GA27631@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR0402MB3777;7:5okzAK7pLsoYtnu9rZmo/NGn1zaYKPoqutpO7RSwtdyRxh27RhfWGEepuo6ic7QtG1oRy1TgS45zxfrDytDAeQmhtPTiZO2LTp+B+THy6/4Gthgy16pgZadAhlPFxs7Mb/o0s1E8NYadmvnhSCIi0p1ywBTtXF1YMOjht0u+RyIkvvibsdiFnAW15eyOZkDWy6lVIfcaLW7DbH18eJvzhzr+5cMuTYpunXjn4vakwOf2NIQVNw96I3QJmPD6OA5k
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 473e2c38-de98-4ef4-e4d8-08d579efeb08
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:AM0PR0402MB3777;
-x-ms-traffictypediagnostic: AM0PR0402MB3777:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com;
-x-microsoft-antispam-prvs: <AM0PR0402MB3777E0407E015368E03D1D3C98CD0@AM0PR0402MB3777.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001079)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231162)(944501161)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:AM0PR0402MB3777;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0402MB3777;
-x-forefront-prvs: 059185FE08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(39860400002)(346002)(39380400002)(51914003)(199004)(189003)(99286004)(68736007)(6436002)(186003)(3280700002)(316002)(8936002)(33656002)(53546011)(54906003)(26005)(86362001)(102836004)(97736004)(6506007)(7696005)(6116002)(229853002)(3846002)(93886005)(55016002)(5250100002)(53936002)(110136005)(74316002)(9686003)(305945005)(76176011)(6246003)(59450400001)(8676002)(14454004)(25786009)(7736002)(106356001)(4326008)(478600001)(3660700001)(66066001)(5660300001)(81156014)(105586002)(81166006)(2906002)(2900100001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3777;H:AM0PR0402MB3329.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: Gtuh/tupU4tbI5RWMNx0GOc5cV2Gr72CZxOmV1DGZOqXmYtVyg0y0K+yJgNHBRHkRCC11r9hEchiVIPi22hrkXDAaKyVHmsKxdr05X/KPuAe9H5ht/05doexRPS7qOsVV5wB3F7tTtNI9F5ObwwvJCCekAGpsn7K7aXlp8l/UAg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
+        id S932210AbeBVMdW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:33:22 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53863 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753811AbeBVMdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:33:16 -0500
+X-Google-Smtp-Source: AH8x225p0rgTfPHjg5FEe9WzvHC7Ebiu0Oam8tYG85hs5ssO4HReax9pRMSxbv76mEEBCqfbVB1sfg==
+Date: Thu, 22 Feb 2018 12:33:08 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
+        krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
+        sboyd@codeaurora.org, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
+        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
+        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Message-ID: <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 473e2c38-de98-4ef4-e4d8-08d579efeb08
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2018 12:29:28.9072
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3777
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MCTdDC006111
 
-On 2/22/2018 1:47 PM, Herbert Xu wrote:
-> On Tue, Feb 20, 2018 at 11:32:25AM +0000, Horia Geantã wrote:
->>
->> If final/finup is optional, how is the final hash supposed to be retrieved?
+On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+> were adapted to this change.
 > 
-> Sometimes the computation ends with a partial hash, that's what
-> export is for.  Also it is completely legal to abandon the hash
-> state entirely.
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>  drivers/bus/ts-nbus.c                |  2 +-
+>  drivers/clk/clk-pwm.c                |  3 ++-
+>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>  drivers/hwmon/pwm-fan.c              |  2 +-
+>  drivers/input/misc/max77693-haptic.c |  2 +-
+>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>  drivers/leds/leds-pwm.c              |  5 ++++-
+>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>  include/linux/pwm.h                  |  6 ++++--
+>  16 files changed, 70 insertions(+), 21 deletions(-)
 > 
-Thanks for the explanation.
-It's unintuitive to call .init() -> .update() and then not to call any of
-.final(), .finup(), .export().
+> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> index 2030a6b77a09..696fa25dafd2 100644
+> --- a/drivers/video/backlight/lm3630a_bl.c
+> +++ b/drivers/video/backlight/lm3630a_bl.c
+> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>  {
+>  	unsigned int period = pchip->pdata->pwm_period;
+>  	unsigned int duty = br * period / br_max;
+> +	struct pwm_caps caps = { };
+>  
+> -	pwm_config(pchip->pwmd, duty, period);
+> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
 
-Christophe,
+Well... I admit I've only really looked at the patches that impact 
+backlight but dispersing this really odd looking bit twiddling 
+throughout the kernel doesn't strike me a great API design.
 
-IIUC this means that there is no room for improvement.
-This patch needs to be reverted, to restore previous behaviour when the
-hw_context was mapped / unmapped for every request.
+IMHO callers should not be required to find the first set bit in
+some specially crafted set of capability bits simply to get sane 
+default behaviour.
 
-Thanks,
-Horia
+
+Daniel.
+
+
+
+
+>  	if (duty)
+>  		pwm_enable(pchip->pwmd);
+>  	else
+> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
+> index 939f057836e1..3d274c604862 100644
+> --- a/drivers/video/backlight/lp855x_bl.c
+> +++ b/drivers/video/backlight/lp855x_bl.c
+> @@ -240,6 +240,7 @@ static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
+>  	unsigned int period = lp->pdata->period_ns;
+>  	unsigned int duty = br * period / max_br;
+>  	struct pwm_device *pwm;
+> +	struct pwm_caps caps = { };
+>  
+>  	/* request pwm device with the consumer name */
+>  	if (!lp->pwm) {
+> @@ -256,7 +257,8 @@ static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
+>  		pwm_apply_args(pwm);
+>  	}
+>  
+> -	pwm_config(lp->pwm, duty, period);
+> +	pwm_get_caps(lp->pwm->chip, lp->pwm, &caps);
+> +	pwm_config(lp->pwm, duty, period, BIT(ffs(caps.modes) - 1));
+>  	if (duty)
+>  		pwm_enable(lp->pwm);
+>  	else
+> diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
+> index cf869ec90cce..06de3163650d 100644
+> --- a/drivers/video/backlight/lp8788_bl.c
+> +++ b/drivers/video/backlight/lp8788_bl.c
+> @@ -128,6 +128,7 @@ static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
+>  	unsigned int duty;
+>  	struct device *dev;
+>  	struct pwm_device *pwm;
+> +	struct pwm_caps caps = { };
+>  
+>  	if (!bl->pdata)
+>  		return;
+> @@ -153,7 +154,9 @@ static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
+>  		pwm_apply_args(pwm);
+>  	}
+>  
+> -	pwm_config(bl->pwm, duty, period);
+> +	pwm_get_caps(bl->pwm->chip, bl->pwm, &caps);
+> +
+> +	pwm_config(bl->pwm, duty, period, BIT(ffs(caps.modes) - 1));
+>  	if (duty)
+>  		pwm_enable(bl->pwm);
+>  	else
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 1c2289ddd555..706a9ab053a7 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -63,10 +63,14 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+>  
+>  static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+>  {
+> +	struct pwm_caps caps = { };
+> +
+>  	if (!pb->enabled)
+>  		return;
+>  
+> -	pwm_config(pb->pwm, 0, pb->period);
+> +	pwm_get_caps(pb->pwm->chip, pb->pwm, &caps);
+> +
+> +	pwm_config(pb->pwm, 0, pb->period, BIT(ffs(caps.modes) - 1));
+>  	pwm_disable(pb->pwm);
+>  
+>  	if (pb->enable_gpio)
+> @@ -96,6 +100,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+>  {
+>  	struct pwm_bl_data *pb = bl_get_data(bl);
+>  	int brightness = bl->props.brightness;
+> +	struct pwm_caps caps = { };
+>  	int duty_cycle;
+>  
+>  	if (bl->props.power != FB_BLANK_UNBLANK ||
+> @@ -108,7 +113,9 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+>  
+>  	if (brightness > 0) {
+>  		duty_cycle = compute_duty_cycle(pb, brightness);
+> -		pwm_config(pb->pwm, duty_cycle, pb->period);
+> +		pwm_get_caps(pb->pwm->chip, pb->pwm, &caps);
+> +		pwm_config(pb->pwm, duty_cycle, pb->period,
+> +			   BIT(ffs(caps.modes) - 1));
+>  		pwm_backlight_power_on(pb, brightness);
+>  	} else
+>  		pwm_backlight_power_off(pb);
+> diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
+> index f599520374dd..4b57dcb5799a 100644
+> --- a/drivers/video/fbdev/ssd1307fb.c
+> +++ b/drivers/video/fbdev/ssd1307fb.c
+> @@ -308,7 +308,8 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
+>  
+>  		par->pwm_period = pargs.period;
+>  		/* Enable the PWM */
+> -		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period);
+> +		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period,
+> +			   pargs.mode);
+>  		pwm_enable(par->pwm);
+>  
+>  		dev_dbg(&par->client->dev, "Using PWM%d with a %dns period.\n",
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index e62349f48129..0ba416ab2772 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -357,11 +357,12 @@ int pwm_adjust_config(struct pwm_device *pwm);
+>   * @pwm: PWM device
+>   * @duty_ns: "on" time (in nanoseconds)
+>   * @period_ns: duration (in nanoseconds) of one cycle
+> + * @mode: PWM mode
+>   *
+>   * Returns: 0 on success or a negative error code on failure.
+>   */
+>  static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+> -			     int period_ns)
+> +			     int period_ns, unsigned long mode)
+>  {
+>  	struct pwm_state state;
+>  
+> @@ -377,6 +378,7 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+>  
+>  	state.duty_cycle = duty_ns;
+>  	state.period = period_ns;
+> +	state.mode = mode;
+>  	return pwm_apply_state(pwm, &state);
+>  }
+>  
+> @@ -537,7 +539,7 @@ static inline int pwm_adjust_config(struct pwm_device *pwm)
+>  }
+>  
+>  static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
+> -			     int period_ns)
+> +			     int period_ns, unsigned long mode)
+>  {
+>  	return -EINVAL;
+>  }
+> -- 
+> 2.7.4
+> 
