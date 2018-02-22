@@ -1,970 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeBVDwO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Feb 2018 22:52:14 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45557 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeBVDwM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Feb 2018 22:52:12 -0500
-X-Google-Smtp-Source: AH8x225qKcHbyNLGKwK4NFJPD09T0yfdzLDnjWniYsH4fKAbHlSP/n2JkCUVOrqkRB841+nJBCk+Jw==
-Subject: Re: [PATCH 01/13] metag: Remove arch/metag/
-To: James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20180221233825.10024-1-jhogan@kernel.org>
- <20180221233825.10024-2-jhogan@kernel.org>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <ea057277-fc48-3961-681d-385023741cdb@roeck-us.net>
-Date: Wed, 21 Feb 2018 19:52:08 -0800
+        id S1752145AbeBVEAU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Feb 2018 23:00:20 -0500
+Received: from mail-by2nam03on0071.outbound.protection.outlook.com ([104.47.42.71]:41439
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751978AbeBVEAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Feb 2018 23:00:17 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=andrew.cooks@opengear.com;
+Subject: Re: [PATCH 2/2] i2c: piix4: Use usleep_range()
+To: Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Jean Delvare <jdelvare@suse.com>,
+        =?UTF-8?B?Wm9sdMOhbiBCw7ZzesO2cm3DqW55?= =?UTF-8?Q?i?=
+        <zboszor@pr.hu>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+ <1514652658-6228-2-git-send-email-linux@roeck-us.net>
+From: Andrew Cooks <andrew.cooks@opengear.com>
+Message-ID: <6af53537-f160-8ea5-2491-98f8a7966975@opengear.com>
+Date: Thu, 22 Feb 2018 13:59:49 +1000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221233825.10024-2-jhogan@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1514652658-6228-2-git-send-email-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [59.167.150.161]
+X-ClientProxiedBy: MEXPR01CA0142.ausprd01.prod.outlook.com (10.171.15.27) To
+ DM5PR15MB1211.namprd15.prod.outlook.com (10.173.209.17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 43d88a91-058a-495d-6301-08d579a8c815
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR15MB1211;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1211;3:TL7QWqVGWCpViOo0CXHtMya6PZpJDvPbFJAFMeWUhBjlFJzOcQ6Z/VOEa9aEjlZfZf/im8JTO/KzOzq/1asqa6VJJnQhM3E9U1KqLepE9det0tpg+hB6i/L3JnXJOcSC04dSX2nUJ1/8jUIFidgdcxJAacGnVXMaEkkEYzPuiAOu7z9DV8k8TPX3iHM145OjSIEwek/W0+UQmxHgUIkWT5/+5CFH9h7Cb3P9ePw90SfXAmWSkM3QqdMsHlX64SCB;25:G4jDxM9him1D2yzCd6QGqsdFAQbBQPSUTD98NTh71Eq3sKY+X/ZZZLtepdgPU8GnClFCOby7kIQLJp08jaM41Y8Mkf+6nRRhcjnLW3WKDLnGYDrOcE4BikCzK8zazIVgxOYYlFcJ712pgL5kzyG7O2/ChncXSxWGiNNrGMK7vxR3jOcZYEU3peLJz/myiu6MCSVRu4Z1FMZui82NtvboDoSMtHc9ToU+MmswUUwhA2aDFkg/kPBu6GF3+tRA8xNZJIxuJPSMicehF47Cdj30IabLLv7UhQhuHzUZY3Ody0Jr18RmNtdMGg0ZunpKsBoEziNMtd7LkCjhpF8s7GtwGg==;31:mBJBW73i7/1ApNcL/LhOS1p6P4fdj6ULzH9UMCFKH7BCQFdepZlzH+El1+6no3JA7Ww+TkqfCDUKbSfwc5KZAnBfYBSlitC2Kqn0rJjW7UPCb09D/HRytnYBswfiyU0YE7lfOg5T+DF1mDrpP9mk2HXA+4M6arW9T8BhyPjGRwRSGX+Svc57F51+HsFR6e9A3GqxDUh+W89au0UPUPJZK1c5PPC2B8w+zzTlHPgBmv8=
+X-MS-TrafficTypeDiagnostic: DM5PR15MB1211:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1211;20:USmzcXwdlZETgaBIOdz0+t35BcnT03uIFiBYiCvHMq3UXaoJfDQJjv+iK47tubXTP99SYtu5/3bf+o2NtW7kYt17H5pMknSQc3C1tEZwEaBpol/UcnsxyG2c0zLD/KAnEvi0CYD7ySbpI5VfoVI1Vrnn820EZGTL82WdcYLZsz0=;4:y8YNtfyyyLkb3l+mO9XH8Fkw9BghqzpDWssJPkWQwDJmMvz+fyHOZbMD83BKYTN+MPJencXdzsuvEVFmqPCa6yiJk0QKqC5hcGDs/N1Zx7ps10T7cPYvpFJgZHzeYSwiw8slZimpja2OWiQB9+Ya2dH4t1ciuo93/sw1q6puP2KoOvdK9bp4ddgSUabemm79d+BXLKDdhJe5280H3rjxHulsCQVOiUzMI5ydIayTM5s44zr0ZOnf3chjeP06V+SymG9I1aoG553ExgHo4FyH4g==
+X-Microsoft-Antispam-PRVS: <DM5PR15MB121122271FBC86026229D7A5EECD0@DM5PR15MB1211.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001074)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231101)(944501161)(6041288)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR15MB1211;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1211;
+X-Forefront-PRVS: 059185FE08
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39840400004)(366004)(39380400002)(346002)(376002)(396003)(189003)(199004)(305945005)(25786009)(53936002)(97736004)(478600001)(47776003)(65806001)(66066001)(65956001)(50466002)(5660300001)(106356001)(64126003)(65826007)(77096007)(7736002)(6666003)(6246003)(76176011)(229853002)(90366009)(26005)(2950100002)(6486002)(117156002)(36756003)(4326008)(52116002)(386003)(105586002)(58126008)(2486003)(52146003)(23676004)(68736007)(2906002)(86362001)(16526019)(551934003)(8936002)(81166006)(81156014)(54906003)(110136005)(8676002)(16576012)(316002)(3846002)(31696002)(53546011)(230700001)(31686004)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR15MB1211;H:[192.168.254.67];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjE1TUIxMjExOzIzOk1mbnBpWE05NS9MVS8vcTdEVmZ1VGxWQlVG?=
+ =?utf-8?B?VHZOZ2xZZHQ4WDhpTm5uNG82ZEN2Mjh5SmY3MXVSTndkWVNuVlBrWTltcEdT?=
+ =?utf-8?B?aVFNaWJlMGJualg2T00xUEdhcFRFNDBXRE05aVRXR2hYN2lSVUphZXZaWWdK?=
+ =?utf-8?B?cHlsM0paSXdDTTh3aitnTkFyakFGcVZiRyt0ZkhEa1J3OWh2MGZVSDhVTUdq?=
+ =?utf-8?B?VEdkbWVmZmZXSlpPZE56MDN4ZEhxbzhuRnBKTy9ZNUlZYlZiTDFRN2ZERGgw?=
+ =?utf-8?B?VFJtSVVUeDVMTUpnbXlZbzBERWNEZmZjQnNUeFA3Y0h2NE9SSnhFd2g3aFBu?=
+ =?utf-8?B?aFh1UGk3emF0L1luZ2VQVjA5S2JnaXB6blRIZjIzbEF6WUxXTGRPWk52Um5x?=
+ =?utf-8?B?YWgwNk1td2VWd1psZnR3UTNwSWpXRFlnNzh0SnV5Ung2OTBpNitlS29PdVY5?=
+ =?utf-8?B?Z09tcDFsSTdCNUx2RmpJZWd6NFFnZzdSRitaU281R0ZTZmNvekQrM0dSeURM?=
+ =?utf-8?B?b1lPUGFoWGpSSTVnLzI5MEIvakFhSHlzWUVRNlpjd2h6Z081RXdZMFhHUUpp?=
+ =?utf-8?B?L2JycmFBRmFQQVVIcDBka3ZuU1NhK21RS2xMRXVWbGpMZlUwa2psb3V6Tm5V?=
+ =?utf-8?B?ZHdrSGp0UWVFdE55c0YxblVKN1l5UGpCWGNxdUR4SVRLWDlYWituSlRyWjRU?=
+ =?utf-8?B?UFBvaDZWRU1SaHUyY2xlbXdDZzdoRzNmcHRkS3JlZVNwRHFTYS9DQ1FsVHZ5?=
+ =?utf-8?B?c1N6eVBrcVNHendoOXhlMmV4b3F5SFhoVFA4bDRLclg5SEVGRUZXckxrTHpX?=
+ =?utf-8?B?M0N2dTBqZEJZdEQ5MC9ZRUpNZFNwOUM0VlBhdzhuMmV2bU9CZE95SlRlTXVV?=
+ =?utf-8?B?d1d5aVM4ZzZpaUpQd09ubG1YalVkRUdLUWE1cVdTVVFQa2lNSnVNczZMM2Zh?=
+ =?utf-8?B?MzVoUHRXWVdENkRUbG9jRzVlMURjanVSQnl4Y1dwUUQ5SHVtcElBY0h0djFD?=
+ =?utf-8?B?WWlMa3Q3QWhrK3Fqbld0ajRCRGZoN3UrZFZPNVgxL0lNeHBIbWRzQ1FqV0Jh?=
+ =?utf-8?B?UGtZa2I1bVZqVkN4QWZMdTNzT1hjdU1TbFdPTlNSUkJobEtRQmNrbUpBMk5O?=
+ =?utf-8?B?b2IzTVRBQkRnaW04b2tGY2pBbEhWckQrbXJKcmR6NjYwOHFVV0o4UmhOa0R2?=
+ =?utf-8?B?NXp6WDdBRUVaMGloM081YlBudlFYNmRpQzRudmJTZ1g5cmdVaGZhOFcvSXZV?=
+ =?utf-8?B?ZnZRc0hVTGtjQXhpMnFrZTNiZkRiS2JOU0Y3cEhiUXd4bmlra0R3ZFQxRi8y?=
+ =?utf-8?B?U2xUbGo1Wk5qVExEa1hnNE5rL2pSL29TQTZjSXNIa2doM00yRmhMcnIxVm1H?=
+ =?utf-8?B?b0lhdHF6YWRoN3Q1Wkl3V0tVOEszR1F2Qm5LQ2wwOElvQk85RUlIODdyTGQv?=
+ =?utf-8?B?SERLRE81Uy96V2tPL1A2M3RzUmZMYndsQURQU05zeFhlbHRia0NOcFZFTmRk?=
+ =?utf-8?B?TXBEU0grZ3FoWXhEVkV0ZGRzcVQ4Y08wMTdMaW8zdUxwZm44ekdBaVN5OU42?=
+ =?utf-8?B?V3hZZHZGK1gvUWVMQnE5Q29lMCtPZVpMd2hkNjBjS1ArMHJVUTh0Z1NUdjNY?=
+ =?utf-8?B?ODNGM0tqdWJ6Mkcxbm5xdUlCbnZqV1lKd2VOblFEbVBxSStJcHMwQjVyQUl3?=
+ =?utf-8?B?a2dyUkFOallvMmxONGNTczZhYXpiclI1ZGN4ZDlxS3BJQjJRcXJEZVlXUEl3?=
+ =?utf-8?B?TW1CMU40VDBoaWRFOGVncHhnQlpuN2JpbEV2M3NObHhsMHZKSTlYMVZ3c2dw?=
+ =?utf-8?B?a2F4OU5FWkIwbHFlaTRLWTBXOW9SWE9FcmZDUFdnOVJPTGYvZXJRcUdIekUr?=
+ =?utf-8?Q?T7nUwXiaATbhCq39wBOJIDbjlcnFaOFU?=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR15MB1211;6:AOHUhQeAxfYGrOqkV4x+IhQuteoOMWkzYSHXqbq3RWJ53qhXVSaIPqX7P2z97y7L6L+XKHjGjK7PTqStp9csERFBjUlkzv86QJT1jYNrnYz5VYLsdMsV6jMX55/PLs2WcnauJuy1/fKHA//J4z/x7UMsAmQTNsq2KukMJTiJNLl2TE9eyfxFrqDRO4jV7l6BZR0bQ1rUC1PdCpBdWvWFIbgUlrdFlmYvDjJpPJ1OVLKmMpypasoz8UGeb/17fnF3kK/N5pIi6Ndq4lK/d5eLBJ8W+ENcyPXKNMLusratqR4OEgnToW9M1nRFo2Ew7fEvHDctZPsZvp0X2Q5Xc5sLdtmb2vbAiOiy5CoOwqRGx7U=;5:VzQlaPwI5pdicgWRVh3PD1qv+TL+Boc16LSVxxxUB6Fnvx5U3qOR+tRGJP5kZIgul3NkYl2RFmOoDY2mBaL6zbYZcbmyD2m2BiYHd43aeMg9LJM5GAecgTdkcu3bqboUGHa/w8Lr88p8m0/LOTsDHp5yX6iJ48j5BAY4dg0gLJE=;24:PMg2lOcjC0wpUFfd0FfSnQj+wqgd0VUSLBFDOKk+WuTtIq3eP7eM0pRhiyUQV8Plz8gI6wOH91YDzEZRjSya2wIeNXTP6NxQO+C33FyKKVw=;7:YU9RFw5+9OjmAUASrpV+9LAvAbhjHWaO5Ie3o55acT16FGtfNAHTc/3AqfZbgQgLdCn2e2xoSYPb7NslUWIeRiLkHqix9xIBiDJH3i4egihh6UCiGk6S3Uqk+DaRiS/JCZ8G2BmyLM7b6XybiLEA8oMj+uO8wh2rAQ4y651Vc5WG/EQffnAo6iYyJ/Yc8EGC2omdswQq0Z1mYh03I4zXuw3eBTNBTvpNLuJYT16iSLOaWTDfHZDrdNY54WulrwQY
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: opengear.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2018 04:00:12.4698 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43d88a91-058a-495d-6301-08d579a8c815
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a6251c26-d21f-4164-a225-1f4eaebf5f9a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 03:38 PM, James Hogan wrote:
-> The earliest Meta architecture port of Linux I have a record of was an
-> import of a Meta port of Linux v2.4.1 in February 2004, which was worked
-> on significantly over the next few years by Graham Whaley, Will Newton,
-> Matt Fleming, myself and others.
+
+On 31/12/17 02:50, Guenter Roeck wrote:
+> The piix4 i2c driver is extremely slow. Replacing msleep()
+> with usleep_range() increases its speed substantially.
 > 
-> Eventually the port was merged into mainline in v3.9 in March 2013, not
-> long after Imagination Technologies bought MIPS Technologies and shifted
-> its CPU focus over to the MIPS architecture.
-> 
-> As a result, though the port was maintained for a while, kept on life
-> support for a while longer, and useful for testing a few specific
-> drivers for which I don't have ready access to the equivalent MIPS
-> hardware, it is now essentially dead with no users.
-> 
-> It is also stuck using an out-of-tree toolchain based on GCC 4.2.4 which
-> is no longer maintained, now struggles to build modern kernels due to
-> toolchain bugs, and doesn't itself build with a modern GCC. The latest
-> buildroot port is still using an old uClibc snapshot which is no longer
-> served, and the latest uClibc doesn't build with GCC 4.2.4.
-> 
-> So lets call it a day and drop the Meta architecture port from the
-> kernel. RIP Meta.
-> 
-> Signed-off-by: James Hogan <jhogan@kernel.org>
-> Link: https://lkml.kernel.org/r/95906b76-6ce1-3f84-eaba-c29b4ae952eb@roeck-us.net
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-metag@vger.kernel.org
-
-FWIW:
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-Did you drop the definition of CPUHP_AP_PERF_METAG_STARTING ?
-I browsed through the patches but didn't find where it was dropped.
-
-Also, how did you generate this patch, and can you try to apply it yourself ?
-I tried to apply it, but neither git am nor patch worked for me. This patch
-also doesn't show up on patchwork.kernel.org which is odd.
-
-Guenter
-
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > ---
->   arch/metag/Kconfig                       |  287 ------
->   arch/metag/Kconfig.debug                 |   34 -
->   arch/metag/Kconfig.soc                   |   69 --
->   arch/metag/Makefile                      |   89 --
->   arch/metag/boot/.gitignore               |    3 -
->   arch/metag/boot/Makefile                 |   68 --
->   arch/metag/boot/dts/Makefile             |   16 -
->   arch/metag/boot/dts/skeleton.dts         |   10 -
->   arch/metag/boot/dts/skeleton.dtsi        |   15 -
->   arch/metag/boot/dts/tz1090.dtsi          |  108 ---
->   arch/metag/boot/dts/tz1090_generic.dts   |   10 -
->   arch/metag/configs/meta1_defconfig       |   39 -
->   arch/metag/configs/meta2_defconfig       |   40 -
->   arch/metag/configs/meta2_smp_defconfig   |   41 -
->   arch/metag/configs/tz1090_defconfig      |   42 -
->   arch/metag/include/asm/Kbuild            |   33 -
->   arch/metag/include/asm/atomic.h          |   49 --
->   arch/metag/include/asm/atomic_lnkget.h   |  204 -----
->   arch/metag/include/asm/atomic_lock1.h    |  157 ----
->   arch/metag/include/asm/barrier.h         |   85 --
->   arch/metag/include/asm/bitops.h          |  127 ---
->   arch/metag/include/asm/bug.h             |   13 -
->   arch/metag/include/asm/cache.h           |   24 -
->   arch/metag/include/asm/cacheflush.h      |  251 ------
->   arch/metag/include/asm/cachepart.h       |   43 -
->   arch/metag/include/asm/checksum.h        |   93 --
->   arch/metag/include/asm/clock.h           |   59 --
->   arch/metag/include/asm/cmpxchg.h         |   64 --
->   arch/metag/include/asm/cmpxchg_irq.h     |   43 -
->   arch/metag/include/asm/cmpxchg_lnkget.h  |   87 --
->   arch/metag/include/asm/cmpxchg_lock1.h   |   49 --
->   arch/metag/include/asm/core_reg.h        |   36 -
->   arch/metag/include/asm/cpu.h             |   15 -
->   arch/metag/include/asm/da.h              |   44 -
->   arch/metag/include/asm/delay.h           |   30 -
->   arch/metag/include/asm/div64.h           |   13 -
->   arch/metag/include/asm/dma-mapping.h     |   12 -
->   arch/metag/include/asm/elf.h             |  126 ---
->   arch/metag/include/asm/fixmap.h          |   69 --
->   arch/metag/include/asm/ftrace.h          |   24 -
->   arch/metag/include/asm/global_lock.h     |  101 ---
->   arch/metag/include/asm/highmem.h         |   62 --
->   arch/metag/include/asm/hugetlb.h         |   75 --
->   arch/metag/include/asm/hwthread.h        |   41 -
->   arch/metag/include/asm/io.h              |  170 ----
->   arch/metag/include/asm/irq.h             |   38 -
->   arch/metag/include/asm/irqflags.h        |   94 --
->   arch/metag/include/asm/l2cache.h         |  259 ------
->   arch/metag/include/asm/linkage.h         |    8 -
->   arch/metag/include/asm/mach/arch.h       |   86 --
->   arch/metag/include/asm/metag_isa.h       |   81 --
->   arch/metag/include/asm/metag_mem.h       | 1109 -----------------------
->   arch/metag/include/asm/metag_regs.h      | 1184 -------------------------
->   arch/metag/include/asm/mman.h            |   12 -
->   arch/metag/include/asm/mmu.h             |   78 --
->   arch/metag/include/asm/mmu_context.h     |  115 ---
->   arch/metag/include/asm/mmzone.h          |   43 -
->   arch/metag/include/asm/module.h          |   38 -
->   arch/metag/include/asm/page.h            |  129 ---
->   arch/metag/include/asm/perf_event.h      |    4 -
->   arch/metag/include/asm/pgalloc.h         |   83 --
->   arch/metag/include/asm/pgtable-bits.h    |  105 ---
->   arch/metag/include/asm/pgtable.h         |  270 ------
->   arch/metag/include/asm/processor.h       |  201 -----
->   arch/metag/include/asm/ptrace.h          |   61 --
->   arch/metag/include/asm/setup.h           |   10 -
->   arch/metag/include/asm/smp.h             |   28 -
->   arch/metag/include/asm/sparsemem.h       |   14 -
->   arch/metag/include/asm/spinlock.h        |   19 -
->   arch/metag/include/asm/spinlock_lnkget.h |  213 -----
->   arch/metag/include/asm/spinlock_lock1.h  |  165 ----
->   arch/metag/include/asm/spinlock_types.h  |   21 -
->   arch/metag/include/asm/stacktrace.h      |   21 -
->   arch/metag/include/asm/string.h          |   14 -
->   arch/metag/include/asm/switch.h          |   21 -
->   arch/metag/include/asm/syscall.h         |  104 ---
->   arch/metag/include/asm/syscalls.h        |   40 -
->   arch/metag/include/asm/tbx.h             | 1420 ------------------------------
->   arch/metag/include/asm/tcm.h             |   31 -
->   arch/metag/include/asm/thread_info.h     |  141 ---
->   arch/metag/include/asm/tlb.h             |   37 -
->   arch/metag/include/asm/tlbflush.h        |   78 --
->   arch/metag/include/asm/topology.h        |   28 -
->   arch/metag/include/asm/traps.h           |   48 -
->   arch/metag/include/asm/uaccess.h         |  213 -----
->   arch/metag/include/asm/unistd.h          |   12 -
->   arch/metag/include/asm/user_gateway.h    |   45 -
->   arch/metag/include/uapi/asm/Kbuild       |   31 -
->   arch/metag/include/uapi/asm/byteorder.h  |    2 -
->   arch/metag/include/uapi/asm/ech.h        |   16 -
->   arch/metag/include/uapi/asm/ptrace.h     |  114 ---
->   arch/metag/include/uapi/asm/sigcontext.h |   32 -
->   arch/metag/include/uapi/asm/siginfo.h    |   16 -
->   arch/metag/include/uapi/asm/swab.h       |   27 -
->   arch/metag/include/uapi/asm/unistd.h     |   24 -
->   arch/metag/kernel/.gitignore             |    1 -
->   arch/metag/kernel/Makefile               |   40 -
->   arch/metag/kernel/asm-offsets.c          |   15 -
->   arch/metag/kernel/cachepart.c            |  132 ---
->   arch/metag/kernel/clock.c                |  110 ---
->   arch/metag/kernel/core_reg.c             |  118 ---
->   arch/metag/kernel/da.c                   |   25 -
->   arch/metag/kernel/devtree.c              |   57 --
->   arch/metag/kernel/dma.c                  |  588 -------------
->   arch/metag/kernel/ftrace.c               |  121 ---
->   arch/metag/kernel/ftrace_stub.S          |   62 --
->   arch/metag/kernel/head.S                 |   66 --
->   arch/metag/kernel/irq.c                  |  293 ------
->   arch/metag/kernel/kick.c                 |  110 ---
->   arch/metag/kernel/machines.c             |   21 -
->   arch/metag/kernel/metag_ksyms.c          |   55 --
->   arch/metag/kernel/module.c               |  284 ------
->   arch/metag/kernel/perf/Makefile          |    3 -
->   arch/metag/kernel/perf/perf_event.c      |  879 ------------------
->   arch/metag/kernel/perf/perf_event.h      |  106 ---
->   arch/metag/kernel/perf_callchain.c       |   97 --
->   arch/metag/kernel/process.c              |  448 ----------
->   arch/metag/kernel/ptrace.c               |  427 ---------
->   arch/metag/kernel/setup.c                |  622 -------------
->   arch/metag/kernel/signal.c               |  336 -------
->   arch/metag/kernel/smp.c                  |  668 --------------
->   arch/metag/kernel/stacktrace.c           |  187 ----
->   arch/metag/kernel/sys_metag.c            |  181 ----
->   arch/metag/kernel/tbiunexp.S             |   23 -
->   arch/metag/kernel/tcm.c                  |  152 ----
->   arch/metag/kernel/time.c                 |   26 -
->   arch/metag/kernel/topology.c             |   78 --
->   arch/metag/kernel/traps.c                |  992 ---------------------
->   arch/metag/kernel/user_gateway.S         |   98 ---
->   arch/metag/kernel/vmlinux.lds.S          |   74 --
->   arch/metag/lib/Makefile                  |   23 -
->   arch/metag/lib/ashldi3.S                 |   34 -
->   arch/metag/lib/ashrdi3.S                 |   34 -
->   arch/metag/lib/checksum.c                |  167 ----
->   arch/metag/lib/clear_page.S              |   18 -
->   arch/metag/lib/cmpdi2.S                  |   33 -
->   arch/metag/lib/copy_page.S               |   21 -
->   arch/metag/lib/delay.c                   |   57 --
->   arch/metag/lib/div64.S                   |  109 ---
->   arch/metag/lib/divsi3.S                  |  101 ---
->   arch/metag/lib/ip_fast_csum.S            |   33 -
->   arch/metag/lib/lshrdi3.S                 |   34 -
->   arch/metag/lib/memcpy.S                  |  186 ----
->   arch/metag/lib/memmove.S                 |  346 --------
->   arch/metag/lib/memset.S                  |   87 --
->   arch/metag/lib/modsi3.S                  |   39 -
->   arch/metag/lib/muldi3.S                  |   45 -
->   arch/metag/lib/ucmpdi2.S                 |   28 -
->   arch/metag/lib/usercopy.c                | 1257 --------------------------
->   arch/metag/mm/Kconfig                    |  147 ----
->   arch/metag/mm/Makefile                   |   20 -
->   arch/metag/mm/cache.c                    |  521 -----------
->   arch/metag/mm/extable.c                  |   15 -
->   arch/metag/mm/fault.c                    |  247 ------
->   arch/metag/mm/highmem.c                  |  122 ---
->   arch/metag/mm/hugetlbpage.c              |  251 ------
->   arch/metag/mm/init.c                     |  408 ---------
->   arch/metag/mm/ioremap.c                  |   90 --
->   arch/metag/mm/l2cache.c                  |  193 ----
->   arch/metag/mm/maccess.c                  |   69 --
->   arch/metag/mm/mmu-meta1.c                |  157 ----
->   arch/metag/mm/mmu-meta2.c                |  208 -----
->   arch/metag/mm/numa.c                     |   82 --
->   arch/metag/oprofile/Makefile             |   18 -
->   arch/metag/oprofile/backtrace.c          |   63 --
->   arch/metag/oprofile/backtrace.h          |    7 -
->   arch/metag/oprofile/common.c             |   66 --
->   arch/metag/tbx/Makefile                  |   22 -
->   arch/metag/tbx/tbicore.S                 |  136 ---
->   arch/metag/tbx/tbictx.S                  |  366 --------
->   arch/metag/tbx/tbictxfpu.S               |  190 ----
->   arch/metag/tbx/tbidefr.S                 |  175 ----
->   arch/metag/tbx/tbidspram.S               |  161 ----
->   arch/metag/tbx/tbilogf.S                 |   48 -
->   arch/metag/tbx/tbipcx.S                  |  451 ----------
->   arch/metag/tbx/tbiroot.S                 |   87 --
->   arch/metag/tbx/tbisoft.S                 |  237 -----
->   arch/metag/tbx/tbistring.c               |  114 ---
->   arch/metag/tbx/tbitimer.S                |  207 -----
->   179 files changed, 25078 deletions(-)
->   delete mode 100644 arch/metag/Kconfig
->   delete mode 100644 arch/metag/Kconfig.debug
->   delete mode 100644 arch/metag/Kconfig.soc
->   delete mode 100644 arch/metag/Makefile
->   delete mode 100644 arch/metag/boot/.gitignore
->   delete mode 100644 arch/metag/boot/Makefile
->   delete mode 100644 arch/metag/boot/dts/Makefile
->   delete mode 100644 arch/metag/boot/dts/skeleton.dts
->   delete mode 100644 arch/metag/boot/dts/skeleton.dtsi
->   delete mode 100644 arch/metag/boot/dts/tz1090.dtsi
->   delete mode 100644 arch/metag/boot/dts/tz1090_generic.dts
->   delete mode 100644 arch/metag/configs/meta1_defconfig
->   delete mode 100644 arch/metag/configs/meta2_defconfig
->   delete mode 100644 arch/metag/configs/meta2_smp_defconfig
->   delete mode 100644 arch/metag/configs/tz1090_defconfig
->   delete mode 100644 arch/metag/include/asm/Kbuild
->   delete mode 100644 arch/metag/include/asm/atomic.h
->   delete mode 100644 arch/metag/include/asm/atomic_lnkget.h
->   delete mode 100644 arch/metag/include/asm/atomic_lock1.h
->   delete mode 100644 arch/metag/include/asm/barrier.h
->   delete mode 100644 arch/metag/include/asm/bitops.h
->   delete mode 100644 arch/metag/include/asm/bug.h
->   delete mode 100644 arch/metag/include/asm/cache.h
->   delete mode 100644 arch/metag/include/asm/cacheflush.h
->   delete mode 100644 arch/metag/include/asm/cachepart.h
->   delete mode 100644 arch/metag/include/asm/checksum.h
->   delete mode 100644 arch/metag/include/asm/clock.h
->   delete mode 100644 arch/metag/include/asm/cmpxchg.h
->   delete mode 100644 arch/metag/include/asm/cmpxchg_irq.h
->   delete mode 100644 arch/metag/include/asm/cmpxchg_lnkget.h
->   delete mode 100644 arch/metag/include/asm/cmpxchg_lock1.h
->   delete mode 100644 arch/metag/include/asm/core_reg.h
->   delete mode 100644 arch/metag/include/asm/cpu.h
->   delete mode 100644 arch/metag/include/asm/da.h
->   delete mode 100644 arch/metag/include/asm/delay.h
->   delete mode 100644 arch/metag/include/asm/div64.h
->   delete mode 100644 arch/metag/include/asm/dma-mapping.h
->   delete mode 100644 arch/metag/include/asm/elf.h
->   delete mode 100644 arch/metag/include/asm/fixmap.h
->   delete mode 100644 arch/metag/include/asm/ftrace.h
->   delete mode 100644 arch/metag/include/asm/global_lock.h
->   delete mode 100644 arch/metag/include/asm/highmem.h
->   delete mode 100644 arch/metag/include/asm/hugetlb.h
->   delete mode 100644 arch/metag/include/asm/hwthread.h
->   delete mode 100644 arch/metag/include/asm/io.h
->   delete mode 100644 arch/metag/include/asm/irq.h
->   delete mode 100644 arch/metag/include/asm/irqflags.h
->   delete mode 100644 arch/metag/include/asm/l2cache.h
->   delete mode 100644 arch/metag/include/asm/linkage.h
->   delete mode 100644 arch/metag/include/asm/mach/arch.h
->   delete mode 100644 arch/metag/include/asm/metag_isa.h
->   delete mode 100644 arch/metag/include/asm/metag_mem.h
->   delete mode 100644 arch/metag/include/asm/metag_regs.h
->   delete mode 100644 arch/metag/include/asm/mman.h
->   delete mode 100644 arch/metag/include/asm/mmu.h
->   delete mode 100644 arch/metag/include/asm/mmu_context.h
->   delete mode 100644 arch/metag/include/asm/mmzone.h
->   delete mode 100644 arch/metag/include/asm/module.h
->   delete mode 100644 arch/metag/include/asm/page.h
->   delete mode 100644 arch/metag/include/asm/perf_event.h
->   delete mode 100644 arch/metag/include/asm/pgalloc.h
->   delete mode 100644 arch/metag/include/asm/pgtable-bits.h
->   delete mode 100644 arch/metag/include/asm/pgtable.h
->   delete mode 100644 arch/metag/include/asm/processor.h
->   delete mode 100644 arch/metag/include/asm/ptrace.h
->   delete mode 100644 arch/metag/include/asm/setup.h
->   delete mode 100644 arch/metag/include/asm/smp.h
->   delete mode 100644 arch/metag/include/asm/sparsemem.h
->   delete mode 100644 arch/metag/include/asm/spinlock.h
->   delete mode 100644 arch/metag/include/asm/spinlock_lnkget.h
->   delete mode 100644 arch/metag/include/asm/spinlock_lock1.h
->   delete mode 100644 arch/metag/include/asm/spinlock_types.h
->   delete mode 100644 arch/metag/include/asm/stacktrace.h
->   delete mode 100644 arch/metag/include/asm/string.h
->   delete mode 100644 arch/metag/include/asm/switch.h
->   delete mode 100644 arch/metag/include/asm/syscall.h
->   delete mode 100644 arch/metag/include/asm/syscalls.h
->   delete mode 100644 arch/metag/include/asm/tbx.h
->   delete mode 100644 arch/metag/include/asm/tcm.h
->   delete mode 100644 arch/metag/include/asm/thread_info.h
->   delete mode 100644 arch/metag/include/asm/tlb.h
->   delete mode 100644 arch/metag/include/asm/tlbflush.h
->   delete mode 100644 arch/metag/include/asm/topology.h
->   delete mode 100644 arch/metag/include/asm/traps.h
->   delete mode 100644 arch/metag/include/asm/uaccess.h
->   delete mode 100644 arch/metag/include/asm/unistd.h
->   delete mode 100644 arch/metag/include/asm/user_gateway.h
->   delete mode 100644 arch/metag/include/uapi/asm/Kbuild
->   delete mode 100644 arch/metag/include/uapi/asm/byteorder.h
->   delete mode 100644 arch/metag/include/uapi/asm/ech.h
->   delete mode 100644 arch/metag/include/uapi/asm/ptrace.h
->   delete mode 100644 arch/metag/include/uapi/asm/sigcontext.h
->   delete mode 100644 arch/metag/include/uapi/asm/siginfo.h
->   delete mode 100644 arch/metag/include/uapi/asm/swab.h
->   delete mode 100644 arch/metag/include/uapi/asm/unistd.h
->   delete mode 100644 arch/metag/kernel/.gitignore
->   delete mode 100644 arch/metag/kernel/Makefile
->   delete mode 100644 arch/metag/kernel/asm-offsets.c
->   delete mode 100644 arch/metag/kernel/cachepart.c
->   delete mode 100644 arch/metag/kernel/clock.c
->   delete mode 100644 arch/metag/kernel/core_reg.c
->   delete mode 100644 arch/metag/kernel/da.c
->   delete mode 100644 arch/metag/kernel/devtree.c
->   delete mode 100644 arch/metag/kernel/dma.c
->   delete mode 100644 arch/metag/kernel/ftrace.c
->   delete mode 100644 arch/metag/kernel/ftrace_stub.S
->   delete mode 100644 arch/metag/kernel/head.S
->   delete mode 100644 arch/metag/kernel/irq.c
->   delete mode 100644 arch/metag/kernel/kick.c
->   delete mode 100644 arch/metag/kernel/machines.c
->   delete mode 100644 arch/metag/kernel/metag_ksyms.c
->   delete mode 100644 arch/metag/kernel/module.c
->   delete mode 100644 arch/metag/kernel/perf/Makefile
->   delete mode 100644 arch/metag/kernel/perf/perf_event.c
->   delete mode 100644 arch/metag/kernel/perf/perf_event.h
->   delete mode 100644 arch/metag/kernel/perf_callchain.c
->   delete mode 100644 arch/metag/kernel/process.c
->   delete mode 100644 arch/metag/kernel/ptrace.c
->   delete mode 100644 arch/metag/kernel/setup.c
->   delete mode 100644 arch/metag/kernel/signal.c
->   delete mode 100644 arch/metag/kernel/smp.c
->   delete mode 100644 arch/metag/kernel/stacktrace.c
->   delete mode 100644 arch/metag/kernel/sys_metag.c
->   delete mode 100644 arch/metag/kernel/tbiunexp.S
->   delete mode 100644 arch/metag/kernel/tcm.c
->   delete mode 100644 arch/metag/kernel/time.c
->   delete mode 100644 arch/metag/kernel/topology.c
->   delete mode 100644 arch/metag/kernel/traps.c
->   delete mode 100644 arch/metag/kernel/user_gateway.S
->   delete mode 100644 arch/metag/kernel/vmlinux.lds.S
->   delete mode 100644 arch/metag/lib/Makefile
->   delete mode 100644 arch/metag/lib/ashldi3.S
->   delete mode 100644 arch/metag/lib/ashrdi3.S
->   delete mode 100644 arch/metag/lib/checksum.c
->   delete mode 100644 arch/metag/lib/clear_page.S
->   delete mode 100644 arch/metag/lib/cmpdi2.S
->   delete mode 100644 arch/metag/lib/copy_page.S
->   delete mode 100644 arch/metag/lib/delay.c
->   delete mode 100644 arch/metag/lib/div64.S
->   delete mode 100644 arch/metag/lib/divsi3.S
->   delete mode 100644 arch/metag/lib/ip_fast_csum.S
->   delete mode 100644 arch/metag/lib/lshrdi3.S
->   delete mode 100644 arch/metag/lib/memcpy.S
->   delete mode 100644 arch/metag/lib/memmove.S
->   delete mode 100644 arch/metag/lib/memset.S
->   delete mode 100644 arch/metag/lib/modsi3.S
->   delete mode 100644 arch/metag/lib/muldi3.S
->   delete mode 100644 arch/metag/lib/ucmpdi2.S
->   delete mode 100644 arch/metag/lib/usercopy.c
->   delete mode 100644 arch/metag/mm/Kconfig
->   delete mode 100644 arch/metag/mm/Makefile
->   delete mode 100644 arch/metag/mm/cache.c
->   delete mode 100644 arch/metag/mm/extable.c
->   delete mode 100644 arch/metag/mm/fault.c
->   delete mode 100644 arch/metag/mm/highmem.c
->   delete mode 100644 arch/metag/mm/hugetlbpage.c
->   delete mode 100644 arch/metag/mm/init.c
->   delete mode 100644 arch/metag/mm/ioremap.c
->   delete mode 100644 arch/metag/mm/l2cache.c
->   delete mode 100644 arch/metag/mm/maccess.c
->   delete mode 100644 arch/metag/mm/mmu-meta1.c
->   delete mode 100644 arch/metag/mm/mmu-meta2.c
->   delete mode 100644 arch/metag/mm/numa.c
->   delete mode 100644 arch/metag/oprofile/Makefile
->   delete mode 100644 arch/metag/oprofile/backtrace.c
->   delete mode 100644 arch/metag/oprofile/backtrace.h
->   delete mode 100644 arch/metag/oprofile/common.c
->   delete mode 100644 arch/metag/tbx/Makefile
->   delete mode 100644 arch/metag/tbx/tbicore.S
->   delete mode 100644 arch/metag/tbx/tbictx.S
->   delete mode 100644 arch/metag/tbx/tbictxfpu.S
->   delete mode 100644 arch/metag/tbx/tbidefr.S
->   delete mode 100644 arch/metag/tbx/tbidspram.S
->   delete mode 100644 arch/metag/tbx/tbilogf.S
->   delete mode 100644 arch/metag/tbx/tbipcx.S
->   delete mode 100644 arch/metag/tbx/tbiroot.S
->   delete mode 100644 arch/metag/tbx/tbisoft.S
->   delete mode 100644 arch/metag/tbx/tbistring.c
->   delete mode 100644 arch/metag/tbx/tbitimer.S
+>  drivers/i2c/busses/i2c-piix4.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/metag/Kconfig b/arch/metag/Kconfig
-> deleted file mode 100644
-> index c7b62a339539..000000000000
-> diff --git a/arch/metag/Kconfig.debug b/arch/metag/Kconfig.debug
-> deleted file mode 100644
-> index ac4516c605db..000000000000
-> diff --git a/arch/metag/Kconfig.soc b/arch/metag/Kconfig.soc
-> deleted file mode 100644
-> index c521f0e00d8e..000000000000
-> diff --git a/arch/metag/Makefile b/arch/metag/Makefile
-> deleted file mode 100644
-> index 033a58214119..000000000000
-> diff --git a/arch/metag/boot/.gitignore b/arch/metag/boot/.gitignore
-> deleted file mode 100644
-> index 6c662ddb909a..000000000000
-> diff --git a/arch/metag/boot/Makefile b/arch/metag/boot/Makefile
-> deleted file mode 100644
-> index 5a1f88cf91e3..000000000000
-> diff --git a/arch/metag/boot/dts/Makefile b/arch/metag/boot/dts/Makefile
-> deleted file mode 100644
-> index f0a180f62766..000000000000
-> diff --git a/arch/metag/boot/dts/skeleton.dts b/arch/metag/boot/dts/skeleton.dts
-> deleted file mode 100644
-> index 7a49aeb365d0..000000000000
-> diff --git a/arch/metag/boot/dts/skeleton.dtsi b/arch/metag/boot/dts/skeleton.dtsi
-> deleted file mode 100644
-> index 43e2ffe73c27..000000000000
-> diff --git a/arch/metag/boot/dts/tz1090.dtsi b/arch/metag/boot/dts/tz1090.dtsi
-> deleted file mode 100644
-> index 24ea7d2e9138..000000000000
-> diff --git a/arch/metag/boot/dts/tz1090_generic.dts b/arch/metag/boot/dts/tz1090_generic.dts
-> deleted file mode 100644
-> index f96090955964..000000000000
-> diff --git a/arch/metag/configs/meta1_defconfig b/arch/metag/configs/meta1_defconfig
-> deleted file mode 100644
-> index 01cd67e4403d..000000000000
-> diff --git a/arch/metag/configs/meta2_defconfig b/arch/metag/configs/meta2_defconfig
-> deleted file mode 100644
-> index 643392ba7ed5..000000000000
-> diff --git a/arch/metag/configs/meta2_smp_defconfig b/arch/metag/configs/meta2_smp_defconfig
-> deleted file mode 100644
-> index f3306737da20..000000000000
-> diff --git a/arch/metag/configs/tz1090_defconfig b/arch/metag/configs/tz1090_defconfig
-> deleted file mode 100644
-> index 9f9316a6df27..000000000000
-> diff --git a/arch/metag/include/asm/Kbuild b/arch/metag/include/asm/Kbuild
-> deleted file mode 100644
-> index 913c779979df..000000000000
-> diff --git a/arch/metag/include/asm/atomic.h b/arch/metag/include/asm/atomic.h
-> deleted file mode 100644
-> index 97ae189c2dd8..000000000000
-> diff --git a/arch/metag/include/asm/atomic_lnkget.h b/arch/metag/include/asm/atomic_lnkget.h
-> deleted file mode 100644
-> index 17e8c61c946d..000000000000
-> diff --git a/arch/metag/include/asm/atomic_lock1.h b/arch/metag/include/asm/atomic_lock1.h
-> deleted file mode 100644
-> index 2ce8fa3a79c2..000000000000
-> diff --git a/arch/metag/include/asm/barrier.h b/arch/metag/include/asm/barrier.h
-> deleted file mode 100644
-> index 2661fec5696a..000000000000
-> diff --git a/arch/metag/include/asm/bitops.h b/arch/metag/include/asm/bitops.h
-> deleted file mode 100644
-> index 766ad43010ad..000000000000
-> diff --git a/arch/metag/include/asm/bug.h b/arch/metag/include/asm/bug.h
-> deleted file mode 100644
-> index ee07a943f931..000000000000
-> diff --git a/arch/metag/include/asm/cache.h b/arch/metag/include/asm/cache.h
-> deleted file mode 100644
-> index b5df02239c8d..000000000000
-> diff --git a/arch/metag/include/asm/cacheflush.h b/arch/metag/include/asm/cacheflush.h
-> deleted file mode 100644
-> index 2584a51eca1a..000000000000
-> diff --git a/arch/metag/include/asm/cachepart.h b/arch/metag/include/asm/cachepart.h
-> deleted file mode 100644
-> index 79411e977586..000000000000
-> diff --git a/arch/metag/include/asm/checksum.h b/arch/metag/include/asm/checksum.h
-> deleted file mode 100644
-> index 6533d14e9789..000000000000
-> diff --git a/arch/metag/include/asm/clock.h b/arch/metag/include/asm/clock.h
-> deleted file mode 100644
-> index ded4ab2e1fd0..000000000000
-> diff --git a/arch/metag/include/asm/cmpxchg.h b/arch/metag/include/asm/cmpxchg.h
-> deleted file mode 100644
-> index 68c4ab1466fd..000000000000
-> diff --git a/arch/metag/include/asm/cmpxchg_irq.h b/arch/metag/include/asm/cmpxchg_irq.h
-> deleted file mode 100644
-> index 5255e37f8496..000000000000
-> diff --git a/arch/metag/include/asm/cmpxchg_lnkget.h b/arch/metag/include/asm/cmpxchg_lnkget.h
-> deleted file mode 100644
-> index c69be00a4739..000000000000
-> diff --git a/arch/metag/include/asm/cmpxchg_lock1.h b/arch/metag/include/asm/cmpxchg_lock1.h
-> deleted file mode 100644
-> index 5976e39db2b4..000000000000
-> diff --git a/arch/metag/include/asm/core_reg.h b/arch/metag/include/asm/core_reg.h
-> deleted file mode 100644
-> index ca70a0a29b61..000000000000
-> diff --git a/arch/metag/include/asm/cpu.h b/arch/metag/include/asm/cpu.h
-> deleted file mode 100644
-> index 9dac67de4748..000000000000
-> diff --git a/arch/metag/include/asm/da.h b/arch/metag/include/asm/da.h
-> deleted file mode 100644
-> index 901daa540e6e..000000000000
-> diff --git a/arch/metag/include/asm/delay.h b/arch/metag/include/asm/delay.h
-> deleted file mode 100644
-> index fd73d3d5d294..000000000000
-> diff --git a/arch/metag/include/asm/div64.h b/arch/metag/include/asm/div64.h
-> deleted file mode 100644
-> index e3686d2ae20e..000000000000
-> diff --git a/arch/metag/include/asm/dma-mapping.h b/arch/metag/include/asm/dma-mapping.h
-> deleted file mode 100644
-> index cfd6a0505b56..000000000000
-> diff --git a/arch/metag/include/asm/elf.h b/arch/metag/include/asm/elf.h
-> deleted file mode 100644
-> index a6c33800ba66..000000000000
-> diff --git a/arch/metag/include/asm/fixmap.h b/arch/metag/include/asm/fixmap.h
-> deleted file mode 100644
-> index af621b041739..000000000000
-> diff --git a/arch/metag/include/asm/ftrace.h b/arch/metag/include/asm/ftrace.h
-> deleted file mode 100644
-> index b1c8c76fb772..000000000000
-> diff --git a/arch/metag/include/asm/global_lock.h b/arch/metag/include/asm/global_lock.h
-> deleted file mode 100644
-> index 4d3da9682233..000000000000
-> diff --git a/arch/metag/include/asm/highmem.h b/arch/metag/include/asm/highmem.h
-> deleted file mode 100644
-> index 8b0dfd684e15..000000000000
-> diff --git a/arch/metag/include/asm/hugetlb.h b/arch/metag/include/asm/hugetlb.h
-> deleted file mode 100644
-> index 1607363d2639..000000000000
-> diff --git a/arch/metag/include/asm/hwthread.h b/arch/metag/include/asm/hwthread.h
-> deleted file mode 100644
-> index 8d2171da5414..000000000000
-> diff --git a/arch/metag/include/asm/io.h b/arch/metag/include/asm/io.h
-> deleted file mode 100644
-> index 71cd2bc54718..000000000000
-> diff --git a/arch/metag/include/asm/irq.h b/arch/metag/include/asm/irq.h
-> deleted file mode 100644
-> index cb02c29935a4..000000000000
-> diff --git a/arch/metag/include/asm/irqflags.h b/arch/metag/include/asm/irqflags.h
-> deleted file mode 100644
-> index e2fe34acb93b..000000000000
-> diff --git a/arch/metag/include/asm/l2cache.h b/arch/metag/include/asm/l2cache.h
-> deleted file mode 100644
-> index f260b158b8fe..000000000000
-> diff --git a/arch/metag/include/asm/linkage.h b/arch/metag/include/asm/linkage.h
-> deleted file mode 100644
-> index 3a9024ecb827..000000000000
-> diff --git a/arch/metag/include/asm/mach/arch.h b/arch/metag/include/asm/mach/arch.h
-> deleted file mode 100644
-> index 433f94624fa2..000000000000
-> diff --git a/arch/metag/include/asm/metag_isa.h b/arch/metag/include/asm/metag_isa.h
-> deleted file mode 100644
-> index c8aa2ae3899f..000000000000
-> diff --git a/arch/metag/include/asm/metag_mem.h b/arch/metag/include/asm/metag_mem.h
-> deleted file mode 100644
-> index 7848bc6d3b61..000000000000
-> diff --git a/arch/metag/include/asm/metag_regs.h b/arch/metag/include/asm/metag_regs.h
-> deleted file mode 100644
-> index 60b750971d8a..000000000000
-> diff --git a/arch/metag/include/asm/mman.h b/arch/metag/include/asm/mman.h
-> deleted file mode 100644
-> index dcb0d20a64fd..000000000000
-> diff --git a/arch/metag/include/asm/mmu.h b/arch/metag/include/asm/mmu.h
-> deleted file mode 100644
-> index cab5a01c3dcb..000000000000
-> diff --git a/arch/metag/include/asm/mmu_context.h b/arch/metag/include/asm/mmu_context.h
-> deleted file mode 100644
-> index 7b4766379622..000000000000
-> diff --git a/arch/metag/include/asm/mmzone.h b/arch/metag/include/asm/mmzone.h
-> deleted file mode 100644
-> index 8627fb532206..000000000000
-> diff --git a/arch/metag/include/asm/module.h b/arch/metag/include/asm/module.h
-> deleted file mode 100644
-> index e957171c320b..000000000000
-> diff --git a/arch/metag/include/asm/page.h b/arch/metag/include/asm/page.h
-> deleted file mode 100644
-> index 9e994d77069d..000000000000
-> diff --git a/arch/metag/include/asm/perf_event.h b/arch/metag/include/asm/perf_event.h
-> deleted file mode 100644
-> index 105bbff0149f..000000000000
-> diff --git a/arch/metag/include/asm/pgalloc.h b/arch/metag/include/asm/pgalloc.h
-> deleted file mode 100644
-> index 0b9d95d78b61..000000000000
-> diff --git a/arch/metag/include/asm/pgtable-bits.h b/arch/metag/include/asm/pgtable-bits.h
-> deleted file mode 100644
-> index 5f6b82282a41..000000000000
-> diff --git a/arch/metag/include/asm/pgtable.h b/arch/metag/include/asm/pgtable.h
-> deleted file mode 100644
-> index a3422f06c03b..000000000000
-> diff --git a/arch/metag/include/asm/processor.h b/arch/metag/include/asm/processor.h
-> deleted file mode 100644
-> index 9a0c502cd4a0..000000000000
-> diff --git a/arch/metag/include/asm/ptrace.h b/arch/metag/include/asm/ptrace.h
-> deleted file mode 100644
-> index 9074f254c9ca..000000000000
-> diff --git a/arch/metag/include/asm/setup.h b/arch/metag/include/asm/setup.h
-> deleted file mode 100644
-> index 504621d79ef5..000000000000
-> diff --git a/arch/metag/include/asm/smp.h b/arch/metag/include/asm/smp.h
-> deleted file mode 100644
-> index 8d3683d83680..000000000000
-> diff --git a/arch/metag/include/asm/sparsemem.h b/arch/metag/include/asm/sparsemem.h
-> deleted file mode 100644
-> index 2942894bace5..000000000000
-> diff --git a/arch/metag/include/asm/spinlock.h b/arch/metag/include/asm/spinlock.h
-> deleted file mode 100644
-> index 4497c232d9c1..000000000000
-> diff --git a/arch/metag/include/asm/spinlock_lnkget.h b/arch/metag/include/asm/spinlock_lnkget.h
-> deleted file mode 100644
-> index dfd780eab350..000000000000
-> diff --git a/arch/metag/include/asm/spinlock_lock1.h b/arch/metag/include/asm/spinlock_lock1.h
-> deleted file mode 100644
-> index c0bd81bbe18c..000000000000
-> diff --git a/arch/metag/include/asm/spinlock_types.h b/arch/metag/include/asm/spinlock_types.h
-> deleted file mode 100644
-> index cd197f1bed59..000000000000
-> diff --git a/arch/metag/include/asm/stacktrace.h b/arch/metag/include/asm/stacktrace.h
-> deleted file mode 100644
-> index f45e3cb2bbb5..000000000000
-> diff --git a/arch/metag/include/asm/string.h b/arch/metag/include/asm/string.h
-> deleted file mode 100644
-> index 86f9614d5fc6..000000000000
-> diff --git a/arch/metag/include/asm/switch.h b/arch/metag/include/asm/switch.h
-> deleted file mode 100644
-> index 1fd6a587c844..000000000000
-> diff --git a/arch/metag/include/asm/syscall.h b/arch/metag/include/asm/syscall.h
-> deleted file mode 100644
-> index 24fc97939f77..000000000000
-> diff --git a/arch/metag/include/asm/syscalls.h b/arch/metag/include/asm/syscalls.h
-> deleted file mode 100644
-> index eac0cf120323..000000000000
-> diff --git a/arch/metag/include/asm/tbx.h b/arch/metag/include/asm/tbx.h
-> deleted file mode 100644
-> index 5cd2a6c86223..000000000000
-> diff --git a/arch/metag/include/asm/tcm.h b/arch/metag/include/asm/tcm.h
-> deleted file mode 100644
-> index a0a4997e4b8a..000000000000
-> diff --git a/arch/metag/include/asm/thread_info.h b/arch/metag/include/asm/thread_info.h
-> deleted file mode 100644
-> index a1a9c7f5ca8c..000000000000
-> diff --git a/arch/metag/include/asm/tlb.h b/arch/metag/include/asm/tlb.h
-> deleted file mode 100644
-> index fbe6ee91e8e7..000000000000
-> diff --git a/arch/metag/include/asm/tlbflush.h b/arch/metag/include/asm/tlbflush.h
-> deleted file mode 100644
-> index f3e5d99a3891..000000000000
-> diff --git a/arch/metag/include/asm/topology.h b/arch/metag/include/asm/topology.h
-> deleted file mode 100644
-> index df0d9e6b7f12..000000000000
-> diff --git a/arch/metag/include/asm/traps.h b/arch/metag/include/asm/traps.h
-> deleted file mode 100644
-> index ac808740bd84..000000000000
-> diff --git a/arch/metag/include/asm/uaccess.h b/arch/metag/include/asm/uaccess.h
-> deleted file mode 100644
-> index a5311eb36e32..000000000000
-> diff --git a/arch/metag/include/asm/unistd.h b/arch/metag/include/asm/unistd.h
-> deleted file mode 100644
-> index 32955a18fb32..000000000000
-> diff --git a/arch/metag/include/asm/user_gateway.h b/arch/metag/include/asm/user_gateway.h
-> deleted file mode 100644
-> index cf2392b95a56..000000000000
-> diff --git a/arch/metag/include/uapi/asm/Kbuild b/arch/metag/include/uapi/asm/Kbuild
-> deleted file mode 100644
-> index f9eaf07d29f8..000000000000
-> diff --git a/arch/metag/include/uapi/asm/byteorder.h b/arch/metag/include/uapi/asm/byteorder.h
-> deleted file mode 100644
-> index e5e03ff7e20d..000000000000
-> diff --git a/arch/metag/include/uapi/asm/ech.h b/arch/metag/include/uapi/asm/ech.h
-> deleted file mode 100644
-> index 1e09f1ea4f7f..000000000000
-> diff --git a/arch/metag/include/uapi/asm/ptrace.h b/arch/metag/include/uapi/asm/ptrace.h
-> deleted file mode 100644
-> index 8ad9daa841c3..000000000000
-> diff --git a/arch/metag/include/uapi/asm/sigcontext.h b/arch/metag/include/uapi/asm/sigcontext.h
-> deleted file mode 100644
-> index ac7e1f28d584..000000000000
-> diff --git a/arch/metag/include/uapi/asm/siginfo.h b/arch/metag/include/uapi/asm/siginfo.h
-> deleted file mode 100644
-> index 9a3f6cde9487..000000000000
-> diff --git a/arch/metag/include/uapi/asm/swab.h b/arch/metag/include/uapi/asm/swab.h
-> deleted file mode 100644
-> index 30d696fcc237..000000000000
-> diff --git a/arch/metag/include/uapi/asm/unistd.h b/arch/metag/include/uapi/asm/unistd.h
-> deleted file mode 100644
-> index 9f72c4cfcfb5..000000000000
-> diff --git a/arch/metag/kernel/.gitignore b/arch/metag/kernel/.gitignore
-> deleted file mode 100644
-> index c5f676c3c224..000000000000
-> diff --git a/arch/metag/kernel/Makefile b/arch/metag/kernel/Makefile
-> deleted file mode 100644
-> index 73441d8c0369..000000000000
-> diff --git a/arch/metag/kernel/asm-offsets.c b/arch/metag/kernel/asm-offsets.c
-> deleted file mode 100644
-> index d9b348b99ff2..000000000000
-> diff --git a/arch/metag/kernel/cachepart.c b/arch/metag/kernel/cachepart.c
-> deleted file mode 100644
-> index 6e0f8a80cc96..000000000000
-> diff --git a/arch/metag/kernel/clock.c b/arch/metag/kernel/clock.c
-> deleted file mode 100644
-> index 6339c9c6d0ab..000000000000
-> diff --git a/arch/metag/kernel/core_reg.c b/arch/metag/kernel/core_reg.c
-> deleted file mode 100644
-> index df2833f2766f..000000000000
-> diff --git a/arch/metag/kernel/da.c b/arch/metag/kernel/da.c
-> deleted file mode 100644
-> index a35dbed6fffa..000000000000
-> diff --git a/arch/metag/kernel/devtree.c b/arch/metag/kernel/devtree.c
-> deleted file mode 100644
-> index 6af749a64438..000000000000
-> diff --git a/arch/metag/kernel/dma.c b/arch/metag/kernel/dma.c
-> deleted file mode 100644
-> index f0ab3a498328..000000000000
-> diff --git a/arch/metag/kernel/ftrace.c b/arch/metag/kernel/ftrace.c
-> deleted file mode 100644
-> index f7b23d300881..000000000000
-> diff --git a/arch/metag/kernel/ftrace_stub.S b/arch/metag/kernel/ftrace_stub.S
-> deleted file mode 100644
-> index 3acc288217c0..000000000000
-> diff --git a/arch/metag/kernel/head.S b/arch/metag/kernel/head.S
-> deleted file mode 100644
-> index 3ed27813413e..000000000000
-> diff --git a/arch/metag/kernel/irq.c b/arch/metag/kernel/irq.c
-> deleted file mode 100644
-> index 704cf17f8370..000000000000
-> diff --git a/arch/metag/kernel/kick.c b/arch/metag/kernel/kick.c
-> deleted file mode 100644
-> index beb377621322..000000000000
-> diff --git a/arch/metag/kernel/machines.c b/arch/metag/kernel/machines.c
-> deleted file mode 100644
-> index e49790181051..000000000000
-> diff --git a/arch/metag/kernel/metag_ksyms.c b/arch/metag/kernel/metag_ksyms.c
-> deleted file mode 100644
-> index e312386efb72..000000000000
-> diff --git a/arch/metag/kernel/module.c b/arch/metag/kernel/module.c
-> deleted file mode 100644
-> index bb8dfba9a763..000000000000
-> diff --git a/arch/metag/kernel/perf/Makefile b/arch/metag/kernel/perf/Makefile
-> deleted file mode 100644
-> index b158cb27208d..000000000000
-> diff --git a/arch/metag/kernel/perf/perf_event.c b/arch/metag/kernel/perf/perf_event.c
-> deleted file mode 100644
-> index 7e793eb0c1fe..000000000000
-> diff --git a/arch/metag/kernel/perf/perf_event.h b/arch/metag/kernel/perf/perf_event.h
-> deleted file mode 100644
-> index fd10a1345b67..000000000000
-> diff --git a/arch/metag/kernel/perf_callchain.c b/arch/metag/kernel/perf_callchain.c
-> deleted file mode 100644
-> index d325ba101de0..000000000000
-> diff --git a/arch/metag/kernel/process.c b/arch/metag/kernel/process.c
-> deleted file mode 100644
-> index 0909834c83a7..000000000000
-> diff --git a/arch/metag/kernel/ptrace.c b/arch/metag/kernel/ptrace.c
-> deleted file mode 100644
-> index e615603a4b0a..000000000000
-> diff --git a/arch/metag/kernel/setup.c b/arch/metag/kernel/setup.c
-> deleted file mode 100644
-> index 1166f1fbfd63..000000000000
-> diff --git a/arch/metag/kernel/signal.c b/arch/metag/kernel/signal.c
-> deleted file mode 100644
-> index e64e8b0a9363..000000000000
-> diff --git a/arch/metag/kernel/smp.c b/arch/metag/kernel/smp.c
-> deleted file mode 100644
-> index 2dbbb7c66043..000000000000
-> diff --git a/arch/metag/kernel/stacktrace.c b/arch/metag/kernel/stacktrace.c
-> deleted file mode 100644
-> index 09d67b7f51ca..000000000000
-> diff --git a/arch/metag/kernel/sys_metag.c b/arch/metag/kernel/sys_metag.c
-> deleted file mode 100644
-> index 27d96499dd38..000000000000
-> diff --git a/arch/metag/kernel/tbiunexp.S b/arch/metag/kernel/tbiunexp.S
-> deleted file mode 100644
-> index 2664808086c7..000000000000
-> diff --git a/arch/metag/kernel/tcm.c b/arch/metag/kernel/tcm.c
-> deleted file mode 100644
-> index 1d7b4e33b114..000000000000
-> diff --git a/arch/metag/kernel/time.c b/arch/metag/kernel/time.c
-> deleted file mode 100644
-> index 1e809e3b43d1..000000000000
-> diff --git a/arch/metag/kernel/topology.c b/arch/metag/kernel/topology.c
-> deleted file mode 100644
-> index 4ba595701f7d..000000000000
-> diff --git a/arch/metag/kernel/traps.c b/arch/metag/kernel/traps.c
-> deleted file mode 100644
-> index 3b62b1b0c0b5..000000000000
-> diff --git a/arch/metag/kernel/user_gateway.S b/arch/metag/kernel/user_gateway.S
-> deleted file mode 100644
-> index 7833fb8f9ddd..000000000000
-> diff --git a/arch/metag/kernel/vmlinux.lds.S b/arch/metag/kernel/vmlinux.lds.S
-> deleted file mode 100644
-> index 1efadae2ea8e..000000000000
-> diff --git a/arch/metag/lib/Makefile b/arch/metag/lib/Makefile
-> deleted file mode 100644
-> index 3982850d692c..000000000000
-> diff --git a/arch/metag/lib/ashldi3.S b/arch/metag/lib/ashldi3.S
-> deleted file mode 100644
-> index 5055df9e5c7b..000000000000
-> diff --git a/arch/metag/lib/ashrdi3.S b/arch/metag/lib/ashrdi3.S
-> deleted file mode 100644
-> index 0c838fd9da85..000000000000
-> diff --git a/arch/metag/lib/checksum.c b/arch/metag/lib/checksum.c
-> deleted file mode 100644
-> index 5d6a98a05e9d..000000000000
-> diff --git a/arch/metag/lib/clear_page.S b/arch/metag/lib/clear_page.S
-> deleted file mode 100644
-> index 87756a5d1367..000000000000
-> diff --git a/arch/metag/lib/cmpdi2.S b/arch/metag/lib/cmpdi2.S
-> deleted file mode 100644
-> index ab70bd94fd81..000000000000
-> diff --git a/arch/metag/lib/copy_page.S b/arch/metag/lib/copy_page.S
-> deleted file mode 100644
-> index abbc75e94374..000000000000
-> diff --git a/arch/metag/lib/delay.c b/arch/metag/lib/delay.c
-> deleted file mode 100644
-> index 6754012a261f..000000000000
-> diff --git a/arch/metag/lib/div64.S b/arch/metag/lib/div64.S
-> deleted file mode 100644
-> index 55eece273a6b..000000000000
-> diff --git a/arch/metag/lib/divsi3.S b/arch/metag/lib/divsi3.S
-> deleted file mode 100644
-> index 9e31abefb160..000000000000
-> diff --git a/arch/metag/lib/ip_fast_csum.S b/arch/metag/lib/ip_fast_csum.S
-> deleted file mode 100644
-> index 441f489d6a81..000000000000
-> diff --git a/arch/metag/lib/lshrdi3.S b/arch/metag/lib/lshrdi3.S
-> deleted file mode 100644
-> index cf7ffc9b377f..000000000000
-> diff --git a/arch/metag/lib/memcpy.S b/arch/metag/lib/memcpy.S
-> deleted file mode 100644
-> index c2e8395f9456..000000000000
-> diff --git a/arch/metag/lib/memmove.S b/arch/metag/lib/memmove.S
-> deleted file mode 100644
-> index 934abda0e680..000000000000
-> diff --git a/arch/metag/lib/memset.S b/arch/metag/lib/memset.S
-> deleted file mode 100644
-> index 6ee246d831c7..000000000000
-> diff --git a/arch/metag/lib/modsi3.S b/arch/metag/lib/modsi3.S
-> deleted file mode 100644
-> index d65a2e5b3154..000000000000
-> diff --git a/arch/metag/lib/muldi3.S b/arch/metag/lib/muldi3.S
-> deleted file mode 100644
-> index 9d106790244d..000000000000
-> diff --git a/arch/metag/lib/ucmpdi2.S b/arch/metag/lib/ucmpdi2.S
-> deleted file mode 100644
-> index 46f5686db8b1..000000000000
-> diff --git a/arch/metag/lib/usercopy.c b/arch/metag/lib/usercopy.c
-> deleted file mode 100644
-> index a48ef522c02d..000000000000
-> diff --git a/arch/metag/mm/Kconfig b/arch/metag/mm/Kconfig
-> deleted file mode 100644
-> index 9d4b2c67dcc1..000000000000
-> diff --git a/arch/metag/mm/Makefile b/arch/metag/mm/Makefile
-> deleted file mode 100644
-> index 0c7c91ba9fb9..000000000000
-> diff --git a/arch/metag/mm/cache.c b/arch/metag/mm/cache.c
-> deleted file mode 100644
-> index a62285284ab8..000000000000
-> diff --git a/arch/metag/mm/extable.c b/arch/metag/mm/extable.c
-> deleted file mode 100644
-> index 9b92d3ad7f9c..000000000000
-> diff --git a/arch/metag/mm/fault.c b/arch/metag/mm/fault.c
-> deleted file mode 100644
-> index de54fe686080..000000000000
-> diff --git a/arch/metag/mm/highmem.c b/arch/metag/mm/highmem.c
-> deleted file mode 100644
-> index 83527fc7c8a7..000000000000
-> diff --git a/arch/metag/mm/hugetlbpage.c b/arch/metag/mm/hugetlbpage.c
-> deleted file mode 100644
-> index 012ee4c80dc7..000000000000
-> diff --git a/arch/metag/mm/init.c b/arch/metag/mm/init.c
-> deleted file mode 100644
-> index 0e2ca9058998..000000000000
-> diff --git a/arch/metag/mm/ioremap.c b/arch/metag/mm/ioremap.c
-> deleted file mode 100644
-> index df2b59cb02eb..000000000000
-> diff --git a/arch/metag/mm/l2cache.c b/arch/metag/mm/l2cache.c
-> deleted file mode 100644
-> index addffc58989c..000000000000
-> diff --git a/arch/metag/mm/maccess.c b/arch/metag/mm/maccess.c
-> deleted file mode 100644
-> index c22755165df9..000000000000
-> diff --git a/arch/metag/mm/mmu-meta1.c b/arch/metag/mm/mmu-meta1.c
-> deleted file mode 100644
-> index 53190b13dc54..000000000000
-> diff --git a/arch/metag/mm/mmu-meta2.c b/arch/metag/mm/mmu-meta2.c
-> deleted file mode 100644
-> index 8b668a69c980..000000000000
-> diff --git a/arch/metag/mm/numa.c b/arch/metag/mm/numa.c
-> deleted file mode 100644
-> index 67b46c295072..000000000000
-> diff --git a/arch/metag/oprofile/Makefile b/arch/metag/oprofile/Makefile
-> deleted file mode 100644
-> index dc92a4a3d618..000000000000
-> diff --git a/arch/metag/oprofile/backtrace.c b/arch/metag/oprofile/backtrace.c
-> deleted file mode 100644
-> index 7cc3f37cb40e..000000000000
-> diff --git a/arch/metag/oprofile/backtrace.h b/arch/metag/oprofile/backtrace.h
-> deleted file mode 100644
-> index 60adb862aa2c..000000000000
-> diff --git a/arch/metag/oprofile/common.c b/arch/metag/oprofile/common.c
-> deleted file mode 100644
-> index ba26152b3c00..000000000000
-> diff --git a/arch/metag/tbx/Makefile b/arch/metag/tbx/Makefile
-> deleted file mode 100644
-> index 98bc5453cf24..000000000000
-> diff --git a/arch/metag/tbx/tbicore.S b/arch/metag/tbx/tbicore.S
-> deleted file mode 100644
-> index a0838ebcb433..000000000000
-> diff --git a/arch/metag/tbx/tbictx.S b/arch/metag/tbx/tbictx.S
-> deleted file mode 100644
-> index 19af983a13ae..000000000000
-> diff --git a/arch/metag/tbx/tbictxfpu.S b/arch/metag/tbx/tbictxfpu.S
-> deleted file mode 100644
-> index e773bea3e7bd..000000000000
-> diff --git a/arch/metag/tbx/tbidefr.S b/arch/metag/tbx/tbidefr.S
-> deleted file mode 100644
-> index 8f0902b22f70..000000000000
-> diff --git a/arch/metag/tbx/tbidspram.S b/arch/metag/tbx/tbidspram.S
-> deleted file mode 100644
-> index 2f27c0372212..000000000000
-> diff --git a/arch/metag/tbx/tbilogf.S b/arch/metag/tbx/tbilogf.S
-> deleted file mode 100644
-> index 4a34d80657db..000000000000
-> diff --git a/arch/metag/tbx/tbipcx.S b/arch/metag/tbx/tbipcx.S
-> deleted file mode 100644
-> index 163c79ac913b..000000000000
-> diff --git a/arch/metag/tbx/tbiroot.S b/arch/metag/tbx/tbiroot.S
-> deleted file mode 100644
-> index 7d84daf1340b..000000000000
-> diff --git a/arch/metag/tbx/tbisoft.S b/arch/metag/tbx/tbisoft.S
-> deleted file mode 100644
-> index b04f50df8d91..000000000000
-> diff --git a/arch/metag/tbx/tbistring.c b/arch/metag/tbx/tbistring.c
-> deleted file mode 100644
-> index f90cd0822065..000000000000
-> diff --git a/arch/metag/tbx/tbitimer.S b/arch/metag/tbx/tbitimer.S
-> deleted file mode 100644
-> index 5dbeddeee7ba..000000000000
+> diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+> index 78dd5951d6e7..52a8b1c5c110 100644
+> --- a/drivers/i2c/busses/i2c-piix4.c
+> +++ b/drivers/i2c/busses/i2c-piix4.c
+> @@ -467,13 +467,13 @@ static int piix4_transaction(struct i2c_adapter *piix4_adapter)
+>  
+>  	/* We will always wait for a fraction of a second! (See PIIX4 docs errata) */
+>  	if (srvrworks_csb5_delay) /* Extra delay for SERVERWORKS_CSB5 */
+> -		msleep(2);
+> +		usleep_range(2000, 2000);
+>  	else
+> -		msleep(1);
+> +		usleep_range(500, 1000);
+>  
+>  	while ((++timeout < MAX_TIMEOUT) &&
+>  	       ((temp = inb_p(SMBHSTSTS)) & 0x01))
+> -		msleep(1);
+> +		usleep_range(200, 500);
+>  
+>  	/* If the SMBus is still busy, we give up */
+>  	if (timeout == MAX_TIMEOUT) {
 > 
+Thanks for this patch.
+
+FWIW, this also makes a noticeable difference on AMD Family 16h Model 30h, used in embedded designs and also commonly available as AMD GX-412TC SoC in the PC Engines APU2.
+
+Among the tests I did were reading from the SoC temperature sensor in a loop:
+while [ true ] ; do i2cget -y 0 0x4C 0x01 ; done
+
+and scanning for peripherals in a loop:
+while [ true ] ; do i2cdetect -y 0 ; done
+
+These tests may be artificial and trivial, but the speedup matters to us because we have more than one bus master and the embedded controller needs to poll multiple sensors.
+
+Tested-by: Andrew Cooks <andrew.cooks@opengear.com>
