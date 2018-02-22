@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932284AbeBVMQH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:16:07 -0500
-Received: from mout.gmx.net ([212.227.15.15]:48799 "EHLO mout.gmx.net"
+        id S932341AbeBVMQc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:16:32 -0500
+Received: from mout.gmx.net ([212.227.17.21]:47199 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932159AbeBVMQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:16:04 -0500
+        id S932077AbeBVMQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 07:16:06 -0500
 From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
@@ -13,65 +13,68 @@ Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Christophe LEROY <christophe.leroy@c-s.fr>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>, Joe Perches <joe@perches.com>
-Subject: [PATCH 2/5] powerpc: mm: Use memblock API for PPC32 page_is_ram
-Date: Thu, 22 Feb 2018 13:15:13 +0100
-Message-Id: <20180222121516.23415-3-j.neuschaefer@gmx.net>
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH 4/5] powerpc: wii: Don't rely on the reserved memory hack
+Date: Thu, 22 Feb 2018 13:15:15 +0100
+Message-Id: <20180222121516.23415-5-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222121516.23415-1-j.neuschaefer@gmx.net>
 References: <20180222121516.23415-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:HXQxNQxY+Q02yGRL6Kz8Tk39uBZXI9Cqhs7UTon4LbICJDL0/kq
- QTi6Awrtqn5PAhP0IudbJpFfXws6h6p434XYeVt1GrXmElBMPGPcjjcfEpeTioE2Je11l8X
- Y2IXnHWW4zzLy/uCVpSEjFcfKyIin1zNMmTruXtMau+X0SMkZ3HOqY8MVGgq85W3aNHzumL
- 3TWYYWYz7D0tpT3Rcegow==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZfB36E2romQ=:WfRSJDF8IcyTwwFSYgOq4S
- GjAYGQjRpAGOO8W3UVQ4dc0Vhjv2r8Pl6h9irOJQ9qoWzJ4UMPhtG5Q+rh6+3TR2GFuBJ2Eez
- KmdxitM2WniZ5faWKNGlswEmccGEmvN8yl0qZxWi8mcnBWrPmUNjBbdtuG8RubJSy/kgc291R
- d2hg/FFVmtAsG7/nLCE1OEsVyYmXtRJ/h2vMtPZmrV69XKJCSlwec5/reT27ItfgdkXj8AWLl
- xNgogz0+yRBj4Du+fYtgfrv5rMQ3xxAPOBidL/alVo+AdfMFxqxKdpEumLwApc2ZqaERk9wda
- N3Uc/CVQkhHlfLzIt/fQIIxMCt73zNXCgvbngsTg/td7jBH/rsT8gufnBdsp5q1ivum++qGEE
- NYqNMnzVMP69z/3JEwgeoIaXfHAtexD+ankr2VlbGNL1TewxF8pnxZG1GTpvbckjZBnx7NzBY
- Q2tCxkCixrnFaQju4MbdBmi0OtN7jzvN7hvI5Cts/7oO7krrqDyEQnSDuy1Sz0yQiEf220zX5
- uuo4Ey283DHHeOEzLSklIF2QIsM8R3aOWHUdv6e4Xmk5H9aKggla4XPWA4R2T+TXh2E5cMP4D
- RSF1Ym1cJb+4W79ZEMyw8LINmLT4egAxY30wP0noDWXaTsMyfNZBjH4bvisXZx/tvNOOZwmEF
- MsjfdZdAb9gGYTCRw86lt8S7VHZtHWLnK4DGf/U4DxlIivYaX4yzWDoftfC7d2Yr46/6/5Rz2
- mOU0QiBaWlBbgEp4A5tDOONyj0Cj9gi3H6lLS+mJnFL6sRUo+60AqrobPBn27c++squKnC6Nf
- V0rz6aOb4mTE8NCTnXsa9iM6ZIVxZaLcl3AKaQZKTu/3RvWtGo=
+X-Provags-ID: V03:K0:no0Bh1zJjmJQEtMX3MGI68G+d3Lph+K4+Vs8bwF1EMnSZ4krBTY
+ QQyxzwjoHaWU16FDIlwv8RI4JBm51FlCWgWkaUF/hrU2ZA7LV0RzbRv85N+hxmvMdL6jMD9
+ Qnw3ldegM05gtzX/TJ3CaY9O0bcKlxX2NA/P2liFQokM+1AEBHGZwg0phtkPiJKocrtM2/B
+ /MhG4sCVbd8xG20PjwpTA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1Cf/jYba+aI=:aMshu3YknPujH18v3diJee
+ bzFClLfIVfziWYkM+JiakZOlrdULbRNnP5gLlmuyKGFDDqps8uUTQwjQmvk6xqWZIerEWlxis
+ VeuCcBAJ3bdVyyZFTkYr1I48LZy9MVVfU5WARGTpwBKrdeyjBzqNF3aioWPe6I8IBr0FyPGyo
+ 70SjLNG0KpZMwfAJWqsWoTnGPRPS1rNZ4k26FB7rt91gfjJH8+n3jPozTcE/LL3OXvNk6GabY
+ 8DWP2clOcHKlANKp+jpwVijsnmFlWTR8JpAnhKzgSwRtNGv9Bm1AURqbJzAM43OoDx7GxncT4
+ Ru0HJ7Nsp5/Az60DRb7Gd+xQZlJwl6FyeytwYcgulhdHxOdpFjqEMHv5ZapzuqMlYjzHZcfkO
+ Gswj6WnNq/YxpKsLgX/4z2bBOZAqHypKIUTKf3aCD7hb+qoed9pyU1LRSFYvSY/m/lKa/Xyqf
+ SwiWtui5Q2kRAwWYQoufp/g79k0cETfCDIMKemSGNvKe9+g800INDUFxPeljsnWmnfDUKMV+t
+ +XeeHGqWPDXUkug4IuMfHsR9IsxbnfyVqzif3jAdQ1AvuS5q91VZw4JBZvxcXyyzdtNniYMsL
+ PNr5ajy3Mo2uY8Q5CvORwXl1i0D6i4Te8h0Hqjhyx4ZMeaEHD+NKp4lVktNl3vAXbjjxEgG4a
+ 4NyTOW+oEHiwC0RHH7t9m/ksUROm24lQVZk3hl1DCyjxj9u1kOpKGYbzXTxVDK6hMTVO+ahFu
+ MAb7ujYsqyl7HVj1eiC5kzInauERF78QJQCwTPJhjDHKzE4rWo1Z4VAGNdd/F6VqQsIN6bSrb
+ R+Q12bnjWMwiE74ucf3iWF3w3xbRe8Mat7rhNp1KThY90YiSPI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support accurate checking for different blocks of memory on PPC32,
-use the same memblock-based approach that's already used on PPC64 also
-on PPC32.
-
 Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- arch/powerpc/mm/mem.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/powerpc/platforms/embedded6xx/wii.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index da4e1555d61d..a42b86e2a34c 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -82,11 +82,7 @@ static inline pte_t *virt_to_kpte(unsigned long vaddr)
+diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/platforms/embedded6xx/wii.c
+index 4682327f76a9..fc00d82691e1 100644
+--- a/arch/powerpc/platforms/embedded6xx/wii.c
++++ b/arch/powerpc/platforms/embedded6xx/wii.c
+@@ -81,21 +81,9 @@ void __init wii_memory_fixups(void)
+ 	BUG_ON(memblock.memory.cnt != 2);
+ 	BUG_ON(!page_aligned(p[0].base) || !page_aligned(p[1].base));
  
- int page_is_ram(unsigned long pfn)
- {
--#ifndef CONFIG_PPC64	/* XXX for now */
--	return pfn < max_pfn;
--#else
- 	return memblock_is_memory(__pfn_to_phys(pfn));
--#endif
+-	/* trim unaligned tail */
+-	memblock_remove(ALIGN(p[1].base + p[1].size, PAGE_SIZE),
+-			(phys_addr_t)ULLONG_MAX);
+-
+-	/* determine hole, add & reserve them */
++	/* determine hole */
+ 	wii_hole_start = ALIGN(p[0].base + p[0].size, PAGE_SIZE);
+ 	wii_hole_size = p[1].base - wii_hole_start;
+-	memblock_add(wii_hole_start, wii_hole_size);
+-	memblock_reserve(wii_hole_start, wii_hole_size);
+-
+-	BUG_ON(memblock.memory.cnt != 1);
+-	__memblock_dump_all();
+-
+-	/* allow ioremapping the address space in the hole */
+-	__allow_ioremap_reserved = 1;
  }
  
- pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ unsigned long __init wii_mmu_mapin_mem2(unsigned long top)
 -- 
 2.16.1
