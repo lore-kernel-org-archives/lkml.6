@@ -1,52 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeBVJzA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:55:00 -0500
-Received: from mail.phytec.co.uk ([217.6.246.34]:54779 "EHLO root.phytec.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752537AbeBVJy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:54:59 -0500
-From: Daniel Schultz <d.schultz@phytec.de>
-To: lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, W.Egorov@phytec.de
-Subject: [PATCH] mfd: rk808: Fix RK818 ID template
-Date: Thu, 22 Feb 2018 10:54:52 +0100
-Message-Id: <1519293292-46451-1-git-send-email-d.schultz@phytec.de>
-X-Mailer: git-send-email 2.7.4
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 22.02.2018 10:54:57,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 22.02.2018 10:54:57,
-        Serialize complete at 22.02.2018 10:54:57
-X-TNEFEvaluated: 1
+        id S1753268AbeBVJzK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:55:10 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34143 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752644AbeBVJzH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:55:07 -0500
+X-Google-Smtp-Source: AH8x225kAJKbaqfZ2BAf0hlcnR16O/SA1aTfVJYwBG9ajWu4oFwuT9ngbmCSKnzZYZwQ9pNGskGrgQ==
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rafael Wysocki <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: tegra186: Break after initialization is done for policy->cpu
+Date: Thu, 22 Feb 2018 15:24:57 +0530
+Message-Id: <77d470741dab32c2076a35253b9c0c2f0136583b.1519293292.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Rockchip PMIC driver can automatically detect connected component
-versions by reading the ID_MSB and ID_LSB registers. The probe function
-will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
-RK818 template ID is 0x8181.
+There are two clusters (2 + 4 CPUs) on this platform and a separate
+cpufreq policy is available for each of the CPUs. The loop in
+tegra186_cpufreq_init() tries to find the structure for the right CPU
+and finish initialization. But it is missing a `break` statement at the
+end, which forces it to restart the loop even when the CPU already
+matched and initialization is done.
 
-This patch changes this value to 0x8180.
+Fix that by adding the missing `break` statement.
 
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- include/linux/mfd/rk808.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpufreq/tegra186-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index d315659..338e0f6 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -443,7 +443,7 @@ enum {
- enum {
- 	RK805_ID = 0x8050,
- 	RK808_ID = 0x0000,
--	RK818_ID = 0x8181,
-+	RK818_ID = 0x8180,
- };
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index fe7875311d62..771df649ceb9 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -79,6 +79,7 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+ 		policy->driver_data =
+ 			data->regs + info->offset + EDVD_CORE_VOLT_FREQ(core);
+ 		cpufreq_table_validate_and_show(policy, cluster->table);
++		break;
+ 	}
  
- struct rk808 {
+ 	policy->cpuinfo.transition_latency = 300 * 1000;
 -- 
-2.7.4
+2.15.0.194.g9af6a3dea062
