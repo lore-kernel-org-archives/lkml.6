@@ -1,235 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932210AbeBVMdW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:33:22 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53863 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753811AbeBVMdQ (ORCPT
+        id S932279AbeBVMgL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:36:11 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46217 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932077AbeBVMgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:33:16 -0500
-X-Google-Smtp-Source: AH8x225p0rgTfPHjg5FEe9WzvHC7Ebiu0Oam8tYG85hs5ssO4HReax9pRMSxbv76mEEBCqfbVB1sfg==
-Date: Thu, 22 Feb 2018 12:33:08 +0000
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
-        krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
-        sboyd@codeaurora.org, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
-        jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
-        rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
-        jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Message-ID: <20180222123308.mypx2r7n6o63mj5z@oak.lan>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+        Thu, 22 Feb 2018 07:36:08 -0500
+Date: Thu, 22 Feb 2018 13:36:00 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
+Message-ID: <20180222123600.GM7203@w540>
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <56271779.hLAmkO6BAC@avalon>
+ <20180222120412.GL7203@w540>
+ <2864762.IPlziE6Y0S@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <2864762.IPlziE6Y0S@avalon>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
-> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
-> were adapted to this change.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->  drivers/bus/ts-nbus.c                |  2 +-
->  drivers/clk/clk-pwm.c                |  3 ++-
->  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->  drivers/hwmon/pwm-fan.c              |  2 +-
->  drivers/input/misc/max77693-haptic.c |  2 +-
->  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->  drivers/leds/leds-pwm.c              |  5 ++++-
->  drivers/media/rc/ir-rx51.c           |  5 ++++-
->  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->  include/linux/pwm.h                  |  6 ++++--
->  16 files changed, 70 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-> index 2030a6b77a09..696fa25dafd2 100644
-> --- a/drivers/video/backlight/lm3630a_bl.c
-> +++ b/drivers/video/backlight/lm3630a_bl.c
-> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
->  {
->  	unsigned int period = pchip->pdata->pwm_period;
->  	unsigned int duty = br * period / br_max;
-> +	struct pwm_caps caps = { };
->  
-> -	pwm_config(pchip->pwmd, duty, period);
-> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
-> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+Hi Laurent,
 
-Well... I admit I've only really looked at the patches that impact 
-backlight but dispersing this really odd looking bit twiddling 
-throughout the kernel doesn't strike me a great API design.
+On Thu, Feb 22, 2018 at 02:14:53PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> On Thursday, 22 February 2018 14:04:12 EET jacopo mondi wrote:
+> > On Wed, Feb 21, 2018 at 10:28:06PM +0200, Laurent Pinchart wrote:
+> > > On Tuesday, 20 February 2018 10:58:57 EET jacopo mondi wrote:
+> > > > On Mon, Feb 19, 2018 at 09:19:32PM +0200, Laurent Pinchart wrote:
+> > > > > On Monday, 19 February 2018 18:59:44 EET Jacopo Mondi wrote:
+> > > > >> The sensor driver sets mbus format colorspace information and sizes,
+> > > > >> but not ycbcr encoding, quantization and xfer function. When supplied
+> > > > >> with an badly initialized mbus frame format structure, those fields
+> > > > >> need to be set explicitly not to leave them uninitialized. This is
+> > > > >> tested by v4l2-compliance, which supplies a mbus format description
+> > > > >> structure and checks for all fields to be properly set.
+> > > > >>
+> > > > >> Without this commit, v4l2-compliance fails when testing formats with:
+> > > > >> fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+> > > > >>
+> > > > >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > >> ---
+> > > > >>
+> > > > >>  drivers/media/i2c/ov7670.c | 4 ++++
+> > > > >>  1 file changed, 4 insertions(+)
+> > > > >>
+> > > > >> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> > > > >> index 25b26d4..61c472e 100644
+> > > > >> --- a/drivers/media/i2c/ov7670.c
+> > > > >> +++ b/drivers/media/i2c/ov7670.c
+> > > > >> @@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct
+> > > > >> v4l2_subdev
+> > > > >> *sd, fmt->height = wsize->height;
+> > > > >>
+> > > > >>  	fmt->colorspace = ov7670_formats[index].colorspace;
+> > > > >
+> > > > > On a side note, if I'm not mistaken the colorspace field is set to
+> > > > > SRGB
+> > > > > for all entries. Shouldn't you hardcode it here and remove the field ?
+> > > > >
+> > > > >> +	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
+> > > > >> +	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
+> > > > >> +	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
+> > > > >
+> > > > > How about setting the values explicitly instead of relying on defaults
+> > > > > ?
+> > > > > That would be V4L2_YCBCR_ENC_601, V4L2_QUANTIZATION_LIM_RANGE and
+> > > > > V4L2_XFER_FUNC_SRGB. And could you then check a captured frame to see
+> > > > > if
+> > > > > the sensor outputs limited or full range ?
+> > > >
+> > > > This actually makes me wonder if those informations (ycbcb_enc,
+> > > > quantization and xfer_func) shouldn't actually be part of the
+> > > > supported format list... I blindly added those default fields in the
+> > > > try_fmt function, but I doubt they applies to all supported formats.
+> > > >
+> > > > Eg. the sensor supports YUYV as well as 2 RGB encodings (RGB444 and
+> > > > RGB 565) and 1 raw format (BGGR). I now have a question here:
+> > > >
+> > > > 1) ycbcr_enc transforms non-linear R'G'B' to Y'CbCr: does this
+> > > > applies to RGB and raw formats? I don't think so, and what value is
+> > > > the correct one for the ycbcr_enc field in this case? I assume
+> > > > xfer_func and quantization applies to all formats instead..
+> > >
+> > > There's no encoding for RGB formats if I understand things correctly, so
+> > > I'd set ycbcr_enc to V4L2_YCBCR_ENC_DEFAULT. The transfer function and
+> > > the quantization apply to all formats, but I'd be surprised to find a
+> > > sensor outputting limited range for RGB.
+> >
+> > Ack, we got the same understanding for RGB formats. I wonder if for
+> > those formats we wouldn't need a V4L2_YCBCR_ENC_NONE or similar...
+>
+> That, or explicitly documenting that when the format is not YUV the field
+> should be set by both drivers and applications to V4L2_YCBCR_ENC_DEFAULT when
+> written and ignored when read.
+>
 
-IMHO callers should not be required to find the first set bit in
-some specially crafted set of capability bits simply to get sane 
-default behaviour.
+Well, if no encoding is performed because the color encoding scheme is
+RGB, the colorspace does anyway define an encoding method, so it seems
+to me the latter is more appropriate (use DEFAULT and ignore when read).
 
+That's anyway just my opinion, but I could send a patch for
+documentation and see what feedback it gets.
 
-Daniel.
+> > > Have you been able to check whether the sensor outputs limited range of
+> > > full range YUV ? If it outputs full range you can hardcode quantization
+> > > to V4L2_QUANTIZATION_FULL_RANGE for all formats.
+> >
+> > In YUYV mode, I see values > 0xf0 ( > 240, which is the max value for
+> > CbCr samples in limited quantization range), so I assume quantization
+> > is full range.
+>
+> It should be, yes. What's the minimum and maximum values you get ?
 
+>From a white surface:
+min = 0x39
+max = 0xfc
 
+>From a black surface:
+min = 0x00 (with 62 occurrences)
+max = 0x8b
 
+I guess that's indeed full range quantization
 
->  	if (duty)
->  		pwm_enable(pchip->pwmd);
->  	else
-> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
-> index 939f057836e1..3d274c604862 100644
-> --- a/drivers/video/backlight/lp855x_bl.c
-> +++ b/drivers/video/backlight/lp855x_bl.c
-> @@ -240,6 +240,7 @@ static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
->  	unsigned int period = lp->pdata->period_ns;
->  	unsigned int duty = br * period / max_br;
->  	struct pwm_device *pwm;
-> +	struct pwm_caps caps = { };
->  
->  	/* request pwm device with the consumer name */
->  	if (!lp->pwm) {
-> @@ -256,7 +257,8 @@ static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
->  		pwm_apply_args(pwm);
->  	}
->  
-> -	pwm_config(lp->pwm, duty, period);
-> +	pwm_get_caps(lp->pwm->chip, lp->pwm, &caps);
-> +	pwm_config(lp->pwm, duty, period, BIT(ffs(caps.modes) - 1));
->  	if (duty)
->  		pwm_enable(lp->pwm);
->  	else
-> diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
-> index cf869ec90cce..06de3163650d 100644
-> --- a/drivers/video/backlight/lp8788_bl.c
-> +++ b/drivers/video/backlight/lp8788_bl.c
-> @@ -128,6 +128,7 @@ static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
->  	unsigned int duty;
->  	struct device *dev;
->  	struct pwm_device *pwm;
-> +	struct pwm_caps caps = { };
->  
->  	if (!bl->pdata)
->  		return;
-> @@ -153,7 +154,9 @@ static void lp8788_pwm_ctrl(struct lp8788_bl *bl, int br, int max_br)
->  		pwm_apply_args(pwm);
->  	}
->  
-> -	pwm_config(bl->pwm, duty, period);
-> +	pwm_get_caps(bl->pwm->chip, bl->pwm, &caps);
-> +
-> +	pwm_config(bl->pwm, duty, period, BIT(ffs(caps.modes) - 1));
->  	if (duty)
->  		pwm_enable(bl->pwm);
->  	else
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index 1c2289ddd555..706a9ab053a7 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -63,10 +63,14 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
->  
->  static void pwm_backlight_power_off(struct pwm_bl_data *pb)
->  {
-> +	struct pwm_caps caps = { };
-> +
->  	if (!pb->enabled)
->  		return;
->  
-> -	pwm_config(pb->pwm, 0, pb->period);
-> +	pwm_get_caps(pb->pwm->chip, pb->pwm, &caps);
-> +
-> +	pwm_config(pb->pwm, 0, pb->period, BIT(ffs(caps.modes) - 1));
->  	pwm_disable(pb->pwm);
->  
->  	if (pb->enable_gpio)
-> @@ -96,6 +100,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->  {
->  	struct pwm_bl_data *pb = bl_get_data(bl);
->  	int brightness = bl->props.brightness;
-> +	struct pwm_caps caps = { };
->  	int duty_cycle;
->  
->  	if (bl->props.power != FB_BLANK_UNBLANK ||
-> @@ -108,7 +113,9 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
->  
->  	if (brightness > 0) {
->  		duty_cycle = compute_duty_cycle(pb, brightness);
-> -		pwm_config(pb->pwm, duty_cycle, pb->period);
-> +		pwm_get_caps(pb->pwm->chip, pb->pwm, &caps);
-> +		pwm_config(pb->pwm, duty_cycle, pb->period,
-> +			   BIT(ffs(caps.modes) - 1));
->  		pwm_backlight_power_on(pb, brightness);
->  	} else
->  		pwm_backlight_power_off(pb);
-> diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-> index f599520374dd..4b57dcb5799a 100644
-> --- a/drivers/video/fbdev/ssd1307fb.c
-> +++ b/drivers/video/fbdev/ssd1307fb.c
-> @@ -308,7 +308,8 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
->  
->  		par->pwm_period = pargs.period;
->  		/* Enable the PWM */
-> -		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period);
-> +		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period,
-> +			   pargs.mode);
->  		pwm_enable(par->pwm);
->  
->  		dev_dbg(&par->client->dev, "Using PWM%d with a %dns period.\n",
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index e62349f48129..0ba416ab2772 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -357,11 +357,12 @@ int pwm_adjust_config(struct pwm_device *pwm);
->   * @pwm: PWM device
->   * @duty_ns: "on" time (in nanoseconds)
->   * @period_ns: duration (in nanoseconds) of one cycle
-> + * @mode: PWM mode
->   *
->   * Returns: 0 on success or a negative error code on failure.
->   */
->  static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> -			     int period_ns)
-> +			     int period_ns, unsigned long mode)
->  {
->  	struct pwm_state state;
->  
-> @@ -377,6 +378,7 @@ static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
->  
->  	state.duty_cycle = duty_ns;
->  	state.period = period_ns;
-> +	state.mode = mode;
->  	return pwm_apply_state(pwm, &state);
->  }
->  
-> @@ -537,7 +539,7 @@ static inline int pwm_adjust_config(struct pwm_device *pwm)
->  }
->  
->  static inline int pwm_config(struct pwm_device *pwm, int duty_ns,
-> -			     int period_ns)
-> +			     int period_ns, unsigned long mode)
->  {
->  	return -EINVAL;
->  }
-> -- 
-> 2.7.4
-> 
+>
+> > Actually the hardest part here was having a white enough surface to
+> > point the sensor to :)
+>
+> Pointing a flashlight to the sensor usually does the trick.
+
+I had a yellowish light that didn't work that well, I ended up putting
+a white paper sheet in front of it and then took the picture.
+
+Thanks
+  j
+
+>
+> > >>>>  	info->format = *fmt;
+> > >>>>
+> > >>>>  	return 0;
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
