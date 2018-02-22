@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751460AbeBVUhM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:37:12 -0500
-Received: from mga09.intel.com ([134.134.136.24]:49853 "EHLO mga09.intel.com"
+        id S1751531AbeBVUhV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:37:21 -0500
+Received: from mga17.intel.com ([192.55.52.151]:38777 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751411AbeBVUhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:37:07 -0500
+        id S1751463AbeBVUhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 15:37:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,378,1515484800";
-   d="scan'208";a="19605599"
-Subject: [RFC][PATCH 04/10] x86/espfix: use kernel-default PTE mask
+   d="scan'208";a="36730235"
+Subject: [RFC][PATCH 09/10] x86/pti: enable global pages for shared areas
 To: linux-kernel@vger.kernel.org
 Cc: Dave Hansen <dave.hansen@linux.intel.com>, aarcange@redhat.com,
         luto@kernel.org, torvalds@linux-foundation.org, keescook@google.com,
         hughd@google.com, jgross@suse.com, x86@kernel.org, namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Thu, 22 Feb 2018 12:36:58 -0800
+Date: Thu, 22 Feb 2018 12:37:05 -0800
 References: <20180222203651.B776810C@viggo.jf.intel.com>
 In-Reply-To: <20180222203651.B776810C@viggo.jf.intel.com>
-Message-Id: <20180222203658.80705136@viggo.jf.intel.com>
+Message-Id: <20180222203705.E4AE8A0B@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -28,11 +28,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-In creating its page tables, the espfix code masks its PGTABLE_PROT
-value with the supported mask: __supported_pte_mask.  This ensures
-that unsupported bits are not set in the final PTE.  But, it also
-sets _PAGE_GLOBAL which we do not want for PTE.  Use
-__default_kernel_pte_mask instead which clears _PAGE_GLOBAL for PTI.
+The entry/exit text and cpu_entry_area are mapped into userspace and
+the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
+TLB misses.
+
+Add the _PAGE_GLOBAL flag for these areas.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -45,19 +45,55 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/kernel/espfix_64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ b/arch/x86/mm/cpu_entry_area.c |   10 +++++++++-
+ b/arch/x86/mm/pti.c            |    9 ++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff -puN arch/x86/kernel/espfix_64.c~espfix-use-kern-defaults-not-supported arch/x86/kernel/espfix_64.c
---- a/arch/x86/kernel/espfix_64.c~espfix-use-kern-defaults-not-supported	2018-02-22 12:36:19.217036552 -0800
-+++ b/arch/x86/kernel/espfix_64.c	2018-02-22 12:36:19.221036552 -0800
-@@ -167,7 +167,7 @@ void init_espfix_ap(int cpu)
- 		goto unlock_done;
+diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
+--- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-02-22 12:36:22.067036545 -0800
++++ b/arch/x86/mm/cpu_entry_area.c	2018-02-22 12:36:22.072036545 -0800
+@@ -27,8 +27,16 @@ EXPORT_SYMBOL(get_cpu_entry_area);
+ void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
+ {
+ 	unsigned long va = (unsigned long) cea_vaddr;
++	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
  
- 	node = cpu_to_node(cpu);
--	ptemask = __supported_pte_mask;
-+	ptemask = __default_kernel_pte_mask;
+-	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
++	/*
++	 * The cpu_entry_area is shared between the user and kernel
++	 * page tables.  All of its ptes can safely be global.
++	 */
++	if (boot_cpu_has(X86_FEATURE_PGE))
++		pte = pte_set_flags(pte, _PAGE_GLOBAL);
++
++	set_pte_vaddr(va, pte);
+ }
  
- 	pud_p = &espfix_pud_page[pud_index(addr)];
- 	pud = *pud_p;
+ static void __init
+diff -puN arch/x86/mm/pti.c~kpti-why-no-global arch/x86/mm/pti.c
+--- a/arch/x86/mm/pti.c~kpti-why-no-global	2018-02-22 12:36:22.069036545 -0800
++++ b/arch/x86/mm/pti.c	2018-02-22 12:36:22.072036545 -0800
+@@ -300,6 +300,13 @@ pti_clone_pmds(unsigned long start, unsi
+ 			return;
+ 
+ 		/*
++		 * Setting 'target_pmd' below creates a mapping in both
++		 * the user and kernel page tables.  It is effectively
++		 * global, so set it as global in both copies.
++		 */
++		*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
++
++		/*
+ 		 * Copy the PMD.  That is, the kernelmode and usermode
+ 		 * tables will share the last-level page tables of this
+ 		 * address range
+@@ -348,7 +355,7 @@ static void __init pti_clone_entry_text(
+ {
+ 	pti_clone_pmds((unsigned long) __entry_text_start,
+ 			(unsigned long) __irqentry_text_end,
+-		       _PAGE_RW | _PAGE_GLOBAL);
++		       _PAGE_RW);
+ }
+ 
+ /*
 _
