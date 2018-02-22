@@ -1,314 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933630AbeBVSNC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 13:13:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40160 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933441AbeBVSNA (ORCPT
+        id S933639AbeBVSPc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 13:15:32 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:54337 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933572AbeBVSPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 13:13:00 -0500
-Date: Thu, 22 Feb 2018 10:13:17 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Daniel Lustig <dlustig@nvidia.com>
-Cc: Andrea Parri <parri.andrea@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
- spin_unlock()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
- <20180222134004.GN25181@hirez.programming.kicks-ass.net>
- <20180222141249.GA14033@andrea>
- <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+        Thu, 22 Feb 2018 13:15:30 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <878tbmf5vl.fsf@xmission.com>
+        <20180221202908.17258-2-ebiederm@xmission.com>
+        <CAOssrKeYuVj6ZWUrXp7R_d+wdoArnJ=mhRp22qE9JBW3x-7tfw@mail.gmail.com>
+Date: Thu, 22 Feb 2018 12:15:00 -0600
+In-Reply-To: <CAOssrKeYuVj6ZWUrXp7R_d+wdoArnJ=mhRp22qE9JBW3x-7tfw@mail.gmail.com>
+        (Miklos Szeredi's message of "Thu, 22 Feb 2018 11:26:22 +0100")
+Message-ID: <87eflc99i3.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18022218-0044-0000-0000-000003E89529
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008577; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00993540; UDB=6.00504855; IPR=6.00772881;
- MB=3.00019692; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 18:12:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022218-0045-0000-0000-000008189BE3
-Message-Id: <20180222181317.GI2855@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802220227
+Content-Type: text/plain
+X-XM-SPF: eid=1eovOy-0008QZ-17;;;mid=<87eflc99i3.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+rdQsGNLPsudJqu0NcswWQsKhFpeBCQY0=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 305 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.8 (1.2%), b_tie_ro: 2.7 (0.9%), parse: 0.73 (0.2%),
+        extract_message_metadata: 10 (3.4%), get_uri_detail_list: 2.2 (0.7%),
+        tests_pri_-1000: 4.5 (1.5%), tests_pri_-950: 1.07 (0.3%), tests_pri_-900:
+        1.00 (0.3%), tests_pri_-400: 26 (8.7%), check_bayes: 25 (8.3%), b_tokenize: 8
+        (2.5%), b_tok_get_all: 9 (2.8%), b_comp_prob: 2.1 (0.7%), b_tok_touch_all:
+        4.2 (1.4%), b_finish: 0.80 (0.3%), tests_pri_0: 251 (82.3%),
+        check_dkim_signature: 0.41 (0.1%), check_dkim_adsp: 2.9 (0.9%),
+        tests_pri_500: 3.3 (1.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v6 2/5] fuse: Fail all requests with invalid uids or gids
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 09:27:09AM -0800, Daniel Lustig wrote:
-> On 2/22/2018 6:12 AM, Andrea Parri wrote:
-> > On Thu, Feb 22, 2018 at 02:40:04PM +0100, Peter Zijlstra wrote:
-> >> On Thu, Feb 22, 2018 at 01:19:50PM +0100, Andrea Parri wrote:
-> >>
-> >>> C unlock-lock-read-ordering
-> >>>
-> >>> {}
-> >>> /* s initially owned by P1 */
-> >>>
-> >>> P0(int *x, int *y)
-> >>> {
-> >>> 	WRITE_ONCE(*x, 1);
-> >>> 	smp_wmb();
-> >>> 	WRITE_ONCE(*y, 1);
-> >>> }
-> >>>
-> >>> P1(int *x, int *y, spinlock_t *s)
-> >>> {
-> >>> 	int r0;
-> >>> 	int r1;
-> >>>
-> >>> 	r0 = READ_ONCE(*y);
-> >>> 	spin_unlock(s);
-> >>> 	spin_lock(s);
-> >>> 	r1 = READ_ONCE(*y);
-> >>> }
-> >>>
-> >>> exists (1:r0=1 /\ 1:r1=0)
-> >>>
-> >>> RISCV RISCV-unlock-lock-read-ordering
-> >>> {
-> >>> 0:x2=x; 0:x4=y;
-> >>> 1:x2=y; 1:x4=x; 1:x6=s;
-> >>> s=1;
-> >>> }
-> >>>  P0           |  P1                      ;
-> >>>  ori x1,x0,1  | lw x1,0(x2)              ;
-> >>>  sw x1,0(x2)  | amoswap.w.rl x0,x0,(x6)  ;
-> >>>  fence w,w    | ori x5,x0,1              ;
-> >>>  ori x3,x0,1  | amoswap.w.aq x0,x5,(x6)  ;
-> >>>  sw x3,0(x4)  | lw x3,0(x4)              ;
-> >>> exists
-> >>> (1:x1=1 /\ 1:x3=0)
-> >>
-> >> So I would indeed expect this to be forbidden. Could someone please
-> >> explain how this could be allowed?
-> > 
-> > As mentioned in IRC, my understanding here is only based on the spec.
-> > referred below and on its (available) formalizations.  I expect that
-> > RISC-V people will be able to provide more information.
-> 
-> I think an RCpc interpretation of .aq and .rl would in fact allow
-> the two normal loads in P1 to be reordered.  Wouldn't it?  Does that
-> go against what the LKMM requires?
-> 
-> The intuition would be that the amoswap.w.aq can forward from the
-> amoswap.w.rl while that's still in the store buffer, and then the
-> lw x3,0(x4) can also perform while the amoswap.w.rl is still in
-> the store buffer, all before the l1 x1,0(x2) executes.  That's
-> not forbidden unless the amoswaps are RCsc, unless I'm missing
-> something.
-> 
-> Likewise even if the unlock()/lock() is between two stores.  A
-> control dependency might originate from the load part of the
-> amoswap.w.aq, but there still would have to be something to
-> ensure that this load part in fact performs after the store
-> part of the amoswap.w.rl performs globally, and that's not
-> automatic under RCpc.
-> 
-> In any case, our concern that amoswap.w.rl and amoswap.w.aq might
-> not actually be sufficient for spin_unlock() and spin_lock() was
-> what prompted us to start our own internal discussion on this.
-> 
-> FWIW we have made a few clarifications to our spec that haven't
-> propagated to the public upstream yet, but that should be happening
-> soon.  In any case as it relates to the questions here, it's
-> more a matter of us deciding what we should put into the spec in
-> the end than it is a matter of checking the current text.  In
-> other words, we're still finalizing things, and there's still
-> some time to tweak as necessary.
-> 
-> >>
-> >>> C unlock-lock-write-ordering
-> >>>
-> >>> {}
-> >>> /* s initially owned by P0 */
-> >>>
-> >>> P0(int *x, int *y, spinlock_t *s)
-> >>> {
-> >>> 	WRITE_ONCE(*x, 1);
-> >>> 	spin_unlock(s);
-> >>> 	spin_lock(s);
-> >>> 	WRITE_ONCE(*y, 1);
-> >>> }
-> >>>
-> >>> P1(int *x, int *y)
-> >>> {
-> >>> 	int r0;
-> >>> 	int r1;
-> >>>
-> >>> 	r0 = READ_ONCE(*y);
-> >>> 	smp_rmb();
-> >>> 	r1 = READ_ONCE(*y);
-> >>> }
-> >>>
-> >>> exists (1:r0=1 /\ 1:r1=0)
-> >>>
-> >>> RISCV RISCV-unlock-lock-write-ordering
-> >>> {
-> >>> 0:x2=x; 0:x4=y; 0:x6=s;
-> >>> 1:x2=y; 1:x4=x;
-> >>> s=1;
-> >>> }
-> >>>  P0                       | P1           ;
-> >>>  ori x1,x0,1              | lw x1,0(x2)  ;
-> >>>  sw x1,0(x2)              | fence r,r    ;
-> >>>  amoswap.w.rl x0,x0,(x6)  | lw x3,0(x4)  ;
-> >>>  ori x5,x0,1              |              ;
-> >>>  amoswap.w.aq x0,x5,(x6)  |              ;
-> >>>  ori x3,x0,1              |              ;
-> >>>  sw x3,0(x4)              |              ;
-> >>> exists
-> >>> (1:x1=1 /\ 1:x3=0)
-> >>
-> >> And here I think the RISCV conversion is flawed, there should be a ctrl
-> >> dependency. The second store-word in P0 should depend on the result of
-> >> amoswap.w.aq being 0.
-> > 
-> > You're right: AFAICT, this can be remedied by inserting "beq x0,x5,FAIL00"
-> > right after amoswap.w.aq (and this label at the end of P0); this does not
-> > change the verdict of the available formalizations reported above however.
-> > 
-> > (So, AFAICT, the above question remains valid/open.)
-> 
-> This makes sense, but one other question: Paul mentioned earlier in the
-> thread that
-> 
-> > The PowerPC lock implementation's unlock-lock pair does not order writes
-> > from the previous critical section against reads from the later critical
-> > section, but it does order other combinations of reads and writes.
-> 
-> My understanding is that the same logic about control dependencies applies
-> here too, right?  In other words, in spite of Peter's claim, the control
-> dependency doesn't automatically fix this for RISC-V or for PowerPC?
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-For PowerPC, an lwsync instruction is used, which means that an external
-obsserver can see a write from an earlier critical section being
-reordered with a read from a later critical section, but no other
-combination of reads and writes can be so reordered.
+> On Wed, Feb 21, 2018 at 9:29 PM, Eric W. Biederman
+> <ebiederm@xmission.com> wrote:
+>> Upon a cursory examinination the uid and gid of a fuse request are
+>> necessary for correct operation.  Failing a fuse request where those
+>> values are not reliable seems a straight forward and reliable means of
+>> ensuring that fuse requests with bad data are not sent or processed.
+>>
+>> In most cases the vfs will avoid actions it suspects will cause
+>> an inode write back of an inode with an invalid uid or gid.  But that does
+>> not map precisely to what fuse is doing, so test for this and solve
+>> this at the fuse level as well.
+>>
+>> Performing this work in fuse_req_init_context is cheap as the code is
+>> already performing the translation here and only needs to check the
+>> result of the translation to see if things are not representable in
+>> a form the fuse server can handle.
+>>
+>> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+>> ---
+>>  fs/fuse/dev.c | 20 +++++++++++++-------
+>>  1 file changed, 13 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index 0fb58f364fa6..216db3f51a31 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -112,11 +112,13 @@ static void __fuse_put_request(struct fuse_req *req)
+>>         refcount_dec(&req->count);
+>>  }
+>>
+>> -static void fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
+>> +static bool fuse_req_init_context(struct fuse_conn *fc, struct fuse_req *req)
+>>  {
+>> -       req->in.h.uid = from_kuid_munged(&init_user_ns, current_fsuid());
+>> -       req->in.h.gid = from_kgid_munged(&init_user_ns, current_fsgid());
+>> +       req->in.h.uid = from_kuid(&init_user_ns, current_fsuid());
+>> +       req->in.h.gid = from_kgid(&init_user_ns, current_fsgid());
+>>         req->in.h.pid = pid_nr_ns(task_pid(current), fc->pid_ns);
+>> +
+>> +       return (req->in.h.uid != ((uid_t)-1)) && (req->in.h.gid != ((gid_t)-1));
+>>  }
+>>
+>>  void fuse_set_initialized(struct fuse_conn *fc)
+>> @@ -162,12 +164,13 @@ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
+>>                         wake_up(&fc->blocked_waitq);
+>>                 goto out;
+>>         }
+>> -
+>> -       fuse_req_init_context(fc, req);
+>>         __set_bit(FR_WAITING, &req->flags);
+>>         if (for_background)
+>>                 __set_bit(FR_BACKGROUND, &req->flags);
+>> -
+>> +       if (unlikely(!fuse_req_init_context(fc, req))) {
+>> +               fuse_put_request(fc, req);
+>> +               return ERR_PTR(-EOVERFLOW);
+>> +       }
+>>         return req;
+>>
+>>   out:
+>> @@ -256,9 +259,12 @@ struct fuse_req *fuse_get_req_nofail_nopages(struct fuse_conn *fc,
+>>         if (!req)
+>>                 req = get_reserved_req(fc, file);
+>>
+>> -       fuse_req_init_context(fc, req);
+>>         __set_bit(FR_WAITING, &req->flags);
+>>         __clear_bit(FR_BACKGROUND, &req->flags);
+>> +       if (unlikely(!fuse_req_init_context(fc, req))) {
+>> +               fuse_put_request(fc, req);
+>> +               return ERR_PTR(-EOVERFLOW);
+>> +       }
+>
+> I think failing the "_nofail" variant is the wrong thing to do.  This
+> is called to allocate a FLUSH request on close() and in readdirplus to
+> allocate a FORGET request.  Failing the latter results in refcount
+> leak in userspace.   Failing the former results in missing unlock on
+> close() of posix locks.
 
-I will dig up PowerPC litmus tests demonstrating this and send them
-along.
+Doh!  You are quite correct.
 
-> >> (strictly speaking there should be a ctrl-dep in the read example too,
-> >> except it'd be pointless for ordering reads, so I accept it being left
-> >> out)
-> >>
-> >> Again, I cannot see how this could be allowed.
-> >>
-> 
-> Peter, in this test you mentioned earlier:
-> 
-> P0()
-> {
-> 	WRITE_ONCE(x, 1);
-> 	smp_store_release(&y, 1);
-> 	r0 = smp_load_acquire(&y);
-> 	WRITE_ONCE(z, 1);
-> }
-> 
-> P1()
-> {
-> 	r1 = READ_ONCE(z);
-> 	smp_rmb();
-> 	r2 = READ_ONCE(x);
-> }
-> 
-> exists: r0 == 1 /\ r1==1 /\ r2==0
-> 
-> You expect this to be forbidden too, even if the release and acquire
-> are RCpc?  This part I don't follow.  There's no conditional branch
-> here to enforce a control dependency.  I get and I agree that
-> smp_store_release/smp_load_acquire are different than spin_unlock/
-> spin_lock, but isn't that even more reason to allow this one if
-> smp_store_release/smp_load_acquire are RCpc without question?
+Modifying fuse_get_req_nofail_nopages to fail is a bug.
 
-Here is the above test, reworked a bit to allow herd to accept it:
+I am thinking the proper solution is to write:
 
-------------------------------------------------------------------------
+    static void fuse_req_init_context_nofail(struct fuse_req *req)
+    {
+            req->in.h.uid = 0;
+            req->in.h.gid = 0;
+            req->in.h.pid = 0;
+    }
 
-C C-peterz
+And use that in the nofail case.  As it appears neither flush nor
+the eviction of inodes is a user space triggered action and as such
+user space identifiers are nonsense in those cases.
 
-{
-}
+I will respin this patch shortly.
 
-P0(int *x, int *y, int *z)
-{
-	int r0;
-
-	WRITE_ONCE(*x, 1);
-	smp_store_release(y, 1);
-	r0 = smp_load_acquire(y);
-	WRITE_ONCE(*z, 1);
-}
-
-P1(int *x, int *y, int *z)
-{
-	int r1;
-	int r2;
-
-	r1 = READ_ONCE(*z);
-	smp_rmb();
-	r2 = READ_ONCE(*x);
-}
-
-exists (0:r0 == 1 /\ 1:r1==1 /\ 1:r2==0)
-
-------------------------------------------------------------------------
-
-Please let me know if I messed up the conversion.  On the perhaps unlikely
-chance that I got it right, here is what the current version of the
-Linux-kernel memory model says:
-
-------------------------------------------------------------------------
-
-$ herd7 -conf linux-kernel.cfg /tmp/C-peterz.litmus 
-Test C-peterz Allowed
-States 4
-0:r0=1; 1:r1=0; 1:r2=0;
-0:r0=1; 1:r1=0; 1:r2=1;
-0:r0=1; 1:r1=1; 1:r2=0;
-0:r0=1; 1:r1=1; 1:r2=1;
-Ok
-Witnesses
-Positive: 1 Negative: 3
-Condition exists (0:r0=1 /\ 1:r1=1 /\ 1:r2=0)
-Observation C-peterz Sometimes 1 3
-Time C-peterz 0.01
-Hash=6c4f7f8a8dc750fd5d706d6f3c104360
-
-------------------------------------------------------------------------
-
-So the current Linux-kernel memory model does in fact allow this, as
-you say.  But again, there is a proposal to tighten the Linux-kernel
-memory model based on the pre-RISC-V set of architectures running the
-Linux kernel, all of which would forbid this test.
-
-So we have something that is not all that rare in the Linux kernel
-community, namely two conflicting more-or-less concurrent changes.
-This clearly needs to be resolved, either by us not strengthening the
-Linux-kernel memory model in the way we were planning to or by you
-strengthening RISC-V to be no weaker than PowerPC for these sorts of
-externally viewed release-acquire situations.
-
-Other thoughts?
-
-							Thanx, Paul
+Eric
