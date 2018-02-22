@@ -1,47 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeBVKL5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:11:57 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40141 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbeBVKLz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:11:55 -0500
-X-Google-Smtp-Source: AH8x227Fe2LbY2hh6wYUQOJt4B0DhVQwNHK5P6rWUhhuPvbhLUewyVPMrxuaJIvCOcgVAeKE6A7kjA==
-Subject: Re: [PATCH 06/13] clocksource: Remove metag generic timer driver
-To: James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-References: <20180221233825.10024-1-jhogan@kernel.org>
- <20180221233825.10024-7-jhogan@kernel.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <aa34648c-5fff-b47f-674c-135611d0ff75@linaro.org>
-Date: Thu, 22 Feb 2018 11:11:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180221233825.10024-7-jhogan@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1753323AbeBVKNU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:13:20 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:46965 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752961AbeBVKNT (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Thu, 22 Feb 2018 05:13:19 -0500
+Message-Id: <5A8EA5CD02000078001AA4CA@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Thu, 22 Feb 2018 03:13:17 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Ingo Molnar" <mingo@kernel.org>
+Cc: <mingo@elte.hu>, <tglx@linutronix.de>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: Re: [PATCH v2] x86: consider effective protection attributes
+ in W+X check
+References: <5A8D917302000078001AA055@prv-mh.provo.novell.com>
+ <20180221165344.ioxrxbsd6kkrhr2v@gmail.com>
+In-Reply-To: <20180221165344.ioxrxbsd6kkrhr2v@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/2018 00:38, James Hogan wrote:
-> Now that arch/metag/ has been removed, remove the metag generic
-> per-thread timer driver. It is of no value without the architecture
-> code.
+>>> On 21.02.18 at 17:53, <mingo@kernel.org> wrote:
+
+> * Jan Beulich <JBeulich@suse.com> wrote:
 > 
-> Signed-off-by: James Hogan <jhogan@kernel.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-metag@vger.kernel.org
+>> Using just the leaf page table entry flags would cause a false warning
+>> in case _PAGE_RW is clear or _PAGE_NX is set in a higher level entry.
+>> Hand through both the current entry's flags as well as the accumulated
+>> effective value (the latter as pgprotval_t instead of pgprot_t, as it's
+>> not an actual entry's value).
+>> 
+>> This in particular eliminates the false W+X warning when running under
+>> Xen, as commit 2cc42bac1c ("x86-64/Xen: eliminate W+X mappings") has to
+>> make the necessary adjustment in L2 rather than L1 (the reason is
+>> explained there). I.e. _PAGE_RW is clear there in L1, but _PAGE_NX is
+>> set in L2.
+>> 
+>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+>> Reviewed-by: Juergen Gross <jgross@suse.com>
+>> ---
+>> v2: Re-base onto tip tree. Add Xen related paragraph to description.
+>> ---
+>>  arch/x86/mm/dump_pagetables.c |   92 
+> ++++++++++++++++++++++++++----------------
+>>  1 file changed, 57 insertions(+), 35 deletions(-)
+> 
+> There's a build failure with CONFIG_KASAN=y enabled:
+> 
+>  arch/x86/mm/dump_pagetables.c: In function ‘kasan_page_table’:
+>  arch/x86/mm/dump_pagetables.c:365:3: error: too few arguments to function ‘note_page’
+>  arch/x86/mm/dump_pagetables.c:238:13: note: declared here
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Oh, I see. Question though is what to pass as the extra argument:
+Do I need to pass in the caller's effective rights, or should I take
+kasan_page_table()'s checking against kasan_zero_p?d as an
+indication that the effective permission is zero here? I'm sorry for
+this probably trivial question, but I know nothing about how KASAN
+works.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Jan
