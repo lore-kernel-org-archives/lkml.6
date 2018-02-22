@@ -1,111 +1,78 @@
-Return-Path: <clabbe@baylibre.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519287572; cv=none;
+Return-Path: <boqun.feng@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519283235; cv=none;
         d=google.com; s=arc-20160816;
-        b=YOhv0OO1IfI9WMo5WrfY5msREMdrGngjhtM4pxhGpMw2XV03IiDMB/Pjdn/gIYexID
-         zjojGxbglnwdCfbBDulh8DVxQ6trQwfN4IJTGYHyPm52LyD6/e6ThU0IJDVbY9JXDPwU
-         QmjIN+yHQhtw2O12Aqz5yGjowoxenbFZXWyybF+ipd0fCtlY+zmuHplgjL36ragRfN8C
-         7f/1rvaSDMUVdLDJGUt4JaTtGtyMYkP6UbN/SE/XeT7f5Ij+U2IXQSa4uE/5ht0D9XQI
-         xc1yk4h4bx1PcVLpmYmhWW0sAxnmWNIb7uvpXAHHe60VAnF/GdNHNUjgmAZbz0WhlPjP
-         9VFg==
+        b=qrrOFF2iZ3bUZ0R9UcNI5z+qmn8fCOoOVMyb+FDJBoSgpPa/C10N6cFbJqbWL8rzto
+         pxJpwT7wPHbkhECR7uh6pvasB9Yc5l6KCUAfbuaSS/ohhcwwyc6cNu654uzlbWTH2j7S
+         fom/afMWKhQDDymFC9LJulop4gc4W1mzOrg7jJwq5SLx5R2QyY6HOkAZuqHgs9vNS14W
+         88BmNsPNnk9HWzKF9QS1wAe6mHOqyiyaNEFXmtO5k+Ud7MYtpabkkwXxUpvl2tOGXrAw
+         TMkjNbCA7SnaLKwxfCM7yrwwrCZf30XxDoLrxtQuycT0huwsQ7cAMigyxxhHZDOib5WK
+         7+hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=tQMR2CuQ2B4vVkE68zzbCpDRmLF5Nm8pq41ugb/Bjtg=;
-        b=w5vcJrJMC8Hy8/28xNG+C2ehvKc0WJFMsgbKGCvt+rwMitAy+5OYiP5rKYQ8M8QW5R
-         d4S0SPH4rXl1OVn5ZFkvCNAqIQps8+RaBgqNTeS5hnl1RTkeeST+nibavsSV0gMqS6zf
-         lEOIIZLz1yk3ZvPBw48NhyBGOBxkbgImCcO0u56+cOnnT8YWncraMtgvyWvwxHyRbUry
-         dcdHXgkBqkAIOSVwI8eqkrIceRbRQKXIS/OfJnugif0WBrX/jZMGbguWGJuX94GeIIYe
-         LpXAt7TzMTSeO3q2Zsv+H0TlJD6UI5Uk9K/fynrQWbGHscb3oAps8BXFwa2y1o5cD+dR
-         VAgA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=0r+0UU3ixP6WXvIe2gFv0V205M1lcSGDAFsB9aZ0oyM=;
+        b=xtaBJef/aY5gazGzG9DNUKNiuSq310IwQgKOlyDqvtPUkJFqhiAJFFRHP5/YIH1c3N
+         BxiKST7Lvr10rLIKy/6UZcAacrs7XDAaAf1W68tg+3bzoXxt/KlnnYOnV6TAhunBzpdC
+         jON8FutFA4cYlLU3UZr0LhlWQAzdcoOanupKCbH89fb1pDQM2B0k+Jn6lf2QLJoNSfjT
+         XejrI2QGdPwuOAGTYhE6eVOuuqzotyval6mL0KFGvmP3ywn1F4DGONlhDcvaFc6HUdZC
+         dU9V0b27zFzsA6NOUX8iNe5wHl25EFEeXGw5Anv9rX71IddBLCLWimsSQJaEjlghHEyD
+         q6hw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=ZuGtYpSm;
-       spf=softfail (google.com: domain of transitioning clabbe@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=clabbe@baylibre.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uA423sR0;
+       spf=pass (google.com: domain of boqun.feng@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=boqun.feng@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=ZuGtYpSm;
-       spf=softfail (google.com: domain of transitioning clabbe@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=clabbe@baylibre.com
-X-Google-Smtp-Source: AH8x227b7ZnEf+wQC9aZ02FoQR7qFRAZUAEsA8BtRq47gDSCJSB0TtUZGkyVrZuhV2aN1SrxZNBYow==
-From: Corentin Labbe <clabbe@baylibre.com>
-To: gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com
-Cc: devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] staging: media: atomisp: Remove inclusion of non-existing directories
-Date: Thu, 22 Feb 2018 08:19:25 +0000
-Message-Id: <1519287565-28485-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uA423sR0;
+       spf=pass (google.com: domain of boqun.feng@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=boqun.feng@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x227pCTNifFANDiB0bW1kgunqBQay6fYpWRWJtosbOcQDuzpyk11qDT5WlRp6nyh4Y6fazCidiw==
+X-ME-Sender: <xms:IGyOWi0sqav0WIP7sqsvu-M6qGml2tXiQuxP6gZgWqoZ55HQOeJHQw>
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [RFC tip/locking/lockdep v5 17/17] MAINTAINERS: Add myself as a LOCKING PRIMITIVES reviewer
+Date: Thu, 22 Feb 2018 15:09:04 +0800
+Message-Id: <20180222070904.548-18-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593088485992638899?=
-X-GMAIL-MSGID: =?utf-8?q?1593088485992638899?=
+X-GMAIL-THRID: =?utf-8?q?1593083938836146742?=
+X-GMAIL-MSGID: =?utf-8?q?1593083938836146742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch fix the following build warnings:
-  CC [M]  drivers/staging/media/atomisp/pci/atomisp2/atomisp_drvfs.o
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/bayer_ls/bayer_ls_1.0/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/io_ls/plane_io_ls/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/io_ls/yuv420_io_ls/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/ipu2_io_ls/plane_io_ls/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/ipu2_io_ls/yuv420_io_ls/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/s3a_stat_ls/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/scale/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/scale/scale_1.0/: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/yuv_ls: No such file or directory [-Wmissing-include-dirs]
-cc1: warning: drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/yuv_ls/yuv_ls_1.0/: No such file or directory [-Wmissing-include-dirs]
-by removing the inclusion of such directories
+Recursive read lock detection work touches most core part of lockdep, so
+add myself as a dedicated reviewer to help people find me if any of my
+code introduces problems or misunderstandings, also if they need my help
+on parsing logs related to recursive read locks.
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Besides, I'd like to provide any help for lock related code.
+
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- drivers/staging/media/atomisp/pci/atomisp2/Makefile | 10 ----------
- 1 file changed, 10 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/Makefile b/drivers/staging/media/atomisp/pci/atomisp2/Makefile
-index ac3805345f20..83f816faba1b 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/Makefile
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/Makefile
-@@ -215,7 +215,6 @@ INCLUDES += \
- 	-I$(atomisp)/css2400/isp/kernels/aa/aa_2/ \
- 	-I$(atomisp)/css2400/isp/kernels/anr/anr_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/anr/anr_2/ \
--	-I$(atomisp)/css2400/isp/kernels/bayer_ls/bayer_ls_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/bh/bh_2/ \
- 	-I$(atomisp)/css2400/isp/kernels/bnlm/ \
- 	-I$(atomisp)/css2400/isp/kernels/bnr/ \
-@@ -258,14 +257,10 @@ INCLUDES += \
- 	-I$(atomisp)/css2400/isp/kernels/io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/io_ls/bayer_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/io_ls/common/ \
--	-I$(atomisp)/css2400/isp/kernels/io_ls/plane_io_ls/ \
--	-I$(atomisp)/css2400/isp/kernels/io_ls/yuv420_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/io_ls/yuv444_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/bayer_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/common/ \
--	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/plane_io_ls/ \
--	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/yuv420_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/ipu2_io_ls/yuv444_io_ls/ \
- 	-I$(atomisp)/css2400/isp/kernels/iterator/ \
- 	-I$(atomisp)/css2400/isp/kernels/iterator/iterator_1.0/ \
-@@ -289,9 +284,6 @@ INCLUDES += \
- 	-I$(atomisp)/css2400/isp/kernels/ref/ref_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/s3a/ \
- 	-I$(atomisp)/css2400/isp/kernels/s3a/s3a_1.0/ \
--	-I$(atomisp)/css2400/isp/kernels/s3a_stat_ls/ \
--	-I$(atomisp)/css2400/isp/kernels/scale/ \
--	-I$(atomisp)/css2400/isp/kernels/scale/scale_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/sc/ \
- 	-I$(atomisp)/css2400/isp/kernels/sc/sc_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/sdis/ \
-@@ -315,8 +307,6 @@ INCLUDES += \
- 	-I$(atomisp)/css2400/isp/kernels/ynr/ \
- 	-I$(atomisp)/css2400/isp/kernels/ynr/ynr_1.0/ \
- 	-I$(atomisp)/css2400/isp/kernels/ynr/ynr_2/ \
--	-I$(atomisp)/css2400/isp/kernels/yuv_ls \
--	-I$(atomisp)/css2400/isp/kernels/yuv_ls/yuv_ls_1.0/ \
- 	-I$(atomisp)/css2400/isp/modes/interface/ \
- 	-I$(atomisp)/css2400/runtime/binary/interface/ \
- 	-I$(atomisp)/css2400/runtime/bufq/interface/ \
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9a7f76eadae9..197dc9c5162f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8239,6 +8239,7 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
+ LOCKING PRIMITIVES
+ M:	Peter Zijlstra <peterz@infradead.org>
+ M:	Ingo Molnar <mingo@redhat.com>
++R:	Boqun Feng <boqun.feng@gmail.com>
+ L:	linux-kernel@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+ S:	Maintained
 -- 
 2.16.1
