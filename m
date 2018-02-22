@@ -1,99 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933659AbeBVRvf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:51:35 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:59373 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933495AbeBVRvd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:51:33 -0500
-X-ME-Sender: <xms:JAOPWga7rpasystRDRruWIBMpjEbFnoJi7PDuUDIXlkQyFVhG4iPNg>
-Date: Thu, 22 Feb 2018 14:51:29 -0300
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-To: "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Kleen, Andi" <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [v2 1/3] x86/microcode/intel: Check microcode revision before
- updating sibling threads
-Message-ID: <20180222175129.4nluqvqdowrm6jv3@khazad-dum.debian.net>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
- <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
- <20180222110056.GA27489@pd.tnic>
- <20180222115554.GA3797@araj-mobl1.jf.intel.com>
- <20180222121506.GC27489@pd.tnic>
- <20180222131918.GB3797@araj-mobl1.jf.intel.com>
- <20180222154605.er6llhcaxmie3rhr@khazad-dum.debian.net>
- <0575AF4FD06DD142AD198903C74E1CC87A61B8E8@ORSMSX103.amr.corp.intel.com>
+        id S933692AbeBVRwz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 12:52:55 -0500
+Received: from mga02.intel.com ([134.134.136.20]:60520 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933581AbeBVRwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 12:52:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,378,1515484800";
+   d="scan'208";a="203012116"
+Subject: [RFC PATCH V2] virtio_pci: Add SR-IOV support
+To: virtio-dev@lists.oasis-open.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+From: Mark Rustad <mark.d.rustad@intel.com>
+Cc: dan.daly@intel.com, alex.williamson@redhat.com, MRustad@gmail.com,
+        alexander.duyck@gmail.com, mst@redhat.com
+Date: Thu, 22 Feb 2018 09:52:50 -0800
+Message-ID: <20180222175250.97135.98386.stgit@mdrustad-mac04.local>
+User-Agent: StGit/0.15
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0575AF4FD06DD142AD198903C74E1CC87A61B8E8@ORSMSX103.amr.corp.intel.com>
-X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
- 0BD9 E811 39CB 4807
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018, Van De Ven, Arjan wrote:
-> > > In the past the only guidance was to not load microcode at the same time to
-> > the
-> > > thread siblings of a core. We now have new guidance that the sibling must be
-> > > spinning and not doing other things that can introduce instability around
-> > loading
-> > > microcode.
-> > 
-> > Document that properly in the Intel SDM, *please*.
-> 
-> yes we will update the SDM, just that is a much longer process than sending code out.
-> 
-> > 
-> > While at it, please verify with the microcode teams that the requirement
-> > for 16-byte alignment of the microcode update as present in the Intel
-> > SDM still stands.  
-> 
-> I'd be surprised if it did not. 
+Hardware-realized virtio-pci devices can implement SR-IOV, so this
+patch enables its use. The device in question is an upcoming Intel
+NIC that implements both a virtio-net PF and virtio-net VFs. These
+are hardware realizations of what has been up to now been a software
+interface.
 
-The question would be better phrased as: important to which processors?
-Just very old ones?
+The device in question has the following 4-part PCI IDs:
 
-The late microcode update loader has it 16-byte aligned as a side-effect
-of malloc() from what I recall when I tested it with SLUB, SLAB (I am
-not sure about what the result was for SLOB), so it is an issue that was
-introduced with the early initramfs microcode loader support.
+PF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 15fe
+VF: device: 1af4 vendor: 1041 subvendor: 8086 subdevice: 05fe
 
-However, the early loader doesn't have that benefit for the BSP.  If the
-16-byte alignment were important for most stuff since the Core2, we
-should be crashing like crazy when attempting early microcode updates...
+The patch needs no check for device ID, because the callback will
+never be made for devices that do not assert the capability or
+when run on a platform incapable of SR-IOV.
 
-Thus, apparently, 4-byte alignment (which we do always get out of the
-early initramfs) is good enough on most non-ancient processors when
-updating the BSP the way Linux does it, since it does work for most
-people.
+One reason for this patch is because the hardware requires the
+vendor ID of a VF to be the same as the vendor ID of the PF that
+created it. So it seemed logical to simply have a fully-functioning
+virtio-net PF create the VFs. This patch makes that possible.
 
-I don't recall what the situation is for the APs for the early loader,
-though.
+Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+---
+Changes in V2:
+- Simplified logic from previous version, removed added driver variable
+- Disable SR-IOV on driver removal excapt when VFs are assigned
+- Sent as RFC to virtio-dev, linux-pci, netdev, lkml and others
+---
+ drivers/virtio/virtio_pci_common.c |   47 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-> >Linux does not enforce it on the early microcode update loader when
-> > using an initramfs (but userspace can work around that, and
-> > iucode_tool --early-fw does so).  If that 16-byte alignment is
-> > important, I could dust off some patches that fix it.
-> 
-> hmm wonder what those tools do nowadays; Intel publishes the microcode
-> in the linux native format since some time (and the .dat format is
-> about to go away entirely)
-
-I think most of them don't force the alignment in userspace.  The
-exceptions are Debian, Ubuntu, and their derivatives when using
-initramfs-tools (not dracut).
-
-I do belive there are a few that generate /boot/ucode.initrd to load as
-the first initrd via the bootloader using iucode_tool --write-earlyfw
-(instead of using cpio).  That would also have the workaround in place.
-
--- 
-  Henrique Holschuh
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..78b53ffc4cee 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -572,6 +572,47 @@ static int virtio_pci_probe(struct pci_dev *pci_dev,
+ 	return rc;
+ }
+ 
++#ifdef CONFIG_PCI_IOV
++static int virtio_pci_sriov_disable(struct pci_dev *pci_dev)
++{
++	/* If vfs are assigned we cannot shut down SR-IOV without causing
++	 * issues, so just leave the hardware available.
++	 */
++	if (pci_vfs_assigned(pci_dev)) {
++		dev_warn(&pci_dev->dev,
++			 "Unloading driver while VFs are assigned - VFs will not be deallocated\n");
++		return -EPERM;
++	}
++	pci_disable_sriov(pci_dev);
++	return 0;
++}
++
++static int virtio_pci_sriov_enable(struct pci_dev *pci_dev, int num_vfs)
++{
++	int rc = 0;
++
++	if (pci_num_vf(pci_dev))
++		return -EINVAL;
++
++	rc = pci_enable_sriov(pci_dev, num_vfs);
++	if (rc) {
++		dev_warn(&pci_dev->dev, "Failed to enable PCI sriov: %d\n", rc);
++		return rc;
++	}
++	dev_info(&pci_dev->dev, "SR-IOV enabled with %d VFs\n", num_vfs);
++	return num_vfs;
++}
++
++static int virtio_pci_sriov_configure(struct pci_dev *dev, int num_vfs)
++{
++	if (num_vfs)
++		return virtio_pci_sriov_enable(dev, num_vfs);
++	if (!pci_num_vf(dev))
++		return -EINVAL;
++	return virtio_pci_sriov_disable(dev);
++}
++#endif /* CONFIG_PCI_IOV */
++
+ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ {
+ 	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+@@ -584,6 +625,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	else
+ 		virtio_pci_modern_remove(vp_dev);
+ 
++#ifdef CONFIG_PCI_IOV
++	virtio_pci_sriov_disable(pci_dev);
++#endif
+ 	pci_disable_device(pci_dev);
+ 	put_device(dev);
+ }
+@@ -596,6 +640,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
++#ifdef CONFIG_PCI_IOV
++	.sriov_configure = virtio_pci_sriov_configure,
++#endif
+ };
+ 
+ module_pci_driver(virtio_pci_driver);
