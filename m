@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-524998-1519316635-2-498617369235056237
+X-Cyrus-Session-Id: sloti22d1t05-524998-1519316550-2-17971689625718267061
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519316634; b=roUFNmJKiqt97/st5YnEmpVwLX4GiECbYGEg8bJbv5dkmbq
-    Bywjll2zZx6RgerjwCEPAdcIiLt2hjqbMEbbR0ayxAX/TJDih7qTRqgGoBGKcG+F
-    xCcbjLlnbp6c5ZwidFodtMwkBm5cvfRJ+97WySy8RFEATK4jOaxi9qe917cp5VcB
-    0xOvlthqZTuVGh7dFYXBxthj+Awr+ezM4TRcOFhwsl8bV1HASaP/RcLCoPSmnNdg
-    ZbFrPDfmVoGA4C62e7H01KOxKOnkKRIgHchnMhrvPRWgjKiojp0+7BnmOpCWNvZ4
-    KZG2XtdpsWgS5aCK3vRr3diKVTCDMcyVC0DKjnw==
+    t=1519316550; b=OB3eaRHa3AdIce5H7YyzMB2hWBuvS0RL5VM748sFq2q14Vw
+    X4X+6lNVsvRTHZO98Hxk2oLg5FgEyLzm/zrvEDOYdN0jmZdOkOTg9fMFG2WKeeqh
+    Ul8JgrPqT+9C9qI4WoRWyV5aXeglQEkpEXXdRuamk5LLxRwhAABcHtHaRfRmecrc
+    T8+Ogi7wKSMNckAUP+vwsTu2CdkJiDuQ994io1m49fIHx1KXGEo19QAVsq1cY12Y
+    nN25VCrBYE4H1HYVC07UZu9dme2deppoFRwwvJz88QpwIKdhNaFjkbunEdMsjf7m
+    71iZe12IJtXHPmfsM4dApc3WAzdFrlo1l3czgHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519316634; bh=Lk7Q4ZOsUyf8FMN8jyiPm+jIOhWw9ysyaPVw3/OhVxo=; b=f
-    fPsOzdbLE+MbTzibiKFkCoqBGbau9/LyeieIYBPSbEPsL30gWpNppx38kVeUOogU
-    q8Y8+bgptoslvCYuJJ5nAlo5Zj9JnHif7sCHF1z1KECg4y9Jnmlxl1b/pWufqpxc
-    oeF0Iff2nsYY9NTXVfxwhlEQuqrhqLsxmgu5KMZkJJg1g6l2BB4KGv4Ffz2WgQ4O
-    XW01Wn+5EY9QLEKduRrV/beBsmIZWAISbRNwlmg5Oc3qGkXi/K1ifPXiPVxz4xN8
-    ym4YXQyGCqh7GUNF44z6uc6XZx5Flb6k2BintmFK3nsU5dpOs8W0u81dfOc3G+OC
-    EJleQ4FncfYl+0rWSbTQw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    1519316550; bh=Qpj5LHAEDMzukxK2NFsU3ytaH5qwcuWcyxFM+YvOMFw=; b=M
+    XeRfP4FU42Kx6AVgvj3cRmdrjCO1+eHRlEuZuPjWrjsM4GJ0Y/bOA7G9UWFgCr8V
+    b+q7O0IDVPWG0k/6N6PEjtX7SNuk2ye1aoFJEgi7aF8V7HnmeuXMgMZEveP96sGp
+    2yemoRePetcC2u27B4HSm3s9XJ0nKOh++MLpXq0RiyCsuzB8tFcOeHF7LoualngZ
+    tfvKtnheySK7wLkc3gkwfy/FhefWVZGPKFl7001F+Kd4bVeJekHxTchKLFgTcdrm
+    IPfOZ42e9INOP7bBHM9QZ5N3VX/5/68g3cAHa9ogKzRg6oOSatcxsgXltX0jivGE
+    0C8581lYW2E7mkRXMyPrA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -49,21 +49,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933286AbeBVQUp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 11:20:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40336 "EHLO mx1.redhat.com"
+        id S933331AbeBVQUx (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 11:20:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39614 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933134AbeBVQUn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:20:43 -0500
+        id S933134AbeBVQUv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:20:51 -0500
 From: David Howells <dhowells@redhat.com>
 To: jmorris@namei.org
 Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 2/6] PKCS#7: fix certificate blacklisting
-Date: Thu, 22 Feb 2018 16:20:41 +0000
-Message-Id: <151931644086.27713.11709941422438272479.stgit@warthog.procyon.org.uk>
+Subject: [PATCH 3/6] PKCS#7: fix direct verification of SignerInfo signature
+Date: Thu, 22 Feb 2018 16:20:47 +0000
+Message-Id: <151931644754.27713.14995018428445770576.stgit@warthog.procyon.org.uk>
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United Kingdom. Registered in England and Wales under Company Registration No. 3798903
 In-Reply-To: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
 References: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
@@ -79,52 +79,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-If there is a blacklisted certificate in a SignerInfo's certificate
-chain, then pkcs7_verify_sig_chain() sets sinfo->blacklisted and returns
-0.  But, pkcs7_verify() fails to handle this case appropriately, as it
-actually continues on to the line 'actual_ret = 0;', indicating that the
-SignerInfo has passed verification.  Consequently, PKCS#7 signature
-verification ignores the certificate blacklist.
+If none of the certificates in a SignerInfo's certificate chain match a
+trusted key, nor is the last certificate signed by a trusted key, then
+pkcs7_validate_trust_one() tries to check whether the SignerInfo's
+signature was made directly by a trusted key.  But, it actually fails to
+set the 'sig' variable correctly, so it actually verifies the last
+signature seen.  That will only be the SignerInfo's signature if the
+certificate chain is empty; otherwise it will actually be the last
+certificate's signature.
 
-Fix this by not considering blacklisted SignerInfos to have passed
-verification.
+This is not by itself a security problem, since verifying any of the
+certificates in the chain should be sufficient to verify the SignerInfo.
+Still, it's not working as intended so it should be fixed.
 
-Also fix the function comment with regards to when 0 is returned.
+Fix it by setting 'sig' correctly for the direct verification case.
 
-Fixes: 03bb79315ddc ("PKCS#7: Handle blacklisted certificates")
-Cc: <stable@vger.kernel.org> # v4.12+
+Fixes: 757932e6da6d ("PKCS#7: Handle PKCS#7 messages that contain no X.509 certs")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/pkcs7_verify.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ crypto/asymmetric_keys/pkcs7_trust.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 2f6a768b91d7..97c77f66b20d 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -366,8 +366,7 @@ static int pkcs7_verify_one(struct pkcs7_message *pkcs7,
-  *
-  *  (*) -EBADMSG if some part of the message was invalid, or:
-  *
-- *  (*) 0 if no signature chains were found to be blacklisted or to contain
-- *	unsupported crypto, or:
-+ *  (*) 0 if a signature chain passed verification, or:
-  *
-  *  (*) -EKEYREJECTED if a blacklisted key was encountered, or:
-  *
-@@ -423,8 +422,11 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
- 
- 	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
- 		ret = pkcs7_verify_one(pkcs7, sinfo);
--		if (sinfo->blacklisted && actual_ret == -ENOPKG)
--			actual_ret = -EKEYREJECTED;
-+		if (sinfo->blacklisted) {
-+			if (actual_ret == -ENOPKG)
-+				actual_ret = -EKEYREJECTED;
-+			continue;
-+		}
- 		if (ret < 0) {
- 			if (ret == -ENOPKG) {
- 				sinfo->unsupported_crypto = true;
+diff --git a/crypto/asymmetric_keys/pkcs7_trust.c b/crypto/asymmetric_keys/pkcs7_trust.c
+index 1f4e25f10049..598906b1e28d 100644
+--- a/crypto/asymmetric_keys/pkcs7_trust.c
++++ b/crypto/asymmetric_keys/pkcs7_trust.c
+@@ -106,6 +106,7 @@ static int pkcs7_validate_trust_one(struct pkcs7_message *pkcs7,
+ 		pr_devel("sinfo %u: Direct signer is key %x\n",
+ 			 sinfo->index, key_serial(key));
+ 		x509 = NULL;
++		sig = sinfo->sig;
+ 		goto matched;
+ 	}
+ 	if (PTR_ERR(key) != -ENOKEY)
