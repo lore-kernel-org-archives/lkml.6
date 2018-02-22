@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752853AbeBVHHt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 02:07:49 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37985 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752747AbeBVHGp (ORCPT
+        id S1752676AbeBVHGX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 02:06:23 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52645 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbeBVHGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 02:06:45 -0500
-X-Google-Smtp-Source: AH8x224cl+DDxP4acHXMRfTCj/PXF2DMNw2Rs+xVpfjqDMIGR5ntxS6DnOVzIauVYqELlmO+GChiUA==
-X-ME-Sender: <xms:AmyOWi0nsoeD2nj2UqX8u8xyvLKJ9q5Ry70wCKvKnp9PiXuf9yew-w>
+        Thu, 22 Feb 2018 02:06:18 -0500
+X-Google-Smtp-Source: AH8x224GSmaiSVOsFSzAI3Gh8uRqeWhIK76ETY86JWrg86DpFwgnI8dfj7Du3k4pgSTgthYnsrVl0w==
+X-ME-Sender: <xms:52uOWukfiO-2dtwwxwDDx_Q3-7NC43wQDcwpQcMsjV9qMo3j5FGZEw>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC tip/locking/lockdep v5 13/17] lockdep/selftest: Add more recursive read related test cases
-Date: Thu, 22 Feb 2018 15:09:00 +0800
-Message-Id: <20180222070904.548-14-boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v5 07/17] lockdep: Adjust check_redundant() for recursive read change
+Date: Thu, 22 Feb 2018 15:08:54 +0800
+Message-Id: <20180222070904.548-8-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180222070904.548-1-boqun.feng@gmail.com>
 References: <20180222070904.548-1-boqun.feng@gmail.com>
@@ -24,216 +24,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add those four test cases:
+As we have four kinds of dependencies now, check_redundant() should only
+report redundant if we have a dependency path which is equal or
+_stronger_ than the current dependency. For example if in
+check_prev_add() we have:
 
-1.	X --(NR)--> Y --(NR)--> Z --(NR)--> X is deadlock.
+	prev->read == 2 && next->read != 2
 
-2.	X --(NN)--> Y --(RR)--> Z --(NR)--> X is deadlock.
+, we should only report redundant if we find a path like:
 
-3.	X --(NN)--> Y --(RR)--> Z --(RN)--> X is not deadlock.
+	prev--(RN)-->....--(*N)-->next
 
-4.	X --(NR)--> Y --(RR)--> Z --(NN)--> X is not deadlock.
+and if we have:
 
-Those self testcases are valuable for the development of supporting
-recursive read related deadlock detection.
+	prev->read == 2 && next->read == 2
+
+, we could report redundant if we find a path like:
+
+	prev--(RN)-->....--(*N)-->next
+
+or
+
+	prev--(RN)-->....--(*R)-->next
+
+To do so, we need to pass the recursive-read status of @next into
+check_redundant(). This patch changes the parameter of check_redundant()
+and the match function to achieve this.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- lib/locking-selftest.c | 161 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 161 insertions(+)
+ kernel/locking/lockdep.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index c2f06b423da8..6b7a28d84fc4 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -1033,6 +1033,133 @@ GENERATE_PERMUTATIONS_3_EVENTS(irq_inversion_soft_wlock)
- #undef E2
- #undef E3
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index e1be088a34c4..0b0ad3db78b4 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1338,9 +1338,12 @@ print_circular_bug_header(struct lock_list *entry, unsigned int depth,
+ 	return 0;
+ }
  
-+/*
-+ * write-read / write-read / write-read deadlock even if read is recursive
-+ */
+-static inline int class_equal(struct lock_list *entry, void *data)
++static inline int hlock_equal(struct lock_list *entry, void *data)
+ {
+-	return entry->class == data;
++	struct held_lock *hlock = (struct held_lock *)data;
 +
-+#define E1()				\
-+					\
-+	WL(X1);				\
-+	RL(Y1);				\
-+	RU(Y1);				\
-+	WU(X1);
-+
-+#define E2()				\
-+					\
-+	WL(Y1);				\
-+	RL(Z1);				\
-+	RU(Z1);				\
-+	WU(Y1);
-+
-+#define E3()				\
-+					\
-+	WL(Z1);				\
-+	RL(X1);				\
-+	RU(X1);				\
-+	WU(Z1);
-+
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(W1R2_W2R3_W3R1)
-+
-+#undef E1
-+#undef E2
-+#undef E3
-+
-+/*
-+ * write-write / read-read / write-read deadlock even if read is recursive
-+ */
-+
-+#define E1()				\
-+					\
-+	WL(X1);				\
-+	WL(Y1);				\
-+	WU(Y1);				\
-+	WU(X1);
-+
-+#define E2()				\
-+					\
-+	RL(Y1);				\
-+	RL(Z1);				\
-+	RU(Z1);				\
-+	RU(Y1);
-+
-+#define E3()				\
-+					\
-+	WL(Z1);				\
-+	RL(X1);				\
-+	RU(X1);				\
-+	WU(Z1);
-+
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(W1W2_R2R3_W3R1)
-+
-+#undef E1
-+#undef E2
-+#undef E3
-+
-+/*
-+ * write-write / read-read / read-write is not deadlock when read is recursive
-+ */
-+
-+#define E1()				\
-+					\
-+	WL(X1);				\
-+	WL(Y1);				\
-+	WU(Y1);				\
-+	WU(X1);
-+
-+#define E2()				\
-+					\
-+	RL(Y1);				\
-+	RL(Z1);				\
-+	RU(Z1);				\
-+	RU(Y1);
-+
-+#define E3()				\
-+					\
-+	RL(Z1);				\
-+	WL(X1);				\
-+	WU(X1);				\
-+	RU(Z1);
-+
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(W1R2_R2R3_W3W1)
-+
-+#undef E1
-+#undef E2
-+#undef E3
-+
-+/*
-+ * write-read / read-read / write-write is not deadlock when read is recursive
-+ */
-+
-+#define E1()				\
-+					\
-+	WL(X1);				\
-+	RL(Y1);				\
-+	RU(Y1);				\
-+	WU(X1);
-+
-+#define E2()				\
-+					\
-+	RL(Y1);				\
-+	RL(Z1);				\
-+	RU(Z1);				\
-+	RU(Y1);
-+
-+#define E3()				\
-+					\
-+	WL(Z1);				\
-+	WL(X1);				\
-+	WU(X1);				\
-+	WU(Z1);
-+
-+#include "locking-selftest-rlock.h"
-+GENERATE_PERMUTATIONS_3_EVENTS(W1W2_R2R3_R3W1)
-+
-+#undef E1
-+#undef E2
-+#undef E3
- /*
-  * read-lock / write-lock recursion that is actually safe.
-  */
-@@ -1258,6 +1385,19 @@ static inline void print_testname(const char *testname)
- 	dotest(name##_##nr, FAILURE, LOCKTYPE_RWLOCK);		\
- 	pr_cont("\n");
++	return hlock_class(hlock) == entry->class &&
++	       (hlock->read == 2 || !entry->is_rr);
+ }
  
-+#define DO_TESTCASE_1RR(desc, name, nr)				\
-+	print_testname(desc"/"#nr);				\
-+	pr_cont("             |");				\
-+	dotest(name##_##nr, SUCCESS, LOCKTYPE_RWLOCK);		\
-+	pr_cont("\n");
-+
-+#define DO_TESTCASE_1RRB(desc, name, nr)			\
-+	print_testname(desc"/"#nr);				\
-+	pr_cont("             |");				\
-+	dotest(name##_##nr, FAILURE, LOCKTYPE_RWLOCK);		\
-+	pr_cont("\n");
-+
-+
- #define DO_TESTCASE_3(desc, name, nr)				\
- 	print_testname(desc"/"#nr);				\
- 	dotest(name##_spin_##nr, FAILURE, LOCKTYPE_SPIN);	\
-@@ -1367,6 +1507,22 @@ static inline void print_testname(const char *testname)
- 	DO_TESTCASE_2IB(desc, name, 312);			\
- 	DO_TESTCASE_2IB(desc, name, 321);
+ static inline int hlock_conflict(struct lock_list *entry, void *data)
+@@ -1480,14 +1483,14 @@ check_noncircular(struct lock_list *root, struct held_lock *target,
+ }
  
-+#define DO_TESTCASE_6x1RR(desc, name)				\
-+	DO_TESTCASE_1RR(desc, name, 123);			\
-+	DO_TESTCASE_1RR(desc, name, 132);			\
-+	DO_TESTCASE_1RR(desc, name, 213);			\
-+	DO_TESTCASE_1RR(desc, name, 231);			\
-+	DO_TESTCASE_1RR(desc, name, 312);			\
-+	DO_TESTCASE_1RR(desc, name, 321);
-+
-+#define DO_TESTCASE_6x1RRB(desc, name)				\
-+	DO_TESTCASE_1RRB(desc, name, 123);			\
-+	DO_TESTCASE_1RRB(desc, name, 132);			\
-+	DO_TESTCASE_1RRB(desc, name, 213);			\
-+	DO_TESTCASE_1RRB(desc, name, 231);			\
-+	DO_TESTCASE_1RRB(desc, name, 312);			\
-+	DO_TESTCASE_1RRB(desc, name, 321);
-+
- #define DO_TESTCASE_6x6(desc, name)				\
- 	DO_TESTCASE_6I(desc, name, 123);			\
- 	DO_TESTCASE_6I(desc, name, 132);			\
-@@ -2137,6 +2293,11 @@ void locking_selftest(void)
- 	pr_cont("             |");
- 	dotest(rlock_chaincache_ABBA1, FAILURE, LOCKTYPE_RWLOCK);
+ static noinline enum bfs_result
+-check_redundant(struct lock_list *root, struct lock_class *target,
++check_redundant(struct lock_list *root, struct held_lock *target,
+ 		struct lock_list **target_entry)
+ {
+ 	enum bfs_result result;
  
-+	DO_TESTCASE_6x1RRB("rlock W1R2/W2R3/W3R1", W1R2_W2R3_W3R1);
-+	DO_TESTCASE_6x1RRB("rlock W1W2/R2R3/W3R1", W1W2_R2R3_W3R1);
-+	DO_TESTCASE_6x1RR("rlock W1W2/R2R3/R3W1", W1W2_R2R3_R3W1);
-+	DO_TESTCASE_6x1RR("rlock W1R2/R2R3/W3W1", W1R2_R2R3_W3W1);
-+
- 	printk("  --------------------------------------------------------------------------\n");
+ 	debug_atomic_inc(nr_redundant_checks);
  
- 	/*
+-	result = __bfs_forwards(root, target, class_equal, target_entry);
++	result = __bfs_forwards(root, target, hlock_equal, target_entry);
+ 
+ 	return result;
+ }
+@@ -2060,7 +2063,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
+ 	 * Is the <prev> -> <next> link redundant?
+ 	 */
+ 	bfs_init_root(&this, prev);
+-	ret = check_redundant(&this, hlock_class(next), &target_entry);
++	ret = check_redundant(&this, next, &target_entry);
+ 	if (ret == BFS_RMATCH) {
+ 		debug_atomic_inc(nr_redundant);
+ 		return 2;
 -- 
 2.16.1
