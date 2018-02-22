@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeBVGdg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 01:33:36 -0500
+        id S1752519AbeBVGde (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 01:33:34 -0500
 Received: from mga03.intel.com ([134.134.136.65]:55370 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752399AbeBVGde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 01:33:34 -0500
+        id S1751594AbeBVGdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 01:33:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="31891775"
+   d="scan'208";a="31891772"
 From: Ashok Raj <ashok.raj@intel.com>
 To: bp@suse.de
 Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
@@ -19,98 +19,47 @@ Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
         Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [v2 1/3] x86/microcode/intel: Check microcode revision before updating sibling threads
-Date: Wed, 21 Feb 2018 22:33:23 -0800
-Message-Id: <1519281205-58951-2-git-send-email-ashok.raj@intel.com>
+Subject: [v2 0/3] Patches to address some limitations in OS microcode loading.
+Date: Wed, 21 Feb 2018 22:33:22 -0800
+Message-Id: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After updating microcode on one of the threads in the core, the
-thread sibling automatically gets the update since the microcode
-resources are shared. Check the ucode revision on the CPU before
-performing a ucode update.
+Patch series to address limitations of OS microcode loading.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Boris Petkov <bp@suse.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Review comments from Boris:
 
-Updates:
-v2: Address Boris's to cleanup apply_microcode_intel
-v3: Fixups per Ingo: Spell Checks
----
- arch/x86/kernel/cpu/microcode/intel.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+Changes since v1: Patch 1/3
+- Check for revision to avoid duplicate microcode load in early load
+- Added inline comments.
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 09b95a7..137c9f5 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -589,6 +589,18 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
- 	if (!mc)
- 		return 0;
- 
-+	rev = intel_get_microcode_revision();
-+
-+	/*
-+	 * Its possible the microcode got updated
-+	 * because its sibling update was done earlier.
-+	 * Skip the update in that case.
-+	 */
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -776,7 +788,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- {
- 	struct microcode_intel *mc;
- 	struct ucode_cpu_info *uci;
--	struct cpuinfo_x86 *c;
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	static int prev_rev;
- 	u32 rev;
- 
-@@ -793,6 +805,18 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 			return UCODE_NFOUND;
- 	}
- 
-+	rev = intel_get_microcode_revision();
-+	/*
-+	 * Its possible the microcode got updated
-+	 * because its sibling update was done earlier.
-+	 * Skip the update in that case.
-+	 */
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		c->microcode = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -813,8 +837,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		prev_rev = rev;
- 	}
- 
--	c = &cpu_data(cpu);
--
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
+Changes since v1: Patch 2/3
+- Change to native_wbinvd for early load.
+
+Changes since v1: Patch 3/3
+- Check for return code of stop_machine
+- When microcode file load fails, stop on first error.
+- If any of the present CPUs are offline, then stop reload.
+  This is just for being paranoid. 
+- Added more comments in commit log and inline in file.
+- split some functionality from reload_store() per Boris's comments.
+
+What's not done from review: TBD:
+- Load microcode file only once. Added comments in source for future cleanup.
+- Removing ucd->errors. (Gives a count of failed loads)
+
+
+Ashok Raj (3):
+  x86/microcode/intel: Check microcode revision before updating sibling
+    threads
+  x86/microcode/intel: Perform a cache flush before ucode update.
+  x86/microcode: Quiesce all threads before a microcode update.
+
+ arch/x86/kernel/cpu/microcode/core.c  | 207 ++++++++++++++++++++++++++++++----
+ arch/x86/kernel/cpu/microcode/intel.c |  43 ++++++-
+ 2 files changed, 222 insertions(+), 28 deletions(-)
+
 -- 
 2.7.4
