@@ -1,82 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751581AbeBVVqt (ORCPT <rfc822;w@1wt.eu>);
+        id S1751626AbeBVVrA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 16:47:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751484AbeBVVqt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Feb 2018 16:46:49 -0500
-Received: from mail-co1nam03on0057.outbound.protection.outlook.com ([104.47.40.57]:15274
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751330AbeBVVqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:46:47 -0500
-From: Nadav Amit <namit@vmware.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "keescook@google.com" <keescook@google.com>,
-        "hughd@google.com" <hughd@google.com>,
-        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
-Thread-Topic: [RFC][PATCH 05/10] x86/mm: do not auto-massage page protections
-Thread-Index: AQHTrBzqLWZEXxxoAECD29jfAs2S86Ow9QeA
-Date: Thu, 22 Feb 2018 21:46:44 +0000
-Message-ID: <5659D3EF-CF51-4B1B-8306-CA2559A75789@vmware.com>
-References: <20180222203651.B776810C@viggo.jf.intel.com>
- <20180222203700.3FDE6BFD@viggo.jf.intel.com>
-In-Reply-To: <20180222203700.3FDE6BFD@viggo.jf.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR05MB1877;7:Iy2iNHOJRS42gRQeXlxpSFRZdv1z8aHHFYDhJY/2jsQ1hyY28TZzewBa/fy/+nCBbX04RmF1edWNeXlHq19xmsBP5KC2KymWA06Ptk/FXHW8jVqduyCrYO2ftCoYaVJsbRdG8WQgNM1HuGKKP+DjsIJYamJ1JcxdbBFjwfjw3hYG6UEQSm0BZzSG/GmLhhqVJytZ+kXD7rD6Kl9CyIcoWAf0/svgE3rR1qjb0pIeUgvAK7G314+iTZrZrJq50G32;20:H9joHYhm9usfcdPzFiDNm/dfnF9N/KqJ3CxYHPkFKe0l3U+iL13iZc9M/xrX5rhTQ/2DwBbOBN71DC8dFZk9Lc9ZFs7no55/e4KftQpeKAceDzHFSGX3cGgZLZEa/GcSl612fMXrkURsPJnLX3ryx7ye4QO9ROMkaatqQ9zgE1o=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: fae2a4a1-7ae6-4b21-1bb4-08d57a3dc3fd
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BY2PR05MB1877;
-x-ms-traffictypediagnostic: BY2PR05MB1877:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com;
-x-microsoft-antispam-prvs: <BY2PR05MB18773291CEE969D2CA38DDD1D0CD0@BY2PR05MB1877.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231166)(944501161)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:BY2PR05MB1877;BCL:0;PCL:0;RULEID:;SRVR:BY2PR05MB1877;
-x-forefront-prvs: 059185FE08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39380400002)(346002)(376002)(39860400002)(199004)(189003)(6116002)(102836004)(83716003)(86362001)(6512007)(77096007)(26005)(186003)(82746002)(6506007)(53936002)(2900100001)(105586002)(14454004)(76176011)(4326008)(6916009)(2950100002)(316002)(25786009)(3660700001)(229853002)(478600001)(54906003)(6486002)(6436002)(5660300001)(6246003)(305945005)(7736002)(97736004)(106356001)(68736007)(99286004)(8676002)(3846002)(3280700002)(81156014)(81166006)(8936002)(2906002)(36756003)(33656002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR05MB1877;H:BY2PR05MB2215.namprd05.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: jY+RwLxk8Z0KMNkMvhUuXtkUCDB9SezVGEwllITmUaddsPY+3HrhG3UnLWua5YSWV3EaTwEAEePskhLYvYBH3CnpCSDsIZTDy6OVpzIl28L8v2FGQp2F5E1RnckO11jK3DWKe9D552aUuYZSZWdIUAjRsJZKcQfh4For/+9U01E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E427F660BC01134296139F62A24CF4E7@namprd05.prod.outlook.com>
+Date: Thu, 22 Feb 2018 13:47:08 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Richard Henderson <rth@twiddle.net>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] locking/xchg/alpha: Add leading smp_mb() to xchg(),
+ cmpxchg()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1519291488-5752-1-git-send-email-parri.andrea@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fae2a4a1-7ae6-4b21-1bb4-08d57a3dc3fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2018 21:46:44.0812
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR05MB1877
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519291488-5752-1-git-send-email-parri.andrea@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18022221-0040-0000-0000-000003FBA11A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008578; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00993612; UDB=6.00504898; IPR=6.00772952;
+ MB=3.00019694; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-22 21:46:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022221-0041-0000-0000-000007FCA82E
+Message-Id: <20180222214708.GN2855@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802220269
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1MLkqj4027314
 
-Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On Thu, Feb 22, 2018 at 10:24:48AM +0100, Andrea Parri wrote:
+> Successful RMW operations are supposed to be fully ordered, but
+> Alpha's xchg() and cmpxchg() do not align to this requirement.
+> 
+> Will reported that:
+> 
+> > So MP using xchg:
+> >
+> > WRITE_ONCE(x, 1)
+> > xchg(y, 1)
+> >
+> > smp_load_acquire(y) == 1
+> > READ_ONCE(x) == 0
+> >
+> > would be allowed.
+> 
+> (thus violating the above requirement).  Amend this by adding a
+> leading smp_mb() to the implementations of xchg(), cmpxchg().
+> 
+> Reported-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 
-> 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> 
-> +static inline pgprotval_t check_pgprot(pgprot_t pgprot)
-> +{
-> +	pgprotval_t massaged_val = massage_pgprot(pgprot);
-> +
-> +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
-> +		  "attempted to set unsupported pgprot: %016lx "
-> +		  "bits: %016lx supported: %016lx\n",
-> +		  pgprot_val(pgprot),
-> +		  pgprot_val(pgprot) ^ massaged_val,
-> +		  __supported_pte_mask);
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-Perhaps use VM_WARN_ONCE instead to avoid any overhead on production
-systems?
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> Cc: Matt Turner <mattst88@gmail.com>
+> Cc: Richard Henderson <rth@twiddle.net>
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/alpha/include/asm/xchg.h | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/alpha/include/asm/xchg.h b/arch/alpha/include/asm/xchg.h
+> index e1facf6fc2446..e2b59fac5257d 100644
+> --- a/arch/alpha/include/asm/xchg.h
+> +++ b/arch/alpha/include/asm/xchg.h
+> @@ -12,6 +12,10 @@
+>   * Atomic exchange.
+>   * Since it can be used to implement critical sections
+>   * it must clobber "memory" (also for interrupts in UP).
+> + *
+> + * The leading and the trailing memory barriers guarantee that these
+> + * operations are fully ordered.
+> + *
+>   */
+> 
+>  static inline unsigned long
+> @@ -19,6 +23,7 @@ ____xchg(_u8, volatile char *m, unsigned long val)
+>  {
+>  	unsigned long ret, tmp, addr64;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"	andnot	%4,7,%3\n"
+>  	"	insbl	%1,%4,%1\n"
+> @@ -43,6 +48,7 @@ ____xchg(_u16, volatile short *m, unsigned long val)
+>  {
+>  	unsigned long ret, tmp, addr64;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"	andnot	%4,7,%3\n"
+>  	"	inswl	%1,%4,%1\n"
+> @@ -67,6 +73,7 @@ ____xchg(_u32, volatile int *m, unsigned long val)
+>  {
+>  	unsigned long dummy;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"1:	ldl_l %0,%4\n"
+>  	"	bis $31,%3,%1\n"
+> @@ -87,6 +94,7 @@ ____xchg(_u64, volatile long *m, unsigned long val)
+>  {
+>  	unsigned long dummy;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"1:	ldq_l %0,%4\n"
+>  	"	bis $31,%3,%1\n"
+> @@ -128,9 +136,12 @@ ____xchg(, volatile void *ptr, unsigned long x, int size)
+>   * store NEW in MEM.  Return the initial value in MEM.  Success is
+>   * indicated by comparing RETURN with OLD.
+>   *
+> - * The memory barrier is placed in SMP unconditionally, in order to
+> - * guarantee that dependency ordering is preserved when a dependency
+> - * is headed by an unsuccessful operation.
+> + * The leading and the trailing memory barriers guarantee that these
+> + * operations are fully ordered.
+> + *
+> + * The trailing memory barrier is placed in SMP unconditionally, in
+> + * order to guarantee that dependency ordering is preserved when a
+> + * dependency is headed by an unsuccessful operation.
+>   */
+> 
+>  static inline unsigned long
+> @@ -138,6 +149,7 @@ ____cmpxchg(_u8, volatile char *m, unsigned char old, unsigned char new)
+>  {
+>  	unsigned long prev, tmp, cmp, addr64;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"	andnot	%5,7,%4\n"
+>  	"	insbl	%1,%5,%1\n"
+> @@ -165,6 +177,7 @@ ____cmpxchg(_u16, volatile short *m, unsigned short old, unsigned short new)
+>  {
+>  	unsigned long prev, tmp, cmp, addr64;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"	andnot	%5,7,%4\n"
+>  	"	inswl	%1,%5,%1\n"
+> @@ -192,6 +205,7 @@ ____cmpxchg(_u32, volatile int *m, int old, int new)
+>  {
+>  	unsigned long prev, cmp;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"1:	ldl_l %0,%5\n"
+>  	"	cmpeq %0,%3,%1\n"
+> @@ -215,6 +229,7 @@ ____cmpxchg(_u64, volatile long *m, unsigned long old, unsigned long new)
+>  {
+>  	unsigned long prev, cmp;
+> 
+> +	smp_mb();
+>  	__asm__ __volatile__(
+>  	"1:	ldq_l %0,%5\n"
+>  	"	cmpeq %0,%3,%1\n"
+> -- 
+> 2.7.4
+> 
