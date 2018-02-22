@@ -1,157 +1,79 @@
 Return-Path: <alastair@au1.ibm.com>
-X-Google-Smtp-Source: AG47ELsJLxQrUFa+sY1tb+Frcyj6jDJxcueUOmJEVFYzsSbqlVqSIdADYYPS6hjZDEO1MO3AuC3V
-ARC-Seal: i=1; a=rsa-sha256; t=1519268683; cv=none;
+X-Google-Smtp-Source: AG47ELuoC32PI4JkWVRKUG19DqWX2/40aHX3Zd8+o+x/iS7TP2q/0iw0UdJ/ECT0kWrPDkKOr1Ii
+ARC-Seal: i=1; a=rsa-sha256; t=1519268682; cv=none;
         d=google.com; s=arc-20160816;
-        b=TTJ94euZicVUxoTap55Q+bs0hUWxR4ST0KH4sWWYbs/LvgGcvQ/rS9R9qYdzylE4c1
-         tzLXycE7sDIHBoL+3Wkwj4mKcgak5xtsrHFNqLZFZoNl2ZLrLZIU5gBd1o5UKpdheb8f
-         jd7WXct5IgfbpSANGbi2WfVOur3VCTrnVcsBmboOtfDujoHYX97Dh3qVV5a+bCykb8/c
-         Vzxq1BkU0fjh22CxQZK2MbDVYA+WTz8ZXA0lPPwk+dNTxe8bii+2Naipj4jKk+GHUcfG
-         Mqdpn0sUzTpJs6Jv0cMXLnAUwMK1yaN38PGwj097WWkvvFUFIiPrwLAfj/h9MoHD+sKA
-         LxyA==
+        b=vAslBq8Yvjo3c6/2z4TWe69IkTHHrS0B+POqfrmJvmH+2AaRNizhrqb3LIYf62yfVh
+         ODolLOvFg589IOXox7JQbrXRtdG0xj3Jb2wReb7SmysrUZm0yAb7d1NnkeHhpKb6QZO0
+         m9QP16i6iyxmY7txR1jssyz4M7J3EUuWjpHLGWymPBiDieMNl2TFk+Nk2fOnvOqaYDYo
+         /TE+F36PdE4rxRwnUz78TenlmHeMHd5zoEXux6sinE+/gYejZ1Ss8xNpafI0YSlrkBAU
+         N/2j26ZxIBTBDQhI2R//SSgk5MyCkxr9VR6RQ56XHqBtZz7BR9iQUeZ6me6jG4kRqbE7
+         9L+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=BzbeQmlxLXOdPaZ6c41xLKG9Xt+aQCC+elXz00mLPww=;
-        b=PVMQ6uWzrUbk7dUO3n+wBJsH7NRkmAa+0hqMtrFLAa8ZbuxgeY7l0e+bdFuBImOQ/2
-         Knvwy+LB4MMNMzRpwv5lG3m4biwOL7sRwvruNzDEjeNFsLt9N+BteWEk5ZgUyRJcef/r
-         ms/+Qpudx9zRCA7r2Qq5CgyS88OnoBhoUo31BZiWACAq1xMhT/yyxPuUt8nUsTgxSPLK
-         FbFwLWZ9yVTl96xbu87IR2KEsigDk1AxRabr4Q0MHFjduTZq5hpXxbEkWxdLzbvfVVym
-         fwk6NWZOGVZ73yNgfE3bWcFgH2aP9k/cwLI8aD1HD2hRH7QBCHqJYyVvcg65Hw9TyTFv
-         00rA==
+        bh=Xm05GBSKsCmZmKNxJ+Y2zr10ntonOj5mFOtEejVNkvI=;
+        b=oYogakCoa+9ddNR2fVNQHCP5OpbrKW/OhDXr/JwGGcKHXDvLOwKd5WrPYfKP84k/fQ
+         Uw/oFFdl5rEqIJ+ZtUirHfN5TuNh4TE7jEWSTNlFRtpK4HHEgrdEE0SpVwIgOQIPO6YY
+         LnjkL1AIwd+I8W56jwSquXo7s1XeFMPA/aFYXlG1j6Cs5WmcDoRSpJoW9Tbc/E45cBh7
+         HyQBzAQrkB/ergF7mXoaKCPgQqKV3Sc54gIZOwhhAdpjsGCdwdExIllNzNAUQUUUrwN7
+         Pcm7zRzyzPEDPVt3w672cbk+G+Aq++b382BSXDezUHFZwp8owGeb01/h6eCFN39DqnuV
+         1B3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 From: "Alastair D'Silva" <alastair@au1.ibm.com>
 To: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org
 Cc: frederic.barrat@fr.ibm.com, andrew.donnellan@au1.ibm.com, arnd@arndb.de,
         gregkh@linuxfoundation.org, alastair@au1.ibm.com,
         "Alastair D'Silva" <alastair@d-silva.org>
-Subject: [PATCH v2 1/2] ocxl: Add get_metadata IOCTL to share OCXL information to userspace
-Date: Thu, 22 Feb 2018 14:03:33 +1100
+Subject: [PATCH v2 2/2] ocxl: Document the OCXL_IOCTL_GET_METADATA IOCTL
+Date: Thu, 22 Feb 2018 14:03:34 +1100
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180222030334.14060-1-alastair@au1.ibm.com>
 References: <20180222030334.14060-1-alastair@au1.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18022203-0040-0000-0000-000004364FF1
+x-cbid: 18022203-0016-0000-0000-000005284E2C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022203-0041-0000-0000-000020D866E4
-Message-Id: <20180222030334.14060-2-alastair@au1.ibm.com>
+x-cbparentid: 18022203-0017-0000-0000-0000286464E2
+Message-Id: <20180222030334.14060-3-alastair@au1.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802220038
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592985250939595866?=
-X-GMAIL-MSGID: =?utf-8?q?1593068678918205022?=
+X-GMAIL-THRID: =?utf-8?q?1593068678696230639?=
+X-GMAIL-MSGID: =?utf-8?q?1593068678696230639?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Alastair D'Silva <alastair@d-silva.org>
 
-Some required information is not exposed to userspace currently (eg. the
-PASID), pass this information back, along with other information which
-is currently communicated via sysfs, which saves some parsing effort in
-userspace.
-
 Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 ---
- drivers/misc/ocxl/file.c | 27 +++++++++++++++++++++++++++
- include/uapi/misc/ocxl.h | 22 ++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+ Documentation/accelerators/ocxl.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-index d9aa407db06a..11514a8444e5 100644
---- a/drivers/misc/ocxl/file.c
-+++ b/drivers/misc/ocxl/file.c
-@@ -102,10 +102,32 @@ static long afu_ioctl_attach(struct ocxl_context *ctx,
- 	return rc;
- }
+diff --git a/Documentation/accelerators/ocxl.rst b/Documentation/accelerators/ocxl.rst
+index 4f7af841d935..ddcc58d01cfb 100644
+--- a/Documentation/accelerators/ocxl.rst
++++ b/Documentation/accelerators/ocxl.rst
+@@ -152,6 +152,11 @@ OCXL_IOCTL_IRQ_SET_FD:
+   Associate an event fd to an AFU interrupt so that the user process
+   can be notified when the AFU sends an interrupt.
  
-+static long afu_ioctl_get_metadata(struct ocxl_context *ctx,
-+		struct ocxl_ioctl_get_metadata __user *uarg)
-+{
-+	struct ocxl_ioctl_get_metadata arg;
++OCXL_IOCTL_GET_METADATA:
 +
-+	memset(&arg, 0, sizeof(arg));
++  Obtains configuration information from the card, such at the size of
++  MMIO areas, the AFU version, and the PASID for the current context.
 +
-+	arg.version = 0;
-+
-+	arg.afu_version_major = ctx->afu->config.version_major;
-+	arg.afu_version_minor = ctx->afu->config.version_minor;
-+	arg.pasid = ctx->pasid;
-+	arg.pp_mmio_size = ctx->afu->config.pp_mmio_stride;
-+	arg.global_mmio_size = ctx->afu->config.global_mmio_size;
-+
-+	if (copy_to_user(uarg, &arg, sizeof(arg)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- #define CMD_STR(x) (x == OCXL_IOCTL_ATTACH ? "ATTACH" :			\
- 			x == OCXL_IOCTL_IRQ_ALLOC ? "IRQ_ALLOC" :	\
- 			x == OCXL_IOCTL_IRQ_FREE ? "IRQ_FREE" :		\
- 			x == OCXL_IOCTL_IRQ_SET_FD ? "IRQ_SET_FD" :	\
-+			x == OCXL_IOCTL_GET_METADATA ? "GET_METADATA" :	\
- 			"UNKNOWN")
  
- static long afu_ioctl(struct file *file, unsigned int cmd,
-@@ -157,6 +179,11 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 					irq_fd.eventfd);
- 		break;
- 
-+	case OCXL_IOCTL_GET_METADATA:
-+		rc = afu_ioctl_get_metadata(ctx,
-+				(struct ocxl_ioctl_get_metadata __user *) args);
-+		break;
-+
- 	default:
- 		rc = -EINVAL;
- 	}
-diff --git a/include/uapi/misc/ocxl.h b/include/uapi/misc/ocxl.h
-index 4b0b0b756f3e..16e1f48ce280 100644
---- a/include/uapi/misc/ocxl.h
-+++ b/include/uapi/misc/ocxl.h
-@@ -32,6 +32,27 @@ struct ocxl_ioctl_attach {
- 	__u64 reserved3;
- };
- 
-+/*
-+ * Version contains the version of the struct.
-+ * Versions will always be backwards compatible, that is, new versions will not
-+ * alter existing fields
-+ */
-+struct ocxl_ioctl_get_metadata {
-+	__u16 version;
-+
-+	// Version 0 fields
-+	__u8  afu_version_major;
-+	__u8  afu_version_minor;
-+	__u32 pasid;
-+
-+	__u64 pp_mmio_size;
-+	__u64 global_mmio_size;
-+
-+	// End version 0 fields
-+
-+	__u64 reserved[13]; // Total of 16*u64
-+};
-+
- struct ocxl_ioctl_irq_fd {
- 	__u64 irq_offset;
- 	__s32 eventfd;
-@@ -45,5 +66,6 @@ struct ocxl_ioctl_irq_fd {
- #define OCXL_IOCTL_IRQ_ALLOC	_IOR(OCXL_MAGIC, 0x11, __u64)
- #define OCXL_IOCTL_IRQ_FREE	_IOW(OCXL_MAGIC, 0x12, __u64)
- #define OCXL_IOCTL_IRQ_SET_FD	_IOW(OCXL_MAGIC, 0x13, struct ocxl_ioctl_irq_fd)
-+#define OCXL_IOCTL_GET_METADATA _IOR(OCXL_MAGIC, 0x14, struct ocxl_ioctl_get_metadata)
- 
- #endif /* _UAPI_MISC_OCXL_H */
+ mmap
+ ----
 -- 
 2.14.3
