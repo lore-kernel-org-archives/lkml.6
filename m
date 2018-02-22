@@ -1,114 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933121AbeBVPom (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:44:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38806 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932980AbeBVPoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:44:39 -0500
-Date: Thu, 22 Feb 2018 16:44:35 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH v5 2/2] mm/memcontrol.c: Reduce reclaim retries in
- mem_cgroup_resize_limit()
-Message-ID: <20180222154435.GO30681@dhcp22.suse.cz>
-References: <20180119132544.19569-2-aryabinin@virtuozzo.com>
- <20180119133510.GD6584@dhcp22.suse.cz>
- <CALvZod7HS6P0OU6Rps8JeMJycaPd4dF5NjxV8k1y2-yosF2bdA@mail.gmail.com>
- <20180119151118.GE6584@dhcp22.suse.cz>
- <20180221121715.0233d34dda330c56e1a9db5f@linux-foundation.org>
- <f3893181-67a4-aec2-9514-f141fa78a6c0@virtuozzo.com>
- <20180222140932.GL30681@dhcp22.suse.cz>
- <e0705720-0909-e224-4bdd-481660e516f2@virtuozzo.com>
- <20180222153343.GN30681@dhcp22.suse.cz>
- <0927bcab-7e2c-c6f9-d16a-315ac436ba98@virtuozzo.com>
+        id S933147AbeBVPpL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:45:11 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:45251 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932942AbeBVPpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:45:08 -0500
+X-Google-Smtp-Source: AH8x227VBv1oI0GICh0LaoARYZrRvmx6f1+JpVYLoL3uOsqAJ/BfV7r+6bLXPFRgJrKLOBAJg7IiM3JDysAph5Wk19I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0927bcab-7e2c-c6f9-d16a-315ac436ba98@virtuozzo.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 22 Feb 2018 16:45:06 +0100
+X-Google-Sender-Auth: gcf18YPXwTI5nKHKErxX3IjrjW8
+Message-ID: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+Subject: Removing architectures without upstream gcc support
+To: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-02-18 18:38:11, Andrey Ryabinin wrote:
-> 
-> 
-> On 02/22/2018 06:33 PM, Michal Hocko wrote:
-> > On Thu 22-02-18 18:13:11, Andrey Ryabinin wrote:
-> >>
-> >>
-> >> On 02/22/2018 05:09 PM, Michal Hocko wrote:
-> >>> On Thu 22-02-18 16:50:33, Andrey Ryabinin wrote:
-> >>>> On 02/21/2018 11:17 PM, Andrew Morton wrote:
-> >>>>> On Fri, 19 Jan 2018 16:11:18 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-> >>>>>
-> >>>>>> And to be honest, I do not really see why keeping retrying from
-> >>>>>> mem_cgroup_resize_limit should be so much faster than keep retrying from
-> >>>>>> the direct reclaim path. We are doing SWAP_CLUSTER_MAX batches anyway.
-> >>>>>> mem_cgroup_resize_limit loop adds _some_ overhead but I am not really
-> >>>>>> sure why it should be that large.
-> >>>>>
-> >>>>> Maybe restarting the scan lots of times results in rescanning lots of
-> >>>>> ineligible pages at the start of the list before doing useful work?
-> >>>>>
-> >>>>> Andrey, are you able to determine where all that CPU time is being spent?
-> >>>>>
-> >>>>
-> >>>> I should have been more specific about the test I did. The full script looks like this:
-> >>>>
-> >>>> mkdir -p /sys/fs/cgroup/memory/test
-> >>>> echo $$ > /sys/fs/cgroup/memory/test/tasks
-> >>>> cat 4G_file > /dev/null
-> >>>> while true; do cat 4G_file > /dev/null; done &
-> >>>> loop_pid=$!
-> >>>> perf stat echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
-> >>>> echo -1 > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
-> >>>> kill $loop_pid
-> >>>>
-> >>>>
-> >>>> I think the additional loops add some overhead and it's not that big by itself, but
-> >>>> this small overhead allows task to refill slightly more pages, increasing
-> >>>> the total amount of pages that mem_cgroup_resize_limit() need to reclaim.
-> >>>>
-> >>>> By using the following commands to show the the amount of reclaimed pages:
-> >>>> perf record -e vmscan:mm_vmscan_memcg_reclaim_end echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
-> >>>> perf script|cut -d '=' -f 2| paste -sd+ |bc
-> >>>>
-> >>>> I've got 1259841 pages (4.9G) with the patch vs 1394312 pages (5.4G) without it.
-> >>>
-> >>> So how does the picture changes if you have multiple producers?
-> >>>
-> >>
-> >> Drastically, in favor of the patch. But numbers *very* fickle from run to run.
-> >>
-> >> Inside 5G vm with  4 cpus (qemu -m 5G -smp 4) and 4 processes in cgroup reading 1G files:
-> >> "while true; do cat /1g_f$i > /dev/null; done &"
-> >>
-> >> with the patch:
-> >> best: 1.04  secs, 9.7G reclaimed
-> >> worst: 2.2 secs, 16G reclaimed.
-> >>
-> >> without:
-> >> best: 5.4 sec, 35G reclaimed
-> >> worst: 22.2 sec, 136G reclaimed
-> > 
-> > Could you also compare how much memory do we reclaim with/without the
-> > patch?
-> > 
-> 
-> I did and I wrote the results. Please look again.
+While building the cross-toolchains, I noticed that overall, we can build almost
+all linux target architectures with upstream binutils and gcc these days,
+however there are still some exceptions, and I'd like to find out if anyone
+has objections to removing the ones that do not have upstream support.
+This are the four architectures I found:
 
-I must have forgotten. Care to point me to the message-id?
-20180119132544.19569-2-aryabinin@virtuozzo.com doesn't contain this
-information and a quick glance over the follow up thread doesn't have
-anything as well. Ideally, this should be in the patch changelog, btw.
+* score (s+core, sunplus core) was a proprietary RISC architecture
+  made by sunplus. It is unclear if they still ship any products based on
+  this architecture, all they list is either ARM Cortex-A9 or an unspecified
+  RISC core that could be any of arm, mips, nds32, arc, xtensa or
+  something completely different. The two maintainers have both left the
+  company many years ago and have not contributed any patches in
+  at least five years. There was an upstream gcc port, which was marked
+  'obsolete' in 2013 and got removed in gcc-5.0.
+  I conclude that this is dead in Linux and can be removed
 
--- 
-Michal Hocko
-SUSE Labs
+* unicore32 was a research project at Peking University with a SoC
+  based on the Intel PXA design. No gcc source code has ever been
+  published, the only toolchain available is a set of binaries that include
+  a gcc-4.4 compiler. The project page at
+  http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
+  not been modified since 2011. The maintainer still Acks patches
+  and has last sent a pull request in 2014 and last sent a patch of
+  his own in 2012 when the project appears to have stalled.
+  I would suggest removing this one.
+
+* Hexagon is Qualcomm's DSP architecture. It is being actively used
+  in all Snapdragon ARM SoCs, but the kernel code appears to be
+  the result of a failed research project to make a standalone Hexagon
+  SoC without an ARM core. There is some information about the
+  project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
+  https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
+  There is a port to gcc-4.5 on the project page, which is evidently
+  abandoned, but there is an active upstream LLVM port that is
+  apparently used to build non-Linux programs.
+  I would consider this one a candidate for removal as well, given that
+  there were never any machines outside of Qualcomm that used this,
+  and they are no longer interested themselves.
+
+* Meta was ImgTec's own architecture and they upstreamed the kernel
+  port just before they acquired MIPS. Apparently Meta was abandoned
+  shortly afterwards and disappeared from imgtec's website in 2014.
+  The maintainer is still fixing bugs in the port, but I could not find
+  any toolchain more recent than
+  https://github.com/img-meta/metag-buildroot/tree/metag-core/toolchain/gcc/4.2.4
+  Not sure about this one, I'd be interested in more background
+  from James Hogan, who probably has an opinion and might have
+  newer toolchain sources.
+
+* OpenRISC is a RISC architecture with a free license and an
+  active community. It seems to have lost a bit of steam after RISC-V
+  is rapidly taking over that niche, but there are chips out there and
+  the design isn't going away. Listing it here for completeness only
+  because there is no upstream gcc port yet, but this will hopefully
+  change in the future based on
+  https://lists.librecores.org/pipermail/openrisc/2018-January/000958.html
+  and I had no problems locating the gcc-7.x tree for building my
+  toolchains. The port is actively being maintained.
+
+There are also a couple of architectures that are more or less
+unmaintained but do have working gcc support: FR-V and M32R
+have been orphaned for a while and are not getting updated
+MN10300 is still maintained officially by David Howells but doesn't
+seem any more active than the other two, the last real updates were
+in 2013.
+
+       Arnd
