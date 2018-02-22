@@ -1,44 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeBVTHL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:07:11 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:50610 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeBVTHI (ORCPT
+        id S1751559AbeBVTHp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:07:45 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53064 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeBVTGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:07:08 -0500
-Date: Thu, 22 Feb 2018 14:07:04 -0500 (EST)
-Message-Id: <20180222.140704.166412303524863230.davem@davemloft.net>
-To: keescook@google.com
-Cc: tgraf@suug.ch, johannes@sipsolutions.net, daniel@iogearbox.net,
-        ast@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        danielmicay@gmail.com
-Subject: Re: nla_put_string() vs NLA_STRING
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
-References: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Feb 2018 14:06:49 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] arm64: dts: renesas: r8a77965: Add #phy-cells property
+Date: Thu, 22 Feb 2018 20:06:08 +0100
+Message-Id: <1519326370-15805-5-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@google.com>
-Date: Tue, 20 Feb 2018 22:00:26 -0800
+Add "#phy-cells" property to "usb-phy@e65ee000" device node.
 
-> So, this specific problem needs fixing (in at least two places calling
-> nla_put_string(msg, NL80211_ATTR_REG_ALPHA2, ...)). While I suspect
-> it's only ever written an extra byte from the following variable in
-> the structure which is an enum nl80211_dfs_regions, I worry there
-> might be a lot more of these (though I'd hope unterminated strings are
-> uncommon for internal representation). And more generally, it seems
-> like only the NLA _input_ functions actually check nla_policy details.
-> It seems that the output functions should do the same too, yes?
+This silences the following DTC compiler warning:
+Warning (phys_property): Missing property '#phy-cells' in node
+/soc/usb-phy@e65ee000 or bad phandle (referred from
+/soc/usb@ee020000:phys[0])
 
-Generally speaking, the policy is for making sure the user doesn't
-give us garbage.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-When building netlink attributes itself, the kernel is supposed to
-know what it is doing.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index be4f25c..cd12176 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -795,6 +795,7 @@
+ 
+ 		usb3_phy0: usb-phy@e65ee000 {
+ 			reg = <0 0xe65ee000 0 0x90>;
++			#phy-cells = <0>;
+ 			/* placeholder */
+ 		};
+ 
+-- 
+2.7.4
