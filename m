@@ -1,56 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932982AbeBVPNH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 10:13:07 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39305 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932966AbeBVPNC (ORCPT
+        id S932998AbeBVPNR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 10:13:17 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:57104 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932922AbeBVPNN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 10:13:02 -0500
-X-Google-Smtp-Source: AH8x226ntCCuLqY4Qjyny20F71wjJ7iYsNrr9gG7SXIvRexdfyVklAmLEb8DxLMgQsfVb4s5QMxEArdFQNLDaoAxHQM=
+        Thu, 22 Feb 2018 10:13:13 -0500
+Date: Thu, 22 Feb 2018 23:12:49 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Haren Myneni <haren@us.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Dan Streetman <ddstreet@ieee.org>
+Subject: Re: [PATCH] crypto: nx-842: Delete an error message for a failed
+ memory allocation in nx842_pseries_init()
+Message-ID: <20180222151249.GH29815@gondor.apana.org.au>
+References: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
 MIME-Version: 1.0
-In-Reply-To: <20180131022151.GA14668@sophia>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com> <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
- <20180131022151.GA14668@sophia>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 16:13:01 +0100
-Message-ID: <CACRpkdY7JGmHO_oC6__+6+5ukJsThqq6Oy5u0+En01=DAN2owQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Change ISA_BUS_API dependency to selection
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 3:22 AM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On Tue, Jan 02, 2018 at 10:29:30AM +0100, Linus Walleij wrote:
->>On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
->><vilhelm.gray@gmail.com> wrote:
->>
->>> Linus, please pickup this entire patchset through your GPIO subsystem
->>> tree; a recursive dependency error is present if these patches are
->>> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
->>> be merged together in the same tree.
->>
->>OK I just need a bunch of ACKs so giving subsystem maintainers some
->>days to come back on this.
->>
->>Yours,
->>Linus Walleij
->
-> Hi Linus,
->
-> Do you have any objections to picking up this patchset now; or would you
-> prefer to wait for some more input from the other maintainers?
+On Wed, Feb 14, 2018 at 05:17:08PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Feb 2018 17:05:13 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-No I will try to apply it and see what happens :)
-
-Yours,
-Linus Walleij
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
