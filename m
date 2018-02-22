@@ -1,57 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751749AbeBVUju (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 15:39:50 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:51798 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751363AbeBVUhD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:37:03 -0500
-Date: Thu, 22 Feb 2018 15:37:00 -0500 (EST)
-Message-Id: <20180222.153700.511110622471984196.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com,
-        f.fainelli@gmail.com, brandon.streiff@ni.com, richardcochran@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dsa: ptp; mark dummy helpers as 'inline'
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180222114459.1272945-1-arnd@arndb.de>
-References: <20180222114459.1272945-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751524AbeBVUlD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 15:41:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751165AbeBVUlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 15:41:01 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 149FF21741
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Thu, 22 Feb 2018 21:40:55 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Pierre Bourdon <delroth@google.com>
+Cc: Andre Heider <a.heider@gmail.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] max17042: propagate of_node to power supply device
+Message-ID: <20180222204055.wvnhlkzdxujriap4@earth.universe>
+References: <20180220150318.138827-1-delroth@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tdw2b2sbipcr5uis"
+Content-Disposition: inline
+In-Reply-To: <20180220150318.138827-1-delroth@google.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Feb 2018 12:44:40 +0100
 
-> Declaring a static function in a header leads to a warning every
-> time that header gets included without the function being used:
-> 
-> In file included from drivers/net/dsa/mv88e6xxx/chip.c:42:
-> drivers/net/dsa/mv88e6xxx/ptp.h:92:13: error: 'mv88e6xxx_hwtstamp_work' defined but not used [-Werror=unused-function]
->  static long mv88e6xxx_hwtstamp_work(struct ptp_clock_info *ptp)
-> In file included from drivers/net/dsa/mv88e6xxx/chip.c:38:
-> drivers/net/dsa/mv88e6xxx/global2.h:355:12: error: 'mv88e6xxx_g2_wait' defined but not used [-Werror=unused-function]
->  static int mv88e6xxx_g2_wait(struct mv88e6xxx_chip *chip, int reg, u16 mask)
->             ^~~~~~~~~~~~~~~~~
-> drivers/net/dsa/mv88e6xxx/global2.h:350:12: error: 'mv88e6xxx_g2_update' defined but not used [-Werror=unused-function]
->  static int mv88e6xxx_g2_update(struct mv88e6xxx_chip *chip, int reg, u16 update)
->             ^~~~~~~~~~~~~~~~~~~
-> drivers/net/dsa/mv88e6xxx/global2.h:345:12: error: 'mv88e6xxx_g2_write' defined but not used [-Werror=unused-function]
->  static int mv88e6xxx_g2_write(struct mv88e6xxx_chip *chip, int reg, u16 val)
->             ^~~~~~~~~~~~~~~~~~
-> drivers/net/dsa/mv88e6xxx/global2.h:340:12: error: 'mv88e6xxx_g2_read' defined but not used [-Werror=unused-function]
->  static int mv88e6xxx_g2_read(struct mv88e6xxx_chip *chip, int reg, u16 *val)
-> 
-> This marks all such functions in dsa inline to make sure we don't warn
-> about them.
-> 
-> Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
-> Fixes: 0d632c3d6fe3 ("net: dsa: mv88e6xxx: add accessors for PTP/TAI registers")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--tdw2b2sbipcr5uis
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks Arnd.
+Hi,
+
+On Tue, Feb 20, 2018 at 04:03:18PM +0100, Pierre Bourdon wrote:
+> max17042_get_status uses the core power_supply_am_i_supplied. That
+> function relies on DT properties to figure out the power supply
+> topology, and will error out without DT.
+>=20
+> Fixes max17042 battery status being reported as "unknown".
+>=20
+> Signed-off-by: Andre Heider <a.heider@gmail.com>
+> ---
+
+Thanks, queued to power-supply's fixes branch.
+
+-- Sebastian
+
+>  drivers/power/supply/max17042_battery.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supp=
+ly/max17042_battery.c
+> index 35dde81b1c9b..1a568df383db 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -1053,6 +1053,7 @@ static int max17042_probe(struct i2c_client *client,
+> =20
+>  	i2c_set_clientdata(client, chip);
+>  	psy_cfg.drv_data =3D chip;
+> +	psy_cfg.of_node =3D dev->of_node;
+> =20
+>  	/* When current is not measured,
+>  	 * CURRENT_NOW and CURRENT_AVG properties should be invisible. */
+> --=20
+> 2.16.1.291.g4437f3f132-goog
+>=20
+
+--tdw2b2sbipcr5uis
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqPKtcACgkQ2O7X88g7
++prELQ/8C5LDN3ZPRBpPzIyRW3Un64WUpZvmb774d/rM7HlEGYMS43w2eGW/N8uh
+e2rM577ib3gEqxFBNBjhkWEQTusk8iaUIqYdqbjG/Z0cp+8HJZVjU0n7QujRJkZn
+7O2JWJv33XtWzS7mw8fFbD1H0HAqAzTBSoV2Uv6bzisqtY1jO4cpVzJqxTEuySIH
+ARfZRcwp+GeJFYFg2BunWSiKUfbyTiKK6TNSI02xzgE1K/GoT+7bi7ThdX1ipXbq
+bP31r1GDm2uGU81564jth8nmBhLc6vLFBbelnoTAn+5C7hN5GcUwo7+LnUyRd2g+
+VY4arbm/6NGhz7UaXYNi4EQi2hkiQuMM0nFGuDbiKqz9EFQJo+bPmI+f2mHFu9Ik
+pCxjhdvEtvZf5lvPcKZPeOuQZNSE3Iv89v76WOB0a7HuoAGYO4att5NSjity7kFa
+dZ2G/e3B3lEkQ/Vb3y1t/HGi/jihe9vZJHUz/BfRtVKPWEZ2czo1jvQbAzpfBzfu
+Cv651IXE+xhmzCdfLH7Q4lRAV/6T3Sku2xr907Iyu+3mIuOl83nbvaKc7D+SPH1V
+uCe/IwPw0hjBl/RVDjCME2uw9ybyg6QnDo3M/W4V7S0mkBNGVf9g0z16hJsZTrKK
+5WeKZYzU/bzEoRFc0YG2XCg+uWQasVeJ0LJ1pyW/tAX+TzLAgl8=
+=maq0
+-----END PGP SIGNATURE-----
+
+--tdw2b2sbipcr5uis--
