@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeBVOQf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:16:35 -0500
-Received: from mail-it0-f48.google.com ([209.85.214.48]:40645 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932593AbeBVOQc (ORCPT
+        id S932739AbeBVORj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:17:39 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36681 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932593AbeBVORg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:16:32 -0500
-X-Google-Smtp-Source: AH8x224DWHF6LWvP7woryHRn2HxFl/RZkYMXm6opWLdknTpo52EbqkeuErKfGNq4dsdLdkw0mlGM1wqaR4NzsFeZDz4=
+        Thu, 22 Feb 2018 09:17:36 -0500
+X-Google-Smtp-Source: AG47ELuVKUwCRWCmMkq4C3CXkwWUw7ls0g1k8K1FteybKhi9YXlknjxJ73NTf7HS5WdRmjsme8CbuXchpNK/1NvNrik=
 MIME-Version: 1.0
-In-Reply-To: <86570340-688b-34ec-2d99-ff728ccbe4a9@users.sourceforge.net>
-References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net> <86570340-688b-34ec-2d99-ff728ccbe4a9@users.sourceforge.net>
+In-Reply-To: <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
+References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net> <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 15:16:31 +0100
-Message-ID: <CACRpkdaEteCvgQuP-+5eR7Jn1E4ViZdskV9DqA7uekcuqO_k5A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: omap: Delete an error message for a failed
- memory allocation in omap_gpio_probe()
+Date: Thu, 22 Feb 2018 15:17:35 +0100
+Message-ID: <CACRpkdZF+_vG3FF4i=FzJAUnCZqqOKGZp6DqHhUOZQHQ2ZWr5Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: omap: Improve a size determination in omap_gpio_probe()
 To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
@@ -27,13 +26,15 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:07 PM, SF Markus Elfring
+On Sat, Feb 10, 2018 at 10:08 PM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:46:30 +0100
+> Date: Sat, 10 Feb 2018 21:49:22 +0100
 >
-> Omit an extra message for a memory allocation failure in this function.
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
 >
 > This issue was detected by using the Coccinelle software.
 >
