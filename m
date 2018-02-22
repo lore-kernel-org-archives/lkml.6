@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1382408-1519342984-2-9875311204413055342
+X-Cyrus-Session-Id: sloti22d1t05-524998-1519316851-2-13141474776452302529
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,22 +14,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519342983; b=Js70cZQRZwSsGDe+7gaXbAb0VlPPHVmR3re3JYbvhLaJRsw
-    38pitmH6EzIA0j749cEvHHCrb601CPIu2oWCglXFO0rKLGLCLtPf0BkLQ0YcU4ZZ
-    E8m/r72xNmWjhWMqRTc/Lfndi3CbcD/318e1ijbYqLaZNIDCfgcToTM6V1ZYngBH
-    hfGoU5aTyM05S0WhXJeZfJaWEMHe3XrHeScdYs+s2dQklhvBTudyAec/9SNMg0OV
-    F/jDFCSkq9aKX4WPtI6U36yRC+L/Uq3ZpGJXGBmJ+ERZ6KDxhkTi9PYlSBEjbHt5
-    49XujMpzpU3tBETixkK8vnCFkhjTDCmpfeYJoIQ==
+    t=1519316851; b=mfxg20zVfk24k0w/zPfYTirDXh5cBtlmDsdBBPdN0Zh90Fc
+    wdTDVL2j4U/Zm2bOth/bVvMd4Hq+GSv36w7b5fD9dOE2c53qKRFmn+e9ymkB4HVS
+    ep9nr36qvVvQZHivqpPbN5mFTODm9JqsevTCftxpT1zk8KRBb02bBS2avu8tcqWg
+    m0E/gfE7K5bAoqRiriHnTvt9ow2nBU49ZANe5f9tx+QonuE6n65k/ooZmmQXshqW
+    CbiRLsuYEISaTHsWp2VPdeMDsIzrCiW5aWAaV5ZL0glV0Er+Qa5gwQMAimQ6baBn
+    3s/MRO2Jzr1joKx74MXsQYmwbq8QHR8IMQY64Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:in-reply-to:references:to:cc:subject
     :mime-version:content-type:content-id:date:message-id:sender
-    :list-id; s=arctest; t=1519342983; bh=3Z1Eu+4guyyOMsNdpjT7Yu0Cdw
-    MB/cbP1T/yiePzLzE=; b=qzWNFto//QoQ9bmux+QLwSEF8AyDPT2Z6GRkzDIC+w
-    S4ZguC+kJuRoSgJRp6evVAdNOiahG0Muizo3pNMYcsml9tVbjq47NzOGCfbShfIs
-    Bjj3dozjAwk17a2FIfE1MkmAKaQ2BEzYZNxxvGwP1oARIcox0a+t/hrHiKufN5F/
-    i+OwV3SUsrrv3Osq9SDbDJMwgRynCgroJjQdMA5v+cLGjyvQoKdL0L0izuMfRH5v
-    5yNuP1ib+v+7V9WoKInUBBwV/iBs+4JhYZU/FP5U1Q5peHc9EFtqs1XH9T1FqycV
-    w4nU/Egq+ApCemgy3v33DzNnGPeSMCLFcFfNswHhTxew==
+    :list-id; s=arctest; t=1519316851; bh=3cZX+/XeMx1HqQq4qIMSWB6G6P
+    xPWGRpZ0yO/k6vczM=; b=wjnAPlT4ixRA1fc6INnpx7f0NQzjkdEvd9I41qlJN5
+    L9/M5NdAMpHKsD5COpoCUQd9lGb/IqU3mYzgRWONykxmo1SLKrqGNPIrhnzbiInW
+    RuI1n97PzUaxuSp0TSqKtv7snCMN3LR2W+vavaH70kroNQIn9qIrqML1HIiyo5Wd
+    5gGSUjHxEHx2VyxOU0eQ6WGwPQouwQiIRMZ+rtnslINmHKx6C1g8wWhFgl5KvvJ9
+    TodCbOFq/lvbmd4DSFr3bpqKmLoxCf+xN4zDdzWqSb4B5yG07588EP2Ch8jStqGz
+    KLBqdrS8u1NOiBfEktvD+x3guCJrUA7hDq+QPBvSpWCg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -48,40 +48,35 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751586AbeBVXmT (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 18:42:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41090 "EHLO mx1.redhat.com"
+        id S933144AbeBVQ12 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Feb 2018 11:27:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750916AbeBVXmR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:42:17 -0500
+        id S932942AbeBVQ11 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:27:27 -0500
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From: David Howells <dhowells@redhat.com>
-In-Reply-To: <151931646922.27713.5363631712174136041.stgit@warthog.procyon.org.uk>
-References: <151931646922.27713.5363631712174136041.stgit@warthog.procyon.org.uk> <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
+In-Reply-To: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
+References: <151931642737.27713.5082532296556836948.stgit@warthog.procyon.org.uk>
 To: jmorris@namei.org
 Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Kirill Marinushkin <k.marinushkin@gmail.com>
-Subject: Re: [PATCH 6/6] KEYS: Use individual pages in big_key for crypto buffers
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/6] KEYS: Fixes
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29837.1519342935.1@warthog.procyon.org.uk>
-Date: Thu, 22 Feb 2018 23:42:15 +0000
-Message-ID: <29838.1519342935@warthog.procyon.org.uk>
+Content-ID: <28345.1519316845.1@warthog.procyon.org.uk>
+Date: Thu, 22 Feb 2018 16:27:25 +0000
+Message-ID: <28346.1519316845@warthog.procyon.org.uk>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-David Howells <dhowells@redhat.com> wrote:
-
-> +		l = min(len, PAGE_SIZE);
-
-Sigh.  This needs to be a min_t().
+Sorry, that RFC shouldn't be there in the subject.
 
 David
