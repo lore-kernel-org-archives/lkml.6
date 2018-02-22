@@ -1,36 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752217AbeBVXws (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 18:52:48 -0500
-Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:51875 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751897AbeBVXw1 (ORCPT
+        id S1752239AbeBVXxD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:53:03 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:40107 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752047AbeBVXvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 18:52:27 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1536:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3874:4321:5007:10004:10400:10848:11232:11658:11914:12196:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21611:21627:30054:30091,0,RBL:195.112.86.173:@perches.com:.lbl8.mailshell.net-62.8.60.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: alarm23_4f43245882621
-X-Filterd-Recvd-Size: 1058
-Message-ID: <1519343539.4326.38.camel@perches.com>
-Subject: Re: [PATCH] doc: process: Add "Root-caused-by" and "Suggested-by"
-From: Joe Perches <joe@perches.com>
-To: Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
+        Thu, 22 Feb 2018 18:51:13 -0500
+From: John Ogness <john.ogness@linutronix.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
-Date: Thu, 22 Feb 2018 15:52:19 -0800
-In-Reply-To: <20180222104024.60408a75@lwn.net>
-References: <20180222003749.GA4724@beast> <20180222104024.60408a75@lwn.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/6] fs/dcache: Avoid a try_lock loop in shrink_dentry_list()
+Date: Fri, 23 Feb 2018 00:50:24 +0100
+Message-Id: <20180222235025.28662-6-john.ogness@linutronix.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180222235025.28662-1-john.ogness@linutronix.de>
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-22 at 10:40 -0700, Jonathan Corbet wrote:
-> That said, we can add this one; I'll take the patch if I get an ack from
-> Joe.
+shrink_dentry_list() holds dentry->d_lock and needs to acquire
+dentry->d_inode->i_lock. This cannot be done with a spin_lock()
+operation because it's the reverse of the regular lock order.
+To avoid ABBA deadlocks it is done with a trylock loop.
 
-Meh-ed-by: Joe Perches <joe@perches.com>
+Trylock loops are problematic in two scenarios:
+
+  1) PREEMPT_RT converts spinlocks to 'sleeping' spinlocks, which are
+     preemptible. As a consequence the i_lock holder can be preempted
+     by a higher priority task. If that task executes the trylock loop
+     it will do so forever and live lock.
+
+  2) In virtual machines trylock loops are problematic as well. The
+     VCPU on which the i_lock holder runs can be scheduled out and a
+     task on a different VCPU can loop for a whole time slice. In the
+     worst case this can lead to starvation. Commits 47be61845c77
+     ("fs/dcache.c: avoid soft-lockup in dput()") and 046b961b45f9
+     ("shrink_dentry_list(): take parent's d_lock earlier") are
+     addressing exactly those symptoms.
+
+Avoid the trylock loop by using dentry_kill(). When pruning ancestors,
+the same code applies that is used to kill a dentry in dput(). This
+also has the benefit that the locking order is now the same. First
+the inode is locked, then the parent.
+
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+---
+ fs/dcache.c | 22 ++--------------------
+ 1 file changed, 2 insertions(+), 20 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 082361939b84..e470d49daa54 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1130,26 +1130,8 @@ static void shrink_dentry_list(struct list_head *list)
+ 		 * fragmentation.
+ 		 */
+ 		dentry = parent;
+-		while (dentry && !lockref_put_or_lock(&dentry->d_lockref)) {
+-			parent = lock_parent(dentry);
+-			if (dentry->d_lockref.count != 1) {
+-				dentry->d_lockref.count--;
+-				spin_unlock(&dentry->d_lock);
+-				if (parent)
+-					spin_unlock(&parent->d_lock);
+-				break;
+-			}
+-			inode = dentry->d_inode;	/* can't be NULL */
+-			if (unlikely(!spin_trylock(&inode->i_lock))) {
+-				spin_unlock(&dentry->d_lock);
+-				if (parent)
+-					spin_unlock(&parent->d_lock);
+-				cpu_relax();
+-				continue;
+-			}
+-			__dentry_kill(dentry);
+-			dentry = parent;
+-		}
++		while (dentry && !lockref_put_or_lock(&dentry->d_lockref))
++			dentry = dentry_kill(dentry);
+ 	}
+ }
+ 
+-- 
+2.11.0
