@@ -1,88 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933633AbeBVRy2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 12:54:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:60587 "EHLO mga02.intel.com"
+        id S933558AbeBVSAl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 13:00:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:46092 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933572AbeBVRyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 12:54:18 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,378,1515484800";
-   d="scan'208";a="19565643"
-Date: Thu, 22 Feb 2018 09:54:12 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Subject: Re: [PATCH v2] efivarfs: Limit the rate for non-root to read files
-Message-ID: <20180222175411.xzx2d2r2fahn7llo@agluck-desk>
-References: <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
- <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
- <20180222014505.2l76ccrrs36y3b26@agluck-desk>
- <CA+55aFzJXsPcsJ5MtsxTp2n+43xC0yGzANLNcDm1mFbZKR75FQ@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37FE28@ORSMSX110.amr.corp.intel.com>
- <CA+55aFy0hRexJkLbN7t31LjfGr4Ae0W5g6sBMqHHJi8aYuGKeA@mail.gmail.com>
- <612E894E-62C8-4155-AED8-D53702EDC8DC@intel.com>
- <CA+55aFxeBaTbwvbWqx1MKYjKKzLUs=1O43Bx2=JaO8qrnY-8HA@mail.gmail.com>
- <20180222171506.wwsichkiyc5f74pr@agluck-desk>
- <CA+55aFyOLYAbvTX0F8WLHgBnhwAPWr7EOPbO_sEepmB5GsCBKQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyOLYAbvTX0F8WLHgBnhwAPWr7EOPbO_sEepmB5GsCBKQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S933441AbeBVSAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 13:00:40 -0500
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH] cpufreq: scpi: drop redundant arm_big_little config dependency
+Date: Thu, 22 Feb 2018 18:00:23 +0000
+Message-Id: <1519322423-27956-1-git-send-email-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 09:39:10AM -0800, Linus Torvalds wrote:
-> I'm certainly ok with this. I'm assuming this has been tested
+Commit 343a8d17fa8d (cpufreq: scpi: remove arm_big_little dependency)
+removed the SCPI cpufreq dependency on arm_big_little cpufreq driver.
+However the Kconfig entry still depends on ARM_BIG_LITTLE_CPUFREQ
+which is clearly wrong.
 
-I read some files using "dd bs=1" as root and non-root.  Root still
-goes fast, non-root is limited. Both see the same data. I can ^C the
-non-root version and the dd quits as expected:
+This patch removes that unnecessary Kconfig dependency.
 
-$ dd if=DefSetup-e8a99903-302c-4851-a6be-ab2731873b2f of=/dev/null bs=1
-^C301+0 records in
-300+0 records out
-300 bytes copied, 3.10487 s, 0.1 kB/s
+Fixes: 343a8d17fa8d (cpufreq: scpi: remove arm_big_little dependency)
+Reported-by: Quentin Perret <quentin.perret@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/cpufreq/Kconfig.arm | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
-> and gives nice warnings too?
-
-They seemed very spammy before so I turned them off with this:
-
-+               ratelimit_set_flags(&new->ratelimit, RATELIMIT_MSG_ON_RELEASE);
-
-They looked like this:
-
-[  176.607182] efivarfs_file_read: 42 callbacks suppressed
-[  177.611064] efivarfs_file_read: 42 callbacks suppressed
-[  178.614931] efivarfs_file_read: 41 callbacks suppressed
-[  179.622986] efivarfs_file_read: 42 callbacks suppressed
-[  180.630920] efivarfs_file_read: 42 callbacks suppressed
-[  181.634839] efivarfs_file_read: 42 callbacks suppressed
-[  182.646729] efivarfs_file_read: 42 callbacks suppressed
-[  183.658679] efivarfs_file_read: 42 callbacks suppressed
-[  184.678664] efivarfs_file_read: 43 callbacks suppressed
-[  185.698571] efivarfs_file_read: 43 callbacks suppressed
-[  186.703129] efivarfs_file_read: 42 callbacks suppressed
-[  187.718510] efivarfs_file_read: 43 callbacks suppressed
-
-With the new "while/nap" change there would still be one message
-per second, but the number of callbacks suppressed should be 1
-(unless the user has many threads doing reads).
-
-Maybe it is good to know that an application is doing something
-stupid and we should drop that line from the patch and let the
-warnings flow?
-
--Tony
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 2e49673a9e21..9bbb5b39d18a 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -44,10 +44,10 @@ config ARM_DT_BL_CPUFREQ
+ 
+ config ARM_SCPI_CPUFREQ
+ 	tristate "SCPI based CPUfreq driver"
+-	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
++	depends on ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
+ 	help
+-	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
+-	  using SCPI protocol for CPU power management.
++	  This adds the CPUfreq driver support for ARM platforms using SCPI
++	  protocol for CPU power management.
+ 
+ 	  This driver uses SCPI Message Protocol driver to interact with the
+ 	  firmware providing the CPU DVFS functionality.
+-- 
+2.7.4
