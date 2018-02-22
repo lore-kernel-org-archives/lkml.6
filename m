@@ -1,181 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeBVW7S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 17:59:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59436 "EHLO mx1.redhat.com"
+        id S1751887AbeBVXA5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 18:00:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751669AbeBVW7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 17:59:17 -0500
-Date: Thu, 22 Feb 2018 15:59:15 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        jroedel@suse.de
-Subject: Re: [PATCH v5] vfio/type1: Adopt fast IOTLB flush interface when
- unmap IOVAs
-Message-ID: <20180222155915.543804e8@w520.home>
-In-Reply-To: <1517466458-3523-1-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1517466458-3523-1-git-send-email-suravee.suthikulpanit@amd.com>
+        id S1751669AbeBVXAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 18:00:55 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CAA421716
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 22 Feb 2018 17:00:52 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
+        egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
+Message-ID: <20180222230052.GA14632@bhelgaas-glaptop.roam.corp.google.com>
+References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
+ <20180206221106.16620-1-ulfalizer@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180206221106.16620-1-ulfalizer@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  1 Feb 2018 01:27:38 -0500
-Suravee Suthikulpanit <suravee.suthikulpanit@amd.com> wrote:
-
-> VFIO IOMMU type1 currently upmaps IOVA pages synchronously, which requires
-> IOTLB flushing for every unmapping. This results in large IOTLB flushing
-> overhead when handling pass-through devices has a large number of mapped
-> IOVAs. This can be avoided by using the new IOTLB flushing interface.
+On Tue, Feb 06, 2018 at 11:11:06PM +0100, Ulf Magnusson wrote:
+> 'default N' should be 'default n', though they happen to have the same
+> effect here, due to undefined symbols (N in this case) evaluating to n
+> in a tristate sense.
 > 
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> Remove the default instead of changing it. bool and tristate symbols
+> implicitly default to n.
+
+s/bool/Bool/
+
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> script.
+> 
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Since only this patch was posted to linux-pci, I assume it will be merged
+via some other tree.
+
 > ---
+> Changes in v2:
+> Make it clear that Kconfig is involved.
 > 
-> Changes from v4 (https://lkml.org/lkml/2018/1/31/153)
->  * Change return type from ssize_t back to size_t since we no longer
->    changing IOMMU API. Also update error handling logic accordingly.
->  * In unmap_unpin_fast(), also sync when failing to allocate entry.
->  * Some code restructuring and variable renaming.
+>  drivers/pci/host/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
->  drivers/vfio/vfio_iommu_type1.c | 128 ++++++++++++++++++++++++++++++++++++----
->  1 file changed, 117 insertions(+), 11 deletions(-)
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index a4ed7484d127..dc8a2a175f19 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -215,7 +215,6 @@ config PCIE_TANGO_SMP8759
+>  config VMD
+>  	depends on PCI_MSI && X86_64 && SRCU
+>  	tristate "Intel Volume Management Device Driver"
+> -	default N
+>  	---help---
+>  	  Adds support for the Intel Volume Management Device (VMD). VMD is a
+>  	  secondary PCI host bridge that allows PCI Express root ports,
+> -- 
+> 2.14.1
 > 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index e30e29a..6041530 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -102,6 +102,13 @@ struct vfio_pfn {
->  	atomic_t		ref_count;
->  };
->  
-> +struct vfio_regions {
-> +	struct list_head list;
-> +	dma_addr_t iova;
-> +	phys_addr_t phys;
-> +	size_t len;
-> +};
-> +
->  #define IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)	\
->  					(!list_empty(&iommu->domain_list))
->  
-> @@ -648,11 +655,102 @@ static int vfio_iommu_type1_unpin_pages(void *iommu_data,
->  	return i > npage ? npage : (i > 0 ? i : -EINVAL);
->  }
->  
-> +static long vfio_sync_unpin(struct vfio_dma *dma, struct vfio_domain *domain,
-> +				struct list_head *regions)
-> +{
-> +	long unlocked = 0;
-> +	struct vfio_regions *entry, *next;
-> +
-> +	iommu_tlb_sync(domain->domain);
-> +
-> +	list_for_each_entry_safe(entry, next, regions, list) {
-> +		unlocked += vfio_unpin_pages_remote(dma,
-> +						    entry->iova,
-> +						    entry->phys >> PAGE_SHIFT,
-> +						    entry->len >> PAGE_SHIFT,
-> +						    false);
-> +		list_del(&entry->list);
-> +		kfree(entry);
-> +	}
-> +
-> +	cond_resched();
-> +
-> +	return unlocked;
-> +}
-> +
-> +/*
-> + * Generally, VFIO needs to unpin remote pages after each IOTLB flush.
-> + * Therefore, when using IOTLB flush sync interface, VFIO need to keep track
-> + * of these regions (currently using a list).
-> + *
-> + * This value specifies maximum number of regions for each IOTLB flush sync.
-> + */
-> +#define VFIO_IOMMU_TLB_SYNC_MAX		512
-> +
-> +static size_t unmap_unpin_fast(struct vfio_domain *domain,
-> +			       struct vfio_dma *dma, dma_addr_t *iova,
-> +			       size_t len, phys_addr_t phys, long *unlocked,
-> +			       struct list_head *unmapped_list,
-> +			       int *unmapped_cnt)
-> +{
-> +	size_t unmapped = 0;
-> +	struct vfio_regions *entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +
-> +	if (entry) {
-> +		unmapped = iommu_unmap_fast(domain->domain, *iova, len);
-> +
-> +		if (!unmapped) {
-> +			kfree(entry);
-> +		} else {
-> +			iommu_tlb_range_add(domain->domain, *iova, unmapped);
-> +			entry->iova = *iova;
-> +			entry->phys = phys;
-> +			entry->len  = unmapped;
-> +			list_add_tail(&entry->list, unmapped_list);
-> +
-> +			*iova += unmapped;
-> +			(*unmapped_cnt)++;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Sync if the number of fast-unmap regions hits the limit
-> +	 * or in case of errors.
-> +	 */
-> +	if (*unmapped_cnt >= VFIO_IOMMU_TLB_SYNC_MAX || !unmapped) {
-> +		*unlocked += vfio_sync_unpin(dma, domain,
-> +					     unmapped_list);
-> +		*unmapped_cnt = 0;
-> +	}
-> +
-> +	return unmapped;
-> +}
-> +
-> +static size_t unmap_unpin_slow(struct vfio_domain *domain,
-> +			       struct vfio_dma *dma, dma_addr_t *iova,
-> +			       size_t len, phys_addr_t phys,
-> +			       long *unlocked)
-> +{
-> +	size_t unmapped = iommu_unmap(domain->domain, *iova, len);
-> +
-> +	if (unmapped) {
-> +		*unlocked += vfio_unpin_pages_remote(dma, *iova,
-> +						     phys >> PAGE_SHIFT,
-> +						     unmapped >> PAGE_SHIFT,
-> +						     false);
-> +		*iova += unmapped;
-> +		cond_resched();
-> +	}
-> +	return unmapped;
-> +}
-> +
->  static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
->  			     bool do_accounting)
->  {
->  	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
->  	struct vfio_domain *domain, *d;
-> +	struct list_head unmapped_region_list;
-> +	int unmapped_region_cnt = 0;
->  	long unlocked = 0;
->  
->  	if (!dma->size)
-> @@ -661,6 +759,8 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
->  	if (!IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu))
->  		return 0;
->  
-> +	INIT_LIST_HEAD(&unmapped_region_list);
-
-Since I harassed Shameer about using LIST_HEAD() for the iova list
-extension, I feel obligated to note that it can also be used here.  If
-you approve I'll just remove the above INIT_LIST_HEAD() and declare
-unmapped_region_list as LIST_HEAD(unmapped_region_list);, no need to
-re-send.  Otherwise looks fine to me.  Thanks,
-
-Alex
