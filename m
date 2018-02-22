@@ -1,74 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932453AbeBVMFz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:05:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35978 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753609AbeBVMFw (ORCPT
+        id S932253AbeBVMDF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 07:03:05 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:4383 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932121AbeBVMC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:05:52 -0500
-Date: Thu, 22 Feb 2018 13:05:41 +0100 (CET)
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-X-X-Sender: sebott@schleppi
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
-cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kvm: fix warning for CONFIG_HAVE_KVM_EVENTFD builds
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Thu, 22 Feb 2018 07:02:57 -0500
+X-IronPort-AV: E=Sophos;i="5.47,377,1515481200";
+   d="scan'208";a="12245955"
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+        <airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+        <jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+        <rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
+        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v3 02/10] pwm: clps711x: populate PWM mode in of_xlate function
+Date: Thu, 22 Feb 2018 14:01:13 +0200
+Message-ID: <1519300881-8136-3-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18022212-0040-0000-0000-000004367FDB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022212-0041-0000-0000-000020D898DA
-Message-Id: <alpine.LFD.2.21.1802221304430.1603@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802220155
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the kvm_arch_irq_routing_update() prototype outside of
-ifdef CONFIG_HAVE_KVM_EVENTFD guards to fix the following sparse warning:
+Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
 
-arch/s390/kvm/../../../virt/kvm/irqchip.c:171:28: warning: symbol 'kvm_arch_irq_routing_update' was not declared. Should it be static?
-
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- include/linux/kvm_host.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-clps711x.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index ed3d4ddbaff3..6930c63126c7 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1105,7 +1105,6 @@ static inline void kvm_irq_routing_update(struct kvm *kvm)
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index 26ec24e457b1..2a4d31ab3af0 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -109,10 +109,20 @@ static const struct pwm_ops clps711x_pwm_ops = {
+ static struct pwm_device *clps711x_pwm_xlate(struct pwm_chip *chip,
+ 					     const struct of_phandle_args *args)
  {
- }
- #endif
--void kvm_arch_irq_routing_update(struct kvm *kvm);
- 
- static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
- {
-@@ -1114,6 +1113,8 @@ static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
- 
- #endif /* CONFIG_HAVE_KVM_EVENTFD */
- 
-+void kvm_arch_irq_routing_update(struct kvm *kvm);
++	struct pwm_device *pwm;
++	struct pwm_caps caps;
 +
- static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
- {
- 	/*
+ 	if (args->args[0] >= chip->npwm)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return pwm_request_from_chip(chip, args->args[0], NULL);
++	pwm = pwm_request_from_chip(chip, args->args[0], NULL);
++	if (IS_ERR(pwm))
++		return pwm;
++
++	pwm_get_caps(chip, pwm, &caps);
++	pwm->args.mode = BIT(ffs(caps.modes) - 1);
++
++	return pwm;
+ }
+ 
+ static int clps711x_pwm_probe(struct platform_device *pdev)
 -- 
-2.13.4
+2.7.4
