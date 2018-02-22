@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751376AbeBVTy6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:54:58 -0500
-Received: from s3.sipsolutions.net ([144.76.63.242]:46070 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeBVTy5 (ORCPT
+        id S1751276AbeBVT5V (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:57:21 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33055 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbeBVT5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:54:57 -0500
-Message-ID: <1519329289.2637.12.camel@sipsolutions.net>
-Subject: Re: nla_put_string() vs NLA_STRING
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Kees Cook <keescook@google.com>, Thomas Graf <tgraf@suug.ch>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>
-Date: Thu, 22 Feb 2018 20:54:49 +0100
-In-Reply-To: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com> (sfid-20180221_070030_986418_27F469F1)
-References: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
-         (sfid-20180221_070030_986418_27F469F1)
+        Thu, 22 Feb 2018 14:57:20 -0500
+X-Google-Smtp-Source: AH8x227id/xXXOsFGruZQjQRJlSObHSjVyfryEF0RAnqnz/c9UhP9ROrIJQxNK/RSdh2nDOwG0AXNam0+kJzMxTpqxA=
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFxDh-69p0Lr52icct6-3PGcsHaZmMqHwks8HptdmdxvTg@mail.gmail.com>
+References: <20180222174140.GA3154@beast> <CA+55aFxDh-69p0Lr52icct6-3PGcsHaZmMqHwks8HptdmdxvTg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 22 Feb 2018 11:57:18 -0800
+X-Google-Sender-Auth: JIeIBBZO8SrpNrOxIkzOVJqLuZs
+Message-ID: <CAGXu5jJZh+LJYULPO=xqwz9ADm8Z3k+mKKnHXQYD2KWtwfxqbg@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig.h: Include compiler types to avoid missed
+ struct attributes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Patrick McLean <chutzpah@gentoo.org>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-20 at 22:00 -0800, Kees Cook wrote:
+On Thu, Feb 22, 2018 at 10:04 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Feb 22, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
+>>
+>> Updated to include Tested-by. Linus, this looks ready to go.
+>
+> Ok, applied.
+>
+> I'm a bit worried that this ends up bypassing our automatic dependency
+> generation.
+>
+> Lookie here (in a fully built tree):
+>
+>     find . -name '*.o.cmd' |
+>         xargs grep -L linux/compiler_types.h |
+>         xargs grep -l linux/kconfig.h |
+>         while read i; do
+>             j=$(echo $i | sed 's/\.o.cmd$/\.c/' | sed 's:/\.:/:');
+>             test -f $j && echo $j;
+>         done
+>
+> shows that a number of files don't end up depending on that header
+> file, even though it's included (that "grep -l linux/kconfig,h"
+> triggers on the command itself having that "-include linux/kconfig.h"
+> line).
+>
+> It looks like "gcc -M" just doesn't list any files that get included
+> on the command line with "-include".
 
-> It seems that in at least one case[1], nla_put_string() is being used
-> on an NLA_STRING, which lacks a NULL terminator, which leads to
-> silliness when nla_put_string() uses strlen() to figure out the size:
+Hmm. But does that mean deps for kconfig.h are broken too? That seems
+silly. I'll take a look...
 
-Fun! I'm not a big fan of the whole NLA_STRING thing with or without
-NUL terminator anyway, it's a bit confusing at times :-)
+-Kees
 
-> This is a problem at least here:
-> 
-> struct regulatory_request {
-> ...
-> char alpha2[2];
-> ...
-> 
-> static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
-> ...
-> [NL80211_ATTR_REG_ALPHA2] = { .type = NLA_STRING, .len = 2 },
-> ...
-
-Yeah, this is clearly stupid. We already fixed one of these, see commit
-a5fe8e7695dc ("regulatory: add NUL to alpha2"). I'll fix up the second
-one too.
-
-> So, this specific problem needs fixing (in at least two places calling
-> nla_put_string(msg, NL80211_ATTR_REG_ALPHA2, ...)). While I suspect
-> it's only ever written an extra byte from the following variable in
-> the structure which is an enum nl80211_dfs_regions, 
-
-Only one, since the other has alpha2[3] already :-)
-
-And in that case, yes, on little endian and only if the dfs region is
-non-zero, though the dfs region was added later so dunno what else
-there was - but certainly this struct would have always contained some
-enum value that had zero-bytes.
-
-> I worry there
-> might be a lot more of these (though I'd hope unterminated strings are
-> uncommon for internal representation).
-
-Generally they are, I'd argue.
-
-> And more generally, it seems
-> like only the NLA _input_ functions actually check nla_policy details.
-> It seems that the output functions should do the same too, yes?
-
-It doesn't really work that way - there's no real guarantee that the
-policy is symmetric on input/output.
-
-johannes
+-- 
+Kees Cook
+Pixel Security
