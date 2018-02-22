@@ -1,294 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932970AbeBVO2C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:28:02 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:35033 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932921AbeBVO1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:27:30 -0500
-Message-Id: <e87e0a30a0a7267d10faedd793e44b278a9f2eb6.1519305412.git.christophe.leroy@c-s.fr>
-In-Reply-To: <455276187b369bf019e91715b7488e86cd932d49.1519305410.git.christophe.leroy@c-s.fr>
-References: <455276187b369bf019e91715b7488e86cd932d49.1519305410.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 5/6] powerpc/mm/slice: Allow up to 64 low slices
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Nicholas Piggin <npiggin@gmail.com>
-Date: Thu, 22 Feb 2018 15:27:28 +0100 (CET)
+        id S932873AbeBVO2j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:28:39 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:48106 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932668AbeBVO2g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 09:28:36 -0500
+Subject: Re: [PATCH 2/4] ARM: OMAP2+: Introduce low-level suspend code for
+ AM43XX
+To: Philippe Ombredanne <pombredanne@nexb.com>
+CC: Tony Lindgren <tony@atomide.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Keerthy J <j-keerthy@ti.com>, Johan Hovold <johan@kernel.org>
+References: <20180216214002.6209-1-d-gerlach@ti.com>
+ <20180216214002.6209-3-d-gerlach@ti.com>
+ <CAOFm3uGUN387rU6xVZf+qndM_s9j=PT+4uuS3JQ=cdSOGm46GA@mail.gmail.com>
+From: Dave Gerlach <d-gerlach@ti.com>
+Message-ID: <bf9eeb82-d70f-fab5-d0fe-83141bddc534@ti.com>
+Date: Thu, 22 Feb 2018 08:28:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAOFm3uGUN387rU6xVZf+qndM_s9j=PT+4uuS3JQ=cdSOGm46GA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.247.59.203]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the implementation of the "slices" address space allows
-a significant amount of high slices, it limits the number of
-low slices to 16 due to the use of a single u64 low_slices_psize
-element in struct mm_context_t
+Hi,
+On 02/20/2018 01:25 AM, Philippe Ombredanne wrote:
+> Dave,
+> 
+> On Fri, Feb 16, 2018 at 10:40 PM, Dave Gerlach <d-gerlach@ti.com> wrote:
+>> Although similar to AM33XX, introduce a new low-level asm file for
+>> suspend containing new context save and restore paths for EMIF and l2
+>> cache disabling and enabling.
+>>
+>> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+>> ---
+>>  arch/arm/mach-omap2/sleep43xx.S | 393 ++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 393 insertions(+)
+>>  create mode 100644 arch/arm/mach-omap2/sleep43xx.S
+>>
+>> diff --git a/arch/arm/mach-omap2/sleep43xx.S b/arch/arm/mach-omap2/sleep43xx.S
+>> new file mode 100644
+>> index 000000000000..3a8bfd62a33c
+>> --- /dev/null
+>> +++ b/arch/arm/mach-omap2/sleep43xx.S
+>> @@ -0,0 +1,393 @@
+>> +/*
+>> + * Low level suspend code for AM43XX SoCs
+>> + *
+>> + * Copyright (C) 2013-2018 Texas Instruments Incorporated - http://www.ti.com/
+>> + *     Dave Gerlach, Vaibhav Bedia
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License as
+>> + * published by the Free Software Foundation version 2.
+>> + *
+>> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+>> + * kind, whether express or implied; without even the implied warranty
+>> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+> 
+> Do you mind using SPDX tags per [1] rather that this fine but long
+> legalese here and in the whole patch set? Unless you are a legalese
+> lover of course!
 
-On the 8xx, the minimum slice size is the size of the area
-covered by a single PMD entry, ie 4M in 4K pages mode and 64M in
-16K pages mode. This means we could have at least 64 slices.
+Yes I will switch, these patches have been around for a long time and I didn't
+think to update the license after rebasing them. Thanks for the reminder!
 
-In order to override this limitation, this patch switches the
-handling of low_slices_psize to char array as done already for
-high_slices_psize.
+Regards,
+Dave
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
----
- v2: Using slice_bitmap_xxx() macros instead of bitmap_xxx() functions.
- v3: keep low_slices as a u64, this allows 64 slices which is enough.
- v4: Moved the 8xx specifics to next patch
- v5: No change
- 
- arch/powerpc/include/asm/book3s/64/mmu.h |  3 +-
- arch/powerpc/include/asm/mmu-8xx.h       |  7 +++-
- arch/powerpc/include/asm/paca.h          |  2 +-
- arch/powerpc/kernel/paca.c               |  3 +-
- arch/powerpc/mm/hash_utils_64.c          | 13 ++++----
- arch/powerpc/mm/slb_low.S                |  8 +++--
- arch/powerpc/mm/slice.c                  | 57 +++++++++++++++++---------------
- 7 files changed, 52 insertions(+), 41 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/book3s/64/mmu.h b/arch/powerpc/include/asm/book3s/64/mmu.h
-index 0abeb0e2d616..bef6e39ed63a 100644
---- a/arch/powerpc/include/asm/book3s/64/mmu.h
-+++ b/arch/powerpc/include/asm/book3s/64/mmu.h
-@@ -91,7 +91,8 @@ typedef struct {
- 	struct npu_context *npu_context;
- 
- #ifdef CONFIG_PPC_MM_SLICES
--	u64 low_slices_psize;	/* SLB page size encodings */
-+	 /* SLB page size encodings*/
-+	unsigned char low_slices_psize[BITS_PER_LONG / BITS_PER_BYTE];
- 	unsigned char high_slices_psize[SLICE_ARRAY_SIZE];
- 	unsigned long slb_addr_limit;
- #else
-diff --git a/arch/powerpc/include/asm/mmu-8xx.h b/arch/powerpc/include/asm/mmu-8xx.h
-index b324ab46d838..d3d7e79140c6 100644
---- a/arch/powerpc/include/asm/mmu-8xx.h
-+++ b/arch/powerpc/include/asm/mmu-8xx.h
-@@ -186,6 +186,11 @@
- #define M_APG2		0x00000040
- #define M_APG3		0x00000060
- 
-+#ifdef CONFIG_PPC_MM_SLICES
-+#include <asm/nohash/32/slice.h>
-+#define SLICE_ARRAY_SIZE	(1 << (32 - SLICE_LOW_SHIFT - 1))
-+#endif
-+
- #ifndef __ASSEMBLY__
- typedef struct {
- 	unsigned int id;
-@@ -193,7 +198,7 @@ typedef struct {
- 	unsigned long vdso_base;
- #ifdef CONFIG_PPC_MM_SLICES
- 	u16 user_psize;		/* page size index */
--	u64 low_slices_psize;	/* page size encodings */
-+	unsigned char low_slices_psize[SLICE_ARRAY_SIZE];
- 	unsigned char high_slices_psize[0];
- 	unsigned long slb_addr_limit;
- #endif
-diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
-index b62c31037cad..d2bf71dddbef 100644
---- a/arch/powerpc/include/asm/paca.h
-+++ b/arch/powerpc/include/asm/paca.h
-@@ -141,7 +141,7 @@ struct paca_struct {
- #ifdef CONFIG_PPC_BOOK3S
- 	mm_context_id_t mm_ctx_id;
- #ifdef CONFIG_PPC_MM_SLICES
--	u64 mm_ctx_low_slices_psize;
-+	unsigned char mm_ctx_low_slices_psize[BITS_PER_LONG / BITS_PER_BYTE];
- 	unsigned char mm_ctx_high_slices_psize[SLICE_ARRAY_SIZE];
- 	unsigned long mm_ctx_slb_addr_limit;
- #else
-diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-index 95ffedf14885..2fd563d05831 100644
---- a/arch/powerpc/kernel/paca.c
-+++ b/arch/powerpc/kernel/paca.c
-@@ -265,7 +265,8 @@ void copy_mm_to_paca(struct mm_struct *mm)
- #ifdef CONFIG_PPC_MM_SLICES
- 	VM_BUG_ON(!mm->context.slb_addr_limit);
- 	get_paca()->mm_ctx_slb_addr_limit = mm->context.slb_addr_limit;
--	get_paca()->mm_ctx_low_slices_psize = context->low_slices_psize;
-+	memcpy(&get_paca()->mm_ctx_low_slices_psize,
-+	       &context->low_slices_psize, sizeof(context->low_slices_psize));
- 	memcpy(&get_paca()->mm_ctx_high_slices_psize,
- 	       &context->high_slices_psize, TASK_SLICE_ARRAY_SZ(mm));
- #else /* CONFIG_PPC_MM_SLICES */
-diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-index cf290d415dcd..b578148d89e6 100644
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -1110,19 +1110,18 @@ unsigned int hash_page_do_lazy_icache(unsigned int pp, pte_t pte, int trap)
- #ifdef CONFIG_PPC_MM_SLICES
- static unsigned int get_paca_psize(unsigned long addr)
- {
--	u64 lpsizes;
--	unsigned char *hpsizes;
-+	unsigned char *psizes;
- 	unsigned long index, mask_index;
- 
- 	if (addr < SLICE_LOW_TOP) {
--		lpsizes = get_paca()->mm_ctx_low_slices_psize;
-+		psizes = get_paca()->mm_ctx_low_slices_psize;
- 		index = GET_LOW_SLICE_INDEX(addr);
--		return (lpsizes >> (index * 4)) & 0xF;
-+	} else {
-+		psizes = get_paca()->mm_ctx_high_slices_psize;
-+		index = GET_HIGH_SLICE_INDEX(addr);
- 	}
--	hpsizes = get_paca()->mm_ctx_high_slices_psize;
--	index = GET_HIGH_SLICE_INDEX(addr);
- 	mask_index = index & 0x1;
--	return (hpsizes[index >> 1] >> (mask_index * 4)) & 0xF;
-+	return (psizes[index >> 1] >> (mask_index * 4)) & 0xF;
- }
- 
- #else
-diff --git a/arch/powerpc/mm/slb_low.S b/arch/powerpc/mm/slb_low.S
-index 2cf5ef3fc50d..2c7c717fd2ea 100644
---- a/arch/powerpc/mm/slb_low.S
-+++ b/arch/powerpc/mm/slb_low.S
-@@ -200,10 +200,12 @@ END_MMU_FTR_SECTION_IFCLR(MMU_FTR_1T_SEGMENT)
- 5:
- 	/*
- 	 * Handle lpsizes
--	 * r9 is get_paca()->context.low_slices_psize, r11 is index
-+	 * r9 is get_paca()->context.low_slices_psize[index], r11 is mask_index
- 	 */
--	ld	r9,PACALOWSLICESPSIZE(r13)
--	mr	r11,r10
-+	srdi    r11,r10,1 /* index */
-+	addi	r9,r11,PACALOWSLICESPSIZE
-+	lbzx	r9,r13,r9		/* r9 is lpsizes[r11] */
-+	rldicl	r11,r10,0,63		/* r11 = r10 & 0x1 */
- 6:
- 	sldi	r11,r11,2  /* index * 4 */
- 	/* Extract the psize and multiply to get an array offset */
-diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
-index 0beca1ba2282..5e9e1e57d580 100644
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -150,19 +150,21 @@ static void slice_mask_for_free(struct mm_struct *mm, struct slice_mask *ret,
- static void slice_mask_for_size(struct mm_struct *mm, int psize, struct slice_mask *ret,
- 				unsigned long high_limit)
- {
--	unsigned char *hpsizes;
-+	unsigned char *hpsizes, *lpsizes;
- 	int index, mask_index;
- 	unsigned long i;
--	u64 lpsizes;
- 
- 	ret->low_slices = 0;
- 	if (SLICE_NUM_HIGH)
- 		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
- 
- 	lpsizes = mm->context.low_slices_psize;
--	for (i = 0; i < SLICE_NUM_LOW; i++)
--		if (((lpsizes >> (i * 4)) & 0xf) == psize)
-+	for (i = 0; i < SLICE_NUM_LOW; i++) {
-+		mask_index = i & 0x1;
-+		index = i >> 1;
-+		if (((lpsizes[index] >> (mask_index * 4)) & 0xf) == psize)
- 			ret->low_slices |= 1u << i;
-+	}
- 
- 	if (high_limit <= SLICE_LOW_TOP)
- 		return;
-@@ -218,8 +220,7 @@ static void slice_convert(struct mm_struct *mm, struct slice_mask mask, int psiz
- {
- 	int index, mask_index;
- 	/* Write the new slice psize bits */
--	unsigned char *hpsizes;
--	u64 lpsizes;
-+	unsigned char *hpsizes, *lpsizes;
- 	unsigned long i, flags;
- 
- 	slice_dbg("slice_convert(mm=%p, psize=%d)\n", mm, psize);
-@@ -232,12 +233,13 @@ static void slice_convert(struct mm_struct *mm, struct slice_mask mask, int psiz
- 
- 	lpsizes = mm->context.low_slices_psize;
- 	for (i = 0; i < SLICE_NUM_LOW; i++)
--		if (mask.low_slices & (1u << i))
--			lpsizes = (lpsizes & ~(0xful << (i * 4))) |
--				(((unsigned long)psize) << (i * 4));
--
--	/* Assign the value back */
--	mm->context.low_slices_psize = lpsizes;
-+		if (mask.low_slices & (1u << i)) {
-+			mask_index = i & 0x1;
-+			index = i >> 1;
-+			lpsizes[index] = (lpsizes[index] &
-+					  ~(0xf << (mask_index * 4))) |
-+				(((unsigned long)psize) << (mask_index * 4));
-+		}
- 
- 	hpsizes = mm->context.high_slices_psize;
- 	for (i = 0; i < GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit); i++) {
-@@ -644,7 +646,7 @@ unsigned long arch_get_unmapped_area_topdown(struct file *filp,
- 
- unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr)
- {
--	unsigned char *hpsizes;
-+	unsigned char *psizes;
- 	int index, mask_index;
- 
- 	/*
-@@ -658,15 +660,14 @@ unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr)
- #endif
- 	}
- 	if (addr < SLICE_LOW_TOP) {
--		u64 lpsizes;
--		lpsizes = mm->context.low_slices_psize;
-+		psizes = mm->context.low_slices_psize;
- 		index = GET_LOW_SLICE_INDEX(addr);
--		return (lpsizes >> (index * 4)) & 0xf;
-+	} else {
-+		psizes = mm->context.high_slices_psize;
-+		index = GET_HIGH_SLICE_INDEX(addr);
- 	}
--	hpsizes = mm->context.high_slices_psize;
--	index = GET_HIGH_SLICE_INDEX(addr);
- 	mask_index = index & 0x1;
--	return (hpsizes[index >> 1] >> (mask_index * 4)) & 0xf;
-+	return (psizes[index >> 1] >> (mask_index * 4)) & 0xf;
- }
- EXPORT_SYMBOL_GPL(get_slice_psize);
- 
-@@ -687,8 +688,8 @@ EXPORT_SYMBOL_GPL(get_slice_psize);
- void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
- {
- 	int index, mask_index;
--	unsigned char *hpsizes;
--	unsigned long flags, lpsizes;
-+	unsigned char *hpsizes, *lpsizes;
-+	unsigned long flags;
- 	unsigned int old_psize;
- 	int i;
- 
-@@ -706,12 +707,14 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
- 	wmb();
- 
- 	lpsizes = mm->context.low_slices_psize;
--	for (i = 0; i < SLICE_NUM_LOW; i++)
--		if (((lpsizes >> (i * 4)) & 0xf) == old_psize)
--			lpsizes = (lpsizes & ~(0xful << (i * 4))) |
--				(((unsigned long)psize) << (i * 4));
--	/* Assign the value back */
--	mm->context.low_slices_psize = lpsizes;
-+	for (i = 0; i < SLICE_NUM_LOW; i++) {
-+		mask_index = i & 0x1;
-+		index = i >> 1;
-+		if (((lpsizes[index] >> (mask_index * 4)) & 0xf) == old_psize)
-+			lpsizes[index] = (lpsizes[index] &
-+					  ~(0xf << (mask_index * 4))) |
-+				(((unsigned long)psize) << (mask_index * 4));
-+	}
- 
- 	hpsizes = mm->context.high_slices_psize;
- 	for (i = 0; i < SLICE_NUM_HIGH; i++) {
--- 
-2.13.3
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+> 
