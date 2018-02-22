@@ -1,54 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751506AbeBVTHH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:07:07 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40159 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeBVTGz (ORCPT
+        id S1751532AbeBVTHL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:07:11 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:50610 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeBVTHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:06:55 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells property
-Date: Thu, 22 Feb 2018 20:06:10 +0100
-Message-Id: <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 22 Feb 2018 14:07:08 -0500
+Date: Thu, 22 Feb 2018 14:07:04 -0500 (EST)
+Message-Id: <20180222.140704.166412303524863230.davem@davemloft.net>
+To: keescook@google.com
+Cc: tgraf@suug.ch, johannes@sipsolutions.net, daniel@iogearbox.net,
+        ast@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        danielmicay@gmail.com
+Subject: Re: nla_put_string() vs NLA_STRING
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
+References: <CAGXu5jLg62737XeB3g0SOLTz-7NyF6_MvvH69kqFE4iqX2w7vQ@mail.gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "#interrupt-cells" property and "interrupt-controller" label to
-"interrupt-controller@e61c0000" device node.
+From: Kees Cook <keescook@google.com>
+Date: Tue, 20 Feb 2018 22:00:26 -0800
 
-This silences the following DTC compiler warnings:
-Warning (interrupts_property): Missing interrupt-controller or
-interrupt-map property in /soc/interrupt-controller@e61c0000
-Warning (interrupts_property): Missing #interrupt-cells in
-interrupt-parent /soc/interrupt-controller@e61c000
+> So, this specific problem needs fixing (in at least two places calling
+> nla_put_string(msg, NL80211_ATTR_REG_ALPHA2, ...)). While I suspect
+> it's only ever written an extra byte from the following variable in
+> the structure which is an enum nl80211_dfs_regions, I worry there
+> might be a lot more of these (though I'd hope unterminated strings are
+> uncommon for internal representation). And more generally, it seems
+> like only the NLA _input_ functions actually check nla_policy details.
+> It seems that the output functions should do the same too, yes?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Generally speaking, the policy is for making sure the user doesn't
+give us garbage.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index cdd4868..665e126 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -316,6 +316,8 @@
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
- 			reg = <0 0xe61c0000 0 0x200>;
- 			/* placeholder */
- 		};
--- 
-2.7.4
+When building netlink attributes itself, the kernel is supposed to
+know what it is doing.
