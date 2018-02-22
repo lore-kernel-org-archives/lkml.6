@@ -1,70 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932125AbeBVLr6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:47:58 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:56576 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753673AbeBVLr5 (ORCPT
+        id S932140AbeBVLsT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:48:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:46783 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753716AbeBVLsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:47:57 -0500
-Date: Thu, 22 Feb 2018 19:47:41 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc: Christophe LEROY <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping
- outside the requests
-Message-ID: <20180222114741.GA27631@gondor.apana.org.au>
-References: <e47bf94ae44f23230b1647e31c9623f1075d3b79.1507284818.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB3342A0A8530F74D408CA2F0298FC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <2338eb8d-a26a-9722-d667-5a9785b32977@c-s.fr>
- <VI1PR0402MB3342D90D574C8829701882BE98C90@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <630c313c-5eca-224d-a5ac-fb3f2783573a@c-s.fr>
- <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <d5809df9-fc17-03da-b7f4-038d973dbd1f@c-s.fr>
- <VI1PR0402MB334299B37F17771BFA9AFDDA98C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <20180220103436.GA20571@gondor.apana.org.au>
- <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR0402MB3342B99A1BEA5622F29F79EF98CF0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 22 Feb 2018 06:48:17 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Alex Deucher <alexander.deucher@amd.com>, Monk Liu <monk.liu@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Chunming Zhou <david1.zhou@amd.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: fix drm_get_max_iomem type mismatch
+Date: Thu, 22 Feb 2018 12:47:51 +0100
+Message-Id: <20180222114804.1394300-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:dQbMdoy6l01x5BYi/1a3Eg9r5f5pXaHyIKXwxQLBzmGEO1OgDDg
+ jgafhRtHgknWg9gUKahTxay6u5a+wi737Z08YdO9Zo2CpDSzBJZwW+GE8bOw7zJMQQKsigH
+ DKg/1YO2aH9FGCAU3FF4+5b8KK+NEc4G8jKbpfAIdai0QKCrOe8jx1fBmf+W55cSZuHds95
+ ZBxJX6tcN7IwHuFqbxefQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:kthamrG6Y4s=:6Tq3+lk+2HikqJJmthMYf6
+ KLxc5PAoa2Bq6SKAq5wzUp1DHuy4EogIUAtU28ouUpnZkMFM7lOQZeP+Jj+bdiAy1G4gOALCD
+ BCiI/fXbffgwmZfnWmJb/L6udfYJHfH5PdphZ+a86/mTNWA3G3+chzkKGbG5Ue+hzx/PjGQuE
+ /Zn3WIFjD++yOzubw9nj/95D6lZg/kxAWDqDKkmuubb+Vd98Ezk8+WdH8uBo4T4/Mmeo+O/FH
+ Tldm6LaOysMAC7qLEWHzZYUaNm2XHqV1C8ygnht/exgRmrNYRAWNvBvvsoRg6pUgHKlU35apL
+ YtEV7nHZHcRf8QKWn3ubKbOljgd/TvYw3kVjsF4++Xb+UqzC5U2Nz5SjgH+wJJtAhnQ0N48Zc
+ tAmBDqaXmBKq4dobj5E9GVPDINgEbLkh6+SHSQcjlxzONvkV3cnV1mFUghvRMnPsOJwmJEhLM
+ 6P01Bm4HoSBkZZWe67tckM9S0xzsPv7V7lNW7UwswKk8vuCu6IrNqkeiNsdTeSuHqz7DSKd9m
+ QOfoTJZrrXfCrfIp2IqXEDVjxD0BiDTe2paJ/SGc3c0AqFIu5vMW4VDaVcMZucYGluN3lnvfb
+ nu8z1t5s5c6UqhXlfiu+4PoF9YzpCNAMAJYWqdEjTQXcNppTLo4Xfe5eAjrEFb4tOJpYWbM18
+ DM2arKb/RDcHDi+9bwhrnWJZ4WNR8rf1v44GMTEI1TZTmw/3rPNCIbSDbTj2owt6IhOD7JqWG
+ OcMsIxnKQW4fEwgzM85xmMecPmrAc2RfZilVwA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 11:32:25AM +0000, Horia Geantă wrote:
->
-> If final/finup is optional, how is the final hash supposed to be retrieved?
+When comparing two variables with min()/max(), they should be the same type:
 
-Sometimes the computation ends with a partial hash, that's what
-export is for.  Also it is completely legal to abandon the hash
-state entirely.
+drivers/gpu/drm/drm_memory.c: In function 'drm_get_max_iomem':
+include/linux/kernel.h:821:16: error: comparison of distinct pointer types lacks a cast [-Werror]
+  (void) (&max1 == &max2);
 
-> According to documentation, these are the accepted flows (with the option to
-> export/import a partial hash b/w update and final/finup):
-> 
-> .init() -> .update() -> .final()
->             ^    |         |
->             '----'         '---> HASH
-> 
-> .init() -> .update() -> .finup()
->             ^    |         |
->             '----'         '---> HASH
-> 
->            .digest()
->                |
->                '---------------> HASH
+This makes the local variable in drm_get_max_iomem make the type
+from resource->end.
 
-The documentation is simply incomplete in this regard.
+Fixes: 82626363a217 ("drm: add func to get max iomem address v2")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/drm_memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
+diff --git a/drivers/gpu/drm/drm_memory.c b/drivers/gpu/drm/drm_memory.c
+index 7ca500b8c399..3c54044214db 100644
+--- a/drivers/gpu/drm/drm_memory.c
++++ b/drivers/gpu/drm/drm_memory.c
+@@ -153,7 +153,7 @@ EXPORT_SYMBOL(drm_legacy_ioremapfree);
+ u64 drm_get_max_iomem(void)
+ {
+ 	struct resource *tmp;
+-	u64 max_iomem = 0;
++	resource_size_t max_iomem = 0;
+ 
+ 	for (tmp = iomem_resource.child; tmp; tmp = tmp->sibling) {
+ 		max_iomem = max(max_iomem,  tmp->end);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.9.0
