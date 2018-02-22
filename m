@@ -1,83 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeBVGeO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 01:34:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:55370 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeBVGde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 01:33:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="31891778"
-From: Ashok Raj <ashok.raj@intel.com>
-To: bp@suse.de
-Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [v2 2/3] x86/microcode/intel: Perform a cache flush before ucode update.
-Date: Wed, 21 Feb 2018 22:33:24 -0800
-Message-Id: <1519281205-58951-3-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
+        id S1752564AbeBVGwx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 01:52:53 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40997 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbeBVGww (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 01:52:52 -0500
+X-Google-Smtp-Source: AH8x2262Dz0HYUIqhkYI3FQI/XnMMcDj1YUb0qU1y3j9sdpfF1HMM7YKZxGXRmg+btGharlllKCPaA==
+From: zhouzhouyi@gmail.com
+To: paulmck@linux.vnet.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        linux-kernel@vger.kernel.org
+Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Subject: [PATCH] srcu: remove never used variable
+Date: Thu, 22 Feb 2018 06:52:37 +0000
+Message-Id: <1519282357-17983-1-git-send-email-zhouzhouyi@gmail.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Microcode updates can be safer if the caches are clean.
-Some of the issues around in certain Broadwell parts
-can be addressed by doing a full cache flush.
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Boris Petkov <bp@suse.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+In function srcu_gp_end, the variable idxnext is never used after assign,
+remove it and its assign statement.
+
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ kernel/rcu/srcutree.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 137c9f5..50e48c4 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -601,6 +601,13 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
- 		return UCODE_OK;
- 	}
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index d5cea81..1241715 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -531,7 +531,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
+ 	unsigned long flags;
+ 	unsigned long gpseq;
+ 	int idx;
+-	int idxnext;
+ 	unsigned long mask;
+ 	struct srcu_data *sdp;
+ 	struct srcu_node *snp;
+@@ -555,7 +554,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
  
-+	/*
-+	 * Microcode updates can be safer if the caches are clean.
-+	 * Some of the issues around in certain Broadwell parts
-+	 * can be addressed by doing a full cache flush.
-+	 */
-+	native_wbinvd();
-+
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -817,6 +824,13 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		return UCODE_OK;
- 	}
- 
-+	/*
-+	 * Microcode updates can be safer if the caches are clean.
-+	 * Some of the issues around in certain Broadwell parts
-+	 * can be addressed by doing a full cache flush.
-+	 */
-+	wbinvd();
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
+ 	/* Initiate callback invocation as needed. */
+ 	idx = rcu_seq_ctr(gpseq) % ARRAY_SIZE(snp->srcu_have_cbs);
+-	idxnext = (idx + 1) % ARRAY_SIZE(snp->srcu_have_cbs);
+ 	rcu_for_each_node_breadth_first(sp, snp) {
+ 		spin_lock_irq_rcu_node(snp);
+ 		cbs = false;
 -- 
-2.7.4
+2.1.4
