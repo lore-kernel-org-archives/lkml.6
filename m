@@ -1,236 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932094AbeBVLod (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 06:44:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40403 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753665AbeBVLoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:44:32 -0500
-Date: Thu, 22 Feb 2018 12:44:13 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Andi Kleen <andi.kleen@intel.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: Re: [v2 3/3] x86/microcode: Quiesce all threads before a microcode
- update.
-Message-ID: <20180222114413.GB27489@pd.tnic>
-References: <1519281205-58951-1-git-send-email-ashok.raj@intel.com>
- <1519281205-58951-4-git-send-email-ashok.raj@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1519281205-58951-4-git-send-email-ashok.raj@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S932118AbeBVLpr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:45:47 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:35471 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753651AbeBVLpp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:45:45 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+        Brandon Streiff <brandon.streiff@ni.com>,
+        Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dsa: ptp; mark dummy helpers as 'inline'
+Date: Thu, 22 Feb 2018 12:44:40 +0100
+Message-Id: <20180222114459.1272945-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:zsRxBT14S56IH6i64adfbVCcNdQ07QEW/LJOR6dAw3326UNBV21
+ 4mw/w2Ieqmzb67Nwafi8NGNA3Mu71LTHfQRMES5FhnEyJs6tc5+e/RaxazJsnuYzzQMi9r7
+ JvGQ5TK7JM4qVOJJFFvKUIDqC7KuqAhUQngTpWj7i48jq9/2J3sq8Ee5BL3HmJUWYCNaiMi
+ 2Y+WSzmFx4TfAQ65BjwTQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:E1vmtr2I1yA=:dG0IIGl+l3QAoawwBcqvBk
+ NsfBPN9EwUs63rzV18hHZZlrX0Hhg7mAspnHX63lWDC7QgEIjituo4uz1opX7wc4GxUYH1L0H
+ CROk6O9Igsg5KzDGeogVX6q54wSqIeS/G0DxrWPsnByJPK6dRdS2TECQZD0mWSGWeKvxkXZiK
+ oj/sNlOkcGLgTZq4PvqpSgqjJXHD7jfXcx5j0tA5FeHtCvew0CSsbk//wMtv/ZP+e/IvUQtXx
+ 98MzWF0sZj2F0HTsZOd4E9KV5e+VV//r48CYk/7W1oCEBFw6fv/DvoofRmxTroTvEhm270ZL3
+ fGPGyZls46LIDQR2ALVvDsSQ9i9CegqKKug0znwiUE5Q3b/cNOvCdDU1a+/rkdU1KUFzoXXoy
+ F9kwa52W6/oGD4IDtsmwTkY9lqQpwzO5OZKq98W7aoQ5HK2mNXtJ+ClaG5CRY/9WW9BkX5Tbo
+ AzGy4o925cGscCu8O9Ls3NJnAw8YO0hd2QtR8Prc2z9j3ytiBQynlgIJVxyfwGOxdiaUxFOOO
+ ZqIU5Kkxk5MBp0qKpxQdWUeHfvNdgTmcZVOSLEsJk0IIvsOvQHN/uO6Q7tj/kw5vfEodY0IDC
+ H/jhw9xn2DcY5GC0XykmuU4eNnJAy7F68sC4bNB9KjkVIGO9kjwt3HraJ6nIdiqPrJNiYp49H
+ CnRn/e4qfMUsNbXT6eFAQpDKLioeLTegSaGnKcSaRzgVmFNAxDF/BGGDbC3yKHZlHivb7gn7t
+ ZOT8xBnqO4SPePSg360NZ9h7DbBgKPY52rFMqw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:33:25PM -0800, Ashok Raj wrote:
-> Microcode updates during OS load always assumed the other hyper-thread
-> was "quiet", but Linux never really did this. We've recently received
-> several issues on this, where things did not go well at scale
-> deployments, and the Intel microcode team asked us to make sure the
-> system is in a quiet state during these updates. Such updates are
-> rare events, so we use stop_machine() to ensure the whole system is
-> quiet.
-> 
-> The most robust solution is to have all the CPUs wait in
-> stop_machine() rendezvous before ucode update, and ensure we stay there
-> until all the CPUs have completed the microcode load. stop_machine ensures
-> that interrupts are disabled while waiting, and a spin_lock serializes
-> that only 1 cpu can perform the update.
-> 
-> Remember microcode resources are shared between the HT siblings of the same
-> core. So updating microcode on one thread automatically is good enough for the
-> sibling thread. Microcode update ensures that the version being updated is
-> greater than what is reported by the CPU. This ensures we do not perform a
-> redundant load on the HT sibling when one isn't necessary.
-> 
-> During early boot, we bring up one CPU at a time. Hence we only end up
-> loading for one of the sibling thread and subsequent sibling would already have
-> the latest copy of the microcode.
-> 
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> Cc: X86 ML <x86@kernel.org>
-> Cc: LKML <linux-kernel@vger.kernel.org>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Boris Petkov <bp@suse.de>
-> Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-> 
-> Changes from V1:
-> - Check for return code of stop_machine
-> - When microcode file load fails, stop on first error.
-> - If any of the present CPUs are offline, then stop reload.
-> - Added more comments in commitlog and inline in file.
-> - split some functionality from reload_store() per Boris's comments.
-> 
-> What's not done from review: TBD:
-> - Load microcode file only once.
-> - Removing ucd->errors. (Gives a count of failed loads)
-> ---
->  arch/x86/kernel/cpu/microcode/core.c  | 207 ++++++++++++++++++++++++++++++----
->  arch/x86/kernel/cpu/microcode/intel.c |   1 +
->  2 files changed, 183 insertions(+), 25 deletions(-)
+Declaring a static function in a header leads to a warning every
+time that header gets included without the function being used:
 
-Please integrate scripts/checkpatch.pl into your patch creation
-workflow. Some of the warnings/errors *actually* make sense.
+In file included from drivers/net/dsa/mv88e6xxx/chip.c:42:
+drivers/net/dsa/mv88e6xxx/ptp.h:92:13: error: 'mv88e6xxx_hwtstamp_work' defined but not used [-Werror=unused-function]
+ static long mv88e6xxx_hwtstamp_work(struct ptp_clock_info *ptp)
+In file included from drivers/net/dsa/mv88e6xxx/chip.c:38:
+drivers/net/dsa/mv88e6xxx/global2.h:355:12: error: 'mv88e6xxx_g2_wait' defined but not used [-Werror=unused-function]
+ static int mv88e6xxx_g2_wait(struct mv88e6xxx_chip *chip, int reg, u16 mask)
+            ^~~~~~~~~~~~~~~~~
+drivers/net/dsa/mv88e6xxx/global2.h:350:12: error: 'mv88e6xxx_g2_update' defined but not used [-Werror=unused-function]
+ static int mv88e6xxx_g2_update(struct mv88e6xxx_chip *chip, int reg, u16 update)
+            ^~~~~~~~~~~~~~~~~~~
+drivers/net/dsa/mv88e6xxx/global2.h:345:12: error: 'mv88e6xxx_g2_write' defined but not used [-Werror=unused-function]
+ static int mv88e6xxx_g2_write(struct mv88e6xxx_chip *chip, int reg, u16 val)
+            ^~~~~~~~~~~~~~~~~~
+drivers/net/dsa/mv88e6xxx/global2.h:340:12: error: 'mv88e6xxx_g2_read' defined but not used [-Werror=unused-function]
+ static int mv88e6xxx_g2_read(struct mv88e6xxx_chip *chip, int reg, u16 *val)
 
-> diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-> index aa1b9a4..20d2cbb 100644
-> --- a/arch/x86/kernel/cpu/microcode/core.c
-> +++ b/arch/x86/kernel/cpu/microcode/core.c
-> @@ -31,6 +31,10 @@
->  #include <linux/cpu.h>
->  #include <linux/fs.h>
->  #include <linux/mm.h>
-> +#include <linux/nmi.h>
-> +#include <linux/stop_machine.h>
-> +#include <linux/delay.h>
-> +#include <linux/topology.h>
->  
->  #include <asm/microcode_intel.h>
->  #include <asm/cpu_device_id.h>
-> @@ -489,30 +493,185 @@ static void __exit microcode_dev_exit(void)
->  /* fake device for request_firmware */
->  static struct platform_device	*microcode_pdev;
->  
-> -static enum ucode_state reload_for_cpu(int cpu)
-> +static struct ucode_update_param {
-> +	spinlock_t ucode_lock;	/* Serialize microcode updates */
-> +	atomic_t   count;  	/* # of CPUs that attempt to load ucode */
-> +	atomic_t   errors; 	/* # of CPUs ucode load failed */
-> +	atomic_t   enter;  	/* ucode rendezvous count */
-> +	int	   timeout;	/* Timeout to wait for all cpus to enter */
-> +} uc_data;
-> +
-> +static int do_ucode_update(int cpu, struct ucode_update_param *ucd)
->  {
-> -	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
-> -	enum ucode_state ustate;
-> +	enum ucode_state retval = 0;
->  
-> -	if (!uci->valid)
-> -		return UCODE_OK;
-> +	spin_lock(&ucd->ucode_lock);
-> +	retval = microcode_ops->apply_microcode(cpu);
-> +	spin_unlock(&ucd->ucode_lock);
-> +	if (retval > UCODE_NFOUND) {
-> +		atomic_inc(&ucd->errors);
-> +		pr_warn("microcode update to CPU %d failed\n", cpu);
-> +	}
-> +	atomic_inc(&ucd->count);
-> +
-> +	return retval;
-> +}
-> +
-> +/*
-> + * Wait for upto 1sec for all CPUs
-> + * to show up in the rendezvous function
-> + */
-> +#define MAX_UCODE_RENDEZVOUS	1000000000 /* nanosec */
+This marks all such functions in dsa inline to make sure we don't warn
+about them.
 
-Please incorporate all review comments before sending the next version.
-I already commented here:
+Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+Fixes: 0d632c3d6fe3 ("net: dsa: mv88e6xxx: add accessors for PTP/TAI registers")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/dsa/mv88e6xxx/global2.h | 8 ++++----
+ drivers/net/dsa/mv88e6xxx/ptp.h     | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-	                                1 * NSEC_PER_SEC
-
-I don't want to be pointing out the same issues twice.
-
-> +#define SPINUNIT		100	   /* 100ns */
-> +
-> +/*
-> + * Each cpu waits for 1sec max.
-> + */
-> +static int microcode_wait_timedout(int *time_out, void *data)
-> +{
-> +	struct ucode_update_param *ucd = data;
-> +	if (*time_out < SPINUNIT) {
-> +		pr_err("Not all CPUs entered ucode update handler %d CPUs missed rendezvous\n",
-> +			(num_online_cpus() - atomic_read(&ucd->enter)));
-> +		return 1;
-> +	}
-> +	*time_out -= SPINUNIT;
-> +	touch_nmi_watchdog();
-> +	return 0;
-> +}
-> +
-> +/*
-> + * All cpus enter here before a ucode load upto 1 sec.
-
-Ok, I think Ingo and I already pointed out that the proper spelling
-is "CPU" not "cpu" or "cpu's" as I see it somewhere else *still* in
-this patch. And I asked you already yesterday to go over everything and
-correct that. But you're still sending me half-baked stuff. Are you
-trying to make me ignore your patches?
-
-...
-
-
-> +/*
-> + * loads microcode files for all cpus.
-> + * TBD: We load for each cpu which is useful
-> + * if we support hetero cores. We really don't yet
-> + * support hetero, so we could optimize this in future to load
-
-Let's just forget the heterogeneous cores. That's just nuts.
-
-> + * just for 1 cpu and reuse the same image for other cpus.
-> + */
-> +static int reload_microcode_files(void)
-> +{
-> +	int cpu, ret = 0;
-> +
-> +	/*
-> +	 * First load the microcode file for all cpu's
-> +	 */
-> +	for_each_online_cpu(cpu) {
-> +		ret = microcode_ops->request_microcode_fw(cpu,
-> +				&microcode_pdev->dev, true);
-
-So looking at this more:
-
-->request_microcode_fw() calls generic_load_microcode() which ends up saving the
-microcode patch for early loading: save_mc_for_early() -> save_microcode_patch()
-so the new patch is in the microcode cache.
-
-Now, apply_microcode_intel() looks for a newer patch in the cache so you
-should be able to do ->request_microcode_fw() only once on CPU 0 and
-then the patch is there.
-
-So I *think* you don't need that reload_microcode_files() dance but
-you'll have to try it.
-
-> +		if (ret > UCODE_NFOUND) {
-> +			pr_warn("Error reloading microcode file for CPU %d\n", cpu);
-> +
-> +			/*
-> +			 * set retval for the first encountered reload error
-> +			 * stop further processing of ucode loads.
-> +			 */
-> +			if (!ret)
-> +				ret = -EINVAL;
-> +			break;
-> +		}
-> +	}
-> +	return ret;
-
-Also, I'd like you to split this patch as it is becoming too big and
-unwieldy to review. Split it in logical steps which contain one logical
-change and commit message explains clearly what it is.
-
-Thanks.
-
+diff --git a/drivers/net/dsa/mv88e6xxx/global2.h b/drivers/net/dsa/mv88e6xxx/global2.h
+index 25f92b3d7157..2a7c4f9b070c 100644
+--- a/drivers/net/dsa/mv88e6xxx/global2.h
++++ b/drivers/net/dsa/mv88e6xxx/global2.h
+@@ -337,22 +337,22 @@ static inline int mv88e6xxx_g2_require(struct mv88e6xxx_chip *chip)
+ 	return 0;
+ }
+ 
+-static int mv88e6xxx_g2_read(struct mv88e6xxx_chip *chip, int reg, u16 *val)
++static inline int mv88e6xxx_g2_read(struct mv88e6xxx_chip *chip, int reg, u16 *val)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int mv88e6xxx_g2_write(struct mv88e6xxx_chip *chip, int reg, u16 val)
++static inline int mv88e6xxx_g2_write(struct mv88e6xxx_chip *chip, int reg, u16 val)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int mv88e6xxx_g2_update(struct mv88e6xxx_chip *chip, int reg, u16 update)
++static inline int mv88e6xxx_g2_update(struct mv88e6xxx_chip *chip, int reg, u16 update)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int mv88e6xxx_g2_wait(struct mv88e6xxx_chip *chip, int reg, u16 mask)
++static inline int mv88e6xxx_g2_wait(struct mv88e6xxx_chip *chip, int reg, u16 mask)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/drivers/net/dsa/mv88e6xxx/ptp.h b/drivers/net/dsa/mv88e6xxx/ptp.h
+index 992818ade746..10f271ab650d 100644
+--- a/drivers/net/dsa/mv88e6xxx/ptp.h
++++ b/drivers/net/dsa/mv88e6xxx/ptp.h
+@@ -89,7 +89,7 @@ void mv88e6xxx_ptp_free(struct mv88e6xxx_chip *chip);
+ 
+ #else /* !CONFIG_NET_DSA_MV88E6XXX_PTP */
+ 
+-static long mv88e6xxx_hwtstamp_work(struct ptp_clock_info *ptp)
++static inline long mv88e6xxx_hwtstamp_work(struct ptp_clock_info *ptp)
+ {
+ 	return -1;
+ }
+@@ -99,7 +99,7 @@ static inline int mv88e6xxx_ptp_setup(struct mv88e6xxx_chip *chip)
+ 	return 0;
+ }
+ 
+-static void mv88e6xxx_ptp_free(struct mv88e6xxx_chip *chip)
++static inline void mv88e6xxx_ptp_free(struct mv88e6xxx_chip *chip)
+ {
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+2.9.0
