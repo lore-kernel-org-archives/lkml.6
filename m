@@ -1,224 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932393AbeBVM7T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 07:59:19 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:60840 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753811AbeBVM7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:59:17 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 3/5] regmap: Move the handling for max_raw_write into regmap_raw_write
-Date: Thu, 22 Feb 2018 12:59:12 +0000
-Message-ID: <20180222125914.17016-3-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180222125914.17016-1-ckeepax@opensource.cirrus.com>
-References: <20180222125914.17016-1-ckeepax@opensource.cirrus.com>
+        id S932506AbeBVNCJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 08:02:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932199AbeBVNCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 08:02:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C3E20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Thu, 22 Feb 2018 10:02:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Weiping Zhang <zwp10758@gmail.com>
+Cc: acme@redhat.com, Jiri Olsa <jolsa@redhat.com>, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2] perf cgroup: simplify arguments if track multiple
+ events for a cgroup
+Message-ID: <20180222130203.GC7621@kernel.org>
+References: <20180129154805.GA6284@localhost.didichuxing.com>
+ <20180131092216.GB3313@krava>
+ <CAA70yB5TB3mxL1uN-sXvUsf578k+_GWkq1gHgF_HRa_1p770gw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802220164
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA70yB5TB3mxL1uN-sXvUsf578k+_GWkq1gHgF_HRa_1p770gw@mail.gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently regmap_bulk_write will split a write into chunks before
-calling regmap_raw_write if max_raw_write is set. It is more logical
-for this handling to be inside regmap_raw_write itself, as this
-removes the need to keep re-implementing the chunking code, which
-would be the same for all users of regmap_raw_write.
+Em Thu, Feb 22, 2018 at 06:34:08PM +0800, Weiping Zhang escreveu:
+> 2018-01-31 17:22 GMT+08:00 Jiri Olsa <jolsa@redhat.com>:
+> > On Mon, Jan 29, 2018 at 11:48:09PM +0800, weiping zhang wrote:
+> >> if use -G with one cgroup and -e with multiple events, only the first
+> >> event has correct cgroup setting, all events from the second will track
+> >> system-wide events.
+> >>
+> >> if user want track multiple events for a specific cgroup, user must give
+> >> parameters like follow:
+> >> $ perf stat -e e1 -e e2 -e e3 -G test,test,test
+> >> this patch simplify this case, just type one cgroup, like following:
+> >> $ perf stat -e e1 -e e2 -e e3 -G test
+> >>
+> >> $ mkdir -p /sys/fs/cgroup/perf_event/test
+> >> $ perf stat -e cycles -e cache-misses  -a -I 1000 -G test
+> >>
+> >> before:
+> >>      1.001007226      <not counted>      cycles                    test
+> >>      1.001007226              7,506      cache-misses
+> >>
+> >> after:
+> >>      1.000834097      <not counted>      cycles                    test
+> >>      1.000834097      <not counted>      cache-misses              test
+> >>
+> >> Signed-off-by: weiping zhang <zhangweiping@didichuxing.com>
+> >
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Hi Arnaldo,
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/base/regmap/regmap.c | 117 ++++++++++++++++++++-----------------------
- 1 file changed, 54 insertions(+), 63 deletions(-)
+Ok, tested and applied an example for when wanting to monitor for an
+specific cgroup and also for system wide:
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index c84c4d5d2df7..dd17e2e7a3d7 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1440,8 +1440,8 @@ static void regmap_set_work_buf_flag_mask(struct regmap *map, int max_bytes,
- 		buf[i] |= (mask >> (8 * i)) & 0xff;
- }
- 
--int _regmap_raw_write(struct regmap *map, unsigned int reg,
--		      const void *val, size_t val_len)
-+static int _regmap_raw_write_impl(struct regmap *map, unsigned int reg,
-+				  const void *val, size_t val_len)
- {
- 	struct regmap_range_node *range;
- 	unsigned long flags;
-@@ -1492,8 +1492,9 @@ int _regmap_raw_write(struct regmap *map, unsigned int reg,
- 		while (val_num > win_residue) {
- 			dev_dbg(map->dev, "Writing window %d/%zu\n",
- 				win_residue, val_len / map->format.val_bytes);
--			ret = _regmap_raw_write(map, reg, val, win_residue *
--						map->format.val_bytes);
-+			ret = _regmap_raw_write_impl(map, reg, val,
-+						     win_residue *
-+						     map->format.val_bytes);
- 			if (ret != 0)
- 				return ret;
- 
-@@ -1709,11 +1710,11 @@ static int _regmap_bus_raw_write(void *context, unsigned int reg,
- 
- 	map->format.format_val(map->work_buf + map->format.reg_bytes
- 			       + map->format.pad_bytes, val, 0);
--	return _regmap_raw_write(map, reg,
--				 map->work_buf +
--				 map->format.reg_bytes +
--				 map->format.pad_bytes,
--				 map->format.val_bytes);
-+	return _regmap_raw_write_impl(map, reg,
-+				      map->work_buf +
-+				      map->format.reg_bytes +
-+				      map->format.pad_bytes,
-+				      map->format.val_bytes);
- }
- 
- static inline void *_regmap_map_get_context(struct regmap *map)
-@@ -1808,6 +1809,49 @@ int regmap_write_async(struct regmap *map, unsigned int reg, unsigned int val)
- }
- EXPORT_SYMBOL_GPL(regmap_write_async);
- 
-+int _regmap_raw_write(struct regmap *map, unsigned int reg,
-+		      const void *val, size_t val_len)
-+{
-+	size_t val_bytes = map->format.val_bytes;
-+	size_t val_count = val_len / val_bytes;
-+	int chunk_stride = map->reg_stride;
-+	size_t chunk_size = val_bytes;
-+	size_t chunk_count = val_count;
-+	int ret, i;
-+
-+	if (!val_count)
-+		return -EINVAL;
-+
-+	if (!map->use_single_write) {
-+		if (map->max_raw_write)
-+			chunk_size = map->max_raw_write;
-+		else
-+			chunk_size = val_len;
-+		if (chunk_size % val_bytes)
-+			chunk_size -= chunk_size % val_bytes;
-+		chunk_count = val_len / chunk_size;
-+		chunk_stride *= chunk_size / val_bytes;
-+	}
-+
-+	/* Write as many bytes as possible with chunk_size */
-+	for (i = 0; i < chunk_count; i++) {
-+		ret = _regmap_raw_write_impl(map,
-+					     reg + (i * chunk_stride),
-+					     val + (i * chunk_size),
-+					     chunk_size);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Write remaining bytes */
-+	if (!ret && chunk_size * i < val_len)
-+		ret = _regmap_raw_write_impl(map, reg + (i * chunk_stride),
-+					     val + (i * chunk_size),
-+					     val_len - i * chunk_size);
-+
-+	return ret;
-+}
-+
- /**
-  * regmap_raw_write() - Write raw values to one or more registers
-  *
-@@ -1833,8 +1877,6 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
- 		return -EINVAL;
- 	if (val_len % map->format.val_bytes)
- 		return -EINVAL;
--	if (map->max_raw_write && map->max_raw_write < val_len)
--		return -E2BIG;
- 
- 	map->lock(map->lock_arg);
- 
-@@ -1925,7 +1967,6 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- {
- 	int ret = 0, i;
- 	size_t val_bytes = map->format.val_bytes;
--	size_t total_size = val_bytes * val_count;
- 
- 	if (!IS_ALIGNED(reg, map->reg_stride))
- 		return -EINVAL;
-@@ -2000,57 +2041,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 			if (ret)
- 				return ret;
- 		}
--	} else if (map->use_single_write ||
--		   (map->max_raw_write && map->max_raw_write < total_size)) {
--		int chunk_stride = map->reg_stride;
--		size_t chunk_size = val_bytes;
--		size_t chunk_count = val_count;
--		void *wval;
--
--		if (!val_count)
--			return -EINVAL;
--
--		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
--		if (!wval)
--			return -ENOMEM;
--
--		for (i = 0; i < val_count * val_bytes; i += val_bytes)
--			map->format.parse_inplace(wval + i);
--
--		if (!map->use_single_write) {
--			chunk_size = map->max_raw_write;
--			if (chunk_size % val_bytes)
--				chunk_size -= chunk_size % val_bytes;
--			chunk_count = total_size / chunk_size;
--			chunk_stride *= chunk_size / val_bytes;
--		}
--
--		map->lock(map->lock_arg);
--		/* Write as many bytes as possible with chunk_size */
--		for (i = 0; i < chunk_count; i++) {
--			ret = _regmap_raw_write(map,
--						reg + (i * chunk_stride),
--						wval + (i * chunk_size),
--						chunk_size);
--			if (ret)
--				break;
--		}
--
--		/* Write remaining bytes */
--		if (!ret && chunk_size * i < total_size) {
--			ret = _regmap_raw_write(map, reg + (i * chunk_stride),
--						wval + (i * chunk_size),
--						total_size - i * chunk_size);
--		}
--		map->unlock(map->lock_arg);
--
--		kfree(wval);
- 	} else {
- 		void *wval;
- 
--		if (!val_count)
--			return -EINVAL;
--
- 		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
- 		if (!wval)
- 			return -ENOMEM;
-@@ -2058,9 +2051,7 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(wval + i);
- 
--		map->lock(map->lock_arg);
--		ret = _regmap_raw_write(map, reg, wval, val_bytes * val_count);
--		map->unlock(map->lock_arg);
-+		ret = regmap_raw_write(map, reg, wval, val_bytes * val_count);
- 
- 		kfree(wval);
- 	}
--- 
-2.11.0
+----
+If wanting to monitor, say, 'cycles' for a cgroup and also for system wide, this
+command line can be used: 'perf stat -e cycles -G cgroup_name -a -e cycles'.
+----
+
+To further clarify what is in the man page already about -G affecting
+only the previously defined events in the command line.
+
+Perhaps it would be interesting to automatically detect that the same
+event is being read system wide and for an specific cgroup and then,
+right after the count for specific cgroups show the percentage?
+
+Thanks,
+
+- Arnaldo
+
+[root@jouet ~]# mkdir -p /sys/fs/cgroup/perf_event/empty_cgroup
+[root@jouet ~]# perf stat -e cycles -I 1000 -G empty_cgroup -a -e cycles
+#           time             counts unit events
+     1.000268091      <not counted>      cycles                    empty_cgroup                                   
+     1.000268091         73,159,886      cycles                                                      
+     2.000748319      <not counted>      cycles                    empty_cgroup                                   
+     2.000748319         70,189,470      cycles                                                      
+     3.001196694      <not counted>      cycles                    empty_cgroup                                   
+     3.001196694         57,076,551      cycles                                                      
+     4.001589957      <not counted>      cycles                    empty_cgroup                                   
+     4.001589957        102,118,895      cycles                                                      
+     5.002017548      <not counted>      cycles                    empty_cgroup                                   
+     5.002017548         66,391,232      cycles                                                      
+^C     5.598699824      <not counted>      cycles                    empty_cgroup                                   
+     5.598699824        136,313,588      cycles                                                      
+
+[root@jouet ~]# 
+
+- Arnaldo
