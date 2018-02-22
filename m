@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeBVTOf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:14:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58336 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751276AbeBVTOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:14:30 -0500
-Date: Thu, 22 Feb 2018 20:14:28 +0100
-From: Jiri Bohac <jbohac@suse.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-security-module@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jforbes@redhat.com
-Subject: Re: [PATCH 08/30] kexec_file: Restrict at runtime if the kernel is
- locked down
-Message-ID: <20180222191428.mam3w3n3flc63jn2@dwarf.suse.cz>
-References: <8846.1519309243@warthog.procyon.org.uk>
- <151024869793.28329.4817577607302613028.stgit@warthog.procyon.org.uk>
- <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
- <8887.1519309313@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8887.1519309313@warthog.procyon.org.uk>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1751387AbeBVTRB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:17:01 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50651 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751265AbeBVTQ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:16:58 -0500
+X-Google-Smtp-Source: AG47ELtIRrd4ZtrKmxB0ZUyK2srU2tZBpQgABH2YdW8xxIwfIgzGWsVRpH40uH/WpSDeumd7jGyfRw==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        jassisinghbrar@gmail.com, andy.shevchenko@gmail.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v2 0/2]add support for Socionext SynQuacer I2C controller
+Date: Thu, 22 Feb 2018 19:16:45 +0000
+Message-Id: <20180222191647.4727-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:21:53PM +0000, David Howells wrote:
-> commit ed0424c531d7dd25adebdec0ee6a78a5784f207a
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Thu Feb 22 14:01:49 2018 +0000
-> 
->     kexec_file: Restrict at runtime if the kernel is locked down
->     
->     When KEXEC_VERIFY_SIG is not enabled, kernel should not load images through
+Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
+SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
 
-s/KEXEC_VERIFY_SIG/KEXEC_SIG/
-Again, my mistake :/
+v2:
+- incorporate Andy's review comments (#2)
+- patch #1 unchanged.
 
-Other than that, looks OK. Much cleaner than my version. Thanks!
+Ard Biesheuvel (2):
+  dt-bindings: i2c: add binding for Socionext SynQuacer I2C
+  i2c: add support for Socionext SynQuacer I2C controller
 
-Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+ Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
+ drivers/i2c/busses/Kconfig                              |  11 +
+ drivers/i2c/busses/Makefile                             |   1 +
+ drivers/i2c/busses/i2c-synquacer.c                      | 796 ++++++++++++++++++++
+ 4 files changed, 837 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
+ create mode 100644 drivers/i2c/busses/i2c-synquacer.c
 
 -- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
+2.11.0
