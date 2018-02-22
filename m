@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932749AbeBVOEV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 09:04:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:41796 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932573AbeBVOEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 09:04:20 -0500
-Subject: Re: [PATCH] lib/dma-debug.c: fix memory leakage
-To: miles.chen@mediatek.com, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-References: <1519298540-3071-1-git-send-email-miles.chen@mediatek.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6df7e9bd-2203-0692-97e4-8c6434304b0f@arm.com>
-Date: Thu, 22 Feb 2018 14:04:17 +0000
+        id S932656AbeBVOIY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 09:08:24 -0500
+Received: from a8-57.smtp-out.amazonses.com ([54.240.8.57]:48376 "EHLO
+        a8-57.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932564AbeBVOIX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 09:08:23 -0500
+Subject: Re: Regression: Dell XPS 13 9360 keyboard no longer works
+To: Marco Martin <notmart@gmail.com>
+Cc: Mario Limonciello <mario.limonciello@dell.com>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <01000161bbeed4e3-8160ffbc-0998-453d-9afd-14b7dd80dd53-000000@email.amazonses.com>
+ <1628582.nV6hDClBbL@phobos>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <01000161bdd7f206-c8d87cce-1b8c-4888-8d6a-5247198b3ead-000000@email.amazonses.com>
+Date: Thu, 22 Feb 2018 14:08:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1519298540-3071-1-git-send-email-miles.chen@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1628582.nV6hDClBbL@phobos>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SES-Outgoing: 2018.02.22-54.240.8.57
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/18 11:22, miles.chen@mediatek.com wrote:
-> From: Miles Chen <miles.chen@mediatek.com>
+On 02/22/2018 05:21 AM, Marco Martin wrote:
+> On giovedì 22 febbraio 2018 06:14:07 CET Jeremy Cline wrote:
+>> Hey folks,
+>>
+>> Commit 30323fb6d552c41997baca5292bf7001366cab57 (Support tablet mode
+>> switch) causes the keyboard on my XPS 13 to stop working. This
+>> particular model has a touch screen (which I've disabled in the BIOS),
+>> but isn't a 2-in-1 with a tablet mode. My guess is it's being put in
+>> tablet mode and that's disabling the keyboard? In any case, I'm happy
+>> to test fixes and provide any necessary information.
 > 
-> Marty reported a memory leakage introduced by commit 3aaabbf1c39e
-> ("lib/dma-debug.c: fix incorrect pfn calculation"). Fix it
-> by checking the virtual address before allocating the entry.
-
-Oops, seems I failed to look closely enough at the surrounding diff 
-context when I reviewed the original patch... :(
-
-> This patch also use virt_addr_valid() instead of virt_to_page()
-> to check if a virtual address is linear.
-
-That's an area I happen to have been looking at lately and now 
-understand a lot better, so fully agreed there as well.
-
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-
-Maybe also worth having a proper Fixes: tag instead of just naming the 
-commit in prose?
-
-Thanks,
-Robin.
-
-> Reported-by: Marty Faltesek <mfaltesek@google.com>
-> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> ---
->   lib/dma-debug.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+> 30323fb6d552c41997baca5292bf7001366cab57 initializes the switch to the correct 
+> state, in theory, it seems VGBS() is returning the wrong thing? could it 
+> report it has the switch and in a closed state even if it doesn't have it?
+>  also seems device specific, on my inspiron6352 if i go in teblet mode the 
+> keyboard keeps working until i fold it completely (which i don't know/don't 
+> think is something detectable at all from the software side)
 > 
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index 1b34d210452c..7f5cdc1e6b29 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -1491,12 +1491,12 @@ void debug_dma_alloc_coherent(struct device *dev, size_t size,
->   	if (unlikely(virt == NULL))
->   		return;
->   
-> -	entry = dma_entry_alloc();
-> -	if (!entry)
-> +	/* handle vmalloc and linear addresses */
-> +	if (!is_vmalloc_addr(virt) && !virt_addr_valid(virt))
->   		return;
->   
-> -	/* handle vmalloc and linear addresses */
-> -	if (!is_vmalloc_addr(virt) && !virt_to_page(virt))
-> +	entry = dma_entry_alloc();
-> +	if (!entry)
->   		return;
->   
->   	entry->type      = dma_debug_coherent;
-> @@ -1528,7 +1528,7 @@ void debug_dma_free_coherent(struct device *dev, size_t size,
->   	};
->   
->   	/* handle vmalloc and linear addresses */
-> -	if (!is_vmalloc_addr(virt) && !virt_to_page(virt))
-> +	if (!is_vmalloc_addr(virt) && !virt_addr_valid(virt))
->   		return;
->   
->   	if (is_vmalloc_addr(virt))
+> can you test with the command evtest (if an external keyboard works, or via 
+> ssh)?, then looking at the state of the intel virtual button driver it should 
+> show you the current state of the switch
 > 
+
+Hi,
+
+Here's the evtest output for the virtual button driver:
+
+Input driver version is 1.0.1
+Input device ID: bus 0x19 vendor 0x0 product 0x0 version 0x0
+Input device name: "Intel Virtual Button driver"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 114 (KEY_VOLUMEDOWN)
+    Event code 115 (KEY_VOLUMEUP)
+    Event code 116 (KEY_POWER)
+    Event code 125 (KEY_LEFTMETA)
+    Event code 240 (KEY_UNKNOWN)
+    Event code 561 (?)
+  Event type 4 (EV_MSC)
+    Event code 4 (MSC_SCAN)
+  Event type 5 (EV_SW)
+    Event code 1 (SW_TABLET_MODE) state 1
+Properties:
+Testing ... (interrupt to exit)
+
+
+Regards,
+Jeremy
