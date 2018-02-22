@@ -1,75 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751334AbeBVTB6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 14:01:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750725AbeBVTB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:01:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4000217AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELt7QBsZO/iffXNjXr56KM6xSN2imxlZObn2cPMrxFDr1JAUZlnnW/4y2A5vzvWidkQg+lWUcs0yEvUoAvpjxio=
-MIME-Version: 1.0
-In-Reply-To: <20180222133643.GJ30681@dhcp22.suse.cz>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
- <151670493255.658225.2881484505285363395.stgit@buzz> <20180221154214.GA4167@bombadil.infradead.org>
- <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com> <20180221170129.GB27687@bombadil.infradead.org>
- <20180222065943.GA30681@dhcp22.suse.cz> <20180222122254.GA22703@bombadil.infradead.org>
- <20180222133643.GJ30681@dhcp22.suse.cz>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 22 Feb 2018 19:01:35 +0000
-X-Gmail-Original-Message-ID: <CALCETrU2c=SzWJCwuqqFuBVkC=nN27_ce4GxweCQXEwPAqnz7A@mail.gmail.com>
-Message-ID: <CALCETrU2c=SzWJCwuqqFuBVkC=nN27_ce4GxweCQXEwPAqnz7A@mail.gmail.com>
-Subject: Re: Use higher-order pages in vmalloc
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751339AbeBVTEc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 14:04:32 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:50542 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbeBVTEb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 14:04:31 -0500
+Date: Thu, 22 Feb 2018 14:04:29 -0500 (EST)
+Message-Id: <20180222.140429.928803762162231850.davem@davemloft.net>
+To: dudenis2000@yahoo.ca
+Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Carrier detect ok, don't turn off negotiation
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1603547691.2507241.1519184131708@mail.yahoo.com>
+References: <20180206.102943.1688399898359622454.davem@davemloft.net>
+        <2005408285.4065183.1517935842178@mail.yahoo.com>
+        <1603547691.2507241.1519184131708@mail.yahoo.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 1:36 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Thu 22-02-18 04:22:54, Matthew Wilcox wrote:
->> On Thu, Feb 22, 2018 at 07:59:43AM +0100, Michal Hocko wrote:
->> > On Wed 21-02-18 09:01:29, Matthew Wilcox wrote:
->> > > Right.  It helps with fragmentation if we can keep higher-order
->> > > allocations together.
->> >
->> > Hmm, wouldn't it help if we made vmalloc pages migrateable instead? That
->> > would help the compaction and get us to a lower fragmentation longterm
->> > without playing tricks in the allocation path.
->>
->> I was wondering about that possibility.  If we want to migrate a page
->> then we have to shoot down the PTE across all CPUs, copy the data to the
->> new page, and insert the new PTE.  Copying 4kB doesn't take long; if you
->> have 12GB/s (current example on Wikipedia: dual-channel memory and one
->> DDR2-800 module per channel gives a theoretical bandwidth of 12.8GB/s)
->> then we should be able to copy a page in 666ns).  So there's no problem
->> holding a spinlock for it.
->>
->> But we can't handle a fault in vmalloc space today.  It's handled in
->> arch-specific code, see vmalloc_fault() in arch/x86/mm/fault.c
->> If we're going to do this, it'll have to be something arches opt into
->> because I'm not taking on the job of fixing every architecture!
->
-> yes.
+From: Denis Du <dudenis2000@yahoo.ca>
+Date: Wed, 21 Feb 2018 03:35:31 +0000 (UTC)
 
-On x86, if you shoot down the PTE for the current stack, you're dead.
-vmalloc_fault() might not even be called.  Instead we hit
-do_double_fault(), and the manual warns extremely strongly against
-trying to recover, and, in this case, I agree with the SDM.  If you
-actually want this to work, there needs to be a special IPI broadcast
-to the task in question (with appropriate synchronization) that calls
-magic arch code that does the switcheroo.
+> How  is your thinking about this patch?
 
-Didn't someone (Christoph?) have a patch to teach the page allocator
-to give high-order allocations if available and otherwise fall back to
-low order?
+I cannot apply a patch which has been corrupted by your email client like
+this.
+
+Please send it properly again, plain ASCII text, and no trasnformations
+by your email client.
+
+You should send the patch to yourself and try to apply the patch you
+receive, do not send to the list until you can pass the test properly.
+
+Do not use attachments to fix this problem, the patch must be inline
+after your commit message and signoffs.
+
+Please read Documentation/process/submitting-patches.rst and
+Documentation/process/email-clients.rsDt for more information.
+
+Thank you.
