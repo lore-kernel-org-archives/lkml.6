@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751283AbeBVFDf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 00:03:35 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43410 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeBVFDe (ORCPT
+        id S1752278AbeBVFFZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 00:05:25 -0500
+Received: from LGEAMRELO11.lge.com ([156.147.23.51]:36021 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeBVFFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 00:03:34 -0500
-X-Google-Smtp-Source: AH8x224o1DpR7PAlsUV0QFk2tof0vJPGypfld9pMiujsGy/XTuD+G8a5JqVmBV6nSBAa5Kdj0N+WGA==
-From: Joel Stanley <joel@jms.id.au>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Update ASPEED entry with details
-Date: Thu, 22 Feb 2018 15:33:24 +1030
-Message-Id: <20180222050324.21531-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.15.1
+        Thu, 22 Feb 2018 00:05:24 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.184
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [QUESTION] srcu: Remove the SCAN2 state
+To: paulmck@linux.vnet.ibm.com
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+References: <1519257447-4232-1-git-send-email-byungchul.park@lge.com>
+ <20180222021147.GA2855@linux.vnet.ibm.com>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <fb00133e-776b-50c7-1a46-b56c3339622b@lge.com>
+Date: Thu, 22 Feb 2018 14:05:18 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180222021147.GA2855@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am interested in all ASPEED drivers, and the previous match wasn't
-grabbing files in nested directories. Use N instead.
+On 2/22/2018 11:11 AM, Paul E. McKenney wrote:
+> On Thu, Feb 22, 2018 at 08:57:27AM +0900, Byungchul Park wrote:
+>> Hello,
+>>
+>> I'm sorry for bothering you, and I seem to be obviously missing
+>> something, but I'm really wondering why we check try_check_zero()
+>> again in the state, SCAN1, for the previous srcu_idx.
+>>
+>> I mean, since we've already checked try_check_zero() in the previous
+>> grace period and gotten 'true' as a return value, all readers who see
+>> the flipped idx via srcu_flip() won't update the src_{lock,unlock}_count
+>> for the previous idx until it gets flipped back again.
+>>
+>> Is there any reasons we check try_check_zero() again in the state, SCAN1?
+>> Is there any problems if the following patch's applied?
+> 
+> Indeed there are!  Removing the second scan exposes us to a nasty race
+> condition where a reader is preempted (or interrupted or whatever) just
 
-Add the arm kernel mailing list so that patches get reviewed there, and
-the linux-aspeed list which exists only so I can use patchwork to track
-patches.
+Indeed! I missed the cases. It should be as it is.
 
-Add Andrew as a reviewer, because he is involved in reviewing ASPEED
-stuff.
+Thanks a lot for pointing it out.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- MAINTAINERS | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> after fetching its counter.  A detailed explanation for an essentially
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a7f76eadae9..1ebf49797175 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1226,10 +1226,15 @@ F:	Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
- 
- ARM/ASPEED MACHINE SUPPORT
- M:	Joel Stanley <joel@jms.id.au>
--S:	Maintained
-+R:	Andrew Jeffery <andrew@aj.id.au>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
-+Q:	https://patchwork.ozlabs.org/project/linux-aspeed/list/
-+S:	Supported
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git
- F:	arch/arm/mach-aspeed/
- F:	arch/arm/boot/dts/aspeed-*
--F:	drivers/*/*aspeed*
-+N:	aspeed
- 
- ARM/ATMEL AT91 Clock Support
- M:	Boris Brezillon <boris.brezillon@free-electrons.com>
 -- 
-2.15.1
+Thanks,
+Byungchul
