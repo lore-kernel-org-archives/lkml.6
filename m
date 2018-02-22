@@ -1,79 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753384AbeBVJwe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 04:52:34 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48037 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753101AbeBVJwc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:52:32 -0500
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH] media: stm32-dcmi: fix unnecessary parentheses
-Date: Thu, 22 Feb 2018 10:51:27 +0100
-Message-ID: <1519293087-19984-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-22_04:,,
- signatures=0
+        id S1753235AbeBVJzA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 04:55:00 -0500
+Received: from mail.phytec.co.uk ([217.6.246.34]:54779 "EHLO root.phytec.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752537AbeBVJy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:54:59 -0500
+From: Daniel Schultz <d.schultz@phytec.de>
+To: lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, W.Egorov@phytec.de
+Subject: [PATCH] mfd: rk808: Fix RK818 ID template
+Date: Thu, 22 Feb 2018 10:54:52 +0100
+Message-Id: <1519293292-46451-1-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 22.02.2018 10:54:57,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 22.02.2018 10:54:57,
+        Serialize complete at 22.02.2018 10:54:57
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix unnecessary parentheses in if conditions.
-Detected by checkpatch.pl --strict.
+The Rockchip PMIC driver can automatically detect connected component
+versions by reading the ID_MSB and ID_LSB registers. The probe function
+will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
+RK818 template ID is 0x8181.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+This patch changes this value to 0x8180.
+
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/mfd/rk808.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 536c0d5..269e963 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -477,7 +477,7 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index d315659..338e0f6 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -443,7 +443,7 @@ enum {
+ enum {
+ 	RK805_ID = 0x8050,
+ 	RK808_ID = 0x0000,
+-	RK818_ID = 0x8181,
++	RK818_ID = 0x8180,
+ };
  
- 	spin_lock_irq(&dcmi->irqlock);
- 
--	if ((dcmi->state == RUNNING) && (!dcmi->active)) {
-+	if (dcmi->state == RUNNING && !dcmi->active) {
- 		dcmi->active = buf;
- 
- 		dev_dbg(dcmi->dev, "Starting capture on buffer[%d] queued\n",
-@@ -730,7 +730,7 @@ static void __find_outer_frame_size(struct stm32_dcmi *dcmi,
- 		int h_err = (fsize->height - pix->height);
- 		int err = w_err + h_err;
- 
--		if ((w_err >= 0) && (h_err >= 0) && (err < min_err)) {
-+		if (w_err >= 0 && h_err >= 0 && err < min_err) {
- 			min_err = err;
- 			match = fsize;
- 		}
-@@ -1065,10 +1065,10 @@ static int dcmi_s_selection(struct file *file, void *priv,
- 	r.top  = clamp_t(s32, r.top, 0, pix.height - r.height);
- 	r.left = clamp_t(s32, r.left, 0, pix.width - r.width);
- 
--	if (!((r.top == dcmi->sd_bounds.top) &&
--	      (r.left == dcmi->sd_bounds.left) &&
--	      (r.width == dcmi->sd_bounds.width) &&
--	      (r.height == dcmi->sd_bounds.height))) {
-+	if (!(r.top == dcmi->sd_bounds.top &&
-+	      r.left == dcmi->sd_bounds.left &&
-+	      r.width == dcmi->sd_bounds.width &&
-+	      r.height == dcmi->sd_bounds.height)) {
- 		/* Crop if request is different than sensor resolution */
- 		dcmi->do_crop = true;
- 		dcmi->crop = r;
+ struct rk808 {
 -- 
-1.9.1
+2.7.4
