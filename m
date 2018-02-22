@@ -1,58 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933285AbeBVQUT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 11:20:19 -0500
-Received: from vps.xff.cz ([195.181.215.36]:52164 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933134AbeBVQUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 11:20:16 -0500
-From: megous@megous.com
-To: dev@linux-sunxi.org
-Cc: Ondrej Jirman <megous@megous.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC] drm/sun4i: Enable the output on the pins (tcon0)
-Date: Thu, 22 Feb 2018 17:12:17 +0100
-Message-Id: <20180222161217.23904-1-megous@megous.com>
+        id S933330AbeBVQUg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 11:20:36 -0500
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33072 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933134AbeBVQUd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 11:20:33 -0500
+X-Google-Smtp-Source: AH8x227lhjV9sBm4cArvhuiNitbStNWQe7bsLyoTgWAbsn7mSsUEBEMkC5MdaFg/Ty6MyPTqkiviiw==
+Date: Thu, 22 Feb 2018 11:20:31 -0500
+From: Sean Paul <seanpaul@chromium.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Alex Deucher <alexander.deucher@amd.com>, Monk Liu <monk.liu@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>,
+        Chunming Zhou <david1.zhou@amd.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: fix drm_get_max_iomem type mismatch
+Message-ID: <20180222162031.GF223881@art_vandelay>
+References: <20180222114804.1394300-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222114804.1394300-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+On Thu, Feb 22, 2018 at 12:47:51PM +0100, Arnd Bergmann wrote:
+> When comparing two variables with min()/max(), they should be the same type:
+> 
+> drivers/gpu/drm/drm_memory.c: In function 'drm_get_max_iomem':
+> include/linux/kernel.h:821:16: error: comparison of distinct pointer types lacks a cast [-Werror]
+>   (void) (&max1 == &max2);
+> 
+> This makes the local variable in drm_get_max_iomem make the type
+> from resource->end.
+> 
+> Fixes: 82626363a217 ("drm: add func to get max iomem address v2")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I noticed that with 4.16-rc1 LVDS output on A83T based TBS A711 tablet doesn't
-work (there's output but it's garbled). I compared some older patches for LVDS
-support with the mainlined ones and this change is missing from mainline Linux.
+Thanks Arnd, I've applied this to drm-misc-next.
 
-I don't know what the register does exactly and the harcoded register value
-doesn't inspire much confidence that it will work in a general case, so I'm
-sending this RFC.
+Sean
 
-This patch fixes the issue on A83T.
+> ---
+>  drivers/gpu/drm/drm_memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_memory.c b/drivers/gpu/drm/drm_memory.c
+> index 7ca500b8c399..3c54044214db 100644
+> --- a/drivers/gpu/drm/drm_memory.c
+> +++ b/drivers/gpu/drm/drm_memory.c
+> @@ -153,7 +153,7 @@ EXPORT_SYMBOL(drm_legacy_ioremapfree);
+>  u64 drm_get_max_iomem(void)
+>  {
+>  	struct resource *tmp;
+> -	u64 max_iomem = 0;
+> +	resource_size_t max_iomem = 0;
+>  
+>  	for (tmp = iomem_resource.child; tmp; tmp = tmp->sibling) {
+>  		max_iomem = max(max_iomem,  tmp->end);
+> -- 
+> 2.9.0
+> 
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 3c15cf24b503..51740ddb4b32 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -335,6 +335,9 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
- 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
- 			   SUN4I_TCON_GCTL_IOMAP_MASK,
- 			   SUN4I_TCON_GCTL_IOMAP_TCON0);
-+
-+	/* Enable the output on the pins */
-+	regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0xe0000000);
- }
- 
- static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
 -- 
-2.16.2
+Sean Paul, Software Engineer, Google / Chromium OS
