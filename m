@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753360AbeBVKYO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:24:14 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46233 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753189AbeBVKYM (ORCPT
+        id S1753414AbeBVKYW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 05:24:22 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51066 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753189AbeBVKYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:24:12 -0500
-X-Google-Smtp-Source: AH8x225PjjYOXjwPBGZq2nvCP/5zA9/b84muhqZ0zRcUgheH+kXQ/4DiyDNYhz82EikH2hnRJlU7NA==
+        Thu, 22 Feb 2018 05:24:18 -0500
+X-Google-Smtp-Source: AH8x226xPjTRe134svsdX424hmNiDw1AV17aSqPN/CdoouHmp3JIHXSdJ6AW0CmjI8OZYYJ0HQuivg==
 From: Rui Miguel Silva <rmfrfs@gmail.com>
 X-Google-Original-From: Rui Miguel Silva <rui.silva@linaro.org>
 To: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH 0/2] media: Introduce Omnivision OV2680 driver
-Date: Thu, 22 Feb 2018 10:23:36 +0000
-Message-Id: <20180222102338.28896-1-rui.silva@linaro.org>
+        Rui Miguel Silva <rui.silva@linaro.org>, devicetree@vger.kernel.org
+Subject: [PATCH 1/2] media: ov2680: dt: Add bindings for OV2680
+Date: Thu, 22 Feb 2018 10:23:37 +0000
+Message-Id: <20180222102338.28896-2-rui.silva@linaro.org>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180222102338.28896-1-rui.silva@linaro.org>
+References: <20180222102338.28896-1-rui.silva@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver and bindings for the OV2680 2 megapixel CMOS 1/5" sensor, which has
-a single MIPI lane interface and output format of 10-bit Raw RGB.
+Add device tree binding documentation for the OV5640 camera sensor.
 
-Features supported are described in PATCH 2/2.
-
-Cheers,
-    Rui
-
-Rui Miguel Silva (2):
-  media: ov2680: dt: Add bindings for OV2680
-  media: ov2680: Add Omnivision OV2680 sensor driver
-
- .../devicetree/bindings/media/i2c/ov2680.txt       |   34 +
- drivers/media/i2c/Kconfig                          |   13 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/ov2680.c                         | 1189 ++++++++++++++++++++
- 4 files changed, 1237 insertions(+)
+CC: devicetree@vger.kernel.org
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ .../devicetree/bindings/media/i2c/ov2680.txt       | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov2680.txt
- create mode 100644 drivers/media/i2c/ov2680.c
 
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov2680.txt b/Documentation/devicetree/bindings/media/i2c/ov2680.txt
+new file mode 100644
+index 000000000000..f9dc63ce5044
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/ov2680.txt
+@@ -0,0 +1,34 @@
++* Omnivision OV2680 MIPI CSI-2 sensor
++
++Required Properties:
++- compatible: should be "ovti,ov2680"
++- clocks: reference to the xvclk input clock.
++- clock-names: should be "xvclk".
++
++Optional Properties:
++- powerdown-gpios: reference to the GPIO connected to the powerdown pin,
++		     if any. This is an active high signal to the OV2680.
++
++The device node must contain one 'port' child node for its digital output
++video port, in accordance with the video interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++Example:
++
++&i2c2 {
++	ov2680: camera-sensor@36 {
++		compatible = "ovti,ov2680";
++		reg = <0x36>;
++		clocks = <&osc>;
++		clock-names = "xvclk";
++		powerdown-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
++
++		port {
++			ov2680_mipi_ep: endpoint {
++				remote-endpoint = <&mipi_sensor_ep>;
++				clock-lanes = <0>;
++				data-lanes = <1>;
++			};
++		};
++	};
++};
 -- 
 2.16.2
