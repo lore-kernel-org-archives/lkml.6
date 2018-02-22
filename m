@@ -1,100 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753557AbeBVK7m (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 05:59:42 -0500
-Received: from mga02.intel.com ([134.134.136.20]:35549 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753411AbeBVK7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:59:41 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,377,1515484800";
-   d="scan'208";a="32705440"
-Date: Thu, 22 Feb 2018 12:59:32 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Rui Miguel Silva <rmfrfs@gmail.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: ov2680: dt: Add bindings for OV2680
-Message-ID: <20180222105932.t4j7ranj2qp4jhj6@paasikivi.fi.intel.com>
-References: <20180222102338.28896-1-rui.silva@linaro.org>
- <20180222102338.28896-2-rui.silva@linaro.org>
+        id S1753579AbeBVLBM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 06:01:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56424 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753411AbeBVLBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 06:01:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C58D46031A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [alsa-devel] [PATCH v3 24/25] ASoC: qcom: apq8096: Add db820c
+ machine driver
+To: srinivas.kandagatla@linaro.org, andy.gross@linaro.org,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
+        lgirdwood@gmail.com, david.brown@linaro.org, robh+dt@kernel.org,
+        spatakok@qti.qualcomm.com, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-25-srinivas.kandagatla@linaro.org>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <2d646729-9bb2-86e5-22f5-19aaf009c0cc@codeaurora.org>
+Date: Thu, 22 Feb 2018 16:30:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222102338.28896-2-rui.silva@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180213165837.1620-25-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rui,
 
-Thanks for the patchset.
 
-Could you use "dt: bindings: " prefix in the subject?
-
-On Thu, Feb 22, 2018 at 10:23:37AM +0000, Rui Miguel Silva wrote:
-> Add device tree binding documentation for the OV5640 camera sensor.
-> 
-> CC: devicetree@vger.kernel.org
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+On 2/13/2018 10:28 PM, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>
+> This patch adds support to DB820c machine driver.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  .../devicetree/bindings/media/i2c/ov2680.txt       | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov2680.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ov2680.txt b/Documentation/devicetree/bindings/media/i2c/ov2680.txt
-> new file mode 100644
-> index 000000000000..f9dc63ce5044
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/ov2680.txt
-> @@ -0,0 +1,34 @@
-> +* Omnivision OV2680 MIPI CSI-2 sensor
+>   sound/soc/qcom/Kconfig   |   8 +++
+>   sound/soc/qcom/apq8096.c | 173 +++++++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 181 insertions(+)
+>   create mode 100644 sound/soc/qcom/apq8096.c
+>
+> diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+> index 8c2d65e0a28e..fa4b575c086c 100644
+> --- a/sound/soc/qcom/Kconfig
+> +++ b/sound/soc/qcom/Kconfig
+> @@ -77,3 +77,11 @@ config SND_SOC_QDSP6
+>   	 This will enable sound soc platform specific
+>   	 audio drivers. This includes q6asm, q6adm,
+>   	 q6afe interfaces to DSP using apr.
 > +
-> +Required Properties:
-> +- compatible: should be "ovti,ov2680"
-> +- clocks: reference to the xvclk input clock.
-> +- clock-names: should be "xvclk".
-> +
-> +Optional Properties:
-> +- powerdown-gpios: reference to the GPIO connected to the powerdown pin,
-> +		     if any. This is an active high signal to the OV2680.
-> +
-> +The device node must contain one 'port' child node for its digital output
-
-Please add that the port contains a single endpoint as well.
-
-> +video port, in accordance with the video interface bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-
-Please list required and optional endpoint properties as well.
-
-> +
-> +Example:
-> +
-> +&i2c2 {
-> +	ov2680: camera-sensor@36 {
-> +		compatible = "ovti,ov2680";
-> +		reg = <0x36>;
-> +		clocks = <&osc>;
-> +		clock-names = "xvclk";
-> +		powerdown-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-> +
-> +		port {
-> +			ov2680_mipi_ep: endpoint {
-> +				remote-endpoint = <&mipi_sensor_ep>;
-> +				clock-lanes = <0>;
-> +				data-lanes = <1>;
-> +			};
-> +		};
-> +	};
-> +};
-
--- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+> +config SND_SOC_MSM8996
+> +	tristate "SoC Machine driver for MSM8996 and APQ8096 boards"
+> +	depends on QCOM_APR
+> +	select SND_SOC_QDSP6V2
+should be select SND_SOC_QDSP6, V2 is not defined
+> +	default n
+> +	help
+> +	 To add support for SoC audio on MSM8996 and APQ8096 boards
+>
