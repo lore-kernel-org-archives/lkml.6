@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226XDuaZhefT++fx1ribRGV470wdo4yX+J4zDWQVM27XMcdLcHaCmmLALiCL2XEhcR9ppCbd
-ARC-Seal: i=1; a=rsa-sha256; t=1519410856; cv=none;
+X-Google-Smtp-Source: AH8x226lL1W8w/lqGtm+ZcNuPAwUtTtmOYiETLLJkUkifaGS4Djj+e3C7SVGRlznRuH3L9VtUEMC
+ARC-Seal: i=1; a=rsa-sha256; t=1519410852; cv=none;
         d=google.com; s=arc-20160816;
-        b=c/L/MVegzKQqJNSN1O5uI8ri59N2p3oFrVXyB+C9rZ+Rdy2oUrvJS50va8VPsS7pdR
-         mw6hAW9vI4fsqCVoFEx0Z/eiE3lUe7pPZi11bkhuizROTBwQok9zY2G5x005s9PyjQm5
-         nIn/MByoVz49zAhT4mBPZHjGJJE+YL4nTXyYiOjfmde8V3D3bEoDDVKQt65vHQBLH35T
-         2CZwj3GoloBec5rWQf3pnwOowbywWzEamgyTdgPiXdttNE8gpuKsab+IFMdbZzOb/TfU
-         zg6qq6qCPN/B5eSW2xE9KYmxjWXLFd55s+k+LIiA//gknPfHHNSbs2+eGWZUpHeKklzr
-         fiKg==
+        b=BP/xyuGLqa5LPLjDGOcFTiAqx+mX8b0wqSbmLINPrZ4HX4aTOE6QbYBR6/+jZ1g3i8
+         l0YE/H7RAGVL8nLcVJLOG0Ikh0OoQMalKfvB12kF20wh2c0gEWm7cjzY2ehYS15BQ5+1
+         WjHExW19GgA2ZNA4pu4wFuJY8yMFDO6E+0cws/ULon1q7BjvVpoF8jnc3O4ql+benEpy
+         nMRZimjVpgb+fk5uxM3Pqzg+htESZPeF8X/ZQHYnLjrF6SgS3mqcAe+Pqcip4uLceR/i
+         DKJhNk4aq3izGBQzxsxexSvLS7fQMZYI6SgQQ3JRJLyq/3Hi/QKblTpZoibZN2Nqip3Z
+         OzKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OJE5esd8rPvcwEwAX/xuIi4gftqcmm2TCJxuxNazbuQ=;
-        b=bFD3EbT3WxftFk5sznBR4nluWeroMuEquFJYeEGHYFYIqiievH6NQu+HQZzf7QNorf
-         UAGhBC5H/FyljUNYknhh+OkKcCckxzFIDSPU/MKNNPHMC26ZFtIiXp5fzhn0I0uDdEgk
-         XesuMPsQ09+oGLwaaBOPb/z/Vkr6bnW4w5k4DekGfm7nCIeIByE+g1q+ntOaOCKtYXe8
-         gTWm+n498e7Bk0mhHpjmtlB/n9Y4pIs31mUV7HXQGoRaTx+QgQzpY/jHqwnXHTix13yN
-         +dtlGFk5i75nTUv5pwDg+x5bOb0XE5joJn1BhJrjCyL187ZxdvKTvpBvAXLT0nUh1ta5
-         QN4Q==
+        bh=Z430NQdBWr/2EFJ1NtkrIp3coxA/9/ua68ie58fXdlc=;
+        b=qQA2f5+8iKmtalOEpo4LqI4vsWWYwn6TEGjOJkROBRHu2gMTJtIhKqXdtGrSeGgvy/
+         JlPK4Lq1jvPy3j4udJfg8tNicTQELgkvedwbSdrwIdQpP+CuNLg0AiReaATY3mlgt+2m
+         QksnjtlPNgOjAz1fQ4Bc3pXTzX/2XD5M2egDjAqXOprSxp0hUADnUYG1QmgsDU66mVnc
+         zbnw+Z7ZjW32jwMMINPNfN1dqTOjgClLvKMP5EzIwrNQLpw9zo0nl/MFrDLH8pwDjTcJ
+         QJpm/FdNghldFuWVCYLAtD/bJCFOLEVLrMoikleD/hxtxAWZprIkPb/tSkiWTjlIAeV8
+         DHkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	syzbot <syzkaller@googlegroups.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [PATCH 4.4 006/193] xfrm: check id proto in validate_tmpl()
-Date: Fri, 23 Feb 2018 19:23:59 +0100
-Message-Id: <20180223170327.047820034@linuxfoundation.org>
+	Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.4 005/193] xfrm: Fix stack-out-of-bounds read on socket policy lookup.
+Date: Fri, 23 Feb 2018 19:23:58 +0100
+Message-Id: <20180223170326.927973666@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217520098223525?=
-X-GMAIL-MSGID: =?utf-8?q?1593217757872181363?=
+X-GMAIL-THRID: =?utf-8?q?1593217754284204073?=
+X-GMAIL-MSGID: =?utf-8?q?1593217754284204073?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,55 +49,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
-commit 6a53b7593233ab9e4f96873ebacc0f653a55c3e1 upstream.
+commit ddc47e4404b58f03e98345398fb12d38fe291512 upstream.
 
-syzbot reported a kernel warning in xfrm_state_fini(), which
-indicates that we have entries left in the list
-net->xfrm.state_all whose proto is zero. And
-xfrm_id_proto_match() doesn't consider them as a match with
-IPSEC_PROTO_ANY in this case.
+When we do tunnel or beet mode, we pass saddr and daddr from the
+template to xfrm_state_find(), this is ok. On transport mode,
+we pass the addresses from the flowi, assuming that the IP
+addresses (and address family) don't change during transformation.
+This assumption is wrong in the IPv4 mapped IPv6 case, packet
+is IPv4 and template is IPv6.
 
-Proto with value 0 is probably not a valid value, at least
-verify_newsa_info() doesn't consider it valid either.
-
-This patch fixes it by checking the proto value in
-validate_tmpl() and rejecting invalid ones, like what iproute2
-does in xfrm_xfrmproto_getbyname().
+Fix this by catching address family missmatches of the policy
+and the flow already before we do the lookup.
 
 Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_user.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/xfrm/xfrm_policy.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1402,6 +1402,21 @@ static int validate_tmpl(int nr, struct
- 		default:
- 			return -EINVAL;
- 		}
-+
-+		switch (ut[i].id.proto) {
-+		case IPPROTO_AH:
-+		case IPPROTO_ESP:
-+		case IPPROTO_COMP:
-+#if IS_ENABLED(CONFIG_IPV6)
-+		case IPPROTO_ROUTING:
-+		case IPPROTO_DSTOPTS:
-+#endif
-+		case IPSEC_PROTO_ANY:
-+			break;
-+		default:
-+			return -EINVAL;
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1225,9 +1225,15 @@ static struct xfrm_policy *xfrm_sk_polic
+ 	read_lock_bh(&net->xfrm.xfrm_policy_lock);
+ 	pol = rcu_dereference(sk->sk_policy[dir]);
+ 	if (pol != NULL) {
+-		bool match = xfrm_selector_match(&pol->selector, fl, family);
++		bool match;
+ 		int err = 0;
+ 
++		if (pol->family != family) {
++			pol = NULL;
++			goto out;
 +		}
 +
- 	}
- 
- 	return 0;
++		match = xfrm_selector_match(&pol->selector, fl, family);
+ 		if (match) {
+ 			if ((sk->sk_mark & pol->mark.m) != pol->mark.v) {
+ 				pol = NULL;
