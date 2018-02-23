@@ -1,81 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeBWPVU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:21:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58434 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751391AbeBWPVS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:21:18 -0500
-Subject: Re: [PATCH] kvm: fix warning for CONFIG_HAVE_KVM_EVENTFD builds
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <alpine.LFD.2.21.1802221304430.1603@schleppi>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Fri, 23 Feb 2018 16:21:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751934AbeBWPWH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:22:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35922 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751597AbeBWPWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:22:06 -0500
+Date: Fri, 23 Feb 2018 09:22:04 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code:
+ section
+Message-ID: <20180223152204.434g7mrvi6hjmmka@treble>
+References: <20180219202826.19797-1-bp@alien8.de>
+ <CALCETrXgT0rLLziiOnv51tZioJ2bNKc1eNniu46dDOvW5=PxYQ@mail.gmail.com>
+ <20180220192956.si2a6m3ckskexvte@treble>
+ <20180220204435.GC24320@pd.tnic>
+ <20180221091553.gxnvhbitiewo2mjc@gmail.com>
+ <20180221175429.GC9989@pd.tnic>
+ <CA+55aFxOcAdN4mnK49F1ObiXoyB2xaREd04JGosgxTd_ufuzpg@mail.gmail.com>
+ <20180222092327.GM25201@hirez.programming.kicks-ass.net>
+ <CA+55aFxYNT-qPRk82xCApZrkBt6i4m=nOAfxmaLW-O6wgq1LTA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.21.1802221304430.1603@schleppi>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022315-0020-0000-0000-000003FB0EF4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022315-0021-0000-0000-0000428F289F
-Message-Id: <e95a0813-d421-f01c-8708-224758a1b117@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802230190
+Content-Disposition: inline
+In-Reply-To: <CA+55aFxYNT-qPRk82xCApZrkBt6i4m=nOAfxmaLW-O6wgq1LTA@mail.gmail.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I can see this warnings as well and yes, kvm_arch_irq_routing_update seems to be available
-for CONFIG_HAVE_KVM_EVENTFD=y and =n.
-Seems that irqchip.c is compile independly from CONFIG_HAVE_KVM_EVENTFD,
+On Thu, Feb 22, 2018 at 10:42:52AM -0800, Linus Torvalds wrote:
+> So what we could perhaps do is:
+> 
+>  - make console_verbose() actually reset things to at least LOGLEVEL_DEBUG
+> 
+>  - make sure the *default* loglevel  be LOGLEVEL_WARNING
+> 
+>  - now you can use pr_debug() in the oops code to print messages to
+> the log, but they won't be printed to the screen.
+> 
+> And people who really want everything can still set a loglevel that is
+> much higher, because "console_verbose" would only do that "at least"
+> thing.
+> 
+> That would seem like the best of both worlds, no?
 
-so
+Maybe.
 
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Broadly speaking, I think our goal should be, in the worst case, to try
+to ensure that the essential data is captured.
 
-On 02/22/2018 01:05 PM, Sebastian Ott wrote:
-> Move the kvm_arch_irq_routing_update() prototype outside of
-> ifdef CONFIG_HAVE_KVM_EVENTFD guards to fix the following sparse warning:
-> 
-> arch/s390/kvm/../../../virt/kvm/irqchip.c:171:28: warning: symbol 'kvm_arch_irq_routing_update' was not declared. Should it be static?
-> 
-> Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-> ---
->  include/linux/kvm_host.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index ed3d4ddbaff3..6930c63126c7 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1105,7 +1105,6 @@ static inline void kvm_irq_routing_update(struct kvm *kvm)
->  {
->  }
->  #endif
-> -void kvm_arch_irq_routing_update(struct kvm *kvm);
-> 
->  static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
->  {
-> @@ -1114,6 +1113,8 @@ static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
-> 
->  #endif /* CONFIG_HAVE_KVM_EVENTFD */
-> 
-> +void kvm_arch_irq_routing_update(struct kvm *kvm);
-> +
->  static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
->  {
->  	/*
-> 
+But the definitions of "worst case" and "essential data" can vary a lot,
+depending on both the user's setup and the nature of the bug.  We're not
+going to be able to get it right 100% of the time.
+
+You're assuming the worst case of
+
+  "an 80x25 screen is the only interface to the console".
+
+But there's another worst case of
+
+  "we had unlimited serial port logging, but didn't dump enough data".
+
+With your proposal, the latter might instead become:
+
+  "we had unlimited serial port logging, but didn't dump enough data
+   because the default loglevel was too low."
+
+I did a little analysis of panics reported on lkml via .jpg files
+(either attached or in a URL).  In the last two years I only found 11
+such reports.  (And only two of them were 25x80, the rest were at least
+47 rows.)
+
+On the other hand, I found a *ton* of panics which were copy/pasted.  It
+was way too many to count, but a rough guess is about one per day.
+
+So ~1.5% of bugs are reported via cell phone camera (with only about
+5-10% of *those* on a tiny 25x80 screen, with the rest having at least
+47 rows).
+
+It's not very scientific, but it gives a general idea, I think.  The
+cell phone camera thing has become a pretty rare way to report bugs, and
+with the proliferation of virtualization and automated testing I would
+expect that trend to continue.
+
+So my worry with your proposal is that many (or most?) people won't
+change their default log level to DEBUG, and then all these nice
+additional bits of data we're adding won't ever get printed, making
+debug harder for the ~98.5% case of sane serial port logging.
+
+But then again, I don't have any better ideas...
+
+-- 
+Josh
