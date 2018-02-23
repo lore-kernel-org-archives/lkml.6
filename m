@@ -1,58 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeBWAlm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:41:42 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39854 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeBWAll (ORCPT
+        id S1751340AbeBWA72 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:59:28 -0500
+Received: from mail-it0-f51.google.com ([209.85.214.51]:37409 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751155AbeBWA70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:41:41 -0500
-X-Google-Smtp-Source: AH8x226aBBsFSkSoRJJobke08ZKKcnpBZ2ydBPD8lEL2ljf1HZzzLAWLrFcMzEQ4uuNEbuFLJ09QdQ==
-Date: Thu, 22 Feb 2018 16:41:40 -0800 (PST)
-X-Google-Original-Date: Thu, 22 Feb 2018 15:59:52 PST (-0800)
-Subject: Re: [PATCH] riscv: Implement free_initrd_mem.
-In-Reply-To: <20180220135043.15411-1-shea@shealevy.com>
-CC: linux-riscv@lists.infradead.org, shea@shealevy.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: shea@shealevy.com, linux-kernel@vger.kernel.org
-Message-ID: <mhng-96c45513-b898-42bc-af9e-f24d9909f489@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 22 Feb 2018 19:59:26 -0500
+X-Google-Smtp-Source: AG47ELsI+o2/cL/g7KxF4CtHOSeG0WuJl3HS+eNC7RB/jSx90VRO7L6ZakS9aSEpgNjiP1WKLQe10CgeTq3ABmNCIwQ=
+MIME-Version: 1.0
+In-Reply-To: <20180222235025.28662-1-john.ogness@linutronix.de>
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Feb 2018 16:59:25 -0800
+X-Google-Sender-Auth: HEs0V9-67OMKSSoo-lzAp_-hjI4
+Message-ID: <CA+55aFzcEv5xAFZuEqNpn55L+x8HkBSJDoWBYi92btCkWCp64Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] fs/dcache: avoid trylock loops
+To: John Ogness <john.ogness@linutronix.de>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018 05:50:43 PST (-0800), shea@shealevy.com wrote:
-> Signed-off-by: Shea Levy <shea@shealevy.com>
-> ---
->  arch/riscv/mm/init.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Thu, Feb 22, 2018 at 3:50 PM, John Ogness <john.ogness@linutronix.de> wrote:
 >
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index c77df8142be2..1c832b541e95 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -66,5 +66,11 @@ void free_initmem(void)
->  #ifdef CONFIG_BLK_DEV_INITRD
->  void free_initrd_mem(unsigned long start, unsigned long end)
->  {
-> +	if (start == initrd_start)
-> +		start = round_down(start, PAGE_SIZE);
-> +	if (end == initrd_end)
-> +		end = round_up(end, PAGE_SIZE);
-> +
-> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
->  }
->  #endif /* CONFIG_BLK_DEV_INITRD */
+> This patchset removes all trylock loops from within the dcache code.
 
-It looks like everyone is doing something slightly different here:
+I'm not hating it.
 
-* arm64 doesn't round to a page size, and has keep_initrd.
-* arm calls poison_init_mem(), and has keep_initrd.
-* sparc64 doesn't round, and doesn't have a keep_initrd.
-* mips doesn't round, and doesn't have a keep_initrd.
-* x86 rounds end to a page size but not start, and doesn't have a keep_initrd.
+It may be because I got used (resigned?) to this from the discussion
+around the previous version. But it looks ok to me.
 
-It feels like this should be something generic.  I'm adding linux-kernel to see 
-what people think.
+But this is very much an area where I do want Al to ack it all, so
+let's see if he's any happier now.
+
+              Linus
