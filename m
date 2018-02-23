@@ -1,85 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753996AbeBWUek (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 15:34:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44876 "EHLO mail.kernel.org"
+        id S1753639AbeBWUkk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:40:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44294 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753918AbeBWUeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 15:34:37 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B280C217BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELujFI7DS6EZU76Mxg2EOcvycIr2Ej2uT05kaBTIh5vMI6L2goCA1vQmPrrYx24zv/NszM0Ar4DgM22potXfysM=
+        id S1753426AbeBWUki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 15:40:38 -0500
+Date: Fri, 23 Feb 2018 21:40:36 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Jason Baron <jbaron@akamai.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 8/8] livepatch: Atomic replace and cumulative patches
+ documentation
+In-Reply-To: <a50b564b-e0c8-321f-cf90-8c001e52499b@redhat.com>
+Message-ID: <alpine.LSU.2.21.1802232125070.26550@pobox.suse.cz>
+References: <20180221132914.4809-1-pmladek@suse.com> <20180221132914.4809-9-pmladek@suse.com> <alpine.LSU.2.21.1802231139030.26550@pobox.suse.cz> <a50b564b-e0c8-321f-cf90-8c001e52499b@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8q-9enjK=WLiB5tWvRKQu9+xh=dCqBtB6X9wazKuYiMA@mail.gmail.com>
-References: <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
- <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
- <20180222014505.2l76ccrrs36y3b26@agluck-desk> <CA+55aFzJXsPcsJ5MtsxTp2n+43xC0yGzANLNcDm1mFbZKR75FQ@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37FE28@ORSMSX110.amr.corp.intel.com>
- <CA+55aFy0hRexJkLbN7t31LjfGr4Ae0W5g6sBMqHHJi8aYuGKeA@mail.gmail.com>
- <612E894E-62C8-4155-AED8-D53702EDC8DC@intel.com> <CA+55aFxeBaTbwvbWqx1MKYjKKzLUs=1O43Bx2=JaO8qrnY-8HA@mail.gmail.com>
- <20180222171506.wwsichkiyc5f74pr@agluck-desk> <CA+55aFyOLYAbvTX0F8WLHgBnhwAPWr7EOPbO_sEepmB5GsCBKQ@mail.gmail.com>
- <20180222175411.xzx2d2r2fahn7llo@agluck-desk> <CA+55aFwbjdLpXc4wnN5t7fQ5Zy1vbc+ysH+bsFkaJkStEBwr=A@mail.gmail.com>
- <CAKv+Gu8q-9enjK=WLiB5tWvRKQu9+xh=dCqBtB6X9wazKuYiMA@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 23 Feb 2018 20:34:15 +0000
-X-Gmail-Original-Message-ID: <CALCETrVrJWQNYcXFt4YQ-1EXFqMojiVTZhXR8zFoF+H0ZmfPjw@mail.gmail.com>
-Message-ID: <CALCETrVrJWQNYcXFt4YQ-1EXFqMojiVTZhXR8zFoF+H0ZmfPjw@mail.gmail.com>
-Subject: Re: [PATCH v2] efivarfs: Limit the rate for non-root to read files
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Luck, Tony" <tony.luck@intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Peter Jones <pjones@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 6:08 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 22 February 2018 at 18:07, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Thu, Feb 22, 2018 at 9:54 AM, Luck, Tony <tony.luck@intel.com> wrote:
->>> With the new "while/nap" change there would still be one message
->>> per second, but the number of callbacks suppressed should be 1
->>> (unless the user has many threads doing reads).
->>>
->>> Maybe it is good to know that an application is doing something
->>> stupid and we should drop that line from the patch and let the
->>> warnings flow?
->>
->> I think the "one message per second" is fine.
->>
->> Looks good. Do I get this through the EFI tree, or should I just take
->> it directly?
->>
->
-> Please take it directly if everybody is happy with it.
->
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Fri, 23 Feb 2018, Joe Lawrence wrote:
 
-I don't like this at all.  We're coming up with a bizarre ad-hoc hack
-to work around the fact that we're allowing any unprivileged user can
-call into firmware.  Let's just require privilege.  As I understand
-it, Windows already requires privilege, and Windows is *right*.
+> On 02/23/2018 05:41 AM, Miroslav Benes wrote:
+> > On Wed, 21 Feb 2018, Petr Mladek wrote:
+> > 
+> >> User documentation for the atomic replace feature. It makes it easier
+> >> to maintain livepatches using so-called cumulative patches.
+> >>
+> >> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > Acked-by: Miroslav Benes <mbenes@suse.cz>
+> > 
+> > Joe, are you planning to extend shadow vars documentation you mentioned 
+> > before (v7), or do you want Petr to do it?
+> 
+> I created a sample cumulative patch for testing (I can post later),
+> but I had a quick question regarding the callbacks...
+> 
+> >From v8 of the patch:
+> 
+>   + Only the (un)patching callbacks from the _new_ cumulative livepatch are
+>     executed. Any callbacks from the replaced patches are ignored.
+> 
+> maybe I'm not testing this as intended, but I'm not seeing this
+> behavior with the latest version of the patch.  See below.
 
-Let's apply the original patch, not my patch.  Then, if it causes
-problems with sealtotp, either users can chmod the relevant file or we
-can add a gross hack in the kernel to make that particular file 0644
-*and print a warning* if the file exists.  Then users can bug mjg to
-fix sealtotp to use a privileged helper or systemd service or whatever
-and rename the file at the same time.
+No, you found a bug, I think. I didn't test callbacks and missed this 
+during the review. 
+ 
+> Test 2
+> ======
+> 
+> Make the second livepatch a cumulative one:
+> 
+> diff -upr samples/livepatch/livepatch-callbacks-{demo.c,demo2.c}
+> --- samples/livepatch/livepatch-callbacks-demo.c        2018-02-23 09:42:10.370223095 -0500
+> +++ samples/livepatch/livepatch-callbacks-demo2.c       2018-02-23 11:16:20.557557153 -0500
+> @@ -191,6 +191,7 @@ static struct klp_object objs[] = {
+>  static struct klp_patch patch = {
+>         .mod = THIS_MODULE,
+>         .objs = objs,
+> +       .replace = true,
+>  };
 
-But I read the sealtotp manual, and I don't see the point of using an
-EFI var for sealtotp in the first place.  sealtotp supports TPM NV
-storage, EFI vars, and plain old files.  I get why TPM NV makes
-logical sense (sealtotp is a TPM thing), and using a plain old file
-seems entirely reasonable.  I don't see why anyone would prefer an EFI
-variable.
+The problem is that there are no new/patch functions defined for vmlinux 
+and livepatch-callbacks-mod objects. There are only callbacks. Only 
+livepatch-callbacks-busymod module has a replacement function. I'll focus 
+on vmlinux only. 
 
---Andy
+No nop functions are added by klp_add_nops(). vmlinux object is empty. 
+Then it is destroyed in 
+klp_complete_transition()->klp_free_objects(klp_transition_patch, 
+KLP_FUNC_NOP). In the end only livepatch-callbacks-busymod is preserved 
+regardless the callbacks.
+
+Had you load livepatch-callbacks-busymod module, its callback would be 
+called.
+
+Petr, we cannot free the "nop-only" objects if there is a callback defined 
+there (an unpatch callback).
+  
+>  static int livepatch_callbacks_demo_init(void)
+> 
+> Load the two modules, disable and unload:
+> 
+>   % dmesg -C
+>   % insmod samples/livepatch/livepatch-callbacks-demo.ko
+>   % insmod samples/livepatch/livepatch-callbacks-demo2.ko
+>   % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo2/enabled
+>   % rmmod samples/livepatch/livepatch-callbacks-demo2.ko
+>   % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+> 
+> Pre and post patch callbacks are called for both modules (expected), but
+> *no* unpatch callbacks are executed:
+> 
+>   % dmesg
+>   [ 5442.244332] livepatch: enabling patch 'livepatch_callbacks_demo'
+>   [ 5442.244334] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+> > [ 5442.244372] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+>   [ 5442.244372] livepatch: 'livepatch_callbacks_demo': starting patching transition
+>   [ 5444.704089] livepatch: 'livepatch_callbacks_demo': completing patching transition
+> > [ 5444.704183] livepatch_callbacks_demo: post_patch_callback: vmlinux
+>   [ 5444.704184] livepatch: 'livepatch_callbacks_demo': patching complete
+>   [ 5448.567820] livepatch: enabling patch 'livepatch_callbacks_demo2'
+>   [ 5448.567823] livepatch: 'livepatch_callbacks_demo2': initializing patching transition
+> > [ 5448.567860] livepatch_callbacks_demo2: pre_patch_callback: vmlinux
+>   [ 5448.567861] livepatch: 'livepatch_callbacks_demo2': starting patching transition
+>   [ 5451.744131] livepatch: 'livepatch_callbacks_demo2': completing patching transition
+> > [ 5451.744212] livepatch_callbacks_demo2: post_patch_callback: vmlinux
+>   [ 5451.744213] livepatch: 'livepatch_callbacks_demo2': patching complete
+>   [ 5455.002339] livepatch: 'livepatch_callbacks_demo2': initializing unpatching transition
+>   [ 5455.002378] livepatch: 'livepatch_callbacks_demo2': starting unpatching transition
+>   [ 5456.736068] livepatch: 'livepatch_callbacks_demo2': completing unpatching transition
+>   [ 5456.736132] livepatch: 'livepatch_callbacks_demo2': unpatching complete
+> 
+> 
+> BTW, should we just add this test-case to the doc / samples?
+
+Why not. I think we need to transform the samples into a testsuite or 
+selftests, because their role has changed.
+
+Thanks for the report. The atomic replace patch set has become a nightmare 
+for me :). So many tiny corner cases everywhere and I'm not capable to 
+hold every detail in my brain during the review.
+
+Miroslav
