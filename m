@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeBWVBu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:01:50 -0500
-Received: from muru.com ([72.249.23.125]:58048 "EHLO muru.com"
+        id S1752210AbeBWVBO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:01:14 -0500
+Received: from muru.com ([72.249.23.125]:58026 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752221AbeBWVBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:01:15 -0500
+        id S1752147AbeBWVBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:01:11 -0500
 From: Tony Lindgren <tony@atomide.com>
 To: linux-omap@vger.kernel.org
 Cc: Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
         Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 11/12] PM / AVS: SmartReflex: Prepare to use device tree based probing
-Date: Fri, 23 Feb 2018 13:00:59 -0800
-Message-Id: <20180223210100.86732-12-tony@atomide.com>
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 06/12] bus: ti-sysc: Add support for platform data callbacks
+Date: Fri, 23 Feb 2018 13:00:54 -0800
+Message-Id: <20180223210100.86732-7-tony@atomide.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223210100.86732-1-tony@atomide.com>
 References: <20180223210100.86732-1-tony@atomide.com>
@@ -23,134 +21,363 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are currently probing smartreflex with omap_device while we are
-already probing smartreflex related interconnect target module with
-ti-sysc driver and dts data.
+We want to pass the device tree configuration for interconnect target
+modules from ti-sysc driver to the existing platform hwmod code.
 
-Before we can flip things on for ti-sysc, we need to prepare the
-smartreflex driver a bit:
+This allows us to first validate the dts data against the existing
+platform data before we start dropping the platform data in favor of
+device tree data.
 
-1. The smartreflex clock is really for the whole interconnect target
-   module. So it may be configured at the parent device level with
-   ti-sysc
+To do this, let's add platform data callbacks for PM runtime functions
+to call for the interconnect target modules if platform data is
+available.
 
-2. With ti-sysc, we have the child device manage interconnect target
-   module directly if pm_runtime_irq_safe() is set and there is only
-   one child. In that case nobody else is going to call pm_runtime_get
-   and put, so we need to add these calls to idle smartreflex properly
-   after probe if not fully configured
+Note that as ti-sysc driver can rebind, omap_auxdata_lookup and related
+functions can no longer be __init.
 
-3. With ti-sysc, the parent driver may rebind. So we want to use
-   platform_driver_register() and don't want probe to be __init
-
-Note that this patch depends on the related changes to ti-sysc driver
-and omap_device probing to prevent both ti-sysc and omap_device to
-try to probe smartreflex.
-
-Cc: linux-pm@vger.kernel.org
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/power/avs/smartreflex.c | 41 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 7 deletions(-)
+ arch/arm/mach-omap2/board-n8x0.c      |  4 +-
+ arch/arm/mach-omap2/pdata-quirks.c    | 40 ++++++++++++++-
+ drivers/bus/ti-sysc.c                 | 96 ++++++++++++++++++++++++++++++-----
+ include/linux/platform_data/ti-sysc.h | 49 ++++++++++++++++++
+ 4 files changed, 172 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/power/avs/smartreflex.c b/drivers/power/avs/smartreflex.c
---- a/drivers/power/avs/smartreflex.c
-+++ b/drivers/power/avs/smartreflex.c
-@@ -132,12 +132,16 @@ static void sr_set_clk_length(struct omap_sr *sr)
- 	struct clk *fck;
- 	u32 fclk_speed;
- 
--	fck = clk_get(&sr->pdev->dev, "fck");
--
-+	/* Try interconnect target module fck first if it already exists */
-+	fck = clk_get(sr->pdev->dev.parent, "fck");
- 	if (IS_ERR(fck)) {
--		dev_err(&sr->pdev->dev, "%s: unable to get fck for device %s\n",
--			__func__, dev_name(&sr->pdev->dev));
--		return;
-+		fck = clk_get(&sr->pdev->dev, "fck");
-+		if (IS_ERR(fck)) {
-+			dev_err(&sr->pdev->dev,
-+				"%s: unable to get fck for device %s\n",
-+				__func__, dev_name(&sr->pdev->dev));
-+			return;
-+		}
- 	}
- 
- 	fclk_speed = clk_get_rate(fck);
-@@ -838,7 +842,7 @@ static int omap_sr_autocomp_store(void *data, u64 val)
- DEFINE_SIMPLE_ATTRIBUTE(pm_sr_fops, omap_sr_autocomp_show,
- 			omap_sr_autocomp_store, "%llu\n");
- 
--static int __init omap_sr_probe(struct platform_device *pdev)
-+static int omap_sr_probe(struct platform_device *pdev)
- {
- 	struct omap_sr *sr_info;
- 	struct omap_sr_data *pdata = pdev->dev.platform_data;
-@@ -898,6 +902,12 @@ static int __init omap_sr_probe(struct platform_device *pdev)
- 
- 	list_add(&sr_info->node, &sr_list);
- 
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(&pdev->dev);
-+		goto err_list_del;
-+	}
-+
- 	/*
- 	 * Call into late init to do initializations that require
- 	 * both sr driver and sr class driver to be initiallized.
-@@ -966,12 +976,17 @@ static int __init omap_sr_probe(struct platform_device *pdev)
- 
- 	}
- 
-+	pm_runtime_put_sync(&pdev->dev);
-+
- 	return ret;
- 
- err_debugfs:
- 	debugfs_remove_recursive(sr_info->dbg_dir);
- err_list_del:
- 	list_del(&sr_info->node);
-+
-+	pm_runtime_put_sync(&pdev->dev);
-+
- 	return ret;
+diff --git a/arch/arm/mach-omap2/board-n8x0.c b/arch/arm/mach-omap2/board-n8x0.c
+--- a/arch/arm/mach-omap2/board-n8x0.c
++++ b/arch/arm/mach-omap2/board-n8x0.c
+@@ -566,11 +566,11 @@ static int n8x0_menelaus_late_init(struct device *dev)
  }
+ #endif
  
-@@ -1025,11 +1040,23 @@ static void omap_sr_shutdown(struct platform_device *pdev)
- 	return;
- }
- 
-+static const struct of_device_id omap_sr_match[] = {
-+	{ .compatible = "ti,omap3-smartreflex-core", },
-+	{ .compatible = "ti,omap3-smartreflex-mpu-iva", },
-+	{ .compatible = "ti,omap4-smartreflex-core", },
-+	{ .compatible = "ti,omap4-smartreflex-mpu", },
-+	{ .compatible = "ti,omap4-smartreflex-iva", },
-+	{  },
-+};
-+MODULE_DEVICE_TABLE(of, omap_sr_match);
-+
- static struct platform_driver smartreflex_driver = {
-+	.probe		= omap_sr_probe,
- 	.remove         = omap_sr_remove,
- 	.shutdown	= omap_sr_shutdown,
- 	.driver		= {
- 		.name	= DRIVER_NAME,
-+		.of_match_table	= omap_sr_match,
- 	},
+-struct menelaus_platform_data n8x0_menelaus_platform_data __initdata = {
++struct menelaus_platform_data n8x0_menelaus_platform_data = {
+ 	.late_init = n8x0_menelaus_late_init,
  };
  
-@@ -1048,7 +1075,7 @@ static int __init sr_init(void)
- 	else
- 		pr_warn("%s: No PMIC hook to init smartreflex\n", __func__);
+-struct aic3x_pdata n810_aic33_data __initdata = {
++struct aic3x_pdata n810_aic33_data = {
+ 	.gpio_reset = 118,
+ };
  
--	ret = platform_driver_probe(&smartreflex_driver, omap_sr_probe);
-+	ret = platform_driver_register(&smartreflex_driver);
- 	if (ret) {
- 		pr_err("%s: platform driver register failed for SR\n",
- 		       __func__);
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -24,6 +24,7 @@
+ #include <linux/platform_data/pinctrl-single.h>
+ #include <linux/platform_data/hsmmc-omap.h>
+ #include <linux/platform_data/iommu-omap.h>
++#include <linux/platform_data/ti-sysc.h>
+ #include <linux/platform_data/wkup_m3.h>
+ #include <linux/platform_data/pwm_omap_dmtimer.h>
+ #include <linux/platform_data/media/ir-rx51.h>
+@@ -455,6 +456,42 @@ static void __init dra7x_evm_mmc_quirk(void)
+ }
+ #endif
+ 
++static int ti_sysc_enable_module(struct device *dev,
++				 const struct ti_sysc_cookie *cookie)
++{
++	if (!cookie->data)
++		return -EINVAL;
++
++	return omap_hwmod_enable(cookie->data);
++}
++
++static int ti_sysc_idle_module(struct device *dev,
++			       const struct ti_sysc_cookie *cookie)
++{
++	if (!cookie->data)
++		return -EINVAL;
++
++	return omap_hwmod_idle(cookie->data);
++}
++
++static int ti_sysc_shutdown_module(struct device *dev,
++				   const struct ti_sysc_cookie *cookie)
++{
++	if (!cookie->data)
++		return -EINVAL;
++
++	return omap_hwmod_shutdown(cookie->data);
++}
++
++static struct of_dev_auxdata omap_auxdata_lookup[];
++
++static struct ti_sysc_platform_data ti_sysc_pdata = {
++	.auxdata = omap_auxdata_lookup,
++	.enable_module = ti_sysc_enable_module,
++	.idle_module = ti_sysc_idle_module,
++	.shutdown_module = ti_sysc_shutdown_module,
++};
++
+ static struct pcs_pdata pcs_pdata;
+ 
+ void omap_pcs_legacy_init(int irq, void (*rearm)(void))
+@@ -545,7 +582,7 @@ static struct pdata_init auxdata_quirks[] __initdata = {
+ 
+ struct omap_sr_data __maybe_unused omap_sr_pdata[OMAP_SR_NR];
+ 
+-static struct of_dev_auxdata omap_auxdata_lookup[] __initdata = {
++static struct of_dev_auxdata omap_auxdata_lookup[] = {
+ #ifdef CONFIG_MACH_NOKIA_N8X0
+ 	OF_DEV_AUXDATA("ti,omap2420-mmc", 0x4809c000, "mmci-omap.0", NULL),
+ 	OF_DEV_AUXDATA("menelaus", 0x72, "1-0072", &n8x0_menelaus_platform_data),
+@@ -603,6 +640,7 @@ static struct of_dev_auxdata omap_auxdata_lookup[] __initdata = {
+ 		       &dra7_hsmmc_data_mmc3),
+ #endif
+ 	/* Common auxdata */
++	OF_DEV_AUXDATA("ti,sysc", 0, NULL, &ti_sysc_pdata),
+ 	OF_DEV_AUXDATA("pinctrl-single", 0, NULL, &pcs_pdata),
+ 	{ /* sentinel */ },
+ };
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -25,13 +25,6 @@
+ 
+ #include <dt-bindings/bus/ti-sysc.h>
+ 
+-enum sysc_registers {
+-	SYSC_REVISION,
+-	SYSC_SYSCONFIG,
+-	SYSC_SYSSTATUS,
+-	SYSC_MAX_REGS,
+-};
+-
+ static const char * const reg_names[] = { "rev", "sysc", "syss", };
+ 
+ enum sysc_clocks {
+@@ -70,6 +63,7 @@ struct sysc {
+ 	const char *legacy_mode;
+ 	const struct sysc_capabilities *cap;
+ 	struct sysc_config cfg;
++	struct ti_sysc_cookie cookie;
+ 	const char *name;
+ 	u32 revision;
+ 	bool enabled;
+@@ -494,6 +488,7 @@ static void sysc_show_registers(struct sysc *ddata)
+ 		bufp += sysc_show_reg(ddata, bufp, i);
+ 
+ 	bufp += sysc_show_rev(bufp, ddata);
++	bufp += sysc_show_rev(bufp, ddata);
+ 
+ 	dev_dbg(ddata->dev, "%llx:%x%s\n",
+ 		ddata->module_pa, ddata->module_size,
+@@ -502,33 +497,70 @@ static void sysc_show_registers(struct sysc *ddata)
+ 
+ static int __maybe_unused sysc_runtime_suspend(struct device *dev)
+ {
++	struct ti_sysc_platform_data *pdata;
+ 	struct sysc *ddata;
+-	int i;
++	int error = 0, i;
+ 
+ 	ddata = dev_get_drvdata(dev);
+ 
+-	if (ddata->legacy_mode)
++	if (!ddata->enabled)
+ 		return 0;
+ 
++	if (ddata->legacy_mode) {
++		pdata = dev_get_platdata(ddata->dev);
++		if (!pdata)
++			return 0;
++
++		if (!pdata->idle_module)
++			return -ENODEV;
++
++		error = pdata->idle_module(dev, &ddata->cookie);
++		if (error)
++			dev_err(dev, "%s: could not idle: %i\n",
++				__func__, error);
++
++		goto idled;
++	}
++
+ 	for (i = 0; i < SYSC_MAX_CLOCKS; i++) {
+ 		if (IS_ERR_OR_NULL(ddata->clocks[i]))
+ 			continue;
+ 		clk_disable(ddata->clocks[i]);
+ 	}
+ 
+-	return 0;
++idled:
++	ddata->enabled = false;
++
++	return error;
+ }
+ 
+ static int __maybe_unused sysc_runtime_resume(struct device *dev)
+ {
++	struct ti_sysc_platform_data *pdata;
+ 	struct sysc *ddata;
+-	int i, error;
++	int error = 0, i;
+ 
+ 	ddata = dev_get_drvdata(dev);
+ 
+-	if (ddata->legacy_mode)
++	if (ddata->enabled)
+ 		return 0;
+ 
++	if (ddata->legacy_mode) {
++		pdata = dev_get_platdata(ddata->dev);
++		if (!pdata)
++			return 0;
++
++		if (!pdata->enable_module)
++			return -ENODEV;
++
++		error = pdata->enable_module(dev, &ddata->cookie);
++		if (error)
++			dev_err(dev, "%s: could not enable: %i\n",
++				__func__, error);
++
++		goto awake;
++	}
++
+ 	for (i = 0; i < SYSC_MAX_CLOCKS; i++) {
+ 		if (IS_ERR_OR_NULL(ddata->clocks[i]))
+ 			continue;
+@@ -537,7 +569,10 @@ static int __maybe_unused sysc_runtime_resume(struct device *dev)
+ 			return error;
+ 	}
+ 
+-	return 0;
++awake:
++	ddata->enabled = true;
++
++	return error;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -1007,6 +1042,33 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
+ 	.regbits = &sysc_regbits_omap4_usb_host_fs,
+ };
+ 
++static int sysc_init_pdata(struct sysc *ddata)
++{
++	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
++	struct ti_sysc_module_data mdata;
++	int error = 0;
++
++	if (!pdata || !ddata->legacy_mode)
++		return 0;
++
++	mdata.name = ddata->legacy_mode;
++	mdata.module_pa = ddata->module_pa;
++	mdata.module_size = ddata->module_size;
++	mdata.offsets = ddata->offsets;
++	mdata.nr_offsets = SYSC_MAX_REGS;
++	mdata.cap = ddata->cap;
++	mdata.cfg = &ddata->cfg;
++
++	if (!pdata->init_module)
++		return -ENODEV;
++
++	error = pdata->init_module(ddata->dev, &mdata, &ddata->cookie);
++	if (error == -EEXIST)
++		error = 0;
++
++	return error;
++}
++
+ static int sysc_init_match(struct sysc *ddata)
+ {
+ 	const struct sysc_capabilities *cap;
+@@ -1034,6 +1096,7 @@ static void ti_sysc_idle(struct work_struct *work)
+ 
+ static int sysc_probe(struct platform_device *pdev)
+ {
++	struct ti_sysc_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct sysc *ddata;
+ 	int error;
+ 
+@@ -1072,6 +1135,10 @@ static int sysc_probe(struct platform_device *pdev)
+ 	if (error)
+ 		goto unprepare;
+ 
++	error = sysc_init_pdata(ddata);
++	if (error)
++		goto unprepare;
++
+ 	pm_runtime_enable(ddata->dev);
+ 
+ 	error = sysc_init_module(ddata);
+@@ -1089,7 +1156,8 @@ static int sysc_probe(struct platform_device *pdev)
+ 
+ 	ddata->dev->type = &sysc_device_type;
+ 	error = of_platform_populate(ddata->dev->of_node,
+-				     NULL, NULL, ddata->dev);
++				     NULL, pdata ? pdata->auxdata : NULL,
++				     ddata->dev);
+ 	if (error)
+ 		goto err;
+ 
+diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
+--- a/include/linux/platform_data/ti-sysc.h
++++ b/include/linux/platform_data/ti-sysc.h
+@@ -16,6 +16,10 @@ enum ti_sysc_module_type {
+ 	TI_SYSC_OMAP4_USB_HOST_FS,
+ };
+ 
++struct ti_sysc_cookie {
++	void *data;
++};
++
+ /**
+  * struct sysc_regbits - TI OCP_SYSCONFIG register field offsets
+  * @midle_shift: Offset of the midle bit
+@@ -83,4 +87,49 @@ struct sysc_config {
+ 	u32 quirks;
+ };
+ 
++enum sysc_registers {
++	SYSC_REVISION,
++	SYSC_SYSCONFIG,
++	SYSC_SYSSTATUS,
++	SYSC_MAX_REGS,
++};
++
++/**
++ * struct ti_sysc_module_data - ti-sysc to hwmod translation data for a module
++ * @name: legacy "ti,hwmods" module name
++ * @module_pa: physical address of the interconnect target module
++ * @module_size: size of the interconnect target module
++ * @offsets: array of register offsets as listed in enum sysc_registers
++ * @nr_offsets: number of registers
++ * @cap: interconnect target module capabilities
++ * @cfg: interconnect target module configuration
++ *
++ * This data is enough to allocate a new struct omap_hwmod_class_sysconfig
++ * based on device tree data parsed by ti-sysc driver.
++ */
++struct ti_sysc_module_data {
++	const char *name;
++	u64 module_pa;
++	u32 module_size;
++	int *offsets;
++	int nr_offsets;
++	const struct sysc_capabilities *cap;
++	struct sysc_config *cfg;
++};
++
++struct device;
++
++struct ti_sysc_platform_data {
++	struct of_dev_auxdata *auxdata;
++	int (*init_module)(struct device *dev,
++			   const struct ti_sysc_module_data *data,
++			   struct ti_sysc_cookie *cookie);
++	int (*enable_module)(struct device *dev,
++			     const struct ti_sysc_cookie *cookie);
++	int (*idle_module)(struct device *dev,
++			   const struct ti_sysc_cookie *cookie);
++	int (*shutdown_module)(struct device *dev,
++			       const struct ti_sysc_cookie *cookie);
++};
++
+ #endif	/* __TI_SYSC_DATA_H__ */
 -- 
 2.16.2
