@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841677-1519418911-2-7725450865298831980
+X-Cyrus-Session-Id: sloti22d1t05-3841677-1519418905-2-8684113449030693950
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519418911; b=cbC+HzAxrd07VsejmDDmTwHL0dS2z35Q3GV8V6TvR7aiLSE
-    +ppWBk8duN7QIJjlkXzPGHpIcnwgVShEiurFlyK8OpbeUL1js0T+raRH27h0ax5R
-    ZRJck8FSZxajQd/an6/PvPvAVQ7HTc7KcaNebyt6HqSavp+zVyUE0cEl5/m+VL2d
-    lbweX7a0vVnBHFPcv1v5ihnAPSgqntFFiVBq/yHeLXGqFbW1xKmfJm+DsfFcp6Yi
-    YmyKv5IgiemTcDzDB7SxS+FCrnuz1l9tPC0rZSl0KK5x42yAVdgnJVB/PIz5E8zr
-    7qs3L861CN2ARl3Ij3DLEIPTXKKm/slLmZoYf0A==
+    t=1519418904; b=rfra4efnmdMpcQiSwE1CLdda4ZrSNloIKBSJ3vK2Xj2xmvM
+    +AhNA36KltovCZJGqYtE0dqMu8juJ+M8qQlw2JOzvlTB69DK48yx6xlkvLKkjSt2
+    yvjIAd/6XYMoA3sa39/HiGdA0+ZRENk1wdME13Ao6Mumi6x7gLN8sg91b3GBIP+7
+    IMb6W/cjKbI1E+J15YXMDU1gJLeVDG+h/OBOlvP6+2wAc3VvcewW1ibUmAqVG4of
+    p4E1ZocFLNgEOtloZ4FOB7Z+/0SHgo8ZmOSvSTbQr98tvNlYbKpIfDEiWF1TnONG
+    hkM9zztD0BUwzR9mWrsZJD7WU1OIkCz4UHNdNxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519418911; bh=WjGjN5JAETBpWvqeP/BN6ADbAa
-    rM4WfK4+7AdzemqIY=; b=mcZn2tDPGQOGUU1PYB63yldA0NQOwyyvTcY7lsL8yR
-    1UirJyKDxu+10PQ2loTIop3zkZIpqjtVapGJ0oaIIHIughSFsq8YX2wrwMR/91O6
-    Lxz5amkdUi0wbIbVKX6B/UGfDqFD1E0N71FaY55lc/FjxYm6J3f3Y5trZ4hblKJO
-    Pk2J6KOTPcO1/tQgjuRIpEdSu0I7sIdgujVhmxwM94Gxpnw8fSvNzS9ZChMQJ5VZ
-    SWtg3PFhlzM78iIDTWimDEUoYszDlrPeDaz5F3C8oBIMzeA20KT6pfOqxfmiY+zu
-    dbjRsUicS+rAc22O0zIQ9Pe/vqdo/qwOp9lNnPWIIuBw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519418904; bh=3vIgqonsq3flaleWxvC8lodlEw
+    Y/IdPEmobGkIhbNxM=; b=ALB+pVFgh8dTlZKoXLaTywK9ob/TGyLcNBADaRV8YM
+    qBcxEsoIS1aEwnkJeaPKo7eOMIWe51UvGyLCSH4ckZLl1LyONC5Go4VuXLvWpPzu
+    Baqe+exhKRGGYTIJyERMubRecFm8jCoRWZse81V44tP1Updc1fmvaJgvvPg2RdJG
+    LW5dhNj9EPjOoqpaTB44OF8Su96D6T54fPloqoEoJCTSl/meaTjomEqdW8sm38Xx
+    wFOJaCpDU70Gai0vFa7p56MKdVGESxkOoegUpNC5F6d7gQU7sdOxEteWrQFGGPXy
+    2JnanU0G1MYaetYGd4rtLn8NatqofaGxGP+ydYqoO/Vg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeBWSbs (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:48 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35356 "EHLO
+        id S1752231AbeBWSby (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:31:54 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752656AbeBWSbq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:46 -0500
+        with ESMTP id S1751632AbeBWSbw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:52 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyi Zhou <zhouzhouyi@gmail.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 3.18 09/58] ext4: save error to disk in __ext4_grp_locked_error()
-Date: Fri, 23 Feb 2018 19:26:08 +0100
-Message-Id: <20180223170208.172906318@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 3.18 01/58] IB/mlx4: Fix incorrectly releasing steerable UD QPs when have only ETH ports
+Date: Fri, 23 Feb 2018 19:26:00 +0100
+Message-Id: <20180223170206.956390435@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -78,35 +79,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
+commit 852f6927594d0d3e8632c889b2ab38cbc46476ad upstream.
 
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
+Allocating steerable UD QPs depends on having at least one IB port,
+while releasing those QPs does not.
 
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
+As a result, when there are only ETH ports, the IB (RoCE) driver
+requests releasing a qp range whose base qp is zero, with
+qp count zero.
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+When SR-IOV is enabled, and the VF driver is running on a VM over
+a hypervisor which treats such qp release calls as errors
+(rather than NOPs), we see lines in the VM message log like:
+
+ mlx4_core 0002:00:02.0: Failed to release qp range base:0 cnt:0
+
+Fix this by adding a check for a zero count in mlx4_release_qp_range()
+(which thus treats releasing 0 qps as a nop), and eliminating the
+check for device managed flow steering when releasing steerable UD QPs.
+(Freeing ib_uc_qpns_bitmap unconditionally is also OK, since it
+remains NULL when steerable UD QPs are not allocated).
+
+Fixes: 4196670be786 ("IB/mlx4: Don't allocate range of steerable UD QPs for Ethernet-only device")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx4/main.c       |   13 +++++--------
+ drivers/net/ethernet/mellanox/mlx4/qp.c |    3 +++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -677,6 +677,7 @@ __acquires(bitlock)
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2348,9 +2348,8 @@ err_steer_free_bitmap:
+ 	kfree(ibdev->ib_uc_qpns_bitmap);
+ 
+ err_steer_qp_release:
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED)
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
+ err_counter:
+ 	for (; i; --i)
+ 		if (ibdev->counters[i - 1] != -1)
+@@ -2452,11 +2451,9 @@ static void mlx4_ib_remove(struct mlx4_d
+ 		ibdev->iboe.nb.notifier_call = NULL;
  	}
  
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED) {
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
+-		kfree(ibdev->ib_uc_qpns_bitmap);
+-	}
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
++	kfree(ibdev->ib_uc_qpns_bitmap);
+ 
+ 	if (ibdev->iboe.nb_inet.notifier_call) {
+ 		if (unregister_inetaddr_notifier(&ibdev->iboe.nb_inet))
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -257,6 +257,9 @@ void mlx4_qp_release_range(struct mlx4_d
+ 	u64 in_param = 0;
+ 	int err;
+ 
++	if (!cnt)
++		return;
++
+ 	if (mlx4_is_mfunc(dev)) {
+ 		set_param_l(&in_param, base_qpn);
+ 		set_param_h(&in_param, cnt);
