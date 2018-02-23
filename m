@@ -1,118 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeBWPQ3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:16:29 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39855 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751784AbeBWPO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:14:27 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>
-CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v2 00/11] perf events patches for improved ARM64 support
-Date: Sat, 24 Feb 2018 00:05:21 +0800
-Message-ID: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752067AbeBWPQo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:16:44 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:53563 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeBWPQl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:16:41 -0500
+Date: Fri, 23 Feb 2018 16:16:39 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/7] pinctrl: sunxi: refactor irq related register
+ function to have desc
+Message-ID: <20180223151639.wru7b67byksefxpk@flea.lan>
+References: <20180223122552.58049-1-icenowy@aosc.io>
+ <20180223122552.58049-2-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d5vslvnq23qzf7rm"
+Content-Disposition: inline
+In-Reply-To: <20180223122552.58049-2-icenowy@aosc.io>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for some perf events features,
-targeted at ARM64, implemented in a generic fashion.
 
-The two main features are as follows:
-- support for arch/vendor/platform pmu events directory structure
-   - to support this, topic subdirectory support needs to be dropped
-- support for parsing standard architecture pmu events
+--d5vslvnq23qzf7rm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
-and HiSilicon hip08 JSONs are relocated/added/updated.
+Hi,
 
-In addition, there is a patch to drop mutli-mapfile.csv support and
-also a bugfix in jevents.c for an error code value.
+On Fri, Feb 23, 2018 at 08:25:46PM +0800, Icenowy Zheng wrote:
+> As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
+> related register function for getting the full pinctrl desc structure.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> New patch in v3.
+>=20
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 18 ++++++++----------
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h | 29 +++++++++++++++++++++--------
+>  2 files changed, 29 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
+i/pinctrl-sunxi.c
+> index 341312d66512..31bd99f7df50 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -835,7 +835,7 @@ static void sunxi_pinctrl_irq_release_resources(struc=
+t irq_data *d)
+>  static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int t=
+ype)
+>  {
+>  	struct sunxi_pinctrl *pctl =3D irq_data_get_irq_chip_data(d);
+> -	u32 reg =3D sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_base);
+> +	u32 reg =3D sunxi_irq_cfg_reg(d->hwirq, pctl->desc);
 
-Differences to v1:
-- Address coding issues from Jiri Olsa in adding arch std event
-   support (https://lkml.org/lkml/2018/2/6/501)
-- add patch to drop topic subdirectory support
-- add patch for bug fix in json_events() 
-- add review tags from Jiri Olsa
+That's better, but it makes more sense to have the desc as the first
+argument.
 
-Differences to RFC:
-- reworked patch for arch standard events
-	- added arch standard event keyword support
-	- use some macros to make the code more condense
-	- use <linux/list_head.h>
-- standardised some function names
-- updated README
-- for patch to support vendor subdir, add check for
-  unknown dirent type
- -add patch to drop mutliple mapfile.csv support
- - dealt with new cortex a53 JSONs
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-John Garry (11):
-  perf vendor events: drop incomplete multiple mapfile support
-  perf vendor events: fix error code in json_events()
-  perf vendor events: drop support for unused topic directories
-  perf vendor events: add support for pmu events vendor subdirectory
-  perf vendor events arm64: Relocate ThunderX2 JSON to cavium
-    subdirectory
-  perf vendor events arm64: Relocate Cortex A53 JSONs to arm
-    subdirectory
-  perf vendor events: add support for arch standard events
-  perf vendor events arm64: add armv8-recommended.json
-  perf vendor events arm64: fixup ThunderX2 to use recommended events
-  perf vendor events arm64: fixup A53 to use recommended events
-  perf vendor events arm64: add HiSilicon hip08 JSON file
+--d5vslvnq23qzf7rm
+Content-Type: application/pgp-signature; name="signature.asc"
 
- tools/perf/pmu-events/Build                        |   2 +
- tools/perf/pmu-events/README                       |  15 +-
- .../arch/arm64/arm/cortex-a53/branch.json          |  26 ++
- .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  |  10 +
- .../arch/arm64/arm/cortex-a53/cache.json           |  27 ++
- .../arch/arm64/arm/cortex-a53/memory.json          |  12 +
- .../arch/arm64/arm/cortex-a53/other.json           |  30 ++
- .../arch/arm64/arm/cortex-a53/pipeline.json        |  52 +++
- .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
- .../arch/arm64/cavium/thunderx2-imp-def.json       |  62 ---
- .../arch/arm64/cavium/thunderx2/core-imp-def.json  |  42 ++
- .../pmu-events/arch/arm64/cortex-a53/branch.json   |  27 --
- .../perf/pmu-events/arch/arm64/cortex-a53/bus.json |  22 -
- .../pmu-events/arch/arm64/cortex-a53/cache.json    |  27 --
- .../pmu-events/arch/arm64/cortex-a53/memory.json   |  22 -
- .../pmu-events/arch/arm64/cortex-a53/other.json    |  32 --
- .../pmu-events/arch/arm64/cortex-a53/pipeline.json |  52 ---
- .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 140 +++++++
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |   5 +-
- tools/perf/pmu-events/jevents.c                    | 286 ++++++++++---
- 20 files changed, 1045 insertions(+), 298 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/armv8-recommended.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+-----BEGIN PGP SIGNATURE-----
 
--- 
-1.9.1
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQMFYACgkQ0rTAlCFN
+r3QTOA/9Fy72LvYP4pol6xWqxteUbvn45KolMI2tOMVh9aTvs5CyZzrljAIkcCwn
+R9yR2J4HKWDD0nucHpO/1DomqAhmKo2DF7oFj/r71E/K6uirySM6Dqh7rMmqFN0p
+fwZlBEGbz2WZk1U9HtDfKc9XJuu2+z3bYiysxyla0cQmAScSnkNSTDfQtoMt8G9R
+E7JhenAdANX7c+s1Iq0IJVD42foOWnodh+/Qcg/rWKxG2+FjrhfdZow2BwakvFbv
+FV3UyqaZKyn8SjUycgW117qn/OZIGPG5/cD6LqdY0M+rzzpahG58JNNCNykzahiv
+ajdQEynL0+lS03Nx42Cm4S6jnZyd1e1jlGeoA3ew9Ii4+3Nj9fTswch6Y8r2UUh3
+Nw0lb7E9YAAH9wCpxDToC91ZXQTIS9Kb1bK4bmoc6skLXyJRJu90dF7AskTh3Sda
+YjSwkJ8LP/aKxQsArUEdTdiMoZRkkE4fyZGMGSFyUfCmdv8rrl7Gh0iQTQv5xcEH
+fVAiACoHy5nGwqIbrUguMqreMuxOt1XvzFggvyYprPhnI0Q7QFPJjjU1kypL6rfP
+6P44C7/4W8b1ZT5SUhRFBsi2eti3JGbytr+xYQ1PoaHrK0SE/Mlw2NKr9IT5LOUY
+km9Vq31bp5fYjWIaT8PV1DDVWmbx8lfLbBjS+w+cdo9utBjmmDQ=
+=Y8jB
+-----END PGP SIGNATURE-----
+
+--d5vslvnq23qzf7rm--
