@@ -1,108 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeBWAP4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:15:56 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:54072 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeBWAPv (ORCPT
+        id S1752037AbeBWATw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:19:52 -0500
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33835 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751553AbeBWATv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:15:51 -0500
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Helge Deller <deller@gmx.de>
-Cc: linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        John David Anglin <dave.anglin@bell.net>, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-References: <87373b6ghs.fsf@xmission.com>
-        <20180112005940.23279-4-ebiederm@xmission.com>
-        <20180112222944.GA22642@ls3530.fritz.box>
-Date: Thu, 22 Feb 2018 18:15:16 -0600
-In-Reply-To: <20180112222944.GA22642@ls3530.fritz.box> (Helge Deller's message
-        of "Fri, 12 Jan 2018 23:29:44 +0100")
-Message-ID: <87fu5s4l4b.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 22 Feb 2018 19:19:51 -0500
+X-Google-Smtp-Source: AH8x224YGlblU0v85o/oq4Fq9WZwo+l5w0DDdr8DDdx1n7rPR3ib/jPKlksA37EGw6fhOip/olgQjS4mph+jCEzNZWw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ep11c-0003gS-8V;;;mid=<87fu5s4l4b.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX187bNIGCeUWt2fuNURbcgKizbtnfnPhUOA=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Helge Deller <deller@gmx.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 586 ms - load_scoreonly_sql: 0.08 (0.0%),
-        signal_user_changed: 3.5 (0.6%), b_tie_ro: 2.4 (0.4%), parse: 1.19 (0.2%),
-        extract_message_metadata: 29 (4.9%), get_uri_detail_list: 2.7 (0.5%),
-        tests_pri_-1000: 16 (2.7%), tests_pri_-950: 2.2 (0.4%), tests_pri_-900: 1.74
-        (0.3%), tests_pri_-400: 33 (5.7%), check_bayes: 31 (5.3%), b_tokenize: 11
-        (2.0%), b_tok_get_all: 8 (1.4%), b_comp_prob: 4.8 (0.8%), b_tok_touch_all:
-        2.6 (0.4%), b_finish: 0.86 (0.1%), tests_pri_0: 486 (83.0%),
-        check_dkim_signature: 1.54 (0.3%), check_dkim_adsp: 5 (0.9%), tests_pri_500:
-        8 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 04/11] signal/parisc: Document a conflict with SI_USER with SIGFPE
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <CAGXu5jKx+ReiTOVnxANL=NsOTWuxzuATUYqtfi91GvFKVgR6Yg@mail.gmail.com>
+References: <20180222002854.GA29269@beast> <201802230613.8bqOOUnw%fengguang.wu@intel.com>
+ <CAGXu5jKx+ReiTOVnxANL=NsOTWuxzuATUYqtfi91GvFKVgR6Yg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 22 Feb 2018 16:19:49 -0800
+X-Google-Sender-Auth: 9_TvPFBrtlY4LugISzpmzUBweeM
+Message-ID: <CAGXu5jKcrxSwUaFdr4YGwtt1Lm0DtBZvD-gVkaLYRkgMua+JyQ@mail.gmail.com>
+Subject: Re: [PATCH v2] kconfig.h: Include compiler types to avoid missed
+ struct attributes
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Cc: kbuild-all@01.org, kbuild test robot <lkp@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Helge Deller <deller@gmx.de> writes:
+On Thu, Feb 22, 2018 at 4:03 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Feb 22, 2018 at 2:26 PM, kbuild test robot <lkp@intel.com> wrote:
+>> Hi Kees,
+>>
+>> I love your patch! Yet something to improve:
+>>
+>> [auto build test ERROR on linus/master]
+>> [also build test ERROR on v4.16-rc2 next-20180222]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Kees-Cook/kconfig-h-Include-compiler-types-to-avoid-missed-struct-attributes/20180223-040717
+>> config: mips-jz4740 (attached as .config)
+>> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+>> reproduce:
+>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         # save the attached .config to linux build tree
+>>         make.cross ARCH=mips
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>>> Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
+>>    FATAL ERROR: Unable to parse input tree
+>>    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
+>>    /usr/bin/mkimage Can't add hashes to FIT blob
+>
+> Ugh, the compiler_types.h commit breaks MIPS. I've reproduced this
+> failure; debugging now....
 
-> * Eric W. Biederman <ebiederm@xmission.com>:
->> Setting si_code to 0 results in a userspace seeing an si_code of 0.
->> This is the same si_code as SI_USER.  Posix and common sense requires
->> that SI_USER not be a signal specific si_code.  As such this use of 0
->> for the si_code is a pretty horribly broken ABI.
->> 
->> Further use of si_code == 0 guaranteed that copy_siginfo_to_user saw a
->> value of __SI_KILL and now sees a value of SIL_KILL with the result
->> that uid and pid fields are copied and which might copying the si_addr
->> field by accident but certainly not by design.  Making this a very
->> flakey implementation.
->> 
->> Utilizing FPE_FIXME siginfo_layout will now return SIL_FAULT and the
->> appropriate fields will reliably be copied.
->> 
->> This bug is 13 years old and parsic machines are no longer being built
->> so I don't know if it possible or worth fixing it.  But it is at least
->> worth documenting this so other architectures don't make the same
->> mistake.
->
->
-> I think we should fix it, even if we now break the ABI.
->
-> It's about a "conditional trap" which needs to be handled by userspace.
-> I doubt there is any Linux code out which is utilizing this
-> parisc-specific trap.
->
-> I'd suggest to add a new FPE trap si_code (e.g. FPE_CONDTRAP).
-> While at it, maybe we should include the already existing FPE_MDAOVF
-> from the frv architecture, so that arch/frv/include/uapi/asm/siginfo.h
-> can go completely.
->
-> Suggested patch is below.
->
-> I'm willing to test the patch below on the parisc architecture for a few
-> weeks. And it will break arch/x86/kernel/signal_compat.c which needs
-> looking at then too.
+For the MIPS folks, this is about 28128c61e08e ("kconfig.h: Include
+compiler types to avoid missed struct attributes").
 
-Have you managed to test this change?
+This hack fixes it ("struct" definitions were appearing in the
+resulting its output files, which broke parsing):
 
-I am sitting looking at another new FPE si_code and if this has been tested
-I figure FPE_CONDTRAP should get the next available FPE si_code and the
-other change should get the one that follows.
+diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
+index 1bd5c4f00d19..c22da16d67b8 100644
+--- a/arch/mips/boot/Makefile
++++ b/arch/mips/boot/Makefile
+@@ -126,6 +126,7 @@ $(obj)/vmlinux.its.S: $(addprefix
+$(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS
 
-Eric
+ quiet_cmd_cpp_its_S = ITS     $@
+       cmd_cpp_its_S = $(CPP) $(cpp_flags) -P -C -o $@ $< \
++                       -D__ASSEMBLY__ \
+                        -DKERNEL_NAME="\"Linux $(KERNELRELEASE)\"" \
+                        -DVMLINUX_BINARY="\"$(3)\"" \
+                        -DVMLINUX_COMPRESSION="\"$(2)\"" \
+
+I assume since this is overloading a .S build rule, the __ASSEMBLY__
+define went missing from cpp_flags?
+
+I'm trying to figure out if there is a better solution; ideas welcome!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
