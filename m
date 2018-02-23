@@ -1,60 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751597AbeBWQeT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:34:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751430AbeBWQeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:34:18 -0500
-Date: Fri, 23 Feb 2018 10:34:17 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Robin Jarry <robin.jarry@6wind.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 2/2] objtool: use host flags to detect if libelf is
- missing
-Message-ID: <20180223163417.jdj54q6uy2sefcfh@treble>
-References: <cover.1519393674.git.robin.jarry@6wind.com>
- <2afbfc7911a0eb0642c33e8c2582f137a4fda2f3.1519393674.git.robin.jarry@6wind.com>
- <20180223153720.glun6fa2a3jde7mi@treble>
- <20180223162255.cakkzdi3jpkh4vmi@6wind.com>
+        id S1751831AbeBWQhV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:37:21 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41284 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751770AbeBWQhS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:37:18 -0500
+X-Google-Smtp-Source: AH8x225NEY8G0wfzRSz+mHgSIQCYP1/DPPH1GG0MhA6lXHLhrPGNyPvItFSCLklLhB5Us4ojUo9EGA==
+Date: Fri, 23 Feb 2018 08:37:14 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Timur Tabi <timur@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add a reserved-gpio-ranges
+ property
+Message-ID: <20180223163714.GM93895@bjorns-mbp-2.lan>
+References: <20180126011400.2191-1-sboyd@codeaurora.org>
+ <20180126011400.2191-2-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180223162255.cakkzdi3jpkh4vmi@6wind.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180126011400.2191-2-sboyd@codeaurora.org>
+User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 05:22:55PM +0100, Robin Jarry wrote:
-> 2018-02-23, Josh Poimboeuf:
-> > Hi Robin,
-> > 
-> > Did you test this?  I see some issues:
-> > 
-> > a) I don't see where the host_cflags variable comes from (and btw, it's
-> >    misspelled...)
-> 
-> Hi Josh,
-> 
-> Shame on me... Last minute fix. I had tested this first by forcing
-> HOSTCC="gcc <CFLAGS> <LDFLAGS>" but I found it rather dirty. As it turns
-> out, my patch is not better.
-> 
-> > b) I don't see where objtool uses HOSTLDFLAGS.
-> 
-> Indeed, I also missed this (see above).
-> 
-> It looks like objtool does not use HOSTCFLAGS nor HOSTLDFLAGS (defined
-> in top Makefile). Do you see a reason why? Maybe it would be a good idea
-> to share these flags (adding some specific ones for objtool, if needed).
-> 
-> What do you think?
+On Thu 25 Jan 17:13 PST 2018, Stephen Boyd wrote:
 
-Yeah, I think it would be a good idea for objtool to use HOSTCC,
-HOSTCFLAGS, and HOSTLDFLAGS.
++ Rob
 
--- 
-Josh
+> Some qcom platforms make some GPIOs or pins unavailable for use
+> by non-secure operating systems, and thus reading or writing the
+> registers for those pins will cause access control issues.
+> Introduce a DT property to describe the set of GPIOs that are
+> available for use so that higher level OSes are able to know what
+> pins to avoid reading/writing.
+> 
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index b5de08e3b1a2..c22b56680fc8 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -151,9 +151,9 @@ in a lot of designs, some using all 32 bits, some using 18 and some using
+>  first 18 GPIOs, at local offset 0 .. 17, are in use.
+>  
+>  If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1, an
+> -additional bitmask is needed to specify which GPIOs are actually in use,
+> -and which are dummies. The bindings for this case has not yet been
+> -specified, but should be specified if/when such hardware appears.
+> +additional set of tuples is needed to specify which GPIOs are unusable, with
+> +the reserved-gpio-ranges binding. This property indicates the start and size
+> +of the GPIOs that can't be used.
+>  
+>  Optionally, a GPIO controller may have a "gpio-line-names" property. This is
+>  an array of strings defining the names of the GPIO lines going out of the
+> @@ -178,6 +178,7 @@ gpio-controller@00000000 {
+>  	gpio-controller;
+>  	#gpio-cells = <2>;
+>  	ngpios = <18>;
+> +	reserved-gpio-ranges = <0 4>, <12 2>;
+>  	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
+>  		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
+>  		"Row A", "Row B", "Row C", "Row D", "NMI button",
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
