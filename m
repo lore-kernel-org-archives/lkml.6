@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuSWDH8GjpA4sJUbb/cIKAgJ+ZLu+urudM3i5XkcA/vCvNyzXqvd3HdWGWz57wmUBI5bYFG
-ARC-Seal: i=1; a=rsa-sha256; t=1519411094; cv=none;
+X-Google-Smtp-Source: AH8x2275WNu3d2sCx6rkODlgBObYIqxXh6a3DwfxF/fs/COCEcp+XJ9Kk0KnssAQWcFdpFPeJ3pO
+ARC-Seal: i=1; a=rsa-sha256; t=1519411091; cv=none;
         d=google.com; s=arc-20160816;
-        b=acjdjGJKMuacfAfapjgwtuC/D3E+y7ziTIAgv/DkfzoTRzKUpYP+u1kKBlSQcbvCDW
-         5XVGo7ZE42a7zlwXae0huA4jlQFBmhhkCzZioBl/K5znO3NDM8iiron8yK//A5wOFMY0
-         KGKxIeXnbuwNCTecW7xyHkJkgbVipkEpN0BGEKSi7PIfrqVA4/7BnNAJfmuhHXk2pUnH
-         h2MihbhqKGSGuXU2bHQ5WEpa8pL6+QWP/xJIixthWhNoZ0wu8bTKKXmYv82OdmrT57gB
-         JgB4uTX3N+MsXLfNWgfuzeMG8ZvVHZkGkUp+SVQpWNyR4U644oyTMzfWaHxneqI3yfix
-         QvBw==
+        b=a4eRgLkIL1JAEBZyVReLgn5dXZFHZQCu6mSCdDTI2EXTAalGeE2fTnpim7r7bfXo4j
+         RglEgjvXZX24VN3LBroDK212uUDkV4ySSlexZkbTkHC3UERHITEIBIclH7uxMGEareKK
+         qfKoVFGrw44x8mrupLHd6ejWBikjfHw+3X4s7k+6uHfrZMFAqWSva+i1bLVGojY6kik/
+         UIZOS4krmU5fiJpswPw8Q1653MlEnA4ExfzP3DLuT2MEN/HsEIFQ0M1zVSe/guw02fEA
+         bKEKpB21KsLH6Ar3zaIlYsiH3MEBxM94IsuEQJZmsOPYwnVL5VkdJwhY5HR/+YTxjA5m
+         bD4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=a12DaF6UnAUFC25id0VDihPkFUZazdfPGkOAimKj8F0=;
-        b=rjI0Eu+uyo/DgbsScwyS30YycLxBU0hH717GasPnIf+861ADX+3ZPfetbmpU1fTdet
-         bBkKPTZUcsDAU/wdaUVquGSeOdYSAoqdqo3cE8bZx+z2Ay+SFZ6pzi3tA0BkJUCG+rXg
-         iYJWcTKLv4g4VbHKKY5YsYN5ZZSkTzj8cCad+gtC9JK8pcl6Q5UIKiO00p0T9urOWVx9
-         UyPimFtvrEbOH73jaNodFKxrXgMQ55yP04L7Y2j0ujCmIBnRyORnziI34krigYXj7IjK
-         1RNCwVcZXjL0nOBBxqeATK9HfP9IcCRfZFDV4c3yjwGkhCp/OJ3OGrwSGLLgqUX/GXTa
-         xNhA==
+        bh=GNP5u4Sb6U3Hczn/FU6yzx5WxOS/XfB392p3ItyHc9w=;
+        b=LxShbqllhZTcOFOamHnWD1O5v5d3qHMnoDey2AHLfnH5mmFLum1DJYaIrSzZ5/OySw
+         kPL2+eip/pigO2awsYR8MHsK/XAw07cs0FHkl6qGgIrg8SVB7c4W76a8BdmUtsAOZ16w
+         F4vF9dFy7gYl3bnN0AZ9faDX24bX21MSoMXQqVLQccc9wS6nvb3dUmyGQj47CCKaPWqe
+         McEXwOf3WAwRGCBGGabH7kmbyp71dwD1S6SPk31JlRMbg2axg/0Ipq1YAUpKtVgmJBrP
+         wRkZAjPBVbpu5t2xFdmaMv05upM56qZFZiDV3NtUXtb6PU04QqJO9JVl2m5o6y+BtCaC
+         wJ1g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Michael Buesch <m@bues.ch>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 081/193] ssb: mark ssb_bus_register as __maybe_unused
-Date: Fri, 23 Feb 2018 19:25:14 +0100
-Message-Id: <20180223170338.726633607@linuxfoundation.org>
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.4 080/193] reiserfs: avoid a -Wmaybe-uninitialized warning
+Date: Fri, 23 Feb 2018 19:25:13 +0100
+Message-Id: <20180223170338.545702896@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218008257181873?=
-X-GMAIL-MSGID: =?utf-8?q?1593218008257181873?=
+X-GMAIL-THRID: =?utf-8?q?1593218005125191239?=
+X-GMAIL-MSGID: =?utf-8?q?1593218005125191239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,43 +51,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit b7e2d195cc523bd92ed7a64aac089421dbab2a2d upstream.
+commit ab4949640d6674b617b314ad3c2c00353304bab9 upstream.
 
-The SoC variant of the ssb code is now optional like the other
-ones, which means we can build the framwork without any
-front-end, but that results in a warning:
+The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
 
-drivers/ssb/main.c:616:12: warning: 'ssb_bus_register' defined but not used [-Wunused-function]
+In file included from fs/reiserfs/lbalance.c:8:0:
+fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
+           ~~^~~
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
 
-This annotates the ssb_bus_register function as __maybe_unused to
-shut up the warning. A configuration like this will not work on
-any hardware of course, but we still want this to silently build
-without warnings if the configuration is allowed in the first
-place.
+This happens because the offset/type pair that is stored in
+ih.key.u.k_offset_v2 is actually uninitialized when we call
+set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
+all data is correct, but the first of the two reads uninitialized data
+for the type field and writes it back before it gets overwritten.
+
+This works around the warning by initializing the k_offset_v2 through
+the slightly larger memcpy().
+
+[JK: Remove now unused define and make it obvious we initialize the key]
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 845da6e58e19 ("ssb: add Kconfig entry for compiling SoC related code")
-Acked-by: Michael Buesch <m@bues.ch>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ssb/main.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/reiserfs/lbalance.c |    2 +-
+ fs/reiserfs/reiserfs.h |    1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/ssb/main.c
-+++ b/drivers/ssb/main.c
-@@ -613,9 +613,10 @@ out:
- 	return err;
- }
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buff
+ 			 * 'cpy_bytes'; create new item header;
+ 			 * n_ih = new item_header;
+ 			 */
+-			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
++			memcpy(&n_ih.ih_key, &ih->ih_key, KEY_SIZE);
  
--static int ssb_bus_register(struct ssb_bus *bus,
--			    ssb_invariants_func_t get_invariants,
--			    unsigned long baseaddr)
-+static int __maybe_unused
-+ssb_bus_register(struct ssb_bus *bus,
-+		 ssb_invariants_func_t get_invariants,
-+		 unsigned long baseaddr)
- {
- 	int err;
+ 			/* Endian safe, both le */
+ 			n_ih.ih_version = ih->ih_version;
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -1326,7 +1326,6 @@ struct cpu_key {
+ #define KEY_NOT_FOUND 0
  
+ #define KEY_SIZE (sizeof(struct reiserfs_key))
+-#define SHORT_KEY_SIZE (sizeof (__u32) + sizeof (__u32))
+ 
+ /* return values for search_by_key and clones */
+ #define ITEM_FOUND 1
