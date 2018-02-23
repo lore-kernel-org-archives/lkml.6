@@ -1,23 +1,23 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELvpW8Zz9pXPKGWSs0SC1ugLxsA62cBxtk++9dK3JDEbp/G6X8ep506od4CfJCrOyH1EVXw9
-ARC-Seal: i=1; a=rsa-sha256; t=1519403072; cv=none;
+X-Google-Smtp-Source: AG47ELvKKLIuATkTtbbkHtKLWQJifZWONVoaF1QoqK8vi7Y2jbEjCxJc5rK4MUk3vl+FtxhFL0j+
+ARC-Seal: i=1; a=rsa-sha256; t=1519403071; cv=none;
         d=google.com; s=arc-20160816;
-        b=m4P/N0Qbb4uTbkp5pPtlXq09CKtHrFiW/nX3mmbcDStGTzRVwnNlOja/ZdRDvdlgKS
-         /3FM2HBivEuhgYaynC57w/tD7XEkAtlBQMMnqlvHPBonB1SlrA2tmQri10E6GbWKTPk0
-         xp0fc3us35DM/iS7bGUoS+o80Ddtdsb8q7g66LhRuobkQ+YOlGgNTmutfBLMgXgZRBOM
-         iO7Ikmgycqp4+fiWefg+Yo7FpzJJY3SwiH4x5tHpX4bwTVzJL2hwCNlW3PJ3zVyQFg6/
-         CIYopaKrkk0luqc1zWVV634xHEzYmGgJgRYFj6xbJsqvnvNBnj2iARU5b/oE9hfKnfxr
-         ZvvQ==
+        b=sY9ssj4OPl7GYRYINy7a91OhZ8Q62hCd0NnA+Fvs4O8c2cD3mcorW3HYqWOIK8ao8g
+         ppPlXhQvb1ot3GOIqglSCfWebsZUV7T63cRcIBma5NM2y3wilF20NdEyxE9D5sRRuh/R
+         YDmkGEVovDz2VWABQo/BgITmdWqOTrjvjnuo8Ek32SjSgRjEITOzQJ8JLb6p+8qyvDXC
+         Iyrtcvnt3aip4yM+Ya1aSE9kcbibto+hT3Cs0/KB7BEbfGznjM1rL9FWwhuRoDMXsQj4
+         hWuWl+wWb9djepuIg8ymEsIViMk3Vtr6JK6viO5jHrTF7ustoPxPElNcjNv6sFBvuMTg
+         0wIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=zxOP0WiWlvtJ/OIp+Rq6G/vshRCRASh4HZX8EJBR3Ek=;
-        b=K4A55RvQ4GB8lcB3OUkg37kQKYYcyYroVTLVVF6DiZxI88qElPoMIiZ9v/isnTpPw/
-         FDfGSTTr5yIPOybcuS/mYZBTg6FPJiUn+CnwMmChQoF5tq/GSoyEzD5J8bbfpUCoPAIe
-         AZstFz0lTwVQSPjaKBZoDdzUUWAuAt56LCKBj/7SWjBKi0Gcg78Xv4pw+szTNB4ooFBN
-         MGOg7NQn7ACNWu/DbPlgRYSkAc+ociz6WekQxxyige10Em8Zn5OOilwqgHPkt2D4Ncom
-         HK7oVOjEXawnJlWRjYEmDXtGNDL7ViQCdnV1bh4eN4T3zBoD7dy/NWYSWPGk7WzFqTi0
-         sD0g==
+        bh=g9IizfHET6borApZmIaQgd4ij6zd3VPuzTYKXEJm7HI=;
+        b=LOsk2sCv1Eid8S7Gs2tfvp52aDeO1wS4uMMBDvrWRSRmyFroidnJiuE+c3AWY4OkDT
+         1Xghl6EwcAysFCB9+3fSPTq+vDDVGZjDL1yDbwqOcVyCWEcszqx6Ipk1AVSVORHBNAdN
+         +VJng4sfEko2K0fVJpnOhZJMb1tz1nVKSUc+nuOnWvFJ4ZX0g96i83nE/jZbHJBOrvD1
+         l6VVxe6zQn8m/GzeMA1LSdCkRVJzyc9ZnuceBEl+4AcFaxXiJTLT7Ae2jHHkc9Y3k7rl
+         kEc0mF5xyNUeecwxE+pQgDjS659Vtl8xh3t4L8RmsZMJ4+x3YMcuTRtFE13JpYeB3ZgN
+         lG0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
@@ -29,211 +29,203 @@ To: ALKML <linux-arm-kernel@lists.infradead.org>,
 Cc: Sudeep Holla <sudeep.holla@arm.com>,
 	Alexey Klimov <klimov.linux@gmail.com>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v6 15/20] firmware: arm_scmi: add device power domain support using genpd
-Date: Fri, 23 Feb 2018 16:23:45 +0000
-Message-Id: <1519403030-21189-16-git-send-email-sudeep.holla@arm.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 14/20] firmware: arm_scmi: add per-protocol channels support using idr objects
+Date: Fri, 23 Feb 2018 16:23:44 +0000
+Message-Id: <1519403030-21189-15-git-send-email-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
 References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593209596421874456?=
-X-GMAIL-MSGID: =?utf-8?q?1593209596421874456?=
+X-GMAIL-THRID: =?utf-8?q?1593209594924358236?=
+X-GMAIL-MSGID: =?utf-8?q?1593209594924358236?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch hooks up the support for device power domain provided by
-SCMI using the Linux generic power domain infrastructure.
+In order to maintain the channel information per protocol, we need
+some sort of list or hashtable to hold all this information. IDR
+provides sparse array mapping of small integer ID numbers onto arbitrary
+pointers. In this case the arbitrary pointers can be pointers to the
+channel information.
 
-Cc: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+This patch adds support for per-protocol channels using those idr
+objects.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/Kconfig                   |  13 +++
- drivers/firmware/arm_scmi/Makefile         |   1 +
- drivers/firmware/arm_scmi/scmi_pm_domain.c | 140 +++++++++++++++++++++++++++++
- 3 files changed, 154 insertions(+)
- create mode 100644 drivers/firmware/arm_scmi/scmi_pm_domain.c
+ drivers/firmware/arm_scmi/driver.c | 54 +++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 704961e0473a..6e83880046d7 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -40,6 +40,19 @@ config ARM_SCMI_PROTOCOL
- 	  This protocol library provides interface for all the client drivers
- 	  making use of the features offered by the SCMI.
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index a9e3f4c46b78..527157f55e27 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -115,6 +115,7 @@ struct scmi_chan_info {
+ 	struct mbox_chan *chan;
+ 	void __iomem *payload;
+ 	struct device *dev;
++	struct scmi_handle *handle;
+ };
  
-+config ARM_SCMI_POWER_DOMAIN
-+	tristate "SCMI power domain driver"
-+	depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
-+	default y
-+	select PM_GENERIC_DOMAINS if PM
-+	help
-+	  This enables support for the SCMI power domains which can be
-+	  enabled or disabled via the SCP firmware
+ /**
+@@ -126,7 +127,7 @@ struct scmi_chan_info {
+  * @version: SCMI revision information containing protocol version,
+  *	implementation version and (sub-)vendor identification.
+  * @minfo: Message info
+- * @tx_cinfo: Reference to SCMI channel information
++ * @tx_idr: IDR object to map protocol id to channel info pointer
+  * @protocols_imp: list of protocols implemented, currently maximum of
+  *	MAX_PROTOCOLS_IMP elements allocated by the base protocol
+  * @node: list head
+@@ -138,7 +139,7 @@ struct scmi_info {
+ 	struct scmi_revision_info version;
+ 	struct scmi_handle handle;
+ 	struct scmi_xfers_info minfo;
+-	struct scmi_chan_info *tx_cinfo;
++	struct idr tx_idr;
+ 	u8 *protocols_imp;
+ 	struct list_head node;
+ 	int users;
+@@ -229,7 +230,7 @@ static void scmi_rx_callback(struct mbox_client *cl, void *m)
+ 	struct scmi_xfer *xfer;
+ 	struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
+ 	struct device *dev = cinfo->dev;
+-	struct scmi_info *info = dev_get_drvdata(dev);
++	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
+ 	struct scmi_xfers_info *minfo = &info->minfo;
+ 	struct scmi_shared_mem __iomem *mem = cinfo->payload;
+ 
+@@ -401,7 +402,11 @@ int scmi_do_xfer(const struct scmi_handle *handle, struct scmi_xfer *xfer)
+ 	int timeout;
+ 	struct scmi_info *info = handle_to_scmi_info(handle);
+ 	struct device *dev = info->dev;
+-	struct scmi_chan_info *cinfo = info->tx_cinfo;
++	struct scmi_chan_info *cinfo;
 +
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called scmi_pm_domain. Note this may needed early in boot
-+	  before rootfs may be available.
++	cinfo = idr_find(&info->tx_idr, xfer->hdr.protocol_id);
++	if (unlikely(!cinfo))
++		return -EINVAL;
+ 
+ 	ret = mbox_send_message(cinfo->chan, xfer);
+ 	if (ret < 0) {
+@@ -668,13 +673,18 @@ static int scmi_mailbox_check(struct device_node *np)
+ 	return of_parse_phandle_with_args(np, "mboxes", "#mbox-cells", 0, &arg);
+ }
+ 
+-static int scmi_mbox_free_channel(struct scmi_chan_info *cinfo)
++static int scmi_mbox_free_channel(int id, void *p, void *data)
+ {
++	struct scmi_chan_info *cinfo = p;
++	struct idr *idr = data;
 +
- config ARM_SCPI_PROTOCOL
- 	tristate "ARM System Control and Power Interface (SCPI) Message Protocol"
- 	depends on ARM || ARM64 || COMPILE_TEST
-diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 3236890905b9..99e36c580fbc 100644
---- a/drivers/firmware/arm_scmi/Makefile
-+++ b/drivers/firmware/arm_scmi/Makefile
-@@ -2,3 +2,4 @@ obj-y	= scmi-bus.o scmi-driver.o scmi-protocols.o
- scmi-bus-y = bus.o
- scmi-driver-y = driver.o
- scmi-protocols-y = base.o clock.o perf.o power.o sensors.o
-+obj-$(CONFIG_ARM_SCMI_POWER_DOMAIN) += scmi_pm_domain.o
-diff --git a/drivers/firmware/arm_scmi/scmi_pm_domain.c b/drivers/firmware/arm_scmi/scmi_pm_domain.c
-new file mode 100644
-index 000000000000..c03c06d3840a
---- /dev/null
-+++ b/drivers/firmware/arm_scmi/scmi_pm_domain.c
-@@ -0,0 +1,140 @@
-+/*
-+ * SCMI Generic power domain support.
-+ *
-+ * Copyright (C) 2017 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
+ 	if (!IS_ERR_OR_NULL(cinfo->chan)) {
+ 		mbox_free_channel(cinfo->chan);
+ 		cinfo->chan = NULL;
+ 	}
+ 
++	idr_remove(idr, id);
 +
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/pm_domain.h>
-+#include <linux/scmi_protocol.h>
-+
-+struct scmi_pm_domain {
-+	struct generic_pm_domain genpd;
-+	const struct scmi_handle *handle;
-+	const char *name;
-+	u32 domain;
-+};
-+
-+#define to_scmi_pd(gpd) container_of(gpd, struct scmi_pm_domain, genpd)
-+
-+static int scmi_pd_power(struct generic_pm_domain *domain, bool power_on)
-+{
-+	int ret;
-+	u32 state, ret_state;
-+	struct scmi_pm_domain *pd = to_scmi_pd(domain);
-+	const struct scmi_power_ops *ops = pd->handle->power_ops;
-+
-+	if (power_on)
-+		state = SCMI_POWER_STATE_GENERIC_ON;
-+	else
-+		state = SCMI_POWER_STATE_GENERIC_OFF;
-+
-+	ret = ops->state_set(pd->handle, pd->domain, state);
-+	if (!ret)
-+		ret = ops->state_get(pd->handle, pd->domain, &ret_state);
-+	if (!ret && state != ret_state)
-+		return -EIO;
-+
-+	return ret;
-+}
-+
-+static int scmi_pd_power_on(struct generic_pm_domain *domain)
-+{
-+	return scmi_pd_power(domain, true);
-+}
-+
-+static int scmi_pd_power_off(struct generic_pm_domain *domain)
-+{
-+	return scmi_pd_power(domain, false);
-+}
-+
-+static int scmi_pm_domain_probe(struct scmi_device *sdev)
-+{
-+	int num_domains, i;
-+	struct device *dev = &sdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct scmi_pm_domain *scmi_pd;
-+	struct genpd_onecell_data *scmi_pd_data;
-+	struct generic_pm_domain **domains;
-+	const struct scmi_handle *handle = sdev->handle;
-+
-+	if (!handle || !handle->power_ops)
-+		return -ENODEV;
-+
-+	num_domains = handle->power_ops->num_domains_get(handle);
-+	if (num_domains < 0) {
-+		dev_err(dev, "number of domains not found\n");
-+		return num_domains;
+ 	return 0;
+ }
+ 
+@@ -682,6 +692,7 @@ static int scmi_remove(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+ 	struct scmi_info *info = platform_get_drvdata(pdev);
++	struct idr *idr = &info->tx_idr;
+ 
+ 	mutex_lock(&scmi_list_mutex);
+ 	if (info->users)
+@@ -690,28 +701,34 @@ static int scmi_remove(struct platform_device *pdev)
+ 		list_del(&info->node);
+ 	mutex_unlock(&scmi_list_mutex);
+ 
+-	if (!ret)
++	if (!ret) {
+ 		/* Safe to free channels since no more users */
+-		return scmi_mbox_free_channel(info->tx_cinfo);
++		ret = idr_for_each(idr, scmi_mbox_free_channel, idr);
++		idr_destroy(&info->tx_idr);
++	}
+ 
+ 	return ret;
+ }
+ 
+-static inline int scmi_mbox_chan_setup(struct scmi_info *info)
++static inline int
++scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev, int prot_id)
+ {
+ 	int ret;
+ 	struct resource res;
+ 	resource_size_t size;
+-	struct device *dev = info->dev;
+ 	struct device_node *shmem, *np = dev->of_node;
+ 	struct scmi_chan_info *cinfo;
+ 	struct mbox_client *cl;
+ 
++	if (scmi_mailbox_check(np)) {
++		cinfo = idr_find(&info->tx_idr, SCMI_PROTOCOL_BASE);
++		goto idr_alloc;
 +	}
 +
-+	scmi_pd = devm_kcalloc(dev, num_domains, sizeof(*scmi_pd), GFP_KERNEL);
-+	if (!scmi_pd)
-+		return -ENOMEM;
-+
-+	scmi_pd_data = devm_kzalloc(dev, sizeof(*scmi_pd_data), GFP_KERNEL);
-+	if (!scmi_pd_data)
-+		return -ENOMEM;
-+
-+	domains = devm_kcalloc(dev, num_domains, sizeof(*domains), GFP_KERNEL);
-+	if (!domains)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_domains; i++, scmi_pd++) {
-+		u32 state;
-+
-+		domains[i] = &scmi_pd->genpd;
-+
-+		scmi_pd->domain = i;
-+		scmi_pd->handle = handle;
-+		scmi_pd->name = handle->power_ops->name_get(handle, i);
-+		scmi_pd->genpd.name = scmi_pd->name;
-+		scmi_pd->genpd.power_off = scmi_pd_power_off;
-+		scmi_pd->genpd.power_on = scmi_pd_power_on;
-+
-+		if (handle->power_ops->state_get(handle, i, &state)) {
-+			dev_warn(dev, "failed to get state for domain %d\n", i);
-+			continue;
-+		}
-+
-+		pm_genpd_init(&scmi_pd->genpd, NULL,
-+			      state == SCMI_POWER_STATE_GENERIC_OFF);
+ 	cinfo = devm_kzalloc(info->dev, sizeof(*cinfo), GFP_KERNEL);
+ 	if (!cinfo)
+ 		return -ENOMEM;
+ 
+-	info->tx_cinfo = cinfo;
+ 	cinfo->dev = dev;
+ 
+ 	cl = &cinfo->cl;
+@@ -745,6 +762,14 @@ static inline int scmi_mbox_chan_setup(struct scmi_info *info)
+ 		return ret;
+ 	}
+ 
++idr_alloc:
++	ret = idr_alloc(&info->tx_idr, cinfo, prot_id, prot_id + 1, GFP_KERNEL);
++	if (ret != prot_id) {
++		dev_err(dev, "unable to allocate SCMI idr slot err %d\n", ret);
++		return ret;
 +	}
 +
-+	scmi_pd_data->domains = domains;
-+	scmi_pd_data->num_domains = num_domains;
++	cinfo->handle = &info->handle;
+ 	return 0;
+ }
+ 
+@@ -761,6 +786,11 @@ scmi_create_protocol_device(struct device_node *np, struct scmi_info *info,
+ 		return;
+ 	}
+ 
++	if (scmi_mbox_chan_setup(info, &sdev->dev, prot_id)) {
++		dev_err(&sdev->dev, "failed to setup transport\n");
++		scmi_device_destroy(sdev);
++	}
 +
-+	of_genpd_add_provider_onecell(np, scmi_pd_data);
-+
-+	return 0;
-+}
-+
-+static const struct scmi_device_id scmi_id_table[] = {
-+	{ SCMI_PROTOCOL_POWER },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-+
-+static struct scmi_driver scmi_power_domain_driver = {
-+	.name = "scmi-power-domain",
-+	.probe = scmi_pm_domain_probe,
-+	.id_table = scmi_id_table,
-+};
-+module_scmi_driver(scmi_power_domain_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCMI power domain driver");
-+MODULE_LICENSE("GPL v2");
+ 	/* setup handle now as the transport is ready */
+ 	scmi_set_handle(sdev);
+ }
+@@ -795,19 +825,19 @@ static int scmi_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, info);
++	idr_init(&info->tx_idr);
+ 
+ 	handle = &info->handle;
+ 	handle->dev = info->dev;
+ 	handle->version = &info->version;
+ 
+-	ret = scmi_mbox_chan_setup(info);
++	ret = scmi_mbox_chan_setup(info, dev, SCMI_PROTOCOL_BASE);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ret = scmi_base_protocol_init(handle);
+ 	if (ret) {
+ 		dev_err(dev, "unable to communicate with SCMI(%d)\n", ret);
+-		scmi_mbox_free_channel(info->tx_cinfo);
+ 		return ret;
+ 	}
+ 
 -- 
 2.7.4
