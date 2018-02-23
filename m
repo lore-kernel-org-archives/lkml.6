@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225tnFhHLGJEr+GR5S7w8gajeL3TJWgwaxTKz2kOR76qa1cu8BCCVGDDh1XcGRN+tipWcBCD
-ARC-Seal: i=1; a=rsa-sha256; t=1519412183; cv=none;
+X-Google-Smtp-Source: AG47ELumjlNlGUkjYpkLm7Xr7YH76YoUEEz4h4gqAmVH9j7DPIIU4J5Y3Wx2FPV6ieoGsh6cUMUZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519412179; cv=none;
         d=google.com; s=arc-20160816;
-        b=HJLT3812LkJ/EE2mLCnO5Lkm5V3XVPQgoAFd9Zqx5znB2VBuhjkePNUWxvtUfHztuB
-         +xU599JS0Ao7SMkJDYry1I64q20upkBM25HTNxfV0M3EXxpPdIn0jOUGhZjO4dbozPdk
-         OPyxsB/1Dc05PCwnAZbg9+wpp7NMt1OkbA4z94CDX9QocDQC8HetVgtSfbevDse9yTWB
-         sECwuWXfAsIL5YxPSU7hhj9h0uVTZOIfsfHJCW9rvkDCgN8ZZboVG1E/M9axTl1k8fHO
-         lAHiFe4jEuFJH/S8Xbl3/59Gv6fN6wTYkxj+ly6mAb//l/2oQJRn742TFPa06tA70oMs
-         iYJw==
+        b=VEpWpIeRHHJckWbTXrP97l3FcHt6zuNDfD3RgJXo8UBOw5cSfin2wqWgtqR/Ef9MCO
+         p4qFZJjwwrFKP3PqzPJ+NpFhlxew0ZY2MWOIEi1J7leoym4gYavWxql06DnepEWsex9p
+         2lVMNmCkOiYaxAJpvN2HToWNRhD01GolqGqdtYlCyRHdr6lr/8bkk9dzNU391FGBQrG8
+         JtDHui0kVfsuOLd4AXKnbxHr3Os19SWtIG3Inql5m4mXN3ZX/FBhv8+3Z4YKPSFdABqD
+         RPSybOgqscytzn7RqsSWp4+ck1OBaPWowMPxRA5OXE59I4GoJtJ1ZkIDp0fjRTtW8IHW
+         wGcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=I2Pj2Vfpcu+sncBPg1+/ANQjpCnjdznQfA+/TuP6jGE=;
-        b=WfLC0F8CwN+94NbpJ0uGf0GcOzZUsIGBqfwghKdfeqfmahkD/QYPtBbYgrDrF73fAk
-         6VTgg3VZycJaiINUaoSFYklc0K+CVK6sKdoRj+aYQ2dvFTEYoXXyKTnqSnfnKubSmrP3
-         ynJ7PjoOSQe5wbXChux6Q4wsO/hzGkSH5bIsD59HuGZCZ9Ybv9mL9LDzkFE9Owc4jjB3
-         UQCwLBpu2VkQx9+EH3MtcyIWS1vgP+8XEmrjioZ041wSmlt1IM3QD8fsXlCTeDpzT+uI
-         TnuQVuIwiExU32gLGpiUQaRx6I+8xoU/k4SumqRDK5YY0vYioYhqIceh2pZva1yc6QYl
-         DYwA==
+        bh=5cAnjeoB+2wMCb6BR/KFhNHyj+8bruVzceLsgB5cZ4s=;
+        b=hN6xN0PoMHGMIklHdmNi+fvGh5iCFwW3mo81JIa5SD725TnfxWXkxf/9UR4xQO7dnJ
+         HCg3sWpt9XQLJhmojiO3e6FnLvQ575cAWUUiGW8VoxZ/nhxSEeNaYv3E/pdjikqvYSdg
+         lHmFXZbSruD7b/EY3eZioutC3cAn/McAtrcnUWzh9SxS8qU8Qp+Cwyqc1x3hm9VgP8+p
+         HEkEcUpVCmLiSNxp0nAAizegLx6YvXLRxCji/Qzzn9NWA+B7bw6DwJoZDYCq2Wp3cdwb
+         kRhdJ+RFA2OrN5NQAROSK0P1U0q6+WWlXpznbr24xGGI2uGgH/qpvTMKigNCtXjrGOEo
+         Ok2A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 116/159] net: qualcomm: rmnet: Fix leak on transmit failure
-Date: Fri, 23 Feb 2018 19:27:04 +0100
-Message-Id: <20180223170757.353074376@linuxfoundation.org>
+Subject: [PATCH 4.14 151/159] PCI: rcar: Fix use-after-free in probe error path
+Date: Fri, 23 Feb 2018 19:27:39 +0100
+Message-Id: <20180223170801.222910037@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219149353364003?=
-X-GMAIL-MSGID: =?utf-8?q?1593219149353364003?=
+X-GMAIL-THRID: =?utf-8?q?1593219145981602190?=
+X-GMAIL-MSGID: =?utf-8?q?1593219145981602190?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +52,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit c20a548792f15f8d8e38cd74356301c6db0d241f ]
+[ Upstream commit 0c31f1d7be1b5c4858b1d714dcefa25f41428cab ]
 
-If a skb in transmit path does not have sufficient headroom to add
-the map header, the skb is not sent out and is never freed.
+If CONFIG_DEBUG_SLAB=y, and no PCIe card is inserted, the kernel crashes
+during probe on r8a7791/koelsch:
 
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  rcar-pcie fe000000.pcie: PCIe link down
+  Unable to handle kernel paging request at virtual address 6b6b6b6b
+
+(seeing this message requires earlycon and keep_bootcon).
+
+Indeed, pci_free_host_bridge() frees the PCI host bridge, including the
+embedded rcar_pcie object, so pci_free_resource_list() must not be called
+afterwards.
+
+To fix this, move the call to pci_free_resource_list() up, and update the
+label name accordingly.
+
+Fixes: ddd535f1ea3eb27e ("PCI: rcar: Fix memory leak when no PCIe card is inserted")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/pci/host/pcie-rcar.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-@@ -166,12 +166,12 @@ static int rmnet_map_egress_handler(stru
- 
- 	if (skb_headroom(skb) < required_headroom) {
- 		if (pskb_expand_head(skb, required_headroom, 0, GFP_KERNEL))
--			return RMNET_MAP_CONSUMED;
-+			goto fail;
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -1146,12 +1146,12 @@ static int rcar_pcie_probe(struct platfo
+ 	err = rcar_pcie_get_resources(pcie);
+ 	if (err < 0) {
+ 		dev_err(dev, "failed to request resources: %d\n", err);
+-		goto err_free_bridge;
++		goto err_free_resource_list;
  	}
  
- 	map_header = rmnet_map_add_map_header(skb, additional_header_len, 0);
- 	if (!map_header)
--		return RMNET_MAP_CONSUMED;
-+		goto fail;
+ 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
+ 	if (err)
+-		goto err_free_bridge;
++		goto err_free_resource_list;
  
- 	if (port->egress_data_format & RMNET_EGRESS_FORMAT_MUXING) {
- 		if (ep->mux_id == 0xff)
-@@ -183,6 +183,10 @@ static int rmnet_map_egress_handler(stru
- 	skb->protocol = htons(ETH_P_MAP);
+ 	pm_runtime_enable(dev);
+ 	err = pm_runtime_get_sync(dev);
+@@ -1194,9 +1194,9 @@ err_pm_put:
+ err_pm_disable:
+ 	pm_runtime_disable(dev);
  
- 	return RMNET_MAP_SUCCESS;
-+
-+fail:
-+	kfree_skb(skb);
-+	return RMNET_MAP_CONSUMED;
+-err_free_bridge:
+-	pci_free_host_bridge(bridge);
++err_free_resource_list:
+ 	pci_free_resource_list(&pcie->resources);
++	pci_free_host_bridge(bridge);
+ 
+ 	return err;
  }
- 
- /* Ingress / Egress Entry Points */
