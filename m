@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751952AbeBWPO2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:14:28 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39925 "EHLO huawei.com"
+        id S1752037AbeBWPQD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:16:03 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39924 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751841AbeBWPOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:14:25 -0500
+        id S1751834AbeBWPO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:14:27 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
         <mingo@redhat.com>, <acme@kernel.org>,
@@ -15,9 +15,9 @@ To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
 CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v2 06/11] perf vendor events arm64: Relocate Cortex A53 JSONs to arm subdirectory
-Date: Sat, 24 Feb 2018 00:05:27 +0800
-Message-ID: <1519401932-205051-7-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v2 08/11] perf vendor events arm64: add armv8-recommended.json
+Date: Sat, 24 Feb 2018 00:05:29 +0800
+Message-ID: <1519401932-205051-9-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
 References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
@@ -29,485 +29,476 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since jevents now supports vendor subdirectory, relocate
-the Cortex-A53 JSONs to arm subdirectory.
+Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
 
-Cc: William Cohen <wcohen@redhat.com>
+The JSON is copied from ARMv8 architecture reference manual,
+available here:
+https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
+
 Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
- .../arch/arm64/arm/cortex-a53/branch.json          | 27 +++++++++++
- .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  | 22 +++++++++
- .../arch/arm64/arm/cortex-a53/cache.json           | 27 +++++++++++
- .../arch/arm64/arm/cortex-a53/memory.json          | 22 +++++++++
- .../arch/arm64/arm/cortex-a53/other.json           | 32 +++++++++++++
- .../arch/arm64/arm/cortex-a53/pipeline.json        | 52 ++++++++++++++++++++++
- .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 -----------
- .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 ---------
- .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 -----------
- .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 ---------
- .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 -------------
- .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ----------------------
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |  2 +-
- 13 files changed, 183 insertions(+), 183 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+ .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
+ 1 file changed, 452 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/armv8-recommended.json
 
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
+diff --git a/tools/perf/pmu-events/arch/arm64/armv8-recommended.json b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
 new file mode 100644
-index 0000000..3b62087
+index 0000000..6328828
 --- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-@@ -0,0 +1,27 @@
++++ b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+@@ -0,0 +1,452 @@
 +[
-+  {,
-+    "EventCode": "0x7A",
-+    "EventName": "BR_INDIRECT_SPEC",
-+    "BriefDescription": "Branch speculatively executed - Indirect branch"
-+  },
-+  {,
-+    "EventCode": "0xC9",
-+    "EventName": "BR_COND",
-+    "BriefDescription": "Conditional branch executed"
-+  },
-+  {,
-+    "EventCode": "0xCA",
-+    "EventName": "BR_INDIRECT_MISPRED",
-+    "BriefDescription": "Indirect branch mispredicted"
-+  },
-+  {,
-+    "EventCode": "0xCB",
-+    "EventName": "BR_INDIRECT_MISPRED_ADDR",
-+    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
-+  },
-+  {,
-+    "EventCode": "0xCC",
-+    "EventName": "BR_COND_MISPRED",
-+    "BriefDescription": "Conditional branch mispredicted"
-+  }
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, read",
++        "EventCode": "0x40",
++        "EventName": "L1D_CACHE_RD",
++        "BriefDescription": "L1D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, write",
++        "EventCode": "0x41",
++        "EventName": "L1D_CACHE_WR",
++        "BriefDescription": "L1D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, read",
++        "EventCode": "0x42",
++        "EventName": "L1D_CACHE_REFILL_RD",
++        "BriefDescription": "L1D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, write",
++        "EventCode": "0x43",
++        "EventName": "L1D_CACHE_REFILL_WR",
++        "BriefDescription": "L1D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, inner",
++        "EventCode": "0x44",
++        "EventName": "L1D_CACHE_REFILL_INNER",
++        "BriefDescription": "L1D cache refill, inner"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, outer",
++        "EventCode": "0x45",
++        "EventName": "L1D_CACHE_REFILL_OUTER",
++        "BriefDescription": "L1D cache refill, outer"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache Write-Back, victim",
++        "EventCode": "0x46",
++        "EventName": "L1D_CACHE_WB_VICTIM",
++        "BriefDescription": "L1D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 1 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x47",
++        "EventName": "L1D_CACHE_WB_CLEAN",
++        "BriefDescription": "L1D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache invalidate",
++        "EventCode": "0x48",
++        "EventName": "L1D_CACHE_INVAL",
++        "BriefDescription": "L1D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, read",
++        "EventCode": "0x4C",
++        "EventName": "L1D_TLB_REFILL_RD",
++        "BriefDescription": "L1D tlb refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, write",
++        "EventCode": "0x4D",
++        "EventName": "L1D_TLB_REFILL_WR",
++        "BriefDescription": "L1D tlb refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
++        "EventCode": "0x4E",
++        "EventName": "L1D_TLB_RD",
++        "BriefDescription": "L1D tlb access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
++        "EventCode": "0x4F",
++        "EventName": "L1D_TLB_WR",
++        "BriefDescription": "L1D tlb access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, read",
++        "EventCode": "0x50",
++        "EventName": "L2D_CACHE_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, write",
++        "EventCode": "0x51",
++        "EventName": "L2D_CACHE_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, read",
++        "EventCode": "0x52",
++        "EventName": "L2D_CACHE_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, write",
++        "EventCode": "0x53",
++        "EventName": "L2D_CACHE_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache Write-Back, victim",
++        "EventCode": "0x56",
++        "EventName": "L2D_CACHE_WB_VICTIM",
++        "BriefDescription": "L2D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 2 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x57",
++        "EventName": "L2D_CACHE_WB_CLEAN",
++        "BriefDescription": "L2D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache invalidate",
++        "EventCode": "0x58",
++        "EventName": "L2D_CACHE_INVAL",
++        "BriefDescription": "L2D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, read",
++        "EventCode": "0x5c",
++        "EventName": "L2D_TLB_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, write",
++        "EventCode": "0x5d",
++        "EventName": "L2D_TLB_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, read",
++        "EventCode": "0x5e",
++        "EventName": "L2D_TLB_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, write",
++        "EventCode": "0x5f",
++        "EventName": "L2D_TLB_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Bus access read",
++        "EventCode": "0x60",
++        "EventName": "BUS_ACCESS_RD",
++        "BriefDescription": "Bus access read"
++   },
++   {
++        "PublicDescription": "Bus access write",
++        "EventCode": "0x61",
++        "EventName": "BUS_ACCESS_WR",
++        "BriefDescription": "Bus access write"
++   }
++   {
++        "PublicDescription": "Bus access, Normal, Cacheable, Shareable",
++        "EventCode": "0x62",
++        "EventName": "BUS_ACCESS_SHARED",
++        "BriefDescription": "Bus access, Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, not Normal, Cacheable, Shareable",
++        "EventCode": "0x63",
++        "EventName": "BUS_ACCESS_NOT_SHARED",
++        "BriefDescription": "Bus access, not Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, Normal",
++        "EventCode": "0x64",
++        "EventName": "BUS_ACCESS_NORMAL",
++        "BriefDescription": "Bus access, Normal"
++   }
++   {
++        "PublicDescription": "Bus access, peripheral",
++        "EventCode": "0x65",
++        "EventName": "BUS_ACCESS_PERIPH",
++        "BriefDescription": "Bus access, peripheral"
++   }
++   {
++        "PublicDescription": "Data memory access, read",
++        "EventCode": "0x66",
++        "EventName": "MEM_ACCESS_RD",
++        "BriefDescription": "Data memory access, read"
++   }
++   {
++        "PublicDescription": "Data memory access, write",
++        "EventCode": "0x67",
++        "EventName": "MEM_ACCESS_WR",
++        "BriefDescription": "Data memory access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access, read",
++        "EventCode": "0x68",
++        "EventName": "UNALIGNED_LD_SPEC",
++        "BriefDescription": "Unaligned access, read"
++   }
++   {
++        "PublicDescription": "Unaligned access, write",
++        "EventCode": "0x69",
++        "EventName": "UNALIGNED_ST_SPEC",
++        "BriefDescription": "Unaligned access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access",
++        "EventCode": "0x6a",
++        "EventName": "UNALIGNED_LDST_SPEC",
++        "BriefDescription": "Unaligned access"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, LDREX or LDX",
++        "EventCode": "0x6c",
++        "EventName": "LDREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, LDREX or LDX"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX pass",
++        "EventCode": "0x6d",
++        "EventName": "STREX_PASS_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX pass"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX fail",
++        "EventCode": "0x6e",
++        "EventName": "STREX_FAIL_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX fail"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX",
++        "EventCode": "0x6f",
++        "EventName": "STREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load",
++        "EventCode": "0x70",
++        "EventName": "LD_SPEC",
++        "BriefDescription": "Operation speculatively executed, load"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, store"
++        "EventCode": "0x71",
++        "EventName": "ST_SPEC",
++        "BriefDescription": "Operation speculatively executed, store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load or store",
++        "EventCode": "0x72",
++        "EventName": "LDST_SPEC",
++        "BriefDescription": "Operation speculatively executed, load or store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, integer data processing",
++        "EventCode": "0x73",
++        "EventName": "DP_SPEC",
++        "BriefDescription": "Operation speculatively executed, integer data processing"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Advanced SIMD instruction",
++        "EventCode": "0x74",
++        "EventName": "ASE_SPEC",
++        "BriefDescription": "Operation speculatively executed, Advanced SIMD instruction",
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, floating-point instruction",
++        "EventCode": "0x75",
++        "EventName": "VFP_SPEC",
++        "BriefDescription": "Operation speculatively executed, floating-point instruction"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, software change of the PC",
++        "EventCode": "0x76",
++        "EventName": "PC_WRITE_SPEC",
++        "BriefDescription": "Operation speculatively executed, software change of the PC"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Cryptographic instruction",
++        "EventCode": "0x77",
++        "EventName": "CRYPTO_SPEC",
++        "BriefDescription": "Operation speculatively executed, Cryptographic instruction"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, immediate branch"
++        "EventCode": "0x78",
++        "EventName": "BR_IMMED_SPEC",
++        "BriefDescription": "Branch speculatively executed, immediate branch"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, procedure return"
++        "EventCode": "0x79",
++        "EventName": "BR_RETURN_SPEC",
++        "BriefDescription": "Branch speculatively executed, procedure return"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, indirect branch"
++        "EventCode": "0x7a",
++        "EventName": "BR_INDIRECT_SPEC",
++        "BriefDescription": "Branch speculatively executed, indirect branch"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, ISB"
++        "EventCode": "0x7c",
++        "EventName": "ISB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, ISB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DSB"
++        "EventCode": "0x7d",
++        "EventName": "DSB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DSB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DMB"
++        "EventCode": "0x7e",
++        "EventName": "DMB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DMB"
++   }
++   {
++        "PublicDescription": "Exception taken, Other synchronous"
++        "EventCode": "0x81",
++        "EventName": "EXC_UNDEF",
++        "BriefDescription": "Exception taken, Other synchronous"
++   }
++   {
++        "PublicDescription": "Exception taken, Supervisor Call"
++        "EventCode": "0x82",
++        "EventName": "EXC_SVC",
++        "BriefDescription": "Exception taken, Supervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort"
++        "EventCode": "0x83",
++        "EventName": "EXC_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort and SError"
++        "EventCode": "0x84",
++        "EventName": "EXC_DABORT",
++        "BriefDescription": "Exception taken, Data Abort and SError"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ"
++        "EventCode": "0x86",
++        "EventName": "EXC_IRQ",
++        "BriefDescription": "Exception taken, IRQ"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ"
++        "EventCode": "0x87",
++        "EventName": "EXC_FIQ",
++        "BriefDescription": "Exception taken, FIQ"
++   }
++   {
++        "PublicDescription": "Exception taken, Secure Monitor Call"
++        "EventCode": "0x88",
++        "EventName": "EXC_SMC",
++        "BriefDescription": "Exception taken, Secure Monitor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Hypervisor Call"
++        "EventCode": "0x8a",
++        "EventName": "EXC_HVC",
++        "BriefDescription": "Exception taken, Hypervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort not taken locally"
++        "EventCode": "0x8b",
++        "EventName": "EXC_TRAP_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort or SError not taken locally"
++        "EventCode": "0x8c",
++        "EventName": "EXC_TRAP_DABORT",
++        "BriefDescription": "Exception taken, Data Abort or SError not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Other traps not taken locally"
++        "EventCode": "0x8d",
++        "EventName": "EXC_TRAP_OTHER",
++        "BriefDescription": "Exception taken, Other traps not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ not taken locally"
++        "EventCode": "0x8e",
++        "EventName": "EXC_TRAP_IRQ",
++        "BriefDescription": "Exception taken, IRQ not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ not taken locally"
++        "EventCode": "0x8f",
++        "EventName": "EXC_TRAP_FIQ",
++        "BriefDescription": "Exception taken, FIQ not taken locally"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Load-Acquire"
++        "EventCode": "0x90",
++        "EventName": "RC_LD_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Load-Acquire"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Store-Release"
++        "EventCode": "0x91",
++        "EventName": "RC_ST_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Store-Release"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, read"
++        "EventCode": "0xa0",
++        "EventName": "L3D_CACHE_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, write"
++        "EventCode": "0xa1",
++        "EventName": "L3D_CACHE_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, read"
++        "EventCode": "0xa2",
++        "EventName": "L3D_CACHE_REFILL_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, write"
++        "EventCode": "0xa3",
++        "EventName": "L3D_CACHE_REFILL_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++        "EventCode": "0xa6",
++        "EventName": "L3D_CACHE_WB_VICTIM",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++        "EventCode": "0xa7",
++        "EventName": "L3D_CACHE_WB_CLEAN",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, invalidate"
++        "EventCode": "0xa8",
++        "EventName": "L3D_CACHE_INVAL",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, invalidate"
++   }
 +]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-new file mode 100644
-index 0000000..480d9f7
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-new file mode 100644
-index 0000000..11baad6
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-@@ -0,0 +1,27 @@
-+[
-+  {,
-+    "EventCode": "0xC2",
-+    "EventName": "PREFETCH_LINEFILL",
-+    "BriefDescription": "Linefill because of prefetch"
-+  },
-+  {,
-+    "EventCode": "0xC3",
-+    "EventName": "PREFETCH_LINEFILL_DROP",
-+    "BriefDescription": "Instruction Cache Throttle occurred"
-+  },
-+  {,
-+    "EventCode": "0xC4",
-+    "EventName": "READ_ALLOC_ENTER",
-+    "BriefDescription": "Entering read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC5",
-+    "EventName": "READ_ALLOC",
-+    "BriefDescription": "Read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC8",
-+    "EventName": "EXT_SNOOP",
-+    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-new file mode 100644
-index 0000000..480d9f7
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-new file mode 100644
-index 0000000..73a2240
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-@@ -0,0 +1,32 @@
-+[
-+  {,
-+    "EventCode": "0x86",
-+    "EventName": "EXC_IRQ",
-+    "BriefDescription": "Exception taken, IRQ"
-+  },
-+  {,
-+    "EventCode": "0x87",
-+    "EventName": "EXC_FIQ",
-+    "BriefDescription": "Exception taken, FIQ"
-+  },
-+  {,
-+    "EventCode": "0xC6",
-+    "EventName": "PRE_DECODE_ERR",
-+    "BriefDescription": "Pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xD0",
-+    "EventName": "L1I_CACHE_ERR",
-+    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
-+  },
-+  {,
-+    "EventCode": "0xD1",
-+    "EventName": "L1D_CACHE_ERR",
-+    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
-+  },
-+  {,
-+    "EventCode": "0xD2",
-+    "EventName": "TLB_ERR",
-+    "BriefDescription": "TLB memory error"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-new file mode 100644
-index 0000000..3149fb9
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-@@ -0,0 +1,52 @@
-+[
-+  {,
-+    "EventCode": "0xC7",
-+    "EventName": "STALL_SB_FULL",
-+    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
-+  },
-+  {,
-+    "EventCode": "0xE0",
-+    "EventName": "OTHER_IQ_DEP_STALL",
-+    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xE1",
-+    "EventName": "IC_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE2",
-+    "EventName": "IUTLB_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE3",
-+    "EventName": "DECODE_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
-+  },
-+  {,
-+    "EventCode": "0xE4",
-+    "EventName": "OTHER_INTERLOCK_STALL",
-+    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
-+  },
-+  {,
-+    "EventCode": "0xE5",
-+    "EventName": "AGU_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
-+  },
-+  {,
-+    "EventCode": "0xE6",
-+    "EventName": "SIMD_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
-+  },
-+  {,
-+    "EventCode": "0xE7",
-+    "EventName": "LD_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
-+  },
-+  {,
-+    "EventCode": "0xE8",
-+    "EventName": "ST_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-deleted file mode 100644
-index 3b62087..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-+++ /dev/null
-@@ -1,27 +0,0 @@
--[
--  {,
--    "EventCode": "0x7A",
--    "EventName": "BR_INDIRECT_SPEC",
--    "BriefDescription": "Branch speculatively executed - Indirect branch"
--  },
--  {,
--    "EventCode": "0xC9",
--    "EventName": "BR_COND",
--    "BriefDescription": "Conditional branch executed"
--  },
--  {,
--    "EventCode": "0xCA",
--    "EventName": "BR_INDIRECT_MISPRED",
--    "BriefDescription": "Indirect branch mispredicted"
--  },
--  {,
--    "EventCode": "0xCB",
--    "EventName": "BR_INDIRECT_MISPRED_ADDR",
--    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
--  },
--  {,
--    "EventCode": "0xCC",
--    "EventName": "BR_COND_MISPRED",
--    "BriefDescription": "Conditional branch mispredicted"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-deleted file mode 100644
-index 480d9f7..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-+++ /dev/null
-@@ -1,22 +0,0 @@
--[
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
--  },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
--    "EventCode": "0xC0",
--    "EventName": "EXT_MEM_REQ",
--    "BriefDescription": "External memory request"
--  },
--  {,
--    "EventCode": "0xC1",
--    "EventName": "EXT_MEM_REQ_NC",
--    "BriefDescription": "Non-cacheable external memory request"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-deleted file mode 100644
-index 11baad6..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-+++ /dev/null
-@@ -1,27 +0,0 @@
--[
--  {,
--    "EventCode": "0xC2",
--    "EventName": "PREFETCH_LINEFILL",
--    "BriefDescription": "Linefill because of prefetch"
--  },
--  {,
--    "EventCode": "0xC3",
--    "EventName": "PREFETCH_LINEFILL_DROP",
--    "BriefDescription": "Instruction Cache Throttle occurred"
--  },
--  {,
--    "EventCode": "0xC4",
--    "EventName": "READ_ALLOC_ENTER",
--    "BriefDescription": "Entering read allocate mode"
--  },
--  {,
--    "EventCode": "0xC5",
--    "EventName": "READ_ALLOC",
--    "BriefDescription": "Read allocate mode"
--  },
--  {,
--    "EventCode": "0xC8",
--    "EventName": "EXT_SNOOP",
--    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-deleted file mode 100644
-index 480d9f7..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-+++ /dev/null
-@@ -1,22 +0,0 @@
--[
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
--  },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
--    "EventCode": "0xC0",
--    "EventName": "EXT_MEM_REQ",
--    "BriefDescription": "External memory request"
--  },
--  {,
--    "EventCode": "0xC1",
--    "EventName": "EXT_MEM_REQ_NC",
--    "BriefDescription": "Non-cacheable external memory request"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-deleted file mode 100644
-index 73a2240..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-+++ /dev/null
-@@ -1,32 +0,0 @@
--[
--  {,
--    "EventCode": "0x86",
--    "EventName": "EXC_IRQ",
--    "BriefDescription": "Exception taken, IRQ"
--  },
--  {,
--    "EventCode": "0x87",
--    "EventName": "EXC_FIQ",
--    "BriefDescription": "Exception taken, FIQ"
--  },
--  {,
--    "EventCode": "0xC6",
--    "EventName": "PRE_DECODE_ERR",
--    "BriefDescription": "Pre-decode error"
--  },
--  {,
--    "EventCode": "0xD0",
--    "EventName": "L1I_CACHE_ERR",
--    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
--  },
--  {,
--    "EventCode": "0xD1",
--    "EventName": "L1D_CACHE_ERR",
--    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
--  },
--  {,
--    "EventCode": "0xD2",
--    "EventName": "TLB_ERR",
--    "BriefDescription": "TLB memory error"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-deleted file mode 100644
-index 3149fb9..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-+++ /dev/null
-@@ -1,52 +0,0 @@
--[
--  {,
--    "EventCode": "0xC7",
--    "EventName": "STALL_SB_FULL",
--    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
--  },
--  {,
--    "EventCode": "0xE0",
--    "EventName": "OTHER_IQ_DEP_STALL",
--    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
--  },
--  {,
--    "EventCode": "0xE1",
--    "EventName": "IC_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
--  },
--  {,
--    "EventCode": "0xE2",
--    "EventName": "IUTLB_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
--  },
--  {,
--    "EventCode": "0xE3",
--    "EventName": "DECODE_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
--  },
--  {,
--    "EventCode": "0xE4",
--    "EventName": "OTHER_INTERLOCK_STALL",
--    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
--  },
--  {,
--    "EventCode": "0xE5",
--    "EventName": "AGU_DEP_STALL",
--    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
--  },
--  {,
--    "EventCode": "0xE6",
--    "EventName": "SIMD_DEP_STALL",
--    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
--  },
--  {,
--    "EventCode": "0xE7",
--    "EventName": "LD_DEP_STALL",
--    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
--  },
--  {,
--    "EventCode": "0xE8",
--    "EventName": "ST_DEP_STALL",
--    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index 952a05c..cf14e23 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -12,5 +12,5 @@
- #
- #
- #Family-model,Version,Filename,EventType
-+0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
--0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
 -- 
 1.9.1
