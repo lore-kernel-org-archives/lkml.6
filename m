@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeBWIZj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:25:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55405 "EHLO
+        id S1751857AbeBWI0H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:26:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33619 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751581AbeBWIZh (ORCPT
+        with ESMTP id S1750855AbeBWI0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:25:37 -0500
-Date: Fri, 23 Feb 2018 00:25:11 -0800
+        Fri, 23 Feb 2018 03:26:04 -0500
+Date: Fri, 23 Feb 2018 00:25:39 -0800
 From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-69c42d493db452ea87c1ac56e83c978512f4e6ec@git.kernel.org>
-Cc: peterz@infradead.org, torvalds@linux-foundation.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, jdelvare@suse.com,
+Message-ID: <tip-9c0a30b67bd916a7da1a7101dbf3115e5f10d852@git.kernel.org>
+Cc: peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, jdelvare@suse.com, rjw@rjwysocki.net,
         andriy.shevchenko@linux.intel.com, bhelgaas@google.com,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, mingo@kernel.org, jdelvare@suse.com,
+        torvalds@linux-foundation.org, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org, mingo@kernel.org,
         bhelgaas@google.com, andriy.shevchenko@linux.intel.com,
-        rjw@rjwysocki.net, peterz@infradead.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
-References: <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+        rjw@rjwysocki.net, jdelvare@suse.com
+In-Reply-To: <20180222125923.57385-3-andriy.shevchenko@linux.intel.com>
+References: <20180222125923.57385-3-andriy.shevchenko@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/platform] x86/pci: Simplify code by using the new
+Subject: [tip:x86/platform] ACPI/sleep: Simplify code by using the new
  dmi_get_bios_year() helper
-Git-Commit-ID: 69c42d493db452ea87c1ac56e83c978512f4e6ec
+Git-Commit-ID: 9c0a30b67bd916a7da1a7101dbf3115e5f10d852
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,14 +36,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  69c42d493db452ea87c1ac56e83c978512f4e6ec
-Gitweb:     https://git.kernel.org/tip/69c42d493db452ea87c1ac56e83c978512f4e6ec
+Commit-ID:  9c0a30b67bd916a7da1a7101dbf3115e5f10d852
+Gitweb:     https://git.kernel.org/tip/9c0a30b67bd916a7da1a7101dbf3115e5f10d852
 Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Thu, 22 Feb 2018 14:59:21 +0200
+AuthorDate: Thu, 22 Feb 2018 14:59:22 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Fri, 23 Feb 2018 08:20:30 +0100
 
-x86/pci: Simplify code by using the new dmi_get_bios_year() helper
+ACPI/sleep: Simplify code by using the new dmi_get_bios_year() helper
 
 ...instead of open coding its functionality.
 
@@ -58,77 +58,27 @@ Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-acpi@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180222125923.57385-2-andriy.shevchenko@linux.intel.com
+Link: http://lkml.kernel.org/r/20180222125923.57385-3-andriy.shevchenko@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/pci/acpi.c            | 8 ++------
- arch/x86/pci/direct.c          | 5 ++---
- arch/x86/pci/mmconfig-shared.c | 9 ++-------
- 3 files changed, 6 insertions(+), 16 deletions(-)
+ drivers/acpi/sleep.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
-index 7df49c40665e..00e60de30328 100644
---- a/arch/x86/pci/acpi.c
-+++ b/arch/x86/pci/acpi.c
-@@ -140,12 +140,8 @@ static const struct dmi_system_id pci_crs_quirks[] __initconst = {
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index 46cde0912762..b35923e3a926 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -376,12 +376,10 @@ void __init acpi_sleep_no_blacklist(void)
  
- void __init pci_acpi_crs_quirks(void)
+ static void __init acpi_sleep_dmi_check(void)
  {
 -	int year;
 -
--	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year < 2008) {
--		if (iomem_resource.end <= 0xffffffff)
--			pci_use_crs = false;
--	}
-+	if ((dmi_get_bios_year() < 2008) && (iomem_resource.end <= 0xffffffff))
-+		pci_use_crs = false;
+ 	if (ignore_blacklist)
+ 		return;
  
- 	dmi_check_system(pci_crs_quirks);
+-	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year >= 2012)
++	if (dmi_get_bios_year() >= 2012)
+ 		acpi_nvs_nosave_s3();
  
-diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
-index 2d9503323d10..a51074c55982 100644
---- a/arch/x86/pci/direct.c
-+++ b/arch/x86/pci/direct.c
-@@ -195,14 +195,13 @@ static const struct pci_raw_ops pci_direct_conf2 = {
- static int __init pci_sanity_check(const struct pci_raw_ops *o)
- {
- 	u32 x = 0;
--	int year, devfn;
-+	int devfn;
- 
- 	if (pci_probe & PCI_NO_CHECKS)
- 		return 1;
- 	/* Assume Type 1 works for newer systems.
- 	   This handles machines that don't have anything on PCI Bus 0. */
--	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
--	if (year >= 2001)
-+	if (dmi_get_bios_year() >= 2001)
- 		return 1;
- 
- 	for (devfn = 0; devfn < 0x100; devfn++) {
-diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
-index 96684d0adcf9..0b40482578b8 100644
---- a/arch/x86/pci/mmconfig-shared.c
-+++ b/arch/x86/pci/mmconfig-shared.c
-@@ -547,19 +547,14 @@ static void __init pci_mmcfg_reject_broken(int early)
- static int __init acpi_mcfg_check_entry(struct acpi_table_mcfg *mcfg,
- 					struct acpi_mcfg_allocation *cfg)
- {
--	int year;
--
- 	if (cfg->address < 0xFFFFFFFF)
- 		return 0;
- 
- 	if (!strncmp(mcfg->header.oem_id, "SGI", 3))
- 		return 0;
- 
--	if (mcfg->header.revision >= 1) {
--		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
--		    year >= 2010)
--			return 0;
--	}
-+	if ((mcfg->header.revision >= 1) && (dmi_get_bios_year() >= 2010))
-+		return 0;
- 
- 	pr_err(PREFIX "MCFG region for %04x [bus %02x-%02x] at %#llx "
- 	       "is above 4GB, ignored\n", cfg->pci_segment,
+ 	dmi_check_system(acpisleep_dmi_table);
