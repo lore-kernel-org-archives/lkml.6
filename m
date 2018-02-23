@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751357AbeBWBpB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:45:01 -0500
-Received: from mga12.intel.com ([192.55.52.136]:30216 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750916AbeBWBpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:45:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,381,1515484800";
-   d="scan'208";a="206287905"
-Subject: Re: [PATCH] MAINTAINERS: Update ASPEED entry with details
-To: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20180222050324.21531-1-joel@jms.id.au>
- <1519288786.101739.1279390200.1CD3EC51@webmail.messagingengine.com>
- <23b668f1-ab4b-7ef3-ba1e-f252fbba4d1b@linux.intel.com>
- <1519344667.1024159.1280347184.36AD3FEC@webmail.messagingengine.com>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <d67a8a8d-4b3d-403c-e62d-bc0939e8d08f@linux.intel.com>
-Date: Fri, 23 Feb 2018 09:44:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751376AbeBWBtg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:49:36 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:55508 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeBWBte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:49:34 -0500
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>
+Cc: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        Xiaofei Tan <tanxiaofei@huawei.com>
+Subject: Re: [PATCH 1/8] dt-bindings: scsi: hisi_sas: add an property of signal attenuation
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
+        <1519067611-206638-2-git-send-email-john.garry@huawei.com>
+Date: Thu, 22 Feb 2018 20:49:17 -0500
+In-Reply-To: <1519067611-206638-2-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Tue, 20 Feb 2018 03:13:24 +0800")
+Message-ID: <yq17er4bhlu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1519344667.1024159.1280347184.36AD3FEC@webmail.messagingengine.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=601
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230018
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+> From: Xiaofei Tan <tanxiaofei@huawei.com>
+>
+> For some new boards with hip07 chipset we are required to
+> set PHY config registers differently. The hw property which
+> determines how to set these registers is in the PHY signal
+> attenuation readings.
+>
+> This patch add an devicetree property, signal-attenuation, which
+> is used to describe the signal attenuation of an board.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> ---
+>  Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> index df3bef7..bd32ecd 100644
+> --- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> +++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> @@ -53,6 +53,13 @@ Main node required properties:
+>  Optional main node properties:
+>   - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
+>  			    "am-max-transmissions" limitation.
+> + - signal-attenuation : array of 3 32-bit values, containing de-emphasis,
+> +		preshoot, and boost attenuation readings for the board. They
+> +		are used to describe the signal attenuation of the board. These
+> +		values' range is 7600 to 12400, and used to represent -24dB to
+> +		24dB.
+> +		The formula is "y = (x-10000)/10000". For example, 10478
+> +		means 4.78dB.
+>  
+>  Example:
+>  	sas0: sas@c1000000 {
 
-On 2018-02-23 08:11, Andrew Jeffery wrote:
-> Hi Haiyue,
->
-> On Thu, 22 Feb 2018, at 19:20, Wang, Haiyue wrote:
->> Dear Andrew & Joel,
->>
->> Since you are ASPEED BMC experts, any time and interest in eSPI code
->> review ? I've sent
->>
->> it before, but no more response. Intel recommends eSPI bus than LPC as I
->> know. I just kept
->>
->> the minimal eSPI code which is approved to work well in our real server
->> boards for two more
->>
->> years. Other part of eSPI driver from ASPEED's SDK  has been removed,
->> because ePSI is a new
->>
->> thing, we only use a small feature set like booting host.
->>
->> We Intel submit this eSPI patch for openbmc upstreaming, hope for your
->> response. :-)
->>
->> https://patchwork.kernel.org/patch/10166577/
->>
-> There are some comments against the v1 that you linked to above, is there a v2 on the lists?
-A long holiday back, will send v2 patch soon.
-> Separately it's better to ping us by replying to the patch itself and putting us in To/Cc, that way we keep discussions focused on the patch at hand here.
-Got it. Thanks for your reply.
->
-> Cheers,
->
-> Andrew
+Rob/Mark: Please review!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
