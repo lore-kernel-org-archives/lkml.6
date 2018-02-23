@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224yvTLvmhI4FmxnBTo/sLbJarsr+4wUBOR7syGeqMXn4kTJQnSsSivuN0BXFUpTectWeYND
-ARC-Seal: i=1; a=rsa-sha256; t=1519411131; cv=none;
+X-Google-Smtp-Source: AH8x2265Iu+gp+AoksllzHucsj/PH8NYRHbhQdzzL6yV8EPXCvXsfFo/k5rVKiF4KMMPvIZWgD7s
+ARC-Seal: i=1; a=rsa-sha256; t=1519411128; cv=none;
         d=google.com; s=arc-20160816;
-        b=JwVOpdUwaacWp7MFDlBt9uiHNkBQBGL9eZhVFz/JNX7r81KM3bIFVko8Br6Gz0PAg4
-         gb1x/Y3UqwKbc+gcnV3J/L4NOCkulN5kYh5IQLhzoL1QuXkQRLq+XUtvYCoiIW5C5APJ
-         ExM27eI3Z6pVjzqMS742AOlSAFBr/zitGNCxJupCH+mk0X3SRsXQKlzbvjw6+6riDe6M
-         ZRKsrnD9qf9kR7KLgMvd0NcUQJpwy4WvzOBlTaz2Mp19KZZGvZ5eBivO0ksNCHLoILsg
-         wqZpV+Eh9lk1zfv2wbGtbNxNXzKZS9nv8M0jgCVGxUjXNBsl43jHEuyf/HlvDqzIHn7e
-         JaNw==
+        b=M2CigToKItx7IL7F/e/qkK9OvuAX3dNQayCptDAaXwkVGRrKHuG9Q1nFWWYRcZJpkq
+         LcpXEU3iFUAQ0UncdesEfzEhfwI6nUz2L6yp7jvqn+hfV9y23fYQIwKuBhuCKCPUX48Y
+         TnsnWKMd0A6hxLANkmAxW0E0KqSP/DvSfbRM+qr4b9tC8bx4BfVSqkDr4e2f3YKblbrq
+         M5mAIeBUxdDARKSEGnV/hKsSV3faFrxKI131x5cFN77yxYS+7l7kAWrrUfFe1R+11WPC
+         DPc1dUHp1BubmKpQqWw11G+XrE0i9tu64gdKyqpOYBzQmOX6OwWhHHmMVh3Mu5YplmJW
+         vBPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QkcxbfOr/ThANRBUI0+gaz85WssDHxZq2IypOXYRXaQ=;
-        b=C1yOAG6RZHaULhT63ObCdfdnvwBQeWvD0uAY22ajotHMo/cjxGvqoJ7nGcfHaHR/O1
-         8SQdwHna6iGB8ssJwjF3wegZOuZXD02Ji2E7oNoXfw8Tr0RaFcwJwTCBi43YRJdXlMgn
-         myq7LkUpF5AJTqJwwBZJtB1ZX/whwY27yR0FMd0Xjo3brVzPdIWbKJG+vZ5nUgkwgxPt
-         C9Sy3MgSvY5yjK1cQxSj7HqXNCUE+XGREYrc3Pg7cHjhrIDAFFQ078fhZNGbkcFPlMKg
-         f/WR0l2t0dXxVkuPFZwe+YwVWnHP77AJhhyWN69WAqEWp/FTxTtEp1/mbmxmACvP9Qk6
-         r7iw==
+        bh=0TsSDW+1EfWDwrx+OzLaL8EQ5IVh06ixE2MRt4TpLRU=;
+        b=rewevnViSbnAWHE5J8xWfx+NI3vj9hYlmjAXN32jsIRpJy+Spv3nzr4EUjno2olGAY
+         YnSovhKnJcZhXyraJeMC4NL1SJfGCVdw+0ufBS0icx6KMEMBoLnMiIz1e4rnmKaBwydp
+         wYR/w7ZybqHUQJfzdcu6ykRwqn3Jj3xtWJaVstxG4L72d95RsQ2yybQVb5/QsPeUqXSb
+         tKag4RBtonTP447VUxCtGVqgzzD0zc31D+Y8QG0e3arNFUM50xQVxyIgE+CyL3Gm3LBb
+         /u1RAQ+l5m0XHBay+8az1LfZzovlAKXoGZXC0EzbCmzsBShabxWOzVEQOdlw8SJauMus
+         ocxw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	kbuild test robot <fengguang.wu@intel.com>,
-	Glen Lee <glen.lee@atmel.com>
-Subject: [PATCH 4.4 115/193] staging: wilc1000: fix kbuild test robot error
-Date: Fri, 23 Feb 2018 19:25:48 +0100
-Message-Id: <20180223170343.908482739@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 132/193] Input: tca8418_keypad - hide gcc-4.9 -Wmaybe-uninitialized warning
+Date: Fri, 23 Feb 2018 19:26:05 +0100
+Message-Id: <20180223170346.468592232@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218046863650995?=
-X-GMAIL-MSGID: =?utf-8?q?1593218046863650995?=
+X-GMAIL-THRID: =?utf-8?q?1593218044096392002?=
+X-GMAIL-MSGID: =?utf-8?q?1593218044096392002?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Glen Lee <glen.lee@atmel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b22fa80cdbf4ff1056ecddb4efdcc0ede5f5f422 upstream.
+commit ea4348c8462a20e8b1b6455a7145d2b86f8a49b6 upstream.
 
-This patch fixes build warning and error reported by kbuild test robot.
-It is fixed by including netdevice.h.
+Older versions of gcc warn about the tca8418_irq_handler function
+as they can't keep track of the variable assignment inside of the
+loop when using the -Wmaybe-unintialized flag:
 
->> drivers/staging/wilc1000/wilc_wlan_if.h:940:27: warning: 'struct net_device'
- declared inside parameter list
-    int wilc_wlan_init(struct net_device *dev, wilc_wlan_inp_t *inp);
->> drivers/staging/wilc1000/wilc_wlan_if.h:940:27: warning: its scope is only
- this definition or declaration, which is probably not what you want
->> drivers/staging/wilc1000/wilc_wlan.c:1954:5: error: conflicting types for
- 'wilc_wlan_init'
-    int wilc_wlan_init(struct net_device *dev, wilc_wlan_inp_t *inp)
+drivers/input/keyboard/tca8418_keypad.c: In function ‘tca8418_irq_handler’:
+drivers/input/keyboard/tca8418_keypad.c:172:9: error: ‘reg’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/input/keyboard/tca8418_keypad.c:165:5: note: ‘reg’ was declared here
 
-Fixes: 30135ce ("staging: wilc1000: wilc_wlan_init: add argument struct net_device")
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Glen Lee <glen.lee@atmel.com>
+This is fixed in gcc-6, but it's possible to rearrange the code
+in a way that avoids the warning on older compilers as well.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wilc1000/wilc_wlan_if.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/keyboard/tca8418_keypad.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/drivers/staging/wilc1000/wilc_wlan_if.h
-+++ b/drivers/staging/wilc1000/wilc_wlan_if.h
-@@ -12,6 +12,7 @@
+--- a/drivers/input/keyboard/tca8418_keypad.c
++++ b/drivers/input/keyboard/tca8418_keypad.c
+@@ -164,11 +164,18 @@ static void tca8418_read_keypad(struct t
+ 	int error, col, row;
+ 	u8 reg, state, code;
  
- #include <linux/semaphore.h>
- #include "linux_wlan_common.h"
-+#include <linux/netdevice.h>
+-	/* Initial read of the key event FIFO */
+-	error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
++	do {
++		error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
++		if (error < 0) {
++			dev_err(&keypad_data->client->dev,
++				"unable to read REG_KEY_EVENT_A\n");
++			break;
++		}
++
++		/* Assume that key code 0 signifies empty FIFO */
++		if (reg <= 0)
++			break;
  
- /********************************************
-  *
+-	/* Assume that key code 0 signifies empty FIFO */
+-	while (error >= 0 && reg > 0) {
+ 		state = reg & KEY_EVENT_VALUE;
+ 		code  = reg & KEY_EVENT_CODE;
+ 
+@@ -184,11 +191,7 @@ static void tca8418_read_keypad(struct t
+ 
+ 		/* Read for next loop */
+ 		error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
+-	}
+-
+-	if (error < 0)
+-		dev_err(&keypad_data->client->dev,
+-			"unable to read REG_KEY_EVENT_A\n");
++	} while (1);
+ 
+ 	input_sync(input);
+ }
