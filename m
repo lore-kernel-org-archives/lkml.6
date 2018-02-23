@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvvqKeBiCJwE1eVWCTRGyJwcWFlaSeXx8kIseQ5K9iQjD7dXUAuctxbVzKy8vgjnL6e5Hex
-ARC-Seal: i=1; a=rsa-sha256; t=1519412325; cv=none;
+X-Google-Smtp-Source: AG47ELsuiSIxjLHxoFq/XXXriPxUHOkBEtyLV4YT03ZCKurxPn6V29XUIG9iB0+IU/i/X58Ynnpu
+ARC-Seal: i=1; a=rsa-sha256; t=1519412322; cv=none;
         d=google.com; s=arc-20160816;
-        b=xmlKwjlvO7PTE9Vu1it1CfSFwn8NqyABAH6KT1dpA3p1AyJQTZyFY0qslf61zrLacY
-         kIGKPVkQhfvvxC6RPNWPyCIdnIQ03OFGXgO/5jd0HfKYDgJipfnUIUxoP5X6IwfvOsXO
-         VlyjBuNifkwS+799AM1c0AX99/a6PYe8Choch/U0IK0obxhmB/QxVho3nmVqETmY4OCZ
-         ahjfb1xaXXg25PBIYQgT6ysvPQJIopLVXggRPru9UIBQZANCJynJd9o7DGaVKTAeISeW
-         Et4EZS5xe/tg6Tv9Ym4z0iKkSa7GcvHY2XNQ4FnvzRROTSJyzkWjER++kcRUg/I8hHi8
-         1KMQ==
+        b=LM/8EA1nadPgDnUjpSSMmXFkROh8ccdCxBAIvkzF1aDNwAz8KCZIh7l0Dm296iJLhQ
+         87L1r/yTudpSpOCTjiEwkyCqn4p8mcSxtYIhw2fP0xLFO+avGk1zquk/scX6Ja3hUEyr
+         sEVOciDLcI72PdleEAd1Mze+qOrC6t3Z67j7KP6FTiB0duIChRViwBr0bh0acbgbPtbT
+         1AIL5mP8UXDoH528c3MnV6/1j9a2f+D8utlV87LRMvynfiJuJcBiApqIVMDP9kMfns53
+         0pIsfDFBtVYdnRd80pNqwgXAQK1ij1hvGS+SMPvdCHc4i56aQ7G4pjVTo6+Gyc6drRiR
+         +/hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1ir5Y+4lagmAwwRuPdMGE3C8X+s7Q2tu2XHl6VWqh1k=;
-        b=E0lJ2MFT4qLtg7t4QBxxCc7pbf/S/FeIEkRDicIr+LlOlw6fUIt+v6yZ+gqThMSJXB
-         oxjzTegc5j3uoRC8teISZmny1/j7QamoNaabYXj/V5IiXcRP8WdsNk/PY204SR92LFr1
-         fLDeNUbNZPxChV7o552s57Dkr0RqlWo8eQg49Jf1F20oMa0ut6OC8o2kGWj2TRm/uSpr
-         iGxEv+E1kkk+znpfGuxCAn4d2ly+fvUMwmBb3TSjxgYmmPN5YsaPrbPSWjftr+qCEX+v
-         x6os58L6Caifpf037xIKdw/bTOBqcVs3RZQsEvX2H5jJSd0DAJBXxAcxJZNVvXTqP/uv
-         3Jdw==
+        bh=IpnkShDaHW91BUgnT3yW36Ghee6BSjVFbnZPHJITC8E=;
+        b=C12Ca2/Vf0x550mWojLHsn705mrjf3kuh4jPisa7mBQd/oWrR4OFMA08sL63LVTXYu
+         9AH4d7K7qra8KsIDymFWoL9GlHaVwUhNwJ/v8VplOWLNj8XhzoQ2bzq80ldrg9jhoeRf
+         rgoIWbWdBvIK8Gq+QnXZFvNw59B+sDgTfS/7MMUlPhEnJ+jlCnEoRtArDFeri7YTEoWp
+         VjPSVoE1IL2avCgeR8RwQeG8POCQTOjyYVc+M471tqKRH7qRO+tcw0DBU3OoTYNvNQFR
+         KyEfGGnB127menTvBw7+b9iQTF0tAV89DiBqQyUZOaIlbptCpmMU3dYFeNLrI5BNWwiG
+         +Kmg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.15 41/45] usbip: keep usbip_device sockfd state in sync with tcp_socket
-Date: Fri, 23 Feb 2018 19:29:20 +0100
-Message-Id: <20180223170721.895702679@linuxfoundation.org>
+	Zhengjun Xing <zhengjun.xing@linux.intel.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.15 40/45] xhci: fix xhci debugfs errors in xhci_stop
+Date: Fri, 23 Feb 2018 19:29:19 +0100
+Message-Id: <20180223170721.723267082@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217572786296075?=
-X-GMAIL-MSGID: =?utf-8?q?1593219298042303544?=
+X-GMAIL-THRID: =?utf-8?q?1593219295556498276?=
+X-GMAIL-MSGID: =?utf-8?q?1593219295556498276?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,63 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
 
-commit 009f41aed4b3e11e6dc1e3c07377a10c20f1a5ed upstream.
+commit 11cd764dc9a030991880ad4d51db93918afa5822 upstream.
 
-Keep usbip_device sockfd state in sync with tcp_socket. When tcp_socket
-is reset to null, reset sockfd to -1 to keep it in sync.
+In function xhci_stop, xhci_debugfs_exit called before xhci_mem_cleanup.
+xhci_debugfs_exit removed the xhci debugfs root nodes, xhci_mem_cleanup
+called function xhci_free_virt_devices_depth_first which in turn called
+function xhci_debugfs_remove_slot.
+Function xhci_debugfs_remove_slot removed the nodes for devices, the nodes
+folders are sub folder of xhci debugfs.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable@vger.kernel.org
+It is unreasonable to remove xhci debugfs root folder before
+xhci debugfs sub folder. Function xhci_mem_cleanup should be called
+before function xhci_debugfs_exit.
+
+Fixes: 02b6fdc2a153 ("usb: xhci: Add debugfs interface for xHCI driver")
+Cc: <stable@vger.kernel.org> # v4.15
+Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_dev.c |    3 +++
- drivers/usb/usbip/vhci_hcd.c |    2 ++
- 2 files changed, 5 insertions(+)
+ drivers/usb/host/xhci.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -73,6 +73,7 @@ static ssize_t store_sockfd(struct devic
- 			goto err;
- 
- 		sdev->ud.tcp_socket = socket;
-+		sdev->ud.sockfd = sockfd;
- 
- 		spin_unlock_irq(&sdev->ud.lock);
- 
-@@ -172,6 +173,7 @@ static void stub_shutdown_connection(str
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -652,8 +652,6 @@ static void xhci_stop(struct usb_hcd *hc
+ 		return;
  	}
  
- 	/* 3. free used data */
-@@ -266,6 +268,7 @@ static struct stub_device *stub_device_a
- 	sdev->ud.status		= SDEV_ST_AVAILABLE;
- 	spin_lock_init(&sdev->ud.lock);
- 	sdev->ud.tcp_socket	= NULL;
-+	sdev->ud.sockfd		= -1;
+-	xhci_debugfs_exit(xhci);
+-
+ 	spin_lock_irq(&xhci->lock);
+ 	xhci->xhc_state |= XHCI_STATE_HALTED;
+ 	xhci->cmd_ring_state = CMD_RING_STATE_STOPPED;
+@@ -685,6 +683,7 @@ static void xhci_stop(struct usb_hcd *hc
  
- 	INIT_LIST_HEAD(&sdev->priv_init);
- 	INIT_LIST_HEAD(&sdev->priv_tx);
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -984,6 +984,7 @@ static void vhci_shutdown_connection(str
- 	if (vdev->ud.tcp_socket) {
- 		sockfd_put(vdev->ud.tcp_socket);
- 		vdev->ud.tcp_socket = NULL;
-+		vdev->ud.sockfd = -1;
- 	}
- 	pr_info("release socket\n");
- 
-@@ -1030,6 +1031,7 @@ static void vhci_device_reset(struct usb
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
- 	}
- 	ud->status = VDEV_ST_NULL;
- 
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "cleaning up memory");
+ 	xhci_mem_cleanup(xhci);
++	xhci_debugfs_exit(xhci);
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+ 			"xhci_stop completed - status = %x",
+ 			readl(&xhci->op_regs->status));
