@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtLe9jFOHA7BNb6D5WUsMZ9Yt8W3e79CCeV6urq34A+pQJFmTq1NxM6Oh1yqfhZCJ75SfRI
-ARC-Seal: i=1; a=rsa-sha256; t=1519411625; cv=none;
+X-Google-Smtp-Source: AH8x226WpDfgmiThXq9LycZHzq56M0AuKxgkzZYwlNis75G2bT5xzMEY2haBFYjhGNwCOM7C6HX5
+ARC-Seal: i=1; a=rsa-sha256; t=1519411616; cv=none;
         d=google.com; s=arc-20160816;
-        b=NLTzDNTCzZ7XsTqCtX5DDa/0btY1QUPT3plTXBGkPt0pigFGNnZudSAgP7wkfaqXDu
-         bAWGMZA2ibaeN3P51kYBmGk6j+PLVpbu0tcX6x/iDhZLuveKpl4lnvDZrz5pZDP1LQrX
-         YhH8qrw7lao8IfhkV0x6yS+tTd1UhCo/7iuHSnrS8l/3a8NK46zqQwoq3KzW8dmPO4Ll
-         hhyD9bVbCCNkZ8O3/ZeL5t3iR6OKpuPBcyZWdCplUtPk6dM+9mZ+VLVZxHmRa6dIHBUa
-         9QvGkYbC7Ond1i4tqYvlIkMQ4o+sgl7KZEY+HE1tVk0JFRtNd3GccomH/VfAPchONk3F
-         0p5w==
+        b=k0rzJukws/8UNjtLl4lWHV7G+Kgb4TcGzEfoKUowrteUeph8H7rA0MUl2t1JXjOrJh
+         t1sm2mtCTF9m0qejwpbp4kKOoGD55iuc+9F5/sjf24Ani5CygpLpZ530d3gHkdnD/ciM
+         Dcd7egr1wICjNuVyFd79XLtwEudIJGJrZzAbI5Np8fRaUzU6PvL53HfWDQPpAWLAkGVk
+         LKeb9VT59WrQ3xjh4rK4xVmE+E6zkBpP/EDYRYIaoe7pT7LBF3rErs2SguXCuB6TY9rX
+         1P4cb1h+l7HmRdjHphKGm1PtXKQs/If6zAdKABtdIjVGvUowSE8KuYAs/c8ctSfL+bHI
+         Bb1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QK7U/f546F2M7DkXC1vqDHh2jCCcywkmwj1rFcrlDJI=;
-        b=SiBTmA7Ko2NzF0wDZ4595F6lQmDBvbAtRdrWPLsBpIm4VopfIq3US5v+k+HrZhSdo2
-         o2f2Qx51+WmTbLc3DWv/bY+itT5Swg1Ds1NY3FvrUAxRdisVvboaQ4F/LgXMRpXGsBls
-         o1RSuvJ946MIjhI8UcQhRno6SWUEdUROGicWx1mf9rb+cvQQlPT1diGBj373Men6ZO3j
-         WVYeox52IXxFrOLI3npKknsZQrpSPFq10vUeXYdxwlZ9FN0rN6FjVQyTyXfP+NjTHIGN
-         lbKf/NneYgd0VkvG6gUQ0AtDhUKhe3m3XWcftIs+l5+82f6V3m1KxythXicI8Y3e04qH
-         eqJg==
+        bh=nCDuSEDRjKkncHNSBTa8VnVt+tnixk4xHNxXTUF/5+o=;
+        b=s2+HZdrKrGipOxRKjVSuxfhNCWkzYjCmmwIUNKTbao3TXHFDfnxFnEfFrIQpmkTkVt
+         DRHvgsSkZLlIgnkAngCOKk2/OwMspJvvZ8Z4xeNbOM0RlUgmz8+SyHVIaS2TK0Q8jhMc
+         mS/u8+wbeEXwH22hO2UoG81OhWqKvY43mxUKLM8aY3hj3rpEK+pfebFPZXqV3k7LTA0H
+         N4rN4inyai1MRmI3AEEjMKH8SPEnorQImObNCrmmdFq3X3k/NEyQE+ipb7WdLxJvYXRb
+         xcVRf40eDeYgF+gDA9bvdBMTOhH9cCDCyWs0L9tqvvzF11GzkEznCQvKAo7y/sqNERSI
+         ltBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bill Metzenthen <billm@melbpc.org.au>,
+	Borislav Petkov <bp@suse.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Yazen Ghannam <Yazen.Ghannam@amd.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 107/145] x86/fpu/math-emu: Fix possible uninitialized variable use
-Date: Fri, 23 Feb 2018 19:26:53 +0100
-Message-Id: <20180223170738.620538719@linuxfoundation.org>
+Subject: [PATCH 4.9 104/145] x86/ras/inject: Make it depend on X86_LOCAL_APIC=y
+Date: Fri, 23 Feb 2018 19:26:50 +0100
+Message-Id: <20180223170738.240335474@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217868412742928?=
-X-GMAIL-MSGID: =?utf-8?q?1593218565073086658?=
+X-GMAIL-THRID: =?utf-8?q?1593217862812726856?=
+X-GMAIL-MSGID: =?utf-8?q?1593218555743937418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,111 +55,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit 75e2f0a6b16141cb347f442033ec907380d4d66e upstream.
+commit d4b2ac63b0eae461fc10c9791084be24724ef57a upstream.
 
-When building the kernel with "make EXTRA_CFLAGS=...", this overrides
-the "PARANOID" preprocessor macro defined in arch/x86/math-emu/Makefile,
-and we run into a build warning:
+... and get rid of the annoying:
 
-  arch/x86/math-emu/reg_compare.c: In function ‘compare_i_st_st’:
-  arch/x86/math-emu/reg_compare.c:254:6: error: ‘f’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  arch/x86/kernel/cpu/mcheck/mce-inject.c:97:13: warning: ‘mce_irq_ipi’ defined but not used [-Wunused-function]
 
-This fixes the implementation to work correctly even without the PARANOID
-flag, and also fixes the Makefile to not use the EXTRA_CFLAGS variable
-but instead use the ccflags-y variable in the Makefile that is meant
-for this purpose.
+when doing randconfig builds.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Bill Metzenthen <billm@melbpc.org.au>
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170719125310.2487451-3-arnd@arndb.de
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20170123183514.13356-2-bp@alien8.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/math-emu/Makefile      |    4 ++--
- arch/x86/math-emu/reg_compare.c |   16 ++++++++--------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ arch/x86/Kconfig                        |    2 +-
+ arch/x86/kernel/cpu/mcheck/mce-inject.c |    5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/x86/math-emu/Makefile
-+++ b/arch/x86/math-emu/Makefile
-@@ -5,8 +5,8 @@
- #DEBUG	= -DDEBUGGING
- DEBUG	=
- PARANOID = -DPARANOID
--EXTRA_CFLAGS	:= $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
--EXTRA_AFLAGS	:= $(PARANOID)
-+ccflags-y += $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
-+asflags-y += $(PARANOID)
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1057,7 +1057,7 @@ config X86_MCE_THRESHOLD
+ 	def_bool y
  
- # From 'C' language sources:
- C_OBJS =fpu_entry.o errors.o \
---- a/arch/x86/math-emu/reg_compare.c
-+++ b/arch/x86/math-emu/reg_compare.c
-@@ -168,7 +168,7 @@ static int compare(FPU_REG const *b, int
- /* This function requires that st(0) is not empty */
- int FPU_compare_st_data(FPU_REG const *loaded_data, u_char loaded_tag)
- {
--	int f = 0, c;
-+	int f, c;
+ config X86_MCE_INJECT
+-	depends on X86_MCE
++	depends on X86_MCE && X86_LOCAL_APIC
+ 	tristate "Machine check injector support"
+ 	---help---
+ 	  Provide support for injecting machine checks for testing purposes.
+--- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
++++ b/arch/x86/kernel/cpu/mcheck/mce-inject.c
+@@ -152,7 +152,6 @@ static void raise_mce(struct mce *m)
+ 	if (context == MCJ_CTX_RANDOM)
+ 		return;
  
- 	c = compare(loaded_data, loaded_tag);
- 
-@@ -189,12 +189,12 @@ int FPU_compare_st_data(FPU_REG const *l
- 		case COMP_No_Comp:
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#ifdef PARANOID
- 		default:
-+#ifdef PARANOID
- 			EXCEPTION(EX_INTERNAL | 0x121);
-+#endif /* PARANOID */
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#endif /* PARANOID */
- 		}
- 	setcc(f);
- 	if (c & COMP_Denormal) {
-@@ -205,7 +205,7 @@ int FPU_compare_st_data(FPU_REG const *l
- 
- static int compare_st_st(int nr)
- {
--	int f = 0, c;
-+	int f, c;
- 	FPU_REG *st_ptr;
- 
- 	if (!NOT_EMPTY(0) || !NOT_EMPTY(nr)) {
-@@ -235,12 +235,12 @@ static int compare_st_st(int nr)
- 		case COMP_No_Comp:
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#ifdef PARANOID
- 		default:
-+#ifdef PARANOID
- 			EXCEPTION(EX_INTERNAL | 0x122);
-+#endif /* PARANOID */
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#endif /* PARANOID */
- 		}
- 	setcc(f);
- 	if (c & COMP_Denormal) {
-@@ -283,12 +283,12 @@ static int compare_i_st_st(int nr)
- 	case COMP_No_Comp:
- 		f = X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF;
- 		break;
--#ifdef PARANOID
- 	default:
-+#ifdef PARANOID
- 		EXCEPTION(EX_INTERNAL | 0x122);
-+#endif /* PARANOID */
- 		f = 0;
- 		break;
--#endif /* PARANOID */
- 	}
- 	FPU_EFLAGS = (FPU_EFLAGS & ~(X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF)) | f;
- 	if (c & COMP_Denormal) {
+-#ifdef CONFIG_X86_LOCAL_APIC
+ 	if (m->inject_flags & (MCJ_IRQ_BROADCAST | MCJ_NMI_BROADCAST)) {
+ 		unsigned long start;
+ 		int cpu;
+@@ -192,9 +191,7 @@ static void raise_mce(struct mce *m)
+ 		raise_local();
+ 		put_cpu();
+ 		put_online_cpus();
+-	} else
+-#endif
+-	{
++	} else {
+ 		preempt_disable();
+ 		raise_local();
+ 		preempt_enable();
