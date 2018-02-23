@@ -1,100 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeBWNhb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:37:31 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38453 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751766AbeBWNh1 (ORCPT
+        id S1751843AbeBWNhy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:37:54 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37102 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751437AbeBWNgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:37:27 -0500
-X-Google-Smtp-Source: AG47ELtKIKX4HxwFJ8jWFYwFCN7W6psx1AdQwoMDN50//DFkFqpVxV4ap2YGHQvs8O4/pE5zIH0OjeosJ08AvOo9+Wg=
+        Fri, 23 Feb 2018 08:36:53 -0500
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <thierry.reding@gmail.com>, <alexandre.torgue@st.com>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <benjamin.gaignard@linaro.org>
+Subject: [RESEND PATCH 2/3] pwm: stm32: LPTimer: use 3 cells xlate
+Date: Fri, 23 Feb 2018 14:36:04 +0100
+Message-ID: <1519392965-28235-3-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519392965-28235-1-git-send-email-fabrice.gasnier@st.com>
+References: <1519392965-28235-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20170708005624.GA17338@embeddedgus>
-References: <20170708005624.GA17338@embeddedgus>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 23 Feb 2018 14:37:06 +0100
-Message-ID: <CANiq72=m-CC5=uFYHona1cx3nFMi_wwz8ue0cg3AwsehA2Ob1A@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: ht16k33: constify fb_fix_screeninfo and
- fb_var_screeninfo structures
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Robin van der Gracht <robin@protonic.nl>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+From: Gerald Baeza <gerald.baeza@st.com>
 
-On Sat, Jul 8, 2017 at 2:56 AM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
-> These structures are only used to copy into other structures,
-> so declare them as const.
->
-> This issue was detected using Coccinelle and the following semantic patch:
->
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct fb_fix_screeninfo i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> e = i@p
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct fb_fix_screeninfo e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct fb_fix_screeninfo i = { ... };
->
-> The semantic patch for fb_var_screeninfo is analogous.
->
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
->  drivers/auxdisplay/ht16k33.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index fbfa5b4..a0162b5 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -82,7 +82,7 @@ struct ht16k33_priv {
->         struct ht16k33_fbdev fbdev;
->  };
->
-> -static struct fb_fix_screeninfo ht16k33_fb_fix = {
-> +static const struct fb_fix_screeninfo ht16k33_fb_fix = {
->         .id             = DRIVER_NAME,
->         .type           = FB_TYPE_PACKED_PIXELS,
->         .visual         = FB_VISUAL_MONO10,
-> @@ -93,7 +93,7 @@ static struct fb_fix_screeninfo ht16k33_fb_fix = {
->         .accel          = FB_ACCEL_NONE,
->  };
->
-> -static struct fb_var_screeninfo ht16k33_fb_var = {
-> +static const struct fb_var_screeninfo ht16k33_fb_var = {
->         .xres = HT16K33_MATRIX_LED_MAX_ROWS,
->         .yres = HT16K33_MATRIX_LED_MAX_COLS,
->         .xres_virtual = HT16K33_MATRIX_LED_MAX_ROWS,
+STM32 Low-Power Timer supports generic 3 cells pwm to encode
+PWM number, period and polarity.
 
-I will pick this up for 4.17.
+Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/pwm/pwm-stm32-lp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thank you for the patch!
-Miguel
-
-> --
-> 2.5.0
->
+diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+index 1ac9e43..346b7bd 100644
+--- a/drivers/pwm/pwm-stm32-lp.c
++++ b/drivers/pwm/pwm-stm32-lp.c
+@@ -203,6 +203,8 @@ static int stm32_pwm_lp_probe(struct platform_device *pdev)
+ 	priv->chip.dev = &pdev->dev;
+ 	priv->chip.ops = &stm32_pwm_lp_ops;
+ 	priv->chip.npwm = 1;
++	priv->chip.of_xlate = of_pwm_xlate_with_flags;
++	priv->chip.of_pwm_n_cells = 3;
+ 
+ 	ret = pwmchip_add(&priv->chip);
+ 	if (ret < 0)
+-- 
+1.9.1
