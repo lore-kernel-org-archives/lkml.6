@@ -1,61 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeBWGme (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 01:42:34 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:32945 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751402AbeBWGln (ORCPT
+        id S1751631AbeBWGma (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 01:42:30 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:41334 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeBWGln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Feb 2018 01:41:43 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180223064141epoutp01a41d27c164f81d070c68e8dd8be7f1d2~V4Tz55Nfc3131431314epoutp015
-X-AuditID: b6c32a48-9adff70000000ff0-f0-5a8fb7a45bcd
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180223064141epoutp041fb30903123bf1250eebe6dd23584930~V4Tz-50CW2369223692epoutp04K
+X-AuditID: b6c32a47-19fff7000000100c-92-5a8fb7a47dca
 From: Jaehoon Chung <jh80.chung@samsung.com>
 To: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         manabian@gmail.com, dinguyen@kernel.org, will.deacon@arm.com,
         xuwei5@hisilicon.com, Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH 3/6] ARM: dts: socfpga: remove 'num-slots' property for
+Subject: [PATCH 4/6] arm64: dts: stratix10: remove 'num-slots' property for
  dwmmc
-Date: Fri, 23 Feb 2018 15:41:35 +0900
-Message-id: <20180223064138.18401-3-jh80.chung@samsung.com>
+Date: Fri, 23 Feb 2018 15:41:36 +0900
+Message-id: <20180223064138.18401-4-jh80.chung@samsung.com>
 X-Mailer: git-send-email 2.15.1
 In-reply-to: <20180223064138.18401-1-jh80.chung@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7bCmhe7S7f1RBu2bmSzmHznHanH0/G4m
-        ixu/2lgtLu+aw2Zx5H8/o8Xu6+cYLZZev8hk0br3CLvF8bXhFi8/nmCxeHJ0CrMDt8eaeWsY
-        PXbOusvu8XjuRnaPTas62TzuXNvD5tG3ZRWjx+dNcgHsUak2GamJKalFCql5yfkpmXnptkre
-        wfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUA3KimUJeaUAoUCEouLlfTtbIryS0tSFTLy
-        i0tslaINDY30DA3M9YyMjPRMjGOtjEyBShJSM/befsZU8JavYt+0XuYGxtk8XYycHBICJhKz
-        2s8zdTFycQgJ7GCUuDHhBCuE851R4u7yJlaYqv8zprJDJDYwSlxbfY0FwvnBKDHr4jomkCo2
-        AR2J7d+Og9kiApES81cdZgYpYhY4wihx+eFtIIeDQ1jAX+LpA2kQk0VAVeLgAQ2Qcl4Ba4lX
-        l8+wQyyTl5iwpYkFxOYUsJGY8OcF2C4JgR1sEh27nrJAFLlInLz1Cuo6YYlXx7dANUtLPFu1
-        kRHCbmeUODtbGKJ5CqPEihndTBAJY4lnC7vAbGYBPomOw3/ZQQ6SEOCV6GgTgijxkNj59iMb
-        hO0ocXzFd6iH+xklnrbsYJrAKLWAkWEVo1hqQXFuemqxUYGJXnFibnFpXrpecn7uJkZwGtLy
-        2MF44JzPIUYBDkYlHt6Ikt4oIdbEsuLK3EOMEhzMSiK8Dqv6o4R4UxIrq1KL8uOLSnNSiw8x
-        mgLDZiKzlGhyPjBF5pXEG5pYGpiYmRmZm1kAk4M4b1uAS5SQQHpiSWp2ampBahFMHxMHp1QD
-        o/L8hatVmdvFHMO1vSYu//GI8+Q9Ow2mKxqFB9LYVMS8Fig8fygwfU51ztuV1X0Om16feZK+
-        TW3+Nt5/N1u/bX6uLLsw4uyiD7bH85cGpLSLcSRzX6s8Oy9pdxjzr9LzzrtrLYrsbO4atk55
-        8tr2+d2GswGTUlQOJk2S/VW2uHi6nHRcg1XhdiWW4oxEQy3mouJEAEf1WEdZAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsVy+t9jQd0l2/ujDHa95beYf+Qcq8XR87uZ
-        LG78amO1uLxrDpvFkf/9jBa7r59jtFh6/SKTReveI+wWx9eGW7z8eILF4snRKcwO3B5r5q1h
-        9Ng56y67x+O5G9k9Nq3qZPO4c20Pm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl7L39jKng
-        LV/Fvmm9zA2Ms3m6GDk5JARMJP7PmMrexcjFISSwjlFi0ZxfjBDOD0aJHT2N7CBVbAI6Etu/
-        HWcCsUUEIiUO/J7CBFLELHCEUWLnhqlADgeHsICvxM1JMSAmi4CqxMEDGiDlvALWEq8un2GH
-        WCYvMWFLEwuIzSlgIzHhzwswWwio5t353ywTGHkWMDKsYpRMLSjOTc8tNiowykst1ytOzC0u
-        zUvXS87P3cQIDL9th7X6dzA+XhJ/iFGAg1GJhzeipDdKiDWxrLgy9xCjBAezkgivw6r+KCHe
-        lMTKqtSi/Pii0pzU4kOM0hwsSuK8/PnHIoUE0hNLUrNTUwtSi2CyTBycUg2MIsrphtejYv4s
-        n7uX+430vjB1re/fpp9aHtB95euDj5oxeYu8V6amnLlVneESecE+saHRZEdS/4vr255Mjkz+
-        vv9/+ZcDtX+6M5IflD6NW1LdVdPQ0xCXMMvrwYXVAbf/3vtxVP9XoYe+q8TeqR3Xeywcw/e9
-        bLxZOd+iZneX9Brp9aEPs+YUKbEUZyQaajEXFScCAN2FrFc7AgAA
-X-CMS-MailID: 20180223064140epcas2p2145faef6a2c44d7d20bb3d6099f12d18
+X-Brightmail-Tracker: H4sIAAAAAAAAAzVSWUwTURT1ddqZAawZissLRiGToIFIbUtpBy0GlegkEkPkA61RnMCzEGhL
+        Zlri8kNUEDBsoRLFBRdUUoEANoCoH5QSjEKFkICCStwIgktcUaLRKaN/591zzrsnN4fEVF5F
+        OJljcyDexuXReLC8ozfaENvQWWnW1F4xMfU+v4Lpe3RHxjyeL1YwI93nccb3pxIwd8b8gLk2
+        Nixjiu75CKa/OZ15++m+nHnd58KSQtimi02AvV33jGBfXWgj2HZ3Kc4+Hb2LsxUeN2C/tK9O
+        JczIlI24LMRHIlumPSvHZkmkd6RlbM2IN2i0sdoExkhH2jgrSqSTU1Jjt+XkiRnpyAIuzymO
+        UjlBoNdvMvF2pwNFZtsFRyK9V6vVqbUao1qn06n1cfs26OJFyQGU/fKUS57foDhU0mMqBD55
+        GQgiIaWHnqs1RBkIJlVUF4Bni+aJAKGi5gAs/278L5qZ/aCQRK0A+ufGgPT4AWDdcIssoMKp
+        dbDze/8CXkrtgfXuXiwgwigfgCMvJrAAEUalwU89U6KbIOVUFJyPCEyV1EbYOXQDl5ZFwCrP
+        sYV0QZQJVv2alge+gZQHh6PVx//FTobPK1wKCYfBmX4PIeGVcMrdBiR8EsDBc2GS2QVg45lT
+        MomIg1OXyxYwRi2BJb2/RTMpzpWwpFglQRb2v18jqTfDuuJaXDpKJYAnZokqEH4JLHKD5Shf
+        sFqQoMuPUwucVXDaLOpMu7UdLPQnZnsX6PCneAFFAnqxcrej3KxScAXCYasXQBKjlyqT3JVm
+        lTKLO3wE8fYM3pmHBC+IFw9TjYUvy7SLbbQ5MrT6BI3eYNAZDYxYhRXKotRks4qycA6Ui1A+
+        4v/7ZGRQeCHY5Y/5ueazbbppq/7gquYrwUTD/cJ0zfiq09/MNxsHZMOetRb++qJQ5HtiHcj8
+        Cdhb3a9iee9kbqkR4K0JWC0+NbnrXZ9+i7OmYdqx4fSgYW78d8h+g/zyzvTQidz20o8pX12G
+        emfrw+jRlhBBf3R2yPQr6mHpg5meN6/JgYIoWi5kc9oYjBe4vwxBwLxVAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsVy+t9jQd0l2/ujDBqmi1vMP3KO1eLo+d1M
+        Fjd+tbFaXN41h83iyP9+Rovd188xWiy9fpHJonXvEXaL42vDLV5+PMFi8eToFGYHbo8189Yw
+        euycdZfd4/Hcjewem1Z1snncubaHzaNvyypGj8+b5ALYo7hsUlJzMstSi/TtErgyHnVPYSlY
+        wlrRcdCmgfEISxcjJ4eEgInEq9fvWLsYuTiEBNYxSjw89wfK+cEosaOnkR2kik1AR2L7t+NM
+        ILaIQKTEgd9TmECKmAWOMErs3DAVLCEsECzx8eAzxi5Gdg4WAVWJX/IgUV4Ba4ntF5azQSyT
+        l5iwpQlsMaeAjcSEPy/AbCGgmnfnf7NMYORZwMiwilEytaA4Nz232KjAKC+1XK84Mbe4NC9d
+        Lzk/dxMjMPi2Hdbq38H4eEn8IUYBDkYlHt6Ikt4oIdbEsuLK3EOMEhzMSiK8Dqv6o4R4UxIr
+        q1KL8uOLSnNSiw8xSnOwKInz8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwMjI21vAEljNOC/zN
+        GHjbSO21t99a1c/HLpeuWHD8g037w675zTfWbHDzm31F4+mBbWeZRMqX3Kk7lO59b0luzKcd
+        f20XcdytvvYhU20LZ+Lxz9PjLmtJOAhZMa1PCr23hVdIVpTP482hsDNGJ28Jt233WTZXqyhv
+        9Z1cpoyeD9feLP+RfFb4tBJLcUaioRZzUXEiAGGqDCQ6AgAA
+X-CMS-MailID: 20180223064140epcas2p3804fe3b7d63e4b7975d94a178e94dffb
 X-Msg-Generator: CA
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180223064140epcas2p2145faef6a2c44d7d20bb3d6099f12d18
-X-RootMTR: 20180223064140epcas2p2145faef6a2c44d7d20bb3d6099f12d18
+X-CMS-RootMailID: 20180223064140epcas2p3804fe3b7d63e4b7975d94a178e94dffb
+X-RootMTR: 20180223064140epcas2p3804fe3b7d63e4b7975d94a178e94dffb
 References: <20180223064138.18401-1-jh80.chung@samsung.com>
-        <CGME20180223064140epcas2p2145faef6a2c44d7d20bb3d6099f12d18@epcas2p2.samsung.com>
+        <CGME20180223064140epcas2p3804fe3b7d63e4b7975d94a178e94dffb@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,17 +65,14 @@ device-tree file.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts | 1 -
- arch/arm/boot/dts/socfpga_arria5.dtsi             | 1 -
- arch/arm/boot/dts/socfpga_cyclone5.dtsi           | 1 -
- arch/arm/boot/dts/socfpga_vt.dts                  | 1 -
- 4 files changed, 4 deletions(-)
+ arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-index 040a164ba148..5822fd2085db 100644
---- a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-+++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-@@ -20,7 +20,6 @@
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index a37c46112876..4e146b4e6487 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -88,7 +88,6 @@
  
  &mmc {
  	status = "okay";
@@ -83,41 +80,5 @@ index 040a164ba148..5822fd2085db 100644
  	cap-sd-highspeed;
  	broken-cd;
  	bus-width = <4>;
-diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
-index 8c037297296c..e59461f5416e 100644
---- a/arch/arm/boot/dts/socfpga_arria5.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
-@@ -30,7 +30,6 @@
- 		};
- 
- 		mmc0: dwmmc0@ff704000 {
--			num-slots = <1>;
- 			broken-cd;
- 			bus-width = <4>;
- 			cap-mmc-highspeed;
-diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-index a05e3df23103..68ced67f8bfb 100644
---- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-+++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-@@ -31,7 +31,6 @@
- 		};
- 
- 		mmc0: dwmmc0@ff704000 {
--			num-slots = <1>;
- 			broken-cd;
- 			bus-width = <4>;
- 			cap-mmc-highspeed;
-diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
-index dfe2193cd4d5..547c38632c68 100644
---- a/arch/arm/boot/dts/socfpga_vt.dts
-+++ b/arch/arm/boot/dts/socfpga_vt.dts
-@@ -42,7 +42,6 @@
- 		};
- 
- 		dwmmc0@ff704000 {
--			num-slots = <1>;
- 			broken-cd;
- 			bus-width = <4>;
- 			cap-mmc-highspeed;
 -- 
 2.15.1
