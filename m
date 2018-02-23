@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415061-2-12169819454573034679
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415055-2-10167980672713414795
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415060; b=F9rvYTaOZUCJDAK0YYEkwiDDmuWg8aDqqfn40WWCcJvDTEZ
-    KrA9r+o51Nr+9hTkB1UxK9OElmCjhhZ2/0QrkrSNEZwlB3mUItkYd/6ae8ZXaCtz
-    CuaAFjneNbd6+dCV0bl9pNpdWy9kiGEU2Eh/R3TglBPIGuGdt2QW/7SbsZN9hwTg
-    j0zre/KDQAvT56PgLfsYMm+biJvd2oun6i0BubLqqdMtNYiPB+pMNNpk8RvjTREd
-    dYOqG3dhqYNK+nYhH4qsQNeL3jJ+R5FpEdJpteLNdwkghfEF582X6/eCbb3/MQr8
-    DbvAyFxM5oYhOhsEuZZ5tNhiUBBBJJFotECVZAQ==
+    t=1519415054; b=uDxi7B2ORrINsGgxAtGdKkCgCN8ISOMVfX0/7J8rFzJRcCi
+    VoqjYTJS+JcVhDJO5CFvh/w6mNFT961ipL2uO2Vab4vWRzu6dV/ZcyqVkYuhSUtA
+    yV/RfHzqK88efCwwD3R7X5M3rETq2sZ6dHmPV4Z+CKRP6k8dhl5K3E6fia4OYtUF
+    P9crFWQvIUb/BV6A09306d1ywhV/Dhnf+m7DebpUuVlHh8xQKEbw9QX3loh4AURx
+    ucn4WB6aq03QxRSy9qCfjxSEgQqtUDZZ4PXoKWhXZSNK9N617i2Ve5kPV3E1XXpr
+    6rpE18tDPbJg1bKqxZ8wIMd/gwp1gSAlEL24Kxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415060; bh=2sxCQNa+0YSwquUZo/y3Q2bTuu
-    hZJFrITfGgt8AaAIs=; b=wzfYTS2HWdP05b2lCDiGKqcO44Wwyy6pnvWZMfJkZi
-    6G92Y/aoK9RuA7gLE9GE9CxP440R6oXwMa4SWfDXvpJH0F6UAqJM3Nlt9HTcWXil
-    tOgs5cNWVm/hHOH5+y6hCOMivt6cZsF0buJ4wY0DtIqNdJO5NpYllk84JZu4BZxe
-    M6NSbGtkoH2zpnscJwf2UvEnf3U25ICgEGvXZA/ou3s42iZKKWasuvfnnX8epVrN
-    CTVd8LnjQN5aApDoi23RfN2D8dyUAJn2UcDeiJV3Vc74RxP87G+lY2C+2i3RsEes
-    ImdjUFPjr73NTiJqMrolQ97OmQTrFqjF+MTwEx2uXAZg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415054; bh=R/FfRPFqamtUOYaVfKMkwljKsa
+    0EXhQYXRcporGt6Ww=; b=dAWkb5eiXzKFnC8oz3vR4XFMHhn6D+QNN/2JCh+oyt
+    qQZXs+o7C9bxiVNMgXDtsnafGMG52gLQLkdThA8e3MPgTEKsLH1EazbFJkgd4FnR
+    B4uB1em6PIJcnjTZbFLJOXddcd7jZlTMHVcK5+rdU4Ur/7nbVM3fasPNp5qiYhqx
+    woJO4fJZ3g7Sjy172RQeZG2qtedWzoblC7VLAYHArQ/QxYO/siUgzxtsHk4tfVrT
+    dtAAb0m62ZhBIiYHfEUX1imBEUxM7p089es4YtiKEd+21jUXPseXHZz2hFX2KmV3
+    xPUvpyW2IUfo1H/cltFCITbPVcxwE10yB6vO672ZHuaw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,19 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934378AbeBWSsX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:48:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44914 "EHLO
+        id S1754821AbeBWTn6 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:43:58 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934335AbeBWSsX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:23 -0500
+        with ESMTP id S934385AbeBWSsZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:25 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 4.9 135/145] arm64: sunxi: always enable reset controller
-Date: Fri, 23 Feb 2018 19:27:21 +0100
-Message-Id: <20180223170742.193676184@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 136/145] binfmt_elf: compat: avoid unused function warning
+Date: Fri, 23 Feb 2018 19:27:22 +0100
+Message-Id: <20180223170742.299355660@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -80,42 +79,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 900a9020af7a023f9b64c919fddf8a7486108962 upstream.
+When CONFIG_ELF_CORE is disabled, we get a harmless warning in the compat
+version of binfmt_elf:
 
-The sunxi clk driver causes a link error when the reset controller
-subsystem is disabled:
+fs/compat_binfmt_elf.c:58:13: error: 'cputime_to_compat_timeval' defined but not used [-Werror=unused-function]
 
-drivers/clk/built-in.o: In function `sun4i_ve_clk_setup':
-:(.init.text+0xd040): undefined reference to `reset_controller_register'
-drivers/clk/built-in.o: In function `sun4i_a10_display_init':
-:(.init.text+0xe5e0): undefined reference to `reset_controller_register'
-drivers/clk/built-in.o: In function `sunxi_usb_clk_setup':
-:(.init.text+0x10074): undefined reference to `reset_controller_register'
+This was addressed in mainline Linux as part of a larger rework with commit
+cd19c364b313 ("fs/binfmt: Convert obsolete cputime type to nsecs").
 
-We already force it to be enabled on arm32 and some other arm64 platforms,
-but not on arm64/sunxi. This adds the respective Kconfig statements to
-also select it here.
+For 4.9 and earlier, this just shuts up the warning by adding an #ifdef
+around the function definition.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-[arnd: manually rebased to 4.9]
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/Kconfig.platforms |    2 ++
+ fs/compat_binfmt_elf.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -2,9 +2,11 @@ menu "Platform selection"
+--- a/fs/compat_binfmt_elf.c
++++ b/fs/compat_binfmt_elf.c
+@@ -51,6 +51,7 @@
+ #define elf_prstatus	compat_elf_prstatus
+ #define elf_prpsinfo	compat_elf_prpsinfo
  
- config ARCH_SUNXI
- 	bool "Allwinner sunxi 64-bit SoC Family"
-+	select ARCH_HAS_RESET_CONTROLLER
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
- 	select PINCTRL_SUN50I_A64
-+	select RESET_CONTROLLER
- 	help
- 	  This enables support for Allwinner sunxi based SoCs like the A64.
++#ifdef CONFIG_ELF_CORE
+ /*
+  * Compat version of cputime_to_compat_timeval, perhaps this
+  * should be an inline in <linux/compat.h>.
+@@ -63,6 +64,7 @@ static void cputime_to_compat_timeval(co
+ 	value->tv_sec = tv.tv_sec;
+ 	value->tv_usec = tv.tv_usec;
+ }
++#endif
  
+ #undef cputime_to_timeval
+ #define cputime_to_timeval cputime_to_compat_timeval
