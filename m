@@ -1,77 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeBWCkK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 21:40:10 -0500
-Received: from mga03.intel.com ([134.134.136.65]:47173 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751274AbeBWCkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 21:40:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,381,1515484800";
-   d="scan'208";a="206298548"
-From: "Fenghua Yu" <fenghua.yu@intel.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Tony Luck" <tony.luck@intel.com>,
-        "Shivappa, Vikas" <vikas.shivappa@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Xiaochen Shen" <xiaochen.shen@intel.com>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>, "x86" <x86@kernel.org>,
-        Wang Hui <john.wanghui@huawei.com>,
-        Zhang Yanfei <yanfei.zhang@huawei.com>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH] x86/intel_rdt: Fix incorrect returned value when creating rdgroup sub-directory in resctrl file system
-Date: Thu, 22 Feb 2018 19:26:03 -0800
-Message-Id: <1519356363-133085-1-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
+        id S1751456AbeBWCpz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 21:45:55 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39422 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751252AbeBWCpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 21:45:54 -0500
+X-Google-Smtp-Source: AH8x225uXxH9jyPvIs5gNkPrPWfJIkl7P071wH/Tbnb51CtbQKdDSnN+vweowAw3qV5lONGAKezSXw==
+Date: Fri, 23 Feb 2018 10:43:20 +0800
+From: Peng Fan <van.freenix@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: jens.wiklander@linaro.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: Re: [PATCH] tee: correct max value for id allocation
+Message-ID: <20180223024320.GA321@shlinux2>
+References: <20180115092735.20969-1-peng.fan@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180115092735.20969-1-peng.fan@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wang Hui <john.wanghui@huawei.com>
+Hi Jens,
 
-If no monitoring feature is detected because all monitoring features are
-disabled during boot time or there is no monitoring feature in hardware,
-creating rdtgroup sub-directory by "mkdir" command reports error:
+Any comments on this patch?
 
-#mkdir /sys/fs/resctrl/p1
-mkdir: cannot create directory ‘/sys/fs/resctrl/p1’: No such file or
-directory
+Thanks,
+Peng
+On Mon, Jan 15, 2018 at 05:27:35PM +0800, Peng Fan wrote:
+>The privileged dev id range is [TEE_NUM_DEVICES / 2, TEE_NUM_DEVICES).
+>The non-privileged dev id range is [0, TEE_NUM_DEVICES / 2).
+>
+>So when finding a slot for them, need to use different max value.
+>
+>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>Cc: Jens Wiklander <jens.wiklander@linaro.org>
+>---
+> drivers/tee/tee_core.c | 14 +++++++++-----
+> 1 file changed, 9 insertions(+), 5 deletions(-)
+>
+>diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+>index 3d49ac2e3c84..d1f4ecdbc8cc 100644
+>--- a/drivers/tee/tee_core.c
+>+++ b/drivers/tee/tee_core.c
+>@@ -701,7 +701,7 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+> {
+> 	struct tee_device *teedev;
+> 	void *ret;
+>-	int rc;
+>+	int rc, max_id;
+> 	int offs = 0;
+> 
+> 	if (!teedesc || !teedesc->name || !teedesc->ops ||
+>@@ -715,16 +715,20 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+> 		goto err;
+> 	}
+> 
+>-	if (teedesc->flags & TEE_DESC_PRIVILEGED)
+>+	max_id = TEE_NUM_DEVICES / 2;
+>+
+>+	if (teedesc->flags & TEE_DESC_PRIVILEGED) {
+> 		offs = TEE_NUM_DEVICES / 2;
+>+		max_id = TEE_NUM_DEVICES;
+>+	}
+> 
+> 	spin_lock(&driver_lock);
+>-	teedev->id = find_next_zero_bit(dev_mask, TEE_NUM_DEVICES, offs);
+>-	if (teedev->id < TEE_NUM_DEVICES)
+>+	teedev->id = find_next_zero_bit(dev_mask, max_id, offs);
+>+	if (teedev->id < max_id)
+> 		set_bit(teedev->id, dev_mask);
+> 	spin_unlock(&driver_lock);
+> 
+>-	if (teedev->id >= TEE_NUM_DEVICES) {
+>+	if (teedev->id >= max_id) {
+> 		ret = ERR_PTR(-ENOMEM);
+> 		goto err;
+> 	}
+>-- 
+>2.14.1
+>
 
-But the sub-directory actually is generated and content is correct:
-
-#ls /sys/fs/resctrl/p1
-cpus  cpus_list  schemata  tasks
-
-The error is because rdtgroup_mkdir_ctrl_mon() returns non zero value after
-the sub-directory is created and the returned value is reported as an error
-to user.
-
-Clear the returned value to report to user that the sub-directory is
-actually created successfully.
-
-Signed-off-by: Wang Hui <john.wanghui@huawei.com>
-Signed-off-by: Zhang Yanfei <yanfei.zhang@huawei.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index bdab7d2f51af..fca759d272a1 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1804,6 +1804,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 		goto out_common_fail;
- 	}
- 	closid = ret;
-+	ret = 0;
- 
- 	rdtgrp->closid = closid;
- 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
 -- 
-2.5.0
