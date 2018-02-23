@@ -1,67 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751635AbeBWQQn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:16:43 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46525 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeBWQQl (ORCPT
+        id S1751713AbeBWQRO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:17:14 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38102 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751391AbeBWQRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:16:41 -0500
-X-Google-Smtp-Source: AG47ELu1f76oxIJW8r58CT9kXjX6SiMN4O1bV2HZzGi07sOktZ/PZNft7LqTjrfDPkdwL6OuHvFOxU86eYtPKj2ct7s=
+        Fri, 23 Feb 2018 11:17:12 -0500
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+From: Ludovic BARRE <ludovic.barre@st.com>
+To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+Message-ID: <73fbc744-872a-8a69-8bf4-a46d7f5b6636@st.com>
+Date: Fri, 23 Feb 2018 17:16:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <7ba335af-3fc5-2afd-8c52-03dca5eba9a4@rock-chips.com>
-References: <CGME20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342@epcas2p1.samsung.com>
- <20180223064138.18401-1-jh80.chung@samsung.com> <CAHp75Vd27mFnSJTOta0ZWhfOGz1WA8ETNgU_GpuxEJ9nnhsR-g@mail.gmail.com>
- <7ba335af-3fc5-2afd-8c52-03dca5eba9a4@rock-chips.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Feb 2018 18:16:39 +0200
-Message-ID: <CAHp75VcthggOwOPjQFNX-xMmK44F99oXYOdeBxfO=euT_JvkoQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] mmc: dw_mmc: remove the deprecated
- "clock-freq-min-max" property
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joachim Eastwood <manabian@gmail.com>, dinguyen@kernel.org,
-        Will Deacon <will.deacon@arm.com>, "xuwei (O)" <xuwei5@hisilicon.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 4:19 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> On 2018/2/23 21:27, Andy Shevchenko wrote:
->> On Fri, Feb 23, 2018 at 8:41 AM, Jaehoon Chung <jh80.chung@samsung.com>
->> wrote:
->>>
->>> 'clock-freq-min-max' property had already deprecated.
->>> Remove the 'clock-freq-min-max' property that is kept to maintain
->>> the compatibility.
->>
->>
->> Removing a property without telling the user what to expect is a bad
->> idea and ABI breakage.
->>
->
-> What's the general process to remove a property?
->
-> I guess we should do:
-> 1) deprecate it in the first place and remove it from all upstream DT
-> 2) wait some long enough days for expecting the stale of all old DTB
-> containing that property
-> 3) remove the functionality of the deprecated property from the driver
-> but still leave some warning there
-> 4) remove the left warning finally
 
-I don't know. Perhaps Rob can shed a light here.
-But I would really OK with removal of some of such properties from
-some drivers where it's more burden to keep them.
 
-> And for the ABI breakage, we should add something in Documentation/ABI
-> /obsolete  or Documentation/ABI/removed ?
+On 02/23/2018 04:46 PM, Ludovic BARRE wrote:
+> hi Radoslaw
+> 
+> The gpio-keys tests it's now functional on H7, great.
+> However the gpio-key test only the bank1 (like stm32f429).
+> Like the H7 introduce the multi-bank management,
+> we must perform complementary test.
+> 
+> comment below about ack in handler
+> 
+> On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
+>> - discards setting handle_simple_irq handler for hierarchy interrupts
+>> - removes acking in chained irq handler as this is done by
+>> irq_chip itself inside handle_edge_irq
+>> - removes unneeded irq_domain_ops.xlate callback
+>>
+>> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+>> ---
+>>   drivers/irqchip/irq-stm32-exti.c | 13 -------------
+>>   1 file changed, 13 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-stm32-exti.c 
+>> b/drivers/irqchip/irq-stm32-exti.c
+>> index 36f0fbe..8013a87 100644
+>> --- a/drivers/irqchip/irq-stm32-exti.c
+>> +++ b/drivers/irqchip/irq-stm32-exti.c
+>> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct 
+>> irq_chip_generic *gc)
+>>       return irq_reg_readl(gc, stm32_bank->pr_ofst);
+>>   }
+>> -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
+>> -{
+>> -    const struct stm32_exti_bank *stm32_bank = gc->private;
+>> -
+>> -    irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
+>> -}
+>> -
+>>   static void stm32_irq_handler(struct irq_desc *desc)
+>>   {
+>>       struct irq_domain *domain = irq_desc_get_handler_data(desc);
+>> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
+>>               for_each_set_bit(n, &pending, IRQS_PER_BANK) {
+>>                   virq = irq_find_mapping(domain, irq_base + n);
+>>                   generic_handle_irq(virq);
+>> -                stm32_exti_irq_ack(gc, BIT(n));
+> 
+> the while loop " while ((pending = " has been introduce while original
+> upstream of this driver in V2 to V3
+> https://patchwork.ozlabs.org/patch/604190/
+> https://patchwork.ozlabs.org/patch/665242/
+> 
+> the "ack" is needed to acknowledge the irq which are handled and which 
+> is not the original irq for which we enter.
+> 
+>>               }
+>>           }
+>>       }
+>> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data 
+>> *data, unsigned int on)
+>>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>>                   unsigned int nr_irqs, void *data)
+>>   {
+>> -    struct irq_chip_generic *gc;
+>>       struct irq_fwspec *fwspec = data;
+>>       irq_hw_number_t hwirq;
+>>       hwirq = fwspec->param[0];
+>> -    gc = irq_get_domain_generic_chip(d, hwirq);
+>>       irq_map_generic_chip(d, virq, hwirq);
+>> -    irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+>> -                handle_simple_irq, NULL, NULL);
+> 
+> I see if it is not disturb the multi-bank.
 
--- 
-With Best Regards,
-Andy Shevchenko
+you are right, normally irq_domain_set_info is already set in
+irq_map_generic_chip.
+
+> 
+>>       return 0;
+>>   }
+>> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d, 
+>> unsigned int virq,
+>>   struct irq_domain_ops irq_exti_domain_ops = {
+>>       .map    = irq_map_generic_chip,
+>> -    .xlate    = irq_domain_xlate_onetwocell,
+>>       .alloc  = stm32_exti_alloc,
+>>       .free    = stm32_exti_free,
+>>   };
+>>
+> 
+> BR
+> Ludo
