@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225s7+EGY495q0OI+FR8rEJKz6ycSR71RlGgviWeyd4vfqXT99ctZlhB8QaqkZtt6Q0kBgFH
-ARC-Seal: i=1; a=rsa-sha256; t=1519410811; cv=none;
+X-Google-Smtp-Source: AG47ELsUVmzScAmrf4ZqYuTpnnULlJ3uYNTABeLvyqd32rVPifJEq1CkZsCNab+dn2OOY2Kw4gXz
+ARC-Seal: i=1; a=rsa-sha256; t=1519410807; cv=none;
         d=google.com; s=arc-20160816;
-        b=cs92MTxzyy/zOTVEXejm1YShDf5jJa85QUYGFFn/BPvtYU1Ovk8o6Qv9UiryEwMHDU
-         UZV/MeFI3TwXWrT3aGun2bzKsQ4AAlBS/RM4VhsyTLmhv9PIio34UjbxJF0bttSrLSMZ
-         JzroLf9147T//7FfBlvFawxn8kbNlJt7x6rAPKdukzo5uyomNJFNlE8PcXkzaDaSsYiT
-         17LnCj+G1lpYGsfhGjY9GCy+EET+EjodglRmSUMRY/ifLFsolKgQVp1QxoPUN2ZCTMXG
-         B/Lu6+E3ebrhv6tKmic0sGYbGFiT21XNMvKR9hXp1MvlqxtOz8JN1XeGmU4r3y2SMP3G
-         GUfQ==
+        b=I79HijpR/4vFGlm3eMpi27ZtD+6BT1Tltkaje9JRoDBzho3wL7/UAMjEk+9R2rjEuT
+         qrl9zhN/2sEL8UC+A2q3K3XN0uaOz7/DThbJIFwyi73VBwfs5XeVMPkr+0JZ+D78eATd
+         TBcCZgR1q216FFEW5XQZzYocDaxgMo8AonQzK6/ywFeZOpnrkEU7NiYmhymYpuygSGTI
+         gXPA/zLildODTrcfVozi1puhO3d3vD5dpCOAzFH2HqbEzFnW5/m6bknWP7RY0Vp1xIQE
+         WXTTQ+QRyTtYIwBGjs3sGQSjUtnBsHGFLsxWuzLafarrEhssr6nLc/bfODSolxPAUTEh
+         i5eA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZjT95x1KJz+6VFh6Tx4j5XiX+CsQuzLxP3dmjciqMVA=;
-        b=Kx9GsOhG0jvJ66nRdIGDG1IyWpnV1Ya4T3+QtwK9oRQpWINqz9TjSvMWiVmuImaBjX
-         CkHGZNktGa8llrbGO262E8LPSTVwtUKp2PW7lKIfoT7trd6jS9jng9BMOLl7H4OJyFxA
-         1GGAStrhmmvpHcCjJ+C6WZtDt/IqchmPb9Uxt5O1/p3A5GwbtnwX+gi1x0eeEVOop8An
-         SPJeyUYGR5qQlW4ftTfH3p+/bIb5PaBzk3hSfGIyYJsmCD7C21ITr9Eb20Q9xUrmCXWx
-         5pC0SSlfR/k+tv/x1HiLFeQnD4awVKEw9kCevMDIvts5ioniEwdA74fY9NhicMFeDPLz
-         83ZA==
+        bh=tGrQIT9vxlw2IsGaTS38bfdPVEBw9aC6O9lqiPVVYQw=;
+        b=ammvZMZukwOtnfkV+VM+u+6U4ZE5R9VoGjfoURyxLbBbqQdBd3Kuubs8R8MAlHHnZR
+         UeqY3tlTpBvLuOWednplqhRPA7+3NnGJLmQ4/eK6jOqcuYm/5wifY/Np+e+dbQamivJP
+         FWpeDCVUMxvLldwM4K5mxI2DTXUdtQnqSkXNBzrGi4lo9onHPT7+mnIaF9QmcJeKdbOz
+         F9pZK9sz7vK2OOWqc6cEX+5NUc++5MsvR0mMuTUa5m0s1VAxghmZ2GEUI75EqQ67Nfpj
+         1J90900TpwnbqgQw1nX4+/66WMXMnnt5II2YrpGDXeQYN4TUJXaEz/tdC1fFjQh/0I8W
+         CebQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 021/193] ASoC: ux500: add MODULE_LICENSE tag
-Date: Fri, 23 Feb 2018 19:24:14 +0100
-Message-Id: <20180223170329.389316802@linuxfoundation.org>
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 020/193] net: avoid skb_warn_bad_offload on IS_ERR
+Date: Fri, 23 Feb 2018 19:24:13 +0100
+Message-Id: <20180223170329.250184813@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217561163131306?=
-X-GMAIL-MSGID: =?utf-8?q?1593217711387704017?=
+X-GMAIL-THRID: =?utf-8?q?1593217549729214691?=
+X-GMAIL-MSGID: =?utf-8?q?1593217707593068348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 1783c9d7cb7bc3181b9271665959b87280d98d8e upstream.
+commit 8d74e9f88d65af8bb2e095aff506aa6eac755ada upstream.
 
-This adds MODULE_LICENSE/AUTHOR/DESCRIPTION tags to the ux500
-platform drivers, to avoid these build warnings:
+skb_warn_bad_offload warns when packets enter the GSO stack that
+require skb_checksum_help or vice versa. Do not warn on arbitrary
+bad packets. Packet sockets can craft many. Syzkaller was able to
+demonstrate another one with eth_type games.
 
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-plat-dma.o
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-mach-mop500.o
+In particular, suppress the warning when segmentation returns an
+error, which is for reasons other than checksum offload.
 
-The company no longer exists, so the email addresses of the authors
-don't work any more, but I've added them anyway for consistency.
+See also commit 36c92474498a ("net: WARN if skb_checksum_help() is
+called on skb requiring segmentation") for context on this warning.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/ux500/mop500.c    |    4 ++++
- sound/soc/ux500/ux500_pcm.c |    5 +++++
- 2 files changed, 9 insertions(+)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/ux500/mop500.c
-+++ b/sound/soc/ux500/mop500.c
-@@ -164,3 +164,7 @@ static struct platform_driver snd_soc_mo
- };
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2598,7 +2598,7 @@ struct sk_buff *__skb_gso_segment(struct
  
- module_platform_driver(snd_soc_mop500_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("ASoC MOP500 board driver");
-+MODULE_AUTHOR("Ola Lilja");
---- a/sound/soc/ux500/ux500_pcm.c
-+++ b/sound/soc/ux500/ux500_pcm.c
-@@ -165,3 +165,8 @@ int ux500_pcm_unregister_platform(struct
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(ux500_pcm_unregister_platform);
-+
-+MODULE_AUTHOR("Ola Lilja");
-+MODULE_AUTHOR("Roger Nilsson");
-+MODULE_DESCRIPTION("ASoC UX500 driver");
-+MODULE_LICENSE("GPL v2");
+ 	segs = skb_mac_gso_segment(skb, features);
+ 
+-	if (unlikely(skb_needs_check(skb, tx_path)))
++	if (unlikely(skb_needs_check(skb, tx_path) && !IS_ERR(segs)))
+ 		skb_warn_bad_offload(skb);
+ 
+ 	return segs;
