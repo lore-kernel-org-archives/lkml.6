@@ -1,61 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeBWRMr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:12:47 -0500
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:43135 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751351AbeBWRMp (ORCPT
+        id S1751578AbeBWRPu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:15:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33030 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751351AbeBWRPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:12:45 -0500
-X-Google-Smtp-Source: AG47ELusqlHL8OOtsOJaVRbmT5AUK3j3wm0AMYUo/cHKTl2ZN7FZH+cfTHtPoRbRnqe+fKEd/Kqcr8qI0Q8+dnp+nx8=
+        Fri, 23 Feb 2018 12:15:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 246D6606DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date: Fri, 23 Feb 2018 11:15:43 -0600
+From: Richard Kuo <rkuo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hexagon@vger.kernel.org, Chen Liqin <liqin.linux@gmail.com>,
+        Lennox Wu <lennox.wu@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180223171543.GA3780@codeaurora.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222191758.GB5180@codeaurora.org>
+ <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <04b6c673208b4680b7d6cf41ccdfd3f0@AcuMS.aculab.com>
-References: <20180223153700.2186058-1-arnd@arndb.de> <e8e54cb303074abd82048ffa65f26fc9@AcuMS.aculab.com>
- <CAHp75VfNKVjAmgEor2veC6sDnuLacxK1BVgKbqdZ-mxOX=9CSw@mail.gmail.com> <04b6c673208b4680b7d6cf41ccdfd3f0@AcuMS.aculab.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Feb 2018 19:12:44 +0200
-Message-ID: <CAHp75VcGM=2Tg3Qw-ywC=_Sofgg7Wppf=f=Jhs18n4U1tbTTGA@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
-To: David Laight <David.Laight@aculab.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 7:09 PM, David Laight <David.Laight@aculab.com> wrote:
-> From: Andy Shevchenko
->> Sent: 23 February 2018 16:51
->> On Fri, Feb 23, 2018 at 6:41 PM, David Laight <David.Laight@aculab.com> wrote:
+On Thu, Feb 22, 2018 at 11:43:10PM +0100, Arnd Bergmann wrote:
+> On Thu, Feb 22, 2018 at 8:17 PM, Richard Kuo <rkuo@codeaurora.org> wrote:
+> > On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
+> >> * Hexagon is Qualcomm's DSP architecture. It is being actively used
+> >>   in all Snapdragon ARM SoCs, but the kernel code appears to be
+> >>   the result of a failed research project to make a standalone Hexagon
+> >>   SoC without an ARM core. There is some information about the
+> >>   project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
+> >>   https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
+> >>   There is a port to gcc-4.5 on the project page, which is evidently
+> >>   abandoned, but there is an active upstream LLVM port that is
+> >>   apparently used to build non-Linux programs.
+> >>   I would consider this one a candidate for removal as well, given that
+> >>   there were never any machines outside of Qualcomm that used this,
+> >>   and they are no longer interested themselves.
+> >
+> > It's difficult for me to speak to the decisions as I can understand
+> > your point of view, but maybe I can speak to some of the status.
+> >
+> > We still use the port internally for kicking the tools around and other
+> > research projects.  As you noticed we're not doing gcc anymore; we're
+> > using LLVM for both kernel and userspace.  Yes there have been some
+> > caveats but it does work within confines.
+> >
+> > Time is unfortunately just limited for me to upstream some of my kernel
+> > fixes and cleanups, and there are some things that just haven't shown
+> > up externally yet.
+> >
+> > However, as James Hogan mentioned, having it in the tree really has been
+> > useful because it gets included in the various upstream changes and
+> > fixes, which we appreciate.
+> >
+> > So hopefully this will help inform the decision a little better.
+> >
+> > If you have any other questions please let me know.
+> 
+> Thanks for the clarification! Since you are the maintainer and you
+> still consider the port useful, I don't see how anyone else would be
+> in a position to demand it to be removed, so we should keep it
+> around until you want it gone.
+> 
+> I still have a few questions:
+> 
+> - Any idea how we would find out of the status ever changes? E.g. if
+>   you decide at some point that you don't find the latest Linux useful
+>   any more for your internal work, would you send a patch for removal?
+
+Yes, we can definitely notify everyone if this happens.
+
+ 
+> - How do I build an llvm based toolchain for Hexagon? Do I need patches
+>   on top of the llvm-6 release branch? Where can I find the corresponding
+>   binutils-2.30 sources?
+
+The Hexagon LLVM tools available from Qualcomm should have an ABI switch
+that's supposed to work for this:
+
+-target hexagon-unknown-linux
+
+Admittedly I haven't tried that one.  I'm unsure about the full upstream
+status; I'll check on that, but I think the sketchiest component out of
+that bunch is currently going to be the linker.
+
+Let me do some checking on all this the next couple of days and get
+a better answer.
 
 
->> The side-effect I referred previously is about tails, i.e. unaligned
->> bytes are transferred in portions
->> like
->>   7 on 64-bit will be  4 + 2 + 1,
->>   5 = 4 + 1
->
-> on 64bit memcpy() is allowed to do:
->         (long *)(tgt+len)[-1] = (long *)(src+len)[-1];
->         rep_movsq(tgt, src, len >> 3);
-> provided the length is at least 8.
->
-> The misaligned PCIe transfer generates a single TLP covering 12 bytes with the
-> relevant byte enables set for the first and last 32bit words.
+Thanks,
+Richard Kuo
 
-But is it guaranteed on any type of bus?
-memcpy_toio() is a generic helper, so, first of all we need to be sure
-what CPU on its side does, this is I think is pretty straight forward
-since it's all written in asm for 64-bit case.
-So, what about buses?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
