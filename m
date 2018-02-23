@@ -1,109 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751510AbeBWI40 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:56:26 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40389 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeBWI4Y (ORCPT
+        id S1751413AbeBWJCJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 04:02:09 -0500
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:37603 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbeBWJCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:56:24 -0500
-X-Google-Smtp-Source: AH8x226cPkSUq8dF6jd+0sCLPYt2C/5rEOS+nN++n+QNG4NDGXcMoxttlsjTAb8nAxGTjw6H01KDhw==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
-Message-Id: <34D9B5A3-0A44-4214-9B2B-E0030DC20BA4@lightnvm.io>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] lightnvm: fix memory leak in pblk_luns_init
-Date: Fri, 23 Feb 2018 09:56:18 +0100
-In-Reply-To: <870ebf31-340a-1673-d4b3-e755dd2be493@lightnvm.io>
-Cc: Huaicheng Li <huaicheng@cs.uchicago.edu>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <20180222210147.GA29523@gmail.com>
- <CANr0WEcDSy3YuZ8kaNuB7Z0wFfiV6AwT=bg4W3MNq--2txX2xQ@mail.gmail.com>
- <870ebf31-340a-1673-d4b3-e755dd2be493@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Fri, 23 Feb 2018 04:02:07 -0500
+X-Google-Smtp-Source: AH8x225OSkk5AGyK/+w1suGKnBHgf29k2gjZVP/TMErBkhQBPLXMglD3noxSnjHENzMoWUhacFMGm1HfoWu0piGBS48=
+MIME-Version: 1.0
+In-Reply-To: <42a823e5-ba12-2060-a2bd-44027261e26f@collabora.com>
+References: <20180219224111.21601-1-enric.balletbo@collabora.com>
+ <CAMHSBOVwqgTn5KAgq8Ueqh-QDMU+bfDAzQLSEk5-6pb58L8X9g@mail.gmail.com> <42a823e5-ba12-2060-a2bd-44027261e26f@collabora.com>
+From: Gwendal Grignou <gwendal@google.com>
+Date: Fri, 23 Feb 2018 01:01:45 -0800
+Message-ID: <CAMHSBOXBu7pRmifePJ82cj3MorRXXGqfdDSCrDJ7qwJ8YBarrA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] mfd: cros_ec_dev: Check communication with ec at resume
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Gwendal Grignou <gwendal@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 22, 2018 at 1:41 AM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> Hi Gwendal,
+>
+> On 22/02/18 03:20, Gwendal Grignou wrote:
+>> On Mon, Feb 19, 2018 at 2:41 PM, Enric Balletbo i Serra
+>> <enric.balletbo@collabora.com> wrote:
+>>> From: Gwendal Grignou <gwendal@chromium.org>
+>> This patch is not needed anymore. It was added to
+>>>
+>>> Send dummy command to EC at resume time, wait for status.
+>>> If EC loses that command and return a status for the
+>>> pre-suspend command, we will not interpret that status as an
+>>> answer for an important command.
+>>>
+>>> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> Hold on for this commit. We have only used it in 3.14 kernels. It
+>> looks like the issue has been addressed by a more elegant solution at
+>> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/0225a9de5971b99770344c04e0eba5b35ca68f71
+>
+> Just to make sure.
+>
+> I don't see this patch reverted in current chromeos-4.4, seems that both are
+> applied. The patch is still there [1]. So, to double check, can I remove this
+> patch from this series and add only the one that moves the system sleep pm ops
+> to late?
+You're right, it is still in chromeos-4.4. If it is still really
+needed, we will apply it later.
+Thanks,
 
---Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-> On 23 Feb 2018, at 07.12, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 02/23/2018 12:03 AM, Huaicheng Li wrote:
->> Please ignore my previous email as I found the memory is free'ed at
->> pblk_init()'s error handling logic.
->> Sorry for the interruption.
->> On Thu, Feb 22, 2018 at 3:01 PM, Huaicheng Li =
-<huaicheng@cs.uchicago.edu>
->> wrote:
->>> Signed-off-by: Huaicheng Li <huaicheng@cs.uchicago.edu>
+Gwendal.
+>
+> [1]
+> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4/drivers/platform/chrome/cros_ec_dev.c#782
+>
 >>> ---
->>> drivers/lightnvm/pblk-init.c | 1 +
->>> 1 file changed, 1 insertion(+)
->>>=20
->>> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->>> index 93d671ca518e..330665d91d8d 100644
->>> --- a/drivers/lightnvm/pblk-init.c
->>> +++ b/drivers/lightnvm/pblk-init.c
->>> @@ -510,6 +510,7 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct
->>> ppa_addr *luns)
->>>                 if (ret) {
->>>                         while (--i >=3D 0)
->>>                                 kfree(pblk->luns[i].bb_list);
->>> +                       kfree(pblk->luns);
->>>                         return ret;
->>>                 }
->>>         }
+>>>  drivers/mfd/cros_ec_dev.c | 10 ++++++++++
+>>>  1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+>>> index fc98e0564061..c901839317ae 100644
+>>> --- a/drivers/mfd/cros_ec_dev.c
+>>> +++ b/drivers/mfd/cros_ec_dev.c
+>>> @@ -553,6 +553,16 @@ static __maybe_unused int ec_device_suspend(struct device *dev)
+>>>  static __maybe_unused int ec_device_resume(struct device *dev)
+>>>  {
+>>>         struct cros_ec_dev *ec = dev_get_drvdata(dev);
+>>> +       char msg[sizeof(struct ec_response_get_version) +
+>>> +                sizeof(CROS_EC_DEV_VERSION)];
+>>> +       int ret;
+>>> +
+>>> +       /* Be sure the communication with the EC is reestablished */
+>>> +       ret = ec_get_version(ec, msg, sizeof(msg));
+>>> +       if (ret < 0) {
+>>> +               dev_err(ec->ec_dev->dev, "No EC response at resume: %d\n", ret);
+>>> +               return 0;
+>> Besides, that looks wrong, we should try to resume the lightbar.
+>>> +       }
+>>>
+>>>         lb_resume(ec);
+>>>
 >>> --
->>> 2.13.6
->=20
-> No worries. The initialization part is pretty complex due to all the
-> data structures being set up. I would love to have a clean
-> initialization function, which cleans up after it self. But being able
-> to share the "fail" bringup and tear-down code is very helpful and
-> makes other parts easier.
-
-As part of the 2.0 patches, I took a first try at refactoring the
-init/exit sequences to maintain the same fail paths but minimizing
-dependencies across structures. One of the big parts have been the bad
-block initialization, which now is much cleaner, but still needs more
-work to be as I would like it to. Patches are very welcome :)
-
-Javier
-
---Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqP1zIACgkQYx8FO3WZ
-GMrtRhAAqldPkPdDQ0TLTyQZQgGzmS5tAmfLDw9TkR1pT0F8cPo3uVXBPf1OEApk
-FsBPCAPJee1UAirLkqws7YICh2P8vCvifJ+mxmi5tbruySrc9A/fGMqtuLXp0NCe
-krGkzcIexglI1RlccaKiQvAp4h0ot3yNROGCLGhS1BnldjI/FpDXQ8kHGccKU/Zk
-KoPxGT1mfebHqSudbHh/stnyggM4gre1RDtS4Ghhw4ZA6nZ/kbi1eBrCPGojxVnZ
-/rYvwtBMVaaKuv4ss7dDs7IwXoj09uCy99rOQPUCEZL1/4MK8x26NeV3HOrJqCIG
-e7eJ8zsGkQ3iOPGyHkD7LN8riE+gDdlczX/PSEBZyTnK5uZTTfdn6Msks7cB/5FK
-HOL2GlpvqYRqMkWpZc+gbARNNjLNRnn7Und+5fUFzX5gRuGClOSntGlZPcc96PyZ
-46zm5DPgzMMPmacDTXRmH1qw6wb9/v5jNnej8CP4VDjhHg7IXmqMys0Kn1S2LO2v
-FOXsOS/861U0xroYIKzEp74N+GuMTmrqNZRys2mCrqaVqQMUkyEo/2UjJ3LmJ/PF
-i+l4ZzbaJcX1fHMsiEMmFWFQ8r+uGoqpjMQfPNu5ES7l/cuOwtrxbMu90a3iDFUe
-OBNHQOfXhNaZ+IbK4++m1vnUpAE4tFzPy4qYd+e4lOTwuCGkXNM=
-=1Tjn
------END PGP SIGNATURE-----
-
---Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6--
+>>> 2.16.1
+>>>
+>
+> Thanks,
+>   Enric
