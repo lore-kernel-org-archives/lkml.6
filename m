@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtbZ0vo3uZOkzOyXGrtRdug/emFObSyQLLE2pu179lbbIOGTZEO1ytpeth0bLSOtc9RXfQC
-ARC-Seal: i=1; a=rsa-sha256; t=1519410788; cv=none;
+X-Google-Smtp-Source: AH8x225vsQcgMjsOmSWyh+XIp8RLzHOs6Cfibd6H9DM8E+xGyd/A3XHM/bxWWAADghz7htDFwh1c
+ARC-Seal: i=1; a=rsa-sha256; t=1519410785; cv=none;
         d=google.com; s=arc-20160816;
-        b=RhQr4pTXbBjOSlkI9pVOxO0Zh2Mm1z7aTy6Gcf+a52jL8LVvAFOxxHM3dpBtExJ385
-         2LdCLsO7TfjUqDE491iI1Yrgggu6EB+c/WzOlHDEGmfdq1ZKMw8Shdkj57LFn0r23VTu
-         hFhEVOmnQYn+3aZZnchDo9XznkEnWo9L5jG9D5TQ1BHfAOgGTAtl0lhKuWNl57+UFMlr
-         zAj4sz/DRE6+5Uo4ncT4Y9y5cZ5d8mrr2Q7mlqeAw/Uc8dDyYrk1Kr1pSmu2XxdtnSiK
-         lNeKetf6nsTLB923ATQRpNZ4r5goouz1pbZl+QS6JegjhEg6GvIt4AC3nwbhtqxWuYJx
-         KpIA==
+        b=DwARDOcCVNYJKooNXspVFxwAjR2iHG/efcfkKP95pPK50/MuA1I0vGXwqMuQQgOKzZ
+         pymgWUKGB6bawVUazE9SwI9aOEBDriBxJKMKBw/erAPdSWk5zYAOCSPMHZk9gVqbnH1Q
+         1GeeVE0prgCSXh82lxmIm6sjQ+NTZwqa9+hUltTfQzTT+W6HafXeU1Qt6D3a9bhkwVr8
+         5uMujv8kmbYMtqR+mYdfN2wFwwJXe9GAhx/au0AzmYHYuOAkqFN93R0nSp7SCffbl8M9
+         V59YXupUevtHWS5zBICV53tr6nsC9GZuVA153xDlXcXR/juTPKZ2qspjQi1PfQkmPde2
+         uyhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cvOC+6qnWEQHzpKgIl6r3fHUvFfYmO3tts/IVjVimE0=;
-        b=VMfwkydlxTQrXYmYeoL0h5e4j8sRIdrbCekQVzgP5r/2wRK6TCTdd73DQNd//Xhbr+
-         HFJkGNYS6EnubGvNg82SLM5ciwCE5Dfxxz7nnY8zQ1n/HSMgK5ZOuMJooywQ0c3im6oI
-         +wBhRMmcH4GhTn5cjDW3TzLd0+Ou0d1zgt+Ols3PJFovJA5QwPG35bM+XD1QkexUFZtz
-         yR3Tf+W8xD8ydhl1yTiDgsTOrHoiu8zYwD2V3TMeNXYgs0hQ79dBtWy35eMF8RHtHph6
-         nCeSzUEdKgMnZ1am+NDJmUUD8TbMIVnu1GULiNguRxJZoY0plbVPyeLN6TO3StkB4U5G
-         HzVA==
+        bh=NwbPpezVMUT1lpixcgazOtxbACDQMJcR1Kkc69IpI28=;
+        b=c7dnYl7KvxfK+gS5AZAysoaHgdxcdhE4+szTf+7+tcieUbocfELogKoJ35OVHtL1ng
+         xnxsOMaHDLnkyxcwfcWh1X/bs33o/wTb72nyFd/dJ510tyQDNHKHbQt4L1MFkXcohajG
+         KP1lHs+2X5LfZMxEX7VpDvAB/QRu6w2js2Kv+omw+t7/ywJwo+LRQCglrMj3Y8UYedgn
+         11fXgnaeK18xsbx3x2PEHbAXnTfRCxTgNbkK0/jQpKmLphUDdrmwZUwWHeUjGw4i9Ef9
+         eUY9mNVUpJWMaNStWpW+RduINBbAn71BdjOk9zgMC9AvNvq9eff9NFY6UVRnZEUPR+ix
+         wJdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+4396883fa8c4f64e0175@syzkaller.appspotmail.com,
 	Dmitry Vyukov <dvyukov@google.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 015/193] netfilter: x_tables: fix int overflow in xt_alloc_table_info()
-Date: Fri, 23 Feb 2018 19:24:08 +0100
-Message-Id: <20180223170328.496659583@linuxfoundation.org>
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>
+Subject: [PATCH 4.4 014/193] KVM: x86: fix escape of guest dr6 to the host
+Date: Fri, 23 Feb 2018 19:24:07 +0100
+Message-Id: <20180223170328.366217668@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217534990919232?=
-X-GMAIL-MSGID: =?utf-8?q?1593217686951082362?=
+X-GMAIL-THRID: =?utf-8?q?1593217684161240424?=
+X-GMAIL-MSGID: =?utf-8?q?1593217684161240424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +52,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
-commit 889c604fd0b5f6d3b8694ade229ee44124de1127 upstream.
+commit efdab992813fb2ed825745625b83c05032e9cda2 upstream.
 
-syzkaller triggered OOM kills by passing ipt_replace.size = -1
-to IPT_SO_SET_REPLACE. The root cause is that SMP_ALIGN() in
-xt_alloc_table_info() causes int overflow and the size check passes
-when it should not. SMP_ALIGN() is no longer needed leftover.
+syzkaller reported:
 
-Remove SMP_ALIGN() call in xt_alloc_table_info().
+   WARNING: CPU: 0 PID: 12927 at arch/x86/kernel/traps.c:780 do_debug+0x222/0x250
+   CPU: 0 PID: 12927 Comm: syz-executor Tainted: G           OE    4.15.0-rc2+ #16
+   RIP: 0010:do_debug+0x222/0x250
+   Call Trace:
+    <#DB>
+    debug+0x3e/0x70
+   RIP: 0010:copy_user_enhanced_fast_string+0x10/0x20
+    </#DB>
+    _copy_from_user+0x5b/0x90
+    SyS_timer_create+0x33/0x80
+    entry_SYSCALL_64_fastpath+0x23/0x9a
 
-Reported-by: syzbot+4396883fa8c4f64e0175@syzkaller.appspotmail.com
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The testcase sets a watchpoint (with perf_event_open) on a buffer that is
+passed to timer_create() as the struct sigevent argument.  In timer_create(),
+copy_from_user()'s rep movsb triggers the BP.  The testcase also sets
+the debug registers for the guest.
+
+However, KVM only restores host debug registers when the host has active
+watchpoints, which triggers a race condition when running the testcase with
+multiple threads.  The guest's DR6.BS bit can escape to the host before
+another thread invokes timer_create(), and do_debug() complains.
+
+The fix is to respect do_debug()'s dr6 invariant when leaving KVM.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/kvm/x86.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -38,8 +38,6 @@ MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Harald Welte <laforge@netfilter.org>");
- MODULE_DESCRIPTION("{ip,ip6,arp,eb}_tables backend module");
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2755,6 +2755,12 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *
+ 	kvm_x86_ops->vcpu_put(vcpu);
+ 	kvm_put_guest_fpu(vcpu);
+ 	vcpu->arch.last_host_tsc = rdtsc();
++	/*
++	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
++	 * on every vmexit, but if not, we might have a stale dr6 from the
++	 * guest. do_debug expects dr6 to be cleared after it runs, do the same.
++	 */
++	set_debugreg(0, 6);
+ }
  
--#define SMP_ALIGN(x) (((x) + SMP_CACHE_BYTES-1) & ~(SMP_CACHE_BYTES-1))
--
- struct compat_delta {
- 	unsigned int offset; /* offset in kernel */
- 	int delta; /* delta in 32bit user land */
-@@ -954,7 +952,7 @@ struct xt_table_info *xt_alloc_table_inf
- 		return NULL;
- 
- 	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
--	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
-+	if ((size >> PAGE_SHIFT) + 2 > totalram_pages)
- 		return NULL;
- 
- 	if (sz <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+ static int kvm_vcpu_ioctl_get_lapic(struct kvm_vcpu *vcpu,
