@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuKEjCHj9Hf1J1uzpARwLO+Htw9eoQuJYg3lxZn31Q3GqMITfymPGRv5QXmi2ZhTCh2D4am
-ARC-Seal: i=1; a=rsa-sha256; t=1519412156; cv=none;
+X-Google-Smtp-Source: AG47ELsOzFMIeXZAPWeOfHMHcyxDebh3zDW5UmGgOrksBFW+K7RYEzgTARNADGpO3NggfexQ77qa
+ARC-Seal: i=1; a=rsa-sha256; t=1519412153; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z5k8uOtKbEyMkXObZ//zQS/NaTzFkVXkZsnObCqg+X/YP8IjAtfUvbXJQLxvLKk3R7
-         zokgimp1JjsumdgOAnpGmO6/d5/nisCb7Gexob2Cci+Oat/T/Y3ibodRRfI4CZ+1THK/
-         ozg8uENI65WUrmd9YkVX2v8SF0z4hbvwvweeqS5UIm2juXiAMofPbEnLV+UKAgpL3Y54
-         B/m/AxP3tJNZIVJfQU/W0xosI9xFSayIQxqW/UEbqtAeyAWg7srdVZtUroqINYQWpBV/
-         5Wr+kt+ne9CogLid+tlzOWYtFxq/VsOg7/QDsjZMjuxCPglPz7HcxotHcVVmhl5D5G+m
-         zKTg==
+        b=Hcf+8l3kGESmI77vFV+Ikl5SpI4EyZHG9dILYM+ZIQSevT9EGCgoVZfbTGj7H+JYh+
+         dhAfiAzVAvrUMv8CBezibTCqR049q6DC+3YagmqdFwLenxssrQozlNtI1D7ysrjLcQjj
+         40qr4nmpb06WnpzFur8ZRuumWQfMG43m2xtayRDb2dhrghBS7nKUXvkmvU5axQDYxPVI
+         oC4O8vsOVM5XUNzD/4wba5UTM5+uJZSPWkacds7dn/P3Q8tjdK9k+bjizHAiOaZRc6WZ
+         iq9V4xeoz8fYSuBcirBnEt+zosV4sYhhCSncTGtysXrKWD+baFblAFdpVmA93joTLkmC
+         P1HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aeKtqPtPXqNLaEzXRrKictfO9CDrf0Xq7Mb3WcHufBE=;
-        b=MV3jMxh/iPLtGfu9v2fQqKmFPF9Po9YH20zP0G7w2VIUdse1a50DF8cluWQpu93Msw
-         u41uXfazxdep8U8V8c142y0ptKWtbFdCIkpqAjreb68T/pqTaPESb7fLKyudBaPFWGTm
-         ciK4trhwDr+QkbTGSIP4EIt4xb3B9fssbFH/h0KRbOx9fDqfbajqmypveaVCm5LdykSw
-         1CNmB7f2RuIRQC0yeQgYK+tLPzsjkstUKMHCWoFSO/gYtBDXgtdLveGLxtzHHhjwdQT7
-         hUQDTlrGwY59cPSfowoI69DAk5FDXs60/nABUDR/aPwsb5/WxozZcHhztJIxrsApMbaO
-         9oIQ==
+        bh=+lSSeiGboGBGy7+nvLD7oEGyc/Izjtvgu1ocfOVBKRQ=;
+        b=OsWsFs5hce7T+Rzo2EEfCV/sZ7xIxBjg0xcOt/nALbdyJS9CBa3KIdj07+F7+m54wE
+         s1iSxCgWGdJ8XR6pnMGS1A9Sbb8USalZMQDUNrI7TXrvKAKnpXrlc7uTjJa1PEsyUosY
+         6RNYm/1/9DMx1G1FiZoQi1q3MUk4/kVgrV+n2iZ8mkh/Up1O0HKTaIsOY4GlafdC38LG
+         ihYF2HoZQBMesx4KT8bhXJY8wpmF7BvCuiWo+EUkzblfcMhJnEPE9MF9+OF3jp7E1odB
+         b2zMxxVs2iP4fXWyhiWhokDRF+Zo5JTowx1w7mAS2zLD7Pu7VBWI4xuGt+ZdqbsK96Q4
+         JSBA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Schake <stschake@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
+	Jiada Wang <jiada_wang@mentor.com>,
+	Takashi Sakamoto <takashi.sakamoto@miraclelinux.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 143/159] drm/vc4: Release fence after signalling
-Date: Fri, 23 Feb 2018 19:27:31 +0100
-Message-Id: <20180223170800.313006422@linuxfoundation.org>
+Subject: [PATCH 4.14 142/159] ASoC: rsnd: ssi: fix race condition in rsnd_ssi_pointer_update
+Date: Fri, 23 Feb 2018 19:27:30 +0100
+Message-Id: <20180223170800.182800801@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219120908525240?=
-X-GMAIL-MSGID: =?utf-8?q?1593219120908525240?=
+X-GMAIL-THRID: =?utf-8?q?1593219117972842023?=
+X-GMAIL-MSGID: =?utf-8?q?1593219117972842023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +52,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Schake <stschake@gmail.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
 
-[ Upstream commit babc8110057cb9ca542c3c1666cbda4e8ccf9250 ]
+[ Upstream commit 33f801366bdf3f8b67dfe325b84f4051a090d01e ]
 
-We were never releasing the initial fence reference that is obtained
-through dma_fence_init.
+Currently there is race condition between set of byte_pos and wrap
+it around when new buffer starts. If .pointer is called in-between
+it will result in inconsistent pointer position be returned
+from .pointer callback.
 
-Link: https://github.com/anholt/linux/issues/122
-Fixes: cdec4d361323 ("drm/vc4: Expose dma-buf fences for V3D rendering.")
-Signed-off-by: Stefan Schake <stschake@gmail.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/1512236444-301-1-git-send-email-stschake@gmail.com
+This patch increments buffer pointer atomically to avoid this issue.
+
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Reviewed-by: Takashi Sakamoto <takashi.sakamoto@miraclelinux.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/vc4/vc4_gem.c |    4 +++-
- drivers/gpu/drm/vc4/vc4_irq.c |    1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/sh/rcar/ssi.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/vc4/vc4_gem.c
-+++ b/drivers/gpu/drm/vc4/vc4_gem.c
-@@ -829,8 +829,10 @@ vc4_complete_exec(struct drm_device *dev
- 	/* If we got force-completed because of GPU reset rather than
- 	 * through our IRQ handler, signal the fence now.
- 	 */
--	if (exec->fence)
-+	if (exec->fence) {
- 		dma_fence_signal(exec->fence);
-+		dma_fence_put(exec->fence);
-+	}
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -449,25 +449,29 @@ static bool rsnd_ssi_pointer_update(stru
+ 				    int byte)
+ {
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	bool ret = false;
++	int byte_pos;
  
- 	if (exec->bo) {
- 		for (i = 0; i < exec->bo_count; i++)
---- a/drivers/gpu/drm/vc4/vc4_irq.c
-+++ b/drivers/gpu/drm/vc4/vc4_irq.c
-@@ -139,6 +139,7 @@ vc4_irq_finish_render_job(struct drm_dev
- 	list_move_tail(&exec->head, &vc4->job_done_list);
- 	if (exec->fence) {
- 		dma_fence_signal_locked(exec->fence);
-+		dma_fence_put(exec->fence);
- 		exec->fence = NULL;
+-	ssi->byte_pos += byte;
++	byte_pos = ssi->byte_pos + byte;
+ 
+-	if (ssi->byte_pos >= ssi->next_period_byte) {
++	if (byte_pos >= ssi->next_period_byte) {
+ 		struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+ 
+ 		ssi->period_pos++;
+ 		ssi->next_period_byte += ssi->byte_per_period;
+ 
+ 		if (ssi->period_pos >= runtime->periods) {
+-			ssi->byte_pos = 0;
++			byte_pos = 0;
+ 			ssi->period_pos = 0;
+ 			ssi->next_period_byte = ssi->byte_per_period;
+ 		}
+ 
+-		return true;
++		ret = true;
  	}
- 	vc4_submit_next_render_job(dev);
+ 
+-	return false;
++	WRITE_ONCE(ssi->byte_pos, byte_pos);
++
++	return ret;
+ }
+ 
+ /*
+@@ -838,7 +842,7 @@ static int rsnd_ssi_pointer(struct rsnd_
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+ 
+-	*pointer = bytes_to_frames(runtime, ssi->byte_pos);
++	*pointer = bytes_to_frames(runtime, READ_ONCE(ssi->byte_pos));
+ 
+ 	return 0;
+ }
