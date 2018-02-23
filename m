@@ -1,38 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965278AbeBWTMK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 14:12:10 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:36548 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754439AbeBWS4Y (ORCPT
+        id S1754516AbeBWTRF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 14:17:05 -0500
+Received: from mail-pg0-f42.google.com ([74.125.83.42]:39013 "EHLO
+        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751801AbeBWTRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 13:56:24 -0500
-X-Google-Smtp-Source: AG47ELuojYx1G+IFHfypiBdlz+U4/8Jp7pRu3jrwi30HTna9bluTcpP00/dEdy33jInvPFPV7U11Eg==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-        Markus Mayer <mmayer@broadcom.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>
-Cc: ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Fri, 23 Feb 2018 14:17:01 -0500
+X-Google-Smtp-Source: AH8x227TG/uD7SmUmjt7eCZrCOz7w0aa4hn99/IRf534S9IwKmHPNpvpxleyXbHmhAQkD/h+5U991w==
+To: linux-pci <linux-pci@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] memory: brcmstb: dpfe: properly mask vendor error bits
-Date: Fri, 23 Feb 2018 10:56:09 -0800
-Message-Id: <20180223185609.16641-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <1518554440-21805-2-git-send-email-mmayer@broadcom.com>
-References: <1518554440-21805-1-git-send-email-mmayer@broadcom.com> <1518554440-21805-2-git-send-email-mmayer@broadcom.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, sbodomerle@gmail.com,
+        rjui@broadcom.com
+From: valmiki <valmikibow@gmail.com>
+Subject: Affinity on non MSI-X interrupts
+Message-ID: <714a8d82-c4b0-9661-5b78-ed0d87a0a5fc@gmail.com>
+Date: Sat, 24 Feb 2018 00:47:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Feb 2018 12:40:38 -0800, Markus Mayer <mmayer@broadcom.com> wrote:
-> We were printing the entire 32 bit register rather than just the lower
-> 8 bits. Anything above bit 7 is reserved and may be any random value.
-> 
-> Fixes: 2f330caff577 ("memory: brcmstb: Add driver for DPFE")
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
-> ---
+Hi,
 
-Applied to drivers/fixes, thanks!
---
-Florian
+Does multi MSI interrupts will also be set and routed by affinity ?
+
+In drivers/pci/host/pcie-iproc-msi.c interrupt handler there is do while 
+loop.
+head = iproc_msi_read_reg(msi, IPROC_MSI_EQ_HEAD,
+				  eq) & IPROC_MSI_EQ_MASK;
+	do {
+		tail = iproc_msi_read_reg(msi, IPROC_MSI_EQ_TAIL,
+					  eq) & IPROC_MSI_EQ_MASK;
+
+		.....
+		}
+
+		
+		 */
+	} while (true);
+
+What happens if two multi MSI cards are connected and continuously 
+running traffic ? Will this handler ever come out? wont this stall CPU ?
+Will the interrupts be routed to different CPU's in this case also?
+
+Regards,
+Valmiki
+
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
