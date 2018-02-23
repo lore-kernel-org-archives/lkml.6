@@ -1,42 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeBWKld (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:41:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46579 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751089AbeBWKlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:41:31 -0500
-Date: Fri, 23 Feb 2018 11:41:28 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 8/8] livepatch: Atomic replace and cumulative patches
- documentation
-In-Reply-To: <20180221132914.4809-9-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1802231139030.26550@pobox.suse.cz>
-References: <20180221132914.4809-1-pmladek@suse.com> <20180221132914.4809-9-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751402AbeBWKr3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:47:29 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:32672 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbeBWKr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 05:47:27 -0500
+Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <20180221124707.26308-1-embedded24@evers-fischer.de>
+ <20180221124707.26308-2-embedded24@evers-fischer.de>
+ <20180222181901.GA13694@e107981-ln.cambridge.arm.com>
+ <9cdc8c1c-b448-b00b-d5b8-b664bd96f856@ti.com>
+ <20180223093611.GA25086@e107981-ln.cambridge.arm.com>
+CC: Rolf Evers-Fischer <embedded24@evers-fischer.de>,
+        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a7070bd0-72b7-4870-419e-7ac15c6825ae@ti.com>
+Date: Fri, 23 Feb 2018 16:17:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180223093611.GA25086@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018, Petr Mladek wrote:
 
-> User documentation for the atomic replace feature. It makes it easier
-> to maintain livepatches using so-called cumulative patches.
+
+On Friday 23 February 2018 03:06 PM, Lorenzo Pieralisi wrote:
+> On Fri, Feb 23, 2018 at 11:40:49AM +0530, Kishon Vijay Abraham I wrote:
+>> Hi Lorenzo,
+>>
+>> On Thursday 22 February 2018 11:49 PM, Lorenzo Pieralisi wrote:
+>>> On Wed, Feb 21, 2018 at 01:47:06PM +0100, Rolf Evers-Fischer wrote:
+>>>> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+>>>>
+>>>> This commit decreases the number of jump labels and ensures
+>>>> that the next commit doesn't increase the number of occurrences
+>>>> of 'kfree(func_name)'.
+>>>>
+>>>> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
+>>>> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+>>>> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+>>>> ---
+>>>>  drivers/pci/endpoint/pci-epf-core.c | 7 ++-----
+>>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+>>>> index 766ce1dca2ec..23d0e128d1a5 100644
+>>>> --- a/drivers/pci/endpoint/pci-epf-core.c
+>>>> +++ b/drivers/pci/endpoint/pci-epf-core.c
+>>>> @@ -220,9 +220,10 @@ struct pci_epf *pci_epf_create(const char *name)
+>>>>  	*buf = '\0';
+>>>>  
+>>>>  	epf->name = kstrdup(func_name, GFP_KERNEL);
+>>>> +	kfree(func_name);
+>>>
+>>> I am certainly missing something but what if we reworked the code
+>>> and just:
+>>>
+>>> kstrdup(name, GFP_KERNEL);
+>>>
+>>> once instead of allocating another local copy (that we then have to
+>>> free) ?
+>>
+>> name will be something like pci_epf_test.0 and in epf->name we want to just
+>> have pci_epf_test.
+>>>
+>>> Reworded: why
+>>>
+>>> epf->name = func_name;
+>>
+>> memory should be allocated for epf->name before it can be initialized. IMO
+>> without kstrdup, there will be a null pointer exception.
 > 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> I understand that but the point is that func_name *was* allocated with
+> kstrdup() already I would like to understand why we need to do it twice
+> (and kfree the first allocation).
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+func_name would be allocated for a size greater than what will be in epf->name.
+It won't be significant though.
 
-Joe, are you planning to extend shadow vars documentation you mentioned 
-before (v7), or do you want Petr to do it?
-
-Thanks,
-Miroslav
+Thanks
+Kishon
