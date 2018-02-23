@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416010-2-18397345181953813694
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415997-2-16739286592047687562
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416009; b=MDupuu/pEcQmIEtdXAnvjPF+sk8bX2splXsJBs2iMvtWPpx
-    Mtljw7/46IENdtjDyBK6hCYLOB6aK93o4eOPzMctxzmqr2+6KaJxPJV1wLwij8xL
-    BmoC1o2xWrBiDKM9SehLQxbmuO+EaexH232ElunOnd59prCX319Bp8UXg8ZQ/jBj
-    EVVukyXn2FmzZWUwAwONjO3KzWIN6+u+3wFDrzvL2SXKtaPvmb+MjiL0lnYDYuV5
-    0nk+BrM/RpBfLj4d+NmMBpCuWmsmlvkKKaTufHJ64lr0+cBbA7AxRbFmqQNlCbCq
-    ySdy+PX5pviovk5v05t3smAnmnOjPAIR8R/7nLA==
+    t=1519415996; b=QWJHp4VE9uyUn40BqB9BQQsmqEMnx+vaGDWH5EBEWM2Iwu9
+    dpgzXoYwiI8kl/ksG/Bat5ECWkkmo7Ydix6xh8lsb0xXRATsdBZe+ctj+oG1yhku
+    3gOyfiZXIsjVLX7mvScO1W5CzM8B1kBOP00QN67zpQ0swWtsP/ntq0N/WGz9VdB4
+    HZKv5z7+nUKBc2zR4oRuhTT98xMniqX+BquU1EZMpeS4QF9O5TTRFP0jr9cBuI21
+    jFUS9hytEmvmIPcHyc0r138VMuICLlExvRsGCF1CTR5OFqv/js8mhF/tJUWVuWFJ
+    +zs/Z3KbHKhpg/c9kMlnLdLpadUhFWvhwMqSjKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416009; bh=4nuGZZ3Rw9BAqghrK3cDjXZvyU
-    u1kPumnq3JXjqhf2I=; b=Uggwz8AMm6+SdUpHVet0JYN6QytaZXezyS0zWREeai
-    vnjZjxpHiBC4km+GmgAVDYnimoPWTMb6fFlMD1E/qPZhfomnJdmraqL6+kiqRSj3
-    0bc2LusCYKcsKr2RZnrSLXBr4hoR5Ocyx4bteg0PggnK6pbTOStw7K5P5Lv384sr
-    S2H7EA9lAg0R2Q8jRJM+VADsizYSvCs9MBQGFmanY5IBx24YiXhh7x06PHO8U8EI
-    47MveUqSv2/x3YMNiRDWdqeThpSSqekYH0r8RNaEIi9jx0yp8AOh5Y9W73O6o/4A
-    0zyKkspwQINE5amLs8YjWVuHRauGZtikY+PGFipOoijA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415996; bh=2jMw+xSAHBrlmkhxpnBZfNpFeQ
+    1VEYy2/M24ezRfNkI=; b=Q82/SCOL6L5q7FvG9g3QUzYV5KKNvlx0LxINjW2QR/
+    lfGHV/MEPSn0ARNZgq0fTLBg6RTjKPPzcPiuJibU8J6Dquapo0W7Rp4gcbMBmlXf
+    /tgX6fbCHk1SY/bI3nDKfSjYObx14ifx1HBC6R2vjtUmEN8u4btOMNp4zxQlYRW4
+    6ZnrsNI3sysBHOnBRszItqM4ucQOI565HjnGTJW/yeQRw+7+icKJ5EuHMm3Depr9
+    TMqb5uPYtbe9CWFX/hzC+/sdfwN5zefVXUGiWhqBCaJjfo3JuwsV8GITukV1LnkO
+    K9/a+h4cseBKRrBgfhfjN01+c7x32vN4fNR5spltF5Ug==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754793AbeBWT7z (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:59:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42336 "EHLO
+        id S933053AbeBWSnv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:43:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933386AbeBWSnq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:46 -0500
+        with ESMTP id S932953AbeBWSnt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:49 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 037/145] staging: android: ashmem: Fix a race condition in pin ioctls
-Date: Fri, 23 Feb 2018 19:25:43 +0100
-Message-Id: <20180223170729.749650378@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.9 038/145] binder: check for binder_thread allocation failure in binder_poll()
+Date: Fri, 23 Feb 2018 19:25:44 +0100
+Message-Id: <20180223170729.872536682@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -77,70 +78,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Eric Biggers <ebiggers@google.com>
 
-commit ce8a3a9e76d0193e2e8d74a06d275b3c324ca652 upstream.
+commit f88982679f54f75daa5b8eff3da72508f1e7422f upstream.
 
-ashmem_pin_unpin() reads asma->file and asma->size before taking the
-ashmem_mutex, so it can race with other operations that modify them.
+If the kzalloc() in binder_get_thread() fails, binder_poll()
+dereferences the resulting NULL pointer.
 
-Build-tested only.
+Fix it by returning POLLERR if the memory allocation failed.
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+This bug was found by syzkaller using fault injection.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ashmem.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/android/binder.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -719,30 +719,32 @@ static int ashmem_pin_unpin(struct ashme
- 	size_t pgstart, pgend;
- 	int ret = -EINVAL;
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2628,6 +2628,8 @@ static unsigned int binder_poll(struct f
+ 	binder_lock(__func__);
  
-+	mutex_lock(&ashmem_mutex);
-+
- 	if (unlikely(!asma->file))
--		return -EINVAL;
-+		goto out_unlock;
+ 	thread = binder_get_thread(proc);
++	if (!thread)
++		return POLLERR;
  
--	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
--		return -EFAULT;
-+	if (unlikely(copy_from_user(&pin, p, sizeof(pin)))) {
-+		ret = -EFAULT;
-+		goto out_unlock;
-+	}
- 
- 	/* per custom, you can pass zero for len to mean "everything onward" */
- 	if (!pin.len)
- 		pin.len = PAGE_ALIGN(asma->size) - pin.offset;
- 
- 	if (unlikely((pin.offset | pin.len) & ~PAGE_MASK))
--		return -EINVAL;
-+		goto out_unlock;
- 
- 	if (unlikely(((__u32)-1) - pin.offset < pin.len))
--		return -EINVAL;
-+		goto out_unlock;
- 
- 	if (unlikely(PAGE_ALIGN(asma->size) < pin.offset + pin.len))
--		return -EINVAL;
-+		goto out_unlock;
- 
- 	pgstart = pin.offset / PAGE_SIZE;
- 	pgend = pgstart + (pin.len / PAGE_SIZE) - 1;
- 
--	mutex_lock(&ashmem_mutex);
--
- 	switch (cmd) {
- 	case ASHMEM_PIN:
- 		ret = ashmem_pin(asma, pgstart, pgend);
-@@ -755,6 +757,7 @@ static int ashmem_pin_unpin(struct ashme
- 		break;
- 	}
- 
-+out_unlock:
- 	mutex_unlock(&ashmem_mutex);
- 
- 	return ret;
+ 	wait_for_proc_work = thread->transaction_stack == NULL &&
+ 		list_empty(&thread->todo) && thread->return_error == BR_OK;
