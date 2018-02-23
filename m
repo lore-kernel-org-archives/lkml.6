@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2279TK0k2gpC5RT543apveImn1Oaeglb+IU27kt5mE5M/hYa6k+U9I0jbQgMblvyEUbsbS09
-ARC-Seal: i=1; a=rsa-sha256; t=1519411258; cv=none;
+X-Google-Smtp-Source: AH8x227O69KR9eQYlz+sk1T/qayIi5hZVlqx3c9Kw3pw2b/lkAtZ4vn/Igy0/4ULEHhYDFi7J+GB
+ARC-Seal: i=1; a=rsa-sha256; t=1519411255; cv=none;
         d=google.com; s=arc-20160816;
-        b=OFlV+dDYc0PJpjKtw8D/oTA3IRNTNwlzrp2pbskXWxEI0zrdr08ihkSZdz/twMo6qi
-         6OapOkroZQ4AJFZc7sABx7XSRJsRhlX+rTkZ28NyiaihNkbNT0DlpOxnaCjwCuEVOX2h
-         tsf3elWtcg5kSMcxsqQBwIlwbrBuomSP2Ud6qk4sYoLFEAyIE9tQPGikeJyu84ew/9Kc
-         phAN2D0My/IRdxwUULF7kSt1XXkNTaEtaBdVFs7KtBpbaXkz3DaAt2SIG5ddueo0hwKZ
-         pr2Msxx9MNJoFdKZvv1io66MD2niUZZTDC6iYYyT39dUDl6KYxEIt10BytDcEltvB3hY
-         JEjQ==
+        b=asW+zpGk4g965ZXBpit3LtDowaZffUP+nJGJgbO2P3QJXN697qayTNMutYXOQUxbPw
+         TzMR04M/6vpvRC5u67uux5u8wmha5NYAdJVbGcEFZRby05DIPyBhmQvv+pPZsgCV5MEj
+         it/PPNiAD3B0bd5SmCL0pchjAlmaOp3lDEh/A1m0JlSIp1zGxgInMfSoGWX34dpI5MQc
+         OSza6uf8bHgracrNL6QnZo8xmB5dO9Giiaa13nqFpDgMaWnJ7M/1nBrCvNjZV+SI/wBA
+         S6N67f02uFMUoP3cYBuR61cwDRl3Hvpjk3rGpGFKrRqtRajV3fSSWO6RnsrcfNpku+UX
+         SmHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wKZsoUg8Jks9QaizcZ74pMvc3P6RBClHMAcZxnA2Y0M=;
-        b=XBAFkDmMsTTzwzGADzulI9HhZa1RB2inaTkcozf87587mHuWHWzP2SP4nB0VmcmCMV
-         BnbXCyintbXVfI7jHSKNH7uW407gZkvg0NmB5FX67FU1kPpNVxM4OD3NbkzmpzfuOoKZ
-         hfjE2yOrL8Tkccp1D9kA6fy+gPQf9AdtXAUzN4zq/hvcYZtp+snyUN1NVtCxvrVaFins
-         90fVQOxp0FUMyj3dH+XymZQGGX/eSTEKxxtywDHJr1riaHRhYHQnXFowXYQsd0oMH5ed
-         qi17VIJbHALRivEnQmk/V4jx1e7lVNgElQ9qzQqRj2PJnD+XJKgOnJdp3qQyczisweWv
-         QelQ==
+        bh=THJ/Ylt2miY5hnOh3A644fBb7p/wCwK7zJqBp03xUMQ=;
+        b=PtmdholnEbglYahf9wWrJGc2a7kHMk7fBIalp0esnF9ws3wkabS8NGABoNsAxqdD/b
+         D7oXD3VArj1e6fhORqD4EtvqB0L6Ags2GJTnvQcOx8G6uyK8TMD6JtJYgVWTM+4XMPEe
+         rAAsGUFZgOC4fTn4ZWyo1zK/oG7s/Zl+kEdwCbgGNj75Dp8MXRueWNWV78zlRQo3/FPs
+         HyjQvhTHLZ2rjx4N5Vt4htqSAStMp0oGuabk7np4s02+LqYh6dYbf+oTZ3q+xVvAvrwI
+         sC0LMIC6Y4FD6prxvajdjKB7ubcy5rFkWUVZr5KXYB0J7d8Edorkw6rpUIUFF+lOPVOa
+         kZzA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	Cyril Novikov <cnovikov@lynx.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-arch@vger.kernel.org,
 	kernel-hardening@lists.openwall.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	torvalds@linux-foundation.org,
 	alan@linux.intel.com,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 175/193] x86: Implement array_index_mask_nospec
-Date: Fri, 23 Feb 2018 19:26:48 +0100
-Message-Id: <20180223170353.463068875@linuxfoundation.org>
+Subject: [PATCH 4.4 174/193] array_index_nospec: Sanitize speculative array de-references
+Date: Fri, 23 Feb 2018 19:26:47 +0100
+Message-Id: <20180223170353.313139741@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -46,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218179864531574?=
-X-GMAIL-MSGID: =?utf-8?q?1593218179864531574?=
+X-GMAIL-THRID: =?utf-8?q?1593218176946310853?=
+X-GMAIL-MSGID: =?utf-8?q?1593218176946310853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,63 +62,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-(cherry picked from commit babdde2698d482b6c0de1eab4f697cf5856c5859)
+(cherry picked from commit f3804203306e098dae9ca51540fcd5eb700d7f40)
 
-array_index_nospec() uses a mask to sanitize user controllable array
-indexes, i.e. generate a 0 mask if 'index' >= 'size', and a ~0 mask
-otherwise. While the default array_index_mask_nospec() handles the
-carry-bit from the (index - size) result in software.
+array_index_nospec() is proposed as a generic mechanism to mitigate
+against Spectre-variant-1 attacks, i.e. an attack that bypasses boundary
+checks via speculative execution. The array_index_nospec()
+implementation is expected to be safe for current generation CPUs across
+multiple architectures (ARM, x86).
 
-The x86 array_index_mask_nospec() does the same, but the carry-bit is
-handled in the processor CF flag without conditional instructions in the
-control flow.
+Based on an original implementation by Linus Torvalds, tweaked to remove
+speculative flows by Alexei Starovoitov, and tweaked again by Linus to
+introduce an x86 assembly implementation for the mask generation.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Co-developed-by: Alexei Starovoitov <ast@kernel.org>
+Suggested-by: Cyril Novikov <cnovikov@lynx.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
 Cc: kernel-hardening@lists.openwall.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
 Cc: gregkh@linuxfoundation.org
+Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727414808.33451.1873237130672785331.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-[jwang:chery pick to 4.4]
+[jwang: cherry pick to 4.4]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/barrier.h |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ include/linux/nospec.h |   72 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+ create mode 100644 include/linux/nospec.h
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -24,6 +24,30 @@
- #define wmb()	asm volatile("sfence" ::: "memory")
- #endif
- 
+--- /dev/null
++++ b/include/linux/nospec.h
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright(c) 2018 Linus Torvalds. All rights reserved.
++// Copyright(c) 2018 Alexei Starovoitov. All rights reserved.
++// Copyright(c) 2018 Intel Corporation. All rights reserved.
++
++#ifndef _LINUX_NOSPEC_H
++#define _LINUX_NOSPEC_H
++
 +/**
-+ * array_index_mask_nospec() - generate a mask that is ~0UL when the
-+ * 	bounds check succeeds and 0 otherwise
++ * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
 + * @index: array element index
 + * @size: number of elements in array
 + *
-+ * Returns:
-+ *     0 - (index < size)
++ * When @index is out of bounds (@index >= @size), the sign bit will be
++ * set.  Extend the sign bit to all bits and invert, giving a result of
++ * zero for an out of bounds index, or ~0 if within bounds [0, @size).
 + */
++#ifndef array_index_mask_nospec
 +static inline unsigned long array_index_mask_nospec(unsigned long index,
-+		unsigned long size)
++						    unsigned long size)
 +{
-+	unsigned long mask;
++	/*
++	 * Warn developers about inappropriate array_index_nospec() usage.
++	 *
++	 * Even if the CPU speculates past the WARN_ONCE branch, the
++	 * sign bit of @index is taken into account when generating the
++	 * mask.
++	 *
++	 * This warning is compiled out when the compiler can infer that
++	 * @index and @size are less than LONG_MAX.
++	 */
++	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
++			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
++		return 0;
 +
-+	asm ("cmp %1,%2; sbb %0,%0;"
-+			:"=r" (mask)
-+			:"r"(size),"r" (index)
-+			:"cc");
-+	return mask;
++	/*
++	 * Always calculate and emit the mask even if the compiler
++	 * thinks the mask is not needed. The compiler does not take
++	 * into account the value of @index under speculation.
++	 */
++	OPTIMIZER_HIDE_VAR(index);
++	return ~(long)(index | (size - 1UL - index)) >> (BITS_PER_LONG - 1);
 +}
++#endif
 +
-+/* Override the default implementation from linux/nospec.h. */
-+#define array_index_mask_nospec array_index_mask_nospec
-+
- #ifdef CONFIG_X86_PPRO_FENCE
- #define dma_rmb()	rmb()
- #else
++/*
++ * array_index_nospec - sanitize an array index after a bounds check
++ *
++ * For a code sequence like:
++ *
++ *     if (index < size) {
++ *         index = array_index_nospec(index, size);
++ *         val = array[index];
++ *     }
++ *
++ * ...if the CPU speculates past the bounds check then
++ * array_index_nospec() will clamp the index within the range of [0,
++ * size).
++ */
++#define array_index_nospec(index, size)					\
++({									\
++	typeof(index) _i = (index);					\
++	typeof(size) _s = (size);					\
++	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
++									\
++	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
++	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
++									\
++	_i &= _mask;							\
++	_i;								\
++})
++#endif /* _LINUX_NOSPEC_H */
