@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv+6mGLBskPL5tsa4JyoHvQJa+lv/rmxSvXWQe+kDX1mo7CT9namypXyUpFvqfq9xsqBodK
-ARC-Seal: i=1; a=rsa-sha256; t=1519411206; cv=none;
+X-Google-Smtp-Source: AG47ELtmpVIJHPnl5z/+O4y9cMTIjMOX4uElIjFL26E7xA23acn0E9q3S3QwuStheR7g/bdeS5qa
+ARC-Seal: i=1; a=rsa-sha256; t=1519411202; cv=none;
         d=google.com; s=arc-20160816;
-        b=BHI8ZUzCePH4CMSwWUVi1bnfi9P3djlHv6cWJwS5oTwPr52n/ArPsdOfgDOffW8BVD
-         E4+PL6Inh4x3fnPK4mgzgdp9R0wSGjEnEb/no2xLqT8+5KzmznKof41+wY/RPdeKlpf4
-         ps7n8SLUOs1ANy40gHY0dgtPoRdlgrX2/aVH/n/ASATr1oM8gXp5GlRgYdiIyoMZEcUL
-         JjdfyM94PI9pe9gIQewGDd9KpiqV3QGCRtCfAdDh4ZRCaPiMiEa4MMlHvughmbbQIaJe
-         5IdbYiJE/MWSzQZNugVa4NiN151xc3eNOqmHrdmhxwCGYE64RbRc3sB9M3Zl4cfhei3c
-         AmkA==
+        b=y55kxHA/08X3cRgRa0nM748CrWK93Rm7cZCQaAYWp0JPWZX4UvmXKwNeMkk3/V7DAe
+         uti72nJZERUO2ZbEzg23LfZhMpT1cM7D+f1gpFFmUKaDrJsPRS6o5Ld0UNjSQMto/cJA
+         IyuEtG09B14hj5M0fR8J6GqVx7Z7bsCTw25dswXGKWzWTw/g5HqKJkUUrWSNPCab1baw
+         1HE4mMesZ/BkjaYKBDb7CNr74utYLL6s0kIyLzDJPXCeKbsto/BgLQHKpNogP/hV8Qry
+         88yzGrleOYMXoYB9YM33COCjDhom+v07bGDz+IS5OPJerOf4d1PW0k4Q+4dqyv8zJUFS
+         uwLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TP9fQ2PQLOdxbBjTlHBoF1OGRpw8KN10Leg+2C3+Ox0=;
-        b=qFACgDovlxKD/5ZL+a12F43ts38w2K7WyZthXiXi8Wl7N2Sfg4TiSYOm8GxN05qiOl
-         XEmLu3ftcgijAlIBNjtOLefSQ/aVK047s5Qq9F5sq6LuFcZ5O12noWlUB0EFTIQVn9FH
-         ZySxNiXLkINmnro/OsRYhgg3dhCW1Vl/fHkDmKvrwWrMZffbaUXnvk2O2SrZyWARHo1k
-         FWla9oWqyNRC2T0vz/aiLP6b4uhVbCeedPey6LurpBZQuLbSfQ2OvXKr7RssPmsTIHz1
-         z6oXkRZVzzJ35lqL9ehPqtkDaueLhXiwwtb8VJ1XGnyfvYBKUIF0RBeNNgk/6STa3eZW
-         xrlw==
+        bh=/S/54jP2KIVcMTz5zoRdb38yaY0oWOufh44eeJsf6CY=;
+        b=AizM9rJ7SQhEOchzBDG3q/4vmZx4KexV3l7Ie5iF5rfaHL5MqvTTG/98AlRLW38tBZ
+         y6iWQZ7VxaOcSkIGxo7pOuWERMXNSIWBuBjpx53nMocXIYDwsmJ7fnyeMUjMTs1zKLzs
+         4xO6GgFuAY0In0SEzlgh9R2RHzTcXCAG8G31IdXlJijV3v16Ny9CDiIuIwTN/z0PtuAr
+         nK9KkNaPQfaPFUVQX/MGVRr3EfuINbNBuh8ir3sz2TNTx+l+duXUIRTVAo/Blm0fQ50F
+         RvbSR1wTY2LC2IcvzZCBe13RdJNZcQ0PP8B2V7nYQAeiI957EXKhuOn3uue7HanrLsGu
+         W19Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 120/193] tlan: avoid unused label with PCI=n
-Date: Fri, 23 Feb 2018 19:25:53 +0100
-Message-Id: <20180223170344.676395351@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>,
+	Darren Hart <dvhart@linux.intel.com>
+Subject: [PATCH 4.4 119/193] tc1100-wmi: fix build warning when CONFIG_PM not enabled
+Date: Fri, 23 Feb 2018 19:25:52 +0100
+Message-Id: <20180223170344.476822898@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218125842050582?=
-X-GMAIL-MSGID: =?utf-8?q?1593218125842050582?=
+X-GMAIL-THRID: =?utf-8?q?1593218121602004888?=
+X-GMAIL-MSGID: =?utf-8?q?1593218121602004888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 1e09c106a44c2b2685a77a1ef27951381c9fcd23 upstream.
+commit 75d7e7d7a8f4966cb8b1da54a1c74fb2a97ae8fc upstream.
 
-While build testing with randconfig on x86, I ran into this warning
-that appears to have been around forever
+Conditionally declare suspend_data on CONFIG_PM to avoid
+the following warning when CONFIG_OM is not enabled:
 
-drivers/net/ethernet/ti/tlan.c: In function ‘tlan_probe1’:
-drivers/net/ethernet/ti/tlan.c:614:1: error: label ‘err_out’ defined but not used [-Werror=unused-label]
+drivers/platform/x86/tc1100-wmi.c:55:27: warning:
+  'suspend_data' defined but not used [-Wunused-variable]
 
-This can be trivially avoided by just moving the label into the
-existing #ifdef.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Darren Hart <dvhart@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/ti/tlan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/tc1100-wmi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/ti/tlan.c
-+++ b/drivers/net/ethernet/ti/tlan.c
-@@ -610,8 +610,8 @@ err_out_regions:
- #ifdef CONFIG_PCI
- 	if (pdev)
- 		pci_release_regions(pdev);
--#endif
- err_out:
+--- a/drivers/platform/x86/tc1100-wmi.c
++++ b/drivers/platform/x86/tc1100-wmi.c
+@@ -52,7 +52,9 @@ struct tc1100_data {
+ 	u32 jogdial;
+ };
+ 
++#ifdef CONFIG_PM
+ static struct tc1100_data suspend_data;
 +#endif
- 	if (pdev)
- 		pci_disable_device(pdev);
- 	return rc;
+ 
+ /* --------------------------------------------------------------------------
+ 				Device Management
