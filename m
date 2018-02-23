@@ -1,67 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751472AbeBWGMb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 01:12:31 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44822 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeBWGM3 (ORCPT
+        id S1751423AbeBWGXS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 01:23:18 -0500
+Received: from regular1.263xmail.com ([211.150.99.135]:57087 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751350AbeBWGXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 01:12:29 -0500
-X-Google-Smtp-Source: AG47ELt21CxgaggADEuoBmj7GfsMk4tKgVtIMbOKAJeXu0OtTK/tmTZvJYQIXdd2QVnDzL+2zaFcxA==
-Subject: Re: [PATCH] lightnvm: fix memory leak in pblk_luns_init
-To: Huaicheng Li <huaicheng@cs.uchicago.edu>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180222210147.GA29523@gmail.com>
- <CANr0WEcDSy3YuZ8kaNuB7Z0wFfiV6AwT=bg4W3MNq--2txX2xQ@mail.gmail.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <870ebf31-340a-1673-d4b3-e755dd2be493@lightnvm.io>
-Date: Fri, 23 Feb 2018 07:12:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <CANr0WEcDSy3YuZ8kaNuB7Z0wFfiV6AwT=bg4W3MNq--2txX2xQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Feb 2018 01:23:17 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <ebfaba9c810f32834e8ec58a85fb4c1b>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: seanpaul@chromium.org, dcastagna@google.com, hoegsberg@google.com,
+        heiko@sntech.de, tfiga@chromium.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Sandy Huang <hjc@rock-chips.com>, dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] drm/rockchip: vop: Init vskiplines in scl_vop_cal_scale()
+Date: Fri, 23 Feb 2018 14:22:50 +0800
+Message-Id: <20180223062250.10470-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 12:03 AM, Huaicheng Li wrote:
-> Please ignore my previous email as I found the memory is free'ed at
-> pblk_init()'s error handling logic.
-> Sorry for the interruption.
-> 
-> On Thu, Feb 22, 2018 at 3:01 PM, Huaicheng Li <huaicheng@cs.uchicago.edu>
-> wrote:
-> 
->> Signed-off-by: Huaicheng Li <huaicheng@cs.uchicago.edu>
->> ---
->> drivers/lightnvm/pblk-init.c | 1 +
->> 1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index 93d671ca518e..330665d91d8d 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -510,6 +510,7 @@ static int pblk_luns_init(struct pblk *pblk, struct
->> ppa_addr *luns)
->>                  if (ret) {
->>                          while (--i >= 0)
->>                                  kfree(pblk->luns[i].bb_list);
->> +                       kfree(pblk->luns);
->>                          return ret;
->>                  }
->>          }
->> --
->> 2.13.6
->>
->>
-> 
+Currently we are calling scl_vop_cal_scale() to get vskiplines for yrgb
+and cbcr. So the cbcr's vskiplines might be an unexpected value if the
+second scl_vop_cal_scale() didn't update it.
 
-No worries. The initialization part is pretty complex due to all the 
-data structures being set up. I would love to have a clean 
-initialization function, which cleans up after it self. But being able 
-to share the "fail" bringup and tear-down code is very helpful and makes 
-other parts easier.
+Init vskiplines in scl_vop_cal_scale() to avoid that.
+
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
+
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 7715853ef90a..9b03c51903ab 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -259,6 +259,9 @@ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
+ {
+ 	uint16_t val = 1 << SCL_FT_DEFAULT_FIXPOINT_SHIFT;
+ 
++	if (vskiplines)
++		*vskiplines = 0;
++
+ 	if (is_horizontal) {
+ 		if (mode == SCALE_UP)
+ 			val = GET_SCL_FT_BIC(src, dst);
+@@ -299,7 +302,7 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+ 	uint16_t vsu_mode;
+ 	uint16_t lb_mode;
+ 	uint32_t val;
+-	int vskiplines = 0;
++	int vskiplines;
+ 
+ 	if (dst_w > 3840) {
+ 		DRM_DEV_ERROR(vop->dev, "Maximum dst width (3840) exceeded\n");
+-- 
+2.11.0
