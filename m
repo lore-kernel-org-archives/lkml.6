@@ -1,74 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeBWCWp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 21:22:45 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41282 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeBWCWo (ORCPT
+        id S1751432AbeBWC1v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 21:27:51 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35016 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeBWC1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 21:22:44 -0500
-Date: Fri, 23 Feb 2018 02:22:43 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] fs/dcache: Avoid the try_lock loops in
- dentry_kill()
-Message-ID: <20180223022242.GV30522@ZenIV.linux.org.uk>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
- <20180222235025.28662-5-john.ogness@linutronix.de>
+        Thu, 22 Feb 2018 21:27:49 -0500
+X-Google-Smtp-Source: AG47ELsfN7c8Nl0MG66bB42or3ut2X7qXTR2dG1clYDbnNMYyFYC4BrGcWRZ08d4Lw/Sv209Ob6JJg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222235025.28662-5-john.ogness@linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+From: Gurchetan Singh <gurchetansingh@chromium.org>
+Date: Thu, 22 Feb 2018 18:27:46 -0800
+X-Gmail-Original-Message-ID: <CAAfnVBkFw9o-FOdT6OXq0qbPHmLRcKUfu3K-7mJ-XNq-kdP5Qw@mail.gmail.com>
+Message-ID: <CAAfnVBkFw9o-FOdT6OXq0qbPHmLRcKUfu3K-7mJ-XNq-kdP5Qw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] drm/virtio: Checkpatch cleanup for virtio
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:50:23AM +0100, John Ogness wrote:
->  static struct dentry *dentry_kill(struct dentry *dentry)
->  	__releases(dentry->d_lock)
->  {
-> -	struct inode *inode = dentry->d_inode;
-> -	struct dentry *parent = NULL;
-> +	int saved_count = dentry->d_lockref.count;
+Patches 1 to 7 are:
 
-	Umm...  How can that be not 1?  After all, fast_dput() should
-never return false without ->d_lock being held *and* ->d_count being
-equal to 1.
+Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
 
-> +	/*
-> +	 * d_inode might have changed if d_lock was temporarily
-> +	 * dropped. If it changed it is necessary to start over
-> +	 * because a wrong inode (or no inode) lock is held.
-> +	 */
-
-If it might have changed, we are fucked.
-
-> +out_ref_changed:
-> +	/*
-> +	 * The refcount was incremented while dentry->d_lock was dropped.
-> +	 * Just decrement the refcount, unlock, and tell the caller to
-> +	 * stop the directory walk.
-> +	 */
-> +	if (!WARN_ON(dentry->d_lockref.count < 1))
-> +		dentry->d_lockref.count--;
-> +
->  	spin_unlock(&dentry->d_lock);
-> -	return dentry; /* try again with same dentry */
-> +
-> +	return NULL;
-
-No.  This is completely wrong.  If somebody else has found the sucker
-while we dropped the lock and even got around to playing with refcount,
-they might have done more than that.
-
-In particular, they might have *dropped* their reference, after e.g.
-picking it as our inode's alias and rehashed the fucker.  Making
-our decision not to retain it no longer valid.  And your code will
-not notice that.
+On Thu, Feb 22, 2018 at 3:59 PM, Rodrigo Siqueira
+<rodrigosiqueiramelo@gmail.com> wrote:
+> This patchset fixes warnings and errors found by checkpatch.pl in the
+> drm/virtio:
+>
+> * Removes return from void function;
+> * Adds */ in block comments to separate line;
+> * Adds blank line after variable declarations;
+> * Adds tabs at the start of a line;
+> * Replaces 'unsigned' for 'unsigned int';
+> * Removes multiple blank lines;
+> * Adds spaces around operators.
+>
+> Rodrigo Siqueira (7):
+>   drm/virtio: Add tabs at the start of a line
+>   drm/virtio: Add blank line after variable declarations
+>   drm/virtio: Add */ in block comments to separate line
+>   drm/virtio: Remove return from void function
+>   drm/virtio: Replace 'unsigned' for 'unsigned int'
+>   drm/virtio: Remove multiple blank lines
+>   drm/virtio: Add spaces around operators
+>
+>  drivers/gpu/drm/virtio/virtgpu_display.c |  7 ++++---
+>  drivers/gpu/drm/virtio/virtgpu_drv.c     |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_drv.h     |  8 ++++----
+>  drivers/gpu/drm/virtio/virtgpu_fb.c      |  6 +++++-
+>  drivers/gpu/drm/virtio/virtgpu_gem.c     |  1 +
+>  drivers/gpu/drm/virtio/virtgpu_ioctl.c   | 23 +++++++++++++----------
+>  drivers/gpu/drm/virtio/virtgpu_prime.c   |  4 ++--
+>  drivers/gpu/drm/virtio/virtgpu_ttm.c     |  4 +---
+>  drivers/gpu/drm/virtio/virtgpu_vq.c      | 13 ++++++++-----
+>  9 files changed, 39 insertions(+), 29 deletions(-)
+>
+> --
+> 2.16.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
