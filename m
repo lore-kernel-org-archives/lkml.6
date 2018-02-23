@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414956-2-4918748730060083117
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414942-2-1038934614439298089
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414955; b=Z+X4oBtlLMMMsZfr8XhFfQzuy1BdZCzpD7PM3I3gj4XgqEo
-    Xh5KFXeomSxaqaPuNJjAiN/eFHSZ8X/o798R4qepqZJ5AimPt1mBFtYkkqlWJViw
-    QAQMhHQkHwAgm9FxlXFzctvFcd8lT8k9C8ptQDCA2/pDcY1Zt8m4a5myE7wMCkFs
-    ayGqHYwftooAmcRIHA1z1M910hUrG56ekXJ5mQq7rDzcgdbfWa7VI5rQq1GQiAch
-    DJVHAij6iikzMGkDhcuWp4HZ05npCnBb7loP0pieD/YIVkA9moBXkIjqXxPB4oiE
-    wGaS+t+BMMWvdl8MNY5R/I+JjBwyaggpFMeofmQ==
+    t=1519414941; b=YpNGZnj9JDAEbZZLHwv+30ZlSlZzcVoId0XjJysiqxAtdcF
+    yIOkhgMwLtVzc/AE3eDBftpmEpGY2lIHQu2kqJcCJImyPGpumUy3PYCkxRZyiQ7m
+    XDZagCSQt5oEMhoEoTwzk1TDEhXGD8jaLKSAXVtjtogIUwNT2F/GnDCpj5a6MBUU
+    oUcNwKzVFf0kZXY4uyc3yFhzSMw6cECaArw1fAlc2EJslbc6DDQffaPHRR/iSEaS
+    LR+g8FiQ/US7P+CK791S8WOZQ1Ti1gn5STePcJLKRjUU7tTYh4hTQgOKHVfIbKTU
+    KKJFKxkZQSfp9K8Ps039jzHZm2jgXSPmxYmo7KQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414955; bh=RCRA+djcp+TCUoTNte5suF2wPV
-    hqaYKS6tvoSWgfV5M=; b=pgRD/Q4RUK7OXTYXFWRtHpuFURHW5lkniM0SSJCXLk
-    PQuyrFYYtb2GYW0svd5Oj6Y3COXqSR1HEIpAEMqkTLCWmqsqmNVbYI9iabjeQl5q
-    F6sfEjK2CmC8hQTKQ0OZxSMbL5txsP2C0uT+Y5eHPDBOacfYxft44z8QssL0/smJ
-    uq3FHpImDxeR1fiF2VPX2gSfzc+VOG5WwOQhsYesSeCEFV6P8Ur2DRxTTKxg2lUi
-    7pC/dT8AkAyy0RQ5yWoFd+NTZMBfc76tIxM9ddKosgsgWFCxsOWYOYv8FFXtzT7k
-    ghRb0OhEkwTE9mOENalmdwiSjiwRuSZPIxAQLDAbKzsQ==
+    :list-id; s=arctest; t=1519414941; bh=imXk5ExmtYS0u4px6oEj9mv40O
+    yxX0LemIn0pN96qFo=; b=QCOTti//n64oBKZtFe2/AjAgol2c++Cb2eFiXiK4ZP
+    qxLcBAml8AMbSnxKLbZKAe1St/hmFtuvPyiXnUv29wFsGfXT3fu2vKSOgW597o21
+    YBW9U1PGEUio9KpvNyv6Poc06t8wBlOhpUuRZiikLDIFQvsgWUMaplZDnORt75j4
+    iW1fM3A/Hh0UVcKNVw69yc9IRG+8TuMmyRPa52VUzGihzWXvu68BEeOZC/cGoKfp
+    b0m1yz9KD98T8YuDhqChF1mU3W3Y7QalBoefBOTLuIa+T0LFBZshgMpacbNZqvVE
+    xC2Cdht/eieUHow0zhs2gRkSxl6yfzoSbgdZ4ddnR5lA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,19 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932816AbeBWTmT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:42:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44960 "EHLO
+        id S934414AbeBWSse (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:48:34 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934411AbeBWSse (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:34 -0500
+        with ESMTP id S934405AbeBWSsb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 139/145] arm64: fix warning about swapper_pg_dir overflow
-Date: Fri, 23 Feb 2018 19:27:25 +0100
-Message-Id: <20180223170742.674594702@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 138/145] idle: i7300: add PCI dependency
+Date: Fri, 23 Feb 2018 19:27:24 +0100
+Message-Id: <20180223170742.562665464@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -82,39 +79,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 12f043ff2b28fa64c9123b454cbe30a8a9e1967e upstream.
+GCC correctly points out an uninitialized variable use when CONFIG_PCI is disabled.
 
-With 4 levels of 16KB pages, we get this warning about the fact that we are
-copying a whole page into an array that is declared as having only two pointers
-for the top level of the page table:
+drivers/idle/i7300_idle.c: In function 'i7300_idle_notifier':
+include/asm-generic/bug.h:119:5: error: 'got_ctl' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (unlikely(__ret_warn_once && !__warned)) {  \
+     ^
+drivers/idle/i7300_idle.c:415:5: note: 'got_ctl' was declared here
+  u8 got_ctl;
+     ^~~~~~~
 
-arch/arm64/mm/mmu.c: In function 'paging_init':
-arch/arm64/mm/mmu.c:528:2: error: 'memcpy' writing 16384 bytes into a region of size 16 overflows the destination [-Werror=stringop-overflow=]
+The driver no longer exists in later kernels, so this patch only appplies to
+linux-4.9.y and earlier.
 
-This is harmless since we actually reserve a whole page in the definition of the
-array that comes from, and just the extern declaration is short. The pgdir
-is initialized to zero either way, so copying the actual entries here seems
-like the best solution.
-
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-[slightly adapted to apply on 4.9]
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/mm/mmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/idle/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -479,7 +479,7 @@ void __init paging_init(void)
- 	 * To do this we need to go via a temporary pgd.
- 	 */
- 	cpu_replace_ttbr1(__va(pgd_phys));
--	memcpy(swapper_pg_dir, pgd, PAGE_SIZE);
-+	memcpy(swapper_pg_dir, pgd, PGD_SIZE);
- 	cpu_replace_ttbr1(swapper_pg_dir);
+--- a/drivers/idle/Kconfig
++++ b/drivers/idle/Kconfig
+@@ -17,6 +17,7 @@ config I7300_IDLE_IOAT_CHANNEL
  
- 	pgd_clear_fixmap();
+ config I7300_IDLE
+ 	tristate "Intel chipset idle memory power saving driver"
++	depends on PCI
+ 	select I7300_IDLE_IOAT_CHANNEL
+ 	help
+ 	  Enable memory power savings when idle with certain Intel server
