@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu+Cfm2qHDEk04v0jhoNdH7Rv2OYON53dNLdy7ogQJgvBzirgfFb1V0T20+F7OdQ6J13J3K
-ARC-Seal: i=1; a=rsa-sha256; t=1519411199; cv=none;
+X-Google-Smtp-Source: AH8x224L6Xf70yk7rVto9JQyDfmQkXnqtMQBRmNuZNTXC/99QJOcwNOLNmPY3NDS6fa270OOd1Ku
+ARC-Seal: i=1; a=rsa-sha256; t=1519411197; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q8zAdD6DAYwQN160ajkZiiPotF1Dh6YWQwhkG6K7ZjffgPkTlX/MJUajgnHH4dRjnU
-         kOFCLI1TNj6AkDX0/99w8TxQJVh8cx0TA+UhArOIbrrXHox0n6w3ppaDZDmWjQU6oJ6f
-         HynsRRGiCCZF3p74u30LW906aDVbmbG43KRWo8xbtXfPhv6fMMa9SwAvpWcJv0tlmppy
-         sQJ2KhzWpG8zWRMR0Wxn0OLMnWNBFjbplF9W8ulsGeCmgMrgXr6YmYPGPXNcqX90reCv
-         zyMeJOG9duDmPRD4CsQeaY+FJyHgVhgFEUxPwvD17m3lZKHpssAvYh37YkkLQw9EYf6X
-         zXtw==
+        b=RAdOY7gF/HmpzRUUWaqymBCIRvp4F0VypujefEMUjAmm3Wpk4QCUtJnjATDdkEa7Mz
+         aqxMJBfLeAnmfBJ+OWMqyMjrSKbLePdrAOn9urOVhLFUiSnGxBICIzSGwvPypC0OeYrQ
+         FT1nK4YmAa3yZGqvuKUi9hfJO6c8iPtpVUCM1MRkBcRgSufVKot0Y37G86qq1fWztuoa
+         8n6E2/hy22JC7f8/i3ToDHL/DVvXiyxozvj4gCrc2IyN13R8q1EsSD8Ab4xZQDixn6rF
+         evkK5+FWuGmfCHeGKPrlAxX+3Y2hFKaepFjnbL0cPiI+9Mzzh9G3HWEQC31rXgc/JwXV
+         KIRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=d3MEDZwMUmYnv/E96DFeC3d/3+QNtWdalrf1QzSusgQ=;
-        b=FIO56QledfkJifM1soV8L55eL2zAU7HqccBNB7IXq8Ektfw3PY2kN6+pCrY1UslVVw
-         MrSiQ9RKxXPZw9BQjq8J6ZBzHvw4aPFjLJmqTjRo+8MKlcF3RGxPfQzF8UHvJgqIrhbl
-         dFlJLqgEzN8PHhe0KdDeYkJGhR+6AELRcrtoufmdz6bmH5VyGMgiGasqO/H4cMJW9L4P
-         35NkFFE0KisYUVdLhglHyTQ7bYhPvfpmuy2PsdqwDB7z7lJPCAFewzIl2NNyfO5wCGt0
-         W9CmtcXHT6AVwY118A6wMP6/mgk3WpC/lJW3fxbDoGo8YPUm+fRa3iQmvK0HhBnDqMkV
-         OWcw==
+        bh=F2+rUK4/RQcO288w6M+h8Nm7PA4QApaQEwx3N7bk7pI=;
+        b=eLRVsX1iNhbYY03ia8ms4hMEgmHfwrx74DPxfMKhauQvd3WWrQEuRfljVfa/22CqVk
+         HjmMQuDg4rPFFoSwke+DK2mtZ3kU7S+oB4iISihmmfRP3zFs3/DHELLCAV4aDlnLyrQ0
+         tgWMD1cSFzWXwi1mpAgoQJekh4axSeXzSXNjzjMG07vjwEPCcEEiDfSbV5jPsAFWsUe1
+         ynk17zGpnRyLVsXdBtT0Pm0YVVc2WvlnufLbIrfQk6E161sGNFndsCH/ZSnb1vN0B6zL
+         2EZKtC2uwbJc/NtiyNAnx+B4OuIasvUGGGu3PfkQdgT2L7MDczJfS0kPd9DO8aOyYHgT
+         Fd4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 118/193] ipv4: ipconfig: avoid unused ic_proto_used symbol
-Date: Fri, 23 Feb 2018 19:25:51 +0100
-Message-Id: <20180223170344.332616740@linuxfoundation.org>
+	Julian Anastasov <ja@ssi.bg>,
+	Simon Horman <horms@verge.net.au>
+Subject: [PATCH 4.4 117/193] netfilter: ipvs: avoid unused variable warnings
+Date: Fri, 23 Feb 2018 19:25:50 +0100
+Message-Id: <20180223170344.173025093@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218118384471296?=
-X-GMAIL-MSGID: =?utf-8?q?1593218118384471296?=
+X-GMAIL-THRID: =?utf-8?q?1593218115301335867?=
+X-GMAIL-MSGID: =?utf-8?q?1593218115301335867?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +52,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 52b79e2bdf92b07b37c805c50811eaf69a33683d upstream.
+commit f6ca9f46f6615c3a87529550058d1b468c0cad89 upstream.
 
-When CONFIG_PROC_FS, CONFIG_IP_PNP_BOOTP, CONFIG_IP_PNP_DHCP and
-CONFIG_IP_PNP_RARP are all disabled, we get a warning about the
-ic_proto_used variable being unused:
+The proc_create() and remove_proc_entry() functions do not reference
+their arguments when CONFIG_PROC_FS is disabled, so we get a couple
+of warnings about unused variables in IPVS:
 
-net/ipv4/ipconfig.c:146:12: error: 'ic_proto_used' defined but not used [-Werror=unused-variable]
+ipvs/ip_vs_app.c:608:14: warning: unused variable 'net' [-Wunused-variable]
+ipvs/ip_vs_ctl.c:3950:14: warning: unused variable 'net' [-Wunused-variable]
+ipvs/ip_vs_ctl.c:3994:14: warning: unused variable 'net' [-Wunused-variable]
 
-This avoids the warning, by making the definition conditional on
-whether a dynamic IP configuration protocol is configured. If not,
-we know that the value is always zero, so we can optimize away the
-variable and all code that depends on it.
+This removes the local variables and instead looks them up separately
+for each use, which obviously avoids the warning.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 4c50a8ce2b63 ("netfilter: ipvs: avoid unused variable warning")
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/ipconfig.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/netfilter/ipvs/ip_vs_app.c |    8 ++------
+ net/netfilter/ipvs/ip_vs_ctl.c |   15 ++++++---------
+ 2 files changed, 8 insertions(+), 15 deletions(-)
 
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -152,7 +152,11 @@ static char dhcp_client_identifier[253]
+--- a/net/netfilter/ipvs/ip_vs_app.c
++++ b/net/netfilter/ipvs/ip_vs_app.c
+@@ -605,17 +605,13 @@ static const struct file_operations ip_v
  
- /* Persistent data: */
+ int __net_init ip_vs_app_net_init(struct netns_ipvs *ipvs)
+ {
+-	struct net *net = ipvs->net;
+-
+ 	INIT_LIST_HEAD(&ipvs->app_list);
+-	proc_create("ip_vs_app", 0, net->proc_net, &ip_vs_app_fops);
++	proc_create("ip_vs_app", 0, ipvs->net->proc_net, &ip_vs_app_fops);
+ 	return 0;
+ }
  
-+#ifdef IPCONFIG_DYNAMIC
- static int ic_proto_used;			/* Protocol used, if any */
-+#else
-+#define ic_proto_used 0
-+#endif
- static __be32 ic_nameservers[CONF_NAMESERVERS_MAX]; /* DNS Server IP addresses */
- static u8 ic_domain[64];		/* DNS (not NIS) domain name */
+ void __net_exit ip_vs_app_net_cleanup(struct netns_ipvs *ipvs)
+ {
+-	struct net *net = ipvs->net;
+-
+ 	unregister_ip_vs_app(ipvs, NULL /* all */);
+-	remove_proc_entry("ip_vs_app", net->proc_net);
++	remove_proc_entry("ip_vs_app", ipvs->net->proc_net);
+ }
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -3951,7 +3951,6 @@ static struct notifier_block ip_vs_dst_n
+ 
+ int __net_init ip_vs_control_net_init(struct netns_ipvs *ipvs)
+ {
+-	struct net *net = ipvs->net;
+ 	int i, idx;
+ 
+ 	/* Initialize rs_table */
+@@ -3978,9 +3977,9 @@ int __net_init ip_vs_control_net_init(st
+ 
+ 	spin_lock_init(&ipvs->tot_stats.lock);
+ 
+-	proc_create("ip_vs", 0, net->proc_net, &ip_vs_info_fops);
+-	proc_create("ip_vs_stats", 0, net->proc_net, &ip_vs_stats_fops);
+-	proc_create("ip_vs_stats_percpu", 0, net->proc_net,
++	proc_create("ip_vs", 0, ipvs->net->proc_net, &ip_vs_info_fops);
++	proc_create("ip_vs_stats", 0, ipvs->net->proc_net, &ip_vs_stats_fops);
++	proc_create("ip_vs_stats_percpu", 0, ipvs->net->proc_net,
+ 		    &ip_vs_stats_percpu_fops);
+ 
+ 	if (ip_vs_control_net_init_sysctl(ipvs))
+@@ -3995,13 +3994,11 @@ err:
+ 
+ void __net_exit ip_vs_control_net_cleanup(struct netns_ipvs *ipvs)
+ {
+-	struct net *net = ipvs->net;
+-
+ 	ip_vs_trash_cleanup(ipvs);
+ 	ip_vs_control_net_cleanup_sysctl(ipvs);
+-	remove_proc_entry("ip_vs_stats_percpu", net->proc_net);
+-	remove_proc_entry("ip_vs_stats", net->proc_net);
+-	remove_proc_entry("ip_vs", net->proc_net);
++	remove_proc_entry("ip_vs_stats_percpu", ipvs->net->proc_net);
++	remove_proc_entry("ip_vs_stats", ipvs->net->proc_net);
++	remove_proc_entry("ip_vs", ipvs->net->proc_net);
+ 	free_percpu(ipvs->tot_stats.cpustats);
+ }
  
