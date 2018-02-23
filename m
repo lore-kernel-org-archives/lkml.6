@@ -1,66 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeBWEcy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 23:32:54 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38946 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751404AbeBWEcw (ORCPT
+        id S1751468AbeBWEpJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 23:45:09 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45204 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBWEpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 23:32:52 -0500
-X-Google-Smtp-Source: AH8x225Op51+X330qhxlk1VUAzvz2O7igw1UKN+ccQslrFu67P6Gy9/veCoyNL/7g/dcGxXHfO+ljQ==
-Date: Fri, 23 Feb 2018 10:02:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, daniel.thompson@linaro.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH V2 1/7] thermal/drivers/cpu_cooling: Fixup the header and
- copyright
-Message-ID: <20180223043250.GD26947@vireshk-i7>
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <1519226968-19821-2-git-send-email-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519226968-19821-2-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 22 Feb 2018 23:45:06 -0500
+X-Google-Smtp-Source: AH8x227Y4M4M6WRCRZS5aoQl3ExWFinDxu7D9fMzpzNVM9i9mXhRdJBLOAbU0X5tQzQ/tt+fVgFREQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
+        andy.shevchenko@gmail.com
+Subject: [PATCH v4 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Fri, 23 Feb 2018 12:44:38 +0800
+Message-Id: <c2db9b3b5c611cadfbe5ea97327be7ee5981fa54.1519360872.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-02-18, 16:29, Daniel Lezcano wrote:
-> The copyright format does not conform to the format requested by
-> Linaro: https://wiki.linaro.org/Copyright
-> 
-> Fix it.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/cpu_cooling.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index dc63aba..42110ee 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -2,9 +2,11 @@
->   *  linux/drivers/thermal/cpu_cooling.c
->   *
->   *  Copyright (C) 2012	Samsung Electronics Co., Ltd(http://www.samsung.com)
-> - *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
->   *
-> - *  Copyright (C) 2014  Viresh Kumar <viresh.kumar@linaro.org>
-> + *  Copyright (C) 2012-2018 Linaro Limited.
-> + *
-> + *  Authors:	Amit Daniel <amit.kachhap@linaro.org>
-> + *		Viresh Kumar <viresh.kumar@linaro.org>
->   *
->   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   *  This program is free software; you can redistribute it and/or modify
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes since v3:
+ - Add acked tag from Rob.
 
+Changes since v2:
+ - No updates.
+
+Changes since v1:
+ - No updates.
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
++
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
++
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
-viresh
+1.7.9.5
