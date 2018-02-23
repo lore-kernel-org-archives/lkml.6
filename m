@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsAJS5odZwKZz3efx7CPTBNljO+VAsZY0i/W00wer1WMfiUYNb9Gi6y3ZWI4yMRyLBIdJXC
-ARC-Seal: i=1; a=rsa-sha256; t=1519410814; cv=none;
+X-Google-Smtp-Source: AH8x225s7+EGY495q0OI+FR8rEJKz6ycSR71RlGgviWeyd4vfqXT99ctZlhB8QaqkZtt6Q0kBgFH
+ARC-Seal: i=1; a=rsa-sha256; t=1519410811; cv=none;
         d=google.com; s=arc-20160816;
-        b=pd6KvWZbCB4BlbFRctjZjhgJO24jgaXAD2hSVM8RSEZvI9NpP879wXEzfVz5bnCc22
-         i2Zs0+ZtwBdMYJ+1r0CB9glKuZDxlsAm/qVxkyjzoNeYEaKKbeUPYzicKaqG3UMj1L2e
-         f2heoNbMTi4W6lfWVz2AKSVZAaU3yQMM4RB8bS5t37Eaf/tesurNlJFj7O7joY1hDpFv
-         gjVrmuynHBiKbDTpMDZn+WoDhDgQy/YRmOYm3UasyXkLijkNWOacHg38NsjoL9h1P1Na
-         7Bk8iRg3Kj05jcreKhIQGdTc+81guDv09JhiZHLJoj3Hclqwrx4azHdHD9ZcU9lEdYNf
-         DkJw==
+        b=cs92MTxzyy/zOTVEXejm1YShDf5jJa85QUYGFFn/BPvtYU1Ovk8o6Qv9UiryEwMHDU
+         UZV/MeFI3TwXWrT3aGun2bzKsQ4AAlBS/RM4VhsyTLmhv9PIio34UjbxJF0bttSrLSMZ
+         JzroLf9147T//7FfBlvFawxn8kbNlJt7x6rAPKdukzo5uyomNJFNlE8PcXkzaDaSsYiT
+         17LnCj+G1lpYGsfhGjY9GCy+EET+EjodglRmSUMRY/ifLFsolKgQVp1QxoPUN2ZCTMXG
+         B/Lu6+E3ebrhv6tKmic0sGYbGFiT21XNMvKR9hXp1MvlqxtOz8JN1XeGmU4r3y2SMP3G
+         GUfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=b3BLo0BXGzSGZ8JdyEAHPiCVKbUIQGxRwFWxCZldZN0=;
-        b=DJ5X4IvzYDEis5s0xkspHtrYJfXJ7llP4ISKq5G6YmFM35q2yKmsxD+ckQnZwKvkmv
-         XF58KHtpjJfV7U2JtT7fOjHIdgl92eNYjVZeqK/eYxJz4Eu8NJrMp7QoDZXIH8fsyYrT
-         vIOjFCrqYSQU9Ozs+y9lizXGyLJGLph6bbPpoU/e9EzPrxYzgmM5nXI8u3GHsUx33HrR
-         idQ3yJXMtOy2x80W9AiB1aNqzsTcqjGGTRaNH8+mTKf1SllfxVY1RiqUBQB+ov8nko25
-         v5Vzn/5PFGZahmxacD3lxWnBtfmEiW3JrEO6GE4pDh2t3aDrR9Ruh6ir7pwxiMJ6LEJ5
-         MUEA==
+        bh=ZjT95x1KJz+6VFh6Tx4j5XiX+CsQuzLxP3dmjciqMVA=;
+        b=Kx9GsOhG0jvJ66nRdIGDG1IyWpnV1Ya4T3+QtwK9oRQpWINqz9TjSvMWiVmuImaBjX
+         CkHGZNktGa8llrbGO262E8LPSTVwtUKp2PW7lKIfoT7trd6jS9jng9BMOLl7H4OJyFxA
+         1GGAStrhmmvpHcCjJ+C6WZtDt/IqchmPb9Uxt5O1/p3A5GwbtnwX+gi1x0eeEVOop8An
+         SPJeyUYGR5qQlW4ftTfH3p+/bIb5PaBzk3hSfGIyYJsmCD7C21ITr9Eb20Q9xUrmCXWx
+         5pC0SSlfR/k+tv/x1HiLFeQnD4awVKEw9kCevMDIvts5ioniEwdA74fY9NhicMFeDPLz
+         83ZA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.4 022/193] video: fbdev/mmp: add MODULE_LICENSE
-Date: Fri, 23 Feb 2018 19:24:15 +0100
-Message-Id: <20180223170329.553594881@linuxfoundation.org>
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 021/193] ASoC: ux500: add MODULE_LICENSE tag
+Date: Fri, 23 Feb 2018 19:24:14 +0100
+Message-Id: <20180223170329.389316802@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217569293058738?=
-X-GMAIL-MSGID: =?utf-8?q?1593217713748098491?=
+X-GMAIL-THRID: =?utf-8?q?1593217561163131306?=
+X-GMAIL-MSGID: =?utf-8?q?1593217711387704017?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit c1530ac5a3ce93a1f02adabc4508b5fbf862dfe2 upstream.
+commit 1783c9d7cb7bc3181b9271665959b87280d98d8e upstream.
 
-Kbuild complains about the lack of a license tag in this driver:
+This adds MODULE_LICENSE/AUTHOR/DESCRIPTION tags to the ux500
+platform drivers, to avoid these build warnings:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/mmp/mmp_disp.o
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-plat-dma.o
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/ux500/snd-soc-ux500-mach-mop500.o
 
-This adds the license, author and description tags.
+The company no longer exists, so the email addresses of the authors
+don't work any more, but I've added them anyway for consistency.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/mmp/core.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/ux500/mop500.c    |    4 ++++
+ sound/soc/ux500/ux500_pcm.c |    5 +++++
+ 2 files changed, 9 insertions(+)
 
---- a/drivers/video/fbdev/mmp/core.c
-+++ b/drivers/video/fbdev/mmp/core.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/dma-mapping.h>
- #include <linux/export.h>
-+#include <linux/module.h>
- #include <video/mmp_disp.h>
+--- a/sound/soc/ux500/mop500.c
++++ b/sound/soc/ux500/mop500.c
+@@ -164,3 +164,7 @@ static struct platform_driver snd_soc_mo
+ };
  
- static struct mmp_overlay *path_get_overlay(struct mmp_path *path,
-@@ -249,3 +250,7 @@ void mmp_unregister_path(struct mmp_path
- 	mutex_unlock(&disp_lock);
- }
- EXPORT_SYMBOL_GPL(mmp_unregister_path);
+ module_platform_driver(snd_soc_mop500_driver);
 +
-+MODULE_AUTHOR("Zhou Zhu <zzhu3@marvell.com>");
-+MODULE_DESCRIPTION("Marvell MMP display framework");
-+MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("ASoC MOP500 board driver");
++MODULE_AUTHOR("Ola Lilja");
+--- a/sound/soc/ux500/ux500_pcm.c
++++ b/sound/soc/ux500/ux500_pcm.c
+@@ -165,3 +165,8 @@ int ux500_pcm_unregister_platform(struct
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(ux500_pcm_unregister_platform);
++
++MODULE_AUTHOR("Ola Lilja");
++MODULE_AUTHOR("Roger Nilsson");
++MODULE_DESCRIPTION("ASoC UX500 driver");
++MODULE_LICENSE("GPL v2");
