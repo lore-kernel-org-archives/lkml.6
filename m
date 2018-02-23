@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414746-2-12217629666890461522
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414730-2-5132349427969292177
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414745; b=BIE8RdsAkLIGlZYFmY9/FaEdkvArQNSxoFeitMsaXcE50Rx
-    WAdhbIhJPk22cJtJbwLS1LEd4FAOR4TvyZRVTXEYZCUh+TdH391LFwAlhyYYJ+RH
-    HXlUQGr9T0R+RBcaiEvvjzV2865h/MPSHtcxffaUJZ/RFomhHpeBpRf9767u+3rT
-    pVrL/rTlGpiIePyqmg8TYCZkMYRecKAUOJ48dlHTJIKKvvaoD0ft7IG/ImRwm7h5
-    jlijUSs/fqPScgXu9Cv4KExb2jRzeIuK1sVgZsS3DO4xAssM52sFnL6sCmeMj8WV
-    muxRiGvrtHYlfBYYmXRFmlpBAsoGgt7w+2Hb/lA==
+    t=1519414730; b=uhtHIykD15TH2QhXxzTPNRyKjGWZgNhyuTcUUmuTfBKBSDo
+    JaAp8Z+F2nCErE7VTBfwElUBQJrCrK7VDOcHVgCgC45Cq6C+1BlOVgZd7OQangt9
+    pENi4wN1HRjiWXCqiLLkg3uGuHDwhAob6HXRYCeDS1jg7HuS0w3Vifp3gk2rOvE0
+    wcpUzpKMN2xCxruXx6wFh6qTvg3LP73BTFkicxd2L25hLv9URZByMZN4padKrgUe
+    UcsSJ30QDkjKb/yu+WgzkQKMgdlLNsYTUBVapIKbb6rYXCsq//ZMj1Dc+5sRz037
+    WZNJn64RqHgMTFYonvAF/7xKXms8dAwtm+CgAwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414745; bh=/Gw3Y4LVZxB3WvNbw3IxiMdzt7
-    hh1qBZFFcI0FLxoX0=; b=BZheWFyrzxfbC47Gi8FZMrkeOC5mPXpM0p30QIOCc6
-    sJQ8eb1Iqciua/d4j4tlrEyB8qKdn9wYqvM3p0xfOl3mLzX0tEhZciOifU+H4DcG
-    rE5gLAVmc2tXj1E34PTda1sqdtKf0GG+V0w6j5uWY6FBf+/0YN+sPOFPj5nmOsSQ
-    3hB7toeRP4deXcOyncPITWhpy552eijlD+ZB3QdLqQPTmXzudXl0titW0EdApQS2
-    t9cwzjBFiWWFGD6KzAwDNFEqmG8mwCM8XGJx8zZhC6ETrn7Xibt+3t0aA+p7lr5G
-    eymzBj1UMVP2iZ6+1bpYT04l+PN42yGHJleT1xjkJ/Dg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414730; bh=VuR6tsAyx+jq211cOfpDOM8aGr
+    TaNn6Sw1tFqiUyDFQ=; b=mGxxzJ7Ypix8nXcBCuyTUQkTapTY2Df5y1dShG6jrj
+    Dmx79DV1LfFL9RaSPjdhyFW8S2QXCIhG7oOV+rdTihFs5LkDD0FGNSjWZPV7fSme
+    3+3L0oMyCx52qcQbpxTeb+0ctK2Z/B2VHIhtD1yCJEY6qsjf1HJ/V28PGjJel7Yi
+    GV2S23/9HB1DxK9leq8KhqkrF2DQZbScahjdMoSeF6G7HG8XyQ1IY8BeVOrcoH2t
+    jSnx6JGw40qjeMh8mgxZPALBcKGxjVhLZz8g5IfjecxVvbJmvHtJ+hADTQchlMry
+    izIRLdQHWD6v4kT/nZDCI0z/SQ4cqyRPPzIvIzn9i1Xw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,23 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754555AbeBWTit (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:38:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45470 "EHLO
+        id S934322AbeBWSt5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:49:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45450 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934323AbeBWSt5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:49:57 -0500
+        with ESMTP id S934602AbeBWStw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:49:52 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 021/159] ALSA: line6: Add a sanity check for invalid EPs
-Date: Fri, 23 Feb 2018 19:25:29 +0100
-Message-Id: <20180223170745.762995404@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+dbb7c1161485e61b0241@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 002/159] vhost: use mutex_lock_nested() in vhost_dev_lock_vqs()
+Date: Fri, 23 Feb 2018 19:25:10 +0100
+Message-Id: <20180223170743.355506815@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -78,54 +81,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 2a4340c57717162c6bf07a0860d05711d4de994b upstream.
+commit e9cb4239134c860e5f92c75bf5321bd377bb505b upstream.
 
-As syzkaller spotted, currently line6 drivers submit a URB with the
-fixed EP without checking whether it's actually available, which may
-result in a kernel warning like:
-  usb 1-1: BOGUS urb xfer, pipe 3 != type 1
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 24 at drivers/usb/core/urb.c:449
-  usb_submit_urb+0xf8a/0x11d0
-  Modules linked in:
-  CPU: 0 PID: 24 Comm: kworker/0:1 Not tainted 4.14.0-rc2-42613-g1488251d1a98 #238
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-  Workqueue: usb_hub_wq hub_event
-  Call Trace:
-   line6_start_listen+0x55f/0x9e0 sound/usb/line6/driver.c:82
-   line6_init_cap_control sound/usb/line6/driver.c:690
-   line6_probe+0x7c9/0x1310 sound/usb/line6/driver.c:764
-   podhd_probe+0x64/0x70 sound/usb/line6/podhd.c:474
-   usb_probe_interface+0x35d/0x8e0 drivers/usb/core/driver.c:361
-   ....
+We used to call mutex_lock() in vhost_dev_lock_vqs() which tries to
+hold mutexes of all virtqueues. This may confuse lockdep to report a
+possible deadlock because of trying to hold locks belong to same
+class. Switch to use mutex_lock_nested() to avoid false positive.
 
-This patch adds a sanity check of validity of EPs at the device
-initialization phase for avoiding the call with an invalid EP.
-
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Tested-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+Reported-by: syzbot+dbb7c1161485e61b0241@syzkaller.appspotmail.com
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/driver.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/vhost/vhost.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/line6/driver.c
-+++ b/sound/usb/line6/driver.c
-@@ -78,6 +78,13 @@ static int line6_start_listen(struct usb
- 			line6->buffer_listen, LINE6_BUFSIZE_LISTEN,
- 			line6_data_received, line6);
- 	}
-+
-+	/* sanity checks of EP before actually submitting */
-+	if (usb_urb_ep_type_check(line6->urb_listen)) {
-+		dev_err(line6->ifcdev, "invalid control EP\n");
-+		return -EINVAL;
-+	}
-+
- 	line6->urb_listen->actual_length = 0;
- 	err = usb_submit_urb(line6->urb_listen, GFP_ATOMIC);
- 	return err;
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -904,7 +904,7 @@ static void vhost_dev_lock_vqs(struct vh
+ {
+ 	int i = 0;
+ 	for (i = 0; i < d->nvqs; ++i)
+-		mutex_lock(&d->vqs[i]->mutex);
++		mutex_lock_nested(&d->vqs[i]->mutex, i);
+ }
+ 
+ static void vhost_dev_unlock_vqs(struct vhost_dev *d)
