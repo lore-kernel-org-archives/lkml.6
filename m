@@ -1,314 +1,318 @@
-Return-Path: <tcminyard@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519658245; cv=none;
+Return-Path: <aishpant@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519381206; cv=none;
         d=google.com; s=arc-20160816;
-        b=e7j9AJVaifyAgQEq6yWjGotMU8la2xjYkoh5i2qtkhf+BR4Vel0aTR19dM29aUkmNk
-         /pJYw0l23jhSaqDBmwSeBkZ4PsVDaBm9AUsU6/fX7gqLLelVVolnMf7ssuK207sHS4JL
-         qDyIDBUTKo5EecAcYrlQbW5jSl4bZoWjclUGsqeMeaswZ8OqxdDmO9ObKN9yfNWa6vcM
-         P99r2xdN6LDRrZITFPwnKkIwE3NUvonmOBuzsiDTLfEdc0nw66fwPEBK8twzuOvD3rRd
-         rEGIzo1NkINFXaRFmOjhhi3BwG/4qi2wk3KdpRZ7UYOQXQ27S+P149ftsnm+7xfNnQCW
-         cffw==
+        b=DbGWuH+FtddLw0PL9x19Z+QLmLOH8rrHRsZZVwHZVoIFm8pK9s8lc1FS2XkvyXCXPd
+         GRZhjijytnLcy8f0XUF5MmH5di18NsX047Gu40qWvt9Y9kf1RAGgs4DUakIZ0E8QjUEK
+         9PBfXjjqAMXpL820ro/OD53y5KtLVXhnEDQaC9lS+pg5so2IpvtjmKrSw191g6WaEXyt
+         n3ynI4bOLDyvyQXKPGh3o4enBMdJCqNnGvxeyL3asNtUAYhc0qGiAvZZNbvxWRp+9Yz9
+         ONUkS4ZQOITrfAbTnzTS47MaGiw6354FvlH2vTvUMs1vWkxe4kYSFqDKxqKNHi4oEAkG
+         vZig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:reply-to
-         :sender:dkim-signature:arc-authentication-results;
-        bh=wnGyO6AZTjLMJ3BoN46jD7dalcFsom6F0bs9fTcI9aQ=;
-        b=IO3dvpovLuFU+vYHrwY47E7u9NZj77Ws6jqNYHYEiaMwCM1z6p/lHpeZjbVAyD+FoC
-         n9tViWVJgHzMgoneiQesGm/8EYqjkitkOgwCljMxRH7DRX4CAIEUJoxlWxBc6lv4Z4qJ
-         MNmygBahEXc2pANpvSDycni1h68lhvkVaGUx3ajFxs34pTZu0SJSwtrIpJ4ojev9Yn1S
-         Zxbf1nf77V3nNOwzkqHtc2tAnqDUW+WOMGI5Im9Kc6HQrr4p03rxwHddBdLPh8MN8guj
-         jjKjRefFwNPs9ChEN79PneIdS7+YATR7IGosn4454EKreZ8gOQToR5DTOvKajJoqFaPW
-         uqmg==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=4QaphbK5ICcs4rTzJBavOllbSvNPLUcvOMn64W/nhc0=;
+        b=IJLPuyffxQLfJATEpMc9XCb2rT2Kw0AThTVAS7jjD5R258ZvgL9T+IGE2Re5YX9Noq
+         F1VSFrku6+yuJlxKBcoB17lsVPRNmtu/93U8E4MzSpp/Pjm7NX7zE+y/ZzEiyoO/6RWS
+         PSFXfu4Y3Fo9+IEamnkgTAPbOEmS3s5W/aVne2XVDt29Yx6Nx79oadMjSxXJsJ1/5DFQ
+         OhEZiJnaODSABUB+fFPnlEvDGYIRoEZdHs5jjW3ZpaLXzSPY/HROzR75mh37H1HxAj7n
+         k4hAkGfAm0GUcJ84ex1+VA+PpCioUrxRkWHzriGyVdh8m8OUdRlnqj0bXb8iT6XY+lSi
+         Fdkg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Sq4vYbPC;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vRMGZQIH;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Sq4vYbPC;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
-X-Google-Smtp-Source: AH8x226YNytP1qNj5HNnkU4h3M955Qei7n3XxCa4Q+o8vGFhyXS+1rIdhR+ZMaZSTddrP1Zb6LJDkQ==
-Sender: Corey Minyard <tcminyard@gmail.com>
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH] char/ipmi: add documentation for sysfs interface
-To: Aishwarya Pant <aishpant@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vRMGZQIH;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuGPIaR54bX+EoFrZ8mPQ7ZAMTxgkGNBxEBe+CWOfL8kajvsnnLjrtMudqqCkUGi27lXRzPXw==
+Date: Fri, 23 Feb 2018 15:49:59 +0530
+From: Aishwarya Pant <aishpant@gmail.com>
+To: Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+	Alex Elder <elder@kernel.org>, ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Greg KH <gregkh@linuxfoundation.org>
 Cc: Julia Lawall <julia.lawall@lip6.fr>
-References: <20180224090645.GA15344@mordor.localdomain>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <5df2a0a6-d99e-58c1-eb06-cac063b4024c@acm.org>
-Date: Mon, 26 Feb 2018 09:17:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: [PATCH v2] block: rbd: update sysfs interface
+Message-ID: <20180223101959.GA4441@mordor.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180224090645.GA15344@mordor.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593272656676320677?=
-X-GMAIL-MSGID: =?utf-8?q?1593477164710084351?=
+X-GMAIL-THRID: =?utf-8?q?1593186668051125162?=
+X-GMAIL-MSGID: =?utf-8?q?1593186668051125162?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/24/2018 03:06 AM, Aishwarya Pant wrote:
-> This is an attempt to document the sysfs interface for the IPMI drivers.
-> Descriptions were collected from v2.0 of the IPMI specification and from
-> code comments.
->
-> Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+The existing sysfs interface has been updated to be in the same format
+as described in Documentation/ABI/README. This will be useful for
+scripting and tracking changes in the ABI. Attributes have been grouped
+by functionality and/or the date on which they were added.
 
-Wow, you spent some time on this.  It all looks accurate, it's in my tree.
+There are a couple of more changes:
+- The attributes have been annotated with file permissions RO/RW/WO.
+- Added description of the bus attribute supported_features
 
-Thanks,
+Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+---
+Changes in v2:
+- Update dates and kernel version. Sorry, my scripts have been acting up :/
+- Update contact information. Would it be more appropriate to use the mailing
+  list ceph-devel@vger.kernel.org in the contact section?
+- (WO) -> (RO) in image_id
+- Fix typo pool_idr -> pool_id
 
--corey
+ Documentation/ABI/testing/sysfs-bus-rbd | 203 +++++++++++++++++++-------------
+ 1 file changed, 122 insertions(+), 81 deletions(-)
 
-> ---
->   .../ABI/testing/sysfs-devices-platform-ipmi        | 238 +++++++++++++++++++++
->   1 file changed, 238 insertions(+)
->   create mode 100644 Documentation/ABI/testing/sysfs-devices-platform-ipmi
->
-> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-ipmi b/Documentation/ABI/testing/sysfs-devices-platform-ipmi
-> new file mode 100644
-> index 000000000000..2a781e7513b7
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-devices-platform-ipmi
-> @@ -0,0 +1,238 @@
-> +What:		/sys/devices/platform/ipmi_bmc.*/firmware_revision
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) The major and minor revision of the firmware.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/aux_firmware_revision
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Holds additional information about the firmware revision,
-> +		such as boot block or internal data structure version numbers.
-> +		The meanings of the numbers are specific to the vendor
-> +		identified by Manufacturer ID.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/revision
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Device revision. Useful for identifying if significant
-> +		hardware changes have been made to the implementation of the
-> +		management controller.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/provides_device_sdrs
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Indicates whether device provides device sensor data
-> +		records (1) or not (0).
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/device_id
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Device id is specified by the manufacturer identified by
-> +		the Manufacturer ID field. This field allows controller specific
-> +		software to identify the unique application command, OEM
-> +		fields, and functionality that are provided by the controller
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/additional_device_support
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Lists the IPMI ‘logical device’ commands and functions
-> +		that the controller supports that are in addition to the
-> +		mandatory IPM and Application commands.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/ipmi_version
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Displays the IPMI Command Specification Version.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/manufacturer_id
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Identifies the manufacturer responsible for the
-> +		specification of functionality of the vendor (OEM)-specific
-> +		commands, codes, and interfaces used in the controller.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/product_id
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Displays a number that identifies a particular system,
-> +		module, add-in card, or board set. The number is specified
-> +		according to the manufacturer given by Manufacturer ID.
-> +
-> +For detailed definitions of the above attributes, refer to section 20.1 'Get
-> +Device ID Command' of the IPMI specification v2.0.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_bmc.*/guid
-> +Date:		Mar, 2006
-> +KernelVersion:	v2.6.17
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) A GUID (Globally Unique ID), also referred to as a UUID
-> +		(Universally Unique Identifier), for the management controller,
-> +		as described in section 20.8 'Get Device GUID Command' of the
-> +		IPMI specification v2.0.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_si.*/type
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) The device interface for IPMI "kcs", "smic", "bt" or
-> +		"invalid"
-> +
-> +What:		/sys/devices/platform/ipmi_si.*/idles
-> +What:		/sys/devices/platform/ipmi_si.*/watchdog_pretimeouts
-> +What:		/sys/devices/platform/ipmi_si.*/complete_transactions
-> +What:		/sys/devices/platform/ipmi_si.*/events
-> +What:		/sys/devices/platform/ipmi_si.*/interrupts
-> +What:		/sys/devices/platform/ipmi_si.*/hosed_count
-> +What:		/sys/devices/platform/ipmi_si.*/long_timeouts
-> +What:		/sys/devices/platform/ipmi_si.*/flag_fetches
-> +What:		/sys/devices/platform/ipmi_si.*/attentions
-> +What:		/sys/devices/platform/ipmi_si.*/incoming_messages
-> +What:		/sys/devices/platform/ipmi_si.*/short_timeouts
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +
-> +		idles:			(RO) Number of times the interface was
-> +					idle while being polled.
-> +
-> +		watchdog_pretimeouts:	(RO) Number of watchdog pretimeouts.
-> +
-> +		complete_transactions:	(RO) Number of completed messages.
-> +
-> +		events:			(RO) Number of IPMI events received from
-> +					the hardware.
-> +
-> +		interrupts:		(RO) Number of interrupts the driver
-> +					handled.
-> +
-> +		hosed_count:		(RO) Number of times the hardware didn't
-> +					follow the state machine.
-> +
-> +		long_timeouts:		(RO) Number of times the driver
-> +					requested a timer while nothing was in
-> +					progress.
-> +
-> +		flag_fetches:		(RO) Number of times the driver
-> +					requested flags from the hardware.
-> +
-> +		attentions:		(RO) Number of time the driver got an
-> +					ATTN from the hardware.
-> +
-> +		incoming_messages:	(RO) Number of asynchronous messages
-> +					received.
-> +
-> +		short_timeouts:		(RO) Number of times the driver
-> +					requested a timer while an operation was
-> +					in progress.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_si.*/interrupts_enabled
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Indicates whether interrupts are enabled or not. The driver
-> +		disables interrupts when it gets into a situation where it
-> +		cannot handle messages due to lack of memory. Once that
-> +		situation clears up, it will re-enable interrupts.
-> +
-> +
-> +What:		/sys/devices/platform/ipmi_si.*/params
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		[to be documented]
-> +
-> +
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/type
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		(RO) Shows the IMPI device interface type - "ssif" here.
-> +
-> +
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/hosed
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/alerts
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/sent_messages
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/sent_messages_parts
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/received_messages
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/received_message_parts
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/events
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/watchdog_pretimeouts
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/flag_fetches
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/send_retries
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/receive_retries
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/send_errors
-> +What:		/sys/devices/platform/dmi-ipmi-ssif.*/receive_errors
-> +Date:		Sep, 2017
-> +KernelVersion:	v4.15
-> +Contact:	openipmi-developer@lists.sourceforge.net
-> +Description:
-> +		hosed:			(RO) Number of times the hardware didn't
-> +					follow the state machine.
-> +
-> +		alerts:			(RO) Number of alerts received.
-> +
-> +		sent_messages:		(RO) Number of total messages sent.
-> +
-> +		sent_message_parts:	(RO) Number of message parts sent.
-> +					Messages may be broken into parts if
-> +					they are long.
-> +
-> +		receieved_messages:	(RO) Number of message responses
-> +					received.
-> +
-> +		received_message_parts: (RO) Number of message fragments
-> +					received.
-> +
-> +		events:			(RO) Number of received events.
-> +
-> +		watchdog_pretimeouts:	(RO) Number of watchdog pretimeouts.
-> +
-> +		flag_fetches:		(RO) Number of times a flag fetch was
-> +					requested.
-> +
-> +		send_retries:		(RO) Number of time a message was
-> +					retried.
-> +
-> +		receive_retries:	(RO) Number of times the receive of a
-> +					message was retried.
-> +
-> +		send_errors:		(RO) Number of times the send of a
-> +					message failed.
-> +
-> +		receive_errors:		(RO) Number of errors in receiving
-> +					messages.
+diff --git a/Documentation/ABI/testing/sysfs-bus-rbd b/Documentation/ABI/testing/sysfs-bus-rbd
+index f208ac58d613..cc30bee8b5f4 100644
+--- a/Documentation/ABI/testing/sysfs-bus-rbd
++++ b/Documentation/ABI/testing/sysfs-bus-rbd
+@@ -1,121 +1,162 @@
+-What:		/sys/bus/rbd/
+-Date:		November 2010
+-Contact:	Yehuda Sadeh <yehuda@newdream.net>,
+-		Sage Weil <sage@newdream.net>
++What:		/sys/bus/rbd/add
++Date:		Oct, 2010
++KernelVersion:	v2.6.37
++Contact:	Sage Weil <sage@newdream.net>
+ Description:
++		(WO) Add rbd block device.
+ 
+-Being used for adding and removing rbd block devices.
++		Usage: <mon ip addr> <options> <pool name> <rbd image name> [<snap name>]
+ 
+-Usage: <mon ip addr> <options> <pool name> <rbd image name> [<snap name>]
++		 $ echo "192.168.0.1 name=admin rbd foo" > /sys/bus/rbd/add
+ 
+- $ echo "192.168.0.1 name=admin rbd foo" > /sys/bus/rbd/add
++		The snapshot name can be "-" or omitted to map the image
++		read/write. A <dev-id> will be assigned for any registered block
++		device. If snapshot is used, it will be mapped read-only.
+ 
+-The snapshot name can be "-" or omitted to map the image read/write. A <dev-id>
+-will be assigned for any registered block device. If snapshot is used, it will
+-be mapped read-only.
+ 
+-Usage: <dev-id> [force]
++What:		/sys/bus/rbd/remove
++Date:		Oct, 2010
++KernelVersion:	v2.6.37
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(WO) Remove rbd block device.
++
++		Usage: <dev-id> [force]
+ 
+- $ echo 2 > /sys/bus/rbd/remove
++		 $ echo 2 > /sys/bus/rbd/remove
++
++		Optional "force" argument which when passed will wait for
++		running requests and then unmap the image. Requests sent to the
++		driver after initiating the removal will be failed. (August
++		2016, since 4.9.)
+ 
+-Optional "force" argument which when passed will wait for running requests and
+-then unmap the image. Requests sent to the driver after initiating the removal
+-will be failed.  (August 2016, since 4.9.)
+ 
+ What:		/sys/bus/rbd/add_single_major
+-Date:		December 2013
+-KernelVersion:	3.14
+-Contact:	Sage Weil <sage@inktank.com>
+-Description:	Available only if rbd module is inserted with single_major
++Date:		Dec, 2013
++KernelVersion:	v3.14
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(WO) Available only if rbd module is inserted with single_major
+ 		parameter set to true.
+-		Usage is the same as for /sys/bus/rbd/add.  If present,
++
++		Usage is the same as for /sys/bus/rbd/add. If present, this
+ 		should be used instead of the latter: any attempts to use
+-		/sys/bus/rbd/add if /sys/bus/rbd/add_single_major is
+-		available will fail for backwards compatibility reasons.
++		/sys/bus/rbd/add if /sys/bus/rbd/add_single_major is available
++		will fail for backwards compatibility reasons.
++
+ 
+ What:		/sys/bus/rbd/remove_single_major
+-Date:		December 2013
+-KernelVersion:	3.14
+-Contact:	Sage Weil <sage@inktank.com>
+-Description:	Available only if rbd module is inserted with single_major
++Date:		Dec, 2013
++KernelVersion:	v3.14
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(WO) Available only if rbd module is inserted with single_major
+ 		parameter set to true.
+-		Usage is the same as for /sys/bus/rbd/remove.  If present,
++
++		Usage is the same as for /sys/bus/rbd/remove. If present, this
+ 		should be used instead of the latter: any attempts to use
+ 		/sys/bus/rbd/remove if /sys/bus/rbd/remove_single_major is
+ 		available will fail for backwards compatibility reasons.
+ 
+-Entries under /sys/bus/rbd/devices/<dev-id>/
+---------------------------------------------
+-
+-client_addr
+-
+-	The ceph unique client entity_addr_t (address + nonce).
+-	The format is <address>:<port>/<nonce>: '1.2.3.4:1234/5678' or
+-	'[1:2:3:4:5:6:7:8]:1234/5678'.  (August 2016, since 4.9.)
+-
+-client_id
+-
+-	The ceph unique client id that was assigned for this specific session.
+-
+-cluster_fsid
+ 
+-	The ceph cluster UUID.  (August 2016, since 4.9.)
+-
+-config_info
+-
+-	The string written into /sys/bus/rbd/add{,_single_major}.  (August
+-	2016, since 4.9.)
+-
+-features
+-
+-	A hexadecimal encoding of the feature bits for this image.
+-
+-major
+-
+-	The block device major number.
++What:		/sys/bus/rbd/supported_features
++Date:		Mar, 2017
++KernelVersion:	v4.11
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(RO) Displays the features supported by the rbd module so that
++		userspace can generate meaningful error messages and spell out
++		unsupported features that need to be disabled.
++
++
++What:		/sys/bus/rbd/devices/<dev-id>/size
++What:		/sys/bus/rbd/devices/<dev-id>/major
++What:		/sys/bus/rbd/devices/<dev-id>/client_id
++What:		/sys/bus/rbd/devices/<dev-id>/pool
++What:		/sys/bus/rbd/devices/<dev-id>/name
++What:		/sys/bus/rbd/devices/<dev-id>/refresh
++What:		/sys/bus/rbd/devices/<dev-id>/current_snap
++Date:		Oct, 2010
++KernelVersion:	v2.6.37
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		size:		(RO) The size (in bytes) of the mapped block
++				device.
+ 
+-minor
++		major:		(RO) The block device major number.
+ 
+-	The block device minor number.  (December 2013, since 3.14.)
++		client_id:	(RO) The ceph unique client id that was assigned
++				for this specific session.
+ 
+-name
++		pool:		(RO) The name of the storage pool where this rbd
++				image resides. An rbd image name is unique
++				within its pool.
+ 
+-	The name of the rbd image.
++		name:		(RO) The name of the rbd image.
+ 
+-image_id
++		refresh:	(WO) Writing to this file will reread the image
++				header data and set all relevant data structures
++				accordingly.
+ 
+-	The unique id for the rbd image.  (For rbd image format 1
+-	this is empty.)
++		current_snap:	(RO) The current snapshot for which the device
++				is mapped.
+ 
+-pool
+ 
+-	The name of the storage pool where this rbd image resides.
+-	An rbd image name is unique within its pool.
++What:		/sys/bus/rbd/devices/<dev-id>/pool_id
++Date:		Jul, 2012
++KernelVersion:	v3.6
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(RO) The unique identifier for the rbd image's pool. This is a
++		permanent attribute of the pool. A pool's id will never change.
+ 
+-pool_id
+ 
+-	The unique identifier for the rbd image's pool.  This is
+-	a permanent attribute of the pool.  A pool's id will never
+-	change.
++What:		/sys/bus/rbd/devices/<dev-id>/image_id
++What:		/sys/bus/rbd/devices/<dev-id>/features
++Date:		Oct, 2012
++KernelVersion:	v3.7
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		image_id:	(RO) The unique id for the rbd image. (For rbd
++				image format 1 this is empty.)
+ 
+-size
++		features:	(RO) A hexadecimal encoding of the feature bits
++				for this image.
+ 
+-	The size (in bytes) of the mapped block device.
+ 
+-refresh
++What:		/sys/bus/rbd/devices/<dev-id>/parent
++Date:		Nov, 2012
++KernelVersion:	v3.8
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(RO) Information identifying the chain of parent images in a
++		layered rbd image. Entries are separated by empty lines.
+ 
+-	Writing to this file will reread the image header data and set
+-	all relevant datastructures accordingly.
+ 
+-current_snap
++What:		/sys/bus/rbd/devices/<dev-id>/minor
++Date:		Dec, 2013
++KernelVersion:	v3.14
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		(RO) The block device minor number.
+ 
+-	The current snapshot for which the device is mapped.
+ 
+-snap_id
++What:		/sys/bus/rbd/devices/<dev-id>/snap_id
++What:		/sys/bus/rbd/devices/<dev-id>/config_info
++What:		/sys/bus/rbd/devices/<dev-id>/cluster_fsid
++What:		/sys/bus/rbd/devices/<dev-id>/client_addr
++Date:		Aug, 2016
++KernelVersion:	v4.9
++Contact:	Sage Weil <sage@newdream.net>
++Description:
++		snap_id:	(RO) The current snapshot's id.
+ 
+-	The current snapshot's id.  (August 2016, since 4.9.)
++		config_info:	(RO) The string written into
++				/sys/bus/rbd/add{,_single_major}.
+ 
+-parent
++		cluster_fsid:	(RO) The ceph cluster UUID.
+ 
+-	Information identifying the chain of parent images in a layered rbd
+-	image.  Entries are separated by empty lines.
++		client_addr:	(RO) The ceph unique client
++				entity_addr_t (address + nonce). The format is
++				<address>:<port>/<nonce>: '1.2.3.4:1234/5678' or
++				'[1:2:3:4:5:6:7:8]:1234/5678'.
+-- 
+2.16.2
