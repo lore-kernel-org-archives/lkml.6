@@ -1,141 +1,130 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4022886-1519424169-2-11001571560678933222
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519424169; b=hxi3r6aDRt3NnFCfitGsxOVeV98T6Tx6S9hnsaqYeOC1o25
-    BFRyleh/dROfWfqvLG9BCzo+LkdDPGNSI16yJRLQ7y+gB4Xwl82y9CJX2UP/BgUZ
-    KjuxKPJ1tV9LHMyVTRNXopOOGdPjzMQ3AJYht5DgxCUZ/1UwYyV5xz0RZBL8xocP
-    iAqFVlIBdsPLyFvFIB57usanB5JlhqhmWcBkomsIt9Ci0JA0VFtiTnE9IWE4Pfgn
-    VXhzbVaWgsurXj+vRAyJl45o8rek7fDUJlqIyTUY6gDYGsfmt1+hyuVQpcLKlmTU
-    y66dyVh6/s56lUQnDLR+ct0PX6xOr2lfN1vmvGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519424169; bh=VqQ+dSQzdameJW2R8J8tLXwHoOAy0y0/XkJcmfrLhp4=; b=P
-    PEC3YmPxW0TgvUNNkvHwplybTe23lHvZS5KBrXzPBaRCwk0+RnlgH46K+dx+tlHM
-    /jPwIfA3t1gHO1ULuWWoisFoPJgtcNJNXrcZaOJbkszvNUWlkBJOhiYUNWt5Vaf2
-    ZAhy4YX/AQmjx3jM11xXdlkmPmtf+Ti2v/1VahUMFUQfh6pChEKNeuogdGduvC10
-    f8hSb5WkZ2Ud7PQjXSOOP0dk97bG066gKvxzpae1x+w+pZPOR4VuZZKkjcx0Npsu
-    s+6VqYeEJXVOUs1JXxSPYaAy8VGNzTjuVZBH/dqS2M0tiaGJsVV8Mv53MptS1p11
-    jEmnIkZuAjuIfodwplcXQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeBWWPI (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 17:15:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:16190 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752153AbeBWWPG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 23 Feb 2018 17:15:06 -0500
+Return-Path: <dan.j.williams@intel.com>
+X-Google-Smtp-Source: AH8x225FN6WS1lpdLB4JpXo5WtSfNpVxEhDEPmlExqmGTe1l/htB+YMBjeSkj1OvwT4MT4W0ZAjX
+ARC-Seal: i=1; a=rsa-sha256; t=1519424084; cv=none;
+        d=google.com; s=arc-20160816;
+        b=r5tLN4K6+2IQcpgN8UKCk67tLAxcptD4bTcRBkFRzhWGMcgQGHUi4+7VRe/M1k+VH6
+         P2ccNi343Z3lc5/QSwV75bfM46WMAMQabiIKcLHzrZwWeRGZV46scG0eZLKf02fgyJK/
+         StkRCEO1lYxd31h/VoeilzFYcgVKRNixh0f3j57+aoV6Q76P1uaAonIXeMxGw17XXtpn
+         XW0tUSkGskb/DGj3VdCM0r9x4b46d8YZ4WcabdU+rE2mNZ9m/wYfr28vm8BedKEIpxmA
+         LEmG8Slgbpz/5OBXFT7E2auqnQYk5xMNoe/pdakf8Mge/JPlrji0HBkGr1guUYG72jIw
+         W/Gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject
+         :arc-authentication-results;
+        bh=ZJ2iWapV1bD0OH9pfPsbCfRXowHFo7hDz2e0Pp1IfwA=;
+        b=aZ9Dcoms1o69yBz1Sey4x3yWSsK9hp8TxLXZAS1VPwS/YZhmu/V/0cYQmWLM/sYedK
+         ubhyn7VBlngA/TzAaKwei1QK9Ty6fcv8mvGoJHSg7MB7a7OKjdCQ1hqk/x2VffP96gFD
+         AzEpJDNQWDHuK0YcMru7mjLa8AsuuxMcW4oj5mDiqBiuxXWpX9TKq72fhnClnAP9RUbt
+         e+GwAcglI3YvTKy8FvRAlk8BFTBsL385ITi0aEeGABApFlg/W+N6ecvZgeUtqMR2YAnB
+         kaldrl5EGXPgPG8CzM6p67R0QtTIsh6GJADOvb9EI2cHN7bxjCqFbXIs5aHVJPNcm3K2
+         xONw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of dan.j.williams@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of dan.j.williams@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
-   d="scan'208";a="19967653"
-Subject: [4.9-stable PATCH 07/11] IB/core: disable memory registration of
- filesystem-dax vmas
+   d="scan'208";a="19805346"
+Subject: [4.9-stable PATCH 03/11] libnvdimm: fix integer overflow static
+ analysis warning
 From: Dan Williams <dan.j.williams@intel.com>
 To: gregkh@linuxfoundation.org
-Cc: Sean Hefty <sean.hefty@intel.com>, Jan Kara <jack@suse.cz>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Hal Rosenstock <hal.rosenstock@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Date: Fri, 23 Feb 2018 14:06:00 -0800
-Message-ID: <151942356005.21775.11352557058864235434.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc: stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+ linux-kernel@vger.kernel.org
+Bcc: dan.j.williams@intel.com
+Date: Fri, 23 Feb 2018 14:05:38 -0800
+Message-ID: <151942353841.21775.10479863744600514056.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593231628982860596?=
+X-GMAIL-MSGID: =?utf-8?q?1593231628982860596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 5f1d43de54164dcfb9bfa542fcc92c1e1a1b6c1d upstream.
+commit 58738c495e15badd2015e19ff41f1f1ed55200bc upstream.
 
-Until there is a solution to the dma-to-dax vs truncate problem it is
-not safe to allow RDMA to create long standing memory registrations
-against filesytem-dax vmas.
+Dan reports:
+    The patch 62232e45f4a2: "libnvdimm: control (ioctl) messages for
+    nvdimm_bus and nvdimm devices" from Jun 8, 2015, leads to the
+    following static checker warning:
 
-Link: http://lkml.kernel.org/r/151068941011.7446.7766030590347262502.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-Acked-by: Doug Ledford <dledford@redhat.com>
-Cc: Sean Hefty <sean.hefty@intel.com>
-Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
+            drivers/nvdimm/bus.c:1018 __nd_ioctl()
+            warn: integer overflows 'buf_len'
+
+    From a casual review, this seems like it might be a real bug.  On
+    the first iteration we load some data into in_env[].  On the second
+    iteration we read a use controlled "in_size" from nd_cmd_in_size().
+    It can go up to UINT_MAX - 1.  A high number means we will fill the
+    whole in_env[] buffer.  But we potentially keep looping and adding
+    more to in_len so now it can be any value.
+
+    It simple enough to change, but it feels weird that we keep looping
+    even though in_env is totally full.  Shouldn't we just return an
+    error if we don't have space for desc->in_num.
+
+We keep looping because the size of the total input is allowed to be
+bigger than the 'envelope' which is a subset of the payload that tells
+us how much data to expect. For safety explicitly check that buf_len
+does not overflow which is what the checker flagged.
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 62232e45f4a2: "libnvdimm: control (ioctl) messages for nvdimm_bus..."
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/infiniband/core/umem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvdimm/bus.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index c22fde6207d1..8e973a2993a6 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -193,7 +193,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
- 	sg_list_start = umem->sg_head.sgl;
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 0392eb8a0dea..8311a93cabd8 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -812,16 +812,17 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
+ 		int read_only, unsigned int ioctl_cmd, unsigned long arg)
+ {
+ 	struct nvdimm_bus_descriptor *nd_desc = nvdimm_bus->nd_desc;
+-	size_t buf_len = 0, in_len = 0, out_len = 0;
+ 	static char out_env[ND_CMD_MAX_ENVELOPE];
+ 	static char in_env[ND_CMD_MAX_ENVELOPE];
+ 	const struct nd_cmd_desc *desc = NULL;
+ 	unsigned int cmd = _IOC_NR(ioctl_cmd);
+ 	void __user *p = (void __user *) arg;
+ 	struct device *dev = &nvdimm_bus->dev;
+-	struct nd_cmd_pkg pkg;
+ 	const char *cmd_name, *dimm_name;
++	u32 in_len = 0, out_len = 0;
+ 	unsigned long cmd_mask;
++	struct nd_cmd_pkg pkg;
++	u64 buf_len = 0;
+ 	void *buf;
+ 	int rc, i;
  
- 	while (npages) {
--		ret = get_user_pages(cur_base,
-+		ret = get_user_pages_longterm(cur_base,
- 				     min_t(unsigned long, npages,
- 					   PAGE_SIZE / sizeof (struct page *)),
- 				     gup_flags, page_list, vma_list);
+@@ -882,7 +883,7 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
+ 	}
+ 
+ 	if (cmd == ND_CMD_CALL) {
+-		dev_dbg(dev, "%s:%s, idx: %llu, in: %zu, out: %zu, len %zu\n",
++		dev_dbg(dev, "%s:%s, idx: %llu, in: %u, out: %u, len %llu\n",
+ 				__func__, dimm_name, pkg.nd_command,
+ 				in_len, out_len, buf_len);
+ 
+@@ -912,9 +913,9 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
+ 		out_len += out_size;
+ 	}
+ 
+-	buf_len = out_len + in_len;
++	buf_len = (u64) out_len + (u64) in_len;
+ 	if (buf_len > ND_IOCTL_MAX_BUFLEN) {
+-		dev_dbg(dev, "%s:%s cmd: %s buf_len: %zu > %d\n", __func__,
++		dev_dbg(dev, "%s:%s cmd: %s buf_len: %llu > %d\n", __func__,
+ 				dimm_name, cmd_name, buf_len,
+ 				ND_IOCTL_MAX_BUFLEN);
+ 		return -EINVAL;
