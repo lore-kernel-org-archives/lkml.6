@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416027-2-13479180804922694351
+X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416016-2-12325765625872368031
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416026; b=OkSM3z/crgUQ8xX+ihH7yemjfvHjIjoTX4gLmAiN83S+9S9
-    npb/1BkUevOrTYgGNxbqXAeflfe7fvSYZk/XjK3cwLQWj6yx/qus5ZQMqRARvTNM
-    cjn2JsjI+UUfp1QfCc3Ad/Z9K7aHZOJ9kLkds0YoLM/0xoOlabicMsZQ7W5lrhAM
-    F283SbuwdOfuvTTVWHu3NmIA54MGLBBLc/XD5qLdY5n/3yfeOR/mKI9PhfWQGgeT
-    VdC4QmNmnw/ob2YpJfHID1gurHR6HSuVnjOiL41t8gdX1uiSZiU99UXIHd2bnC59
-    RJIU5PdAoYeXQMFScFeu7ct7SKEC2wsUng00MOg==
+    t=1519416015; b=RkCkBtln8nFrJmF+sdjXJboxULgBg0ej785+IjjUPHls0nM
+    pC2C8l/p3Eb0flWNs/PmOyqUgmkYjGouXWZZugbjYOumDhrvo3C+2m/rCRK7El+B
+    WyLzvzCHsQVUdwNVY6VYu07vJrPzI4BLtHmmHLmgrTYXuK6+HrABePA6zj0QvGvP
+    XGHpghyxrS3b6i28LJGm8ozb6IbtocLtgDZqJYMthK5sr3Zw9R87EXZRWwAp6eaR
+    uGsfmdi8vvtm3s1wLu/xMFQSWPcLVrDlrImZHwCQl19Q5Q+WhxXSHU/g2h3XE6qF
+    Ub7IlRRrkgt7BnE52gdjXiv+k8gnMwMa5UDf7WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416026; bh=bY90TcO5vWPUJqxE+f8zcX307E
-    tbSnX41oQ4SzAdT0U=; b=IE3O3zan+/MT63qRYqNjWIopnFfYvhJX3F9UFQ1C0E
-    jvPTSHpj8/aCGh+TEjrn6kWbEyCYyX1ODVWGwV+0Kj0kx6sM2T+tRe58DfPz97RO
-    XylQFj3w4R4NRMuiVU4akrepTikrTNsRs15pHCLerP1Oem40WNOny4oSpbi1dt3D
-    6ECR2kpgIBLRGJnNhGzz5vb7FkWF069b9Ksjyt5lp1Zy3o9PvHKtzWR0ob4B5iM3
-    Zl1Rhs3by44EVpGBUciWME5HeA6wcUeJ90KGiNH2oNcbSj04/0QIgEcrYbY3mPHj
-    eO1dJ9MTTmUk48Vtfp4/jBxSnMM0CTZUQoaR/RemzfNg==
+    :list-id; s=arctest; t=1519416015; bh=GQvhA8kQse/e4VxLx10sMU7AMr
+    /AgMMjIB2W0+VOFxw=; b=c9mzwXsEV3lWdHDZe7GZQXv+JjFRFCdMj/Sg7dN7i6
+    bfDk+GGW7RA4rfRZ9EjHyw+LTgNPy6Bz/6ZgxRM8eYhVJ5jE/EYHAH0/eSNYavHY
+    y93io6Ubs4bArAa8ORwqMYfDYPNsead6CjiZotgPlIVhZUn8/CylzPg17PmZpBDl
+    zxJGATrRKO4TEONakX+E0tGyzlVTVeU73bKOl9oNAm67w2Bv0GEpDMVNu4GTsCog
+    F5dNevo6aEL85oivOkg7dWAir5vCl+Fa22luhc1V5zf5OVZCMFIJ5o39Hx7oKzUo
+    tzLq13WDNpn1N7KfndWcoWi7h236/R/Cq41JYwXtu7yg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933351AbeBWSnm (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:43:42 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42296 "EHLO
+        id S933375AbeBWSnp (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:43:45 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42312 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932953AbeBWSnl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:41 -0500
+        with ESMTP id S932953AbeBWSno (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.9 035/145] arm64: dts: add #cooling-cells to CPU nodes
-Date: Fri, 23 Feb 2018 19:25:41 +0100
-Message-Id: <20180223170729.439727564@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Vandrovec <petr@vandrovec.name>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 036/145] dn_getsockoptdecnet: move nf_{get/set}sockopt outside sock lock
+Date: Fri, 23 Feb 2018 19:25:42 +0100
+Message-Id: <20180223170729.553321509@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -79,44 +79,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit acbf76ee05067c3942852019993f7beb69a0f45f upstream.
+commit dfec091439bb2acf763497cfc58f2bdfc67c56b7 upstream.
 
-dtc complains about the lack of #coolin-cells properties for the
-CPU nodes that are referred to as "cooling-device":
+After commit 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), the caller of nf_{get/set}sockopt() must
+not hold any lock, but, in such changeset, I forgot to cope with DECnet.
 
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@0 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@0:cooling-device[0])
-arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@100 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@1:cooling-device[0])
+This commit addresses the issue moving the nf call outside the lock,
+in the dn_{get,set}sockopt() with the same schema currently used by
+ipv4 and ipv6. Also moves the unhandled sockopts of the end of the main
+switch statements, to improve code readability.
 
-Apparently this property must be '<2>' to match the binding.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Tested-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-[arnd: backported to 4.15]
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Petr Vandrovec <petr@vandrovec.name>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198791#c2
+Fixes: 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/mediatek/mt8173.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+ net/decnet/af_decnet.c |   62 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 29 deletions(-)
 
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -73,6 +73,7 @@
- 			reg = <0x000>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			#cooling-cells = <2>;
- 		};
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -1337,6 +1337,12 @@ static int dn_setsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_setsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	/* we need to exclude all possible ENOPROTOOPTs except default case */
++	if (err == -ENOPROTOOPT && optname != DSO_LINKINFO &&
++	    optname != DSO_STREAM && optname != DSO_SEQPACKET)
++		err = nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
++#endif
  
- 		cpu1: cpu@1 {
-@@ -89,6 +90,7 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			#cooling-cells = <2>;
- 		};
+ 	return err;
+ }
+@@ -1444,15 +1450,6 @@ static int __dn_setsockopt(struct socket
+ 		dn_nsp_send_disc(sk, 0x38, 0, sk->sk_allocation);
+ 		break;
  
- 		cpu3: cpu@101 {
+-	default:
+-#ifdef CONFIG_NETFILTER
+-		return nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
+-#endif
+-	case DSO_LINKINFO:
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (optlen != sizeof(unsigned long))
+ 			return -EINVAL;
+@@ -1500,6 +1497,12 @@ static int __dn_setsockopt(struct socket
+ 			return -EINVAL;
+ 		scp->info_loc = u.info;
+ 		break;
++
++	case DSO_LINKINFO:
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	return 0;
+@@ -1513,6 +1516,20 @@ static int dn_getsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_getsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	if (err == -ENOPROTOOPT && optname != DSO_STREAM &&
++	    optname != DSO_SEQPACKET && optname != DSO_CONACCEPT &&
++	    optname != DSO_CONREJECT) {
++		int len;
++
++		if (get_user(len, optlen))
++			return -EFAULT;
++
++		err = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
++		if (err >= 0)
++			err = put_user(len, optlen);
++	}
++#endif
+ 
+ 	return err;
+ }
+@@ -1578,26 +1595,6 @@ static int __dn_getsockopt(struct socket
+ 		r_data = &link;
+ 		break;
+ 
+-	default:
+-#ifdef CONFIG_NETFILTER
+-	{
+-		int ret, len;
+-
+-		if (get_user(len, optlen))
+-			return -EFAULT;
+-
+-		ret = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
+-		if (ret >= 0)
+-			ret = put_user(len, optlen);
+-		return ret;
+-	}
+-#endif
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-	case DSO_CONACCEPT:
+-	case DSO_CONREJECT:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (r_len > sizeof(unsigned long))
+ 			r_len = sizeof(unsigned long);
+@@ -1629,6 +1626,13 @@ static int __dn_getsockopt(struct socket
+ 			r_len = sizeof(unsigned char);
+ 		r_data = &scp->info_rem;
+ 		break;
++
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	case DSO_CONACCEPT:
++	case DSO_CONREJECT:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	if (r_data) {
