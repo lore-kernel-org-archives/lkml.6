@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu3JHq8GvYISayKNCZaWAT5mXaSRK4M/X46D1UK//+/ntXykEr77RFmDWq63RtNFjYcv5IP
-ARC-Seal: i=1; a=rsa-sha256; t=1519412276; cv=none;
+X-Google-Smtp-Source: AH8x224pqWpJWe8r6TxA31ME96z0QbwodrPJkK32KyPGk0QH5rUiLbkpeXxU4Nxya8gVlAleyP2A
+ARC-Seal: i=1; a=rsa-sha256; t=1519412273; cv=none;
         d=google.com; s=arc-20160816;
-        b=aHxj1uXizmUckKsG/ZKM331ljd21FnMfE65p6pg/O7lamXT2SI8UZWl20PTdPUWiQN
-         x1NGSdXBRTSBFwyJwrGatkjp0Cl65E3dg109wHVkd+XpXU9rk0moc28QJjPJ3C1qKxWs
-         OwGv29Aq/4Cpfxioe2NTTAder6eQ9a7Xf2/UVi9zHguzVsb0doby/dZYRJIswI3nwrBo
-         AvBe97eZ0PjPwJ7jI7OMZ8E5x9RD24Qxw27QodZNWl+IxUw4mgBHObK0tfW5ByI+Yc8S
-         QYQKpliBzKrnsCK/iKR6q7nIU2/eUSNjCoiE5G/L3ant9LGQNdED8+S5vB38lPjtHThO
-         iosQ==
+        b=VbAZK3RjY6Ii8g9qSbIhGCFY6+QjjkmrvOxPPWQeEitWnTpKx68B5P+Hkll12ILduy
+         5TzZuNUuxsdop7CM//CzMT3NbzWvAR/M4QFN8lQKZfyyw/wn1WIwkBkACCO3rZLi/Rcv
+         jPgbpuiOZJ+SUKLhwqeYS+KY9nNmi5FsulXCCofHcc/codbQpDIHG2C/GeqRW0VXtThN
+         jmATa0RD0E3OhPHDI4BBu1HbYbPX4tBrqyXAym//sOuKb/ASoLgdskHEDnNAGc9VA7v6
+         yO23YDmr4DX8esJmGoxdRUySX4sCwBFEnQ8KEwaZzwPF0iQlXnGG2QVpgHcAou6I45vz
+         RCdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=elhcKPbeOxmSl7/QH3MFBIqtw8woLl9QpcS8Ac+f8+g=;
-        b=h2haV+ITpBKlRyaDQii++MVMhGkTPwQpsHSRcz3Lwb6XHz0iFeJKOi0uXn07hXoWkm
-         7ZIX5umdHo09B5Ag57RMVg8dvhKKuvT5UJ9v+ivV5THZPKpjAN+m8PFaT9ahe79dgwVi
-         ea3Rp0MR/4CTPQXLpZEfxatq1zYZyzt/OylfT/AqysV5FUFchbNzYv14PuY1Yq7j2XgG
-         Pm8AEO03Xk3Z4utrvLURqoJA7Xf4SayBDp9YlavQ8JHVyqpkboV7azSfAZkWf6iZTabh
-         Ke9XSR5v4UbmPE9CTylcT7wVEHXaiI0/92Ou8hSMcaF3kHQtRWt/DLW0Bpn/hq0WtP+3
-         +A0w==
+        bh=toCXj+rF+X0RZdW5hDXRNiCqiMJssosKh+NIrdzUtwM=;
+        b=L7eUbD9LWvKOphchDdNglZiWaJaGRZh5i3MaoLAgXceANNLbmbv7Ud8a12GnkgY23a
+         mhDyliRCTj+qdxY7spA46ueLNopn8sZYw5KXQdgugwbOAt9jz4DbRLensm4epn44qnQ/
+         1LJHGIy3kfqj3EFrekUiy26ncH+nOkDDMdgXK3Q+xFjl2f1EO9NBXPDR4p2aunCKIKve
+         9+iiZ98NAVrtksDDW4lwPii+/uE1QZlFZy97pP5IP2YuzrU9yCIdge9FJ3+7wtIFYHbX
+         rDhPRjo/ckdxDF0+l1VjUoRcs6GuX3xse0Ul0nKqPFoK86lxjPjOmjjT1Wh+RhEmdmmS
+         T9SQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>,
-	Paul Moore <paul@paul-moore.com>,
-	William Roberts <william.c.roberts@intel.com>
-Subject: [PATCH 4.15 04/45] selinux: ensure the context is NUL terminated in security_context_to_sid_core()
-Date: Fri, 23 Feb 2018 19:28:43 +0100
-Message-Id: <20180223170715.973981040@linuxfoundation.org>
+	syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 03/45] ptr_ring: try vmalloc() when kmalloc() fails
+Date: Fri, 23 Feb 2018 19:28:42 +0100
+Message-Id: <20180223170715.783010673@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217554793974221?=
-X-GMAIL-MSGID: =?utf-8?q?1593219247420292635?=
+X-GMAIL-THRID: =?utf-8?q?1593218760596859413?=
+X-GMAIL-MSGID: =?utf-8?q?1593219243880175550?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,65 +51,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Moore <paul@paul-moore.com>
+From: Jason Wang <jasowang@redhat.com>
 
-commit ef28df55ac27e1e5cd122e19fa311d886d47a756 upstream.
+commit 0bf7800f1799b5b1fd7d4f024e9ece53ac489011 upstream.
 
-The syzbot/syzkaller automated tests found a problem in
-security_context_to_sid_core() during early boot (before we load the
-SELinux policy) where we could potentially feed context strings without
-NUL terminators into the strcmp() function.
+This patch switch to use kvmalloc_array() for using a vmalloc()
+fallback to help in case kmalloc() fails.
 
-We already guard against this during normal operation (after the SELinux
-policy has been loaded) by making a copy of the context strings and
-explicitly adding a NUL terminator to the end.  The patch extends this
-protection to the early boot case (no loaded policy) by moving the context
-copy earlier in security_context_to_sid_core().
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Reviewed-By: William Roberts <william.c.roberts@intel.com>
+Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/services.c |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ include/linux/ptr_ring.h |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -1413,27 +1413,25 @@ static int security_context_to_sid_core(
- 	if (!scontext_len)
- 		return -EINVAL;
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -451,11 +451,14 @@ static inline int ptr_ring_consume_batch
+ 	__PTR_RING_PEEK_CALL_v; \
+ })
  
-+	/* Copy the string to allow changes and ensure a NUL terminator */
-+	scontext2 = kmemdup_nul(scontext, scontext_len, gfp_flags);
-+	if (!scontext2)
-+		return -ENOMEM;
-+
- 	if (!ss_initialized) {
- 		int i;
++/* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
++ * documentation for vmalloc for which of them are legal.
++ */
+ static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+ {
+ 	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
+ 		return NULL;
+-	return kcalloc(size, sizeof(void *), gfp);
++	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
+ }
  
- 		for (i = 1; i < SECINITSID_NUM; i++) {
--			if (!strcmp(initial_sid_to_string[i], scontext)) {
-+			if (!strcmp(initial_sid_to_string[i], scontext2)) {
- 				*sid = i;
--				return 0;
-+				goto out;
- 			}
- 		}
- 		*sid = SECINITSID_KERNEL;
--		return 0;
-+		goto out;
+ static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
+@@ -588,7 +591,7 @@ static inline int ptr_ring_resize(struct
+ 	spin_unlock(&(r)->producer_lock);
+ 	spin_unlock_irqrestore(&(r)->consumer_lock, flags);
+ 
+-	kfree(old);
++	kvfree(old);
+ 
+ 	return 0;
+ }
+@@ -628,7 +631,7 @@ static inline int ptr_ring_resize_multip
  	}
- 	*sid = SECSID_NULL;
  
--	/* Copy the string so that we can modify the copy as we parse it. */
--	scontext2 = kmalloc(scontext_len + 1, gfp_flags);
--	if (!scontext2)
--		return -ENOMEM;
--	memcpy(scontext2, scontext, scontext_len);
--	scontext2[scontext_len] = 0;
--
- 	if (force) {
- 		/* Save another copy for storing in uninterpreted form */
- 		rc = -ENOMEM;
+ 	for (i = 0; i < nrings; ++i)
+-		kfree(queues[i]);
++		kvfree(queues[i]);
+ 
+ 	kfree(queues);
+ 
+@@ -636,7 +639,7 @@ static inline int ptr_ring_resize_multip
+ 
+ nomem:
+ 	while (--i >= 0)
+-		kfree(queues[i]);
++		kvfree(queues[i]);
+ 
+ 	kfree(queues);
+ 
+@@ -651,7 +654,7 @@ static inline void ptr_ring_cleanup(stru
+ 	if (destroy)
+ 		while ((ptr = ptr_ring_consume(r)))
+ 			destroy(ptr);
+-	kfree(r->queue);
++	kvfree(r->queue);
+ }
+ 
+ #endif /* _LINUX_PTR_RING_H  */
