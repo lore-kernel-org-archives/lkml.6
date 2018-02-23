@@ -1,113 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751823AbeBWJZO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 04:25:14 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56966 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751470AbeBWJZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 04:25:12 -0500
-Date: Fri, 23 Feb 2018 17:24:59 +0800
-From: Dave Young <dyoung@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 03/13] kexec_file,x86,powerpc: factor out
- kexec_file_ops functions
-Message-ID: <20180223092459.GC4433@dhcp-128-65.nay.redhat.com>
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
- <20180222111732.23051-4-takahiro.akashi@linaro.org>
+        id S1751826AbeBWJ0A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 04:26:00 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:42000 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBWJZ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 04:25:58 -0500
+X-Google-Smtp-Source: AG47ELut3MPsxaXuh3ozy77+DPRtS5nr6emAdTt2NBun6SkLb87a9be8rd9pGtTexRv/20Vu9qwIrVzP4eFUkwGYeUs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222111732.23051-4-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1519326370-15805-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org> <1519326370-15805-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Feb 2018 10:25:57 +0100
+X-Google-Sender-Auth: osYQyxJy9xBTT45yHKMy6Z3jQAw
+Message-ID: <CAMuHMdUtb7kHbZ-z7JMKfAQZ-cyQaPPeOitwV=WSns+Y7hZkSg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: renesas: r8a77965: Add #pwm-cells property
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi AKASHI,
+On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add "#pwm-cells" property to "pwm@e6e31000" device node.
+>
+> This silences the following DTC compiler warning:
+> Warning (pwms_property): Missing property '#pwm-cells' in node
+> /soc/pwm@e6e31000 or bad phandle (referred from /backlight:pwms[0])
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
-> As arch_kexec_kernel_*_{probe,load}(), arch_kimage_file_post_load_cleanup()
-> and arch_kexec_kernel_verify_sg can be parameterized with a kexec_file_ops
-> array and now duplicated among some architectures, let's factor them out.
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> ---
->  arch/powerpc/include/asm/kexec.h            |  2 +-
->  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
->  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++------------------
->  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
->  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
->  arch/x86/kernel/machine_kexec_64.c          | 45 +----------------------
->  include/linux/kexec.h                       | 15 ++++----
->  kernel/kexec_file.c                         | 57 +++++++++++++++++++++++++++--
->  8 files changed, 70 insertions(+), 94 deletions(-)
-> 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[snip]
+Gr{oetje,eeting}s,
 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 990adae52151..a6d14a768b3e 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -26,34 +26,83 @@
->  #include <linux/vmalloc.h>
->  #include "kexec_internal.h"
->  
-> +const __weak struct kexec_file_ops * const kexec_file_loaders[] = {NULL};
-> +
->  #ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
->  static int kexec_calculate_store_digests(struct kimage *image);
->  #else
->  static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
->  #endif
->  
-> +int _kexec_kernel_image_probe(struct kimage *image, void *buf,
-> +			     unsigned long buf_len)
-> +{
-> +	const struct kexec_file_ops * const *fops;
-> +	int ret = -ENOEXEC;
-> +
-> +	for (fops = &kexec_file_loaders[0]; *fops && (*fops)->probe; ++fops) {
-> +		ret = (*fops)->probe(buf, buf_len);
-> +		if (!ret) {
-> +			image->fops = *fops;
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  /* Architectures can provide this probe function */
->  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
->  					 unsigned long buf_len)
->  {
-> -	return -ENOEXEC;
-> +	return _kexec_kernel_image_probe(image, buf, buf_len);
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I vaguely remember previously I suggest split the _kexec_kernel_image_probe
-because arch code can call them, and common code also use it like above.
-But in your new series I do not find where else calls this function
-except the common code arch_kexec_kernel_image_probe.  If nobody use
-them then it is not worth to split them out, it is better to just embed
-them in the __weak functions.
-
-Ditto for other similar functions.
-
-[snip]
-
-Thanks
-Dave
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
