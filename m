@@ -1,74 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeBWL4B (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:56:01 -0500
-Received: from mout.web.de ([212.227.17.11]:44175 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751276AbeBWLz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:55:59 -0500
-Subject: Re: [0/8] target-iSCSI: Adjustments for several function
- implementations
-To: Dan Carpenter <dan.carpenter@oracle.com>, target-devel@vger.kernel.org
-Cc: David Disseldorp <ddiss@suse.de>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
- <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
- <20180222143624.7c7241a1@suse.de> <20180222135600.5vv7vzw7sa5metcb@mwanda>
- <145b88b1-bd1e-a417-8dce-ff19e35a00fc@users.sourceforge.net>
- <20180223101715.xv5dscdaeszqxoyk@mwanda>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <866a1802-0cd8-48fd-e04f-7dc676ab58a6@users.sourceforge.net>
-Date: Fri, 23 Feb 2018 12:50:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751366AbeBWMCv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:02:51 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50947 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeBWMCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 07:02:49 -0500
+Date: Fri, 23 Feb 2018 13:02:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells
+ property
+Message-ID: <20180223120244.ftzw72a3a6w45pi3@verge.net.au>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
+ <20180223100607.GO7203@w540>
 MIME-Version: 1.0
-In-Reply-To: <20180223101715.xv5dscdaeszqxoyk@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:swOsVOYe4UnbjJkb/PFOslKGU753oF4pUbz71+hn31PyN1oet50
- HBV8+UtOlxW9d7bx3PDH1Ss33h3cGYxR3umPCFq1WrFzixeaWIEUx3zJ7qZr878TPnoMsoh
- 4oVhTZpE7HbtsHyhldQTsiYv56XGQkIX1GE1ZxSztBTLDIElu1Rw5ms1FxaOxvw0bkfyyyh
- eo0OTTBzJyGc1uWjjJ+ZA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kgB0zsviVaM=:RoB9I7REcD/hoKEZBguP+t
- W/vIgtm+HbK3s2bHqYYQcf2p4wy7Wmu4x5LtsYZK5UJgZg25IvZvNnnMmui+FZq+ksuz4ZvY6
- MZBxLBL/mPZdu9yOZZ4VC9jR3EH27E5phazZSSS4QS2uyWfP/H6gneCQvHbRFy+oNmjSqXnE3
- xKU9cAObiGKUpeRW7RSbTA1Ew8/a5ZXwNYyL+ViGalVVFRLUUg5wuQAhVml/d2A0XvFSA/CP2
- 3uF/kKvGSHNv3Fzo2niKq3/SpQJc0Y+7JJ5CqyQJOvIcmjDYpiwAUPyjg/zVuO88qBNz71Tyi
- CR+5mkhnMaWFiRPk/pOtQvvBCZrngk/HXYnCIBCYzuvFMNG33nNrPof3WriY+tf4+u6jaryWc
- JCazfch2NB1QvsyJU0A2BwyzwIrYRKJsAYsy2p/Ekq4OoSsk7c8Vacx6WyypDpRDPlpyujRaC
- H0ex8gacCkT4is3lInfCik9x+bRquaSEWSfFpU9R5JDooDNYGqgEJ7d3s19O76LNdBG2rIBpQ
- scEkmTiKIasbjo61/85FziwK8wD8n3PnrSJPuAKl5XlbkMXd2Jhjxry4XN51+lBCKdoUA2NMm
- Qlg6I98vmQGea8shlWcx1brFqWZlbDSGI/RbAAdu+o3AXBdov4yhUabVbJgrY7K9c+/kgvTLQ
- mT2m1OSN+wRZAZVieMwRVIqln7xMbwV8OHE/5DikiMStp0Mi1lKMQg7fMhfD5xO2Rhj1Ml4yK
- DJR8UDUElxFxK1d7WEnQDvgBbHClQeoslMd51RYHDboB69+XHafzipU4H9Vo+KarM4CTwR8hW
- rVsRIhojMzMga21rpf8LFpRB9Nf9E0qzc6RaOhRc3jkdyPfv7o=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223100607.GO7203@w540>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Can a passed null pointer really work in this function?
->>
->> https://elixir.bootlin.com/linux/v4.16-rc2/source/include/crypto/hash.h#L684
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/crypto/hash.h?id=0f9da844d87796ac31b04e81ee95e155e9043132#n751
->>
->> static inline struct crypto_tfm *crypto_shash_tfm(struct crypto_shash *tfm)
->> {
->> 	return &tfm->base;
->> }
+On Fri, Feb 23, 2018 at 11:06:07AM +0100, jacopo mondi wrote:
+> Hi Geert,
 > 
-> Yes.  It's not a dereference,
+> On Fri, Feb 23, 2018 at 10:27:16AM +0100, Geert Uytterhoeven wrote:
+> > On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > > Add "#interrupt-cells" property and "interrupt-controller" label to
+> > > "interrupt-controller@e61c0000" device node.
+> > >
+> > > This silences the following DTC compiler warnings:
+> > > Warning (interrupts_property): Missing interrupt-controller or
+> > > interrupt-map property in /soc/interrupt-controller@e61c0000
+> > > Warning (interrupts_property): Missing #interrupt-cells in
+> > > interrupt-parent /soc/interrupt-controller@e61c000
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > @@ -316,6 +316,8 @@
+> > >                 };
+> > >
+> > >                 intc_ex: interrupt-controller@e61c0000 {
+> > > +                       #interrupt-cells = <2>;
+> > > +                       interrupt-controller;
+> > >                         reg = <0 0xe61c0000 0 0x200>;
+> > >                         /* placeholder */
+> >
+> > (bikeshedding) Should the placeholder be at the top of the node?
+> 
+> I would like it more too, but in M3-W dtsi:
+> 
+> 		pciec0: pcie@fe000000 {
+> 			reg = <0 0xfe000000 0 0x80000>;
+> 			/* placeholder */
+> 		};
+> 
+> So I kept using the same style everywhere here.
+> 
+> I can change it everywhere in this series to have placeholder at the
+> beginning of the node definition if you agree with that!
 
-Do any processors treat the zero address still special there?
-
-
-> it's just doing pointer math to get the address.
-
-Can eventually happen anything unexpected?
-
-
-Can it be nicer to avoid such a software behaviour concern generally
-just by adjusting a few jump labels (as I proposed it)?
-
-Regards,
-Markus
+Either way is fine by me. But if we do change it lets change it everywhere.
