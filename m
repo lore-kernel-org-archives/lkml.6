@@ -1,116 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753516AbeBWUlS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 15:41:18 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36189 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752381AbeBWUlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 15:41:16 -0500
-X-Google-Smtp-Source: AG47ELvvxbVwZ8JSN9WJ7djdVV9dE/EYGIUeP+QyFFARG0y+YTP8ZmB4N1CV6OQDTxUjPk/lgwhESg==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: opendmb@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
-        ARCHITECTURE),
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: B15: Update to support Brahma-B53
-Date: Fri, 23 Feb 2018 12:41:10 -0800
-Message-Id: <20180223204110.6350-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        id S1752590AbeBWUvE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:51:04 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59702 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752447AbeBWSbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 13:31:04 -0500
+Date: Fri, 23 Feb 2018 18:30:58 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
+Message-ID: <20180223183058.GA11698@e107981-ln.cambridge.arm.com>
+References: <20180221124707.26308-1-embedded24@evers-fischer.de>
+ <20180221124707.26308-2-embedded24@evers-fischer.de>
+ <20180222181901.GA13694@e107981-ln.cambridge.arm.com>
+ <9cdc8c1c-b448-b00b-d5b8-b664bd96f856@ti.com>
+ <20180223093611.GA25086@e107981-ln.cambridge.arm.com>
+ <a7070bd0-72b7-4870-419e-7ac15c6825ae@ti.com>
+ <alpine.LNX.2.20.1802231828250.16055@5HSWXM1.fritz.box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.20.1802231828250.16055@5HSWXM1.fritz.box>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The B53 CPU design supports up to 8 processors, which moved the RAC_FLUSH_REG
-offset 0x4 bytes below to make room for a RAC_CONFIG2_REG to control RAC
-settings for CPU4-7.
+On Fri, Feb 23, 2018 at 06:38:42PM +0100, Rolf Evers-Fischer wrote:
+> Hi Kishon,
+> 
+> On Fri, 23 Feb 2018, Kishon Vijay Abraham I wrote:
+> > On Friday 23 February 2018 03:06 PM, Lorenzo Pieralisi wrote:
+> > > On Fri, Feb 23, 2018 at 11:40:49AM +0530, Kishon Vijay Abraham I wrote:
+> > >> Hi Lorenzo,
+> > >>
+> > >> On Thursday 22 February 2018 11:49 PM, Lorenzo Pieralisi wrote:
+> > >>> On Wed, Feb 21, 2018 at 01:47:06PM +0100, Rolf Evers-Fischer wrote:
+> > >>>> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > >>>>
+> > >>>> This commit decreases the number of jump labels and ensures
+> > >>>> that the next commit doesn't increase the number of occurrences
+> > >>>> of 'kfree(func_name)'.
+> > >>>>
+> > >>>> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
+> > >>>> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> > >>>> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+> > >>>> ---
+> > >>>>  drivers/pci/endpoint/pci-epf-core.c | 7 ++-----
+> > >>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+> > >>>>
+> > >>>> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> > >>>> index 766ce1dca2ec..23d0e128d1a5 100644
+> > >>>> --- a/drivers/pci/endpoint/pci-epf-core.c
+> > >>>> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> > >>>> @@ -220,9 +220,10 @@ struct pci_epf *pci_epf_create(const char *name)
+> > >>>>  	*buf = '\0';
+> > >>>>  
+> > >>>>  	epf->name = kstrdup(func_name, GFP_KERNEL);
+> > >>>> +	kfree(func_name);
+> > >>>
+> > >>> I am certainly missing something but what if we reworked the code
+> > >>> and just:
+> > >>>
+> > >>> kstrdup(name, GFP_KERNEL);
+> > >>>
+> > >>> once instead of allocating another local copy (that we then have to
+> > >>> free) ?
+> > >>
+> > >> name will be something like pci_epf_test.0 and in epf->name we want to just
+> > >> have pci_epf_test.
+> > >>>
+> > >>> Reworded: why
+> > >>>
+> > >>> epf->name = func_name;
+> > >>
+> > >> memory should be allocated for epf->name before it can be initialized. IMO
+> > >> without kstrdup, there will be a null pointer exception.
+> > > 
+> > > I understand that but the point is that func_name *was* allocated with
+> > > kstrdup() already I would like to understand why we need to do it twice
+> > > (and kfree the first allocation).
+> > 
+> > func_name would be allocated for a size greater than what will be in epf->name.
+> > It won't be significant though.
+> > 
+> > Thanks
+> > Kishon
+> > 
+> I have just an idea, how to use only one copy, but with the shorter 
+> length. What about changing the code like this?
+>   int len = strchrnul(name, '.') - name;
+>   epf->name = kstrndup(name, len, GFP_KERNEL);
+> 
+> In this case we are only allocating the smaller amount of memory and we 
+> don't need the 'buf' and 'func_name' pointers anymore. They will be 
+> replaced with 'len' and some pointer arithmetic.
 
-Lookup the processor type (B15 or B53) and adjust the RAC_FLUSH_REG offset
-accordingly, if we do not know the processor, bail out.
+Yes, something along those lines, I do not see the point of having to
+allocate two buffers (and actually this simplifies the error path too).
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm/mm/cache-b15-rac.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mm/cache-b15-rac.c b/arch/arm/mm/cache-b15-rac.c
-index d9586ba2e63c..c6ed14840c3c 100644
---- a/arch/arm/mm/cache-b15-rac.c
-+++ b/arch/arm/mm/cache-b15-rac.c
-@@ -33,7 +33,10 @@ extern void v7_flush_kern_cache_all(void);
- #define  RAC_CPU_SHIFT			(8)
- #define  RACCFG_MASK			(0xff)
- #define RAC_CONFIG1_REG			(0x7c)
--#define RAC_FLUSH_REG			(0x80)
-+/* Brahma-B15 is a quad-core only design */
-+#define B15_RAC_FLUSH_REG		(0x80)
-+/* Brahma-B53 is an octo-core design */
-+#define B53_RAC_FLUSH_REG		(0x84)
- #define  FLUSH_RAC			(1 << 0)
- 
- /* Bitmask to enable instruction and data prefetching with a 256-bytes stride */
-@@ -52,6 +55,7 @@ static void __iomem *b15_rac_base;
- static DEFINE_SPINLOCK(rac_lock);
- 
- static u32 rac_config0_reg;
-+static u32 rac_flush_offset;
- 
- /* Initialization flag to avoid checking for b15_rac_base, and to prevent
-  * multi-platform kernels from crashing here as well.
-@@ -70,14 +74,14 @@ static inline void __b15_rac_flush(void)
- {
- 	u32 reg;
- 
--	__raw_writel(FLUSH_RAC, b15_rac_base + RAC_FLUSH_REG);
-+	__raw_writel(FLUSH_RAC, b15_rac_base + rac_flush_offset);
- 	do {
- 		/* This dmb() is required to force the Bus Interface Unit
- 		 * to clean oustanding writes, and forces an idle cycle
- 		 * to be inserted.
- 		 */
- 		dmb();
--		reg = __raw_readl(b15_rac_base + RAC_FLUSH_REG);
-+		reg = __raw_readl(b15_rac_base + rac_flush_offset);
- 	} while (reg & FLUSH_RAC);
- }
- 
-@@ -287,7 +291,7 @@ static struct syscore_ops b15_rac_syscore_ops = {
- 
- static int __init b15_rac_init(void)
- {
--	struct device_node *dn;
-+	struct device_node *dn, *cpu_dn;
- 	int ret = 0, cpu;
- 	u32 reg, en_mask = 0;
- 
-@@ -305,6 +309,24 @@ static int __init b15_rac_init(void)
- 		goto out;
- 	}
- 
-+	cpu_dn = of_get_cpu_node(0, NULL);
-+	if (!cpu_dn) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	if (of_device_is_compatible(cpu_dn, "brcm,brahma-b15"))
-+		rac_flush_offset = B15_RAC_FLUSH_REG;
-+	else if (of_device_is_compatible(cpu_dn, "brcm,brahma-b53"))
-+		rac_flush_offset = B53_RAC_FLUSH_REG;
-+	else {
-+		pr_err("Unsupported CPU\n");
-+		of_node_put(cpu_dn);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	of_node_put(cpu_dn);
-+
- 	ret = register_reboot_notifier(&b15_rac_reboot_nb);
- 	if (ret) {
- 		pr_err("failed to register reboot notifier\n");
--- 
-2.14.1
+Thanks,
+Lorenzo
