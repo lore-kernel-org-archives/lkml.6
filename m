@@ -1,66 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751936AbeBWQs7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:48:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55257 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeBWQs6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:48:58 -0500
-From: Colin King <colin.king@canonical.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][mm-next] mm, swap: make bool enable_vma_readahead and function swap_vma_readahead static
-Date: Fri, 23 Feb 2018 16:48:52 +0000
-Message-Id: <20180223164852.5159-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752047AbeBWQtE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:49:04 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58250 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751366AbeBWQtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:49:01 -0500
+Date: Fri, 23 Feb 2018 16:48:58 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 1/4] drm: Add writeback connector type
+Message-ID: <20180223164858.GY9111@e110455-lin.cambridge.arm.com>
+References: <20180223131758.18362-1-robdclark@gmail.com>
+ <20180223131758.18362-2-robdclark@gmail.com>
+ <20180223155935.GJ223881@art_vandelay>
+ <CAF6AEGs3EHxzwW4MaYc+LXmKL3amD8pUysamrprPy-F-W8=6AQ@mail.gmail.com>
+ <20180223164329.GO223881@art_vandelay>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180223164329.GO223881@art_vandelay>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 23, 2018 at 11:43:29AM -0500, Sean Paul wrote:
+> On Fri, Feb 23, 2018 at 11:25:11AM -0500, Rob Clark wrote:
+> > On Fri, Feb 23, 2018 at 10:59 AM, Sean Paul <seanpaul@chromium.org> wrote:
+> > >
+> > > Have we considered hiding writeback behind a client cap instead?
+> > 
+> > It is kinda *almost* unneeded, since the connector reports itself as
+> > disconnected.
+> > 
+> > I'm not sure what the reason was to drop the cap, but I think it would
+> > be better to have a cap so WB connectors don't show up in, for ex,
+> > xrandr
+> 
+> Yeah, the disconnected hack is kind of gross, IMO. I hate to introduce churn in
+> the patch series given that it was initially introduced with the client cap.
 
-The bool enable_vma_readahead and function swap_vma_readahead are local
-to the source and do not need to be in global scope, so make them static.
+Haha, that's the reverse of Daniel's position:
 
-Cleans up sparse warnings:
-mm/swap_state.c:41:6: warning: symbol 'enable_vma_readahead' was not
-declared. Should it be static?
-mm/swap_state.c:742:13: warning: symbol 'swap_vma_readahead' was not
-declared. Should it be static?
+https://lists.freedesktop.org/archives/dri-devel/2016-October/120519.html
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/swap_state.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> There are also cases where we might want to make writeback unavailable, such as
+> when content protection is enabled. In those cases, it's conceivable that we
+> might want to use disconnected as a signal to u/s. I suppose we could also just
+> fail the check, so most of this is just academic.
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 8dde719e973c..f3952138f01d 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -38,7 +38,7 @@ static const struct address_space_operations swap_aops = {
- 
- struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
- static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
--bool enable_vma_readahead __read_mostly = true;
-+static bool enable_vma_readahead __read_mostly = true;
- 
- #define SWAP_RA_WIN_SHIFT	(PAGE_SHIFT / 2)
- #define SWAP_RA_HITS_MASK	((1UL << SWAP_RA_WIN_SHIFT) - 1)
-@@ -739,8 +739,8 @@ static void swap_ra_info(struct vm_fault *vmf,
- 	pte_unmap(orig_pte);
- }
- 
--struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
--				    struct vm_fault *vmf)
-+static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-+				       struct vm_fault *vmf)
- {
- 	struct blk_plug plug;
- 	struct vm_area_struct *vma = vmf->vma;
+Not sure what other hardware out there does, but on Mali DP's case you
+would be outputing the protected content by putting the display
+processor in secure mode, which automatically disables writeback for us.
+Or to put in another way, you don't need a writeback framebuffer if you
+are in non-secure mode as you can get access to the framebuffer used for
+the plane anyway.
+
+Best regards,
+Liviu
+
+> 
+> Sean
+> 
+> 
+> > 
+> > BR,
+> > -R
+> 
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
+
 -- 
-2.15.1
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
