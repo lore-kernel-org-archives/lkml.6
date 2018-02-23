@@ -1,116 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751376AbeBWItp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:49:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750879AbeBWIto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:49:44 -0500
-Date: Fri, 23 Feb 2018 16:49:34 +0800
-From: Dave Young <dyoung@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/13] kexec_file: make an use of purgatory optional
-Message-ID: <20180223084934.GB4433@dhcp-128-65.nay.redhat.com>
-References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
- <20180222111732.23051-3-takahiro.akashi@linaro.org>
+        id S1751351AbeBWIvh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:51:37 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:45570 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbeBWIvf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 03:51:35 -0500
+X-Google-Smtp-Source: AG47ELtUu87XKTa0ZMEkpL06sVU1QNz0ytP/vji9hTAGOKVUo0K+jGAlXslKGE/GxN4hiLpegwz7JanAyGs0ppeKppo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222111732.23051-3-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CA+M3ks7VmVsHFZ4qo6qPyX5tCoqYAVHhKB+EXyteEuL_EFjn4w@mail.gmail.com>
+References: <20180208122146.28399-1-benjamin.gaignard@linaro.org>
+ <CAK8P3a0-qZM8aaXSNjuQctZVirN6wEsOsU4pyDG7QhqcG2LBjA@mail.gmail.com> <CA+M3ks7VmVsHFZ4qo6qPyX5tCoqYAVHhKB+EXyteEuL_EFjn4w@mail.gmail.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Fri, 23 Feb 2018 09:51:34 +0100
+Message-ID: <CA+M3ks484t7Rx12zCGws2kZTeaoAWtqZTt=j-k3Oa5w60rTfVA@mail.gmail.com>
+Subject: Re: [PATCH] firmware: qcom_scm: use correct parameter type for dma_alloc_coherent
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi AKASHI,
+2018-02-08 15:26 GMT+01:00 Benjamin Gaignard <benjamin.gaignard@linaro.org>:
+> 2018-02-08 15:09 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
+>> On Thu, Feb 8, 2018 at 1:21 PM, Benjamin Gaignard
+>> <benjamin.gaignard@linaro.org> wrote:
+>>> dma_alloc_coherent expects it third argument type to be dma_addr_t and
+>>> not phys_addr_t.
+>>> When phys_addr_t is defined as u32 and dma_addr_t as u64 that generate
+>>> a compilation issue.
+>>> Change the variable name because dma_alloc_coherent returns a bus
+>>> address not a physical address.
+>>>
+>>
+>>> @@ -480,14 +480,14 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+>>>
+>>>         /* Fill details of mem buff to map */
+>>>         mem_to_map = ptr + ALIGN(src_sz, SZ_64);
+>>> -       mem_to_map_phys = ptr_phys + ALIGN(src_sz, SZ_64);
+>>> +       mem_to_map_phys = handle + ALIGN(src_sz, SZ_64);
+>>>         mem_to_map[0].mem_addr = cpu_to_le64(mem_addr);
+>>>         mem_to_map[0].mem_size = cpu_to_le64(mem_sz);
+>>>
+>>>         next_vm = 0;
+>>>         /* Fill details of next vmid detail */
+>>>         destvm = ptr + ALIGN(mem_to_map_sz, SZ_64) + ALIGN(src_sz, SZ_64);
+>>> -       dest_phys = ptr_phys + ALIGN(mem_to_map_sz, SZ_64) + ALIGN(src_sz, SZ_64);
+>>> +       dest_phys = handle + ALIGN(mem_to_map_sz, SZ_64) + ALIGN(src_sz, SZ_64);
+>>
+>> This still assigns from a 'dma' address to a 'phys' address without a
+>> long comment
+>> explaining why you do it. There is also another instance of the naming confusion
+>> in qcom_scm_pas_init_image and __qcom_scm_pas_init_image, so maybe they
+>> should be addressed at the same time.
+>
+> This patch just fix a compilation issue, nothing else.
 
-On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
-> On arm64, no trampline code between old kernel and new kernel will be
-> required in kexec_file implementation. This patch introduces a new
-> configuration, ARCH_HAS_KEXEC_PURGATORY, and allows related code to be
-> compiled in only if necessary.
+Gentle ping on this patch since the problem still exist on 4.16-rc2
 
-Here also need the explanation about why no purgatory is needed, it would be
-required for kexec if no strong reason.
-
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> ---
->  arch/powerpc/Kconfig | 3 +++
->  arch/x86/Kconfig     | 3 +++
->  kernel/kexec_file.c  | 6 ++++++
->  3 files changed, 12 insertions(+)
-> 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 73ce5dd07642..c32a181a7cbb 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -552,6 +552,9 @@ config KEXEC_FILE
->  	  for kernel and initramfs as opposed to a list of segments as is the
->  	  case for the older kexec call.
->  
-> +config ARCH_HAS_KEXEC_PURGATORY
-> +	def_bool KEXEC_FILE
-> +
->  config RELOCATABLE
->  	bool "Build a relocatable kernel"
->  	depends on PPC64 || (FLATMEM && (44x || FSL_BOOKE))
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index c1236b187824..f031c3efe47e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2019,6 +2019,9 @@ config KEXEC_FILE
->  	  for kernel and initramfs as opposed to list of segments as
->  	  accepted by previous system call.
->  
-> +config ARCH_HAS_KEXEC_PURGATORY
-> +	def_bool KEXEC_FILE
-> +
->  config KEXEC_VERIFY_SIG
->  	bool "Verify kernel signature during kexec_file_load() syscall"
->  	depends on KEXEC_FILE
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index e5bcd94c1efb..990adae52151 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -26,7 +26,11 @@
->  #include <linux/vmalloc.h>
->  #include "kexec_internal.h"
->  
-> +#ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
->  static int kexec_calculate_store_digests(struct kimage *image);
-> +#else
-> +static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
-> +#endif
->  
->  /* Architectures can provide this probe function */
->  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
-> @@ -520,6 +524,7 @@ int kexec_add_buffer(struct kexec_buf *kbuf)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
->  /* Calculate and store the digest of segments */
->  static int kexec_calculate_store_digests(struct kimage *image)
->  {
-> @@ -1022,3 +1027,4 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
->  
->  	return 0;
->  }
-> +#endif /* CONFIG_ARCH_HAS_KEXEC_PURGATORY */
-> -- 
-> 2.16.2
-> 
-
-Thanks
-Dave
+>
+>>
+>>        Arnd
