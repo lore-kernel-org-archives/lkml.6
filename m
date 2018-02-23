@@ -1,92 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933226AbeBWUIo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 15:08:44 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42113 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932898AbeBWUIm (ORCPT
+        id S1755073AbeBWUNW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:13:22 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41716 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754653AbeBWUNS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 15:08:42 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SyOsBP1_1519416504;
-Subject: Re: [PATCH] fs: proc: use down_read_killable in
- proc_pid_cmdline_read()
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180220223825.GA6705@avx2>
- <fa1e9b6b-efaf-79c5-00ea-1f58d5078c2d@linux.alibaba.com>
- <20180221195720.GA639@avx2>
- <b82e9c62-0c8d-205b-9887-8ea2c18eaccb@linux.alibaba.com>
- <20180223193338.GA5708@avx2>
- <e8cdbc7d-45ef-ab1f-6df0-1d8ef1d4f1eb@linux.alibaba.com>
- <20180223194547.GC5708@avx2>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <139a6862-ca1a-c291-3e03-8130e35b5fc0@linux.alibaba.com>
-Date: Fri, 23 Feb 2018 12:08:20 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        Fri, 23 Feb 2018 15:13:18 -0500
+Date: Fri, 23 Feb 2018 20:13:17 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, John Ogness <john.ogness@linutronix.de>
+Subject: [BUG] lock_parent() breakage when used from shrink_dentry_list()
+ (was Re: [PATCH v2 6/6] fs/dcache: Avoid remaining try_lock loop in
+ shrink_dentry_list())
+Message-ID: <20180223201317.GG30522@ZenIV.linux.org.uk>
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+ <20180222235025.28662-7-john.ogness@linutronix.de>
+ <20180223035814.GZ30522@ZenIV.linux.org.uk>
+ <20180223040814.GA30522@ZenIV.linux.org.uk>
+ <87h8q7erlo.fsf@linutronix.de>
+ <20180223150928.GC30522@ZenIV.linux.org.uk>
+ <20180223174216.GD30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180223194547.GC5708@avx2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223174216.GD30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 23, 2018 at 05:42:16PM +0000, Al Viro wrote:
 
+> 	4) the nasty one - shrink_dentry_list() evictions of zero-count dentries.
+> _That_ calls for careful use of RCU, etc. - none of the others need that.  Need
+> to think how to deal with that sucker; in any case, I do not believe that sharing
+> said RCU use, etc. with any other cases would do anything other than obfuscating
+> the rest.
 
-On 2/23/18 11:45 AM, Alexey Dobriyan wrote:
-> On Fri, Feb 23, 2018 at 11:42:34AM -0800, Yang Shi wrote:
->>
->> On 2/23/18 11:33 AM, Alexey Dobriyan wrote:
->>> On Wed, Feb 21, 2018 at 03:13:10PM -0800, Yang Shi wrote:
->>>
->>>>>>> 2) access_remote_vm() et al will do the same ->mmap_sem, and
->>>>>> Yes, it does. But, __access_remote_vm() is called by access_process_vm()
->>>>>> too, which is used by much more places, i.e. ptrace, so I was not sure
->>>>>> if it is preferred to convert to killable version. So, I leave it untouched.
->>>>> Yeah, but ->mmap_sem is taken 3 times per /proc/*/cmdline read
->>>>> and your scalability tests should trigger next backtrace right away.
->>>> Yes, however, I didn't run into it if mmap_sem is acquired earlier.
->>>>
->>>> How about defining a killable version, like
->>>> __access_remote_vm_killable() which use down_read_killable(), then the
->>>> killable version can be used by proc/*/cmdline? There might be other
->>>> users in the future.
->>> It would be a disaster as interfaces multiply.
->> Might be not that bad.
-> Maybe.
->
-> But you need to explain why there is no backtrace several lines later:
->
-> 	access_remote_vm
-> 	__access_remote_vm
-> 	down_read(&mm->mmap_sem)
+Arrrgh...  Actually, there's a nasty corner case where the variant in mainline is
+broken.  Look:
+	dentry placed on a shrink list
+	we pick the fucker from the list and lock it.
+	we call lock_parent() on it.
+		dentry is not a root and it's not deleted, so we proceed.
+		trylock fails.
+		we grab rcu_read_lock()
+		we drop dentry->d_lock
+	on another CPU, something does e.g. d_prune_aliases() (or finds the
+	sucker in hash and proceeds to unhash and dput(), etc.) - anything
+	that evicts that dentry.  It is marked with DCACHE_MAY_FREE and left
+	alone.  The parent, OTOH, is dropped and freeing gets scheduled as
+	soon as RCU allows.
+		we grab parent->d_lock
+		we verify that dentry->d_parent is still the same (it is)
+		we do rcu_read_unlock()
+		we grab dentry->d_lock
+		we return parent
+At that point we are fucked - there's nothing to prevent parent from being
+freed at any point.  And we assume that its ->d_lock is held and needs to
+be dropped.
 
-I think it might be because:
+The call site in d_prune_aliases() avoids the same scenario, since there we
+are already holding ->i_lock and another thread won't get to __dentry_kill()
+until we are done with lock_parent().
 
-         CPU A                                  CPU B
-                                          read /proc/*/cmdline
-                                          get_mm
-acquire mmap_sem
-munmap(300G)                 try to acquire mmap_sem --> go to sleep
-release mmap_sem
-                                           got mmap_sem
-                                           release mmap_sem
+Unless I'm missing something, that's a (narrow) memory corruptor.  The window is
+narrow, but not impossibly so - if that other thread had been spinning on attempt
+to grab dentry->d_lock in d_prune_alias(), it has to squeeze through
+                if (!dentry->d_lockref.count) {
+and then in lock_parent() called there - through
+        if (IS_ROOT(dentry))
+                return NULL;
+        if (unlikely(dentry->d_lockref.count < 0))
+                return NULL;
+        if (likely(spin_trylock(&parent->d_lock)))
+before the first CPU gets through
+        parent = READ_ONCE(dentry->d_parent);
+        spin_lock(&parent->d_lock);
 
-                                           access_remote_vm
-                                           put_mm
+The first CPU can't be preempted, but there's nothing to prevent an IRQ arriving
+at that point, letting the second one win the race.
 
+Comments?
 
-The munmap might happen right before access_remote_vm(), but I just 
-didn't run into it for the time being. It may be hit on another machine 
-or with some changes to the test cases.
+I think the (untested) patch below is -stable fodder:
 
-BTW, even the hung I met happened occassionally, not very often. So, the 
-access_remote_vm() hit sounds less often. But, I agree it is still 
-possible in theory.
+lock_parent() needs to recheck if dentry got __dentry_kill'ed under it
 
-Regards,
-Yang
+In case when dentry passed to lock_parent() is protected from freeing only
+by the fact that it's on a shrink list and trylock of parent fails, we
+could get hit by __dentry_kill() (and subsequent dentry_kill(parent))
+between unlocking dentry and locking presumed parent.  We need to recheck
+that dentry is alive once we lock both it and parent *and* postpone
+rcu_read_unlock() until after that point.  Otherwise we could return
+a pointer to struct dentry that already is rcu-scheduled for freeing, with
+->d_lock held on it; caller's subsequent attempt to unlock it can end
+up with memory corruption.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 7c38f39958bc..32aaab21e648 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -647,11 +647,16 @@ static inline struct dentry *lock_parent(struct dentry *dentry)
+ 		spin_unlock(&parent->d_lock);
+ 		goto again;
+ 	}
+-	rcu_read_unlock();
+-	if (parent != dentry)
++	if (parent != dentry) {
+ 		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+-	else
++		if (unlikely(dentry->d_lockref.count < 0)) {
++			spin_unlock(&parent->d_lock);
++			parent = NULL;
++		}
++	} else {
+ 		parent = NULL;
++	}
++	rcu_read_unlock();
+ 	return parent;
+ }
+ 
