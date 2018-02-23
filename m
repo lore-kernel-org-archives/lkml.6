@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226TMOlRNoWpEfA7I84rJi+SanHQOoBe3Q0b/sLf3oBktEbWcC1C1IQQA15mIPb92phJ9svi
-ARC-Seal: i=1; a=rsa-sha256; t=1519411159; cv=none;
+X-Google-Smtp-Source: AH8x2255AV0OJQpJJsZzN9tBj1gE4QgOoaBFhJVayZjyuOi0aSxClDp0VSfCRFhCuVEGwc5rXRhm
+ARC-Seal: i=1; a=rsa-sha256; t=1519411157; cv=none;
         d=google.com; s=arc-20160816;
-        b=HKlLcqR1MUUkGtMFuiLSXH+rT/a3bcZDIT4B4tPQsC8MzH+0K3dCtqTqpfIhsdeA2j
-         uc+e6JKZjS4pddbW2/L0yOin1JXu8TGXDo0whXnQj9OuEct/zzuK1sRcjCr5VObBZJgq
-         GqJXyr+8ZZSsDrGrdJUyK8r31PkrOJlDDghUCFwsc2xw6lUlPW384ZL6gCBX8lCxfnkt
-         03+JEfyNj8fzXm8E3VjkHIMGZGY5h6bMKGXMYrscN19kmiZcOGkldxmNnekRQtzT3arJ
-         qq4ec6P0nyQojmM6D4bPkLio82hiP+EBxYsdMMDqQCzFRVXXnV40dchrnv8GRzzrn/+i
-         d1ng==
+        b=Q/gru17Z/sEjqausKKS6EmVqe6n5FgG6SUxPrI3a4aBuOiBf2PC19sYtyaZEyQtm6L
+         AyMstuj3hM98y+DOccRhjaEtGklZfYcWEEyjcVx21O/mJwe3eVeaILv4UP5D85FIBKWT
+         KwK7WWz/8SWv6Nys+OYZLweZv2mrzaWtsMFVApLCU3gNvDQyGWS2ADn7QRcLjxY0opKG
+         9mhMMG8/Um60p0eYXNC8m/vP32IaOSQ+6bNw1EKSoepSgQe+UuhSKTflrf3+fnIbdbhj
+         kldzEYMlWFakQt3QNgZiCA1Mf1nyubgNPSymdeOG6zyRR4qiJF8fWAoDjs3yIJjKaxbA
+         Rd0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AoIFyqeYi2X6Nr0P0knce6xRQuPv12RdlcgtAm3TWwQ=;
-        b=ju/jpNhpildpaqy6pl2cvmPMZ/o6byAGwNImfX5N47AJYVESQ97DXHn13wnwFXQWp2
-         HXq9YSHqSqeJKM7LeYwB96JHg3xIOe0VFt/iSbxJfbXYsSKbu7yX42WobtzQwEuMe8fH
-         RMeCTwrMG1lucVVO0kgB26ZeX3yE9nOqerUKlfdsUWnXMyf+JgXXP2viUDJMDXTNMa9T
-         KVVWKx7ikZ/WVqRMlMH/t+8Ig3sNfbTQ/mFJmjpegH/epYQxsJfzCE3lq2yT+AnOtxAG
-         /wB1Yi/d0IDkxhNvrQf2H3l8ueNjbuxDxj7nN6+waH/xeLatlZNDjuf/kQNoUUPXRniK
-         isWg==
+        bh=PScSqdmxyGvx3SX5suoaJeQU0F2t9BLOPcC5a8TXbY8=;
+        b=PxmHo/jvwdHg/EaAemvmhFqIyvpU/i9zKy/U9rE2sF/gltZ3S9baGnDXw1P4rJHLFU
+         pOjAKMShTZCCHuJ122iLAhsP96nKxHfcRmZ/8HaCt5gzaehHphzhKUxDBuYUjucH07HQ
+         au0ZBRk+T3FaEkrEeupDeg6NgTTPizjwP59O/D53CUBi65DquFpFj/9UsR8vCfcaW4li
+         1mgUk8SmRayE0TPH2if3Ij4rBEOlUjjkQo5LPxuOT4DgHaUf2+o3G/SHeW7/g1oWQ0ae
+         i0REG1b1BR25WFs/6ohwIymP1rnTIFogRfpjGNL+nYND0jZKfcYGtX05rcVj0jNbXkob
+         ygjA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
 	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 4.4 141/193] [media] v4l: remove MEDIA_TUNER dependency for VIDEO_TUNER
-Date: Fri, 23 Feb 2018 19:26:14 +0100
-Message-Id: <20180223170347.938119989@linuxfoundation.org>
+Subject: [PATCH 4.4 140/193] [media] hdpvr: hide unused variable
+Date: Fri, 23 Feb 2018 19:26:13 +0100
+Message-Id: <20180223170347.768919081@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218076475754307?=
-X-GMAIL-MSGID: =?utf-8?q?1593218076475754307?=
+X-GMAIL-THRID: =?utf-8?q?1593218073839196180?=
+X-GMAIL-MSGID: =?utf-8?q?1593218073839196180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,32 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 7c8fe516bd81d991feb73ccd969ec29850af3013 upstream.
+commit b97baa3e22e18dac42001e665cf27ad1211bf878 upstream.
 
-em28xx selects VIDEO_TUNER, which has a dependency on MEDIA_TUNER,
-so we get a Kconfig warning if that is disabled:
+The i2c client pointer is only used when CONFIG_I2C is set, and
+otherwise produces a compile-time warning:
 
-warning: (VIDEO_PVRUSB2 && VIDEO_USBVISION && VIDEO_GO7007 && VIDEO_AU0828_V4L2 && VIDEO_CX231XX && VIDEO_TM6000 && VIDEO_EM28XX && VIDEO_IVTV && VIDEO_MXB && VIDEO_CX18 && VIDEO_CX23885 && VIDEO_CX88 && VIDEO_BT848 && VIDEO_SAA7134 && VIDEO_SAA7164) selects VIDEO_TUNER which has unmet direct dependencies (MEDIA_SUPPORT && MEDIA_TUNER)
+drivers/media/usb/hdpvr/hdpvr-core.c: In function 'hdpvr_probe':
+drivers/media/usb/hdpvr/hdpvr-core.c:276:21: error: unused variable 'client' [-Werror=unused-variable]
 
-VIDEO_TUNER does not actually depend on MEDIA_TUNER, and the
-dependency does nothing except cause the above warning, so let's
-remove it.
+This uses the same #ifdef to hide the variable when the code using
+it is hidden.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/usb/hdpvr/hdpvr-core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/v4l2-core/Kconfig
-+++ b/drivers/media/v4l2-core/Kconfig
-@@ -37,7 +37,6 @@ config VIDEO_PCI_SKELETON
- # Used by drivers that need tuner.ko
- config VIDEO_TUNER
- 	tristate
--	depends on MEDIA_TUNER
- 
- # Used by drivers that need v4l2-mem2mem.ko
- config V4L2_MEM2MEM_DEV
+--- a/drivers/media/usb/hdpvr/hdpvr-core.c
++++ b/drivers/media/usb/hdpvr/hdpvr-core.c
+@@ -273,7 +273,9 @@ static int hdpvr_probe(struct usb_interf
+ 	struct hdpvr_device *dev;
+ 	struct usb_host_interface *iface_desc;
+ 	struct usb_endpoint_descriptor *endpoint;
++#if IS_ENABLED(CONFIG_I2C)
+ 	struct i2c_client *client;
++#endif
+ 	size_t buffer_size;
+ 	int i;
+ 	int retval = -ENOMEM;
