@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvFjjs4zC1foHdSMb/BFQgFmwwgTLYPEp7vl1a5nv4SCPrej5+KOLvaQAxhkbS5BT8KSrwc
-ARC-Seal: i=1; a=rsa-sha256; t=1519412217; cv=none;
+X-Google-Smtp-Source: AG47ELti9MWiCMK/QkQz6FLrW5TLSjtMRCLkXJC4mNGCHR9di37CsPYhjGH8KLW+INwf2vYXa11v
+ARC-Seal: i=1; a=rsa-sha256; t=1519412216; cv=none;
         d=google.com; s=arc-20160816;
-        b=0nkOcgVutgZVtm2JU15aB6+9D5BOQ8q6X0guzvZOuAoBFquFpShu8ujUatxa45tL8L
-         iU+9LlvcVIyxo115WIZOW7UonBnNqLrzhyOrD9scDr3Cqr6orsb/BGWDM98CkjbuWbZ2
-         gT4H3AMQcE5+noPOg0eIajYybkOrcwvhRw6lq43meomnO9NBr/SucLU/p9JlZcCaMULp
-         eCFrRX6xZkVUyIr2Pt1Ih1WNPCcEk12NSBDaoIr8rDNG+HsQjtcbhTUq5KnLG4imFuug
-         qRWFUpRjDIHIdx7vhij0p20jO94OdSP5nc7Wa8D5fZgOMi2MxSbGvxN2NQHPeXjfFcb8
-         yhng==
+        b=0M9/NqrU0UctdouIWipYnbM2j3hCc/kMvxiDe5mVsNVmxivdqJN4s6VAwU055WLWt5
+         xo4LjZilWSBGm5qSWmbb+QgD8iGhMQ9g9SE+qbSbXYmIyZyxs7T/D6SswA/7ajWTieff
+         p7SkB7IQ9K1ZlkVEVSpOl0tcTZSIp0bXUlUUm6YvACy9wcBGoRJ4UcR3LrIXhlNg9zrp
+         MX3fFu7IRDnPhClj50rKYKsI8la0n9hqacgBDqPZlCV5AQf4weaETbfdyN6XR0RuZigi
+         1UWQdzRTAuBmZmLOGz36skRKaIdgGOtxJWCKoL2VG2EejQ4cxviw+A6btQqMKMlW/LvX
+         PxzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4jCaWmR1rkbLCuvbJF91Bwk0drbB9GDa2KQsxvTIgqk=;
-        b=NLeQGOFmcO6RU2eZb9jUowzp6zu4xb5IX30tHme+A5BUkamWCYwqoziJP3q07UsvrO
-         M7435m8XHBsCjGfSTmx2HHub6zSRPvH649dLCJw+j6jLNDK3KaHu6f1jFUYaRdrWVRhy
-         a+Vx4ncNpGFeObaX4BjftRcgnOrwB8ir6ohPV1MjCDXc2Et9y51TbMpzOogoD4jp1nhQ
-         uNivz/ZX3ZxFp62KcpsnoJcwL3Mk7sQ6NPijcZbLF+G+Y39i9VAG1oiePO4WQQ9CC2QH
-         eux1k9+Axlg6GbwWYrfMeJoYi/BgEliutQ2yVYiVUTqNRDBZdq6qCyO8it0bevmSzJy3
-         WULA==
+        bh=vBTPK8W7/qyMhbgVOV33rqhJTdDiLps3G1yFox1IptM=;
+        b=E92IApbgowOPVkgc3w4DKSs3x+CXDzYF50L7la44RbkZYxGnXfe0/1TXAhSGT/Zc/j
+         z8pp5gX4nZFXMPS7T8UQO0rO2DFdO4CRwJqqKNVYHZteqAj+3U4Mg8Pnr9oePY2C3FxS
+         2KYWdUedjaoKwu93o55R+l7E0cKhnuqlh8ewECZxK56KJzbWfNr9vt0mDwU49N2VwD1B
+         cUh7Kq9jmOqf7L4/MtNj+1gAm0JTDA1IZYLnriURbrJwPDMGwfcEgXSevNN4rzl4R53K
+         0ATPR1LNyR67KlCfN8o2igSN2UbvlTHnB+OnzUWuGy51VD8W3OL2Y5zRng94f8ccN+kn
+         qR2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.14 155/159] drm/i915: fix intel_backlight_device_register declaration
-Date: Fri, 23 Feb 2018 19:27:43 +0100
-Message-Id: <20180223170801.702996437@linuxfoundation.org>
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 154/159] crypto: talitos - fix Kernel Oops on hashing an empty file
+Date: Fri, 23 Feb 2018 19:27:42 +0100
+Message-Id: <20180223170801.591220137@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218626816907145?=
-X-GMAIL-MSGID: =?utf-8?q?1593219185550559780?=
+X-GMAIL-THRID: =?utf-8?q?1593218624011124864?=
+X-GMAIL-MSGID: =?utf-8?q?1593219184736246806?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +49,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: LEROY Christophe <christophe.leroy@c-s.fr>
 
-commit ac29fc66855b79c2960c63a4a66952d5b721d698 upstream.
+commit 87a81dce53b1ea61acaeefa5191a0376a2d1d721 upstream.
 
-The alternative intel_backlight_device_register() definition apparently
-never got used, but I have now run into a case of i915 being compiled
-without CONFIG_BACKLIGHT_CLASS_DEVICE, resulting in a number of
-identical warnings:
+Performing the hash of an empty file leads to a kernel Oops
 
-drivers/gpu/drm/i915/intel_drv.h:1739:12: error: 'intel_backlight_device_register' defined but not used [-Werror=unused-function]
+[   44.504600] Unable to handle kernel paging request for data at address 0x0000000c
+[   44.512819] Faulting instruction address: 0xc02d2be8
+[   44.524088] Oops: Kernel access of bad area, sig: 11 [#1]
+[   44.529171] BE PREEMPT CMPC885
+[   44.532232] CPU: 0 PID: 491 Comm: md5sum Not tainted 4.15.0-rc8-00211-g3a968610b6ea #81
+[   44.540814] NIP:  c02d2be8 LR: c02d2984 CTR: 00000000
+[   44.545812] REGS: c6813c90 TRAP: 0300   Not tainted  (4.15.0-rc8-00211-g3a968610b6ea)
+[   44.554223] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 48222822  XER: 20000000
+[   44.560855] DAR: 0000000c DSISR: c0000000
+[   44.560855] GPR00: c02d28fc c6813d40 c6828000 c646fa40 00000001 00000001 00000001 00000000
+[   44.560855] GPR08: 0000004c 00000000 c000bfcc 00000000 28222822 100280d4 00000000 10020008
+[   44.560855] GPR16: 00000000 00000020 00000000 00000000 10024008 00000000 c646f9f0 c6179a10
+[   44.560855] GPR24: 00000000 00000001 c62f0018 c6179a10 00000000 c6367a30 c62f0000 c646f9c0
+[   44.598542] NIP [c02d2be8] ahash_process_req+0x448/0x700
+[   44.603751] LR [c02d2984] ahash_process_req+0x1e4/0x700
+[   44.608868] Call Trace:
+[   44.611329] [c6813d40] [c02d28fc] ahash_process_req+0x15c/0x700 (unreliable)
+[   44.618302] [c6813d90] [c02060c4] hash_recvmsg+0x11c/0x210
+[   44.623716] [c6813db0] [c0331354] ___sys_recvmsg+0x98/0x138
+[   44.629226] [c6813eb0] [c03332c0] __sys_recvmsg+0x40/0x84
+[   44.634562] [c6813f10] [c03336c0] SyS_socketcall+0xb8/0x1d4
+[   44.640073] [c6813f40] [c000d1ac] ret_from_syscall+0x0/0x38
+[   44.645530] Instruction dump:
+[   44.648465] 38c00001 7f63db78 4e800421 7c791b78 54690ffe 0f090000 80ff0190 2f870000
+[   44.656122] 40befe50 2f990001 409e0210 813f01bc <8129000c> b39e003a 7d29c214 913e003c
 
-This marks the function as 'inline', which was surely the original
-intention here.
+This patch fixes that Oops by checking if src is NULL.
 
-Fixes: 1ebaa0b9c2d4 ("drm/i915: Move backlight registration to connector registration")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171127151239.1813673-1-arnd@arndb.de
-(cherry picked from commit 2de2d0b063b08becb2c67a2c338c44e37bdcffee)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Fixes: 6a1e8d14156d4 ("crypto: talitos - making mapping helpers more generic")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/gpu/drm/i915/intel_drv.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -1708,7 +1708,7 @@ extern struct drm_display_mode *intel_fi
- int intel_backlight_device_register(struct intel_connector *connector);
- void intel_backlight_device_unregister(struct intel_connector *connector);
- #else /* CONFIG_BACKLIGHT_CLASS_DEVICE */
--static int intel_backlight_device_register(struct intel_connector *connector)
-+static inline int intel_backlight_device_register(struct intel_connector *connector)
- {
- 	return 0;
- }
+---
+ drivers/crypto/talitos.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1124,6 +1124,11 @@ int talitos_sg_map(struct device *dev, s
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+ 
++	if (!src) {
++		*ptr = zero_entry;
++		return 1;
++	}
++
+ 	to_talitos_ptr_len(ptr, len, is_sec1);
+ 	to_talitos_ptr_ext_set(ptr, 0, is_sec1);
+ 
