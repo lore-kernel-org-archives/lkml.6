@@ -1,95 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeBWQtE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:49:04 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58250 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751366AbeBWQtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:49:01 -0500
-Date: Fri, 23 Feb 2018 16:48:58 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Rob Clark <robdclark@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        David Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 1/4] drm: Add writeback connector type
-Message-ID: <20180223164858.GY9111@e110455-lin.cambridge.arm.com>
-References: <20180223131758.18362-1-robdclark@gmail.com>
- <20180223131758.18362-2-robdclark@gmail.com>
- <20180223155935.GJ223881@art_vandelay>
- <CAF6AEGs3EHxzwW4MaYc+LXmKL3amD8pUysamrprPy-F-W8=6AQ@mail.gmail.com>
- <20180223164329.GO223881@art_vandelay>
+        id S1751863AbeBWQvO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:51:14 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40044 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751402AbeBWQvM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:51:12 -0500
+X-Google-Smtp-Source: AG47ELsRh+ItNb5M4i2UL0gPSI5YNH7ly6WZ7D7ps1Brl0CKku9soEgAuLCbbXwqLAMTbtOhHp48ytOYBLRm2RYyu0s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180223164329.GO223881@art_vandelay>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <e8e54cb303074abd82048ffa65f26fc9@AcuMS.aculab.com>
+References: <20180223153700.2186058-1-arnd@arndb.de> <e8e54cb303074abd82048ffa65f26fc9@AcuMS.aculab.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 23 Feb 2018 18:51:11 +0200
+Message-ID: <CAHp75VfNKVjAmgEor2veC6sDnuLacxK1BVgKbqdZ-mxOX=9CSw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
+To: David Laight <David.Laight@aculab.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 11:43:29AM -0500, Sean Paul wrote:
-> On Fri, Feb 23, 2018 at 11:25:11AM -0500, Rob Clark wrote:
-> > On Fri, Feb 23, 2018 at 10:59 AM, Sean Paul <seanpaul@chromium.org> wrote:
-> > >
-> > > Have we considered hiding writeback behind a client cap instead?
-> > 
-> > It is kinda *almost* unneeded, since the connector reports itself as
-> > disconnected.
-> > 
-> > I'm not sure what the reason was to drop the cap, but I think it would
-> > be better to have a cap so WB connectors don't show up in, for ex,
-> > xrandr
-> 
-> Yeah, the disconnected hack is kind of gross, IMO. I hate to introduce churn in
-> the patch series given that it was initially introduced with the client cap.
+On Fri, Feb 23, 2018 at 6:41 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Arnd Bergmann
+>> Sent: 23 February 2018 15:37
+>>
+>> 32-bit architectures generally cannot use writeq(), so we now get a build
+>> failure for the lpfc driver:
+>>
+>> drivers/scsi/lpfc/lpfc_sli.c: In function 'lpfc_sli4_wq_put':
+>> drivers/scsi/lpfc/lpfc_sli.c:145:4: error: implicit declaration of function 'writeq'; did you mean
+>> 'writeb'? [-Werror=implicit-function-declaration]
+>>
+>> Another problem here is that writing out actual data (unlike accessing
+>> mmio registers) means we must write the data with the same endianess
+>> that we have read from memory, but writeq() will perform byte swaps
+>> and add barriers inbetween accesses as we do for registers.
+>>
+>> Using memcpy_toio() should do the right thing here, using register
+>> sized stores with correct endianess conversion and barriers (i.e. none),
+>> but on some architectures might fall back to byte-size access.
+> ...
+>
+> Have you looked at the performance impact of this on x86?
+> Last time I looked memcpy_toio() aliased directly to memcpy().
+> memcpy() is run-time patched between several different algorithms.
+> On recent Intel cpus memcpy() is implemented as 'rep movsb' relying
+> on the hardware to DTRT.
+> For uncached accesses (typical for io) the 'RT' has to be byte transfers.
+> So instead of the 8 byte transfers (on 64 bit) you get single bytes.
+> This won't be what is intended!
+> memcpy_toio() should probably use 'rep movsd' for the bulk of the transfer.
 
-Haha, that's the reverse of Daniel's position:
+Maybe I'm wrong but it uses movsq on 64-bit and movsl on 32-bit.
 
-https://lists.freedesktop.org/archives/dri-devel/2016-October/120519.html
+The side-effect I referred previously is about tails, i.e. unaligned
+bytes are transferred in portions
+like
+  7 on 64-bit will be  4 + 2 + 1,
+  5 = 4 + 1
+etc
 
-> 
-> There are also cases where we might want to make writeback unavailable, such as
-> when content protection is enabled. In those cases, it's conceivable that we
-> might want to use disconnected as a signal to u/s. I suppose we could also just
-> fail the check, so most of this is just academic.
-
-Not sure what other hardware out there does, but on Mali DP's case you
-would be outputing the protected content by putting the display
-processor in secure mode, which automatically disables writeback for us.
-Or to put in another way, you don't need a writeback framebuffer if you
-are in non-secure mode as you can get access to the framebuffer used for
-the plane anyway.
-
-Best regards,
-Liviu
-
-> 
-> Sean
-> 
-> 
-> > 
-> > BR,
-> > -R
-> 
-> -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
+Similar way on 32-bit.
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+With Best Regards,
+Andy Shevchenko
