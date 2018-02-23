@@ -1,177 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeBWVCb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:02:31 -0500
-Received: from muru.com ([72.249.23.125]:58040 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752178AbeBWVBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:01:14 -0500
-From: Tony Lindgren <tony@atomide.com>
-To: linux-omap@vger.kernel.org
-Cc: Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 09/12] ARM: OMAP2+: Add checks for device tree based sysconfig data
-Date: Fri, 23 Feb 2018 13:00:57 -0800
-Message-Id: <20180223210100.86732-10-tony@atomide.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180223210100.86732-1-tony@atomide.com>
-References: <20180223210100.86732-1-tony@atomide.com>
+        id S1752588AbeBWVCk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:02:40 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39002 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeBWVCe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:02:34 -0500
+X-Google-Smtp-Source: AG47ELvNOYvV9uvCmnE/WyEZowg/RcPMYUwY3yOyVCy2m1nZxvJ579gKRKacv84rCUfBHgQIV4+Zn3Gma9ww50zhsv8=
+MIME-Version: 1.0
+In-Reply-To: <20180223153700.2186058-1-arnd@arndb.de>
+References: <20180223153700.2186058-1-arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 23 Feb 2018 22:02:33 +0100
+X-Google-Sender-Auth: RTVrCPkn0NIshFC2AgEw8O8J3Yc
+Message-ID: <CAK8P3a1--4o7piRf1VEr_cTUaE09ATnWoJfezrg=eqFzM64RoA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
+To: James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can check the device tree based sysconfig data against the existing
-platform data to make sure we're not introducing regressions. Then at
-some point after the sysconfig data comes from device tree, we can just
-drop the related platform data.
+On Fri, Feb 23, 2018 at 4:36 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> @@ -138,12 +137,10 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, union lpfc_wqe *wqe)
+>         if (q->phba->sli3_options & LPFC_SLI4_PHWQ_ENABLED)
+>                 bf_set(wqe_wqid, &wqe->generic.wqe_com, q->queue_id);
+>         lpfc_sli_pcimem_bcopy(wqe, temp_wqe, q->entry_size);
+> -       if (q->dpp_enable && q->phba->cfg_enable_dpp) {
+> +       if (q->dpp_enable && q->phba->cfg_enable_dpp)
+>                 /* write to DPP aperture taking advatage of Combined Writes */
+> -               tmp = (uint8_t *)wqe;
+> -               for (i = 0; i < q->entry_size; i += sizeof(uint64_t))
+> -                       writeq(*((uint64_t *)(tmp + i)), q->dpp_regaddr + i);
+> -       }
+> +               memcpy_toio(tmp, q->dpp_regaddr, q->entry_size);
+> +
+>         /* ensure WQE bcopy and DPP flushed before doorbell write */
+>         wmb();
+>
 
-Cc: Paul Walmsley <paul@pwsan.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/mach-omap2/omap_hwmod.c | 109 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 106 insertions(+), 3 deletions(-)
+Not sure where we are with the question of whether memcpy_toio
+is a good replacement or not, but further build testing showed that
+my patch was completely broken in more than one way:
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -3062,6 +3062,53 @@ int __init omap_hwmod_setup_one(const char *oh_name)
- 	return 0;
- }
- 
-+static void omap_hwmod_check_one(struct device *dev,
-+				 const char *name, s8 v1, u8 v2)
-+{
-+	if (v1 < 0)
-+		return;
-+
-+	if (v1 != v2)
-+		dev_warn(dev, "%s %d != %d\n", name, v1, v2);
-+}
-+
-+/**
-+ * omap_hwmod_check_sysc - check sysc against platform sysc
-+ * @dev: struct device
-+ * @data: module data
-+ * @sysc_fields: new sysc configuration
-+ */
-+static int omap_hwmod_check_sysc(struct device *dev,
-+				 const struct ti_sysc_module_data *data,
-+				 struct sysc_regbits *sysc_fields)
-+{
-+	const struct sysc_regbits *regbits = data->cap->regbits;
-+
-+	omap_hwmod_check_one(dev, "dmadisable_shift",
-+			     regbits->dmadisable_shift,
-+			     sysc_fields->dmadisable_shift);
-+	omap_hwmod_check_one(dev, "midle_shift",
-+			     regbits->midle_shift,
-+			     sysc_fields->midle_shift);
-+	omap_hwmod_check_one(dev, "sidle_shift",
-+			     regbits->sidle_shift,
-+			     sysc_fields->sidle_shift);
-+	omap_hwmod_check_one(dev, "clkact_shift",
-+			     regbits->clkact_shift,
-+			     sysc_fields->clkact_shift);
-+	omap_hwmod_check_one(dev, "enwkup_shift",
-+			     regbits->enwkup_shift,
-+			     sysc_fields->enwkup_shift);
-+	omap_hwmod_check_one(dev, "srst_shift",
-+			     regbits->srst_shift,
-+			     sysc_fields->srst_shift);
-+	omap_hwmod_check_one(dev, "autoidle_shift",
-+			     regbits->autoidle_shift,
-+			     sysc_fields->autoidle_shift);
-+
-+	return 0;
-+}
-+
- /**
-  * omap_hwmod_init_regbits - init sysconfig specific register bits
-  * @dev: struct device
-@@ -3111,7 +3158,7 @@ static int omap_hwmod_init_regbits(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	return 0;
-+	return omap_hwmod_check_sysc(dev, data, *sysc_fields);
- }
- 
- /**
-@@ -3249,6 +3296,59 @@ int omap_hwmod_init_idlemodes(struct device *dev,
- 	return 0;
- }
- 
-+/**
-+ * omap_hwmod_check_module - check new module against platform data
-+ * @dev: struct device
-+ * @oh: module
-+ * @data: new module data
-+ * @sysc_fields: sysc register bits
-+ * @rev_offs: revision register offset
-+ * @sysc_offs: sysconfig register offset
-+ * @syss_offs: sysstatus register offset
-+ * @sysc_flags: sysc specific flags
-+ * @idlemodes: sysc supported idlemodes
-+ */
-+static int omap_hwmod_check_module(struct device *dev,
-+				   struct omap_hwmod *oh,
-+				   const struct ti_sysc_module_data *data,
-+				   struct sysc_regbits *sysc_fields,
-+				   u32 rev_offs, u32 sysc_offs,
-+				   u32 syss_offs, u32 sysc_flags,
-+				   u32 idlemodes)
-+{
-+	if (!oh->class->sysc)
-+		return -ENODEV;
-+
-+	if (sysc_fields != oh->class->sysc->sysc_fields)
-+		dev_warn(dev, "sysc_fields %p != %p\n", sysc_fields,
-+			 oh->class->sysc->sysc_fields);
-+
-+	if (rev_offs != oh->class->sysc->rev_offs)
-+		dev_warn(dev, "rev_offs %08x != %08x\n", rev_offs,
-+			 oh->class->sysc->rev_offs);
-+	if (sysc_offs != oh->class->sysc->sysc_offs)
-+		dev_warn(dev, "sysc_offs %08x != %08x\n", sysc_offs,
-+			 oh->class->sysc->sysc_offs);
-+	if (syss_offs != oh->class->sysc->syss_offs)
-+		dev_warn(dev, "syss_offs %08x != %08x\n", syss_offs,
-+			 oh->class->sysc->syss_offs);
-+
-+	if (sysc_flags != oh->class->sysc->sysc_flags)
-+		dev_warn(dev, "sysc_flags %08x != %08x\n", sysc_flags,
-+			 oh->class->sysc->sysc_flags);
-+
-+	if (idlemodes != oh->class->sysc->idlemodes)
-+		dev_warn(dev, "idlemodes %08x != %08x\n", idlemodes,
-+			 oh->class->sysc->idlemodes);
-+
-+	if (data->cfg->srst_udelay != oh->class->sysc->srst_udelay)
-+		dev_warn(dev, "srst_udelay %i != %i\n",
-+			 data->cfg->srst_udelay,
-+			 oh->class->sysc->srst_udelay);
-+
-+	return 0;
-+}
-+
- /**
-  * omap_hwmod_allocate_module - allocate new module
-  * @dev: struct device
-@@ -3359,8 +3459,11 @@ int omap_hwmod_init_module(struct device *dev,
- 	if (data->cfg->quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
- 		oh->flags |= HWMOD_INIT_NO_RESET;
- 
--	if (oh->class->sysc)
--		return 0;
-+	error = omap_hwmod_check_module(dev, oh, data, sysc_fields,
-+					rev_offs, sysc_offs, syss_offs,
-+					sysc_flags, idlemodes);
-+	if (!error)
-+		return error;
- 
- 	return omap_hwmod_allocate_module(dev, oh, data, sysc_fields,
- 					  rev_offs, sysc_offs, syss_offs,
--- 
-2.16.2
+I mixed up the source and destination arguments, and I used
+the uninitialized 'tmp' instead of 'wqe'. Don't try this patch.
+
+       Arnd
