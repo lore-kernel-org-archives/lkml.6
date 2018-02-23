@@ -1,82 +1,71 @@
-Return-Path: <kkamagui@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519811326; cv=none;
+Return-Path: <bp@alien8.de>
+X-Google-Smtp-Source: AG47ELuGeedkQqEkYwIcwFMm4c6dEWBtq61hmmQIwoV75vrSJak8zsjeBq3CVbz9DwxRP/C6NRKP
+ARC-Seal: i=1; a=rsa-sha256; t=1519382576; cv=none;
         d=google.com; s=arc-20160816;
-        b=nfTFChqkwT3VyT8d2mbJeKGwG7WIFkHctBpvGq9rGYr/yk5BfVqAMkNba/euebXcL3
-         RWyMIHqYdMLf+62gPFDdAgqpZVhAJZpz3RhBaAYo2/MHO+bOF5TIgZd9oJGZWyGA6K9y
-         teRhuxKk//OMzGBrpxhaDRlW+Ezbgb1tjqSlWcf2l4CTVNiAtAthP9/3og3/N7m8JTgq
-         WuglzHDEpVRyQOhW4+tDfl1CudbEsEShHjcwc3TJX4XyBo+4AeXUinDj+vZNkV6kcQky
-         6ovl0ThiAsm4EkkHRBB2m8RbRPxWdgmmBKZf8Jl/4iBvONOrPmE3/XxRCCic337MJmF7
-         WQHw==
+        b=IjBe8NYC47F7Akqacm8KhDhl+yRmKZAS8QnDvRuq3l17VrIYMouVpMAcbNgG5YcxT3
+         pnNy5CpZm0g3355TwcZ6wmygHNQsIQolqhg8fDYhAvflkVVxli/b9sd1uX1gF79ts6uU
+         41bSAFvxk78PM6nCSlUu60pWB5ppeJmGoNLJuwkRJMWHAVrTZghOWszoXfSHXQfAVpGV
+         yJQ6fNeDzh6MI4BbgL6sS1/Tq6ncFVxNzTamSY0mzDRc46lZlRqz0JGUltRaKPsLZijC
+         8HyFeYY5cISfXfYz103zT3rlVrdjbO89d0wpSG9kVPRNSgznFHZLXx9U7kzPOzoZwC2I
+         d0UA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=O/CmAOqFlD2mZpT5KYuKYAOozTIwr43WLUrNUQW5yVY=;
-        b=ZAvMqK3UuJPRQooWW/e6HRMsCM/rTFWXTTe8QI255N4Yz20QYOlYVyZgxpor5zTFVB
-         HgpPIW25dSg4YvgC6xOySfScozmqVnYUDYRSvX47kD20Ikj1XDxqlhwdADtyjB8H18uD
-         Y8XvNLeAES8kGRceSUgtZv+UsoQukORLtvN8fTpwa7qwKeaDSFMlD2MSfil0DWasq8kw
-         OnX2j8ufsFwlp00G0u1dchJSSdO08Z8ls/rbu1JiuE/gecpfZEExGE60mt/0nJFmElTr
-         ajVbbt+5hYy+huaHMcq0xJ56wRQs0uDAYlJ4jlGMmESncKbiN9eBVx+q0VsJRTWfOZWp
-         Cwsw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=oWcaLhcjluvqO3fwhAQJd0XBJhR0/O+CrMNoShwaDUw=;
+        b=nbNKuaB/KYmDxrbcwzKEZw5SZfabH56xm8FHeTWWS2koPMjxCZs0zznb5nVy8UkwdY
+         bUC3G7pv1cIUk37rfUttWVoCWgXlGIudwh48P6Sj3dgDcgDK8Zs8NXaWW5GN2EK14Gro
+         TVeJc1HEtr6+ovCpFcHStXRXiqqu50keyZ1IsUKw1og8RgYz+FaRWe+YDZ7vaBgKD3t1
+         xlT+yBmI4IcDQxHhGi01U/oCD+qGiUye9cDHt8mmu7aGZ7bty61UbeU2NCjTEvZQe1LU
+         FZOjWEh1Vuqo24G8FU2sA6SdwQCCSyp73b8s2KvZQ5zXaPSOmwBs7msOPZbrVv+XZTfj
+         J3CQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gkOJtJ3E;
-       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gkOJtJ3E;
-       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuCvUkjqgWUVkMdtYEd/0dla97AHhMDqq0mws6zdLpGKw0ZevBwvY0k/93DWkOBckfn0cuUdLLeuecDMDLDBew=
-MIME-Version: 1.0
-In-Reply-To: <20180228093238.GA3769@pd.tnic>
-References: <20180223101350.8344-1-kkamagui@gmail.com> <20180223105220.GA12058@kroah.com>
- <CAHjaAcTVUxm6LnD_3sp2BwGgR9ustuctoHUBFkMD1nZh4o6bTA@mail.gmail.com> <20180228093238.GA3769@pd.tnic>
-From: Seunghun Han <kkamagui@gmail.com>
-Date: Wed, 28 Feb 2018 18:48:45 +0900
-Message-ID: <CAHjaAcT2s0v8cZ4dvGZMVOZHzk=2-LpthC2umw7-FfjfsJczjQ@mail.gmail.com>
+       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
+Date: Fri, 23 Feb 2018 11:42:39 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Seunghun Han <kkamagui@gmail.com>, Tony Luck <tony.luck@intel.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH] x86: mce: fix kernel panic when check_interval is changed
-To: Borislav Petkov <bp@alien8.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180223104239.GA4981@pd.tnic>
+References: <20180223101350.8344-1-kkamagui@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180223101350.8344-1-kkamagui@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
-X-GMAIL-MSGID: =?utf-8?q?1593637681558053776?=
+X-GMAIL-MSGID: =?utf-8?q?1593188104653677420?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello, Borislav.
+On Fri, Feb 23, 2018 at 07:13:50PM +0900, Seunghun Han wrote:
+> I am Seunghun Han and a senior security researcher at National Security
+> Research Institute of South Korea.
+> 
+> I found a critical security issue which can make kernel panic in userspace.
+> After analyzing the issue carefully, I found that MCE driver in the kernel
+> has a problem which can be occurred in SMP environment.
+> 
+> The check_interval file in
+> /sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
+> global timer value for MCE polling. If it is changed by one CPU, MCE driver
+> in kernel calls mce_restart() function and broadcasts the event to other
 
-2018-02-28 18:32 GMT+09:00 Borislav Petkov <bp@alien8.de>:
-> On Mon, Feb 26, 2018 at 05:05:04AM +0900, Seunghun Han wrote:
->> >> It is a critical security problem because the attacker can make kernel panic
->> >> by writing a value to the check_interval file in userspace, and it can be
->> >> used for Denial-of-Service (DoS) attack.
->> >
->> > As only root can write to that file, it's not that critical of an issue,
->> > but yes, this is a problem.  Nice find and fix.
->
-> This is still the wrong fix. You need to:
->
-> 1. check the old value of check_interval in store_int_with_restart() and
-> exit early if it is the same.
->
-> 2. have mce_restart() grab a newly defined mutex, say, mce_sysfs_mutex
-> or so, which synchronizes all CPUs so that their timers get deleted and
-> reinitialized in the proper order.
+Right, so I'm thinking that doing that per-CPU configuration doesn't
+make a whole lot of sense. It is not something that needs to happen very
+often and it is done globally anyway.
 
-Thank you for your advice.
-I will change my patch like that and send it again.
+So what we should do here, IMO, is make mce_restart() grab a mutex and
+thus serialize all those sysfs writes. It will naturally also slow down
+any hammering from userspace which we should not allow anyway.
 
-Best regard.
+Tony, what do you think?
 
-Seunghun.
+-- 
+Regards/Gruss,
+    Boris.
 
->
-> Thx.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+Good mailing practices for 400: avoid top-posting and trim the reply.
