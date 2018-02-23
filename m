@@ -1,236 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeBWCbv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 21:31:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38626 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeBWCbt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 21:31:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19AE5606DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH 5/9] scsi: ufs: add reference counting for scsi block
- requests
-To: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>,
-        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.1519120988.git.asutoshd@codeaurora.org>
- <ff8f06512eca0c6275d3d486af0d430d8111c451.1519120988.git.asutoshd@codeaurora.org>
- <MWHPR04MB1137BE3E48766435570460689ACE0@MWHPR04MB1137.namprd04.prod.outlook.com>
-From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <5f0ed265-2c2a-2734-7ab1-b71d29ff2ad6@codeaurora.org>
-Date: Fri, 23 Feb 2018 08:01:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751468AbeBWCi4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 21:38:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45904 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750916AbeBWCiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 21:38:55 -0500
+Date: Fri, 23 Feb 2018 10:38:49 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, tglx@linutronix.de
+Subject: Re: [PATCH v2 3/3] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+Message-ID: <20180223023849.GE693@localhost.localdomain>
+References: <20180222091130.32165-1-bhe@redhat.com>
+ <20180222091130.32165-4-bhe@redhat.com>
+ <34593e3f-879b-cdf9-9dc4-a114e4bfab52@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <MWHPR04MB1137BE3E48766435570460689ACE0@MWHPR04MB1137.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34593e3f-879b-cdf9-9dc4-a114e4bfab52@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/2018 6:48 PM, Stanislav Nijnikov wrote:
+On 02/22/18 at 02:22pm, Dave Hansen wrote:
+> First of all, this is a much-improved changelog.  Thanks for that!
 > 
+> On 02/22/2018 01:11 AM, Baoquan He wrote:
+> > In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+> > are allocated with the size of NR_MEM_SECTIONS. They are used to store
+> > each memory section's usemap and mem map if marked as present. With
+> > the help of these two arrays, continuous memory chunk is allocated for
+> > usemap and memmap for memory sections on one node. This avoids too many
+> > memory fragmentations. Like below diagram, '1' indicates the present
+> > memory section, '0' means absent one. The number 'n' could be much
+> > smaller than NR_MEM_SECTIONS on most of systems.
+> > 
+> > |1|1|1|1|0|0|0|0|1|1|0|0|...|1|0||1|0|...|1||0|1|...|0|
+> > -------------------------------------------------------
+> >  0 1 2 3         4 5         i   i+1     n-1   n
+> > 
+> > If fail to populate the page tables to map one section's memmap, its
+> > ->section_mem_map will be cleared finally to indicate that it's not present.
+> > After use, these two arrays will be released at the end of sparse_init().
 > 
->> -----Original Message-----
->> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
->> owner@vger.kernel.org] On Behalf Of Asutosh Das
->> Sent: Wednesday, February 21, 2018 6:57 AM
->> To: subhashj@codeaurora.org; cang@codeaurora.org;
->> vivek.gautam@codeaurora.org; rnayak@codeaurora.org;
->> vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;
->> martin.petersen@oracle.com
->> Cc: linux-scsi@vger.kernel.org; Asutosh Das <asutoshd@codeaurora.org>;
->> open list <linux-kernel@vger.kernel.org>
->> Subject: [PATCH 5/9] scsi: ufs: add reference counting for scsi block requests
->>
->> From: Subhash Jadavani <subhashj@codeaurora.org>
->>
->> Currently we call the scsi_block_requests()/scsi_unblock_requests()
->> whenever we want to block/unblock scsi requests but as there is no
->> reference counting, nesting of these calls could leave us in undesired state
->> sometime. Consider following call flow sequence:
->> 1. func1() calls scsi_block_requests() but calls func2() before
->>     calling scsi_unblock_requests()
->> 2. func2() calls scsi_block_requests()
->> 3. func2() calls scsi_unblock_requests() 4. func1() calls
->> scsi_unblock_requests()
->>
->> As there is no reference counting, we will have scsi requests unblocked after
->> #3 instead of it to be unblocked only after #4. Though we may not have
->> failures seen with this, we might run into some failures in future.
->> Better solution would be to fix this by adding reference counting.
->>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> ---
->>   drivers/scsi/ufs/ufshcd.c | 44
->> +++++++++++++++++++++++++++++++++++++-------
->>   drivers/scsi/ufs/ufshcd.h |  5 +++++
->>   2 files changed, 42 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
->> 7a4df95..987b81b 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -264,6 +264,36 @@ static inline void ufshcd_disable_irq(struct ufs_hba
->> *hba)
->>   	}
->>   }
->>
->> +void ufshcd_scsi_unblock_requests(struct ufs_hba *hba) {
->> +	unsigned long flags;
->> +	bool unblock = false;
->> +
->> +	spin_lock_irqsave(hba->host->host_lock, flags);
->> +	hba->scsi_block_reqs_cnt--;
->> +	unblock = !hba->scsi_block_reqs_cnt;
->> +	spin_unlock_irqrestore(hba->host->host_lock, flags);
->> +	if (unblock)
->> +		scsi_unblock_requests(hba->host);
->> +}
->> +EXPORT_SYMBOL(ufshcd_scsi_unblock_requests);
->> +
->> +static inline void __ufshcd_scsi_block_requests(struct ufs_hba *hba) {
->> +	if (!hba->scsi_block_reqs_cnt++)
->> +		scsi_block_requests(hba->host);
->> +}
->> +
->> +void ufshcd_scsi_block_requests(struct ufs_hba *hba) {
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(hba->host->host_lock, flags);
->> +	__ufshcd_scsi_block_requests(hba);
->> +	spin_unlock_irqrestore(hba->host->host_lock, flags); }
->> +EXPORT_SYMBOL(ufshcd_scsi_block_requests);
->> +
->>   /* replace non-printable or non-ASCII characters with spaces */  static inline
->> void ufshcd_remove_non_printable(char *val)  { @@ -1079,12 +1109,12 @@
->> static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba)
->>   	 * make sure that there are no outstanding requests when
->>   	 * clock scaling is in progress
->>   	 */
->> -	scsi_block_requests(hba->host);
->> +	ufshcd_scsi_block_requests(hba);
->>   	down_write(&hba->clk_scaling_lock);
->>   	if (ufshcd_wait_for_doorbell_clr(hba, DOORBELL_CLR_TOUT_US)) {
->>   		ret = -EBUSY;
->>   		up_write(&hba->clk_scaling_lock);
->> -		scsi_unblock_requests(hba->host);
->> +		ufshcd_scsi_unblock_requests(hba);
->>   	}
->>
->>   	return ret;
->> @@ -1093,7 +1123,7 @@ static int ufshcd_clock_scaling_prepare(struct
->> ufs_hba *hba)  static void ufshcd_clock_scaling_unprepare(struct ufs_hba
->> *hba)  {
->>   	up_write(&hba->clk_scaling_lock);
->> -	scsi_unblock_requests(hba->host);
->> +	ufshcd_scsi_unblock_requests(hba);
->>   }
->>
->>   /**
->> @@ -1413,7 +1443,7 @@ static void ufshcd_ungate_work(struct work_struct
->> *work)
->>   		hba->clk_gating.is_suspended = false;
->>   	}
->>   unblock_reqs:
->> -	scsi_unblock_requests(hba->host);
->> +	ufshcd_scsi_unblock_requests(hba);
->>   }
->>
->>   /**
->> @@ -1469,7 +1499,7 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
->>   		 * work and to enable clocks.
->>   		 */
->>   	case CLKS_OFF:
->> -		scsi_block_requests(hba->host);
->> +		__ufshcd_scsi_block_requests(hba);
->>   		hba->clk_gating.state = REQ_CLKS_ON;
->>   		trace_ufshcd_clk_gating(dev_name(hba->dev),
->>   					hba->clk_gating.state);
->> @@ -5197,7 +5227,7 @@ static void ufshcd_err_handler(struct work_struct
->> *work)
->>
->>   out:
->>   	spin_unlock_irqrestore(hba->host->host_lock, flags);
->> -	scsi_unblock_requests(hba->host);
->> +	ufshcd_scsi_unblock_requests(hba);
->>   	ufshcd_release(hba);
->>   	pm_runtime_put_sync(hba->dev);
->>   }
->> @@ -5299,7 +5329,7 @@ static void ufshcd_check_errors(struct ufs_hba
->> *hba)
->>   		/* handle fatal errors only when link is functional */
->>   		if (hba->ufshcd_state == UFSHCD_STATE_OPERATIONAL) {
->>   			/* block commands from scsi mid-layer */
->> -			scsi_block_requests(hba->host);
->> +			__ufshcd_scsi_block_requests(hba);
->>
->>   			hba->ufshcd_state =
->> UFSHCD_STATE_EH_SCHEDULED;
->>
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h index
->> 7a2dad3..4385741 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -498,6 +498,7 @@ struct ufs_stats {
->>    * @urgent_bkops_lvl: keeps track of urgent bkops level for device
->>    * @is_urgent_bkops_lvl_checked: keeps track if the urgent bkops level for
->>    *  device is known or not.
->> + * @scsi_block_reqs_cnt: reference counting for scsi block requests
->>    */
->>   struct ufs_hba {
->>   	void __iomem *mmio_base;
->> @@ -690,6 +691,7 @@ struct ufs_hba {
->>
->>   	struct rw_semaphore clk_scaling_lock;
->>   	struct ufs_desc_size desc_size;
->> +	int scsi_block_reqs_cnt;
->>   };
->>
->>   /* Returns true if clocks can be gated. Otherwise false */ @@ -862,6 +864,9
->> @@ int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum
->> desc_idn desc_id,
->>
->>   u32 ufshcd_get_local_unipro_ver(struct ufs_hba *hba);
->>
->> +void ufshcd_scsi_block_requests(struct ufs_hba *hba); void
->> +ufshcd_scsi_unblock_requests(struct ufs_hba *hba);
->> +
->>   /* Wrapper functions for safely calling variant operations */  static inline
->> const char *ufshcd_get_var_name(struct ufs_hba *hba)  {
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
->> Inc.
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
->> Linux Foundation Collaborative Project.
-> 
-> 1. The atomic variable and operations could be used for the reference counting.
->       This will allow to avoid usage of the locks.
-> 2. Why are the ufshcd_scsi_block_requests/ ufshcd_scsi_unblock_requests
->      functions not defined as static? They are not used outside ufshcd.c.
-> 
-> Regards
-> Stanislav
-> 
-Hi
-Thanks. Let me check this and get back.
-I'll wait for comments on the other patches before posting a v2.
 
--asd
+Thanks, Dave.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+> Let me see if I understand this.  tl;dr version of this changelog:
+> 
+> Today, we allocate usemap and mem_map for all sections up front and then
+> free them later if they are not needed.  With 5-level paging, this eats
+> all memory and we fall over before we can free them.  Fix it by only
+> allocating what we _need_ (nr_present_sections).
+
+Might no quite right, we allocate pointer array usemap_map and map_map
+for all sections, then we allocate usemap and memmap for present sections,
+and use usemap_map to point at the allocated usemap, map_map to point at
+allocated memmap. At last, we set them into mem_section[]'s member,
+please see sparse_init_one_section() calling in sparse_init(). And
+pointer array usemap_map and map_map are not needed any more, they are
+freed totally.
+
+And yes, with 5-level paging, this eats too much memory. We fall over
+because we can't allocate so much memory on system with few memory, e.g
+in kdump kernel with 256M memory usually.
+
+Here, pointer array usemap_map and map_map are auxiliary data
+structures. Without them, we have to allocate usemap and memmap for 
+section one by one, and we tend to allocate each node's data on that
+node itself. This will cause too many memory fragmentations.
+
+In this patch, only allocate those temporary pointer arrays usemap_map
+and map_map with 'nr_present_sections'. You can see, in sections loop,
+there are two variables increasing with different steps. 'pnum' steps up
+from 0 to NR_MEM_SECTIONS, while 'i' steps up only if section is
+present.
+
+> 
+> 
+> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> > index 640e68f8324b..f83723a49e47 100644
+> > --- a/mm/sparse-vmemmap.c
+> > +++ b/mm/sparse-vmemmap.c
+> > @@ -281,6 +281,7 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+> >  	unsigned long pnum;
+> >  	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
+> >  	void *vmemmap_buf_start;
+> > +	int i = 0;
+> 
+> 'i' is a criminally negligent variable name for how it is used here.
+
+Hmm, I considered this. However, it's mainly used to index map, I can't
+think of a good name to represent the present section, and also do not
+want to make the array indexing line too long. I would like to hear any
+suggestion about a better naming.
+
+> 
+> >  	size = ALIGN(size, PMD_SIZE);
+> >  	vmemmap_buf_start = __earlyonly_bootmem_alloc(nodeid, size * map_count,
+> > @@ -291,14 +292,15 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+> >  		vmemmap_buf_end = vmemmap_buf_start + size * map_count;
+> >  	}
+> >  
+> > -	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
+> > +	for (pnum = pnum_begin; pnum < pnum_end && i < map_count; pnum++) {
+> >  		struct mem_section *ms;
+> >  
+> >  		if (!present_section_nr(pnum))
+> >  			continue;
+> >  
+> > -		map_map[pnum] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> > -		if (map_map[pnum])
+> > +		i++;
+> > +		map_map[i-1] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> > +		if (map_map[i-1])
+> >  			continue;
+> 
+> The i-1 stuff here looks pretty funky.  Isn't this much more readable?
+
+
+Below code needs another 'i++;' if map_map[i] == 0, it might look not good.
+That is why I used trick to avoid it.
+
+	map_map[i] = sparse_mem_map_populate(pnum, nodeid, NULL);
+	if (map_map[i]) {
+	        i++;
+	        continue;
+	}
+	ms = __nr_to_section(pnum);
+	pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
+		__func__);
+	i++;
+
+
+Pankaj's suggestion looks better, I plan to take his if no objection.
+
+        map_map[i] = sparse_mem_map_populate(pnum, nodeid, NULL);
+        if (map_map[i++])                                                                                                                 
+                continue;
+        ms = __nr_to_section(pnum);
+> 
+> 
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index e9311b44e28a..aafb6d838872 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -405,6 +405,7 @@ static void __init sparse_early_usemaps_alloc_node(void *data,
+> >  	unsigned long pnum;
+> >  	unsigned long **usemap_map = (unsigned long **)data;
+> >  	int size = usemap_size();
+> > +	int i = 0;
+> 
+> Ditto on the naming.  Shouldn't it be nr_consumed_maps or something?
+
+Before I hesitated on this because it would make the code line too long.
+
+		usemap_map[nr_consumed_maps] = usemap;
+
+I am fine with nr_consumed_maps, or is it OK to replace 'i' with
+'nr_present' in all places?
+
+> 
+> >  	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nodeid),
+> >  							  size * usemap_count);
+> > @@ -413,12 +414,13 @@ static void __init sparse_early_usemaps_alloc_node(void *data,
+> >  		return;
+> >  	}
+> >  
+> > -	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
+> > +	for (pnum = pnum_begin; pnum < pnum_end && i < usemap_count; pnum++) {
+> >  		if (!present_section_nr(pnum))
+> >  			continue;
+> > -		usemap_map[pnum] = usemap;
+> > +		usemap_map[i] = usemap;
+> >  		usemap += size;
+> > -		check_usemap_section_nr(nodeid, usemap_map[pnum]);
+> > +		check_usemap_section_nr(nodeid, usemap_map[i]);
+> > +		i++;
+> >  	}
+> >  }
+> 
+> How would 'i' ever exceed usemap_count?
+
+'i' should not exceed usemap_count, just it's a limit, I had worry. Will
+remove the 'i < usemap_count' checking.
+
+> 
+> Also, are there any other side-effects from changing map_map[] to be
+> indexed by something other than the section number?
+
+>From code, it won't bring side-effect. As I said above, we just write
+into map_map[] by indexing with 'i', and fetch with 'i' too from
+map_map[]. And agree we need be very careful since this is core code,
+need more eyes to help review. 
+
+Thanks
+Baoquan
