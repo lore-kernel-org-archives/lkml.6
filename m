@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22613oUoN/wXd4Dj5zhqejYrIcwEDTse8Ee4c3De5H9IcmKSMbqAYh+b7bMF7pAODyT1yn5/
-ARC-Seal: i=1; a=rsa-sha256; t=1519411171; cv=none;
+X-Google-Smtp-Source: AH8x224BdxTPyP+Qa1zw8hHF0BitQyn+nepr9DUQiaMlWbOArrLCz6DzQsNcp1Gh79b40UEW2+1g
+ARC-Seal: i=1; a=rsa-sha256; t=1519411168; cv=none;
         d=google.com; s=arc-20160816;
-        b=WATvBSLZxVuZZ4A4kl+cmqN3nNt+wuiumtJqSiph+Lb9z7EZ+wIRbynAen4yedKrzA
-         NAdfSqmSX8s6W+BsQ+bTMOFwY9nPPxX2N9q0LMzrBItoWx22LgnGgFSO4M298TRCIh97
-         xpE4wzbnQSZL92d+2F6BxQlJspT+gQXD6dJLSt6W7yr1HHXxWsC3+cN3ZI6JLdJGUssh
-         HdpxhiB6SqydellpnEt1V1qP6lxcPptx79WsRaPxK8n6vK3+b4gJkwMYo5gu8GaQ/kL2
-         jtjou/cvNcAiY7c8Fmpn4fg2gA2nBf2IZi17VUP5V+sSoNvICEajNqJpaTvVHq2OUwsU
-         c/sg==
+        b=J+DtQ4N7lwl1ZX7NjVWMME3c+x/8pUFJB75jGvdZATsLkFQA0FyXVOVGFmzhnanGgZ
+         BvEUGEM7EPA4TdUqO1aECypnOW30BU7LTfn/xYzWRXP52wOiejxm9u7vFguVnL51kQyo
+         lwAXRExRLYNV6vbnzHriAR6vVvV264VaPU+B6148qK+ickxv+0jDgqYijoMR1tUSJXJW
+         NbJEesUVQOw6cEA4Mjs2Y7UcY374SBQdWpgMi4FV3Rpu2V6FTPAnhD0elNMle/Y12WhE
+         zyUcuGZF3OYhCP7gV800r+OSya2qcjDISds6DbfQKmzEhclN74Ixq44REmjbMQfFMu7i
+         Xg1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9Ja34OWzG1HWVS67QkfrUYZq41hst+OzfBQ6shv5xrw=;
-        b=1LWNbNlNTnJ+hwLwRLS/NQUQxwXa7ICabknf3nkfXrciG3duS/qHXWwmRHHyEL2bb3
-         Hj41kcTp1oODeQlPxtSSa+5RdkTVaLINi2KwO2cWWGLTwAyqd24fBErYi9WsNbHiq/JT
-         VRcjVqrjpZDV2vmqm7cQe1Ed4tc824mwdAOV5NmBnueUCyHkRyaVPv4e7YktsDKkvwhN
-         rOwuXutAwXO0xfJiOnFIXkyvzGjjZP1/kLf9Q8yUmJc25H7AS3V96Wt7hx0EaomN+kmj
-         0pmB4Mld9oaxr8X2CLY/3zcaBFft6mobpnaqH+Xj06L69Khzr1B81haRfSNQRcrwTv+O
-         NPvw==
+        bh=gNWgNaMgj93FnEqvnI0LBCd/bROy5z0lxsR5qmQthp0=;
+        b=V1K5rcKGoY6iGm99K2QxWv/lr1zQgz+lZNVlahk/KgMilrzB8JgUmKXLSxe5wG4n0z
+         bAeBwz8Y6uql6k+xhENTU3w0+QKmExp2LnbzeWP0U9LGORcCfkfkg8KRRLeT2GzUZMpT
+         Gm3CgeTM5AZohdmK2ej5r+Cm2TShxD/pZg97PNp0OKRgf7oAuWfJp3x/5OkZQthg6eGj
+         40fobGK6EOv9iLg6wtztk6jrPrKVbZgk9MbzuIVldTx3UaTERzdgzH5FuZPLbzj6oKer
+         pmwM3bA/LGR4yhTjBB4wqIaFat+WNSGHYMcDB5Qfx7p+SZbrxi51WDnVOAmMbmFZ0UV1
+         CRfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 144/193] perf/x86: Shut up false-positive -Wmaybe-uninitialized warning
-Date: Fri, 23 Feb 2018 19:26:17 +0100
-Message-Id: <20180223170348.399001558@linuxfoundation.org>
+	Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 143/193] wireless: cw1200: use __maybe_unused to hide pm functions_
+Date: Fri, 23 Feb 2018 19:26:16 +0100
+Message-Id: <20180223170348.255073308@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -47,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218087998560586?=
-X-GMAIL-MSGID: =?utf-8?q?1593218087998560586?=
+X-GMAIL-THRID: =?utf-8?q?1593218085582008729?=
+X-GMAIL-MSGID: =?utf-8?q?1593218085582008729?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,48 +51,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 11d8b05855f3749bcb6c57e2c4052921b9605c77 upstream.
+commit 836856e3bd61d0644e5178a2c1b51d90459e2788 upstream.
 
-The intialization function checks for various failure scenarios, but
-unfortunately the compiler gets a little confused about the possible
-combinations, leading to a false-positive build warning when
--Wmaybe-uninitialized is set:
+The cw1200 uses #ifdef to check for CONFIG_PM, but then
+uses SIMPLE_DEV_PM_OPS, which leaves the references out when
+CONFIG_PM_SLEEP is not defined, so we get a warning with
+PM=y && PM_SLEEP=n:
 
-  arch/x86/events/core.c: In function ‘init_hw_perf_events’:
-  arch/x86/events/core.c:264:3: warning: ‘reg_fail’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  arch/x86/events/core.c:264:3: warning: ‘val_fail’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-     pr_err(FW_BUG "the BIOS has corrupted hw-PMU resources (MSR %x is %Lx)\n",
+drivers/net/wireless/st/cw1200/cw1200_spi.c:450:12: error: 'cw1200_spi_suspend' defined but not used [-Werror=unused-function]
 
-We can't actually run into this case, so this shuts up the warning
-by initializing the variables to a known-invalid state.
+This removes the incorrect #ifdef and instead uses a __maybe_unused
+annotation to let the compiler know it can silently drop
+the function definition.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+For the DEV_PM_OPS definition, we can use an IS_ENABLED() check
+to avoid defining the structure when CONFIG_PM is not set without
+the #ifdef.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170719125310.2487451-2-arnd@arndb.de
-Link: https://patchwork.kernel.org/patch/9392595/
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/perf_event.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/cw1200/cw1200_spi.c |    9 ++-------
+ drivers/net/wireless/cw1200/pm.h         |    9 +++++++--
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kernel/cpu/perf_event.c
-+++ b/arch/x86/kernel/cpu/perf_event.c
-@@ -188,8 +188,8 @@ static void release_pmc_hardware(void) {
+--- a/drivers/net/wireless/cw1200/cw1200_spi.c
++++ b/drivers/net/wireless/cw1200/cw1200_spi.c
+@@ -446,8 +446,7 @@ static int cw1200_spi_disconnect(struct
+ 	return 0;
+ }
  
- static bool check_hw_exists(void)
+-#ifdef CONFIG_PM
+-static int cw1200_spi_suspend(struct device *dev)
++static int __maybe_unused cw1200_spi_suspend(struct device *dev)
  {
--	u64 val, val_fail, val_new= ~0;
--	int i, reg, reg_fail, ret = 0;
-+	u64 val, val_fail = -1, val_new= ~0;
-+	int i, reg, reg_fail = -1, ret = 0;
- 	int bios_fail = 0;
- 	int reg_safe = -1;
+ 	struct hwbus_priv *self = spi_get_drvdata(to_spi_device(dev));
  
+@@ -460,16 +459,12 @@ static int cw1200_spi_suspend(struct dev
+ 
+ static SIMPLE_DEV_PM_OPS(cw1200_pm_ops, cw1200_spi_suspend, NULL);
+ 
+-#endif
+-
+ static struct spi_driver spi_driver = {
+ 	.probe		= cw1200_spi_probe,
+ 	.remove		= cw1200_spi_disconnect,
+ 	.driver = {
+ 		.name		= "cw1200_wlan_spi",
+-#ifdef CONFIG_PM
+-		.pm		= &cw1200_pm_ops,
+-#endif
++		.pm		= IS_ENABLED(CONFIG_PM) ? &cw1200_pm_ops : NULL,
+ 	},
+ };
+ 
+--- a/drivers/net/wireless/cw1200/pm.h
++++ b/drivers/net/wireless/cw1200/pm.h
+@@ -31,13 +31,18 @@ int cw1200_pm_init(struct cw1200_pm_stat
+ void cw1200_pm_deinit(struct cw1200_pm_state *pm);
+ int cw1200_wow_suspend(struct ieee80211_hw *hw,
+ 		       struct cfg80211_wowlan *wowlan);
+-int cw1200_wow_resume(struct ieee80211_hw *hw);
+ int cw1200_can_suspend(struct cw1200_common *priv);
++int cw1200_wow_resume(struct ieee80211_hw *hw);
+ void cw1200_pm_stay_awake(struct cw1200_pm_state *pm,
+ 			  unsigned long tmo);
+ #else
+ static inline void cw1200_pm_stay_awake(struct cw1200_pm_state *pm,
+-					unsigned long tmo) {
++					unsigned long tmo)
++{
++}
++static inline int cw1200_can_suspend(struct cw1200_common *priv)
++{
++	return 0;
+ }
+ #endif
+ #endif
