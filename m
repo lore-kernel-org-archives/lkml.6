@@ -1,49 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754732AbeBWTdp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 14:33:45 -0500
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:44205 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754623AbeBWTdn (ORCPT
+        id S1754640AbeBWTfS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 14:35:18 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40545 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753221AbeBWTfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 14:33:43 -0500
-X-Google-Smtp-Source: AH8x224z6dLu/g1UIWBCps53DkrtCFLd/EB19vWvyBXZQmEUbbz+1nda+MsiVW+HAy6HzcREekLFXg==
-Date: Fri, 23 Feb 2018 22:33:38 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: proc: use down_read_killable in
- proc_pid_cmdline_read()
-Message-ID: <20180223193338.GA5708@avx2>
-References: <1519156169-11883-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180220223825.GA6705@avx2>
- <fa1e9b6b-efaf-79c5-00ea-1f58d5078c2d@linux.alibaba.com>
- <20180221195720.GA639@avx2>
- <b82e9c62-0c8d-205b-9887-8ea2c18eaccb@linux.alibaba.com>
+        Fri, 23 Feb 2018 14:35:15 -0500
+X-Google-Smtp-Source: AH8x225CdXU69oDVja4TLM4yIILAejH+Ma7V5SGVKBsLflCUOo8aMRdWrw3/b8dE8nBHZMA/WmWrLQ==
+Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <6129743.3Euq8y3YuW@avalon> <050fa0bb-2157-8796-1bce-354f1da67e24@gmail.com>
+ <5155593.q1p5eQX8Bt@avalon>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <ce1dec01-4053-6aac-9ed7-4898ae2bade1@gmail.com>
+Date: Fri, 23 Feb 2018 11:35:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b82e9c62-0c8d-205b-9887-8ea2c18eaccb@linux.alibaba.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <5155593.q1p5eQX8Bt@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 03:13:10PM -0800, Yang Shi wrote:
-
-> >>> 2) access_remote_vm() et al will do the same ->mmap_sem, and
-> >> Yes, it does. But, __access_remote_vm() is called by access_process_vm()
-> >> too, which is used by much more places, i.e. ptrace, so I was not sure
-> >> if it is preferred to convert to killable version. So, I leave it untouched.
-> > Yeah, but ->mmap_sem is taken 3 times per /proc/*/cmdline read
-> > and your scalability tests should trigger next backtrace right away.
+On 02/23/18 01:25, Laurent Pinchart wrote:
+> Hi Frank,
 > 
-> Yes, however, I didn't run into it if mmap_sem is acquired earlier.
+> On Friday, 23 February 2018 05:20:43 EET Frank Rowand wrote:
+>> On 02/22/18 02:25, Laurent Pinchart wrote:
+>>> On Thursday, 22 February 2018 08:07:14 EET Frank Rowand wrote:
+>>>> On 02/20/18 15:10, Laurent Pinchart wrote:
+>>>>> Hello,
+>>>>>
+>>>>> This patch series addresses a design mistake that dates back from the
+>>>>> initial DU support. Support for the LVDS encoders, which are IP cores
+>>>>> separate from the DU, was bundled in the DU driver. Worse, both the DU
+>>>>> and LVDS were described through a single DT node.
+>>>>>
+>>>>> To fix the, patches 01/16 and 02/16 define new DT bindings for the LVDS
+>>>>> encoders, and deprecate their description inside the DU bindings. To
+>>>>> retain backward compatibility with existing DT, patches 03/16 to 08/16
+>>>>> then patch the device tree at runtime to convert the legacy bindings to
+>>>>> the new ones.
+>>>>>
+>>>>> With the DT side addressed, patch 09/16 converts the LVDS support code
+>>>>> to a separate bridge driver. Patches 11/16 to 16/16 then update all the
+>>>>> device tree sources to the new DU and LVDS encoders bindings.
+>>>>>
+>>>>> I decided to go for live DT patching in patch 08/16 because implementing
+>>>>> support for both the legacy and new bindings in the driver would have
+>>>>> been very intrusive, and prevented further cleanups. This version relies
+>>>>> more heavily on overlays to avoid touching the internals of the OF core
+>>>>> compared to v2, even if manual fixes to the device tree are still
+>>>>> needed.
+>>>>>
+>>>>> Compared to v3, this series uses the OF changeset API to update
+>>>>> properties instead of accessing the internals of the property structure.
+>>>>> This removes the local implementation of functions to look up nodes by
+>>>>> path and update properties. In order to do this, I pulled in Pantelis'
+>>>>> patch series titled "[PATCH v2 0/5] of: dynamic: Changesets helpers &
+>>>>> fixes" at Rob's request, and rebased it while taking two small review
+>>>>> comments into account.
+>>>>
+>>>> Wait a minute!  Why are you putting a patch set to modify core devicetree
+>>>> in the middle of a driver series.  Please pull it out to a separate
+>>>> series.
+>>>
+>>> Because Rob asked for the driver-local implementation of the property add
+>>> function to be replaced by Pantelis' series. I want to get the LVDS
+>>> changes in v4.17 and asked Rob whether I could then take the OF changeset
+>>> patches merged through the DRM tree, and he didn't object. If that causes
+>>> an issue I'll switch back to the driver-local implementation to get the
+>>> driver changes merged, split the OF changeset series out, and then move
+>>> to the OF changeset API once merged. Would you prefer that ?
+>>
+>> You have already created a new version of the R-Car patches without the
+>> set of patches that I was objecting to here.  So this is somewhat just
+>> an academic comment.
+>>
+>> As I mentioned in the v6 thread, I am coming back here to clean up loose
+>> ends, and explain why I had the reaction I had.  Basically, this is a
+>> process issue to me.
+>>
+>> (1) The patch set from Pantelis is "hidden" in the driver patch series.
+>> When viewing collapsed threads (which is my normal mode to avoid getting
+>> overwhelmed by the vast volume of email I scan), the Pantelis patch set
+>> is totally invisible.  If the R-Car driver patch series had not had me
+>> on the to: list, there is a very good chance I would not have noticed
+>> it.  Or noticed in a more delayed time frame.  And the same applies to
+>> anyone else who might be subscribed to the devicetree mail list.  If
+>> the Pantelis patch series was split out into a separate patch set then
+>> it would be more visible on the list.
+>>
+>> (2) There is no good way to indicate in the email subject lines for
+>> the Pantelis patches that they are version 3 of the series, since
+>> they are also version 4 of the R-Car patch series.  If one reads the
+>> patch 0/0 header carefully, and/or the other Pantelis patch comment
+>> headers carefully, and then does a little detective work, it is
+>> possible to find version 2 of the Pantelis patch series, and thus
+>> be able to track the full history.  If just glancing at each
+>> individual patch email subject, scanning the patch comment, and
+>> spending more time reading the body of the patch, it would be
+>> very easy to overlook the existence of the previous versions on
+>> the mail list.
+>>
+>> (2b) Small quibble:  if the Pantelis patches were in a separate series,
+>> with v3 in the subject header, then you would have normally put
+>> a "changes since v2" section in the patch comment header, which would
+>> have been more visible and less cryptic than what you wrote, which was:
+>>
+>>    ...
+>>
+>>    Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>>    [Fixed memory leak in __of_changeset_add_update_property_copy()]
+>>    Signed-off-by: Laurent Pinchart
+>> <laurent.pinchart+renesas@ideasonboard.com>
+>>    ---
+>>     drivers/of/dynamic.c | 222 ++++++++++++++++++++++++++++++++++
+>>     include/linux/of.h   | 328 +++++++++++++++++++++++++++++++++++++++++++++
+>>     2 files changed, 550 insertions(+)
+>>
+>> My original scan of version 2 and then the email in this series had me
+>> questioning whether the two open issues from patch 2 had been addressed
+>> (yes, patch 0/16 did explicitly mention that 2 review comments had been
+>> taken into account, so you can point at my poor reading comprehension).
 > 
-> How about defining a killable version, like 
-> __access_remote_vm_killable() which use down_read_killable(), then the 
-> killable version can be used by proc/*/cmdline? There might be other 
-> users in the future.
+> All points dully noted, I'll make sure not to include similar patches in the 
+> middle of a driver series should I need to rework a patch series previously 
+> posted by someone else.
+> 
+> I assume your comments also apply to patches to drivers/of/ that are developed 
+> as part of a drivers series, not merely pulled in it ?
 
-It would be a disaster as interfaces multiply.
+Yes, as a normal process.  Of course we find cases where following normal process
+causes problems, and it can be better to do something different in those cases.
+
+
+> I have mixed feelings 
+> about this, as in many subsystems changes to the core require at least one 
+> user. Always splitting core and driver changes in separate series would thus 
+> often be impractical.
+
+If at all reasonable, I would still prefer to see two patch series for this
+case.  I would expect both series to be upstreamed by a single maintainer
+(with the two involved maintainers coordinating this process).  I have not
+thought this through in any detail, so I don't know if I'm missing a bunch
+of issues.  One issue that I can think of is clearly documenting which
+version of the subsystem patch series any given version of the driver patch
+series depends upon.  That should be easy to note in patch 0 of the driver
+series.  Do you have experience with any other issues in this scenario?
+
+This sounds like a good topic to include in the "Guide to Being A Linux Kernel
+Maintainer".
+
+
+> I doubt we will find a single process that will suit all subsystem 
+> maintainers, so maybe this should be a per-subsystem decision ?
+
+Totally agree.  And even for me, I see it as a guideline or normal process,
+with exceptions made where it makes sense.
+
+
+>> (3) This is totally unrelated to your patch series, but I'm leaving a bread
+>> crumb trail here.  Rob pointed you at a patch series that was not the most
+>> recent version.  When this patch series appears again, there already is
+>> a version 3 subset of it, but it is still labeled as being version 2, and
+>> also has outstanding un-addressed issues.  ("[PATCH v2 1/2] of: dynamic:
+>> Add __of_node_dupv()", 11/04/16)
+> 
+> Ah, thank you for the information. I was looking for a v3 but missed that one 
+> as it was labeled v2.
+> 
