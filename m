@@ -1,114 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751578AbeBWRPu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:15:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33030 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751351AbeBWRPs (ORCPT
+        id S1751733AbeBWRQU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:16:20 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:59925 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751402AbeBWRQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:15:48 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 246D6606DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
-Date: Fri, 23 Feb 2018 11:15:43 -0600
-From: Richard Kuo <rkuo@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-hexagon@vger.kernel.org, Chen Liqin <liqin.linux@gmail.com>,
-        Lennox Wu <lennox.wu@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180223171543.GA3780@codeaurora.org>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222191758.GB5180@codeaurora.org>
- <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 23 Feb 2018 12:16:19 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Date: Fri, 23 Feb 2018 18:15:52 +0100
+Message-Id: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 11:43:10PM +0100, Arnd Bergmann wrote:
-> On Thu, Feb 22, 2018 at 8:17 PM, Richard Kuo <rkuo@codeaurora.org> wrote:
-> > On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
-> >> * Hexagon is Qualcomm's DSP architecture. It is being actively used
-> >>   in all Snapdragon ARM SoCs, but the kernel code appears to be
-> >>   the result of a failed research project to make a standalone Hexagon
-> >>   SoC without an ARM core. There is some information about the
-> >>   project at https://wiki.codeaurora.org/xwiki/bin/Hexagon/ and
-> >>   https://unix.stackexchange.com/questions/246243/what-is-was-the-qualcomm-hexagon-comet-board
-> >>   There is a port to gcc-4.5 on the project page, which is evidently
-> >>   abandoned, but there is an active upstream LLVM port that is
-> >>   apparently used to build non-Linux programs.
-> >>   I would consider this one a candidate for removal as well, given that
-> >>   there were never any machines outside of Qualcomm that used this,
-> >>   and they are no longer interested themselves.
-> >
-> > It's difficult for me to speak to the decisions as I can understand
-> > your point of view, but maybe I can speak to some of the status.
-> >
-> > We still use the port internally for kicking the tools around and other
-> > research projects.  As you noticed we're not doing gcc anymore; we're
-> > using LLVM for both kernel and userspace.  Yes there have been some
-> > caveats but it does work within confines.
-> >
-> > Time is unfortunately just limited for me to upstream some of my kernel
-> > fixes and cleanups, and there are some things that just haven't shown
-> > up externally yet.
-> >
-> > However, as James Hogan mentioned, having it in the tree really has been
-> > useful because it gets included in the various upstream changes and
-> > fixes, which we appreciate.
-> >
-> > So hopefully this will help inform the decision a little better.
-> >
-> > If you have any other questions please let me know.
-> 
-> Thanks for the clarification! Since you are the maintainer and you
-> still consider the port useful, I don't see how anyone else would be
-> in a position to demand it to be removed, so we should keep it
-> around until you want it gone.
-> 
-> I still have a few questions:
-> 
-> - Any idea how we would find out of the status ever changes? E.g. if
->   you decide at some point that you don't find the latest Linux useful
->   any more for your internal work, would you send a patch for removal?
+Hi,
 
-Yes, we can definitely notify everyone if this happens.
+This series gets back on the TCB drivers rework. It introduces a new driver to
+handle the clocksource and clockevent devices.
 
- 
-> - How do I build an llvm based toolchain for Hexagon? Do I need patches
->   on top of the llvm-6 release branch? Where can I find the corresponding
->   binutils-2.30 sources?
+As a reminder, this is necessary because:
+ - the current tcb_clksrc driver is probed too late to be able to be used at
+   boot and we now have SoCs that don't have a PIT. They currently are not able
+   to boot a mainline kernel.
+ - using the PIT doesn't work well with preempt-rt because its interrupt is
+   shared (in particular with the UART and their interrupt flags are
+   incompatible)
+ - the current solution is wasting some TCB channels
 
-The Hexagon LLVM tools available from Qualcomm should have an ABI switch
-that's supposed to work for this:
+The plan is to get this driver upstream, then convert the TCB PWM driver to be
+able to get rid of the tcb_clksrc driver along with atmel_tclib.
 
--target hexagon-unknown-linux
+changes in v3:
+ - use SPDX tag in include/soc/at91/atmel_tcb.h
+ - rework option selection to make the clocksource option silent
 
-Admittedly I haven't tried that one.  I'm unsure about the full upstream
-status; I'll check on that, but I think the sketchiest component out of
-that bunch is currently going to be the linker.
-
-Let me do some checking on all this the next couple of days and get
-a better answer.
+Main changes in v2:
+ - use direct IO instead of regmap when accessing channel specific registers to
+   avoid the regmap locking
+ - implement suspend/resume
 
 
-Thanks,
-Richard Kuo
+Alexandre Belloni (6):
+  ARM: at91: add TCB registers definitions
+  clocksource/drivers: Add a new driver for the Atmel ARM TC blocks
+  clocksource/drivers: atmel-pit: make option silent
+  ARM: at91: Implement clocksource selection
+  ARM: configs: at91: use new TCB timer driver
+  ARM: configs: at91: unselect PIT
 
+ arch/arm/configs/at91_dt_defconfig    |   2 +-
+ arch/arm/configs/sama5_defconfig      |   2 +-
+ arch/arm/mach-at91/Kconfig            |  25 ++
+ drivers/clocksource/Kconfig           |  13 +-
+ drivers/clocksource/Makefile          |   3 +-
+ drivers/clocksource/timer-atmel-tcb.c | 608 ++++++++++++++++++++++++++++++++++
+ include/soc/at91/atmel_tcb.h          | 216 ++++++++++++
+ 7 files changed, 865 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clocksource/timer-atmel-tcb.c
+ create mode 100644 include/soc/at91/atmel_tcb.h
 
 -- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+2.16.1
