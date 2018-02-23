@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2275WNu3d2sCx6rkODlgBObYIqxXh6a3DwfxF/fs/COCEcp+XJ9Kk0KnssAQWcFdpFPeJ3pO
-ARC-Seal: i=1; a=rsa-sha256; t=1519411091; cv=none;
+X-Google-Smtp-Source: AH8x227eJ0SpEJVoDgp4KfIosRgk6LB8Wphfc1M62YcSHdVroplDbKxvSCB9zvIxEjBhnvLglcps
+ARC-Seal: i=1; a=rsa-sha256; t=1519411086; cv=none;
         d=google.com; s=arc-20160816;
-        b=a4eRgLkIL1JAEBZyVReLgn5dXZFHZQCu6mSCdDTI2EXTAalGeE2fTnpim7r7bfXo4j
-         RglEgjvXZX24VN3LBroDK212uUDkV4ySSlexZkbTkHC3UERHITEIBIclH7uxMGEareKK
-         qfKoVFGrw44x8mrupLHd6ejWBikjfHw+3X4s7k+6uHfrZMFAqWSva+i1bLVGojY6kik/
-         UIZOS4krmU5fiJpswPw8Q1653MlEnA4ExfzP3DLuT2MEN/HsEIFQ0M1zVSe/guw02fEA
-         bKEKpB21KsLH6Ar3zaIlYsiH3MEBxM94IsuEQJZmsOPYwnVL5VkdJwhY5HR/+YTxjA5m
-         bD4A==
+        b=o/YZcTt6VR9gtMifpJL1R/r50a05lyM2X95TFXzqvP1j6g93r3o3r8J0kV+8LKfNvl
+         ZdqwXrAUCK3esCzqCxm3Yqm/nZ+Nppfrbexsvl/fjPKTVGscyivBXYOvX0drbmrdmQmm
+         PqbNegZ6QWm+9pOE8ZpDH9zGWR0mKRuTqr2Di/jNglBplDxa7JPupu3vMfazUT6SVllt
+         jKnTefmR06Ro9gQpkSS6BR0Kr/Ake6o84t8sDPT8yHjpP/XBJmDza+AgHpoWMT5G9Bxl
+         g/AAkF4PXilpj2B9S9DURAbLrGl5TCa+dAZDI8BSPj8/USGp8aSC19z3pX70xVSh1vj5
+         9bzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GNP5u4Sb6U3Hczn/FU6yzx5WxOS/XfB392p3ItyHc9w=;
-        b=LxShbqllhZTcOFOamHnWD1O5v5d3qHMnoDey2AHLfnH5mmFLum1DJYaIrSzZ5/OySw
-         kPL2+eip/pigO2awsYR8MHsK/XAw07cs0FHkl6qGgIrg8SVB7c4W76a8BdmUtsAOZ16w
-         F4vF9dFy7gYl3bnN0AZ9faDX24bX21MSoMXQqVLQccc9wS6nvb3dUmyGQj47CCKaPWqe
-         McEXwOf3WAwRGCBGGabH7kmbyp71dwD1S6SPk31JlRMbg2axg/0Ipq1YAUpKtVgmJBrP
-         wRkZAjPBVbpu5t2xFdmaMv05upM56qZFZiDV3NtUXtb6PU04QqJO9JVl2m5o6y+BtCaC
-         wJ1g==
+        bh=vZiUbiQjfpD3HYoYTh/I56mRajqZdZOuCI/V7Go8O/8=;
+        b=frWoLMfj9nSmv4qtWdygVlQT6PBwSZWYwdOMUZGB4UYr5GDeIg8dLIxGTOrYmbXksU
+         tzSTiSL1smx+Fm2oS2DP6v3arAWlA9nf9BMkOQHAW4FGV1MCjn4ix8cS1W3CVzDBzU9m
+         G9CoWQ94gOYJONAmD8oJS5CWhFrIQUE9VHtDkKTEtAjRTGRzYxbE/l6GPA2T0mCDOs/S
+         NkviySh2W5Rv07QlW8/s70RymineUsw+XKu3eOf3lqGULunfqERGmy6FY5wR7pJnGiZo
+         Ap9e9Sd1DuJdyKSx26ExgTR3+Ljw8YJ1MytiMrXSP8dnavDAD51Ev8KePR6vvKff6sNp
+         y7xQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.4 080/193] reiserfs: avoid a -Wmaybe-uninitialized warning
-Date: Fri, 23 Feb 2018 19:25:13 +0100
-Message-Id: <20180223170338.545702896@linuxfoundation.org>
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.4 078/193] arm64: Kconfig: select COMPAT_BINFMT_ELF only when BINFMT_ELF is set
+Date: Fri, 23 Feb 2018 19:25:11 +0100
+Message-Id: <20180223170338.273458126@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218005125191239?=
-X-GMAIL-MSGID: =?utf-8?q?1593218005125191239?=
+X-GMAIL-THRID: =?utf-8?q?1593217998928383123?=
+X-GMAIL-MSGID: =?utf-8?q?1593217998928383123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,58 +49,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-commit ab4949640d6674b617b314ad3c2c00353304bab9 upstream.
+commit 2e449048a25eb75d48dff12882b93f26d130a1c6 upstream.
 
-The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
+Fix warning:
+"(COMPAT) selects COMPAT_BINFMT_ELF which has unmet direct dependencies
+(COMPAT && BINFMT_ELF)"
 
-In file included from fs/reiserfs/lbalance.c:8:0:
-fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
-fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
-           ~~^~~
-fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
-
-This happens because the offset/type pair that is stored in
-ih.key.u.k_offset_v2 is actually uninitialized when we call
-set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
-all data is correct, but the first of the two reads uninitialized data
-for the type field and writes it back before it gets overwritten.
-
-This works around the warning by initializing the k_offset_v2 through
-the slightly larger memcpy().
-
-[JK: Remove now unused define and make it obvious we initialize the key]
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/reiserfs/lbalance.c |    2 +-
- fs/reiserfs/reiserfs.h |    1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/reiserfs/lbalance.c
-+++ b/fs/reiserfs/lbalance.c
-@@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buff
- 			 * 'cpy_bytes'; create new item header;
- 			 * n_ih = new item_header;
- 			 */
--			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
-+			memcpy(&n_ih.ih_key, &ih->ih_key, KEY_SIZE);
- 
- 			/* Endian safe, both le */
- 			n_ih.ih_version = ih->ih_version;
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -1326,7 +1326,6 @@ struct cpu_key {
- #define KEY_NOT_FOUND 0
- 
- #define KEY_SIZE (sizeof(struct reiserfs_key))
--#define SHORT_KEY_SIZE (sizeof (__u32) + sizeof (__u32))
- 
- /* return values for search_by_key and clones */
- #define ITEM_FOUND 1
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -785,7 +785,7 @@ source "fs/Kconfig.binfmt"
+ config COMPAT
+ 	bool "Kernel support for 32-bit EL0"
+ 	depends on ARM64_4K_PAGES || EXPERT
+-	select COMPAT_BINFMT_ELF
++	select COMPAT_BINFMT_ELF if BINFMT_ELF
+ 	select HAVE_UID16
+ 	select OLD_SIGSUSPEND3
+ 	select COMPAT_OLD_SIGACTION
