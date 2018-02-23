@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvxQY0cNFMs+TRXoix1Z4w0hWUU7AMp3BIu/n25kICNVEENA7qu93UP0dTByaZOsNIaAO1e
-ARC-Seal: i=1; a=rsa-sha256; t=1519411652; cv=none;
+X-Google-Smtp-Source: AH8x226+Tw+Lh3rraY1vmq4naePOCtiVQFEm+gXsBzrImlEpy3KGjBHTjRIbeHgitpRKrgC2X55w
+ARC-Seal: i=1; a=rsa-sha256; t=1519411649; cv=none;
         d=google.com; s=arc-20160816;
-        b=VUxltEH/DuTyTB10lh6jEILbzbGe6Bq+MlfrPe9eVjkkZ8aQ5UN/ogYGoRXBb93VtB
-         /z9Q6Y4kunJdvnctemozwAcn0ZFYk3A/wMUN9hc50kb5DjAarRiXJX9Q0e2qf6RxvGYt
-         BcIl47gl54euZ97gwzyH9DPWF409YDqrd6/bUUoUrLoqJyu2RL+f5MRCb3PtlRZXT66E
-         39I0DsHyYBd0eprbIrJW88iK3X6io/mIrtcrTvPkoM6abWy7Ett+3giWQtXLrTbWCfYm
-         ctxb9UyIY0kgJd09e9R70/wmQWQllM5FF+wdpTBmXKj28tnXQEMpL2MIah4Gbq6HoeCP
-         swMA==
+        b=bJco8W8Vv7US9Z2FIewJgeWWtf0UUroGsx+AnVz2g5VbYPL5nPyVcj/ITPm5Ksic+y
+         HAoEQknhIbhujexUYQRnfb7sZkNXTnYPhIsh6kHzTj7nPs3EqC7o+1XcPHKV8XKjLA+X
+         qs8EU+0tyQH4GKEG7w/7h6CBol0w6cqk2bY5LIx+kwPtxL+R9VdZzx6QjHXBvldmnd7q
+         ynkt0DPSXUeqLLGROERLHpr4V+JGIvwiT6KsoJGOoX8FUXhMXBfeKe94PLrDitQ2BHkA
+         DejuUUPzFbbyZzBheWD7rVpOlvh28Ya+l08dcxuZOkupsPsfEjwJR2tLIxhrmlEM5ddb
+         yCeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=V6Ao1EbYFCZl08OWcpdgIZxin3P1SWiimrTsR37QGaA=;
-        b=gxXPATu9pUtG++5e2/emeJoeTQzWB0Bc7gb/VpSkcxTd0NgtJeimrL7sv/mll2cdTb
-         J2kQCexoCl44hNlsNWhyxvlsN13taj9tgqXssXA9gdktz+GjKe6seEtAkLX/19pGHaid
-         sIdGVzFqDC4fS7f/+PqOqrexu5EuYlTfJJ/OthmupcKFAX8ZlYEpV4I8xLGG7Qtb48G4
-         DVCtBATcKgXKObnbLy9MpWft9NJiQg8eOyI3w9YhosXcO+1puR7P2FkiuB0gdbqluVJu
-         hizR1glR7IK537iIpjbSlTaXirviCaZozBdKfEAfHDJaHeIVHWv/IPOMwc1H8Rn5GZzQ
-         c0Kg==
+        bh=CbKLOaiyEk3zcBRjFxViK+rutXaS6/Gm6B9wjxn9FdM=;
+        b=K5FhM4zn3mmWHmtiCK438by54EaYv3JyzZ0A6UaMjF88paiiaNBpRRuruniW7IltSU
+         +wFb6DhLj32RFQKKxwR1LHprBJkkF8mxJrIQoQsyGjwNXseKqIlCFyjXehKnxBs8ahHO
+         wUH6TSkudieatz0X5h3bcEGNQLfDMsQSSOsmBP3Hk9Q2SkDY1Mxc/QOInr2nLOL8zCs9
+         pv9qMaKilm1HTPh454YvGzKUe9A3ZyMNZfQznVB7PJQtzNJzGR7teUO5I+yHSD1TG2VB
+         luzj99gHI2UxQd+JasJzA1KDafkH1jZFa8qQMCCIVGhgQmTUF2/9DYkhMppPjwtWTOxH
+         CX9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 115/145] scsi: advansys: fix uninitialized data access
-Date: Fri, 23 Feb 2018 19:27:01 +0100
-Message-Id: <20180223170739.696833771@linuxfoundation.org>
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?= <jeremy.lefaure@lse.epita.fr>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Borislav Petkov <bp@suse.de>,
+	Carlos ODonell <carlos@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 114/145] x86/vm86: Fix unused variable warning if THP is disabled
+Date: Fri, 23 Feb 2018 19:27:00 +0100
+Message-Id: <20180223170739.564633626@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217996534204075?=
-X-GMAIL-MSGID: =?utf-8?q?1593218592705644032?=
+X-GMAIL-THRID: =?utf-8?q?1593218589982964410?=
+X-GMAIL-MSGID: =?utf-8?q?1593218589982964410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,61 +52,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-commit 44a5b977128c0ffff0654392b40f4c2ce72a619b upstream.
+commit 3ba5b5ea7dc3a10ef50819b43a9f8de2705f4eec upstream.
 
-gcc-7.0.1 now warns about a previously unnoticed access of uninitialized
-struct members:
+GCC complains about unused variable 'vma' in mark_screen_rdonly() if THP is
+disabled:
 
-drivers/scsi/advansys.c: In function 'AscMsgOutSDTR':
-drivers/scsi/advansys.c:3860:26: error: '*((void *)&sdtr_buf+5)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-         ((ushort)s_buffer[i + 1] << 8) | s_buffer[i]);
-                          ^
-drivers/scsi/advansys.c:3860:26: error: '*((void *)&sdtr_buf+7)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/scsi/advansys.c:3860:26: error: '*((void *)&sdtr_buf+5)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/scsi/advansys.c:3860:26: error: '*((void *)&sdtr_buf+7)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+arch/x86/kernel/vm86_32.c: In function ‘mark_screen_rdonly’:
+arch/x86/kernel/vm86_32.c:180:26: warning: unused variable ‘vma’
+[-Wunused-variable]
+   struct vm_area_struct *vma = find_vma(mm, 0xA0000);
 
-The code has existed in this exact form at least since v2.6.12, and the
-warning seems correct. This uses named initializers to ensure we
-initialize all members of the structure.
+That's silly. pmd_trans_huge() resolves to 0 when THP is disabled, so the
+whole block should be eliminated.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Moving the variable declaration outside the if() block shuts GCC up.
+
+Reported-by: Jérémy Lefaure <jeremy.lefaure@lse.epita.fr>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Tested-by: Borislav Petkov <bp@suse.de>
+Cc: Carlos O'Donell <carlos@redhat.com>
+Link: http://lkml.kernel.org/r/20170213125228.63645-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/advansys.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/kernel/vm86_32.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/advansys.c
-+++ b/drivers/scsi/advansys.c
-@@ -6291,18 +6291,17 @@ static uchar AscGetSynPeriodIndex(ASC_DV
- static uchar
- AscMsgOutSDTR(ASC_DVC_VAR *asc_dvc, uchar sdtr_period, uchar sdtr_offset)
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -160,11 +160,12 @@ void save_v86_state(struct kernel_vm86_r
+ 
+ static void mark_screen_rdonly(struct mm_struct *mm)
  {
--	EXT_MSG sdtr_buf;
--	uchar sdtr_period_index;
--	PortAddr iop_base;
--
--	iop_base = asc_dvc->iop_base;
--	sdtr_buf.msg_type = EXTENDED_MESSAGE;
--	sdtr_buf.msg_len = MS_SDTR_LEN;
--	sdtr_buf.msg_req = EXTENDED_SDTR;
--	sdtr_buf.xfer_period = sdtr_period;
-+	PortAddr iop_base = asc_dvc->iop_base;
-+	uchar sdtr_period_index = AscGetSynPeriodIndex(asc_dvc, sdtr_period);
-+	EXT_MSG sdtr_buf = {
-+		.msg_type = EXTENDED_MESSAGE,
-+		.msg_len = MS_SDTR_LEN,
-+		.msg_req = EXTENDED_SDTR,
-+		.xfer_period = sdtr_period,
-+		.req_ack_offset = sdtr_offset,
-+	};
- 	sdtr_offset &= ASC_SYN_MAX_OFFSET;
--	sdtr_buf.req_ack_offset = sdtr_offset;
--	sdtr_period_index = AscGetSynPeriodIndex(asc_dvc, sdtr_period);
-+
- 	if (sdtr_period_index <= asc_dvc->max_sdtr_index) {
- 		AscMemWordCopyPtrToLram(iop_base, ASCV_MSGOUT_BEG,
- 					(uchar *)&sdtr_buf,
++	struct vm_area_struct *vma;
++	spinlock_t *ptl;
+ 	pgd_t *pgd;
+ 	pud_t *pud;
+ 	pmd_t *pmd;
+ 	pte_t *pte;
+-	spinlock_t *ptl;
+ 	int i;
+ 
+ 	down_write(&mm->mmap_sem);
+@@ -177,7 +178,7 @@ static void mark_screen_rdonly(struct mm
+ 	pmd = pmd_offset(pud, 0xA0000);
+ 
+ 	if (pmd_trans_huge(*pmd)) {
+-		struct vm_area_struct *vma = find_vma(mm, 0xA0000);
++		vma = find_vma(mm, 0xA0000);
+ 		split_huge_pmd(vma, pmd, 0xA0000);
+ 	}
+ 	if (pmd_none_or_clear_bad(pmd))
