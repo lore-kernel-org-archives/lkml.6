@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841409-1519418935-2-10828200704408415236
+X-Cyrus-Session-Id: sloti22d1t05-3841677-1519418911-2-7725450865298831980
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519418934; b=Nz58rwu4sV78M6wYNq5NevMQ7bE+qnrRn3Agqte4blgiBnO
-    GSSXDS29p6tz7Sr4+cWs5eJD4dhdR3TwFgz1Wqmjvz5u2+s2sb6TX+1z4I1YFEoe
-    ZTE0fpUUQsmhmxZqqClGMYI64gUB4iIWzix3dXOCkaQRyMbDwa0BX7LcZRta/S9t
-    J191hiaq2FG9L6/tnWOoAUzIVwYbcj7NBhfPpLertfyZ2559gAjaKvYqHg6jkTZp
-    UVeCMcn/EjpMfqrdLj9tl5rCkEYhjVZ3KP2gB+OqJRi0zPERECfgZciKVRGtHVF+
-    BgYTMhTC6NTfW5XyDShyHvXE0i7j4FjoUmGzL6w==
+    t=1519418911; b=cbC+HzAxrd07VsejmDDmTwHL0dS2z35Q3GV8V6TvR7aiLSE
+    +ppWBk8duN7QIJjlkXzPGHpIcnwgVShEiurFlyK8OpbeUL1js0T+raRH27h0ax5R
+    ZRJck8FSZxajQd/an6/PvPvAVQ7HTc7KcaNebyt6HqSavp+zVyUE0cEl5/m+VL2d
+    lbweX7a0vVnBHFPcv1v5ihnAPSgqntFFiVBq/yHeLXGqFbW1xKmfJm+DsfFcp6Yi
+    YmyKv5IgiemTcDzDB7SxS+FCrnuz1l9tPC0rZSl0KK5x42yAVdgnJVB/PIz5E8zr
+    7qs3L861CN2ARl3Ij3DLEIPTXKKm/slLmZoYf0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519418934; bh=BA9kvzg4ROzhvU0CZwg8dqhwxG
-    nhGxi/LCVePr7uPl4=; b=lRfVnPk7SECDbKj+bd292TrLHP8vB0QXFGDS5tR3VR
-    l43PKQZuEcT1dlCpKMZqjFQRCE3MHPxOmohnh9v3Rgwojgl4F3qhbHxfH+IqlWSS
-    M/6ZefFuUA1KH3aYu40uM+zmS/HEm1wjsqqqNvvTXppORBEoOmcIcKAqgIIm8iWe
-    6q6lS28zub0bmSQOpwPeKc4DS3N5QY1O2fQCimQvNpdJsJs9LOjlOuNcWkd71I6g
-    XSQfckKhLlgS6TIzNYgzruW9vE90kI6sLJ2MZiQittbk+Kr2LcPq+w8pcjvjZ30M
-    IKqV7BI77HFmb6qNijs5KScOimotGEZnuSkXAtD4KFhg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519418911; bh=WjGjN5JAETBpWvqeP/BN6ADbAa
+    rM4WfK4+7AdzemqIY=; b=mcZn2tDPGQOGUU1PYB63yldA0NQOwyyvTcY7lsL8yR
+    1UirJyKDxu+10PQ2loTIop3zkZIpqjtVapGJ0oaIIHIughSFsq8YX2wrwMR/91O6
+    Lxz5amkdUi0wbIbVKX6B/UGfDqFD1E0N71FaY55lc/FjxYm6J3f3Y5trZ4hblKJO
+    Pk2J6KOTPcO1/tQgjuRIpEdSu0I7sIdgujVhmxwM94Gxpnw8fSvNzS9ZChMQJ5VZ
+    SWtg3PFhlzM78iIDTWimDEUoYszDlrPeDaz5F3C8oBIMzeA20KT6pfOqxfmiY+zu
+    dbjRsUicS+rAc22O0zIQ9Pe/vqdo/qwOp9lNnPWIIuBw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeBWSbj (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35312 "EHLO
+        id S1752670AbeBWSbs (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:31:48 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeBWSbh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:37 -0500
+        with ESMTP id S1752656AbeBWSbq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:46 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 3.18 06/58] arm: spear13xx: Fix spics gpio controllers warning
-Date: Fri, 23 Feb 2018 19:26:05 +0100
-Message-Id: <20180223170207.672704285@linuxfoundation.org>
+        stable@vger.kernel.org, Zhouyi Zhou <zhouzhouyi@gmail.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 3.18 09/58] ext4: save error to disk in __ext4_grp_locked_error()
+Date: Fri, 23 Feb 2018 19:26:08 +0100
+Message-Id: <20180223170208.172906318@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -79,35 +78,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-commit f8975cb1b8a36d0839b6365235778dd9df1d04ca upstream.
+commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
 
-This fixes the following warning by also sending the flags argument for
-gpio controllers:
+In the function __ext4_grp_locked_error(), __save_error_info()
+is called to save error info in super block block, but does not sync
+that information to disk to info the subsequence fsck after reboot.
 
-Property 'cs-gpios', cell 6 is not a phandle reference in
-/ahb/apb/spi@e0100000
+This patch writes the error information to disk.  After this patch,
+I think there is no obvious EXT4 error handle branches which leads to
+"Remounting filesystem read-only" will leave the disk partition miss
+the subsequence fsck.
 
-Fixes: 8113ba917dfa ("ARM: SPEAr: DT: Update device nodes")
-Cc: stable@vger.kernel.org # v3.8+
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/spear1310-evb.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/spear1310-evb.dts
-+++ b/arch/arm/boot/dts/spear1310-evb.dts
-@@ -349,7 +349,7 @@
- 			spi0: spi@e0100000 {
- 				status = "okay";
- 				num-cs = <3>;
--				cs-gpios = <&gpio1 7 0>, <&spics 0>, <&spics 1>;
-+				cs-gpios = <&gpio1 7 0>, <&spics 0 0>, <&spics 1 0>;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -677,6 +677,7 @@ __acquires(bitlock)
+ 	}
  
- 				stmpe610@0 {
- 					compatible = "st,stmpe610";
+ 	ext4_unlock_group(sb, grp);
++	ext4_commit_super(sb, 1);
+ 	ext4_handle_error(sb);
+ 	/*
+ 	 * We only get here in the ERRORS_RO case; relocking the group
