@@ -1,33 +1,33 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x22416n1jMDOkd9DsoigW1cz/iG8+EXU+tylcbrtGU35wbvhDj7u8B3FOuBnpqhEq0gYSl3zV
-ARC-Seal: i=1; a=rsa-sha256; t=1519374284; cv=none;
+X-Google-Smtp-Source: AH8x224JFw6flLI0r6TnTonmyXoksJ6O2klzRUKtMywviuUK86NvoDDghWEFRIUVg0MHaE+KnCjo
+ARC-Seal: i=1; a=rsa-sha256; t=1519374260; cv=none;
         d=google.com; s=arc-20160816;
-        b=XlIeo5KUFjohVAmvbrNkOsKwVDrZwNZCi/ar+85ALYCVxdSPNN98gNaNlPUKHT90VW
-         07j9dyakGazUBd/EcpVgqR+7iZsiZawWTHhltC7ZLkwOb7wLGGm3bgScm60N9hB6iSep
-         R5g4zvGwT5876o6wgV8ei8ZaOxX9avQniztB8JEWH89ZJhjFM9tdIyiYUzMxiXMVN8HX
-         Sb8ljjAYgTCuLQm85QlMbbO0o7dOcesDxfrvNJaTlTtgmrNv6NEaQOX14nvj6ZOBBxDy
-         HDiOu1B4R/l2uvp9isgkUlO6yFlHpDlTk/30GEcvF5NjQpH7XXVwWHOo0ND+pGzn7zbB
-         lH9w==
+        b=ZRcBK9Cn8IXoSRy06r8X1QTw9FWNqlz4GUh63iglb/Ulces4/LggWMipBj34EJ47fY
+         RTJ5PYJRLbEy9aiHeoPYTZG22JZU//E1RD1oT7AuCsOfIGeGIK+gaqt0t7LLSfZFkyoY
+         NOhniUOK0ci6Oi1bpJTijUiXsTKrQxeCDQYPeznVvYIK8h3cHQBtqszER2kA4Dy7pG3N
+         BqMZZzy8lgyWf3kcXNa1nyKebfG1GtqQ2NQLYAuzYOTnawaZnECqTYfqFBl6S4ozrdYu
+         m5/FN17+rfK+geiubgUfx1SLrYQw5Wk39AdUfi79yZak9CbM7XhZ2ro6axSUAz9A2vaB
+         WYBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=clwW3gcdfXm4uCbyrvZ/U04u+0cuqJlbDq+UT+seTik=;
-        b=EwxkxtFXqodiLsw0mnAaTJmlLtTMEJGP5Do6s+coqelHF/RiOmgVu7ZasA6ZjGYFu8
-         dACFWWifFbSVW/9M7fHs9Jr5pQNAmFDjpX38oJ+uHhjgcTO91yDEMWGJkmJOcmfb9i+b
-         ZzO9+BzTjgjgvnMYCHg0XlhHX6uvekG5H2zp9tz4HIFQnnsy6Lq5btv1zgLhf3IyCeOt
-         O0bf9ug/iIVWFVKyy4S+G+g2nK85YUv8+JuNyhe9BX5e2LpLUJNuOi7u65Oog6p94LsL
-         JMN7uSBSUUH72+47B9f0uwq6tLtnNDAwC/jE06cwx0cmWEp6cV8Swt+bqw4k0RQV0GrS
-         3Qgg==
+        bh=NdLxPYjlHUWURPydx0TYHH3eGfZcrtmSP6FXuH/3XqA=;
+        b=GjS2QeFhsMMFr1rmFiPf3D81xw4sOZvvGP+JZMU1CHC/4swfpi8hr2WemQbTkMaNyk
+         MNhDiMmuxmSSZCofYgyjN6rWFpWI/xy93nyFbHV2+PWFZWTN+GQDyVJe0G1lZ/hlfcJd
+         rGj/ylPTPlOo2SU6kgspp4139HWmLxsuUhEUZbaJvKyekHbBKBjU0MBHPvM49W7JM9N8
+         xuxzFlarylu0KPAHanaSe1HAaS3mnAXheQR9f78Z/Td+FTv1zuVDAKqYU1mShcWgmZQH
+         5khoLTIHJjtRV6DESIglJHcDE/3aMMZQdFR1YYe0CfW4aRuJtQraN6LUPvd1K+UekzFP
+         XC2g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Be+57Pgj;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GVzbqDb8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nvBOYTnv;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nvBOYTnv;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Be+57Pgj;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GVzbqDb8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nvBOYTnv;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nvBOYTnv;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F84A60A50
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC3A860F6B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
 From: Oza Pawandeep <poza@codeaurora.org>
@@ -44,137 +44,62 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v11 7/7] PCI/DPC: Enumerate the devices after DPC trigger event
-Date: Fri, 23 Feb 2018 13:54:04 +0530
-Message-Id: <1519374244-20539-8-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v11 1/7] PCI/AER: Rename error recovery to generic pci naming
+Date: Fri, 23 Feb 2018 13:53:58 +0530
+Message-Id: <1519374244-20539-2-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
 References: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086428728217914?=
-X-GMAIL-MSGID: =?utf-8?q?1593179409710515720?=
+X-GMAIL-THRID: =?utf-8?q?1593086403303503248?=
+X-GMAIL-MSGID: =?utf-8?q?1593179384621560762?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Implement error_resume callback in DPC so, after DPC trigger event
-enumerates the devices beneath.
+This patch renames error recovery to generic name with pci prefix
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index e15bcda..751efc0 100644
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -126,6 +126,21 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index a4bfea5..aeb83a0 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -478,7 +478,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
  }
  
  /**
-+ * dpc_error_resume - enumerate the devices beneath
-+ * @dev: pointer to Root Port's pci_dev data structure
-+ *
-+ * Invoked by Port Bus driver during fatal recovery.
-+ */
-+static void dpc_error_resume(struct pci_dev *pdev)
-+{
-+	if (pci_wait_for_link(pdev, true)) {
-+		pci_lock_rescan_remove();
-+		pci_rescan_bus(pdev->bus);
-+		pci_unlock_rescan_remove();
-+	}
-+}
-+
-+/**
-  * dpc_reset_link - reset link DPC  routine
-  * @dev: pointer to Root Port's pci_dev data structure
+- * do_recovery - handle nonfatal/fatal error recovery process
++ * pcie_do_recovery - handle nonfatal/fatal error recovery process
+  * @dev: pointer to a pci_dev data structure of agent detecting an error
+  * @severity: error severity type
   *
-@@ -364,6 +379,7 @@ static void dpc_remove(struct pcie_device *dev)
- 	.probe		= dpc_probe,
- 	.remove		= dpc_remove,
- 	.reset_link     = dpc_reset_link,
-+	.error_resume	= dpc_error_resume,
- };
- 
- static int __init dpc_service_init(void)
-diff --git a/drivers/pci/pcie/pcie-err.c b/drivers/pci/pcie/pcie-err.c
-index 1ea4b9a..1e1bf98 100644
---- a/drivers/pci/pcie/pcie-err.c
-+++ b/drivers/pci/pcie/pcie-err.c
-@@ -236,6 +236,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
-  * @state: error state
-  * @error_mesg: message to print
-  * @cb: callback to be broadcast
-+ * @severity: error severity
-  *
-  * Invoked during error recovery process. Once being invoked, the content
-  * of error severity will be broadcast to all downstream drivers in a
-@@ -244,7 +245,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
- static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 	enum pci_channel_state state,
- 	char *error_mesg,
--	int (*cb)(struct pci_dev *, void *))
-+	int (*cb)(struct pci_dev *, void *),
-+	int severity)
+@@ -486,7 +486,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+  * error detected message to all downstream drivers within a hierarchy in
+  * question and return the returned code.
+  */
+-static void do_recovery(struct pci_dev *dev, int severity)
++static void pcie_do_recovery(struct pci_dev *dev, int severity)
  {
- 	struct aer_broadcast_data result_data;
+ 	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
+ 	enum pci_channel_state state;
+@@ -566,7 +566,7 @@ static void handle_error_source(struct pcie_device *aerdev,
+ 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
+ 					info->status);
+ 	} else
+-		do_recovery(dev, info->severity);
++		pcie_do_recovery(dev, info->severity);
+ }
  
-@@ -256,6 +258,17 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 		result_data.result = PCI_ERS_RESULT_RECOVERED;
- 
- 	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-+		/* If DPC is triggered, call resume error handler
-+		 * because, at this point we can safely assume that
-+		 * link recovery has happened, this is only handled if
-+		 * callback is resume, as this function can be called
-+		 * with multiple callbacks.
-+		 */
-+		if ((severity == DPC_FATAL) &&
-+		    (cb == report_resume)) {
-+			cb(dev, NULL);
-+			return PCI_ERS_RESULT_RECOVERED;
-+		}
- 		/*
- 		 * If the error is reported by a bridge, we think this error
- 		 * is related to the downstream link of the bridge, so we
-@@ -305,7 +318,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	status = broadcast_error_message(dev,
- 			state,
- 			"error_detected",
--			report_error_detected);
-+			report_error_detected,
-+			severity);
- 
- 	if (severity == AER_FATAL ||
- 	    severity == DPC_FATAL) {
-@@ -321,7 +335,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 		status = broadcast_error_message(dev,
- 				state,
- 				"mmio_enabled",
--				report_mmio_enabled);
-+				report_mmio_enabled,
-+				severity);
- 
- 	if (status == PCI_ERS_RESULT_NEED_RESET) {
- 		/*
-@@ -332,7 +347,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 		status = broadcast_error_message(dev,
- 				state,
- 				"slot_reset",
--				report_slot_reset);
-+				report_slot_reset,
-+				severity);
+ #ifdef CONFIG_ACPI_APEI_PCIEAER
+@@ -631,7 +631,7 @@ static void aer_recover_work_func(struct work_struct *work)
+ 		}
+ 		cper_print_aer(pdev, entry.severity, entry.regs);
+ 		if (entry.severity != AER_CORRECTABLE)
+-			do_recovery(pdev, entry.severity);
++			pcie_do_recovery(pdev, entry.severity);
+ 		pci_dev_put(pdev);
  	}
- 
- 	if (status != PCI_ERS_RESULT_RECOVERED)
-@@ -342,7 +358,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
- 	broadcast_error_message(dev,
- 				state,
- 				"resume",
--				report_resume);
-+				report_resume,
-+				severity);
- 
- 	dev_info(&dev->dev, "Device recovery successful\n");
- 	mutex_unlock(&pci_err_recovery_lock);
+ }
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
 a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
