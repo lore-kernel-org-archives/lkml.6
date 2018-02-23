@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtMMqAbqNGrzT1yqrNGan68f4BKkeL9UN2vTBXya7bhfNlhvfgXd0Irg2Q6LmWn9R3fS1vU
-ARC-Seal: i=1; a=rsa-sha256; t=1519411138; cv=none;
+X-Google-Smtp-Source: AG47ELt00yTe9iLZgDROaVr77lrQ8gpPXPwPM6iycXYGFx3nci+gGnJIa1lW7SwI63eSRRye8fMu
+ARC-Seal: i=1; a=rsa-sha256; t=1519411134; cv=none;
         d=google.com; s=arc-20160816;
-        b=YTPLTi4xvJwEnXh4Fhsf01YKgWCjvZQWxAldj5LA3MaX5TnEhtt+mgxDhGvu0Fw6o/
-         cVaolI57pwb+05sfwwu8sFHF30LEyGcun5DDbvPWE4TYBrSFYbXGN4jrl8ULS4lWa+Vj
-         ETEv4DuuPc27oxbJB3odsz2hI9WQdK2fAbs87m8KihUvHH6Z7j+ElmkDWfysHyRz9R2l
-         3C91OJ89V0BZ/lH+HvnwCJH8N7bt1dmpE2qZgElvhybk4uIO9erHoiNxFN01EsIbRLMW
-         18/0kDqXHOSl+JlCCky+I5DKjnqP4Lx2NkVDJQr1mizcwMInOZu3qa91MH+fWGQB4Ig8
-         Uocg==
+        b=MJvIQ7ETKuzH+5ZKOgZxQ3BLegI0pYo5cYSKIqRfctN3Cq4tyQI7XC9K6mg9zXUTVu
+         XcYxLwaVDq0FtaNLVR0BqxDkBL6Ky2d8VBHI7XJuEdvpPxY99Sta5XhbGdyHQbxkd8CW
+         UZmvsxxuf6kMkKxwn5ApAXPtActy97G7ZSt7vJ0kb3rmuNonYJ/KZ8OxjMup6gT6P/Xi
+         7BX2Pee4dpL92AsQBXc3QNX093lGBLGUI9KjLjdomELEX5ZrM45yLTmp/ljre7lMoY5Z
+         yTOqOQFGBbikXCAbo7yqpwguwLj9Yio4297vOujJC28+w8FvqLFlo5WJtBd3Kqz3ueNd
+         tsKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3xWuqhobklHI9s5kC1NIJaZhuldwIxd4RBdtEh4dA+0=;
-        b=jCydPSY0frrPVBg1xueXIwkbrCfM4iXgcHfBiDbCKyNMkZqiHipyqfYE4xC+IFJbg5
-         zqnjkZLc4L3fUnlE6sobPDZ7jG/6gTxyToZ8l3WBb110SRwZFdS+4cyscDtRQpvG/r2I
-         M/sQgqlzYPb4FABN4+wM/oMeRfh80GtFGxj2cJq22gBBceIZ/G9ZlyeD5+MPnAuuLo0Q
-         uOAoJhq7lVpMYuaAF9u0U9FCSkY+oqsK4SPH03SOdPcFlVscVU/MHqjUF66HgvFM1k5e
-         +k1l3kDOoeHkM66uwqk6MKXj9Pn2KRx09BPBYh2KN3te2u73aqSUNm22psaCbr2E0jz5
-         YDUw==
+        bh=riKI/dKiXSczYDdZEFoCcT75OMafyYNalLOppksHGHo=;
+        b=EM5LvxRHtx3Fp6uqOmC5wlw64Wqx59YNpwZGHlDcOLyey5j3H9Nn+gwMaXVrLWiKmz
+         zKuzwaG1llXoNvTpwgsZI0V5Ku3a43lsx6JKufQpTc1iQ0kieMv8HXIMS2zd/6z3w+H9
+         fQ0YzZADtEqT409mVwrVhpGDdPB24mWOI8kZAkdtkAX6T/yWO+pfxi1wUWChVokE61qs
+         jYqhS/WKDadRl60HVcmqlBOL5t9YYf3JEHjQL0UuQOJHTizRQB8EGsULJvpb/+MkIF1o
+         bQrcvAzentE9KT2gVfNbA/50gLF27dhp1hTWSfHNby3pi2mthCK56P0umjWtuelO/xP+
+         /UMg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.4 134/193] [media] go7007: add MEDIA_CAMERA_SUPPORT dependency
-Date: Fri, 23 Feb 2018 19:26:07 +0100
-Message-Id: <20180223170346.823910090@linuxfoundation.org>
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.4 133/193] KVM: add X86_LOCAL_APIC dependency
+Date: Fri, 23 Feb 2018 19:26:06 +0100
+Message-Id: <20180223170346.665314740@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218054101846199?=
-X-GMAIL-MSGID: =?utf-8?q?1593218054101846199?=
+X-GMAIL-THRID: =?utf-8?q?1593218049468964929?=
+X-GMAIL-MSGID: =?utf-8?q?1593218049468964929?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit fa6317eedd6341f2144ed1097706d8c34f18b6e4 upstream.
+commit e42eef4ba38806b18c4a74f0c276fb2e0b548173 upstream.
 
-If MEDIA_SUBDRV_AUTOSELECT and VIDEO_GO7007 are both set, we
-automatically select VIDEO_OV7640, but that depends on MEDIA_CAMERA_SUPPORT,
-so we get a Kconfig warning if that is disabled:
+The rework of the posted interrupt handling broke building without
+support for the local APIC:
 
-warning: (VIDEO_GO7007) selects VIDEO_OV7640 which has unmet direct dependencies (MEDIA_SUPPORT && I2C && VIDEO_V4L2 && MEDIA_CAMERA_SUPPORT)
+ERROR: "boot_cpu_physical_apicid" [arch/x86/kvm/kvm-intel.ko] undefined!
 
-This adds another dependency so we don't accidentally select
-it when it is unavailable.
+That configuration is probably not particularly useful anyway, so
+we can avoid the randconfig failures by adding a Kconfig dependency.
 
+Fixes: 8b306e2f3c41 ("KVM: VMX: avoid double list add with VT-d posted interrupts")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/go7007/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/usb/go7007/Kconfig
-+++ b/drivers/media/usb/go7007/Kconfig
-@@ -11,7 +11,7 @@ config VIDEO_GO7007
- 	select VIDEO_TW2804 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_TW9903 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_TW9906 if MEDIA_SUBDRV_AUTOSELECT
--	select VIDEO_OV7640 if MEDIA_SUBDRV_AUTOSELECT
-+	select VIDEO_OV7640 if MEDIA_SUBDRV_AUTOSELECT && MEDIA_CAMERA_SUPPORT
- 	select VIDEO_UDA1342 if MEDIA_SUBDRV_AUTOSELECT
- 	---help---
- 	  This is a video4linux driver for the WIS GO7007 MPEG
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -23,6 +23,7 @@ config KVM
+ 	depends on HIGH_RES_TIMERS
+ 	# for TASKSTATS/TASK_DELAY_ACCT:
+ 	depends on NET && MULTIUSER
++	depends on X86_LOCAL_APIC
+ 	select PREEMPT_NOTIFIERS
+ 	select MMU_NOTIFIER
+ 	select ANON_INODES
