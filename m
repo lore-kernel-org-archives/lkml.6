@@ -1,91 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751404AbeBWBGU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:06:20 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34100 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751158AbeBWBGS (ORCPT
+        id S1751339AbeBWBOo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:14:44 -0500
+Received: from elektron.elka.pw.edu.pl ([194.29.160.103]:60257 "EHLO
+        elektron.elka.pw.edu.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbeBWBOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:06:18 -0500
-X-Google-Smtp-Source: AH8x227bvnG8ojr0IKXnSBLT6wmOvtb2pn9BNV5D22DZwTuSZTHSqvOGeWqdcPSayTS/6yLLh501w29VFinUUTi4zLU=
+        Thu, 22 Feb 2018 20:14:43 -0500
+Subject: Proposal - how to make usbip more resistant to misconfiguration
+From: "wzabolot@elektron.elka.pw.edu.pl" <wzabolot@elektron.elka.pw.edu.pl>
+To: 891036@bugs.debian.org
+References: <da4d5257-9bbd-7abb-2022-ba474aea4720@elka.pw.edu.pl>
+ <6d54befc-2fbb-b1ca-cc93-00eefb5c867f@elektron.elka.pw.edu.pl>
+ <7c22ea61-a9da-caa6-5b69-06e3dfefdb44@elektron.elka.pw.edu.pl>
+Cc: LKML <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        "linux-usb@vger.kernel.org >> linux-usb"@vger.kernel.org
+Message-ID: <19aaf781-851b-fc26-239a-a6fc8494fd5c@elektron.elka.pw.edu.pl>
+Date: Fri, 23 Feb 2018 01:56:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
-References: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
-From: Alexey Klimov <klimov.linux@gmail.com>
-Date: Fri, 23 Feb 2018 01:06:16 +0000
-Message-ID: <CALW4P+J4tf377puAGJRQK1rXgWzxRBLjLkBb4RuBTq6Z4hwAyw@mail.gmail.com>
-Subject: Re: [PATCH v2] [media] Delete unnecessary variable initialisations in
- seven functions
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux Media <linux-media@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        =?UTF-8?Q?David_H=C3=A4rdeman?= <david@hardeman.nu>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Schwarzott <zzam@gentoo.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>,
-        Romain Reignier <r.reignier@robopec.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Santosh Kumar Singh <kumar.san1093@gmail.com>,
-        Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7c22ea61-a9da-caa6-5b69-06e3dfefdb44@elektron.elka.pw.edu.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: pl-PL
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 9:22 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Feb 2018 21:45:47 +0100
->
-> Some local variables will be set to an appropriate value before usage.
-> Thus omit explicit initialisations at the beginning of these functions.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v2:
-> Hans Verkuil insisted on patch squashing. Thus some changes
-> were recombined based on source files from Linux next-20180216.
->
->  drivers/media/radio/radio-mr800.c             | 2 +-
+Hi,
 
-For radio-mr800:
+I have found that the
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=891036 is not the only
+one related to misconfiguration of the usbip driver and tools.
+A few weeks ago the similar bug
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=878866 was discovered.
+It seems that the configuration of usbip is fragile, and it is easy to
+make a mistake leading to the setup that doesn't work correctly.
+I suppose, that additional mechanisms should be added to prevent such
+problems:
 
-Acked-by: Alexey Klimov <klimov.linux@gmail.com>
+ 1. It should be checked DURING THE COMPILATION, that the number of
+    ports in a single virtual hub does not exceed 128.
+ 2. The MAXNPORT constant in tools/usb/usbip/libsrc/vhci_driver.h should
+    be defined as:
+    #define MAXNPORT ( VHCI_PORTS * VHCI_NR_HCS )
 
->  drivers/media/radio/radio-wl1273.c            | 2 +-
->  drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
->  drivers/media/usb/cx231xx/cx231xx-cards.c     | 2 +-
->  drivers/media/usb/cx231xx/cx231xx-dvb.c       | 2 +-
->  drivers/media/usb/go7007/snd-go7007.c         | 2 +-
->  drivers/media/usb/tm6000/tm6000-cards.c       | 2 +-
->  7 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
-> index dc6c4f985911..0f292c6ba338 100644
-> --- a/drivers/media/radio/radio-mr800.c
-> +++ b/drivers/media/radio/radio-mr800.c
-> @@ -511,5 +511,5 @@ static int usb_amradio_probe(struct usb_interface *intf,
->                                 const struct usb_device_id *id)
->  {
->         struct amradio_device *radio;
-> -       int retval = 0;
-> +       int retval;
->
-> diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
+I have not tested the above modifications. If I find some time to verify
+them, and if they are correct, I'll submit the official patches.
 
-[..]
+With best regards,
+Wojtek
 
-Thanks!
-Alexey
+-- 
+Wojciech M Zabolotny, PhD
+Institute of Electronic Systems
+Faculty of Electronics and Information Technology
+Warsaw University of Technology
