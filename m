@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226X32M3Absgum58W7wgVndebRfqyeYcamk/4uYb/xckDijFfgz9tJQGIUV4nzXeSIM+9fcL
-ARC-Seal: i=1; a=rsa-sha256; t=1519410901; cv=none;
+X-Google-Smtp-Source: AG47ELvh0tezxpyp10eKKYUx07jHUkSrDDCnpxlNL+h22x5zColWp74rIxsAJL9vZEVfnlCSRC0/
+ARC-Seal: i=1; a=rsa-sha256; t=1519410895; cv=none;
         d=google.com; s=arc-20160816;
-        b=gJz9RAbhE9EPdNPwxCsOQBxM0ye5C3qS5dK1CK5wi0JTjQ/qIcfEL/eAnDB2dmDPtm
-         soh9kTbMta1XIiQ97Zdwo/hZg1j4zJCCLxCz29N12jaN6laR3BmiZwLXkcgXzCVuqwcT
-         dly19/QLlQjDS+AnK4vRQ8NVlOE4xFHec2auJrMCCBdjffgNeJ9csnvcVzOXejwAEY3R
-         bw7kYfbO67dD9mpoanueOAIbD2mAfXtF2BzBZatCgqGta/cL7YOXpZ9sNsmzilzyJjLy
-         ebaVuT7+djqureznqm+mw9riDK1iTbb0U7SacnBoTzHgfJuaNttsUZBWzOPLUgkljV4j
-         bgEg==
+        b=bEEQmLHMq4p6TquKrFgwmHuJ4vaNYgweXmTDB+Fw1Mkz8se+bo+9psEp1qFA9rBzuX
+         GIVu3MfpEmX7yvh2Z8I5NlwDFQ1lzOMc3ua0W2QwF2BG0H3jnsA4reqN1z4OGDRyUDM3
+         lpjl+WNm9QtQoFKgVGP/ijRkE+aMJ7xUbkpyH95iHYVjcn/NvyrfOCp5vwREpnuKpzz6
+         1JaMzXDM/060r+OilTggJgq9YGez5BIpXHGa+SW9VqYCsfQvOP4M7vg29HxwiMyNwMRj
+         C7akPh7TkJYSUEx5+fzBfbkk4UTpHamif7broJ7xfhdL2xA8AqOW5dcHVkK+VXuSq1EP
+         AcQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zDmFS06FrhE4u9pa9w2Msm4/xe/jiGowtP2Y6pXck3g=;
-        b=S1rQ4f2gFlP9nlHSKcwnVyIsgrAmaLGrdApMCiVD108VDDkUzan97U3eqHfQS5RtBA
-         VGmKJvLXYZz88PXwB8BEnRSPJ3W188bIFAYRgmBSS2nwHw0TzPNH8sn4Zh3ogbOfXOqM
-         EH0fWTez6xAEbSQ9OLFRdQc4CmAOBfrkx7cYVW+/5eJuRxIhNMcsr3ZxYqxC5t/7XoyA
-         L52Cdlpndw//eR1ZZRKoUed9fvCE8hC6Hg3AZ7rLHm6gW53AZjsQPcCrUeCgs7JLdMOr
-         dMqPiUfD5s1gzGxYCr565AtSBEyHx4E18tEA96Y2uSdlI5tMlOxiPs/g5PKldjk6YX02
-         7OcA==
+        bh=jh0U38cCoQjJu2IZncDFmTKoFM0+2W9vroPhz6vGAos=;
+        b=Dgr/ALgPqJi+X53rsAynyk8FrMATRbuIfhMHd2S96PuF2SBiYs2Jl034B7sDkqW40D
+         5ZSZ73OuZNaPoZght7YrFYbhPRsltcGMl4sX5NUqv4ROZyx2ZLfcK63MTVzei+v8Uzvj
+         werXjDgkeEWB/UGCb4CjcTMacd+ejmnP3g5KDLIGxxMZEWW9uRcPu98jzrcHeUab5mrR
+         /f+ARdXX7bQ8AaWQNURQ2QOEPny6wG0Cxvi9oBL+n3UrKvPgWguO388eq8fzVPyeGcfK
+         hBeyqu35FUxlgqr/hQiu4Gy4NdeiLhYLHluRJQXY3WsxvEY02M3tVUWPTQOo9anZrp7h
+         NDVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Andi Kleen <andi@firstfloor.org>,
-	David Ahern <dsahern@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Wang Nan <wangnan0@huawei.com>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Vinod Koul <vinod.koul@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 035/193] perf top: Fix window dimensions change handling
-Date: Fri, 23 Feb 2018 19:24:28 +0100
-Message-Id: <20180223170331.576368507@linuxfoundation.org>
+Subject: [PATCH 4.4 051/193] dmaengine: at_hdmac: fix potential NULL pointer dereference in atc_prep_dma_interleaved
+Date: Fri, 23 Feb 2018 19:24:44 +0100
+Message-Id: <20180223170334.016821770@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -47,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217584770930249?=
-X-GMAIL-MSGID: =?utf-8?q?1593217805429687382?=
+X-GMAIL-THRID: =?utf-8?q?1593217798955458934?=
+X-GMAIL-MSGID: =?utf-8?q?1593217798955458934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,80 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 
-[ Upstream commit 89d0aeab4252adc2a7ea693637dd21c588bfa2d1 ]
+[ Upstream commit 62a277d43d47e74972de44d33bd3763e31992414 ]
 
-The stdio perf top crashes when we change the terminal
-window size. The reason is that we assumed we get the
-perf_top pointer as a signal handler argument which is
-not the case.
+_xt_ is being dereferenced before it is null checked, hence there is a
+potential null pointer dereference.
 
-Changing the SIGWINCH handler logic to change global
-resize variable, which is checked in the main thread
-loop.
+Fix this by moving the pointer dereference after _xt_ has been null
+checked.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-ysuzwz77oev1ftgvdscn9bpu@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This issue was detected with the help of Coccinelle.
+
+Fixes: 4483320e241c ("dmaengine: Use Pointer xt after NULL check.")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-top.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/dma/at_hdmac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -70,6 +70,7 @@
- #include <linux/types.h>
- 
- static volatile int done;
-+static volatile int resize;
- 
- #define HEADER_LINE_NR  5
- 
-@@ -79,10 +80,13 @@ static void perf_top__update_print_entri
- }
- 
- static void perf_top__sig_winch(int sig __maybe_unused,
--				siginfo_t *info __maybe_unused, void *arg)
-+				siginfo_t *info __maybe_unused, void *arg __maybe_unused)
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -716,7 +716,7 @@ atc_prep_dma_interleaved(struct dma_chan
+ 			 unsigned long flags)
  {
--	struct perf_top *top = arg;
-+	resize = 1;
-+}
+ 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
+-	struct data_chunk	*first = xt->sgl;
++	struct data_chunk	*first;
+ 	struct at_desc		*desc = NULL;
+ 	size_t			xfer_count;
+ 	unsigned int		dwidth;
+@@ -728,6 +728,8 @@ atc_prep_dma_interleaved(struct dma_chan
+ 	if (unlikely(!xt || xt->numf != 1 || !xt->frame_size))
+ 		return NULL;
  
-+static void perf_top__resize(struct perf_top *top)
-+{
- 	get_term_dimensions(&top->winsize);
- 	perf_top__update_print_entries(top);
- }
-@@ -466,7 +470,7 @@ static bool perf_top__handle_keypress(st
- 					.sa_sigaction = perf_top__sig_winch,
- 					.sa_flags     = SA_SIGINFO,
- 				};
--				perf_top__sig_winch(SIGWINCH, NULL, top);
-+				perf_top__resize(top);
- 				sigaction(SIGWINCH, &act, NULL);
- 			} else {
- 				signal(SIGWINCH, SIG_DFL);
-@@ -1023,6 +1027,11 @@ static int __cmd_top(struct perf_top *to
- 
- 		if (hits == top->samples)
- 			ret = perf_evlist__poll(top->evlist, 100);
++	first = xt->sgl;
 +
-+		if (resize) {
-+			perf_top__resize(top);
-+			resize = 0;
-+		}
- 	}
- 
- 	ret = 0;
+ 	dev_info(chan2dev(chan),
+ 		 "%s: src=%pad, dest=%pad, numf=%d, frame_size=%d, flags=0x%lx\n",
+ 		__func__, &xt->src_start, &xt->dst_start, xt->numf,
