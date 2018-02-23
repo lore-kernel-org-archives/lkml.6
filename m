@@ -1,26 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751641AbeBWI3O (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:29:14 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40203 "EHLO
+        id S1751629AbeBWI3w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:29:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49449 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751378AbeBWI3M (ORCPT
+        with ESMTP id S1751420AbeBWI3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:29:12 -0500
-Date: Fri, 23 Feb 2018 00:28:48 -0800
-From: tip-bot for Dou Liyang <tipbot@zytor.com>
-Message-ID: <tip-0c52f7c5499dc708a64742da0cb7eb4f6d94588b@git.kernel.org>
-Cc: mingo@kernel.org, douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        douly.fnst@cn.fujitsu.com, tglx@linutronix.de
-In-Reply-To: <20180222084812.14497-1-douly.fnst@cn.fujitsu.com>
-References: <20180222084812.14497-1-douly.fnst@cn.fujitsu.com>
+        Fri, 23 Feb 2018 03:29:50 -0500
+Date: Fri, 23 Feb 2018 00:29:17 -0800
+From: tip-bot for Samuel Neves <tipbot@zytor.com>
+Message-ID: <tip-4596749339e06dc7a424fc08a15eded850ed78b7@git.kernel.org>
+Cc: douly.fnst@cn.fujitsu.com, sneves@dei.uc.pt, peterz@infradead.org,
+        mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, peterz@infradead.org, sneves@dei.uc.pt,
+        douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        hpa@zytor.com
+In-Reply-To: <20180221205036.5244-1-sneves@dei.uc.pt>
+References: <20180221205036.5244-1-sneves@dei.uc.pt>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/topology: Fix function name in documentation
-Git-Commit-ID: 0c52f7c5499dc708a64742da0cb7eb4f6d94588b
+Subject: [tip:x86/urgent] x86/topology: Update the 'cpu cores' field in
+ /proc/cpuinfo correctly across CPU hotplug operations
+Git-Commit-ID: 4596749339e06dc7a424fc08a15eded850ed78b7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,42 +35,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0c52f7c5499dc708a64742da0cb7eb4f6d94588b
-Gitweb:     https://git.kernel.org/tip/0c52f7c5499dc708a64742da0cb7eb4f6d94588b
-Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
-AuthorDate: Thu, 22 Feb 2018 16:48:12 +0800
+Commit-ID:  4596749339e06dc7a424fc08a15eded850ed78b7
+Gitweb:     https://git.kernel.org/tip/4596749339e06dc7a424fc08a15eded850ed78b7
+Author:     Samuel Neves <sneves@dei.uc.pt>
+AuthorDate: Wed, 21 Feb 2018 20:50:36 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 23 Feb 2018 08:40:12 +0100
+CommitDate: Fri, 23 Feb 2018 08:47:47 +0100
 
-x86/topology: Fix function name in documentation
+x86/topology: Update the 'cpu cores' field in /proc/cpuinfo correctly across CPU hotplug operations
 
-topology_sibling_cpumask() is the correct thread-related topology
-function in the kernel:
+Without this fix, /proc/cpuinfo will display an incorrect amount
+of CPU cores, after bringing them offline and online again, as
+exemplified below:
 
-  s/topology_sibling_mask/topology_sibling_cpumask
+  $ cat /proc/cpuinfo | grep cores
+  cpu cores	: 4
+  cpu cores	: 8
+  cpu cores	: 8
+  cpu cores	: 20
+  cpu cores	: 4
+  cpu cores	: 3
+  cpu cores	: 2
+  cpu cores	: 2
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+This patch fixes this by always zeroing the booted_cores variable
+upon turning off a logical CPU.
+
+Tested-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: corbet@lwn.net
-Cc: linux-doc@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180222084812.14497-1-douly.fnst@cn.fujitsu.com
+Cc: jgross@suse.com
+Cc: luto@kernel.org
+Cc: prarit@redhat.com
+Cc: vkuznets@redhat.com
+Link: http://lkml.kernel.org/r/20180221205036.5244-1-sneves@dei.uc.pt
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/x86/topology.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/smpboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/x86/topology.txt b/Documentation/x86/topology.txt
-index f3e9d7e9ed6c..2953e3ec9a02 100644
---- a/Documentation/x86/topology.txt
-+++ b/Documentation/x86/topology.txt
-@@ -108,7 +108,7 @@ The topology of a system is described in the units of:
- 
-     The number of online threads is also printed in /proc/cpuinfo "siblings."
- 
--  - topology_sibling_mask():
-+  - topology_sibling_cpumask():
- 
-     The cpumask contains all online threads in the core to which a thread
-     belongs.
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 9eee25d07586..ff99e2b6fc54 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1437,6 +1437,7 @@ static void remove_siblinginfo(int cpu)
+ 	cpumask_clear(topology_sibling_cpumask(cpu));
+ 	cpumask_clear(topology_core_cpumask(cpu));
+ 	c->cpu_core_id = 0;
++	c->booted_cores = 0;
+ 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+ 	recompute_smt_state();
+ }
