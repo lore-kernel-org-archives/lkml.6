@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtwyPqd+fsaEzYleNeoBp9H02H6KVMwd4xuQigfC7e0jonQl4kIStbJI+HcTPWLBz4AlwBg
-ARC-Seal: i=1; a=rsa-sha256; t=1519410612; cv=none;
+X-Google-Smtp-Source: AH8x227p9xV/JSMqJdDP4xSeqAfhKxFygjSojvyDQxk5RNfWv8bPrv2n774ncgo/owJmw4FvlcfP
+ARC-Seal: i=1; a=rsa-sha256; t=1519410606; cv=none;
         d=google.com; s=arc-20160816;
-        b=efu60leB100bjuSIn0KBzo4ttunrtlHdSK6oLjOPLKbaXGvA0WWcQpBn5ggNXl8pno
-         veBFM/QZeEB0ATu60xPVRUaPzN+uZ/qkcSVZUNsrdsO8c6HhpfJUqaEMgplldll8v0fh
-         ZQBRZdQllXlPfKTb57WbihaAMEgPPum6qJlO/WVkprOYq2SLDvVjCx0zPIo4Savq85O6
-         wi9E00wyO7kba6GDywtjdbzr2oDxAdaEjXFjxa/gEMda2tIXUSIJw6NAf7bL6kBP9dmp
-         tsaIIALhzl1eDM+AQnfd/P/dZIoZ3EqvnzwMrEn9f4woXd4MK8DsK04gWuuTuaRLL0yt
-         Jn5w==
+        b=W+/2sbh5GnVUx/7Vwnh4ubuUmSrl1dVzsQtpcUUHxDuvyspkUDGJOh7Vq8W+rSgd8M
+         zVSRVhXTuveQrCgK+Hja6psstlIBnt0OBg1wXNKW2zXkOy5+uV63PVK/jJqakXXw1AHN
+         PiGlX6rQWq8XZsJosWTJZ8RQ0sBZ48VUnEd7c5NFUc0O03ZMxi5RjjG5A08M5uWbQuCB
+         sg3HmnODE7wXJWUVoCBFSV9sWhXMgpPs/5E9MHqYozhsty4SHJ87xTumTr9UtbYjIi0X
+         edCw1BhKKbTAdIw0Ufv/LiKWMYSxosq0rz59LNG+O7zsqfBej76vZZCaZ4saDyFfG6Hf
+         +6jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oz0RhDTf6lBC7lpVSSJ7EjZIhEsARb/AknXiOqj6gWg=;
-        b=WyXVTFkiosHVqEOocSWGJX50WbNOnkqde3n3pAFxX+IFFqOltJ/gBdOhnz+4aVdW5D
-         spxVAAvbP2DZBBAodUFaCThK7864GGEr/j8+BAa7/T9jaRb/TvMgGlAe6SQIS7T16jVk
-         lpA5gLOPBHnsACAvAsBaIQpKjjX09yW/CFKJvOYvSaoxE3JlDvHVWHAA9Q99tBgY9A00
-         vknOAauSJ1kTXYGM/pRXJ+hS+XqmSC9PttL70NAqd9PI1hUuJPe+hNUVM6MMykgslRMU
-         BOUU4K2RS6BWzrfwCwEVz/7QHNYNDupktgbndX9oknE2FS3xT8mCSpAzi2ugeuUQ9t5Z
-         dujw==
+        bh=BaGFdERIi5xJjnd9i/ME2Mm8ubaoy+Ov/1nqvg6qZ10=;
+        b=T+Ow4vLMAtT2PZDhIRy1ING/8s9XQNFFXjOeD+xsQZuY/1sU/4yxhSS5ZqPUTbLyIU
+         Op7vTjbNPRVyTcBPfU+9KxO4T6y44bWD+LYKzypiTW65VsevY999SDed5nVvqnWo6nrA
+         Nq/7VkpoRJnQqarhrPopgAxlbV/pht/qU70aKoI2yH2Z26IyhlscQjDC5bXs6K0TqkLV
+         Z/jhcXGKnHm35pZSOd4W4WwDLGOtvxq/nPlSv/cI2Sz9rn6xYPYx/i+lWRbRoYfAK3E0
+         sf2NxsiTl8gyjsF18Ed8ylwRI7ExrghBTZy+Uw9myvp/wcyzDhbr8OEu+sU/WBDJkiJC
+         NVog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liu Bo <bo.li.liu@oracle.com>,
-	Josef Bacik <jbacik@fb.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 3.18 13/58] Btrfs: fix deadlock in run_delalloc_nocow
-Date: Fri, 23 Feb 2018 19:26:12 +0100
-Message-Id: <20180223170208.775595070@linuxfoundation.org>
+	Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Johan Hovold <johan@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 3.18 11/58] video: fbdev: atmel_lcdfb: fix display-timings lookup
+Date: Fri, 23 Feb 2018 19:26:10 +0100
+Message-Id: <20180223170208.466195106@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217502104112550?=
-X-GMAIL-MSGID: =?utf-8?q?1593217502104112550?=
+X-GMAIL-THRID: =?utf-8?q?1593217495892868716?=
+X-GMAIL-MSGID: =?utf-8?q?1593217495892868716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,36 +52,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit e89166990f11c3f21e1649d760dd35f9e410321c upstream.
+commit 9cb18db0701f6b74f0c45c23ad767b3ebebe37f6 upstream.
 
-@cur_offset is not set back to what it should be (@cow_start) if
-btrfs_next_leaf() returns something wrong, and the range [cow_start,
-cur_offset) remains locked forever.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-cc: <stable@vger.kernel.org>
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+To make things worse, the parent display node was also prematurely
+freed.
+
+Note that the display and timings node references are never put after a
+successful dt-initialisation so the nodes would leak on later probe
+deferrals and on driver unbind.
+
+Fixes: b985172b328a ("video: atmel_lcdfb: add device tree suport")
+Cc: stable <stable@vger.kernel.org>     # 3.13
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/atmel_lcdfb.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1256,8 +1256,11 @@ next_slot:
- 		leaf = path->nodes[0];
- 		if (path->slots[0] >= btrfs_header_nritems(leaf)) {
- 			ret = btrfs_next_leaf(root, path);
--			if (ret < 0)
-+			if (ret < 0) {
-+				if (cow_start != (u64)-1)
-+					cur_offset = cow_start;
- 				goto error;
-+			}
- 			if (ret > 0)
- 				break;
- 			leaf = path->nodes[0];
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1121,7 +1121,7 @@ static int atmel_lcdfb_of_init(struct at
+ 		goto put_display_node;
+ 	}
+ 
+-	timings_np = of_find_node_by_name(display_np, "display-timings");
++	timings_np = of_get_child_by_name(display_np, "display-timings");
+ 	if (!timings_np) {
+ 		dev_err(dev, "failed to find display-timings node\n");
+ 		ret = -ENODEV;
+@@ -1142,6 +1142,12 @@ static int atmel_lcdfb_of_init(struct at
+ 		fb_add_videomode(&fb_vm, &info->modelist);
+ 	}
+ 
++	/*
++	 * FIXME: Make sure we are not referencing any fields in display_np
++	 * and timings_np and drop our references to them before returning to
++	 * avoid leaking the nodes on probe deferral and driver unbind.
++	 */
++
+ 	return 0;
+ 
+ put_timings_node:
