@@ -1,134 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeBWRhJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:37:09 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39754 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751420AbeBWRhH (ORCPT
+        id S1751825AbeBWRi4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:38:56 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:34765 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751351AbeBWRiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:37:07 -0500
-X-Google-Smtp-Source: AG47ELsux7/wE4D0vdTOK3Z7gIN1N0VhdQa4dH9ePsftbjZxzdv8LicXpx1pIi/+AxwPCs5mC1MoRI+gZqjyLeR4DGU=
+        Fri, 23 Feb 2018 12:38:55 -0500
+Date: Fri, 23 Feb 2018 18:38:42 +0100 (CET)
+From: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+X-X-Sender: rolf@5HSWXM1.fritz.box
+To: Kishon Vijay Abraham I <kishon@ti.com>
+cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rolf Evers-Fischer <embedded24@evers-fischer.de>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
+In-Reply-To: <a7070bd0-72b7-4870-419e-7ac15c6825ae@ti.com>
+Message-ID: <alpine.LNX.2.20.1802231828250.16055@5HSWXM1.fritz.box>
+References: <20180221124707.26308-1-embedded24@evers-fischer.de> <20180221124707.26308-2-embedded24@evers-fischer.de> <20180222181901.GA13694@e107981-ln.cambridge.arm.com> <9cdc8c1c-b448-b00b-d5b8-b664bd96f856@ti.com> <20180223093611.GA25086@e107981-ln.cambridge.arm.com>
+ <a7070bd0-72b7-4870-419e-7ac15c6825ae@ti.com>
+User-Agent: Alpine 2.20 (LNX 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <cover.1519374248.git.radoslaw.pietrzyk@gmail.com> <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
-From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Date: Fri, 23 Feb 2018 18:37:04 +0100
-Message-ID: <CAFvLkMTzaFODziZC3fFGYu+F=RuMBx5tFgA1q2UFSk4KyfuU5A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
-To: Ludovic BARRE <ludovic.barre@st.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K0:2wY45UH2XctnL3T1pElVIGUeICUXZ8RiHiza7EL3ik5x9qKtLgC
+ U0JQ3dlDHV51H9zhYdlbIA31RYBz60z/FRkaHo+5SiT7h2TwvOyKVj1W9uVkqd1Q7rvCihx
+ 2D13T9t/weAPQ3rg5nl1cXNmWCYdRDB3sbZTfSeqsEGA6augP/fWeQp/ySd2c9VseYOd3o2
+ rCbM3mLrKD7/45lXuek5g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3yA+TEYNMIs=:cK8BKq+i/pFvw9dw9JrH6e
+ ofnj9Pq6YCiFRXEkCbp6NwVoSEXtVdg2UDKSdm381qSKKPyiSoX20p5FZuC+Lgjbywg8lnygJ
+ Gg16BhJyKb76cHIJ6jAiKmIIHoNWNRPLX2yUgQEIL57IfCcDRABa4IAek0WVwXA1rai35f5GR
+ ajxtBEBMPLdUywzZKOhJjFYlDwzMvaUpff+r4HKScZy4iJQzRgI1ZM1SqvNBvdUU0kOnwPdEu
+ ToL2xKIftiP9zGuusGoIdm3RU2I3LVy3ZyZ120o4PRzN7ousTEVD4oDC4QnWDOEnOi/bGsTWg
+ YvWofeh3ATyqOz52aoQQH3SukacVvmtAzZXH6W4LnyEh/xxLoQjerMEqdAqBYI8plwuvMwqxi
+ 4+CwZoprlIi8Vj6WeQdgxVO7DMaIg4/7heYMhs8cn1s86EFEFLOS8aYodEubzv6jcNez/77pT
+ 9guF2cykNGyFye1ntpGhJsIEaW6Mzu0tdntE47v39JfJrugtSuJmK9Zxa+sgxdrn5g6IEmvTO
+ jpn6wZf2yH6duuq1NkXMvNcmqZR5P8/63FkimE/Lch7oODcAeARgz3nzlJh2u8iSQNEvsKTdk
+ 4/YL3bY9h0nbjaFp9GPEHVnEh8SjI0zPoBafXNkrbegMmnVzkhc7Q6izMprr99cCtXLqw6F/G
+ WsFaZZFyBSGcGGEfGssU2qEXUhDPfEQpVHWuiYYu3Phz6gP4NWHx0fBGGlXPHaZt5V7+FOnfX
+ OOQgC5Zn97xntCaezTSwn9JFE/WiGjmRU3J5c5tOVa2UqRFV5+85ePfEKOU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't fully get it to be honest. If interrupt is pending it must
-have been enabled (unmasked) and requires to be handled acked. It will
-be acked by irq_chip.irq_ack handler within the edge handler.
-Therefore this additional acking is meaningless.
+Hi Kishon,
 
-2018-02-23 16:46 GMT+01:00 Ludovic BARRE <ludovic.barre@st.com>:
-> hi Radoslaw
->
-> The gpio-keys tests it's now functional on H7, great.
-> However the gpio-key test only the bank1 (like stm32f429).
-> Like the H7 introduce the multi-bank management,
-> we must perform complementary test.
->
-> comment below about ack in handler
->
->
-> On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
->>
->> - discards setting handle_simple_irq handler for hierarchy interrupts
->> - removes acking in chained irq handler as this is done by
->> irq_chip itself inside handle_edge_irq
->> - removes unneeded irq_domain_ops.xlate callback
->>
->> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
->> ---
->>   drivers/irqchip/irq-stm32-exti.c | 13 -------------
->>   1 file changed, 13 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-stm32-exti.c
->> b/drivers/irqchip/irq-stm32-exti.c
->> index 36f0fbe..8013a87 100644
->> --- a/drivers/irqchip/irq-stm32-exti.c
->> +++ b/drivers/irqchip/irq-stm32-exti.c
->> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct
->> irq_chip_generic *gc)
->>         return irq_reg_readl(gc, stm32_bank->pr_ofst);
->>   }
->>   -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
->> -{
->> -       const struct stm32_exti_bank *stm32_bank = gc->private;
->> -
->> -       irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
->> -}
->> -
->>   static void stm32_irq_handler(struct irq_desc *desc)
->>   {
->>         struct irq_domain *domain = irq_desc_get_handler_data(desc);
->> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
->>                         for_each_set_bit(n, &pending, IRQS_PER_BANK) {
->>                                 virq = irq_find_mapping(domain, irq_base +
->> n);
->>                                 generic_handle_irq(virq);
->> -                               stm32_exti_irq_ack(gc, BIT(n));
->
->
-> the while loop " while ((pending = " has been introduce while original
-> upstream of this driver in V2 to V3
-> https://patchwork.ozlabs.org/patch/604190/
-> https://patchwork.ozlabs.org/patch/665242/
->
-> the "ack" is needed to acknowledge the irq which are handled and which is
-> not the original irq for which we enter.
->
->>                         }
->>                 }
->>         }
->> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data *data,
->> unsigned int on)
->>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
->>                             unsigned int nr_irqs, void *data)
->>   {
->> -       struct irq_chip_generic *gc;
->>         struct irq_fwspec *fwspec = data;
->>         irq_hw_number_t hwirq;
->>         hwirq = fwspec->param[0];
->> -       gc = irq_get_domain_generic_chip(d, hwirq);
->>         irq_map_generic_chip(d, virq, hwirq);
->> -       irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
->> -                           handle_simple_irq, NULL, NULL);
->
->
-> I see if it is not disturb the multi-bank.
->
->>         return 0;
->>   }
->> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d,
->> unsigned int virq,
->>     struct irq_domain_ops irq_exti_domain_ops = {
->>         .map    = irq_map_generic_chip,
->> -       .xlate  = irq_domain_xlate_onetwocell,
->>         .alloc  = stm32_exti_alloc,
->>         .free   = stm32_exti_free,
->>   };
->>
->
-> BR
-> Ludo
+On Fri, 23 Feb 2018, Kishon Vijay Abraham I wrote:
+> On Friday 23 February 2018 03:06 PM, Lorenzo Pieralisi wrote:
+> > On Fri, Feb 23, 2018 at 11:40:49AM +0530, Kishon Vijay Abraham I wrote:
+> >> Hi Lorenzo,
+> >>
+> >> On Thursday 22 February 2018 11:49 PM, Lorenzo Pieralisi wrote:
+> >>> On Wed, Feb 21, 2018 at 01:47:06PM +0100, Rolf Evers-Fischer wrote:
+> >>>> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> >>>>
+> >>>> This commit decreases the number of jump labels and ensures
+> >>>> that the next commit doesn't increase the number of occurrences
+> >>>> of 'kfree(func_name)'.
+> >>>>
+> >>>> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
+> >>>> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+> >>>> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+> >>>> ---
+> >>>>  drivers/pci/endpoint/pci-epf-core.c | 7 ++-----
+> >>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> >>>> index 766ce1dca2ec..23d0e128d1a5 100644
+> >>>> --- a/drivers/pci/endpoint/pci-epf-core.c
+> >>>> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> >>>> @@ -220,9 +220,10 @@ struct pci_epf *pci_epf_create(const char *name)
+> >>>>  	*buf = '\0';
+> >>>>  
+> >>>>  	epf->name = kstrdup(func_name, GFP_KERNEL);
+> >>>> +	kfree(func_name);
+> >>>
+> >>> I am certainly missing something but what if we reworked the code
+> >>> and just:
+> >>>
+> >>> kstrdup(name, GFP_KERNEL);
+> >>>
+> >>> once instead of allocating another local copy (that we then have to
+> >>> free) ?
+> >>
+> >> name will be something like pci_epf_test.0 and in epf->name we want to just
+> >> have pci_epf_test.
+> >>>
+> >>> Reworded: why
+> >>>
+> >>> epf->name = func_name;
+> >>
+> >> memory should be allocated for epf->name before it can be initialized. IMO
+> >> without kstrdup, there will be a null pointer exception.
+> > 
+> > I understand that but the point is that func_name *was* allocated with
+> > kstrdup() already I would like to understand why we need to do it twice
+> > (and kfree the first allocation).
+> 
+> func_name would be allocated for a size greater than what will be in epf->name.
+> It won't be significant though.
+> 
+> Thanks
+> Kishon
+> 
+I have just an idea, how to use only one copy, but with the shorter 
+length. What about changing the code like this?
+  int len = strchrnul(name, '.') - name;
+  epf->name = kstrndup(name, len, GFP_KERNEL);
+
+In this case we are only allocating the smaller amount of memory and we 
+don't need the 'buf' and 'func_name' pointers anymore. They will be 
+replaced with 'len' and some pointer arithmetic.
+
+Kind regards,
+ Rolf
