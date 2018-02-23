@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226+0Ub6vw/trdpyt/Vir5/DF+yMdScX7gvu7PHd791FEoiZ2EQxhslqMpwsCjTn+ask1Gdw
-ARC-Seal: i=1; a=rsa-sha256; t=1519412331; cv=none;
+X-Google-Smtp-Source: AG47ELtjcJRdpm8wHg6Anr86xHxDiPv0xZBDgNwsfuKHjq73O1eyBXTC1BGo5Qr5cVOsSUp0vnNY
+ARC-Seal: i=1; a=rsa-sha256; t=1519412328; cv=none;
         d=google.com; s=arc-20160816;
-        b=O4gyo6TDQWiQcJ6tTN8BMcq8deEDr8WrPj6lZPA0YaguoIH9OKDuUXD0Ms3ldXuK1a
-         t9VKkfY7r7BnuVK8njFHI0cAQBoxyoEHsk+9mxaDFUAbqN2B24EFSoQwQzXraDmuV4cz
-         eMlEP/g7Yg/wlc1iqvjHIK/WXIuWlGknvCTQzVjsT6EkXsaes65R3raST4W8LmLlSBAv
-         5WSRyX/iGPaRfaQoiGvWA+i34swHlDsipxzIiPE1MN2zkpPdSYnzK3T45O6OI+6pL6y+
-         jF9Y+oRRxUkBa/hLqOyutte04FCtWgEOZHmhqyJOjVFEBcPcnDo0ktZjikr6GwG73imW
-         VOzQ==
+        b=ORZOaN7gaWSWHO5fZ2A/bWbkQVWrQqSbmGPcbKWvqad3GLDxHVqN1ePEFTyf7TEEhg
+         aqDf3drh9wbq0/izMaRAEmrGfd210YzO6Rk4hRLvRbsYZ5YuffBJ3P84CPRyNgTk59R5
+         6+YFICp/C3PwdYolotVWMyb+RWlu3UYrcirtcrE78Ya0xJ1Iru6TSOfufFEadZkmttwq
+         bHbiIg3in4DGN/zd9oF808y+5RATOfqvQcsk2043QNbGNOSTYrMASmJ3fwMaXzBIw78f
+         8lhwqPp85cXzn5v3GLsiOyGW+JkEY5ZApsXqTODBgWkkG9ZiANgNhYu9mbJbrge5VntC
+         DjWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eD8J0E+c4RKp8U4dQIzIjgnspsVuDnPO8DXn9rTfgcU=;
-        b=aiBHT/wWjzTD4Cc7K0ApTUDDGn/Sgrt5YrCoE4tTufCLfoj92rmPnki0/R7J9shnIK
-         ztepntAEogZ/IcOj1pw4uhmoF3JItkL8ItGxsmMLMvBDmUQWFr0cHh2m7cUiVb6FjluM
-         nTpvTpFm99hmdaycip5dwANaDuWSRWl41cN3+QiPI+W+nuud9F6+mOjt3Fsa0cNpPuKt
-         tXUL7vhbvuojlqFr37ZlGD9z7nZSN3F/w9G9dzMvAYhxfNuMi9QiUwAP2wR04N9FmPXy
-         yR7Uu3kUV33Wg4OFsWJJhhL4yw6AraZi8m5RhSuPHWvG5/4B4+wYuII53phfmQ/aPIyG
-         lCvw==
+        bh=m1lEcFy0EDSFQNF2Jy5DTnw8/DXP8g+c7gFvCakgqUM=;
+        b=JQUNknHP7RZbJMi2wqsdmdcsTocSmR/YCNU90S7Qd5VwrlSDGmPbOAaDvLUaPC0cDW
+         XpDe48egy6K+GTFV0JSHm+EcQJyJhOGZNJv4hclpYYBu6xFmI2D5ZCaSTXdwRtH555y6
+         m2y2VJhCyBwgSeOGPVYG3/ucGA1lKul6kVKD177DaFtdfDkuhxSAFH8AMkZpFpCD9oSM
+         0j+HSE6HGt/U0xIyhdfg3rJ/OE0KhXLABToGfgcoCskvDIB948LZv+LtEJtGMF/PRto8
+         rcaMoRKfF86qLJTifbiHAWelaF3usN4TO8DmqMzgVAixUI6uAjBGg/K+YepwbPqJlSs5
+         DaDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.15 43/45] mei: me: add cannon point device ids
-Date: Fri, 23 Feb 2018 19:29:22 +0100
-Message-Id: <20180223170722.253250915@linuxfoundation.org>
+	Kamil Konieczny <k.konieczny@partner.samsung.com>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.15 42/45] crypto: s5p-sss - Fix kernel Oops in AES-ECB mode
+Date: Fri, 23 Feb 2018 19:29:21 +0100
+Message-Id: <20180223170722.083625911@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219189171382911?=
-X-GMAIL-MSGID: =?utf-8?q?1593219305338915210?=
+X-GMAIL-THRID: =?utf-8?q?1593217639655479509?=
+X-GMAIL-MSGID: =?utf-8?q?1593219301862359560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-commit f8f4aa68a8ae98ed79c8fee3488c38a2f5d2de8c upstream.
+commit c927b080c67e3e97193c81fc1d27f4251bf4e036 upstream.
 
-Add CNP LP and CNP H device ids for cannon lake
-and coffee lake platforms.
+In AES-ECB mode crypt is done with key only, so any use of IV
+can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
 
-Cc: <stable@vger.kernel.org> 4.14+
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Reported-by: Anand Moon <linux.amoon@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/hw-me-regs.h |    3 +++
- drivers/misc/mei/pci-me.c     |    3 +++
- 2 files changed, 6 insertions(+)
+ drivers/crypto/s5p-sss.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -132,6 +132,9 @@
- #define MEI_DEV_ID_KBP        0xA2BA  /* Kaby Point */
- #define MEI_DEV_ID_KBP_2      0xA2BB  /* Kaby Point 2 */
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -1926,15 +1926,21 @@ static void s5p_aes_crypt_start(struct s
+ 	uint32_t aes_control;
+ 	unsigned long flags;
+ 	int err;
++	u8 *iv;
  
-+#define MEI_DEV_ID_CNP_LP     0x9DE0  /* Cannon Point LP */
-+#define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
-+
- /*
-  * MEI HW Section
-  */
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -98,6 +98,9 @@ static const struct pci_device_id mei_me
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_KBP, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_KBP_2, MEI_ME_PCH8_CFG)},
+ 	aes_control = SSS_AES_KEY_CHANGE_MODE;
+ 	if (mode & FLAGS_AES_DECRYPT)
+ 		aes_control |= SSS_AES_MODE_DECRYPT;
  
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_LP, MEI_ME_PCH8_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH8_CFG)},
-+
- 	/* required last entry */
- 	{0, }
- };
+-	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
++	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
+-	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
++		iv = req->info;
++	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
+ 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
++		iv = req->info;
++	} else {
++		iv = NULL; /* AES_ECB */
++	}
+ 
+ 	if (dev->ctx->keylen == AES_KEYSIZE_192)
+ 		aes_control |= SSS_AES_KEY_SIZE_192;
+@@ -1965,7 +1971,7 @@ static void s5p_aes_crypt_start(struct s
+ 		goto outdata_error;
+ 
+ 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+-	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
++	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
+ 
+ 	s5p_set_dma_indata(dev,  dev->sg_src);
+ 	s5p_set_dma_outdata(dev, dev->sg_dst);
