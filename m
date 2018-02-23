@@ -1,70 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeBWPG2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:06:28 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37276 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbeBWPGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:06:18 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
+        id S1751897AbeBWPGz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:06:55 -0500
+Received: from ms.lwn.net ([45.79.88.28]:57244 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751766AbeBWPG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:06:27 -0500
+Date: Fri, 23 Feb 2018 08:06:26 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as a subdevice.
-Date: Fri, 23 Feb 2018 16:06:01 +0100
-Message-Id: <20180223150605.10417-5-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180223150605.10417-1-enric.balletbo@collabora.com>
-References: <20180223150605.10417-1-enric.balletbo@collabora.com>
+Subject: Re: [PATCH] doc-guide: kernel-doc: add comment about formatting
+ verification
+Message-ID: <20180223080626.54c053df@lwn.net>
+In-Reply-To: <1519151785-25997-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1519151785-25997-1-git-send-email-rppt@linux.vnet.ibm.com>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check whether this EC instance has RTC host command support and instatiate
-the RTC driver as a subdevice in such case.
+On Tue, 20 Feb 2018 20:36:25 +0200
+Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
----
+> Currently there is no automated checking for kernel-doc comments except
+> running 'kernel-doc -v -none <filename>'. Mention the possibility to run
+> kernel-doc to verify formatting of the comments in the kernel-doc guide.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Changes in v2:
-- [4/8] Add the Reviewed-by Gwendal.
+Applied, thanks.
 
- drivers/mfd/cros_ec_dev.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index f98e5beffca6..33fe1b439ee2 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -389,6 +389,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
-+static const struct mfd_cell cros_ec_rtc_cell = {
-+	.name = "cros-ec-rtc",
-+};
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -437,6 +441,16 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
-+	/* check whether this EC instance has RTC host command support */
-+	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
-+		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+					 &cros_ec_rtc_cell, 1, NULL, 0, NULL);
-+		if (retval)
-+			dev_err(ec->dev,
-+				"failed to add cros-ec-rtc device: %d\n",
-+				retval);
-+	}
-+
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
--- 
-2.16.1
+jon
