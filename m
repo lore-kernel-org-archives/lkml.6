@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226ukGoImp1o3cgwZ9VtAmYWGdMqQsL/ieINoQ7Q+cZ9QyGbTAbtqBQGREa+uAVSmn8MiBB7
-ARC-Seal: i=1; a=rsa-sha256; t=1519410978; cv=none;
+X-Google-Smtp-Source: AH8x225ynesyLRNBs8k0Ox7r/UxwtOWZXL1NMx81TrcL8VufWT7VkvSALO6Yn2Dy9AKYkqkawm6D
+ARC-Seal: i=1; a=rsa-sha256; t=1519410973; cv=none;
         d=google.com; s=arc-20160816;
-        b=cNRf9l8H/bhoGXlfd0Bolv1D4Zi8KxqXxTjBvaJErs1H0vUK5r4Bd64YnJmn5Xuroq
-         83nT1CDUTQ0EDFG3ksuhSc3TzekKf7T+/YtKx1Mjy9LgKHNiY3GdRMl0uyXOqSRsEn+V
-         mp10c6QzsToQn3EJYkrkAzBUregHHKLygeMBq9G3qcjlmKStuYLpTneN7LiY4ZjUOPeb
-         P0AfsoSOcUA5zIPl3Q3PrfYxQCv3O1tXQETgdG/oqtfBO0rk7sYhDJONqJ0+3iY3I0VY
-         LuwiSMH/fyBRi+VLDMJuN1VBV2VrWGkwMA9ZqM13oQF6wak0FIKVv+3XWzZ54fi/Gp+8
-         A1nA==
+        b=GyvQ7b3MnS/DWCj/O3z0nuGekWMUrrZjvKCKLqXKm7d9TBTVxm5V2tGGEthvZSce7Z
+         bhyNUyrBGnD1nS3IQtfeKnpll2hJd/veGVgi782sWSjxZbHMoJ9kVVirVfLB0BEfdhgW
+         CEpJ3DZnmelFThYUB5U8/m6IX5FKpvTHD1Nf8/KvxaiUjlburop4F2wduAmiLFTB8xRc
+         4DOyWMUpRf1aweY3uvbUzAxaWgiLBJUaHK8YzS9X2d80PHpZKol6RRwgJu17STvc7SU4
+         xKDtrGbHci8/SfP5/4Zx7JriZinGJoyRlceT0JNLsL53BRVOf2VFQKZXWoSGwh2f9xKN
+         Wr0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=13sVStWPVj7BIupz6o9FmSL7aGpd/e9/V63LeDE66xw=;
-        b=eoLNE8kYuRaqAdJsB6ociD/zyp36O2k70OMi7qgigN6ea6jnqrsqjvNACnU1zq0JLD
-         zC5hbUqrnkdDA1pqvL8TCqEbHbVCqbpFNKGDloCOb9AfAJ1zBn3FTRNSAT3/ZxETw6dC
-         /E0ZuE1D5bXLXAdmhg5/VhgrUq4fJc4ErmCvMPYcMZTaIixua+gL+uxQ8yzTXd+G03vP
-         ejKYFK+YaXHdepBmyOh4dJsFgakKMGnKjDiISfvpj08UISG48P31MFg0944cKDZ1GML4
-         w8hXzf+LOMvGZYZiV6ayNfddFyu+9LuWE18qJb78/6g6kKPJ5Sc++W154tm0EkJv4dpr
-         bzhg==
+        bh=hNy5E3dlVdS6mXaNDI43RJKpbdT5cqrqMD/qrOOy2nI=;
+        b=q2V/Ea+M83d92jSf8ot8MzXhHb3jeRhyjGqP2RSJdaC64OEKkGxhdmeOZoovIkFpak
+         hvGQol0bIxocU9/cuQ/1cUeZB18CsTk7ax/IEI8opuE2qrAhOpBiOY/Qj6qDDts5fs3X
+         oJ2LubkrwoNkd+VGi+0Kesu1rNT2tg7WpDQQVCs9l8weLi0Gu4b//uDmlE1EPdgexwsP
+         h8O0Mw3VpdxklL2bJbN+fLkxHJ7BL+q48wRtXz90uuTSEMPxDcJKagiEnloFW/nbUJ/D
+         RbMXWIZAQdq0/HZMG+muMnZTT/30xc3uiGOQNDzuZCnPXqAWHQVrtmQ1r5K84+bNqrDb
+         gNow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Greg Ungerer <gerg@linux-m68k.org>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Will Deacon <will.deacon@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 042/193] m68k: add missing SOFTIRQENTRY_TEXT linker section
-Date: Fri, 23 Feb 2018 19:24:35 +0100
-Message-Id: <20180223170332.640722819@linuxfoundation.org>
+Subject: [PATCH 4.4 040/193] scripts/kernel-doc: Dont fail with status != 0 if error encountered with -none
+Date: Fri, 23 Feb 2018 19:24:33 +0100
+Message-Id: <20180223170332.306392622@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217642973745829?=
-X-GMAIL-MSGID: =?utf-8?q?1593217886939661538?=
+X-GMAIL-THRID: =?utf-8?q?1593217612425405249?=
+X-GMAIL-MSGID: =?utf-8?q?1593217880553828547?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,70 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Ungerer <gerg@linux-m68k.org>
+From: Will Deacon <will.deacon@arm.com>
 
 
-[ Upstream commit 969de0988b77e5a57aac2f7270191a3c50540c52 ]
+[ Upstream commit e814bccbafece52a24e152d2395b5d49eef55841 ]
 
-Commit be7635e7287e ("arch, ftrace: for KASAN put hard/soft IRQ entries
-into separate sections") added a new linker section, SOFTIRQENTRY_TEXT,
-to the linker scripts for most architectures. It didn't add it to any of
-the linker scripts for the m68k architecture. This was not really a problem
-because it is only defined if either of CONFIG_FUNCTION_GRAPH_TRACER or
-CONFIG_KASAN are enabled - which can never be true for m68k.
+My bisect scripts starting running into build failures when trying to
+compile 4.15-rc1 with the builds failing with things like:
 
-However commit 229a71860547 ("irq: Make the irqentry text section
-unconditional") means that SOFTIRQENTRY_TEXT is now always defined. So on
-m68k we now end up with a separate ELF section for .softirqentry.text
-instead of it being part of the .text section. On some m68k targets in some
-configurations this can also cause a fatal link error:
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:2078: error: Cannot parse struct or union!
 
-  LD      vmlinux
-/usr/local/bin/../m68k-uclinux/bin/ld.real: section .softirqentry.text loaded at [0000000010de10c0,0000000010de12dd] overlaps section .rodata loaded at [0000000010de10c0,0000000010e0fd67]
+The line in question is actually just a #define, but after some digging
+it turns out that my scripts pass W=1 and since commit 3a025e1d1c2ea
+("Add optional check for bad kernel-doc comments") that results in
+kernel-doc running on each source file. The file in question has a
+badly formatted comment immediately before the #define:
 
-To fix add in the missing SOFTIRQENTRY_TEXT section into the m68k linker
-scripts. I noticed that m68k is also missing the IRQENTRY_TEXT section,
-so this patch also adds an entry for that too.
+/**
+ * struct brcmf_skbuff_cb reserves first two bytes in sk_buff::cb for
+ * bus layer usage.
+ */
 
-Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+which causes the regex in dump_struct to fail (lack of braces following
+struct declaration) and kernel-doc returns 1, which causes the build
+to fail.
+
+Fix the issue by always returning 0 from kernel-doc when invoked with
+-none. It successfully generates no documentation, and prints out any
+issues.
+
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/m68k/kernel/vmlinux-nommu.lds |    2 ++
- arch/m68k/kernel/vmlinux-std.lds   |    2 ++
- arch/m68k/kernel/vmlinux-sun3.lds  |    2 ++
- 3 files changed, 6 insertions(+)
+ scripts/kernel-doc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/m68k/kernel/vmlinux-nommu.lds
-+++ b/arch/m68k/kernel/vmlinux-nommu.lds
-@@ -44,6 +44,8 @@ SECTIONS {
- 	.text : {
- 		HEAD_TEXT
- 		TEXT_TEXT
-+		IRQENTRY_TEXT
-+		SOFTIRQENTRY_TEXT
- 		SCHED_TEXT
- 		LOCK_TEXT
- 		*(.fixup)
---- a/arch/m68k/kernel/vmlinux-std.lds
-+++ b/arch/m68k/kernel/vmlinux-std.lds
-@@ -15,6 +15,8 @@ SECTIONS
-   .text : {
- 	HEAD_TEXT
- 	TEXT_TEXT
-+	IRQENTRY_TEXT
-+	SOFTIRQENTRY_TEXT
- 	SCHED_TEXT
- 	LOCK_TEXT
- 	*(.fixup)
---- a/arch/m68k/kernel/vmlinux-sun3.lds
-+++ b/arch/m68k/kernel/vmlinux-sun3.lds
-@@ -15,6 +15,8 @@ SECTIONS
-   .text : {
- 	HEAD_TEXT
- 	TEXT_TEXT
-+	IRQENTRY_TEXT
-+	SOFTIRQENTRY_TEXT
- 	SCHED_TEXT
- 	LOCK_TEXT
- 	*(.fixup)
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -2742,4 +2742,4 @@ if ($verbose && $warnings) {
+   print STDERR "$warnings warnings\n";
+ }
+ 
+-exit($errors);
++exit($output_mode eq "none" ? 0 : $errors);
