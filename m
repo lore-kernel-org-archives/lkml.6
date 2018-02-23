@@ -1,33 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeBWPUf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:20:35 -0500
-Received: from fieldses.org ([173.255.197.46]:45560 "EHLO fieldses.org"
+        id S1752012AbeBWPUr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:20:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:27237 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751412AbeBWPUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:20:33 -0500
-Date: Fri, 23 Feb 2018 10:20:32 -0500
-From: "J. Bruce Fields" <bfields@fieldses.org>
-To: James Ettle <james@ettle.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the nfsd tree
-Message-ID: <20180223152032.GD15876@fieldses.org>
-References: <20180222151723.7d381e77@canb.auug.org.au>
- <12138EE4-77CA-480F-B2F9-B4C7E4E20891@ettle.org.uk>
- <20180223010545.GC15876@fieldses.org>
- <440587E4-661C-4E73-A954-8329593DAE4F@ettle.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <440587E4-661C-4E73-A954-8329593DAE4F@ettle.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1751765AbeBWPUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:20:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
+   d="scan'208";a="36923949"
+Message-ID: <1519399242.10722.112.camel@linux.intel.com>
+Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org
+Date: Fri, 23 Feb 2018 17:20:42 +0200
+In-Reply-To: <CAK8P3a3-NTzY3x5xM_d8Bxm-s+SF0L8d60vd-FOHccVxXo_AVg@mail.gmail.com>
+References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+         <CAK8P3a3-NTzY3x5xM_d8Bxm-s+SF0L8d60vd-FOHccVxXo_AVg@mail.gmail.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:41:05PM +0000, James Ettle wrote:
-> I'm OK with that. (This is the first time I've ventured into kernel space so I thought it better to at least sketch a solution and let the experts do it correctly ;) Glad it's passed the review!)
+On Fri, 2018-02-23 at 16:19 +0100, Arnd Bergmann wrote:
+> On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
+> <mail@maciej.szmigiero.name> wrote:
 
-OK, thanks!--b.
+
+>  I would really like to avoid mixing
+> 'select' and 'depends on' here, as that will likely cause other
+> circular
+> dependencies in the future.
+
+Agree. And it doesn't make sense to do in a separate changes.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
