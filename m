@@ -1,107 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeBWQQZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:16:25 -0500
-Received: from smtp.eu.citrix.com ([185.25.65.24]:20504 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeBWQQY (ORCPT
+        id S1751635AbeBWQQn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:16:43 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46525 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751514AbeBWQQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:16:24 -0500
-X-IronPort-AV: E=Sophos;i="5.47,383,1515456000";
-   d="scan'208";a="68476018"
-Date: Fri, 23 Feb 2018 16:15:00 +0000
-From: Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-To: Dongwon Kim <dongwon.kim@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>,
-        <xen-devel@lists.xenproject.org>, <sumit.semwal@linaro.org>,
-        <dri-devel@lists.freedesktop.org>, <mateuszx.potrola@intel.com>
-Subject: Re: [Xen-devel] [RFC PATCH v2 2/9] hyper_dmabuf: architecture
- specification and reference guide
-Message-ID: <20180223161500.xpbqnpsxihoxi5o4@MacBook-Pro-de-Roger.local>
-References: <20180214015008.9513-1-dongwon.kim@intel.com>
- <20180214015008.9513-3-dongwon.kim@intel.com>
+        Fri, 23 Feb 2018 11:16:41 -0500
+X-Google-Smtp-Source: AG47ELu1f76oxIJW8r58CT9kXjX6SiMN4O1bV2HZzGi07sOktZ/PZNft7LqTjrfDPkdwL6OuHvFOxU86eYtPKj2ct7s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180214015008.9513-3-dongwon.kim@intel.com>
-User-Agent: NeoMutt/20171215
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+In-Reply-To: <7ba335af-3fc5-2afd-8c52-03dca5eba9a4@rock-chips.com>
+References: <CGME20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342@epcas2p1.samsung.com>
+ <20180223064138.18401-1-jh80.chung@samsung.com> <CAHp75Vd27mFnSJTOta0ZWhfOGz1WA8ETNgU_GpuxEJ9nnhsR-g@mail.gmail.com>
+ <7ba335af-3fc5-2afd-8c52-03dca5eba9a4@rock-chips.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 23 Feb 2018 18:16:39 +0200
+Message-ID: <CAHp75VcthggOwOPjQFNX-xMmK44F99oXYOdeBxfO=euT_JvkoQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] mmc: dw_mmc: remove the deprecated
+ "clock-freq-min-max" property
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joachim Eastwood <manabian@gmail.com>, dinguyen@kernel.org,
+        Will Deacon <will.deacon@arm.com>, "xuwei (O)" <xuwei5@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 05:50:01PM -0800, Dongwon Kim wrote:
-> Reference document for hyper_DMABUF driver
-> 
-> Documentation/hyper-dmabuf-sharing.txt
+On Fri, Feb 23, 2018 at 4:19 PM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+> On 2018/2/23 21:27, Andy Shevchenko wrote:
+>> On Fri, Feb 23, 2018 at 8:41 AM, Jaehoon Chung <jh80.chung@samsung.com>
+>> wrote:
+>>>
+>>> 'clock-freq-min-max' property had already deprecated.
+>>> Remove the 'clock-freq-min-max' property that is kept to maintain
+>>> the compatibility.
+>>
+>>
+>> Removing a property without telling the user what to expect is a bad
+>> idea and ABI breakage.
+>>
+>
+> What's the general process to remove a property?
+>
+> I guess we should do:
+> 1) deprecate it in the first place and remove it from all upstream DT
+> 2) wait some long enough days for expecting the stale of all old DTB
+> containing that property
+> 3) remove the functionality of the deprecated property from the driver
+> but still leave some warning there
+> 4) remove the left warning finally
 
-This should likely be patch 1 in order for reviewers to have the
-appropriate context.
+I don't know. Perhaps Rob can shed a light here.
+But I would really OK with removal of some of such properties from
+some drivers where it's more burden to keep them.
 
-> 
-> Signed-off-by: Dongwon Kim <dongwon.kim@intel.com>
-> ---
->  Documentation/hyper-dmabuf-sharing.txt | 734 +++++++++++++++++++++++++++++++++
->  1 file changed, 734 insertions(+)
->  create mode 100644 Documentation/hyper-dmabuf-sharing.txt
-> 
-> diff --git a/Documentation/hyper-dmabuf-sharing.txt b/Documentation/hyper-dmabuf-sharing.txt
-> new file mode 100644
-> index 000000000000..928e411931e3
-> --- /dev/null
-> +++ b/Documentation/hyper-dmabuf-sharing.txt
-> @@ -0,0 +1,734 @@
-> +Linux Hyper DMABUF Driver
-> +
-> +------------------------------------------------------------------------------
-> +Section 1. Overview
-> +------------------------------------------------------------------------------
-> +
-> +Hyper_DMABUF driver is a Linux device driver running on multiple Virtual
-> +achines (VMs), which expands DMA-BUF sharing capability to the VM environment
-> +where multiple different OS instances need to share same physical data without
-> +data-copy across VMs.
-> +
-> +To share a DMA_BUF across VMs, an instance of the Hyper_DMABUF drv on the
-> +exporting VM (so called, “exporter”) imports a local DMA_BUF from the original
-> +producer of the buffer,
+> And for the ABI breakage, we should add something in Documentation/ABI
+> /obsolete  or Documentation/ABI/removed ?
 
-The usage of export and import in the above sentence makes it almost
-impossible to understand.
-
-> then re-exports it with an unique ID, hyper_dmabuf_id
-> +for the buffer to the importing VM (so called, “importer”).
-
-And this is even worse.
-
-Maybe it would help to have some kind of flow diagram of all this
-import/export operations, but please read below.
-
-> +
-> +Another instance of the Hyper_DMABUF driver on importer registers
-> +a hyper_dmabuf_id together with reference information for the shared physical
-> +pages associated with the DMA_BUF to its database when the export happens.
-> +
-> +The actual mapping of the DMA_BUF on the importer’s side is done by
-> +the Hyper_DMABUF driver when user space issues the IOCTL command to access
-> +the shared DMA_BUF. The Hyper_DMABUF driver works as both an importing and
-> +exporting driver as is, that is, no special configuration is required.
-> +Consequently, only a single module per VM is needed to enable cross-VM DMA_BUF
-> +exchange.
-
-IMHO I need a more generic view of the problem you are trying to solve
-in the overview section. I've read the full overview, and I still have
-no idea why you need all this.
-
-I think the overview should contain at least:
-
-1. A description of the problem you are trying to solve.
-2. A high level description of the proposed solution.
-3. How the proposed solution deals with the problem described in 1.
-
-This overview is not useful for people that don't know which problem
-you are trying to solve, like myself.
-
-Thanks, Roger.
+-- 
+With Best Regards,
+Andy Shevchenko
