@@ -1,43 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751340AbeBWA72 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:59:28 -0500
-Received: from mail-it0-f51.google.com ([209.85.214.51]:37409 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751155AbeBWA70 (ORCPT
+        id S1751413AbeBWA7c (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:59:32 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38308 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751155AbeBWA73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:59:26 -0500
-X-Google-Smtp-Source: AG47ELsI+o2/cL/g7KxF4CtHOSeG0WuJl3HS+eNC7RB/jSx90VRO7L6ZakS9aSEpgNjiP1WKLQe10CgeTq3ABmNCIwQ=
+        Thu, 22 Feb 2018 19:59:29 -0500
+X-Google-Smtp-Source: AH8x225XgsQHroguEEFespii9Br3NnuijQMpoxJuJYx3sBlU9pes2IN00YO85WTkEwJ95OevBiJ+dw==
+Date: Thu, 22 Feb 2018 16:59:26 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kbuild test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org
+Subject: [PATCH] MIPS: boot: Define __ASSEMBLY__ for its.S build
+Message-ID: <20180223005926.GA18630@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180222235025.28662-1-john.ogness@linutronix.de>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 22 Feb 2018 16:59:25 -0800
-X-Google-Sender-Auth: HEs0V9-67OMKSSoo-lzAp_-hjI4
-Message-ID: <CA+55aFzcEv5xAFZuEqNpn55L+x8HkBSJDoWBYi92btCkWCp64Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] fs/dcache: avoid trylock loops
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 3:50 PM, John Ogness <john.ogness@linutronix.de> wrote:
->
-> This patchset removes all trylock loops from within the dcache code.
+The MIPS %.its.S compiler command did not define __ASSEMBLY__, which meant
+when compiler_types.h was added to kconfig.h, unexpected things appeared
+(e.g. struct declarations) which should not have been present. As done in
+the general %.S compiler command, __ASSEMBLY__ is now included here too.
 
-I'm not hating it.
+The failure was:
 
-It may be because I got used (resigned?) to this from the discussion
-around the previous version. But it looks ok to me.
+    Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
+    FATAL ERROR: Unable to parse input tree
+    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
+    /usr/bin/mkimage Can't add hashes to FIT blob
 
-But this is very much an area where I do want Al to ack it all, so
-let's see if he's any happier now.
+Reported-by: kbuild test robot <lkp@intel.com>
+Fixes: 28128c61e08e ("kconfig.h: Include compiler types to avoid missed struct attributes")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/mips/boot/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-              Linus
+diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
+index 1bd5c4f00d19..c22da16d67b8 100644
+--- a/arch/mips/boot/Makefile
++++ b/arch/mips/boot/Makefile
+@@ -126,6 +126,7 @@ $(obj)/vmlinux.its.S: $(addprefix $(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS
+ 
+ quiet_cmd_cpp_its_S = ITS     $@
+       cmd_cpp_its_S = $(CPP) $(cpp_flags) -P -C -o $@ $< \
++			-D__ASSEMBLY__ \
+ 		        -DKERNEL_NAME="\"Linux $(KERNELRELEASE)\"" \
+ 			-DVMLINUX_BINARY="\"$(3)\"" \
+ 			-DVMLINUX_COMPRESSION="\"$(2)\"" \
+-- 
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
