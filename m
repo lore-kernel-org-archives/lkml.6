@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2258K/Np+ln37pbKTCFwFZuOl9mJiw6p+rFX6sKfbNCT+FPv1BFB2czkdDyYckVN8ljUWeQV
-ARC-Seal: i=1; a=rsa-sha256; t=1519412044; cv=none;
+X-Google-Smtp-Source: AG47ELvjrIR/oMCm3WcuzFK4IpYWX2oxCK54tt3mBvVAizhmXTgwJBAdnFS/DNVpcgFitGTleoLv
+ARC-Seal: i=1; a=rsa-sha256; t=1519412039; cv=none;
         d=google.com; s=arc-20160816;
-        b=h5ZAFQDln/aqabW2WSjqgiIrO933YCCXoq0ORwwSlElodu730FoClIVpyFPDR8bxa7
-         rDsUUYukJiuWjpOHEnCASamGMiHn7sAXxerQFEMyuYecPpaZVNF8gOJK4JZ4uwD5ti+h
-         zLqFbLC8m+OX2Dko90WZtijeLpHIikUAtt0DpFH4NDjnWk2cjyCTmnOidl2/ZyjMt+pu
-         jcc+jKwLxeN8jy56RE/hholaCjEOVQCiwbBwqlTwwkf/PswP5oO+IHZMw3yFju0eYB5i
-         X0K3/WTXu4ia3K4iGtJimWwAfPDOSKKpbIVA4I+qYNMVsLebHHvg6tEGmUHe5iP/WZjA
-         fBiQ==
+        b=Oq2T6kE+HJK3w9tPOQ82BdUI/HuHZLWYWpwo6FNvq5tcUsuVrXPA/uNRUC9a76hp/4
+         Sey4P7jkfc1clks4FUsWFYIM7/HR3ak9VJTRPX6CVrmt86kVspsdccQ3B7p0NAv6rWOT
+         UCoPre38ib+zWlWDnMBSC1rrXopX099hxCFxiv5/7jAOkKnGlun92GZPWluBSZsHfcTg
+         brcEFrjGCWd7fdSSzF5O1gZWAlSgfaTjt+/yjoqvitirP24+RXbh7ohd7CFc7bEP3e+h
+         J51XZ2g6581lgurknU/Ndr2TSIBD3tl02GhJcLiOIDAovxs/8XuKNXrwky45RZGaS3f0
+         dNnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gfCAYv0cRJ0oWVij9FVs4X01K0a2fJnHpID/ma84urQ=;
-        b=c+CUy3J3/oYy6r9/OL9BcZTwyA4RoskwuHXd9v/9+DFTp5Jlhmgp8flPRsAgmH1V+Z
-         w2z2fniXZYy2ZBTUJDl6L5VXbFkKIrKV+Ek62P0++0bnruJjzow6AvIP7NpduLzMAAPl
-         ueW0g78XMvBjkzmEKvwdiQYhxr4wl/F0SBA6G6U0PejxE5R4enTptdQWBg6nLATUS9iD
-         qbEbNbS62C6g1niUxXkaRyxEQrrep1SMEUW8sAzP/Gc4tR/SeEGsNf2mYeIVZZBgObZ6
-         HTKpTTywiHEmRR86CuBgHi6Kj/eNe2NDKZsXocox02+9oXf3WirMjHIzjBE17teZQIKu
-         dD8g==
+        bh=gvGwDXZjs70dEy86e/9WmSjQtlBjYFNpPo3HcDUdf+U=;
+        b=Ky/ued1OIk94Q6wQOzVkTRXuDKSEWo57BuJA2jlXySHRm9NUY/AEHj03JLQhX6BKKf
+         z2FY4JBofDe2EGOEP+JUrEzHLbmTZbOYuiZa/4XKkqV7qtiUnncIJWuiCPK+h2m2iTio
+         krjYl3kWj766OBFnEmT3qLGDIPRaPJqzSFkSnvXT0a00l6rav0JjgW6kHOJJfQ19/pMx
+         iipp+llBJpiySkJaLUEgtiz6LZvmyqEuZgTPTQgkqeyHu+b6TvWwPYIJ1QQ/cXan/Aiq
+         /sKJMIKwuML9CJRTe0UwDtK2MUyeS95jAlUruSndOMP7p46paPM7u9q6ShnTR6yExzZ0
+         hE4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Greg Ungerer <gerg@linux-m68k.org>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 104/159] m68k: add missing SOFTIRQENTRY_TEXT linker section
-Date: Fri, 23 Feb 2018 19:26:52 +0100
-Message-Id: <20180223170756.003062677@linuxfoundation.org>
+Subject: [PATCH 4.14 102/159] bnxt_en: Need to unconditionally shut down RoCE in bnxt_shutdown
+Date: Fri, 23 Feb 2018 19:26:50 +0100
+Message-Id: <20180223170755.775602161@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217642973745829?=
-X-GMAIL-MSGID: =?utf-8?q?1593219004712952014?=
+X-GMAIL-THRID: =?utf-8?q?1593218998410584422?=
+X-GMAIL-MSGID: =?utf-8?q?1593218998410584422?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,70 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Ungerer <gerg@linux-m68k.org>
+From: Ray Jui <ray.jui@broadcom.com>
 
 
-[ Upstream commit 969de0988b77e5a57aac2f7270191a3c50540c52 ]
+[ Upstream commit a7f3f939dd7d8398acebecd1ceb2e9e7ffbe91d2 ]
 
-Commit be7635e7287e ("arch, ftrace: for KASAN put hard/soft IRQ entries
-into separate sections") added a new linker section, SOFTIRQENTRY_TEXT,
-to the linker scripts for most architectures. It didn't add it to any of
-the linker scripts for the m68k architecture. This was not really a problem
-because it is only defined if either of CONFIG_FUNCTION_GRAPH_TRACER or
-CONFIG_KASAN are enabled - which can never be true for m68k.
+The current 'bnxt_shutdown' implementation only invokes
+'bnxt_ulp_shutdown' to shut down RoCE in the case when the system is in
+the path of power off (SYSTEM_POWER_OFF). While this may work in most
+cases, it does not work in the smart NIC case, when Linux 'reboot'
+command is initiated from the Linux that runs on the ARM cores of the
+NIC card. In this particular case, Linux 'reboot' results in a system
+'L3' level reset where the entire ARM and associated subsystems are
+being reset, but at the same time, Nitro core is being kept in sane state
+(to allow external PCIe connected servers to continue to work). Without
+properly shutting down RoCE and freeing all associated resources, it
+results in the ARM core to hang immediately after the 'reboot'
 
-However commit 229a71860547 ("irq: Make the irqentry text section
-unconditional") means that SOFTIRQENTRY_TEXT is now always defined. So on
-m68k we now end up with a separate ELF section for .softirqentry.text
-instead of it being part of the .text section. On some m68k targets in some
-configurations this can also cause a fatal link error:
+By always invoking 'bnxt_ulp_shutdown' in 'bnxt_shutdown', it fixes the
+above issue
 
-  LD      vmlinux
-/usr/local/bin/../m68k-uclinux/bin/ld.real: section .softirqentry.text loaded at [0000000010de10c0,0000000010de12dd] overlaps section .rodata loaded at [0000000010de10c0,0000000010e0fd67]
+Fixes: 0efd2fc65c92 ("bnxt_en: Add a callback to inform RDMA driver during PCI shutdown.")
 
-To fix add in the missing SOFTIRQENTRY_TEXT section into the m68k linker
-scripts. I noticed that m68k is also missing the IRQENTRY_TEXT section,
-so this patch also adds an entry for that too.
-
-Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/m68k/kernel/vmlinux-nommu.lds |    2 ++
- arch/m68k/kernel/vmlinux-std.lds   |    2 ++
- arch/m68k/kernel/vmlinux-sun3.lds  |    2 ++
- 3 files changed, 6 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/m68k/kernel/vmlinux-nommu.lds
-+++ b/arch/m68k/kernel/vmlinux-nommu.lds
-@@ -45,6 +45,8 @@ SECTIONS {
- 	.text : {
- 		HEAD_TEXT
- 		TEXT_TEXT
-+		IRQENTRY_TEXT
-+		SOFTIRQENTRY_TEXT
- 		SCHED_TEXT
- 		CPUIDLE_TEXT
- 		LOCK_TEXT
---- a/arch/m68k/kernel/vmlinux-std.lds
-+++ b/arch/m68k/kernel/vmlinux-std.lds
-@@ -16,6 +16,8 @@ SECTIONS
-   .text : {
- 	HEAD_TEXT
- 	TEXT_TEXT
-+	IRQENTRY_TEXT
-+	SOFTIRQENTRY_TEXT
- 	SCHED_TEXT
- 	CPUIDLE_TEXT
- 	LOCK_TEXT
---- a/arch/m68k/kernel/vmlinux-sun3.lds
-+++ b/arch/m68k/kernel/vmlinux-sun3.lds
-@@ -16,6 +16,8 @@ SECTIONS
-   .text : {
- 	HEAD_TEXT
- 	TEXT_TEXT
-+	IRQENTRY_TEXT
-+	SOFTIRQENTRY_TEXT
- 	SCHED_TEXT
- 	CPUIDLE_TEXT
- 	LOCK_TEXT
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -8218,8 +8218,9 @@ static void bnxt_shutdown(struct pci_dev
+ 	if (netif_running(dev))
+ 		dev_close(dev);
+ 
++	bnxt_ulp_shutdown(bp);
++
+ 	if (system_state == SYSTEM_POWER_OFF) {
+-		bnxt_ulp_shutdown(bp);
+ 		bnxt_clear_int_mode(bp);
+ 		pci_wake_from_d3(pdev, bp->wol);
+ 		pci_set_power_state(pdev, PCI_D3hot);
