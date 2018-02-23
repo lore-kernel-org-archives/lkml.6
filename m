@@ -1,93 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeBWMQM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 07:16:12 -0500
-Received: from mail02.prevas.se ([62.95.78.10]:43003 "EHLO mail02.prevas.se"
+        id S1751455AbeBWMRE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:17:04 -0500
+Received: from mx.socionext.com ([202.248.49.38]:47445 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750935AbeBWMQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:16:11 -0500
-X-IronPort-AV: E=Sophos;i="5.47,383,1515452400";
-   d="scan'208";a="3117698"
-Subject: Re: [PATCH RFC v2 1/3] drivers: irqchip: pdc: Add PDC interrupt
- controller for QCOM SoCs
-To: Marc Zyngier <marc.zyngier@arm.com>, Lina Iyer <ilina@codeaurora.org>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <rnayak@codeaurora.org>,
-        <asathyak@codeaurora.org>
-References: <20180202142200.6229-1-ilina@codeaurora.org>
- <20180202142200.6229-2-ilina@codeaurora.org>
- <e1322b9a-4765-3c71-84b8-cb725fe457dd@arm.com>
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Message-ID: <02e2a5f9-8ecc-76b1-a3cc-c95b215e8fe1@prevas.dk>
-Date: Fri, 23 Feb 2018 13:16:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <e1322b9a-4765-3c71-84b8-cb725fe457dd@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.16.8.31]
+        id S1751378AbeBWMRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 07:17:03 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] ASoC: uniphier: fix broken sound if use SRC in replay
+Date: Fri, 23 Feb 2018 21:17:01 +0900
+Message-Id: <20180223121701.13372-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-02 15:58, Marc Zyngier wrote:
-> Hi Lina,
-> 
-> On 02/02/18 14:21, Lina Iyer wrote:
->> From : Archana Sathyakumar <asathyak@codeaurora.org>
->>
->> +
->> +static int qcom_pdc_translate(struct irq_domain *d,
->> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
->> +{
->> +	if (is_of_node(fwspec->fwnode)) {
->> +		if (fwspec->param_count < 3)
->> +			return -EINVAL;
-> 
-> Why 3? Reading the DT binding, this is indeed set to 3 without any
-> reason. I'd suggest this becomes 2, encoding the pin number and the
-> trigger information, as the leading 0 is quite useless. Yes, I know
-> other examples in the kernel are using this 0, and that was a
-> consequence of retrofitting the omitted interrupt controllers (back in
-> the days of the stupid gic_arch_extn...). Don't do that.
-> 
+This patch fixes settings for ports with SRC. These ports need to
+set the fixed audio rate and clock. If not, the SRC outputs broken
+sound.
 
-Hi Marc
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ sound/soc/uniphier/aio-core.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-I'm about to send out a new revision of the ls-extirq patchset, and
-thanks to you pointing me to these patches, I've read the comments on
-the various revisions of this series and tried to take those into
-account. But the above confused me, because in response to my first RFC
-(https://patchwork.kernel.org/patch/10102643/) we have
-
-On 2017-12-08 17:09, Marc Zyngier wrote:
-> On 08/12/17 15:11, Alexander Stein wrote:
->> Hi Rasmus,
->>
->>> +
->>> +Required properties:
->>> +- compatible: should be "fsl,ls1021a-extirq"
->>> +- interrupt-controller: Identifies the node as an interrupt controller
->>> +- #interrupt-cells: Use the same format as specified by GIC in
-arm,gic.txt.
->>
->> Do you really need 3 interrupt-cells here? As you've written below
-you don't
->> support PPI anyway the 1st flag might be dropped then. So support
-just 2 cells:
->> * IRQ number (IRQ0 - IRQ5)
->> * IRQ flags
->
-> The convention for irqchip stacked on top of a GIC is to keep the
-> interrupt specifier the same. It makes the maintenance if the DT much
-> easier, and doesn't hurt at all.
-
-Personally, I'd actually prefer the simpler interrupt specifiers without
-a redundant 0. Maybe I'm just missing some difference between this case
-and the ls-extirq one?
-
-Thanks,
-Rasmus
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index 1e5f053d9f6b..1711361fc0c2 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -501,7 +501,7 @@ int aio_port_set_clk(struct uniphier_aio_sub *sub)
+ 				OPORTMXCTR2_MSSEL_MASTER |
+ 				OPORTMXCTR2_EXTLSIFSSEL_36 |
+ 				OPORTMXCTR2_DACCKSEL_1_2;
+-		} else {
++		} else if (sub->swm->type == PORT_TYPE_SPDIF) {
+ 			if (sub->aio->pll_out >= ARRAY_SIZE(v_pll)) {
+ 				dev_err(dev, "PLL(%d) is invalid\n",
+ 					sub->aio->pll_out);
+@@ -521,6 +521,11 @@ int aio_port_set_clk(struct uniphier_aio_sub *sub)
+ 				v |= OPORTMXCTR2_EXTLSIFSSEL_24;
+ 				break;
+ 			}
++		} else {
++			v = OPORTMXCTR2_ACLKSEL_A1 |
++				OPORTMXCTR2_MSSEL_MASTER |
++				OPORTMXCTR2_EXTLSIFSSEL_36 |
++				OPORTMXCTR2_DACCKSEL_1_2;
+ 		}
+ 		regmap_write(r, OPORTMXCTR2(sub->swm->oport.map), v);
+ 	} else {
+@@ -550,11 +555,19 @@ int aio_port_set_param(struct uniphier_aio_sub *sub, int pass_through,
+ 		       const struct snd_pcm_hw_params *params)
+ {
+ 	struct regmap *r = sub->aio->chip->regmap;
++	unsigned int rate;
+ 	u32 v;
+ 	int ret;
+ 
+ 	if (!pass_through) {
+-		ret = aio_port_set_rate(sub, params_rate(params));
++		if (sub->swm->type == PORT_TYPE_EVE ||
++		    sub->swm->type == PORT_TYPE_CONV) {
++			rate = 48000;
++		} else {
++			rate = params_rate(params);
++		}
++
++		ret = aio_port_set_rate(sub, rate);
+ 		if (ret)
+ 			return ret;
+ 
+-- 
+2.16.1
