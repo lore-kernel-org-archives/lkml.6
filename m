@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3586829-1519411547-2-12621528173223752339
+X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411546-2-4846854355678349209
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519411547; b=HA0uJlqjDEtGO6DU+HaQU5X+102NNjOxN+FGJRc/fomRFEY
-    YMZkmGgpgfoowQG6p3lNJayQCYxXoRX/fdzjIsbdcTEThNw+RhZllNbYNK+VUq6d
-    sho0Pusnk6cyP3UP9tdhE35Z4nvhoOkmN837A6h0iVY1ukChSo2CbW6nbiLny6ij
-    acGKMGkgi2I4DhSUkB/Tm01Z6NSoEgJIIFBUwiUavdGBatdIYgu+PobPVNsuMErA
-    IDCmstAQqYHf5gydRziXmd4/LlypWY9+5EQiBuS/jyFeY8kX7iS+z/HR4kGCmqpe
-    X2I2D0a1ew/dUMb3+j7t/Nx7vbRadngF7ZU4oQA==
+    t=1519411546; b=t4teDYT7IBPrm0jOLIOgJme+L3HtrM2gqdUYiHWhx5AiC/J
+    GuIRGUyHSiqCrAC3x2V2kvwZtLUac8RkIjDzfT5Mbvw+kt+WsojZibhrRh2vbLpH
+    7M0dFeS8xOR0/Wdi0iLGdCm04b3x3aR8Az0CNLSShsUUOZ3rGXjxubpLbgSWxLsd
+    /nik40xnpFHVlbZ58cR4FvDF/isxR0eVFUMRKa/exJDtojQsEBM7uqbbxAZ/j6/O
+    BjFC0u15JrqPzhw3DOTZML8jj3uMwgIkjVmPnYN1jasBab6TkBVB93CSsuAHkJCL
+    1HjAdJbls3u34RnZWvRPyNKM5Wt+z5GNX37uK8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519411547; bh=vtjNE0slaih/W6IYUn/yOTcbt0
-    WC9a/z2yBHDkTgWww=; b=u5UQ+JnNHuNBGfnXOItNRHqTO5fAGPXiGpur3I2qnD
-    ewie4tmRDXC7PGLfhseE8ItUBDOi6f2acAznrYyp7x+xyvXuJqvmix0avN/cqq8A
-    ZHNqvx/FfmCFzBP6+GkzswE2SBGrocBWDto78FIhQn8beGxVmM3UBumR8U8L5t70
-    wAhC2/K8rseTE7wfR6S/53J4rp+Qfp/fFp+sO7fi2obRumMPf6FzG1hviP5xWDF2
-    IVUGPlaTzfJi15fBUegQWsDVjLMQCwcQWFK0QcGthC8qOioFQOWp/FSeJq3IKAVt
-    C5gGeHgmibzaGo0FRS5lIdCEaJ2A/2Sj4t4K5NQ2sGVA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519411546; bh=oAOKoT7wPqv/9tAiSMdeIw78XQ
+    jhomMOaGOBjnIExUk=; b=YlBS18JEFwu3oM7tIGoMnuEz/mL+scFaoFOpbZp1Un
+    rUc2BTi2lJ8JU3LII85lNz/Pwa/R02ULfQkA8XVmQ8OzQWVeoU9tl7v0R/+agZUy
+    nzamjEe9Fp/PRoQnP0uRD/KCx9SLOxV3UsVSZJ/vEHJjG6PiK7qlXJKQPnQOkHJj
+    UBEH42Dc/ZhiSirf/Xdae6FGIpud/S6c//3gI1fnguvpp83fndb6BYqEReBP9CtS
+    hD4Wt16NK8FEZFgjQt13X4A3EnrNqnb3gbQuq3IcNwO8W6uiJ62/YTV1FOOSvwL0
+    r85vQifaeFuPDFgCGw0gKbV453N0RKAwvFNGI3jgX3rw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,23 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933857AbeBWSpn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:45:43 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43428 "EHLO
+        id S933524AbeBWSpj (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:45:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933550AbeBWSpl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:45:41 -0500
+        with ESMTP id S933550AbeBWSpj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:45:39 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        Takuo Koguchi <takuo.koguchi.sw@hitachi.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 077/145] xfrm: Fix stack-out-of-bounds with misconfigured transport mode policies.
-Date: Fri, 23 Feb 2018 19:26:23 +0100
-Message-Id: <20180223170734.699697306@linuxfoundation.org>
+Subject: [PATCH 4.9 076/145] spi: sun4i: disable clocks in the remove function
+Date: Fri, 23 Feb 2018 19:26:22 +0100
+Message-Id: <20180223170734.549761759@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -79,62 +81,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Klassert <steffen.klassert@secunet.com>
+From: Takuo Koguchi <takuo.koguchi@gmail.com>
 
 
-[ Upstream commit 732706afe1cc46ef48493b3d2b69c98f36314ae4 ]
+[ Upstream commit c810daba0ab5226084a56893a789af427a801146 ]
 
-On policies with a transport mode template, we pass the addresses
-from the flowi to xfrm_state_find(), assuming that the IP addresses
-(and address family) don't change during transformation.
+mclk and hclk need to be disabled. Since pm_runtime_disable does
+not disable the clocks, use pm_runtime_force_suspend instead.
 
-Unfortunately our policy template validation is not strict enough.
-It is possible to configure policies with transport mode template
-where the address family of the template does not match the selectors
-address family. This lead to stack-out-of-bound reads because
-we compare arddesses of the wrong family. Fix this by refusing
-such a configuration, address family can not change on transport
-mode.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-We use the assumption that, on transport mode, the first templates
-address family must match the address family of the policy selector.
-Subsequent transport mode templates must mach the address family of
-the previous template.
-
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Takuo Koguchi <takuo.koguchi.sw@hitachi.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_user.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/spi/spi-sun4i.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1380,11 +1380,14 @@ static void copy_templates(struct xfrm_p
+--- a/drivers/spi/spi-sun4i.c
++++ b/drivers/spi/spi-sun4i.c
+@@ -466,7 +466,7 @@ err_free_master:
  
- static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ static int sun4i_spi_remove(struct platform_device *pdev)
  {
-+	u16 prev_family;
- 	int i;
+-	pm_runtime_disable(&pdev->dev);
++	pm_runtime_force_suspend(&pdev->dev);
  
- 	if (nr > XFRM_MAX_DEPTH)
- 		return -EINVAL;
- 
-+	prev_family = family;
-+
- 	for (i = 0; i < nr; i++) {
- 		/* We never validated the ut->family value, so many
- 		 * applications simply leave it at zero.  The check was
-@@ -1396,6 +1399,12 @@ static int validate_tmpl(int nr, struct
- 		if (!ut[i].family)
- 			ut[i].family = family;
- 
-+		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
-+		    (ut[i].family != prev_family))
-+			return -EINVAL;
-+
-+		prev_family = ut[i].family;
-+
- 		switch (ut[i].family) {
- 		case AF_INET:
- 			break;
+ 	return 0;
+ }
