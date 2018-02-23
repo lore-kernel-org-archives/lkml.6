@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeBWW2V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 17:28:21 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41824 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752459AbeBWW2T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752470AbeBWW2T (ORCPT <rfc822;w@1wt.eu>);
         Fri, 23 Feb 2018 17:28:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41804 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751983AbeBWW2O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 17:28:14 -0500
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: iommu@lists.linux-foundation.org
 Cc: linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Baoquan He <bhe@redhat.com>
-Subject: [PATCH 01/10] iommu/amd: take into account that alloc_dev_data() may return NULL
-Date: Fri, 23 Feb 2018 23:27:27 +0100
-Message-Id: <20180223222736.18542-2-bigeasy@linutronix.de>
+        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 03/10] iommu/amd: split domain id out of amd_iommu_devtable_lock
+Date: Fri, 23 Feb 2018 23:27:29 +0100
+Message-Id: <20180223222736.18542-4-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180223222736.18542-1-bigeasy@linutronix.de>
 References: <20180223222736.18542-1-bigeasy@linutronix.de>
@@ -24,31 +23,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_dev_data() does not check whether the return value alloc_dev_data()
-is NULL. This was okay once because the pointer was returned once as-is.
-Since commit df3f7a6e8e85 ("iommu/amd: Use is_attach_deferred
-call-back") the pointer may be used within find_dev_data() so a NULL
-check is required.
+domain_id_alloc() and domain_id_free() is used for id management. Those
+two function share a bitmap (amd_iommu_pd_alloc_bitmap) and set/clear
+bits based on id allocation. There is no need to share this with
+amd_iommu_devtable_lock, it can use its own lock for this operation.
 
-Cc: Baoquan He <bhe@redhat.com>
-Fixes: df3f7a6e8e85 ("iommu/amd: Use is_attach_deferred call-back")
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/iommu/amd_iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/amd_iommu.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 74788fdeb773..8b591c192daf 100644
+index 53aece41ddf2..958efe311057 100644
 --- a/drivers/iommu/amd_iommu.c
 +++ b/drivers/iommu/amd_iommu.c
-@@ -310,6 +310,8 @@ static struct iommu_dev_data *find_dev_data(u16 devid)
+@@ -81,6 +81,7 @@
+ #define AMD_IOMMU_PGSIZES	((~0xFFFUL) & ~(2ULL << 38))
 =20
- 	if (dev_data =3D=3D NULL) {
- 		dev_data =3D alloc_dev_data(devid);
-+		if (!dev_data)
-+			return NULL;
+ static DEFINE_RWLOCK(amd_iommu_devtable_lock);
++static DEFINE_SPINLOCK(pd_bitmap_lock);
 =20
- 		if (translation_pre_enabled(iommu))
- 			dev_data->defer_attach =3D true;
+ /* List of all available dev_data structures */
+ static LLIST_HEAD(dev_data_list);
+@@ -1599,29 +1600,26 @@ static void del_domain_from_list(struct protection_=
+domain *domain)
+=20
+ static u16 domain_id_alloc(void)
+ {
+-	unsigned long flags;
+ 	int id;
+=20
+-	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
++	spin_lock(&pd_bitmap_lock);
+ 	id =3D find_first_zero_bit(amd_iommu_pd_alloc_bitmap, MAX_DOMAIN_ID);
+ 	BUG_ON(id =3D=3D 0);
+ 	if (id > 0 && id < MAX_DOMAIN_ID)
+ 		__set_bit(id, amd_iommu_pd_alloc_bitmap);
+ 	else
+ 		id =3D 0;
+-	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
++	spin_unlock(&pd_bitmap_lock);
+=20
+ 	return id;
+ }
+=20
+ static void domain_id_free(int id)
+ {
+-	unsigned long flags;
+-
+-	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
++	spin_lock(&pd_bitmap_lock);
+ 	if (id > 0 && id < MAX_DOMAIN_ID)
+ 		__clear_bit(id, amd_iommu_pd_alloc_bitmap);
+-	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
++	spin_unlock(&pd_bitmap_lock);
+ }
+=20
+ #define DEFINE_FREE_PT_FN(LVL, FN)				\
 --=20
 2.16.1
