@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvuzx/1ToYZCi0Bxm8yOR1pj6Gf2KvMjN6ikxhKzMCA7OgCG3y7vinh26qBxfxSzGhpp4F
-ARC-Seal: i=1; a=rsa-sha256; t=1519411628; cv=none;
+X-Google-Smtp-Source: AG47ELtLe9jFOHA7BNb6D5WUsMZ9Yt8W3e79CCeV6urq34A+pQJFmTq1NxM6Oh1yqfhZCJ75SfRI
+ARC-Seal: i=1; a=rsa-sha256; t=1519411625; cv=none;
         d=google.com; s=arc-20160816;
-        b=XFH3W/zr8QPwt8rb7ex9J1nLnbTuCMy1pdKQUkriaHm5qDkE/U5SdHK/EWLhv7UDxz
-         AKb92rweE5C8SeQWT3azseQ6LrZ3pvx/t7iIHWROtxh5sLn0CsZ+TAW0qqQG6uo4vmYb
-         q4d1pSwJKRmIYKtlVsPdF5yOiNnJgB0jN+GgXSwB5h+pL1SC6y0X5cszxCDlBztmYlKV
-         m2ZRoFrS8bF/Bl+8SliTsVddGiYRuZB2g+jdhGLsC135HSl0wPVSvgDqLW63H358EGB0
-         kI7VVGeFNEx5luYXt+3oK8wjJci68oNgwkD0y5a18vj7g1etMv6Ok7LgfiiWRP1Eu+rW
-         VBDQ==
+        b=NLTzDNTCzZ7XsTqCtX5DDa/0btY1QUPT3plTXBGkPt0pigFGNnZudSAgP7wkfaqXDu
+         bAWGMZA2ibaeN3P51kYBmGk6j+PLVpbu0tcX6x/iDhZLuveKpl4lnvDZrz5pZDP1LQrX
+         YhH8qrw7lao8IfhkV0x6yS+tTd1UhCo/7iuHSnrS8l/3a8NK46zqQwoq3KzW8dmPO4Ll
+         hhyD9bVbCCNkZ8O3/ZeL5t3iR6OKpuPBcyZWdCplUtPk6dM+9mZ+VLVZxHmRa6dIHBUa
+         9QvGkYbC7Ond1i4tqYvlIkMQ4o+sgl7KZEY+HE1tVk0JFRtNd3GccomH/VfAPchONk3F
+         0p5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/6QL9qj8TDUO1MyJxoNn87bRclRMnL3RkyGPPFPL2Ks=;
-        b=DkrEGRbidYbW9iE2eL27NNnoABcNJm/SS52kWRIYiayIWCrvAi1Y67IC3RWWM3cr1H
-         nMJkUUxQzUbAJHzpTVfLtIZpiE8c51XYdypvqo80DUZvvhGqG8DRuL4tYjbGR4xfR304
-         PrVlKpnpmnfvA5jZb6uO3s37K4hNNMmQD+42WhDH42kBRaoaDwViLCV6S/j2kSITbdyQ
-         ukvjem/ZZfrQJ86GG4rJyaQufDmInC7imUNOEhLA/W42UyYtaKAriXAeliJL/mog3j7E
-         X0vOC9LzRNtwEJl47dv315xQggTWoqmUV2H9UugY8f5NuyfA/aDyMseLf5zp27MHatF4
-         JlnA==
+        bh=QK7U/f546F2M7DkXC1vqDHh2jCCcywkmwj1rFcrlDJI=;
+        b=SiBTmA7Ko2NzF0wDZ4595F6lQmDBvbAtRdrWPLsBpIm4VopfIq3US5v+k+HrZhSdo2
+         o2f2Qx51+WmTbLc3DWv/bY+itT5Swg1Ds1NY3FvrUAxRdisVvboaQ4F/LgXMRpXGsBls
+         o1RSuvJ946MIjhI8UcQhRno6SWUEdUROGicWx1mf9rb+cvQQlPT1diGBj373Men6ZO3j
+         WVYeox52IXxFrOLI3npKknsZQrpSPFq10vUeXYdxwlZ9FN0rN6FjVQyTyXfP+NjTHIGN
+         lbKf/NneYgd0VkvG6gUQ0AtDhUKhe3m3XWcftIs+l5+82f6V3m1KxythXicI8Y3e04qH
+         eqJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Michal Marek <mmarek@suse.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 108/145] tools build: Add tools tree support for make -s
-Date: Fri, 23 Feb 2018 19:26:54 +0100
-Message-Id: <20180223170738.780387317@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Bill Metzenthen <billm@melbpc.org.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 107/145] x86/fpu/math-emu: Fix possible uninitialized variable use
+Date: Fri, 23 Feb 2018 19:26:53 +0100
+Message-Id: <20180223170738.620538719@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218010959624529?=
-X-GMAIL-MSGID: =?utf-8?q?1593218568326026363?=
+X-GMAIL-THRID: =?utf-8?q?1593217868412742928?=
+X-GMAIL-MSGID: =?utf-8?q?1593218565073086658?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,115 +53,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit e572d0887137acfc53f18175522964ec19d88175 upstream.
+commit 75e2f0a6b16141cb347f442033ec907380d4d66e upstream.
 
-When doing a kernel build with 'make -s', everything is silenced except
-the objtool build.  That's because the tools tree support for silent
-builds is some combination of missing and broken.
+When building the kernel with "make EXTRA_CFLAGS=...", this overrides
+the "PARANOID" preprocessor macro defined in arch/x86/math-emu/Makefile,
+and we run into a build warning:
 
-Three changes are needed to fix it:
+  arch/x86/math-emu/reg_compare.c: In function ‘compare_i_st_st’:
+  arch/x86/math-emu/reg_compare.c:254:6: error: ‘f’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-- Makefile: propagate '-s' to the sub-make's MAKEFLAGS variable so the
-  tools Makefiles can see it.
+This fixes the implementation to work correctly even without the PARANOID
+flag, and also fixes the Makefile to not use the EXTRA_CFLAGS variable
+but instead use the ccflags-y variable in the Makefile that is meant
+for this purpose.
 
-- tools/scripts/Makefile.include: fix the tools Makefiles' ability to
-  recognize '-s'.  The MAKE_VERSION and MAKEFLAGS checks are copied from
-  the top-level Makefile.  This silences the "DESCEND objtool" message.
-
-- tools/build/Makefile.build: add support to the tools Build files for
-  recognizing '-s'.  Again the MAKE_VERSION and MAKEFLAGS checks are
-  copied from the top-level Makefile.  This silences all the object
-  compile/link messages.
-
-Reported-and-Tested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Michal Marek <mmarek@suse.com>
-Link: http://lkml.kernel.org/r/e8967562ef640c3ae9a76da4ae0f4e47df737c34.1484799200.git.jpoimboe@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Bill Metzenthen <billm@melbpc.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170719125310.2487451-3-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile                       |    6 ++++--
- tools/build/Makefile.build     |   10 ++++++++++
- tools/scripts/Makefile.include |   12 +++++++++++-
- 3 files changed, 25 insertions(+), 3 deletions(-)
+ arch/x86/math-emu/Makefile      |    4 ++--
+ arch/x86/math-emu/reg_compare.c |   16 ++++++++--------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -87,10 +87,12 @@ endif
- ifneq ($(filter 4.%,$(MAKE_VERSION)),)	# make-4
- ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
-   quiet=silent_
-+  tools_silent=s
- endif
- else					# make-3.8x
- ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
-   quiet=silent_
-+  tools_silent=-s
- endif
- endif
+--- a/arch/x86/math-emu/Makefile
++++ b/arch/x86/math-emu/Makefile
+@@ -5,8 +5,8 @@
+ #DEBUG	= -DDEBUGGING
+ DEBUG	=
+ PARANOID = -DPARANOID
+-EXTRA_CFLAGS	:= $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
+-EXTRA_AFLAGS	:= $(PARANOID)
++ccflags-y += $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
++asflags-y += $(PARANOID)
  
-@@ -1614,11 +1616,11 @@ image_name:
- # Clear a bunch of variables before executing the submake
- tools/: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(tools_silent) $(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
+ # From 'C' language sources:
+ C_OBJS =fpu_entry.o errors.o \
+--- a/arch/x86/math-emu/reg_compare.c
++++ b/arch/x86/math-emu/reg_compare.c
+@@ -168,7 +168,7 @@ static int compare(FPU_REG const *b, int
+ /* This function requires that st(0) is not empty */
+ int FPU_compare_st_data(FPU_REG const *loaded_data, u_char loaded_tag)
+ {
+-	int f = 0, c;
++	int f, c;
  
- tools/%: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(tools_silent) $(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
+ 	c = compare(loaded_data, loaded_tag);
  
- # Single targets
- # ---------------------------------------------------------------------------
---- a/tools/build/Makefile.build
-+++ b/tools/build/Makefile.build
-@@ -19,6 +19,16 @@ else
-   Q=@
- endif
+@@ -189,12 +189,12 @@ int FPU_compare_st_data(FPU_REG const *l
+ 		case COMP_No_Comp:
+ 			f = SW_C3 | SW_C2 | SW_C0;
+ 			break;
+-#ifdef PARANOID
+ 		default:
++#ifdef PARANOID
+ 			EXCEPTION(EX_INTERNAL | 0x121);
++#endif /* PARANOID */
+ 			f = SW_C3 | SW_C2 | SW_C0;
+ 			break;
+-#endif /* PARANOID */
+ 		}
+ 	setcc(f);
+ 	if (c & COMP_Denormal) {
+@@ -205,7 +205,7 @@ int FPU_compare_st_data(FPU_REG const *l
  
-+ifneq ($(filter 4.%,$(MAKE_VERSION)),)	# make-4
-+ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
-+  quiet=silent_
-+endif
-+else					# make-3.8x
-+ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
-+  quiet=silent_
-+endif
-+endif
-+
- build-dir := $(srctree)/tools/build
+ static int compare_st_st(int nr)
+ {
+-	int f = 0, c;
++	int f, c;
+ 	FPU_REG *st_ptr;
  
- # Define $(fixdep) for dep-cmd function
---- a/tools/scripts/Makefile.include
-+++ b/tools/scripts/Makefile.include
-@@ -46,6 +46,16 @@ else
- NO_SUBDIR = :
- endif
- 
-+ifneq ($(filter 4.%,$(MAKE_VERSION)),)  # make-4
-+ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
-+  silent=1
-+endif
-+else					# make-3.8x
-+ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
-+  silent=1
-+endif
-+endif
-+
- #
- # Define a callable command for descending to a new directory
- #
-@@ -58,7 +68,7 @@ descend = \
- QUIET_SUBDIR0  = +$(MAKE) $(COMMAND_O) -C # space to separate -C and subdir
- QUIET_SUBDIR1  =
- 
--ifneq ($(findstring $(MAKEFLAGS),s),s)
-+ifneq ($(silent),1)
-   ifneq ($(V),1)
- 	QUIET_CC       = @echo '  CC       '$@;
- 	QUIET_CC_FPIC  = @echo '  CC FPIC  '$@;
+ 	if (!NOT_EMPTY(0) || !NOT_EMPTY(nr)) {
+@@ -235,12 +235,12 @@ static int compare_st_st(int nr)
+ 		case COMP_No_Comp:
+ 			f = SW_C3 | SW_C2 | SW_C0;
+ 			break;
+-#ifdef PARANOID
+ 		default:
++#ifdef PARANOID
+ 			EXCEPTION(EX_INTERNAL | 0x122);
++#endif /* PARANOID */
+ 			f = SW_C3 | SW_C2 | SW_C0;
+ 			break;
+-#endif /* PARANOID */
+ 		}
+ 	setcc(f);
+ 	if (c & COMP_Denormal) {
+@@ -283,12 +283,12 @@ static int compare_i_st_st(int nr)
+ 	case COMP_No_Comp:
+ 		f = X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF;
+ 		break;
+-#ifdef PARANOID
+ 	default:
++#ifdef PARANOID
+ 		EXCEPTION(EX_INTERNAL | 0x122);
++#endif /* PARANOID */
+ 		f = 0;
+ 		break;
+-#endif /* PARANOID */
+ 	}
+ 	FPU_EFLAGS = (FPU_EFLAGS & ~(X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF)) | f;
+ 	if (c & COMP_Denormal) {
