@@ -1,98 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeBWLJn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:09:43 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35298 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750910AbeBWLJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:09:42 -0500
-Date: Fri, 23 Feb 2018 12:09:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Anna Karbownik <anna.karbownik@intel.com>
-Cc: mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
-        tony.luck@intel.com, jim.m.snow@intel.com, qiuxu.zhuo@intel.com,
-        lukasz.odzioba@intel.com, krzysztof.paliswiat@intel.com
-Subject: Re: [PATCH 1/1] EDAC, sb_edac: Fix out of bound write during DIMM
- configuration on KNL
-Message-ID: <20180223110924.GB4981@pd.tnic>
-References: <1519312693-4789-1-git-send-email-anna.karbownik@intel.com>
+        id S1751752AbeBWLMA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:12:00 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22440 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751716AbeBWLL5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:11:57 -0500
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <jic23@kernel.org>, <robh+dt@kernel.org>
+CC: <linux@armlinux.org.uk>, <mark.rutland@arm.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>,
+        <arnaud.pouliquen@st.com>
+Subject: [PATCH] dt-bindings: iio: adc: stm32-dfsdm: fix types, add missing pinctrl
+Date: Fri, 23 Feb 2018 12:11:00 +0100
+Message-ID: <1519384260-23875-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1519312693-4789-1-git-send-email-anna.karbownik@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 04:18:13PM +0100, Anna Karbownik wrote:
-> From: akarbown <anna.karbownik@intel.com>
-> 
-> In one of the previous patches we decreased NUM_CHANNELS from 8 to 4, but
+- Add missing pinctrl description. Support is made optional as dfsdm
+  may use internal sources (e.g. via registers)
+- Fix typo in IIO STM32 DFSDM filter "MANCH_F" description.
+Basically, this should be "falling edge = logic 0", not "1" that applies
+to "MANCH_R".
+BTW, make the description complete by describing both rising/falling
+edges as described in reference manuals.
 
-We say which patch it was.
+Fixes: 6c82f947fc97 ("IIO: add DT bindings for stm32 DFSDM filter")
 
-Anyway, corrected and applied the below, thanks.
-
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
-From: Anna Karbownik <anna.karbownik@intel.com>
-Date: Thu, 22 Feb 2018 16:18:13 +0100
-Subject: [PATCH] EDAC, sb_edac: Fix out of bound writes during DIMM
- configuration on KNL
+ Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Commit
-
-  3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
-
-decreased NUM_CHANNELS from 8 to 4, but this is not enough for Knights
-Landing which supports up to 6 channels.
-
-This caused out-of-bounds writes to pvt->mirror_mode and pvt->tolm
-variables which don't pay critical role on KNL code path, so the memory
-corruption wasn't causing any visible driver failures.
-
-The easiest way of fixing it is to change NUM_CHANNELS to 6. Do that.
-
-An alternative solution would be to restructure the KNL part of the
-driver to 2MC/3channel representation.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Anna Karbownik <anna.karbownik@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: jim.m.snow@intel.com
-Cc: krzysztof.paliswiat@intel.com
-Cc: lukasz.odzioba@intel.com
-Cc: qiuxu.zhuo@intel.com
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Fixes: 3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
-Link: http://lkml.kernel.org/r/1519312693-4789-1-git-send-email-anna.karbownik@intel.com
-[ Massage commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- drivers/edac/sb_edac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index f34430f99fd8..872100215ca0 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -279,7 +279,7 @@ static const u32 correrrthrsld[] = {
-  * sbridge structs
-  */
+diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+index 911492da..ed7520d 100644
+--- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+@@ -32,6 +32,10 @@ Optional properties:
+ 		  to "clock" property. Frequency must be a multiple of the rcc
+ 		  clock frequency. If not, SPI CLKOUT frequency will not be
+ 		  accurate.
++- pinctrl-names:	Set to "default".
++- pinctrl-0:		List of phandles pointing to pin configuration
++			nodes to set pins in mode of operation for dfsdm
++			on external pin.
  
--#define NUM_CHANNELS		4	/* Max channels per MC */
-+#define NUM_CHANNELS		6	/* Max channels per MC */
- #define MAX_DIMMS		3	/* Max DIMMS per channel */
- #define KNL_MAX_CHAS		38	/* KNL max num. of Cache Home Agents */
- #define KNL_MAX_CHANNELS	6	/* KNL max num. of PCI channels */
+ Contents of a STM32 DFSDM child nodes:
+ --------------------------------------
+@@ -68,8 +72,8 @@ Optional properties:
+ - st,adc-channel-types:	Single-ended channel input type.
+ 			- "SPI_R": SPI with data on rising edge (default)
+ 			- "SPI_F": SPI with data on falling edge
+-			- "MANCH_R": manchester codec, rising edge = logic 0
+-			- "MANCH_F": manchester codec, falling edge = logic 1
++			- "MANCH_R": manchester codec, rising edge = logic 0, falling edge = logic 1
++			- "MANCH_F": manchester codec, rising edge = logic 1, falling edge = logic 0
+ - st,adc-channel-clk-src: Conversion clock source.
+ 			  - "CLKIN": external SPI clock (CLKIN x)
+ 			  - "CLKOUT": internal SPI clock (CLKOUT) (default)
 -- 
-2.13.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+1.9.1
