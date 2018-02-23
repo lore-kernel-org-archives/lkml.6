@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeBWOly (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:41:54 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42237 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeBWOkk (ORCPT
+        id S1751849AbeBWOmP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:42:15 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40143 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeBWOkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:40:40 -0500
-X-Google-Smtp-Source: AH8x225kVPz0dFPxVOLxRKUBMcmy5tSjDSQ/u37BpVZZ9RJ3JHl+t4RlfUkMRw7OGi+Eh0r7yBux9g==
+        Fri, 23 Feb 2018 09:40:37 -0500
+X-Google-Smtp-Source: AG47ELtftRGemzYQiBFPi2vjgCunmHdiNFvVza1f9dnAWOIn6ZVs2lbXh1EW9bn05g6NYvhZvDD5bw==
 From: Michal Simek <michal.simek@xilinx.com>
 To: devicetree@vger.kernel.org
 Cc: monstr@monstr.eu, Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -16,9 +16,9 @@ Cc: monstr@monstr.eu, Masahiro Yamada <yamada.masahiro@socionext.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/8] arm64: zynqmp: Add support for Xilinx zcu104-revA
-Date: Fri, 23 Feb 2018 15:40:26 +0100
-Message-Id: <68acadbb82fb0a8ac5abb9b1e156b9a9cf5b0f11.1519396753.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 2/8] arm64: zynqmp: Add support for Xilinx zcu100-revC
+Date: Fri, 23 Feb 2018 15:40:24 +0100
+Message-Id: <26229dbbeb0ced5db870a8cf636f6d3d5855199e.1519396753.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1519396753.git.michal.simek@xilinx.com>
 References: <cover.1519396753.git.michal.simek@xilinx.com>
@@ -28,77 +28,311 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xilinx zcu104 is another customer board. It is sort of zcu102 clone
-with some differences.
+This board has 2GB of memory, i2c, sd, wifi sdio, spis, uarts, display
+port and usbs.
+Board is using fixed clocks because clock driver hasn't been merged yet.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
 Changes in v2:
+- Use i2c-mux instead of i2cswitch
 - Remove i2c mw u-boot commands
+- Use 96boards labels for i2cs and spis
+- Fix pmic and wifi node
 - Record compatible string to xilinx.txt
+- Remove Nathalie's email (she left Xilinx already)
 
- Documentation/devicetree/bindings/arm/xilinx.txt  |   3 +
+ Documentation/devicetree/bindings/arm/xilinx.txt  |   6 +
  arch/arm64/boot/dts/xilinx/Makefile               |   1 +
- arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts | 197 ++++++++++++++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts
+ arch/arm64/boot/dts/xilinx/zynqmp-clk.dtsi        | 213 ++++++++++++++++
+ arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 292 ++++++++++++++++++++++
+ 4 files changed, 512 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-clk.dtsi
+ create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index 2b922ec3c82a..a9ce08a68711 100644
+index 549e70a022cb..29039b645807 100644
 --- a/Documentation/devicetree/bindings/arm/xilinx.txt
 +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-@@ -26,3 +26,6 @@ Additional compatible strings:
-   "xlnx,zynqmp-zcu102-revA", "xlnx,zynqmp-zcu102"
-   "xlnx,zynqmp-zcu102-revB", "xlnx,zynqmp-zcu102"
-   "xlnx,zynqmp-zcu102-rev1.0", "xlnx,zynqmp-zcu102"
+@@ -15,3 +15,9 @@ shall have the following properties.
+ 
+ Required root node properties:
+     - compatible = "xlnx,zynqmp";
 +
-+- Xilinx evaluation board zcu104
-+  "xlnx,zynqmp-zcu104-revA", "xlnx,zynqmp-zcu104"
++
++Additional compatible strings:
++
++- Xilinx 96boards compatible board zcu100
++  "xlnx,zynqmp-zcu100-revC", "xlnx,zynqmp-zcu100"
 diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/xilinx/Makefile
-index 24e3ce801304..1c039e59c7c3 100644
+index eba179b23b17..7266a6a9c0cd 100644
 --- a/arch/arm64/boot/dts/xilinx/Makefile
 +++ b/arch/arm64/boot/dts/xilinx/Makefile
-@@ -4,3 +4,4 @@ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu100-revC.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revA.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revB.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-rev1.0.dtb
-+dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu104-revA.dtb
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-ep108.dtb
++dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu100-revC.dtb
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-clk.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp-clk.dtsi
 new file mode 100644
-index 000000000000..89d26f56514b
+index 000000000000..9c09baca7dd7
 --- /dev/null
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts
-@@ -0,0 +1,197 @@
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-clk.dtsi
+@@ -0,0 +1,213 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * dts file for Xilinx ZynqMP ZCU104
++ * Clock specification for Xilinx ZynqMP
 + *
-+ * (C) Copyright 2017 - 2018, Xilinx, Inc.
++ * (C) Copyright 2015 - 2018, Xilinx, Inc.
 + *
 + * Michal Simek <michal.simek@xilinx.com>
++ */
++
++/ {
++	clk100: clk100 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
++
++	clk125: clk125 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++	};
++
++	clk200: clk200 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <200000000>;
++	};
++
++	clk250: clk250 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <250000000>;
++	};
++
++	clk300: clk300 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <300000000>;
++	};
++
++	clk600: clk600 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <600000000>;
++	};
++
++	dp_aclk: clock0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-accuracy = <100>;
++	};
++
++	dp_aud_clk: clock1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++		clock-accuracy = <100>;
++	};
++
++	dpdma_clk: dpdma_clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0x0>;
++		clock-frequency = <533000000>;
++	};
++
++	drm_clock: drm_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0x0>;
++		clock-frequency = <262750000>;
++		clock-accuracy = <0x64>;
++	};
++};
++
++&can0 {
++	clocks = <&clk100 &clk100>;
++};
++
++&can1 {
++	clocks = <&clk100 &clk100>;
++};
++
++&fpd_dma_chan1 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan2 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan3 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan4 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan5 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan6 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan7 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&fpd_dma_chan8 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan1 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan2 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan3 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan4 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan5 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan6 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan7 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&lpd_dma_chan8 {
++	clocks = <&clk600>, <&clk100>;
++};
++
++&gem0 {
++	clocks = <&clk125>, <&clk125>, <&clk125>;
++};
++
++&gem1 {
++	clocks = <&clk125>, <&clk125>, <&clk125>;
++};
++
++&gem2 {
++	clocks = <&clk125>, <&clk125>, <&clk125>;
++};
++
++&gem3 {
++	clocks = <&clk125>, <&clk125>, <&clk125>;
++};
++
++&gpio {
++	clocks = <&clk100>;
++};
++
++&i2c0 {
++	clocks = <&clk100>;
++};
++
++&i2c1 {
++	clocks = <&clk100>;
++};
++
++&sata {
++	clocks = <&clk250>;
++};
++
++&sdhci0 {
++	clocks = <&clk200 &clk200>;
++};
++
++&sdhci1 {
++	clocks = <&clk200 &clk200>;
++};
++
++&spi0 {
++	clocks = <&clk200 &clk200>;
++};
++
++&spi1 {
++	clocks = <&clk200 &clk200>;
++};
++
++&uart0 {
++	clocks = <&clk100 &clk100>;
++};
++
++&uart1 {
++	clocks = <&clk100 &clk100>;
++};
++
++&usb0 {
++	clocks = <&clk250>, <&clk250>;
++};
++
++&usb1 {
++	clocks = <&clk250>, <&clk250>;
++};
++
++&watchdog0 {
++	clocks = <&clk250>;
++};
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+new file mode 100644
+index 000000000000..ce819c8c0044
+--- /dev/null
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+@@ -0,0 +1,292 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * dts file for Xilinx ZynqMP ZCU100 revC
++ *
++ * (C) Copyright 2016 - 2018, Xilinx, Inc.
++ *
++ * Michal Simek <michal.simek@xilinx.com>
++ * Nathalie Chan King Choy
 + */
 +
 +/dts-v1/;
 +
 +#include "zynqmp.dtsi"
 +#include "zynqmp-clk.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
 +#include <dt-bindings/gpio/gpio.h>
 +
 +/ {
-+	model = "ZynqMP ZCU104 RevA";
-+	compatible = "xlnx,zynqmp-zcu104-revA", "xlnx,zynqmp-zcu104", "xlnx,zynqmp";
++	model = "ZynqMP ZCU100 RevC";
++	compatible = "xlnx,zynqmp-zcu100-revC", "xlnx,zynqmp-zcu100", "xlnx,zynqmp";
 +
 +	aliases {
-+		ethernet0 = &gem3;
 +		gpio0 = &gpio;
 +		i2c0 = &i2c1;
-+		mmc0 = &sdhci1;
 +		rtc0 = &rtc;
-+		serial0 = &uart0;
-+		serial1 = &uart1;
++		serial0 = &uart1;
++		serial1 = &uart0;
 +		serial2 = &dcc;
++		spi0 = &spi0;
++		spi1 = &spi1;
 +		usb0 = &usb0;
++		usb1 = &usb1;
++		mmc0 = &sdhci0;
++		mmc1 = &sdhci1;
 +	};
 +
 +	chosen {
@@ -110,120 +344,187 @@ index 000000000000..89d26f56514b
 +		device_type = "memory";
 +		reg = <0x0 0x0 0x0 0x80000000>;
 +	};
-+};
 +
-+&can1 {
-+	status = "okay";
++	gpio-keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		autorepeat;
++		sw4 {
++			label = "sw4";
++			gpios = <&gpio 23 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			gpio-key,wakeup;
++			autorepeat;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		ds2 {
++			label = "ds2";
++			gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++
++		ds3 {
++			label = "ds3";
++			gpios = <&gpio 19 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "phy0tx"; /* WLAN tx */
++			default-state = "off";
++		};
++
++		ds4 {
++			label = "ds4";
++			gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "phy0rx"; /* WLAN rx */
++			default-state = "off";
++		};
++
++		ds5 {
++			label = "ds5";
++			gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "bluetooth-power";
++		};
++
++		vbus_det { /* U5 USB5744 VBUS detection via MIO25 */
++			label = "vbus_det";
++			gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++
++		bt_power {
++			label = "bt_power";
++			gpios = <&gpio 8 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
++
++	wmmcsdio_fixed: fixedregulator-mmcsdio {
++		compatible = "regulator-fixed";
++		regulator-name = "wmmcsdio_fixed";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
++	sdio_pwrseq: sdio_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpio 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
++	};
 +};
 +
 +&dcc {
 +	status = "okay";
 +};
 +
-+&gem3 {
-+	status = "okay";
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
-+	phy0: phy@c {
-+		reg = <0xc>;
-+		ti,rx-internal-delay = <0x8>;
-+		ti,tx-internal-delay = <0xa>;
-+		ti,fifo-depth = <0x1>;
-+	};
-+};
-+
 +&gpio {
 +	status = "okay";
++	gpio-line-names = "UART1_TX", "UART1_RX", "UART0_RX", "UART0_TX", "I2C1_SCL",
++			  "I2C1_SDA", "SPI1_SCLK", "WLAN_EN", "BT_EN", "SPI1_CS",
++			  "SPI1_MISO", "SPI1_MOSI", "I2C_MUX_RESET", "SD0_DAT0", "SD0_DAT1",
++			  "SD0_DAT2", "SD0_DAT3", "PS_LED3", "PS_LED2", "PS_LED1",
++			  "PS_LED0", "SD0_CMD", "SD0_CLK", "GPIO_PB", "SD0_DETECT",
++			  "VBUS_DET", "POWER_INT", "DP_AUX", "DP_HPD", "DP_OE",
++			  "DP_AUX_IN", "INA226_ALERT", "PS_FP_PWR_EN", "PL_PWR_EN", "POWER_KILL",
++			  "", "GPIO-A", "GPIO-B", "SPI0_SCLK", "GPIO-C",
++			  "GPIO-D", "SPI0_CS", "SPI0_MISO", "SPI_MOSI", "GPIO-E",
++			  "GPIO-F", "SD1_D0", "SD1_D1", "SD1_D2", "SD1_D3",
++			  "SD1_CMD", "SD1_CLK", "USB0_CLK", "USB0_DIR", "USB0_DATA2",
++			  "USB0_NXT", "USB0_DATA0", "USB0_DATA1", "USB0_STP", "USB0_DATA3",
++			  "USB0_DATA4", "USB0_DATA5", "USB0_DATA6", "USB0_DATA7", "USB1_CLK",
++			  "USB1_DIR", "USB1_DATA2", "USB1_NXT", "USB1_DATA0", "USB1_DATA1",
++			  "USB1_STP", "USB1_DATA3", "USB1_DATA4", "USB1_DATA5", "USB1_DATA6",
++			  "USB_DATA7", "WLAN_IRQ", "PMIC_IRQ", /* MIO end and EMIO start */
++			  "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "";
 +};
 +
 +&i2c1 {
 +	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	/* Another connection to this bus via PL i2c via PCA9306 - u45 */
-+	i2cswitch@74 { /* u34 */
++	clock-frequency = <100000>;
++	i2c-mux@75 { /* u11 */
 +		compatible = "nxp,pca9548";
 +		#address-cells = <1>;
 +		#size-cells = <0>;
-+		reg = <0x74>;
-+		i2c@0 {
++		reg = <0x75>;
++		i2csw_0: i2c@0 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			reg = <0>;
-+			/*
-+			 * IIC_EEPROM 1kB memory which uses 256B blocks
-+			 * where every block has different address.
-+			 *    0 - 256B address 0x54
-+			 * 256B - 512B address 0x55
-+			 * 512B - 768B address 0x56
-+			 * 768B - 1024B address 0x57
-+			 */
-+			eeprom@54 { /* u23 */
-+				compatible = "atmel,24c08";
-+				reg = <0x54>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+			};
++			label = "LS-I2C0";
 +		};
-+
-+		i2c@1 {
++		i2csw_1: i2c@1 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			reg = <1>;
-+			clock_8t49n287: clock-generator@6c { /* 8T49N287 - u182 */
-+				reg = <0x6c>;
-+			};
++			label = "LS-I2C1";
 +		};
-+
-+		i2c@2 {
++		i2csw_2: i2c@2 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			reg = <2>;
-+			irps5401_43: irps54012@43 { /* IRPS5401 - u175 */
-+				reg = <0x43>;
-+			};
-+			irps5401_4d: irps54012@4d { /* IRPS5401 - u180 */
-+				reg = <0x4d>;
-+			};
++			label = "HS-I2C2";
 +		};
-+
-+		i2c@4 {
++		i2csw_3: i2c@3 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+			reg = <4>;
-+			tca6416_u97: gpio@21 {
-+				compatible = "ti,tca6416";
-+				reg = <0x21>;
-+				gpio-controller;
++			reg = <3>;
++			label = "HS-I2C3";
++		};
++		i2csw_4: i2c@4 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x4>;
++
++			pmic: pmic@5e { /* Custom TI PMIC u33 */
++				compatible = "ti,tps65086";
++				reg = <0x5e>;
++				interrupt-parent = <&gpio>;
++				interrupts = <77 GPIO_ACTIVE_LOW>;
 +				#gpio-cells = <2>;
-+				/*
-+				 * IRQ not connected
-+				 * Lines:
-+				 * 0 - IRPS5401_ALERT_B
-+				 * 1 - HDMI_8T49N241_INT_ALM
-+				 * 2 - MAX6643_OT_B
-+				 * 3 - MAX6643_FANFAIL_B
-+				 * 5 - IIC_MUX_RESET_B
-+				 * 6 - GEM3_EXP_RESET_B
-+				 * 7 - FMC_LPC_PRSNT_M2C_B
-+				 * 4, 10 - 17 - not connected
-+				 */
++				gpio-controller;
 +			};
 +		};
-+
-+		i2c@5 {
++		i2csw_5: i2c@5 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			reg = <5>;
++			/* PS_PMBUS */
++			ina226@40 { /* u35 */
++				compatible = "ti,ina226";
++				reg = <0x40>;
++				shunt-resistor = <10000>;
++				/* MIO31 is alert which should be routed to PMUFW */
++			};
 +		};
-+
-+		i2c@7 {
++		i2csw_6: i2c@6 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <6>;
++			/*
++			 * Not Connected
++			 */
++		};
++		i2csw_7: i2c@7 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			reg = <7>;
++			/*
++			 * usb5744 (DNP) - U5
++			 * 100kHz - this is default freq for us
++			 */
 +		};
-+
-+		/* 3, 6 not connected */
 +	};
 +};
 +
@@ -231,24 +532,40 @@ index 000000000000..89d26f56514b
 +	status = "okay";
 +};
 +
-+&sata {
-+	status = "okay";
-+	/* SATA OOB timing settings */
-+	ceva,p0-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
-+	ceva,p0-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
-+	ceva,p0-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
-+	ceva,p0-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
-+	ceva,p1-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
-+	ceva,p1-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
-+	ceva,p1-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
-+	ceva,p1-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
-+};
-+
-+/* SD1 with level shifter */
-+&sdhci1 {
++/* SD0 only supports 3.3V, no level shifter */
++&sdhci0 {
 +	status = "okay";
 +	no-1-8-v;
++	broken-cd; /* CD has to be enabled by default */
 +	disable-wp;
++};
++
++&sdhci1 {
++	status = "okay";
++	bus-width = <0x4>;
++	non-removable;
++	disable-wp;
++	cap-power-off-card;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	vqmmc-supply = <&wmmcsdio_fixed>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	wlcore: wifi@2 {
++		compatible = "ti,wl1831";
++		reg = <2>;
++		interrupt-parent = <&gpio>;
++		interrupts = <76 IRQ_TYPE_EDGE_RISING>; /* MIO76 WLAN_IRQ 1V8 */
++	};
++};
++
++&spi0 { /* Low Speed connector */
++	status = "okay";
++	label = "LS-SPI0";
++};
++
++&spi1 { /* High Speed connector */
++	status = "okay";
++	label = "HS-SPI1";
 +};
 +
 +&uart0 {
@@ -257,10 +574,16 @@ index 000000000000..89d26f56514b
 +
 +&uart1 {
 +	status = "okay";
++
 +};
 +
 +/* ULPI SMSC USB3320 */
 +&usb0 {
++	status = "okay";
++};
++
++/* ULPI SMSC USB3320 */
++&usb1 {
 +	status = "okay";
 +};
 +
