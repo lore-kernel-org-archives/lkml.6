@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2245NOnnm+DeBdYIBiEBZTbymvwZSj9SLlwr+hA4O/OBTg6u1Xq1SHHNaxEaY+y4dJYwi5PY
-ARC-Seal: i=1; a=rsa-sha256; t=1519410875; cv=none;
+X-Google-Smtp-Source: AG47ELs5X/cxop/wepEwsn210xhrCEhGiX4oB2vmbnv3H+9Rq5IS65kugse0eI/M7bgNtZFlB5nS
+ARC-Seal: i=1; a=rsa-sha256; t=1519410872; cv=none;
         d=google.com; s=arc-20160816;
-        b=SnELCSMleF/rJKGn9pmLGXl4rRAichr1FGGDvLlwCpq+axu1QWXHyJO6/qBn9NW4oj
-         RtAw9NYQw8h5WSuEK3Deicr6+rx53Ebia/PjcXsGhayCZKA43j6k8xV75/MngrmejHd3
-         pAQBJp0hCL4A4zqGkRvLti0ALJE/ZDVML9JpYAqQS6QjQ+GgWYIM7GrXSi+88p0tEMTB
-         uq2QBes33Qu9K40wvTUlaZ2aI/5E3SPGKzljJKka+YvCSk0Fd/33n1AOZESju99zf284
-         zFwH2Gqpe91CL1JtVheQzTYR1R9a5jbLzduWwR3ElQ8hIEKwIi1FbeOv/kjDLH4M42MC
-         Uz8Q==
+        b=M+QVFpPXm+g7og+KrJe8dsxemf6XdHG2ZLAZhDtHmZqO5E1Kaz7i6f1JQlswygPSUj
+         egAsNCCo4kVASzTpMIy5kK62d4b8Wih8hyxtRXjQXP14hPnn36eDDQS4sEvMTmYr+3uW
+         RVjlRWR3BMoKx9UidJ/mTInfEHLx1Us/aaBJ0/XDzOWrXx+8bak4lXtn28qXJFbfufhF
+         Nhg6l5XpmeCSHe42mJFilYx/d8NrAI2HVZuw7I8dUd7b1mWIL4BxWO5tSDd9673dFSaW
+         DFsQbXNs3pVTygDOTe43Dt1pBVkXkjY0lUsK2P6joux9Uu4d0DsSQNKFjA2z9+NqLRnw
+         K2Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MSomPkusWW+yfVHgmrU2xPDM4UiUyUGrOWb2BvR3y2M=;
-        b=OX/BKsLj5h/f+iAeEOmZgenzHeCjh15wbb8AqBEP2i6wu8TZsq1NiZDYqsZ0aNZi3+
-         nhAWgXch9noUVEsy+dkOypyPv+JcMtyohHK3x6yJ0nXSwIYOL+LhMhILQ3uloOPfH0Sb
-         pAV+6QdXuqp7Dtq2HHXbFTnL2n3w7t8GSWTaJlFUO4lhbTfjUgnIQ/GJv9eAslZii9eT
-         Oo/VAEVP0GUZjYKnfvIbvnoERn9903n+Shxw5BXN9Q4IWLR16VSI/TJdwkWhP4Q6xRVc
-         do5kD1G5zu2mfJw2s9qR3WBdQklMNzUZlyDT7MAd0K6vlP1kZY/S/FC0C+3z33exN4t+
-         858w==
+        bh=aZUoiu8gD5qNhUJu/StKGiukfbeMoKv0YIHq/X5+GYg=;
+        b=zhYQSxyuzqK+8Mj6bsIPgKyPhIK5o+HgsFOOii/HP8GwdDqka/8+wOL+e45qD51ctu
+         KRR+LKxyMLdYhrXeS8xmCv2p6gEfREWVG9kFm/yY8zwOcuVjApixqHvn3nCItawqD2/8
+         0vy5P6QMsrUN1W3DFRYKDm3DH0zgvwqcpeg2mCvS75lGENujNL0L5TyCmh6Fc14EcMyU
+         e0BJ6B8Eb3KSSR7qKeDsgCp/WwBDpf5pfguT9OU5mnjExLEfZw7DFXiw6EtA2e7Mzeoj
+         HsqOefg8j/vbwgHJTUmOXh2LCXECS5jQ+lZv4ZICIhnrraocbErLL1iH2rT1RSdAo7aa
+         mR2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Haberland <sth@linux.vnet.ibm.com>,
-	Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 044/193] s390/dasd: prevent prefix I/O error
-Date: Fri, 23 Feb 2018 19:24:37 +0100
-Message-Id: <20180223170332.924158651@linuxfoundation.org>
+Subject: [PATCH 4.4 043/193] powerpc/perf: Fix oops when grouping different pmu events
+Date: Fri, 23 Feb 2018 19:24:36 +0100
+Message-Id: <20180223170332.800079565@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217648861123641?=
-X-GMAIL-MSGID: =?utf-8?q?1593217778537559868?=
+X-GMAIL-THRID: =?utf-8?q?1593217645800636005?=
+X-GMAIL-MSGID: =?utf-8?q?1593217774922429968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Haberland <sth@linux.vnet.ibm.com>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 
 
-[ Upstream commit da340f921d3454f1521671c7a5a43ad3331fbe50 ]
+[ Upstream commit 5aa04b3eb6fca63d2e9827be656dcadc26d54e11 ]
 
-Prevent that a prefix flag is set based on invalid configuration data.
-The validity.verify_base flag should only be set for alias devices.
-Usually the unit address type is either one of base, PAV alias or
-HyperPAV alias. But in cases where the unit address type is not set or
-any other value the validity.verify_base flag might be set as well.
-This would lead to follow on errors.
-Explicitly check for alias devices and set the validity flag only for
-them.
+When user tries to group imc (In-Memory Collections) event with
+normal event, (sometime) kernel crashes with following log:
 
-Signed-off-by: Stefan Haberland <sth@linux.vnet.ibm.com>
-Reviewed-by: Jan Hoeppner <hoeppner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+    Faulting instruction address: 0x00000000
+    [link register   ] c00000000010ce88 power_check_constraints+0x128/0x980
+    ...
+    c00000000010e238 power_pmu_event_init+0x268/0x6f0
+    c0000000002dc60c perf_try_init_event+0xdc/0x1a0
+    c0000000002dce88 perf_event_alloc+0x7b8/0xac0
+    c0000000002e92e0 SyS_perf_event_open+0x530/0xda0
+    c00000000000b004 system_call+0x38/0xe0
+
+'event_base' field of 'struct hw_perf_event' is used as flags for
+normal hw events and used as memory address for imc events. While
+grouping these two types of events, collect_events() tries to
+interpret imc 'event_base' as a flag, which causes a corruption
+resulting in a crash.
+
+Consider only those events which belongs to 'perf_hw_context' in
+collect_events().
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Reviewed-By: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/block/dasd_eckd.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/powerpc/perf/core-book3s.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -518,10 +518,12 @@ static int prefix_LRE(struct ccw1 *ccw,
- 	pfxdata->validity.define_extent = 1;
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1381,7 +1381,7 @@ static int collect_events(struct perf_ev
+ 	int n = 0;
+ 	struct perf_event *event;
  
- 	/* private uid is kept up to date, conf_data may be outdated */
--	if (startpriv->uid.type != UA_BASE_DEVICE) {
-+	if (startpriv->uid.type == UA_BASE_PAV_ALIAS)
- 		pfxdata->validity.verify_base = 1;
--		if (startpriv->uid.type == UA_HYPER_PAV_ALIAS)
--			pfxdata->validity.hyper_pav = 1;
-+
-+	if (startpriv->uid.type == UA_HYPER_PAV_ALIAS) {
-+		pfxdata->validity.verify_base = 1;
-+		pfxdata->validity.hyper_pav = 1;
+-	if (!is_software_event(group)) {
++	if (group->pmu->task_ctx_nr == perf_hw_context) {
+ 		if (n >= max_count)
+ 			return -1;
+ 		ctrs[n] = group;
+@@ -1389,7 +1389,7 @@ static int collect_events(struct perf_ev
+ 		events[n++] = group->hw.config;
  	}
- 
- 	/* define extend data (mostly)*/
-@@ -3002,10 +3004,12 @@ static int prepare_itcw(struct itcw *itc
- 	pfxdata.validity.define_extent = 1;
- 
- 	/* private uid is kept up to date, conf_data may be outdated */
--	if (startpriv->uid.type != UA_BASE_DEVICE) {
-+	if (startpriv->uid.type == UA_BASE_PAV_ALIAS)
-+		pfxdata.validity.verify_base = 1;
-+
-+	if (startpriv->uid.type == UA_HYPER_PAV_ALIAS) {
- 		pfxdata.validity.verify_base = 1;
--		if (startpriv->uid.type == UA_HYPER_PAV_ALIAS)
--			pfxdata.validity.hyper_pav = 1;
-+		pfxdata.validity.hyper_pav = 1;
- 	}
- 
- 	switch (cmd) {
+ 	list_for_each_entry(event, &group->sibling_list, group_entry) {
+-		if (!is_software_event(event) &&
++		if (event->pmu->task_ctx_nr == perf_hw_context &&
+ 		    event->state != PERF_EVENT_STATE_OFF) {
+ 			if (n >= max_count)
+ 				return -1;
