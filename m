@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226rRq25VXuLpk6M6oKyiVPZOrDTQn2LpC797YOORDRV/Ytd6YE3s0DdiAqB3EKAiU+/F1jv
-ARC-Seal: i=1; a=rsa-sha256; t=1519410837; cv=none;
+X-Google-Smtp-Source: AG47ELsAi84s2rwa21BDwpEOE6PX37sE2+A5XnyZ67a93SvBDp3yT5jhNxaeSlrXsqXxvnKiabJB
+ARC-Seal: i=1; a=rsa-sha256; t=1519410835; cv=none;
         d=google.com; s=arc-20160816;
-        b=k17ikisl461Jo58AE0RTPR3OD2KpMCAhbxXp4nFPi+5KnAzKKKq8n57Yq7pPXVVwzV
-         F8ivxshpbpwA/FOnZlrb1xfe+25rSlkJbrKLetKg6bUHbsKZ1M05q/PYURdWdGszpAw/
-         2AEm3/V0yY57CcDEirteeFAeDuRWRaPTtpFZ2xWtZsk3MSUegdylCgveGqJIXH8G79uC
-         MNfaVnzpBzRxT7YtieWGH6hDjKHSp3l2yJdrsripZabsrFSpO8Ta3pyfNMv8wbu8VAZw
-         3ILfi1ms2FE+zyypE0e0djkArgluARSjX4xqiS2X7coQZ4gXdIv3uDGbEMxKCWDpo81I
-         y/Qw==
+        b=QsOUg7RhZfQ1nv9KvZIy8xbNPAOKpxfzZTrBo42KFrVC9uVtRpja9/cn+Rs+u8/OqX
+         If+SszRsU7gcr0nXSozfIYxfG4xv67jw+AaZ6s/wiiNyvyL2XuJDZHBEJ7Y3ONNGCTkY
+         mV/LpGkgLqBfmMvBRIXrJrO0yUzi+kfIqk3cGrRxRjZK7cf62vgiIyXbqY+sDBNovs9A
+         jz8BDk5lVppVPjxq0JJg7IHTTPEMHlKX12Y1957OSfvF/9jd+ocne17UmFveaLRQ9TOu
+         cpJgjWLWeDdTA0+MgDR2uIPSCI4r5WvHxl1KyYNBUw5wui5dy5R/RqZ9JmpKoJ0Eu+gL
+         LaMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=b+zlMjbF25QPxpui7HYHO2nT4Z8xSrtR+e43sCRCn7c=;
-        b=I5UG1LdWYlnVPA4gUYAvMxaqqF/wa1kEDv39k0YMn06EcOtEWosPJbLJsHzxbGdz+O
-         oRpuaFcCOho6fFcbRIAUlJOx3Rvt+lcSbE4U9Bj/rPNpMgIx2bfeSN7WTE0yzSTBCSPl
-         fBF9920cy/+UY3O0Dtd0dRbFtWQtY4vKw9TZSCZJIVJoNzMgecH1XErROAiXFHSyOzoV
-         eJ/zPge+oE0lWjWrl2eMXiSPkEDHjJDYl4A4qNUHfSszZmwC3P8FWHhMix/MwobK/+5U
-         S7Tg1b3dMqWVhgOBQ4BrCIXLKBpfQgBTr6wKTH2hBM8ut9yK2gMqoWItG5SA8oy+W+VM
-         UmsA==
+        bh=dKGWQdsAHE4ADxYjxNoqoOolS+aXuDH+T7A3SjaBRCo=;
+        b=zFY5ILZ4xezPXY7vs6yOOxcy1GJNSrK+aMcMu3MzuPIzDDPS2ini9RIB0FIgalChC2
+         UF0fofM9kN7gf8Cihke6cgz4xosmprztyuttG8xEV9RfBMLpx+Szd5Z7+1j5nr41E7ZS
+         H4+fwUlgQPTsXVNR8E8F/ByRoFYOawA2aYx0hm5kRdygAJCv7jfOFJh76CMKADSG0Vvp
+         A2y46G+l3KCKBnNlGv9Dw+c2EztLT7GBlTHSwzcSfEbd3j7TCFxxB4RjCjo8DIzKcJNQ
+         z+S+PQ7lBExnjB6tlEtUGZL95BhDvmtlpBsxnFlAjBtdmova3xiSsNCQwfOt2svhV8Tr
+         HLvA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 003/193] cfg80211: check dev_set_name() return value
-Date: Fri, 23 Feb 2018 19:23:56 +0100
-Message-Id: <20180223170326.555798015@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.4 029/193] usbip: keep usbip_device sockfd state in sync with tcp_socket
+Date: Fri, 23 Feb 2018 19:24:22 +0100
+Message-Id: <20180223170330.617450280@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217738640080988?=
-X-GMAIL-MSGID: =?utf-8?q?1593217738640080988?=
+X-GMAIL-THRID: =?utf-8?q?1593217572786296075?=
+X-GMAIL-MSGID: =?utf-8?q?1593217736188766574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +48,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
+commit 009f41aed4b3e11e6dc1e3c07377a10c20f1a5ed upstream.
 
-syzbot reported a warning from rfkill_alloc(), and after a while
-I think that the reason is that it was doing fault injection and
-the dev_set_name() failed, leaving the name NULL, and we didn't
-check the return value and got to rfkill_alloc() with a NULL name.
-Since we really don't want a NULL name, we ought to check the
-return value.
+Keep usbip_device sockfd state in sync with tcp_socket. When tcp_socket
+is reset to null, reset sockfd to -1 to keep it in sync.
 
-Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
-Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/core.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/usbip/stub_dev.c |    3 +++
+ drivers/usb/usbip/vhci_hcd.c |    2 ++
+ 2 files changed, 5 insertions(+)
 
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -390,6 +390,8 @@ struct wiphy *wiphy_new_nm(const struct
- 		if (rv)
- 			goto use_default_name;
- 	} else {
-+		int rv;
-+
- use_default_name:
- 		/* NOTE:  This is *probably* safe w/out holding rtnl because of
- 		 * the restrictions on phy names.  Probably this call could
-@@ -397,7 +399,11 @@ use_default_name:
- 		 * phyX.  But, might should add some locking and check return
- 		 * value, and use a different name if this one exists?
- 		 */
--		dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+		rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+		if (rv < 0) {
-+			kfree(rdev);
-+			return NULL;
-+		}
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -87,6 +87,7 @@ static ssize_t store_sockfd(struct devic
+ 			goto err;
+ 
+ 		sdev->ud.tcp_socket = socket;
++		sdev->ud.sockfd = sockfd;
+ 
+ 		spin_unlock_irq(&sdev->ud.lock);
+ 
+@@ -186,6 +187,7 @@ static void stub_shutdown_connection(str
+ 	if (ud->tcp_socket) {
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
++		ud->sockfd = -1;
  	}
  
- 	INIT_LIST_HEAD(&rdev->wdev_list);
+ 	/* 3. free used data */
+@@ -280,6 +282,7 @@ static struct stub_device *stub_device_a
+ 	sdev->ud.status		= SDEV_ST_AVAILABLE;
+ 	spin_lock_init(&sdev->ud.lock);
+ 	sdev->ud.tcp_socket	= NULL;
++	sdev->ud.sockfd		= -1;
+ 
+ 	INIT_LIST_HEAD(&sdev->priv_init);
+ 	INIT_LIST_HEAD(&sdev->priv_tx);
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -797,6 +797,7 @@ static void vhci_shutdown_connection(str
+ 	if (vdev->ud.tcp_socket) {
+ 		sockfd_put(vdev->ud.tcp_socket);
+ 		vdev->ud.tcp_socket = NULL;
++		vdev->ud.sockfd = -1;
+ 	}
+ 	pr_info("release socket\n");
+ 
+@@ -844,6 +845,7 @@ static void vhci_device_reset(struct usb
+ 	if (ud->tcp_socket) {
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
++		ud->sockfd = -1;
+ 	}
+ 	ud->status = VDEV_ST_NULL;
+ 
