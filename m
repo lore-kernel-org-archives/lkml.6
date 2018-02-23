@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752094AbeBWQmF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:42:05 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:52016 "EHLO
+        id S1752116AbeBWQmd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:42:33 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:38010 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752049AbeBWQmA (ORCPT
+        with ESMTP id S1752067AbeBWQmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:42:00 -0500
+        Fri, 23 Feb 2018 11:42:02 -0500
 From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To: linux-snps-arc@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 2/3] ARC: mcip: update MCIP debug mask when the new cpu came online
-Date: Fri, 23 Feb 2018 19:41:53 +0300
-Message-Id: <20180223164154.22377-2-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 3/3] ARC: setup cpu possible mask according to possible-cpus dts property
+Date: Fri, 23 Feb 2018 19:41:54 +0300
+Message-Id: <20180223164154.22377-3-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.9.3
 In-Reply-To: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
 References: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
@@ -23,99 +23,107 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of today we use hardcoded MCIP debug mask, so if we launch
-kernel via debugger and kick fever cores than HW has all cpus
-hang at the momemt of setup MCIP debug mask.
+As we have option in u-boot to set CPU mask for running linux,
+we want to pass information to kernel about CPU cores should
+be brought up. So we patch kernel dtb in u-boot to set
+possible-cpus property.
 
-So update MCIP debug mask when the new cpu came online, instead of
-use hardcoded MCIP debug mask.
+This also allows us to have correctly setuped MCIP debug mask.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
 
 Changes v1->v2:
- * update MCIP debug mask when the new cpu came online instead of
-   using MCIP debug mask generated from "possible_cpus" mask.
+ * no changes.
 
- arch/arc/kernel/mcip.c | 37 ++++++++++++++++++++++++++++++++-----
- include/soc/arc/mcip.h |  2 ++
- 2 files changed, 34 insertions(+), 5 deletions(-)
+ arch/arc/kernel/smp.c | 50 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arc/kernel/mcip.c b/arch/arc/kernel/mcip.c
-index 1119029..5fe84e4 100644
---- a/arch/arc/kernel/mcip.c
-+++ b/arch/arc/kernel/mcip.c
-@@ -51,6 +51,34 @@ static void mcip_update_gfrc_halt_mask(int cpu)
- 	raw_spin_unlock_irqrestore(&mcip_lock, flags);
+diff --git a/arch/arc/kernel/smp.c b/arch/arc/kernel/smp.c
+index efe8b42..21d86c3 100644
+--- a/arch/arc/kernel/smp.c
++++ b/arch/arc/kernel/smp.c
+@@ -24,6 +24,7 @@
+ #include <linux/reboot.h>
+ #include <linux/irqdomain.h>
+ #include <linux/export.h>
++#include <linux/of_fdt.h>
+ 
+ #include <asm/processor.h>
+ #include <asm/setup.h>
+@@ -47,6 +48,42 @@ void __init smp_prepare_boot_cpu(void)
+ {
  }
  
-+static void mcip_update_debug_halt_mask(int cpu)
++static int __init arc_get_cpu_map(const char *name, struct cpumask *cpumask)
 +{
-+	u32 mcip_mask = 0;
-+	unsigned long flags;
++	unsigned long dt_root = of_get_flat_dt_root();
++	const char *buf;
 +
-+	raw_spin_lock_irqsave(&mcip_lock, flags);
++	buf = of_get_flat_dt_prop(dt_root, name, NULL);
++	if (!buf)
++		return -EINVAL;
 +
-+	/*
-+	 * mcip_mask is same for CMD_DEBUG_SET_SELECT and CMD_DEBUG_SET_MASK
-+	 * commands. So read it once instead of reading both CMD_DEBUG_READ_MASK
-+	 * and CMD_DEBUG_READ_SELECT.
-+	 */
-+	__mcip_cmd(CMD_DEBUG_READ_SELECT, 0);
-+	mcip_mask = read_aux_reg(ARC_REG_MCIP_READBACK);
++	if (cpulist_parse(buf, cpumask))
++		return -EINVAL;
 +
-+	mcip_mask |= BIT(cpu);
-+
-+	__mcip_cmd_data(CMD_DEBUG_SET_SELECT, 0, mcip_mask);
-+	/*
-+	 * Parameter specified halt cause:
-+	 * STATUS32[H]/actionpoint/breakpoint/self-halt
-+	 * We choose all of them (0xF).
-+	 */
-+	__mcip_cmd_data(CMD_DEBUG_SET_MASK, 0xF, mcip_mask);
-+
-+	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++	return 0;
 +}
 +
- static void mcip_setup_per_cpu(int cpu)
- {
- 	struct mcip_bcr mp;
-@@ -63,6 +91,10 @@ static void mcip_setup_per_cpu(int cpu)
- 	/* Update GFRC halt mask as new CPU came online */
- 	if (mp.gfrc)
- 		mcip_update_gfrc_halt_mask(cpu);
++/*
++ * Read from DeviceTree and setup cpu possible mask. If there is no
++ * "possible-cpus" property in DeviceTree pretend all [0..NR_CPUS-1] exist.
++ */
++static void __init arc_init_cpu_possible(void)
++{
++	struct cpumask cpumask;
 +
-+	/* Update MCIP debug mask as new CPU came online */
-+	if (mp.dbg)
-+		mcip_update_debug_halt_mask(cpu);
- }
- 
- static void mcip_ipi_send(int cpu)
-@@ -138,11 +170,6 @@ static void mcip_probe_n_setup(void)
- 		IS_AVAIL1(mp.gfrc, "GFRC"));
- 
- 	cpuinfo_arc700[0].extn.gfrc = mp.gfrc;
++	if (arc_get_cpu_map("possible-cpus", &cpumask)) {
++		pr_warn("Failed to get possible-cpus from dtb, pretending all %u cpus exist\n",
++			NR_CPUS);
++
++		cpumask_setall(&cpumask);
++	}
++
++	if (!cpumask_test_cpu(0, &cpumask))
++		panic("Master cpu (cpu[0]) is missed in cpu possible mask!");
++
++	init_cpu_possible(&cpumask);
++}
++
+ /*
+  * Called from setup_arch() before calling setup_processor()
+  *
+@@ -58,10 +95,7 @@ void __init smp_prepare_boot_cpu(void)
+  */
+ void __init smp_init_cpus(void)
+ {
+-	unsigned int i;
 -
--	if (mp.dbg) {
--		__mcip_cmd_data(CMD_DEBUG_SET_SELECT, 0, 0xf);
--		__mcip_cmd_data(CMD_DEBUG_SET_MASK, 0xf, 0xf);
+-	for (i = 0; i < NR_CPUS; i++)
+-		set_cpu_possible(i, true);
++	arc_init_cpu_possible();
+ 
+ 	if (plat_smp_ops.init_early_smp)
+ 		plat_smp_ops.init_early_smp();
+@@ -70,16 +104,12 @@ void __init smp_init_cpus(void)
+ /* called from init ( ) =>  process 1 */
+ void __init smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * if platform didn't set the present map already, do it now
+ 	 * boot cpu is set to present already by init/main.c
+ 	 */
+-	if (num_present_cpus() <= 1) {
+-		for (i = 0; i < max_cpus; i++)
+-			set_cpu_present(i, true);
 -	}
++	if (num_present_cpus() <= 1)
++		init_cpu_present(cpu_possible_mask);
  }
  
- struct plat_smp_ops plat_smp_ops = {
-diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
-index 1138da5..a91f251 100644
---- a/include/soc/arc/mcip.h
-+++ b/include/soc/arc/mcip.h
-@@ -37,7 +37,9 @@ struct mcip_cmd {
- #define CMD_SEMA_RELEASE		0x12
- 
- #define CMD_DEBUG_SET_MASK		0x34
-+#define CMD_DEBUG_READ_MASK		0x35
- #define CMD_DEBUG_SET_SELECT		0x36
-+#define CMD_DEBUG_READ_SELECT		0x37
- 
- #define CMD_GFRC_READ_LO		0x42
- #define CMD_GFRC_READ_HI		0x43
+ void __init smp_cpus_done(unsigned int max_cpus)
 -- 
 2.9.3
