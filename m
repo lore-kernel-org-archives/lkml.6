@@ -1,70 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeBWSFw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 13:05:52 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40252 "EHLO mx1.redhat.com"
+        id S1752129AbeBWSG4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 13:06:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751527AbeBWSFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 13:05:51 -0500
-Subject: Re: [PATCH] KVM: SVM: Fix sparse: incorrect type in argument 1
- (different base types)
-To: Brijesh Singh <brijesh.singh@amd.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc: kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Borislav Petkov <bp@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
-References: <20180219161228.46931-1-brijesh.singh@amd.com>
- <20180221174910.GI30522@ZenIV.linux.org.uk>
- <f55f25f6-559d-bb93-5605-af66678438c2@amd.com>
- <20180221201839.GK30522@ZenIV.linux.org.uk>
- <f8b22e16-73b4-340a-7387-c8c7270e9432@amd.com>
+        id S1751587AbeBWSGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 13:06:55 -0500
+Subject: Re: [PATCH] kvm: fix warning for non-x86 builds
+To: Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <alpine.LFD.2.21.1802221301580.1603@schleppi>
 From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <561de7e2-84a6-7372-b561-b035ff390ac5@redhat.com>
-Date: Fri, 23 Feb 2018 19:05:45 +0100
+Message-ID: <7825efa7-da58-ad95-1d41-71eefb9784c3@redhat.com>
+Date: Fri, 23 Feb 2018 19:06:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <f8b22e16-73b4-340a-7387-c8c7270e9432@amd.com>
+In-Reply-To: <alpine.LFD.2.21.1802221301580.1603@schleppi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/2018 16:56, Brijesh Singh wrote:
+On 22/02/2018 13:04, Sebastian Ott wrote:
+> Fix the following sparse warning by moving the prototype
+> of kvm_arch_mmu_notifier_invalidate_range() to linux/kvm_host.h .
 > 
+>   CHECK   arch/s390/kvm/../../../virt/kvm/kvm_main.c
+> arch/s390/kvm/../../../virt/kvm/kvm_main.c:138:13: warning: symbol 'kvm_arch_mmu_notifier_invalidate_range' was not declared. Should it be static?
 > 
-> On 02/21/2018 02:18 PM, Al Viro wrote:
->> On Wed, Feb 21, 2018 at 01:59:55PM -0600, Brijesh Singh wrote:
->>
->>> Sure, checking access_ok() does not guarantee that later
->>> copy_from_user() will not fail. But it does eliminate one possible
->>> reason for the failure. We are trying to validate most of the user
->>> inputs before we invoke  SEV command.
->>
->> That makes no sense whatsoever.  If user is deliberately fuzzing
->> your code or trying to DoS it, that "validation" doesn't buy you
->> anything - they can just as well feed you NULL, after all.
->>
+> Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 3 ---
+>  include/linux/kvm_host.h        | 3 +++
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index dd6f57a54a26..0a9e330b34f0 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1464,7 +1464,4 @@ static inline int kvm_cpu_get_apicid(int mps_cpu)
+>  #define put_smstate(type, buf, offset, val)                      \
+>  	*(type *)((buf) + (offset) - 0x7e00) = val
+>  
+> -void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> -		unsigned long start, unsigned long end);
+> -
+>  #endif /* _ASM_X86_KVM_HOST_H */
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index ac0062b74aed..ed3d4ddbaff3 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1272,4 +1272,7 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
+>  }
+>  #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
+>  
+> +void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> +		unsigned long start, unsigned long end);
+> +
+>  #endif
 > 
-> Currently, we let user query the blob length with params.len == 0 ||
-> param.uaddr == NULL. We could limit it to just params.len == 0.
-> 
-> 
->> What is the rationale for that?  "Userland is accidentally feeding
->> us garbage pointers" is the case where slowness is the least of your
->> concerns...
->>
-> 
-> My intent was to do some obvious failure checks on user inputs before
-> invoking the HW. I do see your point that if userspace is feeding us
-> garbage then slowness is least of our concern. If you think that we
-> should not be using access_ok() in this particular case then I am okay
-> with it.
 
-Can you please send a patch?  Thanks!
+Queued, thanks.
 
 Paolo
