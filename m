@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415303-2-981659267723445246
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415258-2-509468500979646739
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415303; b=tI75HC3NEaOiTAes6kxiQuiNMB1aljaAja9UbB2TivVkurK
-    g7MWolzf9qztW6iLwB42Pc4DVovjD+CYHEGJEATt4sUj2PpDzBNehoGBPXoB9h9F
-    CcY0fk1ks+zRXCmsGF89cXIiPWVP5zubzCxlxrcdE4C1tazoPyQtgwGxsdcKpFGb
-    JAY+QJuXZB8AqIR/3edjSbY0AvI45QB0hTTPveoiL1pfEHoUw+tEc3T6DFTGjYET
-    s9jhROmsb/Y8OzvOdYukaZIHLCT/Zoc9i+2Oel68lWImkyvBgjWBECHSLm4m1lsz
-    GNdJwK2iXAvqlbYarI0GWjH/sQOg01t6Tf5B5CQ==
+    t=1519415257; b=ICqADkiIkfqdIPQMujbor2tRdddeVkN2bVNH/dSydbFv+XT
+    j1bD4nKmulkyek408glqv4EiTQw/xQWoA0Lg/+bxAkP7bF1Vb/VfykcQwllbg4WX
+    E+NZyKvEYcutFJpQ5dhuvOjbVHYmvfYavXYe7M0/le0sp6PIHu+86g1zEMD4onqL
+    Y4JhrItv+7XZRbx8XoG7x68tWZ6OjhfBD0hIU/5UpIX67GYLOmhH6OEz2fydNxw1
+    PhkBw5GV4mygR9vnL5CXer1pzyLwQvHZ+fsZPOb3lyiCZEpTjHnKZRLQHwhhfEmx
+    29urROlphq25gMEpnlJzvu6nLyIo0QrGOf9swFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415303; bh=I9zf+qH0G9e+PenG6ctq1UeIRx
-    +vx/HEjIlPd4m8ESM=; b=tvCs+QwAmMcdaq7eUwVdkoOU1PVw6wtloz1O55WPDx
-    T3ca6i/Lkacf5mhX0S9SC8mUg1ibDQkXOxu6asMK2UDJNmkkpjvGSGma2xtL/3On
-    J0mk3j5N5Kr8wBZAvIwWkFTylUf6bWggYYyOwdBPZp7sfCtUyHXNdTCGyd1RswkO
-    VFQvQymmk4Jr6SPkzu8uph8DzYtwuuT0Wn3VEKWxUMOUmf1MLXAcGLwBmnR+8ipf
-    M/QBHIKPdX4kj8rzmrYD+D8/DwobMlbNQRXWxmDxnkmusY8vXnhX4fjmneVw5Cqg
-    k6+eJA+/4SG42FcedAnf80wJBYxNMBV/qHqmCVH93jjw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415257; bh=7A8K6ItwbcIaYBW9SJlCSCB9kS
+    yb4XyJ4hnGKYP8jxk=; b=V+p22jFYBlH62TA1lBwIfsnx9gNl8u9Z6gB5gueW1Q
+    njFgHEc937VOrDI5tvmFds7iBCClqtH/ckbSG1dSl/EJgSWRKIaLK22W+oi0Ma1+
+    woKCSm65W3stYxVkFO9uFRHS/4C/vezkvpCVuK/oLc/6GAhRbim3jSA67sE6qaAs
+    WiB1ozXxz41eeTtDtRZMDS/egdXgdsAUoCG0rITDVePC66Lzt1Ic9hl5ujTjIrBO
+    t2GBGQEPvFUeaVvi5Y/wvZQvGOCAbPSPNvl/DBOaVvTV/LvkuK2YYpax3ZPpfio+
+    N21qtZrDDhkTCBYsFkIPMAH9qkG9sojNY2emebTKMp7g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934125AbeBWSrO (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:47:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44494 "EHLO
+        id S934168AbeBWSr2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:47:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934058AbeBWSrN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:13 -0500
+        with ESMTP id S933859AbeBWSrZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:25 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 4.9 110/145] thermal: fix INTEL_SOC_DTS_IOSF_CORE dependencies
-Date: Fri, 23 Feb 2018 19:26:56 +0100
-Message-Id: <20180223170739.079915401@linuxfoundation.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 113/145] x86/platform: Add PCI dependency for PUNIT_ATOM_DEBUG
+Date: Fri, 23 Feb 2018 19:26:59 +0100
+Message-Id: <20180223170739.449671175@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -81,44 +86,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 68fd77cf8a4b045594231f07e5fc92e1a34c0a9e upstream.
+commit d689c64d189e43d782fec5649fb0afe303c5b3f9 upstream.
 
-We get a Kconfig warning when selecting this without also enabling
-CONFIG_PCI:
+The IOSF_MBI option requires PCI support, without it we get a harmless
+Kconfig warning when it gets selected by PUNIT_ATOM_DEBUG:
 
-warning: (X86_INTEL_LPSS && INTEL_SOC_DTS_IOSF_CORE
-&& SND_SST_IPC_ACPI && MMC_SDHCI_ACPI && PUNIT_ATOM_DEBUG)
-selects IOSF_MBI which has unmet direct dependencies (PCI)
+  warning: (X86_INTEL_LPSS && SND_SST_IPC_ACPI && MMC_SDHCI_ACPI && PUNIT_ATOM_DEBUG) selects IOSF_MBI which has unmet direct dependencies (PCI)
 
-This adds a new depedency.
+This adds another dependency to avoid the warning.
 
-Fixes: 3a2419f865a6 ("Thermal: Intel SoC: DTS thermal use common APIs")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170719125310.2487451-8-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/Kconfig.debug |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -316,7 +316,7 @@ config X86_PKG_TEMP_THERMAL
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -352,6 +352,7 @@ config X86_DEBUG_FPU
  
- config INTEL_SOC_DTS_IOSF_CORE
- 	tristate
--	depends on X86
-+	depends on X86 && PCI
+ config PUNIT_ATOM_DEBUG
+ 	tristate "ATOM Punit debug driver"
++	depends on PCI
+ 	select DEBUG_FS
  	select IOSF_MBI
- 	help
- 	  This is becoming a common feature for Intel SoCs to expose the additional
-@@ -326,7 +326,7 @@ config INTEL_SOC_DTS_IOSF_CORE
- 
- config INTEL_SOC_DTS_THERMAL
- 	tristate "Intel SoCs DTS thermal driver"
--	depends on X86
-+	depends on X86 && PCI
- 	select INTEL_SOC_DTS_IOSF_CORE
- 	select THERMAL_WRITABLE_TRIPS
- 	help
+ 	---help---
