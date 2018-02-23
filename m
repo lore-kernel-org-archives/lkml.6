@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519416055-2-15199652229299068158
+X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416050-2-7024595586214756320
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416054; b=O3jLBZMSY22GiE5CF+MhrZMmNWi93qRBTqDjOKgh0dVo30r
-    NFBVSXRriPPc+ITHT58hIF6kitCIMU7u9bp/c5NZWMRtqhylgpQ3I9dMPLkdr6hb
-    pczJNj8mOHABm1MwoeL/vVKMwKCUajUjV6HOlLx2qCyHEG6sAsWt8xA+e650HMFb
-    cK0BMsN1rA2jwtC0G6RHxWFzmqqOdGddqMhpMB1FLqLLhJgwWxknZ7m82/5b2k6F
-    Sw9BoEvu9eq+Eztakz5EObw1y/kOX3BnsTQE0ZrZemqaMj/Aub6SXNl8mpcnPjae
-    kxZMN9sc5PFNhecX2YRLnAGpcxooKt2NzLlmhNg==
+    t=1519416050; b=wv5MPmnVNqIPyZpaEqSXBh+KcOrfO6Q6YUvEHa5BmwpaPHN
+    Bs2y3mf/jCfBZG392rYO1U9YOl7jHTz54Ma3NzcotSgNzdH4J6PUQq/gA3Fzy8wL
+    t//gmH/YyC7HQ7/8sjYEWutyWxHYi1Z62Iml1H6FpTY/8UX6x0HUjyEqmrduJSRf
+    9yZWXhjnAgluI0qJ42KtEVw3LSpeKsS6EHJrOEAMqNf0TsI9/YWbOtDINmBafAqj
+    ftNAbxpRqgwh8402a1+tC+LoJdGeyGh34oKBUwJGSR43LhZTioNn9yWGwFhzzmgD
+    1Hwcrv8o3hiVehCWlzISzj3c52shCAlfCzk5cYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416054; bh=ZXP8zZ+hYLYJZ5fDVm2Q81HGIM
-    dvoL+KINTMZMVHDmM=; b=SFhcBBaMpW2pq7QBJ6x5m2D4zn7N0VO9IUep9GDq0E
-    Itg45/9E/+wRB+pL9Qp9yV7ygQ3SSMgiT71CfGFeVDNvZaMcnLBt4Pt+999A357n
-    pMF/eNvO392NwU0Dhz6hbRuPdzuH6c1BN4qdrdRTDE0QaBH8h7JFUV3V2CYIfuEw
-    8LzfS2X0xm9SsTh8pBizMG9hmx0+vW6VuoQ4mXkFJ7kLhcXbSlPsrgZImbUNvwsm
-    nAZk9UInKllMkJfolzo3Q69Bc4pfCnUGokSTIgrsX1JJgimizxmjdr8VWoEC4COc
-    yJ5PHgUirOXhIKfTySLVnY8dnK1ANsSStfWVGo4BhL+Q==
+    :list-id; s=arctest; t=1519416050; bh=BMQd+Yk/i+PGfermZy3+rvu1DZ
+    RZ6qjkvMaWoiuFFy4=; b=aQChirOgFsp2B9pgq9qEGUcCTVxsrcHBHDvnMQTzbT
+    FTpB75BkHQ36twoixPWH1W3bXe+KLAd+gakOMtoFJFh0sHHC47xbq+mBann3oyvc
+    JK5cTyBPUBh9xs2A39MfHbRh7o6JxPFs56Up5Eh8YYY04+2BBCh3gNasjAq9FDSZ
+    0jcWqK1UikAF5y2TMHnpnRvMs1z+Fb518ntmbtyA518pXusTKwQYH1kPVoDVINMj
+    QzbzmRYXjmvFTdaaeTc1uPIS8SU7KmfBFvf5qXoTiy+n1ZqsTo3UqVzlIrOLkBCT
+    4k7FUU4+Q8NRYtBrUqsqe737L7mslVAC5WNA6xwS0PBw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933306AbeBWSnb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:43:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42230 "EHLO
+        id S933329AbeBWSnh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:43:37 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932961AbeBWSn2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:28 -0500
+        with ESMTP id S932961AbeBWSnf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:35 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Timo Teras <timo.teras@iki.fi>,
-        Christophe Gouault <christophe.gouault@6wind.com>,
-        syzbot
-        <bot+c028095236fcb6f4348811565b75084c754dc729@syzkaller.appspotmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.9 005/145] xfrm: skip policies marked as dead while rehashing
-Date: Fri, 23 Feb 2018 19:25:11 +0100
-Message-Id: <20180223170725.421935424@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.9 033/145] video: fbdev/mmp: add MODULE_LICENSE
+Date: Fri, 23 Feb 2018 19:25:39 +0100
+Message-Id: <20180223170729.179078650@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -83,62 +78,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 862591bf4f519d1b8d859af720fafeaebdd0162a upstream.
+commit c1530ac5a3ce93a1f02adabc4508b5fbf862dfe2 upstream.
 
-syzkaller triggered following KASAN splat:
+Kbuild complains about the lack of a license tag in this driver:
 
-BUG: KASAN: slab-out-of-bounds in xfrm_hash_rebuild+0xdbe/0xf00 net/xfrm/xfrm_policy.c:618
-read of size 2 at addr ffff8801c8e92fe4 by task kworker/1:1/23 [..]
-Workqueue: events xfrm_hash_rebuild [..]
- __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
- xfrm_hash_rebuild+0xdbe/0xf00 net/xfrm/xfrm_policy.c:618
- process_one_work+0xbbf/0x1b10 kernel/workqueue.c:2112
- worker_thread+0x223/0x1990 kernel/workqueue.c:2246 [..]
+WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/mmp/mmp_disp.o
 
-The reproducer triggers:
-1016                 if (error) {
-1017                         list_move_tail(&walk->walk.all, &x->all);
-1018                         goto out;
-1019                 }
+This adds the license, author and description tags.
 
-in xfrm_policy_walk() via pfkey (it sets tiny rcv space, dump
-callback returns -ENOBUFS).
-
-In this case, *walk is located the pfkey socket struct, so this socket
-becomes visible in the global policy list.
-
-It looks like this is intentional -- phony walker has walk.dead set to 1
-and all other places skip such "policies".
-
-Ccing original authors of the two commits that seem to expose this
-issue (first patch missed ->dead check, second patch adds pfkey
-sockets to policies dumper list).
-
-Fixes: 880a6fab8f6ba5b ("xfrm: configure policy hash table thresholds by netlink")
-Fixes: 12a169e7d8f4b1c ("ipsec: Put dumpers on the dump list")
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Timo Teras <timo.teras@iki.fi>
-Cc: Christophe Gouault <christophe.gouault@6wind.com>
-Reported-by: syzbot <bot+c028095236fcb6f4348811565b75084c754dc729@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_policy.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/mmp/core.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -643,7 +643,8 @@ static void xfrm_hash_rebuild(struct wor
+--- a/drivers/video/fbdev/mmp/core.c
++++ b/drivers/video/fbdev/mmp/core.c
+@@ -23,6 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/export.h>
++#include <linux/module.h>
+ #include <video/mmp_disp.h>
  
- 	/* re-insert all policies by order of creation */
- 	list_for_each_entry_reverse(policy, &net->xfrm.policy_all, walk.all) {
--		if (xfrm_policy_id2dir(policy->index) >= XFRM_POLICY_MAX) {
-+		if (policy->walk.dead ||
-+		    xfrm_policy_id2dir(policy->index) >= XFRM_POLICY_MAX) {
- 			/* skip socket policies */
- 			continue;
- 		}
+ static struct mmp_overlay *path_get_overlay(struct mmp_path *path,
+@@ -249,3 +250,7 @@ void mmp_unregister_path(struct mmp_path
+ 	mutex_unlock(&disp_lock);
+ }
+ EXPORT_SYMBOL_GPL(mmp_unregister_path);
++
++MODULE_AUTHOR("Zhou Zhu <zzhu3@marvell.com>");
++MODULE_DESCRIPTION("Marvell MMP display framework");
++MODULE_LICENSE("GPL");
