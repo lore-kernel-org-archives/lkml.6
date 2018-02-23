@@ -1,58 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeBWOit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:38:49 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:57316 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751565AbeBWOio (ORCPT
+        id S1751659AbeBWOki (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:40:38 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38353 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbeBWOkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:38:44 -0500
-Subject: Re: [PATCH 1/9] drm/xen-front: Introduce Xen para-virtualized
- frontend driver
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
- <1519200222-20623-2-git-send-email-andr2000@gmail.com>
- <e4501c0b-0504-e306-19ab-2c6023ad2ccf@oracle.com>
- <1c569896-e60c-bed3-fda8-c72b8d0a349d@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <3740a458-35d7-b51d-5cd0-be3bebd87574@oracle.com>
-Date: Fri, 23 Feb 2018 09:39:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <1c569896-e60c-bed3-fda8-c72b8d0a349d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=711
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802230183
+        Fri, 23 Feb 2018 09:40:35 -0500
+X-Google-Smtp-Source: AG47ELvByLnNiciUARXjKqESNZCG+neppvQdRoJ1UJJ71DroKNMegXgcGpFNYFA5l780T6dx3to3Dg==
+From: Michal Simek <michal.simek@xilinx.com>
+To: devicetree@vger.kernel.org
+Cc: monstr@monstr.eu, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/8] dt-bindings: xilinx: Add description for ZynqMP
+Date: Fri, 23 Feb 2018 15:40:23 +0100
+Message-Id: <0bff485b7ad09c0f1e23e82464382b43a918b84d.1519396753.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1519396753.git.michal.simek@xilinx.com>
+References: <cover.1519396753.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1519396753.git.michal.simek@xilinx.com>
+References: <cover.1519396753.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 01:37 AM, Oleksandr Andrushchenko wrote:
-> On 02/23/2018 12:23 AM, Boris Ostrovsky wrote:
->> On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
->>> +static struct xenbus_driver xen_driver = {
->>> +    .ids = xen_drv_ids,
->>> +    .probe = xen_drv_probe,
->>> +    .remove = xen_drv_remove,
->>> +    .otherend_changed = backend_on_changed,
->> What does "_on_" stand for?
-> Well, it is somewhat like a hint that this is called "on" event,
-> e.g. event when the other end state has changed, backend in this
-> case. It could be something like "backend_on_state_changed"
+Record xlnx,zynqmp compatible string.
 
-If you look at other xenbus_drivers none of the uses this so I think we
-should stick to conventional naming. (and the same applies to other
-backend_on_* routines).
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
--boris
+Changes in v2:
+- New patch in this series
+
+ Documentation/devicetree/bindings/arm/xilinx.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
+index 1f7995357888..549e70a022cb 100644
+--- a/Documentation/devicetree/bindings/arm/xilinx.txt
++++ b/Documentation/devicetree/bindings/arm/xilinx.txt
+@@ -5,3 +5,13 @@ shall have the following properties.
+ 
+ Required root node properties:
+     - compatible = "xlnx,zynq-7000";
++
++---------------------------------------------------------------
++
++Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
++
++Boards with ZynqMP SOC based on an ARM Cortex A53 processor
++shall have the following properties.
++
++Required root node properties:
++    - compatible = "xlnx,zynqmp";
+-- 
+1.9.1
