@@ -1,74 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751468AbeBWLht (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:37:49 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:38853 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750935AbeBWLhq (ORCPT
+        id S1751472AbeBWLiv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:38:51 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33928 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750935AbeBWLiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:37:46 -0500
-X-Google-Smtp-Source: AG47ELvkqRvlX0+T1dhC2smgu+RCcLCqs3Eq9l5GHYhpkYx9qnayu0A2UezAn23jTI9qLl6iHmBaxuQu+YIQ24sJNLg=
+        Fri, 23 Feb 2018 06:38:50 -0500
+Date: Fri, 23 Feb 2018 12:38:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [RFC tip/locking/lockdep v5 15/17] lockdep: Reduce the size of
+ lock_list
+Message-ID: <20180223113843.GY25201@hirez.programming.kicks-ass.net>
+References: <20180222070904.548-1-boqun.feng@gmail.com>
+ <20180222070904.548-16-boqun.feng@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222180420.GA17956@infradead.org>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222160217.GA18243@infradead.org> <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
- <20180222180420.GA17956@infradead.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 23 Feb 2018 12:37:45 +0100
-X-Google-Sender-Auth: blGMfdKEvaKPXzMIpj5RvO3JawQ
-Message-ID: <CAK8P3a2VMbAARCFuBjY7TMuAfGM_h4BU3PfQA2C_pUFT34UHAA@mail.gmail.com>
-Subject: Re: Removing architectures without upstream gcc support
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
-        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>, metcalf@alum.mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222070904.548-16-boqun.feng@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 7:04 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Thu, Feb 22, 2018 at 09:14:11AM -0800, Max Filippov wrote:
->> On Thu, Feb 22, 2018 at 8:02 AM, Christoph Hellwig <hch@infradead.org> wrote:
->> > I'd love to see dead architecture ports dropped if they really are
->> > more or less abandoned.  In addition to your missing gcc port ones
->> > above (minus openrisc) it seems like frv and m32r certainly qualify,
->> > and xtensa seems to be going that way with the glibc port being dropped
->> > now.
->>
->> It's not that it's been dropped, there have never been an official glibc
->> port for xtensa, but we're working to get one.
->
-> Ah sorry - I meant to say tile not xtensa when writing this.
+On Thu, Feb 22, 2018 at 03:09:02PM +0800, Boqun Feng wrote:
+> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> index a1f91f8680bd..3fce8dbf5091 100644
+> --- a/include/linux/lockdep.h
+> +++ b/include/linux/lockdep.h
+> @@ -186,11 +186,11 @@ struct lock_list {
+>  	struct list_head		entry;
+>  	struct lock_class		*class;
+>  	struct stack_trace		trace;
+> -	int				distance;
+> +	u16				distance;
+>  	/* bitmap of different dependencies from head to this */
+> -	u16				dep;
+> +	u8				dep;
+>  	/* used by BFS to record whether this is picked as a recursive read */
+> -	u16				is_rr;
+> +	bool				is_rr;
 
-That makes more sense, yes. I'm still unsure about this one though. Chris in
-fact made the suggestion to remove the architecture from both glibc and kernel
-as with his departure from Mellanox there is nobody left from to maintain it.
-
-I suggested keeping it as 'Orphaned' for the time being, given that the port
-is still in a good shape, much better than many other ports.
-
-The known customers that sold TileGX based appliances (Cisco, Brocade,
-Checkpoint, Mikrotik, ...) tend to have long support cycles, and there have
-been attempts at getting Debian, OpenWRT and Centos distro support
-at least a few years ago.
-
-According to one comment, at least Cisco doesn't use the mainline kernels [1],
-and it's likely similar for the others.
-
-The other architecture that was recently marked 'obsolete' is Blackfin,
-if we remove Tile, then that one can probably get removed as well.
-
-          Arnd
-
-[1] http://sourceware-org.1504.n7.nabble.com/RFC-remove-the-quot-tile-quot-architecture-from-glibc-td486836i20.html#a491434
+Don't use bool, use u8 if you want a single byte. sizeof(_Bool) is part
+of the architecture ABI and can be up to 4 bytes (well really anything,
+but I've not seen it bigger than 4 bytes for any sane implementation).
