@@ -1,52 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeBWMPL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 07:15:11 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:34050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeBWMPJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:15:09 -0500
-Date: Fri, 23 Feb 2018 13:14:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Andi Kleen <ak@linux.intel.com>, "Liang, Kan" <kan.liang@intel.com>,
-        jolsa@redhat.com, bigeasy@linutronix.de,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Long standing kernel warning: perfevents: irq loop stuck!
-Message-ID: <20180223121456.GZ25201@hirez.programming.kicks-ass.net>
-References: <CAM_iQpXvuYKn94WjJ9nSjzhk8DzYAvDmdgxsi6cc9CdBfkdTnw@mail.gmail.com>
+        id S1751437AbeBWMQM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:16:12 -0500
+Received: from mail02.prevas.se ([62.95.78.10]:43003 "EHLO mail02.prevas.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750935AbeBWMQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 07:16:11 -0500
+X-IronPort-AV: E=Sophos;i="5.47,383,1515452400";
+   d="scan'208";a="3117698"
+Subject: Re: [PATCH RFC v2 1/3] drivers: irqchip: pdc: Add PDC interrupt
+ controller for QCOM SoCs
+To: Marc Zyngier <marc.zyngier@arm.com>, Lina Iyer <ilina@codeaurora.org>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <rnayak@codeaurora.org>,
+        <asathyak@codeaurora.org>
+References: <20180202142200.6229-1-ilina@codeaurora.org>
+ <20180202142200.6229-2-ilina@codeaurora.org>
+ <e1322b9a-4765-3c71-84b8-cb725fe457dd@arm.com>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Message-ID: <02e2a5f9-8ecc-76b1-a3cc-c95b215e8fe1@prevas.dk>
+Date: Fri, 23 Feb 2018 13:16:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpXvuYKn94WjJ9nSjzhk8DzYAvDmdgxsi6cc9CdBfkdTnw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e1322b9a-4765-3c71-84b8-cb725fe457dd@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.16.8.31]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 08:59:47PM -0800, Cong Wang wrote:
-> Hello,
+On 2018-02-02 15:58, Marc Zyngier wrote:
+> Hi Lina,
 > 
-> We keep seeing the following kernel warning from 3.10 kernel to 4.9
-> kernel, it exists for a rather long time.
+> On 02/02/18 14:21, Lina Iyer wrote:
+>> From : Archana Sathyakumar <asathyak@codeaurora.org>
+>>
+>> +
+>> +static int qcom_pdc_translate(struct irq_domain *d,
+>> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
+>> +{
+>> +	if (is_of_node(fwspec->fwnode)) {
+>> +		if (fwspec->param_count < 3)
+>> +			return -EINVAL;
 > 
-> Google search shows there was a patch from Ingo:
-> https://patchwork.kernel.org/patch/6308681/
+> Why 3? Reading the DT binding, this is indeed set to 3 without any
+> reason. I'd suggest this becomes 2, encoding the pin number and the
+> trigger information, as the leading 0 is quite useless. Yes, I know
+> other examples in the kernel are using this 0, and that was a
+> consequence of retrofitting the omitted interrupt controllers (back in
+> the days of the stupid gic_arch_extn...). Don't do that.
 > 
-> but it doesn't look like ever merged into mainline...
-> 
-> I don't know how it is triggered. Please let me know if any other
-> information I can provide.
 
-What exact workload are you using to reproduce?
+Hi Marc
 
-And I'm taking that the patch 'works' for you?
+I'm about to send out a new revision of the ls-extirq patchset, and
+thanks to you pointing me to these patches, I've read the comments on
+the various revisions of this series and tried to take those into
+account. But the above confused me, because in response to my first RFC
+(https://patchwork.kernel.org/patch/10102643/) we have
 
-Given the HSD143 errata and its possible relevance, have you tried
-changing the magic number to 32, does it then still fix things?
+On 2017-12-08 17:09, Marc Zyngier wrote:
+> On 08/12/17 15:11, Alexander Stein wrote:
+>> Hi Rasmus,
+>>
+>>> +
+>>> +Required properties:
+>>> +- compatible: should be "fsl,ls1021a-extirq"
+>>> +- interrupt-controller: Identifies the node as an interrupt controller
+>>> +- #interrupt-cells: Use the same format as specified by GIC in
+arm,gic.txt.
+>>
+>> Do you really need 3 interrupt-cells here? As you've written below
+you don't
+>> support PPI anyway the 1st flag might be dropped then. So support
+just 2 cells:
+>> * IRQ number (IRQ0 - IRQ5)
+>> * IRQ flags
+>
+> The convention for irqchip stacked on top of a GIC is to keep the
+> interrupt specifier the same. It makes the maintenance if the DT much
+> easier, and doesn't hurt at all.
 
-No real objection to the patch as such, it just needs a coherent comment
-and a tested-by tag I think.
+Personally, I'd actually prefer the simpler interrupt specifiers without
+a redundant 0. Maybe I'm just missing some difference between this case
+and the ls-extirq one?
+
+Thanks,
+Rasmus
