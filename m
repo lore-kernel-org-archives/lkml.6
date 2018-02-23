@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224CIO0xuyI4rQe3pmPZiOPfwdCaTCLIESiXlT2evPzhxeomb8r2BNLuJ89W7h+YV3u5ozH2
-ARC-Seal: i=1; a=rsa-sha256; t=1519411240; cv=none;
+X-Google-Smtp-Source: AG47ELu73M1L/O7lcfOgbEeqgdgaLEDXelWYwuwkOFxWPqLy3EnISYLAB/e5lAAasYeX87pg1ulp
+ARC-Seal: i=1; a=rsa-sha256; t=1519411237; cv=none;
         d=google.com; s=arc-20160816;
-        b=tR20ajDz+6IgM8DnovcejDtjQjT5oWn2P8R9wNdMmg7PTM6WXjP/qQg8gLmMbuUt/W
-         pkmQTAXgIStFbPzEmScJeMTrAA2mYUeAceAQMMv+kLZLCzrOlZH6gJoNLZ5394bgWFhN
-         zH/DT9YXXJTq6EDUAGf8wJIkGHlxMKQyKoTxeZ9pknynsxEtyBxXrANM9wR8BXewuEIB
-         GxAyc7WZ3L9pRqDYElWPDrKiExBMz/j5nFNARUG9Oi/kSadShUf4/7mzZFNo1rtDBzAi
-         mCNMezulwFG8Xqji3UezuH0m8OEtp0SSPDAUUuamAxFM/57DOkFANBKyO9HawNGdcmX6
-         fS/A==
+        b=Ue0jKynTXIxOkOvj5hueQQrA6lCJAS9wmhovv5F49MYTlBt8iSQUo38i55XVwrr7Uz
+         V0+XzFliRhBMdReGdbi+lwb9dx2GUBPJr7+g6keKkdE8avVchH/w0Z6tgrThZvwqMwid
+         XSPN5nNhghh6xzXHIdDy37eAjuXU68kinQ3v4AorEDs5OMbBZFITiX0uTkqW6OoD5Gax
+         mdnhL49vQrdVPirimOkWj/laP73rlmheMiyndL7AZPd1ajzAzGLCU5Qb9/3fXjEW9yAo
+         tApjwq9E8UbHLNTkv2MRBPgwpEsuDbzrvWzRiEtrRw95yfcXoyRnzMHCsFsJQCTFgGLk
+         R2Ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2DVtwH5tlQvATW3ziZUpm0I4vJ/v+x+ltVzG15MLh9U=;
-        b=0T/Bb/XSO6YUe0BL1aT4MxGmJCu646O58g0AmevYVlUOVI1XdCIBQ5zzNNqbYYj4Zp
-         vaq3ZWFfHXU2C0pkH7XyqqYXi+zpYgNm1eGP6kaP/OFOodUaxPezliMpxEfDeIGNbXM0
-         1F7iMFUmHL4QIROuzEqFpddGeUmb670xq80gtH9I+JTzhiC8y55LL50/wic92uG3YxSP
-         p6y36zmUl/WttfDa68hC53NVLLlfs7+PCP/2sV+2nUOensNjz5DS3RTDMNkxSxY+htlN
-         PLzOuZczM0wAB1S5z6k6wsg4ePRZ8m1lL6X2TNMk+hGcdmRY9BMT+61dl5dWWUbqQKtv
-         3cDg==
+        bh=4WFgdWFGLrNGxpOYK1Z7MLw7pHkborYLWFR/FnHn+t0=;
+        b=VFeQcMi2WqkGPE5IDjrcmdLb67Dkxt0hgX2cYTe+BpYghFOLwUWhmi6uXiQqfqYrs6
+         1TN3mwiy445Ie8K7G5ydrM9tJyJQTiEaT0QfUZwuqjapZibOjvT+xADi6kci7ibHmqxx
+         D0HEkIatadeF/y+Ed374M7j2fF42MEYkOBIpz8KqIPUwgG6mEhp5A6IAqtJPF0k+uCPw
+         A7mM/hdJok9Huw4j30EmsbM42vQxGpBwKULD1Ub3tCwmIILE9p/A4qUTp2nZUG/e/h5E
+         DHwaGMoRgjmAlGZNMcu0iE3UG2IV5RcrfIQmP+b/JY0vERvksIjmaHBllNLmgXvgcys6
+         NiRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -41,10 +41,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	tim.c.chen@linux.intel.com,
 	pjt@google.com,
 	David Woodhouse <dwmw@amazon.co.uk>,
-	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 170/193] x86/bugs: Drop one "mitigation" from dmesg
-Date: Fri, 23 Feb 2018 19:26:43 +0100
-Message-Id: <20180223170352.649818604@linuxfoundation.org>
+	Jack Wang <jinpu.wang@profitbricks.com>,
+	gregkh@linux-foundation.org
+Subject: [PATCH 4.4 169/193] x86/nospec: Fix header guards names
+Date: Fri, 23 Feb 2018 19:26:42 +0100
+Message-Id: <20180223170352.503332691@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -54,8 +55,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218160873278595?=
-X-GMAIL-MSGID: =?utf-8?q?1593218160873278595?=
+X-GMAIL-THRID: =?utf-8?q?1593218158118132121?=
+X-GMAIL-MSGID: =?utf-8?q?1593218158118132121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -65,21 +66,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Borislav Petkov <bp@suse.de>
 
-(cherry picked from commit 55fa19d3e51f33d9cd4056d25836d93abf9438db)
+(cherry picked from commit 7a32fc51ca938e67974cbb9db31e1a43f98345a9)
 
-Make
+... to adhere to the _ASM_X86_ naming scheme.
 
-[    0.031118] Spectre V2 mitigation: Mitigation: Full generic retpoline
-
-into
-
-[    0.031118] Spectre V2: Mitigation: Full generic retpoline
-
-to reduce the mitigation mitigations strings.
+No functional change.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: riel@redhat.com
 Cc: ak@linux.intel.com
 Cc: peterz@infradead.org
@@ -91,24 +85,32 @@ Cc: torvalds@linux-foundation.org
 Cc: keescook@google.com
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
 Cc: pjt@google.com
-Link: https://lkml.kernel.org/r/20180126121139.31959-5-bp@alien8.de
+Link: https://lkml.kernel.org/r/20180126121139.31959-3-bp@alien8.de
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-[jwang: port to 4.4]
+[cherry-pick to 4.4]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/nospec-branch.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -90,7 +90,7 @@ static const char *spectre_v2_strings[]
- };
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
  
- #undef pr_fmt
--#define pr_fmt(fmt)     "Spectre V2 mitigation: " fmt
-+#define pr_fmt(fmt)     "Spectre V2 : " fmt
+-#ifndef __NOSPEC_BRANCH_H__
+-#define __NOSPEC_BRANCH_H__
++#ifndef _ASM_X86_NOSPEC_BRANCH_H_
++#define _ASM_X86_NOSPEC_BRANCH_H_
  
- static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+@@ -195,4 +195,4 @@ static inline void vmexit_fill_RSB(void)
+ }
  
+ #endif /* __ASSEMBLY__ */
+-#endif /* __NOSPEC_BRANCH_H__ */
++#endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
