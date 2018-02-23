@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeBWATw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:19:52 -0500
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:33835 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeBWATv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:19:51 -0500
-X-Google-Smtp-Source: AH8x224YGlblU0v85o/oq4Fq9WZwo+l5w0DDdr8DDdx1n7rPR3ib/jPKlksA37EGw6fhOip/olgQjS4mph+jCEzNZWw=
+        id S1751906AbeBWAVr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:21:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751723AbeBWAVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 19:21:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F5821716
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 22 Feb 2018 18:21:42 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>, Paul Burton <paul.burton@mips.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Christoph Hellwig <hch@lst.de>, Michal Nazarewicz <mina86@mina86.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+        Paul Mackerras <paulus@ozlabs.org>, Will Deacon <will.deacon@arm.com>,
+        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
+Message-ID: <20180223002142.GG14632@bhelgaas-glaptop.roam.corp.google.com>
+References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
+ <20180206221106.16620-1-ulfalizer@gmail.com>
+ <20180222230052.GA14632@bhelgaas-glaptop.roam.corp.google.com>
+ <CAFkk2KScFZE0sjZovi1vq2xBQ_-wx2XoSbWG6_qL2W0rR5B7YQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKx+ReiTOVnxANL=NsOTWuxzuATUYqtfi91GvFKVgR6Yg@mail.gmail.com>
-References: <20180222002854.GA29269@beast> <201802230613.8bqOOUnw%fengguang.wu@intel.com>
- <CAGXu5jKx+ReiTOVnxANL=NsOTWuxzuATUYqtfi91GvFKVgR6Yg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 22 Feb 2018 16:19:49 -0800
-X-Google-Sender-Auth: 9_TvPFBrtlY4LugISzpmzUBweeM
-Message-ID: <CAGXu5jKcrxSwUaFdr4YGwtt1Lm0DtBZvD-gVkaLYRkgMua+JyQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kconfig.h: Include compiler types to avoid missed
- struct attributes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Burton <paul.burton@imgtec.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Cc: kbuild-all@01.org, kbuild test robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFkk2KScFZE0sjZovi1vq2xBQ_-wx2XoSbWG6_qL2W0rR5B7YQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 4:03 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Feb 22, 2018 at 2:26 PM, kbuild test robot <lkp@intel.com> wrote:
->> Hi Kees,
->>
->> I love your patch! Yet something to improve:
->>
->> [auto build test ERROR on linus/master]
->> [also build test ERROR on v4.16-rc2 next-20180222]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Kees-Cook/kconfig-h-Include-compiler-types-to-avoid-missed-struct-attributes/20180223-040717
->> config: mips-jz4740 (attached as .config)
->> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->> reproduce:
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         make.cross ARCH=mips
->>
->> All errors (new ones prefixed by >>):
->>
->>>> Error: arch/mips/boot/vmlinux.gz.its:201.1-2 syntax error
->>    FATAL ERROR: Unable to parse input tree
->>    /usr/bin/mkimage: Can't read arch/mips/boot/vmlinux.gz.itb.tmp: Invalid argument
->>    /usr/bin/mkimage Can't add hashes to FIT blob
->
-> Ugh, the compiler_types.h commit breaks MIPS. I've reproduced this
-> failure; debugging now....
+On Fri, Feb 23, 2018 at 12:42:28AM +0100, Ulf Magnusson wrote:
+> On Fri, Feb 23, 2018 at 12:00 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Tue, Feb 06, 2018 at 11:11:06PM +0100, Ulf Magnusson wrote:
+> >> 'default N' should be 'default n', though they happen to have the same
+> >> effect here, due to undefined symbols (N in this case) evaluating to n
+> >> in a tristate sense.
+> >>
+> >> Remove the default instead of changing it. bool and tristate symbols
+> >> implicitly default to n.
+> >
+> > s/bool/Bool/
+> 
+> Not a great excuse, but I was thinking syntactically -- 'bool' and
+> 'tristate' symbols... :)
+> 
+> >
+> >> Discovered with the
+> >> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+> >> script.
+> >>
+> >> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> >
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> >
+> > Since only this patch was posted to linux-pci, I assume it will be merged
+> > via some other tree.
+> 
+> I didn't have a particular tree in mind for this patchset. I imagined
+> people would pick up patches into the trees where they make the most
+> sense, and only created the patchset to keep track of the patches more
+> easily. Might have created some confusion in retrospect.
+> 
+> I just did a --cc-cmd="scripts/get_maintainer.pl -i" for the
+> individual patches by the way.
 
-For the MIPS folks, this is about 28128c61e08e ("kconfig.h: Include
-compiler types to avoid missed struct attributes").
+OK, then either Lorenzo or I will pick it up.
 
-This hack fixes it ("struct" definitions were appearing in the
-resulting its output files, which broke parsing):
+It's in drivers/pci/host/, so ideally Lorenzo will take it since he
+looks after everything else in there.
 
-diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
-index 1bd5c4f00d19..c22da16d67b8 100644
---- a/arch/mips/boot/Makefile
-+++ b/arch/mips/boot/Makefile
-@@ -126,6 +126,7 @@ $(obj)/vmlinux.its.S: $(addprefix
-$(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS
-
- quiet_cmd_cpp_its_S = ITS     $@
-       cmd_cpp_its_S = $(CPP) $(cpp_flags) -P -C -o $@ $< \
-+                       -D__ASSEMBLY__ \
-                        -DKERNEL_NAME="\"Linux $(KERNELRELEASE)\"" \
-                        -DVMLINUX_BINARY="\"$(3)\"" \
-                        -DVMLINUX_COMPRESSION="\"$(2)\"" \
-
-I assume since this is overloading a .S build rule, the __ASSEMBLY__
-define went missing from cpp_flags?
-
-I'm trying to figure out if there is a better solution; ideas welcome!
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Bjorn
