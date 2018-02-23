@@ -1,71 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeBWJZH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 04:25:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751481AbeBWJZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 04:25:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68152178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
-        Jon Medhurst <tixy@linaro.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org
-Subject: [PATCH] [BUGFIX] arm: kprobes: Fix to use get_kprobe_ctlblk after irq-disabed
-Date: Fri, 23 Feb 2018 18:24:40 +0900
-Message-Id: <151937788067.22527.14819753928851623471.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
+        id S1751823AbeBWJZO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 04:25:14 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751470AbeBWJZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 04:25:12 -0500
+Date: Fri, 23 Feb 2018 17:24:59 +0800
+From: Dave Young <dyoung@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        bauerman@linux.vnet.ibm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        akpm@linux-foundation.org, mpe@ellerman.id.au, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, julien.thierry@arm.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 03/13] kexec_file,x86,powerpc: factor out
+ kexec_file_ops functions
+Message-ID: <20180223092459.GC4433@dhcp-128-65.nay.redhat.com>
+References: <20180222111732.23051-1-takahiro.akashi@linaro.org>
+ <20180222111732.23051-4-takahiro.akashi@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222111732.23051-4-takahiro.akashi@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since get_kprobe_ctlblk() uses smp_processor_id() to access
-per-cpu variable, it hits smp_processor_id sanity check as below.
+Hi AKASHI,
 
-[    7.006928] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-[    7.007859] caller is debug_smp_processor_id+0x20/0x24
-[    7.008438] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1-00192-g4eb17253e4b5 #1
-[    7.008890] Hardware name: Generic DT based system
-[    7.009917] [<c0313f0c>] (unwind_backtrace) from [<c030e6d8>] (show_stack+0x20/0x24)
-[    7.010473] [<c030e6d8>] (show_stack) from [<c0c64694>] (dump_stack+0x84/0x98)
-[    7.010990] [<c0c64694>] (dump_stack) from [<c071ca5c>] (check_preemption_disabled+0x138/0x13c)
-[    7.011592] [<c071ca5c>] (check_preemption_disabled) from [<c071ca80>] (debug_smp_processor_id+0x20/0x24)
-[    7.012214] [<c071ca80>] (debug_smp_processor_id) from [<c03335e0>] (optimized_callback+0x2c/0xe4)
-[    7.013077] [<c03335e0>] (optimized_callback) from [<bf0021b0>] (0xbf0021b0)
+On 02/22/18 at 08:17pm, AKASHI Takahiro wrote:
+> As arch_kexec_kernel_*_{probe,load}(), arch_kimage_file_post_load_cleanup()
+> and arch_kexec_kernel_verify_sg can be parameterized with a kexec_file_ops
+> array and now duplicated among some architectures, let's factor them out.
+> 
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/include/asm/kexec.h            |  2 +-
+>  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
+>  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++------------------
+>  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
+>  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
+>  arch/x86/kernel/machine_kexec_64.c          | 45 +----------------------
+>  include/linux/kexec.h                       | 15 ++++----
+>  kernel/kexec_file.c                         | 57 +++++++++++++++++++++++++++--
+>  8 files changed, 70 insertions(+), 94 deletions(-)
+> 
 
-To fix this issue, call get_kprobe_ctlblk() right after
-irq-disabled since that disables preemption.
+[snip]
 
-Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/arm/probes/kprobes/opt-arm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 990adae52151..a6d14a768b3e 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -26,34 +26,83 @@
+>  #include <linux/vmalloc.h>
+>  #include "kexec_internal.h"
+>  
+> +const __weak struct kexec_file_ops * const kexec_file_loaders[] = {NULL};
+> +
+>  #ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
+>  static int kexec_calculate_store_digests(struct kimage *image);
+>  #else
+>  static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
+>  #endif
+>  
+> +int _kexec_kernel_image_probe(struct kimage *image, void *buf,
+> +			     unsigned long buf_len)
+> +{
+> +	const struct kexec_file_ops * const *fops;
+> +	int ret = -ENOEXEC;
+> +
+> +	for (fops = &kexec_file_loaders[0]; *fops && (*fops)->probe; ++fops) {
+> +		ret = (*fops)->probe(buf, buf_len);
+> +		if (!ret) {
+> +			image->fops = *fops;
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  /* Architectures can provide this probe function */
+>  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
+>  					 unsigned long buf_len)
+>  {
+> -	return -ENOEXEC;
+> +	return _kexec_kernel_image_probe(image, buf, buf_len);
 
-diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
-index bcdecc25461b..ddc5a82eb10d 100644
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -165,13 +165,14 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
- {
- 	unsigned long flags;
- 	struct kprobe *p = &op->kp;
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
-+	struct kprobe_ctlblk *kcb;
- 
- 	/* Save skipped registers */
- 	regs->ARM_pc = (unsigned long)op->kp.addr;
- 	regs->ARM_ORIG_r0 = ~0UL;
- 
- 	local_irq_save(flags);
-+	kcb = get_kprobe_ctlblk();
- 
- 	if (kprobe_running()) {
- 		kprobes_inc_nmissed_count(&op->kp);
+
+I vaguely remember previously I suggest split the _kexec_kernel_image_probe
+because arch code can call them, and common code also use it like above.
+But in your new series I do not find where else calls this function
+except the common code arch_kexec_kernel_image_probe.  If nobody use
+them then it is not worth to split them out, it is better to just embed
+them in the __weak functions.
+
+Ditto for other similar functions.
+
+[snip]
+
+Thanks
+Dave
