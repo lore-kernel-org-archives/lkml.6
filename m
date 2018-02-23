@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415893-2-4152322364967152009
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415877-2-8110040208875033860
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415892; b=vIjoe2F7R8t9cBX18cKrDxQYc+r81qC5zEO4C86W/JnG6/M
-    kOCBV8fn4DfK1jSuyp3fWVYkDN2ywCNvqucZNU/+KSv3MbuuS/e408/+rNxbL8HE
-    WDqS/yefPBDFhhvIQU/pSDWqsVJ63W2WNb4DjCZ2hRJ/Ol5GUKDJ+j96QB7k9jJM
-    6IHM90ykibB/ey/1IcQhLcq5ACJaCBaJM4eaV38Tm8gF+8kePz0mXvZVgNBjTnaB
-    nZ4szMfTmB9Uqb9S1F0HnIFVBGmz3YbSB53fhdZzhZHDoiG0D3KGD9kRuoC1X7EF
-    R/tPJsWbX/NjADo45juRmtMCP6s04ivYYW5qBtg==
+    t=1519415877; b=iAniDfYzdb7757xRm+AnWXcEkyNY7nGz647s5BKeP1dUORd
+    mTua0NdHYYlK5Pgwn1Z1Zx6+Putw+RiDdaUBseu5gGH603xueh/fYUo0Pz8GQK6Y
+    iO6B0eow1E1NAbfpHuGknl4jTO4tprLIx3ruCVwf3q1dDYOpXr+YxaxSTarpuA9A
+    mNEVKb0EGSLrjEs+kq1m0qRfy9ibRycESTHJAxp7BG5BaeulRDfMdzJls5LxtKU5
+    nKHzkKU4x3kR4p8n4t1dZbU9271LorW0DrFhOemaoKw6E39iFMIC28S3i5/TeK6I
+    kGzvxfV1wOiFjj5toTiCmhCDkOcM5HKBm7FrVJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415892; bh=QyaL2ihhViyOY3E85XiptcN5hC
-    r2pADb3pR8wPnl7vU=; b=qS/lgO9FRsLrGRPTx9RTFT62w0qOoSLjc/Es40M9Sh
-    x1s8e57iAD9UtcgO/iNTK8c2nih2uo3jKbMV+YEjrShmMSimDw9kQQ7AK2QA1YWb
-    NgfAS858hoJ2STCF01RJmb9bBVaQdmZ5CzliMC4F9Qhij4p+/Jxk/PNY8HxUnWDz
-    VkUsc/FxphCaHvm7sr3n8neCiJS/5o4eOZEY7pNQUXLVeVpEMTHjWsXe8gjns9QN
-    lzMBpWqiGTSXqq4vWvQZ1OFUmPoVZxNIOxmxbjZAtMXR19DScKNJMBI3GZqRtNnI
-    czTKwqxD/v8VAvnBN2eV+3bjyoCThu7M5SzAWogwogHQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415877; bh=Z8SErVP6L+l1GHJOmo3R8lsk//
+    7zYpe4E4iDWoknIng=; b=NdkWTheImbtRyX45fhLHrzJrh8mXlFmvQQGwCLPsCL
+    MMJiUcnUMIia9Xn8fDWiJDqXr6KBbrGkFa7hdOH66KDuiQHHblFYb7N7sIIhKu7+
+    HmAUH4JiCGR73o0szmxeqxDMPnO9aJu7cxUK16wOmfN+yjv9BDNHehPsKZiONYKZ
+    dM46wJtKY+qop3R/86jECGj1k3NKDe/NvrYofgkStMDJ6rrIACPZvKKMxVw4gurp
+    c4NQciPPEnYB1maQ7fwnJe2rEtsw4TTG3H8HYhEeBcNRZ7RN83LVMG+ajuV2OmTJ
+    0VaGZUGgbcYZs0SYO+CasD1hwgPrQ7vX7fNOVQ8knhuQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754792AbeBWT55 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:57:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42528 "EHLO
+        id S933558AbeBWSoY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:44:24 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933546AbeBWSoV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:44:21 -0500
+        with ESMTP id S933538AbeBWSoY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:44:24 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Balamuruhan S <bala24@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 051/145] perf bench numa: Fixup discontiguous/sparse numa nodes
-Date: Fri, 23 Feb 2018 19:25:57 +0100
-Message-Id: <20180223170731.482806680@linuxfoundation.org>
+Subject: [PATCH 4.9 052/145] media: s5k6aa: describe some function parameters
+Date: Fri, 23 Feb 2018 19:25:58 +0100
+Message-Id: <20180223170731.620636626@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -83,130 +79,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
 
-[ Upstream commit 321a7c35c90cc834851ceda18a8ee18f1d032b92 ]
+[ Upstream commit 070250a1715cee2297de0d9e7e2cea58be999d37 ]
 
-Certain systems are designed to have sparse/discontiguous nodes.  On
-such systems, 'perf bench numa' hangs, shows wrong number of nodes and
-shows values for non-existent nodes. Handle this by only taking nodes
-that are exposed by kernel to userspace.
+as warned:
+  drivers/media/i2c/s5k6aa.c:429: warning: No description found for parameter 's5k6aa'
+  drivers/media/i2c/s5k6aa.c:679: warning: No description found for parameter 's5k6aa'
+  drivers/media/i2c/s5k6aa.c:733: warning: No description found for parameter 's5k6aa'
+  drivers/media/i2c/s5k6aa.c:733: warning: No description found for parameter 'preset'
+  drivers/media/i2c/s5k6aa.c:787: warning: No description found for parameter 'sd'
 
-Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/1edbcd353c009e109e93d78f2f46381930c340fe.1511368645.git.sathnaga@linux.vnet.ibm.com
-Signed-off-by: Balamuruhan S <bala24@linux.vnet.ibm.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/bench/numa.c |   56 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 51 insertions(+), 5 deletions(-)
+ drivers/media/i2c/s5k6aa.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -211,6 +211,47 @@ static const char * const numa_usage[] =
- 	NULL
- };
+--- a/drivers/media/i2c/s5k6aa.c
++++ b/drivers/media/i2c/s5k6aa.c
+@@ -421,6 +421,7 @@ static int s5k6aa_set_ahb_address(struct
  
-+/*
-+ * To get number of numa nodes present.
-+ */
-+static int nr_numa_nodes(void)
-+{
-+	int i, nr_nodes = 0;
-+
-+	for (i = 0; i < g->p.nr_nodes; i++) {
-+		if (numa_bitmask_isbitset(numa_nodes_ptr, i))
-+			nr_nodes++;
-+	}
-+
-+	return nr_nodes;
-+}
-+
-+/*
-+ * To check if given numa node is present.
-+ */
-+static int is_node_present(int node)
-+{
-+	return numa_bitmask_isbitset(numa_nodes_ptr, node);
-+}
-+
-+/*
-+ * To check given numa node has cpus.
-+ */
-+static bool node_has_cpus(int node)
-+{
-+	struct bitmask *cpu = numa_allocate_cpumask();
-+	unsigned int i;
-+
-+	if (cpu && !numa_node_to_cpus(node, cpu)) {
-+		for (i = 0; i < cpu->size; i++) {
-+			if (numa_bitmask_isbitset(cpu, i))
-+				return true;
-+		}
-+	}
-+
-+	return false; /* lets fall back to nocpus safely */
-+}
-+
- static cpu_set_t bind_to_cpu(int target_cpu)
- {
- 	cpu_set_t orig_mask, mask;
-@@ -239,12 +280,12 @@ static cpu_set_t bind_to_cpu(int target_
+ /**
+  * s5k6aa_configure_pixel_clock - apply ISP main clock/PLL configuration
++ * @s5k6aa: pointer to &struct s5k6aa describing the device
+  *
+  * Configure the internal ISP PLL for the required output frequency.
+  * Locking: called with s5k6aa.lock mutex held.
+@@ -669,6 +670,7 @@ static int s5k6aa_set_input_params(struc
  
- static cpu_set_t bind_to_node(int target_node)
- {
--	int cpus_per_node = g->p.nr_cpus/g->p.nr_nodes;
-+	int cpus_per_node = g->p.nr_cpus / nr_numa_nodes();
- 	cpu_set_t orig_mask, mask;
- 	int cpu;
- 	int ret;
+ /**
+  * s5k6aa_configure_video_bus - configure the video output interface
++ * @s5k6aa: pointer to &struct s5k6aa describing the device
+  * @bus_type: video bus type: parallel or MIPI-CSI
+  * @nlanes: number of MIPI lanes to be used (MIPI-CSI only)
+  *
+@@ -724,6 +726,8 @@ static int s5k6aa_new_config_sync(struct
  
--	BUG_ON(cpus_per_node*g->p.nr_nodes != g->p.nr_cpus);
-+	BUG_ON(cpus_per_node * nr_numa_nodes() != g->p.nr_cpus);
- 	BUG_ON(!cpus_per_node);
+ /**
+  * s5k6aa_set_prev_config - write user preview register set
++ * @s5k6aa: pointer to &struct s5k6aa describing the device
++ * @preset: s5kaa preset to be applied
+  *
+  * Configure output resolution and color fromat, pixel clock
+  * frequency range, device frame rate type and frame period range.
+@@ -777,6 +781,7 @@ static int s5k6aa_set_prev_config(struct
  
- 	ret = sched_getaffinity(0, sizeof(orig_mask), &orig_mask);
-@@ -644,7 +685,7 @@ static int parse_setup_node_list(void)
- 			int i;
- 
- 			for (i = 0; i < mul; i++) {
--				if (t >= g->p.nr_tasks) {
-+				if (t >= g->p.nr_tasks || !node_has_cpus(bind_node)) {
- 					printf("\n# NOTE: ignoring bind NODEs starting at NODE#%d\n", bind_node);
- 					goto out;
- 				}
-@@ -959,6 +1000,8 @@ static void calc_convergence(double runt
- 	sum = 0;
- 
- 	for (node = 0; node < g->p.nr_nodes; node++) {
-+		if (!is_node_present(node))
-+			continue;
- 		nr = nodes[node];
- 		nr_min = min(nr, nr_min);
- 		nr_max = max(nr, nr_max);
-@@ -979,8 +1022,11 @@ static void calc_convergence(double runt
- 	process_groups = 0;
- 
- 	for (node = 0; node < g->p.nr_nodes; node++) {
--		int processes = count_node_processes(node);
-+		int processes;
- 
-+		if (!is_node_present(node))
-+			continue;
-+		processes = count_node_processes(node);
- 		nr = nodes[node];
- 		tprintf(" %2d/%-2d", nr, processes);
- 
-@@ -1286,7 +1332,7 @@ static void print_summary(void)
- 
- 	printf("\n ###\n");
- 	printf(" # %d %s will execute (on %d nodes, %d CPUs):\n",
--		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", g->p.nr_nodes, g->p.nr_cpus);
-+		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", nr_numa_nodes(), g->p.nr_cpus);
- 	printf(" #      %5dx %5ldMB global  shared mem operations\n",
- 			g->p.nr_loops, g->p.bytes_global/1024/1024);
- 	printf(" #      %5dx %5ldMB process shared mem operations\n",
+ /**
+  * s5k6aa_initialize_isp - basic ISP MCU initialization
++ * @sd: pointer to V4L2 sub-device descriptor
+  *
+  * Configure AHB addresses for registers read/write; configure PLLs for
+  * required output pixel clock. The ISP power supply needs to be already
