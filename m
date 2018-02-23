@@ -1,69 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeBWVgE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:36:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752228AbeBWVfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752411AbeBWVgD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:36:03 -0500
+Received: from mail-it0-f51.google.com ([209.85.214.51]:35048 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbeBWVfy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Feb 2018 16:35:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6AB217A9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 23 Feb 2018 15:35:52 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
-Message-ID: <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+X-Google-Smtp-Source: AG47ELvqCSZQQUjPAYpgqy3dlZmW1E5hZbkHKrTJ7/yzQ9YPkO096rsIF6M5pjE3w8UHXzPMV+s80BJJwRLZyHkDbfU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180223201317.GG30522@ZenIV.linux.org.uk>
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+ <20180222235025.28662-7-john.ogness@linutronix.de> <20180223035814.GZ30522@ZenIV.linux.org.uk>
+ <20180223040814.GA30522@ZenIV.linux.org.uk> <87h8q7erlo.fsf@linutronix.de>
+ <20180223150928.GC30522@ZenIV.linux.org.uk> <20180223174216.GD30522@ZenIV.linux.org.uk>
+ <20180223201317.GG30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Feb 2018 13:35:52 -0800
+X-Google-Sender-Auth: 9NHaGNqzwm_npAGDdalsRbQS6TI
+Message-ID: <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+Subject: Re: [BUG] lock_parent() breakage when used from shrink_dentry_list()
+ (was Re: [PATCH v2 6/6] fs/dcache: Avoid remaining try_lock loop in shrink_dentry_list())
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Ogness <john.ogness@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
-> It's used in several places and more users may come.
-> By using this helper they may create a slightly cleaner code.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  include/linux/dmi.h | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/include/linux/dmi.h b/include/linux/dmi.h
-> index 46e151172d95..241c27008c70 100644
-> --- a/include/linux/dmi.h
-> +++ b/include/linux/dmi.h
-> @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
->  
->  #endif
->  
-> +static inline int dmi_get_bios_year(void)
-> +{
-> +	int year;
-> +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
-> +	return year;
-> +}
+On Fri, Feb 23, 2018 at 12:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> Look:
+>         dentry placed on a shrink list
+>         we pick the fucker from the list and lock it.
+>         we call lock_parent() on it.
+>                 dentry is not a root and it's not deleted, so we proceed.
+>                 trylock fails.
+>                 we grab rcu_read_lock()
+>                 we drop dentry->d_lock
 
-I don't really care personally, and I assume this series will go via a
-non-PCI tree, but making this inline looks similar to this, which
-wasn't well-received:
+[ deleted the bad things ]
 
-https://lkml.kernel.org/r/CA+55aFypU331cQy-6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
+Should we just instead get the ref to the dentry before dropping the
+lock, so that nobody else can get to dentry_kill?
 
->  #endif	/* __DMI_H__ */
-> -- 
-> 2.16.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is too subtle, and your fix to check d_lockref.count < 0 sounds
+wrong to me. If it's really gone, maybe it has been reused and the
+refcount is positive again, but it's something else than a dentry
+entirely?
+
+Hmm.
+
+No, you extended the rcu read section, so I guess your patch is fine.
+And lock_parent already has that pattern, soiit's not new.
+
+Ok, I agree, looks like lock_parent should just re-check that thing
+that it already checked earler, but that now might be true again
+because of we dropped d_lock.
+
+              Linus
