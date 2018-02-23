@@ -1,91 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751385AbeBWB6v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:58:51 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52225 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeBWB6u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:58:50 -0500
-X-Google-Smtp-Source: AG47ELvInoRc/7q3v6TLuoBX3rpJTKHKSaKUbWtPT8eIBRh4NdwPjQfpFA2NKbDXdLhRMMkE+IbBgemIDcDaTGK3GEA=
+        id S1751432AbeBWB7u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:59:50 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48524 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750916AbeBWB7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:59:49 -0500
+Subject: Re: [PATCH net v3 2/2] tuntap: correctly add the missing xdp flush
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        christoffer.dall@linaro.org, sergei.shtylyov@cogentembedded.com
+References: <1519292206-6384-1-git-send-email-jasowang@redhat.com>
+ <1519292206-6384-2-git-send-email-jasowang@redhat.com>
+ <20180222184647.0e1d6631@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <6b0a7fac-1b4a-c621-e391-b5e763f007f7@redhat.com>
+Date: Fri, 23 Feb 2018 09:59:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180223012057.GO2855@linux.vnet.ibm.com>
-References: <1519282357-17983-1-git-send-email-zhouzhouyi@gmail.com>
- <20180222165803.GF2855@linux.vnet.ibm.com> <CAABZP2wt0QLuOFndOFTgRACxZw0jqNNeumE91KpjiFQieg14dA@mail.gmail.com>
- <20180223012057.GO2855@linux.vnet.ibm.com>
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Date: Fri, 23 Feb 2018 09:58:49 +0800
-Message-ID: <CAABZP2xp6uCCv58PzLcOWyWWZKEx4G0-k29UgjKkdKeJ8K5kjA@mail.gmail.com>
-Subject: Re: [PATCH] srcu: remove never used variable
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180222184647.0e1d6631@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Paul's encouragement, I will keep studying SRCU code.
 
-On Fri, Feb 23, 2018 at 9:20 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Fri, Feb 23, 2018 at 09:04:05AM +0800, Zhouyi Zhou wrote:
->> Thanks Paul for reviewing
+
+On 2018年02月23日 01:46, Jesper Dangaard Brouer wrote:
+> On Thu, 22 Feb 2018 17:36:46 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
 >
-> And thank you for your interest in SRCU!  I am pretty sure that other
-> bugs still remain.  ;-)
->
->                                                         Thanx, Paul
->
->> Cheers
->> Zhouyi
+>> Commit 762c330d670e ("tuntap: add missing xdp flush") tries to fix the
+>> devmap stall caused by missed xdp flush by counting the pending xdp
+>> redirected packets and flush when it exceeds NAPI_POLL_WEIGHT or
+>> MSG_MORE is clear. This may lead to BUG() since xdp_do_flush() was
+>> called in the process context with preemption enabled. Simply
+>> disabling preemption may silence the warning but be not enough since
+>> process may move between different CPUS during a batch which cause
+>> xdp_do_flush() misses some CPU where the process run
+>> previously. Consider the fallouts, that commit was reverted. To fix
+>> the issue correctly, we can simply call xdp_do_flush() immediately
+>> after xdp_do_redirect(), a side effect is that this removes any
+>> possibility of batching which could be addressed in the future.
 >>
->> On Friday, February 23, 2018, Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->> wrote:
+>> Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
+>> Fixes: 762c330d670e ("tuntap: add missing xdp flush")
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>>   drivers/net/tun.c | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
->> > On Thu, Feb 22, 2018 at 06:52:37AM +0000, zhouzhouyi@gmail.com wrote:
->> > > From: Zhouyi Zhou <zhouzhouyi@gmail.com>
->> > >
->> > > In function srcu_gp_end, the variable idxnext is never used after assign,
->> > > remove it and its assign statement.
->> > >
->> > > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
->> >
->> > Good catch, but Byungchul Park beat you to it.  Please see commit
->> > a72da917f186 ("srcu: Remove dead code in srcu_gp_end()") in -rcu.
->> >
->> >                                                         Thanx, Paul
->> >
->> > > ---
->> > >  kernel/rcu/srcutree.c | 2 --
->> > >  1 file changed, 2 deletions(-)
->> > >
->> > > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
->> > > index d5cea81..1241715 100644
->> > > --- a/kernel/rcu/srcutree.c
->> > > +++ b/kernel/rcu/srcutree.c
->> > > @@ -531,7 +531,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
->> > >       unsigned long flags;
->> > >       unsigned long gpseq;
->> > >       int idx;
->> > > -     int idxnext;
->> > >       unsigned long mask;
->> > >       struct srcu_data *sdp;
->> > >       struct srcu_node *snp;
->> > > @@ -555,7 +554,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
->> > >
->> > >       /* Initiate callback invocation as needed. */
->> > >       idx = rcu_seq_ctr(gpseq) % ARRAY_SIZE(snp->srcu_have_cbs);
->> > > -     idxnext = (idx + 1) % ARRAY_SIZE(snp->srcu_have_cbs);
->> > >       rcu_for_each_node_breadth_first(sp, snp) {
->> > >               spin_lock_irq_rcu_node(snp);
->> > >               cbs = false;
->> > > --
->> > > 2.1.4
->> > >
->> >
->> >
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index 2823a4a..a363ea2 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1662,6 +1662,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>>   			get_page(alloc_frag->page);
+>>   			alloc_frag->offset += buflen;
+>>   			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
+>> +			xdp_do_flush_map();
+>>   			if (err)
+>>   				goto err_redirect;
+>>   			rcu_read_unlock();
+> As you have noticed, the xdp_do_redirect() + xdp_do_flush_map() rely
+> heavily on being executed in softirq/napi_schedule context.
+> Particularly the map infra devmap[1]+cpumap depend on the enqueue and
+> flush operation MUST happen on the same CPU (e.g. stores which
+> devices needs flushing in a this_cpu_ptr bitmap [1]).
 >
+> What context is tun_build_skb() invoked under?
+>
+> Even when you call xdp_do_redirect and xdp_do_flush_map right after
+> each-other, are we sure we cannot be preempted here?
+
+Ok, I miss the fact that we can be preempted here with preemptible RCU. 
+Let me disable preemption here and post a V4.
+
+Thanks
+
+>
+>
+> [1] https://github.com/torvalds/linux/blob/master/kernel/bpf/devmap.c#L209-L215
