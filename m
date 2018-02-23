@@ -1,89 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752698AbeBWXtu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 18:49:50 -0500
-Received: from icp-osb-irony-out9.external.iinet.net.au ([203.59.1.226]:28188
-        "EHLO icp-osb-irony-out9.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752457AbeBWXtt (ORCPT
+        id S1752651AbeBWX6D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 18:58:03 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36138 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeBWX6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 18:49:49 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CDAAAWqJBa/03NBjoNUBkBAQEBAQEBA?=
- =?us-ascii?q?QEBAQEHAQEBAQGJIZhjAQEBAQEBBoE0gRaYZ4U9AoMQFAECAQEBAQEBAoY3AQE?=
- =?us-ascii?q?BAyMVQRALDQEKAgImAgJXBgEMCAEBihKrFm6CJyGEX4N5giEBAQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQEBIoEPhAmDNoIuKYMEiDiCZQWkQggBomGHdJlnNoFzMxoIKAiCfoUHjg8?=
- =?us-ascii?q?BAQE?=
-X-IPAS-Result: =?us-ascii?q?A2CDAAAWqJBa/03NBjoNUBkBAQEBAQEBAQEBAQEHAQEBAQG?=
- =?us-ascii?q?JIZhjAQEBAQEBBoE0gRaYZ4U9AoMQFAECAQEBAQEBAoY3AQEBAyMVQRALDQEKA?=
- =?us-ascii?q?gImAgJXBgEMCAEBihKrFm6CJyGEX4N5giEBAQEBAQEBAQEBAQEBAQEBIoEPhAm?=
- =?us-ascii?q?DNoIuKYMEiDiCZQWkQggBomGHdJlnNoFzMxoIKAiCfoUHjg8BAQE?=
-X-IronPort-AV: E=Sophos;i="5.47,385,1515427200";
-   d="scan'208";a="49079543"
-Subject: Re: Removing architectures without upstream gcc support
-To: Guenter Roeck <linux@roeck-us.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <20180223154316.35b26857@alans-desktop> <20180223171019.GA1125@roeck-us.net>
-From: Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <7da72881-2c19-9e6d-0a70-7767cab19437@linux-m68k.org>
-Date: Sat, 24 Feb 2018 09:49:40 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 23 Feb 2018 18:58:01 -0500
+X-Google-Smtp-Source: AG47ELuwUOe5VETyRed4Nsr6yupchvMkTW4H3B336ol36vWlZv6rRGMam0frizXcUEw4YLXQayl1Pqo4Mggih+aKXpA=
 MIME-Version: 1.0
-In-Reply-To: <20180223171019.GA1125@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1c92a979dce897db920d9b9a625923d64cba2266.1519120988.git.asutoshd@codeaurora.org>
+References: <cover.1519120988.git.asutoshd@codeaurora.org> <1c92a979dce897db920d9b9a625923d64cba2266.1519120988.git.asutoshd@codeaurora.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 24 Feb 2018 00:57:40 +0100
+Message-ID: <CANiq72==rFxaw7+ZQv41Zbr+-fJvHiQVzVucrRFpUzrQtN750w@mail.gmail.com>
+Subject: Re: [PATCH 9/9] scsi: ufs: Add clock ungating to a separate workqueue
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Vijay Viswanath <vviswana@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/02/18 03:10, Guenter Roeck wrote:
-> On Fri, Feb 23, 2018 at 03:43:16PM +0000, Alan Cox wrote:
->>> Regarding the older architectures I mentioned (m32r, frv, mn10300),
->>> the situation is a bit different as they don't have the problems with
->>> build testing but they do have problems with using less of the
->>> standard interfaces (syscall, timer, gpio, rtc, ...), so they do add
->>> more to the maintenance burden without the nostalgia value of
->>> some of the even older architectures (parisc, alpha, m68k, ia64)
->>> that people maintain mainly for fun.
->>
->> IMHO the magic word is 'maintain'. If someone is actively maintaining it
->> then I don't think we should care too much, if not then while the code
->> may be buildable on current systems does anyone honestly think it works
->> properly if used in anger ?
->>
-> 
-> FWIW, alpha and m68k are known boot with qemu (even though m68k
-> generates a warning traceback with the mainline kernel).
+On Wed, Feb 21, 2018 at 5:56 AM, Asutosh Das <asutoshd@codeaurora.org> wrote:
+> From: Vijay Viswanath <vviswana@codeaurora.org>
+>
+> UFS driver can receive a request during memory reclaim by kswapd.
+> So when ufs driver puts the ungate work in queue, and if there are no
+> idle workers, kthreadd is invoked to create a new kworker. Since
+> kswapd task holds a mutex which kthreadd also needs, this can cause
+> a deadlock situation. So ungate work must be done in a separate
+> work queue with WQ__RECLAIM flag enabled.Such a workqueue will have
 
-At the very least I build every defconfig for every rc and release
-kernel for m68k. I also run a ColdFire build through qemu (non-MMU)
-and also run it and an MMU build on real hardware. So they are
-always checked and by far mostly work - and when they don't I fix
-it ASAP.
+WQ_MEM_RECLAIM here. Also space after dot.
 
-I am pretty sure Geert does similar for the traditional 68k targets.
-NXP still sell ColdFire parts, so for the moment it is not dead
-in terms of available silicon.
+> a rescue thread which will be called when the above deadlock
+> condition is possible.
+>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 10 +++++++++-
+>  drivers/scsi/ufs/ufshcd.h |  1 +
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 6541e1d..bb3382a 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1503,7 +1503,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
+>                 hba->clk_gating.state = REQ_CLKS_ON;
+>                 trace_ufshcd_clk_gating(dev_name(hba->dev),
+>                                         hba->clk_gating.state);
+> -               schedule_work(&hba->clk_gating.ungate_work);
+> +               queue_work(hba->clk_gating.clk_gating_workq,
+> +                          &hba->clk_gating.ungate_work);
+>                 /*
+>                  * fall through to check if we should wait for this
+>                  * work to be done or not.
+> @@ -1689,6 +1690,8 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
+>
+>  static void ufshcd_init_clk_gating(struct ufs_hba *hba)
+>  {
+> +       char wq_name[sizeof("ufs_clk_gating_00")];
+> +
+>         if (!ufshcd_is_clkgating_allowed(hba))
+>                 return;
+>
+> @@ -1696,6 +1699,10 @@ static void ufshcd_init_clk_gating(struct ufs_hba *hba)
+>         INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
+>         INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
+>
+> +       snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
+> +                hba->host->host_no);
+> +       hba->clk_gating.clk_gating_workq = create_singlethread_workqueue(wq_name);
 
-(*) I know linux-4.16-rc1 and rc2 issue a warning on boot of a
-non-MMU m68k/coldfire build due to the addition of a warning by
-Christoph in 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask") but I haven't had a chance to track what the
-exact problem is there.
+Shouldn't this be alloc_ordered_workqueue() with WQ_MEM_RECLAIM then?
+(create_singlethread_workqueue() and friends are deprecated).
 
-Regards
-Greg
+Cheers,
+Miguel
+
+> +
+>         hba->clk_gating.is_enabled = true;
+>
+>         hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
+> @@ -1723,6 +1730,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba *hba)
+>         device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
+>         cancel_work_sync(&hba->clk_gating.ungate_work);
+>         cancel_delayed_work_sync(&hba->clk_gating.gate_work);
+> +       destroy_workqueue(hba->clk_gating.clk_gating_workq);
+>  }
+>
+>  /* Must be called with host lock acquired */
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 4385741..570c33e 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -361,6 +361,7 @@ struct ufs_clk_gating {
+>         struct device_attribute enable_attr;
+>         bool is_enabled;
+>         int active_reqs;
+> +       struct workqueue_struct *clk_gating_workq;
+>  };
+>
+>  struct ufs_saved_pwr_info {
+> --
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>
