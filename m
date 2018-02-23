@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410736-2-15101977392542827802
+X-Cyrus-Session-Id: sloti22d1t05-3559911-1519410727-2-16007732697984420500
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519410735; b=Ps1NNS1U1tJxg7Sj99rKofmztb0K+jxrhXBWGv6XtIasOej
-    bWv1dKp8Ga7XbcEtsbhchipT8DE4vJHz6H61R55zchSgljM/LxEHlGxVfKRjUgWz
-    yI3Q4U50+qWH0mjSftmuhzI11ZGeJnn+ThpQDEoesoroao+J7sOsHG95XamT7vV1
-    WcVqi4/PpNZ3svbvfkNvpj9wpAQdWh1N1EWwcUCCW9SSfytVawyB8UV8yOOc/35j
-    UuVKe65KDD2AeAz96gDTHDCRoEXoIur2p1gdHQQ9iV2nvzSkJxlfUIKe7ByGIjY7
-    fq8GZ2IW2f0Qr0M6xA1qMdb/5apnTIafuKhI0Ow==
+    t=1519410726; b=UBHwRYCFCa7ec0qmQXlrUGyoYDaOL3yx19c0XpufMqAPeuI
+    GE/UTtyuhbqGvFeUbS4XlnRJSfDEzDTNBosYgWSgOZdQBTQjuHAAcpIIX386RMku
+    yldHIa/LwtybeuMv5YpD8ZuzNdlqDzJ29jzAiVTtJIeoj/PljSByCFiIIpTWjb4A
+    oiYRN6iGepnWZ0io4zGl+6snHshbUllriuIIlRFSI8eNTg8xU5ti4BQVqvlUeumm
+    WXJjrnE1tArPxLJqUCNxw8Yyh8l874g/YXOW3n31S8V3b3CO2TXYB4YodU0peRZZ
+    HcoGRan51gJ3Dy0ngr17Vu/KrTh+/9PEqworCng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519410735; bh=LHtES75ODUMuWQp0zPTGSrNCiY
-    Ex5/ErfkPcd0Ao0Wg=; b=qP/4BnOic3S8T8W64rDuF+i80gd71lgiXtIjqQRXkx
-    6iccPVqwgW/oTHtS31ova6Jo50/REqLmU7bZWqhaafSHVmlH+jc637OA/9luGF9I
-    reQPfMvKwsDL5cYzGJgoRa5KOgT2L6Tm+giI+ZhGvNoFFcj9yEJRWf3gTJmzMe15
-    gj12HXNcHQJFR0+Ws0nVYU+PHJONE98lmgVJuLV78UXfGFwzQz0KTZ90J7urIhco
-    qzRPyzQ0cD4AhK/iA/NePbo8bBUPfOkYInpFRJpBQOrMC9kv2HoIMrFEox+j38Th
-    eKCk/V05cltXjWfyyeiwaUCCxAIWiwGnxZdWvJUNJ14g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519410726; bh=u6D5MeWUfKCm7wSiDhXtj6FHJv
+    j/rNrRK+keBYD51V8=; b=juEKudFvgqiWbQlCRssXCDQshd3JGsj2r8KIzPxNUe
+    dM708BsvCaIrHbdNZ69zQcMMjkN0/vPRtBYGnEu98X7vxpQT5gi25safR13213vr
+    hd/02KCg20xNLx6qGNbsgNfw/QkCUrJebsy8AygKuR+XjFTXux3xs6C+RF5I0AXU
+    K1m8uBIAVn8OB+5WbaehmpLCzuV22cpbrpkbm8Q48YEaaQHTrZ/c2xU5kSOXYofi
+    ZsQeWh+PM5SyLhWzEapLLg7e+So/99dSqZM++n2QZjbnoLiNP9i9CM44bNOBd7IK
+    p30K9Cjf3/Uzy5aO12XTK3Du79jGZxm3xVALhgt61x2Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeBWScM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:32:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35904 "EHLO
+        id S1751949AbeBWScD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:32:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35714 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752716AbeBWScI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:32:08 -0500
+        with ESMTP id S1751632AbeBWScC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:32:02 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, bp@suse.de,
-        linux-efi@vger.kernel.org, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 53/58] mm/early_ioremap: Fix boot hang with earlyprintk=efi,keep
-Date: Fri, 23 Feb 2018 19:26:52 +0100
-Message-Id: <20180223170215.061838996@linuxfoundation.org>
+Subject: [PATCH 3.18 51/58] xfrm: Fix stack-out-of-bounds with misconfigured transport mode policies.
+Date: Fri, 23 Feb 2018 19:26:50 +0100
+Message-Id: <20180223170214.786890273@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -83,46 +79,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Young <dyoung@redhat.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
 
-[ Upstream commit 7f6f60a1ba52538c16f26930bfbcfe193d9d746a ]
+[ Upstream commit 732706afe1cc46ef48493b3d2b69c98f36314ae4 ]
 
-earlyprintk=efi,keep does not work any more with a warning
-in mm/early_ioremap.c: WARN_ON(system_state != SYSTEM_BOOTING):
-Boot just hangs because of the earlyprintk within the earlyprintk
-implementation code itself.
+On policies with a transport mode template, we pass the addresses
+from the flowi to xfrm_state_find(), assuming that the IP addresses
+(and address family) don't change during transformation.
 
-This is caused by a new introduced middle state in:
+Unfortunately our policy template validation is not strict enough.
+It is possible to configure policies with transport mode template
+where the address family of the template does not match the selectors
+address family. This lead to stack-out-of-bound reads because
+we compare arddesses of the wrong family. Fix this by refusing
+such a configuration, address family can not change on transport
+mode.
 
-  69a78ff226fe ("init: Introduce SYSTEM_SCHEDULING state")
+We use the assumption that, on transport mode, the first templates
+address family must match the address family of the policy selector.
+Subsequent transport mode templates must mach the address family of
+the previous template.
 
-early_ioremap() is fine in both SYSTEM_BOOTING and SYSTEM_SCHEDULING
-states, original condition should be updated accordingly.
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: bp@suse.de
-Cc: linux-efi@vger.kernel.org
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20171209041610.GA3249@dhcp-128-65.nay.redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/early_ioremap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/xfrm/xfrm_user.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/mm/early_ioremap.c
-+++ b/mm/early_ioremap.c
-@@ -102,7 +102,7 @@ __early_ioremap(resource_size_t phys_add
- 	enum fixed_addresses idx;
- 	int i, slot;
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1349,11 +1349,14 @@ static void copy_templates(struct xfrm_p
  
--	WARN_ON(system_state != SYSTEM_BOOTING);
-+	WARN_ON(system_state >= SYSTEM_RUNNING);
+ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ {
++	u16 prev_family;
+ 	int i;
  
- 	slot = -1;
- 	for (i = 0; i < FIX_BTMAPS_SLOTS; i++) {
+ 	if (nr > XFRM_MAX_DEPTH)
+ 		return -EINVAL;
+ 
++	prev_family = family;
++
+ 	for (i = 0; i < nr; i++) {
+ 		/* We never validated the ut->family value, so many
+ 		 * applications simply leave it at zero.  The check was
+@@ -1365,6 +1368,12 @@ static int validate_tmpl(int nr, struct
+ 		if (!ut[i].family)
+ 			ut[i].family = family;
+ 
++		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
++		    (ut[i].family != prev_family))
++			return -EINVAL;
++
++		prev_family = ut[i].family;
++
+ 		switch (ut[i].family) {
+ 		case AF_INET:
+ 			break;
