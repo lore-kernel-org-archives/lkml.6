@@ -1,80 +1,104 @@
-Return-Path: <tomas.winkler@intel.com>
-X-Google-Smtp-Source: AH8x225cFnfD2AzBO/QkKTBepJV6PFL68JieVH86gj0BGmZJPVpr/wVqO+rVrEDxalPsa92K7TK+
-ARC-Seal: i=1; a=rsa-sha256; t=1519768075; cv=none;
+Return-Path: <kkamagui@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519380926; cv=none;
         d=google.com; s=arc-20160816;
-        b=xFrWLiu0KK0xKYQAXWaL6iblvgwDcvLdnA0finVaVlOfjUGWAbcronGywUSSWah7V4
-         XPbRUlZlx/sWHBHwIFJpSc/k5+wqMbIZfWcvT+1gsG+nYGd1cuvSOaIrqFYIq8J2u/X7
-         m2f5hiKMAH5A00XZ9kRZ5dS/ueBDEJlt7ef9EuVXCD4iHSqRjgTjGOaiTbEPwKeR1GgS
-         NA2LwxjRbD2cwQwaNQQjhXG+Skcm7QiNyFcJFEBK8k8reH2hr5crNx/pjAxktkU6EJRi
-         vUc+IiFIwTmrn8c0gp3Vts0t3ijyW7hWrNSzHtfcTC93knVIcGxQLHplX1sCVg1v+MRb
-         tmFA==
+        b=n0svCut/t4LmixPmSDkl9VCZh1m12VmbzJbmKpH+dKaz/OIseSizC2SWmKY31kUIUP
+         kOp+J1sxK+gEo2p+NwkOKF5N+GOz8XshJHj7rX7HCUiUxtUNFfa4HlckGDDdh9FA802y
+         B0jO0Y/BsVzJEfGNbXV+9rJXovFhayv5EbZI/eaAI/blPucsWfp5u6B4cx75S70mGg+V
+         eCWvdsugBzPwJO3K+tb34dh6hfL9dDSInCnQuzi1mwju5TEd8s2Y7am79EkhkIjyzxVa
+         i8yl7RWaKTt04tEqU2y3kSM7mGzvIQXDEQ5+UKMomCWS2DMzx1jtpkfCo2/dUdxyE8NM
+         8Xag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
-         :dlp-product:content-language:accept-language:in-reply-to:references
-         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=Wh/y0FLEGe1dzmgpiuksLW13eRWnLrTsSesAHyhGRp8=;
-        b=viGCdR0VoEZZ84EsiL31r9pYkPQMvZ9xROa/P+G0/OS9dcEY5a7SrXBhBVvTDosJ2X
-         enSUiBebago+/7LBusgwhfrxeQeFsEG/uZmk7XXEgIdGMmaQphcnA80wvU03xCwaz4i6
-         eDbvmfHtMquBc1r8U3C6yCDJRkXz1Nptte16C1rqm93yDNTM8Ex6ZBRmnZKwjOSGqD/I
-         cAWWoKPb5FkKKUiD0Up8WQ7dO1GbtjwHmOGnsxRmrVFvqiYphAWc+frAdlZjOvI1PBrJ
-         Nb0yncfk/8AsQ2fVHVZL9hOSOldcklAcsCmdjcp4VN/MQsjPYT7xQRvz5PknN5JHC+1W
-         Dutg==
+        bh=E8912SBG6XsZQpSKEiXaak7O1BKvvLVklKmTpPpQdws=;
+        b=yqqLYKWsLCKgXh1QwDT3lBr2tDvue+3dZSmS0UwsFHy/ogwEfkrT8bhnLkY4Bi7VZV
+         QFlh/cSfeyI4VbUERptClPhlwP+BgnrO7NLsyHQi3vb2KxkLL9O6y1c5DTrW8fka77QJ
+         9pHklUfmeJ2SKEGXaokkC1QkfDYEclyRoelbQyZhSMUVmCkKdtvoCBw1HI4ImnFNOKhq
+         rY1kuE1//WlhqOQF+3aVkMddFWLF/ue8PjIzL+GdFtBkpb6zBVZE68Pqiq8M1rKRMwH5
+         NdmGgjz7ebK1ehlTuBkE7mT+9Y2WqYgafmgk9BWMSUZbNJnsGLSHjMRKN7eiG3mQrQ67
+         KDoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tomas.winkler@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=tomas.winkler@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZIQxCk+A;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tomas.winkler@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=tomas.winkler@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,402,1515484800";
-   d="scan'208";a="20659706"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Colin Ian King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mei: remove dev_err message on an unsupported ioctl
-Thread-Topic: [PATCH] mei: remove dev_err message on an unsupported ioctl
-Thread-Index: AQHTr+cBWLhVLGez8kOOfhAUJlAh/6O4fpMA///hpYCAAGj7UA==
-Date: Tue, 27 Feb 2018 21:47:51 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422A748@hasmsx108.ger.corp.intel.com>
-References: <20180227162105.14113-1-colin.king@canonical.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422A4CC@hasmsx108.ger.corp.intel.com>
- <42c81e25-52be-a80e-f304-765c9a71b328@canonical.com>
-In-Reply-To: <42c81e25-52be-a80e-f304-765c9a71b328@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDc1ZmU0MDMtZTNmNS00YTU2LWFlMTUtYTcwZmEyNzRlNTMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJRbXhsU1dzZUlwaXJldU9NS2JnU1wvMXNtVG1JVXg2YW56ZXpXcTMzSW5yTWh1Q3lSOXhvWEdCd2JrM3dEd1BnNyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.252.4.156]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZIQxCk+A;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225D54fhA3VQlstemYCpirC9Eh05lp5hU+oyveE9eaHlqRFRggMygguiR1t7gXGGVTxtuj/ENA==
+From: Seunghun Han <kkamagui@gmail.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH] x86: mce: fix kernel panic when check_interval is changed
+Date: Fri, 23 Feb 2018 19:13:50 +0900
+Message-Id: <20180223101350.8344-1-kkamagui@gmail.com>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593571772960941030?=
-X-GMAIL-MSGID: =?utf-8?q?1593592329590167960?=
+X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
+X-GMAIL-MSGID: =?utf-8?q?1593186374882748310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQo+IE9uIDI3LzAyLzE4IDE3OjI2LCBXaW5rbGVyLCBUb21hcyB3cm90ZToNCj4gPj4NCj4gPj4g
-RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gPj4NCj4g
-Pj4gQ3VycmVudGx5IHRoZSBkcml2ZXIgc3BhbXMgdGhlIGtlcm5lbCBsb2cgb24gdW5zdXBwb3J0
-ZWQgaW9jdGxzIHdoaWNoDQo+ID4+IGlzIHVubmVjZXNzYXJ5IGFzIHRoZSBpb2N0bCByZXR1cm5z
-IC1FTk9JT0NUTENNRCB0byBpbmRpY2F0ZSB0aGlzDQo+IGFueXdheS4NCj4gPj4gSSBzdXNwZWN0
-IHRoaXMgd2FzIG9yaWdpbmFsbHkgZm9yIGRlYnVnZ2luZyBwdXJwb3NlcyBidXQgaXQgcmVhbGx5
-IGlzDQo+ID4+IG5vdCByZXF1aXJlZCBzbyByZW1vdmUgaXQuDQo+ID4+DQo+ID4NCj4gPiBUaGlz
-IGlzIHJhdGhlciBzdHJhbmdlIGFzIG1vc3Qgb2YgdGhlIGxlZ2ltaXQgYXBwbGljYXRpb25zIGFy
-ZSB1c2luZw0KPiA+IG9uZSBJT0NUTCBmcm9tIGtlcm5lbCAzLjAgRG8geW91IGhhdmUgYW55IHJl
-ZmVyZW5jZSB3aGVyZSB0aGlzIGNhbGwgaXMNCj4gb3JpZ2luYXRlZCBmcm9tLCBmcmFua2x5IHRo
-aXMgaXMgdGhlIGZpcnN0IHRpbWUgSSBnb3Qgc3VjaCBjb21wbGFpbi4NCj4gDQo+IEkgaGl0IHRo
-aXMgd2hpbGUgc3RyZXNzaW5nIHRoZSBrZXJuZWwgd2l0aCBteSBzdHJlc3Mtbmcga2VybmVsIHN0
-cmVzc2luZyB0b29sOw0KPiB0aGlzIHdhcyBub3QgdXNpbmcgdGhlIGxlZ2l0aW1hdGUgaW9jdGxz
-ICh0byBzZWUgaWYgdGhpbmdzDQo+IGV4cGxvZGUpIGFuZCBJIGdvdCBhIHJhdGhlciBmdWxsIGtl
-cm5lbCBsb2cuIFNvIGl0IHdhcyBiZWluZyBhYnVzZWQgc29tZXdoYXQNCj4gOy0pDQoNCk9rYXks
-IHRoYW5rcyBmb3IgdGhlIGluZm8uDQoNCg==
+I am Seunghun Han and a senior security researcher at National Security
+Research Institute of South Korea.
+
+I found a critical security issue which can make kernel panic in userspace.
+After analyzing the issue carefully, I found that MCE driver in the kernel
+has a problem which can be occurred in SMP environment.
+
+The check_interval file in
+/sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
+global timer value for MCE polling. If it is changed by one CPU, MCE driver
+in kernel calls mce_restart() function and broadcasts the event to other
+CPUs to delete and restart MCE polling timer.
+
+The __mcheck_cpu_init_timer() function which is called by mce_restart()
+function initializes the mce_timer variable, and the "lock" in mce_timer is
+also reinitialized. If more than one CPU write a specific value to
+check_interval file concurrently, one can initialize the "lock" in mce_timer
+while the others are handling "lock" in mce_timer. This problem causes some
+synchronization errors such as kernel panic and kernel hang.
+
+It is a critical security problem because the attacker can make kernel panic
+by writing a value to the check_interval file in userspace, and it can be
+used for Denial-of-Service (DoS) attack.
+
+To fix this problem, I changed the __mcheck_cpu_init_timer() function to
+reuse mce_timer instead of initializing it. The purpose of the function is
+to restart the timer and it can be archived by calling
+
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 3d8c573a9a27..d72f2f74f4d7 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1771,7 +1771,6 @@ static void __mcheck_cpu_init_timer(void)
+ {
+ 	struct timer_list *t = this_cpu_ptr(&mce_timer);
+ 
+-	timer_setup(t, mce_timer_fn, TIMER_PINNED);
+ 	mce_start_timer(t);
+ }
+ 
+@@ -2029,8 +2028,10 @@ static void mce_enable_ce(void *all)
+ 		return;
+ 	cmci_reenable();
+ 	cmci_recheck();
+-	if (all)
++	if (all) {
++		del_timer_sync(this_cpu_ptr(&mce_timer));
+ 		__mcheck_cpu_init_timer();
++	}
+ }
+ 
+ static struct bus_type mce_subsys = {
+-- 
+2.11.0
