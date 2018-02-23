@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226PQvKea3pnnv72qzo583M9taKzXKVrG+TpZ97otlRTWeg7jdmi1bSBWbYhiHAU4FbzBazm
-ARC-Seal: i=1; a=rsa-sha256; t=1519412191; cv=none;
+X-Google-Smtp-Source: AH8x227oPRotflxQcQpn25tQz/N/K4B8cYdo+K6ceSBGW8I7xvbQRP2uI5iuD/DggH5jkrtsUivh
+ARC-Seal: i=1; a=rsa-sha256; t=1519412188; cv=none;
         d=google.com; s=arc-20160816;
-        b=N12Wo2mjQAK/Lr7dSlrtSwK3tdynL6KC/HupEr1XPp3qsJqjutjSyGlYf5eXSpAEn/
-         sjUacxwrJW6MsUiNrLXiZlGygJvglEhe1PmhhmCmBcYRA3yX/pvvy2OIJi1xAFcHnY42
-         RZWSDfbQhJ86Um8TwC7ftY+CsAzy/91pNTENEuOpwaidyq0AwR9/qOOIe1WCvIiaQyrN
-         UkNu5OoYb/s2mBwbuXXzHnPfJ0Fv7LJd8BVkknayMVmrqEQEAh4rtz1/IMM7qGxki1Nf
-         kh3sePRpaMxvubGoQUeRWCbcCXs2aHATwMJkUwS4IElpdJpDkV7gHtuHHBA7I9kg7tUj
-         Y51w==
+        b=wByvMhJ/H8W/D1hhuDhbjFWnuDUSVCsZ7S7FQuKDsVYWmJ9PY3UT9NGOtFlhb39ASy
+         Aylwl0/rO/dSv38QValTkNPQz1E/b4fBSYSbNJwkoNJpYUI8ljYpmrQmuGn15WazsLCn
+         9m7C3F+CALMNVb8Id/Hvf98JLoK2/TeMzHoDY0GcwnYYKbO2+YJS2hXYVSt8PYSmZM2g
+         Hy320CCAt/MiIHaM+vURHuWL/rhl4t4p7VXlED65m3WRO3EzpPgBy6dqlKkgf2LZ0FqS
+         RwKzOHuPaPmPjAM6mkiUpMO7h/ibPEt5ylCgkh6SKZ9mlqb4FgznMIXZHxitBD9YLb4r
+         nh+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NOjZooq6u65QtqBIPzsyPzgUUYrNPVCikGKkBwSMXFI=;
-        b=S15UUG9uaf80+Ez0I4G7CVdPncLERs+eyCpHHxRoFE5vSx9Z4PRa5abEhUBUI58YmT
-         DqIrsASEwFLbU+NFvr8hy0363ywAYIBQudYlEypOyttqLvwzv3fwfPQj5FQDDFuxebXA
-         3Ac3sBt6G2ll0vHAnNFjvJ65iUKR+k2s/e1xxwl6qUePwFYrMjDy9vribzt6BtumHmgL
-         vrYmEPbz+TlWgfUiB3Y/2K/rwLXJ51R4yyblHwLysVUlMv8RlXS2UyljYxIq3CjCEsvL
-         Rq+lxeAibCbeydXeaib0M/LjsIsRK66R4JAOIMKPg2sUO69QoMlGDER72xR8FZdulzVt
-         jFbw==
+        bh=UGQhDI+lIzmSQ4BJtubQH1yjOjK5wZ86vIKXf/y7b7g=;
+        b=jcTM8Dvl4XatJ2ilPhfuwqQj8hkLxMbfjndG5G9YyZyqgHgDvYpaNZs/vSDVommt7G
+         d+L+ddwCLzFR+Y+7xa2N1swH5a4DSYA3N7dNqYdpIZUPNrPx8yQo+DY9sVhRhgwMI8+L
+         y0EnOLYWlYqIPDCXs2tceAY5ANKVaCCpeIGUUn4CbvIPxR8fNNZJ3b1tCHodiMcQ/PiS
+         59SzgmxFdyRvy7OBQtoJmru/Y7Vt79jssuufybmlxXzlXNXQPZO+ttI4hAgC0b7wjYBN
+         iOJ85DNz+5K+Yb0/lxdi63pV38Kd8fmhOODipLWCHHxZQs0ZM+q2V4+m1r9tpeAQI9uc
+         6Ivw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>,
+	Justin Maggard <jmaggard@netgear.com>,
 	Qu Wenruo <wqu@suse.com>,
 	David Sterba <dsterba@suse.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 119/159] Btrfs: disable FUA if mounted with nobarrier
-Date: Fri, 23 Feb 2018 19:27:07 +0100
-Message-Id: <20180223170757.691151421@linuxfoundation.org>
+Subject: [PATCH 4.14 118/159] btrfs: Fix quota reservation leak on preallocated files
+Date: Fri, 23 Feb 2018 19:27:06 +0100
+Message-Id: <20180223170757.587068442@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219158542441794?=
-X-GMAIL-MSGID: =?utf-8?q?1593219158542441794?=
+X-GMAIL-THRID: =?utf-8?q?1593219155611912676?=
+X-GMAIL-MSGID: =?utf-8?q?1593219155611912676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,53 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Justin Maggard <jmaggard10@gmail.com>
 
 
-[ Upstream commit 1b9e619c5bc8235cfba3dc4ced2fb0e3554a05d4 ]
+[ Upstream commit b430b7751286b3acff2d324553c8cec4f1e87764 ]
 
-I was seeing disk flushes still happening when I mounted a Btrfs
-filesystem with nobarrier for testing. This is because we use FUA to
-write out the first super block, and on devices without FUA support, the
-block layer translates FUA to a flush. Even on devices supporting true
-FUA, using FUA when we asked for no barriers is surprising.
+Commit c6887cd11149 ("Btrfs: don't do nocow check unless we have to")
+changed the behavior of __btrfs_buffered_write() so that it first tries
+to get a data space reservation, and then skips the relatively expensive
+nocow check if the reservation succeeded.
 
-Fixes: 387125fc722a8ed ("Btrfs: fix barrier flushes")
-Signed-off-by: Omar Sandoval <osandov@fb.com>
+If we have quotas enabled, the data space reservation also includes a
+quota reservation.  But in the rewrite case, the space has already been
+accounted for in qgroups.  So btrfs_check_data_free_space() increases
+the quota reservation, but it never gets decreased when the data
+actually gets written and overwrites the pre-existing data.  So we're
+left with both the qgroup and qgroup reservation accounting for the same
+space.
+
+This commit adds the missing btrfs_qgroup_free_data() call in the case
+of BTRFS_ORDERED_PREALLOC extents.
+
+Fixes: c6887cd11149 ("Btrfs: don't do nocow check unless we have to")
+Signed-off-by: Justin Maggard <jmaggard@netgear.com>
 Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/disk-io.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ fs/btrfs/inode.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3391,6 +3391,7 @@ static int write_dev_supers(struct btrfs
- 	int errors = 0;
- 	u32 crc;
- 	u64 bytenr;
-+	int op_flags;
- 
- 	if (max_mirrors == 0)
- 		max_mirrors = BTRFS_SUPER_MIRROR_MAX;
-@@ -3433,13 +3434,10 @@ static int write_dev_supers(struct btrfs
- 		 * we fua the first super.  The others we allow
- 		 * to go down lazy.
- 		 */
--		if (i == 0) {
--			ret = btrfsic_submit_bh(REQ_OP_WRITE,
--				REQ_SYNC | REQ_FUA | REQ_META | REQ_PRIO, bh);
--		} else {
--			ret = btrfsic_submit_bh(REQ_OP_WRITE,
--				REQ_SYNC | REQ_META | REQ_PRIO, bh);
--		}
-+		op_flags = REQ_SYNC | REQ_META | REQ_PRIO;
-+		if (i == 0 && !btrfs_test_opt(device->fs_info, NOBARRIER))
-+			op_flags |= REQ_FUA;
-+		ret = btrfsic_submit_bh(REQ_OP_WRITE, op_flags, bh);
- 		if (ret)
- 			errors++;
- 	}
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3016,6 +3016,8 @@ static int btrfs_finish_ordered_io(struc
+ 		compress_type = ordered_extent->compress_type;
+ 	if (test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags)) {
+ 		BUG_ON(compress_type);
++		btrfs_qgroup_free_data(inode, NULL, ordered_extent->file_offset,
++				       ordered_extent->len);
+ 		ret = btrfs_mark_extent_written(trans, BTRFS_I(inode),
+ 						ordered_extent->file_offset,
+ 						ordered_extent->file_offset +
