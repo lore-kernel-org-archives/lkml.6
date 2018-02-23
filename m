@@ -1,45 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeBWVJ6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:09:58 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:41009 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752424AbeBWVJ4 (ORCPT
+        id S1752052AbeBWVOP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:14:15 -0500
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:8757 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbeBWVOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:09:56 -0500
-To: LKML <linux-kernel@vger.kernel.org>
-From: =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <email@xn--ywecrlyn-m0a.net>
-Subject: Re: Avoid speculative indirect calls in kernel
-Message-ID: <949dc572-5e4f-c259-a27f-65dcf3acf032@xn--ywecrlyn-m0a.net>
-Date: Fri, 23 Feb 2018 22:10:05 +0100
-User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 23 Feb 2018 16:14:14 -0500
+From: Toshi Kani <toshi.kani@hpe.com>
+To: dan.j.williams@intel.com
+Cc: linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] update label size handlings per UEFI 2.7
+Date: Fri, 23 Feb 2018 14:59:20 -0700
+Message-Id: <20180223215922.25415-1-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patchmeister Torvalds:
+This patchset updates label storage size check and index block size
+calculation according to UEFI 2.7 spec.
 
-"Or is Intel basically saying "we are committed to selling you shit
-forever and ever, and never fixing anything"?"
+---
+Toshi Kani (2):
+ 1/2 libnvdimm, label: change min label storage size per UEFI 2.7
+ 2/2 libnvdimm, label: change nvdimm_num_label_slots per UEFI 2.7
 
-Back in Celeron days, Intel was popular because you could clock the 
-lesser cached Celeron 300mhz to ~500mhz.
-
-Everybody knew then not to get anything pricier. But still Intel sells 
-Xeons at 3x the price, for little noticable gain?
-
-Basically I did research on philosophy, and indeed the mainconcept of a 
-culture is what determines a cultures behaviour. Even the internal 
-design of the cpu seems to be inspired by "God".
-
-I have tried the zén-realized version "Zün", instead, God of absolute 
-reality. Because regressions in philosophy, is regressions in computing, 
-is ultimately Bill Gates talking about fecal water.
-
--- 
-Fredelige hilsener,
-Ywe Cærlyn,
+---
+ drivers/nvdimm/label.c | 34 ++++++++++++++++++++++++----------
+ drivers/nvdimm/label.h |  2 +-
+ 2 files changed, 25 insertions(+), 11 deletions(-)
