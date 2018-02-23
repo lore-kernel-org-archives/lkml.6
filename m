@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410988-2-1691626997994385100
+X-Cyrus-Session-Id: sloti22d1t05-3559911-1519410988-2-16959595501195962495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519410987; b=UeD0Eu73EIdEFqSBfo2wfggmM1SuqGTb2YhzLMOTp6y7UzU
-    OZYKAy3iQ2AeygWTICg8kJD40kgnZebFIcL7hnZaxWOneTQxx5zfxCUFmye6/Jmc
-    KEbSBcV4CjG46JE1RzZ2egIfRFWWNsFeHTnEgUKe6Ve9p9n0zuMezMHBWIdfR232
-    +RP0tBAr2w/ZhthM8cq6DJW8TTv1fluvNuZjsDCtlRt8UwKNNAyLTP6B/3bT4brG
-    zbDG//IoAmuiWngCKEnoUgCZvdnoNM6HM7QC4JsX3JWNcN2Z7VPZ/0YN4cnQrW0Q
-    LBJwXnTpfjec4WSlmdiUKSxN4VIgNuEcI0LL4BQ==
+    t=1519410987; b=OYYDd23wQG12oEeJk8my9cYo0m2AwKV50ZhiZLbkyK1L9Y8
+    n8hm4ZcUfMPTd6iKfEROKMFl4awnsUL7eqtXDdvcUySevKYhpFxNJ6hDg2zNV0q4
+    VJX9q7C8epvW6uSY66r8jphhToKR88lOVByuh2y6xvPIDdLacqRgUvARmg6wMNbs
+    6NJXAmm1tJJhuVHTLOEUTxBJSK9cEKJkniM6TgBY5sfTn8xyypFtgdh+jn0PjjEX
+    QRgw35Uh4WbnmBKMeqJ8dd05JVz8cSTUrA20aMoqi2YcFT+3TTE7S1AHhX8+yvt6
+    OqkXtBUnqyHORHCdz4eCoL/OshkMfVRYyqK58zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519410987; bh=nm9RKoc6a/k2/bshqegDiZDuSW
-    G0nMaxSC/YtbgchTQ=; b=W9xenLAylE4niWKCKUNAwbxb8bk3BcDVHZpgCAiGME
-    FA8bbgRG9jSJQZyMLsYO5SCB8zdbtPF+YJfv1Pcxz1DtvqDiIVw1gg196oIZmaxF
-    y1qgVo7vcTCtxNYqDclWeaR5lDSWlMcsFGrqYNUJn0m+zyAJ17leVBhxLPyLl1c7
-    3KvX+RLsDEQRzRD0qANYpr+WJs31weXKIMTzWClZAawiMhBXuiS6mhdp8wG7xWt6
-    dgbIho1rCEWqD3QY1TBy4mtcB7dfHJvHyEpEm8ZrkTWBHiRgrwiLlItGRTDQE+bF
-    2fwKGqZ6F4qNM09ql8ufIFj+yBw9Dk4wcTe/rjKpFajw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519410987; bh=YYnL9iJFGL3fFZHKBqdfcFYm7i
+    jekkk8ZHrgJhoBOcI=; b=GxCEfGcO9m94AOlkwJZeaABVhgA/5NsMdL9zwNQfdo
+    hxnSYvua4rZWX7dyKBN1dGEZ2NvwLgY+l58tCbvA3/w0Yx7PAgAY//tXCHikjCg7
+    oS18Zr/dSYw0rdSckWxl+UvYzG3Drva6Onhed+cm8WlRizF1CUX0wA9T0ybIcw9/
+    ZnoHPneeYZmp2w+ia9PnjVwJXcUeSxLmSPkkJ+prXHflRTMHdrsQM3pEpCnkSagB
+    3ECYGDuF3sS6zjvdm3umuQYCTI7Bt5LU3KEVaO9t0EDiyHTtlJJqcFmVwW26VBv2
+    vgsewYj4XdK8J4zjTSPmFfRn0wOkf1OjlCYH75hHsj8g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeBWSgW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:36:22 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37650 "EHLO
+        id S1754007AbeBWSgZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:36:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754007AbeBWSgU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:36:20 -0500
+        with ESMTP id S1754041AbeBWSgX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:36:23 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Nishanth Menon <nm@ti.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 033/193] ARM: dts: Fix omap4 hang with GPS connected to USB by using wakeupgen
-Date: Fri, 23 Feb 2018 19:24:26 +0100
-Message-Id: <20180223170331.289904566@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 073/193] x86/build: Silence the build with "make -s"
+Date: Fri, 23 Feb 2018 19:25:06 +0100
+Message-Id: <20180223170337.429487430@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -83,59 +82,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
+commit d460131dd50599e0e9405d5f4ae02c27d529a44a upstream.
 
-[ Upstream commit cf87634c8b24e24bf379b8c6807c8b0fb5f23567 ]
+Every kernel build on x86 will result in some output:
 
-There's been a reproducable USB OHCI/EHCI cpuidle related hang on omap4
-for a while that happens after about 20 - 40 minutes on an idle system
-with some data feeding device being connected, like a USB GPS device or
-a cellular modem.
+  Setup is 13084 bytes (padded to 13312 bytes).
+  System is 4833 kB
+  CRC 6d35fa35
+  Kernel: arch/x86/boot/bzImage is ready  (#2)
 
-This issue happens in cpuidle states C2 and C3 and does not happen if
-cpuidle is limited to C1 state only. The symptoms are that the whole
-system hangs and never wakes up from idle, and if a watchdog is
-configured the system reboots after a while.
+This shuts it up, so that 'make -s' is truely silent as long as
+everything works. Building without '-s' should produce unchanged
+output.
 
-Turns out that OHCI/EHCI devices on omap4 are trying to use the GIC
-interrupt controller directly as a parent instead of the WUGEN. We
-need to pass the interrupts through WUGEN to GIC to provide the wakeup
-events for the processor.
-
-Let's fix the issue by removing the gic interrupt-parent and use the
-default interrupt-parent wakeupgen instead. Note that omap5.dtsi had
-this already fixes earlier by commit 7136d457f365 ("ARM: omap: convert
-wakeupgen to stacked domains") but we somehow missed omap4 at that
-point.
-
-Fixes: 7136d457f365 ("ARM: omap: convert wakeupgen to stacked domains")
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170719125310.2487451-6-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/omap4.dtsi |    2 --
- 1 file changed, 2 deletions(-)
 
---- a/arch/arm/boot/dts/omap4.dtsi
-+++ b/arch/arm/boot/dts/omap4.dtsi
-@@ -844,14 +844,12 @@
- 			usbhsohci: ohci@4a064800 {
- 				compatible = "ti,ohci-omap3";
- 				reg = <0x4a064800 0x400>;
--				interrupt-parent = <&gic>;
- 				interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
- 			};
+---
+ arch/x86/boot/Makefile |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -64,12 +64,13 @@ GCOV_PROFILE := n
+ $(obj)/bzImage: asflags-y  := $(SVGA_MODE)
  
- 			usbhsehci: ehci@4a064c00 {
- 				compatible = "ti,ehci-omap";
- 				reg = <0x4a064c00 0x400>;
--				interrupt-parent = <&gic>;
- 				interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
+ quiet_cmd_image = BUILD   $@
++silent_redirect_image = >/dev/null
+ cmd_image = $(obj)/tools/build $(obj)/setup.bin $(obj)/vmlinux.bin \
+-			       $(obj)/zoffset.h $@
++			       $(obj)/zoffset.h $@ $($(quiet)redirect_image)
+ 
+ $(obj)/bzImage: $(obj)/setup.bin $(obj)/vmlinux.bin $(obj)/tools/build FORCE
+ 	$(call if_changed,image)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
++	@$(kecho) 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ OBJCOPYFLAGS_vmlinux.bin := -O binary -R .note -R .comment -S
+ $(obj)/vmlinux.bin: $(obj)/compressed/vmlinux FORCE
