@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtWnfnkVSgVgpykq3B9SQHyAOZderiSEFAAuLVpytqkypezXUkb00Qgi+Dbt4TKzIEah/0g
-ARC-Seal: i=1; a=rsa-sha256; t=1519411012; cv=none;
+X-Google-Smtp-Source: AG47ELt862tIruSH4pOMAHMouaPArWdg8rHHFB9iqcadPQ3KaEmkiL04bdXodipmhlXNuuW0fEXl
+ARC-Seal: i=1; a=rsa-sha256; t=1519411009; cv=none;
         d=google.com; s=arc-20160816;
-        b=LiEThHw5ziNFLpfRUONnvIV7RQ/iM0lQyi0yspEbT5RCHUS+7qdY5RXbCcuvYZvVkv
-         v6B68YTrN8fR5HzPWHY8IGqAO8a8/l/PWxEW0eiKZRpejfHwTTbDeUFt/tL1JvE4PyIK
-         7R3Qs3kiTAOBmgzsPWqwCqE1bDHE6VePW4DCYeKfIbVlRBliFJ0qEVzmDw34vegeokoi
-         HAwBTnhB08FrCy379A+vFoLCKGVkQeGyRHf7sdFCQ/lLtF2qKZLp6xNDfOnkbMlsNCu+
-         WDol0fCXd+/Ce2l3MrOwfvmX6spA+jPLgt+BFGB64JMMUVLZrOLiMKNs5BPjOiEDnSja
-         auWA==
+        b=U8AwXriDhNWq0ChXNfTtG7JoKmEhPs5At9UYz1nTCzQjnaETFhabqvU/TYaRvfmpQB
+         JQG/ZvfeJpWLo6+fLAJqksU2OPz/1kH3cTeLbjDgbIh9yfkOlzyJKe+90IiRr5AnQ7Ls
+         0fvFIaUv7MUPpF5mCQ48emm+KCiOikwVcWactEpXYfBcFiXaKoXRU9WPqikO/ZkZCLts
+         hSUX+WsChmtbBN3U2fRuqwofSJn/tA8o5lYXAnHjntx/Y8+OpisqTLsXOBmJYcxr1bTo
+         QJLDv/XuPpFyJGDY92R+4fXUFoyJEqNHLKjMufZe5M8cjUVwIem6bvvHEUlZJFnKmq5Q
+         ka9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wmkHlu4FXias3YoyMN2Jc4e2cWH+E3I5mDU6FA3d9X4=;
-        b=OEsg9ospP3dGgEL0SKSzoCunpTIH5TXGBmKFAw43VHdq/rBHZafVdPjA8gonpFKMWe
-         3ggmtql9sC+WUWdJWXVBIIPxclz0sxX/PleFimQ+j/NAZMxXaYNhIq0s7itVQozIesU6
-         sPBLRLy9AT0mAVLwQIvnP3BCu36eP2/XYlDa6hwX3ystnIcsRG4YCjMSt+bwoO/eYZQ3
-         9m0GRB4LVcE4DomCiXH8REmkMkyJrsSgQg37yjkGVEHS9+VTRfCjYbPEbs8oH4iLY8bQ
-         n4QevPOOBTGzTsOqS/en4chqXMpXoyPUOpaNky2c2o+DFPBXMQVZjAj85CNYW9H/GS2r
-         zXHA==
+        bh=SmBwSo++TQgsTqVk98Yr5jYDJKwWKU9blWEDjbgLACo=;
+        b=LwNOwQEi1pZq1abG1Mr/DUaurC7djYzsVMdtd/QwV0rYPINGQBrN8ua8TOJVTIxuMz
+         HmXcqNCkSDAfGpxVQt0KaP8HJyGXb5i5aRLbTK8jdLv6dJND+Ym3AIh/Rrw9rndeMFC1
+         pAxCGLCEWHCXr9r8DcGGP+rX9qMHgr23OcjUhKhYXCINqR24O3q8rRyGW/2vXp/kkEy+
+         QK3l/K4wwWFTZcEUrZ12KqXPT2J3jQ0eAvdal09yEIUL78ZP/69tPQy6F3FYsfkCteKd
+         YimzLvBUWC5P/EtyIcmlbz2hURrZY8HkT7AkOzWC/6lsiTaiA6vcA9xklrYFCwY9LntU
+         q4Dg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 091/193] mptfusion: hide unused seq_mpt_print_ioc_summary function
-Date: Fri, 23 Feb 2018 19:25:24 +0100
-Message-Id: <20180223170340.289648646@linuxfoundation.org>
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	Brian Norris <computersforpeace@gmail.com>
+Subject: [PATCH 4.4 090/193] mtd: maps: add __init attribute
+Date: Fri, 23 Feb 2018 19:25:23 +0100
+Message-Id: <20180223170340.118210702@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217921461979750?=
-X-GMAIL-MSGID: =?utf-8?q?1593217921461979750?=
+X-GMAIL-THRID: =?utf-8?q?1593217919100331243?=
+X-GMAIL-MSGID: =?utf-8?q?1593217919100331243?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +49,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-commit 28558f5af50d8335cbbc8bc2726e0747553e29f5 upstream.
+commit e4106a7c8236eb7b91686d36f3bf33ee43db94b4 upstream.
 
-The seq_mpt_print_ioc_summary function is used for the
-/proc/mpt/iocN/summary implementation and never gets called when
-CONFIG_PROC_FS is disabled:
+Add __init attribute on functions that are only called from other __init
+functions and that are not inlined, at least with gcc version 4.8.4 on an
+x86 machine with allyesconfig.  Currently, the functions are put in the
+.text.unlikely segment.  Declaring them as __init will cause them to be
+put in the .init.text and to disappear after initialization.
 
-drivers/message/fusion/mptbase.c:6851:13: warning: 'seq_mpt_print_ioc_summary' defined but not used [-Wunused-function]
- static void seq_mpt_print_ioc_summary(MPT_ADAPTER *ioc, struct seq_file *m, int showlan)
+The result of objdump -x on the functions before the change is as follows:
 
-This adds an #ifdef to hide the function definition in that case and
-avoid the warning.
+00000000000001bc l     F .text.unlikely 00000000000006a2 ck804xrom_init_one.isra.1
+00000000000001aa l     F .text.unlikely 0000000000000764 esb2rom_init_one.isra.1
+00000000000001db l     F .text.unlikely 0000000000000716 ichxrom_init_one.isra.1
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+And after the change it is as follows:
+
+0000000000000000 l     F .init.text	000000000000069d ck804xrom_init_one.isra.1
+0000000000000000 l     F .init.text	000000000000075f esb2rom_init_one.isra.1
+0000000000000000 l     F .init.text	0000000000000711 ichxrom_init_one.isra.1
+
+Done with the help of Coccinelle.  The semantic patch checks for local
+static non-init functions that are called from an __init function and are
+not called from any other function.
+
+Note that in each case, the function is stored in the probe field of a
+pci_driver structure, but this code is under an #if 0.  The #if 0s have
+been unchanged since 2009 at the latest.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/message/fusion/mptbase.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/maps/ck804xrom.c |    4 ++--
+ drivers/mtd/maps/esb2rom.c   |    4 ++--
+ drivers/mtd/maps/ichxrom.c   |    4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -6848,6 +6848,7 @@ mpt_print_ioc_summary(MPT_ADAPTER *ioc,
- 	*size = y;
+--- a/drivers/mtd/maps/ck804xrom.c
++++ b/drivers/mtd/maps/ck804xrom.c
+@@ -112,8 +112,8 @@ static void ck804xrom_cleanup(struct ck8
  }
  
-+#ifdef CONFIG_PROC_FS
- static void seq_mpt_print_ioc_summary(MPT_ADAPTER *ioc, struct seq_file *m, int showlan)
+ 
+-static int ck804xrom_init_one(struct pci_dev *pdev,
+-			      const struct pci_device_id *ent)
++static int __init ck804xrom_init_one(struct pci_dev *pdev,
++				     const struct pci_device_id *ent)
  {
- 	char expVer[32];
-@@ -6879,6 +6880,7 @@ static void seq_mpt_print_ioc_summary(MP
- 
- 	seq_putc(m, '\n');
+ 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
+ 	u8 byte;
+--- a/drivers/mtd/maps/esb2rom.c
++++ b/drivers/mtd/maps/esb2rom.c
+@@ -144,8 +144,8 @@ static void esb2rom_cleanup(struct esb2r
+ 	pci_dev_put(window->pdev);
  }
-+#endif
  
- /**
-  *	mpt_set_taskmgmt_in_progress_flag - set flags associated with task management
+-static int esb2rom_init_one(struct pci_dev *pdev,
+-			    const struct pci_device_id *ent)
++static int __init esb2rom_init_one(struct pci_dev *pdev,
++				   const struct pci_device_id *ent)
+ {
+ 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
+ 	struct esb2rom_window *window = &esb2rom_window;
+--- a/drivers/mtd/maps/ichxrom.c
++++ b/drivers/mtd/maps/ichxrom.c
+@@ -86,8 +86,8 @@ static void ichxrom_cleanup(struct ichxr
+ }
+ 
+ 
+-static int ichxrom_init_one(struct pci_dev *pdev,
+-			    const struct pci_device_id *ent)
++static int __init ichxrom_init_one(struct pci_dev *pdev,
++				   const struct pci_device_id *ent)
+ {
+ 	static char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
+ 	struct ichxrom_window *window = &ichxrom_window;
