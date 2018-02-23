@@ -1,129 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeBWQmd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:42:33 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:38010 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeBWQmC (ORCPT
+        id S1751582AbeBWQng (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:43:36 -0500
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:33054 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbeBWQnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:42:02 -0500
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: linux-snps-arc@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 3/3] ARC: setup cpu possible mask according to possible-cpus dts property
-Date: Fri, 23 Feb 2018 19:41:54 +0300
-Message-Id: <20180223164154.22377-3-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.9.3
-In-Reply-To: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
-References: <20180223164154.22377-1-Eugeniy.Paltsev@synopsys.com>
+        Fri, 23 Feb 2018 11:43:31 -0500
+X-Google-Smtp-Source: AG47ELsz8NAlC+kp4vFN7VL/aFWSITNigatwx69pez5dW0zoOrw+34N+tA4psDs4A94g1MMZto3eqQ==
+Date: Fri, 23 Feb 2018 11:43:29 -0500
+From: Sean Paul <seanpaul@chromium.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <seanpaul@chromium.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 1/4] drm: Add writeback connector type
+Message-ID: <20180223164329.GO223881@art_vandelay>
+References: <20180223131758.18362-1-robdclark@gmail.com>
+ <20180223131758.18362-2-robdclark@gmail.com>
+ <20180223155935.GJ223881@art_vandelay>
+ <CAF6AEGs3EHxzwW4MaYc+LXmKL3amD8pUysamrprPy-F-W8=6AQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGs3EHxzwW4MaYc+LXmKL3amD8pUysamrprPy-F-W8=6AQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we have option in u-boot to set CPU mask for running linux,
-we want to pass information to kernel about CPU cores should
-be brought up. So we patch kernel dtb in u-boot to set
-possible-cpus property.
+On Fri, Feb 23, 2018 at 11:25:11AM -0500, Rob Clark wrote:
+> On Fri, Feb 23, 2018 at 10:59 AM, Sean Paul <seanpaul@chromium.org> wrote:
+> >
+> > Have we considered hiding writeback behind a client cap instead?
+> 
+> It is kinda *almost* unneeded, since the connector reports itself as
+> disconnected.
+> 
+> I'm not sure what the reason was to drop the cap, but I think it would
+> be better to have a cap so WB connectors don't show up in, for ex,
+> xrandr
 
-This also allows us to have correctly setuped MCIP debug mask.
+Yeah, the disconnected hack is kind of gross, IMO. I hate to introduce churn in
+the patch series given that it was initially introduced with the client cap.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
+There are also cases where we might want to make writeback unavailable, such as
+when content protection is enabled. In those cases, it's conceivable that we
+might want to use disconnected as a signal to u/s. I suppose we could also just
+fail the check, so most of this is just academic.
 
-Changes v1->v2:
- * no changes.
+Sean
 
- arch/arc/kernel/smp.c | 50 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 40 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arc/kernel/smp.c b/arch/arc/kernel/smp.c
-index efe8b42..21d86c3 100644
---- a/arch/arc/kernel/smp.c
-+++ b/arch/arc/kernel/smp.c
-@@ -24,6 +24,7 @@
- #include <linux/reboot.h>
- #include <linux/irqdomain.h>
- #include <linux/export.h>
-+#include <linux/of_fdt.h>
- 
- #include <asm/processor.h>
- #include <asm/setup.h>
-@@ -47,6 +48,42 @@ void __init smp_prepare_boot_cpu(void)
- {
- }
- 
-+static int __init arc_get_cpu_map(const char *name, struct cpumask *cpumask)
-+{
-+	unsigned long dt_root = of_get_flat_dt_root();
-+	const char *buf;
-+
-+	buf = of_get_flat_dt_prop(dt_root, name, NULL);
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (cpulist_parse(buf, cpumask))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Read from DeviceTree and setup cpu possible mask. If there is no
-+ * "possible-cpus" property in DeviceTree pretend all [0..NR_CPUS-1] exist.
-+ */
-+static void __init arc_init_cpu_possible(void)
-+{
-+	struct cpumask cpumask;
-+
-+	if (arc_get_cpu_map("possible-cpus", &cpumask)) {
-+		pr_warn("Failed to get possible-cpus from dtb, pretending all %u cpus exist\n",
-+			NR_CPUS);
-+
-+		cpumask_setall(&cpumask);
-+	}
-+
-+	if (!cpumask_test_cpu(0, &cpumask))
-+		panic("Master cpu (cpu[0]) is missed in cpu possible mask!");
-+
-+	init_cpu_possible(&cpumask);
-+}
-+
- /*
-  * Called from setup_arch() before calling setup_processor()
-  *
-@@ -58,10 +95,7 @@ void __init smp_prepare_boot_cpu(void)
-  */
- void __init smp_init_cpus(void)
- {
--	unsigned int i;
--
--	for (i = 0; i < NR_CPUS; i++)
--		set_cpu_possible(i, true);
-+	arc_init_cpu_possible();
- 
- 	if (plat_smp_ops.init_early_smp)
- 		plat_smp_ops.init_early_smp();
-@@ -70,16 +104,12 @@ void __init smp_init_cpus(void)
- /* called from init ( ) =>  process 1 */
- void __init smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * if platform didn't set the present map already, do it now
- 	 * boot cpu is set to present already by init/main.c
- 	 */
--	if (num_present_cpus() <= 1) {
--		for (i = 0; i < max_cpus; i++)
--			set_cpu_present(i, true);
--	}
-+	if (num_present_cpus() <= 1)
-+		init_cpu_present(cpu_possible_mask);
- }
- 
- void __init smp_cpus_done(unsigned int max_cpus)
+> 
+> BR,
+> -R
+
 -- 
-2.9.3
+Sean Paul, Software Engineer, Google / Chromium OS
