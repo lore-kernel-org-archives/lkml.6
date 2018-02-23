@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225gM0DCYdxSXioEFgdghmsYyYIoDZW413M9yMnAaM0E9elafqDKvNiTmvnoMHOwyfLNb0PJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519410961; cv=none;
+X-Google-Smtp-Source: AG47ELtmZplnmJNNIngKZBPRzewGGr7CrAKKdIrHFWZLu39qSN6F2dTOYvMalrSPLzOY1QKA7b8I
+ARC-Seal: i=1; a=rsa-sha256; t=1519410958; cv=none;
         d=google.com; s=arc-20160816;
-        b=owY6xQWto+wmp8OqS/VA0oliTLKg3Ic5C3jaXQwdOlqvfFjkzg19E6Xcq7AOD77Ovs
-         POvEN2jLqCrcB6DlzCl+SnaEMkPSui0UK2JM89LFli+93uvnIfS/b4P/y2SxRkeGQ8Gg
-         5daYK0Xck0eccltr7nMhMUe2D4GhWhtmjp0tDVitDtdP3K7sMMgtuLNDpFHCNjJRq78g
-         KRfCRujscrG7rsVGAFZ+IFPHfmvZr8elhSpZgR9hpMBjUZ8xzMBaQnlzNDf/mGo+xnk2
-         19Rrlk7Hq8PDIbjqrDEs6BSZ9Vaazjk9Ff4CsBaKECyPg7XYUV/ai2O0c+E/9heLV2y9
-         PRmQ==
+        b=TbwdLEuLxEWa/q/CDznsfYSYOnG4jCr7emjF2LsbjrrXqn21JPzsdNREpapFZS1sxi
+         zABSWo9R5sIHDItl0LcaozyPL6j/dkwy9JzsB/sSdinxr+2UeIxY++z8dWL54bj9AIGy
+         Jf0sWYgQGzVaMhQutAuMtzmbxBUqwtXV8Uy/CCkC5J1AdSWgDBAWbigzRafc7xLiUMaC
+         fubJ9L8jDSnHvZ6vsk+TBDo+ku91/NMWddEKl2McT1DIGwsSWvlLi+JAKGnvv3QsgsaQ
+         78wGSPaGJxsycVIhWXtBLQ5S2TOZr0SFd/A0Vk7Bs9dcR/LDzUwrFmtLLJLeLjzIgSj/
+         ijtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QfZbut2PEYVXHWyU8GJ90HiwsH46X2598V84t+XKwS4=;
-        b=B5AQXeSIvq/P+gXrYq1n6r95/L1hme9ZOomCxgCcnoLmSOBBr1ZMDXvquIeQCxsUvb
-         ttXZwygCbCVfxGDZfyqSoP51cHRhaQPUMHYirqTDQbyT2kAr90B1c3wFrt6HidsVKgr8
-         FRglsdxcVj4C4SopL/0OFW+PjipEOXPt9dhkNK1KL+wG6DbKElXvbGRQbXkxw+aXfKWv
-         IikYpbx5jN2oPfbi3ApIfniV46LZXomBKSAAgFm14Hc4kKN08UhgVI66M8mn+BTqMsuY
-         F2jy+zRx0f4NsGOxv9YxXXmNqESOCFnIq60gSgMPbAr83Bb3CcjTIVH2sWhrEgasLdHL
-         OV5Q==
+        bh=An5A++usW0/IAlJZwZBQmxh5UOWxltkCgnJjDLP1ZxU=;
+        b=CDw74ml3DL2BiS4jKXvXoFOmKotmMUQVLd0asSgTDxbmnk3zKohAz9FoqGQAe0H34p
+         3JaontHRbJ+IEGjc/S5RsitX2ZED9AeUiCF4jnpUWv4w04Dv26td9zXYlUWq7/HGZwqq
+         lYkHk7trHZ3q/WGYWHNgGYPr29xt9LfhdPiOa/UyNORKTPJZIu9KcWvrdGc00LwZGXIy
+         oLeFPzInXNaPRkszz+HEQaVcnqsqONbbyhV7AyS9lZqDDxsYt4nZB0KwVivLFPESi+/V
+         McsmYoLwcUeRpyReNfSJrPms8mrHTY6yfUkeRyul3N2gWOq31zE5ozn1O02toiEoo6uv
+         ipMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Bill Metzenthen <billm@melbpc.org.au>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 071/193] x86/fpu/math-emu: Fix possible uninitialized variable use
-Date: Fri, 23 Feb 2018 19:25:04 +0100
-Message-Id: <20180223170337.089670014@linuxfoundation.org>
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.4 070/193] arm64: define BUG() instruction without CONFIG_BUG
+Date: Fri, 23 Feb 2018 19:25:03 +0100
+Message-Id: <20180223170336.924929508@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217868412742928?=
-X-GMAIL-MSGID: =?utf-8?q?1593217868412742928?=
+X-GMAIL-THRID: =?utf-8?q?1593217866108388873?=
+X-GMAIL-MSGID: =?utf-8?q?1593217866108388873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,109 +52,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 75e2f0a6b16141cb347f442033ec907380d4d66e upstream.
+commit f13d52cb3fad03c237572be2ee691e1fe2d1d7bb upstream.
 
-When building the kernel with "make EXTRA_CFLAGS=...", this overrides
-the "PARANOID" preprocessor macro defined in arch/x86/math-emu/Makefile,
-and we run into a build warning:
+This mirrors commit e9c38ceba8d9 ("ARM: 8455/1: define __BUG as
+asm(BUG_INSTR) without CONFIG_BUG") to make the behavior of
+arm64 consistent with arm and x86, and avoids lots of warnings in
+randconfig builds, such as:
 
-  arch/x86/math-emu/reg_compare.c: In function ‘compare_i_st_st’:
-  arch/x86/math-emu/reg_compare.c:254:6: error: ‘f’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+kernel/seccomp.c: In function '__seccomp_filter':
+kernel/seccomp.c:666:1: error: no return statement in function returning non-void [-Werror=return-type]
 
-This fixes the implementation to work correctly even without the PARANOID
-flag, and also fixes the Makefile to not use the EXTRA_CFLAGS variable
-but instead use the ccflags-y variable in the Makefile that is meant
-for this purpose.
-
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Bill Metzenthen <billm@melbpc.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170719125310.2487451-3-arnd@arndb.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/math-emu/Makefile      |    4 ++--
- arch/x86/math-emu/reg_compare.c |   16 ++++++++--------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/include/asm/bug.h |   35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
---- a/arch/x86/math-emu/Makefile
-+++ b/arch/x86/math-emu/Makefile
-@@ -5,8 +5,8 @@
- #DEBUG	= -DDEBUGGING
- DEBUG	=
- PARANOID = -DPARANOID
--EXTRA_CFLAGS	:= $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
--EXTRA_AFLAGS	:= $(PARANOID)
-+ccflags-y += $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
-+asflags-y += $(PARANOID)
+--- a/arch/arm64/include/asm/bug.h
++++ b/arch/arm64/include/asm/bug.h
+@@ -20,9 +20,6 @@
  
- # From 'C' language sources:
- C_OBJS =fpu_entry.o errors.o \
---- a/arch/x86/math-emu/reg_compare.c
-+++ b/arch/x86/math-emu/reg_compare.c
-@@ -168,7 +168,7 @@ static int compare(FPU_REG const *b, int
- /* This function requires that st(0) is not empty */
- int FPU_compare_st_data(FPU_REG const *loaded_data, u_char loaded_tag)
- {
--	int f = 0, c;
-+	int f, c;
+ #include <asm/debug-monitors.h>
  
- 	c = compare(loaded_data, loaded_tag);
+-#ifdef CONFIG_GENERIC_BUG
+-#define HAVE_ARCH_BUG
+-
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ #define _BUGVERBOSE_LOCATION(file, line) __BUGVERBOSE_LOCATION(file, line)
+ #define __BUGVERBOSE_LOCATION(file, line)				\
+@@ -36,28 +33,36 @@
+ #define _BUGVERBOSE_LOCATION(file, line)
+ #endif
  
-@@ -189,12 +189,12 @@ int FPU_compare_st_data(FPU_REG const *l
- 		case COMP_No_Comp:
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#ifdef PARANOID
- 		default:
-+#ifdef PARANOID
- 			EXCEPTION(EX_INTERNAL | 0x121);
-+#endif /* PARANOID */
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#endif /* PARANOID */
- 		}
- 	setcc(f);
- 	if (c & COMP_Denormal) {
-@@ -205,7 +205,7 @@ int FPU_compare_st_data(FPU_REG const *l
+-#define _BUG_FLAGS(flags) __BUG_FLAGS(flags)
++#ifdef CONFIG_GENERIC_BUG
  
- static int compare_st_st(int nr)
- {
--	int f = 0, c;
-+	int f, c;
- 	FPU_REG *st_ptr;
+-#define __BUG_FLAGS(flags) asm volatile (		\
++#define __BUG_ENTRY(flags) 				\
+ 		".pushsection __bug_table,\"a\"\n\t"	\
+ 		".align 2\n\t"				\
+ 	"0:	.long 1f - 0b\n\t"			\
+ _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
+ 		".short " #flags "\n\t"			\
+ 		".popsection\n"				\
+-							\
+-	"1:	brk %[imm]"				\
+-		:: [imm] "i" (BUG_BRK_IMM)		\
+-)
+-
+-#define BUG() do {				\
+-	_BUG_FLAGS(0);				\
+-	unreachable();				\
++	"1:	"
++#else
++#define __BUG_ENTRY(flags) ""
++#endif
++
++#define __BUG_FLAGS(flags)				\
++	asm volatile (					\
++		__BUG_ENTRY(flags)			\
++		"brk %[imm]" :: [imm] "i" (BUG_BRK_IMM)	\
++	);
++
++
++#define BUG() do {					\
++	__BUG_FLAGS(0);					\
++	unreachable();					\
+ } while (0)
  
- 	if (!NOT_EMPTY(0) || !NOT_EMPTY(nr)) {
-@@ -235,12 +235,12 @@ static int compare_st_st(int nr)
- 		case COMP_No_Comp:
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#ifdef PARANOID
- 		default:
-+#ifdef PARANOID
- 			EXCEPTION(EX_INTERNAL | 0x122);
-+#endif /* PARANOID */
- 			f = SW_C3 | SW_C2 | SW_C0;
- 			break;
--#endif /* PARANOID */
- 		}
- 	setcc(f);
- 	if (c & COMP_Denormal) {
-@@ -283,12 +283,12 @@ static int compare_i_st_st(int nr)
- 	case COMP_No_Comp:
- 		f = X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF;
- 		break;
--#ifdef PARANOID
- 	default:
-+#ifdef PARANOID
- 		EXCEPTION(EX_INTERNAL | 0x122);
-+#endif /* PARANOID */
- 		f = 0;
- 		break;
--#endif /* PARANOID */
- 	}
- 	FPU_EFLAGS = (FPU_EFLAGS & ~(X86_EFLAGS_ZF | X86_EFLAGS_PF | X86_EFLAGS_CF)) | f;
- 	if (c & COMP_Denormal) {
+-#define __WARN_TAINT(taint) _BUG_FLAGS(BUGFLAG_TAINT(taint))
++#define __WARN_TAINT(taint) 				\
++	__BUG_FLAGS(BUGFLAG_TAINT(taint))
+ 
+-#endif /* ! CONFIG_GENERIC_BUG */
++#define HAVE_ARCH_BUG
+ 
+ #include <asm-generic/bug.h>
+ 
