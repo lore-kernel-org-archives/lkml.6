@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519416457-2-10060324596363911102
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519416445-2-6205736458876871211
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416457; b=vwDdxxeAEyVl0d/MCFi0/d7dJTurckrYEaowyOoWPanJvq/
-    B87aHrmcSVuDdYmfSENJGD83IgVBH993pKjS9cs/RI0xN5s+Ril8EAJXLUozXs+m
-    4ySbzQf/AjyhVevfh12lzi1deeuZX8Kh84HlBxvQKpGIUXf20deWqDa0++RDlkuS
-    hvDM45IKH5wrj1jUTl47BoUCRaf/sR9vqxC7gw9Dm41XytJC/tKgjLka9j8c2E+w
-    +/swDFRh2if5QBW/W56iBGbllrheQTln4ks4eJ2tc/A7jnp9DiXOrIZILpQDbacz
-    GTqYQhSiJTGg2T6tzlLAuef1+i3lXupVPXqKGSA==
+    t=1519416445; b=Ioj15O6MPwlLPAO/3gbKADqW2otM04votQUb5ayQz7GYKLx
+    YArG5F/7W6d1o2hSqCa7g3h3sXbwoD6Ta+ACzFgi8vzyzFsZQukUc827r3gwT30J
+    tSvk1JJ0ZNR3BHI82lootvWSUbMMQeOm4Eh4J1NAoLwJZtLnQmop7XCG4je8jDwT
+    O53uET+RP3v7XhAqcDfXDkDfhY1BWGSmhIs93P4XEoW0cAk9oaO5kHlXy7rB8lgy
+    bIPRhX3UtpkoZ+oeOn2duN2cfkgihHh+wmK4TXQiZTI7C9o09qDxbKcBtWRj/zxB
+    vVJjlKy+0yUzY7T0UX/erf2r3zCddK1r1LD7J1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416457; bh=jkz3x4PTQ/KnIroJw+sCCSdS6b
-    2T+LPZZW99XXUE20o=; b=eeRy5g6rt0RR7LUhJC6EMbxHyuFVv6qAmp839KSVb/
-    Cb/p8K29nal66HoNAm2ahk6R43qMe4dZNn19osbS678WikYS3jN6zFJdKLqWlPAS
-    myfJXM2zFMBFwH/8wnrAET1AHf697Gr8abO4JtkXExCCew989gvczGyn+/HbwBHV
-    yZvyKyrNHOtxGY3gtroFfVdRI3hldjn26kMW0zFdpugm2TaMDfOxdE977XMBP9mO
-    51StiYqwZmIDFFWkcLRDMysVAxbaay1C8230oR7f+aQUt5fhWnN1Cd/FT7G1O0+/
-    13udsyOTEQoNvzSPsJ7eMtsMek8zDp+OF4oundTIflQw==
+    :list-id; s=arctest; t=1519416445; bh=rds9WsaNyHcs/6DJWnfH8Gq/yQ
+    nfNeAobPgoZn/0l9k=; b=LnKtVEv6PgechhPFdtnMbBNUEWFY2tUn+RQ96JBiqJ
+    DIx/lcKMZM2cr8t6T4UZiP6bjQ/vYhR9AgDeAITeueodMzAnZF2rb8Lq+wgGXAW2
+    MaLbDPGTZujW41KD4+M5CcVMfQiasXDgdu5vmTMzsAX3r496RlnvKgCpNRCsNm1S
+    PoV2TQHjzdgIjCIE+pXW6QrQ+Aq4gpmXm30X2zUp6/nHjHRzNgkYvc11PV1d3LGj
+    X5tGe/gQsWauv45eoIB2giKaYlRMa1lZUrWlC2ytYyFfldUcKxhzjoedoHy9Iv9P
+    5W92X3Md0HBj7zaPebBpW6NNvrijBkyPdQ9oPRwIzbeA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933135AbeBWSmr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:42:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41918 "EHLO
+        id S1755111AbeBWUHO (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:07:14 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41956 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932515AbeBWSmq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:46 -0500
+        with ESMTP id S932769AbeBWSmy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 019/145] blk_rq_map_user_iov: fix error override
-Date: Fri, 23 Feb 2018 19:25:25 +0100
-Message-Id: <20180223170727.146950163@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 004/145] cfg80211: check dev_set_name() return value
+Date: Fri, 23 Feb 2018 19:25:10 +0100
+Message-Id: <20180223170725.307645045@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -78,44 +79,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Douglas Gilbert <dgilbert@interlog.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 69e0927b3774563c19b5fb32e91d75edc147fb62 upstream.
+commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
 
-During stress tests by syzkaller on the sg driver the block layer
-infrequently returns EINVAL. Closer inspection shows the block
-layer was trying to return ENOMEM (which is much more
-understandable) but for some reason overroad that useful error.
+syzbot reported a warning from rfkill_alloc(), and after a while
+I think that the reason is that it was doing fault injection and
+the dev_set_name() failed, leaving the name NULL, and we didn't
+check the return value and got to rfkill_alloc() with a NULL name.
+Since we really don't want a NULL name, we ought to check the
+return value.
 
-Patch below does not show this (unchanged) line:
-   ret =__blk_rq_map_user_iov(rq, map_data, &i, gfp_mask, copy);
-That 'ret' was being overridden when that function failed.
-
-Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
+Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-map.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/core.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -116,7 +116,7 @@ int blk_rq_map_user_iov(struct request_q
- 	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
- 	struct bio *bio = NULL;
- 	struct iov_iter i;
--	int ret;
-+	int ret = -EINVAL;
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -421,6 +421,8 @@ struct wiphy *wiphy_new_nm(const struct
+ 		if (rv)
+ 			goto use_default_name;
+ 	} else {
++		int rv;
++
+ use_default_name:
+ 		/* NOTE:  This is *probably* safe w/out holding rtnl because of
+ 		 * the restrictions on phy names.  Probably this call could
+@@ -428,7 +430,11 @@ use_default_name:
+ 		 * phyX.  But, might should add some locking and check return
+ 		 * value, and use a different name if this one exists?
+ 		 */
+-		dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++		rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++		if (rv < 0) {
++			kfree(rdev);
++			return NULL;
++		}
+ 	}
  
- 	if (!iter_is_iovec(iter))
- 		goto fail;
-@@ -145,7 +145,7 @@ unmap_rq:
- 	__blk_rq_unmap_user(bio);
- fail:
- 	rq->bio = NULL;
--	return -EINVAL;
-+	return ret;
- }
- EXPORT_SYMBOL(blk_rq_map_user_iov);
- 
+ 	INIT_LIST_HEAD(&rdev->wiphy.wdev_list);
