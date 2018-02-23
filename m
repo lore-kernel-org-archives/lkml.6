@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411976-5-7882803175653638090
+X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411903-2-6595402240030542957
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roenda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519411975; b=B4mPIyJtqokStFrkLv6HohNQ36LBGBBgIlPF7mrsZfKREZg
-    d7IlUdR/wQeOOZ8sxR9RoJovUUfQhPMoaizrc30/JxNbRL/OuH1y2TsFGvzj0KeZ
-    XkzWd5XDxJl5sQF4Q1Vdnbr1M5Yk5CZrQS+CtsBCF5dyezrPyN7c5vIPH6/AkAEQ
-    DxA8+nd26jaH7qEUdp6xx+x5PWCadIcjSwZsNcSKA0wtrI356ren1538u3crZc1N
-    PyMtt+omFIf+PDtHX85gmkhmL2kDjCUlkd49xrGsJEx7KaIqxvZVXfP86+Onst5F
-    CdOHtt+LOf7zwsAELCHAiH47ZhSM7Vx3m995U8g==
+    t=1519411902; b=s+pxglGYvCeoi7EMiUwo7E4Aag0DhSzKk4edAhkkdwbCpva
+    xs1xU6tpjOa7bOdx4kSNzzfG8tXb2Cgc+Ct+Z/QEJFsuqU9FiBAl2F9hvS1vjTJc
+    9UQIIwL4ckd/7laN/SL0QXuBHfbY/vkjBoP607Z60Mgb973VYt6JKont7ugsYBnB
+    cjg7Yy0rkDvDsjY2+7ohff+cwEqPzdD6Lu8BFxfyF4QIzjSfGiR1ivnY9qmpdwVK
+    30UhIlxkbabb6IM9WNxjiYtOpep3p8jLS354sCNhLZJ3x2RtqPgwSWt4sNaLthGt
+    ptXEA+MubZ2bZCrqgSGYxnugDheQWnFNM4zuGDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519411975; bh=n1LUAFRYCKZbkI0t5a4oarteUR
-    2PwoKz16VjAg63npY=; b=u90/LLcNeT3FFI14gz/pPD2GrPhI3qmTGxrmOFU4n/
-    4MyKlNMWAx6Acy6g28WmIbEdzRFDc1qjW19CAoh4aCCFLHEDo8bIyQR6T2FuKqAQ
-    OhcxhEHCGkWUx6v4TpJ+5nI97/USSeZuPW71qWIyx6hFzIB6lBD1we0pZKXZBuXa
-    NlXdvKzxPdOoR+U+XlQzXunTszOgqVrreJEK5PbjfpVsZFK+Ups01a5VBK62Dari
-    ZI/Jc8L+cHfYVgUskslgcMzaVJNI71nR4vZd/TsGpw2+hOD+Jkf4ZjF7g2rCYQeQ
-    /kygnNeWzeJWRu0QDS0E4Z0ytoX3spUsCiuNJh9XK5Pw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519411902; bh=qOuZBK+DLveoEslwRpgoiLYr2N
+    /+ElvKtO6KO6jbitQ=; b=v5KXHn/U7TQfGYxxqibNzI728mq1r/bVrpZqBqwC6W
+    gKIX5IJXt3/7mDIV6Wwo7yrT0KSgz8yA1UsxyNce0hVfVZz425QeXns37T7H7Imv
+    v6iafpiCYpYD92ByXKFv7CQST43+G0POhbNC+oWLd4uBdpEY8Y/0atgtal8E0pAp
+    yqZPYB2J0KUco5ZQu1yeKgC1O8gVeHatSUYcIT0526u9zeEOmEJBvo+F4/VGDZYD
+    FrExaN/8SqEkNUDIZIPirK3QhIsAqG6UT5hrFzOLgrS7MpdvgWJ8NLsHgEGqVAWm
+    xE/rjpSVkn4HXJ2ys7MPphGa29ecDNM5criLwkP/eo9w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,19 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935223AbeBWSwv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:52:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47090 "EHLO
+        id S934997AbeBWSvk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:51:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935204AbeBWSwq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:46 -0500
+        with ESMTP id S934995AbeBWSvi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:38 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 041/159] rds: tcp: correctly sequence cleanup on netns deletion.
-Date: Fri, 23 Feb 2018 19:25:49 +0100
-Message-Id: <20180223170748.406395347@linuxfoundation.org>
+        stable@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.14 054/159] binder: replace "%p" with "%pK"
+Date: Fri, 23 Feb 2018 19:26:02 +0100
+Message-Id: <20180223170750.142875604@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,120 +77,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Todd Kjos <tkjos@android.com>
 
-commit 681648e67d43cf269c5590ecf021ed481f4551fc upstream.
+commit 8ca86f1639ec5890d400fff9211aca22d0a392eb upstream.
 
-Commit 8edc3affc077 ("rds: tcp: Take explicit refcounts on struct net")
-introduces a regression in rds-tcp netns cleanup. The cleanup_net(),
-(and thus rds_tcp_dev_event notification) is only called from put_net()
-when all netns refcounts go to 0, but this cannot happen if the
-rds_connection itself is holding a c_net ref that it expects to
-release in rds_tcp_kill_sock.
+The format specifier "%p" can leak kernel addresses. Use
+"%pK" instead. There were 4 remaining cases in binder.c.
 
-Instead, the rds_tcp_kill_sock callback should make sure to
-tear down state carefully, ensuring that the socket teardown
-is only done after all data-structures and workqs that depend
-on it are quiesced.
-
-The original motivation for commit 8edc3affc077 ("rds: tcp: Take explicit
-refcounts on struct net") was to resolve a race condition reported by
-syzkaller where workqs for tx/rx/connect were triggered after the
-namespace was deleted. Those worker threads should have been
-cancelled/flushed before socket tear-down and indeed,
-rds_conn_path_destroy() does try to sequence this by doing
-     /* cancel cp_send_w */
-     /* cancel cp_recv_w */
-     /* flush cp_down_w */
-     /* free data structures */
-Here the "flush cp_down_w" will trigger rds_conn_shutdown and thus
-invoke rds_tcp_conn_path_shutdown() to close the tcp socket, so that
-we ought to have satisfied the requirement that "socket-close is
-done after all other dependent state is quiesced". However,
-rds_conn_shutdown has a bug in that it *always* triggers the reconnect
-workq (and if connection is successful, we always restart tx/rx
-workqs so with the right timing, we risk the race conditions reported
-by syzkaller).
-
-Netns deletion is like module teardown- no need to restart a
-reconnect in this case. We can use the c_destroy_in_prog bit
-to avoid restarting the reconnect.
-
-Fixes: 8edc3affc077 ("rds: tcp: Take explicit refcounts on struct net")
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rds/connection.c |    3 ++-
- net/rds/rds.h        |    6 +++---
- net/rds/tcp.c        |    4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/android/binder.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/rds/connection.c
-+++ b/net/rds/connection.c
-@@ -366,6 +366,8 @@ void rds_conn_shutdown(struct rds_conn_p
- 	 * to the conn hash, so we never trigger a reconnect on this
- 	 * conn - the reconnect is always triggered by the active peer. */
- 	cancel_delayed_work_sync(&cp->cp_conn_w);
-+	if (conn->c_destroy_in_prog)
-+		return;
- 	rcu_read_lock();
- 	if (!hlist_unhashed(&conn->c_hash_node)) {
- 		rcu_read_unlock();
-@@ -445,7 +447,6 @@ void rds_conn_destroy(struct rds_connect
- 	 */
- 	rds_cong_remove_conn(conn);
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2141,7 +2141,7 @@ static void binder_transaction_buffer_re
+ 	int debug_id = buffer->debug_id;
  
--	put_net(conn->c_net);
- 	kfree(conn->c_path);
- 	kmem_cache_free(rds_conn_slab, conn);
+ 	binder_debug(BINDER_DEBUG_TRANSACTION,
+-		     "%d buffer release %d, size %zd-%zd, failed at %p\n",
++		     "%d buffer release %d, size %zd-%zd, failed at %pK\n",
+ 		     proc->pid, buffer->debug_id,
+ 		     buffer->data_size, buffer->offsets_size, failed_at);
  
---- a/net/rds/rds.h
-+++ b/net/rds/rds.h
-@@ -150,7 +150,7 @@ struct rds_connection {
- 
- 	/* Protocol version */
- 	unsigned int		c_version;
--	struct net		*c_net;
-+	possible_net_t		c_net;
- 
- 	struct list_head	c_map_item;
- 	unsigned long		c_map_queued;
-@@ -165,13 +165,13 @@ struct rds_connection {
- static inline
- struct net *rds_conn_net(struct rds_connection *conn)
- {
--	return conn->c_net;
-+	return read_pnet(&conn->c_net);
+@@ -3653,7 +3653,7 @@ static int binder_thread_write(struct bi
+ 				}
+ 			}
+ 			binder_debug(BINDER_DEBUG_DEAD_BINDER,
+-				     "%d:%d BC_DEAD_BINDER_DONE %016llx found %p\n",
++				     "%d:%d BC_DEAD_BINDER_DONE %016llx found %pK\n",
+ 				     proc->pid, thread->pid, (u64)cookie,
+ 				     death);
+ 			if (death == NULL) {
+@@ -4991,7 +4991,7 @@ static void print_binder_transaction_ilo
+ 	spin_lock(&t->lock);
+ 	to_proc = t->to_proc;
+ 	seq_printf(m,
+-		   "%s %d: %p from %d:%d to %d:%d code %x flags %x pri %ld r%d",
++		   "%s %d: %pK from %d:%d to %d:%d code %x flags %x pri %ld r%d",
+ 		   prefix, t->debug_id, t,
+ 		   t->from ? t->from->proc->pid : 0,
+ 		   t->from ? t->from->pid : 0,
+@@ -5015,7 +5015,7 @@ static void print_binder_transaction_ilo
+ 	}
+ 	if (buffer->target_node)
+ 		seq_printf(m, " node %d", buffer->target_node->debug_id);
+-	seq_printf(m, " size %zd:%zd data %p\n",
++	seq_printf(m, " size %zd:%zd data %pK\n",
+ 		   buffer->data_size, buffer->offsets_size,
+ 		   buffer->data);
  }
- 
- static inline
- void rds_conn_net_set(struct rds_connection *conn, struct net *net)
- {
--	conn->c_net = get_net(net);
-+	write_pnet(&conn->c_net, net);
- }
- 
- #define RDS_FLAG_CONG_BITMAP	0x01
---- a/net/rds/tcp.c
-+++ b/net/rds/tcp.c
-@@ -527,7 +527,7 @@ static void rds_tcp_kill_sock(struct net
- 	rds_tcp_listen_stop(lsock, &rtn->rds_tcp_accept_w);
- 	spin_lock_irq(&rds_tcp_conn_lock);
- 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
--		struct net *c_net = tc->t_cpath->cp_conn->c_net;
-+		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
- 
- 		if (net != c_net || !tc->t_sock)
- 			continue;
-@@ -586,7 +586,7 @@ static void rds_tcp_sysctl_reset(struct
- 
- 	spin_lock_irq(&rds_tcp_conn_lock);
- 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
--		struct net *c_net = tc->t_cpath->cp_conn->c_net;
-+		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
- 
- 		if (net != c_net || !tc->t_sock)
- 			continue;
