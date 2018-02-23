@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225h4OeXixRtW4Erd0XvrXaoUI7B3PUIt0IvdJObkSVYC/pdgk5ykYERoNCwYB6JkdAuVHbk
-ARC-Seal: i=1; a=rsa-sha256; t=1519410942; cv=none;
+X-Google-Smtp-Source: AG47ELtceD49b/AdRhuZgrcRS/K4Al9m1IKsI1FJJERCBYCsVVaFuAg7zU7Da7Q8YQV5I9KxINR0
+ARC-Seal: i=1; a=rsa-sha256; t=1519410936; cv=none;
         d=google.com; s=arc-20160816;
-        b=x+yTsWZ1S8G0bABXgWUKjemCAj/W32jhu7z5a3STl94sXaQc2nJGaL73KsBHNVFHUc
-         /ymknGDseELQnNl654JrX/hP5glItntgkFJm3dETbJzALI9/4oKMeD1ekjZ9O7koK9dU
-         RchwUd5Kb5pl1vGLi1AhYgn2RQ4Vu7qd4WvR2gm7kX3aZuG2lcCqSNpt3qY3PYnSeZEi
-         lKl/PlfnBzcA+v0jiaFrOdoBnc/XZvZ/PSj687a6T7qWlKYaQHHvxHY/MPdh8czO7gaY
-         TzJ9nrp1JSYUSLgjIzC0BGJQjVvyotr6ycUODiKwMuh2Y0RuYLyfBfu8pmYK0Wi/Qr8i
-         kv5w==
+        b=suMwLm3VlomE7cdpjfmexzlxlrD7AH7GJeA09rYspC+4xbE+hlSbdFag1s1QFFkZSD
+         LsE4Y9xduGeXcW7mf08oyfqIgqIX6B6SqQ5nysGfq3ZWXIdSH8Po4tQuXdQKX8O45ULP
+         JEgJCjWYFM1mHWqsBqvoCaX03IwSRMkrPPojB6mYz3aKxW6tBPQD4dqk5WhITJ0cncJQ
+         /02K2f0enf2zLzb+ilfrqf9WDixfSaCC0RmXEd/zBXQ+t3zIQgdkUh6NKficrjg+yMlm
+         lVZVzEiC4QQRxLXMYM9wSp2sC3UEraCMlrPzH7L3dpvU/MNz+RKovKQxNCAccrK7z2jQ
+         cPDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xO4ylNpYN9CNBtcbjuNhgF82U8K5wydphxaW2HANwMo=;
-        b=k0R1RKpX4w2YwMTFLBUjWqJ6lDy26C6rkh8otTRp1WmZDtbpgpr2l+9V3Fn69rGxMV
-         CWPLqb2zEbZj6Ygv1+gmXoqiDMLDuryknLiCvuZTcDVowKj0q0Q0yXK3MdvXzAEy+DCD
-         1UrodVxkt9k5t7lqKhFjnth19V9SuZSfw68NIPIyCi0J5nMW2PBCkibhkBnytyAMB11Q
-         hP67S6tZX5swpWIXvG4lc9GVm8D5hFKTJ9VoweSyqtyxBMalsmjl2H7KokuZJBF4Mbyr
-         ZhBwxUfeLNoi26lXu34t2IE0OahUw1BuW4kHShcAXkXWoK6Bs7YTPJeFg1aZXCusb8uq
-         Pi9w==
+        bh=zBJCaw1nUTM3uMhYLjo4iGphpSQ+v3yBpHca+Y0gwY8=;
+        b=eA9FXjLMi+R+ZhtmVUFPSUvcNpM1Xv6+Wb9VGWwOPUAk07raaijM/lY9pZ0XURGrqP
+         +vnRMQ/j4ngyLQG1lll9+NribCEUbCup6Duis2de8af0fLQ9+FmOVJvQjTOUT8AsDKYf
+         /vu69mBGeCga9dUXj0qateTqhuKWYLvpm3N2xyNHvCqIZZme0iwb3OsseypVcp9IDTTP
+         nkGD2/T+3jvO3P/relI8peOtITdzs7hfXDmco/YX5TzLYcZDn9iQw4mHO8+P07AD+WVe
+         +eWfJ9ZURDe8WCR/1C7FVVLpnvF0x15nYlx8Q5awsMr3ckwxMAjd+7oTRurdfZq0PzlW
+         eoLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 064/193] vmxnet3: prevent building with 64K pages
-Date: Fri, 23 Feb 2018 19:24:57 +0100
-Message-Id: <20180223170335.983494978@linuxfoundation.org>
+	Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+	Balamuruhan S <bala24@linux.vnet.ibm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 036/193] perf bench numa: Fixup discontiguous/sparse numa nodes
+Date: Fri, 23 Feb 2018 19:24:29 +0100
+Message-Id: <20180223170331.756199134@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217848180784820?=
-X-GMAIL-MSGID: =?utf-8?q?1593217848180784820?=
+X-GMAIL-THRID: =?utf-8?q?1593217587003347681?=
+X-GMAIL-MSGID: =?utf-8?q?1593217842683299123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +53,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
 
-commit fbdf0e28d061708cf18ba0f8e0db5360dc9a15b9 upstream.
 
-I got a warning about broken code on ARM64 with 64K pages:
+[ Upstream commit 321a7c35c90cc834851ceda18a8ee18f1d032b92 ]
 
-drivers/net/vmxnet3/vmxnet3_drv.c: In function 'vmxnet3_rq_init':
-drivers/net/vmxnet3/vmxnet3_drv.c:1679:29: error: large integer implicitly truncated to unsigned type [-Werror=overflow]
-    rq->buf_info[0][i].len = PAGE_SIZE;
+Certain systems are designed to have sparse/discontiguous nodes.  On
+such systems, 'perf bench numa' hangs, shows wrong number of nodes and
+shows values for non-existent nodes. Handle this by only taking nodes
+that are exposed by kernel to userspace.
 
-'len' here is a 16-bit integer, so this clearly won't work. I don't think
-this driver is used much on anything other than x86, so there is no need
-to fix this properly and we can work around it with a Kconfig dependency
-to forbid known-broken configurations. qemu in theory supports it on
-other architectures too, but presumably only for compatibility with x86
-guests that also run on vmware.
-
-CONFIG_PAGE_SIZE_64KB is used on hexagon, mips, sh and tile, the other
-symbols are architecture-specific names for the same thing.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/1edbcd353c009e109e93d78f2f46381930c340fe.1511368645.git.sathnaga@linux.vnet.ibm.com
+Signed-off-by: Balamuruhan S <bala24@linux.vnet.ibm.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/Kconfig |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/bench/numa.c |   56 +++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 51 insertions(+), 5 deletions(-)
 
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -411,6 +411,9 @@ config XEN_NETDEV_BACKEND
- config VMXNET3
- 	tristate "VMware VMXNET3 ethernet driver"
- 	depends on PCI && INET
-+	depends on !(PAGE_SIZE_64KB || ARM64_64K_PAGES || \
-+		     IA64_PAGE_SIZE_64KB || MICROBLAZE_64K_PAGES || \
-+		     PARISC_PAGE_SIZE_64KB || PPC_64K_PAGES)
- 	help
- 	  This driver supports VMware's vmxnet3 virtual ethernet NIC.
- 	  To compile this driver as a module, choose M here: the
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -208,6 +208,47 @@ static const char * const numa_usage[] =
+ 	NULL
+ };
+ 
++/*
++ * To get number of numa nodes present.
++ */
++static int nr_numa_nodes(void)
++{
++	int i, nr_nodes = 0;
++
++	for (i = 0; i < g->p.nr_nodes; i++) {
++		if (numa_bitmask_isbitset(numa_nodes_ptr, i))
++			nr_nodes++;
++	}
++
++	return nr_nodes;
++}
++
++/*
++ * To check if given numa node is present.
++ */
++static int is_node_present(int node)
++{
++	return numa_bitmask_isbitset(numa_nodes_ptr, node);
++}
++
++/*
++ * To check given numa node has cpus.
++ */
++static bool node_has_cpus(int node)
++{
++	struct bitmask *cpu = numa_allocate_cpumask();
++	unsigned int i;
++
++	if (cpu && !numa_node_to_cpus(node, cpu)) {
++		for (i = 0; i < cpu->size; i++) {
++			if (numa_bitmask_isbitset(cpu, i))
++				return true;
++		}
++	}
++
++	return false; /* lets fall back to nocpus safely */
++}
++
+ static cpu_set_t bind_to_cpu(int target_cpu)
+ {
+ 	cpu_set_t orig_mask, mask;
+@@ -236,12 +277,12 @@ static cpu_set_t bind_to_cpu(int target_
+ 
+ static cpu_set_t bind_to_node(int target_node)
+ {
+-	int cpus_per_node = g->p.nr_cpus/g->p.nr_nodes;
++	int cpus_per_node = g->p.nr_cpus / nr_numa_nodes();
+ 	cpu_set_t orig_mask, mask;
+ 	int cpu;
+ 	int ret;
+ 
+-	BUG_ON(cpus_per_node*g->p.nr_nodes != g->p.nr_cpus);
++	BUG_ON(cpus_per_node * nr_numa_nodes() != g->p.nr_cpus);
+ 	BUG_ON(!cpus_per_node);
+ 
+ 	ret = sched_getaffinity(0, sizeof(orig_mask), &orig_mask);
+@@ -641,7 +682,7 @@ static int parse_setup_node_list(void)
+ 			int i;
+ 
+ 			for (i = 0; i < mul; i++) {
+-				if (t >= g->p.nr_tasks) {
++				if (t >= g->p.nr_tasks || !node_has_cpus(bind_node)) {
+ 					printf("\n# NOTE: ignoring bind NODEs starting at NODE#%d\n", bind_node);
+ 					goto out;
+ 				}
+@@ -956,6 +997,8 @@ static void calc_convergence(double runt
+ 	sum = 0;
+ 
+ 	for (node = 0; node < g->p.nr_nodes; node++) {
++		if (!is_node_present(node))
++			continue;
+ 		nr = nodes[node];
+ 		nr_min = min(nr, nr_min);
+ 		nr_max = max(nr, nr_max);
+@@ -976,8 +1019,11 @@ static void calc_convergence(double runt
+ 	process_groups = 0;
+ 
+ 	for (node = 0; node < g->p.nr_nodes; node++) {
+-		int processes = count_node_processes(node);
++		int processes;
+ 
++		if (!is_node_present(node))
++			continue;
++		processes = count_node_processes(node);
+ 		nr = nodes[node];
+ 		tprintf(" %2d/%-2d", nr, processes);
+ 
+@@ -1283,7 +1329,7 @@ static void print_summary(void)
+ 
+ 	printf("\n ###\n");
+ 	printf(" # %d %s will execute (on %d nodes, %d CPUs):\n",
+-		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", g->p.nr_nodes, g->p.nr_cpus);
++		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", nr_numa_nodes(), g->p.nr_cpus);
+ 	printf(" #      %5dx %5ldMB global  shared mem operations\n",
+ 			g->p.nr_loops, g->p.bytes_global/1024/1024);
+ 	printf(" #      %5dx %5ldMB process shared mem operations\n",
