@@ -1,90 +1,136 @@
-Return-Path: <kernel-hardening-return-11960-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuHewL8c4ZQyTsgCVt77ZgRkyFAQ8Z9i5sKiWpHwqjoGNKr/D/woT3wR8LCHkDbKjgN8UxA
-ARC-Seal: i=1; a=rsa-sha256; t=1519663106; cv=none;
+Return-Path: <kernel-hardening-return-11924-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x224JlTk6U7oIgSJAIBYhlH2Y1s/GlnwlL9eyYaUL+9EoR8gonH2Vf01u2tXbrQvR6U89w7DM
+ARC-Seal: i=1; a=rsa-sha256; t=1519397558; cv=none;
         d=google.com; s=arc-20160816;
-        b=PXqxyMts0fZSuczKBp5Upo630t2H0pYCnT6C8Ie/dFg05NeSuK0BBoOBwOKIeJMprC
-         9OXue8tdxAXLGhRGaEqWb7d2vK2kmwaiR0lsUhybYguzF3Jf/NDRbSQKVM520+sp3KJK
-         XbxfyScKQMoQmfG8lMCxfs+wiFSuLtUVk0XbylZeKrgAsYJQXxWSkHFU0eqCE+krM75h
-         s3u0ArYzO7aRAXHltIPY/e0Oo+JmBe16l9iwiKlebjJfGD6zH1DoTNDjqNOvVKL9dilD
-         Ys7tcN5O9DCw0VwQyj7VakDNohiyMK5TEp6C9WLxhHSqZuFS4I/3LnOFMpk/3L2Q+Wto
-         Gi+g==
+        b=pYfvAx8OTB9UQCHg3qBCbyhqUvp+9vFs+z+UuySgKAkEKTXDo5NR/rvMTS6ZSE04Om
+         rDoWFyebe+ge3Ru7ZCneolxui/FPUCwOpll99AL2ZsV2smwRzVjQV9bRbyHdGh57agXt
+         eUT7lEA9EX/lyA6MIKiK4lfJufDQtuhPXqoywooPhsF9FQ8kTHBKD4zKm7DmdddexOg3
+         O+vY5Y+xkRggIG+D2WNsvLpShdgrsl9z4tBukcTQzZyHQ5fkN3QsSwsgzCWx12yCOIpt
+         jZ0VxkCSzVFPtqYu8dRKZwbO2enliMouFBSVvvtJHEu/MzGXUKzHc72FZuZUMcf9ZHHB
+         kqjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=wtntiyUxUB/Nd4ERwl2lsXiArKg+mu8Lhi8mF8SfEOM=;
-        b=ar8rkurJ3d+uMsfmpee7KRyI3O7q8LBN6GSTuREREFwKCJrxk6JMdeguoXOEj00GmD
-         aTK2Giq7NKuktZzJGY9b/GZPOUw6l4N8qCPMkE/d6cXNX/HlutBfKkTYuL2o4yoZDurr
-         SfYRKlTN6bxqEiDTYfv4Ch8rdU5oulQ8mjul+V8OsLWNUQZo1aEX6Q8ztOphacQ5h+UZ
-         89y+2NobsZH4mkoJ+29Qp9G6NtzXwtp3jwnU2aPYnTX5G6K2E5aEo2n7KBGt6wjdfa24
-         Q/Ivwo1iusOMjAenstBWrN6x/iEUWgNcb7YIoYAlaMpunuyaTzpfLQ3FgYxa8AKkFEzP
-         03xw==
+        bh=r+/dQbGqp28pibuoRjnpcP730sLxUhZuApp/+iHgoXc=;
+        b=nC/rGzRjsb1/Vqbv+mCygpxtOsCpFPQzJZNTYEi5kgLBg1cxaof4HcBFWSAo3LVtc3
+         RcsKLSNCXe1vLUxBcBRZeseTdnwQX2j4y2N2pVJxRoMbS+XjdFxTSD7OmNmeeRklahLQ
+         utIBoFRocnOnMcJZ6BHQZlCGlSPBDKgKwhohHTymf7Yd6OSE+CQQJTnvzktfym3ODFFj
+         UfJQ+I+WhYtEr2Yv5efM2pFQq51puMAuy0qKKL45mKoCjlh/GA8VrWcaLAo0L/hXfeCR
+         1Q1Gkry6ymBU2QyXaI+UQZ/sonGnU8q5tVUOhmNRzaxx/F8rSMcQsTRewF2rZgnrOhh6
+         IK1g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11960-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11960-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11924-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11924-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11960-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11960-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11924-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11924-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 3/7] struct page: add field for vm_struct
-To: Matthew Wilcox <willy@infradead.org>
-CC: <david@fromorbit.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
-	<labbott@redhat.com>, <linux-security-module@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-hardening@lists.openwall.com>
-References: <20180223144807.1180-1-igor.stoppa@huawei.com>
- <20180223144807.1180-4-igor.stoppa@huawei.com>
- <20180225033808.GB15796@bombadil.infradead.org>
 From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <5ec5d25a-dbf2-5be4-b449-3704254f8117@huawei.com>
-Date: Mon, 26 Feb 2018 18:37:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+To: <david@fromorbit.com>, <willy@infradead.org>, <keescook@chromium.org>,
+	<mhocko@kernel.org>
+CC: <labbott@redhat.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [PATCH 6/7] lkdtm: crash on overwriting protected pmalloc var
+Date: Fri, 23 Feb 2018 16:48:06 +0200
+Message-ID: <20180223144807.1180-7-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180223144807.1180-1-igor.stoppa@huawei.com>
+References: <20180223144807.1180-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180225033808.GB15796@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593203701882872070?=
-X-GMAIL-MSGID: =?utf-8?q?1593482261797516840?=
+X-GMAIL-THRID: =?utf-8?q?1593203814128727346?=
+X-GMAIL-MSGID: =?utf-8?q?1593203814128727346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Verify that pmalloc read-only protection is in place: trying to
+overwrite a protected variable will crash the kernel.
 
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ drivers/misc/lkdtm.h       |  1 +
+ drivers/misc/lkdtm_core.c  |  3 +++
+ drivers/misc/lkdtm_perms.c | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
-On 25/02/18 05:38, Matthew Wilcox wrote:
-> On Fri, Feb 23, 2018 at 04:48:03PM +0200, Igor Stoppa wrote:
->> @@ -1769,6 +1771,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
->>  
->>  	kmemleak_vmalloc(area, size, gfp_mask);
->>  
->> +	for (i = 0; i < area->nr_pages; i++)
->> +		area->pages[i]->area = area;
->> +
->>  	return addr;
->>  
->>  fail:
-> 
-> IMO, this is the wrong place to initialise the page->area.  It should be
-> done in __vmalloc_area_node() like so:
-> 
->                         area->nr_pages = i;
->                         goto fail;
->                 }
-> +		page->area = area;
->                 area->pages[i] = page;
->                 if (gfpflags_allow_blocking(gfp_mask))
->                         cond_resched();
-> 
-
-
-ok
-
---
-igor
+diff --git a/drivers/misc/lkdtm.h b/drivers/misc/lkdtm.h
+index 9e513dcfd809..dcda3ae76ceb 100644
+--- a/drivers/misc/lkdtm.h
++++ b/drivers/misc/lkdtm.h
+@@ -38,6 +38,7 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
+ void __init lkdtm_perms_init(void);
+ void lkdtm_WRITE_RO(void);
+ void lkdtm_WRITE_RO_AFTER_INIT(void);
++void lkdtm_WRITE_RO_PMALLOC(void);
+ void lkdtm_WRITE_KERN(void);
+ void lkdtm_EXEC_DATA(void);
+ void lkdtm_EXEC_STACK(void);
+diff --git a/drivers/misc/lkdtm_core.c b/drivers/misc/lkdtm_core.c
+index 2154d1bfd18b..c9fd42bda6ee 100644
+--- a/drivers/misc/lkdtm_core.c
++++ b/drivers/misc/lkdtm_core.c
+@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(ACCESS_USERSPACE),
+ 	CRASHTYPE(WRITE_RO),
+ 	CRASHTYPE(WRITE_RO_AFTER_INIT),
++#ifdef CONFIG_PROTECTABLE_MEMORY
++	CRASHTYPE(WRITE_RO_PMALLOC),
++#endif
+ 	CRASHTYPE(WRITE_KERN),
+ 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
+ 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
+diff --git a/drivers/misc/lkdtm_perms.c b/drivers/misc/lkdtm_perms.c
+index 53b85c9d16b8..0ac9023fd2b0 100644
+--- a/drivers/misc/lkdtm_perms.c
++++ b/drivers/misc/lkdtm_perms.c
+@@ -9,6 +9,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/mman.h>
+ #include <linux/uaccess.h>
++#include <linux/pmalloc.h>
+ #include <asm/cacheflush.h>
+ 
+ /* Whether or not to fill the target memory area with do_nothing(). */
+@@ -104,6 +105,33 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
+ 	*ptr ^= 0xabcd1234;
+ }
+ 
++#ifdef CONFIG_PROTECTABLE_MEMORY
++void lkdtm_WRITE_RO_PMALLOC(void)
++{
++	struct gen_pool *pool;
++	int *i;
++
++	pool = pmalloc_create_pool("pool", 0);
++	if (unlikely(!pool)) {
++		pr_info("Failed preparing pool for pmalloc test.");
++		return;
++	}
++
++	i = (int *)pmalloc(pool, sizeof(int), GFP_KERNEL);
++	if (unlikely(!i)) {
++		pr_info("Failed allocating memory for pmalloc test.");
++		pmalloc_destroy_pool(pool);
++		return;
++	}
++
++	*i = INT_MAX;
++	pmalloc_protect_pool(pool);
++
++	pr_info("attempting bad pmalloc write at %p\n", i);
++	*i = 0;
++}
++#endif
++
+ void lkdtm_WRITE_KERN(void)
+ {
+ 	size_t size;
+-- 
+2.14.1
