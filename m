@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvDrENeKaIWh14aVemCsih3xheCxqXdsuKjFGiOSRf5RLFtZNnNgt4SMkmmM/Eab87zF/T6
-ARC-Seal: i=1; a=rsa-sha256; t=1519410886; cv=none;
+X-Google-Smtp-Source: AH8x224ELs+0p4pcX9it9xf7xmC8KWIst72wwtQY7xPifUpNIxhKTq/UJJhlplH1s1PUro34Puql
+ARC-Seal: i=1; a=rsa-sha256; t=1519410883; cv=none;
         d=google.com; s=arc-20160816;
-        b=SBk/zSgoBbjaroc01t+xxCmRkrGXGbAFNW5wStHHgdQ+shKGGi9+Bm4VKz0STSN7D7
-         PKF1q7uA0+B6uDnbz1tghbE8xt1tJwL7dEFW8fMOK4oD3mnnkqufrlP9Y0MJsB9r6dMl
-         NWlfRKkPJ03HTjPrHe97TPf7qDRS8YOzH2e5+8AZDDm8konMSYM0/CUVHbKI/N7bnt7D
-         gC7i5Odyag0CduJWrmf7MjboYsysPgO2HOh2Jy82Z6XXVfVhwd/1Jx7Qx/kAS5XSwKor
-         4iSOCPFa1teqO9YSXqQDcLz4bGxHNPgZuY6nnfHnXC8b69ALhuc+hBxQR9jOnrftye8r
-         E/lg==
+        b=LTYeDkI3mwiHiyYmrfVOodEB5g/R+tJALThiD/aJhMPYTwzDgYQtjBibF0V7Ox045F
+         AAahWvexeICh7mMBpgVvegLXYEoO8NTpjRYPIpsguccx8hYnnPlRT5tyccmh6Iqakzww
+         BX+voHIW1JDc/MFr7awEHG4n8IBJTcRUtH+34fcX9YF6oVAZMHfihY/o2G+xFNWBzv6O
+         J3lGA3mdj13wm4uIrpOnnTr1wfXUE2mxkRIzTSHSCwtUlT3JhElH101ACiANknTpkRGl
+         XTpCl1DeE4a04fmoSIBUYt5GginU9KwdwIGscgd7Q2mcBr0VgjtW830+X6rq85OWJbBq
+         cbLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zyEpc2kXttN0xTeBvqBVu0ZPBtF2K6J3rpv1Zhvtt5k=;
-        b=c6HTqrFVIKrIEFFlmn+avBSV9oK6wptqkUd7NTm6Q02miOsqZ3QBxVrXPvZLBDFcpB
-         0b/j7QaB3+YQMx9JuaXuXHt329VasDUc85RjEs1cZ7jH10HCjocBPPaDQUNbXhf2aale
-         7Fpx+Vej3WIHD9TBbAAaW2ZUOq87oCUTNywuFsAlfx2oM4BK/JdPD9dGXLVWIeoMA2/f
-         aP7+DV+JJjTttVsq/O655e3KknL4al8h+vOJI00OAipi98EIUzvXhF9s+jk7xg4CpZVw
-         py4KQgiTGgeVkdLUj6ghVfXAHvAGSJ2VerrcKHNTlze9shq3YvC3SQ8phNlvzLBIrlzt
-         J4GA==
+        bh=RSgNi3t4XwEZWrGUrSagR2+4rAp8NmwP8atHRZ5ooH8=;
+        b=VMSIaAJqURRnEAk/8Dla1cL4PE+uP9d9NCAg0ppN+3aRjKFHzQH2ArKwJltid9s12o
+         oRVMHVAY3YM984+cKH1WdXvogm1lKSKeM3GsR1+z4mknESMhfz4f6OULwTEW6BM1Vn96
+         fhcd4ONfmqAOSbEXgYVYG2lbxFqphOgYNIRGxD4ZCszN68EgNEhIN3tjkVv4jRa5lu9K
+         cZ+dZqCq1PrIXvswUmOs3nBhNct+EAVmN8gwhBnWViV99oybiPQBC+VNRUO4v34JbY5x
+         TrGi16dlmrrORm3Ab6/+faEiy90ZkKzQB2LKWYoYFtF62vKhTh5XhuSUI0LWztTFchnM
+         +NQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikolay Borisov <nborisov@suse.com>,
-	David Sterba <dsterba@suse.com>,
+	Nogah Frankel <nogahf@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 048/193] btrfs: Fix possible off-by-one in btrfs_search_path_in_tree
-Date: Fri, 23 Feb 2018 19:24:41 +0100
-Message-Id: <20180223170333.493308033@linuxfoundation.org>
+Subject: [PATCH 4.4 047/193] net_sched: red: Avoid illegal values
+Date: Fri, 23 Feb 2018 19:24:40 +0100
+Message-Id: <20180223170333.345774015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217660394969402?=
-X-GMAIL-MSGID: =?utf-8?q?1593217789524213551?=
+X-GMAIL-THRID: =?utf-8?q?1593217657774423929?=
+X-GMAIL-MSGID: =?utf-8?q?1593217787176944804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,54 +50,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Nogah Frankel <nogahf@mellanox.com>
 
 
-[ Upstream commit c8bcbfbd239ed60a6562964b58034ac8a25f4c31 ]
+[ Upstream commit 8afa10cbe281b10371fee5a87ab266e48d71a7f9 ]
 
-The name char array passed to btrfs_search_path_in_tree is of size
-BTRFS_INO_LOOKUP_PATH_MAX (4080). So the actual accessible char indexes
-are in the range of [0, 4079]. Currently the code uses the define but this
-represents an off-by-one.
+Check the qmin & qmax values doesn't overflow for the given Wlog value.
+Check that qmin <= qmax.
 
-Implications:
-
-Size of btrfs_ioctl_ino_lookup_args is 4096, so the new byte will be
-written to extra space, not some padding that could be provided by the
-allocator.
-
-btrfs-progs store the arguments on stack, but kernel does own copy of
-the ioctl buffer and the off-by-one overwrite does not affect userspace,
-but the ending 0 might be lost.
-
-Kernel ioctl buffer is allocated dynamically so we're overwriting
-somebody else's memory, and the ioctl is privileged if args.objectid is
-not 256. Which is in most cases, but resolving a subvolume stored in
-another directory will trigger that path.
-
-Before this patch the buffer was one byte larger, but then the -1 was
-not added.
-
-Fixes: ac8e9819d71f907 ("Btrfs: add search and inode lookup ioctls")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ added implications ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-
+Fixes: a783474591f2 ("[PKT_SCHED]: Generic RED layer")
+Signed-off-by: Nogah Frankel <nogahf@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/ioctl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/red.h     |   11 +++++++++++
+ net/sched/sch_choke.c |    3 +++
+ net/sched/sch_gred.c  |    3 +++
+ net/sched/sch_red.c   |    2 ++
+ net/sched/sch_sfq.c   |    3 +++
+ 5 files changed, 22 insertions(+)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2231,7 +2231,7 @@ static noinline int btrfs_search_path_in
- 	if (!path)
- 		return -ENOMEM;
+--- a/include/net/red.h
++++ b/include/net/red.h
+@@ -167,6 +167,17 @@ static inline void red_set_vars(struct r
+ 	v->qcount	= -1;
+ }
  
--	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX];
-+	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX - 1];
++static inline bool red_check_params(u32 qth_min, u32 qth_max, u8 Wlog)
++{
++	if (fls(qth_min) + Wlog > 32)
++		return false;
++	if (fls(qth_max) + Wlog > 32)
++		return false;
++	if (qth_max < qth_min)
++		return false;
++	return true;
++}
++
+ static inline void red_set_parms(struct red_parms *p,
+ 				 u32 qth_min, u32 qth_max, u8 Wlog, u8 Plog,
+ 				 u8 Scell_log, u8 *stab, u32 max_P)
+--- a/net/sched/sch_choke.c
++++ b/net/sched/sch_choke.c
+@@ -438,6 +438,9 @@ static int choke_change(struct Qdisc *sc
  
- 	key.objectid = tree_id;
- 	key.type = BTRFS_ROOT_ITEM_KEY;
+ 	ctl = nla_data(tb[TCA_CHOKE_PARMS]);
+ 
++	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
++		return -EINVAL;
++
+ 	if (ctl->limit > CHOKE_MAX_QUEUE)
+ 		return -EINVAL;
+ 
+--- a/net/sched/sch_gred.c
++++ b/net/sched/sch_gred.c
+@@ -389,6 +389,9 @@ static inline int gred_change_vq(struct
+ 	struct gred_sched *table = qdisc_priv(sch);
+ 	struct gred_sched_data *q = table->tab[dp];
+ 
++	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
++		return -EINVAL;
++
+ 	if (!q) {
+ 		table->tab[dp] = q = *prealloc;
+ 		*prealloc = NULL;
+--- a/net/sched/sch_red.c
++++ b/net/sched/sch_red.c
+@@ -199,6 +199,8 @@ static int red_change(struct Qdisc *sch,
+ 	max_P = tb[TCA_RED_MAX_P] ? nla_get_u32(tb[TCA_RED_MAX_P]) : 0;
+ 
+ 	ctl = nla_data(tb[TCA_RED_PARMS]);
++	if (!red_check_params(ctl->qth_min, ctl->qth_max, ctl->Wlog))
++		return -EINVAL;
+ 
+ 	if (ctl->limit > 0) {
+ 		child = fifo_create_dflt(sch, &bfifo_qdisc_ops, ctl->limit);
+--- a/net/sched/sch_sfq.c
++++ b/net/sched/sch_sfq.c
+@@ -633,6 +633,9 @@ static int sfq_change(struct Qdisc *sch,
+ 	if (ctl->divisor &&
+ 	    (!is_power_of_2(ctl->divisor) || ctl->divisor > 65536))
+ 		return -EINVAL;
++	if (ctl_v1 && !red_check_params(ctl_v1->qth_min, ctl_v1->qth_max,
++					ctl_v1->Wlog))
++		return -EINVAL;
+ 	if (ctl_v1 && ctl_v1->qth_min) {
+ 		p = kmalloc(sizeof(*p), GFP_KERNEL);
+ 		if (!p)
