@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvG4/w2gpLw68C+WEtiF7Zf91MDYGta7ybhGrO8xkAkcH/in6SRP1L7Pp6pr9DnY9y4SrKY
-ARC-Seal: i=1; a=rsa-sha256; t=1519412219; cv=none;
+X-Google-Smtp-Source: AG47ELvFjjs4zC1foHdSMb/BFQgFmwwgTLYPEp7vl1a5nv4SCPrej5+KOLvaQAxhkbS5BT8KSrwc
+ARC-Seal: i=1; a=rsa-sha256; t=1519412217; cv=none;
         d=google.com; s=arc-20160816;
-        b=SX8/HFA1Bc1NZrBxkYSLdWchTXQsPFj8YVAzmD3nWCHjCmRvG+GeKjcwQCqsuXItpV
-         PQzWK8OB/0LK3f9GyWbgNyIy5FKaakzbDx6taitzktMNvguaW0KJd/7x5aQlAv6/ig8z
-         u7a8uvc6mQ3l90plqsm9Vh2AJiEazXhkuH/D0rOXHN0LBGUmXBa1zPTM8SKRkBA8vpzU
-         8xv6n1J+IetfOkwPykLA0b5rL9zqU8KsrsMu2bY9jAflnzXa0K0ZNAU/pvifsrSpB9fc
-         avJGNNjv1sWY+6yO3mAynNkUeyVmWHfJp9qIkcrCaAojUYGgS4MXI+UTbJuGZHR7gfeq
-         LE2w==
+        b=0nkOcgVutgZVtm2JU15aB6+9D5BOQ8q6X0guzvZOuAoBFquFpShu8ujUatxa45tL8L
+         iU+9LlvcVIyxo115WIZOW7UonBnNqLrzhyOrD9scDr3Cqr6orsb/BGWDM98CkjbuWbZ2
+         gT4H3AMQcE5+noPOg0eIajYybkOrcwvhRw6lq43meomnO9NBr/SucLU/p9JlZcCaMULp
+         eCFrRX6xZkVUyIr2Pt1Ih1WNPCcEk12NSBDaoIr8rDNG+HsQjtcbhTUq5KnLG4imFuug
+         qRWFUpRjDIHIdx7vhij0p20jO94OdSP5nc7Wa8D5fZgOMi2MxSbGvxN2NQHPeXjfFcb8
+         yhng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dbkAoTmHRzNS6k0vGfUU+R+KdnKcwEiQU3xZ29b7O8k=;
-        b=nazy/Hb1Gtk10xYG3ZyAe5FudTs2zYucvaRka5afwO4IsOGDbp3myWkMw38szWjSCo
-         k1EtuTfgWzRNjT4FquVPaRxywxtW54Pn149aflUeIeEx7EDLXMYHqN62R4/zZq/WEUhL
-         aFnU2X70aao8GTp5lZRkYQv4czf4iuzzsJEwX3VZpKvdD6hbGR9mpc44az+BeBxyEdv+
-         NHdOzRvFCOcWuuCOP/cS1EcuNZXj7b1Y+EdgfDWzuUuF07r2tx05bR3M8vOpgVr65Fae
-         5vp3RFtTk3AWSHA8DlmxvEpxv+G0DCrIHvYyf+eajoiKZ2OX2paMbD0fz8+vS7YNob3+
-         DwEw==
+        bh=4jCaWmR1rkbLCuvbJF91Bwk0drbB9GDa2KQsxvTIgqk=;
+        b=NLeQGOFmcO6RU2eZb9jUowzp6zu4xb5IX30tHme+A5BUkamWCYwqoziJP3q07UsvrO
+         M7435m8XHBsCjGfSTmx2HHub6zSRPvH649dLCJw+j6jLNDK3KaHu6f1jFUYaRdrWVRhy
+         a+Vx4ncNpGFeObaX4BjftRcgnOrwB8ir6ohPV1MjCDXc2Et9y51TbMpzOogoD4jp1nhQ
+         uNivz/ZX3ZxFp62KcpsnoJcwL3Mk7sQ6NPijcZbLF+G+Y39i9VAG1oiePO4WQQ9CC2QH
+         eux1k9+Axlg6GbwWYrfMeJoYi/BgEliutQ2yVYiVUTqNRDBZdq6qCyO8it0bevmSzJy3
+         WULA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kamil Konieczny <k.konieczny@partner.samsung.com>,
-	Anand Moon <linux.amoon@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 156/159] crypto: s5p-sss - Fix kernel Oops in AES-ECB mode
-Date: Fri, 23 Feb 2018 19:27:44 +0100
-Message-Id: <20180223170801.818855262@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.14 155/159] drm/i915: fix intel_backlight_device_register declaration
+Date: Fri, 23 Feb 2018 19:27:43 +0100
+Message-Id: <20180223170801.702996437@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217639655479509?=
-X-GMAIL-MSGID: =?utf-8?q?1593219187657957650?=
+X-GMAIL-THRID: =?utf-8?q?1593218626816907145?=
+X-GMAIL-MSGID: =?utf-8?q?1593219185550559780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit c927b080c67e3e97193c81fc1d27f4251bf4e036 upstream.
+commit ac29fc66855b79c2960c63a4a66952d5b721d698 upstream.
 
-In AES-ECB mode crypt is done with key only, so any use of IV
-can cause kernel Oops. Use IV only in AES-CBC and AES-CTR.
+The alternative intel_backlight_device_register() definition apparently
+never got used, but I have now run into a case of i915 being compiled
+without CONFIG_BACKLIGHT_CLASS_DEVICE, resulting in a number of
+identical warnings:
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Reported-by: Anand Moon <linux.amoon@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-Cc: stable@vger.kernel.org # can be applied after commit 8f9702aad138
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+drivers/gpu/drm/i915/intel_drv.h:1739:12: error: 'intel_backlight_device_register' defined but not used [-Werror=unused-function]
+
+This marks the function as 'inline', which was surely the original
+intention here.
+
+Fixes: 1ebaa0b9c2d4 ("drm/i915: Move backlight registration to connector registration")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171127151239.1813673-1-arnd@arndb.de
+(cherry picked from commit 2de2d0b063b08becb2c67a2c338c44e37bdcffee)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/s5p-sss.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/intel_drv.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -601,15 +601,21 @@ static void s5p_aes_crypt_start(struct s
- 	uint32_t aes_control;
- 	unsigned long flags;
- 	int err;
-+	u8 *iv;
- 
- 	aes_control = SSS_AES_KEY_CHANGE_MODE;
- 	if (mode & FLAGS_AES_DECRYPT)
- 		aes_control |= SSS_AES_MODE_DECRYPT;
- 
--	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC)
-+	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
--	else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR)
-+		iv = req->info;
-+	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
-+		iv = req->info;
-+	} else {
-+		iv = NULL; /* AES_ECB */
-+	}
- 
- 	if (dev->ctx->keylen == AES_KEYSIZE_192)
- 		aes_control |= SSS_AES_KEY_SIZE_192;
-@@ -640,7 +646,7 @@ static void s5p_aes_crypt_start(struct s
- 		goto outdata_error;
- 
- 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
--	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
-+	s5p_set_aes(dev, dev->ctx->aes_key, iv, dev->ctx->keylen);
- 
- 	s5p_set_dma_indata(dev,  dev->sg_src);
- 	s5p_set_dma_outdata(dev, dev->sg_dst);
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -1708,7 +1708,7 @@ extern struct drm_display_mode *intel_fi
+ int intel_backlight_device_register(struct intel_connector *connector);
+ void intel_backlight_device_unregister(struct intel_connector *connector);
+ #else /* CONFIG_BACKLIGHT_CLASS_DEVICE */
+-static int intel_backlight_device_register(struct intel_connector *connector)
++static inline int intel_backlight_device_register(struct intel_connector *connector)
+ {
+ 	return 0;
+ }
