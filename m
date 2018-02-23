@@ -1,63 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeBWEIR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 23:08:17 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42786 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeBWEIP (ORCPT
+        id S1751497AbeBWEJp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 23:09:45 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:47123 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBWEJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 23:08:15 -0500
-Date: Fri, 23 Feb 2018 04:08:14 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] fs/dcache: Avoid remaining try_lock loop in
- shrink_dentry_list()
-Message-ID: <20180223040814.GA30522@ZenIV.linux.org.uk>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
- <20180222235025.28662-7-john.ogness@linutronix.de>
- <20180223035814.GZ30522@ZenIV.linux.org.uk>
+        Thu, 22 Feb 2018 23:09:43 -0500
+Subject: Re: [PATCH v11 04/10] clocksource: timer-ti-dm: Replace architecture
+To: Tony Lindgren <tony@atomide.com>,
+        Ladislav Michl <ladis@linux-mips.org>
+CC: <daniel.lezcano@linaro.org>, <thierry.reding@gmail.com>,
+        <aaro.koskinen@iki.fi>, <Claudiu.Beznea@microchip.com>,
+        <narmstrong@baylibre.com>, <linux-pwm@vger.kernel.org>,
+        <s-anna@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <sebastian.reichel@collabora.co.uk>, <linux-omap@vger.kernel.org>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <grygorii.strashko@ti.com>
+References: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
+ <1518674511-26421-5-git-send-email-j-keerthy@ti.com>
+ <20180222105713.GA30885@lenoch> <20180222184541.GB5184@atomide.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <44e7cb7c-aafa-ad10-fc11-6417066fb6e9@ti.com>
+Date: Fri, 23 Feb 2018 09:38:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223035814.GZ30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180222184541.GB5184@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 03:58:14AM +0000, Al Viro wrote:
-> On Fri, Feb 23, 2018 at 12:50:25AM +0100, John Ogness wrote:
-> 
-> > Avoid the trylock loop by using dentry_kill(). When killing dentries
-> > from the dispose list, it is very similar to killing a dentry in
-> > dput(). The difference is that dput() expects to be the last user of
-> > the dentry (refcount=1) and will deref whereas shrink_dentry_list()
-> > expects there to be no user (refcount=0). In order to handle both
-> > situations with the same code, move the deref code from dentry_kill()
-> > into a new wrapper function dentry_put_kill(), which can be used
-> > by previous dentry_kill() users. Then shrink_dentry_list() can use
-> > the dentry_kill() to cleanup the dispose list.
-> > 
-> > This also has the benefit that the locking order is now the same.
-> > First the inode is locked, then the parent.
-> 
-> Current code moves the sucker to the end of list in that case; I'm not
-> at all sure that what you are doing will improve the situation at all...
-> 
-> You *still* have a trylock loop there - only it keeps banging at the
-> same dentry instead of going through the rest first...
 
-Actually, it's even worse - _here_ you are dealing with something that
-really can change inode under you.  This is one and only case where
-we are kicking out a zero-refcount dentry without having already held
-->i_lock.  At the very least, it's bloody different from regular
-dentry_kill().  In this case, dentry itself is protected from freeing
-by being on the shrink list - that's what makes __dentry_kill() to
-leave the sucker allocated.   We are not holding references, it is
-hashed and anybody could come, pick it, d_delete() it, etc.
+
+On Friday 23 February 2018 12:15 AM, Tony Lindgren wrote:
+> * Ladislav Michl <ladis@linux-mips.org> [180222 10:58]:
+>> On Thu, Feb 15, 2018 at 11:31:45AM +0530, Keerthy wrote:
+>>> Replace architecture specific guard with clocksource guard.
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> Replace architecture specific defines with clocksource
+>>
+>> This looks like a bit unussual commit log. Also, what about merging
+>> it with previous patch?
+> 
+> I'll just remove that line locally to avoid yet another set
+> of patches being posted :)
+
+Thanks!
+
+> 
+>> Btw, I tested whole serie again on the top of today's -next and it is
+>> still working fine. What is preventing these patches from being merged?
+
+Ladis,
+
+Thanks once again.
+
+
+> 
+> Well I noticed we need a fix for omap1 that I just posted.
+> And patch 4/10 needs the following select for omap16xx that
+> I'll fold in.
+> 
+> I'll push it all to omap-for-v4.17/timer and will merge into
+> my for-next after some more testing. It seems any further
+> patching can be done after move to drivers.
+
+Yes that would be great.
+
+> 
+> Regards,
+> 
+> Tony
+> 
+> 8< -----------------
+> --- a/arch/arm/mach-omap1/Kconfig
+> +++ b/arch/arm/mach-omap1/Kconfig
+> @@ -30,6 +30,7 @@ config ARCH_OMAP16XX
+>  	bool "OMAP16xx Based System"
+>  	select ARCH_OMAP_OTG
+>  	select CPU_ARM926T
+> +	select OMAP_DM_TIMER
+>  
+>  config OMAP_MUX
+>  	bool "OMAP multiplexing support"
+> 
