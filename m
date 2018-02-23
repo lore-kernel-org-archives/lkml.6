@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226yyPTxDwITb4vMZpIo+wb9LdmiViDcsAhqFAMfX0HDl78jp0EosL45LDupobu0CoOubI3p
-ARC-Seal: i=1; a=rsa-sha256; t=1519412125; cv=none;
+X-Google-Smtp-Source: AH8x227bdiDQTTc1buPGQ+hkTnY0UfhqJmSu0CO3Zq3PXId2puAh7lrLgX0yIqY9jfyeXQQZOtEY
+ARC-Seal: i=1; a=rsa-sha256; t=1519412121; cv=none;
         d=google.com; s=arc-20160816;
-        b=E1a33KmtzQW1UK0w1vQ1K2vm4bAqnmgCU3k8905tC2WkUp8FhPMh2RCl0EKamEWLc+
-         l3i1X8DGaBkTk1QZ53H8uooExkpXNYnNO6DDWSaf/aWgbVw2iVjaGuY6PmobW55qlSSP
-         hO6SHVbno9BTcLgcrh+npnFbAav0ncYdNyRM7wanjmjvpx30cKHFABOMhe87olbf3K3V
-         pqNZ+tR1tbn9LAwVuTutXcSfdHmiDKUPA5WjhrmzUVY//EKFPfqyHHNqQKvuUwAW5z/I
-         Z084wjxBcDwfKFMB8WcgXvcfurrHm8OJS0Py10ck6Zslfps7tCt2sl2BvwCHuFuwlfTH
-         zpEQ==
+        b=xzNuUvABtHprRIPHgoAO7wW7iKP0E4hpikKtHLDBQWcakKeUo9DXQASdaRB4XYEn8D
+         XBczkTx9mXw3i1MTM3tTTi9r0PH3g36yiNUvjz0DqriaAY4JPORHwcaq5CEtrR6Vkmni
+         GCtArmFxINGPc2Hvv9iVCQ1jFjS9+VhXZLwmHeuRVyQgBbsSdQTH3RYVru1LNXCBdwgu
+         LNzSoa1jCtYdh6qknWN0w6TbAvs6URAphdTwkYgTs7naZ1V5BmmjIzQ75h28lML6Buy8
+         /KrTphjuHAx2agg3dfF9cEQcx6Es+Jf+ns52de77aQGj1iw2Y6NuToKZaUg441VcFnp/
+         fAag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oHceiN7rB29N2wNG1d4+uAMO/oCzeQFn1qOfgyI4vwU=;
-        b=0LrSVquNEEhVm88IlxMQ7Ecmo+7noWrA0yQyG60LDpMwQgrb94tRdfauN2QNfkwTCW
-         AQsE4hAk0maRKOXpv5FHlw3OvfOItfi3oBTbL6BnGC/Gio2csp5dibX0/VR0o5U1l4WF
-         wz5wqGOa0sWUy8BVSTt1NPMTVv6sFC0Y9bBfB+QdbgQZ2bBHS4q1bHYEiiJOXUmnhuhA
-         Uxl9CxAMotF9CpI2F5avM410LAMzS21i4Va4rbCR8Lp7gPgT8SOXw0tr0WaHnaRPAA5c
-         XW8WvPm62/c41NMnwpc/NmDtgYJQJduIiJP/UPXx5NMzuI1Jg/CGUGgZBsRdoIHZacY9
-         oYVA==
+        bh=ktNh1WzeZLWYNDXdQETSzWmShxv6gflzzE1SWI5vUIY=;
+        b=hLI1Q/6ZHyCRYg7X1QzFRyNa8FoeqC2rASLNZUqFaNz4dxVisxMJrytFw9WZPP/U0u
+         +MC434RQXoRNfyS6QaK3FGswtSrQzne7o/Ct8TNKiblq7TYCyDFYkZlNj65Og5OWdgQ0
+         0peyO3qj8Gy+TUGEpC/f32E0tSJ3FtfFT5SjIgdTHLTzQO3ClxzCRY9wxMsfa6KMYQze
+         tQ3GVJGrLBnKs0tyuKc2ExZQ9kcGlmn9gmamz/L5OqFDHbAPnzQF+rOQweU+b4yXIfxd
+         oSZAZVyI/oFTs9OJPAp0gt5kI/8x9kTB0YcjaRAvFKe5EmaH/+fursjoDIIHG15dCVRT
+         cMVg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aviv Heller <avivh@mellanox.com>,
-	Yevgeny Kliteynik <kliteyn@mellanox.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Vinod Koul <vinod.koul@intel.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 133/159] xfrm: Fix xfrm_input() to verify state is valid when (encap_type < 0)
-Date: Fri, 23 Feb 2018 19:27:21 +0100
-Message-Id: <20180223170759.188697997@linuxfoundation.org>
+Subject: [PATCH 4.14 132/159] dmaengine: at_hdmac: fix potential NULL pointer dereference in atc_prep_dma_interleaved
+Date: Fri, 23 Feb 2018 19:27:20 +0100
+Message-Id: <20180223170759.079898794@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219088067808189?=
-X-GMAIL-MSGID: =?utf-8?q?1593219088067808189?=
+X-GMAIL-THRID: =?utf-8?q?1593217798955458934?=
+X-GMAIL-MSGID: =?utf-8?q?1593219085140624391?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aviv Heller <avivh@mellanox.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 
-[ Upstream commit 4ce3dbe397d7b6b15f272ae757c78c35e9e4b61d ]
+[ Upstream commit 62a277d43d47e74972de44d33bd3763e31992414 ]
 
-Code path when (encap_type < 0) does not verify the state is valid
-before progressing.
+_xt_ is being dereferenced before it is null checked, hence there is a
+potential null pointer dereference.
 
-This will result in a crash if, for instance, x->km.state ==
-XFRM_STATE_ACQ.
+Fix this by moving the pointer dereference after _xt_ has been null
+checked.
 
-Fixes: 7785bba299a8 ("esp: Add a software GRO codepath")
-Signed-off-by: Aviv Heller <avivh@mellanox.com>
-Signed-off-by: Yevgeny Kliteynik <kliteyn@mellanox.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This issue was detected with the help of Coccinelle.
+
+Fixes: 4483320e241c ("dmaengine: Use Pointer xt after NULL check.")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_input.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/dma/at_hdmac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -207,7 +207,7 @@ int xfrm_input(struct sk_buff *skb, int
- 	xfrm_address_t *daddr;
- 	struct xfrm_mode *inner_mode;
- 	u32 mark = skb->mark;
--	unsigned int family;
-+	unsigned int family = AF_UNSPEC;
- 	int decaps = 0;
- 	int async = 0;
- 	bool xfrm_gro = false;
-@@ -216,6 +216,16 @@ int xfrm_input(struct sk_buff *skb, int
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -708,7 +708,7 @@ atc_prep_dma_interleaved(struct dma_chan
+ 			 unsigned long flags)
+ {
+ 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
+-	struct data_chunk	*first = xt->sgl;
++	struct data_chunk	*first;
+ 	struct at_desc		*desc = NULL;
+ 	size_t			xfer_count;
+ 	unsigned int		dwidth;
+@@ -720,6 +720,8 @@ atc_prep_dma_interleaved(struct dma_chan
+ 	if (unlikely(!xt || xt->numf != 1 || !xt->frame_size))
+ 		return NULL;
  
- 	if (encap_type < 0) {
- 		x = xfrm_input_state(skb);
++	first = xt->sgl;
 +
-+		if (unlikely(x->km.state != XFRM_STATE_VALID)) {
-+			if (x->km.state == XFRM_STATE_ACQ)
-+				XFRM_INC_STATS(net, LINUX_MIB_XFRMACQUIREERROR);
-+			else
-+				XFRM_INC_STATS(net,
-+					       LINUX_MIB_XFRMINSTATEINVALID);
-+			goto drop;
-+		}
-+
- 		family = x->outer_mode->afinfo->family;
- 
- 		/* An encap_type of -1 indicates async resumption. */
+ 	dev_info(chan2dev(chan),
+ 		 "%s: src=%pad, dest=%pad, numf=%d, frame_size=%d, flags=0x%lx\n",
+ 		__func__, &xt->src_start, &xt->dst_start, xt->numf,
