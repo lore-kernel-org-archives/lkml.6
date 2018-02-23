@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519415898-2-16064698872150111002
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415893-2-4152322364967152009
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415897; b=BLomViZ+eqysBb5wtTAWnTMEjM0ab3YFpb1wziYEMS/4H2P
-    l6ji7HEdHxBIQL2EKJ2crhzbCblJJ4m4/6foDuL/OizcN0OFbaxJG2mToBw6B2oq
-    Z90DokcrlpBajBeAchf2gktLLjcoWa+RzXxXSTPWPMjO2gVPbx2b7vvsj3oZcJQ/
-    I4qZf6e/IJ0zSEY+x5WmPUrKoaz82yHJ5aaReszxxiFKjOt2KrGaOfHb/ELacA39
-    yEPDtNZjsYUM9apfa7qzGFEM8WxmWLnAlI6QsOj9GXyQDXqZiPP8cuAMevu+LmYc
-    WzWlsC9LaLZ/XTp6Klovz78w1YGgfu5PjhhY4VA==
+    t=1519415892; b=vIjoe2F7R8t9cBX18cKrDxQYc+r81qC5zEO4C86W/JnG6/M
+    kOCBV8fn4DfK1jSuyp3fWVYkDN2ywCNvqucZNU/+KSv3MbuuS/e408/+rNxbL8HE
+    WDqS/yefPBDFhhvIQU/pSDWqsVJ63W2WNb4DjCZ2hRJ/Ol5GUKDJ+j96QB7k9jJM
+    6IHM90ykibB/ey/1IcQhLcq5ACJaCBaJM4eaV38Tm8gF+8kePz0mXvZVgNBjTnaB
+    nZ4szMfTmB9Uqb9S1F0HnIFVBGmz3YbSB53fhdZzhZHDoiG0D3KGD9kRuoC1X7EF
+    R/tPJsWbX/NjADo45juRmtMCP6s04ivYYW5qBtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415897; bh=JxE1S0kcaZITK3rYd17jtbhbiP
-    pLWaV6UsldkSOYrfA=; b=A6Zf6c9kqRWjVzukuAW5QamskPFASVFjFiokal0Oyo
-    ml6ktlUTAST15vMmdFjFR2iNVqj0LP5LTbyL1/+TfgGh5xFFuO8XYtobjGnJJFVz
-    B28uspYQKErXiBfJlt/FqpZdroS24OIwEJER0Rcsc3E7fSPpKSwMLo/Hz4oQj48V
-    gvUa8buIN+Htw84+sisHS3SC13wn21dOVXiWQ7s3fiShoTPeCwdD5P5m1zwI4VDR
-    L5laMB9x+nj66Mv0K2v44HYqQC+RmmpN8yNARi9PNzxBZPKZWrQsqRT7BEYPkyuG
-    bJgleycL/XXM3OSSlDx2mCsgc5ymkWf3THGVnG2mSwJw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415892; bh=QyaL2ihhViyOY3E85XiptcN5hC
+    r2pADb3pR8wPnl7vU=; b=qS/lgO9FRsLrGRPTx9RTFT62w0qOoSLjc/Es40M9Sh
+    x1s8e57iAD9UtcgO/iNTK8c2nih2uo3jKbMV+YEjrShmMSimDw9kQQ7AK2QA1YWb
+    NgfAS858hoJ2STCF01RJmb9bBVaQdmZ5CzliMC4F9Qhij4p+/Jxk/PNY8HxUnWDz
+    VkUsc/FxphCaHvm7sr3n8neCiJS/5o4eOZEY7pNQUXLVeVpEMTHjWsXe8gjns9QN
+    lzMBpWqiGTSXqq4vWvQZ1OFUmPoVZxNIOxmxbjZAtMXR19DScKNJMBI3GZqRtNnI
+    czTKwqxD/v8VAvnBN2eV+3bjyoCThu7M5SzAWogwogHQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,25 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932663AbeBWSoT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:44:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42514 "EHLO
+        id S1754792AbeBWT55 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:57:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933538AbeBWSoS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:44:18 -0500
+        with ESMTP id S933546AbeBWSoV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:44:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        stable@vger.kernel.org,
+        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Balamuruhan S <bala24@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 042/145] usb: build drivers/usb/common/ when USB_SUPPORT is set
-Date: Fri, 23 Feb 2018 19:25:48 +0100
-Message-Id: <20180223170730.327049708@linuxfoundation.org>
+Subject: [PATCH 4.9 051/145] perf bench numa: Fixup discontiguous/sparse numa nodes
+Date: Fri, 23 Feb 2018 19:25:57 +0100
+Message-Id: <20180223170731.482806680@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -78,38 +83,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
 
 
-[ Upstream commit c9d24f78268be444e803fb2bb138a2f598de9c23 ]
+[ Upstream commit 321a7c35c90cc834851ceda18a8ee18f1d032b92 ]
 
-PHY drivers can use ULPI interfaces when CONFIG_USB (which is host side
-support) is not enabled, so also build drivers/usb/ when CONFIG_USB_SUPPORT
-is enabled so that drivers/usb/common/ is built.
+Certain systems are designed to have sparse/discontiguous nodes.  On
+such systems, 'perf bench numa' hangs, shows wrong number of nodes and
+shows values for non-existent nodes. Handle this by only taking nodes
+that are exposed by kernel to userspace.
 
-ERROR: "ulpi_unregister_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "__ulpi_register_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_read" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_write" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_unregister_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-ERROR: "__ulpi_register_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-ERROR: "ulpi_write" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/1edbcd353c009e109e93d78f2f46381930c340fe.1511368645.git.sathnaga@linux.vnet.ibm.com
+Signed-off-by: Balamuruhan S <bala24@linux.vnet.ibm.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/bench/numa.c |   56 +++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 51 insertions(+), 5 deletions(-)
 
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_TC)		+= tc/
- obj-$(CONFIG_UWB)		+= uwb/
- obj-$(CONFIG_USB_PHY)		+= usb/
- obj-$(CONFIG_USB)		+= usb/
-+obj-$(CONFIG_USB_SUPPORT)	+= usb/
- obj-$(CONFIG_PCI)		+= usb/
- obj-$(CONFIG_USB_GADGET)	+= usb/
- obj-$(CONFIG_OF)		+= usb/
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -211,6 +211,47 @@ static const char * const numa_usage[] =
+ 	NULL
+ };
+ 
++/*
++ * To get number of numa nodes present.
++ */
++static int nr_numa_nodes(void)
++{
++	int i, nr_nodes = 0;
++
++	for (i = 0; i < g->p.nr_nodes; i++) {
++		if (numa_bitmask_isbitset(numa_nodes_ptr, i))
++			nr_nodes++;
++	}
++
++	return nr_nodes;
++}
++
++/*
++ * To check if given numa node is present.
++ */
++static int is_node_present(int node)
++{
++	return numa_bitmask_isbitset(numa_nodes_ptr, node);
++}
++
++/*
++ * To check given numa node has cpus.
++ */
++static bool node_has_cpus(int node)
++{
++	struct bitmask *cpu = numa_allocate_cpumask();
++	unsigned int i;
++
++	if (cpu && !numa_node_to_cpus(node, cpu)) {
++		for (i = 0; i < cpu->size; i++) {
++			if (numa_bitmask_isbitset(cpu, i))
++				return true;
++		}
++	}
++
++	return false; /* lets fall back to nocpus safely */
++}
++
+ static cpu_set_t bind_to_cpu(int target_cpu)
+ {
+ 	cpu_set_t orig_mask, mask;
+@@ -239,12 +280,12 @@ static cpu_set_t bind_to_cpu(int target_
+ 
+ static cpu_set_t bind_to_node(int target_node)
+ {
+-	int cpus_per_node = g->p.nr_cpus/g->p.nr_nodes;
++	int cpus_per_node = g->p.nr_cpus / nr_numa_nodes();
+ 	cpu_set_t orig_mask, mask;
+ 	int cpu;
+ 	int ret;
+ 
+-	BUG_ON(cpus_per_node*g->p.nr_nodes != g->p.nr_cpus);
++	BUG_ON(cpus_per_node * nr_numa_nodes() != g->p.nr_cpus);
+ 	BUG_ON(!cpus_per_node);
+ 
+ 	ret = sched_getaffinity(0, sizeof(orig_mask), &orig_mask);
+@@ -644,7 +685,7 @@ static int parse_setup_node_list(void)
+ 			int i;
+ 
+ 			for (i = 0; i < mul; i++) {
+-				if (t >= g->p.nr_tasks) {
++				if (t >= g->p.nr_tasks || !node_has_cpus(bind_node)) {
+ 					printf("\n# NOTE: ignoring bind NODEs starting at NODE#%d\n", bind_node);
+ 					goto out;
+ 				}
+@@ -959,6 +1000,8 @@ static void calc_convergence(double runt
+ 	sum = 0;
+ 
+ 	for (node = 0; node < g->p.nr_nodes; node++) {
++		if (!is_node_present(node))
++			continue;
+ 		nr = nodes[node];
+ 		nr_min = min(nr, nr_min);
+ 		nr_max = max(nr, nr_max);
+@@ -979,8 +1022,11 @@ static void calc_convergence(double runt
+ 	process_groups = 0;
+ 
+ 	for (node = 0; node < g->p.nr_nodes; node++) {
+-		int processes = count_node_processes(node);
++		int processes;
+ 
++		if (!is_node_present(node))
++			continue;
++		processes = count_node_processes(node);
+ 		nr = nodes[node];
+ 		tprintf(" %2d/%-2d", nr, processes);
+ 
+@@ -1286,7 +1332,7 @@ static void print_summary(void)
+ 
+ 	printf("\n ###\n");
+ 	printf(" # %d %s will execute (on %d nodes, %d CPUs):\n",
+-		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", g->p.nr_nodes, g->p.nr_cpus);
++		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", nr_numa_nodes(), g->p.nr_cpus);
+ 	printf(" #      %5dx %5ldMB global  shared mem operations\n",
+ 			g->p.nr_loops, g->p.bytes_global/1024/1024);
+ 	printf(" #      %5dx %5ldMB process shared mem operations\n",
