@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuLY3iPy6vKxvwJsYWKRJdnAVFUKS+bqbsKw9TwW+HxBV19kh2mu5Jm2zNMO4i0HUpFiBDY
-ARC-Seal: i=1; a=rsa-sha256; t=1519410801; cv=none;
+X-Google-Smtp-Source: AG47ELuK6D4yaZYWIoUitz/iuHMWcHIU3LtX4bfakXzvEV2BrTjKDOrNnFcFJyda0wHIBRLkDvTk
+ARC-Seal: i=1; a=rsa-sha256; t=1519410798; cv=none;
         d=google.com; s=arc-20160816;
-        b=OBIdyFHrEqbAOJn7fbgabw1+K/8bAAfJdJMR+Ddym0it25FSc8I9qlUVHzGe5sQjQk
-         4eOUOxzZUP6KHQyk87LG8QkUogkKgEq/uXg0gLMF6d2NpcTG7a+280wbtsREBRTUH7Ni
-         b15JEZ+AqaVwCzOzvRB4gh87mZ1BG37Nw5JGQ3TZ9ItgDRr9XdKegdKbzRxY5lmuMSGl
-         wy/50s5jWj6+9L3VV+VthLfdkhJR5eEFza+HtuFpk4SEc/Ei9JU8rl6M9hLs/YZjlUYP
-         kAH4kyn2skyq9I/Rvh4/CBZ6jWn7BolpJScIbMEftRtD8NwsvzdLqeQdZrVDd1/EIJeO
-         Nvjg==
+        b=kjNLYAa7NW03tNnKwhQK4Xuh/GZuIW9XhSZQbdCWdFuLj+PIbQCQZaO/eLJdQh3ndd
+         nbr6EDfKowyrHhfmzx/5bDPrQij9wambAJ8FC8ScFpi5QgwggwVM08OBK6UmAvGJMGFw
+         pS4tnSzwEyS5uiFuHyCZk2htMumHgIC/aDsFQFQBl68kTfLlrbAbWNzzvzI3Gb9PMLv1
+         g23HJ0crSexP4FAPvT4pVIwWkL9yV48Irq32Lwy4GotwRDsMSr5gzL1ScVF9YDw0CMig
+         mp9sXLzqsqAoujgrCegPfsheD32cYZPcYWbrwMv0ug0EdhsEsxwCEin6U1hmkc78h1nD
+         s/ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J9qgXukxcpAIcB/AyfAt+GnWaCEGNQT3zusfMGNtUEE=;
-        b=oPYzVbuzNaAzGhp28NNB6dkWPDkOlPU61msmODeQ6aRWwY49NXwBt55if5ImWB8q0N
-         3sovAytar6pALugBZVnVXsPUPaIcFoWPxLI+3xt5ysU9CF1IoNMAuJFCHf7GD9otq0jh
-         rPmQupfuknwNH4SeiFVm29KYlZmqSQPL9/c8ZJ0DUBFEQGnjbnemxmhy5ve53CUOLVnf
-         F1kDEmYdS5ykD5ePT2V8tjEn5CzdHCYIvpKyZlKR7tINWf87Z1RoC3wsRliUt1FyUBDO
-         TvImEM/rdd4fFmb5X7D5gTlOM/GBpighGNbNJt7fYjYSIB0OCrPB0ye4ZGLdfZgr0IF4
-         wZsw==
+        bh=jqws0IwAvc4q3GxGow4bxAeblXFRc49xuwUymZ3E7tA=;
+        b=f+KXqcMRBsUF5umXQ53nXjnzEF6I7NMd7OwwqoGYJs9XnpPoM7yjXAly545dOy3MYf
+         5MNEKYMWgtPLoC6U3eJtbyBaoozrrYcAuuoI+gJmIRT66v05f5aaX0kG0YROcd8rx5yO
+         6bf7nfMvcraVjo3v+6yCIkOJIIHLqzlpO/doy33mC+xGj+f5yx/aaXvW1U4/WsRNzjEo
+         sGalJCdDnxWykdEYvV/oMdjlazm6PN7W1hvf7SFiX4YmVIxF1RsZh0MtdmeimZ7fxIn1
+         02GEpNoqZG0HXElfLVG14GKTD4XdSdILkK1IeOEbn28pFhcDDGbJpcpK8MWlP9/AB43g
+         8ZpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com,
-	Cong Wang <xiyou.wangcong@gmail.com>,
+	syzbot+a4c2dc980ac1af699b36@syzkaller.appspotmail.com,
 	Florian Westphal <fw@strlen.de>,
-	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 019/193] netfilter: xt_RATEEST: acquire xt_rateest_mutex for hash insert
-Date: Fri, 23 Feb 2018 19:24:12 +0100
-Message-Id: <20180223170329.070324493@linuxfoundation.org>
+Subject: [PATCH 4.4 018/193] netfilter: on sockopt() acquire sock lock only in the required scope
+Date: Fri, 23 Feb 2018 19:24:11 +0100
+Message-Id: <20180223170328.917840129@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217546378915154?=
-X-GMAIL-MSGID: =?utf-8?q?1593217701005641128?=
+X-GMAIL-THRID: =?utf-8?q?1593217543770768506?=
+X-GMAIL-MSGID: =?utf-8?q?1593217697410568375?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,90 +51,240 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 7dc68e98757a8eccf8ca7a53a29b896f1eef1f76 upstream.
+commit 3f34cfae1238848fd53f25e5c8fd59da57901f4b upstream.
 
-rateest_hash is supposed to be protected by xt_rateest_mutex,
-and, as suggested by Eric, lookup and insert should be atomic,
-so we should acquire the xt_rateest_mutex once for both.
+Syzbot reported several deadlocks in the netfilter area caused by
+rtnl lock and socket lock being acquired with a different order on
+different code paths, leading to backtraces like the following one:
 
-So introduce a non-locking helper for internal use and keep the
-locking one for external.
+======================================================
+WARNING: possible circular locking dependency detected
+4.15.0-rc9+ #212 Not tainted
+------------------------------------------------------
+syzkaller041579/3682 is trying to acquire lock:
+  (sk_lock-AF_INET6){+.+.}, at: [<000000008775e4dd>] lock_sock
+include/net/sock.h:1463 [inline]
+  (sk_lock-AF_INET6){+.+.}, at: [<000000008775e4dd>]
+do_ipv6_setsockopt.isra.8+0x3c5/0x39d0 net/ipv6/ipv6_sockglue.c:167
 
-Reported-by: <syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com>
-Fixes: 5859034d7eb8 ("[NETFILTER]: x_tables: add RATEEST target")
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+but task is already holding lock:
+  (rtnl_mutex){+.+.}, at: [<000000004342eaa9>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (rtnl_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+        __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+        rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
+        register_netdevice_notifier+0xad/0x860 net/core/dev.c:1607
+        tee_tg_check+0x1a0/0x280 net/netfilter/xt_TEE.c:106
+        xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:845
+        check_target net/ipv6/netfilter/ip6_tables.c:538 [inline]
+        find_check_entry.isra.7+0x935/0xcf0
+net/ipv6/netfilter/ip6_tables.c:580
+        translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:749
+        do_replace net/ipv6/netfilter/ip6_tables.c:1165 [inline]
+        do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1691
+        nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+        nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+        ipv6_setsockopt+0x115/0x150 net/ipv6/ipv6_sockglue.c:928
+        udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
+        sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+        SYSC_setsockopt net/socket.c:1849 [inline]
+        SyS_setsockopt+0x189/0x360 net/socket.c:1828
+        entry_SYSCALL_64_fastpath+0x29/0xa0
+
+-> #0 (sk_lock-AF_INET6){+.+.}:
+        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3914
+        lock_sock_nested+0xc2/0x110 net/core/sock.c:2780
+        lock_sock include/net/sock.h:1463 [inline]
+        do_ipv6_setsockopt.isra.8+0x3c5/0x39d0 net/ipv6/ipv6_sockglue.c:167
+        ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
+        udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
+        sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+        SYSC_setsockopt net/socket.c:1849 [inline]
+        SyS_setsockopt+0x189/0x360 net/socket.c:1828
+        entry_SYSCALL_64_fastpath+0x29/0xa0
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(rtnl_mutex);
+                                lock(sk_lock-AF_INET6);
+                                lock(rtnl_mutex);
+   lock(sk_lock-AF_INET6);
+
+  *** DEADLOCK ***
+
+1 lock held by syzkaller041579/3682:
+  #0:  (rtnl_mutex){+.+.}, at: [<000000004342eaa9>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+
+The problem, as Florian noted, is that nf_setsockopt() is always
+called with the socket held, even if the lock itself is required only
+for very tight scopes and only for some operation.
+
+This patch addresses the issues moving the lock_sock() call only
+where really needed, namely in ipv*_getorigdst(), so that nf_setsockopt()
+does not need anymore to acquire both locks.
+
+Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
+Reported-by: syzbot+a4c2dc980ac1af699b36@syzkaller.appspotmail.com
+Suggested-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_RATEEST.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ net/ipv4/ip_sockglue.c                         |   14 ++++----------
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c |    6 +++++-
+ net/ipv6/ipv6_sockglue.c                       |   17 +++++------------
+ net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c |   18 ++++++++++++------
+ 4 files changed, 26 insertions(+), 29 deletions(-)
 
---- a/net/netfilter/xt_RATEEST.c
-+++ b/net/netfilter/xt_RATEEST.c
-@@ -40,23 +40,31 @@ static void xt_rateest_hash_insert(struc
- 	hlist_add_head(&est->list, &rateest_hash[h]);
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1221,11 +1221,8 @@ int ip_setsockopt(struct sock *sk, int l
+ 	if (err == -ENOPROTOOPT && optname != IP_HDRINCL &&
+ 			optname != IP_IPSEC_POLICY &&
+ 			optname != IP_XFRM_POLICY &&
+-			!ip_mroute_opt(optname)) {
+-		lock_sock(sk);
++			!ip_mroute_opt(optname))
+ 		err = nf_setsockopt(sk, PF_INET, optname, optval, optlen);
+-		release_sock(sk);
+-	}
+ #endif
+ 	return err;
  }
+@@ -1250,12 +1247,9 @@ int compat_ip_setsockopt(struct sock *sk
+ 	if (err == -ENOPROTOOPT && optname != IP_HDRINCL &&
+ 			optname != IP_IPSEC_POLICY &&
+ 			optname != IP_XFRM_POLICY &&
+-			!ip_mroute_opt(optname)) {
+-		lock_sock(sk);
+-		err = compat_nf_setsockopt(sk, PF_INET, optname,
+-					   optval, optlen);
+-		release_sock(sk);
+-	}
++			!ip_mroute_opt(optname))
++		err = compat_nf_setsockopt(sk, PF_INET, optname, optval,
++					   optlen);
+ #endif
+ 	return err;
+ }
+--- a/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
++++ b/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c
+@@ -259,15 +259,19 @@ getorigdst(struct sock *sk, int optval,
+ 	struct nf_conntrack_tuple tuple;
  
--struct xt_rateest *xt_rateest_lookup(const char *name)
-+static struct xt_rateest *__xt_rateest_lookup(const char *name)
+ 	memset(&tuple, 0, sizeof(tuple));
++
++	lock_sock(sk);
+ 	tuple.src.u3.ip = inet->inet_rcv_saddr;
+ 	tuple.src.u.tcp.port = inet->inet_sport;
+ 	tuple.dst.u3.ip = inet->inet_daddr;
+ 	tuple.dst.u.tcp.port = inet->inet_dport;
+ 	tuple.src.l3num = PF_INET;
+ 	tuple.dst.protonum = sk->sk_protocol;
++	release_sock(sk);
+ 
+ 	/* We only do TCP and SCTP at the moment: is there a better way? */
+-	if (sk->sk_protocol != IPPROTO_TCP && sk->sk_protocol != IPPROTO_SCTP) {
++	if (tuple.dst.protonum != IPPROTO_TCP &&
++	    tuple.dst.protonum != IPPROTO_SCTP) {
+ 		pr_debug("SO_ORIGINAL_DST: Not a TCP/SCTP socket\n");
+ 		return -ENOPROTOOPT;
+ 	}
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -905,12 +905,8 @@ int ipv6_setsockopt(struct sock *sk, int
+ #ifdef CONFIG_NETFILTER
+ 	/* we need to exclude all possible ENOPROTOOPTs except default case */
+ 	if (err == -ENOPROTOOPT && optname != IPV6_IPSEC_POLICY &&
+-			optname != IPV6_XFRM_POLICY) {
+-		lock_sock(sk);
+-		err = nf_setsockopt(sk, PF_INET6, optname, optval,
+-				optlen);
+-		release_sock(sk);
+-	}
++			optname != IPV6_XFRM_POLICY)
++		err = nf_setsockopt(sk, PF_INET6, optname, optval, optlen);
+ #endif
+ 	return err;
+ }
+@@ -940,12 +936,9 @@ int compat_ipv6_setsockopt(struct sock *
+ #ifdef CONFIG_NETFILTER
+ 	/* we need to exclude all possible ENOPROTOOPTs except default case */
+ 	if (err == -ENOPROTOOPT && optname != IPV6_IPSEC_POLICY &&
+-	    optname != IPV6_XFRM_POLICY) {
+-		lock_sock(sk);
+-		err = compat_nf_setsockopt(sk, PF_INET6, optname,
+-					   optval, optlen);
+-		release_sock(sk);
+-	}
++	    optname != IPV6_XFRM_POLICY)
++		err = compat_nf_setsockopt(sk, PF_INET6, optname, optval,
++					   optlen);
+ #endif
+ 	return err;
+ }
+--- a/net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c
+@@ -226,20 +226,27 @@ static struct nf_hook_ops ipv6_conntrack
+ static int
+ ipv6_getorigdst(struct sock *sk, int optval, void __user *user, int *len)
  {
- 	struct xt_rateest *est;
- 	unsigned int h;
+-	const struct inet_sock *inet = inet_sk(sk);
++	struct nf_conntrack_tuple tuple = { .src.l3num = NFPROTO_IPV6 };
+ 	const struct ipv6_pinfo *inet6 = inet6_sk(sk);
++	const struct inet_sock *inet = inet_sk(sk);
+ 	const struct nf_conntrack_tuple_hash *h;
+ 	struct sockaddr_in6 sin6;
+-	struct nf_conntrack_tuple tuple = { .src.l3num = NFPROTO_IPV6 };
+ 	struct nf_conn *ct;
++	__be32 flow_label;
++	int bound_dev_if;
  
- 	h = xt_rateest_hash(name);
--	mutex_lock(&xt_rateest_mutex);
- 	hlist_for_each_entry(est, &rateest_hash[h], list) {
- 		if (strcmp(est->name, name) == 0) {
- 			est->refcnt++;
--			mutex_unlock(&xt_rateest_mutex);
- 			return est;
- 		}
- 	}
--	mutex_unlock(&xt_rateest_mutex);
-+
- 	return NULL;
- }
-+
-+struct xt_rateest *xt_rateest_lookup(const char *name)
-+{
-+	struct xt_rateest *est;
-+
-+	mutex_lock(&xt_rateest_mutex);
-+	est = __xt_rateest_lookup(name);
-+	mutex_unlock(&xt_rateest_mutex);
-+	return est;
-+}
- EXPORT_SYMBOL_GPL(xt_rateest_lookup);
++	lock_sock(sk);
+ 	tuple.src.u3.in6 = sk->sk_v6_rcv_saddr;
+ 	tuple.src.u.tcp.port = inet->inet_sport;
+ 	tuple.dst.u3.in6 = sk->sk_v6_daddr;
+ 	tuple.dst.u.tcp.port = inet->inet_dport;
+ 	tuple.dst.protonum = sk->sk_protocol;
++	bound_dev_if = sk->sk_bound_dev_if;
++	flow_label = inet6->flow_label;
++	release_sock(sk);
  
- void xt_rateest_put(struct xt_rateest *est)
-@@ -104,8 +112,10 @@ static int xt_rateest_tg_checkentry(cons
- 		rnd_inited = true;
- 	}
+-	if (sk->sk_protocol != IPPROTO_TCP && sk->sk_protocol != IPPROTO_SCTP)
++	if (tuple.dst.protonum != IPPROTO_TCP &&
++	    tuple.dst.protonum != IPPROTO_SCTP)
+ 		return -ENOPROTOOPT;
  
--	est = xt_rateest_lookup(info->name);
-+	mutex_lock(&xt_rateest_mutex);
-+	est = __xt_rateest_lookup(info->name);
- 	if (est) {
-+		mutex_unlock(&xt_rateest_mutex);
- 		/*
- 		 * If estimator parameters are specified, they must match the
- 		 * existing estimator.
-@@ -143,11 +153,13 @@ static int xt_rateest_tg_checkentry(cons
+ 	if (*len < 0 || (unsigned int) *len < sizeof(sin6))
+@@ -257,14 +264,13 @@ ipv6_getorigdst(struct sock *sk, int opt
  
- 	info->est = est;
- 	xt_rateest_hash_insert(est);
-+	mutex_unlock(&xt_rateest_mutex);
- 	return 0;
+ 	sin6.sin6_family = AF_INET6;
+ 	sin6.sin6_port = ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.dst.u.tcp.port;
+-	sin6.sin6_flowinfo = inet6->flow_label & IPV6_FLOWINFO_MASK;
++	sin6.sin6_flowinfo = flow_label & IPV6_FLOWINFO_MASK;
+ 	memcpy(&sin6.sin6_addr,
+ 		&ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.dst.u3.in6,
+ 					sizeof(sin6.sin6_addr));
  
- err2:
- 	kfree(est);
- err1:
-+	mutex_unlock(&xt_rateest_mutex);
- 	return ret;
+ 	nf_ct_put(ct);
+-	sin6.sin6_scope_id = ipv6_iface_scope_id(&sin6.sin6_addr,
+-						 sk->sk_bound_dev_if);
++	sin6.sin6_scope_id = ipv6_iface_scope_id(&sin6.sin6_addr, bound_dev_if);
+ 	return copy_to_user(user, &sin6, sizeof(sin6)) ? -EFAULT : 0;
  }
  
