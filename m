@@ -1,61 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeBWK1n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:27:43 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35036 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeBWK1k (ORCPT
+        id S1751440AbeBWKag (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:30:36 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36734 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeBWKae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:27:40 -0500
-Date: Fri, 23 Feb 2018 13:17:15 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: target-devel@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
-        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-scsi@vger.kernel.org
-Subject: Re: [0/8] target-iSCSI: Adjustments for several function
- implementations
-Message-ID: <20180223101715.xv5dscdaeszqxoyk@mwanda>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
- <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
- <20180222143624.7c7241a1@suse.de>
- <20180222135600.5vv7vzw7sa5metcb@mwanda>
- <145b88b1-bd1e-a417-8dce-ff19e35a00fc@users.sourceforge.net>
+        Fri, 23 Feb 2018 05:30:34 -0500
+X-Google-Smtp-Source: AG47ELt+DhoUoRFjoz2dRS2fvx2iTeuXDEwrU2OI02ZpBz4upF0lSbELsDBifXcAPj+/+PJcusIP2DvAcxE9Eip1JWs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <145b88b1-bd1e-a417-8dce-ff19e35a00fc@users.sourceforge.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=466
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802230130
+In-Reply-To: <1517391071-29042-1-git-send-email-shannon.ml.booth@gmail.com>
+References: <1517391071-29042-1-git-send-email-shannon.ml.booth@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 23 Feb 2018 11:30:13 +0100
+Message-ID: <CANiq72nrmPHq6Cb0VXBp44fY+cc84KgzB-Jn+uKS233-jMcPMA@mail.gmail.com>
+Subject: Re: [PATCH] staging: auxdisplay: add missing MODULE_LICENSE()
+To: Shannon Booth <shannon.ml.booth@gmail.com>
+Cc: Paul Burton <paul.burton@mips.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 10:06:16AM +0100, SF Markus Elfring wrote:
-> > Calling crypto_free_shash(NULL) is actually fine.
-> 
-> Really?
-> 
-> 
-> > It doesn't dereference the parameter, it just does pointer math on it in
-> > crypto_shash_tfm() and returns if it's NULL in crypto_destroy_tfm().
-> 
-> Can a passed null pointer really work in this function?
-> 
-> https://elixir.bootlin.com/linux/v4.16-rc2/source/include/crypto/hash.h#L684
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/crypto/hash.h?id=0f9da844d87796ac31b04e81ee95e155e9043132#n751
-> 
-> static inline struct crypto_tfm *crypto_shash_tfm(struct crypto_shash *tfm)
-> {
-> 	return &tfm->base;
-> }
+Hi Shannon,
 
-Yes.  It's not a dereference, it's just doing pointer math to get the
-address.
+On Wed, Jan 31, 2018 at 10:31 AM, Shannon Booth
+<shannon.ml.booth@gmail.com> wrote:
+> This patch fixes the compilation warning:
+>
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
+>
+> Signed-off-by: Shannon Booth <shannon.ml.booth@gmail.com>
+> ---
+>  drivers/auxdisplay/img-ascii-lcd.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+> index db040b3..9222c88 100644
+> --- a/drivers/auxdisplay/img-ascii-lcd.c
+> +++ b/drivers/auxdisplay/img-ascii-lcd.c
+> @@ -441,3 +441,5 @@ static struct platform_driver img_ascii_lcd_driver = {
+>         .remove = img_ascii_lcd_remove,
+>  };
+>  module_platform_driver(img_ascii_lcd_driver);
+> +
+> +MODULE_LICENSE("GPL v2");
 
-regards,
-dan carpenter
+This was already done by 09c479f7f1fbfaf848e5813996793966cd50be81
+("auxdisplay: img-ascii-lcd: add missing
+MODULE_DESCRIPTION/AUTHOR/LICENSE") back in early January.
+
+In any case, it should have been "GPL" (i.e. version 2 or later), not
+"GPL v2", according to the header in img-ascii-lcd.c, see:
+
+  https://elixir.bootlin.com/linux/v4.16-rc2/source/include/linux/module.h#L171
+
+But thank you for the patch! :-)
+
+Cheers,
+Miguel
+
+> --
+> 2.7.4
+>
