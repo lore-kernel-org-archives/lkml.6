@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226yVi90FgUuUjz2RX9RRJkTazejWHfmBrOz9bf5P9zaKlxAsUpkH/KsatdUkVQ1nMPG5iby
-ARC-Seal: i=1; a=rsa-sha256; t=1519411031; cv=none;
+X-Google-Smtp-Source: AH8x2244Q3ZNcjHS9EE/Np43BeW5tTaM/3xlHZ+BIL8qMU+uA0z4gj6UPmKF/1z28pFoayiT1tMr
+ARC-Seal: i=1; a=rsa-sha256; t=1519411028; cv=none;
         d=google.com; s=arc-20160816;
-        b=sslAAi/2j2Grw8XuUfzJ6LfIrKAdUMVsybBIz3SJmhGBAl0QeUP37B4C8fcVbJTK70
-         qMUgBNDFNFwZ+8RN8TIbMcpF0OGDXN/7AjrL+ISyVNJaWMvRNDg9+r7KjqqNbnJHEP1x
-         t/Z87g8HQw3I1KAZbujQb6ln0K/ZRaCwEBFLDKrvIqFlAxdDyMZfzDhb6wmHsJIbRb8b
-         hkjQRU4i9E8axxZ+XDB6Fz2E2trooAXxZZSd7L+98PSguRs8zuXRnBHGQihoSn8gTZ3s
-         X8vVCfWvnhfm5izWoGjtLEQ2zwQb+eSi7gRnL1UrkWP4LGs7n+RAU9RaXlZd9+m4NsQw
-         tZnA==
+        b=jV7b41mB8lFct6Q+nfuJYv0DKeCkbHP9gygm5XcQO+r8i3byPvb36Bt1Fwr6Hdd3qc
+         rnuJphcvft+Z3NlrmXCQZ4VOhfbW0JtSPXVq7MKwJ1do/6xhygaC5AkZXNi0NyRl8f9s
+         kUfpwG9//IxRbEEr9m8GgDmikuRNLClCGVMUlbYuyenX5UU93lw2EONvzTZDjndhy96w
+         l4YZePl/SVQ4wl5zWYDDvDA8InHRLfwFzxoOo5dgMW3ke5v04Dp83cN5wrHPw0cN2gR9
+         8NIvU6fyA8GA8CDQfxVqrzSFmXFxPZpxFHpXgqGwMaZ4J9Fw6CuKTS4uMtYdeFsR4Gpv
+         Utvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4d1XRmA8Z0tj87k/lvkVfC1Ro3xDiqhLYdX0sOKqRiw=;
-        b=wgNfCtPj0Nd7m3sCu8USfyGO5QOvnU7NMK9UjlfCNc7bfeZNUTZ4yBefzNwsIvw6mw
-         0xhtkkasUTvxn7WTadlzzFtEnt84I12mH2dJ12XihIW1Ab9WH4u6lhPO6o6r5vUQ2U8/
-         KQm6UDcqkyC5KAtByliCFoNUPVQnfOgc03o0m3aEVWGgaPztcF8Q8nYIjuFxuRZiSor/
-         wdl+u0ZaQURL+Wh3SSjK+xHArRDgFHR8POqPkHFWn9k2qWhWS3AQU9dDj8/lfzRSDO6r
-         VxWMLfNVPv6jHa/9moxfC2LjVvyZL5Ff+sOC3uOiJZ/j0ambO4VjdwbQa3AYAO9FwOs4
-         Kgbg==
+        bh=Z1dF7lHH7V5uHRoXrFxswuR3y42g/h/tigIdn49nVYo=;
+        b=x92/VhOuWzOCDC06Gk6eMrUunY1sGMBA/hGUnmXyqtB/9QqP/F9w+QkgB6KdAKY2RE
+         s3I2uea9X93pOI9hRCH6yhuuADCsfaNAhFYr5SJP8a3C/FwvtjzsiVpGl6UD1TZlYJ4c
+         tFAlm2ekDgd20CZy5EXt0mdH2xS6lDq39ZReuRlN524XymnwN3N2YZ2UCMFYI5aZWe7m
+         AaU9x9jzBBx6jtRhGJRZw0K55+mwy2i8fHMcito9P4liMb6dhDWfZielJzp/k3+o+tmT
+         Vm2j6b4704ot2p5icxML2Xc38V8Ak42/l1lF+kuEUWACDtm6Y5zl9mEOnjJsjanf4LGZ
+         L+Jg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 097/193] scsi: mvumi: use __maybe_unused to hide pm functions
-Date: Fri, 23 Feb 2018 19:25:30 +0100
-Message-Id: <20180223170341.232962399@linuxfoundation.org>
+	Daniel Wagner <daniel.wagner@bmw-carit.de>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH 4.4 096/193] video: Use bool instead int pointer for get_opt_bool() argument
+Date: Fri, 23 Feb 2018 19:25:29 +0100
+Message-Id: <20180223170341.017478741@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217941928771618?=
-X-GMAIL-MSGID: =?utf-8?q?1593217941928771618?=
+X-GMAIL-THRID: =?utf-8?q?1593217939420300046?=
+X-GMAIL-MSGID: =?utf-8?q?1593217939420300046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,46 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Daniel Wagner <daniel.wagner@bmw-carit.de>
 
-commit fddbeb80a904aae41c84ed566e2b0d1de55907df upstream.
+commit 206fc20598157ce15597822cf01b94377e30075b upstream.
 
-The mvumi scsi hides the references to its suspend/resume functions in
-an #ifdef but does not hide the implementation the same way:
+As the function name already indicates that get_opt_bool() parses
+for a bool. It is not a surprise that compiler is complaining
+about it when -Werror=incompatible-pointer-types is used:
 
-drivers/scsi/mvumi.c:2632:12: error: 'mvumi_suspend' defined but not used [-Werror=unused-function]
-drivers/scsi/mvumi.c:2651:12: error: 'mvumi_resume' defined but not used [-Werror=unused-function]
+drivers/video/fbdev/intelfb/intelfbdrv.c: In function ‘intelfb_setup’:
+drivers/video/fbdev/intelfb/intelfbdrv.c:353:39: error: passing argument 3 of ‘get_opt_bool’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+   if (get_opt_bool(this_opt, "accel", &accel))
 
-This adds __maybe_unused annotations so the compiler knows it can
-silently drop them instead of warning, while avoiding the addition of
-another #ifdef.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Daniel Wagner <daniel.wagner@bmw-carit.de>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/mvumi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/intelfb/intelfbdrv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/mvumi.c
-+++ b/drivers/scsi/mvumi.c
-@@ -2629,7 +2629,7 @@ static void mvumi_shutdown(struct pci_de
- 	mvumi_flush_cache(mhba);
+--- a/drivers/video/fbdev/intelfb/intelfbdrv.c
++++ b/drivers/video/fbdev/intelfb/intelfbdrv.c
+@@ -302,7 +302,7 @@ static __inline__ int get_opt_int(const
  }
  
--static int mvumi_suspend(struct pci_dev *pdev, pm_message_t state)
-+static int __maybe_unused mvumi_suspend(struct pci_dev *pdev, pm_message_t state)
+ static __inline__ int get_opt_bool(const char *this_opt, const char *name,
+-				   int *ret)
++				   bool *ret)
  {
- 	struct mvumi_hba *mhba = NULL;
- 
-@@ -2648,7 +2648,7 @@ static int mvumi_suspend(struct pci_dev
- 	return 0;
- }
- 
--static int mvumi_resume(struct pci_dev *pdev)
-+static int __maybe_unused mvumi_resume(struct pci_dev *pdev)
- {
- 	int ret;
- 	struct mvumi_hba *mhba = NULL;
+ 	if (!ret)
+ 		return 0;
