@@ -1,50 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751983AbeBWWEo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 17:04:44 -0500
-Received: from muru.com ([72.249.23.125]:58092 "EHLO muru.com"
+        id S1752112AbeBWWGP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 17:06:15 -0500
+Received: from muru.com ([72.249.23.125]:58110 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751547AbeBWWEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 17:04:43 -0500
-Date: Fri, 23 Feb 2018 14:04:40 -0800
+        id S1751578AbeBWWGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 17:06:14 -0500
 From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Brian Norris <briannorris@chromium.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
-Message-ID: <20180223220440.GC5593@atomide.com>
-References: <20180209161456.18951-1-tony@atomide.com>
- <CAHp75VcSRxLZJxmqXWpAGypvZa6W2cEAiTF2muJWqdaOYu_TpA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcSRxLZJxmqXWpAGypvZa6W2cEAiTF2muJWqdaOYu_TpA@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Subject: [PATCHv2] PM / wakeirq: Add wakeup name to dedicated wake irqs
+Date: Fri, 23 Feb 2018 14:06:12 -0800
+Message-Id: <20180223220612.35181-1-tony@atomide.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andy Shevchenko <andy.shevchenko@gmail.com> [180214 10:24]:
-> Subject: [PATCH] genirq: Add wakeup sysfs node to show IRQ wakeup state
-> 
-> Surprisingly there is no simple way to see if the IRQ line in question
-> is wakeup source or not.
+This makes it easy to grep :wakeup /proc/interrupts.
 
-Finally got around trying this one. Yeah it's nice and it seems
-that this is how we could also allow add support for showing the
-time when the wakeirq triggered and was actually seen by the irq
-subsystem. I think that's what people have been after for a
-while :)
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Suggested-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/base/power/power.h   |  1 +
+ drivers/base/power/wakeirq.c | 15 +++++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-It seems we should do both /sys/kernel/irq/*/wakeup and also
-have a name for the dedicated wakeirqs. I'll send out my
-kasprintf updated patch shortly.
-
-Regards,
-
-Tony
+diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+--- a/drivers/base/power/power.h
++++ b/drivers/base/power/power.h
+@@ -31,6 +31,7 @@ struct wake_irq {
+ 	struct device *dev;
+ 	unsigned int status;
+ 	int irq;
++	char *name;
+ };
+ 
+ extern void dev_pm_arm_wake_irq(struct wake_irq *wirq);
+diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
+--- a/drivers/base/power/wakeirq.c
++++ b/drivers/base/power/wakeirq.c
+@@ -112,6 +112,7 @@ void dev_pm_clear_wake_irq(struct device *dev)
+ 		free_irq(wirq->irq, wirq);
+ 		wirq->status &= ~WAKE_IRQ_DEDICATED_MASK;
+ 	}
++	kfree(wirq->name);
+ 	kfree(wirq);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_clear_wake_irq);
+@@ -184,6 +185,14 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+ 	if (!wirq)
+ 		return -ENOMEM;
+ 
++	wirq->name = kasprintf(GFP_KERNEL, "%s:%s",
++			       dev_name(dev),
++			       "wakeup");
++	if (!wirq->name) {
++		err = -ENOMEM;
++		goto err_free;
++	}
++
+ 	wirq->dev = dev;
+ 	wirq->irq = irq;
+ 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+@@ -196,9 +205,9 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+ 	 * so we use a threaded irq.
+ 	 */
+ 	err = request_threaded_irq(irq, NULL, handle_threaded_wake_irq,
+-				   IRQF_ONESHOT, dev_name(dev), wirq);
++				   IRQF_ONESHOT, wirq->name, wirq);
+ 	if (err)
+-		goto err_free;
++		goto err_free_name;
+ 
+ 	err = dev_pm_attach_wake_irq(dev, irq, wirq);
+ 	if (err)
+@@ -210,6 +219,8 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+ 
+ err_free_irq:
+ 	free_irq(irq, wirq);
++err_free_name:
++	kfree(wirq->name);
+ err_free:
+ 	kfree(wirq);
+ 
+-- 
+2.16.2
