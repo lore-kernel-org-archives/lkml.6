@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413657-2-487301808105705088
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413643-2-456806909340912618
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413657; b=E712aiWJuAxPRIsDHMvb++eo6TPrGMiq2o9SAEqDLgQ/bq1
-    LMBUgHwCK0zbdPJpAa3WA/pyD1TJPFgZh3fqgISO6bCjWTAR+ZlXVaiRnElTBH27
-    vkFKEOl82S4GL9lh2w0a8PV40WF/cHAVhZfjqgNd3Nyh9Yp7wVPx747Cgpr1Nfbi
-    FM+XO4qDbsKWrWVCIClMw0x3RabAjlerdILdnlQgktVpS7V2gAPQKL3eyFoyV8ie
-    ZnesBs+gdgQMR44Oa5cuPwXTaQpDbK0TWvsJDVloOGhXDamKKD9tbWG5cCWlZlm+
-    X+zeHZfhvcPrNudTNKlZNXf5uUr6shkiz1hWFSw==
+    t=1519413642; b=ZvG0/DY0gKJcqc3xJ4QacSmHolKK+dDYMJzDTZ9dhavF+Qw
+    TXEgRM58cgxDBud2drI7dTGEy1G1syJmgbOA6aMqJqsKYBT5WNJfUI3ZXN9ylJ6G
+    tEQV6I6fJAPLXz2mVodZ4TmLVl4NcUxfBnqXAgqvYiOc753+RV+PFxxeJAhNHmWT
+    AVeaK4IcsaAtAL4W/owBAfHcvJNolLmgB/kihOJnpFol1xwIpYms1WF5bBumDwKv
+    QCJCWFOJ0AXK8+WZ4Kx2mIawJtQm7y8TDVpxtlDOrfOqCn8/Dw3DT9jQv4D77I1e
+    QkZ87Clt8WzgPoYePK95bHGscY1h8jmuOtKbuIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413657; bh=YiV8r3ZETHayotUUuWa6PZomXD
-    bs+sPupwlJQenUYpg=; b=J5kbBZPSnwZidxIzeczkEgf+TMF+Uwglz/9EibWugx
-    lkKOFE3njeYNf1zyOfS0OSyADIhJdt/PblxaZblJQH/JDCdjc3DeVFN+hZwLfpoD
-    3yXFTXfOLVbmIsnBeFkHEZXjgqwlEgh+92WjGxLoGeY9Ei9ipBDazzatgrd4QnDX
-    8RCGjVKSEzcHkDvboyYHLtjHkhIiBJC+KqzGARgoCPBrjlpxlPtq58KRlVkJBS7w
-    Or4xLaBV4ScUKifsVaMIGH/+YBlthlFKDoP3FYFEnAPyTVevp+JMWbvvKIibT/Sr
-    h27clNq+DR/5ic3Jloqkje+sDpCLdcOyqsKfoO7aIt8A==
+    :list-id; s=arctest; t=1519413642; bh=C6veyivqUR10blWSuf7VW0yFRd
+    Ez78xauaN1jP7Zi3Q=; b=vzJhuZSEMdQ2Ebh4Le1d3xGg+ObL+X5be5F4PH9Gll
+    LvWCZyF+0PCgYUgCV8AyNZY6Cvulu5HzA74AjWEj0aiOq/tjfY8mK5RRumDnTfZ+
+    hhpZ1B1E/T7Iqwd+VSt3akhhx4pIqzxHfgo/E4cRWsn65680vIkDWobTGzWa0dpy
+    2RDseegqnMZ7wyo3OqbrusLQ99+K12xfJv60juu4wYRwMwjYMKdx26piyTsfBYZW
+    zd4vJVhXGOX/q2H+ipdNycmjyaED64GjfEeDEm7lvWp/JvtxyeJ6jGMrrilp+eMd
+    otrirvQY405eexFibXxMM1/tMvV/IDK0JSH5qDUM34bQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeBWTUl (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:20:41 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47644 "EHLO
+        id S935176AbeBWSyL (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:54:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47652 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964910AbeBWSyH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:07 -0500
+        with ESMTP id S964898AbeBWSyJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:09 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 105/159] powerpc/perf: Fix oops when grouping different pmu events
-Date: Fri, 23 Feb 2018 19:26:53 +0100
-Message-Id: <20180223170756.106505625@linuxfoundation.org>
+Subject: [PATCH 4.14 106/159] PM / runtime: Fix handling of suppliers with disabled runtime PM
+Date: Fri, 23 Feb 2018 19:26:54 +0100
+Message-Id: <20180223170756.223462110@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -81,58 +80,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
 
-[ Upstream commit 5aa04b3eb6fca63d2e9827be656dcadc26d54e11 ]
+[ Upstream commit 31eb7431805493e10f4731f366cf4d4e3e952035 ]
 
-When user tries to group imc (In-Memory Collections) event with
-normal event, (sometime) kernel crashes with following log:
+Prevent rpm_get_suppliers() from returning an error code if runtime
+PM is disabled for one or more of the supplier devices it wants to
+runtime-resume, so as to make runtime PM work for devices with links
+to suppliers that don't use runtime PM (such links may be created
+during device enumeration even before it is known whether or not
+runtime PM will be enabled for the devices in question, for example).
 
-    Faulting instruction address: 0x00000000
-    [link register   ] c00000000010ce88 power_check_constraints+0x128/0x980
-    ...
-    c00000000010e238 power_pmu_event_init+0x268/0x6f0
-    c0000000002dc60c perf_try_init_event+0xdc/0x1a0
-    c0000000002dce88 perf_event_alloc+0x7b8/0xac0
-    c0000000002e92e0 SyS_perf_event_open+0x530/0xda0
-    c00000000000b004 system_call+0x38/0xe0
-
-'event_base' field of 'struct hw_perf_event' is used as flags for
-normal hw events and used as memory address for imc events. While
-grouping these two types of events, collect_events() tries to
-interpret imc 'event_base' as a flag, which causes a corruption
-resulting in a crash.
-
-Consider only those events which belongs to 'perf_hw_context' in
-collect_events().
-
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Reviewed-By: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 21d5c57b3726 (PM / runtime: Use device links)
+Reported-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Tested-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/power/runtime.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1419,7 +1419,7 @@ static int collect_events(struct perf_ev
- 	int n = 0;
- 	struct perf_event *event;
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -276,7 +276,8 @@ static int rpm_get_suppliers(struct devi
+ 			continue;
  
--	if (!is_software_event(group)) {
-+	if (group->pmu->task_ctx_nr == perf_hw_context) {
- 		if (n >= max_count)
- 			return -1;
- 		ctrs[n] = group;
-@@ -1427,7 +1427,7 @@ static int collect_events(struct perf_ev
- 		events[n++] = group->hw.config;
- 	}
- 	list_for_each_entry(event, &group->sibling_list, group_entry) {
--		if (!is_software_event(event) &&
-+		if (event->pmu->task_ctx_nr == perf_hw_context &&
- 		    event->state != PERF_EVENT_STATE_OFF) {
- 			if (n >= max_count)
- 				return -1;
+ 		retval = pm_runtime_get_sync(link->supplier);
+-		if (retval < 0) {
++		/* Ignore suppliers with disabled runtime PM. */
++		if (retval < 0 && retval != -EACCES) {
+ 			pm_runtime_put_noidle(link->supplier);
+ 			return retval;
+ 		}
