@@ -1,53 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751330AbeBWHwX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 02:52:23 -0500
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:43547 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeBWHwV (ORCPT
+        id S1751338AbeBWHxz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 02:53:55 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36500 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeBWHxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 02:52:21 -0500
-X-Google-Smtp-Source: AG47ELtA20hJlPyPXEbF2XhKdwZp68XWn+9z4tlq+VDBbsOHRGJkuxQXDrY1zpED/UbRsTOMD1Yj5iNydFZvyoKxy3A=
+        Fri, 23 Feb 2018 02:53:53 -0500
+X-Google-Smtp-Source: AG47ELsNIR+tdGL1SR9MJAco+3iJCiiyqz92la8UZlIFhTDC6dJJWtYvc2fZF4/cw1aRxj6XfNvK6g==
+Subject: Re: [PATCH 5/9] drm/xen-front: Implement handling of shared display
+ buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-6-git-send-email-andr2000@gmail.com>
+ <11ce6c96-1739-435c-4b6f-c9f5d02a2905@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <dea8aaa3-70e8-4532-1f5a-2e0f8f57abed@gmail.com>
+Date: Fri, 23 Feb 2018 09:53:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180221094009.2zql6gbzkcklbakk@ninjato>
-References: <20180116160618.27859-1-peda@axentia.se> <20180116160618.27859-2-peda@axentia.se>
- <20180129161727.g4kdrr5sih22vs5a@rob-hp-laptop> <CAMRc=Mcqj36KP7dG71dzSn_7cxw-Tru5kNtXdr5-SiH=jbCfMA@mail.gmail.com>
- <20180221091130.4sdfnalrng4sd77i@ninjato> <CAMRc=Mfcvh3PoF46DvU8RiVZ2bnQPkRm=pmv9MPEux1sHpnAOw@mail.gmail.com>
- <20180221094009.2zql6gbzkcklbakk@ninjato>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Feb 2018 08:52:20 +0100
-Message-ID: <CAMRc=MdE_LX276mjXCHaNgAthKyzaKPW-eWBfEuCcG187X7wvQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: at24: sort manufacturers alphabetically
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <11ce6c96-1739-435c-4b6f-c9f5d02a2905@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-21 10:40 GMT+01:00 Wolfram Sang <wsa@the-dreams.de>:
+On 02/23/2018 02:25 AM, Boris Ostrovsky wrote:
+> On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
+>>   
+>>   static int __init xen_drv_init(void)
+>>   {
+>> +	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
+>> +	BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
 >
->> Will do. What about this (http://patchwork.ozlabs.org/patch/867169/)
->> one? It's part of a bigger series, do you want me to apply it to my
->> tree and provide you with an immutable branch?
+> Why BUILD_BUG_ON? This should simply not load if page sizes are different.
 >
-> Well, I would accept it for 4.16 using the "plain new id" rule. So, if
-> you add it on top of Peter's sorting patch, totally fine by me.
+>   
+This is a compile time check, so if kernel/Xen is configured
+to use page size combination which is not supported by the
+driver it will fail during compilation. This seems correct to me,
+because you shouldn't even try to load the driver which
+cannot handle different page sizes to not make any harm.
 >
-> If you want it in v4.17, ok, too. I'd think an immutable branch is not
-> needed. There is a fallback property in the DTS. So at worst, there will
-> be a DTS warning during the merge window which will be fixed at rc1 time.
 >
-> Unless I overlooked something.
 >
+>> +	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
+>> +	BUG_ON(ret);
+>
+> We should try not to BUG*(). There are a few in this patch (and possibly
+> others) that I think can be avoided.
+>
+I will rework BUG_* for map/unmap code to handle errors,
+but will still leave
+     /* either pages or sgt, not both */
+     BUG_ON(cfg->pages && cfg->sgt);
+which is a real driver bug and must not happen
+>
+>
+>
+>> +
+>> +static int alloc_storage(struct xen_drm_front_shbuf *buf)
+>> +{
+>> +	if (buf->sgt) {
+>> +		buf->pages = kvmalloc_array(buf->num_pages,
+>> +				sizeof(struct page *), GFP_KERNEL);
+>> +		if (!buf->pages)
+>> +			return -ENOMEM;
+>> +
+>> +		if (drm_prime_sg_to_page_addr_arrays(buf->sgt, buf->pages,
+>> +				NULL, buf->num_pages) < 0)
+>> +			return -EINVAL;
+>> +	}
+>> +
+>> +	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
+>> +	if (!buf->grefs)
+>> +		return -ENOMEM;
+>> +
+>> +	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
+>> +	if (!buf->directory)
+>> +		return -ENOMEM;
+> You need to clean up on errors.
+this is called in xen_drm_front_shbuf_alloc and is properly cleaned
+on failure, e.g.:
+     ret = alloc_storage(buf);
+     if (ret)
+         goto fail;
+[...]
+fail:
+     xen_drm_front_shbuf_free(buf);
 
-Ok, I'll have some time during the weekend, so I'll send a PR for rc3.
-
-Bart
+> -boris
+>
+>> +
+>> +	return 0;
+>> +}
