@@ -1,148 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752035AbeBWPWa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:22:30 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:56116 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751651AbeBWPW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:22:28 -0500
-Date: Fri, 23 Feb 2018 23:22:06 +0800
-In-Reply-To: <20180223152038.2bflylwa6vj4gzfj@flea.lan>
-References: <20180223123555.64009-6-icenowy@aosc.io> <20180223123555.64009-7-icenowy@aosc.io> <20180223152038.2bflylwa6vj4gzfj@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
+        id S1751651AbeBWPZv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:25:51 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42570 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751338AbeBWPZt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:25:49 -0500
+X-Google-Smtp-Source: AH8x227pFIYNBUVDOJo3KzrgOAcwqrPYTRigyMkr8NknHniuDqMfqL4t4aMfWtGnYW/fYUOb/bbv5g==
+From: Richard Cochran <richardcochran@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH net-next] net: phylink: Remove redundant netdev.phydev assignment
+Date: Fri, 23 Feb 2018 07:25:46 -0800
+Message-Id: <20180223152546.13354-1-richardcochran@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As a part of working on MII time stamping infrastructure, I was trying
+to figure out how netdev->phydev gets assigned, and I stumbled across
+this.  Ever since the new phylink code came in, the field is assigned
+twice.
 
+The function, phylink_connect_phy(), calls
 
-于 2018年2月23日 GMT+08:00 下午11:20:38, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Fri, Feb 23, 2018 at 08:35:54PM +0800, Icenowy Zheng wrote:
->> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with
->its
->> memory map fully reworked and some high-speed peripherals (PCIe, USB
->> 3.0) introduced.
->> 
->> This commit adds the basical DTSI file of it, including the clock
->> support and UART support.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
->> ---
->> Changes in v3:
->> - SPDX license identifier fix.
->> 
->> Changes in v2:
->> - Add APB1 clock as PIO's APB clock.
->> - Switched to SPDX license identifier.
->> 
->>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177
->+++++++++++++++++++++++++++
->>  1 file changed, 177 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> 
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> new file mode 100644
->> index 000000000000..4a6236bd9778
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> @@ -0,0 +1,177 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
->> +/*
->> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
->> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
->> +
->> +/ {
->> +	interrupt-parent = <&gic>;
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu0: cpu@0 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <0>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu1: cpu@1 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <1>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu2: cpu@2 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <2>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu3: cpu@3 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <3>;
->> +			enable-method = "psci";
->> +		};
->> +	};
->> +
->> +	iosc: internal-osc-clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <16000000>;
->> +		clock-accuracy = <300000000>;
->> +		clock-output-names = "iosc";
->> +	};
->
->You're not using it anywhere
->
->> +	osc24M: osc24M_clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "osc24M";
->> +	};
->> +
->> +	osc32k: osc32k_clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <32768>;
->> +		clock-output-names = "osc32k";
->> +	};
->> +
->> +	psci {
->> +		compatible = "arm,psci-0.2";
->> +		method = "smc";
->> +	};
->
->Is it needed? The bootloader should fill it with whatever version it
->has, shouldn't it?
+	phy_attach_direct()
+	phylink_bringup_phy()
 
-But we now use ATF rather than U-Boot PSCI. U-Boot will
-not fill ATF info.
+and phy_attach_direct() sets
 
-See A64/H5 device trees.
+	dev->phydev = phydev;
 
->
->Thanks!
->Maxime
+but phylink_bringup_phy() then sets the same field again:
+
+	pl->netdev->phydev = phy;
+
+Similarly, the function, phylink_of_phy_connect(), calls
+
+	of_phy_attach()
+		phy_attach_direct()
+	phylink_bringup_phy()
+
+The removal code is also duplicated:
+
+phylink_disconnect_phy()
+	pl->netdev->phydev = NULL;
+	phy_disconnect()
+		phy_detach()
+			phydev->attached_dev->phydev = NULL;
+
+This patch removes the redundant assignments, restricting manipulation
+of the netdev.phydev field to phy_attach_direct() and phy_detach().
+
+Signed-off-by: Richard Cochran <richardcochran@gmail.com>
+---
+ drivers/net/phy/phylink.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 6ac8b29b2dc3..867ffd654daf 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -679,7 +679,6 @@ static int phylink_bringup_phy(struct phylink *pl, struct phy_device *phy)
+ 
+ 	mutex_lock(&phy->lock);
+ 	mutex_lock(&pl->state_mutex);
+-	pl->netdev->phydev = phy;
+ 	pl->phydev = phy;
+ 	linkmode_copy(pl->supported, supported);
+ 	linkmode_copy(pl->link_config.advertising, config.advertising);
+@@ -817,7 +816,6 @@ void phylink_disconnect_phy(struct phylink *pl)
+ 	if (phy) {
+ 		mutex_lock(&phy->lock);
+ 		mutex_lock(&pl->state_mutex);
+-		pl->netdev->phydev = NULL;
+ 		pl->phydev = NULL;
+ 		mutex_unlock(&pl->state_mutex);
+ 		mutex_unlock(&phy->lock);
+-- 
+2.11.0
