@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225anOnHyQdf30EPwLhOoHRS0SsO4dUOKTlELnZkO85xBYibLBgEMVvbsDe4wbu7v3V1z07a
-ARC-Seal: i=1; a=rsa-sha256; t=1519410995; cv=none;
+X-Google-Smtp-Source: AG47ELsWB2+uSX4EOH3IGObwRWs7rPXPipSUCXbEOT8at0TtcftEYHc+r9RzlZj6nzRvD+lGuc92
+ARC-Seal: i=1; a=rsa-sha256; t=1519410992; cv=none;
         d=google.com; s=arc-20160816;
-        b=CjdX65xLii+3SmCmMIKnL8AXT++fdbTeEM5TxuyhlHEu0Ypm5vtE0Y1QCTqhJzHrlF
-         Aa6V3vqWeJI6CHFil4iln5PReuACpXQFk3HsBrRy1RpMg4Gf1jyXPsbkk4xmGcwlp+88
-         huySNrp7gVVM+biREPU/TmqfnkJCnY2K5oTcwjqybyz5opLkP0radsvURhavlXwH5sc2
-         y9ol6lD7arsGJxTLyE+088IWJJKbQ2vRl590Jt3Wg6aBE3yg9+R4CSMJOLt+/J98mmxd
-         LqTtwxFBAyrBY1a3eSq5kCdP6HVN8TshRKWFTxlFBn2/vRr9bjNsuh51c36+6l6csmO0
-         1VEQ==
+        b=jCf+5ytegK6crOxHX436xzxDXaTyn7peQQmmeaXIx0+mxYcFf2cZTOBvcR4btZqPJE
+         1VpkSPByzc1HYrknO8/40khBUhfbOcSo1mRolc6VpnyOgd7VTu3AY5S+qYJKeYExaz4M
+         N0OZtu7KbT1C8x3WPUjgovfs1KlqTfbkOELaHhw8WNHWedZHNSCbfkyWqQpRTWCYnFEb
+         IiCjQpAi/RLfS3JuGELfHpPJKZ7xScxYYq63Eq1bxhXbnw1/X5RPUQ59C1EZwz2m8ddo
+         gPSQopv2sHEL8hh56wZJYbJLG+qM+1/4Keyt2UKciuxEZCjGyVn6oLbfTajf441Ghyov
+         e6zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NOKj9mlpA8HiUx/HKOJKq9cESQ6TAUAoRFZXoLsD7qM=;
-        b=AGHXsBeVa53E4AXwHLYo76pDejaRe7DU0lHFQlcIKluiDGsFEfPb+B2msDOAJYBIIm
-         PawQYfDTWace7D3fMgDR3aZzX6K1HD5rLMtaNWrto8BZHLFaT/xtcM7CDCJnycP5kIKG
-         4ZlC/EnzkNLvep6BhFDi/HjCbyEr7+w6uK9CoDLlCj4qo4uC0MXVj41eXwYHIEEohnFf
-         uivMUQeQLw5l/S0qrWwoTEV0xKpPDpd1Dm9SYhafokhZoF9E+niLZvpxpkIAK0rhzIGm
-         1DokL5X990bTo3zJHz0ZQJa5vehgCQX4l0qlEHd0Er3VRAmdqaO9GShhBWTNEL1U9BSf
-         loIA==
+        bh=b0f0i90u14GTMsRvMWhlVC59VE18XXwSbx4k2N1hAEs=;
+        b=qorQP/xB7C6/oXaBl3MKKdZ2duBkzTWKaTeGJh+O2HqUtSMETyCq+WIPRDTT6yF+od
+         8YPlSl9MPg7cqcbjNAF9a39RYqaRsEQBT6gpUdsWvKkbTs/UHERNmFAi1clqqjUts6i3
+         VS/IE+6D8Q+7uGQqz+Bz/aISxCwybW/g0GM2ef/A9CTsYLPjTVUmnzj11QL1qOc/XjV9
+         IbPQ23P2qoE00cGiKr7nOVHvuT/FlBzsE6WEgjCmvb0ZTM+92j4UHVwDlOSQpEAYcQ/9
+         sqTe/F5wn4wTvB7aQgBAn1Fn3anhyqlInkUpCx/g9nrMh8CnTbu5kn9buTwp5BvwlWT1
+         NbTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fabian Frederick <fabf@skynet.be>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 085/193] drivers/net: fix eisa_driver probe section mismatch
-Date: Fri, 23 Feb 2018 19:25:18 +0100
-Message-Id: <20180223170339.359985411@linuxfoundation.org>
+	Sudip Mukherjee <sudip@vectorindia.org>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 084/193] scsi: sim710: fix build warning
+Date: Fri, 23 Feb 2018 19:25:17 +0100
+Message-Id: <20180223170339.216157820@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217903866781097?=
-X-GMAIL-MSGID: =?utf-8?q?1593217903866781097?=
+X-GMAIL-THRID: =?utf-8?q?1593217901064285175?=
+X-GMAIL-MSGID: =?utf-8?q?1593217901064285175?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,65 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabian Frederick <fabf@skynet.be>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-commit cb4396edd84ed73081635fb933d19c1410fafaf4 upstream.
+commit 648a0a7da34f281410e8e3a59de8c13ec6ea380a upstream.
 
-Some eisa_driver structures used __init probe functions which generates
-a warning and could crash if function is called after being deleted.
+We are getting build warning about:
+ "Section mismatch in reference from the variable sim710_eisa_driver to
+ the function .init.text:sim710_eisa_probe()
+ The variable sim710_eisa_driver references the function __init
+ sim710_eisa_probe()"
 
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+sim710_eisa_probe() was having __init but that was being referenced from
+sim710_eisa_driver.
+
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/3com/3c509.c      |    2 +-
- drivers/net/ethernet/3com/3c59x.c      |    2 +-
- drivers/net/ethernet/dec/tulip/de4x5.c |    2 +-
- drivers/net/ethernet/hp/hp100.c        |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/scsi/sim710.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/3com/3c509.c
-+++ b/drivers/net/ethernet/3com/3c509.c
-@@ -562,7 +562,7 @@ static void el3_common_remove (struct ne
- }
- 
- #ifdef CONFIG_EISA
--static int __init el3_eisa_probe (struct device *device)
-+static int el3_eisa_probe(struct device *device)
- {
- 	short i;
- 	int ioaddr, irq, if_port;
---- a/drivers/net/ethernet/3com/3c59x.c
-+++ b/drivers/net/ethernet/3com/3c59x.c
-@@ -907,7 +907,7 @@ static struct eisa_device_id vortex_eisa
+--- a/drivers/scsi/sim710.c
++++ b/drivers/scsi/sim710.c
+@@ -176,8 +176,7 @@ static struct eisa_device_id sim710_eisa
  };
- MODULE_DEVICE_TABLE(eisa, vortex_eisa_ids);
+ MODULE_DEVICE_TABLE(eisa, sim710_eisa_ids);
  
--static int __init vortex_eisa_probe(struct device *device)
-+static int vortex_eisa_probe(struct device *device)
+-static __init int
+-sim710_eisa_probe(struct device *dev)
++static int sim710_eisa_probe(struct device *dev)
  {
- 	void __iomem *ioaddr;
- 	struct eisa_device *edev;
---- a/drivers/net/ethernet/dec/tulip/de4x5.c
-+++ b/drivers/net/ethernet/dec/tulip/de4x5.c
-@@ -1990,7 +1990,7 @@ SetMulticastFilter(struct net_device *de
- 
- static u_char de4x5_irq[] = EISA_ALLOWED_IRQ_LIST;
- 
--static int __init de4x5_eisa_probe (struct device *gendev)
-+static int de4x5_eisa_probe(struct device *gendev)
- {
- 	struct eisa_device *edev;
- 	u_long iobase;
---- a/drivers/net/ethernet/hp/hp100.c
-+++ b/drivers/net/ethernet/hp/hp100.c
-@@ -2843,7 +2843,7 @@ static void cleanup_dev(struct net_devic
- }
- 
- #ifdef CONFIG_EISA
--static int __init hp100_eisa_probe (struct device *gendev)
-+static int hp100_eisa_probe(struct device *gendev)
- {
- 	struct net_device *dev = alloc_etherdev(sizeof(struct hp100_private));
- 	struct eisa_device *edev = to_eisa_device(gendev);
+ 	struct eisa_device *edev = to_eisa_device(dev);
+ 	unsigned long io_addr = edev->base_addr;
