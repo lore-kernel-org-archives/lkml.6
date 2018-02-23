@@ -1,219 +1,167 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4146530-1519429557-5-13755740832633697144
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414856-2-10335839484497946816
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519429557; b=qImSCLpCFyUpcaI2Nws/PXiPVOyKfsDl1gZ8JQMtdpfi7M6
-    pWMwfXzsdWq2G/jv0V7RbVJpNGiJ55eQJNymJyXRsizYSjvT3WZilZ+m/E65ELex
-    +b2vqDi3djauE0UKW+lbdQIiwyVY7df759b47GLCNXFkDwwmEgymH99EeqNRXFf3
-    akbkFvMvR/eW+OoBbLXZeJM4WZtb6JlRH8LCDjgLvVBX8IW/oQ/+akp5MDnjl6po
-    knog3FJ/dst2caekeA+Tkw8Pn7dmgoprkLfrKVVKZHb2QyXNjU38tKMf0fqs9YNr
-    LCLAY0N4HRxVvFk95DXCvJRSgi1pu7qTr0Fg5dw==
+    t=1519414856; b=o6jwpmR8B42dedtlWS36KGnw6Gj3PATGTusPBCAdYHlePzT
+    nl4pLloMzbLlMlvZi7u8sJ/bXk9dDA+j6i1ZanX20IXInKIvytxHhupEIlovaBjq
+    17QCmyttM6TAx6sy2edYE/7AQbH7Yk4uSZ8mn6eA1xrUk6VKuhE37xqUedLuVxNX
+    HbQS6d8BVvlHmKSzkP6Sx/9NGTIxMn3p/qNGq9eCKBcVw3Xo6PbIHeMjbZBUETPo
+    gGS+pLSBO+nXHNsfoTFKqnZxOqFFs99nIiCxyuE/pa2YP8zFUz8fgMPXgV1jz3Fm
+    p5o847I62kp30vILAvaBbfw4CkgC4g/LVILCZFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=arctest; t=1519429557; bh=tUDAW3U
-    Ga3z8/BAogjIFdm6kUhEpOq34HvCVkC/tHzU=; b=wp2JNCJ8qiB2WjQU1IDzRnM
-    212Z8i0PD0hNDmdRQamRN63uQuxPpw+U7GFCuXSBunT3wtDbQqJUDoTdfucrABPD
-    ac6oTnVyILc0/Ow8fbYQiv/Fz7Ou7wezpqzELGGb2ke5FPfPIJj2s/Z8AcAp1jhf
-    AnlTI+xJGhgx9i8ls4xATE4XP1Ub2x3kUEuZ7KcRXPa7bWtemIgb+poCQdPEl7rQ
-    HQnmhCJ99fvXAt1mYOIXACE8CIVv5+aDU8Kjs8OXc9EathlQ49rTJPsLQ7gW7ngD
-    EuNexgy6Ad6j1ye8YwUyQtFoFExhdhfMJgcksQm7yK7xvb3MbOg5Dy5M+uP5Lfw=
-    =
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Zh4kKHCq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519414856; bh=rhwt239xBTQppNtvCDWml0TkhZ
+    AhVRCIfQW2br4lxxg=; b=rr95ssP1ngY/Uaeyy6t3lDh0ErOST9VrB1xDEbUUPK
+    9BpiH7QKPFtCsOUzN1LY+XyQcHZNMNqidfEzr88ydY9qegV483lzvN0PqRQq3kKj
+    yK8Uc4SBzU9H5x4F+7PVWKyfpjSCi00Ql7gf9LZPo2Hnw25gogn+uWDEtB2NRPxE
+    w0sjX5uJiD6yJmIjNhd700Huw8/Or4ETjuHW1d/zBUmis3wimYPZGE37cFX32WI0
+    oNPOg6UE5ZZmAmoEhGWiTblqtegYs9DAZBPkfYYOnrdkwcKDrAxPfq8S7vxsdH/E
+    aOPLxIRPv7ei3Ethzla2rfS7seMl2GOMvZTh5yM5Q2zg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nDB2NkrR;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Zh4kKHCq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nDB2NkrR;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeBWXpy (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 18:45:54 -0500
-Received: from mail-io0-f182.google.com ([209.85.223.182]:35056 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeBWXpw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 18:45:52 -0500
-X-Google-Smtp-Source: AG47ELttyxK223iJMT2lKPqK2Ey1D2S2P8INY2CWxCMN/KlppvDF212ZvgyOZNSNcQTCIp2Yl9rn+Q==
-Date: Fri, 23 Feb 2018 17:45:50 -0600
-From: Dan Rue <dan.rue@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
-        shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
-        patches@kernelci.org, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 4.14 000/159] 4.14.22-stable review
-Message-ID: <20180223234550.ztjubws6wsqri4md@xps>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk,
-        shuahkh@osg.samsung.com, lkft-triage@lists.linaro.org,
-        patches@kernelci.org, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-References: <20180223170743.086611315@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S933596AbeBWTkk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:40:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45244 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934513AbeBWStV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:49:21 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 001/159] usb: core: Add a helper function to check the validity of EP type in URB
+Date: Fri, 23 Feb 2018 19:25:09 +0100
+Message-Id: <20180223170743.256398104@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
-User-Agent: NeoMutt/20171215
+References: <20180223170743.086611315@linuxfoundation.org>
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 07:25:08PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.22 release.
-> There are 159 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Feb 25 17:06:38 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.22-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm and x86_64.
+------------------
 
-Summary
-------------------------------------------------------------------------
+From: Takashi Iwai <tiwai@suse.de>
 
-kernel: 4.14.22-rc1
-git repo:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.14.y
-git commit: 61e5ffb08842d3b466d2a321bc8d199c7e768892
-git describe: v4.14.21-160-g61e5ffb08842
-Test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.21-160-g61e5ffb08842
+commit e901b9873876ca30a09253731bd3a6b00c44b5b0 upstream.
 
+This patch adds a new helper function to perform a sanity check of the
+given URB to see whether it contains a valid endpoint.  It's a light-
+weight version of what usb_submit_urb() does, but without the kernel
+warning followed by the stack trace, just returns an error code.
 
-No regressions (compared to build v4.14.21-154-gac0921d9f7a8)
+Especially for a driver that doesn't parse the descriptor but fills
+the URB with the fixed endpoint (e.g. some quirks for non-compliant
+devices), this kind of check is preferable at the probe phase before
+actually submitting the urb.
 
-Boards, architectures and test suites:
--------------------------------------
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-hi6220-hikey - arm64
-* boot - pass: 20,
-* kselftest - pass: 48, skip: 17
-* libhugetlbfs - pass: 90, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 21, skip: 1
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 10, skip: 4
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 999, skip: 151
-* ltp-timers-tests - pass: 12, skip: 1
+---
+ drivers/usb/core/urb.c |   30 ++++++++++++++++++++++++++----
+ include/linux/usb.h    |    2 ++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
-juno-r2 - arm64
-* boot - pass: 20,
-* kselftest - pass: 48, skip: 17
-* libhugetlbfs - pass: 90, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 10, skip: 4
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1001, skip: 149
-* ltp-timers-tests - pass: 12, skip: 1
-
-x15 - arm
-* boot - pass: 20,
-* kselftest - pass: 45, skip: 19
-* libhugetlbfs - pass: 87, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 61, skip: 2
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 20, skip: 2
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 13, skip: 1
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1053, skip: 97
-* ltp-timers-tests - pass: 12, skip: 1
-
-x86_64
-* boot - pass: 20,
-* kselftest - pass: 61, skip: 19
-* libhugetlbfs - pass: 89, skip: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - pass: 64, skip: 17
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - pass: 62, skip: 1
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 9, skip: 5
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - pass: 1031, skip: 119
-* ltp-timers-tests - pass: 12, skip: 1
-
---
-Linaro QA (beta)
-https://qa-reports.linaro.org
+--- a/drivers/usb/core/urb.c
++++ b/drivers/usb/core/urb.c
+@@ -187,6 +187,31 @@ EXPORT_SYMBOL_GPL(usb_unanchor_urb);
+ 
+ /*-------------------------------------------------------------------*/
+ 
++static const int pipetypes[4] = {
++	PIPE_CONTROL, PIPE_ISOCHRONOUS, PIPE_BULK, PIPE_INTERRUPT
++};
++
++/**
++ * usb_urb_ep_type_check - sanity check of endpoint in the given urb
++ * @urb: urb to be checked
++ *
++ * This performs a light-weight sanity check for the endpoint in the
++ * given urb.  It returns 0 if the urb contains a valid endpoint, otherwise
++ * a negative error code.
++ */
++int usb_urb_ep_type_check(const struct urb *urb)
++{
++	const struct usb_host_endpoint *ep;
++
++	ep = usb_pipe_endpoint(urb->dev, urb->pipe);
++	if (!ep)
++		return -EINVAL;
++	if (usb_pipetype(urb->pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
++		return -EINVAL;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(usb_urb_ep_type_check);
++
+ /**
+  * usb_submit_urb - issue an asynchronous transfer request for an endpoint
+  * @urb: pointer to the urb describing the request
+@@ -326,9 +351,6 @@ EXPORT_SYMBOL_GPL(usb_unanchor_urb);
+  */
+ int usb_submit_urb(struct urb *urb, gfp_t mem_flags)
+ {
+-	static int			pipetypes[4] = {
+-		PIPE_CONTROL, PIPE_ISOCHRONOUS, PIPE_BULK, PIPE_INTERRUPT
+-	};
+ 	int				xfertype, max;
+ 	struct usb_device		*dev;
+ 	struct usb_host_endpoint	*ep;
+@@ -444,7 +466,7 @@ int usb_submit_urb(struct urb *urb, gfp_
+ 	 */
+ 
+ 	/* Check that the pipe's type matches the endpoint's type */
+-	if (usb_pipetype(urb->pipe) != pipetypes[xfertype])
++	if (usb_urb_ep_type_check(urb))
+ 		dev_WARN(&dev->dev, "BOGUS urb xfer, pipe %x != type %x\n",
+ 			usb_pipetype(urb->pipe), pipetypes[xfertype]);
+ 
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -1729,6 +1729,8 @@ static inline int usb_urb_dir_out(struct
+ 	return (urb->transfer_flags & URB_DIR_MASK) == URB_DIR_OUT;
+ }
+ 
++int usb_urb_ep_type_check(const struct urb *urb);
++
+ void *usb_alloc_coherent(struct usb_device *dev, size_t size,
+ 	gfp_t mem_flags, dma_addr_t *dma);
+ void usb_free_coherent(struct usb_device *dev, size_t size,
