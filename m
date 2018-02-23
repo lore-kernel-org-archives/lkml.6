@@ -1,124 +1,237 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751797AbeBWQRi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:17:38 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37257 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751589AbeBWQRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:17:36 -0500
-X-Google-Smtp-Source: AH8x2278pGo/5jMJ4ykHx25OnEDedyTZ+2GQR3CX4ttrD7olcFa8hVUWw2s7mYIBdwl6VppmZEka6w==
+        id S1751716AbeBWQST (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:18:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42484 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751381AbeBWQSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:18:17 -0500
+Date: Sat, 24 Feb 2018 00:17:57 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Alban Browaeys <alban.browaeys@gmail.com>, ivan@ludios.org,
+        169364@studenti.unimore.it, holger@applied-asynchrony.com,
+        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
+Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
+Message-ID: <20180223161751.GA17466@ming.t460p>
+References: <20180207211920.6343-1-paolo.valente@linaro.org>
+ <20180223150705.GB30079@ming.t460p>
+ <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180223133742.26044-11-mylene.josserand@bootlin.com>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com> <20180223133742.26044-11-mylene.josserand@bootlin.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 24 Feb 2018 00:17:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
-Message-ID: <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        quentin.schulz@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
-<mylene.josserand@bootlin.com> wrote:
-> On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
-> It should be done by the bootloader but it is currently not the case,
-> even for boot CPU because this SoC is booting in secure mode.
-> It leads to an random offset value meaning that each CPU will have a
-> different time, which isn't working very well.
->
-> Add assembly code used for boot CPU and secondary CPU cores to make
-> sure that the CNTVOFF register is initialized.
->
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> ---
->  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
->  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
->  2 files changed, 25 insertions(+)
->
-> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> index d5c97e945e69..605896251927 100644
-> --- a/arch/arm/mach-sunxi/headsmp.S
-> +++ b/arch/arm/mach-sunxi/headsmp.S
-> @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
->         first: .word sunxi_mc_smp_first_comer - .
->  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
->
-> +ENTRY(sunxi_init_cntvoff)
-> +       /*
-> +        * CNTVOFF has to be initialized either from non-secure Hypervisor
-> +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-> +        * then it should be handled by the secure code
-> +        */
-> +       cps     #MON_MODE
-> +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
-> +       orr     r0, r1, #1
-> +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
-> +       instr_sync
-> +       mov     r0, #0
-> +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
-> +       instr_sync
-> +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
-> +       instr_sync
-> +       cps     #SVC_MODE
-> +       ret     lr
-> +ENDPROC(sunxi_init_cntvoff)
+Hi Paolo,
 
-There is no need to move all the assembly into a separate file, just
-to add this function. Everything can be inlined as a naked function.
-The "instr_sync" macro can be replaced with "isb", which is what it
-expands to anyway.
-
-I really want to keep everything self-contained without global symbols,
-and in C files if possible.
-
-> +
->  #ifdef CONFIG_SMP
->  ENTRY(sunxi_boot)
->         bl      sunxi_mc_smp_cluster_cache_enable
-> +       bl      sunxi_init_cntvoff
->         b       secondary_startup
->  ENDPROC(sunxi_boot)
->
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index 5e9602ce1573..4bb041492b54 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
->  };
->
->  extern void __init sun6i_reset_init(void);
-> +extern void sunxi_init_cntvoff(void);
-> +
->  static void __init sun6i_timer_init(void)
+On Fri, Feb 23, 2018 at 04:41:36PM +0100, Paolo Valente wrote:
+> 
+> 
+> > Il giorno 23 feb 2018, alle ore 16:07, Ming Lei <ming.lei@redhat.com> ha scritto:
+> > 
+> > Hi Paolo,
+> > 
+> > On Wed, Feb 07, 2018 at 10:19:20PM +0100, Paolo Valente wrote:
+> >> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
+> >> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
+> >> be re-inserted into the active I/O scheduler for that device. As a
+> > 
+> > No, this behaviour isn't related with commit a6a252e64914, and
+> > it has been there since blk_mq_requeue_request() is introduced.
+> > 
+> 
+> Hi Ming,
+> actually, we wrote the above statement after simply following the call
+> chain that led to the failure.  In this respect, the change in commit
+> a6a252e64914:
+> 
+>  static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
+> +                                      bool has_sched,
+>                                        struct request *rq)
 >  {
-> +       sunxi_init_cntvoff();
-
-You should check the enable-method to see if PSCI is set or not,
-as an indicator whether the kernel is booted secure or non-secure.
-AFAIK trying to set CNTVOFF under non-secure would be very bad.
-
-
-Regards
-ChenYu
-
+> -       if (rq->tag == -1) {
+> +       /* dispatch flush rq directly */
+> +       if (rq->rq_flags & RQF_FLUSH_SEQ) {
+> +               spin_lock(&hctx->lock);
+> +               list_add(&rq->queuelist, &hctx->dispatch);
+> +               spin_unlock(&hctx->lock);
+> +               return true;
+> +       }
 > +
->         of_clk_init(NULL);
->         if (IS_ENABLED(CONFIG_RESET_CONTROLLER))
->                 sun6i_reset_init();
-> --
-> 2.11.0
->
+> +       if (has_sched) {
+>                 rq->rq_flags |= RQF_SORTED;
+> -               return false;
+> +               WARN_ON(rq->tag != -1);
+>         }
+>  
+> -       /*
+> -        * If we already have a real request tag, send directly to
+> -        * the dispatch list.
+> -        */
+> -       spin_lock(&hctx->lock);
+> -       list_add(&rq->queuelist, &hctx->dispatch);
+> -       spin_unlock(&hctx->lock);
+> -       return true;
+> +       return false;
+>  }
+> 
+> makes blk_mq_sched_bypass_insert return false for all non-flush
+> requests.  From that, the anomaly described in our commit follows, for
+> bfq any stateful scheduler that waits for the completion of requests
+> that passed through it.  I'm elaborating again a little bit on this in
+> my replies to your next points below.
+
+Before a6a252e64914, follows blk_mq_sched_bypass_insert()
+
+       if (rq->tag == -1) {
+               rq->rq_flags |= RQF_SORTED;
+               return false;
+	   }
+
+       /*
+        * If we already have a real request tag, send directly to
+        * the dispatch list.
+        */
+       spin_lock(&hctx->lock);
+       list_add(&rq->queuelist, &hctx->dispatch);
+       spin_unlock(&hctx->lock);
+       return true;
+
+This function still returns false for all non-flush request, so nothing
+changes wrt. this kind of handling.
+
+> 
+> I don't mean that this change is an error, it simply sends a stateful
+> scheduler in an inconsistent state, unless the scheduler properly
+> handles the requeue that precedes the re-insertion into the
+> scheduler.
+> 
+> If this clarifies the situation, but there is still some misleading
+> statement in the commit, just let me better understand, and I'll be
+> glad to rectify it, if possible somehow.
+> 
+> 
+> > And you can see blk_mq_requeue_request() is called by lots of drivers,
+> > especially it is often used in error handler, see SCSI's example.
+> > 
+> >> consequence, I/O schedulers may get the same request inserted again,
+> >> even several times, without a finish_request invoked on that request
+> >> before each re-insertion.
+> >> 
+> 
+> ...
+> 
+> >> @@ -5426,7 +5482,8 @@ static struct elevator_type iosched_bfq_mq = {
+> >> 	.ops.mq = {
+> >> 		.limit_depth		= bfq_limit_depth,
+> >> 		.prepare_request	= bfq_prepare_request,
+> >> -		.finish_request		= bfq_finish_request,
+> >> +		.requeue_request        = bfq_finish_requeue_request,
+> >> +		.finish_request		= bfq_finish_requeue_request,
+> >> 		.exit_icq		= bfq_exit_icq,
+> >> 		.insert_requests	= bfq_insert_requests,
+> >> 		.dispatch_request	= bfq_dispatch_request,
+> > 
+> > This way may not be correct since blk_mq_sched_requeue_request() can be
+> > called for one request which won't enter io scheduler.
+> > 
+> 
+> Exactly, there are two cases: requeues that lead to subsequent
+> re-insertions, and requeues that don't.  The function
+> bfq_finish_requeue_request handles both, and both need to be handled,
+> to inform bfq that it has not to wait for the completion of rq any
+> longer.
+> 
+> One special case is when bfq_finish_requeue_request gets invoked even
+> if rq has nothing to do with any scheduler.  In that case,
+> bfq_finish_requeue_request exists immediately.
+> 
+> 
+> > __blk_mq_requeue_request() is called for two cases:
+> > 
+> > 	- one is that the requeued request is added to hctx->dispatch, such
+> > 	as blk_mq_dispatch_rq_list()
+> 
+> yes
+> 
+> > 	- another case is that the request is requeued to io scheduler, such as
+> > 	blk_mq_requeue_request().
+> > 
+> 
+> yes
+> 
+> > For the 1st case, blk_mq_sched_requeue_request() shouldn't be called
+> > since it is nothing to do with scheduler,
+> 
+> No, if that rq has been inserted and then extracted from the scheduler
+> through a dispatch_request, then it has.  The scheduler is stateful,
+> and keeps state for rq, because it must do so, until a completion or a
+> requeue arrive.  In particular, bfq may decide that no other
+
+This 'requeue' to hctx->dispatch is invisible to io scheduler, and from
+io scheduler view, seems no difference between STS_OK and STS_RESOURCE,
+since this request will be submitted to lld automatically by blk-mq
+core.
+
+Also in legacy path, no such notification to io scheduler too.
+
+> bfq_queues must be served before rq has been completed, because this
+> is necessary to preserve its target service guarantees.  If bfq is not
+> informed, either through its completion or its requeue hook, then it
+> will wait forever.
+
+The .finish_request will be called after this request is completed for this
+case, either after this io is completed by device, or timeout.
+
+Or .requeue_request will be called if the driver need to requeue it to
+io scheduler via blk_mq_requeue_request() explicitly.
+
+So io scheduler will be made sure to get notified.
+
+> 
+> > seems we only need to do that
+> > for 2nd case.
+> > 
+> 
+> > So looks we need the following patch:
+> > 
+> > diff --git a/block/blk-mq.c b/block/blk-mq.c
+> > index 23de7fd8099a..a216f3c3c3ce 100644
+> > --- a/block/blk-mq.c
+> > +++ b/block/blk-mq.c
+> > @@ -712,7 +714,6 @@ static void __blk_mq_requeue_request(struct request *rq)
+> > 
+> > 	trace_block_rq_requeue(q, rq);
+> > 	wbt_requeue(q->rq_wb, &rq->issue_stat);
+> > -	blk_mq_sched_requeue_request(rq);
+> > 
+> 
+> By doing so, if rq has 'passed' through bfq, then you block again bfq
+> forever.
+
+Could you explain it a bit why bfq is blocked by this way?
+
+> 
+> Of course, I may be wrong, as I don't have a complete mental model of
+> all what blk-mq does around bfq.  But I thin that you can quickly
+> check whether a hang occurs again if you add this change.  In
+> particular, it should happen in the USB former failure case.
+
+USB/BFQ runs well on my parted test with this change, and this test can
+trigger the IO hang issue easily on kyber or without your patch of 'block,
+bfq: add requeue-request hook'.
+
+Thanks,
+Ming
