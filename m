@@ -1,165 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeBWPS0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:18:26 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53716 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbeBWPSY (ORCPT
+        id S1751992AbeBWPTE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:19:04 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39813 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeBWPTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:18:24 -0500
-Date: Fri, 23 Feb 2018 16:18:21 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 2/7] pinctrl: sunxi: support pin controllers with
- holes among IRQ banks
-Message-ID: <20180223151821.gqn66roldejpowzu@flea.lan>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-3-icenowy@aosc.io>
+        Fri, 23 Feb 2018 10:19:02 -0500
+X-Google-Smtp-Source: AG47ELtXZMtPbzxJIz8IMJgYkS9O1RfAZ9Qon4/Rjsbd+b7RXJ2+A+DylJ1c4ZA9JdyCZgBxfznRaJyrTawl1m7VSMc=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hzki2yhvhouadvwv"
-Content-Disposition: inline
-In-Reply-To: <20180223122552.58049-3-icenowy@aosc.io>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 23 Feb 2018 16:19:01 +0100
+X-Google-Sender-Auth: NwzZI1VE01skHK3VMH_zNPZKbFs
+Message-ID: <CAK8P3a3-NTzY3x5xM_d8Bxm-s+SF0L8d60vd-FOHccVxXo_AVg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
+<mail@maciej.szmigiero.name> wrote:
+> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
+>
+> Now that the patch series changing ISA_BUS_API dependency to selection
+> was merged this reversion will do the same for gpio-winbond driver to
+> make it consistent with other ISA bus gpio drivers.
+>
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
---hzki2yhvhouadvwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I still see a number of other users of 'depends on ISA_BUS_API' in linux-next:
 
-On Fri, Feb 23, 2018 at 08:25:47PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. This
-> situation cannot be processed with the current pinctrl IRQ code, as it
-> only expects a offset to all IRQ banks.
->=20
-> Update the code to use a logical IRQ bank to hardware IRQ bank map, so
-> the new situation in H6 main pin controller can be processed. The old
-> special situation which uses a constant offset (on A33 and V3s, both
-> with a offset of 1) can be also processed with the new code.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - change for the refactor in the new PATCH 1.
->=20
-> No changes in v2.
->=20
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 29 +++++++++++++++++--------=
-----
->  3 files changed, 23 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-a33.c
-> index da387211a75e..f043afa1aac5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> @@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[]=
- =3D {
->  		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
->  };
-> =20
-> +static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data =3D {
->  	.pins =3D sun8i_a33_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_a33_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_a33_pinctrl_irq_bank_map,
->  	.disable_strict_mode =3D true,
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-v3s.c
-> index 496ba34e1f5f..6704ce8e5e3d 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> @@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[]=
- =3D {
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
->  };
-> =20
-> +static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data =3D {
->  	.pins =3D sun8i_v3s_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_v3s_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_v3s_pinctrl_irq_bank_map,
->  	.irq_read_needs_mux =3D true
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.h
-> index 909ca1504b61..36502cbef6c2 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
->  	int				npins;
->  	unsigned			pin_base;
->  	unsigned			irq_banks;
-> -	unsigned			irq_bank_base;
-> +	const unsigned int		*irq_bank_map;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
->  };
-> @@ -263,14 +263,23 @@ static inline u32 sunxi_pull_offset(u16 pin)
->  	return pin_num * PULL_PINS_BITS;
->  }
-> =20
-> +static inline u32 sunxi_irq_hw_bank_num(u8 bank,
-> +					const struct sunxi_pinctrl_desc *desc)
-> +{
-> +	if (!desc->irq_bank_map)
-> +		return bank;
-> +	else
-> +		return desc->irq_bank_map[bank];
-> +}
-> +
+drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
+drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
+drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
+drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
+drivers/gpio/Kconfig:   depends on ISA_BUS_API
+drivers/gpio/Kconfig:   depends on ISA_BUS_API
+drivers/iio/adc/Kconfig:        depends on PC104 && X86 && ISA_BUS_API
+drivers/iio/counter/Kconfig:    depends on PC104 && X86 && ISA_BUS_API
+drivers/iio/dac/Kconfig:        depends on X86 && ISA_BUS_API
+drivers/watchdog/Kconfig:       depends on X86 && ISA_BUS_API
 
-Same remark about the order of the argument, and I would have split
-this patch in two, one to introduce the new function (but still using
-the irq_bank_base), and then a second patch to introduce the
-irq_bank_map.
+Did you change all of the above? I would really like to avoid mixing
+'select' and 'depends on' here, as that will likely cause other circular
+dependencies in the future.
 
-Looks good otherwise, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---hzki2yhvhouadvwv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQML0ACgkQ0rTAlCFN
-r3TOoA/+IJr26dnmK1zjBiaE2I3eHpmYqrmmV7BmcTV3zEUAp0U/bCenYecTaG6C
-L6ck25pgYSYk1MJQf2JsOxK7YIUp+5dytqBmHq2JgUsgGam1OrESDMuPkJJXjiha
-I/6Fqunaa9Sa5gWjRAI426SL/9xe0gGz2Bf0d46MjycxgZlgrsxhLxDKEKASju7q
-ViGnN5uZNle6Y88+84FRIYH/wMl1CFAWjGoVQbiss1UVPQapatqBhcnxSgUIVRd2
-fbbc4As+/KgrN8CXZYY1vOmDF+PsGzDSngdZ4Sz+wKy5KMvZBTCplBCwl3+YkFJF
-9h96wlLWIbK7JnL1NxRRir+e7kWRHgEstXF4Qz5LDTwnAEkprTaFdd9nmHhJzgIf
-2Y44TpMIzhzCFA+rJG7hIJEWRCd4ZU726xLiJluqsKgTLz3S2DWFpn9ZAjVwRtXj
-kTON+NtvCiB+sdoRVeQlq2V6VExk0HJsntSo8CKlX0IynFCyDyRxZgx21zkj/bDN
-Oh5n24gGnqhZmArvCibeEKUOgzOEIkSLyrQbx28eOzgKGf28dH+xmUUpMFZqhzC8
-hkv8ylzeYayFqQWgbCnuWGuvQqLyiOEJIQu2DIBA4LUTvL0gs3mFtqaFE4IASGd8
-ZI2TMjJacm8bH0hMlzTANBDdvg67cr04wPDQYPjoiRrevTU4K58=
-=GXP9
------END PGP SIGNATURE-----
-
---hzki2yhvhouadvwv--
+       Arnd
