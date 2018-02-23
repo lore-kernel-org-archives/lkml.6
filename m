@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226dJzTw2mXjutbYA5mEtelctAfy3uWT9nZWbKYq8HlAg2P7C3z01cP9iu+L7Gfd0Tv2uANT
-ARC-Seal: i=1; a=rsa-sha256; t=1519411077; cv=none;
+X-Google-Smtp-Source: AH8x226Wt3+fwZ2S/JcILLpjX0xAwfnk9A5nUaKYoPezaFBnb4nscV+7k7vnqdgqF217682HWgOw
+ARC-Seal: i=1; a=rsa-sha256; t=1519411075; cv=none;
         d=google.com; s=arc-20160816;
-        b=gziFms0k629ecb8VkdzFv/m+aG68GR+gNv4EKj9e8EtmM+OrcSOdKOnQ1Flqbc721x
-         l1vM616h7+6veymzy7N02COeNEwBplV9VYo1cM/8o/dUpBPMOZu8iCz6ncJz+Q9nD8He
-         j3ZfOKRkF3Vbo0yUW4Nltkcx0MeFet3bvZhRURuUKXkLkEcZrtGisYS8xRhrhCUYdXdc
-         uWbRLJDywhhTSSdm6TGODOEqXmYKGw9LSC8TcU2781+ikaev+EjYEYBr99sg/aR/ZmsT
-         9XLkCmMXOt2fJ86sIq4UvN+G5QisLuzGmpAFvv5ub7K1eASgs6eugys7S4KO+ZtgAbxS
-         SrMA==
+        b=U9HWehBpG/+iq4Sk9sD/7XzSev0cfdOACQOg7ccttX4CqerGXpcqYXZPyAmgQbEcKv
+         tJ+GLq7oDvuEyaQ4D6bBuCczBp+667IOTDeFomUEbxXUaGZQNXPa4tOuQAWCwxsDLLt9
+         OuyXalMziMTELsV4K7ZNEFa+zsKRkpJMYxhFXmN6MFBwZ9enMfStW5wK1zLpd0DbLe6F
+         fwjsaBNI6kQyx1gVok3DUtBP1h6/J7l2Us2OzRTN2vnI6vKpBSlSzHAdLMk/ePSh8W2d
+         XxEy2+NMYRozvvZVAyp2jfj6o70GhBNbATS6r46DUNoR52BvOqr3ZWtiHOTwo3AiHVi6
+         kB3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fGBfNzUHSS5sXTDA+6wsUzZZSR+266G/+yLrnmKJTy8=;
-        b=a06wX4hw4iJEB0vsVFh0uOoy/9qSFuoNtATyVxGLVMhx0gIog6pSm2MPkLH13TOL4M
-         llVXd7SxyMqPyuSIenCybB5gx7rA5JEWILHz1cZatuNYkxdrQ3RIbwgsl9ujGWq6J7GB
-         93Pyl5rNdUCAj74WaxoroFIbJHSs2q65w0a8I0pOivjiytn/8r1ULEMovUsbwnisWQhb
-         DMe4FS77cb73DoTs/LYaVJv8jDml6fiRcfqDYEvpKf2eMU0JJfgG+OHk2jInSJ3kmY2a
-         Q0PWtTn2f4YCwJYwjyBCS34BMYrw6Uqf3sdVST2qaGmEgTFkZrXCO6iFNWrievBgwuoW
-         l/WQ==
+        bh=tvBYzEOtrEphg7avkvYaat5BdxUEoNfSCaXZlna6cQE=;
+        b=vjsdVV8XOliqTMEVFg1Mshy0XPRK/KT0WB3IHLyIYWXUBlXwUAMXQMpRTSlqJM4UPY
+         9vL9YHAVOqLTo2XmaBZJZ1lP0OQy9E3id7mMvJZMvY2Mm1TRFYFs+GkOOxMttMJPgsA7
+         eXyegha9LRGyacEdnApHgmJ/waBK7BAzbBM94vL8XA+2q9ZtkUL7A8y9QNX/zWLBujGV
+         fdX0Exxab3FlgR8rbaq6PNvpXgmt1nWdnnWTvGIWXyfMyxZm3mBypDP81OaERDA/Yhl9
+         HaXfL9o/x2wFE6KgiV/6PHl/JNmsooOSOsC9EDgrLlzi6TDIhPEZIG6mGY3zM31yYEZ9
+         HHHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,16 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 076/193] x86/platform: Add PCI dependency for PUNIT_ATOM_DEBUG
-Date: Fri, 23 Feb 2018 19:25:09 +0100
-Message-Id: <20180223170337.929638064@linuxfoundation.org>
+	Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH 4.4 111/193] fbdev: sm712fb: avoid unused function warnings
+Date: Fri, 23 Feb 2018 19:25:44 +0100
+Message-Id: <20180223170343.328363047@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -46,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217990527842136?=
-X-GMAIL-MSGID: =?utf-8?q?1593217990527842136?=
+X-GMAIL-THRID: =?utf-8?q?1593217987421546003?=
+X-GMAIL-MSGID: =?utf-8?q?1593217987421546003?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,37 +51,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit d689c64d189e43d782fec5649fb0afe303c5b3f9 upstream.
+commit 24ed78dc2e8b2428eccc70c3162e70d33ab448c4 upstream.
 
-The IOSF_MBI option requires PCI support, without it we get a harmless
-Kconfig warning when it gets selected by PUNIT_ATOM_DEBUG:
+The sm712fb framebuffer driver encloses the power-management
+functions in #ifdef CONFIG_PM, but the smtcfb_pci_suspend/resume
+functions are only really used when CONFIG_PM_SLEEP is also
+set, as a frequent gcc warning shows:
 
-  warning: (X86_INTEL_LPSS && SND_SST_IPC_ACPI && MMC_SDHCI_ACPI && PUNIT_ATOM_DEBUG) selects IOSF_MBI which has unmet direct dependencies (PCI)
+fbdev/sm712fb.c:1549:12: warning: 'smtcfb_pci_suspend' defined but not used
+fbdev/sm712fb.c:1572:12: warning: 'smtcfb_pci_resume' defined but not used
 
-This adds another dependency to avoid the warning.
+The driver also avoids using the SIMPLE_DEV_PM_OPS macro when
+CONFIG_PM is unset, which is redundant.
+
+This changes the driver to remove the #ifdef and instead mark
+the functions as __maybe_unused, which is a nicer anyway, as it
+provides build testing for all the code in all configurations
+and is harder to get wrong.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170719125310.2487451-8-arnd@arndb.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Kconfig.debug |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/fbdev/sm712fb.c |   16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -391,6 +391,7 @@ config X86_DEBUG_FPU
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -28,9 +28,7 @@
+ #include <linux/console.h>
+ #include <linux/screen_info.h>
  
- config PUNIT_ATOM_DEBUG
- 	tristate "ATOM Punit debug driver"
-+	depends on PCI
- 	select DEBUG_FS
- 	select IOSF_MBI
- 	---help---
+-#ifdef CONFIG_PM
+ #include <linux/pm.h>
+-#endif
+ 
+ #include "sm712.h"
+ 
+@@ -1545,8 +1543,7 @@ static void smtcfb_pci_remove(struct pci
+ 	pci_disable_device(pdev);
+ }
+ 
+-#ifdef CONFIG_PM
+-static int smtcfb_pci_suspend(struct device *device)
++static int __maybe_unused smtcfb_pci_suspend(struct device *device)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(device);
+ 	struct smtcfb_info *sfb;
+@@ -1569,7 +1566,7 @@ static int smtcfb_pci_suspend(struct dev
+ 	return 0;
+ }
+ 
+-static int smtcfb_pci_resume(struct device *device)
++static int __maybe_unused smtcfb_pci_resume(struct device *device)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(device);
+ 	struct smtcfb_info *sfb;
+@@ -1610,20 +1607,13 @@ static int smtcfb_pci_resume(struct devi
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(sm7xx_pm_ops, smtcfb_pci_suspend, smtcfb_pci_resume);
+-#define SM7XX_PM_OPS (&sm7xx_pm_ops)
+-
+-#else  /* !CONFIG_PM */
+-
+-#define SM7XX_PM_OPS NULL
+-
+-#endif /* !CONFIG_PM */
+ 
+ static struct pci_driver smtcfb_driver = {
+ 	.name = "smtcfb",
+ 	.id_table = smtcfb_pci_table,
+ 	.probe = smtcfb_pci_probe,
+ 	.remove = smtcfb_pci_remove,
+-	.driver.pm  = SM7XX_PM_OPS,
++	.driver.pm  = &sm7xx_pm_ops,
+ };
+ 
+ static int __init sm712fb_init(void)
