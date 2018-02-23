@@ -1,51 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeBWPDR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:03:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751338AbeBWPDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:03:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D182178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
-        Jon Medhurst <tixy@linaro.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org
-Subject: [PATCH] [BUGFIX] arm: kprobes: Prohibit probing on optimized_callback
-Date: Sat, 24 Feb 2018 00:02:43 +0900
-Message-Id: <151939816362.3492.13470623813255297405.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1751716AbeBWPGT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:06:19 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37266 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751351AbeBWPGQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:06:16 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: lee.jones@linaro.org
+Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
+        linux-kernel@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>
+Subject: [PATCH v2 1/8] mfd: cros_ec: fail early if we cannot identify the EC
+Date: Fri, 23 Feb 2018 16:05:58 +0100
+Message-Id: <20180223150605.10417-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180223150605.10417-1-enric.balletbo@collabora.com>
+References: <20180223150605.10417-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prohibit probing on optimized_callback() because
-it is called from kprobes itself. If we put a kprobes
-on it, that will cause a recursive call loop.
-Mark it NOKPROBE_SYMBOL.
+From: Vincent Palatin <vpalatin@chromium.org>
 
-Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+If we cannot communicate with the EC chip to detect the protocol version
+and its features, it's very likely useless to continue. Else we will
+commit all kind of uninformed mistakes (using the wrong protocol, the
+wrong buffer size, mixing the EC with other chips).
+
+Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+Acked-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- arch/arm/probes/kprobes/opt-arm.c |    1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
-index ddc5a82eb10d..b2aa9b32bff2 100644
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -192,6 +192,7 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
+Changes in v2: None
+
+ drivers/mfd/cros_ec.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index d61024141e2b..74780f2964a1 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -112,7 +112,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
  
- 	local_irq_restore(flags);
- }
-+NOKPROBE_SYMBOL(optimized_callback)
+ 	mutex_init(&ec_dev->lock);
  
- int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *orig)
- {
+-	cros_ec_query_all(ec_dev);
++	err = cros_ec_query_all(ec_dev);
++	if (err) {
++		dev_err(dev, "Cannot identify the EC: error %d\n", err);
++		return err;
++	}
+ 
+ 	if (ec_dev->irq) {
+ 		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+-- 
+2.16.1
