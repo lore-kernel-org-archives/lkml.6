@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751909AbeBWKT4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:19:56 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28937 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751586AbeBWKQz (ORCPT
+        id S1751815AbeBWKTy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:19:54 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:23098 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751589AbeBWKQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Feb 2018 05:16:55 -0500
-X-UUID: 1311f815ed0741a88a14381b1d276f0f-20180223
+X-UUID: b8c44d5fd1574ac182848b7663dcc5fb-20180223
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 18/19] arm: dts: mt7623: add MT7623A reference boards
-Date: Fri, 23 Feb 2018 18:16:38 +0800
-Message-ID: <ddffdff293734954ba368be8a54edd3c84a4f4e6.1519378872.git.sean.wang@mediatek.com>
+Subject: [PATCH v1 12/19] arm: dts: mt7623: fix all Warnings (unit_address_vs_reg)
+Date: Fri, 23 Feb 2018 18:16:32 +0800
+Message-ID: <5cf5b140e45b8484eca780b53cc223ba8d1d768b.1519378872.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1519378871.git.sean.wang@mediatek.com>
 References: <cover.1519378871.git.sean.wang@mediatek.com>
@@ -28,225 +28,194 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add mt7623a-rfb.dtsi where most nodes can be inherited from
-mt7623n-rfb.dtsi and keep these distinctions from MT7623A boards in
-mt7623a-rfb.dtsi for most definition can be reused among MT7623A board
-variants.
+Fix below a lot of warnings that dtc complains so much
 
-MT7623A has its specific definition of power domain and thus we need
-to change related devices such as audio, ethernet, crypto, high-speed
-DMA, NAND, and USB controller to the power domain they specifically
-belong to. In addition, MT7530 exists as built-in module inside MT7623A
-SoC and I2C2 and UART[0-1] get being removed and UART2 have distinct pin
-usage. Those all differences can be totally seen in mt7623a-rfb.dtsi.
+Warning (unit_address_vs_reg): Node /oscillator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /oscillator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/cir@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/i2c@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/i2c@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/i2s@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/i2s@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/keys@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/leds@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/pwm@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/spi@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/uart@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/uart@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /pinctrl@10005000/uart@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /ethernet@1b100000/mdio-bus/switch@0/ports has a reg or ranges property, but no unit name
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
 ---
- arch/arm/boot/dts/Makefile             |  2 +
- arch/arm/boot/dts/mt7623a-rfb-emmc.dts | 22 +++++++++
- arch/arm/boot/dts/mt7623a-rfb-nand.dts | 26 +++++++++++
- arch/arm/boot/dts/mt7623a-rfb.dtsi     | 84 ++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/mt7623n-rfb.dtsi     | 15 ++++++
- 5 files changed, 149 insertions(+)
- create mode 100644 arch/arm/boot/dts/mt7623a-rfb-emmc.dts
- create mode 100644 arch/arm/boot/dts/mt7623a-rfb-nand.dts
- create mode 100644 arch/arm/boot/dts/mt7623a-rfb.dtsi
+ arch/arm/boot/dts/mt7623.dtsi                 |  4 ++--
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 29 +++++++++++++--------------
+ arch/arm/boot/dts/mt7623n-rfb.dtsi            |  2 +-
+ 3 files changed, 17 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5af6fce..818817c 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1122,6 +1122,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
- 	mt6580-evbp1.dtb \
- 	mt6589-aquaris5.dtb \
- 	mt6592-evb.dtb \
-+	mt7623a-rfb-emmc.dtb \
-+	mt7623a-rfb-nand.dtb \
- 	mt7623n-rfb-emmc.dtb \
- 	mt7623n-rfb-nand.dtb \
- 	mt7623n-bananapi-bpi-r2.dtb \
-diff --git a/arch/arm/boot/dts/mt7623a-rfb-emmc.dts b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
-new file mode 100644
-index 0000000..ef6398e
---- /dev/null
-+++ b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2018 MediaTek Inc.
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "mt7623a-rfb.dtsi"
-+
-+/ {
-+	model = "MediaTek MT7623A with eMMC reference board";
-+	compatible = "mediatek,mt7623a-rfb-emmc", "mediatek,mt7623";
-+
-+	chosen {
-+		bootargs = "console=ttyS0,115200n8 earlyprintk";
-+	};
-+};
-+
-+&mmc0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/mt7623a-rfb-nand.dts b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
-new file mode 100644
-index 0000000..592d5d7
---- /dev/null
-+++ b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2018 MediaTek Inc.
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "mt7623a-rfb.dtsi"
-+
-+/ {
-+	model = "MediaTek MT7623A with NAND reference board";
-+	compatible = "mediatek,mt7623a-rfb-nand", "mediatek,mt7623";
-+
-+	chosen {
-+		bootargs = "console=ttyS0,115200n8 earlyprintk";
-+	};
-+};
-+
-+&bch {
-+	status = "okay";
-+};
-+
-+&nandc {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/mt7623a-rfb.dtsi b/arch/arm/boot/dts/mt7623a-rfb.dtsi
-new file mode 100644
-index 0000000..3a15c46
---- /dev/null
-+++ b/arch/arm/boot/dts/mt7623a-rfb.dtsi
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2018 MediaTek Inc.
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/power/mt7623a-power.h>
-+#include "mt7623n-rfb.dtsi"
-+
-+/ {
-+	memory {
-+		device_type = "memory";
-+		reg = <0 0x80000000 0 0x20000000>;
-+	};
-+};
-+
-+&afe {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
-+};
-+
-+&cir {
-+	status = "disabled";
-+};
-+
-+&crypto {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
-+};
-+
-+&eth {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
-+};
-+
-+&hsdma {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
-+};
-+
-+&i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins_b>;
-+};
-+
-+&mt7530 {
-+	mediatek,mcm;
-+	resets = <&ethsys MT2701_ETHSYS_MCM_RST>;
-+	reset-names = "mcm";
-+};
-+
-+&nandc {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
-+};
-+
-+&pcie {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
-+
-+&scpsys {
-+	compatible = "mediatek,mt7623a-scpsys",
-+		     "syscon";
-+	clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
-+	clock-names = "ethif";
-+};
-+
-+&uart0 {
-+	status = "disabled";
-+};
-+
-+&uart1 {
-+	status = "disabled";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_pins_b>;
-+};
-+
-+&usb1 {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
-+
-+&usb2 {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
-diff --git a/arch/arm/boot/dts/mt7623n-rfb.dtsi b/arch/arm/boot/dts/mt7623n-rfb.dtsi
-index 0237476..07ed15d 100644
---- a/arch/arm/boot/dts/mt7623n-rfb.dtsi
-+++ b/arch/arm/boot/dts/mt7623n-rfb.dtsi
-@@ -380,6 +380,14 @@
- 		};
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index 4b68448..bf9db44 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -130,14 +130,14 @@
+ 		#clock-cells = <0>;
  	};
  
-+	i2c2_pins_b: i2c2-alt {
-+		pin-i2c2 {
-+			pinmux = <MT7623_PIN_122_GPIO122_FUNC_SDA2>,
-+				 <MT7623_PIN_123_HTPLG_FUNC_SCL2>;
-+			bias-disable;
-+		};
-+	};
-+
- 	i2s0_pins_a: i2s0-default {
- 		pin-i2s0 {
- 			pinmux = <MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA>,
-@@ -629,6 +637,13 @@
- 				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
- 		};
+-	rtc32k: oscillator@1 {
++	rtc32k: oscillator-1 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32000>;
+ 		clock-output-names = "rtc32k";
  	};
-+
-+	uart2_pins_b: uart2-alt {
-+		pins-dat {
-+			pinmux = <MT7623_PIN_200_URXD2_FUNC_URXD2>,
-+				 <MT7623_PIN_201_UTXD2_FUNC_UTXD2>;
-+		};
-+	};
+ 
+-	clk26m: oscillator@0 {
++	clk26m: oscillator-0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+index a6295ef..75e61c4 100644
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -158,7 +158,6 @@
+ 			ports {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				reg = <0>;
+ 
+ 				port@0 {
+ 					reg = <0>;
+@@ -262,14 +261,14 @@
  };
  
- &pwm {
+ &pio {
+-	cir_pins_a:cir@0 {
++	cir_pins_a:cir-default {
+ 		pins-cir {
+ 			pinmux = <MT7623_PIN_46_IR_FUNC_IR>;
+ 			bias-disable;
+ 		};
+ 	};
+ 
+-	i2c0_pins_a: i2c@0 {
++	i2c0_pins_a: i2c0-default {
+ 		pins-i2c0 {
+ 			pinmux = <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+ 				 <MT7623_PIN_76_SCL0_FUNC_SCL0>;
+@@ -277,7 +276,7 @@
+ 		};
+ 	};
+ 
+-	i2c1_pins_a: i2c@1 {
++	i2c1_pins_a: i2c1-default {
+ 		pin-i2c1 {
+ 			pinmux = <MT7623_PIN_57_SDA1_FUNC_SDA1>,
+ 				 <MT7623_PIN_58_SCL1_FUNC_SCL1>;
+@@ -285,7 +284,7 @@
+ 		};
+ 	};
+ 
+-	i2s0_pins_a: i2s@0 {
++	i2s0_pins_a: i2s0-default {
+ 		pin-i2s0 {
+ 			pinmux = <MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA>,
+ 				 <MT7623_PIN_72_I2S0_DATA_IN_FUNC_I2S0_DATA_IN>,
+@@ -297,7 +296,7 @@
+ 		};
+ 	};
+ 
+-	i2s1_pins_a: i2s@1 {
++	i2s1_pins_b: i2s1-default {
+ 		pin-i2s1 {
+ 			pinmux = <MT7623_PIN_33_I2S1_DATA_FUNC_I2S1_DATA>,
+ 				 <MT7623_PIN_34_I2S1_DATA_IN_FUNC_I2S1_DATA_IN>,
+@@ -309,7 +308,7 @@
+ 		};
+ 	};
+ 
+-	key_pins_a: keys@0 {
++	key_pins_a: keys-alt {
+ 		pins-keys {
+ 			pinmux = <MT7623_PIN_256_GPIO256_FUNC_GPIO256>,
+ 				 <MT7623_PIN_257_GPIO257_FUNC_GPIO257> ;
+@@ -317,7 +316,7 @@
+ 		};
+ 	};
+ 
+-	led_pins_a: leds@0 {
++	led_pins_a: leds-alt {
+ 		pins-leds {
+ 			pinmux = <MT7623_PIN_239_EXT_SDIO0_FUNC_GPIO239>,
+ 				 <MT7623_PIN_240_EXT_XCS_FUNC_GPIO240>,
+@@ -428,15 +427,15 @@
+ 		};
+ 	};
+ 
+-	pcie_default: pcie_pin_default {
+-		pins_cmd_dat {
++	pcie_default: pcie-pin-default {
++		pins-cmd-dat {
+ 			pinmux = <MT7623_PIN_208_AUD_EXT_CK1_FUNC_PCIE0_PERST_N>,
+ 				 <MT7623_PIN_209_AUD_EXT_CK2_FUNC_PCIE1_PERST_N>;
+ 			bias-disable;
+ 		};
+ 	};
+ 
+-	pwm_pins_a: pwm@0 {
++	pwm_pins_a: pwm-default {
+ 		pins-pwm {
+ 			pinmux = <MT7623_PIN_203_PWM0_FUNC_PWM0>,
+ 				 <MT7623_PIN_204_PWM1_FUNC_PWM1>,
+@@ -446,7 +445,7 @@
+ 		};
+ 	};
+ 
+-	spi0_pins_a: spi@0 {
++	spi0_pins_a: spi0-default {
+ 		pins-spi {
+ 			pinmux = <MT7623_PIN_53_SPI0_CSN_FUNC_SPI0_CS>,
+ 				<MT7623_PIN_54_SPI0_CK_FUNC_SPI0_CK>,
+@@ -456,21 +455,21 @@
+ 		};
+ 	};
+ 
+-	uart0_pins_a: uart@0 {
++	uart0_pins_a: uart0-default {
+ 		pins-dat {
+ 			pinmux = <MT7623_PIN_79_URXD0_FUNC_URXD0>,
+ 				 <MT7623_PIN_80_UTXD0_FUNC_UTXD0>;
+ 		};
+ 	};
+ 
+-	uart1_pins_a: uart@1 {
++	uart1_pins_a: uart1-default {
+ 		pins-dat {
+ 			pinmux = <MT7623_PIN_81_URXD1_FUNC_URXD1>,
+ 				 <MT7623_PIN_82_UTXD1_FUNC_UTXD1>;
+ 		};
+ 	};
+ 
+-	uart2_pins_a: uart@2 {
++	uart2_pins_a: uart2-default {
+ 		pins-dat {
+ 			pinmux = <MT7623_PIN_14_GPIO14_FUNC_URXD2>,
+ 				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
+diff --git a/arch/arm/boot/dts/mt7623n-rfb.dtsi b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+index 256c5fd..128586d 100644
+--- a/arch/arm/boot/dts/mt7623n-rfb.dtsi
++++ b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+@@ -50,7 +50,7 @@
+ 		reg = <0 0x80000000 0 0x40000000>;
+ 	};
+ 
+-	usb_p1_vbus: regulator@0 {
++	usb_p1_vbus: regulator-5v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb_vbus";
+ 		regulator-min-microvolt = <5000000>;
 -- 
 2.7.4
