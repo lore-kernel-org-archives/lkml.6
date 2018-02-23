@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841677-1519418968-2-1868841201940647504
+X-Cyrus-Session-Id: sloti22d1t05-3841409-1519418945-2-11677642127997015253
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519418968; b=s1SqARLRH9yFhAYdpL6bZTboM03pH4AOpuKLIDWlh7PAjOh
-    1VLCeP9apNi6+ScvUVWD39MBPV8cB/QHLngNdc6vSw8VhABkjiIvoKHQwOxSQ1Oh
-    QKTfyXqf8/31ptezCSoCfisfdQNg223Mfv4MFLkGWufj4ft1dVQpMMLrq+sWkxAu
-    8XiRiVnqFIUOsp28yaOcvf50jZ3BlUj0B0+L2czF3ffodF/VdBh50ZS4fi+tFUwV
-    +pbhKtuiPSG39sLWx6HsJw1PatPCknfU5YOlo0QfByoUlvQiR7D7Fdu+mHhIGS22
-    i0HKuu5vrYKUK68dYVE0dvi5mK+NMYcqgfwVmXA==
+    t=1519418944; b=D6lF0GGmNiXj8WiBf1DB4uBokfjfSKf5DZJT7g/8pEx9fPC
+    KBDDokMn/vJbdUW6g/vOAthYyN9uGbpSWlQYogH+m24fKd44S0cLYXgnD0yPyWQN
+    jGCM998Z+IHGjK/CBHh7UbPYCAOFn+ULArVL46Nn9/rFgUDsLyiRE2ONZ6bK5pnN
+    CMDnKb4P0N42rPgUDMDh9HOcVeZrLgiwoDVAchcFAjIIZp+Fsbrqe6LOvUGNaylk
+    3JPFCRPhr63AAbcn6dPz+nAnxUIljofnQ8hHPYcYQmsIYTh8Scf+3KBVHNp7Ti83
+    R5FaCBvr4mkEEr2mvaSlHnVtKWL7hmBsx7HzVNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519418968; bh=WpQe0k8gHuztFA+vY3pp5ZS3zW
-    9D/38/palgs274qVE=; b=Ipveb0SIdBlF440Fz4Ef5zV3IOZb5csOvH19DSXuMo
-    uBXBTvHHZXGA7Yv+N3VkNCmHFTfithBlkT3TOCUvdch/WeGhbOPeTfTNlhLuFkzC
-    WMQFEm6jNzvobR/ZeSvtT3cesZWzGEGxcZvbyqYMAEu4b5xPSRmJXHLVXaNHdZdC
-    0V861fPBBAMb+FeXGnnafqxkyyS7vUs6BD3AOE6xV0ahbqyKPX4zgEOtVNgKIh1y
-    KnbCATGs31fXl4jdhVsm4Ox+0Zf6YUQEXbMFtmAeVgo14YSUdUa1xsPeDDb/SOFk
-    f+HtlGfYXOxoKJuOOFzcmRfWD/CaFlS5Dj88zEin4s4A==
+    :list-id; s=arctest; t=1519418944; bh=D+/0u/gueOyEwj+rKsLW3mi9aA
+    DaoCVStWb4OqXxCb4=; b=fCY9FUuixiy5ZZmzFZovsbsmYw1m0kN1Ok1V3vrAQf
+    Fetu12pNp4EvuYSHJWp4h2O74Lij9EJnJA0Av9Hv+6/f+Q0GtLk8Ygr2LKDCvX32
+    QtT08IRbgOt+WCLyyPcBz5gnhNRiwJF7Hi3isTXTaBJWg0gS1XV0wJfzYUbBkYvc
+    hJJYwPV8hoYlp4QEGMlsDgRWHZDmM4tOfwBssIifnRbMmhACtykbiPPt0Sp0TWcl
+    nSlkNfcP6UP2mmBkYf8SebZye6ZaIrkV2v8mA2facfiiemw7l1lmNE6FN/61p0/m
+    sE/CSdyekGddREJECwbQmHu0duG2VIDnUwiWmAfFXaug==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752562AbeBWSbb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35250 "EHLO
+        id S1752604AbeBWSbg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:31:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752516AbeBWSb3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:29 -0500
+        with ESMTP id S1752597AbeBWSbf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:35 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 38/58] perf top: Fix window dimensions change handling
-Date: Fri, 23 Feb 2018 19:26:37 +0100
-Message-Id: <20180223170212.762320156@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH 3.18 05/58] arm: spear13xx: Fix dmas cells
+Date: Fri, 23 Feb 2018 19:26:04 +0100
+Message-Id: <20180223170207.489945611@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -85,80 +79,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
+commit cdd10409914184c7eee5ae3e11beb890c9c16c61 upstream.
 
-[ Upstream commit 89d0aeab4252adc2a7ea693637dd21c588bfa2d1 ]
+The "dmas" cells for the designware DMA controller need to have only 3
+properties apart from the phandle: request line, src master and
+destination master. But the commit 6e8887f60f60 updated it incorrectly
+while moving from platform code to DT. Fix it.
 
-The stdio perf top crashes when we change the terminal
-window size. The reason is that we assumed we get the
-perf_top pointer as a signal handler argument which is
-not the case.
-
-Changing the SIGWINCH handler logic to change global
-resize variable, which is checked in the main thread
-loop.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-ysuzwz77oev1ftgvdscn9bpu@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org # v3.10+
+Fixes: 6e8887f60f60 ("ARM: SPEAr13xx: Pass generic DW DMAC platform data from DT")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/builtin-top.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -70,6 +70,7 @@
- #include <linux/types.h>
+---
+ Documentation/devicetree/bindings/dma/snps-dma.txt |    2 +-
+ arch/arm/boot/dts/spear1340.dtsi                   |    4 ++--
+ arch/arm/boot/dts/spear13xx.dtsi                   |    6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+--- a/Documentation/devicetree/bindings/dma/snps-dma.txt
++++ b/Documentation/devicetree/bindings/dma/snps-dma.txt
+@@ -58,6 +58,6 @@ Example:
+ 		interrupts = <0 35 0x4>;
+ 		status = "disabled";
+ 		dmas = <&dmahost 12 0 1>,
+-			<&dmahost 13 0 1 0>;
++			<&dmahost 13 1 0>;
+ 		dma-names = "rx", "rx";
+ 	};
+--- a/arch/arm/boot/dts/spear1340.dtsi
++++ b/arch/arm/boot/dts/spear1340.dtsi
+@@ -141,8 +141,8 @@
+ 				reg = <0xb4100000 0x1000>;
+ 				interrupts = <0 105 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x600 0 0 1>, /* 0xC << 11 */
+-					<&dwdma0 0x680 0 1 0>; /* 0xD << 7 */
++				dmas = <&dwdma0 12 0 1>,
++					<&dwdma0 13 1 0>;
+ 				dma-names = "tx", "rx";
+ 			};
  
- static volatile int done;
-+static volatile int resize;
+--- a/arch/arm/boot/dts/spear13xx.dtsi
++++ b/arch/arm/boot/dts/spear13xx.dtsi
+@@ -100,7 +100,7 @@
+ 			reg = <0xb2800000 0x1000>;
+ 			interrupts = <0 29 0x4>;
+ 			status = "disabled";
+-			dmas = <&dwdma0 0 0 0 0>;
++			dmas = <&dwdma0 0 0 0>;
+ 			dma-names = "data";
+ 		};
  
- #define HEADER_LINE_NR  5
+@@ -288,8 +288,8 @@
+ 				#size-cells = <0>;
+ 				interrupts = <0 31 0x4>;
+ 				status = "disabled";
+-				dmas = <&dwdma0 0x2000 0 0 0>, /* 0x4 << 11 */
+-					<&dwdma0 0x0280 0 0 0>;  /* 0x5 << 7 */
++				dmas = <&dwdma0 4 0 0>,
++					<&dwdma0 5 0 0>;
+ 				dma-names = "tx", "rx";
+ 			};
  
-@@ -79,10 +80,13 @@ static void perf_top__update_print_entri
- }
- 
- static void perf_top__sig_winch(int sig __maybe_unused,
--				siginfo_t *info __maybe_unused, void *arg)
-+				siginfo_t *info __maybe_unused, void *arg __maybe_unused)
- {
--	struct perf_top *top = arg;
-+	resize = 1;
-+}
- 
-+static void perf_top__resize(struct perf_top *top)
-+{
- 	get_term_dimensions(&top->winsize);
- 	perf_top__update_print_entries(top);
- }
-@@ -461,7 +465,7 @@ static bool perf_top__handle_keypress(st
- 					.sa_sigaction = perf_top__sig_winch,
- 					.sa_flags     = SA_SIGINFO,
- 				};
--				perf_top__sig_winch(SIGWINCH, NULL, top);
-+				perf_top__resize(top);
- 				sigaction(SIGWINCH, &act, NULL);
- 			} else {
- 				signal(SIGWINCH, SIG_DFL);
-@@ -997,6 +1001,11 @@ static int __cmd_top(struct perf_top *to
- 
- 		if (hits == top->samples)
- 			ret = perf_evlist__poll(top->evlist, 100);
-+
-+		if (resize) {
-+			perf_top__resize(top);
-+			resize = 0;
-+		}
- 	}
- 
- 	ret = 0;
