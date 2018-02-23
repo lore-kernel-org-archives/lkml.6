@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414465-2-3997895534870614679
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414450-2-6258696349379377530
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414465; b=E5OiVepvfHM4eaD3umncm7l4nCHco9Kh139fdmnNzarrisi
-    a2DnvpAIrVPo4nGHLu1VV6Oxzoy1AQ/BfXL8YlZVBNdLKKURvGS/5E1Z1/Dwhs2E
-    dJOyk6Xhsoz/aPVW2XjZ2ljIbkSpygdVz3iXqpkXt0/GQ1UzbDVcYJdGdsj0DIPW
-    X80xh8Ld7EVF1TD/7M2y14osvsHAlkT60FPX+5CQc6tvOYqQgeE2pmMQpeHJKSyM
-    jhjpoZaoo4zt/tnvJKJkl9heYboJzra1F/FDxPsQAoKPhnf/zq3TrYFf1x7AUyvc
-    H0C6CpxAa/M6QUYY807kGYi0igdyxxcMFSqgDhQ==
+    t=1519414450; b=cJD9O0slEpHYYnuRT7SzRpk76bj7TvHhCxIZgWkCO/TBQ/5
+    LEfov7nO7FV7zlDxDFmjZSgEB3AYw92ZAkr5zE/dOxsfF32h9mDx69QeuCHit//d
+    5or+gvpLwZ4vLC1Jv7HpeuKiVBSuIy+rkef0BFGsqOoOKM13hxQijPV5A/PTK/hA
+    asciUAkksbpw14q6EMDTv+Iyu8I5oMuYlruvcSoMNlj9/nbHErPJfAJLqKiSDsP6
+    DguKc9o0+HzShWJEae3Yc51MPl03D8FKyBDml1n6ePCPQHhXNpUU9jvT2Dq3VUbG
+    nZuyXaM1/3/QeOMgLTQmZEKnnZtlhWc/7jEQ/Dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414465; bh=fxkKHlNe/trC7xfR3W5NiTBrMP
-    clC8j1umgKa+AGHpQ=; b=aRjP76/jfTNiXPNtYW8wmCCzu2BeSIbeMB/SzQsJmG
-    DwcPZWEriIgpu5xdQ0HVDRbWxS0OMg63J5cmaNVkm6xB8XdDkn6dn3P6CTFbJeq8
-    E7oD5LbEyxfW3bXnUdG7ezsHXPJEYAIbCLomBrcxFh8CdQ5Es0h0DUOQ0svfH2Dt
-    8xtqDrRzk/pFDutBQ+idzNT9he0r+9KT8s8sofpJc+EiDS3vbmrBMh+xOu/cyZ7y
-    BlLXYBz11syn20TBZdzL5dNhfj3JedSPt2381r+Hu/XprtntZZMIh8DAb9bctVYE
-    APNW2yGFJMrTQAivu1WcnbcCKYu0A01axpQuKyYJlp9w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414450; bh=rc149ZYmTO26lYpZbgspMRvs0i
+    C9bWhQ0J0IucxtaxM=; b=d54zaT40wY99MMyXy9udHtmV8GSjGfa2nViD4LHnkA
+    KJEk2ohixBjhCk23wRUR3xydaarsWfW9/pmEfQ6gAlNA/1O60Asdq4w15JCIxPIY
+    hT1xJOK61bJhj/i12k8eMk5SqzLhudQXQovD6cuump9jzt5TDM5FxP6rDPFzN15N
+    7v+Ss18o0eYlHbUciqWE9ZTwP8GmBb7MbKO9w2C/hb3RItMGDQeWhtPPvV4/cytc
+    OUhPADHLBLp4KrizGmZpssr5iaj0EdiRO9OCvI5J7j38isjckEbUK1TEVbKNcxOG
+    AbFjORYWpTH99wTek0LR9RhHZnOaRQ0otniZiWVcabCg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753238AbeBWTeL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:34:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45914 "EHLO
+        id S934321AbeBWSvH (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:51:07 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934866AbeBWSvC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:02 -0500
+        with ESMTP id S934306AbeBWSvF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:05 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 043/159] net: avoid skb_warn_bad_offload on IS_ERR
-Date: Fri, 23 Feb 2018 19:25:51 +0100
-Message-Id: <20180223170748.597729358@linuxfoundation.org>
+Subject: [PATCH 4.14 044/159] net_sched: gen_estimator: fix lockdep splat
+Date: Fri, 23 Feb 2018 19:25:52 +0100
+Message-Id: <20180223170748.719730598@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -78,37 +80,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8d74e9f88d65af8bb2e095aff506aa6eac755ada upstream.
+commit 40ca54e3a686f13117f3de0c443f8026dadf7c44 upstream.
 
-skb_warn_bad_offload warns when packets enter the GSO stack that
-require skb_checksum_help or vice versa. Do not warn on arbitrary
-bad packets. Packet sockets can craft many. Syzkaller was able to
-demonstrate another one with eth_type games.
+syzbot reported a lockdep splat in gen_new_estimator() /
+est_fetch_counters() when attempting to lock est->stats_lock.
 
-In particular, suppress the warning when segmentation returns an
-error, which is for reasons other than checksum offload.
+Since est_fetch_counters() is called from BH context from timer
+interrupt, we need to block BH as well when calling it from process
+context.
 
-See also commit 36c92474498a ("net: WARN if skb_checksum_help() is
-called on skb requiring segmentation") for context on this warning.
+Most qdiscs use per cpu counters and are immune to the problem,
+but net/sched/act_api.c and net/netfilter/xt_RATEEST.c are using
+a spinlock to protect their data. They both call gen_new_estimator()
+while object is created and not yet alive, so this bug could
+not trigger a deadlock, only a lockdep splat.
 
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: 1c0d32fde5bd ("net_sched: gen_estimator: complete rewrite of rate estimators")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/gen_estimator.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2792,7 +2792,7 @@ struct sk_buff *__skb_gso_segment(struct
+--- a/net/core/gen_estimator.c
++++ b/net/core/gen_estimator.c
+@@ -159,7 +159,11 @@ int gen_new_estimator(struct gnet_stats_
+ 	est->intvl_log = intvl_log;
+ 	est->cpu_bstats = cpu_bstats;
  
- 	segs = skb_mac_gso_segment(skb, features);
- 
--	if (unlikely(skb_needs_check(skb, tx_path)))
-+	if (unlikely(skb_needs_check(skb, tx_path) && !IS_ERR(segs)))
- 		skb_warn_bad_offload(skb);
- 
- 	return segs;
++	if (stats_lock)
++		local_bh_disable();
+ 	est_fetch_counters(est, &b);
++	if (stats_lock)
++		local_bh_enable();
+ 	est->last_bytes = b.bytes;
+ 	est->last_packets = b.packets;
+ 	old = rcu_dereference_protected(*rate_est, 1);
