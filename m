@@ -1,108 +1,90 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-793053-1519325128-2-7263601565190917190
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='edu', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519325127; b=bQ6jtiR7C/gCFjX2Kyo92hzJGEQwfU08iY4CcmyG53RLrD0
-    W9qIr8+avO/S2c5bHHUzG5XHk2fWBaQXVsPP1idUSP3+OVRxMJgMeTCYYaLIJim4
-    5CcAdXM9ds3aNGxrFasM34YOx3cdJRRfhg9eecoyGhh2CfV5WblxqhT0HMJ65J1b
-    3dFZLdPPc+bByfpZczdB7d+IX8mgzGArxWWFULxjay+cDNNsi2FsEPhFjsne6X/Z
-    P6Cp9m4BPI4Cm7qyIsYfQ/TbTQs3581qolb+hUlPVdBEZderKOojcyvRJ9ThXt0+
-    1qWqLC6t7yqu/v63a1J90WUcS1S3DMXCXlNOfKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:mime-version:content-type:sender:list-id; s=arctest;
-    t=1519325127; bh=bodfI+8+XUKSt/k6AytBMA6ZUauynrlgxH/v3qEew7w=; b=
-    Fkx7Pb2MKPXisl3b/oAGETqNFIML1FAZJrVKQ9FsOfjCaQKorAz0Uk7Sq34xFU4d
-    cxU91HT/YtIs3kf3d77G1cgSvXyZQv3nnxa4Bdc30lG8+3bGLyKnnxjxr7W5xaPs
-    U1X8juXuMILBHSunDNH4yJMHErOvD3GB7WlasTVHN9VEcRuUVA+oac0Qytedagaa
-    LMR8nQUWvLQrqAFj2zKYmmvDEJP12M3JCi8mkC46LC3m62Lrd0Rm2vKYb6VUjdlr
-    H8klJmbF4KO1JopYep9/zXicN7bj1r0Lh+YUtCAYq7stmIIzIq9W2++cBJVntKZR
-    lpSkjYEBuQLsMVZdXg0epQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rowland.harvard.edu;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rowland.harvard.edu header.result=pass header_org.domain=harvard.edu header_org.result=pass header_is_org_domain=no
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AH8x225k4vBtDLlRZs7ghTsOkZGMZlZaj3Tsb0+mACm+gLLEZ5ziv8wyxYE36N5VC2Q05X2bWvkk
+ARC-Seal: i=1; a=rsa-sha256; t=1519423926; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VFTrieQe9O6+dQAij77Iyyo/+k2yDd/OGkyIvCR4fPkUKDtn3lUbd1oeDD3bizOXr3
+         ix/76OtCCtQxW/0wXndBlEHCcObAijBTz4LZ5cYsEN0OnNNncqdJuxlzU9uTvKbWrN3F
+         gDXoHuE+uukC06WoWFsVMP7Z9cf0CEehZYi7LaX5S/6W5Cd9Fm3SrWrraBk1MdaafYT3
+         eALTJeOY2NIHNJTL/6ZDVu0KbNPcGGC9CgkT9oeNMlujGkLvs2SRmBztV1sOqpCYAqre
+         Woj8lYeYR5b78EOnKqYtw2t8skkH8F5duyRAqfdsQ3Bwk/O1YIuozrh+PQTOjsTDhmEe
+         L+ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=ctAeSqdQIuQ5ipuQYLejlHbvthKl7Hb216egTB+P0Sw=;
+        b=WqClj7dwI35OfuS+igLGdvomed6cq8eHNs3tqtJTilUL5ty8IJkBB/OOzV8xEqt0IH
+         tzZHXHEqegXb2cMLZZdLHUlpdAxEi9G7noeLStKq6cwsTAIpYXBc7zH9V3owVt0ATbdp
+         Wv261vRCQrquqb/7a0F2DEJPuuttR30pr3hPaIJoIj1Tm9PZgw6et9VsIQjoTLqJAJgy
+         C3lza+bw249OuLvBTKEvApsw88TlHuJXcrogl/Shhgte3rYGam4nWXbPQe/rIMG4d88Y
+         /HFtWP1rd6ISzIQkluMNwtv3hFb8nty6JNwp0t2AFBGXIEwQVMA7D1FOBZHl06FfJpOA
+         gAiA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750816AbeBVSpL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Feb 2018 13:45:11 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:48438 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1750725AbeBVSpL (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 22 Feb 2018 13:45:11 -0500
-Date: Thu, 22 Feb 2018 13:45:09 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-usb@vger.kernel.org>
-Subject: Re: [RFC PATCH] usb: hcd: complete URBs in threaded-IRQ context
- instead of tasklet
-In-Reply-To: <20180222161949.3prjzbvkss4hjj2c@linutronix.de>
-Message-ID: <Pine.LNX.4.44L0.1802221336520.1295-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S1751955AbeBWWMF (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Fri, 23 Feb 2018 17:12:05 -0500
+Received: from osg.samsung.com ([64.30.133.232]:59897 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751707AbeBWWMF (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Fri, 23 Feb 2018 17:12:05 -0500
+From: Shuah Khan <shuahkh@osg.samsung.com>
+To: shuah@kernel.org, dvhart@infradead.org, tbird20d@gmail.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/5] Handling for TAP header level
+Date: Fri, 23 Feb 2018 15:11:35 -0700
+Message-Id: <cover.1519423340.git.shuahkh@osg.samsung.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593231463102479903?=
+X-GMAIL-MSGID: =?utf-8?q?1593231463102479903?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 22 Feb 2018, Sebastian Andrzej Siewior wrote:
+This patch series is a result discussion with Tim Bird about nested TAP
+header handling. Based on the discussion, I am introducing a environment
+variable to prevent nested TAP headers. These patches improve the run_tests
+output and the output from the script generated by emit_tests.
+    
+This first patch in this series adds environment variable KSFT_TAP_LEVEL
+to avoid printing nested TAP headers for each test. lib.mk run_tests
+target prints TAP header before invoking the test program or test script.
+Tests need a way to suppress TAP headers if it is already printed out.
 
-> On 2018-02-16 16:46:41 [-0500], Alan Stern wrote:
-> > > The theaded interrupt runs SCHED_FIFO priority 50 by default. The only
-> > > thing that can interrupt it are interrupts, a softirq (not ksoftirqd)
-> > > and other tasks with a higher priority than 50.
-> > > There should be no downside performance wise.
-> > 
-> > Maybe.  It would be nice to see some real measurements.
-> 
-> I had an usb3 flash stick behind the EHCI controller which was passed
-> through from the host to a kvm guest. The performance numbers in the
-> guest were equal (some noise was there) with and without the patch.
-> The numbers with the patch were worse if lockdep was enabled which isn't
-> much of a surprise.
-> If you have anything specific requirements for a measurement then please
-> let me know and I see what I can do.
+This new environment variable adds a way for ksft_print_header()
+print TAP header only when KSFT_TAP_LEVEL isn't set.
+  
+The second patch in this series changes lib.mk run_tests target to set
+KSFT_TAP_LEVEL before running tests.
 
-No, I didn't have anything more specific in mind.
+The third patch changes Makefile to export KSFT_TAP_LEVEL and adds
+TAP and KSFT_TAP_LEVEL handling to emit_tests target.
+ 
+Forth and fifth patches make changes to size and futex tests to
+prevent nested TAP headers to take advantage of the framework
+change in the first patch.
 
-In principle then, using threaded-interrupt bottom halves instead of
-tasklets should be fine.  I don't object to making such a change.
+Shuah Khan (5):
+  selftests: kselftest framework: add handling for TAP header level
+  selftests: lib.mk set KSFT_TAP_LEVEL to prevent nested TAP headers
+  selftests: Makefile set KSFT_TAP_LEVEL to prevent nested TAP headers
+  selftests: size call ksft_print_header() to print TAP header
+  selftests: futex Makefile add top level TAP header echo to RUN_TESTS
 
-However, using a work queue for root-hub URBs is pretty ugly.  It would
-be better to reinstate the code that dropped hcd_root_hub_lock around
-root-hub givebacks, which was removed by commit 94dfd7edfd5c ("USB:
-HCD: support giveback of URB in tasklet context"); then it would be 
-safe to give back those URBs in the bottom half.
+ tools/testing/selftests/Makefile        | 10 +++++++++-
+ tools/testing/selftests/futex/Makefile  |  3 +++
+ tools/testing/selftests/kselftest.h     |  3 ++-
+ tools/testing/selftests/lib.mk          |  1 +
+ tools/testing/selftests/size/get_size.c |  4 +++-
+ 5 files changed, 18 insertions(+), 3 deletions(-)
 
-Alan Stern
+-- 
+2.14.1
 
