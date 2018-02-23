@@ -1,56 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751497AbeBWCWR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 21:22:17 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:65354 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750916AbeBWCWQ (ORCPT
+        id S1751532AbeBWCWp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 21:22:45 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41282 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeBWCWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 21:22:16 -0500
-X-UUID: a67e4de9560d471395065d743ec05193-20180223
-Message-ID: <1519352530.9025.63.camel@mtkswgap22>
-Subject: Re: [PATCH] cpufreq: mediatek: Convert pr_warn() to pr_debug()
-From: Sean Wang <sean.wang@mediatek.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: Rafael Wysocki <rjw@rjwysocki.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 23 Feb 2018 10:22:10 +0800
-In-Reply-To: <5bc4db542fa521c32d295f490a1ad1dadf715098.1519278976.git.viresh.kumar@linaro.org>
-References: <5bc4db542fa521c32d295f490a1ad1dadf715098.1519278976.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Feb 2018 21:22:44 -0500
+Date: Fri, 23 Feb 2018 02:22:43 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] fs/dcache: Avoid the try_lock loops in
+ dentry_kill()
+Message-ID: <20180223022242.GV30522@ZenIV.linux.org.uk>
+References: <20180222235025.28662-1-john.ogness@linutronix.de>
+ <20180222235025.28662-5-john.ogness@linutronix.de>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222235025.28662-5-john.ogness@linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-22 at 11:26 +0530, Viresh Kumar wrote:
-> With multi-platform build images, this shows a message on non mediatek
-> platforms, which is unnecessary. Convert pr_warn() to pr_debug() here.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/mediatek-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index 8c04dddd3c28..84d658d57029 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -578,7 +578,7 @@ static int __init mtk_cpufreq_driver_init(void)
->  	match = of_match_node(mtk_cpufreq_machines, np);
->  	of_node_put(np);
->  	if (!match) {
-> -		pr_warn("Machine is not compatible with mtk-cpufreq\n");
-> +		pr_debug("Machine is not compatible with mtk-cpufreq\n");
->  		return -ENODEV;
->  	}
->  
+On Fri, Feb 23, 2018 at 12:50:23AM +0100, John Ogness wrote:
+>  static struct dentry *dentry_kill(struct dentry *dentry)
+>  	__releases(dentry->d_lock)
+>  {
+> -	struct inode *inode = dentry->d_inode;
+> -	struct dentry *parent = NULL;
+> +	int saved_count = dentry->d_lockref.count;
 
-Acked-by: Sean Wang <sean.wang@mediatek.com>
+	Umm...  How can that be not 1?  After all, fast_dput() should
+never return false without ->d_lock being held *and* ->d_count being
+equal to 1.
+
+> +	/*
+> +	 * d_inode might have changed if d_lock was temporarily
+> +	 * dropped. If it changed it is necessary to start over
+> +	 * because a wrong inode (or no inode) lock is held.
+> +	 */
+
+If it might have changed, we are fucked.
+
+> +out_ref_changed:
+> +	/*
+> +	 * The refcount was incremented while dentry->d_lock was dropped.
+> +	 * Just decrement the refcount, unlock, and tell the caller to
+> +	 * stop the directory walk.
+> +	 */
+> +	if (!WARN_ON(dentry->d_lockref.count < 1))
+> +		dentry->d_lockref.count--;
+> +
+>  	spin_unlock(&dentry->d_lock);
+> -	return dentry; /* try again with same dentry */
+> +
+> +	return NULL;
+
+No.  This is completely wrong.  If somebody else has found the sucker
+while we dropped the lock and even got around to playing with refcount,
+they might have done more than that.
+
+In particular, they might have *dropped* their reference, after e.g.
+picking it as our inode's alias and rehashed the fucker.  Making
+our decision not to retain it no longer valid.  And your code will
+not notice that.
