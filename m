@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeBWKYL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:24:11 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39195 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750903AbeBWKYI (ORCPT
+        id S1751567AbeBWKYU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:24:20 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37201 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751521AbeBWKYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:24:08 -0500
-X-Google-Smtp-Source: AH8x22621bYZ3ZKghUlZn1GVm8lfP4caKLiiUa33jOTWcFR00jIeSYSQ5oPFACAMJ5qm9AvpIIfUjw==
+        Fri, 23 Feb 2018 05:24:16 -0500
+X-Google-Smtp-Source: AH8x224MfuNNd9hrGE7GKK/AdBRHB1vjfILD+9Lm6D7S72FogwvBJ3mGBKqWN+YWbQCjGUvjOTuoNw==
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Viresh Kumar <viresh.kumar@linaro.org>,
@@ -18,9 +18,9 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>,
         s.hauer@pengutronix.de, l.stach@pengutronix.de, shawnguo@kernel.org,
         fabio.estevam@nxp.com, nm@ti.com, xuwei5@hisilicon.com,
         robh+dt@kernel.org, olof@lixom.net
-Subject: [PATCH V7 01/13] of: platform: Add of_find_any_device_by_node()
-Date: Fri, 23 Feb 2018 15:53:40 +0530
-Message-Id: <483bc64db23821497d0634a86e801510e439fe3d.1519380923.git.viresh.kumar@linaro.org>
+Subject: [PATCH V7 04/13] boot_constraint: Add support for supply constraints
+Date: Fri, 23 Feb 2018 15:53:43 +0530
+Message-Id: <4425c187bddde1baf7a17cb52e36aae746626add.1519380923.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 In-Reply-To: <cover.1519380923.git.viresh.kumar@linaro.org>
 References: <cover.1519380923.git.viresh.kumar@linaro.org>
@@ -30,105 +30,193 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This creates a new helper that returns the struct device corresponding
-to a struct device_node. This currently works only for amba and platform
-devices, but can be easily extended to include other bus types.
+This patch adds the first constraint type: power-supply.
 
-This also creates an internal of_find_amba_device_by_node() helper,
-which isn't exported as of now.
+The constraint is set by enabling the regulator and setting a voltage
+range (if required) for the respective regulator device, which will be
+honored by the regulator core even if more users turn up. Once the
+device is probed, the regulator is released and the constraint is
+removed.
 
+Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/of/platform.c       | 55 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_platform.h |  5 +++++
- 2 files changed, 60 insertions(+)
+ drivers/bootconstraint/Makefile |  2 +-
+ drivers/bootconstraint/core.c   |  4 ++
+ drivers/bootconstraint/core.h   |  5 +++
+ drivers/bootconstraint/supply.c | 95 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/boot_constraint.h | 17 +++++++-
+ 5 files changed, 121 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/bootconstraint/supply.c
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index c00d81dfac0b..72853f9043e6 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -55,6 +55,61 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
- }
- EXPORT_SYMBOL(of_find_device_by_node);
+diff --git a/drivers/bootconstraint/Makefile b/drivers/bootconstraint/Makefile
+index 0f2680177974..a45616f0c3b0 100644
+--- a/drivers/bootconstraint/Makefile
++++ b/drivers/bootconstraint/Makefile
+@@ -1,3 +1,3 @@
+ # Makefile for device boot constraints
  
-+#ifdef CONFIG_ARM_AMBA
-+/**
-+ * of_find_amba_device_by_node - Find the amba_device associated with a node
-+ * @np: Pointer to device tree node
-+ *
-+ * Takes a reference to the embedded struct device which needs to be dropped
-+ * after use.
-+ *
-+ * Returns amba_device pointer, or NULL if not found
+-obj-y := core.o
++obj-y := core.o supply.o
+diff --git a/drivers/bootconstraint/core.c b/drivers/bootconstraint/core.c
+index a9f38a0febb3..2973f8dd9094 100644
+--- a/drivers/bootconstraint/core.c
++++ b/drivers/bootconstraint/core.c
+@@ -91,6 +91,10 @@ static struct constraint *constraint_allocate(struct constraint_dev *cdev,
+ 	void (*remove)(struct constraint *constraint);
+ 
+ 	switch (type) {
++	case DEV_BOOT_CONSTRAINT_SUPPLY:
++		add = constraint_supply_add;
++		remove = constraint_supply_remove;
++		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/bootconstraint/core.h b/drivers/bootconstraint/core.h
+index d04bd484b2a7..44c219716be5 100644
+--- a/drivers/bootconstraint/core.h
++++ b/drivers/bootconstraint/core.h
+@@ -27,4 +27,9 @@ struct constraint {
+ 	void (*remove)(struct constraint *constraint);
+ 	void *private;
+ };
++
++/* Forward declarations of constraint specific callbacks */
++int constraint_supply_add(struct constraint *constraint, void *data);
++void constraint_supply_remove(struct constraint *constraint);
++
+ #endif /* _CORE_H */
+diff --git a/drivers/bootconstraint/supply.c b/drivers/bootconstraint/supply.c
+new file mode 100644
+index 000000000000..352ded92d057
+--- /dev/null
++++ b/drivers/bootconstraint/supply.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Linaro.
++ * Viresh Kumar <viresh.kumar@linaro.org>
 + */
-+static struct amba_device *of_find_amba_device_by_node(struct device_node *np)
++
++#include <linux/err.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++
++#include "core.h"
++
++struct constraint_supply {
++	struct dev_boot_constraint_supply_info supply;
++	struct regulator *reg;
++};
++
++int constraint_supply_add(struct constraint *constraint, void *data)
 +{
-+	struct device *dev;
++	struct dev_boot_constraint_supply_info *supply = data;
++	struct constraint_supply *csupply;
++	struct device *dev = constraint->cdev->dev;
++	int ret;
 +
-+	dev = bus_find_device(&amba_bustype, NULL, np, of_dev_node_match);
-+	return dev ? to_amba_device(dev) : NULL;
-+}
-+#else
-+static inline struct amba_device *of_find_amba_device_by_node(struct device_node *np)
-+{
-+	return NULL;
-+}
-+#endif
++	csupply = kzalloc(sizeof(*csupply), GFP_KERNEL);
++	if (!csupply)
++		return -ENOMEM;
 +
-+/**
-+ * of_find_any_device_by_node - Find the struct device associated with a node
-+ * @np: Pointer to device tree node
-+ *
-+ * Takes a reference to the embedded struct device which needs to be dropped
-+ * after use.
-+ *
-+ * This currently supports only AMBA and platform devices.
-+ *
-+ * Returns struct device pointer, or NULL if not found
-+ */
-+struct device *of_find_any_device_by_node(struct device_node *np)
-+{
-+	struct device *dev = NULL;
-+
-+	if (of_device_is_compatible(np, "arm,primecell")) {
-+		struct amba_device *adev = of_find_amba_device_by_node(np);
-+
-+		if (adev)
-+			dev = &adev->dev;
-+	} else {
-+		struct platform_device *pdev = of_find_device_by_node(np);
-+
-+		if (pdev)
-+			dev = &pdev->dev;
++	csupply->reg = regulator_get(dev, supply->name);
++	if (IS_ERR(csupply->reg)) {
++		ret = PTR_ERR(csupply->reg);
++		if (ret != -EPROBE_DEFER) {
++			dev_err(dev, "regulator_get() failed for %s (%d)\n",
++				supply->name, ret);
++		}
++		goto free;
 +	}
 +
-+	return dev;
-+}
-+EXPORT_SYMBOL(of_find_any_device_by_node);
++	if (supply->u_volt_min != 0 && supply->u_volt_max != 0) {
++		ret = regulator_set_voltage(csupply->reg, supply->u_volt_min,
++					    supply->u_volt_max);
++		if (ret) {
++			dev_err(dev, "regulator_set_voltage %s failed (%d)\n",
++				supply->name, ret);
++			goto free_regulator;
++		}
++	}
 +
- #ifdef CONFIG_OF_ADDRESS
- /*
-  * The following routines scan a subtree and registers a device for
-diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
-index 84a966623e78..5fb20afaf895 100644
---- a/include/linux/of_platform.h
-+++ b/include/linux/of_platform.h
-@@ -54,11 +54,16 @@ extern struct platform_device *of_device_alloc(struct device_node *np,
- 					 struct device *parent);
- #ifdef CONFIG_OF
- extern struct platform_device *of_find_device_by_node(struct device_node *np);
-+extern struct device *of_find_any_device_by_node(struct device_node *np);
- #else
- static inline struct platform_device *of_find_device_by_node(struct device_node *np)
- {
- 	return NULL;
- }
-+static inline struct device *of_find_any_device_by_node(struct device_node *np)
-+{
-+	return NULL;
++	ret = regulator_enable(csupply->reg);
++	if (ret) {
++		dev_err(dev, "regulator_enable %s failed (%d)\n",
++			supply->name, ret);
++		goto remove_voltage;
++	}
++
++	memcpy(&csupply->supply, supply, sizeof(*supply));
++	csupply->supply.name = kstrdup_const(supply->name, GFP_KERNEL);
++	constraint->private = csupply;
++
++	return 0;
++
++remove_voltage:
++	if (supply->u_volt_min != 0 && supply->u_volt_max != 0)
++		regulator_set_voltage(csupply->reg, 0, INT_MAX);
++free_regulator:
++	regulator_put(csupply->reg);
++free:
++	kfree(csupply);
++
++	return ret;
 +}
- #endif
++
++void constraint_supply_remove(struct constraint *constraint)
++{
++	struct constraint_supply *csupply = constraint->private;
++	struct dev_boot_constraint_supply_info *supply = &csupply->supply;
++	struct device *dev = constraint->cdev->dev;
++	int ret;
++
++	kfree_const(supply->name);
++
++	ret = regulator_disable(csupply->reg);
++	if (ret)
++		dev_err(dev, "regulator_disable failed (%d)\n", ret);
++
++	if (supply->u_volt_min != 0 && supply->u_volt_max != 0) {
++		ret = regulator_set_voltage(csupply->reg, 0, INT_MAX);
++		if (ret)
++			dev_err(dev, "regulator_set_voltage failed (%d)\n",
++				ret);
++	}
++
++	regulator_put(csupply->reg);
++	kfree(csupply);
++}
+diff --git a/include/linux/boot_constraint.h b/include/linux/boot_constraint.h
+index d56e33f3f921..736fe09a8589 100644
+--- a/include/linux/boot_constraint.h
++++ b/include/linux/boot_constraint.h
+@@ -16,9 +16,24 @@ struct device;
+ /**
+  * enum dev_boot_constraint_type - This defines different boot constraint types.
+  *
++ * @DEV_BOOT_CONSTRAINT_SUPPLY: This represents a power supply boot constraint.
+  */
+ enum dev_boot_constraint_type {
+-	DEV_BOOT_CONSTRAINT_NONE,
++	DEV_BOOT_CONSTRAINT_SUPPLY,
++};
++
++/**
++ * struct dev_boot_constraint_supply_info - Power supply boot constraint
++ * information.
++ *
++ * @name: This must match the power supply name for the device.
++ * @u_volt_min: This is the minimum microvolts value supported by the device.
++ * @u_volt_max: This is the maximum microvolts value supported by the device.
++ */
++struct dev_boot_constraint_supply_info {
++	const char *name;
++	unsigned int u_volt_min;
++	unsigned int u_volt_max;
+ };
  
- /* Platform devices and busses creation */
+ /**
 -- 
 2.15.0.194.g9af6a3dea062
