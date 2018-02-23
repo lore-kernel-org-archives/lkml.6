@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsUVmzScAmrf4ZqYuTpnnULlJ3uYNTABeLvyqd32rVPifJEq1CkZsCNab+dn2OOY2Kw4gXz
-ARC-Seal: i=1; a=rsa-sha256; t=1519410807; cv=none;
+X-Google-Smtp-Source: AG47ELuLY3iPy6vKxvwJsYWKRJdnAVFUKS+bqbsKw9TwW+HxBV19kh2mu5Jm2zNMO4i0HUpFiBDY
+ARC-Seal: i=1; a=rsa-sha256; t=1519410801; cv=none;
         d=google.com; s=arc-20160816;
-        b=I79HijpR/4vFGlm3eMpi27ZtD+6BT1Tltkaje9JRoDBzho3wL7/UAMjEk+9R2rjEuT
-         qrl9zhN/2sEL8UC+A2q3K3XN0uaOz7/DThbJIFwyi73VBwfs5XeVMPkr+0JZ+D78eATd
-         TBcCZgR1q216FFEW5XQZzYocDaxgMo8AonQzK6/ywFeZOpnrkEU7NiYmhymYpuygSGTI
-         gXPA/zLildODTrcfVozi1puhO3d3vD5dpCOAzFH2HqbEzFnW5/m6bknWP7RY0Vp1xIQE
-         WXTTQ+QRyTtYIwBGjs3sGQSjUtnBsHGFLsxWuzLafarrEhssr6nLc/bfODSolxPAUTEh
-         i5eA==
+        b=OBIdyFHrEqbAOJn7fbgabw1+K/8bAAfJdJMR+Ddym0it25FSc8I9qlUVHzGe5sQjQk
+         4eOUOxzZUP6KHQyk87LG8QkUogkKgEq/uXg0gLMF6d2NpcTG7a+280wbtsREBRTUH7Ni
+         b15JEZ+AqaVwCzOzvRB4gh87mZ1BG37Nw5JGQ3TZ9ItgDRr9XdKegdKbzRxY5lmuMSGl
+         wy/50s5jWj6+9L3VV+VthLfdkhJR5eEFza+HtuFpk4SEc/Ei9JU8rl6M9hLs/YZjlUYP
+         kAH4kyn2skyq9I/Rvh4/CBZ6jWn7BolpJScIbMEftRtD8NwsvzdLqeQdZrVDd1/EIJeO
+         Nvjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tGrQIT9vxlw2IsGaTS38bfdPVEBw9aC6O9lqiPVVYQw=;
-        b=ammvZMZukwOtnfkV+VM+u+6U4ZE5R9VoGjfoURyxLbBbqQdBd3Kuubs8R8MAlHHnZR
-         UeqY3tlTpBvLuOWednplqhRPA7+3NnGJLmQ4/eK6jOqcuYm/5wifY/Np+e+dbQamivJP
-         FWpeDCVUMxvLldwM4K5mxI2DTXUdtQnqSkXNBzrGi4lo9onHPT7+mnIaF9QmcJeKdbOz
-         F9pZK9sz7vK2OOWqc6cEX+5NUc++5MsvR0mMuTUa5m0s1VAxghmZ2GEUI75EqQ67Nfpj
-         1J90900TpwnbqgQw1nX4+/66WMXMnnt5II2YrpGDXeQYN4TUJXaEz/tdC1fFjQh/0I8W
-         CebQ==
+        bh=J9qgXukxcpAIcB/AyfAt+GnWaCEGNQT3zusfMGNtUEE=;
+        b=oPYzVbuzNaAzGhp28NNB6dkWPDkOlPU61msmODeQ6aRWwY49NXwBt55if5ImWB8q0N
+         3sovAytar6pALugBZVnVXsPUPaIcFoWPxLI+3xt5ysU9CF1IoNMAuJFCHf7GD9otq0jh
+         rPmQupfuknwNH4SeiFVm29KYlZmqSQPL9/c8ZJ0DUBFEQGnjbnemxmhy5ve53CUOLVnf
+         F1kDEmYdS5ykD5ePT2V8tjEn5CzdHCYIvpKyZlKR7tINWf87Z1RoC3wsRliUt1FyUBDO
+         TvImEM/rdd4fFmb5X7D5gTlOM/GBpighGNbNJt7fYjYSIB0OCrPB0ye4ZGLdfZgr0IF4
+         wZsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Willem de Bruijn <willemb@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 020/193] net: avoid skb_warn_bad_offload on IS_ERR
-Date: Fri, 23 Feb 2018 19:24:13 +0100
-Message-Id: <20180223170329.250184813@linuxfoundation.org>
+	syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.4 019/193] netfilter: xt_RATEEST: acquire xt_rateest_mutex for hash insert
+Date: Fri, 23 Feb 2018 19:24:12 +0100
+Message-Id: <20180223170329.070324493@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217549729214691?=
-X-GMAIL-MSGID: =?utf-8?q?1593217707593068348?=
+X-GMAIL-THRID: =?utf-8?q?1593217546378915154?=
+X-GMAIL-MSGID: =?utf-8?q?1593217701005641128?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +52,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 8d74e9f88d65af8bb2e095aff506aa6eac755ada upstream.
+commit 7dc68e98757a8eccf8ca7a53a29b896f1eef1f76 upstream.
 
-skb_warn_bad_offload warns when packets enter the GSO stack that
-require skb_checksum_help or vice versa. Do not warn on arbitrary
-bad packets. Packet sockets can craft many. Syzkaller was able to
-demonstrate another one with eth_type games.
+rateest_hash is supposed to be protected by xt_rateest_mutex,
+and, as suggested by Eric, lookup and insert should be atomic,
+so we should acquire the xt_rateest_mutex once for both.
 
-In particular, suppress the warning when segmentation returns an
-error, which is for reasons other than checksum offload.
+So introduce a non-locking helper for internal use and keep the
+locking one for external.
 
-See also commit 36c92474498a ("net: WARN if skb_checksum_help() is
-called on skb requiring segmentation") for context on this warning.
-
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: <syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com>
+Fixes: 5859034d7eb8 ("[NETFILTER]: x_tables: add RATEEST target")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/xt_RATEEST.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2598,7 +2598,7 @@ struct sk_buff *__skb_gso_segment(struct
+--- a/net/netfilter/xt_RATEEST.c
++++ b/net/netfilter/xt_RATEEST.c
+@@ -40,23 +40,31 @@ static void xt_rateest_hash_insert(struc
+ 	hlist_add_head(&est->list, &rateest_hash[h]);
+ }
  
- 	segs = skb_mac_gso_segment(skb, features);
+-struct xt_rateest *xt_rateest_lookup(const char *name)
++static struct xt_rateest *__xt_rateest_lookup(const char *name)
+ {
+ 	struct xt_rateest *est;
+ 	unsigned int h;
  
--	if (unlikely(skb_needs_check(skb, tx_path)))
-+	if (unlikely(skb_needs_check(skb, tx_path) && !IS_ERR(segs)))
- 		skb_warn_bad_offload(skb);
+ 	h = xt_rateest_hash(name);
+-	mutex_lock(&xt_rateest_mutex);
+ 	hlist_for_each_entry(est, &rateest_hash[h], list) {
+ 		if (strcmp(est->name, name) == 0) {
+ 			est->refcnt++;
+-			mutex_unlock(&xt_rateest_mutex);
+ 			return est;
+ 		}
+ 	}
+-	mutex_unlock(&xt_rateest_mutex);
++
+ 	return NULL;
+ }
++
++struct xt_rateest *xt_rateest_lookup(const char *name)
++{
++	struct xt_rateest *est;
++
++	mutex_lock(&xt_rateest_mutex);
++	est = __xt_rateest_lookup(name);
++	mutex_unlock(&xt_rateest_mutex);
++	return est;
++}
+ EXPORT_SYMBOL_GPL(xt_rateest_lookup);
  
- 	return segs;
+ void xt_rateest_put(struct xt_rateest *est)
+@@ -104,8 +112,10 @@ static int xt_rateest_tg_checkentry(cons
+ 		rnd_inited = true;
+ 	}
+ 
+-	est = xt_rateest_lookup(info->name);
++	mutex_lock(&xt_rateest_mutex);
++	est = __xt_rateest_lookup(info->name);
+ 	if (est) {
++		mutex_unlock(&xt_rateest_mutex);
+ 		/*
+ 		 * If estimator parameters are specified, they must match the
+ 		 * existing estimator.
+@@ -143,11 +153,13 @@ static int xt_rateest_tg_checkentry(cons
+ 
+ 	info->est = est;
+ 	xt_rateest_hash_insert(est);
++	mutex_unlock(&xt_rateest_mutex);
+ 	return 0;
+ 
+ err2:
+ 	kfree(est);
+ err1:
++	mutex_unlock(&xt_rateest_mutex);
+ 	return ret;
+ }
+ 
