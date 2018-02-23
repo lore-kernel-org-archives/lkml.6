@@ -1,219 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751546AbeBWKBy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:01:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751468AbeBWKBx (ORCPT
+        id S1751505AbeBWKGQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:06:16 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42244 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeBWKGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:01:53 -0500
-Date: Fri, 23 Feb 2018 11:01:43 +0100
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: linux-s390@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 00/17] Add kexec_file_load support to s390
-In-Reply-To: <20180223083405.GA29498@dhcp-128-65.nay.redhat.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-        <20180214073543.GA12328@dhcp-128-65.nay.redhat.com>
-        <20180214105449.1325bfbe@ThinkPad>
-        <20180223083405.GA29498@dhcp-128-65.nay.redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 23 Feb 2018 05:06:14 -0500
+Date: Fri, 23 Feb 2018 11:06:07 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells
+ property
+Message-ID: <20180223100607.GO7203@w540>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18022310-0012-0000-0000-000005B3E9A7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18022310-0013-0000-0000-000019300658
-Message-Id: <20180223110143.1747fb3f@ThinkPad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802230123
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave
+Hi Geert,
 
-On Fri, 23 Feb 2018 16:34:05 +0800
-Dave Young <dyoung@redhat.com> wrote:
+On Fri, Feb 23, 2018 at 10:27:16AM +0100, Geert Uytterhoeven wrote:
+> On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Add "#interrupt-cells" property and "interrupt-controller" label to
+> > "interrupt-controller@e61c0000" device node.
+> >
+> > This silences the following DTC compiler warnings:
+> > Warning (interrupts_property): Missing interrupt-controller or
+> > interrupt-map property in /soc/interrupt-controller@e61c0000
+> > Warning (interrupts_property): Missing #interrupt-cells in
+> > interrupt-parent /soc/interrupt-controller@e61c000
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > @@ -316,6 +316,8 @@
+> >                 };
+> >
+> >                 intc_ex: interrupt-controller@e61c0000 {
+> > +                       #interrupt-cells = <2>;
+> > +                       interrupt-controller;
+> >                         reg = <0 0xe61c0000 0 0x200>;
+> >                         /* placeholder */
+>
+> (bikeshedding) Should the placeholder be at the top of the node?
 
-> On 02/14/18 at 10:54am, Philipp Rudo wrote:
-> > Hi Dave,
-> > 
-> > I just browsed AKASHI's patches (v7). The way I see it the common code changes
-> > are on different areas of kexec_file and shouldn't get in conflict. Only in the
-> > arch code (s390 and arm64) some function calls might need an update. But I have
-> > to take a closer look on the patches first.  
-> 
-> I'm tring both in local branch with both series (V8 from AKASHI and this series),
-> but there are indeed some conflicts, may because AKASHI factored out some arch
-> code from ppc/x86 to common code.
+I would like it more too, but in M3-W dtsi:
 
-I feared this would happen.  I didn't have time to look at AKASHI's v8
-yesterday but hope to find some today. How do you think i should handle
-conflicts with his patches? I don't think it is wise to include the changes
-into my patches as that would make AKASHI's patches a prereq for mine. Is adding
-one (multiple?) fixup patches on top of my series ok for you?
+		pciec0: pcie@fe000000 {
+			reg = <0 0xfe000000 0 0x80000>;
+			/* placeholder */
+		};
+
+So I kept using the same style everywhere here.
+
+I can change it everywhere in this series to have placeholder at the
+beginning of the node definition if you agree with that!
 
 Thanks
-Philipp
+   j
 
-> > 
-> > @AKASHI: Welcome to the list. While browsing I couldn't find any
-> > arch_apply_relocation function for arm64. These require the biggest changes in
-> > my patch set. Did I just miss it or does arm64 work differently?
-> > 
-> > @Dave: Happy holiday  
-> 
-> Thank you!
-> 
-> > 
-> > Thanks
-> > Philipp
-> > 
-> > On Wed, 14 Feb 2018 15:35:43 +0800
-> > Dave Young <dyoung@redhat.com> wrote:
-> >   
-> > > Hi Philipp,
-> > > 
-> > > I added AKASHI in cc, he posted arm64 kexec_file series previously.
-> > > I would like to read both series especially the general part, but
-> > > maybe at the end of this month because of a holiday..
-> > > 
-> > > From the patch log the cleanup looks nice, but still need read the
-> > > details.
-> > > 
-> > > On 02/12/18 at 11:07am, Philipp Rudo wrote:  
-> > > > Hi everybody
-> > > > 
-> > > > resending the series as there was no reaction, yet. Furthermore i was told
-> > > > that Andrew and the x86 list should also be CCed, so welcome.
-> > > > 
-> > > > No changes made to the patches since first time i sent them. The patches
-> > > > apply to the current master (v4.16-rc1).
-> > > > 
-> > > > Thanks
-> > > > Philipp
-> > > > 
-> > > > ---
-> > > > 
-> > > > this series adds the kexec_file_load system call to s390. Before the system
-> > > > call is added there are some preparations/clean ups to common
-> > > > kexec_file_load. In detail this series contains:
-> > > > 
-> > > > Patch #1&2: Minor cleanups/fixes.
-> > > > 
-> > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> > > > depending on the section. With these patches the section address will be
-> > > > calculated verbosely and sh_offset will contain the offset of the section
-> > > > in the stripped purgatory binary (purgatory_buf).
-> > > > 
-> > > > Patch #10: Allows architectures to set the purgaory load address. This
-> > > > patch is important for s390 as the kernel and purgatory have to be loaded
-> > > > to fixed addresses. In current code this is impossible as the purgatory
-> > > > load is opaque to the architecture.
-> > > > 
-> > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
-> > > > directory.
-> > > > 
-> > > > Patches #12-17 finally adds the kexec_file_load system call to s390.
-> > > > 
-> > > > Please note that I had to touch arch code for x86 and power a little. In
-> > > > theory this should not change the behavior but I don't have a way to test
-> > > > it. Cross-compiling with defconfig(*) works fine for both.
-> > > > 
-> > > > Thanks
-> > > > Philipp
-> > > > 
-> > > > (*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
-> > > > 
-> > > > Philipp Rudo (17):
-> > > >   kexec_file: Silence compile warnings
-> > > >   kexec_file: Remove checks in kexec_purgatory_load
-> > > >   kexec_file: Make purgatory_info->ehdr const
-> > > >   kexec_file: Search symbols in read-only kexec_purgatory
-> > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-> > > >   kexec_file: Split up __kexec_load_puragory
-> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-> > > >   kexec_file: Remove mis-use of sh_offset field
-> > > >   kexec_file: Allow archs to set purgatory load address
-> > > >   kexec_file: Move purgatories sha256 to common code
-> > > >   s390/kexec_file: Prepare setup.h for kexec_file_load
-> > > >   s390/kexec_file: Add purgatory
-> > > >   s390/kexec_file: Add kexec_file_load system call
-> > > >   s390/kexec_file: Add image loader
-> > > >   s390/kexec_file: Add crash support to image loader
-> > > >   s390/kexec_file: Add ELF loader
-> > > > 
-> > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
-> > > >  arch/s390/Kbuild                               |   1 +
-> > > >  arch/s390/Kconfig                              |   4 +
-> > > >  arch/s390/include/asm/kexec.h                  |  23 ++
-> > > >  arch/s390/include/asm/purgatory.h              |  17 ++
-> > > >  arch/s390/include/asm/setup.h                  |  40 ++-
-> > > >  arch/s390/kernel/Makefile                      |   1 +
-> > > >  arch/s390/kernel/asm-offsets.c                 |   5 +
-> > > >  arch/s390/kernel/compat_wrapper.c              |   1 +
-> > > >  arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
-> > > >  arch/s390/kernel/kexec_image.c                 |  78 +++++
-> > > >  arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
-> > > >  arch/s390/kernel/syscalls/syscall.tbl          |   1 +
-> > > >  arch/s390/purgatory/Makefile                   |  37 +++
-> > > >  arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
-> > > >  arch/s390/purgatory/purgatory.c                |  42 +++
-> > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
-> > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
-> > > >  arch/x86/purgatory/Makefile                    |   3 +
-> > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
-> > > >  include/linux/kexec.h                          |  38 +--
-> > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
-> > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
-> > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
-> > > >  24 files changed, 1200 insertions(+), 284 deletions(-)
-> > > >  create mode 100644 arch/s390/include/asm/purgatory.h
-> > > >  create mode 100644 arch/s390/kernel/kexec_elf.c
-> > > >  create mode 100644 arch/s390/kernel/kexec_image.c
-> > > >  create mode 100644 arch/s390/kernel/machine_kexec_file.c
-> > > >  create mode 100644 arch/s390/purgatory/Makefile
-> > > >  create mode 100644 arch/s390/purgatory/head.S
-> > > >  create mode 100644 arch/s390/purgatory/purgatory.c
-> > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > > > 
-> > > > -- 
-> > > > 2.13.5
-> > > > 
-> > > > 
-> > > > _______________________________________________
-> > > > kexec mailing list
-> > > > kexec@lists.infradead.org
-> > > > http://lists.infradead.org/mailman/listinfo/kexec    
-> > > 
-> > > Thanks
-> > > Dave
-> > >   
-> >   
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
+>
+> >                 };
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
