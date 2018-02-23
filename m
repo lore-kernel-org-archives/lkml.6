@@ -1,106 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeBWRcJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:32:09 -0500
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:55024 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbeBWRcG (ORCPT
+        id S1751843AbeBWRhJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:37:09 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39754 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751420AbeBWRhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:32:06 -0500
-X-Google-Smtp-Source: AH8x224NP8PmUEwVaFSM9EIwZM9UPKwpbNiep1tbq+GqQIkJVaRe+xpxt4WtdRNwVuLzbiU5YKOwXw==
-Date: Fri, 23 Feb 2018 18:31:58 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Nikolay Borisov <nborisov@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        mathieu.desnoyers@efficios.com, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: Reasoning about memory ordering
-Message-ID: <20180223173158.GA3723@andrea>
-References: <0db16ef6-c805-b1f6-527f-8fec149e3df5@suse.com>
+        Fri, 23 Feb 2018 12:37:07 -0500
+X-Google-Smtp-Source: AG47ELsux7/wE4D0vdTOK3Z7gIN1N0VhdQa4dH9ePsftbjZxzdv8LicXpx1pIi/+AxwPCs5mC1MoRI+gZqjyLeR4DGU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0db16ef6-c805-b1f6-527f-8fec149e3df5@suse.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <cover.1519374248.git.radoslaw.pietrzyk@gmail.com> <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Date: Fri, 23 Feb 2018 18:37:04 +0100
+Message-ID: <CAFvLkMTzaFODziZC3fFGYu+F=RuMBx5tFgA1q2UFSk4KyfuU5A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
+To: Ludovic BARRE <ludovic.barre@st.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 02:30:22PM +0200, Nikolay Borisov wrote:
-> Hello, 
-> 
-> I'm cc'ing a bunch of people I know are well-versed in 
-> the black arts of memory ordering! 
-> 
-> Currently in btrfs we have roughly the following sequence: 
-> 
-> T1:													T2:
-> i_size_write(inode, newsize);                                                         						
-> set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);          				atomic_inc(&inode->i_dio_count);
-> smp_mb(); 												if (iov_iter_rw(iter) == READ) {
-> 														if (test_bit(BTRFS_INODE_READDIO_NEED_LOCK, &BTRFS_I(inode)->runtime_flags)) {
-> if (atomic_read(&inode->i_dio_count)) {											if (atomic_dec_and_test(&inode->i_dio_count))   
-> 	wait_queue_head_t *wq = bit_waitqueue(&inode->i_state, __I_DIO_WAKEUP);                 				wake_up_bit(&inode->i_state, __I_DIO_WAKEUP);
->         DEFINE_WAIT_BIT(q, &inode->i_state, __I_DIO_WAKEUP);                    				}
->                                                                                 				if (offset >= i_size_read(inode))
->         do {                                                                    			               return;
->                 prepare_to_wait(wq, &q.wq_entry, TASK_UNINTERRUPTIBLE);                                 }      
->                 if (atomic_read(&inode->i_dio_count))                           
->                         schedule();                                             
->         } while (atomic_read(&inode->i_dio_count));                             
->         finish_wait(wq, &q.wq_entry);           
-> }
-> 
-> smp_mb__before_atomic();                                                
-> clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);     
-> 
-> The semantics I'm after are: 
-> 
-> 1. If T1 goes to sleep, then T2 would see the 
-> BTRFS_INODE_READDIO_NEED_LOCK and hence will execute the 
-> atomic_dec_and_test and possibly wake up T1. This flag serves as a way 
-> to indicate to possibly multiple T2 (dio readers) that T1 is blocked
-> and they should unblock it and resort to acquiring some locks (this is not 
-> visible in this excerpt of code for brevity). It's sort of a back-off 
-> mechanism.
+I don't fully get it to be honest. If interrupt is pending it must
+have been enabled (unmasked) and requires to be handled acked. It will
+be acked by irq_chip.irq_ack handler within the edge handler.
+Therefore this additional acking is meaningless.
 
-I don't see how this could be guaranteed, even in a sequentially consistent
-world (disclaimer: I'm certainly not familiar with btrfs): what is wrong in
-
-T1				T2
-
-				atomic_inc(i_dio_count)
-				test_bit(NEED_LOCK, flags)  // unset
-set_bit(NEED_LOCK, flags)
-atomic_read(i_dio_count)  // >1
-	--> go to sleep
-
-Thanks,
-  Andrea
-
-
-> 
-> 2. BTRFS_INODE_READDIO_NEED_LOCK bit must be set _before_ going to sleep 
-> 
-> 3. BTRFS_INODE_READDIO_NEED_LOCK must be cleared _after_ the thread has 
-> been woken up. 
-> 
-> 4. After T1 is woken up, it's possible that a new T2 comes and doesn't see 
-> the  BTRFS_INODE_READDIO_NEED_LOCK flag set but this is fine, since the check 
-> for i_size should cause T2 to just return (it will also execute atomic_dec_and_test)
-> 
-> Given this is the current state of the code (it's part of btrfs) I believe
-> the following could/should be done: 
-> 
-> 1. The smp_mb after the set_bit in T1 could be removed, since there is 
-> already an implied full mm in prepare_to_wait. That is if we go to sleep, 
-> then T2 is guaranteed to see the flag/i_size_write happening by merit of 
-> the implied memory barrier in prepare_to_wait/schedule. But what if it doesn't 
-> go to sleep? I still would like the i_size_write to be visible to T2
-> 
-> 2. The bit clearing code in T1 should be possible to be replaced by 
-> clear_bit_unlock (this was suggested by PeterZ on IRC).
-> 
-> 3. I suspect there is a memory barrier in T2 that is missing. Perhaps
-> there should be an smp_mb__before_atomic right before the test_bit so that 
-> it's ordered with the implied smp_mb in T1's prepare_to_wait. 
+2018-02-23 16:46 GMT+01:00 Ludovic BARRE <ludovic.barre@st.com>:
+> hi Radoslaw
+>
+> The gpio-keys tests it's now functional on H7, great.
+> However the gpio-key test only the bank1 (like stm32f429).
+> Like the H7 introduce the multi-bank management,
+> we must perform complementary test.
+>
+> comment below about ack in handler
+>
+>
+> On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
+>>
+>> - discards setting handle_simple_irq handler for hierarchy interrupts
+>> - removes acking in chained irq handler as this is done by
+>> irq_chip itself inside handle_edge_irq
+>> - removes unneeded irq_domain_ops.xlate callback
+>>
+>> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+>> ---
+>>   drivers/irqchip/irq-stm32-exti.c | 13 -------------
+>>   1 file changed, 13 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-stm32-exti.c
+>> b/drivers/irqchip/irq-stm32-exti.c
+>> index 36f0fbe..8013a87 100644
+>> --- a/drivers/irqchip/irq-stm32-exti.c
+>> +++ b/drivers/irqchip/irq-stm32-exti.c
+>> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct
+>> irq_chip_generic *gc)
+>>         return irq_reg_readl(gc, stm32_bank->pr_ofst);
+>>   }
+>>   -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
+>> -{
+>> -       const struct stm32_exti_bank *stm32_bank = gc->private;
+>> -
+>> -       irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
+>> -}
+>> -
+>>   static void stm32_irq_handler(struct irq_desc *desc)
+>>   {
+>>         struct irq_domain *domain = irq_desc_get_handler_data(desc);
+>> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
+>>                         for_each_set_bit(n, &pending, IRQS_PER_BANK) {
+>>                                 virq = irq_find_mapping(domain, irq_base +
+>> n);
+>>                                 generic_handle_irq(virq);
+>> -                               stm32_exti_irq_ack(gc, BIT(n));
+>
+>
+> the while loop " while ((pending = " has been introduce while original
+> upstream of this driver in V2 to V3
+> https://patchwork.ozlabs.org/patch/604190/
+> https://patchwork.ozlabs.org/patch/665242/
+>
+> the "ack" is needed to acknowledge the irq which are handled and which is
+> not the original irq for which we enter.
+>
+>>                         }
+>>                 }
+>>         }
+>> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data *data,
+>> unsigned int on)
+>>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>>                             unsigned int nr_irqs, void *data)
+>>   {
+>> -       struct irq_chip_generic *gc;
+>>         struct irq_fwspec *fwspec = data;
+>>         irq_hw_number_t hwirq;
+>>         hwirq = fwspec->param[0];
+>> -       gc = irq_get_domain_generic_chip(d, hwirq);
+>>         irq_map_generic_chip(d, virq, hwirq);
+>> -       irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+>> -                           handle_simple_irq, NULL, NULL);
+>
+>
+> I see if it is not disturb the multi-bank.
+>
+>>         return 0;
+>>   }
+>> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d,
+>> unsigned int virq,
+>>     struct irq_domain_ops irq_exti_domain_ops = {
+>>         .map    = irq_map_generic_chip,
+>> -       .xlate  = irq_domain_xlate_onetwocell,
+>>         .alloc  = stm32_exti_alloc,
+>>         .free   = stm32_exti_free,
+>>   };
+>>
+>
+> BR
+> Ludo
