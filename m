@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413601-3-17610128340786046812
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413564-2-14773121584568749182
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413601; b=gEzRI8JR2nUyRL9kWNnUvYOEe4oONkif3XK/k2uUWWnULww
-    Iz3ZAhP/+ePjgq1VUc1jlWq1MyzzShlnsEwpxgPT6jFcV/3A6uP1stbh2uPdy59/
-    DF3HLVxCWPZRzYJYGWU5BCvH7nrRhSaGkWrsBQE0k0SrQ/b6xZrQ91rsQ9CsB4so
-    Ze1zSnbDn6B48J0oIq4oGasNssfE2+Z1LjyJjCWK6ERM4HG3bWUlEGNmJmb2Jkp1
-    1dXlelJ22Xb8PbClc+d+6MUSAlC13HgebrrYLPJ8uk7+HUDNRPrarHfKQZxbjsQA
-    9zdZbgW4UQ0lleq9gxQ2gogvF2JIjSH91mkLGGA==
+    t=1519413563; b=EyQOatmCh5FEXp5AwK1LSY3VAeDJTDaMANHy6Kdoi0J29kN
+    uQ+c312g4G8gIcH99glJzjCJ9QWHydIgiJfeyilL5hWVUEFUoZFCZSutcWksUlKl
+    aRdoOMZLJ0BR+QATp5TxGhjirpaYWE5/TVlmCB46xLvUdoqLA2881Ntm0itEgBkB
+    Y6UdJYY14gcBFOL1jtWsPwytdtupeu7NdmK5tTPJb4jYSaIouvjmK6qcqjbNvbSX
+    Ol+5uKUYXDsUGZuhZfVGnosnXjNmJ6kH4imQ9L+bc5hWA7uPU7gLgTaUcUm7b/gf
+    bhqFoC1PmooeWvyxWL4YOMS+PohfWJY8jHL1hag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413601; bh=/7K7Endd31mV6UcQSa1/FjwQiS
-    gsihx5eGoHxfeBvQQ=; b=k6f7iuh8db0ngUrfkHxogJOsMgaDMWbdUImoVW7YKU
-    CX+HokuB7tCxXBDPqfGhmZ6Jq7Bt7ATul6xZFJ03jRGdg62T1l/GIDkGPI7gh8wW
-    2brEAjA0P0cXx042OniKMmHU73y19ih8Pt0/LexDW6N+Vhte42RIScqJsRBrj7QV
-    ruih9qjErHCqSo0PZf3NQchHJddx9QfwaXow2+ofIRL3SBPjTICU+SMK9N3cE1Gd
-    P4xGGvr1SLKKCqpgHp/RFUTeiLULoFnglKWV7ATcqjLxmwcVAzKjTBeJjv0x9v41
-    I3Lpg043YmsEt5WQEhXLbpT+QSIF1cazUDGIJDxNcprQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413563; bh=+NiAy74gQJdNU4loPjwOYi6JXh
+    7zTedFGrOi8+zOcbI=; b=Sh2U4QhEyyrodBA7CM7k+hY0Rcu3k/WMVxszxVM/if
+    FYuh+90xljMZu7eiYHbW7N8OhsCLrf66c0eOv5M5rIaHyJr0TriCYnbd4XUGGVSM
+    U9fptKGqnvqBAT/9qo460niNunohiVJTrWtWKXZgkgnaVKQVPYy20WrXvBj3O2fb
+    jxCE44viksmOPdrK8SKCCvqeUnRLx4Ph0CDyQVzjevEHztoprmHE6Qo4aBCRa3NC
+    LN36ffgGOdMh0bROZTLBD73l/HNEsL7NrleTZ84a4RQtoN/gV+e7UP4zxQQV/8eB
+    l6gtNYjAs5gMpPk7Xd6Tm01JCNTW85p6OMVHm6PNTIRA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964945AbeBWSyW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:54:22 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47728 "EHLO
+        id S1751707AbeBWTTT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:19:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964920AbeBWSyV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:21 -0500
+        with ESMTP id S964956AbeBWSyX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:23 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pieter Jansen van Vuuren
-        <pieter.jansenvanvuuren@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org, Zumeng Chen <zumeng.chen@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 110/159] nfp: fix port stats for mac representors
-Date: Fri, 23 Feb 2018 19:26:58 +0100
-Message-Id: <20180223170756.686403723@linuxfoundation.org>
+Subject: [PATCH 4.14 111/159] gianfar: fix a flooded alignment reports because of padding issue.
+Date: Fri, 23 Feb 2018 19:26:59 +0100
+Message-Id: <20180223170756.778421568@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -83,49 +79,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+From: Zumeng Chen <zumeng.chen@gmail.com>
 
 
-[ Upstream commit 42d779ffc186f6dd26271fc60a7417cb51aca93e ]
+[ Upstream commit 58117672943734715bbe7565ac9f062effa524f0 ]
 
-Previously we swapped the tx_packets, tx_bytes and tx_dropped counters
-with rx_packets, rx_bytes and rx_dropped counters, respectively. This
-behaviour is correct and expected for VF representors but it should not
-be swapped for physical port mac representors.
+According to LS1021A RM, the value of PAL can be set so that the start of the
+IP header in the receive data buffer is aligned to a 32-bit boundary. Normally,
+setting PAL = 2 provides minimal padding to ensure such alignment of the IP
+header.
 
-Fixes: eadfa4c3be99 ("nfp: add stats and xmit helpers for representors")
-Signed-off-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+However every incoming packet's 8-byte time stamp will be inserted into the
+packet data buffer as padding alignment bytes when hardware time stamping is
+enabled.
+
+So we set the padding 8+2 here to avoid the flooded alignment faults:
+
+root@128:~# cat /proc/cpu/alignment
+User:           0
+System:         17539 (inet_gro_receive+0x114/0x2c0)
+Skipped:        0
+Half:           0
+Word:           0
+DWord:          0
+Multi:          17539
+User faults:    2 (fixup)
+
+Also shown when exception report enablement
+
+CPU: 0 PID: 161 Comm: irq/66-eth1_g0_ Not tainted 4.1.21-rt13-WR8.0.0.0_preempt-rt #16
+Hardware name: Freescale LS1021A
+[<8001b420>] (unwind_backtrace) from [<8001476c>] (show_stack+0x20/0x24)
+[<8001476c>] (show_stack) from [<807cfb48>] (dump_stack+0x94/0xac)
+[<807cfb48>] (dump_stack) from [<80025d70>] (do_alignment+0x720/0x958)
+[<80025d70>] (do_alignment) from [<80009224>] (do_DataAbort+0x40/0xbc)
+[<80009224>] (do_DataAbort) from [<80015398>] (__dabt_svc+0x38/0x60)
+Exception stack(0x86ad1cc0 to 0x86ad1d08)
+1cc0: f9b3e080 86b3d072 2d78d287 00000000 866816c0 86b3d05e 86e785d0 00000000
+1ce0: 00000011 0000000e 80840ab0 86ad1d3c 86ad1d08 86ad1d08 806d7fc0 806d806c
+1d00: 40070013 ffffffff
+[<80015398>] (__dabt_svc) from [<806d806c>] (inet_gro_receive+0x114/0x2c0)
+[<806d806c>] (inet_gro_receive) from [<80660eec>] (dev_gro_receive+0x21c/0x3c0)
+[<80660eec>] (dev_gro_receive) from [<8066133c>] (napi_gro_receive+0x44/0x17c)
+[<8066133c>] (napi_gro_receive) from [<804f0538>] (gfar_clean_rx_ring+0x39c/0x7d4)
+[<804f0538>] (gfar_clean_rx_ring) from [<804f0bf4>] (gfar_poll_rx_sq+0x58/0xe0)
+[<804f0bf4>] (gfar_poll_rx_sq) from [<80660b10>] (net_rx_action+0x27c/0x43c)
+[<80660b10>] (net_rx_action) from [<80033638>] (do_current_softirqs+0x1e0/0x3dc)
+[<80033638>] (do_current_softirqs) from [<800338c4>] (__local_bh_enable+0x90/0xa8)
+[<800338c4>] (__local_bh_enable) from [<8008025c>] (irq_forced_thread_fn+0x70/0x84)
+[<8008025c>] (irq_forced_thread_fn) from [<800805e8>] (irq_thread+0x16c/0x244)
+[<800805e8>] (irq_thread) from [<8004e490>] (kthread+0xe8/0x104)
+[<8004e490>] (kthread) from [<8000fda8>] (ret_from_fork+0x14/0x2c)
+
+Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_repr.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c
-@@ -84,16 +84,13 @@ nfp_repr_phy_port_get_stats64(struct nfp
- {
- 	u8 __iomem *mem = port->eth_stats;
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -1378,9 +1378,11 @@ static int gfar_probe(struct platform_de
  
--	/* TX and RX stats are flipped as we are returning the stats as seen
--	 * at the switch port corresponding to the phys port.
--	 */
--	stats->tx_packets = readq(mem + NFP_MAC_STATS_RX_FRAMES_RECEIVED_OK);
--	stats->tx_bytes = readq(mem + NFP_MAC_STATS_RX_IN_OCTETS);
--	stats->tx_dropped = readq(mem + NFP_MAC_STATS_RX_IN_ERRORS);
-+	stats->tx_packets = readq(mem + NFP_MAC_STATS_TX_FRAMES_TRANSMITTED_OK);
-+	stats->tx_bytes = readq(mem + NFP_MAC_STATS_TX_OUT_OCTETS);
-+	stats->tx_dropped = readq(mem + NFP_MAC_STATS_TX_OUT_ERRORS);
+ 	gfar_init_addr_hash_table(priv);
  
--	stats->rx_packets = readq(mem + NFP_MAC_STATS_TX_FRAMES_TRANSMITTED_OK);
--	stats->rx_bytes = readq(mem + NFP_MAC_STATS_TX_OUT_OCTETS);
--	stats->rx_dropped = readq(mem + NFP_MAC_STATS_TX_OUT_ERRORS);
-+	stats->rx_packets = readq(mem + NFP_MAC_STATS_RX_FRAMES_RECEIVED_OK);
-+	stats->rx_bytes = readq(mem + NFP_MAC_STATS_RX_IN_OCTETS);
-+	stats->rx_dropped = readq(mem + NFP_MAC_STATS_RX_IN_ERRORS);
- }
+-	/* Insert receive time stamps into padding alignment bytes */
++	/* Insert receive time stamps into padding alignment bytes, and
++	 * plus 2 bytes padding to ensure the cpu alignment.
++	 */
+ 	if (priv->device_flags & FSL_GIANFAR_DEV_HAS_TIMER)
+-		priv->padding = 8;
++		priv->padding = 8 + DEFAULT_PADDING;
  
- static void
+ 	if (dev->features & NETIF_F_IP_CSUM ||
+ 	    priv->device_flags & FSL_GIANFAR_DEV_HAS_TIMER)
