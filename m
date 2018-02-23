@@ -1,85 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeBWQxQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:53:16 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35201 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeBWQxO (ORCPT
+        id S1751797AbeBWQxY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:53:24 -0500
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:34578 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751460AbeBWQxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:53:14 -0500
-X-Google-Smtp-Source: AG47ELs2/TJ2jMSSD3AxYy99z4AP10kvboXZ8+2PBDCvspnhp4qgCCGjyWkLOcGBn2Wr5CYvB0vL/gzFRwnVwqrHBFc=
+        Fri, 23 Feb 2018 11:53:21 -0500
+X-Google-Smtp-Source: AG47ELuGQ2LzWjEOOkJnCIbKxwAXRdCHoaCLXtO2Pz2amG7cIr1yU12aqHSyB+bE/XuZJNDQCfUmhA==
+Date: Fri, 23 Feb 2018 08:53:17 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH] percpu: add a schedule point in pcpu_balance_workfn()
+Message-ID: <20180223165317.GD1641506@devbig577.frc2.facebook.com>
+References: <1519402362.55655.70.camel@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfNKVjAmgEor2veC6sDnuLacxK1BVgKbqdZ-mxOX=9CSw@mail.gmail.com>
-References: <20180223153700.2186058-1-arnd@arndb.de> <e8e54cb303074abd82048ffa65f26fc9@AcuMS.aculab.com>
- <CAHp75VfNKVjAmgEor2veC6sDnuLacxK1BVgKbqdZ-mxOX=9CSw@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Feb 2018 18:53:13 +0200
-Message-ID: <CAHp75Vd-_iNb9mTevMX1HjOHZkqwFkc3uLRSp8T5ZgygV+b4+A@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
-To: David Laight <David.Laight@aculab.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519402362.55655.70.camel@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 6:51 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, Feb 23, 2018 at 6:41 PM, David Laight <David.Laight@aculab.com> wrote:
->> From: Arnd Bergmann
->>> Sent: 23 February 2018 15:37
->>>
->>> 32-bit architectures generally cannot use writeq(), so we now get a build
->>> failure for the lpfc driver:
->>>
->>> drivers/scsi/lpfc/lpfc_sli.c: In function 'lpfc_sli4_wq_put':
->>> drivers/scsi/lpfc/lpfc_sli.c:145:4: error: implicit declaration of function 'writeq'; did you mean
->>> 'writeb'? [-Werror=implicit-function-declaration]
->>>
->>> Another problem here is that writing out actual data (unlike accessing
->>> mmio registers) means we must write the data with the same endianess
->>> that we have read from memory, but writeq() will perform byte swaps
->>> and add barriers inbetween accesses as we do for registers.
->>>
->>> Using memcpy_toio() should do the right thing here, using register
->>> sized stores with correct endianess conversion and barriers (i.e. none),
->>> but on some architectures might fall back to byte-size access.
->> ...
->>
->> Have you looked at the performance impact of this on x86?
->> Last time I looked memcpy_toio() aliased directly to memcpy().
->> memcpy() is run-time patched between several different algorithms.
->> On recent Intel cpus memcpy() is implemented as 'rep movsb' relying
->> on the hardware to DTRT.
->> For uncached accesses (typical for io) the 'RT' has to be byte transfers.
->> So instead of the 8 byte transfers (on 64 bit) you get single bytes.
->> This won't be what is intended!
->> memcpy_toio() should probably use 'rep movsd' for the bulk of the transfer.
->
-> Maybe I'm wrong but it uses movsq on 64-bit and movsl on 32-bit.
->
-> The side-effect I referred previously is about tails, i.e. unaligned
-> bytes are transferred in portions
-> like
->   7 on 64-bit will be  4 + 2 + 1,
->   5 = 4 + 1
-> etc
->
-> Similar way on 32-bit.
+On Fri, Feb 23, 2018 at 08:12:42AM -0800, Eric Dumazet wrote:
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> When a large BPF percpu map is destroyed, I have seen
+> pcpu_balance_workfn() holding cpu for hundreds of milliseconds.
+> 
+> On KASAN config and 112 hyperthreads, average time to destroy a chunk
+> is ~4 ms.
+> 
+> [ 2489.841376] destroy chunk 1 in 4148689 ns
+> ...
+> [ 2490.093428] destroy chunk 32 in 4072718 ns
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
 
-Same for leading bytes as well.
+Applied to percpu/for-4.16-fixes.
 
-arch/x86/lib/memcpy_64.S
-
-So, I *hope* that in the code in question there is no unaligned access is used.
+Thank, Eric.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+tejun
