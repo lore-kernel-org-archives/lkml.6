@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841409-1519419032-2-11787239688699872074
+X-Cyrus-Session-Id: sloti22d1t05-3841677-1519419013-2-3682959538415390435
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519419031; b=OJvBohoAnGmR7hHY7pGqFszPrKQPbHvVMgIVqQ8832tXF1e
-    eTPJ9+RkQ2NAjbp+FyvMQWRpxTT39TRjkc8d3Muh++S32wJDGjZsdC8w+oX3xtMF
-    WXF9tDZqkQ/tpFSBQ2JWLdFVCeBIwj7yEe2BoLaikQCuC6DK8hRJBsUu4dWSWv+T
-    M1zkExIxFNn3ZwHUrwq9ftdVbO3RI/nE/QRD6CpzkO3clg2BcXYk7gmGksY2Zctm
-    osyCDYwAxA6OdBRyyTxHEWYOxoiaIbTTXyQoirBHxGGZc/B+cXQIpYLPimRTKjs9
-    +U0WisvmPH/vMk7QOCfxHwF9hs4xj3O1t8sBncw==
+    t=1519419013; b=guPfWPt/OZlchyLKnr5TliSYV5bYFLO/SR9Cu57/5yrzN3t
+    qRmnP2PVCeIT95sPfDxK8AlPPJmDmh3S02muGvKbVFFtCSzj5y0CtFmBXTQXOgr7
+    KQiyoICf2LbOW9rtbYJpRIYOEabPK5JC+XYS5Y89CZjKGaGa0w855cIjAHaOFxL8
+    k7mIGuEgUoPtSH1nt9tGHBFWJrAnHqIDzwkhDqmvkAbh4GzGol2h5afxRUndHt9K
+    LFuwvrTu7RrnOOHzR/mNK52jzM1/XccZxDlXdt86jb8EmrYRJRpK+aVbHuJp26pc
+    EQSNrhHptqpKmOISnK8ktJ5tas/LQnQOpMXIosg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519419031; bh=KtmjYOAlDvImR3kXrqWYS21zox
-    ymceTkLYvQP0n28rw=; b=wr8M1G4dH5Yzw6qdQpSUE0T4gyv9YCx7HtLfIBXRh/
-    FIX2jkkvkmnUPfVVrRqOvpFPNpHjujyhgK5u5D5rfSMx2SfJoKdXQ0PBvHPO9rIu
-    LLcKhtWxrp7i1jPPZHdoNoSKKMgMNatJPvyAbYkLjHYPQGlST/O3KU1o66Fbz+vQ
-    iXXc+7rd9pWi898Tg9qL6gWubVuNdP8iY0gCmdx0AXLYSuIkenbpbQzSEs5bxz9E
-    MuvdUycm9fFrOMADOSzJ85e2eK5dpxm4RYX7W7hzjojm22zcD3Tn+Du1eVWCFnSq
-    Z45gDctkDW/QQD1r9+Qay2eFpxk1sZuqaOotzXwXhlXw==
+    :list-id; s=arctest; t=1519419013; bh=gvQk2PCmxRCbQUNzlkMBTOY9f9
+    QaMQtgQn8n71H/AnQ=; b=lRc9El+xM61s9NJUZKVlhungfKozrIBCHPNEmHl8Fq
+    NtvjgkmULHliP+6Tn5z3+O1+3e9C7W1+Q5m5qKUvo6cpRLlNsuXQ5Mi6pRliplk1
+    6aSgEMPAGOVl20ThamZ56S1T1TaCBFkeHv/vJi/vc2fb6JH/gor6lYfN/j1fhVGj
+    q1ycRnABcMrun8UWrzHGziJFHXAz090Nx7XQx3+qRFtN5n5rPG3KgTDEbaVcgkIx
+    D5dc87UmqheMyCrWotbULsiSk7D3PtwXRgwC5UP83aMD5hrVWbOHzkICZalHva+t
+    /HvHb6vE7RgoimkT3bFp17HATur2p+l6UHeOfuieRw7Q==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeBWUuS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 15:50:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35138 "EHLO
+        id S1752650AbeBWUtz (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:49:55 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35196 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752500AbeBWSbR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:17 -0500
+        with ESMTP id S1752519AbeBWSbU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:20 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Vandrovec <petr@vandrovec.name>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 33/58] dn_getsockoptdecnet: move nf_{get/set}sockopt outside sock lock
-Date: Fri, 23 Feb 2018 19:26:32 +0100
-Message-Id: <20180223170212.052071568@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 35/58] usb: build drivers/usb/common/ when USB_SUPPORT is set
+Date: Fri, 23 Feb 2018 19:26:34 +0100
+Message-Id: <20180223170212.359644291@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -79,133 +78,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit dfec091439bb2acf763497cfc58f2bdfc67c56b7 upstream.
 
-After commit 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock
-only in the required scope"), the caller of nf_{get/set}sockopt() must
-not hold any lock, but, in such changeset, I forgot to cope with DECnet.
+[ Upstream commit c9d24f78268be444e803fb2bb138a2f598de9c23 ]
 
-This commit addresses the issue moving the nf call outside the lock,
-in the dn_{get,set}sockopt() with the same schema currently used by
-ipv4 and ipv6. Also moves the unhandled sockopts of the end of the main
-switch statements, to improve code readability.
+PHY drivers can use ULPI interfaces when CONFIG_USB (which is host side
+support) is not enabled, so also build drivers/usb/ when CONFIG_USB_SUPPORT
+is enabled so that drivers/usb/common/ is built.
 
-Reported-by: Petr Vandrovec <petr@vandrovec.name>
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198791#c2
-Fixes: 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock only in the required scope")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ERROR: "ulpi_unregister_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "__ulpi_register_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_read" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_write" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_unregister_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+ERROR: "__ulpi_register_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+ERROR: "ulpi_write" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/decnet/af_decnet.c |   62 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 33 insertions(+), 29 deletions(-)
+ drivers/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/decnet/af_decnet.c
-+++ b/net/decnet/af_decnet.c
-@@ -1337,6 +1337,12 @@ static int dn_setsockopt(struct socket *
- 	lock_sock(sk);
- 	err = __dn_setsockopt(sock, level, optname, optval, optlen, 0);
- 	release_sock(sk);
-+#ifdef CONFIG_NETFILTER
-+	/* we need to exclude all possible ENOPROTOOPTs except default case */
-+	if (err == -ENOPROTOOPT && optname != DSO_LINKINFO &&
-+	    optname != DSO_STREAM && optname != DSO_SEQPACKET)
-+		err = nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
-+#endif
- 
- 	return err;
- }
-@@ -1444,15 +1450,6 @@ static int __dn_setsockopt(struct socket
- 		dn_nsp_send_disc(sk, 0x38, 0, sk->sk_allocation);
- 		break;
- 
--	default:
--#ifdef CONFIG_NETFILTER
--		return nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
--#endif
--	case DSO_LINKINFO:
--	case DSO_STREAM:
--	case DSO_SEQPACKET:
--		return -ENOPROTOOPT;
--
- 	case DSO_MAXWINDOW:
- 		if (optlen != sizeof(unsigned long))
- 			return -EINVAL;
-@@ -1500,6 +1497,12 @@ static int __dn_setsockopt(struct socket
- 			return -EINVAL;
- 		scp->info_loc = u.info;
- 		break;
-+
-+	case DSO_LINKINFO:
-+	case DSO_STREAM:
-+	case DSO_SEQPACKET:
-+	default:
-+		return -ENOPROTOOPT;
- 	}
- 
- 	return 0;
-@@ -1513,6 +1516,20 @@ static int dn_getsockopt(struct socket *
- 	lock_sock(sk);
- 	err = __dn_getsockopt(sock, level, optname, optval, optlen, 0);
- 	release_sock(sk);
-+#ifdef CONFIG_NETFILTER
-+	if (err == -ENOPROTOOPT && optname != DSO_STREAM &&
-+	    optname != DSO_SEQPACKET && optname != DSO_CONACCEPT &&
-+	    optname != DSO_CONREJECT) {
-+		int len;
-+
-+		if (get_user(len, optlen))
-+			return -EFAULT;
-+
-+		err = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
-+		if (err >= 0)
-+			err = put_user(len, optlen);
-+	}
-+#endif
- 
- 	return err;
- }
-@@ -1578,26 +1595,6 @@ static int __dn_getsockopt(struct socket
- 		r_data = &link;
- 		break;
- 
--	default:
--#ifdef CONFIG_NETFILTER
--	{
--		int ret, len;
--
--		if (get_user(len, optlen))
--			return -EFAULT;
--
--		ret = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
--		if (ret >= 0)
--			ret = put_user(len, optlen);
--		return ret;
--	}
--#endif
--	case DSO_STREAM:
--	case DSO_SEQPACKET:
--	case DSO_CONACCEPT:
--	case DSO_CONREJECT:
--		return -ENOPROTOOPT;
--
- 	case DSO_MAXWINDOW:
- 		if (r_len > sizeof(unsigned long))
- 			r_len = sizeof(unsigned long);
-@@ -1629,6 +1626,13 @@ static int __dn_getsockopt(struct socket
- 			r_len = sizeof(unsigned char);
- 		r_data = &scp->info_rem;
- 		break;
-+
-+	case DSO_STREAM:
-+	case DSO_SEQPACKET:
-+	case DSO_CONACCEPT:
-+	case DSO_CONREJECT:
-+	default:
-+		return -ENOPROTOOPT;
- 	}
- 
- 	if (r_data) {
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -90,6 +90,7 @@ obj-$(CONFIG_TC)		+= tc/
+ obj-$(CONFIG_UWB)		+= uwb/
+ obj-$(CONFIG_USB_PHY)		+= usb/
+ obj-$(CONFIG_USB)		+= usb/
++obj-$(CONFIG_USB_SUPPORT)	+= usb/
+ obj-$(CONFIG_PCI)		+= usb/
+ obj-$(CONFIG_USB_GADGET)	+= usb/
+ obj-$(CONFIG_SERIO)		+= input/serio/
