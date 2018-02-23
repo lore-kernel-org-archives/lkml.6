@@ -1,56 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeBWLon (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:44:43 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37091 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750935AbeBWLom (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:44:42 -0500
-X-Google-Smtp-Source: AH8x2244Lpcly3MQw5qBJ7Cp5URgXirn7iE2mRGmBTCN7PN0ufzSaJNGdF/WL/uHeI0mjOch3SiuOQ==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jose.Abreu@synopsys.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic Meson GX SoCs
-Date: Fri, 23 Feb 2018 12:44:37 +0100
-Message-Id: <1519386277-25902-1-git-send-email-narmstrong@baylibre.com>
+        id S1751514AbeBWLph (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:45:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52828 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750935AbeBWLpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:45:34 -0500
+From: Nikolay Borisov <nborisov@suse.com>
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de, rgoldwyn@suse.de,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH 1/2] direct-io: Remove unused DIO_ASYNC_EXTEND flag
+Date: Fri, 23 Feb 2018 13:45:28 +0200
+Message-Id: <1519386329-2734-1-git-send-email-nborisov@suse.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Amlogic Meson GX SoCs, embedded the v2.01a controller, has been also
-identified needing this workaround.
-This patch adds the corresponding version to enable a single iteration for
-this specific version.
+This flag was added by 6039257378e4 ("direct-io: add flag to allow aio
+writes beyond i_size") to support XFS. However, with the rework of
+XFS' DIO's path to use iomap in acdda3aae146 ("xfs: use iomap_dio_rw")
+it became redundant. So let's remove it.
 
-Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/direct-io.c     | 3 +--
+ include/linux/fs.h | 3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index a38db40..f5018f9 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1637,6 +1637,8 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
- 	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
- 	 * 4 and 1 iterations respectively.
-+	 * The Amlogic Meson GX SoCs (v2.01a) have been identifies as needing
-+	 * the workaround with a single iteration.
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index a0ca9e48e993..99a81c49bce9 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1252,8 +1252,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
  	 */
+ 	if (is_sync_kiocb(iocb))
+ 		dio->is_async = false;
+-	else if (!(dio->flags & DIO_ASYNC_EXTEND) &&
+-		 iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
++	else if (iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
+ 		dio->is_async = false;
+ 	else
+ 		dio->is_async = true;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2a815560fda0..260c233e7375 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2977,9 +2977,6 @@ enum {
+ 	/* filesystem does not support filling holes */
+ 	DIO_SKIP_HOLES	= 0x02,
  
- 	switch (hdmi->version) {
-@@ -1644,6 +1646,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 		count = 4;
- 		break;
- 	case 0x131a:
-+	case 0x201a:
- 		count = 1;
- 		break;
- 	default:
+-	/* filesystem can handle aio writes beyond i_size */
+-	DIO_ASYNC_EXTEND = 0x04,
+-
+ 	/* inode/fs/bdev does not need truncate protection */
+ 	DIO_SKIP_DIO_COUNT = 0x08,
+ };
 -- 
 2.7.4
