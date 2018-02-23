@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226WpDfgmiThXq9LycZHzq56M0AuKxgkzZYwlNis75G2bT5xzMEY2haBFYjhGNwCOM7C6HX5
-ARC-Seal: i=1; a=rsa-sha256; t=1519411616; cv=none;
+X-Google-Smtp-Source: AH8x226UA1vduUvs7xnx7TAKS1czWCooRd1BEqQupjvom8G4hDFGOQbZbvSmDwAgpZB9OdGlGFpD
+ARC-Seal: i=1; a=rsa-sha256; t=1519411608; cv=none;
         d=google.com; s=arc-20160816;
-        b=k0rzJukws/8UNjtLl4lWHV7G+Kgb4TcGzEfoKUowrteUeph8H7rA0MUl2t1JXjOrJh
-         t1sm2mtCTF9m0qejwpbp4kKOoGD55iuc+9F5/sjf24Ani5CygpLpZ530d3gHkdnD/ciM
-         Dcd7egr1wICjNuVyFd79XLtwEudIJGJrZzAbI5Np8fRaUzU6PvL53HfWDQPpAWLAkGVk
-         LKeb9VT59WrQ3xjh4rK4xVmE+E6zkBpP/EDYRYIaoe7pT7LBF3rErs2SguXCuB6TY9rX
-         1P4cb1h+l7HmRdjHphKGm1PtXKQs/If6zAdKABtdIjVGvUowSE8KuYAs/c8ctSfL+bHI
-         Bb1A==
+        b=OA+JTAW6Kp20dRc2Ak0rILscfjprSy2hu3Eo363N4wFpXobaaWBjtiMVePSoWZ7kF4
+         dR6S/R2+36cSb02JAmabqfRdejJDUb17/HhK5hBOQtP2cuUc7pcCeuk5Z29m0PqnTFHZ
+         fgWW2GjG4w7lMDRh2aSx7M6ATn6PDu2+Z2dGZ+9hObTa3xm4yFR1hdxuPSq7qSbYIYUk
+         5dv6vV/pTFRmfVoeWfFi4Dc3DFTw8BPSxzZiIaaY8UfdxZegixrsrKYkC11SzfiMIN3a
+         i56510awWWS8Tcnns4YWeuw5EPs9P5i6b8Ba+Z0bCLT/c6Ib4xpe9w2gdTB+rs63aZwD
+         35QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nCDuSEDRjKkncHNSBTa8VnVt+tnixk4xHNxXTUF/5+o=;
-        b=s2+HZdrKrGipOxRKjVSuxfhNCWkzYjCmmwIUNKTbao3TXHFDfnxFnEfFrIQpmkTkVt
-         DRHvgsSkZLlIgnkAngCOKk2/OwMspJvvZ8Z4xeNbOM0RlUgmz8+SyHVIaS2TK0Q8jhMc
-         mS/u8+wbeEXwH22hO2UoG81OhWqKvY43mxUKLM8aY3hj3rpEK+pfebFPZXqV3k7LTA0H
-         N4rN4inyai1MRmI3AEEjMKH8SPEnorQImObNCrmmdFq3X3k/NEyQE+ipb7WdLxJvYXRb
-         xcVRf40eDeYgF+gDA9bvdBMTOhH9cCDCyWs0L9tqvvzF11GzkEznCQvKAo7y/sqNERSI
-         ltBg==
+        bh=D5mugG4IB49IDkpVLnSBDbCHkv6vdlCtp1tVCTQ+F8M=;
+        b=so2UqDkeL/7ufEzAUWHbDXuGHXEu0vc/jimahp2xVRCel8xaeADyD5idQvqg/Gimva
+         01ay+yYv6rUTLC+9WrlZZAJKbUtD9H8WOFkIe43VZf/1M3P6Bgu4XBvenz0uuDURf2XR
+         lJ3aEcqXlPL55th67rou6hILU0CEuY3jQVZEP/kkF2T/0E05RZiWHGBMrsuIelOpABSK
+         3RQOvfcvvkQSp5jTIm2mDYfyGv1AXjMfbwia0K9h2ZcOftvm5MD8uq22BPnaKZ2tu+vP
+         jsH9a8RAhy+WXtB/K/3ugo8p0XoBSg4Ndd/PTmhcSWyFrK3rMfnpwgyqMaYVlRDUwo50
+         vELg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Yazen Ghannam <Yazen.Ghannam@amd.com>,
-	linux-edac <linux-edac@vger.kernel.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 104/145] x86/ras/inject: Make it depend on X86_LOCAL_APIC=y
-Date: Fri, 23 Feb 2018 19:26:50 +0100
-Message-Id: <20180223170738.240335474@linuxfoundation.org>
+	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+	"Gabriel M. Elder" <gabriel@tekgnowsys.com>,
+	"Darren Hart (VMware)" <dvhart@infradead.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 084/145] platform/x86: dell-laptop: Fix keyboard max lighting for Dell Latitude E6410
+Date: Fri, 23 Feb 2018 19:26:30 +0100
+Message-Id: <20180223170735.601863409@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217862812726856?=
-X-GMAIL-MSGID: =?utf-8?q?1593218555743937418?=
+X-GMAIL-THRID: =?utf-8?q?1593218546954783654?=
+X-GMAIL-MSGID: =?utf-8?q?1593218546954783654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,61 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: "Pali Roh�r" <pali.rohar@gmail.com>
 
-commit d4b2ac63b0eae461fc10c9791084be24724ef57a upstream.
 
-... and get rid of the annoying:
+[ Upstream commit 68a213d325c23d39f109f4c7c824b906a7d209de ]
 
-  arch/x86/kernel/cpu/mcheck/mce-inject.c:97:13: warning: ‘mce_irq_ipi’ defined but not used [-Wunused-function]
+This machine reports number of keyboard backlight led levels, instead of
+value of the last led level index. Therefore max_brightness properly needs
+to be subtracted by 1 to match led max_brightness API.
 
-when doing randconfig builds.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20170123183514.13356-2-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+Reported-by: Gabriel M. Elder <gabriel@tekgnowsys.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=196913
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/Kconfig                        |    2 +-
- arch/x86/kernel/cpu/mcheck/mce-inject.c |    5 +----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/platform/x86/dell-laptop.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1057,7 +1057,7 @@ config X86_MCE_THRESHOLD
- 	def_bool y
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -45,6 +45,7 @@
  
- config X86_MCE_INJECT
--	depends on X86_MCE
-+	depends on X86_MCE && X86_LOCAL_APIC
- 	tristate "Machine check injector support"
- 	---help---
- 	  Provide support for injecting machine checks for testing purposes.
---- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-inject.c
-@@ -152,7 +152,6 @@ static void raise_mce(struct mce *m)
- 	if (context == MCJ_CTX_RANDOM)
- 		return;
+ struct quirk_entry {
+ 	u8 touchpad_led;
++	u8 kbd_led_levels_off_1;
  
--#ifdef CONFIG_X86_LOCAL_APIC
- 	if (m->inject_flags & (MCJ_IRQ_BROADCAST | MCJ_NMI_BROADCAST)) {
- 		unsigned long start;
- 		int cpu;
-@@ -192,9 +191,7 @@ static void raise_mce(struct mce *m)
- 		raise_local();
- 		put_cpu();
- 		put_online_cpus();
--	} else
--#endif
--	{
-+	} else {
- 		preempt_disable();
- 		raise_local();
- 		preempt_enable();
+ 	int needs_kbd_timeouts;
+ 	/*
+@@ -75,6 +76,10 @@ static struct quirk_entry quirk_dell_xps
+ 	.kbd_timeouts = { 0, 5, 15, 60, 5 * 60, 15 * 60, -1 },
+ };
+ 
++static struct quirk_entry quirk_dell_latitude_e6410 = {
++	.kbd_led_levels_off_1 = 1,
++};
++
+ static struct platform_driver platform_driver = {
+ 	.driver = {
+ 		.name = "dell-laptop",
+@@ -270,6 +275,15 @@ static const struct dmi_system_id dell_q
+ 		},
+ 		.driver_data = &quirk_dell_xps13_9333,
+ 	},
++	{
++		.callback = dmi_matched,
++		.ident = "Dell Latitude E6410",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Latitude E6410"),
++		},
++		.driver_data = &quirk_dell_latitude_e6410,
++	},
+ 	{ }
+ };
+ 
+@@ -1170,6 +1184,9 @@ static int kbd_get_info(struct kbd_info
+ 	units = (buffer->output[2] >> 8) & 0xFF;
+ 	info->levels = (buffer->output[2] >> 16) & 0xFF;
+ 
++	if (quirks && quirks->kbd_led_levels_off_1 && info->levels)
++		info->levels--;
++
+ 	if (units & BIT(0))
+ 		info->seconds = (buffer->output[3] >> 0) & 0xFF;
+ 	if (units & BIT(1))
