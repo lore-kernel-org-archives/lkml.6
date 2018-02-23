@@ -1,159 +1,120 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4006443-1519424146-2-16197105125207101555
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519424145; b=WG4Tf6eq+2bjutnCCHthv6phZSEkM/64QG9CaARQkQb6II3
-    5lXHwFBHJzH68f2SuGPUGSr8TMk5UjnjwWNU3GnRZICnwDC4Dl3jkJsE1A9Uxbpy
-    EN7uYhxZDgkR4RPvPzqOe7S2COqqt4HeGW8HbBc6udVxQCfRkqLQsfswNIE6Acts
-    s7rZs26IIaCHsZxMbKxqDp/seeyY2T6yEv8Md8R8ALePQBE0flX9PGdeZkZxnThm
-    SfS6cmrcfckLds1uFNFkP/3rpS9V0IvIStRlX9+ZZf+lQYffdHcSuTvFMAl4/Pir
-    fbkAvsnnneEL4mh5F8vIujgwbtzjou2mkRTUXFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519424145; bh=eRK+6nFfzqtaoQ1Pd0jsxQ+J54fYfbx/kc7KpODGy2E=; b=v
-    1tH5OQxsc2V95iQSjGkZ6OypJYXf8riX4Ui4GxWPh4XcnenxDnBJ9TVOUoTowaK9
-    WaokmV24UPuRaqZ7VsUVxmL4Y3I0boKIwNgAUpcWg+cYH4d25W90GwS57RF9YiLg
-    Gf+NyGUwAVBDnvbf0R4PXqviTxlWU1NBA8C6Lp+oJBWTVyRUXXjdX5zGIX5e/TEQ
-    znMfzSatVrLM3aq2Q3M3nR4DMFHEAGn/SCXihyh/1Ke5TJGd/OQUyAkCA1dXl8d8
-    tpDX2xsmfDMhBXBgHQfAzhu04SeQmjEh/fdNzN9Ufyk1Wu+frJtplGgysDmJvnDx
-    xprGajrTKbAS4ZJZ5OHtg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752339AbeBWWPa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 17:15:30 -0500
-Received: from mga02.intel.com ([134.134.136.20]:55156 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752031AbeBWWP1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 23 Feb 2018 17:15:27 -0500
+Return-Path: <dan.j.williams@intel.com>
+X-Google-Smtp-Source: AH8x227dxpUpphnTzQFb7OpaRvpVL3WjVqTUIYkwL+fLf4gdkMVoMM5NHqjjozQ0SqJb8Rf9hiPF
+ARC-Seal: i=1; a=rsa-sha256; t=1519424100; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CMD+3vQdpv7oecyADNuHBeIIu7vvz6Ucikedz45df2hwnFqlzQqo1VwDdSzFvt70io
+         kkEbfAPEGH07dH9N+a5E5EULzHkK0mUoygbNObAYKq6qPlQ5WLue/m25Vh4ZIDY+DGMJ
+         UcVfiee7O6QBStq0xDTB5GjE5ccef3HNmLxF1P+Ee9qOLkKBdW9/UZjoFnSaLufGmmLN
+         OOrEtN1NPp1Cvkz3Ujpnvj76eEoqnLiM8EI33bGjQayRvpkbXDzuoEnvRqw+1OseAe8O
+         rVp7KgcNHAKDezOyFtB1s68OBqE3g0HXlT1T4dhzJpWSZKUi2T4sDokkCUdwKmg+5Hsd
+         mzXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject
+         :arc-authentication-results;
+        bh=7ecC+RsWIhOHu+HKMG2yvUfLbzBLrS6MLd9U/UCPSLM=;
+        b=jfCMd0L6h7NrmYUU8GNNks9wj+YbDKEQF7WQgfh7RtzYMBT0cUfpeHyznekA8DFJLF
+         btBhxjlKJCdzthFV2BfRHbgLztZeQOKtW5FkggG1vADOhlSBzBncGGNvwvJGwuPb1BLh
+         9ePPeKV2bXJosiwd26XMRSS8c4N+eauD8RWs6K0xzFYtyPEalIv6Sv372G1ov690dOr6
+         jyNat4WbXUbBeRBSCR88uH+q+TgaTYVClZzXzQRv8jiAeGS4xCC/TJsYvtNFFWpnESqw
+         sP33uZVGT8SDBcvVU176cLLnP2vkq7+4GF8DujJ/Uj6PtVDt9PB3K9S7fA1mWi+pv8QC
+         c6oA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of dan.j.williams@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of dan.j.williams@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
-   d="scan'208";a="22639940"
-Subject: [4.9-stable PATCH 11/11] x86/entry/64: Clear extra registers beyond
- syscall arguments, to reduce speculation attack surface
+   d="scan'208";a="22639784"
+Subject: [4.9-stable PATCH 06/11] v4l2: disable filesystem-dax mapping
+ support
 From: Dan Williams <dan.j.williams@intel.com>
 To: gregkh@linuxfoundation.org
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-Date: Fri, 23 Feb 2018 14:06:21 -0800
-Message-ID: <151942358116.21775.14209781084277174517.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc: Jan Kara <jack@suse.cz>, Joonyoung Shim <jy0922.shim@samsung.com>,
+ linux-kernel@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Doug Ledford <dledford@redhat.com>, stable@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Inki Dae <inki.dae@samsung.com>,
+ Jeff Moyer <jmoyer@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>,
+ Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Ross Zwisler <ross.zwisler@linux.intel.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Sean Hefty <sean.hefty@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Hal Rosenstock <hal.rosenstock@gmail.com>, Vlastimil Babka <vbabka@suse.cz>
+Bcc: dan.j.williams@intel.com
+Date: Fri, 23 Feb 2018 14:05:54 -0800
+Message-ID: <151942355435.21775.3892492011172127062.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <151942352167.21775.16852023419062929165.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593231645761720959?=
+X-GMAIL-MSGID: =?utf-8?q?1593231645761720959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 8e1eb3fa009aa7c0b944b3c8b26b07de0efb3200 upstream.
+commit b70131de648c2b997d22f4653934438013f407a1 upstream.
 
-At entry userspace may have (maliciously) populated the extra registers
-outside the syscall calling convention with arbitrary values that could
-be useful in a speculative execution (Spectre style) attack.
+V4L2 memory registrations are incompatible with filesystem-dax that
+needs the ability to revoke dma access to a mapping at will, or
+otherwise allow the kernel to wait for completion of DMA.  The
+filesystem-dax implementation breaks the traditional solution of
+truncate of active file backed mappings since there is no page-cache
+page we can orphan to sustain ongoing DMA.
 
-Clear these registers to minimize the kernel's attack surface.
+If v4l2 wants to support long lived DMA mappings it needs to arrange to
+hold a file lease or use some other mechanism so that the kernel can
+coordinate revoking DMA access when the filesystem needs to truncate
+mappings.
 
-Note, this only clears the extra registers and not the unused
-registers for syscalls less than 6 arguments, since those registers are
-likely to be clobbered well before their values could be put to use
-under speculation.
-
-Note, Linus found that the XOR instructions can be executed with
-minimized cost if interleaved with the PUSH instructions, and Ingo's
-analysis found that R10 and R11 should be included in the register
-clearing beyond the typical 'extra' syscall calling convention
-registers.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Andi Kleen <ak@linux.intel.com>
+Link: http://lkml.kernel.org/r/151068940499.7446.12846708245365671207.stgit@dwillia2-desk3.amr.corp.intel.com
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Sean Hefty <sean.hefty@intel.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/151787988577.7847.16733592218894189003.stgit@dwillia2-desk3.amr.corp.intel.com
-[ Made small improvements to the changelog and the code comments. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- arch/x86/entry/entry_64.S |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/media/v4l2-core/videobuf-dma-sg.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index db5009ce065a..8d7e4d48db0d 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -176,13 +176,26 @@ GLOBAL(entry_SYSCALL_64_after_swapgs)
- 	pushq	%r8				/* pt_regs->r8 */
- 	pushq	%r9				/* pt_regs->r9 */
- 	pushq	%r10				/* pt_regs->r10 */
-+	/*
-+	 * Clear extra registers that a speculation attack might
-+	 * otherwise want to exploit. Interleave XOR with PUSH
-+	 * for better uop scheduling:
-+	 */
-+	xorq	%r10, %r10			/* nospec   r10 */
- 	pushq	%r11				/* pt_regs->r11 */
-+	xorq	%r11, %r11			/* nospec   r11 */
- 	pushq	%rbx				/* pt_regs->rbx */
-+	xorl	%ebx, %ebx			/* nospec   rbx */
- 	pushq	%rbp				/* pt_regs->rbp */
-+	xorl	%ebp, %ebp			/* nospec   rbp */
- 	pushq	%r12				/* pt_regs->r12 */
-+	xorq	%r12, %r12			/* nospec   r12 */
- 	pushq	%r13				/* pt_regs->r13 */
-+	xorq	%r13, %r13			/* nospec   r13 */
- 	pushq	%r14				/* pt_regs->r14 */
-+	xorq	%r14, %r14			/* nospec   r14 */
- 	pushq	%r15				/* pt_regs->r15 */
-+	xorq	%r15, %r15			/* nospec   r15 */
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index 1db0af6c7f94..b6189a4958c5 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -185,12 +185,13 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
+ 	dprintk(1, "init user [0x%lx+0x%lx => %d pages]\n",
+ 		data, size, dma->nr_pages);
  
- 	/* IRQs are off. */
- 	movq	%rsp, %rdi
+-	err = get_user_pages(data & PAGE_MASK, dma->nr_pages,
++	err = get_user_pages_longterm(data & PAGE_MASK, dma->nr_pages,
+ 			     flags, dma->pages, NULL);
+ 
+ 	if (err != dma->nr_pages) {
+ 		dma->nr_pages = (err >= 0) ? err : 0;
+-		dprintk(1, "get_user_pages: err=%d [%d]\n", err, dma->nr_pages);
++		dprintk(1, "get_user_pages_longterm: err=%d [%d]\n", err,
++			dma->nr_pages);
+ 		return err < 0 ? err : -EINVAL;
+ 	}
+ 	return 0;
