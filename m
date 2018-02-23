@@ -1,27 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeBWHTn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 02:19:43 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41937 "EHLO
+        id S1751566AbeBWHUS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 02:20:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38511 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeBWHTl (ORCPT
+        with ESMTP id S1751530AbeBWHUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 02:19:41 -0500
-Date: Thu, 22 Feb 2018 23:19:22 -0800
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-e84cf6aa501c58bf4bf451f1e425192ec090aed2@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        delamonpansie@gmail.com, hpa@zytor.com, rdunlap@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, delamonpansie@gmail.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, rdunlap@infradead.org,
-        tglx@linutronix.de, mingo@kernel.org
-In-Reply-To: <20180222112316.930791749@linutronix.de>
-References: <20180222112316.930791749@linutronix.de>
+        Fri, 23 Feb 2018 02:20:16 -0500
+Date: Thu, 22 Feb 2018 23:19:48 -0800
+From: tip-bot for Wang Hui <tipbot@zytor.com>
+Message-ID: <tip-36e74d355297dde6e69a39c838d24710e442babe@git.kernel.org>
+Cc: ravi.v.shankar@intel.com, tony.luck@intel.com,
+        vikas.shivappa@intel.com, yanfei.zhang@huawei.com,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        xiaochen.shen@intel.com, john.wanghui@huawei.com, hpa@zytor.com,
+        fenghua.yu@intel.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org
+Reply-To: mingo@kernel.org, xiaochen.shen@intel.com, john.wanghui@huawei.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
+        peterz@infradead.org, tglx@linutronix.de, ravi.v.shankar@intel.com,
+        tony.luck@intel.com, vikas.shivappa@intel.com, yanfei.zhang@huawei.com,
+        torvalds@linux-foundation.org
+In-Reply-To: <1519356363-133085-1-git-send-email-fenghua.yu@intel.com>
+References: <1519356363-133085-1-git-send-email-fenghua.yu@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/apic/vector: Handle vector release on CPU
- unplug correctly
-Git-Commit-ID: e84cf6aa501c58bf4bf451f1e425192ec090aed2
+Subject: [tip:x86/urgent] x86/intel_rdt: Fix incorrect returned value when
+ creating rdgroup sub-directory in resctrl file system
+Git-Commit-ID: 36e74d355297dde6e69a39c838d24710e442babe
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,82 +39,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e84cf6aa501c58bf4bf451f1e425192ec090aed2
-Gitweb:     https://git.kernel.org/tip/e84cf6aa501c58bf4bf451f1e425192ec090aed2
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 22 Feb 2018 12:08:06 +0100
+Commit-ID:  36e74d355297dde6e69a39c838d24710e442babe
+Gitweb:     https://git.kernel.org/tip/36e74d355297dde6e69a39c838d24710e442babe
+Author:     Wang Hui <john.wanghui@huawei.com>
+AuthorDate: Thu, 22 Feb 2018 19:26:03 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 23 Feb 2018 08:02:00 +0100
+CommitDate: Fri, 23 Feb 2018 08:03:21 +0100
 
-x86/apic/vector: Handle vector release on CPU unplug correctly
+x86/intel_rdt: Fix incorrect returned value when creating rdgroup sub-directory in resctrl file system
 
-When a irq vector is replaced, then the previous vector is normally
-released when the first interrupt happens on the new vector. If the target
-CPU of the previous vector is already offline when the new vector is
-installed, then the previous vector is silently discarded, which leads to
-accounting issues causing suspend failures and other problems.
+If no monitoring feature is detected because all monitoring features are
+disabled during boot time or there is no monitoring feature in hardware,
+creating rdtgroup sub-directory by "mkdir" command reports error:
 
-Adjust the logic so that the previous vector is freed in the underlying
-matrix allocator to ensure that the accounting stays correct.
+  mkdir: cannot create directory ‘/sys/fs/resctrl/p1’: No such file or directory
 
-Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
-Reported-by: Yuriy Vostrikov <delamonpansie@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Yuriy Vostrikov <delamonpansie@gmail.com>
+But the sub-directory actually is generated and content is correct:
+
+  cpus  cpus_list  schemata  tasks
+
+The error is because rdtgroup_mkdir_ctrl_mon() returns non zero value after
+the sub-directory is created and the returned value is reported as an error
+to user.
+
+Clear the returned value to report to user that the sub-directory is
+actually created successfully.
+
+Signed-off-by: Wang Hui <john.wanghui@huawei.com>
+Signed-off-by: Zhang Yanfei <yanfei.zhang@huawei.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180222112316.930791749@linutronix.de
+Cc: Ravi V Shankar <ravi.v.shankar@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vikas <vikas.shivappa@intel.com>
+Cc: Xiaochen Shen <xiaochen.shen@intel.com>
+Link: http://lkml.kernel.org/r/1519356363-133085-1-git-send-email-fenghua.yu@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/apic/vector.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 3cc471beb50b..bb6f7a2148d7 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -134,21 +134,40 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
- {
- 	struct apic_chip_data *apicd = apic_chip_data(irqd);
- 	struct irq_desc *desc = irq_data_to_desc(irqd);
-+	bool managed = irqd_affinity_is_managed(irqd);
- 
- 	lockdep_assert_held(&vector_lock);
- 
- 	trace_vector_update(irqd->irq, newvec, newcpu, apicd->vector,
- 			    apicd->cpu);
- 
--	/* Setup the vector move, if required  */
--	if (apicd->vector && cpu_online(apicd->cpu)) {
-+	/*
-+	 * If there is no vector associated or if the associated vector is
-+	 * the shutdown vector, which is associated to make PCI/MSI
-+	 * shutdown mode work, then there is nothing to release. Clear out
-+	 * prev_vector for this and the offlined target case.
-+	 */
-+	apicd->prev_vector = 0;
-+	if (!apicd->vector || apicd->vector == MANAGED_IRQ_SHUTDOWN_VECTOR)
-+		goto setnew;
-+	/*
-+	 * If the target CPU of the previous vector is online, then mark
-+	 * the vector as move in progress and store it for cleanup when the
-+	 * first interrupt on the new vector arrives. If the target CPU is
-+	 * offline then the regular release mechanism via the cleanup
-+	 * vector is not possible and the vector can be immediately freed
-+	 * in the underlying matrix allocator.
-+	 */
-+	if (cpu_online(apicd->cpu)) {
- 		apicd->move_in_progress = true;
- 		apicd->prev_vector = apicd->vector;
- 		apicd->prev_cpu = apicd->cpu;
- 	} else {
--		apicd->prev_vector = 0;
-+		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
-+				managed);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index bdab7d2f51af..fca759d272a1 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -1804,6 +1804,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 		goto out_common_fail;
  	}
+ 	closid = ret;
++	ret = 0;
  
-+setnew:
- 	apicd->vector = newvec;
- 	apicd->cpu = newcpu;
- 	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
+ 	rdtgrp->closid = closid;
+ 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
