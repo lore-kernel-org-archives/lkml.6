@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvoyyMcVYxRPxJKfRlZMrWG6QP19XDf91HMcG6doPxBoRl6HMfcd52ThuHg01FeMpTq7SXi
-ARC-Seal: i=1; a=rsa-sha256; t=1519411145; cv=none;
+X-Google-Smtp-Source: AH8x225vt5lNNTqz5lAOrj2du4gmHFP6Fa1ehRmEZSTeGFj2fQHT9qJV4m86cHXLOmwgMxVWBEEb
+ARC-Seal: i=1; a=rsa-sha256; t=1519411142; cv=none;
         d=google.com; s=arc-20160816;
-        b=tSBRpTsip7nDa2wv2gNSyyxN1Z0s+ONyHrqkgAq5p6tFKYJE/wkVP6oeX3RAmQygTL
-         k7YCiHtQajfFrFDLgCS1hy8c2qxH4AOaf4yF4eTRhuPBKJPdj55KoR2pbo6zOrZb03Nh
-         DS/cB6OOT45cKERltIF/03l0mYc3cdy1vLyjg0vy3aCHmyZXtkzUGiU4G9WuVy2+2JeR
-         CJethxFnzBgau76VoBmbWLb/+Qxlxg6kKGDLUQAMMp9Y1YzW47NtHp1QufVM4+AhpQSM
-         wyTqYphzHVE683Gnmheqv94tEkjJ+avYBDK/v2OGJRiHmgKwKE79gqT25Y4um5xJuEAc
-         9Bzw==
+        b=PyW1Vzi+a3VQ2vZCI1SEyqKMs+Im/TekNv2X64Xibxvk/95OlpamA1ElGIaLOEG0Qk
+         ZeARysyvt8zPTMpa+Td7stcc5u7jW/EB32G3sYf6JmtzuXXdgPS+3Ucaluyqu3oFPFIh
+         84GRvU3OUMq2pAFkhveDxVoXgHvresSNKvBh40G//526tHZ02v+2pMRJSB+c3x//a9jz
+         MoW/QxYhlvwr+HkUT7Ys1syD5zij6nraWTOUJjuZ0PwrXNDQpXcnlx0/xFxtSADeKK1A
+         eFm80biwyWwA7F6znphIfMMMEs3qxOWhwri+r8zf2JWauffidv5j0u9Lwsrdzh1XPDMD
+         GCZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LpAvb3exHv9sW2myZfrb3//izbpBRPwM00Ox+H2Ekaw=;
-        b=ra/atdWKebYLzFXt76v9yBz+wQnucr9fuUdPz9D/8o/F1+Te3iq2sBC+QOZCk4g0G6
-         s+H6boIkEsW9QG/38T7a4E4yvL1LThepx/9D7TCHscCbwACpDoNqSpf6LdvKkW0SC+ve
-         HWccXU7hsm/dSStjyEV4uJwpIvqERtDPKEw3hhvBEdkh4rncr4nLbV0rRNJ5/KtdCTMa
-         wfHFAsq/9J51HGgvqnTPgaCYho/tsoviQxv9j6Y1LQrLCHWDDUMG+29X3NStIqbYhDE9
-         ub5nncL0QV4qgdQmUaDN7EK29ElelSIkI6Kt9T65BWABHfgQqHgCNf+VnLitLAZeoFh/
-         koLg==
+        bh=b5zvYft1iCEgNBC7/ilvZ1WFtB2s6fWrS2Esna3IviI=;
+        b=x/AkhdLfIh9r6V37tyX7XAuf839qneZoJMN2QgfWID2YFb8fxNeCoceuLBdpfBXJ4P
+         3Ma2j2odxR68ubw7t70tZDkfy00sXZqTLbWtybCSamaF5Yjp0go/wDCQO+hjUA8vMHsb
+         SNUgD4YDSKvDbk/Rpl1+/98PtV/I1CtLdZoor4WdQHUcpWlioZnMqWxd8BUBJFvX6OoK
+         rt/qZmuwV3ep7LKj7R9mbtYgcxhd2O6YgHij37woLcJ8/4xdR/4vrNGwCno25DpGkdZV
+         AI/1CuTW3s5VTwT9gVmkteIDq9My2W1Ivk+F3kayS3da4BJVMJaqLYqN9S+5VedxJFyl
+         u6qA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 136/193] ISDN: eicon: reduce stack size of sig_ind function
-Date: Fri, 23 Feb 2018 19:26:09 +0100
-Message-Id: <20180223170347.100101187@linuxfoundation.org>
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 135/193] [media] em28xx: only use mt9v011 if camera support is enabled
+Date: Fri, 23 Feb 2018 19:26:08 +0100
+Message-Id: <20180223170346.972995069@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218061369111419?=
-X-GMAIL-MSGID: =?utf-8?q?1593218061369111419?=
+X-GMAIL-THRID: =?utf-8?q?1593218058252482575?=
+X-GMAIL-MSGID: =?utf-8?q?1593218058252482575?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,72 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 27d807180ae0a9e50d90adf9b22573c21be904c2 upstream.
+commit 190b23b4eb997767afad186bd8c96badceabf39e upstream.
 
-I noticed that this function uses a lot of kernel stack when the
-"latent entropy" plugin is enabled:
+In randconfig builds that select VIDEO_EM28XX_V4L2 and
+MEDIA_SUBDRV_AUTOSELECT, but not MEDIA_CAMERA_SUPPORT, we get
+a Kconfig warning:
 
-drivers/isdn/hardware/eicon/message.c: In function 'sig_ind':
-drivers/isdn/hardware/eicon/message.c:6113:1: error: the frame size of 1168 bytes is larger than 1152 bytes [-Werror=frame-larger-than=]
+ warning: (VIDEO_EM28XX_V4L2) selects VIDEO_MT9V011 which has unmet direct dependencies (MEDIA_SUPPORT && I2C && VIDEO_V4L2 && MEDIA_CAMERA_SUPPORT)
 
-We currently don't warn about this, as we raise the warning limit
-to 2048 bytes in mainline, but I'd like to lower that limit again
-in the future, and this function can easily be changed to be more
-efficient and avoid that warning, by making some of its local
-variables 'const'.
+This avoids the warning by making that 'select' conditional on
+MEDIA_CAMERA_SUPPORT. Alternatively we could mark EM28XX as
+'depends on MEDIA_CAMERA_SUPPORT', but it does not seem to
+have any real dependency on that itself.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/isdn/hardware/eicon/message.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/media/usb/em28xx/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/isdn/hardware/eicon/message.c
-+++ b/drivers/isdn/hardware/eicon/message.c
-@@ -147,7 +147,7 @@ static word plci_remove_check(PLCI *);
- static void listen_check(DIVA_CAPI_ADAPTER *);
- static byte AddInfo(byte **, byte **, byte *, byte *);
- static byte getChannel(API_PARSE *);
--static void IndParse(PLCI *, word *, byte **, byte);
-+static void IndParse(PLCI *, const word *, byte **, byte);
- static byte ie_compare(byte *, byte *);
- static word find_cip(DIVA_CAPI_ADAPTER *, byte *, byte *);
- static word CPN_filter_ok(byte *cpn, DIVA_CAPI_ADAPTER *, word);
-@@ -4860,7 +4860,7 @@ static void sig_ind(PLCI *plci)
- 	/* included before the ESC_MSGTYPE and MAXPARMSIDS has to be incremented */
- 	/* SMSG is situated at the end because its 0 (for compatibility reasons */
- 	/* (see Info_Mask Bit 4, first IE. then the message type)           */
--	word parms_id[] =
-+	static const word parms_id[] =
- 		{MAXPARMSIDS, CPN, 0xff, DSA, OSA, BC, LLC, HLC, ESC_CAUSE, DSP, DT, CHA,
- 		 UUI, CONG_RR, CONG_RNR, ESC_CHI, KEY, CHI, CAU, ESC_LAW,
- 		 RDN, RDX, CONN_NR, RIN, NI, CAI, ESC_CR,
-@@ -4868,12 +4868,12 @@ static void sig_ind(PLCI *plci)
- 	/* 14 FTY repl by ESC_CHI */
- 	/* 18 PI  repl by ESC_LAW */
- 	/* removed OAD changed to 0xff for future use, OAD is multiIE now */
--	word multi_fac_id[] = {1, FTY};
--	word multi_pi_id[]  = {1, PI};
--	word multi_CiPN_id[]  = {1, OAD};
--	word multi_ssext_id[]  = {1, ESC_SSEXT};
-+	static const word multi_fac_id[] = {1, FTY};
-+	static const word multi_pi_id[]  = {1, PI};
-+	static const word multi_CiPN_id[]  = {1, OAD};
-+	static const word multi_ssext_id[]  = {1, ESC_SSEXT};
+--- a/drivers/media/usb/em28xx/Kconfig
++++ b/drivers/media/usb/em28xx/Kconfig
+@@ -11,7 +11,7 @@ config VIDEO_EM28XX_V4L2
+ 	select VIDEO_SAA711X if MEDIA_SUBDRV_AUTOSELECT
+ 	select VIDEO_TVP5150 if MEDIA_SUBDRV_AUTOSELECT
+ 	select VIDEO_MSP3400 if MEDIA_SUBDRV_AUTOSELECT
+-	select VIDEO_MT9V011 if MEDIA_SUBDRV_AUTOSELECT
++	select VIDEO_MT9V011 if MEDIA_SUBDRV_AUTOSELECT && MEDIA_CAMERA_SUPPORT
  
--	word multi_vswitch_id[]  = {1, ESC_VSWITCH};
-+	static const word multi_vswitch_id[]  = {1, ESC_VSWITCH};
- 
- 	byte *cau;
- 	word ncci;
-@@ -8926,7 +8926,7 @@ static void listen_check(DIVA_CAPI_ADAPT
- /* functions for all parameters sent in INDs                        */
- /*------------------------------------------------------------------*/
- 
--static void IndParse(PLCI *plci, word *parms_id, byte **parms, byte multiIEsize)
-+static void IndParse(PLCI *plci, const word *parms_id, byte **parms, byte multiIEsize)
- {
- 	word ploc;            /* points to current location within packet */
- 	byte w;
+ 	---help---
+ 	  This is a video4linux driver for Empia 28xx based TV cards.
