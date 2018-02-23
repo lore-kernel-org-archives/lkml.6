@@ -1,24 +1,24 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x2258Mzh/SGIp/eKiwVoClQHBDtpUodpSf8CxIGFT7h2M3Bkm12+nt3hD9mWqPDwzXuiQTnmN
-ARC-Seal: i=1; a=rsa-sha256; t=1519423936; cv=none;
+X-Google-Smtp-Source: AH8x224JxE+MelY+KdLp8B95PXddtZlaeF7cfzTTqU0WoxnpvdilgGC7Rs95/8LS+wz3VWsmLaRv
+ARC-Seal: i=1; a=rsa-sha256; t=1519423934; cv=none;
         d=google.com; s=arc-20160816;
-        b=CpTZ4op7WaFxs0dFO8oinHu3qzJoUN74khwlxN+i5ZqijQZMWaCw+UFNguwHOOlU6a
-         ciE/eX/fhrCVpj+QE0AJroEndorFNpJVg0KdnbIFy9BFp64TbBdkSbAz1SglGgqdwbCc
-         VVsMvJjnsJopcSecDgWXR/3iow0vVxmnJqVmOqTf3Fh48beudhvL4ORwS8N7meLeoacW
-         IjPb+vcO6XJZhzhH8vwq7F8o2wUTZbvLRXTkCwdwsDxVRoNLoXuALDSIoRJHPQQDMgE+
-         CkGQiXpcuz/OzgSGHjqbPsgK++mOTA6ad8DjDaBQ/lDn5IalvSnp15v5fEENDE/GPsRU
-         ONpQ==
+        b=0IjteP2mEKKet1ackfKttXRKGPp3xqzkx4emvs0U0mXYi6CSbeDnbzrLwV+hSPuRDP
+         ZYEeUfablvihZbhvD5+uC0IaUzrhguNO1jxlr94faHeq98j80qlUDtwBp8UMNrfglDUy
+         mghLAeo0zId0F3nyAyACMZjXZ0S0fNvs5hWOODGQwh6RUPfeOgJrLVpir0389VqTjtEW
+         Tmt3l2OGlUEiYXU2Q56W8b157ah+qj2g8s2Iylx9x1vLdjS5+xNkQftReUEtBJl9S50j
+         FDts3bwsSBKMpl3bj3GA3Ng7spOP01jLD5YsBcTxf59/6OFjk1YOQ+eVjEBtgYxsQw3K
+         CJBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:references:in-reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=jNSwTKV5xhf8qmP46rR4mvUWjZpu9eDhQHXQPtnrxdU=;
-        b=XmCj10bSLDypbGeijPTYk8NBIcQgUApZSiH4XcSxb+RtMTpGtfZjT2bslr6SfwRPpy
-         CceYv6kXQmVV1KtoGCock6RW71a3Qn8UgftRV4CFLvzgz+I/e2iXBi0dp+s/B86410Gh
-         sTZPinFOWtEfQx+GClbz+kN65BZVFSt/r71zgTE+/ldWSUffU9F9Ksqvo7dZdgyLrR5P
-         X5hfAlfRn9a8wCGGCYhGnkKGkgLeDNGQs7y+duXfGIe7V9q2rvq+Czrki2YHaEn2ltjj
-         95/ga7ldmXr3ExPzIczQOo42SgIuArA+q+NeqdiZA0uMhEPf4MCs4xtm1F1DqaOHphuy
-         Q9Jw==
+        bh=ORvtkP1+2/NoXDRvxEdeng3uyo+1MIzo5Z2OeMraJUE=;
+        b=07+tU5xVRbIbig2EpPWbaj36CuWsuvozU7c8YLCwWNzN163xUyqoRSZqEcB4P9WD+a
+         6Q4vz9+/8+jktiGJEYdQtuOwiY4wYW3mVU/rjqkhMTOzxTgFVqCKA2lxtFyAQjX1wpbZ
+         nK7MqV3DE5kzgPeNoghQmM2GOiw304a1UrbO7fP4g+KE/NKk29pZbdfhi5lYnuK8iC4W
+         iF54rQ1EL7ukmwmi5VVEPget/8hTsz+ra52N/XQc1JUGf4tWHjFjm7oAoD0bkhVrPIlx
+         ERgu9RsLnVrn58ege7i8Pd3ebzCQYU/31KFhrsElZiaVFMoaYlCow6iHnfGcTW6eBvdi
+         Ac6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
@@ -26,21 +26,21 @@ Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeBWWMP (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 23 Feb 2018 17:12:15 -0500
-Received: from osg.samsung.com ([64.30.133.232]:57573 "EHLO osg.samsung.com"
+        id S1752133AbeBWWMM (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Fri, 23 Feb 2018 17:12:12 -0500
+Received: from osg.samsung.com ([64.30.133.232]:46417 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751707AbeBWWMJ (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 23 Feb 2018 17:12:09 -0500
+        id S1751955AbeBWWMK (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Fri, 23 Feb 2018 17:12:10 -0500
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Shuah Khan <shuahkh@osg.samsung.com>
 To: shuah@kernel.org, dvhart@infradead.org, tbird20d@gmail.com
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, tglx@linutronix.de,
         mingo@redhat.com, peterz@infradead.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH 1/5] selftests: kselftest framework: add handling for TAP header level
-Date: Fri, 23 Feb 2018 15:11:36 -0700
-Message-Id: <3176a8f2e1aaf19632cece19a7945a12e5ebc35f.1519423340.git.shuahkh@osg.samsung.com>
+Subject: [PATCH 4/5] selftests: size call ksft_print_header() to print TAP header
+Date: Fri, 23 Feb 2018 15:11:39 -0700
+Message-Id: <181e4860e7f2b2dc8e4074e76d00cc99662c1fa1.1519423341.git.shuahkh@osg.samsung.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1519423340.git.shuahkh@osg.samsung.com>
 References: <cover.1519423340.git.shuahkh@osg.samsung.com>
@@ -49,44 +49,44 @@ References: <cover.1519423340.git.shuahkh@osg.samsung.com>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593231473162736882?=
-X-GMAIL-MSGID: =?utf-8?q?1593231473162736882?=
+X-GMAIL-THRID: =?utf-8?q?1593231471136984453?=
+X-GMAIL-MSGID: =?utf-8?q?1593231471136984453?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Introduce environment variable KSFT_TAP_LEVEL to avoid printing
-nested TAP headers for each test. lib.mk run_tests target prints
-TAP header before invoking the test program or test script. Tests
-need a way to suppress TAP headers if it is already printed out.
-
-This new environment variable adds a way for ksft_print_header()
-print TAP header only when KSFT_TAP_LEVEL isn't set.
-
-lib.mk run_tests and test program should print TAP header and set
-KSFT_TAP_LEVEL to avoid a second TAP header to be printed.
-
-selftests Makefile should export KSFT_TAP_LEVEL and add TAP Header
-echo to the run_kselftest.sh script from emit_tests target handling.
+Call ksft_print_header() to print TAP header. This change helps
+prevent nested TAP headers when the test is run from run_tests
+and from script generated by emit_tests as in both of these cases
+KSFT_TAP_LEVEL will be set and ksft_print_header() will suppress
+the nested TAP header from size test.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- tools/testing/selftests/kselftest.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/size/get_size.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-index 1a52b03962a3..1b9d8ecdebce 100644
---- a/tools/testing/selftests/kselftest.h
-+++ b/tools/testing/selftests/kselftest.h
-@@ -57,7 +57,8 @@ static inline int ksft_get_error_cnt(void) { return ksft_cnt.ksft_error; }
+diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
+index d4b59ab979a0..1280b09266f0 100644
+--- a/tools/testing/selftests/size/get_size.c
++++ b/tools/testing/selftests/size/get_size.c
+@@ -23,6 +23,8 @@
  
- static inline void ksft_print_header(void)
- {
--	printf("TAP version 13\n");
-+	if (!(getenv("KSFT_TAP_LEVEL")))
-+		printf("TAP version 13\n");
- }
+ #include <sys/sysinfo.h>
+ #include <unistd.h>
++#include <stdio.h>
++#include "../kselftest.h"
  
- static inline void ksft_print_cnts(void)
+ #define STDOUT_FILENO 1
+ 
+@@ -77,7 +79,7 @@ void _start(void)
+ 	unsigned long used;
+ 	static const char *test_name = " get runtime memory use\n";
+ 
+-	print("TAP version 13\n");
++	ksft_print_header();
+ 	print("# Testing system size.\n");
+ 
+ 	ccode = sysinfo(&info);
 -- 
 2.14.1
 
