@@ -1,86 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751831AbeBWQhV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:37:21 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41284 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeBWQhS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:37:18 -0500
-X-Google-Smtp-Source: AH8x225NEY8G0wfzRSz+mHgSIQCYP1/DPPH1GG0MhA6lXHLhrPGNyPvItFSCLklLhB5Us4ojUo9EGA==
-Date: Fri, 23 Feb 2018 08:37:14 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Timur Tabi <timur@codeaurora.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add a reserved-gpio-ranges
- property
-Message-ID: <20180223163714.GM93895@bjorns-mbp-2.lan>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
- <20180126011400.2191-2-sboyd@codeaurora.org>
+        id S1751936AbeBWQiL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:38:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:57878 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751600AbeBWQiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:38:10 -0500
+Date: Fri, 23 Feb 2018 16:38:06 +0000
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] sched/fair: Avoid unnecessary balancing of
+ asymmetric capacity groups
+Message-ID: <20180223163806.GE4589@e105550-lin.cambridge.arm.com>
+References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
+ <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
+ <20180219151011.GI25181@hirez.programming.kicks-ass.net>
+ <20180220163352.GD4589@e105550-lin.cambridge.arm.com>
+ <20180220182605.GI25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180126011400.2191-2-sboyd@codeaurora.org>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+In-Reply-To: <20180220182605.GI25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 25 Jan 17:13 PST 2018, Stephen Boyd wrote:
-
-+ Rob
-
-> Some qcom platforms make some GPIOs or pins unavailable for use
-> by non-secure operating systems, and thus reading or writing the
-> registers for those pins will cause access control issues.
-> Introduce a DT property to describe the set of GPIOs that are
-> available for use so that higher level OSes are able to know what
-> pins to avoid reading/writing.
+On Tue, Feb 20, 2018 at 07:26:05PM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 20, 2018 at 04:33:52PM +0000, Morten Rasmussen wrote:
+> > On Mon, Feb 19, 2018 at 04:10:11PM +0100, Peter Zijlstra wrote:
+> > > On Thu, Feb 15, 2018 at 04:20:51PM +0000, Morten Rasmussen wrote:
+> > > > +/*
+> > > > + * group_similar_cpu_capacity: Returns true if the minimum capacity of the
+> > > > + * compared groups differ by less than 12.5%.
+> > > > + */
+> > > > +static inline bool
+> > > > +group_similar_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
+> > > > +{
+> > > > +	long diff = sg->sgc->min_capacity - ref->sgc->min_capacity;
+> > > > +	long max = max(sg->sgc->min_capacity, ref->sgc->min_capacity);
+> > > > +
+> > > > +	return abs(diff) < max >> 3;
+> > > > +}
+> > > 
+> > > This seems a fairly random and dodgy heuristic.
+> > 
+> > I can't deny that :-)
+> > 
+> > We need to somehow figure out if we are doing asymmetric cpu capacity
+> > balancing or normal SMP balancing. We probably don't care about
+> > migrating tasks if the capacities are nearly identical. But how much is
+> > 'nearly'?
+> > 
+> > We could make it strictly equal as long as sgc->min_capacity is based on
+> > capacity_orig. If we let things like rt-pressure influence
+> > sgc->min_capacity, it might become a mess.
 > 
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> See, that is the problem, I think it this min_capacity thing is
+> influenced by rt-pressure and the like.
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index b5de08e3b1a2..c22b56680fc8 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -151,9 +151,9 @@ in a lot of designs, some using all 32 bits, some using 18 and some using
->  first 18 GPIOs, at local offset 0 .. 17, are in use.
->  
->  If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1, an
-> -additional bitmask is needed to specify which GPIOs are actually in use,
-> -and which are dummies. The bindings for this case has not yet been
-> -specified, but should be specified if/when such hardware appears.
-> +additional set of tuples is needed to specify which GPIOs are unusable, with
-> +the reserved-gpio-ranges binding. This property indicates the start and size
-> +of the GPIOs that can't be used.
->  
->  Optionally, a GPIO controller may have a "gpio-line-names" property. This is
->  an array of strings defining the names of the GPIO lines going out of the
-> @@ -178,6 +178,7 @@ gpio-controller@00000000 {
->  	gpio-controller;
->  	#gpio-cells = <2>;
->  	ngpios = <18>;
-> +	reserved-gpio-ranges = <0 4>, <12 2>;
->  	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
->  		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
->  		"Row A", "Row B", "Row C", "Row D", "NMI button",
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> See update_cpu_capacity(), min_capacity is set after we add the RT scale
+> factor thingy, and then update_group_capacity() filters the min of the
+> whole group. The thing only ever goes down.
 > 
+> But this means that if a big CPU has a very high IRQ/RT load, its
+> capacity will dip below that of a little core and min_capacity for the
+> big group as a whole will appear smaller than that of the little group.
+> 
+> Or am I now terminally confused again?
+
+No, I think you are right, or I'm equally confused.
+
+I don't think we can avoid having some sort of margin to decide when
+capacities are significantly different if we want to keep this patch.
+
+Looking more into this, I realized that we do already have similar
+comparison and margin in group_smaller_cpu_capacity(). So I'm going to
+look using that instead if possible.
+
+The commit message could use some clarification too as we do in fact
+already use group_smaller_cpu_capacity() to bail out of pulling big
+tasks from big cpus to little. However, there are cases where it is fine
+to have sum_nr_running > group_weight on the big side and cases where it
+is fine to have the bigs idling while the littles are lightly utilized
+which should be addressed by this patch.
