@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeBWRAX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:00:23 -0500
-Received: from mail-eopbgr30114.outbound.protection.outlook.com ([40.107.3.114]:45087
+        id S1751881AbeBWRAT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:00:19 -0500
+Received: from mail-eopbgr30108.outbound.protection.outlook.com ([40.107.3.108]:25861
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751825AbeBWRAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:00:16 -0500
+        id S1751702AbeBWRAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 12:00:11 -0500
 From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org
-Subject: [PATCH 3/3] ftrace: Add MODULE_PLTS support
-Date: Fri, 23 Feb 2018 17:58:49 +0100
-Message-Id: <20180223165849.16388-4-alexander.sverdlin@nokia.com>
+Subject: [PATCH 2/3] ARM: PLT: Move struct plt_entries definition to header
+Date: Fri, 23 Feb 2018 17:58:48 +0100
+Message-Id: <20180223165849.16388-3-alexander.sverdlin@nokia.com>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180223165849.16388-1-alexander.sverdlin@nokia.com>
 References: <20180223165849.16388-1-alexander.sverdlin@nokia.com>
@@ -45,47 +45,47 @@ X-ClientProxiedBy: VI1PR0202CA0036.eurprd02.prod.outlook.com
  (2a01:111:e400:59ec::14)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: ad8ab03b-157a-48eb-3c85-08d57adee6e4
+X-MS-Office365-Filtering-Correlation-Id: 79bc3cf2-13c1-4635-6e8d-08d57adee484
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7193020);SRVR:AM4PR07MB1316;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;3:ZU7++AHDVV8eQYPq8iXhvsiDsMT7OHbkQC7fjSfVnGrdRSm2PEPuTW4R7tcKr23it+j+m86d20v1FzWJ8QGlYhF6yGNlZkHvHLjmQeHf44xVjqsWFGryqXI2PO0jxIflkXZaa+ge3/t2aSFx1Wdbxv/PYNoABWK1xXev5CjOtOoJqCmaprT94GdGgH5w1Gm5NzEmEYm6pjwnpxJWm74+jAaaUQkBpXp67yDQqfjRZEoJPn+GeXDUSQRsXy4AkNNs;25:xf/uVsHx5xTTcLcaV7gPTo0Ge0nLi9XMEwucFD8TkvyklLOs4yGzGp+ZGswBXbVv8EzfscBHJokuGV7IlF33p26jSTjQZHQATn0avmnFi+UNYPPdjE5nmBUhwI/kaWhiHZEeCSjq0kDVv2j4bAr3e9/kYAN/Vws6NcTvzFcCsqQ9GQtRBxwsu2pfhjZgC7kc22bLqmE192Imv5pJAANPEDFSrIm6OgK1Mnhq8ynVWjtpaKObqzAcKJEPUQDNNezMkzB6IU4hZMhccLIZ/2Y9E2U+6njJrm5Y1Fm/crFgWJ6ptIEG9oGO/+6nzLSlbh22nDxdJIZliKkP++MZX0F5rw==;31:uPgiGPAkMjhxm0F6PbRZJv+iztDSiP/MpkiyM51UxmikpfRUjkY8kyLX6GkralDjXCOpebI85hP2miBvTxQ0dN3fzPwrEcBSH99G1ry3c9Y3ewC7uCpbDs5comp4sgeHW25OJtawCt10YnW84ICGCNYk6I4HsiRBQOVBqQcP8GQHxKJkr6+2GdRzV1kt2D8p2lHp5ZTYpQqIXh4DuOn6xZ3uN4CttwgIRydkF0nM3Vw=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;3:7Q8Jh8QPnLmRs29Ipk1+WyeIYskGVh1MOLr/d51RyVl+Hli4zYTAXKnZnJCbQnQsIWctwE9x6C8+LfHeANpA0l4mvCAprY+kgdmBCzGSxBCNTosvPfxh9EGBkONGPF+BmviofEAk06moNFNDd98j1ple77PkXFmDhLYXnTC2lg04hOzQpuEy3s6kGBWarWzbpMCTHLABqiY4PFBj3GMt/OPCZl4QigxarfB9rqavxwjlXdZRQrT1/g6wejGWnxXz;25:rfJk7hwNw5R+Z2BYJcwezb5Tg49LS0v16gdpVDuxx7zAh2Iw7TWAH9jQIC4nWIzj0yzZrGId0aV966gnoone1mNljVGnhqo5qSG4btIlXwjzUyX5iEOboP6a+ems2KiyfystOwCwyHHekN+Ho2DGt+VRdJHC6sipZ8rqQISKTSDn2ZPG1vwtMYb0tPsoqRt6fA2jf4iSBCyOffXF/QHuuYJTgnXjM3Axt9S36SHDH81Au9U1ntU1U01EO6g/ueOm+UkwlMBeS7dK80xNxHCtilMR7rTe/B6OxNf0tRitw8ZZqZ4Qhih9YIiIx+paegisrVeXYo/sP9ZY6Q59QTyzQg==;31:BK0K15Rie0YWI/V7bZZ/A7fe7Jk8pdoyjDrzRiMtC6jJtJPyNwSJpOi1vuBV98ts4mN5r7U4A9Y5gRlBOJZiUhlB2leutpBRGuaNhkurK2KwA8ii7SZeYzTTqLGJcnxhXsLLm1xHEgzg81tjThW05dNiIVreRMGMjd5W6acSE1Nsu3exDpLwESqdIeRygv+p+DSkPPUvkl3V+i/+pBn2TdjrTL1cUxsAR9Si7O/V53E=
 X-MS-TrafficTypeDiagnostic: AM4PR07MB1316:
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;20:gY74JIjsr10Kf6EGTYKQ72zXIHeIF/mYu4sS2sX4Ktj3BvfGVVzUFLX3jC9Y1lw4QKcGBlKINy71SVuEQZv8cBqQjE3a4KpJf0A2Ot+bl2FlmmRw5q8W6C3GvcmigS5MuLdHEjZJcJ0dBA5ChQte4IV/fkBMPfMB+eDlkTliI5tyXxAPoOCWFtt4zXM2PqMHgikf4dd0+QoZ2t6TjXX0buvt1SWlb3u+y+R8U7c9wtNLb2VpZY3su4Smfge/qEANlvvQfBrAYWSKSSIari5CvSsJxrFiXhb2czY61LPnZVg94exV5HnuIV3PrR6XKVTkthcfrwkcEGKBkjRxsigRd70nFMaBBpzJAjjmdqfIDOGW6QEVrXtcL/8JoYal8fx6C9gi9R3h9Ot8VSxlCL+1s2ualzQBQ0fyTvrPQCASufGZpOd15ApnyLHXKHwMcEahZAk39SzY4+wIVX92U5nGFDbmNE1cIXk9k36ZztptpOQQK0WgKE/GU76Qdfj/KKXiZVEYujwVHdtalWXidnGDIx0sKlvou1nx7qMfhXUn3T8ALmilKvIyUV7xT5PZZ6I9ahdlKLAR7XXsNrAjNX96LbwmUYwcY1x+vack9Uswce0=;4:7oZ0K/nBw16mh6R2Up/Wz1lOStmIv4NEiPq61hCBjHVyAgxWWOeyaW3I4hvqees2FfeJ4O/vo8Qug0NzJPeysn3CtB/j4z0TB2iht92u11UHqz1iqsfN2syS6t3mKHMz2icn/KC786d8ePJvFKMVf3HTGRRkt3tSo+GaQ9ajRUd8Grc5crl5pS8l+YMVHa0eNL7FMmyJAag7x8JgSzwVfzxqsiw+HdEzY8jWVyaXpbkapkroYTnMOElKJVpEV/LvYcmINgej1LPesexrz1grA/YQmBTllNECP0az+20Vzh4P/qeYGN6iFDRTJgI8stmD
-X-Microsoft-Antispam-PRVS: <AM4PR07MB131608FCDBF556A19A0E672288CC0@AM4PR07MB1316.eurprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;20:ergzrdy9bFJTepNR3AVFpMgUbzzrfJXxK0Ys1YXMx3QXU8k4u61dkYI91mIRXpbcPtW7CV/o6HShh9D3K/ADtDkx5nQyT/7tVW7VF4AEQ2DETb8p8tTbbWOI9jL/lWnsBJ5CQFrcehbmxcNcCiL9GbBS/B8rTaNgK5qSamR0RR4RbN3jticmxkkMr7sFFDo+fYR1AQ/nfIWBGislBle0VI+js7vaVL8LrTAbol5V8s3TJ9SwFej5NGIfDRZgED9L7V7GqPc96d9KW/mHQUy27WxxuTIpJEAg7Twwmui2u+ba11BfsMQMsknLAAVOFspdcTOvqhvBdUoM0S0RK6Vdf8XyWtfUGOcKIawKpy1ZvIbUBP2XcPOId1+R1JkH7QU8sUnP2nBIlx8W6I8BSArVUailhNEBtvam/RNd1dgRhqnyGTvxGL9mzIWx5n4/K5iYJ2PW6yXD43f9EmhGjuEppXQojK3N9SD4U7NMe4Ai+OclZ4/Dzi71XUWrAgTqmOudFX54714NKmxKujBVe1o90Fnpul01+6wUQmEZ/KXITp9qvDqOZIhN10qULC+EI8FMuxdoBYYCZ1gdW/mFuoiKzELJFnylkw8n0jugfISc6IE=;4:PEcAxu+kFLBwQBVx1hs8vusmCPnbIwhb/RqQUNVfFLVje2yjsFpD+ZxUdqX9EUn/h+XkZZKWU5CDRgLMiX4bHWdCnn9xEQHxB60LcEVQ5i94hvKD8aWOgv0phcnt8U4QYNrvJVFZqRJAaK5eN7uHH6+BbFU2O0ES7KPWY59tX4d1/+PqBTYi9ME0EbnPTJGVJbVBRtJCErXdiXhf5FkaV/6qi60/FhjwEIrPzmk/fmo6Sv/Qzan8qBEs1bXchRFJV/PIIfRX3U281hqSYJVRtJ8/2wMORpP76uamq5qoDmx9kgwl1n3vQ7ccKldndkJq
+X-Microsoft-Antispam-PRVS: <AM4PR07MB131606FCAC3F5DE6EC8D187988CC0@AM4PR07MB1316.eurprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(82608151540597);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231192)(11241501184)(806099)(944501161)(52105095)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:AM4PR07MB1316;BCL:0;PCL:0;RULEID:;SRVR:AM4PR07MB1316;
 X-Forefront-PRVS: 0592A9FDE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(39380400002)(366004)(346002)(199004)(189003)(52116002)(6506007)(386003)(7736002)(305945005)(2950100002)(76176011)(1076002)(7406005)(7416002)(97736004)(5660300001)(6666003)(6116002)(59450400001)(39060400002)(3846002)(16526019)(186003)(50226002)(105586002)(478600001)(106356001)(81166006)(81156014)(66066001)(6346003)(8936002)(47776003)(68736007)(26005)(8676002)(86362001)(575784001)(50466002)(4326008)(53936002)(51416003)(25786009)(6486002)(48376002)(54906003)(110136005)(16586007)(6512007)(316002)(2906002)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR07MB1316;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(39380400002)(366004)(346002)(199004)(189003)(52116002)(6506007)(386003)(7736002)(305945005)(2950100002)(76176011)(1076002)(7406005)(7416002)(97736004)(5660300001)(6666003)(6116002)(39060400002)(3846002)(16526019)(186003)(50226002)(105586002)(478600001)(106356001)(81166006)(81156014)(66066001)(6346003)(8936002)(47776003)(68736007)(26005)(8676002)(86362001)(575784001)(50466002)(4326008)(53936002)(51416003)(25786009)(6486002)(48376002)(54906003)(110136005)(16586007)(6512007)(316002)(2906002)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR07MB1316;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=alexander.sverdlin@nokia.com;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR07MB1316;23:zPwnB84J8MIwli2yRrwsWlLtSSCv/Wx7yoKpkSJzu?=
- =?us-ascii?Q?MKmqs2GeybZMTTZxcX7+ySr2XKgkVnuPi1OlGpmzq/IFwaQUQfcXvakeYhqk?=
- =?us-ascii?Q?EC2gG7+PPT8UIZtn+GPKbmanMB0bSnmSHrRVY8MnMRFzeK8m7GMNvTc5oVT4?=
- =?us-ascii?Q?BeAjnckTI37RzxL+mIB2021MQBut+S4AbcFRc9B/KlLnFVddqxLlXb6cfaT/?=
- =?us-ascii?Q?Q3XHvyXgPrb57Up0QXl8rgYmisuOdWwwHxYPHqm8h7OMINNZHHP5m/sDQoXE?=
- =?us-ascii?Q?XKCa0JSz4wC3Df8nO8vDOak1dguVY2566DvT0Lg35hvifaPHGqDY9Qioxg23?=
- =?us-ascii?Q?ClFfsE8us6CDBXD8BcvYE0akJJgf8Hso4ZvSQo1fWZeEX0R5mx/NtecgrKKC?=
- =?us-ascii?Q?wKxGKQIewFxzIGB/TtdICabdOTYKmVraBfOIucBn2dK8kXsFx/vx05AcX/tr?=
- =?us-ascii?Q?85ljjKJ4kavkk7kNKOl+h0ZzElVLhD5HuwMJu2w18Jf9DS3lZS9CA2ycTNij?=
- =?us-ascii?Q?nMOauEkNFxBB1zcwYj6AExVBc/1rRpExNfUOFa4sOOceyCIRNzchRa6fr2xs?=
- =?us-ascii?Q?e0CN7Yl2Umt58IUTsTpYiWCnlsjP5RoenpEXaLrYlniHhE1Ld3f9PG53LHFS?=
- =?us-ascii?Q?eTIHSuOCTnKWgyqnKG8XO8QN4JbeokwWL096vsSrzkhz+DuAlhlFFhQVGTcR?=
- =?us-ascii?Q?A7vG3RwG6BW7DTj8Pu8KmkOjf6VEhQja0n9HPRdN90A4boVLq8uMp0X2NLtt?=
- =?us-ascii?Q?bqGwz+46msBuVtDCo6Lj9kUfFrTiyRbRo36sstKvAw6KReLDfLo1l5USU4ti?=
- =?us-ascii?Q?/i8Ban8i5nO1RoTRfI/apDBwag6YLP5HVLQoTmfRS7AtL1IP8L6rMKvUwk0B?=
- =?us-ascii?Q?6PIUkui0nkteSsmXpKX6McZmFIO4rIb3j+GsxrhFqTUDwMBfB8PbJ1FhI1Z5?=
- =?us-ascii?Q?iFSly48le0wJnV6oTA8Ie5xWIN12vJGqOqDYZYjZpc4QGzBb69CbpRX3PhGl?=
- =?us-ascii?Q?/91QXgEzqhBFTPTjr/7RL5ZHcMf0IZROLAYPdAb4IrnDctAARQTdYnzAQJNq?=
- =?us-ascii?Q?CEXQjK7kx2fiRow+P/H7j4cI61IWDQgp+/d8z3MkLj357BzOn7Y0d3uul8nV?=
- =?us-ascii?Q?JQkspHW7lxyKWPj0E1aovC3taWJ2LFUHjhuN/DUjGCLJ03fNSRQY8GYtRm+P?=
- =?us-ascii?Q?n5I1kPkaagF9cHcXgc3u6qDFM2IBEY6eiyoKXinIjvyBT9vfRDODUgefHRUP?=
- =?us-ascii?Q?7WPXJCDtzRwuk3X9nN2Ojw/1zgSmOP8d9zjiEun?=
-X-Microsoft-Antispam-Message-Info: 8CeGaz9UXEEDCj7kxcwydKgGBEwKun2zebrqB+doT0QRoqSHLwDypqgXQmUI+44nGa2F5mqVv4qbXYaNurdOow==
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;6:Y/rpW58nS0YTD7q50lt0PxgYSUhx3i5a8UccKNi9G4Ev/Y+nb9kee3U/UOP8Vpq3pwP/pIbO0v3kKuVGeKmcBcPJVgIOP9EVykbicvHXpb3nKj2LiGzoDO6MFrWy8oVKiOrvD91nC3BpdHc2bN0i/oio84nCW5bL77dNPIG6w94WrtADVC1WrPK1mwpwvnLplJOoyaTiQmN5HVTzTf1t73u0lS7AlszEhsNLY4jZ75sHne3S4qBY8SZeb4xp9FlCdBvRbJw0r0vz5Qc75g4Yu/uFup/aNf79AkBTgRiiakUO9vD+wiwwYZv4W5TXGzEDDtx3lP5ksYmkFMtOfxCp8X/2Azbehk2JQzeyPiWkTRk=;5:tfj3FOJ4uyajhYKSrVxSng+yFyX2EK1x86XXqFORIYVl8+jot/bbLjyf97Dfcb2yo2ntkXwX6aVhrbtYXF0AtURDBuK4QBDaaODjdhVtaavrVDyCi0XUMkhYN2ch+jN5Q3Hrqj7biIbK9XllKX/cW55N3HychgqRIpEhgLZDw1A=;24:PPsFI/2HJAaQmE5uvtflCnEff1mVHlZ+VUD/NLtRs1hvkS5F0FY89bWsKEScsbFVS0VRjFMzkZIDdedt9WsteqkepYW6kcsJNcPHFtLXIzU=;7:523f2042B0LVzaDqujB0cB4kiqsv9sy6hH86jCENqfFIei38HCr0lNI9j2s6kS/t2GzKfixx8L0dbeYpX0OH6P4rIaY44CKjqQB1klNI25/hmvw3ZHWUormM7OAYVn/+C1IbnJYz7qOyxDOR9ecuxprW4QqD2hhRLWzK7NWR3vusNxA6o4Dpz6ivkqTYqN9nxxt7CIiLfpIHb8iZLzgmv/ulodQNAlx5OP0JaWXSG2WhxSpm5Rp2QJ3E04QUZGEo
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR07MB1316;23:2dQ9vo/Yb3QFqmThYwu36D/IP78Y83yUppaRD+74q?=
+ =?us-ascii?Q?XIlkSJZsOnGeS1tn2JH3xuNk/vezro85EigYRNiZDM8YkWDoDetiATohQebj?=
+ =?us-ascii?Q?9BjCgzppI1A3Y84cIOUxPv/VJa8ltZnlJML3oZmQG2vAivyCJ1mo6tpuorbM?=
+ =?us-ascii?Q?dvR3NNHCe1ErETiwhZBYqvNpzzKbjUINBpqHABkpldzAkjLW7JSe+tN2maey?=
+ =?us-ascii?Q?Ax6QYfMb8UmdJNSlDvUDt0Wuj35NwfnibxvfvDZzNshF5TqY7BG0vNMaPvl3?=
+ =?us-ascii?Q?7P1h8WJ78HUXxty8jOzftZsrTO3RIwBv/E9b68yj+vzntU36TueIlCvoCPfT?=
+ =?us-ascii?Q?RtLgtlx9cLJXsnUw4PU1I9uCaKXBaeMjhfzPXG4x3OF2EvTqtJ5sWGAOHen7?=
+ =?us-ascii?Q?TeiziUySlJS6aFu5cHEOfEpjVYsz+g2D4ZzqzuTHeuJ5mFo0Zn+KER2vBhm1?=
+ =?us-ascii?Q?gDIAD3hz9tS+vtCwnKat8qrir1r/5PSZolpX+Jpou9cSrWx3hWXExGa7DcMK?=
+ =?us-ascii?Q?bEHQaVl+9pWZDVenMg3iMdSiTioLk3jJEYKbV5F2cW/PBFF5gyK7/xp4ejYy?=
+ =?us-ascii?Q?Ey0OMczPZj9t1sL7a4hdBFBT3yPehxNg/Qom733gf2FGM9+qo79Wg2I2ngb3?=
+ =?us-ascii?Q?XT8hd8zRF9Ksc17d3Eff9zTfOkNUzWM8ZSDhHSrc6StTAsf21+FZm2Eq1Tw+?=
+ =?us-ascii?Q?9Jd01MY+9H57I9IbwQAzVx22xVYXgTeIetFaGC7wz7+OQ+/J6su5xZrW1sKO?=
+ =?us-ascii?Q?s4fWovYAzerxyr/KlPQ5oDIJG4d7Zf1/IJOkSo5q+XItfokpQkOU57rcK283?=
+ =?us-ascii?Q?rZwECGfMLMUiK+8f67dNLf58tHMUE0my/rR0Qcd0jCuwiKrmpH7kZNwHl7Hy?=
+ =?us-ascii?Q?7t4zGUEqUDel1wZ6NmBKIkDid2jjo5621fk/ZnNvM7JAy5V4ccMcM1IYrRRN?=
+ =?us-ascii?Q?VkmaZjyitSOIV84bs3aODo9dXO8wPa1/147Rybp9EXdZJO84sBudrHe/7JY3?=
+ =?us-ascii?Q?tj+5tAvqESv2h2nI687xi+WodSUMB3CFWTx0Hu3x0dEtZ4OKcxSoxVVgZ9WQ?=
+ =?us-ascii?Q?v1Q/dpjnheBRAvPLdXPjfrLzfu5HhIf7wMNfnnbfdEYGQBQEGHfUURLeByKF?=
+ =?us-ascii?Q?eMJeO9ZkHOnwcvx3f5fzcQwE2CmbL75lFgOwS21G4WEJ4SmsJIz+IL1eLWdS?=
+ =?us-ascii?Q?kugy2ORZ/s8Xjg7QexwGQPpCGbbcxcCMFYsrO4VK5/LN0ZFeRc6Qumw/yojV?=
+ =?us-ascii?Q?paWAumB2BcIObPFCh0=3D?=
+X-Microsoft-Antispam-Message-Info: FyXxymlteNzITjb92QjiuuuC/1tmTakZAIz+DfV2fV8pmI/BkeUoGN8F2pfjrF1SxxSIPB08BakhNK17gjVhvA==
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB1316;6:3nHDfInwYhbdZr0yD6JjrbfAjnmwppmRL3rPQIf300ohaEItiwL4F60fGCqHsrweoB0Z/lMK7AwGkgto2D4GTwyZQjq/wQZcrxFCJ6a2P9KmFk7C//sa66S1Qsng2TnVfMMlz3gE+7M8thghu5/Akpdf9IGWJHoRya4kiiv+Z/zFNW2q4vWi8z5efsbSsp4D2wbMRUW7omFHHL1bauylocOFifozkAiDLoFUqyivPkfjNYwSn7o1JzNzDY7PZq81j+82+TlxdmU0fuLUMIyFNTV2l6copRaSF7D7uxD6lZ4piXfntcPG1sGgRJby5pUih8RZi9mk+DmBo798BG+o1d2c+i/iYd6qsj3qEh52KDY=;5:NuUUM4lvXxnrAr/nvFZbe6hLc/8lYUVzHSmfUkdZR+RiTnots5oXdnlBSYN4ZNFCGaz7CvfstGhG/Dl7gZtzLVwwe+t3bcubl2UARrm3+JGsrzU8GT9M+jnb+7pZLY+KzPSct6PCLpL5SHrQGCW36HhIJLY/TIiMC06uXfE0e94=;24:cGo9FHurz9C7iw443mL3nt650Cuv/3ltbhbfIoMADD+WeAmHPW23glaSXFZuCNtNKX/mGP3R8ztqAA8sZ5G3MDnBo3i2W4/AqNLns0uVl2c=;7:7sv+CWo1iPGqnnZFb1KUJ4CaqPwmtgJo79W3KITKE9Le7vF8xePJRVmaLyjWQNaZfhxSwdznxA0VfyGhM1BnQoSmgvuR/McB25O5b1PKHtqz8MbBo9qTSlGZ1Debmsp4X++RWVONODh6qgBXa1qZwQmeq/VoPKR/tS1OCGl0wxyAiufECzjKkRhQgB9CochzD5IK+88mS1Gn7Hj63kMxTO0XlNB2N3ByFLMyidTgrNmlzq4RJhRmpB0gImXA55xW
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 17:00:08.2849 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad8ab03b-157a-48eb-3c85-08d57adee6e4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 17:00:04.3036 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79bc3cf2-13c1-4635-6e8d-08d57adee484
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR07MB1316
@@ -93,259 +93,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Teach ftrace_make_call() and ftrace_make_nop() about PLTs.
-Teach PLT code about FTRACE and all its callbacks.
-Otherwise the following might happen:
-
-------------[ cut here ]------------
-WARNING: CPU: 14 PID: 2265 at .../arch/arm/kernel/insn.c:14 __arm_gen_branch+0x83/0x8c()
-...
-Hardware name: LSI Axxia AXM55XX
-[<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
-[<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
-[<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
-[<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
-[<c03218f3>] (warn_slowpath_null) from [<c03143cf>] (__arm_gen_branch+0x83/0x8c)
-[<c03143cf>] (__arm_gen_branch) from [<c0314337>] (ftrace_make_nop+0xf/0x24)
-[<c0314337>] (ftrace_make_nop) from [<c038ebcb>] (ftrace_process_locs+0x27b/0x3e8)
-[<c038ebcb>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
-[<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
-[<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
----[ end trace e1b64ced7a89adcc ]---
-------------[ cut here ]------------
-WARNING: CPU: 14 PID: 2265 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1b1/0x234()
-...
-Hardware name: LSI Axxia AXM55XX
-[<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
-[<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
-[<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
-[<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
-[<c03218f3>] (warn_slowpath_null) from [<c038e87d>] (ftrace_bug+0x1b1/0x234)
-[<c038e87d>] (ftrace_bug) from [<c038ebd5>] (ftrace_process_locs+0x285/0x3e8)
-[<c038ebd5>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
-[<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
-[<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
----[ end trace e1b64ced7a89adcd ]---
-ftrace failed to modify [<e9ef7006>] 0xe9ef7006
-actual: 02:f0:3b:fa
-ftrace record flags: 0
-(0) expected tramp: c0314265
+No functional change, later it will be re-used in several files.
 
 Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 ---
- arch/arm/include/asm/module.h |  1 +
- arch/arm/kernel/ftrace.c      | 70 ++++++++++++++++++++++++++++++++++++-------
- arch/arm/kernel/module-plts.c | 53 ++++++++++++++++++++++++--------
- 3 files changed, 101 insertions(+), 23 deletions(-)
+ arch/arm/include/asm/module.h | 9 +++++++++
+ arch/arm/kernel/module-plts.c | 9 ---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
-index 6996405..e3d7a51 100644
+index 89ad059..6996405 100644
 --- a/arch/arm/include/asm/module.h
 +++ b/arch/arm/include/asm/module.h
-@@ -30,6 +30,7 @@ struct plt_entries {
- 
- struct mod_plt_sec {
- 	struct elf32_shdr	*plt;
-+	struct plt_entries	*plt_ent;
- 	int			plt_count;
+@@ -19,6 +19,15 @@ enum {
  };
- 
-diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
-index be20adc..0a0da25 100644
---- a/arch/arm/kernel/ftrace.c
-+++ b/arch/arm/kernel/ftrace.c
-@@ -98,6 +98,19 @@ int ftrace_arch_code_modify_post_process(void)
- 
- static unsigned long ftrace_call_replace(unsigned long pc, unsigned long addr)
- {
-+	s32 offset = addr - pc;
-+	s32 blim = 0xfe000008;
-+	s32 flim = 0x02000004;
-+
-+	if (IS_ENABLED(CONFIG_THUMB2_KERNEL)) {
-+		blim = 0xff000004;
-+		flim = 0x01000002;
-+	}
-+
-+	if (IS_ENABLED(CONFIG_ARM_MODULE_PLTS) &&
-+	    (offset < blim || offset > flim))
-+		return 0;
-+
- 	return arm_gen_branch_link(pc, addr);
- }
- 
-@@ -167,10 +180,27 @@ int ftrace_make_call(struct module *mod, struct dyn_ftrace *rec,
- {
- 	unsigned long new, old;
- 	unsigned long ip = rec->ip;
-+	unsigned long aaddr = adjust_address(rec, addr);
- 
- 	old = ftrace_nop_replace(rec);
- 
--	new = ftrace_call_replace(ip, adjust_address(rec, addr));
-+	new = ftrace_call_replace(ip, aaddr);
-+
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+	if (!new) {
-+		/*
-+		 * mod is only supplied during module loading, later we have to
-+		 * search for it
-+		 */
-+		if (!mod)
-+			mod = __module_address(ip);
-+
-+		if (mod) {
-+			aaddr = get_module_plt(mod, ip, aaddr);
-+			new = ftrace_call_replace(ip, aaddr);
-+		}
-+	}
-+#endif
- 
- 	return ftrace_modify_code(rec->ip, old, new, true);
- }
-@@ -200,20 +230,40 @@ int ftrace_make_nop(struct module *mod,
- 	unsigned long new;
- 	int ret;
- 
--	old = ftrace_call_replace(ip, adjust_address(rec, addr));
--	new = ftrace_nop_replace(rec);
--	ret = ftrace_modify_code(ip, old, new, true);
--
--#ifdef CONFIG_OLD_MCOUNT
--	if (ret == -EINVAL && addr == MCOUNT_ADDR) {
--		rec->arch.old_mcount = true;
-+	for (;;) {
-+		unsigned long aaddr = adjust_address(rec, addr);
-+
-+		old = ftrace_call_replace(ip, aaddr);
-+
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+		if (!old) {
-+			/*
-+			 * mod is only supplied during module loading, later we
-+			 * have to search for it
-+			 */
-+			if (!mod)
-+				mod = __module_address(ip);
-+
-+			if (mod) {
-+				aaddr = get_module_plt(mod, ip, aaddr);
-+				old = ftrace_call_replace(ip, aaddr);
-+			}
-+		}
-+#endif
- 
--		old = ftrace_call_replace(ip, adjust_address(rec, addr));
- 		new = ftrace_nop_replace(rec);
- 		ret = ftrace_modify_code(ip, old, new, true);
--	}
-+
-+#ifdef CONFIG_OLD_MCOUNT
-+		if (ret == -EINVAL && !rec->arch.old_mcount) {
-+			rec->arch.old_mcount = true;
-+			continue;
-+		}
  #endif
  
-+		break;
-+	}
++#define PLT_ENT_STRIDE		L1_CACHE_BYTES
++#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
++#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
 +
- 	return ret;
- }
- 
++struct plt_entries {
++	u32	ldr[PLT_ENT_COUNT];
++	u32	lit[PLT_ENT_COUNT];
++};
++
+ struct mod_plt_sec {
+ 	struct elf32_shdr	*plt;
+ 	int			plt_count;
 diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
-index f272711..a216256 100644
+index 3d0c2e4..f272711 100644
 --- a/arch/arm/kernel/module-plts.c
 +++ b/arch/arm/kernel/module-plts.c
-@@ -7,6 +7,7 @@
-  */
+@@ -14,10 +14,6 @@
+ #include <asm/cache.h>
+ #include <asm/opcodes.h>
  
- #include <linux/elf.h>
-+#include <linux/ftrace.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/sort.h>
-@@ -22,6 +23,15 @@
+-#define PLT_ENT_STRIDE		L1_CACHE_BYTES
+-#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
+-#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
+-
+ #ifdef CONFIG_THUMB2_KERNEL
+ #define PLT_ENT_LDR		__opcode_to_mem_thumb32(0xf8dff000 | \
+ 							(PLT_ENT_STRIDE - 4))
+@@ -26,11 +22,6 @@
  						    (PLT_ENT_STRIDE - 8))
  #endif
  
-+static u32 fixed_plts[] = {
-+	FTRACE_ADDR,
-+	MCOUNT_ADDR,
-+#ifdef CONFIG_OLD_MCOUNT
-+	(unsigned long)ftrace_caller_old,
-+	(unsigned long)mcount,
-+#endif
-+};
-+
+-struct plt_entries {
+-	u32	ldr[PLT_ENT_COUNT];
+-	u32	lit[PLT_ENT_COUNT];
+-};
+-
  static bool in_init(const struct module *mod, unsigned long loc)
  {
  	return loc - (u32)mod->init_layout.base < mod->init_layout.size;
-@@ -31,26 +41,43 @@ u32 get_module_plt(struct module *mod, unsigned long loc, Elf32_Addr val)
- {
- 	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
- 							  &mod->arch.init;
-+	int idx;
-+	struct plt_entries *plt;
-+
-+	/* Pre-allocate entries in the first plt */
-+	if (!pltsec->plt_count) {
-+		plt = (struct plt_entries *)pltsec->plt->sh_addr;
-+		for (idx = 0; idx < ARRAY_SIZE(plt->ldr); ++idx)
-+			plt->ldr[idx] = PLT_ENT_LDR;
-+		memcpy(plt->lit, fixed_plts, sizeof(fixed_plts));
-+		pltsec->plt_count = ARRAY_SIZE(fixed_plts);
-+		/*
-+		 * cache the address,
-+		 * ELF header is available only during module load
-+		 */
-+		pltsec->plt_ent = plt;
-+	}
-+	plt = pltsec->plt_ent;
- 
--	struct plt_entries *plt = (struct plt_entries *)pltsec->plt->sh_addr;
--	int idx = 0;
-+	idx = ARRAY_SIZE(fixed_plts);
-+	while (idx)
-+		if (plt->lit[--idx] == val)
-+			return (u32)&plt->ldr[idx];
- 
- 	/*
- 	 * Look for an existing entry pointing to 'val'. Given that the
- 	 * relocations are sorted, this will be the last entry we allocated.
- 	 * (if one exists).
- 	 */
--	if (pltsec->plt_count > 0) {
--		plt += (pltsec->plt_count - 1) / PLT_ENT_COUNT;
--		idx = (pltsec->plt_count - 1) % PLT_ENT_COUNT;
-+	plt += (pltsec->plt_count - 1) / PLT_ENT_COUNT;
-+	idx = (pltsec->plt_count - 1) % PLT_ENT_COUNT;
- 
--		if (plt->lit[idx] == val)
--			return (u32)&plt->ldr[idx];
-+	if (plt->lit[idx] == val)
-+		return (u32)&plt->ldr[idx];
- 
--		idx = (idx + 1) % PLT_ENT_COUNT;
--		if (!idx)
--			plt++;
--	}
-+	idx = (idx + 1) % PLT_ENT_COUNT;
-+	if (!idx)
-+		plt++;
- 
- 	pltsec->plt_count++;
- 	BUG_ON(pltsec->plt_count * PLT_ENT_SIZE > pltsec->plt->sh_size);
-@@ -182,8 +209,8 @@ static unsigned int count_plts(const Elf32_Sym *syms, Elf32_Addr base,
- int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
- 			      char *secstrings, struct module *mod)
- {
--	unsigned long core_plts = 0;
--	unsigned long init_plts = 0;
-+	unsigned long core_plts = ARRAY_SIZE(fixed_plts);
-+	unsigned long init_plts = ARRAY_SIZE(fixed_plts);
- 	Elf32_Shdr *s, *sechdrs_end = sechdrs + ehdr->e_shnum;
- 	Elf32_Sym *syms = NULL;
- 
 -- 
 2.4.6
