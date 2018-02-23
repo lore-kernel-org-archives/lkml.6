@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416538-2-17824833759691836228
+X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416505-2-4650593538947975459
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416537; b=L3nK4UU3WMeGP0ZBHsaQOP/MfrzwBHYH1hdLNkx8XbBXVv9
-    KF8r6c5VqQPwggAPVzaJcisZcyKvEoQ5tCGT1SVD7LWu90TwPx4N8GVuEGi6aIHI
-    SlC96afdbCVLdKnHa8hYLA6kXKBZjhm9oldsFJnlloKkGTEQHPY6xAUPLKXsv8Tf
-    VFtL9Uk3/Q1HS35+KEW1PWZz1RnWfgx+K5C0eDJzhYi2ev3larwhvaAsf3TItHKG
-    je/nfF09z6CR1wCVuvGCRYWbIZ6zOboVs/4zJpSgIKYp8gYXyqW0B6JcIKIY7+tj
-    BFBKm+zrt55TvOg4a0EoLBlD5spYwW9Xvuna7iQ==
+    t=1519416503; b=Owo8tc1HyYkTsgOi5kD6W6k8DY3YVyD39fETVB1wBQW6XJ0
+    C5XR/lqaatVy9BjXpN1MedbofZBj+/72CjkRHgxsIV7zRJcT9nc+RqomU4ktXQ+r
+    tZGiHUgCkoKuvHzEeUjb6MAbngQaKVzoTwRb8JMB0dIGclpaW8xSPL1FGEsL0AkH
+    OFO5lrPE7RmdV8lHLjPv8/B/UXrwT/GkJLOCdeTBAvuGvo8DVPnjLcK0uyTxx52b
+    XdnyPA1+LZeriVObnE1jwbBRp+B/wdtYtd2zq3fbeVzmhzZShD9Ub+H4DX1eoWnk
+    /HUseNZGvh6B4h+mK8EWxUmIOk7zlOL589oEtIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416537; bh=+p/qhO6FyKgUVPO87X2h/RaGo9
-    UVlFtz+WlC2t+g2Ow=; b=dgC2dWqYgOgsNPv+bRnC8nulvgNb4o9ZMjx4KxbueN
-    qGfNksRbMjlvfC+H/K0xfenYJW5/pnjmHFitW9HcabT6IvTPIgJ2vRqOYiun7x6L
-    a+rDHhkqZWrzyk6+Xv+xQKksZVdStp8K7kVyVZI8aLWoEaV8yg4OHiKE7wwcu8GI
-    rXzDQlOMrMFF2zVmunJXAvZGJZAbRWTojh5wbT35JzXX64eTutHUw4e5QuA/lnja
-    Q1OQZStokq8jXS84C6YdiutllUkee176e+A2EnDxyYpWrgtYkNSIHh15eVwmzoTf
-    yPlx0cOrKUOHpiqd8moFNy3sgpgxHQ+hY+BV1cD/MooQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519416503; bh=/WpSpFZUl4GsKQHt9mJg64tSfi
+    JAqhYqqCAeCXh8gS4=; b=aJevxa7qD7ukrCdVFNmzmdAZLM4p91fabICl5yyjEn
+    8wJ6quBhp+h55agjnoVVVW+J4wN2FKx3l31P74xpF5PIRaIIsHVrMvatEJOibq60
+    jXUkhT8BEKHUCdS9B9LOM1esEDUnkO3wn5KzhXMImKFxkcvZGTuK6MdJ8R3mHkji
+    G2XXLOKM0oGaPyLbO15vp48XXk+/AmAh/OQgGpc19W06K6DelQWzCiRfqs84F1XY
+    81alT6inugsNUVmqP/JBQCUjrb51atlYoztZLPWJwitcyE9V+FtAF8Gt1vWFHOF7
+    DRDUKZgG44D1G6PSaUQ0qawSTJuc/fb8oFit2o8u3uag==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933067AbeBWUIW (ORCPT <rfc822;greg@kroah.com>);
+        id S932769AbeBWUIW (ORCPT <rfc822;greg@kroah.com>);
         Fri, 23 Feb 2018 15:08:22 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41610 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41694 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeBWSm3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:29 -0500
+        with ESMTP id S933057AbeBWSmb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 013/145] Provide a function to create a NUL-terminated string from unterminated data
-Date: Fri, 23 Feb 2018 19:25:19 +0100
-Message-Id: <20180223170726.377426584@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Paul Moore <paul@paul-moore.com>,
+        William Roberts <william.c.roberts@intel.com>
+Subject: [PATCH 4.9 014/145] selinux: ensure the context is NUL terminated in security_context_to_sid_core()
+Date: Fri, 23 Feb 2018 19:25:20 +0100
+Message-Id: <20180223170726.493008536@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -78,72 +79,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
 
-commit f35157417215ec138c920320c746fdb3e04ef1d5 upstream.
+commit ef28df55ac27e1e5cd122e19fa311d886d47a756 upstream.
 
-Provide a function, kmemdup_nul(), that will create a NUL-terminated string
-from an unterminated character array where the length is known in advance.
+The syzbot/syzkaller automated tests found a problem in
+security_context_to_sid_core() during early boot (before we load the
+SELinux policy) where we could potentially feed context strings without
+NUL terminators into the strcmp() function.
 
-This is better than kstrndup() in situations where we already know the
-string length as the strnlen() in kstrndup() is superfluous.
+We already guard against this during normal operation (after the SELinux
+policy has been loaded) by making a copy of the context strings and
+explicitly adding a NUL terminator to the end.  The patch extends this
+protection to the early boot case (no loaded policy) by moving the context
+copy earlier in security_context_to_sid_core().
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Reviewed-By: William Roberts <william.c.roberts@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/string.h |    1 +
- mm/util.c              |   24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ security/selinux/ss/services.c |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -123,6 +123,7 @@ extern char *kstrdup(const char *s, gfp_
- extern const char *kstrdup_const(const char *s, gfp_t gfp);
- extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
- extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
-+extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1400,27 +1400,25 @@ static int security_context_to_sid_core(
+ 	if (!scontext_len)
+ 		return -EINVAL;
  
- extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
- extern void argv_free(char **argv);
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -80,6 +80,8 @@ EXPORT_SYMBOL(kstrdup_const);
-  * @s: the string to duplicate
-  * @max: read at most @max chars from @s
-  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Note: Use kmemdup_nul() instead if the size is known exactly.
-  */
- char *kstrndup(const char *s, size_t max, gfp_t gfp)
- {
-@@ -118,6 +120,28 @@ void *kmemdup(const void *src, size_t le
- EXPORT_SYMBOL(kmemdup);
++	/* Copy the string to allow changes and ensure a NUL terminator */
++	scontext2 = kmemdup_nul(scontext, scontext_len, gfp_flags);
++	if (!scontext2)
++		return -ENOMEM;
++
+ 	if (!ss_initialized) {
+ 		int i;
  
- /**
-+ * kmemdup_nul - Create a NUL-terminated string from unterminated data
-+ * @s: The data to stringify
-+ * @len: The size of the data
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ */
-+char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-+{
-+	char *buf;
-+
-+	if (!s)
-+		return NULL;
-+
-+	buf = kmalloc_track_caller(len + 1, gfp);
-+	if (buf) {
-+		memcpy(buf, s, len);
-+		buf[len] = '\0';
-+	}
-+	return buf;
-+}
-+EXPORT_SYMBOL(kmemdup_nul);
-+
-+/**
-  * memdup_user - duplicate memory region from user space
-  *
-  * @src: source address in user space
+ 		for (i = 1; i < SECINITSID_NUM; i++) {
+-			if (!strcmp(initial_sid_to_string[i], scontext)) {
++			if (!strcmp(initial_sid_to_string[i], scontext2)) {
+ 				*sid = i;
+-				return 0;
++				goto out;
+ 			}
+ 		}
+ 		*sid = SECINITSID_KERNEL;
+-		return 0;
++		goto out;
+ 	}
+ 	*sid = SECSID_NULL;
+ 
+-	/* Copy the string so that we can modify the copy as we parse it. */
+-	scontext2 = kmalloc(scontext_len + 1, gfp_flags);
+-	if (!scontext2)
+-		return -ENOMEM;
+-	memcpy(scontext2, scontext, scontext_len);
+-	scontext2[scontext_len] = 0;
+-
+ 	if (force) {
+ 		/* Save another copy for storing in uninterpreted form */
+ 		rc = -ENOMEM;
