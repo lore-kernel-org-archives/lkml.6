@@ -1,191 +1,1661 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933364AbeBWUF6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 15:05:58 -0500
-Received: from mail-by2nam03on0043.outbound.protection.outlook.com ([104.47.42.43]:12992
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933285AbeBWUDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 15:03:54 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-From: Yazen Ghannam <Yazen.Ghannam@amd.com>
-To: linux-efi@vger.kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, bp@suse.de, x86@kernel.org
-Subject: [PATCH 2/8] efi: Decode IA32/X64 Processor Error Section
-Date: Fri, 23 Feb 2018 14:03:27 -0600
-Message-Id: <20180223200333.6410-3-Yazen.Ghannam@amd.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180223200333.6410-1-Yazen.Ghannam@amd.com>
-References: <20180223200333.6410-1-Yazen.Ghannam@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: MWHPR04CA0033.namprd04.prod.outlook.com (10.172.163.19) To
- BN6PR12MB1906.namprd12.prod.outlook.com (10.175.102.12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e7ef7b47-eea2-4776-9342-08d57af88f3f
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BN6PR12MB1906;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1906;3:N6WQ6NAZI5mId+2RlstSGiZG7wYl/tst63+akDkwxmmzZ6ySmyafIuue1nCo86c6ZkZh/bMuUfyqthQAhCvZCn5kEvc9gkvBeZseY+7bT2sJcnF0/JLZTAmsnJCT7iSQt/dyy+41ciWBw5dnmS0Un9n5TkMyj8db9GLmheD7q4zuphVVdx85k6W+TspABptiz1mt/r29nDUcU/EDeScQ9uIX1b4ISRh872/nZ3SmKDrmA1NNAtfUPz3io2YF0MS2;25:jTb0Bwxo1CBYzdb4bjyFQ+QQi3TGSAJkzXz8W6z8KxRfyNSYe9Qd9sBk5ILrqaT95bFw9FIlwDvWRHNnzqnDIQGJTXG5B5eJBxb8s/4fBdBT8GRxF/kU8R8P2kKhPkHY0SanvjqYnC/DREHjVi1Mr5xT6MPHRk5MWZbgzDuylUjFty64csLNtzEr0wfa5qbi8PgTiBfjOk4UQ7U6oeAqi1piJF10hWmvlV1bdwZ0HePUKEO9IP6eD0xscfOKcFxUMghodd1Vq3o7/tnaJV2joWGPdKXZxsyoO6P5eMYLmgLWE+u1GZfKcd/O0F0bZFgG/hjOAYVvksBWGYqNuvvMIA==;31:QjVyJHbZU8D2HiHIiiyotfG4Mqu2wXJSmigP7OFe4o7HB2FabJd8wzhTskSUd76KXeFrPg/c21nfwyOijdRTIf4lEIOH5lVak1KSQJfqtAuEBRjcCaWjuNqN1VXtevU0HjzlBI0oItDyrdxl+o0O7QEGnB75YqoRmqz/MWcywuJaaR7DR6hIBUgMrovjWjXTcGbN5MGlEAuvQRtWKONjPEI792pF1EnceX6ObG6nE6E=
-X-MS-TrafficTypeDiagnostic: BN6PR12MB1906:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1906;20:JzxMqMMPp/0b2Aq/eE9vfPMuNpMZllxZo4ccAnt9o5Jig06Ae9hHzzNHxv3Y7z5AP4zJKfkCeuIg/qD5Xv71sJAkI1QIfrwtd79ba+7etgr5jbDvX+ZxwxeBkQJ2wXPv6HvIxPnkEgq7vO6v/OKJW06EJAQQNZWWYOxKM9UZM34tLKL3h1dW5z+g3SKA75Jfk99/RPrOmnEIxnYRvHTPOOmtH1uXbaQCRKvtaGzr/hcxXSWtqiaTHHFn3O2QmP+uxEsVFGqXqFJA/ufHyB/iUWGaOlhB22NklgcyUczYfFiu0xAErYNwBoDnU4phTYAoHInQE4rhMsdFphh+LK3Lxn3qJyHkYB52C7bFPKhlxRwkz7WICjbwr4YW3vO507+H6C0WXSha9oV7gaTsbEkHghaSxDgD/e7txHpC0S8V+QX+RfZgacEVsOHWs3Lp0GMyR08BJbTdQeN8aSkxs7YyaQl7JB9/IGkA3NjJS2QrnI3or2ewH0HhrFexdsj5okBz;4:sJS7ZIB5HPk24ZrxCgZPqyiJt37XKoVeXHU5yCD3V/chba39MTwMoUcnfX4UAVRF+7rQu5vF8jwbAIhZhQffr1p0+ncIs+AmJkrXCWftvUoul/EyEQrDjPaOGoOyfIFb6X226wZPQdbWbGdsM94frluM9gGKapUdY3Lfg2hQePrP/2ScMsuRNRIjpuvpJeYEAUwNlcttWAiCJZggH04QwTRijWCfmdlZrd4Ut+tk7rThIiAts79PC3BNYewfE30poeE272Crj08iJiKx3uA1qDrJWLkRUT99v2mi5n/JjMWVOSDXqzRtU6z9rsUQKYVZY3fBM7AvO+wQbplEn4kf8A==
-X-Microsoft-Antispam-PRVS: <BN6PR12MB190686C85081EE27443D2AD1F8CC0@BN6PR12MB1906.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3231101)(944501161)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR12MB1906;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1906;
-X-Forefront-PRVS: 0592A9FDE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(366004)(39380400002)(346002)(396003)(189003)(199004)(386003)(50226002)(8676002)(478600001)(8936002)(81166006)(81156014)(106356001)(26005)(4326008)(76176011)(2361001)(53416004)(51416003)(72206003)(2351001)(68736007)(2950100002)(6116002)(6916009)(6666003)(316002)(16586007)(66066001)(25786009)(1076002)(2906002)(3846002)(47776003)(5660300001)(305945005)(7736002)(97736004)(105586002)(48376002)(7696005)(52116002)(36756003)(16526019)(186003)(53936002)(50466002)(86362001)(575784001)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1906;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR12MB1906;23:4MEWGKQMOdO5jArl4idaDl901GH2k+wKhp0D/fXKn?=
- =?us-ascii?Q?+B9xQxEL9yPTtv9K3yhMiKzfzdJyVwK3783ectpBMlPjU5RwNVy9DW0HI7CF?=
- =?us-ascii?Q?DVFH1X5UOah0I7F3zSNzwwbL4068jF2aj65g/0BncHq6RnWE6S4FyJfPwUt+?=
- =?us-ascii?Q?z8S/ePxlnF4Ozpb2XyG7HZMHNQhYj5kekggam0S8gPzKPU4IswcQk8vwgzPf?=
- =?us-ascii?Q?Az1ykPezTaPfPG7gUua3ykKKcX7O1/UctIWfUHoBtJ99VhpioFhQAEn5bbau?=
- =?us-ascii?Q?A0K60nDRuteVf/2Wn71GsFvMXVNJdiuLyOTftvPvjvrf51zLH+w0kZGpSyh0?=
- =?us-ascii?Q?NiFontPei+ZlapqHbl7Q91Ez6vYn2xXY3a9T9u6KwrIKOnqhtruSLe5XOEOg?=
- =?us-ascii?Q?Gps3wGzddZBAIwIpybF45s+ONgn91XcOrd5I8QvGy3MMBIHDbrtr/dmxAMNw?=
- =?us-ascii?Q?X0GFgNOMEziRzB9mk3+QuOqasEnyTihL7zMju2OavANXfXU1cQRUmwD+gK6A?=
- =?us-ascii?Q?DhKZJbjwci+UDPFOknRYs39VBNucTuhAV01XoxKabmzEcOWz9E+wyr4LYSkt?=
- =?us-ascii?Q?SRVJrKE4mTJZyjEvEimKJChI50WLqD2QV0LzloISaAuLZcDbZpzzTrSSN59q?=
- =?us-ascii?Q?U/WIHRYZrfhG+Fx+qC80/Ddoq7FbgijmqvgLlw//e1S9QC3ky8ywQ2ULbfJM?=
- =?us-ascii?Q?u/X0d+t/dy0w6aWTnoHxY9uCaxRqb+mODAis6jiseb3X4hqU7JdQ91mI3n+g?=
- =?us-ascii?Q?+KSLBoSY9QYXaT8h/0O9FLQG5qJE1gK00B2cXETO+/wqVo95fEk5s5Pt1cew?=
- =?us-ascii?Q?ifDHB2xKPx81GaPMZPXOieQUnAAOIFMwB4jwm+sRnfQjpkaoa4SnO1HiLfgd?=
- =?us-ascii?Q?E/53tzgiF12G3j8MGIFxaoougCaEAozQKzg1woggOxrefdVLDRKWgjpbKXfe?=
- =?us-ascii?Q?p7IvBO3hvFFr3ECdE8ibvemJsEqtS44yrH6qthKT0ClzGFIEZ19Q5kwWD4sL?=
- =?us-ascii?Q?Kr816qlyUfYuTRPpsjrg90kVHRkxs0PQwcBVkepiym0LzZb6kCjBM7F6RTlc?=
- =?us-ascii?Q?k0zoZgsnSsT5zGVGmmUKr+rMsSAjKgnm7LB+MJVtDcMydsy1RJ3rpwyRov6x?=
- =?us-ascii?Q?My6mrrxVNu2V6Eiv/i0aQPWSCnGwzRP90hl9U8wIfv77X++TcoQviXFbM1Me?=
- =?us-ascii?Q?5motVet1wqlnd4WKup0XTcaip/fD4eEp2LI?=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1906;6:QBA2B1qeXhuvXP7WUwoWX1GA4DxV7FEbsuffRrqKFWccGIZ5Ic9hp8MDX3mTHxwMocXbUXYv/H9VW1zlj6FgeD4pB0aR9DTpi4IlRHRnfdsXOEKN2hcjVjvEDKvDbNxvKgzAEIwRmuYR83Q++TOGI42eW9QOchJm3WjdFytkoyf2DLgOlYVkAirFyAX9ltGWU8BbeUAzbKwerNtbUV/luN/2bh5/vzPQOXwHUXGoK0HqijGnB9uSSaC5mPuUBaaq06XmeuWexB20rrIhr7g1+Su+jkw65z6GPZTo2YLPnQaYrynDcy+IfHusZ1I6z8ihFlAch7Wp3ZWguPTm5Btwy5hFwWYw6bTSpGTlwM+ILBI=;5:CzLP9L2T5V+Qs7bY5q3ImQKCBBSYE9WyX70VpgGmeM/uCWNy/iQ9jzKU6tEg8ZPMvzCniP7lboJZHIMEM0/n7cMiE3gMAs9adqMkWPCG6O8vYOsS5RlRiFSKCKNv74m0SidVgCrbhszYFDMM8WHfRIeB8HcS3qlHCjnj58+iRKc=;24:pvtFmWtQGWuHp75WI9MUY5KaC/cqNoKbaPjwwMdmdA+GvBXn50Ue7z1Eh4JcrCYPSyEKIer+Dl03QrtbQS/XNqC+kE4dQQmGqtxPrlC73Dw=;7:CGVP2C4S3oAaB7d7V+ERZXfeKxMVKAAF9P9xJE6CgfL8O3iFZK6beUP4k/XwXzCG5qcQIfuPC4rnLDIi0fN3w0rkxD0VKcKnaQQQf8XX+96tCABuWcBgZCqdESqc5GXP/h7uxZ6S80O4uegUvHPYUTWCORZ686G3c5X+4r2oGii5KOT4JIjtyB9RffvngRX5VfH0faykfVyxZxFzCtK5wM/lfzoeawF4UFLkdhBeKb3OZjoi70Ff/+eOGlfaVYNb
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1906;20:1MJG5E2Z/sS8lTnOpKYS3uscgxVNUKvN3A/Kq43HnWLcLmUM5JdN0V8unhAbB3IRU14COMOTDJhETuxCUHMxCNiur9d/eOfyBb+mIw9uYC61lwRn/XfPgAzGT/bSQVuvmSirhdnN59zDwTMD0lrp/em4PZmob6PU7kfi7yigoFarOyAVmTjjC70sdYlF3cP7GmJhBah8LOME0FzUfHF/mZF17mRlgagkiNL0M/SR7ZNOWPaqh69ebI2Pa4eRTe/B
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 20:03:50.3610 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7ef7b47-eea2-4776-9342-08d57af88f3f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1906
+        id S1755010AbeBWUG1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:06:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38258 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933319AbeBWUDL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 15:03:11 -0500
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv5 2/5] ASoC: codec: cpcap: new codec
+Date: Fri, 23 Feb 2018 21:02:51 +0100
+Message-Id: <20180223200254.25685-3-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+Motorola CPCAP is a PMIC with audio functionality, that can be
+found on Motorola Droid 4 and probably a few other phones from
+Motorola's Droid series.
 
-Recognize the IA32/X64 Processor Error Section.
+The driver has been written from scratch using Motorola's Android
+driver, register dumps from running Android and datasheet for NXP
+MC13783UG (which is similar to Motorola CPCAP, but not the same).
 
-Do the section decoding in a new "cper-x86.c" file and add this to the
-Makefile depending on a new "UEFI_CPER_X86" config option.
+The chip provides two audio interfaces, that can be muxed to two
+different audio codecs. One provides support for stereo output
+(named StDAC or HiFi), while the other only provides mono output
+(named Voice). Only the Voice codec provides a Capture interface.
 
-Print the Local APIC ID and CPUID info from the Processor Error Record.
-
-The "Processor Error Info" and "Processor Context" fields will be
-decoded in following patches.
-
-Based on UEFI 2.7 Table 255. Processor Error Record.
-
-Cc: <stable@vger.kernel.org> # 4.16.x
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/firmware/efi/Kconfig    |  5 +++++
- drivers/firmware/efi/Makefile   |  2 ++
- drivers/firmware/efi/cper-x86.c | 26 ++++++++++++++++++++++++++
- drivers/firmware/efi/cper.c     | 10 ++++++++++
- include/linux/cper.h            |  2 ++
- 5 files changed, 45 insertions(+)
- create mode 100644 drivers/firmware/efi/cper-x86.c
+ sound/soc/codecs/Kconfig  |    4 +
+ sound/soc/codecs/Makefile |    2 +
+ sound/soc/codecs/cpcap.c  | 1568 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1574 insertions(+)
+ create mode 100644 sound/soc/codecs/cpcap.c
 
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index 3098410abad8..8b684147835d 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -174,6 +174,11 @@ config UEFI_CPER_ARM
- 	depends on UEFI_CPER && ( ARM || ARM64 )
- 	default y
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 2b331f7266ab..5bd94841feb6 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -408,6 +408,10 @@ config SND_SOC_ALC5632
+ config SND_SOC_BT_SCO
+ 	tristate "Dummy BT SCO codec driver"
  
-+config UEFI_CPER_X86
-+	bool
-+	depends on UEFI_CPER && ( X86_32 || X86_64 )
-+	default y
++config SND_SOC_CPCAP
++	tristate "Motorola CPCAP codec"
++	depends on MFD_CPCAP
 +
- config EFI_DEV_PATH_PARSER
- 	bool
- 	depends on ACPI
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index cb805374f4bc..7cf8d75ebe51 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -31,3 +31,5 @@ obj-$(CONFIG_ARM)			+= $(arm-obj-y)
- obj-$(CONFIG_ARM64)			+= $(arm-obj-y)
- obj-$(CONFIG_EFI_CAPSULE_LOADER)	+= capsule-loader.o
- obj-$(CONFIG_UEFI_CPER_ARM)		+= cper-arm.o
-+
-+obj-$(CONFIG_UEFI_CPER_X86)		+= cper-x86.o
-diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+ config SND_SOC_CQ0093VC
+ 	tristate
+ 
+diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+index da1571336f1e..2aeee1ba034e 100644
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -36,6 +36,7 @@ snd-soc-ak4671-objs := ak4671.o
+ snd-soc-ak5386-objs := ak5386.o
+ snd-soc-arizona-objs := arizona.o
+ snd-soc-bt-sco-objs := bt-sco.o
++snd-soc-cpcap-objs := cpcap.o
+ snd-soc-cq93vc-objs := cq93vc.o
+ snd-soc-cs35l32-objs := cs35l32.o
+ snd-soc-cs35l33-objs := cs35l33.o
+@@ -282,6 +283,7 @@ obj-$(CONFIG_SND_SOC_ALC5632)	+= snd-soc-alc5632.o
+ obj-$(CONFIG_SND_SOC_ARIZONA)	+= snd-soc-arizona.o
+ obj-$(CONFIG_SND_SOC_BT_SCO)	+= snd-soc-bt-sco.o
+ obj-$(CONFIG_SND_SOC_CQ0093VC) += snd-soc-cq93vc.o
++obj-$(CONFIG_SND_SOC_CPCAP)	+= snd-soc-cpcap.o
+ obj-$(CONFIG_SND_SOC_CS35L32)	+= snd-soc-cs35l32.o
+ obj-$(CONFIG_SND_SOC_CS35L33)	+= snd-soc-cs35l33.o
+ obj-$(CONFIG_SND_SOC_CS35L34)	+= snd-soc-cs35l34.o
+diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
 new file mode 100644
-index 000000000000..b50ee3cdf637
+index 000000000000..aedb267d4581
 --- /dev/null
-+++ b/drivers/firmware/efi/cper-x86.c
-@@ -0,0 +1,26 @@
++++ b/sound/soc/codecs/cpcap.c
+@@ -0,0 +1,1568 @@
 +// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018, Advanced Micro Devices, Inc.
-+// Copyright (C) 2018, Yazen Ghannam <yazen.ghannam@amd.com>
++/*
++ * ALSA SoC CPCAP codec driver
++ *
++ * Copyright (C) 2017 - 2018 Sebastian Reichel <sre@kernel.org>
++ *
++ * Very loosely based on original driver from Motorola:
++ * Copyright (C) 2007 - 2009 Motorola, Inc.
++ */
 +
-+#include <linux/cper.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/motorola-cpcap.h>
++#include <sound/core.h>
++#include <sound/soc.h>
++#include <sound/tlv.h>
++
++/* Register 513 CPCAP_REG_CC     --- CODEC */
++#define CPCAP_BIT_CDC_CLK2                15
++#define CPCAP_BIT_CDC_CLK1                14
++#define CPCAP_BIT_CDC_CLK0                13
++#define CPCAP_BIT_CDC_SR3                 12
++#define CPCAP_BIT_CDC_SR2                 11
++#define CPCAP_BIT_CDC_SR1                 10
++#define CPCAP_BIT_CDC_SR0                 9
++#define CPCAP_BIT_CDC_CLOCK_TREE_RESET    8
++#define CPCAP_BIT_MIC2_CDC_EN             7
++#define CPCAP_BIT_CDC_EN_RX               6
++#define CPCAP_BIT_DF_RESET                5
++#define CPCAP_BIT_MIC1_CDC_EN             4
++#define CPCAP_BIT_AUDOHPF_1		  3
++#define CPCAP_BIT_AUDOHPF_0		  2
++#define CPCAP_BIT_AUDIHPF_1		  1
++#define CPCAP_BIT_AUDIHPF_0		  0
++
++/* Register 514 CPCAP_REG_CDI    --- CODEC Digital Audio Interface */
++#define CPCAP_BIT_CDC_PLL_SEL             15
++#define CPCAP_BIT_CLK_IN_SEL              13
++#define CPCAP_BIT_DIG_AUD_IN              12
++#define CPCAP_BIT_CDC_CLK_EN              11
++#define CPCAP_BIT_CDC_DIG_AUD_FS1         10
++#define CPCAP_BIT_CDC_DIG_AUD_FS0         9
++#define CPCAP_BIT_MIC2_TIMESLOT2          8
++#define CPCAP_BIT_MIC2_TIMESLOT1          7
++#define CPCAP_BIT_MIC2_TIMESLOT0          6
++#define CPCAP_BIT_MIC1_RX_TIMESLOT2       5
++#define CPCAP_BIT_MIC1_RX_TIMESLOT1       4
++#define CPCAP_BIT_MIC1_RX_TIMESLOT0       3
++#define CPCAP_BIT_FS_INV                  2
++#define CPCAP_BIT_CLK_INV                 1
++#define CPCAP_BIT_SMB_CDC                 0
++
++/* Register 515 CPCAP_REG_SDAC   --- Stereo DAC */
++#define CPCAP_BIT_FSYNC_CLK_IN_COMMON     11
++#define CPCAP_BIT_SLAVE_PLL_CLK_INPUT     10
++#define CPCAP_BIT_ST_CLOCK_TREE_RESET     9
++#define CPCAP_BIT_DF_RESET_ST_DAC         8
++#define CPCAP_BIT_ST_SR3                  7
++#define CPCAP_BIT_ST_SR2                  6
++#define CPCAP_BIT_ST_SR1                  5
++#define CPCAP_BIT_ST_SR0                  4
++#define CPCAP_BIT_ST_DAC_CLK2             3
++#define CPCAP_BIT_ST_DAC_CLK1             2
++#define CPCAP_BIT_ST_DAC_CLK0             1
++#define CPCAP_BIT_ST_DAC_EN               0
++
++/* Register 516 CPCAP_REG_SDACDI --- Stereo DAC Digital Audio Interface */
++#define CPCAP_BIT_ST_L_TIMESLOT2          13
++#define CPCAP_BIT_ST_L_TIMESLOT1          12
++#define CPCAP_BIT_ST_L_TIMESLOT0          11
++#define CPCAP_BIT_ST_R_TIMESLOT2          10
++#define CPCAP_BIT_ST_R_TIMESLOT1          9
++#define CPCAP_BIT_ST_R_TIMESLOT0          8
++#define CPCAP_BIT_ST_DAC_CLK_IN_SEL       7
++#define CPCAP_BIT_ST_FS_INV               6
++#define CPCAP_BIT_ST_CLK_INV              5
++#define CPCAP_BIT_ST_DIG_AUD_FS1          4
++#define CPCAP_BIT_ST_DIG_AUD_FS0          3
++#define CPCAP_BIT_DIG_AUD_IN_ST_DAC       2
++#define CPCAP_BIT_ST_CLK_EN               1
++#define CPCAP_BIT_SMB_ST_DAC              0
++
++/* Register 517 CPCAP_REG_TXI    --- TX Interface */
++#define CPCAP_BIT_PTT_TH		15
++#define CPCAP_BIT_PTT_CMP_EN		14
++#define CPCAP_BIT_HS_ID_TX		13
++#define CPCAP_BIT_MB_ON2		12
++#define CPCAP_BIT_MB_ON1L		11
++#define CPCAP_BIT_MB_ON1R		10
++#define CPCAP_BIT_RX_L_ENCODE		9
++#define CPCAP_BIT_RX_R_ENCODE		8
++#define CPCAP_BIT_MIC2_MUX		7
++#define CPCAP_BIT_MIC2_PGA_EN		6
++#define CPCAP_BIT_CDET_DIS		5
++#define CPCAP_BIT_EMU_MIC_MUX		4
++#define CPCAP_BIT_HS_MIC_MUX		3
++#define CPCAP_BIT_MIC1_MUX		2
++#define CPCAP_BIT_MIC1_PGA_EN		1
++#define CPCAP_BIT_DLM			0
++
++/* Register 518 CPCAP_REG_TXMP   --- Mic Gain */
++#define CPCAP_BIT_MB_BIAS_R1              11
++#define CPCAP_BIT_MB_BIAS_R0              10
++#define CPCAP_BIT_MIC2_GAIN_4             9
++#define CPCAP_BIT_MIC2_GAIN_3             8
++#define CPCAP_BIT_MIC2_GAIN_2             7
++#define CPCAP_BIT_MIC2_GAIN_1             6
++#define CPCAP_BIT_MIC2_GAIN_0             5
++#define CPCAP_BIT_MIC1_GAIN_4             4
++#define CPCAP_BIT_MIC1_GAIN_3             3
++#define CPCAP_BIT_MIC1_GAIN_2             2
++#define CPCAP_BIT_MIC1_GAIN_1             1
++#define CPCAP_BIT_MIC1_GAIN_0             0
++
++/* Register 519 CPCAP_REG_RXOA   --- RX Output Amplifier */
++#define CPCAP_BIT_UNUSED_519_15		15
++#define CPCAP_BIT_UNUSED_519_14		14
++#define CPCAP_BIT_UNUSED_519_13		13
++#define CPCAP_BIT_STDAC_LOW_PWR_DISABLE	12
++#define CPCAP_BIT_HS_LOW_PWR		11
++#define CPCAP_BIT_HS_ID_RX		10
++#define CPCAP_BIT_ST_HS_CP_EN		9
++#define CPCAP_BIT_EMU_SPKR_R_EN		8
++#define CPCAP_BIT_EMU_SPKR_L_EN		7
++#define CPCAP_BIT_HS_L_EN		6
++#define CPCAP_BIT_HS_R_EN		5
++#define CPCAP_BIT_A4_LINEOUT_L_EN	4
++#define CPCAP_BIT_A4_LINEOUT_R_EN	3
++#define CPCAP_BIT_A2_LDSP_L_EN		2
++#define CPCAP_BIT_A2_LDSP_R_EN		1
++#define CPCAP_BIT_A1_EAR_EN		0
++
++/* Register 520 CPCAP_REG_RXVC   --- RX Volume Control */
++#define CPCAP_BIT_VOL_EXT3                15
++#define CPCAP_BIT_VOL_EXT2                14
++#define CPCAP_BIT_VOL_EXT1                13
++#define CPCAP_BIT_VOL_EXT0                12
++#define CPCAP_BIT_VOL_DAC3                11
++#define CPCAP_BIT_VOL_DAC2                10
++#define CPCAP_BIT_VOL_DAC1                9
++#define CPCAP_BIT_VOL_DAC0                8
++#define CPCAP_BIT_VOL_DAC_LSB_1dB1        7
++#define CPCAP_BIT_VOL_DAC_LSB_1dB0        6
++#define CPCAP_BIT_VOL_CDC3                5
++#define CPCAP_BIT_VOL_CDC2                4
++#define CPCAP_BIT_VOL_CDC1                3
++#define CPCAP_BIT_VOL_CDC0                2
++#define CPCAP_BIT_VOL_CDC_LSB_1dB1        1
++#define CPCAP_BIT_VOL_CDC_LSB_1dB0        0
++
++/* Register 521 CPCAP_REG_RXCOA  --- Codec to Output Amp Switches */
++#define CPCAP_BIT_PGA_CDC_EN              10
++#define CPCAP_BIT_CDC_SW                  9
++#define CPCAP_BIT_PGA_OUTR_USBDP_CDC_SW   8
++#define CPCAP_BIT_PGA_OUTL_USBDN_CDC_SW   7
++#define CPCAP_BIT_ALEFT_HS_CDC_SW         6
++#define CPCAP_BIT_ARIGHT_HS_CDC_SW        5
++#define CPCAP_BIT_A4_LINEOUT_L_CDC_SW     4
++#define CPCAP_BIT_A4_LINEOUT_R_CDC_SW     3
++#define CPCAP_BIT_A2_LDSP_L_CDC_SW        2
++#define CPCAP_BIT_A2_LDSP_R_CDC_SW        1
++#define CPCAP_BIT_A1_EAR_CDC_SW           0
++
++/* Register 522 CPCAP_REG_RXSDOA --- RX Stereo DAC to Output Amp Switches */
++#define CPCAP_BIT_PGA_DAC_EN              12
++#define CPCAP_BIT_ST_DAC_SW               11
++#define CPCAP_BIT_MONO_DAC1               10
++#define CPCAP_BIT_MONO_DAC0               9
++#define CPCAP_BIT_PGA_OUTR_USBDP_DAC_SW   8
++#define CPCAP_BIT_PGA_OUTL_USBDN_DAC_SW   7
++#define CPCAP_BIT_ALEFT_HS_DAC_SW         6
++#define CPCAP_BIT_ARIGHT_HS_DAC_SW        5
++#define CPCAP_BIT_A4_LINEOUT_L_DAC_SW     4
++#define CPCAP_BIT_A4_LINEOUT_R_DAC_SW     3
++#define CPCAP_BIT_A2_LDSP_L_DAC_SW        2
++#define CPCAP_BIT_A2_LDSP_R_DAC_SW        1
++#define CPCAP_BIT_A1_EAR_DAC_SW           0
++
++/* Register 523 CPCAP_REG_RXEPOA --- RX External PGA to Output Amp Switches */
++#define CPCAP_BIT_PGA_EXT_L_EN            14
++#define CPCAP_BIT_PGA_EXT_R_EN            13
++#define CPCAP_BIT_PGA_IN_L_SW             12
++#define CPCAP_BIT_PGA_IN_R_SW             11
++#define CPCAP_BIT_MONO_EXT1               10
++#define CPCAP_BIT_MONO_EXT0               9
++#define CPCAP_BIT_PGA_OUTR_USBDP_EXT_SW   8
++#define CPCAP_BIT_PGA_OUTL_USBDN_EXT_SW   7
++#define CPCAP_BIT_ALEFT_HS_EXT_SW         6
++#define CPCAP_BIT_ARIGHT_HS_EXT_SW        5
++#define CPCAP_BIT_A4_LINEOUT_L_EXT_SW     4
++#define CPCAP_BIT_A4_LINEOUT_R_EXT_SW     3
++#define CPCAP_BIT_A2_LDSP_L_EXT_SW        2
++#define CPCAP_BIT_A2_LDSP_R_EXT_SW        1
++#define CPCAP_BIT_A1_EAR_EXT_SW           0
++
++/* Register 525 CPCAP_REG_A2LA --- SPK Amplifier and Clock Config for Headset */
++#define CPCAP_BIT_NCP_CLK_SYNC            7
++#define CPCAP_BIT_A2_CLK_SYNC             6
++#define CPCAP_BIT_A2_FREE_RUN             5
++#define CPCAP_BIT_A2_CLK2                 4
++#define CPCAP_BIT_A2_CLK1                 3
++#define CPCAP_BIT_A2_CLK0                 2
++#define CPCAP_BIT_A2_CLK_IN               1
++#define CPCAP_BIT_A2_CONFIG               0
++
++#define SLEEP_ACTIVATE_POWER 2
++#define CLOCK_TREE_RESET_TIME 1
++
++/* constants for ST delay workaround */
++#define STM_STDAC_ACTIVATE_RAMP_TIME   1
++#define STM_STDAC_EN_TEST_PRE          0x090C
++#define STM_STDAC_EN_TEST_POST         0x0000
++#define STM_STDAC_EN_ST_TEST1_PRE      0x2400
++#define STM_STDAC_EN_ST_TEST1_POST     0x0400
++
++struct cpcap_reg_info {
++	u16 reg;
++	u16 mask;
++	u16 val;
++};
++
++static const struct cpcap_reg_info cpcap_default_regs[] = {
++	{ CPCAP_REG_CC, 0xFFFF, 0x0000 },
++	{ CPCAP_REG_CC, 0xFFFF, 0x0000 },
++	{ CPCAP_REG_CDI, 0xBFFF, 0x0000 },
++	{ CPCAP_REG_SDAC, 0x0FFF, 0x0000 },
++	{ CPCAP_REG_SDACDI, 0x3FFF, 0x0000 },
++	{ CPCAP_REG_TXI, 0x0FDF, 0x0000 },
++	{ CPCAP_REG_TXMP, 0x0FFF, 0x0400 },
++	{ CPCAP_REG_RXOA, 0x01FF, 0x0000 },
++	{ CPCAP_REG_RXVC, 0xFF3C, 0x0000 },
++	{ CPCAP_REG_RXCOA, 0x07FF, 0x0000 },
++	{ CPCAP_REG_RXSDOA, 0x1FFF, 0x0000 },
++	{ CPCAP_REG_RXEPOA, 0x7FFF, 0x0000 },
++	{ CPCAP_REG_A2LA, BIT(CPCAP_BIT_A2_FREE_RUN),
++	  BIT(CPCAP_BIT_A2_FREE_RUN) },
++};
++
++enum cpcap_dai {
++	CPCAP_DAI_HIFI,
++	CPCAP_DAI_VOICE,
++};
++
++struct cpcap_audio {
++	struct snd_soc_codec *codec;
++	struct regmap *regmap;
++
++	u16 vendor;
++
++	int codec_clk_id;
++	int codec_freq;
++	int codec_format;
++};
++
++static int cpcap_st_workaround(struct snd_soc_dapm_widget *w,
++			       struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	int err = 0;
++
++	/* Only CPCAP from ST requires workaround */
++	if (cpcap->vendor != CPCAP_VENDOR_ST)
++		return 0;
++
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		err = regmap_write(cpcap->regmap, CPCAP_REG_TEST,
++				   STM_STDAC_EN_TEST_PRE);
++		if (err)
++			return err;
++		err = regmap_write(cpcap->regmap, CPCAP_REG_ST_TEST1,
++				   STM_STDAC_EN_ST_TEST1_PRE);
++		break;
++	case SND_SOC_DAPM_POST_PMU:
++		msleep(STM_STDAC_ACTIVATE_RAMP_TIME);
++
++		err = regmap_write(cpcap->regmap, CPCAP_REG_ST_TEST1,
++				   STM_STDAC_EN_ST_TEST1_POST);
++		if (err)
++			return err;
++		err = regmap_write(cpcap->regmap, CPCAP_REG_TEST,
++				   STM_STDAC_EN_TEST_POST);
++		break;
++	default:
++		break;
++	}
++
++	return err;
++}
++
++/* Capture Gain Control: 0dB to 31dB in 1dB steps */
++static const DECLARE_TLV_DB_SCALE(mic_gain_tlv, 0, 100, 0);
++
++/* Playback Gain Control: -33dB to 12dB in 3dB steps */
++static const DECLARE_TLV_DB_SCALE(vol_tlv, -3300, 300, 0);
++
++static const struct snd_kcontrol_new cpcap_snd_controls[] = {
++	/* Playback Gain */
++	SOC_SINGLE_TLV("HiFi Playback Volume",
++		CPCAP_REG_RXVC, CPCAP_BIT_VOL_DAC0, 0xF, 0, vol_tlv),
++	SOC_SINGLE_TLV("Voice Playback Volume",
++		CPCAP_REG_RXVC, CPCAP_BIT_VOL_CDC0, 0xF, 0, vol_tlv),
++	SOC_SINGLE_TLV("Ext Playback Volume",
++		CPCAP_REG_RXVC, CPCAP_BIT_VOL_EXT0, 0xF, 0, vol_tlv),
++
++	/* Capture Gain */
++	SOC_SINGLE_TLV("Mic1 Capture Volume",
++		CPCAP_REG_TXMP, CPCAP_BIT_MIC1_GAIN_0, 0x1F, 0, mic_gain_tlv),
++	SOC_SINGLE_TLV("Mic2 Capture Volume",
++		CPCAP_REG_TXMP, CPCAP_BIT_MIC2_GAIN_0, 0x1F, 0, mic_gain_tlv),
++
++	/* Phase Invert */
++	SOC_SINGLE("Hifi Left Phase Invert Switch",
++		CPCAP_REG_RXSDOA, CPCAP_BIT_MONO_DAC0, 1, 0),
++	SOC_SINGLE("Ext Left Phase Invert Switch",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_MONO_EXT0, 1, 0),
++};
++
++static const char * const cpcap_out_mux_texts[] = {
++	"Off", "Voice", "HiFi", "Ext"
++};
++
++static const char * const cpcap_in_right_mux_texts[] = {
++	"Off", "Mic 1", "Headset Mic", "EMU Mic", "Ext Right"
++};
++
++static const char * const cpcap_in_left_mux_texts[] = {
++	"Off", "Mic 2", "Ext Left"
++};
 +
 +/*
-+ * We don't need a "CPER_IA" prefix since these are all locally defined.
-+ * This will save us a lot of line space.
++ * input muxes use unusual register layout, so that we need to use custom
++ * getter/setter methods
 + */
-+#define VALID_LAPIC_ID			BIT_ULL(0)
-+#define VALID_CPUID_INFO		BIT_ULL(1)
++static SOC_ENUM_SINGLE_EXT_DECL(cpcap_input_left_mux_enum,
++				cpcap_in_left_mux_texts);
++static SOC_ENUM_SINGLE_EXT_DECL(cpcap_input_right_mux_enum,
++				cpcap_in_right_mux_texts);
 +
-+void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
++/*
++ * mux uses same bit in CPCAP_REG_RXCOA, CPCAP_REG_RXSDOA & CPCAP_REG_RXEPOA;
++ * even though the register layout makes it look like a mixer, this is a mux.
++ * Enabling multiple inputs will result in no audio being forwarded.
++ */
++static SOC_ENUM_SINGLE_DECL(cpcap_earpiece_mux_enum, 0, 0, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_spkr_r_mux_enum, 0, 1, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_spkr_l_mux_enum, 0, 2, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_line_r_mux_enum, 0, 3, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_line_l_mux_enum, 0, 4, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_hs_r_mux_enum, 0, 5, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_hs_l_mux_enum, 0, 6, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_emu_l_mux_enum, 0, 7, cpcap_out_mux_texts);
++static SOC_ENUM_SINGLE_DECL(cpcap_emu_r_mux_enum, 0, 8, cpcap_out_mux_texts);
++
++static int cpcap_output_mux_get_enum(struct snd_kcontrol *kcontrol,
++				     struct snd_ctl_elem_value *ucontrol)
 +{
-+	printk("%sValidation Bits: 0x%016llx\n", pfx, proc->validation_bits);
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
++	unsigned int shift = e->shift_l;
++	int reg_voice, reg_hifi, reg_ext, status;
++	int err;
 +
-+	if (proc->validation_bits & VALID_LAPIC_ID)
-+		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
++	err = regmap_read(cpcap->regmap, CPCAP_REG_RXCOA, &reg_voice);
++	if (err)
++		return err;
++	err = regmap_read(cpcap->regmap, CPCAP_REG_RXSDOA, &reg_hifi);
++	if (err)
++		return err;
++	err = regmap_read(cpcap->regmap, CPCAP_REG_RXEPOA, &reg_ext);
++	if (err)
++		return err;
 +
-+	if (proc->validation_bits & VALID_CPUID_INFO) {
-+		printk("%sCPUID Info:\n", pfx);
-+		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
-+			       sizeof(proc->cpuid), 0);
++	reg_voice = (reg_voice >> shift) & 1;
++	reg_hifi = (reg_hifi >> shift) & 1;
++	reg_ext = (reg_ext >> shift) & 1;
++	status = reg_ext << 2 | reg_hifi << 1 | reg_voice;
++
++	switch (status) {
++	case 0x04:
++		ucontrol->value.enumerated.item[0] = 3;
++		break;
++	case 0x02:
++		ucontrol->value.enumerated.item[0] = 2;
++		break;
++	case 0x01:
++		ucontrol->value.enumerated.item[0] = 1;
++		break;
++	default:
++		ucontrol->value.enumerated.item[0] = 0;
++		break;
 +	}
-+}
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index c165933ebf38..5a59b582c9aa 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -469,6 +469,16 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
- 			cper_print_proc_arm(newpfx, arm_err);
- 		else
- 			goto err_section_too_small;
-+#endif
-+#if defined(CONFIG_UEFI_CPER_X86)
-+	} else if (guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
-+		struct cper_sec_proc_ia *ia_err = acpi_hest_get_payload(gdata);
 +
-+		printk("%ssection_type: IA32/X64 processor error\n", newpfx);
-+		if (gdata->error_data_length >= sizeof(*ia_err))
-+			cper_print_proc_ia(newpfx, ia_err);
-+		else
-+			goto err_section_too_small;
- #endif
- 	} else {
- 		const void *err = acpi_hest_get_payload(gdata);
-diff --git a/include/linux/cper.h b/include/linux/cper.h
-index 4b5f8459b403..9c703a0abe6e 100644
---- a/include/linux/cper.h
-+++ b/include/linux/cper.h
-@@ -551,5 +551,7 @@ const char *cper_mem_err_unpack(struct trace_seq *,
- 				struct cper_mem_err_compact *);
- void cper_print_proc_arm(const char *pfx,
- 			 const struct cper_sec_proc_arm *proc);
-+void cper_print_proc_ia(const char *pfx,
-+			const struct cper_sec_proc_ia *proc);
- 
- #endif
++	return 0;
++}
++
++static int cpcap_output_mux_put_enum(struct snd_kcontrol *kcontrol,
++				     struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_dapm_context *dapm =
++		snd_soc_dapm_kcontrol_dapm(kcontrol);
++	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
++	unsigned int muxval = ucontrol->value.enumerated.item[0];
++	unsigned int mask = BIT(e->shift_l);
++	u16 reg_voice = 0x00, reg_hifi = 0x00, reg_ext = 0x00;
++	int err;
++
++	switch (muxval) {
++	case 1:
++		reg_voice = mask;
++		break;
++	case 2:
++		reg_hifi = mask;
++		break;
++	case 3:
++		reg_ext = mask;
++		break;
++	default:
++		break;
++	}
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXCOA,
++				 mask, reg_voice);
++	if (err)
++		return err;
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXSDOA,
++				 mask, reg_hifi);
++	if (err)
++		return err;
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXEPOA,
++				 mask, reg_ext);
++	if (err)
++		return err;
++
++	snd_soc_dapm_mux_update_power(dapm, kcontrol, muxval, e, NULL);
++
++	return 0;
++}
++
++static int cpcap_input_right_mux_get_enum(struct snd_kcontrol *kcontrol,
++					  struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	int regval, mask;
++	int err;
++
++	err = regmap_read(cpcap->regmap, CPCAP_REG_TXI, &regval);
++	if (err)
++		return err;
++
++	mask = 0;
++	mask |= BIT(CPCAP_BIT_MIC1_MUX);
++	mask |= BIT(CPCAP_BIT_HS_MIC_MUX);
++	mask |= BIT(CPCAP_BIT_EMU_MIC_MUX);
++	mask |= BIT(CPCAP_BIT_RX_R_ENCODE);
++
++	switch (regval & mask) {
++	case BIT(CPCAP_BIT_RX_R_ENCODE):
++		ucontrol->value.enumerated.item[0] = 4;
++		break;
++	case BIT(CPCAP_BIT_EMU_MIC_MUX):
++		ucontrol->value.enumerated.item[0] = 3;
++		break;
++	case BIT(CPCAP_BIT_HS_MIC_MUX):
++		ucontrol->value.enumerated.item[0] = 2;
++		break;
++	case BIT(CPCAP_BIT_MIC1_MUX):
++		ucontrol->value.enumerated.item[0] = 1;
++		break;
++	default:
++		ucontrol->value.enumerated.item[0] = 0;
++		break;
++	}
++
++	return 0;
++}
++
++static int cpcap_input_right_mux_put_enum(struct snd_kcontrol *kcontrol,
++					  struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_dapm_context *dapm =
++		snd_soc_dapm_kcontrol_dapm(kcontrol);
++	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
++	unsigned int muxval = ucontrol->value.enumerated.item[0];
++	int regval = 0, mask;
++	int err;
++
++	mask = 0;
++	mask |= BIT(CPCAP_BIT_MIC1_MUX);
++	mask |= BIT(CPCAP_BIT_HS_MIC_MUX);
++	mask |= BIT(CPCAP_BIT_EMU_MIC_MUX);
++	mask |= BIT(CPCAP_BIT_RX_R_ENCODE);
++
++	switch (muxval) {
++	case 1:
++		regval = BIT(CPCAP_BIT_MIC1_MUX);
++		break;
++	case 2:
++		regval = BIT(CPCAP_BIT_HS_MIC_MUX);
++		break;
++	case 3:
++		regval = BIT(CPCAP_BIT_EMU_MIC_MUX);
++		break;
++	case 4:
++		regval = BIT(CPCAP_BIT_RX_R_ENCODE);
++		break;
++	default:
++		break;
++	}
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
++				 mask, regval);
++	if (err)
++		return err;
++
++	snd_soc_dapm_mux_update_power(dapm, kcontrol, muxval, e, NULL);
++
++	return 0;
++}
++
++static int cpcap_input_left_mux_get_enum(struct snd_kcontrol *kcontrol,
++					 struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	int regval, mask;
++	int err;
++
++	err = regmap_read(cpcap->regmap, CPCAP_REG_TXI, &regval);
++	if (err)
++		return err;
++
++	mask = 0;
++	mask |= BIT(CPCAP_BIT_MIC2_MUX);
++	mask |= BIT(CPCAP_BIT_RX_L_ENCODE);
++
++	switch (regval & mask) {
++	case BIT(CPCAP_BIT_RX_L_ENCODE):
++		ucontrol->value.enumerated.item[0] = 2;
++		break;
++	case BIT(CPCAP_BIT_MIC2_MUX):
++		ucontrol->value.enumerated.item[0] = 1;
++		break;
++	default:
++		ucontrol->value.enumerated.item[0] = 0;
++		break;
++	}
++
++	return 0;
++}
++
++static int cpcap_input_left_mux_put_enum(struct snd_kcontrol *kcontrol,
++					 struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_dapm_context *dapm =
++		snd_soc_dapm_kcontrol_dapm(kcontrol);
++	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
++	unsigned int muxval = ucontrol->value.enumerated.item[0];
++	int regval = 0, mask;
++	int err;
++
++	mask = 0;
++	mask |= BIT(CPCAP_BIT_MIC2_MUX);
++	mask |= BIT(CPCAP_BIT_RX_L_ENCODE);
++
++	switch (muxval) {
++	case 1:
++		regval = BIT(CPCAP_BIT_MIC2_MUX);
++		break;
++	case 2:
++		regval = BIT(CPCAP_BIT_RX_L_ENCODE);
++		break;
++	default:
++		break;
++	}
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
++				 mask, regval);
++	if (err)
++		return err;
++
++	snd_soc_dapm_mux_update_power(dapm, kcontrol, muxval, e, NULL);
++
++	return 0;
++}
++
++static const struct snd_kcontrol_new cpcap_input_left_mux =
++	SOC_DAPM_ENUM_EXT("Input Left", cpcap_input_left_mux_enum,
++			  cpcap_input_left_mux_get_enum,
++			  cpcap_input_left_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_input_right_mux =
++	SOC_DAPM_ENUM_EXT("Input Right", cpcap_input_right_mux_enum,
++			  cpcap_input_right_mux_get_enum,
++			  cpcap_input_right_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_emu_left_mux =
++	SOC_DAPM_ENUM_EXT("EMU Left", cpcap_emu_l_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_emu_right_mux =
++	SOC_DAPM_ENUM_EXT("EMU Right", cpcap_emu_r_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_hs_left_mux =
++	SOC_DAPM_ENUM_EXT("Headset Left", cpcap_hs_l_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_hs_right_mux =
++	SOC_DAPM_ENUM_EXT("Headset Right", cpcap_hs_r_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_line_left_mux =
++	SOC_DAPM_ENUM_EXT("Line Left", cpcap_line_l_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_line_right_mux =
++	SOC_DAPM_ENUM_EXT("Line Right", cpcap_line_r_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_speaker_left_mux =
++	SOC_DAPM_ENUM_EXT("Speaker Left", cpcap_spkr_l_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_speaker_right_mux =
++	SOC_DAPM_ENUM_EXT("Speaker Right", cpcap_spkr_r_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++static const struct snd_kcontrol_new cpcap_earpiece_mux =
++	SOC_DAPM_ENUM_EXT("Earpiece", cpcap_earpiece_mux_enum,
++			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
++
++static const struct snd_kcontrol_new cpcap_hifi_mono_mixer_controls[] = {
++	SOC_DAPM_SINGLE("HiFi Mono Playback Switch",
++		CPCAP_REG_RXSDOA, CPCAP_BIT_MONO_DAC1, 1, 0),
++};
++static const struct snd_kcontrol_new cpcap_ext_mono_mixer_controls[] = {
++	SOC_DAPM_SINGLE("Ext Mono Playback Switch",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_MONO_EXT0, 1, 0),
++};
++
++static const struct snd_kcontrol_new cpcap_extr_mute_control =
++	SOC_DAPM_SINGLE("Switch",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_PGA_IN_R_SW, 1, 0);
++static const struct snd_kcontrol_new cpcap_extl_mute_control =
++	SOC_DAPM_SINGLE("Switch",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_PGA_IN_L_SW, 1, 0);
++
++static const struct snd_kcontrol_new cpcap_voice_loopback =
++	SOC_DAPM_SINGLE("Switch",
++		CPCAP_REG_TXI, CPCAP_BIT_DLM, 1, 0);
++
++static const struct snd_soc_dapm_widget cpcap_dapm_widgets[] = {
++	/* DAIs */
++	SND_SOC_DAPM_AIF_IN("HiFi RX", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("Voice RX", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("Voice TX", NULL, 0, SND_SOC_NOPM, 0, 0),
++
++	/* Power Supply */
++	SND_SOC_DAPM_REGULATOR_SUPPLY("VAUDIO", SLEEP_ACTIVATE_POWER, 0),
++
++	/* Highpass Filters */
++	SND_SOC_DAPM_REG(snd_soc_dapm_pga, "Highpass Filter RX",
++		CPCAP_REG_CC, CPCAP_BIT_AUDIHPF_0, 0x3, 0x3, 0x0),
++	SND_SOC_DAPM_REG(snd_soc_dapm_pga, "Highpass Filter TX",
++		CPCAP_REG_CC, CPCAP_BIT_AUDOHPF_0, 0x3, 0x3, 0x0),
++
++	/* Clocks */
++	SND_SOC_DAPM_SUPPLY("HiFi DAI Clock",
++		CPCAP_REG_SDACDI, CPCAP_BIT_ST_CLK_EN, 0, NULL, 0),
++	SND_SOC_DAPM_SUPPLY("Voice DAI Clock",
++		CPCAP_REG_CDI, CPCAP_BIT_CDC_CLK_EN, 0, NULL, 0),
++
++	/* Microphone Bias */
++	SND_SOC_DAPM_SUPPLY("MIC1R Bias",
++		CPCAP_REG_TXI, CPCAP_BIT_MB_ON1R, 0, NULL, 0),
++	SND_SOC_DAPM_SUPPLY("MIC1L Bias",
++		CPCAP_REG_TXI, CPCAP_BIT_MB_ON1L, 0, NULL, 0),
++	SND_SOC_DAPM_SUPPLY("MIC2 Bias",
++		CPCAP_REG_TXI, CPCAP_BIT_MB_ON2, 0, NULL, 0),
++
++	/* Inputs */
++	SND_SOC_DAPM_INPUT("MICR"),
++	SND_SOC_DAPM_INPUT("HSMIC"),
++	SND_SOC_DAPM_INPUT("EMUMIC"),
++	SND_SOC_DAPM_INPUT("MICL"),
++	SND_SOC_DAPM_INPUT("EXTR"),
++	SND_SOC_DAPM_INPUT("EXTL"),
++
++	/* Capture Route */
++	SND_SOC_DAPM_MUX("Right Capture Route",
++		SND_SOC_NOPM, 0, 0, &cpcap_input_right_mux),
++	SND_SOC_DAPM_MUX("Left Capture Route",
++		SND_SOC_NOPM, 0, 0, &cpcap_input_left_mux),
++
++	/* Capture PGAs */
++	SND_SOC_DAPM_PGA("Microphone 1 PGA",
++		CPCAP_REG_TXI, CPCAP_BIT_MIC1_PGA_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Microphone 2 PGA",
++		CPCAP_REG_TXI, CPCAP_BIT_MIC2_PGA_EN, 0, NULL, 0),
++
++	/* ADC */
++	SND_SOC_DAPM_ADC("ADC Right", NULL,
++		CPCAP_REG_CC, CPCAP_BIT_MIC1_CDC_EN, 0),
++	SND_SOC_DAPM_ADC("ADC Left", NULL,
++		CPCAP_REG_CC, CPCAP_BIT_MIC2_CDC_EN, 0),
++
++	/* DAC */
++	SND_SOC_DAPM_DAC_E("DAC HiFi", NULL,
++		CPCAP_REG_SDAC, CPCAP_BIT_ST_DAC_EN, 0,
++		cpcap_st_workaround,
++		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
++	SND_SOC_DAPM_DAC_E("DAC Voice", NULL,
++		CPCAP_REG_CC, CPCAP_BIT_CDC_EN_RX, 0,
++		cpcap_st_workaround,
++		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
++
++	/* Playback PGA */
++	SND_SOC_DAPM_PGA("HiFi PGA",
++		CPCAP_REG_RXSDOA, CPCAP_BIT_PGA_DAC_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Voice PGA",
++		CPCAP_REG_RXCOA, CPCAP_BIT_PGA_CDC_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA_E("Ext Right PGA",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_PGA_EXT_R_EN, 0,
++		NULL, 0,
++		cpcap_st_workaround,
++		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
++	SND_SOC_DAPM_PGA_E("Ext Left PGA",
++		CPCAP_REG_RXEPOA, CPCAP_BIT_PGA_EXT_L_EN, 0,
++		NULL, 0,
++		cpcap_st_workaround,
++		SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
++
++	/* Playback Switch */
++	SND_SOC_DAPM_SWITCH("Ext Right Enable", SND_SOC_NOPM, 0, 0,
++		&cpcap_extr_mute_control),
++	SND_SOC_DAPM_SWITCH("Ext Left Enable", SND_SOC_NOPM, 0, 0,
++		&cpcap_extl_mute_control),
++
++	/* Loopback Switch */
++	SND_SOC_DAPM_SWITCH("Voice Loopback", SND_SOC_NOPM, 0, 0,
++		&cpcap_voice_loopback),
++
++	/* Mono Mixer */
++	SOC_MIXER_ARRAY("HiFi Mono Left Mixer", SND_SOC_NOPM, 0, 0,
++		cpcap_hifi_mono_mixer_controls),
++	SOC_MIXER_ARRAY("HiFi Mono Right Mixer", SND_SOC_NOPM, 0, 0,
++		cpcap_hifi_mono_mixer_controls),
++	SOC_MIXER_ARRAY("Ext Mono Left Mixer", SND_SOC_NOPM, 0, 0,
++		cpcap_ext_mono_mixer_controls),
++	SOC_MIXER_ARRAY("Ext Mono Right Mixer", SND_SOC_NOPM, 0, 0,
++		cpcap_ext_mono_mixer_controls),
++
++	/* Output Routes */
++	SND_SOC_DAPM_MUX("Earpiece Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_earpiece_mux),
++	SND_SOC_DAPM_MUX("Speaker Right Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_speaker_right_mux),
++	SND_SOC_DAPM_MUX("Speaker Left Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_speaker_left_mux),
++	SND_SOC_DAPM_MUX("Lineout Right Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_line_right_mux),
++	SND_SOC_DAPM_MUX("Lineout Left Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_line_left_mux),
++	SND_SOC_DAPM_MUX("Headset Right Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_hs_right_mux),
++	SND_SOC_DAPM_MUX("Headset Left Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_hs_left_mux),
++	SND_SOC_DAPM_MUX("EMU Right Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_emu_right_mux),
++	SND_SOC_DAPM_MUX("EMU Left Playback Route", SND_SOC_NOPM, 0, 0,
++		&cpcap_emu_left_mux),
++
++	/* Output Amplifier */
++	SND_SOC_DAPM_PGA("Earpiece PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_A1_EAR_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Speaker Right PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_A2_LDSP_R_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Speaker Left PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_A2_LDSP_L_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Lineout Right PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_A4_LINEOUT_R_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Lineout Left PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_A4_LINEOUT_L_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Headset Right PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_HS_R_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("Headset Left PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_HS_L_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("EMU Right PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_EMU_SPKR_R_EN, 0, NULL, 0),
++	SND_SOC_DAPM_PGA("EMU Left PGA",
++		CPCAP_REG_RXOA, CPCAP_BIT_EMU_SPKR_L_EN, 0, NULL, 0),
++
++	/* Headet Charge Pump */
++	SND_SOC_DAPM_SUPPLY("Headset Charge Pump",
++		CPCAP_REG_RXOA, CPCAP_BIT_ST_HS_CP_EN, 0, NULL, 0),
++
++	/* Outputs */
++	SND_SOC_DAPM_OUTPUT("EP"),
++	SND_SOC_DAPM_OUTPUT("SPKR"),
++	SND_SOC_DAPM_OUTPUT("SPKL"),
++	SND_SOC_DAPM_OUTPUT("LINER"),
++	SND_SOC_DAPM_OUTPUT("LINEL"),
++	SND_SOC_DAPM_OUTPUT("HSR"),
++	SND_SOC_DAPM_OUTPUT("HSL"),
++	SND_SOC_DAPM_OUTPUT("EMUR"),
++	SND_SOC_DAPM_OUTPUT("EMUL"),
++};
++
++static const struct snd_soc_dapm_route intercon[] = {
++	/* Power Supply */
++	{"HiFi PGA", NULL, "VAUDIO"},
++	{"Voice PGA", NULL, "VAUDIO"},
++	{"Ext Right PGA", NULL, "VAUDIO"},
++	{"Ext Left PGA", NULL, "VAUDIO"},
++	{"Microphone 1 PGA", NULL, "VAUDIO"},
++	{"Microphone 2 PGA", NULL, "VAUDIO"},
++
++	/* Stream -> AIF */
++	{"HiFi RX", NULL, "HiFi Playback"},
++	{"Voice RX", NULL, "Voice Playback"},
++	{"Voice Capture", NULL, "Voice TX"},
++
++	/* AIF clocks */
++	{"HiFi RX", NULL, "HiFi DAI Clock"},
++	{"Voice RX", NULL, "Voice DAI Clock"},
++	{"Voice TX", NULL, "Voice DAI Clock"},
++
++	/* Digital Loopback */
++	{"Voice Loopback", "Switch", "Voice TX"},
++	{"Voice RX", NULL, "Voice Loopback"},
++
++	/* Highpass Filters */
++	{"Highpass Filter RX", NULL, "Voice RX"},
++	{"Voice TX", NULL, "Highpass Filter TX"},
++
++	/* AIF -> DAC mapping */
++	{"DAC HiFi", NULL, "HiFi RX"},
++	{"DAC Voice", NULL, "Highpass Filter RX"},
++
++	/* DAC -> PGA */
++	{"HiFi PGA", NULL, "DAC HiFi"},
++	{"Voice PGA", NULL, "DAC Voice"},
++
++	/* Ext Input -> PGA */
++	{"Ext Right PGA", NULL, "EXTR"},
++	{"Ext Left PGA", NULL, "EXTL"},
++
++	/* Ext PGA -> Ext Playback Switch */
++	{"Ext Right Enable", "Switch", "Ext Right PGA"},
++	{"Ext Left Enable", "Switch", "Ext Left PGA"},
++
++	/* HiFi PGA -> Mono Mixer */
++	{"HiFi Mono Left Mixer", NULL, "HiFi PGA"},
++	{"HiFi Mono Left Mixer", "HiFi Mono Playback Switch", "HiFi PGA"},
++	{"HiFi Mono Right Mixer", NULL, "HiFi PGA"},
++	{"HiFi Mono Right Mixer", "HiFi Mono Playback Switch", "HiFi PGA"},
++
++	/* Ext Playback Switch -> Ext Mono Mixer */
++	{"Ext Mono Right Mixer", NULL, "Ext Right Enable"},
++	{"Ext Mono Right Mixer", "Ext Mono Playback Switch", "Ext Left Enable"},
++	{"Ext Mono Left Mixer", NULL, "Ext Left Enable"},
++	{"Ext Mono Left Mixer", "Ext Mono Playback Switch", "Ext Right Enable"},
++
++	/* HiFi Mono Mixer -> Output Route */
++	{"Earpiece Playback Route", "HiFi", "HiFi Mono Right Mixer"},
++	{"Speaker Right Playback Route", "HiFi", "HiFi Mono Right Mixer"},
++	{"Speaker Left Playback Route", "HiFi", "HiFi Mono Left Mixer"},
++	{"Lineout Right Playback Route", "HiFi", "HiFi Mono Right Mixer"},
++	{"Lineout Left Playback Route", "HiFi", "HiFi Mono Left Mixer"},
++	{"Headset Right Playback Route", "HiFi", "HiFi Mono Right Mixer"},
++	{"Headset Left Playback Route", "HiFi", "HiFi Mono Left Mixer"},
++	{"EMU Right Playback Route", "HiFi", "HiFi Mono Right Mixer"},
++	{"EMU Left Playback Route", "HiFi", "HiFi Mono Left Mixer"},
++
++	/* Voice PGA -> Output Route */
++	{"Earpiece Playback Route", "Voice", "Voice PGA"},
++	{"Speaker Right Playback Route", "Voice", "Voice PGA"},
++	{"Speaker Left Playback Route", "Voice", "Voice PGA"},
++	{"Lineout Right Playback Route", "Voice", "Voice PGA"},
++	{"Lineout Left Playback Route", "Voice", "Voice PGA"},
++	{"Headset Right Playback Route", "Voice", "Voice PGA"},
++	{"Headset Left Playback Route", "Voice", "Voice PGA"},
++	{"EMU Right Playback Route", "Voice", "Voice PGA"},
++	{"EMU Left Playback Route", "Voice", "Voice PGA"},
++
++	/* Ext Mono Mixer -> Output Route */
++	{"Earpiece Playback Route", "Ext", "Ext Mono Right Mixer"},
++	{"Speaker Right Playback Route", "Ext", "Ext Mono Right Mixer"},
++	{"Speaker Left Playback Route", "Ext", "Ext Mono Left Mixer"},
++	{"Lineout Right Playback Route", "Ext", "Ext Mono Right Mixer"},
++	{"Lineout Left Playback Route", "Ext", "Ext Mono Left Mixer"},
++	{"Headset Right Playback Route", "Ext", "Ext Mono Right Mixer"},
++	{"Headset Left Playback Route", "Ext", "Ext Mono Left Mixer"},
++	{"EMU Right Playback Route", "Ext", "Ext Mono Right Mixer"},
++	{"EMU Left Playback Route", "Ext", "Ext Mono Left Mixer"},
++
++	/* Output Route -> Output Amplifier */
++	{"Earpiece PGA", NULL, "Earpiece Playback Route"},
++	{"Speaker Right PGA", NULL, "Speaker Right Playback Route"},
++	{"Speaker Left PGA", NULL, "Speaker Left Playback Route"},
++	{"Lineout Right PGA", NULL, "Lineout Right Playback Route"},
++	{"Lineout Left PGA", NULL, "Lineout Left Playback Route"},
++	{"Headset Right PGA", NULL, "Headset Right Playback Route"},
++	{"Headset Left PGA", NULL, "Headset Left Playback Route"},
++	{"EMU Right PGA", NULL, "EMU Right Playback Route"},
++	{"EMU Left PGA", NULL, "EMU Left Playback Route"},
++
++	/* Output Amplifier -> Output */
++	{"EP", NULL, "Earpiece PGA"},
++	{"SPKR", NULL, "Speaker Right PGA"},
++	{"SPKL", NULL, "Speaker Left PGA"},
++	{"LINER", NULL, "Lineout Right PGA"},
++	{"LINEL", NULL, "Lineout Left PGA"},
++	{"HSR", NULL, "Headset Right PGA"},
++	{"HSL", NULL, "Headset Left PGA"},
++	{"EMUR", NULL, "EMU Right PGA"},
++	{"EMUL", NULL, "EMU Left PGA"},
++
++	/* Headset Charge Pump -> Headset */
++	{"HSR", NULL, "Headset Charge Pump"},
++	{"HSL", NULL, "Headset Charge Pump"},
++
++	/* Mic -> Mic Route */
++	{"Right Capture Route", "Mic 1", "MICR"},
++	{"Right Capture Route", "Headset Mic", "HSMIC"},
++	{"Right Capture Route", "EMU Mic", "EMUMIC"},
++	{"Right Capture Route", "Ext Right", "EXTR"},
++	{"Left Capture Route", "Mic 2", "MICL"},
++	{"Left Capture Route", "Ext Left", "EXTL"},
++
++	/* Input Route -> Microphone PGA */
++	{"Microphone 1 PGA", NULL, "Right Capture Route"},
++	{"Microphone 2 PGA", NULL, "Left Capture Route"},
++
++	/* Microphone PGA -> ADC */
++	{"ADC Right", NULL, "Microphone 1 PGA"},
++	{"ADC Left", NULL, "Microphone 2 PGA"},
++
++	/* ADC -> Stream */
++	{"Highpass Filter TX", NULL, "ADC Right"},
++	{"Highpass Filter TX", NULL, "ADC Left"},
++
++	/* Mic Bias */
++	{"MICL", NULL, "MIC1L Bias"},
++	{"MICR", NULL, "MIC1R Bias"},
++};
++
++static int cpcap_set_sysclk(struct cpcap_audio *cpcap, enum cpcap_dai dai,
++			    int clk_id, int freq)
++{
++	u16 clkfreqreg, clkfreqshift;
++	u16 clkfreqmask, clkfreqval;
++	u16 clkidreg, clkidshift;
++	u16 mask, val;
++	int err;
++
++	switch (dai) {
++	case CPCAP_DAI_HIFI:
++		clkfreqreg = CPCAP_REG_SDAC;
++		clkfreqshift = CPCAP_BIT_ST_DAC_CLK0;
++		clkidreg = CPCAP_REG_SDACDI;
++		clkidshift = CPCAP_BIT_ST_DAC_CLK_IN_SEL;
++		break;
++	case CPCAP_DAI_VOICE:
++		clkfreqreg = CPCAP_REG_CC;
++		clkfreqshift = CPCAP_BIT_CDC_CLK0;
++		clkidreg = CPCAP_REG_CDI;
++		clkidshift = CPCAP_BIT_CLK_IN_SEL;
++		break;
++	default:
++		dev_err(cpcap->codec->dev, "invalid DAI: %d", dai);
++		return -EINVAL;
++	}
++
++	/* setup clk id */
++	if (clk_id < 0 || clk_id > 1) {
++		dev_err(cpcap->codec->dev, "invalid clk id %d", clk_id);
++		return -EINVAL;
++	}
++	err = regmap_update_bits(cpcap->regmap, clkidreg, BIT(clkidshift),
++				 clk_id ? BIT(clkidshift) : 0);
++	if (err)
++		return err;
++
++	/* enable PLL for Voice DAI */
++	if (dai == CPCAP_DAI_VOICE) {
++		mask = BIT(CPCAP_BIT_CDC_PLL_SEL);
++		val = BIT(CPCAP_BIT_CDC_PLL_SEL);
++		err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
++					 mask, val);
++		if (err)
++			return err;
++	}
++
++	/* setup frequency */
++	clkfreqmask = 0x7 << clkfreqshift;
++	switch (freq) {
++	case 15360000:
++		clkfreqval = 0x01 << clkfreqshift;
++		break;
++	case 16800000:
++		clkfreqval = 0x02 << clkfreqshift;
++		break;
++	case 19200000:
++		clkfreqval = 0x03 << clkfreqshift;
++		break;
++	case 26000000:
++		clkfreqval = 0x04 << clkfreqshift;
++		break;
++	case 33600000:
++		clkfreqval = 0x05 << clkfreqshift;
++		break;
++	case 38400000:
++		clkfreqval = 0x06 << clkfreqshift;
++		break;
++	default:
++		dev_err(cpcap->codec->dev, "unsupported freq %u", freq);
++		return -EINVAL;
++	}
++
++	err = regmap_update_bits(cpcap->regmap, clkfreqreg,
++				 clkfreqmask, clkfreqval);
++	if (err)
++		return err;
++
++	if (dai == CPCAP_DAI_VOICE) {
++		cpcap->codec_clk_id = clk_id;
++		cpcap->codec_freq = freq;
++	}
++
++	return 0;
++}
++
++static int cpcap_set_samprate(struct cpcap_audio *cpcap, enum cpcap_dai dai,
++			      int samplerate)
++{
++	struct snd_soc_codec *codec = cpcap->codec;
++	u16 sampreg, sampmask, sampshift, sampval, sampreset;
++	int err, sampreadval;
++
++	switch (dai) {
++	case CPCAP_DAI_HIFI:
++		sampreg = CPCAP_REG_SDAC;
++		sampshift = CPCAP_BIT_ST_SR0;
++		sampreset = BIT(CPCAP_BIT_DF_RESET_ST_DAC) |
++			    BIT(CPCAP_BIT_ST_CLOCK_TREE_RESET);
++		break;
++	case CPCAP_DAI_VOICE:
++		sampreg = CPCAP_REG_CC;
++		sampshift = CPCAP_BIT_CDC_SR0;
++		sampreset = BIT(CPCAP_BIT_DF_RESET) |
++			    BIT(CPCAP_BIT_CDC_CLOCK_TREE_RESET);
++		break;
++	default:
++		dev_err(codec->dev, "invalid DAI: %d", dai);
++		return -EINVAL;
++	}
++
++	sampmask = 0xF << sampshift | sampreset;
++	switch (samplerate) {
++	case 48000:
++		sampval = 0x8 << sampshift;
++		break;
++	case 44100:
++		sampval = 0x7 << sampshift;
++		break;
++	case 32000:
++		sampval = 0x6 << sampshift;
++		break;
++	case 24000:
++		sampval = 0x5 << sampshift;
++		break;
++	case 22050:
++		sampval = 0x4 << sampshift;
++		break;
++	case 16000:
++		sampval = 0x3 << sampshift;
++		break;
++	case 12000:
++		sampval = 0x2 << sampshift;
++		break;
++	case 11025:
++		sampval = 0x1 << sampshift;
++		break;
++	case 8000:
++		sampval = 0x0 << sampshift;
++		break;
++	default:
++		dev_err(codec->dev, "unsupported samplerate %d", samplerate);
++		return -EINVAL;
++	}
++	err = regmap_update_bits(cpcap->regmap, sampreg,
++				 sampmask, sampval | sampreset);
++	if (err)
++		return err;
++
++	/* Wait for clock tree reset to complete */
++	mdelay(CLOCK_TREE_RESET_TIME);
++
++	err = regmap_read(cpcap->regmap, sampreg, &sampreadval);
++	if (err)
++		return err;
++
++	if (sampreadval & sampreset) {
++		dev_err(codec->dev, "reset self-clear failed: %04x",
++			sampreadval);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int cpcap_hifi_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params,
++				struct snd_soc_dai *dai)
++{
++	struct snd_soc_codec *codec = dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	int rate = params_rate(params);
++
++	dev_dbg(codec->dev, "HiFi setup HW params: rate=%d", rate);
++	return cpcap_set_samprate(cpcap, CPCAP_DAI_HIFI, rate);
++}
++
++static int cpcap_hifi_set_dai_sysclk(struct snd_soc_dai *codec_dai, int clk_id,
++				     unsigned int freq, int dir)
++{
++	struct snd_soc_codec *codec = codec_dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct device *dev = codec->dev;
++
++	dev_dbg(dev, "HiFi setup sysclk: clk_id=%u, freq=%u", clk_id, freq);
++	return cpcap_set_sysclk(cpcap, CPCAP_DAI_HIFI, clk_id, freq);
++}
++
++static int cpcap_hifi_set_dai_fmt(struct snd_soc_dai *codec_dai,
++				  unsigned int fmt)
++{
++	struct snd_soc_codec *codec = codec_dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	struct device *dev = codec->dev;
++	static const u16 reg = CPCAP_REG_SDACDI;
++	static const u16 mask =
++		BIT(CPCAP_BIT_SMB_ST_DAC) |
++		BIT(CPCAP_BIT_ST_CLK_INV) |
++		BIT(CPCAP_BIT_ST_FS_INV) |
++		BIT(CPCAP_BIT_ST_DIG_AUD_FS0) |
++		BIT(CPCAP_BIT_ST_DIG_AUD_FS1) |
++		BIT(CPCAP_BIT_ST_L_TIMESLOT0) |
++		BIT(CPCAP_BIT_ST_L_TIMESLOT1) |
++		BIT(CPCAP_BIT_ST_L_TIMESLOT2) |
++		BIT(CPCAP_BIT_ST_R_TIMESLOT0) |
++		BIT(CPCAP_BIT_ST_R_TIMESLOT1) |
++		BIT(CPCAP_BIT_ST_R_TIMESLOT2);
++	u16 val = 0x0000;
++
++	dev_dbg(dev, "HiFi setup dai format (%08x)", fmt);
++
++	/*
++	 * "HiFi Playback" should always be configured as
++	 * SND_SOC_DAIFMT_CBM_CFM - codec clk & frm master
++	 * SND_SOC_DAIFMT_I2S - I2S mode
++	 */
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBM_CFM:
++		val &= ~BIT(CPCAP_BIT_SMB_ST_DAC);
++		break;
++	default:
++		dev_err(dev, "HiFi dai fmt failed: CPCAP should be master");
++		return -EINVAL;
++	}
++
++	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
++	case SND_SOC_DAIFMT_IB_IF:
++		val |= BIT(CPCAP_BIT_ST_FS_INV);
++		val |= BIT(CPCAP_BIT_ST_CLK_INV);
++		break;
++	case SND_SOC_DAIFMT_IB_NF:
++		val &= ~BIT(CPCAP_BIT_ST_FS_INV);
++		val |= BIT(CPCAP_BIT_ST_CLK_INV);
++		break;
++	case SND_SOC_DAIFMT_NB_IF:
++		val |= BIT(CPCAP_BIT_ST_FS_INV);
++		val &= ~BIT(CPCAP_BIT_ST_CLK_INV);
++		break;
++	case SND_SOC_DAIFMT_NB_NF:
++		val &= ~BIT(CPCAP_BIT_ST_FS_INV);
++		val &= ~BIT(CPCAP_BIT_ST_CLK_INV);
++		break;
++	default:
++		dev_err(dev, "HiFi dai fmt failed: unsupported clock invert mode");
++		return -EINVAL;
++	}
++
++	if (val & BIT(CPCAP_BIT_ST_CLK_INV))
++		val &= ~BIT(CPCAP_BIT_ST_CLK_INV);
++	else
++		val |= BIT(CPCAP_BIT_ST_CLK_INV);
++
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS0);
++		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS1);
++		break;
++	default:
++		/* 01 - 4 slots network mode */
++		val |= BIT(CPCAP_BIT_ST_DIG_AUD_FS0);
++		val &= ~BIT(CPCAP_BIT_ST_DIG_AUD_FS1);
++		/* L on slot 1 */
++		val |= BIT(CPCAP_BIT_ST_L_TIMESLOT0);
++		break;
++	}
++
++	dev_dbg(dev, "HiFi dai format: val=%04x", val);
++	return regmap_update_bits(cpcap->regmap, reg, mask, val);
++}
++
++static int cpcap_hifi_set_mute(struct snd_soc_dai *dai, int mute)
++{
++	struct snd_soc_codec *codec = dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	static const u16 reg = CPCAP_REG_RXSDOA;
++	static const u16 mask = BIT(CPCAP_BIT_ST_DAC_SW);
++	u16 val;
++
++	if (mute)
++		val = 0;
++	else
++		val = BIT(CPCAP_BIT_ST_DAC_SW);
++
++	dev_dbg(codec->dev, "HiFi mute: %d", mute);
++	return regmap_update_bits(cpcap->regmap, reg, mask, val);
++}
++
++static const struct snd_soc_dai_ops cpcap_dai_hifi_ops = {
++	.hw_params	= cpcap_hifi_hw_params,
++	.set_sysclk	= cpcap_hifi_set_dai_sysclk,
++	.set_fmt	= cpcap_hifi_set_dai_fmt,
++	.digital_mute	= cpcap_hifi_set_mute,
++};
++
++static int cpcap_voice_hw_params(struct snd_pcm_substream *substream,
++				 struct snd_pcm_hw_params *params,
++				 struct snd_soc_dai *dai)
++{
++	struct snd_soc_codec *codec = dai->codec;
++	struct device *dev = codec->dev;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	static const u16 reg_cdi = CPCAP_REG_CDI;
++	int rate = params_rate(params);
++	int channels = params_channels(params);
++	int direction = substream->stream;
++	u16 val, mask;
++	int err;
++
++	dev_dbg(dev, "Voice setup HW params: rate=%d, direction=%d, chan=%d",
++		rate, direction, channels);
++
++	err = cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, rate);
++	if (err)
++		return err;
++
++	if (direction == SNDRV_PCM_STREAM_CAPTURE) {
++		mask = 0x0000;
++		mask |= CPCAP_BIT_MIC1_RX_TIMESLOT0;
++		mask |= CPCAP_BIT_MIC1_RX_TIMESLOT1;
++		mask |= CPCAP_BIT_MIC1_RX_TIMESLOT2;
++		mask |= CPCAP_BIT_MIC2_TIMESLOT0;
++		mask |= CPCAP_BIT_MIC2_TIMESLOT1;
++		mask |= CPCAP_BIT_MIC2_TIMESLOT2;
++		val = 0x0000;
++		if (channels >= 2)
++			val = BIT(CPCAP_BIT_MIC1_RX_TIMESLOT0);
++		err = regmap_update_bits(cpcap->regmap, reg_cdi, mask, val);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int cpcap_voice_set_dai_sysclk(struct snd_soc_dai *codec_dai, int clk_id,
++				      unsigned int freq, int dir)
++{
++	struct snd_soc_codec *codec = codec_dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++
++	dev_dbg(codec->dev, "Voice setup sysclk: clk_id=%u, freq=%u",
++		clk_id, freq);
++	return cpcap_set_sysclk(cpcap, CPCAP_DAI_VOICE, clk_id, freq);
++}
++
++static int cpcap_voice_set_dai_fmt(struct snd_soc_dai *codec_dai,
++				   unsigned int fmt)
++{
++	struct snd_soc_codec *codec = codec_dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	static const u16 mask = BIT(CPCAP_BIT_SMB_CDC) |
++				BIT(CPCAP_BIT_CLK_INV) |
++				BIT(CPCAP_BIT_FS_INV) |
++				BIT(CPCAP_BIT_CDC_DIG_AUD_FS0) |
++				BIT(CPCAP_BIT_CDC_DIG_AUD_FS1);
++	u16 val = 0x0000;
++	int err;
++
++	dev_dbg(codec->dev, "Voice setup dai format (%08x)", fmt);
++
++	/*
++	 * "Voice Playback" and "Voice Capture" should always be
++	 * configured as SND_SOC_DAIFMT_CBM_CFM - codec clk & frm
++	 * master
++	 */
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBM_CFM:
++		val &= ~BIT(CPCAP_BIT_SMB_CDC);
++		break;
++	default:
++		dev_err(codec->dev, "Voice dai fmt failed: CPCAP should be the master");
++		val &= ~BIT(CPCAP_BIT_SMB_CDC);
++		break;
++	}
++
++	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
++	case SND_SOC_DAIFMT_IB_IF:
++		val |= BIT(CPCAP_BIT_CLK_INV);
++		val |= BIT(CPCAP_BIT_FS_INV);
++		break;
++	case SND_SOC_DAIFMT_IB_NF:
++		val |= BIT(CPCAP_BIT_CLK_INV);
++		val &= ~BIT(CPCAP_BIT_FS_INV);
++		break;
++	case SND_SOC_DAIFMT_NB_IF:
++		val &= ~BIT(CPCAP_BIT_CLK_INV);
++		val |= BIT(CPCAP_BIT_FS_INV);
++		break;
++	case SND_SOC_DAIFMT_NB_NF:
++		val &= ~BIT(CPCAP_BIT_CLK_INV);
++		val &= ~BIT(CPCAP_BIT_FS_INV);
++		break;
++	default:
++		dev_err(codec->dev, "Voice dai fmt failed: unsupported clock invert mode");
++		break;
++	}
++
++	if (val & BIT(CPCAP_BIT_CLK_INV))
++		val &= ~BIT(CPCAP_BIT_CLK_INV);
++	else
++		val |= BIT(CPCAP_BIT_CLK_INV);
++
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		/* 11 - true I2S mode */
++		val |= BIT(CPCAP_BIT_CDC_DIG_AUD_FS0);
++		val |= BIT(CPCAP_BIT_CDC_DIG_AUD_FS1);
++		break;
++	default:
++		/* 4 timeslots network mode */
++		val |= BIT(CPCAP_BIT_CDC_DIG_AUD_FS0);
++		val &= ~BIT(CPCAP_BIT_CDC_DIG_AUD_FS1);
++		break;
++	}
++
++	dev_dbg(codec->dev, "Voice dai format: val=%04x", val);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI, mask, val);
++	if (err)
++		return err;
++
++	cpcap->codec_format = val;
++	return 0;
++}
++
++static int cpcap_voice_set_mute(struct snd_soc_dai *dai, int mute)
++{
++	struct snd_soc_codec *codec = dai->codec;
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	static const u16 reg = CPCAP_REG_RXCOA;
++	static const u16 mask = BIT(CPCAP_BIT_CDC_SW);
++	u16 val;
++
++	if (mute)
++		val = 0;
++	else
++		val = BIT(CPCAP_BIT_CDC_SW);
++
++	dev_dbg(codec->dev, "Voice mute: %d", mute);
++	return regmap_update_bits(cpcap->regmap, reg, mask, val);
++};
++
++static const struct snd_soc_dai_ops cpcap_dai_voice_ops = {
++	.hw_params	= cpcap_voice_hw_params,
++	.set_sysclk	= cpcap_voice_set_dai_sysclk,
++	.set_fmt	= cpcap_voice_set_dai_fmt,
++	.digital_mute	= cpcap_voice_set_mute,
++};
++
++static struct snd_soc_dai_driver cpcap_dai[] = {
++{
++	.id = 0,
++	.name = "cpcap-hifi",
++	.playback = {
++		.stream_name = "HiFi Playback",
++		.channels_min = 2,
++		.channels_max = 2,
++		.rates = SNDRV_PCM_RATE_8000_48000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_S24_LE,
++	},
++	.ops = &cpcap_dai_hifi_ops,
++},
++{
++	.id = 1,
++	.name = "cpcap-voice",
++	.playback = {
++		.stream_name = "Voice Playback",
++		.channels_min = 1,
++		.channels_max = 1,
++		.rates = SNDRV_PCM_RATE_8000_48000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
++	},
++	.capture = {
++		.stream_name = "Voice Capture",
++		.channels_min = 1,
++		.channels_max = 2,
++		.rates = SNDRV_PCM_RATE_8000_48000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
++	},
++	.ops = &cpcap_dai_voice_ops,
++},
++};
++
++static int cpcap_dai_mux(struct cpcap_audio *cpcap, bool swap_dai_configuration)
++{
++	u16 hifi_val, voice_val;
++	u16 hifi_mask = BIT(CPCAP_BIT_DIG_AUD_IN_ST_DAC);
++	u16 voice_mask = BIT(CPCAP_BIT_DIG_AUD_IN);
++	int err;
++
++
++
++	if (!swap_dai_configuration) {
++		/* Codec on DAI0, HiFi on DAI1 */
++		voice_val = 0;
++		hifi_val = hifi_mask;
++	} else {
++		/* Codec on DAI1, HiFi on DAI0 */
++		voice_val = voice_mask;
++		hifi_val = 0;
++	}
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
++				 voice_mask, voice_val);
++	if (err)
++		return err;
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_SDACDI,
++				 hifi_mask, hifi_val);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++static int cpcap_audio_reset(struct snd_soc_codec *codec,
++			     bool swap_dai_configuration)
++{
++	struct cpcap_audio *cpcap = snd_soc_codec_get_drvdata(codec);
++	int i, err = 0;
++
++	dev_dbg(codec->dev, "init audio codec");
++
++	for (i = 0; i < ARRAY_SIZE(cpcap_default_regs); i++) {
++		err = regmap_update_bits(cpcap->regmap,
++					 cpcap_default_regs[i].reg,
++					 cpcap_default_regs[i].mask,
++					 cpcap_default_regs[i].val);
++		if (err)
++			return err;
++	}
++
++	/* setup default settings */
++	err = cpcap_dai_mux(cpcap, swap_dai_configuration);
++	if (err)
++		return err;
++
++	err = cpcap_set_sysclk(cpcap, CPCAP_DAI_HIFI, 0, 26000000);
++	if (err)
++		return err;
++	err = cpcap_set_sysclk(cpcap, CPCAP_DAI_VOICE, 0, 26000000);
++	if (err)
++		return err;
++
++	err = cpcap_set_samprate(cpcap, CPCAP_DAI_HIFI, 48000);
++	if (err)
++		return err;
++
++	err = cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, 48000);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++static int cpcap_soc_probe(struct snd_soc_codec *codec)
++{
++	struct cpcap_audio *cpcap;
++	int err;
++
++	cpcap = devm_kzalloc(codec->dev, sizeof(*cpcap), GFP_KERNEL);
++	if (!cpcap)
++		return -ENOMEM;
++	snd_soc_codec_set_drvdata(codec, cpcap);
++	cpcap->codec = codec;
++
++	cpcap->regmap = dev_get_regmap(codec->dev->parent, NULL);
++	if (!cpcap->regmap)
++		return -ENODEV;
++	snd_soc_codec_init_regmap(codec, cpcap->regmap);
++
++	err = cpcap_get_vendor(codec->dev, cpcap->regmap, &cpcap->vendor);
++	if (err)
++		return err;
++
++	return cpcap_audio_reset(codec, false);
++}
++
++static struct snd_soc_codec_driver soc_codec_dev_cpcap = {
++	.probe = cpcap_soc_probe,
++
++	.component_driver = {
++		.controls		= cpcap_snd_controls,
++		.num_controls		= ARRAY_SIZE(cpcap_snd_controls),
++		.dapm_widgets		= cpcap_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cpcap_dapm_widgets),
++		.dapm_routes		= intercon,
++		.num_dapm_routes	= ARRAY_SIZE(intercon),
++	},
++};
++
++static int cpcap_codec_probe(struct platform_device *pdev)
++{
++	struct device_node *codec_node =
++		of_get_child_by_name(pdev->dev.parent->of_node, "audio-codec");
++
++	pdev->dev.of_node = codec_node;
++
++	return snd_soc_register_codec(&pdev->dev, &soc_codec_dev_cpcap,
++				      cpcap_dai, ARRAY_SIZE(cpcap_dai));
++}
++
++static int cpcap_codec_remove(struct platform_device *pdev)
++{
++	snd_soc_unregister_codec(&pdev->dev);
++	return 0;
++}
++
++static struct platform_driver cpcap_codec_driver = {
++	.probe		= cpcap_codec_probe,
++	.remove		= cpcap_codec_remove,
++	.driver		= {
++		.name	= "cpcap-codec",
++	},
++};
++module_platform_driver(cpcap_codec_driver);
++
++MODULE_ALIAS("platform:cpcap-codec");
++MODULE_DESCRIPTION("ASoC CPCAP codec driver");
++MODULE_AUTHOR("Sebastian Reichel");
++MODULE_LICENSE("GPL v2");
 -- 
-2.14.1
+2.16.1
