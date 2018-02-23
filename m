@@ -1,38 +1,42 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225TiIxgdfQfDqNwDnO7Sx5zk1Uci6Q9k5Jouyd8nSy8NgKPU0FUUT4wqEhPQSMS1DxJymYW
-ARC-Seal: i=1; a=rsa-sha256; t=1519411223; cv=none;
+X-Google-Smtp-Source: AG47ELvH25wgoSTT5G/2EFEAhFJqzuMxvXU1bhiolE4dCONc4co3tZ4A4eZL/YAj7zD3vsGy+69L
+ARC-Seal: i=1; a=rsa-sha256; t=1519411220; cv=none;
         d=google.com; s=arc-20160816;
-        b=dxu6PJjA09QhZvrBG1i8WX0wp3c3LmOlHavOnL0iOsFRSYtz2INcx+3iyQHB5fCguF
-         pJYuFpVkLgvAlR9V+tN9MCW+fjX/Gt2/IGUnTfMFZeBY/XRBOR8btTIXypkU5Tk3Q4Vo
-         3xkVYLiZzxh8oYtylUeN9yxmU1gtlHitDeBCyBSVc9Q9Dng0aBxgWRoWBHPm/zzcypZL
-         24QctImrHHGICMzM4Zh+FTPK2A07UosW8jS14cmZIXhYC9Pml0IAskXuTk4pbNJ6wPWE
-         V/MO6gcladU3bCJ+iKvSIzBBF+MZl4ywxUchpoFTTi7LDERTbReq4QLHPmqaDcG5pxTI
-         uS4g==
+        b=i9JXaSIprWQt8Z1PKUYxwqVhdD0m5AFe8taW2cu0eDLHIb3SS90zXy2iRqjKVa8OTK
+         e0SvFj/6jtBjJYBox23Il+R3R3mW5vMA6bzRVohFo07nkEre2npuaMrjinrjEebXY9sh
+         HhNNWyZEqoDwgdFaR5LxNfrHRmsqyqYC/KO0UcUVXaiVptcNClt92zsj51WSs+uyRPBm
+         oC6OqKxQ/QcfM4jpjzrkqD+xcaIZcU3refsa0HegLKnsdhC04LQrUhraPYBzT7Xzcfkd
+         OBoMwLxCiJmMPYFtTIr+IqOS6P0ZraLTGKec6nz6imkPBEg40Sx0p3XWFLgU7GOei1eQ
+         GRIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IZaTboCtn78gng4wI2Szuy/XFu86LReJAi2Et6eJNRU=;
-        b=tUPMmCg1Z2oevmbm5rI0IZcawerTN+pTyiumcY0gSJiN4dg4N/XB7R8ArIcEwgFm9b
-         U/sGwK06LyQ9Ac8HOF4BVCaLD3aTMwpy0490eKifZIc17nnHWTc8zgqB7CTza2RzELbz
-         3H0HIXDO1FWP4HVTHDlThhXnDrCKTMrVJj0fiBNiwe8g31QH0SNj5IMzp9B8o3n/lvNy
-         KtooPjaagIEjkxP0PGVG2+sWoMESNo6W+NYDfOiOiVOrzO1OFa0eFWjCTwKX/t8VpPMM
-         Jio9nmT6OssncKvVmPSjav3wPwUBlsU4WkMGLO/N8oHFUGm3rXpFtIMhb11li3X8owcs
-         EgEw==
+        bh=ZRlfLM+WB/TSReAOMe9FyZn0RHPdGjKW2YRaKDSxwXg=;
+        b=GK/YxBYEVvg/N2B3saD2vum0je+WyFDnSabRo9vxPmOp1JEjoyVbxRtSNMbnHymvFm
+         LvQlb1VHf6AjKJ9Do6N79LqNPCPmebtRZz8IDb4UHW3WAvjaM119xdez0hjIkLhoBjTw
+         RFtzFJw0tTgKBzA1puFmIMgM9CUxfRgvQjsyaNe1WVGEIk1nJiJHVcB5EM3lQ2WtzZte
+         TeUxafmH5BuHr89usqW3cyS+Ue1I5ic+vBP1w+W2KHw7jSaTkq1VuZwStUcmUFe9sD10
+         KF1m4FKRvkJCH6D7RzN+FtFgfWs7oyoae6/y6/VSCs6wnYkUIF0z0oXSYrKcasfyuU+9
+         rWiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 164/193] KVM: async_pf: Fix #DF due to inject "Page not Present" and "Page Ready" exceptions simultaneously
-Date: Fri, 23 Feb 2018 19:26:37 +0100
-Message-Id: <20180223170351.616636226@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 163/193] kasan: rework Kconfig settings
+Date: Fri, 23 Feb 2018 19:26:36 +0100
+Message-Id: <20180223170351.424191376@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217637115498580?=
-X-GMAIL-MSGID: =?utf-8?q?1593218143134234620?=
+X-GMAIL-THRID: =?utf-8?q?1593218140126518943?=
+X-GMAIL-MSGID: =?utf-8?q?1593218140126518943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,97 +55,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 9a6e7c39810e4a8bc7fc95056cefb40583fe07ef upstream.
+commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
 
-qemu-system-x86-8600  [004] d..1  7205.687530: kvm_entry: vcpu 2
-qemu-system-x86-8600  [004] ....  7205.687532: kvm_exit: reason EXCEPTION_NMI rip 0xffffffffa921297d info ffffeb2c0e44e018 80000b0e
-qemu-system-x86-8600  [004] ....  7205.687532: kvm_page_fault: address ffffeb2c0e44e018 error_code 0
-qemu-system-x86-8600  [004] ....  7205.687620: kvm_try_async_get_page: gva = 0xffffeb2c0e44e018, gfn = 0x427e4e
-qemu-system-x86-8600  [004] .N..  7205.687628: kvm_async_pf_not_present: token 0x8b002 gva 0xffffeb2c0e44e018
-    kworker/4:2-7814  [004] ....  7205.687655: kvm_async_pf_completed: gva 0xffffeb2c0e44e018 address 0x7fcc30c4e000
-qemu-system-x86-8600  [004] ....  7205.687703: kvm_async_pf_ready: token 0x8b002 gva 0xffffeb2c0e44e018
-qemu-system-x86-8600  [004] d..1  7205.687711: kvm_entry: vcpu 2
+We get a lot of very large stack frames using gcc-7.0.1 with the default
+-fsanitize-address-use-after-scope --param asan-stack=1 options, which can
+easily cause an overflow of the kernel stack, e.g.
 
-After running some memory intensive workload in guest, I catch the kworker
-which completes the GUP too quickly, and queues an "Page Ready" #PF exception
-after the "Page not Present" exception before the next vmentry as the above
-trace which will result in #DF injected to guest.
+  drivers/gpu/drm/i915/gvt/handlers.c:2434:1: warning: the frame size of 46176 bytes is larger than 3072 bytes
+  drivers/net/wireless/ralink/rt2x00/rt2800lib.c:5650:1: warning: the frame size of 23632 bytes is larger than 3072 bytes
+  lib/atomic64_test.c:250:1: warning: the frame size of 11200 bytes is larger than 3072 bytes
+  drivers/gpu/drm/i915/gvt/handlers.c:2621:1: warning: the frame size of 9208 bytes is larger than 3072 bytes
+  drivers/media/dvb-frontends/stv090x.c:3431:1: warning: the frame size of 6816 bytes is larger than 3072 bytes
+  fs/fscache/stats.c:287:1: warning: the frame size of 6536 bytes is larger than 3072 bytes
 
-This patch fixes it by clearing the queue for "Page not Present" if "Page Ready"
-occurs before the next vmentry since the GUP has already got the required page
-and shadow page table has already been fixed by "Page Ready" handler.
+To reduce this risk, -fsanitize-address-use-after-scope is now split out
+into a separate CONFIG_KASAN_EXTRA Kconfig option, leading to stack
+frames that are smaller than 2 kilobytes most of the time on x86_64.  An
+earlier version of this patch also prevented combining KASAN_EXTRA with
+KASAN_INLINE, but that is no longer necessary with gcc-7.0.1.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Fixes: 7c90705bf2a3 ("KVM: Inject asynchronous page fault into a PV guest if page is swapped out.")
-[Changed indentation and added clearing of injected. - Radim]
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-[port from upstream v4.14-rc1, Don't assign to kvm_queued_exception::injected or
- x86_exception::async_page_fault]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+All patches to get the frame size below 2048 bytes with CONFIG_KASAN=y
+and CONFIG_KASAN_EXTRA=n have been merged by maintainers now, so we can
+bring back that default now.  KASAN_EXTRA=y still causes lots of
+warnings but now defaults to !COMPILE_TEST to disable it in
+allmodconfig, and it remains disabled in all other defconfigs since it
+is a new option.  I arbitrarily raise the warning limit for KASAN_EXTRA
+to 3072 to reduce the noise, but an allmodconfig kernel still has around
+50 warnings on gcc-7.
+
+I experimented a bit more with smaller stack frames and have another
+follow-up series that reduces the warning limit for 64-bit architectures
+to 1280 bytes (without CONFIG_KASAN).
+
+With earlier versions of this patch series, I also had patches to address
+the warnings we get with KASAN and/or KASAN_EXTRA, using a
+"noinline_if_stackbloat" annotation.
+
+That annotation now got replaced with a gcc-8 bugfix (see
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715) and a workaround for
+older compilers, which means that KASAN_EXTRA is now just as bad as
+before and will lead to an instant stack overflow in a few extreme
+cases.
+
+This reverts parts of commit 3f181b4d8652 ("lib/Kconfig.debug: disable
+-Wframe-larger-than warnings with KASAN=y").  Two patches in linux-next
+should be merged first to avoid introducing warnings in an allmodconfig
+build:
+  3cd890dbe2a4 ("media: dvb-frontends: fix i2c access helpers for KASAN")
+  16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
+
+Do we really need to backport this?
+
+I think we do: without this patch, enabling KASAN will lead to
+unavoidable kernel stack overflow in certain device drivers when built
+with gcc-7 or higher on linux-4.10+ or any version that contains a
+backport of commit c5caf21ab0cf8.  Most people are probably still on
+older compilers, but it will get worse over time as they upgrade their
+distros.
+
+The warnings we get on kernels older than this should all be for code
+that uses dangerously large stack frames, though most of them do not
+cause an actual stack overflow by themselves.The asan-stack option was
+added in linux-4.0, and commit 3f181b4d8652 ("lib/Kconfig.debug:
+disable -Wframe-larger-than warnings with KASAN=y") effectively turned
+off the warning for allmodconfig kernels, so I would like to see this
+fix backported to any kernels later than 4.0.
+
+I have done dozens of fixes for individual functions with stack frames
+larger than 2048 bytes with asan-stack, and I plan to make sure that
+all those fixes make it into the stable kernels as well (most are
+already there).
+
+Part of the complication here is that asan-stack (from 4.0) was
+originally assumed to always require much larger stacks, but that
+turned out to be a combination of multiple gcc bugs that we have now
+worked around and fixed, but sanitize-address-use-after-scope (from
+v4.10) has a much higher inherent stack usage and also suffers from at
+least three other problems that we have analyzed but not yet fixed
+upstream, each of them makes the stack usage more severe than it should
+be.
+
+Link: http://lkml.kernel.org/r/20171221134744.2295529-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[arnd: rebase to v4.4; only re-enable warning]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/x86.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ lib/Kconfig.debug |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8210,6 +8210,13 @@ static int apf_put_user(struct kvm_vcpu
- 				      sizeof(val));
- }
- 
-+static int apf_get_user(struct kvm_vcpu *vcpu, u32 *val)
-+{
-+
-+	return kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.apf.data, val,
-+				      sizeof(u32));
-+}
-+
- void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
- 				     struct kvm_async_pf *work)
- {
-@@ -8236,6 +8243,7 @@ void kvm_arch_async_page_present(struct
- 				 struct kvm_async_pf *work)
- {
- 	struct x86_exception fault;
-+	u32 val;
- 
- 	if (work->wakeup_all)
- 		work->arch.token = ~0; /* broadcast wakeup */
-@@ -8243,14 +8251,24 @@ void kvm_arch_async_page_present(struct
- 		kvm_del_async_pf_gfn(vcpu, work->arch.gfn);
- 	trace_kvm_async_pf_ready(work->arch.token, work->gva);
- 
--	if ((vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED) &&
--	    !apf_put_user(vcpu, KVM_PV_REASON_PAGE_READY)) {
--		fault.vector = PF_VECTOR;
--		fault.error_code_valid = true;
--		fault.error_code = 0;
--		fault.nested_page_fault = false;
--		fault.address = work->arch.token;
--		kvm_inject_page_fault(vcpu, &fault);
-+	if (vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED &&
-+	    !apf_get_user(vcpu, &val)) {
-+		if (val == KVM_PV_REASON_PAGE_NOT_PRESENT &&
-+		    vcpu->arch.exception.pending &&
-+		    vcpu->arch.exception.nr == PF_VECTOR &&
-+		    !apf_put_user(vcpu, 0)) {
-+			vcpu->arch.exception.pending = false;
-+			vcpu->arch.exception.nr = 0;
-+			vcpu->arch.exception.has_error_code = false;
-+			vcpu->arch.exception.error_code = 0;
-+		} else if (!apf_put_user(vcpu, KVM_PV_REASON_PAGE_READY)) {
-+			fault.vector = PF_VECTOR;
-+			fault.error_code_valid = true;
-+			fault.error_code = 0;
-+			fault.nested_page_fault = false;
-+			fault.address = work->arch.token;
-+			kvm_inject_page_fault(vcpu, &fault);
-+		}
- 	}
- 	vcpu->arch.apf.halted = false;
- 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -197,7 +197,7 @@ config ENABLE_MUST_CHECK
+ config FRAME_WARN
+ 	int "Warn for stack frames larger than (needs gcc 4.4)"
+ 	range 0 8192
+-	default 0 if KASAN
++	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+ 	default 1024 if !64BIT
+ 	default 2048 if 64BIT
+ 	help
