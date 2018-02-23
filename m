@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225kr/e3CJ2i7mpo/Paf89oez9xBKl9zyo5Csme65u6JNPAPFTeIRJxY5sWDbdO0vb7T8LWg
-ARC-Seal: i=1; a=rsa-sha256; t=1519411054; cv=none;
+X-Google-Smtp-Source: AG47ELuPp2xWuccEbOq7n5rxVAPlG5kurb8mOYlA7jXwue6S15NZ1kX6kLQVglb+G4FtU4Khc0MU
+ARC-Seal: i=1; a=rsa-sha256; t=1519411051; cv=none;
         d=google.com; s=arc-20160816;
-        b=KGTfB7QaZsZzdsM6/mxSayGJjGIsIG014ELA75XDWiKUW7G1WSFuF5/FJTakpoy5cs
-         kvg1T6if3QIJlZo1a30lXIv4uuWEkcPic3qm7iS+MDkYzI4lniaAm09iJDEASq2BPaof
-         25nnMqiaTnM/yiGBU0LkFT0rGjoKNjrhcBGTcM5i6epd5dauBhz4xXVlp8HuZ0Y8P8Jh
-         smF16wggGyRFwIz7w0PGVFnRw+RWr4NKPEmbwzkx9TTpq0PUeLTTJI4l8/OiCDhJ1NHZ
-         Jvj3kczU4UFuMrdj2nzxSCKt9mky78TRfvA2sbRjxCXcP/7xyZFpRLupcDSOJ/lDDfs5
-         WvTg==
+        b=qcGzKN89NtxPz93Zosb9hodStq+eIwIH0vvqLLGlTzDHRuecH+kiZWpdpJv6hJ+8kM
+         jaaHHC/bsQaBs5zo7LdNggCDc1n40MHbcd+8NeKrNrhvZ7R5/R3pzyCxomvdz5biLn8k
+         CwkNWo6mLU3+CKwdz+ajSUzPAP8pGk/QKbvzAoDHa4PSbpEi2lch1P54kPpWMoYLm9uP
+         rD2yFA1rMqCoLAy6Mrbnz/oIJsLGuStlU4axzzvf89orAVQ4BmQq+mDpKboSEGrb9D0x
+         KPJyBYG4GqrwvWUfL/suiNmeWJ5/AKsFVkaOsCJBGykrXdj4AyZAtTK6BRHy472xcrNu
+         ypag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Jnd4kX1NyzLRTiHNHo69scU2fqHxYmK44+XdVCDLw9c=;
-        b=Dm4/SNZzGpwTNn8Ah7BNskDYbiJtr54+AUksdWpxpXzf3Fxyo4sFUvPB9HgPXsYK8D
-         IHoLMiz7GrK/8R0tWmL9ITOna5TsvJ31i7Eh+ZYFBjtSEQVh+/TuSalq57bIXIHUG6CN
-         PdqVkjCYK20LtyXNeeuYPpMqJZkjX+rsDV1GE81BGLzmetjjN9QQYedSgo6MpTcw++DT
-         ZoiJGlgTf9Z7lTBgDE2Pze02pR3ObHp6pUMU9/WnNgF5xdZklfyGEMRofn6xHqGUdGaS
-         kXHy2fUGQ1m3vZROnxSbk2z9RBwP61FFyhiiA8apm7GXdH6OSMmzLiyYTafp0v+t+yIw
-         Ollw==
+        bh=LqLCFjZo1HKO+JvD90GzcEPQVeZhxU9/QJvvrrCXFP0=;
+        b=U75mcGQCF3ZfN7INUXjnBV71bgJCnbxWbxk/+q29D8yVvLD+zbleaxzlrHG7DZiCNi
+         tNESSRlZHruDCrohG2lEyrhXvYDygGrCsCbvlM6V176JuaIsDSuatRVKeFyVHJZdH80M
+         NRHcV0QqwgniWuYqH3kGrjBmL9jN/xgV/kOQVrBtr3S9PHlNMWEwcPR7xinW0B/eRGZT
+         uuOmzXJPsVxoKi8k7cydW81SK0nalh8ER91fzj9aF1g215DIvD/HR7uIKuVBOQ1xIpBZ
+         DYGgNM52T/oRfw0epKvUtmILO27Ra6ZABBXarIxJxLU47E07nUu7Vo3dA6Dw55FvwGf7
+         SrwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH 4.4 104/193] fbdev: auo_k190x: avoid unused function warnings
-Date: Fri, 23 Feb 2018 19:25:37 +0100
-Message-Id: <20180223170342.232618179@linuxfoundation.org>
+	Andrew Lunn <andrew@lunn.ch>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 103/193] driver-core: use dev argument in dev_dbg_ratelimited stub
+Date: Fri, 23 Feb 2018 19:25:36 +0100
+Message-Id: <20180223170342.087780611@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217966120288358?=
-X-GMAIL-MSGID: =?utf-8?q?1593217966120288358?=
+X-GMAIL-THRID: =?utf-8?q?1593217963253722803?=
+X-GMAIL-MSGID: =?utf-8?q?1593217963253722803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit a8a31afad5ffa1c7de0cef1c4bc383b50f426bf8 upstream.
+commit 1f62ff34a90471d1b735bac2c79e894afc7c59bc upstream.
 
-The auo_k190x framebuffer driver encloses the power-management
-functions in #ifdef CONFIG_PM, but the auok190x_suspend/resume
-functions are only really used when CONFIG_PM_SLEEP is also
-set, as a frequent gcc warning shows:
+dev_dbg_ratelimited() is a macro that ignores its first argument when DEBUG is
+not set, which can lead to unused variable warnings:
 
-drivers/video/fbdev/auo_k190x.c:859:12: warning: 'auok190x_suspend' defined but not used
-drivers/video/fbdev/auo_k190x.c:899:12: warning: 'auok190x_resume' defined but not used
+ethernet/mellanox/mlxsw/pci.c: In function 'mlxsw_pci_cqe_sdq_handle':
+ethernet/mellanox/mlxsw/pci.c:646:18: warning: unused variable 'pdev' [-Wunused-variable]
+ethernet/mellanox/mlxsw/pci.c: In function 'mlxsw_pci_cqe_rdq_handle':
+ethernet/mellanox/mlxsw/pci.c:671:18: warning: unused variable 'pdev' [-Wunused-variable]
 
-This changes the driver to remove the #ifdef and instead mark
-the functions as __maybe_unused, which is a nicer anyway, as it
-provides build testing for all the code in all configurations
-and is harder to get wrong.
+The macro already ensures that all its other arguments are silently
+ignored by the compiler without triggering a warning, through the
+use of the no_printk() macro, but the dev argument is not passed into
+that.
+
+This changes the definition to use the same trick as no_printk() with
+an if(0) that leads the compiler to not evaluate the side-effects but
+still see that 'dev' might not be unused.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 6f586e663e3b ("driver-core: Shut up dev_dbg_reatelimited() without DEBUG")
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/video/fbdev/auo_k190x.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ include/linux/device.h |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/auo_k190x.c
-+++ b/drivers/video/fbdev/auo_k190x.c
-@@ -773,9 +773,7 @@ static void auok190x_recover(struct auok
- /*
-  * Power-management
-  */
--
--#ifdef CONFIG_PM
--static int auok190x_runtime_suspend(struct device *dev)
-+static int __maybe_unused auok190x_runtime_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct fb_info *info = platform_get_drvdata(pdev);
-@@ -822,7 +820,7 @@ finish:
- 	return 0;
- }
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1272,8 +1272,11 @@ do {									\
+ 		dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__);	\
+ } while (0)
+ #else
+-#define dev_dbg_ratelimited(dev, fmt, ...)			\
+-	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#define dev_dbg_ratelimited(dev, fmt, ...)				\
++do {									\
++	if (0)								\
++		dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__);	\
++} while (0)
+ #endif
  
--static int auok190x_runtime_resume(struct device *dev)
-+static int __maybe_unused auok190x_runtime_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct fb_info *info = platform_get_drvdata(pdev);
-@@ -856,7 +854,7 @@ static int auok190x_runtime_resume(struc
- 	return 0;
- }
- 
--static int auok190x_suspend(struct device *dev)
-+static int __maybe_unused auok190x_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct fb_info *info = platform_get_drvdata(pdev);
-@@ -896,7 +894,7 @@ static int auok190x_suspend(struct devic
- 	return 0;
- }
- 
--static int auok190x_resume(struct device *dev)
-+static int __maybe_unused auok190x_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct fb_info *info = platform_get_drvdata(pdev);
-@@ -933,7 +931,6 @@ static int auok190x_resume(struct device
- 
- 	return 0;
- }
--#endif
- 
- const struct dev_pm_ops auok190x_pm = {
- 	SET_RUNTIME_PM_OPS(auok190x_runtime_suspend, auok190x_runtime_resume,
+ #ifdef VERBOSE_DEBUG
