@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv/p62ZEH1AQojmW7KpzqrKDzhaOUPFwvPSoFr+2F7UKiqGv1MpJVd3aqwmZx2lmlSxScOK
-ARC-Seal: i=1; a=rsa-sha256; t=1519411826; cv=none;
+X-Google-Smtp-Source: AH8x226q/5HyboisrGC8LQfT7wzotutP2fiKtLqFthZtixMqMvtPCcC8sRK6Twjbtg8oWrd3v2wt
+ARC-Seal: i=1; a=rsa-sha256; t=1519411823; cv=none;
         d=google.com; s=arc-20160816;
-        b=D86gd2LXcVZ44acKXIKpVeNMpYaqS9zJ8zGFE3wSliA7pKNRXRdrw4TQ3TqhrDlX0w
-         UuYFNy0QnNjPRbBwCSlpMFK+kx21GoTC6fs51CHbT+o2aACWq3bHufGOpgj7Zvf7RJpo
-         15RBzefGxFunlqLlS8rlnCasyXkwR4YO8pWbCn2dPdUMQK3lZzNgPYHNWgndwYm4RB5C
-         JJTJwvJ+7vsGUDy6IwPpONi3K3Xvv4OaFnJy4d240xEj2+CgehtUuERIVAnYDtT1duuw
-         kSTRznWbRWDH+Skgzund6PABFFVr2SyjZsB2K7g9OyeC5LmNbe7gPcRd0/7LED0ToZjw
-         7gPg==
+        b=vEJ4NsdlHlCdsow2qJz2NGkkic1ym/m8DcfbI/bfu4mnlPlNlHqIf8HjjFq9LCRZE0
+         zCaP2yWxriKIGUiUz9cW0izFxW5Dnn8RrETfUKNzIwKGrRtJq/7xELs1baq30IMiMhlr
+         FnsldG1/10izlfoDix1z1KtpXektxRsyXb4VOxGxh2gN0RBysf8o2LAA378OAHZaHYX+
+         b0vxyxKw5Y7PLH3bcC4yzpT4yBdUxW2/xplREs2iY/ITi3ovx8hIrXkCqJjRCeaQpDlf
+         cLp1Tkc3nbzLbqf9CxPu6I7NNpRMFUqMmy9VvBXqEUZ6PWoMXiVQbsGpMIy7JOUjkiA9
+         NeuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=c1mtNUK2cfuldYUwjqEFOSqmLNB6wiNROOupBYxXYgg=;
-        b=u6TzgcO70Uj6pWAFwqJptHYuVENMmXFxqf8hNv8FMXdZpqwbzAKAcEdI6/qsOvTFrP
-         mRbRfMy8QysaGF9/QIJ7njaRsYcIHtRoTWF1BCNLJfH98T90gdnJLPkdy5EAB+NLb9Ax
-         pveN8uQhLHsbHprGbPlbWzTSNEx9F/Gx4CzRaa3UhlbAnOHeJ4F//zd7SzmfqFL/5GWN
-         ibR42Qe0yLugjOnD8Vd/CUzudDfmiQFb0RQxtmmBM1f7QYeex2R11/uup/SauX+ehj3I
-         uz8tIm901kp9/8IwWPyO6BSuRlgYcPkjgb41QxHOdf8IGyiDPGXtV1Eo7WXbwMCPeFXz
-         d3JA==
+        bh=o9q1KqY8or4U3QjmniXgWPYA4Tewhsm0Qe+6vYGJau4=;
+        b=jgIRZmmGMh8K367P/LB5Xfu7xcDWruMLepCeas/VxATpOKj4GYauWwqRVL4BDTwQFQ
+         AunQpDGAW5UUpHGuIJFPLzD7fnFDBBCD6CJriPu5D1j2pJ4cfmqPovDxLqOrsI1f0Sug
+         +X8oLXL9fOgITjPkdBtr+svALoxfrASw78w1sQAQJV5SfR4oKWg8XX7oO/DSSUFHoCF6
+         VEW872JxQTuWwmooaRCBCOF6oq8IHJTChlF/9LiiokonB6GKSRU2pjiDXLw3PfAqfQXV
+         TKXD2jaFmAmWSkmjqFvSU8J6tTIsP78baBEHC5H6nHmiuvNZa6/hxSTbHUZ9oy++FTwp
+         ieQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+114b15f2be420a8886c3@syzkaller.appspotmail.com,
-	Tom Herbert <tom@quantonium.net>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 003/159] kcm: Check if sk_user_data already set in kcm_attach
-Date: Fri, 23 Feb 2018 19:25:11 +0100
-Message-Id: <20180223170743.496615531@linuxfoundation.org>
+	syzbot <syzkaller@googlegroups.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 029/159] crypto: x86/twofish-3way - Fix %rbp usage
+Date: Fri, 23 Feb 2018 19:25:37 +0100
+Message-Id: <20180223170746.783203230@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218387524448381?=
-X-GMAIL-MSGID: =?utf-8?q?1593218775770517556?=
+X-GMAIL-THRID: =?utf-8?q?1593217529169344601?=
+X-GMAIL-MSGID: =?utf-8?q?1593218772826228972?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,61 +51,258 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Herbert <tom@quantonium.net>
+From: Eric Biggers <ebiggers@google.com>
 
-commit e5571240236c5652f3e079b1d5866716a7ad819c upstream.
+commit d8c7fe9f2a486a6e5f0d5229ca43807af5ab22c6 upstream.
 
-This is needed to prevent sk_user_data being overwritten.
-The check is done under the callback lock. This should prevent
-a socket from being attached twice to a KCM mux. It also prevents
-a socket from being attached for other use cases of sk_user_data
-as long as the other cases set sk_user_data under the lock.
-Followup work is needed to unify all the use cases of sk_user_data
-to use the same locking.
+Using %rbp as a temporary register breaks frame pointer convention and
+breaks stack traces when unwinding from an interrupt in the crypto code.
 
-Reported-by: syzbot+114b15f2be420a8886c3@syzkaller.appspotmail.com
-Fixes: ab7ac4eb9832 ("kcm: Kernel Connection Multiplexor module")
-Signed-off-by: Tom Herbert <tom@quantonium.net>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In twofish-3way, we can't simply replace %rbp with another register
+because there are none available.  Instead, we use the stack to hold the
+values that %rbp, %r11, and %r12 were holding previously.  Each of these
+values represents the half of the output from the previous Feistel round
+that is being passed on unchanged to the following round.  They are only
+used once per round, when they are exchanged with %rax, %rbx, and %rcx.
+
+As a result, we free up 3 registers (one per block) and can reassign
+them so that %rbp is not used, and additionally %r14 and %r15 are not
+used so they do not need to be saved/restored.
+
+There may be a small overhead caused by replacing 'xchg REG, REG' with
+the needed sequence 'mov MEM, REG; mov REG, MEM; mov REG, REG' once per
+round.  But, counterintuitively, when I tested "ctr-twofish-3way" on a
+Haswell processor, the new version was actually about 2% faster.
+(Perhaps 'xchg' is not as well optimized as plain moves.)
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/kcm/kcmsock.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/crypto/twofish-x86_64-asm_64-3way.S |  118 ++++++++++++++-------------
+ 1 file changed, 63 insertions(+), 55 deletions(-)
 
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1405,9 +1405,18 @@ static int kcm_attach(struct socket *soc
- 		return err;
- 	}
+--- a/arch/x86/crypto/twofish-x86_64-asm_64-3way.S
++++ b/arch/x86/crypto/twofish-x86_64-asm_64-3way.S
+@@ -55,29 +55,31 @@
+ #define RAB1bl %bl
+ #define RAB2bl %cl
  
--	sock_hold(csk);
++#define CD0 0x0(%rsp)
++#define CD1 0x8(%rsp)
++#define CD2 0x10(%rsp)
++
++# used only before/after all rounds
+ #define RCD0 %r8
+ #define RCD1 %r9
+ #define RCD2 %r10
+ 
+-#define RCD0d %r8d
+-#define RCD1d %r9d
+-#define RCD2d %r10d
 -
- 	write_lock_bh(&csk->sk_callback_lock);
+-#define RX0 %rbp
+-#define RX1 %r11
+-#define RX2 %r12
+-
+-#define RX0d %ebp
+-#define RX1d %r11d
+-#define RX2d %r12d
+-
+-#define RY0 %r13
+-#define RY1 %r14
+-#define RY2 %r15
+-
+-#define RY0d %r13d
+-#define RY1d %r14d
+-#define RY2d %r15d
++# used only during rounds
++#define RX0 %r8
++#define RX1 %r9
++#define RX2 %r10
 +
-+	/* Check if sk_user_data is aready by KCM or someone else.
-+	 * Must be done under lock to prevent race conditions.
-+	 */
-+	if (csk->sk_user_data) {
-+		write_unlock_bh(&csk->sk_callback_lock);
-+		strp_done(&psock->strp);
-+		kmem_cache_free(kcm_psockp, psock);
-+		return -EALREADY;
-+	}
++#define RX0d %r8d
++#define RX1d %r9d
++#define RX2d %r10d
 +
- 	psock->save_data_ready = csk->sk_data_ready;
- 	psock->save_write_space = csk->sk_write_space;
- 	psock->save_state_change = csk->sk_state_change;
-@@ -1415,8 +1424,11 @@ static int kcm_attach(struct socket *soc
- 	csk->sk_data_ready = psock_data_ready;
- 	csk->sk_write_space = psock_write_space;
- 	csk->sk_state_change = psock_state_change;
++#define RY0 %r11
++#define RY1 %r12
++#define RY2 %r13
 +
- 	write_unlock_bh(&csk->sk_callback_lock);
++#define RY0d %r11d
++#define RY1d %r12d
++#define RY2d %r13d
  
-+	sock_hold(csk);
+ #define RT0 %rdx
+ #define RT1 %rsi
+@@ -85,6 +87,8 @@
+ #define RT0d %edx
+ #define RT1d %esi
+ 
++#define RT1bl %sil
 +
- 	/* Finished initialization, now add the psock to the MUX. */
- 	spin_lock_bh(&mux->lock);
- 	head = &mux->psocks;
+ #define do16bit_ror(rot, op1, op2, T0, T1, tmp1, tmp2, ab, dst) \
+ 	movzbl ab ## bl,		tmp2 ## d; \
+ 	movzbl ab ## bh,		tmp1 ## d; \
+@@ -92,6 +96,11 @@
+ 	op1##l T0(CTX, tmp2, 4),	dst ## d; \
+ 	op2##l T1(CTX, tmp1, 4),	dst ## d;
+ 
++#define swap_ab_with_cd(ab, cd, tmp)	\
++	movq cd, tmp;			\
++	movq ab, cd;			\
++	movq tmp, ab;
++
+ /*
+  * Combined G1 & G2 function. Reordered with help of rotates to have moves
+  * at begining.
+@@ -110,15 +119,15 @@
+ 	/* G1,2 && G2,2 */ \
+ 	do16bit_ror(32, xor, xor, Tx2, Tx3, RT0, RT1, ab ## 0, x ## 0); \
+ 	do16bit_ror(16, xor, xor, Ty3, Ty0, RT0, RT1, ab ## 0, y ## 0); \
+-	xchgq cd ## 0, ab ## 0; \
++	swap_ab_with_cd(ab ## 0, cd ## 0, RT0); \
+ 	\
+ 	do16bit_ror(32, xor, xor, Tx2, Tx3, RT0, RT1, ab ## 1, x ## 1); \
+ 	do16bit_ror(16, xor, xor, Ty3, Ty0, RT0, RT1, ab ## 1, y ## 1); \
+-	xchgq cd ## 1, ab ## 1; \
++	swap_ab_with_cd(ab ## 1, cd ## 1, RT0); \
+ 	\
+ 	do16bit_ror(32, xor, xor, Tx2, Tx3, RT0, RT1, ab ## 2, x ## 2); \
+ 	do16bit_ror(16, xor, xor, Ty3, Ty0, RT0, RT1, ab ## 2, y ## 2); \
+-	xchgq cd ## 2, ab ## 2;
++	swap_ab_with_cd(ab ## 2, cd ## 2, RT0);
+ 
+ #define enc_round_end(ab, x, y, n) \
+ 	addl y ## d,			x ## d; \
+@@ -168,6 +177,16 @@
+ 	decrypt_round3(ba, dc, (n*2)+1); \
+ 	decrypt_round3(ba, dc, (n*2));
+ 
++#define push_cd()	\
++	pushq RCD2;	\
++	pushq RCD1;	\
++	pushq RCD0;
++
++#define pop_cd()	\
++	popq RCD0;	\
++	popq RCD1;	\
++	popq RCD2;
++
+ #define inpack3(in, n, xy, m) \
+ 	movq 4*(n)(in),			xy ## 0; \
+ 	xorq w+4*m(CTX),		xy ## 0; \
+@@ -223,11 +242,8 @@ ENTRY(__twofish_enc_blk_3way)
+ 	 *	%rdx: src, RIO
+ 	 *	%rcx: bool, if true: xor output
+ 	 */
+-	pushq %r15;
+-	pushq %r14;
+ 	pushq %r13;
+ 	pushq %r12;
+-	pushq %rbp;
+ 	pushq %rbx;
+ 
+ 	pushq %rcx; /* bool xor */
+@@ -235,40 +251,36 @@ ENTRY(__twofish_enc_blk_3way)
+ 
+ 	inpack_enc3();
+ 
+-	encrypt_cycle3(RAB, RCD, 0);
+-	encrypt_cycle3(RAB, RCD, 1);
+-	encrypt_cycle3(RAB, RCD, 2);
+-	encrypt_cycle3(RAB, RCD, 3);
+-	encrypt_cycle3(RAB, RCD, 4);
+-	encrypt_cycle3(RAB, RCD, 5);
+-	encrypt_cycle3(RAB, RCD, 6);
+-	encrypt_cycle3(RAB, RCD, 7);
++	push_cd();
++	encrypt_cycle3(RAB, CD, 0);
++	encrypt_cycle3(RAB, CD, 1);
++	encrypt_cycle3(RAB, CD, 2);
++	encrypt_cycle3(RAB, CD, 3);
++	encrypt_cycle3(RAB, CD, 4);
++	encrypt_cycle3(RAB, CD, 5);
++	encrypt_cycle3(RAB, CD, 6);
++	encrypt_cycle3(RAB, CD, 7);
++	pop_cd();
+ 
+ 	popq RIO; /* dst */
+-	popq %rbp; /* bool xor */
++	popq RT1; /* bool xor */
+ 
+-	testb %bpl, %bpl;
++	testb RT1bl, RT1bl;
+ 	jnz .L__enc_xor3;
+ 
+ 	outunpack_enc3(mov);
+ 
+ 	popq %rbx;
+-	popq %rbp;
+ 	popq %r12;
+ 	popq %r13;
+-	popq %r14;
+-	popq %r15;
+ 	ret;
+ 
+ .L__enc_xor3:
+ 	outunpack_enc3(xor);
+ 
+ 	popq %rbx;
+-	popq %rbp;
+ 	popq %r12;
+ 	popq %r13;
+-	popq %r14;
+-	popq %r15;
+ 	ret;
+ ENDPROC(__twofish_enc_blk_3way)
+ 
+@@ -278,35 +290,31 @@ ENTRY(twofish_dec_blk_3way)
+ 	 *	%rsi: dst
+ 	 *	%rdx: src, RIO
+ 	 */
+-	pushq %r15;
+-	pushq %r14;
+ 	pushq %r13;
+ 	pushq %r12;
+-	pushq %rbp;
+ 	pushq %rbx;
+ 
+ 	pushq %rsi; /* dst */
+ 
+ 	inpack_dec3();
+ 
+-	decrypt_cycle3(RAB, RCD, 7);
+-	decrypt_cycle3(RAB, RCD, 6);
+-	decrypt_cycle3(RAB, RCD, 5);
+-	decrypt_cycle3(RAB, RCD, 4);
+-	decrypt_cycle3(RAB, RCD, 3);
+-	decrypt_cycle3(RAB, RCD, 2);
+-	decrypt_cycle3(RAB, RCD, 1);
+-	decrypt_cycle3(RAB, RCD, 0);
++	push_cd();
++	decrypt_cycle3(RAB, CD, 7);
++	decrypt_cycle3(RAB, CD, 6);
++	decrypt_cycle3(RAB, CD, 5);
++	decrypt_cycle3(RAB, CD, 4);
++	decrypt_cycle3(RAB, CD, 3);
++	decrypt_cycle3(RAB, CD, 2);
++	decrypt_cycle3(RAB, CD, 1);
++	decrypt_cycle3(RAB, CD, 0);
++	pop_cd();
+ 
+ 	popq RIO; /* dst */
+ 
+ 	outunpack_dec3();
+ 
+ 	popq %rbx;
+-	popq %rbp;
+ 	popq %r12;
+ 	popq %r13;
+-	popq %r14;
+-	popq %r15;
+ 	ret;
+ ENDPROC(twofish_dec_blk_3way)
