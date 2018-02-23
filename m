@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227O69KR9eQYlz+sk1T/qayIi5hZVlqx3c9Kw3pw2b/lkAtZ4vn/Igy0/4ULEHhYDFi7J+GB
-ARC-Seal: i=1; a=rsa-sha256; t=1519411255; cv=none;
+X-Google-Smtp-Source: AG47ELvMLUP9IzEX3J/BCpJcPqFThx68Vbged/KKC2aCGfOVI7O+H/OdKRsxwXCksnNg8bqNjQy8
+ARC-Seal: i=1; a=rsa-sha256; t=1519411252; cv=none;
         d=google.com; s=arc-20160816;
-        b=asW+zpGk4g965ZXBpit3LtDowaZffUP+nJGJgbO2P3QJXN697qayTNMutYXOQUxbPw
-         TzMR04M/6vpvRC5u67uux5u8wmha5NYAdJVbGcEFZRby05DIPyBhmQvv+pPZsgCV5MEj
-         it/PPNiAD3B0bd5SmCL0pchjAlmaOp3lDEh/A1m0JlSIp1zGxgInMfSoGWX34dpI5MQc
-         OSza6uf8bHgracrNL6QnZo8xmB5dO9Giiaa13nqFpDgMaWnJ7M/1nBrCvNjZV+SI/wBA
-         S6N67f02uFMUoP3cYBuR61cwDRl3Hvpjk3rGpGFKrRqtRajV3fSSWO6RnsrcfNpku+UX
-         SmHw==
+        b=DKCzEBLK3slUm1a1gAMYKsQLsMY4ZJ8JdSIuGp3WjCv/b4iBXMLvcFG1yUiSrwq7V2
+         TxCYaQj2i78nvs0a1+w7+3YYmC0mAe20wWucHLjw0GpL371q11zNqF5z97w9Yx1zAAGi
+         aTLt0rE6aEy4Gfe4xjlzzuBF3MmjkRAl3kuO8A2KLyFUPPnXmTP1f4CzIeqQ4SKulWrQ
+         4Wky6rfa5PWRPdQ9/jxHQfPZrKVTkLX/Kmykwfs7g7EpkbRWWjSXyF7vE84u9+Sfxox1
+         fA9AHOIYd4bN+YiwEXoOeIsN8wq0K2Swtr+Gedz5+KuueOPUsaiHnTdNeMD63mzKR3PP
+         mDkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=THJ/Ylt2miY5hnOh3A644fBb7p/wCwK7zJqBp03xUMQ=;
-        b=PtmdholnEbglYahf9wWrJGc2a7kHMk7fBIalp0esnF9ws3wkabS8NGABoNsAxqdD/b
-         D7oXD3VArj1e6fhORqD4EtvqB0L6Ags2GJTnvQcOx8G6uyK8TMD6JtJYgVWTM+4XMPEe
-         rAAsGUFZgOC4fTn4ZWyo1zK/oG7s/Zl+kEdwCbgGNj75Dp8MXRueWNWV78zlRQo3/FPs
-         HyjQvhTHLZ2rjx4N5Vt4htqSAStMp0oGuabk7np4s02+LqYh6dYbf+oTZ3q+xVvAvrwI
-         sC0LMIC6Y4FD6prxvajdjKB7ubcy5rFkWUVZr5KXYB0J7d8Edorkw6rpUIUFF+lOPVOa
-         kZzA==
+        bh=FbyFLFVtMqH4EXIpOD7ujpnnqAehzxdPOLiAEU/QEAg=;
+        b=oJD9PC58p6kspZUss6KknYGGfKGtpN+bdqVsSkWNCsbEjZLRfAb88jonsF7eQ2Jr3c
+         FkxtadGq4IAGgS1s//x+n5oSI1tXlMgCg+ibl1rzCMSvXCGOZvuRsNbL0Uljqxy3YBQH
+         iHQMF0MT/LGcTdtXXe/Yf0vqxSNlla2Y3aajZ0LdoP5+WDNR+FOmrc478ysmAwT6z1uI
+         0y2ivFlqzhPYKspEsbAxrz3aYUTH8bQVbmL7xIEEXx84xwbwMdU2I8i/V90DL6U+wJ1M
+         q1jJw7W28ulSoG7U2LD1E8Gz6YXQc7t5C2YDA2WjFurTbCotjwZahaycRAqIaqPmSnpO
+         GP5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Cyril Novikov <cnovikov@lynx.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Kees Cook <keescook@chromium.org>,
 	linux-arch@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
+	Jonathan Corbet <corbet@lwn.net>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
+	kernel-hardening@lists.openwall.com,
 	torvalds@linux-foundation.org,
 	alan@linux.intel.com,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 174/193] array_index_nospec: Sanitize speculative array de-references
-Date: Fri, 23 Feb 2018 19:26:47 +0100
-Message-Id: <20180223170353.313139741@linuxfoundation.org>
+Subject: [PATCH 4.4 173/193] Documentation: Document array_index_nospec
+Date: Fri, 23 Feb 2018 19:26:46 +0100
+Message-Id: <20180223170353.126016056@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218176946310853?=
-X-GMAIL-MSGID: =?utf-8?q?1593218176946310853?=
+X-GMAIL-THRID: =?utf-8?q?1593218174234829623?=
+X-GMAIL-MSGID: =?utf-8?q?1593218174234829623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,116 +60,124 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-(cherry picked from commit f3804203306e098dae9ca51540fcd5eb700d7f40)
+(cherry picked from commit f84a56f73dddaeac1dba8045b007f742f61cd2da)
 
-array_index_nospec() is proposed as a generic mechanism to mitigate
-against Spectre-variant-1 attacks, i.e. an attack that bypasses boundary
-checks via speculative execution. The array_index_nospec()
-implementation is expected to be safe for current generation CPUs across
-multiple architectures (ARM, x86).
+Document the rationale and usage of the new array_index_nospec() helper.
 
-Based on an original implementation by Linus Torvalds, tweaked to remove
-speculative flows by Alexei Starovoitov, and tweaked again by Linus to
-introduce an x86 assembly implementation for the mask generation.
-
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Co-developed-by: Alexei Starovoitov <ast@kernel.org>
-Suggested-by: Cyril Novikov <cnovikov@lynx.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
+Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
 Cc: gregkh@linuxfoundation.org
+Cc: kernel-hardening@lists.openwall.com
 Cc: torvalds@linux-foundation.org
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727413645.33451.15878817161436755393.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 [jwang: cherry pick to 4.4]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/nospec.h |   72 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 include/linux/nospec.h
+ Documentation/speculation.txt |   90 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 Documentation/speculation.txt
 
 --- /dev/null
-+++ b/include/linux/nospec.h
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright(c) 2018 Linus Torvalds. All rights reserved.
-+// Copyright(c) 2018 Alexei Starovoitov. All rights reserved.
-+// Copyright(c) 2018 Intel Corporation. All rights reserved.
++++ b/Documentation/speculation.txt
+@@ -0,0 +1,90 @@
++This document explains potential effects of speculation, and how undesirable
++effects can be mitigated portably using common APIs.
 +
-+#ifndef _LINUX_NOSPEC_H
-+#define _LINUX_NOSPEC_H
++===========
++Speculation
++===========
 +
-+/**
-+ * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
-+ * @index: array element index
-+ * @size: number of elements in array
-+ *
-+ * When @index is out of bounds (@index >= @size), the sign bit will be
-+ * set.  Extend the sign bit to all bits and invert, giving a result of
-+ * zero for an out of bounds index, or ~0 if within bounds [0, @size).
-+ */
-+#ifndef array_index_mask_nospec
-+static inline unsigned long array_index_mask_nospec(unsigned long index,
-+						    unsigned long size)
-+{
-+	/*
-+	 * Warn developers about inappropriate array_index_nospec() usage.
-+	 *
-+	 * Even if the CPU speculates past the WARN_ONCE branch, the
-+	 * sign bit of @index is taken into account when generating the
-+	 * mask.
-+	 *
-+	 * This warning is compiled out when the compiler can infer that
-+	 * @index and @size are less than LONG_MAX.
-+	 */
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
-+			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
-+		return 0;
++To improve performance and minimize average latencies, many contemporary CPUs
++employ speculative execution techniques such as branch prediction, performing
++work which may be discarded at a later stage.
 +
-+	/*
-+	 * Always calculate and emit the mask even if the compiler
-+	 * thinks the mask is not needed. The compiler does not take
-+	 * into account the value of @index under speculation.
-+	 */
-+	OPTIMIZER_HIDE_VAR(index);
-+	return ~(long)(index | (size - 1UL - index)) >> (BITS_PER_LONG - 1);
-+}
-+#endif
++Typically speculative execution cannot be observed from architectural state,
++such as the contents of registers. However, in some cases it is possible to
++observe its impact on microarchitectural state, such as the presence or
++absence of data in caches. Such state may form side-channels which can be
++observed to extract secret information.
 +
-+/*
-+ * array_index_nospec - sanitize an array index after a bounds check
-+ *
-+ * For a code sequence like:
-+ *
-+ *     if (index < size) {
-+ *         index = array_index_nospec(index, size);
-+ *         val = array[index];
-+ *     }
-+ *
-+ * ...if the CPU speculates past the bounds check then
-+ * array_index_nospec() will clamp the index within the range of [0,
-+ * size).
-+ */
-+#define array_index_nospec(index, size)					\
-+({									\
-+	typeof(index) _i = (index);					\
-+	typeof(size) _s = (size);					\
-+	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+									\
-+	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
-+	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
-+									\
-+	_i &= _mask;							\
-+	_i;								\
-+})
-+#endif /* _LINUX_NOSPEC_H */
++For example, in the presence of branch prediction, it is possible for bounds
++checks to be ignored by code which is speculatively executed. Consider the
++following code:
++
++	int load_array(int *array, unsigned int index)
++	{
++		if (index >= MAX_ARRAY_ELEMS)
++			return 0;
++		else
++			return array[index];
++	}
++
++Which, on arm64, may be compiled to an assembly sequence such as:
++
++	CMP	<index>, #MAX_ARRAY_ELEMS
++	B.LT	less
++	MOV	<returnval>, #0
++	RET
++  less:
++	LDR	<returnval>, [<array>, <index>]
++	RET
++
++It is possible that a CPU mis-predicts the conditional branch, and
++speculatively loads array[index], even if index >= MAX_ARRAY_ELEMS. This
++value will subsequently be discarded, but the speculated load may affect
++microarchitectural state which can be subsequently measured.
++
++More complex sequences involving multiple dependent memory accesses may
++result in sensitive information being leaked. Consider the following
++code, building on the prior example:
++
++	int load_dependent_arrays(int *arr1, int *arr2, int index)
++	{
++		int val1, val2,
++
++		val1 = load_array(arr1, index);
++		val2 = load_array(arr2, val1);
++
++		return val2;
++	}
++
++Under speculation, the first call to load_array() may return the value
++of an out-of-bounds address, while the second call will influence
++microarchitectural state dependent on this value. This may provide an
++arbitrary read primitive.
++
++====================================
++Mitigating speculation side-channels
++====================================
++
++The kernel provides a generic API to ensure that bounds checks are
++respected even under speculation. Architectures which are affected by
++speculation-based side-channels are expected to implement these
++primitives.
++
++The array_index_nospec() helper in <linux/nospec.h> can be used to
++prevent information from being leaked via side-channels.
++
++A call to array_index_nospec(index, size) returns a sanitized index
++value that is bounded to [0, size) even under cpu speculation
++conditions.
++
++This can be used to protect the earlier load_array() example:
++
++	int load_array(int *array, unsigned int index)
++	{
++		if (index >= MAX_ARRAY_ELEMS)
++			return 0;
++		else {
++			index = array_index_nospec(index, MAX_ARRAY_ELEMS);
++			return array[index];
++		}
++	}
