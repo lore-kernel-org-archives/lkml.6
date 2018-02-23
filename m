@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413643-2-456806909340912618
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413631-2-7226150684755992542
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413642; b=ZvG0/DY0gKJcqc3xJ4QacSmHolKK+dDYMJzDTZ9dhavF+Qw
-    TXEgRM58cgxDBud2drI7dTGEy1G1syJmgbOA6aMqJqsKYBT5WNJfUI3ZXN9ylJ6G
-    tEQV6I6fJAPLXz2mVodZ4TmLVl4NcUxfBnqXAgqvYiOc753+RV+PFxxeJAhNHmWT
-    AVeaK4IcsaAtAL4W/owBAfHcvJNolLmgB/kihOJnpFol1xwIpYms1WF5bBumDwKv
-    QCJCWFOJ0AXK8+WZ4Kx2mIawJtQm7y8TDVpxtlDOrfOqCn8/Dw3DT9jQv4D77I1e
-    QkZ87Clt8WzgPoYePK95bHGscY1h8jmuOtKbuIg==
+    t=1519413630; b=ownGzPX01rN82TxtyuQTvvjiOUAnZJL5J0tkVt2om7DTPB6
+    BRk4bbd5eJBhzJ3J7EOQ6s5s34UAfG/rg5tP5alXiZUTvlMKblvlBbNjI688XVZy
+    MDtO+Pkmqwp8udh2OFW2J0yTi5wHcT+WSC9OY326n0z6CQ4TRlWWI99sKdIHzaxz
+    +pwPnj4bb7fkcwYA1zQvCPo2QGDRouWcoB99K/kZjR7mwA9c2Tu+wQtXUR70ewmC
+    LM4pkkbNXBSkq9S4Et2Luudz/tMeHCH55WNBulCTKKgLTuWSZH2Vx5l8dF3Q4Foe
+    tCrhFMu2nzPekaE0NdaT8jPfUVKvyHBi5vd4RxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413642; bh=C6veyivqUR10blWSuf7VW0yFRd
-    Ez78xauaN1jP7Zi3Q=; b=vzJhuZSEMdQ2Ebh4Le1d3xGg+ObL+X5be5F4PH9Gll
-    LvWCZyF+0PCgYUgCV8AyNZY6Cvulu5HzA74AjWEj0aiOq/tjfY8mK5RRumDnTfZ+
-    hhpZ1B1E/T7Iqwd+VSt3akhhx4pIqzxHfgo/E4cRWsn65680vIkDWobTGzWa0dpy
-    2RDseegqnMZ7wyo3OqbrusLQ99+K12xfJv60juu4wYRwMwjYMKdx26piyTsfBYZW
-    zd4vJVhXGOX/q2H+ipdNycmjyaED64GjfEeDEm7lvWp/JvtxyeJ6jGMrrilp+eMd
-    otrirvQY405eexFibXxMM1/tMvV/IDK0JSH5qDUM34bQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413630; bh=4FTjyyUiIcqXR9xmcZuD3O6Da7
+    rHQSZCSHJy1uqknH4=; b=l5ts6y6uJemAeiZ1oYOqCH030Qd+GO7T1I0LQph+S4
+    KxPt3jGyIjTRsc5H4YK5tdjE5TpOPTy45FJrc0nyNSTfzkPCC1beRyUB+xOAexXw
+    osuTIHC4VxQgrtYEWvRLR04Uspz+URcm6KiR/piWEwxT0W5QF2cn5vi4EpHMX9Pw
+    oFGpH5rt30E0wE46QRHenHXtBs0kGxRjx1KFd6LJcSfNB5JfeoU+OkV6WherElLi
+    mjL6CGrH0wpYWcll9snKfX4UhIbRH4Jdf4SHYkH9nwPFUwMdf94e5Osp+9d336sD
+    uNOTmDeXjzIH/JILQ6NtYxoN1Ox8wPKZuOmbNdLvmH7A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,25 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935176AbeBWSyL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:54:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47652 "EHLO
+        id S935463AbeBWSyO (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:54:14 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964898AbeBWSyJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:09 -0500
+        with ESMTP id S935461AbeBWSyM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:12 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 106/159] PM / runtime: Fix handling of suppliers with disabled runtime PM
-Date: Fri, 23 Feb 2018 19:26:54 +0100
-Message-Id: <20180223170756.223462110@linuxfoundation.org>
+Subject: [PATCH 4.14 107/159] s390/virtio: add BSD license to virtio-ccw
+Date: Fri, 23 Feb 2018 19:26:55 +0100
+Message-Id: <20180223170756.339678850@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,38 +83,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
 
-[ Upstream commit 31eb7431805493e10f4731f366cf4d4e3e952035 ]
+[ Upstream commit edfb8d8fcb94a75b2e61c63549d4a5f6474ad3d2 ]
 
-Prevent rpm_get_suppliers() from returning an error code if runtime
-PM is disabled for one or more of the supplier devices it wants to
-runtime-resume, so as to make runtime PM work for devices with links
-to suppliers that don't use runtime PM (such links may be created
-during device enumeration even before it is known whether or not
-runtime PM will be enabled for the devices in question, for example).
+The original intent of the virtio header relicensing
+from 2008 was to make sure anyone can implement compatible
+devices/drivers. The virtio-ccw was omitted by mistake.
 
-Fixes: 21d5c57b3726 (PM / runtime: Use device links)
-Reported-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
-Tested-by: Adrian Hunter <adrian.hunter@intel.com>
+We have an ack from the only contributor as well as the
+maintainer from IBM, so it's not too late to fix that.
+
+Make it dual-licensed with GPLv2, as the whole kernel is GPL2.
+
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Acked-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/power/runtime.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/include/uapi/asm/virtio-ccw.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -276,7 +276,8 @@ static int rpm_get_suppliers(struct devi
- 			continue;
- 
- 		retval = pm_runtime_get_sync(link->supplier);
--		if (retval < 0) {
-+		/* Ignore suppliers with disabled runtime PM. */
-+		if (retval < 0 && retval != -EACCES) {
- 			pm_runtime_put_noidle(link->supplier);
- 			return retval;
- 		}
+--- a/arch/s390/include/uapi/asm/virtio-ccw.h
++++ b/arch/s390/include/uapi/asm/virtio-ccw.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
+ /*
+  * Definitions for virtio-ccw devices.
+  *
