@@ -1,13 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeBWNrL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:47:11 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:28496 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751317AbeBWNrI (ORCPT
+        id S1751557AbeBWNsj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:48:39 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21097 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751276AbeBWNsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:47:08 -0500
-Subject: Re: [PATCH] dt-bindings: iio: adc: sd-modulator: fix io-channel-cells
+        Fri, 23 Feb 2018 08:48:37 -0500
+Subject: Re: [PATCH] dt-bindings: iio: adc: stm32-dfsdm: fix types, add
+ missing pinctrl
 To: Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>,
         <robh+dt@kernel.org>
 CC: <linux@armlinux.org.uk>, <mark.rutland@arm.com>,
@@ -16,19 +17,19 @@ CC: <linux@armlinux.org.uk>, <mark.rutland@arm.com>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <benjamin.gaignard@linaro.org>
-References: <1519384041-23782-1-git-send-email-fabrice.gasnier@st.com>
+References: <1519384260-23875-1-git-send-email-fabrice.gasnier@st.com>
 From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <c221e43d-c7fb-c33b-6fd1-bbf8aca6fa49@st.com>
-Date: Fri, 23 Feb 2018 14:46:19 +0100
+Message-ID: <7e40cdfc-8d9f-ccfb-f3fd-8d639a87d5b0@st.com>
+Date: Fri, 23 Feb 2018 14:47:36 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1519384041-23782-1-git-send-email-fabrice.gasnier@st.com>
+In-Reply-To: <1519384260-23875-1-git-send-email-fabrice.gasnier@st.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE1.st.com
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_04:,,
  signatures=0
@@ -43,34 +44,46 @@ Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Regards,
 Arnaud
 
-On 02/23/2018 12:07 PM, Fabrice Gasnier wrote:
-> io-channel-cells should be <0> since sigma delta modulator exports only
-> one channel, as described in ../iio/iio-bindings.txt "IIO providers"
-> section. Only the phandle is necessary for IIO consumers in this case.
+On 02/23/2018 12:11 PM, Fabrice Gasnier wrote:
+> - Add missing pinctrl description. Support is made optional as dfsdm
+>   may use internal sources (e.g. via registers)
+> - Fix typo in IIO STM32 DFSDM filter "MANCH_F" description.
+> Basically, this should be "falling edge = logic 0", not "1" that applies
+> to "MANCH_R".
+> BTW, make the description complete by describing both rising/falling
+> edges as described in reference manuals.
 > 
-> Fixes: af11143757b7 ("IIO: Add DT bindings for sigma delta adc modulator")
+> Fixes: 6c82f947fc97 ("IIO: add DT bindings for stm32 DFSDM filter")
 > 
 > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 > ---
->  Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-> index e9ebb8a..ba24ca7 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-> @@ -3,11 +3,11 @@ Device-Tree bindings for sigma delta modulator
->  Required properties:
->  - compatible: should be "ads1201", "sd-modulator". "sd-modulator" can be use
->  	as a generic SD modulator if modulator not specified in compatible list.
-> -- #io-channel-cells = <1>: See the IIO bindings section "IIO consumers".
-> +- #io-channel-cells = <0>: See the IIO bindings section "IIO consumers".
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+> index 911492da..ed7520d 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+> @@ -32,6 +32,10 @@ Optional properties:
+>  		  to "clock" property. Frequency must be a multiple of the rcc
+>  		  clock frequency. If not, SPI CLKOUT frequency will not be
+>  		  accurate.
+> +- pinctrl-names:	Set to "default".
+> +- pinctrl-0:		List of phandles pointing to pin configuration
+> +			nodes to set pins in mode of operation for dfsdm
+> +			on external pin.
 >  
->  Example node:
->  
->  	ads1202: adc@0 {
->  		compatible = "sd-modulator";
-> -		#io-channel-cells = <1>;
-> +		#io-channel-cells = <0>;
->  	};
+>  Contents of a STM32 DFSDM child nodes:
+>  --------------------------------------
+> @@ -68,8 +72,8 @@ Optional properties:
+>  - st,adc-channel-types:	Single-ended channel input type.
+>  			- "SPI_R": SPI with data on rising edge (default)
+>  			- "SPI_F": SPI with data on falling edge
+> -			- "MANCH_R": manchester codec, rising edge = logic 0
+> -			- "MANCH_F": manchester codec, falling edge = logic 1
+> +			- "MANCH_R": manchester codec, rising edge = logic 0, falling edge = logic 1
+> +			- "MANCH_F": manchester codec, rising edge = logic 1, falling edge = logic 0
+>  - st,adc-channel-clk-src: Conversion clock source.
+>  			  - "CLKIN": external SPI clock (CLKIN x)
+>  			  - "CLKOUT": internal SPI clock (CLKOUT) (default)
 > 
