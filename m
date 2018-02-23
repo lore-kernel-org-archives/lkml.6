@@ -1,90 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeBWP7q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:59:46 -0500
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:46869 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751477AbeBWP7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:59:10 -0500
-X-Google-Smtp-Source: AG47ELtf7tq5jDwPyxxS7N5rNzVA9SJ/a9UhMNoc6pmokO6n8KHG9ESi5gzHsS+1UU6/ePEUpFhozTXdM+q7VQTU+h4=
+        id S1751853AbeBWQAH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:00:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48858 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751808AbeBWQAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:00:04 -0500
+Subject: Re: Reasoning about memory ordering
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        mathieu.desnoyers@efficios.com, Peter Zijlstra <peterz@infradead.org>,
+        parri.andrea@gmail.com
+References: <0db16ef6-c805-b1f6-527f-8fec149e3df5@suse.com>
+ <20180223153807.64666cfe@alans-desktop>
+From: Nikolay Borisov <nborisov@suse.com>
+Message-ID: <c7e3e457-fac3-7e9f-2045-f4b9a7d54702@suse.com>
+Date: Fri, 23 Feb 2018 17:59:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180223153700.2186058-1-arnd@arndb.de>
-References: <20180223153700.2186058-1-arnd@arndb.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Feb 2018 17:59:08 +0200
-Message-ID: <CAHp75VdAsEQNKRnTRKnpY+X2Ph=B17dNQ_1==2OkRKcs7ma5KA@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180223153807.64666cfe@alans-desktop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 5:36 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> 32-bit architectures generally cannot use writeq(), so we now get a build
-> failure for the lpfc driver:
->
-> drivers/scsi/lpfc/lpfc_sli.c: In function 'lpfc_sli4_wq_put':
-> drivers/scsi/lpfc/lpfc_sli.c:145:4: error: implicit declaration of function 'writeq'; did you mean 'writeb'? [-Werror=implicit-function-declaration]
->
-> Another problem here is that writing out actual data (unlike accessing
-> mmio registers) means we must write the data with the same endianess
-> that we have read from memory, but writeq() will perform byte swaps
-> and add barriers inbetween accesses as we do for registers.
->
-> Using memcpy_toio() should do the right thing here, using register
-> sized stores with correct endianess conversion and barriers (i.e. none),
-> but on some architectures might fall back to byte-size access.
->
-> Side note: shouldn't the driver use ioremap_wc() instead of ioremap()
-> to get a write-combining mapping on all architectures that support this?
-
-IIRC memcpy_toio() doesn't increment the destination address.
-
-lo_hi or hi_lo helpers sound better.
-
-> Fixes: 1351e69fc6db ("scsi: lpfc: Add push-to-adapter support to sli4")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-> @@ -115,7 +115,6 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, union lpfc_wqe *wqe)
->         struct lpfc_register doorbell;
->         uint32_t host_index;
->         uint32_t idx;
-> -       uint32_t i = 0;
->         uint8_t *tmp;
->
->         /* sanity check on queue memory */
-> @@ -138,12 +137,10 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, union lpfc_wqe *wqe)
->         if (q->phba->sli3_options & LPFC_SLI4_PHWQ_ENABLED)
->                 bf_set(wqe_wqid, &wqe->generic.wqe_com, q->queue_id);
->         lpfc_sli_pcimem_bcopy(wqe, temp_wqe, q->entry_size);
-> -       if (q->dpp_enable && q->phba->cfg_enable_dpp) {
-> +       if (q->dpp_enable && q->phba->cfg_enable_dpp)
->                 /* write to DPP aperture taking advatage of Combined Writes */
-> -               tmp = (uint8_t *)wqe;
-> -               for (i = 0; i < q->entry_size; i += sizeof(uint64_t))
-> -                       writeq(*((uint64_t *)(tmp + i)), q->dpp_regaddr + i);
-> -       }
-> +               memcpy_toio(tmp, q->dpp_regaddr, q->entry_size);
-> +
->         /* ensure WQE bcopy and DPP flushed before doorbell write */
->         wmb();
->
-> --
-> 2.9.0
->
 
 
+On 23.02.2018 17:38, Alan Cox wrote:
+>> Given this is the current state of the code (it's part of btrfs) I believe
+>> the following could/should be done: 
+> 
+> Is there benchmarking data to show that a custom lock is justified
+> (especiaally given it's going to mean btrfs and rtlinux don't play
+> together nicely since it won't be able to see the mutex lock and do
+> priority boosting ?)
 
--- 
-With Best Regards,
-Andy Shevchenko
+No, unfortunately this is not code that was written by me. I'm just
+arguing it's not entirely correct. Generally in btrfs we'd like to allow
+concurrent DIO read/write accesses to unrelated portionsin a file. Hence
+I can't just use inode_Lock (DIO writes are synchronized with
+inode_lock). Also I cannot use inode_shared_Lock to synchronize multiple
+DIO reader against writers (including truncate) since this tanks
+perfromance and I already tried[0] this approach and received a NAK...
+
+[0] https://patchwork.kernel.org/patch/10232015/
+
+> 
+> Alan
+> 
+> 
+> 
