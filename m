@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414714-2-10991120816937436134
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414704-2-15902395542763868055
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414714; b=YSTEFGU3HT5VviB8w/pz+3/foJ2ddXVw1jJJ7IlOJ09RHHQ
-    kxk+7d7SmGF1uU/TFAQsym/gudYSBUy149GmhTclFoRIamqgdcfPd1ystYnLQe3J
-    OaVcS7lAfJOmyeA5DGFuUpFaFzsr8aN+o36GVyaj4gHRfkV8uPffrVbsHm6pSb9x
-    ZR8vYTDAlZt/HRdlPrzySQdBvlaEIATDI2RYqQsUt30vWEs+kXZzRk+bZqVBmpWi
-    nQY4VaLGyjIVjd2M4duqJBESLR3wT1gU5P+616Sf0bSPjPez9NP5UT8tFcGQ+/Wb
-    7a0lp7djhLRZapl7vwreaogef8v1UK2umGY9LXA==
+    t=1519414704; b=M731XGvC6+H6VMaykJus9p6zUUhWlpfA+Hmk3G/zil7Khu/
+    Mzur1sC3sDW5xseglsI7EzQq1nrMj9xq87TKHqWUpuT8qyhKEn6DqSJkTe/NuglR
+    zFYeEdEOmAT8LGqTeoNm6X2RsLQkXsgSJ8Ka/u0nA3N9bAB/FYdYvK8v1cF4bIE/
+    ZSgDx9/wN8FOZaNS9GmJKEiyniRK7JUv9zibOO9CuLcsv276zB46y7SEUA7vzXme
+    Gqxf/8o46xCRHEVbehlEDHDbWMVU1UcY4ncudTqc1UgnVnFB9WLeB0bc23vKC0pq
+    7xNppLvh1whW3bGQG8QNKYsfqT3rBozK6BY04Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414714; bh=2MAtqfklvjbghIMgLzFkMCdI6m
-    0UF92EQ7c6BOjHbO4=; b=D24PSfs5OAuR/iO2Ur+xzScBypl7ohb4Og6kcmP84F
-    yDG9XAv2Bcjt1XOm3VzLiKEjpkAlshVPr39XYGt+jfUFWFJ9OV7692BQcEVC3sbC
-    rGrzK2dM95D5BxYhiDjuP2VNQxETAjRBZfZtYPFf6dGPVXfSqlKr+Vnq71NNTsoM
-    b0Txw6p6ExNyB4QkpQa4ZU4AAljm3WEZRJjHgPe6b2tWx4FkPHz4Ie1CccJBS18W
-    pibCmiYSuC5K0OCT49uvra8fchVbys8VJ92kGAdpX4aq2Gz90j9hqspS9tKX2ZPq
-    W9p3H8jNUFmlErobianP4zM6zwizXNmSf1zDFJleSRCA==
+    :list-id; s=arctest; t=1519414704; bh=1EcMNvvYSypI0PqS9DDwWxyo6v
+    h5asN3T3LF0quZI0I=; b=gHc625jtaZ6+nLV36rWS0MqCMAluqx3cq/eN9yEyPg
+    f3wPu3M31A0APSwH/XAgIo9ybu2v3xlQnIVjkaIBCeBuS+myJxjxQMubVwfqAk9X
+    V4IMft5jykqkHvf8jUCj40hW5smVD6XUGUV8K0vtTf2LYA/cyUo5KjvtyT5B5Qh5
+    vXqG4ZASDlTQ146bPUaPNzlHtA5LFBPKfjsAW8dHtmOpUF0j3wdjKfdKAckajKKR
+    90xLJnEvFqq1aGinMYlq2T0EQoTE4LCo1Db1IVVFzHrSxleXDICzr6wkbMOceW8e
+    BC1T06xFbB7P47ONeUo3oVJ371OPFqP9EaWolWEvfkbQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934602AbeBWSuG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:50:06 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45508 "EHLO
+        id S934413AbeBWSuK (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:50:10 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934413AbeBWSuF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:50:05 -0500
+        with ESMTP id S934662AbeBWSuI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:50:08 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 023/159] ALSA: bcd2000: Add a sanity check for invalid EPs
-Date: Fri, 23 Feb 2018 19:25:31 +0100
-Message-Id: <20180223170745.997497718@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 024/159] ptr_ring: fail early if queue occupies more than KMALLOC_MAX_SIZE
+Date: Fri, 23 Feb 2018 19:25:32 +0100
+Message-Id: <20180223170746.103599233@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -78,54 +81,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 6815a0b444572527256f0d0efd8efe3ddede6018 upstream.
+commit 6e6e41c3112276288ccaf80c70916779b84bb276 upstream.
 
-As syzkaller spotted, currently bcd2000 driver submits a URB with the
-fixed EP without checking whether it's actually available, which may
-result in a kernel warning like:
-  usb 1-1: BOGUS urb xfer, pipe 1 != type 3
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 1846 at drivers/usb/core/urb.c:449
-  usb_submit_urb+0xf8a/0x11d0
-  Modules linked in:
-  CPU: 0 PID: 1846 Comm: kworker/0:2 Not tainted
-  4.14.0-rc2-42613-g1488251d1a98 #238
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-  Workqueue: usb_hub_wq hub_event
-  Call Trace:
-   bcd2000_init_device sound/usb/bcd2000/bcd2000.c:289
-   bcd2000_init_midi sound/usb/bcd2000/bcd2000.c:345
-   bcd2000_probe+0xe64/0x19e0 sound/usb/bcd2000/bcd2000.c:406
-   usb_probe_interface+0x35d/0x8e0 drivers/usb/core/driver.c:361
-   ....
+To avoid slab to warn about exceeded size, fail early if queue
+occupies more than KMALLOC_MAX_SIZE.
 
-This patch adds a sanity check of validity of EPs at the device
-initialization phase for avoiding the call with an invalid EP.
-
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Tested-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
+Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/bcd2000/bcd2000.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/ptr_ring.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/usb/bcd2000/bcd2000.c
-+++ b/sound/usb/bcd2000/bcd2000.c
-@@ -342,6 +342,13 @@ static int bcd2000_init_midi(struct bcd2
- 				bcd2k->midi_out_buf, BUFSIZE,
- 				bcd2000_output_complete, bcd2k, 1);
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -447,6 +447,8 @@ static inline int ptr_ring_consume_batch
  
-+	/* sanity checks of EPs before actually submitting */
-+	if (usb_urb_ep_type_check(bcd2k->midi_in_urb) ||
-+	    usb_urb_ep_type_check(bcd2k->midi_out_urb)) {
-+		dev_err(&bcd2k->dev->dev, "invalid MIDI EP\n");
-+		return -EINVAL;
-+	}
-+
- 	bcd2000_init_device(bcd2k);
+ static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+ {
++	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
++		return NULL;
+ 	return kcalloc(size, sizeof(void *), gfp);
+ }
  
- 	return 0;
