@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415608-2-8101516518112232388
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415598-2-1408718382107362770
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415607; b=Ou9ELHzewfFDMphai9bnUNsbrQu0xLNQxkjH9M681ObhlVz
-    DQ3XTMyvrm1HIQwgmx1LVs9azU0BsgghDqyZQyn5nl82+COKyWZcu3oupJ+j9REj
-    I+Cgb1dIDM42W84e7DcurkWw76ig0x6bgxR5i7146628wYyQV6NFC4WPqQfz+Y3y
-    SP7M6Kiq5xoLAZWG7LUsLwmCOc1NT3WBQmC9detxNaXoo5E+/6H72UbCyTy7NnMv
-    +mOR3HlSrEsOb4ZRa/8qcQGa0zgUCRwd+vp/qgmMZYqOJGBWBjlMqHVakRZJWwlv
-    Hgijga246aptl2SzYb5U51JLP4sxRV0d3c45T2g==
+    t=1519415598; b=r3Ka7OhaNX+li7cP/YoOt0kOrTaoMn1FRE4xEkWUh2TQ6QL
+    iyPwurlx8s2RrEk7wfRz8oBIVsC/OZaHQ26YWUCtZ3E+C59kwrrFelYDYkNfrEXB
+    HbWW/8eJeClNi7T0VPZG6lrqOdkFnzRaBwX0T55v8Hr+X/c06vsLvZiHYHJqPMuF
+    ZU0ZXJ9krg9XRzFW2Ji39DNUxu4oB7Kwb0qpzieTB3x32SZP7NIpWRjILDkXoW0X
+    g9+6sNmzEWcrzIRADvPdmSRPmxHjRdKzKPRfvn2jVVkZ+ZtnA35lEWnwmxtu4WEv
+    bkxIItDywwfhdXIzl91YDezPfZJZQ4+kVkNHOKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415607; bh=wUXa8+9aSCFrTDc0UjBCgAj3lh
-    IGlS7blDRe2rBrvdQ=; b=RMV17qsihj6drJulEXf84HPOzTbEwV03H0MjuOIQnc
-    YRF+YjqR1j3gpbnHdLxtf4TqWAnfSpAFTgDqybf6ZTrqOPehWsJka8nx71I2NF8X
-    9rIZBjjaO09mVEhyuwk0rI4bZ45pJIyYtOMbORe0If2PNhH7OXlQrpoSjDj421pa
-    inPwPMy+U+ejLrt4NH7zjLqslXg6epqzCTQBgNzKwOoGkXDNyUK41lzOZGM6VCdP
-    pNkg7J9vLhQLPnr84blQmPXEOuHomoQlhz1L8FqV2msBwfuBDIpfek7Mh9V3ybAx
-    0J3axanQe+cIckkFQvi6RaSTMrnd2As3rjqirS9YWd1w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415598; bh=Ea96xClJDIDaGkZza9l5/V0vde
+    gf6nvCZHeE9omklKc=; b=RV6IE5j5WT4Vbgw6Lp/WewSTxkUtFxcgdzSCZ0PL3z
+    aQOteFyvdS84q9+NZWiMy36PJYRxEs2t+qf986cZW0zIbTApbK45pvWYUX5IUVbW
+    RDVOz70lNfJYHCHLp4n9nHhDcRussFG0dpaPN5iSE28nn04o2QCQn3NH0r1rzt8p
+    OxCtkhDl6sYk74fNdx6p7oBX/LI13pvjUiNHYTkvni6lCBejAKvz/qJuP526Dbb+
+    b78z7csNEzbiDg8pCy4K8hPvwNy9/VzHdNg3ftHEDi44VoAPrvfpbvn3IvKhLwuz
+    0mpelHOtnoiu91et+K8nmoPQh0365gVF6fklo6Fp1h1Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933806AbeBWSpc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:45:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43366 "EHLO
+        id S1753255AbeBWTw7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:52:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43394 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933330AbeBWSpa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:45:30 -0500
+        with ESMTP id S933330AbeBWSpg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:45:36 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 073/145] dmaengine: at_hdmac: fix potential NULL pointer dereference in atc_prep_dma_interleaved
-Date: Fri, 23 Feb 2018 19:26:19 +0100
-Message-Id: <20180223170734.126332999@linuxfoundation.org>
+Subject: [PATCH 4.9 075/145] ASoC: rockchip: disable clock on error
+Date: Fri, 23 Feb 2018 19:26:21 +0100
+Message-Id: <20180223170734.417523447@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -81,46 +80,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
 
 
-[ Upstream commit 62a277d43d47e74972de44d33bd3763e31992414 ]
+[ Upstream commit c7b92172a61b91936be985cb9bc499a4ebc6489b ]
 
-_xt_ is being dereferenced before it is null checked, hence there is a
-potential null pointer dereference.
+Disable the clocks in  rk_spdif_probe when an error occurs after one
+of the clocks has been enabled previously.
 
-Fix this by moving the pointer dereference after _xt_ has been null
-checked.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-This issue was detected with the help of Coccinelle.
-
-Fixes: 4483320e241c ("dmaengine: Use Pointer xt after NULL check.")
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Fixes: f874b80e1571 ASoC: rockchip: Add rockchip SPDIF transceiver driver
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/at_hdmac.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/rockchip/rockchip_spdif.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -709,7 +709,7 @@ atc_prep_dma_interleaved(struct dma_chan
- 			 unsigned long flags)
- {
- 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
--	struct data_chunk	*first = xt->sgl;
-+	struct data_chunk	*first;
- 	struct at_desc		*desc = NULL;
- 	size_t			xfer_count;
- 	unsigned int		dwidth;
-@@ -721,6 +721,8 @@ atc_prep_dma_interleaved(struct dma_chan
- 	if (unlikely(!xt || xt->numf != 1 || !xt->frame_size))
- 		return NULL;
+--- a/sound/soc/rockchip/rockchip_spdif.c
++++ b/sound/soc/rockchip/rockchip_spdif.c
+@@ -318,26 +318,30 @@ static int rk_spdif_probe(struct platfor
+ 	spdif->mclk = devm_clk_get(&pdev->dev, "mclk");
+ 	if (IS_ERR(spdif->mclk)) {
+ 		dev_err(&pdev->dev, "Can't retrieve rk_spdif master clock\n");
+-		return PTR_ERR(spdif->mclk);
++		ret = PTR_ERR(spdif->mclk);
++		goto err_disable_hclk;
+ 	}
  
-+	first = xt->sgl;
-+
- 	dev_info(chan2dev(chan),
- 		 "%s: src=%pad, dest=%pad, numf=%d, frame_size=%d, flags=0x%lx\n",
- 		__func__, &xt->src_start, &xt->dst_start, xt->numf,
+ 	ret = clk_prepare_enable(spdif->mclk);
+ 	if (ret) {
+ 		dev_err(spdif->dev, "clock enable failed %d\n", ret);
+-		return ret;
++		goto err_disable_clocks;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(regs))
+-		return PTR_ERR(regs);
++	if (IS_ERR(regs)) {
++		ret = PTR_ERR(regs);
++		goto err_disable_clocks;
++	}
+ 
+ 	spdif->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "hclk", regs,
+ 						  &rk_spdif_regmap_config);
+ 	if (IS_ERR(spdif->regmap)) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to initialise managed register map\n");
+-		return PTR_ERR(spdif->regmap);
++		ret = PTR_ERR(spdif->regmap);
++		goto err_disable_clocks;
+ 	}
+ 
+ 	spdif->playback_dma_data.addr = res->start + SPDIF_SMPDR;
+@@ -369,6 +373,10 @@ static int rk_spdif_probe(struct platfor
+ 
+ err_pm_runtime:
+ 	pm_runtime_disable(&pdev->dev);
++err_disable_clocks:
++	clk_disable_unprepare(spdif->mclk);
++err_disable_hclk:
++	clk_disable_unprepare(spdif->hclk);
+ 
+ 	return ret;
+ }
