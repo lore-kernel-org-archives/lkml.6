@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225Z0eEVW4Rp+sauXZWeTraUHcBdGnRrg9akgy0148iuYyyRlq9hySBLa77ebLWqu7SxjP7t
-ARC-Seal: i=1; a=rsa-sha256; t=1519411314; cv=none;
+X-Google-Smtp-Source: AG47ELv0hEEv9dzAmchP79zMn5LvpFDAn7PoZwcirK8Hpa9mAi39KsSTLHWoxChfhtQzF0nXwLHx
+ARC-Seal: i=1; a=rsa-sha256; t=1519411311; cv=none;
         d=google.com; s=arc-20160816;
-        b=DfZ1c0+Qh63qWWWpHzzlXeG6AKcj0XvunyRIAhOoPLfWBWCyuq8140HkWS3Mwz1VCd
-         v1FKCLpAOw3CaQzZh59U4RPwOzIUB85Y6rQ4Yojcj7Y7/MdAVds6CMlIY6jmGoS+13Il
-         f1luWEAkFJtcN8WYUrZj458I2H6eK5EfJlcQOYflCvI4Ro+aaYKEAq2hawtppW1wZZyc
-         YzSuxgKe4dsdcA3/3jJDNlhoe/VPoGUGZi2Ri3dhk5fP01MFtA8/Cb4hsmEeyM4d+wqh
-         iYAZBjDcueZWgVScJ2u7uDKCYPgLAuC8ztZUC9hT2FIR5l1Ap9DFnGbLXJwrlLpjR44n
-         BkTg==
+        b=E1KwYyJYmaf0ho58E1lQe+Df08qdLequg21PxbHT6SKglFUNmpV9kmRMLr4wJjXD1b
+         ubmaypQOLqMgU7dBD0B0C8n1Mipi8V/BcX8T4f1jEopt00bgXG9C2C8E3esq4rsyGx2c
+         K4GJr4QAwGpFHmFmxnDaJ6Q8bmvcgWcTGYlsv2NyYWnY4+7gi8KME6A3IxXGRgnZ9Hgo
+         5/iG+PN3bgmlkvtBGhGVfpr4DK53megOSDScKirrCOYreOuF2mnABttwIzXhHRGU7VPH
+         YSjpHb9UZEWRJHnu1lhcHa+wyhc3K1oSu88ISyVNrc7G5RpR6TRxTMbj/6G+zDrgRcpd
+         YVpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p76JiLvAYQ40gT/bpBZE6Kb5rS66+Tp3dfHgLlqRZUc=;
-        b=qn8H1kgm54mf+0//T7p9Sd7MxyvA1W+mYUUt1w5GPBuAn8QjMcpWat02pFokslReMf
-         fB277ClOlzKtxYvrhf41I/tzJ6Uog+NminLbtze75ep9YifVpoR6BcBYEcuTpn0kQYG9
-         p7n9AkAghYs0xtIlXsXyhb3f3uCzN7VrogU2JWCsShK3drUwGGPuH1e65iEaj6Gwmqoh
-         WKyKkp6veMgh+6a/wL0Qkf72Zc80Dvl1Gx2BvRmos6DRNWJ/t41t32I6UF98bZ/iVbVT
-         sAkUI3IDk3KMSfEMlMGn5bhNkM7TR9ThmYA8elK0B7bp6fE4a2V1+62NCCxXOn1QyFU4
-         rjew==
+        bh=ZGu9zD2o+42UjfRjjjbpSxOggDXRSQaKLLy1aqJiIBA=;
+        b=usjY3lBOhG2HdiXcQbtmu9A5psc0XcJFphkQPZQ4yfxERWifAVdbEPr7IbcRLWRHdb
+         bWdzThmA+/DC6ifUBW+Aha62WnC9h4ZEpa9QLw9k6Dmw792SjAHO4asK2bsFvugEwS/g
+         /caCUDSwZ+llVw5VinAYUa6ZYRDXBGMWL9kTFN44ChSjf82xjDb8sG/z6cyLbKAe21mg
+         EbDz8yZNH/Ual933QPbRMny/SlXGmG0UQMIEkrGLg6LTCFvBR2FTDfwBMerH8mh3T396
+         +0pFgJFygtIB0qvAbXeieXl71EF1oa0zF3TclekIaO8vBl8axrxg4aEPJYIia/j6YI0/
+         PWXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 158/193] netlink: fix nla_put_{u8,u16,u32} for KASAN
-Date: Fri, 23 Feb 2018 19:26:31 +0100
-Message-Id: <20180223170350.672132086@linuxfoundation.org>
+	Randy Dunlap <rdunlap@infradead.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.4 157/193] ASoC: Intel: Kconfig: fix build when ACPI is not enabled
+Date: Fri, 23 Feb 2018 19:26:30 +0100
+Message-Id: <20180223170350.512304837@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218238787821665?=
-X-GMAIL-MSGID: =?utf-8?q?1593218238787821665?=
+X-GMAIL-THRID: =?utf-8?q?1593218235665026382?=
+X-GMAIL-MSGID: =?utf-8?q?1593218235665026382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,238 +51,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Vinod Koul <vinod.koul@intel.com>
 
-commit b4391db42308c9940944b5d7be5ca4b78fb88dd0 upstream.
+commit 3493d4a86457c7de9f1e602b4267c9b0f9ec1c9f upstream.
 
-When CONFIG_KASAN is enabled, the "--param asan-stack=1" causes rather large
-stack frames in some functions. This goes unnoticed normally because
-CONFIG_FRAME_WARN is disabled with CONFIG_KASAN by default as of commit
-3f181b4d8652 ("lib/Kconfig.debug: disable -Wframe-larger-than warnings with
-KASAN=y").
+Randy reported following error when ACPI is not enabled:
 
-The kernelci.org build bot however has the warning enabled and that led
-me to investigate it a little further, as every build produces these warnings:
+warning: (SND_SOC_INTEL_BYTCR_RT5640_MACH && SND_SOC_INTEL_BYTCR_RT5651_MACH
+&& SND_SOC_INTEL_CHT_BSW_RT5672_MACH && SND_SOC_INTEL_CHT_BSW_RT5645_MACH &&
+SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH) selects SND_SST_IPC_ACPI
++which has unmet direct dependencies (SOUND && !M68K && !UML && SND &&
+SND_SOC && ACPI)
 
-net/wireless/nl80211.c:4389:1: warning: the frame size of 2240 bytes is larger than 2048 bytes [-Wframe-larger-than=]
-net/wireless/nl80211.c:1895:1: warning: the frame size of 3776 bytes is larger than 2048 bytes [-Wframe-larger-than=]
-net/wireless/nl80211.c:1410:1: warning: the frame size of 2208 bytes is larger than 2048 bytes [-Wframe-larger-than=]
-net/bridge/br_netlink.c:1282:1: warning: the frame size of 2544 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+causing these build errors:
 
-Most of this problem is now solved in gcc-8, which can consolidate
-the stack slots for the inline function arguments. On older compilers
-we can add a workaround by declaring a local variable in each function
-to pass the inline function argument.
+In file included from ../sound/soc/intel/atom/sst/sst_acpi.c:40:0:
+../include/acpi/acpi_bus.h:65:20: error: conflicting types for
+'acpi_evaluate_dsm'
+ union acpi_object *acpi_evaluate_dsm(acpi_handle handle, const u8 *uuid,
+In file included from ../sound/soc/intel/atom/sst/sst_acpi.c:31:0:
+../include/linux/acpi.h:676:34: note: previous definition of
+'acpi_evaluate_dsm' was here
+ static inline union acpi_object *acpi_evaluate_dsm(acpi_handle handle,
 
-Cc: stable@vger.kernel.org
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[arnd: rebased to 4.4-stable]
+CONFIG_SND_SST_IPC_ACPI was already dependent upon ACPI, but that was not
+solving it. So move the depends up to machine drivers and remove from
+CONFIG_SND_SST_IPC_ACPI.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+[arnd: rebased to PATCH kernel]
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/netlink.h |   73 +++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 55 insertions(+), 18 deletions(-)
+ sound/soc/intel/Kconfig |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -745,7 +745,10 @@ static inline int nla_parse_nested(struc
-  */
- static inline int nla_put_u8(struct sk_buff *skb, int attrtype, u8 value)
- {
--	return nla_put(skb, attrtype, sizeof(u8), &value);
-+	/* temporary variables to work around GCC PR81715 with asan-stack=1 */
-+	u8 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(u8), &tmp);
- }
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -24,7 +24,6 @@ config SND_SST_IPC_PCI
+ config SND_SST_IPC_ACPI
+ 	tristate
+ 	select SND_SST_IPC
+-	depends on ACPI
  
- /**
-@@ -756,7 +759,9 @@ static inline int nla_put_u8(struct sk_b
-  */
- static inline int nla_put_u16(struct sk_buff *skb, int attrtype, u16 value)
- {
--	return nla_put(skb, attrtype, sizeof(u16), &value);
-+	u16 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(u16), &tmp);
- }
+ config SND_SOC_INTEL_SST
+ 	tristate
+@@ -91,7 +90,7 @@ config SND_SOC_INTEL_BROADWELL_MACH
  
- /**
-@@ -767,7 +772,9 @@ static inline int nla_put_u16(struct sk_
-  */
- static inline int nla_put_be16(struct sk_buff *skb, int attrtype, __be16 value)
- {
--	return nla_put(skb, attrtype, sizeof(__be16), &value);
-+	__be16 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__be16), &tmp);
- }
+ config SND_SOC_INTEL_BYTCR_RT5640_MACH
+ 	tristate "ASoC Audio DSP Support for MID BYT Platform"
+-	depends on X86 && I2C
++	depends on X86 && I2C && ACPI
+ 	select SND_SOC_RT5640
+ 	select SND_SST_MFLD_PLATFORM
+ 	select SND_SST_IPC_ACPI
+@@ -103,7 +102,7 @@ config SND_SOC_INTEL_BYTCR_RT5640_MACH
  
- /**
-@@ -778,7 +785,9 @@ static inline int nla_put_be16(struct sk
-  */
- static inline int nla_put_net16(struct sk_buff *skb, int attrtype, __be16 value)
- {
--	return nla_put_be16(skb, attrtype | NLA_F_NET_BYTEORDER, value);
-+	__be16 tmp = value;
-+
-+	return nla_put_be16(skb, attrtype | NLA_F_NET_BYTEORDER, tmp);
- }
+ config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
+         tristate "ASoC Audio driver for Intel Cherrytrail & Braswell with RT5672 codec"
+-        depends on X86_INTEL_LPSS && I2C
++        depends on X86_INTEL_LPSS && I2C && ACPI
+         select SND_SOC_RT5670
+         select SND_SST_MFLD_PLATFORM
+         select SND_SST_IPC_ACPI
+@@ -115,7 +114,7 @@ config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
  
- /**
-@@ -789,7 +798,9 @@ static inline int nla_put_net16(struct s
-  */
- static inline int nla_put_le16(struct sk_buff *skb, int attrtype, __le16 value)
- {
--	return nla_put(skb, attrtype, sizeof(__le16), &value);
-+	__le16 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__le16), &tmp);
- }
- 
- /**
-@@ -800,7 +811,9 @@ static inline int nla_put_le16(struct sk
-  */
- static inline int nla_put_u32(struct sk_buff *skb, int attrtype, u32 value)
- {
--	return nla_put(skb, attrtype, sizeof(u32), &value);
-+	u32 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(u32), &tmp);
- }
- 
- /**
-@@ -811,7 +824,9 @@ static inline int nla_put_u32(struct sk_
-  */
- static inline int nla_put_be32(struct sk_buff *skb, int attrtype, __be32 value)
- {
--	return nla_put(skb, attrtype, sizeof(__be32), &value);
-+	__be32 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__be32), &tmp);
- }
- 
- /**
-@@ -822,7 +837,9 @@ static inline int nla_put_be32(struct sk
-  */
- static inline int nla_put_net32(struct sk_buff *skb, int attrtype, __be32 value)
- {
--	return nla_put_be32(skb, attrtype | NLA_F_NET_BYTEORDER, value);
-+	__be32 tmp = value;
-+
-+	return nla_put_be32(skb, attrtype | NLA_F_NET_BYTEORDER, tmp);
- }
- 
- /**
-@@ -833,7 +850,9 @@ static inline int nla_put_net32(struct s
-  */
- static inline int nla_put_le32(struct sk_buff *skb, int attrtype, __le32 value)
- {
--	return nla_put(skb, attrtype, sizeof(__le32), &value);
-+	__le32 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__le32), &tmp);
- }
- 
- /**
-@@ -844,7 +863,9 @@ static inline int nla_put_le32(struct sk
-  */
- static inline int nla_put_u64(struct sk_buff *skb, int attrtype, u64 value)
- {
--	return nla_put(skb, attrtype, sizeof(u64), &value);
-+	u64 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(u64), &tmp);
- }
- 
- /**
-@@ -855,7 +876,9 @@ static inline int nla_put_u64(struct sk_
-  */
- static inline int nla_put_be64(struct sk_buff *skb, int attrtype, __be64 value)
- {
--	return nla_put(skb, attrtype, sizeof(__be64), &value);
-+	__be64 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__be64), &tmp);
- }
- 
- /**
-@@ -866,7 +889,9 @@ static inline int nla_put_be64(struct sk
-  */
- static inline int nla_put_net64(struct sk_buff *skb, int attrtype, __be64 value)
- {
--	return nla_put_be64(skb, attrtype | NLA_F_NET_BYTEORDER, value);
-+	__be64 tmp = value;
-+
-+	return nla_put_be64(skb, attrtype | NLA_F_NET_BYTEORDER, tmp);
- }
- 
- /**
-@@ -877,7 +902,9 @@ static inline int nla_put_net64(struct s
-  */
- static inline int nla_put_le64(struct sk_buff *skb, int attrtype, __le64 value)
- {
--	return nla_put(skb, attrtype, sizeof(__le64), &value);
-+	__le64 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(__le64), &tmp);
- }
- 
- /**
-@@ -888,7 +915,9 @@ static inline int nla_put_le64(struct sk
-  */
- static inline int nla_put_s8(struct sk_buff *skb, int attrtype, s8 value)
- {
--	return nla_put(skb, attrtype, sizeof(s8), &value);
-+	s8 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(s8), &tmp);
- }
- 
- /**
-@@ -899,7 +928,9 @@ static inline int nla_put_s8(struct sk_b
-  */
- static inline int nla_put_s16(struct sk_buff *skb, int attrtype, s16 value)
- {
--	return nla_put(skb, attrtype, sizeof(s16), &value);
-+	s16 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(s16), &tmp);
- }
- 
- /**
-@@ -910,7 +941,9 @@ static inline int nla_put_s16(struct sk_
-  */
- static inline int nla_put_s32(struct sk_buff *skb, int attrtype, s32 value)
- {
--	return nla_put(skb, attrtype, sizeof(s32), &value);
-+	s32 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(s32), &tmp);
- }
- 
- /**
-@@ -921,7 +954,9 @@ static inline int nla_put_s32(struct sk_
-  */
- static inline int nla_put_s64(struct sk_buff *skb, int attrtype, s64 value)
- {
--	return nla_put(skb, attrtype, sizeof(s64), &value);
-+	s64 tmp = value;
-+
-+	return nla_put(skb, attrtype, sizeof(s64), &tmp);
- }
- 
- /**
-@@ -969,7 +1004,9 @@ static inline int nla_put_msecs(struct s
- static inline int nla_put_in_addr(struct sk_buff *skb, int attrtype,
- 				  __be32 addr)
- {
--	return nla_put_be32(skb, attrtype, addr);
-+	__be32 tmp = addr;
-+
-+	return nla_put_be32(skb, attrtype, tmp);
- }
- 
- /**
+ config SND_SOC_INTEL_CHT_BSW_RT5645_MACH
+ 	tristate "ASoC Audio driver for Intel Cherrytrail & Braswell with RT5645/5650 codec"
+-	depends on X86_INTEL_LPSS && I2C
++	depends on X86_INTEL_LPSS && I2C && ACPI
+ 	select SND_SOC_RT5645
+ 	select SND_SST_MFLD_PLATFORM
+ 	select SND_SST_IPC_ACPI
