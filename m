@@ -1,66 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751841AbeBWP0C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:26:02 -0500
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:36312 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbeBWP0A (ORCPT
+        id S1751938AbeBWP0f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:26:35 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34378 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751494AbeBWP0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:26:00 -0500
-X-Google-Smtp-Source: AH8x225NRoZ8QPA5GyNDXOLT58KtYimtNtoJLzkXGoZ6sfLA83ULqrn1juzMZjpML4dOOx/I3TPJog==
-Date: Fri, 23 Feb 2018 10:25:53 -0500
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
-Message-ID: <20180223152553.GA20248@sophia>
-References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
- <CAK8P3a3-NTzY3x5xM_d8Bxm-s+SF0L8d60vd-FOHccVxXo_AVg@mail.gmail.com>
+        Fri, 23 Feb 2018 10:26:33 -0500
+Subject: Re: [PATCH 8/9] drm/xen-front: Implement GEM operations
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-9-git-send-email-andr2000@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <2f2c6fea-c0cb-e244-41f3-269db07986fc@oracle.com>
+Date: Fri, 23 Feb 2018 10:26:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <1519200222-20623-9-git-send-email-andr2000@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3-NTzY3x5xM_d8Bxm-s+SF0L8d60vd-FOHccVxXo_AVg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=643
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230191
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 04:19:01PM +0100, Arnd Bergmann wrote:
->On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
-><mail@maciej.szmigiero.name> wrote:
->> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
->>
->> Now that the patch series changing ISA_BUS_API dependency to selection
->> was merged this reversion will do the same for gpio-winbond driver to
->> make it consistent with other ISA bus gpio drivers.
->>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->
->I still see a number of other users of 'depends on ISA_BUS_API' in linux-next:
->
->drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
->drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
->drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
->drivers/gpio/Kconfig:   depends on PC104 && ISA_BUS_API
->drivers/gpio/Kconfig:   depends on ISA_BUS_API
->drivers/gpio/Kconfig:   depends on ISA_BUS_API
->drivers/iio/adc/Kconfig:        depends on PC104 && X86 && ISA_BUS_API
->drivers/iio/counter/Kconfig:    depends on PC104 && X86 && ISA_BUS_API
->drivers/iio/dac/Kconfig:        depends on X86 && ISA_BUS_API
->drivers/watchdog/Kconfig:       depends on X86 && ISA_BUS_API
->
->Did you change all of the above? I would really like to avoid mixing
->'select' and 'depends on' here, as that will likely cause other circular
->dependencies in the future.
->
->       Arnd
+On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
+> +static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
+> +{
+> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+> +	struct xen_gem_object *xen_obj;
+> +	int ret;
+> +
+> +	size = round_up(size, PAGE_SIZE);
+> +	xen_obj = gem_create_obj(dev, size);
+> +	if (IS_ERR_OR_NULL(xen_obj))
+> +		return xen_obj;
+> +
+> +	if (drm_info->cfg->be_alloc) {
+> +		/*
+> +		 * backend will allocate space for this buffer, so
+> +		 * only allocate array of pointers to pages
+> +		 */
+> +		xen_obj->be_alloc = true;
 
-Those 'depends on' for ISA_BUS_API are resolved in the devel branch of
-the linux-gpio tree; this revert patch should be applied there before
-being picked up later for linux-next.
+If be_alloc is a flag (which I am not sure about) --- should it be set
+to true *after* you've successfully allocated your things?
 
-William Breathitt Gray
+> +		ret = gem_alloc_pages_array(xen_obj, size);
+> +		if (ret < 0) {
+> +			gem_free_pages_array(xen_obj);
+> +			goto fail;
+> +		}
+> +
+> +		ret = alloc_xenballooned_pages(xen_obj->num_pages,
+> +				xen_obj->pages);
+
+Why are you allocating balloon pages?
+
+-boris
+
+> +		if (ret < 0) {
+> +			DRM_ERROR("Cannot allocate %zu ballooned pages: %d\n",
+> +					xen_obj->num_pages, ret);
+> +			goto fail;
+> +		}
+> +
+> +		return xen_obj;
+> +	}
+> +	/*
+> +	 * need to allocate backing pages now, so we can share those
+> +	 * with the backend
+> +	 */
+> +	xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
+> +	xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
+> +	if (IS_ERR_OR_NULL(xen_obj->pages)) {
+> +		ret = PTR_ERR(xen_obj->pages);
+> +		xen_obj->pages = NULL;
+> +		goto fail;
+> +	}
+> +
+> +	return xen_obj;
+> +
+> +fail:
+> +	DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
+> +	return ERR_PTR(ret);
+> +}
+> +
+>
