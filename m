@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3559911-1519410682-2-6577759633355456748
+X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410652-2-11209064356848849436
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES dasvhr.us-ascii,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519410681; b=aZLApTsZ94p3HXVlBueWR65sN0xzhlcgCP1geGmfRSFchet
-    R437isrM+b+SfH9+R5miDJAQ7Ez7LtJEBTy875V54r5JqcytPac4w5axdIWRmylL
-    W4hUFGtS+NVMTDS+6vQXoxzbVS4FkjmFakcBX9ob2Us7DHhQXzsw4HwxQFmRXWQE
-    IuiFDoNDILHLbvenXAqubpsAAuCK3NMTfCz1Q9a14S3Sl1sGOzp4FNhPv/hYuhlP
-    0tQUBdPL8HwgKiwmclt+R1dIBIyjzx2IBMA5tBGhX91MKtx0x/cHpZUvFM9pklzB
-    3A5VL1e9O0pTKDFTN9oRZdwtZJ6mQi0arncMQHg==
+    t=1519410651; b=HaSeAar2VoGfk3AumtZ9Ux5nl3SMnzBGPC+mZj3sGz3LH0q
+    ckN+NoD7H9TugbAWBQDa12yJbvtpjItFxbukMHg008xFk4hteTPNn4KjU1ec+nW0
+    7jWSAjNak4i8oq73JZAqrT43Yse3STI4Sc3S/B+7z3wPC2pkL5+o3QI4Z0E6TyMW
+    FRHeidh19EYkIoDEQyf8Uw+NWI5QgYpI0iqXjo0wzDLfzJkVYJL6C2Xr2nnfMuel
+    xcBo3ZFEzPj8+IRkPR9LIm7ckV/tzqnUDxZebauHPDKmpQNc5+3Ly6LobmyEBpr4
+    R7+S3dzhvK2849dQRRAYKvDYZCvMTkMQUDAaCRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519410681; bh=Zjta3ppaP1DfdXPkQjesEnME3u
-    m+cLNBwVMjxEINPp4=; b=eziFjxEyCFJq6vgDABhnPgpGZ5VJNn7CIVc5PvOC49
-    gIS0Ysq+RktAnNH2RkYpA35YGnpoNHh/KMlE6FKg19SayO7CSC8r+Ex1ts6BX9YB
-    wMXKKvDNY2Q1vR3eMvhECHEyNGmPF5lD+erCHjC+TxtSTikL4GymrNzfbbvCCgHw
-    Jr7UUJZvlqM0W7RX5Q2nRj8ay+GBevgV2VkJMtYMZfbvE4A4Y8bVc4YatyBrNk7D
-    hPW7iMlM2CDmINVmInVJuQ3R6kaoT8+WiF3lr7rY2jHdHvjc0vzCVYBT2MHB8bJg
-    A2ZgTOifksF53DWamuflbpDz2JSv8/Kpxp66vwY4xl9g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519410651; bh=E2w9tesD5denANOtkwu9da4Is/
+    yqN/gZpS6IVDDRmLI=; b=vlB39dcYckehwec84ah9oDWBNX63SymUzzpWWLO0Ak
+    6W2scSOmcd6aRm0kNPxQF+IvWLrvpAobky0sxjMEXUHpGp0MeqQO6Ul8xzYmFxbo
+    Z8h4eTOy+7ozqMD/sCRykDG1tdTbEyUFY80PBTen72dgEU7E01PIezvyoSRCPTh8
+    DUPhSrJ/Fkgou7nbiLBssXNBwprA1B69BIMKxgRDBiOYJPaXtR1iQ2kSyhBBiGQS
+    a32iBZjZFVMrh+BD0uluebAueZUVnVyQsAWrxT0bS/Muw3SlKSYcajPI6SG9enEW
+    x/TfqlNkaB/szN7te+64NWIS8uYGHU+xq/9ADpnu0HbQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeBWSbU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35184 "EHLO
+        id S1752373AbeBWSar (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:30:47 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34660 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752516AbeBWSbS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:18 -0500
+        with ESMTP id S1751463AbeBWSap (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:30:45 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 3.18 34/58] usbip: keep usbip_device sockfd state in sync with tcp_socket
-Date: Fri, 23 Feb 2018 19:26:33 +0100
-Message-Id: <20180223170212.196857031@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 3.18 24/58] netfilter: x_tables: avoid out-of-bounds reads in xt_request_find_{match|target}
+Date: Fri, 23 Feb 2018 19:26:23 +0100
+Message-Id: <20180223170210.706218104@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -77,63 +80,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 009f41aed4b3e11e6dc1e3c07377a10c20f1a5ed upstream.
+commit da17c73b6eb74aad3c3c0654394635675b623b3e upstream.
 
-Keep usbip_device sockfd state in sync with tcp_socket. When tcp_socket
-is reset to null, reset sockfd to -1 to keep it in sync.
+It looks like syzbot found its way into netfilter territory.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable@vger.kernel.org
+Issue here is that @name comes from user space and might
+not be null terminated.
+
+Out-of-bound reads happen, KASAN is not happy.
+
+v2 added similar fix for xt_request_find_target(),
+as Florian advised.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_dev.c |    3 +++
- drivers/usb/usbip/vhci_hcd.c |    2 ++
- 2 files changed, 5 insertions(+)
+ net/netfilter/x_tables.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -87,6 +87,7 @@ static ssize_t store_sockfd(struct devic
- 			goto err;
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -209,6 +209,9 @@ xt_request_find_match(uint8_t nfproto, c
+ {
+ 	struct xt_match *match;
  
- 		sdev->ud.tcp_socket = socket;
-+		sdev->ud.sockfd = sockfd;
++	if (strnlen(name, XT_EXTENSION_MAXNAMELEN) == XT_EXTENSION_MAXNAMELEN)
++		return ERR_PTR(-EINVAL);
++
+ 	match = xt_find_match(nfproto, name, revision);
+ 	if (IS_ERR(match)) {
+ 		request_module("%st_%s", xt_prefix[nfproto], name);
+@@ -251,6 +254,9 @@ struct xt_target *xt_request_find_target
+ {
+ 	struct xt_target *target;
  
- 		spin_unlock_irq(&sdev->ud.lock);
- 
-@@ -186,6 +187,7 @@ static void stub_shutdown_connection(str
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
- 	}
- 
- 	/* 3. free used data */
-@@ -280,6 +282,7 @@ static struct stub_device *stub_device_a
- 	sdev->ud.status		= SDEV_ST_AVAILABLE;
- 	spin_lock_init(&sdev->ud.lock);
- 	sdev->ud.tcp_socket	= NULL;
-+	sdev->ud.sockfd		= -1;
- 
- 	INIT_LIST_HEAD(&sdev->priv_init);
- 	INIT_LIST_HEAD(&sdev->priv_tx);
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -791,6 +791,7 @@ static void vhci_shutdown_connection(str
- 	if (vdev->ud.tcp_socket) {
- 		sockfd_put(vdev->ud.tcp_socket);
- 		vdev->ud.tcp_socket = NULL;
-+		vdev->ud.sockfd = -1;
- 	}
- 	pr_info("release socket\n");
- 
-@@ -839,6 +840,7 @@ static void vhci_device_reset(struct usb
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
- 	}
- 	ud->status = VDEV_ST_NULL;
- 
++	if (strnlen(name, XT_EXTENSION_MAXNAMELEN) == XT_EXTENSION_MAXNAMELEN)
++		return ERR_PTR(-EINVAL);
++
+ 	target = xt_find_target(af, name, revision);
+ 	if (IS_ERR(target)) {
+ 		request_module("%st_%s", xt_prefix[af], name);
