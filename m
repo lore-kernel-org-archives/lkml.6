@@ -1,48 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeBWNhK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:37:10 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:6642 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751638AbeBWNgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:36:55 -0500
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <thierry.reding@gmail.com>, <alexandre.torgue@st.com>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <benjamin.gaignard@linaro.org>
-Subject: [RESEND PATCH 0/3] Add pwm-cells on STM32 LPTimer
-Date: Fri, 23 Feb 2018 14:36:02 +0100
-Message-ID: <1519392965-28235-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751811AbeBWNhY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:37:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54428 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751766AbeBWNhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 08:37:22 -0500
+Subject: Re: [PATCH RFC v2 1/3] drivers: irqchip: pdc: Add PDC interrupt
+ controller for QCOM SoCs
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Lina Iyer <ilina@codeaurora.org>, tglx@linutronix.de,
+        jason@lakedaemon.net
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, asathyak@codeaurora.org
+References: <20180202142200.6229-1-ilina@codeaurora.org>
+ <20180202142200.6229-2-ilina@codeaurora.org>
+ <e1322b9a-4765-3c71-84b8-cb725fe457dd@arm.com>
+ <02e2a5f9-8ecc-76b1-a3cc-c95b215e8fe1@prevas.dk>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <8a482f9c-9d2c-cea9-137e-2ce367c0f903@arm.com>
+Date: Fri, 23 Feb 2018 13:37:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_04:,,
- signatures=0
+In-Reply-To: <02e2a5f9-8ecc-76b1-a3cc-c95b215e8fe1@prevas.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing generic #pwm-cells on STM32 LPTimer to allow initialization
-of channel, period and polarity.
+Hi Rasmus,
 
-Fabrice Gasnier (1):
-  ARM: dts: stm32: update pwm-cells for LPTimer on stm32h743
+On 23/02/18 12:16, Rasmus Villemoes wrote:
+> On 2018-02-02 15:58, Marc Zyngier wrote:
+>> Hi Lina,
+>>
+>> On 02/02/18 14:21, Lina Iyer wrote:
+>>> From : Archana Sathyakumar <asathyak@codeaurora.org>
+>>>
+>>> +
+>>> +static int qcom_pdc_translate(struct irq_domain *d,
+>>> +	struct irq_fwspec *fwspec, unsigned long *hwirq, unsigned int *type)
+>>> +{
+>>> +	if (is_of_node(fwspec->fwnode)) {
+>>> +		if (fwspec->param_count < 3)
+>>> +			return -EINVAL;
+>>
+>> Why 3? Reading the DT binding, this is indeed set to 3 without any
+>> reason. I'd suggest this becomes 2, encoding the pin number and the
+>> trigger information, as the leading 0 is quite useless. Yes, I know
+>> other examples in the kernel are using this 0, and that was a
+>> consequence of retrofitting the omitted interrupt controllers (back in
+>> the days of the stupid gic_arch_extn...). Don't do that.
+>>
+> 
+> Hi Marc
+> 
+> I'm about to send out a new revision of the ls-extirq patchset, and
+> thanks to you pointing me to these patches, I've read the comments on
+> the various revisions of this series and tried to take those into
+> account. But the above confused me, because in response to my first RFC
+> (https://patchwork.kernel.org/patch/10102643/) we have
+> 
+> On 2017-12-08 17:09, Marc Zyngier wrote:
+>> On 08/12/17 15:11, Alexander Stein wrote:
+>>> Hi Rasmus,
+>>>
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: should be "fsl,ls1021a-extirq"
+>>>> +- interrupt-controller: Identifies the node as an interrupt controller
+>>>> +- #interrupt-cells: Use the same format as specified by GIC in
+> arm,gic.txt.
+>>>
+>>> Do you really need 3 interrupt-cells here? As you've written below
+> you don't
+>>> support PPI anyway the 1st flag might be dropped then. So support
+> just 2 cells:
+>>> * IRQ number (IRQ0 - IRQ5)
+>>> * IRQ flags
+>>
+>> The convention for irqchip stacked on top of a GIC is to keep the
+>> interrupt specifier the same. It makes the maintenance if the DT much
+>> easier, and doesn't hurt at all.
+> 
+> Personally, I'd actually prefer the simpler interrupt specifiers without
+> a redundant 0. Maybe I'm just missing some difference between this case
+> and the ls-extirq one?
+The difference is that you're adding a new irqchip to an existing DT,
+and you get some possible breakage. Maybe you'd be happy with the
+breakage, that's your call (and the maintainer's). In the QC case, it is
+old brand new, so no harm in doing the right thing from day one.
 
-Gerald Baeza (2):
-  dt-bindings: pwm-stm32-lp: add #pwm-cells
-  pwm: stm32: LPTimer: use 3 cells xlate
+It is in the end an implementation decision, and you could go either way.
 
- Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt | 3 +++
- arch/arm/boot/dts/stm32h743.dtsi                       | 5 +++++
- drivers/pwm/pwm-stm32-lp.c                             | 2 ++
- 3 files changed, 10 insertions(+)
+Hope this helps,
 
+	M.
 -- 
-1.9.1
+Jazz is not dead. It just smells funny...
