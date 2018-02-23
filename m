@@ -1,52 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751477AbeBWOiH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:38:07 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51999 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751314AbeBWOiG (ORCPT
+        id S1751626AbeBWOit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:38:49 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57316 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751565AbeBWOio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:38:06 -0500
-From: Colin King <colin.king@canonical.com>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: pxa: remove duplicated bit-wise or of SNDRV_PCM_FMTBIT_S24_LE
-Date: Fri, 23 Feb 2018 14:37:38 +0000
-Message-Id: <20180223143738.29600-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Fri, 23 Feb 2018 09:38:44 -0500
+Subject: Re: [PATCH 1/9] drm/xen-front: Introduce Xen para-virtualized
+ frontend driver
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-2-git-send-email-andr2000@gmail.com>
+ <e4501c0b-0504-e306-19ab-2c6023ad2ccf@oracle.com>
+ <1c569896-e60c-bed3-fda8-c72b8d0a349d@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <3740a458-35d7-b51d-5cd0-be3bebd87574@oracle.com>
+Date: Fri, 23 Feb 2018 09:39:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c569896-e60c-bed3-fda8-c72b8d0a349d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=711
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 02/23/2018 01:37 AM, Oleksandr Andrushchenko wrote:
+> On 02/23/2018 12:23 AM, Boris Ostrovsky wrote:
+>> On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
+>>> +static struct xenbus_driver xen_driver = {
+>>> +    .ids = xen_drv_ids,
+>>> +    .probe = xen_drv_probe,
+>>> +    .remove = xen_drv_remove,
+>>> +    .otherend_changed = backend_on_changed,
+>> What does "_on_" stand for?
+> Well, it is somewhat like a hint that this is called "on" event,
+> e.g. event when the other end state has changed, backend in this
+> case. It could be something like "backend_on_state_changed"
 
-Bit pattern SNDRV_PCM_FMTBIT_S24_LE is being bit-wise or'd twice; remove
-the redundant 2nd SNDRV_PCM_FMTBIT_S24_LE
+If you look at other xenbus_drivers none of the uses this so I think we
+should stick to conventional naming. (and the same applies to other
+backend_on_* routines).
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/pxa/mmp-sspa.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
-index 64b85e30c1f8..7c998ea4ebee 100644
---- a/sound/soc/pxa/mmp-sspa.c
-+++ b/sound/soc/pxa/mmp-sspa.c
-@@ -377,7 +377,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
- #define MMP_SSPA_FORMATS (SNDRV_PCM_FMTBIT_S8 | \
- 		SNDRV_PCM_FMTBIT_S16_LE | \
- 		SNDRV_PCM_FMTBIT_S24_LE | \
--		SNDRV_PCM_FMTBIT_S24_LE | \
- 		SNDRV_PCM_FMTBIT_S32_LE)
- 
- static const struct snd_soc_dai_ops mmp_sspa_dai_ops = {
--- 
-2.15.1
+-boris
