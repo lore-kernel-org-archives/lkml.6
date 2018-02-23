@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519414207-2-7114110057156061900
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519414202-2-5504228026962585456
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414206; b=bxnDwJuhHLVeHYXqCp4Yhdn6a8uI1Ci7viXMuomU3owYAzu
-    mhe6/hw4Z4WxuTgAB1RHTkDEddNmVkAifagAaJKLavQvoujit9aEa4RU0+KFD3/U
-    VMnIJ0/YZCgiznqFurqrS9aSmTXqX/5z/pWAZ6VAWDLuBAbvoNeL7JZ52hKmf3jp
-    /TZseA0iJLOedWaHtbMucHQ1HpNm7lAYY3gEFVn/o1EPJjvaY3zkSlUi2moQJ9Oz
-    NWWmch7VnyG66zFfkMNhXR4bkS+hdLSmzFnclfnAPDatJ287oRPFcDMTKNoOaBps
-    LaAgSDivlXj01rVwbUbYDS36vVBK5F43/RzaH1Q==
+    t=1519414202; b=l84AMea0gxXVKwzBgHxf7SCsJWDzKO45g0fTcldSD2myQEr
+    fCfcsEpd+NOwvHQC6Rm+sde6TKxTh/zkv1VQ7Yc6UZ3qsLTD58WA/YcIRvNYnFcb
+    WOFzM+7zA0yZWyKzqGqugZ0GvIT7URnAc0tuJgQDk0UdyQ3S9fA8koGxTO3QvcBb
+    N4WWci5YSc8VUM0vMrBwT6JQqM6d0JdJPdzvrxALWONDLI2pPdctLD2ZkYClLdFX
+    omCE+cmX/SGQ5NGd1AKUZYu8KMIfDAAcSoJMESQXk26TQWjUXIdTbGPHEW2ZQz5W
+    mJsbHlB7H3o3U8sJGIoFxZFfYOgOLvhy4ygvANA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414206; bh=2xpoRsIo/KQI5Lk90iDCutMBzO
-    DhNSk5Q6Q3UKokA5w=; b=unAZ5h6IvKy3lIRdBUhc4uPmYzOJnXtHzPXtWrA9cj
-    gm3slx2bYI0fQUBIdm/3CzSMnX62SwHFrlAkCh132xkPaY7myRMyTUvsiAEsVTPi
-    hgb+a3HJWG7+fDyAR91bTvg+MYQ6iMckPki5x+7dyPUODiG5kQ0qoy9rEZ6GGexY
-    pTzkvlUWja5sTrq+KWZTXm1mJjOGkOCrK/HBMUTzGXNGylN+fr5RCsBDu1UYGbJH
-    f+4d6sftT+KGASCJt3QfvIWAjV6SkTmVQtNrNc19vudtgfUhafK5SVx7CXC+opLx
-    o8DqiqwGToK0+SOyBOGXHFgVJxuNzSMgGg0EMdEUW3mg==
+    :list-id; s=arctest; t=1519414202; bh=CVZBSW/L4UqgFMD5cbuhWG2tS3
+    wP1f94jvEm24epknU=; b=KkxS8TcKp8474++8XzHP2MwNT7oqFDT779mVt813UI
+    8fB+nWxX7qFq63YXWbr81WjDNyEIEIALey4ckuKV3+4mhSr8IleaA1ZtAbanI6Op
+    ruu/1476yRZt6h1mZcDQxFRmruiYLK7aTlVqvK4PkD221rHmq3zECyl3/tGJYPVo
+    TWT5BkcxDE/Ef3zTagiPijHbi9fV2ViG+jnGJnm9qaMft380OnaDp+dWd1Li8CYq
+    Cf++KxwpFlKbUtdL1WBKpl7y//G0WSlhHFeMSQN28dg2cMMXY1LVDNwyn5xyA/ly
+    F/bpElQ3tLKNfnbjkdFBFFO/oa5tp+dfb5ioLAriVvRQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935027AbeBWSvv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:51:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
+        id S1754633AbeBWT3s (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:29:48 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934465AbeBWSvt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:49 -0500
+        with ESMTP id S935030AbeBWSvw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:52 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.14 058/159] usbip: keep usbip_device sockfd state in sync with tcp_socket
-Date: Fri, 23 Feb 2018 19:26:06 +0100
-Message-Id: <20180223170750.635565694@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 059/159] usb: build drivers/usb/common/ when USB_SUPPORT is set
+Date: Fri, 23 Feb 2018 19:26:07 +0100
+Message-Id: <20180223170750.741294825@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -77,63 +78,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 009f41aed4b3e11e6dc1e3c07377a10c20f1a5ed upstream.
 
-Keep usbip_device sockfd state in sync with tcp_socket. When tcp_socket
-is reset to null, reset sockfd to -1 to keep it in sync.
+[ Upstream commit c9d24f78268be444e803fb2bb138a2f598de9c23 ]
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable@vger.kernel.org
+PHY drivers can use ULPI interfaces when CONFIG_USB (which is host side
+support) is not enabled, so also build drivers/usb/ when CONFIG_USB_SUPPORT
+is enabled so that drivers/usb/common/ is built.
+
+ERROR: "ulpi_unregister_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "__ulpi_register_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_read" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_write" [drivers/phy/ti/phy-tusb1210.ko] undefined!
+ERROR: "ulpi_unregister_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+ERROR: "__ulpi_register_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+ERROR: "ulpi_write" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/usbip/stub_dev.c |    3 +++
- drivers/usb/usbip/vhci_hcd.c |    2 ++
- 2 files changed, 5 insertions(+)
+ drivers/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -87,6 +87,7 @@ static ssize_t store_sockfd(struct devic
- 			goto err;
- 
- 		sdev->ud.tcp_socket = socket;
-+		sdev->ud.sockfd = sockfd;
- 
- 		spin_unlock_irq(&sdev->ud.lock);
- 
-@@ -186,6 +187,7 @@ static void stub_shutdown_connection(str
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
- 	}
- 
- 	/* 3. free used data */
-@@ -280,6 +282,7 @@ static struct stub_device *stub_device_a
- 	sdev->ud.status		= SDEV_ST_AVAILABLE;
- 	spin_lock_init(&sdev->ud.lock);
- 	sdev->ud.tcp_socket	= NULL;
-+	sdev->ud.sockfd		= -1;
- 
- 	INIT_LIST_HEAD(&sdev->priv_init);
- 	INIT_LIST_HEAD(&sdev->priv_tx);
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -998,6 +998,7 @@ static void vhci_shutdown_connection(str
- 	if (vdev->ud.tcp_socket) {
- 		sockfd_put(vdev->ud.tcp_socket);
- 		vdev->ud.tcp_socket = NULL;
-+		vdev->ud.sockfd = -1;
- 	}
- 	pr_info("release socket\n");
- 
-@@ -1044,6 +1045,7 @@ static void vhci_device_reset(struct usb
- 	if (ud->tcp_socket) {
- 		sockfd_put(ud->tcp_socket);
- 		ud->tcp_socket = NULL;
-+		ud->sockfd = -1;
- 	}
- 	ud->status = VDEV_ST_NULL;
- 
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -105,6 +105,7 @@ obj-$(CONFIG_TC)		+= tc/
+ obj-$(CONFIG_UWB)		+= uwb/
+ obj-$(CONFIG_USB_PHY)		+= usb/
+ obj-$(CONFIG_USB)		+= usb/
++obj-$(CONFIG_USB_SUPPORT)	+= usb/
+ obj-$(CONFIG_PCI)		+= usb/
+ obj-$(CONFIG_USB_GADGET)	+= usb/
+ obj-$(CONFIG_OF)		+= usb/
