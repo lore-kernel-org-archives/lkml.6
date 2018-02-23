@@ -1,118 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751868AbeBWPLc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:11:32 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37306 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751437AbeBWPLb (ORCPT
+        id S1751820AbeBWPMS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:12:18 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:53370 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbeBWPMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:11:31 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/8] mfd: cros_ec_dev: Register cros_ec_accel_legacy driver as a subdevice.
-Date: Fri, 23 Feb 2018 16:11:19 +0100
-Message-Id: <20180223151122.11567-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
+        Fri, 23 Feb 2018 10:12:16 -0500
+Date: Fri, 23 Feb 2018 16:12:13 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+Message-ID: <20180223151213.inrk7ghl6z3pbcol@flea.lan>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+ <20180223133742.26044-11-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ulfzt5j6yrqtig2w"
+Content-Disposition: inline
+In-Reply-To: <20180223133742.26044-11-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With this patch, the cros_ec_ctl driver will register the legacy
-accelerometer driver (named cros_ec_accel_legacy) if it fails to
-register sensors through the usual path cros_ec_sensors_register().
-This legacy device is present on Chromebook devices with older EC
-firmware only supporting deprecated EC commands (Glimmer based devices).
 
-Tested-by: Gwendal Grignou <gwendal@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
----
+--ulfzt5j6yrqtig2w
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-- [5/8] Add the Reviewed-by Gwendal.
+On Fri, Feb 23, 2018 at 02:37:42PM +0100, Myl=E8ne Josserand wrote:
+> On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
+> It should be done by the bootloader but it is currently not the case,
+> even for boot CPU because this SoC is booting in secure mode.
+> It leads to an random offset value meaning that each CPU will have a
+> different time, which isn't working very well.
+>=20
+> Add assembly code used for boot CPU and secondary CPU cores to make
+> sure that the CNTVOFF register is initialized.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+> ---
+>  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
+>  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
+>  2 files changed, 25 insertions(+)
+>=20
+> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> index d5c97e945e69..605896251927 100644
+> --- a/arch/arm/mach-sunxi/headsmp.S
+> +++ b/arch/arm/mach-sunxi/headsmp.S
+> @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
+>  	first: .word sunxi_mc_smp_first_comer - .
+>  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> =20
+> +ENTRY(sunxi_init_cntvoff)
+> +	/*
+> +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+> +	 * mode or secure Monitor mode with SCR.NS=3D=3D1. If TrustZone is enab=
+led
+> +	 * then it should be handled by the secure code
+> +	 */
+> +	cps	#MON_MODE
+> +	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
+> +	orr	r0, r1, #1
+> +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+> +	instr_sync
+> +	mov	r0, #0
+> +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF =3D 0 */
+> +	instr_sync
+> +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+> +	instr_sync
+> +	cps	#SVC_MODE
+> +	ret	lr
+> +ENDPROC(sunxi_init_cntvoff)
+> +
+>  #ifdef CONFIG_SMP
+>  ENTRY(sunxi_boot)
+>  	bl	sunxi_mc_smp_cluster_cache_enable
+> +	bl	sunxi_init_cntvoff
+>  	b	secondary_startup
+>  ENDPROC(sunxi_boot)
+> =20
+> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> index 5e9602ce1573..4bb041492b54 100644
+> --- a/arch/arm/mach-sunxi/sunxi.c
+> +++ b/arch/arm/mach-sunxi/sunxi.c
+> @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] =3D {
+>  };
+> =20
+>  extern void __init sun6i_reset_init(void);
+> +extern void sunxi_init_cntvoff(void);
+> +
+>  static void __init sun6i_timer_init(void)
+>  {
+> +	sunxi_init_cntvoff();
+> +
 
- drivers/mfd/cros_ec_dev.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+This would deserve a comment explaining why this is needed in the
+first place, and this is not correct. All the other SoCs listed in
+that machine have their CNTVOFF setup correctly on CPU0, and since
+Linux is booted in HYP, it's probably not even valid to do that.
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 33fe1b439ee2..fd7f0068fb45 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -389,6 +389,63 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
-+#define CROS_EC_SENSOR_LEGACY_NUM 2
-+static struct mfd_cell cros_ec_accel_legacy_cells[CROS_EC_SENSOR_LEGACY_NUM];
-+
-+static void cros_ec_accel_legacy_register(struct cros_ec_dev *ec)
-+{
-+	struct cros_ec_device *ec_dev = ec->ec_dev;
-+	u8 status;
-+	int i, ret;
-+	struct cros_ec_sensor_platform
-+		sensor_platforms[CROS_EC_SENSOR_LEGACY_NUM];
-+
-+	/*
-+	 * EC that need legacy support are the main EC, directly connected to
-+	 * the AP.
-+	 */
-+	if (ec->cmd_offset != 0)
-+		return;
-+
-+	/*
-+	 * Check if EC supports direct memory reads and if EC has
-+	 * accelerometers.
-+	 */
-+	if (!ec_dev->cmd_readmem)
-+		return;
-+
-+	ret = ec_dev->cmd_readmem(ec_dev, EC_MEMMAP_ACC_STATUS, 1, &status);
-+	if (ret < 0) {
-+		dev_warn(ec->dev, "EC does not support direct reads.\n");
-+		return;
-+	}
-+
-+	/* Check if EC has accelerometers. */
-+	if (!(status & EC_MEMMAP_ACC_STATUS_PRESENCE_BIT)) {
-+		dev_info(ec->dev, "EC does not have accelerometers.\n");
-+		return;
-+	}
-+
-+	/*
-+	 * Register 2 accelerometers
-+	 */
-+	for (i = 0; i < CROS_EC_SENSOR_LEGACY_NUM; i++) {
-+		cros_ec_accel_legacy_cells[i].name = "cros-ec-accel-legacy";
-+		sensor_platforms[i].sensor_num = i;
-+		cros_ec_accel_legacy_cells[i].id = i;
-+		cros_ec_accel_legacy_cells[i].platform_data =
-+			&sensor_platforms[i];
-+		cros_ec_accel_legacy_cells[i].pdata_size =
-+			sizeof(struct cros_ec_sensor_platform);
-+	}
-+	ret = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+			      cros_ec_accel_legacy_cells,
-+			      CROS_EC_SENSOR_LEGACY_NUM,
-+			      NULL, 0, NULL);
-+	if (ret)
-+		dev_err(ec_dev->dev, "failed to add EC sensors\n");
-+}
-+
- static const struct mfd_cell cros_ec_rtc_cell = {
- 	.name = "cros-ec-rtc",
- };
-@@ -440,6 +497,9 @@ static int ec_device_probe(struct platform_device *pdev)
- 	/* check whether this EC is a sensor hub. */
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
-+	else
-+		/* Workaroud for older EC firmware */
-+		cros_ec_accel_legacy_register(ec);
- 
- 	/* check whether this EC instance has RTC host command support */
- 	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
--- 
-2.16.1
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ulfzt5j6yrqtig2w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQL0wACgkQ0rTAlCFN
+r3SspBAAi6rjoChO+AIbsyvs22zukl8PstofUuTy35osW5dX0s9aHc3XiZ8gUaRd
+1IdxK8z7sn6aAnW4Y2DUMaLvE1/LhExRT/qKJMj0hPUYdU/h0NvabMhsMNkUH7XC
+0FtcWWuEViSeJo60Ym92/9IFq1ueXYfDYJsBj3cr0B5AXzjwYIpz0FQdKnvcELG/
+tYdtdnRLwvyM45BbEJLRGLxvxbIM6aCgTRHH0BY4bSCGe7fj7PP2Lub6Jb5QYT31
+Oq3fyxkhb+WV+O+8+v2i6qLFdtz59jMyy3VUqVAZXIl4kH9wTFBnlZr3frJAkRj/
+yQG0umjmUty4xSfv/qB5q91s5nqnAsqKaUuVLK+YK/kqYyHJ9RRaFwaIG960OoBr
+J65D+MjWUlwpQqc18ttBcPFzSy6RLxU7kXnMoxjGF72vVE3E7QMjR8nXfUVGsSOV
+aeuTuzueKe1tcBQtjAmPca+QOC8ZMZk2bWGndyOaXl0e1pfBoH3XYjd7pOrj1Pq8
+SuUnCSZtGnftdysu+i42n9lR1PoEBCwINr601PIQFGoezRlCmrc2x5Ju3MF3QQu2
+mPhc9onrwjFAgxWvLcgxyh5CxbPF8Y8IAUv31esv4aifq4eojZbLH3pW6V4Hl/DT
+/nxB4M89ZjwzYxdD+ZVQUymkQk5TdyTYxL1BdnQVyFIcKlsc6/o=
+=NQiv
+-----END PGP SIGNATURE-----
+
+--ulfzt5j6yrqtig2w--
