@@ -1,68 +1,43 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410903-2-13581483188591616103
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519410903; b=NsFjO31Kv3M3pSwXrj4f9mhy7OUrekVE+O2TOKew3iEeER+
-    zUiVWRw3JGGtLcZ+WSWeSr83HS6Rpd9dp1qvpvvVFZTIKESpYzocTO+WSVepFlme
-    x/STlmcM5qx9/6kqT1km3l+5o4d1431bMSJd/cW+HxUMFNIbByZ6Mxl5RGLlFzHI
-    N+TEn4I/eQo23fKMRo2XXcV4o5oSs0/1Ix+qOsUPnYnPOKVpgFCO9JKRfj6MD7TB
-    2w4LyyugZ6SxT/m0mxAf5oF3wjStHCOcg6oka2lZKN4jzQGH0LZClzFwErjHKmK1
-    B3OX4qdaYXmHJA0Zep62ER0/PYnYsElJcMPuxeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519410903; bh=D86h9isstgexjECFBdL0YBbN4r
-    +ZO93ZUJ1Na5bAxl4=; b=E6lQnQbSzFWrjz1YiTQAzWraLd7GfzGuHYGPlOj37m
-    iQcVrFB7qq8oJDP5HXurIw4/XO4+dX70b5w1ImJB6YJc89GDMYHYaAnnzX3r5vcr
-    E2Ftch9fb8J27q1KlLHatYEFX/XBBjeM203M1Br2IegTdSKOzgzXymowFtlv5BkI
-    sEpmW/sdfhLhs1vqv47cruG1mj8y0Vr4u9D3MuHu8Jz/zSp32nntgadlYpBFjrqL
-    +NnaIsvHA19VEdIgt785tOoIXnjPfE6nHfSgb7FmCgZYmJADvxrzTX2CsFIFLlQc
-    eGdQRey4URyea7v7Y2BhyKRbONLWAUfiS04POqh7EwHw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753681AbeBWSe7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:34:59 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37116 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753653AbeBWSe5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:34:57 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226X32M3Absgum58W7wgVndebRfqyeYcamk/4uYb/xckDijFfgz9tJQGIUV4nzXeSIM+9fcL
+ARC-Seal: i=1; a=rsa-sha256; t=1519410901; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gJz9RAbhE9EPdNPwxCsOQBxM0ye5C3qS5dK1CK5wi0JTjQ/qIcfEL/eAnDB2dmDPtm
+         soh9kTbMta1XIiQ97Zdwo/hZg1j4zJCCLxCz29N12jaN6laR3BmiZwLXkcgXzCVuqwcT
+         dly19/QLlQjDS+AnK4vRQ8NVlOE4xFHec2auJrMCCBdjffgNeJ9csnvcVzOXejwAEY3R
+         bw7kYfbO67dD9mpoanueOAIbD2mAfXtF2BzBZatCgqGta/cL7YOXpZ9sNsmzilzyJjLy
+         ebaVuT7+djqureznqm+mw9riDK1iTbb0U7SacnBoTzHgfJuaNttsUZBWzOPLUgkljV4j
+         bgEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=zDmFS06FrhE4u9pa9w2Msm4/xe/jiGowtP2Y6pXck3g=;
+        b=S1rQ4f2gFlP9nlHSKcwnVyIsgrAmaLGrdApMCiVD108VDDkUzan97U3eqHfQS5RtBA
+         VGmKJvLXYZz88PXwB8BEnRSPJ3W188bIFAYRgmBSS2nwHw0TzPNH8sn4Zh3ogbOfXOqM
+         EH0fWTez6xAEbSQ9OLFRdQc4CmAOBfrkx7cYVW+/5eJuRxIhNMcsr3ZxYqxC5t/7XoyA
+         L52Cdlpndw//eR1ZZRKoUed9fvCE8hC6Hg3AZ7rLHm6gW53AZjsQPcCrUeCgs7JLdMOr
+         dMqPiUfD5s1gzGxYCr565AtSBEyHx4E18tEA96Y2uSdlI5tMlOxiPs/g5PKldjk6YX02
+         7OcA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cai Li <cai.li@spreadtrum.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 052/193] clk: fix a panic error caused by accessing NULL pointer
-Date: Fri, 23 Feb 2018 19:24:45 +0100
-Message-Id: <20180223170334.152831819@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <andi@firstfloor.org>,
+	David Ahern <dsahern@gmail.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Wang Nan <wangnan0@huawei.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 035/193] perf top: Fix window dimensions change handling
+Date: Fri, 23 Feb 2018 19:24:28 +0100
+Message-Id: <20180223170331.576368507@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -70,9 +45,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593217584770930249?=
+X-GMAIL-MSGID: =?utf-8?q?1593217805429687382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,41 +56,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cai Li <cai.li@spreadtrum.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
 
-[ Upstream commit 975b820b6836b6b6c42fb84cd2e772e2b41bca67 ]
+[ Upstream commit 89d0aeab4252adc2a7ea693637dd21c588bfa2d1 ]
 
-In some cases the clock parent would be set NULL when doing re-parent,
-it will cause a NULL pointer accessing if clk_set trace event is
-enabled.
+The stdio perf top crashes when we change the terminal
+window size. The reason is that we assumed we get the
+perf_top pointer as a signal handler argument which is
+not the case.
 
-This patch sets the parent as "none" if the input parameter is NULL.
+Changing the SIGWINCH handler logic to change global
+resize variable, which is checked in the main thread
+loop.
 
-Fixes: dfc202ead312 (clk: Add tracepoints for hardware operations)
-Signed-off-by: Cai Li <cai.li@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-ysuzwz77oev1ftgvdscn9bpu@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/clk.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-top.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/include/trace/events/clk.h
-+++ b/include/trace/events/clk.h
-@@ -134,12 +134,12 @@ DECLARE_EVENT_CLASS(clk_parent,
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -70,6 +70,7 @@
+ #include <linux/types.h>
  
- 	TP_STRUCT__entry(
- 		__string(        name,           core->name                )
--		__string(        pname,          parent->name              )
-+		__string(        pname, parent ? parent->name : "none"     )
- 	),
+ static volatile int done;
++static volatile int resize;
  
- 	TP_fast_assign(
- 		__assign_str(name, core->name);
--		__assign_str(pname, parent->name);
-+		__assign_str(pname, parent ? parent->name : "none");
- 	),
+ #define HEADER_LINE_NR  5
  
- 	TP_printk("%s %s", __get_str(name), __get_str(pname))
+@@ -79,10 +80,13 @@ static void perf_top__update_print_entri
+ }
+ 
+ static void perf_top__sig_winch(int sig __maybe_unused,
+-				siginfo_t *info __maybe_unused, void *arg)
++				siginfo_t *info __maybe_unused, void *arg __maybe_unused)
+ {
+-	struct perf_top *top = arg;
++	resize = 1;
++}
+ 
++static void perf_top__resize(struct perf_top *top)
++{
+ 	get_term_dimensions(&top->winsize);
+ 	perf_top__update_print_entries(top);
+ }
+@@ -466,7 +470,7 @@ static bool perf_top__handle_keypress(st
+ 					.sa_sigaction = perf_top__sig_winch,
+ 					.sa_flags     = SA_SIGINFO,
+ 				};
+-				perf_top__sig_winch(SIGWINCH, NULL, top);
++				perf_top__resize(top);
+ 				sigaction(SIGWINCH, &act, NULL);
+ 			} else {
+ 				signal(SIGWINCH, SIG_DFL);
+@@ -1023,6 +1027,11 @@ static int __cmd_top(struct perf_top *to
+ 
+ 		if (hits == top->samples)
+ 			ret = perf_evlist__poll(top->evlist, 100);
++
++		if (resize) {
++			perf_top__resize(top);
++			resize = 0;
++		}
+ 	}
+ 
+ 	ret = 0;
