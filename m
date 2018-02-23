@@ -1,94 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeBWKGQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:06:16 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42244 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeBWKGO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:06:14 -0500
-Date: Fri, 23 Feb 2018 11:06:07 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells
- property
-Message-ID: <20180223100607.GO7203@w540>
-References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
+        id S1751470AbeBWKI3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:08:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42522 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751015AbeBWKI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 05:08:27 -0500
+Date: Fri, 23 Feb 2018 10:22:46 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] printk for 4.16-rc3
+Message-ID: <20180223092245.52acfu56hhfpmqvl@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Linus,
 
-On Fri, Feb 23, 2018 at 10:27:16AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > Add "#interrupt-cells" property and "interrupt-controller" label to
-> > "interrupt-controller@e61c0000" device node.
-> >
-> > This silences the following DTC compiler warnings:
-> > Warning (interrupts_property): Missing interrupt-controller or
-> > interrupt-map property in /soc/interrupt-controller@e61c0000
-> > Warning (interrupts_property): Missing #interrupt-cells in
-> > interrupt-parent /soc/interrupt-controller@e61c000
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> > @@ -316,6 +316,8 @@
-> >                 };
-> >
-> >                 intc_ex: interrupt-controller@e61c0000 {
-> > +                       #interrupt-cells = <2>;
-> > +                       interrupt-controller;
-> >                         reg = <0 0xe61c0000 0 0x200>;
-> >                         /* placeholder */
->
-> (bikeshedding) Should the placeholder be at the top of the node?
+please pull one printk-related fix for 4.16-rc3 from
 
-I would like it more too, but in M3-W dtsi:
+  git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git for-linus
 
-		pciec0: pcie@fe000000 {
-			reg = <0 0xfe000000 0 0x80000>;
-			/* placeholder */
-		};
+============
 
-So I kept using the same style everywhere here.
+- People expect to see the real pointer value for %px. Let's substitute
+  "(null)" only for the other %p? format modifiers that need to deference
+  the pointer.
 
-I can change it everywhere in this series to have placeholder at the
-beginning of the node definition if you agree with that!
+----------------------------------------------------------------
+Adam Borowski (1):
+      vsprintf: avoid misleading "(null)" for %px
 
-Thanks
-   j
-
->
-> >                 };
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+ lib/vsprintf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
