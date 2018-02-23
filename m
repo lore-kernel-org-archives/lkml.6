@@ -1,64 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeBWNla (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:41:30 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49291 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbeBWNl0 (ORCPT
+        id S1751625AbeBWNoG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:44:06 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:59076 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751437AbeBWNoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:41:26 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/7] R-Car M3-N DTS fixes
-Date: Fri, 23 Feb 2018 14:40:52 +0100
-Message-Id: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 23 Feb 2018 08:44:00 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <linus.walleij@linaro.org>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH] pinctrl: core: Add missing EXPORT on pinctrl_register_mappings
+Date: Fri, 23 Feb 2018 13:43:52 +0000
+Message-ID: <20180223134352.32612-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=996 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802230172
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-   in this second iteration I have fixed two remarks from Geert received on
-v1:
-- Extend "du" address length to include third channel
-- Move usb2_phy1 device node next to usb2_phy0
+Systems that don't have devicetree need pinctrl_register_mappings.
+It should be EXPORT_SYMBOL_GPL so that it can be called from
+pinctrl drivers built as modules.
 
-Two minor nits were not addressed:
-- "placeholder" comment position not changed to maintain consistency with
-  placeholders in M3-W. When they'll get changed, let's change all of them at
-  the same time.
-- The addresses block sizes (and multiple address range blocks) are still there
-  (next time we can consider dropping the unit address from place-holder nodes
-  and do not add any "reg" property at all, until DTC won't start complaining
-  about this as well)
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ drivers/pinctrl/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-All patches but the newly introduced 7/7 now have Geert's Reviewed-by tag.
-
-Simon: as per v1, this series is based on my M3-N enablement series, last
-patch on Ether-AVB excluded.
-
-Thanks
-   j
-
-v1 -> v2:
-- Extend "du" address length to include third channel
-- Move usb2_phy1 node next to usb2_phy0
-
-Jacopo Mondi (7):
-  arm64: dts: renesas: r8a77965: Add "reg" properties
-  arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
-  arm64: dts: renesas: r8a77965: Remove stale reg property
-  arm64: dts: renesas: r8a77965: Add #phy-cells property
-  arm64: dts: renesas: r8a77965: Add #pwm-cells property
-  arm64: dts: renesas: r8a77965: Add #interrupt-cells property
-  arm64: dts: renesas: r8a77965: Move usb2_phy1 up
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 89 +++++++++++++++++++++++++++++--
- 1 file changed, 84 insertions(+), 5 deletions(-)
-
---
-2.7.4
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 343981cb2461..e5a303002021 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1416,6 +1416,7 @@ int pinctrl_register_mappings(const struct pinctrl_map *maps,
+ {
+ 	return pinctrl_register_map(maps, num_maps, true);
+ }
++EXPORT_SYMBOL_GPL(pinctrl_register_mappings);
+ 
+ void pinctrl_unregister_map(const struct pinctrl_map *map)
+ {
+-- 
+2.11.0
