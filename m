@@ -1,70 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751454AbeBWG2z convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 01:28:55 -0500
-Received: from mout.perfora.net ([74.208.4.194]:45113 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750943AbeBWG2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 01:28:54 -0500
-Date: Fri, 23 Feb 2018 07:28:33 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com> <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
+        id S1751353AbeBWGfT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 01:35:19 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:39783 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbeBWGfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 01:35:17 -0500
+X-Google-Smtp-Source: AG47ELshq0e3ygaEyfl5nJPeC+P8hqq4q1nsuRslMTjHCpshYckN5jCy2BdVmmLZqqOe6JSOHbd7pA==
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Stephen Warren <swarren@wwwdotorg.org>
-CC: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Message-ID: <5E71CC53-1C99-45FD-9615-D95C88DC085B@ziswiler.com>
-X-Provags-ID: V03:K0:rZtui7sdewY5hfIwjKud5oNfVYnIiBMr8llNfrxk4n1w2IW00Fs
- pPkyEDI02M0G6FDvkfKsbK43Dv2LpPTVVqA1yX9r8RXFXgXy5xzHxjdYtIWNbEsD/TlZYnc
- ZX82wZTpqTbbcbOC0UIseTIHIDaW3G+lcAEc/cu6tzKH7h3y7rQHzN5Hxx8Grl18jdj5wVZ
- y6nGnETIp0LkKrrdZhPEA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:S6KOWFypF2s=:pVpVBFY8g1VH7DzMbBHHYZ
- EZzPoVNEuWHtbIiy+mgQagKYnH4N5TZ98+fNeOPoh09bOG6QcDCD/0HMCU4IxLSOTE5onHqe5
- Rd/VPOs0RdJ4l66c63KbdaoSJzbT3Jylr0DCJt8fbIgPg3AbDRbTMoLVBjdEN2slm8kTqJfYx
- OP14rIPnGBn2soClruGdvUnQTM1OodHZZDC+R0ibWSAcTCuXoaidtAzFqOlE4+kd01iXKiYCg
- h52RhejoUZdV0mmNp3Gztar3MZGABsDXwBeGVCbxoRUwa+U1kHX6zNuyaSo6XtLIouc3ogQmi
- +MBqvF0bo6KCFPjgTMcrJaCBiOn3Iiusj6OoSYyoV3c1t3ME+Di/MdXUPiQ0KqTS+phpxi2Vf
- TytOQb0xyuMq0cxGi/W+z5gtQoUUUn7AtKDqVSzIF1iGncA/xEZuUa64Nyk7MhBFd09SmAA+U
- uN1WN7JajBg7az6LuEdKskfdPDTmWU66YlcZM3Kaji7Mo5zRQ8ZNUg4aryigcuC4GCECt1qEn
- edAsk2bAksYEhjtxw00YqBElZIooS++jegI62Q6t8Tz3r7nKJ4btmt3+Qe41yDoIVnCfWkz7Z
- BLauGjMoLJZeKhyEkQVhX4vqKmCZnNy/1+MYYBi+Ylyvv9Zk5tZhOP2We/lozep66EKcBFUL7
- WbTxY7uzSd2o71byYnyJQZ4Y0DrtGiqRBOEpFoKGvtEX9xtSjVw9KM3GtPRyOuSz9uqhA75GK
- 4zGa3BC3SXIz4yaJ3cc6zL93yVH7thQWTH8t+okf9e45ibO0UJk04AQrHG0=
+In-Reply-To: <86ad101f-f400-c7fd-2aa5-4dc618973f3d@xs4all.nl>
+References: <20180220044425.169493-1-acourbot@chromium.org>
+ <20180220044425.169493-14-acourbot@chromium.org> <86ad101f-f400-c7fd-2aa5-4dc618973f3d@xs4all.nl>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 23 Feb 2018 15:34:53 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AOoknDxxqGKjDD0LDt4kYY=UdrLOKLtqs1foFdCviFNw@mail.gmail.com>
+Message-ID: <CAAFQd5AOoknDxxqGKjDD0LDt4kYY=UdrLOKLtqs1foFdCviFNw@mail.gmail.com>
+Subject: Re: [RFCv4 13/21] media: videobuf2-v4l2: support for requests
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On February 23, 2018 12:47:56 AM GMT+01:00, Stephen Warren <swarren@wwwdotorg.org> wrote:
->On 02/22/2018 04:04 PM, Marcel Ziswiler wrote:
->> Turns out latest upstream U-Boot does not configure/enable pllu which
->> leaves it at some default rate of 500 kHz:
+On Wed, Feb 21, 2018 at 1:18 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 02/20/2018 05:44 AM, Alexandre Courbot wrote:
+>> Add a new vb2_qbuf_request() (a request-aware version of vb2_qbuf())
+>> that request-aware drivers can call to queue a buffer into a request
+>> instead of directly into the vb2 queue if relevent.
+>>
+>> This function expects that drivers invoking it are using instances of
+>> v4l2_request_entity and v4l2_request_entity_data to describe their
+>> entity and entity data respectively.
+>>
+>> Also add the vb2_request_submit() helper function which drivers can
+>> invoke in order to queue all the buffers previously queued into a
+>> request into the regular vb2 queue.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+>> ---
+>>  .../media/common/videobuf2/videobuf2-v4l2.c   | 129 +++++++++++++++++-
+>>  include/media/videobuf2-v4l2.h                |  59 ++++++++
+>>  2 files changed, 187 insertions(+), 1 deletion(-)
+>>
 >
->I assume this is only because U-Boot just happened not to access any
->USB 
->devices. In other words, if you break into the U-Boot boot flow and 
->explicitly initialize/access USB, then USB works both in U-Boot and in 
->the kernel even without this patch?
-
-Exactly.
-
-> If that's not the case, it seems 
->there's a bug in U-Boot.
+> <snip>
 >
->Either way, I have no issue with this patch. I just want to make sure 
->there weren't other bugs in U-Boot that needed fixing.
+>> @@ -776,10 +899,14 @@ EXPORT_SYMBOL_GPL(vb2_ioctl_querybuf);
+>>  int vb2_ioctl_qbuf(struct file *file, void *priv, struct v4l2_buffer *p)
+>>  {
+>>       struct video_device *vdev = video_devdata(file);
+>> +     struct v4l2_fh *fh = NULL;
+>> +
+>> +     if (test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags))
+>> +             fh = file->private_data;
+>
+> No need for this. All drivers using vb2 will also use v4l2_fh.
+>
+>>
+>>       if (vb2_queue_is_busy(vdev, file))
+>>               return -EBUSY;
+>> -     return vb2_qbuf(vdev->queue, p);
+>> +     return vb2_qbuf_request(vdev->queue, p, fh ? fh->entity : NULL);
+>>  }
+>>  EXPORT_SYMBOL_GPL(vb2_ioctl_qbuf);
+>>
+>> diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
+>> index 3d5e2d739f05..d4dfa266a0da 100644
+>> --- a/include/media/videobuf2-v4l2.h
+>> +++ b/include/media/videobuf2-v4l2.h
+>> @@ -23,6 +23,12 @@
+>>  #error VB2_MAX_PLANES != VIDEO_MAX_PLANES
+>>  #endif
+>>
+>> +struct media_entity;
+>> +struct v4l2_fh;
+>> +struct media_request;
+>> +struct media_request_entity;
+>> +struct v4l2_request_entity_data;
+>> +
+>>  /**
+>>   * struct vb2_v4l2_buffer - video buffer information for v4l2.
+>>   *
+>> @@ -116,6 +122,59 @@ int vb2_prepare_buf(struct vb2_queue *q, struct v4l2_buffer *b);
+>>   */
+>>  int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b);
+>>
+>> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
+>> +
+>> +/**
+>> + * vb2_qbuf_request() - Queue a buffer, with request support
+>> + * @q:               pointer to &struct vb2_queue with videobuf2 queue.
+>> + * @b:               buffer structure passed from userspace to
+>> + *           &v4l2_ioctl_ops->vidioc_qbuf handler in driver
+>> + * @entity:  request entity to queue for if requests are used.
+>> + *
+>> + * Should be called from &v4l2_ioctl_ops->vidioc_qbuf handler of a driver.
+>> + *
+>> + * If requests are not in use, calling this is equivalent to calling vb2_qbuf().
+>> + *
+>> + * If the request_fd member of b is set, then the buffer represented by b is
+>> + * queued in the request instead of the vb2 queue. The buffer will be passed
+>> + * to the vb2 queue when the request is submitted.
+>
+> I would definitely also prepare the buffer at this time. That way you'll see any
+> errors relating to the prepare early on.
 
-No, rest assured U-Boot is working just fine on the legacy Tegras. The only thing in need of fixing lately was NAND on Colibri T20 and Harmony.
+Would the prepare operation be completely independent of other state?
+I can see a case when how the buffer is to be prepared may depend on
+values of some controls. If so, it would be only possible at request
+submission time. Alternatively, the application would have to be
+mandated to include any controls that may affect buffer preparing in
+the request and before the QBUF is called.
+
+Best regards,
+Tomasz
