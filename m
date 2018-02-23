@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415109-2-2528498157430458964
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415099-3-9527025093589450335
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415109; b=mR8htXWy9cOeYh9hj1CmxBwMlPannLvCjymE56Z1yb187bY
-    Hx83IBD0uJAQij/8uWAIVazCzhRXn9w6keqbMLwADf+qs2OjgXJC52tFG7UYSRWu
-    rvCyAqW8olb1X0/r4BQEnoP3kYMIzzrojfQcl0jNCgF1vCuIlCErp3VJFfVp6sGA
-    rVZw//f+8C0AhQjBMKxbFaUwr8/RZ+KAKOwnq7KD5GVJ0vYfkI5YAj8rIdzl2xGW
-    iBzjsdQj4SOXYlkyEzKJAbbPTTOG512kcF0L+kbrJevHCqnbDxjmp0QnU0SSwafm
-    NKLRVvrKqlNbI65cghPipWu4aTrXI3Z92o4rhTA==
+    t=1519415099; b=ric5q3ocZ5bDrgiSsQn70z+9byNbXs2zRXUIgnksuDDwb0G
+    M7M1bzKsBvdFC6F8oV/SdwjnBT73Wjwo8zNZdOSgnE+9Xs3VtvF1dP/34MId0l2j
+    QPJOTfC/z/zfO24/kMKBS95/n3MGzdLG9qiaTJDkEc0DtLymyHS8R+Fe7jq8cxHG
+    WXrf9bDvSiWevvQz35TRU8i2+ghn+HTWNHqpKI3MxAzpfe0k1BAEwMshVrSA/JS2
+    in8oQuCdXd29Diy78vgs5WCSfMlcWOuNUTxEdxEeAg3sXo3LIIfSwgfsZa+NoePE
+    bPqSBTY8GtXXSq6iKC8ooacGY7M+R4rWYFPrsWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415109; bh=X6d6H9slIPfBJfxQrUFj/fBmHi
-    rtlBERy75TLrvOOt0=; b=xEbKASq8HEXznCxYRouXydm0nadvcOLFfz5F9wKLay
-    WgBE+G1dbjOQFDMqZjJviBm9wdnInpPHMx3I0p1IjF0NhD1Ad7rDE2PztIBasmnt
-    IVnCuQgi+bm+23ZEPDqDPfNcY/USz4Ld4IvSxe9c15AktGEw82T21QexitbQ4RuK
-    HFJCNASpqMqsDoERS/fGKR54VX5ICJjzjOu4ttw8AugG9OOsIWI+xrRazTQQz+TQ
-    z7z1gdZw20XEhLSW0Z170DCtAkxT4QNSE9ReqN2Y6DFJqxtAPjpBEQWGnnt19cpl
-    qPgWhqDDpwnWtyTqjtu6BAcJHuk2lvzTYyN25bIaBgyw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415099; bh=v1+pYpYLr+rXO5NdIzb+4KLeHb
+    eLhP+kLrLOEphets4=; b=siYX5b9G5E0X4xrjZDlHcx4F/7xiq/RkE4umw7/5Td
+    Vpfv0H9AC21XMnmftucgB4qCLL6xQWeDHbLadyYE4HG1dAHkND1LeMku+ODbhENd
+    ik8wrAt528e25hhPSL4P/m9Lm9k9RBZ3oqYrLtsGBEj5TVZbM0Qliz0PPBX32BLo
+    KVGdCJsT5OaMEkNEHIOvsK22HnVHNT7QeLIB9529sGAwMLAxM7NoWvTpLWESeXRp
+    FhWegdMZ6xoc5Ty6vgMlQQkIc1vFvwWbxF9b9NnKIzwvvLW7GC3KNzHJ6fbPV6hF
+    eWkdmS/Tj5w0PSuE58Cp1Q2HX7aSwf2Zq2MxS/TrBD7Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934308AbeBWSsO (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:48:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44822 "EHLO
+        id S934052AbeBWSsT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:48:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934018AbeBWSsM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:12 -0500
+        with ESMTP id S934018AbeBWSsR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 131/145] ISDN: eicon: reduce stack size of sig_ind function
-Date: Fri, 23 Feb 2018 19:27:17 +0100
-Message-Id: <20180223170741.706992588@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 133/145] kasan: rework Kconfig settings
+Date: Fri, 23 Feb 2018 19:27:19 +0100
+Message-Id: <20180223170741.957508092@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -80,72 +86,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 27d807180ae0a9e50d90adf9b22573c21be904c2 upstream.
+commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
 
-I noticed that this function uses a lot of kernel stack when the
-"latent entropy" plugin is enabled:
+We get a lot of very large stack frames using gcc-7.0.1 with the default
+-fsanitize-address-use-after-scope --param asan-stack=1 options, which can
+easily cause an overflow of the kernel stack, e.g.
 
-drivers/isdn/hardware/eicon/message.c: In function 'sig_ind':
-drivers/isdn/hardware/eicon/message.c:6113:1: error: the frame size of 1168 bytes is larger than 1152 bytes [-Werror=frame-larger-than=]
+  drivers/gpu/drm/i915/gvt/handlers.c:2434:1: warning: the frame size of 46176 bytes is larger than 3072 bytes
+  drivers/net/wireless/ralink/rt2x00/rt2800lib.c:5650:1: warning: the frame size of 23632 bytes is larger than 3072 bytes
+  lib/atomic64_test.c:250:1: warning: the frame size of 11200 bytes is larger than 3072 bytes
+  drivers/gpu/drm/i915/gvt/handlers.c:2621:1: warning: the frame size of 9208 bytes is larger than 3072 bytes
+  drivers/media/dvb-frontends/stv090x.c:3431:1: warning: the frame size of 6816 bytes is larger than 3072 bytes
+  fs/fscache/stats.c:287:1: warning: the frame size of 6536 bytes is larger than 3072 bytes
 
-We currently don't warn about this, as we raise the warning limit
-to 2048 bytes in mainline, but I'd like to lower that limit again
-in the future, and this function can easily be changed to be more
-efficient and avoid that warning, by making some of its local
-variables 'const'.
+To reduce this risk, -fsanitize-address-use-after-scope is now split out
+into a separate CONFIG_KASAN_EXTRA Kconfig option, leading to stack
+frames that are smaller than 2 kilobytes most of the time on x86_64.  An
+earlier version of this patch also prevented combining KASAN_EXTRA with
+KASAN_INLINE, but that is no longer necessary with gcc-7.0.1.
 
+All patches to get the frame size below 2048 bytes with CONFIG_KASAN=y
+and CONFIG_KASAN_EXTRA=n have been merged by maintainers now, so we can
+bring back that default now.  KASAN_EXTRA=y still causes lots of
+warnings but now defaults to !COMPILE_TEST to disable it in
+allmodconfig, and it remains disabled in all other defconfigs since it
+is a new option.  I arbitrarily raise the warning limit for KASAN_EXTRA
+to 3072 to reduce the noise, but an allmodconfig kernel still has around
+50 warnings on gcc-7.
+
+I experimented a bit more with smaller stack frames and have another
+follow-up series that reduces the warning limit for 64-bit architectures
+to 1280 bytes (without CONFIG_KASAN).
+
+With earlier versions of this patch series, I also had patches to address
+the warnings we get with KASAN and/or KASAN_EXTRA, using a
+"noinline_if_stackbloat" annotation.
+
+That annotation now got replaced with a gcc-8 bugfix (see
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715) and a workaround for
+older compilers, which means that KASAN_EXTRA is now just as bad as
+before and will lead to an instant stack overflow in a few extreme
+cases.
+
+This reverts parts of commit 3f181b4d8652 ("lib/Kconfig.debug: disable
+-Wframe-larger-than warnings with KASAN=y").  Two patches in linux-next
+should be merged first to avoid introducing warnings in an allmodconfig
+build:
+  3cd890dbe2a4 ("media: dvb-frontends: fix i2c access helpers for KASAN")
+  16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
+
+Do we really need to backport this?
+
+I think we do: without this patch, enabling KASAN will lead to
+unavoidable kernel stack overflow in certain device drivers when built
+with gcc-7 or higher on linux-4.10+ or any version that contains a
+backport of commit c5caf21ab0cf8.  Most people are probably still on
+older compilers, but it will get worse over time as they upgrade their
+distros.
+
+The warnings we get on kernels older than this should all be for code
+that uses dangerously large stack frames, though most of them do not
+cause an actual stack overflow by themselves.The asan-stack option was
+added in linux-4.0, and commit 3f181b4d8652 ("lib/Kconfig.debug:
+disable -Wframe-larger-than warnings with KASAN=y") effectively turned
+off the warning for allmodconfig kernels, so I would like to see this
+fix backported to any kernels later than 4.0.
+
+I have done dozens of fixes for individual functions with stack frames
+larger than 2048 bytes with asan-stack, and I plan to make sure that
+all those fixes make it into the stable kernels as well (most are
+already there).
+
+Part of the complication here is that asan-stack (from 4.0) was
+originally assumed to always require much larger stacks, but that
+turned out to be a combination of multiple gcc bugs that we have now
+worked around and fixed, but sanitize-address-use-after-scope (from
+v4.10) has a much higher inherent stack usage and also suffers from at
+least three other problems that we have analyzed but not yet fixed
+upstream, each of them makes the stack usage more severe than it should
+be.
+
+Link: http://lkml.kernel.org/r/20171221134744.2295529-1-arnd@arndb.de
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[arnd: rebase to v4.9; only re-enable warning]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/isdn/hardware/eicon/message.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ lib/Kconfig.debug |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/isdn/hardware/eicon/message.c
-+++ b/drivers/isdn/hardware/eicon/message.c
-@@ -147,7 +147,7 @@ static word plci_remove_check(PLCI *);
- static void listen_check(DIVA_CAPI_ADAPTER *);
- static byte AddInfo(byte **, byte **, byte *, byte *);
- static byte getChannel(API_PARSE *);
--static void IndParse(PLCI *, word *, byte **, byte);
-+static void IndParse(PLCI *, const word *, byte **, byte);
- static byte ie_compare(byte *, byte *);
- static word find_cip(DIVA_CAPI_ADAPTER *, byte *, byte *);
- static word CPN_filter_ok(byte *cpn, DIVA_CAPI_ADAPTER *, word);
-@@ -4858,7 +4858,7 @@ static void sig_ind(PLCI *plci)
- 	/* included before the ESC_MSGTYPE and MAXPARMSIDS has to be incremented */
- 	/* SMSG is situated at the end because its 0 (for compatibility reasons */
- 	/* (see Info_Mask Bit 4, first IE. then the message type)           */
--	word parms_id[] =
-+	static const word parms_id[] =
- 		{MAXPARMSIDS, CPN, 0xff, DSA, OSA, BC, LLC, HLC, ESC_CAUSE, DSP, DT, CHA,
- 		 UUI, CONG_RR, CONG_RNR, ESC_CHI, KEY, CHI, CAU, ESC_LAW,
- 		 RDN, RDX, CONN_NR, RIN, NI, CAI, ESC_CR,
-@@ -4866,12 +4866,12 @@ static void sig_ind(PLCI *plci)
- 	/* 14 FTY repl by ESC_CHI */
- 	/* 18 PI  repl by ESC_LAW */
- 	/* removed OAD changed to 0xff for future use, OAD is multiIE now */
--	word multi_fac_id[] = {1, FTY};
--	word multi_pi_id[]  = {1, PI};
--	word multi_CiPN_id[]  = {1, OAD};
--	word multi_ssext_id[]  = {1, ESC_SSEXT};
-+	static const word multi_fac_id[] = {1, FTY};
-+	static const word multi_pi_id[]  = {1, PI};
-+	static const word multi_CiPN_id[]  = {1, OAD};
-+	static const word multi_ssext_id[]  = {1, ESC_SSEXT};
- 
--	word multi_vswitch_id[]  = {1, ESC_VSWITCH};
-+	static const word multi_vswitch_id[]  = {1, ESC_VSWITCH};
- 
- 	byte *cau;
- 	word ncci;
-@@ -8924,7 +8924,7 @@ static void listen_check(DIVA_CAPI_ADAPT
- /* functions for all parameters sent in INDs                        */
- /*------------------------------------------------------------------*/
- 
--static void IndParse(PLCI *plci, word *parms_id, byte **parms, byte multiIEsize)
-+static void IndParse(PLCI *plci, const word *parms_id, byte **parms, byte multiIEsize)
- {
- 	word ploc;            /* points to current location within packet */
- 	byte w;
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -197,7 +197,6 @@ config ENABLE_MUST_CHECK
+ config FRAME_WARN
+ 	int "Warn for stack frames larger than (needs gcc 4.4)"
+ 	range 0 8192
+-	default 0 if KASAN
+ 	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+ 	default 1024 if !64BIT
+ 	default 2048 if 64BIT
