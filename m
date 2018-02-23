@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225wVjynLjy7qMkyxjKMKx/o4QuPOGwZAvyTIFgV70h8GR2pn13Cqt610YZ2ON5DZTBaJ0Vf
-ARC-Seal: i=1; a=rsa-sha256; t=1519411065; cv=none;
+X-Google-Smtp-Source: AG47ELvTn4Xvr7jqyDykBg5kSz2QExcgCGH61gA5hIvO1alJAQsbYpUdmZq8RL0KfYmSvH8eHL7L
+ARC-Seal: i=1; a=rsa-sha256; t=1519411062; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ipf2xQ1qv0tIqOY5ALuJw04die+GUajrXv9/wiwAplzf7Ng+j+zdl2X46pAa6ayEUw
-         24Sg1lFMUGkhFPwKUUZcCaEcyhM7bSR34C4GFzaIWHt/kFjo+tEsubB6AxmJ0suMhx2u
-         zWwdrA58jMf/5F75ROIPO+tPvolBYMEUT9+NxETRL933fSlxAj36g7d+k96w3yxCejmT
-         gQyeo4zxjJYOp54/z41xLpVcxVHkSq25YGoRUhLvpuFAhNS5H++Oj7gnFU2zA5pC7def
-         DHKKzQRbAL59ZYIIXrqYn9vMoSlFKI/R7MRf6cMJrgbDuUYtw5c5uEiHfEEyP9D+ra4V
-         l+QQ==
+        b=mXKr2jaiDmqZDrEpsQw/uFHQDad/wryoY8JKpF6P24wUabBMSOmmDG9uYwntO/oN/O
+         OF3l80B47pIft6ZUp/G6vz/SdGJqaGedUZZ9JDL9k1u8VreTlO0+/FlKYTGOt4LUAXe9
+         z3Wb6ntQTX9v2qW+zu3uEXaSKL0O9Qd+x4AxnzxqgWKiMVksk/1JPN/OTxcKAc29TK5H
+         z7zbbmhE3lx+p01djnTUrMXadN1onVwcQaNr9Ew9jtFycaDdZTHS4jHq+b5bImYKdCQ6
+         QiV+MgiswwWTicNQIffDC+btuT86f8RbmpOtkgNPhFlflxQa5MTHoWix/yeOElrHfAIZ
+         2xBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AeEpOEnA4hW7FaYxxblmZY/GzwK8gjQwH1PLW3tSvcs=;
-        b=oxtqv//NnPlY5OWVs1e1TJ5EIp6zOUywtrVPNmNPtNOksUprkNMh33oZE8m6HSp3pi
-         EpCHdGqEZBBCGhUkKdysEfJ8XevW53VWmlyn2xPJAxG3yO22Ohg9+31I60RcMs1bFvad
-         qpvHcZtHnJ6hWbseZrzwuVPmGp6Q6FDqxC9KyuAUjHdfzsQWUtB4nJvQUvZyXbliIPyS
-         gdYi3zJdtHb6GJxJOA4OmPTvJ1hYjfVJMDUZRRUAANgv7Tvc3Ijlw8W8ZJGOY34vrOsy
-         PvABJsT9/TudPTeDS/uWEpdj1fgQrOCDkY4u5aF+fbL9mSogifZqF0R3/GvZd9+blVEy
-         h/LA==
+        bh=+TxwMbq2Q4AmMlfogKWQ3TW+QLK0v5rhJQ6XQ+bVP68=;
+        b=svvRcuhPNsmVhBPVmcmCV++lmEJhgxyoGt0qROP5R2uat47HKeOUrwYl3sODBOIUcJ
+         hBIMcxNcdFaTlszmr14kVHir1rmMXUzjLEBZAt30uD95xJtfMRWHeaR7eWysUTma8NAK
+         +bKP9Ko/aQiJ4BFpTUOW1z3DbsQ+z643oXCXJI7CSPuGP8cMnpF0V53hsngtKqiA+N3s
+         IkXbQ3ZGYAfOx7yfW4eUgMp0MsidDZuCOHl63P5Soj42cnRBlUmMjNPFI+s3q1ZW5wtB
+         e2ei/0YgfqLxmnp8ye+gOOsaXvzkSNmSYd6rBMzC+8aS/xkNIN51yAT7plJwmsYnJJKf
+         Z3Rw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH 4.4 108/193] fbdev: s6e8ax0: avoid unused function warnings
-Date: Fri, 23 Feb 2018 19:25:41 +0100
-Message-Id: <20180223170342.858514771@linuxfoundation.org>
+	Brian Norris <computersforpeace@gmail.com>
+Subject: [PATCH 4.4 107/193] mtd: cfi: enforce valid geometry configuration
+Date: Fri, 23 Feb 2018 19:25:40 +0100
+Message-Id: <20180223170342.702974596@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217977587001623?=
-X-GMAIL-MSGID: =?utf-8?q?1593217977587001623?=
+X-GMAIL-THRID: =?utf-8?q?1593217974695541908?=
+X-GMAIL-MSGID: =?utf-8?q?1593217974695541908?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,68 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit b54729b6cea7d1f46b1ed70cb7065c6bdefaa780 upstream.
+commit f5f92b36fbbb8ac7d70ff5fa39ec2637cce3094c upstream.
 
-The s6e8ax0 suspend/resume functions are hidden inside of an #ifdef
-when CONFIG_PM is set to avoid unused function warnings, but they
-call some other functions that nothing else calls, and we get warnings
-about those:
+MTD allows compile-time configuration of the possible CFI geometry
+settings that are allowed by the kernel, but that includes a couple of
+invalid configurations, where no bank width or no interleave setting
+is allowed. These are then caught with a compile-time warning:
 
-drivers/video/fbdev/exynos/s6e8ax0.c:449:13: error: 's6e8ax0_sleep_in' defined but not used [-Werror=unused-function]
-drivers/video/fbdev/exynos/s6e8ax0.c:485:13: error: 's6e8ax0_display_off' defined but not used [-Werror=unused-function]
+include/linux/mtd/cfi.h:76:2: warning: #warning No CONFIG_MTD_CFI_Ix selected. No NOR chip support can work.
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WIDTH_xx selected. No NOR chip support can work"
 
-This marks the PM functions as __maybe_unused so the compiler can
-silently drop them when they are not referenced.
+This is a bit annoying for randconfig tests, and can be avoided if
+we change the Kconfig logic to always select the simplest configuration
+when no other one is enabled.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/exynos/s6e8ax0.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/mtd/chips/Kconfig |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/video/fbdev/exynos/s6e8ax0.c
-+++ b/drivers/video/fbdev/exynos/s6e8ax0.c
-@@ -829,8 +829,7 @@ static int s6e8ax0_probe(struct mipi_dsi
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
-+static int __maybe_unused s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
- {
- 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
- 
-@@ -843,7 +842,7 @@ static int s6e8ax0_suspend(struct mipi_d
- 	return 0;
- }
- 
--static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
-+static int __maybe_unused s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
- {
- 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
- 
-@@ -855,10 +854,6 @@ static int s6e8ax0_resume(struct mipi_ds
- 
- 	return 0;
- }
--#else
--#define s6e8ax0_suspend		NULL
--#define s6e8ax0_resume		NULL
--#endif
- 
- static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
- 	.name = "s6e8ax0",
-@@ -867,8 +862,8 @@ static struct mipi_dsim_lcd_driver s6e8a
- 	.power_on = s6e8ax0_power_on,
- 	.set_sequence = s6e8ax0_set_sequence,
- 	.probe = s6e8ax0_probe,
--	.suspend = s6e8ax0_suspend,
--	.resume = s6e8ax0_resume,
-+	.suspend = IS_ENABLED(CONFIG_PM) ? s6e8ax0_suspend : NULL,
-+	.resume = IS_ENABLED(CONFIG_PM) ? s6e8ax0_resume : NULL,
- };
- 
- static int s6e8ax0_init(void)
+--- a/drivers/mtd/chips/Kconfig
++++ b/drivers/mtd/chips/Kconfig
+@@ -67,6 +67,10 @@ endchoice
+ config MTD_CFI_GEOMETRY
+ 	bool "Specific CFI Flash geometry selection"
+ 	depends on MTD_CFI_ADV_OPTIONS
++	select MTD_MAP_BANK_WIDTH_1 if  !(MTD_MAP_BANK_WIDTH_2 || \
++		 MTD_MAP_BANK_WIDTH_4  || MTD_MAP_BANK_WIDTH_8 || \
++		 MTD_MAP_BANK_WIDTH_16 || MTD_MAP_BANK_WIDTH_32)
++	select MTD_CFI_I1 if !(MTD_CFI_I2 || MTD_CFI_I4 || MTD_CFI_I8)
+ 	help
+ 	  This option does not affect the code directly, but will enable
+ 	  some other configuration options which would allow you to reduce
