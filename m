@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeBWPA3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:00:29 -0500
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:38767 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbeBWPA0 (ORCPT
+        id S1751879AbeBWPB3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:01:29 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55435 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeBWPA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:00:26 -0500
-X-Google-Smtp-Source: AG47ELsYumfu8HQwlbPCNA89Z9XqMJb3w4aWGZqHBGa/e0p4LCfBGYJ/RyVpkQo+GOxpupJ8gdb0/w==
+        Fri, 23 Feb 2018 10:00:28 -0500
+X-Google-Smtp-Source: AG47ELuDuyasboGJo1FWnmDDE2wFXH2gg0tvyRoX0ApjY1LAZQaRvqzydqPn0PaGp2/qLz1Dqmx6MQ==
 From: Michal Simek <michal.simek@xilinx.com>
 To: devicetree@vger.kernel.org
 Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
@@ -18,54 +18,141 @@ Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
         Josh Cartwright <josh.cartwright@ni.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/5] arm: zynq: Adding new Xilinx boards
-Date: Fri, 23 Feb 2018 16:00:18 +0100
-Message-Id: <cover.1519398009.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 1/5] arm: zynq: Add Xilinx cc108 board
+Date: Fri, 23 Feb 2018 16:00:19 +0100
+Message-Id: <eb2fec632fcb7fbfed39dcbeae92b38a98518618.1519398009.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1519398009.git.michal.simek@xilinx.com>
+References: <cover.1519398009.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1519398009.git.michal.simek@xilinx.com>
+References: <cover.1519398009.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The board contains 7z010 with 512MB memory, ethernet, qspi, uart, usbs
+and sd. But board is not supporting booting from sd card.
 
-this patchset is adding 5 new dts files which target cc108 and zc770
-boards.
-Please let me know if you see any issue with them.
-
-Series depends on this one patch
-https://lkml.org/lkml/2018/2/23/412
-
-Thanks,
-Michal
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
 Changes in v2:
 - Record compatible string to xilinx.txt
-- Record compatible string to xilinx.txt
-- Record compatible string to xilinx.txt
-- Record compatible string to xilinx.txt
-- use eeprom as node name instead of at25
-- Record compatible string to xilinx.txt
 
-Michal Simek (5):
-  arm: zynq: Add Xilinx cc108 board
-  arm: zynq: Add support for Xilinx zc770 xm010 dc1 board
-  arm: zynq: Add support for Xilinx zc770 xm011 dc2 board
-  arm: zynq: Add support for Xilinx zc770 xm012 dc3 board
-  arm: zynq: Add support for Xilinx zc770 xm013 dc4 board
-
- Documentation/devicetree/bindings/arm/xilinx.txt | 11 +++
- arch/arm/boot/dts/Makefile                       |  5 ++
- arch/arm/boot/dts/zynq-cc108.dts                 | 75 +++++++++++++++++++
- arch/arm/boot/dts/zynq-zc770-xm010.dts           | 92 ++++++++++++++++++++++++
- arch/arm/boot/dts/zynq-zc770-xm011.dts           | 64 +++++++++++++++++
- arch/arm/boot/dts/zynq-zc770-xm012.dts           | 64 +++++++++++++++++
- arch/arm/boot/dts/zynq-zc770-xm013.dts           | 78 ++++++++++++++++++++
- 7 files changed, 389 insertions(+)
+ Documentation/devicetree/bindings/arm/xilinx.txt |  5 ++
+ arch/arm/boot/dts/Makefile                       |  1 +
+ arch/arm/boot/dts/zynq-cc108.dts                 | 75 ++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
  create mode 100644 arch/arm/boot/dts/zynq-cc108.dts
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm010.dts
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm011.dts
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm012.dts
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm013.dts
 
+diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
+index 549e70a022cb..425c74fcc560 100644
+--- a/Documentation/devicetree/bindings/arm/xilinx.txt
++++ b/Documentation/devicetree/bindings/arm/xilinx.txt
+@@ -6,6 +6,11 @@ shall have the following properties.
+ Required root node properties:
+     - compatible = "xlnx,zynq-7000";
+ 
++Additional compatible strings:
++
++- Xilinx internal board cc108
++  "xlnx,zynq-cc108"
++
+ ---------------------------------------------------------------
+ 
+ Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index ade7a38543dc..c6810e84d4d7 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1062,6 +1062,7 @@ dtb-$(CONFIG_ARCH_VT8500) += \
+ 	wm8750-apc8750.dtb \
+ 	wm8850-w70v2.dtb
+ dtb-$(CONFIG_ARCH_ZYNQ) += \
++	zynq-cc108.dtb \
+ 	zynq-microzed.dtb \
+ 	zynq-parallella.dtb \
+ 	zynq-zc702.dtb \
+diff --git a/arch/arm/boot/dts/zynq-cc108.dts b/arch/arm/boot/dts/zynq-cc108.dts
+new file mode 100644
+index 000000000000..1a0f631c1d8d
+--- /dev/null
++++ b/arch/arm/boot/dts/zynq-cc108.dts
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Xilinx CC108 board DTS
++ *
++ * (C) Copyright 2007-2018 Xilinx, Inc.
++ * (C) Copyright 2007-2013 Michal Simek
++ * (C) Copyright 2007-2012 PetaLogix Qld Pty Ltd
++ *
++ * Michal SIMEK <monstr@monstr.eu>
++ */
++/dts-v1/;
++/include/ "zynq-7000.dtsi"
++
++/ {
++	compatible = "xlnx,zynq-cc108", "xlnx,zynq-7000";
++	model = "Xilinx Zynq";
++
++	aliases {
++		ethernet0 = &gem0;
++		serial0 = &uart0;
++	};
++
++	chosen {
++		bootargs = "";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x20000000>;
++	};
++
++	usb_phy0: phy0 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++
++	usb_phy1: phy1 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++};
++
++&gem0 {
++	status = "okay";
++	phy-mode = "rgmii-id";
++	phy-handle = <&ethernet_phy>;
++
++	ethernet_phy: ethernet-phy@1 {
++		reg = <1>;
++		device_type = "ethernet-phy";
++	};
++};
++
++&sdhci1 {
++	status = "okay";
++	broken-cd ;
++	wp-inverted ;
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++	dr_mode = "host";
++	usb-phy = <&usb_phy0>;
++};
++
++&usb1 {
++	status = "okay";
++	dr_mode = "host";
++	usb-phy = <&usb_phy1>;
++};
 -- 
 1.9.1
