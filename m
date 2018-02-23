@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvliFkCkE6iuy2mMxFaN12x0pmIX8YsWSd0dzk8ZBI6oCTh7fde8scnF+0+vSOOuZE3JNNV
-ARC-Seal: i=1; a=rsa-sha256; t=1519412081; cv=none;
+X-Google-Smtp-Source: AH8x2253g2B2wdQYRp2fbheNeaBDgRksyQ+tU22vIPPIMt7upKelE5UWWHGF7cFaTkHaOJbORShA
+ARC-Seal: i=1; a=rsa-sha256; t=1519412078; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z8f7sBudjo3m6PQ0A+wjsYniR2pMBt7abWsW39Em3gaTdnTcjbnMZiSUMANUyMNyfm
-         SS9puqACi5saetMghejBGmuPHeGRD6b/JoOzbQmN4FzqB+FwXpWbSUqSwqSlS8W8D23d
-         lEgYEWMIZ7D3vJzRrM6Um2IEaQmM0tP9Gx3mLZ+5oZvHTr+QUwzL0hSq6NFDPOo80CRd
-         OAtN/Rxl5k7IAAScj6YDavdbdIM+HPQ7YWk+GDczs/Y53gf2dQIMKRndZivzjjjmWY1d
-         xuvxalQUBllmt9EMF3tV6I+ujBExnDgZoTD8LCz5K/NVZnS1i3KA7EQYvAUj2tUtOjlG
-         fy0Q==
+        b=tyvP+4kowXxA0h3qjk9Qs7bHY0a+oXm8ZdgT+p6TBvZG7zViGiOZyp8DvvxDe+05mi
+         oRoc3K2HKNqgMBEOBqJInDrwDoDbvkPa+aMKqojLHtkHBheyF7+rdiif3F6mz1ZK21Z0
+         4es+lxeh1jmHdxwlNCdbIWGYE+JOwkxCy4WfdKIi0Waix1MGo42hMK4ipej5PlxnldzQ
+         IQKUBwD7ULgrUIQtjDFt1Fby/I2QTByCNHDRgdECNuUQq+18bDQxfhhNcuBQPgAkibu3
+         A5GGLl3HalQzCu8v6LW+o2NArrjx8UiWv05mEs9ZeMz51MDDVa73N1R3tj+wMnO/r3Yk
+         ZUSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BwJ8LjGrxVFYYFEwTqDBDKi5tmSRXD2L5s2N4sw7Neg=;
-        b=j5DEl7vFyW+f/J8tFjBzkKkuBkYX4MUVTq2Nb+Zj42Ycl2BBL4a2kpY8nqptmBxtQB
-         0dc8/5wzV8AJqmm+5CdqCJd67lRkg6sYr8odLImJtRRW1yzl39z6f5CBAtheytwKCitx
-         IG6YpXOEa0YS37TmenZsS2XBWS2G5lIqwC+omv9VdeIBBsx5CBUqE/jr56PJNhDc9mC6
-         fDBi74kBBEoz/2QSWnfjQRCL5F1zUI+w9DJ7TSTj0FIW1cbGodlryu2SJ6QUmxbXnOhs
-         yiKh2PdxYjHAnD3AQ8x5jGKouJ6wVjr6fnaytKIJbzkxsmsz7Tv5YzXszVMgoM9Y1Tkh
-         BYzQ==
+        bh=IUFkaCcDaDOaZqK+ojWbZ296YfRJvUdL4uRnfmNvzwM=;
+        b=e46YHvAAMPTVa306f6w2V+FOIrncoQ+Ut7767cogVbkPM3GGc4Ib0XYSccFuSXVwon
+         91DRKXkKx5e1Bd6tKdJ2ORNg1RpY/FYzc1KZ9yNur6kp+VFpktwis0a8Peut9C/V3zzB
+         e2PtOonAZJN4jkU2u0jRAfVlP5y9+K0Fo5zpgKZXewl3vFzExbosvCg9hYPUusYZcf6H
+         IARAsGS7awfLlufDAgYDl3tE36IZxDVnukvlUsbtWb7MXFLY0FK36HFIUBVdvLbRy4CV
+         Zn6XlW80aTHPxBut7O/vNLGjTakREDr+cbj21RcC2XaZV2Jh8jdA7reci8NO7ROs28VM
+         xQ1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yan Markman <ymarkman@marvell.com>,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 081/159] net: mvpp2: allocate zeroed tx descriptors
-Date: Fri, 23 Feb 2018 19:26:29 +0100
-Message-Id: <20180223170753.395913447@linuxfoundation.org>
+Subject: [PATCH 4.14 080/159] media: ov13858: Select V4L2_FWNODE
+Date: Fri, 23 Feb 2018 19:26:28 +0100
+Message-Id: <20180223170753.280357800@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593219043130251047?=
-X-GMAIL-MSGID: =?utf-8?q?1593219043130251047?=
+X-GMAIL-THRID: =?utf-8?q?1593219040057436719?=
+X-GMAIL-MSGID: =?utf-8?q?1593219040057436719?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +50,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yan Markman <ymarkman@marvell.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 
-[ Upstream commit a154f8e399a063137fc42b961f437248d55ece29 ]
+[ Upstream commit fce8ba670b7418319da14a6fc6668db1f1a96267 ]
 
-Reserved and unused fields in the Tx descriptors should be 0. The PPv2
-driver doesn't clear them at run-time (for performance reasons) but
-these descriptors aren't zeroed when allocated, which can lead to
-unpredictable behaviors. This patch fixes this by using
-dma_zalloc_coherent instead of dma_alloc_coherent.
+The ov13858 driver depends on the V4L2 fwnode, thus add that to Kconfig.
 
-Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
-Signed-off-by: Yan Markman <ymarkman@marvell.com>
-[Antoine: commit message]
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5fcf092e0c9f ("[media] ov13858: add support for OV13858 sensor")
 
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -5399,7 +5399,7 @@ static int mvpp2_aggr_txq_init(struct pl
- 	u32 txq_dma;
- 
- 	/* Allocate memory for TX descriptors */
--	aggr_txq->descs = dma_alloc_coherent(&pdev->dev,
-+	aggr_txq->descs = dma_zalloc_coherent(&pdev->dev,
- 				MVPP2_AGGR_TXQ_SIZE * MVPP2_DESC_ALIGNED_SIZE,
- 				&aggr_txq->descs_dma, GFP_KERNEL);
- 	if (!aggr_txq->descs)
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -660,6 +660,7 @@ config VIDEO_OV13858
+ 	tristate "OmniVision OV13858 sensor support"
+ 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+ 	depends on MEDIA_CAMERA_SUPPORT
++	select V4L2_FWNODE
+ 	---help---
+ 	  This is a Video4Linux2 sensor-level driver for the OmniVision
+ 	  OV13858 camera.
