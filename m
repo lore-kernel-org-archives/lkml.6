@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226aCkrsEmWrpKZLinXayJdZF+PKBqs/t350/gXcyAWfeCl9HKq5i7Vp3X7V2jb6MEM6ZOjP
-ARC-Seal: i=1; a=rsa-sha256; t=1519411182; cv=none;
+X-Google-Smtp-Source: AH8x227ekIfZT5wQZo6Vaqim+uodMbdW7pFQ1f9JOOpp6frQPkrYjmB4REGmfd/WDrXd7ZPm3C1F
+ARC-Seal: i=1; a=rsa-sha256; t=1519411179; cv=none;
         d=google.com; s=arc-20160816;
-        b=0vkMkfgf3P/A+JgNtUsAvO7xfpG9ILN3IvktApKTDDn4qSzSDIl7L5rQKS8wpKuLiI
-         gzF7RsHIKY5rXco77exeCgQWmoZr7EIKquC+lJ5FZh/0Xvt/tdAZQnVN2CC9u1uFsapn
-         O63WcEk4xZBiTNgIXaYTNMCW0fwhojyuNTz6iW3BuHZtJPC6P304Kf+DE73SFVZ9l+GK
-         h5oQzvi/ycOrYG1qDlsz4tBwh17Md2BOZbAYlFDcf9NG8KEKeqx5e8LZc89WJUKkLUB7
-         jKO8XKceYBJXyaCdrXVxJTGnvwqXWIMtU+fWtTwHoaucry/bwnWlF+On+Gi+7u8UeU/8
-         SSqw==
+        b=v2zSMRchSVCWtX/2xWh7nz8jCKyJWwn+uYmuBr056mGXg46472OHj8MMVmqyaBPFqN
+         nmp/rOJirRUl5t23+qEZnDcNJ1J3NbnPYfzhHyIU2XSLQqZFDGJ4etH3w5QJGHSDbCXo
+         lpFc10yJwqkFR2CSItQ46oSjMc7RAuSjZLwkY06OmAvHtu5GM9IKOiwd+NoV0EMZr9B9
+         qgTOsPJ9OrHh0XkYv1CBKG0MI7I7yvthAjw5/D9LC4oMqMvm6bgHMSI8BfATXk8cBM3q
+         SSVcOFk5uzfNXOS8imsNqBCq4v7GUJHuph/tl5TOSeiHFkyD/YNND0JTMTkMCrlIzCPH
+         OILQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qLIEksqOBNJ+3s29vTkcd5rfa7+Qv6O9zhiiRoAgF10=;
-        b=cbpAl7Y1rPvBf9lEOKP4ejV8Z/SR5CUjzN0xYVFPv0LwP1J5/6Lk1KrGTJWEhIDlcW
-         hy/6fnjpz3bDw64v0YQxplUxj+tejdeO+QzO643wPjLyLHGvVp+PCXn7Gye0b8I5EUT2
-         2x0BZah3w5ZcmwdLpoZSaM945d/beiOhkZBWnNw9xGHnLkfHRetlGsRmoibCuxn1qX4h
-         9iWOQ937ZSmUESf64j/CbKxul1yiHHnr4Zx2UINiolb6WXMG/Nb+v11thGsqCBA2vzeB
-         rm7jlBdgyGP0WZmLxfn8X/Y7TOKnFooverT2+uPP5lDx0lhMSs/cNgN5Zy9aVc78ndcA
-         qxYg==
+        bh=sDEvdRCtHzj4GjkKYzR3APbbqTLrBiPG4dLBfZ6Fh4I=;
+        b=j2VcRrQXvSAmhBAO0BMdHQRcmBVUXB/LgiUKI4FVV70Nv4eYv/tyCK8p2gN3q+nxaq
+         ru+Hpi3xHSc1RfITv2h6QZPqXetPbmfHTqQfy17HhrYG7wFhiIjryJV6oK3bSnzFKDPE
+         1++fWBFTF6YcrzAoqcEBK6r8clZSezjuxaUtW1DVMPq4uU39RBhArV1+je9NdsYInimK
+         IybEHo48vLYlEDBVdOlfw6x66negQpjhD7v/RG7g6m7sK8FhPrJvlrYJltM9HualFQMx
+         E3KXscT8iup7IuqLMZmlqLdwe/59tODdBt11ewcwmnhMXfYnyT+DVCr2itw3XAWajCFF
+         0Pnw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 148/193] ncpfs: fix unused variable warning
-Date: Fri, 23 Feb 2018 19:26:21 +0100
-Message-Id: <20180223170349.066404744@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.4 147/193] gpio: xgene: mark PM functions as __maybe_unused
+Date: Fri, 23 Feb 2018 19:26:20 +0100
+Message-Id: <20180223170348.920384237@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218099827168839?=
-X-GMAIL-MSGID: =?utf-8?q?1593218099827168839?=
+X-GMAIL-THRID: =?utf-8?q?1593218097512625824?=
+X-GMAIL-MSGID: =?utf-8?q?1593218097512625824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,36 +49,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 9a232de4999666b2e8ea6775b2b0e3e4feb09b7a upstream.
+commit b115bebc07f282067eccc06fd5aa3060ab1426da upstream.
 
-Without CONFIG_NCPFS_NLS the following warning is seen:
+When CONFIG_PM_SLEEP is disabled, we get a warning about unused functions:
 
-fs/ncpfs/dir.c: In function 'ncp_hash_dentry':
-fs/ncpfs/dir.c:136:23: warning: unused variable 'sb' [-Wunused-variable]
-   struct super_block *sb = dentry->d_sb;
+drivers/gpio/gpio-xgene.c:155:12: warning: 'xgene_gpio_resume' defined but not used [-Wunused-function]
+ static int xgene_gpio_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~
+drivers/gpio/gpio-xgene.c:142:12: warning: 'xgene_gpio_suspend' defined but not used [-Wunused-function]
+ static int xgene_gpio_suspend(struct device *dev)
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+The warnings are harmless and can be avoided by simplifying the code and marking
+the functions as __maybe_unused.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ncpfs/dir.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpio/gpio-xgene.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
---- a/fs/ncpfs/dir.c
-+++ b/fs/ncpfs/dir.c
-@@ -133,12 +133,11 @@ ncp_hash_dentry(const struct dentry *den
- 		return 0;
+--- a/drivers/gpio/gpio-xgene.c
++++ b/drivers/gpio/gpio-xgene.c
+@@ -42,9 +42,7 @@ struct xgene_gpio {
+ 	struct gpio_chip	chip;
+ 	void __iomem		*base;
+ 	spinlock_t		lock;
+-#ifdef CONFIG_PM
+ 	u32			set_dr_val[XGENE_MAX_GPIO_BANKS];
+-#endif
+ };
  
- 	if (!ncp_case_sensitive(inode)) {
--		struct super_block *sb = dentry->d_sb;
- 		struct nls_table *t;
- 		unsigned long hash;
- 		int i;
+ static inline struct xgene_gpio *to_xgene_gpio(struct gpio_chip *chip)
+@@ -132,8 +130,7 @@ static int xgene_gpio_dir_out(struct gpi
+ 	return 0;
+ }
  
--		t = NCP_IO_TABLE(sb);
-+		t = NCP_IO_TABLE(dentry->d_sb);
- 		hash = init_name_hash();
- 		for (i=0; i<this->len ; i++)
- 			hash = partial_name_hash(ncp_tolower(t, this->name[i]),
+-#ifdef CONFIG_PM
+-static int xgene_gpio_suspend(struct device *dev)
++static __maybe_unused int xgene_gpio_suspend(struct device *dev)
+ {
+ 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
+ 	unsigned long bank_offset;
+@@ -146,7 +143,7 @@ static int xgene_gpio_suspend(struct dev
+ 	return 0;
+ }
+ 
+-static int xgene_gpio_resume(struct device *dev)
++static __maybe_unused int xgene_gpio_resume(struct device *dev)
+ {
+ 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
+ 	unsigned long bank_offset;
+@@ -160,10 +157,6 @@ static int xgene_gpio_resume(struct devi
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
+-#define XGENE_GPIO_PM_OPS	(&xgene_gpio_pm)
+-#else
+-#define XGENE_GPIO_PM_OPS	NULL
+-#endif
+ 
+ static int xgene_gpio_probe(struct platform_device *pdev)
+ {
+@@ -230,7 +223,7 @@ static struct platform_driver xgene_gpio
+ 	.driver = {
+ 		.name = "xgene-gpio",
+ 		.of_match_table = xgene_gpio_of_match,
+-		.pm     = XGENE_GPIO_PM_OPS,
++		.pm     = &xgene_gpio_pm,
+ 	},
+ 	.probe = xgene_gpio_probe,
+ 	.remove = xgene_gpio_remove,
