@@ -1,185 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751718AbeBWIeT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:34:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37334 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751273AbeBWIeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750827AbeBWIeS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:34:18 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40485 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbeBWIeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Feb 2018 03:34:15 -0500
-Date: Fri, 23 Feb 2018 16:34:05 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 00/17] Add kexec_file_load support to s390
-Message-ID: <20180223083405.GA29498@dhcp-128-65.nay.redhat.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
- <20180214073543.GA12328@dhcp-128-65.nay.redhat.com>
- <20180214105449.1325bfbe@ThinkPad>
+X-Google-Smtp-Source: AG47ELvflWVubp7WqZNRBJiHbi4tjpd/Fj/BYyOs2DfOO6qgq55afMN8+9qtGbNDZFglEr++tET4CocOAzi8uVYEPqY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214105449.1325bfbe@ThinkPad>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAFvLkMSa5rQUS7xboNFZO_0x0unPmd6JKyROCjv4L-KgXbXzWg@mail.gmail.com>
+References: <1519221027-4028-2-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <d007f880-0509-e30c-4c28-94117d2f8037@st.com> <CAFvLkMSa5rQUS7xboNFZO_0x0unPmd6JKyROCjv4L-KgXbXzWg@mail.gmail.com>
+From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Date: Fri, 23 Feb 2018 09:34:12 +0100
+Message-ID: <CAFvLkMT9YpzTRoN8f3NCpH_qGeDzyDcvZLeWpOoDL1xqje+VaQ@mail.gmail.com>
+Subject: Re: [1/2] ARM: irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
+To: Ludovic BARRE <ludovic.barre@st.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1N8YYGY011998
 
-On 02/14/18 at 10:54am, Philipp Rudo wrote:
-> Hi Dave,
-> 
-> I just browsed AKASHI's patches (v7). The way I see it the common code changes
-> are on different areas of kexec_file and shouldn't get in conflict. Only in the
-> arch code (s390 and arm64) some function calls might need an update. But I have
-> to take a closer look on the patches first.
+Hi Ludovic,
+Please check latest v2 patches series and let me know if it works on
+stm32h7 as it does on stm32f4
 
-I'm tring both in local branch with both series (V8 from AKASHI and this series),
-but there are indeed some conflicts, may because AKASHI factored out some arch
-code from ppc/x86 to common code.
-
-> 
-> @AKASHI: Welcome to the list. While browsing I couldn't find any
-> arch_apply_relocation function for arm64. These require the biggest changes in
-> my patch set. Did I just miss it or does arm64 work differently?
-> 
-> @Dave: Happy holiday
-
-Thank you!
-
-> 
-> Thanks
-> Philipp
-> 
-> On Wed, 14 Feb 2018 15:35:43 +0800
-> Dave Young <dyoung@redhat.com> wrote:
-> 
-> > Hi Philipp,
-> > 
-> > I added AKASHI in cc, he posted arm64 kexec_file series previously.
-> > I would like to read both series especially the general part, but
-> > maybe at the end of this month because of a holiday..
-> > 
-> > From the patch log the cleanup looks nice, but still need read the
-> > details.
-> > 
-> > On 02/12/18 at 11:07am, Philipp Rudo wrote:
-> > > Hi everybody
-> > > 
-> > > resending the series as there was no reaction, yet. Furthermore i was told
-> > > that Andrew and the x86 list should also be CCed, so welcome.
-> > > 
-> > > No changes made to the patches since first time i sent them. The patches
-> > > apply to the current master (v4.16-rc1).
-> > > 
-> > > Thanks
-> > > Philipp
-> > > 
-> > > ---
-> > > 
-> > > this series adds the kexec_file_load system call to s390. Before the system
-> > > call is added there are some preparations/clean ups to common
-> > > kexec_file_load. In detail this series contains:
-> > > 
-> > > Patch #1&2: Minor cleanups/fixes.
-> > > 
-> > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> > > depending on the section. With these patches the section address will be
-> > > calculated verbosely and sh_offset will contain the offset of the section
-> > > in the stripped purgatory binary (purgatory_buf).
-> > > 
-> > > Patch #10: Allows architectures to set the purgaory load address. This
-> > > patch is important for s390 as the kernel and purgatory have to be loaded
-> > > to fixed addresses. In current code this is impossible as the purgatory
-> > > load is opaque to the architecture.
-> > > 
-> > > Patch #11: Moves x86 purgatories sha implementation to common lib/
-> > > directory.
-> > > 
-> > > Patches #12-17 finally adds the kexec_file_load system call to s390.
-> > > 
-> > > Please note that I had to touch arch code for x86 and power a little. In
-> > > theory this should not change the behavior but I don't have a way to test
-> > > it. Cross-compiling with defconfig(*) works fine for both.
-> > > 
-> > > Thanks
-> > > Philipp
-> > > 
-> > > (*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
-> > > 
-> > > Philipp Rudo (17):
-> > >   kexec_file: Silence compile warnings
-> > >   kexec_file: Remove checks in kexec_purgatory_load
-> > >   kexec_file: Make purgatory_info->ehdr const
-> > >   kexec_file: Search symbols in read-only kexec_purgatory
-> > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-> > >   kexec_file: Split up __kexec_load_puragory
-> > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-> > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-> > >   kexec_file: Remove mis-use of sh_offset field
-> > >   kexec_file: Allow archs to set purgatory load address
-> > >   kexec_file: Move purgatories sha256 to common code
-> > >   s390/kexec_file: Prepare setup.h for kexec_file_load
-> > >   s390/kexec_file: Add purgatory
-> > >   s390/kexec_file: Add kexec_file_load system call
-> > >   s390/kexec_file: Add image loader
-> > >   s390/kexec_file: Add crash support to image loader
-> > >   s390/kexec_file: Add ELF loader
-> > > 
-> > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
-> > >  arch/s390/Kbuild                               |   1 +
-> > >  arch/s390/Kconfig                              |   4 +
-> > >  arch/s390/include/asm/kexec.h                  |  23 ++
-> > >  arch/s390/include/asm/purgatory.h              |  17 ++
-> > >  arch/s390/include/asm/setup.h                  |  40 ++-
-> > >  arch/s390/kernel/Makefile                      |   1 +
-> > >  arch/s390/kernel/asm-offsets.c                 |   5 +
-> > >  arch/s390/kernel/compat_wrapper.c              |   1 +
-> > >  arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
-> > >  arch/s390/kernel/kexec_image.c                 |  78 +++++
-> > >  arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
-> > >  arch/s390/kernel/syscalls/syscall.tbl          |   1 +
-> > >  arch/s390/purgatory/Makefile                   |  37 +++
-> > >  arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
-> > >  arch/s390/purgatory/purgatory.c                |  42 +++
-> > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
-> > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
-> > >  arch/x86/purgatory/Makefile                    |   3 +
-> > >  arch/x86/purgatory/purgatory.c                 |   2 +-
-> > >  include/linux/kexec.h                          |  38 +--
-> > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
-> > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
-> > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
-> > >  24 files changed, 1200 insertions(+), 284 deletions(-)
-> > >  create mode 100644 arch/s390/include/asm/purgatory.h
-> > >  create mode 100644 arch/s390/kernel/kexec_elf.c
-> > >  create mode 100644 arch/s390/kernel/kexec_image.c
-> > >  create mode 100644 arch/s390/kernel/machine_kexec_file.c
-> > >  create mode 100644 arch/s390/purgatory/Makefile
-> > >  create mode 100644 arch/s390/purgatory/head.S
-> > >  create mode 100644 arch/s390/purgatory/purgatory.c
-> > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > > 
-> > > -- 
-> > > 2.13.5
-> > > 
-> > > 
-> > > _______________________________________________
-> > > kexec mailing list
-> > > kexec@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/kexec  
-> > 
-> > Thanks
-> > Dave
-> > 
-> 
+2018-02-22 12:01 GMT+01:00 Radosław Pietrzyk <radoslaw.pietrzyk@gmail.com>:
+> Hi Ludovic,
+> I have tested on stm32f429-disco and it works without a problem.
+> handle_edge_irq is not used in current implementation because it is
+> substituted by handle_simple_irq in an alloc callback either way which
+> causes that irq_ack callback is not invoked as well (acking is done in
+> chained handler).
+>
+> 2018-02-22 11:55 GMT+01:00 Ludovic BARRE <ludovic.barre@st.com>:
+>> Hi Radek
+>>
+>> I've tested your change on stm32h743i-eval.dts board
+>> and gpio-keys tests are not functional.
+>> No interrupt occurs when we push or release button
+>> (cat /proc/interrupt).
+>>
+>> Board: stm32h743i-eval.dts
+>> Test description: gpio-keys (gpioc 13 => exti 13), with gpio or interrupt
+>> property.
+>>
+>> comment below
+>>
+>>
+>> On 02/21/2018 02:50 PM, radek wrote:
+>>>
+>>> - allocates generic chip with handle_simple_irq
+>>>         which simplifies irq_domain_ops.alloc callback
+>>>         - removes ack register from generic chip which is not used for
+>>>         handle_simple_irq as acking is done in a chained handler
+>>>         - removes unneeded irq_domain_ops.xlate callback
+>>>
+>>> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+>>> ---
+>>>   drivers/irqchip/irq-stm32-exti.c | 10 +---------
+>>>   1 file changed, 1 insertion(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-stm32-exti.c
+>>> b/drivers/irqchip/irq-stm32-exti.c
+>>> index 36f0fbe..42e74e3 100644
+>>> --- a/drivers/irqchip/irq-stm32-exti.c
+>>> +++ b/drivers/irqchip/irq-stm32-exti.c
+>>> @@ -176,16 +176,12 @@ static int stm32_irq_set_wake(struct irq_data *data,
+>>> unsigned int on)
+>>>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>>>                             unsigned int nr_irqs, void *data)
+>>>   {
+>>> -       struct irq_chip_generic *gc;
+>>>         struct irq_fwspec *fwspec = data;
+>>>         irq_hw_number_t hwirq;
+>>>         hwirq = fwspec->param[0];
+>>> -       gc = irq_get_domain_generic_chip(d, hwirq);
+>>>         irq_map_generic_chip(d, virq, hwirq);
+>>> -       irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+>>> -                           handle_simple_irq, NULL, NULL);
+>>>         return 0;
+>>>   }
+>>> @@ -200,7 +196,6 @@ static void stm32_exti_free(struct irq_domain *d,
+>>> unsigned int virq,
+>>>     struct irq_domain_ops irq_exti_domain_ops = {
+>>>         .map    = irq_map_generic_chip,
+>>> -       .xlate  = irq_domain_xlate_onetwocell,
+>>>         .alloc  = stm32_exti_alloc,
+>>>         .free   = stm32_exti_free,
+>>>   };
+>>> @@ -231,7 +226,7 @@ __init stm32_exti_init(const struct stm32_exti_bank
+>>> **stm32_exti_banks,
+>>>         }
+>>>         ret = irq_alloc_domain_generic_chips(domain, IRQS_PER_BANK, 1,
+>>> "exti",
+>>> -                                            handle_edge_irq, clr, 0, 0);
+>>> +                                            handle_simple_irq, clr, 0,
+>>> 0);
+>>
+>>
+>> EXTI hardware block is trigged on pulse event rising or failing edge.
+>> Why do you change to handle_simple_irq ?
+>>
+>>>         if (ret) {
+>>>                 pr_err("%pOF: Could not allocate generic interrupt
+>>> chip.\n",
+>>>                         node);
+>>> @@ -246,13 +241,10 @@ __init stm32_exti_init(const struct stm32_exti_bank
+>>> **stm32_exti_banks,
+>>>                 gc->reg_base = base;
+>>>                 gc->chip_types->type = IRQ_TYPE_EDGE_BOTH;
+>>> -               gc->chip_types->chip.irq_ack = irq_gc_ack_set_bit;
+>>>                 gc->chip_types->chip.irq_mask = irq_gc_mask_clr_bit;
+>>>                 gc->chip_types->chip.irq_unmask = irq_gc_mask_set_bit;
+>>>                 gc->chip_types->chip.irq_set_type = stm32_irq_set_type;
+>>>                 gc->chip_types->chip.irq_set_wake = stm32_irq_set_wake;
+>>> -               gc->chip_types->regs.ack = stm32_bank->pr_ofst;
+>>> -               gc->chip_types->regs.mask = stm32_bank->imr_ofst;
+>>>                 gc->private = (void *)stm32_bank;
+>>>                 /* Determine number of irqs supported */
+>>>
+>>
+>> BR
+>> Ludo
