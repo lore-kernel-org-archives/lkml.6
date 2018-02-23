@@ -1,114 +1,141 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AH8x224vQiwBVAqF3w8NWpkuyVLZuZw1be1OfsWdFVOOMhJBc8eKby32q3Z6AQeyXmim+8aijnm7
-ARC-Seal: i=1; a=rsa-sha256; t=1519379001; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tR1BfG1GFW2tjeck4HfZuYOgmKXSJc71h9EcLQXTKRoJGWDzRdZ9UYCvudlQbR4bmu
-         349ipya2wIw/ho3gYcPoZ1rCbCG1lGApzDZrRw32+xIdKDtIKYgOrqftUOIXtciv7QTh
-         ycev/XJB2JWzjd11pb6Ao+mRy+n/t/TmpTYlNZ5tHaHvxU5gOIiZgkbii3wi97HsxenG
-         LESKXbf0OcDhu57ZOLcv0P3lgc4OoQ4xDOc+eue4TmXSqfVCrqtdnRLljohOpcL9fhZm
-         CCTHLBCYDDf9NSWma02BTkC8Ghw73BFSRXnXFykm58oC3wU8Z6dW66/pfnirQ6ql8RjO
-         BQ3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
-         :mime-version:user-agent:from:date:message-id
-         :arc-authentication-results;
-        bh=Xi3209J08PySORmQSzh9QgHZIUl6aEM+t2jIS+MQFDI=;
-        b=nwOQSixeY0uIjKOBonPsVQDpUY9WuIxP5QO4m269btS+/q5RZAd7cCdKHqjj5eB14f
-         EUoDUnEgVURQepwXwJTRMdtd1OBz++K1ABr2w5AJ8qe2FVOO4sPKX8dxfW0VCjkP8YdL
-         cedP8gyOaYMgZ51hbY1b7fdfOoF0AbKDVHh351kiFJzVSQITf7CnNOBdM3HsYIKZWTxM
-         /3ROvzOh/ldiZN9ftbc4rKgKrnaAiUqKLd+lT/lONykUha2E6iPMSNEi32ItLC18o5jE
-         ULiNeevStEyuBTPLLEa4I3jjIsmJo71kmd9hCXRciZwDlpMoomD8XMc9pIMBBQHtDCqI
-         wZ+w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.29 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.29 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <8eda361e1991ef3428f827f14bd35d03>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A8FE22A.1070709@rock-chips.com>
-Date: Fri, 23 Feb 2018 17:43:06 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+Return-Path: <sfr@canb.auug.org.au>
+X-Cyrus-Session-Id: sloti22d1t05-1666428-1519352925-5-16654015844605123561
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='103.22.144.67', Host='ozlabs.org', Country='AU', FromHeader='au',
+  MailFrom='au'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: sfr@canb.auug.org.au
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519352924; b=cuVRq1DjqF+d1CT9sjsVHbUR86xkWpVClYzE7DmZpVcaHUw
+    s1wwgRf2ym36ka985iJuaSWYjnIUDw/Rby/j0GGa2TLrEFm80gwzsuY0U2YSiTPO
+    SX8ptg/bZUT/I1xWENX+lkfJa7x6tAYPx6Ndt59TvHb753GmapFoS9UEasQlixhD
+    hy4HINr7lAOWLcCRfYmdQ3zuboXaBv0NYbKGnCX+FsSEzZ+IJv+In5xgLZOD5mEd
+    vM8wtmGTPpreGjsolwzpO54vNzePy3mGkUI6+mIDMY5X6C/yLFTdHbgVoOnbvmJl
+    JChVenn2IOL9GRdNYcmS35YNTnB3dJvSpj+3J+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type; s=arctest; t=1519352924; bh=l1tXAfXE
+    AwmR1XktY6MtKiOK/YIVEJf3d5ZE+30L+9k=; b=MdrEmtWuhQiG3WSBBXxfMwxV
+    +XaGq2IhYXU5I9VGrPRt/5ky1+4KcjAS1ZX+qCwErSx2fCifdbiySG9Ns2F2buM5
+    MgyNfbyMOGXl8wtnp4O5fu4zGbZwN9CEzyvkhvajI++A5yyPXiDfpoAvO9MZHlau
+    COsgRbHlmvqv1mk4olSY4VMrq1zCOckknuk8iR/eRBWID2WUvl4WV9ztpUPul/M+
+    woADDhNsya3vAFQA4fPZ2ivyugwwThygh0Adlol0Zr6Yr+Ef3/XNArE0raYsvblA
+    zVpwWeEreZkp+UFzhuiTZOTl3PB1LsN7B44aT0TcY62rwlFxrPTuEKR/hKqluA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p6R3Bf0t x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p6R3Bf0t x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Date: Fri, 23 Feb 2018 13:28:36 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bogdan Purcareata <bogdan.purcareata@nxp.com>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Message-ID: <20180223132836.6c7afdff@canb.auug.org.au>
 MIME-Version: 1.0
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
-CC: linux-kernel@vger.kernel.org, briannorris@google.com,
- dtor@google.com, dianders@google.com, Arnd Bergmann <arnd@arndb.de>,
- Joseph Lo <josephl@nvidia.com>,
- Rob Herring <robh+dt@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Emil Renner Berthing <kernel@esmil.dk>,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- Brian Norris <briannorris@chromium.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- linux-rockchip@lists.infradead.org,
- Kate Stewart <kstewart@linuxfoundation.org>,
- linux-input@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
- Matthias Kaehlcke <mka@chromium.org>,
- devicetree@vger.kernel.org, stephen lu <lumotuwe@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arvind Yadav <arvind.yadav.cs@gmail.com>,
- linux-arm-kernel@lists.infradead.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 0/3] gpio-keys: Add support for specifying wakeup event
- action
-References: <20180210110907.5504-1-jeffy.chen@rock-chips.com> <1541427.8RRpDbxO4f@diego>
-In-Reply-To: <1541427.8RRpDbxO4f@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2b_kVVH=C=ShM0jIsYtf7t9"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592012039137400382?=
-X-GMAIL-MSGID: =?utf-8?q?1593184356755380790?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Heiko,
+--Sig_/2b_kVVH=C=ShM0jIsYtf7t9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your reply :)
+Hi Greg,
 
-On 02/14/2018 09:39 PM, Heiko Stübner wrote:
-> Hi Jeffy,
->
-> Am Samstag, 10. Februar 2018, 12:09:04 CET schrieb Jeffy Chen:
->> On chromebook kevin, we are using gpio-keys for pen insert event. But
->> we only want it to wakeup the system when ejecting the pen.
->>
->> So we may need to change the interrupt trigger type during suspending.
->>
->> Changes in v2:
->> Specify wakeup event action instead of irq trigger type as Brian
->> suggested.
->>
->> Jeffy Chen (3):
->>    Input: gpio-keys - add support for wakeup event action
->>    Input: gpio-keys - allow setting wakeup event action in DT
->>    arm64: dts: rockchip: Avoid wakeup when inserting the pen
->
-> The recipient-selection for the mail thread seems to be a bit off and
-> I only got the cover-letter and patch 3/3.
-> Therefore I won't really see if and when the Input-changes get
-> accepted. So please ping me once that has happened so I can pick up
-> the rockchip dts change for it.
-oops, sorry, i'll add you to the CC list in the next version :)
+Today's linux-next merge of the staging tree got a conflict in:
 
->
->
-> Thanks
-> Heiko
->
->
->
+  drivers/staging/fsl-mc/bus/Kconfig
+
+between commit:
+
+  02b7b2844c2f ("staging: fsl-mc: fix build testing on x86")
+
+from Linus' tree and commit:
+
+  6bd067c48efe ("staging: fsl-mc: Move core bus out of staging")
+
+from the staging tree.
+
+I fixed it up (I used the latter version of that file and applied the
+followinf merge fix patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 23 Feb 2018 13:25:34 +1100
+Subject: [PATCH] staging: fsl-mc: merge fix for CONFIG_FSL_MC_BUS moving
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/bus/fsl-mc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/bus/fsl-mc/Kconfig b/drivers/bus/fsl-mc/Kconfig
+index bcca64486fd3..c23c77c9b705 100644
+--- a/drivers/bus/fsl-mc/Kconfig
++++ b/drivers/bus/fsl-mc/Kconfig
+@@ -7,7 +7,7 @@
+=20
+ config FSL_MC_BUS
+ 	bool "QorIQ DPAA2 fsl-mc bus driver"
+-	depends on OF && (ARCH_LAYERSCAPE || (COMPILE_TEST && (ARM || ARM64 || X8=
+6 || PPC)))
++	depends on OF && (ARCH_LAYERSCAPE || (COMPILE_TEST && (ARM || ARM64 || X8=
+6_LOCAL_APIC || PPC)))
+ 	select GENERIC_MSI_IRQ_DOMAIN
+ 	help
+ 	  Driver to enable the bus infrastructure for the QorIQ DPAA2
+--=20
+2.16.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2b_kVVH=C=ShM0jIsYtf7t9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqPfFQACgkQAVBC80lX
+0Gwougf/dEdwi/0QEATCox0OtG11Us93yz+Rl0rn+Hik8+9boISwyFFaL1Gl74zF
+8MyxYzsE4lmgErzYhAai6c8R7uzXeUiFr+Tq82huPuCKiFRU/VelFzplNkE6uenW
+i2RZtgvE2GZKAKlU1b6aeneDrko1SBssJlwqQkHgzbiazVOKvwtwwwnqHpI9TmGN
+NwNJEG3dAp2MwgeahUXoQhKLyVJVnv2Lgck35noiaaCUq1cw5eVm9lP64CmL1qIc
+E/4tCMOOcxsMUtRRjKPuWyPCLgbGuETwrdi4Iy4lO9Rq/x7kW+uG6HS5PAVCB/U9
+B52wZnCmizdLR7cvjsjOhMx2zdf2+A==
+=Q91X
+-----END PGP SIGNATURE-----
+
+--Sig_/2b_kVVH=C=ShM0jIsYtf7t9--
