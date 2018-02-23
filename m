@@ -1,107 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeBWKbK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:31:10 -0500
-Received: from sauhun.de ([88.99.104.3]:52846 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeBWKbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:31:08 -0500
-Date: Fri, 23 Feb 2018 11:31:06 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.16
-Message-ID: <20180223103103.hnjqvkmsz2xwlylu@ninjato>
+        id S1751378AbeBWKcf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:32:35 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37513 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeBWKcd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 05:32:33 -0500
+X-Google-Smtp-Source: AG47ELtBoT0KGhj0l9AhK0NUoKVkMwVIK4pVsWQekVAd8PzSUGsre+ARL4QIvekS2g7Fbn5WdZ2jShgMcnDS0CuJT4s=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s4rpk42xg7mr65zi"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180222234833.GA3047@roeck-us.net>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222234833.GA3047@roeck-us.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 23 Feb 2018 11:32:32 +0100
+X-Google-Sender-Auth: qZUqF3X3V5GjVgzzrVZqrSfRftA
+Message-ID: <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
+Subject: Re: Removing architectures without upstream gcc support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 23, 2018 at 12:48 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
+>> While building the cross-toolchains, I noticed that overall, we can build almost
+>> all linux target architectures with upstream binutils and gcc these days,
+>> however there are still some exceptions, and I'd like to find out if anyone
+>> has objections to removing the ones that do not have upstream support.
+>> This are the four architectures I found:
+>>
+>> * score (s+core, sunplus core) was a proprietary RISC architecture
+>>   made by sunplus. It is unclear if they still ship any products based on
+>>   this architecture, all they list is either ARM Cortex-A9 or an unspecified
+>>   RISC core that could be any of arm, mips, nds32, arc, xtensa or
+>>   something completely different. The two maintainers have both left the
+>>   company many years ago and have not contributed any patches in
+>>   at least five years. There was an upstream gcc port, which was marked
+>>   'obsolete' in 2013 and got removed in gcc-5.0.
+>>   I conclude that this is dead in Linux and can be removed
+>>
+>> * unicore32 was a research project at Peking University with a SoC
+>>   based on the Intel PXA design. No gcc source code has ever been
+>>   published, the only toolchain available is a set of binaries that include
+>>   a gcc-4.4 compiler. The project page at
+>>   http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
+>>   not been modified since 2011. The maintainer still Acks patches
+>>   and has last sent a pull request in 2014 and last sent a patch of
+>>   his own in 2012 when the project appears to have stalled.
+>>   I would suggest removing this one.
+>>
+>
+> The above two would be primary removal targets for me; they are all
+> but impossible to support given the toolchain limitations. Meta
+> would have been another one, but James is already taking care of it.
 
---s4rpk42xg7mr65zi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok. Have you had any success building arch/hexagon with clang?
 
-Linus,
+Regarding the older architectures I mentioned (m32r, frv, mn10300),
+the situation is a bit different as they don't have the problems with
+build testing but they do have problems with using less of the
+standard interfaces (syscall, timer, gpio, rtc, ...), so they do add
+more to the maintenance burden without the nostalgia value of
+some of the even older architectures (parisc, alpha, m68k, ia64)
+that people maintain mainly for fun.
 
-I2C has for you: two bugfixes, one v4.16 regression fix, and two
-documentation bugfixes.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f51:
-
-  Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to d1fa74520dcdbeae891b30035e6c51aafa35306d:
-
-  i2c: designware: Consider SCL GPIO optional (2018-02-22 12:15:35 +0100)
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      i2c: designware: Consider SCL GPIO optional
-
-Ben Gardner (1):
-      i2c: designware: must wait for enable
-
-Eric Anholt (1):
-      i2c: bcm2835: Set up the rising/falling edge delays
-
-Jarkko Nikula (1):
-      i2c: i801: Add missing documentation entries for Braswell and Kaby Lake
-
-Patryk Kocielnik (1):
-      i2c: busses: i2c-sirf: Fix spelling: "formular" -> "formula".
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Dominik Brodowski (1):
-      (Test) i2c: designware: Consider SCL GPIO optional
-
-Jos?? Roberto de Souza (1):
-      (Rev.) i2c: designware: must wait for enable
-
- Documentation/i2c/busses/i2c-i801          |  2 ++
- drivers/i2c/busses/Kconfig                 |  2 ++
- drivers/i2c/busses/i2c-bcm2835.c           | 21 ++++++++++++++++++++-
- drivers/i2c/busses/i2c-designware-master.c |  4 ++--
- drivers/i2c/busses/i2c-i801.c              |  1 +
- drivers/i2c/busses/i2c-sirf.c              |  4 ++--
- 6 files changed, 29 insertions(+), 5 deletions(-)
-
---s4rpk42xg7mr65zi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqP7WIACgkQFA3kzBSg
-Kbab/w/+LErXF6wYNbKcEk7+wdY7iHnRUAZAtL2otbqcympNKsdC93rCJdKSqVVs
-QVvd+dMuSEEfEWnJXRaHP9gGnwkUt9gdyKP+o3qCDa88F+2zoNn89qhyga+HVg64
-Hy7SeHfMT95yBnpD3v6EPKXSrDYp+aLBuwvsw6WmYOkQFkFluwsRqie6S9gzu4ry
-TlnxGZJBaCbx/dWNd7WJ6gsqMz76qKEDSZ5AkvYCliBJaQML2XdvNWxZl3cS7Fl/
-yDjQz8M0NsgG0cUy/Cy9OT2V26/67UaqjOtNiZyQDKC3rROg7FPF0tZdKpEIKNSk
-jF0P691CqBU1zA2PVnIED+IarUqLGRvknsJ6v9+J8/p0xudCTUShOzxlmqZKdEGM
-t2k/RuovHpCgwYDVFgwla89682bOtFzNpvRQuUDArX7qRGglyui0+A3IH4mEMXFj
-vSv85zx5c2G/x+1nNUznbru7F9ov8LAvra/NBLInwCWSD5CkLpi7ExPsoUsK5igu
-B3BNo6lrUXqYxPcKVbgHZzcjCrw2t374Cucr+mvpQYeHgn43i8Ku5Qp7Dmt2r9Mg
-VtRYdLA6V8GRH1oSY0O0wG3ZjUCTyFspeHd6/R6ARXmJ5trVGoDLsS7oeYIieL0p
-fCkq02AT/DMtlG/QmODXKWB2YFAgJYhRi4mRF3IL2T7VPK/JxqU=
-=XVZb
------END PGP SIGNATURE-----
-
---s4rpk42xg7mr65zi--
+     Arnd
