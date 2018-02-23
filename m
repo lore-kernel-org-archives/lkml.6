@@ -1,304 +1,101 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519390496; cv=none;
-        d=google.com; s=arc-20160816;
-        b=A2y71Ek7bY1AwwZUVL7rCwTJmrn1YIs4oiARYETgGVBmdlCyGSzOrIf1pY5GhNZl20
-         og+0seSiDLQ3caWJOh3XI5KjqQ+fjpkTM3r4WYqZSMVnnbvuEHNZD8+ATsUmZriKflyk
-         emvYYzFfGRXcQgUHIr/VsXshjiGiOPAAlBXuWyj1u+z/rHgSVE033mNd7T3gTKeH3iXp
-         3P+4K2vptlCVTeZAj13+J2d1LZhBIVjQYgFdaPQ/fbTfXVwh3HLRiKzobeYRq0lofitk
-         bgQBIS9GxZNWtivZN7pdiXS5Lz9+mn38Ga321mVgFT6R22NnJzBwldI3QkeO+G387WtD
-         Ww9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=aZUDLgmM3F8h8ycVRF3MxdaBKUOHKuI+KS/+6UcRmLQ=;
-        b=CULsoOJWwKMNu+SEGKtK0m/AT14CGCgmi9euxA2ChTGeoAgG7t60LrJU3QuzMa5RB1
-         8Fm7qifceEpFEkmCpzKKT/V8o5uqD9gyqY1ls6o5/AaHaCknb4rBbulpv/1Sfpu0xJwb
-         wplR8EZSuKK79UlumeXFRGXDzlj21k1wXvS6jsFjw1w8XprBs9pKRE0gjDaRcmCutj24
-         n2HugUBSgLw5MnJ5UgB7SOQ7ZIG8rsomtJx5NtG/OKbpdWjVZixTGOzCxIv95d9YNyMe
-         9O6z3G6IwpTOhsSJmbZZ5eNpKd21WWVQSpSbfbGGN9CIjnsoxTEn7E63oZdqueCaLtsK
-         BAig==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tlbxBMLp;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tlbxBMLp;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225bRPElxHzRuN4Ee7QyZAJGt5t3fvudGf7jAeCPPQLe7VU3W4+EXuB3AOncevzDxjlLl6jqIQ==
-Date: Fri, 23 Feb 2018 18:24:48 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>, linux-nvdimm@lists.01.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v2] acpi: nfit: document sysfs interface
-Message-ID: <20180223125448.GA16909@mordor.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2787554-1519386222-2-11874542301385513981
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES svdaen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519386221; b=DGMtuU44I3RxvkjoOJhR7HHvWVZo0xa+1Zwn8eON+XHZy4n
+    2tIllefGBt00J1clIajkJ6VIoz1PY09wU3mmUWRjTJ8FqX0XUsvpYxUqRaavjbQO
+    5WOS+2ICAI+fTTk2PL1/es5LpjWy48l8aKdO6CkHPe9eG984eYdVTuAsBy2yZhu1
+    JRYfJjPJbU6ClPiIHi3qFjcQ8lSViMoCrq1z4PzSSJcMU8aWr6h2U5A2UwEyEQQK
+    /hYLl1fb4L3FhuZaqjdMmhnEl0QGIIUnGf5Wi5K2Lv/cXSWS7p4+zSCIVRJcgRJz
+    IpnyfVN3y9AtIPX2rYj2u/0yD1ijqJx2JNr6S0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519386221; bh=LLIVLDXD8YNFIqmvl2Cu1AhF29
+    9D3y1jXWfdHwI2YYY=; b=XAQoO0OQ2Qh4xsGWNN1Xf5FJjA3mzNsSUSBFUVEJX4
+    0cUboWyKs1kF6MjaW5JE3rWBdMBOIeAQc/VvWKFdfaBZPn8ujJC3XYkCGISFTvZz
+    ScQ/BnaRXjl09zZ0mfLfu4f6dmJdbs5+BfzIOQK4Zd4pR0OQTgXlxFN+mvyrKbGa
+    gB5d12Oy/88W90DDGdciqU6Fw7eCSrZJd/l7tdCsoSQq/TgoUcYYBkRDFJYaaONF
+    pRktCryHdUHlH577Bjj3KyOO9zHdw47M75DbpJ4ITQmT6e6FS2/bYMyEHfHX1Jm/
+    DRJCXqLYCm3gTjr0i4Px4AXBU+lQdZotDbg5YmcGbcIQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751273AbeBWLnj (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 06:43:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:65239 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751089AbeBWLnj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:43:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
+   d="scan'208";a="22495077"
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH] virtio_ring: fix num_free handling in error case
+Date: Fri, 23 Feb 2018 19:41:30 +0800
+Message-Id: <20180223114130.16332-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.11.0
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593196408980037383?=
-X-GMAIL-MSGID: =?utf-8?q?1593196408980037383?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is an attempt to document the nfit sysfs interface. The
-descriptions have been collected from git commit logs and the ACPI
-specification 6.2.
+The vq->vq.num_free hasn't been changed when error happens,
+so it shouldn't be changed when handling the error.
 
-Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 ---
-Changes in v2:
-- Add descriptions for range_index and ecc_unit_size
-- Edit various descriptions as suggested
+ drivers/virtio/virtio_ring.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- Documentation/ABI/testing/sysfs-bus-nfit | 233 +++++++++++++++++++++++++++++++
- 1 file changed, 233 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-nfit
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-nfit b/Documentation/ABI/testing/sysfs-bus-nfit
-new file mode 100644
-index 000000000000..619eb8ca0f99
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-nfit
-@@ -0,0 +1,233 @@
-+For all of the nmem device attributes under nfit/*, see the 'NVDIMM Firmware
-+Interface Table (NFIT)' section in the ACPI specification
-+(http://www.uefi.org/specifications) for more details.
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/serial
-+Date:		Jun, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Serial number of the NVDIMM (non-volatile dual in-line
-+		memory module), assigned by the module vendor.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/handle
-+Date:		Apr, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) The address (given by the _ADR object) of the device on its
-+		parent bus of the NVDIMM device containing the NVDIMM region.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/device
-+Date:		Apr, 2015
-+KernelVersion:	v4.1
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Device id for the NVDIMM, assigned by the module vendor.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/rev_id
-+Date:		Jun, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Revision of the NVDIMM, assigned by the module vendor.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/phys_id
-+Date:		Apr, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Handle (i.e., instance number) for the SMBIOS (system
-+		management BIOS) Memory Device structure describing the NVDIMM
-+		containing the NVDIMM region.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/flags
-+Date:		Jun, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) The flags in the NFIT memory device sub-structure indicate
-+		the state of the data on the nvdimm relative to its energy
-+		source or last "flush to persistence".
-+
-+		The attribute is a translation of the 'NVDIMM State Flags' field
-+		in section 5.2.25.3 'NVDIMM Region Mapping' Structure of the
-+		ACPI specification 6.2.
-+
-+		The health states are "save_fail", "restore_fail", "flush_fail",
-+		"not_armed", "smart_event", "map_fail" and "smart_notify".
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/format
-+What:		/sys/bus/nd/devices/nmemX/nfit/format1
-+What:		/sys/bus/nd/devices/nmemX/nfit/formats
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) The interface codes indicate support for persistent memory
-+		mapped directly into system physical address space and / or a
-+		block aperture access mechanism to the NVDIMM media.
-+		The 'formats' attribute displays the number of supported
-+		interfaces.
-+
-+		This layout is compatible with existing libndctl binaries that
-+		only expect one code per-dimm as they will ignore
-+		nmemX/nfit/formats and nmemX/nfit/formatN.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/vendor
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Vendor id of the NVDIMM.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/dsm_mask
-+Date:		May, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) The bitmask indicates the supported device specific control
-+		functions relative to the NVDIMM command family supported by the
-+		device
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/family
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Displays the NVDIMM family command sets. Values
-+		0, 1, 2 and 3 correspond to NVDIMM_FAMILY_INTEL,
-+		NVDIMM_FAMILY_HPE1, NVDIMM_FAMILY_HPE2 and NVDIMM_FAMILY_MSFT
-+		respectively.
-+
-+		See the specifications for these command families here:
-+		http://pmem.io/documents/NVDIMM_DSM_Interface-V1.6.pdf
-+		https://github.com/HewlettPackard/hpe-nvm/blob/master/Documentation/
-+		https://msdn.microsoft.com/library/windows/hardware/mt604741"
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/id
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) ACPI specification 6.2 section 5.2.25.9, defines an
-+		identifier for an NVDIMM, which refelects the id attribute.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_vendor
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Sub-system vendor id of the NVDIMM non-volatile memory
-+		subsystem controller.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_rev_id
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Sub-system revision id of the NVDIMM non-volatile memory subsystem
-+		controller, assigned by the non-volatile memory subsystem
-+		controller vendor.
-+
-+
-+What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_device
-+Date:		Apr, 2016
-+KernelVersion:	v4.7
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Sub-system device id for the NVDIMM non-volatile memory
-+		subsystem controller, assigned by the non-volatile memory
-+		subsystem controller vendor.
-+
-+
-+What:		/sys/bus/nd/devices/ndbusX/nfit/revision
-+Date:		Jun, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) ACPI NFIT table revision number.
-+
-+
-+What:		/sys/bus/nd/devices/ndbusX/nfit/scrub
-+Date:		Sep, 2016
-+KernelVersion:	v4.9
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RW) This shows the number of full Address Range Scrubs (ARS)
-+		that have been completed since driver load time. Userspace can
-+		wait on this using select/poll etc. A '+' at the end indicates
-+		an ARS is in progress
-+
-+		Writing a value of 1 triggers an ARS scan.
-+
-+
-+What:		/sys/bus/nd/devices/ndbusX/nfit/hw_error_scrub
-+Date:		Sep, 2016
-+KernelVersion:	v4.9
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RW) Provides a way to toggle the behavior between just adding
-+		the address (cache line) where the MCE happened to the poison
-+		list and doing a full scrub. The former (selective insertion of
-+		the address) is done unconditionally.
-+
-+		This attribute can have the following values written to it:
-+
-+		'0': Switch to the default mode where an exception will only
-+		insert the address of the memory error into the poison and
-+		badblocks lists.
-+		'1': Enable a full scrub to happen if an exception for a memory
-+		error is received.
-+
-+
-+What:		/sys/bus/nd/devices/ndbusX/nfit/dsm_mask
-+Date:		Jun, 2017
-+KernelVersion:	v4.13
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) The bitmask indicates the supported bus specific control
-+		functions. See the section named 'NVDIMM Root Device _DSMs' in
-+		the ACPI specification.
-+
-+
-+What:		/sys/bus/nd/devices/regionX/nfit/range_index
-+Date:		Jun, 2015
-+KernelVersion:	v4.2
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) A unique number provided by the BIOS to identify an address
-+		range. Used by NVDIMM Region Mapping Structure to uniquely refer
-+		to this structure. Value of 0 is reserved and not used as an
-+		index.
-+
-+
-+What:		/sys/bus/nd/devices/regionX/nfit/ecc_unit_size
-+Date:		Aug, 2017
-+KernelVersion:	v4.14
-+Contact:	linux-nvdimm@lists.01.org
-+Description:
-+		(RO) Size of a write request to a DIMM that will not incur a
-+		read-modify-write cycle at the memory controller.
-+
-+		When the nfit driver initializes it runs an ARS (Address Range
-+		Scrub) operation across every pmem range. Part of that process
-+		involves determining the ARS capabilities of a given address
-+		range. One of the capabilities that is reported is the 'Clear
-+		Uncorrectable Error Range Length Unit Size' (see: ACPI 6.2
-+		section 9.20.7.4 Function Index 1 - Query ARS Capabilities).
-+		This property indicates the boundary at which the NVDIMM may
-+		need to perform read-modify-write cycles to maintain ECC (Error
-+		Correcting Code) blocks.
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index eb30f3e09a47..71458f493cf8 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -428,8 +428,6 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+ 		i = virtio16_to_cpu(_vq->vdev, vq->vring.desc[i].next);
+ 	}
+ 
+-	vq->vq.num_free += total_sg;
+-
+ 	if (indirect)
+ 		kfree(desc);
+ 
 -- 
-2.16.2
+2.11.0
