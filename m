@@ -1,107 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeBWUvE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 15:51:04 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59702 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeBWSbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 13:31:04 -0500
-Date: Fri, 23 Feb 2018 18:30:58 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-Subject: Re: [PATCH 1/2] pci: endpoint: Free func_name after last usage
-Message-ID: <20180223183058.GA11698@e107981-ln.cambridge.arm.com>
-References: <20180221124707.26308-1-embedded24@evers-fischer.de>
- <20180221124707.26308-2-embedded24@evers-fischer.de>
- <20180222181901.GA13694@e107981-ln.cambridge.arm.com>
- <9cdc8c1c-b448-b00b-d5b8-b664bd96f856@ti.com>
- <20180223093611.GA25086@e107981-ln.cambridge.arm.com>
- <a7070bd0-72b7-4870-419e-7ac15c6825ae@ti.com>
- <alpine.LNX.2.20.1802231828250.16055@5HSWXM1.fritz.box>
+        id S1752295AbeBWUzM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:55:12 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35529 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751540AbeBWUzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 15:55:08 -0500
+X-Google-Smtp-Source: AG47ELuiIzcQRLqXnX7JQS7RjXp23pNJleKWqg4NYQtnBb1vjBu6l/xX6QmK/ey0Zm7uUgPkOn/CGQ==
+Date: Fri, 23 Feb 2018 23:55:04 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH -mm] proc: move "struct proc_dir_entry" into kmem cache
+Message-ID: <20180223205504.GA17139@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.20.1802231828250.16055@5HSWXM1.fritz.box>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 06:38:42PM +0100, Rolf Evers-Fischer wrote:
-> Hi Kishon,
-> 
-> On Fri, 23 Feb 2018, Kishon Vijay Abraham I wrote:
-> > On Friday 23 February 2018 03:06 PM, Lorenzo Pieralisi wrote:
-> > > On Fri, Feb 23, 2018 at 11:40:49AM +0530, Kishon Vijay Abraham I wrote:
-> > >> Hi Lorenzo,
-> > >>
-> > >> On Thursday 22 February 2018 11:49 PM, Lorenzo Pieralisi wrote:
-> > >>> On Wed, Feb 21, 2018 at 01:47:06PM +0100, Rolf Evers-Fischer wrote:
-> > >>>> From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-> > >>>>
-> > >>>> This commit decreases the number of jump labels and ensures
-> > >>>> that the next commit doesn't increase the number of occurrences
-> > >>>> of 'kfree(func_name)'.
-> > >>>>
-> > >>>> Change-Id: I0d1b6fd652395b85f82b11c43bf9b7db512854d1
-> > >>>> Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
-> > >>>> Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
-> > >>>> ---
-> > >>>>  drivers/pci/endpoint/pci-epf-core.c | 7 ++-----
-> > >>>>  1 file changed, 2 insertions(+), 5 deletions(-)
-> > >>>>
-> > >>>> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> > >>>> index 766ce1dca2ec..23d0e128d1a5 100644
-> > >>>> --- a/drivers/pci/endpoint/pci-epf-core.c
-> > >>>> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> > >>>> @@ -220,9 +220,10 @@ struct pci_epf *pci_epf_create(const char *name)
-> > >>>>  	*buf = '\0';
-> > >>>>  
-> > >>>>  	epf->name = kstrdup(func_name, GFP_KERNEL);
-> > >>>> +	kfree(func_name);
-> > >>>
-> > >>> I am certainly missing something but what if we reworked the code
-> > >>> and just:
-> > >>>
-> > >>> kstrdup(name, GFP_KERNEL);
-> > >>>
-> > >>> once instead of allocating another local copy (that we then have to
-> > >>> free) ?
-> > >>
-> > >> name will be something like pci_epf_test.0 and in epf->name we want to just
-> > >> have pci_epf_test.
-> > >>>
-> > >>> Reworded: why
-> > >>>
-> > >>> epf->name = func_name;
-> > >>
-> > >> memory should be allocated for epf->name before it can be initialized. IMO
-> > >> without kstrdup, there will be a null pointer exception.
-> > > 
-> > > I understand that but the point is that func_name *was* allocated with
-> > > kstrdup() already I would like to understand why we need to do it twice
-> > > (and kfree the first allocation).
-> > 
-> > func_name would be allocated for a size greater than what will be in epf->name.
-> > It won't be significant though.
-> > 
-> > Thanks
-> > Kishon
-> > 
-> I have just an idea, how to use only one copy, but with the shorter 
-> length. What about changing the code like this?
->   int len = strchrnul(name, '.') - name;
->   epf->name = kstrndup(name, len, GFP_KERNEL);
-> 
-> In this case we are only allocating the smaller amount of memory and we 
-> don't need the 'buf' and 'func_name' pointers anymore. They will be 
-> replaced with 'len' and some pointer arithmetic.
+"struct proc_dir_entry" is variable sized because of 0-length trailing
+array for name, however, because of SLAB padding allocations it is
+possible to make "struct proc_dir_entry" fixed sized and allocate same
+amount of memory.
 
-Yes, something along those lines, I do not see the point of having to
-allocate two buffers (and actually this simplifies the error path too).
+It buys fine-grained debugging with poisoning and usercopy protection
+which is not possible with kmalloc-* caches.
 
-Thanks,
-Lorenzo
+Currently, on 32-bit 91+ byte allocations go into kmalloc-128 and
+on 64-bit 147+ byte allocations go to kmalloc-192 anyway.
+
+Additional memory is allocated only for 38/46+ byte long names
+which are rare or may not even exist in the wild.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ fs/proc/generic.c  |   50 ++++++++++++++++++++++++++++++++------------------
+ fs/proc/inode.c    |    4 ++++
+ fs/proc/internal.h |   11 ++++++++++-
+ fs/proc/proc_net.c |    7 ++++---
+ fs/proc/root.c     |    3 ++-
+ 5 files changed, 52 insertions(+), 23 deletions(-)
+
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -8,6 +8,7 @@
+  * Copyright (C) 1997 Theodore Ts'o
+  */
+ 
++#include <linux/cache.h>
+ #include <linux/errno.h>
+ #include <linux/time.h>
+ #include <linux/proc_fs.h>
+@@ -28,6 +29,17 @@
+ 
+ static DEFINE_RWLOCK(proc_subdir_lock);
+ 
++struct kmem_cache *proc_dir_entry_cache __ro_after_init;
++
++void pde_free(struct proc_dir_entry *pde)
++{
++	if (S_ISLNK(pde->mode))
++		kfree(pde->data);
++	if (pde->name != pde->inline_name)
++		kfree(pde->name);
++	kmem_cache_free(proc_dir_entry_cache, pde);
++}
++
+ static int proc_match(const char *name, struct proc_dir_entry *de, unsigned int len)
+ {
+ 	if (len < de->namelen)
+@@ -363,10 +375,20 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 		return NULL;
+ 	}
+ 
+-	ent = kzalloc(sizeof(struct proc_dir_entry) + qstr.len + 1, GFP_KERNEL);
++	ent = kmem_cache_zalloc(proc_dir_entry_cache, GFP_KERNEL);
+ 	if (!ent)
+ 		goto out;
+ 
++	if (qstr.len + 1 <= sizeof(ent->inline_name)) {
++		ent->name = ent->inline_name;
++	} else {
++		ent->name = kmalloc(qstr.len + 1, GFP_KERNEL);
++		if (!ent->name) {
++			pde_free(ent);
++			return NULL;
++		}
++	}
++
+ 	memcpy(ent->name, fn, qstr.len + 1);
+ 	ent->namelen = qstr.len;
+ 	ent->mode = mode;
+@@ -395,12 +417,11 @@ struct proc_dir_entry *proc_symlink(const char *name,
+ 			strcpy((char*)ent->data,dest);
+ 			ent->proc_iops = &proc_link_inode_operations;
+ 			if (proc_register(parent, ent) < 0) {
+-				kfree(ent->data);
+-				kfree(ent);
++				pde_free(ent);
+ 				ent = NULL;
+ 			}
+ 		} else {
+-			kfree(ent);
++			pde_free(ent);
+ 			ent = NULL;
+ 		}
+ 	}
+@@ -423,7 +444,7 @@ struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
+ 		ent->proc_iops = &proc_dir_inode_operations;
+ 		parent->nlink++;
+ 		if (proc_register(parent, ent) < 0) {
+-			kfree(ent);
++			pde_free(ent);
+ 			parent->nlink--;
+ 			ent = NULL;
+ 		}
+@@ -458,7 +479,7 @@ struct proc_dir_entry *proc_create_mount_point(const char *name)
+ 		ent->proc_iops = NULL;
+ 		parent->nlink++;
+ 		if (proc_register(parent, ent) < 0) {
+-			kfree(ent);
++			pde_free(ent);
+ 			parent->nlink--;
+ 			ent = NULL;
+ 		}
+@@ -495,7 +516,7 @@ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
+ 		goto out_free;
+ 	return pde;
+ out_free:
+-	kfree(pde);
++	pde_free(pde);
+ out:
+ 	return NULL;
+ }
+@@ -522,19 +543,12 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
+ }
+ EXPORT_SYMBOL(proc_set_user);
+ 
+-static void free_proc_entry(struct proc_dir_entry *de)
+-{
+-	proc_free_inum(de->low_ino);
+-
+-	if (S_ISLNK(de->mode))
+-		kfree(de->data);
+-	kfree(de);
+-}
+-
+ void pde_put(struct proc_dir_entry *pde)
+ {
+-	if (atomic_dec_and_test(&pde->count))
+-		free_proc_entry(pde);
++	if (atomic_dec_and_test(&pde->count)) {
++		proc_free_inum(pde->low_ino);
++		pde_free(pde);
++	}
+ }
+ 
+ /*
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -104,6 +104,10 @@ void __init proc_init_kmemcache(void)
+ 	pde_opener_cache =
+ 		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
+ 				  SLAB_ACCOUNT|SLAB_PANIC, NULL);
++	proc_dir_entry_cache = kmem_cache_create_usercopy(
++		"proc_dir_entry", sizeof(struct proc_dir_entry), 0, SLAB_PANIC,
++		offsetof(struct proc_dir_entry, inline_name),
++		sizeof_field(struct proc_dir_entry, inline_name), NULL);
+ }
+ 
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -52,11 +52,20 @@ struct proc_dir_entry {
+ 	struct proc_dir_entry *parent;
+ 	struct rb_root_cached subdir;
+ 	struct rb_node subdir_node;
++	char *name;
+ 	umode_t mode;
+ 	u8 namelen;
+-	char name[];
++#ifdef CONFIG_64BIT
++#define SIZEOF_PDE_INLINE_NAME	(192-147)
++#else
++#define SIZEOF_PDE_INLINE_NAME	(128-91)
++#endif
++	char inline_name[SIZEOF_PDE_INLINE_NAME];
+ } __randomize_layout;
+ 
++extern struct kmem_cache *proc_dir_entry_cache;
++void pde_free(struct proc_dir_entry *pde);
++
+ union proc_op {
+ 	int (*proc_get_link)(struct dentry *, struct path *);
+ 	int (*proc_show)(struct seq_file *m,
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -192,7 +192,7 @@ static __net_init int proc_net_ns_init(struct net *net)
+ 	int err;
+ 
+ 	err = -ENOMEM;
+-	netd = kzalloc(sizeof(*netd) + 4, GFP_KERNEL);
++	netd = kmem_cache_zalloc(proc_dir_entry_cache, GFP_KERNEL);
+ 	if (!netd)
+ 		goto out;
+ 
+@@ -201,6 +201,7 @@ static __net_init int proc_net_ns_init(struct net *net)
+ 	netd->nlink = 2;
+ 	netd->namelen = 3;
+ 	netd->parent = &proc_root;
++	netd->name = netd->inline_name;
+ 	memcpy(netd->name, "net", 4);
+ 
+ 	uid = make_kuid(net->user_ns, 0);
+@@ -223,7 +224,7 @@ static __net_init int proc_net_ns_init(struct net *net)
+ 	return 0;
+ 
+ free_net:
+-	kfree(netd);
++	pde_free(netd);
+ out:
+ 	return err;
+ }
+@@ -231,7 +232,7 @@ static __net_init int proc_net_ns_init(struct net *net)
+ static __net_exit void proc_net_ns_exit(struct net *net)
+ {
+ 	remove_proc_entry("stat", net->proc_net);
+-	kfree(net->proc_net);
++	pde_free(net->proc_net);
+ }
+ 
+ static struct pernet_operations __net_initdata proc_net_ns_ops = {
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -208,7 +208,8 @@ struct proc_dir_entry proc_root = {
+ 	.proc_fops	= &proc_root_operations,
+ 	.parent		= &proc_root,
+ 	.subdir		= RB_ROOT_CACHED,
+-	.name		= "/proc",
++	.name		= proc_root.inline_name,
++	.inline_name	= "/proc",
+ };
+ 
+ int pid_ns_prepare_proc(struct pid_namespace *ns)
