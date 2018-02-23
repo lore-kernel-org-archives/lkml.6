@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415415-2-12098231205020075514
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415408-2-6845603044448457402
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415415; b=b/07IEHpjMIIBE7K4E03+nbEVUFLHXbe+DZiidb6qpbsSy+
-    QpiGWFt2bNKy5DrjsvQdprRHirdfhQzcthvJRO7qCuBc0YcQ1iB+yWOH8geIKUV8
-    OXjQjXCsDSsHEwPQJGlP+e/O/h5MqkrNRpNd15zKfV7pffoIeqfA0ClHGGGHk6X3
-    3jT9xN/aLIV1zrVzMCiA0hWBQ/NBbBGLP9rSUZO/ov80qeTACT6QXWLvo/lXtwdJ
-    PALUw+ggWjC+LrHxyuJ0tpANi4J66WSTgBpqV8eBj05B9E5r21vX5FDT9sQvVLzC
-    NAtQTXd/tVBHVF5opHm3icJDfKuN+Grha4Hx+ZA==
+    t=1519415407; b=b5hKzQi7V4keJVcVICZf7mWJVZgdkkoJiWFo+q/fIktb0j/
+    HwUIFgE5EPz+bmEuKlfDaAWLYKyQ8Vntv7SFcoLlQ/kyhPu96z8c0au5j0+65+ux
+    VSvHsUBC+n17DonvwuTxmN4XCfiYDAsWlNJOsYw28xhjvjkdxZE6lLwnyC3TV192
+    fxyemQV2xuPsEVeIgeWxVK8vsp6NTd//BMadxuFhHDu4buVqcMqrs2Zf6f1D3Dma
+    vPwpyQLAXyeekjfOtPG0bLNgPZRI6iDTbiJ/P4CFs5jwTtHrzH1hftYdCE+L1dWd
+    y19JR+saC9mRKchECg5zMMAqFrJizqesJfzyR/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415415; bh=rwtTyhvVVeJ/BgfBbZJ956gYrU
-    5NUu+NBz0HV7VrlxU=; b=E22BDUbIzlwZVQufhrOMkPkXSZ7r+Tyt0Tb5XO0teF
-    CMS/CsSwrVf/nZcV8xOG+VosBAjekdpw5lC4H///LZC7mnkPFoMG+qDUVtq815qE
-    +uA27HueBVQutI6qaDuoc7ZRTc9kX/MM1a+XKf/Kopc4NsDuwu3FTAar8VBTST2o
-    7gq1U3HjqqBVHuKKNwDdSLLc4nTFTgPPHn5StRCYqblHtKykWdpWyqcDXiADeWWT
-    eKaSBQtSaDrczAwfvIyXO9divpu4NoUGIiBrjIM7zWmRFsicWj5J25eW4u7q/6b+
-    XM3lot6txErK95JoEPVAw6qxxtoSmF3C4WHEvJVDjlfQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519415407; bh=t8Johfu/NoAAIi/OqYhT/PED50
+    BgRyO9EzXlkPul+98=; b=P8yJvzL819/Wt1oj0XIPv9kjFe9XksYuhM2bcdy0js
+    Vs5la771mApWkD+4QWAqrCdUFsHnENTFawBXuLMJKHEXbgVN08EpGDuZJPd1H+Ws
+    Yyd8P6SEG1RPNLkUpVLbByKLO3FgaicJ5E+Svr56lVEvSund5erDsKIx6kNa/7Ap
+    2RVCjVg8jUIMUaa0p/OfNu8zoGnOF22WbJoKHFBEzKUTzq9xhbATgnTyQkMl1pe6
+    /AHWfnYS0gtNMNbbNVd4cC2efH5QMsN4DuZWNzi1j7ank8bn3hAU5M00wBAn5bCz
+    uvHYXHrJbCsdYTUV2rl1IWkhgIafn5mNyFm95ufHlXgA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933641AbeBWSqS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:46:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43636 "EHLO
+        id S933503AbeBWTtt (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:49:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933975AbeBWSqP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:46:15 -0500
+        with ESMTP id S933975AbeBWSqW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:46:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude <lyude@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Pekka Paalanen <ppaalanen@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        nouveau@lists.freedesktop.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 083/145] x86/mm/kmmio: Fix mmiotrace for page unaligned addresses
-Date: Fri, 23 Feb 2018 19:26:29 +0100
-Message-Id: <20180223170735.466154379@linuxfoundation.org>
+        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4.9 093/145] clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+Date: Fri, 23 Feb 2018 19:26:39 +0100
+Message-Id: <20180223170736.828352470@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -85,114 +78,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Karol Herbst <kherbst@redhat.com>
+From: Tobias Regnery <tobias.regnery@gmail.com>
 
+commit aa01338c018469274848a973bcbd287ef341937c upstream.
 
-[ Upstream commit 6d60ce384d1d5ca32b595244db4077a419acc687 ]
+With CONFIG_RESET_CONTROLLER=n we get the following link error in the
+sunxi-ng clk driver:
 
-If something calls ioremap() with an address not aligned to PAGE_SIZE, the
-returned address might be not aligned as well. This led to a probe
-registered on exactly the returned address, but the entire page was armed
-for mmiotracing.
+drivers/built-in.o: In function `sunxi_ccu_probe':
+mux-core.c:(.text+0x12fe68): undefined reference to 'reset_controller_register'
+mux-core.c:(.text+0x12fe68): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol 'reset_controller_register'
 
-On calling iounmap() the address passed to unregister_kmmio_probe() was
-PAGE_SIZE aligned by the caller leading to a complete freeze of the
-machine.
+Fix this by adding the appropriate select statement.
 
-We should always page align addresses while (un)registerung mappings,
-because the mmiotracer works on top of pages, not mappings. We still keep
-track of the probes based on their real addresses and lengths though,
-because the mmiotrace still needs to know what are mapped memory regions.
-
-Also move the call to mmiotrace_iounmap() prior page aligning the address,
-so that all probes are unregistered properly, otherwise the kernel ends up
-failing memory allocations randomly after disabling the mmiotracer.
-
-Tested-by: Lyude <lyude@redhat.com>
-Signed-off-by: Karol Herbst <kherbst@redhat.com>
-Acked-by: Pekka Paalanen <ppaalanen@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: nouveau@lists.freedesktop.org
-Link: http://lkml.kernel.org/r/20171127075139.4928-1-kherbst@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/mm/ioremap.c |    4 ++--
- arch/x86/mm/kmmio.c   |   12 +++++++-----
- 2 files changed, 9 insertions(+), 7 deletions(-)
 
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -347,11 +347,11 @@ void iounmap(volatile void __iomem *addr
- 	    (void __force *)addr < phys_to_virt(ISA_END_ADDRESS))
- 		return;
+---
+ drivers/clk/sunxi-ng/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -1,6 +1,7 @@
+ config SUNXI_CCU
+ 	bool "Clock support for Allwinner SoCs"
+ 	depends on ARCH_SUNXI || COMPILE_TEST
++	select RESET_CONTROLLER
+ 	default ARCH_SUNXI
  
-+	mmiotrace_iounmap(addr);
-+
- 	addr = (volatile void __iomem *)
- 		(PAGE_MASK & (unsigned long __force)addr);
- 
--	mmiotrace_iounmap(addr);
--
- 	/* Use the vm area unlocked, assuming the caller
- 	   ensures there isn't another iounmap for the same address
- 	   in parallel. Reuse of the virtual address is prevented by
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -434,17 +434,18 @@ int register_kmmio_probe(struct kmmio_pr
- 	unsigned long flags;
- 	int ret = 0;
- 	unsigned long size = 0;
-+	unsigned long addr = p->addr & PAGE_MASK;
- 	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
- 	unsigned int l;
- 	pte_t *pte;
- 
- 	spin_lock_irqsave(&kmmio_lock, flags);
--	if (get_kmmio_probe(p->addr)) {
-+	if (get_kmmio_probe(addr)) {
- 		ret = -EEXIST;
- 		goto out;
- 	}
- 
--	pte = lookup_address(p->addr, &l);
-+	pte = lookup_address(addr, &l);
- 	if (!pte) {
- 		ret = -EINVAL;
- 		goto out;
-@@ -453,7 +454,7 @@ int register_kmmio_probe(struct kmmio_pr
- 	kmmio_count++;
- 	list_add_rcu(&p->list, &kmmio_probes);
- 	while (size < size_lim) {
--		if (add_kmmio_fault_page(p->addr + size))
-+		if (add_kmmio_fault_page(addr + size))
- 			pr_err("Unable to set page fault.\n");
- 		size += page_level_size(l);
- 	}
-@@ -527,19 +528,20 @@ void unregister_kmmio_probe(struct kmmio
- {
- 	unsigned long flags;
- 	unsigned long size = 0;
-+	unsigned long addr = p->addr & PAGE_MASK;
- 	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
- 	struct kmmio_fault_page *release_list = NULL;
- 	struct kmmio_delayed_release *drelease;
- 	unsigned int l;
- 	pte_t *pte;
- 
--	pte = lookup_address(p->addr, &l);
-+	pte = lookup_address(addr, &l);
- 	if (!pte)
- 		return;
- 
- 	spin_lock_irqsave(&kmmio_lock, flags);
- 	while (size < size_lim) {
--		release_kmmio_fault_page(p->addr + size, &release_list);
-+		release_kmmio_fault_page(addr + size, &release_list);
- 		size += page_level_size(l);
- 	}
- 	list_del_rcu(&p->list);
+ if SUNXI_CCU
