@@ -1,175 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeBWPUp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:20:45 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53925 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbeBWPUl (ORCPT
+        id S1752017AbeBWPVU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:21:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58434 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751391AbeBWPVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:20:41 -0500
-Date: Fri, 23 Feb 2018 16:20:38 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
- H6 DTSI file
-Message-ID: <20180223152038.2bflylwa6vj4gzfj@flea.lan>
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
+        Fri, 23 Feb 2018 10:21:18 -0500
+Subject: Re: [PATCH] kvm: fix warning for CONFIG_HAVE_KVM_EVENTFD builds
+To: Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <alpine.LFD.2.21.1802221304430.1603@schleppi>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Fri, 23 Feb 2018 16:21:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l2fdrnpsmitlpdua"
-Content-Disposition: inline
-In-Reply-To: <20180223123555.64009-7-icenowy@aosc.io>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <alpine.LFD.2.21.1802221304430.1603@schleppi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18022315-0020-0000-0000-000003FB0EF4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18022315-0021-0000-0000-0000428F289F
+Message-Id: <e95a0813-d421-f01c-8708-224758a1b117@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802230190
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I can see this warnings as well and yes, kvm_arch_irq_routing_update seems to be available
+for CONFIG_HAVE_KVM_EVENTFD=y and =n.
+Seems that irqchip.c is compile independly from CONFIG_HAVE_KVM_EVENTFD,
 
---l2fdrnpsmitlpdua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+so
 
-On Fri, Feb 23, 2018 at 08:35:54PM +0800, Icenowy Zheng wrote:
-> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
-> memory map fully reworked and some high-speed peripherals (PCIe, USB
-> 3.0) introduced.
->=20
-> This commit adds the basical DTSI file of it, including the clock
-> support and UART support.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+
+On 02/22/2018 01:05 PM, Sebastian Ott wrote:
+> Move the kvm_arch_irq_routing_update() prototype outside of
+> ifdef CONFIG_HAVE_KVM_EVENTFD guards to fix the following sparse warning:
+> 
+> arch/s390/kvm/../../../virt/kvm/irqchip.c:171:28: warning: symbol 'kvm_arch_irq_routing_update' was not declared. Should it be static?
+> 
+> Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
 > ---
-> Changes in v3:
-> - SPDX license identifier fix.
->=20
-> Changes in v2:
-> - Add APB1 clock as PIO's APB clock.
-> - Switched to SPDX license identifier.
->=20
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177 +++++++++++++++++++++=
-++++++
->  1 file changed, 177 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
-ot/dts/allwinner/sun50i-h6.dtsi
-> new file mode 100644
-> index 000000000000..4a6236bd9778
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + */
+>  include/linux/kvm_host.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index ed3d4ddbaff3..6930c63126c7 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1105,7 +1105,6 @@ static inline void kvm_irq_routing_update(struct kvm *kvm)
+>  {
+>  }
+>  #endif
+> -void kvm_arch_irq_routing_update(struct kvm *kvm);
+> 
+>  static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
+>  {
+> @@ -1114,6 +1113,8 @@ static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
+> 
+>  #endif /* CONFIG_HAVE_KVM_EVENTFD */
+> 
+> +void kvm_arch_irq_routing_update(struct kvm *kvm);
 > +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
-> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
-> +
-> +/ {
-> +	interrupt-parent =3D <&gic>;
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <1>;
-> +
-> +	cpus {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			compatible =3D "arm,cortex-a53", "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <0>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			compatible =3D "arm,cortex-a53", "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <1>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu2: cpu@2 {
-> +			compatible =3D "arm,cortex-a53", "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <2>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu3: cpu@3 {
-> +			compatible =3D "arm,cortex-a53", "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <3>;
-> +			enable-method =3D "psci";
-> +		};
-> +	};
-> +
-> +	iosc: internal-osc-clk {
-> +		#clock-cells =3D <0>;
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <16000000>;
-> +		clock-accuracy =3D <300000000>;
-> +		clock-output-names =3D "iosc";
-> +	};
-
-You're not using it anywhere
-
-> +	osc24M: osc24M_clk {
-> +		#clock-cells =3D <0>;
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <24000000>;
-> +		clock-output-names =3D "osc24M";
-> +	};
-> +
-> +	osc32k: osc32k_clk {
-> +		#clock-cells =3D <0>;
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <32768>;
-> +		clock-output-names =3D "osc32k";
-> +	};
-> +
-> +	psci {
-> +		compatible =3D "arm,psci-0.2";
-> +		method =3D "smc";
-> +	};
-
-Is it needed? The bootloader should fill it with whatever version it
-has, shouldn't it?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---l2fdrnpsmitlpdua
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQMUUACgkQ0rTAlCFN
-r3TVHRAAk/zurzZNX92aYYFuKKrNaIZVtlQ3TjMUrhpHWREtUKOY6Eqww5ymSq/A
-lMJMDtBPP4cUMWqGfhJsOevAqzfpEVzta4QoIhUo44TclVAOVegBbDwEFemWsfg7
-S1RzpeAXmW2rNvbHdqp519L97tHZQTxZ1aPsyGDGcnMDOyej6moAPjj+im5istOW
-+rPlNSqd6Wa5/ZUoEJUJn/5U6R8sKvZNPgxdl3YlXWHlNNkzkJ36KaEu6vykwhV6
-6GgHdoVuTcWU/XtnNjIsC3j5GfQxOvGXBtvhKcnZowo1Vxt+p2Gb3bDkHtqjbLUy
-tNrFFxUTKZK0F06Ct/+cgm6N6SkFsu8WHlp7Ak4zP6uUvMHS+5FlycRCI49gmp05
-HkXbHndRnRJvSc+MKj6qjBhpceFzBtbViD2iUL3SEsQi1j+v75t6mZiHo7nFVbT6
-oPLAF/89ZFjO6XyfmMIEc0nVRr1UvEXo6XuOlByvXv2/ttcZQlHK62ruqjuiK1dE
-4bHknI2POiMi8/3AJkUwhS+g8h6KGhmTUyUR1cy99CSagRsnbe4Wd/YOsFFDeSAp
-LT5mvFcWSPUIrlYSfmxa98NFXi6DH7PL/+5m7IVjUzz1IfXBTR+rZ6zGoR1yko3o
-gn2hMHXn/YRQaewgp6zhorbffutDGzM+Wb+nYwMWCmQVe3YC7Og=
-=xle5
------END PGP SIGNATURE-----
-
---l2fdrnpsmitlpdua--
+>  static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+>  {
+>  	/*
+> 
