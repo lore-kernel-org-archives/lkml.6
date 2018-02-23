@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsAG1UT2RDJrlgvtlWN5r4dP/V7p1IXhMCNFlQ2cNgMu1zV3dRRSQH+8WF7uuhJL8m01nWQ
+X-Google-Smtp-Source: AG47ELuz68OmrdfTIdZs5JO/irbU5ZP8yvW3de/3phqq8H2aaLhDNPZK6TOS+zEe/eEn4RcYYnCy
 ARC-Seal: i=1; a=rsa-sha256; t=1519412238; cv=none;
         d=google.com; s=arc-20160816;
-        b=HlG9A5iHZWuQmA0eTqL9r5vd5WYL665ALU+z6cApyYBm+xigrbPjTh/YGeNetZNWZE
-         q7bry1grMsBZYAvJVbqQcIFYmlTZ4udIBbpK8sIn/sTa0z0rfDn3JJuRZnek+gh3eyzj
-         Jhjs6H98gtvziuN4HJ7xbwmdZMxknSepqQYFaO7JuUkQaRuOmhVB8f3CdQspCTNn0tAF
-         U4CioubOBBgejeCKy2PcaHMrnUczM7acJ4WDfYIMJod/izkuD0xdssbTgs1dxRc4AyLq
-         7i4WJAJAPaH1srfB1ZDx13bWeUj5jcRhbFuL56/mu7LHIfzD9nP9k6ARL0HpdsSTNskR
-         QiOw==
+        b=p5ui5ykGaD/HBskuTPlK9TTO52mu4hCbyXSb8xuiG84lho/HeXVlJG/Hwyf7FSPXLi
+         JhBsXXFayrMu6GvJdrmST//8+LCgw743tyOJSkRBR42wPNAnoTuTMZ3vh9RwTHyMtCgt
+         PBOluTGkiCj9jr7z6mTV79LZ8YVUG6qNMKMm/pmcFHJ2A+kOng7wp8rJnpnkKF4Y0Byi
+         9R/ZpPsg9KvsxxSuWJvUWmmbgDnkfsq1UW0magY0r9DNKTWEXP68Pgundo8iRv9Vnlls
+         5CgegWeN6CoEmrVGBHDII31KYA6KzBo6zHgMumxYaz5giFjJRry6A/TPBnGTkGJKNPFk
+         dddg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5/AlM9oj183c0CHmJ0h8cwAoOFMpZLLR4DYRKGqyOPs=;
-        b=mvie1ZxQERbSWUpp+xctcFKEJIsaNRA6+4ptmXAZLcOWFabfwq9RIgY6T3n0aWyguj
-         dGjGavKE24BOiXqjKpDC5OX432zR7gPlumF6cTxycU7rLUp+UR4SRe7SPRQfoxEHffO/
-         ssVn7hN8aKYxWR09yB5EfVAFe8k2hK2haCwq8TqRYz15VJWbB15QSCqBqmIQHbX7Ju+X
-         OU1G0DPW+L+CwM2VvKC4QgoAwjNQn9/pNuQs0m7ITgcvaagQEvbVSfTLKuv+MI4ZjtAr
-         /ICOXs9LdXLpZ44vczT0L5DBSWzkHF7eluhCT9I7wwW2BEuPbInWvz0cEHSzuPHusbPq
-         aEiw==
+        bh=GluV1uV2rr0c64H4xhiLWi6QkzinZoEbpJt4Sd4nKlk=;
+        b=MIS8WeKFEwvGWfWF6bI2x1hSbz+X3XrKFATuiSDP+XxZMNWQe5ektT0l3ODc5r3GB4
+         Rorcvj+Or4AJUFzKSCvXs9LL+fEPKtZoAgRcd+YXQM1AljurzRgqtFppzIXQvgHeGF9o
+         Fsb+V8ZS1LZXP/MpwX/1Sz0MLBzZjugJRT/WpY/sAFW3dCOVpAoOjyKf6PSQPU51zcIZ
+         o4784OCue++ToKMypQ9K9cnyxFGl5B+NKs9Ct7QoxRmP0g0XgZXSnNVftvx6fNZjcuSu
+         2eC3BouiVMq0kMQDZDtkH4BXMWuHNCAdYIL5fa/Q0obbKSrZI7UYnm7ws2g41etniO5R
+         A4/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>
-Subject: [PATCH 4.15 11/45] KVM: x86: fix escape of guest dr6 to the host
-Date: Fri, 23 Feb 2018 19:28:50 +0100
-Message-Id: <20180223170717.106961823@linuxfoundation.org>
+	Douglas Gilbert <dgilbert@interlog.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 10/45] blk_rq_map_user_iov: fix error override
+Date: Fri, 23 Feb 2018 19:28:49 +0100
+Message-Id: <20180223170716.977053392@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217684161240424?=
-X-GMAIL-MSGID: =?utf-8?q?1593219207459718220?=
+X-GMAIL-THRID: =?utf-8?q?1593218293614384582?=
+X-GMAIL-MSGID: =?utf-8?q?1593219207176204984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,63 +49,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
 
-commit efdab992813fb2ed825745625b83c05032e9cda2 upstream.
+commit 69e0927b3774563c19b5fb32e91d75edc147fb62 upstream.
 
-syzkaller reported:
+During stress tests by syzkaller on the sg driver the block layer
+infrequently returns EINVAL. Closer inspection shows the block
+layer was trying to return ENOMEM (which is much more
+understandable) but for some reason overroad that useful error.
 
-   WARNING: CPU: 0 PID: 12927 at arch/x86/kernel/traps.c:780 do_debug+0x222/0x250
-   CPU: 0 PID: 12927 Comm: syz-executor Tainted: G           OE    4.15.0-rc2+ #16
-   RIP: 0010:do_debug+0x222/0x250
-   Call Trace:
-    <#DB>
-    debug+0x3e/0x70
-   RIP: 0010:copy_user_enhanced_fast_string+0x10/0x20
-    </#DB>
-    _copy_from_user+0x5b/0x90
-    SyS_timer_create+0x33/0x80
-    entry_SYSCALL_64_fastpath+0x23/0x9a
+Patch below does not show this (unchanged) line:
+   ret =__blk_rq_map_user_iov(rq, map_data, &i, gfp_mask, copy);
+That 'ret' was being overridden when that function failed.
 
-The testcase sets a watchpoint (with perf_event_open) on a buffer that is
-passed to timer_create() as the struct sigevent argument.  In timer_create(),
-copy_from_user()'s rep movsb triggers the BP.  The testcase also sets
-the debug registers for the guest.
-
-However, KVM only restores host debug registers when the host has active
-watchpoints, which triggers a race condition when running the testcase with
-multiple threads.  The guest's DR6.BS bit can escape to the host before
-another thread invokes timer_create(), and do_debug() complains.
-
-The fix is to respect do_debug()'s dr6 invariant when leaving KVM.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ block/blk-map.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2939,6 +2939,12 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *
- 	pagefault_enable();
- 	kvm_x86_ops->vcpu_put(vcpu);
- 	vcpu->arch.last_host_tsc = rdtsc();
-+	/*
-+	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
-+	 * on every vmexit, but if not, we might have a stale dr6 from the
-+	 * guest. do_debug expects dr6 to be cleared after it runs, do the same.
-+	 */
-+	set_debugreg(0, 6);
- }
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -119,7 +119,7 @@ int blk_rq_map_user_iov(struct request_q
+ 	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
+ 	struct bio *bio = NULL;
+ 	struct iov_iter i;
+-	int ret;
++	int ret = -EINVAL;
  
- static int kvm_vcpu_ioctl_get_lapic(struct kvm_vcpu *vcpu,
+ 	if (!iter_is_iovec(iter))
+ 		goto fail;
+@@ -148,7 +148,7 @@ unmap_rq:
+ 	__blk_rq_unmap_user(bio);
+ fail:
+ 	rq->bio = NULL;
+-	return -EINVAL;
++	return ret;
+ }
+ EXPORT_SYMBOL(blk_rq_map_user_iov);
+ 
