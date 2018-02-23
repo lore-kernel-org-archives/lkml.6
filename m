@@ -1,123 +1,144 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519425468; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224h/XYdVKsa5YUhuP5I14ba4RYmAYRpCq2SRoJ5m9yA9BnVo9ds5TasxeLhPl2e2pRP5mTQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519411334; cv=none;
         d=google.com; s=arc-20160816;
-        b=GZi1hIXlsmi/3078fAn5GXD4Wb9FlmC+NvF4uFs/D93MoxgFU7guklQo7XYNAHKSgz
-         D8LGCaZCOw8M/lsq4zrg22fesnAecfKKAwKTuzi4CDS4zj1PUA1xBVkN/J1jLmN6+oXV
-         7oRT7sXO+wav5yVBrLNPENh0bHLz05/dPqUOtlx7LXzqRWAG+xjHI9IjlbPtkgsqY3nQ
-         Lspsqp1JGv8ckCBHGMVXJ6Ovik3WHdjn/anPxZiQE+wA06GtmNUeyT5CbRtpLnthuWmb
-         d8OT0uDQ51XYlRaNLWO5tUIFK1vW6mQgsXfJkOW3EZpsIHMHPX06Kj7BOVn5HLTfbYV7
-         7kNQ==
+        b=B78gY3fC4Otq1sZqE2MDwSZVf42HIu12S6FA7UObz4uw9lmJZWj143HpOqx9rCZyTw
+         Lvi4NdjP6UEul+x+mjvF8ShutgA9/YLMVvOoxVma+9ok9guQcakjPsoiUwi3krrh9IU/
+         TVSJn1Cc/hnfwSk7xIxW8uJGZwHTsWlz1pFcci8LBhgD3XBMzzX90sVgLEDLe9Ifr7Jv
+         KeNJBuskClxaekIz9XsbC69+LTLVQlB5PZ/SMMR1J/Ds5DWlAcuh8C+nwx+MaIDCfrH7
+         bZZqsHlafXJ8H2pPkNrDvZd4h6OjSN+AOuWx0UziISXL1uaEmbBsjbM5xBW/gSpMhrcD
+         TY7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=u0CJeCxCcgZ4VWgRbKbbkVRmevaj/KPtAFNs7/fSTxk=;
-        b=AjyqIQ2b17Iny55GTNEnzNm0eYN7VqIwrIvlE7DlIEt3Y2xdhxpYg/kBfB4dw6M8d9
-         nAn6KBRopECsRBlmyfm15y8AlZ3vmN6d1Dsv8F9Pp9OpJw2oGMoJhaIFoglmZ86oYFzz
-         vctb0xNN22e5XtUX2ef5XsSnf/5j8gbpUftIon59C4UsoIgHAYvcbYw7goTlvyXANg1u
-         z2Qvt0jDVpbm26xSb2UKTNtulcWDq5rKRuiYMxXPNi5ht+v1p1JWxJpnUAK4wG8olp0L
-         698PpFPTiyPi2pbluvcAYatlTBroJoERyQ32W4WgF1iplYa8Mshmu+fI32wGRgmUPX/6
-         HvNg==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=yqDuDNM7pH09jrq1E8L78Eo1sPDw8Z834TxPhvi7Srw=;
+        b=c2QR0gVx15Z1XYyzax87ogIHKpdTp3r+RXR4rbOCf7/5ddDTD2Iws6ofxQUlfDo7x2
+         fTVO1tsn+CUFLXDvOvLZMQO3CearlyAw4de8sVecMRsK/BD+MOhp8rZYOvx9KyjA/35o
+         cR8+XoAnzf5Ov53LGGMlzJmSjazqIiH0+XduoMrJxLmtHFlREn2QnYcnR170oPiPBTay
+         dRIVksXQePiQgrMLcu5wCJPmC51jTFQRf2SDELZTya0uRdJUXkfp0AuvqCr/a2rUYktc
+         YaBaQwQPe0ZIPzfxbX67vo1HvWZ9u4R32yxORvKZPl90wePPIE4iWJ1Zu3cyG9BBleTL
+         YyWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELuRGhOfBJJqXA6o42Ve143lr0k21JkfxUIEXfaRNbk52FOzjZschVkuPvlhTZjlGaSCYtdFpA==
-Message-ID: <5a9097ba.c8c7df0a.f0996.53cc@mx.google.com>
-Date: Fri, 23 Feb 2018 14:37:46 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Kernel: v4.4.117-194-g5468668278fb
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Jan Dakinevich <jan.dakinevich@gmail.com>,
+	Ladi Prosek <lprosek@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Jack Wang <jinpu.wang@profitbricks.com>
+Subject: [PATCH 4.4 192/193] KVM: nVMX: invvpid handling improvements
+Date: Fri, 23 Feb 2018 19:27:05 +0100
+Message-Id: <20180223170356.519362179@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 000/193] 4.4.118-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593217769867343564?=
-X-GMAIL-MSGID: =?utf-8?q?1593233080411573517?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593218259279654464?=
+X-GMAIL-MSGID: =?utf-8?q?1593218259279654464?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 86 boots: 2 failed, 70 passed with 14 offline (=
-v4.4.117-194-g5468668278fb)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.117-194-g5468668278fb/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.117-194-g5468668278fb/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.117-194-g5468668278fb
-Git Commit: 5468668278fb027d3101294c021c57bb000f7962
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 44 unique boards, 18 SoC families, 15 builds out of 176
+From: Jan Dakinevich <jan.dakinevich@gmail.com>
 
-Boot Regressions Detected:
+commit bcdde302b8268ef7dbc4ddbdaffb5b44eafe9a1e upstream
 
-arm:
+ - Expose all invalidation types to the L1
 
-    exynos_defconfig:
-        exynos5422-odroidxu3:
-            lab-collabora: new failure (last pass: v4.4.116)
+ - Reject invvpid instruction, if L1 passed zero vpid value to single
+   context invalidations
 
-    multi_v7_defconfig:
-        exynos5422-odroidxu3:
-            lab-collabora: new failure (last pass: v4.4.116)
-
-Boot Failures Detected:
-
-arm:
-
-    multi_v7_defconfig
-        exynos5422-odroidxu3: 1 failed lab
-
-    exynos_defconfig
-        exynos5422-odroidxu3: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
+Signed-off-by: Jan Dakinevich <jan.dakinevich@gmail.com>
+Tested-by: Ladi Prosek <lprosek@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+[jwang: port to 4.4]
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ arch/x86/kvm/vmx.c |   36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -126,6 +126,12 @@ module_param_named(pml, enable_pml, bool
+ 
+ #define VMX_MISC_EMULATED_PREEMPTION_TIMER_RATE 5
+ 
++#define VMX_VPID_EXTENT_SUPPORTED_MASK		\
++	(VMX_VPID_EXTENT_INDIVIDUAL_ADDR_BIT |	\
++	VMX_VPID_EXTENT_SINGLE_CONTEXT_BIT |	\
++	VMX_VPID_EXTENT_GLOBAL_CONTEXT_BIT |	\
++	VMX_VPID_EXTENT_SINGLE_NON_GLOBAL_BIT)
++
+ /*
+  * These 2 parameters are used to config the controls for Pause-Loop Exiting:
+  * ple_gap:    upper bound on the amount of time between two successive
+@@ -2657,8 +2663,7 @@ static void nested_vmx_setup_ctls_msrs(s
+ 	 */
+ 	if (enable_vpid)
+ 		vmx->nested.nested_vmx_vpid_caps = VMX_VPID_INVVPID_BIT |
+-				VMX_VPID_EXTENT_SINGLE_CONTEXT_BIT |
+-				VMX_VPID_EXTENT_GLOBAL_CONTEXT_BIT;
++			VMX_VPID_EXTENT_SUPPORTED_MASK;
+ 	else
+ 		vmx->nested.nested_vmx_vpid_caps = 0;
+ 
+@@ -7418,7 +7423,8 @@ static int handle_invvpid(struct kvm_vcp
+ 	vmx_instruction_info = vmcs_read32(VMX_INSTRUCTION_INFO);
+ 	type = kvm_register_readl(vcpu, (vmx_instruction_info >> 28) & 0xf);
+ 
+-	types = (vmx->nested.nested_vmx_vpid_caps >> 8) & 0x7;
++	types = (vmx->nested.nested_vmx_vpid_caps &
++			VMX_VPID_EXTENT_SUPPORTED_MASK) >> 8;
+ 
+ 	if (type >= 32 || !(types & (1 << type))) {
+ 		nested_vmx_failValid(vcpu,
+@@ -7440,21 +7446,27 @@ static int handle_invvpid(struct kvm_vcp
+ 	}
+ 
+ 	switch (type) {
++	case VMX_VPID_EXTENT_INDIVIDUAL_ADDR:
+ 	case VMX_VPID_EXTENT_SINGLE_CONTEXT:
+-		/*
+-		 * Old versions of KVM use the single-context version so we
+-		 * have to support it; just treat it the same as all-context.
+-		 */
++	case VMX_VPID_EXTENT_SINGLE_NON_GLOBAL:
++		if (!vpid) {
++			nested_vmx_failValid(vcpu,
++				VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID);
++			skip_emulated_instruction(vcpu);
++			return 1;
++		}
++		break;
+ 	case VMX_VPID_EXTENT_ALL_CONTEXT:
+-		__vmx_flush_tlb(vcpu, to_vmx(vcpu)->nested.vpid02);
+-		nested_vmx_succeed(vcpu);
+ 		break;
+ 	default:
+-		/* Trap individual address invalidation invvpid calls */
+-		BUG_ON(1);
+-		break;
++		WARN_ON_ONCE(1);
++		skip_emulated_instruction(vcpu);
++		return 1;
+ 	}
+ 
++	__vmx_flush_tlb(vcpu, vmx->nested.vpid02);
++	nested_vmx_succeed(vcpu);
++
+ 	skip_emulated_instruction(vcpu);
+ 	return 1;
+ }
