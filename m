@@ -1,29 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeBWI25 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:28:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38869 "EHLO
+        id S1751641AbeBWI3O (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:29:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40203 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751823AbeBWI2x (ORCPT
+        with ESMTP id S1751378AbeBWI3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:28:53 -0500
-Date: Fri, 23 Feb 2018 00:27:26 -0800
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-fba407e1710ae4c558e1e2b55b5a55b2c07a596d@git.kernel.org>
-Cc: tglx@linutronix.de, msebor@gmail.com, arnd@arndb.de, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        Fri, 23 Feb 2018 03:29:12 -0500
+Date: Fri, 23 Feb 2018 00:28:48 -0800
+From: tip-bot for Dou Liyang <tipbot@zytor.com>
+Message-ID: <tip-0c52f7c5499dc708a64742da0cb7eb4f6d94588b@git.kernel.org>
+Cc: mingo@kernel.org, douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
         torvalds@linux-foundation.org
-Reply-To: peterz@infradead.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        hpa@zytor.com, msebor@gmail.com, mingo@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de
-In-Reply-To: <20180222112817.456380-1-arnd@arndb.de>
-References: <20180222112817.456380-1-arnd@arndb.de>
+Reply-To: torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        douly.fnst@cn.fujitsu.com, tglx@linutronix.de
+In-Reply-To: <20180222084812.14497-1-douly.fnst@cn.fujitsu.com>
+References: <20180222084812.14497-1-douly.fnst@cn.fujitsu.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/boot/compressed/64: Fix warning for 32-bit
- trampoline memcpy()
-Git-Commit-ID: fba407e1710ae4c558e1e2b55b5a55b2c07a596d
+Subject: [tip:x86/urgent] x86/topology: Fix function name in documentation
+Git-Commit-ID: 0c52f7c5499dc708a64742da0cb7eb4f6d94588b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,54 +33,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fba407e1710ae4c558e1e2b55b5a55b2c07a596d
-Gitweb:     https://git.kernel.org/tip/fba407e1710ae4c558e1e2b55b5a55b2c07a596d
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Thu, 22 Feb 2018 12:28:05 +0100
+Commit-ID:  0c52f7c5499dc708a64742da0cb7eb4f6d94588b
+Gitweb:     https://git.kernel.org/tip/0c52f7c5499dc708a64742da0cb7eb4f6d94588b
+Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+AuthorDate: Thu, 22 Feb 2018 16:48:12 +0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 23 Feb 2018 08:29:54 +0100
+CommitDate: Fri, 23 Feb 2018 08:40:12 +0100
 
-x86/boot/compressed/64: Fix warning for 32-bit trampoline memcpy()
+x86/topology: Fix function name in documentation
 
-GCC-8 warns that we copy TRAMPOLINE_32BIT_CODE_SIZE bytes from the pointer
-to the function into actual trampoline, when that pointer is only 8 bytes:
+topology_sibling_cpumask() is the correct thread-related topology
+function in the kernel:
 
-  In file included from arch/x86/boot/compressed/pgtable_64.c:3:
-  arch/x86/boot/compressed/pgtable_64.c: In function 'paging_prepare':
-  arch/x86/boot/compressed/../string.h:18:23: error: '__builtin_memcpy' reading 96 bytes from a region of size 8 [-Werror=stringop-overflow=]
-   #define memcpy(d,s,l) __builtin_memcpy(d,s,l)
-                       ^~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/boot/compressed/pgtable_64.c:62:2: note: in expansion of macro 'memcpy'
-    memcpy(trampoline + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
-    ^~~~~~
+  s/topology_sibling_mask/topology_sibling_cpumask
 
-It turns out that the declaration is incorrect here: trampoline_32bit_src
-is defined as a function in arch/x86/boot/compressed/head_64.S, not a
-pointer to a function. Fixing the prototype to match addresses the warning.
-
-Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Sebor <msebor@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b91993a87aff ("x86/boot/compressed/64: Prepare trampoline memory")
-Link: http://lkml.kernel.org/r/20180222112817.456380-1-arnd@arndb.de
+Cc: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180222084812.14497-1-douly.fnst@cn.fujitsu.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/boot/compressed/pgtable.h | 2 +-
+ Documentation/x86/topology.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-index 6e0db2260147..5e0b1c4abef4 100644
---- a/arch/x86/boot/compressed/pgtable.h
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -12,7 +12,7 @@
+diff --git a/Documentation/x86/topology.txt b/Documentation/x86/topology.txt
+index f3e9d7e9ed6c..2953e3ec9a02 100644
+--- a/Documentation/x86/topology.txt
++++ b/Documentation/x86/topology.txt
+@@ -108,7 +108,7 @@ The topology of a system is described in the units of:
  
- #ifndef __ASSEMBLER__
+     The number of online threads is also printed in /proc/cpuinfo "siblings."
  
--extern void (*trampoline_32bit_src)(void *return_ptr);
-+extern void trampoline_32bit_src(void *return_ptr);
+-  - topology_sibling_mask():
++  - topology_sibling_cpumask():
  
- #endif /* __ASSEMBLER__ */
- #endif /* BOOT_COMPRESSED_PAGETABLE_H */
+     The cpumask contains all online threads in the core to which a thread
+     belongs.
