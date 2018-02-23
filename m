@@ -1,142 +1,180 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AG47ELvOBDKItG9MIj943g++aKPK0IcnZ6OcDMhuFJ1WG+PxSPTz6T/bzG0KkJDFFykQ6/reny0U
-ARC-Seal: i=1; a=rsa-sha256; t=1519742519; cv=none;
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AH8x226lf7nWccFu4YEAS5ODXWmowraJbu9O7cfZYyfgO6BL9z4RZV02bxGdqAQRPE3y0tlrUBej
+ARC-Seal: i=1; a=rsa-sha256; t=1519374280; cv=none;
         d=google.com; s=arc-20160816;
-        b=Yr9TW/WC5IhLBiFbxBPJfkvwJueFqktcCVVyJxp2S4sX/XqSQsb8XpCpJuhy8JVQpj
-         d3BoVupavzXO9b7/nTX7dPhv4n7mN6ln7fvwTyZja2vqtIY10XOGf3MlxrXBIzQVIgXu
-         QoEqDecg4Dougf+U+ZoLLRaFa5ZSx4vJslxchQCjgffrcZvAr4/RSoPp3hxbiyuPFh5s
-         PM3dj9gwOZiy2asUMY5s5+pAUDELc3moiLxwZUyMcLK7rck5ybf4PccbUlq7sez2A7Su
-         VaVp7QjWwhvo2OGG8yoe4k5O7krnJXA4rlsbTY32WGFHoeN5oykFqDiDNU2F4+9ggK5t
-         rMOQ==
+        b=D9xYNg/cwsV4lxz0GHIzSCX+NZSXs1yItOR/4nwcbFiJpYKpufq2+NGei7H7vPi8SJ
+         fy49yG2L8LonR6YgU/lTbBa7VEGJr4T09wFIo6c/tjlr94Inf37ghTxTbrVkaoA8OPiH
+         eqJUeNdGU82ByDKWcn4VnYHo90dnlhOjLmdrSGLECobSl616PgCQSL12GifB/FQO9J6h
+         NzktPAjVSz1+spIZY44/tNVO7PYTyTaZNemA1nHOdXD4c8t+mtTmja06VBhMkCZkS6EN
+         cK0dsZ7MxQwfgGtRj/x+PhVuKFgru7vpkWOVm7lYmgsvy4n3gUi1MV4n/+tKnzZOnhwU
+         uZ+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=UfBDoIJRQdKicjQbe6jVS6NgyOsgIUF2m32WI91w5BA=;
-        b=XaR/DkZfWQI/OwhR5Ej+cBfmmUufmmztTUsetgglmXfr7dGzkkDOiMLB7PnRDWpbnb
-         BcKwkE2UN2c6U4QVPzETmDqIL6DPaOJFXRhsgZnl0BD/pNYHgTthHRrxKRXK/bJODf5A
-         t974ye4YHNg8/ICic/b4BKmC8Gto1jJSUe7N0DRB6CCGAqefH7W4eqCS6xXZ0VQdb/3X
-         7X1H4OCvmHE8QTDLsMaABzRVM42dB+ItA2My8PqwUP9KegVZ0GkOgluSvEXL9K7jAZlo
-         Or25IZxui52GeeEZPsuxgZVJNSx1/3eb1NnS0es4Nx/YprQTS7/8nL0MQgXs3VI3cwYV
-         k6KA==
+        bh=m6gvST5HNHM3/4tlt3ll0haevBnLk8uI5b6kaT8KeLk=;
+        b=vhtS26jyY270TI5+UWLjssLpvyKmQmGlI6hCNTv+DdfAQz+g6TpfQuVgcryxnw9iWb
+         ZrkueByLDhDpTGIUhhyVdh481O8HBnamvPw2dyxlxz5P1/ZXSOYDQ2zGtiAkAKJId24S
+         H6xykg8iCJvz+popp3kV6MATCXvFoWeCKdzjeqDcCXH1MncmpHj3V3qe9cHPhlAUCa3J
+         8/2Mo+Ytgq6elQv9c6eqMV2VKCvZ0QlS4oX7EZ2gRkdcwWqvS2kVwy2UOPeSLeWLP8FK
+         g1N+6lDtAVsacqesVRfd6Asy40u6KYjFePmcLW/AEeQIsE8bKvQxtXPN36JNcil2+MNy
+         +XOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=df07v6e5;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=df07v6e5;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48422168D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 27 Feb 2018 08:41:57 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: poza@codeaurora.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=df07v6e5;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=df07v6e5;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9187460F6B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v11 3/7] PCI/ERR: add mutex to synchronize recovery
-Message-ID: <20180227144157.GA112033@bhelgaas-glaptop.roam.corp.google.com>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v11 6/7] PCI: Unify wait for link active into generic pci
+Date: Fri, 23 Feb 2018 13:54:03 +0530
+Message-Id: <1519374244-20539-7-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
 References: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
- <1519374244-20539-4-git-send-email-poza@codeaurora.org>
- <20180223234525.GQ14632@bhelgaas-glaptop.roam.corp.google.com>
- <34e4c9a98a9ed3494a0295d00e181fe9@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34e4c9a98a9ed3494a0295d00e181fe9@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086412177501980?=
-X-GMAIL-MSGID: =?utf-8?q?1593565532180011413?=
+X-GMAIL-THRID: =?utf-8?q?1593086424372892434?=
+X-GMAIL-MSGID: =?utf-8?q?1593179405111225142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 10:46:34AM +0530, poza@codeaurora.org wrote:
-> On 2018-02-24 05:15, Bjorn Helgaas wrote:
-> > On Fri, Feb 23, 2018 at 01:54:00PM +0530, Oza Pawandeep wrote:
-> > > This patch protects pci_do_recovery with mutex.
-> > 
-> > pcie_do_recovery()
-> > 
-> > Please explain why the mutex is necessary.  What bad things happen
-> > without the mutex?
-> > 
-> > You named (some) of the other things "pcie"; maybe use "pcie" in the
-> > mutex name as well so they look the same.
-> > 
-> 
-> PCIe specification: 6.2.10
-> When DPC is triggered due to receipt of an uncorrectable error Message, the
-> Requester ID from the Message is recorded in the DPC Error Source ID
-> register and that Message is discarded and not forwarded Upstream.
-> 
-> So, having said that, what we think is we dont need Mutex, because in DPC
-> enabled system either AER or DPC can be triggered, not both.
-> so right now there is no need of guarding pcie_do_recovery() with mutex.
-> 
-> but I was in a thought that; since pcie_do_recovery is supposed to be used
-> by error clients,
-> from sw architecture point of view, adding mutex takes care of concurrency
-> if it exists (in corner cases, faulty hw where both AER and DPC triggered
-> etc..)
-> 
-> We can choose to drop this patch, since we dont require mutex.
-> Bjorn, please advise.
+Clients such as pciehp, dpc are using pcie_wait_link_active, which waits
+till the link becomes active or inactive.
 
-I'm not trying to convince you that we don't need the mutex.  My
-point is that if we *do* need it, the changelog needs to say *why*
-(and ideally the code will either have a comment or it will be obvious
-from the code why it's necessary).
+Made generic function and moved it to drivers/pci/pci.c
 
-If we don't have a clear indication that it's required, I guess I
-would omit it.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-> > > Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-> > > 
-> > > diff --git a/drivers/pci/pcie/pcie-err.c b/drivers/pci/pcie/pcie-err.c
-> > > index fcd5add..f830975 100644
-> > > --- a/drivers/pci/pcie/pcie-err.c
-> > > +++ b/drivers/pci/pcie/pcie-err.c
-> > > @@ -20,6 +20,8 @@
-> > >  #include <linux/pcieport_if.h>
-> > >  #include "portdrv.h"
-> > > 
-> > > +static DEFINE_MUTEX(pci_err_recovery_lock);
-> > > +
-> > >  struct aer_broadcast_data {
-> > >  	enum pci_channel_state state;
-> > >  	enum pci_ers_result result;
-> > > @@ -283,6 +285,8 @@ void pcie_do_recovery(struct pci_dev *dev, int
-> > > severity)
-> > >  	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
-> > >  	enum pci_channel_state state;
-> > > 
-> > > +	mutex_lock(&pci_err_recovery_lock);
-> > > +
-> > >  	if (severity == AER_FATAL)
-> > >  		state = pci_channel_io_frozen;
-> > >  	else
-> > > @@ -326,9 +330,11 @@ void pcie_do_recovery(struct pci_dev *dev, int
-> > > severity)
-> > >  				report_resume);
-> > > 
-> > >  	dev_info(&dev->dev, "Device recovery successful\n");
-> > > +	mutex_unlock(&pci_err_recovery_lock);
-> > >  	return;
-> > > 
-> > >  failed:
-> > >  	/* TODO: Should kernel panic here? */
-> > >  	dev_info(&dev->dev, "Device recovery failed\n");
-> > > +	mutex_unlock(&pci_err_recovery_lock);
-> > >  }
-> > > --
-> > > Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-> > > Technologies, Inc.,
-> > > a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-> > > a Linux Foundation Collaborative Project.
-> > > 
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8..de9b0ea 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
+ 	return ret;
+ }
+ 
+-static void __pcie_wait_link_active(struct controller *ctrl, bool active)
++static bool pcie_wait_link_active(struct controller *ctrl)
+ {
+-	int timeout = 1000;
+-
+-	if (pciehp_check_link_active(ctrl) == active)
+-		return;
+-	while (timeout > 0) {
+-		msleep(10);
+-		timeout -= 10;
+-		if (pciehp_check_link_active(ctrl) == active)
+-			return;
+-	}
+-	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
+-			active ? "set" : "cleared");
+-}
++	struct pci_dev *pdev = ctrl_dev(ctrl);
+ 
+-static void pcie_wait_link_active(struct controller *ctrl)
+-{
+-	__pcie_wait_link_active(ctrl, true);
++	return pci_wait_for_link(pdev, true);
+ }
+ 
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd1..f8d44b4 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4176,6 +4176,37 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
+ 	return 0;
+ }
+ 
++/**
++ * pci_wait_for_link - Wait for link till its active/inactive
++ * @pdev: Bridge device
++ * @active: waiting for active or inactive ?
++ *
++ * Use this to wait till link becomes active or inactive.
++ */
++bool pci_wait_for_link(struct pci_dev *pdev, bool active)
++{
++	int timeout = 1000;
++	bool ret;
++	u16 lnk_status;
++
++	for (;;) {
++		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++		if (ret == active)
++			return true;
++		if (timeout <= 0)
++			break;
++		timeout -= 10;
++	}
++
++	dev_printk(KERN_DEBUG, &pdev->dev,
++		   "Data Link Layer Link Active not %s in 1000 msec\n",
++		   active ? "set" : "cleared");
++
++	return false;
++}
++EXPORT_SYMBOL(pci_wait_for_link);
++
+ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
+ 	u16 ctrl;
+diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
+index 5c01c63..e15bcda 100644
+--- a/drivers/pci/pcie/pcie-dpc.c
++++ b/drivers/pci/pcie/pcie-dpc.c
+@@ -120,19 +120,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+ 
+ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ {
+-	unsigned long timeout = jiffies + HZ;
+ 	struct pci_dev *pdev = dpc->dev->port;
+-	struct device *dev = &dpc->dev->device;
+-	u16 lnk_status;
+ 
+-	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+-					!time_after(jiffies, timeout)) {
+-		msleep(10);
+-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	}
+-	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+-		dev_warn(dev, "Link state not disabled for DPC event\n");
++	pci_wait_for_link(pdev, false);
+ }
+ 
+ /**
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 024a1be..cb674c3 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1195,6 +1195,7 @@ int pci_add_ext_cap_save_buffer(struct pci_dev *dev,
+ int pci_request_selected_regions(struct pci_dev *, int, const char *);
+ int pci_request_selected_regions_exclusive(struct pci_dev *, int, const char *);
+ void pci_release_selected_regions(struct pci_dev *, int);
++bool pci_wait_for_link(struct pci_dev *pdev, bool active);
+ 
+ /* drivers/pci/bus.c */
+ struct pci_bus *pci_bus_get(struct pci_bus *bus);
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
