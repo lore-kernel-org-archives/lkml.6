@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415055-2-10167980672713414795
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414956-2-4918748730060083117
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415054; b=uDxi7B2ORrINsGgxAtGdKkCgCN8ISOMVfX0/7J8rFzJRcCi
-    VoqjYTJS+JcVhDJO5CFvh/w6mNFT961ipL2uO2Vab4vWRzu6dV/ZcyqVkYuhSUtA
-    yV/RfHzqK88efCwwD3R7X5M3rETq2sZ6dHmPV4Z+CKRP6k8dhl5K3E6fia4OYtUF
-    P9crFWQvIUb/BV6A09306d1ywhV/Dhnf+m7DebpUuVlHh8xQKEbw9QX3loh4AURx
-    ucn4WB6aq03QxRSy9qCfjxSEgQqtUDZZ4PXoKWhXZSNK9N617i2Ve5kPV3E1XXpr
-    6rpE18tDPbJg1bKqxZ8wIMd/gwp1gSAlEL24Kxg==
+    t=1519414955; b=Z+X4oBtlLMMMsZfr8XhFfQzuy1BdZCzpD7PM3I3gj4XgqEo
+    Xh5KFXeomSxaqaPuNJjAiN/eFHSZ8X/o798R4qepqZJ5AimPt1mBFtYkkqlWJViw
+    QAQMhHQkHwAgm9FxlXFzctvFcd8lT8k9C8ptQDCA2/pDcY1Zt8m4a5myE7wMCkFs
+    ayGqHYwftooAmcRIHA1z1M910hUrG56ekXJ5mQq7rDzcgdbfWa7VI5rQq1GQiAch
+    DJVHAij6iikzMGkDhcuWp4HZ05npCnBb7loP0pieD/YIVkA9moBXkIjqXxPB4oiE
+    wGaS+t+BMMWvdl8MNY5R/I+JjBwyaggpFMeofmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415054; bh=R/FfRPFqamtUOYaVfKMkwljKsa
-    0EXhQYXRcporGt6Ww=; b=dAWkb5eiXzKFnC8oz3vR4XFMHhn6D+QNN/2JCh+oyt
-    qQZXs+o7C9bxiVNMgXDtsnafGMG52gLQLkdThA8e3MPgTEKsLH1EazbFJkgd4FnR
-    B4uB1em6PIJcnjTZbFLJOXddcd7jZlTMHVcK5+rdU4Ur/7nbVM3fasPNp5qiYhqx
-    woJO4fJZ3g7Sjy172RQeZG2qtedWzoblC7VLAYHArQ/QxYO/siUgzxtsHk4tfVrT
-    dtAAb0m62ZhBIiYHfEUX1imBEUxM7p089es4YtiKEd+21jUXPseXHZz2hFX2KmV3
-    xPUvpyW2IUfo1H/cltFCITbPVcxwE10yB6vO672ZHuaw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414955; bh=RCRA+djcp+TCUoTNte5suF2wPV
+    hqaYKS6tvoSWgfV5M=; b=pgRD/Q4RUK7OXTYXFWRtHpuFURHW5lkniM0SSJCXLk
+    PQuyrFYYtb2GYW0svd5Oj6Y3COXqSR1HEIpAEMqkTLCWmqsqmNVbYI9iabjeQl5q
+    F6sfEjK2CmC8hQTKQ0OZxSMbL5txsP2C0uT+Y5eHPDBOacfYxft44z8QssL0/smJ
+    uq3FHpImDxeR1fiF2VPX2gSfzc+VOG5WwOQhsYesSeCEFV6P8Ur2DRxTTKxg2lUi
+    7pC/dT8AkAyy0RQ5yWoFd+NTZMBfc76tIxM9ddKosgsgWFCxsOWYOYv8FFXtzT7k
+    ghRb0OhEkwTE9mOENalmdwiSjiwRuSZPIxAQLDAbKzsQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754821AbeBWTn6 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:43:58 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44924 "EHLO
+        id S932816AbeBWTmT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:42:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934385AbeBWSsZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:25 -0500
+        with ESMTP id S934411AbeBWSse (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:34 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 136/145] binfmt_elf: compat: avoid unused function warning
-Date: Fri, 23 Feb 2018 19:27:22 +0100
-Message-Id: <20180223170742.299355660@linuxfoundation.org>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 139/145] arm64: fix warning about swapper_pg_dir overflow
+Date: Fri, 23 Feb 2018 19:27:25 +0100
+Message-Id: <20180223170742.674594702@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -79,38 +82,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-When CONFIG_ELF_CORE is disabled, we get a harmless warning in the compat
-version of binfmt_elf:
+commit 12f043ff2b28fa64c9123b454cbe30a8a9e1967e upstream.
 
-fs/compat_binfmt_elf.c:58:13: error: 'cputime_to_compat_timeval' defined but not used [-Werror=unused-function]
+With 4 levels of 16KB pages, we get this warning about the fact that we are
+copying a whole page into an array that is declared as having only two pointers
+for the top level of the page table:
 
-This was addressed in mainline Linux as part of a larger rework with commit
-cd19c364b313 ("fs/binfmt: Convert obsolete cputime type to nsecs").
+arch/arm64/mm/mmu.c: In function 'paging_init':
+arch/arm64/mm/mmu.c:528:2: error: 'memcpy' writing 16384 bytes into a region of size 16 overflows the destination [-Werror=stringop-overflow=]
 
-For 4.9 and earlier, this just shuts up the warning by adding an #ifdef
-around the function definition.
+This is harmless since we actually reserve a whole page in the definition of the
+array that comes from, and just the extern declaration is short. The pgdir
+is initialized to zero either way, so copying the actual entries here seems
+like the best solution.
 
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+[slightly adapted to apply on 4.9]
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/compat_binfmt_elf.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/mm/mmu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -51,6 +51,7 @@
- #define elf_prstatus	compat_elf_prstatus
- #define elf_prpsinfo	compat_elf_prpsinfo
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -479,7 +479,7 @@ void __init paging_init(void)
+ 	 * To do this we need to go via a temporary pgd.
+ 	 */
+ 	cpu_replace_ttbr1(__va(pgd_phys));
+-	memcpy(swapper_pg_dir, pgd, PAGE_SIZE);
++	memcpy(swapper_pg_dir, pgd, PGD_SIZE);
+ 	cpu_replace_ttbr1(swapper_pg_dir);
  
-+#ifdef CONFIG_ELF_CORE
- /*
-  * Compat version of cputime_to_compat_timeval, perhaps this
-  * should be an inline in <linux/compat.h>.
-@@ -63,6 +64,7 @@ static void cputime_to_compat_timeval(co
- 	value->tv_sec = tv.tv_sec;
- 	value->tv_usec = tv.tv_usec;
- }
-+#endif
- 
- #undef cputime_to_timeval
- #define cputime_to_timeval cputime_to_compat_timeval
+ 	pgd_clear_fixmap();
