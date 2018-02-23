@@ -1,76 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeBWOJm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:09:42 -0500
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:47062 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeBWOJk (ORCPT
+        id S1751546AbeBWOJv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:09:51 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:37634 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751432AbeBWOJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:09:40 -0500
-X-Google-Smtp-Source: AH8x224a0jXRmT1vJgxKeN48yECFez1nW3QbERpsvDw2RHMgxBNINYBH+sNmZ/PS/Ycqn/s44D7l7A==
-Date: Fri, 23 Feb 2018 09:09:39 -0500
-From: Sean Paul <seanpaul@chromium.org>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, seanpaul@chromium.org,
-        dcastagna@google.com, hoegsberg@google.com, heiko@sntech.de,
-        tfiga@chromium.org, Sandy Huang <hjc@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        David Airlie <airlied@linux.ie>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/rockchip: vop: Init vskiplines in scl_vop_cal_scale()
-Message-ID: <20180223140939.GI223881@art_vandelay>
-References: <20180223062250.10470-1-jeffy.chen@rock-chips.com>
+        Fri, 23 Feb 2018 09:09:47 -0500
+X-Google-Smtp-Source: AG47ELs6HQUQfph9PTUaNc2+JAxLaXInCvrFz2PhJ9ASlFnnj1sz0hCVSPx/oGdCqGg92MkUD04HelZB3dYwuilxg7Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223062250.10470-1-jeffy.chen@rock-chips.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <ec0c1668-dc0d-cd44-1c87-b1d71215f477@maciej.szmigiero.name>
+References: <cover.1514578085.git.vilhelm.gray@gmail.com> <1534276cb63d1e9e6dd139b4edceedbe728f65f5.1514578085.git.vilhelm.gray@gmail.com>
+ <CACRpkdaw75RH_WR4Ta9AmqNmGnaPhFKK2HfC=m8SNabACs95vg@mail.gmail.com>
+ <20180222203009.GA10834@sophia> <278aed38-1b40-e362-00e2-38d61a4b81c2@maciej.szmigiero.name>
+ <ec0c1668-dc0d-cd44-1c87-b1d71215f477@maciej.szmigiero.name>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Feb 2018 15:09:45 +0100
+Message-ID: <CACRpkdYmUrVAnZLJtxEdp__W8j1kFVPAhVDYr1Rb_1DczwzS+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] gpio: Change ISA_BUS_API dependency to selection
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 02:22:50PM +0800, Jeffy Chen wrote:
-> Currently we are calling scl_vop_cal_scale() to get vskiplines for yrgb
-> and cbcr. So the cbcr's vskiplines might be an unexpected value if the
-> second scl_vop_cal_scale() didn't update it.
-> 
-> Init vskiplines in scl_vop_cal_scale() to avoid that.
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+On Fri, Feb 23, 2018 at 2:50 PM, Maciej S. Szmigiero
+<mail@maciej.szmigiero.name> wrote:
+> On 22.02.2018 21:44, Maciej S. Szmigiero wrote:
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>> Note that gpio-winbond (CONFIG_GPIO_WINBOND) driver was originally
+>> merged using ISA_BUS_API selection as done for other ISA bus gpio drivers
+>> by this patch, then temporary switched to the previous ("depends on")
+>> style by commit 92a8046c9d952a to fix a circular Kconfig dependency.
+>> So now this commit (92...) should be reverted to make gpio-winbond
+>> driver Kconfig dependency / selection consistent with the remaining ISA
+>> bus gpio drivers.
+>>
+>> Unfortunately, I can't test the reversion myself because it looks like
+>> Linus didn't push his trees yet to git.kernel.org after applying this
+>> series (or I am not looking at the right place - linusw/linux-gpio.git?).
+>
+> It looks like the series has been pushed to git.kernel.org now.
+> I have tested the reversion of commit 92a8046c9d952a and can confirm
+> that the ISA_BUS_API dependency / selection for gpio-winbond works
+> then as intended (in a way that is consistent with other ISA bus gpio
+> drivers).
+>
+> @Linus:
+> Will you revert that commit or should I submit a patch that does it?
 
-> ---
-> 
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index 7715853ef90a..9b03c51903ab 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -259,6 +259,9 @@ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
->  {
->  	uint16_t val = 1 << SCL_FT_DEFAULT_FIXPOINT_SHIFT;
->  
-> +	if (vskiplines)
-> +		*vskiplines = 0;
-> +
->  	if (is_horizontal) {
->  		if (mode == SCALE_UP)
->  			val = GET_SCL_FT_BIC(src, dst);
-> @@ -299,7 +302,7 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
->  	uint16_t vsu_mode;
->  	uint16_t lb_mode;
->  	uint32_t val;
-> -	int vskiplines = 0;
-> +	int vskiplines;
->  
->  	if (dst_w > 3840) {
->  		DRM_DEV_ERROR(vop->dev, "Maximum dst width (3840) exceeded\n");
-> -- 
-> 2.11.0
-> 
-> 
+Oh send me a patch, that's easiest.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Yours,
+Linus Walleij
