@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415229-2-5163855850767836645
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415214-2-15910300340967853974
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415229; b=BiMai3H/6XkA2y+AYFswFLC8yS7xgxGBQbq5QsmuUar/EtI
-    Aj2WuYLaa2tJRN4QgbP9v7tJPDU/EMuxbzfRrm9Ad0S4sn0ozeG+k5eMM38Hwmo+
-    XOUbpeW0lhD4sTeYCyDhdk4hFBGwEUU/f1RaBncohN8rmzLYhtvUFTYpPam+WkYW
-    O1Pr5wlL4s/ABYWsVILpdxoD6v/7ACD7VkORdVDinyyBnwSuwOJP+lfnmyLOGIWc
-    Y2cX/iDhwhekZM4k7s+PSItvVFWkU91lK97z0gqRFpgDs/Z6azq2ZEf4xEKXZWcm
-    l3YAAF3spSRByZxOOw2KAi/xdqjGY0EGjjjcgsw==
+    t=1519415213; b=sxj7U+Bp4ytCQ5TGff+v6OaVJOWrDt4MQJ0fL/xgtDDi/Zf
+    i2QLmP/Fattabo1wZm7LEgj8cTWIEwnCsmYpX3rG1sBYP0UbQmBs5WMd/j+qLPEG
+    RtOILCGnQWJDXX4GzpYjc8fBtRq4iR6d1eUXKgvRYVf/iziIQbbv5xXxN7gWgVag
+    KWakE6QbwUf9omxrsktiC5qvKcm2ustghXTnlyqSd56pRTBBO/bSxy170+57v/F9
+    FM6Vcr9zesxYc72IFzFr8Y5zIuKU5cJbHI+jZKQawXkXZvWj4dnO7xZa+dpQ2X50
+    xhi+32ReaJUfQVK9s5PlHNW+6blPETHllnvyOiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415229; bh=9nUFy09HcWepBy3Yag++gd+mhj
-    luqvTmh2eo21IHtkg=; b=kCeUpwVdv6a0bjUPpo6amVfGLnM4Xncptm5/rqsXI8
-    /Y3dAyocxEfD89+DNfbPKj1QAAzw5vC2Csgn5SFCZgNNFMaoz16VlIrFSOlsdMM+
-    q4NRzWUpzg2DOOPTy0DhkYFHI5Cr4yNO8OaYmM7h5TaZl4RnYaxsqcX+xz/YryqH
-    ZA1cOp/Z8Vk3omUgUqgZ21rTci7xlGczbgh5q85rDXk4J7HjeeEPjMIHW66WBobT
-    bAm48rSI9EmcugLEpk+N146+Y4uh0cdHZASrSxyvqAKDWEjs6z3iW2EgCrFsrJ3U
-    4VOQbsL+BmxeXI5E13HUNzlXzxV0wf7f5wIERiVDBkyQ==
+    :list-id; s=arctest; t=1519415213; bh=/Jd3/658BfDh8HCesVVdu4e7Nq
+    zCFKPCjDW8xIf9qnc=; b=SOgCRRagakBOcBYkcmmsXsGdfpHd3mBPL0ulfVAurV
+    lrrPmCp5bNC9N8jWPomeOesYRkgBKCMofBc6ImfRtsHfoJa95F+ZLPkdoJxVHB2d
+    HDYZ4rtlvcKG4RcrAL8OnBtMoZsqRjPDnmd54Ar4M73TTR3U8kIXZ9F9WScNAQYS
+    k34OeZNMnPp8GBrbg+tpB347qfcgBbvBChrELjJlhI7s1RfgbqSzc3Kt57ialj0L
+    R6SJdu6pG8HjkAyGJKD2vGuAk0vG5K2+xzf8aivZ0vhxcv5AWwC/Zz6FrICH4Mbl
+    MUXl1J6QKBrcyJyocgWiQwTxUVymmNMBghf//1RxYwXA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934199AbeBWSri (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:47:38 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44600 "EHLO
+        id S933859AbeBWSrk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:47:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44620 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933859AbeBWSrg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:36 -0500
+        with ESMTP id S934214AbeBWSrj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:39 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 117/145] ALSA: hda/ca0132 - fix possible NULL pointer use
-Date: Fri, 23 Feb 2018 19:27:03 +0100
-Message-Id: <20180223170739.958889642@linuxfoundation.org>
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 118/145] reiserfs: avoid a -Wmaybe-uninitialized warning
+Date: Fri, 23 Feb 2018 19:27:04 +0100
+Message-Id: <20180223170740.069699158@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -80,35 +80,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 46a049dae771b95e77ac6c823330f4a60f600236 upstream.
+commit ab4949640d6674b617b314ad3c2c00353304bab9 upstream.
 
-gcc-7 caught what it considers a NULL pointer dereference:
+The latest gcc-7.0.1 snapshot warns about an unintialized variable use:
 
-sound/pci/hda/patch_ca0132.c: In function 'dspio_scp.constprop':
-sound/pci/hda/patch_ca0132.c:1487:4: error: argument 1 null where non-null expected [-Werror=nonnull]
+In file included from fs/reiserfs/lbalance.c:8:0:
+fs/reiserfs/lbalance.c: In function 'leaf_item_bottle.isra.3':
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
+           ~~^~~
+fs/reiserfs/reiserfs.h:1279:13: error: '*((void *)&n_ih+8).v' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  v2->v = (v2->v & cpu_to_le64(15ULL << 60)) | cpu_to_le64(offset);
 
-This is plausible from looking at the function, as we compare 'reply'
-to NULL earlier in it. I have not tried to analyze if there are constraints
-that make it impossible to hit the bug, but adding another NULL check in
-the end kills the warning and makes the function more robust.
+This happens because the offset/type pair that is stored in
+ih.key.u.k_offset_v2 is actually uninitialized when we call
+set_le_ih_k_offset() and set_le_ih_k_type(). After we have called both,
+all data is correct, but the first of the two reads uninitialized data
+for the type field and writes it back before it gets overwritten.
+
+This works around the warning by initializing the k_offset_v2 through
+the slightly larger memcpy().
+
+[JK: Remove now unused define and make it obvious we initialize the key]
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_ca0132.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/reiserfs/lbalance.c |    2 +-
+ fs/reiserfs/reiserfs.h |    1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -1482,6 +1482,9 @@ static int dspio_scp(struct hda_codec *c
- 		} else if (ret_size != reply_data_size) {
- 			codec_dbg(codec, "RetLen and HdrLen .NE.\n");
- 			return -EINVAL;
-+		} else if (!reply) {
-+			codec_dbg(codec, "NULL reply\n");
-+			return -EINVAL;
- 		} else {
- 			*reply_len = ret_size*sizeof(unsigned int);
- 			memcpy(reply, scp_reply.data, *reply_len);
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -475,7 +475,7 @@ static void leaf_item_bottle(struct buff
+ 			 * 'cpy_bytes'; create new item header;
+ 			 * n_ih = new item_header;
+ 			 */
+-			memcpy(&n_ih, ih, SHORT_KEY_SIZE);
++			memcpy(&n_ih.ih_key, &ih->ih_key, KEY_SIZE);
+ 
+ 			/* Endian safe, both le */
+ 			n_ih.ih_version = ih->ih_version;
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -1326,7 +1326,6 @@ struct cpu_key {
+ #define KEY_NOT_FOUND 0
+ 
+ #define KEY_SIZE (sizeof(struct reiserfs_key))
+-#define SHORT_KEY_SIZE (sizeof (__u32) + sizeof (__u32))
+ 
+ /* return values for search_by_key and clones */
+ #define ITEM_FOUND 1
