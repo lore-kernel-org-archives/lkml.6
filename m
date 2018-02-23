@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227JrRJOCMNPjVl+e1ZyL9kaHok/cQTCMkKCR0bBoFbOgcrb1gk8Wr1xxKCMFmhlBoag27bc
-ARC-Seal: i=1; a=rsa-sha256; t=1519411271; cv=none;
+X-Google-Smtp-Source: AH8x227i9IpNGPzExkUc2E1oQMM9sP4V2Q1RuIwN2Avm0v3hCXXuyM3YHxvHgpZ/+K56wB18yvnr
+ARC-Seal: i=1; a=rsa-sha256; t=1519411268; cv=none;
         d=google.com; s=arc-20160816;
-        b=yVbj36b7WB+KbzGsx4FeLSiTdaeVh+wjWmUazHZWOqV4z539xK3ywq+ykcLoqMHm7F
-         42MU5ryHPw7sbrYYqAXTQ0BQy9AIhPs/gAaRR9O6Cpy67PgF83TvGENUYzXEgn8VnNGC
-         e0SP8c3azNC2wUpbH+GdDOjwooGJtlPiDB9CPbxkFD8RrKnVAVC1zvIOKX0aPe7lys7U
-         LdFweStSbmaqRH3fEyblD8LIchE6bb1MoBhnSJpu38vLjFzkRsaOkQLBswD5BMpHvxTc
-         d1QakEkqHLBqFz4lRScBCfNE9H0qxaSTIJtipm3tyeXucrbTD6LiR9JrNSZMja3QEBdj
-         TAKA==
+        b=LFKr4OJ+d3Nn3/eHuAU6JTyPqV9jkHKW2gdkh1qg9eoCvT0xCiUSFBP88dI4yEBk1D
+         QEhN5ysBu8LdAv//WlDkeoAHB+Aof66fUpTFIzVyE2j4IXBayTpsYhkoymSWNPvVDSOk
+         ATHGwlQHj81Lh53Mhw55nUL3yq5+6yJ/1rQkUVcS8tcXcQPzT5zOrbr3doQAO5DoYLXD
+         3Cq7Jh/+bIEAMSzOeZN1B/zNWzDveqYdmV/yt6fRHRgN9MMTtPpsZC0Rhv7NaQslBrZS
+         2LjIQEUq6sAIz5pE+DBy4Mqn4aJBTk4bJTRU5UqIqQ6zFrDsW7eORZlHhhWKjyVghyIj
+         uubw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zOmmE8Rh6SwuMiKhMRIgcENgXyQ1KiUW47QBlnBR7NE=;
-        b=lZWJjhbFxGfWxbkMVz1TmeJ3eQbPVqMy2as9pWgO8/IyseKZJsOSUwJV5kSF4Gxs6/
-         kR6OHdSYEPbGm7kij58m+BYsEzsRWsV0nCSvWX/UWCZJher+Z3p+py6k7Zd8qY65ydoq
-         AdzjN1BDs6TW+EdIoz7bwkAIl/IEs5rl5ZNLe2wGjpcqCUD6z+riCQNdeFbRgXeGkXWT
-         zJrnkfj496ZOIvAsvoICR+sjHpEWFRBTLVv6oLDjddyjbccH1nYnj+AATiJl189cTvBz
-         f1qQOu3asw9MdA6KpP82bzplX3nvXYGJxe850V2aB4jIx5Ghw6BeBExAIw1Sdub7ZfXm
-         9YWA==
+        bh=SwJ9WJ7ES/L+799LkA7qFuOZDpkME8PcL8MwBLOOTjg=;
+        b=OXu8KW6zXadNl48P6O8dlx5A0I14vv5aBnZhb92rBvjIY7bWgmeCQ9C48WAz4GYmFG
+         vS4WBxorI9DU2Nla+I496RUF+DS0FEMQ8GtgRepRU92plkEFjELVu2Psbqnbt9dGqejn
+         zcd5veSc9O5o55f+UgwsR2+dj+7vZ7KQV3lVzdf308ncHt+GFV1sbSyWO98LEC3s116g
+         3K7AD/o68TjVk/v4PdZIT0C40Fdhp7RyMITKdZ++D0j9gpfIqYCj53AD08SkuOOb7rsv
+         HBbkCU4r6/P5c1N5yd+K7HTBDoqTlIlOroyjHnWlkMD7cy01b4eq4tQ0eL32hwt/zdpo
+         ODBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-arch@vger.kernel.org,
 	kernel-hardening@lists.openwall.com,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	torvalds@linux-foundation.org,
+	Andy Lutomirski <luto@kernel.org>,
 	alan@linux.intel.com,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 179/193] vfs, fdtable: Prevent bounds-check bypass via speculative execution
-Date: Fri, 23 Feb 2018 19:26:52 +0100
-Message-Id: <20180223170354.207391528@linuxfoundation.org>
+Subject: [PATCH 4.4 178/193] x86/syscall: Sanitize syscall table de-references under speculation
+Date: Fri, 23 Feb 2018 19:26:51 +0100
+Message-Id: <20180223170354.028619665@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218194144060029?=
-X-GMAIL-MSGID: =?utf-8?q?1593218194144060029?=
+X-GMAIL-THRID: =?utf-8?q?1593218189881514500?=
+X-GMAIL-MSGID: =?utf-8?q?1593218189881514500?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,51 +58,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-(cherry picked from commit 56c30ba7b348b90484969054d561f711ba196507)
+(cherry picked from commit 2fbd7af5af8665d18bcefae3e9700be07e22b681)
 
-'fd' is a user controlled value that is used as a data dependency to
-read from the 'fdt->fd' array.  In order to avoid potential leaks of
-kernel memory values, block speculative execution of the instruction
-stream that could issue reads based on an invalid 'file *' returned from
-__fcheck_files.
+The syscall table base is a user controlled function pointer in kernel
+space. Use array_index_nospec() to prevent any out of bounds speculation.
 
-Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
+While retpoline prevents speculating into a userspace directed target it
+does not stop the pointer de-reference, the concern is leaking memory
+relative to the syscall table base, by observing instruction cache
+behavior.
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: torvalds@linux-foundation.org
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727417984.33451.1216731042505722161.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-[jwang: cherry pick to 4.4]
+[jwang: port to 4.4, no syscall_64]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/fdtable.h |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/entry/common.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -9,6 +9,7 @@
- #include <linux/compiler.h>
- #include <linux/spinlock.h>
- #include <linux/rcupdate.h>
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -20,6 +20,7 @@
+ #include <linux/export.h>
+ #include <linux/context_tracking.h>
+ #include <linux/user-return-notifier.h>
 +#include <linux/nospec.h>
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-@@ -81,8 +82,10 @@ static inline struct file *__fcheck_file
- {
- 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
+ #include <linux/uprobes.h>
  
--	if (fd < fdt->max_fds)
-+	if (fd < fdt->max_fds) {
-+		fd = array_index_nospec(fd, fdt->max_fds);
- 		return rcu_dereference_raw(fdt->fd[fd]);
-+	}
- 	return NULL;
- }
+ #include <asm/desc.h>
+@@ -381,6 +382,7 @@ __always_inline void do_syscall_32_irqs_
+ 	}
  
+ 	if (likely(nr < IA32_NR_syscalls)) {
++		nr = array_index_nospec(nr, IA32_NR_syscalls);
+ 		/*
+ 		 * It's possible that a 32-bit syscall implementation
+ 		 * takes a 64-bit parameter but nonetheless assumes that
