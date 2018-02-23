@@ -1,38 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvh0tezxpyp10eKKYUx07jHUkSrDDCnpxlNL+h22x5zColWp74rIxsAJL9vZEVfnlCSRC0/
-ARC-Seal: i=1; a=rsa-sha256; t=1519410895; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bEEQmLHMq4p6TquKrFgwmHuJ4vaNYgweXmTDB+Fw1Mkz8se+bo+9psEp1qFA9rBzuX
-         GIVu3MfpEmX7yvh2Z8I5NlwDFQ1lzOMc3ua0W2QwF2BG0H3jnsA4reqN1z4OGDRyUDM3
-         lpjl+WNm9QtQoFKgVGP/ijRkE+aMJ7xUbkpyH95iHYVjcn/NvyrfOCp5vwREpnuKpzz6
-         1JaMzXDM/060r+OilTggJgq9YGez5BIpXHGa+SW9VqYCsfQvOP4M7vg29HxwiMyNwMRj
-         C7akPh7TkJYSUEx5+fzBfbkk4UTpHamif7broJ7xfhdL2xA8AqOW5dcHVkK+VXuSq1EP
-         AcQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=jh0U38cCoQjJu2IZncDFmTKoFM0+2W9vroPhz6vGAos=;
-        b=Dgr/ALgPqJi+X53rsAynyk8FrMATRbuIfhMHd2S96PuF2SBiYs2Jl034B7sDkqW40D
-         5ZSZ73OuZNaPoZght7YrFYbhPRsltcGMl4sX5NUqv4ROZyx2ZLfcK63MTVzei+v8Uzvj
-         werXjDgkeEWB/UGCb4CjcTMacd+ejmnP3g5KDLIGxxMZEWW9uRcPu98jzrcHeUab5mrR
-         /f+ARdXX7bQ8AaWQNURQ2QOEPny6wG0Cxvi9oBL+n3UrKvPgWguO388eq8fzVPyeGcfK
-         hBeyqu35FUxlgqr/hQiu4Gy4NdeiLhYLHluRJQXY3WsxvEY02M3tVUWPTQOo9anZrp7h
-         NDVQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410894-2-15746873076741730725
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519410893; b=c8VnYp5UPMrsJinP8sAV6wYl09G1iPFyYEk/Utgw1GjkfjE
+    59A40JabemipsqO7Abvdv661dC44DqFaC+DkLFaAIqjYvhzwA3NmBTGUjmFHHXDM
+    pGi8U6w0cFDJi0wBdTjjKm7kns7TYmvw+LacvpDuJIe1K0l43LOr9opR1eOjbaIQ
+    E1o0Wex/j6WT5RJEz06CRPcrv4bwYXs+XwINe2o7Upbnqwoq5NbqKXCvIuS5fcNL
+    JPa0SuWvOUTJB3diTmbUjOt7BMMiGJ4w33Gq+ARRY7cQQbTedSYwVR+wvWzwWqvT
+    XMwu1hTe5cw8TAcql1sFbtpSQUbYk0BHwxOmD2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519410893; bh=zcI60uaD45xBQrnVxK8w7OIYn5
+    a0+hl5RS4eVBRSTsI=; b=gD/n55zTCufXyjQ+zj3f1fXAyXiRand3WJ3cl1+fLb
+    6vsO7gl5JdoKIpcsOx3x3ALO4oFIbUa+gk67P8ALHDtvEZzlnCZnA9MF4ie8xjGd
+    EnWJai6a0pzdUr9jDr//t6oozgk0CEGPYCUsWmyxDQ/l8M+tVkEE4S1HmEtnE5LC
+    nV4D7BLifrY1hbXCW27vx/Gjidm0oBD+kUf6YdBvPSDO08OFLazG5UWoefZRtbnu
+    /EfYXZ4Zk63QfU0S713fwvyC+2Un9iMvF9MEKOQlV/kuWMrgm2zVGxwYBFWNgjK1
+    7G4FXCPflBeX1ahf+NrNhnLSk/MDeWUnhJ7WjxipSWZA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753637AbeBWSet (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:34:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37068 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753619AbeBWSes (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:34:48 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 051/193] dmaengine: at_hdmac: fix potential NULL pointer dereference in atc_prep_dma_interleaved
-Date: Fri, 23 Feb 2018 19:24:44 +0100
-Message-Id: <20180223170334.016821770@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 049/193] 509: fix printing uninitialized stack memory when OID is empty
+Date: Fri, 23 Feb 2018 19:24:42 +0100
+Message-Id: <20180223170333.671846766@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217798955458934?=
-X-GMAIL-MSGID: =?utf-8?q?1593217798955458934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,46 +79,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Eric Biggers <ebiggers3@gmail.com>
 
 
-[ Upstream commit 62a277d43d47e74972de44d33bd3763e31992414 ]
+[ Upstream commit 8dfd2f22d3bf3ab7714f7495ad5d897b8845e8c1 ]
 
-_xt_ is being dereferenced before it is null checked, hence there is a
-potential null pointer dereference.
+Callers of sprint_oid() do not check its return value before printing
+the result.  In the case where the OID is zero-length, -EBADMSG was
+being returned without anything being written to the buffer, resulting
+in uninitialized stack memory being printed.  Fix this by writing
+"(bad)" to the buffer in the cases where -EBADMSG is returned.
 
-Fix this by moving the pointer dereference after _xt_ has been null
-checked.
-
-This issue was detected with the help of Coccinelle.
-
-Fixes: 4483320e241c ("dmaengine: Use Pointer xt after NULL check.")
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Fixes: 4f73175d0375 ("X.509: Add utility functions to render OIDs as strings")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/at_hdmac.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/oid_registry.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -716,7 +716,7 @@ atc_prep_dma_interleaved(struct dma_chan
- 			 unsigned long flags)
- {
- 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
--	struct data_chunk	*first = xt->sgl;
-+	struct data_chunk	*first;
- 	struct at_desc		*desc = NULL;
- 	size_t			xfer_count;
- 	unsigned int		dwidth;
-@@ -728,6 +728,8 @@ atc_prep_dma_interleaved(struct dma_chan
- 	if (unlikely(!xt || xt->numf != 1 || !xt->frame_size))
- 		return NULL;
+--- a/lib/oid_registry.c
++++ b/lib/oid_registry.c
+@@ -116,7 +116,7 @@ int sprint_oid(const void *data, size_t
+ 	int count;
  
-+	first = xt->sgl;
+ 	if (v >= end)
+-		return -EBADMSG;
++		goto bad;
+ 
+ 	n = *v++;
+ 	ret = count = snprintf(buffer, bufsize, "%u.%u", n / 40, n % 40);
+@@ -134,7 +134,7 @@ int sprint_oid(const void *data, size_t
+ 			num = n & 0x7f;
+ 			do {
+ 				if (v >= end)
+-					return -EBADMSG;
++					goto bad;
+ 				n = *v++;
+ 				num <<= 7;
+ 				num |= n & 0x7f;
+@@ -148,6 +148,10 @@ int sprint_oid(const void *data, size_t
+ 	}
+ 
+ 	return ret;
 +
- 	dev_info(chan2dev(chan),
- 		 "%s: src=%pad, dest=%pad, numf=%d, frame_size=%d, flags=0x%lx\n",
- 		__func__, &xt->src_start, &xt->dst_start, xt->numf,
++bad:
++	snprintf(buffer, bufsize, "(bad)");
++	return -EBADMSG;
+ }
+ EXPORT_SYMBOL_GPL(sprint_oid);
+ 
