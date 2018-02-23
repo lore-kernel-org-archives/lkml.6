@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413782-2-7335308929132892370
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413776-2-3199681767006384710
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413781; b=daj5WxhQjTiD8kGbDChPnhDT3lLUTrvO99RaGQlBQsOQ2II
-    xRNrTHWRSciX2eB4ufgxZg9LkJZZyxEbAuOr/bsbwkYPLhlE9xCls8DThk003Eja
-    kPqvEJyT+v0MMos2vzU4SCV+EtJfpFya+7tPqQT6IlYKv5Rs2uS24NJXHOQBe3Wi
-    zrZXa0ps1idvpvEM6iZBStMEJtjZllEV9jtfsCB8BbaFBFtaG4mqatdIw+fEtuw7
-    9thr9fFacMCzxBfXGzo4WNRB7tqM+y/1qscvQackqFWNNp+XfKZKeKowaJBkN9hV
-    Q3xed19mDY6By0MumRihywqANlKGH1bVVvQfuPg==
+    t=1519413776; b=oT/9hiOzlIekiklqPWPOa9m4gB+6DmEHSkggQQY6wwtOe69
+    q4rnIP8VReg7E5BsGhbKccfXcKM6oU8weGF9mQLx0jvguGVyOu0UnPdgU/+Hk9BD
+    Xw8vURckyZmQbNxDH9W5oWMpXcKlPEmgdQ3x3SNYcNsyKh2FKpLXNKYsZfjx4ICp
+    A3wfDqqf/U0mgwpffBOBEL9pD3F7LDJyHoXBc2H0PVxvOmPdrSzxIbsinGfoOnUn
+    daPGiUbE2iogl2i9vgre9zqc+93MSGGtIrhqRuYe7P71cQO47u0UormaOeR4bofo
+    E7e8nrcVPk6xX3CltqnWEVaGTB/sehOQ7nhUVXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413781; bh=4mNpK5f21JMXghs6Za2Ozn3kSu
-    oeIaZsuUpcOoiJs2U=; b=lUjzZm/REpQlVsvOMqeZ/B1RKD6qyVoIAfd+WCZyZz
-    DHUMUlDWIaGsvPYrrl3xHK8ZpUQI8I7ssyfOGC6bh7yfM5zux3Ci14OsNIoxxsrz
-    qqWipRXtCvpuQ9Q6aJyUB80rxu4VUi5Dm8HYwqJdryI/ICR4XGD83ZhB+xWHOX0f
-    MW+s8xbPIyuejc9cZXLXSYaZfBk0QuvmLa9/WTMurKf7j1wrsydqOrQtnFI+Lhgm
-    /CKNmwqw5Q49nh8Kg9z/JbTU8MwzQuY3Eu9FCiuJHGGSuAtPwfmRLkJZ8+cgfn8j
-    41PSMJM/ziaH1Yoql9Hh1LkpW3Tqgt4TrYQijpDysz7A==
+    :list-id; s=arctest; t=1519413776; bh=OKD+af3WfCwPsCJ7M4YvKpQ7eD
+    K60a3MKBKleWBoVkU=; b=ZMIUzmvyOarQuBkVxJJuQLPrcC9x7TWnwRm8ehlWpJ
+    mcl9FHyJ9jcrlqqV5tSFyNDsXjw8wwL9n11B/dgMpLi6TJNWGhX+bcOzK5PTC+zp
+    WVvEDzuQub8r1l9mfeRv/TQVgF7iMtIZqEeV5lBFbM16wu0Wtemsk4YjmrxtEyTR
+    KGtCZGz8m2PWJN5RC8YDETvkvYURuPN/JMEpVzzZPnJvJFAxOJqUpzohHW8xWMAx
+    NXV3dqEOLy7vSZ8e9WC0cl3p/jV4kEWwSCK47nyXAd7Kaw8bOjGIPMXo5ZKoxOOb
+    kXVakyfzAMLsBIuO5ts6Eoi/ek23dvF/80PkN7jgAu/w==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935345AbeBWSxd (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:53:33 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47392 "EHLO
+        id S935033AbeBWSxh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:53:37 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935421AbeBWSxc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:32 -0500
+        with ESMTP id S964785AbeBWSxf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:35 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roy Chung <roychung@synology.com>,
-        Alex Wu <alexwu@synology.com>,
-        BingJing Chang <bingjingc@synology.com>,
-        Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 094/159] md/raid5: correct degraded calculation in raid5_error
-Date: Fri, 23 Feb 2018 19:26:42 +0100
-Message-Id: <20180223170754.905649117@linuxfoundation.org>
+Subject: [PATCH 4.14 095/159] sctp: only update outstanding_bytes for transmitted queue when doing prsctp_prune
+Date: Fri, 23 Feb 2018 19:26:43 +0100
+Message-Id: <20180223170755.021741977@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -81,50 +80,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: bingjingc <bingjingc@synology.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit aff69d89bdebc39235cddb4445371eb979b49685 ]
+[ Upstream commit d30fc5126efb0c33b7adf5966d3051db2c3d7721 ]
 
-When disk failure occurs on new disks for reshape, mddev->degraded
-is not calculated correctly. Faulty bit of the failure device is not
-set before raid5_calc_degraded(conf).
+Now outstanding_bytes is only increased when appending chunks into one
+packet and sending it at 1st time, while decreased when it is about to
+move into retransmit queue. It means outstanding_bytes value is already
+decreased for all chunks in retransmit queue.
 
-mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/loop[012]
-mdadm /dev/md0 -a /dev/loop3
-mdadm /dev/md0 --grow -n4
-mdadm /dev/md0 -f /dev/loop3 # simulating disk failure
+However sctp_prsctp_prune_sent is a common function to check the chunks
+in both transmitted and retransmit queue, it decrease outstanding_bytes
+when moving a chunk into abandoned queue from either of them.
 
-cat /sys/block/md0/md/degraded # it outputs 0, but it should be 1.
+It could cause outstanding_bytes underflow, as it also decreases it's
+value for the chunks in retransmit queue.
 
-However, mdadm -D /dev/md0 will show that it is degraded. It's a bug.
-It can be fixed by moving the resources raid5_calc_degraded() depends
-on before it.
+This patch fixes it by only updating outstanding_bytes for transmitted
+queue when pruning queues for prsctp prio policy, the same fix is also
+needed in sctp_check_transmitted.
 
-Reported-by: Roy Chung <roychung@synology.com>
-Reviewed-by: Alex Wu <alexwu@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: 8dbdf1f5b09c ("sctp: implement prsctp PRIO policy")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid5.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sctp/outqueue.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2678,13 +2678,13 @@ static void raid5_error(struct mddev *md
- 	pr_debug("raid456: error called\n");
+--- a/net/sctp/outqueue.c
++++ b/net/sctp/outqueue.c
+@@ -368,7 +368,8 @@ static int sctp_prsctp_prune_sent(struct
+ 		asoc->abandoned_sent[SCTP_PR_INDEX(PRIO)]++;
+ 		streamout->abandoned_sent[SCTP_PR_INDEX(PRIO)]++;
  
- 	spin_lock_irqsave(&conf->device_lock, flags);
-+	set_bit(Faulty, &rdev->flags);
- 	clear_bit(In_sync, &rdev->flags);
- 	mddev->degraded = raid5_calc_degraded(conf);
- 	spin_unlock_irqrestore(&conf->device_lock, flags);
- 	set_bit(MD_RECOVERY_INTR, &mddev->recovery);
- 
- 	set_bit(Blocked, &rdev->flags);
--	set_bit(Faulty, &rdev->flags);
- 	set_mask_bits(&mddev->sb_flags, 0,
- 		      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
- 	pr_crit("md/raid:%s: Disk failure on %s, disabling device.\n"
+-		if (!chk->tsn_gap_acked) {
++		if (queue != &asoc->outqueue.retransmit &&
++		    !chk->tsn_gap_acked) {
+ 			if (chk->transport)
+ 				chk->transport->flight_size -=
+ 						sctp_data_size(chk);
+@@ -1429,7 +1430,8 @@ static void sctp_check_transmitted(struc
+ 			/* If this chunk has not been acked, stop
+ 			 * considering it as 'outstanding'.
+ 			 */
+-			if (!tchunk->tsn_gap_acked) {
++			if (transmitted_queue != &q->retransmit &&
++			    !tchunk->tsn_gap_acked) {
+ 				if (tchunk->transport)
+ 					tchunk->transport->flight_size -=
+ 							sctp_data_size(tchunk);
