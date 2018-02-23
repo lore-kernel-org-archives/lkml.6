@@ -1,85 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeBWAVr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:21:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751723AbeBWAVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:21:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F5821716
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 22 Feb 2018 18:21:42 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>, Paul Burton <paul.burton@mips.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Hellwig <hch@lst.de>, Michal Nazarewicz <mina86@mina86.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Will Deacon <will.deacon@arm.com>,
-        Tony Lindgren <tony@atomide.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
-Message-ID: <20180223002142.GG14632@bhelgaas-glaptop.roam.corp.google.com>
-References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
- <20180206221106.16620-1-ulfalizer@gmail.com>
- <20180222230052.GA14632@bhelgaas-glaptop.roam.corp.google.com>
- <CAFkk2KScFZE0sjZovi1vq2xBQ_-wx2XoSbWG6_qL2W0rR5B7YQ@mail.gmail.com>
+        id S1752089AbeBWAY7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:24:59 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:41586 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751723AbeBWAY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 19:24:58 -0500
+Subject: Re: [PATCH 5/9] drm/xen-front: Implement handling of shared display
+ buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-6-git-send-email-andr2000@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <11ce6c96-1739-435c-4b6f-c9f5d02a2905@oracle.com>
+Date: Thu, 22 Feb 2018 19:25:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFkk2KScFZE0sjZovi1vq2xBQ_-wx2XoSbWG6_qL2W0rR5B7YQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1519200222-20623-6-git-send-email-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=588
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230002
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:42:28AM +0100, Ulf Magnusson wrote:
-> On Fri, Feb 23, 2018 at 12:00 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Feb 06, 2018 at 11:11:06PM +0100, Ulf Magnusson wrote:
-> >> 'default N' should be 'default n', though they happen to have the same
-> >> effect here, due to undefined symbols (N in this case) evaluating to n
-> >> in a tristate sense.
-> >>
-> >> Remove the default instead of changing it. bool and tristate symbols
-> >> implicitly default to n.
-> >
-> > s/bool/Bool/
-> 
-> Not a great excuse, but I was thinking syntactically -- 'bool' and
-> 'tristate' symbols... :)
-> 
-> >
-> >> Discovered with the
-> >> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> >> script.
-> >>
-> >> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> >
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > Since only this patch was posted to linux-pci, I assume it will be merged
-> > via some other tree.
-> 
-> I didn't have a particular tree in mind for this patchset. I imagined
-> people would pick up patches into the trees where they make the most
-> sense, and only created the patchset to keep track of the patches more
-> easily. Might have created some confusion in retrospect.
-> 
-> I just did a --cc-cmd="scripts/get_maintainer.pl -i" for the
-> individual patches by the way.
+On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
+>  
+>  static int __init xen_drv_init(void)
+>  {
+> +	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
+> +	BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
 
-OK, then either Lorenzo or I will pick it up.
 
-It's in drivers/pci/host/, so ideally Lorenzo will take it since he
-looks after everything else in there.
+Why BUILD_BUG_ON? This should simply not load if page sizes are different.
 
-Bjorn
+ 
+
+
+
+> +	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
+> +	BUG_ON(ret);
+
+
+We should try not to BUG*(). There are a few in this patch (and possibly
+others) that I think can be avoided.
+
+
+
+
+
+> +
+> +static int alloc_storage(struct xen_drm_front_shbuf *buf)
+> +{
+> +	if (buf->sgt) {
+> +		buf->pages = kvmalloc_array(buf->num_pages,
+> +				sizeof(struct page *), GFP_KERNEL);
+> +		if (!buf->pages)
+> +			return -ENOMEM;
+> +
+> +		if (drm_prime_sg_to_page_addr_arrays(buf->sgt, buf->pages,
+> +				NULL, buf->num_pages) < 0)
+> +			return -EINVAL;
+> +	}
+> +
+> +	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
+> +	if (!buf->grefs)
+> +		return -ENOMEM;
+> +
+> +	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
+> +	if (!buf->directory)
+> +		return -ENOMEM;
+
+You need to clean up on errors.
+
+-boris
+
+> +
+> +	return 0;
+> +}
