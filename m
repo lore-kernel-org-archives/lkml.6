@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414375-2-954160963331810837
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414370-2-12859140014381474810
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414375; b=iDDI8wj9Zh2MLgPlwkod/wumjqpe4M/l7vEYuoGyOqH+Icc
-    o8Ujk32L+RgkUFC/nV7yNSNc/THy7DWC4S7THWRNnrjtXEBxMZ2czcbzMU1fdiIa
-    GCvfptYsSqUfjROIbGCpoAcEOVe+MLQ+ilePe8gJSRef7rIemKpOIu0mo3dKZxVJ
-    l+6Kxl6cURmP6KtYp+cW2gLGcDicl3Pkv2tAsCh02eZVh0Bhwc4NXNaytszlCnAi
-    utX5MYObT0n52Wd1+L+eePpI77kOr4bP0AkOgwNNNVdOd5utEVpS46e25tVPk8Dx
-    wnWnOwy818tBa8ri+D2AIU6sJWlNXrE3J8aakRw==
+    t=1519414369; b=HlADInCvKAgoohWbpZRSjFndut9xhMpDDaz3PNE/blRzum0
+    zLJ3EmUb8hkPf2OJ5uEHLx5Pbv3INXwsm9Ayv7+F0DVTRwI/4YM6TxYbLMdsKGyr
+    16UPdOHKSCWH+1KPWo0undR4YZ2Scix6CnCNudUPxVCLPXgRPqrf6KtltFNbL4kL
+    zh5Ynk6RFZBrb4dytwnJ+4Uu/+YjbApTu1JsgCP09ORsSx9UqEpbo3Vk8cL56QEY
+    XE1SlA2yYcY7z/gpZgHdPwyRC5Cwp+6GExPQNDQ0VkPsrrL6qxPnxwMvaBuOs+vT
+    Pa/1nMV4obrBPNm3ojyyrj03Ho1RzQxPG6IxhLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414375; bh=+Juv7MKkrrIl5fij17o3QmizFT
-    Gr+5VrhjeM0yqAuyw=; b=BWLdLP9GzR2syuoryrweJTOonnWziSJfxGaM7+Ryzx
-    vUsQIjA8fcDTVNipMRsmq+vCPzySQIeCMkNGm8wib5FjIRfoB+ZPsEm4pv6GSX2G
-    AJjTX27AD1bkqpmhV0YPOCbHKAvZzm8aDHAL4KEbcEuxTWq6UpKORfx1gf3RO2wW
-    yAC+6TExXxo4hErqm+2A1FC8VQL1risJxZtuSnEi3bBD0g7Iwu/J0H77m2VDb85+
-    snl8AMxLCFshEcFc409/HfGkDZNCHUW1vGlYFNesqaX0Cc/ujTCHzhk7ecDVavi5
-    9AlwS4iOiWF+N/icFH8Zpwa3/LUPzMZSA2VSpSX6TmHw==
+    :list-id; s=arctest; t=1519414369; bh=Q+YyTAyfFZ7pLir7CwVjMA3qeG
+    ekPN8cCJy6avLkJoo=; b=rchDwNBZT93f88KgqxEx3nZSBToc+FRN8LdFwnfJC1
+    yVJSsVdQ5yM93MOpxf3G1HNGRR3jh2/FM15t69IfaWE9ZTNWoVnTXBlo8bPihrIx
+    Nej+6HZFgNNHvtbRpCiw0ml7ajRw/Wc9GEA/FTlhllOfr8/r2SWetWv2SMk5QqHl
+    INQcLTI73FHwZU7GVKJGrktx9PPu7nTflzKaSdDEiPPJJYuMKXf3789YGToRwCDm
+    EfA81k6UN2d/qLvP9oZu7k13/+y1RMqdx2iwTYyUPNCltKTqUImKuzmG8if9P9wG
+    Nr8R2kcsQYn3/EhbHuUHd9JgyJpwUlL954PwCWyCTDfw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934919AbeBWSvQ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:51:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45972 "EHLO
+        id S934935AbeBWSvT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:51:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45990 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934901AbeBWSvO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:14 -0500
+        with ESMTP id S934934AbeBWSvS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:18 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.14 047/159] ARM: 8743/1: bL_switcher: add MODULE_LICENSE tag
-Date: Fri, 23 Feb 2018 19:25:55 +0100
-Message-Id: <20180223170749.143496652@linuxfoundation.org>
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.14 048/159] arm64: dts: add #cooling-cells to CPU nodes
+Date: Fri, 23 Feb 2018 19:25:56 +0100
+Message-Id: <20180223170749.303009855@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,29 +81,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit a21b4c10c7bf5b58112afa20d6fa829e8d74e3e6 upstream.
+commit acbf76ee05067c3942852019993f7beb69a0f45f upstream.
 
-Without this tag, we get a build warning:
+dtc complains about the lack of #coolin-cells properties for the
+CPU nodes that are referred to as "cooling-device":
 
-WARNING: modpost: missing MODULE_LICENSE() in arch/arm/common/bL_switcher_dummy_if.o
+arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@0 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@0:cooling-device[0])
+arch/arm64/boot/dts/mediatek/mt8173-evb.dtb: Warning (cooling_device_property): Missing property '#cooling-cells' in node /cpus/cpu@100 or bad phandle (referred from /thermal-zones/cpu_thermal/cooling-maps/map@1:cooling-device[0])
 
-For completeness, I'm also adding author and description fields.
+Apparently this property must be '<2>' to match the binding.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Tested-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+[arnd: backported to 4.15]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/common/bL_switcher_dummy_if.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm/common/bL_switcher_dummy_if.c
-+++ b/arch/arm/common/bL_switcher_dummy_if.c
-@@ -57,3 +57,7 @@ static struct miscdevice bL_switcher_dev
- 	&bL_switcher_fops
- };
- module_misc_device(bL_switcher_device);
-+
-+MODULE_AUTHOR("Nicolas Pitre <nico@linaro.org>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("big.LITTLE switcher dummy user interface");
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -81,6 +81,7 @@
+ 			reg = <0x000>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -97,6 +98,7 @@
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu3: cpu@101 {
