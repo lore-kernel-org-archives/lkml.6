@@ -1,94 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933827AbeBWTrj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 14:47:39 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754857AbeBWTrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 14:47:36 -0500
-Date: Fri, 23 Feb 2018 14:47:33 -0500
-From: Peter Jones <pjones@redhat.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mjg59@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Bottomley <james.bottomley@hansenpartnership.com>
-Subject: Re: [PATCH] efivarfs: Limit the rate for non-root to read files
-Message-ID: <20180223194732.v6trfxp3pmlhthcc@redhat.com>
-References: <20180221182104.GI3231@tassilo.jf.intel.com>
- <20180221194731.t7jowrmicvaggu3x@agluck-desk>
- <CA+55aFzy89V13rSxGQy77Bb08qpUpH+J=trcjooKQhsAFbgrVw@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37F130@ORSMSX110.amr.corp.intel.com>
- <CA+55aFx3WKAL7e3TAs-2okggW6Z+DHANdmcsr+WTDh3N-Mx+Xw@mail.gmail.com>
- <20180222014505.2l76ccrrs36y3b26@agluck-desk>
- <CA+55aFzJXsPcsJ5MtsxTp2n+43xC0yGzANLNcDm1mFbZKR75FQ@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B37FE28@ORSMSX110.amr.corp.intel.com>
- <CA+55aFy0hRexJkLbN7t31LjfGr4Ae0W5g6sBMqHHJi8aYuGKeA@mail.gmail.com>
- <612E894E-62C8-4155-AED8-D53702EDC8DC@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <612E894E-62C8-4155-AED8-D53702EDC8DC@intel.com>
-User-Agent: NeoMutt/20171215
+        id S1755044AbeBWUDH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 15:03:07 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38220 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754727AbeBWUDE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 15:03:04 -0500
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv5 0/5] Motorola Droid 4 Audio Support
+Date: Fri, 23 Feb 2018 21:02:49 +0100
+Message-Id: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 06:11:14AM +0000, Luck, Tony wrote:
->> On Feb 21, 2018, at 21:52, Linus Torvalds wrote:
->> 
->> Does the error return actually break real users? Not "I can do did
->> things and it acts differently" things, but actual users...
-> 
-> Probably not. Peter Jones said that efibootmgr might access up to 20
-> files. Assuming it is sanely reading in big chunks, it won’t hit the
-> rate limit that I set at 100.
+Hi,
 
-Typically each read looks like:
+This adds audio support to Motorola Droid 4. I dropped the
+regulator from the DT binding as requested by Mark.
 
-openat(AT_FDCWD, "/sys/firmware/efi/efivars/Boot0001-8be4df61-93ca-11d2-aa0d-00e098032b8c", O_RDONLY) = 3
-read(3, "\7\0\0\0", 4)                  = 4
-read(3, "\1\0\0\0b\0t\0e\0s\0t\0\0\0\4\1*\0\1\0\0\0\0\10\0\0\0\0\0\0"..., 4096) = 114
-read(3, "", 3982)                       = 0
-close(3)                                = 0
+Tested:
+ - Playing via both DACs using Speaker, Earpiece, Headphone
+ - Recording using internal Mic
+ - Volume Controls
 
-For each multiple of 4k, you'll see one more read() call.  (It's two
-reads because libefivar's efi_get_variable() returns the attributes
-separately from the data, which goes in an allocation the caller is
-responsible for freeing, so doing it as one read means it would
-introduce an extra copy.)  Looking at that code path, if it *does* get
-tripped up by EAGAIN, it should handle it fine, though maybe I should
-add a short randomized delay (or just sched_yield()) in that case.
+Known not to work:
+ - 3.5mm detection support (requires closed source firmware,
+   needs further investigation)
+ - Modem / Bluetooth Audio (this needs something more sophisticated
+   than the audio-graph-card driver. I will have a look once
+   the basic support has been merged)
 
-I don't think the 3rd read there to detect EOF hits the efivarfs code,
-so that's 2 reads per variable until you go over 4k, which most never
-do.
+Changes since PATCHv4:
+ * Replace verbose GPL text with SPDX header
+ * Use "GPL v2" as MODULE_LICENSE
+ * Drop "default MFD_CPCAP" for the codec driver
+ * Use SOC_SINGLE instead of SOC_ENUM for Phase invert switches
+ * Find DT node by node name instead of by compatible property
+  - Drop Acked-by from Rob Herring
+ * Add new patch for MFD driver to implement the mentioned
+   DT change
 
-That pattern is true of everything that uses libefivar to do its EFI
-variable manipulation.  On my moderately typical laptop with 2 boot
-variables set, it looks something like:
+Changes since PATCHv3:
+ * Drop regulator from DT binding, request VAUDIO from
+   global regulator namespace instead
 
-trillian:~$ strace -o efibootmgr.strace efibootmgr -v 
-BootCurrent: 0001
-Timeout: 0 seconds
-BootOrder: 0001,0000
-Boot0000* Fedora	HD(1,GPT,2cf5261b-7b98-48c0-ae54-463dbd23e65b,0x800,0x64000)/File(\EFI\fedora\shimx64.efi)
-Boot0001* test	HD(1,GPT,2cf5261b-7b98-48c0-ae54-463dbd23e65b,0x800,0x64000)/File(\EFI\fedora\shimx64.efi)
-trillian:~$ grep '^\(open\|read\)' efibootmgr.strace | grep -A100 sys/firmware  | grep -c ^read
-15
+Changes since PATCHv2:
+ * Fix a whitespace issue
+ * Fix const notes Takashi provided
+ * Fix a DAPM route issue I accidently introduced in v2
 
-Which, if I'm write about VFS eating that last read, means 10 calls.
-Many machines have some default boot variables; my desktop at home has 5
-completely useless variables the firmware sets.  So there it winds up
-being 27 calls to read(2), and thus 18 calls to count towards our limit.
+Changes since PATCHv1:
+ * Add patch from Tony exporting soc_dpcm_runtime_update
+ * Integrate DT patch for vaudio initial mode
+ * Split dt-binding from codec patch and add Ack from Rob
+ * Fix CPCAP position in Kconfig/Makefile
+ * Avoid "err +=" constructs
+ * Simplify reset function
+ * Drop cpcap_audio_read/write helpers
+ * Do not use tertiary operator for mute register value
+ * Update Input Mux logic
+ * Switch from simple-audio-card to audio-graph-card
 
-Your limit at 100 looks sufficiently large to me.
+-- Sebastian
+
+Sebastian Reichel (5):
+  dt-bindings: mfd: motorola-cpcap: document audio-codec
+  ASoC: codec: cpcap: new codec
+  mfd: motorola-cpcap: Add audio-codec support
+  ARM: dts: motorola-cpcap-mapphone: add audio-codec
+  ARM: dts: omap4-droid4: add soundcard
+
+ .../devicetree/bindings/mfd/motorola-cpcap.txt     |   42 +
+ arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi     |   13 +
+ arch/arm/boot/dts/omap4-droid4-xt894.dts           |   78 +
+ drivers/mfd/motorola-cpcap.c                       |   51 +-
+ sound/soc/codecs/Kconfig                           |    4 +
+ sound/soc/codecs/Makefile                          |    2 +
+ sound/soc/codecs/cpcap.c                           | 1568 ++++++++++++++++++++
+ 7 files changed, 1757 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/codecs/cpcap.c
 
 -- 
-  Peter
+2.16.1
