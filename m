@@ -1,175 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeBWQcG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:32:06 -0500
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:37091 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeBWQcE (ORCPT
+        id S1751814AbeBWQc7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:32:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54881 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeBWQc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:32:04 -0500
-X-Google-Smtp-Source: AH8x224rtqrM1CWFFjXqT8T4GnkcvmK2cjxHY2dQYn0WE0/tB0rYxA+5vwyjExx4Tfn34E0+U+S6OA==
-Date: Fri, 23 Feb 2018 11:32:02 -0500
-From: Sean Paul <seanpaul@chromium.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 3/4] drm/msm/mdp5: add config for writeback pipes
-Message-ID: <20180223163202.GM223881@art_vandelay>
-References: <20180223131758.18362-1-robdclark@gmail.com>
- <20180223131758.18362-4-robdclark@gmail.com>
+        Fri, 23 Feb 2018 11:32:57 -0500
+From: Colin King <colin.king@canonical.com>
+To: "Rafael J . Wysock" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][ACPI-next] ACPI: battery: make function __battery_hook_unregister static
+Date: Fri, 23 Feb 2018 16:32:55 +0000
+Message-Id: <20180223163255.3899-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223131758.18362-4-robdclark@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 08:17:53AM -0500, Rob Clark wrote:
-> Note there seems to be a slight disagreement between public 8x16 HRD
-> (which claims WB2 has offset of 0x65000, relative to start of MDP), and
-> reality (which claims WB2 has offset of 0x64800).  I sided with reality.
-> 
-> There should also be a WB0 attached to LM0 (which routes to DSI
-> interface).  It isn't clear if this can be used at the same time as
-> output to DSI, which would be hugely useful.  I was unable to get this
-> to work (with HDMI bridge chip on db410c, so DSI in video mode).
-> 
-> This will be needed to implement writeback support, but also useful
-> to remove a manual hack to the generated headers (since rnndb register
-> docs for WB had been merged long ago).
-> 
-> Also fixes LM3 offset.
-> 
-> Signed-off-by: Rob Clark <robdclark@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm not familiar with the hw, but I don't see any programming errors, so:
+The function __battery_hook_unregister is local to the source and does
+not need to be in global scope, so make it static.
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Cleans up sparse warning:
+drivers/acpi/battery.c:654:6: warning: symbol '__battery_hook_unregister'
+was not declared. Should it be static?
 
-> ---
->  drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h |  2 --
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c | 17 +++++++++++------
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.h | 11 +++++++++++
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c |  1 +
->  4 files changed, 23 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h b/drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h
-> index d9c10e02ee41..bebcbabb1fe4 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h
-> @@ -1391,13 +1391,11 @@ static inline uint32_t REG_MDP5_PP_FBC_LOSSY_MODE(uint32_t i0) { return 0x000000
->  static inline uint32_t __offset_WB(uint32_t idx)
->  {
->  	switch (idx) {
-> -#if 0  /* TEMPORARY until patch that adds wb.base[] is merged */
->  		case 0: return (mdp5_cfg->wb.base[0]);
->  		case 1: return (mdp5_cfg->wb.base[1]);
->  		case 2: return (mdp5_cfg->wb.base[2]);
->  		case 3: return (mdp5_cfg->wb.base[3]);
->  		case 4: return (mdp5_cfg->wb.base[4]);
-> -#endif
->  		default: return INVALID_IDX(idx);
->  	}
->  }
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
-> index 824067d2d427..f92e68cdeeef 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
-> @@ -300,8 +300,8 @@ const struct mdp5_cfg_hw msm8x16_config = {
->  		},
->  	},
->  	.ctl = {
-> -		.count = 5,
-> -		.base = { 0x01000, 0x01200, 0x01400, 0x01600, 0x01800 },
-> +		.count = 3,
-> +		.base = { 0x01000, 0x01200, 0x01400 },
->  		.flush_hw_mask = 0x4003ffff,
->  	},
->  	.pipe_vig = {
-> @@ -324,7 +324,7 @@ const struct mdp5_cfg_hw msm8x16_config = {
->  	},
->  	.lm = {
->  		.count = 2, /* LM0 and LM3 */
-> -		.base = { 0x44000, 0x47000 },
-> +		.base = { [0] = 0x44000, [3] = 0x47000 },
->  		.instances = {
->  				{ .id = 0, .pp = 0, .dspp = 0,
->  				  .caps = MDP_LM_CAP_DISPLAY, },
-> @@ -338,12 +338,17 @@ const struct mdp5_cfg_hw msm8x16_config = {
->  	.dspp = {
->  		.count = 1,
->  		.base = { 0x54000 },
-> -
-> +	},
-> +	.wb = {
-> +		.count = 1,
-> +		.base = { [0] = 0x64000, [2] = 0x64800 },
-> +		.instances = {
-> +			{ .id = 2, .lm = 3 },
-> +		},
->  	},
->  	.intf = {
-> -		.base = { 0x00000, 0x6a800 },
-> +		.base = { 0x6a000, 0x6a800, 0x6b000, 0x6b800 },
->  		.connect = {
-> -			[0] = INTF_DISABLED,
->  			[1] = INTF_DSI,
->  		},
->  	},
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.h b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.h
-> index 75910d0f2f4c..2e529fb2f9ee 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.h
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.h
-> @@ -77,6 +77,16 @@ struct mdp5_mdp_block {
->  	uint32_t caps;			/* MDP capabilities: MDP_CAP_xxx bits */
->  };
->  
-> +struct mdp5_wb_instance {
-> +	int id;
-> +	int lm;
-> +};
-> +
-> +struct mdp5_wb_block {
-> +	MDP5_SUB_BLOCK_DEFINITION;
-> +	struct mdp5_wb_instance instances[MAX_BASES];
-> +};
-> +
->  #define MDP5_INTF_NUM_MAX	5
->  
->  struct mdp5_intf_block {
-> @@ -100,6 +110,7 @@ struct mdp5_cfg_hw {
->  	struct mdp5_sub_block pp;
->  	struct mdp5_sub_block dsc;
->  	struct mdp5_sub_block cdm;
-> +	struct mdp5_wb_block wb;
->  	struct mdp5_intf_block intf;
->  
->  	uint32_t max_clk;
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-> index 6d8e3a9a6fc0..1f44d8f15ce1 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-> @@ -652,6 +652,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
->  	pm_runtime_get_sync(&pdev->dev);
->  	for (i = 0; i < MDP5_INTF_NUM_MAX; i++) {
->  		if (mdp5_cfg_intf_is_virtual(config->hw->intf.connect[i]) ||
-> +		    (config->hw->intf.connect[i] == INTF_DISABLED) ||
->  		    !config->hw->intf.base[i])
->  			continue;
->  		mdp5_write(mdp5_kms, REG_MDP5_INTF_TIMING_ENGINE_EN(i), 0);
-> -- 
-> 2.14.3
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index cfdef4c1d097..b4580b2e8706 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -651,7 +651,7 @@ static LIST_HEAD(acpi_battery_list);
+ static LIST_HEAD(battery_hook_list);
+ static DEFINE_MUTEX(hook_mutex);
+ 
+-void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
++static void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
+ {
+ 	struct acpi_battery *battery;
+ 	/*
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.15.1
