@@ -1,41 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeBWVoc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:44:32 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33652 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbeBWVoa (ORCPT
+        id S1752357AbeBWVqy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:46:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52740 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeBWVqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:44:30 -0500
-Date: Fri, 23 Feb 2018 16:36:02 -0500
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH 05/10] KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR
- bitmap
-Message-ID: <20180223213602.GG20992@char.us.oracle.com>
-References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
- <1519235241-6500-6-git-send-email-karahmed@amazon.de>
+        Fri, 23 Feb 2018 16:46:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91A2A6030F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5A908BCA.3080403@codeaurora.org>
+Date: Fri, 23 Feb 2018 13:46:50 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519235241-6500-6-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8813 signatures=668678
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=689
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802230265
+To: Mark Rutland <mark.rutland@arm.com>
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>, will.deacon@arm.com,
+        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
+        peterz@infradead.org, jonathan.cameron@huawei.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
+        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org,
+        avilaj@codeaurora.org
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+References: <20180102112533.13640-1-suzuki.poulose@arm.com> <20180102112533.13640-9-suzuki.poulose@arm.com> <5A8E2BCE.3050509@codeaurora.org> <20180222113352.oeedj7upx3zxvdcc@lakrids.cambridge.arm.com> <5A8F2A4F.5020105@codeaurora.org> <20180223113552.2gn27h4uxbpo5zoq@lakrids.cambridge.arm.com>
+In-Reply-To: <20180223113552.2gn27h4uxbpo5zoq@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 06:47:16PM +0100, KarimAllah Ahmed wrote:
-> ... since using kvm_vcpu_gpa_to_page() and kmap() will only work for guest
-> memory that has a "struct page".
-> 
-> The life-cycle of the mapping also changes to avoid doing map and unmap on
+On 02/23/2018 03:35 AM, Mark Rutland wrote:
+> On Thu, Feb 22, 2018 at 12:38:39PM -0800, Saravana Kannan wrote:
+>> On 02/22/2018 03:33 AM, Mark Rutland wrote:
+>>> On Wed, Feb 21, 2018 at 06:32:46PM -0800, Saravana Kannan wrote:
+>>>> I'm not exactly sure if we can add entries to perf_type_id. If that's
+>>>> allowed maybe we need to add something line PERF_TYPE_DSU and use that?
+>>>>
+>>>> Or if that's not allowed then would it be better to offset the DSU PMU
+>>>> events by some number (say 0x1000) and then delete the event type check or
+>>>> pass PERF_TYPE_RAW to perf_pmu_register()?
+>>>
+>>> As above, neither of these should be necessary.
+>>
+>> For the userspace interface. How about the kernel interface though?
+>> perf_event_create_kernel_counter() takes attr.type as an input. But there's
+>> no way to look up the DSU PMU's "type".
+>
+> There is no lookup mechanism currently.
+>
+> I take it you want to use DSU events from a kernel module?
 
-s/also changes/has been changed/ ?
+Yes
+
+>
+> It would be possible to have a simlar name -> type lookup mechanism
+> kernel-side, if necessary.
+
+Yeah, this is what I was thinking once you explained how user space 
+handles this. Just wanted to hear it from this thread. I can submit a patch.
+
+Thanks,
+Saravana
+
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
