@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224NVUi391Fyf3O0PJldfifQbhR8jic4bTqG+Td4MboAq502qPkHEX+FK/CRrfsOIoJKVdUF
-ARC-Seal: i=1; a=rsa-sha256; t=1519412136; cv=none;
+X-Google-Smtp-Source: AH8x2253fGohg3zlSmtU/4SW2HC4kiHScYhckEMOBmQJjAZbti/iZkEILqVViedRTB33eiTkj5P9
+ARC-Seal: i=1; a=rsa-sha256; t=1519412133; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZWDmrw5dR2YY959WSrZ/XWXvI5KAbHpJD6PPexUx5/ZMp2jcVHFnN3ZXhLiJYfljsY
-         KnHFMraEL4LiK4jVMrx0UA7SZX+TB6S08Fo3/lPQWx2mYLMej5KK80rWgXs+DoqN2Fzc
-         eETSvV7aghO/qF8sIC0YHEjRkQRqk2zOzIRu7JNGd6dyE9fPqEvfKW8y0ogmMsoH4CRq
-         /LZkXuZMjxDWwE2tAwUT7redUHXL/Gb0yJSsCEOHwkSJnJv2BLo5n+ezgE8t76dee0O2
-         mBT1PtTDyRyzlc5/SipUWLQfNTeNAPhR3PxIoXdN+4Ul7gE6Rfm1d+jSql4m/zAbAhDG
-         OtrA==
+        b=WDsPZ1Wy3s1E6bCdC+ZGkCS21dk6U+Fh+ql36uU6mS+qB9uiRUcYJD5sbhW8oWnF3w
+         upW2NmDonm++dG1TKtjtCkmmhXf4UikS0bi2zFcF3BVeec+y8w7kXNtCO91vuymB8FCs
+         3jWUcdPissPiVDyvHjfP63cH0Ex4DEHry5nbNf4ScbyxZV1tQ2KIdcirlSOyt9r0eE3Y
+         6sR3kF9Rs0sF3fZDKMiQ8/uxuqaBj/mHDLIYeFKoFhyte+LQST15Dp4J15V2bUjBRqQY
+         7i4oqhh3S5eFaRzXtRPfIWn7cgFiLZPWw26tuIA6GFiooOKdd+0qumWmr7JwPTOsT89P
+         A9WA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=w9dlSJJW6pyk6EkEzXEjibTzlvX/muRU6ITsG+F5cLI=;
-        b=gCuRawPOmtLrFkvnE9n336CUQ4sDIwN5GjtCDF+/v6u6w6cRwfWkJlY6W0mySj0ApM
-         Zzx2ua+hLZYRJ+SgW+Ya98pifcv5J1dvi0Be+JVPk0RyBNirFhD6FQHWsobcDc5E555c
-         WYQefp07c3sScVST4aRGavui8VbYt1pzkbh3LbVz8I9+PP5X+NUPStwEONmOeHIGKkMQ
-         KCRcoU8/ljw43ZhsZqrLfn4Ww+r5Iw++trnfnYUoURUessO+F011f4YrWUceCjozZe3X
-         EmWZhhA+i2kxYkVTo2uYR0bjNprtd2wMhSNuT6sYbVoDAqy1sT4snAGhzEfq9nNrGWAU
-         kI9g==
+        bh=c+At81a4nff7X0pG/8ho0H4CHvMrkZYbDtAXJRq3hns=;
+        b=q7s1J8T9vQrDlDVPXIEqqvJCI/OzxXJx4U5MwqnYS0xk4dUlLrKDlCzt+SmFpQqdzR
+         7hybsp5XaSdH908yb6xe0BVQ7bIzutVXUf232QbErxsfbfKKoaYsUK6av9NP/c2glcWz
+         Puvpfdj411R9OZFwHDVS23wXq8Nfhe4urCZg0MY5GmJnih8tQpREjwtbTJvL+gCEgn5Z
+         4xDuQ6FQaxNLNPlpzsn7KsdTkQ8j4h0pR6+/EQZHCmFq4HzegQ4ch1eI/IJV6achi1YT
+         tRxlHeh5kEFvFaq0W0M2Md+AjvL36mMKmSGWFWJRnBiNrbTg1BnF+YcyVxYkxh9lI7Hx
+         wt/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-	Mark Brown <broonie@kernel.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 137/159] ASoC: rockchip: disable clock on error
-Date: Fri, 23 Feb 2018 19:27:25 +0100
-Message-Id: <20180223170759.663091447@linuxfoundation.org>
+Subject: [PATCH 4.14 136/159] staging: ccree: Uninitialized return in ssi_ahash_import()
+Date: Fri, 23 Feb 2018 19:27:24 +0100
+Message-Id: <20180223170759.540294728@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217808867092644?=
-X-GMAIL-MSGID: =?utf-8?q?1593219100904817901?=
+X-GMAIL-THRID: =?utf-8?q?1593219098164593277?=
+X-GMAIL-MSGID: =?utf-8?q?1593219098164593277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,71 +49,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit c7b92172a61b91936be985cb9bc499a4ebc6489b ]
+[ Upstream commit aece09024414b54158e03aa45f4a4436e7cb996c ]
 
-Disable the clocks in  rk_spdif_probe when an error occurs after one
-of the clocks has been enabled previously.
+The return value isn't initialized on some success paths.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Fixes: f874b80e1571 ASoC: rockchip: Add rockchip SPDIF transceiver driver
-Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: c5f39d07860c ("staging: ccree: fix leak of import() after init()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/rockchip/rockchip_spdif.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/staging/ccree/ssi_hash.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/rockchip/rockchip_spdif.c
-+++ b/sound/soc/rockchip/rockchip_spdif.c
-@@ -322,26 +322,30 @@ static int rk_spdif_probe(struct platfor
- 	spdif->mclk = devm_clk_get(&pdev->dev, "mclk");
- 	if (IS_ERR(spdif->mclk)) {
- 		dev_err(&pdev->dev, "Can't retrieve rk_spdif master clock\n");
--		return PTR_ERR(spdif->mclk);
-+		ret = PTR_ERR(spdif->mclk);
-+		goto err_disable_hclk;
- 	}
+--- a/drivers/staging/ccree/ssi_hash.c
++++ b/drivers/staging/ccree/ssi_hash.c
+@@ -1781,7 +1781,7 @@ static int ssi_ahash_import(struct ahash
+ 	struct device *dev = &ctx->drvdata->plat_dev->dev;
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
+ 	u32 tmp;
+-	int rc;
++	int rc = 0;
  
- 	ret = clk_prepare_enable(spdif->mclk);
- 	if (ret) {
- 		dev_err(spdif->dev, "clock enable failed %d\n", ret);
--		return ret;
-+		goto err_disable_clocks;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(regs))
--		return PTR_ERR(regs);
-+	if (IS_ERR(regs)) {
-+		ret = PTR_ERR(regs);
-+		goto err_disable_clocks;
-+	}
- 
- 	spdif->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "hclk", regs,
- 						  &rk_spdif_regmap_config);
- 	if (IS_ERR(spdif->regmap)) {
- 		dev_err(&pdev->dev,
- 			"Failed to initialise managed register map\n");
--		return PTR_ERR(spdif->regmap);
-+		ret = PTR_ERR(spdif->regmap);
-+		goto err_disable_clocks;
- 	}
- 
- 	spdif->playback_dma_data.addr = res->start + SPDIF_SMPDR;
-@@ -373,6 +377,10 @@ static int rk_spdif_probe(struct platfor
- 
- err_pm_runtime:
- 	pm_runtime_disable(&pdev->dev);
-+err_disable_clocks:
-+	clk_disable_unprepare(spdif->mclk);
-+err_disable_hclk:
-+	clk_disable_unprepare(spdif->hclk);
- 
- 	return ret;
- }
+ 	memcpy(&tmp, in, sizeof(u32));
+ 	if (tmp != CC_EXPORT_MAGIC) {
