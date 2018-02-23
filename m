@@ -1,237 +1,932 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751716AbeBWQST (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:18:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42484 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751381AbeBWQSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:18:17 -0500
-Date: Sat, 24 Feb 2018 00:17:57 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Alban Browaeys <alban.browaeys@gmail.com>, ivan@ludios.org,
-        169364@studenti.unimore.it, holger@applied-asynchrony.com,
-        efault@gmx.de, Serena Ziviani <ziviani.serena@gmail.com>
-Subject: Re: [PATCH BUGFIX V3] block, bfq: add requeue-request hook
-Message-ID: <20180223161751.GA17466@ming.t460p>
-References: <20180207211920.6343-1-paolo.valente@linaro.org>
- <20180223150705.GB30079@ming.t460p>
- <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
+        id S1751517AbeBWQVJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:21:09 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57158 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751360AbeBWQVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:21:07 -0500
+Date: Fri, 23 Feb 2018 16:21:05 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 1/4] drm: Add writeback connector type
+Message-ID: <20180223162104.GX9111@e110455-lin.cambridge.arm.com>
+References: <20180223131758.18362-1-robdclark@gmail.com>
+ <20180223131758.18362-2-robdclark@gmail.com>
+ <20180223155935.GJ223881@art_vandelay>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8296094C-C3DB-434F-A83D-64CBDE927D09@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180223155935.GJ223881@art_vandelay>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo,
-
-On Fri, Feb 23, 2018 at 04:41:36PM +0100, Paolo Valente wrote:
-> 
-> 
-> > Il giorno 23 feb 2018, alle ore 16:07, Ming Lei <ming.lei@redhat.com> ha scritto:
+On Fri, Feb 23, 2018 at 10:59:35AM -0500, Sean Paul wrote:
+> On Fri, Feb 23, 2018 at 08:17:51AM -0500, Rob Clark wrote:
+> > From: Brian Starkey <brian.starkey@arm.com>
 > > 
-> > Hi Paolo,
+> > Writeback connectors represent writeback engines which can write the
+> > CRTC output to a memory framebuffer. Add a writeback connector type and
+> > related support functions.
 > > 
-> > On Wed, Feb 07, 2018 at 10:19:20PM +0100, Paolo Valente wrote:
-> >> Commit 'a6a252e64914 ("blk-mq-sched: decide how to handle flush rq via
-> >> RQF_FLUSH_SEQ")' makes all non-flush re-prepared requests for a device
-> >> be re-inserted into the active I/O scheduler for that device. As a
+> > Drivers should initialize a writeback connector with
+> > drm_writeback_connector_init() which takes care of setting up all the
+> > writeback-specific details on top of the normal functionality of
+> > drm_connector_init().
 > > 
-> > No, this behaviour isn't related with commit a6a252e64914, and
-> > it has been there since blk_mq_requeue_request() is introduced.
+> > Writeback connectors have a WRITEBACK_FB_ID property, used to set the
+> > output framebuffer, and a WRITEBACK_PIXEL_FORMATS blob used to expose the
+> > supported writeback formats to userspace.
+> > 
+> > When a framebuffer is attached to a writeback connector with the
+> > WRITEBACK_FB_ID property, it is used only once (for the commit in which
+> > it was included), and userspace can never read back the value of
+> > WRITEBACK_FB_ID. WRITEBACK_FB_ID can only be set if the connector is
+> > attached to a CRTC.
+> > 
+> > Changes since v1:
+> >  - Added drm_writeback.c + documentation
+> >  - Added helper to initialize writeback connector in one go
+> >  - Added core checks
+> >  - Squashed into a single commit
+> >  - Dropped the client cap
+> >  - Writeback framebuffers are no longer persistent
+> > 
+> > Changes since v2:
+> >  Daniel Vetter:
+> >  - Subclass drm_connector to drm_writeback_connector
+> >  - Relax check to allow CRTC to be set without an FB
+> >  - Add some writeback_ prefixes
+> >  - Drop PIXEL_FORMATS_SIZE property, as it was unnecessary
+> >  Gustavo Padovan:
+> >  - Add drm_writeback_job to handle writeback signalling centrally
+> > 
+> > Changes since v3:
+> >  - Rebased
+> >  - Rename PIXEL_FORMATS -> WRITEBACK_PIXEL_FORMATS
+> > 
+> > Changes since v4:
+> >  - Added atomic_commit() vfunc to connector helper funcs, so that
+> >    writeback jobs are committed from atomic helpers
+> > 
+> > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> > [rebased and fixed conflicts]
+> > Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> > [rebased and added atomic_commit() vfunc for writeback jobs]
+> > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > ---
+> >  Documentation/gpu/drm-kms.rst            |   9 ++
+> >  drivers/gpu/drm/Makefile                 |   2 +-
+> >  drivers/gpu/drm/drm_atomic.c             | 130 ++++++++++++++++
+> >  drivers/gpu/drm/drm_atomic_helper.c      |  30 ++++
+> >  drivers/gpu/drm/drm_connector.c          |   4 +-
+> >  drivers/gpu/drm/drm_writeback.c          | 257 +++++++++++++++++++++++++++++++
+> >  include/drm/drm_atomic.h                 |   3 +
+> >  include/drm/drm_connector.h              |  13 ++
+> >  include/drm/drm_mode_config.h            |  14 ++
+> >  include/drm/drm_modeset_helper_vtables.h |  11 ++
+> >  include/drm/drm_writeback.h              |  89 +++++++++++
+> >  include/uapi/drm/drm_mode.h              |   1 +
+> >  12 files changed, 561 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/gpu/drm/drm_writeback.c
+> >  create mode 100644 include/drm/drm_writeback.h
+> > 
+> > diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+> > index 2dcf5b42015d..e7590dd2f71e 100644
+> > --- a/Documentation/gpu/drm-kms.rst
+> > +++ b/Documentation/gpu/drm-kms.rst
+> > @@ -370,6 +370,15 @@ Connector Functions Reference
+> >  .. kernel-doc:: drivers/gpu/drm/drm_connector.c
+> >     :export:
+> >  
+> > +Writeback Connectors
+> > +--------------------
+> > +
+> > +.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
+> > +  :doc: overview
+> > +
+> > +.. kernel-doc:: drivers/gpu/drm/drm_writeback.c
+> > +  :export:
+> > +
+> >  Encoder Abstraction
+> >  ===================
+> >  
+> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> > index 50093ff4479b..3d708959b224 100644
+> > --- a/drivers/gpu/drm/Makefile
+> > +++ b/drivers/gpu/drm/Makefile
+> > @@ -18,7 +18,7 @@ drm-y       :=	drm_auth.o drm_bufs.o drm_cache.o \
+> >  		drm_encoder.o drm_mode_object.o drm_property.o \
+> >  		drm_plane.o drm_color_mgmt.o drm_print.o \
+> >  		drm_dumb_buffers.o drm_mode_config.o drm_vblank.o \
+> > -		drm_syncobj.o drm_lease.o
+> > +		drm_syncobj.o drm_lease.o drm_writeback.o
+> >  
+> >  drm-$(CONFIG_DRM_LIB_RANDOM) += lib/drm_random.o
+> >  drm-$(CONFIG_DRM_VM) += drm_vm.o
+> > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > index 46733d534587..019f131fe8be 100644
+> > --- a/drivers/gpu/drm/drm_atomic.c
+> > +++ b/drivers/gpu/drm/drm_atomic.c
+> > @@ -30,6 +30,7 @@
+> >  #include <drm/drm_atomic.h>
+> >  #include <drm/drm_mode.h>
+> >  #include <drm/drm_print.h>
+> > +#include <drm/drm_writeback.h>
+> >  #include <linux/sync_file.h>
+> >  
+> >  #include "drm_crtc_internal.h"
+> > @@ -638,6 +639,46 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
+> >  		crtc->funcs->atomic_print_state(p, state);
+> >  }
+> >  
+> > +/**
+> > + * drm_atomic_connector_check - check connector state
+> > + * @connector: connector to check
+> > + * @state: connector state to check
+> > + *
+> > + * Provides core sanity checks for connector state.
+> > + *
+> > + * RETURNS:
+> > + * Zero on success, error code on failure
+> > + */
+> > +static int drm_atomic_connector_check(struct drm_connector *connector,
+> > +		struct drm_connector_state *state)
+> > +{
+> > +	struct drm_crtc_state *crtc_state;
+> > +	struct drm_writeback_job *writeback_job = state->writeback_job;
+> > +
+> > +	if ((connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK) ||
+> > +	    !writeback_job)
+> > +		return 0;
+> > +
+> > +	if (writeback_job->fb && !state->crtc) {
+> > +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] framebuffer without CRTC\n",
+> > +				 connector->base.id, connector->name);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (state->crtc)
+> > +		crtc_state = drm_atomic_get_existing_crtc_state(state->state,
+> > +								state->crtc);
+> > +
+> > +	if (writeback_job->fb && !crtc_state->active) {
+> 
+> Checking for writeback_job->fb is redundant here and above since it's checked
+> first thing as early exit criteria.
+
+I somehow don't see that check. We check if (!writebac_job) and then all
+other checks are logic ands with other conditions, so I think the check
+here is still relevant.
+
+> 
+> > +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] has framebuffer, but [CRTC:%d] is off\n",
+> > +				 connector->base.id, connector->name,
+> > +				 state->crtc->base.id);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * drm_atomic_get_plane_state - get plane state
+> >   * @state: global atomic state object
+> > @@ -1230,6 +1271,12 @@ static int drm_atomic_connector_set_property(struct drm_connector *connector,
+> >  			return -EINVAL;
+> >  		}
+> >  		state->content_protection = val;
+> > +	} else if (property == config->writeback_fb_id_property) {
+> > +		struct drm_framebuffer *fb = drm_framebuffer_lookup(dev, NULL, val);
+> > +		int ret = drm_atomic_set_writeback_fb_for_connector(state, fb);
+> > +		if (fb)
+> > +			drm_framebuffer_unreference(fb);
+> > +		return ret;
+> >  	} else if (connector->funcs->atomic_set_property) {
+> >  		return connector->funcs->atomic_set_property(connector,
+> >  				state, property, val);
+> > @@ -1311,6 +1358,9 @@ drm_atomic_connector_get_property(struct drm_connector *connector,
+> >  		*val = state->scaling_mode;
+> >  	} else if (property == connector->content_protection_property) {
+> >  		*val = state->content_protection;
+> > +	} else if (property == config->writeback_fb_id_property) {
+> > +		/* Writeback framebuffer is one-shot, write and forget */
+> > +		*val = 0;
+> >  	} else if (connector->funcs->atomic_get_property) {
+> >  		return connector->funcs->atomic_get_property(connector,
+> >  				state, property, val);
+> > @@ -1518,6 +1568,75 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_set_crtc_for_connector);
+> >  
+> > +/*
+> > + * drm_atomic_get_writeback_job - return or allocate a writeback job
+> > + * @conn_state: Connector state to get the job for
+> > + *
+> > + * Writeback jobs have a different lifetime to the atomic state they are
+> > + * associated with. This convenience function takes care of allocating a job
+> > + * if there isn't yet one associated with the connector state, otherwise
+> > + * it just returns the existing job.
+> > + *
+> > + * Returns: The writeback job for the given connector state
+> > + */
+> > +static struct drm_writeback_job *
+> > +drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
+> > +{
+> > +	WARN_ON(conn_state->connector->connector_type !=
+> > +		DRM_MODE_CONNECTOR_WRITEBACK);
+> > +
+> > +	if (!conn_state->writeback_job)
+> > +		conn_state->writeback_job =
+> > +			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
+> > +
+> > +	return conn_state->writeback_job;
+> > +}
+> > +
+> > +/**
+> > + * drm_atomic_set_writeback_fb_for_connector - set writeback framebuffer
+> > + * @conn_state: atomic state object for the connector
+> > + * @fb: fb to use for the connector
+> > + *
+> > + * This is used to set the framebuffer for a writeback connector, which outputs
+> > + * to a buffer instead of an actual physical connector.
+> > + * Changing the assigned framebuffer requires us to grab a reference to the new
+> > + * fb and drop the reference to the old fb, if there is one. This function
+> > + * takes care of all these details besides updating the pointer in the
+> > + * state object itself.
+> > + *
+> > + * Note: The only way conn_state can already have an fb set is if the commit
+> > + * sets the property more than once.
+> > + *
+> > + * See also: drm_writeback_connector_init()
+> > + *
+> > + * Returns: 0 on success
+> > + */
+> > +int drm_atomic_set_writeback_fb_for_connector(
+> > +		struct drm_connector_state *conn_state,
+> > +		struct drm_framebuffer *fb)
+> > +{
+> > +	struct drm_writeback_job *job =
+> > +		drm_atomic_get_writeback_job(conn_state);
+> > +	if (!job)
+> > +		return -ENOMEM;
+> > +
+> > +	if (job->fb)
+> > +		drm_framebuffer_unreference(job->fb);
+> > +	if (fb)
+> > +		drm_framebuffer_reference(fb);
+> > +	job->fb = fb;
+> > +
+> > +	if (fb)
+> > +		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
+> > +				 fb->base.id, conn_state);
+> > +	else
+> > +		DRM_DEBUG_ATOMIC("Set [NOFB] for connector state %p\n",
+> > +				 conn_state);
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_set_writeback_fb_for_connector);
+> > +
+> >  /**
+> >   * drm_atomic_add_affected_connectors - add connectors for crtc
+> >   * @state: atomic state
+> > @@ -1636,6 +1755,8 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+> >  	struct drm_plane_state *plane_state;
+> >  	struct drm_crtc *crtc;
+> >  	struct drm_crtc_state *crtc_state;
+> > +	struct drm_connector *conn;
+> > +	struct drm_connector_state *conn_state;
+> >  	int i, ret = 0;
+> >  
+> >  	DRM_DEBUG_ATOMIC("checking %p\n", state);
+> > @@ -1658,6 +1779,15 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
+> >  		}
+> >  	}
+> >  
+> > +	for_each_new_connector_in_state(state, conn, conn_state, i) {
+> > +		ret = drm_atomic_connector_check(conn, conn_state);
+> > +		if (ret) {
+> > +			DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] atomic core check failed\n",
+> > +					 conn->base.id, conn->name);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> >  	if (config->funcs->atomic_check)
+> >  		ret = config->funcs->atomic_check(state->dev, state);
+> >  
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> > index ae3cbfe9e01c..12b910755d84 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -30,6 +30,7 @@
+> >  #include <drm/drm_plane_helper.h>
+> >  #include <drm/drm_crtc_helper.h>
+> >  #include <drm/drm_atomic_helper.h>
+> > +#include <drm/drm_writeback.h>
+> >  #include <linux/dma-fence.h>
+> >  
+> >  #include "drm_crtc_helper_internal.h"
+> > @@ -1159,6 +1160,27 @@ void drm_atomic_helper_commit_modeset_disables(struct drm_device *dev,
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_disables);
+> >  
+> > +static void commit_writebacks(struct drm_device *dev, struct drm_atomic_state *old_state)
+> > +{
+> > +	struct drm_connector *connector;
+> > +	struct drm_connector_state *new_conn_state;
+> > +	int i;
+> > +
+> > +	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
+> > +		const struct drm_connector_helper_funcs *funcs;
+> > +
+> > +		funcs = connector->helper_private;
+> > +
+> > +		if (new_conn_state->writeback_job &&
+> > +		    new_conn_state->writeback_job->fb) {
+> > +			WARN_ON(connector->connector_type !=
+> > +				DRM_MODE_CONNECTOR_WRITEBACK);
+> > +			funcs->atomic_commit(connector,
+> > +					     new_conn_state->writeback_job);
+> > +		}
+> > +	}
+> > +}
+> > +
+> >  /**
+> >   * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
+> >   * @dev: DRM device
+> > @@ -1238,6 +1260,8 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+> >  
+> >  		drm_bridge_enable(encoder->bridge);
+> >  	}
+> > +
+> > +	commit_writebacks(dev, old_state);
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_helper_commit_modeset_enables);
+> >  
+> > @@ -3627,6 +3651,9 @@ __drm_atomic_helper_connector_duplicate_state(struct drm_connector *connector,
+> >  	if (state->crtc)
+> >  		drm_connector_get(connector);
+> >  	state->commit = NULL;
+> > +
+> > +	/* Don't copy over a writeback job, they are used only once */
+> > +	state->writeback_job = NULL;
+> >  }
+> >  EXPORT_SYMBOL(__drm_atomic_helper_connector_duplicate_state);
+> >  
+> > @@ -3756,6 +3783,9 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
+> >  
+> >  	if (state->commit)
+> >  		drm_crtc_commit_put(state->commit);
+> > +
+> > +	if (state->writeback_job)
+> > +		drm_writeback_cleanup_job(state->writeback_job);
+> >  }
+> >  EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
+> >  
+> > diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> > index 16b9c3810af2..add47f06ae70 100644
+> > --- a/drivers/gpu/drm/drm_connector.c
+> > +++ b/drivers/gpu/drm/drm_connector.c
+> > @@ -87,6 +87,7 @@ static struct drm_conn_prop_enum_list drm_connector_enum_list[] = {
+> >  	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual" },
+> >  	{ DRM_MODE_CONNECTOR_DSI, "DSI" },
+> >  	{ DRM_MODE_CONNECTOR_DPI, "DPI" },
+> > +	{ DRM_MODE_CONNECTOR_WRITEBACK, "Writeback" },
+> >  };
+> >  
+> >  void drm_connector_ida_init(void)
+> > @@ -249,7 +250,8 @@ int drm_connector_init(struct drm_device *dev,
+> >  	config->num_connector++;
+> >  	spin_unlock_irq(&config->connector_list_lock);
+> >  
+> > -	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL)
+> > +	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL &&
+> > +	    connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+> >  		drm_object_attach_property(&connector->base,
+> >  					      config->edid_property,
+> >  					      0);
+> > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> > new file mode 100644
+> > index 000000000000..da61f929cbc3
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/drm_writeback.c
+> > @@ -0,0 +1,257 @@
+> > +/*
+> > + * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
+> > + * Author: Brian Starkey <brian.starkey@arm.com>
+> > + *
+> > + * This program is free software and is provided to you under the terms of the
+> > + * GNU General Public License version 2 as published by the Free Software
+> > + * Foundation, and any use by you of this program is subject to the terms
+> > + * of such GNU licence.
+> > + */
+> > +
+> > +#include <drm/drm_crtc.h>
+> > +#include <drm/drm_modeset_helper_vtables.h>
+> > +#include <drm/drm_property.h>
+> > +#include <drm/drm_writeback.h>
+> > +#include <drm/drmP.h>
+> > +
+> > +/**
+> > + * DOC: overview
+> > + *
+> > + * Writeback connectors are used to expose hardware which can write the output
+> > + * from a CRTC to a memory buffer. They are used and act similarly to other
+> > + * types of connectors, with some important differences:
+> > + *  - Writeback connectors don't provide a way to output visually to the user.
+> > + *  - Writeback connectors should always report as "disconnected" (so that
+> > + *    clients which don't understand them will ignore them).
+> 
+> Have we considered hiding writeback behind a client cap instead?
+
+Yes, changelog says that the client cap was dropped in v2 based on
+feedback (as far as I remember). 
+
+> 
+> > + *  - Writeback connectors don't have EDID.
+> > + *
+> > + * A framebuffer may only be attached to a writeback connector when the
+> > + * connector is attached to a CRTC. The WRITEBACK_FB_ID property which sets the
+> > + * framebuffer applies only to a single commit (see below). A framebuffer may
+> > + * not be attached while the CRTC is off.
+> > + *
+> > + * Writeback connectors have some additional properties, which userspace
+> > + * can use to query and control them:
+> > + *
+> > + *  "WRITEBACK_FB_ID":
+> > + *	Write-only object property storing a DRM_MODE_OBJECT_FB: it stores the
+> > + *	framebuffer to be written by the writeback connector. This property is
+> > + *	similar to the FB_ID property on planes, but will always read as zero
+> > + *	and is not preserved across commits.
+> > + *	Userspace must set this property to an output buffer every time it
+> > + *	wishes the buffer to get filled.
+> > + *
+> > + *  "WRITEBACK_PIXEL_FORMATS":
+> > + *	Immutable blob property to store the supported pixel formats table. The
+> > + *	data is an array of u32 DRM_FORMAT_* fourcc values.
+> > + *	Userspace can use this blob to find out what pixel formats are supported
+> > + *	by the connector's writeback engine.
+> > + */
+> > +
+> > +static bool create_writeback_properties(struct drm_device *dev)
+> > +{
+> > +	struct drm_property *prop;
+> > +
+> > +	if (!dev->mode_config.writeback_fb_id_property) {
+> 
+> Somewhat an aside, but we should probably come up with more formal rules on
+> where to stick properties. We have some in drm_connector, which I interpret as
+> "connector-only properties", but we also have a bunch in mode_config.
+> 
+> For optional properties which will generally only apply to one connector on a
+> system, I'd be inclined to put it in connector. 
+
+I can move the writeback-related properties into the connector in the
+next series.
+
+
+> 
+> > +		prop = drm_property_create_object(dev, DRM_MODE_PROP_ATOMIC,
+> > +						  "WRITEBACK_FB_ID",
+> > +						  DRM_MODE_OBJECT_FB);
+> > +		if (!prop)
+> > +			return false;
+> > +		dev->mode_config.writeback_fb_id_property = prop;
+> > +	}
+> > +
+> > +	if (!dev->mode_config.writeback_pixel_formats_property) {
+> > +		prop = drm_property_create(dev, DRM_MODE_PROP_BLOB | DRM_MODE_PROP_IMMUTABLE,
+> > +					   "WRITEBACK_PIXEL_FORMATS", 0);
+> 
+> Does it make sense to expose the formats if u/s doesn't support atomic and can't
+> use writeback? Perhaps this should also be DRM_MODE_PROP_ATOMIC.
+
+Agree, probably all the writeback properties should only be available if
+the client selects DRM_MODE_PROP_ATOMIC.
+
+> 
+> 
+> > +		if (!prop)
+> > +			return false;
+> > +		dev->mode_config.writeback_pixel_formats_property = prop;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static const struct drm_encoder_funcs drm_writeback_encoder_funcs = {
+> > +	.destroy = drm_encoder_cleanup,
+> > +};
+> > +
+> > +/**
+> > + * drm_writeback_connector_init - Initialize a writeback connector and its properties
+> > + * @dev: DRM device
+> > + * @wb_connector: Writeback connector to initialize
+> > + * @con_funcs: Connector funcs vtable
+> > + * @enc_helper_funcs: Encoder helper funcs vtable to be used by the internal encoder
+> > + * @formats: Array of supported pixel formats for the writeback engine
+> > + * @n_formats: Length of the formats array
+> > + *
+> > + * This function creates the writeback-connector-specific properties if they
+> > + * have not been already created, initializes the connector as
+> > + * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
+> > + * values. It will also create an internal encoder associated with the
+> > + * drm_writeback_connector and set it to use the @enc_helper_funcs vtable for
+> > + * the encoder helper.
+> > + *
+> > + * Drivers should always use this function instead of drm_connector_init() to
+> > + * set up writeback connectors.
+> > + *
+> > + * Returns: 0 on success, or a negative error code
+> > + */
+> > +int drm_writeback_connector_init(struct drm_device *dev,
+> > +				 struct drm_writeback_connector *wb_connector,
+> > +				 const struct drm_connector_funcs *con_funcs,
+> > +				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
+> > +				 const u32 *formats, int n_formats)
+> > +{
+> > +	int ret;
+> > +	struct drm_property_blob *blob;
+> > +	struct drm_connector *connector = &wb_connector->base;
+> > +	struct drm_mode_config *config = &dev->mode_config;
+> > +
+> > +	if (!create_writeback_properties(dev))
+> > +		return -EINVAL;
+> > +
+> > +	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
+> > +					formats);
+> > +	if (IS_ERR(blob))
+> > +		return PTR_ERR(blob);
+> > +
+> > +	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
+> > +	ret = drm_encoder_init(dev, &wb_connector->encoder,
+> > +			       &drm_writeback_encoder_funcs,
+> > +			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> > +	if (ret)
+> > +		goto fail;
+> > +
+> > +	connector->interlace_allowed = 0;
+> > +
+> > +	ret = drm_connector_init(dev, connector, con_funcs,
+> > +				 DRM_MODE_CONNECTOR_WRITEBACK);
+> > +	if (ret)
+> > +		goto connector_fail;
+> > +
+> > +	ret = drm_mode_connector_attach_encoder(connector,
+> > +						&wb_connector->encoder);
+> > +	if (ret)
+> > +		goto attach_fail;
+> > +
+> > +	INIT_LIST_HEAD(&wb_connector->job_queue);
+> > +	spin_lock_init(&wb_connector->job_lock);
+> > +
+> > +	drm_object_attach_property(&connector->base,
+> > +				   config->writeback_fb_id_property, 0);
+> > +
+> > +	drm_object_attach_property(&connector->base,
+> > +				   config->writeback_pixel_formats_property,
+> > +				   blob->base.id);
+> > +	wb_connector->pixel_formats_blob_ptr = blob;
+> > +
+> > +	return 0;
+> > +
+> > +attach_fail:
+> > +	drm_connector_cleanup(connector);
+> > +connector_fail:
+> > +	drm_encoder_cleanup(&wb_connector->encoder);
+> > +fail:
+> > +	drm_property_unreference_blob(blob);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_connector_init);
+> > +
+> > +/**
+> > + * drm_writeback_queue_job - Queue a writeback job for later signalling
+> > + * @wb_connector: The writeback connector to queue a job on
+> > + * @job: The job to queue
+> > + *
+> > + * This function adds a job to the job_queue for a writeback connector. It
+> > + * should be considered to take ownership of the writeback job, and so any other
+> > + * references to the job must be cleared after calling this function.
+> > + *
+> > + * Drivers must ensure that for a given writeback connector, jobs are queued in
+> > + * exactly the same order as they will be completed by the hardware (and
+> > + * signaled via drm_writeback_signal_completion).
+> > + *
+> > + * For every call to drm_writeback_queue_job() there must be exactly one call to
+> > + * drm_writeback_signal_completion()
+> > + *
+> > + * See also: drm_writeback_signal_completion()
+> > + */
+> > +void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+> > +			     struct drm_writeback_job *job)
+> > +{
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&wb_connector->job_lock, flags);
+> > +	list_add_tail(&job->list_entry, &wb_connector->job_queue);
+> > +	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_queue_job);
+> > +
+> > +/**
+> > + * drm_writeback_cleanup_job - Cleanup and free a writeback job
+> > + * @job: The writeback job to free
+> > + *
+> > + * Drops any references held by the writeback job, and frees the structure.
+> > + */
+> > +void drm_writeback_cleanup_job(struct drm_writeback_job *job)
+> > +{
+> > +	if (!job)
+> > +		return;
+> > +
+> > +	if (job->fb)
+> > +		drm_framebuffer_unreference(job->fb);
+> > +	kfree(job);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_cleanup_job);
+> > +
+> > +/*
+> > + * @cleanup_work: deferred cleanup of a writeback job
+> > + *
+> > + * The job cannot be cleaned up directly in drm_writeback_signal_completion,
+> > + * because it may be called in interrupt context. Dropping the framebuffer
+> > + * reference can sleep, and so the cleanup is deferred to a workqueue.
+> > + */
+> > +static void cleanup_work(struct work_struct *work)
+> > +{
+> > +	struct drm_writeback_job *job = container_of(work,
+> > +						     struct drm_writeback_job,
+> > +						     cleanup_work);
+> > +	drm_writeback_cleanup_job(job);
+> 
+> TIL that you can free work while using it.
+
+Was not aware that it is possible. I can update the code to do it.
+
+Thanks for the feedback and review!
+
+Best regards,
+Liviu
+
+> 
+> > +}
+> > +
+> > +/**
+> > + * drm_writeback_signal_completion - Signal the completion of a writeback job
+> > + * @wb_connector: The writeback connector whose job is complete
+> > + *
+> > + * Drivers should call this to signal the completion of a previously queued
+> > + * writeback job. It should be called as soon as possible after the hardware
+> > + * has finished writing, and may be called from interrupt context.
+> > + * It is the driver's responsibility to ensure that for a given connector, the
+> > + * hardware completes writeback jobs in the same order as they are queued.
+> > + *
+> > + * Unless the driver is holding its own reference to the framebuffer, it must
+> > + * not be accessed after calling this function.
+> > + *
+> > + * See also: drm_writeback_queue_job()
+> > + */
+> > +void
+> > +drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector)
+> > +{
+> > +	unsigned long flags;
+> > +	struct drm_writeback_job *job;
+> > +
+> > +	spin_lock_irqsave(&wb_connector->job_lock, flags);
+> > +	job = list_first_entry_or_null(&wb_connector->job_queue,
+> > +				       struct drm_writeback_job,
+> > +				       list_entry);
+> > +	if (job)
+> > +		list_del(&job->list_entry);
+> > +	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+> > +
+> > +	if (WARN_ON(!job))
+> > +		return;
+> > +
+> > +	INIT_WORK(&job->cleanup_work, cleanup_work);
+> > +	queue_work(system_long_wq, &job->cleanup_work);
+> > +}
+> > +EXPORT_SYMBOL(drm_writeback_signal_completion);
+> > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> > index cf13842a6dbd..d7b0263cc5cf 100644
+> > --- a/include/drm/drm_atomic.h
+> > +++ b/include/drm/drm_atomic.h
+> > @@ -594,6 +594,9 @@ void drm_atomic_set_fence_for_plane(struct drm_plane_state *plane_state,
+> >  int __must_check
+> >  drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+> >  				  struct drm_crtc *crtc);
+> > +int drm_atomic_set_writeback_fb_for_connector(
+> > +		struct drm_connector_state *conn_state,
+> > +		struct drm_framebuffer *fb);
+> >  int __must_check
+> >  drm_atomic_add_affected_connectors(struct drm_atomic_state *state,
+> >  				   struct drm_crtc *crtc);
+> > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> > index 758a176e7b57..8701ebcc68b3 100644
+> > --- a/include/drm/drm_connector.h
+> > +++ b/include/drm/drm_connector.h
+> > @@ -425,6 +425,19 @@ struct drm_connector_state {
+> >  	 * protection. This is most commonly used for HDCP.
+> >  	 */
+> >  	unsigned int content_protection;
+> > +
+> > +	/**
+> > +	 * @writeback_job: Writeback job for writeback connectors
+> > +	 *
+> > +	 * Holds the framebuffer for a writeback connector. As the writeback
+> > +	 * completion may be asynchronous to the normal commit cycle, the
+> > +	 * writeback job lifetime is managed separately from the normal atomic
+> > +	 * state by this object.
+> > +	 *
+> > +	 * See also: drm_writeback_queue_job() and
+> > +	 * drm_writeback_signal_completion()
+> > +	 */
+> > +	struct drm_writeback_job *writeback_job;
+> >  };
+> >  
+> >  /**
+> > diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
+> > index 7569f22ffef6..c012e1148ec0 100644
+> > --- a/include/drm/drm_mode_config.h
+> > +++ b/include/drm/drm_mode_config.h
+> > @@ -779,6 +779,20 @@ struct drm_mode_config {
+> >  	 */
+> >  	struct drm_property *panel_orientation_property;
+> >  
+> > +	/**
+> > +	 * @writeback_fb_id_property: Property for writeback connectors, storing
+> > +	 * the ID of the output framebuffer.
+> > +	 * See also: drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property *writeback_fb_id_property;
+> > +	/**
+> > +	 * @writeback_pixel_formats_property: Property for writeback connectors,
+> > +	 * storing an array of the supported pixel formats for the writeback
+> > +	 * engine (read-only).
+> > +	 * See also: drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property *writeback_pixel_formats_property;
+> > +
+> >  	/* dumb ioctl parameters */
+> >  	uint32_t preferred_depth, prefer_shadow;
+> >  
+> > diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+> > index 3e76ca805b0f..97d3a810bc85 100644
+> > --- a/include/drm/drm_modeset_helper_vtables.h
+> > +++ b/include/drm/drm_modeset_helper_vtables.h
+> > @@ -974,6 +974,17 @@ struct drm_connector_helper_funcs {
+> >  	 */
+> >  	int (*atomic_check)(struct drm_connector *connector,
+> >  			    struct drm_connector_state *state);
+> > +
+> > +	/**
+> > +	 * @atomic_commit:
+> > +	 *
+> > +	 * For write-back connectors, this is the point to commit the write-
+> > +	 * back job to hw.
+> > +	 *
+> > +	 * This callback is used by the atomic modeset helpers.
+> > +	 */
+> > +	void (*atomic_commit)(struct drm_connector *connector,
+> > +			      struct drm_writeback_job *writeback_job);
+> >  };
+> >  
+> >  /**
+> > diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> > new file mode 100644
+> > index 000000000000..0bb95fd4907d
+> > --- /dev/null
+> > +++ b/include/drm/drm_writeback.h
+> > @@ -0,0 +1,89 @@
+> > +/*
+> > + * (C) COPYRIGHT 2016 ARM Limited. All rights reserved.
+> > + * Author: Brian Starkey <brian.starkey@arm.com>
+> > + *
+> > + * This program is free software and is provided to you under the terms of the
+> > + * GNU General Public License version 2 as published by the Free Software
+> > + * Foundation, and any use by you of this program is subject to the terms
+> > + * of such GNU licence.
+> > + */
+> > +
+> > +#ifndef __DRM_WRITEBACK_H__
+> > +#define __DRM_WRITEBACK_H__
+> > +#include <drm/drm_connector.h>
+> > +#include <drm/drm_encoder.h>
+> > +#include <linux/workqueue.h>
+> > +
+> > +struct drm_writeback_connector {
+> > +	struct drm_connector base;
+> > +
+> > +	/**
+> > +	 * @encoder: Internal encoder used by the connector to fulfill
+> > +	 * the DRM framework requirements. The users of the
+> > +	 * @drm_writeback_connector control the behaviour of the @encoder
+> > +	 * by passing the @enc_funcs parameter to drm_writeback_connector_init()
+> > +	 * function.
+> > +	 */
+> > +	struct drm_encoder encoder;
+> > +
+> > +	/**
+> > +	 * @pixel_formats_blob_ptr:
+> > +	 *
+> > +	 * DRM blob property data for the pixel formats list on writeback
+> > +	 * connectors
+> > +	 * See also drm_writeback_connector_init()
+> > +	 */
+> > +	struct drm_property_blob *pixel_formats_blob_ptr;
+> > +
+> > +	/** @job_lock: Protects job_queue */
+> > +	spinlock_t job_lock;
+> > +
+> > +	/**
+> > +	 * @job_queue:
+> > +	 *
+> > +	 * Holds a list of a connector's writeback jobs; the last item is the
+> > +	 * most recent. The first item may be either waiting for the hardware
+> > +	 * to begin writing, or currently being written.
+> > +	 *
+> > +	 * See also: drm_writeback_queue_job() and
+> > +	 * drm_writeback_signal_completion()
+> > +	 */
+> > +	struct list_head job_queue;
+> > +};
+> > +#define to_wb_connector(x) container_of(x, struct drm_writeback_connector, base)
+> > +
+> > +struct drm_writeback_job {
+> > +	/**
+> > +	 * @cleanup_work:
+> > +	 *
+> > +	 * Used to allow drm_writeback_signal_completion to defer dropping the
+> > +	 * framebuffer reference to a workqueue.
+> > +	 */
+> > +	struct work_struct cleanup_work;
+> > +	/**
+> > +	 * @list_entry:
+> > +	 *
+> > +	 * List item for the connector's @job_queue
+> > +	 */
+> > +	struct list_head list_entry;
+> > +	/**
+> > +	 * @fb:
+> > +	 *
+> > +	 * Framebuffer to be written to by the writeback connector. Do not set
+> > +	 * directly, use drm_atomic_set_writeback_fb_for_connector()
+> > +	 */
+> > +	struct drm_framebuffer *fb;
+> > +};
+> > +
+> > +int drm_writeback_connector_init(struct drm_device *dev,
+> > +				 struct drm_writeback_connector *wb_connector,
+> > +				 const struct drm_connector_funcs *con_funcs,
+> > +				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
+> > +				 const u32 *formats, int n_formats);
+> > +
+> > +void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+> > +			     struct drm_writeback_job *job);
+> > +
+> > +void drm_writeback_cleanup_job(struct drm_writeback_job *job);
+> > +void drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector);
+> > +#endif
+> > diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> > index 2c575794fb52..7b47e184e95e 100644
+> > --- a/include/uapi/drm/drm_mode.h
+> > +++ b/include/uapi/drm/drm_mode.h
+> > @@ -338,6 +338,7 @@ enum drm_mode_subconnector {
+> >  #define DRM_MODE_CONNECTOR_VIRTUAL      15
+> >  #define DRM_MODE_CONNECTOR_DSI		16
+> >  #define DRM_MODE_CONNECTOR_DPI		17
+> > +#define DRM_MODE_CONNECTOR_WRITEBACK	18
+> >  
+> >  struct drm_mode_get_connector {
+> >  
+> > -- 
+> > 2.14.3
 > > 
 > 
-> Hi Ming,
-> actually, we wrote the above statement after simply following the call
-> chain that led to the failure.  In this respect, the change in commit
-> a6a252e64914:
-> 
->  static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
-> +                                      bool has_sched,
->                                        struct request *rq)
->  {
-> -       if (rq->tag == -1) {
-> +       /* dispatch flush rq directly */
-> +       if (rq->rq_flags & RQF_FLUSH_SEQ) {
-> +               spin_lock(&hctx->lock);
-> +               list_add(&rq->queuelist, &hctx->dispatch);
-> +               spin_unlock(&hctx->lock);
-> +               return true;
-> +       }
-> +
-> +       if (has_sched) {
->                 rq->rq_flags |= RQF_SORTED;
-> -               return false;
-> +               WARN_ON(rq->tag != -1);
->         }
->  
-> -       /*
-> -        * If we already have a real request tag, send directly to
-> -        * the dispatch list.
-> -        */
-> -       spin_lock(&hctx->lock);
-> -       list_add(&rq->queuelist, &hctx->dispatch);
-> -       spin_unlock(&hctx->lock);
-> -       return true;
-> +       return false;
->  }
-> 
-> makes blk_mq_sched_bypass_insert return false for all non-flush
-> requests.  From that, the anomaly described in our commit follows, for
-> bfq any stateful scheduler that waits for the completion of requests
-> that passed through it.  I'm elaborating again a little bit on this in
-> my replies to your next points below.
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
 
-Before a6a252e64914, follows blk_mq_sched_bypass_insert()
-
-       if (rq->tag == -1) {
-               rq->rq_flags |= RQF_SORTED;
-               return false;
-	   }
-
-       /*
-        * If we already have a real request tag, send directly to
-        * the dispatch list.
-        */
-       spin_lock(&hctx->lock);
-       list_add(&rq->queuelist, &hctx->dispatch);
-       spin_unlock(&hctx->lock);
-       return true;
-
-This function still returns false for all non-flush request, so nothing
-changes wrt. this kind of handling.
-
-> 
-> I don't mean that this change is an error, it simply sends a stateful
-> scheduler in an inconsistent state, unless the scheduler properly
-> handles the requeue that precedes the re-insertion into the
-> scheduler.
-> 
-> If this clarifies the situation, but there is still some misleading
-> statement in the commit, just let me better understand, and I'll be
-> glad to rectify it, if possible somehow.
-> 
-> 
-> > And you can see blk_mq_requeue_request() is called by lots of drivers,
-> > especially it is often used in error handler, see SCSI's example.
-> > 
-> >> consequence, I/O schedulers may get the same request inserted again,
-> >> even several times, without a finish_request invoked on that request
-> >> before each re-insertion.
-> >> 
-> 
-> ...
-> 
-> >> @@ -5426,7 +5482,8 @@ static struct elevator_type iosched_bfq_mq = {
-> >> 	.ops.mq = {
-> >> 		.limit_depth		= bfq_limit_depth,
-> >> 		.prepare_request	= bfq_prepare_request,
-> >> -		.finish_request		= bfq_finish_request,
-> >> +		.requeue_request        = bfq_finish_requeue_request,
-> >> +		.finish_request		= bfq_finish_requeue_request,
-> >> 		.exit_icq		= bfq_exit_icq,
-> >> 		.insert_requests	= bfq_insert_requests,
-> >> 		.dispatch_request	= bfq_dispatch_request,
-> > 
-> > This way may not be correct since blk_mq_sched_requeue_request() can be
-> > called for one request which won't enter io scheduler.
-> > 
-> 
-> Exactly, there are two cases: requeues that lead to subsequent
-> re-insertions, and requeues that don't.  The function
-> bfq_finish_requeue_request handles both, and both need to be handled,
-> to inform bfq that it has not to wait for the completion of rq any
-> longer.
-> 
-> One special case is when bfq_finish_requeue_request gets invoked even
-> if rq has nothing to do with any scheduler.  In that case,
-> bfq_finish_requeue_request exists immediately.
-> 
-> 
-> > __blk_mq_requeue_request() is called for two cases:
-> > 
-> > 	- one is that the requeued request is added to hctx->dispatch, such
-> > 	as blk_mq_dispatch_rq_list()
-> 
-> yes
-> 
-> > 	- another case is that the request is requeued to io scheduler, such as
-> > 	blk_mq_requeue_request().
-> > 
-> 
-> yes
-> 
-> > For the 1st case, blk_mq_sched_requeue_request() shouldn't be called
-> > since it is nothing to do with scheduler,
-> 
-> No, if that rq has been inserted and then extracted from the scheduler
-> through a dispatch_request, then it has.  The scheduler is stateful,
-> and keeps state for rq, because it must do so, until a completion or a
-> requeue arrive.  In particular, bfq may decide that no other
-
-This 'requeue' to hctx->dispatch is invisible to io scheduler, and from
-io scheduler view, seems no difference between STS_OK and STS_RESOURCE,
-since this request will be submitted to lld automatically by blk-mq
-core.
-
-Also in legacy path, no such notification to io scheduler too.
-
-> bfq_queues must be served before rq has been completed, because this
-> is necessary to preserve its target service guarantees.  If bfq is not
-> informed, either through its completion or its requeue hook, then it
-> will wait forever.
-
-The .finish_request will be called after this request is completed for this
-case, either after this io is completed by device, or timeout.
-
-Or .requeue_request will be called if the driver need to requeue it to
-io scheduler via blk_mq_requeue_request() explicitly.
-
-So io scheduler will be made sure to get notified.
-
-> 
-> > seems we only need to do that
-> > for 2nd case.
-> > 
-> 
-> > So looks we need the following patch:
-> > 
-> > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > index 23de7fd8099a..a216f3c3c3ce 100644
-> > --- a/block/blk-mq.c
-> > +++ b/block/blk-mq.c
-> > @@ -712,7 +714,6 @@ static void __blk_mq_requeue_request(struct request *rq)
-> > 
-> > 	trace_block_rq_requeue(q, rq);
-> > 	wbt_requeue(q->rq_wb, &rq->issue_stat);
-> > -	blk_mq_sched_requeue_request(rq);
-> > 
-> 
-> By doing so, if rq has 'passed' through bfq, then you block again bfq
-> forever.
-
-Could you explain it a bit why bfq is blocked by this way?
-
-> 
-> Of course, I may be wrong, as I don't have a complete mental model of
-> all what blk-mq does around bfq.  But I thin that you can quickly
-> check whether a hang occurs again if you add this change.  In
-> particular, it should happen in the USB former failure case.
-
-USB/BFQ runs well on my parted test with this change, and this test can
-trigger the IO hang issue easily on kyber or without your patch of 'block,
-bfq: add requeue-request hook'.
-
-Thanks,
-Ming
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
