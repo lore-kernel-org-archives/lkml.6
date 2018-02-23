@@ -1,128 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751422AbeBWBkl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:40:41 -0500
-Received: from lucky1.263xmail.com ([211.157.147.131]:55413 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751158AbeBWBkj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:40:39 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <b103f6ae59f1ac221e29094064f67ca5>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: shawn.lin@rock-chips.com, Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: dw_mmc: update kernel-doc comments for dw_mci
-To: Alexey Roslyakov <alexey.roslyakov@gmail.com>
-References: <20180222194525.28947-1-alexey.roslyakov@gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <f87c7d91-8b26-bf63-5323-5c60b00c81e4@rock-chips.com>
-Date: Fri, 23 Feb 2018 09:40:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751424AbeBWBlx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:41:53 -0500
+Received: from mga07.intel.com ([134.134.136.100]:14249 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750916AbeBWBlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:41:51 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,381,1515484800";
+   d="scan'208";a="177406629"
+Date: Fri, 23 Feb 2018 09:42:46 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v2 1/2] free_pcppages_bulk: do not hold lock when picking
+ pages to free
+Message-ID: <20180223014245.GB4338@intel.com>
+References: <20180124023050.20097-1-aaron.lu@intel.com>
+ <20180124163926.c7ptagn655aeiut3@techsingularity.net>
+ <20180125072144.GA27678@intel.com>
+ <20180215124644.GA12360@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180222194525.28947-1-alexey.roslyakov@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215124644.GA12360@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexey,
+On Thu, Feb 15, 2018 at 04:46:44AM -0800, Matthew Wilcox wrote:
+> On Thu, Jan 25, 2018 at 03:21:44PM +0800, Aaron Lu wrote:
+> > When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
+> > the zone->lock is held and then pages are chosen from PCP's migratetype
+> > list. While there is actually no need to do this 'choose part' under
+> > lock since it's PCP pages, the only CPU that can touch them is us and
+> > irq is also disabled.
+> 
+> I have no objection to this patch.  If you're looking for ideas for
+> future improvement though, I wonder whether using a LIST_HEAD is the
+> best way to store these pages temporarily.  If you batch them into a
+> pagevec and then free the entire pagevec, the CPU should be a little
+> faster scanning a short array than walking a linked list.
 
-On 2018/2/23 3:45, Alexey Roslyakov wrote:
-> cur_slot and num_slots has been removed from struct dw_mci in 42f989c002f2.
-> Unfortunately, inline documentation was not updated so far.
-> 
-> Fix @lock field documentation in Locking section.
-> Move @mrq field of struct dw_mci_slot mention closer to it
-> description, so no one could miss this slightest detail.
-> 
-> Couple of code style fixes as a bonus.
-> 
+Thanks for the suggestion.
 
-Thanks for updating these.
+> It would also puts a hard boundary on how long zone->lock is held, as
+> you'd drop it and go back for another batch after 15 pages.  That might
+> be bad, of course.
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+Yes that's a concern.
+As Mel reponded in another email, I think I'll just keep using list
+here.
 
-> Signed-off-by: Alexey Roslyakov <alexey.roslyakov@gmail.com>
-> ---
->   drivers/mmc/host/dw_mmc.h | 19 +++++++++----------
->   1 file changed, 9 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> index e3124f06a47e..451bc0862493 100644
-> --- a/drivers/mmc/host/dw_mmc.h
-> +++ b/drivers/mmc/host/dw_mmc.h
-> @@ -65,8 +65,7 @@ struct dw_mci_dma_slave {
->    * @fifo_reg: Pointer to MMIO registers for data FIFO
->    * @sg: Scatterlist entry currently being processed by PIO code, if any.
->    * @sg_miter: PIO mapping scatterlist iterator.
-> - * @cur_slot: The slot which is currently using the controller.
-> - * @mrq: The request currently being processed on @cur_slot,
-> + * @mrq: The request currently being processed on @slot,
->    *	or NULL if the controller is idle.
->    * @cmd: The command currently being sent to the card, or NULL.
->    * @data: The data currently being transferred, or NULL if no data
-> @@ -102,7 +101,6 @@ struct dw_mci_dma_slave {
->    * @bus_hz: The rate of @mck in Hz. This forms the basis for MMC bus
->    *	rate and timeout calculations.
->    * @current_speed: Configured rate of the controller.
-> - * @num_slots: Number of slots available.
->    * @fifoth_val: The value of FIFOTH register.
->    * @verid: Denote Version ID.
->    * @dev: Device associated with the MMC controller.
-> @@ -134,17 +132,17 @@ struct dw_mci_dma_slave {
->    * =======
->    *
->    * @lock is a softirq-safe spinlock protecting @queue as well as
-> + * @slot, @mrq and @state. These must always be updated
->    * at the same time while holding @lock.
-> + * The @mrq field of struct dw_mci_slot is also protected by @lock,
-> + * and must always be written at the same time as the slot is added to
-> + * @queue.
->    *
->    * @irq_lock is an irq-safe spinlock protecting the INTMASK register
->    * to allow the interrupt handler to modify it directly.  Held for only long
->    * enough to read-modify-write INTMASK and no other locks are grabbed when
->    * holding this one.
->    *
-> - * The @mrq field of struct dw_mci_slot is also protected by @lock,
-> - * and must always be written at the same time as the slot is added to
-> - * @queue.
-> - *
->    * @pending_events and @completed_events are accessed using atomic bit
->    * operations, so they don't need any locking.
->    *
-> @@ -321,8 +319,8 @@ struct dw_mci_board {
->   #define SDMMC_ENABLE_SHIFT	0x110
->   #define SDMMC_DATA(x)		(x)
->   /*
-> -* Registers to support idmac 64-bit address mode
-> -*/
-> + * Registers to support idmac 64-bit address mode
-> + */
->   #define SDMMC_DBADDRL		0x088
->   #define SDMMC_DBADDRU		0x08c
->   #define SDMMC_IDSTS64		0x090
-> @@ -449,7 +447,8 @@ struct dw_mci_board {
->   	(SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET | SDMMC_CTRL_DMA_RESET)
->   
->   /* FIFO register access macros. These should not change the data endian-ness
-> - * as they are written to memory to be dealt with by the upper layers */
-> + * as they are written to memory to be dealt with by the upper layers
-> + */
->   #define mci_fifo_readw(__reg)	__raw_readw(__reg)
->   #define mci_fifo_readl(__reg)	__raw_readl(__reg)
->   #define mci_fifo_readq(__reg)	__raw_readq(__reg)
-> 
+> Another minor change I'd like to see is free_pcpages_bulk updating
+> pcp->count itself; all of the callers do it currently.
+
+Sounds good, I'll prepare a separate patch for this, thanks!
