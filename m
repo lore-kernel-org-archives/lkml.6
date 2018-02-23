@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227POetfsXU8IMvxqPnuPebDaVfYmPeylN9NwjsHMG3sr/qM+0ag3RIkCjkOfKliddbhbJoD
-ARC-Seal: i=1; a=rsa-sha256; t=1519410869; cv=none;
+X-Google-Smtp-Source: AH8x2260eQ96+vIuEGNNc2UO68SQfFqsmOR9fYSxAiCGVw/BiY8MKMfRAXr7td+hLBJFm+CIqmHZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519410864; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZhFWDbvDmuFKI5k5ugnL3k0BV+v2CDZCdLkL3JahHAKWhv5aNrC/6zumxWZSO/+txu
-         n4OXCUd/G6g2zbH9/F3d73cCqhNM7aTBV+rSj2dIIdOC3JVgKPGn9JASwDTWe6dQ5BrL
-         FbqX53gHHDILQJZczNfWpr8/F1lYOubVzuk4SfG/ff3ApauHDbEN9UI/ZTlc+ry8yWBl
-         vYT7kSP+St03EkBHwOD5SFGOy8WWd7hC6Rs0D+ccmX0Q3gOASuDBlmv1Sna/vH4I84l2
-         aQlHRlUS2Swi78NMN5CqJbV8YHPRCrbfikSpkyTYBmiMS0DiA58vaI/MEMYMl5YwXWfp
-         7wdw==
+        b=uaK8rM1TufDBqOJ509F6+0eD6SCGs2K1IdgZjyzyVE046J1IUD7ifA2GZEOetSAB5P
+         +ztfYK78hIiYD5LgHyvWDqdJw7pElXa5U9V+2kR7kTcKNd7Ar48QXN5rj+QItE7fArLp
+         X5ZfqIWHKWV98JeCkI3PheZCkIjVycTwbZIUfWyMRsLJg7OOQpgFy+IHjuVrqYpSIqKn
+         YVi8M11foZekTDh89wu5thCCbcsj9DQIB7GRHMkXbH0jF+0JanOEyQH+EWX0xn5/7w2V
+         i93NEn/xn3zmcxMBATcAOvJkeY5eGu94T9gN86CdGEnCiSh3eb9EKQ0pZHByZgn/28iU
+         bxVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IaqoL/HV9ZitikmS168hiUEkaWBd4lWWFnIGYIvqHlg=;
-        b=J8KwUBdCMcIvNfgz7sVh1v/2HA2HlZ4gZMyO/Whqgc8B6ctj+0uyeW7KbZqwOMqOG/
-         4blOhZMvFZsF3w8hqwyGOzEiK0piazuqt6L0IDjkt38BiXSKCdqHnfrrUT5JPwhVRg0A
-         PuvRxnxAXdiHAW82JeBYj1cNkRyMU5IyP0tKURswgpcr0KaHbjFDfv/3T3B5smRP99Ye
-         ulV+pxnFpcwfwZFgqsISRdhujs7vf4yNUxTW15Lj3DTuq2Oo/6XDhxVWvMzb9bNWuty9
-         jVLEKTDO6WcaOtg6IvTK/Lh29kA2Hn3pXe/3T15zUVSESsyRxcrwBUtTqgOH8TaYebIn
-         4Rkg==
+        bh=/3EJjkdSfzZ20XZy2GVYRT9SLMmAoJfjeVSxHkMsJds=;
+        b=IYJpUiW0UOhQGE07UDzOiraGK7IEkMdunXpOgLkaMbBGio1dp8+jku67EOGrFFIvSG
+         LbzwDEfb+h/9tw/l73K+oGvvtMVnPGs5awEl+t2IGnMLqj/6FO8bdK9kDe/wYMAluJn1
+         R42jMGnevNCIf7V5v84T+j8zblx3ayIguhNzc/CjjHP/dUpgz/jSyircw7IAVrl8L7vv
+         8E7lg78gpySzyKlRpS4WB1kxNIZHRaaoydzYW7X62VcWn8AEwaAqELzNNquY/ItG9qZn
+         tEz+eJ1VmCNkXGGvXVLD+3N+zOLkyLIbkQKcbRnEa4woEh+lKMNIVKhc4XZPwledBFfB
+         +dsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 034/193] ARM: dts: am4372: Correct the interrupts_properties of McASP
-Date: Fri, 23 Feb 2018 19:24:27 +0100
-Message-Id: <20180223170331.432970109@linuxfoundation.org>
+	David Howells <dhowells@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 009/193] Provide a function to create a NUL-terminated string from unterminated data
+Date: Fri, 23 Feb 2018 19:24:02 +0100
+Message-Id: <20180223170327.540076280@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217581492927668?=
-X-GMAIL-MSGID: =?utf-8?q?1593217772480887454?=
+X-GMAIL-THRID: =?utf-8?q?1593217552383694521?=
+X-GMAIL-MSGID: =?utf-8?q?1593217766480936283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +49,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: David Howells <dhowells@redhat.com>
 
+commit f35157417215ec138c920320c746fdb3e04ef1d5 upstream.
 
-[ Upstream commit 627395a6f8091c0aa18f49dca7df59ba3ec147ef ]
+Provide a function, kmemdup_nul(), that will create a NUL-terminated string
+from an unterminated character array where the length is known in advance.
 
-Fixes the following warnings:
+This is better than kstrndup() in situations where we already know the
+string length as the strnlen() in kstrndup() is superfluous.
 
-arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
-interrupts size is (8), expected multiple of 12 in
-/ocp@44000000/mcasp@48038000
-
-arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
-interrupts size is (8), expected multiple of 12 in
-/ocp@44000000/mcasp@4803C000
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/am4372.dtsi |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -807,7 +807,8 @@
- 			reg = <0x48038000 0x2000>,
- 			      <0x46000000 0x400000>;
- 			reg-names = "mpu", "dat";
--			interrupts = <80>, <81>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "tx", "rx";
- 			status = "disabled";
- 			dmas = <&edma 8>,
-@@ -821,7 +822,8 @@
- 			reg = <0x4803C000 0x2000>,
- 			      <0x46400000 0x400000>;
- 			reg-names = "mpu", "dat";
--			interrupts = <82>, <83>;
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "tx", "rx";
- 			status = "disabled";
- 			dmas = <&edma 10>,
+---
+ include/linux/string.h |    1 +
+ mm/util.c              |   24 ++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -122,6 +122,7 @@ extern char *kstrdup(const char *s, gfp_
+ extern const char *kstrdup_const(const char *s, gfp_t gfp);
+ extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
+ extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
++extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+ 
+ extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
+ extern void argv_free(char **argv);
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -80,6 +80,8 @@ EXPORT_SYMBOL(kstrdup_const);
+  * @s: the string to duplicate
+  * @max: read at most @max chars from @s
+  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Note: Use kmemdup_nul() instead if the size is known exactly.
+  */
+ char *kstrndup(const char *s, size_t max, gfp_t gfp)
+ {
+@@ -118,6 +120,28 @@ void *kmemdup(const void *src, size_t le
+ EXPORT_SYMBOL(kmemdup);
+ 
+ /**
++ * kmemdup_nul - Create a NUL-terminated string from unterminated data
++ * @s: The data to stringify
++ * @len: The size of the data
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ */
++char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
++{
++	char *buf;
++
++	if (!s)
++		return NULL;
++
++	buf = kmalloc_track_caller(len + 1, gfp);
++	if (buf) {
++		memcpy(buf, s, len);
++		buf[len] = '\0';
++	}
++	return buf;
++}
++EXPORT_SYMBOL(kmemdup_nul);
++
++/**
+  * memdup_user - duplicate memory region from user space
+  *
+  * @src: source address in user space
