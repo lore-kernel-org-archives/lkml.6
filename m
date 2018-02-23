@@ -1,180 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeBWH3J (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 02:29:09 -0500
-Received: from mail-bn3nam01on0082.outbound.protection.outlook.com ([104.47.33.82]:60262
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751494AbeBWH3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 02:29:06 -0500
-From: Manish Narani <MNARANI@xilinx.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC: Anirudha Sarangi <anirudh@xilinx.com>,
-        Srinivas Goud <sgoud@xilinx.com>
-Subject: RE: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
- ZynqMP Platform
-Thread-Topic: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
- ZynqMP Platform
-Thread-Index: AQHTmfZbHcgatUAMk0Kw/6gGGMV5dKOnKs4AgAdTQuCAAI+lgIABKkOAgAGDzGA=
-Date: Fri, 23 Feb 2018 07:29:01 +0000
-Message-ID: <SN1PR0201MB1791EA315C2FC9B15D7BC650C1CC0@SN1PR0201MB1791.namprd02.prod.outlook.com>
-References: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
- <608309c3-fc4d-25a2-f0a9-21c0f3e2db46@intel.com>
- <SN1PR0201MB1791863A71475E3F0D896DD0C1CE0@SN1PR0201MB1791.namprd02.prod.outlook.com>
- <ce9efad6-b007-4cd9-18e7-a7932835846c@intel.com>
-In-Reply-To: <ce9efad6-b007-4cd9-18e7-a7932835846c@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=MNARANI@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR0201MB1839;7:+md1qkJZNRjEoy91rb8NmoUvPJyexWrPrh/VcGE5ZUVulK1RZ/sUhZgFyXD+83zT2zI347qIIIp1rndBzJG/jQLHO/oRIG5JsqK+W2NfWlne82S9sRvnRNaqvORE94BSvLnPnLi5rXHvEN/HW/9H8uCMSMRj/K7kLSqG+d3tURm9hFKv5VFi0tEzcSLzNGzvPIMSJNvYrLcKt4MAscBmovktlwZBRNUVimcunoZSvN4BUjouu6LVbdYpqJ5B05qs
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fdbd8e6d-c354-448f-3220-08d57a8f1c6f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:SN1PR0201MB1839;
-x-ms-traffictypediagnostic: SN1PR0201MB1839:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <SN1PR0201MB18391BB1EF3DAF2EF1FD54BCC1CC0@SN1PR0201MB1839.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(228905959029699)(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(3231101)(944501161)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:SN1PR0201MB1839;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0201MB1839;
-x-forefront-prvs: 0592A9FDE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(376002)(396003)(39860400002)(39380400002)(346002)(199004)(189003)(13464003)(305945005)(76176011)(68736007)(26005)(7736002)(102836004)(6506007)(25786009)(4326008)(59450400001)(2906002)(66066001)(107886003)(93886005)(97736004)(53546011)(8936002)(229853002)(110136005)(55236004)(316002)(54906003)(3280700002)(3660700001)(74316002)(6116002)(2201001)(86362001)(3846002)(5250100002)(2501003)(7696005)(478600001)(81156014)(81166006)(8676002)(2950100002)(53936002)(186003)(6246003)(99286004)(55016002)(2900100001)(72206003)(105586002)(5660300001)(6436002)(106356001)(33656002)(14454004)(9686003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0201MB1839;H:SN1PR0201MB1791.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: OWsM34dJ73KgLk96eUOGRSXD0rP+EaxCw2TOS+eIBk6u/qReWeOphRvS3+GuNoiiXOy3zewxoxXdw7NEEFijzAlBqJONQogSPk4K80BuyUcEh04GinLZUHOUR3VjvzIM34g0/M9pcf+FJqzi/Ed2/MP+bDshBeT5iA5jMuOWQag=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751661AbeBWHca (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 02:32:30 -0500
+Received: from mout.web.de ([212.227.17.11]:47461 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeBWHc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 02:32:28 -0500
+Subject: Re: [PATCH 2/2] crypto: omap: Improve a size determination in three
+ functions
+To: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Joel Fernandes <joelf@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
+ <0a45e47f-5ed0-5dd6-7545-adc8df2d7972@users.sourceforge.net>
+ <20180222133813.GB28447@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <3916c49d-f74a-97a0-9240-de9a727bece9@users.sourceforge.net>
+Date: Fri, 23 Feb 2018 08:32:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdbd8e6d-c354-448f-3220-08d57a8f1c6f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2018 07:29:01.6879
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0201MB1839
+In-Reply-To: <20180222133813.GB28447@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:fjoAZrsZnkiV9tXXJt8WmnB2mkp7YztFzE2fm80QQbCIKBQRcLM
+ AoFIodNiM2e6Yt/TJO1A1wcHZS8K5wNu9rqMschtmZ2i77w69VXS3v3dY8ZeXn52egaCe0i
+ bMMKRyseXzQBru0g5mreD7HIBqGOU9nLa65wNtqX7XBdyk9qJtx1bdAifviUzdouGQR5LzW
+ IeGPoDOtIjekn1LVREFaQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:oq09mef9qR0=:tONZhdO1AgkA8hLcSAia/5
+ OwQhaho+77LFIfl85dd4ArTfNS7fsvbSIaPDfSGYDfXyYd4+h+0vM23seEQ+mrhd9DWtJo8pC
+ UIxvciMJeUVEUX72wH1JdajaYjuPxzzMKWOof8vpW0TVk6wPP6WZ5M4xhyUVmNQMEMQQWBGtT
+ atC+26QrabuuDMWkNoZJ4pHGi5mfQAeX+2ZZ6Hun3qHMddF4rZpAcTSv0yx3tU8IhEP/KcgX8
+ K7pLbZkdFINprc271DzE1iLmlN2EnPZUOHZtNPSpFV4VoVctv+mmsCNAoSOEj0vVlHhKIoJN9
+ IRdTfBHnPvqOtiCtZjrWdFpu2rN3DhmV44VqL1UVQQH2TGbzapaig2I2kV2XM2N3ErqitHz+T
+ XuPBxHB1II3sJAfU3qfA0c5Yvzi3lWCaTOU0Vf0VAUFq1QThLoCKs74wO3acSFNfonKzTnYZ5
+ iVffznTRr2pqr+QuWhJxZtKBCwMb6HEBFNpHQSM6mFyOJo7OB6qrTs7GldVddv6Ei35rVK9ez
+ 4Y/bWN6B+nVx4jdRnJzYyWrTv/HVLarXBKzOHT55JkfRPUeMZR3CQrFv5z1/x+L4QA0UG1mHN
+ Ol0PSnUYytnedZzwzF6Jkh9Vh3r7d6g6n0g7zapWO7SK2u/CNkXTwragvcGRbxxxlKzheCSb5
+ PRdAiaJHZpKsHcIRbZyjql1/3rd/57der/LghR0Gre5Fgyxzrg6vbiEftqlAzsRBGWTQAOsp+
+ eLI62N128RniNf8RdSpGS5DyN8EWmbRJiM0OsH2VDXMTXvO03cuUkW/Ntadn6cZvE16zWg4xZ
+ Ixz/V6Cc4R1HcegIkfKLll2feXZgdK5pi9DFgztpOh0df4n7/k=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1N7TDfw026225
+
+>> @@ -1032,14 +1032,13 @@ static int omap_aes_get_res_pdev(struct omap_aes_dev *dd,
+>>  static int omap_aes_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> -	struct omap_aes_dev *dd;
+>>  	struct crypto_alg *algp;
+>>  	struct aead_alg *aalg;
+>>  	struct resource res;
+>>  	int err = -ENOMEM, i, j, irq = -1;
+>>  	u32 reg;
+>> +	struct omap_aes_dev *dd = devm_kzalloc(dev, sizeof(*dd), GFP_KERNEL);
+>>  
+>> -	dd = devm_kzalloc(dev, sizeof(struct omap_aes_dev), GFP_KERNEL);
+> 
+> I'm fine with sizeof(*dd)
+
+Thanks for your feedback.
 
 
+> but please don't combine the allocation with the declaration.
 
-> -----Original Message-----
-> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> Sent: Thursday, February 22, 2018 1:50 PM
-> To: Manish Narani <MNARANI@xilinx.com>; michal.simek@xilinx.com;
-> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org; linux-
-> mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; mark.rutland@arm.com; robh+dt@kernel.org
-> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> <sgoud@xilinx.com>
-> Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
-> ZynqMP Platform
-> 
-> On 21/02/18 17:00, Manish Narani wrote:
-> > Hi Adrian,
-> >
-> >> -----Original Message-----
-> >> From: Manish Narani
-> >> Sent: Wednesday, February 21, 2018 11:39 AM
-> >> To: Adrian Hunter <adrian.hunter@intel.com>; michal.simek@xilinx.com;
-> >> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org; linux-
-> >> mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >> devicetree@vger.kernel.org; mark.rutland@arm.com;
-> robh+dt@kernel.org
-> >> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> >> <sgoud@xilinx.com>
-> >> Subject: RE: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning
-> >> support for ZynqMP Platform
-> >>
-> >> Hi Adrian,
-> >>
-> >>
-> >>> -----Original Message-----
-> >>> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> >>> Sent: Friday, February 16, 2018 7:37 PM
-> >>> To: Manish Narani <MNARANI@xilinx.com>; michal.simek@xilinx.com;
-> >>> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org; linux-
-> >>> mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >>> devicetree@vger.kernel.org; mark.rutland@arm.com;
-> robh+dt@kernel.org
-> >>> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> >>> <sgoud@xilinx.com>; Manish Narani <MNARANI@xilinx.com>
-> >>> Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning
-> >>> support for ZynqMP Platform
-> >>>
-> >>> On 30/01/18 20:14, Manish Narani wrote:
-> >>>> This patch adds support of SD auto tuning for ZynqMP platform. Auto
-> >>>> tuning sequence sends tuning block to card when operating in UHS-1
-> >>>> modes. This resets the DLL and sends CMD19/CMD21 as a part of the
-> >>>> auto tuning process. Once the auto tuning process gets completed,
-> >>>> reset the DLL to load the newly obtained SDHC tuned tap value.
-> >>>
-> >>> How is this different from:
-> >>> 	1. reset the dll
-> >>> 	2. call sdhci_execute_tuning
-> >>> 	3. reset the dll
-> >>>
-> > Below is my take on your above comments:
-> > - 'Reset the dll' is a platform specific call inside
-> > 'arasan_zynqmp_execute_tuning' which is implemented in
-> > sdhci-of-arasan.c
-> > - 'arasan_zynqmp_execute_tuning' is called from 'sdhci_execute_tuning'
-> > as a platform_execute_tuning routine
-> > - So to keep 'DLL reset' routine called from sdhci-of-arasan.c, I have
-> > implemented the execute_tuning in sdhci-of-arasan.c
-> 
-> I meant something like:
-> 
-> 	if (of_device_is_compatible(pdev->dev.of_node, "xlnx,zynqmp-
-> 8.9a"))
-> 		host->mmc_host_ops.execute_tuning =
-> arasan_zynqmp_execute_tuning;
-> 
-This will need the removal of 'const' from 'static const struct mmc_host_ops sdhci_ops = {}' in sdhci.c file. Please confirm.
+Why do you not like such an implementation detail?
 
-Thanks,
-Manish
-> 
-> static int arasan_zynqmp_execute_tuning(struct mmc_host *mmc, u32
-> opcode) {
-> 	struct sdhci_host *host = mmc_priv(mmc);
-> 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> 	struct sdhci_arasan_data *sdhci_arasan =
-> sdhci_pltfm_priv(pltfm_host);
-> 	int err;
-> 
-> 	arasan_zynqmp_dll_reset(host, sdhci_arasan->device_id);
-> 
-> 	err = sdhci_execute_tuning(mmc, opcode);
-> 	if (err)
-> 		return err;
-> 
-> 	arasan_zynqmp_dll_reset(host, sdhci_arasan->device_id);
-> 
-> 	return 0;
-> }
-> 
-> >
-> > Alternative way (Please review):
-> > - Define a host->quirk2 bit (SDHCI_QUIRK2_DLL_RESET_NEEDED) in
-> > sdhci-of-arasan.c indicating DLL reset needed while tuning operation
-> > - Call 'dll reset' routine before and after __sdhci_execute_tuning()
-> > in sdhci.c when a host->quirk2 bit (SDHCI_QUIRK2_DLL_RESET_NEEDED) is
-> > set
-> 
-> We should try to avoid quirks.
+Regards,
+Markus
