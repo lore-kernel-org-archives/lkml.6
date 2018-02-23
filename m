@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt1tuNH1JyZz08du6BNGM/rOkxkUKz1tly++QiB1WtrouC356jm0Qekjzloc/tpSQdhiUoz
-ARC-Seal: i=1; a=rsa-sha256; t=1519411023; cv=none;
+X-Google-Smtp-Source: AH8x225ZZO/LDuVgpI4/GyPssHCMAGXMTl7UfYYlPaN961GRPzwjSvGXoQNYxcc1bB5wr5W4YlLN
+ARC-Seal: i=1; a=rsa-sha256; t=1519411020; cv=none;
         d=google.com; s=arc-20160816;
-        b=NIJbo1t9BgMUWjpOZbxjvDEImxIXamV1PpiLP0LZoTHifdVtc0n2B3OPicLfxoLLlu
-         OMF3si30R6KxUD52tV0Vea220/aELxJEYCIiYdL11GCVk4GgSZtD73Dhng4J+ly3/+Ry
-         nVF9200IKOkAs/gINefFKwd5e9pMopht1HZsxCVeFeF8jiQniflVhQYY/GnzvqQL0A7v
-         NLQ4Posxmv1hom/uZm1sGFj6A71KrA7ONgEs1trwJJJAqiZR9tGAEDAXpJeqDvFd3abp
-         6c1ARAVRMGp/NAstRdeKhoV8AhAhsWvgDYAjxOq6mVmWdwLrG626/U3eyyx7wUvnALWA
-         BB9w==
+        b=p3p/GijbNzWoLzQT8Gt6LmVsaelf1yorO/+yqYitkD53QTjiirZdZcLYyBJ+NnBBRw
+         gliUmySYrwqlNnRWv+lDWnU9mJ3YGweiZFOP2d6AxwLeTbDk/x9fSU+dNPjPffe0PwTB
+         sItSTt3mOxjTHd4LmSxGGXlellQAiGy8LHG7Xw7EnSDwUMSIJdsbBwGn80ZxY0rxWHUg
+         rwpjbA5+cJ2iRgEKoXvwE4q6KJBD7ITAmtMkG8FqhlvcTQPi9UJ7XKD2IdAIdn7QnN+x
+         W/4SRwHGvqtKcjMcECrB1xEZjWROSLQnKLPR4arNAx31+Gni6DzbZJkSD53yor9N8ZGX
+         +luA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=auT36D+I8882IG7bmvl5icimmvk+byl9pHutnc2JHss=;
-        b=wN9JFUYmaxTnG8uIjV0LjwSq64yz5YHsHTvTGFpQIULW4VswNbEBNzla2HzIOWiSkL
-         ul+8Z+Sx6gcuro3V0EUkaA0O8PZkRiVXYetVebDSQQPfCTjoxgC7CsFr1K857sGlSgC6
-         LBDSq6RqWlLY88FJUN0/4lujW8CSZYDBBnOm8dJytkjn9pbpoNfSEJZfzgOR0C37Ll8g
-         M+tSAqWqKOjVoAmfb2A+1gJTA7OAFGAvZXxeozLD7TRO4YS898sZ1zBrDwIC+wf2DVnh
-         rUmAgJsdLHUMWl2Q+2/fP0Uq/EhUnbHzVkokHcmEcvc8QkkvplIwCBClP748b1+WquYl
-         eP1Q==
+        bh=st+zQrHebBP/F9IwvDj6RTquWRbzr2LunVebVkqqL40=;
+        b=wxFUduebQdR/MaXDKUE/QnGDID7D1ypRli3+pWpGc+V7TqbPbcO1fA8RVhaGqb4Nzn
+         yJib5yoWosTZ+vxISUmveQDe0aLuJvWABKNpKBdGmzHcveqP9d5fqwMEKnVjA5qLqRmS
+         8X7jm3u9GflRrWbzEZIYKwOw9MrWVCpRMFSmXNRgJ31ODNED6pvXutVMdsw1NgrzgwnU
+         cUSgBzpajmD8h+Ko6YbAxVbmoIJN86bPQVjj8+3USvXj11vi+hEzcuQv5kySTagrsOq2
+         20h0yqRo1tWGpksC9j1Qy4zYBduFZGsMfIsu7cnnEAcJj/XxSKbRUA/MnribGtsXm9mp
+         BZJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.4 094/193] staging: ste_rmi4: avoid unused function warnings
-Date: Fri, 23 Feb 2018 19:25:27 +0100
-Message-Id: <20180223170340.748931974@linuxfoundation.org>
+	Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH 4.4 093/193] video: fbdev: sis: remove unused variable
+Date: Fri, 23 Feb 2018 19:25:26 +0100
+Message-Id: <20180223170340.563013348@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217932766414877?=
-X-GMAIL-MSGID: =?utf-8?q?1593217932766414877?=
+X-GMAIL-THRID: =?utf-8?q?1593217930044747386?=
+X-GMAIL-MSGID: =?utf-8?q?1593217930044747386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +49,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-commit 9045a4a7e686a6316129d6d0b21b4fe2520968e4 upstream.
+commit 32ad61951574d011d363694d6037592e99da9421 upstream.
 
-The rmi4 touchscreen driver encloses the power-management
-functions in #ifdef CONFIG_PM, but the smtcfb_pci_suspend/resume
-functions are only really used when CONFIG_PM_SLEEP is also
-set, as a frequent gcc warning shows:
+The variables modeflag and resinfo were only assigned some value but
+were never used.
 
-ste_rmi4/synaptics_i2c_rmi4.c:1050:12: warning: 'synaptics_rmi4_suspend' defined but not used
-ste_rmi4/synaptics_i2c_rmi4.c:1084:12: warning: 'synaptics_rmi4_resume' defined but not used
-
-This changes the driver to remove the #ifdef and instead mark
-the functions as __maybe_unused, which is a nicer anyway, as it
-provides build testing for all the code in all configurations
-and is harder to get wrong.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/sis/init301.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c
-+++ b/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c
-@@ -1039,7 +1039,6 @@ static int synaptics_rmi4_remove(struct
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
- /**
-  * synaptics_rmi4_suspend() - suspend the touch screen controller
-  * @dev: pointer to device structure
-@@ -1047,7 +1046,7 @@ static int synaptics_rmi4_remove(struct
-  * This function is used to suspend the
-  * touch panel controller and returns integer
-  */
--static int synaptics_rmi4_suspend(struct device *dev)
-+static int __maybe_unused synaptics_rmi4_suspend(struct device *dev)
+--- a/drivers/video/fbdev/sis/init301.c
++++ b/drivers/video/fbdev/sis/init301.c
+@@ -2151,17 +2151,15 @@ SiS_GetVCLK2Ptr(struct SiS_Private *SiS_
+ 		unsigned short RefreshRateTableIndex)
  {
- 	/* Touch sleep mode */
- 	int retval;
-@@ -1081,7 +1080,7 @@ static int synaptics_rmi4_suspend(struct
-  * This function is used to resume the touch panel
-  * controller and returns integer.
-  */
--static int synaptics_rmi4_resume(struct device *dev)
-+static int __maybe_unused synaptics_rmi4_resume(struct device *dev)
- {
- 	int retval;
- 	unsigned char intr_status;
-@@ -1112,8 +1111,6 @@ static int synaptics_rmi4_resume(struct
- 	return 0;
- }
+   unsigned short CRT2Index, VCLKIndex = 0, VCLKIndexGEN = 0, VCLKIndexGENCRT = 0;
+-  unsigned short modeflag, resinfo, tempbx;
++  unsigned short resinfo, tempbx;
+   const unsigned char *CHTVVCLKPtr = NULL;
  
--#endif
+   if(ModeNo <= 0x13) {
+-     modeflag = SiS_Pr->SiS_SModeIDTable[ModeIdIndex].St_ModeFlag;
+      resinfo = SiS_Pr->SiS_SModeIDTable[ModeIdIndex].St_ResInfo;
+      CRT2Index = SiS_Pr->SiS_SModeIDTable[ModeIdIndex].St_CRT2CRTC;
+      VCLKIndexGEN = (SiS_GetRegByte((SiS_Pr->SiS_P3ca+0x02)) >> 2) & 0x03;
+      VCLKIndexGENCRT = VCLKIndexGEN;
+   } else {
+-     modeflag = SiS_Pr->SiS_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
+      resinfo = SiS_Pr->SiS_EModeIDTable[ModeIdIndex].Ext_RESINFO;
+      CRT2Index = SiS_Pr->SiS_RefIndex[RefreshRateTableIndex].Ext_CRT2CRTC;
+      VCLKIndexGEN = SiS_Pr->SiS_RefIndex[RefreshRateTableIndex].Ext_CRTVCLK;
+@@ -7270,7 +7268,7 @@ SiS_ShiftXPos(struct SiS_Private *SiS_Pr
+ static void
+ SiS_SetGroup4_C_ELV(struct SiS_Private *SiS_Pr, unsigned short ModeNo, unsigned short ModeIdIndex)
+ {
+-   unsigned short temp, temp1, resinfo = 0;
++   unsigned short temp, temp1;
+    unsigned char  *ROMAddr = SiS_Pr->VirtualRomBase;
+ 
+    if(!(SiS_Pr->SiS_VBType & VB_SIS30xCLV)) return;
+@@ -7282,10 +7280,6 @@ SiS_SetGroup4_C_ELV(struct SiS_Private *
+       if(!(ROMAddr[0x61] & 0x04)) return;
+    }
+ 
+-   if(ModeNo > 0x13) {
+-      resinfo = SiS_Pr->SiS_EModeIDTable[ModeIdIndex].Ext_RESINFO;
+-   }
 -
- static SIMPLE_DEV_PM_OPS(synaptics_rmi4_dev_pm_ops, synaptics_rmi4_suspend,
- 			 synaptics_rmi4_resume);
- 
+    SiS_SetRegOR(SiS_Pr->SiS_Part4Port,0x3a,0x08);
+    temp = SiS_GetReg(SiS_Pr->SiS_Part4Port,0x3a);
+    if(!(temp & 0x01)) {
