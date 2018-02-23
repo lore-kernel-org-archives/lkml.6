@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224qP0cb2r9YFR2Aolj++7XD3rMFXo3Nw/6DHD7VqlstL+AJpPJRk84azF8FUWVz8CStuH2U
-ARC-Seal: i=1; a=rsa-sha256; t=1519411100; cv=none;
+X-Google-Smtp-Source: AH8x224KzCJ2VrjZyhUY1TegVeddOQL2i+vS4fA5V4+BcQWNYbk4m0wgEZ7z0xE00dUHj6qF6b96
+ARC-Seal: i=1; a=rsa-sha256; t=1519411097; cv=none;
         d=google.com; s=arc-20160816;
-        b=ojD1doRpJktrrZHbqjOgCYAs9zC1M0KS3OWSG2GrYIQ90YCONbG9YVbNtgpN7HI536
-         yGe7wutO52xfpN+SpbNh/jbQOMFUM3jrDzyhUfx2Utn/fXXiJ90n/JMgEO7wvFXC6Wav
-         6HD5eMIeGhvngZE+HDnCMMZwMHk382dpZSnLDHHDDligNlsbJcOzGalsthrpo0Osq3ne
-         UJcnJNEkmLuEqj1UuuUUbyRoz5SS0hwHt8ZRR3PF0v7MsqCGs7IJdP/d7UZSr10IZL5L
-         kH8NLcJXYcVV/4lYO+grMYds1/thB1+D/FYX3mI2ovS8QpsNBpp6Rf7s/mCOjf2SyPWz
-         hAvA==
+        b=UUmVTH3NWt61aoyulrFXZjx9GqhuORFj+g6b+uTB8IlF7kADzcsGB3gwfTenMAmywN
+         3jt+yhGThpqaZTRFi5z4v5bC+iqMLPHu6F91356Kjo4A+R/FTHpCqgKzeQM2vf0gGB1x
+         wAM0YLc5P4NJM22UMlskMn/VPpJhCggU1Mi+0jcnyVxzv5vNnK1z/CpP3Y9Kg2FYViHe
+         IlyGLZ/xIT96nQ9pvxE1W4s4FeKKvN8MHYFfxkMpilyDPyrcISTP+BZWVQCdfY6U0EXP
+         zCNxSl0BwBLER4/BZAvhp35rvM4nB+1bHlqx+BKX7lQaImOFf8Uj3tM+epVT47NmpaD6
+         Pr/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EB+gP8nlJk4qL3w+lmWO0mlj/prkv5tQ6C952srfR8c=;
-        b=itm5ogsK7puCus6KjStJMgHKOQp/t4iLvtr0+qpHL69cvF7Rlmxu4Y2KDdcdzKB0N7
-         WamamY3dOwvN9a5OdBcC19PYQ62EqM9PCjGmgJdB/m1d++dyw6zQkSB5grhLAcF66FN3
-         qUHlShTokDyiXpRoh4tV5OcPenO9kP8RiH639u9A0G+loPenev8gPhtQSywhCRUMIj2n
-         ydFSW4A3K4xGKy45d5204c5SK7KbAAt4qD9B6t+XA84Socw1rDXKFcoegx7DJ9oEz3J2
-         TUz4hHuZZ1oaU+2fng15zDreg7I3t0UyGT4AwH5KZJ0ncP2ClSyb46zF4k3kIMi0PpgZ
-         QyWA==
+        bh=1XkGpCmzdCHJ5C3Ndngc9cME330LHeZPJ03+RMu1BJk=;
+        b=eAiQg3eeTws++WliHWe8V9aGni9WzKxGw7DoktioMEAfYn5X5z1oT2X8vwIvVQFOin
+         TVB3zCpp/gFqMIP37OI1TtsBxfs26vhdiDN9LIyhoXLaQuzhGUxCecBLsBtXMJmB798K
+         /FCKmGMoK5GKLPEiVOOh2Wof4EkPBjeWDFEWMM2lSwZ9ZVTe2o3BrtSi82HscBxigWMg
+         DsjXKCwde98SkASJG9KYQ+rp9nH+ogKd90KonZScrZvBcXZilb8op2m4HlXmMFo4fzTu
+         DEcjZ0cXeLhAknM3GXvpvqSYohs2Q6SCVa4lWPzactXq4o99fzXQLb4HwniffLg4IjZ4
+         ThMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 114/193] rtlwifi: fix gcc-6 indentation warning
-Date: Fri, 23 Feb 2018 19:25:47 +0100
-Message-Id: <20180223170343.775799857@linuxfoundation.org>
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Michal Marek <mmarek@suse.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 072/193] tools build: Add tools tree support for make -s
+Date: Fri, 23 Feb 2018 19:25:05 +0100
+Message-Id: <20180223170337.252974260@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218013950563813?=
-X-GMAIL-MSGID: =?utf-8?q?1593218013950563813?=
+X-GMAIL-THRID: =?utf-8?q?1593218010959624529?=
+X-GMAIL-MSGID: =?utf-8?q?1593218010959624529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +51,115 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 2acd846485549655582ee379ceb966206f91e6f8 upstream.
+commit e572d0887137acfc53f18175522964ec19d88175 upstream.
 
-The rtl8821ae_dm_txpower_tracking_callback_thermalmeter function
-contains a call to RT_TRACE() that is indented in a misleading
-way, as pointed out by a gcc-6 warning:
+When doing a kernel build with 'make -s', everything is silenced except
+the objtool build.  That's because the tools tree support for silent
+builds is some combination of missing and broken.
 
-drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c: In function 'rtl8821ae_dm_txpower_tracking_callback_thermalmeter':
-drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:2491:4: error: statement is indented as if it were guarded by...
-    RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-    ^~~~~~~~
-drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:2488:3: note: ...this 'for' clause, but it is not
-   for (p = RF90_PATH_A; p < MAX_PATH_NUM_8821A; p++)
-   ^~~
+Three changes are needed to fix it:
 
-It is clear from the context that the call was not meant to be
-part of the loop and only the indentation is wrong, so this
-removes the extra tabs.
+- Makefile: propagate '-s' to the sub-make's MAKEFLAGS variable so the
+  tools Makefiles can see it.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+- tools/scripts/Makefile.include: fix the tools Makefiles' ability to
+  recognize '-s'.  The MAKE_VERSION and MAKEFLAGS checks are copied from
+  the top-level Makefile.  This silences the "DESCEND objtool" message.
+
+- tools/build/Makefile.build: add support to the tools Build files for
+  recognizing '-s'.  Again the MAKE_VERSION and MAKEFLAGS checks are
+  copied from the top-level Makefile.  This silences all the object
+  compile/link messages.
+
+Reported-and-Tested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Michal Marek <mmarek@suse.com>
+Link: http://lkml.kernel.org/r/e8967562ef640c3ae9a76da4ae0f4e47df737c34.1484799200.git.jpoimboe@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Makefile                       |    6 ++++--
+ tools/build/Makefile.build     |   10 ++++++++++
+ tools/scripts/Makefile.include |   12 +++++++++++-
+ 3 files changed, 25 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-@@ -2488,9 +2488,9 @@ void rtl8821ae_dm_txpower_tracking_callb
- 		for (p = RF90_PATH_A; p < MAX_PATH_NUM_8821A; p++)
- 			rtldm->swing_idx_ofdm_base[p] = rtldm->swing_idx_ofdm[p];
+--- a/Makefile
++++ b/Makefile
+@@ -87,10 +87,12 @@ endif
+ ifneq ($(filter 4.%,$(MAKE_VERSION)),)	# make-4
+ ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
+   quiet=silent_
++  tools_silent=s
+ endif
+ else					# make-3.8x
+ ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
+   quiet=silent_
++  tools_silent=-s
+ endif
+ endif
  
--			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--				 "pDM_Odm->RFCalibrateInfo.ThermalValue = %d ThermalValue= %d\n",
--				 rtldm->thermalvalue, thermal_value);
-+		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
-+			 "pDM_Odm->RFCalibrateInfo.ThermalValue = %d ThermalValue= %d\n",
-+			 rtldm->thermalvalue, thermal_value);
- 		/*Record last Power Tracking Thermal Value*/
- 		rtldm->thermalvalue = thermal_value;
- 	}
+@@ -1523,11 +1525,11 @@ image_name:
+ # Clear a bunch of variables before executing the submake
+ tools/: FORCE
+ 	$(Q)mkdir -p $(objtree)/tools
+-	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
++	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(tools_silent) $(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
+ 
+ tools/%: FORCE
+ 	$(Q)mkdir -p $(objtree)/tools
+-	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
++	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(tools_silent) $(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
+ 
+ # Single targets
+ # ---------------------------------------------------------------------------
+--- a/tools/build/Makefile.build
++++ b/tools/build/Makefile.build
+@@ -19,6 +19,16 @@ else
+   Q=@
+ endif
+ 
++ifneq ($(filter 4.%,$(MAKE_VERSION)),)	# make-4
++ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
++  quiet=silent_
++endif
++else					# make-3.8x
++ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
++  quiet=silent_
++endif
++endif
++
+ build-dir := $(srctree)/tools/build
+ 
+ # Define $(fixdep) for dep-cmd function
+--- a/tools/scripts/Makefile.include
++++ b/tools/scripts/Makefile.include
+@@ -46,6 +46,16 @@ else
+ NO_SUBDIR = :
+ endif
+ 
++ifneq ($(filter 4.%,$(MAKE_VERSION)),)  # make-4
++ifneq ($(filter %s ,$(firstword x$(MAKEFLAGS))),)
++  silent=1
++endif
++else					# make-3.8x
++ifneq ($(filter s% -s%,$(MAKEFLAGS)),)
++  silent=1
++endif
++endif
++
+ #
+ # Define a callable command for descending to a new directory
+ #
+@@ -58,7 +68,7 @@ descend = \
+ QUIET_SUBDIR0  = +$(MAKE) $(COMMAND_O) -C # space to separate -C and subdir
+ QUIET_SUBDIR1  =
+ 
+-ifneq ($(findstring $(MAKEFLAGS),s),s)
++ifneq ($(silent),1)
+   ifneq ($(V),1)
+ 	QUIET_CC       = @echo '  CC       '$@;
+ 	QUIET_CC_FPIC  = @echo '  CC FPIC  '$@;
