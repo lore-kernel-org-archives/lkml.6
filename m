@@ -1,64 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeBWLIa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:08:30 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3883 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750910AbeBWLI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:08:28 -0500
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <jic23@kernel.org>, <robh+dt@kernel.org>
-CC: <linux@armlinux.org.uk>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>,
-        <arnaud.pouliquen@st.com>
-Subject: [PATCH] dt-bindings: iio: adc: sd-modulator: fix io-channel-cells
-Date: Fri, 23 Feb 2018 12:07:21 +0100
-Message-ID: <1519384041-23782-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751430AbeBWLJn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:09:43 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35298 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750910AbeBWLJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:09:42 -0500
+Date: Fri, 23 Feb 2018 12:09:24 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Anna Karbownik <anna.karbownik@intel.com>
+Cc: mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
+        tony.luck@intel.com, jim.m.snow@intel.com, qiuxu.zhuo@intel.com,
+        lukasz.odzioba@intel.com, krzysztof.paliswiat@intel.com
+Subject: Re: [PATCH 1/1] EDAC, sb_edac: Fix out of bound write during DIMM
+ configuration on KNL
+Message-ID: <20180223110924.GB4981@pd.tnic>
+References: <1519312693-4789-1-git-send-email-anna.karbownik@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_03:,,
- signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1519312693-4789-1-git-send-email-anna.karbownik@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-io-channel-cells should be <0> since sigma delta modulator exports only
-one channel, as described in ../iio/iio-bindings.txt "IIO providers"
-section. Only the phandle is necessary for IIO consumers in this case.
+On Thu, Feb 22, 2018 at 04:18:13PM +0100, Anna Karbownik wrote:
+> From: akarbown <anna.karbownik@intel.com>
+> 
+> In one of the previous patches we decreased NUM_CHANNELS from 8 to 4, but
 
-Fixes: af11143757b7 ("IIO: Add DT bindings for sigma delta adc modulator")
+We say which patch it was.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Anyway, corrected and applied the below, thanks.
+
 ---
- Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+From: Anna Karbownik <anna.karbownik@intel.com>
+Date: Thu, 22 Feb 2018 16:18:13 +0100
+Subject: [PATCH] EDAC, sb_edac: Fix out of bound writes during DIMM
+ configuration on KNL
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-index e9ebb8a..ba24ca7 100644
---- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
-@@ -3,11 +3,11 @@ Device-Tree bindings for sigma delta modulator
- Required properties:
- - compatible: should be "ads1201", "sd-modulator". "sd-modulator" can be use
- 	as a generic SD modulator if modulator not specified in compatible list.
--- #io-channel-cells = <1>: See the IIO bindings section "IIO consumers".
-+- #io-channel-cells = <0>: See the IIO bindings section "IIO consumers".
+Commit
+
+  3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
+
+decreased NUM_CHANNELS from 8 to 4, but this is not enough for Knights
+Landing which supports up to 6 channels.
+
+This caused out-of-bounds writes to pvt->mirror_mode and pvt->tolm
+variables which don't pay critical role on KNL code path, so the memory
+corruption wasn't causing any visible driver failures.
+
+The easiest way of fixing it is to change NUM_CHANNELS to 6. Do that.
+
+An alternative solution would be to restructure the KNL part of the
+driver to 2MC/3channel representation.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Anna Karbownik <anna.karbownik@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: jim.m.snow@intel.com
+Cc: krzysztof.paliswiat@intel.com
+Cc: lukasz.odzioba@intel.com
+Cc: qiuxu.zhuo@intel.com
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
+Link: http://lkml.kernel.org/r/1519312693-4789-1-git-send-email-anna.karbownik@intel.com
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ drivers/edac/sb_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index f34430f99fd8..872100215ca0 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -279,7 +279,7 @@ static const u32 correrrthrsld[] = {
+  * sbridge structs
+  */
  
- Example node:
- 
- 	ads1202: adc@0 {
- 		compatible = "sd-modulator";
--		#io-channel-cells = <1>;
-+		#io-channel-cells = <0>;
- 	};
+-#define NUM_CHANNELS		4	/* Max channels per MC */
++#define NUM_CHANNELS		6	/* Max channels per MC */
+ #define MAX_DIMMS		3	/* Max DIMMS per channel */
+ #define KNL_MAX_CHAS		38	/* KNL max num. of Cache Home Agents */
+ #define KNL_MAX_CHANNELS	6	/* KNL max num. of PCI channels */
 -- 
-1.9.1
+2.13.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
