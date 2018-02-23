@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227Kw1khq8QVDn9hMWBWRqEhGI2GLUx8e8KfZlZJyokFKGcvp3KyM+tM2yiXl1FT66ZGXozT
-ARC-Seal: i=1; a=rsa-sha256; t=1519410840; cv=none;
+X-Google-Smtp-Source: AH8x226rRq25VXuLpk6M6oKyiVPZOrDTQn2LpC797YOORDRV/Ytd6YE3s0DdiAqB3EKAiU+/F1jv
+ARC-Seal: i=1; a=rsa-sha256; t=1519410837; cv=none;
         d=google.com; s=arc-20160816;
-        b=GIgLoiEmcIU+bVxew9Xie9vZfyDu68ANiduoZNIpV+mTBu7/Jtns+REEELMd3hBBrS
-         wP4kWlA+L4KDsqwQfpxyAI6rNyE8zJRkXaRylbbqjL8tt4UcZ/hVYWFVyva89EwKUU2H
-         Gz3bz9L/yhoi1lbR0kEYQ0+oUzWlTEBdDSHbgPrUWqKIDc3NGnfuh2YuF3O7SE8Fu8ru
-         FIJ1NLNibc8lntb4z65Z18Ac+dU+h2wT9RieOMBmGgs8dMRGT5bQKz/3p5llu9D5+8LV
-         zaIJISV1NbnfAvwUSL6smCX+nXT4/v1hX9XPYaHFqUQW9CUwboPyPkDO8VENLgR36Dmj
-         y04Q==
+        b=k17ikisl461Jo58AE0RTPR3OD2KpMCAhbxXp4nFPi+5KnAzKKKq8n57Yq7pPXVVwzV
+         F8ivxshpbpwA/FOnZlrb1xfe+25rSlkJbrKLetKg6bUHbsKZ1M05q/PYURdWdGszpAw/
+         2AEm3/V0yY57CcDEirteeFAeDuRWRaPTtpFZ2xWtZsk3MSUegdylCgveGqJIXH8G79uC
+         MNfaVnzpBzRxT7YtieWGH6hDjKHSp3l2yJdrsripZabsrFSpO8Ta3pyfNMv8wbu8VAZw
+         3ILfi1ms2FE+zyypE0e0djkArgluARSjX4xqiS2X7coQZ4gXdIv3uDGbEMxKCWDpo81I
+         y/Qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gyGhAW3OenUyqHFL9mK+0NAmpkNu8rTFrurti50tG9c=;
-        b=zU62b/Lml3f8rq/YdGBHE0jO8l4XzlYU9sDc3XXCJt1qZpdFcSMnS5lx+SEmM0vifA
-         yq7CxpxOhMkqdxIiy6UKGTpqlsHPpI0AYOC9yBNceb4C05JvyJxBf8xvYq9U70nK2gFu
-         qLospM5zVcVrl4BKVrluU/IuL+VU3AXEZ2tcvmcEaxo9yeXPIFCDB0+h4pQScMgnO6NU
-         emWZJhFWlwebSFyYqhT2b69O6E2w5xuKsStKfd8z6xXbFO+J8ylKIMXWigDef6Y89wcI
-         JGSj87qs6OLrs3HkC3WQywqFWOEIKDLSOPtEcmROjr9jZG1jinWhMZmoR5ACApPIKxw9
-         691Q==
+        bh=b+zlMjbF25QPxpui7HYHO2nT4Z8xSrtR+e43sCRCn7c=;
+        b=I5UG1LdWYlnVPA4gUYAvMxaqqF/wa1kEDv39k0YMn06EcOtEWosPJbLJsHzxbGdz+O
+         oRpuaFcCOho6fFcbRIAUlJOx3Rvt+lcSbE4U9Bj/rPNpMgIx2bfeSN7WTE0yzSTBCSPl
+         fBF9920cy/+UY3O0Dtd0dRbFtWQtY4vKw9TZSCZJIVJoNzMgecH1XErROAiXFHSyOzoV
+         eJ/zPge+oE0lWjWrl2eMXiSPkEDHjJDYl4A4qNUHfSszZmwC3P8FWHhMix/MwobK/+5U
+         S7Tg1b3dMqWVhgOBQ4BrCIXLKBpfQgBTr6wKTH2hBM8ut9yK2gMqoWItG5SA8oy+W+VM
+         UmsA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 030/193] usb: build drivers/usb/common/ when USB_SUPPORT is set
-Date: Fri, 23 Feb 2018 19:24:23 +0100
-Message-Id: <20180223170330.781043957@linuxfoundation.org>
+	syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.4 003/193] cfg80211: check dev_set_name() return value
+Date: Fri, 23 Feb 2018 19:23:56 +0100
+Message-Id: <20180223170326.555798015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217575098453397?=
-X-GMAIL-MSGID: =?utf-8?q?1593217741348168718?=
+X-GMAIL-THRID: =?utf-8?q?1593217738640080988?=
+X-GMAIL-MSGID: =?utf-8?q?1593217738640080988?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Johannes Berg <johannes.berg@intel.com>
 
+commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
 
-[ Upstream commit c9d24f78268be444e803fb2bb138a2f598de9c23 ]
+syzbot reported a warning from rfkill_alloc(), and after a while
+I think that the reason is that it was doing fault injection and
+the dev_set_name() failed, leaving the name NULL, and we didn't
+check the return value and got to rfkill_alloc() with a NULL name.
+Since we really don't want a NULL name, we ought to check the
+return value.
 
-PHY drivers can use ULPI interfaces when CONFIG_USB (which is host side
-support) is not enabled, so also build drivers/usb/ when CONFIG_USB_SUPPORT
-is enabled so that drivers/usb/common/ is built.
-
-ERROR: "ulpi_unregister_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "__ulpi_register_driver" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_read" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_write" [drivers/phy/ti/phy-tusb1210.ko] undefined!
-ERROR: "ulpi_unregister_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-ERROR: "__ulpi_register_driver" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-ERROR: "ulpi_write" [drivers/phy/qualcomm/phy-qcom-usb-hs.ko] undefined!
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
+Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ net/wireless/core.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -96,6 +96,7 @@ obj-$(CONFIG_TC)		+= tc/
- obj-$(CONFIG_UWB)		+= uwb/
- obj-$(CONFIG_USB_PHY)		+= usb/
- obj-$(CONFIG_USB)		+= usb/
-+obj-$(CONFIG_USB_SUPPORT)	+= usb/
- obj-$(CONFIG_PCI)		+= usb/
- obj-$(CONFIG_USB_GADGET)	+= usb/
- obj-$(CONFIG_OF)		+= usb/
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -390,6 +390,8 @@ struct wiphy *wiphy_new_nm(const struct
+ 		if (rv)
+ 			goto use_default_name;
+ 	} else {
++		int rv;
++
+ use_default_name:
+ 		/* NOTE:  This is *probably* safe w/out holding rtnl because of
+ 		 * the restrictions on phy names.  Probably this call could
+@@ -397,7 +399,11 @@ use_default_name:
+ 		 * phyX.  But, might should add some locking and check return
+ 		 * value, and use a different name if this one exists?
+ 		 */
+-		dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++		rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
++		if (rv < 0) {
++			kfree(rdev);
++			return NULL;
++		}
+ 	}
+ 
+ 	INIT_LIST_HEAD(&rdev->wdev_list);
