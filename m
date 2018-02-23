@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416583-2-14576838098945664141
+X-Cyrus-Session-Id: sloti22d1t05-3795596-1519416571-3-13011932791558990437
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416583; b=jt8Q/HcRGXfFZjhV5rSiCyrRyKwZ2FQ5IOXmP8jJaJhrewf
-    cU2r/AUPaOBKtP+C3TFt+yMnevUsQsB8UegyFRapfeCbxcD+b7359bHJgKYLtR9a
-    Vxtwx0mme4/5IUliolsvamgJL4+WYxGypPkU8GQ+U+aKcy/tSumUOqq+w+KAsmEC
-    btzxvjlGiuWMIWuQwLXxpdXmeTZ5rcIVQkqbEL68airsmgzdxtay3Vac2qQu6q1F
-    tYcrmVXpjRLH8PBVVzP+Q+n9ggVXW4dgBTerAlCbBseffA0sevtE0oDUa97f8r08
-    mpiokuaCMV9WL16A9bdGa85p59nV+INehW6lylw==
+    t=1519416571; b=WDzKFN2A0UddQWJYJxvSTDwKX/pqq6c4rRaoS9tVjdqTI2S
+    Aqs6s965GOSW7W5/FKrma+SaroX/x7vH5J9vvwARnLBykR9P8IE5FGPmtx/Rfxgq
+    IsnSQ/yER2i5uxIGxCySlfLgpixjBLXYP+JxCgfX5V3ykkxVbG8/xT1DCIZXncUc
+    /DpR4Nkz5aZ5+hxhvQSaGtYT/tRnovi5WJhUV7b+OB4OmEPHE5nRAOJpvg9JNaLS
+    4rTSZh8sFC7nIHDPBfwavVWV3SZD6od/1hjS+VWTcHM92Yghn84MalBAEKomJi6+
+    WNAEhcNTGi2nUgOIxKH68cgBpb4sLqr1eDvO4hA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416583; bh=p387Tl2DusS+jDDv4ikG1xuIVG
-    f1VvXFcYOFZdBT5wg=; b=OlaVHXfq+ea+iEsWGy1BXCtDWniHKCtuLNrxzWrYKc
-    p9etDN9k/g5YZyg/ZRz90uN00UXewr9lNuBZPmGxuTG8bwZsNlmXDeMH1dGb2+Dd
-    HYAzBIZDO21i/CiHKKWK6mh1mJboE+9Z8ZInwn/DCrilsbZ8kh6Qu1oQxdjLFJL+
-    SuYBP1nSfa1TKbl2HKhWTheMHIeBJvNpmSCj/szNgLUwBCIAGE7WG7gOaUOKNe68
-    aI/Tol6Ki3kRW7uNAB2j0DG0J4kLtAU3CZwCYIxXr37gyGgd+V5Ynr3hSGM/0hSy
-    y7xVENyU7oXj3e32WnlUaEXISjuI+otdM4zglWM09J5g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519416571; bh=5fOCUHfDZ++buVKgMshL7cnAbf
+    4cmIxaUiVExn6HKAk=; b=Vywwn+ALqNldXKfDDbPQtNVCf/y/ST+YB7N3FpTHIJ
+    944BBBJXwecMr/+m2ZQ7F/9llXKGGw610w1DHRSwDqB+vp7tkiB1UuCa45pLCA8r
+    D/WMurn3p3Kn4HrdhkhZm6YJzDWu8V6QZk2tWjHvpyuEZkd3iphd4fc4TJ2Gy4DZ
+    ah1q5KeE3EJ6kWDJqPsX2HPeovo5FfK0d1ZLYlRiQ5wNxmsoZeCrlS21HSJEXxsq
+    xNfHKjBO3vLxg9hG3aqiENMuC3enS7WNBklMV/OFGC0VpYtLSPp+VEl2YmbU3LqN
+    8OxF/C2hEyNvJfue06ZnX1/ompzxMblZuv+HjGwbkdAA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932614AbeBWSmS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:42:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41442 "EHLO
+        id S933123AbeBWUJP (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:09:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41500 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932515AbeBWSmQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:16 -0500
+        with ESMTP id S933026AbeBWSmX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:23 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+dbb7c1161485e61b0241@syzkaller.appspotmail.com,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com,
+        Tom Herbert <tom@quantonium.net>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 001/145] vhost: use mutex_lock_nested() in vhost_dev_lock_vqs()
-Date: Fri, 23 Feb 2018 19:25:07 +0100
-Message-Id: <20180223170724.846027079@linuxfoundation.org>
+Subject: [PATCH 4.9 003/145] kcm: Only allow TCP sockets to be attached to a KCM mux
+Date: Fri, 23 Feb 2018 19:25:09 +0100
+Message-Id: <20180223170725.169691035@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -80,34 +81,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Tom Herbert <tom@quantonium.net>
 
-commit e9cb4239134c860e5f92c75bf5321bd377bb505b upstream.
+commit 581e7226a5d43f629eb6399a121f85f6a15f81be upstream.
 
-We used to call mutex_lock() in vhost_dev_lock_vqs() which tries to
-hold mutexes of all virtqueues. This may confuse lockdep to report a
-possible deadlock because of trying to hold locks belong to same
-class. Switch to use mutex_lock_nested() to avoid false positive.
+TCP sockets for IPv4 and IPv6 that are not listeners or in closed
+stated are allowed to be attached to a KCM mux.
 
-Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-Reported-by: syzbot+dbb7c1161485e61b0241@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: ab7ac4eb9832 ("kcm: Kernel Connection Multiplexor module")
+Reported-by: syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com
+Signed-off-by: Tom Herbert <tom@quantonium.net>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/vhost.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/kcm/kcmsock.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -849,7 +849,7 @@ static void vhost_dev_lock_vqs(struct vh
- {
- 	int i = 0;
- 	for (i = 0; i < d->nvqs; ++i)
--		mutex_lock(&d->vqs[i]->mutex);
-+		mutex_lock_nested(&d->vqs[i]->mutex, i);
- }
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1381,8 +1381,13 @@ static int kcm_attach(struct socket *soc
+ 	if (!csk)
+ 		return -EINVAL;
  
- static void vhost_dev_unlock_vqs(struct vhost_dev *d)
+-	/* We must prevent loops or risk deadlock ! */
+-	if (csk->sk_family == PF_KCM)
++	/* Only allow TCP sockets to be attached for now */
++	if ((csk->sk_family != AF_INET && csk->sk_family != AF_INET6) ||
++	    csk->sk_protocol != IPPROTO_TCP)
++		return -EOPNOTSUPP;
++
++	/* Don't allow listeners or closed sockets */
++	if (csk->sk_state == TCP_LISTEN || csk->sk_state == TCP_CLOSE)
+ 		return -EOPNOTSUPP;
+ 
+ 	psock = kmem_cache_zalloc(kcm_psockp, GFP_KERNEL);
