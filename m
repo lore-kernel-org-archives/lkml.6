@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeBWKSx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:18:53 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59743 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751617AbeBWKQ5 (ORCPT
+        id S1751868AbeBWKSw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:18:52 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5938 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751625AbeBWKQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Feb 2018 05:16:57 -0500
-X-UUID: 209236d2ae894f328632669d280fb3e3-20180223
+X-UUID: 07add77d47af4b9bb7375f2038cc24ff-20180223
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 11/19] arm: dts: mt7623: use - instead of _ in DT node name
-Date: Fri, 23 Feb 2018 18:16:31 +0800
-Message-ID: <eb782e65f83246f0747ee21fbfb03ab13bddcc12.1519378872.git.sean.wang@mediatek.com>
+Subject: [PATCH v1 17/19] arm: dts: mt7623: add MT7623N reference board with eMMC
+Date: Fri, 23 Feb 2018 18:16:37 +0800
+Message-ID: <45572848513719fd4099c0f3564b06743b1be27b.1519378872.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1519378871.git.sean.wang@mediatek.com>
 References: <cover.1519378871.git.sean.wang@mediatek.com>
@@ -28,313 +28,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-It should be good that no use "_" is in DT node name. Consequently,
-those nodes in certain files which have an inappropriate name containing
-"_" are all being replaced with "-".
+Add MT7623N reference board with eMMC. On the board, there is additional
+external PHY which is ICPlus IP1001 transceiver available by port 5 on the
+MDIO bus connectted with GMAC2.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
 ---
- arch/arm/boot/dts/mt7623.dtsi                 | 12 +++----
- arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 50 +++++++++++++--------------
- arch/arm/boot/dts/mt7623n-rfb-nand.dts        |  6 ++--
- 3 files changed, 34 insertions(+), 34 deletions(-)
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/mt7623n-rfb-emmc.dts | 37 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 arch/arm/boot/dts/mt7623n-rfb-emmc.dts
 
-diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-index 5cf93a4..4b68448 100644
---- a/arch/arm/boot/dts/mt7623.dtsi
-+++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -28,7 +28,7 @@
- 	compatible = "mediatek,mt7623";
- 	interrupt-parent = <&sysirq>;
- 
--	cpu_opp_table: opp_table {
-+	cpu_opp_table: opp-table {
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
-@@ -145,32 +145,32 @@
- 	};
- 
- 	thermal-zones {
--			cpu_thermal: cpu_thermal {
-+			cpu_thermal: cpu-thermal {
- 				polling-delay-passive = <1000>;
- 				polling-delay = <1000>;
- 
- 				thermal-sensors = <&thermal 0>;
- 
- 				trips {
--					cpu_passive: cpu_passive {
-+					cpu_passive: cpu-passive {
- 						temperature = <47000>;
- 						hysteresis = <2000>;
- 						type = "passive";
- 					};
- 
--					cpu_active: cpu_active {
-+					cpu_active: cpu-active {
- 						temperature = <67000>;
- 						hysteresis = <2000>;
- 						type = "active";
- 					};
- 
--					cpu_hot: cpu_hot {
-+					cpu_hot: cpu-hot {
- 						temperature = <87000>;
- 						hysteresis = <2000>;
- 						type = "hot";
- 					};
- 
--					cpu_crit {
-+					cpu-crit {
- 						temperature = <107000>;
- 						hysteresis = <2000>;
- 						type = "critical";
-diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-index f2d3cfb..a6295ef 100644
---- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-+++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-@@ -66,7 +66,7 @@
- 		regulator-always-on;
- 	};
- 
--	gpio_keys {
-+	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&key_pins_a>;
-@@ -263,14 +263,14 @@
- 
- &pio {
- 	cir_pins_a:cir@0 {
--		pins_cir {
-+		pins-cir {
- 			pinmux = <MT7623_PIN_46_IR_FUNC_IR>;
- 			bias-disable;
- 		};
- 	};
- 
- 	i2c0_pins_a: i2c@0 {
--		pins_i2c0 {
-+		pins-i2c0 {
- 			pinmux = <MT7623_PIN_75_SDA0_FUNC_SDA0>,
- 				 <MT7623_PIN_76_SCL0_FUNC_SCL0>;
- 			bias-disable;
-@@ -278,7 +278,7 @@
- 	};
- 
- 	i2c1_pins_a: i2c@1 {
--		pin_i2c1 {
-+		pin-i2c1 {
- 			pinmux = <MT7623_PIN_57_SDA1_FUNC_SDA1>,
- 				 <MT7623_PIN_58_SCL1_FUNC_SCL1>;
- 			bias-disable;
-@@ -286,7 +286,7 @@
- 	};
- 
- 	i2s0_pins_a: i2s@0 {
--		pin_i2s0 {
-+		pin-i2s0 {
- 			pinmux = <MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA>,
- 				 <MT7623_PIN_72_I2S0_DATA_IN_FUNC_I2S0_DATA_IN>,
- 				 <MT7623_PIN_73_I2S0_LRCK_FUNC_I2S0_LRCK>,
-@@ -298,7 +298,7 @@
- 	};
- 
- 	i2s1_pins_a: i2s@1 {
--		pin_i2s1 {
-+		pin-i2s1 {
- 			pinmux = <MT7623_PIN_33_I2S1_DATA_FUNC_I2S1_DATA>,
- 				 <MT7623_PIN_34_I2S1_DATA_IN_FUNC_I2S1_DATA_IN>,
- 				 <MT7623_PIN_35_I2S1_BCK_FUNC_I2S1_BCK>,
-@@ -310,7 +310,7 @@
- 	};
- 
- 	key_pins_a: keys@0 {
--		pins_keys {
-+		pins-keys {
- 			pinmux = <MT7623_PIN_256_GPIO256_FUNC_GPIO256>,
- 				 <MT7623_PIN_257_GPIO257_FUNC_GPIO257> ;
- 			input-enable;
-@@ -318,7 +318,7 @@
- 	};
- 
- 	led_pins_a: leds@0 {
--		pins_leds {
-+		pins-leds {
- 			pinmux = <MT7623_PIN_239_EXT_SDIO0_FUNC_GPIO239>,
- 				 <MT7623_PIN_240_EXT_XCS_FUNC_GPIO240>,
- 				 <MT7623_PIN_241_EXT_SCK_FUNC_GPIO241>;
-@@ -326,7 +326,7 @@
- 	};
- 
- 	mmc0_pins_default: mmc0default {
--		pins_cmd_dat {
-+		pins-cmd-dat {
- 			pinmux = <MT7623_PIN_111_MSDC0_DAT7_FUNC_MSDC0_DAT7>,
- 				 <MT7623_PIN_112_MSDC0_DAT6_FUNC_MSDC0_DAT6>,
- 				 <MT7623_PIN_113_MSDC0_DAT5_FUNC_MSDC0_DAT5>,
-@@ -340,19 +340,19 @@
- 			bias-pull-up;
- 		};
- 
--		pins_clk {
-+		pins-clk {
- 			pinmux = <MT7623_PIN_117_MSDC0_CLK_FUNC_MSDC0_CLK>;
- 			bias-pull-down;
- 		};
- 
--		pins_rst {
-+		pins-rst {
- 			pinmux = <MT7623_PIN_115_MSDC0_RSTB_FUNC_MSDC0_RSTB>;
- 			bias-pull-up;
- 		};
- 	};
- 
- 	mmc0_pins_uhs: mmc0 {
--		pins_cmd_dat {
-+		pins-cmd-dat {
- 			pinmux = <MT7623_PIN_111_MSDC0_DAT7_FUNC_MSDC0_DAT7>,
- 				 <MT7623_PIN_112_MSDC0_DAT6_FUNC_MSDC0_DAT6>,
- 				 <MT7623_PIN_113_MSDC0_DAT5_FUNC_MSDC0_DAT5>,
-@@ -367,20 +367,20 @@
- 			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
- 		};
- 
--		pins_clk {
-+		pins-clk {
- 			pinmux = <MT7623_PIN_117_MSDC0_CLK_FUNC_MSDC0_CLK>;
- 			drive-strength = <MTK_DRIVE_2mA>;
- 			bias-pull-down = <MTK_PUPD_SET_R1R0_01>;
- 		};
- 
--		pins_rst {
-+		pins-rst {
- 			pinmux = <MT7623_PIN_115_MSDC0_RSTB_FUNC_MSDC0_RSTB>;
- 			bias-pull-up;
- 		};
- 	};
- 
- 	mmc1_pins_default: mmc1default {
--		pins_cmd_dat {
-+		pins-cmd-dat {
- 			pinmux = <MT7623_PIN_107_MSDC1_DAT0_FUNC_MSDC1_DAT0>,
- 				 <MT7623_PIN_108_MSDC1_DAT1_FUNC_MSDC1_DAT1>,
- 				 <MT7623_PIN_109_MSDC1_DAT2_FUNC_MSDC1_DAT2>,
-@@ -391,26 +391,26 @@
- 			bias-pull-up = <MTK_PUPD_SET_R1R0_10>;
- 		};
- 
--		pins_clk {
-+		pins-clk {
- 			pinmux = <MT7623_PIN_106_MSDC1_CLK_FUNC_MSDC1_CLK>;
- 			bias-pull-down;
- 			drive-strength = <MTK_DRIVE_4mA>;
- 		};
- 
--		pins_wp {
-+		pins-wp {
- 			pinmux = <MT7623_PIN_29_EINT7_FUNC_MSDC1_WP>;
- 			input-enable;
- 			bias-pull-up;
- 		};
- 
--		pins_insert {
-+		pins-insert {
- 			pinmux = <MT7623_PIN_261_MSDC1_INS_FUNC_GPIO261>;
- 			bias-pull-up;
- 		};
- 	};
- 
- 	mmc1_pins_uhs: mmc1 {
--		pins_cmd_dat {
-+		pins-cmd-dat {
- 			pinmux = <MT7623_PIN_107_MSDC1_DAT0_FUNC_MSDC1_DAT0>,
- 				 <MT7623_PIN_108_MSDC1_DAT1_FUNC_MSDC1_DAT1>,
- 				 <MT7623_PIN_109_MSDC1_DAT2_FUNC_MSDC1_DAT2>,
-@@ -421,7 +421,7 @@
- 			bias-pull-up = <MTK_PUPD_SET_R1R0_10>;
- 		};
- 
--		pins_clk {
-+		pins-clk {
- 			pinmux = <MT7623_PIN_106_MSDC1_CLK_FUNC_MSDC1_CLK>;
- 			drive-strength = <MTK_DRIVE_4mA>;
- 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-@@ -437,7 +437,7 @@
- 	};
- 
- 	pwm_pins_a: pwm@0 {
--		pins_pwm {
-+		pins-pwm {
- 			pinmux = <MT7623_PIN_203_PWM0_FUNC_PWM0>,
- 				 <MT7623_PIN_204_PWM1_FUNC_PWM1>,
- 				 <MT7623_PIN_205_PWM2_FUNC_PWM2>,
-@@ -447,7 +447,7 @@
- 	};
- 
- 	spi0_pins_a: spi@0 {
--		pins_spi {
-+		pins-spi {
- 			pinmux = <MT7623_PIN_53_SPI0_CSN_FUNC_SPI0_CS>,
- 				<MT7623_PIN_54_SPI0_CK_FUNC_SPI0_CK>,
- 				<MT7623_PIN_55_SPI0_MI_FUNC_SPI0_MI>,
-@@ -457,21 +457,21 @@
- 	};
- 
- 	uart0_pins_a: uart@0 {
--		pins_dat {
-+		pins-dat {
- 			pinmux = <MT7623_PIN_79_URXD0_FUNC_URXD0>,
- 				 <MT7623_PIN_80_UTXD0_FUNC_UTXD0>;
- 		};
- 	};
- 
- 	uart1_pins_a: uart@1 {
--		pins_dat {
-+		pins-dat {
- 			pinmux = <MT7623_PIN_81_URXD1_FUNC_URXD1>,
- 				 <MT7623_PIN_82_UTXD1_FUNC_UTXD1>;
- 		};
- 	};
- 
- 	uart2_pins_a: uart@2 {
--		pins_dat {
-+		pins-dat {
- 			pinmux = <MT7623_PIN_14_GPIO14_FUNC_URXD2>,
- 				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
- 		};
-diff --git a/arch/arm/boot/dts/mt7623n-rfb-nand.dts b/arch/arm/boot/dts/mt7623n-rfb-nand.dts
-index e66de86..f729c71 100644
---- a/arch/arm/boot/dts/mt7623n-rfb-nand.dts
-+++ b/arch/arm/boot/dts/mt7623n-rfb-nand.dts
-@@ -81,13 +81,13 @@
- 
- &pio {
- 	nand_pins_default: nanddefault {
--		pins_ale {
-+		pins-ale {
- 			pinmux = <MT7623_PIN_116_MSDC0_CMD_FUNC_NALE>;
- 			drive-strength = <MTK_DRIVE_8mA>;
- 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
- 		};
- 
--		pins_dat {
-+		pins-dat {
- 			pinmux = <MT7623_PIN_111_MSDC0_DAT7_FUNC_NLD7>,
- 				 <MT7623_PIN_112_MSDC0_DAT6_FUNC_NLD6>,
- 				 <MT7623_PIN_114_MSDC0_DAT4_FUNC_NLD4>,
-@@ -102,7 +102,7 @@
- 			bias-pull-up;
- 		};
- 
--		pins_we {
-+		pins-we {
- 			pinmux = <MT7623_PIN_117_MSDC0_CLK_FUNC_NWEB>;
- 			drive-strength = <MTK_DRIVE_8mA>;
- 			bias-pull-up = <MTK_PUPD_SET_R1R0_10>;
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index ade7a38..5af6fce 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1122,6 +1122,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
+ 	mt6580-evbp1.dtb \
+ 	mt6589-aquaris5.dtb \
+ 	mt6592-evb.dtb \
++	mt7623n-rfb-emmc.dtb \
+ 	mt7623n-rfb-nand.dtb \
+ 	mt7623n-bananapi-bpi-r2.dtb \
+ 	mt8127-moose.dtb \
+diff --git a/arch/arm/boot/dts/mt7623n-rfb-emmc.dts b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+new file mode 100644
+index 0000000..0db75bc
+--- /dev/null
++++ b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2017-2018 MediaTek Inc.
++ * Author: Sean Wang <sean.wang@mediatek.com>
++ *
++ */
++
++/dts-v1/;
++#include "mt7623n-rfb.dtsi"
++
++/ {
++	model = "MediaTek MT7623N with eMMC reference board";
++	compatible = "mediatek,mt7623n-rfb-nand", "mediatek,mt7623";
++
++	chosen {
++		bootargs = "console=ttyS2,115200n8 earlyprintk";
++	};
++};
++
++&eth {
++	gmac1: mac@1 {
++		compatible = "mediatek,eth-mac";
++		reg = <1>;
++		phy-handle = <&phy5>;
++	};
++};
++
++&mdio {
++	phy5: ethernet-phy@5 {
++		reg = <5>;
++		phy-mode = "rgmii-rxid";
++	};
++};
++
++&mmc0 {
++	status = "okay";
++};
 -- 
 2.7.4
