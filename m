@@ -1,67 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413482-2-12225954619742076544
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413481; b=HJXphd1x/1uu3hFDT0F/HiNK+cQjgtaCjMpHyamriuFvEaz
-    +d1yZK/ohjJU95jPrTFli5k0wSkATuWTLfLjRC3PSYxSFDXznqcpKAcbmh46+c1x
-    xUWcfg9pKsPFqmAcN6GBGJx9WmNhnwRfBXKcRdeYD/e0q9YFW2n9pOFMq4v48R9+
-    IDYLQhMYfGW/neHdoVtAD4LWlr2V1My3WDo+ur9k6xevVYool9x5U6B8Ve2xxrmp
-    1DKUZXh5risgzVqyJdelOvV9Qfy6CK1sc3rmhPrAriKKUZKf6VFD+NlxSvarTODH
-    GbQoATd4K4Edv5UPKZbr1z72hcxeoZcHEFyyWog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413481; bh=1adxxiZ2NUJ/r+KJMMc/eIBlCy
-    hOT17GD7j/Cz7lGc4=; b=Nu0cgYW1MspP31rN9n2231WtmFGx6K4kqPYolo9kkv
-    J7b+9lBcZz/SWa8JQ039xP9pIwAVo+582tUeViufkGMlHYmM5Ra4IJ9BFmpp9qk6
-    k24hKVMuPYoEgOwKtrPEHs8Dxi9Hj1TTobIJztcNgZc9MOr5AMQ28uYRbmhFmzew
-    n5IHI9vqixklyereAuPVHSWe2Oo8wBU++JLxldcnLFq/WtrghNy13ITGNeickbAr
-    elEeCBX9TDn6yV2u7n434iwJQUV/51dxYTy39R2umEjCLkLyP37v5o7sgavEv8Ru
-    dPoSjI6PlEvi5BwCIiN/26H9cy0R572xQEu3kqeEa27A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965020AbeBWSyw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:54:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47950 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965013AbeBWSyv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:51 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x225NIbMIigKExBbcu7/6+XeWFEDGMmFRzY9Wi4OLhjasJsLovi8wOBLOnimIcssk8E+YDc40
+ARC-Seal: i=1; a=rsa-sha256; t=1519412237; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UcwqaLfaDktWGwkM6+puh3SwofTTsrnBQfRa4n1ai4Zx81kbIWHEdhTUdDddalfiXS
+         E7W7kzLQ9ewirnsDAHmJKIuSdDJLGmvcSLiNM8SGEOxvz9mtu9A1M/UdMblkwvf0dlVd
+         d004LwEVEx4M/107ZSmAg+0ieMeHuW4RBtXcejc+FM3Uxq98hk24V/0hG3z4fGyX1p5N
+         BddIbZUj9+lrKfBPJBHONLfAw8D029kTQhSSJ+xk3KPxyaFZppCLmG+PwzOZD7UVvJ01
+         unYIMzdNDc8cgCQrte2yzIzXH0QLhWMaKD1HlLnMV9gv8pWfW3Mj5e3xF5BLrZEBX8FV
+         KZrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=RJbd7PaQ4joVNTcKtNqf3QcPbPSQQVxDj5LJEFNjKOY=;
+        b=oG97YJMDaGBf7u1uJvJChv4VApd/JC0d5Fy0JoSFDoNjOL68VgY7jUKqtlASuD2YtV
+         fCLzE+x0bHN7E1t95uPrXSPagKVWzn9iM0zvyTK5v4U6vE4EjacqU8+uVf0Ja53GN30j
+         g3gpyujcrrG1itCHO2PwD80MyDJvFg8h2SPHBsqIju4Ahg9JD0XQojgTaewrNE9jVhPu
+         a+84cajxzAAsgEn9mj1/6cmG9SGeEnrdJ/ZscD7WG/PbBZOVxcWeqampfvQY7koeFkrf
+         4Rq1DQsesoeuPqdLe0elrQ3TDgPLz4ep+HebdIDyuHjr2bvSMYRHgeq1HzXs/UGF5WmI
+         fuDA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Branislav Radocaj <branislav@radocaj.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 123/159] net: ethernet: arc: fix error handling in emac_rockchip_probe
-Date: Fri, 23 Feb 2018 19:27:11 +0100
-Message-Id: <20180223170758.114603707@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 152/159] powerpc/perf/imc: Fix nest-imc cpuhotplug callback failure
+Date: Fri, 23 Feb 2018 19:27:40 +0100
+Message-Id: <20180223170801.356982256@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -69,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593219206613374961?=
+X-GMAIL-MSGID: =?utf-8?q?1593219206613374961?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,44 +51,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Branislav Radocaj <branislav@radocaj.org>
+From: Anju T Sudhakar <anju@linux.vnet.ibm.com>
 
 
-[ Upstream commit e46772a6946a7d1f3fbbc1415871851d6651f1d4 ]
+[ Upstream commit ad2b6e01024ef23bddc3ce0bcb115ecd8c520b7e ]
 
-If clk_set_rate() fails, we should disable clk before return.
-Found by Linux Driver Verification project (linuxtesting.org).
+Oops is observed during boot:
 
-Signed-off-by: Branislav Radocaj <branislav@radocaj.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  Faulting instruction address: 0xc000000000248340
+  cpu 0x0: Vector: 380 (Data Access Out of Range) at [c000000ff66fb850]
+      pc: c000000000248340: event_function_call+0x50/0x1f0
+      lr: c00000000024878c: perf_remove_from_context+0x3c/0x100
+      sp: c000000ff66fbad0
+     msr: 9000000000009033
+     dar: 7d20e2a6f92d03c0
+    pid = 14, comm = cpuhp/0
+
+While registering the cpuhotplug callbacks for nest-imc, if we fail in
+the cpuhotplug online path for any random node in a multi node
+system (because the opal call to stop nest-imc counters fails for that
+node), ppc_nest_imc_cpu_offline() will get invoked for other nodes who
+successfully returned from cpuhotplug online path.
+
+This call trace is generated since in the ppc_nest_imc_cpu_offline()
+path we are trying to migrate the event context, when nest-imc
+counters are not even initialized.
+
+Patch to add a check to ensure that nest-imc is registered before
+migrating the event context.
+
+Fixes: 885dcd709ba9 ("powerpc/perf: Add nest IMC PMU support")
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/arc/emac_rockchip.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/powerpc/perf/imc-pmu.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/net/ethernet/arc/emac_rockchip.c
-+++ b/drivers/net/ethernet/arc/emac_rockchip.c
-@@ -220,9 +220,11 @@ static int emac_rockchip_probe(struct pl
+--- a/arch/powerpc/perf/imc-pmu.c
++++ b/arch/powerpc/perf/imc-pmu.c
+@@ -309,6 +309,19 @@ static int ppc_nest_imc_cpu_offline(unsi
+ 		return 0;
  
- 		/* RMII TX/RX needs always a rate of 25MHz */
- 		err = clk_set_rate(priv->macclk, 25000000);
--		if (err)
-+		if (err) {
- 			dev_err(dev,
- 				"failed to change mac clock rate (%d)\n", err);
-+			goto out_clk_disable_macclk;
-+		}
- 	}
- 
- 	err = arc_emac_probe(ndev, interface);
-@@ -232,7 +234,8 @@ static int emac_rockchip_probe(struct pl
- 	}
- 
- 	return 0;
--
-+out_clk_disable_macclk:
-+	clk_disable_unprepare(priv->macclk);
- out_regulator_disable:
- 	if (priv->regulator)
- 		regulator_disable(priv->regulator);
+ 	/*
++	 * Check whether nest_imc is registered. We could end up here if the
++	 * cpuhotplug callback registration fails. i.e, callback invokes the
++	 * offline path for all successfully registered nodes. At this stage,
++	 * nest_imc pmu will not be registered and we should return here.
++	 *
++	 * We return with a zero since this is not an offline failure. And
++	 * cpuhp_setup_state() returns the actual failure reason to the caller,
++	 * which in turn will call the cleanup routine.
++	 */
++	if (!nest_pmus)
++		return 0;
++
++	/*
+ 	 * Now that this cpu is one of the designated,
+ 	 * find a next cpu a) which is online and b) in same chip.
+ 	 */
