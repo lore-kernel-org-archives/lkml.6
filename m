@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414131-2-2133653888517513833
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519414121-2-6912100472844505461
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414130; b=wbz+Hf38B3UKrRMwZxhsCPRTaEdgdvy6lOfTjsn1tImh51i
-    s6l8l1Joo3kkltzUPg0J5sd9rp7qQDe94aN9/CpE3ZNQOWT9iBh1vWuKNE1lRiac
-    r/tnNXWJ/Npqq8q3CSFeZ3tHHLhTHeIJxm89G/xCx527ptojRoSkAy5JunYuQRjt
-    OYWNH8yl0FEZriwYpZzItcsV3bO1/LjN5rumn4OXJUAGKbnkrzNKp65+es1qE9Pz
-    OGz3HmBtfylyRWWb2C8K0Qm73PPcgq1aYLNquaGlYmMTeM5bp7JaC0BUtymVeHKo
-    lwX88KIZMn/kDrTFGBMGqM3qaePPLSpLTcPJh3Q==
+    t=1519414121; b=UBS5t1jrs8LxccI9cA5tknP3KruMD1RORywEMh2yUovuGiq
+    bTQQgt/vTyjwsLNVrI8Qi9h11pBDnd3luXPRUgpJMwI5aDk92GJHZe7XR0WxkYL5
+    PBDgQvY4lxuHvHDJHmqCBH79Ra8akCtQ9XtFrnmyEOy1vtLB7ZuXfuNhGvV92cjk
+    WOV+qBqVFDlzUM9caH0YWtHnXRdJeBXEQU58PPFzAwemFVLi9+BhrYE8QfLyeiCj
+    83UQcctBuo/8nfhc4wILe/VbJPvJTPwkfbW4O+xbQq1XrnRzhC0O2y3M7hRu5u+w
+    jcrDONATcmLvVOTN0gLInnPjT5YTyvweFTRD4Zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414130; bh=GJe064+zYQUlJbW2G6uRgeVfn2
-    3wQt2x+eZkOFsTUP4=; b=E+q8YGojTUnTYzyL1ohFJVcrCFHnjfzQHUG+x18OiX
-    X9a3/uBm9uizocHlqab8ObDlMp4AQigEdoZLBLqyDS2vneqG0PCCJ/Ru3nl/2CWL
-    rz7ow/zjAvIddtA5JYipHRSvaAP5JG5GlfR/AjeEyWVslfJHWT5/28iNGjlCRYmr
-    qSnnft88U3PAwueB/MCKBVtdiddJ60aBHejYXn1oWqMFgzfB3fKMKpdx/KGrYfw2
-    JWvEp87JT59jw63DgvxWNMqu/t+rBbKsprj335vsHbOtwvHMk6ASUhgLBp/XNv8O
-    hNYw3xflPQjzKdIO4hCoaKs2S+OHaQLmRug02q8mxYiQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414121; bh=+o87Hb+Zz3fsWAsN/aBXEb0P4o
+    6SM/k9+ieHf9K1MXA=; b=LVnqA9r/AgEfiWqMzZGtMl9CBtnIkltzut+oKJ6GAT
+    rdIkJqAapth8dib/Atv2vaSzyj8PjSHB/ZpvW74Q+rkui8TGqm08BBWSVMPoDs9u
+    EGLQvTlEgrFClznZB2Trl0n/MLkq5efL25TCnrmGxAGL6f/1BbhbgeF66TLe177W
+    MQMvZkfzzHNdcroPBNnI+/JBccppW575lukAwhVNkON95xbpKZvYAUb91Sit03ln
+    G5zMczoeHIHyXwGzkHrjZEez2uxYHnfZ4uTRQEdW3JzpO6zKCpVNIeZtxh4UBSTo
+    DtCdNBraNF+tQ8PTpEatgdUtukg4eJIalsJmYUN7uJXQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935058AbeBWSwE (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:52:04 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46528 "EHLO
+        id S1754622AbeBWT22 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:28:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46628 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935075AbeBWSwE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:04 -0500
+        with ESMTP id S935083AbeBWSwG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:06 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Roger Quadros <rogerq@ti.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 062/159] ARM: AM33xx: PRM: Remove am33xx_pwrdm_read_prev_pwrst function
-Date: Fri, 23 Feb 2018 19:26:10 +0100
-Message-Id: <20180223170751.089659979@linuxfoundation.org>
+Subject: [PATCH 4.14 063/159] ARM: dts: Fix omap4 hang with GPS connected to USB by using wakeupgen
+Date: Fri, 23 Feb 2018 19:26:11 +0100
+Message-Id: <20180223170751.239659718@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -79,57 +83,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Tony Lindgren <tony@atomide.com>
 
 
-[ Upstream commit b6d6af7226465b6d11eac09d0be2ab78a4a9eb62 ]
+[ Upstream commit cf87634c8b24e24bf379b8c6807c8b0fb5f23567 ]
 
-Referring TRM Am335X series:
-http://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
+There's been a reproducable USB OHCI/EHCI cpuidle related hang on omap4
+for a while that happens after about 20 - 40 minutes on an idle system
+with some data feeding device being connected, like a USB GPS device or
+a cellular modem.
 
-The LastPowerStateEntered bitfield is present only for PM_CEFUSE
-domain. This is not present in any of the other power domains. Hence
-remove the generic am33xx_pwrdm_read_prev_pwrst hook which wrongly
-reads the reserved bit fields for all the other power domains.
+This issue happens in cpuidle states C2 and C3 and does not happen if
+cpuidle is limited to C1 state only. The symptoms are that the whole
+system hangs and never wakes up from idle, and if a watchdog is
+configured the system reboots after a while.
 
-Reading the reserved bits leads to wrongly interpreting the low
-power transitions for various power domains that do not have the
-LastPowerStateEntered field. The pm debug counters values are wrong
-currently as we are incrementing them based on the reserved bits.
+Turns out that OHCI/EHCI devices on omap4 are trying to use the GIC
+interrupt controller directly as a parent instead of the WUGEN. We
+need to pass the interrupts through WUGEN to GIC to provide the wakeup
+events for the processor.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Let's fix the issue by removing the gic interrupt-parent and use the
+default interrupt-parent wakeupgen instead. Note that omap5.dtsi had
+this already fixes earlier by commit 7136d457f365 ("ARM: omap: convert
+wakeupgen to stacked domains") but we somehow missed omap4 at that
+point.
+
+Fixes: 7136d457f365 ("ARM: omap: convert wakeupgen to stacked domains")
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Cc: Nishanth Menon <nm@ti.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Reviewed-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/prm33xx.c |   12 ------------
- 1 file changed, 12 deletions(-)
+ arch/arm/boot/dts/omap4.dtsi |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/arm/mach-omap2/prm33xx.c
-+++ b/arch/arm/mach-omap2/prm33xx.c
-@@ -176,17 +176,6 @@ static int am33xx_pwrdm_read_pwrst(struc
- 	return v;
- }
+--- a/arch/arm/boot/dts/omap4.dtsi
++++ b/arch/arm/boot/dts/omap4.dtsi
+@@ -861,14 +861,12 @@
+ 			usbhsohci: ohci@4a064800 {
+ 				compatible = "ti,ohci-omap3";
+ 				reg = <0x4a064800 0x400>;
+-				interrupt-parent = <&gic>;
+ 				interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
  
--static int am33xx_pwrdm_read_prev_pwrst(struct powerdomain *pwrdm)
--{
--	u32 v;
--
--	v = am33xx_prm_read_reg(pwrdm->prcm_offs, pwrdm->pwrstst_offs);
--	v &= AM33XX_LASTPOWERSTATEENTERED_MASK;
--	v >>= AM33XX_LASTPOWERSTATEENTERED_SHIFT;
--
--	return v;
--}
--
- static int am33xx_pwrdm_set_lowpwrstchange(struct powerdomain *pwrdm)
- {
- 	am33xx_prm_rmw_reg_bits(AM33XX_LOWPOWERSTATECHANGE_MASK,
-@@ -357,7 +346,6 @@ struct pwrdm_ops am33xx_pwrdm_operations
- 	.pwrdm_set_next_pwrst		= am33xx_pwrdm_set_next_pwrst,
- 	.pwrdm_read_next_pwrst		= am33xx_pwrdm_read_next_pwrst,
- 	.pwrdm_read_pwrst		= am33xx_pwrdm_read_pwrst,
--	.pwrdm_read_prev_pwrst		= am33xx_pwrdm_read_prev_pwrst,
- 	.pwrdm_set_logic_retst		= am33xx_pwrdm_set_logic_retst,
- 	.pwrdm_read_logic_pwrst		= am33xx_pwrdm_read_logic_pwrst,
- 	.pwrdm_read_logic_retst		= am33xx_pwrdm_read_logic_retst,
+ 			usbhsehci: ehci@4a064c00 {
+ 				compatible = "ti,ehci-omap";
+ 				reg = <0x4a064c00 0x400>;
+-				interrupt-parent = <&gic>;
+ 				interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
+ 		};
