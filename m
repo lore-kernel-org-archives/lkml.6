@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeBWVJY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:09:24 -0500
+        id S1752224AbeBWVJk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:09:40 -0500
 Received: from mail-eopbgr40102.outbound.protection.outlook.com ([40.107.4.102]:10720
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751983AbeBWVJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:09:20 -0500
+        id S1751843AbeBWVJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:09:22 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Rasmus.Villemoes@prevas.se;
 From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 To: Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc: Andy Tang <andy.tang@nxp.com>,
         Alexander Stein <alexander.stein@systec-electronic.com>,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/2] irqchip: add support for Layerscape external interrupt lines
-Date: Fri, 23 Feb 2018 22:08:59 +0100
-Message-Id: <20180223210901.23480-2-rasmus.villemoes@prevas.dk>
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 2/2] dt/bindings: Add bindings for Layerscape external irqs
+Date: Fri, 23 Feb 2018 22:09:00 +0100
+Message-Id: <20180223210901.23480-3-rasmus.villemoes@prevas.dk>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180223210901.23480-1-rasmus.villemoes@prevas.dk>
 References: <20180125150230.7234-1-rasmus.villemoes@prevas.dk>
@@ -32,45 +33,45 @@ X-ClientProxiedBy: AM5P190CA0019.EURP190.PROD.OUTLOOK.COM
  (2603:10a6:206:14::32) To DB6PR10MB0439.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:4:11::19)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 14d1cce8-2871-45aa-55d9-08d57b01b2d3
+X-MS-Office365-Filtering-Correlation-Id: 40d1ba17-baa3-4d5c-4ca6-08d57b01b3ea
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DB6PR10MB0439;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;3:NyyD8jdXzMEes+QLj/YM94L6QThg5fE2oD4cz7jK3zj8qVJ/+91nJwHoK+PdGBluaAeXIT5BBYCpIlYFeNwDScqXlgNqH4pHaQgsP7xsRN29jDrkVQZyphEDcAxDYRx35Rr8T5ReyTUiPuEsV1aMUd29AGU4LKOXTHLwX+9pUHwm66XjQBWmfijC8uIjwpco1oBsuSeeNmwQ+oR8I/zMai1Kw/Ax3JZ1so5Gy5Q00o/SFxpoQic6GvAcqVSgg32w;25:H8iQxKfYdOLQI8FoYVkOh+f2f4qmNuMgfIU8Z6nL2i0v7UWsWvYZYj6JCX7ioMShCGEC7omeJqpiI1E0rbW0yIXqMZOH6mIZkXhZ3tl5H8DovAP6RsIpkQtuVZhrwHd+d5iTT8FTSOv1kdZBbYRjlzaspVid2sWD6Qx75HHjGFfBNW+lQRZgI/cdUEqvy0+Erxp7gtRiIxu8OK9pbpZNB2L25eQcFaa+nFn9I5osTxrXD6duo3Nw2KruEepKp0MHWdufrLoxnTaciUklWOLvDDAbkkju3GJCCKTHOVQUOMjZ9TsVdl5ccZ9dt1S7kqk+djkTrp7ND+02V2UhB4hjIw==;31:wxfSPLgqX3DGYwJAxOcv9hA/Gbma7bqFAKtqFmvNhA/q4v3ICtTnPdjJQp/28Na5vzUBHvkDRVey4vFXXFBWUwRJosMfYlN9mMJCN9AcRsUY2zP9B9oOvk7TwmOFH97Q9IOGHCojPDZhBEPcamxGs8Q3pvlwUjvY7KK3pnIE3vwwEPAxLqkNqMwcpBuNVmhh6s3aeBWPuNK3dtJzuHoFQoTZHHQeHIKl5qn5tBuP4dM=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;3:rUvQfen9qjInLvOTtK/dkfjILfnfyjjPbB6pEV/P3vB7r0T/uNUhI/DvEYgGZyVuG4Iv30VhGy00kc6Hp+EKo9vLfxINptteJwdRXnWUkHCvopFLGxH1JfrXD3LGsmoYEak61DienPMk/nD6AQyPnH+NGTAfrT+RlMLHzPkmTOD5yIdVzf85XhYXX1auKHnAmERsHtzHsq0D9sR2+84g7hAP2MUvikWQuQHpl4T2BHhkHnWpX0UJy5uHQ9Mt+Nfk;25:ztQYMAHCTE0qs6GJnJ57F7lyIc5qrq2OGLR92mwnhg85OlBsQcdXI+6KXndi5MwqtUyzSAsKwDhCikMKCJQWhMbd0AklAwtgSLW+naC3MC55TN0nt0b9clw5Q8ky/LjNgGNZGEoFq+0frfG/ih3QQQLnhqQVgcIJHuUzGH1OW2Pq+PLUNjcCkHKCzh21qcpK4wKyNd727BEV3jO2NPDfcP7u7ZDmJMh6FTTzfHKteIXSDfk0wfF6GfA/cfSPwvCEXR3XrYsj/DdIOt4ww0w9yGeHqvwPbniChApSIUe+YiGepk8PacR23V00myncGn6wWLuO0kv0Gu9+WdWw3m1Jow==;31:PLYJDJIvtdbc1aZOHkebYKc7hWEoO3uUqm01bXPGS+xPZZaYqOR0mdh1gs9gsR5AUNOs4O7bYov1lFRQ3LBrDaoBCHj6Q1EkH0c9qUv6Ms0uAaDKL0qY3rkNanb42t6nrwjj9cIdPJ9a5cmthAqzFdmdpnH8cs86pBo1MpHke0hUt7kFKmpEy8BFbR+80gqrce+Sh+FvelU2vW/wIbaSoP1dmhwJWJKD/DjH9Hc7CI4=
 X-MS-TrafficTypeDiagnostic: DB6PR10MB0439:
-X-Microsoft-Antispam-PRVS: <DB6PR10MB0439084ED59AC93F057433108ACC0@DB6PR10MB0439.EURPRD10.PROD.OUTLOOK.COM>
+X-Microsoft-Antispam-PRVS: <DB6PR10MB0439B50BF83641DA70E558228ACC0@DB6PR10MB0439.EURPRD10.PROD.OUTLOOK.COM>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231197)(944501161)(52105095)(93006095)(3002001)(6041288)(20161123558120)(2016111802025)(20161123564045)(20161123562045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:DB6PR10MB0439;BCL:0;PCL:0;RULEID:;SRVR:DB6PR10MB0439;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;4:dmzj/bzjST5/sTLYnvbjkbojAdDBMv6TBfDAP2jsdTmusBXlVfkcbx/AuLEtGgRoWF/oLCucQIpDovIE1agx/IymNXyXl4pe3UQK5drb/uZqqxSEgjwObV03fzv5rXDoJO0FzkgcbA5texqYZVzgojCPUSueJX5pbjvAwno//wWZi5i5xFjkoPWDaXrIGWYxyFqGYRiJa9Llx55asHUs6QwT4rcxXJLfRhtk6TSmMQl6VuRnjPjLvK7nl0H1sXPhhDs2XF6fsv9uqVAIUbtgig==
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;4:Gve37QonKiFh+x6Mp642HIMUfuqt2D/PbO2h+MzemxUjNfHK5f8C8Zwuiv0QsQir6dEK9VSoNXP8zlYjLYE8iwLsjXmGzdna22LoxuVEvwPa46Mkrb1qhXGb0cFVLDmDz/LXpUHZyj82XAK/zQJRy079BiTQrTAxYVK9j2H6kOOCDLecshBm4uELInN4vKttSD114aFsa4fcvGkJPRwPdaf5HBt8GRZ+3KJzSRkwqD5SN6WLh1xyeW72n+htgLTxQVklFV9gJuZIHiO8g3lrgw==
 X-Forefront-PRVS: 0592A9FDE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(39850400004)(376002)(346002)(189003)(199004)(51444003)(16586007)(76176011)(8656006)(386003)(110136005)(54906003)(6506007)(51416003)(81156014)(53416004)(316002)(2906002)(59450400001)(8676002)(8936002)(81166006)(72206003)(53936002)(74482002)(8976002)(305945005)(478600001)(6512007)(50466002)(6116002)(7736002)(186003)(1076002)(3846002)(16526019)(50226002)(5660300001)(25786009)(66066001)(26005)(6486002)(97736004)(47776003)(106356001)(68736007)(48376002)(6666003)(42882006)(2950100002)(52116002)(36756003)(4326008)(105586002)(69596002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR10MB0439;H:prevas-ravi.prevas.se;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR10MB0439;23:qLD3Rmach6EWxLbLVsbVAPpwZ962ZK5O8cZ82s4r6?=
- =?us-ascii?Q?7bqTopmO/J8jv0M2MT3nsoVA5ueBX7I1I6rL2WclvGm0VY1cQIGOw6Tu4xcP?=
- =?us-ascii?Q?frj2cjLGeckJfIsOqJfie3mmSPe4lvE4VvIApTZWnozeWSqQAFdWN+iGss0q?=
- =?us-ascii?Q?F8xIu4Z5oUAsiY5kxNf5KoY7dI0HueJ4XsALMNp36dRzAwvo4TSYAK03ErHE?=
- =?us-ascii?Q?NvBHt/jCkW2G7axGBaEGl4Lcwmg5Jo895XjaksLc6Fb5Gav4rxyBJipxiRzO?=
- =?us-ascii?Q?trxI8yNJ3cDONdMjLsPD6b1lDPnW3YeWR7AkwKTgIwDyeX/ImtBBnlVRUflF?=
- =?us-ascii?Q?jZkrYlzXsgMWFRNwO0pJqovYrY3ehSp7Tsn4fVb4dZ7+vbRFZ8qfaKQWERuq?=
- =?us-ascii?Q?hqdifo3Ix6DuT5FcqJBY/x5xcskTuv9kcaEvKP5/w6lp/qfqLXzoy+0yXo0y?=
- =?us-ascii?Q?/0ABVnGhBAti4PBUqG4KZpBiT2frK+9EjHS8d2S4OuT7pDDWtuUUEIQMeU9l?=
- =?us-ascii?Q?3BQDGhK4NHzUBUxuqVHfy/nqoNZQPszXYYxACbudK/3pP++mKFAFM4pLJys+?=
- =?us-ascii?Q?oC8rUMqFdvcbwxjVyL12rfof1YJG/3INb9rTCQJnJ1qb/O1Rh2gtVxvDs9Qm?=
- =?us-ascii?Q?ttreQsEQUnT1E7FPfO9F6ilHAtFcxh/Fvm38VVtRGU/+9chuKdSslkBW0tj3?=
- =?us-ascii?Q?oupID25wv1Hzz8fIt/ur0g1ZFEOp6OyN+cY3tMnWwpdwdcCA7jqPOBHruDct?=
- =?us-ascii?Q?NomZxM1GpuCAupDmz1vOB3I5vKNRYLE5oIdKu4HzC2mEo7CEaCEC2EVP9PtF?=
- =?us-ascii?Q?DQSlFP5VR2GwT9wmwZcVH3VIaI2WEdKSYul7OjBeZ9YpibqVQ07ZINZx86bg?=
- =?us-ascii?Q?QqmuiEhaqIbi85vxc6UwB1lXDoAoyVwF5Wdak1yccPXtBoGDUtd2AC7RiqOC?=
- =?us-ascii?Q?cRLsQNFmZUsUO41jLBw7iwFW88SZe4xYhthlbcYVR+P5B/yBNiamObAFLGKA?=
- =?us-ascii?Q?G9i/Zg2DLd1jwaJUNe/YgxvhCslWZOy5cPHP5kql/yEbfu09Eyay+h3RssB4?=
- =?us-ascii?Q?NzswCRj6GXlyurp/Ls94NDM8qv7qR+PT9UqI84U5paRCBaffRaW+oKm7W3VK?=
- =?us-ascii?Q?RXi/GwPUtZFr3l10mOsXiaU0si4mr3CbQH6sLIzheVaUgF9olFFriuNhyt2s?=
- =?us-ascii?Q?pcF3FN7wBJs04aYhxoN6yRhcDj7vv8CR5UWxz1/5762iXRjPOqlYdH7jhvrr?=
- =?us-ascii?Q?hGEGeZn5lINoxvo2bL2JOAltxX0h/wqwoUgCXU/EVwMGJ9OegMbjbQJBHzlJ?=
- =?us-ascii?Q?e7fnzsVc4uRpX+Cd/U3z1Y=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;6:JVJ94dtugb7itHqlj4dMY7B6MBenrvcEbwIs48YK55I/bQNHywhyRnRiXUvDG4wi8t67eJDChvwKWK3aBCZedl6xm/ZFRK/U8FZOBKu1V4wo1QCAXjPUdc4e4iKwQkaZXCJmdzd8Pls8wSMsLCbXOEKlL+6GGb+EaVwt8X7Z14XVLaBMQ2049S95FV3XNTGb9raaFsUzqQXlYj6hsTiUh8ncx5MuRRrkHWg/Ewp8neyqVFCuxIP2UFUZrxlTrsEnFHgT7iyEuVZPr+aBw2DWR4PB6g4/+TkBxFYwD2MqsZsUyPblqOhcCxI3BCGUe1M10TfCzK2J/vmVNJVLy2DYlylOsBSBnedxm74F5LBQkDs=;5:ZD6fekvupsHBaWU4WXa0ho2o9MlkefmUU8WoByWz95MJD5xHtPFD77LLnw9y0O957KKQhO+oLrY4SHlHZUzhbiLBQ3mn3wQPCSK38+UG1jP6aD6c2GDaiPnlvKQLtooFGVyIfQHkxrhixQZsA7vNKyevKXe/26i0M1Wb7WBiZxY=;24:vWvLNTSyktlN7SPKDtUTrY0t+aQPgSXBc80jFhX1iNExqXCHcQh0o8OxDpwupDm6U9T17AoQCZ/+R3rT6wzITKEI0pIRZgXXx+jGWOm3syc=;7:BasDMdoz9ZFzEzny/YJoRD6WtZ4xf/7A8PkIxJ3ijJBGfUYGGqJ+RfEI49qOhPLQfG3sitWRGKldhjS3YJk+gxu0D7lcUrRPbQVsIKckuf3wOjR/C33VJhKXTfLRizOe9oERsYdEflHkNiNwpycRCFcJN9WZVFzAbVermi42WK1wx37so65vWuChaCVqOYwtw+H5nMOf+bdVbvJXO7541hymBORm/v0PV4r3QnzWDj7U6O+H2Z81fclAFLEQM3n6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(39850400004)(376002)(346002)(189003)(199004)(16586007)(76176011)(8656006)(386003)(110136005)(54906003)(6506007)(51416003)(81156014)(53416004)(316002)(2906002)(8676002)(8936002)(81166006)(72206003)(53936002)(74482002)(8976002)(305945005)(478600001)(6512007)(50466002)(6116002)(7736002)(186003)(1076002)(3846002)(16526019)(50226002)(5660300001)(25786009)(66066001)(26005)(6486002)(97736004)(47776003)(106356001)(68736007)(7416002)(48376002)(6666003)(42882006)(2950100002)(52116002)(36756003)(4326008)(105586002)(69596002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR10MB0439;H:prevas-ravi.prevas.se;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR10MB0439;23:cY+3R7CpmtcDSlVoAWWyaXJVPvXy42yLodJMaEvFd?=
+ =?us-ascii?Q?9xkJKMPnhQvEP2LPvF7yor0wfh1PIF1F1Y5ijkgD93xFheq6iGA4IaEOWXGg?=
+ =?us-ascii?Q?WrTey89j0hOR/hnL3ZScRy1C9aMsGj+kne18/txD0wUWxLoYZrI90JtJgg8L?=
+ =?us-ascii?Q?3khgXk1bD31fXPtWm7A5IES0A4fGX0wyYCEvm168h+USdktQ32oyLK4jSSAB?=
+ =?us-ascii?Q?lc/O45kqeouIbVUgyqgysmQl+KHw+MWW9I6Fe/v8r/DgWXH/EEMljqiiy1HF?=
+ =?us-ascii?Q?MJ67UpQ6e5LHrAsQvMSBk9Tiz4LcnJ13zYa2fQma90pS6mlvDvuPcxh98ZaW?=
+ =?us-ascii?Q?3kTE1IeGsh4gwGWPetccLV/uj/r4VQrNCEbOZU8SbNXphPRheZWZK5sXgaI9?=
+ =?us-ascii?Q?ydkaH0cvjkSeHAbvfNLROWTMJZDUbJXLQplPndNKNnG0sZNj2hZExLgX+Zku?=
+ =?us-ascii?Q?O34x7PvfI1u3TJe3jhOsD/Mh1sjOD+XX+5ZTTbftinjpDg3onklMT2UewJ5p?=
+ =?us-ascii?Q?YlwZYBNyGod+bBRSNVOe/Hh6wo5oQtWHj0YOe+1jdVRSrjOBCvQ4gyQnxSrj?=
+ =?us-ascii?Q?+eGPF0hQgQH8nFGcQFd2mIENTUG9m6orDVQovB51+A5HRV3x3JuV8WUZqJ3Z?=
+ =?us-ascii?Q?2HmhOz2JUcorZ4cjO8jMoe28NI+lg7PuzYC/EX5NJzy/9mv/oxyoaYbhjHK+?=
+ =?us-ascii?Q?5k1PQH2LekFYwd1CNEzD8XQem9CiFbjFGd3MpuPRjCEdM16B0uzPzZtvnYP+?=
+ =?us-ascii?Q?yrFukbATJkrt3H2cnNwAychGNUCtNhN/eY7m07Pbm985vB1yZDgiYEQ9AcRm?=
+ =?us-ascii?Q?YCGDDFNpnrQ2Fy4Nc+wKjAuhfV+x4GidyYV0B42L2DifrC1Q6sbkY9mLxfJE?=
+ =?us-ascii?Q?YqrQ8F1NlF+6eqaHTDZNgINeadGP2CaBr2qtKsZGfZMMqNDtIHiiOiNXkHM4?=
+ =?us-ascii?Q?xQ95+y83IkeOI/3iV6tDAyr/cP6BBP9B0e1drxnLOUZ3B/sXHcNpCqK+RW/n?=
+ =?us-ascii?Q?avdHUFJwu8I7kslCtQd224Sb+MmMw1YS2DrQr4xGgwDt8Io16YObUiHgGaQo?=
+ =?us-ascii?Q?dXTR12MI3pgtxGbtJ8anDhkyaUai7WHAbu/X/c0mdGyJhYmSnl+pDHSQjeus?=
+ =?us-ascii?Q?n7YfBsa83PPLinIGWWOADdZdiMQovyiYxrcsuB7ay8FTDTXAXa0kmzEpoHMR?=
+ =?us-ascii?Q?QuD9RwRCSu3IV6hHFS+3EOWMxqx4V38zelloPVba/+3v8IN3HOIFHOAEbqcA?=
+ =?us-ascii?Q?dG3ddNfm9bW8DIntsT0UE/1EnRqB5dOwZh4yAatsxpBlWbcCkH5s5DfBj1xI?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR10MB0439;6:P5hNlNd0R28PBbwieF3uxoxNNSQcH+NKaJy4ze7rMITnzl3SsOT3kngPAHqOqmKjrH5l4wye/s/4p/iS3ibgKw/VTiPgsRJR3aIC6euGEgik0u10XP/OeIJyLKyRwJif0txXauzGZJtzrVQWKScXAauro815EcuZtpX7Xzjc32Kv64KFDsmaOhlMMpjfXhodDwCqypBSLyRt1Cb/tJNA95EdMYcWnVADXmYgOizDFeYioLmSXzu+iDeZF/pT1IK1OK564OsyN1mAXQRrNi10uJq1ndYZBGd8AImKzNrC+helqvNs7qnDl7z5Dizcbcshi9SRcdAxvcnN8rXGAWJYxuIuDQ1Yu8P4I3FIqgq5Df0=;5:uC6RL7hLdFrrXyawKNtFlD8/gF2uydM5wy+hE9HVn5nXKpuW6nriaWsYpABf/96drT4hMLv5R392U0uZaAtZPtX5b/UKbq8JMQKwbAuQEN6Ns+WBCC+jyiGScQGFEOd11no/J7S7VBn5pSMABpJHImZx+NNAum6TO9/zT0DH/Nw=;24:sffr6ilCNCNa9Z5Tj7iZuRPU/3NF8so+Y+lDlgf1pOjjthPyqo5W4v7PKluIpiRRzdCGzeSVCoIb4HGlBtIcfETCm1xGejN4AgCCUpX5WhM=;7:KJvOgOE0AA4M+T3V+OSn6vaYOPM1wVi5YHLelPe/8qVYnSRFAX0WJF808A6mCz17ElgGmt0L3THnjp39mvNKVtELsHqj2I2Ru979HP7R8db4ywKvBAFm+0xFg2Uq+mabahwfB80uXPT2JJLR0gTzsTZaMpU4GuDWq4m76Up4vuIWBTlPNqp+UJIS8vEqLJkDHrCjEFeimBfpY/kfpkbDSpwgK8pgbJ9fY31zFwIZQGyhXY9R10UH3N5FUsy1N2RL
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 21:09:16.1764 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14d1cce8-2871-45aa-55d9-08d57b01b2d3
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 21:09:17.8953 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40d1ba17-baa3-4d5c-4ca6-08d57b01b3ea
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR10MB0439
@@ -78,239 +79,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1021A allows inverting the polarity of six interrupt lines
-IRQ[0:5] via the scfg_intpcr register, effectively allowing
-IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_EDGE_FALLING for those. We just need to
-check the type, set the relevant bit in INTPCR accordingly, and fixup
-the type argument before calling the GIC's irq_set_type.
-
-In fact, the power-on-reset value of the INTPCR register on the LS1021A
-is so that all six lines have their polarity inverted. Hence any
-hardware connected to those lines is unusable without this: If the line
-is indeed active low, the generic GIC code will reject an irq spec with
-IRQ_TYPE_LEVEL_LOW, while if the line is active high, we must obviously
-disable the polarity inversion (writing 0 to the relevant bit) before
-unmasking the interrupt.
-
-Some other Layerscape SOCs (LS1043A, LS1046A) reportedly have a similar
-feature, just with a different number of external interrupt lines (and a
-different POR value for the INTPCR register). This driver should be
-prepared for supporting those by properly filling out the device tree
-node, but I don't have the full reference manual, nor the hardware to be
-able to test it. I do know, from a tiny clipout from one of the other
-reference manuals I was shown, that 1U<<n is the right formula to
-use for setting/clearing the bit corresponding to the external IRQn, but
-I don't know which interrupts on the GIC those lines represent.
-
-There's also a little Kconfig/Kbuild issue: For now, I've let the driver
-be built if CONFIG_SOC_LS1021A is set. For the others, it might make
-sense to instead use CONFIG_ARCH_LAYERSCAPE, but SOC_LS1021A does not
-select ARCH_LAYERSCAPE. The simplest solution is probably to do what is
-done for irq-ls-scfg-msi.c: introduce a "def_bool y if SOC_LS1021A ||
-ARCH_LAYERSCAPE" symbol. But I think that can wait until somebody with
-the hardware actually tests that this works for the other platforms. At
-that point, one can also add the extra IRQCHIP_DECLARE instances.
+This adds Device Tree binding documentation for the external interrupt
+lines with configurable polarity present on some Layerscape SOCs.
 
 Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 ---
- drivers/irqchip/Makefile        |   1 +
- drivers/irqchip/irq-ls-extirq.c | 176 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 177 insertions(+)
- create mode 100644 drivers/irqchip/irq-ls-extirq.c
+ .../interrupt-controller/fsl,ls-extirq.txt         | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
 
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index d27e3e3619e0..6fe8612e6a49 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_MVEBU_ICU)			+= irq-mvebu-icu.o
- obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
- obj-$(CONFIG_MVEBU_PIC)			+= irq-mvebu-pic.o
- obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
-+obj-$(CONFIG_SOC_LS1021A)		+= irq-ls-extirq.o
- obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
- obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o irq-aspeed-i2c-ic.o
- obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
-diff --git a/drivers/irqchip/irq-ls-extirq.c b/drivers/irqchip/irq-ls-extirq.c
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
 new file mode 100644
-index 000000000000..e5665ad867d6
+index 000000000000..e510c715e8f6
 --- /dev/null
-+++ b/drivers/irqchip/irq-ls-extirq.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
+@@ -0,0 +1,44 @@
++* Freescale Layerscape external IRQs
 +
-+#define pr_fmt(fmt) "irq-ls-extirq: " fmt
++Some Layerscape SOCs (LS1021A, LS1043A, LS1046A) support inverting
++the polarity of certain external interrupt lines.
 +
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_address.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++The device node must be a child of the node representing the
++Supplemental Configuration Unit (SCFG).
 +
-+#define MAXIRQ 12
++Required properties:
++- compatible: should be "fsl,<soc-name>-extirq", e.g. "fsl,ls1021a-extirq".
++- interrupt-controller: Identifies the node as an interrupt controller
++- #interrupt-cells: Must be 2. The first element is the index of the
++  external interrupt line. The second element is the trigger type.
++- interrupt-parent: phandle of GIC.
++- reg: Specifies the Interrupt Polarity Control Register (INTPCR) in the SCFG.
++- fsl,extirq-map: Specifies the mapping to interrupt numbers in the parent
++  interrupt controller. Interrupts are mapped one-to-one to parent
++  interrupts.
 +
-+struct extirq_chip_data {
-+	struct regmap *syscon;
-+	u32           intpcr;
-+	bool          bit_reverse;
-+	u32           nirq;
-+	u32           parent_irq[MAXIRQ];
-+};
++Optional properties:
++- fsl,bit-reverse: This boolean property should be set on the LS1021A
++  if the SCFGREVCR register has been set to all-ones (which is usually
++  the case), meaning that all reads and writes of SCFG registers are
++  implicitly bit-reversed. Other compatible platforms do not have such
++  a register.
 +
-+static int
-+ls_extirq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	irq_hw_number_t hwirq = data->hwirq;
-+	struct extirq_chip_data *chip_data = data->chip_data;
-+	u32 value, mask;
++Example:
++	scfg: scfg@1570000 {
++		compatible = "fsl,ls1021a-scfg", "syscon";
++		...
++		extirq: interrupt-controller {
++			compatible = "fsl,ls1021a-extirq";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			interrupt-parent = <&gic>;
++			reg = <0x1ac>;
++			fsl,extirq-map = <163 164 165 167 168 169>;
++			fsl,bit-reverse;
++		};
++	};
 +
-+	if (chip_data->bit_reverse)
-+		mask = 1U << (31 - hwirq);
-+	else
-+		mask = 1U << hwirq;
 +
-+	switch (type) {
-+	case IRQ_TYPE_LEVEL_LOW:
-+		type = IRQ_TYPE_LEVEL_HIGH;
-+		value = mask;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		type = IRQ_TYPE_EDGE_RISING;
-+		value = mask;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+	case IRQ_TYPE_EDGE_RISING:
-+		value = 0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(chip_data->syscon, chip_data->intpcr, mask, value);
-+
-+	data = data->parent_data;
-+	return data->chip->irq_set_type(data, type);
-+}
-+
-+static struct irq_chip extirq_chip = {
-+	.name			= "extirq",
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_set_type		= ls_extirq_set_type,
-+	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+	.flags                  = IRQCHIP_SET_TYPE_MASKED,
-+};
-+
-+static int
-+ls_extirq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
-+			   unsigned long *hwirq, unsigned int *type)
-+{
-+	if (!is_of_node(fwspec->fwnode))
-+		return -EINVAL;
-+
-+	if (fwspec->param_count != 2)
-+		return -EINVAL;
-+
-+	*hwirq = fwspec->param[0];
-+	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-+	return 0;
-+}
-+
-+static int
-+ls_extirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+		       unsigned int nr_irqs, void *arg)
-+{
-+	irq_hw_number_t hwirq;
-+	struct irq_fwspec *fwspec = arg;
-+	struct irq_fwspec gic_fwspec;
-+	struct extirq_chip_data *chip_data = domain->host_data;
-+
-+	if (fwspec->param_count != 2)
-+		return -EINVAL;
-+
-+	hwirq = fwspec->param[0];
-+	if (hwirq >= chip_data->nirq)
-+		return -EINVAL;
-+
-+	irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &extirq_chip,
-+				      chip_data);
-+
-+	gic_fwspec.fwnode = domain->parent->fwnode;
-+	gic_fwspec.param_count = 3;
-+	gic_fwspec.param[0] = GIC_SPI;
-+	gic_fwspec.param[1] = chip_data->parent_irq[hwirq];
-+	gic_fwspec.param[2] = fwspec->param[1];
-+
-+	return irq_domain_alloc_irqs_parent(domain, virq, 1, &gic_fwspec);
-+}
-+
-+static const struct irq_domain_ops extirq_domain_ops = {
-+	.translate	= ls_extirq_domain_translate,
-+	.alloc		= ls_extirq_domain_alloc,
-+	.free		= irq_domain_free_irqs_common,
-+};
-+
-+static int __init
-+ls_extirq_of_init(struct device_node *node, struct device_node *parent)
-+{
-+
-+	struct irq_domain *domain, *domain_parent;
-+	struct extirq_chip_data *chip;
-+	const __be32 *intpcr;
-+	int ret;
-+
-+	domain_parent = irq_find_host(parent);
-+	if (!domain_parent) {
-+		pr_err("interrupt-parent not found\n");
-+		return -EINVAL;
-+	}
-+
-+	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->syscon = syscon_node_to_regmap(node->parent);
-+	if (IS_ERR(chip->syscon)) {
-+		ret = PTR_ERR(chip->syscon);
-+		pr_err("Failed to lookup parent regmap\n");
-+		goto err;
-+	}
-+	intpcr = of_get_address(node, 0, NULL, NULL);
-+	if (!intpcr) {
-+		ret = -ENOENT;
-+		pr_err("Missing INTPCR offset value\n");
-+		goto err;
-+	}
-+	chip->intpcr = __be32_to_cpu(*intpcr);
-+
-+	ret = of_property_read_variable_u32_array(node, "fsl,extirq-map",
-+						  chip->parent_irq,
-+						  1, ARRAY_SIZE(chip->parent_irq));
-+	if (ret < 0)
-+		goto err;
-+	chip->nirq = ret;
-+	chip->bit_reverse = of_property_read_bool(node, "fsl,bit-reverse");
-+
-+	domain = irq_domain_add_hierarchy(domain_parent, 0, chip->nirq, node,
-+					  &extirq_domain_ops, chip);
-+	if (!domain) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	return 0;
-+
-+err:
-+	kfree(chip);
-+	return ret;
-+}
-+
-+IRQCHIP_DECLARE(ls1021a_extirq, "fsl,ls1021a-extirq", ls_extirq_of_init);
++	interrupts-extended = <&gic GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
++			      <&extirq 1 IRQ_TYPE_LEVEL_LOW>;
 -- 
 2.15.1
