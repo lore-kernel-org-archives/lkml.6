@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtmZplnmJNNIngKZBPRzewGGr7CrAKKdIrHFWZLu39qSN6F2dTOYvMalrSPLzOY1QKA7b8I
-ARC-Seal: i=1; a=rsa-sha256; t=1519410958; cv=none;
+X-Google-Smtp-Source: AG47ELvJPKASV26rnueT8ICtcUOrs7/txEKAMXeRuL9jwo0cqQ42a8y24rdk+yX3ACoWdxGooRY3
+ARC-Seal: i=1; a=rsa-sha256; t=1519410956; cv=none;
         d=google.com; s=arc-20160816;
-        b=TbwdLEuLxEWa/q/CDznsfYSYOnG4jCr7emjF2LsbjrrXqn21JPzsdNREpapFZS1sxi
-         zABSWo9R5sIHDItl0LcaozyPL6j/dkwy9JzsB/sSdinxr+2UeIxY++z8dWL54bj9AIGy
-         Jf0sWYgQGzVaMhQutAuMtzmbxBUqwtXV8Uy/CCkC5J1AdSWgDBAWbigzRafc7xLiUMaC
-         fubJ9L8jDSnHvZ6vsk+TBDo+ku91/NMWddEKl2McT1DIGwsSWvlLi+JAKGnvv3QsgsaQ
-         78wGSPaGJxsycVIhWXtBLQ5S2TOZr0SFd/A0Vk7Bs9dcR/LDzUwrFmtLLJLeLjzIgSj/
-         ijtg==
+        b=XcHrbojIAv2DtogRUE+7yoLlvrKc8s36IkTSIV2ZjAevA7o2tvYS1iqGOgP9tjNlbh
+         jArHbCJK1LjOSePieMk4T+ZgAb64jIUGi9bj7chzWJAMdzVU2tgV10751a1AlWfNJKiZ
+         Hr7Ij4OpaE6ScUxiDbgtqefseMdPp0IWoHIiExId3UTkyGQNl0CGdkZabzCTViQAOv2e
+         Auos71wRJtqfmgrHhjpbjrFcpj4kBZpGmiVtuu3aqko2Yd3qBv1XhC3EqAkMY15WyJPC
+         jRUEoif8G8j7b2ia86KJG+/k3q6RTJ6MqH6bXusf8Xty2a1rr/0Qxc4uGfAgkJOC4dp4
+         +jKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=An5A++usW0/IAlJZwZBQmxh5UOWxltkCgnJjDLP1ZxU=;
-        b=CDw74ml3DL2BiS4jKXvXoFOmKotmMUQVLd0asSgTDxbmnk3zKohAz9FoqGQAe0H34p
-         3JaontHRbJ+IEGjc/S5RsitX2ZED9AeUiCF4jnpUWv4w04Dv26td9zXYlUWq7/HGZwqq
-         lYkHk7trHZ3q/WGYWHNgGYPr29xt9LfhdPiOa/UyNORKTPJZIu9KcWvrdGc00LwZGXIy
-         oLeFPzInXNaPRkszz+HEQaVcnqsqONbbyhV7AyS9lZqDDxsYt4nZB0KwVivLFPESi+/V
-         McsmYoLwcUeRpyReNfSJrPms8mrHTY6yfUkeRyul3N2gWOq31zE5ozn1O02toiEoo6uv
-         ipMQ==
+        bh=VF95gGtQir1geGeq9pyYk3dSk66hWyHhju/6qmBQZIs=;
+        b=DKv7fRYbtfSuqn+AXoVanb5Q7ppmYQX2VSgUzsz7EPezqy6Ghe7VdIN7o4Dyzt3nNA
+         v3FTO/GGJ/q+YXdelIRStqwzCG0sj2bCzRr4NAUslixZ7bJhhccrsN8/rSCCmR8DjQ3g
+         yBsI1nGF2Cz2YBPJmtepnVg4DRjD+6Z/7whJQI8q0gPEfjjCyD36wU+d2pUtmzkbpUo2
+         C8ApFCZuTkjzTLHERVAgz7/xvjXCfoRVQy6TD+mAKqbQS1UxQTVSng6PvH429k6kAxFU
+         yewaiQo2NNTS4IVRNZMbz/hmvTvLXgrNQmqtaE83b/+94Q7+TWWkO0hjYVKwAs3+g9uz
+         0xbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.4 070/193] arm64: define BUG() instruction without CONFIG_BUG
-Date: Fri, 23 Feb 2018 19:25:03 +0100
-Message-Id: <20180223170336.924929508@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Yazen Ghannam <Yazen.Ghannam@amd.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 069/193] x86/ras/inject: Make it depend on X86_LOCAL_APIC=y
+Date: Fri, 23 Feb 2018 19:25:02 +0100
+Message-Id: <20180223170336.756832745@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217866108388873?=
-X-GMAIL-MSGID: =?utf-8?q?1593217866108388873?=
+X-GMAIL-THRID: =?utf-8?q?1593217862812726856?=
+X-GMAIL-MSGID: =?utf-8?q?1593217862812726856?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,85 +55,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit f13d52cb3fad03c237572be2ee691e1fe2d1d7bb upstream.
+commit d4b2ac63b0eae461fc10c9791084be24724ef57a upstream.
 
-This mirrors commit e9c38ceba8d9 ("ARM: 8455/1: define __BUG as
-asm(BUG_INSTR) without CONFIG_BUG") to make the behavior of
-arm64 consistent with arm and x86, and avoids lots of warnings in
-randconfig builds, such as:
+... and get rid of the annoying:
 
-kernel/seccomp.c: In function '__seccomp_filter':
-kernel/seccomp.c:666:1: error: no return statement in function returning non-void [-Werror=return-type]
+  arch/x86/kernel/cpu/mcheck/mce-inject.c:97:13: warning: ‘mce_irq_ipi’ defined but not used [-Wunused-function]
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+when doing randconfig builds.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20170123183514.13356-2-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/bug.h |   35 ++++++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 15 deletions(-)
+ arch/x86/Kconfig                        |    2 +-
+ arch/x86/kernel/cpu/mcheck/mce-inject.c |    5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/arm64/include/asm/bug.h
-+++ b/arch/arm64/include/asm/bug.h
-@@ -20,9 +20,6 @@
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1009,7 +1009,7 @@ config X86_MCE_THRESHOLD
+ 	def_bool y
  
- #include <asm/debug-monitors.h>
+ config X86_MCE_INJECT
+-	depends on X86_MCE
++	depends on X86_MCE && X86_LOCAL_APIC
+ 	tristate "Machine check injector support"
+ 	---help---
+ 	  Provide support for injecting machine checks for testing purposes.
+--- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
++++ b/arch/x86/kernel/cpu/mcheck/mce-inject.c
+@@ -152,7 +152,6 @@ static void raise_mce(struct mce *m)
+ 	if (context == MCJ_CTX_RANDOM)
+ 		return;
  
--#ifdef CONFIG_GENERIC_BUG
--#define HAVE_ARCH_BUG
--
- #ifdef CONFIG_DEBUG_BUGVERBOSE
- #define _BUGVERBOSE_LOCATION(file, line) __BUGVERBOSE_LOCATION(file, line)
- #define __BUGVERBOSE_LOCATION(file, line)				\
-@@ -36,28 +33,36 @@
- #define _BUGVERBOSE_LOCATION(file, line)
- #endif
- 
--#define _BUG_FLAGS(flags) __BUG_FLAGS(flags)
-+#ifdef CONFIG_GENERIC_BUG
- 
--#define __BUG_FLAGS(flags) asm volatile (		\
-+#define __BUG_ENTRY(flags) 				\
- 		".pushsection __bug_table,\"a\"\n\t"	\
- 		".align 2\n\t"				\
- 	"0:	.long 1f - 0b\n\t"			\
- _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
- 		".short " #flags "\n\t"			\
- 		".popsection\n"				\
--							\
--	"1:	brk %[imm]"				\
--		:: [imm] "i" (BUG_BRK_IMM)		\
--)
--
--#define BUG() do {				\
--	_BUG_FLAGS(0);				\
--	unreachable();				\
-+	"1:	"
-+#else
-+#define __BUG_ENTRY(flags) ""
-+#endif
-+
-+#define __BUG_FLAGS(flags)				\
-+	asm volatile (					\
-+		__BUG_ENTRY(flags)			\
-+		"brk %[imm]" :: [imm] "i" (BUG_BRK_IMM)	\
-+	);
-+
-+
-+#define BUG() do {					\
-+	__BUG_FLAGS(0);					\
-+	unreachable();					\
- } while (0)
- 
--#define __WARN_TAINT(taint) _BUG_FLAGS(BUGFLAG_TAINT(taint))
-+#define __WARN_TAINT(taint) 				\
-+	__BUG_FLAGS(BUGFLAG_TAINT(taint))
- 
--#endif /* ! CONFIG_GENERIC_BUG */
-+#define HAVE_ARCH_BUG
- 
- #include <asm-generic/bug.h>
- 
+-#ifdef CONFIG_X86_LOCAL_APIC
+ 	if (m->inject_flags & (MCJ_IRQ_BROADCAST | MCJ_NMI_BROADCAST)) {
+ 		unsigned long start;
+ 		int cpu;
+@@ -193,9 +192,7 @@ static void raise_mce(struct mce *m)
+ 		raise_local();
+ 		put_cpu();
+ 		put_online_cpus();
+-	} else
+-#endif
+-	{
++	} else {
+ 		preempt_disable();
+ 		raise_local();
+ 		preempt_enable();
