@@ -1,88 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeBWCIT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 21:08:19 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41064 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeBWCIS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 21:08:18 -0500
-Date: Fri, 23 Feb 2018 02:08:16 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] fs/dcache: Avoid the try_lock loop in d_delete()
-Message-ID: <20180223020816.GU30522@ZenIV.linux.org.uk>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
- <20180222235025.28662-4-john.ogness@linutronix.de>
+        id S1751480AbeBWCJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 21:09:26 -0500
+Received: from ozlabs.org ([103.22.144.67]:46093 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750916AbeBWCJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 21:09:24 -0500
+Date: Fri, 23 Feb 2018 13:09:20 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>, Greentime Hu <green.hu@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Farhan Ali <alifm@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the kvms390 tree with the nds32 tree
+Message-ID: <20180223130920.1db2c245@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222235025.28662-4-john.ogness@linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/z3XI4IZlZiwixXLux8+kDwN"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:50:22AM +0100, John Ogness wrote:
+--Sig_/z3XI4IZlZiwixXLux8+kDwN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> The trylock loop can be avoided with functionality similar to
-> lock_parent(). The fast path tries the trylock first, which is likely
-> to succeed. In the contended case it attempts locking in the correct
-> order. This requires to drop dentry->d_lock first, which allows
-> another task to free d_inode.
+Hi all,
 
-Wait a minute.  _What_ allows another task to free ->d_inode on
-a dentry we are holding a reference to?  Any place like that is
-a serious bug - after all, what's to prevent the same place
-doing that to dentry of an opened file, with obvious ugly
-results.
+Today's linux-next merge of the kvms390 tree got a conflict in:
 
-That's the whole reason why d_delete() is *NOT* making dentry
-negative when refcount is greater than 1 (i.e. when somebody
-else is holding a reference).
+  drivers/video/console/Kconfig
 
-Rules for ->d_inode:
+between commit:
 
-* initially NULL.
+  2312dbf7462b ("drivers/video/concole: add negative dependency for VGA_CON=
+SOLE on nds32")
 
-* only changes under ->d_lock
+from the nds32 tree and commit:
 
-* __dentry_kill() makes it NULL after dentry has been
-	+ marked dead
-	+ evicted from all lists except possibly shrink one.
-  with ->d_lock held through all of that.  The only thing
-  that can be done by anybody else with the ones stuck on
-  shrink list is actually freeing them.
+  2f1ca75f69f3 ("s390/setup : enable display support for KVM guest")
 
-  Note that once __dentry_kill() is called, that's it - dentry
-  is ours, for all practical purposes.  There'd better be no
-  other references to that sucker and we make sure that no new
-  ones will arise.
+from the kvms390 tree.
 
-* prior to the call of __dentry_kill() any would-be changer
-  of ->d_inode must be holding a reference to dentry.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-* changes from non-NULL to NULL are possible only when there's
-  nobody else holding references.
+--=20
+Cheers,
+Stephen Rothwell
 
-Changes from NULL to non-NULL _are_ possible (caller must be
-holding a reference, but that's it).  However, feeding a negative
-dentry to your dentry_lock_inode() is an instant oops - it won't
-live to the point where you would recheck ->d_inode for changes.
+diff --cc drivers/video/console/Kconfig
+index 27bb893cf6b2,7aa721e3a581..000000000000
+--- a/drivers/video/console/Kconfig
++++ b/drivers/video/console/Kconfig
+@@@ -9,7 -9,7 +9,7 @@@ config VGA_CONSOL
+  	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
+  		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
+  		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
+- 		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32
+ -		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !S390
+++		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32 && !S390
+  	default y
+  	help
+  	  Saying Y here will allow you to use Linux in text mode through a
 
-So if you see any place where positive could be changed to negative
-under us, we do have a problem.  Big one.
+--Sig_/z3XI4IZlZiwixXLux8+kDwN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Refcount can change once we drop ->d_lock, but it can't get to zero -
-our reference is still with us.
+-----BEGIN PGP SIGNATURE-----
 
-Note that ->d_parent *CAN* change, no matter how many references are
-held.  That's what rcu games in lock_parent() are about - dentry
-can be moved and ex-parent could've been freed if that was the last
-reference.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqPd9AACgkQAVBC80lX
+0GwS2Af+OmtL5nygWdqyvozvkMGsBLadgClRNoqnTNwwib9gxK0IxSUK+eFMubyF
+cv/NjMM9bBf9JmQP0J0nkIJJsoJjusUqgAz0PjJ/PJF0Jn+K5D7oDcM4p9990C0O
+L2Afh3TQp7xf374naCJ0oHL1ityh6+WjtxWVNJR7I+YDzj0aC2aWQAhLOqmePVC/
+c6mjoUMoyOeOxEsOM4O+oF/TeOn/hgEmZp8CJ0RHdhLG4zX6vZzv5vqWlpIGAbTU
+auNJFrVSBRJmrhpdheSebRpzV9qxD5hqf15mZaEG/HfYIOvFPOkWTEPpwNuieqx5
+E3IQzf41xach4nWBDJV6NhxLwGbpcQ==
+=ytTk
+-----END PGP SIGNATURE-----
+
+--Sig_/z3XI4IZlZiwixXLux8+kDwN--
