@@ -1,40 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtceD49b/AdRhuZgrcRS/K4Al9m1IKsI1FJJERCBYCsVVaFuAg7zU7Da7Q8YQV5I9KxINR0
-ARC-Seal: i=1; a=rsa-sha256; t=1519410936; cv=none;
-        d=google.com; s=arc-20160816;
-        b=suMwLm3VlomE7cdpjfmexzlxlrD7AH7GJeA09rYspC+4xbE+hlSbdFag1s1QFFkZSD
-         LsE4Y9xduGeXcW7mf08oyfqIgqIX6B6SqQ5nysGfq3ZWXIdSH8Po4tQuXdQKX8O45ULP
-         JEgJCjWYFM1mHWqsBqvoCaX03IwSRMkrPPojB6mYz3aKxW6tBPQD4dqk5WhITJ0cncJQ
-         /02K2f0enf2zLzb+ilfrqf9WDixfSaCC0RmXEd/zBXQ+t3zIQgdkUh6NKficrjg+yMlm
-         lVZVzEiC4QQRxLXMYM9wSp2sC3UEraCMlrPzH7L3dpvU/MNz+RKovKQxNCAccrK7z2jQ
-         cPDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=zBJCaw1nUTM3uMhYLjo4iGphpSQ+v3yBpHca+Y0gwY8=;
-        b=eA9FXjLMi+R+ZhtmVUFPSUvcNpM1Xv6+Wb9VGWwOPUAk07raaijM/lY9pZ0XURGrqP
-         +vnRMQ/j4ngyLQG1lll9+NribCEUbCup6Duis2de8af0fLQ9+FmOVJvQjTOUT8AsDKYf
-         /vu69mBGeCga9dUXj0qateTqhuKWYLvpm3N2xyNHvCqIZZme0iwb3OsseypVcp9IDTTP
-         nkGD2/T+3jvO3P/relI8peOtITdzs7hfXDmco/YX5TzLYcZDn9iQw4mHO8+P07AD+WVe
-         +eWfJ9ZURDe8WCR/1C7FVVLpnvF0x15nYlx8Q5awsMr3ckwxMAjd+7oTRurdfZq0PzlW
-         eoLw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3559911-1519410933-2-2283830517952143745
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519410927; b=C8D9Bv+qVoKEGOyeGGjozYWvorX4/bt9KaHCnJw7rq2g3dr
+    BuVWcAIxCFH32ZimpMKtQP78WjynuRUnVuEW8InZe517axI4QncI/lth7f4TMAMT
+    s6sxzsEs0KFbuZRAD+eAO2nrAGDzih+N/OmqaBwSrYkdJuly+y783053WR9S8KNE
+    LOGbFTNwWKkFjAaAFPMZh2Hrm4QbXCdGsixrwsLczkDTcl8F6qcrPE/4egKh5PJf
+    B72uaebr3xuFconueJ52gq+0rtiQC1u30tcp3fdKA2RmOa7I9jRp7D5y4DgVjdJM
+    Rb9fNzFeARB/7eY44TQvNKxuPzCLCU9WuWGpKHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519410927; bh=jyvgVjwgmLGtoS/+Z1QwUGbSa2
+    EkK0ZFCiKkJeW+nns=; b=lD8A8cq2B09z1xLla/axtHECAf1xCJAlABgCoUNWPi
+    o/RPlbTGu4bnqnLfb7CM83291NdAB3eoAWjXZUvHy3w7dJxDuBbQX1gTvXsGhdDx
+    s4qTUTE6dVMfXMum/WiaFxpJZujrj6zJdsOva4TAd1v6jlp1WyPRApARmL/Myoum
+    4CHDOAIhPFZFFakvL2KWK9mhZ9mW1Jr5lFY9yOJtbHoRzjwFzCJf/lwm8vSgqao4
+    q4Y6Ly3E3I4Sazl1Dd7/03pC4fYdAV7RbqhtqPzkls5VT7dy57dByRQ+FgjKNxQ1
+    NJkTcmWGI/ArUgO2plO/tkk4DYdnDRSIIt6TRtc2eHIw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753793AbeBWSfV (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:35:21 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37242 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753770AbeBWSfT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:35:19 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-	Balamuruhan S <bala24@linux.vnet.ibm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 036/193] perf bench numa: Fixup discontiguous/sparse numa nodes
-Date: Fri, 23 Feb 2018 19:24:29 +0100
-Message-Id: <20180223170331.756199134@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, bp@suse.de,
+        linux-efi@vger.kernel.org, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 058/193] mm/early_ioremap: Fix boot hang with earlyprintk=efi,keep
+Date: Fri, 23 Feb 2018 19:24:51 +0100
+Message-Id: <20180223170335.072376251@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217587003347681?=
-X-GMAIL-MSGID: =?utf-8?q?1593217842683299123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,130 +83,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+From: Dave Young <dyoung@redhat.com>
 
 
-[ Upstream commit 321a7c35c90cc834851ceda18a8ee18f1d032b92 ]
+[ Upstream commit 7f6f60a1ba52538c16f26930bfbcfe193d9d746a ]
 
-Certain systems are designed to have sparse/discontiguous nodes.  On
-such systems, 'perf bench numa' hangs, shows wrong number of nodes and
-shows values for non-existent nodes. Handle this by only taking nodes
-that are exposed by kernel to userspace.
+earlyprintk=efi,keep does not work any more with a warning
+in mm/early_ioremap.c: WARN_ON(system_state != SYSTEM_BOOTING):
+Boot just hangs because of the earlyprintk within the earlyprintk
+implementation code itself.
 
-Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/1edbcd353c009e109e93d78f2f46381930c340fe.1511368645.git.sathnaga@linux.vnet.ibm.com
-Signed-off-by: Balamuruhan S <bala24@linux.vnet.ibm.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This is caused by a new introduced middle state in:
+
+  69a78ff226fe ("init: Introduce SYSTEM_SCHEDULING state")
+
+early_ioremap() is fine in both SYSTEM_BOOTING and SYSTEM_SCHEDULING
+states, original condition should be updated accordingly.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: bp@suse.de
+Cc: linux-efi@vger.kernel.org
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20171209041610.GA3249@dhcp-128-65.nay.redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/bench/numa.c |   56 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 51 insertions(+), 5 deletions(-)
+ mm/early_ioremap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -208,6 +208,47 @@ static const char * const numa_usage[] =
- 	NULL
- };
+--- a/mm/early_ioremap.c
++++ b/mm/early_ioremap.c
+@@ -103,7 +103,7 @@ __early_ioremap(resource_size_t phys_add
+ 	enum fixed_addresses idx;
+ 	int i, slot;
  
-+/*
-+ * To get number of numa nodes present.
-+ */
-+static int nr_numa_nodes(void)
-+{
-+	int i, nr_nodes = 0;
-+
-+	for (i = 0; i < g->p.nr_nodes; i++) {
-+		if (numa_bitmask_isbitset(numa_nodes_ptr, i))
-+			nr_nodes++;
-+	}
-+
-+	return nr_nodes;
-+}
-+
-+/*
-+ * To check if given numa node is present.
-+ */
-+static int is_node_present(int node)
-+{
-+	return numa_bitmask_isbitset(numa_nodes_ptr, node);
-+}
-+
-+/*
-+ * To check given numa node has cpus.
-+ */
-+static bool node_has_cpus(int node)
-+{
-+	struct bitmask *cpu = numa_allocate_cpumask();
-+	unsigned int i;
-+
-+	if (cpu && !numa_node_to_cpus(node, cpu)) {
-+		for (i = 0; i < cpu->size; i++) {
-+			if (numa_bitmask_isbitset(cpu, i))
-+				return true;
-+		}
-+	}
-+
-+	return false; /* lets fall back to nocpus safely */
-+}
-+
- static cpu_set_t bind_to_cpu(int target_cpu)
- {
- 	cpu_set_t orig_mask, mask;
-@@ -236,12 +277,12 @@ static cpu_set_t bind_to_cpu(int target_
+-	WARN_ON(system_state != SYSTEM_BOOTING);
++	WARN_ON(system_state >= SYSTEM_RUNNING);
  
- static cpu_set_t bind_to_node(int target_node)
- {
--	int cpus_per_node = g->p.nr_cpus/g->p.nr_nodes;
-+	int cpus_per_node = g->p.nr_cpus / nr_numa_nodes();
- 	cpu_set_t orig_mask, mask;
- 	int cpu;
- 	int ret;
- 
--	BUG_ON(cpus_per_node*g->p.nr_nodes != g->p.nr_cpus);
-+	BUG_ON(cpus_per_node * nr_numa_nodes() != g->p.nr_cpus);
- 	BUG_ON(!cpus_per_node);
- 
- 	ret = sched_getaffinity(0, sizeof(orig_mask), &orig_mask);
-@@ -641,7 +682,7 @@ static int parse_setup_node_list(void)
- 			int i;
- 
- 			for (i = 0; i < mul; i++) {
--				if (t >= g->p.nr_tasks) {
-+				if (t >= g->p.nr_tasks || !node_has_cpus(bind_node)) {
- 					printf("\n# NOTE: ignoring bind NODEs starting at NODE#%d\n", bind_node);
- 					goto out;
- 				}
-@@ -956,6 +997,8 @@ static void calc_convergence(double runt
- 	sum = 0;
- 
- 	for (node = 0; node < g->p.nr_nodes; node++) {
-+		if (!is_node_present(node))
-+			continue;
- 		nr = nodes[node];
- 		nr_min = min(nr, nr_min);
- 		nr_max = max(nr, nr_max);
-@@ -976,8 +1019,11 @@ static void calc_convergence(double runt
- 	process_groups = 0;
- 
- 	for (node = 0; node < g->p.nr_nodes; node++) {
--		int processes = count_node_processes(node);
-+		int processes;
- 
-+		if (!is_node_present(node))
-+			continue;
-+		processes = count_node_processes(node);
- 		nr = nodes[node];
- 		tprintf(" %2d/%-2d", nr, processes);
- 
-@@ -1283,7 +1329,7 @@ static void print_summary(void)
- 
- 	printf("\n ###\n");
- 	printf(" # %d %s will execute (on %d nodes, %d CPUs):\n",
--		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", g->p.nr_nodes, g->p.nr_cpus);
-+		g->p.nr_tasks, g->p.nr_tasks == 1 ? "task" : "tasks", nr_numa_nodes(), g->p.nr_cpus);
- 	printf(" #      %5dx %5ldMB global  shared mem operations\n",
- 			g->p.nr_loops, g->p.bytes_global/1024/1024);
- 	printf(" #      %5dx %5ldMB process shared mem operations\n",
+ 	slot = -1;
+ 	for (i = 0; i < FIX_BTMAPS_SLOTS; i++) {
