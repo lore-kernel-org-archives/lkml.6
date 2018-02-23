@@ -1,67 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751732AbeBWQzA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 11:55:00 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45242 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeBWQy6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 11:54:58 -0500
-X-Google-Smtp-Source: AH8x2277vGxY0wgEcmePIpScUwWoUv8897Vx7xrWc/78Und4oywBMr/TUgosr0EvyzePKGu5n/LH1w==
-Date: Fri, 23 Feb 2018 08:54:55 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] Support qcom pinctrl protected pins
-Message-ID: <20180223165455.GN93895@bjorns-mbp-2.lan>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
- <94a7bd07-8ad5-7ab1-20ab-a02fe2476efd@codeaurora.org>
- <CACRpkdbgz9PnyLgsn_grsGHbVnak54aOKhetsqfvag5wJNm7=g@mail.gmail.com>
+        id S1751762AbeBWQzy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 11:55:54 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38532 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751366AbeBWQzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 11:55:52 -0500
+Subject: Re: [PATCH v8 8/8] livepatch: Atomic replace and cumulative patches
+ documentation
+To: Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180221132914.4809-1-pmladek@suse.com>
+ <20180221132914.4809-9-pmladek@suse.com>
+ <alpine.LSU.2.21.1802231139030.26550@pobox.suse.cz>
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <a50b564b-e0c8-321f-cf90-8c001e52499b@redhat.com>
+Date: Fri, 23 Feb 2018 11:55:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbgz9PnyLgsn_grsGHbVnak54aOKhetsqfvag5wJNm7=g@mail.gmail.com>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+In-Reply-To: <alpine.LSU.2.21.1802231139030.26550@pobox.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23 Feb 06:22 PST 2018, Linus Walleij wrote:
-
-> On Tue, Feb 20, 2018 at 5:45 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> > On 01/25/2018 07:13 PM, Stephen Boyd wrote:
-> >>
-> >> This patchset proposes a solution to describing the valid
-> >> pins for a pin controller in a semi-generic way so that qcom
-> >> platforms can expose the pins that are really available.
-> >>
-> >> Typically, this has been done by having drivers and firmware
-> >> descriptions only use pins they know they have access to, and that
-> >> still works now because we no longer read the pin direction at
-> >> boot. But there are still some userspace drivers and debugfs facilities
-> >> that don't know what pins are available and attempt to read everything
-> >> they can. On qcom platforms, this may lead to a system hang, which isn't
-> >> very nice behavior, even if root is the only user that can trigger it.
-> >
-> > Any progress on this patch set?  Stephen no longer works for Qualcomm, so I
-> > don't know what the next step is, and I really want this feature in 4.17
-> > (we've missed so many merge windows already).
+On 02/23/2018 05:41 AM, Miroslav Benes wrote:
+> On Wed, 21 Feb 2018, Petr Mladek wrote:
 > 
-> I depend on Bjorn as maintainer of the pin control driver to ACK
-> the solution he likes.
+>> User documentation for the atomic replace feature. It makes it easier
+>> to maintain livepatches using so-called cumulative patches.
+>>
+>> Signed-off-by: Petr Mladek <pmladek@suse.com>
 > 
+> Acked-by: Miroslav Benes <mbenes@suse.cz>
+> 
+> Joe, are you planning to extend shadow vars documentation you mentioned 
+> before (v7), or do you want Petr to do it?
 
-I haven't found the time to review the reuse of the irq valid mask or
-the effort needed to replace this, other than that I think the series
-looks good.
+I created a sample cumulative patch for testing (I can post later),
+but I had a quick question regarding the callbacks...
 
-Regards,
-Bjorn
+>From v8 of the patch:
+
+  + Only the (un)patching callbacks from the _new_ cumulative livepatch are
+    executed. Any callbacks from the replaced patches are ignored.
+
+maybe I'm not testing this as intended, but I'm not seeing this
+behavior with the latest version of the patch.  See below.
+
+
+Init
+====
+
+Setup dynamic debug messages:
+
+  % echo "file kernel/livepatch/* +p" > /sys/kernel/debug/dynamic_debug/control
+  % echo "func klp_try_switch_task -p" >> /sys/kernel/debug/dynamic_debug/control
+
+
+Test 1
+======
+
+Copy the original callbacks demo, leave the atomic .replace feature off:
+
+diff -upr samples/livepatch/livepatch-callbacks-{demo.c,demo2.c}
+--- samples/livepatch/livepatch-callbacks-demo.c        2018-02-23 09:42:10.370223095 -0500
++++ samples/livepatch/livepatch-callbacks-demo2.c       2018-02-23 11:38:08.372557153 -0500
+@@ -191,6 +191,7 @@ static struct klp_object objs[] = {
+ static struct klp_patch patch = {
+        .mod = THIS_MODULE,
+        .objs = objs,
++       .replace = false,
+ };
+ 
+ static int livepatch_callbacks_demo_init(void)
+
+
+Load the two modules, disable and unload:
+
+  % dmesg -C
+  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+  % insmod samples/livepatch/livepatch-callbacks-demo2.ko
+  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo2/enabled
+  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+  % rmmod samples/livepatch/livepatch-callbacks-demo2.ko
+  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+
+All callbacks are called for both livepatch modules (expected):
+
+  % dmesg
+  [ 5755.608999] livepatch: enabling patch 'livepatch_callbacks_demo'
+  [ 5755.609014] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+> [ 5755.609054] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+  [ 5755.609055] livepatch: 'livepatch_callbacks_demo': starting patching transition
+  [ 5756.704163] livepatch: 'livepatch_callbacks_demo': completing patching transition
+> [ 5756.704259] livepatch_callbacks_demo: post_patch_callback: vmlinux
+  [ 5756.704260] livepatch: 'livepatch_callbacks_demo': patching complete
+  [ 5760.231035] livepatch: enabling patch 'livepatch_callbacks_demo2'
+  [ 5760.231038] livepatch: 'livepatch_callbacks_demo2': initializing patching transition
+> [ 5760.231077] livepatch_callbacks_demo2: pre_patch_callback: vmlinux
+  [ 5760.231078] livepatch: 'livepatch_callbacks_demo2': starting patching transition
+  [ 5761.696067] livepatch: 'livepatch_callbacks_demo2': completing patching transition
+> [ 5761.696166] livepatch_callbacks_demo2: post_patch_callback: vmlinux
+  [ 5761.696166] livepatch: 'livepatch_callbacks_demo2': patching complete
+  [ 5765.738278] livepatch: 'livepatch_callbacks_demo2': initializing unpatching transition
+> [ 5765.738319] livepatch_callbacks_demo2: pre_unpatch_callback: vmlinux
+  [ 5765.738319] livepatch: 'livepatch_callbacks_demo2': starting unpatching transition
+  [ 5767.712143] livepatch: 'livepatch_callbacks_demo2': completing unpatching transition
+> [ 5767.712502] livepatch_callbacks_demo2: post_unpatch_callback: vmlinux
+  [ 5767.712503] livepatch: 'livepatch_callbacks_demo2': unpatching complete
+  [ 5770.909701] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+> [ 5770.909743] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+  [ 5770.909743] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+  [ 5772.704108] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+> [ 5772.704215] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+  [ 5772.704216] livepatch: 'livepatch_callbacks_demo': unpatching complete
+
+
+Test 2
+======
+
+Make the second livepatch a cumulative one:
+
+diff -upr samples/livepatch/livepatch-callbacks-{demo.c,demo2.c}
+--- samples/livepatch/livepatch-callbacks-demo.c        2018-02-23 09:42:10.370223095 -0500
++++ samples/livepatch/livepatch-callbacks-demo2.c       2018-02-23 11:16:20.557557153 -0500
+@@ -191,6 +191,7 @@ static struct klp_object objs[] = {
+ static struct klp_patch patch = {
+        .mod = THIS_MODULE,
+        .objs = objs,
++       .replace = true,
+ };
+ 
+ static int livepatch_callbacks_demo_init(void)
+
+Load the two modules, disable and unload:
+
+  % dmesg -C
+  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+  % insmod samples/livepatch/livepatch-callbacks-demo2.ko
+  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo2/enabled
+  % rmmod samples/livepatch/livepatch-callbacks-demo2.ko
+  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+
+Pre and post patch callbacks are called for both modules (expected), but
+*no* unpatch callbacks are executed:
+
+  % dmesg
+  [ 5442.244332] livepatch: enabling patch 'livepatch_callbacks_demo'
+  [ 5442.244334] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+> [ 5442.244372] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+  [ 5442.244372] livepatch: 'livepatch_callbacks_demo': starting patching transition
+  [ 5444.704089] livepatch: 'livepatch_callbacks_demo': completing patching transition
+> [ 5444.704183] livepatch_callbacks_demo: post_patch_callback: vmlinux
+  [ 5444.704184] livepatch: 'livepatch_callbacks_demo': patching complete
+  [ 5448.567820] livepatch: enabling patch 'livepatch_callbacks_demo2'
+  [ 5448.567823] livepatch: 'livepatch_callbacks_demo2': initializing patching transition
+> [ 5448.567860] livepatch_callbacks_demo2: pre_patch_callback: vmlinux
+  [ 5448.567861] livepatch: 'livepatch_callbacks_demo2': starting patching transition
+  [ 5451.744131] livepatch: 'livepatch_callbacks_demo2': completing patching transition
+> [ 5451.744212] livepatch_callbacks_demo2: post_patch_callback: vmlinux
+  [ 5451.744213] livepatch: 'livepatch_callbacks_demo2': patching complete
+  [ 5455.002339] livepatch: 'livepatch_callbacks_demo2': initializing unpatching transition
+  [ 5455.002378] livepatch: 'livepatch_callbacks_demo2': starting unpatching transition
+  [ 5456.736068] livepatch: 'livepatch_callbacks_demo2': completing unpatching transition
+  [ 5456.736132] livepatch: 'livepatch_callbacks_demo2': unpatching complete
+
+
+BTW, should we just add this test-case to the doc / samples?
+
+-- Joe
