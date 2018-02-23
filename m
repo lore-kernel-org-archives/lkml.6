@@ -1,65 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752411AbeBWVgD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:36:03 -0500
-Received: from mail-it0-f51.google.com ([209.85.214.51]:35048 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeBWVfy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:35:54 -0500
-X-Google-Smtp-Source: AG47ELvqCSZQQUjPAYpgqy3dlZmW1E5hZbkHKrTJ7/yzQ9YPkO096rsIF6M5pjE3w8UHXzPMV+s80BJJwRLZyHkDbfU=
+        id S1752172AbeBWVjh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:39:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751455AbeBWVjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:39:35 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18AE217A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 23 Feb 2018 15:39:33 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] x86/pci: Re-use new dmi_get_bios_year() helper
+Message-ID: <20180223213933.GM14632@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+ <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180223201317.GG30522@ZenIV.linux.org.uk>
-References: <20180222235025.28662-1-john.ogness@linutronix.de>
- <20180222235025.28662-7-john.ogness@linutronix.de> <20180223035814.GZ30522@ZenIV.linux.org.uk>
- <20180223040814.GA30522@ZenIV.linux.org.uk> <87h8q7erlo.fsf@linutronix.de>
- <20180223150928.GC30522@ZenIV.linux.org.uk> <20180223174216.GD30522@ZenIV.linux.org.uk>
- <20180223201317.GG30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 23 Feb 2018 13:35:52 -0800
-X-Google-Sender-Auth: 9NHaGNqzwm_npAGDdalsRbQS6TI
-Message-ID: <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
-Subject: Re: [BUG] lock_parent() breakage when used from shrink_dentry_list()
- (was Re: [PATCH v2 6/6] fs/dcache: Avoid remaining try_lock loop in shrink_dentry_list())
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Ogness <john.ogness@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222125923.57385-2-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> Look:
->         dentry placed on a shrink list
->         we pick the fucker from the list and lock it.
->         we call lock_parent() on it.
->                 dentry is not a root and it's not deleted, so we proceed.
->                 trylock fails.
->                 we grab rcu_read_lock()
->                 we drop dentry->d_lock
+x86/PCI: Re-use ...
 
-[ deleted the bad things ]
+would match the arch/x86/pci/* convention.
 
-Should we just instead get the ref to the dentry before dropping the
-lock, so that nobody else can get to dentry_kill?
+On Thu, Feb 22, 2018 at 02:59:21PM +0200, Andy Shevchenko wrote:
+> ...instead of open coding its functionality.
 
-This is too subtle, and your fix to check d_lockref.count < 0 sounds
-wrong to me. If it's really gone, maybe it has been reused and the
-refcount is positive again, but it's something else than a dentry
-entirely?
+And I personally like it when changelogs are complete in themselves,
+i.e., they aren't a continuation of the subject line.  It makes things
+easier to read because the convention in written English is that the
+title and the body are separate things.
 
-Hmm.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-No, you extended the rcu read section, so I guess your patch is fine.
-And lock_parent already has that pattern, soiit's not new.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Ok, I agree, looks like lock_parent should just re-check that thing
-that it already checked earler, but that now might be true again
-because of we dropped d_lock.
+Assuming this goes via some other tree.
 
-              Linus
+> ---
+>  arch/x86/pci/acpi.c            | 8 ++------
+>  arch/x86/pci/direct.c          | 5 ++---
+>  arch/x86/pci/mmconfig-shared.c | 9 ++-------
+>  3 files changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
+> index 7df49c40665e..00e60de30328 100644
+> --- a/arch/x86/pci/acpi.c
+> +++ b/arch/x86/pci/acpi.c
+> @@ -140,12 +140,8 @@ static const struct dmi_system_id pci_crs_quirks[] __initconst = {
+>  
+>  void __init pci_acpi_crs_quirks(void)
+>  {
+> -	int year;
+> -
+> -	if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) && year < 2008) {
+> -		if (iomem_resource.end <= 0xffffffff)
+> -			pci_use_crs = false;
+> -	}
+> +	if ((dmi_get_bios_year() < 2008) && (iomem_resource.end <= 0xffffffff))
+> +		pci_use_crs = false;
+>  
+>  	dmi_check_system(pci_crs_quirks);
+>  
+> diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
+> index 2d9503323d10..a51074c55982 100644
+> --- a/arch/x86/pci/direct.c
+> +++ b/arch/x86/pci/direct.c
+> @@ -195,14 +195,13 @@ static const struct pci_raw_ops pci_direct_conf2 = {
+>  static int __init pci_sanity_check(const struct pci_raw_ops *o)
+>  {
+>  	u32 x = 0;
+> -	int year, devfn;
+> +	int devfn;
+>  
+>  	if (pci_probe & PCI_NO_CHECKS)
+>  		return 1;
+>  	/* Assume Type 1 works for newer systems.
+>  	   This handles machines that don't have anything on PCI Bus 0. */
+> -	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
+> -	if (year >= 2001)
+> +	if (dmi_get_bios_year() >= 2001)
+>  		return 1;
+>  
+>  	for (devfn = 0; devfn < 0x100; devfn++) {
+> diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+> index 96684d0adcf9..0b40482578b8 100644
+> --- a/arch/x86/pci/mmconfig-shared.c
+> +++ b/arch/x86/pci/mmconfig-shared.c
+> @@ -547,19 +547,14 @@ static void __init pci_mmcfg_reject_broken(int early)
+>  static int __init acpi_mcfg_check_entry(struct acpi_table_mcfg *mcfg,
+>  					struct acpi_mcfg_allocation *cfg)
+>  {
+> -	int year;
+> -
+>  	if (cfg->address < 0xFFFFFFFF)
+>  		return 0;
+>  
+>  	if (!strncmp(mcfg->header.oem_id, "SGI", 3))
+>  		return 0;
+>  
+> -	if (mcfg->header.revision >= 1) {
+> -		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
+> -		    year >= 2010)
+> -			return 0;
+> -	}
+> +	if ((mcfg->header.revision >= 1) && (dmi_get_bios_year() >= 2010))
+> +		return 0;
+>  
+>  	pr_err(PREFIX "MCFG region for %04x [bus %02x-%02x] at %#llx "
+>  	       "is above 4GB, ignored\n", cfg->pci_segment,
+> -- 
+> 2.16.1
+> 
