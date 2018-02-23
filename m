@@ -1,37 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvrnh6hi4Unb5hjnrSkIe/IHUpS4RhpZQsQ/BF9vTjk3mAiW/ED0xtbJDP1g40ITv/DqGF
-ARC-Seal: i=1; a=rsa-sha256; t=1519410832; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VeCSwxpf8OChje/JFuNk26RRXploTcfwmk/XSjATPsGTsh0BculTKXp7/AQdAWhtfm
-         YsAmfMIZ5xl7fVvhzMSLlc8gW7NA4r6hfb3iJ3odBgvdmq32Om+QCV373Z21bEA6muS8
-         zlRbZZGddyV8u7vVX14lxUrXuGVFr8KP3N3HrUzkRzGoz8QhDRrFtOw8apjsGNC5ng5u
-         PI7JvEP7BrOocXP1O+l8q4k6F5KTRfsAUEvuWhqLcw0ya5vGyWnFmwpUxSnFZ6OD7QIC
-         82k6oa0J+30on+18qkk/GEOQTy31jvOvBpt9Vre2KiHolvt9G91MkeqaKLTLrGmVxkZT
-         xd/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=JWG8BGv1gyKh3rlQg7TGrWsh19Oaj18E3+ex3Y+RJNM=;
-        b=gOjmuzdSU4pCG/fG5+te5F+ucMK1IIXdIZLuZRmo/BMhD06CPr5/97OxISR511jt0i
-         3+iVffsx7XkTuyeyKbW0hkJfB4rlSlZBJlXE/GgvFf/E4SdyhOR+vh+EHwt21MHAY0D5
-         HYHnuaTBlEirgIJTGR7/GcRqu8sB3on2KBDRLOU46rNV0OJ4mWQfn6cvso6sl5F/fHBH
-         0kWt+h5hxzaRdn8WIcn8So7ZYgtklICjAH3L/tkcejCVjthlpOaLtIlVo7mI6CeHc3vj
-         HOpA4rzTQ0L7fjzrg/uHPn1l9RLgmCDeSmTJbYqHjV8JOMfx0tcxEU4p0DvhKaxpNVuA
-         0kjw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410827-2-1582716348633304657
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519410826; b=ttRnsgcLl79z7m43qHUtbU9+S1UYj2cPumhLdISnMQn9wv0
+    RdVN0IYLqHEU5pNl6YUm01a1Jct2hEGF7kYcLAS+UQ1RvHwQ2qf6NLHf0xfbbmjk
+    GwD+lTsmkZltMvWn11Ih2hJ0k8ua2Gr5t6cYgC2XblGZR1vL1HNVVvHadp4JWPy0
+    N9Anrzmgn3uDgIdR4MRbBpqA35WK99eoT9hHLf4YVXgfG5DfDyqRqwSZvLqWZTfp
+    vh4fqxLOwdtuRTsTR3sMW/g93du3rbg+l1sU8vpU+gXjaOJiv6q+ZhM9FajQnPr8
+    jsMJ25Z21o9xsjh2ZcK8rqyt0jRlGMzEoeG6X5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519410826; bh=2EZf67pwns/+3q38DntVB8DYD8
+    BWEVfa5gPAQd8ItbA=; b=tfQZPcUWYu4WeqsWYI/ksb+T6tQPzVx/5+MNclRFSd
+    BPMs1x+fBQGFEUjZqHy9ryrRjzL574WKd/jqcKoN4kJsSq+4lQcmksV4SgtolDXw
+    4fgC4TjLKOYcGPoWRh03mDMBMgE+rGz0hquk4NjvuNu5n1eMyFEGNKwymmd9sauD
+    Kys/hG26h1VwnCdTqfVO7npb23OjQJM3AQPMWYV6jQuuRgpAnC4BWOodEgu9tf0Y
+    otFIRB6Rvbf1StPtYm9p3zJC8guodjWSKXQ5BCXIP3pBD9ScrmfL7L+L1dmGip2e
+    ZTOyfewG+CDDmQ+dPf9m+A11kt0sw1uS9CYEnQPa96Fg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753303AbeBWSdn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:33:43 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36644 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753191AbeBWSdm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:33:42 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Stable@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.4 028/193] staging: iio: adc: ad7192: fix external frequency setting
-Date: Fri, 23 Feb 2018 19:24:21 +0100
-Message-Id: <20180223170330.452883580@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Vandrovec <petr@vandrovec.name>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 025/193] dn_getsockoptdecnet: move nf_{get/set}sockopt outside sock lock
+Date: Fri, 23 Feb 2018 19:24:18 +0100
+Message-Id: <20180223170329.992961921@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -39,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217732777267779?=
-X-GMAIL-MSGID: =?utf-8?q?1593217732777267779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,79 +79,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit e31b617d0a63c6558485aaa730fd162faa95a766 upstream.
+commit dfec091439bb2acf763497cfc58f2bdfc67c56b7 upstream.
 
-The external clock frequency was set only when selecting
-the internal clock, which is fixed at 4.9152 Mhz.
+After commit 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), the caller of nf_{get/set}sockopt() must
+not hold any lock, but, in such changeset, I forgot to cope with DECnet.
 
-This is incorrect, since it should be set when any of
-the external clock or crystal settings is selected.
+This commit addresses the issue moving the nf call outside the lock,
+in the dn_{get,set}sockopt() with the same schema currently used by
+ipv4 and ipv6. Also moves the unhandled sockopts of the end of the main
+switch statements, to improve code readability.
 
-Added range validation for the external (crystal/clock)
-frequency setting.
-Valid values are between 2.4576 and 5.12 Mhz.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reported-by: Petr Vandrovec <petr@vandrovec.name>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198791#c2
+Fixes: 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/iio/adc/ad7192.c |   27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ net/decnet/af_decnet.c |   62 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 29 deletions(-)
 
---- a/drivers/staging/iio/adc/ad7192.c
-+++ b/drivers/staging/iio/adc/ad7192.c
-@@ -124,6 +124,8 @@
- #define AD7192_GPOCON_P1DAT	BIT(1) /* P1 state */
- #define AD7192_GPOCON_P0DAT	BIT(0) /* P0 state */
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -1337,6 +1337,12 @@ static int dn_setsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_setsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	/* we need to exclude all possible ENOPROTOOPTs except default case */
++	if (err == -ENOPROTOOPT && optname != DSO_LINKINFO &&
++	    optname != DSO_STREAM && optname != DSO_SEQPACKET)
++		err = nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
++#endif
  
-+#define AD7192_EXT_FREQ_MHZ_MIN	2457600
-+#define AD7192_EXT_FREQ_MHZ_MAX	5120000
- #define AD7192_INT_FREQ_MHZ	4915200
- 
- /* NOTE:
-@@ -199,6 +201,12 @@ static int ad7192_calibrate_all(struct a
- 				ARRAY_SIZE(ad7192_calib_arr));
+ 	return err;
  }
- 
-+static inline bool ad7192_valid_external_frequency(u32 freq)
-+{
-+	return (freq >= AD7192_EXT_FREQ_MHZ_MIN &&
-+		freq <= AD7192_EXT_FREQ_MHZ_MAX);
-+}
-+
- static int ad7192_setup(struct ad7192_state *st,
- 			const struct ad7192_platform_data *pdata)
- {
-@@ -224,17 +232,20 @@ static int ad7192_setup(struct ad7192_st
- 			 id);
- 
- 	switch (pdata->clock_source_sel) {
--	case AD7192_CLK_EXT_MCLK1_2:
--	case AD7192_CLK_EXT_MCLK2:
--		st->mclk = AD7192_INT_FREQ_MHZ;
--		break;
- 	case AD7192_CLK_INT:
- 	case AD7192_CLK_INT_CO:
--		if (pdata->ext_clk_hz)
--			st->mclk = pdata->ext_clk_hz;
--		else
--			st->mclk = AD7192_INT_FREQ_MHZ;
-+		st->mclk = AD7192_INT_FREQ_MHZ;
+@@ -1444,15 +1450,6 @@ static int __dn_setsockopt(struct socket
+ 		dn_nsp_send_disc(sk, 0x38, 0, sk->sk_allocation);
  		break;
-+	case AD7192_CLK_EXT_MCLK1_2:
-+	case AD7192_CLK_EXT_MCLK2:
-+		if (ad7192_valid_external_frequency(pdata->ext_clk_hz)) {
-+			st->mclk = pdata->ext_clk_hz;
-+			break;
-+		}
-+		dev_err(&st->sd.spi->dev, "Invalid frequency setting %u\n",
-+			pdata->ext_clk_hz);
-+		ret = -EINVAL;
-+		goto out;
- 	default:
- 		ret = -EINVAL;
- 		goto out;
+ 
+-	default:
+-#ifdef CONFIG_NETFILTER
+-		return nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
+-#endif
+-	case DSO_LINKINFO:
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (optlen != sizeof(unsigned long))
+ 			return -EINVAL;
+@@ -1500,6 +1497,12 @@ static int __dn_setsockopt(struct socket
+ 			return -EINVAL;
+ 		scp->info_loc = u.info;
+ 		break;
++
++	case DSO_LINKINFO:
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	return 0;
+@@ -1513,6 +1516,20 @@ static int dn_getsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_getsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	if (err == -ENOPROTOOPT && optname != DSO_STREAM &&
++	    optname != DSO_SEQPACKET && optname != DSO_CONACCEPT &&
++	    optname != DSO_CONREJECT) {
++		int len;
++
++		if (get_user(len, optlen))
++			return -EFAULT;
++
++		err = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
++		if (err >= 0)
++			err = put_user(len, optlen);
++	}
++#endif
+ 
+ 	return err;
+ }
+@@ -1578,26 +1595,6 @@ static int __dn_getsockopt(struct socket
+ 		r_data = &link;
+ 		break;
+ 
+-	default:
+-#ifdef CONFIG_NETFILTER
+-	{
+-		int ret, len;
+-
+-		if (get_user(len, optlen))
+-			return -EFAULT;
+-
+-		ret = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
+-		if (ret >= 0)
+-			ret = put_user(len, optlen);
+-		return ret;
+-	}
+-#endif
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-	case DSO_CONACCEPT:
+-	case DSO_CONREJECT:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (r_len > sizeof(unsigned long))
+ 			r_len = sizeof(unsigned long);
+@@ -1629,6 +1626,13 @@ static int __dn_getsockopt(struct socket
+ 			r_len = sizeof(unsigned char);
+ 		r_data = &scp->info_rem;
+ 		break;
++
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	case DSO_CONACCEPT:
++	case DSO_CONREJECT:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	if (r_data) {
