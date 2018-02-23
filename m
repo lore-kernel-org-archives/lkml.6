@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414492-5-5097683829476410168
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414471-2-6343606321055309237
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414492; b=sPWIibjY5o0z2cNP+Rb64wR8WwsapuPE641PH34b3qAsyNq
-    auDARhAiEHf+2pTGLuyJXJzojZH0fd71alzkFZvmrytl+9il5tOSgdctA5eeOvIj
-    9YhRD4lI/K/KXHUD9gVHREZVDcdV9IcaivukcW5479lQNx6JIuHrRB6EV+R2eD95
-    ItY/0s1c9Zd9lY/m0HmaOtuOVFvMj4rqMtidzRP72A2dGvJY22Ky/liMCgUUVmBh
-    R+7OUQbByDHkpbiFAwODrKt6j5Jv+ymPeEUSPeoxQ2VEafSeY2jF1f+84tr5Wwft
-    ahuyLD6WVlW1O/joKOK6QzBBBzifkgl3n1OO8Zw==
+    t=1519414470; b=J+SGeTFzaNY2U2LzVHN0SRyCaaR16iQp03AxarBB/ILJ0NR
+    YoVXmlOQ+i1Zc+ayD9cLmDWbtAVY2sNWa/7GjzZpFlBGm+FBmnZt/zdzbfuSkKYE
+    tAfJUEKZq7kJIM5zsHjXefIru/GcGgolAQ6Z+3WxoRap3hSu4oINOtR2WoO+BZtf
+    +zYNJDR1Wyglf4ciyPRa005gGHAU9s3EhrrXBMVhlNmtoC1PFHU2+kBojcyWH1RD
+    9v86qZ7mLbmWtgkiNwGXaYyVRlXr9ugBUba9TOKA4CbqtUsTLPW9yX9ubKDGLfs+
+    G077QmYBLkmiFnAQVldR7pAYzv3NOrPcr27kl8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414492; bh=OXLJB2jUIh2owRri2iMgtZp6v8
-    uvNOpO9y0JT58Mcts=; b=UAr5O8+7Qd73XCpgDb/I9oxBszlboo6zueWGSem0nA
-    g1jaj38BvrkqqQCFnnDjTF9cMtQNSASvf7t6hBMR2LEa80/HxOltFDy1pbpUS1ff
-    QsEZoYQnn1F0P/NWrw3F8be6mYnIXuyN72mjtSWwioNttH7rbdSuZKX3kCf6Y4Jg
-    3LaN1U5J/w9O8jpem4jGLGD0I1fwJMVE9iEkNlZjv7BbVPBJW+Yj3D1PpHkpJW81
-    idcCUEK897cORjFI8Gd/i02oh9tLgQQJcu2GU+pabdS0DZhDPvb17vacHogqrjRE
-    ieeEe4okcXGCl4S3YK1QzRr1Qymmtm3oWBBllC9YWepA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414470; bh=jq314Kj8KOZsuwbluaoJjdfloS
+    WHBRqHDu/Lz+6ECdU=; b=S22UNixedS49oLyb3ULZJomYq/qFIuh0MziGjxQOBt
+    NrdCZN4oCljdHmoSfxseaO7l4E3pyuHl2CRmr2IHnv6mjmAxrRoMqM8S6PVk5TOF
+    JCnN7sfa1QWUzpy01L+iOxmONNboJoP/uPOY6gy9zPFvb9Ny6xleFkCdAsjKEN6i
+    YKGGNJ5y+RNXE3qSHn81Y0X//6wAKjfF6XKtqZQTnHib2wc/ibKK2KO5tVkuH2Rn
+    AOBJYOiYCikXAev5wVbSgcxRR7FWrj1nl1e/eewONW0Mjs7RWAmG9RR8hVbt817T
+    78WjCI4UT7KcN8bUvbl74MqZbeq9z9IVHdt+MMlcxO5g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934848AbeBWSux (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:50:53 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45816 "EHLO
+        id S934862AbeBWSvB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:51:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45896 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934306AbeBWSuu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:50:50 -0500
+        with ESMTP id S934306AbeBWSu6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:50:58 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e149f7d1328c26f9c12f@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.14 009/159] xfrm: dont call xfrm_policy_cache_flush while holding spinlock
-Date: Fri, 23 Feb 2018 19:25:17 +0100
-Message-Id: <20180223170744.323363188@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 042/159] rds: tcp: atomically purge entries from rds_tcp_conn_list during netns delete
+Date: Fri, 23 Feb 2018 19:25:50 +0100
+Message-Id: <20180223170748.490604442@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,45 +80,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-commit b1bdcb59b64f806ef08d25a85c39ffb3ad841ce6 upstream.
+commit f10b4cff98c6977668434fbf5dd58695eeca2897 upstream.
 
-xfrm_policy_cache_flush can sleep, so it cannot be called while holding
-a spinlock.  We could release the lock first, but I don't see why we need
-to invoke this function here in first place, the packet path won't reuse
-an xdst entry unless its still valid.
+The rds_tcp_kill_sock() function parses the rds_tcp_conn_list
+to find the rds_connection entries marked for deletion as part
+of the netns deletion under the protection of the rds_tcp_conn_lock.
+Since the rds_tcp_conn_list tracks rds_tcp_connections (which
+have a 1:1 mapping with rds_conn_path), multiple tc entries in
+the rds_tcp_conn_list will map to a single rds_connection, and will
+be deleted as part of the rds_conn_destroy() operation that is
+done outside the rds_tcp_conn_lock.
 
-While at it, add an annotation to xfrm_policy_cache_flush, it would
-have probably caught this bug sooner.
+The rds_tcp_conn_list traversal done under the protection of
+rds_tcp_conn_lock should not leave any doomed tc entries in
+the list after the rds_tcp_conn_lock is released, else another
+concurrently executiong netns delete (for a differnt netns) thread
+may trip on these entries.
 
-Fixes: ec30d78c14a813 ("xfrm: add xdst pcpu cache")
-Reported-by: syzbot+e149f7d1328c26f9c12f@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_policy.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/rds/tcp.c |    9 +++++++--
+ net/rds/tcp.h |    1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -975,8 +975,6 @@ int xfrm_policy_flush(struct net *net, u
- 	}
- 	if (!cnt)
- 		err = -ESRCH;
--	else
--		xfrm_policy_cache_flush();
- out:
- 	spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
- 	return err;
-@@ -1738,6 +1736,8 @@ void xfrm_policy_cache_flush(void)
- 	bool found = 0;
- 	int cpu;
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -306,7 +306,8 @@ static void rds_tcp_conn_free(void *arg)
+ 	rdsdebug("freeing tc %p\n", tc);
  
-+	might_sleep();
-+
- 	local_bh_disable();
- 	rcu_read_lock();
- 	for_each_possible_cpu(cpu) {
+ 	spin_lock_irqsave(&rds_tcp_conn_lock, flags);
+-	list_del(&tc->t_tcp_node);
++	if (!tc->t_tcp_node_detached)
++		list_del(&tc->t_tcp_node);
+ 	spin_unlock_irqrestore(&rds_tcp_conn_lock, flags);
+ 
+ 	kmem_cache_free(rds_tcp_conn_slab, tc);
+@@ -531,8 +532,12 @@ static void rds_tcp_kill_sock(struct net
+ 
+ 		if (net != c_net || !tc->t_sock)
+ 			continue;
+-		if (!list_has_conn(&tmp_list, tc->t_cpath->cp_conn))
++		if (!list_has_conn(&tmp_list, tc->t_cpath->cp_conn)) {
+ 			list_move_tail(&tc->t_tcp_node, &tmp_list);
++		} else {
++			list_del(&tc->t_tcp_node);
++			tc->t_tcp_node_detached = true;
++		}
+ 	}
+ 	spin_unlock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node) {
+--- a/net/rds/tcp.h
++++ b/net/rds/tcp.h
+@@ -12,6 +12,7 @@ struct rds_tcp_incoming {
+ struct rds_tcp_connection {
+ 
+ 	struct list_head	t_tcp_node;
++	bool			t_tcp_node_detached;
+ 	struct rds_conn_path	*t_cpath;
+ 	/* t_conn_path_lock synchronizes the connection establishment between
+ 	 * rds_tcp_accept_one and rds_tcp_conn_path_connect
