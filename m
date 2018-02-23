@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224myFtSWiMwffM/5zhkJFGz8goljGlg1/2bq86mmYPhLGbWZ7Bbamm7SYhNCzQMORG1Nt8T
-ARC-Seal: i=1; a=rsa-sha256; t=1519411194; cv=none;
+X-Google-Smtp-Source: AH8x226A6jH2bBPRey26FwQoKTi/cTHAPo2ozuo51/1WbXva/C5al5jnZ6VLFclwYIfiK6xTLFta
+ARC-Seal: i=1; a=rsa-sha256; t=1519411191; cv=none;
         d=google.com; s=arc-20160816;
-        b=HjRyW5/kZtB/ufhVhjN1vidNBeOo15vU+Bp0w5koNKZk1KGXdvoaTtfNO9u2WCarhv
-         p2GTDWw3Z+1mwsxXpEjl62FxoRoFqEb0MQprBjR4yduHKFPeggUNvQN3qmlmizajDNgt
-         GjwIYwCAz/GHWx1sPVoknSUSDPbmmHdOSAcCd3+g0FkDf65MWsmvvNuAUXTBlyYfl2Kv
-         W2KNPpRh9C8TNHH0/j9KWxxQ93ddQyC5CC3uGCW6FkDOYsjqk4l1Wo5NG0nChdJFEocE
-         uLTr8VwPOvV+01JkzmfR2sfJpQRCuHBikP2gflnCq2fy/ldGpOYtYrLquNkH40JaEwtv
-         Ez8Q==
+        b=L4gjeEhU7r67nCoAJHrbkepW8kzboG/6j561VIp/anAf9sSpzAAOpeTm0AbzDrTMI1
+         dUrZvOTcwTwjXHQ1a/b1KpqnFLijsi8UDlxh0WINF4gcRMdEFuwYJVGOGsNUhmETm/VG
+         83FnIEzRMzRcS7ElzzVwX9Nh73gq0RhukwHmUz1xORALqg8hf5ZLLd36GwI7+FR/ebJ6
+         vPvm1m5Z7Cb4uFpoyx35u0PKLqMt8riaD6hX41kPCAPpmPEvGptkNPdXxbyD0t1VM9cb
+         r0J1MKAWHx6kED6bszc9OvhxXP7uQ81jnK6/AbOgoRyfr30EBp8UlCx2nl1P0/H0zalb
+         84rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iBKXR6AeJ0Oob0bJy1+DhT5rGFa+a7dcRDucSotqlIw=;
-        b=YOO9ycgt6iTQlqiqt4aNygiTsbM6a7+zEKAmHJaWbQ5pxMK1FUYflNp9jBszsdKlpP
-         qIcCebD4L3QQfgjbpy8DunvMDsxtKWHz7lik+hTC7RfBZwwLvr+exzonIzp242yL30ni
-         XumEDvU3vjEWjeJPsl0/2TWICD4PhaVYK8VwW4xGXJJelubN/JtYzVEd9/Q5dcdJ6FPJ
-         YpHaQFpCk7FuuMWn2ioHfqs/VMQU6pDlYvhPWJuVgE6+PFXNqh7vOl+aUqPPVuzveOqB
-         fnDWVQp18qnye5OqZqJABZFOmzTjYfYB3WthrUcwLTaG6Afdf2hUBPeysHE5jlPdKJto
-         +R0A==
+        bh=Ru0rIDU/dLq4ulzLQZ80LKlSpHrSRNs6g9SiqYtw7ic=;
+        b=SY1tnI3n04FknVX2UmHRJpimMt8mry4oB8NfUYSU2R8trKXn9DtniB0c5MAq2Ez3+h
+         ToAE9tGZyWMVrAtjvGUY/hM5YyTqqkkemC8/y9NbDBzNzabLCsTpMOMNg/S3ksZParBS
+         rG0i7rXOXbBPQvxDnKSPUHqWm5tCMQX54KcrKvqzGv8AmsrT4JFekDb7zvIhpD0m+VXv
+         NIf22qf4XqhR03xguZf9B+WvS5iyFfr6Ef38GXa5woqf3aiV5M14j+8LogE6OJruFg0S
+         K/XRbM7MeWYpcDKgJdplp/V/ZtEpY4LW5Da6B23PK4IDp7xjtzyxR37WmNcMmZRTS3l8
+         +aZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.4 152/193] binfmt_elf: compat: avoid unused function warning
-Date: Fri, 23 Feb 2018 19:26:25 +0100
-Message-Id: <20180223170349.766396281@linuxfoundation.org>
+Subject: [PATCH 4.4 151/193] isdn: sc: work around type mismatch warning
+Date: Fri, 23 Feb 2018 19:26:24 +0100
+Message-Id: <20180223170349.616543647@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218112328279833?=
-X-GMAIL-MSGID: =?utf-8?q?1593218112328279833?=
+X-GMAIL-THRID: =?utf-8?q?1593218109801119517?=
+X-GMAIL-MSGID: =?utf-8?q?1593218109801119517?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-When CONFIG_ELF_CORE is disabled, we get a harmless warning in the compat
-version of binfmt_elf:
+This driver shows warnings on many architectures:
 
-fs/compat_binfmt_elf.c:58:13: error: 'cputime_to_compat_timeval' defined but not used [-Werror=unused-function]
+drivers/isdn/sc/init.c: In function 'identify_board':
+drivers/isdn/sc/init.c:484:2: error: passing argument 1 of 'readl' makes pointer from integer without a cast [-Werror]
 
-This was addressed in mainline Linux as part of a larger rework with commit
-cd19c364b313 ("fs/binfmt: Convert obsolete cputime type to nsecs").
-
-For 4.9 and earlier, this just shuts up the warning by adding an #ifdef
-around the function definition.
+In newer kernels, it was completely removed, but for the 4.4-stable
+series, let's just shut up that warning by adding an extra variable
+to do the necessary type cast.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/compat_binfmt_elf.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/isdn/sc/init.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -51,6 +51,7 @@
- #define elf_prstatus	compat_elf_prstatus
- #define elf_prpsinfo	compat_elf_prpsinfo
+--- a/drivers/isdn/sc/init.c
++++ b/drivers/isdn/sc/init.c
+@@ -441,6 +441,7 @@ static int identify_board(unsigned long
+ 	RspMessage rcvmsg;
+ 	ReqMessage sndmsg;
+ 	HWConfig_pl hwci;
++	void __iomem *rambase_sig = (void __iomem *)rambase + SIG_OFFSET;
+ 	int x;
  
-+#ifdef CONFIG_ELF_CORE
- /*
-  * Compat version of cputime_to_compat_timeval, perhaps this
-  * should be an inline in <linux/compat.h>.
-@@ -63,6 +64,7 @@ static void cputime_to_compat_timeval(co
- 	value->tv_sec = tv.tv_sec;
- 	value->tv_usec = tv.tv_usec;
- }
-+#endif
- 
- #undef cputime_to_timeval
- #define cputime_to_timeval cputime_to_compat_timeval
+ 	pr_debug("Attempting to identify adapter @ 0x%lx io 0x%x\n",
+@@ -481,7 +482,7 @@ static int identify_board(unsigned long
+ 	 */
+ 	outb(PRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl(rambase_sig);
+ 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
+ 	if (sig == SIGNATURE)
+ 		return PRI_BOARD;
+@@ -491,7 +492,7 @@ static int identify_board(unsigned long
+ 	 */
+ 	outb(BRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl(rambase_sig);
+ 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
+ 	if (sig == SIGNATURE)
+ 		return BRI_BOARD;
+@@ -501,7 +502,7 @@ static int identify_board(unsigned long
+ 	/*
+ 	 * Try to spot a card
+ 	 */
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl(rambase_sig);
+ 	pr_debug("Looking for a signature, got 0x%lx\n", sig);
+ 	if (sig != SIGNATURE)
+ 		return -1;
