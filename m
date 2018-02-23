@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225XAv4tJKeV3WRhBis2ng+IXmaurVN1H92EbTIe4Or8RqfYLW7srQY+2K/5WPZafrJSHPqI
-ARC-Seal: i=1; a=rsa-sha256; t=1519411597; cv=none;
+X-Google-Smtp-Source: AH8x227kmubJSb3CWdNGxISvMAg24oW4+R6MFhToRvsx01/oB6gBe6oTE+1iK5Sdbp3/xCp6u9/l
+ARC-Seal: i=1; a=rsa-sha256; t=1519411594; cv=none;
         d=google.com; s=arc-20160816;
-        b=Nqo0N66fINfMdA0HI/jgW0Ur1hylwFTMeWKm7WCf//VUpoF6w6MJhwoh+VC08WLu2d
-         oXjgfGhe7QM576FdBddrATk05xzVsn012glNAPwRdzVlH4Oa9kAAYhcnNn9g385AiD9r
-         tH8dzkR6l0xypo3GmpzDmEsnl1YW87yrF9CeatahA3zXhdA/ULJFoK82QcTaZcGIRA1G
-         VSAbBramwiZF80c0YaYOgoEL9Liq4eA1QdPUEO8HUyLnBBDjbpVnRKCiIxPorx8S3Wyq
-         fiFqrZNCC2/ujdQpDTvkjoASOtQr3HlkbDpq2JDanWzGgHAJWGxFGJ6fpOGTRsNXikvz
-         pU5A==
+        b=FWsOgwPmx9o4AB3D0aDFOnrGQgTlMRgyoRgFTeMH/w6AalZQB1mHUoOWVThGpcWiBw
+         3RtbLCh68nymbIaXZoSMpKgXNOhfsr37mgIdLSTSkPk9mVBe8kLwVSd6E/2ErFd78KO2
+         PMQvvXQhg2E5iSIr96PEWDCx0vDUXXT9MSz/FNXiqJuEmWYoJdlUvI9rwp4qfKsxtV2f
+         Fs8ePzBpxwmiLgAaB7YHFvjTSlMVMKaz8CD+VNXoRvbdJT5Lfx4Pt0ohs4GE8Yu3Rqio
+         rI9XVWKd8hT1z/pHb2YDQo9tkl8G8EgXhjr/NRQw3ablkRYbcG67u5rro5TYJM1XlXqw
+         fE9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NL2MMNFO9y0EIhOPW8rnaiCmrRytHaJHWZtAdBQCIEw=;
-        b=laHZvxNDMFnQ2q2klxvQlBpGL9m2nI7n5nF5VaI36Mwuqym6wJpfR/Nxwph/DMrDs+
-         TKRJ6AuWufdoTeTHnu7lc+STHBgaQPWvz8NOgSsNMDchoXIry65bdMaWHdbgplgIrshw
-         zWRq+yeNxX4RRVFUvxmJr8zYiGAr2BQ4sJOLtn628LQhwPUz12pWsKpEfxHm85oFvX3C
-         SxkfwgE10N6J7zQuXKrqMj5IV4XZppOqYKORprhTnTetsXFt87bmgC897Wg0Z7HYe8fE
-         EQdcy8ajWzW2ZZtEgKHqySgWkwF6t8xeumebBbaMz4LG4kDGKN7GWGRfMJnHDEFi7RaG
-         RS7w==
+        bh=ZQ2KC0bqqhyfSH6Ar0DMDhEpiTD1rnIFyuNb1DQiEf0=;
+        b=gCN6d79aAK4m5s8rbaw5hlO/LndVMi5tPKmfunD4Hxu5paFKGbLjUeG3QrS9Qij3r9
+         CZdKRm5cSchmqBL6YqNm7ZuHFAv40th0McOdqzKcyn2F3Tg8TY6UWQPMtBBSKquvLWk8
+         lp1/YelFkfImDPLl52LeoLgPyUfxdwUts4AEkSZ/UMJFIOIreYFKPnxH6kdXRqeGVd8y
+         cISZY8asAWzYa382jxebsoOPWiAcu+OXwbbMg1mmt3U8+YxW0yeuTbioEfeHck4HZvdZ
+         qba+kjJO1lPQ003WFV56RiHeKTcisoZQ0nHqVWWqBz6JQPcMOR5Qu4TpB3d1qjlcHa9b
+         UJEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Darren Hart <dvhart@infradead.org>,
-	platform-driver-x86@vger.kernel.org,
+	Augusto Mecking Caringi <augustocaringi@gmail.com>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.9 098/145] platform/x86: intel_mid_thermal: Fix suspend handlers unused warning
-Date: Fri, 23 Feb 2018 19:26:44 +0100
-Message-Id: <20180223170737.513014623@linuxfoundation.org>
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 097/145] gpio: intel-mid: Fix build warning when !CONFIG_PM
+Date: Fri, 23 Feb 2018 19:26:43 +0100
+Message-Id: <20180223170737.376373846@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217854160762387?=
-X-GMAIL-MSGID: =?utf-8?q?1593218535043040748?=
+X-GMAIL-THRID: =?utf-8?q?1593217851358846377?=
+X-GMAIL-MSGID: =?utf-8?q?1593218532356350834?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,49 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Augusto Mecking Caringi <augustocaringi@gmail.com>
 
-commit b4aca383f9afb5f84b05de272656e6d4a919d995 upstream.
+commit fbc2a294f29e726787a0f5238b27137904f26b81 upstream.
 
-Fix:
+The only usage of function intel_gpio_runtime_idle() is here (in the
+same file):
 
-  drivers/platform/x86/intel_mid_thermal.c:424:12: warning: ‘mid_thermal_resume’
-  defined but not used [-Wunused-function]
-   static int mid_thermal_resume(struct device *dev)
-              ^
-  drivers/platform/x86/intel_mid_thermal.c:436:12: warning: ‘mid_thermal_suspend’
-  defined but not used [-Wunused-function]
-   static int mid_thermal_suspend(struct device *dev)
-              ^
+static const struct dev_pm_ops intel_gpio_pm_ops = {
+	SET_RUNTIME_PM_OPS(NULL, NULL, intel_gpio_runtime_idle)
+};
 
-which I see during randbuilds here.
+And when CONFIG_PM is not set, the macro SET_RUNTIME_PM_OPS expands to
+nothing, causing the following compiler warning:
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+drivers/gpio/gpio-intel-mid.c:324:12: warning: ‘intel_gpio_runtime_idle’
+defined but not used [-Wunused-function]
+static int intel_gpio_runtime_idle(struct device *dev)
+
+Fix it by annotating the function with __maybe_unused.
+
+Signed-off-by: Augusto Mecking Caringi <augustocaringi@gmail.com>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/intel_mid_thermal.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-intel-mid.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/platform/x86/intel_mid_thermal.c
-+++ b/drivers/platform/x86/intel_mid_thermal.c
-@@ -415,6 +415,7 @@ static struct thermal_device_info *initi
- 	return td_info;
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -321,7 +321,7 @@ static void intel_mid_irq_init_hw(struct
+ 	}
  }
  
-+#ifdef CONFIG_PM_SLEEP
- /**
-  * mid_thermal_resume - resume routine
-  * @dev: device structure
-@@ -442,6 +443,7 @@ static int mid_thermal_suspend(struct de
- 	 */
- 	return configure_adc(0);
- }
-+#endif
- 
- static SIMPLE_DEV_PM_OPS(mid_thermal_pm,
- 			 mid_thermal_suspend, mid_thermal_resume);
+-static int intel_gpio_runtime_idle(struct device *dev)
++static int __maybe_unused intel_gpio_runtime_idle(struct device *dev)
+ {
+ 	int err = pm_schedule_suspend(dev, 500);
+ 	return err ?: -EBUSY;
