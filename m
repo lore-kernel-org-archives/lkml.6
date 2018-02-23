@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuzf5wfnNfuUDrhOpatDWrrVlyfrMlhgutl7vaJjSIMPQO+/EM/+nPwXyN55HrAvGkxD2lX
-ARC-Seal: i=1; a=rsa-sha256; t=1519410953; cv=none;
+X-Google-Smtp-Source: AG47ELt5g5Ys28Rr8mnlRWTEJRtgy35f4COmdvOjKpVB5CXB49O8acrvua1AgX1NVMAAqfXf0NNT
+ARC-Seal: i=1; a=rsa-sha256; t=1519410947; cv=none;
         d=google.com; s=arc-20160816;
-        b=tVnUll8y3ZtNJ4GlWBg43awvNEdYW1I6AeSz+XC/OuMJuLSDrvwM3n2euGoumYpv7+
-         xGTAS1CkyXsySmlTSmVsi+5ONtXF3fhLQfQWcpFEqyUl3YOO/H3v5efbhLfMYNSAYbvx
-         UiE8IzVEUTzikpTSCE1v5WAcCPQwJg/rdDFKxmqbcvu9cey74Efy9E0Ie8YSI0ar+0y/
-         0F5kE4M3d9PoRKCuZL2whbrbNm+XROYSCN6mDiYzSR3iCUZvvEy2APsRDK6MWZmz2A7h
-         MDZG6DlYvF8CAmtPohSpGVmDjVB1qqnseEx63f9PTNK98v4UApBDdhjV5xTDu/Giqk6Y
-         NV1A==
+        b=lJBCwVNDKTn8AFPUEJWljrHIZbH/0b4iFEjHl8/Zh+Ri5KUFwn4vdUYcaEtP/0RMKy
+         tOVTjcPhv0zTL8FIhdsUzf2TqGyCDRpHfmhceSySRP+ag90Rn8Klu2f+2K2cnyb6CGfl
+         TpuoONcbycSi8X+TPqvaVLarouP7TFrweekUwUy4nnP5sIXBlyS6YjCet0KJF99aRRe8
+         EDiCCegmuSCLDF55e1c1AM3XUXfy6nmHWgNPZwwxpHwGDjXMTkKvbazbnWxSP9WOKoap
+         IjIhHe6DZoBfAlJs0YHd8Lllboihrh1oTVf+KxQedSPVmOrDwv2lDMX5DwtM4SjpVWRK
+         vdjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/Bwf1TDGtB1YtuNtMTEC0nqn4FXSnd2mpV8e94wxPH8=;
-        b=dyqOUN8C2JyCygY1XoAOi1Uie5CaKwCroV/QiDxgVo2ovKyYu2wZz7F/oqctTwp/FI
-         tEWRrWNmdX6BKItkZ9LgYhgcKxmbaKZLCd0AOra1Ei27Q5z1vEjB9IFKne4PIKyh+HT8
-         MIiDZWL/ULX7GcC2VTd7oUHTsBwbd4R1K6DMr6HbqOHF7/wcbN9jZeCmtJrvZWVh56XU
-         zq+LiNgcifLI5lN5gwEBCsf5warVMy5+XMC+plVC3ZWFRuJ9flo08HYYNsqKyfZDb959
-         mGoLL8gvlMWD2fd869TW3AAsuxBlYVAssKXHWsfyb2ZqEcQOB976k2bGxwrSIKyjTSX5
-         2OHw==
+        bh=VyQkwHweMUuNzE3yp5bNVvuGD4+542j8CmnhtkdXN8M=;
+        b=n0OqCQiNB53NKRutfgXdIICehehPVbLbI+NTlDaRhL+rCV2WulPnH7XpB+z+JaTPEP
+         /PsIbWAA6COfK+wBipSM2/TTktA4MmVZwfG4gw+V6rbT9jVnsEsdm54GaLs5WRwQ+Kq6
+         o5QHaUoeaQl1PEcUHDzfvw9Lzj6U7bq3zuO75GX9EOQBj4D9BI/KmD3ys3xR/S4x6jIe
+         mG39LuXtUJffp7Tm/W4OR7v7gLl2UZzePVo8MCCN3+CevUQTK0Iji0miZ3KYxMuVXCnZ
+         WhhvFZgmxlzuNje19s/r7aExYyDOyEPktRQqPs9sK05y0oI1dr4CKpH/UcCb7lhQtYQC
+         K7rA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 068/193] scsi: advansys: fix build warning for PCI=n
-Date: Fri, 23 Feb 2018 19:25:01 +0100
-Message-Id: <20180223170336.603617213@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>,
+	Darren Hart <dvhart@infradead.org>,
+	platform-driver-x86@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.4 066/193] platform/x86: intel_mid_thermal: Fix suspend handlers unused warning
+Date: Fri, 23 Feb 2018 19:24:59 +0100
+Message-Id: <20180223170336.309656182@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217860144452845?=
-X-GMAIL-MSGID: =?utf-8?q?1593217860144452845?=
+X-GMAIL-THRID: =?utf-8?q?1593217854160762387?=
+X-GMAIL-MSGID: =?utf-8?q?1593217854160762387?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +52,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit f46e7cd36b5f2ce2bfb567e278a10ca717f85b84 upstream.
+commit b4aca383f9afb5f84b05de272656e6d4a919d995 upstream.
 
-The advansys probe function tries to handle both ISA and PCI cases, each
-hidden in an #ifdef when unused. This leads to a warning indicating that
-when PCI is disabled we could be using uninitialized data:
+Fix:
 
-drivers/scsi/advansys.c: In function  advansys_board_found :
-drivers/scsi/advansys.c:11036:5: error:  ret  may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/scsi/advansys.c:10928:28: note:  ret  was declared here
-drivers/scsi/advansys.c:11309:8: error:  share_irq  may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/scsi/advansys.c:10928:6: note:  share_irq  was declared here
+  drivers/platform/x86/intel_mid_thermal.c:424:12: warning: ‘mid_thermal_resume’
+  defined but not used [-Wunused-function]
+   static int mid_thermal_resume(struct device *dev)
+              ^
+  drivers/platform/x86/intel_mid_thermal.c:436:12: warning: ‘mid_thermal_suspend’
+  defined but not used [-Wunused-function]
+   static int mid_thermal_suspend(struct device *dev)
+              ^
 
-This cannot happen in practice because the hardware in question only
-exists for PCI, but changing the code to just error out here is better
-for consistency and avoids the warning.
+which I see during randbuilds here.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/advansys.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/intel_mid_thermal.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/advansys.c
-+++ b/drivers/scsi/advansys.c
-@@ -11030,6 +11030,9 @@ static int advansys_board_found(struct S
- 		ASC_DBG(2, "AdvInitGetConfig()\n");
+--- a/drivers/platform/x86/intel_mid_thermal.c
++++ b/drivers/platform/x86/intel_mid_thermal.c
+@@ -415,6 +415,7 @@ static struct thermal_device_info *initi
+ 	return td_info;
+ }
  
- 		ret = AdvInitGetConfig(pdev, shost) ? -ENODEV : 0;
-+#else
-+		share_irq = 0;
-+		ret = -ENODEV;
- #endif /* CONFIG_PCI */
- 	}
++#ifdef CONFIG_PM_SLEEP
+ /**
+  * mid_thermal_resume - resume routine
+  * @dev: device structure
+@@ -442,6 +443,7 @@ static int mid_thermal_suspend(struct de
+ 	 */
+ 	return configure_adc(0);
+ }
++#endif
  
+ static SIMPLE_DEV_PM_OPS(mid_thermal_pm,
+ 			 mid_thermal_suspend, mid_thermal_resume);
