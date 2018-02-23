@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227F6gRkvNrXjucIqWdHgYf15bTCESwETRAOh7DxYzIWUWcEglMdw7GKCkxzl79MiMF5Vns/
-ARC-Seal: i=1; a=rsa-sha256; t=1519411034; cv=none;
+X-Google-Smtp-Source: AH8x226yVi90FgUuUjz2RX9RRJkTazejWHfmBrOz9bf5P9zaKlxAsUpkH/KsatdUkVQ1nMPG5iby
+ARC-Seal: i=1; a=rsa-sha256; t=1519411031; cv=none;
         d=google.com; s=arc-20160816;
-        b=qLWbHphR0UM37d8SFMK9vXPksAcYXHeXY6sAFJyDHYZjL5oTKwnuMRadfqgJox0iOx
-         VqzkrkQgH5QmpWiOKi+QWYEguMqqT0P9uJQntcEmYI+633BGyd8+3ik5Y1kJS8HXIY0u
-         RTSN6HuTGrDV6y46qdeBpWGHI/+Mu45+ZQiWthbuy4gMFFfwgYyCgktGbM7kSNmX2B1f
-         bP/nAQ6EzeAXwqS1YAyb3BGwnnc4jlzfZ75FSnkyffPG9cs/FlPNCWI6aixgmVj4RyzH
-         TgMhXTUSeOyT+0tkW3J9gU74g+SAKIyNrT1ChBN1c8EDvIJluvWVuP3u6+ujguhPudD4
-         Drxw==
+        b=sslAAi/2j2Grw8XuUfzJ6LfIrKAdUMVsybBIz3SJmhGBAl0QeUP37B4C8fcVbJTK70
+         qMUgBNDFNFwZ+8RN8TIbMcpF0OGDXN/7AjrL+ISyVNJaWMvRNDg9+r7KjqqNbnJHEP1x
+         t/Z87g8HQw3I1KAZbujQb6ln0K/ZRaCwEBFLDKrvIqFlAxdDyMZfzDhb6wmHsJIbRb8b
+         hkjQRU4i9E8axxZ+XDB6Fz2E2trooAXxZZSd7L+98PSguRs8zuXRnBHGQihoSn8gTZ3s
+         X8vVCfWvnhfm5izWoGjtLEQ2zwQb+eSi7gRnL1UrkWP4LGs7n+RAU9RaXlZd9+m4NsQw
+         tZnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dWtrmDizR3ki1Ix2JZVmznhAcMdQNH6gXKT/uh5JT/g=;
-        b=Y1oFsp/prk2iqTtwWsRJCjllzmfJDKv5YEjfH8jSdnzf0BBidA7NTRIn5KyGKa3aE3
-         o9BPOk2Y3YbXIlZ6H1qWJY1i3aCZ+j6dZXDyUlMFf8HOb/couw06UurKQdZ4SuQ3N79o
-         B67JxNXMe/rCiExjhTQJXsfoKFYgzTocQLaBAdItYpgvAyYmpIoJnIn4UR1RNstbedoA
-         0LKaT9wg5JBoCI0GDLRZbkSWM4KAH1LKSr6MKROvPJnc8n3z1jC/eXn4NTe64RiVX69t
-         mCmOFOxvaY8Bi1PNBicPlAaFhJkh8dZoBbsbwVLvi1P1VMK/oP2QqEDYL/yHX07If1DZ
-         Vp0w==
+        bh=4d1XRmA8Z0tj87k/lvkVfC1Ro3xDiqhLYdX0sOKqRiw=;
+        b=wgNfCtPj0Nd7m3sCu8USfyGO5QOvnU7NMK9UjlfCNc7bfeZNUTZ4yBefzNwsIvw6mw
+         0xhtkkasUTvxn7WTadlzzFtEnt84I12mH2dJ12XihIW1Ab9WH4u6lhPO6o6r5vUQ2U8/
+         KQm6UDcqkyC5KAtByliCFoNUPVQnfOgc03o0m3aEVWGgaPztcF8Q8nYIjuFxuRZiSor/
+         wdl+u0ZaQURL+Wh3SSjK+xHArRDgFHR8POqPkHFWn9k2qWhWS3AQU9dDj8/lfzRSDO6r
+         VxWMLfNVPv6jHa/9moxfC2LjVvyZL5Ff+sOC3uOiJZ/j0ambO4VjdwbQa3AYAO9FwOs4
+         Kgbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	Christoph Hellwig <hch@lst.de>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 098/193] SCSI: initio: remove duplicate module device table
-Date: Fri, 23 Feb 2018 19:25:31 +0100
-Message-Id: <20180223170341.366407634@linuxfoundation.org>
+Subject: [PATCH 4.4 097/193] scsi: mvumi: use __maybe_unused to hide pm functions
+Date: Fri, 23 Feb 2018 19:25:30 +0100
+Message-Id: <20180223170341.232962399@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217944727605893?=
-X-GMAIL-MSGID: =?utf-8?q?1593217944727605893?=
+X-GMAIL-THRID: =?utf-8?q?1593217941928771618?=
+X-GMAIL-MSGID: =?utf-8?q?1593217941928771618?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,58 +52,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit d282e2b383e3f41a7758e8cbf3076091ef9d9447 upstream.
+commit fddbeb80a904aae41c84ed566e2b0d1de55907df upstream.
 
-The initio driver has for many years had two copies of the
-same module device table. One of them is also used for registering
-the other driver, the other one is entirely useless after the
-large scale cleanup that Alan Cox did back in 2007.
+The mvumi scsi hides the references to its suspend/resume functions in
+an #ifdef but does not hide the implementation the same way:
 
-The compiler warns about this whenever the driver is built-in:
+drivers/scsi/mvumi.c:2632:12: error: 'mvumi_suspend' defined but not used [-Werror=unused-function]
+drivers/scsi/mvumi.c:2651:12: error: 'mvumi_resume' defined but not used [-Werror=unused-function]
 
-drivers/scsi/initio.c:131:29: warning: 'i91u_pci_devices' defined but not used [-Wunused-variable]
-
-This removes the extraneous table and the warning.
+This adds __maybe_unused annotations so the compiler knows it can
+silently drop them instead of warning, while avoiding the addition of
+another #ifdef.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 72d39fea901 ("[SCSI] initio: Convert into a real Linux driver and update to modern style")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/initio.c |   16 ----------------
- 1 file changed, 16 deletions(-)
+ drivers/scsi/mvumi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/initio.c
-+++ b/drivers/scsi/initio.c
-@@ -110,11 +110,6 @@
- #define i91u_MAXQUEUE		2
- #define i91u_REVID "Initio INI-9X00U/UW SCSI device driver; Revision: 1.04a"
+--- a/drivers/scsi/mvumi.c
++++ b/drivers/scsi/mvumi.c
+@@ -2629,7 +2629,7 @@ static void mvumi_shutdown(struct pci_de
+ 	mvumi_flush_cache(mhba);
+ }
  
--#define I950_DEVICE_ID	0x9500	/* Initio's inic-950 product ID   */
--#define I940_DEVICE_ID	0x9400	/* Initio's inic-940 product ID   */
--#define I935_DEVICE_ID	0x9401	/* Initio's inic-935 product ID   */
--#define I920_DEVICE_ID	0x0002	/* Initio's other product ID      */
--
- #ifdef DEBUG_i91u
- static unsigned int i91u_debug = DEBUG_DEFAULT;
- #endif
-@@ -127,17 +122,6 @@ static int setup_debug = 0;
+-static int mvumi_suspend(struct pci_dev *pdev, pm_message_t state)
++static int __maybe_unused mvumi_suspend(struct pci_dev *pdev, pm_message_t state)
+ {
+ 	struct mvumi_hba *mhba = NULL;
  
- static void i91uSCBPost(u8 * pHcb, u8 * pScb);
+@@ -2648,7 +2648,7 @@ static int mvumi_suspend(struct pci_dev
+ 	return 0;
+ }
  
--/* PCI Devices supported by this driver */
--static struct pci_device_id i91u_pci_devices[] = {
--	{ PCI_VENDOR_ID_INIT,  I950_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
--	{ PCI_VENDOR_ID_INIT,  I940_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
--	{ PCI_VENDOR_ID_INIT,  I935_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
--	{ PCI_VENDOR_ID_INIT,  I920_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
--	{ PCI_VENDOR_ID_DOMEX, I920_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
--	{ }
--};
--MODULE_DEVICE_TABLE(pci, i91u_pci_devices);
--
- #define DEBUG_INTERRUPT 0
- #define DEBUG_QUEUE     0
- #define DEBUG_STATE     0
+-static int mvumi_resume(struct pci_dev *pdev)
++static int __maybe_unused mvumi_resume(struct pci_dev *pdev)
+ {
+ 	int ret;
+ 	struct mvumi_hba *mhba = NULL;
