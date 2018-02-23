@@ -1,142 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeBWPxK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:53:10 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38490 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeBWPxJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:53:09 -0500
-X-Google-Smtp-Source: AG47ELv9ejfVwS/2wAacM5fbFARB0wIWnGKuT5AmxUrv5imFsXaBqNdz3GYCC9357hSbeGDz82gwdg==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Cc: Kostya Serebryany <kcc@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH] kasan, slub: fix handling of kasan_slab_free hook
-Date: Fri, 23 Feb 2018 16:53:00 +0100
-Message-Id: <083f58501e54731203801d899632d76175868e97.1519400992.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
+        id S1751475AbeBWP6e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:58:34 -0500
+Received: from mga12.intel.com ([192.55.52.136]:55969 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751338AbeBWP6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:58:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,383,1515484800";
+   d="scan'208";a="19896995"
+Subject: Re: [Intel-gfx] [RFC] perf: Allow fine-grained PMU access control
+From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+References: <20180118184007.1300-1-tvrtko.ursulin@linux.intel.com>
+ <20180119164540.GT2228@hirez.programming.kicks-ass.net>
+ <1074f5d5-dab4-dd62-6894-38676721491d@linux.intel.com>
+Message-ID: <5e7d376d-5204-099c-8313-e5aae8adea91@linux.intel.com>
+Date: Fri, 23 Feb 2018 15:58:30 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1074f5d5-dab4-dd62-6894-38676721491d@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kasan_slab_free hook's return value denotes whether the reuse of a
-slab object must be delayed (e.g. when the object is put into memory
-qurantine).
 
-The current way SLUB handles this hook is by ignoring its return value
-and hardcoding checks similar (but not exactly the same) to the ones
-performed in kasan_slab_free, which is prone to making mistakes.
+Hi,
 
-This patch changes the way SLUB handles this by:
-1. taking into account the return value of kasan_slab_free for each of
-   the objects, that are being freed;
-2. reconstructing the freelist of objects to exclude the ones, whose
-   reuse must be delayed.
+On 19/01/2018 17:10, Tvrtko Ursulin wrote:
+> 
+> Hi,
+> 
+> On 19/01/2018 16:45, Peter Zijlstra wrote:
+>> On Thu, Jan 18, 2018 at 06:40:07PM +0000, Tvrtko Ursulin wrote:
+>>> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>>>
+>>> For situations where sysadmins might want to allow different level of
+>>> of access control for different PMUs, we start creating per-PMU
+>>> perf_event_paranoid controls in sysfs.
+>>
+>> You've completely and utterly failed to explain why.
+> 
+> On an abstract level, if there is a desire to decrease the security knob 
+> on one particular PMU provider, it is better to be able to do it just 
+> for the one, rather for the whole system.
+> 
+> On a more concrete level, we have customers who want to look at certain 
+> i915 metrics, most probably engine utilization or queue depth, in order 
+> to make load-balancing decisions. (The two would be roughly analogous to 
+> CPU usage and load.)
+> 
+> This data needs to be available to their userspaces dynamically and 
+> would be used to pick a best GPU engine (mostly analogous to a CPU core) 
+> to run a particular packet of work.
+> 
+> It would be impossible to run their product as root, and while one 
+> option could be to write a proxy daemon which would allow unprivileged 
+> queries, it is also a significant complication which introduces a time 
+> shift problem on the PMU data as well.
+> 
+> So my thinking was that a per-PMU paranoid control should not be a 
+> problematic concept in general. And my gut feeling anyway was that not 
+> all PMU providers are the same class data, security wise, which was 
+> another reason I thought per-PMU controls would be fine.
+> 
+> There is one more way of thinking about it, and that is that the access 
+> control could even be extended to be per-event, and not just per-PMU. 
+> That would allow registered PMUs to let the core know which counters are 
+> potentially security sensitive, and which are not.
+> 
+> I've sent another RFC along those lines some time ago, but afterwards 
+> I've changed my mind and thought the approach from this patch should be 
+> less controversial since it retains all control fully in the perf core 
+> and in the hands of sysadmins.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- mm/slub.c | 52 ++++++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+Any thoughts on this one? Is the approach acceptable?
 
-diff --git a/mm/slub.c b/mm/slub.c
-index e381728a3751..f111c2a908b9 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1362,10 +1362,8 @@ static __always_inline void kfree_hook(void *x)
- 	kasan_kfree_large(x, _RET_IP_);
- }
- 
--static __always_inline void *slab_free_hook(struct kmem_cache *s, void *x)
-+static __always_inline bool slab_free_hook(struct kmem_cache *s, void *x)
- {
--	void *freeptr;
--
- 	kmemleak_free_recursive(x, s->flags);
- 
- 	/*
-@@ -1385,17 +1383,12 @@ static __always_inline void *slab_free_hook(struct kmem_cache *s, void *x)
- 	if (!(s->flags & SLAB_DEBUG_OBJECTS))
- 		debug_check_no_obj_freed(x, s->object_size);
- 
--	freeptr = get_freepointer(s, x);
--	/*
--	 * kasan_slab_free() may put x into memory quarantine, delaying its
--	 * reuse. In this case the object's freelist pointer is changed.
--	 */
--	kasan_slab_free(s, x, _RET_IP_);
--	return freeptr;
-+	/* KASAN might put x into memory quarantine, delaying its reuse */
-+	return kasan_slab_free(s, x, _RET_IP_);
- }
- 
- static inline void slab_free_freelist_hook(struct kmem_cache *s,
--					   void *head, void *tail)
-+					   void **head, void **tail)
- {
- /*
-  * Compiler cannot detect this function can be removed if slab_free_hook()
-@@ -1406,13 +1399,29 @@ static inline void slab_free_freelist_hook(struct kmem_cache *s,
- 	defined(CONFIG_DEBUG_OBJECTS_FREE) ||	\
- 	defined(CONFIG_KASAN)
- 
--	void *object = head;
--	void *tail_obj = tail ? : head;
--	void *freeptr;
-+	void *object;
-+	void *next = *head;
-+	void *old_tail = *tail ? *tail : *head;
-+
-+	/* Head and tail of the reconstructed freelist */
-+	*head = NULL;
-+	*tail = NULL;
- 
- 	do {
--		freeptr = slab_free_hook(s, object);
--	} while ((object != tail_obj) && (object = freeptr));
-+		object = next;
-+		next = get_freepointer(s, object);
-+		/* If object's reuse doesn't have to be delayed */
-+		if (!slab_free_hook(s, object)) {
-+			/* Move object to the new freelist */
-+			set_freepointer(s, object, *head);
-+			*head = object;
-+			if (!*tail)
-+				*tail = object;
-+		}
-+	} while (object != old_tail);
-+
-+	if (*head == *tail)
-+		*tail = NULL;
- #endif
- }
- 
-@@ -2965,14 +2974,13 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
- 				      void *head, void *tail, int cnt,
- 				      unsigned long addr)
- {
--	slab_free_freelist_hook(s, head, tail);
- 	/*
--	 * slab_free_freelist_hook() could have put the items into quarantine.
--	 * If so, no need to free them.
-+	 * With KASAN enabled slab_free_freelist_hook modifies the freelist
-+	 * to remove objects, whose reuse must be delayed.
- 	 */
--	if (s->flags & SLAB_KASAN && !(s->flags & SLAB_TYPESAFE_BY_RCU))
--		return;
--	do_slab_free(s, page, head, tail, cnt, addr);
-+	slab_free_freelist_hook(s, &head, &tail);
-+	if (head != NULL)
-+		do_slab_free(s, page, head, tail, cnt, addr);
- }
- 
- #ifdef CONFIG_KASAN
--- 
-2.16.1.291.g4437f3f132-goog
+Regards,
+
+Tvrtko
