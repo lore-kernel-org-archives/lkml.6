@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413962-2-15979306258506001370
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413950-2-1860472048183292252
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413962; b=spOdH+zK34FS69PaijSTgfqgpJc1DgX8cdIV+rPuSehwtc6
-    dN2lYLA6Y/hItIsBL6sIatfDnHwGw4+TyGAH+Q4T1R7NW3t4bHCXqsySi+xrmmaA
-    SJ0yVPZQzqUn7R6q2tTNSCSCXNEsmWtOzDMtJMiVTDXgpJaQp7+XYY7NkaO5kCp5
-    v/rMuv/IINcYyrKQl4QsxKODnHyCh8lfwAkmhzHs/6MV2c5n0rNcnMgnU2/H3EWZ
-    RGkPAGavivVYpNXoxNjQ82nYTd7UhRZVue42aMGQwslSU3cIBR2So20Md8ATstzV
-    I6odRhxEZ4D2zDOtpqOmeVSU2IHhjEAfMu4fRLw==
+    t=1519413949; b=PVBPV/6c1Ro/Emklun7oMj9/Qjs2LwovHC0ptKBzJlmPr9z
+    6n9xHoqHvhIHsHT0o+jv6WR5FY17UvfgbZlmUWlEkNn11/p0qrPfja3/yYOIjcVs
+    ypIfzxPbNL8LtEESQ0W5pyNw4jmB5VNg46fM2t9nCjHvDiIMxVvv+sjtLM0z9rMN
+    V7Uv56dUHw+bnTrymTVcB1HsJgWzm83/Sn02jLnZt5AuRlOVInDS9EnS+ywfz+V3
+    dCfgCpJXn/vBkdXGbglJFovq8oom1rZ42D1PzsciWA8fdyOCZLbionqJx41OO3JG
+    ggd6rNFaeVY0xSnP8Xm99fTTJ/JNhsHcjw3Nw5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413962; bh=aJpB0hDRdSdp0UtnlvXA4fdCXb
-    us8Rt1kz2QhzYIaEM=; b=nLfmPpNeSfl/vchfte3+hBh7I87X5hcZ2FgAXPVPuI
-    FkJZthufkc4C+YekaaBJPik9sKHFVoVK2/Q6pn0Mc6wJfm8oqGwQtwd0JbN473z4
-    XDWObzPy70vzeoGZbuVmq8bOGHF8m6VMScQFQBykEBJqF9wUAWXAdT1Xw7srT90a
-    2Z32RYwvh+VQHlVmIlS5yuAQXjvBeEroeeU+YEP5EAOMD02nJA3bhbe3oZP3Q5YT
-    qNHPnpeFFdz2wvOVyUQLxzS3KF+itD9xqv5vD+JL21MsIdQHMrJIS2oUwR2ox8wW
-    itCxvVWuVfE/0dEUqQu50oefLGgGWnjULsb3E6wBzX3w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413949; bh=QIahH20hYtvJTZvPX/KmzsQovk
+    pPJmHO7DqpZrpzswI=; b=BSsUA1LhXBgpRCiPUpzk8vTT70Gzh+yPhV07aVFXuB
+    gqKw9FE3L+abRcccJaCtzoYDWZ8Cptqui5jabZm+sbAjxyjE4Tjv9nJ4QipvGnY0
+    N4EtJ7xwsWGCtbuHCELaFgRyhBgUNuQ3Y3bAwhX1J4R3yrn2E3qv+ahg0Fsx19+w
+    yam/oK0KspKob/cSh9cGTywQJPhvsqQUejUNx/DLAUNz14/4lC7eIa88w0I95rsx
+    3pzYu6DFFCxU7Z4Moc3jsg4ghGu7f62pJ37FsjHeVonk3JEHjb3RbQVhipblU6yR
+    nC5E8hR4kqllkwmCXjT7PIUW0jqDu/h2nR+Z6fwvcGiw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,27 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935216AbeBWSwu (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:52:50 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47098 "EHLO
+        id S1752260AbeBWTZc (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:25:32 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935166AbeBWSwt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:49 -0500
+        with ESMTP id S935228AbeBWSwv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:51 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 032/159] blk_rq_map_user_iov: fix error override
-Date: Fri, 23 Feb 2018 19:25:40 +0100
-Message-Id: <20180223170747.146310231@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 073/159] perf top: Fix window dimensions change handling
+Date: Fri, 23 Feb 2018 19:26:21 +0100
+Message-Id: <20180223170752.443474351@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -78,44 +85,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Douglas Gilbert <dgilbert@interlog.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 69e0927b3774563c19b5fb32e91d75edc147fb62 upstream.
 
-During stress tests by syzkaller on the sg driver the block layer
-infrequently returns EINVAL. Closer inspection shows the block
-layer was trying to return ENOMEM (which is much more
-understandable) but for some reason overroad that useful error.
+[ Upstream commit 89d0aeab4252adc2a7ea693637dd21c588bfa2d1 ]
 
-Patch below does not show this (unchanged) line:
-   ret =__blk_rq_map_user_iov(rq, map_data, &i, gfp_mask, copy);
-That 'ret' was being overridden when that function failed.
+The stdio perf top crashes when we change the terminal
+window size. The reason is that we assumed we get the
+perf_top pointer as a signal handler argument which is
+not the case.
 
-Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Changing the SIGWINCH handler logic to change global
+resize variable, which is checked in the main thread
+loop.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-ysuzwz77oev1ftgvdscn9bpu@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-map.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-top.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -126,7 +126,7 @@ int blk_rq_map_user_iov(struct request_q
- 	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
- 	struct bio *bio = NULL;
- 	struct iov_iter i;
--	int ret;
-+	int ret = -EINVAL;
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -77,6 +77,7 @@
+ #include "sane_ctype.h"
  
- 	if (!iter_is_iovec(iter))
- 		goto fail;
-@@ -155,7 +155,7 @@ unmap_rq:
- 	__blk_rq_unmap_user(bio);
- fail:
- 	rq->bio = NULL;
--	return -EINVAL;
-+	return ret;
+ static volatile int done;
++static volatile int resize;
+ 
+ #define HEADER_LINE_NR  5
+ 
+@@ -86,10 +87,13 @@ static void perf_top__update_print_entri
  }
- EXPORT_SYMBOL(blk_rq_map_user_iov);
  
+ static void perf_top__sig_winch(int sig __maybe_unused,
+-				siginfo_t *info __maybe_unused, void *arg)
++				siginfo_t *info __maybe_unused, void *arg __maybe_unused)
+ {
+-	struct perf_top *top = arg;
++	resize = 1;
++}
+ 
++static void perf_top__resize(struct perf_top *top)
++{
+ 	get_term_dimensions(&top->winsize);
+ 	perf_top__update_print_entries(top);
+ }
+@@ -477,7 +481,7 @@ static bool perf_top__handle_keypress(st
+ 					.sa_sigaction = perf_top__sig_winch,
+ 					.sa_flags     = SA_SIGINFO,
+ 				};
+-				perf_top__sig_winch(SIGWINCH, NULL, top);
++				perf_top__resize(top);
+ 				sigaction(SIGWINCH, &act, NULL);
+ 			} else {
+ 				signal(SIGWINCH, SIG_DFL);
+@@ -1022,6 +1026,11 @@ static int __cmd_top(struct perf_top *to
+ 
+ 		if (hits == top->samples)
+ 			ret = perf_evlist__poll(top->evlist, 100);
++
++		if (resize) {
++			perf_top__resize(top);
++			resize = 0;
++		}
+ 	}
+ 
+ 	ret = 0;
