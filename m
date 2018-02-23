@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225nBM96bRQ1Z/AG00vtAq4VeXMcC1SkXNsnM66fIDt5JkbLrPK1N4fFX2aAlVPP+AQAe3VH
-ARC-Seal: i=1; a=rsa-sha256; t=1519411274; cv=none;
+X-Google-Smtp-Source: AH8x227JrRJOCMNPjVl+e1ZyL9kaHok/cQTCMkKCR0bBoFbOgcrb1gk8Wr1xxKCMFmhlBoag27bc
+ARC-Seal: i=1; a=rsa-sha256; t=1519411271; cv=none;
         d=google.com; s=arc-20160816;
-        b=gBj3JFn870talljc3sHQv0v1iqVyt2SmcT5hDdGc8xPEr5qGfTZMOC8Vgif9j0911t
-         vUQs8BUgDD9jchTaj6fGyROzUKnOLHzwka4pCHFZSy9J4fj+AT2dHs7rrSpQHKDszSXW
-         4N5SkIoBrOH+ghicExnZMHEHnFu1bk9Dwkcs2n75QYG6ey1ijAcnhRWhW2SwIEwOHhtr
-         ooFhYCVLW3F/ScY0ecf4nYOIPWK2/2rbSCtHt6fg8lzjVsBbTEHdgCBCwGVFiIFV9jp0
-         Ti4votRoErqfOmaEgBC1C5DIA8e/FWyDcra0EqRlh09JvO56aafle+zo40u6WzhwVhIb
-         MFcQ==
+        b=yVbj36b7WB+KbzGsx4FeLSiTdaeVh+wjWmUazHZWOqV4z539xK3ywq+ykcLoqMHm7F
+         42MU5ryHPw7sbrYYqAXTQ0BQy9AIhPs/gAaRR9O6Cpy67PgF83TvGENUYzXEgn8VnNGC
+         e0SP8c3azNC2wUpbH+GdDOjwooGJtlPiDB9CPbxkFD8RrKnVAVC1zvIOKX0aPe7lys7U
+         LdFweStSbmaqRH3fEyblD8LIchE6bb1MoBhnSJpu38vLjFzkRsaOkQLBswD5BMpHvxTc
+         d1QakEkqHLBqFz4lRScBCfNE9H0qxaSTIJtipm3tyeXucrbTD6LiR9JrNSZMja3QEBdj
+         TAKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R9dKKsVygUpm0t1EGJOqgLjVlbyOq1bfVrFfv5I0h28=;
-        b=Al6tBumJApg//oOarlf89gDgjbZMfsU92sh2fJWRXrjM8yHH7SGMN4lAwf9KVE0ZjG
-         e/+tfix67ItcyD8d9PsSv5EKLuT8bZo4TpTVZ3gZ6fsZ94ESxr8Je2trbvIvSGyTlk3W
-         b5l+J+u4P9viip63MKY35HC5yBEiK+ZyDeaANfLvx/DdXSzZPWR2EZQn+5bOLF4UgLz+
-         BD1SoV+Zj8tsnAF2eD4GF/uybKxQmInC3TiEWCOZdAhvTQcGoAFJFkWC3L1G0maA7l7Y
-         4cibSYWwEL4jdsjUufx6kAwEVku9QK5VB+ag4lcIA2LrcQoiH29mVpGMy3oxbkSVvdVv
-         s0aQ==
+        bh=zOmmE8Rh6SwuMiKhMRIgcENgXyQ1KiUW47QBlnBR7NE=;
+        b=lZWJjhbFxGfWxbkMVz1TmeJ3eQbPVqMy2as9pWgO8/IyseKZJsOSUwJV5kSF4Gxs6/
+         kR6OHdSYEPbGm7kij58m+BYsEzsRWsV0nCSvWX/UWCZJher+Z3p+py6k7Zd8qY65ydoq
+         AdzjN1BDs6TW+EdIoz7bwkAIl/IEs5rl5ZNLe2wGjpcqCUD6z+riCQNdeFbRgXeGkXWT
+         zJrnkfj496ZOIvAsvoICR+sjHpEWFRBTLVv6oLDjddyjbccH1nYnj+AATiJl189cTvBz
+         f1qQOu3asw9MdA6KpP82bzplX3nvXYGJxe850V2aB4jIx5Ghw6BeBExAIw1Sdub7ZfXm
+         9YWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Lamparter <chunkeey@gmail.com>,
-	Elena Reshetova <elena.reshetova@intel.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Johannes Berg <johannes@sipsolutions.net>,
 	linux-arch@vger.kernel.org,
 	kernel-hardening@lists.openwall.com,
-	linux-wireless@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	torvalds@linux-foundation.org,
-	"David S. Miller" <davem@davemloft.net>,
 	alan@linux.intel.com,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 180/193] nl80211: Sanitize array index in parse_txq_params
-Date: Fri, 23 Feb 2018 19:26:53 +0100
-Message-Id: <20180223170354.369164387@linuxfoundation.org>
+Subject: [PATCH 4.4 179/193] vfs, fdtable: Prevent bounds-check bypass via speculative execution
+Date: Fri, 23 Feb 2018 19:26:52 +0100
+Message-Id: <20180223170354.207391528@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -51,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218196541583573?=
-X-GMAIL-MSGID: =?utf-8?q?1593218196541583573?=
+X-GMAIL-THRID: =?utf-8?q?1593218194144060029?=
+X-GMAIL-MSGID: =?utf-8?q?1593218194144060029?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,69 +58,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-(cherry picked from commit 259d8c1e984318497c84eef547bbb6b1d9f4eb05)
+(cherry picked from commit 56c30ba7b348b90484969054d561f711ba196507)
 
-Wireless drivers rely on parse_txq_params to validate that txq_params->ac
-is less than NL80211_NUM_ACS by the time the low-level driver's ->conf_tx()
-handler is called. Use a new helper, array_index_nospec(), to sanitize
-txq_params->ac with respect to speculation. I.e. ensure that any
-speculation into ->conf_tx() handlers is done with a value of
-txq_params->ac that is within the bounds of [0, NL80211_NUM_ACS).
+'fd' is a user controlled value that is used as a data dependency to
+read from the 'fdt->fd' array.  In order to avoid potential leaks of
+kernel memory values, block speculative execution of the instruction
+stream that could issue reads based on an invalid 'file *' returned from
+__fcheck_files.
 
-Reported-by: Christian Lamparter <chunkeey@gmail.com>
-Reported-by: Elena Reshetova <elena.reshetova@intel.com>
+Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Johannes Berg <johannes@sipsolutions.net>
 Cc: linux-arch@vger.kernel.org
 Cc: kernel-hardening@lists.openwall.com
 Cc: gregkh@linuxfoundation.org
-Cc: linux-wireless@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: torvalds@linux-foundation.org
-Cc: "David S. Miller" <davem@davemloft.net>
 Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727419584.33451.7700736761686184303.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: https://lkml.kernel.org/r/151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 [jwang: cherry pick to 4.4]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ include/linux/fdtable.h |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -16,6 +16,7 @@
- #include <linux/nl80211.h>
- #include <linux/rtnetlink.h>
- #include <linux/netlink.h>
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -9,6 +9,7 @@
+ #include <linux/compiler.h>
+ #include <linux/spinlock.h>
+ #include <linux/rcupdate.h>
 +#include <linux/nospec.h>
- #include <linux/etherdevice.h>
- #include <net/net_namespace.h>
- #include <net/genetlink.h>
-@@ -1879,20 +1880,22 @@ static const struct nla_policy txq_param
- static int parse_txq_params(struct nlattr *tb[],
- 			    struct ieee80211_txq_params *txq_params)
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/fs.h>
+@@ -81,8 +82,10 @@ static inline struct file *__fcheck_file
  {
-+	u8 ac;
-+
- 	if (!tb[NL80211_TXQ_ATTR_AC] || !tb[NL80211_TXQ_ATTR_TXOP] ||
- 	    !tb[NL80211_TXQ_ATTR_CWMIN] || !tb[NL80211_TXQ_ATTR_CWMAX] ||
- 	    !tb[NL80211_TXQ_ATTR_AIFS])
- 		return -EINVAL;
+ 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
  
--	txq_params->ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
-+	ac = nla_get_u8(tb[NL80211_TXQ_ATTR_AC]);
- 	txq_params->txop = nla_get_u16(tb[NL80211_TXQ_ATTR_TXOP]);
- 	txq_params->cwmin = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMIN]);
- 	txq_params->cwmax = nla_get_u16(tb[NL80211_TXQ_ATTR_CWMAX]);
- 	txq_params->aifs = nla_get_u8(tb[NL80211_TXQ_ATTR_AIFS]);
- 
--	if (txq_params->ac >= NL80211_NUM_ACS)
-+	if (ac >= NL80211_NUM_ACS)
- 		return -EINVAL;
--
-+	txq_params->ac = array_index_nospec(ac, NL80211_NUM_ACS);
- 	return 0;
+-	if (fd < fdt->max_fds)
++	if (fd < fdt->max_fds) {
++		fd = array_index_nospec(fd, fdt->max_fds);
+ 		return rcu_dereference_raw(fdt->fd[fd]);
++	}
+ 	return NULL;
  }
  
