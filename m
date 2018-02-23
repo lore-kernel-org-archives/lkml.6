@@ -1,23 +1,23 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELscDgK301KcK4pgyHi1v61eKN3aLqPo8tMjCmTh/hgUC44NU/5I1tcrUBSEEjT5m9B9jvRw
-ARC-Seal: i=1; a=rsa-sha256; t=1519403059; cv=none;
+X-Google-Smtp-Source: AG47ELuzslhX6TiBVYYOjolkuaAOi0qGori5x55mR/wuIb3XyaPp7GKoi9GBrdMJVxjK8WsWJURi
+ARC-Seal: i=1; a=rsa-sha256; t=1519403058; cv=none;
         d=google.com; s=arc-20160816;
-        b=VlnNGaE/jtLFeXOX7BOcQ8uZEofUz8sJUsT6CtFOPtsNdhAq07NZJfuABilkkrzg0h
-         oMIOcnChw7+LRIVePLj1ostNgCQquj9dQbaWq5IaI6AZERX2zp7b5FWMbpFb30nssSq6
-         TGT/30Dd5qIMriH8LGxabFQ4a4m0WQQbXdYUf8uxsTjWDYb0l5JzNaakp10lwoWfgvZN
-         RHkpIYeEuMNCIwYs0LG24FZergUFIBtSvsJfphnGgJ03TnzUJTUZ42rdbHNoM/L+XBgB
-         SLMrrl9INQwxhB0wneFKE4kpzLAOm7LYf5dsyUd8UrSRSqaANUYT3xh7vrgAOYfwDGWS
-         IC/A==
+        b=SZuYFdsnLp3CvLTd9PgkJh1o04JDqN99SE1yxLoj0wOmLHzoIQVzfYU1qK2SfoZ+Qu
+         ikc5SWwEvJneL00hT6B0O+JHq0wOoS5nK1CLMgAbIdhe+dtfJBPKjBtk23VJGFpePp9m
+         Y89cbbAxUoJW390VTVFdHKCeOX98ZKUezT5BdNcuVaHDTjam54UQq6qJRC92PVIP/pif
+         IHYMr+Vlt+784XeOGHdPt9RQFIb7mGgdIs8N0GLBY7JVDuWfwYNt9U7a+ONbAqM+bEio
+         KTN3JoDsEy+tzzPvIvhNk8vpo5hAtcSGcl7ERO9img34vRyyebG5wGRmQ8FNZro3viPT
+         mdvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=NXXFxuT8izlccyhL/3IVm1GJGuI4fFKdNdMsX/G0TDE=;
-        b=fK6hItJAaJ0rIZwy4M0cgnkFj2IOANXmn42vvVpKRAIsVsJJ52a4Wz8y4g2aAoBmP6
-         uTjuwoaKF3snmMzcJJRWjjqaYyKF5Izwx2mzrXGIwORyF6zGXvk4F2JtQXmE7qbvIaVZ
-         WBGz3dE8emVeqKiWMzULwWCa9IxCetaxqxUnwnTXpXBGkeeZs+E/U58MArVX/vW93sPM
-         5fS0vM0Ft3ulnPIhrRxgBj4e41L740bjHoH1gpQhKHA3NrrCtuLcYOhnEEGczL2ncpNC
-         54Vi2pVhhKHn8zMe9WxMdWkCua0JmAQfmnzI2oMs8QeuuZJeEVoTEQI4gRR6i582sJAw
-         kRPQ==
+        bh=UUpL9SwWfmn3htrfRjZTOp5qis5yLTDaugZ7aZJFk6g=;
+        b=PWfkd3Dl8YnDOrl/G51crgI33Gnbpm5xgtLDX2UfWWrbAGLpufkcky+jYLXgD6Mcfj
+         CLa45RzGOx5enJAHaHSbD4h7EejZNYLbqSm/7jPOTgLL+9+zaJOIzU/pJOboh3KEcU3/
+         E8RIWfcEWUq9w0UKiDo+WrD0baY0KqaToaJ4vc8DA/W/aGJEdbNrJV+I22tLjx59tSxF
+         3IUtz723GexLedcSE7cF1z5hTvUM3JeIkZ5dMbgnlCHsqPPusfhY3EaGJApm/NxLA5wr
+         FJtRfzv7ML1fzlnhMpPCQ5VXcEBlxZiBnyz6w+nGHgpzIp6WhCNZoDFSMzF+3wzDCrM3
+         TLVw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
@@ -30,55 +30,74 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
 	Alexey Klimov <klimov.linux@gmail.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 07/20] firmware: arm_scmi: add initial support for clock protocol
-Date: Fri, 23 Feb 2018 16:23:37 +0000
-Message-Id: <1519403030-21189-8-git-send-email-sudeep.holla@arm.com>
+Subject: [PATCH v6 06/20] firmware: arm_scmi: add initial support for performance protocol
+Date: Fri, 23 Feb 2018 16:23:36 +0000
+Message-Id: <1519403030-21189-7-git-send-email-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
 References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593209583153656472?=
-X-GMAIL-MSGID: =?utf-8?q?1593209583153656472?=
+X-GMAIL-THRID: =?utf-8?q?1593209580825368561?=
+X-GMAIL-MSGID: =?utf-8?q?1593209580825368561?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The clock protocol is intended for management of clocks. It is used to
-enable or disable clocks, and to set and get the clock rates. This
-protocol provides commands to describe the protocol version, discover
-various implementation specific attributes, describe a clock, enable
-and disable a clock and get/set the rate of the clock synchronously or
-asynchronously.
+The performance protocol is intended for the performance management of
+group(s) of device(s) that run in the same performance domain. It
+includes even the CPUs. A performance domain is defined by a set of
+devices that always have to run at the same performance level.
+For example, a set of CPUs that share a voltage domain, and have a
+common frequency control, is said to be in the same performance domain.
 
-This patch adds initial support for the clock protocol.
+The commands in this protocol provide functionality to describe the
+protocol version, describe various attribute flags, set and get the
+performance level of a domain. It also supports discovery of the list
+of performance levels supported by a performance domain, and the
+properties of each performance level.
+
+This patch adds basic support for the performance protocol.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
  drivers/firmware/arm_scmi/Makefile |   2 +-
- drivers/firmware/arm_scmi/clock.c  | 353 +++++++++++++++++++++++++++++++++++++
- include/linux/scmi_protocol.h      |  44 +++++
- 3 files changed, 398 insertions(+), 1 deletion(-)
- create mode 100644 drivers/firmware/arm_scmi/clock.c
+ drivers/firmware/arm_scmi/common.h |   1 +
+ drivers/firmware/arm_scmi/perf.c   | 489 +++++++++++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h      |  42 ++++
+ 4 files changed, 533 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/firmware/arm_scmi/perf.c
 
 diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 687cbbfb3af6..2130ee9ac825 100644
+index 5f4ec2613db6..687cbbfb3af6 100644
 --- a/drivers/firmware/arm_scmi/Makefile
 +++ b/drivers/firmware/arm_scmi/Makefile
 @@ -1,4 +1,4 @@
  obj-y	= scmi-bus.o scmi-driver.o scmi-protocols.o
  scmi-bus-y = bus.o
  scmi-driver-y = driver.o
--scmi-protocols-y = base.o perf.o
-+scmi-protocols-y = base.o clock.o perf.o
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+-scmi-protocols-y = base.o
++scmi-protocols-y = base.o perf.o
+diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+index f1eeacaef57b..b045a3f268e7 100644
+--- a/drivers/firmware/arm_scmi/common.h
++++ b/drivers/firmware/arm_scmi/common.h
+@@ -30,6 +30,7 @@
+ #define PROTOCOL_REV_MAJOR(x)	((x) >> PROTOCOL_REV_MINOR_BITS)
+ #define PROTOCOL_REV_MINOR(x)	((x) & PROTOCOL_REV_MINOR_MASK)
+ #define MAX_PROTOCOLS_IMP	16
++#define MAX_OPPS		16
+ 
+ enum scmi_common_cmd {
+ 	PROTOCOL_VERSION = 0x0,
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
 new file mode 100644
-index 000000000000..34bc15e766c4
+index 000000000000..c189c5a3163f
 --- /dev/null
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -0,0 +1,353 @@
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -0,0 +1,489 @@
 +/*
-+ * System Control and Management Interface (SCMI) Clock Protocol
++ * System Control and Management Interface (SCMI) Performance Protocol
 + *
 + * Copyright (C) 2017 ARM Ltd.
 + *
@@ -95,80 +114,118 @@ index 000000000000..34bc15e766c4
 + * with this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/sort.h>
++
 +#include "common.h"
 +
-+enum scmi_clock_protocol_cmd {
-+	CLOCK_ATTRIBUTES = 0x3,
-+	CLOCK_DESCRIBE_RATES = 0x4,
-+	CLOCK_RATE_SET = 0x5,
-+	CLOCK_RATE_GET = 0x6,
-+	CLOCK_CONFIG_SET = 0x7,
++enum scmi_performance_protocol_cmd {
++	PERF_DOMAIN_ATTRIBUTES = 0x3,
++	PERF_DESCRIBE_LEVELS = 0x4,
++	PERF_LIMITS_SET = 0x5,
++	PERF_LIMITS_GET = 0x6,
++	PERF_LEVEL_SET = 0x7,
++	PERF_LEVEL_GET = 0x8,
++	PERF_NOTIFY_LIMITS = 0x9,
++	PERF_NOTIFY_LEVEL = 0xa,
 +};
 +
-+struct scmi_msg_resp_clock_protocol_attributes {
-+	__le16 num_clocks;
-+	u8 max_async_req;
-+	u8 reserved;
++struct scmi_opp {
++	u32 perf;
++	u32 power;
++	u32 trans_latency_us;
 +};
 +
-+struct scmi_msg_resp_clock_attributes {
-+	__le32 attributes;
-+#define	CLOCK_ENABLE	BIT(0)
++struct scmi_msg_resp_perf_attributes {
++	__le16 num_domains;
++	__le16 flags;
++#define POWER_SCALE_IN_MILLIWATT(x)	((x) & BIT(0))
++	__le32 stats_addr_low;
++	__le32 stats_addr_high;
++	__le32 stats_size;
++};
++
++struct scmi_msg_resp_perf_domain_attributes {
++	__le32 flags;
++#define SUPPORTS_SET_LIMITS(x)		((x) & BIT(31))
++#define SUPPORTS_SET_PERF_LVL(x)	((x) & BIT(30))
++#define SUPPORTS_PERF_LIMIT_NOTIFY(x)	((x) & BIT(29))
++#define SUPPORTS_PERF_LEVEL_NOTIFY(x)	((x) & BIT(28))
++	__le32 rate_limit_us;
++	__le32 sustained_freq_khz;
++	__le32 sustained_perf_level;
 +	    u8 name[SCMI_MAX_STR_SIZE];
 +};
 +
-+struct scmi_clock_set_config {
-+	__le32 id;
-+	__le32 attributes;
++struct scmi_msg_perf_describe_levels {
++	__le32 domain;
++	__le32 level_index;
 +};
 +
-+struct scmi_msg_clock_describe_rates {
-+	__le32 id;
-+	__le32 rate_index;
++struct scmi_perf_set_limits {
++	__le32 domain;
++	__le32 max_level;
++	__le32 min_level;
 +};
 +
-+struct scmi_msg_resp_clock_describe_rates {
-+	__le32 num_rates_flags;
-+#define NUM_RETURNED(x)		((x) & 0xfff)
-+#define RATE_DISCRETE(x)	!((x) & BIT(12))
-+#define NUM_REMAINING(x)	((x) >> 16)
++struct scmi_perf_get_limits {
++	__le32 max_level;
++	__le32 min_level;
++};
++
++struct scmi_perf_set_level {
++	__le32 domain;
++	__le32 level;
++};
++
++struct scmi_perf_notify_level_or_limits {
++	__le32 domain;
++	__le32 notify_enable;
++};
++
++struct scmi_msg_resp_perf_describe_levels {
++	__le16 num_returned;
++	__le16 num_remaining;
 +	struct {
-+		__le32 value_low;
-+		__le32 value_high;
-+	} rate[0];
-+#define RATE_TO_U64(X)		\
-+({				\
-+	typeof(X) x = (X);	\
-+	le32_to_cpu((x).value_low) | (u64)le32_to_cpu((x).value_high) << 32; \
-+})
++		__le32 perf_val;
++		__le32 power;
++		__le16 transition_latency_us;
++		__le16 reserved;
++	} opp[0];
 +};
 +
-+struct scmi_clock_set_rate {
-+	__le32 flags;
-+#define CLOCK_SET_ASYNC		BIT(0)
-+#define CLOCK_SET_DELAYED	BIT(1)
-+#define CLOCK_SET_ROUND_UP	BIT(2)
-+#define CLOCK_SET_ROUND_AUTO	BIT(3)
-+	__le32 id;
-+	__le32 value_low;
-+	__le32 value_high;
++struct perf_dom_info {
++	bool set_limits;
++	bool set_perf;
++	bool perf_limit_notify;
++	bool perf_level_notify;
++	u32 opp_count;
++	u32 sustained_freq_khz;
++	u32 sustained_perf_level;
++	u32 mult_factor;
++	char name[SCMI_MAX_STR_SIZE];
++	struct scmi_opp opp[MAX_OPPS];
 +};
 +
-+struct clock_info {
-+	int num_clocks;
-+	int max_async_req;
-+	struct scmi_clock_info *clk;
++struct scmi_perf_info {
++	int num_domains;
++	bool power_scale_mw;
++	u64 stats_addr;
++	u32 stats_size;
++	struct perf_dom_info *dom_info;
 +};
 +
-+static int scmi_clock_protocol_attributes_get(const struct scmi_handle *handle,
-+					      struct clock_info *ci)
++static int scmi_perf_attributes_get(const struct scmi_handle *handle,
++				    struct scmi_perf_info *pi)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_msg_resp_clock_protocol_attributes *attr;
++	struct scmi_msg_resp_perf_attributes *attr;
 +
 +	ret = scmi_one_xfer_init(handle, PROTOCOL_ATTRIBUTES,
-+				 SCMI_PROTOCOL_CLOCK, 0, sizeof(*attr), &t);
++				 SCMI_PROTOCOL_PERF, 0, sizeof(*attr), &t);
 +	if (ret)
 +		return ret;
 +
@@ -176,151 +233,189 @@ index 000000000000..34bc15e766c4
 +
 +	ret = scmi_do_xfer(handle, t);
 +	if (!ret) {
-+		ci->num_clocks = le16_to_cpu(attr->num_clocks);
-+		ci->max_async_req = attr->max_async_req;
++		u16 flags = le16_to_cpu(attr->flags);
++
++		pi->num_domains = le16_to_cpu(attr->num_domains);
++		pi->power_scale_mw = POWER_SCALE_IN_MILLIWATT(flags);
++		pi->stats_addr = le32_to_cpu(attr->stats_addr_low) |
++				(u64)le32_to_cpu(attr->stats_addr_high) << 32;
++		pi->stats_size = le32_to_cpu(attr->stats_size);
 +	}
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static int scmi_clock_attributes_get(const struct scmi_handle *handle,
-+				     u32 clk_id, struct scmi_clock_info *clk)
++static int
++scmi_perf_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
++				struct perf_dom_info *dom_info)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_msg_resp_clock_attributes *attr;
++	struct scmi_msg_resp_perf_domain_attributes *attr;
 +
-+	ret = scmi_one_xfer_init(handle, CLOCK_ATTRIBUTES, SCMI_PROTOCOL_CLOCK,
-+				 sizeof(clk_id), sizeof(*attr), &t);
++	ret = scmi_one_xfer_init(handle, PERF_DOMAIN_ATTRIBUTES,
++				 SCMI_PROTOCOL_PERF, sizeof(domain),
++				 sizeof(*attr), &t);
 +	if (ret)
 +		return ret;
 +
-+	*(__le32 *)t->tx.buf = cpu_to_le32(clk_id);
++	*(__le32 *)t->tx.buf = cpu_to_le32(domain);
 +	attr = t->rx.buf;
 +
 +	ret = scmi_do_xfer(handle, t);
-+	if (!ret)
-+		memcpy(clk->name, attr->name, SCMI_MAX_STR_SIZE);
-+	else
-+		clk->name[0] = '\0';
++	if (!ret) {
++		u32 flags = le32_to_cpu(attr->flags);
++
++		dom_info->set_limits = SUPPORTS_SET_LIMITS(flags);
++		dom_info->set_perf = SUPPORTS_SET_PERF_LVL(flags);
++		dom_info->perf_limit_notify = SUPPORTS_PERF_LIMIT_NOTIFY(flags);
++		dom_info->perf_level_notify = SUPPORTS_PERF_LEVEL_NOTIFY(flags);
++		dom_info->sustained_freq_khz =
++					le32_to_cpu(attr->sustained_freq_khz);
++		dom_info->sustained_perf_level =
++					le32_to_cpu(attr->sustained_perf_level);
++		dom_info->mult_factor =	(dom_info->sustained_freq_khz * 1000) /
++					dom_info->sustained_perf_level;
++		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
++	}
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static int
-+scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
-+			      struct scmi_clock_info *clk)
++static int opp_cmp_func(const void *opp1, const void *opp2)
 +{
-+	u64 *rate;
++	const struct scmi_opp *t1 = opp1, *t2 = opp2;
++
++	return t1->perf - t2->perf;
++}
++
++static int
++scmi_perf_describe_levels_get(const struct scmi_handle *handle, u32 domain,
++			      struct perf_dom_info *perf_dom)
++{
 +	int ret, cnt;
-+	bool rate_discrete;
-+	u32 tot_rate_cnt = 0, rates_flag;
++	u32 tot_opp_cnt = 0;
 +	u16 num_returned, num_remaining;
 +	struct scmi_xfer *t;
-+	struct scmi_msg_clock_describe_rates *clk_desc;
-+	struct scmi_msg_resp_clock_describe_rates *rlist;
++	struct scmi_opp *opp;
++	struct scmi_msg_perf_describe_levels *dom_info;
++	struct scmi_msg_resp_perf_describe_levels *level_info;
 +
-+	ret = scmi_one_xfer_init(handle, CLOCK_DESCRIBE_RATES,
-+				 SCMI_PROTOCOL_CLOCK, sizeof(*clk_desc), 0, &t);
++	ret = scmi_one_xfer_init(handle, PERF_DESCRIBE_LEVELS,
++				 SCMI_PROTOCOL_PERF, sizeof(*dom_info), 0, &t);
 +	if (ret)
 +		return ret;
 +
-+	clk_desc = t->tx.buf;
-+	rlist = t->rx.buf;
++	dom_info = t->tx.buf;
++	level_info = t->rx.buf;
 +
 +	do {
-+		clk_desc->id = cpu_to_le32(clk_id);
-+		/* Set the number of rates to be skipped/already read */
-+		clk_desc->rate_index = cpu_to_le32(tot_rate_cnt);
++		dom_info->domain = cpu_to_le32(domain);
++		/* Set the number of OPPs to be skipped/already read */
++		dom_info->level_index = cpu_to_le32(tot_opp_cnt);
 +
 +		ret = scmi_do_xfer(handle, t);
 +		if (ret)
 +			break;
 +
-+		rates_flag = le32_to_cpu(rlist->num_rates_flags);
-+		num_remaining = NUM_REMAINING(rates_flag);
-+		rate_discrete = RATE_DISCRETE(rates_flag);
-+		num_returned = NUM_RETURNED(rates_flag);
-+
-+		if (tot_rate_cnt + num_returned > SCMI_MAX_NUM_RATES) {
-+			dev_err(handle->dev, "No. of rates > MAX_NUM_RATES");
++		num_returned = le16_to_cpu(level_info->num_returned);
++		num_remaining = le16_to_cpu(level_info->num_remaining);
++		if (tot_opp_cnt + num_returned > MAX_OPPS) {
++			dev_err(handle->dev, "No. of OPPs exceeded MAX_OPPS");
 +			break;
 +		}
 +
-+		if (!rate_discrete) {
-+			clk->range.min_rate = RATE_TO_U64(rlist->rate[0]);
-+			clk->range.max_rate = RATE_TO_U64(rlist->rate[1]);
-+			clk->range.step_size = RATE_TO_U64(rlist->rate[2]);
-+			dev_dbg(handle->dev, "Min %llu Max %llu Step %llu Hz\n",
-+				clk->range.min_rate, clk->range.max_rate,
-+				clk->range.step_size);
-+			break;
++		opp = &perf_dom->opp[tot_opp_cnt];
++		for (cnt = 0; cnt < num_returned; cnt++, opp++) {
++			opp->perf = le32_to_cpu(level_info->opp[cnt].perf_val);
++			opp->power = le32_to_cpu(level_info->opp[cnt].power);
++			opp->trans_latency_us = le16_to_cpu
++				(level_info->opp[cnt].transition_latency_us);
++
++			dev_dbg(handle->dev, "Level %d Power %d Latency %dus\n",
++				opp->perf, opp->power, opp->trans_latency_us);
 +		}
 +
-+		rate = &clk->list.rates[tot_rate_cnt];
-+		for (cnt = 0; cnt < num_returned; cnt++, rate++) {
-+			*rate = RATE_TO_U64(rlist->rate[cnt]);
-+			dev_dbg(handle->dev, "Rate %llu Hz\n", *rate);
-+		}
-+
-+		tot_rate_cnt += num_returned;
++		tot_opp_cnt += num_returned;
 +		/*
 +		 * check for both returned and remaining to avoid infinite
 +		 * loop due to buggy firmware
 +		 */
 +	} while (num_returned && num_remaining);
 +
-+	if (rate_discrete)
-+		clk->list.num_rates = tot_rate_cnt;
++	perf_dom->opp_count = tot_opp_cnt;
++	scmi_one_xfer_put(handle, t);
++
++	sort(perf_dom->opp, tot_opp_cnt, sizeof(*opp), opp_cmp_func, NULL);
++	return ret;
++}
++
++static int scmi_perf_limits_set(const struct scmi_handle *handle, u32 domain,
++				u32 max_perf, u32 min_perf)
++{
++	int ret;
++	struct scmi_xfer *t;
++	struct scmi_perf_set_limits *limits;
++
++	ret = scmi_one_xfer_init(handle, PERF_LIMITS_SET, SCMI_PROTOCOL_PERF,
++				 sizeof(*limits), 0, &t);
++	if (ret)
++		return ret;
++
++	limits = t->tx.buf;
++	limits->domain = cpu_to_le32(domain);
++	limits->max_level = cpu_to_le32(max_perf);
++	limits->min_level = cpu_to_le32(min_perf);
++
++	ret = scmi_do_xfer(handle, t);
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static int
-+scmi_clock_rate_get(const struct scmi_handle *handle, u32 clk_id, u64 *value)
++static int scmi_perf_limits_get(const struct scmi_handle *handle, u32 domain,
++				u32 *max_perf, u32 *min_perf)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
++	struct scmi_perf_get_limits *limits;
 +
-+	ret = scmi_one_xfer_init(handle, CLOCK_RATE_GET, SCMI_PROTOCOL_CLOCK,
-+				 sizeof(__le32), sizeof(u64), &t);
++	ret = scmi_one_xfer_init(handle, PERF_LIMITS_GET, SCMI_PROTOCOL_PERF,
++				 sizeof(__le32), 0, &t);
 +	if (ret)
 +		return ret;
 +
-+	*(__le32 *)t->tx.buf = cpu_to_le32(clk_id);
++	*(__le32 *)t->tx.buf = cpu_to_le32(domain);
 +
 +	ret = scmi_do_xfer(handle, t);
 +	if (!ret) {
-+		__le32 *pval = t->rx.buf;
++		limits = t->rx.buf;
 +
-+		*value = le32_to_cpu(*pval);
-+		*value |= (u64)le32_to_cpu(*(pval + 1)) << 32;
++		*max_perf = le32_to_cpu(limits->max_level);
++		*min_perf = le32_to_cpu(limits->min_level);
 +	}
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static int scmi_clock_rate_set(const struct scmi_handle *handle, u32 clk_id,
-+			       u32 config, u64 rate)
++static int
++scmi_perf_level_set(const struct scmi_handle *handle, u32 domain, u32 level)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_clock_set_rate *cfg;
++	struct scmi_perf_set_level *lvl;
 +
-+	ret = scmi_one_xfer_init(handle, CLOCK_RATE_SET, SCMI_PROTOCOL_CLOCK,
-+				 sizeof(*cfg), 0, &t);
++	ret = scmi_one_xfer_init(handle, PERF_LEVEL_SET, SCMI_PROTOCOL_PERF,
++				 sizeof(*lvl), 0, &t);
 +	if (ret)
 +		return ret;
 +
-+	cfg = t->tx.buf;
-+	cfg->flags = cpu_to_le32(config);
-+	cfg->id = cpu_to_le32(clk_id);
-+	cfg->value_low = cpu_to_le32(rate & 0xffffffff);
-+	cfg->value_high = cpu_to_le32(rate >> 32);
++	lvl = t->tx.buf;
++	lvl->domain = cpu_to_le32(domain);
++	lvl->level = cpu_to_le32(level);
 +
 +	ret = scmi_do_xfer(handle, t);
 +
@@ -329,183 +424,226 @@ index 000000000000..34bc15e766c4
 +}
 +
 +static int
-+scmi_clock_config_set(const struct scmi_handle *handle, u32 clk_id, u32 config)
++scmi_perf_level_get(const struct scmi_handle *handle, u32 domain, u32 *level)
 +{
 +	int ret;
 +	struct scmi_xfer *t;
-+	struct scmi_clock_set_config *cfg;
 +
-+	ret = scmi_one_xfer_init(handle, CLOCK_CONFIG_SET, SCMI_PROTOCOL_CLOCK,
-+				 sizeof(*cfg), 0, &t);
++	ret = scmi_one_xfer_init(handle, PERF_LEVEL_GET, SCMI_PROTOCOL_PERF,
++				 sizeof(u32), sizeof(u32), &t);
 +	if (ret)
 +		return ret;
 +
-+	cfg = t->tx.buf;
-+	cfg->id = cpu_to_le32(clk_id);
-+	cfg->attributes = cpu_to_le32(config);
++	*(__le32 *)t->tx.buf = cpu_to_le32(domain);
 +
 +	ret = scmi_do_xfer(handle, t);
++	if (!ret)
++		*level = le32_to_cpu(*(__le32 *)t->rx.buf);
 +
 +	scmi_one_xfer_put(handle, t);
 +	return ret;
 +}
 +
-+static int scmi_clock_enable(const struct scmi_handle *handle, u32 clk_id)
++/* Device specific ops */
++static int scmi_dev_domain_id(struct device *dev)
 +{
-+	return scmi_clock_config_set(handle, clk_id, CLOCK_ENABLE);
++	struct of_phandle_args clkspec;
++
++	if (of_parse_phandle_with_args(dev->of_node, "clocks", "#clock-cells",
++				       0, &clkspec))
++		return -EINVAL;
++
++	return clkspec.args[0];
 +}
 +
-+static int scmi_clock_disable(const struct scmi_handle *handle, u32 clk_id)
++static int scmi_dvfs_add_opps_to_device(const struct scmi_handle *handle,
++					struct device *dev)
 +{
-+	return scmi_clock_config_set(handle, clk_id, 0);
++	int idx, ret, domain;
++	unsigned long freq;
++	struct scmi_opp *opp;
++	struct perf_dom_info *dom;
++	struct scmi_perf_info *pi = handle->perf_priv;
++
++	domain = scmi_dev_domain_id(dev);
++	if (domain < 0)
++		return domain;
++
++	dom = pi->dom_info + domain;
++	if (!dom)
++		return -EIO;
++
++	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
++		freq = opp->perf * dom->mult_factor;
++
++		ret = dev_pm_opp_add(dev, freq, 0);
++		if (ret) {
++			dev_warn(dev, "failed to add opp %luHz\n", freq);
++
++			while (idx-- > 0) {
++				freq = (--opp)->perf * dom->mult_factor;
++				dev_pm_opp_remove(dev, freq);
++			}
++			return ret;
++		}
++	}
++	return 0;
 +}
 +
-+static int scmi_clock_count_get(const struct scmi_handle *handle)
++static int scmi_dvfs_get_transition_latency(const struct scmi_handle *handle,
++					    struct device *dev)
 +{
-+	struct clock_info *ci = handle->clk_priv;
++	struct perf_dom_info *dom;
++	struct scmi_perf_info *pi = handle->perf_priv;
++	int domain = scmi_dev_domain_id(dev);
 +
-+	return ci->num_clocks;
++	if (domain < 0)
++		return domain;
++
++	dom = pi->dom_info + domain;
++	if (!dom)
++		return -EIO;
++
++	/* uS to nS */
++	return dom->opp[dom->opp_count - 1].trans_latency_us * 1000;
 +}
 +
-+static const struct scmi_clock_info *
-+scmi_clock_info_get(const struct scmi_handle *handle, u32 clk_id)
++static int scmi_dvfs_freq_set(const struct scmi_handle *handle, u32 domain,
++			      unsigned long freq)
 +{
-+	struct clock_info *ci = handle->clk_priv;
-+	struct scmi_clock_info *clk = ci->clk + clk_id;
++	struct scmi_perf_info *pi = handle->perf_priv;
++	struct perf_dom_info *dom = pi->dom_info + domain;
 +
-+	if (!clk->name || !clk->name[0])
-+		return NULL;
-+
-+	return clk;
++	return scmi_perf_level_set(handle, domain, freq / dom->mult_factor);
 +}
 +
-+static struct scmi_clk_ops clk_ops = {
-+	.count_get = scmi_clock_count_get,
-+	.info_get = scmi_clock_info_get,
-+	.rate_get = scmi_clock_rate_get,
-+	.rate_set = scmi_clock_rate_set,
-+	.enable = scmi_clock_enable,
-+	.disable = scmi_clock_disable,
++static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
++			      unsigned long *freq)
++{
++	int ret;
++	u32 level;
++	struct scmi_perf_info *pi = handle->perf_priv;
++	struct perf_dom_info *dom = pi->dom_info + domain;
++
++	ret = scmi_perf_level_get(handle, domain, &level);
++	if (!ret)
++		*freq = level * dom->mult_factor;
++
++	return ret;
++}
++
++static struct scmi_perf_ops perf_ops = {
++	.limits_set = scmi_perf_limits_set,
++	.limits_get = scmi_perf_limits_get,
++	.level_set = scmi_perf_level_set,
++	.level_get = scmi_perf_level_get,
++	.device_domain_id = scmi_dev_domain_id,
++	.get_transition_latency = scmi_dvfs_get_transition_latency,
++	.add_opps_to_device = scmi_dvfs_add_opps_to_device,
++	.freq_set = scmi_dvfs_freq_set,
++	.freq_get = scmi_dvfs_freq_get,
 +};
 +
-+static int scmi_clock_protocol_init(struct scmi_handle *handle)
++static int scmi_perf_protocol_init(struct scmi_handle *handle)
 +{
++	int domain;
 +	u32 version;
-+	int clkid, ret;
-+	struct clock_info *cinfo;
++	struct scmi_perf_info *pinfo;
 +
-+	scmi_version_get(handle, SCMI_PROTOCOL_CLOCK, &version);
++	scmi_version_get(handle, SCMI_PROTOCOL_PERF, &version);
 +
-+	dev_dbg(handle->dev, "Clock Version %d.%d\n",
++	dev_dbg(handle->dev, "Performance Version %d.%d\n",
 +		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
 +
-+	cinfo = devm_kzalloc(handle->dev, sizeof(*cinfo), GFP_KERNEL);
-+	if (!cinfo)
++	pinfo = devm_kzalloc(handle->dev, sizeof(*pinfo), GFP_KERNEL);
++	if (!pinfo)
 +		return -ENOMEM;
 +
-+	scmi_clock_protocol_attributes_get(handle, cinfo);
++	scmi_perf_attributes_get(handle, pinfo);
 +
-+	cinfo->clk = devm_kcalloc(handle->dev, cinfo->num_clocks,
-+				  sizeof(*cinfo->clk), GFP_KERNEL);
-+	if (!cinfo->clk)
++	pinfo->dom_info = devm_kcalloc(handle->dev, pinfo->num_domains,
++				       sizeof(*pinfo->dom_info), GFP_KERNEL);
++	if (!pinfo->dom_info)
 +		return -ENOMEM;
 +
-+	for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
-+		struct scmi_clock_info *clk = cinfo->clk + clkid;
++	for (domain = 0; domain < pinfo->num_domains; domain++) {
++		struct perf_dom_info *dom = pinfo->dom_info + domain;
 +
-+		ret = scmi_clock_attributes_get(handle, clkid, clk);
-+		if (!ret)
-+			scmi_clock_describe_rates_get(handle, clkid, clk);
++		scmi_perf_domain_attributes_get(handle, domain, dom);
++		scmi_perf_describe_levels_get(handle, domain, dom);
 +	}
 +
-+	handle->clk_ops = &clk_ops;
-+	handle->clk_priv = cinfo;
++	handle->perf_ops = &perf_ops;
++	handle->perf_priv = pinfo;
 +
 +	return 0;
 +}
 +
-+static int __init scmi_clock_init(void)
++static int __init scmi_perf_init(void)
 +{
-+	return scmi_protocol_register(SCMI_PROTOCOL_CLOCK,
-+				      &scmi_clock_protocol_init);
++	return scmi_protocol_register(SCMI_PROTOCOL_PERF,
++				      &scmi_perf_protocol_init);
 +}
-+subsys_initcall(scmi_clock_init);
++subsys_initcall(scmi_perf_init);
 diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index d80f4c9a0fad..981523620985 100644
+index db995126134d..d80f4c9a0fad 100644
 --- a/include/linux/scmi_protocol.h
 +++ b/include/linux/scmi_protocol.h
-@@ -19,6 +19,7 @@
- #include <linux/types.h>
- 
- #define SCMI_MAX_STR_SIZE	16
-+#define SCMI_MAX_NUM_RATES	16
- 
- /**
-  * struct scmi_revision_info - version information structure
-@@ -44,9 +45,49 @@ struct scmi_revision_info {
+@@ -44,15 +44,57 @@ struct scmi_revision_info {
  	char sub_vendor_id[SCMI_MAX_STR_SIZE];
  };
  
-+struct scmi_clock_info {
-+	char name[SCMI_MAX_STR_SIZE];
-+	bool rate_discrete;
-+	union {
-+		struct {
-+			int num_rates;
-+			u64 rates[SCMI_MAX_NUM_RATES];
-+		} list;
-+		struct {
-+			u64 min_rate;
-+			u64 max_rate;
-+			u64 step_size;
-+		} range;
-+	};
-+};
-+
- struct scmi_handle;
- 
- /**
-+ * struct scmi_clk_ops - represents the various operations provided
-+ *	by SCMI Clock Protocol
-+ *
-+ * @count_get: get the count of clocks provided by SCMI
-+ * @info_get: get the information of the specified clock
-+ * @rate_get: request the current clock rate of a clock
-+ * @rate_set: set the clock rate of a clock
-+ * @enable: enables the specified clock
-+ * @disable: disables the specified clock
-+ */
-+struct scmi_clk_ops {
-+	int (*count_get)(const struct scmi_handle *handle);
-+
-+	const struct scmi_clock_info *(*info_get)
-+		(const struct scmi_handle *handle, u32 clk_id);
-+	int (*rate_get)(const struct scmi_handle *handle, u32 clk_id,
-+			u64 *rate);
-+	int (*rate_set)(const struct scmi_handle *handle, u32 clk_id,
-+			u32 config, u64 rate);
-+	int (*enable)(const struct scmi_handle *handle, u32 clk_id);
-+	int (*disable)(const struct scmi_handle *handle, u32 clk_id);
-+};
++struct scmi_handle;
 +
 +/**
-  * struct scmi_perf_ops - represents the various operations provided
-  *	by SCMI Performance Protocol
++ * struct scmi_perf_ops - represents the various operations provided
++ *	by SCMI Performance Protocol
++ *
++ * @limits_set: sets limits on the performance level of a domain
++ * @limits_get: gets limits on the performance level of a domain
++ * @level_set: sets the performance level of a domain
++ * @level_get: gets the performance level of a domain
++ * @device_domain_id: gets the scmi domain id for a given device
++ * @get_transition_latency: gets the DVFS transition latency for a given device
++ * @add_opps_to_device: adds all the OPPs for a given device
++ * @freq_set: sets the frequency for a given device using sustained frequency
++ *	to sustained performance level mapping
++ * @freq_get: gets the frequency for a given device using sustained frequency
++ *	to sustained performance level mapping
++ */
++struct scmi_perf_ops {
++	int (*limits_set)(const struct scmi_handle *handle, u32 domain,
++			  u32 max_perf, u32 min_perf);
++	int (*limits_get)(const struct scmi_handle *handle, u32 domain,
++			  u32 *max_perf, u32 *min_perf);
++	int (*level_set)(const struct scmi_handle *handle, u32 domain,
++			 u32 level);
++	int (*level_get)(const struct scmi_handle *handle, u32 domain,
++			 u32 *level);
++	int (*device_domain_id)(struct device *dev);
++	int (*get_transition_latency)(const struct scmi_handle *handle,
++				      struct device *dev);
++	int (*add_opps_to_device)(const struct scmi_handle *handle,
++				  struct device *dev);
++	int (*freq_set)(const struct scmi_handle *handle, u32 domain,
++			unsigned long rate);
++	int (*freq_get)(const struct scmi_handle *handle, u32 domain,
++			unsigned long *rate);
++};
++
+ /**
+  * struct scmi_handle - Handle returned to ARM SCMI clients for usage.
   *
-@@ -88,13 +129,16 @@ struct scmi_perf_ops {
   * @dev: pointer to the SCMI device
   * @version: pointer to the structure containing SCMI version information
-  * @perf_ops: pointer to set of performance protocol operations
-+ * @clk_ops: pointer to set of clock protocol operations
++ * @perf_ops: pointer to set of performance protocol operations
   */
  struct scmi_handle {
  	struct device *dev;
  	struct scmi_revision_info *version;
- 	struct scmi_perf_ops *perf_ops;
-+	struct scmi_clk_ops *clk_ops;
- 	/* for protocol internal use */
- 	void *perf_priv;
-+	void *clk_priv;
++	struct scmi_perf_ops *perf_ops;
++	/* for protocol internal use */
++	void *perf_priv;
  };
  
  enum scmi_std_protocol {
