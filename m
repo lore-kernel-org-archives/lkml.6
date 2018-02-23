@@ -1,211 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751688AbeBWJYp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 04:24:45 -0500
-Received: from mail-bn3nam01on0049.outbound.protection.outlook.com ([104.47.33.49]:9700
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751378AbeBWJYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 04:24:42 -0500
-From: Manish Narani <MNARANI@xilinx.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC: Anirudha Sarangi <anirudh@xilinx.com>,
-        Srinivas Goud <sgoud@xilinx.com>
-Subject: RE: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
- ZynqMP Platform
-Thread-Topic: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
- ZynqMP Platform
-Thread-Index: AQHTmfZbHcgatUAMk0Kw/6gGGMV5dKOnKs4AgAdTQuCAAI+lgIABKkOAgAGDzGCAAAGzgIAAHkzg
-Date: Fri, 23 Feb 2018 09:24:35 +0000
-Message-ID: <SN1PR0201MB17917B7B10ED3DF188BFB445C1CC0@SN1PR0201MB1791.namprd02.prod.outlook.com>
-References: <1517336073-18142-1-git-send-email-mnarani@xilinx.com>
- <608309c3-fc4d-25a2-f0a9-21c0f3e2db46@intel.com>
- <SN1PR0201MB1791863A71475E3F0D896DD0C1CE0@SN1PR0201MB1791.namprd02.prod.outlook.com>
- <ce9efad6-b007-4cd9-18e7-a7932835846c@intel.com>
- <SN1PR0201MB1791EA315C2FC9B15D7BC650C1CC0@SN1PR0201MB1791.namprd02.prod.outlook.com>
- <ef213352-4d4e-bab0-8c1d-e0f87abb2492@intel.com>
-In-Reply-To: <ef213352-4d4e-bab0-8c1d-e0f87abb2492@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=MNARANI@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR0201MB1775;7:R3KCzWzJhE1Sb0ca4alqH9rMTYb8N+ifdrwNRY6LHauev6pDsGrJEiwIJw/EchdqVtRTXGn+ipg7S/OmtqeKjZy4HzrIXjrYsfA0UwO3U1QGvg2QDILipEOts3PRHI6FJITpmqtoCQLLwN4imkkZL4/JibJzmm9RFiabKgULXEu3Cgwo9MenaVXGRvBOHc8Ag8y1WoFkdTZIKYX1Qv4PKKSSOUaR+4B93ZYA0eaf17LpvU07IneNSMUvN10Cggmj
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e0b3dd2e-10d5-4cd5-d431-08d57a9f412e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:SN1PR0201MB1775;
-x-ms-traffictypediagnostic: SN1PR0201MB1775:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <SN1PR0201MB1775DC33AF6B1A8F692A8DE0C1CC0@SN1PR0201MB1775.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(228905959029699)(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6055026)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:SN1PR0201MB1775;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0201MB1775;
-x-forefront-prvs: 0592A9FDE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(39860400002)(396003)(366004)(376002)(189003)(199004)(13464003)(6436002)(54906003)(26005)(316002)(55016002)(5250100002)(53936002)(2950100002)(5660300001)(107886003)(25786009)(2906002)(3846002)(186003)(9686003)(102836004)(14454004)(74316002)(4326008)(110136005)(229853002)(6116002)(2501003)(105586002)(76176011)(59450400001)(93886005)(7696005)(86362001)(72206003)(478600001)(33656002)(97736004)(8936002)(6246003)(2201001)(2900100001)(8676002)(106356001)(81156014)(81166006)(53546011)(3280700002)(99286004)(55236004)(305945005)(66066001)(68736007)(7736002)(3660700001)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0201MB1775;H:SN1PR0201MB1791.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: n1nwSyMeajPU4zaUedFT1IIcVeazUB24MidDyqkI6XuzAM/npO4PjPatVVAUthaLm4OVUl7306YyARPGNV3zJYI7G0jkemi96iXjJvskjAdXhCFdykRtD0dxlw4AaHIPQYY6SRnXAhraUZr9EEK6djiQWomuyQz1A11/xbx7xEE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751766AbeBWJY5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 04:24:57 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47323 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751711AbeBWJYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 04:24:54 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
+Date: Fri, 23 Feb 2018 11:25:38 +0200
+Message-ID: <5155593.q1p5eQX8Bt@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <050fa0bb-2157-8796-1bce-354f1da67e24@gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <6129743.3Euq8y3YuW@avalon> <050fa0bb-2157-8796-1bce-354f1da67e24@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0b3dd2e-10d5-4cd5-d431-08d57a9f412e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2018 09:24:35.3363
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0201MB1775
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1N9Onpu030787
 
+Hi Frank,
 
+On Friday, 23 February 2018 05:20:43 EET Frank Rowand wrote:
+> On 02/22/18 02:25, Laurent Pinchart wrote:
+> > On Thursday, 22 February 2018 08:07:14 EET Frank Rowand wrote:
+> >> On 02/20/18 15:10, Laurent Pinchart wrote:
+> >>> Hello,
+> >>> 
+> >>> This patch series addresses a design mistake that dates back from the
+> >>> initial DU support. Support for the LVDS encoders, which are IP cores
+> >>> separate from the DU, was bundled in the DU driver. Worse, both the DU
+> >>> and LVDS were described through a single DT node.
+> >>> 
+> >>> To fix the, patches 01/16 and 02/16 define new DT bindings for the LVDS
+> >>> encoders, and deprecate their description inside the DU bindings. To
+> >>> retain backward compatibility with existing DT, patches 03/16 to 08/16
+> >>> then patch the device tree at runtime to convert the legacy bindings to
+> >>> the new ones.
+> >>> 
+> >>> With the DT side addressed, patch 09/16 converts the LVDS support code
+> >>> to a separate bridge driver. Patches 11/16 to 16/16 then update all the
+> >>> device tree sources to the new DU and LVDS encoders bindings.
+> >>> 
+> >>> I decided to go for live DT patching in patch 08/16 because implementing
+> >>> support for both the legacy and new bindings in the driver would have
+> >>> been very intrusive, and prevented further cleanups. This version relies
+> >>> more heavily on overlays to avoid touching the internals of the OF core
+> >>> compared to v2, even if manual fixes to the device tree are still
+> >>> needed.
+> >>> 
+> >>> Compared to v3, this series uses the OF changeset API to update
+> >>> properties instead of accessing the internals of the property structure.
+> >>> This removes the local implementation of functions to look up nodes by
+> >>> path and update properties. In order to do this, I pulled in Pantelis'
+> >>> patch series titled "[PATCH v2 0/5] of: dynamic: Changesets helpers &
+> >>> fixes" at Rob's request, and rebased it while taking two small review
+> >>> comments into account.
+> >> 
+> >> Wait a minute!  Why are you putting a patch set to modify core devicetree
+> >> in the middle of a driver series.  Please pull it out to a separate
+> >> series.
+> > 
+> > Because Rob asked for the driver-local implementation of the property add
+> > function to be replaced by Pantelis' series. I want to get the LVDS
+> > changes in v4.17 and asked Rob whether I could then take the OF changeset
+> > patches merged through the DRM tree, and he didn't object. If that causes
+> > an issue I'll switch back to the driver-local implementation to get the
+> > driver changes merged, split the OF changeset series out, and then move
+> > to the OF changeset API once merged. Would you prefer that ?
+> 
+> You have already created a new version of the R-Car patches without the
+> set of patches that I was objecting to here.  So this is somewhat just
+> an academic comment.
+> 
+> As I mentioned in the v6 thread, I am coming back here to clean up loose
+> ends, and explain why I had the reaction I had.  Basically, this is a
+> process issue to me.
+> 
+> (1) The patch set from Pantelis is "hidden" in the driver patch series.
+> When viewing collapsed threads (which is my normal mode to avoid getting
+> overwhelmed by the vast volume of email I scan), the Pantelis patch set
+> is totally invisible.  If the R-Car driver patch series had not had me
+> on the to: list, there is a very good chance I would not have noticed
+> it.  Or noticed in a more delayed time frame.  And the same applies to
+> anyone else who might be subscribed to the devicetree mail list.  If
+> the Pantelis patch series was split out into a separate patch set then
+> it would be more visible on the list.
+> 
+> (2) There is no good way to indicate in the email subject lines for
+> the Pantelis patches that they are version 3 of the series, since
+> they are also version 4 of the R-Car patch series.  If one reads the
+> patch 0/0 header carefully, and/or the other Pantelis patch comment
+> headers carefully, and then does a little detective work, it is
+> possible to find version 2 of the Pantelis patch series, and thus
+> be able to track the full history.  If just glancing at each
+> individual patch email subject, scanning the patch comment, and
+> spending more time reading the body of the patch, it would be
+> very easy to overlook the existence of the previous versions on
+> the mail list.
+> 
+> (2b) Small quibble:  if the Pantelis patches were in a separate series,
+> with v3 in the subject header, then you would have normally put
+> a "changes since v2" section in the patch comment header, which would
+> have been more visible and less cryptic than what you wrote, which was:
+> 
+>    ...
+> 
+>    Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>    [Fixed memory leak in __of_changeset_add_update_property_copy()]
+>    Signed-off-by: Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com>
+>    ---
+>     drivers/of/dynamic.c | 222 ++++++++++++++++++++++++++++++++++
+>     include/linux/of.h   | 328 +++++++++++++++++++++++++++++++++++++++++++++
+>     2 files changed, 550 insertions(+)
+> 
+> My original scan of version 2 and then the email in this series had me
+> questioning whether the two open issues from patch 2 had been addressed
+> (yes, patch 0/16 did explicitly mention that 2 review comments had been
+> taken into account, so you can point at my poor reading comprehension).
 
-> -----Original Message-----
-> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> Sent: Friday, February 23, 2018 1:04 PM
-> To: Manish Narani <MNARANI@xilinx.com>; michal.simek@xilinx.com;
-> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org; linux-
-> mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; mark.rutland@arm.com; robh+dt@kernel.org
-> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> <sgoud@xilinx.com>
-> Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning support for
-> ZynqMP Platform
-> 
-> On 23/02/18 09:29, Manish Narani wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> >> Sent: Thursday, February 22, 2018 1:50 PM
-> >> To: Manish Narani <MNARANI@xilinx.com>; michal.simek@xilinx.com;
-> >> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org; linux-
-> >> mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >> devicetree@vger.kernel.org; mark.rutland@arm.com;
-> robh+dt@kernel.org
-> >> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> >> <sgoud@xilinx.com>
-> >> Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning
-> >> support for ZynqMP Platform
-> >>
-> >> On 21/02/18 17:00, Manish Narani wrote:
-> >>> Hi Adrian,
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Manish Narani
-> >>>> Sent: Wednesday, February 21, 2018 11:39 AM
-> >>>> To: Adrian Hunter <adrian.hunter@intel.com>;
-> >>>> michal.simek@xilinx.com; ulf.hansson@linaro.org;
-> >>>> linux-arm-kernel@lists.infradead.org; linux- mmc@vger.kernel.org;
-> >>>> linux-kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> >>>> mark.rutland@arm.com;
-> >> robh+dt@kernel.org
-> >>>> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> >>>> <sgoud@xilinx.com>
-> >>>> Subject: RE: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning
-> >>>> support for ZynqMP Platform
-> >>>>
-> >>>> Hi Adrian,
-> >>>>
-> >>>>
-> >>>>> -----Original Message-----
-> >>>>> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> >>>>> Sent: Friday, February 16, 2018 7:37 PM
-> >>>>> To: Manish Narani <MNARANI@xilinx.com>;
-> michal.simek@xilinx.com;
-> >>>>> ulf.hansson@linaro.org; linux-arm-kernel@lists.infradead.org;
-> >>>>> linux- mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >>>>> devicetree@vger.kernel.org; mark.rutland@arm.com;
-> >> robh+dt@kernel.org
-> >>>>> Cc: Anirudha Sarangi <anirudh@xilinx.com>; Srinivas Goud
-> >>>>> <sgoud@xilinx.com>; Manish Narani <MNARANI@xilinx.com>
-> >>>>> Subject: Re: [RFC PATCH] mmc: sdhci-of-arasan: Add auto tuning
-> >>>>> support for ZynqMP Platform
-> >>>>>
-> >>>>> On 30/01/18 20:14, Manish Narani wrote:
-> >>>>>> This patch adds support of SD auto tuning for ZynqMP platform.
-> >>>>>> Auto tuning sequence sends tuning block to card when operating in
-> >>>>>> UHS-1 modes. This resets the DLL and sends CMD19/CMD21 as a part
-> >>>>>> of the auto tuning process. Once the auto tuning process gets
-> >>>>>> completed, reset the DLL to load the newly obtained SDHC tuned tap
-> value.
-> >>>>>
-> >>>>> How is this different from:
-> >>>>> 	1. reset the dll
-> >>>>> 	2. call sdhci_execute_tuning
-> >>>>> 	3. reset the dll
-> >>>>>
-> >>> Below is my take on your above comments:
-> >>> - 'Reset the dll' is a platform specific call inside
-> >>> 'arasan_zynqmp_execute_tuning' which is implemented in
-> >>> sdhci-of-arasan.c
-> >>> - 'arasan_zynqmp_execute_tuning' is called from
-> 'sdhci_execute_tuning'
-> >>> as a platform_execute_tuning routine
-> >>> - So to keep 'DLL reset' routine called from sdhci-of-arasan.c, I
-> >>> have implemented the execute_tuning in sdhci-of-arasan.c
-> >>
-> >> I meant something like:
-> >>
-> >> 	if (of_device_is_compatible(pdev->dev.of_node, "xlnx,zynqmp-
-> >> 8.9a"))
-> >> 		host->mmc_host_ops.execute_tuning =
-> arasan_zynqmp_execute_tuning;
-> >>
-> > This will need the removal of 'const' from 'static const struct
-> mmc_host_ops sdhci_ops = {}' in sdhci.c file. Please confirm.
-> 
-> No, it is not const.  You are not looking at the right place. i.e.
-> 
-> $ grep mmc_host_ops drivers/mmc/host/sdhci.h
->         struct mmc_host_ops mmc_host_ops;       /* MMC host ops */
-> 
-[Manish] 
-This looks fair. I got your point. I will send another patch for the same.
-> >
-> > Thanks,
-> > Manish
-> >>
-> >> static int arasan_zynqmp_execute_tuning(struct mmc_host *mmc, u32
-> >> opcode) {
-> >> 	struct sdhci_host *host = mmc_priv(mmc);
-> >> 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >> 	struct sdhci_arasan_data *sdhci_arasan =
-> >> sdhci_pltfm_priv(pltfm_host);
-> >> 	int err;
-> >>
-> >> 	arasan_zynqmp_dll_reset(host, sdhci_arasan->device_id);
-> >>
-> >> 	err = sdhci_execute_tuning(mmc, opcode);
-> >> 	if (err)
-> >> 		return err;
-> >>
-> >> 	arasan_zynqmp_dll_reset(host, sdhci_arasan->device_id);
-> >>
-> >> 	return 0;
-> >> }
-> >>
-> >>>
-> >>> Alternative way (Please review):
-> >>> - Define a host->quirk2 bit (SDHCI_QUIRK2_DLL_RESET_NEEDED) in
-> >>> sdhci-of-arasan.c indicating DLL reset needed while tuning operation
-> >>> - Call 'dll reset' routine before and after __sdhci_execute_tuning()
-> >>> in sdhci.c when a host->quirk2 bit (SDHCI_QUIRK2_DLL_RESET_NEEDED)
-> >>> is set
-> >>
-> >> We should try to avoid quirks.
+All points dully noted, I'll make sure not to include similar patches in the 
+middle of a driver series should I need to rework a patch series previously 
+posted by someone else.
+
+I assume your comments also apply to patches to drivers/of/ that are developed 
+as part of a drivers series, not merely pulled in it ? I have mixed feelings 
+about this, as in many subsystems changes to the core require at least one 
+user. Always splitting core and driver changes in separate series would thus 
+often be impractical.
+
+I doubt we will find a single process that will suit all subsystem 
+maintainers, so maybe this should be a per-subsystem decision ?
+
+> (3) This is totally unrelated to your patch series, but I'm leaving a bread
+> crumb trail here.  Rob pointed you at a patch series that was not the most
+> recent version.  When this patch series appears again, there already is
+> a version 3 subset of it, but it is still labeled as being version 2, and
+> also has outstanding un-addressed issues.  ("[PATCH v2 1/2] of: dynamic:
+> Add __of_node_dupv()", 11/04/16)
+
+Ah, thank you for the information. I was looking for a v3 but missed that one 
+as it was labeled v2.
+
+-- 
+Regards,
+
+Laurent Pinchart
