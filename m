@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt1DQJk4DT6HnWO4XoPO81OagaqNpyiMzBYjE24eiCP+2YpY3x9/bN2TsyphZxwOpSqhTZw
-ARC-Seal: i=1; a=rsa-sha256; t=1519411043; cv=none;
+X-Google-Smtp-Source: AH8x227NVY/Y+vO+Kll51AWG7oBTYGKOX+uBNI3qe1OSQnlAJ4K3Qpl1+KCs5J9/6tQvK1dc+qU8
+ARC-Seal: i=1; a=rsa-sha256; t=1519411040; cv=none;
         d=google.com; s=arc-20160816;
-        b=0Coqp+lqaiNN/Lz/mfbc/AMpsefwXqiC/Zx1ink51I405qqexpuL2Z3SCcZaPoPKHk
-         CyT5MINTqZGesVUeDpYEdmUCPPpYdRhdBLbAhp/jFOmm9BZVosn/zvMYN42Rs9Z4+0xR
-         lrku5yMtvDQHnPz/out+k4zAkr52wil4Gkrr5BD6v7J9iF/lZWMSb/u7e1qwewQ4d4d+
-         hIVD7Z7jMUdLT76vTa6zC09ZvR5MPM8Tb5you2LJBNyGrx3E1tJaKqdm08Z8gDCJcNYi
-         32d3r00Cpjy+XUYeiZxRIQOhaloa76KFtOSySQWbEz5hcKqFXZDOVw8QJNyngxHm50HB
-         BK2g==
+        b=F1yDk1Hx7xhYdvNr514fHBd9gC4c8Dv1Rmpis2FcGcFqLO8gItsLc2HSZz+WKSnV2G
+         jOfkoANetUJZG7FDsE/z6baI8kVVnGr28PzeZrAQO2A4jr10CdxPb56UbWmw4dJLjaiA
+         +39d+2nq3f9n1jc9amJ3wgMLmjrgkbZM8ouSk2GjSlNQOhpqAuTHyeAJzg4pULexdPWi
+         uvkWa384pRgs1Za9h8oJQUiUYwzdhtXIY4ktoPVnsDil4/hS9W7XVOGFmeAvCuLVM4qK
+         Gc1uoGJEPLtoFxVvPO1av+wCLqkqVrfhuBnWHqwJIgKc2yQcRsPTogcLeUbFMoTcNBIZ
+         1exg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vH3l9/jq+bGCArAJGIoiPj4OZUQRHkKKhIJqwYC6hSE=;
-        b=vs9pCQ8fsHdIKfNrkobr0/UvfGsDSTWBXMXeosEDgX6Mi5EIQmxnNtQ80sNzMg92ux
-         B0Q0YCPPxRoSbbrJf2odpsEwDR5zCJbTXL4pbmi7o50S2fGDwOLfZNpqMNhomYMWAjJX
-         GQlZE/ODRTjVGdBh87MElSXfFxAn/BYdDBzw+Woo9i1x1LKcchH76c6BdQ7D6x6VTroJ
-         2WJFC/yev6UMSa2zEKbG+Tb958Nvc32Xo7YVWi6Du7iQvcPJXG7mB9oiap6Rz9OyGWG1
-         Aclfo+TS8033gG6ua0D32YgBQSx8wsG8u+PHRAE6PlMhWDtbMOvdCgm5Jni9MEzJim2k
-         Faqg==
+        bh=HeZWXSOs9YJFkVNYsvecfHAefuczU7GvsO9VTeomRdM=;
+        b=L1HjaKu2z/oDSUCeND2FYjR+JqZ0WFXOE41dVM27MhFa2DSOcSYFbNwPLYUII/Q2aL
+         QO2F6sOw7MpH0/dMhn/0itLsf67vMM78wN+o2TjbjvWmaS7luv7hTHx/vAz4Gt61K/ca
+         y7h9M92VDnHBdoXc7BMwXPOpUgH0Ak/e40i7kI6lOF1QtL5oUgXfHGiVHilSq2Hel8d+
+         osGhWfx8RxO/Wx3b/OmG3LNI1x9R2NEvJtaKj8otOn/bCcBRnqnyF3MCm3i/InzHNXd1
+         r6EltYtZjHCSgF3YW5wclMBdsdsExNQZYrSqSA13MVzHnlwYqcl2l81LzkQrIE/lp7aJ
+         99IQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.4 101/193] tty: hvc_xen: hide xen_console_remove when unused
-Date: Fri, 23 Feb 2018 19:25:34 +0100
-Message-Id: <20180223170341.829892060@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 4.4 100/193] usb: musb/ux500: remove duplicate check for dma_is_compatible
+Date: Fri, 23 Feb 2018 19:25:33 +0100
+Message-Id: <20180223170341.680390410@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217954429418283?=
-X-GMAIL-MSGID: =?utf-8?q?1593217954429418283?=
+X-GMAIL-THRID: =?utf-8?q?1593217951669274244?=
+X-GMAIL-MSGID: =?utf-8?q?1593217951669274244?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +51,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit e36ae3439936e13c33f5841c7c2c1a9875acbb6d upstream.
+commit 62a6abdd427b5fc4d8aad5dac874904e96273e6d upstream.
 
-xencons_disconnect_backend() is only called from xen_console_remove(),
-which is conditionally compiled, so we get a harmless warning when
-CONFIG_HVC_XEN_FRONTEND is unset:
+When dma_addr_t is 64-bit, we get a warning about an invalid cast
+in the call to ux500_dma_is_compatible() from ux500_dma_channel_program():
 
-hvc/hvc_xen.c:350:12: error: 'xen_console_remove' defined but not used [-Werror=unused-function]
+drivers/usb/musb/ux500_dma.c: In function 'ux500_dma_channel_program':
+drivers/usb/musb/ux500_dma.c:210:51: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+  if (!ux500_dma_is_compatible(channel, packet_sz, (void *)dma_addr, len))
 
-This moves the function down into the same #ifdef section to silence
-the warning.
+The problem is that ux500_dma_is_compatible() is called from the
+main musb driver on the virtual address, but here we pass in a
+DMA address, so the types are fundamentally different but it works
+because the function only checks the alignment of the buffer and
+that is the same.
+
+We could work around this by adding another cast, but I have checked
+that the buffer we get passed here is already checked before it
+gets mapped, so the second check seems completely unnecessary
+and removing it must be the cleanest solution.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/hvc/hvc_xen.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/musb/ux500_dma.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/tty/hvc/hvc_xen.c
-+++ b/drivers/tty/hvc/hvc_xen.c
-@@ -323,6 +323,7 @@ void xen_console_resume(void)
- 	}
- }
+--- a/drivers/usb/musb/ux500_dma.c
++++ b/drivers/usb/musb/ux500_dma.c
+@@ -207,9 +207,6 @@ static int ux500_dma_channel_program(str
+ 	BUG_ON(channel->status == MUSB_DMA_STATUS_UNKNOWN ||
+ 		channel->status == MUSB_DMA_STATUS_BUSY);
  
-+#ifdef CONFIG_HVC_XEN_FRONTEND
- static void xencons_disconnect_backend(struct xencons_info *info)
- {
- 	if (info->irq > 0)
-@@ -363,7 +364,6 @@ static int xen_console_remove(struct xen
- 	return 0;
- }
- 
--#ifdef CONFIG_HVC_XEN_FRONTEND
- static int xencons_remove(struct xenbus_device *dev)
- {
- 	return xen_console_remove(dev_get_drvdata(&dev->dev));
+-	if (!ux500_dma_is_compatible(channel, packet_sz, (void *)dma_addr, len))
+-		return false;
+-
+ 	channel->status = MUSB_DMA_STATUS_BUSY;
+ 	channel->actual_len = 0;
+ 	ret = ux500_configure_channel(channel, packet_sz, mode, dma_addr, len);
