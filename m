@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeBWVbP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:31:15 -0500
-Received: from cock.li ([185.100.85.212]:57504 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751527AbeBWVbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:31:12 -0500
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 23 Feb 2018 21:31:04 +0000
-From: thetruthbeforeus@firemail.cc
-To: linux-kernel@vger.kernel.org, debian-user@lists.debian.org,
-        rms@gnu.org
-Cc: oss-security@lists.openwall.com
-Subject: The white man -- Who he is. A Discussion. (Removed by Youtube -
- Trying to squelch truth spoken to power)
-Message-ID: <ed06e66f0cd6437f8df34dc1262676e2@firemail.cc>
-User-Agent: Roundcube Webmail/1.3.3
+        id S1752178AbeBWVd5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:33:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751527AbeBWVdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:33:54 -0500
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+Subject: [PATCH v0 0/3] additional cumulative livepatch doc/samples
+Date: Fri, 23 Feb 2018 16:33:47 -0500
+Message-Id: <1519421630-12025-1-git-send-email-joe.lawrence@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-www.liveleak.com/view?i=017_1519418755
+Hi Miroslav,
 
-This had to be reposted because the youtube people took down the video 
-describing the truth about white society. Speaking truth to power isn't 
-something they was fastioning to slide by.
+This is a follow up to my comment on "Re: [PATCH v8 8/8] livepatch:
+Atomic replace and cumulative patches documentation".
 
-So, dear OpenSource folks, people that run the show on the computing 
-side these days; we need to talk about some things regarding how this 
-society is and why it treats some people in a poor-cross-situational 
-fastion.
+Here's what I was working on today, I can update for v9 and squash into
+a single patch or two if that fits into the patchset better.  (Or Petr,
+feel free to grab these and run with them if you prefer.)
 
-Alot of folks have been wondering: why are things they way that they 
-are? Many have been pondering this notion. All things have roots: you, 
-me, we all do, but when we are cut from those roots we feel adrift in 
-this world. Like this world is not our own. In the past many of us have 
-been forcefully cut from those roots through no fault of our own nor of 
-our ancestors.
+I definitely agree that the complexity of the scenarios and cornercases
+is starting to get out of hand, at least in keeping it all in my brain
+for any period of time :)
 
-To know why things are, you must know Who the people that do them, are. 
-What makes them do these things. Here's some straight truth from someone 
-who has been in the game for some time.
+I like the idea of transforming the growing sample set into a testsuite
+of some kind.  Having regression tests would ease the burden of
+reviewing patches and accounting for all these use cases!
 
-The white man -- Just Who, who really, he is (and why he do what he 
-does):
+Hope these help, let me know if you'd like any modification or other
+tests.
 
-http://www.liveleak.com/view?i=017_1519418755
+Joe Lawrence (3):
+  livepatch: add sample cumulative patch
+  livepatch: update documentation/samples for callbacks
+  livepatch: update documentation for shadow variables
 
-#blackpanther, #wealth, #power, #shaolin
+ Documentation/livepatch/callbacks.txt         | 102 ++++++++++++
+ Documentation/livepatch/shadow-vars.txt       |  24 +++
+ samples/livepatch/Makefile                    |   2 +
+ samples/livepatch/livepatch-callbacks-demo2.c | 162 +++++++++++++++++++
+ samples/livepatch/livepatch-cumulative.c      | 216 ++++++++++++++++++++++++++
+ 5 files changed, 506 insertions(+)
+ create mode 100644 samples/livepatch/livepatch-callbacks-demo2.c
+ create mode 100644 samples/livepatch/livepatch-cumulative.c
 
-(Also how do you feel about youtube taking down this discussion? They 
-couldn't let the power of the people to decide anything)
+-- 
+1.8.3.1
