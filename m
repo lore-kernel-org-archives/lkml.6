@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413927-2-1834885000173008394
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413912-2-6376881853183573004
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413926; b=plZ35UYgOAmOMdJKuQG9JcSapK23wCwlSCxgceq/779v+tE
-    cmZePNGKbKovjWLrdLotP5YnUjc7mhr920yn8uQ0iVCBEuxoPV0hqOx1/kxZ2whN
-    de6/ILgg4Rkln7jwY70X0i7fbWeIhpx2JZAjwJs+C3o2338rFArw8M5ga32l2ZrZ
-    4qGAQrN8JuUf/IWTDYoJ9heJBxQc8sqtY1R4dTAlWUvuYOsj1J5pKjkal6J8RxFx
-    hnwJg7EMZq+mOOmK7sx42aardnmHOC633ilI8LrPs/WZleRBRQc1LwBUJW6BVyAA
-    spBfj2E1QLR11KphjCVMbaDbrkJHC0AoRRvxIxw==
+    t=1519413912; b=EzIsT1hCExHZYnmIkllyIWYb5ShHFZ2XXezGmNyksTjxPt9
+    UNGqFAXKPFGnsSuGMmGyHSYwyJjn6yPpJ4GdD6oz/kFRREdBaoYaPGTr/HWR9rYn
+    Pew1lCpHiMYawKhleLxpMlO1zT22mvjM6wCWTeMqtRUs6XtLjBVpD5jDWJ11PsyW
+    hoxgy7c7XarAqf3S5VPxUUykYEEfP+z7rkIh8B+vfehECabQndqXtx+7nCqOROYL
+    CCWnXUyhe1EMG7cIO7bd1xIavmNrFX4zWzUJ6HZfHFjlWCmC5HqDdU4U2Ky3Kh0E
+    Rg6f+i7A21D22eTQwXFpsFYV2TLBj5RtINUa6TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413926; bh=S9a9tATbw06h9L7DdoSXdQ2UNl
-    eMV6WtVfFxBnnvEZ4=; b=PwxGHzNQw/aqEmIi/MB6W2U0zlXq2ncg2J9ZBgFDKo
-    t6WAaiLKtm8EAmz/JZgasJZMArac+aGXnn4DlTvpLsb/9bMvpy6eACf1miOotf0f
-    BnJDfOfX7dF+38SeW8tIe/brcjxV1A/Kh2+byiS1Z894zeU8z7cz+dueun7pz8av
-    lnULmzKQ4cvh+OSlGSndqskhUk289cTM7Ln+TGLIMVJfyUHmZwXWRZlhBGs9kVdm
-    dUxm4Dp8w24CGa4QRwDQiAt0Xmfr3hhNYYq5e6fVbx2attyA9HGQD1WTOAdOyEFO
-    LOO7/uJp/An7EamD/j8CVzb74VFY7VKYDJxbKhGGHLRA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413912; bh=m3QrrjnhjxI2mjVyn9MvuRxe2Y
+    +iVhFBTNRYQjE+RLw=; b=ZyMHkgGCYkcH3EUw9/oo+gvUrKKeWz9nPBKUCFYfof
+    wRJbUpBm4Z8dEk6TFlKC9TDtCtg3GWFOCi7m8dkgQtKZZ1qxfXL9arm6SD5YghOS
+    q55VT00+lr7pM+3Yi58r3flSlEVwf8Dtbg+q9LxViYtmx/0R0NGIlJgHFhj+nBWh
+    14ULiRD20EUCeHTVkeUjuxlFoeTuwrozN0T8YbNtlrWCokaDp58LtjOScpboAk3B
+    c9OqAPeopZdFV+SUWU6OsZDtenrKg3pCEUyVxhuBEgYbQDOkhQ21xukBaZ8tgNEA
+    /Qjqlr/FwpdljPe3QSi9AjRoJlmrrE1Z4BLyYl7lwDVA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935248AbeBWSwz (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:52:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47142 "EHLO
+        id S935267AbeBWSw7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:52:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47158 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935204AbeBWSwy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:54 -0500
+        with ESMTP id S934921AbeBWSw5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:57 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 082/159] gpio: 74x164: Fix crash during .remove()
-Date: Fri, 23 Feb 2018 19:26:30 +0100
-Message-Id: <20180223170753.496872487@linuxfoundation.org>
+Subject: [PATCH 4.14 083/159] gpio: davinci: Assign first bank regs for unbanked case
+Date: Fri, 23 Feb 2018 19:26:31 +0100
+Message-Id: <20180223170753.622996345@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -81,55 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Keerthy <j-keerthy@ti.com>
 
 
-[ Upstream commit a158531f3c92467df0e93e000d58185acae78a6e ]
+[ Upstream commit 7f8e2a85c1b0bd440ffe87be82c79fdc319e8291 ]
 
-Commit 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios'
-property") added a new member gpiod_oe to the end of the struct
-gen_74x164_chip, after the zero-length buffer array.
+As per the re-design assign the first bank regs for unbanked
+irq case. This was missed out in the original patch.
 
-However, this buffer is a flexible array, allocated together with the
-structure during .probe().  As the buffer is no longer the last member,
-writing to it corrupts the newly added member after it.
-During device removal, the corrupted member will be used as a pointer,
-leading to a crash.
-
-This went unnoticed, as the flexible array was declared as "buffer[0]"
-instead of "buffer[]", and thus did not trigger a "flexible array member
-not at end of struct" error from gcc.
-
-Move the gpiod_oe field up to fix this, and drop the zero from the array
-size to prevent future similar bugs.
-
-Fixes: 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios' property")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-74x164.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-davinci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -23,6 +23,7 @@
- struct gen_74x164_chip {
- 	struct gpio_chip	gpio_chip;
- 	struct mutex		lock;
-+	struct gpio_desc	*gpiod_oe;
- 	u32			registers;
- 	/*
- 	 * Since the registers are chained, every byte sent will make
-@@ -31,8 +32,7 @@ struct gen_74x164_chip {
- 	 * register at the end of the transfer. So, to have a logical
- 	 * numbering, store the bytes in reverse order.
- 	 */
--	u8			buffer[0];
--	struct gpio_desc	*gpiod_oe;
-+	u8			buffer[];
- };
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -383,7 +383,7 @@ static int gpio_irq_type_unbanked(struct
+ 	u32 mask;
  
- static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
+ 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+-	g = (struct davinci_gpio_regs __iomem *)d->regs;
++	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
+ 	mask = __gpio_mask(data->irq - d->base_irq);
+ 
+ 	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
