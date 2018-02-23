@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELslgFcpPivzzq8ZQDEtykqgDJCJzioI7usJsVz8WCp+n+HMk4HQ76PGZZxQ/qs8KSQjEhiJ
-ARC-Seal: i=1; a=rsa-sha256; t=1519411068; cv=none;
+X-Google-Smtp-Source: AH8x225wVjynLjy7qMkyxjKMKx/o4QuPOGwZAvyTIFgV70h8GR2pn13Cqt610YZ2ON5DZTBaJ0Vf
+ARC-Seal: i=1; a=rsa-sha256; t=1519411065; cv=none;
         d=google.com; s=arc-20160816;
-        b=a9FXG22qJs+FaXZLrohUS4bj0JZez3b+/FJql29TWmCm5qvMv0iVXlAwbFlXI+rbQA
-         e5b7b4/ImrGUNOZRdK/JDNhdmsO60f5/J6FFDwxI8hi7jwpA6ZVPptS8iDiMQb6ToOKi
-         2wv1LbzLDM8s/6oExfYhHv2QEL/UsTFDBs/yXZPH9CbbxPemun5HVO5q7MxjPrahjsYp
-         Fa12MSu9L3muzv1+03ew++Bo5UWVgwTKahesimP1fM0jex7ow88brh0gKo20exrFbkUY
-         G6se+LPmeE1F45z5SPsllhV4WXKPZ/05IlRS8NbeGkTllJwR1OBGuOyXkPBQ1UhOj33v
-         lZ5Q==
+        b=Ipf2xQ1qv0tIqOY5ALuJw04die+GUajrXv9/wiwAplzf7Ng+j+zdl2X46pAa6ayEUw
+         24Sg1lFMUGkhFPwKUUZcCaEcyhM7bSR34C4GFzaIWHt/kFjo+tEsubB6AxmJ0suMhx2u
+         zWwdrA58jMf/5F75ROIPO+tPvolBYMEUT9+NxETRL933fSlxAj36g7d+k96w3yxCejmT
+         gQyeo4zxjJYOp54/z41xLpVcxVHkSq25YGoRUhLvpuFAhNS5H++Oj7gnFU2zA5pC7def
+         DHKKzQRbAL59ZYIIXrqYn9vMoSlFKI/R7MRf6cMJrgbDuUYtw5c5uEiHfEEyP9D+ra4V
+         l+QQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+tMHpoDDE11nDeeqfBnSjKeQ3wKNGdtdd2wg+qNpGJ4=;
-        b=TGrtQF/cdI6saJ1zjFNIRyVRK4q3UbcK2IdjtNu3Ly/vZXI5QnNMiqmVqdIh4Po8jv
-         kH6BZFx60dKcoA8GwqzsGja7HqFCLyeSHR3I60EScFC7Wz5mg0p9TtWBWJdaCzztTD+f
-         uJB5AiIbL3+VUGyrYzhzTGPAB8pA4Sd2fXIXsWJ6JAcvvuafAfik1tgbtTtODJGSg1s4
-         aPGBaKm+rjoa+BiRrYsULcVCXfBaW7wc+z/ZAiRHjs1BPG+PkK7md+I+FaKw69Xp3WJk
-         lg7B2mLFtemrt2vhDMnevfJegSxEi0hCmSih97XlRwePxMVVQeV9GqcAfc44DM6NCiRG
-         M8dQ==
+        bh=AeEpOEnA4hW7FaYxxblmZY/GzwK8gjQwH1PLW3tSvcs=;
+        b=oxtqv//NnPlY5OWVs1e1TJ5EIp6zOUywtrVPNmNPtNOksUprkNMh33oZE8m6HSp3pi
+         EpCHdGqEZBBCGhUkKdysEfJ8XevW53VWmlyn2xPJAxG3yO22Ohg9+31I60RcMs1bFvad
+         qpvHcZtHnJ6hWbseZrzwuVPmGp6Q6FDqxC9KyuAUjHdfzsQWUtB4nJvQUvZyXbliIPyS
+         gdYi3zJdtHb6GJxJOA4OmPTvJ1hYjfVJMDUZRRUAANgv7Tvc3Ijlw8W8ZJGOY34vrOsy
+         PvABJsT9/TudPTeDS/uWEpdj1fgQrOCDkY4u5aF+fbL9mSogifZqF0R3/GvZd9+blVEy
+         h/LA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.4 109/193] modsign: hide openssl output in silent builds
-Date: Fri, 23 Feb 2018 19:25:42 +0100
-Message-Id: <20180223170343.002218818@linuxfoundation.org>
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH 4.4 108/193] fbdev: s6e8ax0: avoid unused function warnings
+Date: Fri, 23 Feb 2018 19:25:41 +0100
+Message-Id: <20180223170342.858514771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217980834998490?=
-X-GMAIL-MSGID: =?utf-8?q?1593217980834998490?=
+X-GMAIL-THRID: =?utf-8?q?1593217977587001623?=
+X-GMAIL-MSGID: =?utf-8?q?1593217977587001623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,95 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 5d06ee20b662a78417245714fc576cba90e6374f upstream.
+commit b54729b6cea7d1f46b1ed70cb7065c6bdefaa780 upstream.
 
-When a user calls 'make -s', we can assume they don't want to
-see any output except for warnings and errors, but instead
-they see this for a warning free build:
+The s6e8ax0 suspend/resume functions are hidden inside of an #ifdef
+when CONFIG_PM is set to avoid unused function warnings, but they
+call some other functions that nothing else calls, and we get warnings
+about those:
 
- ###
- ### Now generating an X.509 key pair to be used for signing modules.
- ###
- ### If this takes a long time, you might wish to run rngd in the
- ### background to keep the supply of entropy topped up.  It
- ### needs to be run as root, and uses a hardware random
- ### number generator if one is available.
- ###
- Generating a 4096 bit RSA private key
- .................................................................................................................................................................................................................................++
- ..............................................................................................................................++
- writing new private key to 'certs/signing_key.pem'
- -----
- ###
- ### Key pair generated.
- ###
+drivers/video/fbdev/exynos/s6e8ax0.c:449:13: error: 's6e8ax0_sleep_in' defined but not used [-Werror=unused-function]
+drivers/video/fbdev/exynos/s6e8ax0.c:485:13: error: 's6e8ax0_display_off' defined but not used [-Werror=unused-function]
 
-The output can confuse simple build testing scripts that just check
-for an empty build log.
-
-This patch silences all the output:
- - "echo" is changed to "@$(kecho)", which is dropped when "-s" gets
-   passed
- - the openssl command itself is only printed with V=1, using the
-   $(Q) macro
- - The output of openssl gets redirected to /dev/null on "-s" builds.
+This marks the PM functions as __maybe_unused so the compiler can
+silently drop them when they are not referenced.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- certs/Makefile |   33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ drivers/video/fbdev/exynos/s6e8ax0.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -36,29 +36,34 @@ ifndef CONFIG_MODULE_SIG_HASH
- $(error Could not determine digest type to use from kernel config)
- endif
+--- a/drivers/video/fbdev/exynos/s6e8ax0.c
++++ b/drivers/video/fbdev/exynos/s6e8ax0.c
+@@ -829,8 +829,7 @@ static int s6e8ax0_probe(struct mipi_dsi
+ 	return 0;
+ }
  
-+redirect_openssl	= 2>&1
-+quiet_redirect_openssl	= 2>&1
-+silent_redirect_openssl = 2>/dev/null
-+
- # We do it this way rather than having a boolean option for enabling an
- # external private key, because 'make randconfig' might enable such a
- # boolean option and we unfortunately can't make it depend on !RANDCONFIG.
- ifeq ($(CONFIG_MODULE_SIG_KEY),"certs/signing_key.pem")
- $(obj)/signing_key.pem: $(obj)/x509.genkey
--	@echo "###"
--	@echo "### Now generating an X.509 key pair to be used for signing modules."
--	@echo "###"
--	@echo "### If this takes a long time, you might wish to run rngd in the"
--	@echo "### background to keep the supply of entropy topped up.  It"
--	@echo "### needs to be run as root, and uses a hardware random"
--	@echo "### number generator if one is available."
--	@echo "###"
--	openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_HASH) -days 36500 \
-+	@$(kecho) "###"
-+	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
-+	@$(kecho) "###"
-+	@$(kecho) "### If this takes a long time, you might wish to run rngd in the"
-+	@$(kecho) "### background to keep the supply of entropy topped up.  It"
-+	@$(kecho) "### needs to be run as root, and uses a hardware random"
-+	@$(kecho) "### number generator if one is available."
-+	@$(kecho) "###"
-+	$(Q)openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_HASH) -days 36500 \
- 		-batch -x509 -config $(obj)/x509.genkey \
- 		-outform PEM -out $(obj)/signing_key.pem \
--		-keyout $(obj)/signing_key.pem 2>&1
--	@echo "###"
--	@echo "### Key pair generated."
--	@echo "###"
-+		-keyout $(obj)/signing_key.pem \
-+		$($(quiet)redirect_openssl)
-+	@$(kecho) "###"
-+	@$(kecho) "### Key pair generated."
-+	@$(kecho) "###"
+-#ifdef CONFIG_PM
+-static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
++static int __maybe_unused s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
+ {
+ 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
  
- $(obj)/x509.genkey:
--	@echo Generating X.509 key generation config
-+	@$(kecho) Generating X.509 key generation config
- 	@echo  >$@ "[ req ]"
- 	@echo >>$@ "default_bits = 4096"
- 	@echo >>$@ "distinguished_name = req_distinguished_name"
+@@ -843,7 +842,7 @@ static int s6e8ax0_suspend(struct mipi_d
+ 	return 0;
+ }
+ 
+-static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
++static int __maybe_unused s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
+ {
+ 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
+ 
+@@ -855,10 +854,6 @@ static int s6e8ax0_resume(struct mipi_ds
+ 
+ 	return 0;
+ }
+-#else
+-#define s6e8ax0_suspend		NULL
+-#define s6e8ax0_resume		NULL
+-#endif
+ 
+ static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
+ 	.name = "s6e8ax0",
+@@ -867,8 +862,8 @@ static struct mipi_dsim_lcd_driver s6e8a
+ 	.power_on = s6e8ax0_power_on,
+ 	.set_sequence = s6e8ax0_set_sequence,
+ 	.probe = s6e8ax0_probe,
+-	.suspend = s6e8ax0_suspend,
+-	.resume = s6e8ax0_resume,
++	.suspend = IS_ENABLED(CONFIG_PM) ? s6e8ax0_suspend : NULL,
++	.resume = IS_ENABLED(CONFIG_PM) ? s6e8ax0_resume : NULL,
+ };
+ 
+ static int s6e8ax0_init(void)
