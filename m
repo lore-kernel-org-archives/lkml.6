@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2251WFkuU0iMtdcTV06GZ24mD1mkrDCqQoTp2AFasGh7pQZ59hO1tAn6+hAZIm+aOo8lyS66
-ARC-Seal: i=1; a=rsa-sha256; t=1519411120; cv=none;
+X-Google-Smtp-Source: AG47ELtK6oa7sKyXOU7E+Bg1iuj4ozoJKC7KJfZlzVTf8unIIM6YPOBV8sIwREW8b90zP2BMaAFr
+ARC-Seal: i=1; a=rsa-sha256; t=1519411115; cv=none;
         d=google.com; s=arc-20160816;
-        b=ocfKUW1KT2rNaf5yBt4aZRxoLr6syKfNwbhNvPeqci9GR6YcVmW1bfCB5svADwC3zD
-         ABkJQqNUWJb9x7KLgzlET6+axz6sbx8sLp7jzllgkT4YedynWqySmULeoV3HnBmI3cRG
-         cWNSBj6T8/Aj8xcWt+qjTK5tDpsoPmavurkvTdrIacB4dNksjYjcZ56BdcUtASEaCPuO
-         vwvS81+EHPm9FszdlKTTER9lndPG5dACbEBuRVRMHnF/og/ydrW9QN9+9ue5GBeAifcZ
-         sm2fa8CVwCrsIRkGndveAT4azaIdNexDqiJsHV7nQlg30TCSw28DyP4iQbWhuP0wUo3o
-         AvWw==
+        b=Xjj3qAi/Aid/EmIX4/1LvsD8i5vk08jQpy/A01z6c9vwzMIZn9QDf+Mixoxd6V+I3L
+         Ovmmo62FapKTFfqFZiP5TsMwWlsIhYwSanj44IJvfGXH/zUZja8bxhKJKN9Gz1sTpOJE
+         MQC19EXl8f2nME9fYfUuQvZaL2wbaS/p5tVNO89H6o6wbniurB7CJdU+WGwYNitqqzVa
+         BZbC+XwReWhIojroCfUx5H9OThlzmC0Hf9pZGXgoMuE2Q0sHaCmQVXOELuqF1Kr9EMjQ
+         22U5Rz9qoAEgYy+aD41MsFxvH2aSZ3voiKAyZcIuG8bszZyHCarRpX11Hc4Y5Ku3p17r
+         9jog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tPW34p73PA6s7B8JYTG6+p309lTdiMsIuzbv48ORb2U=;
-        b=m1pT1td9aViAWITV7dD9d0kS0fHqlI8I4+kmtJfNIv16JSo54jwq8x2ClyJwmmBM2j
-         r2YFGwMJ+qp0X9gt8CMBo1NjhsvUTfxTuZ1KWNeaf/9Z9Qi2uNloBeM5PGeVxCvLiXiZ
-         2R2oa1qbqXTxAXSeUwmrcKPkHflYG+o1CPU3kSnkfBOSTt+0QNkgsCiqY0Zg/lLJaDjd
-         5EeMi4sijFtGYrV1q+Xz9x2PZiuyjHQsGBI5/jvhj4YYEoGfb6qYbPjtq+dHh/2VLYBV
-         yYSFEpRiNp0uzB5M1s8HghNAOGI65wNxHb/3T3HYA/UQx7TpL9qf1xGJk5/bTG03lphm
-         +Fiw==
+        bh=kVs6SwhV4UkaGP9AUamyU5FEM3ptyoWmmVuTDB2i88k=;
+        b=mred1VSbB47OwDJYucHpnEBfFOyQWMD0jfABr62W4VA0efRmDTZ7nJoI2TaKc+JGAp
+         Fy3BCH41SwiaRdq8Q363CA5QwoZALmKf15RFRBb9Hjw+kOJy8es8/OVMs9p0rl3r4WvL
+         X1mGq5MLtoDO/4gxBn36XgghkxvLnID8VgK9Fm+jv2GpjWYYqUIgqR4GwqITWvcIM93K
+         BT3L5HsC4VT6kLqvwQ6ejtCRH8DwXxfeO1AIRx74tZJOKKcJQPjr7d5bsj1RdaAlPHhO
+         AFECX5yDZnaVQQc4wfSgFwaAsZdlUCo7sP+8DJ0J7qfApF7ZCZ7+fJLJ3EH5TlhWFjVz
+         eV3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 4.4 129/193] staging: unisys: visorinput depends on INPUT
-Date: Fri, 23 Feb 2018 19:26:02 +0100
-Message-Id: <20180223170346.093070420@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: [PATCH 4.4 127/193] [media] b2c2: flexcop: avoid unused function warnings
+Date: Fri, 23 Feb 2018 19:26:00 +0100
+Message-Id: <20180223170345.788856247@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218034232227739?=
-X-GMAIL-MSGID: =?utf-8?q?1593218034232227739?=
+X-GMAIL-THRID: =?utf-8?q?1593218030223294223?=
+X-GMAIL-MSGID: =?utf-8?q?1593218030223294223?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,48 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 82ddecfe8de54331bafe2d0ff526739fd0980190 upstream.
+commit 733d0def3ebdd1d088330d904149af21fa4b9ae2 upstream.
 
-Fix build errors by limiting UNISYS_VISORINPUT to the INPUT kconfig
-setting.
+The flexcop driver has two functions that are normally used, except
+when multiple frontend drivers are disabled:
 
-drivers/built-in.o: In function `visorinput_remove':
-visorinput.c:(.text+0x20802e): undefined reference to `input_unregister_device'
-drivers/built-in.o: In function `visorinput_probe':
-visorinput.c:(.text+0x208177): undefined reference to `input_allocate_device'
-visorinput.c:(.text+0x208241): undefined reference to `input_register_device'
-visorinput.c:(.text+0x20824d): undefined reference to `input_free_device'
-visorinput.c:(.text+0x208286): undefined reference to `input_allocate_device'
-visorinput.c:(.text+0x208302): undefined reference to `input_set_abs_params'
-visorinput.c:(.text+0x20831a): undefined reference to `input_set_abs_params'
-visorinput.c:(.text+0x20833f): undefined reference to `input_register_device'
-visorinput.c:(.text+0x20834b): undefined reference to `input_free_device'
-visorinput.c:(.text+0x20835f): undefined reference to `input_set_capability'
-drivers/built-in.o: In function `visorinput_channel_interrupt':
-visorinput.c:(.text+0x20851e): undefined reference to `input_event'
-visorinput.c:(.text+0x20862c): undefined reference to `input_event'
-drivers/built-in.o: In function `input_report_key':
-visorinput.c:(.text+0x207fd1): undefined reference to `input_event'
-drivers/built-in.o: In function `input_sync':
-visorinput.c:(.text+0x207fdc): undefined reference to `input_event'
+drivers/media/common/b2c2/flexcop-fe-tuner.c:42:12: warning: 'flexcop_set_voltage' defined but not used [-Wunused-function]
+drivers/media/common/b2c2/flexcop-fe-tuner.c:71:12: warning: 'flexcop_sleep' defined but not used [-Wunused-function]
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+This avoids the build warning by updating the #ifdef for flexcop_set_voltage
+to the exact condition under which it is used. For flexcop_sleep, the
+condition is rather complex, so I resort to marking it as __maybe_unused,
+so the compiler can silently drop it.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/unisys/visorinput/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/common/b2c2/flexcop-fe-tuner.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/unisys/visorinput/Kconfig
-+++ b/drivers/staging/unisys/visorinput/Kconfig
-@@ -4,7 +4,7 @@
+--- a/drivers/media/common/b2c2/flexcop-fe-tuner.c
++++ b/drivers/media/common/b2c2/flexcop-fe-tuner.c
+@@ -38,7 +38,7 @@ static int flexcop_fe_request_firmware(s
+ #endif
  
- config UNISYS_VISORINPUT
- 	tristate "Unisys visorinput driver"
--	depends on UNISYSSPAR && UNISYS_VISORBUS && FB
-+	depends on UNISYSSPAR && UNISYS_VISORBUS && FB && INPUT
- 	---help---
- 	If you say Y here, you will enable the Unisys visorinput driver.
+ /* lnb control */
+-#if FE_SUPPORTED(MT312) || FE_SUPPORTED(STV0299)
++#if (FE_SUPPORTED(MT312) || FE_SUPPORTED(STV0299)) && FE_SUPPORTED(PLL)
+ static int flexcop_set_voltage(struct dvb_frontend *fe,
+ 			       enum fe_sec_voltage voltage)
+ {
+@@ -68,7 +68,7 @@ static int flexcop_set_voltage(struct dv
+ #endif
  
+ #if FE_SUPPORTED(S5H1420) || FE_SUPPORTED(STV0299) || FE_SUPPORTED(MT312)
+-static int flexcop_sleep(struct dvb_frontend* fe)
++static int __maybe_unused flexcop_sleep(struct dvb_frontend* fe)
+ {
+ 	struct flexcop_device *fc = fe->dvb->priv;
+ 	if (fc->fe_sleep)
