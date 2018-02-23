@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225fdUp6a9w3RBLWRJpBwuzZ9rrqI2XVsrQ9iiOjSK+mfDPOnlWe3wFRzFK7fNe0AulvsqYE
-ARC-Seal: i=1; a=rsa-sha256; t=1519411295; cv=none;
+X-Google-Smtp-Source: AG47ELtSKhtLdSge7JWuULu2NYMcAb2gleJFXYO9+eaR0x7fr5qQYi4Aodw/gPq2FWGWA5oQNu/s
+ARC-Seal: i=1; a=rsa-sha256; t=1519411292; cv=none;
         d=google.com; s=arc-20160816;
-        b=c/k/+BVvd27rIQs6fGLPw80KvefGovkh2OlWcmXBwWy4RioN4KzLDUqcChIxKCDXKL
-         DlESprlpofDZabPhZNzw5SEWYwS9ba1vhW8MDgn+D7fqUy5UOOQyDcleU+SgDbVWXy+f
-         GiR8aTDhq+Wo3RktHl4Jaue1IwghJX8ftP8bAHJuGqcj6OBK8TkhY5bHlRcInxzxs86C
-         Hm3B3Ea8rbsB6wAZw3ybJVYE7OInYplq8F3vhDrTAD2u58BFACP8AiIwmSNeF4C9nZdT
-         01GXJQyzZOfkeoC65vFZB2gp2rVJkZp7xCG0VUYlLFPgxsecReHSlbm2zJD17oOKYtMo
-         VCUA==
+        b=K//9+UYweEzV6BiIO7B6kLlrwLZ55aHHqX+yBkd2ryM4Eo6l8n4oX01DzKUyFyG4z7
+         APgBaI530PNegMX0L2A6M2TUy9PP2SqFeRT79FCufYrfDyKPzmbyLLfPwgYNt6tGo1LK
+         z1lhB3H9CzMQArKnckPfIJQctriAYUINUPg1r5QysEpNhfY4QV+clGm6EwTyCPRUhUNA
+         uAxKaSm4EakI41gxThA92UHyUrvWyVU6FJS2SnS7hDe4KE4KL1SHFw2ZRY2iScM0p2NS
+         gkz8qeQ88SqqmrW10kxcAKksTLXy0QnltW7EdeLga7JN1EiOb2dENHg1DTmfXJowaIAZ
+         5y8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lutd+L0LCllD5pxaESWPVzHYs0KfKP5Qbj596el59y0=;
-        b=ySF0AOTeXKDFrbqcVydTpyD6RzZMgFmINTP2R6W3rKFOj1skqutGeBn2aiNgc7/0dY
-         gH/7N2Sw3XvEixQ5qUs9TR3PNE7iSTdG8mu4hbLZtnvmtBSvjkJH1bkQJVZgVHXHAnvH
-         zrMo0l9UeVUVbLOGXa6xkQg3QoPi/tGM0b+FnPIDNUA7/0djT6kg7cB9Wg9CeX+dmKKr
-         fulcTzLbpjts9NfZ5D9SJDWLaSqLi0SZUwNcqjMz2A17iohfnY9TJd0wMeac+PR7oGqR
-         gagd1xLghj8ECpIgyXb0DseofSnrwd9Q9liiah1rK1u4/wHGeIR6nR3QXSMBw12WBx8P
-         MZUw==
+        bh=CcE5SCXA9A4vEWKys2eCfwjb875D85kE0v9SeeRUNFM=;
+        b=aAjGDu91FMZRwQ8rsxmlOZldC0yW/Yy15hMtzWC2TuDR/1hPpo24KMD86MA0SnBBbS
+         aKYmExJmr/szpAOpymii0Omz87vFlRTI/BU2Scem62FTH2lUOE4FRn94DVjhDXV+xZU/
+         pJlLPp340fr5oTWe73bdfrnuWnPa0HLKe+t2EKAJmiv9q2wqrKkXbu/RnNZ9Bet1G8mO
+         cET3ppEh0IV7esWQvt1fJMGdRs9UZH9pFxyay+eCoMggfuYhFUMeCrx0dk4DTO14Idg0
+         67TgZCKN45TKBuyyGPRYawxCWkhupt3bYoDKjg8tMsURNi9zcQwj9rUdPev5Zk6edWAj
+         Vaew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	KarimAllah Ahmed <karahmed@amazon.de>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	karahmed@amazon.de,
 	peterz@infradead.org,
 	bp@alien8.de,
 	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.4 186/193] x86/spectre: Simplify spectre_v2 command line parsing
-Date: Fri, 23 Feb 2018 19:26:59 +0100
-Message-Id: <20180223170355.379658981@linuxfoundation.org>
+Subject: [PATCH 4.4 185/193] x86/retpoline: Avoid retpolines for built-in __init functions
+Date: Fri, 23 Feb 2018 19:26:58 +0100
+Message-Id: <20180223170355.228144146@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218218564418522?=
-X-GMAIL-MSGID: =?utf-8?q?1593218218564418522?=
+X-GMAIL-THRID: =?utf-8?q?1593218215568288447?=
+X-GMAIL-MSGID: =?utf-8?q?1593218215568288447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,137 +53,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: KarimAllah Ahmed <karahmed@amazon.de>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-(cherry picked from commit 9005c6834c0ffdfe46afa76656bd9276cca864f6)
+(cherry picked from commit 66f793099a636862a71c59d4a6ba91387b155e0c)
 
-[dwmw2: Use ARRAY_SIZE]
+There's no point in building init code with retpolines, since it runs before
+any potentially hostile userspace does. And before the retpoline is actually
+ALTERNATIVEd into place, for much of it.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: karahmed@amazon.de
 Cc: peterz@infradead.org
 Cc: bp@alien8.de
-Link: https://lkml.kernel.org/r/1517484441-1420-3-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1517484441-1420-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-[jwang: cherry pick to 4.4]
+[jwang: port to 4.4]
 Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   84 +++++++++++++++++++++++++++++----------------
- 1 file changed, 55 insertions(+), 29 deletions(-)
+ include/linux/init.h |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -119,13 +119,13 @@ static inline const char *spectre_v2_mod
- static void __init spec2_print_if_insecure(const char *reason)
- {
- 	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s\n", reason);
-+		pr_info("%s selected on command line.\n", reason);
- }
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -4,6 +4,13 @@
+ #include <linux/compiler.h>
+ #include <linux/types.h>
  
- static void __init spec2_print_if_secure(const char *reason)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s\n", reason);
-+		pr_info("%s selected on command line.\n", reason);
- }
++/* Built-in __init functions needn't be compiled with retpoline */
++#if defined(RETPOLINE) && !defined(MODULE)
++#define __noretpoline __attribute__((indirect_branch("keep")))
++#else
++#define __noretpoline
++#endif
++
+ /* These macros are used to mark some functions or 
+  * initialized data (doesn't apply to uninitialized data)
+  * as `initialization' functions. The kernel can take this
+@@ -39,7 +46,7 @@
  
- static inline bool retp_compiler(void)
-@@ -140,42 +140,68 @@ static inline bool match_option(const ch
- 	return len == arglen && !strncmp(arg, opt, len);
- }
- 
-+static const struct {
-+	const char *option;
-+	enum spectre_v2_mitigation_cmd cmd;
-+	bool secure;
-+} mitigation_options[] = {
-+	{ "off",               SPECTRE_V2_CMD_NONE,              false },
-+	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
-+	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
-+	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
-+	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
-+	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
-+};
-+
- static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- {
- 	char arg[20];
--	int ret;
-+	int ret, i;
-+	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
-+
-+	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
-+		return SPECTRE_V2_CMD_NONE;
-+	else {
-+		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
-+					  sizeof(arg));
-+		if (ret < 0)
-+			return SPECTRE_V2_CMD_AUTO;
- 
--	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg,
--				  sizeof(arg));
--	if (ret > 0)  {
--		if (match_option(arg, ret, "off")) {
--			goto disable;
--		} else if (match_option(arg, ret, "on")) {
--			spec2_print_if_secure("force enabled on command line.");
--			return SPECTRE_V2_CMD_FORCE;
--		} else if (match_option(arg, ret, "retpoline")) {
--			spec2_print_if_insecure("retpoline selected on command line.");
--			return SPECTRE_V2_CMD_RETPOLINE;
--		} else if (match_option(arg, ret, "retpoline,amd")) {
--			if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
--				pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
--				return SPECTRE_V2_CMD_AUTO;
--			}
--			spec2_print_if_insecure("AMD retpoline selected on command line.");
--			return SPECTRE_V2_CMD_RETPOLINE_AMD;
--		} else if (match_option(arg, ret, "retpoline,generic")) {
--			spec2_print_if_insecure("generic retpoline selected on command line.");
--			return SPECTRE_V2_CMD_RETPOLINE_GENERIC;
--		} else if (match_option(arg, ret, "auto")) {
-+		for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
-+			if (!match_option(arg, ret, mitigation_options[i].option))
-+				continue;
-+			cmd = mitigation_options[i].cmd;
-+			break;
-+		}
-+
-+		if (i >= ARRAY_SIZE(mitigation_options)) {
-+			pr_err("unknown option (%s). Switching to AUTO select\n",
-+			       mitigation_options[i].option);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
- 
--	if (!cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
-+	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
-+	     cmd == SPECTRE_V2_CMD_RETPOLINE_AMD ||
-+	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC) &&
-+	    !IS_ENABLED(CONFIG_RETPOLINE)) {
-+		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
-+		       mitigation_options[i].option);
- 		return SPECTRE_V2_CMD_AUTO;
--disable:
--	spec2_print_if_insecure("disabled on command line.");
--	return SPECTRE_V2_CMD_NONE;
-+	}
-+
-+	if (cmd == SPECTRE_V2_CMD_RETPOLINE_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
-+		pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
-+		return SPECTRE_V2_CMD_AUTO;
-+	}
-+
-+	if (mitigation_options[i].secure)
-+		spec2_print_if_secure(mitigation_options[i].option);
-+	else
-+		spec2_print_if_insecure(mitigation_options[i].option);
-+
-+	return cmd;
- }
- 
- /* Check for Skylake-like CPUs (for RSB handling) */
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+-#define __init		__section(.init.text) __cold notrace
++#define __init		__section(.init.text) __cold notrace __noretpoline
+ #define __initdata	__section(.init.data)
+ #define __initconst	__constsection(.init.rodata)
+ #define __exitdata	__section(.exit.data)
