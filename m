@@ -1,132 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeBWPOb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:14:31 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39963 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751904AbeBWPO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:14:27 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>
-CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v2 03/11] perf vendor events: drop support for unused topic directories
-Date: Sat, 24 Feb 2018 00:05:24 +0800
-Message-ID: <1519401932-205051-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
-References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+        id S1751766AbeBWPPR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:15:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38320 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751436AbeBWPPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:15:15 -0500
+Date: Fri, 23 Feb 2018 08:15:13 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jroedel@suse.de" <jroedel@suse.de>
+Subject: Re: [PATCH v5] vfio/type1: Adopt fast IOTLB flush interface when
+ unmap IOVAs
+Message-ID: <20180223081513.33f799f7@w520.home>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191015A83@SHSMSX101.ccr.corp.intel.com>
+References: <1517466458-3523-1-git-send-email-suravee.suthikulpanit@amd.com>
+        <20180222155915.543804e8@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D191015A83@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently a topic subdirectory is supported in the
-pmu-events dir, in the following sample structure:
-/arch/platform/subtopic/mysubtopic.json
+On Fri, 23 Feb 2018 08:20:51 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-Upto 256 levels of topic subdirectories are supported. So this
-means that JSONs may be located in a topic dir as well as the
-platform dir.
+> > From: Alex Williamson
+> > Sent: Friday, February 23, 2018 6:59 AM
+> > 
+> > On Thu,  1 Feb 2018 01:27:38 -0500
+> > Suravee Suthikulpanit <suravee.suthikulpanit@amd.com> wrote:
+> >   
+> > > VFIO IOMMU type1 currently upmaps IOVA pages synchronously, which  
+> > requires  
+> > > IOTLB flushing for every unmapping. This results in large IOTLB flushing
+> > > overhead when handling pass-through devices has a large number of  
+> > mapped  
+> > > IOVAs. This can be avoided by using the new IOTLB flushing interface.
+> > >
+> > > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > > Cc: Joerg Roedel <joro@8bytes.org>
+> > > Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> > > ---
+> > >
+> > > Changes from v4 (https://lkml.org/lkml/2018/1/31/153)
+> > >  * Change return type from ssize_t back to size_t since we no longer
+> > >    changing IOMMU API. Also update error handling logic accordingly.
+> > >  * In unmap_unpin_fast(), also sync when failing to allocate entry.
+> > >  * Some code restructuring and variable renaming.
+> > >
+> > >  drivers/vfio/vfio_iommu_type1.c | 128  
+> > ++++++++++++++++++++++++++++++++++++----  
+> > >  1 file changed, 117 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/drivers/vfio/vfio_iommu_type1.c  
+> > b/drivers/vfio/vfio_iommu_type1.c  
+> > > index e30e29a..6041530 100644
+> > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > @@ -102,6 +102,13 @@ struct vfio_pfn {
+> > >  	atomic_t		ref_count;
+> > >  };
+> > >
+> > > +struct vfio_regions {
+> > > +	struct list_head list;
+> > > +	dma_addr_t iova;
+> > > +	phys_addr_t phys;
+> > > +	size_t len;
+> > > +};
+> > > +
+> > >  #define IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)	\
+> > >  					(!list_empty(&iommu->domain_list))
+> > >
+> > > @@ -648,11 +655,102 @@ static int  
+> > vfio_iommu_type1_unpin_pages(void *iommu_data,  
+> > >  	return i > npage ? npage : (i > 0 ? i : -EINVAL);
+> > >  }
+> > >
+> > > +static long vfio_sync_unpin(struct vfio_dma *dma, struct vfio_domain  
+> > *domain,  
+> > > +				struct list_head *regions)
+> > > +{
+> > > +	long unlocked = 0;
+> > > +	struct vfio_regions *entry, *next;
+> > > +
+> > > +	iommu_tlb_sync(domain->domain);
+> > > +
+> > > +	list_for_each_entry_safe(entry, next, regions, list) {
+> > > +		unlocked += vfio_unpin_pages_remote(dma,
+> > > +						    entry->iova,
+> > > +						    entry->phys >>  
+> > PAGE_SHIFT,  
+> > > +						    entry->len >> PAGE_SHIFT,
+> > > +						    false);
+> > > +		list_del(&entry->list);
+> > > +		kfree(entry);
+> > > +	}
+> > > +
+> > > +	cond_resched();
+> > > +
+> > > +	return unlocked;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Generally, VFIO needs to unpin remote pages after each IOTLB flush.
+> > > + * Therefore, when using IOTLB flush sync interface, VFIO need to keep  
+> > track  
+> > > + * of these regions (currently using a list).
+> > > + *
+> > > + * This value specifies maximum number of regions for each IOTLB flush  
+> > sync.  
+> > > + */
+> > > +#define VFIO_IOMMU_TLB_SYNC_MAX		512
+> > > +
+> > > +static size_t unmap_unpin_fast(struct vfio_domain *domain,
+> > > +			       struct vfio_dma *dma, dma_addr_t *iova,
+> > > +			       size_t len, phys_addr_t phys, long *unlocked,
+> > > +			       struct list_head *unmapped_list,
+> > > +			       int *unmapped_cnt)
+> > > +{
+> > > +	size_t unmapped = 0;
+> > > +	struct vfio_regions *entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+> > > +
+> > > +	if (entry) {
+> > > +		unmapped = iommu_unmap_fast(domain->domain, *iova,  
+> > len);  
+> > > +
+> > > +		if (!unmapped) {
+> > > +			kfree(entry);
+> > > +		} else {
+> > > +			iommu_tlb_range_add(domain->domain, *iova,  
+> > unmapped);  
+> > > +			entry->iova = *iova;
+> > > +			entry->phys = phys;
+> > > +			entry->len  = unmapped;
+> > > +			list_add_tail(&entry->list, unmapped_list);
+> > > +
+> > > +			*iova += unmapped;
+> > > +			(*unmapped_cnt)++;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Sync if the number of fast-unmap regions hits the limit
+> > > +	 * or in case of errors.
+> > > +	 */
+> > > +	if (*unmapped_cnt >= VFIO_IOMMU_TLB_SYNC_MAX  
+> > || !unmapped) {  
+> > > +		*unlocked += vfio_sync_unpin(dma, domain,
+> > > +					     unmapped_list);
+> > > +		*unmapped_cnt = 0;
+> > > +	}  
+> 
+> I'm not sure why returning ZERO is treated as only unmap error 
+> here, but if looking at __iommu_unmap clearly there are other
+> error codes returned also. I know it's not introduced by this
+> patch but Alex, was it deliberately implemented such way under 
+> any assumption or a typo?
 
-This topic subdirectory causes problems if we want to add support
-for a vendor dir in the pmu-events structure (in the form
-arch/platform/vendor), in that we cannot differentiate between
-a vendor dir and a topic dir.
+iommu_unmap() returns a size_t, an unsigned type.  Suravee has another
+patch in the iommu space to correct that function from trying to return
+-errno.  Thanks,
 
-Since the topic dir feature is not used, drop it so it
-does not block adding vendor subdirectory support.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
----
-NOTE: There was a bug in this code with how add_topic()
-sets topic_level. Also a delimiter could be added in printing
-the "topic" in get_topic().
-
- tools/perf/pmu-events/jevents.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
-
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index edff989..1d02faf 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -256,25 +256,18 @@ static const char *field_to_perf(struct map *table, char *map, jsmntok_t *val)
- 	goto out_free;						\
- } } while (0)
- 
--#define TOPIC_DEPTH 256
--static char *topic_array[TOPIC_DEPTH];
--static int   topic_level;
-+static char *topic;
- 
- static char *get_topic(void)
- {
--	char *tp_old, *tp = NULL;
-+	char *tp;
- 	int i;
- 
--	for (i = 0; i < topic_level + 1; i++) {
--		int n;
--
--		tp_old = tp;
--		n = asprintf(&tp, "%s%s", tp ?: "", topic_array[i]);
--		if (n < 0) {
--			pr_info("%s: asprintf() error %s\n", prog);
--			return NULL;
--		}
--		free(tp_old);
-+	/* tp is free'd in process_one_file() */
-+	i = asprintf(&tp, "%s", topic);
-+	if (i < 0) {
-+		pr_info("%s: asprintf() error %s\n", prog);
-+		return NULL;
- 	}
- 
- 	for (i = 0; i < (int) strlen(tp); i++) {
-@@ -291,25 +284,15 @@ static char *get_topic(void)
- 	return tp;
- }
- 
--static int add_topic(int level, char *bname)
-+static int add_topic(char *bname)
- {
--	char *topic;
--
--	level -= 2;
--
--	if (level >= TOPIC_DEPTH)
--		return -EINVAL;
--
-+	free(topic);
- 	topic = strdup(bname);
- 	if (!topic) {
- 		pr_info("%s: strdup() error %s for file %s\n", prog,
- 				strerror(errno), bname);
- 		return -ENOMEM;
- 	}
--
--	free(topic_array[topic_level]);
--	topic_array[topic_level] = topic;
--	topic_level              = level;
- 	return 0;
- }
- 
-@@ -824,7 +807,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
- 		}
- 	}
- 
--	if (level > 1 && add_topic(level, bname))
-+	if (level > 1 && add_topic(bname))
- 		return -ENOMEM;
- 
- 	/*
--- 
-1.9.1
+Alex
