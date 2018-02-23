@@ -1,103 +1,143 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x224z5CKtDiVxOCgcTu/r91HqAt7I35MIX0X4Cg+3gvhnMq11qeFHNigDQLoao3nUzZCpAukG
-ARC-Seal: i=1; a=rsa-sha256; t=1519664097; cv=none;
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AH8x225miHmuL3nfP7UIdAQs2njquQxs9c3Ktak7WbclpqPqVIP11Fm+3ZOwQi4ooBHnduAcuHRp
+ARC-Seal: i=1; a=rsa-sha256; t=1519374257; cv=none;
         d=google.com; s=arc-20160816;
-        b=l3mAa+KWuFeH/9E8x2hdprK/VOmYg4ih8E33xOIpl7IO35+dHEyIIrp5HitZJUkuRj
-         Ho12cmNZUzQEiOLc0sjiOFScui3aJ5T1o3SsZXhkvwHQY1W2FQ3cxs40haGggXezYJej
-         NaoaVnw6vCdr2tC9rNsqe2dRbdfJ1t0ZzW63kVakVsuVnPhpTKJyAyRssN+kuw/IjYbJ
-         WYDMshxVlx7KsuTEWj0cpZRlwasBJ3Pk8AUSLZBDfpW4Vkttx+yxwigmM1+vSoruz7pW
-         5Hg4UyxupPL+lttzUQMb5O6Rxcv/1pvt5lHRstPP+uQRu9Na0Ul/fC+yAdADOA5qURkC
-         oa2w==
+        b=GPirVDUMjJj6tf+wEROUbXt77QDhNfURTm+ToV5MHyl7F0gvJ1LszKV0m5i2nP7oaU
+         SaSyZB1aYvLHELQHKO/oWsF1ZI3gsiJRJi72J4ijPixHN0E2dmcscTr1P9an3HwlfoSu
+         AGkMXn0yCbjV6ZYiPB2R8NCUt9MAtwmDjOn9/+7pRQ9iMOEVsFpV7d/tYAJVnTTf4wDI
+         NUZHlqo6ycLP5kDelARvNE/RXJ38GwwUL04zgFXWNsbqaV9NvkRmYzCdnmGPw+fUrhZf
+         NoMRc4qou/SZlhOrcwUT66dXhqh5fHOPXxcjR6Gbz9ZvPpkuOt2A2tvv4EThiowG8e62
+         GkXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:reply-to
-         :arc-authentication-results;
-        bh=31rWNZ+DpvosaB3UEB3ApmPDgoYMLOUbPBu3U/+K5ew=;
-        b=Fn4x1mGB6R3QNGIPXdNJYuUJ5WS0ptrDnhFTlWPd9e3KkDJbcAD6x7VGBy4LRuzWhY
-         kNljRSx0B2exlpyObtohgovNhBvlZOkyr/361x0Fty4RhYUuGZMOGAC7asIIrv7hgKjz
-         MZpGeUBkS5xeOtVOsGyNpWMidlD1UKz1Om3gPRcmscUhH9BqRICNny+JcgT7wCJ+EJOH
-         m9AaAM3iyUGeLxFHuSh6wY80DINsSrq58L2qVRC1GFX7AF+Xpn2T46BkluOmBPfnJK74
-         BvJlNHfiymOh+hxZODIPZ8RiLnKJ5t+Fi9QmHHDoRrpdqX5om/OIU9mFWFvuu3SncCNa
-         bnrw==
+        h=message-id:date:subject:cc:to:from:dmarc-filter:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=rFvK8GgxJmyDUtCS4E9V4PZPK+FMLnMf4YBkwiXflUc=;
+        b=AeunoCXwITAQ61gJnV0TpbzSNpgvCqxybPJXqVQd1y2vt3pcry0ch5VeUrxoa+8xm9
+         9iIcFgu+Qem6kpDN03qWCS27XHaTHe9MFhdgk12z0F/1gR7X4qGQG9ZDGbcJ6bHRcBdi
+         OYKVQdqznOXYocoVyJCDEF8+stPC9r4i4R0hKebWBsptL7TvmIaWiP9P3qmI7Wthnh2t
+         klftsuN2OCHP+741U+b8g6hs73/PnxFHzIGhCtSPwhMXKkqOsOVrwhHdgEZov/0MoN3A
+         Xg+SIchFNiGXzYQE6XHviOWY5Kx0EcNbmcU/tEeliDCup4PkjhsQOLpRk0ObhJHXE2cw
+         5TTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QHHU3Gxl;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=C9Hm97rw;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750941AbeBZQy5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 26 Feb 2018 11:54:57 -0500
-Received: from mailout.easymail.ca ([64.68.200.34]:59569 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750767AbeBZQy4 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 26 Feb 2018 11:54:56 -0500
-Reply-To: shuah@kernel.org
-Subject: Re: [PATCH 1/2] selftests: ion: Remove some prints
-To: Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Kjos <tkjos@android.com>, dri-devel@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Liam Mark <lmark@codeaurora.org>,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180216012445.17264-1-labbott@redhat.com>
- <20180216012445.17264-2-labbott@redhat.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <f5324fa1-64fe-4b22-944b-c646c662a48f@kernel.org>
-Date: Mon, 26 Feb 2018 09:54:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180216012445.17264-2-labbott@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QHHU3Gxl;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=C9Hm97rw;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2C8C607C6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v11 0/7] Address error and recovery for AER and DPC
+Date: Fri, 23 Feb 2018 13:53:57 +0530
+Message-Id: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592518834348841549?=
-X-GMAIL-MSGID: =?utf-8?q?1593483300634906330?=
+X-GMAIL-THRID: =?utf-8?q?1593179381697848850?=
+X-GMAIL-MSGID: =?utf-8?q?1593179381697848850?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/15/2018 06:24 PM, Laura Abbott wrote:
-> There's no need to print messages each time we alloc and free. Remove them.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
->  tools/testing/selftests/android/ion/ionutils.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/android/ion/ionutils.c b/tools/testing/selftests/android/ion/ionutils.c
-> index ce69c14f51fa..7d1d37c4ef6a 100644
-> --- a/tools/testing/selftests/android/ion/ionutils.c
-> +++ b/tools/testing/selftests/android/ion/ionutils.c
-> @@ -80,11 +80,6 @@ int ion_export_buffer_fd(struct ion_buffer_info *ion_info)
->  	heap_id = MAX_HEAP_COUNT + 1;
->  	for (i = 0; i < query.cnt; i++) {
->  		if (heap_data[i].type == ion_info->heap_type) {
-> -			printf("--------------------------------------\n");
-> -			printf("heap type: %d\n", heap_data[i].type);
-> -			printf("  heap id: %d\n", heap_data[i].heap_id);
-> -			printf("heap name: %s\n", heap_data[i].name);
-> -			printf("--------------------------------------\n");
->  			heap_id = heap_data[i].heap_id;
->  			break;
->  		}
-> @@ -204,7 +199,6 @@ void ion_close_buffer_fd(struct ion_buffer_info *ion_info)
->  		/* Finally, close the client fd */
->  		if (ion_info->ionfd > 0)
->  			close(ion_info->ionfd);
-> -		printf("<%s>: buffer release successfully....\n", __func__);
->  	}
->  }
->  
-> 
-Thanks Laura. I will queue this up for 4.17-rc1.
+This patch set brings in error handling support for DPC
 
-thanks,
--- Shuah
+The current implementation of AER and error message broadcasting to the
+EP driver is tightly coupled and limited to AER service driver.
+It is important to factor out broadcasting and other link handling
+callbacks. So that not only when AER gets triggered, but also when DPC get
+triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
 
+DPC should enumerate the devices after recovering the link, which is
+achieved by implementing error_resume callback.
+
+Changes since v10:
+    Christoph Hellwig's, David Laight's and Randy Dunlap's
+    comments addressed.
+	> renamed pci_do_recovery to pcie_do_recovery
+	> removed inner braces in conditional statements.
+	> restrctured the code in pci_wait_for_link 
+	> EXPORT_SYMBOL_GPL
+Changes since v9:
+    Sinan's comments addressed.
+	> bool active = true; unnecessary variable removed.
+Changes since v8:
+    Fixed Kbuild errors.
+Changes since v7:
+    Rebased the code on pci master
+	> https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
+Changes since v6:
+    Sinan's and Stefan's comments implemented.
+	> reordered patch 6 and 7
+	> cleaned up
+Changes since v5:
+    Sinan's and Keith's comments incorporated.
+        > made separate patch for mutex
+        > unified error repotting codes into driver/pci/pci.h
+        > got rid of wait link active/inactive and
+          made generic function in driver/pci/pci.c
+Changes since v4:
+    Bjorn's comments incorporated.
+        > Renamed only do_recovery.
+        > moved the things more locally to drivers/pci/pci.h
+Changes since v3:
+    Bjorn's comments incorporated.
+        > Made separate patch renaming generic pci_err.c
+        > Introduce pci_err.h to contain all the error types and recovery
+        > removed all the dependencies on pci.h
+Changes since v2:
+    Based on feedback from Keith:
+    "
+    When DPC is triggered due to receipt of an uncorrectable error Message,
+    the Requester ID from the Message is recorded in the DPC Error
+    Source ID register and that Message is discarded and not forwarded Upstream.
+    "
+    Removed the patch where AER checks if DPC service is active
+Changes since v1:
+    Kbuild errors fixed:
+        > pci_find_dpc_dev made static
+        > ras_event.h updated
+        > pci_find_aer_service call with CONFIG check
+        > pci_find_dpc_service call with CONFIG check
+
+Oza Pawandeep (7):
+  PCI/AER: Rename error recovery to generic pci naming
+  PCI/AER: factor out error reporting from AER
+  PCI/ERR: add mutex to synchronize recovery
+  PCI/DPC: Unify and plumb error handling into DPC
+  PCI/AER: Unify aer error defines at single space
+  PCI/DPC: Enumerate the devices after DPC trigger event
+  PCI: Unify wait for link active into generic pci
+
+ drivers/acpi/apei/ghes.c               |   1 +
+ drivers/pci/hotplug/pciehp_hpc.c       |  21 +-
+ drivers/pci/pci.c                      |  39 +++-
+ drivers/pci/pci.h                      |  11 +
+ drivers/pci/pcie/Makefile              |   2 +-
+ drivers/pci/pcie/aer/aerdrv.h          |  30 ---
+ drivers/pci/pcie/aer/aerdrv_core.c     | 293 +-------------------------
+ drivers/pci/pcie/aer/aerdrv_errprint.c |   1 +
+ drivers/pci/pcie/pcie-dpc.c            | 115 ++++++++++-
+ drivers/pci/pcie/pcie-err.c            | 366 +++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/portdrv.h             |   2 +
+ include/linux/aer.h                    |   4 -
+ include/linux/pci.h                    |   1 +
+ 13 files changed, 534 insertions(+), 352 deletions(-)
+ create mode 100644 drivers/pci/pcie/pcie-err.c
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
