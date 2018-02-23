@@ -1,152 +1,191 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3421458-1519666738-2-17048073669616417832
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519666738; b=briNpB8wZAGrcsvY2OQywuZp4vFgIlijshSHyt/+kBGsa06
-    Upm8uiTWFze+uFI56+PW+ZXglThEjQTVvC8UtuXS5xBOLiebxFWgAMk1AL2KmGI8
-    57FdvhhjKzH28Sr2bulCeHsWI5+qv+UhOLrbgROZqVpoOdQDRxd/vXlRQ3KlbHV3
-    sotfywU/GOQSTyBt2smRkLbxjfp3VO4ZlKj+g471OSSa5s+M1OhZNWm2Inl2vafe
-    pSqmgYoJv0NchJS+r7SNWFYV9S/hovrjYDQh8vxmrwPW0imO7+PmIkb9ZEtDcp0k
-    KunLO1DUWe+j1yMHolBWC4GJqAMYPxkEf3cT/fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519666738; bh=Eu8RNDNdbRYngrmSuDtz5u+Pss
-    TdOgGxGVF0bQpjSu4=; b=qYQK5zB4NgGqFxF3NLc+IomeWMyJLGqWtWPGiid4DA
-    dwSRT+STMpkwQdjcPdVFW0YSsLptWzl4/D3OB4yImvHdUnnRF3Dtb/sE+GKmoTSS
-    5gXV9cBHlTdayacVhbIPK9l0sHV9gn+BsgCnny9sjwkQLjbjPfaNXqaZch1tHEKZ
-    OnWKxzDqmW19s4rfAruPc8x+IZf0t17Bg8/1P+QsB9H213qP/ldZVVTD468YrG1d
-    P5UCHZssDU+vC828/HK8RoBGWAmpKDqPb1kuiAdjUDVNX4ylYHU74mH+q/rAHPjh
-    aBQv3hCprJxEXBI/vTAa81QrTeP+bSrdHSi1sLs5GZFw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l81+t+c4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=l81+t+c4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeBZRik (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 12:38:40 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:27491 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751676AbeBZRih (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 26 Feb 2018 12:38:37 -0500
-Date: Mon, 26 Feb 2018 11:38:33 -0600
-From: Bin Liu <b-liu@ti.com>
-To: Merlijn Wajer <merlijn@wizzup.org>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: musb: call pm_runtime_{get,put}_sync before reading
- vbus registers
-Message-ID: <20180226173833.GC20609@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Merlijn Wajer <merlijn@wizzup.org>, linux-omap@vger.kernel.org,
-        tony@atomide.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180226105609.22514-1-merlijn@wizzup.org>
- <20180226155716.GB20609@uda0271908>
- <73a1de6d-6bf4-275f-aee3-85699cd6ca76@wizzup.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <73a1de6d-6bf4-275f-aee3-85699cd6ca76@wizzup.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <sudeep.holla@arm.com>
+X-Google-Smtp-Source: AG47ELuL3Opm/ycIc5lOcacSub3D2Uwmdj7khx1QlILQl7DEkqvSsrKK2Tc2NOHnl1YCce9P0Phn
+ARC-Seal: i=1; a=rsa-sha256; t=1519403046; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Py7IrXhFKtu+qEsqFUMA/ptKEN8uJ9H/F/oF8M/hIj2aHJgPfzVJjhs4u44RDfTP2J
+         5Xtt2MgVWuL+rH/6FPD59otUMSCMh0JzS1mMt7aaajZL0guuD9xAHgwLlvNEvzOoIWVO
+         A0K1Lc1RazHDhl+P1ycOMWSnhohGLV51zyBCTAYPTfO+cm/rKnsSN/CZ//fVJBAtKlTu
+         8oPa6lHDUiRjjsVHK7eTfJrjHy2ar2DMIOf+gCOQhGXVo2FumtxwQDDcybFjKu/gTci7
+         lVAD5K7PIL5A5g02mS5hYPZdm7OI/XzVXi6fx25s32WcYshYvvWePqV0bu2nqrV7mI2r
+         QFcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=EcAN94cvDkFyRdtKh7kFKfUfxoNLvHpqkv9MgYYvt1E=;
+        b=eTa9d41FrjfXcyGH1KjK9eWt+noCJpAaVJGxdGFZwDsxzmlMVmop9phsSyeEpX+XOU
+         0MY8AvgUTBj+0ZFQxxrkQLgw1HthyiDqqYCEepP9C7okHpNVT5f/HwhiV+T1k0SCbb/5
+         OY+yYwEbczD8+0Mvn+tA2DI+31TC2F/8b+YHVoZzCMJXbOvFQUtiku7k05BEz74eMEEw
+         kyKYnlUx2BdbSJ/Vq0GgGWg/+6Efq6fgqWOYeOVF3XDtADvlwTAFmhky2zA4Pm+Omuaf
+         Obk0ANdywVKUI7TadzY2sVOhNGDzhQkqXVDgbM4EqGts8fAiwU+X5hnOuJmytfeBtxdW
+         0/KA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Alexey Klimov <klimov.linux@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 00/20] firmware: ARM System Control and Management Interface(SCMI) support
+Date: Fri, 23 Feb 2018 16:23:30 +0000
+Message-Id: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593209568480854235?=
+X-GMAIL-MSGID: =?utf-8?q?1593209568480854235?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 06:19:30PM +0100, Merlijn Wajer wrote:
-> Hi,
-> 
-> On 26/02/18 16:57, Bin Liu wrote:
-> > Hi,
-> > 
-> > On Mon, Feb 26, 2018 at 11:56:08AM +0100, Merlijn Wajer wrote:
-> >> Without pm_runtime_{get,put}_sync calls in place, reading
-> >> vbus status via /sys causes the following error:
-> >>
-> >> Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa0ab060
-> >> pgd = b333e822
-> >> [fa0ab060] *pgd=48011452(bad)
-> >>
-> >> [<c05261b0>] (musb_default_readb) from [<c0525bd0>] (musb_vbus_show+0x58/0xe4)
-> >> [<c0525bd0>] (musb_vbus_show) from [<c04c0148>] (dev_attr_show+0x20/0x44)
-> >> [<c04c0148>] (dev_attr_show) from [<c0259f74>] (sysfs_kf_seq_show+0x80/0xdc)
-> >> [<c0259f74>] (sysfs_kf_seq_show) from [<c0210bac>] (seq_read+0x250/0x448)
-> >> [<c0210bac>] (seq_read) from [<c01edb40>] (__vfs_read+0x1c/0x118)
-> >> [<c01edb40>] (__vfs_read) from [<c01edccc>] (vfs_read+0x90/0x144)
-> >> [<c01edccc>] (vfs_read) from [<c01ee1d0>] (SyS_read+0x3c/0x74)
-> >> [<c01ee1d0>] (SyS_read) from [<c0106fe0>] (ret_fast_syscall+0x0/0x54)
-> >>
-> >> Solution was suggested by Tony Lindgren <tony@atomide.com>.
-> >>
-> >> Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
-> >> ---
-> >>  drivers/usb/musb/musb_core.c | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-> >> index eef4ad578b31..ceaa40ef0e73 100644
-> >> --- a/drivers/usb/musb/musb_core.c
-> >> +++ b/drivers/usb/musb/musb_core.c
-> >> @@ -1760,6 +1760,8 @@ vbus_show(struct device *dev, struct device_attribute *attr, char *buf)
-> >>  	val = musb->a_wait_bcon;
-> >>  	vbus = musb_platform_get_vbus_status(musb);
-> >>  	if (vbus < 0) {
-> >> +		pm_runtime_get_sync(dev);
-> >> +
-> >>  		/* Use default MUSB method by means of DEVCTL register */
-> >>  		devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
-> >>  		if ((devctl & MUSB_DEVCTL_VBUS)
-> >> @@ -1767,6 +1769,8 @@ vbus_show(struct device *dev, struct device_attribute *attr, char *buf)
-> >>  			vbus = 1;
-> >>  		else
-> >>  			vbus = 0;
-> >> +
-> >> +		pm_runtime_put_sync(dev);
-> >>  	}
-> >>  	spin_unlock_irqrestore(&musb->lock, flags);
-> > 
-> > Thanks for the patch, but I got spinlock deadlock when testing it. I
-> > think the function pair should be at the outside scope of the
-> > spin_lock/unlock, doesn't it?
-> 
-> I see - sorry. Weird, it worked for me on my Nokia N900. What did you
-> test this on?
-> 
-> I will try to submit an improved version tonight (you seem to have a
-> good idea on what is wrong, so I will follow that), but it would help me
-> if I can reproduce the issue.
+Hi all,
 
-I tested on both Beaglebone Black and AM335x GP EVM, on the USB1 host
-port. I didn't test the USB0 port (yet).
+ARM System Control and Management Interface(SCMI) is more flexible and
+easily extensible than any of the existing interfaces. Many vendors were
+involved in the making of this formal specification and is now published[1].
 
-Thanks,
--Bin.
+There is a strong trend in the industry to provide micro-controllers in
+systems to abstract various power, or other system management tasks.
+These controllers usually have similar interfaces, both in terms of the
+functions that are provided by them, and in terms of how requests are
+communicated to them.
+
+This specification is to standardise and avoid (any further)
+fragmentation in the design of such interface by various vendors.
+
+It currently doesn't support notification, asynchronous/delayed response,
+perf/power statistics region and sensor register region to name a few.
+Some of the ideas of message allocation/management are borrowed from TI SCI.
+
+Changes:
+
+v5[7]->v6:
+	- Dropped notification APIs as it's not fully supported, leftovers
+	  from development
+	- Removed unnecessary mutex usage for allocation
+	- Replace udelay with cpu_relax, found nice helper spin_until_cond
+	- Added inline to couple of functions in header files
+	- Fixed few checkpatch errors
+
+v4[6]->v5:
+	- Rebased to v4.15-rc6
+	- Updated all the gathered Ack/Reviewed-by tags(which includes
+	  all the drivers using SCMI protocol)
+
+v3[5]->v4[6]:
+	- Added SCMI protocol bus to enumerate supported protocols as
+	  suggested by Arnd
+	- Dropped the abstraction to mailbox as it may be optional
+
+v2[4]->v3:
+	- Addressed various comments received so far(clock, hwmon and
+	  cpufreq drivers along with scmi drivers)
+	- Hwmon driver now uses core layer to create and manage sysfs
+	  attributes
+	- Added a shim layer to abstract the mailbox interface to support
+	  any custom adaptation required by the controller driver
+	- Simple ARM MHU shim layer using newly added abstraction
+
+v1[3]->v2[4]:
+	- Additional support for polling based DVFS and per protocol
+	  channels
+	- Dependent drivers(clock, hwmon, cpufreq and power domains)
+	- Various other review comments and issued found during testing
+	  addressed
+	- Explicit binding for method dropped as even SMC based method
+	  are adviertised as mailbox
+
+RFC[2]->v1[3]:
+	- Add generic mailbox binding for shared memory(Rob H)
+	- Dropped compatibles per protocol(Suggested by Matt S)
+	- Dropped lot of unnecessary pointer casting(Arnd B)
+	- Dropped packing of structures(Arnd B)
+	- Few other changes/additions based initial testing with firmware
+	  providing SCMI interface to OSPM
+
+--
+Regards,
+Sudeep
+
+[1] http://infocenter.arm.com/help/topic/com.arm.doc.den0056a/index.html
+[2] https://marc.info/?l=linux-kernel&m=149685193627620&w=2
+[3] https://marc.info/?l=linux-arm-kernel&m=149849482623492&w=2
+[4] https://marc.info/?l=devicetree&m=150185763105926&w=2
+[5] https://marc.info/?l=devicetree&m=150660452015351&w=2
+[6] https://marc.info/?l=devicetree&m=150972061408961&w=2
+[7] https://marc.info/?l=devicetree&m=151846114506163&w=2
+
+Sudeep Holla (20):
+  dt-bindings: mailbox: add support for mailbox client shared memory
+  dt-bindings: arm: add support for ARM System Control and Management
+    Interface(SCMI) protocol
+  firmware: arm_scmi: add basic driver infrastructure for SCMI
+  firmware: arm_scmi: add common infrastructure and support for base
+    protocol
+  firmware: arm_scmi: add scmi protocol bus to enumerate protocol
+    devices
+  firmware: arm_scmi: add initial support for performance protocol
+  firmware: arm_scmi: add initial support for clock protocol
+  firmware: arm_scmi: add initial support for power protocol
+  firmware: arm_scmi: add initial support for sensor protocol
+  firmware: arm_scmi: probe and initialise all the supported protocols
+  firmware: arm_scmi: add support for polling based SCMI transfers
+  firmware: arm_scmi: add option for polling based performance domain
+    operations
+  firmware: arm_scmi: refactor in preparation to support per-protocol
+    channels
+  firmware: arm_scmi: add per-protocol channels support using idr
+    objects
+  firmware: arm_scmi: add device power domain support using genpd
+  clk: add support for clocks provided by SCMI
+  hwmon: (core) Add hwmon_max to hwmon_sensor_types enumeration
+  hwmon: add support for sensors exported via ARM SCMI
+  cpufreq: add support for CPU DVFS based on SCMI message protocol
+  cpufreq: scmi: add support for fast frequency switching
+
+ Documentation/devicetree/bindings/arm/arm,scmi.txt | 179 +++++
+ .../devicetree/bindings/mailbox/mailbox.txt        |  28 +
+ MAINTAINERS                                        |  11 +-
+ drivers/clk/Kconfig                                |  10 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-scmi.c                             | 213 +++++
+ drivers/cpufreq/Kconfig.arm                        |  11 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/scmi-cpufreq.c                     | 272 +++++++
+ drivers/firmware/Kconfig                           |  34 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/arm_scmi/Makefile                 |   5 +
+ drivers/firmware/arm_scmi/base.c                   | 264 ++++++
+ drivers/firmware/arm_scmi/bus.c                    | 232 ++++++
+ drivers/firmware/arm_scmi/clock.c                  | 353 +++++++++
+ drivers/firmware/arm_scmi/common.h                 | 116 +++
+ drivers/firmware/arm_scmi/driver.c                 | 882 +++++++++++++++++++++
+ drivers/firmware/arm_scmi/perf.c                   | 492 ++++++++++++
+ drivers/firmware/arm_scmi/power.c                  | 232 ++++++
+ drivers/firmware/arm_scmi/scmi_pm_domain.c         | 140 ++++
+ drivers/firmware/arm_scmi/sensors.c                | 302 +++++++
+ drivers/hwmon/Kconfig                              |  12 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/scmi-hwmon.c                         | 233 ++++++
+ include/linux/hwmon.h                              |   1 +
+ include/linux/scmi_protocol.h                      | 288 +++++++
+ 26 files changed, 4309 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,scmi.txt
+ create mode 100644 drivers/clk/clk-scmi.c
+ create mode 100644 drivers/cpufreq/scmi-cpufreq.c
+ create mode 100644 drivers/firmware/arm_scmi/Makefile
+ create mode 100644 drivers/firmware/arm_scmi/base.c
+ create mode 100644 drivers/firmware/arm_scmi/bus.c
+ create mode 100644 drivers/firmware/arm_scmi/clock.c
+ create mode 100644 drivers/firmware/arm_scmi/common.h
+ create mode 100644 drivers/firmware/arm_scmi/driver.c
+ create mode 100644 drivers/firmware/arm_scmi/perf.c
+ create mode 100644 drivers/firmware/arm_scmi/power.c
+ create mode 100644 drivers/firmware/arm_scmi/scmi_pm_domain.c
+ create mode 100644 drivers/firmware/arm_scmi/sensors.c
+ create mode 100644 drivers/hwmon/scmi-hwmon.c
+ create mode 100644 include/linux/scmi_protocol.h
+
+-- 
+2.7.4
