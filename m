@@ -1,52 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751514AbeBWJgo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 04:36:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39930 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751422AbeBWJgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 04:36:42 -0500
-Date: Fri, 23 Feb 2018 10:12:48 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc
- allyesconfig
-Message-ID: <20180223091248.GT30681@dhcp22.suse.cz>
-References: <20180212133731.GE3443@dhcp22.suse.cz>
- <87r2ppvaeq.fsf@concordia.ellerman.id.au>
- <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
- <87d1192nzc.fsf@concordia.ellerman.id.au>
- <20180213103213.GP3443@dhcp22.suse.cz>
- <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com>
- <20180214092045.GZ3443@dhcp22.suse.cz>
- <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
- <20180222130738.GG30681@dhcp22.suse.cz>
- <CAGXu5jLLDOqoSn9usuA-pRLb5X=zK6MYdUVMPEh7x7oMgnU5cQ@mail.gmail.com>
+        id S1751507AbeBWJkJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 04:40:09 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:40300 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbeBWJkI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 04:40:08 -0500
+X-Google-Smtp-Source: AG47ELvGUy0C8abU2i+I1Yc/QJ+EyFrdmeG2eTnUJJllw+D/E1nwW8M2p9qCn4ErC7q7mHt5TJHlYT7M7EBWLf5MtIw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLLDOqoSn9usuA-pRLb5X=zK6MYdUVMPEh7x7oMgnU5cQ@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAMuHMdWogcBuVC0PzviJ31w29L5QLYKVoiOtCtvu5Rc88f06oA@mail.gmail.com>
+References: <20180219160956.6uky4zxlnn5kas2t@gmail.com> <CAMuHMdWogcBuVC0PzviJ31w29L5QLYKVoiOtCtvu5Rc88f06oA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 23 Feb 2018 10:39:47 +0100
+Message-ID: <CANiq72nXA+epxof2jyOw2zvBmU=RP0Whdy6cj6Vi=hfrqWxfVw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] auxdisplay: img-ascii-lcd: Silence 2 uninitialized warnings
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-02-18 09:30:35, Kees Cook wrote:
-> On Thu, Feb 22, 2018 at 5:07 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Wed 14-02-18 09:14:47, Kees Cook wrote:
-> > [...]
-> >> I can send it through my seccomp tree via James Morris.
-> >
-> > Could you please do it?
-> 
-> Hi! Yes, sorry, this fell through the cracks. Now applied.
+Hi Geert,
 
-Thanks!
+On Mon, Feb 19, 2018 at 7:40 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Miguel,
+>
+> On Mon, Feb 19, 2018 at 5:09 PM, Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>> The warnings are:
+>>
+>>   drivers/auxdisplay/img-ascii-lcd.c: warning: 'err' may be used
+>>   uninitialized in this function [-Wuninitialized]
+>>
+>> At lines 109 and 207. Reported by Geert using the build service
+>> several times, e.g.:
+>>
+>>   https://lkml.org/lkml/2018/2/19/303
+>>
+>> They are two false positives, since num_chars > 0 in the three present
+>> configurations (boston, malta, sead3). Initializing to an error state by
+>> default silences the warning and makes the code print an error in case a
+>> num_chars == 0 happens in the future (unlikely, since it does not make
+>> sense currently).
+>>
+>> The warnings seem to disappear starting with gcc >= 4.9
+>>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Cc: Paul Burton <paul.burton@mips.com>
+>> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>
+> Thanks for your patch!
+>
+> I would initialize err to zero, though, as there is no real error condition if
+> called with num_char == 0.
 
--- 
-Michal Hocko
-SUSE Labs
+True, it also makes sense that way. Both are fine with me. I was
+thinking more in the lines of "update() called for no reason (no
+chars) is an error".
+
+Since it will never happen anyway and = 0 is simpler to explain
+(nothing to explain in the commit), I will change it for the queue.
+Should I add your Ack?
+
+Thanks for taking a look!
+Miguel
+
+>
+>> ---
+>> I will queue it up for 4.17.
+>>
+>> drivers/auxdisplay/img-ascii-lcd.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+>> index d8133024fd5d..bd5ebb5c516c 100644
+>> --- a/drivers/auxdisplay/img-ascii-lcd.c
+>> +++ b/drivers/auxdisplay/img-ascii-lcd.c
+>> @@ -97,7 +97,7 @@ static struct img_ascii_lcd_config boston_config = {
+>>  static void malta_update(struct img_ascii_lcd_ctx *ctx)
+>>  {
+>>         unsigned int i;
+>> -       int err;
+>> +       int err = 1;
+>>
+>>         for (i = 0; i < ctx->cfg->num_chars; i++) {
+>>                 err = regmap_write(ctx->regmap,
+>> @@ -180,7 +180,7 @@ static int sead3_wait_lcd_idle(struct img_ascii_lcd_ctx *ctx)
+>>  static void sead3_update(struct img_ascii_lcd_ctx *ctx)
+>>  {
+>>         unsigned int i;
+>> -       int err;
+>> +       int err = 1;
+>>
+>>         for (i = 0; i < ctx->cfg->num_chars; i++) {
+>>                 err = sead3_wait_lcd_idle(ctx);
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
