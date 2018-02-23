@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413702-2-9978622764711124216
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413692-2-9962223862875700436
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413701; b=CWW9V1vsan/1nCIOBU1V1unKwqXVNOB47whFY1qctV03kv0
-    27qscOHu61jx2JlDTBxTpkr5EDXW+pVZISDtaudr8amipkf8WabBrU+/QIk0+RXb
-    jsk++vRgz0z1o7JVx+SMJ9dajXCraxPsrQY4kwW8W28QfDZ2ibmxwKQaaGiwCUP/
-    Eb3Qo2THjBKvooOA5kzTFn/8QvMacCGCyojWncqa+Scb0DU/HRDR4WiJR92zsihS
-    0cJgFTv82w2xGN6XbkAvYhqXG4zffsdxDwJvNFAPcRgjO+4podeb8TU7rW4cvdr/
-    QRs5/j+kHUUctt0ZBSee79Dt1rIHPXjVwS3ILcQ==
+    t=1519413692; b=R+DkB6RC1leLENuWj921iryKNEsrCD9c9bLhuaSy/MVlYLC
+    P7zbdoH3YuPjjepLbDqvwSb7+4SlA/P5guObewXZxk651f4rSuR2JpXhJxf1ZQkW
+    XxD7dKq4XFPBKrem8UmJiZob+JU6doVkVtGUZk1LwC28V9blhWmC+jpHodqSoW7z
+    aZYVww1H6sRH/chemVclOnN/WYrtmv69nR9kEUU/7hmk5XMgHufr3Uti7cHG/ifU
+    z+Cmdnx0v3q2i1nXIe/djDOgY4C0a6oraO+quqIiJOERgPZ24j+d3cxDfRHW5Llz
+    sIXyeVvZlMYbZ7fgLFKqScSm8g2pC+4rfwr7+Ag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413701; bh=L95GNYTfeRAmzIcfaAOzrQdSN6
-    qNFxEloZIbi/GJ17Q=; b=ej3MzqKMZsdxJS/rbTHnqkJs8QRWtwd7oYKCDHFSL2
-    p5QDaln4S6iUf4qhCIdR8SGfKIZXEyQh8KzpCzI8njC9k9sewtLgK+kGgWkhgxv2
-    Kz/Vutj3VkO2x6CYGj005O1B9STqFwATkh0qQLaCMqhmLDJV6x1NO9ABhpR1HGOt
-    J/eRQfCSTMjO8mOMv3bNulEwkVspowjbaYsAl/U35U/ThRAZFOcPRA0vmIttxj3J
-    fCgYkCGvVv24bSP8REYq4N9DAXc60TBUTEweaIZd+btPiq8RlZBUF+Ftqa315es+
-    oPNKQ27RVLD2Pic/05Z7xoe+Lr3SuX9sagV1khBHrQBA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413692; bh=I5tSw2jXqWlVwknUGGZ0TtWZck
+    Id/U1kCYXpS6zJeZc=; b=EO6GRghziSio3pFAhD2W348SAn7ZadCFG2jYy07PRg
+    Bhez8546fx/SRNax1xIp37BwWBY9aqNQn/e5W3zOJ0LsDyniCRzJ5vD/CQHa2ltV
+    5r5maKftdXWu0dXwQ/vpDehFlizf1W0zXaf/YQqWzas18Rgk3yblKl3l7HgLKWcg
+    5nPuYNl1/nclruPnVRYzDwNNPVaItEU/x0FFAPlo0orrOf2Psn9pTiSydu97jJC2
+    FjjGC4G7N9KxdHr6boYeYlxXSFQjrJnYSRuImEwLOe3TV5lw3cVCWr9/JAk4lBGe
+    Dfq+xUNZ7EmjU5L0BIYAF8c+xD748uiz7UPMrNp8n6gw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964830AbeBWSxx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:53:53 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47530 "EHLO
+        id S964848AbeBWSx4 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:53:56 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964828AbeBWSxw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:52 -0500
+        with ESMTP id S964828AbeBWSxz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:55 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 101/159] scripts/kernel-doc: Dont fail with status != 0 if error encountered with -none
-Date: Fri, 23 Feb 2018 19:26:49 +0100
-Message-Id: <20180223170755.666412125@linuxfoundation.org>
+Subject: [PATCH 4.14 075/159] perf test: Fix test 21 for s390x
+Date: Fri, 23 Feb 2018 19:26:23 +0100
+Message-Id: <20180223170752.679626816@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,50 +82,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
 
-[ Upstream commit e814bccbafece52a24e152d2395b5d49eef55841 ]
+[ Upstream commit 996548499df61babae5306544c7daf5fd39db31c ]
 
-My bisect scripts starting running into build failures when trying to
-compile 4.15-rc1 with the builds failing with things like:
+Test case 21 (Number of exit events of a simple workload) fails on
+s390x. The reason is the invalid sample frequency supplied for this
+test. On s390x the minimum sample frequency is much higher (see output
+of /proc/service_levels).
 
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:2078: error: Cannot parse struct or union!
+Supply a save sample frequency value for s390x to fix this.  The value
+will be adjusted by the s390x CPUMF frequency convertion function to a
+value well below the sysctl kernel.perf_event_max_sample_rate value.
 
-The line in question is actually just a #define, but after some digging
-it turns out that my scripts pass W=1 and since commit 3a025e1d1c2ea
-("Add optional check for bad kernel-doc comments") that results in
-kernel-doc running on each source file. The file in question has a
-badly formatted comment immediately before the #define:
-
-/**
- * struct brcmf_skbuff_cb reserves first two bytes in sk_buff::cb for
- * bus layer usage.
- */
-
-which causes the regex in dump_struct to fail (lack of braces following
-struct declaration) and kernel-doc returns 1, which causes the build
-to fail.
-
-Fix the issue by always returning 0 from kernel-doc when invoked with
--none. It successfully generates no documentation, and prints out any
-issues.
-
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+LPU-Reference: 20171123114611.93397-1-tmricht@linux.vnet.ibm.com
+Link: https://lkml.kernel.org/n/tip-1ynblyhi1n81idpido59nt1y@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/kernel-doc |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/task-exit.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -3216,4 +3216,4 @@ if ($verbose && $warnings) {
-   print STDERR "$warnings warnings\n";
- }
+--- a/tools/perf/tests/task-exit.c
++++ b/tools/perf/tests/task-exit.c
+@@ -84,7 +84,11 @@ int test__task_exit(struct test *test __
  
--exit($errors);
-+exit($output_mode eq "none" ? 0 : $errors);
+ 	evsel = perf_evlist__first(evlist);
+ 	evsel->attr.task = 1;
++#ifdef __s390x__
++	evsel->attr.sample_freq = 1000000;
++#else
+ 	evsel->attr.sample_freq = 1;
++#endif
+ 	evsel->attr.inherit = 0;
+ 	evsel->attr.watermark = 0;
+ 	evsel->attr.wakeup_events = 1;
