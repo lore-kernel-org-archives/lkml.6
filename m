@@ -1,133 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeBWLz2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:55:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50362 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeBWLz0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:55:26 -0500
-Date: Fri, 23 Feb 2018 12:55:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 04/17] lockdep: Introduce
- lock_list::dep
-Message-ID: <20180223115520.GV25181@hirez.programming.kicks-ass.net>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-5-boqun.feng@gmail.com>
+        id S1751475AbeBWL4B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:56:01 -0500
+Received: from mout.web.de ([212.227.17.11]:44175 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751276AbeBWLz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:55:59 -0500
+Subject: Re: [0/8] target-iSCSI: Adjustments for several function
+ implementations
+To: Dan Carpenter <dan.carpenter@oracle.com>, target-devel@vger.kernel.org
+Cc: David Disseldorp <ddiss@suse.de>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+ <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
+ <20180222143624.7c7241a1@suse.de> <20180222135600.5vv7vzw7sa5metcb@mwanda>
+ <145b88b1-bd1e-a417-8dce-ff19e35a00fc@users.sourceforge.net>
+ <20180223101715.xv5dscdaeszqxoyk@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <866a1802-0cd8-48fd-e04f-7dc676ab58a6@users.sourceforge.net>
+Date: Fri, 23 Feb 2018 12:50:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222070904.548-5-boqun.feng@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180223101715.xv5dscdaeszqxoyk@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:swOsVOYe4UnbjJkb/PFOslKGU753oF4pUbz71+hn31PyN1oet50
+ HBV8+UtOlxW9d7bx3PDH1Ss33h3cGYxR3umPCFq1WrFzixeaWIEUx3zJ7qZr878TPnoMsoh
+ 4oVhTZpE7HbtsHyhldQTsiYv56XGQkIX1GE1ZxSztBTLDIElu1Rw5ms1FxaOxvw0bkfyyyh
+ eo0OTTBzJyGc1uWjjJ+ZA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:kgB0zsviVaM=:RoB9I7REcD/hoKEZBguP+t
+ W/vIgtm+HbK3s2bHqYYQcf2p4wy7Wmu4x5LtsYZK5UJgZg25IvZvNnnMmui+FZq+ksuz4ZvY6
+ MZBxLBL/mPZdu9yOZZ4VC9jR3EH27E5phazZSSS4QS2uyWfP/H6gneCQvHbRFy+oNmjSqXnE3
+ xKU9cAObiGKUpeRW7RSbTA1Ew8/a5ZXwNYyL+ViGalVVFRLUUg5wuQAhVml/d2A0XvFSA/CP2
+ 3uF/kKvGSHNv3Fzo2niKq3/SpQJc0Y+7JJ5CqyQJOvIcmjDYpiwAUPyjg/zVuO88qBNz71Tyi
+ CR+5mkhnMaWFiRPk/pOtQvvBCZrngk/HXYnCIBCYzuvFMNG33nNrPof3WriY+tf4+u6jaryWc
+ JCazfch2NB1QvsyJU0A2BwyzwIrYRKJsAYsy2p/Ekq4OoSsk7c8Vacx6WyypDpRDPlpyujRaC
+ H0ex8gacCkT4is3lInfCik9x+bRquaSEWSfFpU9R5JDooDNYGqgEJ7d3s19O76LNdBG2rIBpQ
+ scEkmTiKIasbjo61/85FziwK8wD8n3PnrSJPuAKl5XlbkMXd2Jhjxry4XN51+lBCKdoUA2NMm
+ Qlg6I98vmQGea8shlWcx1brFqWZlbDSGI/RbAAdu+o3AXBdov4yhUabVbJgrY7K9c+/kgvTLQ
+ mT2m1OSN+wRZAZVieMwRVIqln7xMbwV8OHE/5DikiMStp0Mi1lKMQg7fMhfD5xO2Rhj1Ml4yK
+ DJR8UDUElxFxK1d7WEnQDvgBbHClQeoslMd51RYHDboB69+XHafzipU4H9Vo+KarM4CTwR8hW
+ rVsRIhojMzMga21rpf8LFpRB9Nf9E0qzc6RaOhRc3jkdyPfv7o=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 03:08:51PM +0800, Boqun Feng wrote:
-> @@ -1012,6 +1013,33 @@ static inline bool bfs_error(enum bfs_result res)
->  	return res < 0;
->  }
->  
-> +#define DEP_NN_BIT 0
-> +#define DEP_RN_BIT 1
-> +#define DEP_NR_BIT 2
-> +#define DEP_RR_BIT 3
-> +
-> +#define DEP_NN_MASK (1U << (DEP_NN_BIT))
-> +#define DEP_RN_MASK (1U << (DEP_RN_BIT))
-> +#define DEP_NR_MASK (1U << (DEP_NR_BIT))
-> +#define DEP_RR_MASK (1U << (DEP_RR_BIT))
-> +
-> +static inline unsigned int __calc_dep_bit(int prev, int next)
-> +{
-> +	if (prev == 2 && next != 2)
-> +		return DEP_RN_BIT;
-> +	if (prev != 2 && next == 2)
-> +		return DEP_NR_BIT;
-> +	if (prev == 2 && next == 2)
-> +		return DEP_RR_BIT;
-> +	else
-> +		return DEP_NN_BIT;
-> +}
-> +
-> +static inline unsigned int calc_dep(int prev, int next)
-> +{
-> +	return 1U << __calc_dep_bit(prev, next);
-> +}
-> +
->  static enum bfs_result __bfs(struct lock_list *source_entry,
->  			     void *data,
->  			     int (*match)(struct lock_list *entry, void *data),
-> @@ -1921,6 +1949,16 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
->  		if (entry->class == hlock_class(next)) {
->  			if (distance == 1)
->  				entry->distance = 1;
-> +			entry->dep |= calc_dep(prev->read, next->read);
-> +		}
-> +	}
-> +
-> +	/* Also, update the reverse dependency in @next's ->locks_before list */
-> +	list_for_each_entry(entry, &hlock_class(next)->locks_before, entry) {
-> +		if (entry->class == hlock_class(prev)) {
-> +			if (distance == 1)
-> +				entry->distance = 1;
-> +			entry->dep |= calc_dep(next->read, prev->read);
->  			return 1;
->  		}
->  	}
+>> Can a passed null pointer really work in this function?
+>>
+>> https://elixir.bootlin.com/linux/v4.16-rc2/source/include/crypto/hash.h#L684
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/crypto/hash.h?id=0f9da844d87796ac31b04e81ee95e155e9043132#n751
+>>
+>> static inline struct crypto_tfm *crypto_shash_tfm(struct crypto_shash *tfm)
+>> {
+>> 	return &tfm->base;
+>> }
+> 
+> Yes.  It's not a dereference,
 
-I think it all becomes simpler if you use only 2 bits. Such that:
-
-  bit0 is the prev R (0) or N (1) value,
-  bit1 is the next R (0) or N (1) value.
-
-I think this should work because we don't care about the empty set
-(currently 0000) and all the complexity in patch 5 is because we can
-have R bits set when there's also N bits. The concequence of that is
-that we cannot replace ! with ~ (which is what I kept doing).
-
-But with only 2 bits, we only track the strongest relation in the set,
-which is exactly what we appear to need.
+Do any processors treat the zero address still special there?
 
 
-The above then becomes something like:
+> it's just doing pointer math to get the address.
 
-static inline u8 __calc_dep(struct held_lock *lock)
-{
-	return lock->read != 2;
-}
-
-static inline u8
-calc_dep(struct held_lock *prev, struct held_lock *next)
-{
-	return (__calc_dep(prev) << 0) | (__calc_dep(next) << 1);
-}
+Can eventually happen anything unexpected?
 
 
-	entry->dep |= calc_dep(prev, next);
+Can it be nicer to avoid such a software behaviour concern generally
+just by adjusting a few jump labels (as I proposed it)?
 
-
-
-Then the stuff from 5 can be:
-
-static inline bool is_rx(u8 dep)
-{
-	return !(dep & 1);
-}
-
-static inline bool is_xr(u8 dep)
-{
-	return !(dep & 2);
-}
-
-
-	if (have_xr && is_rx(entry->dep))
-		continue;
-
-	entry->have_xr = is_xr(entry->dep);
-
-
-Or did I mess that up somewhere?
+Regards,
+Markus
