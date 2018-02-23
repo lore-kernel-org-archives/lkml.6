@@ -1,97 +1,123 @@
-Return-Path: <linus.walleij@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519640262; cv=none;
-        d=google.com; s=arc-20160816;
-        b=peshlKPnYW8ZSlXgyVJS9MJa9r0ngJV/sW5cqkJk2Hlx95h90ZHdNd8gjXM7duJz0j
-         O33A1Pl66fFvdb2i+oXLLOhtyOtZk4jdAKYGlQ6Ii+ESfx6PUuno91ctZ/mpgjI4Poik
-         qiZpLJ4tyJLmLzrrU/8ovavPAE0y0Sw096BzQ6+tMJ04g4cIU1ESUq8p+eL4SeFuqSTF
-         8BKulRcncL+exBZg1IMqe4sTNhc0CaybL48ri9jGQBUNEQUnTgU78w3zl1HLnDH/9kjL
-         2X65rrNfmJtXbFudJ1HRGZz/ytbCNl4pZNfrLnlsqIaGm75SDhS9lrCDfAIWr8EaKhgT
-         dp0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=gDO6E0rO2zgIhX3+EcTcIzt0J8tv+TDa1C0aXyiXklk=;
-        b=kfGLxHoMU54l+5sXcIsgo/S7ZYON9A7tcsH3IVTyqGSwS81OwYmzfN2XnTuAWoFMYf
-         UhHcEUoAL4VPY0cZgWKfp3wXm+OuEpkbepe8FaOdf6WiYJ/2++uPImPkGZ+9iUAGBmlD
-         gquC+YsXkEHbvXNYlNfbThtBbHC7yToCtHNkGzahJCjbJ+RH69gJOuV3iHPW2RX4udNH
-         jDa1BqVg+tobajXPK1Pnl2hynP2asHxW31aXTa/JkGZ9nCXMyUZjHWPb2+iVDgZcICq9
-         CeNiZcmRTsuU9Y8egnXnWyPCbM+FdrvNpFwB8aADnB0pWql5s4ED1LYBKUxxl95koPnd
-         qIHg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jNJMof/D;
-       spf=pass (google.com: domain of linus.walleij@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus.walleij@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jNJMof/D;
-       spf=pass (google.com: domain of linus.walleij@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus.walleij@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtC3Qi1dN5ORySA7lVrA3KhBDsKq7/2nADngquPzMZKgeFHxGHlu0HrJG9uatesYmUcZHrSeCQ6Z6HwG/5mx+4=
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2252784-1519370929-2-3936954938542647843
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519370929; b=EYcor0/CbaMMgbu0tzE95jY86+2vEyoICL/5MhrQYds30VQ
+    00scPtGZj57gpcVKqhhe67c0pqaYCSAgUyk2iQ33tiMAzDXcx4NP5VxFJSqH3uP2
+    psWrcdcKxlOfbFcrpqt6tiNJD5tMl7sWQtszZfuaN3LczmZEC98hZsaLIJH5JREm
+    KNZWB3oDUnqbKYK1lSbpmwIZy5lvClmAeriBbBkq0G44SiXG1nVDnqqaN25n+Kzp
+    SxrZdbFvAZ6Od06fdlUmKh6aE//wKIRML4YxWRHqvle2IXyFrBUgOI7xnR4FjNPz
+    VwLLFysGRKSW1do7pBmrTxou2A9AxkqY3HGiNXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1519370929; bh=0ORCC4MeCu57nX9nLmqZqtxAo5
+    jvk5cofyhMJJ3dkBo=; b=YGVSSno3yZrLijzYLWrvwVkMjlvgOPFNQvoOOXjx3/
+    DN78gen2DAaGaLc24NLVRQocMcoCsjBVwds75sJ0EdcFLUY8+h14s8DMmq/oMHJ8
+    rWv8+bWZHveOSSprZtHql5394cwwaHvueLU273anPafjNgYMuA6Ks2Eiqd74Rfej
+    K8XvC73JOrtAN3DMMBFtbiBVlA+NmzBa8eE6vwa2l/hXNx5ov3wSoeMqU3/73MkG
+    Xj4+PCAMEx3bM6g8qMx/DDR91ifo71T7phEzLmxcAZg3r8sMCCOgVbfHavTjkZo1
+    hSg7FWQvxw+qg9JOYx3lRwZaDkHbmxePzprzUDTTe0uA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751547AbeBWH0r (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 02:26:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:41439 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeBWH0q (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 23 Feb 2018 02:26:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,382,1515484800";
+   d="scan'208";a="19818330"
+Subject: [PATCH v2 0/5] vfio,
+ dax: prevent long term filesystem-dax pins and other fixes
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Haozhong Zhang <haozhong.zhang@intel.com>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, linux-mm@kvack.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Gerd Rausch <gerd.rausch@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        kbuild test robot <fengguang.wu@intel.com>,
+        Christoph Hellwig <hch@lst.de>
+Date: Thu, 22 Feb 2018 23:17:40 -0800
+Message-ID: <151937026001.18973.12034171121582300402.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-In-Reply-To: <1519633504-64357-1-git-send-email-leo.wen@rock-chips.com>
-References: <1519633504-64357-1-git-send-email-leo.wen@rock-chips.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Feb 2018 11:17:41 +0100
-Message-ID: <CACRpkdaD+kFcOKP+V642r86hqwOO7h1UyA4wWBqGWdm3mjuhLA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] dt-bindings: Document the Rockchip RK1608 bindings
-To: Wen Nuan <leo.wen@rock-chips.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Greg KH <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	jacob2.chen@rock-chips.com,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-	Eddie Cai <eddie.cai@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593451230041702429?=
-X-GMAIL-MSGID: =?utf-8?q?1593458307618018434?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 9:25 AM, Wen Nuan <leo.wen@rock-chips.com> wrote:
+Changes since v1 [1]:
 
-> From: Leo Wen <leo.wen@rock-chips.com>
->
-> Add DT bindings documentation for Rockchip RK1608.
->
-> Changes V2:
-> - Delete spi-min-frequency property.
-> - Add the external sensor's control pin and clock properties.
-> - Delete the '&pinctrl' node.
->
-> Signed-off-by: Leo Wen <leo.wen@rock-chips.com>
+* Fix the detection of device-dax file instances in vma_is_fsdax().
+  (Haozhong, Gerd)
 
-(...)
-> +- reset-gpio           : GPIO connected to reset pin;
-> +- irq-gpio             : GPIO connected to irq pin;
-> +- sleepst-gpio         : GPIO connected to sleepst pin;
-> +- wakeup-gpio          : GPIO connected to wakeup pin;
-> +- powerdown-gpio       : GPIO connected to powerdown pin;
+* Fix compile breakage in the FS_DAX=n and DEV_DAX=y case. (0day robot)
 
-All these should be named something like:
+[1]: https://lists.01.org/pipermail/linux-nvdimm/2018-February/014046.html
 
-reset-gpios = <>;
-irq-gpios = <>;
-etc
+---
 
-See
-Documentation/devicetree/bindings/gpio/gpio.txt
+The vfio interface, like RDMA, wants to setup long term (indefinite)
+pins of the pages backing an address range so that a guest or userspace
+driver can perform DMA to the with physical address. Given that this
+pinning may lead to filesystem operations deadlocking in the
+filesystem-dax case, the pinning request needs to be rejected.
 
-So all in pluralis even if it is just one line, that is the standard.
+The longer term fix for vfio, RDMA, and any other long term pin user, is
+to provide a 'pin with lease' mechanism. Similar to the leases that are
+hold for pNFS RDMA layouts, this userspace lease gives the kernel a way
+to notify userspace that the block layout of the file is changing and
+the kernel is revoking access to pinned pages.
 
-> +- rockchip,powerdown0  : GPIO connected to the sensor0's powerdown pin;
-> +- rockchip,reset0      : GPIO connected to the sensor0's reset pin;
-> +- rockchip,powerdown1  : GPIO connected to the sensor1's powerdown pin;
-> +- rockchip,reset1      : GPIO connected to the sensor1's reset pin;
+---
 
-Also get rid of the custom names here, either no lines should
-have a "rockchip", prefix or all of them. Use the name of the
-pin on the component, I suspect just
+Dan Williams (5):
+      dax: fix vma_is_fsdax() helper
+      dax: fix dax_mapping() definition in the FS_DAX=n + DEV_DAX=y case
+      dax: fix S_DAX definition
+      dax: short circuit vma_is_fsdax() in the CONFIG_FS_DAX=n case
+      vfio: disable filesystem-dax page pinning
 
-powerdown0-gpios
-reset0-gpios
-etc
 
-By using the standard "*-gpios" suffix the kernel consumer API
-will be much happier as well when you use gpiod_get() & friends.
-
-Yours,
-Linus Walleij
+ drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
+ include/linux/dax.h             |    9 ++++++---
+ include/linux/fs.h              |    6 ++++--
+ 3 files changed, 25 insertions(+), 8 deletions(-)
