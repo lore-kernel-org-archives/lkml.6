@@ -1,68 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751424AbeBWBlx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:41:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:14249 "EHLO mga07.intel.com"
+        id S1751357AbeBWBpB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:45:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:30216 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750916AbeBWBlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:41:51 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1750916AbeBWBpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:45:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,381,1515484800";
-   d="scan'208";a="177406629"
-Date: Fri, 23 Feb 2018 09:42:46 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2 1/2] free_pcppages_bulk: do not hold lock when picking
- pages to free
-Message-ID: <20180223014245.GB4338@intel.com>
-References: <20180124023050.20097-1-aaron.lu@intel.com>
- <20180124163926.c7ptagn655aeiut3@techsingularity.net>
- <20180125072144.GA27678@intel.com>
- <20180215124644.GA12360@bombadil.infradead.org>
+   d="scan'208";a="206287905"
+Subject: Re: [PATCH] MAINTAINERS: Update ASPEED entry with details
+To: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20180222050324.21531-1-joel@jms.id.au>
+ <1519288786.101739.1279390200.1CD3EC51@webmail.messagingengine.com>
+ <23b668f1-ab4b-7ef3-ba1e-f252fbba4d1b@linux.intel.com>
+ <1519344667.1024159.1280347184.36AD3FEC@webmail.messagingengine.com>
+From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
+Message-ID: <d67a8a8d-4b3d-403c-e62d-bc0939e8d08f@linux.intel.com>
+Date: Fri, 23 Feb 2018 09:44:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215124644.GA12360@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1519344667.1024159.1280347184.36AD3FEC@webmail.messagingengine.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:46:44AM -0800, Matthew Wilcox wrote:
-> On Thu, Jan 25, 2018 at 03:21:44PM +0800, Aaron Lu wrote:
-> > When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
-> > the zone->lock is held and then pages are chosen from PCP's migratetype
-> > list. While there is actually no need to do this 'choose part' under
-> > lock since it's PCP pages, the only CPU that can touch them is us and
-> > irq is also disabled.
-> 
-> I have no objection to this patch.  If you're looking for ideas for
-> future improvement though, I wonder whether using a LIST_HEAD is the
-> best way to store these pages temporarily.  If you batch them into a
-> pagevec and then free the entire pagevec, the CPU should be a little
-> faster scanning a short array than walking a linked list.
 
-Thanks for the suggestion.
 
-> It would also puts a hard boundary on how long zone->lock is held, as
-> you'd drop it and go back for another batch after 15 pages.  That might
-> be bad, of course.
-
-Yes that's a concern.
-As Mel reponded in another email, I think I'll just keep using list
-here.
-
-> 
-> Another minor change I'd like to see is free_pcpages_bulk updating
-> pcp->count itself; all of the callers do it currently.
-
-Sounds good, I'll prepare a separate patch for this, thanks!
+On 2018-02-23 08:11, Andrew Jeffery wrote:
+> Hi Haiyue,
+>
+> On Thu, 22 Feb 2018, at 19:20, Wang, Haiyue wrote:
+>> Dear Andrew & Joel,
+>>
+>> Since you are ASPEED BMC experts, any time and interest in eSPI code
+>> review ? I've sent
+>>
+>> it before, but no more response. Intel recommends eSPI bus than LPC as I
+>> know. I just kept
+>>
+>> the minimal eSPI code which is approved to work well in our real server
+>> boards for two more
+>>
+>> years. Other part of eSPI driver from ASPEED's SDK  has been removed,
+>> because ePSI is a new
+>>
+>> thing, we only use a small feature set like booting host.
+>>
+>> We Intel submit this eSPI patch for openbmc upstreaming, hope for your
+>> response. :-)
+>>
+>> https://patchwork.kernel.org/patch/10166577/
+>>
+> There are some comments against the v1 that you linked to above, is there a v2 on the lists?
+A long holiday back, will send v2 patch soon.
+> Separately it's better to ping us by replying to the patch itself and putting us in To/Cc, that way we keep discussions focused on the patch at hand here.
+Got it. Thanks for your reply.
+>
+> Cheers,
+>
+> Andrew
