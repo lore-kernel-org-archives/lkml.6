@@ -1,67 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410894-2-15746873076741730725
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519410893; b=c8VnYp5UPMrsJinP8sAV6wYl09G1iPFyYEk/Utgw1GjkfjE
-    59A40JabemipsqO7Abvdv661dC44DqFaC+DkLFaAIqjYvhzwA3NmBTGUjmFHHXDM
-    pGi8U6w0cFDJi0wBdTjjKm7kns7TYmvw+LacvpDuJIe1K0l43LOr9opR1eOjbaIQ
-    E1o0Wex/j6WT5RJEz06CRPcrv4bwYXs+XwINe2o7Upbnqwoq5NbqKXCvIuS5fcNL
-    JPa0SuWvOUTJB3diTmbUjOt7BMMiGJ4w33Gq+ARRY7cQQbTedSYwVR+wvWzwWqvT
-    XMwu1hTe5cw8TAcql1sFbtpSQUbYk0BHwxOmD2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519410893; bh=zcI60uaD45xBQrnVxK8w7OIYn5
-    a0+hl5RS4eVBRSTsI=; b=gD/n55zTCufXyjQ+zj3f1fXAyXiRand3WJ3cl1+fLb
-    6vsO7gl5JdoKIpcsOx3x3ALO4oFIbUa+gk67P8ALHDtvEZzlnCZnA9MF4ie8xjGd
-    EnWJai6a0pzdUr9jDr//t6oozgk0CEGPYCUsWmyxDQ/l8M+tVkEE4S1HmEtnE5LC
-    nV4D7BLifrY1hbXCW27vx/Gjidm0oBD+kUf6YdBvPSDO08OFLazG5UWoefZRtbnu
-    /EfYXZ4Zk63QfU0S713fwvyC+2Un9iMvF9MEKOQlV/kuWMrgm2zVGxwYBFWNgjK1
-    7G4FXCPflBeX1ahf+NrNhnLSk/MDeWUnhJ7WjxipSWZA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeBWSet (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:34:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37068 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753619AbeBWSes (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:34:48 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELviE5Dbo+9OSTulqWpWEe3pY63CPbtz78n94Niu3rCOxyIlitbZnx5zU/IyMJnErg6ljqs8
+ARC-Seal: i=1; a=rsa-sha256; t=1519410892; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0CrqM0AVLj+AeR9FM824nIh4xt51daYmIYpWkSTkehMnc7e1m62K+YpvcQLDECGdgP
+         e6UMOWp640hiSCCVUCe/tYyvGQAhaG00uZBh8qH91ADlCm9EKAOWJ7x6b/gAhApd+tdm
+         l6kvkZOD8TmijaFELAzncbrMiKqAi+NBVLvtqGF3XZtmXPEur+81vhM+zafjezylCGx3
+         TBVykOT1fNfFPZ97IBt0af8XKsRdZNGvVOoWC2hQwZpj9oxoiu+6z0g6HQMsNpaBxQGc
+         gwniEbGfFh2v/4WGFuRgZzJEtOLfXA6Qa/tAOTtrceH3dyOzAocQ59nKiU0TKGTokA1A
+         c5ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=yONmBN0PwLawH/44puTRPwySCtZZ9oWD6LkdbP8s8iA=;
+        b=bqe3NtaraEfklSfiAQ6zybE+X1aL6QMbtJD9k+cXasmnzsJ/NLN51H7ZeK8LPafzPa
+         gNPkt+cO4hdjmE1ilNpefRE91FaYoG6/7308RakVrW80Gv9F/P+gxQ00tNylqX/V2iH2
+         MJzf67nE5hRN3Yarf21O/ct9nfa7inJZPTWDFjCB99SS/lbMxz4EWXTXYuqcCggS2SK6
+         6ZL9BUJ8p0J/yk+c7Av8e9wZbrfEvOYk86+eiIeF6J2LgyR5hdgBI4mzn/gtGIV3I/8t
+         BXWhCS07xyWCfcilOAP2eWM3JKfd3Iuf+LnikyQGrHrbU47jVp6jBbR9UuAyNkw9zW+9
+         JQeg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 049/193] 509: fix printing uninitialized stack memory when OID is empty
-Date: Fri, 23 Feb 2018 19:24:42 +0100
-Message-Id: <20180223170333.671846766@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 050/193] dmaengine: ioat: Fix error handling path
+Date: Fri, 23 Feb 2018 19:24:43 +0100
+Message-Id: <20180223170333.848670432@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -69,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593217795962943006?=
+X-GMAIL-MSGID: =?utf-8?q?1593217795962943006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,54 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers3@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 8dfd2f22d3bf3ab7714f7495ad5d897b8845e8c1 ]
+[ Upstream commit 5c9afbda911ce20b3f2181d1e440a0222e1027dd ]
 
-Callers of sprint_oid() do not check its return value before printing
-the result.  In the case where the OID is zero-length, -EBADMSG was
-being returned without anything being written to the buffer, resulting
-in uninitialized stack memory being printed.  Fix this by writing
-"(bad)" to the buffer in the cases where -EBADMSG is returned.
+If the last test in 'ioat_dma_self_test()' fails, we must release all
+the allocated resources and not just part of them.
 
-Fixes: 4f73175d0375 ("X.509: Add utility functions to render OIDs as strings")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/oid_registry.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/dma/ioat/init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/lib/oid_registry.c
-+++ b/lib/oid_registry.c
-@@ -116,7 +116,7 @@ int sprint_oid(const void *data, size_t
- 	int count;
- 
- 	if (v >= end)
--		return -EBADMSG;
-+		goto bad;
- 
- 	n = *v++;
- 	ret = count = snprintf(buffer, bufsize, "%u.%u", n / 40, n % 40);
-@@ -134,7 +134,7 @@ int sprint_oid(const void *data, size_t
- 			num = n & 0x7f;
- 			do {
- 				if (v >= end)
--					return -EBADMSG;
-+					goto bad;
- 				n = *v++;
- 				num <<= 7;
- 				num |= n & 0x7f;
-@@ -148,6 +148,10 @@ int sprint_oid(const void *data, size_t
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -395,7 +395,7 @@ static int ioat_dma_self_test(struct ioa
+ 	if (memcmp(src, dest, IOAT_TEST_SIZE)) {
+ 		dev_err(dev, "Self-test copy failed compare, disabling\n");
+ 		err = -ENODEV;
+-		goto free_resources;
++		goto unmap_dma;
  	}
  
- 	return ret;
-+
-+bad:
-+	snprintf(buffer, bufsize, "(bad)");
-+	return -EBADMSG;
- }
- EXPORT_SYMBOL_GPL(sprint_oid);
- 
+ unmap_dma:
