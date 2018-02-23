@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeBWVBQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:01:16 -0500
-Received: from muru.com ([72.249.23.125]:58020 "EHLO muru.com"
+        id S1752386AbeBWVBc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:01:32 -0500
+Received: from muru.com ([72.249.23.125]:58054 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752133AbeBWVBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:01:11 -0500
+        id S1752249AbeBWVBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:01:15 -0500
 From: Tony Lindgren <tony@atomide.com>
 To: linux-omap@vger.kernel.org
 Cc: Dave Gerlach <d-gerlach@ti.com>, Nishanth Menon <nm@ti.com>,
         Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 05/12] bus: ti-sysc: Remove unnecessary debugging statements
-Date: Fri, 23 Feb 2018 13:00:53 -0800
-Message-Id: <20180223210100.86732-6-tony@atomide.com>
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 12/12] ARM: OMAP2+: Enable ti-sysc to use device tree data for smartreflex
+Date: Fri, 23 Feb 2018 13:01:00 -0800
+Message-Id: <20180223210100.86732-13-tony@atomide.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223210100.86732-1-tony@atomide.com>
 References: <20180223210100.86732-1-tony@atomide.com>
@@ -22,49 +21,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already show the status for the interconnect target module
-when debugging is enabled, there's no need to be more verbose
-about that. So let's just cut down the noise and remove the
-extra debug statements.
+Let's enable ti-sysc probing of child devices. So far we have only used
+ti-sysc to probe interconnect target modules to idle them for cases where
+the SoC does not have any child devices configured for the module, such
+as smartreflex on dra7.
 
-Signed-off-by: Tony Lindgren <tony@atomide.coM>
+As we have smartreflex driver configured in the device tree for some SoCs,
+we need to flip things on with a single patch to prevent both omap_device
+and ti-sysc to probe smartreflex. So let's stop probing smartreflex with
+omap_device and probe it with ti-sysc by enabling passing the auxdata.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/bus/ti-sysc.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/arm/mach-omap2/omap_device.c  |  5 +++++
+ arch/arm/mach-omap2/pdata-quirks.c |  1 +
+ arch/arm/mach-omap2/sr_device.c    | 25 ++++++++++++++-----------
+ 3 files changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -201,9 +201,6 @@ static int sysc_parse_and_check_child_range(struct sysc *ddata)
- 	ddata->module_pa = of_translate_address(np, ranges++);
- 	ddata->module_size = be32_to_cpup(ranges);
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -140,6 +140,7 @@ static int omap_device_build_from_dt(struct platform_device *pdev)
+ 	struct omap_device *od;
+ 	struct omap_hwmod *oh;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct resource res;
+ 	const char *oh_name;
+ 	int oh_cnt, i, ret = 0;
+ 	bool device_active = false;
+@@ -150,6 +151,10 @@ static int omap_device_build_from_dt(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
--	dev_dbg(ddata->dev, "interconnect target 0x%llx size 0x%x for %pOF\n",
--		ddata->module_pa, ddata->module_size, np);
--
++	/* Use ti-sysc driver instead of omap_device? */
++	if (!omap_hwmod_parse_module_range(NULL, node, &res))
++		return -ENODEV;
++
+ 	hwmods = kzalloc(sizeof(struct omap_hwmod *) * oh_cnt, GFP_KERNEL);
+ 	if (!hwmods) {
+ 		ret = -ENOMEM;
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -487,6 +487,7 @@ static struct of_dev_auxdata omap_auxdata_lookup[];
+ 
+ static struct ti_sysc_platform_data ti_sysc_pdata = {
+ 	.auxdata = omap_auxdata_lookup,
++	.init_module = omap_hwmod_init_module,
+ 	.enable_module = ti_sysc_enable_module,
+ 	.idle_module = ti_sysc_idle_module,
+ 	.shutdown_module = ti_sysc_shutdown_module,
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -93,16 +93,23 @@ extern struct omap_sr_data omap_sr_pdata[];
+ 
+ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
+ {
+-	struct omap_sr_data *sr_data;
+-	struct platform_device *pdev;
++	struct omap_sr_data *sr_data = NULL;
+ 	struct omap_volt_data *volt_data;
+ 	struct omap_smartreflex_dev_attr *sr_dev_attr;
+-	char *name = "smartreflex";
+ 	static int i;
+ 
+-	sr_data = kzalloc(sizeof(*sr_data), GFP_KERNEL);
+-	if (!sr_data)
+-		return -ENOMEM;
++	if (!strncmp(oh->name, "smartreflex_mpu_iva", 20) ||
++	    !strncmp(oh->name, "smartreflex_mpu", 16))
++		sr_data = &omap_sr_pdata[OMAP_SR_MPU];
++	else if (!strncmp(oh->name, "smartreflex_core", 17))
++		sr_data = &omap_sr_pdata[OMAP_SR_CORE];
++	else if (!strncmp(oh->name, "smartreflex_iva", 16))
++		sr_data = &omap_sr_pdata[OMAP_SR_IVA];
++
++	if (!sr_data) {
++		pr_err("%s: Unknown instance %s\n", __func__, oh->name);
++		return -EINVAL;
++	}
+ 
+ 	sr_dev_attr = (struct omap_smartreflex_dev_attr *)oh->dev_attr;
+ 	if (!sr_dev_attr || !sr_dev_attr->sensor_voltdm_name) {
+@@ -147,13 +154,9 @@ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
+ 
+ 	sr_data->enable_on_init = sr_enable_on_init;
+ 
+-	pdev = omap_device_build(name, i, oh, sr_data, sizeof(*sr_data));
+-	if (IS_ERR(pdev))
+-		pr_warn("%s: Could not build omap_device for %s: %s\n",
+-			__func__, name, oh->name);
+ exit:
+ 	i++;
+-	kfree(sr_data);
++
  	return 0;
  }
  
-@@ -296,11 +293,8 @@ static int sysc_check_children(struct sysc *ddata)
-  */
- static void sysc_check_quirk_16bit(struct sysc *ddata, struct resource *res)
- {
--	if (resource_size(res) == 8) {
--		dev_dbg(ddata->dev,
--			"enabling 16-bit and clockactivity quirks\n");
-+	if (resource_size(res) == 8)
- 		ddata->cfg.quirks |= SYSC_QUIRK_16BIT | SYSC_QUIRK_USE_CLOCKACT;
--	}
- }
- 
- /**
-@@ -326,7 +320,6 @@ static int sysc_parse_one(struct sysc *ddata, enum sysc_registers reg)
- 	res = platform_get_resource_byname(to_platform_device(ddata->dev),
- 					   IORESOURCE_MEM, name);
- 	if (!res) {
--		dev_dbg(ddata->dev, "has no %s register\n", name);
- 		ddata->offsets[reg] = -ENODEV;
- 
- 		return 0;
 -- 
 2.16.2
