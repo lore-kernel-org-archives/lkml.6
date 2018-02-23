@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtXRgbz8YzFwkWnzcuvHwjN+Y2lFVmnEKUtMeR/IESw/wiG5OaKgJfIbBWl2TASzCn7Z0WL
-ARC-Seal: i=1; a=rsa-sha256; t=1519411840; cv=none;
+X-Google-Smtp-Source: AH8x224M9NH6NocmdlJE8wx9TrwkSl+hY0bTXLkv/yeOBmYlfFt7hREWoengcq9CpKCdbrQRpQb6
+ARC-Seal: i=1; a=rsa-sha256; t=1519411836; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tff7Szn39YPPfHx5jc9qEmCauxhMc3N0hUSltqEBadC27w+1jMMcSMckf8+/jNAxxE
-         3z0QzWjPDIekIMDzL1o3HpHmfaQkXogSWRevQKlwsC82TuXAnFUWlcSgunstXCepMXsw
-         61CGsKE5MORJfi1KtS/M82vBNMaghEOuewWTWyy4+MzvK3RAUY0ukq+HUYIc4xJTzP0n
-         9eTWafr1ttKJ1Ge5ZScm0yKOWkp2La4GcqTSLj71KLFERL6qoiemJXCkEsmftbYspUcC
-         9HyMIgLqAtChsmaGtTNYQZBCm4Pza/i3noHsto46MmHS2t/aVMhjk/AGJ/H4zOFttWtE
-         hKxg==
+        b=tvMUYEixdeSVo0T1LBDe0MaCoZG3HOV8RWZ0DjW6oAzmSPxqY+XuLnlRF0AbMMr3P4
+         u8otKM56cu9hltTH1YZ68TBd0HVtevaauXjGugXiTh1yoK9OzLNKt5FxLgnOSaKsZ9Gh
+         9v2trEfrFjLP7Rt+wiSMFHyHNO+aH0PqJ79/LQaDYgxx5Mfl9vZmzT34xCUI9w88AJbB
+         vheBpe/q9b8noo1cXZsKRpl+mc6BRUEjYzR8vJcjYLvznHfevEBnzqYNe3TDNMTbbNtI
+         Eo9N6ZTkf7Ufa6T0jchvyUbe3Rfb1ZEUBc8E/Rr3j6RO6Zuz4C+JdV8Sw5NoGIs4PZm6
+         YEog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CBJYJlBUw0PE/KaFCEi8Kgy0+neDE3Ltk+RdpxMK+ig=;
-        b=0pnli29vfzxGRlscR8+RVAXkhF+/6b0Wu2Jy+L7VTFZr+J6YfUytZW5ukdsLIvUurx
-         B0QduS9HZ6WaqTqaNqoxgbLg09hOWtfDq3bn/Aumzo2OiEvGYsnLMauI7itNePCT6YAB
-         ZrKlW7lBb+8+/OAQDOXoj6RZK5G1LTUlohIfVI91fvTmVyC+flGzbT+s3vGwjtmMs7YS
-         /8KjEa1in7Uvg5ea+BXxTKJC61tmpqljhgvqlGAg7Hau2oPgaLsuZn05+3PGHn1zAPGz
-         6sNlyhAcf+4ouKRym+3oDkSp0GZQ9y4WaYAuAsyVuLTNA250sTOOusCwy3TM6MpLVGMv
-         Sc4w==
+        bh=ZwHlVguxbwnXUW5gjNOuADdTNAlwRhvEvrcB819S7rs=;
+        b=wjdxE6sZtDWzhu0eY309r4b/RjhlEIZvfduegfLxW1mG5NKkmsTmoW4SkK+f4bu9ue
+         bHcnk1N75pJLTK6n6HyUPf6itNmcpUQd06lC5gSQ1keSDvu/hxluuHf0JS4xAkqoJv3v
+         A+f0axPLBDmQLzVIZMf1GzqsxbIPiLdqHK8SCOhqt+jyax2yaIXhm26yZr7/BhKrOLew
+         VYxXI2bnbPtUsVkNKsTlAZG+Gwz8YjCmE+HDmEg+q90CDFz4AP+m57numOb+k61EBxdu
+         al+UMD2xx/IlNZC9MZcZux9U2ZgwFt4uBtt44MK/nCFUPWxck3L9KD+/zl5fgpLMnpzZ
+         PJkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+6d362cadd45dc0a12ba4@syzkaller.appspotmail.com,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.14 005/159] bpf: mark dst unknown on inconsistent {s, u}bounds adjustments
-Date: Fri, 23 Feb 2018 19:25:13 +0100
-Message-Id: <20180223170743.781534180@linuxfoundation.org>
+	syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com,
+	Tom Herbert <tom@quantonium.net>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 004/159] kcm: Only allow TCP sockets to be attached to a KCM mux
+Date: Fri, 23 Feb 2018 19:25:12 +0100
+Message-Id: <20180223170743.619638064@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218789943456071?=
-X-GMAIL-MSGID: =?utf-8?q?1593218789943456071?=
+X-GMAIL-THRID: =?utf-8?q?1593218270128290967?=
+X-GMAIL-MSGID: =?utf-8?q?1593218785248637365?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,233 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Tom Herbert <tom@quantonium.net>
 
-commit 6f16101e6a8b4324c36e58a29d9e0dbb287cdedb upstream.
+commit 581e7226a5d43f629eb6399a121f85f6a15f81be upstream.
 
-syzkaller generated a BPF proglet and triggered a warning with
-the following:
+TCP sockets for IPv4 and IPv6 that are not listeners or in closed
+stated are allowed to be attached to a KCM mux.
 
-  0: (b7) r0 = 0
-  1: (d5) if r0 s<= 0x0 goto pc+0
-   R0=inv0 R1=ctx(id=0,off=0,imm=0) R10=fp0
-  2: (1f) r0 -= r1
-   R0=inv0 R1=ctx(id=0,off=0,imm=0) R10=fp0
-  verifier internal error: known but bad sbounds
-
-What happens is that in the first insn, r0's min/max value
-are both 0 due to the immediate assignment, later in the jsle
-test the bounds are updated for the min value in the false
-path, meaning, they yield smin_val = 1, smax_val = 0, and when
-ctx pointer is subtracted from r0, verifier bails out with the
-internal error and throwing a WARN since smin_val != smax_val
-for the known constant.
-
-For min_val > max_val scenario it means that reg_set_min_max()
-and reg_set_min_max_inv() (which both refine existing bounds)
-demonstrated that such branch cannot be taken at runtime.
-
-In above scenario for the case where it will be taken, the
-existing [0, 0] bounds are kept intact. Meaning, the rejection
-is not due to a verifier internal error, and therefore the
-WARN() is not necessary either.
-
-We could just reject such cases in adjust_{ptr,scalar}_min_max_vals()
-when either known scalars have smin_val != smax_val or
-umin_val != umax_val or any scalar reg with bounds
-smin_val > smax_val or umin_val > umax_val. However, there
-may be a small risk of breakage of buggy programs, so handle
-this more gracefully and in adjust_{ptr,scalar}_min_max_vals()
-just taint the dst reg as unknown scalar when we see ops with
-such kind of src reg.
-
-Reported-by: syzbot+6d362cadd45dc0a12ba4@syzkaller.appspotmail.com
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: ab7ac4eb9832 ("kcm: Kernel Connection Multiplexor module")
+Reported-by: syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com
+Signed-off-by: Tom Herbert <tom@quantonium.net>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/verifier.c                       |   25 +++--
- tools/testing/selftests/bpf/test_verifier.c |  123 +++++++++++++++++++++++++++-
- 2 files changed, 138 insertions(+), 10 deletions(-)
+ net/kcm/kcmsock.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1865,15 +1865,13 @@ static int adjust_ptr_min_max_vals(struc
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1387,8 +1387,13 @@ static int kcm_attach(struct socket *soc
+ 	if (!csk)
+ 		return -EINVAL;
  
- 	dst_reg = &regs[dst];
- 
--	if (WARN_ON_ONCE(known && (smin_val != smax_val))) {
--		print_verifier_state(&env->cur_state);
--		verbose("verifier internal error: known but bad sbounds\n");
--		return -EINVAL;
--	}
--	if (WARN_ON_ONCE(known && (umin_val != umax_val))) {
--		print_verifier_state(&env->cur_state);
--		verbose("verifier internal error: known but bad ubounds\n");
--		return -EINVAL;
-+	if ((known && (smin_val != smax_val || umin_val != umax_val)) ||
-+	    smin_val > smax_val || umin_val > umax_val) {
-+		/* Taint dst register if offset had invalid bounds derived from
-+		 * e.g. dead branches.
-+		 */
-+		__mark_reg_unknown(dst_reg);
-+		return 0;
- 	}
- 
- 	if (BPF_CLASS(insn->code) != BPF_ALU64) {
-@@ -2075,6 +2073,15 @@ static int adjust_scalar_min_max_vals(st
- 	src_known = tnum_is_const(src_reg.var_off);
- 	dst_known = tnum_is_const(dst_reg->var_off);
- 
-+	if ((src_known && (smin_val != smax_val || umin_val != umax_val)) ||
-+	    smin_val > smax_val || umin_val > umax_val) {
-+		/* Taint dst register if offset had invalid bounds derived from
-+		 * e.g. dead branches.
-+		 */
-+		__mark_reg_unknown(dst_reg);
-+		return 0;
-+	}
+-	/* We must prevent loops or risk deadlock ! */
+-	if (csk->sk_family == PF_KCM)
++	/* Only allow TCP sockets to be attached for now */
++	if ((csk->sk_family != AF_INET && csk->sk_family != AF_INET6) ||
++	    csk->sk_protocol != IPPROTO_TCP)
++		return -EOPNOTSUPP;
 +
- 	if (!src_known &&
- 	    opcode != BPF_ADD && opcode != BPF_SUB && opcode != BPF_AND) {
- 		__mark_reg_unknown(dst_reg);
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -6534,7 +6534,7 @@ static struct bpf_test tests[] = {
- 			BPF_JMP_IMM(BPF_JA, 0, 0, -7),
- 		},
- 		.fixup_map1 = { 4 },
--		.errstr = "unbounded min value",
-+		.errstr = "R0 invalid mem access 'inv'",
- 		.result = REJECT,
- 	},
- 	{
-@@ -7715,6 +7715,127 @@ static struct bpf_test tests[] = {
- 		.prog_type = BPF_PROG_TYPE_XDP,
- 	},
- 	{
-+		"check deducing bounds from const, 1",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 1),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 1, 0),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "R0 tried to subtract pointer from scalar",
-+	},
-+	{
-+		"check deducing bounds from const, 2",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 1),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 1, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 1, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = ACCEPT,
-+	},
-+	{
-+		"check deducing bounds from const, 3",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 0),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "R0 tried to subtract pointer from scalar",
-+	},
-+	{
-+		"check deducing bounds from const, 4",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = ACCEPT,
-+	},
-+	{
-+		"check deducing bounds from const, 5",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "R0 tried to subtract pointer from scalar",
-+	},
-+	{
-+		"check deducing bounds from const, 6",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "R0 tried to subtract pointer from scalar",
-+	},
-+	{
-+		"check deducing bounds from const, 7",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, ~0),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 0),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_1,
-+				    offsetof(struct __sk_buff, mark)),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "dereference of modified ctx ptr",
-+	},
-+	{
-+		"check deducing bounds from const, 8",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, ~0),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
-+			BPF_ALU64_REG(BPF_ADD, BPF_REG_1, BPF_REG_0),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_1,
-+				    offsetof(struct __sk_buff, mark)),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "dereference of modified ctx ptr",
-+	},
-+	{
-+		"check deducing bounds from const, 9",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 0),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "R0 tried to subtract pointer from scalar",
-+	},
-+	{
-+		"check deducing bounds from const, 10",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 0),
-+			/* Marks reg as unknown. */
-+			BPF_ALU64_IMM(BPF_NEG, BPF_REG_0, 0),
-+			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "math between ctx pointer and register with unbounded min value is not allowed",
-+	},
-+	{
- 		"XDP pkt read, pkt_end <= pkt_data', bad access 2",
- 		.insns = {
- 			BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1,
++	/* Don't allow listeners or closed sockets */
++	if (csk->sk_state == TCP_LISTEN || csk->sk_state == TCP_CLOSE)
+ 		return -EOPNOTSUPP;
+ 
+ 	psock = kmem_cache_zalloc(kcm_psockp, GFP_KERNEL);
