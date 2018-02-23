@@ -1,37 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227jJSW/ntEvaF3B1pqvGiA6uSAGYJik+N66Sm05+OElCqv/99wHUnpw/OVnE671vWM6RHvo
-ARC-Seal: i=1; a=rsa-sha256; t=1519411511; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VdEfiZY4TjQD1/7QBzZScDIKe2UVrPTINPLKOb2bfPG+UIxYG5bjeHxvXEQ7/ilxWd
-         ajn/V7X5lUREJ1BL49SjotAek3Y5PGhtwD5xgudd3ymCE7uVTTOjfG8i5h8nTNTp/KDT
-         e6/m/mjkVJ6wyiHZ+2zJ9EZXKv90wdkSDsXF9v1t24wwxLruvWd3PzHBNOiDWqDYpJlF
-         /SIZAQecOzvWFujfLIpX7DWfOeSFULZI+lGEkNdvU+UkD19SpViihrgB0UgLVC3AqvXS
-         vM6P0oXs4q/seOvlK0wPE+h8zwg61Qcmqjdo6wGNFLPK1f3+zvg/2CboB9YP19NszG74
-         wQ4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=EoElfQNSVu7x4DhvXeoTGaAClC6jDl9swcn6j4JgQoQ=;
-        b=hH3eY3NXDnjOaOLr3okPO+wSY0FQnU+F+TnxeZWtRW4P9rYrhjsnVxOPjMiifrSiBQ
-         Vs7YinD282KDQH+O6mX0BTVqxXUSWU7yoVMI/+DRh+IHtKSIRZE9h1a0Q2Db14EqGpEj
-         i0V+q9tMWoJxpJmZ45s3QC0ywhRZTEIUxqJko7ok3h1Qzi/BeBTe//adF2q1boKrKJts
-         psZtiiT97sirQXfnn8L+lIgdS/eaDLODoj5x1nhvuYCa+g7JXTArlHRLYEIYVlk29YGg
-         6pfy4sbxurTrREYJvOI06/HTVhhM/V5w6GYVwW5km7zK8iX/3Akw3AIG16POwAgChgx+
-         3wMA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3586829-1519411458-2-5385728096403003208
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519411457; b=l1jRxtHCBRAf3mi1iA6gLwRVf82nFKA3pnzofUp61taJ61v
+    CfVbAs4JWLPLcS4TPsvN2iWcAOs15gt4i7LZpE+VaVYJ+5rEY5R/1T8En+904cX9
+    9uuTsy2wtTpzCshHZnqfuu7EqW+5HXvComcMRproYyQSkjCRv63wTwsWudTsG94x
+    s3yUAcvfydkJXVJMI3TaT/61qkinTfVQKtkV8qZhFrwCIEtyD79HnhPckFpmrowm
+    UFmRIZg9wbp7rVjZgvTXK+Hi72whpFAvVshCkZzKWubs6aggf3hc33JrfSYxhMkJ
+    8vz0isZ0/pqG/Ha0ZvqPIlQmz9fft1MSwszXiEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519411457; bh=/DAi35QSmyn5aiJNcH1GvhLAuf
+    R6p2SHUoeGg0tG//0=; b=TmIu7wrurFDdeqcPE87TJTJyoCq41Vl9BCOvchRZY/
+    QiAhe7ucG9HKMoJSUOCsg5be6tCHRXl9v9eNz1QuxQnDLqkSVK+k6ma4IytDapUl
+    JDlQggFgVJlx0dHsbVJMCw7tOUuNzMMClC6Oza4oiYg3IviQgdQUSucgLic1ocUl
+    rE/eiqo5ywTyr/dH189tTufiaQaNSqEj7KsdcQMtRakShngDgedzlOC/+pWf0f4J
+    fEQ9He7gxVt/Mp/sKE6VvoAoHdqiD5DDHyzcfHTBL+XwBO8p2XOnr4hHLsun54cj
+    WdI/jXxi1IXcEw/ZN/ymIAcg/t8cy3sU23nRwReRR+OA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933503AbeBWSoM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:44:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42450 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932663AbeBWSoK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:44:10 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Nikolay Borisov <nborisov@suse.com>,
-	David Sterba <dsterba@suse.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 067/145] btrfs: Fix possible off-by-one in btrfs_search_path_in_tree
-Date: Fri, 23 Feb 2018 19:26:13 +0100
-Message-Id: <20180223170733.329401059@linuxfoundation.org>
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 010/145] blktrace: fix unlocked registration of tracepoints
+Date: Fri, 23 Feb 2018 19:25:16 +0100
+Message-Id: <20180223170726.032303385@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -39,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217660394969402?=
-X-GMAIL-MSGID: =?utf-8?q?1593218444758107789?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,54 +79,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Jens Axboe <axboe@kernel.dk>
 
+commit a6da0024ffc19e0d47712bb5ca4fd083f76b07df upstream.
 
-[ Upstream commit c8bcbfbd239ed60a6562964b58034ac8a25f4c31 ]
+We need to ensure that tracepoints are registered and unregistered
+with the users of them. The existing atomic count isn't enough for
+that. Add a lock around the tracepoints, so we serialize access
+to them.
 
-The name char array passed to btrfs_search_path_in_tree is of size
-BTRFS_INO_LOOKUP_PATH_MAX (4080). So the actual accessible char indexes
-are in the range of [0, 4079]. Currently the code uses the define but this
-represents an off-by-one.
+This fixes cases where we have multiple users setting up and
+tearing down tracepoints, like this:
 
-Implications:
+CPU: 0 PID: 2995 Comm: syzkaller857118 Not tainted
+4.14.0-rc5-next-20171018+ #36
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:16 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:52
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1c4/0x1e0 kernel/panic.c:546
+  report_bug+0x211/0x2d0 lib/bug.c:183
+  fixup_bug+0x40/0x90 arch/x86/kernel/traps.c:177
+  do_trap_no_signal arch/x86/kernel/traps.c:211 [inline]
+  do_trap+0x260/0x390 arch/x86/kernel/traps.c:260
+  do_error_trap+0x120/0x390 arch/x86/kernel/traps.c:297
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:310
+  invalid_op+0x18/0x20 arch/x86/entry/entry_64.S:905
+RIP: 0010:tracepoint_add_func kernel/tracepoint.c:210 [inline]
+RIP: 0010:tracepoint_probe_register_prio+0x397/0x9a0 kernel/tracepoint.c:283
+RSP: 0018:ffff8801d1d1f6c0 EFLAGS: 00010293
+RAX: ffff8801d22e8540 RBX: 00000000ffffffef RCX: ffffffff81710f07
+RDX: 0000000000000000 RSI: ffffffff85b679c0 RDI: ffff8801d5f19818
+RBP: ffff8801d1d1f7c8 R08: ffffffff81710c10 R09: 0000000000000004
+R10: ffff8801d1d1f6b0 R11: 0000000000000003 R12: ffffffff817597f0
+R13: 0000000000000000 R14: 00000000ffffffff R15: ffff8801d1d1f7a0
+  tracepoint_probe_register+0x2a/0x40 kernel/tracepoint.c:304
+  register_trace_block_rq_insert include/trace/events/block.h:191 [inline]
+  blk_register_tracepoints+0x1e/0x2f0 kernel/trace/blktrace.c:1043
+  do_blk_trace_setup+0xa10/0xcf0 kernel/trace/blktrace.c:542
+  blk_trace_setup+0xbd/0x180 kernel/trace/blktrace.c:564
+  sg_ioctl+0xc71/0x2d90 drivers/scsi/sg.c:1089
+  vfs_ioctl fs/ioctl.c:45 [inline]
+  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:685
+  SYSC_ioctl fs/ioctl.c:700 [inline]
+  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
+  entry_SYSCALL_64_fastpath+0x1f/0xbe
+RIP: 0033:0x444339
+RSP: 002b:00007ffe05bb5b18 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006d66c0 RCX: 0000000000444339
+RDX: 000000002084cf90 RSI: 00000000c0481273 RDI: 0000000000000009
+RBP: 0000000000000082 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: ffffffffffffffff
+R13: 00000000c0481273 R14: 0000000000000000 R15: 0000000000000000
 
-Size of btrfs_ioctl_ino_lookup_args is 4096, so the new byte will be
-written to extra space, not some padding that could be provided by the
-allocator.
+since we can now run these in parallel. Ensure that the exported helpers
+for doing this are grabbing the queue trace mutex.
 
-btrfs-progs store the arguments on stack, but kernel does own copy of
-the ioctl buffer and the off-by-one overwrite does not affect userspace,
-but the ending 0 might be lost.
-
-Kernel ioctl buffer is allocated dynamically so we're overwriting
-somebody else's memory, and the ioctl is privileged if args.objectid is
-not 256. Which is in most cases, but resolving a subvolume stored in
-another directory will trigger that path.
-
-Before this patch the buffer was one byte larger, but then the -1 was
-not added.
-
-Fixes: ac8e9819d71f907 ("Btrfs: add search and inode lookup ioctls")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ added implications ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/ioctl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2244,7 +2244,7 @@ static noinline int btrfs_search_path_in
- 	if (!path)
- 		return -ENOMEM;
+---
+ kernel/trace/blktrace.c |   32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
+
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -57,7 +57,8 @@ static struct tracer_flags blk_tracer_fl
+ };
  
--	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX];
-+	ptr = &name[BTRFS_INO_LOOKUP_PATH_MAX - 1];
+ /* Global reference count of probes */
+-static atomic_t blk_probes_ref = ATOMIC_INIT(0);
++static DEFINE_MUTEX(blk_probe_mutex);
++static int blk_probes_ref;
  
- 	key.objectid = tree_id;
- 	key.type = BTRFS_ROOT_ITEM_KEY;
+ static void blk_register_tracepoints(void);
+ static void blk_unregister_tracepoints(void);
+@@ -306,11 +307,26 @@ static void blk_trace_free(struct blk_tr
+ 	kfree(bt);
+ }
+ 
++static void get_probe_ref(void)
++{
++	mutex_lock(&blk_probe_mutex);
++	if (++blk_probes_ref == 1)
++		blk_register_tracepoints();
++	mutex_unlock(&blk_probe_mutex);
++}
++
++static void put_probe_ref(void)
++{
++	mutex_lock(&blk_probe_mutex);
++	if (!--blk_probes_ref)
++		blk_unregister_tracepoints();
++	mutex_unlock(&blk_probe_mutex);
++}
++
+ static void blk_trace_cleanup(struct blk_trace *bt)
+ {
+ 	blk_trace_free(bt);
+-	if (atomic_dec_and_test(&blk_probes_ref))
+-		blk_unregister_tracepoints();
++	put_probe_ref();
+ }
+ 
+ int blk_trace_remove(struct request_queue *q)
+@@ -522,8 +538,7 @@ int do_blk_trace_setup(struct request_qu
+ 	if (cmpxchg(&q->blk_trace, NULL, bt))
+ 		goto err;
+ 
+-	if (atomic_inc_return(&blk_probes_ref) == 1)
+-		blk_register_tracepoints();
++	get_probe_ref();
+ 
+ 	return 0;
+ err:
+@@ -1469,9 +1484,7 @@ static int blk_trace_remove_queue(struct
+ 	if (bt == NULL)
+ 		return -EINVAL;
+ 
+-	if (atomic_dec_and_test(&blk_probes_ref))
+-		blk_unregister_tracepoints();
+-
++	put_probe_ref();
+ 	blk_trace_free(bt);
+ 	return 0;
+ }
+@@ -1502,8 +1515,7 @@ static int blk_trace_setup_queue(struct
+ 	if (cmpxchg(&q->blk_trace, NULL, bt))
+ 		goto free_bt;
+ 
+-	if (atomic_inc_return(&blk_probes_ref) == 1)
+-		blk_register_tracepoints();
++	get_probe_ref();
+ 	return 0;
+ 
+ free_bt:
