@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255AV0OJQpJJsZzN9tBj1gE4QgOoaBFhJVayZjyuOi0aSxClDp0VSfCRFhCuVEGwc5rXRhm
-ARC-Seal: i=1; a=rsa-sha256; t=1519411157; cv=none;
+X-Google-Smtp-Source: AH8x227t3Ag8m/7pCE5E5ntGYIH9uIyMOb/8yrbARpzQcPT4ChrYCka+TlILTMAz72DQcX+sv9bq
+ARC-Seal: i=1; a=rsa-sha256; t=1519411153; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q/gru17Z/sEjqausKKS6EmVqe6n5FgG6SUxPrI3a4aBuOiBf2PC19sYtyaZEyQtm6L
-         AyMstuj3hM98y+DOccRhjaEtGklZfYcWEEyjcVx21O/mJwe3eVeaILv4UP5D85FIBKWT
-         KwK7WWz/8SWv6Nys+OYZLweZv2mrzaWtsMFVApLCU3gNvDQyGWS2ADn7QRcLjxY0opKG
-         9mhMMG8/Um60p0eYXNC8m/vP32IaOSQ+6bNw1EKSoepSgQe+UuhSKTflrf3+fnIbdbhj
-         kldzEYMlWFakQt3QNgZiCA1Mf1nyubgNPSymdeOG6zyRR4qiJF8fWAoDjs3yIJjKaxbA
-         Rd0A==
+        b=UkDbnJ7dNmdYC0AO3Q4QAZ1fgfx4MRxR9jerBkroCnvz5utaTPeuVA6T9Oxr+rRBsh
+         xU2g2bWF5DgmlsoIznbA4qxl4i5eqLfYP/A6UU0eAdQ26S3XeLL3CPSkSqvxP9i3R2qC
+         RPyEsQUty0mq9TJeYJeQNsAkLNeAy81a/vVQi9hZ8NKu9Q+0rdn3HkXCt0Z/3PZCRNXO
+         x2KCGg3ugHCNvicKHwPjaQuBA0eGn0Kwh6OZ/NHh75aUv/X56aLJYanPBmOmhCo/2CHl
+         PiErG7LCDlvkr2NazVnEaZytfOVSz81DzP1uh1uUcbLwmz0tOpUF4EgvqzviShk1pPwd
+         LLMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PScSqdmxyGvx3SX5suoaJeQU0F2t9BLOPcC5a8TXbY8=;
-        b=PxmHo/jvwdHg/EaAemvmhFqIyvpU/i9zKy/U9rE2sF/gltZ3S9baGnDXw1P4rJHLFU
-         pOjAKMShTZCCHuJ122iLAhsP96nKxHfcRmZ/8HaCt5gzaehHphzhKUxDBuYUjucH07HQ
-         au0ZBRk+T3FaEkrEeupDeg6NgTTPizjwP59O/D53CUBi65DquFpFj/9UsR8vCfcaW4li
-         1mgUk8SmRayE0TPH2if3Ij4rBEOlUjjkQo5LPxuOT4DgHaUf2+o3G/SHeW7/g1oWQ0ae
-         i0REG1b1BR25WFs/6ohwIymP1rnTIFogRfpjGNL+nYND0jZKfcYGtX05rcVj0jNbXkob
-         ygjA==
+        bh=TiyjnLCGV1eqN0kWxLqCaTwJOwXR5p6mC9kMlgEz2VM=;
+        b=Gwg4KaI8BEmvENG2PuSJUCu0PsCeLuAeHyr17UZuU4ZrMySwyXe40UouAVU2Z4xxKm
+         LDXbS75u/ZcmWOnrOi7qaJpquA8+QT/0UN5woVKOdkBfH0PdNqhXx0nnu6EOS54g/CW5
+         j/BU3JlyAXqMNFStOTZ3+5IkgZRIp4pIt7Y68Nr9ZlHRHRot4ikan47Ws7u4UorZNldf
+         4s2wMaPixIEXA0LRVswjS9L2bOc+vzHj1pKuTJ0eOR/8rstT1QTaI2YxBja5YqCCWwpO
+         o3NI7aVB38NmF/jtRw4BRyIFZhnewAzBP2pTvbX614145/fTTcJ0iW3VU/bHm09BkRU8
+         iZAg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 4.4 140/193] [media] hdpvr: hide unused variable
-Date: Fri, 23 Feb 2018 19:26:13 +0100
-Message-Id: <20180223170347.768919081@linuxfoundation.org>
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.4 139/193] drm/gma500: Sanity-check pipe index
+Date: Fri, 23 Feb 2018 19:26:12 +0100
+Message-Id: <20180223170347.581545091@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218073839196180?=
-X-GMAIL-MSGID: =?utf-8?q?1593218073839196180?=
+X-GMAIL-THRID: =?utf-8?q?1593218069647684070?=
+X-GMAIL-MSGID: =?utf-8?q?1593218069647684070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +51,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Thierry Reding <treding@nvidia.com>
 
-commit b97baa3e22e18dac42001e665cf27ad1211bf878 upstream.
+commit 4f250706211cdb949f7580d4fe4dd1fd646de693 upstream.
 
-The i2c client pointer is only used when CONFIG_I2C is set, and
-otherwise produces a compile-time warning:
+If the DSI output isn't connected, then mdfld_dsi_encoder_get_pipe()
+will return -1. The mdfld_dsi_dp_mode_set() function doesn't properly
+check for this condition and causes the following compiler warnings:
 
-drivers/media/usb/hdpvr/hdpvr-core.c: In function 'hdpvr_probe':
-drivers/media/usb/hdpvr/hdpvr-core.c:276:21: error: unused variable 'client' [-Werror=unused-variable]
+	  CC      drivers/gpu/drm/gma500/mdfld_dsi_dpi.o
+	drivers/gpu/drm/gma500/mdfld_dsi_dpi.c: In function ‘mdfld_dsi_dpi_mode_set’:
+	drivers/gpu/drm/gma500/mdfld_dsi_dpi.c:828:35: warning: array subscript is below array bounds [-Warray-bounds]
+	  u32 pipeconf = dev_priv->pipeconf[pipe];
+	                                   ^
+	drivers/gpu/drm/gma500/mdfld_dsi_dpi.c:829:33: warning: array subscript is below array bounds [-Warray-bounds]
+	  u32 dspcntr = dev_priv->dspcntr[pipe];
+	                                 ^
 
-This uses the same #ifdef to hide the variable when the code using
-it is hidden.
+Fix this by checking for a valid pipe before indexing the pipeconf and
+dspcntr arrays.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/1450178476-26284-2-git-send-email-boris.brezillon@free-electrons.com
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/hdpvr/hdpvr-core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/gma500/mdfld_dsi_dpi.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/media/usb/hdpvr/hdpvr-core.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-core.c
-@@ -273,7 +273,9 @@ static int hdpvr_probe(struct usb_interf
- 	struct hdpvr_device *dev;
- 	struct usb_host_interface *iface_desc;
- 	struct usb_endpoint_descriptor *endpoint;
-+#if IS_ENABLED(CONFIG_I2C)
- 	struct i2c_client *client;
-+#endif
- 	size_t buffer_size;
- 	int i;
- 	int retval = -ENOMEM;
+--- a/drivers/gpu/drm/gma500/mdfld_dsi_dpi.c
++++ b/drivers/gpu/drm/gma500/mdfld_dsi_dpi.c
+@@ -821,14 +821,18 @@ void mdfld_dsi_dpi_mode_set(struct drm_e
+ 	struct drm_device *dev = dsi_config->dev;
+ 	struct drm_psb_private *dev_priv = dev->dev_private;
+ 	int pipe = mdfld_dsi_encoder_get_pipe(dsi_encoder);
+-
+ 	u32 pipeconf_reg = PIPEACONF;
+ 	u32 dspcntr_reg = DSPACNTR;
++	u32 pipeconf, dspcntr;
+ 
+-	u32 pipeconf = dev_priv->pipeconf[pipe];
+-	u32 dspcntr = dev_priv->dspcntr[pipe];
+ 	u32 mipi = MIPI_PORT_EN | PASS_FROM_SPHY_TO_AFE | SEL_FLOPPED_HSTX;
+ 
++	if (WARN_ON(pipe < 0))
++		return;
++
++	pipeconf = dev_priv->pipeconf[pipe];
++	dspcntr = dev_priv->dspcntr[pipe];
++
+ 	if (pipe) {
+ 		pipeconf_reg = PIPECCONF;
+ 		dspcntr_reg = DSPCCNTR;
