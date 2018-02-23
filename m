@@ -1,100 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751385AbeBWICb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:02:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46251 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750776AbeBWICa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:02:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,382,1515484800";
-   d="scan'208";a="30074574"
-From: "Huang\, Ying" <ying.huang@intel.com>
-To: <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH RESEND 1/2] mm: swap: clean up swap readahead
-References: <20180220085249.151400-1-minchan@kernel.org>
-        <20180220085249.151400-2-minchan@kernel.org>
-Date: Fri, 23 Feb 2018 16:02:27 +0800
-In-Reply-To: <20180220085249.151400-2-minchan@kernel.org>
-        (minchan@kernel.org's message of "Tue, 20 Feb 2018 17:52:48 +0900")
-Message-ID: <874lm83zho.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1751317AbeBWIG5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:06:57 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33512 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbeBWIGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 03:06:55 -0500
+Date: Fri, 23 Feb 2018 09:06:53 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Kees Cook <keescook@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, Fengguang Wu <fengguang.wu@intel.com>,
+        Laura Abbott <labbott@redhat.com>, Tycho Andersen <tycho@tycho.ws>,
+        Steven Rostedt <srostedt@redhat.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: collecting simple benchmark scripts?
+Message-ID: <20180223080653.GA1584@amd>
+References: <CAGXu5j+LVvfdeD4rhTKAQ0PP5s5ysAjNtrfkpcp2sLzwKqbVHw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+LVvfdeD4rhTKAQ0PP5s5ysAjNtrfkpcp2sLzwKqbVHw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<minchan@kernel.org> writes:
-[snip]
 
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 39ae7cfad90f..c56cce64b2c3 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -332,32 +332,38 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
->  			       unsigned long addr)
->  {
->  	struct page *page;
-> -	unsigned long ra_info;
-> -	int win, hits, readahead;
->  
->  	page = find_get_page(swap_address_space(entry), swp_offset(entry));
->  
->  	INC_CACHE_INFO(find_total);
->  	if (page) {
-> +		bool vma_ra = swap_use_vma_readahead();
-> +		bool readahead = TestClearPageReadahead(page);
-> +
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-TestClearPageReadahead() cannot be called for compound page.  As in
+Hi!
 
-PAGEFLAG(Readahead, reclaim, PF_NO_COMPOUND)
-	TESTCLEARFLAG(Readahead, reclaim, PF_NO_COMPOUND)
+> In a separate thread, some folks were looking for some simple
+> benchmarks for evaluating various changes to kernel internals (as
+> opposed to the much more focused things like xfstests). For me, this
+> has been an area of lore and passed-around scripts, and it seems like
+> maybe we should have a subdirectory of tools/testing/benchmarks/ or
+> something to collect these?
+>=20
+> (Or maybe this already exists and I've totally missed it?)
+>=20
+> I've got at least one micro-benchmark in
+> tools/testing/selftests/seccomp/seccomp_benchmark.c, and searches show
+> tools/testing/selftests/vm/gup_benchmark.c too, but I was thinking of
+> either more generali things more like the famous "kernel build
+> benchmark" or a wrapper for running hackbench to get some statistics
+> out of it, etc.
 
->  		INC_CACHE_INFO(find_success);
->  		if (unlikely(PageTransCompound(page)))
->  			return page;
-> -		readahead = TestClearPageReadahead(page);
+Ok, I guess my micro-benchmark is too micro for you, but I like to use
 
-So we can only call it here after checking whether page is compound.
+"time cat /dev/urandom | head -c 10000000 |  bzip2 -9 - | wc -c"
 
-Best Regards,
-Huang, Ying
+I have a page with various results online somewhere, probably at
 
-> -		if (vma) {
-> -			ra_info = GET_SWAP_RA_VAL(vma);
-> -			win = SWAP_RA_WIN(ra_info);
-> -			hits = SWAP_RA_HITS(ra_info);
-> +
-> +		if (vma && vma_ra) {
-> +			unsigned long ra_val;
-> +			int win, hits;
-> +
-> +			ra_val = GET_SWAP_RA_VAL(vma);
-> +			win = SWAP_RA_WIN(ra_val);
-> +			hits = SWAP_RA_HITS(ra_val);
->  			if (readahead)
->  				hits = min_t(int, hits + 1, SWAP_RA_HITS_MAX);
->  			atomic_long_set(&vma->swap_readahead_info,
->  					SWAP_RA_VAL(addr, win, hits));
->  		}
-> +
->  		if (readahead) {
->  			count_vm_event(SWAP_RA_HIT);
-> -			if (!vma)
-> +			if (!vma || !vma_ra)
->  				atomic_inc(&swapin_readahead_hits);
->  		}
->  	}
-> +
->  	return page;
->  }
->
+http://atrey.karlin.mff.cuni.cz/~pavel/quickbench.html
 
-[snip]
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqPy50ACgkQMOfwapXb+vI/egCff+688Yo4uHAOQsMd5gqqVbSR
+Mx0An2HFbbQg21tRMlBHrhAMCKYLKbzY
+=RgoI
+-----END PGP SIGNATURE-----
+
+--5mCyUwZo2JvN/JJP--
