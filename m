@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226rUOxdzkOL0W24fDPExqwab+fnTznyowc+/dIpwaTmPp/qmnm1dx5J5ijBapXTeHIiR5UM
-ARC-Seal: i=1; a=rsa-sha256; t=1519411812; cv=none;
+X-Google-Smtp-Source: AG47ELtJjJvUH9sCe6zw57b/NUbMd5JGAAbadYo5/6mH86AT9O1BJ6gN5E0AXtquGwmzaY4MDHYB
+ARC-Seal: i=1; a=rsa-sha256; t=1519411795; cv=none;
         d=google.com; s=arc-20160816;
-        b=H+iBuGqC8KzV3WP0YVrFlliQZghjdKDlpGKaLlJ+91hD/26XQvxej8geuzU6XW8ai7
-         OUNpS77RUjZiIvEPK33Exk8GuumQbO7z7g26hqN18oqZg4P1A6VXZaQM4UM3Ge1xjyVm
-         9Gkh89H+PtjSlk9hUKdvYZkgFEkvQ0lNmcc5nscG4AinQGS5L8mR/9O+sUr0FYKdj5yv
-         8xO4GcHn574FhxHN85ZSze9DJZPaPlKuGiYtdI85H4CACtA/uUr8gRg6tYSTZSdoGCef
-         S8KT9VkMaOEG/0zF8O4k0Exm+lB543WIsR3Z3zc+urH7GeQ9J5Hc4d3zU4D+a2P9mDQN
-         8ruA==
+        b=Flz9SHwgsIefas3wZ+m/EBKx6jI56H0dXcSSXVucSw+fYNy14kfJ4n9DS4DUbplsFW
+         U62cYgiSnX+HMo/oiFwXQkwXxS827j+fTE/GJ1OpUbwgv2BGN2/q4OtF7WxPg4Nh8b5u
+         01RMdr2M/ZUKLh6KKxlzjkhTtkQ1KfmIx2RwvPzfATyzkDcbw4S0neC592J58yTE9XVO
+         5WF/VaN2RMHcY7ySqR99jxtZkXLeLdnNAWnXqylkZJ7qe/bJIyT+/aMS22ukhOQHBUBr
+         WRZtPCidiFSWcyzi0OIwncnWC+XpkwvWqsvXdHjzobWmMreb4xjuznRQJeqlprfJgkS+
+         c6ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kyj5shQQ+f2M7VIlaJ/SpZ2jZ4JVpgaBPd958F8e5cE=;
-        b=BbGE5fM2Cl7sN5i1l8JcD0dIQfM8/ZfkOYyGjgcfrV+6lzPXXrP3sB8bi7CyvsSCqD
-         g1z4RRAgHK2zt4Bi3M54qKty8JQQYAcQOLfOxeDAG63x75PONQn2f3OFI5IGx2DVSvH3
-         pYcGscVW1ttCPaSoEg6WlqeVRRnNPXpVq2k1s0rmgvL0AYVm9TuAB+KMartmlA6RS294
-         4hEPLNHcuznbhKqxJcrs7Ezo2s0M7cHK02gXC56ASV9EhiIQ370WUQMNEQi5oAElYVCq
-         VAy++Nhz2T/hlmPWJD0g2WURfL8nDUWihXlq5qt1y0X62dTOWw4nSEgs8ur9TiT4Kz5b
-         SLrQ==
+        bh=ejoIGdJL87V8SWXOgh1oZCfwjssEl450/XOjqoThDcI=;
+        b=VpfAJ75QxZuO316xGw58nJc6/eYzDRC42dhyijGhgufFsgAUb2PkmwbLRgQJXA8+vv
+         1eo1XrAoJBpjnqZlaBNz0iOs4ikt1dmxytJHjI15AbQLoUvqVaQNGGP14llAt9WMJO8t
+         2sUYapdwKas3H6nl8K2Fe97QRi4BWFcNukwPoHE2tO4t5UqnZyS1LKUyB9Og+N/zomvs
+         QXMPhfDsnYmNlaAv3a5XLBvNPEtFJELQFr7/Vrrezt1bfCqJXlnrkfftlUAmDV86pJzB
+         rcsshkMzW1UpypgtmuEWeHYT7ImVQsj9ZoWS7XkTrkWcCDnNPzzlnFSqVwO2eFjUOxJA
+         02Cw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 025/159] ptr_ring: try vmalloc() when kmalloc() fails
-Date: Fri, 23 Feb 2018 19:25:33 +0100
-Message-Id: <20180223170746.211788598@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	syzbot <syzkaller@googlegroups.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Subject: [PATCH 4.14 020/159] drm: Require __GFP_NOFAIL for the legacy drm_modeset_lock_all
+Date: Fri, 23 Feb 2018 19:25:28 +0100
+Message-Id: <20180223170745.630059985@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218760596859413?=
-X-GMAIL-MSGID: =?utf-8?q?1593218760596859413?=
+X-GMAIL-THRID: =?utf-8?q?1593217763110308357?=
+X-GMAIL-MSGID: =?utf-8?q?1593218743012950154?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 0bf7800f1799b5b1fd7d4f024e9ece53ac489011 upstream.
+commit d18d1a5ac811d12f7ebc1129230312b5f2c50cb8 upstream.
 
-This patch switch to use kvmalloc_array() for using a vmalloc()
-fallback to help in case kmalloc() fails.
+To acquire all modeset locks requires a ww_ctx to be allocated. As this
+is the legacy path and the allocation small, to reduce the changes
+required (and complex untested error handling) to the legacy drivers, we
+simply assume that the allocation succeeds. At present, it relies on the
+too-small-to-fail rule, but syzbot found that by injecting a failure
+here we would hit the WARN. Document that this allocation must succeed
+with __GFP_NOFAIL.
 
-Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
-Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171031115535.15166-1-chris@chris-wilson.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ptr_ring.h |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_modeset_lock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -445,11 +445,14 @@ static inline int ptr_ring_consume_batch
- 	__PTR_RING_PEEK_CALL_v; \
- })
+--- a/drivers/gpu/drm/drm_modeset_lock.c
++++ b/drivers/gpu/drm/drm_modeset_lock.c
+@@ -88,7 +88,7 @@ void drm_modeset_lock_all(struct drm_dev
+ 	struct drm_modeset_acquire_ctx *ctx;
+ 	int ret;
  
-+/* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
-+ * documentation for vmalloc for which of them are legal.
-+ */
- static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
- {
- 	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
- 		return NULL;
--	return kcalloc(size, sizeof(void *), gfp);
-+	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
- }
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL | __GFP_NOFAIL);
+ 	if (WARN_ON(!ctx))
+ 		return;
  
- static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
-@@ -582,7 +585,7 @@ static inline int ptr_ring_resize(struct
- 	spin_unlock(&(r)->producer_lock);
- 	spin_unlock_irqrestore(&(r)->consumer_lock, flags);
- 
--	kfree(old);
-+	kvfree(old);
- 
- 	return 0;
- }
-@@ -622,7 +625,7 @@ static inline int ptr_ring_resize_multip
- 	}
- 
- 	for (i = 0; i < nrings; ++i)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -630,7 +633,7 @@ static inline int ptr_ring_resize_multip
- 
- nomem:
- 	while (--i >= 0)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -645,7 +648,7 @@ static inline void ptr_ring_cleanup(stru
- 	if (destroy)
- 		while ((ptr = ptr_ring_consume(r)))
- 			destroy(ptr);
--	kfree(r->queue);
-+	kvfree(r->queue);
- }
- 
- #endif /* _LINUX_PTR_RING_H  */
