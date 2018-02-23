@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413912-2-6376881853183573004
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413903-2-11867157531127815221
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413912; b=EzIsT1hCExHZYnmIkllyIWYb5ShHFZ2XXezGmNyksTjxPt9
-    UNGqFAXKPFGnsSuGMmGyHSYwyJjn6yPpJ4GdD6oz/kFRREdBaoYaPGTr/HWR9rYn
-    Pew1lCpHiMYawKhleLxpMlO1zT22mvjM6wCWTeMqtRUs6XtLjBVpD5jDWJ11PsyW
-    hoxgy7c7XarAqf3S5VPxUUykYEEfP+z7rkIh8B+vfehECabQndqXtx+7nCqOROYL
-    CCWnXUyhe1EMG7cIO7bd1xIavmNrFX4zWzUJ6HZfHFjlWCmC5HqDdU4U2Ky3Kh0E
-    Rg6f+i7A21D22eTQwXFpsFYV2TLBj5RtINUa6TA==
+    t=1519413903; b=xEwhZR0Fbt8pBz9a6FNbzLfFOmNuQ1KSLSp5vyFdx+xk9wQ
+    wXXp7RG1K9aFqvUffbx+RuQlg/pm9VC5uM2gO0JT0HNX81dOMe1ADsv0W+lslkRJ
+    1dah2Nf9TsSX5gldM/DfmZBHw1N/+HDU4CqnekXubdx89Ll+5CycbGtLoe512ZfO
+    3G52Q9sU5lIo0/k/DeqeDxPGtCG7u60uJEmqqH1lXhI4XPltWEDQR0J18sotepz3
+    Y/k7Y7fDRYMPomY9r+ZpkT1vxa5tmDkHnc2CEN/7vz9zH4XplAMQ/t1X3xiX7B18
+    hmOFuk4FKI80LzT/8vpr38WHXiPMAsc3BVCQojw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413912; bh=m3QrrjnhjxI2mjVyn9MvuRxe2Y
-    +iVhFBTNRYQjE+RLw=; b=ZyMHkgGCYkcH3EUw9/oo+gvUrKKeWz9nPBKUCFYfof
-    wRJbUpBm4Z8dEk6TFlKC9TDtCtg3GWFOCi7m8dkgQtKZZ1qxfXL9arm6SD5YghOS
-    q55VT00+lr7pM+3Yi58r3flSlEVwf8Dtbg+q9LxViYtmx/0R0NGIlJgHFhj+nBWh
-    14ULiRD20EUCeHTVkeUjuxlFoeTuwrozN0T8YbNtlrWCokaDp58LtjOScpboAk3B
-    c9OqAPeopZdFV+SUWU6OsZDtenrKg3pCEUyVxhuBEgYbQDOkhQ21xukBaZ8tgNEA
-    /Qjqlr/FwpdljPe3QSi9AjRoJlmrrE1Z4BLyYl7lwDVA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413903; bh=Ii5kSDBqt3LIYccraSRUXOm1OO
+    Jnr4krjl6ORd/zAsU=; b=WJzf6cDu41wqjBJPbSm0iKy50isHQWKmNuOW5nhagM
+    7tMBbkzKezfpYg69vMBmR6SNPwVmVbyvvpbUm/zm5ZuldySvMVBlzJ8xgvXTf1vs
+    q2Y6s60PKbvQB48NbfsSpiS+a8nBegq8aTdcFs048hDXHkgQtZg0i5J7LqBCwLPF
+    wg4b6W/V4RK7VMXmCTaCxTgB4LcZp41z7rvYM91hhjX/shN6xdu9mP93MssJcKtQ
+    qGXsRWi21wD9jAj2vORaS+lYtX/tj7ZaP6xCTZtuxMbsjEFoq0xNEZ8NC+qGUr5v
+    7J1hOKgwUbQZdBjSKaBKBXVY6h3QXmDSHl9VDVCpBMfg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935267AbeBWSw7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:52:59 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47158 "EHLO
+        id S935280AbeBWSxB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:53:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934921AbeBWSw5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:57 -0500
+        with ESMTP id S934921AbeBWSxA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:00 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 083/159] gpio: davinci: Assign first bank regs for unbanked case
-Date: Fri, 23 Feb 2018 19:26:31 +0100
-Message-Id: <20180223170753.622996345@linuxfoundation.org>
+Subject: [PATCH 4.14 084/159] pinctrl: sunxi: Fix A80 interrupt pin bank
+Date: Fri, 23 Feb 2018 19:26:32 +0100
+Message-Id: <20180223170753.737248779@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -79,31 +80,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
 
-[ Upstream commit 7f8e2a85c1b0bd440ffe87be82c79fdc319e8291 ]
+[ Upstream commit 6ad4cc8d1ac483e0fd33f605fb2788b0ecf51ed4 ]
 
-As per the re-design assign the first bank regs for unbanked
-irq case. This was missed out in the original patch.
+On the A80 the pins on port B can trigger interrupts, and those are
+assigned to the second interrupt bank.
+Having two pins assigned to the same interrupt bank/pin combination does
+not look healthy (instead more like a copy&paste bug from pins PA14-PA16),
+so fix the interrupt bank for pins PB14-PB16, which is actually 1.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
+I don't have any A80 board, so could not test this.
+
+Fixes: d5e9fb31baa2 ("pinctrl: sunxi: Add A80 pinctrl muxing options")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-davinci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -383,7 +383,7 @@ static int gpio_irq_type_unbanked(struct
- 	u32 mask;
+--- a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
+@@ -145,19 +145,19 @@ static const struct sunxi_desc_pin sun9i
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x3, "mcsi"),		/* MCLK */
+-		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 14)),	/* PB_EINT14 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 14)),	/* PB_EINT14 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x3, "mcsi"),		/* SCK */
+ 		  SUNXI_FUNCTION(0x4, "i2c4"),		/* SCK */
+-		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 15)),	/* PB_EINT15 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 15)),	/* PB_EINT15 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x3, "mcsi"),		/* SDA */
+ 		  SUNXI_FUNCTION(0x4, "i2c4"),		/* SDA */
+-		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 16)),	/* PB_EINT16 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 16)),	/* PB_EINT16 */
  
- 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
--	g = (struct davinci_gpio_regs __iomem *)d->regs;
-+	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
- 	mask = __gpio_mask(data->irq - d->base_irq);
- 
- 	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+ 	/* Hole */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 0),
