@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2260eQ96+vIuEGNNc2UO68SQfFqsmOR9fYSxAiCGVw/BiY8MKMfRAXr7td+hLBJFm+CIqmHZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519410864; cv=none;
+X-Google-Smtp-Source: AH8x226fii6aoE4CBtRox4hqHkV+77tBi74/GUPC5A1TYCqbgq3ehOd/k9Os19dzoYFxIJn5Zn6n
+ARC-Seal: i=1; a=rsa-sha256; t=1519410861; cv=none;
         d=google.com; s=arc-20160816;
-        b=uaK8rM1TufDBqOJ509F6+0eD6SCGs2K1IdgZjyzyVE046J1IUD7ifA2GZEOetSAB5P
-         +ztfYK78hIiYD5LgHyvWDqdJw7pElXa5U9V+2kR7kTcKNd7Ar48QXN5rj+QItE7fArLp
-         X5ZfqIWHKWV98JeCkI3PheZCkIjVycTwbZIUfWyMRsLJg7OOQpgFy+IHjuVrqYpSIqKn
-         YVi8M11foZekTDh89wu5thCCbcsj9DQIB7GRHMkXbH0jF+0JanOEyQH+EWX0xn5/7w2V
-         i93NEn/xn3zmcxMBATcAOvJkeY5eGu94T9gN86CdGEnCiSh3eb9EKQ0pZHByZgn/28iU
-         bxVA==
+        b=f+fTSPSloDpfdcJmGgsUtVoFc24D+92SprkaPdS25wjH7D/GvyTHy7UnIXsEQe1PH7
+         /+O8G7dfeIt61aYsxqmH5/vhYvlKq0gQzigb+ZchbrWjpNp/lMy0qI1MmieJS8ewYuCI
+         V59+3f67HfgUttwNz17NK9gkXx7pG63fXWeEb4dM3E4Zzmicy+MbV61fx8+Xy6XFmAol
+         L6aKWRy5NHq5RUBdKQyR4UVJN+ootAWXKj8xeZ1eHeX+hRMUd+9XnknSrHhE1twR0RLR
+         Z0p/Nqmsro59VyG5sNomHI33cF7xb7lDZXHSiJFmeczvDhfP5R83KeI1AlUFURzQaI6b
+         jAdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/3EJjkdSfzZ20XZy2GVYRT9SLMmAoJfjeVSxHkMsJds=;
-        b=IYJpUiW0UOhQGE07UDzOiraGK7IEkMdunXpOgLkaMbBGio1dp8+jku67EOGrFFIvSG
-         LbzwDEfb+h/9tw/l73K+oGvvtMVnPGs5awEl+t2IGnMLqj/6FO8bdK9kDe/wYMAluJn1
-         R42jMGnevNCIf7V5v84T+j8zblx3ayIguhNzc/CjjHP/dUpgz/jSyircw7IAVrl8L7vv
-         8E7lg78gpySzyKlRpS4WB1kxNIZHRaaoydzYW7X62VcWn8AEwaAqELzNNquY/ItG9qZn
-         tEz+eJ1VmCNkXGGvXVLD+3N+zOLkyLIbkQKcbRnEa4woEh+lKMNIVKhc4XZPwledBFfB
-         +dsw==
+        bh=ChL/6ytNaKvoD5Sue/uEaml+pXZnMkFOyFN+p1KyQIE=;
+        b=wHoxZejwH48XB/ZUifDinBD7ZaorI56QCYNKTz3bCEx9OIOfKUboeTQt37H5vA5Jso
+         XxsW2yLPTcEuGFyFYKyMTYqy/TyLRqOXd7gL6Uslh5PkNNL+iKnvTYHRbpRq0hPKXKyY
+         q8+pZnNwFI7nlnqvLOpRF9X08XHhOWdcEN6Cx3agDqky0E2n/0o7gjDF7y2MSuOrxfR2
+         f2EOFSdKVyEoQTAL3tcDNGrFU4cJJO6lbijL6huV+y9KCRSXriIdHFmO29fc8Vbq0zkM
+         A38TUXFzs/4H0ogyZLt6KpJalQEJwAz2BiGdxQ28TmRudocp+7qrU/KL+8KXYUM07TF3
+         Ev+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 009/193] Provide a function to create a NUL-terminated string from unterminated data
-Date: Fri, 23 Feb 2018 19:24:02 +0100
-Message-Id: <20180223170327.540076280@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	syzbot <syzkaller@googlegroups.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Subject: [PATCH 4.4 008/193] drm: Require __GFP_NOFAIL for the legacy drm_modeset_lock_all
+Date: Fri, 23 Feb 2018 19:24:01 +0100
+Message-Id: <20180223170327.352765228@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217552383694521?=
-X-GMAIL-MSGID: =?utf-8?q?1593217766480936283?=
+X-GMAIL-THRID: =?utf-8?q?1593217763110308357?=
+X-GMAIL-MSGID: =?utf-8?q?1593217763110308357?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,72 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit f35157417215ec138c920320c746fdb3e04ef1d5 upstream.
+commit d18d1a5ac811d12f7ebc1129230312b5f2c50cb8 upstream.
 
-Provide a function, kmemdup_nul(), that will create a NUL-terminated string
-from an unterminated character array where the length is known in advance.
+To acquire all modeset locks requires a ww_ctx to be allocated. As this
+is the legacy path and the allocation small, to reduce the changes
+required (and complex untested error handling) to the legacy drivers, we
+simply assume that the allocation succeeds. At present, it relies on the
+too-small-to-fail rule, but syzbot found that by injecting a failure
+here we would hit the WARN. Document that this allocation must succeed
+with __GFP_NOFAIL.
 
-This is better than kstrndup() in situations where we already know the
-string length as the strnlen() in kstrndup() is superfluous.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171031115535.15166-1-chris@chris-wilson.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/string.h |    1 +
- mm/util.c              |   24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ drivers/gpu/drm/drm_modeset_lock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -122,6 +122,7 @@ extern char *kstrdup(const char *s, gfp_
- extern const char *kstrdup_const(const char *s, gfp_t gfp);
- extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
- extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
-+extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+--- a/drivers/gpu/drm/drm_modeset_lock.c
++++ b/drivers/gpu/drm/drm_modeset_lock.c
+@@ -69,7 +69,7 @@ void drm_modeset_lock_all(struct drm_dev
+ 	struct drm_modeset_acquire_ctx *ctx;
+ 	int ret;
  
- extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
- extern void argv_free(char **argv);
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -80,6 +80,8 @@ EXPORT_SYMBOL(kstrdup_const);
-  * @s: the string to duplicate
-  * @max: read at most @max chars from @s
-  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Note: Use kmemdup_nul() instead if the size is known exactly.
-  */
- char *kstrndup(const char *s, size_t max, gfp_t gfp)
- {
-@@ -118,6 +120,28 @@ void *kmemdup(const void *src, size_t le
- EXPORT_SYMBOL(kmemdup);
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL | __GFP_NOFAIL);
+ 	if (WARN_ON(!ctx))
+ 		return;
  
- /**
-+ * kmemdup_nul - Create a NUL-terminated string from unterminated data
-+ * @s: The data to stringify
-+ * @len: The size of the data
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ */
-+char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-+{
-+	char *buf;
-+
-+	if (!s)
-+		return NULL;
-+
-+	buf = kmalloc_track_caller(len + 1, gfp);
-+	if (buf) {
-+		memcpy(buf, s, len);
-+		buf[len] = '\0';
-+	}
-+	return buf;
-+}
-+EXPORT_SYMBOL(kmemdup_nul);
-+
-+/**
-  * memdup_user - duplicate memory region from user space
-  *
-  * @src: source address in user space
