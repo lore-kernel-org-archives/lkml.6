@@ -1,96 +1,95 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AG47ELtyc3cnn6f62RAe+NVSbFvDALav9lbtfSFqcaY8R0oenwHf+OuTSGmCG2k9hJHN67BEfrUa
-ARC-Seal: i=1; a=rsa-sha256; t=1519643883; cv=none;
+Return-Path: <arnd@arndb.de>
+X-Google-Smtp-Source: AH8x226XhqaxoNkkOkZFJhB8aSeMittiB+jn1NI/XZaml8bUgliaMaYZZy/J7qb0T8j/Ym2Bx5eT
+ARC-Seal: i=1; a=rsa-sha256; t=1519391830; cv=none;
         d=google.com; s=arc-20160816;
-        b=1K5iOoCnIS7oalOHTfXFU9Uhy9abHIl+UuVzT6W4eriyJvR9rvIW7qMiy8OmdGHNHf
-         u45rohYDwCQKtuJfang6o9RLjFMvUIgxeEqv/tYJCAFEDWk7Cxjqd7wHs/Mvm396n2H7
-         7ZRgef9GOfxIrEYxHlf876suFconoH6INmnOuhfo0UpJFycsKrYhM8hh089RvKOC24H+
-         iq3OBNippLZCTbDnleydugGVE7SxXPpQ4yX1uyVn0D2qlYKSELf81Vy/t3KFyZqkxGt9
-         m4F6UJy82hB7NfTAkK0YZ+MzyHfgf4m1kkrPfEELjS1ol/rC38nwhaBKpdTOUl1BySMK
-         z/Yg==
+        b=USGUEBxjgEYkEbOC5mmGYykFoipOU1cX5HU7QrvzPAtHYd6hpGdSuV0UDRg4QmmB98
+         t6RDG/bcYBUZMWHGYXQKyGuMIEPw9RoQvP8Tuazvc8wyiETntzAibFzO68EHSFtcQkmW
+         LGe0V051vTXXOW0CgK+RXWaYgmQ/VTClC/h6EWeIuLKqLdtqhpXrJoE/Rzy7fRn+zVj+
+         M/IKedsdNkXrKQFdhwwx0FTanCjoGCfGeZV9EXN/Sc2eVPgiQXfzSQ1W0RB1g1ATJFEs
+         jbky+jvamQ5pbzRlEnRzCsJwjHqpn5a+7mlJIBeT7z4/66U2SEMOnrslX0aZ15dc1tAw
+         wQuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=AEvYV77/nhFWZ74ODK3iw2CyNbW0HSv9YhHt9aA6UT0=;
-        b=fWvt3F3vFsHnNU8wCr8ZGZ3Xy24O1XUyhVgVW/IS48rVB52cJk9IuJXApDqvbz5Kxh
-         rtRa340W1KsaEIygzzgyzmaKx330U636JSagyevXiAGy5fOOmQx+pAbFjbAbXCcPI6U4
-         0qHotj0ha+ZZjR3gbNdOiOh1tHqchpLBRDcPuZZmfMUcf0nYFrHGbxsMaCxyFk74ZRIJ
-         N/8G1BoW+JiF/DXFgQPzl93PYoFQB+izsTu+vEceipmE9Liv1BP3Vr/KkPRPLob93FbW
-         U8xvvcrLO/sFAdSOmLQce8vzs3oQPpyuHvZ+POZV1wTIVWrk69Lfe08yJ+S0tl97H7UR
-         DmvA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=iZ2z0E/yPUgYNvLWLfaWq2o/dAu4FL0m5VvJYiqWuy0=;
+        b=esF664a6m5lyrl4CPrLTPgiP9h2ybk3MiKBbFdBvMNY3oa8HfKY61aO/zQrUIkRb04
+         WJsOK3yqHG6WQcGSwdQGie99QN77ImnZXpnO8XJF1KEBvl0jvu3T/dqYLMhCruJ8FyYv
+         UIrLL/0FKv0uCkGPp8ERzHYF8CEYl6jZt/SBYRztcM7r4C1rk7ND+KgUoYyrbbStT92t
+         10f/wG8Skget+mcdRh/3b+A/Ovt52sUM+rDPgsPdeIW0qesoekYggyo8CktO3r2qR+AQ
+         qNsm7oSU6n5txztMKu6FAtwOLoXVvqJsSsx3Ex3VMPJ3SZ0yOxW8RxoompwVM7pBAE6b
+         J0nQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=bY8Xef4F;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+       spf=neutral (google.com: 212.227.126.134 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=bY8Xef4F;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: Remove unnecessary printk for failed allocation" to the regmap tree
-In-Reply-To: <56cba529-03eb-9088-3fea-8fbb50c355af@users.sourceforge.net>
-Message-Id: <E1eqGnC-0005cx-9Z@debutante>
-Date: Mon, 26 Feb 2018 11:18:02 +0000
+       spf=neutral (google.com: 212.227.126.134 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+From: Arnd Bergmann <arnd@arndb.de>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	David Airlie <airlied@linux.ie>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Liu <net147@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/sun4i: link in front-end code if needed
+Date: Fri, 23 Feb 2018 14:06:52 +0100
+Message-Id: <20180223131112.715992-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:ae3oP+fmoLgCueMJ06CwWph6/VZkJsVzsh+tpCfUPBug2+HVDrW
+ kszn/k3eIsXa53WEbCAPiK+u/YUxV6dex9SayszXSbRT3TEAUGHVtMLauXEF1nLPPzAkjTL
+ bkBCUoZEi9thpl+K4T4WV+iGtqhtsKC6TztjAtO/QtkOcWZr1Q40TiyTu+X4p7kgynA/KEJ
+ pDOQ6CJLi+42b8T0Y5AkA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+QaukY0er9o=:vMjGg/lEsqiKsuZ5prcwjz
+ Uu/LNISiBKpBy3wjZTUd3pPs6kAgoe4Ful2UrQCwrqBHgx2D72YQC0GZFDUkOplmgZacizv5s
+ R/dpXdqtakxi+DvmD1sBbNcKLETcnYJNXqkbFhW5ZyJZl+iY1n0OfC42ZX20mutkUCb3ZqlnM
+ V5+EfZDhXbRsaC4fopbN22uinKl3UF6T2pOqPXB8wJxEeJMPB3IK5pGCu4TTbGJrdvfM3Xkyt
+ OHoycQTswLDsMruNW7uqHtoFOw0wdi+e1gpxY57dfDWu1cfruIFFWDulhbB8c2bDPXvD2rqxl
+ VeSU1KZJ6WvsJfDzJzpeAYzvKz+PKPUQZkhnT5oRFAKLNlo2/vJBvLnRa9DeJOZ1bBdz0Z9Fs
+ nPPBWEbfeyrDSjic2DsecgDr7shMc6Xg2Xp/mZads6b9MpkhtuecKyOMhf1+TvxMKj7TCyb2y
+ M6hDktlS3eN2cCSyipJMoQT8dVrdR+bTkEFhvLX7sQJ7DinQwiabRPl3uYFN3Ca7xeUdIqQ8c
+ 7WI+AaURYnbJFA1NDN7qC6ydCNb25VLLyVa4zxEaiN4vdoThVLHpAmic6FxmtxCpNYhEYi6Lm
+ 8GaQ7rQ6drj1GSWrhDE2wEpdE61rZmtlhfEP/JpyyCzg4X0tgYagqTjlHrD9TggWsHqjziWyJ
+ QxUT0m2NoJRLho3R4tkG2h8OZFfo1obZV5kat+5M/f2NYla2zqgXlk38FAlG/v/2AsXZUNb9l
+ NDdvWjvqdaFNQBWFzeF4LUtIQs7mbETKGoHZgw==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593462104317777984?=
-X-GMAIL-MSGID: =?utf-8?q?1593462104317777984?=
+X-GMAIL-THRID: =?utf-8?q?1593197807586940998?=
+X-GMAIL-MSGID: =?utf-8?q?1593197807586940998?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
+When the base sun4i DRM driver is built-in but the back-end is
+a loadable module, we run into a link error:
 
-   regmap: Remove unnecessary printk for failed allocation
+drivers/gpu/drm/sun4i/sun4i_drv.o: In function `sun4i_drv_probe':
+sun4i_drv.c:(.text+0x60c): undefined reference to `sun4i_frontend_of_table'
 
-has been applied to the regmap tree at
+The dependency is a bit tricky, the best workaround I have come up
+with is to use a Makefile hack to to interpret both
+CONFIG_DRM_SUN4I_BACKEND=m and CONFIG_DRM_SUN4I_BACKEND=y
+as a directive to build the front-end the same way as the main module.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b4ecfec5ee3f282a4ac0876de332876fec9b488c Mon Sep 17 00:00:00 2001
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Thu, 22 Feb 2018 12:59:11 +0000
-Subject: [PATCH] regmap: Remove unnecessary printk for failed allocation
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: dd0421f47505 ("drm/sun4i: Add a driver for the display frontend")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/base/regmap/regmap.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 8fe6e08fa41e..707b0450ad72 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2050,10 +2050,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 			return -EINVAL;
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index 582607c0c488..db14e023256b 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -25,6 +25,9 @@ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-tcon.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
  
- 		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
--		if (!wval) {
--			dev_err(map->dev, "Error in memory allocation\n");
-+		if (!wval)
- 			return -ENOMEM;
--		}
-+
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(wval + i);
- 
+-obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o sun4i-frontend.o
++obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o
++ifdef CONFIG_DRM_SUN4I_BACKEND
++obj-$(CONFIG_DRM_SUN4I)		+= sun4i-frontend.o
++endif
+ obj-$(CONFIG_DRM_SUN4I_HDMI)	+= sun4i-drm-hdmi.o
+ obj-$(CONFIG_DRM_SUN8I_MIXER)	+= sun8i-mixer.o
 -- 
-2.16.1
+2.9.0
