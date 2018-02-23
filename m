@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841409-1519418990-2-16426113400241163715
+X-Cyrus-Session-Id: sloti22d1t05-3841409-1519418984-2-17409852827683499436
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519418989; b=b689J2y9gDYTh7HfSWaiBSwNYcZZzrVtCK4vAGq7gKOX2t5
-    SkVtBIwiILJKWzvYMMbIWq57VaIGJM/MW0XqSZtIk0jY7ioYhkJdFj2JAlso73LW
-    vixIoYmkzvwrcLr+5MdhPKFDQN4SX5z+DvtWUUp4DogsG0JQgRBb6gfPeoAVHOWX
-    S0VTtPZk30ZLzKI7qRNCdztZYd2vwqCNa4unoxX0Kpu4kmLrh9agQa+V0iMJIKHR
-    n6w34jq5/UDjbuRYNigHfSxWtivKgHBiKldwKl6ZubDIH+HyYvyYfYTyE8HtOVOi
-    UklMtMMf9Ikf5MwFFGFwS+FCqUGeBLjyqHk1caA==
+    t=1519418983; b=dSeEowPRY1/rpWoQdguwBA20i+HY+N/XENyISpSGl4y3L8i
+    5IkxQ8UrBw0ao+A5Z3HmjAUJg94kCUuwdNHmN63KJtQWots/QNznGdok0gV5vI5Q
+    LO3jEgIBoCirBxjnZpP/e8Dl0PZqk1UnpmK4I69aZY4GqwJCV0mEpBI5/wuvtWSQ
+    5iTdxKBx9MdcWZjoN/sJs3DIQ1ep4c6hPyYf2ufhBaGRNTVuNcipSzLfq6YUMH49
+    uercXgDWgdgdsJEawvDJkyLIBEWnCcLWo2BOz4uxnxZTkfX9X7bZcRnFjvDWX/K6
+    veHbp2WOB1+BmmXPV8isGrLtF78FTKLlEVz8VLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519418989; bh=l7MOHw6eh3On910w7eGxW+OGwh
-    nUOjUbG7bVjvQMLBk=; b=YSfrGO9u5kjbmX/Wj/j6uihDBWnOC52pHhyAxD6COG
-    ReFN0+JlcCxGVrOlbbvmXGtNRdYuxPw3PO1CHtsYv7nhXhcwzak8dHcnQrcUvUYv
-    tyWq/NwTIDuQ7Lbg67+hQL8HwJZrsS0X5l+dKrKZLTEpuAHlZMxOuptwP6o9+Lgy
-    YnOKBZShQxQAsaX07v/89RNkE59y1vbcV8Ht+6eIr80o8VS4bXXZOmgyI47VU4nW
-    NFRfSGtgatjn5irGRx9v+t8zXP2vA3r7916Dju6YTUerK9UCoOP+seF0Mp0YE9ak
-    vv/uml7B94SEP1rXlKOADnrrO42acyGSwTbLqFOgDGlQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519418983; bh=YFI0CxUHKXS2WyLj2iVcO7oOKq
+    lN+tZy/uBq5upPUGo=; b=D0+KUHdWmryd7irltwScrZnZ2zhbEpugZlBWFABbRZ
+    Pm3b9NM18yIhmYAWV8z2mbdfRU3XWcblZpjjOVMttYqG9dssm9ehzNasSPSX9NoU
+    YuT4MiqKOQhjQ5ONVeRIp/p1hAU7RsluoUvyGc/u1IFF5h6Cr/p5Wp3gBldkziXb
+    aRNyqNOsK95WE+/9So0QDXtHfmAY9H6f3Y0sFiuu5O2Nj1iiiCzswhBa7ugQRc7K
+    gk/UO2b6TGYg6MU3RIwdTPf9xxIpBA+GpH+uOkmC1V4f+HpsgRbr7WmYPovTeGQd
+    Z2t1w4pEvzJDnzltM16EFcvuvyfuiRVfp0LwkJ1UnYmg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752542AbeBWSb0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:31:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35206 "EHLO
+        id S1751632AbeBWUt1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:49:27 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35222 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752516AbeBWSbY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:24 -0500
+        with ESMTP id S1752549AbeBWSb0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:31:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 36/58] ARM: AM33xx: PRM: Remove am33xx_pwrdm_read_prev_pwrst function
-Date: Fri, 23 Feb 2018 19:26:35 +0100
-Message-Id: <20180223170212.463009961@linuxfoundation.org>
+Subject: [PATCH 3.18 37/58] ARM: dts: am4372: Correct the interrupts_properties of McASP
+Date: Fri, 23 Feb 2018 19:26:36 +0100
+Message-Id: <20180223170212.628267539@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -79,57 +79,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
 
-[ Upstream commit b6d6af7226465b6d11eac09d0be2ab78a4a9eb62 ]
+[ Upstream commit 627395a6f8091c0aa18f49dca7df59ba3ec147ef ]
 
-Referring TRM Am335X series:
-http://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
+Fixes the following warnings:
 
-The LastPowerStateEntered bitfield is present only for PM_CEFUSE
-domain. This is not present in any of the other power domains. Hence
-remove the generic am33xx_pwrdm_read_prev_pwrst hook which wrongly
-reads the reserved bit fields for all the other power domains.
+arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
+interrupts size is (8), expected multiple of 12 in
+/ocp@44000000/mcasp@48038000
 
-Reading the reserved bits leads to wrongly interpreting the low
-power transitions for various power domains that do not have the
-LastPowerStateEntered field. The pm debug counters values are wrong
-currently as we are incrementing them based on the reserved bits.
+arch/arm/boot/dts/am437x-cm-t43.dtb: Warning (interrupts_property):
+interrupts size is (8), expected multiple of 12 in
+/ocp@44000000/mcasp@4803C000
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/prm33xx.c |   12 ------------
- 1 file changed, 12 deletions(-)
+ arch/arm/boot/dts/am4372.dtsi |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-omap2/prm33xx.c
-+++ b/arch/arm/mach-omap2/prm33xx.c
-@@ -165,17 +165,6 @@ static int am33xx_pwrdm_read_pwrst(struc
- 	return v;
- }
- 
--static int am33xx_pwrdm_read_prev_pwrst(struct powerdomain *pwrdm)
--{
--	u32 v;
--
--	v = am33xx_prm_read_reg(pwrdm->prcm_offs, pwrdm->pwrstst_offs);
--	v &= AM33XX_LASTPOWERSTATEENTERED_MASK;
--	v >>= AM33XX_LASTPOWERSTATEENTERED_SHIFT;
--
--	return v;
--}
--
- static int am33xx_pwrdm_set_lowpwrstchange(struct powerdomain *pwrdm)
- {
- 	am33xx_prm_rmw_reg_bits(AM33XX_LOWPOWERSTATECHANGE_MASK,
-@@ -329,7 +318,6 @@ struct pwrdm_ops am33xx_pwrdm_operations
- 	.pwrdm_set_next_pwrst		= am33xx_pwrdm_set_next_pwrst,
- 	.pwrdm_read_next_pwrst		= am33xx_pwrdm_read_next_pwrst,
- 	.pwrdm_read_pwrst		= am33xx_pwrdm_read_pwrst,
--	.pwrdm_read_prev_pwrst		= am33xx_pwrdm_read_prev_pwrst,
- 	.pwrdm_set_logic_retst		= am33xx_pwrdm_set_logic_retst,
- 	.pwrdm_read_logic_pwrst		= am33xx_pwrdm_read_logic_pwrst,
- 	.pwrdm_read_logic_retst		= am33xx_pwrdm_read_logic_retst,
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -702,7 +702,8 @@
+ 			reg = <0x48038000 0x2000>,
+ 			      <0x46000000 0x400000>;
+ 			reg-names = "mpu", "dat";
+-			interrupts = <80>, <81>;
++			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "tx", "rx";
+ 			status = "disabled";
+ 			dmas = <&edma 8>,
+@@ -716,7 +717,8 @@
+ 			reg = <0x4803C000 0x2000>,
+ 			      <0x46400000 0x400000>;
+ 			reg-names = "mpu", "dat";
+-			interrupts = <82>, <83>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "tx", "rx";
+ 			status = "disabled";
+ 			dmas = <&edma 10>,
