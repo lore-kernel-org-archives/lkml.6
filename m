@@ -1,103 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeBWHAS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 02:00:18 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44015 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeBWHAQ (ORCPT
+        id S1751539AbeBWHDz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 02:03:55 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53374 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751432AbeBWHDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 02:00:16 -0500
-X-Google-Smtp-Source: AG47ELskU+FRKOLG/aV+xIBWzEZSVGykD+apbX/jxTWE/mFXuNgWH08SeUc4mRKnpOqomPnTBLfJVw==
-Subject: Re: [PATCH 4/9] drm/xen-front: Implement Xen event channel handling
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
- <1519200222-20623-5-git-send-email-andr2000@gmail.com>
- <395cdaef-db7e-139c-bbf1-28cb33f41f58@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <5145287f-40b0-c8e2-1b37-36d7e8cac908@gmail.com>
-Date: Fri, 23 Feb 2018 09:00:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 23 Feb 2018 02:03:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 469CC606DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH 1/9] scsi: ufs: Allowing power mode change
+To: Kyuho Choi <chlrbgh0@gmail.com>
+Cc: subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.1519120988.git.asutoshd@codeaurora.org>
+ <70df05c82a8624987c76b16c65143f00a111c94d.1519120988.git.asutoshd@codeaurora.org>
+ <CAP2JTQK3jNrNvxz=aF9weuO1M38zBCCa8YJfz5tazXF61p257w@mail.gmail.com>
+From: "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <13563e4e-1b4d-8791-12ec-8fcb752f3b96@codeaurora.org>
+Date: Fri, 23 Feb 2018 12:33:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <395cdaef-db7e-139c-bbf1-28cb33f41f58@oracle.com>
+In-Reply-To: <CAP2JTQK3jNrNvxz=aF9weuO1M38zBCCa8YJfz5tazXF61p257w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 01:50 AM, Boris Ostrovsky wrote:
-> On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
->> +
->> +static irqreturn_t evtchnl_interrupt_ctrl(int irq, void *dev_id)
->> +{
->> +	struct xen_drm_front_evtchnl *evtchnl = dev_id;
->> +	struct xen_drm_front_info *front_info = evtchnl->front_info;
->> +	struct xendispl_resp *resp;
->> +	RING_IDX i, rp;
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&front_info->io_lock, flags);
->> +
->> +	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
->> +		goto out;
-> Do you need to check the state under lock? (in other routines too).
-not really, will move out of the lock in interrupt handlers
-other places (I assume you refer to be_stream_do_io)
-it is set under lock as a part of atomic operation, e.g.
-we get a new request pointer from the ring and reset completion
-So, those places still seem to be ok
-> ...
->
->> +
->> +static void evtchnl_free(struct xen_drm_front_info *front_info,
->> +		struct xen_drm_front_evtchnl *evtchnl)
->> +{
->> +	unsigned long page = 0;
->> +
->> +	if (evtchnl->type == EVTCHNL_TYPE_REQ)
->> +		page = (unsigned long)evtchnl->u.req.ring.sring;
->> +	else if (evtchnl->type == EVTCHNL_TYPE_EVT)
->> +		page = (unsigned long)evtchnl->u.evt.page;
->> +	if (!page)
->> +		return;
->> +
->> +	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
->> +
->> +	if (evtchnl->type == EVTCHNL_TYPE_REQ) {
->> +		/* release all who still waits for response if any */
->> +		evtchnl->u.req.resp_status = -EIO;
->> +		complete_all(&evtchnl->u.req.completion);
+On 2/23/2018 10:40 AM, Kyuho Choi wrote:
+> Hi Asutosh,
+> 
+> I've simple question in below.
+> 
+> On 2/21/18, Asutosh Das <asutoshd@codeaurora.org> wrote:
+>> From: Yaniv Gardi <ygardi@codeaurora.org>
+>>
+>> Due to M-PHY issues, moving from HS to any other mode or gear or
+>> even Hibern8 causes some un-predicted behavior of the device.
+>> This patch fixes this issues.
+>>
+>> Signed-off-by: Yaniv Gardi <ygardi@codeaurora.org>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>> ---
+>>   drivers/scsi/ufs/ufshcd.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index 011c336..d74d529 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -4167,9 +4167,13 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
+>>   			goto out;
+>>   	} while (ret && retries--);
+>>
+>> -	if (ret)
+>> +	if (ret) {
+>>   		/* failed to get the link up... retire */
+>>   		goto out;
+>> +	} else {
+>> +		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 0);
+>> +		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 1);
 >> +	}
->> +
->> +	if (evtchnl->irq)
->> +		unbind_from_irqhandler(evtchnl->irq, evtchnl);
->> +
->> +	if (evtchnl->port)
->> +		xenbus_free_evtchn(front_info->xb_dev, evtchnl->port);
->> +
->> +	/* end access and free the page */
->> +	if (evtchnl->gref != GRANT_INVALID_REF)
->> +		gnttab_end_foreign_access(evtchnl->gref, 0, page);
->> +
->> +	if (evtchnl->type == EVTCHNL_TYPE_REQ)
->> +		evtchnl->u.req.ring.sring = NULL;
->> +	else
->> +		evtchnl->u.evt.page = NULL;
->> +
->> +	memset(evtchnl, 0, sizeof(*evtchnl));
-> Since you are zeroing out the structure you don't need to set fields to
-> zero.
-good catch, thank you
-> I also think you need to free the page.
-it is freed by gnttab_end_foreign_access, please see [1]
-> -boris
+>>
+> 
+> Every ufs host has same issue and affected?.
+> 
+>>   	if (link_startup_again) {
+>>   		link_startup_again = false;
+>> --
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+>> Inc.
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
+>> Foundation Collaborative Project.
+>>
+>>
+Hi Choi
+Thanks for the review.
 
-[1] 
-https://elixir.bootlin.com/linux/v4.11-rc1/source/drivers/xen/grant-table.c#L380
+No - I can't say if every host has the same issue. However, I get your 
+point. It could be done with a quirk.
+
+I'll fix this in v2 after collating all the comments from the rest of 
+the patches.
+
+-asd
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
