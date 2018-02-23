@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3795596-1519416571-3-13011932791558990437
+X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416538-2-17824833759691836228
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416571; b=WDzKFN2A0UddQWJYJxvSTDwKX/pqq6c4rRaoS9tVjdqTI2S
-    Aqs6s965GOSW7W5/FKrma+SaroX/x7vH5J9vvwARnLBykR9P8IE5FGPmtx/Rfxgq
-    IsnSQ/yER2i5uxIGxCySlfLgpixjBLXYP+JxCgfX5V3ykkxVbG8/xT1DCIZXncUc
-    /DpR4Nkz5aZ5+hxhvQSaGtYT/tRnovi5WJhUV7b+OB4OmEPHE5nRAOJpvg9JNaLS
-    4rTSZh8sFC7nIHDPBfwavVWV3SZD6od/1hjS+VWTcHM92Yghn84MalBAEKomJi6+
-    WNAEhcNTGi2nUgOIxKH68cgBpb4sLqr1eDvO4hA==
+    t=1519416537; b=L3nK4UU3WMeGP0ZBHsaQOP/MfrzwBHYH1hdLNkx8XbBXVv9
+    KF8r6c5VqQPwggAPVzaJcisZcyKvEoQ5tCGT1SVD7LWu90TwPx4N8GVuEGi6aIHI
+    SlC96afdbCVLdKnHa8hYLA6kXKBZjhm9oldsFJnlloKkGTEQHPY6xAUPLKXsv8Tf
+    VFtL9Uk3/Q1HS35+KEW1PWZz1RnWfgx+K5C0eDJzhYi2ev3larwhvaAsf3TItHKG
+    je/nfF09z6CR1wCVuvGCRYWbIZ6zOboVs/4zJpSgIKYp8gYXyqW0B6JcIKIY7+tj
+    BFBKm+zrt55TvOg4a0EoLBlD5spYwW9Xvuna7iQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416571; bh=5fOCUHfDZ++buVKgMshL7cnAbf
-    4cmIxaUiVExn6HKAk=; b=Vywwn+ALqNldXKfDDbPQtNVCf/y/ST+YB7N3FpTHIJ
-    944BBBJXwecMr/+m2ZQ7F/9llXKGGw610w1DHRSwDqB+vp7tkiB1UuCa45pLCA8r
-    D/WMurn3p3Kn4HrdhkhZm6YJzDWu8V6QZk2tWjHvpyuEZkd3iphd4fc4TJ2Gy4DZ
-    ah1q5KeE3EJ6kWDJqPsX2HPeovo5FfK0d1ZLYlRiQ5wNxmsoZeCrlS21HSJEXxsq
-    xNfHKjBO3vLxg9hG3aqiENMuC3enS7WNBklMV/OFGC0VpYtLSPp+VEl2YmbU3LqN
-    8OxF/C2hEyNvJfue06ZnX1/ompzxMblZuv+HjGwbkdAA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519416537; bh=+p/qhO6FyKgUVPO87X2h/RaGo9
+    UVlFtz+WlC2t+g2Ow=; b=dgC2dWqYgOgsNPv+bRnC8nulvgNb4o9ZMjx4KxbueN
+    qGfNksRbMjlvfC+H/K0xfenYJW5/pnjmHFitW9HcabT6IvTPIgJ2vRqOYiun7x6L
+    a+rDHhkqZWrzyk6+Xv+xQKksZVdStp8K7kVyVZI8aLWoEaV8yg4OHiKE7wwcu8GI
+    rXzDQlOMrMFF2zVmunJXAvZGJZAbRWTojh5wbT35JzXX64eTutHUw4e5QuA/lnja
+    Q1OQZStokq8jXS84C6YdiutllUkee176e+A2EnDxyYpWrgtYkNSIHh15eVwmzoTf
+    yPlx0cOrKUOHpiqd8moFNy3sgpgxHQ+hY+BV1cD/MooQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933123AbeBWUJP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 15:09:15 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41500 "EHLO
+        id S933067AbeBWUIW (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:08:22 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933026AbeBWSmX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:23 -0500
+        with ESMTP id S933054AbeBWSm3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:42:29 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com,
-        Tom Herbert <tom@quantonium.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 003/145] kcm: Only allow TCP sockets to be attached to a KCM mux
-Date: Fri, 23 Feb 2018 19:25:09 +0100
-Message-Id: <20180223170725.169691035@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 013/145] Provide a function to create a NUL-terminated string from unterminated data
+Date: Fri, 23 Feb 2018 19:25:19 +0100
+Message-Id: <20180223170726.377426584@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -81,39 +78,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Herbert <tom@quantonium.net>
+From: David Howells <dhowells@redhat.com>
 
-commit 581e7226a5d43f629eb6399a121f85f6a15f81be upstream.
+commit f35157417215ec138c920320c746fdb3e04ef1d5 upstream.
 
-TCP sockets for IPv4 and IPv6 that are not listeners or in closed
-stated are allowed to be attached to a KCM mux.
+Provide a function, kmemdup_nul(), that will create a NUL-terminated string
+from an unterminated character array where the length is known in advance.
 
-Fixes: ab7ac4eb9832 ("kcm: Kernel Connection Multiplexor module")
-Reported-by: syzbot+8865eaff7f9acd593945@syzkaller.appspotmail.com
-Signed-off-by: Tom Herbert <tom@quantonium.net>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This is better than kstrndup() in situations where we already know the
+string length as the strnlen() in kstrndup() is superfluous.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/kcm/kcmsock.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ include/linux/string.h |    1 +
+ mm/util.c              |   24 ++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1381,8 +1381,13 @@ static int kcm_attach(struct socket *soc
- 	if (!csk)
- 		return -EINVAL;
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -123,6 +123,7 @@ extern char *kstrdup(const char *s, gfp_
+ extern const char *kstrdup_const(const char *s, gfp_t gfp);
+ extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
+ extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
++extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
  
--	/* We must prevent loops or risk deadlock ! */
--	if (csk->sk_family == PF_KCM)
-+	/* Only allow TCP sockets to be attached for now */
-+	if ((csk->sk_family != AF_INET && csk->sk_family != AF_INET6) ||
-+	    csk->sk_protocol != IPPROTO_TCP)
-+		return -EOPNOTSUPP;
+ extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
+ extern void argv_free(char **argv);
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -80,6 +80,8 @@ EXPORT_SYMBOL(kstrdup_const);
+  * @s: the string to duplicate
+  * @max: read at most @max chars from @s
+  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Note: Use kmemdup_nul() instead if the size is known exactly.
+  */
+ char *kstrndup(const char *s, size_t max, gfp_t gfp)
+ {
+@@ -118,6 +120,28 @@ void *kmemdup(const void *src, size_t le
+ EXPORT_SYMBOL(kmemdup);
+ 
+ /**
++ * kmemdup_nul - Create a NUL-terminated string from unterminated data
++ * @s: The data to stringify
++ * @len: The size of the data
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ */
++char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
++{
++	char *buf;
 +
-+	/* Don't allow listeners or closed sockets */
-+	if (csk->sk_state == TCP_LISTEN || csk->sk_state == TCP_CLOSE)
- 		return -EOPNOTSUPP;
- 
- 	psock = kmem_cache_zalloc(kcm_psockp, GFP_KERNEL);
++	if (!s)
++		return NULL;
++
++	buf = kmalloc_track_caller(len + 1, gfp);
++	if (buf) {
++		memcpy(buf, s, len);
++		buf[len] = '\0';
++	}
++	return buf;
++}
++EXPORT_SYMBOL(kmemdup_nul);
++
++/**
+  * memdup_user - duplicate memory region from user space
+  *
+  * @src: source address in user space
