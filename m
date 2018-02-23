@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224pqWpJWe8r6TxA31ME96z0QbwodrPJkK32KyPGk0QH5rUiLbkpeXxU4Nxya8gVlAleyP2A
-ARC-Seal: i=1; a=rsa-sha256; t=1519412273; cv=none;
+X-Google-Smtp-Source: AH8x227kOlw5Cx/yiJf4HeJqoJ4MI0zttEAkQjUliRDw49y8CFwDwo/XE8gJCSA+zBmD9Qx0AHbq
+ARC-Seal: i=1; a=rsa-sha256; t=1519412270; cv=none;
         d=google.com; s=arc-20160816;
-        b=VbAZK3RjY6Ii8g9qSbIhGCFY6+QjjkmrvOxPPWQeEitWnTpKx68B5P+Hkll12ILduy
-         5TzZuNUuxsdop7CM//CzMT3NbzWvAR/M4QFN8lQKZfyyw/wn1WIwkBkACCO3rZLi/Rcv
-         jPgbpuiOZJ+SUKLhwqeYS+KY9nNmi5FsulXCCofHcc/codbQpDIHG2C/GeqRW0VXtThN
-         jmATa0RD0E3OhPHDI4BBu1HbYbPX4tBrqyXAym//sOuKb/ASoLgdskHEDnNAGc9VA7v6
-         yO23YDmr4DX8esJmGoxdRUySX4sCwBFEnQ8KEwaZzwPF0iQlXnGG2QVpgHcAou6I45vz
-         RCdQ==
+        b=xzdELbHhDqY3B8y+Z1r8g6uoxXPEOCxB0D94lFZxvOcLjH6Oe9F7lasHgGq+hgTRNC
+         CsZd/bh5s37SkfyaUn04NvDUMQ4Zdwjj0w8ruSGD0VNX8tHedBNR8HD6rZribdw3EQuI
+         AlGnwDZUclmyGCGT5dGHp7uPw6O9F868gUOztLejsKykEKm7QpaOFbgTyKX74s6NvLgE
+         HYrJnVUgZ8c5NMAAH86sh7aCQ8OZJRPx9e4DWtju8rt7+TcpHKT1Ttd06vRZtqUUMlJ9
+         0ngtQGy35PblfLFltXWudv8XrBvEnfemTbbZpuiJ6KlqdrYfbSuXektZz0l+LNdJeqNj
+         ohIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=toCXj+rF+X0RZdW5hDXRNiCqiMJssosKh+NIrdzUtwM=;
-        b=L7eUbD9LWvKOphchDdNglZiWaJaGRZh5i3MaoLAgXceANNLbmbv7Ud8a12GnkgY23a
-         mhDyliRCTj+qdxY7spA46ueLNopn8sZYw5KXQdgugwbOAt9jz4DbRLensm4epn44qnQ/
-         1LJHGIy3kfqj3EFrekUiy26ncH+nOkDDMdgXK3Q+xFjl2f1EO9NBXPDR4p2aunCKIKve
-         9+iiZ98NAVrtksDDW4lwPii+/uE1QZlFZy97pP5IP2YuzrU9yCIdge9FJ3+7wtIFYHbX
-         rDhPRjo/ckdxDF0+l1VjUoRcs6GuX3xse0Ul0nKqPFoK86lxjPjOmjjT1Wh+RhEmdmmS
-         T9SQ==
+        bh=aV3J4r/ME+Wr5NOLObNrLn+Y825aPYrJSFuua1jAcok=;
+        b=v8haCMRXnx8NVWNTGL0Exsg0+de7vQJm6yPymMsuDCTH7IwqzZwkHSPYMoGpzn95NG
+         9fPJ5MI6EuLVDLFeAmotT2sC7LW4hg+vZZpJVbwktS5lltFuXIo7N054Knu80AcEuhuW
+         TKKT8Kow4MWFDI3vQltERkoiqZIBdsHpk44kHYz4sb3NjCV+rShFI3i3eUpXXzZou+PS
+         1gyGjXDZhtas91RY4l093IzI1etRVFfdP6M0/sZiJNzunBeNPZBW40mTggtTfafoq5MZ
+         dE0ETwMDdZqi4QEJ/nw+PYcHFXDBg8O84XwBxE36HTw7KcLvw6YniXJw9ZHKwPmiU22y
+         qQOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 03/45] ptr_ring: try vmalloc() when kmalloc() fails
-Date: Fri, 23 Feb 2018 19:28:42 +0100
-Message-Id: <20180223170715.783010673@linuxfoundation.org>
+	Jesse Chan <jc@linux.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.15 23/45] soc: qcom: rmtfs_mem: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Fri, 23 Feb 2018 19:29:02 +0100
+Message-Id: <20180223170718.919513898@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218760596859413?=
-X-GMAIL-MSGID: =?utf-8?q?1593219243880175550?=
+X-GMAIL-THRID: =?utf-8?q?1593219241022737824?=
+X-GMAIL-MSGID: =?utf-8?q?1593219241022737824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +50,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Jesse Chan <jc@linux.com>
 
-commit 0bf7800f1799b5b1fd7d4f024e9ece53ac489011 upstream.
+commit 3b229bdb54cc83061b4b7840e3532316cb1ac7ce upstream.
 
-This patch switch to use kvmalloc_array() for using a vmalloc()
-fallback to help in case kmalloc() fails.
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-Reported-by: syzbot+e4d4f9ddd4295539735d@syzkaller.appspotmail.com
-Fixes: 2e0ab8ca83c12 ("ptr_ring: array based FIFO for pointers")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+WARNING: modpost: missing MODULE_LICENSE() in drivers/soc/qcom/rmtfs_mem.o
+see include/linux/module.h for more information
+
+This adds the license as "GPL v2", which matches the header of the file.
+
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ptr_ring.h |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/soc/qcom/rmtfs_mem.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -451,11 +451,14 @@ static inline int ptr_ring_consume_batch
- 	__PTR_RING_PEEK_CALL_v; \
- })
- 
-+/* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
-+ * documentation for vmalloc for which of them are legal.
-+ */
- static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
- {
- 	if (size * sizeof(void *) > KMALLOC_MAX_SIZE)
- 		return NULL;
--	return kcalloc(size, sizeof(void *), gfp);
-+	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -267,3 +267,7 @@ static void qcom_rmtfs_mem_exit(void)
+ 	unregister_chrdev_region(qcom_rmtfs_mem_major, QCOM_RMTFS_MEM_DEV_MAX);
  }
- 
- static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
-@@ -588,7 +591,7 @@ static inline int ptr_ring_resize(struct
- 	spin_unlock(&(r)->producer_lock);
- 	spin_unlock_irqrestore(&(r)->consumer_lock, flags);
- 
--	kfree(old);
-+	kvfree(old);
- 
- 	return 0;
- }
-@@ -628,7 +631,7 @@ static inline int ptr_ring_resize_multip
- 	}
- 
- 	for (i = 0; i < nrings; ++i)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -636,7 +639,7 @@ static inline int ptr_ring_resize_multip
- 
- nomem:
- 	while (--i >= 0)
--		kfree(queues[i]);
-+		kvfree(queues[i]);
- 
- 	kfree(queues);
- 
-@@ -651,7 +654,7 @@ static inline void ptr_ring_cleanup(stru
- 	if (destroy)
- 		while ((ptr = ptr_ring_consume(r)))
- 			destroy(ptr);
--	kfree(r->queue);
-+	kvfree(r->queue);
- }
- 
- #endif /* _LINUX_PTR_RING_H  */
+ module_exit(qcom_rmtfs_mem_exit);
++
++MODULE_AUTHOR("Linaro Ltd");
++MODULE_DESCRIPTION("Qualcomm Remote Filesystem memory driver");
++MODULE_LICENSE("GPL v2");
