@@ -1,82 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751631AbeBWMhA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 07:37:00 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:43211 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751378AbeBWMg6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:36:58 -0500
-X-Google-Smtp-Source: AG47ELtwWlvVjmyi5pq5ncqbuUYuKresJjCwNMSORsDFThyOlAh1asovlsWxd5IrF0yr1nfvYJbqcQ==
-X-ME-Sender: <xms:6AqQWnueiMs5lCf5gZF_QuyceGHc025o6qTEjPEmDsR7UdaG5mbIoA>
-Date: Fri, 23 Feb 2018 20:40:23 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 15/17] lockdep: Reduce the size of
- lock_list
-Message-ID: <20180223124023.kdl6pkitu2nhgv4z@tardis>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-16-boqun.feng@gmail.com>
- <20180223113843.GY25201@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6ux5zkvmskhc7amk"
-Content-Disposition: inline
-In-Reply-To: <20180223113843.GY25201@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+        id S1751661AbeBWMhE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:37:04 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:51434 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751360AbeBWMhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 07:37:01 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
+Date: Fri, 23 Feb 2018 20:35:54 +0800
+Message-Id: <20180223123555.64009-7-icenowy@aosc.io>
+In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
+References: <20180223123555.64009-6-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
+memory map fully reworked and some high-speed peripherals (PCIe, USB
+3.0) introduced.
 
---6ux5zkvmskhc7amk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit adds the basical DTSI file of it, including the clock
+support and UART support.
 
-On Fri, Feb 23, 2018 at 12:38:43PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 03:09:02PM +0800, Boqun Feng wrote:
-> > diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> > index a1f91f8680bd..3fce8dbf5091 100644
-> > --- a/include/linux/lockdep.h
-> > +++ b/include/linux/lockdep.h
-> > @@ -186,11 +186,11 @@ struct lock_list {
-> >  	struct list_head		entry;
-> >  	struct lock_class		*class;
-> >  	struct stack_trace		trace;
-> > -	int				distance;
-> > +	u16				distance;
-> >  	/* bitmap of different dependencies from head to this */
-> > -	u16				dep;
-> > +	u8				dep;
-> >  	/* used by BFS to record whether this is picked as a recursive read */
-> > -	u16				is_rr;
-> > +	bool				is_rr;
->=20
-> Don't use bool, use u8 if you want a single byte. sizeof(_Bool) is part
-> of the architecture ABI and can be up to 4 bytes (well really anything,
-> but I've not seen it bigger than 4 bytes for any sane implementation).
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+---
+Changes in v3:
+- SPDX license identifier fix.
 
-Got it, thanks!
+Changes in v2:
+- Add APB1 clock as PIO's APB clock.
+- Switched to SPDX license identifier.
 
-Regards,
-Boqun
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177 +++++++++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
 
---6ux5zkvmskhc7amk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqQC7QACgkQSXnow7UH
-+rhFGwf+Jv+A+TnlEzw1zjBEJM2acomOjUr6R08H+7yF+99YSdLFHuwpos1VgXOo
-zj9kzDR4+Gx4d+C+CLvN7zaY/XVPzPcTeGFPqTqXbtuJLZ5HkBUrpIXU8zOCW389
-c9KIs+F22LWVlvOSQkD0tLUfy8h7TwvLN3YqIRj26d0AW+PZcern+7GmxSgsSZfH
-P/9w8FGY+CfgyoAWq83bUwmjYBqQL1Fw7A3TXxGNqpbuBvO82ZHcAhP6FZHYt6r+
-hCAuDK6LUzix5jyDrMgUf0y2n7Z3ENyKQDiTSuoSXsFEXsIyCQB+M00KmIr/TYY5
-qPEVbDn6GOPWOGh/bVb85GrY1kFBBg==
-=jDsH
------END PGP SIGNATURE-----
-
---6ux5zkvmskhc7amk--
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+new file mode 100644
+index 000000000000..4a6236bd9778
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: (GPL-2.0+ or MIT)
++/*
++ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun50i-h6-ccu.h>
++#include <dt-bindings/reset/sun50i-h6-ccu.h>
++
++/ {
++	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <0>;
++			enable-method = "psci";
++		};
++
++		cpu1: cpu@1 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <1>;
++			enable-method = "psci";
++		};
++
++		cpu2: cpu@2 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <2>;
++			enable-method = "psci";
++		};
++
++		cpu3: cpu@3 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <3>;
++			enable-method = "psci";
++		};
++	};
++
++	iosc: internal-osc-clk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <16000000>;
++		clock-accuracy = <300000000>;
++		clock-output-names = "iosc";
++	};
++
++	osc24M: osc24M_clk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "osc24M";
++	};
++
++	osc32k: osc32k_clk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		clock-output-names = "osc32k";
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
++			     <GIC_PPI 14
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
++			     <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
++			     <GIC_PPI 10
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		ccu: clock@3001000 {
++			compatible = "allwinner,sun50i-h6-ccu";
++			reg = <0x03001000 0x1000>;
++			clocks = <&osc24M>, <&osc32k>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		gic: interrupt-controller@3021000 {
++			compatible = "arm,gic-400";
++			reg = <0x03021000 0x1000>,
++			      <0x03022000 0x2000>,
++			      <0x03024000 0x2000>,
++			      <0x03026000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++
++		pio: pinctrl@300b000 {
++			compatible = "allwinner,sun50i-h6-pinctrl";
++			reg = <0x0300b000 0x400>;
++			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
++			clock-names = "apb", "hosc", "losc";
++			gpio-controller;
++			#gpio-cells = <3>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++
++			uart0_ph_pins: uart0-ph {
++				pins = "PH0", "PH1";
++				function = "uart0";
++			};
++		};
++
++		uart0: serial@5000000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x05000000 0x400>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
++			status = "disabled";
++		};
++
++		uart1: serial@5000400 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x05000400 0x400>;
++			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART1>;
++			resets = <&ccu RST_BUS_UART1>;
++			status = "disabled";
++		};
++
++		uart2: serial@5000800 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x05000800 0x400>;
++			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART2>;
++			resets = <&ccu RST_BUS_UART2>;
++			status = "disabled";
++		};
++
++		uart3: serial@5000c00 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x05000c00 0x400>;
++			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART3>;
++			resets = <&ccu RST_BUS_UART3>;
++			status = "disabled";
++		};
++	};
++};
+-- 
+2.15.1
