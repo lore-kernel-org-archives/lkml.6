@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227OKX92BHSY3gljM1y0EFg0D8y664q8tTXiOWuj7ptoq0W6anQAJfH2hliU1e2O0dTEBOpc
-ARC-Seal: i=1; a=rsa-sha256; t=1519410914; cv=none;
+X-Google-Smtp-Source: AH8x226JFs/GPA8OPSCWS6yN2HevNl63vPilEoAvaezMgNV8sxCKn3T6sM109jWUM9QI79Lb0ek4
+ARC-Seal: i=1; a=rsa-sha256; t=1519410911; cv=none;
         d=google.com; s=arc-20160816;
-        b=DDTBidD3qvQ+vq3XTAah9lsnIAveRoyE0os3PBk4EOpxzNZgIhNeVWRxbwXcImSeYZ
-         Jvf2VV7Dm0ovH2fRYv/o4i4FoVwzXesbLM5zHzAFUjLO/p9KlcmLupz63LBNx1+PsqRG
-         V2bcbCbvxJ+mzfuR3+EJ8URmB/kHNrEXHCxja3BzfI3CXd6ZhmRcfKDb1tVZi+ZtJ7ZS
-         XVJzyQvkyQ0vytNdZPYPJ8Op5daQddl3tfrEgMt6zK4mGzlIUSA/cIAnEombAVLoCZab
-         W0JJ5zHAqOvSTPaNeKupxJmfhwVrtDbCWxUNEdwxgb4UKJFZ7LvXN7v8D+gTT17bZAe8
-         AdgA==
+        b=Dtl/tavGtREUxx1Co374rDx3WyuORgwtZUn8E5GCReNx5Z/U1dE0zKrxdH3Qczbyip
+         8ce512MESEBHM1ax20OzHMCg754cr3t+0eKa1BEVEI7Km/y9zhboVFF3olXMibu+UPfv
+         CH4+659JYnXdLXh/63Yc2JG6I8+MR0wLpUpDJjQBQfIVvNy85Jw2UZyZ7uA5ZFWr/lK9
+         KUNLEG+SWL7FBZkUtowWzJIMbQGeHFnpsU10xHzppBA5f5Csi6aHC5Q/327pLhg3kU8n
+         AIHDlxg/4KTdXYEbMz+3MeDODamfvBV5HGOPjTbmKddtc6pI7XFuvjZJsdcY0AKHworO
+         MvXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KGZV8gR9jGpasnwv81KDIxil6/49UlOmVIBZ9P5853o=;
-        b=ow2RXYpi0vfJngwlgFa4csG4+O2YqIBE8Q7J07PLcbKsdDW3ggxFddI8wfEtjVBi8v
-         Iia4O2gAsPDvoRezRqkpHatAJZBzydY2f67C6qWLX3Zw+abd4CdAL4ANxUMAkbvUspDQ
-         YxmqZLsJuKGLRjV5qqMIstAMe4+y5BhKgOaggLB72aWP0o/yogavjSu4s7Mtwz1wKA4k
-         03dOyHaabswSAKbiGkBaBZuDehndbRAVkQcD+KBPSDp5/uGrtjzSLWMS7lcG245tYFcy
-         Ymuosz8vMZDofnC4YQebO3865Qhdua7Pek6mm8VBf+CxRB+j2KBvV09oNadqasWJbwJX
-         Jb/A==
+        bh=RuFfwSj04lyCB694mBAsAu8SvVdGgxVM5npkUFApswM=;
+        b=M2/yrCYGcoPMFy+r71cS2Vkm4xWuqF6WjqXcYyRoQPC0Pwf718HNgBKSSwqQJq8fmH
+         Tz28oSIPc6gWRqJ8nQjyv0bt5qFsVPugWKmta7gNW3lCxhgeeW4q3d2pZFQkbkS7bIAx
+         AEYljKQ4WTjy9yuUzOEBqYIawo3tAkypnLzaKOXEPmDv1QaGqmmJlTdP6cpAm23Jl3wL
+         J28tCHYI7zcSzQTaIST6U0s8NW9bN1tqRqztVyuulWAcrpJYfi1TjO4wp/G0cJOT25kf
+         PSGg8nFWmGpVMoGQomj089tNLcNh3kHgAkIhsiyPYj0Vd14qiSW3CaNZMMlz+1X7+PLJ
+         /vXg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Russell King <rmk+kernel@armlinux.org.uk>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 056/193] drm/armada: fix leak of crtc structure
-Date: Fri, 23 Feb 2018 19:24:49 +0100
-Message-Id: <20180223170334.767274930@linuxfoundation.org>
+Subject: [PATCH 4.4 055/193] xfrm: Fix stack-out-of-bounds with misconfigured transport mode policies.
+Date: Fri, 23 Feb 2018 19:24:48 +0100
+Message-Id: <20180223170334.611498608@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217818345500659?=
-X-GMAIL-MSGID: =?utf-8?q?1593217818345500659?=
+X-GMAIL-THRID: =?utf-8?q?1593217618518643482?=
+X-GMAIL-MSGID: =?utf-8?q?1593217815716686311?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,80 +49,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
 
-[ Upstream commit 33cd3c07a976e11c3c4cc6b0b3db6760ad1590c5 ]
+[ Upstream commit 732706afe1cc46ef48493b3d2b69c98f36314ae4 ]
 
-Fix the leak of the CRTC structure in the failure paths of
-armada_drm_crtc_create().
+On policies with a transport mode template, we pass the addresses
+from the flowi to xfrm_state_find(), assuming that the IP addresses
+(and address family) don't change during transformation.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Unfortunately our policy template validation is not strict enough.
+It is possible to configure policies with transport mode template
+where the address family of the template does not match the selectors
+address family. This lead to stack-out-of-bound reads because
+we compare arddesses of the wrong family. Fix this by refusing
+such a configuration, address family can not change on transport
+mode.
+
+We use the assumption that, on transport mode, the first templates
+address family must match the address family of the policy selector.
+Subsequent transport mode templates must mach the address family of
+the previous template.
+
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/armada/armada_crtc.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ net/xfrm/xfrm_user.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -1182,17 +1182,13 @@ static int armada_drm_crtc_create(struct
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1376,11 +1376,14 @@ static void copy_templates(struct xfrm_p
  
- 	ret = devm_request_irq(dev, irq, armada_drm_irq, 0, "armada_drm_crtc",
- 			       dcrtc);
--	if (ret < 0) {
--		kfree(dcrtc);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto err_crtc;
+ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ {
++	u16 prev_family;
+ 	int i;
  
- 	if (dcrtc->variant->init) {
- 		ret = dcrtc->variant->init(dcrtc, dev);
--		if (ret) {
--			kfree(dcrtc);
--			return ret;
--		}
-+		if (ret)
-+			goto err_crtc;
- 	}
+ 	if (nr > XFRM_MAX_DEPTH)
+ 		return -EINVAL;
  
- 	/* Ensure AXI pipeline is enabled */
-@@ -1203,13 +1199,15 @@ static int armada_drm_crtc_create(struct
- 	dcrtc->crtc.port = port;
- 
- 	primary = kzalloc(sizeof(*primary), GFP_KERNEL);
--	if (!primary)
--		return -ENOMEM;
-+	if (!primary) {
-+		ret = -ENOMEM;
-+		goto err_crtc;
-+	}
- 
- 	ret = armada_drm_plane_init(primary);
- 	if (ret) {
- 		kfree(primary);
--		return ret;
-+		goto err_crtc;
- 	}
- 
- 	ret = drm_universal_plane_init(drm, &primary->base, 0,
-@@ -1219,7 +1217,7 @@ static int armada_drm_crtc_create(struct
- 				       DRM_PLANE_TYPE_PRIMARY);
- 	if (ret) {
- 		kfree(primary);
--		return ret;
-+		goto err_crtc;
- 	}
- 
- 	ret = drm_crtc_init_with_planes(drm, &dcrtc->crtc, &primary->base, NULL,
-@@ -1238,6 +1236,9 @@ static int armada_drm_crtc_create(struct
- 
- err_crtc_init:
- 	primary->base.funcs->destroy(&primary->base);
-+err_crtc:
-+	kfree(dcrtc);
++	prev_family = family;
 +
- 	return ret;
- }
+ 	for (i = 0; i < nr; i++) {
+ 		/* We never validated the ut->family value, so many
+ 		 * applications simply leave it at zero.  The check was
+@@ -1392,6 +1395,12 @@ static int validate_tmpl(int nr, struct
+ 		if (!ut[i].family)
+ 			ut[i].family = family;
  
++		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
++		    (ut[i].family != prev_family))
++			return -EINVAL;
++
++		prev_family = ut[i].family;
++
+ 		switch (ut[i].family) {
+ 		case AF_INET:
+ 			break;
