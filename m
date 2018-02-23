@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3HrR2cCmKFD3jf/fwgC4axSJ6KMzm5NQCtDzV/k2XEm+b56VwBm3Ht2rr2RE07LwDX7M+
-ARC-Seal: i=1; a=rsa-sha256; t=1519411843; cv=none;
+X-Google-Smtp-Source: AG47ELtXRgbz8YzFwkWnzcuvHwjN+Y2lFVmnEKUtMeR/IESw/wiG5OaKgJfIbBWl2TASzCn7Z0WL
+ARC-Seal: i=1; a=rsa-sha256; t=1519411840; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ghw+wdllOWH6BqGELsHhNQj70NApvXg6IdfKfl8mwKewkiLax0CrcxFzElQpousIiZ
-         L+Fixs5O7diO0/sKnbazwUuoEeDxfn5jF2eN7yGastpbQSrU//STuESDyp2hKQpZhmQm
-         vcSZr/kFyJr2OwJpvTntz3CJdXjmC5T8GtJVPdA9q+ipiYKIa23/Y95AwuwbCwUsuEYe
-         PWHeEkFoRxffGu9P71L8kb0Vckyi69/YHx5njGjIFQ2iVKxXEM15fsRP3As4dV1QpAhO
-         B3xAaVgg6D3zgvZwQzIPh2mJhHdhxFLRzWaHD1cIVNcL+PJ+Jg6P2RSaY9qFFfDhUQds
-         Nm8A==
+        b=Tff7Szn39YPPfHx5jc9qEmCauxhMc3N0hUSltqEBadC27w+1jMMcSMckf8+/jNAxxE
+         3z0QzWjPDIekIMDzL1o3HpHmfaQkXogSWRevQKlwsC82TuXAnFUWlcSgunstXCepMXsw
+         61CGsKE5MORJfi1KtS/M82vBNMaghEOuewWTWyy4+MzvK3RAUY0ukq+HUYIc4xJTzP0n
+         9eTWafr1ttKJ1Ge5ZScm0yKOWkp2La4GcqTSLj71KLFERL6qoiemJXCkEsmftbYspUcC
+         9HyMIgLqAtChsmaGtTNYQZBCm4Pza/i3noHsto46MmHS2t/aVMhjk/AGJ/H4zOFttWtE
+         hKxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t0WPeKXdslwf1C/HGQB5yT5pSOS0VffIJSCT5pA0JbA=;
-        b=QOR4RHFw/sHVrovsXWLS9/JUq+ziVHUFAKDW5HlBIYzPD4pn1AAlPo+TsCGGYQZQeE
-         SlTlsvtxUvlM+W3MDJvD/CR/UYEq2mEwmSMyLpC0l6e65s5yi/VRnm44Jhy2mcTgWohM
-         tUU2f97Y8pdYbeqDIgCdKvLsi9cA6NikdSbliTmL5fmyPj6iQjHPEM7/e7a8pJlktxZg
-         bV44b6dHptqwKVMZ4SpqgZ/bR3d1n5j6avB6hfrZMLg3lrPNjMOJ+2Iez+PuW2Y8Dwpu
-         v4RmbMOUQgW2cxovTSqUg5TH+o2G6jBfuEr61t1yz20f+C88DXyEim615WmpeuJbY5gR
-         d7FA==
+        bh=CBJYJlBUw0PE/KaFCEi8Kgy0+neDE3Ltk+RdpxMK+ig=;
+        b=0pnli29vfzxGRlscR8+RVAXkhF+/6b0Wu2Jy+L7VTFZr+J6YfUytZW5ukdsLIvUurx
+         B0QduS9HZ6WaqTqaNqoxgbLg09hOWtfDq3bn/Aumzo2OiEvGYsnLMauI7itNePCT6YAB
+         ZrKlW7lBb+8+/OAQDOXoj6RZK5G1LTUlohIfVI91fvTmVyC+flGzbT+s3vGwjtmMs7YS
+         /8KjEa1in7Uvg5ea+BXxTKJC61tmpqljhgvqlGAg7Hau2oPgaLsuZn05+3PGHn1zAPGz
+         6sNlyhAcf+4ouKRym+3oDkSp0GZQ9y4WaYAuAsyVuLTNA250sTOOusCwy3TM6MpLVGMv
+         Sc4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 006/159] cfg80211: check dev_set_name() return value
-Date: Fri, 23 Feb 2018 19:25:14 +0100
-Message-Id: <20180223170743.886605795@linuxfoundation.org>
+	syzbot+6d362cadd45dc0a12ba4@syzkaller.appspotmail.com,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.14 005/159] bpf: mark dst unknown on inconsistent {s, u}bounds adjustments
+Date: Fri, 23 Feb 2018 19:25:13 +0100
+Message-Id: <20180223170743.781534180@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217738640080988?=
-X-GMAIL-MSGID: =?utf-8?q?1593218793290158345?=
+X-GMAIL-THRID: =?utf-8?q?1593218789943456071?=
+X-GMAIL-MSGID: =?utf-8?q?1593218789943456071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +50,233 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 59b179b48ce2a6076448a44531242ac2b3f6cef2 upstream.
+commit 6f16101e6a8b4324c36e58a29d9e0dbb287cdedb upstream.
 
-syzbot reported a warning from rfkill_alloc(), and after a while
-I think that the reason is that it was doing fault injection and
-the dev_set_name() failed, leaving the name NULL, and we didn't
-check the return value and got to rfkill_alloc() with a NULL name.
-Since we really don't want a NULL name, we ought to check the
-return value.
+syzkaller generated a BPF proglet and triggered a warning with
+the following:
 
-Fixes: fb28ad35906a ("net: struct device - replace bus_id with dev_name(), dev_set_name()")
-Reported-by: syzbot+1ddfb3357e1d7bb5b5d3@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+  0: (b7) r0 = 0
+  1: (d5) if r0 s<= 0x0 goto pc+0
+   R0=inv0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  2: (1f) r0 -= r1
+   R0=inv0 R1=ctx(id=0,off=0,imm=0) R10=fp0
+  verifier internal error: known but bad sbounds
+
+What happens is that in the first insn, r0's min/max value
+are both 0 due to the immediate assignment, later in the jsle
+test the bounds are updated for the min value in the false
+path, meaning, they yield smin_val = 1, smax_val = 0, and when
+ctx pointer is subtracted from r0, verifier bails out with the
+internal error and throwing a WARN since smin_val != smax_val
+for the known constant.
+
+For min_val > max_val scenario it means that reg_set_min_max()
+and reg_set_min_max_inv() (which both refine existing bounds)
+demonstrated that such branch cannot be taken at runtime.
+
+In above scenario for the case where it will be taken, the
+existing [0, 0] bounds are kept intact. Meaning, the rejection
+is not due to a verifier internal error, and therefore the
+WARN() is not necessary either.
+
+We could just reject such cases in adjust_{ptr,scalar}_min_max_vals()
+when either known scalars have smin_val != smax_val or
+umin_val != umax_val or any scalar reg with bounds
+smin_val > smax_val or umin_val > umax_val. However, there
+may be a small risk of breakage of buggy programs, so handle
+this more gracefully and in adjust_{ptr,scalar}_min_max_vals()
+just taint the dst reg as unknown scalar when we see ops with
+such kind of src reg.
+
+Reported-by: syzbot+6d362cadd45dc0a12ba4@syzkaller.appspotmail.com
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/core.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c                       |   25 +++--
+ tools/testing/selftests/bpf/test_verifier.c |  123 +++++++++++++++++++++++++++-
+ 2 files changed, 138 insertions(+), 10 deletions(-)
 
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -439,6 +439,8 @@ struct wiphy *wiphy_new_nm(const struct
- 		if (rv)
- 			goto use_default_name;
- 	} else {
-+		int rv;
-+
- use_default_name:
- 		/* NOTE:  This is *probably* safe w/out holding rtnl because of
- 		 * the restrictions on phy names.  Probably this call could
-@@ -446,7 +448,11 @@ use_default_name:
- 		 * phyX.  But, might should add some locking and check return
- 		 * value, and use a different name if this one exists?
- 		 */
--		dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+		rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
-+		if (rv < 0) {
-+			kfree(rdev);
-+			return NULL;
-+		}
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1865,15 +1865,13 @@ static int adjust_ptr_min_max_vals(struc
+ 
+ 	dst_reg = &regs[dst];
+ 
+-	if (WARN_ON_ONCE(known && (smin_val != smax_val))) {
+-		print_verifier_state(&env->cur_state);
+-		verbose("verifier internal error: known but bad sbounds\n");
+-		return -EINVAL;
+-	}
+-	if (WARN_ON_ONCE(known && (umin_val != umax_val))) {
+-		print_verifier_state(&env->cur_state);
+-		verbose("verifier internal error: known but bad ubounds\n");
+-		return -EINVAL;
++	if ((known && (smin_val != smax_val || umin_val != umax_val)) ||
++	    smin_val > smax_val || umin_val > umax_val) {
++		/* Taint dst register if offset had invalid bounds derived from
++		 * e.g. dead branches.
++		 */
++		__mark_reg_unknown(dst_reg);
++		return 0;
  	}
  
- 	INIT_LIST_HEAD(&rdev->wiphy.wdev_list);
+ 	if (BPF_CLASS(insn->code) != BPF_ALU64) {
+@@ -2075,6 +2073,15 @@ static int adjust_scalar_min_max_vals(st
+ 	src_known = tnum_is_const(src_reg.var_off);
+ 	dst_known = tnum_is_const(dst_reg->var_off);
+ 
++	if ((src_known && (smin_val != smax_val || umin_val != umax_val)) ||
++	    smin_val > smax_val || umin_val > umax_val) {
++		/* Taint dst register if offset had invalid bounds derived from
++		 * e.g. dead branches.
++		 */
++		__mark_reg_unknown(dst_reg);
++		return 0;
++	}
++
+ 	if (!src_known &&
+ 	    opcode != BPF_ADD && opcode != BPF_SUB && opcode != BPF_AND) {
+ 		__mark_reg_unknown(dst_reg);
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -6534,7 +6534,7 @@ static struct bpf_test tests[] = {
+ 			BPF_JMP_IMM(BPF_JA, 0, 0, -7),
+ 		},
+ 		.fixup_map1 = { 4 },
+-		.errstr = "unbounded min value",
++		.errstr = "R0 invalid mem access 'inv'",
+ 		.result = REJECT,
+ 	},
+ 	{
+@@ -7715,6 +7715,127 @@ static struct bpf_test tests[] = {
+ 		.prog_type = BPF_PROG_TYPE_XDP,
+ 	},
+ 	{
++		"check deducing bounds from const, 1",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 1),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 1, 0),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "R0 tried to subtract pointer from scalar",
++	},
++	{
++		"check deducing bounds from const, 2",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 1),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 1, 1),
++			BPF_EXIT_INSN(),
++			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 1, 1),
++			BPF_EXIT_INSN(),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
++			BPF_EXIT_INSN(),
++		},
++		.result = ACCEPT,
++	},
++	{
++		"check deducing bounds from const, 3",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 0),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "R0 tried to subtract pointer from scalar",
++	},
++	{
++		"check deducing bounds from const, 4",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 1),
++			BPF_EXIT_INSN(),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
++			BPF_EXIT_INSN(),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
++			BPF_EXIT_INSN(),
++		},
++		.result = ACCEPT,
++	},
++	{
++		"check deducing bounds from const, 5",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "R0 tried to subtract pointer from scalar",
++	},
++	{
++		"check deducing bounds from const, 6",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
++			BPF_EXIT_INSN(),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "R0 tried to subtract pointer from scalar",
++	},
++	{
++		"check deducing bounds from const, 7",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, ~0),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 0),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_1, BPF_REG_0),
++			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_1,
++				    offsetof(struct __sk_buff, mark)),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "dereference of modified ctx ptr",
++	},
++	{
++		"check deducing bounds from const, 8",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, ~0),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 1),
++			BPF_ALU64_REG(BPF_ADD, BPF_REG_1, BPF_REG_0),
++			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_1,
++				    offsetof(struct __sk_buff, mark)),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "dereference of modified ctx ptr",
++	},
++	{
++		"check deducing bounds from const, 9",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSGE, BPF_REG_0, 0, 0),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "R0 tried to subtract pointer from scalar",
++	},
++	{
++		"check deducing bounds from const, 10",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_JMP_IMM(BPF_JSLE, BPF_REG_0, 0, 0),
++			/* Marks reg as unknown. */
++			BPF_ALU64_IMM(BPF_NEG, BPF_REG_0, 0),
++			BPF_ALU64_REG(BPF_SUB, BPF_REG_0, BPF_REG_1),
++			BPF_EXIT_INSN(),
++		},
++		.result = REJECT,
++		.errstr = "math between ctx pointer and register with unbounded min value is not allowed",
++	},
++	{
+ 		"XDP pkt read, pkt_end <= pkt_data', bad access 2",
+ 		.insns = {
+ 			BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1,
