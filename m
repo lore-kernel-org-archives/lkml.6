@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411997-2-2896701077011284869
+X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411976-5-7882803175653638090
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519411997; b=fXkLX+lkKWtBzV80xGvihyywTT1f8dlF8rW4HZsZkqGgJfH
-    JdIKI05AzNdH7BA0d5389AyWqT4MLLd6aRKW/nGzSNYKGY0DxHpjLv8LhMlLyjv1
-    CZv28cb1sPvAnj7CIUpWQegOD27qS6zXGZGx4pE+Cy6jmP2lsKlNg0SD80UKA31F
-    IeoXuDorIgBopG3pWy5d025RD0Tb/eWCAw6rIzRt15tWtWign0Vdybdy0Bd+cv08
-    kwnWqLzKT6ZS3lnUQVMUl9NB2aD9KZOwQg/vwEtHNZVv2xI9WOuD3bOI1+fnCMqI
-    jJUqrHz31Kd8yl0lVwyzALQsDsJCbR9tkps9z3Q==
+    t=1519411975; b=B4mPIyJtqokStFrkLv6HohNQ36LBGBBgIlPF7mrsZfKREZg
+    d7IlUdR/wQeOOZ8sxR9RoJovUUfQhPMoaizrc30/JxNbRL/OuH1y2TsFGvzj0KeZ
+    XkzWd5XDxJl5sQF4Q1Vdnbr1M5Yk5CZrQS+CtsBCF5dyezrPyN7c5vIPH6/AkAEQ
+    DxA8+nd26jaH7qEUdp6xx+x5PWCadIcjSwZsNcSKA0wtrI356ren1538u3crZc1N
+    PyMtt+omFIf+PDtHX85gmkhmL2kDjCUlkd49xrGsJEx7KaIqxvZVXfP86+Onst5F
+    CdOHtt+LOf7zwsAELCHAiH47ZhSM7Vx3m995U8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519411997; bh=UftxCZgHxG+iw5FHasfhdS5IGr
-    xDubPsvNvsmR0t5X0=; b=hArmrjkrIcA7t3LvsaOBEnk19haW/73hNLVXOmE4VA
-    vpQ7midmZfRH6IEgue4dBQWnJqrmRM9+R/kEYfqn8OFksseHvK2LuIb96LthVRDx
-    R9uafWZxQc2LojhM9NezIuizlPxBV5s0c1Ez58jcuu1TQl7383FOqSI911nAnR/s
-    Dd/OfWkGyr8b7xKGyJo0E17tZabXYDGLOUhVB/zXedQkc74sv/4ZoLHXJ+iGHZgl
-    9ru6gwqoAWm/R3BnzKDTVfloz0JQEMGrnasuk3q6/IOGXfyEXlz1y17SwA7f9b0t
-    smVwXiR17ftRpIFO6nGd4Ho2G8BBetZYx9Rnn4aDaFyQ==
+    :list-id; s=arctest; t=1519411975; bh=n1LUAFRYCKZbkI0t5a4oarteUR
+    2PwoKz16VjAg63npY=; b=u90/LLcNeT3FFI14gz/pPD2GrPhI3qmTGxrmOFU4n/
+    4MyKlNMWAx6Acy6g28WmIbEdzRFDc1qjW19CAoh4aCCFLHEDo8bIyQR6T2FuKqAQ
+    OhcxhEHCGkWUx6v4TpJ+5nI97/USSeZuPW71qWIyx6hFzIB6lBD1we0pZKXZBuXa
+    NlXdvKzxPdOoR+U+XlQzXunTszOgqVrreJEK5PbjfpVsZFK+Ups01a5VBK62Dari
+    ZI/Jc8L+cHfYVgUskslgcMzaVJNI71nR4vZd/TsGpw2+hOD+Jkf4ZjF7g2rCYQeQ
+    /kygnNeWzeJWRu0QDS0E4Z0ytoX3spUsCiuNJh9XK5Pw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935346AbeBWSxM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:53:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47258 "EHLO
+        id S935223AbeBWSwv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:52:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935345AbeBWSxL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:53:11 -0500
+        with ESMTP id S935204AbeBWSwq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:46 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 088/159] KVM: arm/arm64: Fix spinlock acquisition in vgic_set_owner
-Date: Fri, 23 Feb 2018 19:26:36 +0100
-Message-Id: <20180223170754.163578815@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 041/159] rds: tcp: correctly sequence cleanup on netns deletion.
+Date: Fri, 23 Feb 2018 19:25:49 +0100
+Message-Id: <20180223170748.406395347@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,51 +80,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
+commit 681648e67d43cf269c5590ecf021ed481f4551fc upstream.
 
-[ Upstream commit 7465894e90e5a47e0e52aa5f1f708653fc40020f ]
+Commit 8edc3affc077 ("rds: tcp: Take explicit refcounts on struct net")
+introduces a regression in rds-tcp netns cleanup. The cleanup_net(),
+(and thus rds_tcp_dev_event notification) is only called from put_net()
+when all netns refcounts go to 0, but this cannot happen if the
+rds_connection itself is holding a c_net ref that it expects to
+release in rds_tcp_kill_sock.
 
-vgic_set_owner acquires the irq lock without disabling interrupts,
-resulting in a lockdep splat (an interrupt could fire and result
-in the same lock being taken if the same virtual irq is to be
-injected).
+Instead, the rds_tcp_kill_sock callback should make sure to
+tear down state carefully, ensuring that the socket teardown
+is only done after all data-structures and workqs that depend
+on it are quiesced.
 
-In practice, it is almost impossible to trigger this bug, but
-better safe than sorry. Convert the lock acquisition to a
-spin_lock_irqsave() and keep lockdep happy.
+The original motivation for commit 8edc3affc077 ("rds: tcp: Take explicit
+refcounts on struct net") was to resolve a race condition reported by
+syzkaller where workqs for tx/rx/connect were triggered after the
+namespace was deleted. Those worker threads should have been
+cancelled/flushed before socket tear-down and indeed,
+rds_conn_path_destroy() does try to sequence this by doing
+     /* cancel cp_send_w */
+     /* cancel cp_recv_w */
+     /* flush cp_down_w */
+     /* free data structures */
+Here the "flush cp_down_w" will trigger rds_conn_shutdown and thus
+invoke rds_tcp_conn_path_shutdown() to close the tcp socket, so that
+we ought to have satisfied the requirement that "socket-close is
+done after all other dependent state is quiesced". However,
+rds_conn_shutdown has a bug in that it *always* triggers the reconnect
+workq (and if connection is successful, we always restart tx/rx
+workqs so with the right timing, we risk the race conditions reported
+by syzkaller).
 
-Reported-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Netns deletion is like module teardown- no need to restart a
+reconnect in this case. We can use the c_destroy_in_prog bit
+to avoid restarting the reconnect.
+
+Fixes: 8edc3affc077 ("rds: tcp: Take explicit refcounts on struct net")
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- virt/kvm/arm/vgic/vgic.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -454,6 +454,7 @@ int kvm_vgic_unmap_phys_irq(struct kvm_v
- int kvm_vgic_set_owner(struct kvm_vcpu *vcpu, unsigned int intid, void *owner)
+---
+ net/rds/connection.c |    3 ++-
+ net/rds/rds.h        |    6 +++---
+ net/rds/tcp.c        |    4 ++--
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+--- a/net/rds/connection.c
++++ b/net/rds/connection.c
+@@ -366,6 +366,8 @@ void rds_conn_shutdown(struct rds_conn_p
+ 	 * to the conn hash, so we never trigger a reconnect on this
+ 	 * conn - the reconnect is always triggered by the active peer. */
+ 	cancel_delayed_work_sync(&cp->cp_conn_w);
++	if (conn->c_destroy_in_prog)
++		return;
+ 	rcu_read_lock();
+ 	if (!hlist_unhashed(&conn->c_hash_node)) {
+ 		rcu_read_unlock();
+@@ -445,7 +447,6 @@ void rds_conn_destroy(struct rds_connect
+ 	 */
+ 	rds_cong_remove_conn(conn);
+ 
+-	put_net(conn->c_net);
+ 	kfree(conn->c_path);
+ 	kmem_cache_free(rds_conn_slab, conn);
+ 
+--- a/net/rds/rds.h
++++ b/net/rds/rds.h
+@@ -150,7 +150,7 @@ struct rds_connection {
+ 
+ 	/* Protocol version */
+ 	unsigned int		c_version;
+-	struct net		*c_net;
++	possible_net_t		c_net;
+ 
+ 	struct list_head	c_map_item;
+ 	unsigned long		c_map_queued;
+@@ -165,13 +165,13 @@ struct rds_connection {
+ static inline
+ struct net *rds_conn_net(struct rds_connection *conn)
  {
- 	struct vgic_irq *irq;
-+	unsigned long flags;
- 	int ret = 0;
- 
- 	if (!vgic_initialized(vcpu->kvm))
-@@ -464,12 +465,12 @@ int kvm_vgic_set_owner(struct kvm_vcpu *
- 		return -EINVAL;
- 
- 	irq = vgic_get_irq(vcpu->kvm, vcpu, intid);
--	spin_lock(&irq->irq_lock);
-+	spin_lock_irqsave(&irq->irq_lock, flags);
- 	if (irq->owner && irq->owner != owner)
- 		ret = -EEXIST;
- 	else
- 		irq->owner = owner;
--	spin_unlock(&irq->irq_lock);
-+	spin_unlock_irqrestore(&irq->irq_lock, flags);
- 
- 	return ret;
+-	return conn->c_net;
++	return read_pnet(&conn->c_net);
  }
+ 
+ static inline
+ void rds_conn_net_set(struct rds_connection *conn, struct net *net)
+ {
+-	conn->c_net = get_net(net);
++	write_pnet(&conn->c_net, net);
+ }
+ 
+ #define RDS_FLAG_CONG_BITMAP	0x01
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -527,7 +527,7 @@ static void rds_tcp_kill_sock(struct net
+ 	rds_tcp_listen_stop(lsock, &rtn->rds_tcp_accept_w);
+ 	spin_lock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
+-		struct net *c_net = tc->t_cpath->cp_conn->c_net;
++		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
+ 
+ 		if (net != c_net || !tc->t_sock)
+ 			continue;
+@@ -586,7 +586,7 @@ static void rds_tcp_sysctl_reset(struct
+ 
+ 	spin_lock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
+-		struct net *c_net = tc->t_cpath->cp_conn->c_net;
++		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
+ 
+ 		if (net != c_net || !tc->t_sock)
+ 			continue;
