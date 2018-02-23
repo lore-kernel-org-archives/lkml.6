@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413631-2-7226150684755992542
+X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413621-2-8635300439704270692
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413630; b=ownGzPX01rN82TxtyuQTvvjiOUAnZJL5J0tkVt2om7DTPB6
-    BRk4bbd5eJBhzJ3J7EOQ6s5s34UAfG/rg5tP5alXiZUTvlMKblvlBbNjI688XVZy
-    MDtO+Pkmqwp8udh2OFW2J0yTi5wHcT+WSC9OY326n0z6CQ4TRlWWI99sKdIHzaxz
-    +pwPnj4bb7fkcwYA1zQvCPo2QGDRouWcoB99K/kZjR7mwA9c2Tu+wQtXUR70ewmC
-    LM4pkkbNXBSkq9S4Et2Luudz/tMeHCH55WNBulCTKKgLTuWSZH2Vx5l8dF3Q4Foe
-    tCrhFMu2nzPekaE0NdaT8jPfUVKvyHBi5vd4RxQ==
+    t=1519413621; b=kmklv++5ILxAOMGbfrlXy3HZeKLQf1miE4YfAl2a+usqdd9
+    AAdZZn+L9/qx3Y8xhk5aSIuJvmYSD43fPGPxyrio5nvaDmCScX77dYm9OOo25c7R
+    SIKr0BaPJQOUgnpPeM9kK9BvkVjmcj5OjZwHBbRDCv/RUa7E/J6mgvDf9Lb3aTMN
+    d0wIsFbCBGJRqbTaxl2R0meDqtFu1a5s3CbThchAIRU2FL6bmxOjzA1dU4Ier0eS
+    mNX7EHKTsuf8tewSQORB3A0hezZyoHjc8vhdN+n3XpvQ6t+UyLyoQG9RT34E+YKi
+    4H1ax4XytPnP+gU5R6G2erRBwPyiZzHKRYiChIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413630; bh=4FTjyyUiIcqXR9xmcZuD3O6Da7
-    rHQSZCSHJy1uqknH4=; b=l5ts6y6uJemAeiZ1oYOqCH030Qd+GO7T1I0LQph+S4
-    KxPt3jGyIjTRsc5H4YK5tdjE5TpOPTy45FJrc0nyNSTfzkPCC1beRyUB+xOAexXw
-    osuTIHC4VxQgrtYEWvRLR04Uspz+URcm6KiR/piWEwxT0W5QF2cn5vi4EpHMX9Pw
-    oFGpH5rt30E0wE46QRHenHXtBs0kGxRjx1KFd6LJcSfNB5JfeoU+OkV6WherElLi
-    mjL6CGrH0wpYWcll9snKfX4UhIbRH4Jdf4SHYkH9nwPFUwMdf94e5Osp+9d336sD
-    uNOTmDeXjzIH/JILQ6NtYxoN1Ox8wPKZuOmbNdLvmH7A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413621; bh=iEYjlMXqXDN0GG4WmNF5KHPvd8
+    4XehHZ0YiTLppGzmA=; b=uM9xpTQr4gU/84NjENPv3YJjkZmd183AKFsfwv3Gdn
+    WXsXoOsEfM29mmlpmO7n+MEIKHESCTdE258qQVEgsRU4WacU0JX6GJ2VVI+6LHw9
+    QCP7LSBgY7QNdOHoArLzk6qyLkBhLGAtuvcNeT0GBqQjmwYC5jxFiJ+qKH88b1vZ
+    dhZ+g1aH8mUbQo/U69v9fAUzcC1M7qDmRuw+2I8b0Cdp0IIiL8GSWKz8yv6lpL41
+    MvKNVG4N172sVL8vhlceLHRg5el91HRB8H/GJG3yFkPeFHqiUMRtsRmcx2zGMW7A
+    Cc/kCex/Ckvpb1exTT9a5a/boudhLJkk9xiAikoHB7Tw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,25 +47,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935463AbeBWSyO (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:54:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47670 "EHLO
+        id S1754559AbeBWTUH (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:20:07 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935461AbeBWSyM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:12 -0500
+        with ESMTP id S964927AbeBWSyS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:54:18 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 107/159] s390/virtio: add BSD license to virtio-ccw
-Date: Fri, 23 Feb 2018 19:26:55 +0100
-Message-Id: <20180223170756.339678850@linuxfoundation.org>
+Subject: [PATCH 4.14 109/159] ARM: dts: Fix elm interrupt compiler warning
+Date: Fri, 23 Feb 2018 19:26:57 +0100
+Message-Id: <20180223170756.587859057@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -83,36 +78,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+From: Tony Lindgren <tony@atomide.com>
 
 
-[ Upstream commit edfb8d8fcb94a75b2e61c63549d4a5f6474ad3d2 ]
+[ Upstream commit d364b038bc962f494cffb8f6cb6cddbe41bcb5b6 ]
 
-The original intent of the virtio header relicensing
-from 2008 was to make sure anyone can implement compatible
-devices/drivers. The virtio-ccw was omitted by mistake.
+Looks like the interrupt property is missing the controller and level
+information causing:
 
-We have an ack from the only contributor as well as the
-maintainer from IBM, so it's not too late to fix that.
+Warning (interrupts_property): interrupts size is (4), expected multiple
+of 12 in /ocp/elm@48078000
 
-Make it dual-licensed with GPLv2, as the whole kernel is GPL2.
-
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Acked-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/uapi/asm/virtio-ccw.h |    2 +-
+ arch/arm/boot/dts/omap4.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/include/uapi/asm/virtio-ccw.h
-+++ b/arch/s390/include/uapi/asm/virtio-ccw.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
- /*
-  * Definitions for virtio-ccw devices.
-  *
+--- a/arch/arm/boot/dts/omap4.dtsi
++++ b/arch/arm/boot/dts/omap4.dtsi
+@@ -354,7 +354,7 @@
+ 		elm: elm@48078000 {
+ 			compatible = "ti,am3352-elm";
+ 			reg = <0x48078000 0x2000>;
+-			interrupts = <4>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			ti,hwmods = "elm";
+ 			status = "disabled";
+ 		};
