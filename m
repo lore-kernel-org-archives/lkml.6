@@ -1,54 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeBWBFq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:05:46 -0500
-Received: from fieldses.org ([173.255.197.46]:44250 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751158AbeBWBFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:05:45 -0500
-Date: Thu, 22 Feb 2018 20:05:45 -0500
-From: "J. Bruce Fields" <bfields@fieldses.org>
-To: James Ettle <james@ettle.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the nfsd tree
-Message-ID: <20180223010545.GC15876@fieldses.org>
-References: <20180222151723.7d381e77@canb.auug.org.au>
- <12138EE4-77CA-480F-B2F9-B4C7E4E20891@ettle.org.uk>
+        id S1751404AbeBWBGU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:06:20 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34100 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbeBWBGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:06:18 -0500
+X-Google-Smtp-Source: AH8x227bvnG8ojr0IKXnSBLT6wmOvtb2pn9BNV5D22DZwTuSZTHSqvOGeWqdcPSayTS/6yLLh501w29VFinUUTi4zLU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12138EE4-77CA-480F-B2F9-B4C7E4E20891@ettle.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
+References: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
+From: Alexey Klimov <klimov.linux@gmail.com>
+Date: Fri, 23 Feb 2018 01:06:16 +0000
+Message-ID: <CALW4P+J4tf377puAGJRQK1rXgWzxRBLjLkBb4RuBTq6Z4hwAyw@mail.gmail.com>
+Subject: Re: [PATCH v2] [media] Delete unnecessary variable initialisations in
+ seven functions
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Linux Media <linux-media@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        Colin Ian King <colin.king@canonical.com>,
+        =?UTF-8?Q?David_H=C3=A4rdeman?= <david@hardeman.nu>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Schwarzott <zzam@gentoo.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>,
+        Romain Reignier <r.reignier@robopec.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Santosh Kumar Singh <kumar.san1093@gmail.com>,
+        Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 06:39:43AM +0000, James Ettle wrote:
-> I only really posted this as a demo of a fix. I was hoping someone who actually knows what they're doing in the kernel would pick it up and make it proper.
+On Thu, Feb 22, 2018 at 9:22 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 22 Feb 2018 21:45:47 +0100
+>
+> Some local variables will be set to an appropriate value before usage.
+> Thus omit explicit initialisations at the beginning of these functions.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>
+> v2:
+> Hans Verkuil insisted on patch squashing. Thus some changes
+> were recombined based on source files from Linux next-20180216.
+>
+>  drivers/media/radio/radio-mr800.c             | 2 +-
 
-Whoops, sorry, I didn't realize that.
+For radio-mr800:
 
-But I don't see a problem with the patch as it is.  Are you OK with me
-adding your signed-off-by?
+Acked-by: Alexey Klimov <klimov.linux@gmail.com>
 
---b.
+>  drivers/media/radio/radio-wl1273.c            | 2 +-
+>  drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
+>  drivers/media/usb/cx231xx/cx231xx-cards.c     | 2 +-
+>  drivers/media/usb/cx231xx/cx231xx-dvb.c       | 2 +-
+>  drivers/media/usb/go7007/snd-go7007.c         | 2 +-
+>  drivers/media/usb/tm6000/tm6000-cards.c       | 2 +-
+>  7 files changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
+> index dc6c4f985911..0f292c6ba338 100644
+> --- a/drivers/media/radio/radio-mr800.c
+> +++ b/drivers/media/radio/radio-mr800.c
+> @@ -511,5 +511,5 @@ static int usb_amradio_probe(struct usb_interface *intf,
+>                                 const struct usb_device_id *id)
+>  {
+>         struct amradio_device *radio;
+> -       int retval = 0;
+> +       int retval;
+>
+> diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
 
-> 
-> Thanks,
-> James.
-> 
-> 
-> On 22 February 2018 04:17:23 GMT+00:00, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >Hi,
-> >
-> >Commit
-> >
-> >  35da1ba8af70 ("sunrpc: Fix unaligned access on sparc64")
-> >
-> >is missing a Signed-off-by from its author.
-> >
-> >-- 
-> >Cheers,
-> >Stephen Rothwell
+[..]
+
+Thanks!
+Alexey
