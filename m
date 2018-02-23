@@ -1,49 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751391AbeBWMJp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 07:09:45 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33728 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751015AbeBWMJm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:09:42 -0500
-X-Google-Smtp-Source: AG47ELtKwZWD0+8hRl4LBZ9Xsw2AuVMM0QfN+POhEpt1TnPuOrSjEpMvANXGzqlHauFUcUwgAnnjkCcq8CMh8KoF4Oc=
+        id S1751405AbeBWMNE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:13:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54933 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751273AbeBWMND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 07:13:03 -0500
+Date: Fri, 23 Feb 2018 13:13:00 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: Use higher-order pages in vmalloc
+Message-ID: <20180223121300.GU30681@dhcp22.suse.cz>
+References: <151670492223.658225.4605377710524021456.stgit@buzz>
+ <151670493255.658225.2881484505285363395.stgit@buzz>
+ <20180221154214.GA4167@bombadil.infradead.org>
+ <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
+ <20180221170129.GB27687@bombadil.infradead.org>
+ <20180222065943.GA30681@dhcp22.suse.cz>
+ <20180222122254.GA22703@bombadil.infradead.org>
+ <20180222133643.GJ30681@dhcp22.suse.cz>
+ <CALCETrU2c=SzWJCwuqqFuBVkC=nN27_ce4GxweCQXEwPAqnz7A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net> <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Feb 2018 14:09:41 +0200
-Message-ID: <CAHp75Ve5b+pV78xU0DHi9644GT11gwe6sqzqrj_4xRjHHM5yRg@mail.gmail.com>
-Subject: Re: Removing architectures without upstream gcc support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrU2c=SzWJCwuqqFuBVkC=nN27_ce4GxweCQXEwPAqnz7A@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:32 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu 22-02-18 19:01:35, Andy Lutomirski wrote:
+> On Thu, Feb 22, 2018 at 1:36 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Thu 22-02-18 04:22:54, Matthew Wilcox wrote:
+> >> On Thu, Feb 22, 2018 at 07:59:43AM +0100, Michal Hocko wrote:
+> >> > On Wed 21-02-18 09:01:29, Matthew Wilcox wrote:
+> >> > > Right.  It helps with fragmentation if we can keep higher-order
+> >> > > allocations together.
+> >> >
+> >> > Hmm, wouldn't it help if we made vmalloc pages migrateable instead? That
+> >> > would help the compaction and get us to a lower fragmentation longterm
+> >> > without playing tricks in the allocation path.
+> >>
+> >> I was wondering about that possibility.  If we want to migrate a page
+> >> then we have to shoot down the PTE across all CPUs, copy the data to the
+> >> new page, and insert the new PTE.  Copying 4kB doesn't take long; if you
+> >> have 12GB/s (current example on Wikipedia: dual-channel memory and one
+> >> DDR2-800 module per channel gives a theoretical bandwidth of 12.8GB/s)
+> >> then we should be able to copy a page in 666ns).  So there's no problem
+> >> holding a spinlock for it.
+> >>
+> >> But we can't handle a fault in vmalloc space today.  It's handled in
+> >> arch-specific code, see vmalloc_fault() in arch/x86/mm/fault.c
+> >> If we're going to do this, it'll have to be something arches opt into
+> >> because I'm not taking on the job of fixing every architecture!
+> >
+> > yes.
+> 
+> On x86, if you shoot down the PTE for the current stack, you're dead.
+> vmalloc_fault() might not even be called.  Instead we hit
+> do_double_fault(), and the manual warns extremely strongly against
+> trying to recover, and, in this case, I agree with the SDM.  If you
+> actually want this to work, there needs to be a special IPI broadcast
+> to the task in question (with appropriate synchronization) that calls
+> magic arch code that does the switcheroo.
 
-> some of the even older architectures (parisc, alpha, m68k, ia64)
-> that people maintain mainly for fun.
+Why cannot we use the pte swap entry trick also for vmalloc migration.
+I haven't explored this path at all, to be honest.
 
-alpha is not only for fun but for seeing how out of order can screw up
-the "working" code.
+> Didn't someone (Christoph?) have a patch to teach the page allocator
+> to give high-order allocations if available and otherwise fall back to
+> low order?
 
-ia64 as far as I *heard* from some news will be in support (I mean by
-vendors) for few more years. Not a fun, just business.
+Do you mean kvmalloc?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Michal Hocko
+SUSE Labs
