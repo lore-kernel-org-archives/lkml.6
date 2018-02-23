@@ -1,79 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751460AbeBWNb2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:31:28 -0500
-Received: from mail01.prevas.se ([62.95.78.3]:56206 "EHLO mail01.prevas.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751273AbeBWNb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:31:27 -0500
-X-IronPort-AV: E=Sophos;i="5.47,383,1515452400";
-   d="scan'208";a="3297971"
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-CC: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] ARM: dts: ls1021a: add size-cells and address-cells to scfg and dcfg nodes
-Date: Fri, 23 Feb 2018 14:31:14 +0100
-Message-ID: <20180223133114.7091-1-rasmus.villemoes@prevas.dk>
-X-Mailer: git-send-email 2.15.1
+        id S1751468AbeBWNfF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:35:05 -0500
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:36038 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbeBWNfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 08:35:03 -0500
+X-Google-Smtp-Source: AG47ELvfJBn/4KYPA2QXcNs//0VDohhEcn0/slw6od1oHqbAvEVHtpr5y4a5BzicqKrYvvbxPis2A7HvBDISxjdZT3c=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.8.31]
+In-Reply-To: <2009936f10a349fc6a24796c60e7fea6551b8f0d.1519360872.git.baolin.wang@linaro.org>
+References: <c2db9b3b5c611cadfbe5ea97327be7ee5981fa54.1519360872.git.baolin.wang@linaro.org>
+ <2009936f10a349fc6a24796c60e7fea6551b8f0d.1519360872.git.baolin.wang@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 23 Feb 2018 15:35:01 +0200
+Message-ID: <CAHp75VcKiah6sTYq5iJuF-7DyxFtHUx1sne5VpkZwBpQ-1aq8g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A single u32 is sufficient to specify a register in the Device
-Configuration Unit/Supplemental Configuration Unit. Moreover, they only
-consist of 32 bit registers (for the DCFG we even have "These registers
-only support 32-bit accesses." according to the reference manual), so no
-size specification is needed.
+On Fri, Feb 23, 2018 at 6:44 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+> each group contains 16 GPIOs. Each GPIO can set input/output and has
+> the interrupt capability.
+>
 
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
----
-None of the in-tree .dts files using ls1021a.dtsi currently define a
-subnode of either node. It is possible, though somewhat unlikely, that
-some out-of-tree .dts file is built against the in-tree ls1021a.dtsi,
-and I don't know if such files are treated the same as out-of-tree
-modules (i.e., they get to fix the breakage).
+Sorry, couple comments below.
 
-The reason I'm proposing to add these is that I'm about to add a subnode
-of scfg with a reg property, and if possible I'd like to avoid the
-somewhat clumsy
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-  reg = <0 0x1ac 0 4>;
+> +/* We have 16 banks GPIOs and each bank contain 16 GPIOs */
+> +#define SPRD_GPIO_BANK_NR      16
+> +#define SPRD_GPIO_NR           256
 
-when reg = <0x1ac>; would convey the same information. But if the
-#address-cells and #size-cells properties are set in stone once the
-.dtsi is in mainline, I'll just accept the clumsiness.
+> +#define SPRD_GPIO_BANK_SIZE    0x80
 
-arch/arm/boot/dts/ls1021a.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+128 ?
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index c31dad98f989..3c9fadcd611d 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -159,6 +159,8 @@
- 		dcfg: dcfg@1ee0000 {
- 			compatible = "fsl,ls1021a-dcfg", "syscon";
- 			reg = <0x0 0x1ee0000 0x0 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 			big-endian;
- 		};
- 
-@@ -202,6 +204,8 @@
- 		scfg: scfg@1570000 {
- 			compatible = "fsl,ls1021a-scfg", "syscon";
- 			reg = <0x0 0x1570000 0x0 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 			big-endian;
- 		};
- 
+> +       irq->handler = handle_simple_irq;
+
+Shouldn't be handle_bad_irq() ?
+
+
+> +static const struct of_device_id sprd_gpio_of_match[] = {
+> +       { .compatible = "sprd,sc9860-gpio", },
+
+> +       { /* end of list */ },
+
+Comma is redundant. Absence of it even better at compile time if at
+some weird case the item goes after a terminator.
+
+> +};
+
 -- 
-2.15.1
+With Best Regards,
+Andy Shevchenko
