@@ -1,73 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeBWVZV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:25:21 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42924 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeBWVZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:25:19 -0500
-X-Google-Smtp-Source: AH8x224lvveUVDaUw6ZXsUlYH6H4KlicQfEqU0SKaC0daQG9Q35vIM4gjNkQIJtKuQWa/D4m4aOwJgaUnMeACabnSlU=
+        id S1752116AbeBWVbP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:31:15 -0500
+Received: from cock.li ([185.100.85.212]:57504 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751527AbeBWVbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:31:12 -0500
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180223211235.2402024-1-arnd@arndb.de>
-References: <20180223211235.2402024-1-arnd@arndb.de>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 23 Feb 2018 16:25:17 -0500
-Message-ID: <CAHC9VhTVaogfgf-R=so5mtrh9i1Vy9bnNm5CENgKKDKnSeWjZw@mail.gmail.com>
-Subject: Re: [PATCH] selinux: fix typo in selinux_netlbl_sctp_sk_clone declaration
-To: Arnd Bergmann <arnd@arndb.de>,
-        Richard Haines <richard_c_haines@btinternet.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Martin Kepplinger <martink@posteo.de>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 23 Feb 2018 21:31:04 +0000
+From: thetruthbeforeus@firemail.cc
+To: linux-kernel@vger.kernel.org, debian-user@lists.debian.org,
+        rms@gnu.org
+Cc: oss-security@lists.openwall.com
+Subject: The white man -- Who he is. A Discussion. (Removed by Youtube -
+ Trying to squelch truth spoken to power)
+Message-ID: <ed06e66f0cd6437f8df34dc1262676e2@firemail.cc>
+User-Agent: Roundcube Webmail/1.3.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 4:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> A missing 'struct' keyword caused a build error when CONFIG_NETLABEL
-> is disabled:
->
-> In file included from security/selinux/hooks.c:99:
-> security/selinux/include/netlabel.h:135:66: error: unknown type name 'sock'
->  static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk, sock *newsk)
->                                                                   ^~~~
-> security/selinux/hooks.c: In function 'selinux_sctp_sk_clone':
-> security/selinux/hooks.c:5188:2: error: implicit declaration of function 'selinux_netlbl_sctp_sk_clone'; did you mean 'selinux_netlbl_inet_csk_clone'? [-Werror=implicit-function-declaration]
->
-> Fixes: db97c9f9d312 ("selinux: Add SCTP support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/selinux/include/netlabel.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+www.liveleak.com/view?i=017_1519418755
 
-Thanks, merged and pushed to selinux/next.
+This had to be reposted because the youtube people took down the video 
+describing the truth about white society. Speaking truth to power isn't 
+something they was fastioning to slide by.
 
-Richard was going to submit a patch for that, but I don't think he
-would mind you beating him :)
+So, dear OpenSource folks, people that run the show on the computing 
+side these days; we need to talk about some things regarding how this 
+society is and why it treats some people in a poor-cross-situational 
+fastion.
 
-> diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
-> index 6ef4953431dc..8671de09c363 100644
-> --- a/security/selinux/include/netlabel.h
-> +++ b/security/selinux/include/netlabel.h
-> @@ -132,7 +132,8 @@ static inline void selinux_netlbl_inet_csk_clone(struct sock *sk, u16 family)
->  {
->         return;
->  }
-> -static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk, sock *newsk)
-> +static inline void selinux_netlbl_sctp_sk_clone(struct sock *sk,
-> +                                               struct sock *newsk)
->  {
->         return;
->  }
-> --
-> 2.9.0
->
+Alot of folks have been wondering: why are things they way that they 
+are? Many have been pondering this notion. All things have roots: you, 
+me, we all do, but when we are cut from those roots we feel adrift in 
+this world. Like this world is not our own. In the past many of us have 
+been forcefully cut from those roots through no fault of our own nor of 
+our ancestors.
 
--- 
-paul moore
-www.paul-moore.com
+To know why things are, you must know Who the people that do them, are. 
+What makes them do these things. Here's some straight truth from someone 
+who has been in the game for some time.
+
+The white man -- Just Who, who really, he is (and why he do what he 
+does):
+
+http://www.liveleak.com/view?i=017_1519418755
+
+#blackpanther, #wealth, #power, #shaolin
+
+(Also how do you feel about youtube taking down this discussion? They 
+couldn't let the power of the people to decide anything)
