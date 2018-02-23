@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELucISTbFtE1XNiVjsqMzY+oya+1gI3o/9nGvvIdeiNhQxRZK58VtDHZL1MYAsT5fB/7DiJ4
-ARC-Seal: i=1; a=rsa-sha256; t=1519411742; cv=none;
+X-Google-Smtp-Source: AG47ELv02L57diUz/emf+LsmRD+vDs7sehOUKTTYCCUAAwiepQJITMt5Co92ezWVBwKU62oWZ9++
+ARC-Seal: i=1; a=rsa-sha256; t=1519411740; cv=none;
         d=google.com; s=arc-20160816;
-        b=s0XXY4S9VkcLjp+K5IduiV+SbDUPxOAxSFDfpQ+2Xp4e2LG5RNzkp6zuVw1NcR/lm0
-         piPow5vxNZ22LMZwZNPpfE5WcNb0ngz39OGg9b+eFIzlv4iLoZXmBYL8QX1h+gXRXev8
-         /XSrxHCdvjPCeHwVJl37P54D+tTdsQPKE+jHM837i9yYB2tvKsKT76ijzUzzT7xqLMv2
-         KKQpHtxz81lySQMGBHBZSdqAUcSyKDVNaxbB7cIMcFcSIRf+4Gr5pWEzLTAdtyB8MxfC
-         p8DYvoMniS/1WZXqNaQ0bTZIaLBL7nn2Fm4DEbbij4eBzsydNeLuRsOrdkP98/qlnvpG
-         TGtQ==
+        b=oChQ/QBKU1PBe4ksPyYjohtQPvjCOIKxMuJFPiM+sUHQRK27sS3qXqxrO5BRssFuf2
+         hyA9CSo+5qujRsrVw3t08k01azjvzkTp/caD7J+hX9cc/KNK1gjZA2ynfrBoE/2PBMyF
+         b7Q4ZlW6ng1K2XvJNK2njyX3L5i16+4zd/t1iG917CYH/GmHxp08f7wIYthqh9MndP9f
+         3/ebwEDEsVeOjicP4DGfdbDOz71eTlrd1wrhJWZSL/WtU+dOkU+WhVJjYHkXGJWM6nim
+         EtqzyKk42IyC+QMgMOpU5ggBvfgU2yvMZGdU4y4gVoqmMosb/yaQaZoSEDX4mEQOTlJI
+         uMdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gz+1GRVhlxnOQnPLd/Z8/UBdi1sVEaEUsoPtaG3Yne8=;
-        b=QRu8w4Exx2XTfRoIJHo0sBiuylbIEzPxlctfb+BbG2u4klDqf7BGvZUBZV1ZG0JwN4
-         v4Y4rHy7Md+poKBmA54mGpbMKbzuKqSy+Z1qLWHmLx0gu/rZuN8sT/mgCCO35af3Ok6h
-         tMXdSX6u68P4mmYttH1LazXpicTJLj7WMFB/CQy2yuTvpLGM0aMBhAe8CgwqqC0so/15
-         BPA57ZHbqgY7kFFg01wAFgA/Z5oMLWpHZyVjyVARGn+rSh9OCL3ESqgAl6Ur9xNjx4Im
-         VIu6M1yFV+VWQNDDAGAxMwqvkeVmi4imjAiFSAA/2+56VnR4PTYuqlB8drWbWNrMuxg9
-         F4tA==
+        bh=YZV9c+wUGHYyp7GvohWwRFKPLgARIhFSPKfExmVFB7Q=;
+        b=hE4cQ1uYTO4DgjKPKeN7Icq2ifDrZ889wtKRDkBH6oaIRhjLbMxVrLreuYFF3R6UzW
+         IumEWPTR2UhCZugDAFaIp5dZBasDJJUxlLR1Pt3/3CTLP75dv75nG6Ked9gAZMXfns/e
+         R2jPNZ4R/UL4/RlcfSFDsA0bYOfEJKIXfqivnNl/8JPTNUPTf4wGMAMVjc8ytuPyPAU0
+         iSypa0OPOS/DkwAxcBZIwNvYzkRiVR+vp5G7aqB63XstmNRluEOWmYzN/dRmTLU150ta
+         jMNczpWrKmSne8LnqVK7hVq8vk3JoYYTb4DY4PQ3W2mpCOyLnG/G+Ir4MJYyAuOjzo+z
+         Ehtw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.9 125/145] KVM: add X86_LOCAL_APIC dependency
-Date: Fri, 23 Feb 2018 19:27:11 +0100
-Message-Id: <20180223170740.969473222@linuxfoundation.org>
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 124/145] Input: tca8418_keypad - hide gcc-4.9 -Wmaybe-uninitialized warning
+Date: Fri, 23 Feb 2018 19:27:10 +0100
+Message-Id: <20180223170740.844933076@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218049468964929?=
-X-GMAIL-MSGID: =?utf-8?q?1593218687948120505?=
+X-GMAIL-THRID: =?utf-8?q?1593218044096392002?=
+X-GMAIL-MSGID: =?utf-8?q?1593218684343226544?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,32 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit e42eef4ba38806b18c4a74f0c276fb2e0b548173 upstream.
+commit ea4348c8462a20e8b1b6455a7145d2b86f8a49b6 upstream.
 
-The rework of the posted interrupt handling broke building without
-support for the local APIC:
+Older versions of gcc warn about the tca8418_irq_handler function
+as they can't keep track of the variable assignment inside of the
+loop when using the -Wmaybe-unintialized flag:
 
-ERROR: "boot_cpu_physical_apicid" [arch/x86/kvm/kvm-intel.ko] undefined!
+drivers/input/keyboard/tca8418_keypad.c: In function ‘tca8418_irq_handler’:
+drivers/input/keyboard/tca8418_keypad.c:172:9: error: ‘reg’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/input/keyboard/tca8418_keypad.c:165:5: note: ‘reg’ was declared here
 
-That configuration is probably not particularly useful anyway, so
-we can avoid the randconfig failures by adding a Kconfig dependency.
+This is fixed in gcc-6, but it's possible to rearrange the code
+in a way that avoids the warning on older compilers as well.
 
-Fixes: 8b306e2f3c41 ("KVM: VMX: avoid double list add with VT-d posted interrupts")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/keyboard/tca8418_keypad.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -23,6 +23,7 @@ config KVM
- 	depends on HIGH_RES_TIMERS
- 	# for TASKSTATS/TASK_DELAY_ACCT:
- 	depends on NET && MULTIUSER
-+	depends on X86_LOCAL_APIC
- 	select PREEMPT_NOTIFIERS
- 	select MMU_NOTIFIER
- 	select ANON_INODES
+--- a/drivers/input/keyboard/tca8418_keypad.c
++++ b/drivers/input/keyboard/tca8418_keypad.c
+@@ -164,11 +164,18 @@ static void tca8418_read_keypad(struct t
+ 	int error, col, row;
+ 	u8 reg, state, code;
+ 
+-	/* Initial read of the key event FIFO */
+-	error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
++	do {
++		error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
++		if (error < 0) {
++			dev_err(&keypad_data->client->dev,
++				"unable to read REG_KEY_EVENT_A\n");
++			break;
++		}
++
++		/* Assume that key code 0 signifies empty FIFO */
++		if (reg <= 0)
++			break;
+ 
+-	/* Assume that key code 0 signifies empty FIFO */
+-	while (error >= 0 && reg > 0) {
+ 		state = reg & KEY_EVENT_VALUE;
+ 		code  = reg & KEY_EVENT_CODE;
+ 
+@@ -184,11 +191,7 @@ static void tca8418_read_keypad(struct t
+ 
+ 		/* Read for next loop */
+ 		error = tca8418_read_byte(keypad_data, REG_KEY_EVENT_A, &reg);
+-	}
+-
+-	if (error < 0)
+-		dev_err(&keypad_data->client->dev,
+-			"unable to read REG_KEY_EVENT_A\n");
++	} while (1);
+ 
+ 	input_sync(input);
+ }
