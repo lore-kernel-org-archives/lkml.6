@@ -1,79 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751378AbeBWKcf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 05:32:35 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37513 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeBWKcd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 05:32:33 -0500
-X-Google-Smtp-Source: AG47ELtBoT0KGhj0l9AhK0NUoKVkMwVIK4pVsWQekVAd8PzSUGsre+ARL4QIvekS2g7Fbn5WdZ2jShgMcnDS0CuJT4s=
-MIME-Version: 1.0
-In-Reply-To: <20180222234833.GA3047@roeck-us.net>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 23 Feb 2018 11:32:32 +0100
-X-Google-Sender-Auth: qZUqF3X3V5GjVgzzrVZqrSfRftA
-Message-ID: <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
-Subject: Re: Removing architectures without upstream gcc support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
+        id S1751472AbeBWKck (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 05:32:40 -0500
+Received: from sauhun.de ([88.99.104.3]:52863 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750798AbeBWKch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 05:32:37 -0500
+Date: Fri, 23 Feb 2018 11:32:35 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/4] dt-bindings: at24: sort manufacturers alphabetically
+Message-ID: <20180223103235.gctneumpkqdcxdme@ninjato>
+References: <20180116160618.27859-1-peda@axentia.se>
+ <20180116160618.27859-2-peda@axentia.se>
+ <20180129161727.g4kdrr5sih22vs5a@rob-hp-laptop>
+ <CAMRc=Mcqj36KP7dG71dzSn_7cxw-Tru5kNtXdr5-SiH=jbCfMA@mail.gmail.com>
+ <20180221091130.4sdfnalrng4sd77i@ninjato>
+ <CAMRc=Mfcvh3PoF46DvU8RiVZ2bnQPkRm=pmv9MPEux1sHpnAOw@mail.gmail.com>
+ <20180221094009.2zql6gbzkcklbakk@ninjato>
+ <CAMRc=MdE_LX276mjXCHaNgAthKyzaKPW-eWBfEuCcG187X7wvQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pkdbi46elx5v4cfv"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MdE_LX276mjXCHaNgAthKyzaKPW-eWBfEuCcG187X7wvQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:48 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
->> While building the cross-toolchains, I noticed that overall, we can build almost
->> all linux target architectures with upstream binutils and gcc these days,
->> however there are still some exceptions, and I'd like to find out if anyone
->> has objections to removing the ones that do not have upstream support.
->> This are the four architectures I found:
->>
->> * score (s+core, sunplus core) was a proprietary RISC architecture
->>   made by sunplus. It is unclear if they still ship any products based on
->>   this architecture, all they list is either ARM Cortex-A9 or an unspecified
->>   RISC core that could be any of arm, mips, nds32, arc, xtensa or
->>   something completely different. The two maintainers have both left the
->>   company many years ago and have not contributed any patches in
->>   at least five years. There was an upstream gcc port, which was marked
->>   'obsolete' in 2013 and got removed in gcc-5.0.
->>   I conclude that this is dead in Linux and can be removed
->>
->> * unicore32 was a research project at Peking University with a SoC
->>   based on the Intel PXA design. No gcc source code has ever been
->>   published, the only toolchain available is a set of binaries that include
->>   a gcc-4.4 compiler. The project page at
->>   http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
->>   not been modified since 2011. The maintainer still Acks patches
->>   and has last sent a pull request in 2014 and last sent a patch of
->>   his own in 2012 when the project appears to have stalled.
->>   I would suggest removing this one.
->>
->
-> The above two would be primary removal targets for me; they are all
-> but impossible to support given the toolchain limitations. Meta
-> would have been another one, but James is already taking care of it.
 
-Ok. Have you had any success building arch/hexagon with clang?
+--pkdbi46elx5v4cfv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regarding the older architectures I mentioned (m32r, frv, mn10300),
-the situation is a bit different as they don't have the problems with
-build testing but they do have problems with using less of the
-standard interfaces (syscall, timer, gpio, rtc, ...), so they do add
-more to the maintenance burden without the nostalgia value of
-some of the even older architectures (parisc, alpha, m68k, ia64)
-that people maintain mainly for fun.
 
-     Arnd
+> Ok, I'll have some time during the weekend, so I'll send a PR for rc3.
+
+Well, I am away this weekend, so I just sent out my pull request. But we
+can make it for rc4, no problem.
+
+
+--pkdbi46elx5v4cfv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqP7cMACgkQFA3kzBSg
+KbbYpw//ZO9d7WYm//rt7XXDrpR1dyfWjQzaQJpyJNvkPGjMmdd1mduKnjN1ATsA
+ZvEu34PsRhg4+kpc8t2hTn/H25riJZ6KQMYz6CyHhhk0pvA9wkRMwcxU+xykTGJt
+bny4aS91deETDnJpyPqYgX4TpnylQcriMooaN+yjhijwkUdyBbX0uCybNwb5mcQv
+G3Sp29mMg/nTbWIlooTxbslXal/M3OnrDlN55vf4Elhi0XogrY46s2sBbnhzT1Ps
+E87rtxsZ5IizLGXv8hf5C7z1M+QrMoBOi5WAGi2/kj2rvNoo/7CvtXm04hBEJTAR
+JWRylTAa3Iwg/j95Smt5jq0dw7Tkk8K9z4mNx066zgehM8X+NWqNzidbSbP1STph
+4alnkoeq74M+HLELfYa1psfXXoNpW3h2INaxn8i4xkmQYRAFxiRGsO+XS9kruR8O
+okcg23tG7LdWfdUJw8VYso9lXgB7T1v2H1jOQ1SSWxZ2ZB1VpONmzO/7SZ13TRzH
+kOdKvp+90VuE1n99C0SDBDlsO8pDi3Hf5Y78EcElFpZucP96pJ/7iuIsyrrZhrbD
+vtzaSqt3jakZ0WbaZ0ElOl7HysmGtOMKaxzGgMEd1tH/ig72Bfx0mTu/ytUQr7BC
+votyep/7hwqi8/nzMzSSZVBzCQdUzFvDdSAaUXgjvZuNMayiszY=
+=JG7I
+-----END PGP SIGNATURE-----
+
+--pkdbi46elx5v4cfv--
