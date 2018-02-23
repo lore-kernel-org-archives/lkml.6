@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3759000-1519415258-2-509468500979646739
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415250-2-18402315619050011477
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415257; b=ICqADkiIkfqdIPQMujbor2tRdddeVkN2bVNH/dSydbFv+XT
-    j1bD4nKmulkyek408glqv4EiTQw/xQWoA0Lg/+bxAkP7bF1Vb/VfykcQwllbg4WX
-    E+NZyKvEYcutFJpQ5dhuvOjbVHYmvfYavXYe7M0/le0sp6PIHu+86g1zEMD4onqL
-    Y4JhrItv+7XZRbx8XoG7x68tWZ6OjhfBD0hIU/5UpIX67GYLOmhH6OEz2fydNxw1
-    PhkBw5GV4mygR9vnL5CXer1pzyLwQvHZ+fsZPOb3lyiCZEpTjHnKZRLQHwhhfEmx
-    29urROlphq25gMEpnlJzvu6nLyIo0QrGOf9swFw==
+    t=1519415250; b=N2GphEq+dkpc0mOJL60iFyvXLk8EkU6mBWKxjl6WR7FfFZZ
+    kysvrfO/qWVZXvq0rxYqxJ7v4xeo1Dse3BmXyWpdqqmQbTRGeEng8T6GEREWq8iu
+    97U95MWmGViaSqH0jygOEknDaoUrX3GpKobX3SMDxmKld1Xjn7RXnMeu0RxbRaFD
+    RHpUD4AMODIrIVSNueEsP8TeLQrQ2LYYb/LewXLeet4tl/rq9J1KcOt7dDb3rWme
+    GQi+6UHAvv7BUH8fa33B8UOSB+yhsk8nqOX1Nk6xK4KD63hLUji9kbv1Lw50OPcQ
+    tkUJ/Roqf+VtIbjQ5FdEBTCq2eR/ED/bZcBqryg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415257; bh=7A8K6ItwbcIaYBW9SJlCSCB9kS
-    yb4XyJ4hnGKYP8jxk=; b=V+p22jFYBlH62TA1lBwIfsnx9gNl8u9Z6gB5gueW1Q
-    njFgHEc937VOrDI5tvmFds7iBCClqtH/ckbSG1dSl/EJgSWRKIaLK22W+oi0Ma1+
-    woKCSm65W3stYxVkFO9uFRHS/4C/vezkvpCVuK/oLc/6GAhRbim3jSA67sE6qaAs
-    WiB1ozXxz41eeTtDtRZMDS/egdXgdsAUoCG0rITDVePC66Lzt1Ic9hl5ujTjIrBO
-    t2GBGQEPvFUeaVvi5Y/wvZQvGOCAbPSPNvl/DBOaVvTV/LvkuK2YYpax3ZPpfio+
-    N21qtZrDDhkTCBYsFkIPMAH9qkG9sojNY2emebTKMp7g==
+    :list-id; s=arctest; t=1519415250; bh=WHg1vJxsDpwsrfB2W8rkQLJrW6
+    XKIoMGNZxPRFxDTpc=; b=OI/a1D5yDbVOuRfwRTW2LKkh5HymJH6vDBlbSbLcs6
+    zEcy55q+6fdfUZhCjDtER4B9qpzoZKEwhSM4Xl3CAzNKUBbHifbeXzr4haIEZ7oT
+    1x51iFrKIfraoZ0aEV6m9vrGSL9a3MiRsnBlbbvXWDJb12cebdL/2jKJjr8gG2lS
+    y0OceZUj54q8FADRm1Hqp9hrnTGWHkKzjijaKdww0oibGRS70k0hSW/1RHBgkhA4
+    GrbOvh6AMa1HQNwi2d/nTQQC8rk607tN0vzwGtg4WB+lhvUaI9YgAn696dI2O3UQ
+    Zi5hAefJVYSumTMChqAt8OgL8eXGuXib/hXFkkcqeucg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,26 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934168AbeBWSr2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:47:28 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44550 "EHLO
+        id S1754474AbeBWTrP (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 14:47:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44588 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933859AbeBWSrZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:25 -0500
+        with ESMTP id S933968AbeBWSre (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:47:34 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 113/145] x86/platform: Add PCI dependency for PUNIT_ATOM_DEBUG
-Date: Fri, 23 Feb 2018 19:26:59 +0100
-Message-Id: <20180223170739.449671175@linuxfoundation.org>
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 116/145] arm64: Kconfig: select COMPAT_BINFMT_ELF only when BINFMT_ELF is set
+Date: Fri, 23 Feb 2018 19:27:02 +0100
+Message-Id: <20180223170739.812704513@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -84,39 +78,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-commit d689c64d189e43d782fec5649fb0afe303c5b3f9 upstream.
+commit 2e449048a25eb75d48dff12882b93f26d130a1c6 upstream.
 
-The IOSF_MBI option requires PCI support, without it we get a harmless
-Kconfig warning when it gets selected by PUNIT_ATOM_DEBUG:
+Fix warning:
+"(COMPAT) selects COMPAT_BINFMT_ELF which has unmet direct dependencies
+(COMPAT && BINFMT_ELF)"
 
-  warning: (X86_INTEL_LPSS && SND_SST_IPC_ACPI && MMC_SDHCI_ACPI && PUNIT_ATOM_DEBUG) selects IOSF_MBI which has unmet direct dependencies (PCI)
-
-This adds another dependency to avoid the warning.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170719125310.2487451-8-arnd@arndb.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Kconfig.debug |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -352,6 +352,7 @@ config X86_DEBUG_FPU
- 
- config PUNIT_ATOM_DEBUG
- 	tristate "ATOM Punit debug driver"
-+	depends on PCI
- 	select DEBUG_FS
- 	select IOSF_MBI
- 	---help---
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1007,7 +1007,7 @@ source "fs/Kconfig.binfmt"
+ config COMPAT
+ 	bool "Kernel support for 32-bit EL0"
+ 	depends on ARM64_4K_PAGES || EXPERT
+-	select COMPAT_BINFMT_ELF
++	select COMPAT_BINFMT_ELF if BINFMT_ELF
+ 	select HAVE_UID16
+ 	select OLD_SIGSUSPEND3
+ 	select COMPAT_OLD_SIGACTION
