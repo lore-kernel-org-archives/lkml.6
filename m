@@ -1,382 +1,808 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AH8x226+kxQrg+9tYvDPmPAcg5rfDfQ1M55UZcft4vB8mEoaLxee3lv19xKMSkRVHYTLAelTAWxy
-ARC-Seal: i=1; a=rsa-sha256; t=1519711587; cv=none;
+X-Google-Smtp-Source: AH8x2248uDK3qcAOis2UhyOXNJHMeN/TW2R+KFXErMkwDm4qIgf7yJ53W5cXALmirw6jgGKSNL4e
+ARC-Seal: i=1; a=rsa-sha256; t=1519374266; cv=none;
         d=google.com; s=arc-20160816;
-        b=qvzVMAOgsdOfGGryT0Hu0smZp/2EMRnkAo5b4xShygzqryiFqGTydnsiPickqOEsg0
-         XeL3VTxDhOIW4KSRwCvlsJyt8ZnrOsyYhwPx8IIyAzloJ9DBm1lpNRw8KEF9p/pq/I5K
-         Cmx1zxKwfaPEkIlVOqjsfTFW2Bs71XfTIZO3DUI/QNqZ7Vy3CyT/KCJGUycyA91UKCDS
-         3yo+NCi2uJOsxSI+oM+JYdBSd1RSLuVOYl9IIorBH6JdSZbYvQgCQNO4yhFz4BFVG2Cn
-         0Twmrx9NagD6bZfv75mYOGzJXsbhJBaUbmuTqJsv13odrzL8xJW8eEXmu+vgq9eCcHpu
-         20cg==
+        b=y1wD01r1vCEjYAz7mJ7Ck6anYhYR1mWANfdgRSwEJzSJ7EI0VkeJ7Ptol7/vaKSyis
+         VdUcY6IQdb/PmidAhZmvhmaP9fx5+Tim6eY0MpF5KK5wiVmG7ohgkp57tQHqxHAORTFP
+         5XyrAkEdvGY71ttrY1ZuXpX/A1hs+T4TnGsBpxN4tIg6h/YLlhO9Sg+3IeiJexew7hda
+         ZofyKd3qa8tJNYLku0wjwgYfScDDXrGAcCy8yZAAqQIF3XvRIDGlIMDL+SJPT0Rx2cip
+         Zkqiuhsncpzv72lGCGHdY8GMFHny4Bg5nLgW6rL+HNNwbQ4oGvuloxHWztAjHI0TqB5R
+         zzFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=tnkErdlrKI57NClZVyHZG7u58230G2FnvKvCPUsb1MQ=;
-        b=tgHsL4PuFAff8pWRQ8Jd8qy7OhxOyTMyJp0lokcPWoxip/+L+xZExE4TsAFlyhjS1r
-         hZmiTAsMViBMfzMzOPic4+1/GZDg8f0XbNxMhTRcS5wIU2UybDxU474xPBnIBcAbUWw5
-         g9QgNKlsC6bnVREUc+YGx4VxDE0L9m73XhDJh06VB8bmL6Uy+5B6XRg3CeprNYtlVIsp
-         PkOsE2DmVJTSd5+O/e9c19MFMKgTTZe2jobApst6nXPFA73Cl/WynGlUz8+O843DFt/F
-         ZMquJ/lIhgsnuktTFYAgDZ/GD8RmcmNrJFzXV4suxVIvjnqY/4NZeDzy376w76f7ADRb
-         AKLA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=4x+CkY0caa+x8cFwKifplW54ANFFALFNAliAujyZZ9w=;
+        b=BfJ/1Io4ZQijjPQZR1OSKcLeL1omYU7uDmD8pFolZkt15k8IOry3r0tcty8SDPAb2a
+         fjRcMjWwDTai87rmW8ztfSu55IXZPn0dFI2vrXaGAoMVuqYGjN52jRaOxRdUbj9fvARI
+         zrgwxZqvXx6jQAdwSUnhd+izDoxND9RofFMuloKbSexf7lMYydORcbfPHShiKXluls1a
+         0U9sJZntNRy+2DMN964JhFojQ40RJO1LoM7YQwEoCvKYYyVfilcBmQG9c04A0XJIz3Jv
+         U8w8D5NAWBAt44zSRQ0rdWgnKV92r2L/7XBepsw5XjAwlVp+S+PNJyhoMYyX3cbBMenT
+         Yn6w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Qc0qU8Si;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kSKZ2eps;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MHvAlno+;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=mi1PiSkt;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Qc0qU8Si;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kSKZ2eps;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MHvAlno+;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=mi1PiSkt;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 27 Feb 2018 11:36:25 +0530
-From: poza@codeaurora.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v11 4/7] PCI/DPC: Unify and plumb error handling into DPC
-In-Reply-To: <20180224000754.GR14632@bhelgaas-glaptop.roam.corp.google.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D390B60BEB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=poza@codeaurora.org
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v11 2/7] PCI/AER: factor out error reporting from AER
+Date: Fri, 23 Feb 2018 13:53:59 +0530
+Message-Id: <1519374244-20539-3-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
 References: <1519374244-20539-1-git-send-email-poza@codeaurora.org>
- <1519374244-20539-5-git-send-email-poza@codeaurora.org>
- <20180224000754.GR14632@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <db8895a8e2cc1abc16445964ea030dc4@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593086415695868818?=
-X-GMAIL-MSGID: =?utf-8?q?1593533098292077500?=
+X-GMAIL-THRID: =?utf-8?q?1593086410511514158?=
+X-GMAIL-MSGID: =?utf-8?q?1593179390622240769?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-02-24 05:37, Bjorn Helgaas wrote:
-> On Fri, Feb 23, 2018 at 01:54:01PM +0530, Oza Pawandeep wrote:
->> Current DPC driver does not do recovery, e.g. calling end-point's 
->> driver's
->> callbacks, which sanitize the sw.
->> 
->> DPC driver implements link_reset callback, and calls pcie_do_recovery.
-> 
-> s/pcie_do_recovery/pcie_do_recovery()/
-> 
+This patch factors out error reporting callbacks, which are currently
+tightly coupled with AER.
+DPC should be able to register callbacks and attmept recovery when DPC
+trigger event occurs.
 
-sure.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
->> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
->> 
->> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->> index abc514e..f8575da 100644
->> --- a/drivers/pci/pci.h
->> +++ b/drivers/pci/pci.h
->> @@ -343,6 +343,8 @@ static inline resource_size_t 
->> pci_resource_alignment(struct pci_dev *dev,
->>  void pci_enable_acs(struct pci_dev *dev);
->> 
->>  /* PCI error reporting and recovery */
->> +#define DPC_FATAL	4
-> 
-> This needs to go next to the AER_FATAL, etc., definitions because
-> DPC_FATAL shares the namespace and they all need to have distinct
-> values.  I can't tell from this patch whether they do or not.
-> 
-
-sure.
-
->>  void pcie_do_recovery(struct pci_dev *dev, int severity);
->> 
->>  #ifdef CONFIG_PCIEASPM
->> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
->> index 38e40c6..5c01c63 100644
->> --- a/drivers/pci/pcie/pcie-dpc.c
->> +++ b/drivers/pci/pcie/pcie-dpc.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/pcieport_if.h>
->>  #include "../pci.h"
->>  #include "aer/aerdrv.h"
->> +#include "portdrv.h"
->> 
->>  struct dpc_dev {
->>  	struct pcie_device	*dev;
->> @@ -45,6 +46,58 @@ struct dpc_dev {
->>  	"Memory Request Completion Timeout",		 /* Bit Position 18 */
->>  };
->> 
->> +static int find_dpc_dev_iter(struct device *device, void *data)
->> +{
->> +	struct pcie_port_service_driver *service_driver;
->> +	struct device **dev = (struct device **) data;;
->> +
->> +	if (device->bus == &pcie_port_bus_type && device->driver) {
->> +		service_driver = to_service_driver(device->driver);
->> +		if (service_driver->service == PCIE_PORT_SERVICE_DPC) {
->> +			*dev = device;
->> +			return 1;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static struct device *pci_find_dpc_dev(struct pci_dev *pdev)
->> +{
->> +	struct device *dev = NULL;
->> +
->> +	device_for_each_child(&pdev->dev, &dev, find_dpc_dev_iter);
->> +
->> +	return dev;
->> +}
-> 
-> Ugh.  You're not responsible for this and you don't need to do
-> anything, but hanging the struct dpc_dev off the struct pcie_device
-> and then having to grub around like this to locate it from the pci_dev
-> is just ... clunky.  OK, rant over, sorry :)
-> 
-
-:) I keep it for now.
-
->> +static int find_dpc_service_iter(struct device *device, void *data)
->> +{
->> +	struct pcie_port_service_driver *service_driver;
->> +	struct pcie_port_service_driver **drv =
->> +		(struct pcie_port_service_driver **) data;
->> +
->> +	if (device->bus == &pcie_port_bus_type && device->driver) {
->> +		service_driver = to_service_driver(device->driver);
->> +		if (service_driver->service == PCIE_PORT_SERVICE_DPC) {
->> +			*drv = service_driver;
->> +			return 1;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +struct pcie_port_service_driver *pci_find_dpc_service(struct pci_dev 
->> *dev)
->> +{
->> +	struct pcie_port_service_driver *drv = NULL;
->> +
->> +	device_for_each_child(&dev->dev, &drv, find_dpc_service_iter);
->> +
->> +	return drv;
->> +}
->> +EXPORT_SYMBOL_GPL(pci_find_dpc_service);
-> 
-> No module uses this, so it doesn't need to be exported.
-> 
-> This is a clone of find_aer_service().  Can you add a preliminary patch 
-> to
-> make a generic "find service" interface that accepts the service type
-> (PCIE_PORT_SERVICE_AER, PCIE_PORT_SERVICE_DPC) as a parameter?
-> 
-> This whole "find service" thing is ugly as sin.  You're not responsible 
-> for
-> cleaning it up, but maybe we can at least limit the proliferation of 
-> it.
-> 
-
-I have taken care of making this as a generic find_Service in pcie port 
-driver now.
-
->>  static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
->>  {
->>  	unsigned long timeout = jiffies + HZ;
->> @@ -82,12 +135,25 @@ static void dpc_wait_link_inactive(struct dpc_dev 
->> *dpc)
->>  		dev_warn(dev, "Link state not disabled for DPC event\n");
->>  }
->> 
->> -static void dpc_work(struct work_struct *work)
->> +/**
->> + * dpc_reset_link - reset link DPC  routine
-> 
-> s/  / / (remove extra space)
-sure.
-> 
->> + * @dev: pointer to Root Port's pci_dev data structure
->> + *
->> + * Invoked by Port Bus driver when performing link reset at Root 
->> Port.
->> + */
->> +static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
->>  {
->> -	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
->> -	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
->>  	struct pci_bus *parent = pdev->subordinate;
->> -	u16 cap = dpc->cap_pos, ctl;
->> +	struct pci_dev *dev, *temp;
->> +	struct dpc_dev *dpc;
->> +	struct pcie_device *pciedev;
->> +	struct device *devdpc;
->> +	u16 cap, ctl;
->> +
->> +	devdpc = pci_find_dpc_dev(pdev);
->> +	pciedev = to_pcie_device(devdpc);
->> +	dpc = get_service_data(pciedev);
->> +	cap = dpc->cap_pos;
->> 
->>  	pci_lock_rescan_remove();
->>  	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
->> @@ -104,21 +170,31 @@ static void dpc_work(struct work_struct *work)
->> 
->>  	dpc_wait_link_inactive(dpc);
->>  	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
->> -		return;
->> +		return PCI_ERS_RESULT_DISCONNECT;
->>  	if (dpc->rp_extensions && dpc->rp_pio_status) {
->>  		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
->>  				       dpc->rp_pio_status);
->>  		dpc->rp_pio_status = 0;
->>  	}
->> 
->> -	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
->> +	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
->>  		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
->> 
->>  	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
->>  	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
->> -			      ctl | PCI_EXP_DPC_CTL_INT_EN);
->> +				ctl | PCI_EXP_DPC_CTL_INT_EN);
-> 
-> Align "ctl" with "pdev".
-
-sure.
-> 
->> +	return PCI_ERS_RESULT_RECOVERED;
->>  }
->> 
->> +static void dpc_work(struct work_struct *work)
->> +{
->> +	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
->> +	struct pci_dev *pdev = dpc->dev->port;
->> +
->> +	/* From DPC point of view error is always FATAL. */
->> +	pcie_do_recovery(pdev, DPC_FATAL);
->> +}
->>  static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
->>  {
->>  	struct device *dev = &dpc->dev->device;
->> @@ -297,6 +373,7 @@ static void dpc_remove(struct pcie_device *dev)
->>  	.service	= PCIE_PORT_SERVICE_DPC,
->>  	.probe		= dpc_probe,
->>  	.remove		= dpc_remove,
->> +	.reset_link     = dpc_reset_link,
->>  };
->> 
->>  static int __init dpc_service_init(void)
->> diff --git a/drivers/pci/pcie/pcie-err.c b/drivers/pci/pcie/pcie-err.c
->> index f830975..1ea4b9a 100644
->> --- a/drivers/pci/pcie/pcie-err.c
->> +++ b/drivers/pci/pcie/pcie-err.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/aer.h>
->>  #include <linux/pcieport_if.h>
->>  #include "portdrv.h"
->> +#include "./../pci.h"
->> 
->>  static DEFINE_MUTEX(pci_err_recovery_lock);
->> 
->> @@ -181,7 +182,7 @@ static pci_ers_result_t default_reset_link(struct 
->> pci_dev *dev)
->>  	return PCI_ERS_RESULT_RECOVERED;
->>  }
->> 
->> -static pci_ers_result_t reset_link(struct pci_dev *dev)
->> +static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
->>  {
->>  	struct pci_dev *udev;
->>  	pci_ers_result_t status;
->> @@ -195,9 +196,17 @@ static pci_ers_result_t reset_link(struct pci_dev 
->> *dev)
->>  		udev = dev->bus->self;
->>  	}
->> 
->> +
->> +	/* Use the service driver of the component firstly */
->> +#if IS_ENABLED(CONFIG_PCIE_DPC)
-> 
-> #ifdef CONFIG_PCIE_DPC
-> 
->> +	if (severity == DPC_FATAL)
->> +		driver = pci_find_dpc_service(udev);
->> +#endif
->>  #if IS_ENABLED(CONFIG_PCIEAER)
->> -	/* Use the aer driver of the component firstly */
->> -	driver = pci_find_aer_service(udev);
->> +	if (severity == AER_FATAL ||
->> +	    severity == AER_NONFATAL ||
->> +	    severity == AER_CORRECTABLE)
-> 
-> This change (to check for AER_FATAL, etc) looks like it belongs in a
-> different patch.  This patch doesn't change any places that set the
-> severity.
-
-I have made generic service and probably now it does not look like this.
-
-> 
->> +		driver = pci_find_aer_service(udev);
->>  #endif
->> 
->>  	if (driver && driver->reset_link) {
->> @@ -287,7 +296,8 @@ void pcie_do_recovery(struct pci_dev *dev, int 
->> severity)
->> 
->>  	mutex_lock(&pci_err_recovery_lock);
->> 
->> -	if (severity == AER_FATAL)
->> +	if (severity == AER_FATAL ||
->> +	    severity == DPC_FATAL)
->>  		state = pci_channel_io_frozen;
->>  	else
->>  		state = pci_channel_io_normal;
->> @@ -297,10 +307,14 @@ void pcie_do_recovery(struct pci_dev *dev, int 
->> severity)
->>  			"error_detected",
->>  			report_error_detected);
->> 
->> -	if (severity == AER_FATAL) {
->> -		result = reset_link(dev);
->> +	if (severity == AER_FATAL ||
->> +	    severity == DPC_FATAL) {
->> +		result = reset_link(dev, severity);
->>  		if (result != PCI_ERS_RESULT_RECOVERED)
->>  			goto failed;
->> +		else if (severity == DPC_FATAL)
->> +			goto resume;
->> +
->>  	}
->> 
->>  	if (status == PCI_ERS_RESULT_CAN_RECOVER)
->> @@ -324,6 +338,7 @@ void pcie_do_recovery(struct pci_dev *dev, int 
->> severity)
->>  	if (status != PCI_ERS_RESULT_RECOVERED)
->>  		goto failed;
->> 
->> +resume:
->>  	broadcast_error_message(dev,
->>  				state,
->>  				"resume",
->> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
->> index 4f1992d..b013e24 100644
->> --- a/drivers/pci/pcie/portdrv.h
->> +++ b/drivers/pci/pcie/portdrv.h
->> @@ -80,4 +80,5 @@ static inline void pcie_port_platform_notify(struct 
->> pci_dev *port, int *mask){}
->>  #endif /* !CONFIG_ACPI */
->> 
->>  struct pcie_port_service_driver *pci_find_aer_service(struct pci_dev 
->> *dev);
->> +struct pcie_port_service_driver *pci_find_dpc_service(struct pci_dev 
->> *dev);
->>  #endif /* _PORTDRV_H_ */
->> --
->> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
->> Technologies, Inc.,
->> a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
->> Linux Foundation Collaborative Project.
->> 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index fcd8191..abc514e 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -342,6 +342,9 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
+ 
+ void pci_enable_acs(struct pci_dev *dev);
+ 
++/* PCI error reporting and recovery */
++void pcie_do_recovery(struct pci_dev *dev, int severity);
++
+ #ifdef CONFIG_PCIEASPM
+ void pcie_aspm_init_link_state(struct pci_dev *pdev);
+ void pcie_aspm_exit_link_state(struct pci_dev *pdev);
+diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+index 223e4c3..d669497 100644
+--- a/drivers/pci/pcie/Makefile
++++ b/drivers/pci/pcie/Makefile
+@@ -6,7 +6,7 @@
+ # Build PCI Express ASPM if needed
+ obj-$(CONFIG_PCIEASPM)		+= aspm.o
+ 
+-pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o
++pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o pcie-err.o
+ pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
+ 
+ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
+diff --git a/drivers/pci/pcie/aer/aerdrv.h b/drivers/pci/pcie/aer/aerdrv.h
+index 5449e5c..bc9db53 100644
+--- a/drivers/pci/pcie/aer/aerdrv.h
++++ b/drivers/pci/pcie/aer/aerdrv.h
+@@ -76,36 +76,6 @@ struct aer_rpc {
+ 					 */
+ };
+ 
+-struct aer_broadcast_data {
+-	enum pci_channel_state state;
+-	enum pci_ers_result result;
+-};
+-
+-static inline pci_ers_result_t merge_result(enum pci_ers_result orig,
+-		enum pci_ers_result new)
+-{
+-	if (new == PCI_ERS_RESULT_NO_AER_DRIVER)
+-		return PCI_ERS_RESULT_NO_AER_DRIVER;
+-
+-	if (new == PCI_ERS_RESULT_NONE)
+-		return orig;
+-
+-	switch (orig) {
+-	case PCI_ERS_RESULT_CAN_RECOVER:
+-	case PCI_ERS_RESULT_RECOVERED:
+-		orig = new;
+-		break;
+-	case PCI_ERS_RESULT_DISCONNECT:
+-		if (new == PCI_ERS_RESULT_NEED_RESET)
+-			orig = PCI_ERS_RESULT_NEED_RESET;
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	return orig;
+-}
+-
+ extern struct bus_type pcie_port_bus_type;
+ void aer_isr(struct work_struct *work);
+ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index aeb83a0..f60b1bb 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -23,6 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/kfifo.h>
+ #include "aerdrv.h"
++#include "../../pci.h"
+ 
+ #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+ 				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+@@ -230,191 +231,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
+ }
+ 
+-static int report_error_detected(struct pci_dev *dev, void *data)
+-{
+-	pci_ers_result_t vote;
+-	const struct pci_error_handlers *err_handler;
+-	struct aer_broadcast_data *result_data;
+-	result_data = (struct aer_broadcast_data *) data;
+-
+-	device_lock(&dev->dev);
+-	dev->error_state = result_data->state;
+-
+-	if (!dev->driver ||
+-		!dev->driver->err_handler ||
+-		!dev->driver->err_handler->error_detected) {
+-		if (result_data->state == pci_channel_io_frozen &&
+-			dev->hdr_type != PCI_HEADER_TYPE_BRIDGE) {
+-			/*
+-			 * In case of fatal recovery, if one of down-
+-			 * stream device has no driver. We might be
+-			 * unable to recover because a later insmod
+-			 * of a driver for this device is unaware of
+-			 * its hw state.
+-			 */
+-			pci_printk(KERN_DEBUG, dev, "device has %s\n",
+-				   dev->driver ?
+-				   "no AER-aware driver" : "no driver");
+-		}
+-
+-		/*
+-		 * If there's any device in the subtree that does not
+-		 * have an error_detected callback, returning
+-		 * PCI_ERS_RESULT_NO_AER_DRIVER prevents calling of
+-		 * the subsequent mmio_enabled/slot_reset/resume
+-		 * callbacks of "any" device in the subtree. All the
+-		 * devices in the subtree are left in the error state
+-		 * without recovery.
+-		 */
+-
+-		if (dev->hdr_type != PCI_HEADER_TYPE_BRIDGE)
+-			vote = PCI_ERS_RESULT_NO_AER_DRIVER;
+-		else
+-			vote = PCI_ERS_RESULT_NONE;
+-	} else {
+-		err_handler = dev->driver->err_handler;
+-		vote = err_handler->error_detected(dev, result_data->state);
+-		pci_uevent_ers(dev, PCI_ERS_RESULT_NONE);
+-	}
+-
+-	result_data->result = merge_result(result_data->result, vote);
+-	device_unlock(&dev->dev);
+-	return 0;
+-}
+-
+-static int report_mmio_enabled(struct pci_dev *dev, void *data)
+-{
+-	pci_ers_result_t vote;
+-	const struct pci_error_handlers *err_handler;
+-	struct aer_broadcast_data *result_data;
+-	result_data = (struct aer_broadcast_data *) data;
+-
+-	device_lock(&dev->dev);
+-	if (!dev->driver ||
+-		!dev->driver->err_handler ||
+-		!dev->driver->err_handler->mmio_enabled)
+-		goto out;
+-
+-	err_handler = dev->driver->err_handler;
+-	vote = err_handler->mmio_enabled(dev);
+-	result_data->result = merge_result(result_data->result, vote);
+-out:
+-	device_unlock(&dev->dev);
+-	return 0;
+-}
+-
+-static int report_slot_reset(struct pci_dev *dev, void *data)
+-{
+-	pci_ers_result_t vote;
+-	const struct pci_error_handlers *err_handler;
+-	struct aer_broadcast_data *result_data;
+-	result_data = (struct aer_broadcast_data *) data;
+-
+-	device_lock(&dev->dev);
+-	if (!dev->driver ||
+-		!dev->driver->err_handler ||
+-		!dev->driver->err_handler->slot_reset)
+-		goto out;
+-
+-	err_handler = dev->driver->err_handler;
+-	vote = err_handler->slot_reset(dev);
+-	result_data->result = merge_result(result_data->result, vote);
+-out:
+-	device_unlock(&dev->dev);
+-	return 0;
+-}
+-
+-static int report_resume(struct pci_dev *dev, void *data)
+-{
+-	const struct pci_error_handlers *err_handler;
+-
+-	device_lock(&dev->dev);
+-	dev->error_state = pci_channel_io_normal;
+-
+-	if (!dev->driver ||
+-		!dev->driver->err_handler ||
+-		!dev->driver->err_handler->resume)
+-		goto out;
+-
+-	err_handler = dev->driver->err_handler;
+-	err_handler->resume(dev);
+-	pci_uevent_ers(dev, PCI_ERS_RESULT_RECOVERED);
+-out:
+-	device_unlock(&dev->dev);
+-	return 0;
+-}
+-
+-/**
+- * broadcast_error_message - handle message broadcast to downstream drivers
+- * @dev: pointer to from where in a hierarchy message is broadcasted down
+- * @state: error state
+- * @error_mesg: message to print
+- * @cb: callback to be broadcasted
+- *
+- * Invoked during error recovery process. Once being invoked, the content
+- * of error severity will be broadcasted to all downstream drivers in a
+- * hierarchy in question.
+- */
+-static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
+-	enum pci_channel_state state,
+-	char *error_mesg,
+-	int (*cb)(struct pci_dev *, void *))
+-{
+-	struct aer_broadcast_data result_data;
+-
+-	pci_printk(KERN_DEBUG, dev, "broadcast %s message\n", error_mesg);
+-	result_data.state = state;
+-	if (cb == report_error_detected)
+-		result_data.result = PCI_ERS_RESULT_CAN_RECOVER;
+-	else
+-		result_data.result = PCI_ERS_RESULT_RECOVERED;
+-
+-	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+-		/*
+-		 * If the error is reported by a bridge, we think this error
+-		 * is related to the downstream link of the bridge, so we
+-		 * do error recovery on all subordinates of the bridge instead
+-		 * of the bridge and clear the error status of the bridge.
+-		 */
+-		if (cb == report_error_detected)
+-			dev->error_state = state;
+-		pci_walk_bus(dev->subordinate, cb, &result_data);
+-		if (cb == report_resume) {
+-			pci_cleanup_aer_uncorrect_error_status(dev);
+-			dev->error_state = pci_channel_io_normal;
+-		}
+-	} else {
+-		/*
+-		 * If the error is reported by an end point, we think this
+-		 * error is related to the upstream link of the end point.
+-		 */
+-		if (state == pci_channel_io_normal)
+-			/*
+-			 * the error is non fatal so the bus is ok, just invoke
+-			 * the callback for the function that logged the error.
+-			 */
+-			cb(dev, &result_data);
+-		else
+-			pci_walk_bus(dev->bus, cb, &result_data);
+-	}
+-
+-	return result_data.result;
+-}
+-
+-/**
+- * default_reset_link - default reset function
+- * @dev: pointer to pci_dev data structure
+- *
+- * Invoked when performing link reset on a Downstream Port or a
+- * Root Port with no aer driver.
+- */
+-static pci_ers_result_t default_reset_link(struct pci_dev *dev)
+-{
+-	pci_reset_bridge_secondary_bus(dev);
+-	pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
+-	return PCI_ERS_RESULT_RECOVERED;
+-}
+-
+ static int find_aer_service_iter(struct device *device, void *data)
+ {
+ 	struct pcie_port_service_driver *service_driver, **drv;
+@@ -432,7 +248,7 @@ static int find_aer_service_iter(struct device *device, void *data)
+ 	return 0;
+ }
+ 
+-static struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
++struct pcie_port_service_driver *pci_find_aer_service(struct pci_dev *dev)
+ {
+ 	struct pcie_port_service_driver *drv = NULL;
+ 
+@@ -440,107 +256,7 @@ static struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+ 
+ 	return drv;
+ }
+-
+-static pci_ers_result_t reset_link(struct pci_dev *dev)
+-{
+-	struct pci_dev *udev;
+-	pci_ers_result_t status;
+-	struct pcie_port_service_driver *driver;
+-
+-	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+-		/* Reset this port for all subordinates */
+-		udev = dev;
+-	} else {
+-		/* Reset the upstream component (likely downstream port) */
+-		udev = dev->bus->self;
+-	}
+-
+-	/* Use the aer driver of the component firstly */
+-	driver = find_aer_service(udev);
+-
+-	if (driver && driver->reset_link) {
+-		status = driver->reset_link(udev);
+-	} else if (udev->has_secondary_link) {
+-		status = default_reset_link(udev);
+-	} else {
+-		pci_printk(KERN_DEBUG, dev, "no link-reset support at upstream device %s\n",
+-			pci_name(udev));
+-		return PCI_ERS_RESULT_DISCONNECT;
+-	}
+-
+-	if (status != PCI_ERS_RESULT_RECOVERED) {
+-		pci_printk(KERN_DEBUG, dev, "link reset at upstream device %s failed\n",
+-			pci_name(udev));
+-		return PCI_ERS_RESULT_DISCONNECT;
+-	}
+-
+-	return status;
+-}
+-
+-/**
+- * pcie_do_recovery - handle nonfatal/fatal error recovery process
+- * @dev: pointer to a pci_dev data structure of agent detecting an error
+- * @severity: error severity type
+- *
+- * Invoked when an error is nonfatal/fatal. Once being invoked, broadcast
+- * error detected message to all downstream drivers within a hierarchy in
+- * question and return the returned code.
+- */
+-static void pcie_do_recovery(struct pci_dev *dev, int severity)
+-{
+-	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
+-	enum pci_channel_state state;
+-
+-	if (severity == AER_FATAL)
+-		state = pci_channel_io_frozen;
+-	else
+-		state = pci_channel_io_normal;
+-
+-	status = broadcast_error_message(dev,
+-			state,
+-			"error_detected",
+-			report_error_detected);
+-
+-	if (severity == AER_FATAL) {
+-		result = reset_link(dev);
+-		if (result != PCI_ERS_RESULT_RECOVERED)
+-			goto failed;
+-	}
+-
+-	if (status == PCI_ERS_RESULT_CAN_RECOVER)
+-		status = broadcast_error_message(dev,
+-				state,
+-				"mmio_enabled",
+-				report_mmio_enabled);
+-
+-	if (status == PCI_ERS_RESULT_NEED_RESET) {
+-		/*
+-		 * TODO: Should call platform-specific
+-		 * functions to reset slot before calling
+-		 * drivers' slot_reset callbacks?
+-		 */
+-		status = broadcast_error_message(dev,
+-				state,
+-				"slot_reset",
+-				report_slot_reset);
+-	}
+-
+-	if (status != PCI_ERS_RESULT_RECOVERED)
+-		goto failed;
+-
+-	broadcast_error_message(dev,
+-				state,
+-				"resume",
+-				report_resume);
+-
+-	pci_info(dev, "AER: Device recovery successful\n");
+-	return;
+-
+-failed:
+-	pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
+-	/* TODO: Should kernel panic here? */
+-	pci_info(dev, "AER: Device recovery failed\n");
+-}
++EXPORT_SYMBOL_GPL(pci_find_aer_service);
+ 
+ /**
+  * handle_error_source - handle logging error into an event log
+diff --git a/drivers/pci/pcie/pcie-err.c b/drivers/pci/pcie/pcie-err.c
+new file mode 100644
+index 0000000..fcd5add
+--- /dev/null
++++ b/drivers/pci/pcie/pcie-err.c
+@@ -0,0 +1,334 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This file implements the error recovery as a core part of PCIe error reporting.
++ * When a PCIe error is delivered, an error message will be collected and printed
++ * to console, then, an error recovery procedure will be executed by following
++ * the PCI error recovery rules.
++ *
++ * Copyright (C) 2006 Intel Corp.
++ *	Tom Long Nguyen (tom.l.nguyen@intel.com)
++ *	Zhang Yanmin (yanmin.zhang@intel.com)
++ *
++ */
++
++#include <linux/pci.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/aer.h>
++#include <linux/pcieport_if.h>
++#include "portdrv.h"
++
++struct aer_broadcast_data {
++	enum pci_channel_state state;
++	enum pci_ers_result result;
++};
++
++static pci_ers_result_t merge_result(enum pci_ers_result orig,
++				  enum pci_ers_result new)
++{
++	if (new == PCI_ERS_RESULT_NO_AER_DRIVER)
++		return PCI_ERS_RESULT_NO_AER_DRIVER;
++
++	if (new == PCI_ERS_RESULT_NONE)
++		return orig;
++
++	switch (orig) {
++	case PCI_ERS_RESULT_CAN_RECOVER:
++	case PCI_ERS_RESULT_RECOVERED:
++		orig = new;
++		break;
++	case PCI_ERS_RESULT_DISCONNECT:
++		if (new == PCI_ERS_RESULT_NEED_RESET)
++			orig = PCI_ERS_RESULT_NEED_RESET;
++		break;
++	default:
++		break;
++	}
++
++	return orig;
++}
++
++static int report_mmio_enabled(struct pci_dev *dev, void *data)
++{
++	pci_ers_result_t vote;
++	const struct pci_error_handlers *err_handler;
++	struct aer_broadcast_data *result_data;
++
++	result_data = (struct aer_broadcast_data *) data;
++
++	device_lock(&dev->dev);
++	if (!dev->driver ||
++		!dev->driver->err_handler ||
++		!dev->driver->err_handler->mmio_enabled)
++		goto out;
++
++	err_handler = dev->driver->err_handler;
++	vote = err_handler->mmio_enabled(dev);
++	result_data->result = merge_result(result_data->result, vote);
++out:
++	device_unlock(&dev->dev);
++	return 0;
++}
++
++static int report_slot_reset(struct pci_dev *dev, void *data)
++{
++	pci_ers_result_t vote;
++	const struct pci_error_handlers *err_handler;
++	struct aer_broadcast_data *result_data;
++
++	result_data = (struct aer_broadcast_data *) data;
++
++	device_lock(&dev->dev);
++	if (!dev->driver ||
++		!dev->driver->err_handler ||
++		!dev->driver->err_handler->slot_reset)
++		goto out;
++
++	err_handler = dev->driver->err_handler;
++	vote = err_handler->slot_reset(dev);
++	result_data->result = merge_result(result_data->result, vote);
++out:
++	device_unlock(&dev->dev);
++	return 0;
++}
++
++static int report_resume(struct pci_dev *dev, void *data)
++{
++	const struct pci_error_handlers *err_handler;
++
++	device_lock(&dev->dev);
++	dev->error_state = pci_channel_io_normal;
++
++	if (!dev->driver ||
++		!dev->driver->err_handler ||
++		!dev->driver->err_handler->resume)
++		goto out;
++
++	err_handler = dev->driver->err_handler;
++	err_handler->resume(dev);
++out:
++	device_unlock(&dev->dev);
++	return 0;
++}
++
++static int report_error_detected(struct pci_dev *dev, void *data)
++{
++	pci_ers_result_t vote;
++	const struct pci_error_handlers *err_handler;
++	struct aer_broadcast_data *result_data;
++
++	result_data = (struct aer_broadcast_data *) data;
++
++	device_lock(&dev->dev);
++	dev->error_state = result_data->state;
++
++	if (!dev->driver ||
++		!dev->driver->err_handler ||
++		!dev->driver->err_handler->error_detected) {
++		if (result_data->state == pci_channel_io_frozen &&
++			dev->hdr_type != PCI_HEADER_TYPE_BRIDGE) {
++			/*
++			 * In case of fatal recovery, if one of down-
++			 * stream device has no driver. We might be
++			 * unable to recover because a later insmod
++			 * of a driver for this device is unaware of
++			 * its hw state.
++			 */
++			dev_printk(KERN_DEBUG, &dev->dev, "device has %s\n",
++				   dev->driver ?
++				   "no error-aware driver" : "no driver");
++		}
++
++		/*
++		 * If there's any device in the subtree that does not
++		 * have an error_detected callback, returning
++		 * PCI_ERS_RESULT_NO_AER_DRIVER prevents calling of
++		 * the subsequent mmio_enabled/slot_reset/resume
++		 * callbacks of "any" device in the subtree. All the
++		 * devices in the subtree are left in the error state
++		 * without recovery.
++		 */
++
++		if (dev->hdr_type != PCI_HEADER_TYPE_BRIDGE)
++			vote = PCI_ERS_RESULT_NO_AER_DRIVER;
++		else
++			vote = PCI_ERS_RESULT_NONE;
++	} else {
++		err_handler = dev->driver->err_handler;
++		vote = err_handler->error_detected(dev, result_data->state);
++	}
++
++	result_data->result = merge_result(result_data->result, vote);
++	device_unlock(&dev->dev);
++	return 0;
++}
++
++/**
++ * default_reset_link - default reset function
++ * @dev: pointer to pci_dev data structure
++ *
++ * Invoked when performing link reset on a Downstream Port or a
++ * Root Port with no aer driver.
++ */
++static pci_ers_result_t default_reset_link(struct pci_dev *dev)
++{
++	pci_reset_bridge_secondary_bus(dev);
++	dev_printk(KERN_DEBUG, &dev->dev, "downstream link has been reset\n");
++	return PCI_ERS_RESULT_RECOVERED;
++}
++
++static pci_ers_result_t reset_link(struct pci_dev *dev)
++{
++	struct pci_dev *udev;
++	pci_ers_result_t status;
++	struct pcie_port_service_driver *driver = NULL;
++
++	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		/* Reset this port for all subordinates */
++		udev = dev;
++	} else {
++		/* Reset the upstream component (likely downstream port) */
++		udev = dev->bus->self;
++	}
++
++#if IS_ENABLED(CONFIG_PCIEAER)
++	/* Use the aer driver of the component firstly */
++	driver = pci_find_aer_service(udev);
++#endif
++
++	if (driver && driver->reset_link) {
++		status = driver->reset_link(udev);
++	} else if (udev->has_secondary_link) {
++		status = default_reset_link(udev);
++	} else {
++		dev_printk(KERN_DEBUG, &dev->dev,
++			"no link-reset support at upstream device %s\n",
++			pci_name(udev));
++		return PCI_ERS_RESULT_DISCONNECT;
++	}
++
++	if (status != PCI_ERS_RESULT_RECOVERED) {
++		dev_printk(KERN_DEBUG, &dev->dev,
++			"link reset at upstream device %s failed\n",
++			pci_name(udev));
++		return PCI_ERS_RESULT_DISCONNECT;
++	}
++
++	return status;
++}
++
++/**
++ * broadcast_error_message - handle message broadcast to downstream drivers
++ * @dev: pointer to where in a hierarchy message is broadcasted down
++ * @state: error state
++ * @error_mesg: message to print
++ * @cb: callback to be broadcast
++ *
++ * Invoked during error recovery process. Once being invoked, the content
++ * of error severity will be broadcast to all downstream drivers in a
++ * hierarchy in question.
++ */
++static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
++	enum pci_channel_state state,
++	char *error_mesg,
++	int (*cb)(struct pci_dev *, void *))
++{
++	struct aer_broadcast_data result_data;
++
++	dev_printk(KERN_DEBUG, &dev->dev, "broadcast %s message\n", error_mesg);
++	result_data.state = state;
++	if (cb == report_error_detected)
++		result_data.result = PCI_ERS_RESULT_CAN_RECOVER;
++	else
++		result_data.result = PCI_ERS_RESULT_RECOVERED;
++
++	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		/*
++		 * If the error is reported by a bridge, we think this error
++		 * is related to the downstream link of the bridge, so we
++		 * do error recovery on all subordinates of the bridge instead
++		 * of the bridge and clear the error status of the bridge.
++		 */
++		if (cb == report_error_detected)
++			dev->error_state = state;
++		pci_walk_bus(dev->subordinate, cb, &result_data);
++		if (cb == report_resume) {
++			pci_cleanup_aer_uncorrect_error_status(dev);
++			dev->error_state = pci_channel_io_normal;
++		}
++	} else {
++		/*
++		 * If the error is reported by an end point, we think this
++		 * error is related to the upstream link of the end point.
++		 */
++		pci_walk_bus(dev->bus, cb, &result_data);
++	}
++
++	return result_data.result;
++}
++
++/**
++ * pcie_do_recovery - handle nonfatal/fatal error recovery process
++ * @dev: pointer to a pci_dev data structure of agent detecting an error
++ * @severity: error severity type
++ *
++ * Invoked when an error is nonfatal/fatal. Once being invoked, broadcast
++ * error detected message to all downstream drivers within a hierarchy in
++ * question and return the returned code.
++ */
++void pcie_do_recovery(struct pci_dev *dev, int severity)
++{
++	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
++	enum pci_channel_state state;
++
++	if (severity == AER_FATAL)
++		state = pci_channel_io_frozen;
++	else
++		state = pci_channel_io_normal;
++
++	status = broadcast_error_message(dev,
++			state,
++			"error_detected",
++			report_error_detected);
++
++	if (severity == AER_FATAL) {
++		result = reset_link(dev);
++		if (result != PCI_ERS_RESULT_RECOVERED)
++			goto failed;
++	}
++
++	if (status == PCI_ERS_RESULT_CAN_RECOVER)
++		status = broadcast_error_message(dev,
++				state,
++				"mmio_enabled",
++				report_mmio_enabled);
++
++	if (status == PCI_ERS_RESULT_NEED_RESET) {
++		/*
++		 * TODO: Should call platform-specific
++		 * functions to reset slot before calling
++		 * drivers' slot_reset callbacks?
++		 */
++		status = broadcast_error_message(dev,
++				state,
++				"slot_reset",
++				report_slot_reset);
++	}
++
++	if (status != PCI_ERS_RESULT_RECOVERED)
++		goto failed;
++
++	broadcast_error_message(dev,
++				state,
++				"resume",
++				report_resume);
++
++	dev_info(&dev->dev, "Device recovery successful\n");
++	return;
++
++failed:
++	/* TODO: Should kernel panic here? */
++	dev_info(&dev->dev, "Device recovery failed\n");
++}
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index a854bc5..4f1992d 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -79,4 +79,5 @@ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask)
+ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask){}
+ #endif /* !CONFIG_ACPI */
+ 
++struct pcie_port_service_driver *pci_find_aer_service(struct pci_dev *dev);
+ #endif /* _PORTDRV_H_ */
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
