@@ -1,77 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751376AbeBWBtg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:49:36 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55508 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeBWBte (ORCPT
+        id S1751385AbeBWB6v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:58:51 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52225 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeBWB6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:49:34 -0500
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>
-Cc: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>
-Subject: Re: [PATCH 1/8] dt-bindings: scsi: hisi_sas: add an property of signal attenuation
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
-        <1519067611-206638-2-git-send-email-john.garry@huawei.com>
-Date: Thu, 22 Feb 2018 20:49:17 -0500
-In-Reply-To: <1519067611-206638-2-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Tue, 20 Feb 2018 03:13:24 +0800")
-Message-ID: <yq17er4bhlu.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 22 Feb 2018 20:58:50 -0500
+X-Google-Smtp-Source: AG47ELvInoRc/7q3v6TLuoBX3rpJTKHKSaKUbWtPT8eIBRh4NdwPjQfpFA2NKbDXdLhRMMkE+IbBgemIDcDaTGK3GEA=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=601
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802230018
+In-Reply-To: <20180223012057.GO2855@linux.vnet.ibm.com>
+References: <1519282357-17983-1-git-send-email-zhouzhouyi@gmail.com>
+ <20180222165803.GF2855@linux.vnet.ibm.com> <CAABZP2wt0QLuOFndOFTgRACxZw0jqNNeumE91KpjiFQieg14dA@mail.gmail.com>
+ <20180223012057.GO2855@linux.vnet.ibm.com>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Date: Fri, 23 Feb 2018 09:58:49 +0800
+Message-ID: <CAABZP2xp6uCCv58PzLcOWyWWZKEx4G0-k29UgjKkdKeJ8K5kjA@mail.gmail.com>
+Subject: Re: [PATCH] srcu: remove never used variable
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks Paul's encouragement, I will keep studying SRCU code.
 
-> From: Xiaofei Tan <tanxiaofei@huawei.com>
+On Fri, Feb 23, 2018 at 9:20 AM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Fri, Feb 23, 2018 at 09:04:05AM +0800, Zhouyi Zhou wrote:
+>> Thanks Paul for reviewing
 >
-> For some new boards with hip07 chipset we are required to
-> set PHY config registers differently. The hw property which
-> determines how to set these registers is in the PHY signal
-> attenuation readings.
+> And thank you for your interest in SRCU!  I am pretty sure that other
+> bugs still remain.  ;-)
 >
-> This patch add an devicetree property, signal-attenuation, which
-> is used to describe the signal attenuation of an board.
+>                                                         Thanx, Paul
 >
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->  Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
+>> Cheers
+>> Zhouyi
+>>
+>> On Friday, February 23, 2018, Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> wrote:
+>>
+>> > On Thu, Feb 22, 2018 at 06:52:37AM +0000, zhouzhouyi@gmail.com wrote:
+>> > > From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+>> > >
+>> > > In function srcu_gp_end, the variable idxnext is never used after assign,
+>> > > remove it and its assign statement.
+>> > >
+>> > > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+>> >
+>> > Good catch, but Byungchul Park beat you to it.  Please see commit
+>> > a72da917f186 ("srcu: Remove dead code in srcu_gp_end()") in -rcu.
+>> >
+>> >                                                         Thanx, Paul
+>> >
+>> > > ---
+>> > >  kernel/rcu/srcutree.c | 2 --
+>> > >  1 file changed, 2 deletions(-)
+>> > >
+>> > > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+>> > > index d5cea81..1241715 100644
+>> > > --- a/kernel/rcu/srcutree.c
+>> > > +++ b/kernel/rcu/srcutree.c
+>> > > @@ -531,7 +531,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
+>> > >       unsigned long flags;
+>> > >       unsigned long gpseq;
+>> > >       int idx;
+>> > > -     int idxnext;
+>> > >       unsigned long mask;
+>> > >       struct srcu_data *sdp;
+>> > >       struct srcu_node *snp;
+>> > > @@ -555,7 +554,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
+>> > >
+>> > >       /* Initiate callback invocation as needed. */
+>> > >       idx = rcu_seq_ctr(gpseq) % ARRAY_SIZE(snp->srcu_have_cbs);
+>> > > -     idxnext = (idx + 1) % ARRAY_SIZE(snp->srcu_have_cbs);
+>> > >       rcu_for_each_node_breadth_first(sp, snp) {
+>> > >               spin_lock_irq_rcu_node(snp);
+>> > >               cbs = false;
+>> > > --
+>> > > 2.1.4
+>> > >
+>> >
+>> >
 >
-> diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> index df3bef7..bd32ecd 100644
-> --- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> +++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> @@ -53,6 +53,13 @@ Main node required properties:
->  Optional main node properties:
->   - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
->  			    "am-max-transmissions" limitation.
-> + - signal-attenuation : array of 3 32-bit values, containing de-emphasis,
-> +		preshoot, and boost attenuation readings for the board. They
-> +		are used to describe the signal attenuation of the board. These
-> +		values' range is 7600 to 12400, and used to represent -24dB to
-> +		24dB.
-> +		The formula is "y = (x-10000)/10000". For example, 10478
-> +		means 4.78dB.
->  
->  Example:
->  	sas0: sas@c1000000 {
-
-Rob/Mark: Please review!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
