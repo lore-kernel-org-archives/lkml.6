@@ -1,184 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeBWNqT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:46:19 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:48885 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751420AbeBWNid (ORCPT
+        id S1751413AbeBWNrL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:47:11 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:28496 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751317AbeBWNrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:38:33 -0500
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: maxime.ripard@bootlin.com, linux@armlinux.org.uk, wens@csie.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, clabbe.montjoie@gmail.com,
-        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com,
-        quentin.schulz@bootlin.com
-Subject: [PATCH v4 01/10] ARM: sun9i: smp: Add sun9i dt parsing function
-Date: Fri, 23 Feb 2018 14:37:33 +0100
-Message-Id: <20180223133742.26044-2-mylene.josserand@bootlin.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180223133742.26044-1-mylene.josserand@bootlin.com>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+        Fri, 23 Feb 2018 08:47:08 -0500
+Subject: Re: [PATCH] dt-bindings: iio: adc: sd-modulator: fix io-channel-cells
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>,
+        <robh+dt@kernel.org>
+CC: <linux@armlinux.org.uk>, <mark.rutland@arm.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@linaro.org>
+References: <1519384041-23782-1-git-send-email-fabrice.gasnier@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <c221e43d-c7fb-c33b-6fd1-bbf8aca6fa49@st.com>
+Date: Fri, 23 Feb 2018 14:46:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1519384041-23782-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-23_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prepare the support for sun8i-a83t, create a new function
-that handles all the resources needed on sun9i-a80 (because
-it will be different from sun8i-a83t).
+Hello,
 
-All the parsing of device tree is moved into this new function:
-sun9i_dt_parsing. Create also a function to release the resources
-retrieved during the dt parsing in case there is an error in init
-function.
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/mach-sunxi/mc_smp.c | 99 ++++++++++++++++++++++++++------------------
- 1 file changed, 58 insertions(+), 41 deletions(-)
+Regards,
+Arnaud
 
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index 11e46c6efb90..650a2ad4398f 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -684,35 +684,22 @@ static int __init sunxi_mc_smp_lookback(void)
- 	return ret;
- }
- 
--static int __init sunxi_mc_smp_init(void)
-+static int sun9i_dt_parsing(struct resource res)
- {
--	struct device_node *cpucfg_node, *sram_node, *node;
--	struct resource res;
-+	struct device_node *prcm_node, *cpucfg_node, *sram_node;
- 	int ret;
- 
--	if (!of_machine_is_compatible("allwinner,sun9i-a80"))
--		return -ENODEV;
--
--	if (!sunxi_mc_smp_cpu_table_init())
--		return -EINVAL;
--
--	if (!cci_probed()) {
--		pr_err("%s: CCI-400 not available\n", __func__);
--		return -ENODEV;
--	}
--
--	node = of_find_compatible_node(NULL, NULL, "allwinner,sun9i-a80-prcm");
--	if (!node) {
--		pr_err("%s: PRCM not available\n", __func__);
-+	prcm_node = of_find_compatible_node(NULL, NULL,
-+				       "allwinner,sun9i-a80-prcm");
-+	if (!prcm_node)
- 		return -ENODEV;
--	}
- 
- 	/*
- 	 * Unfortunately we can not request the I/O region for the PRCM.
- 	 * It is shared with the PRCM clock.
- 	 */
--	prcm_base = of_iomap(node, 0);
--	of_node_put(node);
-+	prcm_base = of_iomap(prcm_node, 0);
-+	of_node_put(prcm_node);
- 	if (!prcm_base) {
- 		pr_err("%s: failed to map PRCM registers\n", __func__);
- 		return -ENOMEM;
-@@ -748,33 +735,12 @@ static int __init sunxi_mc_smp_init(void)
- 		goto err_put_sram_node;
- 	}
- 
--	/* Configure CCI-400 for boot cluster */
--	ret = sunxi_mc_smp_lookback();
--	if (ret) {
--		pr_err("%s: failed to configure boot cluster: %d\n",
--		       __func__, ret);
--		goto err_unmap_release_secure_sram;
--	}
--
- 	/* We don't need the CPUCFG and SRAM device nodes anymore */
- 	of_node_put(cpucfg_node);
- 	of_node_put(sram_node);
- 
--	/* Set the hardware entry point address */
--	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
--	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
--
--	/* Actually enable multi cluster SMP */
--	smp_set_ops(&sunxi_mc_smp_smp_ops);
--
--	pr_info("sunxi multi cluster SMP support installed\n");
--
- 	return 0;
- 
--err_unmap_release_secure_sram:
--	iounmap(sram_b_smp_base);
--	of_address_to_resource(sram_node, 0, &res);
--	release_mem_region(res.start, resource_size(&res));
- err_put_sram_node:
- 	of_node_put(sram_node);
- err_unmap_release_cpucfg:
-@@ -785,6 +751,57 @@ static int __init sunxi_mc_smp_init(void)
- 	of_node_put(cpucfg_node);
- err_unmap_prcm:
- 	iounmap(prcm_base);
-+
-+	return ret;
-+}
-+
-+static void sun9i_iounmap(void)
-+{
-+	iounmap(sram_b_smp_base);
-+	iounmap(cpucfg_base);
-+	iounmap(prcm_base);
-+}
-+
-+static int __init sunxi_mc_smp_init(void)
-+{
-+	struct resource res;
-+	int ret;
-+
-+	if (!of_machine_is_compatible("allwinner,sun9i-a80"))
-+		return -ENODEV;
-+
-+	if (!sunxi_mc_smp_cpu_table_init())
-+		return -EINVAL;
-+
-+	if (!cci_probed()) {
-+		pr_err("%s: CCI-400 not available\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	ret = sun9i_dt_parsing(res);
-+	if (ret) {
-+		pr_err("%s: failed to parse DT: %d\n", __func__, ret);
-+		return ret;
-+	}
-+
-+	/* Configure CCI-400 for boot cluster */
-+	ret = sunxi_mc_smp_lookback();
-+	if (ret) {
-+		pr_err("%s: failed to configure boot cluster: %d\n",
-+		       __func__, ret);
-+		sun9i_iounmap();
-+		return ret;
-+	}
-+
-+	/* Set the hardware entry point address */
-+	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
-+	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
-+
-+	/* Actually enable multi cluster SMP */
-+	smp_set_ops(&sunxi_mc_smp_smp_ops);
-+
-+	pr_info("sunxi multi cluster SMP support installed\n");
-+
- 	return ret;
- }
- 
--- 
-2.11.0
+On 02/23/2018 12:07 PM, Fabrice Gasnier wrote:
+> io-channel-cells should be <0> since sigma delta modulator exports only
+> one channel, as described in ../iio/iio-bindings.txt "IIO providers"
+> section. Only the phandle is necessary for IIO consumers in this case.
+> 
+> Fixes: af11143757b7 ("IIO: Add DT bindings for sigma delta adc modulator")
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
+> index e9ebb8a..ba24ca7 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.txt
+> @@ -3,11 +3,11 @@ Device-Tree bindings for sigma delta modulator
+>  Required properties:
+>  - compatible: should be "ads1201", "sd-modulator". "sd-modulator" can be use
+>  	as a generic SD modulator if modulator not specified in compatible list.
+> -- #io-channel-cells = <1>: See the IIO bindings section "IIO consumers".
+> +- #io-channel-cells = <0>: See the IIO bindings section "IIO consumers".
+>  
+>  Example node:
+>  
+>  	ads1202: adc@0 {
+>  		compatible = "sd-modulator";
+> -		#io-channel-cells = <1>;
+> +		#io-channel-cells = <0>;
+>  	};
+> 
