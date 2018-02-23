@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvDPCydkC1iz87jUC4Yn9RCLbVlRAZdCeZpx84KcM7CjB5xr5GbtOzpGTFCHKEEr66+W8jF
-ARC-Seal: i=1; a=rsa-sha256; t=1519412239; cv=none;
+X-Google-Smtp-Source: AG47ELsAG1UT2RDJrlgvtlWN5r4dP/V7p1IXhMCNFlQ2cNgMu1zV3dRRSQH+8WF7uuhJL8m01nWQ
+ARC-Seal: i=1; a=rsa-sha256; t=1519412238; cv=none;
         d=google.com; s=arc-20160816;
-        b=kVtQanGKfq689C3tI2oCKqxuxupkXJEl38DihRrjfIhSO3/GHATdXfHnkzc7Sekt0X
-         GinvwVS+x86RzMqBFXutFxjk21t4R5Rk1saOI9oLvklAlKI/2kgFBWbrDe/JR4xrFUXK
-         j3z+QR1W5LXl9lTdZzALcj1ewxCn6XuplVqHA1QMnlKWF2DSm8a3TgkxLu4cTYy+UucG
-         KPSVUNcxxcV6Pdw61eW/dx5xNcKpfGdivk+8WVJ2bAUDv37kIwb3XLntgQmeOenhhdw5
-         yz1QBOPSFJnt17IKjXLHK0f0zL0Elc5J5jjk6Uqv6QvX46Ywomhzkhxowp2JeL2WSU3B
-         xKIw==
+        b=HlG9A5iHZWuQmA0eTqL9r5vd5WYL665ALU+z6cApyYBm+xigrbPjTh/YGeNetZNWZE
+         q7bry1grMsBZYAvJVbqQcIFYmlTZ4udIBbpK8sIn/sTa0z0rfDn3JJuRZnek+gh3eyzj
+         Jhjs6H98gtvziuN4HJ7xbwmdZMxknSepqQYFaO7JuUkQaRuOmhVB8f3CdQspCTNn0tAF
+         U4CioubOBBgejeCKy2PcaHMrnUczM7acJ4WDfYIMJod/izkuD0xdssbTgs1dxRc4AyLq
+         7i4WJAJAPaH1srfB1ZDx13bWeUj5jcRhbFuL56/mu7LHIfzD9nP9k6ARL0HpdsSTNskR
+         QiOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=k1C4F/uPkBaKHTfnvTtBJ2z/GkCGxmrr5AkgJ8tjhto=;
-        b=RT3Mh7how96sOBcrums9dMmXbyhy1y1F31Zto/0RwGh0c/o0P/YJ3BZJmd9qfb0wK7
-         r4j2QcOdjNorDS/PxBzdbseFpyQZPLXxrLseeECPribfsG5xYVx2+rWZ+K3o3jD4dD3L
-         HkyzrUbgCNdX7wCB+7DVSrRhvtmoTB8f02DXTVmxzfRVqzmcqq2VaPNF7IIft9XnRxfV
-         ZhRijxXd8mstu4mbiSp/xz/tdp+hoP/aNNR7CRLnocLrfrWD1Rfqv/H2YqG/OTPkh9Xt
-         EX2E6AC5Vmm/Xg5+F97/S+EjMcRD4R3LP7mkvwtkOksXRxfjuAoOQu4dMruQhDOwr31r
-         pSMA==
+        bh=5/AlM9oj183c0CHmJ0h8cwAoOFMpZLLR4DYRKGqyOPs=;
+        b=mvie1ZxQERbSWUpp+xctcFKEJIsaNRA6+4ptmXAZLcOWFabfwq9RIgY6T3n0aWyguj
+         dGjGavKE24BOiXqjKpDC5OX432zR7gPlumF6cTxycU7rLUp+UR4SRe7SPRQfoxEHffO/
+         ssVn7hN8aKYxWR09yB5EfVAFe8k2hK2haCwq8TqRYz15VJWbB15QSCqBqmIQHbX7Ju+X
+         OU1G0DPW+L+CwM2VvKC4QgoAwjNQn9/pNuQs0m7ITgcvaagQEvbVSfTLKuv+MI4ZjtAr
+         /ICOXs9LdXLpZ44vczT0L5DBSWzkHF7eluhCT9I7wwW2BEuPbInWvz0cEHSzuPHusbPq
+         aEiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,13 +27,13 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Dmitry Vyukov <dvyukov@google.com>,
-	Shankara Pailoor <sp3485@columbia.edu>,
-	syzbot <syzkaller@googlegroups.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 12/45] kcov: detect double association with a single task
-Date: Fri, 23 Feb 2018 19:28:51 +0100
-Message-Id: <20180223170717.269717088@linuxfoundation.org>
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>
+Subject: [PATCH 4.15 11/45] KVM: x86: fix escape of guest dr6 to the host
+Date: Fri, 23 Feb 2018 19:28:50 +0100
+Message-Id: <20180223170717.106961823@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170715.197760019@linuxfoundation.org>
 References: <20180223170715.197760019@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218299600984057?=
-X-GMAIL-MSGID: =?utf-8?q?1593219208700456228?=
+X-GMAIL-THRID: =?utf-8?q?1593217684161240424?=
+X-GMAIL-MSGID: =?utf-8?q?1593219207459718220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,49 +52,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
-commit a77660d231f8b3d84fd23ed482e0964f7aa546d6 upstream.
+commit efdab992813fb2ed825745625b83c05032e9cda2 upstream.
 
-Currently KCOV_ENABLE does not check if the current task is already
-associated with another kcov descriptor.  As the result it is possible
-to associate a single task with more than one kcov descriptor, which
-later leads to a memory leak of the old descriptor.  This relation is
-really meant to be one-to-one (task has only one back link).
+syzkaller reported:
 
-Extend validation to detect such misuse.
+   WARNING: CPU: 0 PID: 12927 at arch/x86/kernel/traps.c:780 do_debug+0x222/0x250
+   CPU: 0 PID: 12927 Comm: syz-executor Tainted: G           OE    4.15.0-rc2+ #16
+   RIP: 0010:do_debug+0x222/0x250
+   Call Trace:
+    <#DB>
+    debug+0x3e/0x70
+   RIP: 0010:copy_user_enhanced_fast_string+0x10/0x20
+    </#DB>
+    _copy_from_user+0x5b/0x90
+    SyS_timer_create+0x33/0x80
+    entry_SYSCALL_64_fastpath+0x23/0x9a
 
-Link: http://lkml.kernel.org/r/20180122082520.15716-1-dvyukov@google.com
-Fixes: 5c9a8750a640 ("kernel: add kcov code coverage")
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Shankara Pailoor <sp3485@columbia.edu>
+The testcase sets a watchpoint (with perf_event_open) on a buffer that is
+passed to timer_create() as the struct sigevent argument.  In timer_create(),
+copy_from_user()'s rep movsb triggers the BP.  The testcase also sets
+the debug registers for the guest.
+
+However, KVM only restores host debug registers when the host has active
+watchpoints, which triggers a race condition when running the testcase with
+multiple threads.  The guest's DR6.BS bit can escape to the host before
+another thread invokes timer_create(), and do_debug() complains.
+
+The fix is to respect do_debug()'s dr6 invariant when leaving KVM.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kcov.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -358,7 +358,8 @@ static int kcov_ioctl_locked(struct kcov
- 		 */
- 		if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
- 			return -EINVAL;
--		if (kcov->t != NULL)
-+		t = current;
-+		if (kcov->t != NULL || t->kcov != NULL)
- 			return -EBUSY;
- 		if (arg == KCOV_TRACE_PC)
- 			kcov->mode = KCOV_MODE_TRACE_PC;
-@@ -370,7 +371,6 @@ static int kcov_ioctl_locked(struct kcov
- #endif
- 		else
- 			return -EINVAL;
--		t = current;
- 		/* Cache in task struct for performance. */
- 		t->kcov_size = kcov->size;
- 		t->kcov_area = kcov->area;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2939,6 +2939,12 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *
+ 	pagefault_enable();
+ 	kvm_x86_ops->vcpu_put(vcpu);
+ 	vcpu->arch.last_host_tsc = rdtsc();
++	/*
++	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
++	 * on every vmexit, but if not, we might have a stale dr6 from the
++	 * guest. do_debug expects dr6 to be cleared after it runs, do the same.
++	 */
++	set_debugreg(0, 6);
+ }
+ 
+ static int kvm_vcpu_ioctl_get_lapic(struct kvm_vcpu *vcpu,
