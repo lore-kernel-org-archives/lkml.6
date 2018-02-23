@@ -1,38 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2242tOT12X2ACBKFTzSiOiSe2dFIStKgJCg17upTX2vU137lMmwJhuDQWSnBdlepBQQPbtyd
-ARC-Seal: i=1; a=rsa-sha256; t=1519410741; cv=none;
-        d=google.com; s=arc-20160816;
-        b=zumZvWg82VSPQ46mywfveLkwsCM4+cS23qD06Tz3wHLTdTg8Gzg/hnVSp/K42x56e4
-         ta4KO7JhjvsR2FAldnAYUWrH1L0HUrXjRkplKCLkoc90GSdSN10BVc/pvGAUajvavMAf
-         alCijJK3Ql4oP130KhN9oHFNh55fL7RoVJST0elINo7HU8VP3M3wQJZQK+R7CX8gp8MD
-         GaElsksafALyX/ipT/I1Y3aIodrviOc28ElBj3KZsRLPM02sKzL/54YsUq9xEhs52htw
-         01a8IHmJcWZbtNy7wlSeCm0xCETwbuYqgMZejIdPGZMbxT///rfnz+YMdf3GTcdMXrZJ
-         N+1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=8CDhmKW1Qbevhs/TjEWpiv9atP9kzbZ4b3TBtDsozaw=;
-        b=FHd2M98beVHT/JII6muVgPSjhLcSXw4oFrAhfNN3HGBAxFvVDCkTDUvDEqNetLJPuA
-         8XJ+me8v2P7hNNhy8q705ClS3CuxjLkZJiYHt6Yfa1ZtRnDBCVSKDZG0xUH/Y1K7T23I
-         nf2dUebiBKZj5VxKGMU3RrGoxagsBZue3QRqI30hZFgT1d83LgAgJqhBdVL5uEwlWdqx
-         L4O4B3xS+Y8bSqzktTH/yoPdDp8U2gN0zqbOC5NE8DUQQ7l8s/4oI3fcn9CjYcQ8MbmI
-         VyX8t4GSOThvjT/WnPs4BJUyocYa+tVcRPz+0oRCn05gdWQjrTvk5DiML8AgUV2m0FTZ
-         34cQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3586829-1519410736-2-15101977392542827802
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519410735; b=Ps1NNS1U1tJxg7Sj99rKofmztb0K+jxrhXBWGv6XtIasOej
+    bWv1dKp8Ga7XbcEtsbhchipT8DE4vJHz6H61R55zchSgljM/LxEHlGxVfKRjUgWz
+    yI3Q4U50+qWH0mjSftmuhzI11ZGeJnn+ThpQDEoesoroao+J7sOsHG95XamT7vV1
+    WcVqi4/PpNZ3svbvfkNvpj9wpAQdWh1N1EWwcUCCW9SSfytVawyB8UV8yOOc/35j
+    UuVKe65KDD2AeAz96gDTHDCRoEXoIur2p1gdHQQ9iV2nvzSkJxlfUIKe7ByGIjY7
+    fq8GZ2IW2f0Qr0M6xA1qMdb/5apnTIafuKhI0Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519410735; bh=LHtES75ODUMuWQp0zPTGSrNCiY
+    Ex5/ErfkPcd0Ao0Wg=; b=qP/4BnOic3S8T8W64rDuF+i80gd71lgiXtIjqQRXkx
+    6iccPVqwgW/oTHtS31ova6Jo50/REqLmU7bZWqhaafSHVmlH+jc637OA/9luGF9I
+    reQPfMvKwsDL5cYzGJgoRa5KOgT2L6Tm+giI+ZhGvNoFFcj9yEJRWf3gTJmzMe15
+    gj12HXNcHQJFR0+Ws0nVYU+PHJONE98lmgVJuLV78UXfGFwzQz0KTZ90J7urIhco
+    qzRPyzQ0cD4AhK/iA/NePbo8bBUPfOkYInpFRJpBQOrMC9kv2HoIMrFEox+j38Th
+    eKCk/V05cltXjWfyyeiwaUCCxAIWiwGnxZdWvJUNJ14g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752766AbeBWScM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:32:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35904 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752716AbeBWScI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:32:08 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 3.18 57/58] KVM: async_pf: Fix #DF due to inject "Page not Present" and "Page Ready" exceptions simultaneously
-Date: Fri, 23 Feb 2018 19:26:56 +0100
-Message-Id: <20180223170215.665624911@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, bp@suse.de,
+        linux-efi@vger.kernel.org, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 53/58] mm/early_ioremap: Fix boot hang with earlyprintk=efi,keep
+Date: Fri, 23 Feb 2018 19:26:52 +0100
+Message-Id: <20180223170215.061838996@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -40,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217637115498580?=
-X-GMAIL-MSGID: =?utf-8?q?1593217637115498580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,97 +83,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Dave Young <dyoung@redhat.com>
 
-commit 9a6e7c39810e4a8bc7fc95056cefb40583fe07ef upstream.
 
-qemu-system-x86-8600  [004] d..1  7205.687530: kvm_entry: vcpu 2
-qemu-system-x86-8600  [004] ....  7205.687532: kvm_exit: reason EXCEPTION_NMI rip 0xffffffffa921297d info ffffeb2c0e44e018 80000b0e
-qemu-system-x86-8600  [004] ....  7205.687532: kvm_page_fault: address ffffeb2c0e44e018 error_code 0
-qemu-system-x86-8600  [004] ....  7205.687620: kvm_try_async_get_page: gva = 0xffffeb2c0e44e018, gfn = 0x427e4e
-qemu-system-x86-8600  [004] .N..  7205.687628: kvm_async_pf_not_present: token 0x8b002 gva 0xffffeb2c0e44e018
-    kworker/4:2-7814  [004] ....  7205.687655: kvm_async_pf_completed: gva 0xffffeb2c0e44e018 address 0x7fcc30c4e000
-qemu-system-x86-8600  [004] ....  7205.687703: kvm_async_pf_ready: token 0x8b002 gva 0xffffeb2c0e44e018
-qemu-system-x86-8600  [004] d..1  7205.687711: kvm_entry: vcpu 2
+[ Upstream commit 7f6f60a1ba52538c16f26930bfbcfe193d9d746a ]
 
-After running some memory intensive workload in guest, I catch the kworker
-which completes the GUP too quickly, and queues an "Page Ready" #PF exception
-after the "Page not Present" exception before the next vmentry as the above
-trace which will result in #DF injected to guest.
+earlyprintk=efi,keep does not work any more with a warning
+in mm/early_ioremap.c: WARN_ON(system_state != SYSTEM_BOOTING):
+Boot just hangs because of the earlyprintk within the earlyprintk
+implementation code itself.
 
-This patch fixes it by clearing the queue for "Page not Present" if "Page Ready"
-occurs before the next vmentry since the GUP has already got the required page
-and shadow page table has already been fixed by "Page Ready" handler.
+This is caused by a new introduced middle state in:
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Fixes: 7c90705bf2a3 ("KVM: Inject asynchronous page fault into a PV guest if page is swapped out.")
-[Changed indentation and added clearing of injected. - Radim]
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-[port from upstream v4.14-rc1, Don't assign to kvm_queued_exception::injected or
- x86_exception::async_page_fault]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+  69a78ff226fe ("init: Introduce SYSTEM_SCHEDULING state")
+
+early_ioremap() is fine in both SYSTEM_BOOTING and SYSTEM_SCHEDULING
+states, original condition should be updated accordingly.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: bp@suse.de
+Cc: linux-efi@vger.kernel.org
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20171209041610.GA3249@dhcp-128-65.nay.redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/x86.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ mm/early_ioremap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7756,6 +7756,13 @@ static int apf_put_user(struct kvm_vcpu
- 				      sizeof(val));
- }
+--- a/mm/early_ioremap.c
++++ b/mm/early_ioremap.c
+@@ -102,7 +102,7 @@ __early_ioremap(resource_size_t phys_add
+ 	enum fixed_addresses idx;
+ 	int i, slot;
  
-+static int apf_get_user(struct kvm_vcpu *vcpu, u32 *val)
-+{
-+
-+	return kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.apf.data, val,
-+				      sizeof(u32));
-+}
-+
- void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
- 				     struct kvm_async_pf *work)
- {
-@@ -7782,6 +7789,7 @@ void kvm_arch_async_page_present(struct
- 				 struct kvm_async_pf *work)
- {
- 	struct x86_exception fault;
-+	u32 val;
+-	WARN_ON(system_state != SYSTEM_BOOTING);
++	WARN_ON(system_state >= SYSTEM_RUNNING);
  
- 	if (work->wakeup_all)
- 		work->arch.token = ~0; /* broadcast wakeup */
-@@ -7789,14 +7797,24 @@ void kvm_arch_async_page_present(struct
- 		kvm_del_async_pf_gfn(vcpu, work->arch.gfn);
- 	trace_kvm_async_pf_ready(work->arch.token, work->gva);
- 
--	if ((vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED) &&
--	    !apf_put_user(vcpu, KVM_PV_REASON_PAGE_READY)) {
--		fault.vector = PF_VECTOR;
--		fault.error_code_valid = true;
--		fault.error_code = 0;
--		fault.nested_page_fault = false;
--		fault.address = work->arch.token;
--		kvm_inject_page_fault(vcpu, &fault);
-+	if (vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED &&
-+	    !apf_get_user(vcpu, &val)) {
-+		if (val == KVM_PV_REASON_PAGE_NOT_PRESENT &&
-+		    vcpu->arch.exception.pending &&
-+		    vcpu->arch.exception.nr == PF_VECTOR &&
-+		    !apf_put_user(vcpu, 0)) {
-+			vcpu->arch.exception.pending = false;
-+			vcpu->arch.exception.nr = 0;
-+			vcpu->arch.exception.has_error_code = false;
-+			vcpu->arch.exception.error_code = 0;
-+		} else if (!apf_put_user(vcpu, KVM_PV_REASON_PAGE_READY)) {
-+			fault.vector = PF_VECTOR;
-+			fault.error_code_valid = true;
-+			fault.error_code = 0;
-+			fault.nested_page_fault = false;
-+			fault.address = work->arch.token;
-+			kvm_inject_page_fault(vcpu, &fault);
-+		}
- 	}
- 	vcpu->arch.apf.halted = false;
- 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+ 	slot = -1;
+ 	for (i = 0; i < FIX_BTMAPS_SLOTS; i++) {
