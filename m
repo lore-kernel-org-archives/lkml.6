@@ -1,125 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeBWRwo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:52:44 -0500
-Received: from mail-bl2nam02on0125.outbound.protection.outlook.com ([104.47.38.125]:26912
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751406AbeBWRwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:52:42 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=edgard.arvelaez-diaz@senecacollege.ca;
-From: Alex Diaz <edgard.arvelaez-diaz@senecacollege.ca>
-To: acme@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alex Diaz <edgard.arvelaez-diaz@senecacollege.ca>
-Subject: [PATCH] perf: Reduce memory usage of asnprinf_expr_inout_ints
-Date: Fri, 23 Feb 2018 12:52:13 -0500
-Message-Id: <20180223175213.25561-1-edgard.arvelaez-diaz@senecacollege.ca>
-X-Mailer: git-send-email 2.16.1
+        id S1751845AbeBWR7W (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:59:22 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:60048 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751525AbeBWR7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 12:59:20 -0500
+Date: Fri, 23 Feb 2018 12:58:11 -0500
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: "Woodhouse, David" <dwmw@amazon.co.uk>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Willy Tarreau <w@1wt.eu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC PATCH v3 6/8] x86/pti: don't mark the user PGD with
+ _PAGE_NX.
+Message-ID: <20180223175811.GO8252@char.us.oracle.com>
+References: <1515612500-14505-1-git-send-email-w@1wt.eu>
+ <1515612500-14505-7-git-send-email-w@1wt.eu>
+ <CA+55aFxyx2-m8Rd5vBoncd2u-UOF=QQ-By7XwzWEfHtA=Lqp5A@mail.gmail.com>
+ <CALCETrUH6s8=w6O67g39B45of6XBJv2CTt24Xw-darfb6KB42A@mail.gmail.com>
+ <1515616106.22302.237.camel@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [2607:fea8:23df:f94b:7adf:ba3f:12a7:2849]
-X-ClientProxiedBy: YTOPR0101CA0068.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:14::45) To SN2PR07MB2512.namprd07.prod.outlook.com
- (2603:10b6:804:6::24)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 90075c54-33ac-467c-5f26-08d57ae63bf0
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:SN2PR07MB2512;
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR07MB2512;3:cGMBTlXs3VSwZrenjvMmjRzdQCCuMC8sF20sjGKTLHri39a9Wv6MxZnnM5q8wyi93e382LFOh7Lwo5eU0HgLExmfwyvwpBKZ86GKbFQmF8PmQ5fDSeBPcrKN9iFDa+i/I+cZERKc4fNWrl74v+aA7s45IBNZg0HeqbawxFon1rVb69sIFUVabR6M6phnTPH2HL5Vj00tD09jafHuG7QybNWF+DcqgQGS3tEr1Jr2MMV2P6BHqKih/9Q+/IrYl87y;25:YI9krnDhb44CXh0alNkixyJRWGTGAmdL905XqrYNW12o8Y1WEMlZoWnC9EamnPfZtHvmn0n1LsDM7jq3AoIp2oHkJ5UOktFT4x2pnEnRtK0isDSsmJsCLgb8ZgxX/els77FAyhilDIrwokWn6aRF+xWGcdFJ3qtMJwSl2tBkJcpjNT0C8Sukk2OwjBdOWXTsoelvc8XDR+2WKGFqYVvGSY6dbiaulVzz1woCC10b2ubs3nHihTq79GU6RKJ7p8EspXlN9rRfd2W/VLBVDwV13qijWYlK0YkiUNJYXm1kpKR1brSGB59UEJ6QPs77UxVOTN34Dz5PhyRzlRABz1GpoQ==;31:pgvccIU4DXs7Stt9f7jn1Yj4TAbsoPhlasoDOh0V1Vp3mYt0GQzWgr0Y72u1NCBtg6yIQC3JWOgk4EGWMYN3F8bnzKHFTGv8cjEYW8TwNmZRr888mQSk9CnNbyzh65BhZWxSaq6aPiSRGO6hDWgfk3GQOazEleEYgA7TrF1/sn8CldJTRNSVVpIS+oIy0lMfzgF6vyrxYCHu+4evx61Fyglvx3yXvjYTcDa8/GTrd/k=
-X-MS-TrafficTypeDiagnostic: SN2PR07MB2512:
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR07MB2512;20:l+2/sstkyYLvupIHbJZTMXF5lhdCfD3QIfZms6UAYZfMR+2eB1D6IID4sml8oAK9lXV8caPB2VT9wWTW8xqHKnjut18tZm67PZf5KPlaEY3cswY6nMq5Ycm1t2GeXJsuMAJ7h7Hk8BsEVHdpjbeefBULWy3aUn1n6tazUBN47MEwZnD1h82JrrKOm9seEJtouPhlpjE/AlIesqv4sLzmlfrlLnR18shpp0K957uuhpL3s3KtqUOxhDNwY4HWwaWxIIxAIQTnzpRmNQRNt5Jf+T/1/Z4RcRcfcEo7hMdZfFl9R+S6TbIX1A7xnSnO+yZTbDSgD3DvkAZahtUfhWy6jSMxHpe2MTJKHrb/NbYNIAoveC18ySmls7FODbpD1328fR5kU37BMF4cXy/3S7YXSwem3ReyrSrUrTIeQWs7XaAd9hlwtQW527tFUZoindTGNvouh0H7CkQ4uP9eJFhH8wHD4MVAswISpSSPHzm4tPhZQIKL3K+VZ8TghTW9AWpC;4:KJDgsuDf/A4l45vjDakYjhEnpTL1V+HDM+KS300X16EF3DccPDg+8cMqwAqwotjbyc5F4YblvfeXjP6zm8a+qsj68BVx8LLTOD7YAroUQxbHb3G+/dDOnIB6pyXmv6rI07iEdBMFzI1wHqCGKRxLDedVjzA8JoYYG5hGyKF69kUhbkCFwJ5gWiD6tzSEI3H74Mgm6Ey9oFEcBOp4IQvz90zjqW3XoVA4upJ/iqufEhQCtiiQUR8FnrJLHSy7YTv4HoJDRBX7zXa7A+NI4Q5ZObElo46x0aopyUCZNBjdGbciCPojeWAUjOK8FA5aGqHLRR8Yy4npv6PBTGqFobUcMQ==
-X-Microsoft-Antispam-PRVS: <SN2PR07MB251297365305699D8A923503B4CC0@SN2PR07MB2512.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(95811205626656)(788757137089);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001082)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231101)(944501161)(10201501046)(6041288)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:SN2PR07MB2512;BCL:0;PCL:0;RULEID:;SRVR:SN2PR07MB2512;
-X-Forefront-PRVS: 0592A9FDE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(366004)(396003)(346002)(39380400002)(199004)(189003)(107886003)(2906002)(36756003)(575784001)(86362001)(1857600001)(16526019)(1076002)(50466002)(97736004)(105586002)(186003)(6116002)(106356001)(386003)(6506007)(48376002)(81156014)(81166006)(52396003)(8936002)(7736002)(52116002)(8676002)(4326008)(51416003)(74482002)(305945005)(25786009)(2351001)(478600001)(6486002)(68736007)(786003)(47776003)(2361001)(50226002)(6666003)(16586007)(6916009)(316002)(5660300001)(53936002)(6512007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN2PR07MB2512;H:ealejandro-ryzen.phub.net.cable.rogers.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR07MB2512;23:7bAtK4/wxNUHwiAbtI37JZZdEOULlFSFPs9SMVEwd?=
- =?us-ascii?Q?DLMxl0whT0k6PK2Nlc/73B2wBYjMxDTa+PRzqF+5cm61eFgOEZXwgwubKu2Q?=
- =?us-ascii?Q?GpOGvppmhtsWyq1xkJzOhNcj0sl/hHP+DKWLaM2Fc++2sdOZI0kFsdz7CVsn?=
- =?us-ascii?Q?La92RVI1rghIlFm7C5ccfu9EuxafXgoqhugU+pHIz3MknGyX5R+jsvq63wGR?=
- =?us-ascii?Q?FC+Zn7vNYV3XE6iBcurLW6VJ9CI8DLCdZbqrAFTYpn+GaWZbiGJvN+rBa6Qp?=
- =?us-ascii?Q?GzcsXbpH2Pl0PkOzoEhfwNjHUSrDFvKm+ZI20fnpDVMTSsyTuyKmr7CNkHTG?=
- =?us-ascii?Q?at5xnn5KsrjP5SpWdomrlMeIBZ5lPg3DJUWCu5IfNJDFk1aQXfnKP7Y1+nHu?=
- =?us-ascii?Q?xIbONcEohDMOOpAPHehfreg8X6/y9Qp6UpRNPM8svnfSv/gUowrKDEVTeGdb?=
- =?us-ascii?Q?3Cgx0oytDat+ncDm4FEHeBIqSkrLNsiE9QavM4mvDaIZbzeoU5fBe0PeMITw?=
- =?us-ascii?Q?Pn7q9pbZh2jZ4PctPsF7LAm3CpAHktdg+C6Mn6TsJ4d0KYg+u5VLQsIRK3YL?=
- =?us-ascii?Q?4niSFYlDjDgrQB7h8bpo7J8ASwALV4LMkzbW02hbMR01xLU1KRhKivHKfVok?=
- =?us-ascii?Q?Xd/KoDF7Nco4taI/baDMkNtfcTclI91sbsR4aBQNQNaksIIiYa26qjxOdCZk?=
- =?us-ascii?Q?h+gtt2TXmScQyJKhi+59V8wP7emNPvCr3spSW+HRkNtXu3/QsmQwTgTGJ5b9?=
- =?us-ascii?Q?Nr3G4pzFuTQHyZxq4E1fz7C0M9eq8CyC/nWcbk+/Ju9Vs/T2XVmzaAMxswCj?=
- =?us-ascii?Q?aIX4bt4IvdCGpAatGHagGZGPZzfUxjRA0OmAubywkfdA6dtmD4MOrgujPYT0?=
- =?us-ascii?Q?JsTieSuwC0ryMCl6q2jFQgJEeLElpSjncJNaWuhk4hbFrkCLF6ce/qllNmr3?=
- =?us-ascii?Q?NSlpiS8oXkccyNQeKpXBlYb7NizTE5Av+nYogL1RahsXFIAHsUbH6KCKEn0u?=
- =?us-ascii?Q?F1RhltcYqxHeU9uIE/bTJ3YIpyPJ8vBnUYPhHMfdUZGVtek7PQfDx28pg+bk?=
- =?us-ascii?Q?ZKgTKn4785A3q5KFF3+UxOhgVHRS0mUIrivBSiJK7NH6VuIm285v4ptaI7gn?=
- =?us-ascii?Q?p+sqbqXM82fN02pOm3eQc4Y2wfm6wf/C+Govi0npg6H4m4+VNlGvl6I6hpsZ?=
- =?us-ascii?Q?GHW7gceXJSnfqQ=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR07MB2512;6:W/tNWRG3OBjrcauvZNv5Z6nvxfMdug3s6W09HYu6GTcDv5EIkC3XSOeMHZUDbdWdphgJvIjzEZeGe7heClPltxyClOqkvpWLd4Uj96xPF1Bft7B97zqHCNqPJbkCz28roqu+bnsNiooxfyv+RF4JsFwgPKuwCvr3uToK9Img+IOx4ajyGpt4CO8DJrdwXo71YESWDnk8kIxzk1iTdBVGVMozUl8LjVG98tVJTya8AcgzXWPKtrg4RnGoILaamFjZmvtc2tGQI38HbpLlIjgtwz2Ql5VeVp8NRi+SA2pUq5Upy44+kIazuehxgaUlJHczMhEHdLvc/Wsob6iDlzQfIAkLR40t4VE+mnnKr2nKuuo=;5:Fi5NT/VbARS3aAdY1bkj84yI5rSWmLueIku4ht9NIZKkldd/S9DmdP14FLH1HElrfTMyrF1sFHRenqEtHdBcOJAU1cN3HNu7p36OHyDoW7UavYNqCeYjGdjJ46OHVOt1p4gbVLBpL7x1Jz/yz6i8O+m/vLAZwM5wi8cDe6AzpdE=;24:AEDScM287V/mjC2+dRc2DA9MXCigoWYh7FIRnh3xEX98VrLxhqoZ5eGvt1gARWUI4/TZjIYEMmFh6R59D8A4iekG7dT7Cbjjxp/obf/lElU=;7:Vw70BLjpfBAE60r5Tg2YJkJtGGoG6MWNrcrYbcuR5taxZchggEHxQHpZ14FO3DqYbQMU1PV5ShqWcgHd8z3VzbzFVZ/5048XE6MqtjU6BobFMRnkoUdcFXXcvucMntS2Z2XrVfLZ4jPNgTDMOgFe+qEDqLKGZpg35JdRVtGViQcuJgy9nY4rxjZL+D2WG+Kv3TjBwfNE4yGiyKYcpoGNC1s9I3lG3Dgdl6G3XS5MyaMaaGxuIRv1AlMUtGwViSoS
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: Senecacollege.ca
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2018 17:52:40.6187
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90075c54-33ac-467c-5f26-08d57ae63bf0
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: eb34f74a-58e7-4a8b-9e59-433e4c412757
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR07MB2512
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1515616106.22302.237.camel@amazon.co.uk>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8813 signatures=668678
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=997
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1NHxQ03005851
 
-Originally a formula was hardcoded to allocate 28 bytes
-per integer passed to asprintf_expr_inout_ints. This commit
-replaces said formula and only allocates as many bytes as
-needed.
+On Wed, Jan 10, 2018 at 08:28:26PM +0000, Woodhouse, David wrote:
+> On Wed, 2018-01-10 at 11:59 -0800, Andy Lutomirski wrote:
+> > On Wed, Jan 10, 2018 at 11:54 AM, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > 
+> > > On Wed, Jan 10, 2018 at 11:28 AM, Willy Tarreau <w@1wt.eu> wrote:
+> > > > 
+> > > > Since we're going to keep running on the same PGD when returning to
+> > > > userspace for certain performance-critical tasks, we'll need the user
+> > > > pages to be executable. So this code disables the extra protection
+> > > > that was added consisting in marking user pages _PAGE_NX so that this
+> > > > pgd remains usable for userspace.
+> > > Yeah, no. This is wrong.
+> > > 
+> > > Sure, SMEP gives the same thing in most cases, but not for older CPU's.
+> > > 
+> > > So NX is a really nice way to make sure that PTI really does protect
+> > > against user-space gadgets.
+> > > 
+> > > We don't break that, and we definitely don't break that just because
+> > > of some broken notion of "let's make page table isolation per-thread".
+> > > 
+> > If we're going to have a thread without PTI off, that thread needs to
+> > run with the same page tables for kernel and user, so it needs NX off
+> > on the user part.  I don't see any way around it.
+> > 
+> > We could nix the entire concept of fine-grained PTI control, or we
+> > could make it require SMEP, I suppose.
+> 
+> We've been bashing out the precise requirements for RSB clearing (for
+> pre-SKL to avoid bogus entries) or stuffing (for SKL+ to avoid
+> underflow causing the BTB to be used).
+> 
+> It looks like we can avoid the RSB clearing on kernel entry if we have
+> SMEP. And PTI setting NX on userspace pages is equivalent to SMEP for
+> this purpose — so the RSB clearing basically ended up being AMD-only
+> (!SMEP && !PTI).
+> 
+> We also need to clear the RSB on vmexit, as documented. And if we
+> really want 100% support for retpoline on SKL+ instead of saying "use
+> IBRS if you're paranoid", then there are a few more cases where we need
+> to stuff it to avoid underflow (which is the same operation, but Arjan
+> insists we should differentiate the two, which is reasonable enough).
 
-This commit saves memory in cases where numbers passed
-are small in magnitude.
+Are these cases documented somewhere along with what approaches are taken?
 
-Signed-off-by: Alex Diaz <edgard.arvelaez-diaz@senecacollege.ca>
----
- tools/perf/util/string.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+I do remember Thomas's email from Feb 4th titled:
+Re: [RFC 09/10] x86/enter: Create macros to restrict/unrestrict Indirect Branch Speculation                                                          
 
-diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
-index d8bfd0c4d2cb..b04146099205 100644
---- a/tools/perf/util/string.c
-+++ b/tools/perf/util/string.c
-@@ -3,6 +3,7 @@
- #include <linux/kernel.h>
- #include <linux/string.h>
- #include <stdlib.h>
-+#include <math.h>
- 
- #include "sane_ctype.h"
- 
-@@ -360,15 +361,18 @@ char *rtrim(char *s)
- 
- char *asprintf_expr_inout_ints(const char *var, bool in, size_t nints, int *ints)
- {
--	/*
--	 * FIXME: replace this with an expression using log10() when we
--	 * find a suitable implementation, maybe the one in the dvb drivers...
--	 *
--	 * "%s == %d || " = log10(MAXINT) * 2 + 8 chars for the operators
--	 */
--	size_t size = nints * 28 + 1; /* \0 */
-+	int max_int = 1;
-+	int no_digits;
-+	size_t size;
- 	size_t i, printed = 0;
--	char *expr = malloc(size);
-+	char *expr = NULL;
-+
-+	for (i = 0; i < nints; ++i)
-+		max_int = max(ints[i], max_int);
-+
-+	no_digits = log10(max_int) + 1;
-+	size = (no_digits + strlen(var) + 8) * nints;
-+	expr = malloc(size);
- 
- 	if (expr) {
- 		const char *or_and = "||", *eq_neq = "==";
--- 
-2.16.1
+which outlined a pretty nifty idea on this, but not sure where that has gone?
