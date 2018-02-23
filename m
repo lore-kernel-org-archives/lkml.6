@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3704313-1519414407-2-9025098373727858979
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519414375-2-954160963331810837
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519414406; b=Tg5E6+a1p318QfQKFKV5THgQoiJc2QWll5d7QzYAftin/sU
-    KgJdZHWh8S/qi/M1iIX7D7yziTPco0/vU/ZQQBprvYjL0GFBFK7SYyR+fUPM+oHD
-    qVuuo8b2Qr5pGlHa1hScIec5fRd5OHE5Mvhnuy/8PpljcNF2AaRYjsLasyzX5Vks
-    Q/8srIYF4sFq1W6aX8Ffps0B1s+tEwYb3q5phXocddjdfvINrPWXNJvkOeY5HLy6
-    74gLWMXX9gX1oStyRhxzauAkPTfVIyJeuw26kwo7qvQ8xAhSPiQEOogi1pvNqumA
-    vwVLSdMuKeYphfMfCcdjnEhu452bealiLuwc6sg==
+    t=1519414375; b=iDDI8wj9Zh2MLgPlwkod/wumjqpe4M/l7vEYuoGyOqH+Icc
+    o8Ujk32L+RgkUFC/nV7yNSNc/THy7DWC4S7THWRNnrjtXEBxMZ2czcbzMU1fdiIa
+    GCvfptYsSqUfjROIbGCpoAcEOVe+MLQ+ilePe8gJSRef7rIemKpOIu0mo3dKZxVJ
+    l+6Kxl6cURmP6KtYp+cW2gLGcDicl3Pkv2tAsCh02eZVh0Bhwc4NXNaytszlCnAi
+    utX5MYObT0n52Wd1+L+eePpI77kOr4bP0AkOgwNNNVdOd5utEVpS46e25tVPk8Dx
+    wnWnOwy818tBa8ri+D2AIU6sJWlNXrE3J8aakRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519414406; bh=cal3WC2GVsTFur12vh6ESPwEFk
-    ius1LiNxmOwPTogZ0=; b=eLoMCeNqi3A5A+/rXpkmCDZm9qaA6OD5Og2jRpuCkD
-    fJkWEkIsg55ObYXqevqbysUWBoNbvS8tbTzSuWfSWVfxuhWi5pY2mN7rYC/gruaU
-    XOC9l3zjfkp+dhD83hMZT0g9OaQf5GGITZOkesjoNRpQ74aRz+6PfwNeqiL83UVB
-    g9fvIAUy0rzrUxxeSfL14aS2h1CxDIbgotwSd0G6HUvE80WjYtyGSEiWVoIZE6hh
-    xjTRAoJPRrS8dmpZNO2eUjAKm9XTJTYTMIHeJCI4zGzBF921AC6Pg3/19iui+fkt
-    UbR9U/RzdH2EvPNvqXze5vpC8StqxjJlOEu/GMWWE/6Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519414375; bh=+Juv7MKkrrIl5fij17o3QmizFT
+    Gr+5VrhjeM0yqAuyw=; b=BWLdLP9GzR2syuoryrweJTOonnWziSJfxGaM7+Ryzx
+    vUsQIjA8fcDTVNipMRsmq+vCPzySQIeCMkNGm8wib5FjIRfoB+ZPsEm4pv6GSX2G
+    AJjTX27AD1bkqpmhV0YPOCbHKAvZzm8aDHAL4KEbcEuxTWq6UpKORfx1gf3RO2wW
+    yAC+6TExXxo4hErqm+2A1FC8VQL1risJxZtuSnEi3bBD0g7Iwu/J0H77m2VDb85+
+    snl8AMxLCFshEcFc409/HfGkDZNCHUW1vGlYFNesqaX0Cc/ujTCHzhk7ecDVavi5
+    9AlwS4iOiWF+N/icFH8Zpwa3/LUPzMZSA2VSpSX6TmHw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934904AbeBWSvN (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:51:13 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45966 "EHLO
+        id S934919AbeBWSvQ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:51:16 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45972 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934901AbeBWSvL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:11 -0500
+        with ESMTP id S934901AbeBWSvO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:51:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 046/159] video: fbdev/mmp: add MODULE_LICENSE
-Date: Fri, 23 Feb 2018 19:25:54 +0100
-Message-Id: <20180223170749.010780296@linuxfoundation.org>
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 047/159] ARM: 8743/1: bL_switcher: add MODULE_LICENSE tag
+Date: Fri, 23 Feb 2018 19:25:55 +0100
+Message-Id: <20180223170749.143496652@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -80,37 +80,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit c1530ac5a3ce93a1f02adabc4508b5fbf862dfe2 upstream.
+commit a21b4c10c7bf5b58112afa20d6fa829e8d74e3e6 upstream.
 
-Kbuild complains about the lack of a license tag in this driver:
+Without this tag, we get a build warning:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/mmp/mmp_disp.o
+WARNING: modpost: missing MODULE_LICENSE() in arch/arm/common/bL_switcher_dummy_if.o
 
-This adds the license, author and description tags.
+For completeness, I'm also adding author and description fields.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/mmp/core.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/common/bL_switcher_dummy_if.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/video/fbdev/mmp/core.c
-+++ b/drivers/video/fbdev/mmp/core.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/dma-mapping.h>
- #include <linux/export.h>
-+#include <linux/module.h>
- #include <video/mmp_disp.h>
- 
- static struct mmp_overlay *path_get_overlay(struct mmp_path *path,
-@@ -249,3 +250,7 @@ void mmp_unregister_path(struct mmp_path
- 	mutex_unlock(&disp_lock);
- }
- EXPORT_SYMBOL_GPL(mmp_unregister_path);
+--- a/arch/arm/common/bL_switcher_dummy_if.c
++++ b/arch/arm/common/bL_switcher_dummy_if.c
+@@ -57,3 +57,7 @@ static struct miscdevice bL_switcher_dev
+ 	&bL_switcher_fops
+ };
+ module_misc_device(bL_switcher_device);
 +
-+MODULE_AUTHOR("Zhou Zhu <zzhu3@marvell.com>");
-+MODULE_DESCRIPTION("Marvell MMP display framework");
-+MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Nicolas Pitre <nico@linaro.org>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("big.LITTLE switcher dummy user interface");
