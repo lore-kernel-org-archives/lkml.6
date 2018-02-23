@@ -1,69 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeBWSG4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 13:06:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46144 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751587AbeBWSGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 13:06:55 -0500
-Subject: Re: [PATCH] kvm: fix warning for non-x86 builds
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <alpine.LFD.2.21.1802221301580.1603@schleppi>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <7825efa7-da58-ad95-1d41-71eefb9784c3@redhat.com>
-Date: Fri, 23 Feb 2018 19:06:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.21.1802221301580.1603@schleppi>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751907AbeBWSLt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 13:11:49 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47888 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751527AbeBWSLs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 13:11:48 -0500
+From: Rohit Jain <rohit.k.jain@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, efault@gmx.de,
+        steven.sistare@oracle.com, riel@redhat.com, dhaval.giani@oracle.com,
+        joelaf@google.com, jbacik@fb.com, juri.lelli@redhat.com
+Subject: [PATCH v2] sched/fair: Remove check in idle_balance against migration_cost
+Date: Fri, 23 Feb 2018 10:09:58 -0800
+Message-Id: <1519409398-26275-1-git-send-email-rohit.k.jain@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8813 signatures=668678
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=622
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230222
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/2018 13:04, Sebastian Ott wrote:
-> Fix the following sparse warning by moving the prototype
-> of kvm_arch_mmu_notifier_invalidate_range() to linux/kvm_host.h .
-> 
->   CHECK   arch/s390/kvm/../../../virt/kvm/kvm_main.c
-> arch/s390/kvm/../../../virt/kvm/kvm_main.c:138:13: warning: symbol 'kvm_arch_mmu_notifier_invalidate_range' was not declared. Should it be static?
-> 
-> Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 3 ---
->  include/linux/kvm_host.h        | 3 +++
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index dd6f57a54a26..0a9e330b34f0 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1464,7 +1464,4 @@ static inline int kvm_cpu_get_apicid(int mps_cpu)
->  #define put_smstate(type, buf, offset, val)                      \
->  	*(type *)((buf) + (offset) - 0x7e00) = val
->  
-> -void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> -		unsigned long start, unsigned long end);
-> -
->  #endif /* _ASM_X86_KVM_HOST_H */
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index ac0062b74aed..ed3d4ddbaff3 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1272,4 +1272,7 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
->  }
->  #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
->  
-> +void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> +		unsigned long start, unsigned long end);
-> +
->  #endif
-> 
+Patch "1b9508f6 sched: Rate-limit newidle" reduced the CPU time spent in
+idle_balance() by refusing to balance if the average idle time was less
+than sysctl_sched_migration_cost.  Since then, more refined methods for
+reducing CPU time have been added, including dynamic measurement of search
+cost in curr_cost and a check for this_rq->rd->overload.  The original
+check of sysctl_sched_migration_cost is no longer necessary, and is in
+fact harmful because it discourages load balancing, so delete it.
 
-Queued, thanks.
+1) An internal Oracle RDBMS OLTP test on an 8-socket Exadata shows a 2.2%
+gain in throughput.
 
-Paolo
+2) Hackbench results on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
+
++--------------+-----------------+-------------------------+
+|              | Without Patch   |With Patch               |
++------+-------+--------+--------+----------------+--------+
+|Loops | Groups|Average |%Std Dev|Average         |%Std Dev|
++------+-------+--------+--------+----------------+--------+
+|100000| 4     |9.701   |0.78    |8.919  (+8.07%) |1.07    |
+|100000| 8     |17.186  |0.77    |17.043 (+0.83%) |0.83    |
+|100000| 16    |30.378  |0.55    |29.565 (+2.67%) |0.29    |
+|100000| 32    |54.712  |0.54    |52.158 (+4.67%) |0.22    |
++------+-------+--------+--------+----------------+--------+
+
+3) Sysbench MySQL results on 2 socket, 44 core and 88 threads Intel x86
+machine (higher is better):
+
++-------+--------------------+----------------------------+
+|       | Without Patch      | With Patch                 |
++-------+-----------+--------+-------------------+--------+
+|Num    | Average   |        | Average           |        |
+|Threads| throughput|%Std Dev| throughput        |%Std Dev|
++-------+-----------+--------+-------------------+--------+
+|    8  | 133658.2  | 0.66   | 134232.2 (+0.43%) | 1.29   |
+|   16  | 266540    | 0.48   | 268584.6 (+0.77%) | 0.37   |
+|   32  | 466315.6  | 0.15   | 468594.2 (+0.49%) | 0.23   |
+|   64  | 720039.4  | 0.23   | 717253.8 (-0.39%) | 0.36   |
+|   72  | 757284.4  | 0.25   | 764984.0 (+1.02%) | 0.38   |
+|   80  | 807955.6  | 0.22   | 831372.2 (+2.90%) | 0.10   |
+|   88  | 863173.8  | 0.25   | 887049.0 (+2.77%) | 0.56   |
+|   96  | 882950.8  | 0.32   | 892913.8 (+1.13%) | 0.41   |
+|  128  | 895112.6  | 0.13   | 901195.0 (+0.68%) | 0.28   |
++-------+-----------+--------+-------------------+--------+ 
+
+4) tbench sample results on 2 socket, 44 core and 88 threads Intel x86
+machine:
+
+With Patch:
+
+Throughput 562.783 MB/sec   2 clients   2 procs  max_latency=0.365 ms
+Throughput 1394.5  MB/sec   5 clients   5 procs  max_latency=0.531 ms
+Throughput 2741.27 MB/sec  10 clients  10 procs  max_latency=0.692 ms
+Throughput 5279.49 MB/sec  20 clients  20 procs  max_latency=1.029 ms
+Throughput 8529.22 MB/sec  40 clients  40 procs  max_latency=1.693 ms
+
+Without patch:
+
+Throughput 557.142 MB/sec   2 clients   2 procs  max_latency=0.264 ms
+Throughput 1381.59 MB/sec   5 clients   5 procs  max_latency=0.335 ms
+Throughput 2726.84 MB/sec  10 clients  10 procs  max_latency=0.352 ms
+Throughput 5230.12 MB/sec  20 clients  20 procs  max_latency=1.632 ms
+Throughput 8474.5  MB/sec  40 clients  40 procs  max_latency=7.756 ms
+
+
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+---
+ kernel/sched/fair.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2fe3aa8..52cf36e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8782,8 +8782,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 	 */
+ 	rq_unpin_lock(this_rq, rf);
+ 
+-	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+-	    !this_rq->rd->overload) {
++	if (!this_rq->rd->overload) {
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+-- 
+2.7.4
