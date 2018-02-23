@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3775223-1519416129-2-385391407760580746
+X-Cyrus-Session-Id: sloti22d1t05-3759000-1519416108-2-10186353679167774217
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519416128; b=BTDAPa3lySiJRCLV8OaaM1oDeQFDBDSWKbExIcjghheP3qh
-    hAgiL/tHYV+yNz0GfqQ2HwV783zDs+k2IoYiOxgUm4pRVjAH2PRgArCbeW/7/N4r
-    GKwHM6caMJwXCj+fTSkvrM/+5zrooMEqOc7vgZyFfAaorXGAjdX/LnZInP8EOGGT
-    VZpLp8ZuU5ewp/WaVLbP0LCyVUsFfdtxRkAtiwAdVCv5Bv7SjV8mfTz7izOblfBz
-    yfPWoL/w2AfgdOSxQ80qQ5aIRc8RvsG0HCCoxdNjTFgYSHgvacZo/wdbqSLTuwAO
-    zU3GX7EIIu2v8Yx/Xh+WLPfJXJjzjed4KrCNWgw==
+    t=1519416107; b=OHeZv/xkK4RI9aycWKNW3hUK2Np15BgpjYTIiXO0YbHMaJa
+    MNBuShGII6ycW2qK6DcjuST0Fclh9nQf5pmp4SPadZRQBGsskfSAP2YO60Bjy60Y
+    ssz+xSlbq23JCPv1ibJI0FEQRUgadSJX7G7CrH3OEBz3YT1WX4amdv7SqPaLJ37V
+    XEuWwmylLn8ALi4PicZ7/+6ePqPOiH0Wlz0umzP+0H6DnLMbCYXZ1mmBKXaQr/8Z
+    wHBDYEeFlYSOJyilQSg1TKZnuUp591acFs9AOlGBqUVSsMiKN6oWVbwejg6hHtjq
+    iGJo80Pe9aGLM6IEQb7vpBJJCVBb4H+3ipJOa1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519416128; bh=dxMl/DhNSjKxGi99DJixwgN/Zc
-    1K+CIiBEJSrsgE0E4=; b=qMbaj2pUy6+gLW81BxHLTc/RZt6NM+fYfIEjpPNIY0
-    XPpPl+2m0bcCXIRKcTlrQic1krzDuYiyKZA5X/EjR7LdykoyNZC7O6/X63uV55wI
-    ProkTWf9w+dRi35Z6Mt/OAG3UGO2nJOD8IWwfwMT8wcuAWnnAuN1f1moeMBF2iqT
-    u/b8p+coZAKQVzPD6yaIANL0GxMyGN4oi+HKyCxq/xWmk+7WpkDLpidewzIUU1n0
-    tb3WabOfE3xhPZSda1d4DbJ2jPFqGdbiXWovPe6Yfc+mBOjJoi2v75QRkP7B6K1J
-    Awykscge5bHXDXW6ajNW/9/K5PyWoqh/zSA4+J5ctmaA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519416107; bh=FzJYxC/70rf7nYSp7O0k1e4Lg6
+    Bx2Xqxez4alRKNsiQ=; b=dEt5dw0xQoUupo9TS70wAaxCQ+t+JlevC5xIR5RVJc
+    eDVFIMPSIQM1LUJoLU/hHnWkbps7yRJohx9LSfZ/B/4Eql+sVuGXwvP3/CoK7mNx
+    yE5gBzoT6SdlZGpQH5+Ed4tpQvdXDSyNqW1EbNn4XhnWpZR/dS2XEFfjns2xuqJP
+    17DiXe5ysBu6k22ke8sSyOFmjNjYXY80L3BZdaM/VXUU2dPsYDiydkBT2k7p8hbA
+    z55zwBOILpGu86iv6+CNwO/xRTo+btW8kVRHR4OH3qJG7MNiSTTip23ZYEizzVfN
+    4hVEmD89zJr5D5b87JMhgE5uZhsUBpQW1W3WcC6ReU2g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754796AbeBWUBt (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 15:01:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42160 "EHLO
+        id S933233AbeBWSnU (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:43:20 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933245AbeBWSnQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:16 -0500
+        with ESMTP id S932961AbeBWSnT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:19 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 028/145] rds: tcp: atomically purge entries from rds_tcp_conn_list during netns delete
-Date: Fri, 23 Feb 2018 19:25:34 +0100
-Message-Id: <20180223170728.477640744@linuxfoundation.org>
+Subject: [PATCH 4.9 029/145] net: avoid skb_warn_bad_offload on IS_ERR
+Date: Fri, 23 Feb 2018 19:25:35 +0100
+Message-Id: <20180223170728.619697172@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -80,69 +78,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit f10b4cff98c6977668434fbf5dd58695eeca2897 upstream.
+commit 8d74e9f88d65af8bb2e095aff506aa6eac755ada upstream.
 
-The rds_tcp_kill_sock() function parses the rds_tcp_conn_list
-to find the rds_connection entries marked for deletion as part
-of the netns deletion under the protection of the rds_tcp_conn_lock.
-Since the rds_tcp_conn_list tracks rds_tcp_connections (which
-have a 1:1 mapping with rds_conn_path), multiple tc entries in
-the rds_tcp_conn_list will map to a single rds_connection, and will
-be deleted as part of the rds_conn_destroy() operation that is
-done outside the rds_tcp_conn_lock.
+skb_warn_bad_offload warns when packets enter the GSO stack that
+require skb_checksum_help or vice versa. Do not warn on arbitrary
+bad packets. Packet sockets can craft many. Syzkaller was able to
+demonstrate another one with eth_type games.
 
-The rds_tcp_conn_list traversal done under the protection of
-rds_tcp_conn_lock should not leave any doomed tc entries in
-the list after the rds_tcp_conn_lock is released, else another
-concurrently executiong netns delete (for a differnt netns) thread
-may trip on these entries.
+In particular, suppress the warning when segmentation returns an
+error, which is for reasons other than checksum offload.
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+See also commit 36c92474498a ("net: WARN if skb_checksum_help() is
+called on skb requiring segmentation") for context on this warning.
+
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rds/tcp.c |    9 +++++++--
- net/rds/tcp.h |    1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rds/tcp.c
-+++ b/net/rds/tcp.c
-@@ -303,7 +303,8 @@ static void rds_tcp_conn_free(void *arg)
- 	rdsdebug("freeing tc %p\n", tc);
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2763,7 +2763,7 @@ struct sk_buff *__skb_gso_segment(struct
  
- 	spin_lock_irqsave(&rds_tcp_conn_lock, flags);
--	list_del(&tc->t_tcp_node);
-+	if (!tc->t_tcp_node_detached)
-+		list_del(&tc->t_tcp_node);
- 	spin_unlock_irqrestore(&rds_tcp_conn_lock, flags);
+ 	segs = skb_mac_gso_segment(skb, features);
  
- 	kmem_cache_free(rds_tcp_conn_slab, tc);
-@@ -528,8 +529,12 @@ static void rds_tcp_kill_sock(struct net
+-	if (unlikely(skb_needs_check(skb, tx_path)))
++	if (unlikely(skb_needs_check(skb, tx_path) && !IS_ERR(segs)))
+ 		skb_warn_bad_offload(skb);
  
- 		if (net != c_net || !tc->t_sock)
- 			continue;
--		if (!list_has_conn(&tmp_list, tc->t_cpath->cp_conn))
-+		if (!list_has_conn(&tmp_list, tc->t_cpath->cp_conn)) {
- 			list_move_tail(&tc->t_tcp_node, &tmp_list);
-+		} else {
-+			list_del(&tc->t_tcp_node);
-+			tc->t_tcp_node_detached = true;
-+		}
- 	}
- 	spin_unlock_irq(&rds_tcp_conn_lock);
- 	list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node) {
---- a/net/rds/tcp.h
-+++ b/net/rds/tcp.h
-@@ -11,6 +11,7 @@ struct rds_tcp_incoming {
- struct rds_tcp_connection {
- 
- 	struct list_head	t_tcp_node;
-+	bool			t_tcp_node_detached;
- 	struct rds_conn_path	*t_cpath;
- 	/* t_conn_path_lock synchronizes the connection establishment between
- 	 * rds_tcp_accept_one and rds_tcp_conn_path_connect
+ 	return segs;
