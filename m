@@ -1,125 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751408AbeBWIyt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 03:54:49 -0500
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:37005 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeBWIyr (ORCPT
+        id S1751510AbeBWI40 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 03:56:26 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40389 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750872AbeBWI4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:54:47 -0500
-X-Google-Smtp-Source: AH8x2255o5f07gXgyysvhOmMfRiitFL1AtVX28WJh/Zcy9i/v2jmgSRq9uguUroSdasbBlU3lO6Y+Q==
-X-ME-Sender: <xms:09aPWhr3Ll6dileTA_w5PeilPmZbqujvmPeTEuIqLh0c1G_lYFXJ9A>
-Date: Fri, 23 Feb 2018 16:58:12 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 08/17] lockdep: Fix recursive read
- lock related safe->unsafe detection
-Message-ID: <20180223085812.22u7o6z2gcg272jn@tardis>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-9-boqun.feng@gmail.com>
- <20180222174654.GW25201@hirez.programming.kicks-ass.net>
- <20180223082134.ykkbzqj2h7glxrqn@tardis>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zwqd4op5xu7ger2e"
-Content-Disposition: inline
-In-Reply-To: <20180223082134.ykkbzqj2h7glxrqn@tardis>
-User-Agent: NeoMutt/20171215
+        Fri, 23 Feb 2018 03:56:24 -0500
+X-Google-Smtp-Source: AH8x226cPkSUq8dF6jd+0sCLPYt2C/5rEOS+nN++n+QNG4NDGXcMoxttlsjTAb8nAxGTjw6H01KDhw==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <34D9B5A3-0A44-4214-9B2B-E0030DC20BA4@lightnvm.io>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] lightnvm: fix memory leak in pblk_luns_init
+Date: Fri, 23 Feb 2018 09:56:18 +0100
+In-Reply-To: <870ebf31-340a-1673-d4b3-e755dd2be493@lightnvm.io>
+Cc: Huaicheng Li <huaicheng@cs.uchicago.edu>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <20180222210147.GA29523@gmail.com>
+ <CANr0WEcDSy3YuZ8kaNuB7Z0wFfiV6AwT=bg4W3MNq--2txX2xQ@mail.gmail.com>
+ <870ebf31-340a-1673-d4b3-e755dd2be493@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zwqd4op5xu7ger2e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-On Fri, Feb 23, 2018 at 04:21:34PM +0800, Boqun Feng wrote:
-> On Thu, Feb 22, 2018 at 06:46:54PM +0100, Peter Zijlstra wrote:
-> > On Thu, Feb 22, 2018 at 03:08:55PM +0800, Boqun Feng wrote:
-> > > There are four cases for recursive read lock realted deadlocks:
-> > >=20
-> > > (--(X..Y)--> means a strong dependency path starts with a --(X*)-->
-> > > dependency and ends with a --(*Y)-- dependency.)
-> > >=20
-> > > 1.	An irq-safe lock L1 has a dependency --(*..*)--> to an
-> > > 	irq-unsafe lock L2.
-> > >=20
-> > > 2.	An irq-read-safe lock L1 has a dependency --(N..*)--> to an
-> > > 	irq-unsafe lock L2.
-> > >=20
-> > > 3.	An irq-safe lock L1 has a dependency --(*..N)--> to an
-> > > 	irq-read-unsafe lock L2.
-> > >=20
-> > > 4.	An irq-read-safe lock L1 has a dependency --(N..N)--> to an
-> > > 	irq-read-unsafe lock L2.
-> > >=20
-> > > The current check_usage() only checks 1) and 2), so this patch adds
-> > > checks for 3) and 4) and makes sure when find_usage_{back,for}wards f=
-ind
-> > > an irq-read-{,un}safe lock, the traverse path should ends at a
-> > > dependency --(*N)-->. Note when we search backwards, --(*N)--> indica=
-tes
-> > > a real dependency --(N*)-->.
-> >=20
-> > This adds 4 __bfs() searches for every new link.
-> >=20
-> > Can't we make the existing traversals smarter?
+> On 23 Feb 2018, at 07.12, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
 >=20
-> Haven't really thought this one through, I will try. But as you said, we
-
-Hmm... think again, maybe I can combine case 1 with 3, and case 2 with
-4, because each of them could share the same find_usage_backwards(), and
-find_usage_forwards() uses a usage_match_forwards() as follow for the
-match function:
-
-	static inline int usage_match_forwards(struct lock_list *entry, void *bit)
-	{
-		enum lock_usage_bit ub =3D (enum lock_usage_bit)bit;
-		unsigned long mask;
-		unsigned long read_mask;
-
-		/* mask out the read bit */
-		ub &=3D ~1;
-
-		mask =3D 1ULL << ub;
-		read_mask =3D 1ULL << (ub + 1);
-
-		return (entry->class->usage_mask & mask) ||  // *-> L2 and L2 is an irq-u=
-nsafe lock
-		       ((entry->class->usage_mask & read_mask) && !entry->is_rr); // N-> =
-L2 and L2 is an irq-read-unsafe lock
-	}
-
-Got a bus to catch, I can explain this later, if you need ;-)
-
-Regards,
-Boqun
-
-> only need to do more searchs for _new_ links, so I think it's the slow
-> path, would the performance matter that much?
+> On 02/23/2018 12:03 AM, Huaicheng Li wrote:
+>> Please ignore my previous email as I found the memory is free'ed at
+>> pblk_init()'s error handling logic.
+>> Sorry for the interruption.
+>> On Thu, Feb 22, 2018 at 3:01 PM, Huaicheng Li =
+<huaicheng@cs.uchicago.edu>
+>> wrote:
+>>> Signed-off-by: Huaicheng Li <huaicheng@cs.uchicago.edu>
+>>> ---
+>>> drivers/lightnvm/pblk-init.c | 1 +
+>>> 1 file changed, 1 insertion(+)
+>>>=20
+>>> diff --git a/drivers/lightnvm/pblk-init.c =
+b/drivers/lightnvm/pblk-init.c
+>>> index 93d671ca518e..330665d91d8d 100644
+>>> --- a/drivers/lightnvm/pblk-init.c
+>>> +++ b/drivers/lightnvm/pblk-init.c
+>>> @@ -510,6 +510,7 @@ static int pblk_luns_init(struct pblk *pblk, =
+struct
+>>> ppa_addr *luns)
+>>>                 if (ret) {
+>>>                         while (--i >=3D 0)
+>>>                                 kfree(pblk->luns[i].bb_list);
+>>> +                       kfree(pblk->luns);
+>>>                         return ret;
+>>>                 }
+>>>         }
+>>> --
+>>> 2.13.6
 >=20
-> Regards,
-> Boqun
+> No worries. The initialization part is pretty complex due to all the
+> data structures being set up. I would love to have a clean
+> initialization function, which cleans up after it self. But being able
+> to share the "fail" bringup and tear-down code is very helpful and
+> makes other parts easier.
 
+As part of the 2.0 patches, I took a first try at refactoring the
+init/exit sequences to maintain the same fail paths but minimizing
+dependencies across structures. One of the big parts have been the bad
+block initialization, which now is much cleaner, but still needs more
+work to be as I would like it to. Patches are very welcome :)
 
+Javier
 
---zwqd4op5xu7ger2e
-Content-Type: application/pgp-signature; name="signature.asc"
+--Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqP16AACgkQSXnow7UH
-+rgmSwf/XlM7/ph/GuiOIou6v7OpVJW1VKgy3OEdPPXQcIIDcMtrgjJOL7FAmoQw
-/hPnLmmubkbj6hAfbgf3bayhDyBPRJOWMw2mVEVrGwpQ7S+byOI/VXfU2hkfwBP9
-FvoSPZBC0CRqlEDMbl9apDskseE3XkqCko/nSSaom19mILY1wWyM8HnfT3sb3yXL
-QVG6bMfLkWR6YhXKcVsL8jQfPrUaih7u55Opxw3RBENc+mSC+7AucXC0Ci2lVQdI
-9wjkgHsjstqMPlnvPh90Hagi2YPqrK7mO5AbYBvpPht0dV4tEdeUyNpStAY7iCze
-VDDlqbkBfKeCBtacd3vuwR24u/Gj2Q==
-=sWM2
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqP1zIACgkQYx8FO3WZ
+GMrtRhAAqldPkPdDQ0TLTyQZQgGzmS5tAmfLDw9TkR1pT0F8cPo3uVXBPf1OEApk
+FsBPCAPJee1UAirLkqws7YICh2P8vCvifJ+mxmi5tbruySrc9A/fGMqtuLXp0NCe
+krGkzcIexglI1RlccaKiQvAp4h0ot3yNROGCLGhS1BnldjI/FpDXQ8kHGccKU/Zk
+KoPxGT1mfebHqSudbHh/stnyggM4gre1RDtS4Ghhw4ZA6nZ/kbi1eBrCPGojxVnZ
+/rYvwtBMVaaKuv4ss7dDs7IwXoj09uCy99rOQPUCEZL1/4MK8x26NeV3HOrJqCIG
+e7eJ8zsGkQ3iOPGyHkD7LN8riE+gDdlczX/PSEBZyTnK5uZTTfdn6Msks7cB/5FK
+HOL2GlpvqYRqMkWpZc+gbARNNjLNRnn7Und+5fUFzX5gRuGClOSntGlZPcc96PyZ
+46zm5DPgzMMPmacDTXRmH1qw6wb9/v5jNnej8CP4VDjhHg7IXmqMys0Kn1S2LO2v
+FOXsOS/861U0xroYIKzEp74N+GuMTmrqNZRys2mCrqaVqQMUkyEo/2UjJ3LmJ/PF
+i+l4ZzbaJcX1fHMsiEMmFWFQ8r+uGoqpjMQfPNu5ES7l/cuOwtrxbMu90a3iDFUe
+OBNHQOfXhNaZ+IbK4++m1vnUpAE4tFzPy4qYd+e4lOTwuCGkXNM=
+=1Tjn
 -----END PGP SIGNATURE-----
 
---zwqd4op5xu7ger2e--
+--Apple-Mail=_833FFC8A-C59D-4062-96E8-15926FD617E6--
