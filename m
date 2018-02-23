@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225lL59CZYeHq1R4QWcT295jMzGQ4duc3rHZrqsi77q1b19tVwc0v3xJJNCZIP4uLolsBMtm
-ARC-Seal: i=1; a=rsa-sha256; t=1519410791; cv=none;
+X-Google-Smtp-Source: AG47ELtbZ0vo3uZOkzOyXGrtRdug/emFObSyQLLE2pu179lbbIOGTZEO1ytpeth0bLSOtc9RXfQC
+ARC-Seal: i=1; a=rsa-sha256; t=1519410788; cv=none;
         d=google.com; s=arc-20160816;
-        b=PJyJi3c+ZH0HmNOXtwTD9xwsgKY8ieh1Fw/EOqFeHMiH9aGW6cLRZcaSOoRBb0MNZz
-         CHPDYZOvqLWK77vxDDhNqfwAZfDbPEnj4dGVcK5ypSivL24r7h13q1Scnx3Bcfwt0yJk
-         7M6BaXNT40L3l7g1YjQwBp74VPiPkkFErvB9ZrZPMB/i8XX1RMohoxVhKvaYDBbER2Ax
-         aJQFxnAXshc+6CKRZ2MS4GW9lT87lquWKsqLFIUQHqMXdPQ+U3As/fabqx/PvxIdlwGj
-         UOQx/UoOjHELA1hTSjkToYYfnCZlO9w/p1F7Im7LbCp/DADznLNdqeTMVHp79BIHQZ6G
-         Ou/g==
+        b=RhQr4pTXbBjOSlkI9pVOxO0Zh2Mm1z7aTy6Gcf+a52jL8LVvAFOxxHM3dpBtExJ385
+         2LdCLsO7TfjUqDE491iI1Yrgggu6EB+c/WzOlHDEGmfdq1ZKMw8Shdkj57LFn0r23VTu
+         hFhEVOmnQYn+3aZZnchDo9XznkEnWo9L5jG9D5TQ1BHfAOgGTAtl0lhKuWNl57+UFMlr
+         zAj4sz/DRE6+5Uo4ncT4Y9y5cZ5d8mrr2Q7mlqeAw/Uc8dDyYrk1Kr1pSmu2XxdtnSiK
+         lNeKetf6nsTLB923ATQRpNZ4r5goouz1pbZl+QS6JegjhEg6GvIt4AC3nwbhtqxWuYJx
+         KpIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EC/AQ3pwxtCBvbGUxxr1jCi3B+iN7oZgR7MOtgrM9j0=;
-        b=qSxRp7ttpCNcYkcuvQmonB2nD3SpR/aK8ahkrJy7JwdT5wCKfZ4xfT7EiF6wjMWWun
-         T7KCnthwcvQAT13NrV8RoGUES007RoTUF2CFynsyGW/U04vnVdzJorxKWWHrK3MQFYtP
-         QPzaw6TgfcSYgqdDFF8oU7iDcQh8h7tvwZ+asvvInrIwqDxbfcJw2zhbY+WpZ9sfagmD
-         mr0B3SSH6cJhabzVZWmTTeM41dRukG4EEMmkx/KzYILjwpAlkVz9ZEduuh+B5Whdu8ix
-         ZuaIF5GYGbDdooDHSpcHNcWwxsMUxw8Wg5Yv6d7cc65gJZE7vb/Q+tKfIGIJTiQsVOF9
-         ikLA==
+        bh=cvOC+6qnWEQHzpKgIl6r3fHUvFfYmO3tts/IVjVimE0=;
+        b=VMfwkydlxTQrXYmYeoL0h5e4j8sRIdrbCekQVzgP5r/2wRK6TCTdd73DQNd//Xhbr+
+         HFJkGNYS6EnubGvNg82SLM5ciwCE5Dfxxz7nnY8zQ1n/HSMgK5ZOuMJooywQ0c3im6oI
+         +wBhRMmcH4GhTn5cjDW3TzLd0+Ou0d1zgt+Ols3PJFovJA5QwPG35bM+XD1QkexUFZtz
+         yR3Tf+W8xD8ydhl1yTiDgsTOrHoiu8zYwD2V3TMeNXYgs0hQ79dBtWy35eMF8RHtHph6
+         nCeSzUEdKgMnZ1am+NDJmUUD8TbMIVnu1GULiNguRxJZoY0plbVPyeLN6TO3StkB4U5G
+         HzVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Florian Westphal <fw@strlen.de>,
+	syzbot+4396883fa8c4f64e0175@syzkaller.appspotmail.com,
+	Dmitry Vyukov <dvyukov@google.com>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 016/193] netfilter: x_tables: avoid out-of-bounds reads in xt_request_find_{match|target}
-Date: Fri, 23 Feb 2018 19:24:09 +0100
-Message-Id: <20180223170328.642062300@linuxfoundation.org>
+Subject: [PATCH 4.4 015/193] netfilter: x_tables: fix int overflow in xt_alloc_table_info()
+Date: Fri, 23 Feb 2018 19:24:08 +0100
+Message-Id: <20180223170328.496659583@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593217537889132709?=
-X-GMAIL-MSGID: =?utf-8?q?1593217690202040027?=
+X-GMAIL-THRID: =?utf-8?q?1593217534990919232?=
+X-GMAIL-MSGID: =?utf-8?q?1593217686951082362?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,49 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-commit da17c73b6eb74aad3c3c0654394635675b623b3e upstream.
+commit 889c604fd0b5f6d3b8694ade229ee44124de1127 upstream.
 
-It looks like syzbot found its way into netfilter territory.
+syzkaller triggered OOM kills by passing ipt_replace.size = -1
+to IPT_SO_SET_REPLACE. The root cause is that SMP_ALIGN() in
+xt_alloc_table_info() causes int overflow and the size check passes
+when it should not. SMP_ALIGN() is no longer needed leftover.
 
-Issue here is that @name comes from user space and might
-not be null terminated.
+Remove SMP_ALIGN() call in xt_alloc_table_info().
 
-Out-of-bound reads happen, KASAN is not happy.
-
-v2 added similar fix for xt_request_find_target(),
-as Florian advised.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Florian Westphal <fw@strlen.de>
+Reported-by: syzbot+4396883fa8c4f64e0175@syzkaller.appspotmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/netfilter/x_tables.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 --- a/net/netfilter/x_tables.c
 +++ b/net/netfilter/x_tables.c
-@@ -206,6 +206,9 @@ xt_request_find_match(uint8_t nfproto, c
- {
- 	struct xt_match *match;
+@@ -38,8 +38,6 @@ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Harald Welte <laforge@netfilter.org>");
+ MODULE_DESCRIPTION("{ip,ip6,arp,eb}_tables backend module");
  
-+	if (strnlen(name, XT_EXTENSION_MAXNAMELEN) == XT_EXTENSION_MAXNAMELEN)
-+		return ERR_PTR(-EINVAL);
-+
- 	match = xt_find_match(nfproto, name, revision);
- 	if (IS_ERR(match)) {
- 		request_module("%st_%s", xt_prefix[nfproto], name);
-@@ -248,6 +251,9 @@ struct xt_target *xt_request_find_target
- {
- 	struct xt_target *target;
+-#define SMP_ALIGN(x) (((x) + SMP_CACHE_BYTES-1) & ~(SMP_CACHE_BYTES-1))
+-
+ struct compat_delta {
+ 	unsigned int offset; /* offset in kernel */
+ 	int delta; /* delta in 32bit user land */
+@@ -954,7 +952,7 @@ struct xt_table_info *xt_alloc_table_inf
+ 		return NULL;
  
-+	if (strnlen(name, XT_EXTENSION_MAXNAMELEN) == XT_EXTENSION_MAXNAMELEN)
-+		return ERR_PTR(-EINVAL);
-+
- 	target = xt_find_target(af, name, revision);
- 	if (IS_ERR(target)) {
- 		request_module("%st_%s", xt_prefix[af], name);
+ 	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
+-	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
++	if ((size >> PAGE_SHIFT) + 2 > totalram_pages)
+ 		return NULL;
+ 
+ 	if (sz <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
