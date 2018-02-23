@@ -1,67 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3641323-1519411391-5-11156688859931891294
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosk.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519411390; b=GlaX8Eu2f4jeUtHn3z+UsM2WT/XnCTb1AS3pn+mD/2V2D8b
-    WUvms4JOhLzN6ahkPfgluNKNw9w1Fr2MWvrX6QjEv+IxPt4WwCLA+KuuF8wsVtAD
-    0Zq42vn9diNSlrsWamGuGl86GBhbHwFpgInsk4pWL8Ofn8tVOSy9ihWuPfthzqsx
-    DusxoR9EUem16yNmHI6CANa+G3I5PS/7j6ZAOdUUos9SRK7G1Max5PGbAX+ZiQqT
-    +GHdIrYHlusiDt3lnPLUSRWzHOh3xEkiLe+r6wkcFv/M7+iFI75Wyv1BMg1K6X6o
-    llkhRznkyg/vmsq2ZtR3r/J4NVgDy41qn/vAPhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519411390; bh=9tUOxvRSq3HUDh/VSXYrJI6yFI
-    jFhg8GBGXKxxp7zzY=; b=kIPZMFzcG30XWpQw27JrYQ7G42u0Hul9kAQgRWrRwG
-    bzV5C2PA7AWn43pJ/fZCJNuyuDfUbSqXlfY8wrda23RFQqKuRnAvnsPfYAC9CyTu
-    8h4o9baD8DrPJa6KOhGbbarLdPLluNGISH008do/TL3vb3IkDcCKmx3JCi/vvEU/
-    3u+seqc4cujymjsLCclvCX2Gx6E14n9W/Cvcg3yR4VVdr9E6or8vYsxcA0j8uegj
-    A5z464Fv9fILwCOgt4agb5sTQGeEpn9fMQxkCKKl5EkPJMY3u6Ckcbteqij4R7Sj
-    LSe8/pLr50544Evz6wbm/GBp+FMeVvQnp9XVFtuHqllw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932159AbeBWSnG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:43:06 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42042 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932515AbeBWSnE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:43:04 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226ObQLAmhXObTeench2wqe7VNXBbSVH+XvwlbvTVuK4T/4JR6FOkct53eh6SHJhFY9rQYQ8
+ARC-Seal: i=1; a=rsa-sha256; t=1519411370; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rnmj0qgrRmuPgPTvRTiWVcVzqAjzbGZrZdVdwHrS7aIeXomkJjII6Bc7J6IINm46an
+         0dAoH2rrTYhJ4f9NqgkomPWKifT/3h+z8MpOkpGGM/JNlJSFi2jBvk6Hmq/Fa/w4jXYI
+         TQ+KeT+qAddet8OqbFpRDYOd2EoJE7ve82dnB/uKU0A3OSoamkmtBH+wPD9jpKntDctC
+         FYTW0ejDD6gSbbHQgQkRvfhqziY4UeFH98bDDYH9GKVUxw3BU53pzvKWfvME4zSE1ba1
+         kXznazdTZg0NqgFgLnLPMQGUTeY/VlMdrFpdz9whCTV7Ik2yQdsXvmY9koykGz+SJlZt
+         FD2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/4gbq7lyhN7nxaoCc09CEiIkuryznD8q9x3mOIzVihY=;
+        b=pubd+2z5DzgBGbNbxhY8vfe7BY3UWlqvO0urLVadKkwUvtCHpHm9SqO1J/9cXQ5P6Z
+         weXTVyVxlO2A5P/sKBg4VuLIVvrsUvAAVaX+Bs5Drq0ItwSKeZJXpDpIZpheOj80/KZi
+         1mFbQvH4jUrTUyDxHPR+uwDmXw+KoiKYh9pHIFAwzwgfG8KMUf30+Z+XeizK3AIC2b4p
+         +i0GeFtrp4R/+boM1Itt/F1B7f7TkBw8oFnPfCWjv7HU4lz+LDi+7jtkbc622lwPfb7S
+         VAh5JAZ5HkrD2X9XQoq+jjh64GfEabEF83zgSYUZU2muJ58Wjxop6KbjZbfdhCf1qPVq
+         e3vw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 024/145] netfilter: ipt_CLUSTERIP: fix out-of-bounds accesses in clusterip_tg_check()
-Date: Fri, 23 Feb 2018 19:25:30 +0100
-Message-Id: <20180223170727.895360268@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>
+Subject: [PATCH 4.9 020/145] KVM: x86: fix escape of guest dr6 to the host
+Date: Fri, 23 Feb 2018 19:25:26 +0100
+Message-Id: <20180223170727.299653745@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -69,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593217684161240424?=
+X-GMAIL-MSGID: =?utf-8?q?1593218297013074401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,57 +52,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
-commit 1a38956cce5eabd7b74f94bab70265e4df83165e upstream.
+commit efdab992813fb2ed825745625b83c05032e9cda2 upstream.
 
-Commit 136e92bbec0a switched local_nodes from an array to a bitmask
-but did not add proper bounds checks. As the result
-clusterip_config_init_nodelist() can both over-read
-ipt_clusterip_tgt_info.local_nodes and over-write
-clusterip_config.local_nodes.
+syzkaller reported:
 
-Add bounds checks for both.
+   WARNING: CPU: 0 PID: 12927 at arch/x86/kernel/traps.c:780 do_debug+0x222/0x250
+   CPU: 0 PID: 12927 Comm: syz-executor Tainted: G           OE    4.15.0-rc2+ #16
+   RIP: 0010:do_debug+0x222/0x250
+   Call Trace:
+    <#DB>
+    debug+0x3e/0x70
+   RIP: 0010:copy_user_enhanced_fast_string+0x10/0x20
+    </#DB>
+    _copy_from_user+0x5b/0x90
+    SyS_timer_create+0x33/0x80
+    entry_SYSCALL_64_fastpath+0x23/0x9a
 
-Fixes: 136e92bbec0a ("[NETFILTER] CLUSTERIP: use a bitmap to store node responsibility data")
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The testcase sets a watchpoint (with perf_event_open) on a buffer that is
+passed to timer_create() as the struct sigevent argument.  In timer_create(),
+copy_from_user()'s rep movsb triggers the BP.  The testcase also sets
+the debug registers for the guest.
+
+However, KVM only restores host debug registers when the host has active
+watchpoints, which triggers a race condition when running the testcase with
+multiple threads.  The guest's DR6.BS bit can escape to the host before
+another thread invokes timer_create(), and do_debug() complains.
+
+The fix is to respect do_debug()'s dr6 invariant when leaving KVM.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c |   16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/x86/kvm/x86.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -365,7 +365,7 @@ static int clusterip_tg_check(const stru
- 	struct ipt_clusterip_tgt_info *cipinfo = par->targinfo;
- 	const struct ipt_entry *e = par->entryinfo;
- 	struct clusterip_config *config;
--	int ret;
-+	int ret, i;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2847,6 +2847,12 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *
+ 	kvm_x86_ops->vcpu_put(vcpu);
+ 	kvm_put_guest_fpu(vcpu);
+ 	vcpu->arch.last_host_tsc = rdtsc();
++	/*
++	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
++	 * on every vmexit, but if not, we might have a stale dr6 from the
++	 * guest. do_debug expects dr6 to be cleared after it runs, do the same.
++	 */
++	set_debugreg(0, 6);
+ }
  
- 	if (par->nft_compat) {
- 		pr_err("cannot use CLUSTERIP target from nftables compat\n");
-@@ -384,8 +384,18 @@ static int clusterip_tg_check(const stru
- 		pr_info("Please specify destination IP\n");
- 		return -EINVAL;
- 	}
--
--	/* FIXME: further sanity checks */
-+	if (cipinfo->num_local_nodes > ARRAY_SIZE(cipinfo->local_nodes)) {
-+		pr_info("bad num_local_nodes %u\n", cipinfo->num_local_nodes);
-+		return -EINVAL;
-+	}
-+	for (i = 0; i < cipinfo->num_local_nodes; i++) {
-+		if (cipinfo->local_nodes[i] - 1 >=
-+		    sizeof(config->local_nodes) * 8) {
-+			pr_info("bad local_nodes[%d] %u\n",
-+				i, cipinfo->local_nodes[i]);
-+			return -EINVAL;
-+		}
-+	}
- 
- 	config = clusterip_config_find_get(par->net, e->ip.dst.s_addr, 1);
- 	if (!config) {
+ static int kvm_vcpu_ioctl_get_lapic(struct kvm_vcpu *vcpu,
