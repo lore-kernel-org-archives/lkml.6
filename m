@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeBWBQv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 20:16:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37796 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeBWBQu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 20:16:50 -0500
-Date: Thu, 22 Feb 2018 17:16:46 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Jonathan Woithe <jwoithe@just42.net>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] fujitsu-laptop: Miscellaneous cleanups
-Message-ID: <20180223011646.GJ19843@fury>
-References: <20180211210727.12130-1-kernel@kempniu.pl>
- <20180216193725.GE5786@fury>
- <20180218195509.GB3665@kmp-mobile.hq.kempniu.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180218195509.GB3665@kmp-mobile.hq.kempniu.pl>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751474AbeBWBRZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 20:17:25 -0500
+Received: from mx.socionext.com ([202.248.49.38]:37504 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751265AbeBWBRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 20:17:22 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 1/2] ASoC: add DT bindings documentation for ROHM BD28623 codec
+Date: Fri, 23 Feb 2018 10:17:16 +0900
+Message-Id: <20180223011717.2799-2-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180223011717.2799-1-suzuki.katsuhiro@socionext.com>
+References: <20180223011717.2799-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 18, 2018 at 08:55:09PM +0100, Michał Kępień wrote:
-> > To avoid just having to review everything again in a few months ;-) I've queued
-> > up patches 1-5. I'll await comments to 6 and a respin of 7 based on feedback.
-> 
-> Thanks, I think I will post v2 of the entire series with changes
-> addressing review comments for patches 6/7 and 7/7.  I think that is the
-> most coherent way of moving forward, but if you would rather see fixed
-> versions of patches 6/7 and 7/7 posted as 1/2 and 2/2, please just let
-> me know.
+This patch adds DT bindings documentation for ROHM BD28623MUV
+class D speaker amplifier.
 
-Your cover letter made it easy to manage, thanks for being clear, makes it
-easier on our end.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
+---
+
+Changes in v2:
+  - Change gpio properties to optional
+  - Change VCCA, VCCP-supply to mandatory
+---
+ .../devicetree/bindings/sound/rohm,bd28623.txt     | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/rohm,bd28623.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/rohm,bd28623.txt b/Documentation/devicetree/bindings/sound/rohm,bd28623.txt
+new file mode 100644
+index 000000000000..d84557c2686e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/rohm,bd28623.txt
+@@ -0,0 +1,29 @@
++ROHM BD28623MUV Class D speaker amplifier for digital input
++
++This codec does not have any control buses such as I2C, it detect format and
++rate of I2S signal automatically. It has two signals that can be connected
++to GPIOs: reset and mute.
++
++Required properties:
++- compatible      : should be "rohm,bd28623"
++- #sound-dai-cells: should be 0.
++- VCCA-supply     : regulator phandle for the VCCA supply
++- VCCP1-supply    : regulator phandle for the VCCP1 supply
++- VCCP2-supply    : regulator phandle for the VCCP2 supply
++
++Optional properties:
++- reset-gpios     : GPIO specifier for the active low reset line
++- mute-gpios      : GPIO specifier for the active low mute line
++
++Example:
++
++	codec {
++		compatible = "rohm,bd28623";
++		#sound-dai-cells = <0>;
++
++		VCCA-supply = <&vcc_reg>;
++		VCCP1-supply = <&vcc_reg>;
++		VCCP2-supply = <&vcc_reg>;
++		reset-gpios = <&gpio 0 GPIO_ACTIVE_LOW>;
++		mute-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++	};
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.16.1
