@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeBWAaM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:30:12 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:55081 "EHLO
+        id S1752094AbeBWAa6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:30:58 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:55391 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751723AbeBWAaJ (ORCPT
+        with ESMTP id S1751283AbeBWAaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:30:09 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180223003007epoutp012c11726d8123aa2416f27d7fe900e649~VzPY006_b0299502995epoutp01o
-X-AuditID: b6c32a48-9adff70000000ff0-f3-5a8f608e99c2
+        Thu, 22 Feb 2018 19:30:55 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180223003054epoutp016269afed8a3f4448ddc87cd29bd6f4ce~VzQEssMoD0483404834epoutp01O
+X-AuditID: b6c32a39-47fff70000000fc5-1d-5a8f60bdf5ab
 MIME-version: 1.0
 Content-transfer-encoding: 8BIT
 Content-type: text/plain; charset="UTF-8"
-Message-id: <5A8F608E.4030509@samsung.com>
-Date: Fri, 23 Feb 2018 09:30:06 +0900
+Message-id: <5A8F60BE.8060405@samsung.com>
+Date: Fri, 23 Feb 2018 09:30:54 +0900
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
@@ -25,100 +25,91 @@ To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Fix address of PPMU ACP on
- Exynos4210
-In-reply-to: <20180222191111.23747-1-krzk@kernel.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nOjpfZaVp9Wdk8EKHgcmvTY2oUSQ0MsvojK1knPWzLXWRn
-        s/SPItLmyEsUYWZaogWT8DrL7KqrTEIxMy/lMgYWKWVIOgWjzbPIf8/7vs/zXh5eDBFeRiMx
-        rcFMmwyUjkCDuV19MfK4irOVyvifXwmyrbqFR9a7BnlkpWcWIYeGWvlku+cDjxx5VIuS1UNP
-        OeR91xSfbLm+zCP75qy8g8GK7popvqLdUYYqOhqLFBWdDqBYaI/K4CnpFA1N5dAmEW3INuZo
-        DepUIv2U6rBKnhAviZMkkYmEyEDp6VQi7VhG3BGtzrcUIcqndBZfKoNiGGLvgRST0WKmRRoj
-        Y04lTkskUrEkPlEslUrFsn1Z+6VyH+UsrSn/YEPypsMuziyNg2IwG2IHQRjEZXDk01OOHQRj
-        QvwhgD2tAygbLAH44msT8o9VPP2AzxZaAaz9VY36CwJ8E/RedXPtAMMQfBd0vcv1pxE8Bjp7
-        WgJ8N4Du/iouy4+Fqwt1HD/m4rvh8J8vfD9Gffln38bXem7Eo+Go1wP8eDOeCbvrF9caReAT
-        HNjWOsFhJ5DQ6WxeE4fjJ+EPazPPj4NwOfw46uL6BRD3oPBt+S3AnpAGX/Y7+SwOh99fdwbw
-        djjjaAOswAqg9UkdwgbXABwcc3NY1j44c8ceGB0GbX2rfP/NEBdA2yUhS1FAt2MhQD8Elxvs
-        ASNtAE41VIAqEFWzzrKa/5bVrLPsNkAcYAudx+jVNCPNk4kZSs9YDGpxtlHfDtY+MVbxEDwf
-        PNYLcAwQoYJMc7lSyKPymQJ9L4AYQkQIHgsrlUJBDlVQSJuMKpNFRzO9QO5z/AoSuTnb6Ptr
-        g1klkSXFyxISpIkJpO/HtgouZaQphbiaMtO5NJ1Hm/7pOFhQZDFIW3J6u7usaru0VFkyVlI0
-        N8Bt2nA69mjTHmJHqSr9zWI46k3e+VtXqEq2FbTNzRadx1bOeA6f8JZZNArkuBkdndQ2EKtR
-        k5njjRrTe7tI21SbJZ93LYdmR29ZQp3no0cbZ+fNG0Nibp67EXmua/p59Wfu8LZ7Kx3jcXdf
-        XWgmuIyGksQiJob6C5NNQNOfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsVy+t9jQd2+hP4og/87uS02zljPajH/yDlW
-        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYu2Ru+wW66f9ZLU4/Kad1YHLY+esu+wem1Z1
-        snlsXlLv0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBm91zqYCx7wVTz7foOxgfE1dxcjJ4eE
-        gIlEw4Pt7F2MXBxCAusYJVacPcEMkuAVEJT4MfkeSxcjBwezgLzEkUvZIGFmAXWJSfMWMUPU
-        P2CUODn3OTtEvZbE38/zmEBsFgFViYv/HoLF2YDi+1/cYAOx+QUUJa7+eMwIMlNUIEKi+0Ql
-        yBwRgdtMEl+uTGKGWGAhsXXrarBeYYEAib33l0Id18UoMe1xI1gRp4CpxO2rR1gmMArMQnLr
-        LIRbZyG5dQEj8ypGydSC4tz03GKjAqO81HK94sTc4tK8dL3k/NxNjMBI2HZYq38H4+Ml8YcY
-        BTgYlXh4I0p6o4RYE8uKK3MPMUpwMCuJ8O4R6o8S4k1JrKxKLcqPLyrNSS0+xCjNwaIkzsuf
-        fyxSSCA9sSQ1OzW1ILUIJsvEwSnVwJjB5LmFR2jl16PMqikHHsa5Pcnq1kqZp858lKd5Et9K
-        jtIlFVOu/msz5FgTf/vVcfOJizSnhMztbUhn0nhQplVl2KHo7iN34XOkuJq3JfctHSmbxcu0
-        wg7cPqtYHK+YzXHhgfJpg/Ysm8e9wTddnk2+Ii15bvtPdc0yzW2FC0WcSgPtemMNlViKMxIN
-        tZiLihMBye/A5IACAAA=
-X-CMS-MailID: 20180223003006epcas2p193e4a09e17d6c5611941d17ecaf586ed
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix unit addresses of PDMA nodes
+ in Exynos5410
+In-reply-to: <20180222191111.23747-2-krzk@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTURzm7O7uIa5u6/XLwuxCxRbO3en0WtmDxEZFjIqKSehFD87aQ3Y3
+        ySAyopnrMcMokay0ItJqubRMs0iXWYSWmibko6TsIUZFpRDUtlvUf9/5zved7/w+fjJC6ZZE
+        yXJtTuywcRZaEiG+2arSxjZnek3aoUI9W1vmI9mzgQ6S9Y58JNjOzutS1j/SS7LdjaclbFnn
+        XRF7NTAgZX0nJ0m2dayIXBVhuF0+IDX4q4slhhsX9hmO1VUjw1d/tJE04eVmzGVjRwy2Zdmz
+        c205KfT6zRlrMvSJWiaWSWaT6BgbZ8UpdOoGY2xariX4KTomn7O4gpSR43k6bsVyh93lxDFm
+        O+9ModMZRqdhtEkanU6nSYjfsVSnD0oysXm07DyZ1xW5+9OTCnEh+iz3IJkMqAS41JrrQXKZ
+        kmpAcPF1ogdFBPEPBFc8I+Rfzbv3nMA3ITh/8KckZFBQ02CidFAc0hDUfAh07QrRBKWC+iaf
+        VHhzEEFZe5ogV0Nr3UsihMXUQghcHg4/Iwny9969COOp1AJ4PjGCQngmtR1un/0uDeXOoPpF
+        UHu9XyQEsFBfXxMOmE6lQ3fl/rBBTunhQE8bGTIANSSBlp4SMnQBVCo87WsnBDwdPjyskwqD
+        zYWuBymCvghBUfMZQjicQNDRNygSDPHwttLzJ3kKjH878qcVBRxyKwWJAR7VeJGAV8PQyVqR
+        MP0NBJO31pag6PL/+ir/11f5f32dQ0Q1moXzeGsO5pk8vYbnrLzLlqPJslv9KLyD6uQG1Nax
+        oQVRMkRHKrY7j5qUJJfPF1hbEMgIeobijtJrUiqyuYI92GHPcLgsmG9B+mDfx4momVn24Ebb
+        nBlMQrI2IVEX3K1khqFnK4zGVJOSyuGceBfGedjx1yeSyaMK0c7UlfJZX2q2tg87C18tvhl9
+        eNu6uMsH5tc8Uy1TF515kzmqqmjm9ExT1TG/OrJRZfVht6J3i6/U1yv5eN/+/op7CjwuTfs1
+        2TC2KD+R3ls8sW382mblNb32UlTxnKoSv7zHspoN9Hq13aKIC5s2zvElzTOfOt3tnuvasmSs
+        L34NLebNHKMmHDz3GxhmobmZAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jAd29Cf1RBufPSVhsnLGe1WL+kXOs
+        Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+Txdojd9kt1k/7yWpx+E07qwOXx85Zd9k9Nq3q
+        ZPPYvKTeo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDKez1jMWnCJp+L9mbksDYwfObsYOTgk
+        BEwkXrxM7GLk5BAS2MkosbNRHMTmFRCU+DH5HgtICbOAvMSRS9kgYWYBdYlJ8xYxQ5Q/YJR4
+        OU8XolxL4vCWO2BxFgFViSMrH7CB2GxA8f0vboDZ/AKKEld/PGYEGSkqECHRfaKyi5GLQ0Tg
+        NpPElyuTmCHmW0hs3bqaHcQWFoiWOLP0LNSuzYwSS5vDQWxOAVOJ5ivHWCcwCsxCcukshEtn
+        Ibl0ASPzKkbJ1ILi3PTcYqMCw7zUcr3ixNzi0rx0veT83E2MwAjYdlirbwfj/SXxhxgFOBiV
+        eHgjSnqjhFgTy4orcw8xSnAwK4nw7hHqjxLiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQ
+        QHpiSWp2ampBahFMlomDU6qBUa2f9XZgiTFXDZ+Zr0BIlJzNt3ghkXXnLoj1yR1/Xvc8tGOr
+        6/bdIglaHnt4Yjb6fOk0XBx/TtMvJ7hN4u509i+CN9IYKorCjxR+cTgzb/ZJ6xLLOtnMM9kr
+        WtUyJ5fuSDjW9Ft09ckiJ9+QlZfqazwWhvRMOfV48fIaZouJb4OsbkWHWLArsRRnJBpqMRcV
+        JwIAmd1gfnwCAAA=
+X-CMS-MailID: 20180223003053epcas1p4f9a0625512bb26fc82c3eacfee0b7a81
 X-Msg-Generator: CA
-CMS-TYPE: 102P
+CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180222191146epcas2p1e0fc10e3f8b278f0c3671d32e2d76350
-X-RootMTR: 20180222191146epcas2p1e0fc10e3f8b278f0c3671d32e2d76350
-References: <CGME20180222191146epcas2p1e0fc10e3f8b278f0c3671d32e2d76350@epcas2p1.samsung.com>
-        <20180222191111.23747-1-krzk@kernel.org>
+X-CMS-RootMailID: 20180222191201epcas4p2e23264bce9d1d3b3cc3737c3d30b544d
+X-RootMTR: 20180222191201epcas4p2e23264bce9d1d3b3cc3737c3d30b544d
+References: <20180222191111.23747-1-krzk@kernel.org>
+        <CGME20180222191201epcas4p2e23264bce9d1d3b3cc3737c3d30b544d@epcas4p2.samsung.com>
+        <20180222191111.23747-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2018년 02월 23일 04:11, Krzysztof Kozlowski wrote:
-> Typo in unit address of PPMU ACP caused DTC warnings:
+> Fix the unit addresses of PDMA nodes in Exynos5410 (the reg property is
+> correct) to get rid of DTC warnings like:
 > 
->     arch/arm/boot/dts/exynos4412-odroidu3.dtb:
->         Warning (simple_bus_reg): Node /soc/ppmu_acp@10ae0000 simple-bus unit address format error, expected "106e0000"
-> 
-> PPMU ACP (under 0x10ae0000 address) is present only in Exynos4210 so
-> move this node to exynos4210.dtsi with fixing the reg address to proper
-> one.
+>     arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (simple_bus_reg):
+>         Node /soc/amba/pdma@12680000 simple-bus unit address format error, expected "121a0000"
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos4.dtsi    | 6 ------
->  arch/arm/boot/dts/exynos4210.dtsi | 6 ++++++
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 967cd02401c5..909a9f2bf5be 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -821,12 +821,6 @@
->  			status = "disabled";
->  		};
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 1e6b57d013c4..55509c690328 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -196,9 +196,9 @@
+>  			interrupt-parent = <&gic>;
+>  			ranges;
 >  
-> -		ppmu_acp: ppmu_acp@10ae0000 {
-> -			compatible = "samsung,exynos-ppmu";
-> -			reg = <0x106e0000 0x2000>;
-> -			status = "disabled";
-> -		};
-> -
->  		ppmu_rightbus: ppmu_rightbus@112a0000 {
->  			compatible = "samsung,exynos-ppmu";
->  			reg = <0x112a0000 0x2000>;
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index 853604d91158..88fb47cef9a8 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -162,6 +162,12 @@
->  			iommus = <&sysmmu_g2d>;
->  		};
+> -			pdma0: pdma@12680000 {
+> +			pdma0: pdma@121a0000 {
+>  				compatible = "arm,pl330", "arm,primecell";
+> -				reg = <0x121A0000 0x1000>;
+> +				reg = <0x121a0000 0x1000>;
+>  				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+>  				clocks = <&clock CLK_PDMA0>;
+>  				clock-names = "apb_pclk";
+> @@ -207,9 +207,9 @@
+>  				#dma-requests = <32>;
+>  			};
 >  
-> +		ppmu_acp: ppmu_acp@10ae0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10ae0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
->  		ppmu_lcd1: ppmu_lcd1@12240000 {
->  			compatible = "samsung,exynos-ppmu";
->  			reg = <0x12240000 0x2000>;
+> -			pdma1: pdma@12690000 {
+> +			pdma1: pdma@121b0000 {
+>  				compatible = "arm,pl330", "arm,primecell";
+> -				reg = <0x121B0000 0x1000>;
+> +				reg = <0x121b0000 0x1000>;
+>  				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+>  				clocks = <&clock CLK_PDMA1>;
+>  				clock-names = "apb_pclk";
 > 
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
