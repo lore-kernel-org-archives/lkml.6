@@ -1,57 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeBWLgw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:36:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59468 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbeBWLgv (ORCPT
+        id S1751468AbeBWLht (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:37:49 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:38853 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750935AbeBWLhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:36:51 -0500
-Date: Fri, 23 Feb 2018 12:36:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [RFC tip/locking/lockdep v5 08/17] lockdep: Fix recursive read
- lock related safe->unsafe detection
-Message-ID: <20180223113643.GX25201@hirez.programming.kicks-ass.net>
-References: <20180222070904.548-1-boqun.feng@gmail.com>
- <20180222070904.548-9-boqun.feng@gmail.com>
- <20180222174654.GW25201@hirez.programming.kicks-ass.net>
- <20180223082134.ykkbzqj2h7glxrqn@tardis>
- <20180223085812.22u7o6z2gcg272jn@tardis>
+        Fri, 23 Feb 2018 06:37:46 -0500
+X-Google-Smtp-Source: AG47ELvkqRvlX0+T1dhC2smgu+RCcLCqs3Eq9l5GHYhpkYx9qnayu0A2UezAn23jTI9qLl6iHmBaxuQu+YIQ24sJNLg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223085812.22u7o6z2gcg272jn@tardis>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180222180420.GA17956@infradead.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222160217.GA18243@infradead.org> <CAMo8BfLoqat+6CyOM2VV5Wz13NFMj54YisCogiVm95oDwdnTFQ@mail.gmail.com>
+ <20180222180420.GA17956@infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 23 Feb 2018 12:37:45 +0100
+X-Google-Sender-Auth: blGMfdKEvaKPXzMIpj5RvO3JawQ
+Message-ID: <CAK8P3a2VMbAARCFuBjY7TMuAfGM_h4BU3PfQA2C_pUFT34UHAA@mail.gmail.com>
+Subject: Re: Removing architectures without upstream gcc support
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Max Filippov <jcmvbkbc@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>, metcalf@alum.mit.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 04:58:12PM +0800, Boqun Feng wrote:
-> Hmm... think again, maybe I can combine case 1 with 3, and case 2 with
-> 4, because each of them could share the same find_usage_backwards(), and
-> find_usage_forwards() uses a usage_match_forwards() as follow for the
-> match function:
-> 
-> 	static inline int usage_match_forwards(struct lock_list *entry, void *bit)
-> 	{
-> 		enum lock_usage_bit ub = (enum lock_usage_bit)bit;
-> 		unsigned long mask;
-> 		unsigned long read_mask;
-> 
-> 		/* mask out the read bit */
-> 		ub &= ~1;
-> 
-> 		mask = 1ULL << ub;
-> 		read_mask = 1ULL << (ub + 1);
-> 
-> 		return (entry->class->usage_mask & mask) ||  // *-> L2 and L2 is an irq-unsafe lock
-> 		       ((entry->class->usage_mask & read_mask) && !entry->is_rr); // N-> L2 and L2 is an irq-read-unsafe lock
-> 	}
-> 
-> Got a bus to catch, I can explain this later, if you need ;-)
+On Thu, Feb 22, 2018 at 7:04 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Thu, Feb 22, 2018 at 09:14:11AM -0800, Max Filippov wrote:
+>> On Thu, Feb 22, 2018 at 8:02 AM, Christoph Hellwig <hch@infradead.org> wrote:
+>> > I'd love to see dead architecture ports dropped if they really are
+>> > more or less abandoned.  In addition to your missing gcc port ones
+>> > above (minus openrisc) it seems like frv and m32r certainly qualify,
+>> > and xtensa seems to be going that way with the glibc port being dropped
+>> > now.
+>>
+>> It's not that it's been dropped, there have never been an official glibc
+>> port for xtensa, but we're working to get one.
+>
+> Ah sorry - I meant to say tile not xtensa when writing this.
 
-Right, that's about what I was thinking of. Clearly that needs a wee
-comment but it's much better.
+That makes more sense, yes. I'm still unsure about this one though. Chris in
+fact made the suggestion to remove the architecture from both glibc and kernel
+as with his departure from Mellanox there is nobody left from to maintain it.
+
+I suggested keeping it as 'Orphaned' for the time being, given that the port
+is still in a good shape, much better than many other ports.
+
+The known customers that sold TileGX based appliances (Cisco, Brocade,
+Checkpoint, Mikrotik, ...) tend to have long support cycles, and there have
+been attempts at getting Debian, OpenWRT and Centos distro support
+at least a few years ago.
+
+According to one comment, at least Cisco doesn't use the mainline kernels [1],
+and it's likely similar for the others.
+
+The other architecture that was recently marked 'obsolete' is Blackfin,
+if we remove Tile, then that one can probably get removed as well.
+
+          Arnd
+
+[1] http://sourceware-org.1504.n7.nabble.com/RFC-remove-the-quot-tile-quot-architecture-from-glibc-td486836i20.html#a491434
