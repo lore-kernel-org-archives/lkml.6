@@ -1,53 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeBWEKl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 23:10:41 -0500
-Received: from namei.org ([65.99.196.166]:50386 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeBWEKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 23:10:40 -0500
-Date: Fri, 23 Feb 2018 15:10:15 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] integrity/security: fix digsig.c build error with header
- file
-In-Reply-To: <b3b7eebb-0e9f-f175-94a8-379c5ddcaa86@infradead.org>
-Message-ID: <alpine.LRH.2.21.1802231509460.4713@namei.org>
-References: <b3b7eebb-0e9f-f175-94a8-379c5ddcaa86@infradead.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1751455AbeBWEWH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 23:22:07 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46875 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeBWEWG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Feb 2018 23:22:06 -0500
+X-Google-Smtp-Source: AH8x224HPrIgGTPy+POrzsvFwbJed8jciAKu1FU37Xoy4rbatNc3Q+Jyc4K2M5VEZ/RAEITthC91XQ==
+Date: Fri, 23 Feb 2018 09:52:03 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] cpufreq: scpi: drop redundant arm_big_little config
+ dependency
+Message-ID: <20180223042203.GC26947@vireshk-i7>
+References: <1519322423-27956-1-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519322423-27956-1-git-send-email-sudeep.holla@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018, Randy Dunlap wrote:
+On 22-02-18, 18:00, Sudeep Holla wrote:
 
-> From: Randy Dunlap <rdunlap@infradead.org>
+Not sure if 'redundant' is the right term to be used here. I would
+rather say: "Fix incorrect config dependency" :)
+
+> Commit 343a8d17fa8d (cpufreq: scpi: remove arm_big_little dependency)
+> removed the SCPI cpufreq dependency on arm_big_little cpufreq driver.
+> However the Kconfig entry still depends on ARM_BIG_LITTLE_CPUFREQ
+> which is clearly wrong.
 > 
-> security/integrity/digsig.c has build errors on some $ARCH due to a
-> missing header file, so add it.
+> This patch removes that unnecessary Kconfig dependency.
 > 
->   security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
-> 
-> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: linux-integrity@vger.kernel.org
-> Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
+> Fixes: 343a8d17fa8d (cpufreq: scpi: remove arm_big_little dependency)
+> Reported-by: Quentin Perret <quentin.perret@arm.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > ---
->  security/integrity/digsig.c |    1 +
->  1 file changed, 1 insertion(+)
+>  drivers/cpufreq/Kconfig.arm | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 2e49673a9e21..9bbb5b39d18a 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -44,10 +44,10 @@ config ARM_DT_BL_CPUFREQ
+>  
+>  config ARM_SCPI_CPUFREQ
+>  	tristate "SCPI based CPUfreq driver"
+> -	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
+> +	depends on ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
+>  	help
+> -	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
+> -	  using SCPI protocol for CPU power management.
+> +	  This adds the CPUfreq driver support for ARM platforms using SCPI
+> +	  protocol for CPU power management.
+>  
+>  	  This driver uses SCPI Message Protocol driver to interact with the
+>  	  firmware providing the CPU DVFS functionality.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc3
-
-
-
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-James Morris
-<jmorris@namei.org>
+viresh
