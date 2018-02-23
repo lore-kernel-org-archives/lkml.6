@@ -1,72 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeBWPMi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:12:38 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37318 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeBWPLc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:11:32 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: lee.jones@linaro.org
-Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
-        linux-kernel@vger.kernel.org, Daniel Hung-yu Wu <hywu@google.com>,
-        Daniel Hung-yu Wu <hywu@chromium.org>
-Subject: [PATCH v2 6/8] mfd: cros_ec_dev: register shutdown function for debugfs
-Date: Fri, 23 Feb 2018 16:11:20 +0100
-Message-Id: <20180223151122.11567-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180223151122.11567-1-enric.balletbo@collabora.com>
-References: <20180223151122.11567-1-enric.balletbo@collabora.com>
+        id S1751895AbeBWPOY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:14:24 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39890 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751785AbeBWPOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 10:14:23 -0500
+From: John Garry <john.garry@huawei.com>
+To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
+        <wcohen@redhat.com>, <will.deacon@arm.com>,
+        <ganapatrao.kulkarni@cavium.com>
+CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH v2 09/11] perf vendor events arm64: fixup ThunderX2 to use recommended events
+Date: Sat, 24 Feb 2018 00:05:30 +0800
+Message-ID: <1519401932-205051-10-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Hung-yu Wu <hywu@google.com>
+This patch fixes the Cavium ThunderX2 JSON to use event definitions
+from the ARMv8 recommended events.
 
-Reboot or shutdown during delayed works could corrupt communication with
-EC and certain I2C controller may not be able to recover from the error
-state.
+The brief description is kept for readability, but is not strictly
+required.
 
-This patch registers a shutdown callback used to cancel the debugfs log
-worker thread.
-
-Signed-off-by: Daniel Hung-yu Wu <hywu@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
+ .../arch/arm64/cavium/thunderx2/core-imp-def.json  | 60 ++++++++--------------
+ 1 file changed, 20 insertions(+), 40 deletions(-)
 
-Changes in v2:
-- [6/8] This patch is new in this series.
-
- drivers/mfd/cros_ec_dev.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index fd7f0068fb45..354eb9e01d52 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -535,6 +535,14 @@ static int ec_device_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void ec_device_shutdown(struct platform_device *pdev)
-+{
-+	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
-+
-+	/* Be sure to clear up debugfs delayed works */
-+	cros_ec_debugfs_remove(ec);
-+}
-+
- static const struct platform_device_id cros_ec_id[] = {
- 	{ DRV_NAME, 0 },
- 	{ /* sentinel */ },
-@@ -577,6 +585,7 @@ static struct platform_driver cros_ec_dev_driver = {
- 	},
- 	.probe = ec_device_probe,
- 	.remove = ec_device_remove,
-+	.shutdown = ec_device_shutdown,
- };
- 
- static int __init cros_ec_dev_init(void)
+diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+index 2db45c4..f47bf0f 100644
+--- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
++++ b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+@@ -1,62 +1,42 @@
+ [
+     {
+-        "PublicDescription": "Attributable Level 1 data cache access, read",
+-        "EventCode": "0x40",
+-        "EventName": "l1d_cache_rd",
+-        "BriefDescription": "L1D cache read",
++        "ArchStdEvent": "0x40",
++        "BriefDescription": "L1D cache access, read"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data cache access, write ",
+-        "EventCode": "0x41",
+-        "EventName": "l1d_cache_wr",
+-        "BriefDescription": "L1D cache write",
++        "ArchStdEvent": "0x41",
++        "BriefDescription": "L1D cache access, write"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data cache refill, read",
+-        "EventCode": "0x42",
+-        "EventName": "l1d_cache_refill_rd",
+-        "BriefDescription": "L1D cache refill read",
++        "ArchStdEvent": "0x42",
++        "BriefDescription": "L1D cache refill, read"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data cache refill, write",
+-        "EventCode": "0x43",
+-        "EventName": "l1d_cache_refill_wr",
+-        "BriefDescription": "L1D refill write",
++        "ArchStdEvent": "0x43",
++        "BriefDescription": "L1D cache refill, write"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data TLB refill, read",
+-        "EventCode": "0x4C",
+-        "EventName": "l1d_tlb_refill_rd",
+-        "BriefDescription": "L1D tlb refill read",
++        "ArchStdEvent": "0x4C",
++        "BriefDescription": "L1D cache refill, inner"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data TLB refill, write",
+-        "EventCode": "0x4D",
+-        "EventName": "l1d_tlb_refill_wr",
+-        "BriefDescription": "L1D tlb refill write",
++        "ArchStdEvent": "0x4D",
++        "BriefDescription": "L1D tlb refill, write"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
+-        "EventCode": "0x4E",
+-        "EventName": "l1d_tlb_rd",
+-        "BriefDescription": "L1D tlb read",
++        "ArchStdEvent": "0x4E",
++        "BriefDescription": "L1D tlb access, read"
+     },
+     {
+-        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
+-        "EventCode": "0x4F",
+-        "EventName": "l1d_tlb_wr",
+-        "BriefDescription": "L1D tlb write",
++        "ArchStdEvent": "0x4F",
++        "BriefDescription": "L1D tlb access, write"
+     },
+     {
+-        "PublicDescription": "Bus access read",
+-        "EventCode": "0x60",
+-        "EventName": "bus_access_rd",
+-        "BriefDescription": "Bus access read",
++        "ArchStdEvent": "0x60",
++        "BriefDescription": "Bus access read"
+    },
+    {
+-        "PublicDescription": "Bus access write",
+-        "EventCode": "0x61",
+-        "EventName": "bus_access_wr",
+-        "BriefDescription": "Bus access write",
++        "ArchStdEvent": "0x61",
++        "BriefDescription": "Bus access write"
+    }
+ ]
 -- 
-2.16.1
+1.9.1
