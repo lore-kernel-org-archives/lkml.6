@@ -1,52 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751423AbeBWMUL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 07:20:11 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46018 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeBWMUH (ORCPT
+        id S1751440AbeBWMWz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 07:22:55 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49744 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbeBWMWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:20:07 -0500
-X-Google-Smtp-Source: AG47ELuObY1PRTTF/yOHgXzaVEd5+NO1pYg2s/eNQmBdM/cQfg/m/X6CW5ai98s7h7gtj1XgH4yJKdfJK+v8d1K7jkY=
+        Fri, 23 Feb 2018 07:22:54 -0500
+From: Colin King <colin.king@canonical.com>
+To: Chas Williams <3chas3@gmail.com>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] atm: idt77252: remove redundant bit-wise or'ing of zero
+Date: Fri, 23 Feb 2018 12:22:52 +0000
+Message-Id: <20180223122252.23942-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Ve5b+pV78xU0DHi9644GT11gwe6sqzqrj_4xRjHHM5yRg@mail.gmail.com>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net> <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <CAHp75Ve5b+pV78xU0DHi9644GT11gwe6sqzqrj_4xRjHHM5yRg@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 23 Feb 2018 13:20:05 +0100
-X-Google-Sender-Auth: KLjeC_lLrPkAtMQR8mt3hEu1Q7M
-Message-ID: <CAK8P3a1az+TbmgT-3-sXAdp04XPP=ocxfhcZK1htMMcMnKa=xg@mail.gmail.com>
-Subject: Re: Removing architectures without upstream gcc support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>,
-        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 1:09 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, Feb 23, 2018 at 12:32 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> ia64 as far as I *heard* from some news will be in support (I mean by
-> vendors) for few more years. Not a fun, just business.
+From: Colin Ian King <colin.king@canonical.com>
 
-My impression was that the business side is only on enterprise distros
-(SLES11 is still supported, RHEL5 is on 'extended support' only), but not
-with mainline kernels. Anyway, it doesn't matter as nobody is suggestion
-to remove it any time soon.
+Zero is being bit-wise or'd in a calculation twice; these are redundant
+and can be removed.
 
-        Arnd
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/idt77252.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 0277f36be85b..6e737142ceaa 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -3173,14 +3173,10 @@ static void init_sram(struct idt77252_dev *card)
+ 				    (u32) 0xffffffff);
+ 	}
+ 
+-	writel((SAR_FBQ0_LOW << 28) | 0x00000000 | 0x00000000 |
+-	       (SAR_FB_SIZE_0 / 48), SAR_REG_FBQS0);
+-	writel((SAR_FBQ1_LOW << 28) | 0x00000000 | 0x00000000 |
+-	       (SAR_FB_SIZE_1 / 48), SAR_REG_FBQS1);
+-	writel((SAR_FBQ2_LOW << 28) | 0x00000000 | 0x00000000 |
+-	       (SAR_FB_SIZE_2 / 48), SAR_REG_FBQS2);
+-	writel((SAR_FBQ3_LOW << 28) | 0x00000000 | 0x00000000 |
+-	       (SAR_FB_SIZE_3 / 48), SAR_REG_FBQS3);
++	writel((SAR_FBQ0_LOW << 28) | (SAR_FB_SIZE_0 / 48), SAR_REG_FBQS0);
++	writel((SAR_FBQ1_LOW << 28) | (SAR_FB_SIZE_1 / 48), SAR_REG_FBQS1);
++	writel((SAR_FBQ2_LOW << 28) | (SAR_FB_SIZE_2 / 48), SAR_REG_FBQS2);
++	writel((SAR_FBQ3_LOW << 28) | (SAR_FB_SIZE_3 / 48), SAR_REG_FBQS3);
+ 
+ 	/* Initialize rate table  */
+ 	for (i = 0; i < 256; i++) {
+-- 
+2.15.1
