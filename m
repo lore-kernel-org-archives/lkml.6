@@ -1,56 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751663AbeBWOyh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:54:37 -0500
-Received: from anholt.net ([50.246.234.109]:43304 "EHLO anholt.net"
+        id S1751681AbeBWOzX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:55:23 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:52700 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751530AbeBWOyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:54:35 -0500
-From: Eric Anholt <eric@anholt.net>
-To: Matheus Castello <matheus@castello.eng.br>, stefan.wahren@i2se.com
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: Re: [PATCH] pinctrl: bc2835: Add brcm,level property
-In-Reply-To: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
-References: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Fri, 23 Feb 2018 06:54:33 -0800
-Message-ID: <87woz3lpsm.fsf@anholt.net>
+        id S1751317AbeBWOzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 09:55:22 -0500
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Message-ID: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+Date: Fri, 23 Feb 2018 15:55:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
 
-Matheus Castello <matheus@castello.eng.br> writes:
+Now that the patch series changing ISA_BUS_API dependency to selection
+was merged this reversion will do the same for gpio-winbond driver to
+make it consistent with other ISA bus gpio drivers.
 
-> Property to set initial value of pin output buffer.
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In the commit message, could you expand on the motivation for adding
-this support?  Also, couldn't we reuse some existing
-pinctrl-bindings.txt generic property?
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqQKykACgkQtdYpNtH8
-nui/ZBAAhZeVOdHZTta4X4nPMPin2RhXeHKGTXLw5n8WFPVmc6oPmm2qbrDCnm1n
-PO6zVZPkg8iKJxKpQ9V4yjDMnqDwcYZI/jPbKKEOwhpkC07YFm3TsxDeKj/1U5Nn
-h+wDJo/02PxIWBGx2VVrRAd3FJMrmiS93xdp581Oz9Cus8ndOCjd2kLK2dC6a/np
-DYIjWesfXYEBFB4APRxwsz1SCeVamI556jHdV6iPozaO/Df4WkEFoZgknAQDa8JV
-z4RsOyuostveJT3Zlfp8PnDkevHnersyZ1bnhrgTxmKDd0JTCsfhnq9xWWJ/gNGJ
-cz4XI5KXQX0g1Q1CnXZEDoXlNX2eEXKZbNcUUIDHjBO88hUzaeKdjQTPGzlLrsFR
-aVGTlj5JKWRxVoHWyJLrhdJ8H5fJqR11014lU6uMjflslizfIJ9C0iR4Jmnw5/5K
-TSmucak9Fg3s2tCYusL/pQDcmI/RxpL4XMXT0GfOBIC1Xj0mM09YXO2Xfx306FpP
-Bxs2VnBL5cI39/afedW6W4JiWmOA6+9JHkFNZuz2BU2r/Y9mNS7PjqMAO//hFtR6
-CRbe4qVgfgDr6s/0pzRAOJKBQxR4tDg/vUH4q/p6r/VZz1aO70ihDhQBxFum2T43
-kRISGfe04xfHHZ+0zdXqfCkhAlOnxENIwMq8Xnixsc9hHG6gvys=
-=MDXY
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index dff99871bca8..6d481ef03623 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -722,7 +722,7 @@ config GPIO_TS5500
+ 
+ config GPIO_WINBOND
+ 	tristate "Winbond Super I/O GPIO support"
+-	depends on ISA_BUS_API
++	select ISA_BUS_API
+ 	help
+ 	  This option enables support for GPIOs found on Winbond Super I/O
+ 	  chips.
