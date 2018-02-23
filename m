@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415099-3-9527025093589450335
+X-Cyrus-Session-Id: sloti22d1t05-3723396-1519415097-2-1984877217812653142
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519415099; b=ric5q3ocZ5bDrgiSsQn70z+9byNbXs2zRXUIgnksuDDwb0G
-    M7M1bzKsBvdFC6F8oV/SdwjnBT73Wjwo8zNZdOSgnE+9Xs3VtvF1dP/34MId0l2j
-    QPJOTfC/z/zfO24/kMKBS95/n3MGzdLG9qiaTJDkEc0DtLymyHS8R+Fe7jq8cxHG
-    WXrf9bDvSiWevvQz35TRU8i2+ghn+HTWNHqpKI3MxAzpfe0k1BAEwMshVrSA/JS2
-    in8oQuCdXd29Diy78vgs5WCSfMlcWOuNUTxEdxEeAg3sXo3LIIfSwgfsZa+NoePE
-    bPqSBTY8GtXXSq6iKC8ooacGY7M+R4rWYFPrsWQ==
+    t=1519415096; b=jvUKtAfrJ46JFNaFrbUSDadcZC8PwG5l2o4YZp07gUgkPW4
+    275rH1sHtJN2yGvz+AlFEnlSFthPaSarrzh+1hyXfpHBYIhTAizMCFcBHkrQxafM
+    K1+9PfXBEv2faqtHVChMaeUpS3F3ym2/YYiQn3rzS/kFL1X8YPYjhCvY1/CqiE5u
+    YMriJem8xzTfJO7irpyVxjJNwaUctj3qJwW/StYIeNzk/69EIE+cmZCR/bl+Y64T
+    OMFmJTMH+6/+4fFuga/AWJhdgVFvdQN5FtORuaqaZ0cy+ZBr+0dOEVrLmbUhrvJy
+    reCeNNCLVndTwwaSpALtUjeq4tjpownVBROSVvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519415099; bh=v1+pYpYLr+rXO5NdIzb+4KLeHb
-    eLhP+kLrLOEphets4=; b=siYX5b9G5E0X4xrjZDlHcx4F/7xiq/RkE4umw7/5Td
-    Vpfv0H9AC21XMnmftucgB4qCLL6xQWeDHbLadyYE4HG1dAHkND1LeMku+ODbhENd
-    ik8wrAt528e25hhPSL4P/m9Lm9k9RBZ3oqYrLtsGBEj5TVZbM0Qliz0PPBX32BLo
-    KVGdCJsT5OaMEkNEHIOvsK22HnVHNT7QeLIB9529sGAwMLAxM7NoWvTpLWESeXRp
-    FhWegdMZ6xoc5Ty6vgMlQQkIc1vFvwWbxF9b9NnKIzwvvLW7GC3KNzHJ6fbPV6hF
-    eWkdmS/Tj5w0PSuE58Cp1Q2HX7aSwf2Zq2MxS/TrBD7Q==
+    :list-id; s=arctest; t=1519415096; bh=/eeddx5EBfb9N3sAeafP9o0me7
+    +JU2LyxLyzSP3MSV4=; b=Eidisj+jYFqN/cGSXFZN3Q1uivDBiLoCho94aY2EEF
+    9/amEHkcNxr+ZysIfmFDOGR24a7NQ/FEDS1rDSNndd+miz58ulyuN/8HO+y45XBO
+    qIeU7x1WtDCWhHh1tJKqa5q3D6+b0AlMUu5cjrUhZa1ZcBQB1Mt8AryeQb9WfCwS
+    6F90Lb8Wgtj01UFydLKMMds01TgKHIJvStZR6zjPNFWhsnZFRIKfzcUFEOl3kNiT
+    /VrQZ1oyf5SzNvmgrEOfZXmtyd8wsvvSBIocl6sgUce68GBR3usN80MhQH24l2mg
+    DmMABWOveRbqw/0q4DoAxyJ6LOtnziEb8p9G6OBAqIyQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,26 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934052AbeBWSsT (ORCPT <rfc822;greg@kroah.com>);
+        id S934352AbeBWSsT (ORCPT <rfc822;greg@kroah.com>);
         Fri, 23 Feb 2018 13:48:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44870 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44844 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934018AbeBWSsR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:17 -0500
+        with ESMTP id S934335AbeBWSsO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:48:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 133/145] kasan: rework Kconfig settings
-Date: Fri, 23 Feb 2018 19:27:19 +0100
-Message-Id: <20180223170741.957508092@linuxfoundation.org>
+        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 4.9 132/145] clk: meson: gxbb: fix build error without RESET_CONTROLLER
+Date: Fri, 23 Feb 2018 19:27:18 +0100
+Message-Id: <20180223170741.839015929@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170724.669759283@linuxfoundation.org>
 References: <20180223170724.669759283@linuxfoundation.org>
@@ -84,113 +78,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tobias Regnery <tobias.regnery@gmail.com>
 
-commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
+commit dbed87a9d3a857a86f602775b5845f5f6d9652b5 upstream.
 
-We get a lot of very large stack frames using gcc-7.0.1 with the default
--fsanitize-address-use-after-scope --param asan-stack=1 options, which can
-easily cause an overflow of the kernel stack, e.g.
+With CONFIG_RESET_CONTROLLER=n we see the following link error in the
+meson gxbb clk driver:
 
-  drivers/gpu/drm/i915/gvt/handlers.c:2434:1: warning: the frame size of 46176 bytes is larger than 3072 bytes
-  drivers/net/wireless/ralink/rt2x00/rt2800lib.c:5650:1: warning: the frame size of 23632 bytes is larger than 3072 bytes
-  lib/atomic64_test.c:250:1: warning: the frame size of 11200 bytes is larger than 3072 bytes
-  drivers/gpu/drm/i915/gvt/handlers.c:2621:1: warning: the frame size of 9208 bytes is larger than 3072 bytes
-  drivers/media/dvb-frontends/stv090x.c:3431:1: warning: the frame size of 6816 bytes is larger than 3072 bytes
-  fs/fscache/stats.c:287:1: warning: the frame size of 6536 bytes is larger than 3072 bytes
+drivers/built-in.o: In function 'gxbb_aoclkc_probe':
+drivers/clk/meson/gxbb-aoclk.c:161: undefined reference to 'devm_reset_controller_register'
 
-To reduce this risk, -fsanitize-address-use-after-scope is now split out
-into a separate CONFIG_KASAN_EXTRA Kconfig option, leading to stack
-frames that are smaller than 2 kilobytes most of the time on x86_64.  An
-earlier version of this patch also prevented combining KASAN_EXTRA with
-KASAN_INLINE, but that is no longer necessary with gcc-7.0.1.
+Fix this by selecting the reset controller subsystem.
 
-All patches to get the frame size below 2048 bytes with CONFIG_KASAN=y
-and CONFIG_KASAN_EXTRA=n have been merged by maintainers now, so we can
-bring back that default now.  KASAN_EXTRA=y still causes lots of
-warnings but now defaults to !COMPILE_TEST to disable it in
-allmodconfig, and it remains disabled in all other defconfigs since it
-is a new option.  I arbitrarily raise the warning limit for KASAN_EXTRA
-to 3072 to reduce the noise, but an allmodconfig kernel still has around
-50 warnings on gcc-7.
-
-I experimented a bit more with smaller stack frames and have another
-follow-up series that reduces the warning limit for 64-bit architectures
-to 1280 bytes (without CONFIG_KASAN).
-
-With earlier versions of this patch series, I also had patches to address
-the warnings we get with KASAN and/or KASAN_EXTRA, using a
-"noinline_if_stackbloat" annotation.
-
-That annotation now got replaced with a gcc-8 bugfix (see
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715) and a workaround for
-older compilers, which means that KASAN_EXTRA is now just as bad as
-before and will lead to an instant stack overflow in a few extreme
-cases.
-
-This reverts parts of commit 3f181b4d8652 ("lib/Kconfig.debug: disable
--Wframe-larger-than warnings with KASAN=y").  Two patches in linux-next
-should be merged first to avoid introducing warnings in an allmodconfig
-build:
-  3cd890dbe2a4 ("media: dvb-frontends: fix i2c access helpers for KASAN")
-  16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
-
-Do we really need to backport this?
-
-I think we do: without this patch, enabling KASAN will lead to
-unavoidable kernel stack overflow in certain device drivers when built
-with gcc-7 or higher on linux-4.10+ or any version that contains a
-backport of commit c5caf21ab0cf8.  Most people are probably still on
-older compilers, but it will get worse over time as they upgrade their
-distros.
-
-The warnings we get on kernels older than this should all be for code
-that uses dangerously large stack frames, though most of them do not
-cause an actual stack overflow by themselves.The asan-stack option was
-added in linux-4.0, and commit 3f181b4d8652 ("lib/Kconfig.debug:
-disable -Wframe-larger-than warnings with KASAN=y") effectively turned
-off the warning for allmodconfig kernels, so I would like to see this
-fix backported to any kernels later than 4.0.
-
-I have done dozens of fixes for individual functions with stack frames
-larger than 2048 bytes with asan-stack, and I plan to make sure that
-all those fixes make it into the stable kernels as well (most are
-already there).
-
-Part of the complication here is that asan-stack (from 4.0) was
-originally assumed to always require much larger stacks, but that
-turned out to be a combination of multiple gcc bugs that we have now
-worked around and fixed, but sanitize-address-use-after-scope (from
-v4.10) has a much higher inherent stack usage and also suffers from at
-least three other problems that we have analyzed but not yet fixed
-upstream, each of them makes the stack usage more severe than it should
-be.
-
-Link: http://lkml.kernel.org/r/20171221134744.2295529-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[arnd: rebase to v4.9; only re-enable warning]
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
+Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+[narmstrong: Added fixes-by tag]
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- lib/Kconfig.debug |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -197,7 +197,6 @@ config ENABLE_MUST_CHECK
- config FRAME_WARN
- 	int "Warn for stack frames larger than (needs gcc 4.4)"
- 	range 0 8192
--	default 0 if KASAN
- 	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
- 	default 1024 if !64BIT
- 	default 2048 if 64BIT
+---
+ drivers/clk/meson/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -14,6 +14,7 @@ config COMMON_CLK_MESON8B
+ config COMMON_CLK_GXBB
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
++	select RESET_CONTROLLER
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
