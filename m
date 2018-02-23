@@ -1,292 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751461AbeBWGlb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 01:41:31 -0500
-Received: from mga06.intel.com ([134.134.136.31]:7096 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750943AbeBWGl3 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 01:41:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,382,1515484800";
-   d="scan'208";a="206408936"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf annotate: Support to display the LBR data in tui mode
-Date: Fri, 23 Feb 2018 22:35:58 +0800
-Message-Id: <1519396558-23397-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1751533AbeBWGls (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 01:41:48 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:32923 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbeBWGlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 01:41:42 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180223064140epoutp0141188c63ac955a2228d566e7502aa309~V4TzhOotJ3123231232epoutp01D
+X-AuditID: b6c32a47-19fff7000000100c-8e-5a8fb7a489aa
+From: Jaehoon Chung <jh80.chung@samsung.com>
+To: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        manabian@gmail.com, dinguyen@kernel.org, will.deacon@arm.com,
+        xuwei5@hisilicon.com, Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 1/6] mmc: dw_mmc: remove the deprecated "clock-freq-min-max"
+ property
+Date: Fri, 23 Feb 2018 15:41:33 +0900
+Message-id: <20180223064138.18401-1-jh80.chung@samsung.com>
+X-Mailer: git-send-email 2.15.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7bCmue6S7f1RBpsPKFrMP3KO1eLo+d1M
+        Fjd+tbFaXN41h83iyP9+Rovd188xWiy9fpHJonXvEXaL42vDLV5+PMFi8eToFGYHbo8189Yw
+        euycdZfd4/Hcjewem1Z1snncubaHzaNvyypGj8+b5ALYo1JtMlITU1KLFFLzkvNTMvPSbZW8
+        g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4BuVFIoS8wpBQoFJBYXK+nb2RTll5akKmTk
+        F5fYKkUbGhrpGRqY6xkZGemZGMdaGZkClSSkZky5G1fQK1qx5P10xgbGtYJdjJwcEgImEm2L
+        v7F1MXJxCAnsYJTY2fidFcL5zihx5VUfO0zVtR9TmSESGxgljp/+DOX8YJSYdW86C0gVm4CO
+        xPZvx5lAbBGBSIn5qw6DFTELHGGUuPzwNpDDwSEsEC6x8GMNSA2LgKrEy81LWEFsXgFriffz
+        5kNtk5eYsKWJBaRXQmABm8SbP6vYQHolBFwkNlzggqgRlnh1fAtUvbTEs1UbGSHsdkaJs7OF
+        IXqnMEqsmNHNBJEwlni2sAvMZhbgk+g4/JcdYiavREebEESJh8SXtqUsEGFHiTXHwcYLCcRK
+        3Puyj3kCo+QCRoZVjGKpBcW56anFRgXGesWJucWleel6yfm5mxjBiUbLfQfjtnM+hxgFOBiV
+        eHgjSnqjhFgTy4orcw8xSnAwK4nwOqzqjxLiTUmsrEotyo8vKs1JLT7EaAoMjYnMUqLJ+cAk
+        mFcSb2hiaWBiZmZkbmYBjH9x3tYAlyghgfTEktTs1NSC1CKYPiYOTqkGxlJdZsUVEq/W5f2Q
+        kc1X01SukBbImRlyYGHkvX9sz3/zsfdsOSE8dVXUrucCUn/8XbYl3btnskKgsfOhofClh0In
+        FFSj7DeFCm+wS3l1gVXM0W/Bga8mqwJ/RYnXPDLsPSKyLErZUlvLY/eK0/Frnr/h6dRPlX/K
+        pKLb9ldwceaLQ1f9sk1LlViKMxINtZiLihMBaEnf0EoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsVy+t9jQd0l2/ujDD6vYLSYf+Qcq8XR87uZ
+        LG78amO1uLxrDpvFkf/9jBa7r59jtFh6/SKTReveI+wWx9eGW7z8eILF4snRKcwO3B5r5q1h
+        9Ng56y67x+O5G9k9Nq3qZPO4c20Pm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBlTLkbV9Ar
+        WrHk/XTGBsa1gl2MnBwSAiYS135MZe5i5OIQEljHKNE76wYLhPODUeJsawsTSBWbgI7E9m/H
+        wWwRgUiJA7+nMIEUMQscYZTYuWEqkMPBISwQLrHwYw1IDYuAqsTLzUtYQWxeAWuJ9/Pms0Ns
+        k5eYsKWJZQIj1wJGhlWMkqkFxbnpucVGBUZ5qeV6xYm5xaV56XrJ+bmbGIHhtO2wVv8OxsdL
+        4g8xCnAwKvHwRpT0RgmxJpYVV+YeYpTgYFYS4XVY1R8lxJuSWFmVWpQfX1Sak1p8iFGag0VJ
+        nJc//1ikkEB6YklqdmpqQWoRTJaJg1OqgdF2xrNIG5ES96o835ovWqcnrGavexNxrXZOuey1
+        DTd9bc6v993qtffwRO7zjjvT2jjc5LR99shU7uC80DlxE0/lzdfl/CWz9hivfe9T9//4wv2t
+        6wxvTljc9DHi5ueLpRvdZjXo2t2Osiq6XfbNtzMgevnVOtmAxz5aW37rrDI1OOly3P3k80NK
+        LMUZiYZazEXFiQBSou8VIwIAAA==
+X-CMS-MailID: 20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342
+X-RootMTR: 20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342
+References: <CGME20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342@epcas2p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike the perf report interactive annotate mode, the perf annotate
-doesn't display the LBR data.
+'clock-freq-min-max' property had already deprecated.
+Remove the 'clock-freq-min-max' property that is kept to maintain
+the compatibility.
 
-perf record -b ...
-perf annotate function
-
-It should show IPC/cycle, but it doesn't.
-
-This patch lets perf annotate support the displaying of LBR data.
-
-For example,
-
-perf annotate compute_flag
-
-Percent│ IPC Cycle
-       │
-       │
-       │                Disassembly of section .text:
-       │
-       │                0000000000400640 <compute_flag>:
-       │                compute_flag():
-       │                volatile int count;
-       │                static unsigned int s_randseed;
-       │
-       │                __attribute__((noinline))
-       │                int compute_flag()
-       │                {
- 22.96 │1.18   584        sub    $0x8,%rsp
-       │                        int i;
-       │
-       │                        i = rand() % 2;
- 23.02 │1.18     1      → callq  rand@plt
-       │
-       │                        return i;
- 27.05 │3.37              mov    %eax,%edx
-       │                }
-       │3.37              add    $0x8,%rsp
-       │                {
-       │                        int i;
-       │
-       │                        i = rand() % 2;
-       │
-       │                        return i;
-       │3.37              shr    $0x1f,%edx
-       │3.37              add    %edx,%eax
-       │3.37              and    $0x1,%eax
-       │3.37              sub    %edx,%eax
-       │                }
- 26.97 │3.37     2      ← retq
-
-Note that, this patch only supports tui mode. For other mode like --stdio,
-it just keeps original behavior.
-
-perf annotate compute_flag --stdio
-
- Percent |      Source code & Disassembly of div for cycles:ppp (7993 samples)
-------------------------------------------------------------------------------
-         :
-         :
-         :
-         :            Disassembly of section .text:
-         :
-         :            0000000000400640 <compute_flag>:
-         :            compute_flag():
-         :            volatile int count;
-         :            static unsigned int s_randseed;
-         :
-         :            __attribute__((noinline))
-         :            int compute_flag()
-         :            {
-    0.29 :   400640:       sub    $0x8,%rsp     # +100.00%
-         :                    int i;
-         :
-         :                    i = rand() % 2;
-   42.93 :   400644:       callq  400490 <rand@plt>     # -100.00% (p:100.00%)
-         :
-         :                    return i;
-    0.10 :   400649:       mov    %eax,%edx     # +100.00%
-         :            }
-    0.94 :   40064b:       add    $0x8,%rsp
-         :            {
-         :                    int i;
-         :
-         :                    i = rand() % 2;
-         :
-         :                    return i;
-   27.02 :   40064f:       shr    $0x1f,%edx
-    0.15 :   400652:       add    %edx,%eax
-    1.24 :   400654:       and    $0x1,%eax
-    2.08 :   400657:       sub    %edx,%eax
-         :            }
-   25.26 :   400659:       retq # -100.00% (p:100.00%)
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- tools/perf/builtin-annotate.c | 88 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 82 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt          |  4 ----
+ drivers/mmc/host/dw_mmc.c                                 | 15 ++++-----------
+ 2 files changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index f15731a..ead6ae4 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -44,6 +44,7 @@ struct perf_annotate {
- 	bool	   full_paths;
- 	bool	   print_line;
- 	bool	   skip_missing;
-+	bool	   has_br_stack;
- 	const char *sym_hist_filter;
- 	const char *cpu_list;
- 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-@@ -146,16 +147,73 @@ static void process_branch_stack(struct branch_stack *bs, struct addr_location *
- 	free(bi);
- }
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+index ef3e5f14067a..75c9fdca4aaf 100644
+--- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+@@ -59,10 +59,6 @@ Optional properties:
+   is specified and the ciu clock is specified then we'll try to set the ciu
+   clock to this at probe time.
  
-+static int hist_iter__branch_callback(struct hist_entry_iter *iter,
-+				      struct addr_location *al __maybe_unused,
-+				      bool single __maybe_unused,
-+				      void *arg __maybe_unused)
-+{
-+	struct hist_entry *he = iter->he;
-+	struct branch_info *bi;
-+	struct perf_sample *sample = iter->sample;
-+	struct perf_evsel *evsel = iter->evsel;
-+	int err;
-+
-+	hist__account_cycles(sample->branch_stack, al, sample, false);
-+
-+	bi = he->branch_info;
-+	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
-+
-+	if (err)
-+		goto out;
-+
-+	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
-+
-+out:
-+	return err;
-+}
-+
-+static int process_branch_callback(struct perf_evsel *evsel,
-+				   struct perf_sample *sample,
-+				   struct addr_location *al __maybe_unused,
-+				   struct perf_annotate *ann,
-+				   struct machine *machine)
-+{
-+	struct hist_entry_iter iter = {
-+		.evsel		= evsel,
-+		.sample		= sample,
-+		.add_entry_cb	= hist_iter__branch_callback,
-+		.hide_unresolved	= symbol_conf.hide_unresolved,
-+		.ops		= &hist_iter_branch,
-+	};
-+
-+	struct addr_location a;
-+	int ret;
-+
-+	if (machine__resolve(machine, &a, sample) < 0)
-+		return -1;
-+
-+	if (a.sym == NULL)
-+		return 0;
-+
-+	if (a.map != NULL)
-+		a.map->dso->hit = 1;
-+
-+	ret = hist_entry_iter__add(&iter, &a, PERF_MAX_STACK_DEPTH, ann);
-+	return ret;
-+}
-+
- static int perf_evsel__add_sample(struct perf_evsel *evsel,
- 				  struct perf_sample *sample,
- 				  struct addr_location *al,
--				  struct perf_annotate *ann)
-+				  struct perf_annotate *ann,
-+				  struct machine *machine)
- {
- 	struct hists *hists = evsel__hists(evsel);
- 	struct hist_entry *he;
- 	int ret;
- 
--	if (ann->sym_hist_filter != NULL &&
-+	if ((!ann->has_br_stack || !ui__has_annotation()) &&
-+	    ann->sym_hist_filter != NULL &&
- 	    (al->sym == NULL ||
- 	     strcmp(ann->sym_hist_filter, al->sym->name) != 0)) {
- 		/* We're only interested in a symbol named sym_hist_filter */
-@@ -178,6 +236,9 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
- 	 */
- 	process_branch_stack(sample->branch_stack, al, sample);
- 
-+	if (ann->has_br_stack && ui__has_annotation())
-+		return process_branch_callback(evsel, sample, al, ann, machine);
-+
- 	he = hists__add_entry(hists, al, NULL, NULL, NULL, sample, true);
- 	if (he == NULL)
- 		return -ENOMEM;
-@@ -206,7 +267,8 @@ static int process_sample_event(struct perf_tool *tool,
- 	if (ann->cpu_list && !test_bit(sample->cpu, ann->cpu_bitmap))
- 		goto out_put;
- 
--	if (!al.filtered && perf_evsel__add_sample(evsel, sample, &al, ann)) {
-+	if (!al.filtered &&
-+	    perf_evsel__add_sample(evsel, sample, &al, ann, machine)) {
- 		pr_warning("problem incrementing symbol count, "
- 			   "skipping event\n");
- 		ret = -1;
-@@ -238,6 +300,10 @@ static void hists__find_annotations(struct hists *hists,
- 		if (he->ms.sym == NULL || he->ms.map->dso->annotate_warned)
- 			goto find_next;
- 
-+		if (ann->sym_hist_filter &&
-+		    (strcmp(he->ms.sym->name, ann->sym_hist_filter) != 0))
-+			goto find_next;
-+
- 		notes = symbol__annotation(he->ms.sym);
- 		if (notes->src == NULL) {
- find_next:
-@@ -269,6 +335,7 @@ static void hists__find_annotations(struct hists *hists,
- 			nd = rb_next(nd);
- 		} else if (use_browser == 1) {
- 			key = hist_entry__tui_annotate(he, evsel, NULL);
-+
- 			switch (key) {
- 			case -1:
- 				if (!ann->skip_missing)
-@@ -489,6 +556,9 @@ int cmd_annotate(int argc, const char **argv)
- 	if (annotate.session == NULL)
- 		return -1;
- 
-+	annotate.has_br_stack = perf_header__has_feat(&annotate.session->header,
-+						      HEADER_BRANCH_STACK);
-+
- 	ret = symbol__annotation_init();
- 	if (ret < 0)
- 		goto out_delete;
-@@ -499,9 +569,6 @@ int cmd_annotate(int argc, const char **argv)
- 	if (ret < 0)
- 		goto out_delete;
- 
--	if (setup_sorting(NULL) < 0)
--		usage_with_options(annotate_usage, options);
+-* clock-freq-min-max (DEPRECATED): Minimum and Maximum clock frequency for card output
+-  clock(cclk_out). If it's not specified, max is 200MHZ and min is 400KHz by default.
+-	  (Use the "max-frequency" instead of "clock-freq-min-max".)
 -
- 	if (annotate.use_stdio)
- 		use_browser = 0;
- 	else if (annotate.use_tui)
-@@ -511,6 +578,15 @@ int cmd_annotate(int argc, const char **argv)
+ * num-slots (DEPRECATED): specifies the number of slots supported by the controller.
+   The number of physical slots actually used could be equal or less than the
+   value specified by num-slots. If this property is not specified, the value
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 0aa39975f33b..38e0e7c4ffd9 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2784,7 +2784,6 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ 	struct dw_mci_slot *slot;
+ 	const struct dw_mci_drv_data *drv_data = host->drv_data;
+ 	int ctrl_id, ret;
+-	u32 freq[2];
  
- 	setup_browser(true);
+ 	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), host->dev);
+ 	if (!mmc)
+@@ -2798,16 +2797,6 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ 	host->slot = slot;
  
-+	if (use_browser == 1 && annotate.has_br_stack) {
-+		sort__mode = SORT_MODE__BRANCH;
-+		if (setup_sorting(annotate.session->evlist) < 0)
-+			usage_with_options(annotate_usage, options);
-+	} else {
-+		if (setup_sorting(NULL) < 0)
-+			usage_with_options(annotate_usage, options);
-+	}
+ 	mmc->ops = &dw_mci_ops;
+-	if (device_property_read_u32_array(host->dev, "clock-freq-min-max",
+-					   freq, 2)) {
+-		mmc->f_min = DW_MCI_FREQ_MIN;
+-		mmc->f_max = DW_MCI_FREQ_MAX;
+-	} else {
+-		dev_info(host->dev,
+-			"'clock-freq-min-max' property was deprecated.\n");
+-		mmc->f_min = freq[0];
+-		mmc->f_max = freq[1];
+-	}
+ 
+ 	/*if there are external regulators, get them*/
+ 	ret = mmc_regulator_get_supply(mmc);
+@@ -2846,6 +2835,10 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ 	if (ret)
+ 		goto err_host_allocated;
+ 
++	mmc->f_min = DW_MCI_FREQ_MIN;
++	if (!mmc->f_max)
++		mmc->f_max = DW_MCI_FREQ_MAX;
 +
- 	ret = __cmd_annotate(&annotate);
- 
- out_delete:
+ 	/* Process SDIO IRQs through the sdio_irq_work. */
+ 	if (mmc->caps & MMC_CAP_SDIO_IRQ)
+ 		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
 -- 
-2.7.4
+2.15.1
