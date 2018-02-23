@@ -1,78 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeBWLxH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 06:53:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53372 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751015AbeBWLxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 06:53:05 -0500
-Date: Fri, 23 Feb 2018 11:52:50 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: helgaas@kernel.org, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
-        m.szyprowski@samsung.com, egtvedt@samfundet.no,
-        linus.walleij@linaro.org, vgupta@synopsys.com,
-        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
-        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
-        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
-        yamada.masahiro@socionext.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 20/20] x86/PCI: VMD: Fix malformed Kconfig default
-Message-ID: <20180223115242.GA21946@e107981-ln.cambridge.arm.com>
-References: <0180206191126.GB98765@bhelgaas-glaptop.roam.corp.google.com>
- <20180206221106.16620-1-ulfalizer@gmail.com>
+        id S1751391AbeBWLzT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 06:55:19 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:16321 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750935AbeBWLzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 06:55:17 -0500
+Subject: Re: [PATCH v2 2/2] ARM: davinci_all_defconfig: enable
+ SYSCON_REBOOT_MODE
+To: David Lechner <david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1515724191-30499-1-git-send-email-david@lechnology.com>
+ <1515724191-30499-3-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ce54ca3f-2bef-8001-19d9-6e493f92fed9@ti.com>
+Date: Fri, 23 Feb 2018 17:24:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180206221106.16620-1-ulfalizer@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1515724191-30499-3-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 11:11:06PM +0100, Ulf Magnusson wrote:
-> 'default N' should be 'default n', though they happen to have the same
-> effect here, due to undefined symbols (N in this case) evaluating to n
-> in a tristate sense.
+On Friday 12 January 2018 07:59 AM, David Lechner wrote:
+> This enables SYSCON_REBOOT_MODE as a module. This is used by LEGO
+> MINDSTORMS EV3 to reboot into a special firmware update mode.
 > 
-> Remove the default instead of changing it. bool and tristate symbols
-> implicitly default to n.
-> 
-> Discovered with the
-> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-> script.
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-I have remove this link - it can become stale so I do not think it is
-worth adding it to the log.
-
-I have also reworded the $SUBJECT.
-
-Applied to pci/host/misc for v4.17, let me know if that's fine for you.
+Applied to v4.17/defconfig
 
 Thanks,
-Lorenzo
-
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
-> Changes in v2:
-> Make it clear that Kconfig is involved.
-> 
->  drivers/pci/host/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index a4ed7484d127..dc8a2a175f19 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -215,7 +215,6 @@ config PCIE_TANGO_SMP8759
->  config VMD
->  	depends on PCI_MSI && X86_64 && SRCU
->  	tristate "Intel Volume Management Device Driver"
-> -	default N
->  	---help---
->  	  Adds support for the Intel Volume Management Device (VMD). VMD is a
->  	  secondary PCI host bridge that allows PCI Express root ports,
-> -- 
-> 2.14.1
-> 
+Sekhar
