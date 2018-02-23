@@ -1,120 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751607AbeBWNNn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 08:13:43 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:38132 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeBWNNm (ORCPT
+        id S1751667AbeBWNOL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 08:14:11 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:53451 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbeBWNOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:13:42 -0500
-X-Google-Smtp-Source: AG47ELuzcfrC5QQcDvfY2cr/sZeQUddfWt6AOSYP7G8/w30gsNPHds83WF1lDuAnL4Sf5q+H5nMWBtv+pfqlSZ6L5ko=
-MIME-Version: 1.0
-In-Reply-To: <20180223113924.28957-1-brgl@bgdev.pl>
-References: <20180223113924.28957-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Feb 2018 14:13:41 +0100
-Message-ID: <CAMRc=MdVAkgpdUJKedLq24tbN-GbUgJEz9E7f0fyj=tW3TtBRg@mail.gmail.com>
-Subject: Re: [PATCH v5] reset: add support for non-DT systems
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        David Lechner <david@lechnology.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Feb 2018 08:14:09 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Tim Harvey <tharvey@gateworks.com>, Arnd Bergmann <arnd@arndb.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: i2c: TDA1997x: add CONFIG_SND dependency
+Date: Fri, 23 Feb 2018 14:13:26 +0100
+Message-Id: <20180223131356.979530-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:zrvHbK2sTFGTkAIvKrsDUYleDPa99PJXx5BBP3wYpIgl38aaFfa
+ 2hCS417tNHCVuUhqj/BNtLJrzUG8zZQ9Enfo4e0bT7sf5Qc7N2KabSJt9Hyn8oCyRCNwIQo
+ hG0RnTAvZ3rxEQr0Iapgtw+nJ0QIykLMcqK7B/mE9WLh/mAqvdSipLCnImx76I7g0sMdc59
+ /WAqUmhGuuOSPrHAbfG2Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZSfGUc4PiM4=:H2TLDD97a8ucQRjkY/a4ql
+ zpXGFE7wTS42/1kGAtYUSPIsLU9TIv3U1ycQQUUDtfJVuRbmvpJiDa8yubOUiAYnDT5OzsVhk
+ KHL+ITljY/92oMKBPqCJd0VHyvbdWGMg9Iz3ZoDxM5LVQbtvQdwtutnoMfHpYiVng3SzvqeUy
+ 4wCrCvRh4vSmPvBdwcuhrcBeQAb65mp20ULi3EVGFc31mZIHDYbVhPNf+N/aQgyPL+l7StEx7
+ olk7PZ7jhYUjtrQLm+sEESGG5CXYARFVsfmpqDb8EjYhezDnVZXAlg6WU309QEOaRZhb5aUph
+ dXd1qt0ROpKFWgTO4zTjq1S1zP1PKb3MNbUbv6RV5/RyFIOZvJou7DxeIuM5vlFdCdxu/VeBP
+ iDEn+BEgUE30few1Ui3YEGBXliT2gDU4+OHDGwxIfsn3RSxfwYTFIKMKd2In0MGDFqenxE7C8
+ pD0rdjQk+GLOjaTfTinEu80ze5P3uCcFjAY34vXK4C62c3nXSuOId/11qza+vV2ujPa3uej1i
+ O9pASggF/Funrc/zy6CMV8N9zkb1twsR+tD2xSgK2jcATRbzW6Ea7mCteVOTrmWEnNkG6Zemi
+ ycv2ZDG01ohq6sjwZi9Ggpgr+bqNvEFGM81j1WNVMDhzA4MZ8tOlrW4QzsistdiLP1gfxJYlg
+ TeOBMfI1u8TcqzNqPLxLPOcRAGjNSX+/1sKkJqUsXO1hRGhFWRreWQ1ut5+AzP1lYfYoIyCJo
+ zlCFgmXfwX2rvupC8Z0//ucqm45y36+khpkDIw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-23 12:39 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> The reset framework only supports device-tree. There are some platforms
-> however, which need to use it even in legacy, board-file based mode.
->
-> An example of such architecture is the DaVinci family of SoCs which
-> supports both device tree and legacy boot modes and we don't want to
-> introduce any regressions.
->
-> We're currently working on converting the platform from its hand-crafted
-> clock API to using the common clock framework. Part of the overhaul will
-> be representing the chip's power sleep controller's reset lines using
-> the reset framework.
->
-> This changeset extends the core reset code with a new reset lookup
-> entry structure. It contains data allowing the reset core to associate
-> reset lines with devices by comparing the dev_id and con_id strings.
->
-> It also provides a function allowing drivers to register lookup entries
-> with the framework.
->
-> The new lookup function is only called as a fallback in case the
-> of_node field is NULL and doesn't change anything for current users.
->
-> Tested with a dummy reset driver with several lookup entries.
->
-> An example lookup table registration from a driver can be found below:
->
-> static struct reset_control_lookup foobar_reset_lookup[] = {
->         RESET_LOOKUP("foo.0", "foo", 15),
->         RESET_LOOKUP("bar.0", NULL,   5),
-> };
->
-> foobar_probe()
-> {
-> ...
->
->         reset_controller_add_lookup(&rcdev, foobar_reset_lookup,
->                                     ARRAY_SIZE(foobar_reset_lookup));
->
-> ...
-> }
->
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: David Lechner <david@lechnology.com>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
-> v1 -> v2:
-> - renamed the new function to __reset_control_get_from_lookup()
-> - added a missing break; when a matching entry is found
-> - rearranged the code in __reset_control_get() - we can no longer get to the
->   return at the bottom, so remove it and return from
->   __reset_control_get_from_lookup() if __of_reset_control_get() fails
-> - return -ENOENT from reset_contol_get() if we can't find a matching entry,
->   prevously returned -EINVAL referred to the fact that we passed a device
->   without the of_node which is no longer an error condition
-> - add a comment about needing a sentinel in the lookup table
->
-> v2 -> v3:
-> - added the reset id number field to the lookup struct so that we don't need
->   to rely on the array index
->
-> v3 -> v4:
-> - separated the driver and lookup table registration logic by adding a
->   function meant to be called by machine-specific code that adds a lookup
->   table to the internal list
-> - the correct reset controller is now found by first finding the lookup
->   table associated with it, then finding the actual reset controller by
->   the associated device
->
-> v4 -> v5:
-> - since the first user of this will be the davinci clk driver and it
->   already registers clock lookup from within the driver code - allow
->   drivers to register lookups with the assumption that the code can be
->   extended to make it possible to register entries from machine code as
->   well
-> - simplify the code - only expose a single lookup structure and a simply
->   registration function
-> - add the RESET_LOOKUP macro for brevity
->
->  drivers/reset/core.c             | 65 +++++++++++++++++++++++++++++++++++++++-
->  include/linux/reset-controller.h | 28 +++++++++++++++++
->  2 files changed, 92 insertions(+), 1 deletion(-)
+Without CONFIG_SND, we get a link error:
 
-Also: I decided not to go the phy way of allocating memory dynamically
-for lookup entries - I believe this is overkill and makes the code
-more complicated with all the error checking required.
+ERROR: "snd_soc_register_codec" [drivers/media/i2c/tda1997x.ko] undefined!
+ERROR: "snd_soc_unregister_codec" [drivers/media/i2c/tda1997x.ko] undefined!
+ERROR: "snd_pcm_hw_constraint_minmax" [drivers/media/i2c/tda1997x.ko] undefined!
 
-Instead, the lookup entries structs should be provided by the caller.
+This adds the same Kconfig dependency that we have in other
+media drivers, using 'select SND_PCM' to ensure that we have
+can call snd_pcm_hw_constraint_minmax, while depending on
+CONFIG_SND_SOC for registering the codec.
 
-Bart
+Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/i2c/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 94e32d75d632..a44e8c36f13c 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -59,6 +59,8 @@ config VIDEO_TDA9840
+ config VIDEO_TDA1997X
+ 	tristate "NXP TDA1997x HDMI receiver"
+ 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
++	depends on SND_SOC
++	select SND_PCM
+ 	---help---
+ 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
+ 
+-- 
+2.9.0
