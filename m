@@ -1,153 +1,1099 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-379639-1519705830-3-15219090243093139412
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519705830; b=fvSHgRf/CjMNPGfwNTyxSmSMAEgaAVOS5iSkkbEkpuoD1Wl
-    KrBC6YFOISScnmSAM5T/KDhddzHk1JJy29Uzc4hC+5q2jy4tgsZMWnamOCdZeGuC
-    AetC9T1QXKVedzKNLG3pkR+XXIv3dXtUPy3VZ/QRSVCpCPCv1v8a4+ErbDkZzMNo
-    xzQM3Q1q3EAFkvEJs2ydjGEP/EvzgCjLRF39sgXNwZU4n9jR24/p12Y+y5bFkS1U
-    sPr1obdiePwE/K2dfJ4wMFb5jMI5A86zDOKDcJDFf9unSqBSRpQbT37CJ0O4cuVc
-    hMG9PntIbArKJQ52uZ15jO4iJrrlf0R5k7Kr2bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519705830; bh=Kf/cUYuXMUryoGnK1rMJNeI7PZLoL9Nj7y+935Om2dQ=; b=q
-    YANZcfZnjTPjp9d0bm61z4YBi2Es8ufF3ADI/EOT2+AnCEvMe2ujboHHYQiIL7om
-    JdxxqfxEKQcz/U/ZGKADWjQAEgBfz+yyNEsjAvRb5LMysYWchShung4CJ3FElIf3
-    2gzF6fcMI41/CZd7VuOzT2h7QkhB/I9FoTY/j6xYNUvkf0EWPgl04RTdX0iIg/3P
-    KdIZ5HFMpjmwJMlS4BfqZ2CRP8jch1hlWYLNMew6ozjwHBEnbMKRMoXFhs1+7z5a
-    8ziN54WK2KL847GdPDofdd5HNZwrXdI5zMI8T2UYDS1ZqzDa95Tgs44uhLbz0lW0
-    WDLK/wstuTzh4d+6643XQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752182AbeB0EaG (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Feb 2018 23:30:06 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37973 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752143AbeB0EaE (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 26 Feb 2018 23:30:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,398,1515484800";
-   d="scan'208";a="178335645"
-Subject: [PATCH v4 12/12] vfio: disable filesystem-dax page pinning
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Haozhong Zhang <haozhong.zhang@intel.com>,
-        Michal Hocko <mhocko@suse.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-mm@kvack.org, Alex Williamson <alex.williamson@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Date: Mon, 26 Feb 2018 20:20:58 -0800
-Message-ID: <151970525871.26729.7716403687659267945.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151970519370.26729.1011551137381425076.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.17.1-9-g687f
+Return-Path: <Vitor.Soares@synopsys.com>
+X-Google-Smtp-Source: AH8x225vkPBp13citpjAAchKdYYiadgzME6VdTvXvzyNCmMQW9QvDESFOUIvjXrvpLGZ4GtiWClk
+ARC-Seal: i=1; a=rsa-sha256; t=1519404983; cv=none;
+        d=google.com; s=arc-20160816;
+        b=J4tRJHjQVjL9M40jVlODBSGCf5zJP+C+y8ipRsDL0iYyutqoy6RztH41gIYhWyo9tg
+         6+SatkWbqxRu/XqIQTiuYSwsQi6z+drTX4P1i7VLA29/oyXmNj3DRdQdy7pjqIV0nP/+
+         OBqfzBy45/rRIRFcJrypXsXqk4ewepbVuuWC8Ts4qpR/CJptBHiyJgRjPjx/cOsTDhKq
+         Cl6MQqhxB+SFDONTcmgMwy9P0iort2pos/x9IDUK42nBg0EUgagC5MD8ZbZz0C8rFL7j
+         qM2ud/lZSfSZllBIZVfM9lczX+2rEhcRS5qcQjhAZ51s0I0pJ+WPgVIZaUc21nACQGBk
+         wGdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=Bgi6aAvJ0Jp0DZzzYIaOh1xYTyntc/MqTLQ484OkQ2s=;
+        b=o77Nj0qCK4Ju6w5Liqa1/5DPWzJn7ZQeZpeoZcCQGmL7fQKgakOMwV8wiWZDsixA3W
+         WvD5L/t1YYIZrs9+9DoGePMy4zmCgsDaiqZ/83VLJ7bRqsbfP6K42tuEYqMTdvDheKy2
+         FILYxNs51xRFcI1voTDYKxFrVmOcWM9shimDp7fkJ+4rCPhfw33zCkrFR45vTyONfF93
+         Nv+qv75BXs7VKt+CMS6Y6n65JkT0bTgyfdgjgWmgc9s9zgBjiWqmMpHiDQkSNHDvZ010
+         BYJEecxvbb7Mpo+/7URciUEbKYb39uxjabLwB9/N+ng+zS5TPTLiVJVHYv0mhSmV7pcu
+         GTmw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of vitor.soares@synopsys.com designates 198.182.47.9 as permitted sender) smtp.mailfrom=Vitor.Soares@synopsys.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of vitor.soares@synopsys.com designates 198.182.47.9 as permitted sender) smtp.mailfrom=Vitor.Soares@synopsys.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
+Subject: Re: [PATCH v2 2/7] i3c: Add core I3C infrastructure
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Wolfram Sang
+	<wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, <linux-doc@vger.kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+CC: Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec
+	<agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta
+	<bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak
+	<alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose
+	<sureshp@cadence.com>, Thomas Petazzoni
+	<thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, "Rob
+ Herring" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
+	<mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Kumar
+ Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Vitor Soares <Vitor.Soares@synopsys.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij
+	<linus.walleij@linaro.org>
+References: <20171214151610.19153-1-boris.brezillon@free-electrons.com>
+ <20171214151610.19153-3-boris.brezillon@free-electrons.com>
+From: Vitor Soares <Vitor.Soares@synopsys.com>
+Message-ID: <b39f9016-b2ff-6d8d-96b3-945f32ab2b67@synopsys.com>
+Date: Fri, 23 Feb 2018 16:56:14 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20171214151610.19153-3-boris.brezillon@free-electrons.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Language: pt-PT
+X-Originating-IP: [10.107.19.86]
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1586772916728163872?=
+X-GMAIL-MSGID: =?utf-8?q?1593211599949128529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Filesystem-DAX is incompatible with 'longterm' page pinning. Without
-page cache indirection a DAX mapping maps filesystem blocks directly.
-This means that the filesystem must not modify a file's block map while
-any page in a mapping is pinned. In order to prevent the situation of
-userspace holding of filesystem operations indefinitely, disallow
-'longterm' Filesystem-DAX mappings.
+Hi Boris,
 
-RDMA has the same conflict and the plan there is to add a 'with lease'
-mechanism to allow the kernel to notify userspace that the mapping is
-being torn down for block-map maintenance. Perhaps something similar can
-be put in place for vfio.
+Às 3:16 PM de 12/14/2017, Boris Brezillon escreveu:
+> +
+> +enum i3c_addr_slot_status i3c_bus_get_addr_slot_status(struct i3c_bus *bus,
+> +						       u16 addr)
+> +{
+> +	int status, bitpos = addr * 2;
+> +
+> +	if (addr > I2C_MAX_ADDR)
+> +		return I3C_ADDR_SLOT_RSVD;
+> +
+> +	status = bus->addrslots[bitpos / BITS_PER_LONG];
+> +	status >>= bitpos % BITS_PER_LONG;
+> +
+> +	return status & I3C_ADDR_SLOT_STATUS_MASK;
+> +}
 
-Note that xfs and ext4 still report:
+I don't understand the size of addr. The I3C only allow 7-bit addresses.
 
-   "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
+Is the addrslots used to store the addresses and its status?
 
-...at mount time, and resolving the dax-dma-vs-truncate problem is one
-of the last hurdles to remove that designation.
+> +
+> +void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
+> +				  enum i3c_addr_slot_status status)
+> +{
+> +	int bitpos = addr * 2;
+> +	unsigned long *ptr;
+> +
+> +	if (addr > I2C_MAX_ADDR)
+> +		return;
+> +
+> +	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
+> +	*ptr &= ~(I3C_ADDR_SLOT_STATUS_MASK << (bitpos % BITS_PER_LONG));
+> +	*ptr |= status << (bitpos % BITS_PER_LONG);
+> +}
+> +
+> +bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
+> +{
+> +	enum i3c_addr_slot_status status;
+> +
+> +	status = i3c_bus_get_addr_slot_status(bus, addr);
+> +
+> +	return status == I3C_ADDR_SLOT_FREE;
+> +}
+> +
+> +int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
+> +{
+> +	enum i3c_addr_slot_status status;
+> +	u8 addr;
+> +
+> +	for (addr = start_addr; addr < I3C_MAX_ADDR; addr++) {
+> +		status = i3c_bus_get_addr_slot_status(bus, addr);
+> +		if (status == I3C_ADDR_SLOT_FREE)
+> +			return addr;
+> +	}
+> +
+> +	return -ENOMEM;
+> +}
+> +
+> +static void i3c_bus_init_addrslots(struct i3c_bus *bus)
+> +{
+> +	int i;
+> +
+> +	/* Addresses 0 to 7 are reserved. */
+> +	for (i = 0; i < 8; i++)
+> +		i3c_bus_set_addr_slot_status(bus, i, I3C_ADDR_SLOT_RSVD);
+> +
+> +	/*
+> +	 * Reserve broadcast address and all addresses that might collide
+> +	 * with the broadcast address when facing a single bit error.
+> +	 */
+> +	i3c_bus_set_addr_slot_status(bus, I3C_BROADCAST_ADDR,
+> +				     I3C_ADDR_SLOT_RSVD);
+> +	for (i = 0; i < 7; i++)
+> +		i3c_bus_set_addr_slot_status(bus, I3C_BROADCAST_ADDR ^ BIT(i),
+> +					     I3C_ADDR_SLOT_RSVD);
+> +}
+> +
+> +static const char * const i3c_bus_mode_strings[] = {
+> +	[I3C_BUS_MODE_PURE] = "pure",
+> +	[I3C_BUS_MODE_MIXED_FAST] = "mixed-fast",
+> +	[I3C_BUS_MODE_MIXED_SLOW] = "mixed-slow",
+> +};
+> +
+> +static ssize_t mode_show(struct device *dev,
+> +			 struct device_attribute *da,
+> +			 char *buf)
+> +{
+> +	struct i3c_bus *i3cbus = container_of(dev, struct i3c_bus, dev);
+> +	ssize_t ret;
+> +
+> +	i3c_bus_normaluse_lock(i3cbus);
+> +	if (i3cbus->mode < 0 ||
+> +	    i3cbus->mode > ARRAY_SIZE(i3c_bus_mode_strings) ||
+> +	    !i3c_bus_mode_strings[i3cbus->mode])
+> +		ret = sprintf(buf, "unknown\n");
+> +	else
+> +		ret = sprintf(buf, "%s\n", i3c_bus_mode_strings[i3cbus->mode]);
+> +	i3c_bus_normaluse_unlock(i3cbus);
+> +
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RO(mode);
+> +
+> +static ssize_t current_master_show(struct device *dev,
+> +				   struct device_attribute *da,
+> +				   char *buf)
+> +{
+> +	struct i3c_bus *i3cbus = container_of(dev, struct i3c_bus, dev);
+> +	ssize_t ret;
+> +
+> +	i3c_bus_normaluse_lock(i3cbus);
+> +	ret = sprintf(buf, "%s\n", dev_name(&i3cbus->cur_master->dev));
+> +	i3c_bus_normaluse_unlock(i3cbus);
+> +
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RO(current_master);
+> +
+> +static ssize_t i3c_scl_frequency_show(struct device *dev,
+> +				      struct device_attribute *da,
+> +				      char *buf)
+> +{
+> +	struct i3c_bus *i3cbus = container_of(dev, struct i3c_bus, dev);
+> +	ssize_t ret;
+> +
+> +	i3c_bus_normaluse_lock(i3cbus);
+> +	ret = sprintf(buf, "%ld\n", i3cbus->scl_rate.i3c);
+> +	i3c_bus_normaluse_unlock(i3cbus);
+> +
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RO(i3c_scl_frequency);
+> +
+> +static ssize_t i2c_scl_frequency_show(struct device *dev,
+> +				      struct device_attribute *da,
+> +				      char *buf)
+> +{
+> +	struct i3c_bus *i3cbus = container_of(dev, struct i3c_bus, dev);
+> +	ssize_t ret;
+> +
+> +	i3c_bus_normaluse_lock(i3cbus);
+> +	ret = sprintf(buf, "%ld\n", i3cbus->scl_rate.i2c);
+> +	i3c_bus_normaluse_unlock(i3cbus);
+> +
+> +	return ret;
+> +}
+> +static DEVICE_ATTR_RO(i2c_scl_frequency);
+> +
+> +static struct attribute *i3c_busdev_attrs[] = {
+> +	&dev_attr_mode.attr,
+> +	&dev_attr_current_master.attr,
+> +	&dev_attr_i3c_scl_frequency.attr,
+> +	&dev_attr_i2c_scl_frequency.attr,
+> +	NULL,
+> +};
+> +ATTRIBUTE_GROUPS(i3c_busdev);
+> +
+> +static void i3c_busdev_release(struct device *dev)
+> +{
+> +	struct i3c_bus *bus = container_of(dev, struct i3c_bus, dev);
+> +
+> +	while (!list_empty(&bus->devs.i2c)) {
+> +		struct i2c_device *i2cdev;
+> +
+> +		i2cdev = list_first_entry(&bus->devs.i2c, struct i2c_device,
+> +					  common.node);
+> +		list_del(&i2cdev->common.node);
+> +		of_node_put(i2cdev->info.of_node);
+> +		kfree(i2cdev);
+> +	}
+> +
+> +	while (!list_empty(&bus->devs.i3c)) {
+> +		struct i3c_device *i3cdev;
+> +
+> +		i3cdev = list_first_entry(&bus->devs.i3c, struct i3c_device,
+> +					  common.node);
+> +		list_del(&i3cdev->common.node);
+> +		put_device(&i3cdev->dev);
+> +	}
+> +
+> +	mutex_lock(&i3c_core_lock);
+> +	idr_remove(&i3c_bus_idr, bus->id);
+> +	mutex_unlock(&i3c_core_lock);
+> +
+> +	of_node_put(bus->dev.of_node);
+> +	kfree(bus);
+> +}
+> +
+> +static const struct device_type i3c_busdev_type = {
+> +	.groups	= i3c_busdev_groups,
+> +};
+> +
+> +void i3c_bus_unref(struct i3c_bus *bus)
+> +{
+> +	put_device(&bus->dev);
+> +}
+> +
+> +struct i3c_bus *i3c_bus_create(struct device *parent)
+> +{
+> +	struct i3c_bus *i3cbus;
+> +	int ret;
+> +
+> +	i3cbus = kzalloc(sizeof(*i3cbus), GFP_KERNEL);
+> +	if (!i3cbus)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init_rwsem(&i3cbus->lock);
+> +	INIT_LIST_HEAD(&i3cbus->devs.i2c);
+> +	INIT_LIST_HEAD(&i3cbus->devs.i3c);
+> +	i3c_bus_init_addrslots(i3cbus);
+> +	i3cbus->mode = I3C_BUS_MODE_PURE;
+> +	i3cbus->dev.parent = parent;
+> +	i3cbus->dev.of_node = of_node_get(parent->of_node);
+> +	i3cbus->dev.bus = &i3c_bus_type;
+> +	i3cbus->dev.type = &i3c_busdev_type;
+> +	i3cbus->dev.release = i3c_busdev_release;
+> +
+> +	mutex_lock(&i3c_core_lock);
+> +	ret = idr_alloc(&i3c_bus_idr, i3cbus, 0, 0, GFP_KERNEL);
+> +	mutex_unlock(&i3c_core_lock);
+> +	if (ret < 0)
+> +		goto err_free_bus;
+> +
+> +	i3cbus->id = ret;
+> +	device_initialize(&i3cbus->dev);
+> +
+> +	return i3cbus;
+> +
+> +err_free_bus:
+> +	kfree(i3cbus);
+> +
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +void i3c_bus_unregister(struct i3c_bus *bus)
+> +{
+> +	device_unregister(&bus->dev);
+> +}
+> +
+> +int i3c_bus_register(struct i3c_bus *i3cbus)
+> +{
+> +	struct i2c_device *i2cdev;
+> +
+> +	i3c_bus_for_each_i2cdev(i3cbus, i2cdev) {
+> +		switch (i2cdev->lvr & I3C_LVR_I2C_INDEX_MASK) {
+> +		case I3C_LVR_I2C_INDEX(0):
+> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
+> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
+> +			break;
+> +
+> +		case I3C_LVR_I2C_INDEX(1):
+> +		case I3C_LVR_I2C_INDEX(2):
+> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
+> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
+> +			break;
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (!i3cbus->scl_rate.i3c)
+> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> +
+> +	if (!i3cbus->scl_rate.i2c) {
+> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+> +		else
+> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+> +	}
+> +
+> +	/*
+> +	 * I3C/I2C frequency may have been overridden, check that user-provided
+> +	 * values are not exceeding max possible frequency.
+> +	 */
+> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
+> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
+> +
+> +	return device_add(&i3cbus->dev);
+> +}
+> +
+> +static int __init i3c_init(void)
+> +{
+> +	return bus_register(&i3c_bus_type);
+> +}
+> +subsys_initcall(i3c_init);
+> +
+> +static void __exit i3c_exit(void)
+> +{
+> +	idr_destroy(&i3c_bus_idr);
+> +	bus_unregister(&i3c_bus_type);
+> +}
+> +module_exit(i3c_exit);
+> +
+> +MODULE_AUTHOR("Boris Brezillon<boris.brezillon@free-electrons.com>");
+> +MODULE_DESCRIPTION("I3C core");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/i3c/device.c b/drivers/i3c/device.c
+> new file mode 100644
+> index 000000000000..dcf51150b7cb
+> --- /dev/null
+> +++ b/drivers/i3c/device.c
+> @@ -0,0 +1,344 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2017 Cadence Design Systems Inc.
+> + *
+> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
+> + */
+> +
+> +#include <linux/slab.h>
+> +
+> +#include "internals.h"
+> +
+> +/**
+> + * i3c_device_do_priv_xfers() - do I3C SDR private transfers directed to a
+> + *				specific device
+> + *
+> + * @dev: device with which the transfers should be done
+> + * @xfers: array of transfers
+> + * @nxfers: number of transfers
+> + *
+> + * Initiate one or several private SDR transfers with @dev.
+> + *
+> + * This function can sleep and thus cannot be called in atomic context.
+> + *
+> + * Return: 0 in case of success, a negative error core otherwise.
+> + */
+> +int i3c_device_do_priv_xfers(struct i3c_device *dev,
+> +			     struct i3c_priv_xfer *xfers,
+> +			     int nxfers)
+> +{
+> +	struct i3c_master_controller *master;
+> +	int i, ret;
+> +
+> +	master = i3c_device_get_master(dev);
+> +	if (!master)
+> +		return -EINVAL;
+> +
+> +	i3c_bus_normaluse_lock(master->bus);
+> +	for (i = 0; i < nxfers; i++)
+> +		xfers[i].addr = dev->info.dyn_addr;
+> +
+> +	ret = i3c_master_do_priv_xfers_locked(master, xfers, nxfers);
+> +	i3c_bus_normaluse_unlock(master->bus);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(i3c_device_do_priv_xfers);
 
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: kvm@vger.kernel.org
-Cc: <stable@vger.kernel.org>
-Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
-Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ The controller should know the speed mode for each xfer. The SDR0 mode 
+is used by default but if any device have read or write speed 
+limitations the controller can use SDRx.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index e30e29ae4819..45657e2b1ff7 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -338,11 +338,12 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- {
- 	struct page *page[1];
- 	struct vm_area_struct *vma;
-+	struct vm_area_struct *vmas[1];
- 	int ret;
- 
- 	if (mm == current->mm) {
--		ret = get_user_pages_fast(vaddr, 1, !!(prot & IOMMU_WRITE),
--					  page);
-+		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
-+					      page, vmas);
- 	} else {
- 		unsigned int flags = 0;
- 
-@@ -351,7 +352,18 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 
- 		down_read(&mm->mmap_sem);
- 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
--					    NULL, NULL);
-+					    vmas, NULL);
-+		/*
-+		 * The lifetime of a vaddr_get_pfn() page pin is
-+		 * userspace-controlled. In the fs-dax case this could
-+		 * lead to indefinite stalls in filesystem operations.
-+		 * Disallow attempts to pin fs-dax pages via this
-+		 * interface.
-+		 */
-+		if (ret > 0 && vma_is_fsdax(vmas[0])) {
-+			ret = -EOPNOTSUPP;
-+			put_page(page[0]);
-+		}
- 		up_read(&mm->mmap_sem);
- 	}
- 
+This could be also applied to i2c transfers.
+> +#endif /* I3C_INTERNAL_H */
+> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> new file mode 100644
+> index 000000000000..1c85abac08d5
+> --- /dev/null
+> +++ b/drivers/i3c/master.c
+> @@ -0,0 +1,1433 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2017 Cadence Design Systems Inc.
+> + *
+> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
+> + */
+> +
+> +#include <linux/slab.h>
+> +
+> +#include "internals.h"
+> +
+> +/**
+> + * i3c_master_entdaa_locked() - start a DAA (Dynamic Address Assignment)
+> + *				procedure
+> + * @master: master used to send frames on the bus
+> + *
+> + * Send a ENTDAA CCC command to start a DAA procedure.
+> + *
+> + * Note that this function only sends the ENTDAA CCC command, all the logic
+> + * behind dynamic address assignment has to be handled in the I3C master
+> + * driver.
+> + *
+> + * This function must be called with the bus lock held in write mode.
+> + *
+> + * Return: 0 in case of success, a negative error code otherwise.
+> + */
+> +int i3c_master_entdaa_locked(struct i3c_master_controller *master)
+> +{
+> +	struct i3c_ccc_cmd_dest dest = { };
+> +	struct i3c_ccc_cmd cmd = { };
+> +	int ret;
+> +
+> +	dest.addr = I3C_BROADCAST_ADDR;
+> +	cmd.dests = &dest;
+> +	cmd.ndests = 1;
+> +	cmd.rnw = false;
+> +	cmd.id = I3C_CCC_ENTDAA;
+> +
+> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(i3c_master_entdaa_locked);
+
+ can you explain the process?  the command is only execute once, what if 
+there is more devices on the bus?
+
+ > +
+> +/**
+> + * i3c_master_defslvs_locked() - send a DEFSLVS CCC command
+> + * @master: master used to send frames on the bus
+> + *
+> + * Send a DEFSLVS CCC command containing all the devices known to the @master.
+> + * This is useful when you have secondary masters on the bus to propagate
+> + * device information.
+> + *
+> + * This should be called after all I3C devices have been discovered (in other
+> + * words, after the DAA procedure has finished) and instantiated in
+> + * i3c_master_controller_ops->bus_init().
+> + * It should also be called if a master ACKed an Hot-Join request and assigned
+> + * a dynamic address to the device joining the bus.
+> + *
+> + * This function must be called with the bus lock held in write mode.
+> + *
+> + * Return: 0 in case of success, a negative error code otherwise.
+> + */
+> +int i3c_master_defslvs_locked(struct i3c_master_controller *master)
+> +{
+> +	struct i3c_ccc_cmd_dest dest = {
+> +		.addr = I3C_BROADCAST_ADDR,
+> +	};
+> +	struct i3c_ccc_cmd cmd = {
+> +		.id = I3C_CCC_DEFSLVS,
+> +		.dests = &dest,
+> +		.ndests = 1,
+> +	};
+> +	struct i3c_ccc_defslvs *defslvs;
+> +	struct i3c_ccc_dev_desc *desc;
+> +	struct i3c_device *i3cdev;
+> +	struct i2c_device *i2cdev;
+> +	struct i3c_bus *bus;
+> +	bool send = false;
+> +	int ndevs = 0, ret;
+> +
+> +	if (!master)
+> +		return -EINVAL;
+> +
+> +	bus = i3c_master_get_bus(master);
+> +	i3c_bus_for_each_i3cdev(bus, i3cdev) {
+> +		ndevs++;
+> +		if (I3C_BCR_DEVICE_ROLE(i3cdev->info.bcr) == I3C_BCR_I3C_MASTER)
+> +			send = true;
+> +	}
+> +
+> +	/* No other master on the bus, skip DEFSLVS. */
+> +	if (!send)
+> +		return 0;
+> +
+> +	i3c_bus_for_each_i2cdev(bus, i2cdev)
+> +		ndevs++;
+> +
+> +	dest.payload.len = sizeof(*defslvs) +
+> +			   ((ndevs - 1) * sizeof(struct i3c_ccc_dev_desc));
+> +	defslvs = kzalloc(dest.payload.len, GFP_KERNEL);
+> +	if (!defslvs)
+> +		return -ENOMEM;
+> +
+> +	dest.payload.data = defslvs;
+> +
+> +	defslvs->count = ndevs;
+> +	defslvs->master.bcr = master->this->info.bcr;
+> +	defslvs->master.dcr = master->this->info.dcr;
+> +	defslvs->master.dyn_addr = master->this->info.dyn_addr;
+> +	defslvs->master.static_addr = I3C_BROADCAST_ADDR;
+
+ Why defslvs->master.static_addr = I3C_BROADCAST_ADDR?
+
+ > +
+> +	desc = defslvs->slaves;
+> +	i3c_bus_for_each_i2cdev(bus, i2cdev) {
+> +		desc->lvr = i2cdev->lvr;
+> +		desc->static_addr = i2cdev->info.addr;
+> +		desc++;
+> +	}
+> +
+> +	i3c_bus_for_each_i3cdev(bus, i3cdev) {
+> +		/* Skip the I3C dev representing this master. */
+> +		if (i3cdev == master->this)
+> +			continue;
+> +
+> +		desc->bcr = i3cdev->info.bcr;
+> +		desc->dcr = i3cdev->info.dcr;
+> +		desc->dyn_addr = i3cdev->info.dyn_addr;
+> +		desc->static_addr = i3cdev->info.static_addr;
+> +		desc++;
+> +	}
+> +
+> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
+> +	kfree(defslvs);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(i3c_master_defslvs_locked);
+> +
+> +
+> +static int i3c_master_i2c_adapter_xfer(struct i2c_adapter *adap,
+> +				       struct i2c_msg *xfers, int nxfers)
+> +{
+> +	struct i3c_master_controller *master = i2c_adapter_to_i3c_master(adap);
+> +	int i, ret;
+> +
+> +	for (i = 0; i < nxfers; i++) {
+> +		enum i3c_addr_slot_status status;
+> +
+> +		status = i3c_bus_get_addr_slot_status(master->bus,
+> +						      xfers[i].addr);
+> +		if (status != I3C_ADDR_SLOT_I2C_DEV)
+> +			return -EINVAL;
+> +	}
+> +
+> +	ret = i3c_master_do_i2c_xfers(master, xfers, nxfers);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return nxfers;
+> +}
+> +
+> +static u32 i3c_master_i2c_functionalities(struct i2c_adapter *adap)
+> +{
+> +	return I2C_FUNC_SMBUS_EMUL | I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR;
+> +}
+
+ Is I2C_FUNC_10BIT_ADDR allowed ?
+
+ > diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
+> new file mode 100644
+> index 000000000000..e69de29bb2d1
+> diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
+> new file mode 100644
+> index 000000000000..e69de29bb2d1
+> diff --git a/include/linux/i3c/ccc.h b/include/linux/i3c/ccc.h
+> new file mode 100644
+> index 000000000000..ff3e1a3e2c4c
+> --- /dev/null
+> +++ b/include/linux/i3c/ccc.h
+> @@ -0,0 +1,380 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2017 Cadence Design Systems Inc.
+> + *
+> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
+> + */
+> +
+> +
+> +/**
+> + * enum i3c_ccc_test_mode - enum listing all available test modes
+> + *
+> + * @I3C_CCC_EXIT_TEST_MODE: exit test mode
+> + * @I3C_CCC_VENDOR_TEST_MODE: enter vendor test mode
+> + */
+> +enum i3c_ccc_test_mode {
+> +	I3C_CCC_EXIT_TEST_MODE,
+> +	I3C_CCC_VENDOR_TEST_MODE,
+> +};
+> +
+> +/**
+> + * struct i3c_ccc_enttm - payload passed to ENTTM CCC
+> + *
+> + * @mode: one of the &enum i3c_ccc_test_mode modes
+> + *
+> + * Information passed to the ENTTM CCC to instruct an I3C device to enter a
+> + * specific test mode.
+> + */
+> +struct i3c_ccc_enttm {
+> +	u8 mode;
+> +} __packed;
+> +
+> +/**
+> + * struct i3c_ccc_setda - payload passed to ENTTM CCC
+> + *
+> + * @mode: one of the &enum i3c_ccc_test_mode modes
+> + *
+> + * Information passed to the ENTTM CCC to instruct an I3C device to enter a
+> + * specific test mode.
+> + */
+> +struct i3c_ccc_setda {
+> +	u8 addr;
+> +} __packed;
+
+ what do you mean with struct? Maybe setdasa? if so, what is the addr?
+
+ > +/**
+> + * enum i3c_sdr_max_data_rate - max data rate values for private SDR transfers
+> + */
+> +enum i3c_sdr_max_data_rate {
+> +	I3C_SDR_DR_FSCL_MAX,
+> +	I3C_SDR_DR_FSCL_8MHZ,
+> +	I3C_SDR_DR_FSCL_6MHZ,
+> +	I3C_SDR_DR_FSCL_4MHZ,
+> +	I3C_SDR_DR_FSCL_2MHZ,
+> +};
+Can you change the names to:
+
+I3C_SDR0_FSCL_MAX,
+I3C_SDR1_FSCL_8MHZ,
+I3C_SDR2_FSCL_6MHZ,
+I3C_SDR3_FSCL_4MHZ,
+I3C_SDR4_FSCL_2MHZ,
+
+thus the data rate isn't repeated.
+
+> +
+> +/**
+> + * enum i3c_tsco - clock to data turn-around
+> + */
+> +enum i3c_tsco {
+> +	I3C_TSCO_LT_8NS,
+> +	I3C_TSCO_LT_9NS,
+> +	I3C_TSCO_LT_10NS,
+> +	I3C_TSCO_LT_11NS,
+> +	I3C_TSCO_LT_12NS,
+> +};
+what's the meaning of _LT_ ?
+> +
+> +#endif /* I3C_CCC_H */
+> diff --git a/include/linux/i3c/device.h b/include/linux/i3c/device.h
+> new file mode 100644
+> index 000000000000..83958d3a02e2
+> --- /dev/null
+> +++ b/include/linux/i3c/device.h
+> @@ -0,0 +1,321 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2017 Cadence Design Systems Inc.
+> + *
+> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
+> + */
+> +
+> +#ifndef I3C_DEV_H
+> +#define I3C_DEV_H
+> +
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +
+> +/**
+> + * enum i3c_hdr_mode - HDR mode ids
+> + * @I3C_HDR_DDR: DDR mode
+> + * @I3C_HDR_TSP: TSP mode
+> + * @I3C_HDR_TSL: TSL mode
+> + */
+> +enum i3c_hdr_mode {
+> +	I3C_HDR_DDR,
+> +	I3C_HDR_TSP,
+> +	I3C_HDR_TSL,
+> +};
+> +
+> +/**
+> + * struct i3c_hdr_cmd - I3C HDR command
+> + * @mode: HDR mode selected for this command
+> + * @code: command opcode
+> + * @addr: I3C dynamic address
+> + * @ndatawords: number of data words (a word is 16bits wide)
+> + * @data: input/output buffer
+> + */
+> +struct i3c_hdr_cmd {
+> +	enum i3c_hdr_mode mode;
+> +	u8 code;
+> +	u8 addr;
+> +	int ndatawords;
+> +	union {
+> +		u16 *in;
+> +		const u16 *out;
+> +	} data;
+> +};
+> +
+> +/* Private SDR read transfer */
+> +#define I3C_PRIV_XFER_READ		BIT(0)
+> +/*
+> + * Instruct the controller to issue a STOP after a specific transfer instead
+> + * of a REPEATED START.
+> + */
+> +#define I3C_PRIV_XFER_STOP		BIT(1)
+> +
+> +/**
+> + * struct i3c_priv_xfer - I3C SDR private transfer
+> + * @addr: I3C dynamic address
+> + * @len: transfer length in bytes of the transfer
+> + * @flags: combination of I3C_PRIV_XFER_xxx flags
+> + * @data: input/output buffer
+> + */
+> +struct i3c_priv_xfer {
+> +	u8 addr;
+> +	u16 len;
+> +	u32 flags;
+> +	struct {
+> +		void *in;
+> +		const void *out;
+> +	} data;
+> +};
+
+ Same as above, i3c_sdr_max_data_rate to change the bus scl.
+
+ > +
+> +/**
+> + * enum i3c_dcr - I3C DCR values
+> + * @I3C_DCR_GENERIC_DEVICE: generic I3C device
+> + */
+> +enum i3c_dcr {
+> +	I3C_DCR_GENERIC_DEVICE = 0,
+> +};
+> +
+> +#define I3C_PID_MANUF_ID(pid)		(((pid) & GENMASK_ULL(47, 33)) >> 33)
+> +#define I3C_PID_RND_LOWER_32BITS(pid)	(!!((pid) & BIT_ULL(32)))
+> +#define I3C_PID_RND_VAL(pid)		((pid) & GENMASK_ULL(31, 0))
+> +#define I3C_PID_PART_ID(pid)		(((pid) & GENMASK_ULL(31, 16)) >> 16)
+> +#define I3C_PID_INSTANCE_ID(pid)	(((pid) & GENMASK_ULL(15, 12)) >> 12)
+> +#define I3C_PID_EXTRA_INFO(pid)		((pid) & GENMASK_ULL(11, 0))
+> +
+> +#define I3C_BCR_DEVICE_ROLE(bcr)	((bcr) & GENMASK(7, 6))
+> +#define I3C_BCR_I3C_SLAVE		(0 << 6)
+> +#define I3C_BCR_I3C_MASTER		(1 << 6)
+> +#define I3C_BCR_HDR_CAP			BIT(5)
+> +#define I3C_BCR_BRIDGE			BIT(4)
+> +#define I3C_BCR_OFFLINE_CAP		BIT(3)
+> +#define I3C_BCR_IBI_PAYLOAD		BIT(2)
+> +#define I3C_BCR_IBI_REQ_CAP		BIT(1)
+> +#define I3C_BCR_MAX_DATA_SPEED_LIM	BIT(0)
+> +
+> +/**
+> + * struct i3c_device_info - I3C device information
+> + * @pid: Provisional ID
+> + * @bcr: Bus Characteristic Register
+> + * @dcr: Device Characteristic Register
+> + * @static_addr: static/I2C address
+> + * @dyn_addr: dynamic address
+> + * @hdr_cap: supported HDR modes
+> + * @max_read_ds: max read speed information
+> + * @max_write_ds: max write speed information
+> + * @max_ibi_len: max IBI payload length
+> + * @max_read_turnaround: max read turn-around time in micro-seconds
+> + * @max_read_len: max private SDR read length in bytes
+> + * @max_write_len: max private SDR write length in bytes
+> + *
+> + * These are all basic information that should be advertised by an I3C device.
+> + * Some of them are optional depending on the device type and device
+> + * capabilities.
+> + * For each I3C slave attached to a master with
+> + * i3c_master_add_i3c_dev_locked(), the core will send the relevant CCC command
+> + * to retrieve these data.
+> + */
+> +struct i3c_device_info {
+> +	u64 pid;
+> +	u8 bcr;
+> +	u8 dcr;
+> +	u8 static_addr;
+> +	u8 dyn_addr;
+> +	u8 hdr_cap;
+> +	u8 max_read_ds;
+> +	u8 max_write_ds;
+> +	u8 max_ibi_len;
+> +	u32 max_read_turnaround;
+> +	u16 max_read_len;
+> +	u16 max_write_len;
+> +};
+> +
+
+ is this information filled with data provided from CCC commands?
+
+ > +
+> +#endif /* I3C_DEV_H */
+> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+> new file mode 100644
+> index 000000000000..7ec9a4821bac
+> --- /dev/null
+> +++ b/include/linux/i3c/master.h
+> @@ -0,0 +1,564 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2017 Cadence Design Systems Inc.
+> + *
+> + * Author: Boris Brezillon<boris.brezillon@free-electrons.com>
+> + */
+> +
+> +#ifndef I3C_MASTER_H
+> +#define I3C_MASTER_H
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/i3c/ccc.h>
+> +#include <linux/i3c/device.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define I3C_HOT_JOIN_ADDR		0x2
+> +#define I3C_BROADCAST_ADDR		0x7e
+> +#define I3C_MAX_ADDR			GENMASK(6, 0)
+> +
+> +struct i3c_master_controller;
+> +struct i3c_bus;
+> +
+> +/**
+> + * struct i3c_i2c_dev - I3C/I2C common information
+> + * @node: node element used to insert the device into the I2C or I3C device
+> + *	  list
+> + * @bus: I3C bus this device is connected to
+> + * @master: I3C master that instantiated this device. Will be used to send
+> + *	    I2C/I3C frames on the bus
+> + * @master_priv: master private data assigned to the device. Can be used to
+> + *		 add master specific information
+> + *
+> + * This structure is describing common I3C/I2C dev information.
+> + */
+> +struct i3c_i2c_dev {
+> +	struct list_head node;
+> +	struct i3c_bus *bus;
+> +	struct i3c_master_controller *master;
+> +	void *master_priv;
+> +};
+> +
+> +#define I3C_LVR_I2C_INDEX_MASK		GENMASK(7, 5)
+> +#define I3C_LVR_I2C_INDEX(x)		((x) << 5)
+> +#define I3C_LVR_I2C_FM_MODE		BIT(4)
+> +
+> +#define I2C_MAX_ADDR			GENMASK(9, 0)
+
+ why 10-bit address?
+
+ > +
+> +/**
+> + * struct i2c_device - I2C device object
+> + * @common: inherit common I3C/I2C description
+> + * @info: I2C board info used to instantiate the I2C device. If you are
+> + *	  using DT to describe your hardware, this will be filled for you
+> + * @client: I2C client object created by the I2C framework. This will only
+> + *	    be valid after i3c_master_register() returns
+> + * @lvr: Legacy Virtual Register value as described in the I3C specification
+> + *
+> + * I2C device object. Note that the real I2C device is represented by
+> + * i2c_device->client, but we need extra information to handle the device when
+> + * it's connected to an I3C bus, hence the &struct i2c_device wrapper.
+> + *
+> + * The I2C framework is not impacted by this new representation.
+> + */
+> +struct i2c_device {
+> +	struct i3c_i2c_dev common;
+> +	struct i2c_board_info info;
+> +	struct i2c_client *client;
+> +	u8 lvr;
+> +};
+> +
+
+ It is usefull to know the speed limitations of the device.
+
+ > +
+> +/**
+> + * enum i3c_addr_slot_status - I3C address slot status
+> + * @I3C_ADDR_SLOT_FREE: address is free
+> + * @I3C_ADDR_SLOT_RSVD: address is reserved
+> + * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
+> + * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
+> + * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
+> + *
+> + * On an I3C bus, addresses are assigned dynamically, and we need to know which
+> + * addresses are free to use and which ones are already assigned.
+> + *
+> + * Addresses marked as reserved are those reserved by the I3C protocol
+> + * (broadcast address, ...).
+> + */
+> +enum i3c_addr_slot_status {
+> +	I3C_ADDR_SLOT_FREE,
+> +	I3C_ADDR_SLOT_RSVD,
+> +	I3C_ADDR_SLOT_I2C_DEV,
+> +	I3C_ADDR_SLOT_I3C_DEV,
+> +	I3C_ADDR_SLOT_STATUS_MASK = 3,
+> +};
+> +
+> +/**
+> + * struct i3c_bus - I3C bus object
+> + * @dev: device to be registered to the device-model
+> + * @cur_master: I3C master currently driving the bus. Since I3C is multi-master
+> + *		this can change over the time. Will be used to let a master
+> + *		know whether it needs to request bus ownership before sending
+> + *		a frame or not
+> + * @id: bus ID. Assigned by the framework when register the bus
+> + * @addrslots: a bitmap with 2-bits per-slot to encode the address status and
+> + *	       ease the DAA (Dynamic Address Assignment) procedure (see
+> + *	       &enum i3c_addr_slot_status)
+> + * @mode: bus mode (see &enum i3c_bus_mode)
+> + * @scl_rate: SCL signal rate for I3C and I2C mode
+> + * @devs: 2 lists containing all I3C/I2C devices connected to the bus
+> + * @lock: read/write lock on the bus. This is needed to protect against
+> + *	  operations that have an impact on the whole bus and the devices
+> + *	  connected to it. For example, when asking slaves to drop their
+> + *	  dynamic address (RSTDAA CCC), we need to make sure no one is trying
+> + *	  to send I3C frames to these devices.
+> + *	  Note that this lock does not protect against concurrency between
+> + *	  devices: several drivers can send different I3C/I2C frames through
+> + *	  the same master in parallel. This is the responsibility of the
+> + *	  master to guarantee that frames are actually sent sequentially and
+> + *	  not interlaced
+> + *
+> + * The I3C bus is represented with its own object and not implicitly described
+> + * by the I3C master to cope with the multi-master functionality, where one bus
+> + * can be shared amongst several masters, each of them requesting bus ownership
+> + * when they need to.
+> + */
+> +struct i3c_bus {
+> +	struct device dev;
+> +	struct i3c_device *cur_master;
+> +	int id;
+> +	unsigned long addrslots[((I2C_MAX_ADDR + 1) * 2) / BITS_PER_LONG];
+> +	enum i3c_bus_mode mode;
+> +	struct {
+> +		unsigned long i3c;
+> +		unsigned long i2c;
+> +	} scl_rate;
+> +	struct {
+> +		struct list_head i3c;
+> +		struct list_head i2c;
+> +	} devs;
+> +	struct rw_semaphore lock;
+> +};
+Can you explain the addrslots[] ?
+> +
+> +static inline struct i3c_device *dev_to_i3cdev(struct device *dev)
+> +{
+> +	return container_of(dev, struct i3c_device, dev);
+> +}
+> +
+> +struct i3c_master_controller;
+> +
+> +/**
+> + * struct i3c_master_controller_ops - I3C master methods
+> + * @bus_init: hook responsible for the I3C bus initialization. This
+> + *	      initialization should follow the steps described in the I3C
+> + *	      specification. This hook is called with the bus lock held in
+> + *	      write mode, which means all _locked() helpers can safely be
+> + *	      called from there
+> + * @bus_cleanup: cleanup everything done in
+> + *		 &i3c_master_controller_ops->bus_init(). This function is
+> + *		 optional and should only be implemented if
+> + *		 &i3c_master_controller_ops->bus_init() attached private data
+> + *		 to I3C/I2C devices. This hook is called with the bus lock
+> + *		 held in write mode, which means all _locked() helpers can
+> + *		 safely be called from there
+> + * @supports_ccc_cmd: should return true if the CCC command is supported, false
+> + *		      otherwise
+> + * @send_ccc_cmd: send a CCC command
+> + * @send_hdr_cmds: send one or several HDR commands. If there is more than one
+> + *		   command, they should ideally be sent in the same HDR
+> + *		   transaction
+> + * @priv_xfers: do one or several private I3C SDR transfers
+> + * @i2c_xfers: do one or several I2C transfers
+> + * @request_ibi: attach an IBI handler to an I3C device. This implies defining
+> + *		 an IBI handler and the constraints of the IBI (maximum payload
+> + *		 length and number of pre-allocated slots).
+> + *		 Some controllers support less IBI-capable devices than regular
+> + *		 devices, so this method might return -%EBUSY if there's no
+> + *		 more space for an extra IBI registration
+> + * @free_ibi: free an IBI previously requested with ->request_ibi(). The IBI
+> + *	      should have been disabled with ->disable_irq() prior to that
+> + * @enable_ibi: enable the IBI. Only valid if ->request_ibi() has been called
+> + *		prior to ->enable_ibi(). The controller should first enable
+> + *		the IBI on the controller end (for example, unmask the hardware
+> + *		IRQ) and then send the ENEC CCC command (with the IBI flag set)
+> + *		to the I3C device
+> + * @disable_ibi: disable an IBI. First send the DISEC CCC command with the IBI
+> + *		 flag set and then deactivate the hardware IRQ on the
+> + *		 controller end
+> + * @recycle_ibi_slot: recycle an IBI slot. Called every time an IBI has been
+> + *		      processed by its handler. The IBI slot should be put back
+> + *		      in the IBI slot pool so that the controller can re-use it
+> + *		      for a future IBI
+> + *
+> + * One of the most important hooks in these ops is
+> + * &i3c_master_controller_ops->bus_init(). Here is a non-exhaustive list of
+> + * things that should be done in &i3c_master_controller_ops->bus_init():
+> + *
+> + * 1) call i3c_master_set_info() with all information describing the master
+> + * 2) ask all slaves to drop their dynamic address by sending the RSTDAA CCC
+> + *    with i3c_master_rstdaa_locked()
+> + * 3) ask all slaves to disable IBIs using i3c_master_disec_locked()
+> + * 4) start a DDA procedure by sending the ENTDAA CCC with
+> + *    i3c_master_entdaa_locked(), or using the internal DAA logic provided by
+> + *    your controller
+You mean SETDASA CCC command?
+> + * 5) assign a dynamic address to each I3C device discovered during DAA and
+> + *    for each of them, call i3c_master_add_i3c_dev_locked()
+> + * 6) propagate device table to secondary masters by calling
+> + *    i3c_master_defslvs_locked()
+> + *
+> + * Note that these steps do not include all controller specific initialization.
+> + */
+> +struct i3c_master_controller_ops {
+> +	int (*bus_init)(struct i3c_master_controller *master);
+> +	void (*bus_cleanup)(struct i3c_master_controller *master);
+> +	bool (*supports_ccc_cmd)(struct i3c_master_controller *master,
+> +				 const struct i3c_ccc_cmd *cmd);
+> +	int (*send_ccc_cmd)(struct i3c_master_controller *master,
+> +			    struct i3c_ccc_cmd *cmd);
+> +	int (*send_hdr_cmds)(struct i3c_master_controller *master,
+> +			     const struct i3c_hdr_cmd *cmds,
+> +			     int ncmds);
+> +	int (*priv_xfers)(struct i3c_master_controller *master,
+> +			  const struct i3c_priv_xfer *xfers,
+> +			  int nxfers);
+> +	int (*i2c_xfers)(struct i3c_master_controller *master,
+> +			 const struct i2c_msg *xfers, int nxfers);
+> +	int (*request_ibi)(struct i3c_master_controller *master,
+> +			   struct i3c_device *dev,
+> +			   const struct i3c_ibi_setup *req);
+> +	void (*free_ibi)(struct i3c_master_controller *master,
+> +			 struct i3c_device *dev);
+> +	int (*enable_ibi)(struct i3c_master_controller *master,
+> +			  struct i3c_device *dev);
+> +	int (*disable_ibi)(struct i3c_master_controller *master,
+> +			   struct i3c_device *dev);
+> +	void (*recycle_ibi_slot)(struct i3c_master_controller *master,
+> +				 struct i3c_device *dev,
+> +				 struct i3c_ibi_slot *slot);
+> +};
+> +
+>
+
+Best regards,
+Vitor Soares
