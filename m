@@ -1,81 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeBWOdF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:33:05 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45741 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeBWOdB (ORCPT
+        id S1751447AbeBWOfz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:35:55 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:57448 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeBWOfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:33:01 -0500
-X-Google-Smtp-Source: AH8x224pJEyXZcT5bzn1pfipGOaNyUjMPVxIxgnqhUC9qC/t53CLdnbLhuE1B5MR/2GbZqiEOCbcQg==
-Subject: Re: Removing architectures without upstream gcc support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c86ec381-963c-7460-9e02-4ebeeac1c8fb@roeck-us.net>
-Date: Fri, 23 Feb 2018 06:32:57 -0800
+        Fri, 23 Feb 2018 09:35:54 -0500
+Subject: Re: [PATCH 5/9] drm/xen-front: Implement handling of shared display
+ buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-6-git-send-email-andr2000@gmail.com>
+ <11ce6c96-1739-435c-4b6f-c9f5d02a2905@oracle.com>
+ <dea8aaa3-70e8-4532-1f5a-2e0f8f57abed@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <36003bb4-6fc9-f8f9-2817-103bf0f543e9@oracle.com>
+Date: Fri, 23 Feb 2018 09:36:16 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <dea8aaa3-70e8-4532-1f5a-2e0f8f57abed@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8812 signatures=668677
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=710
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802230182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 02:32 AM, Arnd Bergmann wrote:
-> On Fri, Feb 23, 2018 at 12:48 AM, Guenter Roeck <linux@roeck-us.net> wrote:
->> On Thu, Feb 22, 2018 at 04:45:06PM +0100, Arnd Bergmann wrote:
->>> While building the cross-toolchains, I noticed that overall, we can build almost
->>> all linux target architectures with upstream binutils and gcc these days,
->>> however there are still some exceptions, and I'd like to find out if anyone
->>> has objections to removing the ones that do not have upstream support.
->>> This are the four architectures I found:
->>>
->>> * score (s+core, sunplus core) was a proprietary RISC architecture
->>>    made by sunplus. It is unclear if they still ship any products based on
->>>    this architecture, all they list is either ARM Cortex-A9 or an unspecified
->>>    RISC core that could be any of arm, mips, nds32, arc, xtensa or
->>>    something completely different. The two maintainers have both left the
->>>    company many years ago and have not contributed any patches in
->>>    at least five years. There was an upstream gcc port, which was marked
->>>    'obsolete' in 2013 and got removed in gcc-5.0.
->>>    I conclude that this is dead in Linux and can be removed
->>>
->>> * unicore32 was a research project at Peking University with a SoC
->>>    based on the Intel PXA design. No gcc source code has ever been
->>>    published, the only toolchain available is a set of binaries that include
->>>    a gcc-4.4 compiler. The project page at
->>>    http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
->>>    not been modified since 2011. The maintainer still Acks patches
->>>    and has last sent a pull request in 2014 and last sent a patch of
->>>    his own in 2012 when the project appears to have stalled.
->>>    I would suggest removing this one.
->>>
+On 02/23/2018 02:53 AM, Oleksandr Andrushchenko wrote:
+> On 02/23/2018 02:25 AM, Boris Ostrovsky wrote:
+>> On 02/21/2018 03:03 AM, Oleksandr Andrushchenko wrote:
+>>>     static int __init xen_drv_init(void)
+>>>   {
+>>> +    /* At the moment we only support case with XEN_PAGE_SIZE ==
+>>> PAGE_SIZE */
+>>> +    BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
 >>
->> The above two would be primary removal targets for me; they are all
->> but impossible to support given the toolchain limitations. Meta
->> would have been another one, but James is already taking care of it.
-> 
-> Ok. Have you had any success building arch/hexagon with clang?
-> 
+>> Why BUILD_BUG_ON? This should simply not load if page sizes are
+>> different.
+>>
+>>   
+> This is a compile time check, so if kernel/Xen is configured
+> to use page size combination which is not supported by the
+> driver it will fail during compilation. This seems correct to me,
+> because you shouldn't even try to load the driver which
+> cannot handle different page sizes to not make any harm.
 
-I have not tried. It is a pain having to use different toolchains for different
-kernel versions, and I only do it if I absolutely have to. I use "hexagon-linux-gcc
-(Sourcery CodeBench Lite 2012.03-66) 4.6.1".
 
-Guenter
+This will prevent whole kernel from building. So, for example,
+randconfig builds will fail.
+
+
+>>
+>>
+>>
+>>> +    ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
+>>> +    BUG_ON(ret);
+>>
+>> We should try not to BUG*(). There are a few in this patch (and possibly
+>> others) that I think can be avoided.
+>>
+> I will rework BUG_* for map/unmap code to handle errors,
+> but will still leave
+>     /* either pages or sgt, not both */
+>     BUG_ON(cfg->pages && cfg->sgt);
+> which is a real driver bug and must not happen
+
+Why not return an error?
+
+In fact, AFAICS you only call it in patch 9 where both of these can be
+tested, in which case something like -EINVAL would look reasonable.
+
+-boris
