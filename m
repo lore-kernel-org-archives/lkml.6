@@ -1,70 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751527AbeBWOCO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 09:02:14 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38073 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751436AbeBWOCM (ORCPT
+        id S1751410AbeBWOFc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 09:05:32 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:57026 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751276AbeBWOFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 09:02:12 -0500
-X-Google-Smtp-Source: AH8x225cXbwT6YPlUvg1W8avI7jufJYVF4fpYtXgSeDDfKhZA3biCj+0/ttrxjuqkv/PyvgBNS7Hsg==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org,
-        =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-        devicetree@vger.kernel.org, monstr@monstr.eu,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        Rob Herring <robherring2@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH] arm: zynq: Use i2c-mux instead of i2cswitch for pca9548
-Date: Fri, 23 Feb 2018 15:02:09 +0100
-Message-Id: <5ea002abef0c3c2ef7fe04360c916c0db72f2619.1519394527.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 23 Feb 2018 09:05:31 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [v2,03/10] drm/sun4i: Protect the TCON pixel clocks
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <d5224d2e81ecf73dc09f234e580ada52c00eaee3.1519204731.git-series.maxime.ripard@bootlin.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <287984f8-bcac-3789-d573-2f0c54fb537d@micronovasrl.com>
+Date: Fri, 23 Feb 2018 15:05:26 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <d5224d2e81ecf73dc09f234e580ada52c00eaee3.1519204731.git-series.maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i2c muxes should described like this.
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Both TCON clocks are very sensitive to clock changes, since any change
+might lead to improper timings.
+
+Make sure our rate is never changed.
+
+Tested-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
+  drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Based on Rob's comment https://patchwork.kernel.org/patch/10175211/
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c 
+b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index b73acab74867..cbe87cee13d1 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -261,7 +261,7 @@ static void sun4i_tcon0_mode_set_common(struct 
+sun4i_tcon *tcon,
+  					const struct drm_display_mode *mode)
+  {
+  	/* Configure the dot clock */
+-	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
++	clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
 
----
- arch/arm/boot/dts/zynq-zc702.dts | 2 +-
- arch/arm/boot/dts/zynq-zc706.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+  	/* Set the resolution */
+  	regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
+@@ -419,7 +419,7 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon 
+*tcon,
+  	WARN_ON(!tcon->quirks->has_channel_1);
 
-diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
-index d96979644e49..c0384376d7e0 100644
---- a/arch/arm/boot/dts/zynq-zc702.dts
-+++ b/arch/arm/boot/dts/zynq-zc702.dts
-@@ -105,7 +105,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_i2c0_default>;
- 
--	i2cswitch@74 {
-+	i2c-mux@74 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-zc706.dts
-index d0f51d0d6c95..886d20c4fdd5 100644
---- a/arch/arm/boot/dts/zynq-zc706.dts
-+++ b/arch/arm/boot/dts/zynq-zc706.dts
-@@ -61,7 +61,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_i2c0_default>;
- 
--	i2cswitch@74 {
-+	i2c-mux@74 {
- 		compatible = "nxp,pca9548";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-1.9.1
+  	/* Configure the dot clock */
+-	clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
++	clk_set_rate_exclusive(tcon->sclk1, mode->crtc_clock * 1000);
+
+  	/* Adjust clock delay */
+  	clk_delay = sun4i_tcon_get_clk_delay(mode, 1);
