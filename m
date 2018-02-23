@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeBWPBK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 10:01:10 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41655 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbeBWPAb (ORCPT
+        id S1751674AbeBWPA3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 10:00:29 -0500
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:38767 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751527AbeBWPA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:00:31 -0500
-X-Google-Smtp-Source: AH8x224FxCT87lh/NeE9QSAntmTmvoUpzAZoABQ7z7KI1Igv/VKz6f9B9H+Al52Hf1mcOBUmQwUMRA==
+        Fri, 23 Feb 2018 10:00:26 -0500
+X-Google-Smtp-Source: AG47ELsYumfu8HQwlbPCNA89Z9XqMJb3w4aWGZqHBGa/e0p4LCfBGYJ/RyVpkQo+GOxpupJ8gdb0/w==
 From: Michal Simek <michal.simek@xilinx.com>
 To: devicetree@vger.kernel.org
 Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
@@ -18,127 +18,54 @@ Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
         Josh Cartwright <josh.cartwright@ni.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/5] arm: zynq: Add support for Xilinx zc770 xm011 dc2 board
-Date: Fri, 23 Feb 2018 16:00:21 +0100
-Message-Id: <9156ffe65672c66a7407fe0c71b3c51c5be9c48b.1519398009.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 0/5] arm: zynq: Adding new Xilinx boards
+Date: Fri, 23 Feb 2018 16:00:18 +0100
+Message-Id: <cover.1519398009.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1519398009.git.michal.simek@xilinx.com>
-References: <cover.1519398009.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1519398009.git.michal.simek@xilinx.com>
-References: <cover.1519398009.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zc770 is based board which is extended by FMC/DC cards for SoC
-validation. FMCs/DCs are supposed to cover all SoC configurations.
-FMC/DC contains can, i2c, nand uart, spi and usb.
+Hi,
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+this patchset is adding 5 new dts files which target cc108 and zc770
+boards.
+Please let me know if you see any issue with them.
+
+Series depends on this one patch
+https://lkml.org/lkml/2018/2/23/412
+
+Thanks,
+Michal
 
 Changes in v2:
 - Record compatible string to xilinx.txt
+- Record compatible string to xilinx.txt
+- Record compatible string to xilinx.txt
+- Record compatible string to xilinx.txt
+- use eeprom as node name instead of at25
+- Record compatible string to xilinx.txt
 
- Documentation/devicetree/bindings/arm/xilinx.txt |  1 +
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/zynq-zc770-xm011.dts           | 64 ++++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
+Michal Simek (5):
+  arm: zynq: Add Xilinx cc108 board
+  arm: zynq: Add support for Xilinx zc770 xm010 dc1 board
+  arm: zynq: Add support for Xilinx zc770 xm011 dc2 board
+  arm: zynq: Add support for Xilinx zc770 xm012 dc3 board
+  arm: zynq: Add support for Xilinx zc770 xm013 dc4 board
+
+ Documentation/devicetree/bindings/arm/xilinx.txt | 11 +++
+ arch/arm/boot/dts/Makefile                       |  5 ++
+ arch/arm/boot/dts/zynq-cc108.dts                 | 75 +++++++++++++++++++
+ arch/arm/boot/dts/zynq-zc770-xm010.dts           | 92 ++++++++++++++++++++++++
+ arch/arm/boot/dts/zynq-zc770-xm011.dts           | 64 +++++++++++++++++
+ arch/arm/boot/dts/zynq-zc770-xm012.dts           | 64 +++++++++++++++++
+ arch/arm/boot/dts/zynq-zc770-xm013.dts           | 78 ++++++++++++++++++++
+ 7 files changed, 389 insertions(+)
+ create mode 100644 arch/arm/boot/dts/zynq-cc108.dts
+ create mode 100644 arch/arm/boot/dts/zynq-zc770-xm010.dts
  create mode 100644 arch/arm/boot/dts/zynq-zc770-xm011.dts
+ create mode 100644 arch/arm/boot/dts/zynq-zc770-xm012.dts
+ create mode 100644 arch/arm/boot/dts/zynq-zc770-xm013.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index 019e69037d42..80139a7cfcdc 100644
---- a/Documentation/devicetree/bindings/arm/xilinx.txt
-+++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-@@ -13,6 +13,7 @@ Additional compatible strings:
- 
- - Xilinx internal board zc770 with different FMC cards
-   "xlnx,zynq-zc770-xm010"
-+  "xlnx,zynq-zc770-xm011"
- 
- ---------------------------------------------------------------
- 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index be9ffae2a1ec..801a46a88e93 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1068,6 +1068,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
- 	zynq-zc702.dtb \
- 	zynq-zc706.dtb \
- 	zynq-zc770-xm010.dtb \
-+	zynq-zc770-xm011.dtb \
- 	zynq-zed.dtb \
- 	zynq-zybo.dtb
- dtb-$(CONFIG_MACH_ARMADA_370) += \
-diff --git a/arch/arm/boot/dts/zynq-zc770-xm011.dts b/arch/arm/boot/dts/zynq-zc770-xm011.dts
-new file mode 100644
-index 000000000000..b78883cee96a
---- /dev/null
-+++ b/arch/arm/boot/dts/zynq-zc770-xm011.dts
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Xilinx ZC770 XM013 board DTS
-+ *
-+ * Copyright (C) 2013-2018 Xilinx, Inc.
-+ */
-+/dts-v1/;
-+#include "zynq-7000.dtsi"
-+
-+/ {
-+	compatible = "xlnx,zynq-zc770-xm011", "xlnx,zynq-7000";
-+	model = "Xilinx Zynq";
-+
-+	aliases {
-+		i2c0 = &i2c1;
-+		serial0 = &uart1;
-+		spi0 = &spi0;
-+	};
-+
-+	chosen {
-+		bootargs = "";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000>;
-+	};
-+
-+	usb_phy1: phy1 {
-+		compatible = "usb-nop-xceiv";
-+		#phy-cells = <0>;
-+	};
-+};
-+
-+&can0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	eeprom: eeprom@52 {
-+		compatible = "atmel,24c02";
-+		reg = <0x52>;
-+	};
-+};
-+
-+&spi0 {
-+	status = "okay";
-+	num-cs = <4>;
-+	is-decoded-cs = <0>;
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+	dr_mode = "host";
-+	usb-phy = <&usb_phy1>;
-+};
 -- 
 1.9.1
