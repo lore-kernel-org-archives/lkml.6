@@ -1,244 +1,295 @@
-Return-Path: <ard.biesheuvel@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1518435489; cv=none;
-        d=google.com; s=arc-20160816;
-        b=TGNE40jqu/xdLAjO0P7UmCR9bXdTp8fPNkhiWx2L2NIfAIh+vaaPXCUYYyP3+Yn9Pa
-         9E5CLgy5VcSVOdFttIqZVLcBa0u7AlnzCqqkuIoQF4aglId6/zohSV3+KG6zqCzv6a2h
-         2bZCL2XaJTRoE23yGb0s1L+Q8Nh2xFyfMo3PcmoakeN/Je10XlH6TWw81GbCNW4Sjj4e
-         aet0XTxm3T5THoFodlUg8H87D34y2DW+QdVosslEbZMz456FA6OLIdQbmh56wCy5Mhvt
-         +T+tj/uLq1I/YNQWUk7TDC2rikKC2PstOLPr7/XCpbQH/tVol/Cp8vjEOfbmAan/mifN
-         ZJgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=GDB7csBc3xX53D0EeUXgz8lURyEt5MY6SiP8isgs2Hk=;
-        b=wAEsPGQx59ZlpZ4ncC55IO/afuTmOYYeL8BcElaBLzseltpLETcW8iRqGi/UDTqzR3
-         it6ygRIkK5GSY5ZEci1qLd6p7GlZAahfSDfIvxCMqD5W4HyteswVrkKEMybkS7LMqbkS
-         tRU+AbkcZm8lAqKrHtIN7O/hvv1JrldAf6jstYi0gq/VoSIFB3D/qyINsXR28RRB5Iae
-         g/Y0bKpkFqP3DyAU/6Fi1yTsmO9padYQfzJpfViyuLIqQmi0Cb9OpVquqTrWYRXeaJ+h
-         5to1uyI5VZefu7p8NSe3TwJSn7Z3LT8cAQTeHD9uYejCKHJlLCiBwms5MscYqzQgoxFq
-         4zmw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=SVilzhdZ;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=SVilzhdZ;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x226wUhgN9SYOPUu7j0Tae8ucIW7bqRgz1QboFdhuvnw7aprDQz9a8EU38C5jXq9dnD/e6XBqTg==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	marc.zyngier@arm.com,
-	broonie@linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] arm64 spectre and meltdown mitigations for v4.14-stable
-Date: Mon, 12 Feb 2018 11:38:01 +0000
-Message-Id: <20180212113801.2552-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.11.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3104079-1519395581-2-1058786441162011545
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519395580; b=obwKcEYYQQR+jO4N6fYIz/0b1+LMPgytpo6TF31UkxMcG0G
+    ut2ep9dlwp8D/aHl19qNkR91+6+GUTQPq1dlDGF4DQwlNkyc/lanJXmyu40k+sf5
+    psF9r1tcaCf+sXM5EsZ3dp+FJnPC54yM0kL+gagkz1/YPdS66V5L+nw43umG0+qL
+    U176aMz40xdxyblEEwsAkRWFOcWZ8+VRi7CFL5g+emY2hfoiZ2cr1XlHhqP9Dsre
+    Mn2jk8xiRyF4/Hnh9Z32ujVdBz5cHT0ONLOX9I7egbDP/vU4jbiPNQcIb3SWEZYh
+    9HT/Kjw/iowa2VVbh9luryLxC4lXHNHybvS4r0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519395580; bh=XL5flrd6pAU2ceMwgYbquy6M2bDd686MCejZPh
+    q5ADo=; b=gjlnOljv/XXpH6G1FBpVRiNVzylepbVWM3OTM08gqebP8POFV1xAXB
+    KGceZIx7X8+w8Eq/B1Av4MFxvQssni1vFrIz9VWM2IqaCx+ouorxFuFEPUQlCzwK
+    eqN7EtEQu7wsajJGIzma8PNyBrfhFe0w577LTp0vm3qBkP+DrYEieG7YyZdEKBjL
+    E3978evwaigPCaJpmilLPRuDKH3fiO0TPpby52sV4/FssZ5RQQE2d1C2BnTJ5YhS
+    /MY+aRqWGra8wExPbhjtgeawG+vRyxwtmIB75kbnENkgcpKv0eqKSj1+cezz/pkL
+    TcWOPf8AgicDJyt/OasJ4avxJNQIt3dw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OYRWx5si x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=XMJcXwY9;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OYRWx5si x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=XMJcXwY9;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751376AbeBWOTh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 09:19:37 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:34693 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeBWOTg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 09:19:36 -0500
+X-Google-Smtp-Source: AG47ELu7bLkRtnLulN6BVwBt1qO85iiHrENW5ZPHErESQjRhPT71V/KRNY/U8GRBmsv7oXpgpF3vE3Q2NIrMX2ectOo=
+MIME-Version: 1.0
+In-Reply-To: <20180212113801.2552-1-ard.biesheuvel@linaro.org>
+References: <20180212113801.2552-1-ard.biesheuvel@linaro.org>
+From: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Date: Fri, 23 Feb 2018 15:19:14 +0100
+Message-ID: <CAP71WjzZqcxr-zHFfFUP0jAPfmJm7NM1MpS6tfPkMmj45U7MVg@mail.gmail.com>
+Subject: Re: [GIT PULL] arm64 spectre and meltdown mitigations for v4.14-stable
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        marc.zyngier@arm.com, Mark Brown <broonie@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592195012503488310?=
-X-GMAIL-MSGID: =?utf-8?q?1592195012503488310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+hi,
 
-As mentioned by Will, I have created the v4.14 counterpart of his stable
-backport of the arm64/ARM Spectre/Meltdown mitigations that have been pulled
-into v4.16-rc1.
+On Mon, Feb 12, 2018 at 12:38 PM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> Hi Greg,
+>
+> As mentioned by Will, I have created the v4.14 counterpart of his stable
+> backport of the arm64/ARM Spectre/Meltdown mitigations that have been pulled
+> into v4.16-rc1.
+>
+> Given that this is the v4.15 version backported to v4.14, I have removed any
+> mention of 'conflicts' from the commit logs as they are now ambiguous. The
+> patches applied surprisingly cleanly, I only needed to drop two patches that
+> are already in (the same ones Will mentioned in his PR), and drop another one
+> dealing with SPE, support for which did not exist yet in v4.14. I also included
+> the patch
+>
+>   arm64: move TASK_* definitions to <asm/processor.h>
+>
+> from v4.15 to make Robin's Spectre v1 patches apply more cleanly.
+>
+> Thanks,
+> Ard.
+>
+> Will Deacon (40):
+>       [Variant 3/Meltdown] arm64: mm: Use non-global mappings for kernel space
+>       [Variant 3/Meltdown] arm64: mm: Temporarily disable ARM64_SW_TTBR0_PAN
+>       [Variant 3/Meltdown] arm64: mm: Move ASID from TTBR0 to TTBR1
+>       [Variant 3/Meltdown] arm64: mm: Remove pre_ttbr0_update_workaround for Falkor erratum #E1003
+>       [Variant 3/Meltdown] arm64: mm: Rename post_ttbr0_update_workaround
+>       [Variant 3/Meltdown] arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN
+>       [Variant 3/Meltdown] arm64: mm: Allocate ASIDs in pairs
+>       [Variant 3/Meltdown] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
+>       [Variant 3/Meltdown] arm64: mm: Invalidate both kernel and user ASIDs when performing TLBI
+>       [Variant 3/Meltdown] arm64: entry: Add exception trampoline page for exceptions from EL0
+>       [Variant 3/Meltdown] arm64: mm: Map entry trampoline into trampoline and kernel page tables
+>       [Variant 3/Meltdown] arm64: entry: Explicitly pass exception level to kernel_ventry macro
+>       [Variant 3/Meltdown] arm64: entry: Hook up entry trampoline to exception vectors
+>       [Variant 3/Meltdown] arm64: erratum: Work around Falkor erratum #E1003 in trampoline code
+>       [Variant 3/Meltdown] arm64: tls: Avoid unconditional zeroing of tpidrro_el0 for native tasks
+>       [Variant 3/Meltdown] arm64: entry: Add fake CPU feature for unmapping the kernel at EL0
+>       [Variant 3/Meltdown] arm64: kaslr: Put kernel vectors address in separate data page
+>       [Variant 3/Meltdown] arm64: use RET instruction for exiting the trampoline
+>       [Variant 3/Meltdown] arm64: Kconfig: Add CONFIG_UNMAP_KERNEL_AT_EL0
+>       [Variant 3/Meltdown] arm64: Kconfig: Reword UNMAP_KERNEL_AT_EL0 kconfig entry
+>       [Variant 3/Meltdown] arm64: Take into account ID_AA64PFR0_EL1.CSV3
+>       [Variant 3/Meltdown] arm64: mm: Introduce TTBR_ASID_MASK for getting at the ASID in the TTBR
+>       [Variant 3/Meltdown] arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()
 
-Given that this is the v4.15 version backported to v4.14, I have removed any
-mention of 'conflicts' from the commit logs as they are now ambiguous. The
-patches applied surprisingly cleanly, I only needed to drop two patches that
-are already in (the same ones Will mentioned in his PR), and drop another one
-dealing with SPE, support for which did not exist yet in v4.14. I also included
-the patch
+we are seeing a regression on Qualcomm Dragonbooard 410c at this
+commit ^. we are seeing the same regression on 4.15.x, where the same
+commit exists too. However there is no regression on mainline.
 
-  arm64: move TASK_* definitions to <asm/processor.h>
+Starting from this commit , this is the bootlog (with earlyprintk)
 
-from v4.15 to make Robin's Spectre v1 patches apply more cleanly.
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
+[    0.000000] Linux version 4.15.3 (nicolas.dechesne@qcom-hackbox)
+(gcc version 6.2.1 20161016 (Linaro GCC 6.2-2016.11)) #27
+SMP PREEMPT Tue Feb 20 15:54:58 CET 2018
+[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+[    0.000000] earlycon: msm_serial_dm0 at MMIO 0x00000000078b0000
+(options '115200n8')
+[    0.000000] bootconsole [msm_serial_dm0] enabled
+[    0.000000] efi: Getting EFI parameters from FDT:
+[    0.000000] efi: UEFI not found.
+[    0.000000] cma: Reserved 16 MiB at 0x00000000bec00000
+[    0.000000] NUMA: No NUMA configuration found
+[    0.000000] NUMA: Faking a node at [mem
+0x0000000000000000-0x00000000bfffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0xbfeb1c00-0xbfeb36ff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000085ffffff]
+[    0.000000]   node   0: [mem 0x0000000089f00000-0x000000008e9fffff]
+[    0.000000]   node   0: [mem 0x000000008eb00000-0x00000000bfffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.0 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+[    0.000000] random: fast init done
+[    0.000000] percpu: Embedded 23 pages/cpu @        (ptrval) s55064
+r8192 d30952 u94208
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: enabling workaround for ARM errata
+826319, 827319, 824069
+[    0.000000] CPU features: enabling workaround for ARM erratum 845719
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 241920
+[    0.000000] Policy zone: DMA
+[    0.000000] Kernel command line: console=ttyMSM0,115200n8
+root=/dev/disk/by-partlabel/rootfs rootwait rw
+earlycon=msm_serial_dm,0x78b0000,115200n8
+systemd.unit=multi-user.target androidboot.emmc=true
+androidboot.serialno=1c580271 androidboot.baseband=apq
+mdss_mdp.panel=0:dsi:0:
+[    0.000000] Memory: 929108K/983040K available (9532K kernel code,
+1160K rwdata, 4444K rodata, 1088K init, 396K bss, 37548K reserved,
+16384K cma-reserved)
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]     modules : 0xffff000000000000 - 0xffff000008000000
+(   128 MB)
+[    0.000000]     vmalloc : 0xffff000008000000 - 0xffff7dffbfff0000
+(129022 GB)
+[    0.000000]       .text : 0x        (ptrval) - 0x        (ptrval)
+(  9536 KB)
+[    0.000000]     .rodata : 0x        (ptrval) - 0x        (ptrval)
+(  4480 KB)
+[    0.000000]       .init : 0x        (ptrval) - 0x        (ptrval)
+(  1088 KB)
+[    0.000000]       .data : 0x        (ptrval) - 0x        (ptrval)
+(  1161 KB)
+[    0.000000]        .bss : 0x        (ptrval) - 0x        (ptrval)
+(   397 KB)
+[    0.000000]     fixed   : 0xffff7dfffe7f9000 - 0xffff7dfffec00000
+(  4124 KB)
+[    0.000000]     PCI I/O : 0xffff7dfffee00000 - 0xffff7dffffe00000
+(    16 MB)
+[    0.000000]     vmemmap : 0xffff7e0000000000 - 0xffff800000000000
+(  2048 GB maximum)
+[    0.000000]               0xffff7e0000000000 - 0xffff7e0001000000
+(    16 MB actual)
+[    0.000000]     memory  : 0xffff800000000000 - 0xffff800040000000
+(  1024 MB)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000]  RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=4.
+[    0.000000]  Tasks RCU enabled.
+[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] arch_timer: cp15 and mmio timer(s) running at 19.20MHz
+(virt/virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
+max_cycles: 0x46d987e47, max_idle_ns: 440795202767 ns
+[    0.000004] sched_clock: 56 bits at 19MHz, resolution 52ns, wraps
+every 4398046511078ns
+[    0.011359] Console: colour dummy device 80x25
+[    0.018805] Calibrating delay loop (skipped), value calculated
+using timer frequency.. 38.40 BogoMIPS (lpj=76800)
+[    0.023277] pid_max: default: 32768 minimum: 301
+[    0.033670] Security Framework initialized
+[    0.038818] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes)
+[    0.042469] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes)
+[    0.049423] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes)
+[    0.056177] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes)
+[    0.079104] ASID allocator initialised with 32768 entries
+[    0.087102] Hierarchical SRCU implementation.
+[    0.097379] EFI services will not be available.
+[    0.103147] smp: Bringing up secondary CPUs ...
+[    0.131430] Detected VIPT I-cache on CPU1
+[    0.131479] CPU1: Booted secondary processor 0x0000000001 [0x410fd030]
+[    0.159478] Detected VIPT I-cache on CPU2
+[    0.159518] CPU2: Booted secondary processor 0x0000000002 [0x410fd030]
+[    0.187535] Detected VIPT I-cache on CPU3
+[    0.187571] CPU3: Booted secondary processor 0x0000000003 [0x410fd030]
+[    0.187650] smp: Brought up 1 node, 4 CPUs
+[    0.218074] SMP: Total of 4 processors activated.
+[    0.222145] CPU features: detected feature: 32-bit EL0 Support
+[    0.226921] CPU features: detected feature: Kernel page table
+isolation (KPTI)
+[    0.234739] CPU: All CPU(s) started at EL1
+[    0.239866] alternatives: patching kernel code
+[    0.244070] ------------[ cut here ]------------
+[    0.248350] kernel BUG at ../arch/arm64/mm/mmu.c:138!
+[    0.253128] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[    0.258073] Modules linked in:
+[    0.263455] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.3 #27
+[    0.266495] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    0.272662] pstate: 00000005 (nzcv daif -PAN -UAO)
+[    0.279347] pc : __create_pgd_mapping+0x544/0x660
+[    0.283943] lr : __create_pgd_mapping+0x4d0/0x660
+[    0.288714] sp : ffff000008033cb0
+[    0.293400] x29: ffff000008033cb0 x28: ffff800000e2ffff
+[    0.296701] x27: ffff800000080000 x26: ffff800000200000
+[    0.302083] x25: 0000000080080000 x24: ffff800000e30000
+[    0.307379] x23: ffff7dfffe638000 x22: 00000000bfef6003
+[    0.312673] x21: ffff800000080000 x20: 00e0000000000f93
+[    0.317969] x19: ffff800000e30000 x18: 0000000000000010
+[    0.323264] x17: 000000001f8013fb x16: 000000000522cdac
+[    0.328558] x15: 0000000000000000 x14: 0000000000000400
+[    0.333854] x13: 0000800080000000 x12: 0000000080080000
+[    0.339150] x11: 00e8000000000f13 x10: ffff8000001fffff
+[    0.344445] x9 : ffff800000080000 x8 : 00e0000000000f93
+[    0.349739] x7 : ffff800000090000 x6 : 0040000000000041
+[    0.355034] x5 : 0040000000000001 x4 : 00e8000080080f93
+[    0.360329] x3 : ffff800000080000 x2 : ffff7dfffe639400
+[    0.365624] x1 : ffd7ffffffffff7f x0 : 0008000000000880
+[    0.370922] Process swapper/0 (pid: 1, stack limit = 0x0000000095a442e7)
+[    0.376216] Call trace:
+[    0.382899]  __create_pgd_mapping+0x544/0x660
+[    0.385070]  update_mapping_prot+0x48/0xd8
+[    0.389585]  mark_linear_text_alias_ro+0x68/0x8c
+[    0.393579]  smp_cpus_done+0x60/0x9c
+[    0.398351]  smp_init+0xfc/0x114
+[    0.401909]  kernel_init_freeable+0xcc/0x224
+[    0.405123]  kernel_init+0x10/0x100
+[    0.409374]  ret_from_fork+0x10/0x18
+[    0.412588] Code: 92801001 f2fffae1 ea01001f 54000040 (d4210000)
+[    0.416420] ---[ end trace e7ed67ae05b55982 ]---
+[    0.422430] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    0.422430]
+[    0.427091] SMP: stopping secondary CPUs
+[    0.436203] ---[ end Kernel panic - not syncing: Attempted to kill
+init! exitcode=0x0000000b
+[    0.436203]
 
-Thanks,
-Ard.
-
--------------8<----------------
-The following changes since commit 81d0cc85caabe062991ea45ddada814835d47fb0:
-
-  Linux 4.14.18 (2018-02-07 11:12:26 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git tags/arm64-spectre-meltdown-for-4.14-stable
-
-for you to fetch changes up to 2cfc4ce33abf38e3ae369e209c2de31a5008c4bf:
-
-  [Variant 2/Spectre-v2] arm64: Kill PSCI_GET_VERSION as a variant-2 workaround (2018-02-09 16:20:15 +0000)
-
-----------------------------------------------------------------
-arm64 Spectre and Meltdown mitigations based on v4.14
-
-----------------------------------------------------------------
-Catalin Marinas (1):
-      [Variant 3/Meltdown] arm64: kpti: Fix the interaction between ASID switching and software PAN
-
-James Morse (1):
-      [Variant 2/Spectre-v2] arm64: cpufeature: __this_cpu_has_cap() shouldn't stop early
-
-Jayachandran C (3):
-      [Variant 3/Meltdown] arm64: cputype: Add MIDR values for Cavium ThunderX2 CPUs
-      [Variant 3/Meltdown] arm64: Turn on KPTI only on CPUs that need it
-      [Variant 2/Spectre-v2] arm64: Branch predictor hardening for Cavium ThunderX2
-
-Marc Zyngier (20):
-      [Variant 3/Meltdown] arm64: Force KPTI to be disabled on Cavium ThunderX
-      [Variant 2/Spectre-v2] arm64: Move post_ttbr_update_workaround to C code
-      [Variant 2/Spectre-v2] arm64: Move BP hardening to check_and_switch_context
-      [Variant 2/Spectre-v2] arm64: KVM: Use per-CPU vector when BP hardening is enabled
-      [Variant 2/Spectre-v2] arm64: KVM: Increment PC after handling an SMC trap
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Consolidate the PSCI include files
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Add PSCI_VERSION helper
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Add smccc accessors to PSCI code
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Implement PSCI 1.0 support
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Advertise SMCCC v1.1
-      [Variant 2/Spectre-v2] arm64: KVM: Make PSCI_VERSION a fast path
-      [Variant 2/Spectre-v2] arm/arm64: KVM: Turn kvm_psci_version into a static inline
-      [Variant 2/Spectre-v2] arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP hardening support
-      [Variant 2/Spectre-v2] arm64: KVM: Add SMCCC_ARCH_WORKAROUND_1 fast handling
-      [Variant 2/Spectre-v2] firmware/psci: Expose PSCI conduit
-      [Variant 2/Spectre-v2] firmware/psci: Expose SMCCC version through psci_ops
-      [Variant 2/Spectre-v2] arm/arm64: smccc: Make function identifiers an unsigned quantity
-      [Variant 2/Spectre-v2] arm/arm64: smccc: Implement SMCCC v1.1 inline primitive
-      [Variant 2/Spectre-v2] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support
-      [Variant 2/Spectre-v2] arm64: Kill PSCI_GET_VERSION as a variant-2 workaround
-
-Robin Murphy (3):
-      [Variant 1/Spectre-v1] arm64: Implement array_index_mask_nospec()
-      [Variant 1/Spectre-v1] arm64: Make USER_DS an inclusive limit
-      [Variant 1/Spectre-v1] arm64: Use pointer masking to limit uaccess speculation
-
-Shanker Donthineni (1):
-      [Variant 2/Spectre-v2] arm64: Implement branch predictor hardening for Falkor
-
-Stephen Boyd (1):
-      [Variant 3/Meltdown] arm64: cpu_errata: Add Kryo to Falkor 1003 errata
-
-Suzuki K Poulose (2):
-      [Variant 3/Meltdown] arm64: capabilities: Handle duplicate entries for a capability
-      [Variant 2/Spectre-v2] arm64: Run enable method for errata work arounds on late CPUs
-
-Will Deacon (40):
-      [Variant 3/Meltdown] arm64: mm: Use non-global mappings for kernel space
-      [Variant 3/Meltdown] arm64: mm: Temporarily disable ARM64_SW_TTBR0_PAN
-      [Variant 3/Meltdown] arm64: mm: Move ASID from TTBR0 to TTBR1
-      [Variant 3/Meltdown] arm64: mm: Remove pre_ttbr0_update_workaround for Falkor erratum #E1003
-      [Variant 3/Meltdown] arm64: mm: Rename post_ttbr0_update_workaround
-      [Variant 3/Meltdown] arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN
-      [Variant 3/Meltdown] arm64: mm: Allocate ASIDs in pairs
-      [Variant 3/Meltdown] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
-      [Variant 3/Meltdown] arm64: mm: Invalidate both kernel and user ASIDs when performing TLBI
-      [Variant 3/Meltdown] arm64: entry: Add exception trampoline page for exceptions from EL0
-      [Variant 3/Meltdown] arm64: mm: Map entry trampoline into trampoline and kernel page tables
-      [Variant 3/Meltdown] arm64: entry: Explicitly pass exception level to kernel_ventry macro
-      [Variant 3/Meltdown] arm64: entry: Hook up entry trampoline to exception vectors
-      [Variant 3/Meltdown] arm64: erratum: Work around Falkor erratum #E1003 in trampoline code
-      [Variant 3/Meltdown] arm64: tls: Avoid unconditional zeroing of tpidrro_el0 for native tasks
-      [Variant 3/Meltdown] arm64: entry: Add fake CPU feature for unmapping the kernel at EL0
-      [Variant 3/Meltdown] arm64: kaslr: Put kernel vectors address in separate data page
-      [Variant 3/Meltdown] arm64: use RET instruction for exiting the trampoline
-      [Variant 3/Meltdown] arm64: Kconfig: Add CONFIG_UNMAP_KERNEL_AT_EL0
-      [Variant 3/Meltdown] arm64: Kconfig: Reword UNMAP_KERNEL_AT_EL0 kconfig entry
-      [Variant 3/Meltdown] arm64: Take into account ID_AA64PFR0_EL1.CSV3
-      [Variant 3/Meltdown] arm64: mm: Introduce TTBR_ASID_MASK for getting at the ASID in the TTBR
-      [Variant 3/Meltdown] arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()
-      [Variant 3/Meltdown] arm64: mm: Permit transitioning from Global to Non-Global without BBM
-      [Variant 3/Meltdown] arm64: kpti: Add ->enable callback to remap swapper using nG mappings
-      [Variant 3/Meltdown] arm64: entry: Reword comment about post_ttbr_update_workaround
-      [Variant 3/Meltdown] arm64: idmap: Use "awx" flags for .idmap.text .pushsection directives
-      [Variant 1/Spectre-v1] arm64: barrier: Add CSDB macros to control data-value prediction
-      [Variant 1/Spectre-v1] arm64: entry: Ensure branch through syscall table is bounded under speculation
-      [Variant 1/Spectre-v1] arm64: uaccess: Prevent speculative use of the current addr_limit
-      [Variant 1/Spectre-v1] arm64: uaccess: Don't bother eliding access_ok checks in __{get, put}_user
-      [Variant 1/Spectre-v1] arm64: uaccess: Mask __user pointers for __arch_{clear, copy_*}_user
-      [Variant 1/Spectre-v1] arm64: futex: Mask __user pointers prior to dereference
-      [Variant 2/Spectre-v2] arm64: cpufeature: Pass capability structure to ->enable callback
-      [Variant 2/Spectre-v2] drivers/firmware: Expose psci_get_version through psci_ops structure
-      [Variant 2/Spectre-v2] arm64: Add skeleton to harden the branch predictor against aliasing attacks
-      [Variant 2/Spectre-v2] arm64: entry: Apply BP hardening for high-priority synchronous exceptions
-      [Variant 2/Spectre-v2] arm64: entry: Apply BP hardening for suspicious interrupts from EL0
-      [Variant 2/Spectre-v2] arm64: cputype: Add missing MIDR values for Cortex-A72 and Cortex-A75
-      [Variant 2/Spectre-v2] arm64: Implement branch predictor hardening for affected Cortex-A CPUs
-
-Yury Norov (1):
-      arm64: move TASK_* definitions to <asm/processor.h>
-
- Documentation/arm64/silicon-errata.txt |   2 +-
- arch/arm/include/asm/kvm_host.h        |   6 +
- arch/arm/include/asm/kvm_mmu.h         |  10 ++
- arch/arm/include/asm/kvm_psci.h        |  27 ----
- arch/arm/kvm/handle_exit.c             |   4 +-
- arch/arm64/Kconfig                     |  46 +++++--
- arch/arm64/include/asm/asm-uaccess.h   |  36 +++--
- arch/arm64/include/asm/assembler.h     |  54 +++-----
- arch/arm64/include/asm/barrier.h       |  23 ++++
- arch/arm64/include/asm/cpucaps.h       |   5 +-
- arch/arm64/include/asm/cputype.h       |   9 ++
- arch/arm64/include/asm/efi.h           |  12 +-
- arch/arm64/include/asm/fixmap.h        |   5 +
- arch/arm64/include/asm/futex.h         |   9 +-
- arch/arm64/include/asm/kvm_asm.h       |   2 +
- arch/arm64/include/asm/kvm_host.h      |   5 +
- arch/arm64/include/asm/kvm_mmu.h       |  38 ++++++
- arch/arm64/include/asm/kvm_psci.h      |  27 ----
- arch/arm64/include/asm/memory.h        |  15 ---
- arch/arm64/include/asm/mmu.h           |  48 +++++++
- arch/arm64/include/asm/mmu_context.h   |  12 +-
- arch/arm64/include/asm/pgtable-hwdef.h |   1 +
- arch/arm64/include/asm/pgtable-prot.h  |  35 +++--
- arch/arm64/include/asm/pgtable.h       |   1 +
- arch/arm64/include/asm/proc-fns.h      |   6 -
- arch/arm64/include/asm/processor.h     |  24 ++++
- arch/arm64/include/asm/sysreg.h        |   2 +
- arch/arm64/include/asm/tlbflush.h      |  16 ++-
- arch/arm64/include/asm/uaccess.h       | 181 +++++++++++++++++--------
- arch/arm64/kernel/Makefile             |   4 +
- arch/arm64/kernel/arm64ksyms.c         |   4 +-
- arch/arm64/kernel/asm-offsets.c        |   6 +-
- arch/arm64/kernel/bpi.S                |  83 ++++++++++++
- arch/arm64/kernel/cpu-reset.S          |   2 +-
- arch/arm64/kernel/cpu_errata.c         | 239 ++++++++++++++++++++++++++++++++-
- arch/arm64/kernel/cpufeature.c         | 138 +++++++++++++++----
- arch/arm64/kernel/entry.S              | 230 ++++++++++++++++++++++++++-----
- arch/arm64/kernel/head.S               |   2 +-
- arch/arm64/kernel/process.c            |  12 +-
- arch/arm64/kernel/sleep.S              |   2 +-
- arch/arm64/kernel/vmlinux.lds.S        |  22 ++-
- arch/arm64/kvm/handle_exit.c           |  14 +-
- arch/arm64/kvm/hyp/entry.S             |  12 ++
- arch/arm64/kvm/hyp/hyp-entry.S         |  20 ++-
- arch/arm64/kvm/hyp/switch.c            |  13 +-
- arch/arm64/lib/clear_user.S            |  10 +-
- arch/arm64/lib/copy_from_user.S        |   4 +-
- arch/arm64/lib/copy_in_user.S          |   9 +-
- arch/arm64/lib/copy_to_user.S          |   4 +-
- arch/arm64/mm/cache.S                  |   4 +-
- arch/arm64/mm/context.c                |  48 ++++---
- arch/arm64/mm/fault.c                  |  36 ++++-
- arch/arm64/mm/mmu.c                    |  35 +++++
- arch/arm64/mm/proc.S                   | 223 +++++++++++++++++++++++++++---
- arch/arm64/xen/hypercall.S             |   4 +-
- drivers/firmware/psci.c                |  57 +++++++-
- include/kvm/arm_psci.h                 |  51 +++++++
- include/linux/arm-smccc.h              | 165 ++++++++++++++++++++++-
- include/linux/psci.h                   |  14 ++
- include/uapi/linux/psci.h              |   3 +
- virt/kvm/arm/arm.c                     |  10 +-
- virt/kvm/arm/psci.c                    | 143 ++++++++++++++++----
- 62 files changed, 1899 insertions(+), 385 deletions(-)
- delete mode 100644 arch/arm/include/asm/kvm_psci.h
- delete mode 100644 arch/arm64/include/asm/kvm_psci.h
- create mode 100644 arch/arm64/kernel/bpi.S
- create mode 100644 include/kvm/arm_psci.h
+I understand this is not a lot of data. but I am a bit clueless here.
+One thing worth saying is that we are using custom/proprietary
+firmware here, and CPUs are started in EL1. The DB410c is based on
+APQ8016 SoC from Qualcomm (4x Cortex A53).
