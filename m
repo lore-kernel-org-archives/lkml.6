@@ -1,57 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeBWRKZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 12:10:25 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38412 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751351AbeBWRKX (ORCPT
+        id S1751643AbeBWRMr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 12:12:47 -0500
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:43135 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751351AbeBWRMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 12:10:23 -0500
-X-Google-Smtp-Source: AH8x226l0ahIONSR9ogPIvdEc3UKIzCWeOjxR+HAn3QXt+IQmaHsQ2+fyrKnLgVLtIgtDds3DLl9ZA==
-Date: Fri, 23 Feb 2018 09:10:19 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-metag@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180223171019.GA1125@roeck-us.net>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <20180223154316.35b26857@alans-desktop>
+        Fri, 23 Feb 2018 12:12:45 -0500
+X-Google-Smtp-Source: AG47ELusqlHL8OOtsOJaVRbmT5AUK3j3wm0AMYUo/cHKTl2ZN7FZH+cfTHtPoRbRnqe+fKEd/Kqcr8qI0Q8+dnp+nx8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223154316.35b26857@alans-desktop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <04b6c673208b4680b7d6cf41ccdfd3f0@AcuMS.aculab.com>
+References: <20180223153700.2186058-1-arnd@arndb.de> <e8e54cb303074abd82048ffa65f26fc9@AcuMS.aculab.com>
+ <CAHp75VfNKVjAmgEor2veC6sDnuLacxK1BVgKbqdZ-mxOX=9CSw@mail.gmail.com> <04b6c673208b4680b7d6cf41ccdfd3f0@AcuMS.aculab.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 23 Feb 2018 19:12:44 +0200
+Message-ID: <CAHp75VcGM=2Tg3Qw-ywC=_Sofgg7Wppf=f=Jhs18n4U1tbTTGA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: lpfc: use memcpy_toio instead of writeq
+To: David Laight <David.Laight@aculab.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 03:43:16PM +0000, Alan Cox wrote:
-> > Regarding the older architectures I mentioned (m32r, frv, mn10300),
-> > the situation is a bit different as they don't have the problems with
-> > build testing but they do have problems with using less of the
-> > standard interfaces (syscall, timer, gpio, rtc, ...), so they do add
-> > more to the maintenance burden without the nostalgia value of
-> > some of the even older architectures (parisc, alpha, m68k, ia64)
-> > that people maintain mainly for fun.
-> 
-> IMHO the magic word is 'maintain'. If someone is actively maintaining it
-> then I don't think we should care too much, if not then while the code
-> may be buildable on current systems does anyone honestly think it works
-> properly if used in anger ?
-> 
+On Fri, Feb 23, 2018 at 7:09 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Andy Shevchenko
+>> Sent: 23 February 2018 16:51
+>> On Fri, Feb 23, 2018 at 6:41 PM, David Laight <David.Laight@aculab.com> wrote:
 
-FWIW, alpha and m68k are known boot with qemu (even though m68k
-generates a warning traceback with the mainline kernel).
 
-Guenter
+>> The side-effect I referred previously is about tails, i.e. unaligned
+>> bytes are transferred in portions
+>> like
+>>   7 on 64-bit will be  4 + 2 + 1,
+>>   5 = 4 + 1
+>
+> on 64bit memcpy() is allowed to do:
+>         (long *)(tgt+len)[-1] = (long *)(src+len)[-1];
+>         rep_movsq(tgt, src, len >> 3);
+> provided the length is at least 8.
+>
+> The misaligned PCIe transfer generates a single TLP covering 12 bytes with the
+> relevant byte enables set for the first and last 32bit words.
+
+But is it guaranteed on any type of bus?
+memcpy_toio() is a generic helper, so, first of all we need to be sure
+what CPU on its side does, this is I think is pretty straight forward
+since it's all written in asm for 64-bit case.
+So, what about buses?
+
+-- 
+With Best Regards,
+Andy Shevchenko
