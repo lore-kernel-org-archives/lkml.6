@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841409-1519419285-2-79965797572125797
+X-Cyrus-Session-Id: sloti22d1t05-3841409-1519419238-2-333018798937099853
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519419285; b=lzn4jCVp7KkhInTIHB0Mieal6qhvHwuWj6LOfjbT7OJat1l
-    6fzw2/ytHxwk2WExiCrl+3GMAq1tNhtPBjITe7xbeQnnsuWDo3WmE1pEInIVKgGO
-    CmoVVR0IAjcwqw1fjCYE9LU67wcDgF/4Lfl9aleNxB7TVOklpwvn3FGOkmosGACo
-    CIRNe459CgSwdCM4+tODYxMzaKuV6YeEITZJ/vedlXVYpJeOcVmkZhmrUmafBODs
-    CBG3Y1sytgs1bjg2FzTwSs2QPL7b0f66WbaysQ4b7DaGsYiQpfSuMDuGm1pQpkXZ
-    lonotego7lzOKUAWAs3HEar0ivvi2n+4LFg+cuA==
+    t=1519419237; b=tSKp58BJJWwuuV19wEBQy+DP+ytlLMgkwpEhWm6DNxt6loy
+    8PG7AP/mnYa6lUGJDXhvnmv+8bqvSaXznqBfUgejGsvJShRp02Q5k6jox3gT4M3n
+    1UJwDQNsxfxaO9cpxQN386UW4bIvyKt+ICxRwnEy9dqaH9hrc8z2ADci34DKrrrH
+    +FSj+Aus/HwVW3B6E9zSWagfscKcbRN10OqMGXlyfi7mbWZheOzmhjR3Vs4jn1PZ
+    piNlL8MzOzRPRT4D2IXGCwP4ZD62CkkimZ+siGN0BBXd1tmN4LGg/3U6V77CJ6KO
+    izfri9j5z9owwXGfYCRRSopW1W1cI1kQvDp9Psw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519419285; bh=g9o+WBZRuHIIB/zx4cfV+hNfhZ
-    AFpZmV77faIbN5hK4=; b=DHIVPRiE6Ur/Nhqho1SjuoMYJwhbOCuTo3SoUo1ueZ
-    SM9pKxlDNcEX7ND9IGsNcJOAsKsgMm6iP3ldv2pY1U88NYYwK7M9aELqoU8lyYVn
-    k3i4mkMQ1Vh+zEJUdZIT4C0CoEbXuANNGhjOwOY7THCl3LNkI9f5stD4bZXoODXh
-    v4z3cMDD/odpATv6iG+0no2FMUXvbTQRz/XTw8Y/TkBP5nlp5F0ChCNoDVc3ql65
-    ZFjZtsDFp7CUrjv3d8zs0eJueTTRtkTakgm3Cc6i5c/kkK5R5LF53bHBw98AEbZa
-    alJcsJZXCj+xfX6F8yDuJBviGQzuRbshSLYiW+kKvuxg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519419237; bh=Yg+nj2t06GFkEzwtwFPbntMcoc
+    Ti8ZGlcVd6SDMMPHs=; b=ujNwHl4rKW4mqYRFOLUih3EmUdUjB011Mj+coaasm/
+    VLJYKs3vEs+ADM6JJTe5c6u5c31hvUzzTosEjky7pKpJotm2pOUuxc4p5LbHpVDW
+    0UsCesMNr/9sQW0P6vyH6w8r4K7/TN3M4BubckRBB9hbzV540V+jOwXPDerfG5Gf
+    LzjW4l3nK2bzt5nPRLZUEeeiUspbCaE8EeifmxTznfO3PSgIx+e9mDjdAeiPAdCu
+    mNag1xeR0J0MI+hwxsoVX+BrXG2tcGjAL8rhsH4X4Sh8GbZQrIrdDJqY/XnBs70O
+    XZmLXeqwnMY5U/3dVdoyr/njto6XazkzlUPqiAzkRl4g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752143AbeBWSaJ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 13:30:09 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34426 "EHLO
+        id S1752529AbeBWUxl (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 15:53:41 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34532 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751970AbeBWSaI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:30:08 -0500
+        with ESMTP id S1751540AbeBWSa2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:30:28 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3.18 12/58] console/dummy: leave .con_font_get set to NULL
-Date: Fri, 23 Feb 2018 19:26:11 +0100
-Message-Id: <20180223170208.623835838@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH 3.18 19/58] xfrm: check id proto in validate_tmpl()
+Date: Fri, 23 Feb 2018 19:26:18 +0100
+Message-Id: <20180223170209.862752691@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170206.724655284@linuxfoundation.org>
 References: <20180223170206.724655284@linuxfoundation.org>
@@ -78,30 +80,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 724ba8b30b044aa0d94b1cd374fc15806cdd6f18 upstream.
+commit 6a53b7593233ab9e4f96873ebacc0f653a55c3e1 upstream.
 
-When this method is set, the caller expects struct console_font fields
-to be properly initialized when it returns. Leave it unset otherwise
-nonsensical (leaked kernel stack) values are returned to user space.
+syzbot reported a kernel warning in xfrm_state_fini(), which
+indicates that we have entries left in the list
+net->xfrm.state_all whose proto is zero. And
+xfrm_id_proto_match() doesn't consider them as a match with
+IPSEC_PROTO_ANY in this case.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Proto with value 0 is probably not a valid value, at least
+verify_newsa_info() doesn't consider it valid either.
+
+This patch fixes it by checking the proto value in
+validate_tmpl() and rejecting invalid ones, like what iproute2
+does in xfrm_xfrmproto_getbyname().
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/console/dummycon.c |    1 -
- 1 file changed, 1 deletion(-)
+ net/xfrm/xfrm_user.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/video/console/dummycon.c
-+++ b/drivers/video/console/dummycon.c
-@@ -71,7 +71,6 @@ const struct consw dummy_con = {
-     .con_switch =	DUMMY,
-     .con_blank =	DUMMY,
-     .con_font_set =	DUMMY,
--    .con_font_get =	DUMMY,
-     .con_font_default =	DUMMY,
-     .con_font_copy =	DUMMY,
-     .con_set_palette =	DUMMY,
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1375,6 +1375,21 @@ static int validate_tmpl(int nr, struct
+ 		default:
+ 			return -EINVAL;
+ 		}
++
++		switch (ut[i].id.proto) {
++		case IPPROTO_AH:
++		case IPPROTO_ESP:
++		case IPPROTO_COMP:
++#if IS_ENABLED(CONFIG_IPV6)
++		case IPPROTO_ROUTING:
++		case IPPROTO_DSTOPTS:
++#endif
++		case IPSEC_PROTO_ANY:
++			break;
++		default:
++			return -EINVAL;
++		}
++
+ 	}
+ 
+ 	return 0;
