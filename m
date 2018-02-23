@@ -1,38 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv0hEEv9dzAmchP79zMn5LvpFDAn7PoZwcirK8Hpa9mAi39KsSTLHWoxChfhtQzF0nXwLHx
-ARC-Seal: i=1; a=rsa-sha256; t=1519411311; cv=none;
+X-Google-Smtp-Source: AG47ELu5lVCEBfohqM00KUqq2zxEEPiJv8zbj2IxcgCwYi+O4pOhn03T0n26RdEuIDzncw8MuXY3
+ARC-Seal: i=1; a=rsa-sha256; t=1519411309; cv=none;
         d=google.com; s=arc-20160816;
-        b=E1KwYyJYmaf0ho58E1lQe+Df08qdLequg21PxbHT6SKglFUNmpV9kmRMLr4wJjXD1b
-         ubmaypQOLqMgU7dBD0B0C8n1Mipi8V/BcX8T4f1jEopt00bgXG9C2C8E3esq4rsyGx2c
-         K4GJr4QAwGpFHmFmxnDaJ6Q8bmvcgWcTGYlsv2NyYWnY4+7gi8KME6A3IxXGRgnZ9Hgo
-         5/iG+PN3bgmlkvtBGhGVfpr4DK53megOSDScKirrCOYreOuF2mnABttwIzXhHRGU7VPH
-         YSjpHb9UZEWRJHnu1lhcHa+wyhc3K1oSu88ISyVNrc7G5RpR6TRxTMbj/6G+zDrgRcpd
-         YVpw==
+        b=xUCmtCOnI8UmPWjuF6Jbx3zFa3n2I+2NO4d+PENX+BkbzgM4CkGWhJp4SbUoCm77VO
+         ltbYk+wGDPdMfpTqz0C3YXf/4QdrqlgHsP+voI/oWhLa7OqGXLz+3V3H1rAWRkesFICR
+         c5Mg4yU+QlC4dtOVK1ghnZwQjvqVEgdgi+EPwesa5iiISORvC/8dnOHOrpW2MO6T4eFZ
+         k1eDsvgfoOEd7VrTfXkFHnx3+/l6znIGG35xwNERJMMbTneY5PfJGaTnjWXYV8WxaR2N
+         EbDh+0DwphVr1ir3CbWw+A3M67d6b9Eym5AAuy9wD92ioJ5tGhPZX0T8qznAjbQ9xTkm
+         OW6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZGu9zD2o+42UjfRjjjbpSxOggDXRSQaKLLy1aqJiIBA=;
-        b=usjY3lBOhG2HdiXcQbtmu9A5psc0XcJFphkQPZQ4yfxERWifAVdbEPr7IbcRLWRHdb
-         bWdzThmA+/DC6ifUBW+Aha62WnC9h4ZEpa9QLw9k6Dmw792SjAHO4asK2bsFvugEwS/g
-         /caCUDSwZ+llVw5VinAYUa6ZYRDXBGMWL9kTFN44ChSjf82xjDb8sG/z6cyLbKAe21mg
-         EbDz8yZNH/Ual933QPbRMny/SlXGmG0UQMIEkrGLg6LTCFvBR2FTDfwBMerH8mh3T396
-         +0pFgJFygtIB0qvAbXeieXl71EF1oa0zF3TclekIaO8vBl8axrxg4aEPJYIia/j6YI0/
-         PWXQ==
+        bh=77/BU3eTFpM0XQNpp8v6WxJpcfj7MzNnURGu7VJF32o=;
+        b=SzGwceKP0U0B/Pe42g2Nh9A+kK76S/LMCdjvDTntptILU7QZwXdgTk0YP2ta1x+7y+
+         EDCgTkp1YbKJZk14gOnKyqtPKGq/ZX8BUKOzM1HGVTyeg1V08MmxAbNT+Su29KoRqtxj
+         CIjj3ZASipGW94d9dLe68cisGs3jsySOWUNttIx9jDA3Xcps5w+3uW8wM4mOYpyqUgD1
+         OPuCZKKlyTAinqQx0KxXF0Sz9Q2cHF3h3s6W7UZU9VBD/pWWq6Ob8wRtUUkOdYFtPm4T
+         8SwYEUTP0+dnePYblUv6OBqZ8/3UxC9ysXBwuYXdAADkAksL7QGdGafe4oCA5DsORifo
+         WZrw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.4 157/193] ASoC: Intel: Kconfig: fix build when ACPI is not enabled
-Date: Fri, 23 Feb 2018 19:26:30 +0100
-Message-Id: <20180223170350.512304837@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jan Dakinevich <jan.dakinevich@gmail.com>,
+	Ladi Prosek <lprosek@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Jack Wang <jinpu.wang@profitbricks.com>
+Subject: [PATCH 4.4 191/193] KVM: VMX: clean up declaration of VPID/EPT invalidation types
+Date: Fri, 23 Feb 2018 19:27:04 +0100
+Message-Id: <20180223170356.343070253@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 References: <20180223170325.997716448@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593218235665026382?=
-X-GMAIL-MSGID: =?utf-8?q?1593218235665026382?=
+X-GMAIL-THRID: =?utf-8?q?1593218232987820369?=
+X-GMAIL-MSGID: =?utf-8?q?1593218232987820369?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,77 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vinod Koul <vinod.koul@intel.com>
+From: Jan Dakinevich <jan.dakinevich@gmail.com>
 
-commit 3493d4a86457c7de9f1e602b4267c9b0f9ec1c9f upstream.
+commit 63f3ac48133a19110c8a3666028dbd9b1bf3dcb3 upstream
 
-Randy reported following error when ACPI is not enabled:
+- Remove VMX_EPT_EXTENT_INDIVIDUAL_ADDR, since there is no such type of
+   EPT invalidation
 
-warning: (SND_SOC_INTEL_BYTCR_RT5640_MACH && SND_SOC_INTEL_BYTCR_RT5651_MACH
-&& SND_SOC_INTEL_CHT_BSW_RT5672_MACH && SND_SOC_INTEL_CHT_BSW_RT5645_MACH &&
-SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH) selects SND_SST_IPC_ACPI
-+which has unmet direct dependencies (SOUND && !M68K && !UML && SND &&
-SND_SOC && ACPI)
+ - Add missing VPID types names
 
-causing these build errors:
-
-In file included from ../sound/soc/intel/atom/sst/sst_acpi.c:40:0:
-../include/acpi/acpi_bus.h:65:20: error: conflicting types for
-'acpi_evaluate_dsm'
- union acpi_object *acpi_evaluate_dsm(acpi_handle handle, const u8 *uuid,
-In file included from ../sound/soc/intel/atom/sst/sst_acpi.c:31:0:
-../include/linux/acpi.h:676:34: note: previous definition of
-'acpi_evaluate_dsm' was here
- static inline union acpi_object *acpi_evaluate_dsm(acpi_handle handle,
-
-CONFIG_SND_SST_IPC_ACPI was already dependent upon ACPI, but that was not
-solving it. So move the depends up to machine drivers and remove from
-CONFIG_SND_SST_IPC_ACPI.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-[arnd: rebased to PATCH kernel]
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jan Dakinevich <jan.dakinevich@gmail.com>
+Tested-by: Ladi Prosek <lprosek@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+[jwang: port to 4.4]
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/intel/Kconfig |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/vmx.h |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -24,7 +24,6 @@ config SND_SST_IPC_PCI
- config SND_SST_IPC_ACPI
- 	tristate
- 	select SND_SST_IPC
--	depends on ACPI
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -400,10 +400,11 @@ enum vmcs_field {
+ #define IDENTITY_PAGETABLE_PRIVATE_MEMSLOT	(KVM_USER_MEM_SLOTS + 2)
  
- config SND_SOC_INTEL_SST
- 	tristate
-@@ -91,7 +90,7 @@ config SND_SOC_INTEL_BROADWELL_MACH
+ #define VMX_NR_VPIDS				(1 << 16)
++#define VMX_VPID_EXTENT_INDIVIDUAL_ADDR		0
+ #define VMX_VPID_EXTENT_SINGLE_CONTEXT		1
+ #define VMX_VPID_EXTENT_ALL_CONTEXT		2
++#define VMX_VPID_EXTENT_SINGLE_NON_GLOBAL	3
  
- config SND_SOC_INTEL_BYTCR_RT5640_MACH
- 	tristate "ASoC Audio DSP Support for MID BYT Platform"
--	depends on X86 && I2C
-+	depends on X86 && I2C && ACPI
- 	select SND_SOC_RT5640
- 	select SND_SST_MFLD_PLATFORM
- 	select SND_SST_IPC_ACPI
-@@ -103,7 +102,7 @@ config SND_SOC_INTEL_BYTCR_RT5640_MACH
+-#define VMX_EPT_EXTENT_INDIVIDUAL_ADDR		0
+ #define VMX_EPT_EXTENT_CONTEXT			1
+ #define VMX_EPT_EXTENT_GLOBAL			2
+ #define VMX_EPT_EXTENT_SHIFT			24
+@@ -420,8 +421,10 @@ enum vmcs_field {
+ #define VMX_EPT_EXTENT_GLOBAL_BIT		(1ull << 26)
  
- config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
-         tristate "ASoC Audio driver for Intel Cherrytrail & Braswell with RT5672 codec"
--        depends on X86_INTEL_LPSS && I2C
-+        depends on X86_INTEL_LPSS && I2C && ACPI
-         select SND_SOC_RT5670
-         select SND_SST_MFLD_PLATFORM
-         select SND_SST_IPC_ACPI
-@@ -115,7 +114,7 @@ config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
+ #define VMX_VPID_INVVPID_BIT                    (1ull << 0) /* (32 - 32) */
++#define VMX_VPID_EXTENT_INDIVIDUAL_ADDR_BIT     (1ull << 8) /* (40 - 32) */
+ #define VMX_VPID_EXTENT_SINGLE_CONTEXT_BIT      (1ull << 9) /* (41 - 32) */
+ #define VMX_VPID_EXTENT_GLOBAL_CONTEXT_BIT      (1ull << 10) /* (42 - 32) */
++#define VMX_VPID_EXTENT_SINGLE_NON_GLOBAL_BIT   (1ull << 11) /* (43 - 32) */
  
- config SND_SOC_INTEL_CHT_BSW_RT5645_MACH
- 	tristate "ASoC Audio driver for Intel Cherrytrail & Braswell with RT5645/5650 codec"
--	depends on X86_INTEL_LPSS && I2C
-+	depends on X86_INTEL_LPSS && I2C && ACPI
- 	select SND_SOC_RT5645
- 	select SND_SST_MFLD_PLATFORM
- 	select SND_SST_IPC_ACPI
+ #define VMX_EPT_DEFAULT_GAW			3
+ #define VMX_EPT_MAX_GAW				0x4
