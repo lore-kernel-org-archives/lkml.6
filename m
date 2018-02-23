@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3684173-1519413950-2-1860472048183292252
+X-Cyrus-Session-Id: sloti22d1t05-3704313-1519413927-2-1834885000173008394
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519413949; b=PVBPV/6c1Ro/Emklun7oMj9/Qjs2LwovHC0ptKBzJlmPr9z
-    6n9xHoqHvhIHsHT0o+jv6WR5FY17UvfgbZlmUWlEkNn11/p0qrPfja3/yYOIjcVs
-    ypIfzxPbNL8LtEESQ0W5pyNw4jmB5VNg46fM2t9nCjHvDiIMxVvv+sjtLM0z9rMN
-    V7Uv56dUHw+bnTrymTVcB1HsJgWzm83/Sn02jLnZt5AuRlOVInDS9EnS+ywfz+V3
-    dCfgCpJXn/vBkdXGbglJFovq8oom1rZ42D1PzsciWA8fdyOCZLbionqJx41OO3JG
-    ggd6rNFaeVY0xSnP8Xm99fTTJ/JNhsHcjw3Nw5A==
+    t=1519413926; b=plZ35UYgOAmOMdJKuQG9JcSapK23wCwlSCxgceq/779v+tE
+    cmZePNGKbKovjWLrdLotP5YnUjc7mhr920yn8uQ0iVCBEuxoPV0hqOx1/kxZ2whN
+    de6/ILgg4Rkln7jwY70X0i7fbWeIhpx2JZAjwJs+C3o2338rFArw8M5ga32l2ZrZ
+    4qGAQrN8JuUf/IWTDYoJ9heJBxQc8sqtY1R4dTAlWUvuYOsj1J5pKjkal6J8RxFx
+    hnwJg7EMZq+mOOmK7sx42aardnmHOC633ilI8LrPs/WZleRBRQc1LwBUJW6BVyAA
+    spBfj2E1QLR11KphjCVMbaDbrkJHC0AoRRvxIxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519413949; bh=QIahH20hYtvJTZvPX/KmzsQovk
-    pPJmHO7DqpZrpzswI=; b=BSsUA1LhXBgpRCiPUpzk8vTT70Gzh+yPhV07aVFXuB
-    gqKw9FE3L+abRcccJaCtzoYDWZ8Cptqui5jabZm+sbAjxyjE4Tjv9nJ4QipvGnY0
-    N4EtJ7xwsWGCtbuHCELaFgRyhBgUNuQ3Y3bAwhX1J4R3yrn2E3qv+ahg0Fsx19+w
-    yam/oK0KspKob/cSh9cGTywQJPhvsqQUejUNx/DLAUNz14/4lC7eIa88w0I95rsx
-    3pzYu6DFFCxU7Z4Moc3jsg4ghGu7f62pJ37FsjHeVonk3JEHjb3RbQVhipblU6yR
-    nC5E8hR4kqllkwmCXjT7PIUW0jqDu/h2nR+Z6fwvcGiw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519413926; bh=S9a9tATbw06h9L7DdoSXdQ2UNl
+    eMV6WtVfFxBnnvEZ4=; b=PwxGHzNQw/aqEmIi/MB6W2U0zlXq2ncg2J9ZBgFDKo
+    t6WAaiLKtm8EAmz/JZgasJZMArac+aGXnn4DlTvpLsb/9bMvpy6eACf1miOotf0f
+    BnJDfOfX7dF+38SeW8tIe/brcjxV1A/Kh2+byiS1Z894zeU8z7cz+dueun7pz8av
+    lnULmzKQ4cvh+OSlGSndqskhUk289cTM7Ln+TGLIMVJfyUHmZwXWRZlhBGs9kVdm
+    dUxm4Dp8w24CGa4QRwDQiAt0Xmfr3hhNYYq5e6fVbx2attyA9HGQD1WTOAdOyEFO
+    LOO7/uJp/An7EamD/j8CVzb74VFY7VKYDJxbKhGGHLRA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeBWTZc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 14:25:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47120 "EHLO
+        id S935248AbeBWSwz (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Feb 2018 13:52:55 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935228AbeBWSwv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:51 -0500
+        with ESMTP id S935204AbeBWSwy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Feb 2018 13:52:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 073/159] perf top: Fix window dimensions change handling
-Date: Fri, 23 Feb 2018 19:26:21 +0100
-Message-Id: <20180223170752.443474351@linuxfoundation.org>
+Subject: [PATCH 4.14 082/159] gpio: 74x164: Fix crash during .remove()
+Date: Fri, 23 Feb 2018 19:26:30 +0100
+Message-Id: <20180223170753.496872487@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180223170743.086611315@linuxfoundation.org>
 References: <20180223170743.086611315@linuxfoundation.org>
@@ -85,80 +81,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 89d0aeab4252adc2a7ea693637dd21c588bfa2d1 ]
+[ Upstream commit a158531f3c92467df0e93e000d58185acae78a6e ]
 
-The stdio perf top crashes when we change the terminal
-window size. The reason is that we assumed we get the
-perf_top pointer as a signal handler argument which is
-not the case.
+Commit 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios'
+property") added a new member gpiod_oe to the end of the struct
+gen_74x164_chip, after the zero-length buffer array.
 
-Changing the SIGWINCH handler logic to change global
-resize variable, which is checked in the main thread
-loop.
+However, this buffer is a flexible array, allocated together with the
+structure during .probe().  As the buffer is no longer the last member,
+writing to it corrupts the newly added member after it.
+During device removal, the corrupted member will be used as a pointer,
+leading to a crash.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-ysuzwz77oev1ftgvdscn9bpu@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This went unnoticed, as the flexible array was declared as "buffer[0]"
+instead of "buffer[]", and thus did not trigger a "flexible array member
+not at end of struct" error from gcc.
+
+Move the gpiod_oe field up to fix this, and drop the zero from the array
+size to prevent future similar bugs.
+
+Fixes: 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios' property")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-top.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-74x164.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -77,6 +77,7 @@
- #include "sane_ctype.h"
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -23,6 +23,7 @@
+ struct gen_74x164_chip {
+ 	struct gpio_chip	gpio_chip;
+ 	struct mutex		lock;
++	struct gpio_desc	*gpiod_oe;
+ 	u32			registers;
+ 	/*
+ 	 * Since the registers are chained, every byte sent will make
+@@ -31,8 +32,7 @@ struct gen_74x164_chip {
+ 	 * register at the end of the transfer. So, to have a logical
+ 	 * numbering, store the bytes in reverse order.
+ 	 */
+-	u8			buffer[0];
+-	struct gpio_desc	*gpiod_oe;
++	u8			buffer[];
+ };
  
- static volatile int done;
-+static volatile int resize;
- 
- #define HEADER_LINE_NR  5
- 
-@@ -86,10 +87,13 @@ static void perf_top__update_print_entri
- }
- 
- static void perf_top__sig_winch(int sig __maybe_unused,
--				siginfo_t *info __maybe_unused, void *arg)
-+				siginfo_t *info __maybe_unused, void *arg __maybe_unused)
- {
--	struct perf_top *top = arg;
-+	resize = 1;
-+}
- 
-+static void perf_top__resize(struct perf_top *top)
-+{
- 	get_term_dimensions(&top->winsize);
- 	perf_top__update_print_entries(top);
- }
-@@ -477,7 +481,7 @@ static bool perf_top__handle_keypress(st
- 					.sa_sigaction = perf_top__sig_winch,
- 					.sa_flags     = SA_SIGINFO,
- 				};
--				perf_top__sig_winch(SIGWINCH, NULL, top);
-+				perf_top__resize(top);
- 				sigaction(SIGWINCH, &act, NULL);
- 			} else {
- 				signal(SIGWINCH, SIG_DFL);
-@@ -1022,6 +1026,11 @@ static int __cmd_top(struct perf_top *to
- 
- 		if (hits == top->samples)
- 			ret = perf_evlist__poll(top->evlist, 100);
-+
-+		if (resize) {
-+			perf_top__resize(top);
-+			resize = 0;
-+		}
- 	}
- 
- 	ret = 0;
+ static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
