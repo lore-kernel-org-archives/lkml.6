@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeBWAAv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Feb 2018 19:00:51 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34075 "EHLO
+        id S1752211AbeBWABE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Feb 2018 19:01:04 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:44152 "EHLO
         mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbeBWAAt (ORCPT
+        with ESMTP id S1751317AbeBWABB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Feb 2018 19:00:49 -0500
-X-Google-Smtp-Source: AH8x2276JRrrAU3G0zSO0/vxEg21iI9zs4dALUkeI2jjMgmOLC9k818H3HrD5KebzXexcvyXm13KdQ==
-Date: Thu, 22 Feb 2018 21:00:45 -0300
+        Thu, 22 Feb 2018 19:01:01 -0500
+X-Google-Smtp-Source: AH8x227y+NMCvKVF/S1PMrITnI7E+PV9r9XirnxoB0x0iaiQ4AW56uLTsWT4+zMeNGOw/E6yUVQ0Cw==
+Date: Thu, 22 Feb 2018 21:00:57 -0300
 From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
 Cc: dri-devel@lists.freedesktop.org,
         virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 5/7] drm/virtio: Replace 'unsigned' for 'unsigned int'
-Message-ID: <ac9c4110785e6519801d44c57d4f05c3e0cdad53.1519343668.git.rodrigosiqueiramelo@gmail.com>
+Subject: [PATCH 6/7] drm/virtio: Remove multiple blank lines
+Message-ID: <c43a006f2ed93a16fe824b4a2686a2d5e2ef56f5.1519343668.git.rodrigosiqueiramelo@gmail.com>
 References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -26,74 +26,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+This patch fixes the checkpatch.pl check:
 
-drivers/gpu/drm/virtio/virtgpu_display.c:64: WARNING: Prefer 'unsigned
-int' to bare use of 'unsigned'
-...
+virtgpu_drv.c:116: CHECK: Please don't use multiple blank lines
+virtgpu_vq.c:599: CHECK: Please don't use multiple blank lines
+virtgpu_prime.c:42: CHECK: Please don't use multiple blank lines
 
 Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_display.c | 4 ++--
- drivers/gpu/drm/virtio/virtgpu_drv.h     | 2 +-
- drivers/gpu/drm/virtio/virtgpu_fb.c      | 2 +-
- drivers/gpu/drm/virtio/virtgpu_ttm.c     | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.c   | 1 -
+ drivers/gpu/drm/virtio/virtgpu_prime.c | 1 -
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index 2d1b25630c0e..8cc8c34d67f5 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -61,9 +61,9 @@ static void virtio_gpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
- static int
- virtio_gpu_framebuffer_surface_dirty(struct drm_framebuffer *fb,
- 				     struct drm_file *file_priv,
--				     unsigned flags, unsigned color,
-+				     unsigned int flags, unsigned int color,
- 				     struct drm_clip_rect *clips,
--				     unsigned num_clips)
-+				     unsigned int num_clips)
- {
- 	struct virtio_gpu_framebuffer *virtio_gpu_fb
- 		= to_virtio_gpu_framebuffer(fb);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 59801728cfeb..d25c8ca224aa 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -246,7 +246,7 @@ int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev);
- void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev);
- int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *qfb,
- 			     struct drm_clip_rect *clips,
--			     unsigned num_clips);
-+			     unsigned int num_clips);
- /* virtio vg */
- int virtio_gpu_alloc_vbufs(struct virtio_gpu_device *vgdev);
- void virtio_gpu_free_vbufs(struct virtio_gpu_device *vgdev);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
-index b933cbba0685..8af69ab58b89 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fb.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
-@@ -118,7 +118,7 @@ static int virtio_gpu_dirty_update(struct virtio_gpu_framebuffer *fb,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+index 5d21433b1cdf..d9287c144fe5 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+@@ -113,7 +113,6 @@ static const struct file_operations virtio_gpu_driver_fops = {
+ 	.llseek = noop_llseek,
+ };
  
- int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *vgfb,
- 			     struct drm_clip_rect *clips,
--			     unsigned num_clips)
-+			     unsigned int num_clips)
+-
+ static struct drm_driver driver = {
+ 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME | DRIVER_RENDER | DRIVER_ATOMIC,
+ 	.load = virtio_gpu_driver_load,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
+index 6c6e9dbab096..d27a1688714f 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_prime.c
++++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+@@ -39,7 +39,6 @@ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
+ 	WARN_ONCE(1, "not implemented");
+ }
+ 
+-
+ struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
  {
- 	struct virtio_gpu_device *vgdev = vgfb->base.dev->dev_private;
- 	struct virtio_gpu_object *obj = gem_to_virtio_gpu_obj(vgfb->obj);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
-index cd4a17a1409a..580323ceeb8a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
-@@ -224,7 +224,7 @@ static int virtio_gpu_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
- 		man->default_caching = TTM_PL_FLAG_CACHED;
- 		break;
- 	default:
--		DRM_ERROR("Unsupported memory type %u\n", (unsigned)type);
-+		DRM_ERROR("Unsupported memory type %u\n", (unsigned int)type);
- 		return -EINVAL;
- 	}
- 	return 0;
+ 	WARN_ONCE(1, "not implemented");
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 809d20eb6571..18c78a7fa044 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -596,7 +596,6 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
+ 	wake_up(&vgdev->resp_wq);
+ }
+ 
+-
+ int virtio_gpu_cmd_get_display_info(struct virtio_gpu_device *vgdev)
+ {
+ 	struct virtio_gpu_ctrl_hdr *cmd_p;
 -- 
 2.16.2
