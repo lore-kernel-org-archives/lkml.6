@@ -1,94 +1,105 @@
-Return-Path: <BATV+abca9b65bfc9abb1c9ae+5296+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AH8x2242DI32/Vcto3QCiMWwdL11T2P9/21YupCBYjMX4SU3JyTU1006yaZ0MIMM2RnzuMJPy6vx
-ARC-Seal: i=1; a=rsa-sha256; t=1519325029; cv=none;
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AH8x227K21Urd3AH0kjZEQ523EWyUnDwISgTNSgf4O8QZI4fIpy2mR1QN6s73mYb3y9H9aCr2GgX
+ARC-Seal: i=1; a=rsa-sha256; t=1519368811; cv=none;
         d=google.com; s=arc-20160816;
-        b=XJph4aA+0HEtHwXWSVbrXe5kAj/D2MI9DuWljbG9UGv4KuFj5mxXkktKBsYl5OeZak
-         vaYqQ8AE6FquEOpAs/+BBFqL3/StumRMOeLphNetQJEqlF3c0CeEBMF92zuC+bziPXfn
-         FXa7oXvSYe3dxwRke8Go7JwihikExt+npciRP4SapRq1DWhE41iBz+PGlmsqnjfT0drM
-         4RDym3PzMS+Adumrrqho9XAlS8tKvUaMM04bZNj3Kd9kXStS+l5H7mfxZd75+0uAyfSw
-         NKKTreiB6FhWgNbkpu69vOkJluompvpb7kJHntW3kXORgNjZ0AiA2wvQFST14xMnqlJD
-         bmQw==
+        b=0JYljx7upNaXZUlvF8OkJMqx+7XslYP0X/6/p/D+oDRfUZP0zHW2Y7CtDeyzGDEkXi
+         lUkP1sAsux4oRAWdPEB8wTg4WfFy87O9cbMz1YarhYve5NnTASChFBBWN29riJkQ38Zv
+         0aYVYFBLH0cV5DcxTE3md1Vq9VnFJXOk/6iqUWC8ZqrwfF+CUGPUqZcN7H426vVBFa0z
+         Pn8207T71pdnFzcVPrhZw35OyaU4g6wekHhDN2rO8aUdMnTLD6yH/DPYXKrOyY3utU3C
+         GIBvEHZhm/xiV6iHKRHa2WY0fAHRMQrbOdaaPzIvPsvT+ayK+SDgYEaWyoBmHDy+SE7P
+         dOQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=+zDccxVWV7M5VoCORzdVDFGDu8PnIzHUAB6Jf3nqSXg=;
-        b=py2NcdwTq3KYCw8kGTKIfh+qZdMImNtr2qpK6EeAMJTx8zIaGZutAZxrfcJnHUa+AT
-         /o6BzAlqmQonkr5g07mfmfD8ICjnB32dJBHx6dEfspGynA82OiY0uw26Ip7bOGun9c0a
-         V5Z/aU4u/sgCf6VuEcFfmRtBg6grL6umJLIwB08DqMSeVEn4aC/nTmBAgcMPIRMsptKT
-         5G5qY9oMBYoufJ29XpK+IoSND+nXwmEeq94AFxzBDmceFpwd9E+bRLfv7PdDFaM3ePBS
-         Mwa7+wSTvn4v+o574iE109GR50iUBBKAymICMSn01gGMLHQfLNvLS/rW/Oz+0+fwivAa
-         oHgg==
+        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
+         :date:content-transfer-encoding:mime-version:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=UasjqQuZm8G7GlrryYhAWYtuAjR/vQiN23Wi8+YvFYE=;
+        b=E1W2GSeuPOx8Cj+ZCBV1U2ikDGf9chnce3yPJ2cMlp7XnFHyNnP1xCLZbJrxeHhPUx
+         YbMiFcgszPusKY62IUpNW72PFhyT/8ti809JmEsPRDR/w9lgwNGeWe0zcKBpGYN0oM+U
+         ZRxNP9qhLMcZaGrBQTGq4P5SHK4AK4nG3AxN/ZzGyDj+Cx0FfxNby3h/MTyJp68C+d1g
+         EJsXzVtH4VY+lu6Yt4KsBMmUm/Vv3wbaNNvwsYL6sR+MKgjiivf1rcHu5buQvjAHJYzA
+         IIjx1HTcgQ1NnOdCKOHiPdEoyqAjlXOjQXRYx2kCaQnpSZD8P3GMRa4YyGWIJset3iGT
+         /buQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=aK2oZgGV;
-       spf=pass (google.com: best guess record for domain of batv+abca9b65bfc9abb1c9ae+5296+infradead.org+hch@bombadil.srs.infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=BATV+abca9b65bfc9abb1c9ae+5296+infradead.org+hch@bombadil.srs.infradead.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MAOI4YkV;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=egqUAtmb;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=aK2oZgGV;
-       spf=pass (google.com: best guess record for domain of batv+abca9b65bfc9abb1c9ae+5296+infradead.org+hch@bombadil.srs.infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=BATV+abca9b65bfc9abb1c9ae+5296+infradead.org+hch@bombadil.srs.infradead.org
-Date: Thu, 22 Feb 2018 10:43:48 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MAOI4YkV;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=egqUAtmb;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 23 Feb 2018 12:23:30 +0530
+From: poza@codeaurora.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
+ <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
+ <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
+ Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
+ <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Subject: Re: [PATCH v10 6/7] PCI: Unify wait for link active into generic pci
-Message-ID: <20180222184348.GE6267@infradead.org>
+In-Reply-To: <20180222184348.GE6267@infradead.org>
 References: <1519315332-26852-1-git-send-email-poza@codeaurora.org>
  <1519315332-26852-7-git-send-email-poza@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519315332-26852-7-git-send-email-poza@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+ <20180222184348.GE6267@infradead.org>
+Message-ID: <be1f86033845121116b35ad17ead9527@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593086424372892434?=
-X-GMAIL-MSGID: =?utf-8?q?1593127762660774683?=
+X-GMAIL-MSGID: =?utf-8?q?1593173671228975357?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
->  
-> +/**
-> + * pci__wait_for_link - Wait for link till its active/inactive
+On 2018-02-23 00:13, Christoph Hellwig wrote:
+>> 
+>> +/**
+>> + * pci__wait_for_link - Wait for link till its active/inactive
+> 
+> typo - just wants a single underscore.
+> 
+>> +	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+>> +	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> 
+> no need for the !! when assigning to a boolean.
 
-typo - just wants a single underscore.
+bool is 8 bit, while
+#define  PCI_EXP_LNKSTA_DLLLA	0x2000	/* Data Link Layer Link Active */
+so I think we need it. otherwise it will treat lnk_status & 
+PCI_EXP_LNKSTA_DLLLA as 0 even if 13th bit is set.
 
-> +	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-> +	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> 
+>> +
+>> +	while ((ret != active) && (timeout > 0)) {
+> 
+> No need for either pair of inner braces.
+> 
+>> +		msleep(10);
+>> +		timeout -= 10;
+>> +		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+>> +		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> 
+> Same as above.
+> 
+>> +	}
+>> +
+>> +	if (ret == active)
+>> +		return true;
+> 
+> Seems like the structure is a bit odd.  Why not:
+> 
+> 	for (;;) {
+> 		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> 		if ((lnk_status & PCI_EXP_LNKSTA_DLLLA) == active)
+> 			return true;
+> 		if (timeout <= 0)
+> 			break;
+> 		timeout -= 10;
+> 	}
 
-no need for the !! when assigning to a boolean.
-
-> +
-> +	while ((ret != active) && (timeout > 0)) {
-
-No need for either pair of inner braces.
-
-> +		msleep(10);
-> +		timeout -= 10;
-> +		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-> +		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-
-Same as above.
-
-> +	}
-> +
-> +	if (ret == active)
-> +		return true;
-
-Seems like the structure is a bit odd.  Why not:
-
-	for (;;) {
-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-		if ((lnk_status & PCI_EXP_LNKSTA_DLLLA) == active)
-			return true;
-		if (timeout <= 0)
-			break;
-		timeout -= 10;
-	}
+Thanks for suggestion, will do this way. thanks.
+Regards,
+Oza.
