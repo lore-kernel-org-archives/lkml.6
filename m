@@ -1,78 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752283AbeBWVfz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Feb 2018 16:35:55 -0500
-Received: from tartarus.angband.pl ([89.206.35.136]:45490 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751547AbeBWVfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Feb 2018 16:35:52 -0500
-Date: Fri, 23 Feb 2018 22:34:23 +0100
-From: Adam Borowski <kilobyte@angband.pl>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Guenter Roeck <linux@roeck-us.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-hexagon@vger.kernel.org,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, James Hogan <jhogan@kernel.org>,
-        linux-metag@vger.kernel.org, Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Removing architectures without upstream gcc support
-Message-ID: <20180223213423.iskp7kmvy6rd52gc@angband.pl>
-References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
- <20180222234833.GA3047@roeck-us.net>
- <CAK8P3a3Y2b-DivYz1ZqhFGUqQaiF=5SDB6RFLtCknwY2--09OQ@mail.gmail.com>
- <20180223154316.35b26857@alans-desktop>
- <20180223171019.GA1125@roeck-us.net>
- <20180223181943.GF30522@ZenIV.linux.org.uk>
- <1519414328.30443.29.camel@HansenPartnership.com>
+        id S1752491AbeBWVgE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Feb 2018 16:36:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752228AbeBWVfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Feb 2018 16:35:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6AB217A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 23 Feb 2018 15:35:52 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] dmi: Introduce dmi_get_bios_year() helper
+Message-ID: <20180223213552.GL14632@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1519414328.30443.29.camel@HansenPartnership.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+In-Reply-To: <20180222125923.57385-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 02:32:08PM -0500, James Bottomley wrote:
-> On Fri, 2018-02-23 at 18:19 +0000, Al Viro wrote:
-> [...]
-> > IIRC, parisc/qemu stuff had been announced a while ago;
+On Thu, Feb 22, 2018 at 02:59:20PM +0200, Andy Shevchenko wrote:
+> It's used in several places and more users may come.
+> By using this helper they may create a slightly cleaner code.
 > 
-> I have, but it didn't work sufficiently for me to either boot a kernel
-> using system emulation or start an architecture container using user
-> emulation.  I'll try again now that qemu has gone through several
-> revisions.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  include/linux/dmi.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/include/linux/dmi.h b/include/linux/dmi.h
+> index 46e151172d95..241c27008c70 100644
+> --- a/include/linux/dmi.h
+> +++ b/include/linux/dmi.h
+> @@ -147,4 +147,11 @@ static inline const struct dmi_system_id *
+>  
+>  #endif
+>  
+> +static inline int dmi_get_bios_year(void)
+> +{
+> +	int year;
+> +	dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL);
+> +	return year;
+> +}
 
-Doesn't seem to work.  Debian package (1:2.11+dfsg-1) ships hppa support but
-it doesn't even install binfmt; otherwise, -user is functional enough for a
-minimal executable (so arch-test reports it as working[1]), but not for
-anything libc:
+I don't really care personally, and I assume this series will go via a
+non-PCI tree, but making this inline looks similar to this, which
+wasn't well-received:
 
-[/srv/chroots/hppa]# chroot . /usr/bin/qemu-hppa-static /bin/true
-qemu-hppa-static: /build/qemu-v8TF72/qemu-2.11+dfsg/target/hppa/translate.c:422: nullify_end: Assertion `status != DISAS_NORETURN && status != DISAS_IAQ_N_UPDATED' failed.
-Segmentation fault
+https://lkml.kernel.org/r/CA+55aFypU331cQy-6ZJ6szF=2KVLqcbwCUGd+gTwPViRqRWN+g@mail.gmail.com
 
-This looks bad enough that I didn't even look at qemu-system.
-
-
-ᛗᛖᛟᚹ!
-
-[1]. On archs without changed baseline, the test is just
-write(1,"ok\n",3);_exit(0); unless there's a known issue to look for
-such as swpb emulation being nop, etc.
--- 
-⢀⣴⠾⠻⢶⣦⠀ 
-⣾⠁⢰⠒⠀⣿⡁ Vat kind uf sufficiently advanced technology iz dis!?
-⢿⡄⠘⠷⠚⠋⠀                                 -- Genghis Ht'rok'din
-⠈⠳⣄⠀⠀⠀⠀ 
+>  #endif	/* __DMI_H__ */
+> -- 
+> 2.16.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
